@@ -1,0 +1,59 @@
+{
+  "format": "taiji-w7-p2-8-natural-language-workbench-v1",
+  "task": "Taiji-owned natural-language Workbench execution without caller ActionIntent",
+  "runs": [
+    {
+      "seed": 11,
+      "status": "completed",
+      "selected_kind": "workspace.read",
+      "selected_source_goal_id": "goal:86bb20552cdb5ea2cd475b83",
+      "goal_id": "goal:86bb20552cdb5ea2cd475b83",
+      "execution_status": "completed",
+      "step_success": true,
+      "checkpoint_saved": true,
+      "restored_checkpoint_name": "seed:.p2-8-natural-language-11.pt",
+      "workbench_event_count": 4,
+      "provider_has_no_execution_fields": true
+    },
+    {
+      "seed": 29,
+      "status": "completed",
+      "selected_kind": "workspace.read",
+      "selected_source_goal_id": "goal:86bb20552cdb5ea2cd475b83",
+      "goal_id": "goal:86bb20552cdb5ea2cd475b83",
+      "execution_status": "completed",
+      "step_success": true,
+      "checkpoint_saved": true,
+      "restored_checkpoint_name": "seed:.p2-8-natural-language-29.pt",
+      "workbench_event_count": 4,
+      "provider_has_no_execution_fields": true
+    },
+    {
+      "seed": 47,
+      "status": "completed",
+      "selected_kind": "workspace.read",
+      "selected_source_goal_id": "goal:86bb20552cdb5ea2cd475b83",
+      "goal_id": "goal:86bb20552cdb5ea2cd475b83",
+      "execution_status": "completed",
+      "step_success": true,
+      "checkpoint_saved": true,
+      "restored_checkpoint_name": "seed:.p2-8-natural-language-47.pt",
+      "workbench_event_count": 4,
+      "provider_has_no_execution_fields": true
+    }
+  ],
+  "metrics": {
+    "three_independent_seeds": true,
+    "provider_evidence_is_not_an_action_intent": true,
+    "taiji_creates_intent_from_live_grounding": true,
+    "bounded_workbench_execution_succeeds": true,
+    "checkpoint_saves_and_restores": true,
+    "low_confidence_stops_before_workbench": true,
+    "provider_execution_fields_fail_closed": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "validated semantic evidence must let Taiji create the ActionIntent from live affordances and execute one bounded Workbench task with checkpoint evidence; low-confidence or executable provider evidence must stop before mutation"
+  },
+  "boundary": "This first slice uses deterministic semantic evidence and explicit backend parameter bindings; it does not claim real provider quality, unconstrained semantic grounding, multi-step autonomy, CUDA, CI, or open-domain self-evolution."
+}

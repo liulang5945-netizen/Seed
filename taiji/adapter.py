@@ -11,6 +11,11 @@ from typing import Any, cast
 import torch
 
 from .affordance import LearnedAffordanceFeatures, WorldAffordanceGroundingProducer
+from .artifact_consumption import (
+    ARTIFACT_CONSUMPTION_MODE_LEGACY_COMPATIBLE,
+    ARTIFACT_CONSUMPTION_MODE_VERIFIED_ONLY,
+    ArtifactConsumptionPolicy,
+)
 from .concept_formation import ConceptFormationOrgan, ConceptMatch
 from .content_selection import (
     ContentCandidate,
@@ -110,6 +115,11 @@ from .planning import (
 )
 from .procedural_memory import ProceduralMemoryLearner, ProceduralSequenceLearner
 from .semantic_memory import SemanticMemoryLearner
+from .semantic_provider import (
+    SEMANTIC_PROVIDER_AMBIGUITY_CEILING,
+    SEMANTIC_PROVIDER_CONFIDENCE_FLOOR,
+    SemanticEvidenceProposal,
+)
 from .state import TaijiDecision, TaijiOutcome, TaijiStep
 from .structural_arbitration import (
     StructuralCandidateBatch,
@@ -160,6 +170,12 @@ from .structural_validation import (
 )
 from .structural_validation_artifact import WorkbenchStructuralValidationArtifact
 from .structural_validation_batch import StructuralValidationArtifactBatch
+from .task_decomposition import TaskDecomposition
+from .task_interpretation import (
+    TASK_PLANNER_CONFIDENCE_FLOOR,
+    TaskInterpretation,
+    task_input_digest,
+)
 from .workspace import WorkspaceRouter
 from .world_learning import WorldDynamicsLearner, WorldSchema, WorldSchemaRegistry
 
@@ -298,6 +314,7 @@ class TSKV8Adapter(Taiji):
             StructuralValidationGateDecision
         ] = []
         self._structural_admission_results: list[StructuralAdmissionResult] = []
+        self._artifact_consumption_policy = ArtifactConsumptionPolicy.verified_only()
         self._last_structural_lineage_retention_result: StructuralLineageRetentionResult | None = None
         self._last_structural_lineage_retention_policy: StructuralLineageRetentionPolicy | None = None
         self._last_structural_lineage_retention_policy_migration: StructuralLineageRetentionPolicyMigration | None = None
@@ -363,6 +380,9 @@ class TSKV8Adapter(Taiji):
         self._language_fallback_count = 0
         self._language_fallback_requires_replan = False
         self._language_provider_health = LanguageProviderHealthState()
+        self._last_task_interpretation: TaskInterpretation | None = None
+        self._last_task_decomposition: TaskDecomposition | None = None
+        self._last_semantic_provider_evidence: SemanticEvidenceProposal | None = None
 
     def _empty_cognitive_state(self, episode_id: str) -> CognitiveState:
         empty = torch.empty(0, device=self.device)
@@ -397,6 +417,24 @@ class TSKV8Adapter(Taiji):
         """Return a detached contract snapshot owned by Taiji."""
 
         return CognitiveState.from_payload(self._cognitive_state.to_payload(), device=self.device)
+
+    @property
+    def last_task_interpretation(self) -> TaskInterpretation | None:
+        """Return the latest semantic candidate admitted by Taiji."""
+
+        return self._last_task_interpretation
+
+    @property
+    def last_task_decomposition(self) -> TaskDecomposition | None:
+        """Return the latest bounded semantic step sequence admitted by Taiji."""
+
+        return self._last_task_decomposition
+
+    @property
+    def last_semantic_provider_evidence(self) -> SemanticEvidenceProposal | None:
+        """Return the latest provider proposal accepted as Taiji evidence."""
+
+        return self._last_semantic_provider_evidence
 
     @property
     def concept_formation(self) -> ConceptFormationOrgan:
@@ -2582,6 +2620,73 @@ class TSKV8Adapter(Taiji):
         """Return checkpointable artifact collections keyed by candidate batch."""
 
         return tuple(self._structural_validation_artifact_batches.values())
+
+    @property
+    def artifact_consumption_policy(self) -> ArtifactConsumptionPolicy:
+        """Return the explicit policy for consuming external artifacts."""
+
+        return self._artifact_consumption_policy
+
+    def set_artifact_consumption_policy(
+        self,
+        policy: ArtifactConsumptionPolicy | Mapping[str, Any] | str,
+    ) -> ArtifactConsumptionPolicy:
+        """Set a content-addressed artifact policy before the next consumption.
+
+        The caller must provide a policy object, its validated payload, or one
+        of the two registered mode names.  A mode string is converted to an
+        explicit policy with a visible reason, so it is never a hidden boolean
+        compatibility path.
+        """
+
+        resolved = self._resolve_artifact_consumption_policy(policy)
+        self._artifact_consumption_policy = resolved
+        return resolved
+
+    @staticmethod
+    def _resolve_artifact_consumption_policy(
+        policy: ArtifactConsumptionPolicy | Mapping[str, Any] | str,
+    ) -> ArtifactConsumptionPolicy:
+        if isinstance(policy, ArtifactConsumptionPolicy):
+            return policy
+        if isinstance(policy, Mapping):
+            return ArtifactConsumptionPolicy.from_payload(policy)
+        if str(policy) == ARTIFACT_CONSUMPTION_MODE_VERIFIED_ONLY:
+            return ArtifactConsumptionPolicy.verified_only(reason="explicit-mode")
+        if str(policy) == ARTIFACT_CONSUMPTION_MODE_LEGACY_COMPATIBLE:
+            return ArtifactConsumptionPolicy.legacy_compatible(reason="explicit-mode")
+        raise ValueError("unsupported artifact consumption policy")
+
+    def resolve_artifact_consumption_policy(
+        self,
+        policy: ArtifactConsumptionPolicy | Mapping[str, Any] | str | None = None,
+        *,
+        require_verified_measurements: bool | None = None,
+    ) -> ArtifactConsumptionPolicy:
+        """Resolve an explicit policy, with a narrow legacy-call shim.
+
+        The boolean is accepted only for old callers and is immediately
+        converted to a reason-bearing policy.  New code must pass a policy or
+        use the checkpointed default.
+        """
+
+        if policy is not None and require_verified_measurements is not None:
+            raise ValueError(
+                "artifact consumption accepts a policy or legacy boolean, not both"
+            )
+        if require_verified_measurements is not None:
+            return (
+                ArtifactConsumptionPolicy.verified_only(
+                    reason="legacy-boolean-strict-compatibility"
+                )
+                if require_verified_measurements
+                else ArtifactConsumptionPolicy.legacy_compatible(
+                    reason="legacy-boolean-compatibility"
+                )
+            )
+        if policy is None:
+            return self._artifact_consumption_policy
+        return self._resolve_artifact_consumption_policy(policy)
 
     @property
     def structural_lineage_retention_result(self) -> StructuralLineageRetentionResult | None:
@@ -6570,6 +6675,7 @@ class TSKV8Adapter(Taiji):
             "admission_results": [
                 result.to_payload() for result in self._structural_admission_results
             ],
+            "artifact_consumption_policy": self._artifact_consumption_policy.to_payload(),
             "lineage_retention_result": (
                 None
                 if self._last_structural_lineage_retention_result is None
@@ -6607,6 +6713,7 @@ class TSKV8Adapter(Taiji):
         self._structural_validation_artifact_batches = {}
         self._structural_validation_gate_decisions = []
         self._structural_admission_results = []
+        self._artifact_consumption_policy = ArtifactConsumptionPolicy.verified_only()
         self._last_structural_lineage_retention_result = None
         self._last_structural_lineage_retention_policy = None
         self._last_structural_lineage_retention_policy_migration = None
@@ -6631,6 +6738,7 @@ class TSKV8Adapter(Taiji):
         validation_artifact_batches = payload.get("validation_artifact_batches", ())
         validation_gate_decisions = payload.get("validation_gate_decisions", ())
         admission_results = payload.get("admission_results", ())
+        artifact_consumption_policy = payload.get("artifact_consumption_policy")
         lineage_retention_result = payload.get("lineage_retention_result")
         lineage_retention_policy = payload.get("lineage_retention_policy")
         lineage_retention_policy_migration = payload.get("lineage_retention_policy_migration")
@@ -6650,6 +6758,10 @@ class TSKV8Adapter(Taiji):
             raise ValueError("structural validation gate decisions must be a sequence")
         if not isinstance(admission_results, (tuple, list)):
             raise ValueError("structural admission results must be a sequence")
+        if artifact_consumption_policy is not None and not isinstance(
+            artifact_consumption_policy, Mapping
+        ):
+            raise ValueError("artifact consumption policy must be a mapping")
         if lineage_retention_result is not None and not isinstance(
             lineage_retention_result, Mapping
         ):
@@ -6822,6 +6934,13 @@ class TSKV8Adapter(Taiji):
         self._last_structural_lineage_retention_result = restored_retention
         self._last_structural_lineage_retention_policy = restored_policy
         self._last_structural_lineage_retention_policy_migration = restored_migration
+        self._artifact_consumption_policy = (
+            ArtifactConsumptionPolicy.from_payload(artifact_consumption_policy)
+            if artifact_consumption_policy is not None
+            else ArtifactConsumptionPolicy.legacy_compatible(
+                reason="historical-checkpoint-migration"
+            )
+        )
 
     def attach_world_dynamics(self, learner: WorldDynamicsLearner | None) -> None:
         """Attach a Taiji-owned predictor used for runtime intervention scoring."""
@@ -7991,6 +8110,196 @@ class TSKV8Adapter(Taiji):
             self._cognitive_state,
             goals=GoalState(tick=self.tick, goals=goals),
         )
+
+    def interpret_task_input(
+        self,
+        frame: InputFrame,
+        *,
+        goal_description: str | None = None,
+        constraints: Sequence[str] = (),
+        context_digest: str = "",
+        confidence: float = 0.0,
+        ambiguity: float = 1.0,
+        status: str = "candidate",
+    ) -> TaskInterpretation:
+        """Admit task evidence and project one Goal without planning or acting.
+
+        This is the first Taiji-owned stage after natural-language input. It
+        intentionally does not call perception, a provider, a planner, or an
+        effector: no ActionIntent or tool can be manufactured at this stage.
+        A new task also clears stale plan/intent state so a prior task cannot
+        leak into a future planner decision.
+        """
+
+        interpretation = TaskInterpretation.from_input(
+            frame,
+            goal_description=goal_description,
+            constraints=constraints,
+            context_digest=context_digest,
+            confidence=confidence,
+            ambiguity=ambiguity,
+            status=status,
+            tick=self.tick,
+        )
+        self.admit_task_interpretation(interpretation)
+        return interpretation
+
+    def admit_semantic_provider_evidence(
+        self,
+        frame: InputFrame,
+        proposal: SemanticEvidenceProposal,
+    ) -> tuple[TaskInterpretation, TaskDecomposition | None]:
+        """Validate provider evidence, then let Taiji decide its confidence state.
+
+        The provider proposal is deliberately not a ``TaskInterpretation``:
+        Taiji derives the Goal/interpretation ids and decides whether the
+        evidence is resolved.  All validation happens before mutating the
+        cognitive state, so a stale, mismatched, or executable proposal cannot
+        partially replace the current task.
+        """
+
+        if not isinstance(frame, InputFrame):
+            raise TypeError("frame must be a Taiji InputFrame")
+        if not isinstance(proposal, SemanticEvidenceProposal):
+            raise TypeError("proposal must be a SemanticEvidenceProposal")
+        expected_digest = task_input_digest(bytes(frame.payload))
+        if proposal.input_id != frame.input_id:
+            raise ValueError("semantic provider evidence input_id does not match the live frame")
+        if proposal.input_digest != expected_digest:
+            raise ValueError("semantic provider evidence input digest does not match the live frame")
+        if proposal.modality != frame.modality:
+            raise ValueError("semantic provider evidence modality does not match the live frame")
+        if proposal.tick != self.tick or frame.timestamp != self.tick:
+            raise ValueError("semantic provider evidence must match the current Taiji tick")
+
+        resolved = (
+            proposal.confidence >= SEMANTIC_PROVIDER_CONFIDENCE_FLOOR
+            and proposal.ambiguity <= SEMANTIC_PROVIDER_AMBIGUITY_CEILING
+        )
+        interpretation_status = "resolved" if resolved else (
+            "ambiguous" if proposal.ambiguity > SEMANTIC_PROVIDER_AMBIGUITY_CEILING else "candidate"
+        )
+        provenance = f"{proposal.provenance}:{proposal.provider_id}"
+        interpretation = TaskInterpretation.from_input(
+            frame,
+            goal_description=proposal.goal_description,
+            constraints=proposal.constraints,
+            context_digest=proposal.context_digest,
+            confidence=proposal.confidence,
+            ambiguity=proposal.ambiguity,
+            status=interpretation_status,
+            tick=self.tick,
+            provenance=provenance,
+        )
+        decomposition = None
+        if resolved and proposal.semantic_steps:
+            decomposition = TaskDecomposition.from_interpretation(
+                interpretation,
+                proposal.semantic_steps,
+                confidence=proposal.confidence,
+                ambiguity=proposal.ambiguity,
+                provenance=provenance,
+            )
+        self.admit_task_interpretation(interpretation)
+        if decomposition is not None:
+            self.admit_task_decomposition(decomposition)
+        self._last_semantic_provider_evidence = proposal
+        return interpretation, decomposition
+
+    def admit_task_interpretation(self, interpretation: TaskInterpretation) -> None:
+        """Admit one Taiji semantic candidate and reset stale action state."""
+
+        if not isinstance(interpretation, TaskInterpretation):
+            raise TypeError("interpretation must be a Taiji TaskInterpretation")
+        if interpretation.tick != self.tick:
+            raise ValueError("task interpretation must match the current Taiji tick")
+        self._last_task_interpretation = interpretation
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            goals=GoalState(tick=self.tick, goals=(interpretation.to_goal(),)),
+            plan=PlanState(tick=self.tick),
+            action_intent=None,
+            outcome=None,
+        )
+        self._last_task_decomposition = None
+        self._last_semantic_provider_evidence = None
+
+    def admit_task_decomposition(self, decomposition: TaskDecomposition) -> None:
+        """Admit semantic steps without creating a capability or ActionIntent."""
+
+        if not isinstance(decomposition, TaskDecomposition):
+            raise TypeError("task decomposition must be a Taiji TaskDecomposition")
+        interpretation = self._last_task_interpretation
+        if interpretation is None:
+            raise RuntimeError("task decomposition requires task interpretation evidence")
+        if decomposition.tick != self.tick or interpretation.tick != self.tick:
+            raise ValueError("task decomposition must match the current Taiji tick")
+        if (
+            decomposition.interpretation_id != interpretation.interpretation_id
+            or decomposition.goal_id != interpretation.goal_id
+        ):
+            raise ValueError("task decomposition is not bound to the current task evidence")
+        self._last_task_decomposition = decomposition
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            plan=PlanState(tick=self.tick),
+            action_intent=None,
+            outcome=None,
+        )
+
+    def plan_task_from_current_state(
+        self,
+        *,
+        novelty: float = 0.0,
+        resource_budget: float = 1.0,
+    ) -> dict[str, Any]:
+        """Plan against current Workbench affordances without executing them.
+
+        Unresolved or low-confidence goal evidence stops at clarification. If
+        Taiji has an explicitly resolved interpretation, the learned
+        affordance/executive path may form an ActionIntent. No prompt text is
+        inspected and no capability name is selected by a lookup table.
+        """
+
+        interpretation = self._last_task_interpretation
+        if interpretation is None:
+            raise RuntimeError("task planning requires Taiji task interpretation evidence")
+        if interpretation.tick != self.tick:
+            raise RuntimeError("task interpretation evidence is stale for planning")
+        if interpretation.status != "resolved" or (
+            interpretation.confidence < TASK_PLANNER_CONFIDENCE_FLOOR
+        ):
+            return {
+                "status": "needs_clarification",
+                "reason_code": "task_interpretation_low_confidence",
+                "interpretation": interpretation.to_payload(),
+                "decision": None,
+            }
+        if not self._cognitive_state.world.affordances:
+            raise RuntimeError("task planning requires current Workbench affordances")
+        if self._cognitive_state.percept is None:
+            raise RuntimeError("task planning requires current Taiji perception")
+
+        scoped_affordances = tuple(
+            replace(
+                affordance,
+                confidence=min(float(affordance.confidence), interpretation.confidence),
+            )
+            for affordance in self._cognitive_state.world.affordances
+        )
+        self.set_world_affordances(scoped_affordances)
+        candidates = self.synthesize_executive_candidates()
+        decision = self.select_executive(
+            candidates,
+            novelty=novelty,
+            resource_budget=resource_budget,
+        )
+        return {
+            "status": "planned",
+            "reason_code": "taiji_executive_selected",
+            "interpretation": interpretation.to_payload(),
+            "decision": decision,
+        }
 
     def _apply_concept_affinity(
         self, candidates: Sequence[PlanningCandidate]
@@ -10196,6 +10505,9 @@ class TSKV8Adapter(Taiji):
         self._last_executive_world_action = None
         self._last_generation_trace = None
         self._last_language_emission = None
+        self._last_task_interpretation = None
+        self._last_task_decomposition = None
+        self._last_semantic_provider_evidence = None
         self._language_fallback_count = 0
         self._language_fallback_requires_replan = False
         self._last_content_selection = None
@@ -11433,6 +11745,21 @@ class TSKV8Adapter(Taiji):
             if self._last_language_emission is None
             else self._last_language_emission.to_payload()
         )
+        payload["last_task_interpretation"] = (
+            None
+            if self._last_task_interpretation is None
+            else self._last_task_interpretation.to_payload()
+        )
+        payload["last_task_decomposition"] = (
+            None
+            if self._last_task_decomposition is None
+            else self._last_task_decomposition.to_payload()
+        )
+        payload["last_semantic_provider_evidence"] = (
+            None
+            if self._last_semantic_provider_evidence is None
+            else self._last_semantic_provider_evidence.to_payload()
+        )
         payload["cognitive_state"] = self._cognitive_state.to_payload()
         return payload
 
@@ -11479,6 +11806,9 @@ class TSKV8Adapter(Taiji):
         self._restore_executive_state(checkpoint)
         self._restore_language_emission(checkpoint)
         self._restore_language_fallback_state(checkpoint)
+        self._restore_task_interpretation(checkpoint)
+        self._restore_task_decomposition(checkpoint)
+        self._restore_semantic_provider_evidence(checkpoint)
 
     def _world_dynamics_checkpoint(self) -> dict[str, Any]:
         if self._world_dynamics is None:
@@ -11822,6 +12152,24 @@ class TSKV8Adapter(Taiji):
             return
         self._cognitive_state = CognitiveState.from_payload(state, device=self.device)
 
+    def _restore_task_interpretation(self, payload: Any) -> None:
+        item = payload.get("last_task_interpretation") if isinstance(payload, Mapping) else None
+        self._last_task_interpretation = (
+            None if item is None else TaskInterpretation.from_payload(dict(item))
+        )
+
+    def _restore_task_decomposition(self, payload: Any) -> None:
+        item = payload.get("last_task_decomposition") if isinstance(payload, Mapping) else None
+        self._last_task_decomposition = (
+            None if item is None else TaskDecomposition.from_payload(dict(item))
+        )
+
+    def _restore_semantic_provider_evidence(self, payload: Any) -> None:
+        item = payload.get("last_semantic_provider_evidence") if isinstance(payload, Mapping) else None
+        self._last_semantic_provider_evidence = (
+            None if item is None else SemanticEvidenceProposal.from_payload(dict(item))
+        )
+
     def _restore_rollout_state(self, payload: Any) -> None:
         rollout = payload.get("planned_rollout") if isinstance(payload, dict) else None
         self._planned_rollout = (
@@ -12020,6 +12368,21 @@ class TSKV8Adapter(Taiji):
             if self._last_language_emission is None
             else self._last_language_emission.to_payload()
         )
+        components["last_task_interpretation"] = (
+            None
+            if self._last_task_interpretation is None
+            else self._last_task_interpretation.to_payload()
+        )
+        components["last_task_decomposition"] = (
+            None
+            if self._last_task_decomposition is None
+            else self._last_task_decomposition.to_payload()
+        )
+        components["last_semantic_provider_evidence"] = (
+            None
+            if self._last_semantic_provider_evidence is None
+            else self._last_semantic_provider_evidence.to_payload()
+        )
         return NativeCheckpoint(
             kernel=super().checkpoint(),
             cognitive_state=self.cognitive_snapshot(),
@@ -12077,6 +12440,9 @@ class TSKV8Adapter(Taiji):
         self._restore_executive_state(envelope.components)
         self._restore_language_emission(envelope.components)
         self._restore_language_fallback_state(envelope.components)
+        self._restore_task_interpretation(envelope.components)
+        self._restore_task_decomposition(envelope.components)
+        self._restore_semantic_provider_evidence(envelope.components)
         state = envelope.cognitive_state
         if state.tick != self.tick or state.episode_id != self._state.episode_id:
             raise ValueError("native cognitive state is out of sync with kernel state")

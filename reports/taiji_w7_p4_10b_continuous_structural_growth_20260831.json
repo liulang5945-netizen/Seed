@@ -1,0 +1,2844 @@
+{
+  "format": "taiji-w7-p4-10b-continuous-structural-growth-v1",
+  "task": "second independent online cycle and continuous structural growth",
+  "stage_one_tasks": [
+    "future-bec",
+    "future-ade"
+  ],
+  "stage_two_tasks": [
+    "future-abce",
+    "future-acde"
+  ],
+  "learner_seeds": [
+    11,
+    29,
+    47
+  ],
+  "structural_stage_two_mean_score": 1.0,
+  "control_mean_scores": {
+    "interaction_weight_only": 0.0,
+    "router_only": 0.0,
+    "memory_only": 0.0
+  },
+  "runs": [
+    {
+      "seed": 11,
+      "online_rounds": [
+        {
+          "round": 1,
+          "family": "online-be",
+          "candidate_id": "transfer-group:145339db789015ea7ecd8eaa",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+          "outcome_id": "r2-s2-online-online-be-seed-11:outcome:4:r2-s2-online-online-be-seed-11:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 2,
+          "family": "online-bf",
+          "candidate_id": "transfer-group:b515b1e835c6a4dc6118346f",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "feedback_id": "735fa4be9c18e7987f611e6a4a9dabcc9ab65fa3bd2970a3be41192cf5698481",
+          "outcome_id": "r2-s2-online-online-bf-seed-11:outcome:4:r2-s2-online-online-bf-seed-11:workflow-outcome",
+          "outcome_success": false,
+          "admission_status": "rejected",
+          "admission_reason": "outcome_unsuccessful",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 3,
+          "family": "online-ce",
+          "candidate_id": "transfer-group:61d5583b886b40a97139fe73",
+          "member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+          "outcome_id": "r2-s2-online-online-ce-seed-11:outcome:4:r2-s2-online-online-ce-seed-11:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 4,
+          "family": "online-ae-next",
+          "member_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "49cdf428e109f5e51fd4bb5d09a832965b4ce046984e08603c3c462c1c62319b",
+          "outcome_id": "r2-s2-online-online-ae-next-seed-11:outcome:4:r2-s2-online-online-ae-next-seed-11:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 5,
+          "family": "online-de-next",
+          "member_ids": [
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "c5ffd7683dbbfc16f31d054e3b43a32bb370717bf6766868ae19f4965e6b9c38",
+          "outcome_id": "r2-s2-online-online-de-next-seed-11:outcome:4:r2-s2-online-online-de-next-seed-11:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "online_feedback_ids": [
+        "eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+        "3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+        "49cdf428e109f5e51fd4bb5d09a832965b4ce046984e08603c3c462c1c62319b",
+        "c5ffd7683dbbfc16f31d054e3b43a32bb370717bf6766868ae19f4965e6b9c38"
+      ],
+      "first_pressure": {
+        "format": "taiji-interaction-structural-bridge-v1",
+        "revision": 1,
+        "version": 1,
+        "projection": {
+          "format": "taiji-structural-pressure-projection-v1",
+          "network_id": "standalone:adaptive.cortex",
+          "region_id": "adaptive.cortex",
+          "first_tick": 1,
+          "last_tick": 4,
+          "window_digests": [
+            "8ca15bb4920cc0c6a79f31c9914d4ea42a7b1229f4ef675390fc723a58dc8e50",
+            "ef116be55918f68a0fab02da5d58c22793f3a7921299391685c28d1f6734176c",
+            "8bdce61ef4dd8e9da9aa878a1758a04e018d8057aeed921c9fe85921d6e86ede",
+            "15caffd6dfedc12fdb2159ca5c67d67cdeb1b4054943a04ed16bb0c5e3ffb3d3"
+          ],
+          "train_task_slice_ids": [
+            "online-interaction:transfer-group:145339db789015ea7ecd8eaa",
+            "online-interaction:transfer-group:61d5583b886b40a97139fe73"
+          ],
+          "holdout_task_slice_ids": [
+            "workbench-holdout:online-workbench-holdout-cycle-1"
+          ],
+          "retention_task_slice_ids": [
+            "workbench-retention:online-workbench-retention-cycle-1"
+          ],
+          "train_window_count": 2,
+          "holdout_window_count": 1,
+          "retention_window_count": 1,
+          "prediction_observation_count": 2,
+          "mean_prediction_error": 0.3999999999999999,
+          "mean_resource_state": 0.0,
+          "mean_holdout_transfer": 0.8,
+          "evidence_ids": [
+            "online-feedback:eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+            "online-feedback:3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-1-seed-11:outcome:4:r2-s2-online-holdout-cycle-1-seed-11:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-1-seed-11:outcome:4:r2-s2-online-retention-cycle-1-seed-11:workflow-outcome"
+          ],
+          "projection_digest": "4a6a8b27a65ab12c7737170b66dbf1efba032e3542932b192b1f6095ab6a85b8"
+        },
+        "feedback_ids": [
+          "eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+          "3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b"
+        ],
+        "outcome_ids": [
+          "r2-s2-online-online-be-seed-11:outcome:4:r2-s2-online-online-be-seed-11:workflow-outcome",
+          "r2-s2-online-online-ce-seed-11:outcome:4:r2-s2-online-online-ce-seed-11:workflow-outcome"
+        ],
+        "mean_interaction": 0.6000000000000001,
+        "bridge_digest": "f39d18646657db6dfa0fa2c58bb45b6a26b0cab388f9a0bfc70178e335e47d09"
+      },
+      "second_pressure": {
+        "format": "taiji-interaction-structural-bridge-v1",
+        "revision": 1,
+        "version": 1,
+        "projection": {
+          "format": "taiji-structural-pressure-projection-v1",
+          "network_id": "standalone:adaptive.cortex",
+          "region_id": "adaptive.cortex",
+          "first_tick": 1,
+          "last_tick": 6,
+          "window_digests": [
+            "8ca15bb4920cc0c6a79f31c9914d4ea42a7b1229f4ef675390fc723a58dc8e50",
+            "ef116be55918f68a0fab02da5d58c22793f3a7921299391685c28d1f6734176c",
+            "0b281b6c6d42c46e9c660d5b01d80c784e7bf3aa49a766b6301d82fe2f5a3e42",
+            "f2ef8f8f94a2ebbcbbeaab711933ea2ae0d91d3ea1d1307822f07bfc4a5e8e0c",
+            "76bc02234e1211905a0025ab3511c98b85a33d255315a1dc114b28f33fc9058b",
+            "bea2b9ed81c1f84c09cb61b5348fee3569a77175f6385abf9318dfec42e605b4"
+          ],
+          "train_task_slice_ids": [
+            "online-interaction:transfer-group:145339db789015ea7ecd8eaa",
+            "online-interaction:transfer-group:61d5583b886b40a97139fe73",
+            "online-interaction:transfer-group:d4fedd4e29d1b022b92255d3",
+            "online-interaction:transfer-group:b52e3d8570b6f1aae43883a7"
+          ],
+          "holdout_task_slice_ids": [
+            "workbench-holdout:online-workbench-holdout-cycle-2"
+          ],
+          "retention_task_slice_ids": [
+            "workbench-retention:online-workbench-retention-cycle-2"
+          ],
+          "train_window_count": 4,
+          "holdout_window_count": 1,
+          "retention_window_count": 1,
+          "prediction_observation_count": 4,
+          "mean_prediction_error": 0.3999999999999999,
+          "mean_resource_state": 0.0,
+          "mean_holdout_transfer": 0.8,
+          "evidence_ids": [
+            "online-feedback:eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+            "online-feedback:3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+            "online-feedback:49cdf428e109f5e51fd4bb5d09a832965b4ce046984e08603c3c462c1c62319b",
+            "online-feedback:c5ffd7683dbbfc16f31d054e3b43a32bb370717bf6766868ae19f4965e6b9c38",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-2-seed-11:outcome:4:r2-s2-online-holdout-cycle-2-seed-11:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-2-seed-11:outcome:4:r2-s2-online-retention-cycle-2-seed-11:workflow-outcome"
+          ],
+          "projection_digest": "a56af813dc18c0c9e374b6bac3512c13e90b9a8ffb77934c0b6cd64901175f70"
+        },
+        "feedback_ids": [
+          "eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+          "3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+          "49cdf428e109f5e51fd4bb5d09a832965b4ce046984e08603c3c462c1c62319b",
+          "c5ffd7683dbbfc16f31d054e3b43a32bb370717bf6766868ae19f4965e6b9c38"
+        ],
+        "outcome_ids": [
+          "r2-s2-online-online-be-seed-11:outcome:4:r2-s2-online-online-be-seed-11:workflow-outcome",
+          "r2-s2-online-online-ce-seed-11:outcome:4:r2-s2-online-online-ce-seed-11:workflow-outcome",
+          "r2-s2-online-online-ae-next-seed-11:outcome:4:r2-s2-online-online-ae-next-seed-11:workflow-outcome",
+          "r2-s2-online-online-de-next-seed-11:outcome:4:r2-s2-online-online-de-next-seed-11:workflow-outcome"
+        ],
+        "mean_interaction": 0.6000000000000001,
+        "bridge_digest": "20d99c3a0654608c78f4ec353c82cbc778458809f1c71b38c0901d05d46ae258"
+      },
+      "first_admission": {
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:4a6a8b27a65a",
+        "candidate": {
+          "format": "taiji-structural-proposal-candidate-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:4a6a8b27a65a",
+          "network_id": "standalone:adaptive.cortex",
+          "target_kind": "neuron",
+          "operation": "add",
+          "substrate_ids": [
+            "adaptive.cortex"
+          ],
+          "evidence_ids": [
+            "online-feedback:eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+            "online-feedback:3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-1-seed-11:outcome:4:r2-s2-online-holdout-cycle-1-seed-11:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-1-seed-11:outcome:4:r2-s2-online-retention-cycle-1-seed-11:workflow-outcome"
+          ],
+          "source_tick": 4,
+          "priority": 0.31999999999999995,
+          "specification": {
+            "region_id": "adaptive.cortex",
+            "unit_id": "u2",
+            "cycle_bridge_digest": "f39d18646657db6dfa0fa2c58bb45b6a26b0cab388f9a0bfc70178e335e47d09"
+          },
+          "resource_cost": 1,
+          "depends_on_candidate_ids": [],
+          "conflict_keys": [],
+          "parent_checkpoint_id": "pressure-parent:4a6a8b27a65ab12c7737170b66dbf1efba032e3542932b192b1f6095ab6a85b8:922a3da693e4cea693e4363f0f7e9139513fb3c48c3ee521f4709baf54157245"
+        },
+        "arbitration": {
+          "format": "taiji-structural-candidate-batch-v1",
+          "batch_id": "batch:structural:6a58d6e4a44d71da5f0a9362daf31914",
+          "candidate_ids": [
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:4a6a8b27a65a"
+          ],
+          "selected_candidate_ids": [
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:4a6a8b27a65a"
+          ],
+          "deferred_candidate_ids": [],
+          "rejected_candidate_ids": [],
+          "candidate_states": {
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:4a6a8b27a65a": "reserved"
+          },
+          "reasons": {},
+          "reserved_resource_cost": 1,
+          "reservation_remaining": 1,
+          "structural_budget_before": 2,
+          "available_budget_before": 2,
+          "topology_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "arbitration_digest": "6a58d6e4a44d71da5f0a9362daf319146c5cf32a9b0151ef0f160cf3504a649d",
+          "revision": 0,
+          "status": "planned"
+        },
+        "validation": {
+          "format": "taiji-structural-candidate-validation-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:4a6a8b27a65a",
+          "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+          "status": "validated",
+          "validation_score": 1.0,
+          "parent_checkpoint_digest": "9951c1e5661e1cc9cebc4c3a8a604c7f544a7d4f4dfad50df119db97ec5a2fcb",
+          "validation_checkpoint_digest": "99d7e2153a706dc8de0945f2ea3a302e2762cf8a9b16ed0d935f8a23a022d077",
+          "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "topology_after_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "structural_budget_before": 2,
+          "structural_budget_after": 2,
+          "evidence_ids": [
+            "online-feedback:eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+            "online-feedback:3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-1-seed-11:outcome:4:r2-s2-online-holdout-cycle-1-seed-11:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-1-seed-11:outcome:4:r2-s2-online-retention-cycle-1-seed-11:workflow-outcome"
+          ],
+          "error": null
+        },
+        "decision": {
+          "format": "taiji-structural-validation-gate-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:4a6a8b27a65a",
+          "passed": true,
+          "holdout_gain": 1.0,
+          "retention_regression": 0.02,
+          "lesion_effect": 0.15,
+          "resource_state": 0.8,
+          "resource_cost": 1,
+          "structural_budget": 2,
+          "minimum_holdout_gain": 0.05,
+          "maximum_retention_regression": 0.05,
+          "minimum_lesion_effect": 0.05,
+          "minimum_resource_state": 0.4,
+          "evidence_ids": [
+            "online-feedback:eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+            "online-feedback:3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-1-seed-11:outcome:4:r2-s2-online-holdout-cycle-1-seed-11:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-1-seed-11:outcome:4:r2-s2-online-retention-cycle-1-seed-11:workflow-outcome",
+            "continuous-bridge:f39d18646657db6dfa0fa2c58bb45b6a26b0cab388f9a0bfc70178e335e47d09"
+          ],
+          "reasons": [],
+          "decision_digest": "7403729f0aa077b27ec5aec7c7530d0230f3d2626decc2c6f7bce97545778571"
+        },
+        "admission": {
+          "format": "taiji-structural-admission-result-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:4a6a8b27a65a",
+          "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+          "status": "admitted",
+          "decision_digest": "7403729f0aa077b27ec5aec7c7530d0230f3d2626decc2c6f7bce97545778571",
+          "parent_checkpoint_digest": "2eafe122c199db05cf2247a9e460c8b4f75c88954e25c008403eca4a2b8449b0",
+          "child_checkpoint_digest": "ebb660b4476355b82a0d32c82c536be10e80ea4f50b53be2299af44a347f3444",
+          "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "topology_after_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+          "structural_budget_before": 2,
+          "structural_budget_after": 1,
+          "error": null
+        },
+        "topology_before": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "topology_after": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+        "budget_before": 2,
+        "budget_after": 1,
+        "unit_ids": [
+          "u0",
+          "u1",
+          "u2"
+        ],
+        "candidate_checkpoint_roundtrip": true
+      },
+      "second_admission": {
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:2:a56af813dc18",
+        "candidate": {
+          "format": "taiji-structural-proposal-candidate-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:2:a56af813dc18",
+          "network_id": "standalone:adaptive.cortex",
+          "target_kind": "neuron",
+          "operation": "add",
+          "substrate_ids": [
+            "adaptive.cortex"
+          ],
+          "evidence_ids": [
+            "online-feedback:eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+            "online-feedback:3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+            "online-feedback:49cdf428e109f5e51fd4bb5d09a832965b4ce046984e08603c3c462c1c62319b",
+            "online-feedback:c5ffd7683dbbfc16f31d054e3b43a32bb370717bf6766868ae19f4965e6b9c38",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-2-seed-11:outcome:4:r2-s2-online-holdout-cycle-2-seed-11:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-2-seed-11:outcome:4:r2-s2-online-retention-cycle-2-seed-11:workflow-outcome"
+          ],
+          "source_tick": 6,
+          "priority": 0.31999999999999995,
+          "specification": {
+            "region_id": "adaptive.cortex",
+            "unit_id": "u3",
+            "cycle_bridge_digest": "20d99c3a0654608c78f4ec353c82cbc778458809f1c71b38c0901d05d46ae258"
+          },
+          "resource_cost": 1,
+          "depends_on_candidate_ids": [],
+          "conflict_keys": [],
+          "parent_checkpoint_id": "pressure-parent:a56af813dc18c0c9e374b6bac3512c13e90b9a8ffb77934c0b6cd64901175f70:f9a5a60e013f8b8c0816308e9eea332b988fce7927c8ee16790016f741080220"
+        },
+        "arbitration": {
+          "format": "taiji-structural-candidate-batch-v1",
+          "batch_id": "batch:structural:d15b2c6064cd93bef74767ccd0e2c569",
+          "candidate_ids": [
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:2:a56af813dc18"
+          ],
+          "selected_candidate_ids": [],
+          "deferred_candidate_ids": [
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:2:a56af813dc18"
+          ],
+          "rejected_candidate_ids": [],
+          "candidate_states": {
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:2:a56af813dc18": "deferred"
+          },
+          "reasons": {
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:2:a56af813dc18": "structural_budget_insufficient_for_batch"
+          },
+          "reserved_resource_cost": 0,
+          "reservation_remaining": 0,
+          "structural_budget_before": 1,
+          "available_budget_before": 0,
+          "topology_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+          "arbitration_digest": "d15b2c6064cd93bef74767ccd0e2c5697b012154dcac0768fd588b759c9d060e",
+          "revision": 0,
+          "status": "planned"
+        },
+        "validation": {
+          "format": "taiji-structural-candidate-validation-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:2:a56af813dc18",
+          "proposal_id": "topology:adaptive.cortex:neuron:add:u3",
+          "status": "validated",
+          "validation_score": 1.0,
+          "parent_checkpoint_digest": "9315a2ea122c47f74225997fa3f2c67888d2958263f6e0145fb21bd5f0f1abff",
+          "validation_checkpoint_digest": "977bf7861b6f33cfd2b6c45fcbb03da928723a1fbf771214a5072581d54b66d3",
+          "topology_before_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+          "topology_after_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+          "structural_budget_before": 1,
+          "structural_budget_after": 1,
+          "evidence_ids": [
+            "online-feedback:eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+            "online-feedback:3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+            "online-feedback:49cdf428e109f5e51fd4bb5d09a832965b4ce046984e08603c3c462c1c62319b",
+            "online-feedback:c5ffd7683dbbfc16f31d054e3b43a32bb370717bf6766868ae19f4965e6b9c38",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-2-seed-11:outcome:4:r2-s2-online-holdout-cycle-2-seed-11:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-2-seed-11:outcome:4:r2-s2-online-retention-cycle-2-seed-11:workflow-outcome"
+          ],
+          "error": null
+        },
+        "decision": {
+          "format": "taiji-structural-validation-gate-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:2:a56af813dc18",
+          "passed": true,
+          "holdout_gain": 1.0,
+          "retention_regression": 0.02,
+          "lesion_effect": 0.15,
+          "resource_state": 0.8,
+          "resource_cost": 1,
+          "structural_budget": 1,
+          "minimum_holdout_gain": 0.05,
+          "maximum_retention_regression": 0.05,
+          "minimum_lesion_effect": 0.05,
+          "minimum_resource_state": 0.4,
+          "evidence_ids": [
+            "online-feedback:eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+            "online-feedback:3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+            "online-feedback:49cdf428e109f5e51fd4bb5d09a832965b4ce046984e08603c3c462c1c62319b",
+            "online-feedback:c5ffd7683dbbfc16f31d054e3b43a32bb370717bf6766868ae19f4965e6b9c38",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-2-seed-11:outcome:4:r2-s2-online-holdout-cycle-2-seed-11:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-2-seed-11:outcome:4:r2-s2-online-retention-cycle-2-seed-11:workflow-outcome",
+            "continuous-bridge:20d99c3a0654608c78f4ec353c82cbc778458809f1c71b38c0901d05d46ae258"
+          ],
+          "reasons": [],
+          "decision_digest": "4b61d15157033462b7056a009e23fa762338ed80f35c0752c7e0d342f564572f"
+        },
+        "admission": {
+          "format": "taiji-structural-admission-result-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:2:a56af813dc18",
+          "proposal_id": "topology:adaptive.cortex:neuron:add:u3",
+          "status": "admitted",
+          "decision_digest": "4b61d15157033462b7056a009e23fa762338ed80f35c0752c7e0d342f564572f",
+          "parent_checkpoint_digest": "606f36528834a9f1e58c6ac72fc1b602355d450ce45132d3c954c2cb9d6104bb",
+          "child_checkpoint_digest": "c7babafca19fd5180e07d1e6cf977e44782a9c3cddf431ed2842fb9b959d42d7",
+          "topology_before_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+          "topology_after_digest": "45d9acbf961517d260f721da444733ecc16b00caa0186eb76780f8835faca0b1",
+          "structural_budget_before": 1,
+          "structural_budget_after": 0,
+          "error": null
+        },
+        "topology_before": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+        "topology_after": "45d9acbf961517d260f721da444733ecc16b00caa0186eb76780f8835faca0b1",
+        "budget_before": 1,
+        "budget_after": 0,
+        "unit_ids": [
+          "u0",
+          "u1",
+          "u2",
+          "u3"
+        ],
+        "candidate_checkpoint_roundtrip": true
+      },
+      "stage_one_after_first": [
+        {
+          "task": "future-bec",
+          "method": "growth_cycle_1",
+          "seed": 11,
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "task": "future-ade",
+          "method": "growth_cycle_1",
+          "seed": 11,
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:a4392a0e06e7d823d742cc1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "stage_one_after_second": [
+        {
+          "task": "future-bec",
+          "method": "growth_cycle_2_retention",
+          "seed": 11,
+          "capacity": 4,
+          "candidate_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "task": "future-ade",
+          "method": "growth_cycle_2_retention",
+          "seed": 11,
+          "capacity": 4,
+          "candidate_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:a4392a0e06e7d823d742cc1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "stage_two_after_second": [
+        {
+          "task": "future-abce",
+          "method": "growth_cycle_2",
+          "seed": 11,
+          "capacity": 4,
+          "candidate_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_action_count": 4,
+          "raw_action_success": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 4,
+          "native_checkpoint_replay": true
+        },
+        {
+          "task": "future-acde",
+          "method": "growth_cycle_2",
+          "seed": 11,
+          "capacity": 4,
+          "candidate_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:a4392a0e06e7d823d742cc1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_action_count": 4,
+          "raw_action_success": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 4,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "control_runs": {
+        "interaction_weight_only": [
+          {
+            "task": "future-abce",
+            "method": "interaction_weight_only",
+            "seed": 11,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3"
+            ],
+            "required_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          },
+          {
+            "task": "future-acde",
+            "method": "interaction_weight_only",
+            "seed": 11,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:a4392a0e06e7d823d742cc1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3"
+            ],
+            "required_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          }
+        ],
+        "router_only": [
+          {
+            "task": "future-abce",
+            "method": "router_only",
+            "seed": 11,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3"
+            ],
+            "required_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 2,
+            "native_checkpoint_replay": true
+          },
+          {
+            "task": "future-acde",
+            "method": "router_only",
+            "seed": 11,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:a4392a0e06e7d823d742cc1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:a4392a0e06e7d823d742cc1c",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7"
+            ],
+            "required_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              false,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": false,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          }
+        ],
+        "memory_only": [
+          {
+            "task": "future-abce",
+            "method": "memory_only",
+            "seed": 11,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3"
+            ],
+            "required_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          },
+          {
+            "task": "future-acde",
+            "method": "memory_only",
+            "seed": 11,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:a4392a0e06e7d823d742cc1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3"
+            ],
+            "required_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          }
+        ]
+      },
+      "lesion_run": {
+        "task": "future-abce-lesion",
+        "method": "growth_cycle_2_lesion",
+        "seed": 11,
+        "capacity": 3,
+        "candidate_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63",
+          "workbench-owner:33bf6bd14f843e6f0a77fea3",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e",
+          "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+        ],
+        "selected_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:33bf6bd14f843e6f0a77fea3",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "required_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63",
+          "workbench-owner:33bf6bd14f843e6f0a77fea3",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e"
+        ],
+        "selected_action_count": 3,
+        "raw_action_success": [
+          true,
+          true,
+          true
+        ],
+        "task_complete": false,
+        "all_selected_actions_succeeded": true,
+        "task_score": 0.0,
+        "score_source": "native Workbench raw action success/status plus required-set completion",
+        "native_world_event_count": 4,
+        "native_checkpoint_replay": true
+      },
+      "parent_capacity": 2,
+      "first_growth_capacity": 3,
+      "second_growth_capacity": 4,
+      "after_second_rollback_capacity": 3,
+      "final_capacity": 2,
+      "topology_before_second_rollback": "45d9acbf961517d260f721da444733ecc16b00caa0186eb76780f8835faca0b1",
+      "topology_after_full_rollback": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+      "budget_after_full_rollback": 2,
+      "second_rollback_status": "rolled_back",
+      "first_rollback_status": "rolled_back",
+      "second_workspace_checkpoint_roundtrip": true
+    },
+    {
+      "seed": 29,
+      "online_rounds": [
+        {
+          "round": 1,
+          "family": "online-be",
+          "candidate_id": "transfer-group:145339db789015ea7ecd8eaa",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+          "outcome_id": "r2-s2-online-online-be-seed-29:outcome:4:r2-s2-online-online-be-seed-29:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 2,
+          "family": "online-bf",
+          "candidate_id": "transfer-group:b515b1e835c6a4dc6118346f",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "feedback_id": "35e147e6e1f88134f9e957fcd2eb3237b953b1be9858de2a576014df4a54aa8f",
+          "outcome_id": "r2-s2-online-online-bf-seed-29:outcome:4:r2-s2-online-online-bf-seed-29:workflow-outcome",
+          "outcome_success": false,
+          "admission_status": "rejected",
+          "admission_reason": "outcome_unsuccessful",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 3,
+          "family": "online-ce",
+          "candidate_id": "transfer-group:61d5583b886b40a97139fe73",
+          "member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+          "outcome_id": "r2-s2-online-online-ce-seed-29:outcome:4:r2-s2-online-online-ce-seed-29:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 4,
+          "family": "online-ae-next",
+          "member_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "0c326bb270266f3dfdd8786a0066db3c80ede1e6c6173897d1d08336c2192d7d",
+          "outcome_id": "r2-s2-online-online-ae-next-seed-29:outcome:4:r2-s2-online-online-ae-next-seed-29:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 5,
+          "family": "online-de-next",
+          "member_ids": [
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "713216a1491fc83c0783bc14589379d97688be949c220957f75fbfacf550408c",
+          "outcome_id": "r2-s2-online-online-de-next-seed-29:outcome:4:r2-s2-online-online-de-next-seed-29:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "online_feedback_ids": [
+        "0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+        "0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+        "0c326bb270266f3dfdd8786a0066db3c80ede1e6c6173897d1d08336c2192d7d",
+        "713216a1491fc83c0783bc14589379d97688be949c220957f75fbfacf550408c"
+      ],
+      "first_pressure": {
+        "format": "taiji-interaction-structural-bridge-v1",
+        "revision": 1,
+        "version": 1,
+        "projection": {
+          "format": "taiji-structural-pressure-projection-v1",
+          "network_id": "standalone:adaptive.cortex",
+          "region_id": "adaptive.cortex",
+          "first_tick": 1,
+          "last_tick": 4,
+          "window_digests": [
+            "03268a193e16a42c2f9b0eedbdffcee541ec12669e24023e6f5611337a30c8fa",
+            "a8e47e9802391e761cde301a98045cadf29167ca13339c507b08eb8a7f4825e2",
+            "9fac2ab80da2145d07cac7bd6b642a2a572c14dc310e44bd1123ad5075f5e2b9",
+            "22e69c787cee01054188217724d43dd52044dde8b4dadd4a1ec40a0231294da3"
+          ],
+          "train_task_slice_ids": [
+            "online-interaction:transfer-group:145339db789015ea7ecd8eaa",
+            "online-interaction:transfer-group:61d5583b886b40a97139fe73"
+          ],
+          "holdout_task_slice_ids": [
+            "workbench-holdout:online-workbench-holdout-cycle-1"
+          ],
+          "retention_task_slice_ids": [
+            "workbench-retention:online-workbench-retention-cycle-1"
+          ],
+          "train_window_count": 2,
+          "holdout_window_count": 1,
+          "retention_window_count": 1,
+          "prediction_observation_count": 2,
+          "mean_prediction_error": 0.3999999999999999,
+          "mean_resource_state": 0.0,
+          "mean_holdout_transfer": 0.8,
+          "evidence_ids": [
+            "online-feedback:0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+            "online-feedback:0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-1-seed-29:outcome:4:r2-s2-online-holdout-cycle-1-seed-29:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-1-seed-29:outcome:4:r2-s2-online-retention-cycle-1-seed-29:workflow-outcome"
+          ],
+          "projection_digest": "010d01976d99e981ff71db12962cae36342768a313bf88280dc2ef3c755bf5f3"
+        },
+        "feedback_ids": [
+          "0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+          "0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750"
+        ],
+        "outcome_ids": [
+          "r2-s2-online-online-be-seed-29:outcome:4:r2-s2-online-online-be-seed-29:workflow-outcome",
+          "r2-s2-online-online-ce-seed-29:outcome:4:r2-s2-online-online-ce-seed-29:workflow-outcome"
+        ],
+        "mean_interaction": 0.6000000000000001,
+        "bridge_digest": "b9d927799c177abf6784683142e9022259c4b460cdead84d2fdbe188165b5c75"
+      },
+      "second_pressure": {
+        "format": "taiji-interaction-structural-bridge-v1",
+        "revision": 1,
+        "version": 1,
+        "projection": {
+          "format": "taiji-structural-pressure-projection-v1",
+          "network_id": "standalone:adaptive.cortex",
+          "region_id": "adaptive.cortex",
+          "first_tick": 1,
+          "last_tick": 6,
+          "window_digests": [
+            "03268a193e16a42c2f9b0eedbdffcee541ec12669e24023e6f5611337a30c8fa",
+            "a8e47e9802391e761cde301a98045cadf29167ca13339c507b08eb8a7f4825e2",
+            "c64f9fd648466ffeae76244980fa08f2a4a7455c83c8b6fd5f6b8be4bc17b118",
+            "32f9766734f143552fe0b8149b6b7ff5c49344e05f464bb659d5e65168284a4e",
+            "95c8975f697d90ba87036b9fbb310ceb0b6cd7d1a7e086944a2402a3b4af580f",
+            "c681674a3af90026330817c532481c299554e0b5c897f2fdbc1aa20bf842b993"
+          ],
+          "train_task_slice_ids": [
+            "online-interaction:transfer-group:145339db789015ea7ecd8eaa",
+            "online-interaction:transfer-group:61d5583b886b40a97139fe73",
+            "online-interaction:transfer-group:d4fedd4e29d1b022b92255d3",
+            "online-interaction:transfer-group:b52e3d8570b6f1aae43883a7"
+          ],
+          "holdout_task_slice_ids": [
+            "workbench-holdout:online-workbench-holdout-cycle-2"
+          ],
+          "retention_task_slice_ids": [
+            "workbench-retention:online-workbench-retention-cycle-2"
+          ],
+          "train_window_count": 4,
+          "holdout_window_count": 1,
+          "retention_window_count": 1,
+          "prediction_observation_count": 4,
+          "mean_prediction_error": 0.3999999999999999,
+          "mean_resource_state": 0.0,
+          "mean_holdout_transfer": 0.8,
+          "evidence_ids": [
+            "online-feedback:0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+            "online-feedback:0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+            "online-feedback:0c326bb270266f3dfdd8786a0066db3c80ede1e6c6173897d1d08336c2192d7d",
+            "online-feedback:713216a1491fc83c0783bc14589379d97688be949c220957f75fbfacf550408c",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-2-seed-29:outcome:4:r2-s2-online-holdout-cycle-2-seed-29:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-2-seed-29:outcome:4:r2-s2-online-retention-cycle-2-seed-29:workflow-outcome"
+          ],
+          "projection_digest": "9c87e26eb82717a71885b249a7a4bf65448970a8f95b3a819e3d1cf9cab49857"
+        },
+        "feedback_ids": [
+          "0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+          "0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+          "0c326bb270266f3dfdd8786a0066db3c80ede1e6c6173897d1d08336c2192d7d",
+          "713216a1491fc83c0783bc14589379d97688be949c220957f75fbfacf550408c"
+        ],
+        "outcome_ids": [
+          "r2-s2-online-online-be-seed-29:outcome:4:r2-s2-online-online-be-seed-29:workflow-outcome",
+          "r2-s2-online-online-ce-seed-29:outcome:4:r2-s2-online-online-ce-seed-29:workflow-outcome",
+          "r2-s2-online-online-ae-next-seed-29:outcome:4:r2-s2-online-online-ae-next-seed-29:workflow-outcome",
+          "r2-s2-online-online-de-next-seed-29:outcome:4:r2-s2-online-online-de-next-seed-29:workflow-outcome"
+        ],
+        "mean_interaction": 0.6000000000000001,
+        "bridge_digest": "2f5f4cea93b0bf1e4efef114b4c8e569899a50bf7fe7df0ab164e8bba668a5aa"
+      },
+      "first_admission": {
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:010d01976d99",
+        "candidate": {
+          "format": "taiji-structural-proposal-candidate-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:010d01976d99",
+          "network_id": "standalone:adaptive.cortex",
+          "target_kind": "neuron",
+          "operation": "add",
+          "substrate_ids": [
+            "adaptive.cortex"
+          ],
+          "evidence_ids": [
+            "online-feedback:0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+            "online-feedback:0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-1-seed-29:outcome:4:r2-s2-online-holdout-cycle-1-seed-29:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-1-seed-29:outcome:4:r2-s2-online-retention-cycle-1-seed-29:workflow-outcome"
+          ],
+          "source_tick": 4,
+          "priority": 0.31999999999999995,
+          "specification": {
+            "region_id": "adaptive.cortex",
+            "unit_id": "u2",
+            "cycle_bridge_digest": "b9d927799c177abf6784683142e9022259c4b460cdead84d2fdbe188165b5c75"
+          },
+          "resource_cost": 1,
+          "depends_on_candidate_ids": [],
+          "conflict_keys": [],
+          "parent_checkpoint_id": "pressure-parent:010d01976d99e981ff71db12962cae36342768a313bf88280dc2ef3c755bf5f3:373b9ca9b1ec567f4d0e28bccdfe82e77abf7a9d54ae7a39686edd1cf9166f9a"
+        },
+        "arbitration": {
+          "format": "taiji-structural-candidate-batch-v1",
+          "batch_id": "batch:structural:a3191dcf353375ab867ca00c3e6dd967",
+          "candidate_ids": [
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:010d01976d99"
+          ],
+          "selected_candidate_ids": [
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:010d01976d99"
+          ],
+          "deferred_candidate_ids": [],
+          "rejected_candidate_ids": [],
+          "candidate_states": {
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:010d01976d99": "reserved"
+          },
+          "reasons": {},
+          "reserved_resource_cost": 1,
+          "reservation_remaining": 1,
+          "structural_budget_before": 2,
+          "available_budget_before": 2,
+          "topology_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "arbitration_digest": "a3191dcf353375ab867ca00c3e6dd967721eb750be03d547bc105b12815df0f7",
+          "revision": 0,
+          "status": "planned"
+        },
+        "validation": {
+          "format": "taiji-structural-candidate-validation-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:010d01976d99",
+          "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+          "status": "validated",
+          "validation_score": 1.0,
+          "parent_checkpoint_digest": "b8c71bb0011291d61d177208481deef5b892823c690d46a1a68741bbac1f1b5f",
+          "validation_checkpoint_digest": "321adf0ac957dea9063821c805afc9094c61aa2119f8700f7d9af0987ba94dbb",
+          "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "topology_after_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "structural_budget_before": 2,
+          "structural_budget_after": 2,
+          "evidence_ids": [
+            "online-feedback:0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+            "online-feedback:0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-1-seed-29:outcome:4:r2-s2-online-holdout-cycle-1-seed-29:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-1-seed-29:outcome:4:r2-s2-online-retention-cycle-1-seed-29:workflow-outcome"
+          ],
+          "error": null
+        },
+        "decision": {
+          "format": "taiji-structural-validation-gate-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:010d01976d99",
+          "passed": true,
+          "holdout_gain": 1.0,
+          "retention_regression": 0.02,
+          "lesion_effect": 0.15,
+          "resource_state": 0.8,
+          "resource_cost": 1,
+          "structural_budget": 2,
+          "minimum_holdout_gain": 0.05,
+          "maximum_retention_regression": 0.05,
+          "minimum_lesion_effect": 0.05,
+          "minimum_resource_state": 0.4,
+          "evidence_ids": [
+            "online-feedback:0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+            "online-feedback:0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-1-seed-29:outcome:4:r2-s2-online-holdout-cycle-1-seed-29:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-1-seed-29:outcome:4:r2-s2-online-retention-cycle-1-seed-29:workflow-outcome",
+            "continuous-bridge:b9d927799c177abf6784683142e9022259c4b460cdead84d2fdbe188165b5c75"
+          ],
+          "reasons": [],
+          "decision_digest": "f6bf02a3857d1aa6cc1b90a632e84ccaf1c38efdcfdfd87e462cb3e9a95ae5f2"
+        },
+        "admission": {
+          "format": "taiji-structural-admission-result-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:010d01976d99",
+          "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+          "status": "admitted",
+          "decision_digest": "f6bf02a3857d1aa6cc1b90a632e84ccaf1c38efdcfdfd87e462cb3e9a95ae5f2",
+          "parent_checkpoint_digest": "cf7e0b40060d609318f71bcc9479e0cabb3fc2e6e24be2edeaa3d820d90bc789",
+          "child_checkpoint_digest": "ba7eedbf52fbb623fac4cc6714bc0c2d5300f1529b2f2f514f688623710d7d0a",
+          "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "topology_after_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+          "structural_budget_before": 2,
+          "structural_budget_after": 1,
+          "error": null
+        },
+        "topology_before": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "topology_after": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+        "budget_before": 2,
+        "budget_after": 1,
+        "unit_ids": [
+          "u0",
+          "u1",
+          "u2"
+        ],
+        "candidate_checkpoint_roundtrip": true
+      },
+      "second_admission": {
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:2:9c87e26eb827",
+        "candidate": {
+          "format": "taiji-structural-proposal-candidate-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:2:9c87e26eb827",
+          "network_id": "standalone:adaptive.cortex",
+          "target_kind": "neuron",
+          "operation": "add",
+          "substrate_ids": [
+            "adaptive.cortex"
+          ],
+          "evidence_ids": [
+            "online-feedback:0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+            "online-feedback:0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+            "online-feedback:0c326bb270266f3dfdd8786a0066db3c80ede1e6c6173897d1d08336c2192d7d",
+            "online-feedback:713216a1491fc83c0783bc14589379d97688be949c220957f75fbfacf550408c",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-2-seed-29:outcome:4:r2-s2-online-holdout-cycle-2-seed-29:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-2-seed-29:outcome:4:r2-s2-online-retention-cycle-2-seed-29:workflow-outcome"
+          ],
+          "source_tick": 6,
+          "priority": 0.31999999999999995,
+          "specification": {
+            "region_id": "adaptive.cortex",
+            "unit_id": "u3",
+            "cycle_bridge_digest": "2f5f4cea93b0bf1e4efef114b4c8e569899a50bf7fe7df0ab164e8bba668a5aa"
+          },
+          "resource_cost": 1,
+          "depends_on_candidate_ids": [],
+          "conflict_keys": [],
+          "parent_checkpoint_id": "pressure-parent:9c87e26eb82717a71885b249a7a4bf65448970a8f95b3a819e3d1cf9cab49857:b21c4397df5f005d3341665dbe8df23fc6bd9f419afe3d30646e218e706c4a5c"
+        },
+        "arbitration": {
+          "format": "taiji-structural-candidate-batch-v1",
+          "batch_id": "batch:structural:3a973b53260d3299bd687505d8ed9691",
+          "candidate_ids": [
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:2:9c87e26eb827"
+          ],
+          "selected_candidate_ids": [],
+          "deferred_candidate_ids": [
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:2:9c87e26eb827"
+          ],
+          "rejected_candidate_ids": [],
+          "candidate_states": {
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:2:9c87e26eb827": "deferred"
+          },
+          "reasons": {
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:2:9c87e26eb827": "structural_budget_insufficient_for_batch"
+          },
+          "reserved_resource_cost": 0,
+          "reservation_remaining": 0,
+          "structural_budget_before": 1,
+          "available_budget_before": 0,
+          "topology_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+          "arbitration_digest": "3a973b53260d3299bd687505d8ed9691fd16ec33a85d59474ed6561fb7b09412",
+          "revision": 0,
+          "status": "planned"
+        },
+        "validation": {
+          "format": "taiji-structural-candidate-validation-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:2:9c87e26eb827",
+          "proposal_id": "topology:adaptive.cortex:neuron:add:u3",
+          "status": "validated",
+          "validation_score": 1.0,
+          "parent_checkpoint_digest": "67d115df5eff736532f85d71ea42110f79190a9eeef9fe59d0b25f5542d85f13",
+          "validation_checkpoint_digest": "7b58f1fc0c59e07bb1e6e36faf48e3d3df62e223a7c6ecc4b0767a6428edc723",
+          "topology_before_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+          "topology_after_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+          "structural_budget_before": 1,
+          "structural_budget_after": 1,
+          "evidence_ids": [
+            "online-feedback:0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+            "online-feedback:0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+            "online-feedback:0c326bb270266f3dfdd8786a0066db3c80ede1e6c6173897d1d08336c2192d7d",
+            "online-feedback:713216a1491fc83c0783bc14589379d97688be949c220957f75fbfacf550408c",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-2-seed-29:outcome:4:r2-s2-online-holdout-cycle-2-seed-29:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-2-seed-29:outcome:4:r2-s2-online-retention-cycle-2-seed-29:workflow-outcome"
+          ],
+          "error": null
+        },
+        "decision": {
+          "format": "taiji-structural-validation-gate-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:2:9c87e26eb827",
+          "passed": true,
+          "holdout_gain": 1.0,
+          "retention_regression": 0.02,
+          "lesion_effect": 0.15,
+          "resource_state": 0.8,
+          "resource_cost": 1,
+          "structural_budget": 1,
+          "minimum_holdout_gain": 0.05,
+          "maximum_retention_regression": 0.05,
+          "minimum_lesion_effect": 0.05,
+          "minimum_resource_state": 0.4,
+          "evidence_ids": [
+            "online-feedback:0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+            "online-feedback:0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+            "online-feedback:0c326bb270266f3dfdd8786a0066db3c80ede1e6c6173897d1d08336c2192d7d",
+            "online-feedback:713216a1491fc83c0783bc14589379d97688be949c220957f75fbfacf550408c",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-2-seed-29:outcome:4:r2-s2-online-holdout-cycle-2-seed-29:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-2-seed-29:outcome:4:r2-s2-online-retention-cycle-2-seed-29:workflow-outcome",
+            "continuous-bridge:2f5f4cea93b0bf1e4efef114b4c8e569899a50bf7fe7df0ab164e8bba668a5aa"
+          ],
+          "reasons": [],
+          "decision_digest": "2d4a584f92d96225c68ab648f91c7cbc38fa387cfc5364dd845065b867241f28"
+        },
+        "admission": {
+          "format": "taiji-structural-admission-result-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:2:9c87e26eb827",
+          "proposal_id": "topology:adaptive.cortex:neuron:add:u3",
+          "status": "admitted",
+          "decision_digest": "2d4a584f92d96225c68ab648f91c7cbc38fa387cfc5364dd845065b867241f28",
+          "parent_checkpoint_digest": "83e291346c1b112dff97129c2b0e7e3a15146ac9c38f277866489ccf7d49a741",
+          "child_checkpoint_digest": "ae7453c4bcec15cbb5f02e7b714de391ea185f53a8aaa45936a2b09714396978",
+          "topology_before_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+          "topology_after_digest": "45d9acbf961517d260f721da444733ecc16b00caa0186eb76780f8835faca0b1",
+          "structural_budget_before": 1,
+          "structural_budget_after": 0,
+          "error": null
+        },
+        "topology_before": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+        "topology_after": "45d9acbf961517d260f721da444733ecc16b00caa0186eb76780f8835faca0b1",
+        "budget_before": 1,
+        "budget_after": 0,
+        "unit_ids": [
+          "u0",
+          "u1",
+          "u2",
+          "u3"
+        ],
+        "candidate_checkpoint_roundtrip": true
+      },
+      "stage_one_after_first": [
+        {
+          "task": "future-bec",
+          "method": "growth_cycle_1",
+          "seed": 29,
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "task": "future-ade",
+          "method": "growth_cycle_1",
+          "seed": 29,
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:a4392a0e06e7d823d742cc1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "stage_one_after_second": [
+        {
+          "task": "future-bec",
+          "method": "growth_cycle_2_retention",
+          "seed": 29,
+          "capacity": 4,
+          "candidate_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "task": "future-ade",
+          "method": "growth_cycle_2_retention",
+          "seed": 29,
+          "capacity": 4,
+          "candidate_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:a4392a0e06e7d823d742cc1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "stage_two_after_second": [
+        {
+          "task": "future-abce",
+          "method": "growth_cycle_2",
+          "seed": 29,
+          "capacity": 4,
+          "candidate_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_action_count": 4,
+          "raw_action_success": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 4,
+          "native_checkpoint_replay": true
+        },
+        {
+          "task": "future-acde",
+          "method": "growth_cycle_2",
+          "seed": 29,
+          "capacity": 4,
+          "candidate_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:a4392a0e06e7d823d742cc1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_action_count": 4,
+          "raw_action_success": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 4,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "control_runs": {
+        "interaction_weight_only": [
+          {
+            "task": "future-abce",
+            "method": "interaction_weight_only",
+            "seed": 29,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3"
+            ],
+            "required_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          },
+          {
+            "task": "future-acde",
+            "method": "interaction_weight_only",
+            "seed": 29,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:a4392a0e06e7d823d742cc1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3"
+            ],
+            "required_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          }
+        ],
+        "router_only": [
+          {
+            "task": "future-abce",
+            "method": "router_only",
+            "seed": 29,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:d63fcaa2e7cab50bd2b8cb1c",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3"
+            ],
+            "required_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              false,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": false,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          },
+          {
+            "task": "future-acde",
+            "method": "router_only",
+            "seed": 29,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:a4392a0e06e7d823d742cc1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:a4392a0e06e7d823d742cc1c",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3"
+            ],
+            "required_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              false,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": false,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          }
+        ],
+        "memory_only": [
+          {
+            "task": "future-abce",
+            "method": "memory_only",
+            "seed": 29,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3"
+            ],
+            "required_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          },
+          {
+            "task": "future-acde",
+            "method": "memory_only",
+            "seed": 29,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:a4392a0e06e7d823d742cc1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3"
+            ],
+            "required_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          }
+        ]
+      },
+      "lesion_run": {
+        "task": "future-abce-lesion",
+        "method": "growth_cycle_2_lesion",
+        "seed": 29,
+        "capacity": 3,
+        "candidate_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63",
+          "workbench-owner:33bf6bd14f843e6f0a77fea3",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e",
+          "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+        ],
+        "selected_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:33bf6bd14f843e6f0a77fea3",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "required_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63",
+          "workbench-owner:33bf6bd14f843e6f0a77fea3",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e"
+        ],
+        "selected_action_count": 3,
+        "raw_action_success": [
+          true,
+          true,
+          true
+        ],
+        "task_complete": false,
+        "all_selected_actions_succeeded": true,
+        "task_score": 0.0,
+        "score_source": "native Workbench raw action success/status plus required-set completion",
+        "native_world_event_count": 4,
+        "native_checkpoint_replay": true
+      },
+      "parent_capacity": 2,
+      "first_growth_capacity": 3,
+      "second_growth_capacity": 4,
+      "after_second_rollback_capacity": 3,
+      "final_capacity": 2,
+      "topology_before_second_rollback": "45d9acbf961517d260f721da444733ecc16b00caa0186eb76780f8835faca0b1",
+      "topology_after_full_rollback": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+      "budget_after_full_rollback": 2,
+      "second_rollback_status": "rolled_back",
+      "first_rollback_status": "rolled_back",
+      "second_workspace_checkpoint_roundtrip": true
+    },
+    {
+      "seed": 47,
+      "online_rounds": [
+        {
+          "round": 1,
+          "family": "online-be",
+          "candidate_id": "transfer-group:145339db789015ea7ecd8eaa",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+          "outcome_id": "r2-s2-online-online-be-seed-47:outcome:4:r2-s2-online-online-be-seed-47:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 2,
+          "family": "online-bf",
+          "candidate_id": "transfer-group:b515b1e835c6a4dc6118346f",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "feedback_id": "760bbfbbbf2a6c43eb4a47ccd4972927755db95a111bc3240911723b1d7c253b",
+          "outcome_id": "r2-s2-online-online-bf-seed-47:outcome:4:r2-s2-online-online-bf-seed-47:workflow-outcome",
+          "outcome_success": false,
+          "admission_status": "rejected",
+          "admission_reason": "outcome_unsuccessful",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 3,
+          "family": "online-ce",
+          "candidate_id": "transfer-group:61d5583b886b40a97139fe73",
+          "member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+          "outcome_id": "r2-s2-online-online-ce-seed-47:outcome:4:r2-s2-online-online-ce-seed-47:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 4,
+          "family": "online-ae-next",
+          "member_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "ecb7ca92f60b12b64032c1d0f661fcba41a981767d87a2c89d4a85fa6588af06",
+          "outcome_id": "r2-s2-online-online-ae-next-seed-47:outcome:4:r2-s2-online-online-ae-next-seed-47:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 5,
+          "family": "online-de-next",
+          "member_ids": [
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "bd77994ba8e49a08921f131ee332d9400f4f722a995a85fbc3fcc684b5d4c615",
+          "outcome_id": "r2-s2-online-online-de-next-seed-47:outcome:4:r2-s2-online-online-de-next-seed-47:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "online_feedback_ids": [
+        "740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+        "e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+        "ecb7ca92f60b12b64032c1d0f661fcba41a981767d87a2c89d4a85fa6588af06",
+        "bd77994ba8e49a08921f131ee332d9400f4f722a995a85fbc3fcc684b5d4c615"
+      ],
+      "first_pressure": {
+        "format": "taiji-interaction-structural-bridge-v1",
+        "revision": 1,
+        "version": 1,
+        "projection": {
+          "format": "taiji-structural-pressure-projection-v1",
+          "network_id": "standalone:adaptive.cortex",
+          "region_id": "adaptive.cortex",
+          "first_tick": 1,
+          "last_tick": 4,
+          "window_digests": [
+            "68723c5419f26e016853b6e9f64a9278d943e33d6d6bcbdbb1414088f995c564",
+            "ff09f904d5327f969f3105fd59e10ea82a71a7f246e799bea41b86a02136af56",
+            "f40e3896cd2d1defb537123688beab2901b574a6bf3f232ae517dd64418de2e8",
+            "0a3eb8a8bde6055376c988af66b61af4182e50ac86e3edc3a4ef2152964db387"
+          ],
+          "train_task_slice_ids": [
+            "online-interaction:transfer-group:145339db789015ea7ecd8eaa",
+            "online-interaction:transfer-group:61d5583b886b40a97139fe73"
+          ],
+          "holdout_task_slice_ids": [
+            "workbench-holdout:online-workbench-holdout-cycle-1"
+          ],
+          "retention_task_slice_ids": [
+            "workbench-retention:online-workbench-retention-cycle-1"
+          ],
+          "train_window_count": 2,
+          "holdout_window_count": 1,
+          "retention_window_count": 1,
+          "prediction_observation_count": 2,
+          "mean_prediction_error": 0.3999999999999999,
+          "mean_resource_state": 0.0,
+          "mean_holdout_transfer": 0.8,
+          "evidence_ids": [
+            "online-feedback:740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+            "online-feedback:e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-1-seed-47:outcome:4:r2-s2-online-holdout-cycle-1-seed-47:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-1-seed-47:outcome:4:r2-s2-online-retention-cycle-1-seed-47:workflow-outcome"
+          ],
+          "projection_digest": "ebdf9f204dad0f4d123b8aa39713663bffb85b3de976dc82070f5e3d2bede848"
+        },
+        "feedback_ids": [
+          "740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+          "e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c"
+        ],
+        "outcome_ids": [
+          "r2-s2-online-online-be-seed-47:outcome:4:r2-s2-online-online-be-seed-47:workflow-outcome",
+          "r2-s2-online-online-ce-seed-47:outcome:4:r2-s2-online-online-ce-seed-47:workflow-outcome"
+        ],
+        "mean_interaction": 0.6000000000000001,
+        "bridge_digest": "b26b25c65bf7402f90ed52935c7ef06dd378d3e42bb87759c917b6753b68edce"
+      },
+      "second_pressure": {
+        "format": "taiji-interaction-structural-bridge-v1",
+        "revision": 1,
+        "version": 1,
+        "projection": {
+          "format": "taiji-structural-pressure-projection-v1",
+          "network_id": "standalone:adaptive.cortex",
+          "region_id": "adaptive.cortex",
+          "first_tick": 1,
+          "last_tick": 6,
+          "window_digests": [
+            "68723c5419f26e016853b6e9f64a9278d943e33d6d6bcbdbb1414088f995c564",
+            "ff09f904d5327f969f3105fd59e10ea82a71a7f246e799bea41b86a02136af56",
+            "d3ba9db3bb5c8362d80a261f7f514377f3ed76dd7fd6b89e6bd4e0246b313d55",
+            "e56793d46db457c3e8b4fc22485e2e81ac9e2e11f30068ca2ea610b9b5020985",
+            "1ff52141cd1662b991376754c959b1a8947e04ebe525b038bf678530caffbb49",
+            "032c892b2bd8af23f173be4f6a6095ba17e6d8f9291d9aac507681b3042c0e2c"
+          ],
+          "train_task_slice_ids": [
+            "online-interaction:transfer-group:145339db789015ea7ecd8eaa",
+            "online-interaction:transfer-group:61d5583b886b40a97139fe73",
+            "online-interaction:transfer-group:d4fedd4e29d1b022b92255d3",
+            "online-interaction:transfer-group:b52e3d8570b6f1aae43883a7"
+          ],
+          "holdout_task_slice_ids": [
+            "workbench-holdout:online-workbench-holdout-cycle-2"
+          ],
+          "retention_task_slice_ids": [
+            "workbench-retention:online-workbench-retention-cycle-2"
+          ],
+          "train_window_count": 4,
+          "holdout_window_count": 1,
+          "retention_window_count": 1,
+          "prediction_observation_count": 4,
+          "mean_prediction_error": 0.3999999999999999,
+          "mean_resource_state": 0.0,
+          "mean_holdout_transfer": 0.8,
+          "evidence_ids": [
+            "online-feedback:740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+            "online-feedback:e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+            "online-feedback:ecb7ca92f60b12b64032c1d0f661fcba41a981767d87a2c89d4a85fa6588af06",
+            "online-feedback:bd77994ba8e49a08921f131ee332d9400f4f722a995a85fbc3fcc684b5d4c615",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-2-seed-47:outcome:4:r2-s2-online-holdout-cycle-2-seed-47:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-2-seed-47:outcome:4:r2-s2-online-retention-cycle-2-seed-47:workflow-outcome"
+          ],
+          "projection_digest": "393baea1dabe9d8fa07dc6efb06820498883157bdd64002bb936584ca69ab219"
+        },
+        "feedback_ids": [
+          "740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+          "e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+          "ecb7ca92f60b12b64032c1d0f661fcba41a981767d87a2c89d4a85fa6588af06",
+          "bd77994ba8e49a08921f131ee332d9400f4f722a995a85fbc3fcc684b5d4c615"
+        ],
+        "outcome_ids": [
+          "r2-s2-online-online-be-seed-47:outcome:4:r2-s2-online-online-be-seed-47:workflow-outcome",
+          "r2-s2-online-online-ce-seed-47:outcome:4:r2-s2-online-online-ce-seed-47:workflow-outcome",
+          "r2-s2-online-online-ae-next-seed-47:outcome:4:r2-s2-online-online-ae-next-seed-47:workflow-outcome",
+          "r2-s2-online-online-de-next-seed-47:outcome:4:r2-s2-online-online-de-next-seed-47:workflow-outcome"
+        ],
+        "mean_interaction": 0.6000000000000001,
+        "bridge_digest": "34e0d09088109a0feb35e1549d820f6b83d7f2686a9b47041e3577a86f451454"
+      },
+      "first_admission": {
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:ebdf9f204dad",
+        "candidate": {
+          "format": "taiji-structural-proposal-candidate-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:ebdf9f204dad",
+          "network_id": "standalone:adaptive.cortex",
+          "target_kind": "neuron",
+          "operation": "add",
+          "substrate_ids": [
+            "adaptive.cortex"
+          ],
+          "evidence_ids": [
+            "online-feedback:740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+            "online-feedback:e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-1-seed-47:outcome:4:r2-s2-online-holdout-cycle-1-seed-47:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-1-seed-47:outcome:4:r2-s2-online-retention-cycle-1-seed-47:workflow-outcome"
+          ],
+          "source_tick": 4,
+          "priority": 0.31999999999999995,
+          "specification": {
+            "region_id": "adaptive.cortex",
+            "unit_id": "u2",
+            "cycle_bridge_digest": "b26b25c65bf7402f90ed52935c7ef06dd378d3e42bb87759c917b6753b68edce"
+          },
+          "resource_cost": 1,
+          "depends_on_candidate_ids": [],
+          "conflict_keys": [],
+          "parent_checkpoint_id": "pressure-parent:ebdf9f204dad0f4d123b8aa39713663bffb85b3de976dc82070f5e3d2bede848:fa16094655d554fcd46f917810390ad0efd40a98bf52d87592ace1a7b8b2f5bb"
+        },
+        "arbitration": {
+          "format": "taiji-structural-candidate-batch-v1",
+          "batch_id": "batch:structural:c6dbb18457c8a280da73361be89d15b8",
+          "candidate_ids": [
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:ebdf9f204dad"
+          ],
+          "selected_candidate_ids": [
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:ebdf9f204dad"
+          ],
+          "deferred_candidate_ids": [],
+          "rejected_candidate_ids": [],
+          "candidate_states": {
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:ebdf9f204dad": "reserved"
+          },
+          "reasons": {},
+          "reserved_resource_cost": 1,
+          "reservation_remaining": 1,
+          "structural_budget_before": 2,
+          "available_budget_before": 2,
+          "topology_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "arbitration_digest": "c6dbb18457c8a280da73361be89d15b83d443ad9113dc81ed021b739e67bbf40",
+          "revision": 0,
+          "status": "planned"
+        },
+        "validation": {
+          "format": "taiji-structural-candidate-validation-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:ebdf9f204dad",
+          "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+          "status": "validated",
+          "validation_score": 1.0,
+          "parent_checkpoint_digest": "6d5342198f81bb3b3b087de31c8820482e3000df7aa115d9484da1e5396a3395",
+          "validation_checkpoint_digest": "12d2a5afa6128227f8f9edaa42c06911958cca5505aeddaca5504ffaf7722c25",
+          "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "topology_after_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "structural_budget_before": 2,
+          "structural_budget_after": 2,
+          "evidence_ids": [
+            "online-feedback:740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+            "online-feedback:e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-1-seed-47:outcome:4:r2-s2-online-holdout-cycle-1-seed-47:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-1-seed-47:outcome:4:r2-s2-online-retention-cycle-1-seed-47:workflow-outcome"
+          ],
+          "error": null
+        },
+        "decision": {
+          "format": "taiji-structural-validation-gate-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:ebdf9f204dad",
+          "passed": true,
+          "holdout_gain": 1.0,
+          "retention_regression": 0.02,
+          "lesion_effect": 0.15,
+          "resource_state": 0.8,
+          "resource_cost": 1,
+          "structural_budget": 2,
+          "minimum_holdout_gain": 0.05,
+          "maximum_retention_regression": 0.05,
+          "minimum_lesion_effect": 0.05,
+          "minimum_resource_state": 0.4,
+          "evidence_ids": [
+            "online-feedback:740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+            "online-feedback:e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-1-seed-47:outcome:4:r2-s2-online-holdout-cycle-1-seed-47:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-1-seed-47:outcome:4:r2-s2-online-retention-cycle-1-seed-47:workflow-outcome",
+            "continuous-bridge:b26b25c65bf7402f90ed52935c7ef06dd378d3e42bb87759c917b6753b68edce"
+          ],
+          "reasons": [],
+          "decision_digest": "af767cc31a281e2514c5e75300e5ab00f98f273572de0248798a47d561b1ef81"
+        },
+        "admission": {
+          "format": "taiji-structural-admission-result-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:ebdf9f204dad",
+          "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+          "status": "admitted",
+          "decision_digest": "af767cc31a281e2514c5e75300e5ab00f98f273572de0248798a47d561b1ef81",
+          "parent_checkpoint_digest": "fe840fe3b342f5f0949d1210837078b2e0e7966c50b28a9cc1f6967a58130008",
+          "child_checkpoint_digest": "d66fcdf9e9d01f60d0340eba9a260095b2b9ba8da96bef7b9bb09924bc153bfc",
+          "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "topology_after_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+          "structural_budget_before": 2,
+          "structural_budget_after": 1,
+          "error": null
+        },
+        "topology_before": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "topology_after": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+        "budget_before": 2,
+        "budget_after": 1,
+        "unit_ids": [
+          "u0",
+          "u1",
+          "u2"
+        ],
+        "candidate_checkpoint_roundtrip": true
+      },
+      "second_admission": {
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:2:393baea1dabe",
+        "candidate": {
+          "format": "taiji-structural-proposal-candidate-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:2:393baea1dabe",
+          "network_id": "standalone:adaptive.cortex",
+          "target_kind": "neuron",
+          "operation": "add",
+          "substrate_ids": [
+            "adaptive.cortex"
+          ],
+          "evidence_ids": [
+            "online-feedback:740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+            "online-feedback:e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+            "online-feedback:ecb7ca92f60b12b64032c1d0f661fcba41a981767d87a2c89d4a85fa6588af06",
+            "online-feedback:bd77994ba8e49a08921f131ee332d9400f4f722a995a85fbc3fcc684b5d4c615",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-2-seed-47:outcome:4:r2-s2-online-holdout-cycle-2-seed-47:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-2-seed-47:outcome:4:r2-s2-online-retention-cycle-2-seed-47:workflow-outcome"
+          ],
+          "source_tick": 6,
+          "priority": 0.31999999999999995,
+          "specification": {
+            "region_id": "adaptive.cortex",
+            "unit_id": "u3",
+            "cycle_bridge_digest": "34e0d09088109a0feb35e1549d820f6b83d7f2686a9b47041e3577a86f451454"
+          },
+          "resource_cost": 1,
+          "depends_on_candidate_ids": [],
+          "conflict_keys": [],
+          "parent_checkpoint_id": "pressure-parent:393baea1dabe9d8fa07dc6efb06820498883157bdd64002bb936584ca69ab219:b1de96fc5d7a1133d614d705c978940707318c42bc06c2a432e3a12139fdd57d"
+        },
+        "arbitration": {
+          "format": "taiji-structural-candidate-batch-v1",
+          "batch_id": "batch:structural:6de4db289b92c6f67fdab142f691a729",
+          "candidate_ids": [
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:2:393baea1dabe"
+          ],
+          "selected_candidate_ids": [],
+          "deferred_candidate_ids": [
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:2:393baea1dabe"
+          ],
+          "rejected_candidate_ids": [],
+          "candidate_states": {
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:2:393baea1dabe": "deferred"
+          },
+          "reasons": {
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:2:393baea1dabe": "structural_budget_insufficient_for_batch"
+          },
+          "reserved_resource_cost": 0,
+          "reservation_remaining": 0,
+          "structural_budget_before": 1,
+          "available_budget_before": 0,
+          "topology_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+          "arbitration_digest": "6de4db289b92c6f67fdab142f691a72927d2935ff3923de27cb6232a21a8ccc0",
+          "revision": 0,
+          "status": "planned"
+        },
+        "validation": {
+          "format": "taiji-structural-candidate-validation-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:2:393baea1dabe",
+          "proposal_id": "topology:adaptive.cortex:neuron:add:u3",
+          "status": "validated",
+          "validation_score": 1.0,
+          "parent_checkpoint_digest": "573b16d28c84e1a71bb93cae70fb0e39b78dd9b81cc9205eb80fcaed2c86da0e",
+          "validation_checkpoint_digest": "483b964cccf2b2dc10305dc31ab4de84ab5d1477a55b5d0ff535c0af1265cb54",
+          "topology_before_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+          "topology_after_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+          "structural_budget_before": 1,
+          "structural_budget_after": 1,
+          "evidence_ids": [
+            "online-feedback:740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+            "online-feedback:e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+            "online-feedback:ecb7ca92f60b12b64032c1d0f661fcba41a981767d87a2c89d4a85fa6588af06",
+            "online-feedback:bd77994ba8e49a08921f131ee332d9400f4f722a995a85fbc3fcc684b5d4c615",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-2-seed-47:outcome:4:r2-s2-online-holdout-cycle-2-seed-47:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-2-seed-47:outcome:4:r2-s2-online-retention-cycle-2-seed-47:workflow-outcome"
+          ],
+          "error": null
+        },
+        "decision": {
+          "format": "taiji-structural-validation-gate-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:2:393baea1dabe",
+          "passed": true,
+          "holdout_gain": 1.0,
+          "retention_regression": 0.02,
+          "lesion_effect": 0.15,
+          "resource_state": 0.8,
+          "resource_cost": 1,
+          "structural_budget": 1,
+          "minimum_holdout_gain": 0.05,
+          "maximum_retention_regression": 0.05,
+          "minimum_lesion_effect": 0.05,
+          "minimum_resource_state": 0.4,
+          "evidence_ids": [
+            "online-feedback:740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+            "online-feedback:e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+            "online-feedback:ecb7ca92f60b12b64032c1d0f661fcba41a981767d87a2c89d4a85fa6588af06",
+            "online-feedback:bd77994ba8e49a08921f131ee332d9400f4f722a995a85fbc3fcc684b5d4c615",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-2-seed-47:outcome:4:r2-s2-online-holdout-cycle-2-seed-47:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-2-seed-47:outcome:4:r2-s2-online-retention-cycle-2-seed-47:workflow-outcome",
+            "continuous-bridge:34e0d09088109a0feb35e1549d820f6b83d7f2686a9b47041e3577a86f451454"
+          ],
+          "reasons": [],
+          "decision_digest": "538f12da2054c52652e295811e69b2006ec8c0d0485759d67a8ba624aed8b174"
+        },
+        "admission": {
+          "format": "taiji-structural-admission-result-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:2:393baea1dabe",
+          "proposal_id": "topology:adaptive.cortex:neuron:add:u3",
+          "status": "admitted",
+          "decision_digest": "538f12da2054c52652e295811e69b2006ec8c0d0485759d67a8ba624aed8b174",
+          "parent_checkpoint_digest": "a60a2b0ae2e18c8b1b25d0d907f6c9d9345f78d73b87c0d17e492f3f8f17186d",
+          "child_checkpoint_digest": "33907fc270742ffbffd7d80915c8ccea38a69f5d056de8e432427a835d07cf00",
+          "topology_before_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+          "topology_after_digest": "45d9acbf961517d260f721da444733ecc16b00caa0186eb76780f8835faca0b1",
+          "structural_budget_before": 1,
+          "structural_budget_after": 0,
+          "error": null
+        },
+        "topology_before": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+        "topology_after": "45d9acbf961517d260f721da444733ecc16b00caa0186eb76780f8835faca0b1",
+        "budget_before": 1,
+        "budget_after": 0,
+        "unit_ids": [
+          "u0",
+          "u1",
+          "u2",
+          "u3"
+        ],
+        "candidate_checkpoint_roundtrip": true
+      },
+      "stage_one_after_first": [
+        {
+          "task": "future-bec",
+          "method": "growth_cycle_1",
+          "seed": 47,
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "task": "future-ade",
+          "method": "growth_cycle_1",
+          "seed": 47,
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:a4392a0e06e7d823d742cc1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "stage_one_after_second": [
+        {
+          "task": "future-bec",
+          "method": "growth_cycle_2_retention",
+          "seed": 47,
+          "capacity": 4,
+          "candidate_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "task": "future-ade",
+          "method": "growth_cycle_2_retention",
+          "seed": 47,
+          "capacity": 4,
+          "candidate_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:a4392a0e06e7d823d742cc1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "stage_two_after_second": [
+        {
+          "task": "future-abce",
+          "method": "growth_cycle_2",
+          "seed": 47,
+          "capacity": 4,
+          "candidate_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_action_count": 4,
+          "raw_action_success": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 4,
+          "native_checkpoint_replay": true
+        },
+        {
+          "task": "future-acde",
+          "method": "growth_cycle_2",
+          "seed": 47,
+          "capacity": 4,
+          "candidate_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:a4392a0e06e7d823d742cc1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_action_count": 4,
+          "raw_action_success": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 4,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "control_runs": {
+        "interaction_weight_only": [
+          {
+            "task": "future-abce",
+            "method": "interaction_weight_only",
+            "seed": 47,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3"
+            ],
+            "required_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          },
+          {
+            "task": "future-acde",
+            "method": "interaction_weight_only",
+            "seed": 47,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:a4392a0e06e7d823d742cc1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3"
+            ],
+            "required_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          }
+        ],
+        "router_only": [
+          {
+            "task": "future-abce",
+            "method": "router_only",
+            "seed": 47,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3"
+            ],
+            "required_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          },
+          {
+            "task": "future-acde",
+            "method": "router_only",
+            "seed": 47,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:a4392a0e06e7d823d742cc1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3"
+            ],
+            "required_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          }
+        ],
+        "memory_only": [
+          {
+            "task": "future-abce",
+            "method": "memory_only",
+            "seed": 47,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3"
+            ],
+            "required_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          },
+          {
+            "task": "future-acde",
+            "method": "memory_only",
+            "seed": 47,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:a4392a0e06e7d823d742cc1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3"
+            ],
+            "required_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          }
+        ]
+      },
+      "lesion_run": {
+        "task": "future-abce-lesion",
+        "method": "growth_cycle_2_lesion",
+        "seed": 47,
+        "capacity": 3,
+        "candidate_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63",
+          "workbench-owner:33bf6bd14f843e6f0a77fea3",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e",
+          "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+        ],
+        "selected_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:33bf6bd14f843e6f0a77fea3",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "required_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63",
+          "workbench-owner:33bf6bd14f843e6f0a77fea3",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e"
+        ],
+        "selected_action_count": 3,
+        "raw_action_success": [
+          true,
+          true,
+          true
+        ],
+        "task_complete": false,
+        "all_selected_actions_succeeded": true,
+        "task_score": 0.0,
+        "score_source": "native Workbench raw action success/status plus required-set completion",
+        "native_world_event_count": 4,
+        "native_checkpoint_replay": true
+      },
+      "parent_capacity": 2,
+      "first_growth_capacity": 3,
+      "second_growth_capacity": 4,
+      "after_second_rollback_capacity": 3,
+      "final_capacity": 2,
+      "topology_before_second_rollback": "45d9acbf961517d260f721da444733ecc16b00caa0186eb76780f8835faca0b1",
+      "topology_after_full_rollback": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+      "budget_after_full_rollback": 2,
+      "second_rollback_status": "rolled_back",
+      "first_rollback_status": "rolled_back",
+      "second_workspace_checkpoint_roundtrip": true
+    }
+  ],
+  "metrics": {
+    "three_independent_seeds": true,
+    "new_online_contexts_are_actual_and_successful": true,
+    "second_pressure_contains_new_evidence": true,
+    "failed_online_outcome_stays_excluded": true,
+    "first_growth_retains_after_second": true,
+    "second_growth_completes_unseen_tasks": true,
+    "second_growth_beats_fixed_capacity_controls": true,
+    "controls_stay_at_parent_capacity": true,
+    "capacity_tracks_each_growth_cycle": true,
+    "both_admissions_are_checkpointed_and_bounded": true,
+    "lesion_removes_second_growth_gain": true,
+    "full_rollback_restores_topology_and_budget": true,
+    "training_uses_native_workbench_records": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "after one admitted growth, a new independent online evidence cycle must produce a second checkpointed neuron admission; prior tasks must be retained, two unseen four-action Workbench tasks must beat fixed-capacity weight/router/memory controls, lesion must remove the second-cycle gain, and sequential rollback must restore the parent"
+  },
+  "boundary": "This is two-cycle bounded structural growth evidence. It does not claim unlimited growth, general intelligence, autonomous architecture design, or CUDA acceleration."
+}

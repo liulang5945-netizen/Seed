@@ -1,0 +1,752 @@
+{
+  "format": "taiji-w7-p4-9-online-interaction-structural-bridge-v1",
+  "task": "online interaction evidence to governed structural candidate bridge",
+  "learner_seeds": [
+    11,
+    29,
+    47
+  ],
+  "runs": [
+    {
+      "seed": 11,
+      "rounds": [
+        {
+          "round": 1,
+          "family": "online-be",
+          "candidate_id": "transfer-group:145339db789015ea7ecd8eaa",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+          "outcome_id": "r2-s2-online-online-be-seed-11:outcome:4:r2-s2-online-online-be-seed-11:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 2,
+          "family": "online-bf",
+          "candidate_id": "transfer-group:b515b1e835c6a4dc6118346f",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "feedback_id": "735fa4be9c18e7987f611e6a4a9dabcc9ab65fa3bd2970a3be41192cf5698481",
+          "outcome_id": "r2-s2-online-online-bf-seed-11:outcome:4:r2-s2-online-online-bf-seed-11:workflow-outcome",
+          "outcome_success": false,
+          "admission_status": "rejected",
+          "admission_reason": "outcome_unsuccessful",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 3,
+          "family": "online-ce",
+          "candidate_id": "transfer-group:61d5583b886b40a97139fe73",
+          "member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+          "outcome_id": "r2-s2-online-online-ce-seed-11:outcome:4:r2-s2-online-online-ce-seed-11:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "feedback_ids": [
+        "eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+        "3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b"
+      ],
+      "pressure": {
+        "format": "taiji-interaction-structural-bridge-v1",
+        "revision": 1,
+        "version": 1,
+        "projection": {
+          "format": "taiji-structural-pressure-projection-v1",
+          "network_id": "standalone:adaptive.cortex",
+          "region_id": "adaptive.cortex",
+          "first_tick": 1,
+          "last_tick": 4,
+          "window_digests": [
+            "8ca15bb4920cc0c6a79f31c9914d4ea42a7b1229f4ef675390fc723a58dc8e50",
+            "ef116be55918f68a0fab02da5d58c22793f3a7921299391685c28d1f6734176c",
+            "2a4c2881dcbdcaf962efec10cb97101b5f2e884192c3fa120c5e1f318a8fa1ef",
+            "18cca7d491181237ab6afca5d13b698679f64c6236e04d07ec9822a2a41fbc95"
+          ],
+          "train_task_slice_ids": [
+            "online-interaction:transfer-group:145339db789015ea7ecd8eaa",
+            "online-interaction:transfer-group:61d5583b886b40a97139fe73"
+          ],
+          "holdout_task_slice_ids": [
+            "workbench-holdout:online-workbench-holdout-de"
+          ],
+          "retention_task_slice_ids": [
+            "workbench-retention:online-workbench-retention-ab"
+          ],
+          "train_window_count": 2,
+          "holdout_window_count": 1,
+          "retention_window_count": 1,
+          "prediction_observation_count": 2,
+          "mean_prediction_error": 0.3999999999999999,
+          "mean_resource_state": 0.0,
+          "mean_holdout_transfer": 0.8,
+          "evidence_ids": [
+            "online-feedback:eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+            "online-feedback:3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+            "workbench-holdout:outcome:r2-s2-online-holdout-de-seed-11:outcome:4:r2-s2-online-holdout-de-seed-11:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-ab-seed-11:outcome:4:r2-s2-online-retention-ab-seed-11:workflow-outcome"
+          ],
+          "projection_digest": "f2131902aab38e13fb872085a6a30aa598d95185980dc32b849b6efe887bfd3f"
+        },
+        "feedback_ids": [
+          "eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+          "3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b"
+        ],
+        "outcome_ids": [
+          "r2-s2-online-online-be-seed-11:outcome:4:r2-s2-online-online-be-seed-11:workflow-outcome",
+          "r2-s2-online-online-ce-seed-11:outcome:4:r2-s2-online-online-ce-seed-11:workflow-outcome"
+        ],
+        "mean_interaction": 0.6000000000000001,
+        "bridge_digest": "86d595d4c041fc004b15f1230b111b8ebaf80a0f392d86c598c06915073c4ddf"
+      },
+      "candidate": {
+        "format": "taiji-structural-proposal-candidate-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f2131902aab3",
+        "network_id": "standalone:adaptive.cortex",
+        "target_kind": "neuron",
+        "operation": "add",
+        "substrate_ids": [
+          "adaptive.cortex"
+        ],
+        "evidence_ids": [
+          "online-feedback:eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+          "online-feedback:3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+          "workbench-holdout:outcome:r2-s2-online-holdout-de-seed-11:outcome:4:r2-s2-online-holdout-de-seed-11:workflow-outcome",
+          "workbench-retention:outcome:r2-s2-online-retention-ab-seed-11:outcome:4:r2-s2-online-retention-ab-seed-11:workflow-outcome"
+        ],
+        "source_tick": 4,
+        "priority": 0.31999999999999995,
+        "specification": {
+          "region_id": "adaptive.cortex",
+          "unit_id": "u2",
+          "online_bridge_digest": "86d595d4c041fc004b15f1230b111b8ebaf80a0f392d86c598c06915073c4ddf"
+        },
+        "resource_cost": 1,
+        "depends_on_candidate_ids": [],
+        "conflict_keys": [],
+        "parent_checkpoint_id": "pressure-parent:f2131902aab38e13fb872085a6a30aa598d95185980dc32b849b6efe887bfd3f:86d1af8e895c4422883b3fe1d412407eadb47065d304f8e1117b04bced094d27"
+      },
+      "arbitration": {
+        "format": "taiji-structural-candidate-batch-v1",
+        "batch_id": "batch:structural:9a9a3bf3b7265ffb172c35fe2abdaa9d",
+        "candidate_ids": [
+          "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f2131902aab3"
+        ],
+        "selected_candidate_ids": [
+          "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f2131902aab3"
+        ],
+        "deferred_candidate_ids": [],
+        "rejected_candidate_ids": [],
+        "candidate_states": {
+          "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f2131902aab3": "reserved"
+        },
+        "reasons": {},
+        "reserved_resource_cost": 1,
+        "reservation_remaining": 1,
+        "structural_budget_before": 1,
+        "available_budget_before": 1,
+        "topology_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "arbitration_digest": "9a9a3bf3b7265ffb172c35fe2abdaa9d8b7c3857a55fbcb80611e1005839c85b",
+        "revision": 0,
+        "status": "planned"
+      },
+      "validation": {
+        "format": "taiji-structural-candidate-validation-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f2131902aab3",
+        "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+        "status": "validated",
+        "validation_score": 1.0,
+        "parent_checkpoint_digest": "7c5a0cb533a61980a0c43cf6a3a003bd4f120f80cd5b965bc073b95d32ddb827",
+        "validation_checkpoint_digest": "3a4c3329859e6a91aae7e663b9815f6c91fd4930cf84b484e717564924715ac0",
+        "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "topology_after_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "structural_budget_before": 1,
+        "structural_budget_after": 1,
+        "evidence_ids": [
+          "online-feedback:eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+          "online-feedback:3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+          "workbench-holdout:outcome:r2-s2-online-holdout-de-seed-11:outcome:4:r2-s2-online-holdout-de-seed-11:workflow-outcome",
+          "workbench-retention:outcome:r2-s2-online-retention-ab-seed-11:outcome:4:r2-s2-online-retention-ab-seed-11:workflow-outcome"
+        ],
+        "error": null
+      },
+      "decision": {
+        "format": "taiji-structural-validation-gate-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f2131902aab3",
+        "passed": true,
+        "holdout_gain": 1.0,
+        "retention_regression": 0.02,
+        "lesion_effect": 0.15,
+        "resource_state": 0.8,
+        "resource_cost": 1,
+        "structural_budget": 1,
+        "minimum_holdout_gain": 0.05,
+        "maximum_retention_regression": 0.05,
+        "minimum_lesion_effect": 0.05,
+        "minimum_resource_state": 0.4,
+        "evidence_ids": [
+          "online-feedback:eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+          "online-feedback:3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+          "workbench-holdout:outcome:r2-s2-online-holdout-de-seed-11:outcome:4:r2-s2-online-holdout-de-seed-11:workflow-outcome",
+          "workbench-retention:outcome:r2-s2-online-retention-ab-seed-11:outcome:4:r2-s2-online-retention-ab-seed-11:workflow-outcome",
+          "online-bridge:86d595d4c041fc004b15f1230b111b8ebaf80a0f392d86c598c06915073c4ddf"
+        ],
+        "reasons": [],
+        "decision_digest": "2d8e06256f16f7c1b699e4c4bc1a230976435ac6c52699b736ee6d3486438520"
+      },
+      "admission": {
+        "format": "taiji-structural-admission-result-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f2131902aab3",
+        "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+        "status": "admitted",
+        "decision_digest": "2d8e06256f16f7c1b699e4c4bc1a230976435ac6c52699b736ee6d3486438520",
+        "parent_checkpoint_digest": "974fe2ea7d19d31f071a47c4d65bbb0817f1cb65181cf84bc0caedadb8b84786",
+        "child_checkpoint_digest": "afa6565229fb75ee6bbb8da9624f1956deb90aaa39ed03eeda76a688b70d751b",
+        "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "topology_after_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+        "structural_budget_before": 1,
+        "structural_budget_after": 0,
+        "error": null
+      },
+      "rollback": {
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f2131902aab3",
+        "status": "rolled_back"
+      },
+      "holdout_outcome_id": "r2-s2-online-holdout-de-seed-11:workflow-outcome",
+      "retention_outcome_id": "r2-s2-online-retention-ab-seed-11:workflow-outcome",
+      "parent_units": [
+        "u0",
+        "u1"
+      ],
+      "post_admission_units": [
+        "u0",
+        "u1",
+        "u2"
+      ],
+      "roundtrip_candidate": true,
+      "topology_before": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+      "topology_after_admission": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+      "topology_after_rollback": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+      "budget_before": 1,
+      "budget_after_admission": 0,
+      "budget_after_rollback": 1,
+      "failed_feedback_excluded": true
+    },
+    {
+      "seed": 29,
+      "rounds": [
+        {
+          "round": 1,
+          "family": "online-be",
+          "candidate_id": "transfer-group:145339db789015ea7ecd8eaa",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+          "outcome_id": "r2-s2-online-online-be-seed-29:outcome:4:r2-s2-online-online-be-seed-29:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 2,
+          "family": "online-bf",
+          "candidate_id": "transfer-group:b515b1e835c6a4dc6118346f",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "feedback_id": "35e147e6e1f88134f9e957fcd2eb3237b953b1be9858de2a576014df4a54aa8f",
+          "outcome_id": "r2-s2-online-online-bf-seed-29:outcome:4:r2-s2-online-online-bf-seed-29:workflow-outcome",
+          "outcome_success": false,
+          "admission_status": "rejected",
+          "admission_reason": "outcome_unsuccessful",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 3,
+          "family": "online-ce",
+          "candidate_id": "transfer-group:61d5583b886b40a97139fe73",
+          "member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+          "outcome_id": "r2-s2-online-online-ce-seed-29:outcome:4:r2-s2-online-online-ce-seed-29:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "feedback_ids": [
+        "0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+        "0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750"
+      ],
+      "pressure": {
+        "format": "taiji-interaction-structural-bridge-v1",
+        "revision": 1,
+        "version": 1,
+        "projection": {
+          "format": "taiji-structural-pressure-projection-v1",
+          "network_id": "standalone:adaptive.cortex",
+          "region_id": "adaptive.cortex",
+          "first_tick": 1,
+          "last_tick": 4,
+          "window_digests": [
+            "03268a193e16a42c2f9b0eedbdffcee541ec12669e24023e6f5611337a30c8fa",
+            "a8e47e9802391e761cde301a98045cadf29167ca13339c507b08eb8a7f4825e2",
+            "9e9e17ff32a4bf25e482be960338c9585d7978226b5d10b40953a09fe3fc215a",
+            "3708e7ec15ac72cbecda42ada0fe6cc8eb0bc61c4a4e1128508b21431d8a6565"
+          ],
+          "train_task_slice_ids": [
+            "online-interaction:transfer-group:145339db789015ea7ecd8eaa",
+            "online-interaction:transfer-group:61d5583b886b40a97139fe73"
+          ],
+          "holdout_task_slice_ids": [
+            "workbench-holdout:online-workbench-holdout-de"
+          ],
+          "retention_task_slice_ids": [
+            "workbench-retention:online-workbench-retention-ab"
+          ],
+          "train_window_count": 2,
+          "holdout_window_count": 1,
+          "retention_window_count": 1,
+          "prediction_observation_count": 2,
+          "mean_prediction_error": 0.3999999999999999,
+          "mean_resource_state": 0.0,
+          "mean_holdout_transfer": 0.8,
+          "evidence_ids": [
+            "online-feedback:0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+            "online-feedback:0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+            "workbench-holdout:outcome:r2-s2-online-holdout-de-seed-29:outcome:4:r2-s2-online-holdout-de-seed-29:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-ab-seed-29:outcome:4:r2-s2-online-retention-ab-seed-29:workflow-outcome"
+          ],
+          "projection_digest": "df03b9e31ff77c60e6af15bfb9c071f569ce029297837b67ac35f2b220006973"
+        },
+        "feedback_ids": [
+          "0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+          "0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750"
+        ],
+        "outcome_ids": [
+          "r2-s2-online-online-be-seed-29:outcome:4:r2-s2-online-online-be-seed-29:workflow-outcome",
+          "r2-s2-online-online-ce-seed-29:outcome:4:r2-s2-online-online-ce-seed-29:workflow-outcome"
+        ],
+        "mean_interaction": 0.6000000000000001,
+        "bridge_digest": "c6b910c147962cc3f2af1348a8d0844462a282f0723417fb9691bf50c640eb8b"
+      },
+      "candidate": {
+        "format": "taiji-structural-proposal-candidate-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:df03b9e31ff7",
+        "network_id": "standalone:adaptive.cortex",
+        "target_kind": "neuron",
+        "operation": "add",
+        "substrate_ids": [
+          "adaptive.cortex"
+        ],
+        "evidence_ids": [
+          "online-feedback:0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+          "online-feedback:0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+          "workbench-holdout:outcome:r2-s2-online-holdout-de-seed-29:outcome:4:r2-s2-online-holdout-de-seed-29:workflow-outcome",
+          "workbench-retention:outcome:r2-s2-online-retention-ab-seed-29:outcome:4:r2-s2-online-retention-ab-seed-29:workflow-outcome"
+        ],
+        "source_tick": 4,
+        "priority": 0.31999999999999995,
+        "specification": {
+          "region_id": "adaptive.cortex",
+          "unit_id": "u2",
+          "online_bridge_digest": "c6b910c147962cc3f2af1348a8d0844462a282f0723417fb9691bf50c640eb8b"
+        },
+        "resource_cost": 1,
+        "depends_on_candidate_ids": [],
+        "conflict_keys": [],
+        "parent_checkpoint_id": "pressure-parent:df03b9e31ff77c60e6af15bfb9c071f569ce029297837b67ac35f2b220006973:9ca17ca73685b6efb3f25ee5dd18507ba36f5d32de1b6167fd12b17b81589cc0"
+      },
+      "arbitration": {
+        "format": "taiji-structural-candidate-batch-v1",
+        "batch_id": "batch:structural:bc94e635b034527310704fb61c69a7c5",
+        "candidate_ids": [
+          "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:df03b9e31ff7"
+        ],
+        "selected_candidate_ids": [
+          "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:df03b9e31ff7"
+        ],
+        "deferred_candidate_ids": [],
+        "rejected_candidate_ids": [],
+        "candidate_states": {
+          "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:df03b9e31ff7": "reserved"
+        },
+        "reasons": {},
+        "reserved_resource_cost": 1,
+        "reservation_remaining": 1,
+        "structural_budget_before": 1,
+        "available_budget_before": 1,
+        "topology_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "arbitration_digest": "bc94e635b034527310704fb61c69a7c5424b964e72a354835b181a0f08fb535f",
+        "revision": 0,
+        "status": "planned"
+      },
+      "validation": {
+        "format": "taiji-structural-candidate-validation-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:df03b9e31ff7",
+        "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+        "status": "validated",
+        "validation_score": 1.0,
+        "parent_checkpoint_digest": "e8c5cbcfac10628abc91ca6ddb7729f68661da8ec76dbec387d7ca5f1b3f8939",
+        "validation_checkpoint_digest": "e6b6808814f5581925d591ec609216cfa79c9b1f4cdc3feaf7f564b0ee71b512",
+        "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "topology_after_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "structural_budget_before": 1,
+        "structural_budget_after": 1,
+        "evidence_ids": [
+          "online-feedback:0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+          "online-feedback:0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+          "workbench-holdout:outcome:r2-s2-online-holdout-de-seed-29:outcome:4:r2-s2-online-holdout-de-seed-29:workflow-outcome",
+          "workbench-retention:outcome:r2-s2-online-retention-ab-seed-29:outcome:4:r2-s2-online-retention-ab-seed-29:workflow-outcome"
+        ],
+        "error": null
+      },
+      "decision": {
+        "format": "taiji-structural-validation-gate-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:df03b9e31ff7",
+        "passed": true,
+        "holdout_gain": 1.0,
+        "retention_regression": 0.02,
+        "lesion_effect": 0.15,
+        "resource_state": 0.8,
+        "resource_cost": 1,
+        "structural_budget": 1,
+        "minimum_holdout_gain": 0.05,
+        "maximum_retention_regression": 0.05,
+        "minimum_lesion_effect": 0.05,
+        "minimum_resource_state": 0.4,
+        "evidence_ids": [
+          "online-feedback:0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+          "online-feedback:0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+          "workbench-holdout:outcome:r2-s2-online-holdout-de-seed-29:outcome:4:r2-s2-online-holdout-de-seed-29:workflow-outcome",
+          "workbench-retention:outcome:r2-s2-online-retention-ab-seed-29:outcome:4:r2-s2-online-retention-ab-seed-29:workflow-outcome",
+          "online-bridge:c6b910c147962cc3f2af1348a8d0844462a282f0723417fb9691bf50c640eb8b"
+        ],
+        "reasons": [],
+        "decision_digest": "080ede4494f4e279ec6ba5d99a4ee6de293246e102097496c573645e49228cc2"
+      },
+      "admission": {
+        "format": "taiji-structural-admission-result-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:df03b9e31ff7",
+        "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+        "status": "admitted",
+        "decision_digest": "080ede4494f4e279ec6ba5d99a4ee6de293246e102097496c573645e49228cc2",
+        "parent_checkpoint_digest": "a7c552b8713997dd215c1a29031ea817643750a9d37720a1494c10532d83d262",
+        "child_checkpoint_digest": "6dcca880e13767a72b3118ba3097a5e8c2220481aba8a723fedcaf0ddd828cd7",
+        "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "topology_after_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+        "structural_budget_before": 1,
+        "structural_budget_after": 0,
+        "error": null
+      },
+      "rollback": {
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:df03b9e31ff7",
+        "status": "rolled_back"
+      },
+      "holdout_outcome_id": "r2-s2-online-holdout-de-seed-29:workflow-outcome",
+      "retention_outcome_id": "r2-s2-online-retention-ab-seed-29:workflow-outcome",
+      "parent_units": [
+        "u0",
+        "u1"
+      ],
+      "post_admission_units": [
+        "u0",
+        "u1",
+        "u2"
+      ],
+      "roundtrip_candidate": true,
+      "topology_before": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+      "topology_after_admission": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+      "topology_after_rollback": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+      "budget_before": 1,
+      "budget_after_admission": 0,
+      "budget_after_rollback": 1,
+      "failed_feedback_excluded": true
+    },
+    {
+      "seed": 47,
+      "rounds": [
+        {
+          "round": 1,
+          "family": "online-be",
+          "candidate_id": "transfer-group:145339db789015ea7ecd8eaa",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+          "outcome_id": "r2-s2-online-online-be-seed-47:outcome:4:r2-s2-online-online-be-seed-47:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 2,
+          "family": "online-bf",
+          "candidate_id": "transfer-group:b515b1e835c6a4dc6118346f",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "feedback_id": "760bbfbbbf2a6c43eb4a47ccd4972927755db95a111bc3240911723b1d7c253b",
+          "outcome_id": "r2-s2-online-online-bf-seed-47:outcome:4:r2-s2-online-online-bf-seed-47:workflow-outcome",
+          "outcome_success": false,
+          "admission_status": "rejected",
+          "admission_reason": "outcome_unsuccessful",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 3,
+          "family": "online-ce",
+          "candidate_id": "transfer-group:61d5583b886b40a97139fe73",
+          "member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+          "outcome_id": "r2-s2-online-online-ce-seed-47:outcome:4:r2-s2-online-online-ce-seed-47:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "feedback_ids": [
+        "740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+        "e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c"
+      ],
+      "pressure": {
+        "format": "taiji-interaction-structural-bridge-v1",
+        "revision": 1,
+        "version": 1,
+        "projection": {
+          "format": "taiji-structural-pressure-projection-v1",
+          "network_id": "standalone:adaptive.cortex",
+          "region_id": "adaptive.cortex",
+          "first_tick": 1,
+          "last_tick": 4,
+          "window_digests": [
+            "68723c5419f26e016853b6e9f64a9278d943e33d6d6bcbdbb1414088f995c564",
+            "ff09f904d5327f969f3105fd59e10ea82a71a7f246e799bea41b86a02136af56",
+            "32c13779f2bf5e947edbf5f7ca835eea8e210cbbcd6bcb1a747e6573ac1a39fd",
+            "ba49a6ba1b1f762b727b677748e7b9c24a75719af42cb7aac9eb436967478f6b"
+          ],
+          "train_task_slice_ids": [
+            "online-interaction:transfer-group:145339db789015ea7ecd8eaa",
+            "online-interaction:transfer-group:61d5583b886b40a97139fe73"
+          ],
+          "holdout_task_slice_ids": [
+            "workbench-holdout:online-workbench-holdout-de"
+          ],
+          "retention_task_slice_ids": [
+            "workbench-retention:online-workbench-retention-ab"
+          ],
+          "train_window_count": 2,
+          "holdout_window_count": 1,
+          "retention_window_count": 1,
+          "prediction_observation_count": 2,
+          "mean_prediction_error": 0.3999999999999999,
+          "mean_resource_state": 0.0,
+          "mean_holdout_transfer": 0.8,
+          "evidence_ids": [
+            "online-feedback:740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+            "online-feedback:e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+            "workbench-holdout:outcome:r2-s2-online-holdout-de-seed-47:outcome:4:r2-s2-online-holdout-de-seed-47:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-ab-seed-47:outcome:4:r2-s2-online-retention-ab-seed-47:workflow-outcome"
+          ],
+          "projection_digest": "0097b6bde6d9caba52ad30e4e88405823a3175e56d54dc7513ef50ff413cf109"
+        },
+        "feedback_ids": [
+          "740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+          "e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c"
+        ],
+        "outcome_ids": [
+          "r2-s2-online-online-be-seed-47:outcome:4:r2-s2-online-online-be-seed-47:workflow-outcome",
+          "r2-s2-online-online-ce-seed-47:outcome:4:r2-s2-online-online-ce-seed-47:workflow-outcome"
+        ],
+        "mean_interaction": 0.6000000000000001,
+        "bridge_digest": "52d8d9f684feae8c47b2fe2b29c6a1cfc4dc3c00349af935de59d2f3b6e74bbf"
+      },
+      "candidate": {
+        "format": "taiji-structural-proposal-candidate-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:0097b6bde6d9",
+        "network_id": "standalone:adaptive.cortex",
+        "target_kind": "neuron",
+        "operation": "add",
+        "substrate_ids": [
+          "adaptive.cortex"
+        ],
+        "evidence_ids": [
+          "online-feedback:740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+          "online-feedback:e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+          "workbench-holdout:outcome:r2-s2-online-holdout-de-seed-47:outcome:4:r2-s2-online-holdout-de-seed-47:workflow-outcome",
+          "workbench-retention:outcome:r2-s2-online-retention-ab-seed-47:outcome:4:r2-s2-online-retention-ab-seed-47:workflow-outcome"
+        ],
+        "source_tick": 4,
+        "priority": 0.31999999999999995,
+        "specification": {
+          "region_id": "adaptive.cortex",
+          "unit_id": "u2",
+          "online_bridge_digest": "52d8d9f684feae8c47b2fe2b29c6a1cfc4dc3c00349af935de59d2f3b6e74bbf"
+        },
+        "resource_cost": 1,
+        "depends_on_candidate_ids": [],
+        "conflict_keys": [],
+        "parent_checkpoint_id": "pressure-parent:0097b6bde6d9caba52ad30e4e88405823a3175e56d54dc7513ef50ff413cf109:0d2d1926775a72e379232b2fde1fdc4ba5f19de36b46383d76b5d284dabfe4cf"
+      },
+      "arbitration": {
+        "format": "taiji-structural-candidate-batch-v1",
+        "batch_id": "batch:structural:f7524f01cbbbd3b3d561db0f857277b9",
+        "candidate_ids": [
+          "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:0097b6bde6d9"
+        ],
+        "selected_candidate_ids": [
+          "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:0097b6bde6d9"
+        ],
+        "deferred_candidate_ids": [],
+        "rejected_candidate_ids": [],
+        "candidate_states": {
+          "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:0097b6bde6d9": "reserved"
+        },
+        "reasons": {},
+        "reserved_resource_cost": 1,
+        "reservation_remaining": 1,
+        "structural_budget_before": 1,
+        "available_budget_before": 1,
+        "topology_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "arbitration_digest": "f7524f01cbbbd3b3d561db0f857277b97985aa1740417af448fc7c296f16c879",
+        "revision": 0,
+        "status": "planned"
+      },
+      "validation": {
+        "format": "taiji-structural-candidate-validation-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:0097b6bde6d9",
+        "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+        "status": "validated",
+        "validation_score": 1.0,
+        "parent_checkpoint_digest": "3ee245c95cd2724ffa9807b76344a5eb71d4995b8b051a3d0d2a315acea42531",
+        "validation_checkpoint_digest": "83bff7d89f665f92bbc3a8fa4c6482ccc05e711e0347837b7882dba75e222056",
+        "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "topology_after_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "structural_budget_before": 1,
+        "structural_budget_after": 1,
+        "evidence_ids": [
+          "online-feedback:740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+          "online-feedback:e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+          "workbench-holdout:outcome:r2-s2-online-holdout-de-seed-47:outcome:4:r2-s2-online-holdout-de-seed-47:workflow-outcome",
+          "workbench-retention:outcome:r2-s2-online-retention-ab-seed-47:outcome:4:r2-s2-online-retention-ab-seed-47:workflow-outcome"
+        ],
+        "error": null
+      },
+      "decision": {
+        "format": "taiji-structural-validation-gate-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:0097b6bde6d9",
+        "passed": true,
+        "holdout_gain": 1.0,
+        "retention_regression": 0.02,
+        "lesion_effect": 0.15,
+        "resource_state": 0.8,
+        "resource_cost": 1,
+        "structural_budget": 1,
+        "minimum_holdout_gain": 0.05,
+        "maximum_retention_regression": 0.05,
+        "minimum_lesion_effect": 0.05,
+        "minimum_resource_state": 0.4,
+        "evidence_ids": [
+          "online-feedback:740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+          "online-feedback:e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+          "workbench-holdout:outcome:r2-s2-online-holdout-de-seed-47:outcome:4:r2-s2-online-holdout-de-seed-47:workflow-outcome",
+          "workbench-retention:outcome:r2-s2-online-retention-ab-seed-47:outcome:4:r2-s2-online-retention-ab-seed-47:workflow-outcome",
+          "online-bridge:52d8d9f684feae8c47b2fe2b29c6a1cfc4dc3c00349af935de59d2f3b6e74bbf"
+        ],
+        "reasons": [],
+        "decision_digest": "57a6749cde798ba79491a86475f0bde317aa1954163d84278e4b88435be502f7"
+      },
+      "admission": {
+        "format": "taiji-structural-admission-result-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:0097b6bde6d9",
+        "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+        "status": "admitted",
+        "decision_digest": "57a6749cde798ba79491a86475f0bde317aa1954163d84278e4b88435be502f7",
+        "parent_checkpoint_digest": "19b4fb473a74bc675ae735cb66835d94dd91d7b81c2a7d182dcf0448a41f72d7",
+        "child_checkpoint_digest": "b5d781fa36bff7cb79ff0f5015d34d425c280a30d3a4b49281a4230694d4cd0d",
+        "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "topology_after_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+        "structural_budget_before": 1,
+        "structural_budget_after": 0,
+        "error": null
+      },
+      "rollback": {
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:0097b6bde6d9",
+        "status": "rolled_back"
+      },
+      "holdout_outcome_id": "r2-s2-online-holdout-de-seed-47:workflow-outcome",
+      "retention_outcome_id": "r2-s2-online-retention-ab-seed-47:workflow-outcome",
+      "parent_units": [
+        "u0",
+        "u1"
+      ],
+      "post_admission_units": [
+        "u0",
+        "u1",
+        "u2"
+      ],
+      "roundtrip_candidate": true,
+      "topology_before": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+      "topology_after_admission": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+      "topology_after_rollback": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+      "budget_before": 1,
+      "budget_after_admission": 0,
+      "budget_after_rollback": 1,
+      "failed_feedback_excluded": true
+    }
+  ],
+  "metrics": {
+    "three_independent_seeds": true,
+    "actual_workbench_online_outcomes": true,
+    "failed_online_outcome_excluded": true,
+    "pressure_contains_online_evidence": true,
+    "independent_holdout_and_retention_required": true,
+    "candidate_checkpoint_roundtrip": true,
+    "arbitration_selected_candidate": true,
+    "shadow_validation_is_topology_neutral": true,
+    "admission_changes_topology": true,
+    "rollback_restores_topology_and_budget": true,
+    "train_inputs_are_native_workbench_projected": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "actual admitted online Outcomes must form a sealed structural pressure only with independent holdout and retention evidence; the existing candidate arbitration, shadow validation, admission, and rollback lifecycle must remain the only topology mutation path"
+  },
+  "boundary": "This Gate proves a bounded online-to-structure bridge. It does not claim unrestricted self-evolution, general intelligence, autonomous architecture design, or CUDA gain."
+}

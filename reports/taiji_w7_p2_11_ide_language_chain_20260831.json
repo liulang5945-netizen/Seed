@@ -1,0 +1,119 @@
+{
+  "format": "taiji-w7-p2-11-ide-language-chain-v1",
+  "task": "Taiji-owned IDE read, language evidence, and editor selection chain",
+  "runs": [
+    {
+      "seed": 11,
+      "status": "completed",
+      "planning_kinds": [
+        "workspace.read",
+        "workspace.programming_language.resolve",
+        "editor.set_language"
+      ],
+      "grounding_sources": [
+        "taiji-semantic-contract",
+        "taiji-semantic-contract",
+        "taiji-semantic-contract+workbench-language-evidence"
+      ],
+      "provider_set_step_has_no_final_language_id": true,
+      "taiji_derived_language_id": "python",
+      "language_evidence_digest": "14f006a33585ced70b66de2cf03a98bb2bed3053c7b448eb3178d35a65302ef3",
+      "language_result_digest": "14f006a33585ced70b66de2cf03a98bb2bed3053c7b448eb3178d35a65302ef3",
+      "language_result_state": "taiji_selection",
+      "execution_status": "completed",
+      "step_successes": [
+        true,
+        true,
+        true
+      ],
+      "checkpoint_saved": true,
+      "restored_language_state": "taiji_selection",
+      "recovery_status": "completed",
+      "recovery_step_success": true
+    },
+    {
+      "seed": 29,
+      "status": "completed",
+      "planning_kinds": [
+        "workspace.read",
+        "workspace.programming_language.resolve",
+        "editor.set_language"
+      ],
+      "grounding_sources": [
+        "taiji-semantic-contract",
+        "taiji-semantic-contract",
+        "taiji-semantic-contract+workbench-language-evidence"
+      ],
+      "provider_set_step_has_no_final_language_id": true,
+      "taiji_derived_language_id": "python",
+      "language_evidence_digest": "14f006a33585ced70b66de2cf03a98bb2bed3053c7b448eb3178d35a65302ef3",
+      "language_result_digest": "14f006a33585ced70b66de2cf03a98bb2bed3053c7b448eb3178d35a65302ef3",
+      "language_result_state": "taiji_selection",
+      "execution_status": "completed",
+      "step_successes": [
+        true,
+        true,
+        true
+      ],
+      "checkpoint_saved": true,
+      "restored_language_state": "taiji_selection",
+      "recovery_status": "completed",
+      "recovery_step_success": true
+    },
+    {
+      "seed": 47,
+      "status": "completed",
+      "planning_kinds": [
+        "workspace.read",
+        "workspace.programming_language.resolve",
+        "editor.set_language"
+      ],
+      "grounding_sources": [
+        "taiji-semantic-contract",
+        "taiji-semantic-contract",
+        "taiji-semantic-contract+workbench-language-evidence"
+      ],
+      "provider_set_step_has_no_final_language_id": true,
+      "taiji_derived_language_id": "python",
+      "language_evidence_digest": "14f006a33585ced70b66de2cf03a98bb2bed3053c7b448eb3178d35a65302ef3",
+      "language_result_digest": "14f006a33585ced70b66de2cf03a98bb2bed3053c7b448eb3178d35a65302ef3",
+      "language_result_state": "taiji_selection",
+      "execution_status": "completed",
+      "step_successes": [
+        true,
+        true,
+        true
+      ],
+      "checkpoint_saved": true,
+      "restored_language_state": "taiji_selection",
+      "recovery_status": "completed",
+      "recovery_step_success": true
+    }
+  ],
+  "policy": {
+    "override_setup_status": "success",
+    "override_setup_state": "user_override",
+    "override_blocked_status": "needs_clarification",
+    "override_blocked_reason": "user_override_has_priority",
+    "override_blocked_has_no_execution": true,
+    "ambiguous_status": "needs_clarification",
+    "ambiguous_reason": "language_evidence_ambiguous",
+    "ambiguous_has_no_action_intents": true,
+    "ambiguous_has_no_workbench_events": true
+  },
+  "metrics": {
+    "three_independent_seeds": true,
+    "provider_submits_semantics_not_final_language_binding": true,
+    "taiji_owns_three_step_language_chain": true,
+    "language_id_comes_from_live_workbench_evidence": true,
+    "three_step_execution_and_outcome_succeed": true,
+    "language_selection_checkpoint_and_recovery": true,
+    "user_override_has_priority_before_new_action_intent": true,
+    "ambiguous_language_stops_before_execution": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "provider semantic evidence must let Taiji ground read -> language resolve -> editor selection from live file evidence, checkpoint the result, recover after restart, and stop before ActionIntent on override or ambiguity"
+  },
+  "boundary": "This Gate proves one bounded IDE language chain on deterministic CPU evidence. It does not claim broad language understanding, real provider quality, CUDA, CI, unrestricted IDE autonomy, or AGI."
+}

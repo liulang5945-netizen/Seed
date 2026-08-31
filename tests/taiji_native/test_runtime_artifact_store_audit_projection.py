@@ -17,6 +17,7 @@ from scripts.training.eval_taiji_workbench_multi_region_batch import (
 )
 from taiji import (
     STRUCTURAL_ARTIFACT_STORE_PROJECTION_FORMAT,
+    ArtifactConsumptionPolicy,
     StructuralLineageRetentionPolicy,
     StructuralValidationArtifactStore,
 )
@@ -57,6 +58,9 @@ def test_runtime_projects_external_store_audit_without_mutation() -> None:
     before_retention_path = store_root.parent / f"s47-before-retention-{os.getpid()}.pt"
     after_retention_path = store_root.parent / f"s47-after-retention-{os.getpid()}.pt"
     store = StructuralValidationArtifactStore(store_root)
+    legacy_policy = ArtifactConsumptionPolicy.legacy_compatible(
+        reason="historical-s47-audit-test"
+    )
     try:
         first_artifact, first_replay, _ = _build_artifact(
             runtime.model.architecture,
@@ -69,6 +73,7 @@ def test_runtime_projects_external_store_audit_without_mutation() -> None:
             artifact_store=store,
             artifact_digests_by_candidate={first_id: first_artifact.artifact_digest},
             replays_by_candidate={first_id: first_replay},
+            artifact_consumption_policy=legacy_policy,
         )
         second_artifact, second_replay, _ = _build_artifact(
             runtime.model.architecture,
@@ -81,6 +86,7 @@ def test_runtime_projects_external_store_audit_without_mutation() -> None:
             artifact_store=store,
             artifact_digests_by_candidate={second_id: second_artifact.artifact_digest},
             replays_by_candidate={second_id: second_replay},
+            artifact_consumption_policy=legacy_policy,
         )
         assert first_result["results"][first_id]["status"] == "admitted"
         assert second_result["results"][second_id]["status"] == "admitted"

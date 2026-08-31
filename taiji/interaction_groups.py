@@ -831,6 +831,59 @@ class InteractionGroupEvaluator:
             metrics=metrics,
         )
 
+    def train_only_candidates(
+        self, corpus: InteractionTraceCorpus
+    ) -> tuple[InteractionGroupRecord, ...]:
+        """Return pair candidates estimated from train traces only.
+
+        This is intentionally separate from :meth:`evaluate`: the latter is a
+        train-plus-holdout attribution Gate, while a learner must select from
+        evidence that existed before holdout evaluation.  Candidates returned
+        here are not admitted and carry no holdout-derived field.
+        """
+
+        if len(corpus.train_checkpoint_revisions) != 1:
+            raise ValueError("train-only interaction candidates require one checkpoint revision")
+        revision = next(iter(corpus.train_checkpoint_revisions))
+        member_ids = tuple(
+            sorted({member for episode in corpus.train for member in episode.member_ids})
+        )
+        pairs = tuple(itertools.combinations(member_ids, 2))
+        if len(pairs) > int(self.config.maximum_pairwise_candidates):
+            raise ValueError("train-only interaction candidate budget exceeded")
+        candidates: list[InteractionGroupRecord] = []
+        for members in pairs:
+            estimate = self._estimate_pair(corpus.train, members)
+            if estimate is None or float(estimate["pair_resource_cost"]) > float(
+                self.config.maximum_resource_cost
+            ):
+                continue
+            group_id = self._group_id(
+                members,
+                corpus.train_trace_digest,
+                revision,
+                int(self.config.estimator_revision),
+            )
+            candidates.append(
+                InteractionGroupRecord(
+                    group_id=group_id,
+                    member_ids=members,
+                    source_trace_digest=corpus.train_trace_digest,
+                    checkpoint_revision=revision,
+                    contribution=float(estimate["pair_contribution"]),
+                    interaction=float(estimate["interaction"]),
+                    uncertainty=float(estimate["uncertainty"]),
+                    resource_cost=float(estimate["pair_resource_cost"]),
+                    owner_policy=f"policy:{group_id}",
+                    recovery_effect=float(estimate["recovery_interaction"]),
+                    event_ids=estimate["event_ids"],
+                    outcome_ids=estimate["outcome_ids"],
+                    status="candidate",
+                    method="train-only-factorial-counterfactual",
+                )
+            )
+        return tuple(candidates)
+
     def _failed_evaluation(
         self, corpus: InteractionTraceCorpus, reason: str
     ) -> InteractionGroupEvaluation:

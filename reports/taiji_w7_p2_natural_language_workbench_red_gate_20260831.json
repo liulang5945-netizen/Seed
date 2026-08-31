@@ -1,0 +1,32 @@
+{
+  "format": "taiji-w7-p2-natural-language-workbench-red-gate-v1",
+  "endpoint": "/api/chat/workbench/stream",
+  "status_code": 422,
+  "detail": [
+    {
+      "type": "missing",
+      "loc": [
+        "body",
+        "intent"
+      ],
+      "msg": "Field required",
+      "input": {
+        "prompt": "请读取 README.md 并告诉我项目如何启动",
+        "history": []
+      }
+    }
+  ],
+  "metrics": {
+    "ordinary_prompt_is_not_silently_executed": true,
+    "request_boundary_identifies_missing_intent": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "before P2 planning is wired, a prose-only Workbench request must be rejected at the explicit ActionIntent boundary rather than selecting a tool"
+  },
+  "gap": {
+    "current": "ChatWorkbenchRequest requires a pre-formed intent",
+    "next": "Taiji-owned TaskInterpretation and Goal evidence before planner selection"
+  },
+  "boundary": "This red Gate proves the current missing capability and intentionally does not claim autonomous planning, IDE execution, provider quality, CUDA, CI, or AGI."
+}

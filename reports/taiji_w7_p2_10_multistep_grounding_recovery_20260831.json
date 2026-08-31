@@ -1,0 +1,94 @@
+{
+  "format": "taiji-w7-p2-10-multistep-grounding-recovery-v1",
+  "task": "Taiji-owned multi-step semantic grounding and checkpoint recovery",
+  "runs": [
+    {
+      "seed": 11,
+      "status": "completed",
+      "step_count": 2,
+      "grounding_sources": [
+        "taiji-semantic-contract",
+        "taiji-semantic-contract"
+      ],
+      "grounding_kinds": [
+        "workspace.read",
+        "workspace.stat"
+      ],
+      "execution_status": "completed",
+      "completed_prefix": 2,
+      "step_successes": [
+        true,
+        true
+      ],
+      "checkpoint_saved": true,
+      "restored_checkpoint_name": "seed:.p2-10-multistep-grounding-11.pt",
+      "workbench_event_count": 8
+    },
+    {
+      "seed": 29,
+      "status": "completed",
+      "step_count": 2,
+      "grounding_sources": [
+        "taiji-semantic-contract",
+        "taiji-semantic-contract"
+      ],
+      "grounding_kinds": [
+        "workspace.read",
+        "workspace.stat"
+      ],
+      "execution_status": "completed",
+      "completed_prefix": 2,
+      "step_successes": [
+        true,
+        true
+      ],
+      "checkpoint_saved": true,
+      "restored_checkpoint_name": "seed:.p2-10-multistep-grounding-29.pt",
+      "workbench_event_count": 8
+    },
+    {
+      "seed": 47,
+      "status": "completed",
+      "step_count": 2,
+      "grounding_sources": [
+        "taiji-semantic-contract",
+        "taiji-semantic-contract"
+      ],
+      "grounding_kinds": [
+        "workspace.read",
+        "workspace.stat"
+      ],
+      "execution_status": "completed",
+      "completed_prefix": 2,
+      "step_successes": [
+        true,
+        true
+      ],
+      "checkpoint_saved": true,
+      "restored_checkpoint_name": "seed:.p2-10-multistep-grounding-47.pt",
+      "workbench_event_count": 8
+    }
+  ],
+  "recovery": {
+    "failure_status": "failed",
+    "failure_completed_prefix": 0,
+    "failure_stopped_at": 0,
+    "checkpoint_saved_after_failure": true,
+    "fresh_recovery_status": "completed",
+    "fresh_recovery_execution": "completed",
+    "fresh_recovery_success": true
+  },
+  "metrics": {
+    "three_independent_seeds": true,
+    "each_semantic_step_is_grounded_by_taiji": true,
+    "multi_step_execution_succeeds": true,
+    "checkpoint_roundtrip_after_multistep": true,
+    "failure_stops_at_first_step": true,
+    "failure_checkpoint_and_fresh_recovery": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "Taiji must independently ground and execute at least two semantic steps without external parameter bindings, checkpoint the sequence, stop at the first failure, and accept a fresh recovered request"
+  },
+  "boundary": "This Gate covers two read-only semantic operations. It does not claim broad language understanding, write/terminal parameter synthesis, real provider quality, CUDA, CI, or open-domain self-evolution."
+}

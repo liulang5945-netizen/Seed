@@ -1,0 +1,18 @@
+{
+  "format": "taiji-w7-p2-task-planner-integration-v1",
+  "metrics": {
+    "resolved_goal_reaches_taiji_planner": true,
+    "confidence_and_resource_state_reach_decision": true,
+    "unresolved_goal_stops_before_action_intent": true,
+    "planning_has_no_workbench_side_effect": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "resolved Taiji Goal evidence is combined with live structured Workbench affordances and resource/confidence state to form a non-executing ActionIntent; unresolved prose stops at clarification"
+  },
+  "gap": {
+    "current": "planner integration is non-executing and requires resolved semantic evidence plus structured bindings",
+    "next": "connect semantic resolution and programming-language evidence, then pass the selected intent through preview/policy"
+  },
+  "boundary": "This Gate does not claim natural-language semantic resolution, IDE execution, provider quality, CUDA, CI, open-domain gains, or AGI."
+}

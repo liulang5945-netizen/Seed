@@ -10,7 +10,7 @@ from scripts.training.eval_taiji_workbench_multi_region_batch import (
     _build_runtime,
     _schedule_requests,
 )
-from taiji import StructuralValidationArtifactStore
+from taiji import ArtifactConsumptionPolicy, StructuralValidationArtifactStore
 from taiji.adapter import _checkpoint_digest
 
 
@@ -36,6 +36,9 @@ def test_runtime_artifact_store_bridge_validates_before_native_mutation() -> Non
     )
     checkpoint_path = store_root.parent / f"s42-bridge-runtime-{os.getpid()}.pt"
     store = StructuralValidationArtifactStore(store_root)
+    legacy_policy = ArtifactConsumptionPolicy.legacy_compatible(
+        reason="historical-s42-bridge-test"
+    )
     try:
         store.put(artifact)
         runtime.save(checkpoint_path)
@@ -48,6 +51,7 @@ def test_runtime_artifact_store_bridge_validates_before_native_mutation() -> Non
                 artifact_store=store,
                 artifact_digests_by_candidate={"candidate:foreign": artifact.artifact_digest},
                 replays_by_candidate={},
+                artifact_consumption_policy=legacy_policy,
             )
         except ValueError as exc:
             assert "outside the selected batch" in str(exc)
@@ -63,6 +67,7 @@ def test_runtime_artifact_store_bridge_validates_before_native_mutation() -> Non
                 artifact_store=store,
                 artifact_digests_by_candidate={candidate_id: "0" * 64},
                 replays_by_candidate={candidate_id: replay},
+                artifact_consumption_policy=legacy_policy,
             )
         except FileNotFoundError:
             pass
@@ -76,12 +81,14 @@ def test_runtime_artifact_store_bridge_validates_before_native_mutation() -> Non
             artifact_store=StructuralValidationArtifactStore(store_root),
             artifact_digests_by_candidate={candidate_id: artifact.artifact_digest},
             replays_by_candidate={candidate_id: replay},
+            artifact_consumption_policy=legacy_policy,
         )
         repeated = restored.continue_structural_candidate_batch_from_artifact_store(
             batch.batch_id,
             artifact_store=store,
             artifact_digests_by_candidate={candidate_id: artifact.artifact_digest},
             replays_by_candidate={candidate_id: replay},
+            artifact_consumption_policy=legacy_policy,
         )
         assert result["results"][candidate_id]["status"] == "admitted"
         assert repeated["results"][candidate_id]["status"] == "already_applied"

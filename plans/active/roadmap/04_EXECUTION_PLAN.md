@@ -1,6 +1,6 @@
-# Seed / Taiji 后续详细开发计划
+# Seed / Taiji W7-R5 实施与证据索引
 
-> 计划基线：2026-08-30。本文件给出后续阶段、依赖和验收，不创建第二个即时入口；当前只执行 [03_CURRENT_EXECUTION.md](03_CURRENT_EXECUTION.md) 指定的一项。已完成的 W0–W7 历史蓝图见 [SEED_W7_EXECUTION_PLAN_SNAPSHOT_20260829.md](../../archive/history/SEED_W7_EXECUTION_PLAN_SNAPSHOT_20260829.md)。
+> 计划基线：2026-08-30；2026-08-31 起仅作为 W7-R5 已完成分片与原始 Gate 的证据索引，不再决定后续阶段。当前只执行 [03_CURRENT_EXECUTION.md](03_CURRENT_EXECUTION.md) 指定的一项，S52 后的阶段顺序见 [62_POST_S51_PROJECT_CONVERGENCE_20260831.md](62_POST_S51_PROJECT_CONVERGENCE_20260831.md)。已完成的 W0–W7 历史蓝图见 [SEED_W7_EXECUTION_PLAN_SNAPSHOT_20260829.md](../../archive/history/SEED_W7_EXECUTION_PLAN_SNAPSHOT_20260829.md)。
 
 ## 1. 收敛后的架构主线
 
@@ -101,14 +101,14 @@ R3/R4 未通过时不得声明相应能力，但它们不再作为 R5 的伪串�
 - 校验、预编译和保存候选与激活分离；候选默认 `proposed`，不因落盘自动可执行。
 - 文本描述只供审计，不供 provider/LLM 选择工具。
 
-当前实现：`CapabilityCandidate` 将 bundle 与 rationale、evidence digests、有限数值 resource budget、evaluation gates 和 metadata 组成独立内容寻址 artifact；`CapabilityRegistry.propose()` 不注册 bundle，`validate_candidate()` 只进入 `validated`，`reject_candidate()` 保留拒绝审计；candidate 与 lifecycle 均进入 checkpoint，嵌套 executable-source 字段 fail-closed。L1 evaluator 已通过，下一步进入 L2 shadow 差异 Gate。
+当前实现：`CapabilityCandidate` 将 bundle 与 rationale、evidence digests、有限数值 resource budget、evaluation gates 和 metadata 组成独立内容寻址 artifact；`CapabilityRegistry.propose()` 不注册 bundle，`validate_candidate()` 只进入 `validated`，`reject_candidate()` 保留拒绝审计；candidate 与 lifecycle 均进入 checkpoint，嵌套 executable-source 字段 fail-closed。L1 evaluator 已通过，L2 shadow 差异 Gate 与 L3 资源/rollback Gate 也已完成。
 
 ### L2：shadow 与审批
 
 - 在相同输入上做影子执行或无副作用模拟；记录结果、after-state、资源和风险差异。
 - 需要真实副作用的能力必须经过产品 policy/用户审批；Taiji 不可绕过。
 
-当前实现：`CapabilityShadowObservation` 以 digest 绑定输入、baseline/candidate 输出、after-state 和资源指标；`evaluate_shadow()` 只解析 registry 中的 shadow bundle，不调用 executor，read-only 等价、policy deny、stale snapshot、side-effect detection 和 side-effect approval 均有独立结果。L2 evaluator 已通过，下一步进入 L3 原子激活和资源回滚。
+当前实现：`CapabilityShadowObservation` 以 digest 绑定输入、baseline/candidate 输出、after-state 和资源指标；`evaluate_shadow()` 只解析 registry 中的 shadow bundle，不调用 executor，read-only 等价、policy deny、stale snapshot、side-effect detection 和 side-effect approval 均有独立结果。L2 evaluator 与 L3 原子激活、资源 reservation、rollback Gate 均已通过。
 
 ### L3：可撤销激活
 
@@ -409,7 +409,7 @@ S37 必须证明：错误输入按候选级/调用级原子边界 fail-closed，
 
 S37 已实现并通过：runtime 侧 stale parent、tamper、跨 batch 输入全部 fail-closed；并发提交同一 artifact 只产生一次真实 admission，另一次幂等返回，预算只扣一次，重启后 provenance 保留。定向测试 `2 passed`，Ruff 通过，真实 Workbench CPU canary `scripts/training/eval_taiji_runtime_structural_artifact_failure_concurrency.py` 报告 `gate.passed=true`。本 slice 不处理 CI/CUDA/前端。
 
-### R5C-S38：多轮 SeedRuntime artifact 生命周期与 retention pressure Gate（下一步）
+### R5C-S38：多轮 SeedRuntime artifact 生命周期与 retention pressure Gate（已完成）
 
 S38 将 S36–S37 的 runtime artifact contract 推进到至少三轮真实 Workbench evidence：每轮必须由新的 task slices 产生独立 batch，经过 measured artifact、重启、成功/失败/rollback 或重复提交，并在小 retention 上限下验证活动 lineage 受到保护、终结子图可被完整淘汰。
 
@@ -417,7 +417,7 @@ S38 必须证明：三轮 batch/artifact lineage 不跨轮串线；malformed/sta
 
 S38 已实现并通过：三轮新的真实 Workbench evidence 创建独立 batch；第一轮活动 reservation 经 save/load 保持，第二轮 measured artifact 顺序准入后双 rollback，第三轮 malformed artifact 只使单候选 fail-closed 并保留 sibling reservation；小上限 retention 仅淘汰第二轮终结 artifact 子图，旧 batch replay 无状态变化，最终 checkpoint 保留 policy/cursor/budget/topology。定向测试 `1 passed`，Ruff 通过，真实 Workbench CPU canary `scripts/training/eval_taiji_runtime_structural_artifact_multi_round.py` 报告 `gate.passed=true`。本 slice 不处理 CI/CUDA/前端。
 
-### R5C-S39：retention 后活动 lineage 继续执行 Gate（下一步）
+### R5C-S39：retention 后活动 lineage 继续执行 Gate（已完成）
 
 S39 验证 retention 后的活动 batch 仍然是可继续的 live lineage：SeedRuntime 从 retention 后的磁盘 checkpoint 恢复，使用当前状态重新生成 measured artifact，完成两个 candidate 的 admission，再执行 rollback 与第二次 checkpoint；不能复用旧 parent digest，也不能复活已淘汰 batch/artifact。
 
@@ -425,7 +425,7 @@ S39 必须证明：受保护 reservation 可在 retention 后继续消费新的 
 
 S39 已实现并通过：retention 后从磁盘恢复活动 batch，使用当前 checkpoint 重新生成 measured artifact，完成两个 candidate 的 admission、rollback 和幂等重复；已删除终结 batch 的旧 artifact 仍 fail-closed，二次 checkpoint 保留活动 batch、policy、cursor、budget 与 topology。定向测试 `1 passed`，Ruff 通过，真实 Workbench CPU canary `scripts/training/eval_taiji_runtime_structural_artifact_post_retention.py` 报告 `gate.passed=true`。本 slice 不处理 CI/CUDA/前端。
 
-### R5C-S40：重复 retention pressure 循环与有界增长 Gate（下一步）
+### R5C-S40：重复 retention pressure 循环与有界增长 Gate（已完成）
 
 S40 将 retention 验证扩展到至少五轮新的 Workbench task slices：保留第一轮活动 reservation，后续四轮依次完成 measured artifact admission、rollback 和 `max_batches=1` terminal-only retention，检查多次压力下活动 lineage、预算、topology、cursor、policy 和 checkpoint projection 不漂移。
 
@@ -433,7 +433,7 @@ S40 必须证明：每次 retention 只淘汰当轮终结 batch，活动 batch �
 
 S40 已实现并通过：在第一轮活动 reservation 持续存在时，后续四轮新的 Workbench task slices 均完成 measured artifact admission、双 rollback 与 `max_batches=1` terminal-only retention；每轮 save/load 通过，终结 batch/artifact 只被当轮淘汰，最终只保留活动 batch，记录与容量快照受 lineage limit 约束，删除 batch 的 artifact replay fail-closed。定向测试 `1 passed`，Ruff 通过，真实 Workbench CPU canary `scripts/training/eval_taiji_runtime_structural_artifact_repeated_retention.py` 报告 `gate.passed=true`。本 slice 不处理 CI/CUDA/前端。
 
-### R5C-S41：外部 measured artifact store 与跨进程交接 Gate（下一步）
+### R5C-S41：外部 measured artifact store 与跨进程交接 Gate（已完成）
 
 S41 将 measured artifact 从调用栈里的 Python 对象提升为不可变 content-addressed JSON：artifact 以自身 digest 命名，能够写入磁盘、从另一运行实例读取并再次进入现有 SeedRuntime batch contract；重复/并发写入幂等，字节碰撞、篡改和非法 digest fail-closed。
 
@@ -441,7 +441,7 @@ S41 必须证明：外部 roundtrip 不改变 artifact/measurement/evidence fact
 
 S41 已实现并通过：measured artifact 由自身 digest 命名为不可变 canonical JSON，重复/初次并发写入幂等，Windows replace 竞态不产生半文件，篡改读取和字节碰撞 fail-closed；外部 store 读取的 payload 经 SeedRuntime checkpoint 后仍按既有 batch contract 完成 admission 与重复幂等。定向测试 `1 passed`，Ruff 通过，真实 Workbench CPU canary `scripts/training/eval_taiji_structural_artifact_store.py` 报告 `gate.passed=true`。本 slice 不处理 CI/CUDA/前端。
 
-### R5C-S42：SeedRuntime artifact store bridge 与原子交接 Gate（下一步）
+### R5C-S42：SeedRuntime artifact store bridge 与原子交接 Gate（已完成）
 
 S42 新增显式 SeedRuntime store bridge：调用方只提供 candidate→artifact digest 引用和 replay，runtime 在任何状态改变前完成 batch-bound key 与 store payload 校验，再一次性复用 native artifact/admission contract。unknown key、非法/缺失/篡改 artifact 或 replay 错配必须 fail-closed 且不留下部分状态。
 
@@ -449,7 +449,7 @@ S42 必须证明：外部 digest 引用在 runtime checkpoint 重启后可 admis
 
 S42 已实现并通过：SeedRuntime 新增显式 artifact store bridge，未知 candidate key 在解析前拒绝，缺失 digest 在 runtime 变更前失败；合法外部 digest 经 checkpoint 重启后完成 admission，重复提交返回 `already_applied` 且预算只扣一次。定向测试 `1 passed`，Ruff 通过，真实 Workbench CPU canary `scripts/training/eval_taiji_runtime_artifact_store_bridge.py` 报告 `gate.passed=true`。本 slice 不处理 CI/CUDA/前端。
 
-### R5C-S43：多 candidate artifact 引用预解析与原子性 Gate（下一步）
+### R5C-S43：多 candidate artifact 引用预解析与原子性 Gate（已完成）
 
 S43 验证 bridge 在多 candidate 引用场景下先完成全部外部 artifact 解析，再进入 native batch contract；任一 artifact 缺失、篡改或非法时，第一个合法 artifact 也不能提前触发 admission。失败后在同一 checkpoint 上提交合法 sibling，必须仍能正常 admission 与幂等重复。
 
@@ -457,7 +457,7 @@ S43 必须证明：多 candidate store resolution 是 all-or-nothing，失败不
 
 S43 已实现并通过：多 candidate artifact digest 引用先全量预解析，第二项缺失时第一项不提前 admission，batch/candidate 状态与 checkpoint digest 原子不变；同一 checkpoint 随后合法提交 admission，重复提交幂等。定向测试 `1 passed`，Ruff 通过，真实 Workbench CPU canary `scripts/training/eval_taiji_runtime_artifact_store_preflight.py` 报告 `gate.passed=true`。本 slice 不处理 CI/CUDA/前端。
 
-### R5C-S44：多 artifact 外部 batch 交接与 parent 顺序 Gate（下一步）
+### R5C-S44：多 artifact 外部 batch 交接与 parent 顺序 Gate（已完成）
 
 S44 验证两个 candidate 的 measured artifact 可以分别从外部 store 交接：第一个 artifact 在重启后 admission，第二个 artifact 必须在第一个 admission 后重新测量并绑定 child parent checkpoint；最终同一 batch complete，批量重复提交只返回既有终态。
 
@@ -465,11 +465,13 @@ S44 必须证明：每个 candidate 只 admission 一次且预算精确扣减；
 
 S44 已实现并通过：两个外部 measured artifact 按 parent 顺序跨三次 checkpoint 完成同一 batch，预算精确扣减、provenance 保留，完整 mapping 重复均为 `already_applied`。定向测试 `1 passed`，Ruff 通过，真实 Workbench CPU canary `scripts/training/eval_taiji_runtime_artifact_store_batch.py` 报告 `gate.passed=true`。本 slice 不处理 CI/CUDA/前端。
 
-### R5C-S45：runtime retention 与外部 artifact store 生命周期分离 Gate（下一步）
+### R5C-S45：runtime retention 与外部 artifact store 生命周期分离 Gate（已完成）
 
 S45 验证 runtime retention 只压缩 batch/candidate/artifact 的 lineage 引用，不直接删除外部 immutable store 文件；store 中保留的旧 artifact 仍不能绕过已删除 batch 重新进入 runtime。自动垃圾回收不在本 slice 内实现。
 
 S45 必须证明：终结 batch 被 retention 移除后，外部 artifact 文件字节、digest 和 measurement facts 保持；从 store 读取旧 artifact 回放已删除 batch 必须 fail-closed 且 checkpoint digest 不变；活动 batch、store artifact、retention audit 的所有权在 checkpoint restore 后一致。Gate 只覆盖 native/CPU 生命周期隔离，不声明自动垃圾回收、无限存储、无限扩张、开放域收益、CUDA、前端、Windows shell、CI 或通用智能。
+
+S45 已实现并通过：runtime retention 仅淘汰终结 lineage，不删除外部 immutable artifact；旧 store artifact 不能复活已删除 batch，活动 batch/store/audit 所有权跨 checkpoint 保持。`eval_taiji_runtime_retention_store_separation.py` 报告 `gate.passed=true`。本 slice 不处理 CI/CUDA/前端。
 
 ### R5C-S46：外部 structural artifact store 只读 inventory / audit Gate（已完成）
 
@@ -479,7 +481,7 @@ S46 必须证明：健康 inventory 与逐项 load 事实一致且跨 checkpoint
 
 S46 已实现并通过：`StructuralValidationArtifactStore.inventory()` / `audit()` 按 digest 稳定返回 artifact 与 measurement 事实摘要，重新验证文件名 digest、artifact digest、canonical bytes 和 measurement digest；runtime retention 后的 orphan 保持可审计但不能回放已删除 batch，篡改和非法文件 fail-closed 且不自动修复。定向测试 `1 passed`，Ruff 通过，`eval_taiji_runtime_retention_store_audit.py` 报告 `gate.passed=true`。本 slice 不处理 CI/CUDA/前端。
 
-### R5C-S47：SeedRuntime 外部 artifact store audit 只读投影 Gate（下一步）
+### R5C-S47：SeedRuntime 外部 artifact store audit 只读投影 Gate（已完成）
 
 S47 将 S46 的外部 store inventory 接入一个显式的 SeedRuntime 只读观察入口。入口只接受已存在的 `StructuralValidationArtifactStore`，返回稳定的 store audit 事实与当前 runtime lineage 可见性对照，不把外部 artifact 注册回 runtime，不触发 retention、replay、budget、candidate/batch 或 checkpoint 变化。
 
@@ -513,17 +515,17 @@ S50 已实现并通过：sidecar-only 与 artifact-only partial state 均 fail-c
 
 ### R5C-S51：verified measurement artifact bridge Gate（已完成）
 
-S51 为 SeedRuntime artifact-store bridge 增加显式 `require_verified_measurements` 严格模式：调用方选择严格模式时，artifact 与 measurement sidecar 必须在 runtime 变更前全部通过 store 独立校验；默认模式继续兼容 legacy artifact-only 文件。多 candidate 解析仍遵循全量预解析和原子 batch contract。
+S51 为 SeedRuntime artifact-store bridge 增加显式 `require_verified_measurements` 严格模式：调用方选择严格模式时，artifact 与 measurement sidecar 必须在 runtime 变更前全部通过 store 独立校验；历史兼容调用仍可消费 legacy artifact-only 文件。该默认边界已由 S52 的显式 policy 取代，多 candidate 解析仍遵循全量预解析和原子 batch contract。
 
-S51 必须证明：verified bundle 严格模式可消费，legacy 默认可消费但严格模式 fail-closed；多 candidate 任一 sidecar 缺失或篡改时不发生部分 admission、预算扣减或 checkpoint 变化；严格模式重复消费保持既有幂等，runtime contract 不新增自动注册或自动升级。Gate 只覆盖 native/CPU verified bridge，不声明默认强制迁移、自动删除、无限扩张、开放域收益、CUDA、前端、Windows shell、CI 或通用智能。
+S51 必须证明：verified bundle 严格模式可消费，legacy 兼容调用可消费但严格模式 fail-closed；多 candidate 任一 sidecar 缺失或篡改时不发生部分 admission、预算扣减或 checkpoint 变化；严格模式重复消费保持既有幂等，runtime contract 不新增自动注册或自动升级。Gate 只覆盖 native/CPU verified bridge，不声明默认强制迁移、自动删除、无限扩张、开放域收益、CUDA、前端、Windows shell、CI 或通用智能。
 
-S51 已实现并通过：`load_verified_artifact()` 独立验证 artifact 与 measurement sidecar，SeedRuntime bridge 增加显式 `require_verified_measurements`；verified bundle strict consumption、legacy 默认兼容/strict 拒绝、multi-candidate strict preflight 原子性均通过。定向测试 `1 passed`，Ruff 通过，`eval_taiji_runtime_verified_measurement_bridge.py` 报告 `gate.passed=true`。本 slice 不处理 CI/CUDA/前端。
+S51 已实现并通过：`load_verified_artifact()` 独立验证 artifact 与 measurement sidecar，SeedRuntime bridge 增加显式 `require_verified_measurements`；verified bundle strict consumption、legacy 兼容调用/strict 拒绝、multi-candidate strict preflight 原子性均通过。其历史报告不代表当前默认策略；当前默认由 S52 policy canary 定义。本 slice 不处理 CI/CUDA/前端。
 
-### R5C-S52：artifact consumption policy 与 verified 默认边界 Gate（下一步）
+### R5C-S52：artifact consumption policy 与 verified 默认边界 Gate（已完成）
 
 S52 将 S51 的布尔开关收敛为显式、内容寻址、可 checkpoint 的 artifact consumption policy：新成长路径推荐 verified-only，历史证据只能由显式 legacy-compatible policy 回放；policy、原因和 artifact status 必须进入只读 audit，不能绕过原有 parent、replay、candidate、batch 或 resource contract。
 
-S52 必须证明：verified-only 接受 verified、拒绝 legacy/missing/tampered；legacy-compatible 只允许明确旧证据且保留原因；policy save/load/replay/rollback 稳定；多 candidate policy resolution all-or-nothing。该 slice 是默认边界决策节点，不在策略明确前改变现有默认兼容行为，不声明自动迁移、自动删除、无限扩张、开放域收益、CUDA、前端、Windows shell、CI 或通用智能。
+S52 已证明：verified-only 接受 verified、拒绝 legacy/missing/tampered；legacy-compatible 只允许明确旧证据且保留原因；policy save/load/rollback 稳定；多 candidate policy resolution all-or-nothing。CPU canary 报告为 [taiji_w7_r5c_s52_artifact_consumption_policy_20260831.json](../../../reports/taiji_w7_r5c_s52_artifact_consumption_policy_20260831.json)，不声明自动迁移、自动删除、无限扩张、开放域收益、CUDA、前端、Windows shell、CI 或通用智能。S52 后唯一后继切换为 P2 的自然语言→Workbench red Gate。
 
 禁止全量从零训练作为默认迭代方式；允许基础模型版本升级时进行受控迁移，但必须保留父 lineage、旧能力回归和可逆转换。
 

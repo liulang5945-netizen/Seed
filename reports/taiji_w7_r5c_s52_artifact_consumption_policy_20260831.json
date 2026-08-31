@@ -1,0 +1,23 @@
+{
+  "format": "taiji-w7-r5c-s52-artifact-consumption-policy-v1",
+  "batch_ids": {
+    "strict": "batch:structural:f8d7283753fea14ef04a2fbb6b3a6a4b",
+    "legacy": "batch:structural:1b4d5e610063db4ca581c9b834aa3d4d",
+    "checkpointed": "batch:structural:9fc315e81b95ac93de486d0efd60313b",
+    "tampered": "batch:structural:2ff300ab4ee8013e6ae3cbbb0f4f30b7",
+    "multi": "batch:structural:9433ed362334e0d0bed9b783cfc9006a"
+  },
+  "metrics": {
+    "fresh_runtime_defaults_verified_only": true,
+    "strict_rejects_legacy_read_only": true,
+    "explicit_legacy_replay_is_audited": true,
+    "policy_checkpoint_roundtrip_is_stable": true,
+    "tampered_sidecar_fails_closed": true,
+    "multi_candidate_resolution_is_atomic": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "new runtimes consume only independently verified artifacts by default; historical replay requires an explicit audited compatibility policy; all policy failures remain atomic before native mutation"
+  },
+  "boundary": "This CPU canary proves policy resolution and artifact preflight boundaries. It does not claim open-domain quality, autonomous Workbench planning, CUDA, frontend behavior, CI completion, or general intelligence."
+}

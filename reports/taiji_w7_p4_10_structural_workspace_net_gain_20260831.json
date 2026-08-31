@@ -1,0 +1,1699 @@
+{
+  "format": "taiji-w7-p4-10-structural-workspace-net-gain-v1",
+  "task": "online structural workspace growth against weight/router/memory controls",
+  "target_tasks": [
+    "future-bec",
+    "future-ade"
+  ],
+  "learner_seeds": [
+    11,
+    29,
+    47
+  ],
+  "structural_mean_score": 1.0,
+  "control_mean_scores": {
+    "interaction_weight_only": 0.0,
+    "router_only": 0.0,
+    "memory_only": 0.0
+  },
+  "training_source": {
+    "example_count": 15,
+    "record_count": 15,
+    "records": [
+      {
+        "family": "ab",
+        "cell": "first",
+        "action_count": 1,
+        "successful_action_count": 1,
+        "score_source": "native Workbench raw action success/status projection",
+        "native_world_event_count": 2
+      },
+      {
+        "family": "ab",
+        "cell": "second",
+        "action_count": 1,
+        "successful_action_count": 1,
+        "score_source": "native Workbench raw action success/status projection",
+        "native_world_event_count": 2
+      },
+      {
+        "family": "ab",
+        "cell": "pair",
+        "action_count": 2,
+        "successful_action_count": 2,
+        "score_source": "native Workbench raw action success/status projection",
+        "native_world_event_count": 3
+      },
+      {
+        "family": "ac",
+        "cell": "first",
+        "action_count": 1,
+        "successful_action_count": 1,
+        "score_source": "native Workbench raw action success/status projection",
+        "native_world_event_count": 2
+      },
+      {
+        "family": "ac",
+        "cell": "second",
+        "action_count": 1,
+        "successful_action_count": 1,
+        "score_source": "native Workbench raw action success/status projection",
+        "native_world_event_count": 2
+      },
+      {
+        "family": "ac",
+        "cell": "pair",
+        "action_count": 2,
+        "successful_action_count": 2,
+        "score_source": "native Workbench raw action success/status projection",
+        "native_world_event_count": 3
+      },
+      {
+        "family": "ad",
+        "cell": "first",
+        "action_count": 1,
+        "successful_action_count": 1,
+        "score_source": "native Workbench raw action success/status projection",
+        "native_world_event_count": 2
+      },
+      {
+        "family": "ad",
+        "cell": "second",
+        "action_count": 1,
+        "successful_action_count": 1,
+        "score_source": "native Workbench raw action success/status projection",
+        "native_world_event_count": 2
+      },
+      {
+        "family": "ad",
+        "cell": "pair",
+        "action_count": 2,
+        "successful_action_count": 2,
+        "score_source": "native Workbench raw action success/status projection",
+        "native_world_event_count": 3
+      },
+      {
+        "family": "cd",
+        "cell": "first",
+        "action_count": 1,
+        "successful_action_count": 1,
+        "score_source": "native Workbench raw action success/status projection",
+        "native_world_event_count": 2
+      },
+      {
+        "family": "cd",
+        "cell": "second",
+        "action_count": 1,
+        "successful_action_count": 1,
+        "score_source": "native Workbench raw action success/status projection",
+        "native_world_event_count": 2
+      },
+      {
+        "family": "cd",
+        "cell": "pair",
+        "action_count": 2,
+        "successful_action_count": 2,
+        "score_source": "native Workbench raw action success/status projection",
+        "native_world_event_count": 3
+      },
+      {
+        "family": "fg",
+        "cell": "first",
+        "action_count": 1,
+        "successful_action_count": 0,
+        "score_source": "native Workbench raw action success/status projection",
+        "native_world_event_count": 2
+      },
+      {
+        "family": "fg",
+        "cell": "second",
+        "action_count": 1,
+        "successful_action_count": 0,
+        "score_source": "native Workbench raw action success/status projection",
+        "native_world_event_count": 2
+      },
+      {
+        "family": "fg",
+        "cell": "pair",
+        "action_count": 2,
+        "successful_action_count": 0,
+        "score_source": "native Workbench raw action success/status projection",
+        "native_world_event_count": 3
+      }
+    ],
+    "score_sources": [
+      "native Workbench raw action success/status projection"
+    ]
+  },
+  "runs": [
+    {
+      "seed": 11,
+      "online_rounds": [
+        {
+          "round": 1,
+          "family": "online-be",
+          "candidate_id": "transfer-group:145339db789015ea7ecd8eaa",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+          "outcome_id": "r2-s2-online-online-be-seed-11:outcome:4:r2-s2-online-online-be-seed-11:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 2,
+          "family": "online-bf",
+          "candidate_id": "transfer-group:b515b1e835c6a4dc6118346f",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "feedback_id": "735fa4be9c18e7987f611e6a4a9dabcc9ab65fa3bd2970a3be41192cf5698481",
+          "outcome_id": "r2-s2-online-online-bf-seed-11:outcome:4:r2-s2-online-online-bf-seed-11:workflow-outcome",
+          "outcome_success": false,
+          "admission_status": "rejected",
+          "admission_reason": "outcome_unsuccessful",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 3,
+          "family": "online-ce",
+          "candidate_id": "transfer-group:61d5583b886b40a97139fe73",
+          "member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+          "outcome_id": "r2-s2-online-online-ce-seed-11:outcome:4:r2-s2-online-online-ce-seed-11:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "online_feedback_ids": [
+        "eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+        "3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b"
+      ],
+      "pressure": {
+        "format": "taiji-interaction-structural-bridge-v1",
+        "revision": 1,
+        "version": 1,
+        "projection": {
+          "format": "taiji-structural-pressure-projection-v1",
+          "network_id": "standalone:adaptive.cortex",
+          "region_id": "adaptive.cortex",
+          "first_tick": 1,
+          "last_tick": 4,
+          "window_digests": [
+            "8ca15bb4920cc0c6a79f31c9914d4ea42a7b1229f4ef675390fc723a58dc8e50",
+            "ef116be55918f68a0fab02da5d58c22793f3a7921299391685c28d1f6734176c",
+            "f46b5cf16cc7fc2996aef666312b61c9be7b8d929f65dba6cd37264d55555bcf",
+            "1f1b9fc1683b1e4fd4ee53c677d23b4cae0b582736ad9069d36f469194b88723"
+          ],
+          "train_task_slice_ids": [
+            "online-interaction:transfer-group:145339db789015ea7ecd8eaa",
+            "online-interaction:transfer-group:61d5583b886b40a97139fe73"
+          ],
+          "holdout_task_slice_ids": [
+            "workbench-holdout:online-workbench-holdout-de-bridge"
+          ],
+          "retention_task_slice_ids": [
+            "workbench-retention:online-workbench-retention-ab-bridge"
+          ],
+          "train_window_count": 2,
+          "holdout_window_count": 1,
+          "retention_window_count": 1,
+          "prediction_observation_count": 2,
+          "mean_prediction_error": 0.3999999999999999,
+          "mean_resource_state": 0.0,
+          "mean_holdout_transfer": 0.8,
+          "evidence_ids": [
+            "online-feedback:eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+            "online-feedback:3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+            "workbench-holdout:outcome:r2-s2-online-holdout-de-bridge-seed-11:outcome:4:r2-s2-online-holdout-de-bridge-seed-11:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-ab-bridge-seed-11:outcome:4:r2-s2-online-retention-ab-bridge-seed-11:workflow-outcome"
+          ],
+          "projection_digest": "dc58c85d1333926772ad72422efb115d3705df7f8a0a622cd997f9fcb12261a0"
+        },
+        "feedback_ids": [
+          "eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+          "3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b"
+        ],
+        "outcome_ids": [
+          "r2-s2-online-online-be-seed-11:outcome:4:r2-s2-online-online-be-seed-11:workflow-outcome",
+          "r2-s2-online-online-ce-seed-11:outcome:4:r2-s2-online-online-ce-seed-11:workflow-outcome"
+        ],
+        "mean_interaction": 0.6000000000000001,
+        "bridge_digest": "409b09a3444168bf09692babcf74a9b6a616626359d7541b2e5e46d91ab267fd"
+      },
+      "candidate": {
+        "format": "taiji-structural-proposal-candidate-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:dc58c85d1333",
+        "network_id": "standalone:adaptive.cortex",
+        "target_kind": "neuron",
+        "operation": "add",
+        "substrate_ids": [
+          "adaptive.cortex"
+        ],
+        "evidence_ids": [
+          "online-feedback:eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+          "online-feedback:3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+          "workbench-holdout:outcome:r2-s2-online-holdout-de-bridge-seed-11:outcome:4:r2-s2-online-holdout-de-bridge-seed-11:workflow-outcome",
+          "workbench-retention:outcome:r2-s2-online-retention-ab-bridge-seed-11:outcome:4:r2-s2-online-retention-ab-bridge-seed-11:workflow-outcome"
+        ],
+        "source_tick": 4,
+        "priority": 0.31999999999999995,
+        "specification": {
+          "region_id": "adaptive.cortex",
+          "unit_id": "u2",
+          "online_bridge_digest": "409b09a3444168bf09692babcf74a9b6a616626359d7541b2e5e46d91ab267fd"
+        },
+        "resource_cost": 1,
+        "depends_on_candidate_ids": [],
+        "conflict_keys": [],
+        "parent_checkpoint_id": "pressure-parent:dc58c85d1333926772ad72422efb115d3705df7f8a0a622cd997f9fcb12261a0:fdb7ef49c49c62d07d3d750031912d9566238a49d39be372901a6e8796d1a4c3"
+      },
+      "arbitration": {
+        "format": "taiji-structural-candidate-batch-v1",
+        "batch_id": "batch:structural:746212d74b2c28470931f501fc48de51",
+        "candidate_ids": [
+          "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:dc58c85d1333"
+        ],
+        "selected_candidate_ids": [
+          "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:dc58c85d1333"
+        ],
+        "deferred_candidate_ids": [],
+        "rejected_candidate_ids": [],
+        "candidate_states": {
+          "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:dc58c85d1333": "reserved"
+        },
+        "reasons": {},
+        "reserved_resource_cost": 1,
+        "reservation_remaining": 1,
+        "structural_budget_before": 1,
+        "available_budget_before": 1,
+        "topology_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "arbitration_digest": "746212d74b2c28470931f501fc48de51da65093ae423c39b83ad97d92d4f2676",
+        "revision": 0,
+        "status": "planned"
+      },
+      "validation": {
+        "format": "taiji-structural-candidate-validation-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:dc58c85d1333",
+        "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+        "status": "validated",
+        "validation_score": 1.0,
+        "parent_checkpoint_digest": "18a3a809bd9f9ccf381d73fa0b41107d49888bd107f49117ab90a187ea60174c",
+        "validation_checkpoint_digest": "c9a12877b0afcf82013d380dfad43dea098069393271bd01f1db5e91bf3775a6",
+        "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "topology_after_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "structural_budget_before": 1,
+        "structural_budget_after": 1,
+        "evidence_ids": [
+          "online-feedback:eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+          "online-feedback:3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+          "workbench-holdout:outcome:r2-s2-online-holdout-de-bridge-seed-11:outcome:4:r2-s2-online-holdout-de-bridge-seed-11:workflow-outcome",
+          "workbench-retention:outcome:r2-s2-online-retention-ab-bridge-seed-11:outcome:4:r2-s2-online-retention-ab-bridge-seed-11:workflow-outcome"
+        ],
+        "error": null
+      },
+      "decision": {
+        "format": "taiji-structural-validation-gate-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:dc58c85d1333",
+        "passed": true,
+        "holdout_gain": 1.0,
+        "retention_regression": 0.02,
+        "lesion_effect": 0.15,
+        "resource_state": 0.8,
+        "resource_cost": 1,
+        "structural_budget": 1,
+        "minimum_holdout_gain": 0.05,
+        "maximum_retention_regression": 0.05,
+        "minimum_lesion_effect": 0.05,
+        "minimum_resource_state": 0.4,
+        "evidence_ids": [
+          "online-feedback:eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+          "online-feedback:3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+          "workbench-holdout:outcome:r2-s2-online-holdout-de-bridge-seed-11:outcome:4:r2-s2-online-holdout-de-bridge-seed-11:workflow-outcome",
+          "workbench-retention:outcome:r2-s2-online-retention-ab-bridge-seed-11:outcome:4:r2-s2-online-retention-ab-bridge-seed-11:workflow-outcome",
+          "online-bridge:409b09a3444168bf09692babcf74a9b6a616626359d7541b2e5e46d91ab267fd"
+        ],
+        "reasons": [],
+        "decision_digest": "529d17662e8e3d6c1093cd3d2a095581908e0c0609eaaffb939e21bc4a81d12a"
+      },
+      "admission": {
+        "format": "taiji-structural-admission-result-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:dc58c85d1333",
+        "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+        "status": "admitted",
+        "decision_digest": "529d17662e8e3d6c1093cd3d2a095581908e0c0609eaaffb939e21bc4a81d12a",
+        "parent_checkpoint_digest": "10a3beb26d2da9a84986e6a6e4b63ab20a2cabc8504ff6c1af42c7f08e13e898",
+        "child_checkpoint_digest": "1fbc9354c9aa90d2562d7a8d5a8c84f874ab478111d10d8f470996424c7b5242",
+        "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "topology_after_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+        "structural_budget_before": 1,
+        "structural_budget_after": 0,
+        "error": null
+      },
+      "structural_runs": [
+        {
+          "task": "future-bec",
+          "method": "structural_growth",
+          "seed": 11,
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "task": "future-ade",
+          "method": "structural_growth",
+          "seed": 11,
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:a4392a0e06e7d823d742cc1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "control_runs": {
+        "interaction_weight_only": [
+          {
+            "task": "future-bec",
+            "method": "interaction_weight_only",
+            "seed": 11,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:4983e0f18c1b0d53b8073d63"
+            ],
+            "required_ids": [
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          },
+          {
+            "task": "future-ade",
+            "method": "interaction_weight_only",
+            "seed": 11,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:a4392a0e06e7d823d742cc1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7"
+            ],
+            "required_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          }
+        ],
+        "router_only": [
+          {
+            "task": "future-bec",
+            "method": "router_only",
+            "seed": 11,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:4983e0f18c1b0d53b8073d63"
+            ],
+            "required_ids": [
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          },
+          {
+            "task": "future-ade",
+            "method": "router_only",
+            "seed": 11,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:a4392a0e06e7d823d742cc1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7"
+            ],
+            "required_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          }
+        ],
+        "memory_only": [
+          {
+            "task": "future-bec",
+            "method": "memory_only",
+            "seed": 11,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:4983e0f18c1b0d53b8073d63"
+            ],
+            "required_ids": [
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          },
+          {
+            "task": "future-ade",
+            "method": "memory_only",
+            "seed": 11,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:a4392a0e06e7d823d742cc1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7"
+            ],
+            "required_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          }
+        ]
+      },
+      "parent_capacity": 2,
+      "grown_capacity": 3,
+      "rollback_capacity": 2,
+      "parent_units": [
+        "u0",
+        "u1"
+      ],
+      "grown_units": [
+        "u0",
+        "u1",
+        "u2"
+      ],
+      "topology_before": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+      "topology_after_admission": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+      "topology_after_rollback": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+      "budget_before": 1,
+      "budget_after_admission": 0,
+      "budget_after_rollback": 1,
+      "rollback_status": "rolled_back",
+      "candidate_checkpoint_roundtrip": true,
+      "workspace_checkpoint_roundtrip": true
+    },
+    {
+      "seed": 29,
+      "online_rounds": [
+        {
+          "round": 1,
+          "family": "online-be",
+          "candidate_id": "transfer-group:145339db789015ea7ecd8eaa",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+          "outcome_id": "r2-s2-online-online-be-seed-29:outcome:4:r2-s2-online-online-be-seed-29:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 2,
+          "family": "online-bf",
+          "candidate_id": "transfer-group:b515b1e835c6a4dc6118346f",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "feedback_id": "35e147e6e1f88134f9e957fcd2eb3237b953b1be9858de2a576014df4a54aa8f",
+          "outcome_id": "r2-s2-online-online-bf-seed-29:outcome:4:r2-s2-online-online-bf-seed-29:workflow-outcome",
+          "outcome_success": false,
+          "admission_status": "rejected",
+          "admission_reason": "outcome_unsuccessful",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 3,
+          "family": "online-ce",
+          "candidate_id": "transfer-group:61d5583b886b40a97139fe73",
+          "member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+          "outcome_id": "r2-s2-online-online-ce-seed-29:outcome:4:r2-s2-online-online-ce-seed-29:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "online_feedback_ids": [
+        "0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+        "0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750"
+      ],
+      "pressure": {
+        "format": "taiji-interaction-structural-bridge-v1",
+        "revision": 1,
+        "version": 1,
+        "projection": {
+          "format": "taiji-structural-pressure-projection-v1",
+          "network_id": "standalone:adaptive.cortex",
+          "region_id": "adaptive.cortex",
+          "first_tick": 1,
+          "last_tick": 4,
+          "window_digests": [
+            "03268a193e16a42c2f9b0eedbdffcee541ec12669e24023e6f5611337a30c8fa",
+            "a8e47e9802391e761cde301a98045cadf29167ca13339c507b08eb8a7f4825e2",
+            "3a0bb5f89bf453f5c231f30dc043454ea081bd85f1ac582d26ed89a84fcf0cf9",
+            "2319678da847f05e900f7a3a4ca79b42c178535e1d728b102e021df033b3e4fa"
+          ],
+          "train_task_slice_ids": [
+            "online-interaction:transfer-group:145339db789015ea7ecd8eaa",
+            "online-interaction:transfer-group:61d5583b886b40a97139fe73"
+          ],
+          "holdout_task_slice_ids": [
+            "workbench-holdout:online-workbench-holdout-de-bridge"
+          ],
+          "retention_task_slice_ids": [
+            "workbench-retention:online-workbench-retention-ab-bridge"
+          ],
+          "train_window_count": 2,
+          "holdout_window_count": 1,
+          "retention_window_count": 1,
+          "prediction_observation_count": 2,
+          "mean_prediction_error": 0.3999999999999999,
+          "mean_resource_state": 0.0,
+          "mean_holdout_transfer": 0.8,
+          "evidence_ids": [
+            "online-feedback:0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+            "online-feedback:0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+            "workbench-holdout:outcome:r2-s2-online-holdout-de-bridge-seed-29:outcome:4:r2-s2-online-holdout-de-bridge-seed-29:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-ab-bridge-seed-29:outcome:4:r2-s2-online-retention-ab-bridge-seed-29:workflow-outcome"
+          ],
+          "projection_digest": "9c7d075893aa17e338e091d65555d32baeb167b70353717038dd6c48859d1d53"
+        },
+        "feedback_ids": [
+          "0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+          "0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750"
+        ],
+        "outcome_ids": [
+          "r2-s2-online-online-be-seed-29:outcome:4:r2-s2-online-online-be-seed-29:workflow-outcome",
+          "r2-s2-online-online-ce-seed-29:outcome:4:r2-s2-online-online-ce-seed-29:workflow-outcome"
+        ],
+        "mean_interaction": 0.6000000000000001,
+        "bridge_digest": "083d39e26d1ed9d2b54590389552cbc86c9d6ae090fbe62bd710eeab89260b0f"
+      },
+      "candidate": {
+        "format": "taiji-structural-proposal-candidate-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:9c7d075893aa",
+        "network_id": "standalone:adaptive.cortex",
+        "target_kind": "neuron",
+        "operation": "add",
+        "substrate_ids": [
+          "adaptive.cortex"
+        ],
+        "evidence_ids": [
+          "online-feedback:0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+          "online-feedback:0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+          "workbench-holdout:outcome:r2-s2-online-holdout-de-bridge-seed-29:outcome:4:r2-s2-online-holdout-de-bridge-seed-29:workflow-outcome",
+          "workbench-retention:outcome:r2-s2-online-retention-ab-bridge-seed-29:outcome:4:r2-s2-online-retention-ab-bridge-seed-29:workflow-outcome"
+        ],
+        "source_tick": 4,
+        "priority": 0.31999999999999995,
+        "specification": {
+          "region_id": "adaptive.cortex",
+          "unit_id": "u2",
+          "online_bridge_digest": "083d39e26d1ed9d2b54590389552cbc86c9d6ae090fbe62bd710eeab89260b0f"
+        },
+        "resource_cost": 1,
+        "depends_on_candidate_ids": [],
+        "conflict_keys": [],
+        "parent_checkpoint_id": "pressure-parent:9c7d075893aa17e338e091d65555d32baeb167b70353717038dd6c48859d1d53:98d8d4d88e14f008c3dedb9b37f58fc79338efecb1438bdfaa71f93f089567d0"
+      },
+      "arbitration": {
+        "format": "taiji-structural-candidate-batch-v1",
+        "batch_id": "batch:structural:281c3c85ff3619ca20b3961564672a84",
+        "candidate_ids": [
+          "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:9c7d075893aa"
+        ],
+        "selected_candidate_ids": [
+          "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:9c7d075893aa"
+        ],
+        "deferred_candidate_ids": [],
+        "rejected_candidate_ids": [],
+        "candidate_states": {
+          "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:9c7d075893aa": "reserved"
+        },
+        "reasons": {},
+        "reserved_resource_cost": 1,
+        "reservation_remaining": 1,
+        "structural_budget_before": 1,
+        "available_budget_before": 1,
+        "topology_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "arbitration_digest": "281c3c85ff3619ca20b3961564672a8449b3e1c8ab384d0640bb6af7070bd128",
+        "revision": 0,
+        "status": "planned"
+      },
+      "validation": {
+        "format": "taiji-structural-candidate-validation-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:9c7d075893aa",
+        "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+        "status": "validated",
+        "validation_score": 1.0,
+        "parent_checkpoint_digest": "bbee25e8b5626103a0652869c4b879a80ef8ff44ec51f809da54b32503fe0b67",
+        "validation_checkpoint_digest": "d74b6862e633ac192eda513aa7ea1b94ed93bda2b3e03cf7a51e483b9c98867f",
+        "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "topology_after_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "structural_budget_before": 1,
+        "structural_budget_after": 1,
+        "evidence_ids": [
+          "online-feedback:0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+          "online-feedback:0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+          "workbench-holdout:outcome:r2-s2-online-holdout-de-bridge-seed-29:outcome:4:r2-s2-online-holdout-de-bridge-seed-29:workflow-outcome",
+          "workbench-retention:outcome:r2-s2-online-retention-ab-bridge-seed-29:outcome:4:r2-s2-online-retention-ab-bridge-seed-29:workflow-outcome"
+        ],
+        "error": null
+      },
+      "decision": {
+        "format": "taiji-structural-validation-gate-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:9c7d075893aa",
+        "passed": true,
+        "holdout_gain": 1.0,
+        "retention_regression": 0.02,
+        "lesion_effect": 0.15,
+        "resource_state": 0.8,
+        "resource_cost": 1,
+        "structural_budget": 1,
+        "minimum_holdout_gain": 0.05,
+        "maximum_retention_regression": 0.05,
+        "minimum_lesion_effect": 0.05,
+        "minimum_resource_state": 0.4,
+        "evidence_ids": [
+          "online-feedback:0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+          "online-feedback:0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+          "workbench-holdout:outcome:r2-s2-online-holdout-de-bridge-seed-29:outcome:4:r2-s2-online-holdout-de-bridge-seed-29:workflow-outcome",
+          "workbench-retention:outcome:r2-s2-online-retention-ab-bridge-seed-29:outcome:4:r2-s2-online-retention-ab-bridge-seed-29:workflow-outcome",
+          "online-bridge:083d39e26d1ed9d2b54590389552cbc86c9d6ae090fbe62bd710eeab89260b0f"
+        ],
+        "reasons": [],
+        "decision_digest": "19bae5c2ed943619e58af08d304f02fdb15fda0fc8b20361603f6e2e354f1225"
+      },
+      "admission": {
+        "format": "taiji-structural-admission-result-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:9c7d075893aa",
+        "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+        "status": "admitted",
+        "decision_digest": "19bae5c2ed943619e58af08d304f02fdb15fda0fc8b20361603f6e2e354f1225",
+        "parent_checkpoint_digest": "c9fe2139fbd8f0fbdc78ee23984dd7df11e3bc96a3a8b361b83894babb3f12c7",
+        "child_checkpoint_digest": "f69d84feeecd80c5750714084eb50ad729944809b5f87ed37013d68e99b8516f",
+        "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "topology_after_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+        "structural_budget_before": 1,
+        "structural_budget_after": 0,
+        "error": null
+      },
+      "structural_runs": [
+        {
+          "task": "future-bec",
+          "method": "structural_growth",
+          "seed": 29,
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "task": "future-ade",
+          "method": "structural_growth",
+          "seed": 29,
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:a4392a0e06e7d823d742cc1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "control_runs": {
+        "interaction_weight_only": [
+          {
+            "task": "future-bec",
+            "method": "interaction_weight_only",
+            "seed": 29,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:4983e0f18c1b0d53b8073d63"
+            ],
+            "required_ids": [
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          },
+          {
+            "task": "future-ade",
+            "method": "interaction_weight_only",
+            "seed": 29,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:a4392a0e06e7d823d742cc1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7"
+            ],
+            "required_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          }
+        ],
+        "router_only": [
+          {
+            "task": "future-bec",
+            "method": "router_only",
+            "seed": 29,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:4983e0f18c1b0d53b8073d63"
+            ],
+            "required_ids": [
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          },
+          {
+            "task": "future-ade",
+            "method": "router_only",
+            "seed": 29,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:a4392a0e06e7d823d742cc1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7"
+            ],
+            "required_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          }
+        ],
+        "memory_only": [
+          {
+            "task": "future-bec",
+            "method": "memory_only",
+            "seed": 29,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:4983e0f18c1b0d53b8073d63"
+            ],
+            "required_ids": [
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          },
+          {
+            "task": "future-ade",
+            "method": "memory_only",
+            "seed": 29,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:a4392a0e06e7d823d742cc1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7"
+            ],
+            "required_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          }
+        ]
+      },
+      "parent_capacity": 2,
+      "grown_capacity": 3,
+      "rollback_capacity": 2,
+      "parent_units": [
+        "u0",
+        "u1"
+      ],
+      "grown_units": [
+        "u0",
+        "u1",
+        "u2"
+      ],
+      "topology_before": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+      "topology_after_admission": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+      "topology_after_rollback": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+      "budget_before": 1,
+      "budget_after_admission": 0,
+      "budget_after_rollback": 1,
+      "rollback_status": "rolled_back",
+      "candidate_checkpoint_roundtrip": true,
+      "workspace_checkpoint_roundtrip": true
+    },
+    {
+      "seed": 47,
+      "online_rounds": [
+        {
+          "round": 1,
+          "family": "online-be",
+          "candidate_id": "transfer-group:145339db789015ea7ecd8eaa",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+          "outcome_id": "r2-s2-online-online-be-seed-47:outcome:4:r2-s2-online-online-be-seed-47:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 2,
+          "family": "online-bf",
+          "candidate_id": "transfer-group:b515b1e835c6a4dc6118346f",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "feedback_id": "760bbfbbbf2a6c43eb4a47ccd4972927755db95a111bc3240911723b1d7c253b",
+          "outcome_id": "r2-s2-online-online-bf-seed-47:outcome:4:r2-s2-online-online-bf-seed-47:workflow-outcome",
+          "outcome_success": false,
+          "admission_status": "rejected",
+          "admission_reason": "outcome_unsuccessful",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 3,
+          "family": "online-ce",
+          "candidate_id": "transfer-group:61d5583b886b40a97139fe73",
+          "member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+          "outcome_id": "r2-s2-online-online-ce-seed-47:outcome:4:r2-s2-online-online-ce-seed-47:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "online_feedback_ids": [
+        "740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+        "e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c"
+      ],
+      "pressure": {
+        "format": "taiji-interaction-structural-bridge-v1",
+        "revision": 1,
+        "version": 1,
+        "projection": {
+          "format": "taiji-structural-pressure-projection-v1",
+          "network_id": "standalone:adaptive.cortex",
+          "region_id": "adaptive.cortex",
+          "first_tick": 1,
+          "last_tick": 4,
+          "window_digests": [
+            "68723c5419f26e016853b6e9f64a9278d943e33d6d6bcbdbb1414088f995c564",
+            "ff09f904d5327f969f3105fd59e10ea82a71a7f246e799bea41b86a02136af56",
+            "40081c83851d453b587943a04e78755dd46f33cbbbdaec40b80288ab5d07b909",
+            "a4137db0e309f2481c4614aaf341d3c24d6fa503aeff334abb46602ae954d7b3"
+          ],
+          "train_task_slice_ids": [
+            "online-interaction:transfer-group:145339db789015ea7ecd8eaa",
+            "online-interaction:transfer-group:61d5583b886b40a97139fe73"
+          ],
+          "holdout_task_slice_ids": [
+            "workbench-holdout:online-workbench-holdout-de-bridge"
+          ],
+          "retention_task_slice_ids": [
+            "workbench-retention:online-workbench-retention-ab-bridge"
+          ],
+          "train_window_count": 2,
+          "holdout_window_count": 1,
+          "retention_window_count": 1,
+          "prediction_observation_count": 2,
+          "mean_prediction_error": 0.3999999999999999,
+          "mean_resource_state": 0.0,
+          "mean_holdout_transfer": 0.8,
+          "evidence_ids": [
+            "online-feedback:740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+            "online-feedback:e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+            "workbench-holdout:outcome:r2-s2-online-holdout-de-bridge-seed-47:outcome:4:r2-s2-online-holdout-de-bridge-seed-47:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-ab-bridge-seed-47:outcome:4:r2-s2-online-retention-ab-bridge-seed-47:workflow-outcome"
+          ],
+          "projection_digest": "f4b116d19304dc94636e54fd7bbeeae46a354a302133103585b46f5fefffc637"
+        },
+        "feedback_ids": [
+          "740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+          "e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c"
+        ],
+        "outcome_ids": [
+          "r2-s2-online-online-be-seed-47:outcome:4:r2-s2-online-online-be-seed-47:workflow-outcome",
+          "r2-s2-online-online-ce-seed-47:outcome:4:r2-s2-online-online-ce-seed-47:workflow-outcome"
+        ],
+        "mean_interaction": 0.6000000000000001,
+        "bridge_digest": "173152aecabe564f8c0c87b15132e1ef01979a08e2436123ea30414e7ef1576a"
+      },
+      "candidate": {
+        "format": "taiji-structural-proposal-candidate-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f4b116d19304",
+        "network_id": "standalone:adaptive.cortex",
+        "target_kind": "neuron",
+        "operation": "add",
+        "substrate_ids": [
+          "adaptive.cortex"
+        ],
+        "evidence_ids": [
+          "online-feedback:740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+          "online-feedback:e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+          "workbench-holdout:outcome:r2-s2-online-holdout-de-bridge-seed-47:outcome:4:r2-s2-online-holdout-de-bridge-seed-47:workflow-outcome",
+          "workbench-retention:outcome:r2-s2-online-retention-ab-bridge-seed-47:outcome:4:r2-s2-online-retention-ab-bridge-seed-47:workflow-outcome"
+        ],
+        "source_tick": 4,
+        "priority": 0.31999999999999995,
+        "specification": {
+          "region_id": "adaptive.cortex",
+          "unit_id": "u2",
+          "online_bridge_digest": "173152aecabe564f8c0c87b15132e1ef01979a08e2436123ea30414e7ef1576a"
+        },
+        "resource_cost": 1,
+        "depends_on_candidate_ids": [],
+        "conflict_keys": [],
+        "parent_checkpoint_id": "pressure-parent:f4b116d19304dc94636e54fd7bbeeae46a354a302133103585b46f5fefffc637:456ebcafcf0ad162b866f627dc86ad758891e3146004f6246c0a344118b4dc5b"
+      },
+      "arbitration": {
+        "format": "taiji-structural-candidate-batch-v1",
+        "batch_id": "batch:structural:11e4b59d1c633ec65a9c9f782e174781",
+        "candidate_ids": [
+          "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f4b116d19304"
+        ],
+        "selected_candidate_ids": [
+          "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f4b116d19304"
+        ],
+        "deferred_candidate_ids": [],
+        "rejected_candidate_ids": [],
+        "candidate_states": {
+          "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f4b116d19304": "reserved"
+        },
+        "reasons": {},
+        "reserved_resource_cost": 1,
+        "reservation_remaining": 1,
+        "structural_budget_before": 1,
+        "available_budget_before": 1,
+        "topology_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "arbitration_digest": "11e4b59d1c633ec65a9c9f782e174781ab01813383221761476d9259502438f2",
+        "revision": 0,
+        "status": "planned"
+      },
+      "validation": {
+        "format": "taiji-structural-candidate-validation-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f4b116d19304",
+        "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+        "status": "validated",
+        "validation_score": 1.0,
+        "parent_checkpoint_digest": "fc6169b06606efa4eb363466862278d1b41298b74cb8e85b8f69dac4664ab6ba",
+        "validation_checkpoint_digest": "c9a0da34652e86a8713d15a2170db8a4639ddae5711fcabba447ea261bd1e2d5",
+        "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "topology_after_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "structural_budget_before": 1,
+        "structural_budget_after": 1,
+        "evidence_ids": [
+          "online-feedback:740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+          "online-feedback:e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+          "workbench-holdout:outcome:r2-s2-online-holdout-de-bridge-seed-47:outcome:4:r2-s2-online-holdout-de-bridge-seed-47:workflow-outcome",
+          "workbench-retention:outcome:r2-s2-online-retention-ab-bridge-seed-47:outcome:4:r2-s2-online-retention-ab-bridge-seed-47:workflow-outcome"
+        ],
+        "error": null
+      },
+      "decision": {
+        "format": "taiji-structural-validation-gate-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f4b116d19304",
+        "passed": true,
+        "holdout_gain": 1.0,
+        "retention_regression": 0.02,
+        "lesion_effect": 0.15,
+        "resource_state": 0.8,
+        "resource_cost": 1,
+        "structural_budget": 1,
+        "minimum_holdout_gain": 0.05,
+        "maximum_retention_regression": 0.05,
+        "minimum_lesion_effect": 0.05,
+        "minimum_resource_state": 0.4,
+        "evidence_ids": [
+          "online-feedback:740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+          "online-feedback:e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+          "workbench-holdout:outcome:r2-s2-online-holdout-de-bridge-seed-47:outcome:4:r2-s2-online-holdout-de-bridge-seed-47:workflow-outcome",
+          "workbench-retention:outcome:r2-s2-online-retention-ab-bridge-seed-47:outcome:4:r2-s2-online-retention-ab-bridge-seed-47:workflow-outcome",
+          "online-bridge:173152aecabe564f8c0c87b15132e1ef01979a08e2436123ea30414e7ef1576a"
+        ],
+        "reasons": [],
+        "decision_digest": "267534af8d8c8444fbff08c96c40994be63d6023e6a3f8c6a88a4f047a44095f"
+      },
+      "admission": {
+        "format": "taiji-structural-admission-result-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f4b116d19304",
+        "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+        "status": "admitted",
+        "decision_digest": "267534af8d8c8444fbff08c96c40994be63d6023e6a3f8c6a88a4f047a44095f",
+        "parent_checkpoint_digest": "384254722cadb7d85366d09b6e519db097b97464e309e8ba0a6f71c999c6f2f8",
+        "child_checkpoint_digest": "61d5982f2cc7e5aaf4f985bfdc9be013d7a1c777c9aad43b85dd530370c0d833",
+        "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "topology_after_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+        "structural_budget_before": 1,
+        "structural_budget_after": 0,
+        "error": null
+      },
+      "structural_runs": [
+        {
+          "task": "future-bec",
+          "method": "structural_growth",
+          "seed": 47,
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "task": "future-ade",
+          "method": "structural_growth",
+          "seed": 47,
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:a4392a0e06e7d823d742cc1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "control_runs": {
+        "interaction_weight_only": [
+          {
+            "task": "future-bec",
+            "method": "interaction_weight_only",
+            "seed": 47,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:4983e0f18c1b0d53b8073d63"
+            ],
+            "required_ids": [
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          },
+          {
+            "task": "future-ade",
+            "method": "interaction_weight_only",
+            "seed": 47,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:a4392a0e06e7d823d742cc1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7"
+            ],
+            "required_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          }
+        ],
+        "router_only": [
+          {
+            "task": "future-bec",
+            "method": "router_only",
+            "seed": 47,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:4983e0f18c1b0d53b8073d63"
+            ],
+            "required_ids": [
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          },
+          {
+            "task": "future-ade",
+            "method": "router_only",
+            "seed": 47,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:a4392a0e06e7d823d742cc1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7"
+            ],
+            "required_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          }
+        ],
+        "memory_only": [
+          {
+            "task": "future-bec",
+            "method": "memory_only",
+            "seed": 47,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:33bf6bd14f843e6f0a77fea3",
+              "workbench-owner:4983e0f18c1b0d53b8073d63"
+            ],
+            "required_ids": [
+              "workbench-owner:4983e0f18c1b0d53b8073d63",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:33bf6bd14f843e6f0a77fea3"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          },
+          {
+            "task": "future-ade",
+            "method": "memory_only",
+            "seed": 47,
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e",
+              "workbench-owner:a4392a0e06e7d823d742cc1c"
+            ],
+            "selected_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7"
+            ],
+            "required_ids": [
+              "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+              "workbench-owner:b7c2ca901da88a98aa7b47a7",
+              "workbench-owner:e7ce303c7ef3dc0096150f6e"
+            ],
+            "selected_action_count": 2,
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench raw action success/status plus required-set completion",
+            "native_world_event_count": 3,
+            "native_checkpoint_replay": true
+          }
+        ]
+      },
+      "parent_capacity": 2,
+      "grown_capacity": 3,
+      "rollback_capacity": 2,
+      "parent_units": [
+        "u0",
+        "u1"
+      ],
+      "grown_units": [
+        "u0",
+        "u1",
+        "u2"
+      ],
+      "topology_before": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+      "topology_after_admission": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+      "topology_after_rollback": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+      "budget_before": 1,
+      "budget_after_admission": 0,
+      "budget_after_rollback": 1,
+      "rollback_status": "rolled_back",
+      "candidate_checkpoint_roundtrip": true,
+      "workspace_checkpoint_roundtrip": true
+    }
+  ],
+  "metrics": {
+    "three_independent_seeds": true,
+    "two_independent_unseen_workbench_contexts": true,
+    "actual_workbench_status_projection": true,
+    "structural_growth_completes_unseen_tasks": true,
+    "structural_growth_beats_weight_router_memory_controls": true,
+    "controls_remain_capacity_bound": true,
+    "online_contexts_are_required": true,
+    "failed_online_outcome_excluded": true,
+    "capacity_follows_topology": true,
+    "candidate_checkpoint_roundtrip": true,
+    "workspace_checkpoint_roundtrip": true,
+    "admission_changes_topology_and_spends_budget": true,
+    "rollback_restores_topology_and_budget": true,
+    "lesion_removes_structural_capacity": true,
+    "training_uses_native_workbench_records": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "an online-evidence-backed neuron admission must expand live workspace capacity, complete two unseen three-action Workbench tasks, beat controls that only change interaction weights/router/memory while capacity remains fixed, and preserve checkpoint, resource, lesion, and topology rollback boundaries"
+  },
+  "boundary": "This is a bounded structural-capacity Gate. It does not claim unrestricted autonomous architecture design, AGI, full language understanding, or CUDA acceleration."
+}

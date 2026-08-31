@@ -1,0 +1,72 @@
+{
+  "format": "taiji-w7-p4-3-workbench-longitudinal-gain-v1",
+  "task": "real Workbench complementary interaction-group longitudinal gain",
+  "controls": [
+    "strongest_single",
+    "dense_average",
+    "random_single_expectation",
+    "conflicting_group_negative_control"
+  ],
+  "train_complementary": {
+    "single_first_reward": 0.25,
+    "single_second_reward": 0.25,
+    "grouped_pair_reward": 1.0,
+    "strongest_single_reward": 0.25,
+    "dense_average_reward": 0.25,
+    "random_single_expectation_reward": 0.25,
+    "grouped_gain_vs_strongest_single": 0.75,
+    "grouped_gain_vs_dense_average": 0.75,
+    "grouped_gain_vs_random_expectation": 0.75
+  },
+  "holdout_complementary": {
+    "single_first_reward": 0.3,
+    "single_second_reward": 0.3,
+    "grouped_pair_reward": 1.05,
+    "strongest_single_reward": 0.3,
+    "dense_average_reward": 0.3,
+    "random_single_expectation_reward": 0.3,
+    "grouped_gain_vs_strongest_single": 0.75,
+    "grouped_gain_vs_dense_average": 0.75,
+    "grouped_gain_vs_random_expectation": 0.75
+  },
+  "train_conflicting_negative_control": {
+    "single_first_reward": 0.5,
+    "single_second_reward": -0.5,
+    "grouped_pair_reward": -1.0,
+    "strongest_single_reward": 0.5,
+    "dense_average_reward": 0.0,
+    "random_single_expectation_reward": 0.0,
+    "grouped_gain_vs_strongest_single": -1.5,
+    "grouped_gain_vs_dense_average": -1.0,
+    "grouped_gain_vs_random_expectation": -1.0
+  },
+  "source": {
+    "workbench_contract": "seed-workbench-contract-v1",
+    "train_episode_count": 8,
+    "holdout_episode_count": 8,
+    "semantic_role_labels": 0,
+    "source_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b",
+    "holdout_trace_digest": "e020a16d8c1dcec80fbeb0f84016690f816646c4a749bcbf06138faeb2202966"
+  },
+  "metrics": {
+    "real_workbench_factorial_cells": true,
+    "train_group_gain_beats_strongest_single": true,
+    "train_group_gain_beats_dense_average": true,
+    "train_group_gain_beats_random_expectation": true,
+    "holdout_group_gain_beats_strongest_single": true,
+    "holdout_group_gain_beats_dense_average": true,
+    "holdout_direction_preserved": true,
+    "conflicting_group_is_negative_control": true,
+    "old_workbench_capability_retained": true,
+    "checkpoint_replay_preserved": true,
+    "recovery_trace_preserved": true,
+    "lesion_effect_preserved": true,
+    "resource_bound_preserved": true,
+    "no_policy_tool_or_provider_mutation": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "on real Workbench factorial tasks, an admitted complementary group must beat the strongest single, dense average, and random single expectation on train and holdout; a conflicting group must remain a negative control, while old capabilities, resources, lesion causality, recovery, and checkpoint replay hold"
+  },
+  "boundary": "This gate proves bounded causal gain for the registered Workbench task family. It does not claim open-domain transfer, unrestricted self-evolution, provider quality, CUDA advantage, or general intelligence."
+}

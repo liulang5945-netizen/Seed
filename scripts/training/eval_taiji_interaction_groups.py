@@ -535,6 +535,7 @@ def _run_workbench_episode(
             "workbench_outcome": {
                 "workflow_reward": reward,
                 "provenance": workflow_outcome.provenance,
+                "outcome": workflow_outcome.to_payload(),
                 "raw_actions": execution_records,
                 "recovery": recovery_record,
             },

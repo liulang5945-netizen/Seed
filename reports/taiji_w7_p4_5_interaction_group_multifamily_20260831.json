@@ -1,0 +1,481 @@
+{
+  "format": "taiji-w7-p4-5-interaction-group-multifamily-v1",
+  "task": "leave-one-family-out train-only interaction-group transfer on real Workbench",
+  "families": [
+    "complementary-alpha",
+    "complementary-beta",
+    "complementary-gamma",
+    "conflicting-delta"
+  ],
+  "held_out_families": [
+    "complementary-alpha",
+    "complementary-beta",
+    "complementary-gamma"
+  ],
+  "learner_seeds": [
+    11,
+    29,
+    47
+  ],
+  "selected_group_members": [
+    "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+    "workbench-owner:4983e0f18c1b0d53b8073d63"
+  ],
+  "runs": [
+    {
+      "held_out_family": "complementary-alpha",
+      "seed": 11,
+      "selected": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "group:cd7be9c972712a0ed9dfdfd0",
+        "member_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "source_trace_digest": "c2370efd5ad240b10f2644b64e51f0c5283eff60cf6b1896aaaeab7631d6e0ca",
+        "checkpoint_revision": 1,
+        "utility": 0.5,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "checkpoint_selection": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "group:cd7be9c972712a0ed9dfdfd0",
+        "member_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "source_trace_digest": "c2370efd5ad240b10f2644b64e51f0c5283eff60cf6b1896aaaeab7631d6e0ca",
+        "checkpoint_revision": 1,
+        "utility": 0.5,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "resource_limited_selection": null,
+      "train_trace_digest": "c2370efd5ad240b10f2644b64e51f0c5283eff60cf6b1896aaaeab7631d6e0ca",
+      "candidate_count": 2,
+      "holdout_gain": {
+        "single_first_reward": 0.3,
+        "single_second_reward": 0.3,
+        "grouped_pair_reward": 1.05,
+        "strongest_single_reward": 0.3,
+        "dense_average_reward": 0.3,
+        "random_single_expectation_reward": 0.3,
+        "grouped_gain_vs_strongest_single": 0.75,
+        "grouped_gain_vs_dense_average": 0.75,
+        "grouped_gain_vs_random_expectation": 0.75
+      },
+      "holdout_outcome_cannot_change_selection": true
+    },
+    {
+      "held_out_family": "complementary-alpha",
+      "seed": 29,
+      "selected": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "group:cd7be9c972712a0ed9dfdfd0",
+        "member_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "source_trace_digest": "c2370efd5ad240b10f2644b64e51f0c5283eff60cf6b1896aaaeab7631d6e0ca",
+        "checkpoint_revision": 1,
+        "utility": 0.5,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "checkpoint_selection": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "group:cd7be9c972712a0ed9dfdfd0",
+        "member_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "source_trace_digest": "c2370efd5ad240b10f2644b64e51f0c5283eff60cf6b1896aaaeab7631d6e0ca",
+        "checkpoint_revision": 1,
+        "utility": 0.5,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "resource_limited_selection": null,
+      "train_trace_digest": "c2370efd5ad240b10f2644b64e51f0c5283eff60cf6b1896aaaeab7631d6e0ca",
+      "candidate_count": 2,
+      "holdout_gain": {
+        "single_first_reward": 0.3,
+        "single_second_reward": 0.3,
+        "grouped_pair_reward": 1.05,
+        "strongest_single_reward": 0.3,
+        "dense_average_reward": 0.3,
+        "random_single_expectation_reward": 0.3,
+        "grouped_gain_vs_strongest_single": 0.75,
+        "grouped_gain_vs_dense_average": 0.75,
+        "grouped_gain_vs_random_expectation": 0.75
+      },
+      "holdout_outcome_cannot_change_selection": true
+    },
+    {
+      "held_out_family": "complementary-alpha",
+      "seed": 47,
+      "selected": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "group:cd7be9c972712a0ed9dfdfd0",
+        "member_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "source_trace_digest": "c2370efd5ad240b10f2644b64e51f0c5283eff60cf6b1896aaaeab7631d6e0ca",
+        "checkpoint_revision": 1,
+        "utility": 0.5,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "checkpoint_selection": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "group:cd7be9c972712a0ed9dfdfd0",
+        "member_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "source_trace_digest": "c2370efd5ad240b10f2644b64e51f0c5283eff60cf6b1896aaaeab7631d6e0ca",
+        "checkpoint_revision": 1,
+        "utility": 0.5,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "resource_limited_selection": null,
+      "train_trace_digest": "c2370efd5ad240b10f2644b64e51f0c5283eff60cf6b1896aaaeab7631d6e0ca",
+      "candidate_count": 2,
+      "holdout_gain": {
+        "single_first_reward": 0.3,
+        "single_second_reward": 0.3,
+        "grouped_pair_reward": 1.05,
+        "strongest_single_reward": 0.3,
+        "dense_average_reward": 0.3,
+        "random_single_expectation_reward": 0.3,
+        "grouped_gain_vs_strongest_single": 0.75,
+        "grouped_gain_vs_dense_average": 0.75,
+        "grouped_gain_vs_random_expectation": 0.75
+      },
+      "holdout_outcome_cannot_change_selection": true
+    },
+    {
+      "held_out_family": "complementary-beta",
+      "seed": 11,
+      "selected": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "group:a48f8b310d792232397a4ffd",
+        "member_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "source_trace_digest": "6a0a27466b9281ca2fdd2b3d1588d392c85aafb85cc00556341ac89e876e953f",
+        "checkpoint_revision": 1,
+        "utility": 0.5,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "checkpoint_selection": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "group:a48f8b310d792232397a4ffd",
+        "member_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "source_trace_digest": "6a0a27466b9281ca2fdd2b3d1588d392c85aafb85cc00556341ac89e876e953f",
+        "checkpoint_revision": 1,
+        "utility": 0.5,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "resource_limited_selection": null,
+      "train_trace_digest": "6a0a27466b9281ca2fdd2b3d1588d392c85aafb85cc00556341ac89e876e953f",
+      "candidate_count": 2,
+      "holdout_gain": {
+        "single_first_reward": 0.3,
+        "single_second_reward": 0.3,
+        "grouped_pair_reward": 1.05,
+        "strongest_single_reward": 0.3,
+        "dense_average_reward": 0.3,
+        "random_single_expectation_reward": 0.3,
+        "grouped_gain_vs_strongest_single": 0.75,
+        "grouped_gain_vs_dense_average": 0.75,
+        "grouped_gain_vs_random_expectation": 0.75
+      },
+      "holdout_outcome_cannot_change_selection": true
+    },
+    {
+      "held_out_family": "complementary-beta",
+      "seed": 29,
+      "selected": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "group:a48f8b310d792232397a4ffd",
+        "member_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "source_trace_digest": "6a0a27466b9281ca2fdd2b3d1588d392c85aafb85cc00556341ac89e876e953f",
+        "checkpoint_revision": 1,
+        "utility": 0.5,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "checkpoint_selection": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "group:a48f8b310d792232397a4ffd",
+        "member_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "source_trace_digest": "6a0a27466b9281ca2fdd2b3d1588d392c85aafb85cc00556341ac89e876e953f",
+        "checkpoint_revision": 1,
+        "utility": 0.5,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "resource_limited_selection": null,
+      "train_trace_digest": "6a0a27466b9281ca2fdd2b3d1588d392c85aafb85cc00556341ac89e876e953f",
+      "candidate_count": 2,
+      "holdout_gain": {
+        "single_first_reward": 0.3,
+        "single_second_reward": 0.3,
+        "grouped_pair_reward": 1.05,
+        "strongest_single_reward": 0.3,
+        "dense_average_reward": 0.3,
+        "random_single_expectation_reward": 0.3,
+        "grouped_gain_vs_strongest_single": 0.75,
+        "grouped_gain_vs_dense_average": 0.75,
+        "grouped_gain_vs_random_expectation": 0.75
+      },
+      "holdout_outcome_cannot_change_selection": true
+    },
+    {
+      "held_out_family": "complementary-beta",
+      "seed": 47,
+      "selected": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "group:a48f8b310d792232397a4ffd",
+        "member_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "source_trace_digest": "6a0a27466b9281ca2fdd2b3d1588d392c85aafb85cc00556341ac89e876e953f",
+        "checkpoint_revision": 1,
+        "utility": 0.5,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "checkpoint_selection": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "group:a48f8b310d792232397a4ffd",
+        "member_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "source_trace_digest": "6a0a27466b9281ca2fdd2b3d1588d392c85aafb85cc00556341ac89e876e953f",
+        "checkpoint_revision": 1,
+        "utility": 0.5,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "resource_limited_selection": null,
+      "train_trace_digest": "6a0a27466b9281ca2fdd2b3d1588d392c85aafb85cc00556341ac89e876e953f",
+      "candidate_count": 2,
+      "holdout_gain": {
+        "single_first_reward": 0.3,
+        "single_second_reward": 0.3,
+        "grouped_pair_reward": 1.05,
+        "strongest_single_reward": 0.3,
+        "dense_average_reward": 0.3,
+        "random_single_expectation_reward": 0.3,
+        "grouped_gain_vs_strongest_single": 0.75,
+        "grouped_gain_vs_dense_average": 0.75,
+        "grouped_gain_vs_random_expectation": 0.75
+      },
+      "holdout_outcome_cannot_change_selection": true
+    },
+    {
+      "held_out_family": "complementary-gamma",
+      "seed": 11,
+      "selected": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "group:aa4f636e905baa817dcd9be8",
+        "member_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "source_trace_digest": "98f3c14f2de1d7434718712efb12505d9a5abd561767ca2bf85ed21b23201244",
+        "checkpoint_revision": 1,
+        "utility": 0.5,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "checkpoint_selection": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "group:aa4f636e905baa817dcd9be8",
+        "member_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "source_trace_digest": "98f3c14f2de1d7434718712efb12505d9a5abd561767ca2bf85ed21b23201244",
+        "checkpoint_revision": 1,
+        "utility": 0.5,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "resource_limited_selection": null,
+      "train_trace_digest": "98f3c14f2de1d7434718712efb12505d9a5abd561767ca2bf85ed21b23201244",
+      "candidate_count": 2,
+      "holdout_gain": {
+        "single_first_reward": 0.3,
+        "single_second_reward": 0.3,
+        "grouped_pair_reward": 1.05,
+        "strongest_single_reward": 0.3,
+        "dense_average_reward": 0.3,
+        "random_single_expectation_reward": 0.3,
+        "grouped_gain_vs_strongest_single": 0.75,
+        "grouped_gain_vs_dense_average": 0.75,
+        "grouped_gain_vs_random_expectation": 0.75
+      },
+      "holdout_outcome_cannot_change_selection": true
+    },
+    {
+      "held_out_family": "complementary-gamma",
+      "seed": 29,
+      "selected": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "group:aa4f636e905baa817dcd9be8",
+        "member_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "source_trace_digest": "98f3c14f2de1d7434718712efb12505d9a5abd561767ca2bf85ed21b23201244",
+        "checkpoint_revision": 1,
+        "utility": 0.5,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "checkpoint_selection": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "group:aa4f636e905baa817dcd9be8",
+        "member_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "source_trace_digest": "98f3c14f2de1d7434718712efb12505d9a5abd561767ca2bf85ed21b23201244",
+        "checkpoint_revision": 1,
+        "utility": 0.5,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "resource_limited_selection": null,
+      "train_trace_digest": "98f3c14f2de1d7434718712efb12505d9a5abd561767ca2bf85ed21b23201244",
+      "candidate_count": 2,
+      "holdout_gain": {
+        "single_first_reward": 0.3,
+        "single_second_reward": 0.3,
+        "grouped_pair_reward": 1.05,
+        "strongest_single_reward": 0.3,
+        "dense_average_reward": 0.3,
+        "random_single_expectation_reward": 0.3,
+        "grouped_gain_vs_strongest_single": 0.75,
+        "grouped_gain_vs_dense_average": 0.75,
+        "grouped_gain_vs_random_expectation": 0.75
+      },
+      "holdout_outcome_cannot_change_selection": true
+    },
+    {
+      "held_out_family": "complementary-gamma",
+      "seed": 47,
+      "selected": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "group:aa4f636e905baa817dcd9be8",
+        "member_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "source_trace_digest": "98f3c14f2de1d7434718712efb12505d9a5abd561767ca2bf85ed21b23201244",
+        "checkpoint_revision": 1,
+        "utility": 0.5,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "checkpoint_selection": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "group:aa4f636e905baa817dcd9be8",
+        "member_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "source_trace_digest": "98f3c14f2de1d7434718712efb12505d9a5abd561767ca2bf85ed21b23201244",
+        "checkpoint_revision": 1,
+        "utility": 0.5,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "resource_limited_selection": null,
+      "train_trace_digest": "98f3c14f2de1d7434718712efb12505d9a5abd561767ca2bf85ed21b23201244",
+      "candidate_count": 2,
+      "holdout_gain": {
+        "single_first_reward": 0.3,
+        "single_second_reward": 0.3,
+        "grouped_pair_reward": 1.05,
+        "strongest_single_reward": 0.3,
+        "dense_average_reward": 0.3,
+        "random_single_expectation_reward": 0.3,
+        "grouped_gain_vs_strongest_single": 0.75,
+        "grouped_gain_vs_dense_average": 0.75,
+        "grouped_gain_vs_random_expectation": 0.75
+      },
+      "holdout_outcome_cannot_change_selection": true
+    }
+  ],
+  "source": {
+    "workbench_contract": "seed-workbench-contract-v1",
+    "train_episode_count": 16,
+    "holdout_episode_count": 16,
+    "train_trace_digest": "61c83fd92f6ed3449595a6a681c2003c91925c723aeadee0cea32821fd491bc9",
+    "holdout_trace_digest": "a72de4120d9cc001922431b7e402b97d29a5a901213670e01ac9b91bd9f7e362",
+    "semantic_role_labels": 0
+  },
+  "metrics": {
+    "real_workbench_family_count": true,
+    "leave_one_out_family_count": true,
+    "train_only_candidates_exclude_holdout": true,
+    "same_group_selected_across_families_and_seeds": true,
+    "selected_group_is_not_conflicting": true,
+    "holdout_gain_beats_strongest_single": true,
+    "holdout_gain_beats_dense_and_random": true,
+    "holdout_outcome_cannot_change_selection": true,
+    "resource_budget_filters_selection": true,
+    "old_workbench_capability_retained": true,
+    "workbench_world_evidence_preserved": true,
+    "workbench_executive_selection_preserved": true,
+    "workbench_recovery_preserved": true,
+    "workbench_checkpoint_replay_preserved": true,
+    "interaction_lesion_effect_preserved": true,
+    "resource_bound_preserved": true,
+    "no_policy_tool_or_provider_mutation": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "a train-only interaction learner must transfer the same selected group across three leave-one-family-out Workbench holdouts and three seed orderings, beat single/dense/random controls, reject conflict and resource violations, remain invariant to holdout outcomes, and preserve old capability, lesion, recovery, and checkpoint evidence"
+  },
+  "boundary": "This gate proves bounded transfer across four registered Workbench families. It does not claim open-domain transfer, unrestricted self-evolution, provider quality, CUDA advantage, or general intelligence."
+}

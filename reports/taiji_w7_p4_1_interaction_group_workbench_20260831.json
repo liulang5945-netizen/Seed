@@ -1,0 +1,890 @@
+{
+  "format": "taiji-interaction-group-evaluation-v1",
+  "estimator_revision": 1,
+  "source_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b",
+  "holdout_trace_digest": "e020a16d8c1dcec80fbeb0f84016690f816646c4a749bcbf06138faeb2202966",
+  "checkpoint": {
+    "format": "taiji-interaction-group-v1",
+    "version": 1,
+    "checkpoint_revision": 1,
+    "source_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b",
+    "estimator_revision": 1,
+    "groups": [
+      {
+        "format": "taiji-interaction-group-v1",
+        "version": 1,
+        "group_id": "group:bc0cf47ddb2d595c00188951",
+        "member_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "source_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b",
+        "checkpoint_revision": 1,
+        "contribution": 1.0,
+        "interaction": 0.5,
+        "uncertainty": 0.0,
+        "resource_cost": 2.0,
+        "owner_policy": "policy:group:bc0cf47ddb2d595c00188951",
+        "recovery_effect": 0.0,
+        "holdout_interaction": 0.5,
+        "holdout_recovery_effect": 0.0,
+        "status": "admitted",
+        "method": "factorial-counterfactual+lesion",
+        "event_ids": [
+          "r2-s2-train-complementary-first:event:3",
+          "r2-s2-train-complementary-pair:event:3",
+          "r2-s2-train-complementary-pair:event:4",
+          "r2-s2-train-complementary-second:event:3"
+        ],
+        "outcome_ids": [
+          "r2-s2-train-complementary-first:outcome:3:r2-s2-train-complementary-first:workflow-outcome",
+          "r2-s2-train-complementary-none:outcome:2:r2-s2-train-complementary-none:workflow-outcome",
+          "r2-s2-train-complementary-pair:outcome:4:r2-s2-train-complementary-pair:workflow-outcome",
+          "r2-s2-train-complementary-second:outcome:3:r2-s2-train-complementary-second:workflow-outcome"
+        ]
+      },
+      {
+        "format": "taiji-interaction-group-v1",
+        "version": 1,
+        "group_id": "group:b632890dcfa078c477462a4e",
+        "member_ids": [
+          "workbench-owner:33bf6bd14f843e6f0a77fea3",
+          "workbench-owner:7744a6d4231fe69f0d25fd65"
+        ],
+        "source_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b",
+        "checkpoint_revision": 1,
+        "contribution": -1.0,
+        "interaction": -1.0,
+        "uncertainty": 0.0,
+        "resource_cost": 2.0,
+        "owner_policy": "policy:group:b632890dcfa078c477462a4e",
+        "recovery_effect": 0.0,
+        "holdout_interaction": -1.0,
+        "holdout_recovery_effect": 0.0,
+        "status": "admitted",
+        "method": "factorial-counterfactual+lesion",
+        "event_ids": [
+          "r2-s2-train-conflicting-first:event:3",
+          "r2-s2-train-conflicting-pair:event:3",
+          "r2-s2-train-conflicting-pair:event:4",
+          "r2-s2-train-conflicting-second:event:3"
+        ],
+        "outcome_ids": [
+          "r2-s2-train-conflicting-first:outcome:3:r2-s2-train-conflicting-first:workflow-outcome",
+          "r2-s2-train-conflicting-none:outcome:2:r2-s2-train-conflicting-none:workflow-outcome",
+          "r2-s2-train-conflicting-pair:outcome:5:r2-s2-train-conflicting-pair:workflow-outcome",
+          "r2-s2-train-conflicting-second:outcome:4:r2-s2-train-conflicting-second:workflow-outcome"
+        ]
+      }
+    ],
+    "rejected_candidates": [
+      {
+        "format": "taiji-interaction-group-v1",
+        "version": 1,
+        "candidate_id": "group:1ab67f52693879170eef53aa",
+        "member_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:33bf6bd14f843e6f0a77fea3"
+        ],
+        "source_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b",
+        "checkpoint_revision": 1,
+        "reason": "insufficient_trace"
+      },
+      {
+        "format": "taiji-interaction-group-v1",
+        "version": 1,
+        "candidate_id": "group:db7aff5cad46f31d41fd2f50",
+        "member_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:7744a6d4231fe69f0d25fd65"
+        ],
+        "source_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b",
+        "checkpoint_revision": 1,
+        "reason": "insufficient_trace"
+      },
+      {
+        "format": "taiji-interaction-group-v1",
+        "version": 1,
+        "candidate_id": "group:642ed2c189ec7c93368f9eda",
+        "member_ids": [
+          "workbench-owner:33bf6bd14f843e6f0a77fea3",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "source_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b",
+        "checkpoint_revision": 1,
+        "reason": "insufficient_trace"
+      },
+      {
+        "format": "taiji-interaction-group-v1",
+        "version": 1,
+        "candidate_id": "group:07c1e56314d4c5f5b9af6b4f",
+        "member_ids": [
+          "workbench-owner:4983e0f18c1b0d53b8073d63",
+          "workbench-owner:7744a6d4231fe69f0d25fd65"
+        ],
+        "source_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b",
+        "checkpoint_revision": 1,
+        "reason": "insufficient_trace"
+      }
+    ],
+    "owner_policy_lineage": [
+      "policy:group:bc0cf47ddb2d595c00188951",
+      "policy:group:b632890dcfa078c477462a4e"
+    ]
+  },
+  "events": [
+    {
+      "event": "group_candidate_created",
+      "group_id": "group:1ab67f52693879170eef53aa",
+      "member_ids": [
+        "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+        "workbench-owner:33bf6bd14f843e6f0a77fea3"
+      ],
+      "source_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b",
+      "checkpoint_revision": 1
+    },
+    {
+      "event": "group_rejected",
+      "group_id": "group:1ab67f52693879170eef53aa",
+      "reason": "insufficient_trace"
+    },
+    {
+      "event": "group_candidate_created",
+      "group_id": "group:bc0cf47ddb2d595c00188951",
+      "member_ids": [
+        "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+        "workbench-owner:4983e0f18c1b0d53b8073d63"
+      ],
+      "source_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b",
+      "checkpoint_revision": 1
+    },
+    {
+      "event": "counterfactual_evaluated",
+      "group_id": "group:bc0cf47ddb2d595c00188951",
+      "cells": {
+        "(False, False)": 1,
+        "(True, False)": 1,
+        "(False, True)": 1,
+        "(True, True)": 1
+      },
+      "source_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b"
+    },
+    {
+      "event": "lesion_evaluated",
+      "group_id": "group:bc0cf47ddb2d595c00188951",
+      "group_effect": 1.0,
+      "remove_first_member_effect": 0.75,
+      "remove_second_member_effect": 0.75
+    },
+    {
+      "event": "group_admitted",
+      "group_id": "group:bc0cf47ddb2d595c00188951",
+      "interaction": 0.5,
+      "holdout_interaction": 0.5,
+      "owner_policy": "policy:group:bc0cf47ddb2d595c00188951"
+    },
+    {
+      "event": "group_candidate_created",
+      "group_id": "group:db7aff5cad46f31d41fd2f50",
+      "member_ids": [
+        "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+        "workbench-owner:7744a6d4231fe69f0d25fd65"
+      ],
+      "source_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b",
+      "checkpoint_revision": 1
+    },
+    {
+      "event": "group_rejected",
+      "group_id": "group:db7aff5cad46f31d41fd2f50",
+      "reason": "insufficient_trace"
+    },
+    {
+      "event": "group_candidate_created",
+      "group_id": "group:642ed2c189ec7c93368f9eda",
+      "member_ids": [
+        "workbench-owner:33bf6bd14f843e6f0a77fea3",
+        "workbench-owner:4983e0f18c1b0d53b8073d63"
+      ],
+      "source_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b",
+      "checkpoint_revision": 1
+    },
+    {
+      "event": "group_rejected",
+      "group_id": "group:642ed2c189ec7c93368f9eda",
+      "reason": "insufficient_trace"
+    },
+    {
+      "event": "group_candidate_created",
+      "group_id": "group:b632890dcfa078c477462a4e",
+      "member_ids": [
+        "workbench-owner:33bf6bd14f843e6f0a77fea3",
+        "workbench-owner:7744a6d4231fe69f0d25fd65"
+      ],
+      "source_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b",
+      "checkpoint_revision": 1
+    },
+    {
+      "event": "counterfactual_evaluated",
+      "group_id": "group:b632890dcfa078c477462a4e",
+      "cells": {
+        "(False, False)": 1,
+        "(True, False)": 1,
+        "(False, True)": 1,
+        "(True, True)": 1
+      },
+      "source_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b"
+    },
+    {
+      "event": "lesion_evaluated",
+      "group_id": "group:b632890dcfa078c477462a4e",
+      "group_effect": -1.0,
+      "remove_first_member_effect": -1.5,
+      "remove_second_member_effect": -0.5
+    },
+    {
+      "event": "group_admitted",
+      "group_id": "group:b632890dcfa078c477462a4e",
+      "interaction": -1.0,
+      "holdout_interaction": -1.0,
+      "owner_policy": "policy:group:b632890dcfa078c477462a4e"
+    },
+    {
+      "event": "group_candidate_created",
+      "group_id": "group:07c1e56314d4c5f5b9af6b4f",
+      "member_ids": [
+        "workbench-owner:4983e0f18c1b0d53b8073d63",
+        "workbench-owner:7744a6d4231fe69f0d25fd65"
+      ],
+      "source_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b",
+      "checkpoint_revision": 1
+    },
+    {
+      "event": "group_rejected",
+      "group_id": "group:07c1e56314d4c5f5b9af6b4f",
+      "reason": "insufficient_trace"
+    }
+  ],
+  "metrics": {
+    "train_group_count": 2,
+    "rejected_candidate_count": 4,
+    "complementary_group": "group:bc0cf47ddb2d595c00188951",
+    "conflicting_group": "group:b632890dcfa078c477462a4e",
+    "holdout_direction_preserved": true,
+    "checkpoint_roundtrip": true,
+    "checkpoint_owner_lineage_preserved": true,
+    "lesion_effects_observed": true,
+    "source_digest_excludes_holdout_outcome": true,
+    "role_label_input_count": 0,
+    "gate_passed": true,
+    "workbench_checkpoint_replay": true,
+    "workbench_world_evidence": true,
+    "workbench_executive_selection": true,
+    "workbench_recovery_trace": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "real Workbench capability execution must produce native world evidence, native executive decisions, recovery evidence, and exact checkpoint replay before interaction attribution is admitted"
+  },
+  "stage": "S2",
+  "task": "real Seed Workbench interaction-group workflow",
+  "input": {
+    "train_episode_count": 8,
+    "holdout_episode_count": 8,
+    "train_checkpoint_revisions": [
+      1
+    ],
+    "train_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b",
+    "holdout_trace_digest": "e020a16d8c1dcec80fbeb0f84016690f816646c4a749bcbf06138faeb2202966",
+    "workbench_contract": "seed-workbench-contract-v1",
+    "native_adapter": "tsk-v8",
+    "semantic_role_labels": 0,
+    "workbench_records": [
+      {
+        "episode_id": "r2-s2-train-complementary-none",
+        "native_checkpoint_format": "taiji-native-v1",
+        "native_checkpoint_revision": 1,
+        "native_event_count": 2,
+        "projected_event_count": 0,
+        "native_world_event_count": 1,
+        "replay_equal": true,
+        "workbench_outcome": {
+          "workflow_reward": 0.0,
+          "provenance": "workbench-workflow-adjudication",
+          "raw_actions": [
+            {
+              "capability_id": "workspace.stat",
+              "status": "success",
+              "success": true,
+              "native_event_id": "r2-s2-train-complementary-none:event:2",
+              "workbench_event_id": "workbench-evidence:ddae1681e9617768a7dfff3f6137ca06",
+              "selected_candidate_id": "r2-s2-train-complementary-none:assembly:0:workbench:workspace.stat:20f83675780d9190",
+              "projection": "excluded-from-candidate-set"
+            }
+          ],
+          "recovery": null
+        }
+      },
+      {
+        "episode_id": "r2-s2-train-complementary-first",
+        "native_checkpoint_format": "taiji-native-v1",
+        "native_checkpoint_revision": 1,
+        "native_event_count": 3,
+        "projected_event_count": 1,
+        "native_world_event_count": 2,
+        "replay_equal": true,
+        "workbench_outcome": {
+          "workflow_reward": 0.25,
+          "provenance": "workbench-workflow-adjudication",
+          "raw_actions": [
+            {
+              "capability_id": "workspace.stat",
+              "status": "success",
+              "success": true,
+              "native_event_id": "r2-s2-train-complementary-first:event:2",
+              "workbench_event_id": "workbench-evidence:b6dba5631359ffc7657e784c7687783d",
+              "selected_candidate_id": "r2-s2-train-complementary-first:assembly:0:workbench:workspace.stat:20f83675780d9190",
+              "projection": "excluded-from-candidate-set"
+            },
+            {
+              "capability_id": "workspace.list",
+              "status": "success",
+              "success": true,
+              "error_code": "",
+              "native_event_id": "r2-s2-train-complementary-first:event:3",
+              "workbench_event_id": "workbench-evidence:ef68ce59a345907886136089d9d2ab3e",
+              "selected_candidate_id": "r2-s2-train-complementary-first:assembly:0:workbench:workspace.list:334d687c175daf88"
+            }
+          ],
+          "recovery": null
+        }
+      },
+      {
+        "episode_id": "r2-s2-train-complementary-second",
+        "native_checkpoint_format": "taiji-native-v1",
+        "native_checkpoint_revision": 1,
+        "native_event_count": 3,
+        "projected_event_count": 1,
+        "native_world_event_count": 2,
+        "replay_equal": true,
+        "workbench_outcome": {
+          "workflow_reward": 0.25,
+          "provenance": "workbench-workflow-adjudication",
+          "raw_actions": [
+            {
+              "capability_id": "workspace.stat",
+              "status": "success",
+              "success": true,
+              "native_event_id": "r2-s2-train-complementary-second:event:2",
+              "workbench_event_id": "workbench-evidence:1889069f55760637c6556a9dd15d4d32",
+              "selected_candidate_id": "r2-s2-train-complementary-second:assembly:0:workbench:workspace.stat:20f83675780d9190",
+              "projection": "excluded-from-candidate-set"
+            },
+            {
+              "capability_id": "workspace.search",
+              "status": "success",
+              "success": true,
+              "error_code": "",
+              "native_event_id": "r2-s2-train-complementary-second:event:3",
+              "workbench_event_id": "workbench-evidence:fb56ab20e9b2cd597078e4e0bca2a61a",
+              "selected_candidate_id": "r2-s2-train-complementary-second:assembly:0:workbench:workspace.search:77705d6d26e31ddb"
+            }
+          ],
+          "recovery": null
+        }
+      },
+      {
+        "episode_id": "r2-s2-train-complementary-pair",
+        "native_checkpoint_format": "taiji-native-v1",
+        "native_checkpoint_revision": 1,
+        "native_event_count": 4,
+        "projected_event_count": 2,
+        "native_world_event_count": 3,
+        "replay_equal": true,
+        "workbench_outcome": {
+          "workflow_reward": 1.0,
+          "provenance": "workbench-workflow-adjudication",
+          "raw_actions": [
+            {
+              "capability_id": "workspace.stat",
+              "status": "success",
+              "success": true,
+              "native_event_id": "r2-s2-train-complementary-pair:event:2",
+              "workbench_event_id": "workbench-evidence:a4ffe085432088e9a4b9f258a2d457d4",
+              "selected_candidate_id": "r2-s2-train-complementary-pair:assembly:0:workbench:workspace.stat:20f83675780d9190",
+              "projection": "excluded-from-candidate-set"
+            },
+            {
+              "capability_id": "workspace.list",
+              "status": "success",
+              "success": true,
+              "error_code": "",
+              "native_event_id": "r2-s2-train-complementary-pair:event:3",
+              "workbench_event_id": "workbench-evidence:b42eceb8f3a4971e84b5ca0f223c9e0a",
+              "selected_candidate_id": "r2-s2-train-complementary-pair:assembly:0:workbench:workspace.list:334d687c175daf88"
+            },
+            {
+              "capability_id": "workspace.search",
+              "status": "success",
+              "success": true,
+              "error_code": "",
+              "native_event_id": "r2-s2-train-complementary-pair:event:4",
+              "workbench_event_id": "workbench-evidence:cf74652aed65f7414945e6ec31f6a6ac",
+              "selected_candidate_id": "r2-s2-train-complementary-pair:assembly:1:workbench:workspace.search:77705d6d26e31ddb"
+            }
+          ],
+          "recovery": null
+        }
+      },
+      {
+        "episode_id": "r2-s2-train-conflicting-none",
+        "native_checkpoint_format": "taiji-native-v1",
+        "native_checkpoint_revision": 1,
+        "native_event_count": 2,
+        "projected_event_count": 0,
+        "native_world_event_count": 1,
+        "replay_equal": true,
+        "workbench_outcome": {
+          "workflow_reward": 0.0,
+          "provenance": "workbench-workflow-adjudication",
+          "raw_actions": [
+            {
+              "capability_id": "workspace.stat",
+              "status": "success",
+              "success": true,
+              "native_event_id": "r2-s2-train-conflicting-none:event:2",
+              "workbench_event_id": "workbench-evidence:c8fa5595957b15bb413a38a6e7cd8488",
+              "selected_candidate_id": "r2-s2-train-conflicting-none:assembly:0:workbench:workspace.stat:20f83675780d9190",
+              "projection": "excluded-from-candidate-set"
+            }
+          ],
+          "recovery": null
+        }
+      },
+      {
+        "episode_id": "r2-s2-train-conflicting-first",
+        "native_checkpoint_format": "taiji-native-v1",
+        "native_checkpoint_revision": 1,
+        "native_event_count": 3,
+        "projected_event_count": 1,
+        "native_world_event_count": 2,
+        "replay_equal": true,
+        "workbench_outcome": {
+          "workflow_reward": 0.5,
+          "provenance": "workbench-workflow-adjudication",
+          "raw_actions": [
+            {
+              "capability_id": "workspace.stat",
+              "status": "success",
+              "success": true,
+              "native_event_id": "r2-s2-train-conflicting-first:event:2",
+              "workbench_event_id": "workbench-evidence:5619e445b0c4b9a17acddf1d307bc89f",
+              "selected_candidate_id": "r2-s2-train-conflicting-first:assembly:0:workbench:workspace.stat:20f83675780d9190",
+              "projection": "excluded-from-candidate-set"
+            },
+            {
+              "capability_id": "workspace.read",
+              "status": "success",
+              "success": true,
+              "error_code": "",
+              "native_event_id": "r2-s2-train-conflicting-first:event:3",
+              "workbench_event_id": "workbench-evidence:9eabfb6d5b3b7663ee5397772147173d",
+              "selected_candidate_id": "r2-s2-train-conflicting-first:assembly:0:workbench:workspace.read:c611b19170a6f6c5"
+            }
+          ],
+          "recovery": null
+        }
+      },
+      {
+        "episode_id": "r2-s2-train-conflicting-second",
+        "native_checkpoint_format": "taiji-native-v1",
+        "native_checkpoint_revision": 1,
+        "native_event_count": 4,
+        "projected_event_count": 1,
+        "native_world_event_count": 3,
+        "replay_equal": true,
+        "workbench_outcome": {
+          "workflow_reward": -0.5,
+          "provenance": "workbench-workflow-adjudication",
+          "raw_actions": [
+            {
+              "capability_id": "workspace.stat",
+              "status": "success",
+              "success": true,
+              "native_event_id": "r2-s2-train-conflicting-second:event:2",
+              "workbench_event_id": "workbench-evidence:6c5ea1d7be7729e0e82b93f9002593f2",
+              "selected_candidate_id": "r2-s2-train-conflicting-second:assembly:0:workbench:workspace.stat:20f83675780d9190",
+              "projection": "excluded-from-candidate-set"
+            },
+            {
+              "capability_id": "workspace.read",
+              "status": "error",
+              "success": false,
+              "error_code": "not_found",
+              "native_event_id": "r2-s2-train-conflicting-second:event:3",
+              "workbench_event_id": "workbench-evidence:022218e6850fab028f7b2ebac7c2bc1e",
+              "selected_candidate_id": "r2-s2-train-conflicting-second:assembly:0:workbench:workspace.read:ccf697da8e20e4ad"
+            }
+          ],
+          "recovery": {
+            "capability_id": "workspace.read",
+            "status": "success",
+            "success": true,
+            "error_code": "",
+            "native_event_id": "r2-s2-train-conflicting-second:event:4",
+            "workbench_event_id": "workbench-evidence:cc1b13b0852ca5d27dcca0499b4fc37c",
+            "selected_candidate_id": "r2-s2-train-conflicting-second:assembly:1:workbench:workspace.read:c611b19170a6f6c5"
+          }
+        }
+      },
+      {
+        "episode_id": "r2-s2-train-conflicting-pair",
+        "native_checkpoint_format": "taiji-native-v1",
+        "native_checkpoint_revision": 1,
+        "native_event_count": 5,
+        "projected_event_count": 2,
+        "native_world_event_count": 4,
+        "replay_equal": true,
+        "workbench_outcome": {
+          "workflow_reward": -1.0,
+          "provenance": "workbench-workflow-adjudication",
+          "raw_actions": [
+            {
+              "capability_id": "workspace.stat",
+              "status": "success",
+              "success": true,
+              "native_event_id": "r2-s2-train-conflicting-pair:event:2",
+              "workbench_event_id": "workbench-evidence:49402c23fd8232dc49f977fa8a713f94",
+              "selected_candidate_id": "r2-s2-train-conflicting-pair:assembly:0:workbench:workspace.stat:20f83675780d9190",
+              "projection": "excluded-from-candidate-set"
+            },
+            {
+              "capability_id": "workspace.read",
+              "status": "success",
+              "success": true,
+              "error_code": "",
+              "native_event_id": "r2-s2-train-conflicting-pair:event:3",
+              "workbench_event_id": "workbench-evidence:fe8e20848648231e9bc5e26c97831d28",
+              "selected_candidate_id": "r2-s2-train-conflicting-pair:assembly:0:workbench:workspace.read:c611b19170a6f6c5"
+            },
+            {
+              "capability_id": "workspace.read",
+              "status": "error",
+              "success": false,
+              "error_code": "not_found",
+              "native_event_id": "r2-s2-train-conflicting-pair:event:4",
+              "workbench_event_id": "workbench-evidence:5c30dd63e102d873ecc5cdab5463541c",
+              "selected_candidate_id": "r2-s2-train-conflicting-pair:assembly:1:workbench:workspace.read:ccf697da8e20e4ad"
+            }
+          ],
+          "recovery": {
+            "capability_id": "workspace.read",
+            "status": "success",
+            "success": true,
+            "error_code": "",
+            "native_event_id": "r2-s2-train-conflicting-pair:event:5",
+            "workbench_event_id": "workbench-evidence:3d78077f3af7f63eee807730aa4535ae",
+            "selected_candidate_id": "r2-s2-train-conflicting-pair:assembly:2:workbench:workspace.read:c611b19170a6f6c5"
+          }
+        }
+      },
+      {
+        "episode_id": "r2-s2-holdout-complementary-none",
+        "native_checkpoint_format": "taiji-native-v1",
+        "native_checkpoint_revision": 1,
+        "native_event_count": 2,
+        "projected_event_count": 0,
+        "native_world_event_count": 1,
+        "replay_equal": true,
+        "workbench_outcome": {
+          "workflow_reward": 0.05,
+          "provenance": "workbench-workflow-adjudication",
+          "raw_actions": [
+            {
+              "capability_id": "workspace.stat",
+              "status": "success",
+              "success": true,
+              "native_event_id": "r2-s2-holdout-complementary-none:event:2",
+              "workbench_event_id": "workbench-evidence:5f894c2e84d47d477bf8d5e2512f6b6c",
+              "selected_candidate_id": "r2-s2-holdout-complementary-none:assembly:0:workbench:workspace.stat:20f83675780d9190",
+              "projection": "excluded-from-candidate-set"
+            }
+          ],
+          "recovery": null
+        }
+      },
+      {
+        "episode_id": "r2-s2-holdout-complementary-first",
+        "native_checkpoint_format": "taiji-native-v1",
+        "native_checkpoint_revision": 1,
+        "native_event_count": 3,
+        "projected_event_count": 1,
+        "native_world_event_count": 2,
+        "replay_equal": true,
+        "workbench_outcome": {
+          "workflow_reward": 0.3,
+          "provenance": "workbench-workflow-adjudication",
+          "raw_actions": [
+            {
+              "capability_id": "workspace.stat",
+              "status": "success",
+              "success": true,
+              "native_event_id": "r2-s2-holdout-complementary-first:event:2",
+              "workbench_event_id": "workbench-evidence:0b4e1105e356542798704bc86b9d7bbe",
+              "selected_candidate_id": "r2-s2-holdout-complementary-first:assembly:0:workbench:workspace.stat:20f83675780d9190",
+              "projection": "excluded-from-candidate-set"
+            },
+            {
+              "capability_id": "workspace.list",
+              "status": "success",
+              "success": true,
+              "error_code": "",
+              "native_event_id": "r2-s2-holdout-complementary-first:event:3",
+              "workbench_event_id": "workbench-evidence:6295e53a2847d6d468e4add4e04fdf3e",
+              "selected_candidate_id": "r2-s2-holdout-complementary-first:assembly:0:workbench:workspace.list:334d687c175daf88"
+            }
+          ],
+          "recovery": null
+        }
+      },
+      {
+        "episode_id": "r2-s2-holdout-complementary-second",
+        "native_checkpoint_format": "taiji-native-v1",
+        "native_checkpoint_revision": 1,
+        "native_event_count": 3,
+        "projected_event_count": 1,
+        "native_world_event_count": 2,
+        "replay_equal": true,
+        "workbench_outcome": {
+          "workflow_reward": 0.3,
+          "provenance": "workbench-workflow-adjudication",
+          "raw_actions": [
+            {
+              "capability_id": "workspace.stat",
+              "status": "success",
+              "success": true,
+              "native_event_id": "r2-s2-holdout-complementary-second:event:2",
+              "workbench_event_id": "workbench-evidence:d7c971de944a6b65bb6360ba02a0312a",
+              "selected_candidate_id": "r2-s2-holdout-complementary-second:assembly:0:workbench:workspace.stat:20f83675780d9190",
+              "projection": "excluded-from-candidate-set"
+            },
+            {
+              "capability_id": "workspace.search",
+              "status": "success",
+              "success": true,
+              "error_code": "",
+              "native_event_id": "r2-s2-holdout-complementary-second:event:3",
+              "workbench_event_id": "workbench-evidence:271d118a527acdb9362250ad94d0976f",
+              "selected_candidate_id": "r2-s2-holdout-complementary-second:assembly:0:workbench:workspace.search:77705d6d26e31ddb"
+            }
+          ],
+          "recovery": null
+        }
+      },
+      {
+        "episode_id": "r2-s2-holdout-complementary-pair",
+        "native_checkpoint_format": "taiji-native-v1",
+        "native_checkpoint_revision": 1,
+        "native_event_count": 4,
+        "projected_event_count": 2,
+        "native_world_event_count": 3,
+        "replay_equal": true,
+        "workbench_outcome": {
+          "workflow_reward": 1.05,
+          "provenance": "workbench-workflow-adjudication",
+          "raw_actions": [
+            {
+              "capability_id": "workspace.stat",
+              "status": "success",
+              "success": true,
+              "native_event_id": "r2-s2-holdout-complementary-pair:event:2",
+              "workbench_event_id": "workbench-evidence:92344b116aa35779a30e4b15f3efcebc",
+              "selected_candidate_id": "r2-s2-holdout-complementary-pair:assembly:0:workbench:workspace.stat:20f83675780d9190",
+              "projection": "excluded-from-candidate-set"
+            },
+            {
+              "capability_id": "workspace.list",
+              "status": "success",
+              "success": true,
+              "error_code": "",
+              "native_event_id": "r2-s2-holdout-complementary-pair:event:3",
+              "workbench_event_id": "workbench-evidence:ff162fb85e03b99348ec3462423b4a52",
+              "selected_candidate_id": "r2-s2-holdout-complementary-pair:assembly:0:workbench:workspace.list:334d687c175daf88"
+            },
+            {
+              "capability_id": "workspace.search",
+              "status": "success",
+              "success": true,
+              "error_code": "",
+              "native_event_id": "r2-s2-holdout-complementary-pair:event:4",
+              "workbench_event_id": "workbench-evidence:d9b8fcecb4c65ad36ac3706bcaeefbd1",
+              "selected_candidate_id": "r2-s2-holdout-complementary-pair:assembly:1:workbench:workspace.search:77705d6d26e31ddb"
+            }
+          ],
+          "recovery": null
+        }
+      },
+      {
+        "episode_id": "r2-s2-holdout-conflicting-none",
+        "native_checkpoint_format": "taiji-native-v1",
+        "native_checkpoint_revision": 1,
+        "native_event_count": 2,
+        "projected_event_count": 0,
+        "native_world_event_count": 1,
+        "replay_equal": true,
+        "workbench_outcome": {
+          "workflow_reward": 0.05,
+          "provenance": "workbench-workflow-adjudication",
+          "raw_actions": [
+            {
+              "capability_id": "workspace.stat",
+              "status": "success",
+              "success": true,
+              "native_event_id": "r2-s2-holdout-conflicting-none:event:2",
+              "workbench_event_id": "workbench-evidence:24179063de720877ffc209e0062ae073",
+              "selected_candidate_id": "r2-s2-holdout-conflicting-none:assembly:0:workbench:workspace.stat:20f83675780d9190",
+              "projection": "excluded-from-candidate-set"
+            }
+          ],
+          "recovery": null
+        }
+      },
+      {
+        "episode_id": "r2-s2-holdout-conflicting-first",
+        "native_checkpoint_format": "taiji-native-v1",
+        "native_checkpoint_revision": 1,
+        "native_event_count": 3,
+        "projected_event_count": 1,
+        "native_world_event_count": 2,
+        "replay_equal": true,
+        "workbench_outcome": {
+          "workflow_reward": 0.55,
+          "provenance": "workbench-workflow-adjudication",
+          "raw_actions": [
+            {
+              "capability_id": "workspace.stat",
+              "status": "success",
+              "success": true,
+              "native_event_id": "r2-s2-holdout-conflicting-first:event:2",
+              "workbench_event_id": "workbench-evidence:72ddde379aad24d93e936b23638b2422",
+              "selected_candidate_id": "r2-s2-holdout-conflicting-first:assembly:0:workbench:workspace.stat:20f83675780d9190",
+              "projection": "excluded-from-candidate-set"
+            },
+            {
+              "capability_id": "workspace.read",
+              "status": "success",
+              "success": true,
+              "error_code": "",
+              "native_event_id": "r2-s2-holdout-conflicting-first:event:3",
+              "workbench_event_id": "workbench-evidence:67f075e83dd8e09dfdc16988f5a4b4c3",
+              "selected_candidate_id": "r2-s2-holdout-conflicting-first:assembly:0:workbench:workspace.read:c611b19170a6f6c5"
+            }
+          ],
+          "recovery": null
+        }
+      },
+      {
+        "episode_id": "r2-s2-holdout-conflicting-second",
+        "native_checkpoint_format": "taiji-native-v1",
+        "native_checkpoint_revision": 1,
+        "native_event_count": 4,
+        "projected_event_count": 1,
+        "native_world_event_count": 3,
+        "replay_equal": true,
+        "workbench_outcome": {
+          "workflow_reward": -0.45,
+          "provenance": "workbench-workflow-adjudication",
+          "raw_actions": [
+            {
+              "capability_id": "workspace.stat",
+              "status": "success",
+              "success": true,
+              "native_event_id": "r2-s2-holdout-conflicting-second:event:2",
+              "workbench_event_id": "workbench-evidence:ce0dd7da999b60254f24f3bad10340e9",
+              "selected_candidate_id": "r2-s2-holdout-conflicting-second:assembly:0:workbench:workspace.stat:20f83675780d9190",
+              "projection": "excluded-from-candidate-set"
+            },
+            {
+              "capability_id": "workspace.read",
+              "status": "error",
+              "success": false,
+              "error_code": "not_found",
+              "native_event_id": "r2-s2-holdout-conflicting-second:event:3",
+              "workbench_event_id": "workbench-evidence:768efdb382e68812c4e263aa2bcc557d",
+              "selected_candidate_id": "r2-s2-holdout-conflicting-second:assembly:0:workbench:workspace.read:ccf697da8e20e4ad"
+            }
+          ],
+          "recovery": {
+            "capability_id": "workspace.read",
+            "status": "success",
+            "success": true,
+            "error_code": "",
+            "native_event_id": "r2-s2-holdout-conflicting-second:event:4",
+            "workbench_event_id": "workbench-evidence:b5ff6720cd397c7c69beb94b3bba9b80",
+            "selected_candidate_id": "r2-s2-holdout-conflicting-second:assembly:1:workbench:workspace.read:c611b19170a6f6c5"
+          }
+        }
+      },
+      {
+        "episode_id": "r2-s2-holdout-conflicting-pair",
+        "native_checkpoint_format": "taiji-native-v1",
+        "native_checkpoint_revision": 1,
+        "native_event_count": 5,
+        "projected_event_count": 2,
+        "native_world_event_count": 4,
+        "replay_equal": true,
+        "workbench_outcome": {
+          "workflow_reward": -0.95,
+          "provenance": "workbench-workflow-adjudication",
+          "raw_actions": [
+            {
+              "capability_id": "workspace.stat",
+              "status": "success",
+              "success": true,
+              "native_event_id": "r2-s2-holdout-conflicting-pair:event:2",
+              "workbench_event_id": "workbench-evidence:99496c5f01b497a13176d746fe064c1e",
+              "selected_candidate_id": "r2-s2-holdout-conflicting-pair:assembly:0:workbench:workspace.stat:20f83675780d9190",
+              "projection": "excluded-from-candidate-set"
+            },
+            {
+              "capability_id": "workspace.read",
+              "status": "success",
+              "success": true,
+              "error_code": "",
+              "native_event_id": "r2-s2-holdout-conflicting-pair:event:3",
+              "workbench_event_id": "workbench-evidence:d2e132c8504446923fa7484b67b7857e",
+              "selected_candidate_id": "r2-s2-holdout-conflicting-pair:assembly:0:workbench:workspace.read:c611b19170a6f6c5"
+            },
+            {
+              "capability_id": "workspace.read",
+              "status": "error",
+              "success": false,
+              "error_code": "not_found",
+              "native_event_id": "r2-s2-holdout-conflicting-pair:event:4",
+              "workbench_event_id": "workbench-evidence:d6e5738ccc3d96469d2354439d6b62c1",
+              "selected_candidate_id": "r2-s2-holdout-conflicting-pair:assembly:1:workbench:workspace.read:ccf697da8e20e4ad"
+            }
+          ],
+          "recovery": {
+            "capability_id": "workspace.read",
+            "status": "success",
+            "success": true,
+            "error_code": "",
+            "native_event_id": "r2-s2-holdout-conflicting-pair:event:5",
+            "workbench_event_id": "workbench-evidence:9d93951843f5eb6b54904f8d10e0e8a8",
+            "selected_candidate_id": "r2-s2-holdout-conflicting-pair:assembly:2:workbench:workspace.read:c611b19170a6f6c5"
+          }
+        }
+      }
+    ]
+  },
+  "boundary": {
+    "policy_mutation": false,
+    "tool_selection": false,
+    "provider_selection": false,
+    "high_order_search": false,
+    "holdout_can_add_evidence": false,
+    "capability_snapshot_is_source_of_workbench_actions": true,
+    "native_executive_selection_observed": true,
+    "recovery_retry_observed": true
+  }
+}

@@ -1,0 +1,2310 @@
+{
+  "format": "taiji-w7-p4-11-cross-domain-structural-gain-v1",
+  "task": "editor and MCP cross-domain structural workspace gain with old-capability retention",
+  "capability_domains": [
+    "editor",
+    "mcp"
+  ],
+  "target_tasks": [
+    "cross-editor-mcp-readme-pyproject",
+    "cross-editor-mcp-readme-requirements"
+  ],
+  "learner_seeds": [
+    11,
+    29,
+    47
+  ],
+  "structural_mean_score": 1.0,
+  "control_mean_scores": {
+    "interaction_weight_only": 0.0,
+    "router_only": 0.0,
+    "memory_only": 0.0
+  },
+  "training_source": {
+    "base_example_count": 15,
+    "cross_domain_example_count": 3,
+    "example_count": 18,
+    "base_source": {
+      "example_count": 15,
+      "record_count": 15,
+      "records": [
+        {
+          "family": "ab",
+          "cell": "first",
+          "action_count": 1,
+          "successful_action_count": 1,
+          "score_source": "native Workbench raw action success/status projection",
+          "native_world_event_count": 2
+        },
+        {
+          "family": "ab",
+          "cell": "second",
+          "action_count": 1,
+          "successful_action_count": 1,
+          "score_source": "native Workbench raw action success/status projection",
+          "native_world_event_count": 2
+        },
+        {
+          "family": "ab",
+          "cell": "pair",
+          "action_count": 2,
+          "successful_action_count": 2,
+          "score_source": "native Workbench raw action success/status projection",
+          "native_world_event_count": 3
+        },
+        {
+          "family": "ac",
+          "cell": "first",
+          "action_count": 1,
+          "successful_action_count": 1,
+          "score_source": "native Workbench raw action success/status projection",
+          "native_world_event_count": 2
+        },
+        {
+          "family": "ac",
+          "cell": "second",
+          "action_count": 1,
+          "successful_action_count": 1,
+          "score_source": "native Workbench raw action success/status projection",
+          "native_world_event_count": 2
+        },
+        {
+          "family": "ac",
+          "cell": "pair",
+          "action_count": 2,
+          "successful_action_count": 2,
+          "score_source": "native Workbench raw action success/status projection",
+          "native_world_event_count": 3
+        },
+        {
+          "family": "ad",
+          "cell": "first",
+          "action_count": 1,
+          "successful_action_count": 1,
+          "score_source": "native Workbench raw action success/status projection",
+          "native_world_event_count": 2
+        },
+        {
+          "family": "ad",
+          "cell": "second",
+          "action_count": 1,
+          "successful_action_count": 1,
+          "score_source": "native Workbench raw action success/status projection",
+          "native_world_event_count": 2
+        },
+        {
+          "family": "ad",
+          "cell": "pair",
+          "action_count": 2,
+          "successful_action_count": 2,
+          "score_source": "native Workbench raw action success/status projection",
+          "native_world_event_count": 3
+        },
+        {
+          "family": "cd",
+          "cell": "first",
+          "action_count": 1,
+          "successful_action_count": 1,
+          "score_source": "native Workbench raw action success/status projection",
+          "native_world_event_count": 2
+        },
+        {
+          "family": "cd",
+          "cell": "second",
+          "action_count": 1,
+          "successful_action_count": 1,
+          "score_source": "native Workbench raw action success/status projection",
+          "native_world_event_count": 2
+        },
+        {
+          "family": "cd",
+          "cell": "pair",
+          "action_count": 2,
+          "successful_action_count": 2,
+          "score_source": "native Workbench raw action success/status projection",
+          "native_world_event_count": 3
+        },
+        {
+          "family": "fg",
+          "cell": "first",
+          "action_count": 1,
+          "successful_action_count": 0,
+          "score_source": "native Workbench raw action success/status projection",
+          "native_world_event_count": 2
+        },
+        {
+          "family": "fg",
+          "cell": "second",
+          "action_count": 1,
+          "successful_action_count": 0,
+          "score_source": "native Workbench raw action success/status projection",
+          "native_world_event_count": 2
+        },
+        {
+          "family": "fg",
+          "cell": "pair",
+          "action_count": 2,
+          "successful_action_count": 0,
+          "score_source": "native Workbench raw action success/status projection",
+          "native_world_event_count": 3
+        }
+      ],
+      "score_sources": [
+        "native Workbench raw action success/status projection"
+      ]
+    },
+    "cross_domain_records": [
+      {
+        "family": "editor-mcp-readme",
+        "capability_domains": [
+          "editor",
+          "mcp"
+        ],
+        "native_statuses": [
+          "success",
+          "success"
+        ],
+        "native_audit_event_count": 8,
+        "native_checkpoint_roundtrip": true
+      },
+      {
+        "family": "editor-mcp-pyproject",
+        "capability_domains": [
+          "editor",
+          "mcp"
+        ],
+        "native_statuses": [
+          "success",
+          "success"
+        ],
+        "native_audit_event_count": 8,
+        "native_checkpoint_roundtrip": true
+      },
+      {
+        "family": "editor-mcp-requirements",
+        "capability_domains": [
+          "editor",
+          "mcp"
+        ],
+        "native_statuses": [
+          "success",
+          "success"
+        ],
+        "native_audit_event_count": 8,
+        "native_checkpoint_roundtrip": true
+      }
+    ],
+    "score_source": "native Workbench outcome status and success"
+  },
+  "runs": [
+    {
+      "seed": 11,
+      "online_rounds": [
+        {
+          "round": 1,
+          "family": "online-be",
+          "candidate_id": "transfer-group:145339db789015ea7ecd8eaa",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+          "outcome_id": "r2-s2-online-online-be-seed-11:outcome:4:r2-s2-online-online-be-seed-11:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 2,
+          "family": "online-bf",
+          "candidate_id": "transfer-group:b515b1e835c6a4dc6118346f",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "feedback_id": "735fa4be9c18e7987f611e6a4a9dabcc9ab65fa3bd2970a3be41192cf5698481",
+          "outcome_id": "r2-s2-online-online-bf-seed-11:outcome:4:r2-s2-online-online-bf-seed-11:workflow-outcome",
+          "outcome_success": false,
+          "admission_status": "rejected",
+          "admission_reason": "outcome_unsuccessful",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 3,
+          "family": "online-ce",
+          "candidate_id": "transfer-group:61d5583b886b40a97139fe73",
+          "member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+          "outcome_id": "r2-s2-online-online-ce-seed-11:outcome:4:r2-s2-online-online-ce-seed-11:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "online_feedback_ids": [
+        "eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+        "3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b"
+      ],
+      "pressure": {
+        "format": "taiji-interaction-structural-bridge-v1",
+        "revision": 1,
+        "version": 1,
+        "projection": {
+          "format": "taiji-structural-pressure-projection-v1",
+          "network_id": "standalone:adaptive.cortex",
+          "region_id": "adaptive.cortex",
+          "first_tick": 1,
+          "last_tick": 4,
+          "window_digests": [
+            "8ca15bb4920cc0c6a79f31c9914d4ea42a7b1229f4ef675390fc723a58dc8e50",
+            "ef116be55918f68a0fab02da5d58c22793f3a7921299391685c28d1f6734176c",
+            "af728bb5feb0b6e30b097ee7ef866d38d0267febb716fd132b9ffe7983ec5f23",
+            "b6b8a05af2b587c0315ab57a8e6c2848526aab90c3071f4b803d96c535c61ac9"
+          ],
+          "train_task_slice_ids": [
+            "online-interaction:transfer-group:145339db789015ea7ecd8eaa",
+            "online-interaction:transfer-group:61d5583b886b40a97139fe73"
+          ],
+          "holdout_task_slice_ids": [
+            "workbench-holdout:online-workbench-holdout-cycle-3"
+          ],
+          "retention_task_slice_ids": [
+            "workbench-retention:online-workbench-retention-cycle-3"
+          ],
+          "train_window_count": 2,
+          "holdout_window_count": 1,
+          "retention_window_count": 1,
+          "prediction_observation_count": 2,
+          "mean_prediction_error": 0.3999999999999999,
+          "mean_resource_state": 0.0,
+          "mean_holdout_transfer": 0.8,
+          "evidence_ids": [
+            "online-feedback:eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+            "online-feedback:3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-3-seed-11:outcome:4:r2-s2-online-holdout-cycle-3-seed-11:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-3-seed-11:outcome:4:r2-s2-online-retention-cycle-3-seed-11:workflow-outcome"
+          ],
+          "projection_digest": "1082fbb5670d3b4ddd3087d8a46066e67bc70aaf8d82d75cad34a73ba7ee4310"
+        },
+        "feedback_ids": [
+          "eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+          "3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b"
+        ],
+        "outcome_ids": [
+          "r2-s2-online-online-be-seed-11:outcome:4:r2-s2-online-online-be-seed-11:workflow-outcome",
+          "r2-s2-online-online-ce-seed-11:outcome:4:r2-s2-online-online-ce-seed-11:workflow-outcome"
+        ],
+        "mean_interaction": 0.6000000000000001,
+        "bridge_digest": "e0c577413d42572be18f41b50007bef8246298af35e267dc5fb3ac948be03bed"
+      },
+      "admission": {
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:1082fbb5670d",
+        "candidate": {
+          "format": "taiji-structural-proposal-candidate-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:1082fbb5670d",
+          "network_id": "standalone:adaptive.cortex",
+          "target_kind": "neuron",
+          "operation": "add",
+          "substrate_ids": [
+            "adaptive.cortex"
+          ],
+          "evidence_ids": [
+            "online-feedback:eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+            "online-feedback:3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-3-seed-11:outcome:4:r2-s2-online-holdout-cycle-3-seed-11:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-3-seed-11:outcome:4:r2-s2-online-retention-cycle-3-seed-11:workflow-outcome"
+          ],
+          "source_tick": 4,
+          "priority": 0.31999999999999995,
+          "specification": {
+            "region_id": "adaptive.cortex",
+            "unit_id": "u2",
+            "cycle_bridge_digest": "e0c577413d42572be18f41b50007bef8246298af35e267dc5fb3ac948be03bed"
+          },
+          "resource_cost": 1,
+          "depends_on_candidate_ids": [],
+          "conflict_keys": [],
+          "parent_checkpoint_id": "pressure-parent:1082fbb5670d3b4ddd3087d8a46066e67bc70aaf8d82d75cad34a73ba7ee4310:7915b5d75357e9b3073229c162f903284f1d4f8ef4103b12b6dc9cb4fefbd419"
+        },
+        "arbitration": {
+          "format": "taiji-structural-candidate-batch-v1",
+          "batch_id": "batch:structural:dd86c830de256223ae3ae20ff009cf77",
+          "candidate_ids": [
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:1082fbb5670d"
+          ],
+          "selected_candidate_ids": [
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:1082fbb5670d"
+          ],
+          "deferred_candidate_ids": [],
+          "rejected_candidate_ids": [],
+          "candidate_states": {
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:1082fbb5670d": "reserved"
+          },
+          "reasons": {},
+          "reserved_resource_cost": 1,
+          "reservation_remaining": 1,
+          "structural_budget_before": 2,
+          "available_budget_before": 2,
+          "topology_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "arbitration_digest": "dd86c830de256223ae3ae20ff009cf776c3422a3e7f7d5543447bef4756a9b42",
+          "revision": 0,
+          "status": "planned"
+        },
+        "validation": {
+          "format": "taiji-structural-candidate-validation-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:1082fbb5670d",
+          "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+          "status": "validated",
+          "validation_score": 1.0,
+          "parent_checkpoint_digest": "79432b6b9e76af1e9795e36720b4a2af350e5884b1fb6fbbb0ce16bdefc87786",
+          "validation_checkpoint_digest": "4aba0a62296a21186a657d5537523b6c54547e962ac478a4a9b3295c156d8bc6",
+          "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "topology_after_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "structural_budget_before": 2,
+          "structural_budget_after": 2,
+          "evidence_ids": [
+            "online-feedback:eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+            "online-feedback:3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-3-seed-11:outcome:4:r2-s2-online-holdout-cycle-3-seed-11:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-3-seed-11:outcome:4:r2-s2-online-retention-cycle-3-seed-11:workflow-outcome"
+          ],
+          "error": null
+        },
+        "decision": {
+          "format": "taiji-structural-validation-gate-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:1082fbb5670d",
+          "passed": true,
+          "holdout_gain": 1.0,
+          "retention_regression": 0.02,
+          "lesion_effect": 0.15,
+          "resource_state": 0.8,
+          "resource_cost": 1,
+          "structural_budget": 2,
+          "minimum_holdout_gain": 0.05,
+          "maximum_retention_regression": 0.05,
+          "minimum_lesion_effect": 0.05,
+          "minimum_resource_state": 0.4,
+          "evidence_ids": [
+            "online-feedback:eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+            "online-feedback:3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-3-seed-11:outcome:4:r2-s2-online-holdout-cycle-3-seed-11:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-3-seed-11:outcome:4:r2-s2-online-retention-cycle-3-seed-11:workflow-outcome",
+            "continuous-bridge:e0c577413d42572be18f41b50007bef8246298af35e267dc5fb3ac948be03bed"
+          ],
+          "reasons": [],
+          "decision_digest": "47be1e38220bb608eef19b13e15326e6e642ac30c93277a04562ff16a7191171"
+        },
+        "admission": {
+          "format": "taiji-structural-admission-result-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:1082fbb5670d",
+          "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+          "status": "admitted",
+          "decision_digest": "47be1e38220bb608eef19b13e15326e6e642ac30c93277a04562ff16a7191171",
+          "parent_checkpoint_digest": "c84dd0f042792fa20cf3e5b2c85752cd63a4048dcac043d85801c44742822c6c",
+          "child_checkpoint_digest": "31353934161e04a6480488cd9014f3e129c069eb342bb9b27642b9f6cb53f7f2",
+          "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "topology_after_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+          "structural_budget_before": 2,
+          "structural_budget_after": 1,
+          "error": null
+        },
+        "topology_before": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "topology_after": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+        "budget_before": 2,
+        "budget_after": 1,
+        "unit_ids": [
+          "u0",
+          "u1",
+          "u2"
+        ],
+        "candidate_checkpoint_roundtrip": true
+      },
+      "structural_runs": [
+        {
+          "task": "cross-editor-mcp-readme-pyproject",
+          "method": "structural_growth",
+          "seed": 11,
+          "capability_domains": [
+            "editor",
+            "mcp"
+          ],
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:81eedb0576367f7fc0ddc191",
+            "workbench-owner:a33f287c0a9c01af7781b08c",
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:f3a5314c0a06dd8e7fb5c5d2"
+          ],
+          "selected_ids": [
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:81eedb0576367f7fc0ddc191",
+            "workbench-owner:a33f287c0a9c01af7781b08c"
+          ],
+          "required_ids": [
+            "workbench-owner:81eedb0576367f7fc0ddc191",
+            "workbench-owner:a33f287c0a9c01af7781b08c",
+            "workbench-owner:c62f0519c2dbde0073bb6c10"
+          ],
+          "selected_action_count": 3,
+          "raw_action_status": [
+            "success",
+            "success",
+            "success"
+          ],
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench outcome status/success plus required-set completion",
+          "native_event_count": 4,
+          "native_audit_event_count": 12,
+          "native_checkpoint_roundtrip": true
+        },
+        {
+          "task": "cross-editor-mcp-readme-requirements",
+          "method": "structural_growth",
+          "seed": 11,
+          "capability_domains": [
+            "editor",
+            "mcp"
+          ],
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:81eedb0576367f7fc0ddc191",
+            "workbench-owner:6cff8482cde4a3261c72c689",
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:f3a5314c0a06dd8e7fb5c5d2"
+          ],
+          "selected_ids": [
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:81eedb0576367f7fc0ddc191",
+            "workbench-owner:6cff8482cde4a3261c72c689"
+          ],
+          "required_ids": [
+            "workbench-owner:81eedb0576367f7fc0ddc191",
+            "workbench-owner:6cff8482cde4a3261c72c689",
+            "workbench-owner:c62f0519c2dbde0073bb6c10"
+          ],
+          "selected_action_count": 3,
+          "raw_action_status": [
+            "success",
+            "success",
+            "success"
+          ],
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench outcome status/success plus required-set completion",
+          "native_event_count": 4,
+          "native_audit_event_count": 12,
+          "native_checkpoint_roundtrip": true
+        }
+      ],
+      "retention_runs": [
+        {
+          "task": "retention-future-bec",
+          "method": "cross_domain_retention",
+          "seed": 11,
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "task": "retention-future-ade",
+          "method": "cross_domain_retention",
+          "seed": 11,
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:a4392a0e06e7d823d742cc1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "control_runs": {
+        "interaction_weight_only": [
+          {
+            "task": "cross-editor-mcp-readme-pyproject",
+            "method": "interaction_weight_only",
+            "seed": 11,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:f3a5314c0a06dd8e7fb5c5d2"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:81eedb0576367f7fc0ddc191"
+            ],
+            "required_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10"
+            ],
+            "selected_action_count": 2,
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          },
+          {
+            "task": "cross-editor-mcp-readme-requirements",
+            "method": "interaction_weight_only",
+            "seed": 11,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:6cff8482cde4a3261c72c689",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:f3a5314c0a06dd8e7fb5c5d2"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:81eedb0576367f7fc0ddc191"
+            ],
+            "required_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:6cff8482cde4a3261c72c689",
+              "workbench-owner:c62f0519c2dbde0073bb6c10"
+            ],
+            "selected_action_count": 2,
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          }
+        ],
+        "router_only": [
+          {
+            "task": "cross-editor-mcp-readme-pyproject",
+            "method": "router_only",
+            "seed": 11,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:f3a5314c0a06dd8e7fb5c5d2"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:81eedb0576367f7fc0ddc191"
+            ],
+            "required_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10"
+            ],
+            "selected_action_count": 2,
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          },
+          {
+            "task": "cross-editor-mcp-readme-requirements",
+            "method": "router_only",
+            "seed": 11,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:6cff8482cde4a3261c72c689",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:f3a5314c0a06dd8e7fb5c5d2"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:81eedb0576367f7fc0ddc191"
+            ],
+            "required_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:6cff8482cde4a3261c72c689",
+              "workbench-owner:c62f0519c2dbde0073bb6c10"
+            ],
+            "selected_action_count": 2,
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          }
+        ],
+        "memory_only": [
+          {
+            "task": "cross-editor-mcp-readme-pyproject",
+            "method": "memory_only",
+            "seed": 11,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:f3a5314c0a06dd8e7fb5c5d2"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:81eedb0576367f7fc0ddc191"
+            ],
+            "required_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10"
+            ],
+            "selected_action_count": 2,
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          },
+          {
+            "task": "cross-editor-mcp-readme-requirements",
+            "method": "memory_only",
+            "seed": 11,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:6cff8482cde4a3261c72c689",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:f3a5314c0a06dd8e7fb5c5d2"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:81eedb0576367f7fc0ddc191"
+            ],
+            "required_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:6cff8482cde4a3261c72c689",
+              "workbench-owner:c62f0519c2dbde0073bb6c10"
+            ],
+            "selected_action_count": 2,
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          }
+        ]
+      },
+      "lesion_run": {
+        "task": "cross-domain-lesion",
+        "method": "structural_growth_lesion",
+        "seed": 11,
+        "capability_domains": [
+          "editor",
+          "mcp"
+        ],
+        "capacity": 2,
+        "candidate_ids": [
+          "workbench-owner:81eedb0576367f7fc0ddc191",
+          "workbench-owner:a33f287c0a9c01af7781b08c",
+          "workbench-owner:c62f0519c2dbde0073bb6c10",
+          "workbench-owner:f3a5314c0a06dd8e7fb5c5d2"
+        ],
+        "selected_ids": [
+          "workbench-owner:c62f0519c2dbde0073bb6c10",
+          "workbench-owner:81eedb0576367f7fc0ddc191"
+        ],
+        "required_ids": [
+          "workbench-owner:81eedb0576367f7fc0ddc191",
+          "workbench-owner:a33f287c0a9c01af7781b08c",
+          "workbench-owner:c62f0519c2dbde0073bb6c10"
+        ],
+        "selected_action_count": 2,
+        "raw_action_status": [
+          "success",
+          "success"
+        ],
+        "raw_action_success": [
+          true,
+          true
+        ],
+        "task_complete": false,
+        "all_selected_actions_succeeded": true,
+        "task_score": 0.0,
+        "score_source": "native Workbench outcome status/success plus required-set completion",
+        "native_event_count": 3,
+        "native_audit_event_count": 8,
+        "native_checkpoint_roundtrip": true
+      },
+      "parent_capacity": 2,
+      "grown_capacity": 3,
+      "lesion_capacity": 2,
+      "rollback_capacity": 2,
+      "topology_before_rollback": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+      "topology_after_rollback": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+      "budget_before": 2,
+      "budget_after_admission": 1,
+      "budget_after_rollback": 2,
+      "rollback_status": "rolled_back",
+      "workspace_checkpoint_roundtrip": true
+    },
+    {
+      "seed": 29,
+      "online_rounds": [
+        {
+          "round": 1,
+          "family": "online-be",
+          "candidate_id": "transfer-group:145339db789015ea7ecd8eaa",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+          "outcome_id": "r2-s2-online-online-be-seed-29:outcome:4:r2-s2-online-online-be-seed-29:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 2,
+          "family": "online-bf",
+          "candidate_id": "transfer-group:b515b1e835c6a4dc6118346f",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "feedback_id": "35e147e6e1f88134f9e957fcd2eb3237b953b1be9858de2a576014df4a54aa8f",
+          "outcome_id": "r2-s2-online-online-bf-seed-29:outcome:4:r2-s2-online-online-bf-seed-29:workflow-outcome",
+          "outcome_success": false,
+          "admission_status": "rejected",
+          "admission_reason": "outcome_unsuccessful",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 3,
+          "family": "online-ce",
+          "candidate_id": "transfer-group:61d5583b886b40a97139fe73",
+          "member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+          "outcome_id": "r2-s2-online-online-ce-seed-29:outcome:4:r2-s2-online-online-ce-seed-29:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "online_feedback_ids": [
+        "0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+        "0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750"
+      ],
+      "pressure": {
+        "format": "taiji-interaction-structural-bridge-v1",
+        "revision": 1,
+        "version": 1,
+        "projection": {
+          "format": "taiji-structural-pressure-projection-v1",
+          "network_id": "standalone:adaptive.cortex",
+          "region_id": "adaptive.cortex",
+          "first_tick": 1,
+          "last_tick": 4,
+          "window_digests": [
+            "03268a193e16a42c2f9b0eedbdffcee541ec12669e24023e6f5611337a30c8fa",
+            "a8e47e9802391e761cde301a98045cadf29167ca13339c507b08eb8a7f4825e2",
+            "b1c455f23ea16c87f53cbc9d3b5fdba07d0944b94bf639c968f6969d6cfca4e5",
+            "922dadfd940060257827211f07195f48d3bb069fdc716bbc54f25c337782c3b8"
+          ],
+          "train_task_slice_ids": [
+            "online-interaction:transfer-group:145339db789015ea7ecd8eaa",
+            "online-interaction:transfer-group:61d5583b886b40a97139fe73"
+          ],
+          "holdout_task_slice_ids": [
+            "workbench-holdout:online-workbench-holdout-cycle-3"
+          ],
+          "retention_task_slice_ids": [
+            "workbench-retention:online-workbench-retention-cycle-3"
+          ],
+          "train_window_count": 2,
+          "holdout_window_count": 1,
+          "retention_window_count": 1,
+          "prediction_observation_count": 2,
+          "mean_prediction_error": 0.3999999999999999,
+          "mean_resource_state": 0.0,
+          "mean_holdout_transfer": 0.8,
+          "evidence_ids": [
+            "online-feedback:0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+            "online-feedback:0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-3-seed-29:outcome:4:r2-s2-online-holdout-cycle-3-seed-29:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-3-seed-29:outcome:4:r2-s2-online-retention-cycle-3-seed-29:workflow-outcome"
+          ],
+          "projection_digest": "5d4be467acac5cb0f5c2eade32dd8143c26f332fa1003e08806b12c93b41be8a"
+        },
+        "feedback_ids": [
+          "0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+          "0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750"
+        ],
+        "outcome_ids": [
+          "r2-s2-online-online-be-seed-29:outcome:4:r2-s2-online-online-be-seed-29:workflow-outcome",
+          "r2-s2-online-online-ce-seed-29:outcome:4:r2-s2-online-online-ce-seed-29:workflow-outcome"
+        ],
+        "mean_interaction": 0.6000000000000001,
+        "bridge_digest": "f92de4c737a87f984965fffb0b0c19a3d75085015a7ad6a049316a07b482f9e5"
+      },
+      "admission": {
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:5d4be467acac",
+        "candidate": {
+          "format": "taiji-structural-proposal-candidate-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:5d4be467acac",
+          "network_id": "standalone:adaptive.cortex",
+          "target_kind": "neuron",
+          "operation": "add",
+          "substrate_ids": [
+            "adaptive.cortex"
+          ],
+          "evidence_ids": [
+            "online-feedback:0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+            "online-feedback:0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-3-seed-29:outcome:4:r2-s2-online-holdout-cycle-3-seed-29:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-3-seed-29:outcome:4:r2-s2-online-retention-cycle-3-seed-29:workflow-outcome"
+          ],
+          "source_tick": 4,
+          "priority": 0.31999999999999995,
+          "specification": {
+            "region_id": "adaptive.cortex",
+            "unit_id": "u2",
+            "cycle_bridge_digest": "f92de4c737a87f984965fffb0b0c19a3d75085015a7ad6a049316a07b482f9e5"
+          },
+          "resource_cost": 1,
+          "depends_on_candidate_ids": [],
+          "conflict_keys": [],
+          "parent_checkpoint_id": "pressure-parent:5d4be467acac5cb0f5c2eade32dd8143c26f332fa1003e08806b12c93b41be8a:073fb8e1beb5b4ebb541044e2b67c1548a2283b1019cc0cc8c2120f56a6b2a70"
+        },
+        "arbitration": {
+          "format": "taiji-structural-candidate-batch-v1",
+          "batch_id": "batch:structural:6b8810a0e066c379211d3a95f205ebe1",
+          "candidate_ids": [
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:5d4be467acac"
+          ],
+          "selected_candidate_ids": [
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:5d4be467acac"
+          ],
+          "deferred_candidate_ids": [],
+          "rejected_candidate_ids": [],
+          "candidate_states": {
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:5d4be467acac": "reserved"
+          },
+          "reasons": {},
+          "reserved_resource_cost": 1,
+          "reservation_remaining": 1,
+          "structural_budget_before": 2,
+          "available_budget_before": 2,
+          "topology_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "arbitration_digest": "6b8810a0e066c379211d3a95f205ebe1e576dda5009936e7c2d33f0fe4e76da2",
+          "revision": 0,
+          "status": "planned"
+        },
+        "validation": {
+          "format": "taiji-structural-candidate-validation-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:5d4be467acac",
+          "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+          "status": "validated",
+          "validation_score": 1.0,
+          "parent_checkpoint_digest": "529598790dbaeb310d86e9c0af526252637d75548fbb386ba3fe29eb2a40e1fd",
+          "validation_checkpoint_digest": "f7db459914fc1ef4b9d8e95aa9c244a3a4bf75d79130acbb5ab7a69aa2a6e86e",
+          "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "topology_after_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "structural_budget_before": 2,
+          "structural_budget_after": 2,
+          "evidence_ids": [
+            "online-feedback:0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+            "online-feedback:0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-3-seed-29:outcome:4:r2-s2-online-holdout-cycle-3-seed-29:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-3-seed-29:outcome:4:r2-s2-online-retention-cycle-3-seed-29:workflow-outcome"
+          ],
+          "error": null
+        },
+        "decision": {
+          "format": "taiji-structural-validation-gate-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:5d4be467acac",
+          "passed": true,
+          "holdout_gain": 1.0,
+          "retention_regression": 0.02,
+          "lesion_effect": 0.15,
+          "resource_state": 0.8,
+          "resource_cost": 1,
+          "structural_budget": 2,
+          "minimum_holdout_gain": 0.05,
+          "maximum_retention_regression": 0.05,
+          "minimum_lesion_effect": 0.05,
+          "minimum_resource_state": 0.4,
+          "evidence_ids": [
+            "online-feedback:0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+            "online-feedback:0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-3-seed-29:outcome:4:r2-s2-online-holdout-cycle-3-seed-29:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-3-seed-29:outcome:4:r2-s2-online-retention-cycle-3-seed-29:workflow-outcome",
+            "continuous-bridge:f92de4c737a87f984965fffb0b0c19a3d75085015a7ad6a049316a07b482f9e5"
+          ],
+          "reasons": [],
+          "decision_digest": "2c14f63857fe4644c19420059f8ba602feb8d626dfb514d7f5ab0753c7583900"
+        },
+        "admission": {
+          "format": "taiji-structural-admission-result-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:5d4be467acac",
+          "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+          "status": "admitted",
+          "decision_digest": "2c14f63857fe4644c19420059f8ba602feb8d626dfb514d7f5ab0753c7583900",
+          "parent_checkpoint_digest": "6e946bb6ff76a54044a2656fde372c134e7ce904bfb2b940182d7a625d10a370",
+          "child_checkpoint_digest": "8fb2724ceb6d1a81583904ec467182d8c3a08d482c65e4c97fcff7d70f4a68fa",
+          "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "topology_after_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+          "structural_budget_before": 2,
+          "structural_budget_after": 1,
+          "error": null
+        },
+        "topology_before": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "topology_after": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+        "budget_before": 2,
+        "budget_after": 1,
+        "unit_ids": [
+          "u0",
+          "u1",
+          "u2"
+        ],
+        "candidate_checkpoint_roundtrip": true
+      },
+      "structural_runs": [
+        {
+          "task": "cross-editor-mcp-readme-pyproject",
+          "method": "structural_growth",
+          "seed": 29,
+          "capability_domains": [
+            "editor",
+            "mcp"
+          ],
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:81eedb0576367f7fc0ddc191",
+            "workbench-owner:a33f287c0a9c01af7781b08c",
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:f3a5314c0a06dd8e7fb5c5d2"
+          ],
+          "selected_ids": [
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:81eedb0576367f7fc0ddc191",
+            "workbench-owner:a33f287c0a9c01af7781b08c"
+          ],
+          "required_ids": [
+            "workbench-owner:81eedb0576367f7fc0ddc191",
+            "workbench-owner:a33f287c0a9c01af7781b08c",
+            "workbench-owner:c62f0519c2dbde0073bb6c10"
+          ],
+          "selected_action_count": 3,
+          "raw_action_status": [
+            "success",
+            "success",
+            "success"
+          ],
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench outcome status/success plus required-set completion",
+          "native_event_count": 4,
+          "native_audit_event_count": 12,
+          "native_checkpoint_roundtrip": true
+        },
+        {
+          "task": "cross-editor-mcp-readme-requirements",
+          "method": "structural_growth",
+          "seed": 29,
+          "capability_domains": [
+            "editor",
+            "mcp"
+          ],
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:81eedb0576367f7fc0ddc191",
+            "workbench-owner:6cff8482cde4a3261c72c689",
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:f3a5314c0a06dd8e7fb5c5d2"
+          ],
+          "selected_ids": [
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:81eedb0576367f7fc0ddc191",
+            "workbench-owner:6cff8482cde4a3261c72c689"
+          ],
+          "required_ids": [
+            "workbench-owner:81eedb0576367f7fc0ddc191",
+            "workbench-owner:6cff8482cde4a3261c72c689",
+            "workbench-owner:c62f0519c2dbde0073bb6c10"
+          ],
+          "selected_action_count": 3,
+          "raw_action_status": [
+            "success",
+            "success",
+            "success"
+          ],
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench outcome status/success plus required-set completion",
+          "native_event_count": 4,
+          "native_audit_event_count": 12,
+          "native_checkpoint_roundtrip": true
+        }
+      ],
+      "retention_runs": [
+        {
+          "task": "retention-future-bec",
+          "method": "cross_domain_retention",
+          "seed": 29,
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "task": "retention-future-ade",
+          "method": "cross_domain_retention",
+          "seed": 29,
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:a4392a0e06e7d823d742cc1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "control_runs": {
+        "interaction_weight_only": [
+          {
+            "task": "cross-editor-mcp-readme-pyproject",
+            "method": "interaction_weight_only",
+            "seed": 29,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:f3a5314c0a06dd8e7fb5c5d2"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:81eedb0576367f7fc0ddc191"
+            ],
+            "required_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10"
+            ],
+            "selected_action_count": 2,
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          },
+          {
+            "task": "cross-editor-mcp-readme-requirements",
+            "method": "interaction_weight_only",
+            "seed": 29,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:6cff8482cde4a3261c72c689",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:f3a5314c0a06dd8e7fb5c5d2"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:81eedb0576367f7fc0ddc191"
+            ],
+            "required_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:6cff8482cde4a3261c72c689",
+              "workbench-owner:c62f0519c2dbde0073bb6c10"
+            ],
+            "selected_action_count": 2,
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          }
+        ],
+        "router_only": [
+          {
+            "task": "cross-editor-mcp-readme-pyproject",
+            "method": "router_only",
+            "seed": 29,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:f3a5314c0a06dd8e7fb5c5d2"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:81eedb0576367f7fc0ddc191"
+            ],
+            "required_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10"
+            ],
+            "selected_action_count": 2,
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          },
+          {
+            "task": "cross-editor-mcp-readme-requirements",
+            "method": "router_only",
+            "seed": 29,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:6cff8482cde4a3261c72c689",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:f3a5314c0a06dd8e7fb5c5d2"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:81eedb0576367f7fc0ddc191"
+            ],
+            "required_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:6cff8482cde4a3261c72c689",
+              "workbench-owner:c62f0519c2dbde0073bb6c10"
+            ],
+            "selected_action_count": 2,
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          }
+        ],
+        "memory_only": [
+          {
+            "task": "cross-editor-mcp-readme-pyproject",
+            "method": "memory_only",
+            "seed": 29,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:f3a5314c0a06dd8e7fb5c5d2"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:81eedb0576367f7fc0ddc191"
+            ],
+            "required_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10"
+            ],
+            "selected_action_count": 2,
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          },
+          {
+            "task": "cross-editor-mcp-readme-requirements",
+            "method": "memory_only",
+            "seed": 29,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:6cff8482cde4a3261c72c689",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:f3a5314c0a06dd8e7fb5c5d2"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:81eedb0576367f7fc0ddc191"
+            ],
+            "required_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:6cff8482cde4a3261c72c689",
+              "workbench-owner:c62f0519c2dbde0073bb6c10"
+            ],
+            "selected_action_count": 2,
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          }
+        ]
+      },
+      "lesion_run": {
+        "task": "cross-domain-lesion",
+        "method": "structural_growth_lesion",
+        "seed": 29,
+        "capability_domains": [
+          "editor",
+          "mcp"
+        ],
+        "capacity": 2,
+        "candidate_ids": [
+          "workbench-owner:81eedb0576367f7fc0ddc191",
+          "workbench-owner:a33f287c0a9c01af7781b08c",
+          "workbench-owner:c62f0519c2dbde0073bb6c10",
+          "workbench-owner:f3a5314c0a06dd8e7fb5c5d2"
+        ],
+        "selected_ids": [
+          "workbench-owner:c62f0519c2dbde0073bb6c10",
+          "workbench-owner:81eedb0576367f7fc0ddc191"
+        ],
+        "required_ids": [
+          "workbench-owner:81eedb0576367f7fc0ddc191",
+          "workbench-owner:a33f287c0a9c01af7781b08c",
+          "workbench-owner:c62f0519c2dbde0073bb6c10"
+        ],
+        "selected_action_count": 2,
+        "raw_action_status": [
+          "success",
+          "success"
+        ],
+        "raw_action_success": [
+          true,
+          true
+        ],
+        "task_complete": false,
+        "all_selected_actions_succeeded": true,
+        "task_score": 0.0,
+        "score_source": "native Workbench outcome status/success plus required-set completion",
+        "native_event_count": 3,
+        "native_audit_event_count": 8,
+        "native_checkpoint_roundtrip": true
+      },
+      "parent_capacity": 2,
+      "grown_capacity": 3,
+      "lesion_capacity": 2,
+      "rollback_capacity": 2,
+      "topology_before_rollback": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+      "topology_after_rollback": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+      "budget_before": 2,
+      "budget_after_admission": 1,
+      "budget_after_rollback": 2,
+      "rollback_status": "rolled_back",
+      "workspace_checkpoint_roundtrip": true
+    },
+    {
+      "seed": 47,
+      "online_rounds": [
+        {
+          "round": 1,
+          "family": "online-be",
+          "candidate_id": "transfer-group:145339db789015ea7ecd8eaa",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+          "outcome_id": "r2-s2-online-online-be-seed-47:outcome:4:r2-s2-online-online-be-seed-47:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 2,
+          "family": "online-bf",
+          "candidate_id": "transfer-group:b515b1e835c6a4dc6118346f",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "feedback_id": "760bbfbbbf2a6c43eb4a47ccd4972927755db95a111bc3240911723b1d7c253b",
+          "outcome_id": "r2-s2-online-online-bf-seed-47:outcome:4:r2-s2-online-online-bf-seed-47:workflow-outcome",
+          "outcome_success": false,
+          "admission_status": "rejected",
+          "admission_reason": "outcome_unsuccessful",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 3,
+          "family": "online-ce",
+          "candidate_id": "transfer-group:61d5583b886b40a97139fe73",
+          "member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+          "outcome_id": "r2-s2-online-online-ce-seed-47:outcome:4:r2-s2-online-online-ce-seed-47:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "online_feedback_ids": [
+        "740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+        "e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c"
+      ],
+      "pressure": {
+        "format": "taiji-interaction-structural-bridge-v1",
+        "revision": 1,
+        "version": 1,
+        "projection": {
+          "format": "taiji-structural-pressure-projection-v1",
+          "network_id": "standalone:adaptive.cortex",
+          "region_id": "adaptive.cortex",
+          "first_tick": 1,
+          "last_tick": 4,
+          "window_digests": [
+            "68723c5419f26e016853b6e9f64a9278d943e33d6d6bcbdbb1414088f995c564",
+            "ff09f904d5327f969f3105fd59e10ea82a71a7f246e799bea41b86a02136af56",
+            "08b19fc346cdc715530328a30ab54f73a3f9623641fbb0208940e3d879bf981e",
+            "fc4bbc4262f062aab1a6cffb4a1e50397438a504231a35f344c90ec44f304d3f"
+          ],
+          "train_task_slice_ids": [
+            "online-interaction:transfer-group:145339db789015ea7ecd8eaa",
+            "online-interaction:transfer-group:61d5583b886b40a97139fe73"
+          ],
+          "holdout_task_slice_ids": [
+            "workbench-holdout:online-workbench-holdout-cycle-3"
+          ],
+          "retention_task_slice_ids": [
+            "workbench-retention:online-workbench-retention-cycle-3"
+          ],
+          "train_window_count": 2,
+          "holdout_window_count": 1,
+          "retention_window_count": 1,
+          "prediction_observation_count": 2,
+          "mean_prediction_error": 0.3999999999999999,
+          "mean_resource_state": 0.0,
+          "mean_holdout_transfer": 0.8,
+          "evidence_ids": [
+            "online-feedback:740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+            "online-feedback:e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-3-seed-47:outcome:4:r2-s2-online-holdout-cycle-3-seed-47:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-3-seed-47:outcome:4:r2-s2-online-retention-cycle-3-seed-47:workflow-outcome"
+          ],
+          "projection_digest": "f4406333146a50f42c197c8550fd43ec4cc15fa09ce2b6e7d437bb12b0668003"
+        },
+        "feedback_ids": [
+          "740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+          "e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c"
+        ],
+        "outcome_ids": [
+          "r2-s2-online-online-be-seed-47:outcome:4:r2-s2-online-online-be-seed-47:workflow-outcome",
+          "r2-s2-online-online-ce-seed-47:outcome:4:r2-s2-online-online-ce-seed-47:workflow-outcome"
+        ],
+        "mean_interaction": 0.6000000000000001,
+        "bridge_digest": "bf8cb32d40bc1f885443b1925704829c5efc40fd12c477852032a9935edc0741"
+      },
+      "admission": {
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f4406333146a",
+        "candidate": {
+          "format": "taiji-structural-proposal-candidate-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f4406333146a",
+          "network_id": "standalone:adaptive.cortex",
+          "target_kind": "neuron",
+          "operation": "add",
+          "substrate_ids": [
+            "adaptive.cortex"
+          ],
+          "evidence_ids": [
+            "online-feedback:740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+            "online-feedback:e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-3-seed-47:outcome:4:r2-s2-online-holdout-cycle-3-seed-47:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-3-seed-47:outcome:4:r2-s2-online-retention-cycle-3-seed-47:workflow-outcome"
+          ],
+          "source_tick": 4,
+          "priority": 0.31999999999999995,
+          "specification": {
+            "region_id": "adaptive.cortex",
+            "unit_id": "u2",
+            "cycle_bridge_digest": "bf8cb32d40bc1f885443b1925704829c5efc40fd12c477852032a9935edc0741"
+          },
+          "resource_cost": 1,
+          "depends_on_candidate_ids": [],
+          "conflict_keys": [],
+          "parent_checkpoint_id": "pressure-parent:f4406333146a50f42c197c8550fd43ec4cc15fa09ce2b6e7d437bb12b0668003:87a8a95ab2569d80dbd743e6ed188d8131a9f2eff401ece18d596b109ec45cad"
+        },
+        "arbitration": {
+          "format": "taiji-structural-candidate-batch-v1",
+          "batch_id": "batch:structural:4c09738f2700dd61385640f069246d03",
+          "candidate_ids": [
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f4406333146a"
+          ],
+          "selected_candidate_ids": [
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f4406333146a"
+          ],
+          "deferred_candidate_ids": [],
+          "rejected_candidate_ids": [],
+          "candidate_states": {
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f4406333146a": "reserved"
+          },
+          "reasons": {},
+          "reserved_resource_cost": 1,
+          "reservation_remaining": 1,
+          "structural_budget_before": 2,
+          "available_budget_before": 2,
+          "topology_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "arbitration_digest": "4c09738f2700dd61385640f069246d03de8d8258971ba5a6d9693c9a1cf4bf5a",
+          "revision": 0,
+          "status": "planned"
+        },
+        "validation": {
+          "format": "taiji-structural-candidate-validation-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f4406333146a",
+          "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+          "status": "validated",
+          "validation_score": 1.0,
+          "parent_checkpoint_digest": "ed6e5cb2798809b2a9ca9acd44921c9cb98661376d8fb62944001c59821bf6af",
+          "validation_checkpoint_digest": "66d4c9b8e39ec4800ce13e3ab2b57aae744400e0634808fcf852f17277ae189f",
+          "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "topology_after_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "structural_budget_before": 2,
+          "structural_budget_after": 2,
+          "evidence_ids": [
+            "online-feedback:740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+            "online-feedback:e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-3-seed-47:outcome:4:r2-s2-online-holdout-cycle-3-seed-47:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-3-seed-47:outcome:4:r2-s2-online-retention-cycle-3-seed-47:workflow-outcome"
+          ],
+          "error": null
+        },
+        "decision": {
+          "format": "taiji-structural-validation-gate-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f4406333146a",
+          "passed": true,
+          "holdout_gain": 1.0,
+          "retention_regression": 0.02,
+          "lesion_effect": 0.15,
+          "resource_state": 0.8,
+          "resource_cost": 1,
+          "structural_budget": 2,
+          "minimum_holdout_gain": 0.05,
+          "maximum_retention_regression": 0.05,
+          "minimum_lesion_effect": 0.05,
+          "minimum_resource_state": 0.4,
+          "evidence_ids": [
+            "online-feedback:740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+            "online-feedback:e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-3-seed-47:outcome:4:r2-s2-online-holdout-cycle-3-seed-47:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-3-seed-47:outcome:4:r2-s2-online-retention-cycle-3-seed-47:workflow-outcome",
+            "continuous-bridge:bf8cb32d40bc1f885443b1925704829c5efc40fd12c477852032a9935edc0741"
+          ],
+          "reasons": [],
+          "decision_digest": "8b196c7b8cc0996cbc90b947e52b072608d78ff3689c85f322ffe745e49b1165"
+        },
+        "admission": {
+          "format": "taiji-structural-admission-result-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f4406333146a",
+          "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+          "status": "admitted",
+          "decision_digest": "8b196c7b8cc0996cbc90b947e52b072608d78ff3689c85f322ffe745e49b1165",
+          "parent_checkpoint_digest": "cdebbdeb57b991be8aa73e77e68df6405128bebd10132d90e332710ff1aec7e0",
+          "child_checkpoint_digest": "54b035a808f5780b83577e034ccb6eb97409917cfae4636002a172e4c3cb7d46",
+          "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "topology_after_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+          "structural_budget_before": 2,
+          "structural_budget_after": 1,
+          "error": null
+        },
+        "topology_before": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "topology_after": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+        "budget_before": 2,
+        "budget_after": 1,
+        "unit_ids": [
+          "u0",
+          "u1",
+          "u2"
+        ],
+        "candidate_checkpoint_roundtrip": true
+      },
+      "structural_runs": [
+        {
+          "task": "cross-editor-mcp-readme-pyproject",
+          "method": "structural_growth",
+          "seed": 47,
+          "capability_domains": [
+            "editor",
+            "mcp"
+          ],
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:81eedb0576367f7fc0ddc191",
+            "workbench-owner:a33f287c0a9c01af7781b08c",
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:f3a5314c0a06dd8e7fb5c5d2"
+          ],
+          "selected_ids": [
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:81eedb0576367f7fc0ddc191",
+            "workbench-owner:a33f287c0a9c01af7781b08c"
+          ],
+          "required_ids": [
+            "workbench-owner:81eedb0576367f7fc0ddc191",
+            "workbench-owner:a33f287c0a9c01af7781b08c",
+            "workbench-owner:c62f0519c2dbde0073bb6c10"
+          ],
+          "selected_action_count": 3,
+          "raw_action_status": [
+            "success",
+            "success",
+            "success"
+          ],
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench outcome status/success plus required-set completion",
+          "native_event_count": 4,
+          "native_audit_event_count": 12,
+          "native_checkpoint_roundtrip": true
+        },
+        {
+          "task": "cross-editor-mcp-readme-requirements",
+          "method": "structural_growth",
+          "seed": 47,
+          "capability_domains": [
+            "editor",
+            "mcp"
+          ],
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:81eedb0576367f7fc0ddc191",
+            "workbench-owner:6cff8482cde4a3261c72c689",
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:f3a5314c0a06dd8e7fb5c5d2"
+          ],
+          "selected_ids": [
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:81eedb0576367f7fc0ddc191",
+            "workbench-owner:6cff8482cde4a3261c72c689"
+          ],
+          "required_ids": [
+            "workbench-owner:81eedb0576367f7fc0ddc191",
+            "workbench-owner:6cff8482cde4a3261c72c689",
+            "workbench-owner:c62f0519c2dbde0073bb6c10"
+          ],
+          "selected_action_count": 3,
+          "raw_action_status": [
+            "success",
+            "success",
+            "success"
+          ],
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench outcome status/success plus required-set completion",
+          "native_event_count": 4,
+          "native_audit_event_count": 12,
+          "native_checkpoint_roundtrip": true
+        }
+      ],
+      "retention_runs": [
+        {
+          "task": "retention-future-bec",
+          "method": "cross_domain_retention",
+          "seed": 47,
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "task": "retention-future-ade",
+          "method": "cross_domain_retention",
+          "seed": 47,
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:a4392a0e06e7d823d742cc1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "control_runs": {
+        "interaction_weight_only": [
+          {
+            "task": "cross-editor-mcp-readme-pyproject",
+            "method": "interaction_weight_only",
+            "seed": 47,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:f3a5314c0a06dd8e7fb5c5d2"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:81eedb0576367f7fc0ddc191"
+            ],
+            "required_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10"
+            ],
+            "selected_action_count": 2,
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          },
+          {
+            "task": "cross-editor-mcp-readme-requirements",
+            "method": "interaction_weight_only",
+            "seed": 47,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:6cff8482cde4a3261c72c689",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:f3a5314c0a06dd8e7fb5c5d2"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:81eedb0576367f7fc0ddc191"
+            ],
+            "required_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:6cff8482cde4a3261c72c689",
+              "workbench-owner:c62f0519c2dbde0073bb6c10"
+            ],
+            "selected_action_count": 2,
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          }
+        ],
+        "router_only": [
+          {
+            "task": "cross-editor-mcp-readme-pyproject",
+            "method": "router_only",
+            "seed": 47,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:f3a5314c0a06dd8e7fb5c5d2"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:81eedb0576367f7fc0ddc191"
+            ],
+            "required_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10"
+            ],
+            "selected_action_count": 2,
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          },
+          {
+            "task": "cross-editor-mcp-readme-requirements",
+            "method": "router_only",
+            "seed": 47,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:6cff8482cde4a3261c72c689",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:f3a5314c0a06dd8e7fb5c5d2"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:81eedb0576367f7fc0ddc191"
+            ],
+            "required_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:6cff8482cde4a3261c72c689",
+              "workbench-owner:c62f0519c2dbde0073bb6c10"
+            ],
+            "selected_action_count": 2,
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          }
+        ],
+        "memory_only": [
+          {
+            "task": "cross-editor-mcp-readme-pyproject",
+            "method": "memory_only",
+            "seed": 47,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:f3a5314c0a06dd8e7fb5c5d2"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:81eedb0576367f7fc0ddc191"
+            ],
+            "required_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10"
+            ],
+            "selected_action_count": 2,
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          },
+          {
+            "task": "cross-editor-mcp-readme-requirements",
+            "method": "memory_only",
+            "seed": 47,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:6cff8482cde4a3261c72c689",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:f3a5314c0a06dd8e7fb5c5d2"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:81eedb0576367f7fc0ddc191"
+            ],
+            "required_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:6cff8482cde4a3261c72c689",
+              "workbench-owner:c62f0519c2dbde0073bb6c10"
+            ],
+            "selected_action_count": 2,
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          }
+        ]
+      },
+      "lesion_run": {
+        "task": "cross-domain-lesion",
+        "method": "structural_growth_lesion",
+        "seed": 47,
+        "capability_domains": [
+          "editor",
+          "mcp"
+        ],
+        "capacity": 2,
+        "candidate_ids": [
+          "workbench-owner:81eedb0576367f7fc0ddc191",
+          "workbench-owner:a33f287c0a9c01af7781b08c",
+          "workbench-owner:c62f0519c2dbde0073bb6c10",
+          "workbench-owner:f3a5314c0a06dd8e7fb5c5d2"
+        ],
+        "selected_ids": [
+          "workbench-owner:c62f0519c2dbde0073bb6c10",
+          "workbench-owner:81eedb0576367f7fc0ddc191"
+        ],
+        "required_ids": [
+          "workbench-owner:81eedb0576367f7fc0ddc191",
+          "workbench-owner:a33f287c0a9c01af7781b08c",
+          "workbench-owner:c62f0519c2dbde0073bb6c10"
+        ],
+        "selected_action_count": 2,
+        "raw_action_status": [
+          "success",
+          "success"
+        ],
+        "raw_action_success": [
+          true,
+          true
+        ],
+        "task_complete": false,
+        "all_selected_actions_succeeded": true,
+        "task_score": 0.0,
+        "score_source": "native Workbench outcome status/success plus required-set completion",
+        "native_event_count": 3,
+        "native_audit_event_count": 8,
+        "native_checkpoint_roundtrip": true
+      },
+      "parent_capacity": 2,
+      "grown_capacity": 3,
+      "lesion_capacity": 2,
+      "rollback_capacity": 2,
+      "topology_before_rollback": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+      "topology_after_rollback": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+      "budget_before": 2,
+      "budget_after_admission": 1,
+      "budget_after_rollback": 2,
+      "rollback_status": "rolled_back",
+      "workspace_checkpoint_roundtrip": true
+    }
+  ],
+  "metrics": {
+    "three_independent_seeds": true,
+    "training_contains_actual_editor_and_mcp_records": true,
+    "cross_domain_structural_gain": true,
+    "cross_domain_growth_beats_fixed_capacity_controls": true,
+    "old_workspace_capability_retention": true,
+    "native_status_and_checkpoint_evidence": true,
+    "controls_remain_at_parent_capacity": true,
+    "capacity_tracks_growth_lesion_and_rollback": true,
+    "growth_is_checkpointable": true,
+    "lesion_removes_cross_domain_gain": true,
+    "rollback_restores_topology_and_budget": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "an online-evidence-backed neuron admission must expand the live workspace, complete two unseen three-action tasks spanning editor and MCP, retain prior workspace tasks, beat fixed-capacity controls, and preserve native status, checkpoint, lesion, resource, and rollback evidence"
+  },
+  "boundary": "This is bounded cross-domain capacity evidence. It does not claim autonomous capability discovery, unrestricted architecture design, AGI, terminal safety, full language understanding, or CUDA acceleration."
+}

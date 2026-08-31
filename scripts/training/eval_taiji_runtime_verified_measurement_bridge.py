@@ -23,7 +23,10 @@ from scripts.training.eval_taiji_workbench_multi_region_batch import (  # noqa: 
     _build_runtime,
     _schedule_requests,
 )
-from taiji import StructuralValidationArtifactStore  # noqa: E402
+from taiji import (  # noqa: E402
+    ArtifactConsumptionPolicy,
+    StructuralValidationArtifactStore,
+)
 from taiji.adapter import _checkpoint_digest  # noqa: E402
 
 REPORT_FORMAT = "taiji-w7-r5c-s51-runtime-verified-measurement-bridge-v1"
@@ -104,7 +107,7 @@ def evaluate() -> dict[str, object]:
                 replays_by_candidate={legacy_candidate_id: legacy_replay},
                 require_verified_measurements=True,
             )
-        except ValueError:
+        except (FileNotFoundError, ValueError):
             strict_legacy_rejected = True
         else:
             strict_legacy_rejected = False
@@ -118,6 +121,9 @@ def evaluate() -> dict[str, object]:
             artifact_store=legacy_store,
             artifact_digests_by_candidate={legacy_candidate_id: legacy_artifact.artifact_digest},
             replays_by_candidate={legacy_candidate_id: legacy_replay},
+            artifact_consumption_policy=ArtifactConsumptionPolicy.legacy_compatible(
+                reason="historical-replay-canary"
+            ),
         )
         legacy_default_accepts = (
             default_result["results"][legacy_candidate_id]["status"] == "admitted"
@@ -156,7 +162,7 @@ def evaluate() -> dict[str, object]:
                 },
                 require_verified_measurements=True,
             )
-        except ValueError:
+        except (FileNotFoundError, ValueError):
             partial_rejected = True
         else:
             partial_rejected = False
@@ -170,7 +176,7 @@ def evaluate() -> dict[str, object]:
 
         metrics = {
             "verified_bundle_strictly_consumes": verified_accepts,
-            "legacy_default_compatibility_is_preserved": legacy_default_accepts,
+            "legacy_explicit_compatibility_is_preserved": legacy_default_accepts,
             "legacy_strict_mode_fails_closed_read_only": (
                 strict_legacy_rejected and strict_legacy_read_only
             ),
@@ -186,12 +192,12 @@ def evaluate() -> dict[str, object]:
                 "passed": all(metrics.values()),
                 "criterion": (
                     "strict verified-measurement bridge mode must validate every external artifact "
-                    "before native consumption, while default mode remains legacy-compatible"
+                    "before native consumption, while historical compatibility requires an explicit policy"
                 ),
             },
             "boundary": (
-                "This canary covers native CPU opt-in verified artifact consumption. It does not "
-                "claim default forced migration, automatic registration, deletion, unlimited storage, "
+                "This canary covers native CPU verified artifact consumption and the historical "
+                "compatibility shim. It does not claim default forced migration, automatic registration, deletion, unlimited storage, "
                 "open-domain quality, CUDA, frontend behavior, Windows shell, CI completion, or "
                 "general intelligence."
             ),
