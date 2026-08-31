@@ -307,8 +307,12 @@ from .semantic_provider import (
     SEMANTIC_PROVIDER_CONFIDENCE_FLOOR,
     SEMANTIC_PROVIDER_EVIDENCE_FORMAT,
     SEMANTIC_PROVIDER_EVIDENCE_VERSION,
+    SEMANTIC_PROVIDER_INTERFACE_FORMAT,
     SEMANTIC_PROVIDER_MAX_STEPS,
+    SEMANTIC_PROVIDER_REQUEST_FORMAT,
     SemanticEvidenceProposal,
+    SemanticEvidenceProvider,
+    SemanticProviderRequest,
 )
 from .sparse import SparseSynapses
 from .state import (
@@ -668,8 +672,12 @@ __all__ = [
     "SEMANTIC_PROVIDER_CONFIDENCE_FLOOR",
     "SEMANTIC_PROVIDER_EVIDENCE_FORMAT",
     "SEMANTIC_PROVIDER_EVIDENCE_VERSION",
+    "SEMANTIC_PROVIDER_INTERFACE_FORMAT",
     "SEMANTIC_PROVIDER_MAX_STEPS",
+    "SEMANTIC_PROVIDER_REQUEST_FORMAT",
+    "SemanticEvidenceProvider",
     "SemanticEvidenceProposal",
+    "SemanticProviderRequest",
     "Taiji",
     "TaijiConfig",
     "ARTIFACT_CONSUMPTION_POLICY_FORMAT",

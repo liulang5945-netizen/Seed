@@ -1,0 +1,16 @@
+{
+  "format": "taiji-w7-p5-3-natural-language-workbench-execution-modularization-v1",
+  "task": "Workbench request, preflight, and execution boundary modularization",
+  "metrics": {
+    "dedicated_execution_module_owns_request_preflight_execution": true,
+    "runtime_execution_path_delegates_to_boundary": true,
+    "execution_module_has_no_runtime_or_provider_dependency": true,
+    "boundary_preserves_current_snapshot_and_execution_contract": true,
+    "previous_protocol_and_grounding_gates_remain_green": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "The Workbench execution boundary must own current-snapshot request binding, preflight, execution, and side-effect projection, while SeedRuntime remains a cognitive/runtime facade and previous protocol gates stay green."
+  },
+  "boundary": "This Gate proves behavior-preserving ownership modularization only. It does not claim real provider quality, unrestricted execution, CUDA, CI, or open-domain autonomy."
+}

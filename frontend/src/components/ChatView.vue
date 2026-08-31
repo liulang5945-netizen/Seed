@@ -40,6 +40,19 @@
           @like="likeMsg"
           @regenerate="chatStore.regenerateMessage"
         />
+        <WorkbenchTaskCard
+          v-if="workbenchMode || workbench.interpretation.value || workbench.plan.value || workbench.execution.value"
+          :interpretation="workbench.interpretation.value"
+          :plan="workbench.plan.value"
+          :approval="workbench.approval.value"
+          :approval-tokens="approvalTokens"
+          :execution="workbench.execution.value"
+          :busy="workbench.busy.value"
+          :error="workbench.error.value"
+          @approve="approveWorkbenchRequest"
+          @execute="executeWorkbenchPlan"
+          @reset="resetWorkbench"
+        />
       </div>
 
       <ChatComposer
@@ -50,12 +63,14 @@
         :uploading="uploading"
         :quick-hints="quickHints"
         :prompt-templates="promptTemplates"
+        :workbench-mode="workbenchMode"
         @update:model-value="chatStore.chatInput = $event"
         @send="handleSend"
         @stop="chatStore.stopGeneration()"
         @files-picked="onFilesPicked"
         @insert-template="insertTemplate"
         @apply-quick-hint="applyQuickHint"
+        @toggle-workbench="toggleWorkbench"
       />
     </div>
   </main>
@@ -66,20 +81,25 @@ import { computed, inject, nextTick, onMounted, ref, watch } from 'vue'
 import { Brain, Bug, GitBranch, LineChart, ScrollText, SlidersHorizontal } from 'lucide-vue-next'
 import ChatComposer from './ChatComposer.vue'
 import ChatMessageList from './ChatMessageList.vue'
+import WorkbenchTaskCard from './WorkbenchTaskCard.vue'
 import { nativeApi } from '@/composables/nativeApi.js'
 import { useChatStore } from '@/stores/chatStore.js'
+import { useNaturalLanguageWorkbench } from '@/composables/useNaturalLanguageWorkbench.js'
 import { useRuntimeStore } from '@/stores/runtimeStore.js'
 
 defineOptions({ name: 'ChatView' })
 
 const chatStore = useChatStore()
 const runtimeStore = useRuntimeStore()
+const workbench = useNaturalLanguageWorkbench()
 const toast = inject('toast', () => {})
 
 const messagesArea = ref(null)
 const composerRef = ref(null)
 const showExample = ref(false)
 const uploading = ref(false)
+const workbenchMode = ref(false)
+const approvalTokens = ref({})
 
 const vitalChips = computed(() => {
   const isTaiji = runtimeStore.health.isTaiji
@@ -132,8 +152,76 @@ function handleSend() {
     }
     return
   }
-  chatStore.sendMessage()
+  if (workbenchMode.value) {
+    void startWorkbenchTask()
+  } else {
+    chatStore.sendMessage()
+  }
   scrollToBottom()
+}
+
+async function startWorkbenchTask() {
+  const prompt = chatStore.chatInput.trim()
+  if (!prompt || workbench.busy.value) return
+  const history = []
+  let pendingUser = ''
+  for (const msg of chatStore.messages) {
+    if (msg.role === 'user') pendingUser = msg.content || ''
+    else if (msg.role === 'assistant' && pendingUser) {
+      history.push([pendingUser, msg.content || ''])
+      pendingUser = ''
+    }
+  }
+  chatStore.appendRuntimeMessage('user', prompt)
+  chatStore.chatInput = ''
+  approvalTokens.value = {}
+  try {
+    const interpretation = await workbench.interpretTask({ prompt, history })
+    if (interpretation?.provider_evidence && interpretation?.decomposition?.steps?.length) {
+      const capabilities = await nativeApi.workbenchCapabilities()
+      await workbench.planTask({
+        prompt,
+        semantic_evidence: interpretation.provider_evidence,
+        snapshot_id: capabilities.snapshot_id,
+        loop_id: `chat-workbench:${interpretation.interpretation?.interpretation_id || prompt}`,
+        max_steps: interpretation.decomposition.steps.length,
+        max_budget_units: 1,
+        novelty: 0,
+        resource_budget: 1,
+      })
+    }
+  } catch {
+    toast(workbench.error.value || 'Taiji 工作台无法接收当前任务', 'error')
+  }
+}
+
+async function approveWorkbenchRequest(requestId) {
+  try {
+    const result = await workbench.approveRequest(requestId)
+    if (result?.approval_token) {
+      approvalTokens.value = { ...approvalTokens.value, [requestId]: result.approval_token }
+    }
+  } catch {
+    toast(workbench.error.value || '工作台审批失败', 'error')
+  }
+}
+
+async function executeWorkbenchPlan() {
+  try {
+    await workbench.executePlan(approvalTokens.value)
+  } catch {
+    toast(workbench.error.value || '工作台执行失败', 'error')
+  }
+}
+
+function toggleWorkbench() {
+  workbenchMode.value = !workbenchMode.value
+}
+
+function resetWorkbench() {
+  workbenchMode.value = false
+  approvalTokens.value = {}
+  workbench.reset()
 }
 
 async function copyMsg(content) {

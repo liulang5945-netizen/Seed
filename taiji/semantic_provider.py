@@ -13,7 +13,7 @@ import math
 import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Protocol, runtime_checkable
 
 from .input_boundary import InputFrame
 from .internalization import content_digest
@@ -21,6 +21,8 @@ from .task_interpretation import task_input_digest
 
 SEMANTIC_PROVIDER_EVIDENCE_FORMAT = "taiji-semantic-provider-evidence-v1"
 SEMANTIC_PROVIDER_EVIDENCE_VERSION = 1
+SEMANTIC_PROVIDER_REQUEST_FORMAT = "taiji-semantic-provider-request-v1"
+SEMANTIC_PROVIDER_INTERFACE_FORMAT = "taiji-semantic-provider-interface-v1"
 SEMANTIC_PROVIDER_MAX_STEPS = 8
 SEMANTIC_PROVIDER_CONFIDENCE_FLOOR = 0.5
 SEMANTIC_PROVIDER_AMBIGUITY_CEILING = 0.5
@@ -132,6 +134,94 @@ def _normalize_steps(value: Sequence[Mapping[str, Any]]) -> tuple[dict[str, Any]
             )
         normalized.append(normalized_item)
     return tuple(normalized)
+
+
+@dataclass(frozen=True)
+class SemanticProviderRequest:
+    """Content-addressed request presented to an independent semantic organ.
+
+    The request exposes the exact input frame and a digest of conversational
+    context, but it carries no capability, tool, parameter, intent, or
+    execution authority.  A provider may read the frame and propose semantic
+    evidence; Taiji remains the only owner that can admit, ground, or execute
+    the proposal.
+    """
+
+    frame: InputFrame
+    context_digest: str = ""
+    constraints: tuple[str, ...] = ()
+    request_id: str = ""
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.frame, InputFrame):
+            raise TypeError("semantic provider request frame must be a Taiji InputFrame")
+        context_digest = _digest_text(self.context_digest, "context_digest", optional=True)
+        constraints = _normalize_constraints(self.constraints)
+        identity = self._identity_payload(
+            input_id=self.frame.input_id,
+            input_digest=task_input_digest(bytes(self.frame.payload)),
+            modality=self.frame.modality,
+            context_digest=context_digest,
+            constraints=constraints,
+            tick=int(self.frame.timestamp),
+        )
+        expected_id = f"semantic-request:{content_digest(identity)[:24]}"
+        if self.request_id and str(self.request_id) != expected_id:
+            raise ValueError("semantic provider request_id is not content-addressed")
+        object.__setattr__(self, "context_digest", context_digest)
+        object.__setattr__(self, "constraints", constraints)
+        object.__setattr__(self, "request_id", expected_id)
+
+    @staticmethod
+    def _identity_payload(
+        *,
+        input_id: str,
+        input_digest: str,
+        modality: str,
+        context_digest: str,
+        constraints: tuple[str, ...],
+        tick: int,
+    ) -> dict[str, Any]:
+        return {
+            "input_id": input_id,
+            "input_digest": input_digest,
+            "modality": modality,
+            "context_digest": context_digest,
+            "constraints": list(constraints),
+            "tick": tick,
+        }
+
+    @classmethod
+    def from_frame(
+        cls,
+        frame: InputFrame,
+        *,
+        context_digest: str = "",
+        constraints: Sequence[str] = (),
+    ) -> SemanticProviderRequest:
+        return cls(
+            frame=frame,
+            context_digest=context_digest,
+            constraints=tuple(constraints),
+        )
+
+    @property
+    def input_digest(self) -> str:
+        return task_input_digest(bytes(self.frame.payload))
+
+    def to_payload(self) -> dict[str, Any]:
+        """Return auditable metadata without duplicating the raw input bytes."""
+
+        return {
+            "format": SEMANTIC_PROVIDER_REQUEST_FORMAT,
+            "request_id": self.request_id,
+            "input_id": self.frame.input_id,
+            "input_digest": self.input_digest,
+            "modality": self.frame.modality,
+            "context_digest": self.context_digest,
+            "constraints": list(self.constraints),
+            "tick": int(self.frame.timestamp),
+        }
 
 
 @dataclass(frozen=True)
@@ -345,3 +435,24 @@ class SemanticEvidenceProposal:
             tick=int(payload.get("tick", 0)),
             evidence_digest=str(payload["evidence_digest"]),
         )
+
+
+@runtime_checkable
+class SemanticEvidenceProvider(Protocol):
+    """Independent semantic-organ interface accepted by the Seed edge.
+
+    Implementations may be a local model, a remote connector, or a learned
+    Taiji-side organ.  The interface deliberately returns only
+    ``SemanticEvidenceProposal``; it cannot return a tool call, ActionIntent,
+    parameter binding, patch, or execution result.
+    """
+
+    @property
+    def provider_id(self) -> str:
+        """Stable provider identifier recorded in evidence provenance."""
+
+    def propose(self, request: SemanticProviderRequest) -> SemanticEvidenceProposal:
+        """Propose content-addressed semantic evidence for one request."""
+
+    def checkpoint(self) -> Mapping[str, Any]:
+        """Return a serializable descriptor for explicit provider rebinding."""

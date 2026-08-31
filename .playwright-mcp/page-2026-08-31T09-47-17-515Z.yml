@@ -1,0 +1,151 @@
+- generic [ref=e1]:
+  - generic [ref=e4]:
+    - alert
+    - generic [ref=e208]:
+      - img [ref=e210]
+      - generic [ref=e212]:
+        - generic [ref=e213]: 运行时断开
+        - generic [ref=e214]: 后端返回错误 (HTTP 502)
+      - button "×" [ref=e215] [cursor=pointer]
+    - button "收起侧边栏" [ref=e6] [cursor=pointer]:
+      - img [ref=e7]
+    - generic [ref=e11]:
+      - complementary [ref=e12]:
+        - generic [ref=e14]:
+          - generic [ref=e15]:
+            - img "Seed Taiji" [ref=e17]
+            - generic [ref=e18]:
+              - heading "Seed" [level=2] [ref=e19]
+              - generic [ref=e20]: 等待运行时
+          - generic [ref=e21]:
+            - img [ref=e22]
+            - textbox "搜索" [ref=e25]
+            - generic [ref=e26]: Ctrl K
+        - button "新建对话" [ref=e27] [cursor=pointer]:
+          - img [ref=e28]
+          - generic [ref=e29]: 新对话
+        - list "会话列表" [ref=e30]:
+          - generic [ref=e31]: 对话
+          - listitem [ref=e91] [cursor=pointer]:
+            - generic [ref=e92]:
+              - img [ref=e93]
+              - text: 新对话 1
+            - button "删除会话 新对话 1" [ref=e95]:
+              - img [ref=e96]
+        - navigation "主导航" [ref=e39]:
+          - generic [ref=e40]:
+            - generic [ref=e41]: 工作台
+            - link "IDE" [ref=e42] [cursor=pointer]:
+              - /url: "#/workspace"
+              - img [ref=e44]
+              - generic [ref=e46]: IDE
+          - generic [ref=e47]:
+            - generic [ref=e48]: 能力
+            - link "能力与工具" [ref=e49] [cursor=pointer]:
+              - /url: "#/agent"
+              - img [ref=e51]
+              - generic [ref=e54]: 能力与工具
+            - link "知识库" [ref=e55] [cursor=pointer]:
+              - /url: "#/kb"
+              - img [ref=e57]
+              - generic [ref=e59]: 知识库
+            - link "模型微调" [ref=e60] [cursor=pointer]:
+              - /url: "#/train"
+              - img [ref=e62]
+              - generic [ref=e64]: 模型微调
+          - generic [ref=e65]:
+            - generic [ref=e66]: 系统
+            - link "生命状态" [ref=e67] [cursor=pointer]:
+              - /url: "#/life"
+              - img [ref=e69]
+              - generic [ref=e71]: 生命状态
+            - link "系统设置" [ref=e72] [cursor=pointer]:
+              - /url: "#/settings"
+              - img [ref=e74]
+              - generic [ref=e77]: 系统设置
+      - main [ref=e99]:
+        - generic [ref=e100]:
+          - generic:
+            - generic: 新对话 1
+          - generic "生命体征" [ref=e101]:
+            - generic "运行时" [ref=e102]:
+              - generic [ref=e104]: 运行时
+              - generic [ref=e105]: Seed runtime
+            - generic "输入" [ref=e106]:
+              - generic [ref=e108]: 输入
+              - generic [ref=e109]: 对照流
+            - generic "学习" [ref=e110]:
+              - generic [ref=e112]: 学习
+              - generic [ref=e113]: 状态不可用
+        - generic [ref=e114]:
+          - generic [ref=e115]:
+            - generic [ref=e116]:
+              - img [ref=e118]
+              - heading "有什么我能帮你的吗？" [level=1] [ref=e119]
+              - generic [ref=e120]: 未连接 · Seed 运行时
+            - list [ref=e122]:
+              - button "解释 Taiji 的原始字节输入" [ref=e123] [cursor=pointer]:
+                - img [ref=e124]
+                - generic [ref=e132]: 解释 Taiji 的原始字节输入
+              - button "查看一次状态推进与输出" [ref=e133] [cursor=pointer]:
+                - img [ref=e134]
+                - generic [ref=e143]: 查看一次状态推进与输出
+              - button "生成 Taiji 原生训练配置" [ref=e144] [cursor=pointer]:
+                - img [ref=e145]
+                - generic [ref=e146]: 生成 Taiji 原生训练配置
+              - button "分析局部预测误差" [ref=e147] [cursor=pointer]:
+                - img [ref=e148]
+                - generic [ref=e151]: 分析局部预测误差
+              - button "解释情景场如何巩固记忆" [ref=e152] [cursor=pointer]:
+                - img [ref=e153]
+                - generic [ref=e157]: 解释情景场如何巩固记忆
+              - button "查看 action → outcome 闭环" [ref=e158] [cursor=pointer]:
+                - img [ref=e159]
+                - generic [ref=e162]: 查看 action → outcome 闭环
+            - button "查看示例对话" [ref=e164] [cursor=pointer]:
+              - generic [ref=e165]: 查看示例对话
+              - img [ref=e166]
+            - complementary "Taiji 工作台任务" [ref=e216]:
+              - generic [ref=e217]:
+                - generic [ref=e221]:
+                  - paragraph [ref=e222]: TAIJI WORKBENCH
+                  - heading "工作台任务" [level=2] [ref=e223]
+                - button "关闭" [ref=e224] [cursor=pointer]
+          - generic [ref=e168]:
+            - generic [ref=e169]:
+              - textbox "输入任务、问题或文件说明" [ref=e170]
+              - generic [ref=e171]:
+                - button "添加附件" [ref=e172] [cursor=pointer]:
+                  - img [ref=e173]
+                - button "快速" [ref=e174] [cursor=pointer]:
+                  - img [ref=e175]
+                  - generic [ref=e177]: 快速
+                - button "代码" [ref=e178] [cursor=pointer]:
+                  - img [ref=e179]
+                  - generic [ref=e182]: 代码
+                - button "总结" [ref=e183] [cursor=pointer]:
+                  - img [ref=e184]
+                  - generic [ref=e185]: 总结
+                - button "翻译" [ref=e186] [cursor=pointer]:
+                  - img [ref=e187]
+                  - generic [ref=e191]: 翻译
+                - button "工作台" [active] [pressed] [ref=e192] [cursor=pointer]:
+                  - img [ref=e193]
+                  - generic [ref=e195]: 工作台
+                - button "运行时就绪后可发送" [ref=e196]:
+                  - img [ref=e197]
+            - generic [ref=e200]:
+              - generic [ref=e201]: Enter
+              - text: 发送
+              - generic [ref=e202]: ·
+              - generic [ref=e203]: Shift
+              - text: +
+              - generic [ref=e204]: Enter
+              - text: 换行
+              - generic [ref=e205]: ·
+              - text: Seed基于 Taiji 原生状态与局部可塑性生成，请核对关键信息
+  - generic [ref=e79]:
+    - generic "Toggle devtools panel" [ref=e80] [cursor=pointer]:
+      - img [ref=e81]
+    - generic "Toggle Component Inspector" [ref=e86] [cursor=pointer]:
+      - img [ref=e87]

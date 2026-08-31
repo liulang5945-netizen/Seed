@@ -28,6 +28,10 @@ describe('nativeApi facade', () => {
     expect(nativeApiPaths.workbench.taijiReproject).toBe('/api/workbench/taiji/reproject')
     expect(nativeApiPaths.workbench.taijiRecoveryPortfolio).toBe('/api/workbench/taiji/recovery-branch/portfolio')
     expect(nativeApiPaths.chat.workbenchStream).toBe('/api/chat/workbench/stream')
+    expect(nativeApiPaths.chat.workbenchInterpret).toBe('/api/chat/workbench/interpret')
+    expect(nativeApiPaths.chat.workbenchNaturalLanguagePlan).toBe('/api/chat/workbench/natural-language/plan')
+    expect(nativeApiPaths.chat.workbenchNaturalLanguageApprove).toBe('/api/chat/workbench/natural-language/approve')
+    expect(nativeApiPaths.chat.workbenchNaturalLanguageExecute).toBe('/api/chat/workbench/natural-language/execute')
     expect(nativeApiPaths.system.selectFolder).toBe('/api/system/select_folder')
   })
 
@@ -119,6 +123,49 @@ describe('nativeApi facade', () => {
       method: 'POST',
       retries: 0,
       signal,
+      body: JSON.stringify(payload),
+    }))
+  })
+
+  it('keeps natural-language Workbench planning on the Taiji-owned JSON boundary', async () => {
+    authFetch
+      .mockResolvedValueOnce(jsonResponse({ status: 'needs_approval' }))
+      .mockResolvedValueOnce(jsonResponse({ approval_token: 'token-1' }))
+      .mockResolvedValueOnce(jsonResponse({ status: 'completed' }))
+
+    const planPayload = {
+      prompt: '把文件中的 Seed 改成 Taiji',
+      semantic_evidence: { semantic_steps: [{ semantic_slots: { operation: 'patch' } }] },
+      snapshot_id: 'snapshot-1',
+      loop_id: 'loop-1',
+    }
+    await nativeApi.chatWorkbenchPlanNaturalLanguage(planPayload)
+    await nativeApi.chatWorkbenchApproveNaturalLanguage({ plan_id: 'plan-1', request_id: 'request-1' })
+    await nativeApi.chatWorkbenchExecuteNaturalLanguage({
+      plan_id: 'plan-1',
+      approval_tokens: { 'request-1': 'token-1' },
+    })
+
+    expect(authFetch).toHaveBeenNthCalledWith(1, '/api/chat/workbench/natural-language/plan', expect.objectContaining({
+      method: 'POST',
+      body: JSON.stringify(planPayload),
+    }))
+    expect(authFetch).toHaveBeenNthCalledWith(2, '/api/chat/workbench/natural-language/approve', expect.objectContaining({
+      method: 'POST',
+      body: JSON.stringify({ plan_id: 'plan-1', request_id: 'request-1' }),
+    }))
+    expect(authFetch).toHaveBeenNthCalledWith(3, '/api/chat/workbench/natural-language/execute', expect.objectContaining({
+      method: 'POST',
+      body: JSON.stringify({ plan_id: 'plan-1', approval_tokens: { 'request-1': 'token-1' } }),
+    }))
+  })
+
+  it('keeps Workbench goal intake on the native API facade', async () => {
+    const payload = { prompt: '查看 README.md', history: [] }
+    authFetch.mockResolvedValueOnce(jsonResponse({ status: 'candidate' }))
+    await nativeApi.chatWorkbenchInterpret(payload)
+    expect(authFetch).toHaveBeenCalledWith('/api/chat/workbench/interpret', expect.objectContaining({
+      method: 'POST',
       body: JSON.stringify(payload),
     }))
   })

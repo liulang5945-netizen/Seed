@@ -21,6 +21,9 @@ from api.models import (
     ChatRequest,
     ChatWorkbenchRequest,
     LanguagePlanningRequest,
+    NaturalLanguageWorkbenchApprovalRequest,
+    NaturalLanguageWorkbenchExecuteRequest,
+    NaturalLanguageWorkbenchPlanRequest,
     NaturalLanguageWorkbenchTaskRequest,
     SemanticProviderEvidenceRequest,
     TaskDecompositionRequest,
@@ -180,7 +183,11 @@ async def chat_workbench_stream(request: ChatWorkbenchRequest):
 
 @router.post("/api/chat/workbench/interpret")
 async def chat_workbench_interpret(request: TaskInterpretationRequest):
-    """Admit prose as Taiji Goal evidence without selecting or executing tools."""
+    """Admit prose or an explicitly attached semantic-provider proposal.
+
+    The route never turns provider output into a tool call.  Taiji owns the
+    admission decision and returns only Goal/decomposition evidence here.
+    """
 
     import asyncio
 
@@ -188,26 +195,15 @@ async def chat_workbench_interpret(request: TaskInterpretationRequest):
     if seed_runtime is None:
         raise HTTPException(status_code=409, detail="Seed runtime is not active")
     try:
-        interpretation = await asyncio.to_thread(
-            seed_runtime.interpret_task,
+        result = await asyncio.to_thread(
+            seed_runtime.interpret_workbench_task,
             request.prompt,
             history=request.history,
             constraints=request.constraints,
         )
     except (TypeError, ValueError, RuntimeError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
-    return {
-        "format": interpretation.to_payload()["format"],
-        "interpretation": interpretation.to_payload(),
-        "goal": interpretation.to_goal().to_payload(),
-        "execution": {
-            "status": "not_planned",
-            "action_intent": None,
-            "tool_call": None,
-            "side_effects": False,
-            "next": "taiji_planner",
-        },
-    }
+    return result
 
 
 @router.post("/api/chat/workbench/plan")
@@ -320,6 +316,75 @@ async def chat_workbench_execute_natural_language(
             novelty=request.novelty,
             resource_budget=request.resource_budget,
             learn=request.learn,
+        )
+    except (TypeError, ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.post("/api/chat/workbench/natural-language/plan")
+async def chat_workbench_plan_natural_language(
+    request: NaturalLanguageWorkbenchPlanRequest,
+):
+    """Create a Taiji-owned natural-language plan without executing or approving it."""
+
+    import asyncio
+
+    seed_runtime = get_seed_runtime()
+    if seed_runtime is None:
+        raise HTTPException(status_code=409, detail="Seed runtime is not active")
+    try:
+        return await asyncio.to_thread(
+            seed_runtime.plan_natural_language_workbench_task,
+            request.prompt,
+            request.semantic_evidence,
+            snapshot_id=request.snapshot_id,
+            loop_id=request.loop_id,
+            max_steps=request.max_steps,
+            max_budget_units=request.max_budget_units,
+            novelty=request.novelty,
+            resource_budget=request.resource_budget,
+        )
+    except (TypeError, ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.post("/api/chat/workbench/natural-language/approve")
+async def chat_workbench_approve_natural_language(
+    request: NaturalLanguageWorkbenchApprovalRequest,
+):
+    """Issue one exact approval token after the client reviewed Taiji's preview."""
+
+    import asyncio
+
+    seed_runtime = get_seed_runtime()
+    if seed_runtime is None:
+        raise HTTPException(status_code=409, detail="Seed runtime is not active")
+    try:
+        return await asyncio.to_thread(
+            seed_runtime.approve_planned_natural_language_workbench_task,
+            request.plan_id,
+            request.request_id,
+        )
+    except (TypeError, ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.post("/api/chat/workbench/natural-language/execute")
+async def chat_workbench_execute_planned_natural_language(
+    request: NaturalLanguageWorkbenchExecuteRequest,
+):
+    """Execute only a current Taiji plan with exact request approvals."""
+
+    import asyncio
+
+    seed_runtime = get_seed_runtime()
+    if seed_runtime is None:
+        raise HTTPException(status_code=409, detail="Seed runtime is not active")
+    try:
+        return await asyncio.to_thread(
+            seed_runtime.execute_planned_natural_language_workbench_task,
+            request.plan_id,
+            request.approval_tokens,
         )
     except (TypeError, ValueError, RuntimeError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc

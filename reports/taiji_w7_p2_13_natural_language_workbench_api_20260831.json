@@ -1,0 +1,33 @@
+{
+  "format": "taiji-w7-p2-13-natural-language-workbench-api-v1",
+  "task": "Taiji-owned natural-language Workbench plan/approve/execute product API",
+  "routes": {
+    "plan": "/api/chat/workbench/natural-language/plan",
+    "approve": "/api/chat/workbench/natural-language/approve",
+    "execute": "/api/chat/workbench/natural-language/execute"
+  },
+  "metrics": {
+    "product_plan_route_returns_taiji_plan": true,
+    "api_does_not_reexpose_final_patch_or_bindings": true,
+    "missing_approval_is_visible_and_side_effect_free": true,
+    "approval_is_idempotent_and_write_completes": true,
+    "stale_and_unknown_plans_fail_closed": true
+  },
+  "trace": {
+    "plan_id": "taiji-plan:6e72137ecba8f3b654eccd71",
+    "plan_status": "needs_approval",
+    "missing_approval": {
+      "http_status": 200,
+      "status": "rejected",
+      "reason_code": "capability_requires_approval"
+    },
+    "duplicate_approval_same_token": true,
+    "stale_approval_http_status": 400,
+    "unknown_plan_http_status": 400
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "The product boundary must expose Taiji's plan/approval/execute protocol, keep patch and final binding ownership in Taiji, make approval idempotent, and fail closed on missing or stale plans."
+  },
+  "boundary": "This Gate validates the native API and frontend transport boundary with deterministic semantic evidence. It does not claim a real provider can generate semantic evidence, a complete chat UI journey, CUDA, CI, or open-domain autonomy."
+}

@@ -1,0 +1,104 @@
+{
+  "format": "taiji-w7-p2-12-natural-language-write-v1",
+  "task": "Taiji-owned natural-language semantic edit and controlled Workbench write",
+  "plan": {
+    "status": "needs_approval",
+    "approval_requirements": [
+      {
+        "index": 1,
+        "request_id": "workbench:p2-12-natural-language-write-11:assembly:10:workbench:workspace.apply_patch:bfb0218588038fb5:intent",
+        "capability_id": "workspace.apply_patch",
+        "policy": {
+          "version": 1,
+          "request_id": "workbench:p2-12-natural-language-write-11:assembly:10:workbench:workspace.apply_patch:bfb0218588038fb5:intent",
+          "capability_id": "workspace.apply_patch",
+          "decision": "ask_user",
+          "reason_code": "capability_requires_approval",
+          "snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850"
+        },
+        "preview": {
+          "capability_id": "workspace.apply_patch",
+          "risk": "file_write",
+          "reversible": true,
+          "parameters": {
+            "before_digest": "04e1d463e5e7a5be00ec43356f2f909b2ff77663883b2080c3c27f9a26fcc416",
+            "expected_after_digest": "37573e5522ce699c366b748b2c05316135ebe54dccb80c1cf5784fedf22b2439",
+            "patch": {
+              "kind": "text_replace",
+              "operations": [
+                {
+                  "start": 0,
+                  "end": 4,
+                  "text": "Taiji"
+                }
+              ]
+            },
+            "path": "reports/.p2-12-edit-fixture.txt"
+          },
+          "validated": true,
+          "mutation": {
+            "operation": "workspace.apply_patch",
+            "path": "reports/.p2-12-edit-fixture.txt",
+            "before_digest": "04e1d463e5e7a5be00ec43356f2f909b2ff77663883b2080c3c27f9a26fcc416",
+            "after_digest": "37573e5522ce699c366b748b2c05316135ebe54dccb80c1cf5784fedf22b2439",
+            "before_byte_length": 20,
+            "after_byte_length": 21,
+            "operations": 1
+          }
+        }
+      }
+    ],
+    "provider_patch_semantic_slots": {
+      "operation": "patch",
+      "path": "reports/.p2-12-edit-fixture.txt",
+      "edit": {
+        "kind": "replace_text",
+        "find": "Seed",
+        "replace": "Taiji"
+      }
+    }
+  },
+  "trace": {
+    "approved": {
+      "status": "completed",
+      "execution_status": "completed",
+      "unchanged_before_execute": true,
+      "updated_content": "Taiji editor source\n",
+      "updated_digest": "37573e5522ce699c366b748b2c05316135ebe54dccb80c1cf5784fedf22b2439",
+      "expected_updated_digest": "37573e5522ce699c366b748b2c05316135ebe54dccb80c1cf5784fedf22b2439",
+      "step_statuses": [
+        {
+          "success": true,
+          "error_code": ""
+        },
+        {
+          "success": true,
+          "error_code": ""
+        }
+      ]
+    },
+    "undo": {
+      "execution_status": "success",
+      "restored": true
+    },
+    "missing_approval": {
+      "status": "rejected",
+      "reason_code": "capability_requires_approval",
+      "execution_status": "not_executed",
+      "unchanged": true
+    }
+  },
+  "metrics": {
+    "provider_submits_semantic_edit_not_patch": true,
+    "taiji_derives_current_digest_checked_patch": true,
+    "explicit_preview_approval_and_write_succeed": true,
+    "checkpoint_undo_and_recovery_restore_original": true,
+    "missing_approval_fails_closed_before_write": true,
+    "digest_conflict_stops_before_patch_mutation": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "Taiji must derive a digest-checked structured patch from live file evidence, require explicit preview/approval before writing, checkpoint the outcome, support undo/recovery, and stop on missing approval or stale file state"
+  },
+  "boundary": "This Gate covers one deterministic UTF-8 replacement on CPU. It does not claim general code editing, real provider quality, CUDA, CI, or open-domain autonomy."
+}

@@ -1,0 +1,16 @@
+{
+  "format": "taiji-w7-p5-1-natural-language-workbench-modularization-v1",
+  "task": "Natural-language Workbench orchestration modularization",
+  "metrics": {
+    "dedicated_protocol_module_owns_plan_approval_execute": true,
+    "runtime_public_facade_delegates_to_orchestrator": true,
+    "module_does_not_import_runtime_or_provider": true,
+    "legacy_execute_and_plan_forward_without_semantic_mutation": true,
+    "previous_protocol_gates_remain_green": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "The protocol owner must be a dedicated module, SeedRuntime must remain a compatibility facade, no provider/runtime circular dependency may be added, and P2-12/P2-13 behavior must remain green."
+  },
+  "boundary": "This Gate proves ownership and behavior-preserving modularization only. It does not claim real provider quality, a complete chat UI journey, CUDA, CI, or open-domain autonomy."
+}

@@ -184,6 +184,33 @@ class NaturalLanguageWorkbenchTaskRequest(BaseModel):
     learn: bool = False
 
 
+class NaturalLanguageWorkbenchPlanRequest(BaseModel):
+    """Create a Taiji-owned natural-language Workbench plan without executing it."""
+
+    prompt: str
+    semantic_evidence: dict[str, Any]
+    snapshot_id: str
+    loop_id: str
+    max_steps: int = 1
+    max_budget_units: float = 1.0
+    novelty: float = 0.0
+    resource_budget: float = 1.0
+
+
+class NaturalLanguageWorkbenchApprovalRequest(BaseModel):
+    """Approve one exact request from a previously returned Taiji plan."""
+
+    plan_id: str
+    request_id: str
+
+
+class NaturalLanguageWorkbenchExecuteRequest(BaseModel):
+    """Execute a current Taiji plan with request-id keyed approval tokens."""
+
+    plan_id: str
+    approval_tokens: dict[str, str] = {}
+
+
 class LanguagePlanningRequest(BaseModel):
     """Plan a language selection from current Taiji task evidence and file evidence."""
 

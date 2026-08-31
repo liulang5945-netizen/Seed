@@ -314,6 +314,46 @@
         "title": "HealthPayload",
         "type": "object"
       },
+      "LanguagePlanningRequest": {
+        "description": "Plan a language selection from current Taiji task evidence and file evidence.",
+        "properties": {
+          "lsp_language_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lsp Language Id"
+          },
+          "novelty": {
+            "default": 0.0,
+            "title": "Novelty",
+            "type": "number"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "resource_budget": {
+            "default": 1.0,
+            "title": "Resource Budget",
+            "type": "number"
+          },
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "snapshot_id",
+          "path"
+        ],
+        "title": "LanguagePlanningRequest",
+        "type": "object"
+      },
       "LifePayload": {
         "properties": {
           "is_running": {
@@ -436,6 +476,164 @@
           }
         },
         "title": "NativeTrainRequest",
+        "type": "object"
+      },
+      "NaturalLanguageWorkbenchApprovalRequest": {
+        "description": "Approve one exact request from a previously returned Taiji plan.",
+        "properties": {
+          "plan_id": {
+            "title": "Plan Id",
+            "type": "string"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "plan_id",
+          "request_id"
+        ],
+        "title": "NaturalLanguageWorkbenchApprovalRequest",
+        "type": "object"
+      },
+      "NaturalLanguageWorkbenchExecuteRequest": {
+        "description": "Execute a current Taiji plan with request-id keyed approval tokens.",
+        "properties": {
+          "approval_tokens": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "default": {},
+            "title": "Approval Tokens",
+            "type": "object"
+          },
+          "plan_id": {
+            "title": "Plan Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "plan_id"
+        ],
+        "title": "NaturalLanguageWorkbenchExecuteRequest",
+        "type": "object"
+      },
+      "NaturalLanguageWorkbenchPlanRequest": {
+        "description": "Create a Taiji-owned natural-language Workbench plan without executing it.",
+        "properties": {
+          "loop_id": {
+            "title": "Loop Id",
+            "type": "string"
+          },
+          "max_budget_units": {
+            "default": 1.0,
+            "title": "Max Budget Units",
+            "type": "number"
+          },
+          "max_steps": {
+            "default": 1,
+            "title": "Max Steps",
+            "type": "integer"
+          },
+          "novelty": {
+            "default": 0.0,
+            "title": "Novelty",
+            "type": "number"
+          },
+          "prompt": {
+            "title": "Prompt",
+            "type": "string"
+          },
+          "resource_budget": {
+            "default": 1.0,
+            "title": "Resource Budget",
+            "type": "number"
+          },
+          "semantic_evidence": {
+            "additionalProperties": true,
+            "title": "Semantic Evidence",
+            "type": "object"
+          },
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "prompt",
+          "semantic_evidence",
+          "snapshot_id",
+          "loop_id"
+        ],
+        "title": "NaturalLanguageWorkbenchPlanRequest",
+        "type": "object"
+      },
+      "NaturalLanguageWorkbenchTaskRequest": {
+        "description": "Run a bounded Taiji-owned task from semantic evidence, not an intent.",
+        "properties": {
+          "learn": {
+            "default": false,
+            "title": "Learn",
+            "type": "boolean"
+          },
+          "loop_id": {
+            "title": "Loop Id",
+            "type": "string"
+          },
+          "max_budget_units": {
+            "default": 1.0,
+            "title": "Max Budget Units",
+            "type": "number"
+          },
+          "max_steps": {
+            "default": 1,
+            "title": "Max Steps",
+            "type": "integer"
+          },
+          "novelty": {
+            "default": 0.0,
+            "title": "Novelty",
+            "type": "number"
+          },
+          "parameter_bindings": {
+            "default": [],
+            "items": {
+              "additionalProperties": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "object"
+            },
+            "title": "Parameter Bindings",
+            "type": "array"
+          },
+          "prompt": {
+            "title": "Prompt",
+            "type": "string"
+          },
+          "resource_budget": {
+            "default": 1.0,
+            "title": "Resource Budget",
+            "type": "number"
+          },
+          "semantic_evidence": {
+            "additionalProperties": true,
+            "title": "Semantic Evidence",
+            "type": "object"
+          },
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "prompt",
+          "semantic_evidence",
+          "snapshot_id",
+          "loop_id"
+        ],
+        "title": "NaturalLanguageWorkbenchTaskRequest",
         "type": "object"
       },
       "RecommendRequest": {
@@ -607,6 +805,26 @@
           }
         },
         "title": "RuntimeStatusPayload",
+        "type": "object"
+      },
+      "SemanticProviderEvidenceRequest": {
+        "description": "Provider semantic evidence submitted to Taiji for validation only.",
+        "properties": {
+          "evidence": {
+            "additionalProperties": true,
+            "title": "Evidence",
+            "type": "object"
+          },
+          "prompt": {
+            "title": "Prompt",
+            "type": "string"
+          }
+        },
+        "required": [
+          "prompt",
+          "evidence"
+        ],
+        "title": "SemanticProviderEvidenceRequest",
         "type": "object"
       },
       "TaijiWorkbenchExecuteTaskRequest": {
@@ -933,6 +1151,186 @@
         "title": "TaijiWorkbenchTaskRequest",
         "type": "object"
       },
+      "TaskDecompositionRequest": {
+        "description": "Semantic step evidence with no tool or capability execution binding.",
+        "properties": {
+          "ambiguity": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ambiguity"
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence"
+          },
+          "provenance": {
+            "default": "taiji.semantic",
+            "title": "Provenance",
+            "type": "string"
+          },
+          "status": {
+            "default": "resolved",
+            "title": "Status",
+            "type": "string"
+          },
+          "steps": {
+            "default": [],
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Steps",
+            "type": "array"
+          }
+        },
+        "title": "TaskDecompositionRequest",
+        "type": "object"
+      },
+      "TaskInterpretationRequest": {
+        "description": "Natural-language task evidence request with no execution authority.",
+        "properties": {
+          "constraints": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Constraints",
+            "type": "array"
+          },
+          "history": {
+            "default": [],
+            "items": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "title": "History",
+            "type": "array"
+          },
+          "prompt": {
+            "title": "Prompt",
+            "type": "string"
+          }
+        },
+        "required": [
+          "prompt"
+        ],
+        "title": "TaskInterpretationRequest",
+        "type": "object"
+      },
+      "TaskPlanningRequest": {
+        "description": "Natural-language planning request bound to current structured affordances.",
+        "properties": {
+          "constraints": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Constraints",
+            "type": "array"
+          },
+          "history": {
+            "default": [],
+            "items": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "title": "History",
+            "type": "array"
+          },
+          "novelty": {
+            "default": 0.0,
+            "title": "Novelty",
+            "type": "number"
+          },
+          "parameter_bindings": {
+            "additionalProperties": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "default": {},
+            "title": "Parameter Bindings",
+            "type": "object"
+          },
+          "prompt": {
+            "title": "Prompt",
+            "type": "string"
+          },
+          "resource_budget": {
+            "default": 1.0,
+            "title": "Resource Budget",
+            "type": "number"
+          },
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "prompt",
+          "snapshot_id"
+        ],
+        "title": "TaskPlanningRequest",
+        "type": "object"
+      },
+      "TaskSequencePlanningRequest": {
+        "description": "Ground admitted semantic steps against current Workbench affordances.",
+        "properties": {
+          "novelty": {
+            "default": 0.0,
+            "title": "Novelty",
+            "type": "number"
+          },
+          "parameter_bindings": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parameter Bindings"
+          },
+          "resource_budget": {
+            "default": 1.0,
+            "title": "Resource Budget",
+            "type": "number"
+          },
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "snapshot_id"
+        ],
+        "title": "TaskSequencePlanningRequest",
+        "type": "object"
+      },
       "ToolInfo": {
         "properties": {
           "category": {
@@ -1148,6 +1546,18 @@
               }
             ],
             "title": "Source Goal Id"
+          },
+          "structural_evidence": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Structural Evidence"
           },
           "tick": {
             "default": 0,
@@ -1720,6 +2130,376 @@
           }
         },
         "summary": "Upload Chat File"
+      }
+    },
+    "/api/chat/workbench/decompose": {
+      "post": {
+        "description": "Admit semantic task steps without selecting or executing a capability.",
+        "operationId": "chat_workbench_decompose_api_chat_workbench_decompose_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskDecompositionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Chat Workbench Decompose"
+      }
+    },
+    "/api/chat/workbench/execute-natural-language": {
+      "post": {
+        "description": "Execute a bounded Taiji-owned task without a caller-supplied ActionIntent.",
+        "operationId": "chat_workbench_execute_natural_language_api_chat_workbench_execute_natural_language_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NaturalLanguageWorkbenchTaskRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Chat Workbench Execute Natural Language"
+      }
+    },
+    "/api/chat/workbench/interpret": {
+      "post": {
+        "description": "Admit prose as Taiji Goal evidence without selecting or executing tools.",
+        "operationId": "chat_workbench_interpret_api_chat_workbench_interpret_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskInterpretationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Chat Workbench Interpret"
+      }
+    },
+    "/api/chat/workbench/language-plan": {
+      "post": {
+        "description": "Plan a language switch from Taiji and Workbench evidence, without applying it.",
+        "operationId": "chat_workbench_language_plan_api_chat_workbench_language_plan_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LanguagePlanningRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Chat Workbench Language Plan"
+      }
+    },
+    "/api/chat/workbench/natural-language/approve": {
+      "post": {
+        "description": "Issue one exact approval token after the client reviewed Taiji's preview.",
+        "operationId": "chat_workbench_approve_natural_language_api_chat_workbench_natural_language_approve_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NaturalLanguageWorkbenchApprovalRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Chat Workbench Approve Natural Language"
+      }
+    },
+    "/api/chat/workbench/natural-language/execute": {
+      "post": {
+        "description": "Execute only a current Taiji plan with exact request approvals.",
+        "operationId": "chat_workbench_execute_planned_natural_language_api_chat_workbench_natural_language_execute_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NaturalLanguageWorkbenchExecuteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Chat Workbench Execute Planned Natural Language"
+      }
+    },
+    "/api/chat/workbench/natural-language/plan": {
+      "post": {
+        "description": "Create a Taiji-owned natural-language plan without executing or approving it.",
+        "operationId": "chat_workbench_plan_natural_language_api_chat_workbench_natural_language_plan_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NaturalLanguageWorkbenchPlanRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Chat Workbench Plan Natural Language"
+      }
+    },
+    "/api/chat/workbench/plan": {
+      "post": {
+        "description": "Interpret prose and ask Taiji to plan against supplied affordances only.",
+        "operationId": "chat_workbench_plan_api_chat_workbench_plan_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskPlanningRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Chat Workbench Plan"
+      }
+    },
+    "/api/chat/workbench/semantic-evidence": {
+      "post": {
+        "description": "Validate provider semantic evidence without selecting or executing tools.",
+        "operationId": "chat_workbench_semantic_evidence_api_chat_workbench_semantic_evidence_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SemanticProviderEvidenceRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Chat Workbench Semantic Evidence"
+      }
+    },
+    "/api/chat/workbench/sequence-plan": {
+      "post": {
+        "description": "Ground admitted semantic steps against Workbench without executing them.",
+        "operationId": "chat_workbench_sequence_plan_api_chat_workbench_sequence_plan_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskSequencePlanningRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Chat Workbench Sequence Plan"
       }
     },
     "/api/chat/workbench/stream": {
