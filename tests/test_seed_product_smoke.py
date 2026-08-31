@@ -96,6 +96,71 @@ def test_chat_workbench_stream_emits_shared_native_audit(seed_client):
     assert phases[-4:] == ["planned", "policy", "executing", "outcome"]
 
 
+def test_chat_workbench_natural_language_red_gate_requires_taiji_intent(seed_client):
+    response = seed_client.post(
+        "/api/chat/workbench/stream",
+        json={
+            "prompt": "请读取 README.md 并告诉我项目如何启动",
+            "history": [],
+        },
+    )
+
+    assert response.status_code == 422
+    detail = response.json()["detail"]
+    assert any(
+        item.get("loc", ())[-1:] == ["intent"]
+        for item in detail
+        if isinstance(item, dict)
+    )
+
+
+def test_chat_workbench_interpret_emits_goal_evidence_without_execution(seed_client):
+    response = seed_client.post(
+        "/api/chat/workbench/interpret",
+        json={
+            "prompt": "请读取 README.md 并告诉我项目如何启动",
+            "history": [],
+            "constraints": ["只读"],
+        },
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["interpretation"]["format"] == "taiji-task-interpretation-v1"
+    assert payload["interpretation"]["status"] == "candidate"
+    assert payload["goal"]["goal_id"] == payload["interpretation"]["goal_id"]
+    assert payload["execution"] == {
+        "status": "not_planned",
+        "action_intent": None,
+        "tool_call": None,
+        "side_effects": False,
+        "next": "taiji_planner",
+    }
+    assert seed_client.get("/api/workbench/events").json()["events"] == []
+
+
+def test_chat_workbench_plan_blocks_unresolved_goal_before_tool_selection(seed_client):
+    snapshot_id = seed_client.get("/api/workbench/capabilities").json()["snapshot_id"]
+    response = seed_client.post(
+        "/api/chat/workbench/plan",
+        json={
+            "prompt": "请读取 README.md 并告诉我项目如何启动",
+            "history": [],
+            "snapshot_id": snapshot_id,
+            "parameter_bindings": {"workspace.read": {"path": "README.md"}},
+        },
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["planner"]["status"] == "needs_clarification"
+    assert payload["planner"]["reason_code"] == "task_interpretation_low_confidence"
+    assert payload["execution"]["action_intent"] is None
+    assert payload["execution"]["tool_call"] is None
+    assert payload["execution"]["side_effects"] is False
+    assert seed_client.get("/api/workbench/events").json()["events"] == []
+
+
 def test_switch_model_rejects_unknown_type():
     from api.app import create_app
 

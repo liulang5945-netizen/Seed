@@ -1,0 +1,5032 @@
+{
+  "format": "taiji-w7-p4-12-terminal-three-domain-governance-v1",
+  "task": "terminal governance and three-domain structural workspace gain",
+  "capability_domains": [
+    "editor",
+    "mcp",
+    "terminal"
+  ],
+  "target_tasks": [
+    "three-domain-readme",
+    "three-domain-pyproject"
+  ],
+  "learner_seeds": [
+    11,
+    29,
+    47
+  ],
+  "structural_mean_score": 1.0,
+  "control_mean_scores": {
+    "interaction_weight_only": 0.0,
+    "router_only": 0.0,
+    "memory_only": 0.0
+  },
+  "training_source": {
+    "base_source": {
+      "base_example_count": 15,
+      "cross_domain_example_count": 3,
+      "example_count": 18,
+      "base_source": {
+        "example_count": 15,
+        "record_count": 15,
+        "records": [
+          {
+            "family": "ab",
+            "cell": "first",
+            "action_count": 1,
+            "successful_action_count": 1,
+            "score_source": "native Workbench raw action success/status projection",
+            "native_world_event_count": 2
+          },
+          {
+            "family": "ab",
+            "cell": "second",
+            "action_count": 1,
+            "successful_action_count": 1,
+            "score_source": "native Workbench raw action success/status projection",
+            "native_world_event_count": 2
+          },
+          {
+            "family": "ab",
+            "cell": "pair",
+            "action_count": 2,
+            "successful_action_count": 2,
+            "score_source": "native Workbench raw action success/status projection",
+            "native_world_event_count": 3
+          },
+          {
+            "family": "ac",
+            "cell": "first",
+            "action_count": 1,
+            "successful_action_count": 1,
+            "score_source": "native Workbench raw action success/status projection",
+            "native_world_event_count": 2
+          },
+          {
+            "family": "ac",
+            "cell": "second",
+            "action_count": 1,
+            "successful_action_count": 1,
+            "score_source": "native Workbench raw action success/status projection",
+            "native_world_event_count": 2
+          },
+          {
+            "family": "ac",
+            "cell": "pair",
+            "action_count": 2,
+            "successful_action_count": 2,
+            "score_source": "native Workbench raw action success/status projection",
+            "native_world_event_count": 3
+          },
+          {
+            "family": "ad",
+            "cell": "first",
+            "action_count": 1,
+            "successful_action_count": 1,
+            "score_source": "native Workbench raw action success/status projection",
+            "native_world_event_count": 2
+          },
+          {
+            "family": "ad",
+            "cell": "second",
+            "action_count": 1,
+            "successful_action_count": 1,
+            "score_source": "native Workbench raw action success/status projection",
+            "native_world_event_count": 2
+          },
+          {
+            "family": "ad",
+            "cell": "pair",
+            "action_count": 2,
+            "successful_action_count": 2,
+            "score_source": "native Workbench raw action success/status projection",
+            "native_world_event_count": 3
+          },
+          {
+            "family": "cd",
+            "cell": "first",
+            "action_count": 1,
+            "successful_action_count": 1,
+            "score_source": "native Workbench raw action success/status projection",
+            "native_world_event_count": 2
+          },
+          {
+            "family": "cd",
+            "cell": "second",
+            "action_count": 1,
+            "successful_action_count": 1,
+            "score_source": "native Workbench raw action success/status projection",
+            "native_world_event_count": 2
+          },
+          {
+            "family": "cd",
+            "cell": "pair",
+            "action_count": 2,
+            "successful_action_count": 2,
+            "score_source": "native Workbench raw action success/status projection",
+            "native_world_event_count": 3
+          },
+          {
+            "family": "fg",
+            "cell": "first",
+            "action_count": 1,
+            "successful_action_count": 0,
+            "score_source": "native Workbench raw action success/status projection",
+            "native_world_event_count": 2
+          },
+          {
+            "family": "fg",
+            "cell": "second",
+            "action_count": 1,
+            "successful_action_count": 0,
+            "score_source": "native Workbench raw action success/status projection",
+            "native_world_event_count": 2
+          },
+          {
+            "family": "fg",
+            "cell": "pair",
+            "action_count": 2,
+            "successful_action_count": 0,
+            "score_source": "native Workbench raw action success/status projection",
+            "native_world_event_count": 3
+          }
+        ],
+        "score_sources": [
+          "native Workbench raw action success/status projection"
+        ]
+      },
+      "cross_domain_records": [
+        {
+          "family": "editor-mcp-readme",
+          "capability_domains": [
+            "editor",
+            "mcp"
+          ],
+          "native_statuses": [
+            "success",
+            "success"
+          ],
+          "native_audit_event_count": 8,
+          "native_checkpoint_roundtrip": true
+        },
+        {
+          "family": "editor-mcp-pyproject",
+          "capability_domains": [
+            "editor",
+            "mcp"
+          ],
+          "native_statuses": [
+            "success",
+            "success"
+          ],
+          "native_audit_event_count": 8,
+          "native_checkpoint_roundtrip": true
+        },
+        {
+          "family": "editor-mcp-requirements",
+          "capability_domains": [
+            "editor",
+            "mcp"
+          ],
+          "native_statuses": [
+            "success",
+            "success"
+          ],
+          "native_audit_event_count": 8,
+          "native_checkpoint_roundtrip": true
+        }
+      ],
+      "score_source": "native Workbench outcome status and success"
+    },
+    "base_example_count": 18,
+    "terminal_example_count": 4,
+    "example_count": 22,
+    "terminal_records": [
+      {
+        "family": "terminal-editor-readme",
+        "capability_domains": [
+          "editor",
+          "terminal"
+        ],
+        "native_statuses": [
+          "success",
+          "success"
+        ],
+        "approval_required": [
+          false,
+          true
+        ],
+        "approval_granted": [
+          false,
+          true
+        ],
+        "preview_validated": [
+          false,
+          true
+        ],
+        "native_audit_event_count": 8,
+        "native_checkpoint_roundtrip": true
+      },
+      {
+        "family": "terminal-mcp",
+        "capability_domains": [
+          "mcp",
+          "terminal"
+        ],
+        "native_statuses": [
+          "success",
+          "success"
+        ],
+        "approval_required": [
+          false,
+          true
+        ],
+        "approval_granted": [
+          false,
+          true
+        ],
+        "preview_validated": [
+          false,
+          true
+        ],
+        "native_audit_event_count": 8,
+        "native_checkpoint_roundtrip": true
+      },
+      {
+        "family": "terminal-editor-pyproject",
+        "capability_domains": [
+          "editor",
+          "terminal"
+        ],
+        "native_statuses": [
+          "success",
+          "success"
+        ],
+        "approval_required": [
+          false,
+          true
+        ],
+        "approval_granted": [
+          false,
+          true
+        ],
+        "preview_validated": [
+          false,
+          true
+        ],
+        "native_audit_event_count": 8,
+        "native_checkpoint_roundtrip": true
+      },
+      {
+        "family": "terminal-distractor-negative",
+        "capability_domains": [
+          "editor",
+          "terminal"
+        ],
+        "native_statuses": [
+          "success",
+          "error"
+        ],
+        "approval_required": [
+          false,
+          true
+        ],
+        "approval_granted": [
+          false,
+          true
+        ],
+        "preview_validated": [
+          false,
+          true
+        ],
+        "native_audit_event_count": 8,
+        "native_checkpoint_roundtrip": true,
+        "expected_terminal_failure": true
+      }
+    ],
+    "score_source": "native Workbench outcome status and success"
+  },
+  "runs": [
+    {
+      "seed": 11,
+      "online_rounds": [
+        {
+          "round": 1,
+          "family": "online-be",
+          "candidate_id": "transfer-group:145339db789015ea7ecd8eaa",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+          "outcome_id": "r2-s2-online-online-be-seed-11:outcome:4:r2-s2-online-online-be-seed-11:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 2,
+          "family": "online-bf",
+          "candidate_id": "transfer-group:b515b1e835c6a4dc6118346f",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "feedback_id": "735fa4be9c18e7987f611e6a4a9dabcc9ab65fa3bd2970a3be41192cf5698481",
+          "outcome_id": "r2-s2-online-online-bf-seed-11:outcome:4:r2-s2-online-online-bf-seed-11:workflow-outcome",
+          "outcome_success": false,
+          "admission_status": "rejected",
+          "admission_reason": "outcome_unsuccessful",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 3,
+          "family": "online-ce",
+          "candidate_id": "transfer-group:61d5583b886b40a97139fe73",
+          "member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+          "outcome_id": "r2-s2-online-online-ce-seed-11:outcome:4:r2-s2-online-online-ce-seed-11:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "online_feedback_ids": [
+        "eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+        "3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b"
+      ],
+      "pressure": {
+        "format": "taiji-interaction-structural-bridge-v1",
+        "revision": 1,
+        "version": 1,
+        "projection": {
+          "format": "taiji-structural-pressure-projection-v1",
+          "network_id": "standalone:adaptive.cortex",
+          "region_id": "adaptive.cortex",
+          "first_tick": 1,
+          "last_tick": 4,
+          "window_digests": [
+            "8ca15bb4920cc0c6a79f31c9914d4ea42a7b1229f4ef675390fc723a58dc8e50",
+            "ef116be55918f68a0fab02da5d58c22793f3a7921299391685c28d1f6734176c",
+            "57451294e0006f829aa8cfcaea883a9f19f3177d3769b8ba3721b35cce187e93",
+            "b86baed4434fe31b1b83daf8fb5f6579fa00330ba5b55072bc88a48ab1081e55"
+          ],
+          "train_task_slice_ids": [
+            "online-interaction:transfer-group:145339db789015ea7ecd8eaa",
+            "online-interaction:transfer-group:61d5583b886b40a97139fe73"
+          ],
+          "holdout_task_slice_ids": [
+            "workbench-holdout:online-workbench-holdout-cycle-4"
+          ],
+          "retention_task_slice_ids": [
+            "workbench-retention:online-workbench-retention-cycle-4"
+          ],
+          "train_window_count": 2,
+          "holdout_window_count": 1,
+          "retention_window_count": 1,
+          "prediction_observation_count": 2,
+          "mean_prediction_error": 0.3999999999999999,
+          "mean_resource_state": 0.0,
+          "mean_holdout_transfer": 0.8,
+          "evidence_ids": [
+            "online-feedback:eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+            "online-feedback:3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-4-seed-11:outcome:4:r2-s2-online-holdout-cycle-4-seed-11:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-4-seed-11:outcome:4:r2-s2-online-retention-cycle-4-seed-11:workflow-outcome"
+          ],
+          "projection_digest": "c7658243a599caad3ea7bd2d5ed9c205c6bccddf61b41722d1972d7c15c799a5"
+        },
+        "feedback_ids": [
+          "eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+          "3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b"
+        ],
+        "outcome_ids": [
+          "r2-s2-online-online-be-seed-11:outcome:4:r2-s2-online-online-be-seed-11:workflow-outcome",
+          "r2-s2-online-online-ce-seed-11:outcome:4:r2-s2-online-online-ce-seed-11:workflow-outcome"
+        ],
+        "mean_interaction": 0.6000000000000001,
+        "bridge_digest": "124c1731ca76a5605a48c03e3a752ad5d9c80c4d42326f5621e851a35f167299"
+      },
+      "admission": {
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:c7658243a599",
+        "candidate": {
+          "format": "taiji-structural-proposal-candidate-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:c7658243a599",
+          "network_id": "standalone:adaptive.cortex",
+          "target_kind": "neuron",
+          "operation": "add",
+          "substrate_ids": [
+            "adaptive.cortex"
+          ],
+          "evidence_ids": [
+            "online-feedback:eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+            "online-feedback:3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-4-seed-11:outcome:4:r2-s2-online-holdout-cycle-4-seed-11:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-4-seed-11:outcome:4:r2-s2-online-retention-cycle-4-seed-11:workflow-outcome"
+          ],
+          "source_tick": 4,
+          "priority": 0.31999999999999995,
+          "specification": {
+            "region_id": "adaptive.cortex",
+            "unit_id": "u2",
+            "cycle_bridge_digest": "124c1731ca76a5605a48c03e3a752ad5d9c80c4d42326f5621e851a35f167299"
+          },
+          "resource_cost": 1,
+          "depends_on_candidate_ids": [],
+          "conflict_keys": [],
+          "parent_checkpoint_id": "pressure-parent:c7658243a599caad3ea7bd2d5ed9c205c6bccddf61b41722d1972d7c15c799a5:3e999915d946feceb03fe680ad0070960d04050c8fdad706367667f1455a6cd5"
+        },
+        "arbitration": {
+          "format": "taiji-structural-candidate-batch-v1",
+          "batch_id": "batch:structural:50c95d62511aa3264e67f8964d2de5a1",
+          "candidate_ids": [
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:c7658243a599"
+          ],
+          "selected_candidate_ids": [
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:c7658243a599"
+          ],
+          "deferred_candidate_ids": [],
+          "rejected_candidate_ids": [],
+          "candidate_states": {
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:c7658243a599": "reserved"
+          },
+          "reasons": {},
+          "reserved_resource_cost": 1,
+          "reservation_remaining": 1,
+          "structural_budget_before": 2,
+          "available_budget_before": 2,
+          "topology_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "arbitration_digest": "50c95d62511aa3264e67f8964d2de5a1e92c4bc6f0f8399d16f7a22947ea7397",
+          "revision": 0,
+          "status": "planned"
+        },
+        "validation": {
+          "format": "taiji-structural-candidate-validation-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:c7658243a599",
+          "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+          "status": "validated",
+          "validation_score": 1.0,
+          "parent_checkpoint_digest": "dae9171de678b1822ab59e000e9cfc9f49fb70b730fe3f82a5d6c6a9b52bd26f",
+          "validation_checkpoint_digest": "6972b4fc11b51b155cd9031823fdc0e47b8e8ac6fb755af74161d49e9590153a",
+          "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "topology_after_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "structural_budget_before": 2,
+          "structural_budget_after": 2,
+          "evidence_ids": [
+            "online-feedback:eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+            "online-feedback:3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-4-seed-11:outcome:4:r2-s2-online-holdout-cycle-4-seed-11:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-4-seed-11:outcome:4:r2-s2-online-retention-cycle-4-seed-11:workflow-outcome"
+          ],
+          "error": null
+        },
+        "decision": {
+          "format": "taiji-structural-validation-gate-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:c7658243a599",
+          "passed": true,
+          "holdout_gain": 1.0,
+          "retention_regression": 0.02,
+          "lesion_effect": 0.15,
+          "resource_state": 0.8,
+          "resource_cost": 1,
+          "structural_budget": 2,
+          "minimum_holdout_gain": 0.05,
+          "maximum_retention_regression": 0.05,
+          "minimum_lesion_effect": 0.05,
+          "minimum_resource_state": 0.4,
+          "evidence_ids": [
+            "online-feedback:eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+            "online-feedback:3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-4-seed-11:outcome:4:r2-s2-online-holdout-cycle-4-seed-11:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-4-seed-11:outcome:4:r2-s2-online-retention-cycle-4-seed-11:workflow-outcome",
+            "continuous-bridge:124c1731ca76a5605a48c03e3a752ad5d9c80c4d42326f5621e851a35f167299"
+          ],
+          "reasons": [],
+          "decision_digest": "1dda4c7f0b6535481e3df644cefedf359942b392780facbcd1ef03a22f8bd951"
+        },
+        "admission": {
+          "format": "taiji-structural-admission-result-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:c7658243a599",
+          "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+          "status": "admitted",
+          "decision_digest": "1dda4c7f0b6535481e3df644cefedf359942b392780facbcd1ef03a22f8bd951",
+          "parent_checkpoint_digest": "13bc1a851ce997ebd2a440de1d9aed0c19112280f372951b156e28328e86dc58",
+          "child_checkpoint_digest": "cbf410930dd046a011288e9bcdf65fac25b9ee309dedb22afcb2152d499f38bd",
+          "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "topology_after_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+          "structural_budget_before": 2,
+          "structural_budget_after": 1,
+          "error": null
+        },
+        "topology_before": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "topology_after": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+        "budget_before": 2,
+        "budget_after": 1,
+        "unit_ids": [
+          "u0",
+          "u1",
+          "u2"
+        ],
+        "candidate_checkpoint_roundtrip": true
+      },
+      "structural_runs": [
+        {
+          "task": "three-domain-readme",
+          "method": "terminal_three_domain_growth",
+          "seed": 11,
+          "capability_domains": [
+            "editor",
+            "mcp",
+            "terminal"
+          ],
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:81eedb0576367f7fc0ddc191",
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:849c180589b09dd8b8c96a2b",
+            "workbench-owner:e57f18eb1bb6478c8e591724"
+          ],
+          "selected_ids": [
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:81eedb0576367f7fc0ddc191",
+            "workbench-owner:849c180589b09dd8b8c96a2b"
+          ],
+          "required_ids": [
+            "workbench-owner:81eedb0576367f7fc0ddc191",
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:849c180589b09dd8b8c96a2b"
+          ],
+          "selected_action_count": 3,
+          "selected_capability_ids": [
+            "mcp.list",
+            "editor.open",
+            "terminal.run"
+          ],
+          "selected_parameters": [
+            {},
+            {
+              "path": "README.md"
+            },
+            {
+              "argv": [
+                "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+                "-c",
+                "print('terminal-train-readme')"
+              ],
+              "cwd": ".",
+              "timeout_seconds": 5.0,
+              "output_limit": 1024,
+              "env": {},
+              "env_allowlist": [],
+              "expected_artifacts": [],
+              "execution_kind": "test"
+            }
+          ],
+          "raw_action_status": [
+            "success",
+            "success",
+            "success"
+          ],
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "raw_action_results": [
+            {
+              "registry": {
+                "format": "seed-mcp-registry-v1",
+                "version": 1,
+                "revision": 1,
+                "snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+                "tools": [
+                  {
+                    "version": 1,
+                    "tool_id": "mcp.local.workspace_summary",
+                    "name": "Workspace summary",
+                    "description": "Read a bounded directory summary from the active workspace.",
+                    "input_schema": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "default": "."
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "executor_id": "workspace.list",
+                    "source": "seed.mcp.local",
+                    "risk": "read_only",
+                    "timeout_seconds": 5.0,
+                    "output_limit": 65536,
+                    "enabled": true
+                  }
+                ]
+              },
+              "tools": [
+                {
+                  "version": 1,
+                  "tool_id": "mcp.local.workspace_summary",
+                  "name": "Workspace summary",
+                  "description": "Read a bounded directory summary from the active workspace.",
+                  "input_schema": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string",
+                        "default": "."
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "executor_id": "workspace.list",
+                  "source": "seed.mcp.local",
+                  "risk": "read_only",
+                  "timeout_seconds": 5.0,
+                  "output_limit": 65536,
+                  "enabled": true
+                }
+              ]
+            },
+            {
+              "path": "README.md",
+              "opened": true,
+              "editor_state": "projected"
+            },
+            {
+              "argv": [
+                "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+                "-c",
+                "print('terminal-train-readme')"
+              ],
+              "cwd": ".",
+              "shell": false,
+              "exit_code": 0,
+              "timed_out": false,
+              "duration_ms": 64.488,
+              "stdout": "terminal-train-readme\r\n",
+              "stderr": "",
+              "stdout_truncated": false,
+              "stderr_truncated": false,
+              "output_limit": 1024,
+              "execution_kind": "test",
+              "diagnostics": [],
+              "expected_artifacts": [],
+              "after_state": {
+                "cwd": ".",
+                "artifacts": []
+              },
+              "artifact_failures": [],
+              "success": true
+            }
+          ],
+          "approval_required": [
+            false,
+            false,
+            true
+          ],
+          "approval_granted": [
+            false,
+            false,
+            true
+          ],
+          "preview_validated": [
+            false,
+            false,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench outcome status/success plus required-set completion",
+          "native_event_count": 4,
+          "native_audit_event_count": 12,
+          "native_checkpoint_roundtrip": true
+        },
+        {
+          "task": "three-domain-pyproject",
+          "method": "terminal_three_domain_growth",
+          "seed": 11,
+          "capability_domains": [
+            "editor",
+            "mcp",
+            "terminal"
+          ],
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:a33f287c0a9c01af7781b08c",
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:574524096d445bce75347dd0",
+            "workbench-owner:e57f18eb1bb6478c8e591724"
+          ],
+          "selected_ids": [
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:a33f287c0a9c01af7781b08c",
+            "workbench-owner:574524096d445bce75347dd0"
+          ],
+          "required_ids": [
+            "workbench-owner:a33f287c0a9c01af7781b08c",
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:574524096d445bce75347dd0"
+          ],
+          "selected_action_count": 3,
+          "selected_capability_ids": [
+            "mcp.list",
+            "editor.open",
+            "terminal.run"
+          ],
+          "selected_parameters": [
+            {},
+            {
+              "path": "pyproject.toml"
+            },
+            {
+              "argv": [
+                "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+                "-c",
+                "print('terminal-train-pyproject')"
+              ],
+              "cwd": ".",
+              "timeout_seconds": 5.0,
+              "output_limit": 1024,
+              "env": {},
+              "env_allowlist": [],
+              "expected_artifacts": [],
+              "execution_kind": "test"
+            }
+          ],
+          "raw_action_status": [
+            "success",
+            "success",
+            "success"
+          ],
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "raw_action_results": [
+            {
+              "registry": {
+                "format": "seed-mcp-registry-v1",
+                "version": 1,
+                "revision": 1,
+                "snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+                "tools": [
+                  {
+                    "version": 1,
+                    "tool_id": "mcp.local.workspace_summary",
+                    "name": "Workspace summary",
+                    "description": "Read a bounded directory summary from the active workspace.",
+                    "input_schema": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "default": "."
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "executor_id": "workspace.list",
+                    "source": "seed.mcp.local",
+                    "risk": "read_only",
+                    "timeout_seconds": 5.0,
+                    "output_limit": 65536,
+                    "enabled": true
+                  }
+                ]
+              },
+              "tools": [
+                {
+                  "version": 1,
+                  "tool_id": "mcp.local.workspace_summary",
+                  "name": "Workspace summary",
+                  "description": "Read a bounded directory summary from the active workspace.",
+                  "input_schema": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string",
+                        "default": "."
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "executor_id": "workspace.list",
+                  "source": "seed.mcp.local",
+                  "risk": "read_only",
+                  "timeout_seconds": 5.0,
+                  "output_limit": 65536,
+                  "enabled": true
+                }
+              ]
+            },
+            {
+              "path": "pyproject.toml",
+              "opened": true,
+              "editor_state": "projected"
+            },
+            {
+              "argv": [
+                "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+                "-c",
+                "print('terminal-train-pyproject')"
+              ],
+              "cwd": ".",
+              "shell": false,
+              "exit_code": 0,
+              "timed_out": false,
+              "duration_ms": 66.316,
+              "stdout": "terminal-train-pyproject\r\n",
+              "stderr": "",
+              "stdout_truncated": false,
+              "stderr_truncated": false,
+              "output_limit": 1024,
+              "execution_kind": "test",
+              "diagnostics": [],
+              "expected_artifacts": [],
+              "after_state": {
+                "cwd": ".",
+                "artifacts": []
+              },
+              "artifact_failures": [],
+              "success": true
+            }
+          ],
+          "approval_required": [
+            false,
+            false,
+            true
+          ],
+          "approval_granted": [
+            false,
+            false,
+            true
+          ],
+          "preview_validated": [
+            false,
+            false,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench outcome status/success plus required-set completion",
+          "native_event_count": 4,
+          "native_audit_event_count": 12,
+          "native_checkpoint_roundtrip": true
+        }
+      ],
+      "retention_runs": [
+        {
+          "task": "terminal-retention-future-bec",
+          "method": "terminal_three_domain_retention",
+          "seed": 11,
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "task": "terminal-retention-future-ade",
+          "method": "terminal_three_domain_retention",
+          "seed": 11,
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:a4392a0e06e7d823d742cc1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "control_runs": {
+        "interaction_weight_only": [
+          {
+            "task": "three-domain-readme",
+            "method": "interaction_weight_only",
+            "seed": 11,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:849c180589b09dd8b8c96a2b",
+              "workbench-owner:e57f18eb1bb6478c8e591724"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:81eedb0576367f7fc0ddc191"
+            ],
+            "required_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:849c180589b09dd8b8c96a2b"
+            ],
+            "selected_action_count": 2,
+            "selected_capability_ids": [
+              "mcp.list",
+              "editor.open"
+            ],
+            "selected_parameters": [
+              {},
+              {
+                "path": "README.md"
+              }
+            ],
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "raw_action_results": [
+              {
+                "registry": {
+                  "format": "seed-mcp-registry-v1",
+                  "version": 1,
+                  "revision": 1,
+                  "snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+                  "tools": [
+                    {
+                      "version": 1,
+                      "tool_id": "mcp.local.workspace_summary",
+                      "name": "Workspace summary",
+                      "description": "Read a bounded directory summary from the active workspace.",
+                      "input_schema": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "string",
+                            "default": "."
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "executor_id": "workspace.list",
+                      "source": "seed.mcp.local",
+                      "risk": "read_only",
+                      "timeout_seconds": 5.0,
+                      "output_limit": 65536,
+                      "enabled": true
+                    }
+                  ]
+                },
+                "tools": [
+                  {
+                    "version": 1,
+                    "tool_id": "mcp.local.workspace_summary",
+                    "name": "Workspace summary",
+                    "description": "Read a bounded directory summary from the active workspace.",
+                    "input_schema": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "default": "."
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "executor_id": "workspace.list",
+                    "source": "seed.mcp.local",
+                    "risk": "read_only",
+                    "timeout_seconds": 5.0,
+                    "output_limit": 65536,
+                    "enabled": true
+                  }
+                ]
+              },
+              {
+                "path": "README.md",
+                "opened": true,
+                "editor_state": "projected"
+              }
+            ],
+            "approval_required": [
+              false,
+              false
+            ],
+            "approval_granted": [
+              false,
+              false
+            ],
+            "preview_validated": [
+              false,
+              false
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          },
+          {
+            "task": "three-domain-pyproject",
+            "method": "interaction_weight_only",
+            "seed": 11,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:574524096d445bce75347dd0",
+              "workbench-owner:e57f18eb1bb6478c8e591724"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:a33f287c0a9c01af7781b08c"
+            ],
+            "required_ids": [
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:574524096d445bce75347dd0"
+            ],
+            "selected_action_count": 2,
+            "selected_capability_ids": [
+              "mcp.list",
+              "editor.open"
+            ],
+            "selected_parameters": [
+              {},
+              {
+                "path": "pyproject.toml"
+              }
+            ],
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "raw_action_results": [
+              {
+                "registry": {
+                  "format": "seed-mcp-registry-v1",
+                  "version": 1,
+                  "revision": 1,
+                  "snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+                  "tools": [
+                    {
+                      "version": 1,
+                      "tool_id": "mcp.local.workspace_summary",
+                      "name": "Workspace summary",
+                      "description": "Read a bounded directory summary from the active workspace.",
+                      "input_schema": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "string",
+                            "default": "."
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "executor_id": "workspace.list",
+                      "source": "seed.mcp.local",
+                      "risk": "read_only",
+                      "timeout_seconds": 5.0,
+                      "output_limit": 65536,
+                      "enabled": true
+                    }
+                  ]
+                },
+                "tools": [
+                  {
+                    "version": 1,
+                    "tool_id": "mcp.local.workspace_summary",
+                    "name": "Workspace summary",
+                    "description": "Read a bounded directory summary from the active workspace.",
+                    "input_schema": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "default": "."
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "executor_id": "workspace.list",
+                    "source": "seed.mcp.local",
+                    "risk": "read_only",
+                    "timeout_seconds": 5.0,
+                    "output_limit": 65536,
+                    "enabled": true
+                  }
+                ]
+              },
+              {
+                "path": "pyproject.toml",
+                "opened": true,
+                "editor_state": "projected"
+              }
+            ],
+            "approval_required": [
+              false,
+              false
+            ],
+            "approval_granted": [
+              false,
+              false
+            ],
+            "preview_validated": [
+              false,
+              false
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          }
+        ],
+        "router_only": [
+          {
+            "task": "three-domain-readme",
+            "method": "router_only",
+            "seed": 11,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:849c180589b09dd8b8c96a2b",
+              "workbench-owner:e57f18eb1bb6478c8e591724"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:81eedb0576367f7fc0ddc191"
+            ],
+            "required_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:849c180589b09dd8b8c96a2b"
+            ],
+            "selected_action_count": 2,
+            "selected_capability_ids": [
+              "mcp.list",
+              "editor.open"
+            ],
+            "selected_parameters": [
+              {},
+              {
+                "path": "README.md"
+              }
+            ],
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "raw_action_results": [
+              {
+                "registry": {
+                  "format": "seed-mcp-registry-v1",
+                  "version": 1,
+                  "revision": 1,
+                  "snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+                  "tools": [
+                    {
+                      "version": 1,
+                      "tool_id": "mcp.local.workspace_summary",
+                      "name": "Workspace summary",
+                      "description": "Read a bounded directory summary from the active workspace.",
+                      "input_schema": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "string",
+                            "default": "."
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "executor_id": "workspace.list",
+                      "source": "seed.mcp.local",
+                      "risk": "read_only",
+                      "timeout_seconds": 5.0,
+                      "output_limit": 65536,
+                      "enabled": true
+                    }
+                  ]
+                },
+                "tools": [
+                  {
+                    "version": 1,
+                    "tool_id": "mcp.local.workspace_summary",
+                    "name": "Workspace summary",
+                    "description": "Read a bounded directory summary from the active workspace.",
+                    "input_schema": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "default": "."
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "executor_id": "workspace.list",
+                    "source": "seed.mcp.local",
+                    "risk": "read_only",
+                    "timeout_seconds": 5.0,
+                    "output_limit": 65536,
+                    "enabled": true
+                  }
+                ]
+              },
+              {
+                "path": "README.md",
+                "opened": true,
+                "editor_state": "projected"
+              }
+            ],
+            "approval_required": [
+              false,
+              false
+            ],
+            "approval_granted": [
+              false,
+              false
+            ],
+            "preview_validated": [
+              false,
+              false
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          },
+          {
+            "task": "three-domain-pyproject",
+            "method": "router_only",
+            "seed": 11,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:574524096d445bce75347dd0",
+              "workbench-owner:e57f18eb1bb6478c8e591724"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:a33f287c0a9c01af7781b08c"
+            ],
+            "required_ids": [
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:574524096d445bce75347dd0"
+            ],
+            "selected_action_count": 2,
+            "selected_capability_ids": [
+              "mcp.list",
+              "editor.open"
+            ],
+            "selected_parameters": [
+              {},
+              {
+                "path": "pyproject.toml"
+              }
+            ],
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "raw_action_results": [
+              {
+                "registry": {
+                  "format": "seed-mcp-registry-v1",
+                  "version": 1,
+                  "revision": 1,
+                  "snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+                  "tools": [
+                    {
+                      "version": 1,
+                      "tool_id": "mcp.local.workspace_summary",
+                      "name": "Workspace summary",
+                      "description": "Read a bounded directory summary from the active workspace.",
+                      "input_schema": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "string",
+                            "default": "."
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "executor_id": "workspace.list",
+                      "source": "seed.mcp.local",
+                      "risk": "read_only",
+                      "timeout_seconds": 5.0,
+                      "output_limit": 65536,
+                      "enabled": true
+                    }
+                  ]
+                },
+                "tools": [
+                  {
+                    "version": 1,
+                    "tool_id": "mcp.local.workspace_summary",
+                    "name": "Workspace summary",
+                    "description": "Read a bounded directory summary from the active workspace.",
+                    "input_schema": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "default": "."
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "executor_id": "workspace.list",
+                    "source": "seed.mcp.local",
+                    "risk": "read_only",
+                    "timeout_seconds": 5.0,
+                    "output_limit": 65536,
+                    "enabled": true
+                  }
+                ]
+              },
+              {
+                "path": "pyproject.toml",
+                "opened": true,
+                "editor_state": "projected"
+              }
+            ],
+            "approval_required": [
+              false,
+              false
+            ],
+            "approval_granted": [
+              false,
+              false
+            ],
+            "preview_validated": [
+              false,
+              false
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          }
+        ],
+        "memory_only": [
+          {
+            "task": "three-domain-readme",
+            "method": "memory_only",
+            "seed": 11,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:849c180589b09dd8b8c96a2b",
+              "workbench-owner:e57f18eb1bb6478c8e591724"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:81eedb0576367f7fc0ddc191"
+            ],
+            "required_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:849c180589b09dd8b8c96a2b"
+            ],
+            "selected_action_count": 2,
+            "selected_capability_ids": [
+              "mcp.list",
+              "editor.open"
+            ],
+            "selected_parameters": [
+              {},
+              {
+                "path": "README.md"
+              }
+            ],
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "raw_action_results": [
+              {
+                "registry": {
+                  "format": "seed-mcp-registry-v1",
+                  "version": 1,
+                  "revision": 1,
+                  "snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+                  "tools": [
+                    {
+                      "version": 1,
+                      "tool_id": "mcp.local.workspace_summary",
+                      "name": "Workspace summary",
+                      "description": "Read a bounded directory summary from the active workspace.",
+                      "input_schema": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "string",
+                            "default": "."
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "executor_id": "workspace.list",
+                      "source": "seed.mcp.local",
+                      "risk": "read_only",
+                      "timeout_seconds": 5.0,
+                      "output_limit": 65536,
+                      "enabled": true
+                    }
+                  ]
+                },
+                "tools": [
+                  {
+                    "version": 1,
+                    "tool_id": "mcp.local.workspace_summary",
+                    "name": "Workspace summary",
+                    "description": "Read a bounded directory summary from the active workspace.",
+                    "input_schema": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "default": "."
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "executor_id": "workspace.list",
+                    "source": "seed.mcp.local",
+                    "risk": "read_only",
+                    "timeout_seconds": 5.0,
+                    "output_limit": 65536,
+                    "enabled": true
+                  }
+                ]
+              },
+              {
+                "path": "README.md",
+                "opened": true,
+                "editor_state": "projected"
+              }
+            ],
+            "approval_required": [
+              false,
+              false
+            ],
+            "approval_granted": [
+              false,
+              false
+            ],
+            "preview_validated": [
+              false,
+              false
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          },
+          {
+            "task": "three-domain-pyproject",
+            "method": "memory_only",
+            "seed": 11,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:574524096d445bce75347dd0",
+              "workbench-owner:e57f18eb1bb6478c8e591724"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:a33f287c0a9c01af7781b08c"
+            ],
+            "required_ids": [
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:574524096d445bce75347dd0"
+            ],
+            "selected_action_count": 2,
+            "selected_capability_ids": [
+              "mcp.list",
+              "editor.open"
+            ],
+            "selected_parameters": [
+              {},
+              {
+                "path": "pyproject.toml"
+              }
+            ],
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "raw_action_results": [
+              {
+                "registry": {
+                  "format": "seed-mcp-registry-v1",
+                  "version": 1,
+                  "revision": 1,
+                  "snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+                  "tools": [
+                    {
+                      "version": 1,
+                      "tool_id": "mcp.local.workspace_summary",
+                      "name": "Workspace summary",
+                      "description": "Read a bounded directory summary from the active workspace.",
+                      "input_schema": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "string",
+                            "default": "."
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "executor_id": "workspace.list",
+                      "source": "seed.mcp.local",
+                      "risk": "read_only",
+                      "timeout_seconds": 5.0,
+                      "output_limit": 65536,
+                      "enabled": true
+                    }
+                  ]
+                },
+                "tools": [
+                  {
+                    "version": 1,
+                    "tool_id": "mcp.local.workspace_summary",
+                    "name": "Workspace summary",
+                    "description": "Read a bounded directory summary from the active workspace.",
+                    "input_schema": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "default": "."
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "executor_id": "workspace.list",
+                    "source": "seed.mcp.local",
+                    "risk": "read_only",
+                    "timeout_seconds": 5.0,
+                    "output_limit": 65536,
+                    "enabled": true
+                  }
+                ]
+              },
+              {
+                "path": "pyproject.toml",
+                "opened": true,
+                "editor_state": "projected"
+              }
+            ],
+            "approval_required": [
+              false,
+              false
+            ],
+            "approval_granted": [
+              false,
+              false
+            ],
+            "preview_validated": [
+              false,
+              false
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          }
+        ]
+      },
+      "lesion_run": {
+        "task": "terminal-three-domain-lesion",
+        "method": "terminal_three_domain_lesion",
+        "seed": 11,
+        "capability_domains": [
+          "editor",
+          "mcp"
+        ],
+        "capacity": 2,
+        "candidate_ids": [
+          "workbench-owner:81eedb0576367f7fc0ddc191",
+          "workbench-owner:c62f0519c2dbde0073bb6c10",
+          "workbench-owner:849c180589b09dd8b8c96a2b",
+          "workbench-owner:e57f18eb1bb6478c8e591724"
+        ],
+        "selected_ids": [
+          "workbench-owner:c62f0519c2dbde0073bb6c10",
+          "workbench-owner:81eedb0576367f7fc0ddc191"
+        ],
+        "required_ids": [
+          "workbench-owner:81eedb0576367f7fc0ddc191",
+          "workbench-owner:c62f0519c2dbde0073bb6c10",
+          "workbench-owner:849c180589b09dd8b8c96a2b"
+        ],
+        "selected_action_count": 2,
+        "selected_capability_ids": [
+          "mcp.list",
+          "editor.open"
+        ],
+        "selected_parameters": [
+          {},
+          {
+            "path": "README.md"
+          }
+        ],
+        "raw_action_status": [
+          "success",
+          "success"
+        ],
+        "raw_action_success": [
+          true,
+          true
+        ],
+        "raw_action_results": [
+          {
+            "registry": {
+              "format": "seed-mcp-registry-v1",
+              "version": 1,
+              "revision": 1,
+              "snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+              "tools": [
+                {
+                  "version": 1,
+                  "tool_id": "mcp.local.workspace_summary",
+                  "name": "Workspace summary",
+                  "description": "Read a bounded directory summary from the active workspace.",
+                  "input_schema": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string",
+                        "default": "."
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "executor_id": "workspace.list",
+                  "source": "seed.mcp.local",
+                  "risk": "read_only",
+                  "timeout_seconds": 5.0,
+                  "output_limit": 65536,
+                  "enabled": true
+                }
+              ]
+            },
+            "tools": [
+              {
+                "version": 1,
+                "tool_id": "mcp.local.workspace_summary",
+                "name": "Workspace summary",
+                "description": "Read a bounded directory summary from the active workspace.",
+                "input_schema": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "default": "."
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "executor_id": "workspace.list",
+                "source": "seed.mcp.local",
+                "risk": "read_only",
+                "timeout_seconds": 5.0,
+                "output_limit": 65536,
+                "enabled": true
+              }
+            ]
+          },
+          {
+            "path": "README.md",
+            "opened": true,
+            "editor_state": "projected"
+          }
+        ],
+        "approval_required": [
+          false,
+          false
+        ],
+        "approval_granted": [
+          false,
+          false
+        ],
+        "preview_validated": [
+          false,
+          false
+        ],
+        "task_complete": false,
+        "all_selected_actions_succeeded": true,
+        "task_score": 0.0,
+        "score_source": "native Workbench outcome status/success plus required-set completion",
+        "native_event_count": 3,
+        "native_audit_event_count": 8,
+        "native_checkpoint_roundtrip": true
+      },
+      "governance_probe": {
+        "unapproved_status": "rejected",
+        "unapproved_success": false,
+        "approved_status": "success",
+        "approved_success": true,
+        "approved_shell_free": true,
+        "approved_output_limit": 1024,
+        "failure_loop_status": "failed",
+        "failure_loop_stopped_at": 0,
+        "failure_loop_completed_prefix": 0,
+        "failure_step_success": false,
+        "recovery_status": "completed",
+        "recovery_step_success": true,
+        "checkpoint_exists": true
+      },
+      "parent_capacity": 2,
+      "grown_capacity": 3,
+      "lesion_capacity": 2,
+      "rollback_capacity": 2,
+      "topology_before_rollback": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+      "topology_after_rollback": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+      "budget_before": 2,
+      "budget_after_admission": 1,
+      "budget_after_rollback": 2,
+      "rollback_status": "rolled_back",
+      "workspace_checkpoint_roundtrip": true
+    },
+    {
+      "seed": 29,
+      "online_rounds": [
+        {
+          "round": 1,
+          "family": "online-be",
+          "candidate_id": "transfer-group:145339db789015ea7ecd8eaa",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+          "outcome_id": "r2-s2-online-online-be-seed-29:outcome:4:r2-s2-online-online-be-seed-29:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 2,
+          "family": "online-bf",
+          "candidate_id": "transfer-group:b515b1e835c6a4dc6118346f",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "feedback_id": "35e147e6e1f88134f9e957fcd2eb3237b953b1be9858de2a576014df4a54aa8f",
+          "outcome_id": "r2-s2-online-online-bf-seed-29:outcome:4:r2-s2-online-online-bf-seed-29:workflow-outcome",
+          "outcome_success": false,
+          "admission_status": "rejected",
+          "admission_reason": "outcome_unsuccessful",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 3,
+          "family": "online-ce",
+          "candidate_id": "transfer-group:61d5583b886b40a97139fe73",
+          "member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+          "outcome_id": "r2-s2-online-online-ce-seed-29:outcome:4:r2-s2-online-online-ce-seed-29:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "online_feedback_ids": [
+        "0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+        "0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750"
+      ],
+      "pressure": {
+        "format": "taiji-interaction-structural-bridge-v1",
+        "revision": 1,
+        "version": 1,
+        "projection": {
+          "format": "taiji-structural-pressure-projection-v1",
+          "network_id": "standalone:adaptive.cortex",
+          "region_id": "adaptive.cortex",
+          "first_tick": 1,
+          "last_tick": 4,
+          "window_digests": [
+            "03268a193e16a42c2f9b0eedbdffcee541ec12669e24023e6f5611337a30c8fa",
+            "a8e47e9802391e761cde301a98045cadf29167ca13339c507b08eb8a7f4825e2",
+            "a09f31d8ade1b1b807854e32247504938416e292be5366842bff4e218d687983",
+            "c87c1bb117677de801f4aa08a63012f744f9f3bf7e02e93fde799273d4547c55"
+          ],
+          "train_task_slice_ids": [
+            "online-interaction:transfer-group:145339db789015ea7ecd8eaa",
+            "online-interaction:transfer-group:61d5583b886b40a97139fe73"
+          ],
+          "holdout_task_slice_ids": [
+            "workbench-holdout:online-workbench-holdout-cycle-4"
+          ],
+          "retention_task_slice_ids": [
+            "workbench-retention:online-workbench-retention-cycle-4"
+          ],
+          "train_window_count": 2,
+          "holdout_window_count": 1,
+          "retention_window_count": 1,
+          "prediction_observation_count": 2,
+          "mean_prediction_error": 0.3999999999999999,
+          "mean_resource_state": 0.0,
+          "mean_holdout_transfer": 0.8,
+          "evidence_ids": [
+            "online-feedback:0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+            "online-feedback:0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-4-seed-29:outcome:4:r2-s2-online-holdout-cycle-4-seed-29:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-4-seed-29:outcome:4:r2-s2-online-retention-cycle-4-seed-29:workflow-outcome"
+          ],
+          "projection_digest": "f7b6302c2509bcadb80764d6225b679a4eba6a499e4a2bbedf07cda7f0f0d905"
+        },
+        "feedback_ids": [
+          "0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+          "0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750"
+        ],
+        "outcome_ids": [
+          "r2-s2-online-online-be-seed-29:outcome:4:r2-s2-online-online-be-seed-29:workflow-outcome",
+          "r2-s2-online-online-ce-seed-29:outcome:4:r2-s2-online-online-ce-seed-29:workflow-outcome"
+        ],
+        "mean_interaction": 0.6000000000000001,
+        "bridge_digest": "e46f4e9aeb946e7a97f18519d76b01c77410de94491c579a8a28333d6098840e"
+      },
+      "admission": {
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f7b6302c2509",
+        "candidate": {
+          "format": "taiji-structural-proposal-candidate-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f7b6302c2509",
+          "network_id": "standalone:adaptive.cortex",
+          "target_kind": "neuron",
+          "operation": "add",
+          "substrate_ids": [
+            "adaptive.cortex"
+          ],
+          "evidence_ids": [
+            "online-feedback:0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+            "online-feedback:0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-4-seed-29:outcome:4:r2-s2-online-holdout-cycle-4-seed-29:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-4-seed-29:outcome:4:r2-s2-online-retention-cycle-4-seed-29:workflow-outcome"
+          ],
+          "source_tick": 4,
+          "priority": 0.31999999999999995,
+          "specification": {
+            "region_id": "adaptive.cortex",
+            "unit_id": "u2",
+            "cycle_bridge_digest": "e46f4e9aeb946e7a97f18519d76b01c77410de94491c579a8a28333d6098840e"
+          },
+          "resource_cost": 1,
+          "depends_on_candidate_ids": [],
+          "conflict_keys": [],
+          "parent_checkpoint_id": "pressure-parent:f7b6302c2509bcadb80764d6225b679a4eba6a499e4a2bbedf07cda7f0f0d905:f00e00884b8863799fedf169e63d714315aef2e0445a8d886d164bde25c60600"
+        },
+        "arbitration": {
+          "format": "taiji-structural-candidate-batch-v1",
+          "batch_id": "batch:structural:bf6a1f18253a7cb632c664acc7acae52",
+          "candidate_ids": [
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f7b6302c2509"
+          ],
+          "selected_candidate_ids": [
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f7b6302c2509"
+          ],
+          "deferred_candidate_ids": [],
+          "rejected_candidate_ids": [],
+          "candidate_states": {
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f7b6302c2509": "reserved"
+          },
+          "reasons": {},
+          "reserved_resource_cost": 1,
+          "reservation_remaining": 1,
+          "structural_budget_before": 2,
+          "available_budget_before": 2,
+          "topology_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "arbitration_digest": "bf6a1f18253a7cb632c664acc7acae52a56908ec55d46d8efd193ff27bfd648c",
+          "revision": 0,
+          "status": "planned"
+        },
+        "validation": {
+          "format": "taiji-structural-candidate-validation-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f7b6302c2509",
+          "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+          "status": "validated",
+          "validation_score": 1.0,
+          "parent_checkpoint_digest": "daf610c9e4fdbdb0a69a75fb44a0bdb3a2c64c86648282a3fd8b0dcaed0e4e3e",
+          "validation_checkpoint_digest": "2376d8fcef36ac98e2c5081ce9d1d38cb6ea5e515cfc125dc9c0d34c2383e3a4",
+          "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "topology_after_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "structural_budget_before": 2,
+          "structural_budget_after": 2,
+          "evidence_ids": [
+            "online-feedback:0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+            "online-feedback:0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-4-seed-29:outcome:4:r2-s2-online-holdout-cycle-4-seed-29:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-4-seed-29:outcome:4:r2-s2-online-retention-cycle-4-seed-29:workflow-outcome"
+          ],
+          "error": null
+        },
+        "decision": {
+          "format": "taiji-structural-validation-gate-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f7b6302c2509",
+          "passed": true,
+          "holdout_gain": 1.0,
+          "retention_regression": 0.02,
+          "lesion_effect": 0.15,
+          "resource_state": 0.8,
+          "resource_cost": 1,
+          "structural_budget": 2,
+          "minimum_holdout_gain": 0.05,
+          "maximum_retention_regression": 0.05,
+          "minimum_lesion_effect": 0.05,
+          "minimum_resource_state": 0.4,
+          "evidence_ids": [
+            "online-feedback:0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+            "online-feedback:0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-4-seed-29:outcome:4:r2-s2-online-holdout-cycle-4-seed-29:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-4-seed-29:outcome:4:r2-s2-online-retention-cycle-4-seed-29:workflow-outcome",
+            "continuous-bridge:e46f4e9aeb946e7a97f18519d76b01c77410de94491c579a8a28333d6098840e"
+          ],
+          "reasons": [],
+          "decision_digest": "7c193cc67d0800987c02c844791ff16b3e574aafbe93563a083eb85c1cc4611a"
+        },
+        "admission": {
+          "format": "taiji-structural-admission-result-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:f7b6302c2509",
+          "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+          "status": "admitted",
+          "decision_digest": "7c193cc67d0800987c02c844791ff16b3e574aafbe93563a083eb85c1cc4611a",
+          "parent_checkpoint_digest": "9921ebf1e9abfd052733a9825ad30082809b85b71523e50b5e03441e911b6b2c",
+          "child_checkpoint_digest": "f11216ef51ef0957a86728a6df174feda650b2c4492c4aec46011269047b1657",
+          "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "topology_after_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+          "structural_budget_before": 2,
+          "structural_budget_after": 1,
+          "error": null
+        },
+        "topology_before": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "topology_after": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+        "budget_before": 2,
+        "budget_after": 1,
+        "unit_ids": [
+          "u0",
+          "u1",
+          "u2"
+        ],
+        "candidate_checkpoint_roundtrip": true
+      },
+      "structural_runs": [
+        {
+          "task": "three-domain-readme",
+          "method": "terminal_three_domain_growth",
+          "seed": 29,
+          "capability_domains": [
+            "editor",
+            "mcp",
+            "terminal"
+          ],
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:81eedb0576367f7fc0ddc191",
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:849c180589b09dd8b8c96a2b",
+            "workbench-owner:e57f18eb1bb6478c8e591724"
+          ],
+          "selected_ids": [
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:81eedb0576367f7fc0ddc191",
+            "workbench-owner:849c180589b09dd8b8c96a2b"
+          ],
+          "required_ids": [
+            "workbench-owner:81eedb0576367f7fc0ddc191",
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:849c180589b09dd8b8c96a2b"
+          ],
+          "selected_action_count": 3,
+          "selected_capability_ids": [
+            "mcp.list",
+            "editor.open",
+            "terminal.run"
+          ],
+          "selected_parameters": [
+            {},
+            {
+              "path": "README.md"
+            },
+            {
+              "argv": [
+                "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+                "-c",
+                "print('terminal-train-readme')"
+              ],
+              "cwd": ".",
+              "timeout_seconds": 5.0,
+              "output_limit": 1024,
+              "env": {},
+              "env_allowlist": [],
+              "expected_artifacts": [],
+              "execution_kind": "test"
+            }
+          ],
+          "raw_action_status": [
+            "success",
+            "success",
+            "success"
+          ],
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "raw_action_results": [
+            {
+              "registry": {
+                "format": "seed-mcp-registry-v1",
+                "version": 1,
+                "revision": 1,
+                "snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+                "tools": [
+                  {
+                    "version": 1,
+                    "tool_id": "mcp.local.workspace_summary",
+                    "name": "Workspace summary",
+                    "description": "Read a bounded directory summary from the active workspace.",
+                    "input_schema": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "default": "."
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "executor_id": "workspace.list",
+                    "source": "seed.mcp.local",
+                    "risk": "read_only",
+                    "timeout_seconds": 5.0,
+                    "output_limit": 65536,
+                    "enabled": true
+                  }
+                ]
+              },
+              "tools": [
+                {
+                  "version": 1,
+                  "tool_id": "mcp.local.workspace_summary",
+                  "name": "Workspace summary",
+                  "description": "Read a bounded directory summary from the active workspace.",
+                  "input_schema": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string",
+                        "default": "."
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "executor_id": "workspace.list",
+                  "source": "seed.mcp.local",
+                  "risk": "read_only",
+                  "timeout_seconds": 5.0,
+                  "output_limit": 65536,
+                  "enabled": true
+                }
+              ]
+            },
+            {
+              "path": "README.md",
+              "opened": true,
+              "editor_state": "projected"
+            },
+            {
+              "argv": [
+                "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+                "-c",
+                "print('terminal-train-readme')"
+              ],
+              "cwd": ".",
+              "shell": false,
+              "exit_code": 0,
+              "timed_out": false,
+              "duration_ms": 66.124,
+              "stdout": "terminal-train-readme\r\n",
+              "stderr": "",
+              "stdout_truncated": false,
+              "stderr_truncated": false,
+              "output_limit": 1024,
+              "execution_kind": "test",
+              "diagnostics": [],
+              "expected_artifacts": [],
+              "after_state": {
+                "cwd": ".",
+                "artifacts": []
+              },
+              "artifact_failures": [],
+              "success": true
+            }
+          ],
+          "approval_required": [
+            false,
+            false,
+            true
+          ],
+          "approval_granted": [
+            false,
+            false,
+            true
+          ],
+          "preview_validated": [
+            false,
+            false,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench outcome status/success plus required-set completion",
+          "native_event_count": 4,
+          "native_audit_event_count": 12,
+          "native_checkpoint_roundtrip": true
+        },
+        {
+          "task": "three-domain-pyproject",
+          "method": "terminal_three_domain_growth",
+          "seed": 29,
+          "capability_domains": [
+            "editor",
+            "mcp",
+            "terminal"
+          ],
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:a33f287c0a9c01af7781b08c",
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:574524096d445bce75347dd0",
+            "workbench-owner:e57f18eb1bb6478c8e591724"
+          ],
+          "selected_ids": [
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:a33f287c0a9c01af7781b08c",
+            "workbench-owner:574524096d445bce75347dd0"
+          ],
+          "required_ids": [
+            "workbench-owner:a33f287c0a9c01af7781b08c",
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:574524096d445bce75347dd0"
+          ],
+          "selected_action_count": 3,
+          "selected_capability_ids": [
+            "mcp.list",
+            "editor.open",
+            "terminal.run"
+          ],
+          "selected_parameters": [
+            {},
+            {
+              "path": "pyproject.toml"
+            },
+            {
+              "argv": [
+                "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+                "-c",
+                "print('terminal-train-pyproject')"
+              ],
+              "cwd": ".",
+              "timeout_seconds": 5.0,
+              "output_limit": 1024,
+              "env": {},
+              "env_allowlist": [],
+              "expected_artifacts": [],
+              "execution_kind": "test"
+            }
+          ],
+          "raw_action_status": [
+            "success",
+            "success",
+            "success"
+          ],
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "raw_action_results": [
+            {
+              "registry": {
+                "format": "seed-mcp-registry-v1",
+                "version": 1,
+                "revision": 1,
+                "snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+                "tools": [
+                  {
+                    "version": 1,
+                    "tool_id": "mcp.local.workspace_summary",
+                    "name": "Workspace summary",
+                    "description": "Read a bounded directory summary from the active workspace.",
+                    "input_schema": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "default": "."
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "executor_id": "workspace.list",
+                    "source": "seed.mcp.local",
+                    "risk": "read_only",
+                    "timeout_seconds": 5.0,
+                    "output_limit": 65536,
+                    "enabled": true
+                  }
+                ]
+              },
+              "tools": [
+                {
+                  "version": 1,
+                  "tool_id": "mcp.local.workspace_summary",
+                  "name": "Workspace summary",
+                  "description": "Read a bounded directory summary from the active workspace.",
+                  "input_schema": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string",
+                        "default": "."
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "executor_id": "workspace.list",
+                  "source": "seed.mcp.local",
+                  "risk": "read_only",
+                  "timeout_seconds": 5.0,
+                  "output_limit": 65536,
+                  "enabled": true
+                }
+              ]
+            },
+            {
+              "path": "pyproject.toml",
+              "opened": true,
+              "editor_state": "projected"
+            },
+            {
+              "argv": [
+                "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+                "-c",
+                "print('terminal-train-pyproject')"
+              ],
+              "cwd": ".",
+              "shell": false,
+              "exit_code": 0,
+              "timed_out": false,
+              "duration_ms": 71.172,
+              "stdout": "terminal-train-pyproject\r\n",
+              "stderr": "",
+              "stdout_truncated": false,
+              "stderr_truncated": false,
+              "output_limit": 1024,
+              "execution_kind": "test",
+              "diagnostics": [],
+              "expected_artifacts": [],
+              "after_state": {
+                "cwd": ".",
+                "artifacts": []
+              },
+              "artifact_failures": [],
+              "success": true
+            }
+          ],
+          "approval_required": [
+            false,
+            false,
+            true
+          ],
+          "approval_granted": [
+            false,
+            false,
+            true
+          ],
+          "preview_validated": [
+            false,
+            false,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench outcome status/success plus required-set completion",
+          "native_event_count": 4,
+          "native_audit_event_count": 12,
+          "native_checkpoint_roundtrip": true
+        }
+      ],
+      "retention_runs": [
+        {
+          "task": "terminal-retention-future-bec",
+          "method": "terminal_three_domain_retention",
+          "seed": 29,
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "task": "terminal-retention-future-ade",
+          "method": "terminal_three_domain_retention",
+          "seed": 29,
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:a4392a0e06e7d823d742cc1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "control_runs": {
+        "interaction_weight_only": [
+          {
+            "task": "three-domain-readme",
+            "method": "interaction_weight_only",
+            "seed": 29,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:849c180589b09dd8b8c96a2b",
+              "workbench-owner:e57f18eb1bb6478c8e591724"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:81eedb0576367f7fc0ddc191"
+            ],
+            "required_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:849c180589b09dd8b8c96a2b"
+            ],
+            "selected_action_count": 2,
+            "selected_capability_ids": [
+              "mcp.list",
+              "editor.open"
+            ],
+            "selected_parameters": [
+              {},
+              {
+                "path": "README.md"
+              }
+            ],
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "raw_action_results": [
+              {
+                "registry": {
+                  "format": "seed-mcp-registry-v1",
+                  "version": 1,
+                  "revision": 1,
+                  "snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+                  "tools": [
+                    {
+                      "version": 1,
+                      "tool_id": "mcp.local.workspace_summary",
+                      "name": "Workspace summary",
+                      "description": "Read a bounded directory summary from the active workspace.",
+                      "input_schema": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "string",
+                            "default": "."
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "executor_id": "workspace.list",
+                      "source": "seed.mcp.local",
+                      "risk": "read_only",
+                      "timeout_seconds": 5.0,
+                      "output_limit": 65536,
+                      "enabled": true
+                    }
+                  ]
+                },
+                "tools": [
+                  {
+                    "version": 1,
+                    "tool_id": "mcp.local.workspace_summary",
+                    "name": "Workspace summary",
+                    "description": "Read a bounded directory summary from the active workspace.",
+                    "input_schema": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "default": "."
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "executor_id": "workspace.list",
+                    "source": "seed.mcp.local",
+                    "risk": "read_only",
+                    "timeout_seconds": 5.0,
+                    "output_limit": 65536,
+                    "enabled": true
+                  }
+                ]
+              },
+              {
+                "path": "README.md",
+                "opened": true,
+                "editor_state": "projected"
+              }
+            ],
+            "approval_required": [
+              false,
+              false
+            ],
+            "approval_granted": [
+              false,
+              false
+            ],
+            "preview_validated": [
+              false,
+              false
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          },
+          {
+            "task": "three-domain-pyproject",
+            "method": "interaction_weight_only",
+            "seed": 29,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:574524096d445bce75347dd0",
+              "workbench-owner:e57f18eb1bb6478c8e591724"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:a33f287c0a9c01af7781b08c"
+            ],
+            "required_ids": [
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:574524096d445bce75347dd0"
+            ],
+            "selected_action_count": 2,
+            "selected_capability_ids": [
+              "mcp.list",
+              "editor.open"
+            ],
+            "selected_parameters": [
+              {},
+              {
+                "path": "pyproject.toml"
+              }
+            ],
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "raw_action_results": [
+              {
+                "registry": {
+                  "format": "seed-mcp-registry-v1",
+                  "version": 1,
+                  "revision": 1,
+                  "snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+                  "tools": [
+                    {
+                      "version": 1,
+                      "tool_id": "mcp.local.workspace_summary",
+                      "name": "Workspace summary",
+                      "description": "Read a bounded directory summary from the active workspace.",
+                      "input_schema": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "string",
+                            "default": "."
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "executor_id": "workspace.list",
+                      "source": "seed.mcp.local",
+                      "risk": "read_only",
+                      "timeout_seconds": 5.0,
+                      "output_limit": 65536,
+                      "enabled": true
+                    }
+                  ]
+                },
+                "tools": [
+                  {
+                    "version": 1,
+                    "tool_id": "mcp.local.workspace_summary",
+                    "name": "Workspace summary",
+                    "description": "Read a bounded directory summary from the active workspace.",
+                    "input_schema": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "default": "."
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "executor_id": "workspace.list",
+                    "source": "seed.mcp.local",
+                    "risk": "read_only",
+                    "timeout_seconds": 5.0,
+                    "output_limit": 65536,
+                    "enabled": true
+                  }
+                ]
+              },
+              {
+                "path": "pyproject.toml",
+                "opened": true,
+                "editor_state": "projected"
+              }
+            ],
+            "approval_required": [
+              false,
+              false
+            ],
+            "approval_granted": [
+              false,
+              false
+            ],
+            "preview_validated": [
+              false,
+              false
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          }
+        ],
+        "router_only": [
+          {
+            "task": "three-domain-readme",
+            "method": "router_only",
+            "seed": 29,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:849c180589b09dd8b8c96a2b",
+              "workbench-owner:e57f18eb1bb6478c8e591724"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:81eedb0576367f7fc0ddc191"
+            ],
+            "required_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:849c180589b09dd8b8c96a2b"
+            ],
+            "selected_action_count": 2,
+            "selected_capability_ids": [
+              "mcp.list",
+              "editor.open"
+            ],
+            "selected_parameters": [
+              {},
+              {
+                "path": "README.md"
+              }
+            ],
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "raw_action_results": [
+              {
+                "registry": {
+                  "format": "seed-mcp-registry-v1",
+                  "version": 1,
+                  "revision": 1,
+                  "snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+                  "tools": [
+                    {
+                      "version": 1,
+                      "tool_id": "mcp.local.workspace_summary",
+                      "name": "Workspace summary",
+                      "description": "Read a bounded directory summary from the active workspace.",
+                      "input_schema": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "string",
+                            "default": "."
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "executor_id": "workspace.list",
+                      "source": "seed.mcp.local",
+                      "risk": "read_only",
+                      "timeout_seconds": 5.0,
+                      "output_limit": 65536,
+                      "enabled": true
+                    }
+                  ]
+                },
+                "tools": [
+                  {
+                    "version": 1,
+                    "tool_id": "mcp.local.workspace_summary",
+                    "name": "Workspace summary",
+                    "description": "Read a bounded directory summary from the active workspace.",
+                    "input_schema": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "default": "."
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "executor_id": "workspace.list",
+                    "source": "seed.mcp.local",
+                    "risk": "read_only",
+                    "timeout_seconds": 5.0,
+                    "output_limit": 65536,
+                    "enabled": true
+                  }
+                ]
+              },
+              {
+                "path": "README.md",
+                "opened": true,
+                "editor_state": "projected"
+              }
+            ],
+            "approval_required": [
+              false,
+              false
+            ],
+            "approval_granted": [
+              false,
+              false
+            ],
+            "preview_validated": [
+              false,
+              false
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          },
+          {
+            "task": "three-domain-pyproject",
+            "method": "router_only",
+            "seed": 29,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:574524096d445bce75347dd0",
+              "workbench-owner:e57f18eb1bb6478c8e591724"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:a33f287c0a9c01af7781b08c"
+            ],
+            "required_ids": [
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:574524096d445bce75347dd0"
+            ],
+            "selected_action_count": 2,
+            "selected_capability_ids": [
+              "mcp.list",
+              "editor.open"
+            ],
+            "selected_parameters": [
+              {},
+              {
+                "path": "pyproject.toml"
+              }
+            ],
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "raw_action_results": [
+              {
+                "registry": {
+                  "format": "seed-mcp-registry-v1",
+                  "version": 1,
+                  "revision": 1,
+                  "snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+                  "tools": [
+                    {
+                      "version": 1,
+                      "tool_id": "mcp.local.workspace_summary",
+                      "name": "Workspace summary",
+                      "description": "Read a bounded directory summary from the active workspace.",
+                      "input_schema": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "string",
+                            "default": "."
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "executor_id": "workspace.list",
+                      "source": "seed.mcp.local",
+                      "risk": "read_only",
+                      "timeout_seconds": 5.0,
+                      "output_limit": 65536,
+                      "enabled": true
+                    }
+                  ]
+                },
+                "tools": [
+                  {
+                    "version": 1,
+                    "tool_id": "mcp.local.workspace_summary",
+                    "name": "Workspace summary",
+                    "description": "Read a bounded directory summary from the active workspace.",
+                    "input_schema": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "default": "."
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "executor_id": "workspace.list",
+                    "source": "seed.mcp.local",
+                    "risk": "read_only",
+                    "timeout_seconds": 5.0,
+                    "output_limit": 65536,
+                    "enabled": true
+                  }
+                ]
+              },
+              {
+                "path": "pyproject.toml",
+                "opened": true,
+                "editor_state": "projected"
+              }
+            ],
+            "approval_required": [
+              false,
+              false
+            ],
+            "approval_granted": [
+              false,
+              false
+            ],
+            "preview_validated": [
+              false,
+              false
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          }
+        ],
+        "memory_only": [
+          {
+            "task": "three-domain-readme",
+            "method": "memory_only",
+            "seed": 29,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:849c180589b09dd8b8c96a2b",
+              "workbench-owner:e57f18eb1bb6478c8e591724"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:81eedb0576367f7fc0ddc191"
+            ],
+            "required_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:849c180589b09dd8b8c96a2b"
+            ],
+            "selected_action_count": 2,
+            "selected_capability_ids": [
+              "mcp.list",
+              "editor.open"
+            ],
+            "selected_parameters": [
+              {},
+              {
+                "path": "README.md"
+              }
+            ],
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "raw_action_results": [
+              {
+                "registry": {
+                  "format": "seed-mcp-registry-v1",
+                  "version": 1,
+                  "revision": 1,
+                  "snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+                  "tools": [
+                    {
+                      "version": 1,
+                      "tool_id": "mcp.local.workspace_summary",
+                      "name": "Workspace summary",
+                      "description": "Read a bounded directory summary from the active workspace.",
+                      "input_schema": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "string",
+                            "default": "."
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "executor_id": "workspace.list",
+                      "source": "seed.mcp.local",
+                      "risk": "read_only",
+                      "timeout_seconds": 5.0,
+                      "output_limit": 65536,
+                      "enabled": true
+                    }
+                  ]
+                },
+                "tools": [
+                  {
+                    "version": 1,
+                    "tool_id": "mcp.local.workspace_summary",
+                    "name": "Workspace summary",
+                    "description": "Read a bounded directory summary from the active workspace.",
+                    "input_schema": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "default": "."
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "executor_id": "workspace.list",
+                    "source": "seed.mcp.local",
+                    "risk": "read_only",
+                    "timeout_seconds": 5.0,
+                    "output_limit": 65536,
+                    "enabled": true
+                  }
+                ]
+              },
+              {
+                "path": "README.md",
+                "opened": true,
+                "editor_state": "projected"
+              }
+            ],
+            "approval_required": [
+              false,
+              false
+            ],
+            "approval_granted": [
+              false,
+              false
+            ],
+            "preview_validated": [
+              false,
+              false
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          },
+          {
+            "task": "three-domain-pyproject",
+            "method": "memory_only",
+            "seed": 29,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:574524096d445bce75347dd0",
+              "workbench-owner:e57f18eb1bb6478c8e591724"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:a33f287c0a9c01af7781b08c"
+            ],
+            "required_ids": [
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:574524096d445bce75347dd0"
+            ],
+            "selected_action_count": 2,
+            "selected_capability_ids": [
+              "mcp.list",
+              "editor.open"
+            ],
+            "selected_parameters": [
+              {},
+              {
+                "path": "pyproject.toml"
+              }
+            ],
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "raw_action_results": [
+              {
+                "registry": {
+                  "format": "seed-mcp-registry-v1",
+                  "version": 1,
+                  "revision": 1,
+                  "snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+                  "tools": [
+                    {
+                      "version": 1,
+                      "tool_id": "mcp.local.workspace_summary",
+                      "name": "Workspace summary",
+                      "description": "Read a bounded directory summary from the active workspace.",
+                      "input_schema": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "string",
+                            "default": "."
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "executor_id": "workspace.list",
+                      "source": "seed.mcp.local",
+                      "risk": "read_only",
+                      "timeout_seconds": 5.0,
+                      "output_limit": 65536,
+                      "enabled": true
+                    }
+                  ]
+                },
+                "tools": [
+                  {
+                    "version": 1,
+                    "tool_id": "mcp.local.workspace_summary",
+                    "name": "Workspace summary",
+                    "description": "Read a bounded directory summary from the active workspace.",
+                    "input_schema": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "default": "."
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "executor_id": "workspace.list",
+                    "source": "seed.mcp.local",
+                    "risk": "read_only",
+                    "timeout_seconds": 5.0,
+                    "output_limit": 65536,
+                    "enabled": true
+                  }
+                ]
+              },
+              {
+                "path": "pyproject.toml",
+                "opened": true,
+                "editor_state": "projected"
+              }
+            ],
+            "approval_required": [
+              false,
+              false
+            ],
+            "approval_granted": [
+              false,
+              false
+            ],
+            "preview_validated": [
+              false,
+              false
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          }
+        ]
+      },
+      "lesion_run": {
+        "task": "terminal-three-domain-lesion",
+        "method": "terminal_three_domain_lesion",
+        "seed": 29,
+        "capability_domains": [
+          "editor",
+          "mcp"
+        ],
+        "capacity": 2,
+        "candidate_ids": [
+          "workbench-owner:81eedb0576367f7fc0ddc191",
+          "workbench-owner:c62f0519c2dbde0073bb6c10",
+          "workbench-owner:849c180589b09dd8b8c96a2b",
+          "workbench-owner:e57f18eb1bb6478c8e591724"
+        ],
+        "selected_ids": [
+          "workbench-owner:c62f0519c2dbde0073bb6c10",
+          "workbench-owner:81eedb0576367f7fc0ddc191"
+        ],
+        "required_ids": [
+          "workbench-owner:81eedb0576367f7fc0ddc191",
+          "workbench-owner:c62f0519c2dbde0073bb6c10",
+          "workbench-owner:849c180589b09dd8b8c96a2b"
+        ],
+        "selected_action_count": 2,
+        "selected_capability_ids": [
+          "mcp.list",
+          "editor.open"
+        ],
+        "selected_parameters": [
+          {},
+          {
+            "path": "README.md"
+          }
+        ],
+        "raw_action_status": [
+          "success",
+          "success"
+        ],
+        "raw_action_success": [
+          true,
+          true
+        ],
+        "raw_action_results": [
+          {
+            "registry": {
+              "format": "seed-mcp-registry-v1",
+              "version": 1,
+              "revision": 1,
+              "snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+              "tools": [
+                {
+                  "version": 1,
+                  "tool_id": "mcp.local.workspace_summary",
+                  "name": "Workspace summary",
+                  "description": "Read a bounded directory summary from the active workspace.",
+                  "input_schema": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string",
+                        "default": "."
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "executor_id": "workspace.list",
+                  "source": "seed.mcp.local",
+                  "risk": "read_only",
+                  "timeout_seconds": 5.0,
+                  "output_limit": 65536,
+                  "enabled": true
+                }
+              ]
+            },
+            "tools": [
+              {
+                "version": 1,
+                "tool_id": "mcp.local.workspace_summary",
+                "name": "Workspace summary",
+                "description": "Read a bounded directory summary from the active workspace.",
+                "input_schema": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "default": "."
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "executor_id": "workspace.list",
+                "source": "seed.mcp.local",
+                "risk": "read_only",
+                "timeout_seconds": 5.0,
+                "output_limit": 65536,
+                "enabled": true
+              }
+            ]
+          },
+          {
+            "path": "README.md",
+            "opened": true,
+            "editor_state": "projected"
+          }
+        ],
+        "approval_required": [
+          false,
+          false
+        ],
+        "approval_granted": [
+          false,
+          false
+        ],
+        "preview_validated": [
+          false,
+          false
+        ],
+        "task_complete": false,
+        "all_selected_actions_succeeded": true,
+        "task_score": 0.0,
+        "score_source": "native Workbench outcome status/success plus required-set completion",
+        "native_event_count": 3,
+        "native_audit_event_count": 8,
+        "native_checkpoint_roundtrip": true
+      },
+      "governance_probe": {
+        "unapproved_status": "rejected",
+        "unapproved_success": false,
+        "approved_status": "success",
+        "approved_success": true,
+        "approved_shell_free": true,
+        "approved_output_limit": 1024,
+        "failure_loop_status": "failed",
+        "failure_loop_stopped_at": 0,
+        "failure_loop_completed_prefix": 0,
+        "failure_step_success": false,
+        "recovery_status": "completed",
+        "recovery_step_success": true,
+        "checkpoint_exists": true
+      },
+      "parent_capacity": 2,
+      "grown_capacity": 3,
+      "lesion_capacity": 2,
+      "rollback_capacity": 2,
+      "topology_before_rollback": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+      "topology_after_rollback": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+      "budget_before": 2,
+      "budget_after_admission": 1,
+      "budget_after_rollback": 2,
+      "rollback_status": "rolled_back",
+      "workspace_checkpoint_roundtrip": true
+    },
+    {
+      "seed": 47,
+      "online_rounds": [
+        {
+          "round": 1,
+          "family": "online-be",
+          "candidate_id": "transfer-group:145339db789015ea7ecd8eaa",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+          "outcome_id": "r2-s2-online-online-be-seed-47:outcome:4:r2-s2-online-online-be-seed-47:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 2,
+          "family": "online-bf",
+          "candidate_id": "transfer-group:b515b1e835c6a4dc6118346f",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "feedback_id": "760bbfbbbf2a6c43eb4a47ccd4972927755db95a111bc3240911723b1d7c253b",
+          "outcome_id": "r2-s2-online-online-bf-seed-47:outcome:4:r2-s2-online-online-bf-seed-47:workflow-outcome",
+          "outcome_success": false,
+          "admission_status": "rejected",
+          "admission_reason": "outcome_unsuccessful",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "round": 3,
+          "family": "online-ce",
+          "candidate_id": "transfer-group:61d5583b886b40a97139fe73",
+          "member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+          "outcome_id": "r2-s2-online-online-ce-seed-47:outcome:4:r2-s2-online-online-ce-seed-47:workflow-outcome",
+          "outcome_success": true,
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "online_feedback_ids": [
+        "740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+        "e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c"
+      ],
+      "pressure": {
+        "format": "taiji-interaction-structural-bridge-v1",
+        "revision": 1,
+        "version": 1,
+        "projection": {
+          "format": "taiji-structural-pressure-projection-v1",
+          "network_id": "standalone:adaptive.cortex",
+          "region_id": "adaptive.cortex",
+          "first_tick": 1,
+          "last_tick": 4,
+          "window_digests": [
+            "68723c5419f26e016853b6e9f64a9278d943e33d6d6bcbdbb1414088f995c564",
+            "ff09f904d5327f969f3105fd59e10ea82a71a7f246e799bea41b86a02136af56",
+            "9d924fced2841bde826d988b9b96cf947b81cc61d2faae2fb1f5182b160777a1",
+            "a5610c3c7eebc9d464c187e6de7518078a9f0bf71db70b5dedc3304a81fa7c95"
+          ],
+          "train_task_slice_ids": [
+            "online-interaction:transfer-group:145339db789015ea7ecd8eaa",
+            "online-interaction:transfer-group:61d5583b886b40a97139fe73"
+          ],
+          "holdout_task_slice_ids": [
+            "workbench-holdout:online-workbench-holdout-cycle-4"
+          ],
+          "retention_task_slice_ids": [
+            "workbench-retention:online-workbench-retention-cycle-4"
+          ],
+          "train_window_count": 2,
+          "holdout_window_count": 1,
+          "retention_window_count": 1,
+          "prediction_observation_count": 2,
+          "mean_prediction_error": 0.3999999999999999,
+          "mean_resource_state": 0.0,
+          "mean_holdout_transfer": 0.8,
+          "evidence_ids": [
+            "online-feedback:740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+            "online-feedback:e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-4-seed-47:outcome:4:r2-s2-online-holdout-cycle-4-seed-47:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-4-seed-47:outcome:4:r2-s2-online-retention-cycle-4-seed-47:workflow-outcome"
+          ],
+          "projection_digest": "00bf55c6046d14e40ae55d94ac6c796f46e3496e7c44029fbc28a526dad4ae57"
+        },
+        "feedback_ids": [
+          "740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+          "e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c"
+        ],
+        "outcome_ids": [
+          "r2-s2-online-online-be-seed-47:outcome:4:r2-s2-online-online-be-seed-47:workflow-outcome",
+          "r2-s2-online-online-ce-seed-47:outcome:4:r2-s2-online-online-ce-seed-47:workflow-outcome"
+        ],
+        "mean_interaction": 0.6000000000000001,
+        "bridge_digest": "ba07e00dc31ca526bf7dcfd516df338c568f8642214c43637e22a355e6434118"
+      },
+      "admission": {
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:00bf55c6046d",
+        "candidate": {
+          "format": "taiji-structural-proposal-candidate-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:00bf55c6046d",
+          "network_id": "standalone:adaptive.cortex",
+          "target_kind": "neuron",
+          "operation": "add",
+          "substrate_ids": [
+            "adaptive.cortex"
+          ],
+          "evidence_ids": [
+            "online-feedback:740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+            "online-feedback:e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-4-seed-47:outcome:4:r2-s2-online-holdout-cycle-4-seed-47:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-4-seed-47:outcome:4:r2-s2-online-retention-cycle-4-seed-47:workflow-outcome"
+          ],
+          "source_tick": 4,
+          "priority": 0.31999999999999995,
+          "specification": {
+            "region_id": "adaptive.cortex",
+            "unit_id": "u2",
+            "cycle_bridge_digest": "ba07e00dc31ca526bf7dcfd516df338c568f8642214c43637e22a355e6434118"
+          },
+          "resource_cost": 1,
+          "depends_on_candidate_ids": [],
+          "conflict_keys": [],
+          "parent_checkpoint_id": "pressure-parent:00bf55c6046d14e40ae55d94ac6c796f46e3496e7c44029fbc28a526dad4ae57:b1a58f70f1f82f0e91a980e950f27fb2a137d523a12b998c326cab398d1c2fbf"
+        },
+        "arbitration": {
+          "format": "taiji-structural-candidate-batch-v1",
+          "batch_id": "batch:structural:d58c9cc9306b0cd63f91f6266433680d",
+          "candidate_ids": [
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:00bf55c6046d"
+          ],
+          "selected_candidate_ids": [
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:00bf55c6046d"
+          ],
+          "deferred_candidate_ids": [],
+          "rejected_candidate_ids": [],
+          "candidate_states": {
+            "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:00bf55c6046d": "reserved"
+          },
+          "reasons": {},
+          "reserved_resource_cost": 1,
+          "reservation_remaining": 1,
+          "structural_budget_before": 2,
+          "available_budget_before": 2,
+          "topology_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "arbitration_digest": "d58c9cc9306b0cd63f91f6266433680d787e27df75ac07b523aaa8ccb430f0d3",
+          "revision": 0,
+          "status": "planned"
+        },
+        "validation": {
+          "format": "taiji-structural-candidate-validation-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:00bf55c6046d",
+          "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+          "status": "validated",
+          "validation_score": 1.0,
+          "parent_checkpoint_digest": "e16def9d36c24321664c5d37b48b2c4e2f2acf9b44d180df7defa9d1809ce2f8",
+          "validation_checkpoint_digest": "1d0cc93ab1f06aabed4ec445503d5ecd65d41fa48cb5a48533f5b3e2bf4b1436",
+          "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "topology_after_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "structural_budget_before": 2,
+          "structural_budget_after": 2,
+          "evidence_ids": [
+            "online-feedback:740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+            "online-feedback:e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-4-seed-47:outcome:4:r2-s2-online-holdout-cycle-4-seed-47:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-4-seed-47:outcome:4:r2-s2-online-retention-cycle-4-seed-47:workflow-outcome"
+          ],
+          "error": null
+        },
+        "decision": {
+          "format": "taiji-structural-validation-gate-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:00bf55c6046d",
+          "passed": true,
+          "holdout_gain": 1.0,
+          "retention_regression": 0.02,
+          "lesion_effect": 0.15,
+          "resource_state": 0.8,
+          "resource_cost": 1,
+          "structural_budget": 2,
+          "minimum_holdout_gain": 0.05,
+          "maximum_retention_regression": 0.05,
+          "minimum_lesion_effect": 0.05,
+          "minimum_resource_state": 0.4,
+          "evidence_ids": [
+            "online-feedback:740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+            "online-feedback:e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+            "workbench-holdout:outcome:r2-s2-online-holdout-cycle-4-seed-47:outcome:4:r2-s2-online-holdout-cycle-4-seed-47:workflow-outcome",
+            "workbench-retention:outcome:r2-s2-online-retention-cycle-4-seed-47:outcome:4:r2-s2-online-retention-cycle-4-seed-47:workflow-outcome",
+            "continuous-bridge:ba07e00dc31ca526bf7dcfd516df338c568f8642214c43637e22a355e6434118"
+          ],
+          "reasons": [],
+          "decision_digest": "7aeb5500647c28b498064fe2874612da775816f43ae2cbe816006ac13a7fb570"
+        },
+        "admission": {
+          "format": "taiji-structural-admission-result-v1",
+          "candidate_id": "candidate:pressure:standalone:adaptive.cortex:adaptive.cortex:1:00bf55c6046d",
+          "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+          "status": "admitted",
+          "decision_digest": "7aeb5500647c28b498064fe2874612da775816f43ae2cbe816006ac13a7fb570",
+          "parent_checkpoint_digest": "be8255077640448bcb803268f1dfc42c5ffe2f28127d1e1ae5bc7db6d9bceb35",
+          "child_checkpoint_digest": "68ad67d546414d946127f8ac1b7f01a52b735d2660cd5942b4d94e450cbba6f7",
+          "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+          "topology_after_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+          "structural_budget_before": 2,
+          "structural_budget_after": 1,
+          "error": null
+        },
+        "topology_before": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+        "topology_after": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+        "budget_before": 2,
+        "budget_after": 1,
+        "unit_ids": [
+          "u0",
+          "u1",
+          "u2"
+        ],
+        "candidate_checkpoint_roundtrip": true
+      },
+      "structural_runs": [
+        {
+          "task": "three-domain-readme",
+          "method": "terminal_three_domain_growth",
+          "seed": 47,
+          "capability_domains": [
+            "editor",
+            "mcp",
+            "terminal"
+          ],
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:81eedb0576367f7fc0ddc191",
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:849c180589b09dd8b8c96a2b",
+            "workbench-owner:e57f18eb1bb6478c8e591724"
+          ],
+          "selected_ids": [
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:81eedb0576367f7fc0ddc191",
+            "workbench-owner:849c180589b09dd8b8c96a2b"
+          ],
+          "required_ids": [
+            "workbench-owner:81eedb0576367f7fc0ddc191",
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:849c180589b09dd8b8c96a2b"
+          ],
+          "selected_action_count": 3,
+          "selected_capability_ids": [
+            "mcp.list",
+            "editor.open",
+            "terminal.run"
+          ],
+          "selected_parameters": [
+            {},
+            {
+              "path": "README.md"
+            },
+            {
+              "argv": [
+                "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+                "-c",
+                "print('terminal-train-readme')"
+              ],
+              "cwd": ".",
+              "timeout_seconds": 5.0,
+              "output_limit": 1024,
+              "env": {},
+              "env_allowlist": [],
+              "expected_artifacts": [],
+              "execution_kind": "test"
+            }
+          ],
+          "raw_action_status": [
+            "success",
+            "success",
+            "success"
+          ],
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "raw_action_results": [
+            {
+              "registry": {
+                "format": "seed-mcp-registry-v1",
+                "version": 1,
+                "revision": 1,
+                "snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+                "tools": [
+                  {
+                    "version": 1,
+                    "tool_id": "mcp.local.workspace_summary",
+                    "name": "Workspace summary",
+                    "description": "Read a bounded directory summary from the active workspace.",
+                    "input_schema": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "default": "."
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "executor_id": "workspace.list",
+                    "source": "seed.mcp.local",
+                    "risk": "read_only",
+                    "timeout_seconds": 5.0,
+                    "output_limit": 65536,
+                    "enabled": true
+                  }
+                ]
+              },
+              "tools": [
+                {
+                  "version": 1,
+                  "tool_id": "mcp.local.workspace_summary",
+                  "name": "Workspace summary",
+                  "description": "Read a bounded directory summary from the active workspace.",
+                  "input_schema": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string",
+                        "default": "."
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "executor_id": "workspace.list",
+                  "source": "seed.mcp.local",
+                  "risk": "read_only",
+                  "timeout_seconds": 5.0,
+                  "output_limit": 65536,
+                  "enabled": true
+                }
+              ]
+            },
+            {
+              "path": "README.md",
+              "opened": true,
+              "editor_state": "projected"
+            },
+            {
+              "argv": [
+                "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+                "-c",
+                "print('terminal-train-readme')"
+              ],
+              "cwd": ".",
+              "shell": false,
+              "exit_code": 0,
+              "timed_out": false,
+              "duration_ms": 67.218,
+              "stdout": "terminal-train-readme\r\n",
+              "stderr": "",
+              "stdout_truncated": false,
+              "stderr_truncated": false,
+              "output_limit": 1024,
+              "execution_kind": "test",
+              "diagnostics": [],
+              "expected_artifacts": [],
+              "after_state": {
+                "cwd": ".",
+                "artifacts": []
+              },
+              "artifact_failures": [],
+              "success": true
+            }
+          ],
+          "approval_required": [
+            false,
+            false,
+            true
+          ],
+          "approval_granted": [
+            false,
+            false,
+            true
+          ],
+          "preview_validated": [
+            false,
+            false,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench outcome status/success plus required-set completion",
+          "native_event_count": 4,
+          "native_audit_event_count": 12,
+          "native_checkpoint_roundtrip": true
+        },
+        {
+          "task": "three-domain-pyproject",
+          "method": "terminal_three_domain_growth",
+          "seed": 47,
+          "capability_domains": [
+            "editor",
+            "mcp",
+            "terminal"
+          ],
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:a33f287c0a9c01af7781b08c",
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:574524096d445bce75347dd0",
+            "workbench-owner:e57f18eb1bb6478c8e591724"
+          ],
+          "selected_ids": [
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:a33f287c0a9c01af7781b08c",
+            "workbench-owner:574524096d445bce75347dd0"
+          ],
+          "required_ids": [
+            "workbench-owner:a33f287c0a9c01af7781b08c",
+            "workbench-owner:c62f0519c2dbde0073bb6c10",
+            "workbench-owner:574524096d445bce75347dd0"
+          ],
+          "selected_action_count": 3,
+          "selected_capability_ids": [
+            "mcp.list",
+            "editor.open",
+            "terminal.run"
+          ],
+          "selected_parameters": [
+            {},
+            {
+              "path": "pyproject.toml"
+            },
+            {
+              "argv": [
+                "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+                "-c",
+                "print('terminal-train-pyproject')"
+              ],
+              "cwd": ".",
+              "timeout_seconds": 5.0,
+              "output_limit": 1024,
+              "env": {},
+              "env_allowlist": [],
+              "expected_artifacts": [],
+              "execution_kind": "test"
+            }
+          ],
+          "raw_action_status": [
+            "success",
+            "success",
+            "success"
+          ],
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "raw_action_results": [
+            {
+              "registry": {
+                "format": "seed-mcp-registry-v1",
+                "version": 1,
+                "revision": 1,
+                "snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+                "tools": [
+                  {
+                    "version": 1,
+                    "tool_id": "mcp.local.workspace_summary",
+                    "name": "Workspace summary",
+                    "description": "Read a bounded directory summary from the active workspace.",
+                    "input_schema": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "default": "."
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "executor_id": "workspace.list",
+                    "source": "seed.mcp.local",
+                    "risk": "read_only",
+                    "timeout_seconds": 5.0,
+                    "output_limit": 65536,
+                    "enabled": true
+                  }
+                ]
+              },
+              "tools": [
+                {
+                  "version": 1,
+                  "tool_id": "mcp.local.workspace_summary",
+                  "name": "Workspace summary",
+                  "description": "Read a bounded directory summary from the active workspace.",
+                  "input_schema": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string",
+                        "default": "."
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "executor_id": "workspace.list",
+                  "source": "seed.mcp.local",
+                  "risk": "read_only",
+                  "timeout_seconds": 5.0,
+                  "output_limit": 65536,
+                  "enabled": true
+                }
+              ]
+            },
+            {
+              "path": "pyproject.toml",
+              "opened": true,
+              "editor_state": "projected"
+            },
+            {
+              "argv": [
+                "C:\\Users\\23747\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+                "-c",
+                "print('terminal-train-pyproject')"
+              ],
+              "cwd": ".",
+              "shell": false,
+              "exit_code": 0,
+              "timed_out": false,
+              "duration_ms": 69.004,
+              "stdout": "terminal-train-pyproject\r\n",
+              "stderr": "",
+              "stdout_truncated": false,
+              "stderr_truncated": false,
+              "output_limit": 1024,
+              "execution_kind": "test",
+              "diagnostics": [],
+              "expected_artifacts": [],
+              "after_state": {
+                "cwd": ".",
+                "artifacts": []
+              },
+              "artifact_failures": [],
+              "success": true
+            }
+          ],
+          "approval_required": [
+            false,
+            false,
+            true
+          ],
+          "approval_granted": [
+            false,
+            false,
+            true
+          ],
+          "preview_validated": [
+            false,
+            false,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench outcome status/success plus required-set completion",
+          "native_event_count": 4,
+          "native_audit_event_count": 12,
+          "native_checkpoint_roundtrip": true
+        }
+      ],
+      "retention_runs": [
+        {
+          "task": "terminal-retention-future-bec",
+          "method": "terminal_three_domain_retention",
+          "seed": 47,
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:33bf6bd14f843e6f0a77fea3"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        },
+        {
+          "task": "terminal-retention-future-ade",
+          "method": "terminal_three_domain_retention",
+          "seed": 47,
+          "capacity": 3,
+          "candidate_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e",
+            "workbench-owner:a4392a0e06e7d823d742cc1c"
+          ],
+          "selected_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "required_ids": [
+            "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_action_count": 3,
+          "raw_action_success": [
+            true,
+            true,
+            true
+          ],
+          "task_complete": true,
+          "all_selected_actions_succeeded": true,
+          "task_score": 1.0,
+          "score_source": "native Workbench raw action success/status plus required-set completion",
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true
+        }
+      ],
+      "control_runs": {
+        "interaction_weight_only": [
+          {
+            "task": "three-domain-readme",
+            "method": "interaction_weight_only",
+            "seed": 47,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:849c180589b09dd8b8c96a2b",
+              "workbench-owner:e57f18eb1bb6478c8e591724"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:81eedb0576367f7fc0ddc191"
+            ],
+            "required_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:849c180589b09dd8b8c96a2b"
+            ],
+            "selected_action_count": 2,
+            "selected_capability_ids": [
+              "mcp.list",
+              "editor.open"
+            ],
+            "selected_parameters": [
+              {},
+              {
+                "path": "README.md"
+              }
+            ],
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "raw_action_results": [
+              {
+                "registry": {
+                  "format": "seed-mcp-registry-v1",
+                  "version": 1,
+                  "revision": 1,
+                  "snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+                  "tools": [
+                    {
+                      "version": 1,
+                      "tool_id": "mcp.local.workspace_summary",
+                      "name": "Workspace summary",
+                      "description": "Read a bounded directory summary from the active workspace.",
+                      "input_schema": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "string",
+                            "default": "."
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "executor_id": "workspace.list",
+                      "source": "seed.mcp.local",
+                      "risk": "read_only",
+                      "timeout_seconds": 5.0,
+                      "output_limit": 65536,
+                      "enabled": true
+                    }
+                  ]
+                },
+                "tools": [
+                  {
+                    "version": 1,
+                    "tool_id": "mcp.local.workspace_summary",
+                    "name": "Workspace summary",
+                    "description": "Read a bounded directory summary from the active workspace.",
+                    "input_schema": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "default": "."
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "executor_id": "workspace.list",
+                    "source": "seed.mcp.local",
+                    "risk": "read_only",
+                    "timeout_seconds": 5.0,
+                    "output_limit": 65536,
+                    "enabled": true
+                  }
+                ]
+              },
+              {
+                "path": "README.md",
+                "opened": true,
+                "editor_state": "projected"
+              }
+            ],
+            "approval_required": [
+              false,
+              false
+            ],
+            "approval_granted": [
+              false,
+              false
+            ],
+            "preview_validated": [
+              false,
+              false
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          },
+          {
+            "task": "three-domain-pyproject",
+            "method": "interaction_weight_only",
+            "seed": 47,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:574524096d445bce75347dd0",
+              "workbench-owner:e57f18eb1bb6478c8e591724"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:a33f287c0a9c01af7781b08c"
+            ],
+            "required_ids": [
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:574524096d445bce75347dd0"
+            ],
+            "selected_action_count": 2,
+            "selected_capability_ids": [
+              "mcp.list",
+              "editor.open"
+            ],
+            "selected_parameters": [
+              {},
+              {
+                "path": "pyproject.toml"
+              }
+            ],
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "raw_action_results": [
+              {
+                "registry": {
+                  "format": "seed-mcp-registry-v1",
+                  "version": 1,
+                  "revision": 1,
+                  "snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+                  "tools": [
+                    {
+                      "version": 1,
+                      "tool_id": "mcp.local.workspace_summary",
+                      "name": "Workspace summary",
+                      "description": "Read a bounded directory summary from the active workspace.",
+                      "input_schema": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "string",
+                            "default": "."
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "executor_id": "workspace.list",
+                      "source": "seed.mcp.local",
+                      "risk": "read_only",
+                      "timeout_seconds": 5.0,
+                      "output_limit": 65536,
+                      "enabled": true
+                    }
+                  ]
+                },
+                "tools": [
+                  {
+                    "version": 1,
+                    "tool_id": "mcp.local.workspace_summary",
+                    "name": "Workspace summary",
+                    "description": "Read a bounded directory summary from the active workspace.",
+                    "input_schema": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "default": "."
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "executor_id": "workspace.list",
+                    "source": "seed.mcp.local",
+                    "risk": "read_only",
+                    "timeout_seconds": 5.0,
+                    "output_limit": 65536,
+                    "enabled": true
+                  }
+                ]
+              },
+              {
+                "path": "pyproject.toml",
+                "opened": true,
+                "editor_state": "projected"
+              }
+            ],
+            "approval_required": [
+              false,
+              false
+            ],
+            "approval_granted": [
+              false,
+              false
+            ],
+            "preview_validated": [
+              false,
+              false
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          }
+        ],
+        "router_only": [
+          {
+            "task": "three-domain-readme",
+            "method": "router_only",
+            "seed": 47,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:849c180589b09dd8b8c96a2b",
+              "workbench-owner:e57f18eb1bb6478c8e591724"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:81eedb0576367f7fc0ddc191"
+            ],
+            "required_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:849c180589b09dd8b8c96a2b"
+            ],
+            "selected_action_count": 2,
+            "selected_capability_ids": [
+              "mcp.list",
+              "editor.open"
+            ],
+            "selected_parameters": [
+              {},
+              {
+                "path": "README.md"
+              }
+            ],
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "raw_action_results": [
+              {
+                "registry": {
+                  "format": "seed-mcp-registry-v1",
+                  "version": 1,
+                  "revision": 1,
+                  "snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+                  "tools": [
+                    {
+                      "version": 1,
+                      "tool_id": "mcp.local.workspace_summary",
+                      "name": "Workspace summary",
+                      "description": "Read a bounded directory summary from the active workspace.",
+                      "input_schema": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "string",
+                            "default": "."
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "executor_id": "workspace.list",
+                      "source": "seed.mcp.local",
+                      "risk": "read_only",
+                      "timeout_seconds": 5.0,
+                      "output_limit": 65536,
+                      "enabled": true
+                    }
+                  ]
+                },
+                "tools": [
+                  {
+                    "version": 1,
+                    "tool_id": "mcp.local.workspace_summary",
+                    "name": "Workspace summary",
+                    "description": "Read a bounded directory summary from the active workspace.",
+                    "input_schema": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "default": "."
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "executor_id": "workspace.list",
+                    "source": "seed.mcp.local",
+                    "risk": "read_only",
+                    "timeout_seconds": 5.0,
+                    "output_limit": 65536,
+                    "enabled": true
+                  }
+                ]
+              },
+              {
+                "path": "README.md",
+                "opened": true,
+                "editor_state": "projected"
+              }
+            ],
+            "approval_required": [
+              false,
+              false
+            ],
+            "approval_granted": [
+              false,
+              false
+            ],
+            "preview_validated": [
+              false,
+              false
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          },
+          {
+            "task": "three-domain-pyproject",
+            "method": "router_only",
+            "seed": 47,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:574524096d445bce75347dd0",
+              "workbench-owner:e57f18eb1bb6478c8e591724"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:a33f287c0a9c01af7781b08c"
+            ],
+            "required_ids": [
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:574524096d445bce75347dd0"
+            ],
+            "selected_action_count": 2,
+            "selected_capability_ids": [
+              "mcp.list",
+              "editor.open"
+            ],
+            "selected_parameters": [
+              {},
+              {
+                "path": "pyproject.toml"
+              }
+            ],
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "raw_action_results": [
+              {
+                "registry": {
+                  "format": "seed-mcp-registry-v1",
+                  "version": 1,
+                  "revision": 1,
+                  "snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+                  "tools": [
+                    {
+                      "version": 1,
+                      "tool_id": "mcp.local.workspace_summary",
+                      "name": "Workspace summary",
+                      "description": "Read a bounded directory summary from the active workspace.",
+                      "input_schema": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "string",
+                            "default": "."
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "executor_id": "workspace.list",
+                      "source": "seed.mcp.local",
+                      "risk": "read_only",
+                      "timeout_seconds": 5.0,
+                      "output_limit": 65536,
+                      "enabled": true
+                    }
+                  ]
+                },
+                "tools": [
+                  {
+                    "version": 1,
+                    "tool_id": "mcp.local.workspace_summary",
+                    "name": "Workspace summary",
+                    "description": "Read a bounded directory summary from the active workspace.",
+                    "input_schema": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "default": "."
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "executor_id": "workspace.list",
+                    "source": "seed.mcp.local",
+                    "risk": "read_only",
+                    "timeout_seconds": 5.0,
+                    "output_limit": 65536,
+                    "enabled": true
+                  }
+                ]
+              },
+              {
+                "path": "pyproject.toml",
+                "opened": true,
+                "editor_state": "projected"
+              }
+            ],
+            "approval_required": [
+              false,
+              false
+            ],
+            "approval_granted": [
+              false,
+              false
+            ],
+            "preview_validated": [
+              false,
+              false
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          }
+        ],
+        "memory_only": [
+          {
+            "task": "three-domain-readme",
+            "method": "memory_only",
+            "seed": 47,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:849c180589b09dd8b8c96a2b",
+              "workbench-owner:e57f18eb1bb6478c8e591724"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:81eedb0576367f7fc0ddc191"
+            ],
+            "required_ids": [
+              "workbench-owner:81eedb0576367f7fc0ddc191",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:849c180589b09dd8b8c96a2b"
+            ],
+            "selected_action_count": 2,
+            "selected_capability_ids": [
+              "mcp.list",
+              "editor.open"
+            ],
+            "selected_parameters": [
+              {},
+              {
+                "path": "README.md"
+              }
+            ],
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "raw_action_results": [
+              {
+                "registry": {
+                  "format": "seed-mcp-registry-v1",
+                  "version": 1,
+                  "revision": 1,
+                  "snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+                  "tools": [
+                    {
+                      "version": 1,
+                      "tool_id": "mcp.local.workspace_summary",
+                      "name": "Workspace summary",
+                      "description": "Read a bounded directory summary from the active workspace.",
+                      "input_schema": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "string",
+                            "default": "."
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "executor_id": "workspace.list",
+                      "source": "seed.mcp.local",
+                      "risk": "read_only",
+                      "timeout_seconds": 5.0,
+                      "output_limit": 65536,
+                      "enabled": true
+                    }
+                  ]
+                },
+                "tools": [
+                  {
+                    "version": 1,
+                    "tool_id": "mcp.local.workspace_summary",
+                    "name": "Workspace summary",
+                    "description": "Read a bounded directory summary from the active workspace.",
+                    "input_schema": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "default": "."
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "executor_id": "workspace.list",
+                    "source": "seed.mcp.local",
+                    "risk": "read_only",
+                    "timeout_seconds": 5.0,
+                    "output_limit": 65536,
+                    "enabled": true
+                  }
+                ]
+              },
+              {
+                "path": "README.md",
+                "opened": true,
+                "editor_state": "projected"
+              }
+            ],
+            "approval_required": [
+              false,
+              false
+            ],
+            "approval_granted": [
+              false,
+              false
+            ],
+            "preview_validated": [
+              false,
+              false
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          },
+          {
+            "task": "three-domain-pyproject",
+            "method": "memory_only",
+            "seed": 47,
+            "capability_domains": [
+              "editor",
+              "mcp"
+            ],
+            "capacity": 2,
+            "candidate_ids": [
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:574524096d445bce75347dd0",
+              "workbench-owner:e57f18eb1bb6478c8e591724"
+            ],
+            "selected_ids": [
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:a33f287c0a9c01af7781b08c"
+            ],
+            "required_ids": [
+              "workbench-owner:a33f287c0a9c01af7781b08c",
+              "workbench-owner:c62f0519c2dbde0073bb6c10",
+              "workbench-owner:574524096d445bce75347dd0"
+            ],
+            "selected_action_count": 2,
+            "selected_capability_ids": [
+              "mcp.list",
+              "editor.open"
+            ],
+            "selected_parameters": [
+              {},
+              {
+                "path": "pyproject.toml"
+              }
+            ],
+            "raw_action_status": [
+              "success",
+              "success"
+            ],
+            "raw_action_success": [
+              true,
+              true
+            ],
+            "raw_action_results": [
+              {
+                "registry": {
+                  "format": "seed-mcp-registry-v1",
+                  "version": 1,
+                  "revision": 1,
+                  "snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+                  "tools": [
+                    {
+                      "version": 1,
+                      "tool_id": "mcp.local.workspace_summary",
+                      "name": "Workspace summary",
+                      "description": "Read a bounded directory summary from the active workspace.",
+                      "input_schema": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "string",
+                            "default": "."
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "executor_id": "workspace.list",
+                      "source": "seed.mcp.local",
+                      "risk": "read_only",
+                      "timeout_seconds": 5.0,
+                      "output_limit": 65536,
+                      "enabled": true
+                    }
+                  ]
+                },
+                "tools": [
+                  {
+                    "version": 1,
+                    "tool_id": "mcp.local.workspace_summary",
+                    "name": "Workspace summary",
+                    "description": "Read a bounded directory summary from the active workspace.",
+                    "input_schema": {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "default": "."
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "executor_id": "workspace.list",
+                    "source": "seed.mcp.local",
+                    "risk": "read_only",
+                    "timeout_seconds": 5.0,
+                    "output_limit": 65536,
+                    "enabled": true
+                  }
+                ]
+              },
+              {
+                "path": "pyproject.toml",
+                "opened": true,
+                "editor_state": "projected"
+              }
+            ],
+            "approval_required": [
+              false,
+              false
+            ],
+            "approval_granted": [
+              false,
+              false
+            ],
+            "preview_validated": [
+              false,
+              false
+            ],
+            "task_complete": false,
+            "all_selected_actions_succeeded": true,
+            "task_score": 0.0,
+            "score_source": "native Workbench outcome status/success plus required-set completion",
+            "native_event_count": 3,
+            "native_audit_event_count": 8,
+            "native_checkpoint_roundtrip": true
+          }
+        ]
+      },
+      "lesion_run": {
+        "task": "terminal-three-domain-lesion",
+        "method": "terminal_three_domain_lesion",
+        "seed": 47,
+        "capability_domains": [
+          "editor",
+          "mcp"
+        ],
+        "capacity": 2,
+        "candidate_ids": [
+          "workbench-owner:81eedb0576367f7fc0ddc191",
+          "workbench-owner:c62f0519c2dbde0073bb6c10",
+          "workbench-owner:849c180589b09dd8b8c96a2b",
+          "workbench-owner:e57f18eb1bb6478c8e591724"
+        ],
+        "selected_ids": [
+          "workbench-owner:c62f0519c2dbde0073bb6c10",
+          "workbench-owner:81eedb0576367f7fc0ddc191"
+        ],
+        "required_ids": [
+          "workbench-owner:81eedb0576367f7fc0ddc191",
+          "workbench-owner:c62f0519c2dbde0073bb6c10",
+          "workbench-owner:849c180589b09dd8b8c96a2b"
+        ],
+        "selected_action_count": 2,
+        "selected_capability_ids": [
+          "mcp.list",
+          "editor.open"
+        ],
+        "selected_parameters": [
+          {},
+          {
+            "path": "README.md"
+          }
+        ],
+        "raw_action_status": [
+          "success",
+          "success"
+        ],
+        "raw_action_success": [
+          true,
+          true
+        ],
+        "raw_action_results": [
+          {
+            "registry": {
+              "format": "seed-mcp-registry-v1",
+              "version": 1,
+              "revision": 1,
+              "snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+              "tools": [
+                {
+                  "version": 1,
+                  "tool_id": "mcp.local.workspace_summary",
+                  "name": "Workspace summary",
+                  "description": "Read a bounded directory summary from the active workspace.",
+                  "input_schema": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string",
+                        "default": "."
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "executor_id": "workspace.list",
+                  "source": "seed.mcp.local",
+                  "risk": "read_only",
+                  "timeout_seconds": 5.0,
+                  "output_limit": 65536,
+                  "enabled": true
+                }
+              ]
+            },
+            "tools": [
+              {
+                "version": 1,
+                "tool_id": "mcp.local.workspace_summary",
+                "name": "Workspace summary",
+                "description": "Read a bounded directory summary from the active workspace.",
+                "input_schema": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "default": "."
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "executor_id": "workspace.list",
+                "source": "seed.mcp.local",
+                "risk": "read_only",
+                "timeout_seconds": 5.0,
+                "output_limit": 65536,
+                "enabled": true
+              }
+            ]
+          },
+          {
+            "path": "README.md",
+            "opened": true,
+            "editor_state": "projected"
+          }
+        ],
+        "approval_required": [
+          false,
+          false
+        ],
+        "approval_granted": [
+          false,
+          false
+        ],
+        "preview_validated": [
+          false,
+          false
+        ],
+        "task_complete": false,
+        "all_selected_actions_succeeded": true,
+        "task_score": 0.0,
+        "score_source": "native Workbench outcome status/success plus required-set completion",
+        "native_event_count": 3,
+        "native_audit_event_count": 8,
+        "native_checkpoint_roundtrip": true
+      },
+      "governance_probe": {
+        "unapproved_status": "rejected",
+        "unapproved_success": false,
+        "approved_status": "success",
+        "approved_success": true,
+        "approved_shell_free": true,
+        "approved_output_limit": 1024,
+        "failure_loop_status": "failed",
+        "failure_loop_stopped_at": 0,
+        "failure_loop_completed_prefix": 0,
+        "failure_step_success": false,
+        "recovery_status": "completed",
+        "recovery_step_success": true,
+        "checkpoint_exists": true
+      },
+      "parent_capacity": 2,
+      "grown_capacity": 3,
+      "lesion_capacity": 2,
+      "rollback_capacity": 2,
+      "topology_before_rollback": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+      "topology_after_rollback": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+      "budget_before": 2,
+      "budget_after_admission": 1,
+      "budget_after_rollback": 2,
+      "rollback_status": "rolled_back",
+      "workspace_checkpoint_roundtrip": true
+    }
+  ],
+  "metrics": {
+    "three_independent_seeds": true,
+    "training_contains_actual_terminal_records": true,
+    "three_domain_structural_gain": true,
+    "three_domain_growth_beats_fixed_capacity_controls": true,
+    "old_editor_mcp_workspace_retention": true,
+    "terminal_requires_approval_and_respects_resources": true,
+    "native_status_and_checkpoint_evidence": true,
+    "controls_remain_at_parent_capacity": true,
+    "capacity_tracks_growth_lesion_and_rollback": true,
+    "growth_is_checkpointable": true,
+    "lesion_removes_three_domain_gain": true,
+    "terminal_failure_stops_and_fresh_recovery_succeeds": true,
+    "rollback_restores_topology_and_budget": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "an online-evidence-backed admission must expand live capacity, complete two unseen three-action editor+MCP+terminal tasks, retain old capabilities, beat fixed-capacity controls, require explicit terminal approval and bounded execution, stop on terminal failure, recover from checkpoint, and rollback topology and budget"
+  },
+  "boundary": "This is bounded three-domain governance evidence. It does not claim unrestricted terminal autonomy, arbitrary command safety, capability discovery, AGI, full language understanding, or CUDA acceleration."
+}

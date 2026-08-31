@@ -1,0 +1,172 @@
+{
+  "format": "taiji-w7-p3-2-provider-rotation-invariance-v1",
+  "artifacts": {
+    "before": {
+      "format": "taiji-language-provider-artifact-v1",
+      "artifact_id": "provider-artifact-a",
+      "backend_id": "semantic-surface-provider-artifact-a",
+      "mode": "raw",
+      "base_model": "synthetic/provider-artifact-a",
+      "adapter_path": null,
+      "training_corpus": null,
+      "training_report": null,
+      "safety_report": null,
+      "rollback_strategy": "disable-adapter",
+      "default_enabled": false,
+      "provenance": "eval.provider-rotation",
+      "content_address_format": "taiji-language-provider-content-address-v1",
+      "content_digests": {
+        "base_model": "30f713e1ddd55610bedaead4281a9360a644a883c4612c2a538655f6c8a64336"
+      },
+      "artifact_digest": "c34607736f66012153d87241133768b45343b65c4ca701f5ebca31c65ac162cc",
+      "expires_at": null,
+      "canary_id": "taiji-language-provider-canary-v1"
+    },
+    "after": {
+      "format": "taiji-language-provider-artifact-v1",
+      "artifact_id": "provider-artifact-b",
+      "backend_id": "semantic-surface-provider-artifact-b",
+      "mode": "raw",
+      "base_model": "synthetic/provider-artifact-b",
+      "adapter_path": null,
+      "training_corpus": null,
+      "training_report": null,
+      "safety_report": null,
+      "rollback_strategy": "disable-adapter",
+      "default_enabled": false,
+      "provenance": "eval.provider-rotation",
+      "content_address_format": "taiji-language-provider-content-address-v1",
+      "content_digests": {
+        "base_model": "cc63be8f2566615bbe43bd014ce7f2ce6dd598b24dfe43fcbd21a338fca58567"
+      },
+      "artifact_digest": "35a213b559d65d0c59aee9e00db117b912eb6f42a1339bca28985a1e53f7311c",
+      "expires_at": null,
+      "canary_id": "taiji-language-provider-canary-v1"
+    },
+    "active_before": "provider-artifact-a",
+    "active_after": "provider-artifact-b",
+    "previous_after": "provider-artifact-a"
+  },
+  "decision_projection": {
+    "first": {
+      "goal_description": "读取目标文件并准备编辑环境",
+      "constraints": [
+        "保持可恢复"
+      ],
+      "status": "resolved",
+      "confidence": 0.9,
+      "ambiguity": 0.1,
+      "steps": [
+        {
+          "description": "读取目标文件并确认当前内容",
+          "semantic_slots": {
+            "operation": "inspect",
+            "path": "api/app.py"
+          },
+          "expected_outcome": ""
+        },
+        {
+          "description": "根据文件证据准备语言环境",
+          "semantic_slots": {
+            "operation": "resolve-language",
+            "path": "api/app.py"
+          },
+          "expected_outcome": ""
+        }
+      ]
+    },
+    "second": {
+      "goal_description": "读取目标文件并准备编辑环境",
+      "constraints": [
+        "保持可恢复"
+      ],
+      "status": "resolved",
+      "confidence": 0.9,
+      "ambiguity": 0.1,
+      "steps": [
+        {
+          "description": "读取目标文件并确认当前内容",
+          "semantic_slots": {
+            "operation": "inspect",
+            "path": "api/app.py"
+          },
+          "expected_outcome": ""
+        },
+        {
+          "description": "根据文件证据准备语言环境",
+          "semantic_slots": {
+            "operation": "resolve-language",
+            "path": "api/app.py"
+          },
+          "expected_outcome": ""
+        }
+      ]
+    }
+  },
+  "grounding_projection": {
+    "first": [
+      {
+        "step_index": 0,
+        "kind": "workspace.read",
+        "parameters": {
+          "kind": "mapping",
+          "value": {
+            "path": "api/app.py"
+          }
+        },
+        "planner_status": "planned"
+      },
+      {
+        "step_index": 1,
+        "kind": "workspace.programming_language.resolve",
+        "parameters": {
+          "kind": "mapping",
+          "value": {
+            "path": "api/app.py"
+          }
+        },
+        "planner_status": "planned"
+      }
+    ],
+    "second": [
+      {
+        "step_index": 0,
+        "kind": "workspace.read",
+        "parameters": {
+          "kind": "mapping",
+          "value": {
+            "path": "api/app.py"
+          }
+        },
+        "planner_status": "planned"
+      },
+      {
+        "step_index": 1,
+        "kind": "workspace.programming_language.resolve",
+        "parameters": {
+          "kind": "mapping",
+          "value": {
+            "path": "api/app.py"
+          }
+        },
+        "planner_status": "planned"
+      }
+    ]
+  },
+  "metrics": {
+    "artifact_registry_rotates_with_previous_pointer": true,
+    "provider_identity_is_auditable_but_not_cognitive_owner": true,
+    "same_task_semantic_decision_is_invariant": true,
+    "same_task_grounding_is_invariant": true,
+    "rotation_does_not_execute_workbench": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "provider artifact rotation may change auditable provider provenance, but the same live task must yield the same Taiji semantic and Workbench grounding decision without provider execution authority"
+  },
+  "gap": {
+    "current": "deterministic metadata rotation and same-task invariance are proven; this does not yet load a real packaged Qwen artifact or prove provider language quality",
+    "next": "run the packaged-client artifact rotation, watchdog fallback, and restart rebinding Gate"
+  },
+  "boundary": "This Gate does not claim that provider output is Taiji cognition, does not claim open-domain autonomous IDE execution, and does not cover CUDA, CI, or AGI."
+}

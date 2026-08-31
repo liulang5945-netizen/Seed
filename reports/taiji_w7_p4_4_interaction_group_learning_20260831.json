@@ -1,0 +1,178 @@
+{
+  "format": "taiji-w7-p4-4-interaction-group-learning-v1",
+  "task": "train-only interaction-group selection followed by holdout Workbench evaluation",
+  "learner_seeds": [
+    11,
+    29,
+    47
+  ],
+  "selected_group": {
+    "format": "taiji-interaction-group-learning-v1",
+    "version": 1,
+    "group_id": "group:bc0cf47ddb2d595c00188951",
+    "member_ids": [
+      "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+      "workbench-owner:4983e0f18c1b0d53b8073d63"
+    ],
+    "source_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b",
+    "checkpoint_revision": 1,
+    "utility": 0.5,
+    "resource_cost": 2.0,
+    "observations": 1
+  },
+  "train_complementary": {
+    "single_first_reward": 0.25,
+    "single_second_reward": 0.25,
+    "grouped_pair_reward": 1.0,
+    "strongest_single_reward": 0.25,
+    "dense_average_reward": 0.25,
+    "random_single_expectation_reward": 0.25,
+    "grouped_gain_vs_strongest_single": 0.75,
+    "grouped_gain_vs_dense_average": 0.75,
+    "grouped_gain_vs_random_expectation": 0.75
+  },
+  "holdout_complementary": {
+    "single_first_reward": 0.3,
+    "single_second_reward": 0.3,
+    "grouped_pair_reward": 1.05,
+    "strongest_single_reward": 0.3,
+    "dense_average_reward": 0.3,
+    "random_single_expectation_reward": 0.3,
+    "grouped_gain_vs_strongest_single": 0.75,
+    "grouped_gain_vs_dense_average": 0.75,
+    "grouped_gain_vs_random_expectation": 0.75
+  },
+  "selection_runs": [
+    {
+      "seed": 11,
+      "selected": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "group:bc0cf47ddb2d595c00188951",
+        "member_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "source_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b",
+        "checkpoint_revision": 1,
+        "utility": 0.5,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "checkpoint_selection": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "group:bc0cf47ddb2d595c00188951",
+        "member_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "source_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b",
+        "checkpoint_revision": 1,
+        "utility": 0.5,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "resource_limited_selection": null,
+      "train_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b"
+    },
+    {
+      "seed": 29,
+      "selected": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "group:bc0cf47ddb2d595c00188951",
+        "member_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "source_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b",
+        "checkpoint_revision": 1,
+        "utility": 0.5,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "checkpoint_selection": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "group:bc0cf47ddb2d595c00188951",
+        "member_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "source_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b",
+        "checkpoint_revision": 1,
+        "utility": 0.5,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "resource_limited_selection": null,
+      "train_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b"
+    },
+    {
+      "seed": 47,
+      "selected": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "group:bc0cf47ddb2d595c00188951",
+        "member_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "source_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b",
+        "checkpoint_revision": 1,
+        "utility": 0.5,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "checkpoint_selection": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "group:bc0cf47ddb2d595c00188951",
+        "member_ids": [
+          "workbench-owner:2d8ae599d5e25bf3ab328d6e",
+          "workbench-owner:4983e0f18c1b0d53b8073d63"
+        ],
+        "source_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b",
+        "checkpoint_revision": 1,
+        "utility": 0.5,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "resource_limited_selection": null,
+      "train_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b"
+    }
+  ],
+  "source": {
+    "workbench_contract": "seed-workbench-contract-v1",
+    "train_episode_count": 8,
+    "holdout_episode_count": 8,
+    "train_trace_digest": "55ed89f8d54ce75fb0a75f215ff285eb499649ba43405668dcea6c745b52991b",
+    "holdout_trace_digest": "e020a16d8c1dcec80fbeb0f84016690f816646c4a749bcbf06138faeb2202966",
+    "semantic_role_labels": 0
+  },
+  "metrics": {
+    "train_only_candidate_generation": true,
+    "train_only_selection_is_stable_across_seeds": true,
+    "selected_group_is_complementary": true,
+    "train_gain_beats_strongest_single": true,
+    "holdout_gain_beats_strongest_single": true,
+    "holdout_gain_beats_dense_and_random": true,
+    "conflicting_group_not_selected": true,
+    "holdout_outcome_cannot_change_selection": true,
+    "resource_budget_filters_selection": true,
+    "old_workbench_capability_retained": true,
+    "workbench_world_evidence_preserved": true,
+    "workbench_executive_selection_preserved": true,
+    "workbench_recovery_preserved": true,
+    "workbench_checkpoint_replay_preserved": true,
+    "interaction_lesion_effect_preserved": true,
+    "selected_group_resource_bound": true,
+    "no_policy_tool_or_provider_mutation": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "a train-only native interaction learner must select the same complementary group across seeds, beat single/dense/random controls on unseen Workbench cells, reject conflict and resource violations, remain invariant to holdout outcome changes, and preserve old capability, lesion, recovery, and checkpoint evidence"
+  },
+  "boundary": "This gate proves bounded train-only selection for the registered Workbench task family. It does not claim open-domain transfer, unrestricted self-evolution, provider quality, CUDA advantage, or general intelligence."
+}

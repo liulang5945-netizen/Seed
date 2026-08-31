@@ -1,0 +1,472 @@
+{
+  "format": "taiji-w7-p4-6-interaction-group-transfer-v1",
+  "task": "heterogeneous Workbench member and unseen-combination train-only transfer",
+  "training_families": [
+    "ab",
+    "ac",
+    "ad",
+    "cd",
+    "fg"
+  ],
+  "target_families": [
+    "be",
+    "ce"
+  ],
+  "negative_family": "bf",
+  "learner_seeds": [
+    11,
+    29,
+    47
+  ],
+  "runs": [
+    {
+      "target_family": "be",
+      "seed": 11,
+      "candidate_sets": [
+        [
+          "workbench-owner:4983e0f18c1b0d53b8073d63",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e"
+        ],
+        [
+          "workbench-owner:4983e0f18c1b0d53b8073d63",
+          "workbench-owner:9e29560f2ca9fc10cd5a400a"
+        ]
+      ],
+      "selected": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "transfer-group:bf240f2cb7ef35aed2167771",
+        "member_ids": [
+          "workbench-owner:4983e0f18c1b0d53b8073d63",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e"
+        ],
+        "source_trace_digest": "092ce6d2783c4aec87a97a7705d3c7ce180f82be6fa1befa6da39576a269ae0c",
+        "checkpoint_revision": 1,
+        "utility": 0.35406714107512494,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "selected_candidate": {
+        "format": "taiji-interaction-group-transfer-v1",
+        "version": 1,
+        "group_id": "transfer-group:bf240f2cb7ef35aed2167771",
+        "member_ids": [
+          "workbench-owner:4983e0f18c1b0d53b8073d63",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e"
+        ],
+        "source_trace_digest": "092ce6d2783c4aec87a97a7705d3c7ce180f82be6fa1befa6da39576a269ae0c",
+        "checkpoint_revision": 1,
+        "predicted_interaction": 0.35406714107512494,
+        "uncertainty": 1.161417652791516,
+        "resource_cost": 2.0,
+        "support": 1,
+        "method": "train-only-member-profile-relation"
+      },
+      "checkpoint_selected": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "transfer-group:bf240f2cb7ef35aed2167771",
+        "member_ids": [
+          "workbench-owner:4983e0f18c1b0d53b8073d63",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e"
+        ],
+        "source_trace_digest": "092ce6d2783c4aec87a97a7705d3c7ce180f82be6fa1befa6da39576a269ae0c",
+        "checkpoint_revision": 1,
+        "utility": 0.35406714107512494,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "target_holdout_gain": {
+        "single_first_reward": 0.3,
+        "single_second_reward": 0.55,
+        "grouped_pair_reward": 1.05,
+        "grouped_gain_vs_strongest_single": 0.5,
+        "grouped_gain_vs_dense_average": 0.625,
+        "grouped_gain_vs_random_expectation": 0.625
+      },
+      "model_digest": "0d4ff5d689e821474de2cd1fb5c5e758fa1c7fb487ea0c35882208de8d22901a",
+      "unseen_candidate_is_not_observed": true,
+      "unseen_member_evidence_available": true
+    },
+    {
+      "target_family": "be",
+      "seed": 29,
+      "candidate_sets": [
+        [
+          "workbench-owner:4983e0f18c1b0d53b8073d63",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e"
+        ],
+        [
+          "workbench-owner:4983e0f18c1b0d53b8073d63",
+          "workbench-owner:9e29560f2ca9fc10cd5a400a"
+        ]
+      ],
+      "selected": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "transfer-group:bf240f2cb7ef35aed2167771",
+        "member_ids": [
+          "workbench-owner:4983e0f18c1b0d53b8073d63",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e"
+        ],
+        "source_trace_digest": "092ce6d2783c4aec87a97a7705d3c7ce180f82be6fa1befa6da39576a269ae0c",
+        "checkpoint_revision": 1,
+        "utility": 0.35406714107512494,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "selected_candidate": {
+        "format": "taiji-interaction-group-transfer-v1",
+        "version": 1,
+        "group_id": "transfer-group:bf240f2cb7ef35aed2167771",
+        "member_ids": [
+          "workbench-owner:4983e0f18c1b0d53b8073d63",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e"
+        ],
+        "source_trace_digest": "092ce6d2783c4aec87a97a7705d3c7ce180f82be6fa1befa6da39576a269ae0c",
+        "checkpoint_revision": 1,
+        "predicted_interaction": 0.35406714107512494,
+        "uncertainty": 1.161417652791516,
+        "resource_cost": 2.0,
+        "support": 1,
+        "method": "train-only-member-profile-relation"
+      },
+      "checkpoint_selected": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "transfer-group:bf240f2cb7ef35aed2167771",
+        "member_ids": [
+          "workbench-owner:4983e0f18c1b0d53b8073d63",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e"
+        ],
+        "source_trace_digest": "092ce6d2783c4aec87a97a7705d3c7ce180f82be6fa1befa6da39576a269ae0c",
+        "checkpoint_revision": 1,
+        "utility": 0.35406714107512494,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "target_holdout_gain": {
+        "single_first_reward": 0.3,
+        "single_second_reward": 0.55,
+        "grouped_pair_reward": 1.05,
+        "grouped_gain_vs_strongest_single": 0.5,
+        "grouped_gain_vs_dense_average": 0.625,
+        "grouped_gain_vs_random_expectation": 0.625
+      },
+      "model_digest": "0d4ff5d689e821474de2cd1fb5c5e758fa1c7fb487ea0c35882208de8d22901a",
+      "unseen_candidate_is_not_observed": true,
+      "unseen_member_evidence_available": true
+    },
+    {
+      "target_family": "be",
+      "seed": 47,
+      "candidate_sets": [
+        [
+          "workbench-owner:4983e0f18c1b0d53b8073d63",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e"
+        ],
+        [
+          "workbench-owner:4983e0f18c1b0d53b8073d63",
+          "workbench-owner:9e29560f2ca9fc10cd5a400a"
+        ]
+      ],
+      "selected": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "transfer-group:bf240f2cb7ef35aed2167771",
+        "member_ids": [
+          "workbench-owner:4983e0f18c1b0d53b8073d63",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e"
+        ],
+        "source_trace_digest": "092ce6d2783c4aec87a97a7705d3c7ce180f82be6fa1befa6da39576a269ae0c",
+        "checkpoint_revision": 1,
+        "utility": 0.35406714107512494,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "selected_candidate": {
+        "format": "taiji-interaction-group-transfer-v1",
+        "version": 1,
+        "group_id": "transfer-group:bf240f2cb7ef35aed2167771",
+        "member_ids": [
+          "workbench-owner:4983e0f18c1b0d53b8073d63",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e"
+        ],
+        "source_trace_digest": "092ce6d2783c4aec87a97a7705d3c7ce180f82be6fa1befa6da39576a269ae0c",
+        "checkpoint_revision": 1,
+        "predicted_interaction": 0.35406714107512494,
+        "uncertainty": 1.161417652791516,
+        "resource_cost": 2.0,
+        "support": 1,
+        "method": "train-only-member-profile-relation"
+      },
+      "checkpoint_selected": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "transfer-group:bf240f2cb7ef35aed2167771",
+        "member_ids": [
+          "workbench-owner:4983e0f18c1b0d53b8073d63",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e"
+        ],
+        "source_trace_digest": "092ce6d2783c4aec87a97a7705d3c7ce180f82be6fa1befa6da39576a269ae0c",
+        "checkpoint_revision": 1,
+        "utility": 0.35406714107512494,
+        "resource_cost": 2.0,
+        "observations": 1
+      },
+      "target_holdout_gain": {
+        "single_first_reward": 0.3,
+        "single_second_reward": 0.55,
+        "grouped_pair_reward": 1.05,
+        "grouped_gain_vs_strongest_single": 0.5,
+        "grouped_gain_vs_dense_average": 0.625,
+        "grouped_gain_vs_random_expectation": 0.625
+      },
+      "model_digest": "0d4ff5d689e821474de2cd1fb5c5e758fa1c7fb487ea0c35882208de8d22901a",
+      "unseen_candidate_is_not_observed": true,
+      "unseen_member_evidence_available": true
+    },
+    {
+      "target_family": "ce",
+      "seed": 11,
+      "candidate_sets": [
+        [
+          "workbench-owner:33bf6bd14f843e6f0a77fea3",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e"
+        ],
+        [
+          "workbench-owner:4983e0f18c1b0d53b8073d63",
+          "workbench-owner:9e29560f2ca9fc10cd5a400a"
+        ]
+      ],
+      "selected": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "transfer-group:95f3def12ee3c1e23ab70371",
+        "member_ids": [
+          "workbench-owner:33bf6bd14f843e6f0a77fea3",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e"
+        ],
+        "source_trace_digest": "092ce6d2783c4aec87a97a7705d3c7ce180f82be6fa1befa6da39576a269ae0c",
+        "checkpoint_revision": 1,
+        "utility": 0.3969983571215505,
+        "resource_cost": 2.0,
+        "observations": 2
+      },
+      "selected_candidate": {
+        "format": "taiji-interaction-group-transfer-v1",
+        "version": 1,
+        "group_id": "transfer-group:95f3def12ee3c1e23ab70371",
+        "member_ids": [
+          "workbench-owner:33bf6bd14f843e6f0a77fea3",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e"
+        ],
+        "source_trace_digest": "092ce6d2783c4aec87a97a7705d3c7ce180f82be6fa1befa6da39576a269ae0c",
+        "checkpoint_revision": 1,
+        "predicted_interaction": 0.3969983571215505,
+        "uncertainty": 1.161417652791516,
+        "resource_cost": 2.0,
+        "support": 2,
+        "method": "train-only-member-profile-relation"
+      },
+      "checkpoint_selected": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "transfer-group:95f3def12ee3c1e23ab70371",
+        "member_ids": [
+          "workbench-owner:33bf6bd14f843e6f0a77fea3",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e"
+        ],
+        "source_trace_digest": "092ce6d2783c4aec87a97a7705d3c7ce180f82be6fa1befa6da39576a269ae0c",
+        "checkpoint_revision": 1,
+        "utility": 0.3969983571215505,
+        "resource_cost": 2.0,
+        "observations": 2
+      },
+      "target_holdout_gain": {
+        "single_first_reward": 0.55,
+        "single_second_reward": 0.55,
+        "grouped_pair_reward": 1.05,
+        "grouped_gain_vs_strongest_single": 0.5,
+        "grouped_gain_vs_dense_average": 0.5,
+        "grouped_gain_vs_random_expectation": 0.5
+      },
+      "model_digest": "0d4ff5d689e821474de2cd1fb5c5e758fa1c7fb487ea0c35882208de8d22901a",
+      "unseen_candidate_is_not_observed": true,
+      "unseen_member_evidence_available": true
+    },
+    {
+      "target_family": "ce",
+      "seed": 29,
+      "candidate_sets": [
+        [
+          "workbench-owner:33bf6bd14f843e6f0a77fea3",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e"
+        ],
+        [
+          "workbench-owner:4983e0f18c1b0d53b8073d63",
+          "workbench-owner:9e29560f2ca9fc10cd5a400a"
+        ]
+      ],
+      "selected": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "transfer-group:95f3def12ee3c1e23ab70371",
+        "member_ids": [
+          "workbench-owner:33bf6bd14f843e6f0a77fea3",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e"
+        ],
+        "source_trace_digest": "092ce6d2783c4aec87a97a7705d3c7ce180f82be6fa1befa6da39576a269ae0c",
+        "checkpoint_revision": 1,
+        "utility": 0.3969983571215505,
+        "resource_cost": 2.0,
+        "observations": 2
+      },
+      "selected_candidate": {
+        "format": "taiji-interaction-group-transfer-v1",
+        "version": 1,
+        "group_id": "transfer-group:95f3def12ee3c1e23ab70371",
+        "member_ids": [
+          "workbench-owner:33bf6bd14f843e6f0a77fea3",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e"
+        ],
+        "source_trace_digest": "092ce6d2783c4aec87a97a7705d3c7ce180f82be6fa1befa6da39576a269ae0c",
+        "checkpoint_revision": 1,
+        "predicted_interaction": 0.3969983571215505,
+        "uncertainty": 1.161417652791516,
+        "resource_cost": 2.0,
+        "support": 2,
+        "method": "train-only-member-profile-relation"
+      },
+      "checkpoint_selected": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "transfer-group:95f3def12ee3c1e23ab70371",
+        "member_ids": [
+          "workbench-owner:33bf6bd14f843e6f0a77fea3",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e"
+        ],
+        "source_trace_digest": "092ce6d2783c4aec87a97a7705d3c7ce180f82be6fa1befa6da39576a269ae0c",
+        "checkpoint_revision": 1,
+        "utility": 0.3969983571215505,
+        "resource_cost": 2.0,
+        "observations": 2
+      },
+      "target_holdout_gain": {
+        "single_first_reward": 0.55,
+        "single_second_reward": 0.55,
+        "grouped_pair_reward": 1.05,
+        "grouped_gain_vs_strongest_single": 0.5,
+        "grouped_gain_vs_dense_average": 0.5,
+        "grouped_gain_vs_random_expectation": 0.5
+      },
+      "model_digest": "0d4ff5d689e821474de2cd1fb5c5e758fa1c7fb487ea0c35882208de8d22901a",
+      "unseen_candidate_is_not_observed": true,
+      "unseen_member_evidence_available": true
+    },
+    {
+      "target_family": "ce",
+      "seed": 47,
+      "candidate_sets": [
+        [
+          "workbench-owner:33bf6bd14f843e6f0a77fea3",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e"
+        ],
+        [
+          "workbench-owner:4983e0f18c1b0d53b8073d63",
+          "workbench-owner:9e29560f2ca9fc10cd5a400a"
+        ]
+      ],
+      "selected": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "transfer-group:95f3def12ee3c1e23ab70371",
+        "member_ids": [
+          "workbench-owner:33bf6bd14f843e6f0a77fea3",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e"
+        ],
+        "source_trace_digest": "092ce6d2783c4aec87a97a7705d3c7ce180f82be6fa1befa6da39576a269ae0c",
+        "checkpoint_revision": 1,
+        "utility": 0.3969983571215505,
+        "resource_cost": 2.0,
+        "observations": 2
+      },
+      "selected_candidate": {
+        "format": "taiji-interaction-group-transfer-v1",
+        "version": 1,
+        "group_id": "transfer-group:95f3def12ee3c1e23ab70371",
+        "member_ids": [
+          "workbench-owner:33bf6bd14f843e6f0a77fea3",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e"
+        ],
+        "source_trace_digest": "092ce6d2783c4aec87a97a7705d3c7ce180f82be6fa1befa6da39576a269ae0c",
+        "checkpoint_revision": 1,
+        "predicted_interaction": 0.3969983571215505,
+        "uncertainty": 1.161417652791516,
+        "resource_cost": 2.0,
+        "support": 2,
+        "method": "train-only-member-profile-relation"
+      },
+      "checkpoint_selected": {
+        "format": "taiji-interaction-group-learning-v1",
+        "version": 1,
+        "group_id": "transfer-group:95f3def12ee3c1e23ab70371",
+        "member_ids": [
+          "workbench-owner:33bf6bd14f843e6f0a77fea3",
+          "workbench-owner:e7ce303c7ef3dc0096150f6e"
+        ],
+        "source_trace_digest": "092ce6d2783c4aec87a97a7705d3c7ce180f82be6fa1befa6da39576a269ae0c",
+        "checkpoint_revision": 1,
+        "utility": 0.3969983571215505,
+        "resource_cost": 2.0,
+        "observations": 2
+      },
+      "target_holdout_gain": {
+        "single_first_reward": 0.55,
+        "single_second_reward": 0.55,
+        "grouped_pair_reward": 1.05,
+        "grouped_gain_vs_strongest_single": 0.5,
+        "grouped_gain_vs_dense_average": 0.5,
+        "grouped_gain_vs_random_expectation": 0.5
+      },
+      "model_digest": "0d4ff5d689e821474de2cd1fb5c5e758fa1c7fb487ea0c35882208de8d22901a",
+      "unseen_candidate_is_not_observed": true,
+      "unseen_member_evidence_available": true
+    }
+  ],
+  "source": {
+    "workbench_contract": "seed-workbench-contract-v1",
+    "train_episode_count": 22,
+    "holdout_episode_count": 12,
+    "train_trace_digest": "092ce6d2783c4aec87a97a7705d3c7ce180f82be6fa1befa6da39576a269ae0c",
+    "holdout_trace_digest": "a9f962ab96b2d786cdc0c6a9810c43e98b8fd8adefcdbd81742fec73da41a292",
+    "train_group_count": 5,
+    "train_member_profile_count": 7,
+    "semantic_role_labels": 0
+  },
+  "metrics": {
+    "real_workbench_family_count": true,
+    "distinct_training_capability_pair_count": true,
+    "heterogeneous_capability_ids": true,
+    "target_members_have_train_singleton_evidence": true,
+    "target_combinations_are_unseen_in_train_groups": true,
+    "train_only_relation_has_no_holdout_fields": true,
+    "seed_and_candidate_order_invariant": true,
+    "positive_unseen_target_selected": true,
+    "positive_transfer_beats_holdout_controls": true,
+    "negative_control_not_selected": true,
+    "resource_budget_filters_transfer": true,
+    "workbench_world_evidence_preserved": true,
+    "workbench_checkpoint_replay_preserved": true,
+    "workbench_executive_selection_preserved": true,
+    "workbench_old_capability_preserved": true,
+    "interaction_lesion_and_attribution_preserved": true,
+    "transfer_checkpoint_roundtrip_preserved": true,
+    "no_owner_name_or_fixed_pair_input": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "a train-only relation learner must use heterogeneous Workbench capability traces, score an unseen member combination from singleton evidence, select positive transfer across seed/order permutations, suppress a negative control and resource overflow, roundtrip by checkpoint, and preserve native Workbench/lesion evidence"
+  },
+  "boundary": "This is a bounded inductive transfer Gate: a member with no train singleton evidence fails closed, and the result does not claim open-domain general intelligence, unlimited self-evolution, provider quality, CUDA advantage, or automatic policy mutation."
+}

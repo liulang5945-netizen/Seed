@@ -1,0 +1,915 @@
+{
+  "format": "taiji-w7-p4-7-open-domain-interaction-gain-v1",
+  "task": "real Workbench future-round interaction gain against weight/router/memory controls",
+  "future_families": [
+    "future-be",
+    "future-ce",
+    "future-de"
+  ],
+  "learner_seeds": [
+    11,
+    29,
+    47
+  ],
+  "methods": [
+    "relation_transfer",
+    "weight_only",
+    "router_only",
+    "memory_only"
+  ],
+  "score_definition": "0 for no action, +/-0.2 for one actual Workbench action by success, +1.0 when both required actions succeed, and -1.0 when a two-action task fails",
+  "method_mean_scores": {
+    "relation_transfer": 1.0,
+    "weight_only": 0.2,
+    "router_only": 0.2,
+    "memory_only": 0.2
+  },
+  "runs": [
+    {
+      "seed": 11,
+      "family": "future-be",
+      "scores": {
+        "relation_transfer": 1.0,
+        "weight_only": 0.2,
+        "router_only": 0.2,
+        "memory_only": 0.2
+      },
+      "methods": [
+        {
+          "method": "relation_transfer",
+          "seed": 11,
+          "family": "future-be",
+          "selected_member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_member_keys": [
+            "b",
+            "e"
+          ],
+          "action_count": 2,
+          "derived_task_score": 1.0,
+          "raw_action_success": [
+            true,
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        },
+        {
+          "method": "weight_only",
+          "seed": 11,
+          "family": "future-be",
+          "selected_member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63"
+          ],
+          "selected_member_keys": [
+            "b"
+          ],
+          "action_count": 1,
+          "derived_task_score": 0.2,
+          "raw_action_success": [
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        },
+        {
+          "method": "router_only",
+          "seed": 11,
+          "family": "future-be",
+          "selected_member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63"
+          ],
+          "selected_member_keys": [
+            "b"
+          ],
+          "action_count": 1,
+          "derived_task_score": 0.2,
+          "raw_action_success": [
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        },
+        {
+          "method": "memory_only",
+          "seed": 11,
+          "family": "future-be",
+          "selected_member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63"
+          ],
+          "selected_member_keys": [
+            "b"
+          ],
+          "action_count": 1,
+          "derived_task_score": 0.2,
+          "raw_action_success": [
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        }
+      ],
+      "observation_count_after_future": 5,
+      "future_did_not_enter_train_learner": true,
+      "checkpoint_candidate_rollback_equal": true
+    },
+    {
+      "seed": 11,
+      "family": "future-ce",
+      "scores": {
+        "relation_transfer": 1.0,
+        "weight_only": 0.2,
+        "router_only": 0.2,
+        "memory_only": 0.2
+      },
+      "methods": [
+        {
+          "method": "relation_transfer",
+          "seed": 11,
+          "family": "future-ce",
+          "selected_member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_member_keys": [
+            "c",
+            "e"
+          ],
+          "action_count": 2,
+          "derived_task_score": 1.0,
+          "raw_action_success": [
+            true,
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        },
+        {
+          "method": "weight_only",
+          "seed": 11,
+          "family": "future-ce",
+          "selected_member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3"
+          ],
+          "selected_member_keys": [
+            "c"
+          ],
+          "action_count": 1,
+          "derived_task_score": 0.2,
+          "raw_action_success": [
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        },
+        {
+          "method": "router_only",
+          "seed": 11,
+          "family": "future-ce",
+          "selected_member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3"
+          ],
+          "selected_member_keys": [
+            "c"
+          ],
+          "action_count": 1,
+          "derived_task_score": 0.2,
+          "raw_action_success": [
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        },
+        {
+          "method": "memory_only",
+          "seed": 11,
+          "family": "future-ce",
+          "selected_member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3"
+          ],
+          "selected_member_keys": [
+            "c"
+          ],
+          "action_count": 1,
+          "derived_task_score": 0.2,
+          "raw_action_success": [
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        }
+      ],
+      "observation_count_after_future": 5,
+      "future_did_not_enter_train_learner": true,
+      "checkpoint_candidate_rollback_equal": true
+    },
+    {
+      "seed": 11,
+      "family": "future-de",
+      "scores": {
+        "relation_transfer": 1.0,
+        "weight_only": 0.2,
+        "router_only": 0.2,
+        "memory_only": 0.2
+      },
+      "methods": [
+        {
+          "method": "relation_transfer",
+          "seed": 11,
+          "family": "future-de",
+          "selected_member_ids": [
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_member_keys": [
+            "d",
+            "e"
+          ],
+          "action_count": 2,
+          "derived_task_score": 1.0,
+          "raw_action_success": [
+            true,
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        },
+        {
+          "method": "weight_only",
+          "seed": 11,
+          "family": "future-de",
+          "selected_member_ids": [
+            "workbench-owner:b7c2ca901da88a98aa7b47a7"
+          ],
+          "selected_member_keys": [
+            "d"
+          ],
+          "action_count": 1,
+          "derived_task_score": 0.2,
+          "raw_action_success": [
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        },
+        {
+          "method": "router_only",
+          "seed": 11,
+          "family": "future-de",
+          "selected_member_ids": [
+            "workbench-owner:b7c2ca901da88a98aa7b47a7"
+          ],
+          "selected_member_keys": [
+            "d"
+          ],
+          "action_count": 1,
+          "derived_task_score": 0.2,
+          "raw_action_success": [
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        },
+        {
+          "method": "memory_only",
+          "seed": 11,
+          "family": "future-de",
+          "selected_member_ids": [
+            "workbench-owner:b7c2ca901da88a98aa7b47a7"
+          ],
+          "selected_member_keys": [
+            "d"
+          ],
+          "action_count": 1,
+          "derived_task_score": 0.2,
+          "raw_action_success": [
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        }
+      ],
+      "observation_count_after_future": 5,
+      "future_did_not_enter_train_learner": true,
+      "checkpoint_candidate_rollback_equal": true
+    },
+    {
+      "seed": 29,
+      "family": "future-be",
+      "scores": {
+        "relation_transfer": 1.0,
+        "weight_only": 0.2,
+        "router_only": 0.2,
+        "memory_only": 0.2
+      },
+      "methods": [
+        {
+          "method": "relation_transfer",
+          "seed": 29,
+          "family": "future-be",
+          "selected_member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_member_keys": [
+            "b",
+            "e"
+          ],
+          "action_count": 2,
+          "derived_task_score": 1.0,
+          "raw_action_success": [
+            true,
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        },
+        {
+          "method": "weight_only",
+          "seed": 29,
+          "family": "future-be",
+          "selected_member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63"
+          ],
+          "selected_member_keys": [
+            "b"
+          ],
+          "action_count": 1,
+          "derived_task_score": 0.2,
+          "raw_action_success": [
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        },
+        {
+          "method": "router_only",
+          "seed": 29,
+          "family": "future-be",
+          "selected_member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63"
+          ],
+          "selected_member_keys": [
+            "b"
+          ],
+          "action_count": 1,
+          "derived_task_score": 0.2,
+          "raw_action_success": [
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        },
+        {
+          "method": "memory_only",
+          "seed": 29,
+          "family": "future-be",
+          "selected_member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63"
+          ],
+          "selected_member_keys": [
+            "b"
+          ],
+          "action_count": 1,
+          "derived_task_score": 0.2,
+          "raw_action_success": [
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        }
+      ],
+      "observation_count_after_future": 5,
+      "future_did_not_enter_train_learner": true,
+      "checkpoint_candidate_rollback_equal": true
+    },
+    {
+      "seed": 29,
+      "family": "future-ce",
+      "scores": {
+        "relation_transfer": 1.0,
+        "weight_only": 0.2,
+        "router_only": 0.2,
+        "memory_only": 0.2
+      },
+      "methods": [
+        {
+          "method": "relation_transfer",
+          "seed": 29,
+          "family": "future-ce",
+          "selected_member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_member_keys": [
+            "c",
+            "e"
+          ],
+          "action_count": 2,
+          "derived_task_score": 1.0,
+          "raw_action_success": [
+            true,
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        },
+        {
+          "method": "weight_only",
+          "seed": 29,
+          "family": "future-ce",
+          "selected_member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3"
+          ],
+          "selected_member_keys": [
+            "c"
+          ],
+          "action_count": 1,
+          "derived_task_score": 0.2,
+          "raw_action_success": [
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        },
+        {
+          "method": "router_only",
+          "seed": 29,
+          "family": "future-ce",
+          "selected_member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3"
+          ],
+          "selected_member_keys": [
+            "c"
+          ],
+          "action_count": 1,
+          "derived_task_score": 0.2,
+          "raw_action_success": [
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        },
+        {
+          "method": "memory_only",
+          "seed": 29,
+          "family": "future-ce",
+          "selected_member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3"
+          ],
+          "selected_member_keys": [
+            "c"
+          ],
+          "action_count": 1,
+          "derived_task_score": 0.2,
+          "raw_action_success": [
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        }
+      ],
+      "observation_count_after_future": 5,
+      "future_did_not_enter_train_learner": true,
+      "checkpoint_candidate_rollback_equal": true
+    },
+    {
+      "seed": 29,
+      "family": "future-de",
+      "scores": {
+        "relation_transfer": 1.0,
+        "weight_only": 0.2,
+        "router_only": 0.2,
+        "memory_only": 0.2
+      },
+      "methods": [
+        {
+          "method": "relation_transfer",
+          "seed": 29,
+          "family": "future-de",
+          "selected_member_ids": [
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_member_keys": [
+            "d",
+            "e"
+          ],
+          "action_count": 2,
+          "derived_task_score": 1.0,
+          "raw_action_success": [
+            true,
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        },
+        {
+          "method": "weight_only",
+          "seed": 29,
+          "family": "future-de",
+          "selected_member_ids": [
+            "workbench-owner:b7c2ca901da88a98aa7b47a7"
+          ],
+          "selected_member_keys": [
+            "d"
+          ],
+          "action_count": 1,
+          "derived_task_score": 0.2,
+          "raw_action_success": [
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        },
+        {
+          "method": "router_only",
+          "seed": 29,
+          "family": "future-de",
+          "selected_member_ids": [
+            "workbench-owner:b7c2ca901da88a98aa7b47a7"
+          ],
+          "selected_member_keys": [
+            "d"
+          ],
+          "action_count": 1,
+          "derived_task_score": 0.2,
+          "raw_action_success": [
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        },
+        {
+          "method": "memory_only",
+          "seed": 29,
+          "family": "future-de",
+          "selected_member_ids": [
+            "workbench-owner:b7c2ca901da88a98aa7b47a7"
+          ],
+          "selected_member_keys": [
+            "d"
+          ],
+          "action_count": 1,
+          "derived_task_score": 0.2,
+          "raw_action_success": [
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        }
+      ],
+      "observation_count_after_future": 5,
+      "future_did_not_enter_train_learner": true,
+      "checkpoint_candidate_rollback_equal": true
+    },
+    {
+      "seed": 47,
+      "family": "future-be",
+      "scores": {
+        "relation_transfer": 1.0,
+        "weight_only": 0.2,
+        "router_only": 0.2,
+        "memory_only": 0.2
+      },
+      "methods": [
+        {
+          "method": "relation_transfer",
+          "seed": 47,
+          "family": "future-be",
+          "selected_member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_member_keys": [
+            "b",
+            "e"
+          ],
+          "action_count": 2,
+          "derived_task_score": 1.0,
+          "raw_action_success": [
+            true,
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        },
+        {
+          "method": "weight_only",
+          "seed": 47,
+          "family": "future-be",
+          "selected_member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63"
+          ],
+          "selected_member_keys": [
+            "b"
+          ],
+          "action_count": 1,
+          "derived_task_score": 0.2,
+          "raw_action_success": [
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        },
+        {
+          "method": "router_only",
+          "seed": 47,
+          "family": "future-be",
+          "selected_member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63"
+          ],
+          "selected_member_keys": [
+            "b"
+          ],
+          "action_count": 1,
+          "derived_task_score": 0.2,
+          "raw_action_success": [
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        },
+        {
+          "method": "memory_only",
+          "seed": 47,
+          "family": "future-be",
+          "selected_member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63"
+          ],
+          "selected_member_keys": [
+            "b"
+          ],
+          "action_count": 1,
+          "derived_task_score": 0.2,
+          "raw_action_success": [
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        }
+      ],
+      "observation_count_after_future": 5,
+      "future_did_not_enter_train_learner": true,
+      "checkpoint_candidate_rollback_equal": true
+    },
+    {
+      "seed": 47,
+      "family": "future-ce",
+      "scores": {
+        "relation_transfer": 1.0,
+        "weight_only": 0.2,
+        "router_only": 0.2,
+        "memory_only": 0.2
+      },
+      "methods": [
+        {
+          "method": "relation_transfer",
+          "seed": 47,
+          "family": "future-ce",
+          "selected_member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_member_keys": [
+            "c",
+            "e"
+          ],
+          "action_count": 2,
+          "derived_task_score": 1.0,
+          "raw_action_success": [
+            true,
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        },
+        {
+          "method": "weight_only",
+          "seed": 47,
+          "family": "future-ce",
+          "selected_member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3"
+          ],
+          "selected_member_keys": [
+            "c"
+          ],
+          "action_count": 1,
+          "derived_task_score": 0.2,
+          "raw_action_success": [
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        },
+        {
+          "method": "router_only",
+          "seed": 47,
+          "family": "future-ce",
+          "selected_member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3"
+          ],
+          "selected_member_keys": [
+            "c"
+          ],
+          "action_count": 1,
+          "derived_task_score": 0.2,
+          "raw_action_success": [
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        },
+        {
+          "method": "memory_only",
+          "seed": 47,
+          "family": "future-ce",
+          "selected_member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3"
+          ],
+          "selected_member_keys": [
+            "c"
+          ],
+          "action_count": 1,
+          "derived_task_score": 0.2,
+          "raw_action_success": [
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        }
+      ],
+      "observation_count_after_future": 5,
+      "future_did_not_enter_train_learner": true,
+      "checkpoint_candidate_rollback_equal": true
+    },
+    {
+      "seed": 47,
+      "family": "future-de",
+      "scores": {
+        "relation_transfer": 1.0,
+        "weight_only": 0.2,
+        "router_only": 0.2,
+        "memory_only": 0.2
+      },
+      "methods": [
+        {
+          "method": "relation_transfer",
+          "seed": 47,
+          "family": "future-de",
+          "selected_member_ids": [
+            "workbench-owner:b7c2ca901da88a98aa7b47a7",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "selected_member_keys": [
+            "d",
+            "e"
+          ],
+          "action_count": 2,
+          "derived_task_score": 1.0,
+          "raw_action_success": [
+            true,
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        },
+        {
+          "method": "weight_only",
+          "seed": 47,
+          "family": "future-de",
+          "selected_member_ids": [
+            "workbench-owner:b7c2ca901da88a98aa7b47a7"
+          ],
+          "selected_member_keys": [
+            "d"
+          ],
+          "action_count": 1,
+          "derived_task_score": 0.2,
+          "raw_action_success": [
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        },
+        {
+          "method": "router_only",
+          "seed": 47,
+          "family": "future-de",
+          "selected_member_ids": [
+            "workbench-owner:b7c2ca901da88a98aa7b47a7"
+          ],
+          "selected_member_keys": [
+            "d"
+          ],
+          "action_count": 1,
+          "derived_task_score": 0.2,
+          "raw_action_success": [
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        },
+        {
+          "method": "memory_only",
+          "seed": 47,
+          "family": "future-de",
+          "selected_member_ids": [
+            "workbench-owner:b7c2ca901da88a98aa7b47a7"
+          ],
+          "selected_member_keys": [
+            "d"
+          ],
+          "action_count": 1,
+          "derived_task_score": 0.2,
+          "raw_action_success": [
+            true
+          ],
+          "score_source": "native Workbench raw action success/status projection",
+          "replay_equal": true,
+          "native_world_event_count": 2
+        }
+      ],
+      "observation_count_after_future": 5,
+      "future_did_not_enter_train_learner": true,
+      "checkpoint_candidate_rollback_equal": true
+    }
+  ],
+  "source": {
+    "workbench_contract": "seed-workbench-contract-v1",
+    "train_episode_count": 22,
+    "train_trace_digest": "84377fcec33aa3b4e73eb4539a29273079a7476efc63ef1ed7184149d2635814",
+    "train_group_count": 5,
+    "train_member_profile_count": 7,
+    "train_record_score_sources": [
+      "native Workbench raw action success/status projection"
+    ],
+    "semantic_role_labels": 0
+  },
+  "metrics": {
+    "future_round_count": true,
+    "independent_future_capability_families": true,
+    "train_only_group_count": true,
+    "train_only_member_profile_count": true,
+    "relation_transfer_completes_future_tasks": true,
+    "weight_only_cannot_complete_unseen_pair": true,
+    "router_only_cannot_complete_unseen_pair": true,
+    "memory_only_cannot_recall_unseen_pair": true,
+    "relation_beats_all_controls": true,
+    "relation_cumulative_gain_is_positive": true,
+    "transfer_lesion_drops_future_score": true,
+    "future_holdout_never_updates_learner": true,
+    "candidate_trial_rollback_is_exact": true,
+    "checkpoint_continuation_reselects_target": true,
+    "resource_budget_rejects_transfer": true,
+    "unknown_member_fails_closed": true,
+    "old_workbench_capability_retained": true,
+    "old_workbench_task_still_completes": true,
+    "native_world_evidence_preserved": true,
+    "native_checkpoint_replay_preserved": true,
+    "interaction_lesion_evidence_preserved": true,
+    "no_provider_policy_or_tool_mutation": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "over multiple real Workbench future rounds, train-only relation transfer must complete unseen two-action tasks and beat controls that only change singleton weights, route one member, or recall measured groups; future evidence must not update the learner before scoring, transfer lesion must reduce gain, candidate rollback/checkpoint/resource/unknown-member boundaries must hold, and old native Workbench/replay/lesion evidence must remain intact"
+  },
+  "boundary": "This is a bounded real-Workbench longitudinal comparison, not open-domain AGI proof. The task score is a pre-registered projection of native action success; it does not claim that relation transfer alone creates unrestricted self-evolution, provider quality, CUDA advantage, or automatic policy/topology mutation."
+}

@@ -113,16 +113,10 @@ class StructuralValidationArtifactStore:
     ) -> WorkbenchStructuralValidationArtifact:
         """Load an artifact only when its measurement sidecar is independently verified."""
 
-        try:
-            artifact = self.load(artifact_digest)
-        except FileNotFoundError as exc:
-            raise ValueError("verified artifact is missing from the store") from exc
+        artifact = self.load(artifact_digest)
         if not artifact.measurement_digest:
             raise ValueError("artifact has no independently verifiable measurement sidecar")
-        try:
-            measurements = self.load_measurements(artifact.measurement_digest)
-        except FileNotFoundError as exc:
-            raise ValueError("verified artifact measurement sidecar is missing") from exc
+        measurements = self.load_measurements(artifact.measurement_digest)
         if measurements.measurement_digest != artifact.measurement_digest:
             raise ValueError("artifact and measurement sidecar digests do not match")
         return artifact

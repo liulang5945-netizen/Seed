@@ -295,12 +295,19 @@ class WorkspaceRouter(nn.Module):
         tick: int,
         mode: str = "learned",
         random_seed: int | None = None,
+        capacity: int | None = None,
+        minimum_score: float | None = None,
     ) -> WorkspaceSelection:
         """Select candidates and produce the only shared workspace broadcast."""
 
         candidates = tuple(candidates)
         if mode not in {"learned", "none", "random"}:
             raise ValueError(f"unsupported workspace routing mode: {mode}")
+        effective_capacity = self.capacity if capacity is None else int(capacity)
+        if effective_capacity <= 0:
+            raise ValueError("workspace route capacity must be positive")
+        if minimum_score is not None and not 0.0 <= float(minimum_score) <= 1.0:
+            raise ValueError("workspace route minimum_score must be in [0, 1]")
         features = self._features(candidates)
         candidate_ids = tuple(candidate.candidate_id for candidate in candidates)
         if len(set(candidate_ids)) != len(candidate_ids):
@@ -311,14 +318,21 @@ class WorkspaceRouter(nn.Module):
                 range(len(candidates)),
                 key=lambda index: (-float(scores_tensor[index]), index),
             )
-            selected_indices = ranked[: self.capacity]
+            if minimum_score is None:
+                selected_indices = ranked[:effective_capacity]
+            else:
+                selected_indices = [
+                    index
+                    for index in ranked
+                    if float(scores_tensor[index]) >= float(minimum_score)
+                ][:effective_capacity]
             scores = tuple(float(score) for score in scores_tensor)
         elif mode == "random" and candidates:
             generator = torch.Generator(device="cpu").manual_seed(
                 int(random_seed) if random_seed is not None else 0
             )
             selected_indices = torch.randperm(len(candidates), generator=generator).tolist()[
-                : self.capacity
+                :effective_capacity
             ]
             scores = tuple(0.0 for _ in candidates)
         else:
@@ -336,7 +350,7 @@ class WorkspaceRouter(nn.Module):
             selected_ids=selected_ids,
             scores=scores,
             broadcast=broadcast.detach().clone(),
-            capacity=self.capacity,
+            capacity=effective_capacity,
         )
 
     def checkpoint(self) -> dict[str, object]:

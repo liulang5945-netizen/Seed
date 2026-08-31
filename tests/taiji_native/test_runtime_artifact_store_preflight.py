@@ -10,7 +10,7 @@ from scripts.training.eval_taiji_workbench_multi_region_batch import (
     _build_runtime,
     _schedule_requests,
 )
-from taiji import StructuralValidationArtifactStore
+from taiji import ArtifactConsumptionPolicy, StructuralValidationArtifactStore
 from taiji.adapter import _checkpoint_digest
 
 
@@ -32,6 +32,9 @@ def test_runtime_artifact_store_preflights_all_candidates_before_mutation() -> N
     )
     checkpoint_path = store_root.parent / f"s43-preflight-runtime-{os.getpid()}.pt"
     store = StructuralValidationArtifactStore(store_root)
+    legacy_policy = ArtifactConsumptionPolicy.legacy_compatible(
+        reason="historical-s43-preflight-test"
+    )
     try:
         store.put(artifact)
         runtime.save(checkpoint_path)
@@ -43,6 +46,7 @@ def test_runtime_artifact_store_preflights_all_candidates_before_mutation() -> N
                 artifact_store=store,
                 artifact_digests_by_candidate={first_id: artifact.artifact_digest, second_id: "0" * 64},
                 replays_by_candidate={first_id: replay},
+                artifact_consumption_policy=legacy_policy,
             )
         except FileNotFoundError:
             pass
@@ -61,12 +65,14 @@ def test_runtime_artifact_store_preflights_all_candidates_before_mutation() -> N
             artifact_store=StructuralValidationArtifactStore(store_root),
             artifact_digests_by_candidate={first_id: artifact.artifact_digest},
             replays_by_candidate={first_id: replay},
+            artifact_consumption_policy=legacy_policy,
         )
         repeat = restored.continue_structural_candidate_batch_from_artifact_store(
             batch.batch_id,
             artifact_store=store,
             artifact_digests_by_candidate={first_id: artifact.artifact_digest},
             replays_by_candidate={first_id: replay},
+            artifact_consumption_policy=legacy_policy,
         )
         assert result["results"][first_id]["status"] == "admitted"
         assert repeat["results"][first_id]["status"] == "already_applied"

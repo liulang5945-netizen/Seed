@@ -23,7 +23,10 @@ from scripts.training.eval_taiji_workbench_multi_region_batch import (  # noqa: 
     _build_runtime,
     _schedule_requests,
 )
-from taiji import StructuralValidationArtifactStore  # noqa: E402
+from taiji import (  # noqa: E402
+    ArtifactConsumptionPolicy,
+    StructuralValidationArtifactStore,
+)
 from taiji.adapter import _checkpoint_digest  # noqa: E402
 
 REPORT_FORMAT = "taiji-w7-r5c-s44-runtime-artifact-store-batch-v1"
@@ -59,6 +62,9 @@ def evaluate() -> dict[str, object]:
         checkpoint_root / f"s44-final-{os.getpid()}.pt",
     ]
     store = StructuralValidationArtifactStore(store_root)
+    legacy_policy = ArtifactConsumptionPolicy.legacy_compatible(
+        reason="historical-s44-batch-canary"
+    )
     try:
         initial_budget = _budget(runtime)
         first_artifact, first_replay, first_measurements = _build_artifact(
@@ -75,6 +81,7 @@ def evaluate() -> dict[str, object]:
             artifact_store=StructuralValidationArtifactStore(store_root),
             artifact_digests_by_candidate={first_id: first_artifact.artifact_digest},
             replays_by_candidate={first_id: first_replay},
+            artifact_consumption_policy=legacy_policy,
         )
         first_budget = _budget(first_parent)
 
@@ -92,6 +99,7 @@ def evaluate() -> dict[str, object]:
             artifact_store=store,
             artifact_digests_by_candidate={second_id: second_artifact.artifact_digest},
             replays_by_candidate={second_id: second_replay},
+            artifact_consumption_policy=legacy_policy,
         )
         second_budget = _budget(second_parent)
         second_parent.save(paths[2])
@@ -104,6 +112,7 @@ def evaluate() -> dict[str, object]:
                 second_id: second_artifact.artifact_digest,
             },
             replays_by_candidate={first_id: first_replay, second_id: second_replay},
+            artifact_consumption_policy=legacy_policy,
         )
         final_batch = next(
             item

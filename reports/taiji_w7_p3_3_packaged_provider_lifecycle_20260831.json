@@ -1,0 +1,48 @@
+{
+  "format": "taiji-w7-p3-3-packaged-provider-lifecycle-v1",
+  "test_nodes": [
+    "tests/test_seed_product_smoke.py::test_runtime_watchdog_rolls_back_degraded_provider_after_publish",
+    "tests/seed/test_language_provider_runtime.py::test_provider_rotation_stages_canary_and_preserves_live_version_on_failure",
+    "tests/seed/test_language_provider_runtime.py::test_provider_health_watchdog_walks_the_full_degradation_ladder",
+    "tests/seed/test_language_provider_runtime.py::test_provider_health_probe_folds_live_emissions_and_never_upgrades",
+    "tests/seed/test_language_provider_runtime.py::test_missing_explicit_provider_rolls_back_and_is_observable",
+    "tests/seed/test_language_provider_runtime.py::test_unknown_provider_is_classified_as_manifest_mismatch",
+    "tests/seed/test_language_provider_runtime.py::test_product_chat_first_chat_canary_failure_rolls_back",
+    "tests/seed/test_language_provider_runtime.py::test_watchdog_thresholds_round_trip_and_fail_closed"
+  ],
+  "metrics": {
+    "provider_watchdog_contract": true,
+    "provider_artifact_checkpoint_replay": true,
+    "packaged_rotation_and_fallback_tests": true,
+    "real_provider_model_assets_available": false
+  },
+  "watchdog": {
+    "s0": {
+      "healthy_probe_count": 2,
+      "healthy_accepted_rate": 1.0,
+      "healthy_degraded": false,
+      "degraded_probe_count": 2,
+      "degraded_accepted_rate": 0.0,
+      "probes_before_rollback": 2,
+      "rollback_count": 1,
+      "rollback_suppressed_count": 2,
+      "checkpoint_roundtrip_matches": true,
+      "cooldown_active_after_rollback": true,
+      "rollback_target": "native-readable"
+    },
+    "s1_gate": {
+      "passed": true,
+      "criterion": "provider artifact identity, registry selection, health counters, digest binding, and threshold continuation survive a native adapter checkpoint round-trip"
+    }
+  },
+  "real_assets": {
+    "available": false,
+    "paths": [],
+    "status": "asset-unverified"
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "the deterministic packaged integration seam must rotate an allowlisted provider, detect degradation, fall back once, preserve cooldown/health state through checkpoint, and fail closed on missing or invalid providers"
+  },
+  "boundary": "The Gate is passed only for the deterministic integration seam. It does not claim a real Qwen model was loaded, provider quality was validated, or CUDA, CI, open-domain gains, or AGI were proven."
+}

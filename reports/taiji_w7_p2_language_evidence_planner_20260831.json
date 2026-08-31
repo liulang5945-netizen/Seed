@@ -1,0 +1,18 @@
+{
+  "format": "taiji-w7-p2-language-evidence-planner-v1",
+  "metrics": {
+    "language_evidence_grounds_taiji_action_intent": true,
+    "planning_does_not_execute_or_write": true,
+    "user_override_has_priority": true,
+    "ambiguous_language_stops_before_action_intent": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "live Workbench language evidence is assessed before Taiji planning; only resolved evidence produces a non-executing editor.set_language intent, explicit user override wins, and ambiguous evidence asks"
+  },
+  "gap": {
+    "current": "language evidence can ground a proposed editor language intent, but the intent is not yet admitted and executed through the reversible UI policy",
+    "next": "run a real reversible IDE canary: preview, policy admission, execute, verify language state, checkpoint, and undo"
+  },
+  "boundary": "This Gate does not claim natural-language semantic resolution, file editing, provider quality, CUDA, CI, open-domain gains, or AGI."
+}

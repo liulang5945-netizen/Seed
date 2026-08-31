@@ -2,12 +2,13 @@
 
 > 这是计划资料的总导航。路线只从 [active/SEED_DEVELOPMENT_ROADMAP_2026_08.md](active/SEED_DEVELOPMENT_ROADMAP_2026_08.md) 进入，即时动作只从 [03_CURRENT_EXECUTION.md](active/roadmap/03_CURRENT_EXECUTION.md) 读取；历史文档中的“下一步”一律不再生效。
 
-## 当前收敛结论（2026-08-30）
+## 当前收敛结论（2026-08-31）
 
-- W0–W6、W7-R1/R2 和 R5-S0 已形成当前基线；R3 页面层通过但 Windows shell 为 `tool-blocked`，R4 为 `hardware-blocked`。
-- R3/R4 保持独立补证线，不再把工具或硬件缺失当作整个项目停工条件；它们未通过时仍不得发布对应声明。
-- R5-G1 已分别冻结知识内化与效应器成长 manifest；R5A-S0 转换器 DTO 与确定性 replay Gate 已通过，R5A-S1 原生学习器/检查点/留出集/消融 canary 已完成，跨平台 CI 已全绿，当前唯一开发动作是 R5A-S2 真实 Workbench 纵向证据。
-- 核心架构讨论继续留在 active/reference；2026-08-29 及以前的 Gate 过程和旧 W7 蓝图已归档。
+- W0–W6、W7-R1/R2 已形成基线；R3 页面层已有证据但 Windows shell 为 `tool-blocked`，R4 CUDA 为 `hardware-blocked`。
+- R5A/R5B 和 R5C-S0–S52 已建立知识、效应器与结构候选的验证、准入、rollback、checkpoint、lineage，以及显式 artifact consumption policy；新运行时默认 `verified-only`，历史 replay 只能显式使用 `legacy-compatible`。
+- 当前最大能力缺口已经从“结构机制不存在”转为“自然语言任务虽可形成 Goal evidence、resolved evidence、语言 evidence、受限语义分解，provider 边界、确定性 lifecycle seam、真实 Workbench interaction-group 闭环、互补组收益、train-only 选组稳定性、同 capability 对的 context 留出迁移、异质成员/未见组合的受限 transfer、三轮 future Workbench 对照、三轮真实在线 Outcome 写回/准入/回滚、在线反馈到结构候选的受控桥接、首次结构扩容净收益、两个独立周期的连续结构增长、editor+MCP 跨域结构收益与旧 workspace 保留，以及 terminal 三域治理/审批/资源/失败恢复已建立；P2-8 完成单步闭环，P2-9 完成声明式 semantic grounding，P2-10 完成无外部绑定的多步 grounding/recovery，P2-11 完成无外部最终绑定的 IDE 语言链，但自然语言受控写入、真实 provider 质量和更广开放域收益仍未验收”；S52 已收口 artifact 基础设施线，主线转入可验证的学习/自进化收益，不继续无限增加 artifact-store 微分片。
+- provider watchdog、interaction-group、小型模拟 Gate、Windows 客户端、Legacy 残留清理和 CUDA 均保留在阶段总计划中；CI 按用户决定暂缓，不得把未运行写成通过。
+- 核心架构讨论继续留在 active/reference；完成 Gate 的过程文档将按新的收敛计划批量归档。
 
 ## 目录职责
 
@@ -37,7 +38,8 @@
 | [01_SCOPE_AND_PHASES.md](active/roadmap/01_SCOPE_AND_PHASES.md) | 目标、原则、P0–P7 阶段和退出门槛 |
 | [02_GATES_AND_CI.md](active/roadmap/02_GATES_AND_CI.md) | 当前仍有效的门禁、CI 纪律、停止项和阻塞边界；不再承载事故日志 |
 | [03_CURRENT_EXECUTION.md](active/roadmap/03_CURRENT_EXECUTION.md) | 当前实现快照和当前唯一下一步 |
-| [04_EXECUTION_PLAN.md](active/roadmap/04_EXECUTION_PLAN.md) | C0–C8 后续工作包、依赖、产物和验收；不替代唯一下一步 |
+| [04_EXECUTION_PLAN.md](active/roadmap/04_EXECUTION_PLAN.md) | W7-R5 已完成分片、原始 Gate 与历史阶段定义的证据索引 |
+| [62_POST_S51_PROJECT_CONVERGENCE_20260831.md](active/roadmap/62_POST_S51_PROJECT_CONVERGENCE_20260831.md) | S52 后的端到端 Workbench、语言、自进化收益、工程、产品、CI 与 CUDA 顺序 |
 
 ## 归档原则
 

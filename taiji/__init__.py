@@ -11,6 +11,18 @@ from .affordance import (
     LearnedAffordanceFeatures,
     WorldAffordanceGroundingProducer,
 )
+from .artifact_consumption import (
+    ARTIFACT_CONSUMPTION_AUDIT_FORMAT,
+    ARTIFACT_CONSUMPTION_MODE_LEGACY_COMPATIBLE,
+    ARTIFACT_CONSUMPTION_MODE_VERIFIED_ONLY,
+    ARTIFACT_CONSUMPTION_MODES,
+    ARTIFACT_CONSUMPTION_POLICY_FORMAT,
+    ARTIFACT_CONSUMPTION_STATUSES,
+    ArtifactConsumptionAudit,
+    ArtifactConsumptionPolicy,
+    artifact_consumption_audit_digest,
+    artifact_consumption_policy_digest,
+)
 from .assembly_evaluation import (
     AssemblyRelationEvaluationConfig,
     AssemblyRelationEvaluator,
@@ -119,6 +131,26 @@ from .homeostasis import (
     HomeostaticDrive,
 )
 from .input_boundary import INPUT_BOUNDARY_FORMAT, InputFrame, InputTrace
+from .interaction_group_learning import (
+    INTERACTION_GROUP_LEARNING_CHECKPOINT_FORMAT,
+    InteractionGroupSelection,
+    InteractionGroupUtilityLearner,
+)
+from .interaction_group_online import (
+    INTERACTION_GROUP_ONLINE_CHECKPOINT_FORMAT,
+    INTERACTION_GROUP_ONLINE_MODEL_REVISION,
+    InteractionGroupOnlineAdmission,
+    InteractionGroupOnlineLearner,
+    InteractionGroupOutcomeFeedback,
+)
+from .interaction_group_transfer import (
+    INTERACTION_GROUP_TRANSFER_CHECKPOINT_FORMAT,
+    INTERACTION_GROUP_TRANSFER_MODEL_REVISION,
+    InteractionGroupMemberEvidence,
+    InteractionGroupTransferCandidate,
+    InteractionGroupTransferLearner,
+    build_member_evidence,
+)
 from .interaction_groups import (
     INTERACTION_GROUP_CHECKPOINT_FORMAT,
     INTERACTION_GROUP_ESTIMATOR_REVISION,
@@ -133,6 +165,13 @@ from .interaction_groups import (
     InteractionTraceEpisode,
     InteractionTraceEvent,
     project_native_adapter_episode,
+)
+from .interaction_structural_bridge import (
+    INTERACTION_STRUCTURAL_BRIDGE_FORMAT,
+    INTERACTION_STRUCTURAL_BRIDGE_REVISION,
+    InteractionStructuralBridge,
+    InteractionStructuralBridgeConfig,
+    InteractionStructuralPressure,
 )
 from .internalization import (
     INTERNALIZATION_ALLOWED_STATUSES,
@@ -263,6 +302,14 @@ from .semantic_memory import (
     SEMANTIC_MEMORY_CHECKPOINT_FORMAT,
     SemanticMemoryLearner,
 )
+from .semantic_provider import (
+    SEMANTIC_PROVIDER_AMBIGUITY_CEILING,
+    SEMANTIC_PROVIDER_CONFIDENCE_FLOOR,
+    SEMANTIC_PROVIDER_EVIDENCE_FORMAT,
+    SEMANTIC_PROVIDER_EVIDENCE_VERSION,
+    SEMANTIC_PROVIDER_MAX_STEPS,
+    SemanticEvidenceProposal,
+)
 from .sparse import SparseSynapses
 from .state import (
     MemoryRecall,
@@ -382,6 +429,27 @@ from .structural_validation_batch import (
 from .structural_validation_measurements import (
     STRUCTURAL_VALIDATION_MEASUREMENT_FORMAT,
     StructuralValidationMeasurements,
+)
+from .structural_workspace import (
+    STRUCTURAL_WORKSPACE_CHECKPOINT_FORMAT,
+    STRUCTURAL_WORKSPACE_MODEL_REVISION,
+    StructuralWorkspaceRouter,
+)
+from .task_decomposition import (
+    TASK_DECOMPOSITION_FORMAT,
+    TASK_DECOMPOSITION_MAX_STEPS,
+    TASK_DECOMPOSITION_STATUSES,
+    TASK_DECOMPOSITION_VERSION,
+    TaskDecomposition,
+    TaskStepEvidence,
+)
+from .task_interpretation import (
+    TASK_INTERPRETATION_FORMAT,
+    TASK_INTERPRETATION_STATUSES,
+    TASK_INTERPRETATION_VERSION,
+    TASK_PLANNER_CONFIDENCE_FLOOR,
+    TaskInterpretation,
+    task_input_digest,
 )
 from .workspace import (
     WorkspaceCollaborationEvaluator,
@@ -596,8 +664,24 @@ __all__ = [
     "SparseSynapses",
     "SemanticMemoryLearner",
     "SEMANTIC_MEMORY_CHECKPOINT_FORMAT",
+    "SEMANTIC_PROVIDER_AMBIGUITY_CEILING",
+    "SEMANTIC_PROVIDER_CONFIDENCE_FLOOR",
+    "SEMANTIC_PROVIDER_EVIDENCE_FORMAT",
+    "SEMANTIC_PROVIDER_EVIDENCE_VERSION",
+    "SEMANTIC_PROVIDER_MAX_STEPS",
+    "SemanticEvidenceProposal",
     "Taiji",
     "TaijiConfig",
+    "ARTIFACT_CONSUMPTION_POLICY_FORMAT",
+    "ARTIFACT_CONSUMPTION_AUDIT_FORMAT",
+    "ARTIFACT_CONSUMPTION_MODE_VERIFIED_ONLY",
+    "ARTIFACT_CONSUMPTION_MODE_LEGACY_COMPATIBLE",
+    "ARTIFACT_CONSUMPTION_MODES",
+    "ARTIFACT_CONSUMPTION_STATUSES",
+    "ArtifactConsumptionPolicy",
+    "ArtifactConsumptionAudit",
+    "artifact_consumption_policy_digest",
+    "artifact_consumption_audit_digest",
     "TaijiConsolidation",
     "TaijiDecision",
     "TaijiEnvironment",
@@ -699,19 +783,50 @@ __all__ = [
     "INPUT_BOUNDARY_FORMAT",
     "InputFrame",
     "InputTrace",
+    "TASK_INTERPRETATION_FORMAT",
+    "TASK_INTERPRETATION_STATUSES",
+    "TASK_INTERPRETATION_VERSION",
+    "TASK_PLANNER_CONFIDENCE_FLOOR",
+    "TaskInterpretation",
+    "task_input_digest",
+    "TASK_DECOMPOSITION_FORMAT",
+    "TASK_DECOMPOSITION_MAX_STEPS",
+    "TASK_DECOMPOSITION_STATUSES",
+    "TASK_DECOMPOSITION_VERSION",
+    "TaskDecomposition",
+    "TaskStepEvidence",
     "INTERACTION_GROUP_CHECKPOINT_FORMAT",
     "INTERACTION_GROUP_ESTIMATOR_REVISION",
     "INTERACTION_TRACE_FORMAT",
+    "INTERACTION_GROUP_TRANSFER_CHECKPOINT_FORMAT",
+    "INTERACTION_GROUP_TRANSFER_MODEL_REVISION",
     "InteractionGroupEvaluation",
     "InteractionGroupEvaluator",
     "InteractionGroupEvaluatorConfig",
+    "InteractionGroupMemberEvidence",
+    "INTERACTION_GROUP_LEARNING_CHECKPOINT_FORMAT",
     "InteractionGroupRecord",
+    "InteractionGroupSelection",
     "InteractionGroupState",
     "InteractionGroupTombstone",
+    "InteractionGroupTransferCandidate",
+    "InteractionGroupTransferLearner",
+    "InteractionGroupUtilityLearner",
+    "INTERACTION_GROUP_ONLINE_CHECKPOINT_FORMAT",
+    "INTERACTION_GROUP_ONLINE_MODEL_REVISION",
+    "InteractionGroupOnlineAdmission",
+    "InteractionGroupOnlineLearner",
+    "InteractionGroupOutcomeFeedback",
+    "INTERACTION_STRUCTURAL_BRIDGE_FORMAT",
+    "INTERACTION_STRUCTURAL_BRIDGE_REVISION",
+    "InteractionStructuralBridge",
+    "InteractionStructuralBridgeConfig",
+    "InteractionStructuralPressure",
     "InteractionTraceCorpus",
     "InteractionTraceEpisode",
     "InteractionTraceEvent",
     "project_native_adapter_episode",
+    "build_member_evidence",
     "HOMEOSTASIS_CHECKPOINT_FORMAT",
     "LearningState",
     "LearnedAffordanceFeatures",
@@ -725,6 +840,9 @@ __all__ = [
     "WorkspaceRoutingExample",
     "WorkspaceCompositionSample",
     "WorkspaceCollaborationEvaluator",
+    "STRUCTURAL_WORKSPACE_CHECKPOINT_FORMAT",
+    "STRUCTURAL_WORKSPACE_MODEL_REVISION",
+    "StructuralWorkspaceRouter",
     "WorkingMemoryItem",
     "WorldState",
     "WorldAction",

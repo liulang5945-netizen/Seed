@@ -1,0 +1,20 @@
+{
+  "format": "taiji-w7-p3-1-semantic-provider-boundary-v1",
+  "metrics": {
+    "provider_proposal_is_content_addressed": true,
+    "taiji_decides_goal_and_decomposition": true,
+    "provider_cannot_inject_execution": true,
+    "uncertainty_stops_before_decomposition": true,
+    "checkpoint_preserves_provider_evidence": true,
+    "provider_boundary_has_no_workbench_side_effect": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "an optional semantic provider may submit only content-addressed goal and step evidence; Taiji validates live input and uncertainty, derives the Goal/decomposition, and keeps tool, ActionIntent, policy, and execution ownership inside Taiji"
+  },
+  "gap": {
+    "current": "the provider boundary is contract-level and tested with a deterministic proposal; provider language quality and packaged-client artifact rotation are not yet validated",
+    "next": "evaluate provider artifact rotation and same-task decision invariance"
+  },
+  "boundary": "This Gate does not claim Qwen or another provider is Taiji's brain, does not claim autonomous open-domain IDE execution, and does not cover CUDA, CI, or AGI."
+}

@@ -1,0 +1,20 @@
+{
+  "format": "taiji-w7-p2-task-interpretation-goal-evidence-v1",
+  "endpoint": "/api/chat/workbench/interpret",
+  "status_code": 200,
+  "metrics": {
+    "prose_is_admitted_as_taiji_evidence": true,
+    "goal_is_projected_from_evidence": true,
+    "evidence_is_content_addressed_and_uncertain": true,
+    "interpretation_cannot_execute_or_select_tool": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "natural language becomes content-addressed Taiji Goal evidence with visible uncertainty, while planner/action/tool execution remains a later owned stage"
+  },
+  "gap": {
+    "current": "TaskInterpretation preserves a goal candidate but does not resolve semantics",
+    "next": "feed goal evidence, Workbench affordances and resource/risk state into planner"
+  },
+  "boundary": "This Gate proves the Taiji-owned interpretation boundary only; it does not claim autonomous tool planning, IDE execution, provider quality, CUDA, CI, or AGI."
+}

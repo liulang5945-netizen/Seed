@@ -23,7 +23,10 @@ from scripts.training.eval_taiji_workbench_multi_region_batch import (  # noqa: 
     _build_runtime,
     _schedule_requests,
 )
-from taiji import StructuralValidationArtifactStore  # noqa: E402
+from taiji import (  # noqa: E402
+    ArtifactConsumptionPolicy,
+    StructuralValidationArtifactStore,
+)
 from taiji.adapter import _checkpoint_digest  # noqa: E402
 
 REPORT_FORMAT = "taiji-w7-r5c-s42-runtime-artifact-store-bridge-v1"
@@ -56,6 +59,9 @@ def evaluate() -> dict[str, object]:
     store_root = PROJECT_ROOT / "output" / "manual-r5-canary" / f"s42-bridge-{suffix}"
     checkpoint_path = PROJECT_ROOT / "output" / "manual-r5-canary" / f"s42-bridge-runtime-{suffix}.pt"
     store = StructuralValidationArtifactStore(store_root)
+    legacy_policy = ArtifactConsumptionPolicy.legacy_compatible(
+        reason="historical-s42-bridge-canary"
+    )
     try:
         store.put(artifact)
         runtime.save(checkpoint_path)
@@ -68,6 +74,7 @@ def evaluate() -> dict[str, object]:
                 artifact_store=store,
                 artifact_digests_by_candidate={"candidate:foreign": artifact.artifact_digest},
                 replays_by_candidate={},
+                artifact_consumption_policy=legacy_policy,
             )
         except ValueError as exc:
             unknown_rejected = "outside the selected batch" in str(exc)
@@ -83,6 +90,7 @@ def evaluate() -> dict[str, object]:
                 artifact_store=store,
                 artifact_digests_by_candidate={candidate_id: "0" * 64},
                 replays_by_candidate={candidate_id: replay},
+                artifact_consumption_policy=legacy_policy,
             )
         except FileNotFoundError:
             missing_rejected = True
@@ -97,12 +105,14 @@ def evaluate() -> dict[str, object]:
             artifact_store=handoff,
             artifact_digests_by_candidate={candidate_id: artifact.artifact_digest},
             replays_by_candidate={candidate_id: replay},
+            artifact_consumption_policy=legacy_policy,
         )
         repeated = restored.continue_structural_candidate_batch_from_artifact_store(
             batch.batch_id,
             artifact_store=store,
             artifact_digests_by_candidate={candidate_id: artifact.artifact_digest},
             replays_by_candidate={candidate_id: replay},
+            artifact_consumption_policy=legacy_policy,
         )
         metrics = {
             "unknown_key_rejected_before_store_resolution": unknown_rejected and unknown_atomic,

@@ -1,0 +1,18 @@
+{
+  "format": "taiji-w7-p2-task-decomposition-v1",
+  "metrics": {
+    "semantic_decomposition_is_bound_to_goal": true,
+    "semantic_evidence_contains_no_execution_binding": true,
+    "taiji_grounds_each_step_without_execution": true,
+    "decomposition_checkpoint_roundtrip_is_stable": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "semantic evidence may describe a bounded multi-step task and survive a checkpoint, but it cannot inject tools or intents; Taiji grounds each step against live Workbench affordances without executing it"
+  },
+  "gap": {
+    "current": "multi-step grounding is proven only when semantic evidence is already resolved and bindings are supplied by the Workbench boundary",
+    "next": "connect the language provider to this tool-free semantic evidence contract, then evaluate provider rotation and same-task decision invariance"
+  },
+  "boundary": "This Gate does not claim ordinary prose is autonomously resolved, provider output quality, unrestricted execution, CUDA, CI, open-domain gains, or AGI."
+}

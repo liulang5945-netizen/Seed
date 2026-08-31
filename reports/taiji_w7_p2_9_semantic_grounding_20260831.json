@@ -1,0 +1,66 @@
+{
+  "format": "taiji-w7-p2-9-semantic-grounding-v1",
+  "task": "Taiji-owned semantic-slot grounding without external parameter bindings",
+  "runs": [
+    {
+      "seed": 11,
+      "status": "completed",
+      "selected_kind": "workspace.read",
+      "selected_source_goal_id": "goal:187d55740d7ec1978e1aca7e",
+      "goal_id": "goal:187d55740d7ec1978e1aca7e",
+      "grounding_source": "taiji-semantic-contract",
+      "grounding_count": 1,
+      "execution_status": "completed",
+      "step_success": true,
+      "checkpoint_saved": true,
+      "restored_checkpoint_name": "seed:.p2-9-semantic-grounding-11.pt",
+      "workbench_event_count": 4,
+      "provider_has_no_final_binding": true
+    },
+    {
+      "seed": 29,
+      "status": "completed",
+      "selected_kind": "workspace.read",
+      "selected_source_goal_id": "goal:187d55740d7ec1978e1aca7e",
+      "goal_id": "goal:187d55740d7ec1978e1aca7e",
+      "grounding_source": "taiji-semantic-contract",
+      "grounding_count": 1,
+      "execution_status": "completed",
+      "step_success": true,
+      "checkpoint_saved": true,
+      "restored_checkpoint_name": "seed:.p2-9-semantic-grounding-29.pt",
+      "workbench_event_count": 4,
+      "provider_has_no_final_binding": true
+    },
+    {
+      "seed": 47,
+      "status": "completed",
+      "selected_kind": "workspace.read",
+      "selected_source_goal_id": "goal:187d55740d7ec1978e1aca7e",
+      "goal_id": "goal:187d55740d7ec1978e1aca7e",
+      "grounding_source": "taiji-semantic-contract",
+      "grounding_count": 1,
+      "execution_status": "completed",
+      "step_success": true,
+      "checkpoint_saved": true,
+      "restored_checkpoint_name": "seed:.p2-9-semantic-grounding-47.pt",
+      "workbench_event_count": 4,
+      "provider_has_no_final_binding": true
+    }
+  ],
+  "metrics": {
+    "three_independent_seeds": true,
+    "taiji_contract_grounding_used": true,
+    "taiji_creates_intent_without_external_binding": true,
+    "bounded_workbench_execution_succeeds": true,
+    "checkpoint_saves_and_restores": true,
+    "provider_cannot_supply_final_binding": true,
+    "unresolved_grounding_stops_before_workbench": true,
+    "provider_execution_fields_fail_closed": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "Taiji must select a unique live capability and derive its execution parameters from registered semantic contracts without caller parameter bindings; unresolved or executable provider evidence must stop before Workbench mutation"
+  },
+  "boundary": "This Gate validates declarative grounding for one read-only semantic task. It does not claim real provider quality, broad language coverage, multi-step autonomy, write/terminal parameter synthesis, CUDA, CI, or open-domain self-evolution."
+}

@@ -1,0 +1,41 @@
+{
+  "format": "taiji-w7-p2-reversible-ide-canary-v1",
+  "metrics": {
+    "read_outcome_provided_content_digest": true,
+    "language_plan_reaches_and_executes_editor_selection": true,
+    "patch_is_previewed_approved_and_applied": true,
+    "checkpoint_restores_language_and_undo_state": true,
+    "recovery_restores_file_and_keeps_read_capability": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "a resolved Taiji task reads a real source file, grounds an IDE language selection, previews and approves a reversible patch, executes it, persists language and undo state, then recovers after checkpoint restart"
+  },
+  "trace": {
+    "target_path": "api/app.py",
+    "read_digest": "14f006a33585ced70b66de2cf03a98bb2bed3053c7b448eb3178d35a65302ef3",
+    "updated_digest": "4df2949e86420b5b55b3db87cafd7808062442b3eab3996aa97d2ef33fb9b53b",
+    "language_id": "python",
+    "audit_phases": [
+      "planned",
+      "policy",
+      "executing",
+      "outcome",
+      "planned",
+      "policy",
+      "executing",
+      "outcome",
+      "planned",
+      "policy",
+      "planned",
+      "policy",
+      "executing",
+      "outcome"
+    ]
+  },
+  "gap": {
+    "current": "the real IDE canary is executable for resolved task evidence, but ordinary natural-language semantic resolution and multi-step task decomposition remain gated",
+    "next": "connect a bounded semantic resolver to this canary, then verify restart continuation, failure recovery, budget exhaustion, and old-task retention"
+  },
+  "boundary": "This Gate does not claim open-domain autonomy, unrestricted file writing, provider quality, CUDA, CI, structural growth benefit, or AGI."
+}

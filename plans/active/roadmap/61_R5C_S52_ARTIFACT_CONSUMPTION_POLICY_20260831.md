@@ -26,4 +26,6 @@
 - CPU canary：`scripts/training/eval_taiji_artifact_consumption_policy.py`
 - 报告：`reports/taiji_w7_r5c_s52_artifact_consumption_policy_20260831.json`
 
-本 slice 是 S51 之后的策略收敛节点；在 policy 默认边界明确前，不改变现有默认 legacy 兼容，不处理 CI、CUDA、前端、Windows shell、自动删除、无限扩张、开放域收益或通用智能声明。
+本 slice 已于 2026-08-31 通过 CPU canary，确认新运行时默认 `verified-only`；legacy 只作为带 reason/digest/audit 的显式兼容路径。它是 artifact 基础设施线的默认收口节点，不处理 CI、CUDA、前端、Windows shell、自动删除、无限扩张、开放域收益或通用智能声明。
+
+S52 通过后不自动创建 S53 式 store/retention 微分片。唯一后继切换为 [阶段总计划 P2](62_POST_S51_PROJECT_CONVERGENCE_20260831.md#p2自然语言到-workbench-的-taiji-owned-纵向闭环) 的 red Gate：证明并补齐自然语言输入在没有预制 `ActionIntent` 时无法自主完成受控 Workbench/IDE 任务的缺口。

@@ -25,6 +25,7 @@ from scripts.training.eval_taiji_workbench_multi_region_batch import (  # noqa: 
     _schedule_requests,
 )
 from taiji import (  # noqa: E402
+    ArtifactConsumptionPolicy,
     StructuralLineageRetentionPolicy,
     StructuralValidationArtifactStore,
 )
@@ -65,6 +66,9 @@ def evaluate() -> dict[str, object]:
 
     store_root = PROJECT_ROOT / "output" / "manual-r5-canary" / f"s45-store-{os.getpid()}"
     store = StructuralValidationArtifactStore(store_root)
+    legacy_policy = ArtifactConsumptionPolicy.legacy_compatible(
+        reason="historical-s45-retention-canary"
+    )
     paths = [
         PROJECT_ROOT / "output" / "manual-r5-canary" / f"s45-first-{os.getpid()}.pt",
         PROJECT_ROOT / "output" / "manual-r5-canary" / f"s45-second-{os.getpid()}.pt",
@@ -85,6 +89,7 @@ def evaluate() -> dict[str, object]:
             artifact_store=store,
             artifact_digests_by_candidate={first_id: first_artifact.artifact_digest},
             replays_by_candidate={first_id: first_replay},
+            artifact_consumption_policy=legacy_policy,
         )
 
         second_artifact, second_replay, _ = _build_artifact(
@@ -100,6 +105,7 @@ def evaluate() -> dict[str, object]:
             artifact_store=store,
             artifact_digests_by_candidate={second_id: second_artifact.artifact_digest},
             replays_by_candidate={second_id: second_replay},
+            artifact_consumption_policy=legacy_policy,
         )
         second_rollback = runtime.rollback_structural_candidate_batch(terminal_batch_id, second_id)
         first_rollback = runtime.rollback_structural_candidate_batch(terminal_batch_id, first_id)
@@ -128,6 +134,7 @@ def evaluate() -> dict[str, object]:
                 artifact_store=store,
                 artifact_digests_by_candidate={second_id: second_external.artifact_digest},
                 replays_by_candidate={second_id: second_replay},
+                artifact_consumption_policy=legacy_policy,
             )
         except ValueError as exc:
             terminal_replay_rejected = "unknown structural candidate batch" in str(exc)

@@ -1,0 +1,35 @@
+{
+  "format": "taiji-w7-p4-2-small-simulation-gate-v1",
+  "metrics": {
+    "state_transition_error_to_growth_proposal": true,
+    "cross_region_credit_changes_route_selection": true,
+    "outcome_credit_changes_content_selection": true,
+    "neuron_growth_rollback_restores_parent_state": true,
+    "structural_growth_rollback_restores_budget_and_lineage": true,
+    "checkpoint_continuation_preserves_learning_state": true,
+    "resource_and_budget_guards_fail_closed": true
+  },
+  "component_gates": {
+    "auto_growth": {
+      "passed": true,
+      "criterion": "persistent substrate prediction error plus holdout transfer and available resources must emit a non-semantic neuron proposal; the runtime ledger must validate budget and checkpoint trial, the new unit must improve a holdout signal and fail under lesion, and the parent structure must be recoverable by reverse rollback"
+    },
+    "cross_region_learning": {
+      "passed": true,
+      "criterion": "cross-region route selection must learn from prediction error, holdout transfer and resource state; outperform fixed-full and random baselines on holdout evidence; obey resource feasibility; and survive checkpoint continuation plus connection/region lesion"
+    },
+    "content_credit": {
+      "passed": true,
+      "criterion": "real adapter outcomes demote failed content, promote successful content, and restore one-time credit state from checkpoint"
+    },
+    "structural_growth": {
+      "passed": true,
+      "criterion": "online branch birth must consume a versioned structural budget only after checkpoint and lesion validation, preserve a parent snapshot for native-checkpoint rollback, and reject growth without budget"
+    }
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "bounded native simulations must expose an evidence-driven state transition, credit updates that change selection, explicit resource/budget rejection, rollback to the parent state, and checkpoint continuation without mutation outside the admitted transition"
+  },
+  "boundary": "This is a deterministic closed-world CPU mechanism gate. It does not claim a real-provider quality gain, open-domain transfer, unrestricted self-evolution, CUDA performance, or general intelligence."
+}

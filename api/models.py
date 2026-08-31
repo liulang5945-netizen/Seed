@@ -126,6 +126,74 @@ class ChatWorkbenchRequest(ChatRequest):
     intent: WorkbenchIntentRequest
 
 
+class TaskInterpretationRequest(BaseModel):
+    """Natural-language task evidence request with no execution authority."""
+
+    prompt: str
+    history: list[list[str]] = []
+    constraints: list[str] = []
+
+
+class TaskPlanningRequest(TaskInterpretationRequest):
+    """Natural-language planning request bound to current structured affordances."""
+
+    snapshot_id: str
+    parameter_bindings: dict[str, dict] = {}
+    novelty: float = 0.0
+    resource_budget: float = 1.0
+
+
+class TaskDecompositionRequest(BaseModel):
+    """Semantic step evidence with no tool or capability execution binding."""
+
+    steps: list[dict[str, Any]] = []
+    confidence: float | None = None
+    ambiguity: float | None = None
+    status: str = "resolved"
+    provenance: str = "taiji.semantic"
+
+
+class SemanticProviderEvidenceRequest(BaseModel):
+    """Provider semantic evidence submitted to Taiji for validation only."""
+
+    prompt: str
+    evidence: dict[str, Any]
+
+
+class TaskSequencePlanningRequest(BaseModel):
+    """Ground admitted semantic steps against current Workbench affordances."""
+
+    snapshot_id: str
+    parameter_bindings: list[dict[str, dict]] | None = None
+    novelty: float = 0.0
+    resource_budget: float = 1.0
+
+
+class NaturalLanguageWorkbenchTaskRequest(BaseModel):
+    """Run a bounded Taiji-owned task from semantic evidence, not an intent."""
+
+    prompt: str
+    semantic_evidence: dict[str, Any]
+    snapshot_id: str
+    parameter_bindings: list[dict[str, dict]] = []
+    loop_id: str
+    max_steps: int = 1
+    max_budget_units: float = 1.0
+    novelty: float = 0.0
+    resource_budget: float = 1.0
+    learn: bool = False
+
+
+class LanguagePlanningRequest(BaseModel):
+    """Plan a language selection from current Taiji task evidence and file evidence."""
+
+    snapshot_id: str
+    path: str
+    lsp_language_id: str | None = None
+    novelty: float = 0.0
+    resource_budget: float = 1.0
+
+
 class FileSaveRequest(BaseModel):
     name: str
     content: str

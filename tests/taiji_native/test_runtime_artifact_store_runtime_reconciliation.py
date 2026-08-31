@@ -13,7 +13,11 @@ from scripts.training.eval_taiji_workbench_multi_region_batch import (
     _build_runtime,
     _schedule_requests,
 )
-from taiji import StructuralLineageRetentionPolicy, StructuralValidationArtifactStore
+from taiji import (
+    ArtifactConsumptionPolicy,
+    StructuralLineageRetentionPolicy,
+    StructuralValidationArtifactStore,
+)
 
 
 def _remove_directory(path: Path) -> None:
@@ -50,6 +54,9 @@ def test_runtime_store_reconciliation_distinguishes_missing_and_orphan() -> None
     before_retention_path = store_root.parent / f"s48-before-retention-{os.getpid()}.pt"
     after_retention_path = store_root.parent / f"s48-after-retention-{os.getpid()}.pt"
     store = StructuralValidationArtifactStore(store_root)
+    legacy_policy = ArtifactConsumptionPolicy.legacy_compatible(
+        reason="historical-s48-reconciliation-test"
+    )
     try:
         first_artifact, first_replay, _ = _build_artifact(
             runtime.model.architecture,
@@ -62,6 +69,7 @@ def test_runtime_store_reconciliation_distinguishes_missing_and_orphan() -> None
             artifact_store=store,
             artifact_digests_by_candidate={first_id: first_artifact.artifact_digest},
             replays_by_candidate={first_id: first_replay},
+            artifact_consumption_policy=legacy_policy,
         )
         second_artifact, second_replay, _ = _build_artifact(
             runtime.model.architecture,

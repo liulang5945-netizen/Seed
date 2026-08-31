@@ -12,7 +12,7 @@ from scripts.training.eval_taiji_workbench_multi_region_batch import (
     _build_runtime,
     _schedule_requests,
 )
-from taiji import StructuralValidationArtifactStore
+from taiji import ArtifactConsumptionPolicy, StructuralValidationArtifactStore
 from taiji.adapter import _checkpoint_digest
 
 
@@ -81,7 +81,7 @@ def test_verified_measurement_bridge_is_opt_in_and_all_or_nothing() -> None:
         before_strict_legacy = _checkpoint_digest(
             strict_legacy.model.architecture.native_checkpoint()
         )
-        with pytest.raises(ValueError):
+        with pytest.raises(FileNotFoundError):
             strict_legacy.continue_structural_candidate_batch_from_artifact_store(
                 legacy_batch_id,
                 artifact_store=legacy_store,
@@ -100,6 +100,9 @@ def test_verified_measurement_bridge_is_opt_in_and_all_or_nothing() -> None:
             artifact_store=legacy_store,
             artifact_digests_by_candidate={legacy_candidate_id: legacy_artifact.artifact_digest},
             replays_by_candidate={legacy_candidate_id: legacy_replay},
+            artifact_consumption_policy=ArtifactConsumptionPolicy.legacy_compatible(
+                reason="historical-replay-test"
+            ),
         )
         assert default_result["results"][legacy_candidate_id]["status"] == "admitted"
 
@@ -122,7 +125,7 @@ def test_verified_measurement_bridge_is_opt_in_and_all_or_nothing() -> None:
             partial_runtime.model.architecture.native_checkpoint()
         )
         before_partial_budget = partial_runtime.model.architecture.cognitive_snapshot().development.structural_budget
-        with pytest.raises(ValueError):
+        with pytest.raises(FileNotFoundError):
             partial_runtime.continue_structural_candidate_batch_from_artifact_store(
                 partial_batch_id,
                 artifact_store=partial_store,

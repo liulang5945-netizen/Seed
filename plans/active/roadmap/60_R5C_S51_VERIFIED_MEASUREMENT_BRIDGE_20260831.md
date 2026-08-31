@@ -2,7 +2,7 @@
 
 ## 目标
 
-把 S49 的 measurement-fact sidecar 与 runtime 消费边界连接起来：外部 store bridge 增加显式 `require_verified_measurements` 严格模式，只有 artifact 本体和匹配 sidecar 均通过独立校验时才允许消费。默认模式继续兼容已有 artifact-only legacy 证据，避免历史 checkpoint 被隐式破坏。
+把 S49 的 measurement-fact sidecar 与 runtime 消费边界连接起来：外部 store bridge 增加显式 `require_verified_measurements` 严格模式，只有 artifact 本体和匹配 sidecar 均通过独立校验时才允许消费。S51 时代的兼容调用继续支持已有 artifact-only legacy 证据；当前默认边界已由 S52 的显式 policy 收口，避免历史 checkpoint 被隐式破坏。
 
 ## 设计边界
 

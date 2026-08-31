@@ -1,0 +1,439 @@
+{
+  "format": "taiji-w7-p4-8-online-interaction-writeback-v1",
+  "task": "native online Outcome writeback, admission, rollback, and restart continuation",
+  "learner_seeds": [
+    11,
+    29,
+    47
+  ],
+  "online_rounds": [
+    "online-be",
+    "online-bf",
+    "online-ce"
+  ],
+  "runs": [
+    {
+      "seed": 11,
+      "rounds": [
+        {
+          "round": 1,
+          "family": "online-be",
+          "kind": "success",
+          "candidate_id": "transfer-group:145339db789015ea7ecd8eaa",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "eb1082530d6b317df6f5d6b8e45797bbee36df09abde8ffe204c58268ed839bf",
+          "outcome_id": "r2-s2-online-online-be-seed-11:outcome:4:r2-s2-online-online-be-seed-11:workflow-outcome",
+          "event_ids": [
+            "r2-s2-online-online-be-seed-11:event:3",
+            "r2-s2-online-online-be-seed-11:event:4"
+          ],
+          "outcome_reward": 1.0,
+          "outcome_success": true,
+          "outcome_provenance": "workbench-workflow-adjudication",
+          "derived_task_score": 1.0,
+          "realized_interaction": 0.6000000000000001,
+          "score_source": "native Workbench raw action success/status projection",
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "observation_count_before": 5,
+          "observation_count_after": 6,
+          "model_changed_on_apply": true,
+          "restart_admission_statuses": [
+            "applied"
+          ],
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true,
+          "raw_action_success": [
+            true,
+            true
+          ],
+          "writeback_lesion_keeps_candidate": true
+        },
+        {
+          "round": 2,
+          "family": "online-bf",
+          "kind": "failure",
+          "candidate_id": "transfer-group:b515b1e835c6a4dc6118346f",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "feedback_id": "735fa4be9c18e7987f611e6a4a9dabcc9ab65fa3bd2970a3be41192cf5698481",
+          "outcome_id": "r2-s2-online-online-bf-seed-11:outcome:4:r2-s2-online-online-bf-seed-11:workflow-outcome",
+          "event_ids": [
+            "r2-s2-online-online-bf-seed-11:event:3",
+            "r2-s2-online-online-bf-seed-11:event:4"
+          ],
+          "outcome_reward": -1.0,
+          "outcome_success": false,
+          "outcome_provenance": "workbench-workflow-adjudication",
+          "derived_task_score": -1.0,
+          "realized_interaction": -1.0,
+          "score_source": "native Workbench raw action success/status projection",
+          "admission_status": "rejected",
+          "admission_reason": "outcome_unsuccessful",
+          "observation_count_before": 6,
+          "observation_count_after": 6,
+          "model_changed_on_apply": false,
+          "restart_admission_statuses": [
+            "applied",
+            "rejected"
+          ],
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true,
+          "raw_action_success": [
+            true,
+            false
+          ]
+        },
+        {
+          "round": 3,
+          "family": "online-ce",
+          "kind": "success",
+          "candidate_id": "transfer-group:61d5583b886b40a97139fe73",
+          "member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+          "outcome_id": "r2-s2-online-online-ce-seed-11:outcome:4:r2-s2-online-online-ce-seed-11:workflow-outcome",
+          "event_ids": [
+            "r2-s2-online-online-ce-seed-11:event:3",
+            "r2-s2-online-online-ce-seed-11:event:4"
+          ],
+          "outcome_reward": 1.0,
+          "outcome_success": true,
+          "outcome_provenance": "workbench-workflow-adjudication",
+          "derived_task_score": 1.0,
+          "realized_interaction": 0.6000000000000001,
+          "score_source": "native Workbench raw action success/status projection",
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "observation_count_before": 6,
+          "observation_count_after": 7,
+          "model_changed_on_apply": true,
+          "restart_admission_statuses": [
+            "applied",
+            "rejected",
+            "applied"
+          ],
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true,
+          "raw_action_success": [
+            true,
+            true
+          ]
+        },
+        {
+          "round": "rollback",
+          "target_feedback_id": "3000e69dc839ec4725afc61c31022fcd3f0b9e9e142327106967c8ae4221305b",
+          "status": "rolled_back",
+          "reason": "explicit_trial_rollback",
+          "restart_statuses": [
+            "applied",
+            "rejected",
+            "rolled_back"
+          ],
+          "admitted_observation_count_after_rollback": 6
+        }
+      ],
+      "holdout_writeback_rejected": true,
+      "holdout_candidate_remained_unobserved": true,
+      "rollback_parent_roundtrip": true,
+      "old_train_lineage": true,
+      "old_train_records_retained": true
+    },
+    {
+      "seed": 29,
+      "rounds": [
+        {
+          "round": 1,
+          "family": "online-be",
+          "kind": "success",
+          "candidate_id": "transfer-group:145339db789015ea7ecd8eaa",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "0a3c7bbaefe9020fef36f1da573a267bae9f1f445f576b84c0f49b2a4f0c35ad",
+          "outcome_id": "r2-s2-online-online-be-seed-29:outcome:4:r2-s2-online-online-be-seed-29:workflow-outcome",
+          "event_ids": [
+            "r2-s2-online-online-be-seed-29:event:3",
+            "r2-s2-online-online-be-seed-29:event:4"
+          ],
+          "outcome_reward": 1.0,
+          "outcome_success": true,
+          "outcome_provenance": "workbench-workflow-adjudication",
+          "derived_task_score": 1.0,
+          "realized_interaction": 0.6000000000000001,
+          "score_source": "native Workbench raw action success/status projection",
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "observation_count_before": 5,
+          "observation_count_after": 6,
+          "model_changed_on_apply": true,
+          "restart_admission_statuses": [
+            "applied"
+          ],
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true,
+          "raw_action_success": [
+            true,
+            true
+          ],
+          "writeback_lesion_keeps_candidate": true
+        },
+        {
+          "round": 2,
+          "family": "online-bf",
+          "kind": "failure",
+          "candidate_id": "transfer-group:b515b1e835c6a4dc6118346f",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "feedback_id": "35e147e6e1f88134f9e957fcd2eb3237b953b1be9858de2a576014df4a54aa8f",
+          "outcome_id": "r2-s2-online-online-bf-seed-29:outcome:4:r2-s2-online-online-bf-seed-29:workflow-outcome",
+          "event_ids": [
+            "r2-s2-online-online-bf-seed-29:event:3",
+            "r2-s2-online-online-bf-seed-29:event:4"
+          ],
+          "outcome_reward": -1.0,
+          "outcome_success": false,
+          "outcome_provenance": "workbench-workflow-adjudication",
+          "derived_task_score": -1.0,
+          "realized_interaction": -1.0,
+          "score_source": "native Workbench raw action success/status projection",
+          "admission_status": "rejected",
+          "admission_reason": "outcome_unsuccessful",
+          "observation_count_before": 6,
+          "observation_count_after": 6,
+          "model_changed_on_apply": false,
+          "restart_admission_statuses": [
+            "applied",
+            "rejected"
+          ],
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true,
+          "raw_action_success": [
+            true,
+            false
+          ]
+        },
+        {
+          "round": 3,
+          "family": "online-ce",
+          "kind": "success",
+          "candidate_id": "transfer-group:61d5583b886b40a97139fe73",
+          "member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+          "outcome_id": "r2-s2-online-online-ce-seed-29:outcome:4:r2-s2-online-online-ce-seed-29:workflow-outcome",
+          "event_ids": [
+            "r2-s2-online-online-ce-seed-29:event:3",
+            "r2-s2-online-online-ce-seed-29:event:4"
+          ],
+          "outcome_reward": 1.0,
+          "outcome_success": true,
+          "outcome_provenance": "workbench-workflow-adjudication",
+          "derived_task_score": 1.0,
+          "realized_interaction": 0.6000000000000001,
+          "score_source": "native Workbench raw action success/status projection",
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "observation_count_before": 6,
+          "observation_count_after": 7,
+          "model_changed_on_apply": true,
+          "restart_admission_statuses": [
+            "applied",
+            "rejected",
+            "applied"
+          ],
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true,
+          "raw_action_success": [
+            true,
+            true
+          ]
+        },
+        {
+          "round": "rollback",
+          "target_feedback_id": "0090555b08c341606cb37d9a2a9a3aed36b3bc82d038ec2395e80f4e0e17b750",
+          "status": "rolled_back",
+          "reason": "explicit_trial_rollback",
+          "restart_statuses": [
+            "applied",
+            "rejected",
+            "rolled_back"
+          ],
+          "admitted_observation_count_after_rollback": 6
+        }
+      ],
+      "holdout_writeback_rejected": true,
+      "holdout_candidate_remained_unobserved": true,
+      "rollback_parent_roundtrip": true,
+      "old_train_lineage": true,
+      "old_train_records_retained": true
+    },
+    {
+      "seed": 47,
+      "rounds": [
+        {
+          "round": 1,
+          "family": "online-be",
+          "kind": "success",
+          "candidate_id": "transfer-group:145339db789015ea7ecd8eaa",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "740aa520ace451eec183e90e194adca61a7462effd094ed3c4531dcea46d8432",
+          "outcome_id": "r2-s2-online-online-be-seed-47:outcome:4:r2-s2-online-online-be-seed-47:workflow-outcome",
+          "event_ids": [
+            "r2-s2-online-online-be-seed-47:event:3",
+            "r2-s2-online-online-be-seed-47:event:4"
+          ],
+          "outcome_reward": 1.0,
+          "outcome_success": true,
+          "outcome_provenance": "workbench-workflow-adjudication",
+          "derived_task_score": 1.0,
+          "realized_interaction": 0.6000000000000001,
+          "score_source": "native Workbench raw action success/status projection",
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "observation_count_before": 5,
+          "observation_count_after": 6,
+          "model_changed_on_apply": true,
+          "restart_admission_statuses": [
+            "applied"
+          ],
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true,
+          "raw_action_success": [
+            true,
+            true
+          ],
+          "writeback_lesion_keeps_candidate": true
+        },
+        {
+          "round": 2,
+          "family": "online-bf",
+          "kind": "failure",
+          "candidate_id": "transfer-group:b515b1e835c6a4dc6118346f",
+          "member_ids": [
+            "workbench-owner:4983e0f18c1b0d53b8073d63",
+            "workbench-owner:d63fcaa2e7cab50bd2b8cb1c"
+          ],
+          "feedback_id": "760bbfbbbf2a6c43eb4a47ccd4972927755db95a111bc3240911723b1d7c253b",
+          "outcome_id": "r2-s2-online-online-bf-seed-47:outcome:4:r2-s2-online-online-bf-seed-47:workflow-outcome",
+          "event_ids": [
+            "r2-s2-online-online-bf-seed-47:event:3",
+            "r2-s2-online-online-bf-seed-47:event:4"
+          ],
+          "outcome_reward": -1.0,
+          "outcome_success": false,
+          "outcome_provenance": "workbench-workflow-adjudication",
+          "derived_task_score": -1.0,
+          "realized_interaction": -1.0,
+          "score_source": "native Workbench raw action success/status projection",
+          "admission_status": "rejected",
+          "admission_reason": "outcome_unsuccessful",
+          "observation_count_before": 6,
+          "observation_count_after": 6,
+          "model_changed_on_apply": false,
+          "restart_admission_statuses": [
+            "applied",
+            "rejected"
+          ],
+          "native_world_event_count": 3,
+          "native_checkpoint_replay": true,
+          "raw_action_success": [
+            true,
+            false
+          ]
+        },
+        {
+          "round": 3,
+          "family": "online-ce",
+          "kind": "success",
+          "candidate_id": "transfer-group:61d5583b886b40a97139fe73",
+          "member_ids": [
+            "workbench-owner:33bf6bd14f843e6f0a77fea3",
+            "workbench-owner:e7ce303c7ef3dc0096150f6e"
+          ],
+          "feedback_id": "e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+          "outcome_id": "r2-s2-online-online-ce-seed-47:outcome:4:r2-s2-online-online-ce-seed-47:workflow-outcome",
+          "event_ids": [
+            "r2-s2-online-online-ce-seed-47:event:3",
+            "r2-s2-online-online-ce-seed-47:event:4"
+          ],
+          "outcome_reward": 1.0,
+          "outcome_success": true,
+          "outcome_provenance": "workbench-workflow-adjudication",
+          "derived_task_score": 1.0,
+          "realized_interaction": 0.6000000000000001,
+          "score_source": "native Workbench raw action success/status projection",
+          "admission_status": "applied",
+          "admission_reason": "native_terminal_outcome_admitted",
+          "observation_count_before": 6,
+          "observation_count_after": 7,
+          "model_changed_on_apply": true,
+          "restart_admission_statuses": [
+            "applied",
+            "rejected",
+            "applied"
+          ],
+          "native_world_event_count": 2,
+          "native_checkpoint_replay": true,
+          "raw_action_success": [
+            true,
+            true
+          ]
+        },
+        {
+          "round": "rollback",
+          "target_feedback_id": "e97b6de14809ffc9f744c43b5ecbbcd0f9cf8bdb931dba2c0329bffe55699b4c",
+          "status": "rolled_back",
+          "reason": "explicit_trial_rollback",
+          "restart_statuses": [
+            "applied",
+            "rejected",
+            "rolled_back"
+          ],
+          "admitted_observation_count_after_rollback": 6
+        }
+      ],
+      "holdout_writeback_rejected": true,
+      "holdout_candidate_remained_unobserved": true,
+      "rollback_parent_roundtrip": true,
+      "old_train_lineage": true,
+      "old_train_records_retained": true
+    }
+  ],
+  "metrics": {
+    "online_round_count": true,
+    "three_independent_seeds": true,
+    "actual_outcome_writeback": true,
+    "successful_outcomes_are_admitted": true,
+    "failed_outcome_does_not_mutate": true,
+    "writeback_changes_relation_model": true,
+    "writeback_lesion_keeps_preupdate_candidate": true,
+    "restart_continues_admission_audit": true,
+    "rollback_is_audited_and_restored": true,
+    "holdout_cannot_enter_online_feedback": true,
+    "native_world_and_replay_preserved": true,
+    "old_workbench_capability_retained": true,
+    "native_lesion_evidence_present": true,
+    "train_records_are_native_outcome_projected": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "at least three real Workbench online rounds must bind actual terminal Outcome and native event evidence to the current candidate checkpoint; successful feedback may update the train-lineage relation learner, failed or holdout feedback must not mutate it, restart must preserve the audit and learned state, and explicit rollback must restore the parent state without silent re-admission"
+  },
+  "boundary": "This Gate demonstrates a bounded native online learning boundary, not unrestricted self-evolution or AGI. Admission updates interaction evidence only; it does not silently mutate provider policy, task planning, neuron topology, CUDA kernels, or the desktop UI."
+}

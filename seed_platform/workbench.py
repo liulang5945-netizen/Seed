@@ -123,6 +123,29 @@ def validate_workspace_root(raw_root: Any) -> Path:
     return resolved
 
 
+def _semantic_pairs(value: Any, name: str) -> tuple[tuple[str, str], ...]:
+    """Normalize declarative semantic-contract pairs."""
+
+    if isinstance(value, Mapping):
+        value = tuple(value.items())
+    if isinstance(value, (str, bytes, bytearray)) or not isinstance(value, Sequence):
+        raise TypeError(f"{name} must be a mapping or sequence of pairs")
+    normalized: list[tuple[str, str]] = []
+    for index, pair in enumerate(value):
+        if isinstance(pair, (str, bytes, bytearray)) or not isinstance(pair, Sequence):
+            raise TypeError(f"{name} item {index} must be a pair")
+        if len(pair) != 2:
+            raise ValueError(f"{name} item {index} must contain two values")
+        key = str(pair[0]).strip()
+        target = str(pair[1]).strip()
+        if not key or not target:
+            raise ValueError(f"{name} entries cannot be empty")
+        normalized.append((key, target))
+    if len({key for key, _ in normalized}) != len(normalized):
+        raise ValueError(f"{name} keys must be unique")
+    return tuple(sorted(normalized))
+
+
 @dataclass(frozen=True)
 class CapabilityDescriptor:
     capability_id: str
@@ -132,6 +155,8 @@ class CapabilityDescriptor:
     source: str = "seed.workbench"
     category: str = "workbench"
     parameters: tuple[tuple[str, str], ...] = ()
+    semantic_requirements: tuple[tuple[str, str], ...] = ()
+    semantic_parameters: tuple[tuple[str, str], ...] = ()
     enabled: bool = True
     version: int = WORKBENCH_CONTRACT_VERSION
 
@@ -144,9 +169,23 @@ class CapabilityDescriptor:
             raise ValueError("capability description cannot be empty")
         if len({name for name, _ in self.parameters}) != len(self.parameters):
             raise ValueError("capability parameter names must be unique")
+        requirements = _semantic_pairs(self.semantic_requirements, "semantic_requirements")
+        parameter_bindings = _semantic_pairs(self.semantic_parameters, "semantic_parameters")
+        parameter_names = {name for name, _ in self.parameters}
+        unknown_parameters = sorted(
+            parameter_name
+            for _, parameter_name in parameter_bindings
+            if parameter_name not in parameter_names
+        )
+        if unknown_parameters:
+            raise ValueError(
+                f"semantic contract references undeclared parameters: {unknown_parameters}"
+            )
+        object.__setattr__(self, "semantic_requirements", requirements)
+        object.__setattr__(self, "semantic_parameters", parameter_bindings)
 
     def to_payload(self) -> dict[str, Any]:
-        return {
+        payload = {
             "version": self.version,
             "capability_id": self.capability_id,
             "description": self.description,
@@ -157,6 +196,12 @@ class CapabilityDescriptor:
             "parameters": {name: schema for name, schema in self.parameters},
             "enabled": self.enabled,
         }
+        if self.semantic_requirements or self.semantic_parameters:
+            payload["semantic_contract"] = {
+                "requirements": dict(self.semantic_requirements),
+                "parameters": dict(self.semantic_parameters),
+            }
+        return payload
 
     @property
     def parameter_names(self) -> frozenset[str]:
@@ -193,18 +238,24 @@ class CapabilitySnapshot:
                 "List entries in the active workspace.",
                 category="workspace",
                 parameters=(("path", "relative directory path, default ."),),
+                semantic_requirements=(("operation", "list"),),
+                semantic_parameters=(("path", "path"),),
             ),
             CapabilityDescriptor(
                 "workspace.read",
                 "Read one UTF-8 or binary-safe file snapshot.",
                 category="workspace",
                 parameters=(("path", "relative file path"),),
+                semantic_requirements=(("operation", "read"),),
+                semantic_parameters=(("path", "path"),),
             ),
             CapabilityDescriptor(
                 "workspace.stat",
                 "Read metadata for one workspace entry.",
                 category="workspace",
                 parameters=(("path", "relative path"),),
+                semantic_requirements=(("operation", "stat"),),
+                semantic_parameters=(("path", "path"),),
             ),
             CapabilityDescriptor(
                 "workspace.search",
@@ -214,6 +265,8 @@ class CapabilitySnapshot:
                     ("query", "non-empty text"),
                     ("path", "optional relative directory path"),
                 ),
+                semantic_requirements=(("operation", "search"),),
+                semantic_parameters=(("path", "path"), ("query", "query")),
             ),
             CapabilityDescriptor(
                 "editor.open",
@@ -221,6 +274,8 @@ class CapabilitySnapshot:
                 risk="reversible_ui",
                 category="editor",
                 parameters=(("path", "relative file path"),),
+                semantic_requirements=(("operation", "open"),),
+                semantic_parameters=(("path", "path"),),
             ),
             CapabilityDescriptor(
                 "editor.diagnostics.read",
@@ -240,6 +295,11 @@ class CapabilitySnapshot:
                         "optional connected language-service selection",
                     ),
                 ),
+                semantic_requirements=(("operation", "resolve-language"),),
+                # The language-service hint is optional evidence.  It must not
+                # become a required semantic slot, otherwise a normal file
+                # read cannot reach Taiji's resolver contract.
+                semantic_parameters=(("path", "path"),),
             ),
             CapabilityDescriptor(
                 "editor.set_language",
@@ -250,6 +310,11 @@ class CapabilitySnapshot:
                     ("path", "relative file path"),
                     ("programming_language_id", "registry language id"),
                     ("user_override", "whether to persist an explicit user override"),
+                ),
+                semantic_requirements=(("operation", "set-language"),),
+                semantic_parameters=(
+                    ("path", "path"),
+                    ("user_override", "user_override"),
                 ),
             ),
         )
@@ -265,6 +330,10 @@ class CapabilitySnapshot:
                     ("patch", "structured text replacement operations"),
                     ("expected_after_digest", "required expected resulting SHA-256"),
                 ),
+                semantic_requirements=(("operation", "patch"),),
+                # The semantic edit is not a final patch. Taiji derives the
+                # digest-checked structured patch from the live file below.
+                semantic_parameters=(("path", "path"),),
             ),
             CapabilityDescriptor(
                 "workspace.create",
@@ -323,6 +392,7 @@ class CapabilitySnapshot:
                 "mcp.list",
                 "List native MCP-shaped tools from the Seed-owned registry.",
                 category="mcp",
+                semantic_requirements=(("operation", "list-tools"),),
             ),
             CapabilityDescriptor(
                 "mcp.invoke",
@@ -339,12 +409,12 @@ class CapabilitySnapshot:
         body = {
             "format": WORKBENCH_CONTRACT_FORMAT,
             "version": WORKBENCH_CONTRACT_VERSION,
-            "revision": 4,
+            "revision": 6,
             "capabilities": [item.to_payload() for item in capabilities],
         }
         return cls(
             snapshot_id=_canonical_digest(body),
-            revision=4,
+            revision=6,
             capabilities=capabilities,
         )
 
@@ -368,6 +438,11 @@ class CapabilitySnapshot:
             parameters = raw.get("parameters", {})
             if not isinstance(parameters, Mapping):
                 raise ValueError("workbench capability parameters must be an object")
+            semantic_contract = raw.get("semantic_contract", {})
+            if not isinstance(semantic_contract, Mapping):
+                raise ValueError("workbench semantic_contract must be an object")
+            semantic_requirements = semantic_contract.get("requirements", {})
+            semantic_parameters = semantic_contract.get("parameters", {})
             capabilities.append(
                 CapabilityDescriptor(
                     capability_id=str(raw["capability_id"]),
@@ -379,6 +454,8 @@ class CapabilitySnapshot:
                     parameters=tuple(
                         (str(name), str(schema)) for name, schema in parameters.items()
                     ),
+                    semantic_requirements=semantic_requirements,
+                    semantic_parameters=semantic_parameters,
                     enabled=bool(raw.get("enabled", True)),
                     version=int(raw.get("version", WORKBENCH_CONTRACT_VERSION)),
                 )
@@ -401,12 +478,56 @@ class CapabilitySnapshot:
             None,
         )
 
+    def ground_semantic_step(
+        self,
+        semantic_slots: Mapping[str, Any],
+        *,
+        allow_reversible_ui: bool = False,
+    ) -> dict[str, tuple[dict[str, Any], ...]]:
+        """Ground semantic slots through registered capability contracts.
+
+        This is deliberately declarative: the snapshot owns capability
+        eligibility and slot-to-parameter mappings, while the caller owns only
+        the semantic evidence values.  No prose matching or capability lookup
+        table is consulted here.
+        """
+
+        if not isinstance(semantic_slots, Mapping):
+            raise TypeError("semantic slots must be a mapping")
+        slots = {str(key).strip(): value for key, value in semantic_slots.items()}
+        grounded: dict[str, tuple[dict[str, Any], ...]] = {}
+        for descriptor in sorted(self.capabilities, key=lambda item: item.capability_id):
+            if not descriptor.enabled or not descriptor.semantic_requirements:
+                continue
+            if descriptor.risk != "read_only" and not (
+                allow_reversible_ui and descriptor.risk == "reversible_ui"
+            ):
+                continue
+            if any(
+                str(slots.get(slot_name, "")).strip().casefold()
+                != expected.casefold()
+                for slot_name, expected in descriptor.semantic_requirements
+            ):
+                continue
+            parameters: dict[str, Any] = {}
+            for slot_name, parameter_name in descriptor.semantic_parameters:
+                if slot_name not in slots:
+                    break
+                value = slots[slot_name]
+                if value is None or (isinstance(value, str) and not value.strip()):
+                    break
+                parameters[parameter_name] = value
+            else:
+                grounded[descriptor.capability_id] = (parameters,)
+        return grounded
+
     def to_taiji_affordances(
         self,
         parameter_bindings: Mapping[str, Any],
         *,
         evidence_id: str = "",
         after_state_digest: str = "",
+        allow_reversible_ui: bool = False,
     ) -> tuple[Any, ...]:
         """Project explicit read-only capability bindings into Taiji affordances.
 
@@ -444,9 +565,12 @@ class CapabilitySnapshot:
                 )
             if not descriptor.enabled:
                 raise ValueError(f"Taiji capability binding is disabled: {capability_id}")
-            if descriptor.risk != "read_only":
+            if descriptor.risk != "read_only" and not (
+                allow_reversible_ui and descriptor.risk == "reversible_ui"
+            ):
                 raise ValueError(
-                    f"Taiji capability projection only admits read-only capabilities: {capability_id}"
+                    f"Taiji capability projection only admits read-only capabilities unless "
+                    f"reversible UI is explicitly enabled: {capability_id}"
                 )
             for raw_parameters in raw_bindings:
                 if not isinstance(raw_parameters, Mapping):
@@ -2146,6 +2270,18 @@ class WorkbenchEnvironment:
             "truncated": truncated,
         }
 
+    def read_workspace_evidence(self, parameters: Mapping[str, Any]) -> dict[str, Any]:
+        """Expose a side-effect-free file sensor for Taiji planning.
+
+        Planning may need the current bytes to derive a digest-checked patch.
+        This is deliberately separate from ``execute_tool``: it does not emit
+        a Workbench audit event, change ``last_result``, or mutate the file.
+        The later ``workspace.read`` ActionIntent still verifies the same
+        evidence through the normal execution path.
+        """
+
+        return dict(self._read_workspace(parameters))
+
     def _stat_workspace(self, parameters: Mapping[str, Any]) -> dict[str, Any]:
         path, relative_name = self._resolve_path(parameters.get("path", "."))
         if not path.exists():
@@ -2271,6 +2407,22 @@ class WorkbenchEnvironment:
             with self._lock:
                 self._language_selections[relative_name] = assessment
         return assessment.to_payload()
+
+    def resolve_programming_language_evidence(
+        self, parameters: Mapping[str, Any]
+    ) -> dict[str, Any]:
+        """Read language evidence without persisting a selection.
+
+        Taiji planning uses this method before it proposes ``editor.set_language``.
+        The evidence path may honor an existing explicit user override, but it
+        never creates or changes that override itself.
+        """
+
+        return self._resolve_programming_language(
+            parameters,
+            remember=False,
+            apply_selection=True,
+        )
 
     def _set_editor_language(self, parameters: Mapping[str, Any]) -> dict[str, Any]:
         path, relative_name = self._resolve_path(parameters.get("path"), allow_root=False)
