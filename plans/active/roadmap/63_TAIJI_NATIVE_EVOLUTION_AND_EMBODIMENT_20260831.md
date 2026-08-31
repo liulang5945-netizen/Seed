@@ -446,6 +446,8 @@ Gate：知识问答不是唯一指标；必须同时通过未见任务规划/能
 
 **E6-1 已完成（2026-09-01）**：`seed_platform/mcp_client_capability_registry.py` 将 E6-0 candidate 投影为 Seed-owned shadow lifecycle record，状态只允许 `proposed`、`shadow_pending`、`shadow_validated`、`rejected`、`rolled_back`；每条记录保留 candidate/policy/observation digest、MCP registry snapshot、事件和 parent checkpoint，checkpoint 恢复校验 revision/snapshot/digest，rollback 只改变 shadow registry，不改变 MCP registry、Workbench executor 或 Taiji cognition。`api/routes_mcp_client_capabilities.py` 提供 status/proposals/shadow/rollback 四个入口，每次按当前 Workbench MCP snapshot 重绑，旧 candidate 或旧 observation fail-closed，不接受 executor/source/secret，也不连接真实第三方服务。E6-1 [Gate report](../../../reports/taiji_w7_e6_1_mcp_client_capability_shadow_projection_20260901.json) 的 10/10 检查和 13 个定向回归测试通过；client activation 明确保留到后续独立阶段。
 
+**E6-2 已完成（2026-09-01）**：`seed_platform/mcp_client_capability_activation.py` 建立内容寻址的 `McpClientCapabilityActivationProposal`，只有 `shadow_validated` candidate 才能提出；提案同时绑定 MCP registry snapshot、Workbench capability snapshot、shadow record digest 和 parent checkpoint，但不包含 executor/source/secret/connection，也没有 active 状态。`McpClientCapabilityShadowRegistry` 在 candidate rollback 时联动标记提案 `rolled_back`，checkpoint 可恢复提案生命周期；API 只返回 `proposal_only`，旧 Workbench snapshot fail-closed。E6-2 [Gate report](../../../reports/taiji_w7_e6_2_mcp_client_activation_proposal_20260901.json) 的 10/10 检查和 14 个定向回归测试通过；当前进入 E6-3：用本地合成器官做 client extension host 的 activation dry-run，不连接真实第三方 MCP。
+
 Gate：旧 client/capability snapshot 可恢复，旧路由/组件/监听器/executor 注册无泄漏，在途调用不丢失，资源 reservation 归还，异常插件 quarantine，Taiji cognition checkpoint 不被插件覆盖。
 
 ### E6：MCP 客户端器官继承

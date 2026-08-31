@@ -3,7 +3,7 @@
   "version": 1,
   "work_package": "W7-R5",
   "title": "open-domain structural growth and self-evolution",
-  "status": "e6_0_mcp_client_capability_boundary_passed_e6_1_shadow_projection_pending",
+  "status": "e6_2_activation_proposal_passed_e6_3_client_activation_dry_run_pending",
   "claim": {
     "to_prove": "Taiji can grow local structure or memory in response to persistent real-task error, capacity pressure, or recovery deficiency, while retaining old abilities and remaining checkpointable and reversible.",
     "must_not_claim": "Growth is not automatic intelligence, unlimited weight addition, neuron-count scaling, or a return to full retraining from scratch."
@@ -462,7 +462,11 @@
     "e6_1_test": "tests/seed_platform/test_mcp_client_capability_registry.py, tests/test_mcp_client_capability_routes.py, and scripts/training/verify_taiji_e6_1_mcp_client_capability_shadow_projection.py",
     "e6_1_scope": "project the E6-0 candidate into a Seed-owned API/registry shadow lifecycle bound to the current MCP snapshot; support proposed/shadow-pending/shadow-validated/rejected/rolled-back records, checkpoint integrity and rollback without executor loading, MCP connection, client activation or Taiji cognition mutation",
     "e6_1_evidence": "verify_taiji_e6_1_mcp_client_capability_shadow_projection.py reports status=passed with 10 checks; 13 targeted tests pass; API exposes only declarative candidate and digest-only observation state, registry drift fails closed, checkpoint roundtrip and rollback hold, and no active client state exists",
-    "next_stage": "E6-2 MCP client capability shadow canary with explicit client activation proposal boundary"
+    "e6_2_artifact": "seed_platform/mcp_client_capability_activation.py and the activation-proposal methods/routes in seed_platform/mcp_client_capability_registry.py and api/routes_mcp_client_capabilities.py",
+    "e6_2_test": "tests/seed_platform/test_mcp_client_capability_registry.py, tests/test_mcp_client_capability_routes.py, and scripts/training/verify_taiji_e6_2_mcp_client_activation_proposal.py",
+    "e6_2_scope": "require a shadow-validated candidate before producing a content-addressed activation proposal bound to the current MCP and Workbench capability snapshots; persist and rollback proposals without active client state, executor/source/secret fields, MCP connections or Taiji cognition mutation",
+    "e6_2_evidence": "verify_taiji_e6_2_mcp_client_activation_proposal.py reports status=passed with 10 checks; 14 targeted tests pass; pre-shadow activation is rejected, proposal checkpoint/rollback holds, API exposes proposal_only, and no active client organ or external connection exists",
+    "next_stage": "E6-3 local synthetic client-organ activation dry-run through the existing extension host"
   },
   "boundary": [
     "Self-evolution must be evidence-triggered, resource-bounded, and reversible.",
