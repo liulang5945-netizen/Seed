@@ -355,6 +355,210 @@ class WorldTransitionTask:
         )
 
 
+@dataclass(frozen=True)
+class GoalActionEpisode:
+    """A cue-conditioned action whose value is learned from outcome credit."""
+
+    episode_id: str
+    cue: int
+    preferred_action: int
+    alternate_action: int
+
+    def __post_init__(self) -> None:
+        if not self.episode_id.strip():
+            raise ValueError("goal action episode id must be non-empty")
+        if any(int(value) < 0 for value in (self.cue, self.preferred_action, self.alternate_action)):
+            raise ValueError("goal action episode symbols cannot be negative")
+        if int(self.preferred_action) == int(self.alternate_action):
+            raise ValueError("goal action episode needs two distinct actions")
+
+
+@dataclass(frozen=True)
+class GoalActionCorpus:
+    train: tuple[GoalActionEpisode, ...]
+    holdout: tuple[GoalActionEpisode, ...]
+    retention: tuple[GoalActionEpisode, ...]
+
+    def __post_init__(self) -> None:
+        if not self.train or not self.holdout or not self.retention:
+            raise ValueError("goal action partitions cannot be empty")
+        seen: set[str] = set()
+        for partition, episodes in (
+            ("train", self.train),
+            ("holdout", self.holdout),
+            ("retention", self.retention),
+        ):
+            if any(not isinstance(episode, GoalActionEpisode) for episode in episodes):
+                raise TypeError(f"{partition} must contain GoalActionEpisode values")
+            ids = {episode.episode_id for episode in episodes}
+            if len(ids) != len(episodes) or seen.intersection(ids):
+                raise ValueError("goal action episode ids must be unique across partitions")
+            seen.update(ids)
+
+    @property
+    def sample_counts(self) -> dict[str, int]:
+        return {
+            "train": len(self.train),
+            "holdout": len(self.holdout),
+            "retention": len(self.retention),
+        }
+
+
+class GoalActionTask:
+    """Measure native action choice after cue-specific reward credit assignment."""
+
+    ability_id = "b4_goal_action"
+
+    def __init__(
+        self,
+        config: TaijiConfig,
+        *,
+        seeds: Sequence[int] = (11, 29, 47),
+    ) -> None:
+        if not seeds or len(set(int(seed) for seed in seeds)) != len(seeds):
+            raise ValueError("goal action needs unique seeds")
+        self.config = config
+        self.seeds = tuple(int(seed) for seed in seeds)
+
+    def evaluate(self, corpus: GoalActionCorpus) -> FoundationMeasurement:
+        seed_records: list[dict[str, float | int]] = []
+        for seed in self.seeds:
+            model = Taiji(self._with_seed(seed), episode_id=f"m0-b4-seed-{seed}")
+            self._cold_start_action_organ(model)
+            for episode in corpus.train:
+                self._train_episode(model, episode)
+            holdout = self._evaluate_partition(model, corpus.holdout)
+            persistent_before = _persistent_digest(model)
+            retention = self._evaluate_partition(model, corpus.retention)
+            persistent_after = _persistent_digest(model)
+            credit_lesion = Taiji(self._with_seed(seed), episode_id=f"m0-b4-lesion-{seed}")
+            self._cold_start_action_organ(credit_lesion)
+            for episode in corpus.train:
+                self._train_episode(credit_lesion, episode, learn=False)
+            lesion_accuracy = self._evaluate_partition(credit_lesion, corpus.holdout)
+            frozen = Taiji(self._with_seed(seed), episode_id=f"m0-b4-frozen-{seed}")
+            self._cold_start_action_organ(frozen)
+            frozen_accuracy = self._evaluate_partition(frozen, corpus.holdout)
+            seed_records.append(
+                {
+                    "seed": seed,
+                    "taiji": holdout,
+                    "retention": retention,
+                    "credit_lesion": lesion_accuracy,
+                    "frozen_parent": frozen_accuracy,
+                    "holdout_updates": int(persistent_before != persistent_after),
+                    "parameter_count": model.parameter_count(),
+                }
+            )
+
+        native_values = [float(record["taiji"]) for record in seed_records]
+        retention_values = [float(record["retention"]) for record in seed_records]
+        frozen_values = [float(record["frozen_parent"]) for record in seed_records]
+        lesion_values = [float(record["credit_lesion"]) for record in seed_records]
+        baseline_metrics = {
+            "random": 0.5,
+            "frozen_parent": min(frozen_values),
+            "simple_rule": _majority_goal_action_accuracy(corpus.train, corpus.holdout),
+            "hash_only": min(
+                _hash_goal_action_accuracy(corpus.holdout, seed=seed)
+                for seed in self.seeds
+            ),
+            "credit_lesion": min(lesion_values),
+        }
+        worst_native = min(native_values)
+        holdout_updates = max(int(record["holdout_updates"]) for record in seed_records)
+        beats_controls = all(worst_native > value for value in baseline_metrics.values())
+        causal_credit_gain = all(
+            float(record["taiji"]) > float(record["credit_lesion"])
+            for record in seed_records
+        )
+        retention_preserved = all(
+            retention >= native - 0.05
+            for retention, native in zip(retention_values, native_values, strict=True)
+        )
+        return FoundationMeasurement(
+            ability_id=self.ability_id,
+            status=(
+                "passed"
+                if (
+                    beats_controls
+                    and causal_credit_gain
+                    and retention_preserved
+                    and holdout_updates == 0
+                )
+                else "failed"
+            ),
+            primary_metric="success_rate",
+            metric_direction="higher_is_better",
+            metric_value=worst_native,
+            baseline_metrics=baseline_metrics,
+            sample_counts=corpus.sample_counts,
+            holdout_updates=holdout_updates,
+            evidence=(
+                "seed_metrics=" + json.dumps(seed_records, sort_keys=True),
+                "train_only_reward_credit=true; holdout_and_retention_learning=false",
+            ),
+        )
+
+    def _with_seed(self, seed: int) -> TaijiConfig:
+        values = self.config.to_dict()
+        values["seed"] = int(seed)
+        return TaijiConfig.from_dict(values)
+
+    @staticmethod
+    def _cold_start_action_organ(model: Taiji) -> None:
+        """Start the goal readout uncommitted so credit, not initialization, wins."""
+
+        with torch.no_grad():
+            model.motor.synapses.edge_weight.zero_()
+            model.motor.bias.zero_()
+            model.motor.reward_baseline = 0.0
+            model.motor.reward_updates = 0
+
+    @staticmethod
+    def _train_episode(
+        model: Taiji,
+        episode: GoalActionEpisode,
+        *,
+        learn: bool = True,
+    ) -> bool:
+        model.reset_dynamics(episode_id=f"m0-b4-train-{episode.episode_id}")
+        model.observe(model.config.boundary_symbol, learn=False, learn_motor=False, use_memory=False)
+        model.observe(episode.cue, learn=learn, learn_motor=False, use_memory=False)
+        decision = model.act(
+            tuple(sorted((episode.preferred_action, episode.alternate_action))),
+            sample=True,
+        )
+        success = decision.action_symbol == episode.preferred_action
+        model.settle_action(1.0 if success else -1.0, learn=learn, learn_memory=False)
+        model.observe(model.config.boundary_symbol, learn=False, learn_motor=False, use_memory=False)
+        return success
+
+    @staticmethod
+    def _evaluate_partition(
+        model: Taiji,
+        episodes: Sequence[GoalActionEpisode],
+    ) -> float:
+        correct = 0
+        for episode in episodes:
+            model.reset_dynamics(episode_id=f"m0-b4-eval-{episode.episode_id}")
+            model.observe(
+                model.config.boundary_symbol,
+                learn=False,
+                learn_motor=False,
+                use_memory=False,
+            )
+            model.observe(episode.cue, learn=False, learn_motor=False, use_memory=False)
+            decision = model.act(
+                tuple(sorted((episode.preferred_action, episode.alternate_action))),
+                sample=False,
+            )
+            correct += int(decision.action_symbol == episode.preferred_action)
+            model.settle_action(0.0, learn=False, learn_memory=False)
+            model.observe(model.config.boundary_symbol, learn=False, learn_motor=False, use_memory=False)
+        return correct / len(episodes)
+
+
 def _world_error(
     learner: WorldDynamicsLearner,
     cases: Sequence[WorldInterventionCase],
@@ -601,3 +805,27 @@ def _hash_memory_accuracy(
         prediction = actions[int.from_bytes(digest[:8], "big") % len(actions)]
         correct += int(prediction == query.expected_action)
     return correct / len(queries)
+
+
+def _majority_goal_action_accuracy(
+    train: Sequence[GoalActionEpisode], holdout: Sequence[GoalActionEpisode]
+) -> float:
+    counts: dict[int, int] = {}
+    for episode in train:
+        counts[episode.preferred_action] = counts.get(episode.preferred_action, 0) + 1
+    majority = min(counts, key=lambda action: (-counts[action], action))
+    return sum(int(episode.preferred_action == majority) for episode in holdout) / len(holdout)
+
+
+def _hash_goal_action_accuracy(
+    episodes: Sequence[GoalActionEpisode], *, seed: int
+) -> float:
+    correct = 0
+    for episode in episodes:
+        digest = hashlib.sha256(
+            f"{int(seed)}\0{int(episode.cue)}".encode()
+        ).digest()
+        actions = (episode.preferred_action, episode.alternate_action)
+        prediction = actions[int.from_bytes(digest[:8], "big") % len(actions)]
+        correct += int(prediction == episode.preferred_action)
+    return correct / len(episodes)
