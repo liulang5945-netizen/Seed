@@ -81,7 +81,7 @@ P2-11 已由 [IDE language chain report](../../../reports/taiji_w7_p2_11_ide_lan
 - **CUDA：`hardware-blocked`。** 当前主机无可用 CUDA，不用 CPU 结果替代 GPU 结论。
 - **Windows shell：`tool-blocked`。** 真实任务栏、托盘、通知、DPI 与窗口现场证据待工具可用后补齐。
 - **Git 收束：暂缓。** attached worktree 含未提交变化，必须先审计再决定吸收或删除。
-- **提交/推送：本轮已提交，暂不推送。** E6-0 为 `90616a7`，E6-1 为 `f8abd0a`，E6-2 为 `68ab08b`，E6-3 已完成，E6-4 为 `9c31fa3`；不执行远端同步。
+- **提交/推送：本轮已提交，暂不推送。** E6-0 为 `90616a7`，E6-1 为 `f8abd0a`，E6-2 为 `68ab08b`，E6-4 为 `9c31fa3`，E6-5a 为 `4d72ce8`；不执行远端同步。
 - **语义 provider 质量：Gate 未通过但不阻塞 E1–E3。** 当前 Qwen2.5-0.5B-Instruct 保留在实验/回退路径，不进入生产默认语义入口；结构化 Workbench/Skill/MCP 经验可先驱动 Taiji 原生学习。
 - **客户端插件：E5-0/E5-1/E5-2/E5-3/E6-0/E6-1/E6-2/E6-3/E6-4/E6-5a 已完成，E6-5b 待具体目标确认。** `seed_platform/client_extension_host.py`、`api/routes_client_extensions.py`、`frontend/src/composables/useClientExtensions.js` 和 `frontend/src/components/ClientExtensionSlot.vue` 已接入声明式 client snapshot 两阶段发布与真实 slot projection；旧 `/api/plugins`、marketplace/upload 已统一 410 tombstone，重复入口和前端旧引用已清除；E6-0 冻结 MCP client capability candidate 合同，E6-1 接入 Seed-owned API/registry shadow lifecycle，E6-2 生成显式 activation proposal，E6-3 完成本地合成器官的 prepare-only dry-run，E6-4 完成连接授权、撤销、checkpoint 和 API 边界，E6-5a 完成 target binding、授权时间窗继承、级联撤销和 API 边界。当前仍不能声称真实第三方热插拔，下一步只确认具体目标与权限，不自动建立连接。
 
