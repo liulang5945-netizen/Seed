@@ -1,6 +1,6 @@
 # Seed / Taiji 计划与架构入口
 
-> 这是计划资料的总导航。即时动作只从 [03_CURRENT_EXECUTION.md](active/roadmap/03_CURRENT_EXECUTION.md) 读取；E1–E9 阶段合同见 [63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md](active/roadmap/63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md)，历史文档中的“下一步”一律不再生效。
+> 这是计划资料的总导航。即时动作只从 [03_CURRENT_EXECUTION.md](active/roadmap/03_CURRENT_EXECUTION.md) 读取；E1–E9 阶段合同见 [04_EXECUTION_PLAN.md](active/roadmap/04_EXECUTION_PLAN.md) 第 9–18 节，历史文档中的“下一步”一律不再生效。
 
 ## 当前收敛结论（2026-09-01）
 
@@ -40,9 +40,7 @@
 | [01_SCOPE_AND_PHASES.md](active/roadmap/01_SCOPE_AND_PHASES.md) | 目标、原则、P0–P7 阶段和退出门槛 |
 | [02_GATES_AND_CI.md](active/roadmap/02_GATES_AND_CI.md) | 当前仍有效的门禁、CI 纪律、停止项和阻塞边界；不再承载事故日志 |
 | [03_CURRENT_EXECUTION.md](active/roadmap/03_CURRENT_EXECUTION.md) | 当前实现快照和当前唯一下一步 |
-| [04_EXECUTION_PLAN.md](active/roadmap/04_EXECUTION_PLAN.md) | W7-R5 已完成分片、原始 Gate 与历史阶段定义的证据索引 |
-| [62_POST_S51_PROJECT_CONVERGENCE_20260831.md](active/roadmap/62_POST_S51_PROJECT_CONVERGENCE_20260831.md) | S52 后的历史收敛背景；当前 E1–E9 顺序由新总路线覆盖 |
-| [63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md](active/roadmap/63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md) | Skill/MCP 语料与经验、Taiji 本体训练、MCP 双产物内化和 Seed 客户端热插拔的 E1–E9 总路线 |
+| [04_EXECUTION_PLAN.md](active/roadmap/04_EXECUTION_PLAN.md) | C 系列已完成分片与原始 Gate 的证据索引，以及 E1–E9 主线的路线决策、目标架构、语料/经验合同、Skill/MCP/插件合同、归因规则、未闭合阶段和 owner |
 
 ## 归档原则
 

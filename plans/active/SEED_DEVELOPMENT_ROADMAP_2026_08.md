@@ -16,9 +16,7 @@
 | [01_SCOPE_AND_PHASES.md](roadmap/01_SCOPE_AND_PHASES.md) | 目标、原则、P0–P7 阶段和阶段退出门槛 | 当前参考 |
 | [02_GATES_AND_CI.md](roadmap/02_GATES_AND_CI.md) | 当前仍有效的门禁、CI 纪律、停止项和阻塞边界 | 当前参考 |
 | [03_CURRENT_EXECUTION.md](roadmap/03_CURRENT_EXECUTION.md) | 当前实现快照和唯一下一步 | 当前执行 |
-| [04_EXECUTION_PLAN.md](roadmap/04_EXECUTION_PLAN.md) | W7-R5 已完成分片与原始 Gate 的证据索引 | 当前参考 |
-| [62_POST_S51_PROJECT_CONVERGENCE_20260831.md](roadmap/62_POST_S51_PROJECT_CONVERGENCE_20260831.md) | S52 后的历史收敛背景和已完成端到端能力 Gate | 当前参考 |
-| [63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md](roadmap/63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md) | Skill/MCP 语料与经验、Taiji 本体训练、MCP 双产物内化和 Seed 客户端热插拔 E1–E9 | 当前阶段总计划 |
+| [04_EXECUTION_PLAN.md](roadmap/04_EXECUTION_PLAN.md) | C 系列已完成分片与原始 Gate 的证据索引，以及 E1–E9 主线的路线决策、目标架构、语料/经验合同、Skill/MCP/插件合同、归因规则、未闭合阶段和 owner | 当前参考 |
 | [IMPLEMENTATION_STATUS_2026_08.md](../reference/IMPLEMENTATION_STATUS_2026_08.md) | 代码事实、owner 和能力声明 | 当前参考 |
 
 ## 固定执行规则
