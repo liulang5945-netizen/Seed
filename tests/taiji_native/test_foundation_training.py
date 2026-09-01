@@ -151,6 +151,15 @@ def test_memory_training_saves_a_read_only_recall_checkpoint() -> None:
     assert evaluation["checkpoint_read_only"] is True
 
 
+def test_memory_corpus_foundation_scale_stays_inside_byte_alphabet() -> None:
+    corpus = build_memory_corpus(count=1_000)
+
+    assert min(item.cue for item in corpus.train) >= 0
+    assert max(item.cue for item in corpus.train) <= 255
+    assert max(item.action for item in corpus.train) <= 255
+    assert max(item.outcome for item in corpus.train) <= 255
+
+
 def test_world_action_training_saves_and_resumes_atomic_checkpoint() -> None:
     world_corpus = build_world_corpus(count=4)
     goal_corpus = build_goal_corpus(count=4)

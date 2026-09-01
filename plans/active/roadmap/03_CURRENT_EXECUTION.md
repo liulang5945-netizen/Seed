@@ -227,7 +227,7 @@ M1-6 的 F5 首轮审计已完成，报告为 `reports/taiji_m1_f5_promotion_202
 
 为进入真实覆盖量，`scripts/training/train_taiji_joint.py` 已开放 `--profile foundation`，默认使用 manifest 规定的 B1 `1,048,576/131,072/131,072` 字节预算、B2/B3/B4 各 `1,000` 条训练样本，并把默认 checkpoint 间隔提高到 `256`，避免 CPU 上每个小步都重复扫描大 holdout。该入口只扩大数据覆盖，不扩大 Taiji 神经元规模、不接 Transformer/provider；正式运行仍需先完成磁盘 checkpoint canary，并把三 seed 的训练耗时和磁盘占用写入报告。
 
-F5 的 continuation 现在还支持显式 `--replay-corpus/--replay-profile/--replay-epochs`。回放阶段有独立 `phase=replay`、cursor、epoch 和 corpus digest，和新 phase-B 的训练状态一起写入同一 checkpoint；普通 `--resume` 会严格校验 replay digest，避免恢复时悄悄换 replay 数据。continuation 回归测试已覆盖 replay 执行、磁盘恢复和 eval-only 只读。这使 B5 的“phase-A→phase-B→replay”成为训练链上的真实阶段，而不是只在 evaluator 里模拟。
+F5 的 continuation 现在还支持显式 `--replay-corpus/--replay-profile/--replay-epochs`。回放阶段有独立 `phase=replay`、cursor、epoch 和 corpus digest，和新 phase-B 的训练状态一起写入同一 checkpoint；普通 `--resume` 会严格校验 replay digest，避免恢复时悄悄换 replay 数据。continuation 回归测试已覆盖 replay 执行、磁盘恢复和 eval-only 只读。这使 B5 的“phase-A→phase-B→replay”成为训练链上的真实阶段，而不是只在 evaluator 里模拟。正式 full-coverage 首次启动发现 F2 合成 corpus 的 cue 生成器仍按 `65+index` 递增，在 `count=1,000` 时越过 byte sensor；该数据合同错误已修复为有界且可重复的 cue 周期，并加入 foundation-scale 回归测试，未产生有效训练 checkpoint。
 
 replay CLI canary `reports/taiji_m1_f5_replay_canary_20260901.json` 已通过：从 F4 seed 11 best 恢复，完成扩展课程后实际进入 `phase=replay`，回放 digest 为 F4 pilot 数据 digest `370e9edc…`，并生成 parent/last/best 三类 checkpoint；全新进程的恢复与只读评估保持通过。canary 仍是 smoke 规模，只证明课程和 checkpoint 链路，不能替代 full-coverage 能力测量。
 

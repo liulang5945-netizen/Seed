@@ -43,7 +43,10 @@ def build_corpus(*, count: int) -> DelayedMemoryCorpus:
     train = tuple(
         MemoryEpisode(
             memory_id=f"m1-f2-train-{index}",
-            cue=65 + index,
+            # Keep the synthetic cue vocabulary inside the byte sensor while
+            # allowing foundation-scale corpora to contain more episodes.
+            # The even period preserves the action parity for repeated cues.
+            cue=65 + index % 190,
             action=48 + index % 2,
             outcome=43 if index % 2 == 0 else 45,
         )
