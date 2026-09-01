@@ -1,0 +1,149 @@
+{
+  "format": "taiji-native-world-action-training-v1",
+  "version": 1,
+  "status": "completed",
+  "model_tier": "world-action",
+  "corpus_digest": "765c09efdc6c2c239082082db84f53ce17cfc87e199a1c94d600216539355fbc",
+  "corpus_sample_counts": {
+    "world": {
+      "train": 64,
+      "holdout": 32,
+      "retention": 32
+    },
+    "goal": {
+      "train": 64,
+      "holdout": 32,
+      "retention": 32
+    }
+  },
+  "parent_checkpoint_digest": "e1d78ef617c881df8e3747c7c9acdd3d0ef740334efbb5702c3ea4124e71066e",
+  "parent_world_error": 1.8870715521654553,
+  "final_world_error": 1.369973624673615e-05,
+  "parent_goal_success": 0.5,
+  "final_goal_success": 1.0,
+  "final_credit_lesion_success": 0.5,
+  "joint_holdout_gain": 2.3870578524292085,
+  "world_online_updates": 64,
+  "world_transition_rejections": 0,
+  "holdout_updates": 0,
+  "epoch": 1,
+  "phase": "world",
+  "world_cursor": 0,
+  "goal_cursor": 0,
+  "global_step": 128,
+  "total_epochs": 1,
+  "best_holdout_score": 2.3870578524292085,
+  "child_checkpoint_digest": "937c0288b4bc00a7e753f78eadd807b29a5398b8ff95d53791a92ff4fe06f4ad",
+  "history": [
+    {
+      "epoch": 0,
+      "phase": "world",
+      "world_cursor": 16,
+      "goal_cursor": 0,
+      "global_step": 16,
+      "world_holdout_error": 0.1587875462221704,
+      "goal_holdout_success": 0.5,
+      "joint_holdout_gain": 1.728284005943285,
+      "train_kind": "world"
+    },
+    {
+      "epoch": 0,
+      "phase": "world",
+      "world_cursor": 32,
+      "goal_cursor": 0,
+      "global_step": 32,
+      "world_holdout_error": 0.0020870467835032436,
+      "goal_holdout_success": 0.5,
+      "joint_holdout_gain": 1.884984505381952,
+      "train_kind": "world"
+    },
+    {
+      "epoch": 0,
+      "phase": "world",
+      "world_cursor": 48,
+      "goal_cursor": 0,
+      "global_step": 48,
+      "world_holdout_error": 0.0001316262653990874,
+      "goal_holdout_success": 0.5,
+      "joint_holdout_gain": 1.886939925900056,
+      "train_kind": "world"
+    },
+    {
+      "epoch": 0,
+      "phase": "world",
+      "world_cursor": 64,
+      "goal_cursor": 0,
+      "global_step": 64,
+      "world_holdout_error": 1.369973624673615e-05,
+      "goal_holdout_success": 0.5,
+      "joint_holdout_gain": 1.8870578524292085,
+      "train_kind": "world"
+    },
+    {
+      "epoch": 0,
+      "phase": "goal",
+      "world_cursor": 64,
+      "goal_cursor": 16,
+      "global_step": 80,
+      "world_holdout_error": 1.369973624673615e-05,
+      "goal_holdout_success": 1.0,
+      "joint_holdout_gain": 2.3870578524292085,
+      "train_kind": "goal",
+      "train_success": true
+    },
+    {
+      "epoch": 0,
+      "phase": "goal",
+      "world_cursor": 64,
+      "goal_cursor": 32,
+      "global_step": 96,
+      "world_holdout_error": 1.369973624673615e-05,
+      "goal_holdout_success": 1.0,
+      "joint_holdout_gain": 2.3870578524292085,
+      "train_kind": "goal",
+      "train_success": true
+    },
+    {
+      "epoch": 0,
+      "phase": "goal",
+      "world_cursor": 64,
+      "goal_cursor": 48,
+      "global_step": 112,
+      "world_holdout_error": 1.369973624673615e-05,
+      "goal_holdout_success": 1.0,
+      "joint_holdout_gain": 2.3870578524292085,
+      "train_kind": "goal",
+      "train_success": false
+    },
+    {
+      "epoch": 0,
+      "phase": "goal",
+      "world_cursor": 64,
+      "goal_cursor": 64,
+      "global_step": 128,
+      "world_holdout_error": 1.369973624673615e-05,
+      "goal_holdout_success": 1.0,
+      "joint_holdout_gain": 2.3870578524292085,
+      "train_kind": "goal",
+      "train_success": true
+    },
+    {
+      "epoch": 1,
+      "phase": "world",
+      "world_cursor": 0,
+      "goal_cursor": 0,
+      "global_step": 128,
+      "world_holdout_error": 1.369973624673615e-05,
+      "goal_holdout_success": 1.0,
+      "joint_holdout_gain": 2.3870578524292085
+    }
+  ],
+  "checkpoint_paths": {
+    "parent": "outputs\\taiji_m1_f3_pilot_seed11_20260901\\parent.pt",
+    "last": "outputs\\taiji_m1_f3_pilot_seed11_20260901\\last.pt",
+    "best_holdout": "outputs\\taiji_m1_f3_pilot_seed11_20260901\\best-holdout.pt"
+  },
+  "code_revision": "1d411559f8f3633826b1550f638fa967b51ba5cd",
+  "started_from_checkpoint": false,
+  "report_path": "reports\\taiji_m1_f3_pilot_seed11_20260901.json"
+}

@@ -1,0 +1,85 @@
+{
+  "format": "taiji-native-world-action-training-matrix-v1",
+  "version": 1,
+  "stage": "M1-4",
+  "abilities": [
+    "b3_world_transition",
+    "b4_goal_action"
+  ],
+  "profile": "pilot",
+  "corpus_digest": "765c09efdc6c2c239082082db84f53ce17cfc87e199a1c94d600216539355fbc",
+  "sample_counts": {
+    "world": {
+      "train": 64,
+      "holdout": 32,
+      "retention": 32
+    },
+    "goal": {
+      "train": 64,
+      "holdout": 32,
+      "retention": 32
+    }
+  },
+  "code_revision": "1d411559f8f3633826b1550f638fa967b51ba5cd",
+  "seeds": [
+    {
+      "seed": 11,
+      "parent_world_error": 1.8870715521654553,
+      "final_world_error": 0.00001369973624673615,
+      "parent_goal_success": 0.5,
+      "final_goal_success": 1.0,
+      "final_credit_lesion_success": 0.5,
+      "joint_holdout_gain": 2.3870578524292085,
+      "world_online_updates": 64,
+      "world_transition_rejections": 0,
+      "child_checkpoint_digest": "937c0288b4bc00a7e753f78eadd807b29a5398b8ff95d53791a92ff4fe06f4ad",
+      "fresh_process_eval_only": true
+    },
+    {
+      "seed": 29,
+      "parent_world_error": 0.15701291697986353,
+      "final_world_error": 0.0000742145751272405,
+      "parent_goal_success": 0.5,
+      "final_goal_success": 1.0,
+      "final_credit_lesion_success": 0.5,
+      "joint_holdout_gain": 0.6569387024047364,
+      "world_online_updates": 64,
+      "world_transition_rejections": 0,
+      "child_checkpoint_digest": "a7994ace93cf68f4145a1140699218a7ad6c051167f2cf9fb9c15a418143d225",
+      "fresh_process_eval_only": true
+    },
+    {
+      "seed": 47,
+      "parent_world_error": 0.4283408084274465,
+      "final_world_error": 0.00000794823436090419,
+      "parent_goal_success": 0.5,
+      "final_goal_success": 1.0,
+      "final_credit_lesion_success": 0.5,
+      "joint_holdout_gain": 0.9283328601930856,
+      "world_online_updates": 64,
+      "world_transition_rejections": 0,
+      "child_checkpoint_digest": "5ce9e2d4e26f0a6e7487d64a1320289ea801777c71321c8b4f175046c1261a51",
+      "fresh_process_eval_only": true
+    }
+  ],
+  "smoke": {
+    "world_train": 8,
+    "world_holdout": 4,
+    "goal_train": 8,
+    "goal_holdout": 4,
+    "parent_world_error": 2.0576376901922058,
+    "final_world_error": 0.051368499322746786,
+    "parent_goal_success": 0.5,
+    "final_goal_success": 1.0,
+    "final_credit_lesion_success": 0.5
+  },
+  "decision": {
+    "status": "pilot_passed_stage_exit",
+    "world_gain_all_seeds": true,
+    "goal_gain_all_seeds": true,
+    "credit_gain_all_seeds": true,
+    "holdout_updates": 0,
+    "m1_overall_promotion": false,
+    "next_stage": "M1-5 F4 joint short training"
+  }
+}
