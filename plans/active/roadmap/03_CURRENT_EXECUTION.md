@@ -52,8 +52,8 @@ Taiji 采用“站在巨人肩膀上”的双边界：原始 byte 输入继续�
 
 | 顺序 | 阶段 | 状态 | 主要产物 | 允许进入下一阶段的条件 |
 |---|---|---|---|---|
-| 0 | M0 CPU 五项基础能力真实性基线 | **当前进行（M0-0/M0-1/B1/B2/B3/B4/B5 适配器已完成，完整 M0 矩阵待运行）** | 数据合同、对照 evaluator、checkpoint preflight、基线报告 | 测量链可信且能保存/恢复；模型得分可以失败，但失败必须被如实记录 |
-| 1 | M1 Taiji foundation 训练管线与首次 CPU 训练 | 待开始，M0 后立即进入 | 原生 trainer、数据流水线、训练曲线、首个 child checkpoint | 未见数据相对父 checkpoint/对照有稳定净提升 |
+| 0 | M0 CPU 五项基础能力真实性基线 | **已完成（M0-0/M0-1/B1/B2/B3/B4/B5/M0-3/M0-4）** | 数据合同、对照 evaluator、checkpoint preflight、基线报告 | 测量链可信且能保存/恢复；模型得分可以失败，但失败必须被如实记录 |
+| 1 | M1 Taiji foundation 训练管线与首次 CPU 训练 | **当前进行（M1-0：训练器与可恢复 pilot）** | 原生 trainer、数据流水线、训练曲线、首个 child checkpoint | 未见数据相对父 checkpoint/对照有稳定净提升 |
 | 2 | M2 世界—行动—语言后训练 | 待开始 | 世界预测、行动信用、ContentPlan/语言蒸馏和受控 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
 | 3 | M3 综合能力晋级与真实 Workbench 验证 | 待开始 | 独立评测套件、真实 Workbench longitudinal report、晋级 checkpoint | 至少一个真实任务族获得可重复净收益 |
 | 4 | M4 持续学习、自进化和结构成长 | 冻结等待 M3 | bounded replay 接线、多周期保持、结构候选与单项回滚 | 真实 checkpoint 连续学习收益大于固定容量/weight-only 对照 |
@@ -72,7 +72,7 @@ M0-0 已完成并通过 `reports/taiji_m0_checkpoint_preflight_20260901.json`：
 
 M0-1 已完成并通过 `plans/manifests/taiji_foundation_baseline_v1.json`、`taiji/foundation_evaluation.py` 和 `reports/taiji_foundation_baseline_20260901.json` 的契约 canary。五项能力、四类对照、三 seed、四分区、样本下限、holdout 只读和报告字段已统一；当前报告为 `not_evaluated`，因为真实任务适配器尚未运行，这个失败/未评估状态是预期且必须保留的。
 
-M0-2 已启动：适配器复用现有 Taiji perception、memory、world、action 和 continual-learning 接口，统一输出真实 measurement；不得调用 provider、前端或 MCP，也不得在 holdout 阶段学习。
+M0-2 已完成：适配器复用现有 Taiji perception、memory、world、action 和 continual-learning 接口，统一输出真实 measurement；没有调用 provider、前端或 MCP，holdout 阶段均保持只读。
 
 M0-2 的 B1 适配器已完成并通过 smoke 证据 `reports/taiji_m0_b1_smoke_20260901.json`：真实 Taiji 在 3 个 seed 上优于 random 和 frozen-parent，但仍落后于 unigram 对照，故 B1 当前为失败而非晋级；holdout 更新数为 0。B1 smoke 只证明测量链和适配器可运行，不替代 manifest 规定的 foundation 数据量。
 
@@ -84,7 +84,9 @@ B4 适配器已完成并通过 `reports/taiji_m0_b4_smoke_20260901.json`：动�
 
 B5 适配器已完成并通过 `reports/taiji_m0_b5_smoke_20260901.json`：phase-B 确实从 phase-A 的 checkpoint 继续，holdout 更新数为 0，并记录了 replay 与无 replay 的旧能力变化；当前 smoke 的最差 backward transfer 为负，说明 Taiji 现有序列学习仍会遗忘，B5 任务保持失败而不是伪造通过。这是进入 M1 的直接训练目标：先改善持续学习与旧能力保持，再扩大训练规模。
 
-当前唯一下一步是运行 **完整 M0 五项矩阵**（接入真实 B1 数据和 B2～B5 适配器），再依据真实失败项冻结 M1 首轮训练目标；不因 smoke 失败回到外围建设。
+M0-3/M0-4 已完成：统一矩阵报告为 `reports/taiji_foundation_baseline_20260901.json`，checkpoint gate 为 `passed`，整体 `status=failed`、`can_promote=false`。B1 使用真实中文数据的 foundation 分区（train `1,048,576`、holdout `131,072`、retention `131,072`），最差 seed 为 `6.497 BPB`，仍高于 unigram `5.942`，所以 F1 必须先改善 byte/边界/组合预测。B2 的 `0.75` 没有超过 memory lesion，说明记忆写入尚未形成稳定因果增益；B3 task-level 通过但只有 `8/4/4` 样本，B4 task-level 通过但只有 `32/16/16` 样本，二者都不能晋级 foundation；B5 最差 backward transfer 为 `-0.244`，但 phase-B checkpoint continuation 已被验证，旧能力遗忘是 F5 的直接目标。
+
+M0 的零点已经足够可信，不能因 capability failed 继续扩大外围建设。当前唯一下一步是进入 **M1-0：实现可恢复的 Taiji foundation pilot trainer**，首轮固定 F1→F2→F3→F4→F5 顺序；优先目标是让 child checkpoint 在 B1/B2/B5 上出现可归因净提升，同时保持 B3/B4 不退化。
 
 本步只允许创建或修改以下 owner：
 
@@ -132,10 +134,9 @@ B1 证明“输入中存在可学习规律”；B2 证明“状态可以跨时�
 
 1. M0-0：审计现有 checkpoint、参数计数、数据游标和已知 CI 基线；磁盘 checkpoint roundtrip 失败时先修复。**已完成。**
 2. M0-1：冻结 manifest、JSONL/trajectory schema、分区方法和 baseline 实现；先写会失败的泄漏与副作用测试。**已完成。**
-3. M0-2：实现统一 evaluator 和五项适配器；复用现有 `taiji/evaluation.py`、memory/world/action 接口，但不继续扩大一次性脚本。**当前进行。**
-3. M0-2：实现统一 evaluator 和五项适配器；复用现有 `taiji/evaluation.py`、memory/world/action 接口，但不继续扩大一次性脚本。
-4. M0-3：运行三 seed CPU baseline，输出一份能力矩阵，不用五份互相矛盾的“passed”报告。
-5. M0-4：基于失败曲线冻结 M1 的首轮训练目标、资源预算和模型 tier，然后直接启动训练。
+3. M0-2：实现统一 evaluator 和五项适配器；复用现有 `taiji/evaluation.py`、memory/world/action 接口，但不继续扩大一次性脚本。**已完成。**
+4. M0-3：运行三 seed CPU baseline，输出一份能力矩阵，不用五份互相矛盾的“passed”报告。**已完成。**
+5. M0-4：基于失败曲线冻结 M1 的首轮训练目标、资源预算和模型 tier，然后直接启动训练。**已完成，进入 M1。**
 
 M0 的退出条件不是“五项全绿”。M0 的目标是得到可信零点；如果五项全部失败，只要数据、对照和 checkpoint 可信，也必须进入 M1，而不是继续做插件、UI 或 Gate 外围。
 
@@ -193,6 +194,17 @@ M1 按固定顺序执行：
 模型规模不按愿望预设。先训练默认 micro tier，再根据“holdout 仍改善但容量曲线持续受限”提出 pilot tier；只有固定容量相对 weight/memory/route 调整持续失败，才允许增加区域、神经元或连接。参数增加本身不是收益。
 
 M1 晋级至少要求：三个 seed 中 child checkpoint 在预注册主指标上稳定优于 frozen parent 和最强简单基线；至少四项不退化，一项出现明确净提升；checkpoint 恢复后结果一致；训练/holdout 无泄漏；CPU 成本处于 manifest 预算。未达到时继续同一阶段修数据、目标或学习规则，禁止绕到外围功能。
+
+### 6.5 M1-0 当前冻结决策
+
+M0 的 CPU 实测 foundation 矩阵约耗时 42 分钟，说明当前机器只能先做短 pilot，不能直接启动 foundation 全量训练。M1-0 固定如下边界：
+
+- 模型从 `TaijiConfig` 的 `micro` tier 开始；不扩神经元规模、不接 CUDA、不引入 Transformer/provider；
+- 训练顺序固定为 F1→F2→F3→F4→F5，每个阶段结束保存 `last`、阶段里程碑和可恢复 cursor；
+- F1 使用 `data/simple_zh/dialogue_extended_clean.jsonl` 的受控 train 分区，pilot 只取可在当前 CPU 完成的窗口；F2～F4 使用结构化本地 corpus，不把 goal/world/outcome 压成聊天文本；
+- 第一优先修复 F1 的 unigram 反超、F2 的 memory-lesion 无差异和 F5 的负 backward transfer；B3/B4 只要求短训不退化，不能用它们的 smoke 通过抵消前述失败；
+- 每个 pilot seed 都执行磁盘 `save→新进程 restore→继续一步→再 save`，并把数据 manifest、cursor、parent/child digest、代码 revision 和指标曲线写入同一训练报告；
+- M1-0 的唯一退出条件是产生可恢复、可比较的 child checkpoint；是否晋级由 F5 重新运行 M0 五项矩阵决定，不由训练 loss 单点决定。
 
 ## 7. M2～M8 的开发日程与外围任务安置
 
