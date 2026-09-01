@@ -202,9 +202,12 @@ from .foundation_training import (
     FOUNDATION_TRAINING_VERSION,
     MEMORY_TRAINING_FORMAT,
     MEMORY_TRAINING_VERSION,
+    WORLD_ACTION_TRAINING_FORMAT,
+    WORLD_ACTION_TRAINING_VERSION,
     FoundationTrainingDataset,
     FoundationTrainingRun,
     MemoryTrainingRun,
+    WorldActionTrainingRun,
 )
 from .generation import (
     GENERATION_CHECKPOINT_FORMAT,
@@ -618,6 +621,9 @@ __all__ = [
     "MEMORY_TRAINING_FORMAT",
     "MEMORY_TRAINING_VERSION",
     "MemoryTrainingRun",
+    "WORLD_ACTION_TRAINING_FORMAT",
+    "WORLD_ACTION_TRAINING_VERSION",
+    "WorldActionTrainingRun",
     "DelayedMemoryCorpus",
     "DelayedMemoryQuery",
     "DelayedMemoryTask",
