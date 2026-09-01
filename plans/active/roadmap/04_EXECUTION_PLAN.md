@@ -922,6 +922,8 @@ Gate：
 
 ### E8：长期持续进化与数据飞轮
 
+状态：bounded replay 采样合同 `complete`，其余 Gate 项 `pending`（owner `taiji/evolution_training.py`，回归 `tests/taiji_native/test_evolution_training.py` 7 passed，`tests/taiji_native` 全量 432 passed / 1 skipped）。`internalization.py` 的 `BoundedReplayBuffer` 是硬上限（满则 `BufferError`），不承担优先级淘汰；`select_bounded_replay()` 补的是容量收紧时的淘汰次序：`EVOLUTION_REPLAY_TIERS = ("correction", "failure", "success")` 按层填充，`correction` 与 `failure` 为 `EVOLUTION_REPLAY_RETAINED_TIERS`，容量不足以容纳纠正与失败证据时拒绝采样并报 `capacity cannot drop retained evidence`，因此「旧能力保持」从事后指标变成采样期 fail-closed。层级判据取 `EvolutionExperience` 既有的 `user_correction_digest` 与 `success`，不新增经验字段；`BoundedReplaySelection` 对 `experience_id` 排序后内容寻址，与输入顺序无关、跨重启可复现，删改选中集合即 `selection digest mismatch`。未新建模块，`config.py` 的 11 个 `replay_*` 参数面保持单一。多周期净能力收益、checkpoint 大小/延迟预算、污染隔离仍缺判据；分支合并策略需外部治理输入。
+
 目标：跨重启、跨版本、跨项目累计经验，同时防止灾难性遗忘和数据污染。
 
 - bounded replay、优先级采样、失败与纠正样本平衡；

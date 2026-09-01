@@ -6,7 +6,12 @@ import pytest
 import torch
 
 from taiji.evolution_experience import EvolutionExperience
-from taiji.evolution_training import NativeEvolutionTrainer
+from taiji.evolution_training import (
+    EVOLUTION_REPLAY_TIERS,
+    BoundedReplaySelection,
+    NativeEvolutionTrainer,
+    select_bounded_replay,
+)
 from taiji.internalization import content_digest
 
 
@@ -17,6 +22,7 @@ def _experience(
     capability_id: str,
     success: bool = True,
     reward: float | None = None,
+    correction: bool = False,
 ) -> EvolutionExperience:
     components = {} if reward is None else {"quality": reward}
     return EvolutionExperience(
@@ -34,6 +40,9 @@ def _experience(
         capability_snapshot_id="b" * 64,
         reward_components=components,
         result_digest=content_digest({"result": experience_id}),
+        user_correction_digest=(
+            content_digest({"correction": experience_id}) if correction else ""
+        ),
     )
 
 
@@ -103,3 +112,101 @@ def test_native_route_credit_rejects_partition_overlap_and_tampered_checkpoint()
     tampered["revision"] = 9
     with pytest.raises(ValueError, match="checkpoint digest mismatch"):
         NativeEvolutionTrainer.from_checkpoint(tampered)
+
+
+def _replay_pool() -> tuple[EvolutionExperience, ...]:
+    corrections = tuple(
+        _experience(
+            f"train-correction-{index}",
+            partition="train",
+            capability_id="editor.open",
+            reward=-0.5,
+            success=False,
+            correction=True,
+        )
+        for index in range(2)
+    )
+    failures = tuple(
+        _experience(
+            f"train-failure-{index}",
+            partition="train",
+            capability_id="mcp.list",
+            reward=-1.0,
+            success=False,
+        )
+        for index in range(3)
+    )
+    successes = tuple(
+        _experience(
+            f"train-success-{index}",
+            partition="train",
+            capability_id="editor.open",
+            reward=1.0,
+        )
+        for index in range(20)
+    )
+    return corrections + failures + successes
+
+
+def test_bounded_replay_keeps_correction_and_failure_evidence_under_capacity() -> None:
+    pool = _replay_pool()
+    selection = select_bounded_replay(pool, capacity=8)
+
+    assert isinstance(selection, BoundedReplaySelection)
+    assert len(selection.selected_experience_ids) == 8
+    assert selection.capacity == 8
+    assert selection.considered_experiences == len(pool)
+
+    selected = set(selection.selected_experience_ids)
+    assert {item.experience_id for item in pool if item.user_correction_digest} <= selected
+    assert {
+        item.experience_id
+        for item in pool
+        if not item.success and not item.user_correction_digest
+    } <= selected
+    assert any(item.experience_id in selected for item in pool if item.success)
+    assert selection.tier_counts["correction"] == 2
+    assert selection.tier_counts["failure"] == 3
+    assert selection.tier_counts["success"] == 3
+
+
+def test_bounded_replay_never_evicts_retained_tiers_when_capacity_is_tight() -> None:
+    pool = _replay_pool()
+    selection = select_bounded_replay(pool, capacity=5)
+
+    assert len(selection.selected_experience_ids) == 5
+    assert selection.tier_counts["correction"] == 2
+    assert selection.tier_counts["failure"] == 3
+    assert selection.tier_counts["success"] == 0
+
+    with pytest.raises(ValueError, match="capacity cannot drop retained evidence"):
+        select_bounded_replay(pool, capacity=4)
+
+
+def test_bounded_replay_selection_is_content_addressed_and_reproducible() -> None:
+    pool = _replay_pool()
+    first = select_bounded_replay(pool, capacity=8)
+    second = select_bounded_replay(tuple(reversed(pool)), capacity=8)
+
+    assert first.selected_experience_ids == second.selected_experience_ids
+    assert first.selection_digest == second.selection_digest
+
+    restored = BoundedReplaySelection.from_payload(first.to_payload())
+    assert restored.selection_digest == first.selection_digest
+    assert restored.selected_experience_ids == first.selected_experience_ids
+
+    tampered = deepcopy(first.to_payload())
+    tampered["selected_experience_ids"] = list(tampered["selected_experience_ids"])[:-1]
+    with pytest.raises(ValueError, match="selection digest mismatch"):
+        BoundedReplaySelection.from_payload(tampered)
+
+
+def test_bounded_replay_rejects_non_train_partitions_and_unknown_capacity() -> None:
+    assert EVOLUTION_REPLAY_TIERS == ("correction", "failure", "success")
+
+    holdout = _experience("holdout-1", partition="holdout", capability_id="editor.open")
+    with pytest.raises(ValueError, match="different partition"):
+        select_bounded_replay((holdout,), capacity=4)
+
+    with pytest.raises(ValueError, match="capacity must be positive"):
+        select_bounded_replay(_replay_pool(), capacity=0)
