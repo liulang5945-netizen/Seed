@@ -2208,7 +2208,7 @@
     },
     "/api/chat/workbench/interpret": {
       "post": {
-        "description": "Admit prose as Taiji Goal evidence without selecting or executing tools.",
+        "description": "Admit prose or an explicitly attached semantic-provider proposal.\n\nThe route never turns provider output into a tool call.  Taiji owns the\nadmission decision and returns only Goal/decomposition evidence here.",
         "operationId": "chat_workbench_interpret_api_chat_workbench_interpret_post",
         "requestBody": {
           "content": {
@@ -2539,6 +2539,397 @@
         "summary": "Chat Workbench Stream"
       }
     },
+    "/api/client-extensions": {
+      "get": {
+        "operationId": "client_extensions_api_client_extensions_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Client Extensions Api Client Extensions Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Client Extensions",
+        "tags": [
+          "client-extensions"
+        ]
+      }
+    },
+    "/api/client-extensions/commit": {
+      "post": {
+        "operationId": "commit_client_extensions_api_client_extensions_commit_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Request",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Commit Client Extensions Api Client Extensions Commit Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Commit Client Extensions",
+        "tags": [
+          "client-extensions"
+        ]
+      }
+    },
+    "/api/client-extensions/dependency": {
+      "post": {
+        "operationId": "report_client_dependency_api_client_extensions_dependency_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Request",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Report Client Dependency Api Client Extensions Dependency Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Report Client Dependency",
+        "tags": [
+          "client-extensions"
+        ]
+      }
+    },
+    "/api/client-extensions/prepare": {
+      "post": {
+        "operationId": "prepare_client_extensions_api_client_extensions_prepare_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Request",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Prepare Client Extensions Api Client Extensions Prepare Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Prepare Client Extensions",
+        "tags": [
+          "client-extensions"
+        ]
+      }
+    },
+    "/api/client-extensions/rollback": {
+      "post": {
+        "operationId": "rollback_client_extensions_api_client_extensions_rollback_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Request",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Rollback Client Extensions Api Client Extensions Rollback Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Rollback Client Extensions",
+        "tags": [
+          "client-extensions"
+        ]
+      }
+    },
+    "/api/client-extensions/{plugin_id}/call/begin": {
+      "post": {
+        "operationId": "begin_client_extension_call_api_client_extensions__plugin_id__call_begin_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plugin_id",
+            "required": true,
+            "schema": {
+              "title": "Plugin Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Begin Client Extension Call Api Client Extensions  Plugin Id  Call Begin Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Begin Client Extension Call",
+        "tags": [
+          "client-extensions"
+        ]
+      }
+    },
+    "/api/client-extensions/{plugin_id}/call/end": {
+      "post": {
+        "operationId": "end_client_extension_call_api_client_extensions__plugin_id__call_end_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plugin_id",
+            "required": true,
+            "schema": {
+              "title": "Plugin Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response End Client Extension Call Api Client Extensions  Plugin Id  Call End Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "End Client Extension Call",
+        "tags": [
+          "client-extensions"
+        ]
+      }
+    },
+    "/api/client-extensions/{plugin_id}/quarantine": {
+      "post": {
+        "operationId": "quarantine_client_extension_api_client_extensions__plugin_id__quarantine_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plugin_id",
+            "required": true,
+            "schema": {
+              "title": "Plugin Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Request",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Quarantine Client Extension Api Client Extensions  Plugin Id  Quarantine Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Quarantine Client Extension",
+        "tags": [
+          "client-extensions"
+        ]
+      }
+    },
+    "/api/client-extensions/{plugin_id}/retire": {
+      "post": {
+        "operationId": "retire_client_extension_api_client_extensions__plugin_id__retire_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plugin_id",
+            "required": true,
+            "schema": {
+              "title": "Plugin Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Retire Client Extension Api Client Extensions  Plugin Id  Retire Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Retire Client Extension",
+        "tags": [
+          "client-extensions"
+        ]
+      }
+    },
     "/api/health": {
       "get": {
         "description": "健康检查端点",
@@ -2554,6 +2945,705 @@
           }
         },
         "summary": "Health Check"
+      }
+    },
+    "/api/mcp-client-capabilities": {
+      "get": {
+        "operationId": "mcp_client_capability_status_api_mcp_client_capabilities_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Mcp Client Capability Status Api Mcp Client Capabilities Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Mcp Client Capability Status",
+        "tags": [
+          "mcp-client-capabilities"
+        ]
+      }
+    },
+    "/api/mcp-client-capabilities/connection-authorizations/{authorization_id}/revoke": {
+      "post": {
+        "description": "Revoke metadata only; no client or MCP operation is performed.",
+        "operationId": "revoke_mcp_client_connection_authorization_api_mcp_client_capabilities_connection_authorizations__authorization_id__revoke_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "authorization_id",
+            "required": true,
+            "schema": {
+              "title": "Authorization Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Request",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Revoke Mcp Client Connection Authorization Api Mcp Client Capabilities Connection Authorizations  Authorization Id  Revoke Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Revoke Mcp Client Connection Authorization",
+        "tags": [
+          "mcp-client-capabilities"
+        ]
+      }
+    },
+    "/api/mcp-client-capabilities/connection-authorizations/{authorization_id}/target-binding": {
+      "post": {
+        "description": "Bind an explicit target declaration without opening a connection.",
+        "operationId": "bind_mcp_client_connection_target_route_api_mcp_client_capabilities_connection_authorizations__authorization_id__target_binding_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "authorization_id",
+            "required": true,
+            "schema": {
+              "title": "Authorization Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Request",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Bind Mcp Client Connection Target Route Api Mcp Client Capabilities Connection Authorizations  Authorization Id  Target Binding Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Bind Mcp Client Connection Target Route",
+        "tags": [
+          "mcp-client-capabilities"
+        ]
+      }
+    },
+    "/api/mcp-client-capabilities/connection-targets/{binding_id}/revoke": {
+      "post": {
+        "description": "Revoke a target declaration without performing any connection action.",
+        "operationId": "revoke_mcp_client_connection_target_api_mcp_client_capabilities_connection_targets__binding_id__revoke_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "binding_id",
+            "required": true,
+            "schema": {
+              "title": "Binding Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Request",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Revoke Mcp Client Connection Target Api Mcp Client Capabilities Connection Targets  Binding Id  Revoke Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Revoke Mcp Client Connection Target",
+        "tags": [
+          "mcp-client-capabilities"
+        ]
+      }
+    },
+    "/api/mcp-client-capabilities/proposals": {
+      "post": {
+        "operationId": "propose_mcp_client_capability_api_mcp_client_capabilities_proposals_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Request",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Propose Mcp Client Capability Api Mcp Client Capabilities Proposals Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Propose Mcp Client Capability",
+        "tags": [
+          "mcp-client-capabilities"
+        ]
+      }
+    },
+    "/api/mcp-client-capabilities/{candidate_digest}/activation-dry-run": {
+      "post": {
+        "operationId": "dry_run_mcp_client_capability_activation_api_mcp_client_capabilities__candidate_digest__activation_dry_run_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "candidate_digest",
+            "required": true,
+            "schema": {
+              "title": "Candidate Digest",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Request",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Dry Run Mcp Client Capability Activation Api Mcp Client Capabilities  Candidate Digest  Activation Dry Run Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Dry Run Mcp Client Capability Activation",
+        "tags": [
+          "mcp-client-capabilities"
+        ]
+      }
+    },
+    "/api/mcp-client-capabilities/{candidate_digest}/activation-proposals": {
+      "post": {
+        "operationId": "propose_mcp_client_capability_activation_api_mcp_client_capabilities__candidate_digest__activation_proposals_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "candidate_digest",
+            "required": true,
+            "schema": {
+              "title": "Candidate Digest",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Request",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Propose Mcp Client Capability Activation Api Mcp Client Capabilities  Candidate Digest  Activation Proposals Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Propose Mcp Client Capability Activation",
+        "tags": [
+          "mcp-client-capabilities"
+        ]
+      }
+    },
+    "/api/mcp-client-capabilities/{candidate_digest}/connection-authorization": {
+      "post": {
+        "description": "Record explicit authorization without connecting or activating.",
+        "operationId": "authorize_mcp_client_capability_connection_api_mcp_client_capabilities__candidate_digest__connection_authorization_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "candidate_digest",
+            "required": true,
+            "schema": {
+              "title": "Candidate Digest",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Request",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Authorize Mcp Client Capability Connection Api Mcp Client Capabilities  Candidate Digest  Connection Authorization Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Authorize Mcp Client Capability Connection",
+        "tags": [
+          "mcp-client-capabilities"
+        ]
+      }
+    },
+    "/api/mcp-client-capabilities/{candidate_digest}/rollback": {
+      "post": {
+        "operationId": "rollback_mcp_client_capability_api_mcp_client_capabilities__candidate_digest__rollback_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "candidate_digest",
+            "required": true,
+            "schema": {
+              "title": "Candidate Digest",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Rollback Mcp Client Capability Api Mcp Client Capabilities  Candidate Digest  Rollback Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Rollback Mcp Client Capability",
+        "tags": [
+          "mcp-client-capabilities"
+        ]
+      }
+    },
+    "/api/mcp-client-capabilities/{candidate_digest}/shadow": {
+      "post": {
+        "operationId": "record_mcp_client_capability_shadow_api_mcp_client_capabilities__candidate_digest__shadow_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "candidate_digest",
+            "required": true,
+            "schema": {
+              "title": "Candidate Digest",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Request",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Record Mcp Client Capability Shadow Api Mcp Client Capabilities  Candidate Digest  Shadow Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Record Mcp Client Capability Shadow",
+        "tags": [
+          "mcp-client-capabilities"
+        ]
+      }
+    },
+    "/api/plugins": {
+      "get": {
+        "operationId": "list_plugins_api_plugins_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Plugins"
+      }
+    },
+    "/api/plugins/install": {
+      "post": {
+        "operationId": "install_plugin_api_plugins_install_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Install Plugin"
+      }
+    },
+    "/api/plugins/marketplace": {
+      "get": {
+        "operationId": "plugin_marketplace_api_plugins_marketplace_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Plugin Marketplace"
+      }
+    },
+    "/api/plugins/marketplace/refresh": {
+      "post": {
+        "operationId": "refresh_plugin_marketplace_api_plugins_marketplace_refresh_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Refresh Plugin Marketplace"
+      }
+    },
+    "/api/plugins/upload": {
+      "post": {
+        "operationId": "upload_plugin_api_plugins_upload_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Upload Plugin"
+      }
+    },
+    "/api/plugins/{plugin_id}": {
+      "delete": {
+        "operationId": "uninstall_plugin_api_plugins__plugin_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plugin_id",
+            "required": true,
+            "schema": {
+              "title": "Plugin Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Uninstall Plugin"
+      }
+    },
+    "/api/plugins/{plugin_id}/disable": {
+      "post": {
+        "operationId": "disable_plugin_api_plugins__plugin_id__disable_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plugin_id",
+            "required": true,
+            "schema": {
+              "title": "Plugin Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Disable Plugin"
+      }
+    },
+    "/api/plugins/{plugin_id}/enable": {
+      "post": {
+        "operationId": "enable_plugin_api_plugins__plugin_id__enable_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plugin_id",
+            "required": true,
+            "schema": {
+              "title": "Plugin Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Enable Plugin"
       }
     },
     "/api/runtime/activate": {
