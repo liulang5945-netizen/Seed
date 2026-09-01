@@ -8,12 +8,15 @@ catalog and never returns an ActionIntent or parameter binding.
 
 from __future__ import annotations
 
+import importlib
 import json
 import os
 from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Protocol
+
+import torch
 
 from taiji import (
     SemanticEvidenceProposal,
@@ -391,14 +394,16 @@ class _QwenTextGenerationBackend:
 
     def __init__(self, model_dir: Path) -> None:
         try:
-            import torch
-            from transformers import AutoModelForCausalLM, AutoTokenizer
+            transformers = importlib.import_module("transformers")
         except ImportError as exc:
             raise RuntimeError(
                 "Qwen semantic provider requires the optional transformers integration"
             ) from exc
-        self.tokenizer = AutoTokenizer.from_pretrained(model_dir, local_files_only=True)
-        self.model = AutoModelForCausalLM.from_pretrained(
+        self.tokenizer = transformers.AutoTokenizer.from_pretrained(
+            model_dir,
+            local_files_only=True,
+        )
+        self.model = transformers.AutoModelForCausalLM.from_pretrained(
             model_dir,
             local_files_only=True,
             dtype=torch.float32,
@@ -415,7 +420,7 @@ class _QwenTextGenerationBackend:
                 add_generation_prompt=True,
             )
         encoded = self.tokenizer(formatted_prompt, return_tensors="pt")
-        with __import__("torch").inference_mode():
+        with torch.inference_mode():
             generated = self.model.generate(
                 **encoded,
                 max_new_tokens=int(max_tokens),
