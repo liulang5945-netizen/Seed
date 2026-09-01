@@ -6,6 +6,7 @@ from taiji import Outcome, TaijiConfig, WorldAction, WorldInterventionCase, Worl
 from taiji.foundation_tasks import (
     ContinualLearningCorpus,
     ContinualLearningTask,
+    ContinualMemoryTask,
     DelayedMemoryCorpus,
     DelayedMemoryQuery,
     DelayedMemoryTask,
@@ -115,6 +116,33 @@ def test_delayed_memory_task_recalls_trained_cues_without_holdout_writes() -> No
     assert measurement.holdout_updates == 0
     assert measurement.sample_counts == {"train": 8, "holdout": 8, "retention": 8}
     assert "memory_lesion" in measurement.baseline_metrics
+
+
+def test_continual_memory_contract_measures_replay_against_no_replay() -> None:
+    from scripts.training.eval_taiji_b5_memory import build_corpus
+
+    corpus = build_corpus(train_count=8, holdout_count=4, retention_count=4)
+
+    assert corpus.sample_counts == {
+        "train": 16,
+        "holdout": 8,
+        "retention": 8,
+        "phase_a_train": 8,
+        "phase_a_holdout": 4,
+        "phase_a_retention": 4,
+        "phase_b_train": 8,
+        "phase_b_holdout": 4,
+        "phase_b_retention": 4,
+        "replay_train": 8,
+    }
+    assert len(corpus.digest) == 64
+    measurement = ContinualMemoryTask(_config(11), seeds=(11,)).evaluate(corpus)
+
+    assert measurement.ability_id == "b5_continual_learning"
+    assert measurement.status in {"passed", "failed"}
+    assert measurement.primary_metric == "backward_transfer"
+    assert measurement.holdout_updates == 0
+    assert any("no_replay_counterfactual" in item for item in measurement.evidence)
 
 
 def _world_case(case_id: str, *, position: float, action_kind: str) -> WorldInterventionCase:

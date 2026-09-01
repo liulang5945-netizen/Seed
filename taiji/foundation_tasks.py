@@ -6,6 +6,7 @@ import hashlib
 import json
 import math
 from collections.abc import Sequence
+from copy import deepcopy
 from dataclasses import dataclass
 
 import torch
@@ -229,6 +230,256 @@ class DelayedMemoryTask:
             prediction = max(actions, key=lambda action: float(probabilities[action].item()))
             correct += int(prediction == query.expected_action)
         return correct / len(queries)
+
+
+CONTINUAL_MEMORY_FORMAT = "taiji-native-continual-memory-v1"
+CONTINUAL_MEMORY_VERSION = 1
+
+
+@dataclass(frozen=True)
+class ContinualMemoryCorpus:
+    """A dedicated phase-A/phase-B memory stream with explicit replay data."""
+
+    phase_a_train: tuple[MemoryEpisode, ...]
+    phase_a_holdout: tuple[DelayedMemoryQuery, ...]
+    phase_a_retention: tuple[DelayedMemoryQuery, ...]
+    phase_b_train: tuple[MemoryEpisode, ...]
+    phase_b_holdout: tuple[DelayedMemoryQuery, ...]
+    phase_b_retention: tuple[DelayedMemoryQuery, ...]
+    replay_train: tuple[MemoryEpisode, ...]
+
+    def __post_init__(self) -> None:
+        partitions = {
+            "phase_a_train": self.phase_a_train,
+            "phase_a_holdout": self.phase_a_holdout,
+            "phase_a_retention": self.phase_a_retention,
+            "phase_b_train": self.phase_b_train,
+            "phase_b_holdout": self.phase_b_holdout,
+            "phase_b_retention": self.phase_b_retention,
+            "replay_train": self.replay_train,
+        }
+        if any(not values for values in partitions.values()):
+            raise ValueError("continual memory partitions cannot be empty")
+        for name, values in partitions.items():
+            if name.endswith("train") and any(
+                not isinstance(item, MemoryEpisode) for item in values
+            ):
+                raise TypeError(f"{name} must contain MemoryEpisode values")
+            if not name.endswith("train") and any(
+                not isinstance(item, DelayedMemoryQuery) for item in values
+            ):
+                raise TypeError(f"{name} must contain DelayedMemoryQuery values")
+        for phase in ("a", "b"):
+            train = getattr(self, f"phase_{phase}_train")
+            train_cues = {episode.cue for episode in train}
+            for partition in ("holdout", "retention"):
+                queries = getattr(self, f"phase_{phase}_{partition}")
+                if any(query.cue not in train_cues for query in queries):
+                    raise ValueError(
+                        f"phase-{phase} continual queries must target phase-{phase} cues"
+                    )
+        query_ids = {
+            query.query_id
+            for values in (
+                self.phase_a_holdout,
+                self.phase_a_retention,
+                self.phase_b_holdout,
+                self.phase_b_retention,
+            )
+            for query in values
+        }
+        query_count = sum(
+            len(values)
+            for values in (
+                self.phase_a_holdout,
+                self.phase_a_retention,
+                self.phase_b_holdout,
+                self.phase_b_retention,
+            )
+        )
+        if len(query_ids) != query_count:
+            raise ValueError("continual memory query ids must be unique")
+        train_ids = {episode.memory_id for episode in self.phase_a_train}
+        train_ids.update(episode.memory_id for episode in self.phase_b_train)
+        if len(train_ids) != len(self.phase_a_train) + len(self.phase_b_train):
+            raise ValueError("phase-A and phase-B memory ids must be disjoint")
+
+    @property
+    def sample_counts(self) -> dict[str, int]:
+        return {
+            "train": len(self.phase_a_train) + len(self.phase_b_train),
+            "holdout": len(self.phase_a_holdout) + len(self.phase_b_holdout),
+            "retention": len(self.phase_a_retention) + len(self.phase_b_retention),
+            "phase_a_train": len(self.phase_a_train),
+            "phase_a_holdout": len(self.phase_a_holdout),
+            "phase_a_retention": len(self.phase_a_retention),
+            "phase_b_train": len(self.phase_b_train),
+            "phase_b_holdout": len(self.phase_b_holdout),
+            "phase_b_retention": len(self.phase_b_retention),
+            "replay_train": len(self.replay_train),
+        }
+
+    @property
+    def digest(self) -> str:
+        def episode_payload(item: MemoryEpisode) -> list[object]:
+            return [item.memory_id, item.cue, item.action, item.outcome]
+
+        def query_payload(item: DelayedMemoryQuery) -> list[object]:
+            return [item.query_id, item.cue, item.expected_action]
+
+        return content_digest(
+            {
+                "format": CONTINUAL_MEMORY_FORMAT,
+                "version": CONTINUAL_MEMORY_VERSION,
+                "phase_a_train": [episode_payload(item) for item in self.phase_a_train],
+                "phase_a_holdout": [query_payload(item) for item in self.phase_a_holdout],
+                "phase_a_retention": [query_payload(item) for item in self.phase_a_retention],
+                "phase_b_train": [episode_payload(item) for item in self.phase_b_train],
+                "phase_b_holdout": [query_payload(item) for item in self.phase_b_holdout],
+                "phase_b_retention": [query_payload(item) for item in self.phase_b_retention],
+                "replay_train": [episode_payload(item) for item in self.replay_train],
+            }
+        )
+
+
+class ContinualMemoryTask:
+    """Measure replay's causal gain over a no-replay phase-B counterfactual."""
+
+    ability_id = "b5_continual_learning"
+
+    def __init__(
+        self,
+        config: TaijiConfig,
+        *,
+        seeds: Sequence[int] = (11, 29, 47),
+    ) -> None:
+        if not seeds or len(set(int(seed) for seed in seeds)) != len(seeds):
+            raise ValueError("continual memory needs unique seeds")
+        self.config = config
+        self.seeds = tuple(int(seed) for seed in seeds)
+
+    def evaluate(self, corpus: ContinualMemoryCorpus) -> FoundationMeasurement:
+        actions = tuple(
+            dict.fromkeys(
+                episode.action
+                for episode in (*corpus.phase_a_train, *corpus.phase_b_train)
+            )
+        )
+        if len(actions) < 2:
+            raise ValueError("continual memory needs at least two action classes")
+        seed_records: list[dict[str, float | int | str]] = []
+        for seed in self.seeds:
+            phase_a = Taiji(self._with_seed(seed), episode_id=f"m1-b5-phase-a-{seed}")
+            for episode in corpus.phase_a_train:
+                DelayedMemoryTask._write_episode(phase_a, episode)
+            old_before = DelayedMemoryTask._recall_accuracy(
+                phase_a, corpus.phase_a_holdout, actions, use_memory=True
+            )
+            old_retention_before = DelayedMemoryTask._recall_accuracy(
+                phase_a, corpus.phase_a_retention, actions, use_memory=True
+            )
+            phase_a_payload = deepcopy(phase_a.checkpoint())
+            phase_a_digest = content_digest(phase_a_payload)
+
+            no_replay = Taiji(self._with_seed(seed), episode_id=f"m1-b5-no-replay-{seed}")
+            no_replay.restore(deepcopy(phase_a_payload))
+            for episode in corpus.phase_b_train:
+                DelayedMemoryTask._write_episode(no_replay, episode)
+            no_replay_old_after = DelayedMemoryTask._recall_accuracy(
+                no_replay, corpus.phase_a_holdout, actions, use_memory=True
+            )
+            no_replay_new_after = DelayedMemoryTask._recall_accuracy(
+                no_replay, corpus.phase_b_holdout, actions, use_memory=True
+            )
+
+            replay = Taiji(self._with_seed(seed), episode_id=f"m1-b5-replay-{seed}")
+            replay.restore(deepcopy(phase_a_payload))
+            for episode in corpus.phase_b_train:
+                DelayedMemoryTask._write_episode(replay, episode)
+            for episode in corpus.replay_train:
+                DelayedMemoryTask._write_episode(replay, episode)
+            replay_old_after = DelayedMemoryTask._recall_accuracy(
+                replay, corpus.phase_a_holdout, actions, use_memory=True
+            )
+            replay_retention_after = DelayedMemoryTask._recall_accuracy(
+                replay, corpus.phase_a_retention, actions, use_memory=True
+            )
+            replay_new_after = DelayedMemoryTask._recall_accuracy(
+                replay, corpus.phase_b_holdout, actions, use_memory=True
+            )
+            replay_digest = content_digest(replay.checkpoint())
+            seed_records.append(
+                {
+                    "seed": seed,
+                    "old_before": old_before,
+                    "old_retention_before": old_retention_before,
+                    "no_replay_old_after": no_replay_old_after,
+                    "replay_old_after": replay_old_after,
+                    "replay_retention_after": replay_retention_after,
+                    "no_replay_new_after": no_replay_new_after,
+                    "replay_new_after": replay_new_after,
+                    "no_replay_backward_transfer": no_replay_old_after - old_before,
+                    "replay_backward_transfer": replay_old_after - old_before,
+                    "replay_causal_gain": replay_old_after - no_replay_old_after,
+                    "phase_a_checkpoint_digest": phase_a_digest,
+                    "replay_checkpoint_digest": replay_digest,
+                    "continued_from_phase_a": int(phase_a_digest != replay_digest),
+                    "holdout_updates": 0,
+                }
+            )
+
+        replay_values = [float(item["replay_backward_transfer"]) for item in seed_records]
+        no_replay_values = [
+            float(item["no_replay_backward_transfer"]) for item in seed_records
+        ]
+        baseline_metrics = {
+            "random": 0.0,
+            "frozen_parent": 0.0,
+            "simple_rule": 0.0,
+            "hash_only": 0.0,
+            "no_replay": min(no_replay_values),
+        }
+        causal_gain = all(float(item["replay_causal_gain"]) > 0.0 for item in seed_records)
+        old_retained = all(
+            float(item["replay_old_after"]) >= float(item["old_before"])
+            and float(item["replay_retention_after"]) >= float(item["old_retention_before"])
+            for item in seed_records
+        )
+        new_preserved = all(
+            float(item["replay_new_after"]) + 0.05
+            >= float(item["no_replay_new_after"])
+            for item in seed_records
+        )
+        return FoundationMeasurement(
+            ability_id=self.ability_id,
+            status=(
+                "passed"
+                if (
+                    min(replay_values) >= 0.0
+                    and causal_gain
+                    and old_retained
+                    and new_preserved
+                    and all(bool(item["continued_from_phase_a"]) for item in seed_records)
+                )
+                else "failed"
+            ),
+            primary_metric="backward_transfer",
+            metric_direction="higher_is_better",
+            metric_value=min(replay_values),
+            baseline_metrics=baseline_metrics,
+            sample_counts=corpus.sample_counts,
+            holdout_updates=0,
+            evidence=(
+                "corpus_digest=" + corpus.digest,
+                "seed_metrics=" + json.dumps(seed_records, sort_keys=True),
+                "phase_a_then_phase_b_with_no_replay_counterfactual_then_phase_a_replay=true",
+            ),
+        )
+
+    def _with_seed(self, seed: int) -> TaijiConfig:
+        values = self.config.to_dict()
+        values["seed"] = int(seed)
+        return TaijiConfig.from_dict(values)
 
 
 @dataclass(frozen=True)

@@ -1,0 +1,29 @@
+{
+  "format": "taiji-continual-memory-v1",
+  "version": 1,
+  "purpose": "Dedicated B5 phase-A/phase-B memory replay Gate",
+  "ability_id": "b5_continual_learning",
+  "phases": {
+    "phase_a": "old memory episodes written before the task switch",
+    "phase_b": "same-cue contradictory interference followed by novel-cue control episodes",
+    "replay": "phase-A train episodes replayed after phase B"
+  },
+  "minimum_counts": {
+    "phase_a_train": 1000,
+    "phase_a_holdout": 200,
+    "phase_a_retention": 200,
+    "phase_b_train": 1000,
+    "phase_b_holdout": 200,
+    "phase_b_retention": 200,
+    "replay_train": 1000
+  },
+  "required_comparisons": [
+    "phase_a_old_before_vs_no_replay_old_after",
+    "phase_a_old_before_vs_replay_old_after",
+    "replay_vs_no_replay_causal_gain",
+    "phase_b_new_capability_preserved",
+    "checkpoint_digest_changes_after_continuation"
+  ],
+  "holdout_rule": "all phase-A and phase-B holdout/retention queries are read-only",
+  "promotion_rule": "replay must retain old phase-A holdout and retention for every seed, beat no-replay, preserve phase-B capability, and use no holdout writes"
+}
