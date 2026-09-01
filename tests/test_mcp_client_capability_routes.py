@@ -16,11 +16,13 @@ from seed_platform.mcp_registry import McpToolRegistry
 def client():
     routes_mcp_client_capabilities._registry = None
     routes_mcp_client_capabilities._authorization_store = None
+    routes_mcp_client_capabilities._target_store = None
     app = create_app(startup_tasks=False)
     with TestClient(app) as test_client:
         yield test_client
     routes_mcp_client_capabilities._registry = None
     routes_mcp_client_capabilities._authorization_store = None
+    routes_mcp_client_capabilities._target_store = None
 
 
 def _candidate() -> McpCapabilityInheritanceCandidate:
@@ -76,7 +78,7 @@ def test_mcp_client_capability_api_projects_shadow_lifecycle_and_rollback(client
     status = client.get("/api/mcp-client-capabilities")
     assert status.status_code == 200
     assert len(status.json()["shadow_validated"]) == 1
-    assert status.json()["client_activation"] == "authorization_only_in_e6_4"
+    assert status.json()["client_activation"] == "target_binding_only_in_e6_5"
     client_capability_snapshot_id = status.json()["client_capability_snapshot_id"]
 
     activation_proposal = client.post(
@@ -175,6 +177,27 @@ def test_mcp_client_capability_api_records_and_revokes_connection_authorization(
     assert authorization_payload["connection"] == "not_attempted"
     assert authorization_payload["authorization"]["connection_attempted"] is False
 
+    target = client.post(
+        "/api/mcp-client-capabilities/connection-authorizations/"
+        f"{authorization_payload['authorization']['authorization_id']}/target-binding",
+        json={
+            "target_id": candidate.server_id,
+            "target_version": candidate.server_version,
+            "transport": "stdio",
+            "mcp_registry_snapshot_id": status["mcp_registry_snapshot_id"],
+            "client_capability_snapshot_id": client_snapshot_id,
+            "connection_owner_id": "owner:route",
+            "credential_owner_id": "owner:credential",
+            "approver_id": "approver:route",
+            "at_epoch": 100,
+        },
+    )
+    assert target.status_code == 200
+    target_payload = target.json()
+    assert target_payload["status"] == "bound"
+    assert target_payload["connection"] == "not_attempted"
+    assert target_payload["target"]["connection_attempted"] is False
+
     revoked = client.post(
         "/api/mcp-client-capabilities/connection-authorizations/"
         f"{authorization_payload['authorization']['authorization_id']}/revoke",
@@ -183,6 +206,9 @@ def test_mcp_client_capability_api_records_and_revokes_connection_authorization(
     assert revoked.status_code == 200
     assert revoked.json()["status"] == "revoked"
     assert revoked.json()["authorization"]["state"] == "revoked"
+    assert target_payload["target"]["binding_id"] in revoked.json()["revoked_target_binding_ids"]
+    status_after_revoke = client.get("/api/mcp-client-capabilities").json()
+    assert status_after_revoke["connection_targets"][0]["state"] == "revoked"
 
 
 def test_mcp_client_capability_api_requires_current_snapshot_and_dry_run(client):
@@ -228,3 +254,73 @@ def test_mcp_client_capability_api_requires_current_snapshot_and_dry_run(client)
         },
     )
     assert stale_snapshot.status_code == 409
+
+
+def test_mcp_client_capability_api_rejects_target_drift_and_unsupported_transport(client):
+    candidate = _candidate()
+    assert client.post(
+        "/api/mcp-client-capabilities/proposals",
+        json={"candidate": candidate.to_payload(), "policy": {}},
+    ).status_code == 200
+    assert client.post(
+        f"/api/mcp-client-capabilities/{candidate.candidate_digest}/shadow",
+        json={"observation": _observation(candidate).to_payload()},
+    ).status_code == 200
+    status = client.get("/api/mcp-client-capabilities").json()
+    client_snapshot_id = status["client_capability_snapshot_id"]
+    activation = client.post(
+        f"/api/mcp-client-capabilities/{candidate.candidate_digest}/activation-proposals",
+        json={"client_capability_snapshot_id": client_snapshot_id},
+    ).json()["proposal"]
+    dry_run = client.post(
+        f"/api/mcp-client-capabilities/{candidate.candidate_digest}/activation-dry-run",
+        json={"client_capability_snapshot_id": client_snapshot_id},
+    ).json()["dry_run"]
+    authorization = client.post(
+        f"/api/mcp-client-capabilities/{candidate.candidate_digest}/connection-authorization",
+        json={
+            "proposal_id": activation["proposal_id"],
+            "dry_run_digest": dry_run["dry_run_digest"],
+            "client_capability_snapshot_id": client_snapshot_id,
+            "approval_id": "approval:target",
+            "issuer": "user:target",
+            "issued_at_epoch": 100,
+            "expires_at_epoch": 200,
+        },
+    ).json()["authorization"]
+
+    target_drift = client.post(
+        "/api/mcp-client-capabilities/connection-authorizations/"
+        f"{authorization['authorization_id']}/target-binding",
+        json={
+            "target_id": "other.mcp.server",
+            "target_version": candidate.server_version,
+            "transport": "stdio",
+            "mcp_registry_snapshot_id": status["mcp_registry_snapshot_id"],
+            "client_capability_snapshot_id": client_snapshot_id,
+            "connection_owner_id": "owner:target",
+            "credential_owner_id": "owner:credential",
+            "approver_id": "approver:target",
+            "at_epoch": 100,
+        },
+    )
+    assert target_drift.status_code == 409
+    assert target_drift.json()["detail"]["reason_code"] == "target_id_mismatch"
+
+    unsupported_transport = client.post(
+        "/api/mcp-client-capabilities/connection-authorizations/"
+        f"{authorization['authorization_id']}/target-binding",
+        json={
+            "target_id": candidate.server_id,
+            "target_version": candidate.server_version,
+            "transport": "unknown",
+            "mcp_registry_snapshot_id": status["mcp_registry_snapshot_id"],
+            "client_capability_snapshot_id": client_snapshot_id,
+            "connection_owner_id": "owner:target",
+            "credential_owner_id": "owner:credential",
+            "approver_id": "approver:target",
+            "at_epoch": 100,
+        },
+    )
+    assert unsupported_transport.status_code == 409
+    assert unsupported_transport.json()["detail"]["reason_code"] == "transport_not_allowed"

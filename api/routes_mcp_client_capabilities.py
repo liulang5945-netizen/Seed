@@ -27,6 +27,10 @@ from seed_platform.mcp_client_connection_authorization import (
     McpClientConnectionAuthorizationStore,
     authorize_mcp_client_connection,
 )
+from seed_platform.mcp_client_connection_target import (
+    McpClientConnectionTargetStore,
+    bind_mcp_client_connection_target,
+)
 from seed_platform.workbench import WorkbenchEnvironment, default_workspace_root
 
 router = APIRouter(
@@ -35,6 +39,7 @@ router = APIRouter(
 )
 _registry: McpClientCapabilityShadowRegistry | None = None
 _authorization_store: McpClientConnectionAuthorizationStore | None = None
+_target_store: McpClientConnectionTargetStore | None = None
 
 
 def _environment() -> WorkbenchEnvironment:
@@ -78,6 +83,23 @@ def _authorization_store_for_current() -> McpClientConnectionAuthorizationStore:
     return _authorization_store
 
 
+def _target_store_for_current() -> McpClientConnectionTargetStore:
+    global _target_store
+    environment = _environment()
+    mcp_snapshot_id = environment.mcp_registry.snapshot_id
+    client_snapshot_id = environment.capability_snapshot.snapshot_id
+    if (
+        _target_store is None
+        or _target_store.mcp_registry_snapshot_id != mcp_snapshot_id
+        or _target_store.client_capability_snapshot_id != client_snapshot_id
+    ):
+        _target_store = McpClientConnectionTargetStore(
+            mcp_registry_snapshot_id=mcp_snapshot_id,
+            client_capability_snapshot_id=client_snapshot_id,
+        )
+    return _target_store
+
+
 def _error(exc: Exception) -> None:
     message = str(exc)
     if isinstance(exc, (KeyError, TypeError)):
@@ -95,6 +117,7 @@ def mcp_client_capability_status() -> dict[str, Any]:
     registry, current_snapshot_id = _shadow_registry()
     client_capability_snapshot_id = _environment().capability_snapshot.snapshot_id
     authorization_store = _authorization_store_for_current()
+    target_store = _target_store_for_current()
     return {
         "status": "ok",
         "format": "seed-mcp-client-capability-shadow-registry-v1",
@@ -108,7 +131,9 @@ def mcp_client_capability_status() -> dict[str, Any]:
         "connection_authorizations": [
             item.to_payload() for item in authorization_store.records
         ],
-        "client_activation": "authorization_only_in_e6_4",
+        "connection_targets": [item.to_payload() for item in target_store.records],
+        "connection_target_store_snapshot_id": target_store.snapshot_id,
+        "client_activation": "target_binding_only_in_e6_5",
         "connection": "not_attempted",
     }
 
@@ -317,11 +342,92 @@ def revoke_mcp_client_connection_authorization(
         )
     except Exception as exc:
         _error(exc)
+    target_store = _target_store_for_current()
+    revoked_targets = target_store.revoke_for_authorization(
+        authorization_id,
+        reason=f"authorization_revoked:{revoked.revocation_reason}",
+    )
     return {
         "status": "revoked",
         "connection": "not_attempted",
         "authorization": revoked.to_payload(),
         "authorization_store_snapshot_id": authorization_store.snapshot_id,
+        "revoked_target_binding_ids": list(revoked_targets),
+        "connection_target_store_snapshot_id": target_store.snapshot_id,
+    }
+
+
+@router.post("/connection-authorizations/{authorization_id}/target-binding")
+def bind_mcp_client_connection_target_route(
+    authorization_id: str,
+    request: dict[str, Any],
+) -> dict[str, Any]:
+    """Bind an explicit target declaration without opening a connection."""
+
+    authorization_store = _authorization_store_for_current()
+    authorization = authorization_store.get(authorization_id)
+    if authorization is None:
+        raise HTTPException(status_code=404, detail="unknown MCP connection authorization")
+    environment = _environment()
+    current_mcp_snapshot_id = environment.mcp_registry.snapshot_id
+    current_client_snapshot_id = environment.capability_snapshot.snapshot_id
+    requested_mcp_snapshot_id = str(request.get("mcp_registry_snapshot_id", "")).strip()
+    requested_client_snapshot_id = str(request.get("client_capability_snapshot_id", "")).strip()
+    if requested_mcp_snapshot_id != current_mcp_snapshot_id:
+        raise HTTPException(status_code=409, detail="MCP registry snapshot is stale")
+    if requested_client_snapshot_id != current_client_snapshot_id:
+        raise HTTPException(status_code=409, detail="client capability snapshot is stale")
+    try:
+        decision = bind_mcp_client_connection_target(
+            authorization,
+            target_id=str(request.get("target_id", "")),
+            target_version=str(request.get("target_version", "")),
+            transport=str(request.get("transport", "")),
+            mcp_registry_snapshot_id=current_mcp_snapshot_id,
+            client_capability_snapshot_id=current_client_snapshot_id,
+            network_scopes=request.get("network_scopes", ()),
+            credential_refs=request.get("credential_refs", ()),
+            allowed_permissions=request.get("allowed_permissions", ()),
+            connection_owner_id=str(request.get("connection_owner_id", "")),
+            credential_owner_id=str(request.get("credential_owner_id", "")),
+            approver_id=str(request.get("approver_id", "")),
+            at_epoch=request.get("at_epoch"),
+        )
+    except Exception as exc:
+        _error(exc)
+    if not decision.passed or decision.target is None:
+        raise HTTPException(status_code=409, detail=decision.to_payload())
+    target_store = _target_store_for_current()
+    bound = target_store.issue(decision.target)
+    return {
+        "status": "bound",
+        "connection": "not_attempted",
+        "activation": "not_committed",
+        "target": bound.to_payload(),
+        "target_store_snapshot_id": target_store.snapshot_id,
+    }
+
+
+@router.post("/connection-targets/{binding_id}/revoke")
+def revoke_mcp_client_connection_target(
+    binding_id: str,
+    request: dict[str, Any],
+) -> dict[str, Any]:
+    """Revoke a target declaration without performing any connection action."""
+
+    target_store = _target_store_for_current()
+    try:
+        revoked = target_store.revoke(
+            binding_id,
+            reason=str(request.get("reason", "")),
+        )
+    except Exception as exc:
+        _error(exc)
+    return {
+        "status": "revoked",
+        "connection": "not_attempted",
+        "target": revoked.to_payload(),
+        "target_store_snapshot_id": target_store.snapshot_id,
     }
 
 
