@@ -241,7 +241,9 @@ seed 29 在 world `648/1000` 保存时暴露 Windows 读者锁竞态：`last.pt`
 
 seed 29 的 full-coverage continuation 已完成，报告为 `reports/taiji_m1_f5_full_seed29_20260901.json`，独立进程复核为 `reports/taiji_m1_f5_full_seed29_eval_only_20260902.json`。B1/B2/B3/B4 覆盖分别为 `1,048,576/1,000/1,000/1,000`，replay 实际消费 `16,384` 字节，`world_transition_rejections=0`、`holdout_updates=0`；训练报告和 eval-only 的 checkpoint digest 均为 `2fd8d98d…`，8 项指标逐项一致，且 `checkpoint_read_only=true`。seed 29 的扩展 parent→final 为 sequence `5.4686→4.8460 BPB`、memory `0.489→0.502`、world `6.6895e-4→2.9632e-8`、goal `1.0→1.0`，全部主指标不退化并有净收益；但仍需 seed 47 和三 seed 聚合 Gate，不能单独宣称 M1 晋级。
 
-当前唯一下一步仍是 **M1-6 F5 full-coverage continuation：seed 47**：从 F4 `best-holdout.pt` 沿 parent/child lineage 继续训练，使用与 seed 11/29 相同的 foundation 数据覆盖和 phase-A→phase-B→replay 配置，生成第三个可审计 child。完成后立即做 seed 47 独立 eval-only，再聚合三个 full-coverage 报告并重算 M0 controls、holdout、retention 和 backward transfer；未完成聚合 Gate 前不进入 M2，也不切换到 provider、Workbench、Skill/MCP 或客户端外围。
+seed 47 的 full-coverage continuation 已完成，报告为 `reports/taiji_m1_f5_full_seed47_20260901.json`，独立进程复核为 `reports/taiji_m1_f5_full_seed47_eval_only_20260902.json`。B1/B2/B3/B4 覆盖分别为 `1,048,576/1,000/1,000/1,000`，replay 实际消费 `16,384` 字节，`world_transition_rejections=0`、`holdout_updates=0`；训练报告和 eval-only 的 checkpoint digest 均为 `6f548721…`，8 项指标逐项一致，且 `checkpoint_read_only=true`。seed 47 的扩展 parent→final 为 sequence `5.4107→4.8173 BPB`、memory `0.585→0.493`、world `7.9789e-6→3.0604e-8`、goal `1.0→1.0`；sequence/world/goal 有净收益，但 memory 退化，因此该 seed 不能单独晋级。
+
+三个 full-coverage seed 已全部完成，当前唯一下一步是 **M1-6 F5 三 seed 聚合 Gate**：汇总 seed 11/29/47 的训练与 eval-only 报告，验证三个 child digest、8 项指标一致性、foundation 样本覆盖、checkpoint 只读、holdout 无更新、world rejection 为零，并补齐 B5 phase-A→phase-B→replay 的 backward-transfer 审计。聚合结果若未同时满足预注册 M1 Gate，则继续在 M1 内修复 memory 保持/回放目标，不进入 M2，也不切换到 provider、Workbench、Skill/MCP 或客户端外围。
 
 ## 7. M2～M8 的开发日程与外围任务安置
 
