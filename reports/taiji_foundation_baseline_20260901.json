@@ -1,0 +1,85 @@
+{
+  "format": "taiji-foundation-evaluation-v1",
+  "manifest_digest": "c5f178d4e18018f5085c3f56d1ae6d7596df304aee975f81c12db3b72e7e74f8",
+  "checkpoint_gate_status": "passed",
+  "status": "not_evaluated",
+  "can_promote": false,
+  "failure_reasons": [
+    "b1_sequence_prediction:not_evaluated",
+    "b2_delayed_memory:not_evaluated",
+    "b3_world_transition:not_evaluated",
+    "b4_goal_action:not_evaluated",
+    "b5_continual_learning:not_evaluated"
+  ],
+  "measurements": [
+    {
+      "ability_id": "b1_sequence_prediction",
+      "status": "not_evaluated",
+      "primary_metric": "bits_per_byte",
+      "metric_direction": "lower_is_better",
+      "metric_value": null,
+      "baseline_metrics": {},
+      "sample_counts": {},
+      "holdout_updates": 0,
+      "evidence": [
+        "m0-1-contract-only; task runner pending"
+      ]
+    },
+    {
+      "ability_id": "b2_delayed_memory",
+      "status": "not_evaluated",
+      "primary_metric": "recall_accuracy",
+      "metric_direction": "higher_is_better",
+      "metric_value": null,
+      "baseline_metrics": {},
+      "sample_counts": {},
+      "holdout_updates": 0,
+      "evidence": [
+        "m0-1-contract-only; task runner pending"
+      ]
+    },
+    {
+      "ability_id": "b3_world_transition",
+      "status": "not_evaluated",
+      "primary_metric": "transition_error",
+      "metric_direction": "lower_is_better",
+      "metric_value": null,
+      "baseline_metrics": {},
+      "sample_counts": {},
+      "holdout_updates": 0,
+      "evidence": [
+        "m0-1-contract-only; task runner pending"
+      ]
+    },
+    {
+      "ability_id": "b4_goal_action",
+      "status": "not_evaluated",
+      "primary_metric": "success_rate",
+      "metric_direction": "higher_is_better",
+      "metric_value": null,
+      "baseline_metrics": {},
+      "sample_counts": {},
+      "holdout_updates": 0,
+      "evidence": [
+        "m0-1-contract-only; task runner pending"
+      ]
+    },
+    {
+      "ability_id": "b5_continual_learning",
+      "status": "not_evaluated",
+      "primary_metric": "backward_transfer",
+      "metric_direction": "higher_is_better",
+      "metric_value": null,
+      "baseline_metrics": {},
+      "sample_counts": {},
+      "holdout_updates": 0,
+      "evidence": [
+        "m0-1-contract-only; task runner pending"
+      ]
+    }
+  ],
+  "manifest_path": "E:\\Seed\\plans\\manifests\\taiji_foundation_baseline_v1.json",
+  "contract_status": "validated",
+  "capability_measurements": "not_evaluated",
+  "report_written": true
+}
