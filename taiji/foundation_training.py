@@ -47,6 +47,8 @@ MEMORY_TRAINING_FORMAT = "taiji-native-memory-training-v1"
 MEMORY_TRAINING_VERSION = 1
 WORLD_ACTION_TRAINING_FORMAT = "taiji-native-world-action-training-v1"
 WORLD_ACTION_TRAINING_VERSION = 1
+JOINT_TRAINING_FORMAT = "taiji-native-joint-training-v1"
+JOINT_TRAINING_VERSION = 1
 
 
 def _text_from_record(record: Any) -> str | None:
@@ -1313,6 +1315,491 @@ class WorldActionTrainingRun:
         return run
 
 
+def _joint_sequence_bpb(model: Taiji, data: bytes) -> float:
+    before = content_digest(model.checkpoint())
+    score = model.score_bytes(data)
+    after = content_digest(model.checkpoint())
+    if before != after:
+        raise RuntimeError("joint sequence holdout evaluation mutated persistent state")
+    return float(score["mean_surprise"]) / math.log(2.0)
+
+
+def _joint_memory_recall(
+    model: Taiji,
+    corpus: DelayedMemoryCorpus,
+    *,
+    use_memory: bool,
+) -> float:
+    actions = tuple(dict.fromkeys(item.action for item in corpus.train))
+    if len(actions) < 2:
+        raise ValueError("joint memory corpus needs at least two action classes")
+    correct = 0
+    for query in corpus.holdout:
+        model.reset_dynamics(episode_id=f"m1-f4-query-{query.query_id}")
+        model.observe(
+            model.config.boundary_symbol,
+            learn=False,
+            learn_motor=False,
+            use_memory=use_memory,
+        )
+        model.observe(
+            query.cue,
+            learn=False,
+            learn_motor=False,
+            use_memory=use_memory,
+        )
+        probabilities = model.snapshot().motor_probabilities
+        prediction = max(actions, key=lambda action: float(probabilities[action].item()))
+        correct += int(prediction == query.expected_action)
+    return correct / len(corpus.holdout)
+
+
+def _joint_train_memory_episode(model: Taiji, episode: MemoryEpisode) -> None:
+    model.reset_dynamics(episode_id=f"m1-f4-train-{episode.memory_id}")
+    model.observe(model.config.boundary_symbol, learn=False, learn_motor=False, use_memory=False)
+    model.observe(episode.cue, learn=False, learn_motor=False, use_memory=False)
+    model.act((episode.action,), sample=False)
+    model.settle_action(1.0, learn=False, learn_memory=True)
+    model.observe(episode.outcome, learn=False, learn_motor=False, use_memory=False)
+
+
+class JointTrainingRun:
+    """A resumable short course combining F1, F2 and F3 on one lineage."""
+
+    def __init__(
+        self,
+        model: Taiji,
+        world_learner: WorldDynamicsLearner,
+        dataset: FoundationTrainingDataset,
+        memory_corpus: DelayedMemoryCorpus,
+        world_corpus: WorldTransitionCorpus,
+        goal_corpus: GoalActionCorpus,
+        *,
+        output_dir: str | Path,
+        model_tier: str = "joint",
+        epochs: int = 1,
+        chunk_bytes: int = 1_024,
+        checkpoint_interval: int = 1,
+        world_learning_rate: float = 0.02,
+        world_repeats: int = 8,
+        parent_checkpoint_digest: str | None = None,
+        parent_metrics: Mapping[str, float] | None = None,
+        code_revision: str | None = None,
+    ) -> None:
+        if not isinstance(dataset, FoundationTrainingDataset):
+            raise TypeError("joint training requires FoundationTrainingDataset")
+        if not isinstance(memory_corpus, DelayedMemoryCorpus):
+            raise TypeError("joint training requires DelayedMemoryCorpus")
+        if not isinstance(world_corpus, WorldTransitionCorpus):
+            raise TypeError("joint training requires WorldTransitionCorpus")
+        if not isinstance(goal_corpus, GoalActionCorpus):
+            raise TypeError("joint training requires GoalActionCorpus")
+        if not isinstance(world_learner, WorldDynamicsLearner):
+            raise TypeError("joint training requires WorldDynamicsLearner")
+        if int(epochs) <= 0 or int(chunk_bytes) <= 0 or int(checkpoint_interval) <= 0:
+            raise ValueError("joint training epochs, chunk_bytes, and checkpoint_interval must be positive")
+        if float(world_learning_rate) <= 0.0 or int(world_repeats) <= 0:
+            raise ValueError("joint world learning settings must be positive")
+        self.model = model
+        self.world_learner = world_learner
+        self.dataset = dataset
+        self.memory_corpus = memory_corpus
+        self.world_corpus = world_corpus
+        self.goal_corpus = goal_corpus
+        self.output_dir = Path(output_dir)
+        self.model_tier = str(model_tier)
+        self.total_epochs = int(epochs)
+        self.chunk_bytes = int(chunk_bytes)
+        self.checkpoint_interval = int(checkpoint_interval)
+        self.world_learning_rate = float(world_learning_rate)
+        self.world_repeats = int(world_repeats)
+        self.code_revision = str(code_revision or _code_revision())
+        self.parent_model_payload = deepcopy(model.checkpoint())
+        self.parent_world_payload = deepcopy(_world_learner_payload(world_learner))
+        self.parent_checkpoint_digest = parent_checkpoint_digest or content_digest(
+            {"model": self.parent_model_payload, "world": self.parent_world_payload}
+        )
+        measured_parent = self._measure_metrics()
+        self.parent_metrics = {
+            key: float(value) for key, value in (parent_metrics or measured_parent).items()
+        }
+        self.epoch = 0
+        self.phase = "sequence"
+        self.sequence_cursor = 0
+        self.memory_cursor = 0
+        self.world_cursor = 0
+        self.goal_cursor = 0
+        self.global_step = 0
+        self.history: list[dict[str, Any]] = []
+        self.best_holdout_score = 0.0
+        self.started_from_checkpoint = False
+
+    @property
+    def corpus_digest(self) -> str:
+        return content_digest(
+            {
+                "format": JOINT_TRAINING_FORMAT,
+                "version": JOINT_TRAINING_VERSION,
+                "dataset_digest": self.dataset.digest,
+                "memory_digest": _memory_corpus_digest(self.memory_corpus),
+                "world_action_digest": _world_action_corpus_digest(
+                    self.world_corpus, self.goal_corpus
+                ),
+            }
+        )
+
+    @property
+    def parent_checkpoint_path(self) -> Path:
+        return self.output_dir / "parent.pt"
+
+    @property
+    def last_checkpoint_path(self) -> Path:
+        return self.output_dir / "last.pt"
+
+    @property
+    def best_checkpoint_path(self) -> Path:
+        return self.output_dir / "best-holdout.pt"
+
+    def _measure_metrics(self) -> dict[str, float]:
+        persistent_before = _world_action_persistent_digest(self.model, self.world_learner)
+        metrics = {
+            "sequence_holdout_bpb": _joint_sequence_bpb(self.model, self.dataset.holdout),
+            "sequence_retention_bpb": _joint_sequence_bpb(self.model, self.dataset.retention),
+            "memory_holdout_recall": _joint_memory_recall(
+                self.model, self.memory_corpus, use_memory=True
+            ),
+            "memory_retention_recall": _joint_memory_recall(
+                self.model, self.memory_corpus, use_memory=True
+            ),
+            "world_holdout_error": _world_action_error(
+                self.world_learner, self.world_corpus.holdout
+            ),
+            "world_retention_error": _world_action_error(
+                self.world_learner, self.world_corpus.retention
+            ),
+            "goal_holdout_success": _goal_action_accuracy(
+                self.model, self.goal_corpus.holdout
+            ),
+            "goal_retention_success": _goal_action_accuracy(
+                self.model, self.goal_corpus.retention
+            ),
+        }
+        persistent_after = _world_action_persistent_digest(self.model, self.world_learner)
+        if persistent_before != persistent_after:
+            raise RuntimeError("joint holdout evaluation mutated persistent state")
+        return metrics
+
+    def _joint_holdout_score(self, metrics: Mapping[str, float]) -> float:
+        return (
+            self.parent_metrics["sequence_holdout_bpb"] - metrics["sequence_holdout_bpb"]
+            + metrics["memory_holdout_recall"] - self.parent_metrics["memory_holdout_recall"]
+            + self.parent_metrics["world_holdout_error"] - metrics["world_holdout_error"]
+            + metrics["goal_holdout_success"] - self.parent_metrics["goal_holdout_success"]
+        )
+
+    def _checkpoint_payload(self) -> dict[str, Any]:
+        payload: dict[str, Any] = {
+            "format": JOINT_TRAINING_FORMAT,
+            "version": JOINT_TRAINING_VERSION,
+            "model_tier": self.model_tier,
+            "model": self.model.checkpoint(),
+            "world_learner": _world_learner_payload(self.world_learner),
+            "dataset_digest": self.dataset.digest,
+            "memory_digest": _memory_corpus_digest(self.memory_corpus),
+            "world_action_digest": _world_action_corpus_digest(
+                self.world_corpus, self.goal_corpus
+            ),
+            "corpus_digest": self.corpus_digest,
+            "parent_checkpoint_digest": self.parent_checkpoint_digest,
+            "parent_model": self.parent_model_payload,
+            "parent_world_learner": self.parent_world_payload,
+            "parent_metrics": dict(self.parent_metrics),
+            "epoch": self.epoch,
+            "phase": self.phase,
+            "sequence_cursor": self.sequence_cursor,
+            "memory_cursor": self.memory_cursor,
+            "world_cursor": self.world_cursor,
+            "goal_cursor": self.goal_cursor,
+            "global_step": self.global_step,
+            "total_epochs": self.total_epochs,
+            "chunk_bytes": self.chunk_bytes,
+            "checkpoint_interval": self.checkpoint_interval,
+            "world_learning_rate": self.world_learning_rate,
+            "world_repeats": self.world_repeats,
+            "history": list(self.history),
+            "best_holdout_score": self.best_holdout_score,
+            "code_revision": self.code_revision,
+        }
+        payload["checkpoint_digest"] = content_digest(payload)
+        return payload
+
+    def save(self, path: str | Path) -> Path:
+        target = Path(path)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        temporary = target.with_name(target.name + ".tmp")
+        torch.save(self._checkpoint_payload(), temporary)
+        temporary.replace(target)
+        return target
+
+    def _save_progress(
+        self,
+        *,
+        train_kind: str | None = None,
+        train_success: bool | None = None,
+    ) -> None:
+        metrics = self._measure_metrics()
+        score = self._joint_holdout_score(metrics)
+        record: dict[str, Any] = {
+            "epoch": self.epoch,
+            "phase": self.phase,
+            "sequence_cursor": self.sequence_cursor,
+            "memory_cursor": self.memory_cursor,
+            "world_cursor": self.world_cursor,
+            "goal_cursor": self.goal_cursor,
+            "global_step": self.global_step,
+            **metrics,
+            "joint_holdout_gain": score,
+        }
+        if train_kind is not None:
+            record["train_kind"] = train_kind
+        if train_success is not None:
+            record["train_success"] = bool(train_success)
+        self.history.append(record)
+        if score > self.best_holdout_score:
+            self.best_holdout_score = score
+            self.save(self.best_checkpoint_path)
+        self.save(self.last_checkpoint_path)
+
+    def run(self) -> dict[str, Any]:
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        if not self.started_from_checkpoint and not self.parent_checkpoint_path.exists():
+            self.save(self.parent_checkpoint_path)
+            self.save(self.best_checkpoint_path)
+        while self.epoch < self.total_epochs:
+            self.phase = "sequence"
+            while self.sequence_cursor < len(self.dataset.train):
+                end = min(self.sequence_cursor + self.chunk_bytes, len(self.dataset.train))
+                self.model.learn_bytes(self.dataset.train[self.sequence_cursor:end], epochs=1)
+                self.sequence_cursor = end
+                self.global_step += 1
+                if (
+                    self.global_step % self.checkpoint_interval == 0
+                    or self.sequence_cursor == len(self.dataset.train)
+                ):
+                    self._save_progress(train_kind="sequence")
+                else:
+                    self.save(self.last_checkpoint_path)
+
+            self.phase = "memory"
+            while self.memory_cursor < len(self.memory_corpus.train):
+                _joint_train_memory_episode(
+                    self.model, self.memory_corpus.train[self.memory_cursor]
+                )
+                self.memory_cursor += 1
+                self.global_step += 1
+                if (
+                    self.global_step % self.checkpoint_interval == 0
+                    or self.memory_cursor == len(self.memory_corpus.train)
+                ):
+                    self._save_progress(train_kind="memory")
+                else:
+                    self.save(self.last_checkpoint_path)
+
+            self.phase = "world"
+            while self.world_cursor < len(self.world_corpus.train):
+                case = self.world_corpus.train[self.world_cursor]
+                self.world_learner.online_update(
+                    WorldTransition(
+                        before=case.initial,
+                        action=case.action,
+                        after=case.expected_state,
+                        outcome=case.expected_outcome,
+                    ),
+                    learning_rate=self.world_learning_rate,
+                    repeats=self.world_repeats,
+                    register_parameters=True,
+                )
+                self.world_cursor += 1
+                self.global_step += 1
+                if (
+                    self.global_step % self.checkpoint_interval == 0
+                    or self.world_cursor == len(self.world_corpus.train)
+                ):
+                    self._save_progress(train_kind="world")
+                else:
+                    self.save(self.last_checkpoint_path)
+
+            self.phase = "goal"
+            while self.goal_cursor < len(self.goal_corpus.train):
+                success = _train_goal_episode(
+                    self.model, self.goal_corpus.train[self.goal_cursor], learn=True
+                )
+                self.goal_cursor += 1
+                self.global_step += 1
+                if (
+                    self.global_step % self.checkpoint_interval == 0
+                    or self.goal_cursor == len(self.goal_corpus.train)
+                ):
+                    self._save_progress(train_kind="goal", train_success=success)
+                else:
+                    self.save(self.last_checkpoint_path)
+
+            self.epoch += 1
+            self.phase = "sequence"
+            self.sequence_cursor = 0
+            self.memory_cursor = 0
+            self.world_cursor = 0
+            self.goal_cursor = 0
+            self._save_progress()
+
+        final_metrics = self._measure_metrics()
+        lesion = Taiji.from_checkpoint(self.parent_model_payload)
+        _cold_start_action_organ(lesion)
+        for episode in self.goal_corpus.train:
+            _train_goal_episode(lesion, episode, learn=False)
+        credit_lesion = _goal_action_accuracy(lesion, self.goal_corpus.holdout)
+        return {
+            "format": JOINT_TRAINING_FORMAT,
+            "version": JOINT_TRAINING_VERSION,
+            "status": "completed",
+            "model_tier": self.model_tier,
+            "corpus_digest": self.corpus_digest,
+            "dataset_digest": self.dataset.digest,
+            "memory_digest": _memory_corpus_digest(self.memory_corpus),
+            "world_action_digest": _world_action_corpus_digest(
+                self.world_corpus, self.goal_corpus
+            ),
+            "parent_checkpoint_digest": self.parent_checkpoint_digest,
+            "parent_metrics": dict(self.parent_metrics),
+            "final_metrics": final_metrics,
+            "final_credit_lesion_success": credit_lesion,
+            "joint_holdout_gain": self._joint_holdout_score(final_metrics),
+            "world_online_updates": self.world_learner.online_updates,
+            "world_transition_rejections": self.world_learner.transition_rejections,
+            "holdout_updates": 0,
+            "epoch": self.epoch,
+            "phase": self.phase,
+            "sequence_cursor": self.sequence_cursor,
+            "memory_cursor": self.memory_cursor,
+            "world_cursor": self.world_cursor,
+            "goal_cursor": self.goal_cursor,
+            "global_step": self.global_step,
+            "total_epochs": self.total_epochs,
+            "best_holdout_score": self.best_holdout_score,
+            "child_checkpoint_digest": _world_action_persistent_digest(
+                self.model, self.world_learner
+            ),
+            "history": list(self.history),
+            "checkpoint_paths": {
+                "parent": str(self.parent_checkpoint_path),
+                "last": str(self.last_checkpoint_path),
+                "best_holdout": str(self.best_checkpoint_path),
+            },
+            "code_revision": self.code_revision,
+            "started_from_checkpoint": self.started_from_checkpoint,
+        }
+
+    def evaluate_only(self) -> dict[str, Any]:
+        before = _world_action_persistent_digest(self.model, self.world_learner)
+        metrics = self._measure_metrics()
+        after = _world_action_persistent_digest(self.model, self.world_learner)
+        if before != after:
+            raise RuntimeError("joint eval-only mutated persistent state")
+        return {
+            "format": JOINT_TRAINING_FORMAT,
+            "version": JOINT_TRAINING_VERSION,
+            "status": "evaluated",
+            "model_tier": self.model_tier,
+            "corpus_digest": self.corpus_digest,
+            "checkpoint_digest": before,
+            "metrics": metrics,
+            "checkpoint_read_only": True,
+            "code_revision": self.code_revision,
+        }
+
+    @classmethod
+    def from_checkpoint(
+        cls,
+        path: str | Path,
+        dataset: FoundationTrainingDataset,
+        memory_corpus: DelayedMemoryCorpus,
+        world_corpus: WorldTransitionCorpus,
+        goal_corpus: GoalActionCorpus,
+        *,
+        output_dir: str | Path | None = None,
+        epochs: int | None = None,
+        code_revision: str | None = None,
+    ) -> JointTrainingRun:
+        checkpoint_path = Path(path)
+        payload = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
+        if not isinstance(payload, Mapping):
+            raise ValueError("joint training checkpoint must contain a mapping")
+        if payload.get("format") != JOINT_TRAINING_FORMAT:
+            raise ValueError("unsupported joint training checkpoint format")
+        if int(payload.get("version", -1)) != JOINT_TRAINING_VERSION:
+            raise ValueError("unsupported joint training checkpoint version")
+        expected = content_digest(
+            {key: value for key, value in payload.items() if key != "checkpoint_digest"}
+        )
+        if str(payload.get("checkpoint_digest", "")) != expected:
+            raise ValueError("joint training checkpoint digest mismatch")
+        expected_corpus = content_digest(
+            {
+                "format": JOINT_TRAINING_FORMAT,
+                "version": JOINT_TRAINING_VERSION,
+                "dataset_digest": dataset.digest,
+                "memory_digest": _memory_corpus_digest(memory_corpus),
+                "world_action_digest": _world_action_corpus_digest(world_corpus, goal_corpus),
+            }
+        )
+        if str(payload.get("corpus_digest")) != expected_corpus:
+            raise ValueError("joint training corpus digest mismatch")
+        model_payload = payload.get("model")
+        learner_payload = payload.get("world_learner")
+        if not isinstance(model_payload, Mapping) or not isinstance(learner_payload, Mapping):
+            raise ValueError("joint training checkpoint is missing model or world learner")
+        model = Taiji(
+            TaijiConfig.from_dict(dict(model_payload["config"])),
+            episode_id="joint-resume",
+        )
+        model.restore(model_payload)
+        run = cls(
+            model,
+            _world_learner_from_payload(learner_payload),
+            dataset,
+            memory_corpus,
+            world_corpus,
+            goal_corpus,
+            output_dir=output_dir or checkpoint_path.parent,
+            model_tier=str(payload["model_tier"]),
+            epochs=int(epochs if epochs is not None else payload["total_epochs"]),
+            chunk_bytes=int(payload["chunk_bytes"]),
+            checkpoint_interval=int(payload["checkpoint_interval"]),
+            world_learning_rate=float(payload["world_learning_rate"]),
+            world_repeats=int(payload["world_repeats"]),
+            parent_checkpoint_digest=str(payload["parent_checkpoint_digest"]),
+            parent_metrics=dict(payload["parent_metrics"]),
+            code_revision=code_revision or str(payload.get("code_revision", "working-tree")),
+        )
+        parent_model = payload.get("parent_model")
+        parent_world = payload.get("parent_world_learner")
+        if not isinstance(parent_model, Mapping) or not isinstance(parent_world, Mapping):
+            raise ValueError("joint training checkpoint is missing parent lineage")
+        run.parent_model_payload = deepcopy(parent_model)
+        run.parent_world_payload = deepcopy(parent_world)
+        run.epoch = int(payload["epoch"])
+        run.phase = str(payload.get("phase", "sequence"))
+        run.sequence_cursor = int(payload.get("sequence_cursor", 0))
+        run.memory_cursor = int(payload.get("memory_cursor", 0))
+        run.world_cursor = int(payload.get("world_cursor", 0))
+        run.goal_cursor = int(payload.get("goal_cursor", 0))
+        run.global_step = int(payload.get("global_step", 0))
+        run.history = [dict(item) for item in payload.get("history", ())]
+        run.best_holdout_score = float(payload.get("best_holdout_score", 0.0))
+        run.started_from_checkpoint = True
+        return run
+
+
 __all__ = [
     "MEMORY_TRAINING_FORMAT",
     "MEMORY_TRAINING_VERSION",
@@ -1326,4 +1813,7 @@ __all__ = [
     "WORLD_ACTION_TRAINING_FORMAT",
     "WORLD_ACTION_TRAINING_VERSION",
     "WorldActionTrainingRun",
+    "JOINT_TRAINING_FORMAT",
+    "JOINT_TRAINING_VERSION",
+    "JointTrainingRun",
 ]
