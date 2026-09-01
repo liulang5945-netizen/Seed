@@ -8,6 +8,7 @@ never manufactures a capability pass from a fixture or a provider response.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -23,6 +24,7 @@ from taiji.foundation_evaluation import (
     FoundationManifest,
     FoundationMeasurement,
 )  # noqa: E402
+from taiji.foundation_tasks import SequencePredictionCorpus, SequencePredictionTask  # noqa: E402
 
 DEFAULT_MANIFEST = PROJECT_ROOT / "plans" / "manifests" / "taiji_foundation_baseline_v1.json"
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_foundation_baseline_20260901.json"
@@ -46,6 +48,7 @@ def build_contract_report(
     manifest: FoundationManifest,
     *,
     checkpoint_gate_status: str,
+    b1_measurement: FoundationMeasurement | None = None,
 ) -> FoundationEvaluation:
     measurements = {
         ability_id: FoundationMeasurement(
@@ -61,6 +64,8 @@ def build_contract_report(
         )
         for ability_id in FOUNDATION_REQUIRED_ABILITIES
     }
+    if b1_measurement is not None:
+        measurements[b1_measurement.ability_id] = b1_measurement
     return FoundationEvaluation.evaluate(
         manifest,
         measurements,
@@ -68,23 +73,150 @@ def build_contract_report(
     )
 
 
+def _text_from_record(record: Any) -> str | None:
+    if isinstance(record, str):
+        return record.strip() or None
+    if not isinstance(record, dict):
+        return None
+    for key in ("text", "content", "input"):
+        value = record.get(key)
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+    return None
+
+
+def build_sequence_corpus(
+    paths: list[Path],
+    *,
+    train_bytes: int,
+    holdout_bytes: int,
+    retention_bytes: int,
+    seed: int,
+) -> SequencePredictionCorpus:
+    budgets = {
+        "train": int(train_bytes),
+        "holdout": int(holdout_bytes),
+        "retention": int(retention_bytes),
+    }
+    if any(value <= 0 for value in budgets.values()):
+        raise ValueError("B1 byte budgets must be positive")
+    buffers = {partition: bytearray() for partition in budgets}
+    seen_text_digests: set[str] = set()
+    for path in paths:
+        with Path(path).open("r", encoding="utf-8") as handle:
+            for line in handle:
+                try:
+                    record = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                text = _text_from_record(record)
+                if text is None:
+                    continue
+                text_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+                if text_digest in seen_text_digests:
+                    continue
+                seen_text_digests.add(text_digest)
+                bucket = int.from_bytes(
+                    hashlib.sha256(f"{int(seed)}\0{text}".encode()).digest()[:4],
+                    "big",
+                ) % 10_000
+                partition = (
+                    "train"
+                    if bucket < 8_000
+                    else "holdout"
+                    if bucket < 9_000
+                    else "retention"
+                )
+                remaining = budgets[partition] - len(buffers[partition])
+                if remaining > 0:
+                    buffers[partition].extend(text.encode("utf-8")[:remaining])
+                if all(len(buffers[name]) >= budgets[name] for name in budgets):
+                    break
+        if all(len(buffers[name]) >= budgets[name] for name in budgets):
+            break
+    missing = {
+        name: f"{len(buffers[name])}/{budgets[name]}"
+        for name in budgets
+        if len(buffers[name]) < budgets[name]
+    }
+    if missing:
+        raise ValueError("B1 corpus did not meet byte budgets: " + json.dumps(missing))
+    return SequencePredictionCorpus(
+        train=bytes(buffers["train"]),
+        holdout=bytes(buffers["holdout"]),
+        retention=bytes(buffers["retention"]),
+    )
+
+
+def _model_config(tier: str, seed: int) -> Any:
+    from taiji import TaijiConfig
+
+    if tier == "default":
+        values = TaijiConfig().to_dict()
+    elif tier == "micro":
+        values = TaijiConfig(
+            region_sizes=(8,),
+            synapse_fan_in=2,
+            motor_fan_in=4,
+            memory_units=16,
+            memory_fan_in=2,
+            memory_readout_fan_in=2,
+            memory_meta_dim=4,
+            memory_time_dim=2,
+            memory_episode_dim=2,
+            lateral_fan_in=2,
+            concept_capacity=8,
+        ).to_dict()
+    else:
+        raise ValueError(f"unsupported B1 model tier: {tier}")
+    values["seed"] = int(seed)
+    return TaijiConfig.from_dict(values)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
+    parser.add_argument("--b1-corpus", nargs="+", type=Path)
+    parser.add_argument("--model-tier", choices=("micro", "default"), default="micro")
+    parser.add_argument("--epochs", type=int, default=1)
+    parser.add_argument("--profile", choices=("smoke", "foundation"), default="smoke")
     parser.add_argument("--checkpoint-report", type=Path)
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
     args = parser.parse_args()
 
     manifest = FoundationManifest.load(args.manifest)
     checkpoint_status = _checkpoint_gate_status(manifest, args.checkpoint_report)
+    b1_measurement = None
+    if args.b1_corpus:
+        if args.profile == "smoke":
+            budgets = (4_096, 1_024, 1_024)
+        else:
+            budgets = (1_048_576, 131_072, 131_072)
+        corpus = build_sequence_corpus(
+            args.b1_corpus,
+            train_bytes=budgets[0],
+            holdout_bytes=budgets[1],
+            retention_bytes=budgets[2],
+            seed=manifest.seeds[0],
+        )
+        b1_measurement = SequencePredictionTask(
+            _model_config(args.model_tier, manifest.seeds[0]),
+            seeds=manifest.seeds,
+            epochs=args.epochs,
+        ).evaluate(corpus)
     evaluation = build_contract_report(
         manifest,
         checkpoint_gate_status=checkpoint_status,
+        b1_measurement=b1_measurement,
     )
     result = evaluation.to_payload()
     result["manifest_path"] = str(args.manifest)
     result["contract_status"] = "validated"
-    result["capability_measurements"] = "not_evaluated"
+    result["capability_measurements"] = (
+        "b1_measured; b2-b5_not_evaluated" if b1_measurement is not None else "not_evaluated"
+    )
+    result["profile"] = args.profile
+    result["model_tier"] = args.model_tier if b1_measurement is not None else None
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     result["report_written"] = args.report.is_file()
