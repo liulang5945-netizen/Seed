@@ -19,6 +19,20 @@ Taiji 不从“原始神经元模拟”重新发明全部技术，也不让 Tran
 - **能力注册不等于能力自治；只有 Taiji 的 structured affordance 选择、policy 准入和真实 Outcome 回写闭合后才算身体成长。**
 - **结构增加不等于进化；只有旧能力保持、资源可接受且可回滚的增益才进入稳定模型。**
 
+### R5 编号的接管关系（2026-09-01 收敛）
+
+上述 R5A/R5B/R5C 三链在 2026-08-31 的路线修正后已被 [63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md](63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md) 的 E 系列阶段接管。本文件自此只作为 R5 已完成分片的证据索引，**其中任何“下一阶段”“后续”表述都不再产生动作**：
+
+| 原 R5 链 | 接管阶段 | 接管后的形态 |
+|---|---|---|
+| R5A 知识内化 | E2/E4 | 语料与经验合同 + `CognitiveInternalizationArtifact`（owner: Taiji） |
+| R5B 效应器成长 | E5/E6 | Seed 客户端插件生命周期 + `ClientCapabilityInheritanceCandidate`（owner: Seed 客户端） |
+| R5C 结构成长 | E8 | 长期数据飞轮下的局部结构候选与单项回滚 |
+| R3 Windows shell | 仍为 `tool-blocked` | 不被 E 系列接管，工具可用后按 C7 单独补证 |
+| R4 CUDA | E9（`hardware-blocked`） | 不阻塞 E1–E8 的 CPU/原生正确性 |
+
+接管不等于作废：R5A/R5B 已通过的 Gate 与报告仍是 E 系列的前置证据，但**新的准入判定只走 E 系列的 Gate**，避免同一能力在两套编号里各自声明完成。
+
 ## 2. 阶段总览
 
 | 顺位 | 工作包 | 目标 | 退出产物 |
@@ -56,9 +70,9 @@ R3/R4 未通过时不得声明相应能力，但它们不再作为 R5 的伪串�
 
 ### Gate
 
-已扩展 `tests/test_w7_gate_manifests.py`：缺失/混合 owner、缺 checkpoint、认知越权和错误删除边界会红，合法合同通过；R5B manifest 已推进到 `s1_dispatch_integrated`，R5A 的实现状态由其 S0/S1/S2 分阶段记录。效应器注册表仍由 R5B 独立拥有，避免 R5A 与 R5B 的 owner 边界漂移。
+已扩展 `tests/test_w7_gate_manifests.py`：缺失/混合 owner、缺 checkpoint、认知越权和错误删除边界会红，合法合同通过；R5B manifest 当前实现状态为 `l4_reviewed_no_go`，R5A 为 `s2_stability_gate_implemented`，两者的分阶段记录由各自 manifest 的 `implementation` 持有。效应器注册表仍由 R5B 独立拥有，避免 R5A 与 R5B 的 owner 边界漂移。
 
-## 4. C2：W7-R5A 知识内化（下一阶段）
+## 4. C2：W7-R5A 知识内化（已交付基线，由 E2/E4 接管）
 
 ### S0：纯 DTO 转换与确定性 replay
 
