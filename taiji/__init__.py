@@ -195,6 +195,14 @@ from .foundation_tasks import (
     WorldTransitionCorpus,
     WorldTransitionTask,
 )
+from .foundation_training import (
+    FOUNDATION_TRAINING_FORMAT,
+    FOUNDATION_TRAINING_PROFILE_BUDGETS,
+    FOUNDATION_TRAINING_PROFILES,
+    FOUNDATION_TRAINING_VERSION,
+    FoundationTrainingDataset,
+    FoundationTrainingRun,
+)
 from .generation import (
     GENERATION_CHECKPOINT_FORMAT,
     TEXT_EXPRESSION_CODEC_FORMAT,
@@ -598,6 +606,12 @@ __all__ = [
     "FoundationManifest",
     "FoundationMeasurement",
     "FoundationTaskSpec",
+    "FOUNDATION_TRAINING_FORMAT",
+    "FOUNDATION_TRAINING_PROFILE_BUDGETS",
+    "FOUNDATION_TRAINING_PROFILES",
+    "FOUNDATION_TRAINING_VERSION",
+    "FoundationTrainingDataset",
+    "FoundationTrainingRun",
     "DelayedMemoryCorpus",
     "DelayedMemoryQuery",
     "DelayedMemoryTask",
