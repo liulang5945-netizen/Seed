@@ -906,7 +906,7 @@ E0–E6 的逐条完成记录与当时状态引自被归档的原总路线快照
 
 ### E7：脑—客户端协同选择器
 
-状态：前四条 Gate 与六类输出互斥 `complete`（owner `taiji/evolution_credit.py`，回归 `tests/taiji_native/test_evolution_credit.py` 6 passed）；第五条消融归属 Gate 仍未闭合。结构增长准入不在本模块重算，而是消费 `CapacityGrowthTrigger` 的许可位；「缺少 affordance」以「能力未注册」为可验证代理，不引入第二套 affordance 开关。
+状态：五条 Gate 与六类输出互斥全部 `complete`（owner `taiji/evolution_credit.py`，回归 `tests/taiji_native/test_evolution_credit.py` 12 passed，`tests/taiji_native` 全量 428 passed / 1 skipped）。结构增长准入不在本模块重算，而是消费 `CapacityGrowthTrigger` 的许可位；「缺少 affordance」以「能力未注册」为可验证代理，不引入第二套 affordance 开关。第五条消融归属 Gate 由 `attribute_brain_client_ablation()` 闭合：同一经验集在「能力已注册」与「能力未注册」两种 registry 下各跑一臂，每条 episode 只能落入 `brain_only`、`client_plugin_only`、`unattributed` 之一，`clarify_or_stop`（含资源耗尽与无能力标识）一律归 `unattributed` 而不计入任何一侧收益，归属结果内容寻址、跨臂搬账即 `digest mismatch`。
 
 目标：Taiji 能根据经验判断“应该学习已有能力，还是向 Seed 客户端申请新能力”，但不能直接安装插件。
 
