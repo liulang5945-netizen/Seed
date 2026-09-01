@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from taiji import TaijiConfig
+import torch
+
+from taiji import Outcome, TaijiConfig, WorldAction, WorldInterventionCase, WorldObject, WorldState
 from taiji.foundation_tasks import (
     DelayedMemoryCorpus,
     DelayedMemoryQuery,
@@ -8,6 +10,8 @@ from taiji.foundation_tasks import (
     MemoryEpisode,
     SequencePredictionCorpus,
     SequencePredictionTask,
+    WorldTransitionCorpus,
+    WorldTransitionTask,
 )
 
 
@@ -106,3 +110,70 @@ def test_delayed_memory_task_recalls_trained_cues_without_holdout_writes() -> No
     assert measurement.holdout_updates == 0
     assert measurement.sample_counts == {"train": 8, "holdout": 8, "retention": 8}
     assert "memory_lesion" in measurement.baseline_metrics
+
+
+def _world_case(case_id: str, *, position: float, action_kind: str) -> WorldInterventionCase:
+    before = WorldState(
+        tick=0,
+        latent=torch.zeros(1),
+        objects=(
+            WorldObject("agent", attributes={"energy": 1.0}),
+            WorldObject("target", attributes={"position": position}),
+        ),
+    )
+    action = WorldAction(
+        action_id=case_id,
+        kind=action_kind,
+        tick=0,
+        actor_id="agent",
+        target_id="target",
+        parameters={"amount": 1.0},
+    )
+    delta = 1.0 if action_kind == "push" else -1.0
+    after = WorldState(
+        tick=1,
+        latent=torch.zeros(1),
+        objects=(
+            WorldObject("agent", attributes={"energy": 1.0}),
+            WorldObject("target", attributes={"position": position + delta}),
+        ),
+    )
+    return WorldInterventionCase(
+        case_id=case_id,
+        initial=before,
+        action=action,
+        expected_state=after,
+        expected_outcome=Outcome(
+            intent_id=case_id,
+            reward=delta,
+            success=delta > 0,
+            tick=1,
+        ),
+    )
+
+
+def test_world_transition_task_uses_train_only_schema_and_reports_controls() -> None:
+    train = tuple(
+        _world_case(f"train-{index}", position=float(index), action_kind="push")
+        for index in range(6)
+    )
+    holdout = tuple(
+        _world_case(f"holdout-{index}", position=10.0 + index, action_kind="push")
+        for index in range(3)
+    )
+    retention = tuple(
+        _world_case(f"retention-{index}", position=20.0 + index, action_kind="push")
+        for index in range(3)
+    )
+
+    measurement = WorldTransitionTask(epochs=10, seeds=(11,)).evaluate(
+        WorldTransitionCorpus(train=train, holdout=holdout, retention=retention)
+    )
+
+    assert measurement.ability_id == "b3_world_transition"
+    assert measurement.status in {"passed", "failed"}
+    assert measurement.sample_counts == {"train": 6, "holdout": 3, "retention": 3}
+    assert measurement.holdout_updates == 0
+    assert set(("random", "frozen_parent", "simple_rule", "hash_only")).issubset(
+        measurement.baseline_metrics
+    )
