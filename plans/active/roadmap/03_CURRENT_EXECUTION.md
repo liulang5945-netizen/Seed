@@ -96,6 +96,7 @@ M0 的零点已经足够可信，不能因 capability failed 继续扩大外围�
 - `tests/taiji_native/test_foundation_evaluation.py`：数据泄漏、对照、checkpoint 和失败口径 red；
 - `tests/taiji_native/test_foundation_tasks.py`：原生任务适配器的真实状态和 holdout 只读回归；
 - `scripts/training/eval_taiji_foundation_baseline.py`：CPU 基线入口；
+- `scripts/training/eval_taiji_f5_promotion.py`：从 F4 child 全新进程恢复并执行 M0 晋级覆盖审计；
 - `reports/taiji_foundation_baseline_<date>.json`：首次真实性报告；
 - `reports/taiji_m0_b1_smoke_<date>.json`：B1 smoke 真实性证据。
 - `reports/taiji_m0_b2_smoke_<date>.json`：B2 smoke 真实性证据。
@@ -220,7 +221,9 @@ M1-5 已完成：`JointTrainingRun` 与 `scripts/training/train_taiji_joint.py` 
 
 F4 过程中发现并修复了一个真实恢复错误：float32 范数边界的 1 ulp 舍入会让 `SparseSynapses.load_payload()` 在恢复时二次改写权重，破坏 checkpoint digest 和只读评估。`ab4b079` 增加了容差幂等边界与回归测试；seed 11 从修复前保存的 `last.pt` 继续完成，随后三 seed 的新进程 eval-only 均通过。这次修复是 checkpoint 正确性的基础修复，不是模型能力收益。
 
-当前唯一下一步是执行 **M1-6 F5 首次晋级**：从三个 F4 最佳 checkpoint 中选定可追溯 child，在全新进程重跑 M0 五项矩阵，保留完整 foundation 数据与对照，重点验证 B1 是否超过 unigram、B2 是否超过 memory lesion、B5 是否止住遗忘，同时确认 B3/B4 不因联合训练退化。F5 完成前不进入 M2，也不切换到 provider、Workbench、Skill/MCP 或客户端外围。
+M1-6 的 F5 首轮审计已完成，报告为 `reports/taiji_m1_f5_promotion_20260901.json`。三个 F4 `best-holdout.pt` 均在全新进程恢复；sequence、memory、world、goal 四类联合指标在 seed 11/29/47 均相对各自 parent 改善，`checkpoint_read_only=true`。但报告状态必须是 `blocked`：F4 pilot 只有 B1 `16384/4096/4096` 字节、B2 `64/64/64`、B3 `64/32/32`、B4 `64/32/32`，均未达到 manifest 的 foundation 下限；B5 没有可审计的 phase-A→phase-B 连续学习分区；同时 F4 child 上尚未重算完整 M0 controls。四项指标的 pilot canary 不能替代完整能力晋级。
+
+当前唯一下一步仍是 **M1-6 F5 full-coverage continuation**：从三个 F4 `best-holdout.pt` 沿 parent/child lineage 继续训练，生成覆盖 B1 `1 MiB + 128 KiB + 128 KiB`、B2/B3/B4 至少 `1000/200/200`、B5 phase-A→phase-B→replay 的新 child；训练前先做真实磁盘 save→新进程 restore→继续一步→再 save canary，再按三 seed 重算 M0 controls、holdout、retention 和 backward transfer。未完成该 full-coverage Gate 前不进入 M2，也不切换到 provider、Workbench、Skill/MCP 或客户端外围。
 
 ## 7. M2～M8 的开发日程与外围任务安置
 
