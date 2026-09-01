@@ -74,9 +74,13 @@ def main() -> int:
         default=PROJECT_ROOT / "outputs" / "taiji-m1-f4-joint",
     )
     parser.add_argument("--resume", type=Path)
+    parser.add_argument("--continue-from", dest="continue_from", type=Path)
     parser.add_argument("--eval-only", action="store_true")
     parser.add_argument("--report", type=Path)
     args = parser.parse_args()
+
+    if args.resume is not None and args.continue_from is not None:
+        parser.error("--resume and --continue-from are mutually exclusive")
 
     count = args.count if args.count is not None else (8 if args.profile == "smoke" else 64)
     checkpoint_interval = args.checkpoint_interval or (4 if args.profile == "smoke" else 16)
@@ -88,7 +92,21 @@ def main() -> int:
     memory_corpus = build_memory_corpus(count=count)
     world_corpus = build_world_corpus(count=count)
     goal_corpus = build_goal_corpus(count=count)
-    if args.resume is not None:
+    if args.continue_from is not None:
+        run = JointTrainingRun.from_continuation_checkpoint(
+            args.continue_from,
+            dataset,
+            memory_corpus,
+            world_corpus,
+            goal_corpus,
+            output_dir=args.output_dir,
+            epochs=args.epochs,
+            chunk_bytes=args.chunk_bytes,
+            checkpoint_interval=checkpoint_interval,
+            world_learning_rate=args.world_learning_rate,
+            world_repeats=args.world_repeats,
+        )
+    elif args.resume is not None:
         run = JointTrainingRun.from_checkpoint(
             args.resume,
             dataset,

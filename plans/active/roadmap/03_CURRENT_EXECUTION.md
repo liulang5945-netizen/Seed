@@ -223,6 +223,8 @@ F4 过程中发现并修复了一个真实恢复错误：float32 范数边界的
 
 M1-6 的 F5 首轮审计已完成，报告为 `reports/taiji_m1_f5_promotion_20260901.json`。三个 F4 `best-holdout.pt` 均在全新进程恢复；sequence、memory、world、goal 四类联合指标在 seed 11/29/47 均相对各自 parent 改善，`checkpoint_read_only=true`。但报告状态必须是 `blocked`：F4 pilot 只有 B1 `16384/4096/4096` 字节、B2 `64/64/64`、B3 `64/32/32`、B4 `64/32/32`，均未达到 manifest 的 foundation 下限；B5 没有可审计的 phase-A→phase-B 连续学习分区；同时 F4 child 上尚未重算完整 M0 controls。四项指标的 pilot canary 不能替代完整能力晋级。
 
+为避免把扩大数据误当成旧 pilot 的 `resume`，已补充显式 continuation 接口：`JointTrainingRun.from_continuation_checkpoint()` 和 `train_taiji_joint.py --continue-from` 会校验源 checkpoint digest，重新计算扩展数据上的 parent，清零新课程 cursor，并保存 `continuation_source_checkpoint_digest` lineage。报告 `reports/taiji_m1_f5_continuation_canary_20260901.json` 已用 seed 11 的 F4 best checkpoint 完成 smoke canary：源 lineage、扩展 parent、全新 `parent/last/best-holdout`、训练后恢复和 eval-only 均通过；final sequence BPB `5.4676→5.0399`、memory recall `0.6667→0.8333`、world error `0.007176→0.0000183`、goal success 保持 `1.0`，且 `holdout_updates=0`、world rejection 为 `0`。这只证明 continuation 链路正确，不改变 F5 的能力 Gate 状态。
+
 当前唯一下一步仍是 **M1-6 F5 full-coverage continuation**：从三个 F4 `best-holdout.pt` 沿 parent/child lineage 继续训练，生成覆盖 B1 `1 MiB + 128 KiB + 128 KiB`、B2/B3/B4 至少 `1000/200/200`、B5 phase-A→phase-B→replay 的新 child；训练前先做真实磁盘 save→新进程 restore→继续一步→再 save canary，再按三 seed 重算 M0 controls、holdout、retention 和 backward transfer。未完成该 full-coverage Gate 前不进入 M2，也不切换到 provider、Workbench、Skill/MCP 或客户端外围。
 
 ## 7. M2～M8 的开发日程与外围任务安置
