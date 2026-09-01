@@ -49,6 +49,7 @@ def main() -> int:
     parser.add_argument("--profile", choices=("smoke", "pilot", "foundation"), default="pilot")
     parser.add_argument("--model-tier", choices=("micro", "default"), default="micro")
     parser.add_argument("--seed", type=int, default=11)
+    parser.add_argument("--partition-seed", type=int, default=11)
     parser.add_argument("--epochs", type=int, default=1)
     parser.add_argument("--chunk-bytes", type=int, default=1_024)
     parser.add_argument("--checkpoint-interval", type=int, default=1)
@@ -61,7 +62,7 @@ def main() -> int:
     dataset = FoundationTrainingDataset.from_jsonl(
         args.corpus,
         profile=args.profile,
-        partition_seed=args.seed,
+        partition_seed=args.partition_seed,
     )
     if args.resume is not None:
         run = FoundationTrainingRun.from_checkpoint(
