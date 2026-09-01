@@ -227,6 +227,8 @@ M1-6 的 F5 首轮审计已完成，报告为 `reports/taiji_m1_f5_promotion_202
 
 为进入真实覆盖量，`scripts/training/train_taiji_joint.py` 已开放 `--profile foundation`，默认使用 manifest 规定的 B1 `1,048,576/131,072/131,072` 字节预算、B2/B3/B4 各 `1,000` 条训练样本，并把默认 checkpoint 间隔提高到 `256`，避免 CPU 上每个小步都重复扫描大 holdout。该入口只扩大数据覆盖，不扩大 Taiji 神经元规模、不接 Transformer/provider；正式运行仍需先完成磁盘 checkpoint canary，并把三 seed 的训练耗时和磁盘占用写入报告。
 
+F5 的 continuation 现在还支持显式 `--replay-corpus/--replay-profile/--replay-epochs`。回放阶段有独立 `phase=replay`、cursor、epoch 和 corpus digest，和新 phase-B 的训练状态一起写入同一 checkpoint；普通 `--resume` 会严格校验 replay digest，避免恢复时悄悄换 replay 数据。continuation 回归测试已覆盖 replay 执行、磁盘恢复和 eval-only 只读。这使 B5 的“phase-A→phase-B→replay”成为训练链上的真实阶段，而不是只在 evaluator 里模拟。
+
 当前唯一下一步仍是 **M1-6 F5 full-coverage continuation**：从三个 F4 `best-holdout.pt` 沿 parent/child lineage 继续训练，生成覆盖 B1 `1 MiB + 128 KiB + 128 KiB`、B2/B3/B4 至少 `1000/200/200`、B5 phase-A→phase-B→replay 的新 child；训练前先做真实磁盘 save→新进程 restore→继续一步→再 save canary，再按三 seed 重算 M0 controls、holdout、retention 和 backward transfer。未完成该 full-coverage Gate 前不进入 M2，也不切换到 provider、Workbench、Skill/MCP 或客户端外围。
 
 ## 7. M2～M8 的开发日程与外围任务安置

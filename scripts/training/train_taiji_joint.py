@@ -68,6 +68,10 @@ def main() -> int:
     parser.add_argument("--checkpoint-interval", type=int)
     parser.add_argument("--world-learning-rate", type=float, default=0.02)
     parser.add_argument("--world-repeats", type=int, default=8)
+    parser.add_argument("--replay-corpus", nargs="+", type=Path)
+    parser.add_argument("--replay-profile", choices=("smoke", "pilot", "foundation"), default="pilot")
+    parser.add_argument("--replay-partition-seed", type=int, default=11)
+    parser.add_argument("--replay-epochs", type=int, default=1)
     parser.add_argument(
         "--output-dir",
         type=Path,
@@ -97,6 +101,13 @@ def main() -> int:
         profile=args.profile,
         partition_seed=args.partition_seed,
     )
+    replay_dataset = None
+    if args.replay_corpus is not None:
+        replay_dataset = FoundationTrainingDataset.from_jsonl(
+            args.replay_corpus,
+            profile=args.replay_profile,
+            partition_seed=args.replay_partition_seed,
+        )
     memory_corpus = build_memory_corpus(count=count)
     world_corpus = build_world_corpus(count=count)
     goal_corpus = build_goal_corpus(count=count)
@@ -113,6 +124,8 @@ def main() -> int:
             checkpoint_interval=checkpoint_interval,
             world_learning_rate=args.world_learning_rate,
             world_repeats=args.world_repeats,
+            replay_dataset=replay_dataset,
+            replay_epochs=args.replay_epochs,
         )
     elif args.resume is not None:
         run = JointTrainingRun.from_checkpoint(
@@ -123,6 +136,8 @@ def main() -> int:
             goal_corpus,
             output_dir=args.output_dir,
             epochs=args.epochs,
+            replay_dataset=replay_dataset,
+            replay_epochs=args.replay_epochs,
         )
     else:
         model = Taiji(_config(args.seed), episode_id="joint-train")
@@ -141,6 +156,8 @@ def main() -> int:
             checkpoint_interval=checkpoint_interval,
             world_learning_rate=args.world_learning_rate,
             world_repeats=args.world_repeats,
+            replay_dataset=replay_dataset,
+            replay_epochs=args.replay_epochs,
         )
     result: dict[str, Any]
     if args.eval_only:

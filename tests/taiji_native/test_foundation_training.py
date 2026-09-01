@@ -297,6 +297,8 @@ def test_joint_training_starts_an_explicit_continuation_from_child_checkpoint() 
         chunk_bytes=32,
         checkpoint_interval=2,
         world_repeats=1,
+        replay_dataset=dataset,
+        replay_epochs=1,
     )
 
     assert continuation.continuation_source_checkpoint_digest
@@ -309,6 +311,8 @@ def test_joint_training_starts_an_explicit_continuation_from_child_checkpoint() 
     )
     assert report["parent_checkpoint_digest"]
     assert report["parent_checkpoint_digest"] != original_report["child_checkpoint_digest"]
+    assert report["replay_dataset_digest"] == dataset.digest
+    assert any(item.get("train_kind") == "replay" for item in report["history"])
 
     restored = JointTrainingRun.from_checkpoint(
         continuation_dir / "last.pt",
@@ -317,5 +321,6 @@ def test_joint_training_starts_an_explicit_continuation_from_child_checkpoint() 
         continuation.world_corpus,
         continuation.goal_corpus,
         output_dir=continuation_dir,
+        replay_dataset=dataset,
     )
     assert restored.evaluate_only()["checkpoint_read_only"] is True
