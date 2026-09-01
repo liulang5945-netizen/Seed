@@ -59,7 +59,7 @@ def main() -> int:
         type=Path,
         default=[PROJECT_ROOT / "data" / "simple_zh" / "dialogue_extended_clean.jsonl"],
     )
-    parser.add_argument("--profile", choices=("smoke", "pilot"), default="smoke")
+    parser.add_argument("--profile", choices=("smoke", "pilot", "foundation"), default="smoke")
     parser.add_argument("--count", type=int)
     parser.add_argument("--seed", type=int, default=11)
     parser.add_argument("--partition-seed", type=int, default=11)
@@ -82,8 +82,16 @@ def main() -> int:
     if args.resume is not None and args.continue_from is not None:
         parser.error("--resume and --continue-from are mutually exclusive")
 
-    count = args.count if args.count is not None else (8 if args.profile == "smoke" else 64)
-    checkpoint_interval = args.checkpoint_interval or (4 if args.profile == "smoke" else 16)
+    count = args.count if args.count is not None else {
+        "smoke": 8,
+        "pilot": 64,
+        "foundation": 1_000,
+    }[args.profile]
+    checkpoint_interval = args.checkpoint_interval or {
+        "smoke": 4,
+        "pilot": 16,
+        "foundation": 256,
+    }[args.profile]
     dataset = FoundationTrainingDataset.from_jsonl(
         args.corpus,
         profile=args.profile,

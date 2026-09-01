@@ -225,6 +225,8 @@ M1-6 的 F5 首轮审计已完成，报告为 `reports/taiji_m1_f5_promotion_202
 
 为避免把扩大数据误当成旧 pilot 的 `resume`，已补充显式 continuation 接口：`JointTrainingRun.from_continuation_checkpoint()` 和 `train_taiji_joint.py --continue-from` 会校验源 checkpoint digest，重新计算扩展数据上的 parent，清零新课程 cursor，并保存 `continuation_source_checkpoint_digest` lineage。报告 `reports/taiji_m1_f5_continuation_canary_20260901.json` 已用 seed 11 的 F4 best checkpoint 完成 smoke canary：源 lineage、扩展 parent、全新 `parent/last/best-holdout`、训练后恢复和 eval-only 均通过；final sequence BPB `5.4676→5.0399`、memory recall `0.6667→0.8333`、world error `0.007176→0.0000183`、goal success 保持 `1.0`，且 `holdout_updates=0`、world rejection 为 `0`。这只证明 continuation 链路正确，不改变 F5 的能力 Gate 状态。
 
+为进入真实覆盖量，`scripts/training/train_taiji_joint.py` 已开放 `--profile foundation`，默认使用 manifest 规定的 B1 `1,048,576/131,072/131,072` 字节预算、B2/B3/B4 各 `1,000` 条训练样本，并把默认 checkpoint 间隔提高到 `256`，避免 CPU 上每个小步都重复扫描大 holdout。该入口只扩大数据覆盖，不扩大 Taiji 神经元规模、不接 Transformer/provider；正式运行仍需先完成磁盘 checkpoint canary，并把三 seed 的训练耗时和磁盘占用写入报告。
+
 当前唯一下一步仍是 **M1-6 F5 full-coverage continuation**：从三个 F4 `best-holdout.pt` 沿 parent/child lineage 继续训练，生成覆盖 B1 `1 MiB + 128 KiB + 128 KiB`、B2/B3/B4 至少 `1000/200/200`、B5 phase-A→phase-B→replay 的新 child；训练前先做真实磁盘 save→新进程 restore→继续一步→再 save canary，再按三 seed 重算 M0 controls、holdout、retention 和 backward transfer。未完成该 full-coverage Gate 前不进入 M2，也不切换到 provider、Workbench、Skill/MCP 或客户端外围。
 
 ## 7. M2～M8 的开发日程与外围任务安置
