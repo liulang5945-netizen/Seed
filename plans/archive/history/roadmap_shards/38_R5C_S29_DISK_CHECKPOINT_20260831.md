@@ -30,8 +30,8 @@
 
 ## 证据
 
-- 定向用例：[test_structural_lineage_disk_checkpoint.py](../../../tests/taiji_native/test_structural_lineage_disk_checkpoint.py) 为 `1 passed`。
-- Canary：[taiji_w7_r5c_s29_structural_lineage_disk_checkpoint_20260831.json](../../../reports/taiji_w7_r5c_s29_structural_lineage_disk_checkpoint_20260831.json)，`gate.passed=true`。
+- 定向用例：[test_structural_lineage_disk_checkpoint.py](../../../../tests/taiji_native/test_structural_lineage_disk_checkpoint.py) 为 `1 passed`。
+- Canary：[taiji_w7_r5c_s29_structural_lineage_disk_checkpoint_20260831.json](../../../../reports/taiji_w7_r5c_s29_structural_lineage_disk_checkpoint_20260831.json)，`gate.passed=true`。
 - 两个真实磁盘 artifact 均成功生成并加载，约 3.1 MB；迁移后与回滚后 checkpoint 均通过，tampered/incomplete checkpoint 均 fail-closed。
 - Ruff 定向检查通过；本轮不运行 CI，不把本地 Gate 扩大为远端 CI 结论。
 

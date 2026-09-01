@@ -10,6 +10,7 @@
 | `audits/` | 历史审计、缺口盘点和方向评估；大审计已拆成 origins/findings/directions |
 | `authored/` | 已冻结的早期设计原则、启动标准和 Legacy 机制说明 |
 | `history/` | 阶段收束、对话/实验/项目事件和路线执行日志 |
+| `history/roadmap_shards/` | W7-R5B/R5C 已完成的编号 slice 分片合同与评审记录 |
 | `implementation/` | 已完成的修复、旧实现和兼容层实施记录 |
 | `reference/` | 只用于历史或训练背景的参考资料 |
 
@@ -28,6 +29,7 @@
 | [SEED_GATE_CI_HISTORY_2026_08.md](history/SEED_GATE_CI_HISTORY_2026_08.md) | 2026-08-29 以前累计的 Gate、CI 事故、修复和逐轮证据；活动文件只保留仍生效规则 |
 | [SEED_W7_EXECUTION_PLAN_SNAPSHOT_20260829.md](history/SEED_W7_EXECUTION_PLAN_SNAPSHOT_20260829.md) | R1–R5 原详细蓝图与已完成过程；后续阶段已重写为 C0–C8 活动计划 |
 | [SEED_NATIVE_PHASE_HISTORY_20260829.md](history/SEED_NATIVE_PHASE_HISTORY_20260829.md) | P0–P7 原滚动实现记录；活动版只保留长期范围、阶段状态和退出门槛 |
+| [roadmap_shards/](history/roadmap_shards/) | 2026-09-01 归档 `05`～`61` 共 57 个已完成 slice 分片（原在 `plans/active/roadmap/`）。每个分片的执行结论都已在 [04_EXECUTION_PLAN.md](../active/roadmap/04_EXECUTION_PLAN.md) 的对应 `### R5C-Sxx（已完成）` 小节保留，因此归档不丢失可执行信息；分片内部相对链接已在同一次改动内按新深度改写 |
 
 其他归档文档的用途见各自文件头部说明。原路线、旧 NeuroPlex/Transformer 设计和测试调试记录都不应被重新解释为当前 Taiji 事实。
 

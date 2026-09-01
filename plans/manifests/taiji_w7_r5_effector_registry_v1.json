@@ -190,7 +190,7 @@
     "l3_test": "tests/seed_platform/test_capability_resource_contract.py",
     "l3_scope": "atomic active-set commit, bounded resource reservation, resource exhaustion isolation, checkpoint persistence of resource ledger, replacement rollback, and disposer release audit",
     "l3_evidence": "3 resource contract tests plus eval_capability_resource.py report gate.passed=true; resource exhaustion leaves snapshot and ledger unchanged, replacement rollback restores parent usage, and disposer release is recorded",
-    "l4_artifact": "plans/active/roadmap/05_R5B_L4_PURE_COMPUTATION_REVIEW_20260830.md",
+    "l4_artifact": "plans/archive/history/roadmap_shards/05_R5B_L4_PURE_COMPUTATION_REVIEW_20260830.md",
     "l4_scope": "independent admission review for pure-computation capability candidates; explicit value input, deterministic no-side-effect execution, independent oracle, and registry/policy/checkpoint compatibility",
     "l4_evidence": "review concludes no current workspace, IDE, terminal, MCP, or editor capability qualifies; implementation is No-Go and pseudo-pure executor admission is prohibited",
     "next_stage": "R5C-S0 long-horizon evidence window for structural growth"

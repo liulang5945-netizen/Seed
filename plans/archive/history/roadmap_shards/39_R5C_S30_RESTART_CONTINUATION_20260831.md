@@ -30,8 +30,8 @@
 
 ## 证据
 
-- 定向用例：[test_structural_lineage_restart_continuation.py](../../../tests/taiji_native/test_structural_lineage_restart_continuation.py) 为 `1 passed`。
-- Canary：[taiji_w7_r5c_s30_structural_lineage_restart_continuation_20260831.json](../../../reports/taiji_w7_r5c_s30_structural_lineage_restart_continuation_20260831.json)，`gate.passed=true`。
+- 定向用例：[test_structural_lineage_restart_continuation.py](../../../../tests/taiji_native/test_structural_lineage_restart_continuation.py) 为 `1 passed`。
+- Canary：[taiji_w7_r5c_s30_structural_lineage_restart_continuation_20260831.json](../../../../reports/taiji_w7_r5c_s30_structural_lineage_restart_continuation_20260831.json)，`gate.passed=true`。
 
 ## 明确未覆盖
 

@@ -81,7 +81,7 @@
 |---|---|---|
 | 路线偏移 | S18–S52 对 artifact 生命周期持续微分片，用户可见闭环未同步闭合 | S52 后停止默认存储扩张，转入自然语言→Workbench 纵切片 |
 | 大文件耦合 | `taiji/adapter.py` 约 558 KB，`api/seed_runtime.py` 约 164 KB，`taiji/planning.py` 约 130 KB，`seed_platform/workbench.py` 约 126 KB，`taiji/contracts.py` 约 121 KB | 端到端闭环稳定后按 owner 提取模块，保留 facade 与 checkpoint migration |
-| 计划膨胀 | `plans/active/roadmap/` 已积累 61 个 S52 前文件 | 当前状态已压缩；后续校验链接后批量归档完成分片 |
+| 计划膨胀 | `05`～`61` 共 57 个完成分片已于 2026-09-01 归档到 `plans/archive/history/roadmap_shards/` | 引用链接已同批改写；`plans/active/roadmap/` 仅余骨干 `01`～`04` 与待定性的 `62`/`63` |
 | 永久兼容层 | `gguf_path`、`download_hf` 与隐藏 tombstone 仍存在 | 建立迁移期限和删除 Gate，不让兼容字段永久进入产品模型 |
 | Git 分叉 | attached `codex/interaction-group-incremental` 落后 137 提交且有 5 个未提交文件 | 只读审计后再吸收或删除，不直接合并到 main |
 | 证据过度声明 | 大量 canary `gate.passed=true`，但 CI/CUDA/Windows/开放域收益未同步完成 | 能力声明按证据层级分开；未运行保持未验证 |

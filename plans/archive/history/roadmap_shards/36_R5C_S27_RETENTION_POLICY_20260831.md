@@ -32,7 +32,7 @@
 
 ## 证据
 
-- 报告：[taiji_w7_r5c_s27_structural_lineage_policy_20260831.json](../../../reports/taiji_w7_r5c_s27_structural_lineage_policy_20260831.json)
+- 报告：[taiji_w7_r5c_s27_structural_lineage_policy_20260831.json](../../../../reports/taiji_w7_r5c_s27_structural_lineage_policy_20260831.json)
 - Gate：`gate.passed=true`
 - 定向用例：`tests/taiji_native/test_structural_lineage_policy.py` 为 `4 passed`
 - S18–S27 相关回归：`34 passed`
