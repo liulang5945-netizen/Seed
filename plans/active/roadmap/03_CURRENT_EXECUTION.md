@@ -52,7 +52,7 @@ Taiji 采用“站在巨人肩膀上”的双边界：原始 byte 输入继续�
 
 | 顺序 | 阶段 | 状态 | 主要产物 | 允许进入下一阶段的条件 |
 |---|---|---|---|---|
-| 0 | M0 CPU 五项基础能力真实性基线 | **当前进行** | 数据合同、对照 evaluator、checkpoint preflight、基线报告 | 测量链可信且能保存/恢复；模型得分可以失败，但失败必须被如实记录 |
+| 0 | M0 CPU 五项基础能力真实性基线 | **当前进行（M0-0 已通过，M0-1 进行中）** | 数据合同、对照 evaluator、checkpoint preflight、基线报告 | 测量链可信且能保存/恢复；模型得分可以失败，但失败必须被如实记录 |
 | 1 | M1 Taiji foundation 训练管线与首次 CPU 训练 | 待开始，M0 后立即进入 | 原生 trainer、数据流水线、训练曲线、首个 child checkpoint | 未见数据相对父 checkpoint/对照有稳定净提升 |
 | 2 | M2 世界—行动—语言后训练 | 待开始 | 世界预测、行动信用、ContentPlan/语言蒸馏和受控 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
 | 3 | M3 综合能力晋级与真实 Workbench 验证 | 待开始 | 独立评测套件、真实 Workbench longitudinal report、晋级 checkpoint | 至少一个真实任务族获得可重复净收益 |
@@ -66,9 +66,11 @@ Taiji 采用“站在巨人肩膀上”的双边界：原始 byte 输入继续�
 
 估算日程按单开发者和当前 CPU 环境计算：M0 约 3～5 个开发日，M1 约 7～14 个开发日加实际训练墙钟时间，M2 约 7～14 个开发日，M3 约 4～7 个开发日，M4/M5 各约 1～2 周，M6 约 1～2 周，M7 约 3～7 个开发日；估算只用于排程，不替代 Gate。训练墙钟时间由资源 preflight 后写入 manifest，不提前虚构日期。
 
-## 4. 当前唯一下一步
+## 4. 当前进度与唯一下一步
 
-**实施 M0-0/M0-1：冻结五项基础能力的数据与评价合同，并先完成训练 checkpoint 的磁盘保存、关闭进程、恢复、继续一步 preflight。**
+M0-0 已完成并通过 `reports/taiji_m0_checkpoint_preflight_20260901.json`：父 checkpoint 落盘后关闭原进程，由全新 Python 进程恢复；恢复后的下一步预测和模型摘要与同状态期望值一致；child checkpoint 再次成功落盘。该门禁验证了训练前最关键的“能保存、能恢复、能继续”，但不代表五项能力已经形成。
+
+当前唯一下一步是**实施 M0-1：冻结五项基础能力的数据与评价合同**。先建立 manifest、统一 evaluator 的输入/输出 schema，以及数据泄漏、holdout 副作用和缺失能力必须如实失败的 red tests；完成后再实现五项适配器和 CPU 零点运行。
 
 本步只允许创建或修改以下 owner：
 
@@ -107,8 +109,8 @@ B1 证明“输入中存在可学习规律”；B2 证明“状态可以跨时�
 
 ### 5.3 M0 交付顺序
 
-1. M0-0：审计现有 checkpoint、参数计数、数据游标和已知 CI 基线；磁盘 checkpoint roundtrip 失败时先修复。
-2. M0-1：冻结 manifest、JSONL/trajectory schema、分区方法和 baseline 实现；先写会失败的泄漏与副作用测试。
+1. M0-0：审计现有 checkpoint、参数计数、数据游标和已知 CI 基线；磁盘 checkpoint roundtrip 失败时先修复。**已完成。**
+2. M0-1：冻结 manifest、JSONL/trajectory schema、分区方法和 baseline 实现；先写会失败的泄漏与副作用测试。**当前进行。**
 3. M0-2：实现统一 evaluator 和五项适配器；复用现有 `taiji/evaluation.py`、memory/world/action 接口，但不继续扩大一次性脚本。
 4. M0-3：运行三 seed CPU baseline，输出一份能力矩阵，不用五份互相矛盾的“passed”报告。
 5. M0-4：基于失败曲线冻结 M1 的首轮训练目标、资源预算和模型 tier，然后直接启动训练。
