@@ -85,7 +85,42 @@
 
 R3、R4 是独立验证线：它们未通过就不能发布对应声明，但工具或硬件受阻不再冻结与其无依赖的 R5 合同和 CPU/native 实现。任何 R5 结果也不能反向冒充 R3/R4 已完成。
 
-## 5. 停止条件
+## 5. E 系列验证指标
+
+### 11.1 能力指标
+
+- 未见任务成功率、部分完成率和恢复成功率；
+- 达到目标所需真实 episode 数和用户纠正次数；
+- 跨项目/任务族 transfer；
+- world prediction error、规划 calibration 和错误停止质量；
+- Skill 内化后关闭外部 Skill 的保持率；
+- MCP/客户端插件相对无插件基线的因果收益。
+
+### 11.2 安全与保持指标
+
+- old-task retention regression；
+- holdout 泄漏、taint 命中、secret redaction 和 prompt-injection 拒绝；
+- lesion 后目标收益下降且无关能力保持；
+- rollback 后 checkpoint、topology、client snapshot、registry、plugin state 和 resource ledger 一致；
+- provider、Skill、MCP、frontend 均不能生成最终执行权。
+
+### 11.3 资源指标
+
+- 参数/突触/神经元/连接增量；
+- checkpoint 大小与恢复时间；
+- CPU/GPU、memory、latency、I/O 和输出字节；
+- 每单位资源带来的 holdout gain；
+- 客户端插件的 UI mount/render、空闲、backend 调用和卸载资源；
+- 结构增长相对 weight/memory/route-only 对照的净收益。
+
+## 6. E 系列 CI 与决策节点
+
+- 每个 E 阶段先运行新合同的定向单元测试与 evaluator，再运行受影响回归；全量 CI 按当前用户决定在阶段收口时统一修复，未运行不标记为通过。
+- E1、E3、E5 是强 checkpoint Gate；任一损坏恢复或 lineage 错误立即停止功能推进。
+- E3 完成后是第一个需要讨论的决策点：若直接原生训练没有超过 frozen/route/memory 对照，应先修学习目标和 credit，不扩大参数规模。
+- E5 完成后是第二个决策点：只有隔离、状态迁移和 rollback 可靠，才允许接真实第三方 MCP/plugin。
+
+## 7. 停止条件
 
 出现以下任一情况时停止自动推进，先修复并单独提交：
 

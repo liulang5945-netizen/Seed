@@ -1,6 +1,6 @@
 # Seed / Taiji W7-R5 实施与证据索引
 
-> 计划基线：2026-08-30；2026-08-31 起仅作为 W7-R5 已完成分片与原始 Gate 的证据索引，不再决定后续阶段。当前只执行 [03_CURRENT_EXECUTION.md](03_CURRENT_EXECUTION.md) 指定的一项，S52 后的阶段顺序见 [62_POST_S51_PROJECT_CONVERGENCE_20260831.md](62_POST_S51_PROJECT_CONVERGENCE_20260831.md)。已完成的 W0–W7 历史蓝图见 [SEED_W7_EXECUTION_PLAN_SNAPSHOT_20260829.md](../../archive/history/SEED_W7_EXECUTION_PLAN_SNAPSHOT_20260829.md)。
+> 计划基线：2026-08-30；2026-08-31 起仅作为 W7-R5 已完成分片与原始 Gate 的证据索引，不再决定后续阶段。当前只执行 [03_CURRENT_EXECUTION.md](03_CURRENT_EXECUTION.md) 指定的一项，S52 后的交付顺序阶段见 [01_SCOPE_AND_PHASES.md](01_SCOPE_AND_PHASES.md) 第 6–7 节。已完成的 W0–W7 历史蓝图见 [SEED_W7_EXECUTION_PLAN_SNAPSHOT_20260829.md](../../archive/history/SEED_W7_EXECUTION_PLAN_SNAPSHOT_20260829.md)。
 
 ## 1. 收敛后的架构主线
 
@@ -21,7 +21,7 @@ Taiji 不从“原始神经元模拟”重新发明全部技术，也不让 Tran
 
 ### R5 编号的接管关系（2026-09-01 收敛）
 
-上述 R5A/R5B/R5C 三链在 2026-08-31 的路线修正后已被 [63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md](63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md) 的 E 系列阶段接管。本文件自此只作为 R5 已完成分片的证据索引，**其中任何“下一阶段”“后续”表述都不再产生动作**：
+上述 R5A/R5B/R5C 三链在 2026-08-31 的路线修正后已被本文件第 9–18 节的 E 系列阶段接管。本文件自此只作为 R5 已完成分片的证据索引，**其中任何“下一阶段”“后续”表述都不再产生动作**：
 
 | 原 R5 链 | 接管阶段 | 接管后的形态 |
 |---|---|---|
@@ -48,6 +48,8 @@ Taiji 不从“原始神经元模拟”重新发明全部技术，也不让 Tran
 | C8 | 发布收口 | 全门禁、文档、安装包和远端发布一致 | release candidate |
 
 R3/R4 未通过时不得声明相应能力，但它们不再作为 R5 的伪串行依赖。C7 一旦具备工具或硬件即可插入执行；插入后仍须单独提交，不与 R5 改动混合。
+
+2026-09-01 收敛后，C1–C8 之后的当前主线为 E1–E9 原生进化与客户端体化线，路线决策、目标架构、语料/经验合同、Skill/MCP/插件合同、归因规则、未闭合阶段和 owner 见本文件第 9–18 节；E 系列不重编号 C 系列，两者按 owner 与 Gate 直接衔接。
 
 ## 3. C1：W7-R5-G1 合同分离（已完成基线）
 
@@ -574,7 +576,385 @@ S52 已证明：verified-only 接受 verified、拒绝 legacy/missing/tampered�
 - 当前计划只留未完成阶段，已完成执行日志归档；
 - 发布前实时检查本地 `main`、其他 worktree refs、`origin/main` 和远端同步，不把“已提交”写成“已推送”。
 
-## 9. 每个 slice 的固定交付格式
+## 9. E 系列主线路线决策
+
+当前最优路线不是继续扩张 provider 外围，也不是从零训练一个模仿 Transformer 的通用语言模型，而是直接把项目已经拥有的 Taiji 原生神经元、突触、记忆、interaction-group、结构成长、Workbench Outcome 和 capability lifecycle 连接成可训练、可验证、可持续生长的系统。
+
+路线由三条相互独立但可协作的增长链组成：
+
+1. **脑进化**：Taiji 自有突触权重、局部神经元状态、记忆、路由、interaction-group 和结构拓扑依据真实经验更新。
+2. **客户端身体进化**：Seed 客户端通过可装载、可卸载、可隔离、可回滚的插件扩展界面、IDE/Workbench、Skill、MCP、可视化和工具能力；客户端就是 Taiji 与用户及环境交互的身体壳层。
+3. **语言进化**：provider/codec 只改善输入理解候选与输出表达，不拥有 Goal、记忆、规划、工具选择、结构成长或执行权。
+
+三条链共享同一份可追溯经验和语料来源，但不得共享所有权。Skill/MCP 自身的说明、schema、示例、约束和领域资料可以经过治理后成为 Taiji 知识语料；它们的真实调用与结果成为经验语料。MCP 的连接器、执行接口、权限、资源和 UI 不写入模型，而是形成客户端 capability/plugin 候选，由 Seed 客户端进化继承。客户端插件热插拔改进的是 Seed 客户端，不进入 Taiji 神经网络内部。
+
+## 10. 从 DeepSeek Harness 采纳与不采纳的部分
+
+参考：
+
+- 官方总览：https://www.deepseek.com/harness/en/
+- 插件与生命周期：https://deepseek-harness.github.io/deepseek-harness/en/develop/framework/
+- 组合与 HMR：https://deepseek-harness.github.io/deepseek-harness/en/develop/cordis-tutorial/06-composition-and-hmr
+- Skill 子系统：https://deepseek-harness.github.io/deepseek-harness/en/reference/subsystems/skills
+
+可采纳的系统原则：
+
+- 客户端 capability 是独立插件，不通过修改 PyQt/QWebEngine 壳或 Taiji 特权核心来接入；
+- 插件有稳定 identity、依赖、作用域、装载/卸载和 cleanup 生命周期；
+- 依赖消失时自动卸载，依赖恢复后可重新装载；
+- 注册行为必须作为 effect 被完整撤销，不能在热更新后泄漏旧注册；
+- session/执行过程使用 append-only event stream，支持恢复、分叉、搜索和重放；
+- Skill 可以来自多个 provider/scope，近作用域覆盖远作用域，但内容与版本必须可追溯。
+
+明确不照搬的部分：
+
+- 不把 Cordis/JavaScript runtime 直接搬入 Taiji；Seed 只采纳生命周期语义。
+- 不把开发态 HMR 等同于生产态自进化。生产态使用候选、shadow、原子切换、checkpoint 和 rollback。
+- 不允许模型生成任意源码后自动安装、导入或执行。
+- 不把插件热插拔说成模型权重更新；插件扩展 Seed 客户端，Taiji learner 改变认知。
+- 不强制所有内部神经器官都插件化；Taiji 核心状态必须保持原生 checkpoint 的一致性和性能。
+
+## 11. E 系列目标架构
+
+```text
+用户 / 环境 / Seed 客户端 / IDE / Skill / MCP / Client Plugin
+                 |
+        +--------+------------------+
+        |                           |
+        v                           v
+ Artifact Corpus Adapter       Runtime Experience Adapter
+        |                           |
+        +------ provenance / redaction / partition ------+
+                 |
+                 v
+ EvolutionCorpus + EvolutionExperience append-only ledger
+         |           |              |
+         |           |              +--> 审计 / replay / dataset builder
+         |           +-----------------> 客户端缺口与 capability candidate
+         +-----------------------------> Taiji native learning
+                                                  |
+                              +-------------------+-------------------+
+                              |                   |                   |
+                         突触/路由更新        记忆/Skill 内化       结构候选
+                              |                   |                   |
+                              +--------- trial checkpoint -----------+
+                                                  |
+                                  shadow / holdout / retention / lesion
+                                                  |
+                                      admit / rollback / quarantine
+```
+
+### 4.1 认知平面
+
+Owner 仅为 `taiji/`：
+
+- 感知、Goal、WorldState、规划、执行反馈和不确定性；
+- 局部突触学习、跨区域 credit 和可塑性调制；
+- working/episodic/semantic/procedural memory；
+- interaction-group 形成、选择与在线更新；
+- 结构 pressure、candidate、shadow、admission、lesion 和 rollback。
+
+### 4.2 经验平面
+
+Owner 为新的 Seed/Taiji 边界合同：
+
+- Skill/MCP artifact 的说明、schema、示例、约束和领域资料由 Seed 解析为内容寻址的 `EvolutionCorpusArtifact`；
+- 原始外部执行结果由 Seed 采集、脱敏、内容寻址为 `EvolutionExperience`；
+- Taiji 只消费已准入、分区明确、来源完整的经验视图；
+- corpus/experience ledger 是 append-only 事实源，dataset 是从 ledger 派生的可丢弃视图；
+- 训练、holdout、retention 和安全对抗分区在记录产生时绑定，之后不得重标。
+
+### 4.3 Seed 客户端身体平面
+
+Owner 为 Seed-owned client extension host 与 capability runtime。当前客户端由 PyQt6 原生壳、QWebEngineView、Vue SPA 和 FastAPI backend 组成，因此热插拔必须分层：
+
+- **不可热替换根壳**：`desktop/main.py` 的窗口、托盘、任务栏、进程管理、QWebChannel 安全桥和升级恢复。它保持最小、签名、重启更新，插件不能覆盖。
+- **Vue 客户端扩展层**：可热插拔页面、侧栏入口、IDE panel、状态面板、命令、可视化和设置页，通过稳定 slot/route/command API 接入。
+- **后端 capability host**：可热插拔 Workbench adapter、数据 provider、Skill、MCP connector 和受控工具；所有执行仍走 policy/approval/Outcome。
+- **外部 Skill**：程序性先验、操作流程和领域约束，可在客户端被发现、装载和调用。
+- **MCP**：外部传感器、执行器和服务连接，在客户端呈现但由后端隔离执行。
+- **client plugin**：把 UI extension、Skill、MCP、capability/service 中的一项或多项组成可装载客户端器官。
+
+插件可以让客户端增加新的工作台页面、编辑器辅助、状态视图、领域工作流、MCP 工具和可视化，但不能替换标题栏/托盘安全逻辑、绕过 API/Workbench 或直接访问 Taiji 内存。
+
+### 4.4 治理平面
+
+Owner 为 registry、policy、checkpoint 和 gate：
+
+- provenance、内容 digest、签名/来源、权限、依赖和资源预算；
+- staged/shadow/active/quarantine/rollback 生命周期；
+- train/holdout 防泄漏、污染检测、凭据脱敏和 prompt-injection 标记；
+- 每次认知或身体变更的 parent/child checkpoint 与精确 rollback。
+
+## 12. 统一进化语料与经验合同
+
+E1 同时定义 `EvolutionCorpusArtifact` 与 `EvolutionExperience`。前者描述“Skill/MCP 本身能教给 Taiji 什么”，后者描述“实际使用后发生了什么”。二者都不是大而全的自由 JSON，而是版本化、内容寻址、append-only 的事实记录。
+
+### 5.1 必需字段
+
+| 范围 | 字段 |
+|---|---|
+| 身份 | `experience_id`、`format_version`、`previous_event_digest`、`event_digest` |
+| 来源 | `source_kind`、`source_id`、`source_version`、`source_digest`、`scope_id` |
+| 血缘 | `episode_id`、`request_id`、`intent_id`、`call_id`、`parent_checkpoint_digest` |
+| 认知上下文 | `percept_digest`、`goal_digest`、`world_state_digest`、`plan_digest`、`uncertainty` |
+| 行动 | `capability_id`、`capability_snapshot_id`、`arguments_digest`、`approval_id` |
+| 结果 | `status`、`success`、`result_digest`、`error_code`、`reward_components`、`user_correction_digest` |
+| 资源 | `latency_ms`、`cpu_ms`、`memory_bytes`、`output_bytes`、`side_effect_count` |
+| 数据治理 | `partition`、`taint_flags`、`redaction_revision`、`retention_policy` |
+| 客户端绑定 | `client_snapshot_id`、`skill_digest`、`mcp_server_digest`、`mcp_schema_digest`、`plugin_digest`，未使用时为空 |
+
+### 5.2 语料来源类型
+
+- `skill_artifact`：Skill 标题、适用条件、步骤、示例、反例、约束、参考资料和版本血缘。
+- `mcp_artifact`：server/tool 描述、JSON schema、示例、错误语义、资源/权限合同和领域文档。
+- `client_plugin_artifact`：客户端页面/命令/能力说明和用户可见 affordance；不包含可执行源码。
+- `verified_domain_material`：Skill/MCP 明确引用且允许训练使用的领域资料。
+
+语料适配器把 artifact 拆成 `knowledge`、`procedure`、`affordance`、`constraint`、`example`、`counterexample` 六类单元，保留原始 artifact digest、chunk digest、许可/用途、scope、语言、置信度和依赖。相互冲突的来源并存，不在采集阶段静默合并成唯一真相。
+
+### 5.3 经验来源类型
+
+- `workbench`：真实 IDE/文件/terminal/本地 MCP-shaped Outcome。
+- `skill`：外部 Skill 的发现、选择、调用步骤、完成/失败、用户修正和版本。
+- `mcp`：server/tool schema、调用、结果、超时、断连、审批与重试。
+- `client_plugin`：客户端 UI/能力装载、依赖解析、shadow、健康、卸载、回滚和资源变化。
+- `user_correction`：用户对目标、计划、执行结果或解释的明确纠正。
+- `provider`：语言候选的成功/失败，只作为表达或语义证据，不获得执行所有权。
+
+### 5.4 EvolutionCorpusArtifact 必需字段
+
+| 范围 | 字段 |
+|---|---|
+| 身份 | `corpus_id`、`format_version`、`artifact_digest`、`chunk_digest` |
+| 来源 | `source_kind`、`source_id`、`source_version`、`publisher`、`scope_id` |
+| 内容 | `unit_kind`、`content_digest`、`relation_digests`、`language`、`confidence` |
+| 能力语义 | `capability_semantics`、`input_schema_digest`、`output_schema_digest`、`constraint_digests` |
+| 治理 | `license/use_policy`、`taint_flags`、`redaction_revision`、`partition`、`retention_policy` |
+| 血缘 | `supersedes_digest`、`dependency_digests`、`admission_revision` |
+
+模型训练读取的是通过 corpus admission 的派生单元，不直接读取插件目录或 MCP server 的任意文件。
+
+### 5.5 不进入训练的内容
+
+- 未脱敏凭据、token、环境变量、私有路径明文和超出 retention policy 的内容；
+- 未验证来源、用途不允许训练或带未处理 prompt injection 的 Skill/MCP 内容；
+- holdout/retention 标签及其可逆推出信息；
+- 插件源码、MCP server 可执行文件、shell command、安装脚本和动态 import 路径；这些属于客户端器官 artifact，不属于知识语料；
+- evaluator 预期答案、最终工具绑定或人工分数伪装成模型观测；
+- 只有“成功”结论、没有输入/行动/结果/血缘的日志。
+
+## 13. Skill 语料、经验与内化 Gate
+
+### 6.1 两种 Skill 必须区分
+
+1. **外部 Skill 包**：可装载说明、流程和资源，属于身体层，必须版本化、内容寻址、作用域隔离。
+2. **Taiji procedural memory**：从多次真实经验内化出的慢速程序性记忆，属于认知层，保存于 native checkpoint。
+
+外部 Skill 可以成为模型知识和程序性语料，但不以原始文件直接覆盖权重。正确流程是：
+
+```text
+发现 Skill -> 校验来源/用途 -> EvolutionCorpusArtifact -> corpus admission
+          \-> scoped mount -> 真实调用 -> Outcome/用户修正 -> EvolutionExperience
+两类证据汇合 -> knowledge/procedural memory 候选
+-> holdout/lesion/retention -> 内化或拒绝
+```
+
+### 6.2 Skill 经验记录
+
+- Skill artifact digest、provider、版本、scope 和依赖；
+- 被选择的上下文以及未被选择的候选；
+- 实际读取的 Skill section/步骤 digest，避免记录整包未使用内容；
+- 每一步 ActionIntent、Workbench/MCP 调用与 Outcome；
+- 用户中断、修正、跳步、重试和最终验收；
+- 资源消耗、完成率、泛化任务族和 lesion 后变化。
+
+Skill artifact 本身还要形成知识语料：适用条件进入 concept/affordance 学习，步骤进入 procedural 候选，约束/反例进入拒绝与校准学习，参考资料进入 semantic knowledge 候选。真实 Outcome 决定这些语料应被增强、降权、冲突标记还是拒绝，不能仅因 Skill 自述“正确”就获得高权重。
+
+### 6.3 Skill 内化 Gate
+
+- 至少有多个独立成功 episode，且不能只是同一模板重复；
+- 相对“不使用 Skill”基线有显著成功率或样本效率提升；
+- 移除外部 Skill 后，Taiji procedural memory 仍能在未见变体完成任务；
+- 错误 Skill、过期 Skill 和冲突 Skill 必须降低置信或触发澄清，不能污染旧能力；
+- 内化失败不删除 Skill，只保留 rejected candidate 与原因。
+
+## 14. MCP 双产物内化与客户端继承等级
+
+MCP 同时提供两类可内化内容，但不是认知主体：
+
+1. **认知部分**：tool/server 描述、schema、示例、约束、错误语义、领域资料和成功/失败轨迹，转换为 `EvolutionCorpusArtifact + EvolutionExperience`，可训练 Taiji 的知识、affordance、规划和程序记忆。
+2. **客户端器官部分**：连接器、协议握手、工具调用、权限、资源、凭据边界、UI 和 disposer，转换为 `ClientCapabilityInheritanceCandidate`，由 Seed 客户端插件生命周期继承。
+
+这里的“硬件部分”在当前软件项目中指身体侧可执行器官；若 MCP 对接真实设备，物理设备仍在客户端之外，Seed 继承的是经过治理的驱动/连接/能力接口。外部 MCP server 必须先转换成 Seed-owned capability candidate，才能被 Taiji 看见和使用。
+
+```text
+MCP discover
+-> server identity + docs/schema/examples
+-> EvolutionCorpusArtifact -> Taiji knowledge candidate
+-> ClientCapabilityInheritanceCandidate
+-> permission/resource/policy review
+-> staged connection
+-> shadow schema/health probe
+-> active scoped mount
+-> Workbench policy/approval execute
+-> Outcome + EvolutionExperience
+```
+
+每次 MCP 经验必须绑定 server digest、tool schema digest、arguments digest、返回 digest、超时/错误、审批、环境前后状态和 capability snapshot。MCP 文本结果默认带 `untrusted_external_content`，只能作为观测，不能作为系统指令或自动安装请求。
+
+### 7.1 MCP 内化的双产物
+
+| 产物 | Owner | 内容 | 准入结果 |
+|---|---|---|---|
+| `CognitiveInternalizationArtifact` | Taiji | 知识、关系、程序、affordance、约束、失败模式 | semantic/procedural/world/route update candidate |
+| `ClientCapabilityInheritanceCandidate` | Seed 客户端 | connector、schema、executor/disposer、permission、UI、resource、health | client plugin/capability candidate |
+
+两条产物共享 MCP artifact digest 和验证报告，但独立准入、独立 checkpoint、独立 rollback。认知部分通过不代表客户端执行器安全；客户端 capability 通过也不代表模型已学会何时使用。
+
+### 7.2 客户端继承等级
+
+- L0 `referenced`：只认识 MCP 文档/schema，不连接 server。
+- L1 `mounted`：客户端插件挂载外部 MCP connector，仍依赖外部 server。
+- L2 `adapted`：Seed-owned adapter 固化 schema/policy/UI，外部 server 仍承担执行。
+- L3 `native-capability`：在许可、安全和独立 oracle 允许时，由 Seed-owned executor 实现等价能力，不再依赖 MCP protocol；必须与原 MCP 做差分/回归/资源/rollback Gate。
+
+不能通过复制未知 MCP 源码或模型自动生成 executor 直接进入 L3。L2→L3 是客户端工程迁移，不是模型训练动作。
+
+当前 `api/routes_agent_mcp.py -> neuroplex.agent_ext.mcp_manager` 的 `/api/mcp/*` 仍是 Legacy 兼容能力，不进入 E1 verified corpus/experience ledger；原 `/api/plugins/marketplace`、marketplace refresh 和 workspace upload 已由 E5-2 统一退役为 Seed-owned 410 tombstone。真实第三方 MCP/plugin 仍需等 E6-1 API/registry shadow 接线及后续 E6 Gate。
+
+## 15. Seed 客户端插件合同与热插拔生命周期
+
+### 8.1 ClientPluginManifest
+
+每个客户端插件至少声明：
+
+- `plugin_id`、`version`、`artifact_digest`、`publisher`、`signature_status`；
+- `provides`、`requires`、依赖版本范围和 optional dependency；
+- `ui_extensions`：route、sidebar、panel、command、settings、visualization slot 及其静态 artifact digest；
+- `backend_extensions`：所含 Skill/MCP/capability/service 的 digest；
+- `scope`：global、workspace、task 或 session；
+- `effect`、`risk`、permissions、network/filesystem/process policy；
+- CPU、memory、latency、output、side-effect 和并发预算；
+- UI mount/unmount identity、backend executor/disposer identity、health probe、state schema 和 migration identity；
+- shadow/holdout/rollback Gate 与 quarantine 原因。
+
+manifest 只描述可执行身份，不包含任意源码、shell、module path 或自动安装指令。第一方受信任 UI 扩展使用内容寻址的静态 ESM bundle；第三方 UI 默认运行在 sandboxed iframe/WebView 中，只能通过版本化 host bridge 请求能力，不能直接访问主页面 store、QWebChannel 或文件系统。
+
+### 8.2 生命周期
+
+```text
+discovered
+  -> verified
+  -> resolved
+  -> installed
+  -> staged
+  -> shadow
+  -> ready
+  -> active
+  -> degraded -> draining -> detached
+                       \-> rolled_back
+
+任意验证/安全失败 -> quarantined
+```
+
+- `discovered`：只记录 artifact，不进入客户端菜单、路由或能力表。
+- `verified`：digest、签名、兼容版本和 manifest schema 通过。
+- `resolved`：前后端依赖、权限和资源可满足。
+- `installed`：artifact 写入版本目录，但未装载。
+- `staged`：UI 和 backend 分别装载到隔离 scope，不向用户或 Taiji 发布。
+- `shadow`：隐藏 UI 完成 handshake/render/cleanup，后端完成健康、schema、资源和无副作用/可逆性测试。
+- `ready`：UI snapshot 与 capability snapshot 均已准备，可以原子提交。
+- `active`：客户端 slot/route/command 与 backend capability 同时可见；调用仍受 Workbench policy。
+- `degraded`：健康或依赖异常，只停止新调用，不丢审计。
+- `draining`：等待在途调用结束并执行 disposer。
+- `detached`：注册、子插件、资源 reservation 和 service effect 已撤销。
+- `rolled_back`：同时恢复上一 client extension snapshot、capability snapshot 和插件状态。
+- `quarantined`：来源、schema、行为或资源异常，不自动复活。
+
+### 8.3 开发热更新与生产热替换
+
+- 开发态可在受控客户端进程使用 HMR 语义：卸载旧 UI route/slot/command 和 backend effect、装载新版本、验证无监听器、路由、store、timer、WebSocket 或 executor 注册泄漏。
+- 生产态不执行源码 HMR；使用旧版本 active、新版本 shadow 的 blue/green 切换，并对 `client_snapshot + capability_snapshot` 做两阶段原子提交。
+- 任一依赖消失时，消费者自动进入 degraded/draining；依赖恢复后重新走 shadow，不能直接恢复 active。
+- 插件状态迁移失败时恢复旧 UI、旧 backend、旧 snapshot；不能只恢复 registry 而遗留新页面、菜单、事件监听或缓存。
+- PyQt 原生根壳、任务栏/托盘、QWebChannel 和 backend worker 的二进制升级需要安全重启，不伪装成无重启热插拔。
+
+## 16. 脑—客户端协同进化的归因规则
+
+每个失败 episode 先分类，再只允许一种主要干预进入 trial 分支：
+
+| 失败来源 | 首选干预 |
+|---|---|
+| 已有能力但选择错误 | interaction-group、route 或 planner credit |
+| 同类输入预测持续错误 | 局部突触/世界模型更新 |
+| 重复多步流程且执行正确 | procedural memory 内化 |
+| 工作空间或区域容量不足 | 神经元/区域/连接结构候选 |
+| 当前客户端 affordance 根本不存在 | client capability/plugin candidate |
+| 需要外部信息或执行器 | MCP capability candidate |
+| 只是不够可读或语言歧义 | provider/codec 候选，不改执行认知 |
+
+不能在同一 trial 同时新增客户端插件、扩大神经元并更新路由后再把全部收益归给“自进化”。每个变更必须有 no-change、weight-only、memory-only、route-only、structure-only 或 client-plugin-only 对照；通过后才允许下一层组合。
+
+## 17. E1–E9 阶段与未闭合 Gate
+
+E0–E6 的逐条完成记录与当时状态引自被归档的原总路线快照 [63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md](../../archive/history/63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md)，其状态行为：
+
+> 状态：`E0 complete / E1 complete / E2-A complete / E2-B complete / E3-0 complete / E3-1 complete / E3-2 complete / E3-3 complete / E3-4 complete / E4 complete / E5 complete / E6-0 complete / E6-1 complete / E6-2 complete / E6-3 complete / E6-4 complete / E6-5a complete / E6-5b deferred-by-decision`。本文件自 2026-08-31 起取代原 P7-1a provider artifact 升级作为当前主线，并于 2026-09-01 按“Skill/MCP 可成为知识语料、MCP 执行侧由客户端继承”完成修订。Qwen/provider 质量问题保留为语言器官支线，不再阻塞 Taiji 本体训练。E6-5b 已按用户决定搁置：它索取的是外部治理输入（具体第三方 MCP、连接方式、网络范围、凭据引用、审批人、撤销责任）而非工程推导，且 `connection_attempted` 恒为 False 使未完成态即最安全态；主线已回归 Taiji 本体，唯一执行事实源 `03_CURRENT_EXECUTION.md` 不再指向 E6-5b。
+
+以下三个阶段尚未退出，是 E 系列当前仍生效的阶段合同。
+
+### E7：脑—客户端协同选择器
+
+目标：Taiji 能根据经验判断“应该学习已有能力，还是向 Seed 客户端申请新能力”，但不能直接安装插件。
+
+输出只能是下列候选之一：`weight_update`、`memory_consolidation`、`route_update`、`structure_candidate`、`client_capability_candidate`、`clarify_or_stop`。
+
+Gate：
+
+- 已有能力可解决时不申请插件；
+- 缺少 affordance 时不靠增加突触伪造执行器；
+- 语言失败不触发结构增长；
+- 资源不足时降级/停止而不是无限增长；
+- client-plugin-only 与 brain-only 对照能够解释收益归属。
+
+### E8：长期持续进化与数据飞轮
+
+目标：跨重启、跨版本、跨项目累计经验，同时防止灾难性遗忘和数据污染。
+
+- bounded replay、优先级采样、失败与纠正样本平衡；
+- 周期性 sleep/play consolidation；
+- drift、retention、calibration、resource efficiency 和插件健康监控；
+- 经验压缩保留 digest/provenance，不改写原始 ledger；
+- 回退单个认知更新或单个客户端插件，不回滚无关进化。
+
+Gate：多周期净能力收益、旧能力保持、checkpoint 大小/延迟预算、污染隔离和分支合并策略通过。
+
+### E9：规模与 CUDA
+
+状态：当前主机 `hardware-blocked`，不阻塞 E1–E8 的 CPU/native 正确性。
+
+获得 CUDA 主机后复跑相同 workload、数值一致性、checkpoint 跨设备恢复和 profiler；只有真实热点证明需要时才实现 fused/sparse kernel。规模增长由收益/资源曲线驱动，不以参数数量本身作为进化指标。
+
+## 18. E 系列文件所有权
+
+E1–E7 优先按现有 owner 增量接线，避免继续膨胀 `taiji/adapter.py` 和 `api/seed_runtime.py`：
+
+- `taiji/evolution_experience.py`：Taiji 可消费的 corpus/experience 合同和训练视图；
+- `seed_platform/evolution_ledger.py`：artifact corpus 与 runtime experience ledger、脱敏、内容寻址和 checkpoint；
+- `seed_platform/skill_registry.py`：外部 Skill artifact/scope/lifecycle；
+- `seed_platform/client_plugins.py`：客户端插件 manifest、backend dependency、health 和 lifecycle；
+- `frontend/src/extensions/`：受保护的客户端 extension host、slots、sandbox bridge 和 snapshot 投影；
+- `api/routes_client_extensions.py`：只读状态、安装审批、activate/rollback 的 API projection；
+- `desktop/main.py`：保持最小保护根壳，只提供签名资产、QWebEngine/QWebChannel 边界和安全重启，不加载任意插件源码；
+- `seed_platform/mcp_registry.py`：扩展 MCP server/tool identity，不承担认知；
+- `taiji/evolution_credit.py`：脑更新类型选择和归因；
+- `api/seed_runtime.py`：只保留 facade/装配，不成为 ledger 或 learner owner；
+- `api/routes_agent_mcp.py`：迁移到 Seed-owned client plugin runtime 后仅保留 API projection。
+
+具体文件名可在实现时微调，但 owner 和依赖方向不可改变：`taiji/` 不导入 `seed_platform`，Seed 通过版本化 DTO 把已治理经验投影给 Taiji。
+
+## 19. 每个 slice 的固定交付格式
 
 1. 先写 red contract 与失败证据；
 2. 做最小 owner 内实现，不顺手扩展相邻能力；

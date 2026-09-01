@@ -1,6 +1,6 @@
 # Seed / Taiji 实现事实参考
 
-> 事实快照：2026-09-01。本文件只描述当前代码事实、能力边界和证据入口，不决定执行顺序。当前动作见 [03_CURRENT_EXECUTION.md](../active/roadmap/03_CURRENT_EXECUTION.md)，E1–E9 阶段见 [63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md](../active/roadmap/63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md)。
+> 事实快照：2026-09-01。本文件只描述当前代码事实、能力边界和证据入口，不决定执行顺序。当前动作见 [03_CURRENT_EXECUTION.md](../active/roadmap/03_CURRENT_EXECUTION.md)，E1–E9 阶段见 [63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md](../archive/history/63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md)。
 
 > 最新状态覆盖：P7-1 真实 Qwen 语义质量 Gate 已完成测量但未通过；Qwen2.5-0.5B-Instruct 仅保留为实验/回退 provider。E1–E4、E5-0～E5-3、E6-0～E6-4、E6-5a 均已完成对应 Gate，主线已完成 MCP client capability candidate、shadow registry、activation proposal、prepare-only dry-run、显式连接授权和声明式 target binding 边界；当前停在 E6-5b 真实第三方 MCP 目标与权限确认。
 
@@ -51,7 +51,7 @@
 - MCP 内化必须生成两个独立候选：Taiji-owned 认知内化 artifact，以及 Seed 客户端的 connector/executor/permission/resource/UI capability 继承候选；二者共享 provenance，但独立准入、checkpoint 和 rollback。
 - 客户端当前是 PyQt6 + QWebEngineView + Vue SPA + FastAPI backend，尚无 extension host。后续热插拔只覆盖 Vue route/sidebar/panel/command/settings/visualization 和后端 Workbench/Skill/MCP capability；`desktop/main.py` 根壳、托盘、任务栏、QWebChannel 和进程管理只能安全重启更新。
 - `api/routes_agent_mcp.py` 仍指向未实现的 Legacy `neuroplex.agent_ext.mcp_manager`；这些接口数据不能作为 verified 训练语料或客户端插件证据。
-- 详细阶段 E1–E9 和 DeepSeek Harness 采纳边界见 [63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md](../active/roadmap/63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md)。
+- 详细阶段 E1–E9 和 DeepSeek Harness 采纳边界见 [63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md](../archive/history/63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md)。
 
 ## 3. 当前不能声明的能力
 
@@ -122,7 +122,7 @@
 | P6-1c | [Qwen semantic provider report](../../reports/taiji_w7_p6_1c_qwen_semantic_provider_20260831.json) / [browser field report](../../reports/taiji_w7_p6_1c_qwen_browser_field_20260831.json) / [fallback report](../../reports/taiji_w7_p6_1c_provider_failure_fallback_20260831.json) / [adapter tests](../../tests/seed/test_semantic_provider_qwen.py) | 本机 allowlisted Qwen2.5-0.5B-Instruct 真实加载并输出 semantic evidence；适配器拒绝未知/执行字段、兼容单数 `constraint` 后由 Taiji 完成 `resolved` interpretation/decomposition；浏览器聊天卡片、Taiji plan/execute 和前端无执行字段注入均通过，provider 失败会返回 degraded/Goal-only 且不产生 Workbench 副作用；确定性 packaged lifecycle seam 见 P3-3，后续仅需真实 Qwen packaged-client 现场 |
 | P6-1d | [Packaged Qwen lifecycle report](../../reports/taiji_w7_p6_1d_packaged_qwen_20260831.json) / [packaged evaluator](../../scripts/training/eval_taiji_p6_1d_packaged_qwen.py) / [PyInstaller spec](../../desktop/seed.spec) | 新构建的 `SeedBackend.exe` 在两个独立进程周期中显式挂载同一 allowlisted Qwen artifact，均完成 activation、真实 semantic admission 和 `resolved` interpretation；停止后重启重新绑定同一 provider，evidence digest 保持一致；错误 model digest 返回 500 并 fail-closed；不声明多版本真实 rotation/watchdog、安装器 UI、模型质量或 CUDA |
 | P7-1 | [Qwen semantic quality report](../../reports/taiji_w7_p7_1_qwen_semantic_quality_20260831.json) / [quality evaluator](../../scripts/training/eval_taiji_p7_1_semantic_quality.py) | 真实 Qwen2.5-0.5B-Instruct 的 8 个固定中文案例 Gate 未通过：provider success、只读约束保持和执行字段隔离均为 `1.0`，但清晰案例通过率仅 `0.2857`，模糊请求未达到高歧义；已定位 stat/search、query 丢失、语言协议不匹配、path 污染和过度自信等失败。该 artifact 保留为实验/回退 provider，不能进入生产语义默认入口 |
-| E0 | [Native evolution and client embodiment route](../active/roadmap/63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md) | 已定义 Skill/MCP artifact 知识语料、真实 Outcome 经验、MCP 认知内化与客户端 capability 双产物、DeepSeek Harness 生命周期采纳边界和 E1–E9；路线定义阶段完成 |
+| E0 | [Native evolution and client embodiment route](../archive/history/63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md) | 已定义 Skill/MCP artifact 知识语料、真实 Outcome 经验、MCP 认知内化与客户端 capability 双产物、DeepSeek Harness 生命周期采纳边界和 E1–E9；路线定义阶段完成 |
 | E1 | [E1 evolution ledger report](../../reports/taiji_w7_e1_evolution_ledger_20260901.json) / [E1 tests](../../tests/taiji_native/test_evolution_ledger.py) | `EvolutionCorpusArtifact`、`EvolutionExperience`、Workbench digest-only projection、append-only hash chain、redaction、partition、checkpoint restore/continue 和 tamper rejection 通过；不训练权重、不安装插件、不接 Legacy MCP |
 | E2-A | [E2 source adapter report](../../reports/taiji_w7_e2_source_adapters_20260901.json) / [E2 tests](../../tests/taiji_native/test_evolution_adapters.py) | Skill/MCP/client-plugin artifact 单元投影、scope/publisher/schema lineage、执行源码/secret 排除、生命周期经验投影、失败/取消状态和 ledger checkpoint 通过；适配器不执行来源 |
 | E2-B | [E2-B source registry report](../../reports/taiji_w7_e2b_source_registry_20260901.json) / [E2-B tests](../../tests/taiji_native/test_source_registry_lifecycle.py) | Seed-owned Skill/MCP/client-plugin registry 已支持版本冲突、discovered/staged/shadow/active/failed/quarantined、registry/ledger checkpoint 重绑和幂等投影；Legacy manager 继续隔离，尚未训练权重 |

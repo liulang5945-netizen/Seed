@@ -30,6 +30,8 @@
 | [SEED_W7_EXECUTION_PLAN_SNAPSHOT_20260829.md](history/SEED_W7_EXECUTION_PLAN_SNAPSHOT_20260829.md) | R1–R5 原详细蓝图与已完成过程；后续阶段已重写为 C0–C8 活动计划 |
 | [SEED_NATIVE_PHASE_HISTORY_20260829.md](history/SEED_NATIVE_PHASE_HISTORY_20260829.md) | P0–P7 原滚动实现记录；活动版只保留长期范围、阶段状态和退出门槛 |
 | [roadmap_shards/](history/roadmap_shards/) | 2026-09-01 归档 `05`～`61` 共 57 个已完成 slice 分片（原在 `plans/active/roadmap/`）。每个分片的执行结论都已在 [04_EXECUTION_PLAN.md](../active/roadmap/04_EXECUTION_PLAN.md) 的对应 `### R5C-Sxx（已完成）` 小节保留，因此归档不丢失可执行信息；分片内部相对链接已在同一次改动内按新深度改写 |
+| [62_POST_S51_PROJECT_CONVERGENCE_20260831.md](history/62_POST_S51_PROJECT_CONVERGENCE_20260831.md) | 2026-09-01 归档。交付顺序阶段 P0–P8 的原始收敛计划；其统一执行原则、P2 自然语言执行链和 P3–P8 未退出 Gate 已并入 [01_SCOPE_AND_PHASES.md](../active/roadmap/01_SCOPE_AND_PHASES.md) 第 6–7 节，本文件只保留当时的事实盘点与已完成子阶段记录 |
+| [63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md](history/63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md) | 2026-09-01 归档。E1–E9 原生进化与客户端体化的原始总路线；路线决策、目标架构、语料/经验合同、Skill/MCP/插件合同、归因规则、E7–E9 未闭合阶段和 owner 已并入 [04_EXECUTION_PLAN.md](../active/roadmap/04_EXECUTION_PLAN.md) 第 9–18 节，指标与决策节点已并入 [02_GATES_AND_CI.md](../active/roadmap/02_GATES_AND_CI.md) 第 5–6 节，本文件只保留 E0–E6 的当时完成记录 |
 
 其他归档文档的用途见各自文件头部说明。原路线、旧 NeuroPlex/Transformer 设计和测试调试记录都不应被重新解释为当前 Taiji 事实。
 
@@ -39,3 +41,4 @@
 - 当前执行顺序只看 `plans/active/SEED_DEVELOPMENT_ROADMAP_2026_08.md`，当前唯一下一步只看 `plans/active/roadmap/03_CURRENT_EXECUTION.md`。
 - 当前身份、所有权和产品边界只看 `plans/active/ARCHITECTURE_DIRECTION_2026_08.md` 与 `plans/active/SEED_ARCHITECTURE.md`。
 - 归档文档中的“下一步”均是历史记录，不得直接恢复执行。
+- `plans/active/roadmap/` 恒为 `01`～`04` 四个骨干文件，由 `tests/seed/test_project_identity.py::test_active_plans_have_one_execution_owner_and_resolvable_links` 断言；新增阶段内容必须并入这四个文件的对应小节，不得新增编号分片。

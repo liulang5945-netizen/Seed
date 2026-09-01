@@ -1,6 +1,6 @@
 # Seed / Taiji 后 S51 项目收敛与开发计划
 
-> 状态：2026-08-31 阶段背景与历史收敛计划。执行入口仍以 [03_CURRENT_EXECUTION.md](03_CURRENT_EXECUTION.md) 的唯一下一步为准；原生认知、Skill/MCP 经验与 Seed 客户端插件热插拔的新总路线见 [63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md](63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md)。本文件中 P7/P8 以前的顺序保留为历史依据，不再覆盖 E1–E9。
+> 状态：2026-08-31 阶段背景与历史收敛计划。执行入口仍以 [03_CURRENT_EXECUTION.md](../../active/roadmap/03_CURRENT_EXECUTION.md) 的唯一下一步为准；原生认知、Skill/MCP 经验与 Seed 客户端插件热插拔的新总路线见 [63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md](./63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md)。本文件中 P7/P8 以前的顺序保留为历史依据，不再覆盖 E1–E9。
 
 ## 0. 2026-08-31 路线重定向
 
@@ -208,7 +208,7 @@ P7-1 已证明 Qwen2.5-0.5B-Instruct 不能满足生产语义质量，但继续�
 
 ## 5. E1 执行交接
 
-执行 **E1：统一进化语料/经验合同与 checkpoint 前置 Gate**，详细合同见 [63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md](63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md)。
+执行 **E1：统一进化语料/经验合同与 checkpoint 前置 Gate**，详细合同见 [63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md](./63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md)。
 
 E1 只建立 `EvolutionCorpusArtifact`、`EvolutionExperience`、append-only ledger、Workbench Outcome 投影、Skill/MCP/client-plugin 确定性 fixture、用途/许可、partition/taint/redaction 和 checkpoint 损坏拒绝。它不训练权重、不安装插件、不接 Legacy MCP manager，也不改客户端 UI。通过后按 E2 真实语料/经验来源 → E3 Taiji 本体训练 → E4 Skill/MCP 知识与程序内化 → E5 Seed 客户端插件 host → E6 MCP 客户端器官继承的顺序推进。
 

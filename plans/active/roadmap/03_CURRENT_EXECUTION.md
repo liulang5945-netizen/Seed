@@ -1,6 +1,6 @@
 # Seed / Taiji 当前执行状态
 
-> 快照日期：2026-09-01。本文件是“现在做什么”的唯一事实源；当前原生进化路线见 [63\_TAIJI\_NATIVE\_EVOLUTION\_AND\_EMBODIMENT\_20260831.md](63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md)，阶段背景见 [62\_POST\_S51\_PROJECT\_CONVERGENCE\_20260831.md](62_POST_S51_PROJECT_CONVERGENCE_20260831.md)，完成分片的细节由各路线文件、manifest、report 和 Git 历史追溯。
+> 快照日期：2026-09-01。本文件是“现在做什么”的唯一事实源；当前原生进化主线见 [04_EXECUTION_PLAN.md](04_EXECUTION_PLAN.md) 第 9–18 节，交付顺序阶段 P0–P8 背景见 [01_SCOPE_AND_PHASES.md](01_SCOPE_AND_PHASES.md) 第 6–7 节，完成分片的细节由各路线文件、manifest、report 和 Git 历史追溯。
 
 ## 1. 当前结论
 
@@ -38,7 +38,7 @@
 
 - 当前 artifact 只保留在实验/回退路径；在更强 provider artifact 通过同一 Gate 前，不得把真实 Qwen 接入宣传为可读语言器官或生产级自主 IDE 入口。
 
-- 路线已从“先升级 provider”校正为“先训练 Taiji 本体并建立持续进化数据闭环”：Skill/MCP 本身的说明、schema、示例、约束和领域资料成为受治理的知识语料，Skill/MCP/Workbench 的真实调用 Outcome 成为经验语料；MCP 的 connector、executor、permission、resource 和 UI 则形成客户端 capability/plugin 候选，由 Seed 客户端进化继承。DeepSeek Harness 的插件生命周期原则只用于 Seed 客户端的页面、IDE/Workbench、Skill、MCP、可视化和工具热插拔，不进入 Taiji 神经网络内部。完整路线见 [63\_TAIJI\_NATIVE\_EVOLUTION\_AND\_EMBODIMENT\_20260831.md](63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md)。
+- 路线已从“先升级 provider”校正为“先训练 Taiji 本体并建立持续进化数据闭环”：Skill/MCP 本身的说明、schema、示例、约束和领域资料成为受治理的知识语料，Skill/MCP/Workbench 的真实调用 Outcome 成为经验语料；MCP 的 connector、executor、permission、resource 和 UI 则形成客户端 capability/plugin 候选，由 Seed 客户端进化继承。DeepSeek Harness 的插件生命周期原则只用于 Seed 客户端的页面、IDE/Workbench、Skill、MCP、可视化和工具热插拔，不进入 Taiji 神经网络内部。完整历史路线见 [63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md](../../archive/history/63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md)（已归档 superseded 快照），当前路线合同见 [04_EXECUTION_PLAN.md](04_EXECUTION_PLAN.md) 第 9–18 节。
 
 - P7-1 provider artifact 升级降为语言器官支线；当前 Qwen 仍是实验/回退 artifact，其质量失败不阻塞结构化经验驱动的 Taiji 原生训练。
 
@@ -99,7 +99,7 @@ P2-11 已由 [IDE language chain report](../../../reports/taiji_w7_p2_11_ide_lan
 
 客户端热插拔的对象明确为 Seed 客户端：Vue 页面/路由/侧栏/IDE panel/命令/设置/可视化与后端 Workbench/Skill/MCP capability 通过 `client snapshot + capability snapshot` 两阶段原子切换；`desktop/main.py` 的 PyQt/QWebEngine 根壳、托盘、任务栏、QWebChannel 和进程管理属于保护域，只能安全重启更新。一次 MCP 内化产生两个独立候选：Taiji-owned `CognitiveInternalizationArtifact` 和 Seed-owned `ClientCapabilityInheritanceCandidate`；前者学习知识/程序/affordance，后者让客户端继承连接与执行能力，二者独立准入和回滚。
 
-**当前唯一下一步：定性** **`62`/`63`** **与** **`plans/active/roadmap/`** **闭集合同的冲突。** 本轮已把 `05`～`61` 共 57 个已完成分片归档到 `plans/archive/history/roadmap_shards/`，并在同一次改动内改写全部引用，`test_active_plans_have_one_execution_owner_and_resolvable_links` 的链接可解析性与 57 分片漂移均已消除，失败集合收窄为 `62_POST_S51_PROJECT_CONVERGENCE_20260831.md` 与 `63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md` 两项。这两份是 live 文档而非历史：`SEED_DEVELOPMENT_ROADMAP_2026_08.md` 路由表把 `62` 钉为「当前参考」、`63` 钉为「当前阶段总计划」，而 `plans/archive/README.md` 明确禁止从归档文档恢复执行，因此按历史归档会造成治理自相矛盾。定性只能在「把 `62`/`63` 的活动内容并入 `01`～`04` 骨干并把原件按 superseded 快照归档」与「显式且带理由地扩写合同闭集」之间做一次结构决策，不得静默改测试绕过。在它转绿之前不开新分片，以免继续在非全绿基线上累积证据。
+**当前唯一下一步：运行全量测试确认合并后零红，提交本次 62/63 合并归档。** `62_POST_S51_PROJECT_CONVERGENCE_20260831.md` 与 `63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md` 的活动内容已并入 `01_SCOPE_AND_PHASES.md` 第 6–7 节与 `04_EXECUTION_PLAN.md` 第 9–18 节，原件已 `git mv` 到 `plans/archive/history/` 作为 superseded 快照，全仓库引用已改写，`plans/active/roadmap/` 已恒为 `01`～`04` 四个骨干文件。`test_active_plans_have_one_execution_owner_and_resolvable_links` 断言应转绿。绿后下一步：修复 CI 暂缓，解锁 E7 脑—客户端协同选择器。
 
 ## 5. 当前阻塞与暂缓项
 
@@ -107,7 +107,7 @@ P2-11 已由 [IDE language chain report](../../../reports/taiji_w7_p2_11_ide_lan
 
 - **CI：按用户决定暂缓。** 未运行/未修复不能标记为通过，恢复后统一收口累积问题。
 
-- **plans 目录清单红：57 个已完成分片已归档，仅余** **`62`/`63`** **定性未决。** `tests/seed/test_project_identity.py::test_active_plans_have_one_execution_owner_and_resolvable_links` 断言 `plans/active/roadmap/*.md` 恰为 `01`～`04` 四个文件。该红长期存在但此前未被观测到，因为历次全量只跑 `tests/taiji_native` 而未跑 `tests/seed`；已实证与语义 provider 收口无关（stash 掉 `seed/semantic_provider.py` 改动后仍 1 failed / 4 passed）。本轮已把 `05`～`61` 共 57 个已完成分片 `git mv` 到 `plans/archive/history/roadmap_shards/`，并在同一次改动内改写全部引用：9 个分片内部 12 条链接（`../../../` 深度加一级、`61`→`62` 改为跨目录）、`03`/`04` 两条入站链接、`taiji_w7_r5_effector_registry_v1.json` 与 `taiji_w7_r5_open_domain_growth_v1.json` 共 17 条路径字符串；`reports/*.json` 内嵌的历史文档快照属既成证据，一律不改写。链接可解析性一半已转绿，`plans/active` 与 `plans/reference` 下零断链。残余红只剩一项：`62`（当前参考）与 `63`（当前阶段总计划）是 live 文档，被 `SEED_DEVELOPMENT_ROADMAP_2026_08.md` 路由表钉为当前，而 `plans/archive/README.md` 禁止从归档文档恢复执行，因此它们不能按历史归档，需要一次结构定性决策，不做静默改测试。
+- **plans 目录清单红：已关闭。** `62`/`63` 的活动内容已并入 `01_SCOPE_AND_PHASES.md` 第 6–7 节与 `04_EXECUTION_PLAN.md` 第 9–18 节，原件已归档，`plans/active/roadmap/` 恒为 `01`～`04` 四个骨干文件。`test_active_plans_have_one_execution_owner_and_resolvable_links` 应转绿。
 
 - **CUDA：`hardware-blocked`。** 当前主机无可用 CUDA，不用 CPU 结果替代 GPU 结论。
 
@@ -127,9 +127,9 @@ P2-11 已由 [IDE language chain report](../../../reports/taiji_w7_p2_11_ide_lan
 
 - 架构身份与成熟技术采纳：[ARCHITECTURE\_DIRECTION\_2026\_08.md](../ARCHITECTURE_DIRECTION_2026_08.md)
 
-- 当前阶段总计划：[62\_POST\_S51\_PROJECT\_CONVERGENCE\_20260831.md](62_POST_S51_PROJECT_CONVERGENCE_20260831.md)
+- 交付顺序阶段 P0–P8 背景（已归档 superseded 快照）：[62_POST_S51_PROJECT_CONVERGENCE_20260831.md](../../archive/history/62_POST_S51_PROJECT_CONVERGENCE_20260831.md)
 
-- 原生认知、Skill/MCP 数据与客户端热插拔总路线：[63\_TAIJI\_NATIVE\_EVOLUTION\_AND\_EMBODIMENT\_20260831.md](63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md)
+- E1–E9 原生进化与客户端体化总路线（已归档 superseded 快照）：[63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md](../../archive/history/63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md)
 
 - S52 细化合同：[61\_R5C\_S52\_ARTIFACT\_CONSUMPTION\_POLICY\_20260831.md](../../archive/history/roadmap_shards/61_R5C_S52_ARTIFACT_CONSUMPTION_POLICY_20260831.md)
 
