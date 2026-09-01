@@ -53,7 +53,7 @@ Taiji 采用“站在巨人肩膀上”的双边界：原始 byte 输入继续�
 | 顺序 | 阶段 | 状态 | 主要产物 | 允许进入下一阶段的条件 |
 |---|---|---|---|---|
 | 0 | M0 CPU 五项基础能力真实性基线 | **已完成（M0-0/M0-1/B1/B2/B3/B4/B5/M0-3/M0-4）** | 数据合同、对照 evaluator、checkpoint preflight、基线报告 | 测量链可信且能保存/恢复；模型得分可以失败，但失败必须被如实记录 |
-| 1 | M1 Taiji foundation 训练管线与首次 CPU 训练 | **当前进行（M1-5：F4 联合短训）** | 原生 trainer、数据流水线、训练曲线、首个 child checkpoint | 未见数据相对父 checkpoint/对照有稳定净提升 |
+| 1 | M1 Taiji foundation 训练管线与首次 CPU 训练 | **当前进行（M1-6：F5 首次晋级）** | 原生 trainer、数据流水线、训练曲线、首个 child checkpoint | 未见数据相对父 checkpoint/对照有稳定净提升 |
 | 2 | M2 世界—行动—语言后训练 | 待开始 | 世界预测、行动信用、ContentPlan/语言蒸馏和受控 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
 | 3 | M3 综合能力晋级与真实 Workbench 验证 | 待开始 | 独立评测套件、真实 Workbench longitudinal report、晋级 checkpoint | 至少一个真实任务族获得可重复净收益 |
 | 4 | M4 持续学习、自进化和结构成长 | 冻结等待 M3 | bounded replay 接线、多周期保持、结构候选与单项回滚 | 真实 checkpoint 连续学习收益大于固定容量/weight-only 对照 |
@@ -86,7 +86,7 @@ B5 适配器已完成并通过 `reports/taiji_m0_b5_smoke_20260901.json`：phase
 
 M0-3/M0-4 已完成：统一矩阵报告为 `reports/taiji_foundation_baseline_20260901.json`，checkpoint gate 为 `passed`，整体 `status=failed`、`can_promote=false`。B1 使用真实中文数据的 foundation 分区（train `1,048,576`、holdout `131,072`、retention `131,072`），最差 seed 为 `6.497 BPB`，仍高于 unigram `5.942`，所以 F1 必须先改善 byte/边界/组合预测。B2 的 `0.75` 没有超过 memory lesion，说明记忆写入尚未形成稳定因果增益；B3 task-level 通过但只有 `8/4/4` 样本，B4 task-level 通过但只有 `32/16/16` 样本，二者都不能晋级 foundation；B5 最差 backward transfer 为 `-0.244`，但 phase-B checkpoint continuation 已被验证，旧能力遗忘是 F5 的直接目标。
 
-M0 的零点已经足够可信，不能因 capability failed 继续扩大外围建设。M1-0～M1-4 已完成并进入 **M1-5：F4 联合短训**；首轮固定 F1→F2→F3→F4→F5 顺序，优先目标是让 child checkpoint 在 B1/B2/B5 上出现可归因净提升，同时保持 B3/B4 不退化。
+M0 的零点已经足够可信，不能因 capability failed 继续扩大外围建设。M1-0～M1-5 已完成并进入 **M1-6：F5 首次晋级**；首轮固定 F1→F2→F3→F4→F5 顺序，优先目标是让 child checkpoint 在 B1/B2/B5 上出现可归因净提升，同时保持 B3/B4 不退化。
 
 本步只允许创建或修改以下 owner：
 
@@ -216,7 +216,11 @@ M1-3 已完成：新增 `MemoryTrainingRun` 与 `scripts/training/train_taiji_me
 
 M1-4 已完成：新增 `WorldActionTrainingRun` 与 `scripts/training/train_taiji_world_action.py`，将 `WorldDynamicsLearner` 的原生局部 world update 与 Taiji kernel 的 goal→action→reward credit 放入同一个可恢复 checkpoint。F3 smoke 的 world holdout error 为 `2.0576→0.0514`，goal success 为 `0.5→1.0`；固定 64 条 world + 64 条 goal pilot 后，seed 11/29/47 的 world error 分别为 `1.8871→0.0000137`、`0.1570→0.0000742`、`0.4283→0.00000795`，goal success 均为 `0.5→1.0`，credit-lesion 均为 `0.5`，world transition rejection 为 `0`。三个 last checkpoint 均由全新进程 eval-only 复核，报告 `checkpoint_read_only=true`；F3 pilot 达到阶段退出条件，但不代表 M1 总体晋级。
 
-当前唯一下一步是执行 **M1-5 F4 联合短训**：在同一条 checkpoint lineage 上串联已验证的 F1 byte prediction、F2 delayed memory 和 F3 world/action 目标；先用最小混合 corpus 验证三类器官在同一 child 上互不覆盖，再跑三个 seed 的联合 holdout/retention/lesion，重点检查 F1 BPB、F2 recall、F3 world error/goal success 是否出现互相退化。F4 完成前不进入 F5，也不切换到 provider、Workbench、Skill/MCP 或客户端外围。
+M1-5 已完成：`JointTrainingRun` 与 `scripts/training/train_taiji_joint.py` 将 F1 byte prediction、F2 delayed memory、F3 world/action 串到同一 checkpoint lineage，checkpoint 同时保留模型、世界学习器、三个数据 digest、四个 cursor、parent lineage 和指标历史。正式 F4 pilot 矩阵见 `reports/taiji_m1_f4_pilot_matrix_20260901.json`：固定 partition/corpus 下 seed 11/29/47 的 sequence holdout BPB 分别为 `8.0056→5.2096`、`8.0056→5.4118`、`8.0056→5.4045`；memory recall 分别为 `0.5→0.65625`、`0.5→0.53125`、`0.5→0.65625`；world holdout error 均下降到 `1.37e-5`、`7.42e-5`、`7.95e-6`；goal success 均为 `0.5→1.0`；retention 同步改善，credit-lesion 均为 `0.5`，holdout updates 与 world transition rejections 均为 `0`。三个 last checkpoint 均在全新进程中 eval-only 复核且 `checkpoint_read_only=true`，因此 F4 达到阶段 Gate；但这只是联合短训通过，不代表 M1 总体或 M0 五项晋级。
+
+F4 过程中发现并修复了一个真实恢复错误：float32 范数边界的 1 ulp 舍入会让 `SparseSynapses.load_payload()` 在恢复时二次改写权重，破坏 checkpoint digest 和只读评估。`ab4b079` 增加了容差幂等边界与回归测试；seed 11 从修复前保存的 `last.pt` 继续完成，随后三 seed 的新进程 eval-only 均通过。这次修复是 checkpoint 正确性的基础修复，不是模型能力收益。
+
+当前唯一下一步是执行 **M1-6 F5 首次晋级**：从三个 F4 最佳 checkpoint 中选定可追溯 child，在全新进程重跑 M0 五项矩阵，保留完整 foundation 数据与对照，重点验证 B1 是否超过 unigram、B2 是否超过 memory lesion、B5 是否止住遗忘，同时确认 B3/B4 不因联合训练退化。F5 完成前不进入 M2，也不切换到 provider、Workbench、Skill/MCP 或客户端外围。
 
 ## 7. M2～M8 的开发日程与外围任务安置
 
