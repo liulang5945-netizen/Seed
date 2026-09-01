@@ -66,6 +66,7 @@ def main() -> int:
     parser.add_argument("--epochs", type=int, default=1)
     parser.add_argument("--chunk-bytes", type=int, default=1_024)
     parser.add_argument("--checkpoint-interval", type=int)
+    parser.add_argument("--metric-interval", type=int)
     parser.add_argument("--world-learning-rate", type=float, default=0.02)
     parser.add_argument("--world-repeats", type=int, default=8)
     parser.add_argument("--replay-corpus", nargs="+", type=Path)
@@ -122,6 +123,7 @@ def main() -> int:
             epochs=args.epochs,
             chunk_bytes=args.chunk_bytes,
             checkpoint_interval=checkpoint_interval,
+            metric_interval=args.metric_interval,
             world_learning_rate=args.world_learning_rate,
             world_repeats=args.world_repeats,
             replay_dataset=replay_dataset,
@@ -136,6 +138,7 @@ def main() -> int:
             goal_corpus,
             output_dir=args.output_dir,
             epochs=args.epochs,
+            metric_interval=args.metric_interval,
             replay_dataset=replay_dataset,
             replay_epochs=args.replay_epochs,
         )
@@ -154,6 +157,7 @@ def main() -> int:
             epochs=args.epochs,
             chunk_bytes=args.chunk_bytes,
             checkpoint_interval=checkpoint_interval,
+            metric_interval=args.metric_interval,
             world_learning_rate=args.world_learning_rate,
             world_repeats=args.world_repeats,
             replay_dataset=replay_dataset,

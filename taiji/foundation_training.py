@@ -1380,6 +1380,7 @@ class JointTrainingRun:
         epochs: int = 1,
         chunk_bytes: int = 1_024,
         checkpoint_interval: int = 1,
+        metric_interval: int | None = None,
         world_learning_rate: float = 0.02,
         world_repeats: int = 8,
         replay_dataset: FoundationTrainingDataset | None = None,
@@ -1408,6 +1409,8 @@ class JointTrainingRun:
             raise ValueError("joint world learning settings must be positive")
         if int(replay_epochs) <= 0:
             raise ValueError("joint replay epochs must be positive")
+        if metric_interval is not None and int(metric_interval) <= 0:
+            raise ValueError("joint metric_interval must be positive")
         self.model = model
         self.world_learner = world_learner
         self.dataset = dataset
@@ -1419,6 +1422,9 @@ class JointTrainingRun:
         self.total_epochs = int(epochs)
         self.chunk_bytes = int(chunk_bytes)
         self.checkpoint_interval = int(checkpoint_interval)
+        self.metric_interval = int(
+            metric_interval if metric_interval is not None else checkpoint_interval
+        )
         self.world_learning_rate = float(world_learning_rate)
         self.world_repeats = int(world_repeats)
         self.replay_dataset = replay_dataset
@@ -1538,6 +1544,7 @@ class JointTrainingRun:
             "total_epochs": self.total_epochs,
             "chunk_bytes": self.chunk_bytes,
             "checkpoint_interval": self.checkpoint_interval,
+            "metric_interval": self.metric_interval,
             "world_learning_rate": self.world_learning_rate,
             "world_repeats": self.world_repeats,
             "replay_dataset_digest": (
@@ -1606,7 +1613,7 @@ class JointTrainingRun:
                 self.sequence_cursor = end
                 self.global_step += 1
                 if (
-                    self.global_step % self.checkpoint_interval == 0
+                    self.global_step % self.metric_interval == 0
                     or self.sequence_cursor == len(self.dataset.train)
                 ):
                     self._save_progress(train_kind="sequence")
@@ -1621,7 +1628,7 @@ class JointTrainingRun:
                 self.memory_cursor += 1
                 self.global_step += 1
                 if (
-                    self.global_step % self.checkpoint_interval == 0
+                    self.global_step % self.metric_interval == 0
                     or self.memory_cursor == len(self.memory_corpus.train)
                 ):
                     self._save_progress(train_kind="memory")
@@ -1645,7 +1652,7 @@ class JointTrainingRun:
                 self.world_cursor += 1
                 self.global_step += 1
                 if (
-                    self.global_step % self.checkpoint_interval == 0
+                    self.global_step % self.metric_interval == 0
                     or self.world_cursor == len(self.world_corpus.train)
                 ):
                     self._save_progress(train_kind="world")
@@ -1660,7 +1667,7 @@ class JointTrainingRun:
                 self.goal_cursor += 1
                 self.global_step += 1
                 if (
-                    self.global_step % self.checkpoint_interval == 0
+                    self.global_step % self.metric_interval == 0
                     or self.goal_cursor == len(self.goal_corpus.train)
                 ):
                     self._save_progress(train_kind="goal", train_success=success)
@@ -1681,7 +1688,7 @@ class JointTrainingRun:
                         self.replay_cursor = end
                         self.global_step += 1
                         if (
-                            self.global_step % self.checkpoint_interval == 0
+                            self.global_step % self.metric_interval == 0
                             or self.replay_cursor == len(self.replay_dataset.train)
                         ):
                             self._save_progress(train_kind="replay")
@@ -1725,6 +1732,7 @@ class JointTrainingRun:
             "world_online_updates": self.world_learner.online_updates,
             "world_transition_rejections": self.world_learner.transition_rejections,
             "holdout_updates": 0,
+            "metric_interval": self.metric_interval,
             "replay_dataset_digest": (
                 self.replay_dataset.digest if self.replay_dataset is not None else None
             ),
@@ -1769,6 +1777,7 @@ class JointTrainingRun:
             "checkpoint_digest": before,
             "metrics": metrics,
             "checkpoint_read_only": True,
+            "metric_interval": self.metric_interval,
             "code_revision": self.code_revision,
             "continuation_source_checkpoint_digest": self.continuation_source_checkpoint_digest,
         }
@@ -1786,6 +1795,7 @@ class JointTrainingRun:
         epochs: int | None = None,
         chunk_bytes: int | None = None,
         checkpoint_interval: int | None = None,
+        metric_interval: int | None = None,
         world_learning_rate: float | None = None,
         world_repeats: int | None = None,
         replay_dataset: FoundationTrainingDataset | None = None,
@@ -1842,6 +1852,11 @@ class JointTrainingRun:
                 if checkpoint_interval is not None
                 else payload["checkpoint_interval"]
             ),
+            metric_interval=int(
+                metric_interval
+                if metric_interval is not None
+                else payload.get("metric_interval", payload["checkpoint_interval"])
+            ),
             world_learning_rate=float(
                 world_learning_rate
                 if world_learning_rate is not None
@@ -1874,6 +1889,7 @@ class JointTrainingRun:
         *,
         output_dir: str | Path | None = None,
         epochs: int | None = None,
+        metric_interval: int | None = None,
         replay_dataset: FoundationTrainingDataset | None = None,
         replay_epochs: int | None = None,
         code_revision: str | None = None,
@@ -1928,6 +1944,11 @@ class JointTrainingRun:
             epochs=int(epochs if epochs is not None else payload["total_epochs"]),
             chunk_bytes=int(payload["chunk_bytes"]),
             checkpoint_interval=int(payload["checkpoint_interval"]),
+            metric_interval=int(
+                metric_interval
+                if metric_interval is not None
+                else payload.get("metric_interval", payload["checkpoint_interval"])
+            ),
             world_learning_rate=float(payload["world_learning_rate"]),
             world_repeats=int(payload["world_repeats"]),
             replay_dataset=replay_dataset,
