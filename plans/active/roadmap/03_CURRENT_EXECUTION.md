@@ -53,7 +53,7 @@ Taiji 采用“站在巨人肩膀上”的双边界：原始 byte 输入继续�
 | 顺序 | 阶段 | 状态 | 主要产物 | 允许进入下一阶段的条件 |
 |---|---|---|---|---|
 | 0 | M0 CPU 五项基础能力真实性基线 | **已完成（M0-0/M0-1/B1/B2/B3/B4/B5/M0-3/M0-4）** | 数据合同、对照 evaluator、checkpoint preflight、基线报告 | 测量链可信且能保存/恢复；模型得分可以失败，但失败必须被如实记录 |
-| 1 | M1 Taiji foundation 训练管线与首次 CPU 训练 | **当前进行（M1-1：F1 pilot 首轮训练）** | 原生 trainer、数据流水线、训练曲线、首个 child checkpoint | 未见数据相对父 checkpoint/对照有稳定净提升 |
+| 1 | M1 Taiji foundation 训练管线与首次 CPU 训练 | **当前进行（M1-2：F1 pilot 三 seed 复核）** | 原生 trainer、数据流水线、训练曲线、首个 child checkpoint | 未见数据相对父 checkpoint/对照有稳定净提升 |
 | 2 | M2 世界—行动—语言后训练 | 待开始 | 世界预测、行动信用、ContentPlan/语言蒸馏和受控 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
 | 3 | M3 综合能力晋级与真实 Workbench 验证 | 待开始 | 独立评测套件、真实 Workbench longitudinal report、晋级 checkpoint | 至少一个真实任务族获得可重复净收益 |
 | 4 | M4 持续学习、自进化和结构成长 | 冻结等待 M3 | bounded replay 接线、多周期保持、结构候选与单项回滚 | 真实 checkpoint 连续学习收益大于固定容量/weight-only 对照 |
@@ -208,7 +208,9 @@ M0 的 CPU 实测 foundation 矩阵约耗时 42 分钟，说明当前机器只�
 
 M1-0 已完成：`taiji/foundation_training.py` 和 `scripts/training/train_taiji_foundation.py` 已实现 content-addressed JSONL 分区、cursor 分块训练、`parent/last/best-holdout` 原子 checkpoint、`--resume` 和 `--eval-only`。`reports/taiji_m1_smoke_20260901.json` 的 smoke 训练使用 `4096/1024/1024` 字节，parent holdout 为 `9.025 BPB`，best holdout 降到 `6.864 BPB`；新进程 eval-only 保持 checkpoint 只读，回归测试为 `12 passed`。这只是管线可用性证据，不代表模型已经达到 M1 晋级标准。
 
-当前唯一下一步是执行 **M1-1 F1 pilot 首轮训练**：固定 micro tier、单 seed 起步、按小 chunk 定期保存，从真实中文 JSONL train 分区继续优化 byte/边界/组合预测；完成后先比较 parent/best/final holdout 和 retention，再决定是否增加 seed 或进入 F2。任何未改善都回到 F1 数据/学习规则，不切换到外围任务。
+M1-1 已完成：`reports/taiji_m1_pilot_20260901.json` 记录了 micro/seed 11 的 F1 pilot，parent holdout 为 `9.063 BPB`，best/final holdout 为 `6.384 BPB`，retention 为 `6.435 BPB`；16 个 cursor chunk 完成，parent/last/best checkpoint 均落盘，新进程 eval-only 报告确认 `checkpoint_read_only=true`。这证明 F1 pilot 管线产生了真实改善迹象，但单 seed 不足以晋级。
+
+当前唯一下一步是执行 **M1-2 F1 pilot 三 seed 复核**：固定相同数据 digest、micro tier、chunk 和 epochs，运行 seeds `11/29/47` 并比较每个 child 与各自 parent 的 holdout/retention；只有稳定净改善才进入 F2，否则只修 F1 数据或学习规则，不切换到外围任务。
 
 ## 7. M2～M8 的开发日程与外围任务安置
 
