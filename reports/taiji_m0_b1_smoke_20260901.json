@@ -1,0 +1,97 @@
+{
+  "format": "taiji-foundation-evaluation-v1",
+  "manifest_digest": "c5f178d4e18018f5085c3f56d1ae6d7596df304aee975f81c12db3b72e7e74f8",
+  "checkpoint_gate_status": "passed",
+  "status": "not_evaluated",
+  "can_promote": false,
+  "failure_reasons": [
+    "b1_sequence_prediction:measurement_failed",
+    "b2_delayed_memory:not_evaluated",
+    "b3_world_transition:not_evaluated",
+    "b4_goal_action:not_evaluated",
+    "b5_continual_learning:not_evaluated"
+  ],
+  "measurements": [
+    {
+      "ability_id": "b1_sequence_prediction",
+      "status": "failed",
+      "primary_metric": "bits_per_byte",
+      "metric_direction": "lower_is_better",
+      "metric_value": 7.219065617842044,
+      "baseline_metrics": {
+        "frozen_parent": 8.856963080368393,
+        "hash_only": 15.93309652769855,
+        "random": 8.005624549193879,
+        "simple_rule": 6.076705107929062
+      },
+      "sample_counts": {
+        "holdout": 1024,
+        "retention": 1024,
+        "train": 4096
+      },
+      "holdout_updates": 0,
+      "evidence": [
+        "seed_metrics=[{\"frozen_parent\": 9.0246378050867, \"holdout_updates\": 0, \"parameter_count\": 4999, \"retention\": 7.176103053340723, \"seed\": 11, \"taiji\": 6.972787198038773, \"train_observations\": 4097}, {\"frozen_parent\": 8.856963080368393, \"holdout_updates\": 0, \"parameter_count\": 4999, \"retention\": 7.165494471004094, \"seed\": 29, \"taiji\": 7.219065617842044, \"train_observations\": 4097}, {\"frozen_parent\": 9.347188598146497, \"holdout_updates\": 0, \"parameter_count\": 4999, \"retention\": 6.949165340859788, \"seed\": 47, \"taiji\": 6.920904862096907, \"train_observations\": 4097}]",
+        "native_model_checkpoint_is_read_only_during_score=true"
+      ]
+    },
+    {
+      "ability_id": "b2_delayed_memory",
+      "status": "not_evaluated",
+      "primary_metric": "recall_accuracy",
+      "metric_direction": "higher_is_better",
+      "metric_value": null,
+      "baseline_metrics": {},
+      "sample_counts": {},
+      "holdout_updates": 0,
+      "evidence": [
+        "m0-1-contract-only; task runner pending"
+      ]
+    },
+    {
+      "ability_id": "b3_world_transition",
+      "status": "not_evaluated",
+      "primary_metric": "transition_error",
+      "metric_direction": "lower_is_better",
+      "metric_value": null,
+      "baseline_metrics": {},
+      "sample_counts": {},
+      "holdout_updates": 0,
+      "evidence": [
+        "m0-1-contract-only; task runner pending"
+      ]
+    },
+    {
+      "ability_id": "b4_goal_action",
+      "status": "not_evaluated",
+      "primary_metric": "success_rate",
+      "metric_direction": "higher_is_better",
+      "metric_value": null,
+      "baseline_metrics": {},
+      "sample_counts": {},
+      "holdout_updates": 0,
+      "evidence": [
+        "m0-1-contract-only; task runner pending"
+      ]
+    },
+    {
+      "ability_id": "b5_continual_learning",
+      "status": "not_evaluated",
+      "primary_metric": "backward_transfer",
+      "metric_direction": "higher_is_better",
+      "metric_value": null,
+      "baseline_metrics": {},
+      "sample_counts": {},
+      "holdout_updates": 0,
+      "evidence": [
+        "m0-1-contract-only; task runner pending"
+      ]
+    }
+  ],
+  "manifest_path": "E:\\Seed\\plans\\manifests\\taiji_foundation_baseline_v1.json",
+  "contract_status": "validated",
+  "capability_measurements": "b1_measured; b2-b5_not_evaluated",
+  "profile": "smoke",
+  "model_tier": "micro",
+  "report_written": true
+}

@@ -120,17 +120,6 @@ from .episodic_memory import (
     EpisodicMemoryStore,
 )
 from .evaluation import A1EvaluationConfig, PerceptionCorpus, PerceptionEvaluator
-from .foundation_evaluation import (
-    FOUNDATION_BASELINE_KINDS,
-    FOUNDATION_EVALUATION_FORMAT,
-    FOUNDATION_MANIFEST_FORMAT,
-    FOUNDATION_PARTITIONS,
-    FOUNDATION_REQUIRED_ABILITIES,
-    FoundationEvaluation,
-    FoundationManifest,
-    FoundationMeasurement,
-    FoundationTaskSpec,
-)
 from .evolution_credit import (
     EVOLUTION_CREDIT_ARMS,
     EVOLUTION_CREDIT_ATTRIBUTION_FORMAT,
@@ -180,6 +169,18 @@ from .executive import (
     ExecutiveTrainingExample,
 )
 from .fabric import TaijiFabric
+from .foundation_evaluation import (
+    FOUNDATION_BASELINE_KINDS,
+    FOUNDATION_EVALUATION_FORMAT,
+    FOUNDATION_MANIFEST_FORMAT,
+    FOUNDATION_PARTITIONS,
+    FOUNDATION_REQUIRED_ABILITIES,
+    FoundationEvaluation,
+    FoundationManifest,
+    FoundationMeasurement,
+    FoundationTaskSpec,
+)
+from .foundation_tasks import SequencePredictionCorpus, SequencePredictionTask
 from .generation import (
     GENERATION_CHECKPOINT_FORMAT,
     TEXT_EXPRESSION_CODEC_FORMAT,
@@ -583,6 +584,8 @@ __all__ = [
     "FoundationManifest",
     "FoundationMeasurement",
     "FoundationTaskSpec",
+    "SequencePredictionCorpus",
+    "SequencePredictionTask",
     "AssemblyRelationCorpus",
     "AssemblyRelationExample",
     "AssemblyRelationEvaluationConfig",

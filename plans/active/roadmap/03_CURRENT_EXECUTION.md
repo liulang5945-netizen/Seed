@@ -52,7 +52,7 @@ Taiji 采用“站在巨人肩膀上”的双边界：原始 byte 输入继续�
 
 | 顺序 | 阶段 | 状态 | 主要产物 | 允许进入下一阶段的条件 |
 |---|---|---|---|---|
-| 0 | M0 CPU 五项基础能力真实性基线 | **当前进行（M0-0/M0-1 已完成，M0-2 进行中）** | 数据合同、对照 evaluator、checkpoint preflight、基线报告 | 测量链可信且能保存/恢复；模型得分可以失败，但失败必须被如实记录 |
+| 0 | M0 CPU 五项基础能力真实性基线 | **当前进行（M0-0/M0-1 已完成，M0-2 B1 已完成，B2 进行中）** | 数据合同、对照 evaluator、checkpoint preflight、基线报告 | 测量链可信且能保存/恢复；模型得分可以失败，但失败必须被如实记录 |
 | 1 | M1 Taiji foundation 训练管线与首次 CPU 训练 | 待开始，M0 后立即进入 | 原生 trainer、数据流水线、训练曲线、首个 child checkpoint | 未见数据相对父 checkpoint/对照有稳定净提升 |
 | 2 | M2 世界—行动—语言后训练 | 待开始 | 世界预测、行动信用、ContentPlan/语言蒸馏和受控 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
 | 3 | M3 综合能力晋级与真实 Workbench 验证 | 待开始 | 独立评测套件、真实 Workbench longitudinal report、晋级 checkpoint | 至少一个真实任务族获得可重复净收益 |
@@ -74,13 +74,20 @@ M0-1 已完成并通过 `plans/manifests/taiji_foundation_baseline_v1.json`、`t
 
 当前唯一下一步是**实施 M0-2：实现五项真实任务适配器并接入统一 evaluator**。适配器先复用现有 Taiji perception、memory、world、action 和 continual-learning 接口，统一输出真实 measurement；不得调用 provider、前端或 MCP，也不得在 holdout 阶段学习。
 
+M0-2 的 B1 适配器已完成并通过 smoke 证据 `reports/taiji_m0_b1_smoke_20260901.json`：真实 Taiji 在 3 个 seed 上优于 random 和 frozen-parent，但仍落后于 unigram 对照，故 B1 当前为失败而非晋级；holdout 更新数为 0。B1 smoke 只证明测量链和适配器可运行，不替代 manifest 规定的 foundation 数据量。
+
+当前唯一下一步是完成 **B2 延迟记忆适配器**，随后按 B3、B4、B5 顺序接入；五项都完成后再运行一次完整 M0 矩阵并立即冻结 M1 首轮训练目标。
+
 本步只允许创建或修改以下 owner：
 
 - `plans/manifests/taiji_foundation_baseline_v1.json`：五项能力、数据分区、对照、seed、资源和报告 schema；
 - `taiji/foundation_evaluation.py`：不带训练副作用的统一 evaluator；
+- `taiji/foundation_tasks.py`：原生 B1～B5 任务适配器；当前已完成 B1；
 - `tests/taiji_native/test_foundation_evaluation.py`：数据泄漏、对照、checkpoint 和失败口径 red；
+- `tests/taiji_native/test_foundation_tasks.py`：原生任务适配器的真实状态和 holdout 只读回归；
 - `scripts/training/eval_taiji_foundation_baseline.py`：CPU 基线入口；
-- `reports/taiji_foundation_baseline_<date>.json`：首次真实性报告。
+- `reports/taiji_foundation_baseline_<date>.json`：首次真实性报告；
+- `reports/taiji_m0_b1_smoke_<date>.json`：B1 smoke 真实性证据。
 
 开始写 evaluator 前先核对已登记的 OpenAPI snapshot 漂移，确保现有 CI 基线没有被误当作本步新增失败。M0 报告生成后，不因模型分数低而回到外围建设；只要 checkpoint 和测量链可信，就立即进入 M1，低分直接成为首轮训练目标。
 
