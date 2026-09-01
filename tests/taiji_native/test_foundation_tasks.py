@@ -7,6 +7,9 @@ from taiji.foundation_tasks import (
     DelayedMemoryCorpus,
     DelayedMemoryQuery,
     DelayedMemoryTask,
+    GoalActionCorpus,
+    GoalActionEpisode,
+    GoalActionTask,
     MemoryEpisode,
     SequencePredictionCorpus,
     SequencePredictionTask,
@@ -177,3 +180,41 @@ def test_world_transition_task_uses_train_only_schema_and_reports_controls() -> 
     assert set(("random", "frozen_parent", "simple_rule", "hash_only")).issubset(
         measurement.baseline_metrics
     )
+
+
+def test_goal_action_task_uses_outcome_credit_without_holdout_writes() -> None:
+    def episode(prefix: str, index: int) -> GoalActionEpisode:
+        return GoalActionEpisode(
+            episode_id=f"{prefix}-{index}",
+            cue=65 + index % 2,
+            preferred_action=48 + index % 2,
+            alternate_action=49 - index % 2,
+        )
+
+    corpus = GoalActionCorpus(
+        train=tuple(episode("train", index) for index in range(8)),
+        holdout=tuple(episode("holdout", index) for index in range(4)),
+        retention=tuple(episode("retention", index) for index in range(4)),
+    )
+
+    measurement = GoalActionTask(
+        TaijiConfig(
+            region_sizes=(64, 48),
+            synapse_fan_in=16,
+            motor_fan_in=48,
+            memory_units=128,
+            memory_fan_in=32,
+            memory_meta_dim=32,
+            memory_readout_fan_in=32,
+            memory_iterations=3,
+            seed=11,
+        ),
+        seeds=(11,),
+    ).evaluate(corpus)
+
+    assert measurement.ability_id == "b4_goal_action"
+    assert measurement.status in {"passed", "failed"}
+    assert measurement.metric_direction == "higher_is_better"
+    assert measurement.holdout_updates == 0
+    assert measurement.sample_counts == {"train": 8, "holdout": 4, "retention": 4}
+    assert "credit_lesion" in measurement.baseline_metrics

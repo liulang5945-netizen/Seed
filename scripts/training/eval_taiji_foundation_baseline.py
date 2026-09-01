@@ -37,6 +37,9 @@ from taiji.foundation_tasks import (  # noqa: E402
     DelayedMemoryCorpus,
     DelayedMemoryQuery,
     DelayedMemoryTask,
+    GoalActionCorpus,
+    GoalActionEpisode,
+    GoalActionTask,
     MemoryEpisode,
     SequencePredictionCorpus,
     SequencePredictionTask,
@@ -69,6 +72,7 @@ def build_contract_report(
     b1_measurement: FoundationMeasurement | None = None,
     b2_measurement: FoundationMeasurement | None = None,
     b3_measurement: FoundationMeasurement | None = None,
+    b4_measurement: FoundationMeasurement | None = None,
 ) -> FoundationEvaluation:
     measurements = {
         ability_id: FoundationMeasurement(
@@ -90,6 +94,8 @@ def build_contract_report(
         measurements[b2_measurement.ability_id] = b2_measurement
     if b3_measurement is not None:
         measurements[b3_measurement.ability_id] = b3_measurement
+    if b4_measurement is not None:
+        measurements[b4_measurement.ability_id] = b4_measurement
     return FoundationEvaluation.evaluate(
         manifest,
         measurements,
@@ -257,6 +263,42 @@ def build_world_transition_smoke_corpus(*, count: int = 8) -> WorldTransitionCor
     )
 
 
+def build_goal_action_smoke_corpus(*, count: int = 32) -> GoalActionCorpus:
+    if int(count) < 4 or int(count) % 2:
+        raise ValueError("B4 smoke corpus needs an even count of at least four episodes")
+    episodes = tuple(
+        GoalActionEpisode(
+            episode_id=f"m0-b4-smoke-{index}",
+            cue=65 + index % 2,
+            preferred_action=48 + index % 2,
+            alternate_action=49 - index % 2,
+        )
+        for index in range(int(count))
+    )
+    half = int(count) // 2
+    return GoalActionCorpus(
+        train=episodes,
+        holdout=tuple(
+            GoalActionEpisode(
+                episode_id=f"m0-b4-holdout-{index}",
+                cue=65 + index % 2,
+                preferred_action=48 + index % 2,
+                alternate_action=49 - index % 2,
+            )
+            for index in range(half)
+        ),
+        retention=tuple(
+            GoalActionEpisode(
+                episode_id=f"m0-b4-retention-{index}",
+                cue=65 + index % 2,
+                preferred_action=48 + index % 2,
+                alternate_action=49 - index % 2,
+            )
+            for index in range(half)
+        ),
+    )
+
+
 def _model_config(tier: str, seed: int) -> Any:
     from taiji import TaijiConfig
 
@@ -305,6 +347,7 @@ def main() -> int:
     parser.add_argument("--b1-corpus", nargs="+", type=Path)
     parser.add_argument("--b2-smoke", action="store_true")
     parser.add_argument("--b3-smoke", action="store_true")
+    parser.add_argument("--b4-smoke", action="store_true")
     parser.add_argument("--model-tier", choices=("micro", "default"), default="micro")
     parser.add_argument("--epochs", type=int, default=1)
     parser.add_argument("--profile", choices=("smoke", "foundation"), default="smoke")
@@ -317,6 +360,7 @@ def main() -> int:
     b1_measurement = None
     b2_measurement = None
     b3_measurement = None
+    b4_measurement = None
     if args.b1_corpus:
         if args.profile == "smoke":
             budgets = (4_096, 1_024, 1_024)
@@ -344,12 +388,18 @@ def main() -> int:
             seeds=manifest.seeds,
             epochs=10 if args.profile == "smoke" else 50,
         ).evaluate(build_world_transition_smoke_corpus())
+    if args.b4_smoke:
+        b4_measurement = GoalActionTask(
+            _memory_config(manifest.seeds[0]),
+            seeds=manifest.seeds,
+        ).evaluate(build_goal_action_smoke_corpus())
     evaluation = build_contract_report(
         manifest,
         checkpoint_gate_status=checkpoint_status,
         b1_measurement=b1_measurement,
         b2_measurement=b2_measurement,
         b3_measurement=b3_measurement,
+        b4_measurement=b4_measurement,
     )
     result = evaluation.to_payload()
     result["manifest_path"] = str(args.manifest)
@@ -360,11 +410,12 @@ def main() -> int:
             ("b1_sequence_prediction", b1_measurement),
             ("b2_delayed_memory", b2_measurement),
             ("b3_world_transition", b3_measurement),
+            ("b4_goal_action", b4_measurement),
         )
         if measurement is not None
     ]
     result["capability_measurements"] = (
-        "; ".join((*measured, "b4-b5_not_evaluated")) if measured else "not_evaluated"
+        "; ".join((*measured, "b5_not_evaluated")) if measured else "not_evaluated"
     )
     result["profile"] = args.profile
     result["model_tier"] = args.model_tier if b1_measurement is not None else None
