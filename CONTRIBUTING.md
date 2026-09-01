@@ -57,7 +57,7 @@ python scripts/sync_version.py        # Sync version to all files
 2. Add the smallest failing test or falsification benchmark first.
 3. Implement one architecture change with matching equations and code documentation.
 4. Run native tests, the benchmark, and the full regression suite.
-5. Update `plans/active/TAIJI_NATIVE_ARCHITECTURE_V1.md` when a capability contract changes, and keep `plans/active/SEED_DEVELOPMENT_ROADMAP_2026_08.md` aligned with the implementation state.
+5. Update `plans/active/TAIJI_NATIVE_ARCHITECTURE_V1.md` when a capability contract changes, and keep the single execution source `plans/active/roadmap/03_CURRENT_EXECUTION.md` aligned with the implementation state.
 
 ## Legacy boundary
 

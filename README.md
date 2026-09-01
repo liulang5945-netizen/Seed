@@ -57,7 +57,7 @@ multimodal observations
   → real outcome and continued learning
 ```
 
-See the [core project requirements](plans/active/TAIJI_CORE_REQUIREMENTS.md), [Taiji Native Architecture v1](plans/active/TAIJI_NATIVE_ARCHITECTURE_V1.md), and the [current roadmap](plans/active/SEED_DEVELOPMENT_ROADMAP_2026_08.md).
+See the [core project requirements](plans/active/TAIJI_CORE_REQUIREMENTS.md), [Taiji Native Architecture v1](plans/active/TAIJI_NATIVE_ARCHITECTURE_V1.md), and the [model-first unified plan](plans/active/roadmap/03_CURRENT_EXECUTION.md).
 
 ## Current TSK-v8 kernel baseline
 
