@@ -135,7 +135,7 @@ R3/R4 未通过时不得声明相应能力，但它们不再作为 R5 的伪串�
 
 只有无外部副作用、可用独立 oracle 完全验证的纯计算能力可进入 L4。它需要单独架构评审，不随 L0–L3 自动推进。
 
-2026-08-30 评审结论见 [05_R5B_L4_PURE_COMPUTATION_REVIEW_20260830.md](05_R5B_L4_PURE_COMPUTATION_REVIEW_20260830.md)：当前 workspace、IDE、terminal、MCP 和编辑能力都不能证明同时满足显式值输入、确定性无副作用、独立 oracle 三项条件，因此暂不实施任何 L4 executor。后续只有新候选满足该准入合同，才重新打开评审。
+2026-08-30 评审结论见 [05_R5B_L4_PURE_COMPUTATION_REVIEW_20260830.md](../../archive/history/roadmap_shards/05_R5B_L4_PURE_COMPUTATION_REVIEW_20260830.md)：当前 workspace、IDE、terminal、MCP 和编辑能力都不能证明同时满足显式值输入、确定性无副作用、独立 oracle 三项条件，因此暂不实施任何 L4 executor。后续只有新候选满足该准入合同，才重新打开评审。
 
 ## 6. C4：W7-R5C 结构成长与自进化
 

@@ -30,7 +30,7 @@
 
 ## 证据
 
-- 报告：[taiji_w7_r5c_s26_structural_lineage_status_20260831.json](../../../reports/taiji_w7_r5c_s26_structural_lineage_status_20260831.json)
+- 报告：[taiji_w7_r5c_s26_structural_lineage_status_20260831.json](../../../../reports/taiji_w7_r5c_s26_structural_lineage_status_20260831.json)
 - Gate：`gate.passed=true`
 - 定向用例：`tests/taiji_native/test_structural_lineage_status.py` 为 `3 passed`
 - 语法/lint：Ruff、compileall、`git diff --check` 通过

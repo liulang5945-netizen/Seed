@@ -31,7 +31,7 @@
 
 ## 证据
 
-- 报告：[taiji_w7_r5c_s25_structural_lineage_runtime_20260831.json](../../../reports/taiji_w7_r5c_s25_structural_lineage_runtime_20260831.json)
+- 报告：[taiji_w7_r5c_s25_structural_lineage_runtime_20260831.json](../../../../reports/taiji_w7_r5c_s25_structural_lineage_runtime_20260831.json)
 - Gate：`gate.passed=true`
 - 定向回归：S18–S25 相关测试 `27 passed`
 - 语法/lint：Ruff、compileall、`git diff --check` 通过
