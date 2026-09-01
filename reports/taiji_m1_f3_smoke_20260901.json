@@ -1,0 +1,103 @@
+{
+  "format": "taiji-native-world-action-training-v1",
+  "version": 1,
+  "status": "completed",
+  "model_tier": "world-action",
+  "corpus_digest": "967e589b51eaec8a2a3c600ee7cf7afe6a09de3f7127d477fb8b6d670518aa06",
+  "corpus_sample_counts": {
+    "world": {
+      "train": 8,
+      "holdout": 4,
+      "retention": 4
+    },
+    "goal": {
+      "train": 8,
+      "holdout": 4,
+      "retention": 4
+    }
+  },
+  "parent_checkpoint_digest": "a60c79e9790a63d1fb524fea70ecbfa86fb14ebe5f3bf3948788a7e1ec6f3b17",
+  "parent_world_error": 2.0576376901922058,
+  "final_world_error": 0.051368499322746786,
+  "parent_goal_success": 0.5,
+  "final_goal_success": 1.0,
+  "final_credit_lesion_success": 0.5,
+  "joint_holdout_gain": 2.506269190869459,
+  "world_online_updates": 8,
+  "world_transition_rejections": 0,
+  "holdout_updates": 0,
+  "epoch": 1,
+  "phase": "world",
+  "world_cursor": 0,
+  "goal_cursor": 0,
+  "global_step": 16,
+  "total_epochs": 1,
+  "best_holdout_score": 2.506269190869459,
+  "child_checkpoint_digest": "d5a01ef99060789cf20e02014e588f232e6f8c12e6c804ce4df9df2c979a8c8d",
+  "history": [
+    {
+      "epoch": 0,
+      "phase": "world",
+      "world_cursor": 4,
+      "goal_cursor": 0,
+      "global_step": 4,
+      "world_holdout_error": 0.7285825003141548,
+      "goal_holdout_success": 0.5,
+      "joint_holdout_gain": 1.329055189878051,
+      "train_kind": "world"
+    },
+    {
+      "epoch": 0,
+      "phase": "world",
+      "world_cursor": 8,
+      "goal_cursor": 0,
+      "global_step": 8,
+      "world_holdout_error": 0.051368499322746786,
+      "goal_holdout_success": 0.5,
+      "joint_holdout_gain": 2.006269190869459,
+      "train_kind": "world"
+    },
+    {
+      "epoch": 0,
+      "phase": "goal",
+      "world_cursor": 8,
+      "goal_cursor": 4,
+      "global_step": 12,
+      "world_holdout_error": 0.051368499322746786,
+      "goal_holdout_success": 1.0,
+      "joint_holdout_gain": 2.506269190869459,
+      "train_kind": "goal",
+      "train_success": false
+    },
+    {
+      "epoch": 0,
+      "phase": "goal",
+      "world_cursor": 8,
+      "goal_cursor": 8,
+      "global_step": 16,
+      "world_holdout_error": 0.051368499322746786,
+      "goal_holdout_success": 1.0,
+      "joint_holdout_gain": 2.506269190869459,
+      "train_kind": "goal",
+      "train_success": false
+    },
+    {
+      "epoch": 1,
+      "phase": "world",
+      "world_cursor": 0,
+      "goal_cursor": 0,
+      "global_step": 16,
+      "world_holdout_error": 0.051368499322746786,
+      "goal_holdout_success": 1.0,
+      "joint_holdout_gain": 2.506269190869459
+    }
+  ],
+  "checkpoint_paths": {
+    "parent": "outputs\\taiji_m1_f3_smoke_v2_20260901\\parent.pt",
+    "last": "outputs\\taiji_m1_f3_smoke_v2_20260901\\last.pt",
+    "best_holdout": "outputs\\taiji_m1_f3_smoke_v2_20260901\\best-holdout.pt"
+  },
+  "code_revision": "1d411559f8f3633826b1550f638fa967b51ba5cd",
+  "started_from_checkpoint": false,
+  "report_path": "reports\\taiji_m1_f3_smoke_20260901.json"
+}
