@@ -1,6 +1,6 @@
 # Taiji 原生认知训练、经验进化与 Seed 客户端热插拔总路线
 
-> 状态：`E0 complete / E1 complete / E2-A complete / E2-B complete / E3-0 complete / E3-1 complete / E3-2 complete / E3-3 complete / E3-4 complete / E4 complete / E5 complete / E6-0 complete / E6-1 complete / E6-2 complete / E6-3 complete / E6-4 complete / E6-5a complete / E6-5b decision pending`。本文件自 2026-08-31 起取代原 P7-1a provider artifact 升级作为当前主线，并于 2026-09-01 按“Skill/MCP 可成为知识语料、MCP 执行侧由客户端继承”完成修订。Qwen/provider 质量问题保留为语言器官支线，不再阻塞 Taiji 本体训练；唯一执行事实源 `03_CURRENT_EXECUTION.md` 当前指向 E6-5b：真实第三方 MCP 目标与权限确认。
+> 状态：`E0 complete / E1 complete / E2-A complete / E2-B complete / E3-0 complete / E3-1 complete / E3-2 complete / E3-3 complete / E3-4 complete / E4 complete / E5 complete / E6-0 complete / E6-1 complete / E6-2 complete / E6-3 complete / E6-4 complete / E6-5a complete / E6-5b deferred-by-decision`。本文件自 2026-08-31 起取代原 P7-1a provider artifact 升级作为当前主线，并于 2026-09-01 按“Skill/MCP 可成为知识语料、MCP 执行侧由客户端继承”完成修订。Qwen/provider 质量问题保留为语言器官支线，不再阻塞 Taiji 本体训练。E6-5b 已按用户决定搁置：它索取的是外部治理输入（具体第三方 MCP、连接方式、网络范围、凭据引用、审批人、撤销责任）而非工程推导，且 `connection_attempted` 恒为 False 使未完成态即最安全态；主线已回归 Taiji 本体，唯一执行事实源 `03_CURRENT_EXECUTION.md` 不再指向 E6-5b。
 
 ## 1. 路线决策
 

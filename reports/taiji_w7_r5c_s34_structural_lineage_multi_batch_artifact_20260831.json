@@ -1,17 +1,17 @@
 {
   "format": "taiji-w7-r5c-s34-structural-lineage-multi-batch-artifact-v1",
-  "active_batch_id": "batch:structural:338bebc0bac54bd4353d09cb2b91f8a1",
-  "terminal_batch_id": "batch:structural:862ea7654cd7cdd4b7723bd9bfe9fed9",
+  "active_batch_id": "batch:structural:1ec46bb452163e70a4fc8e7a5f921735",
+  "terminal_batch_id": "batch:structural:01983adff5050b6843caccb366064525",
   "terminal_artifact_digests": [
-    "57192e28212e854c37d9ec0aa20d53b2cede647b207c95620813a3e47ee17f2b",
-    "6edd1f992ec3242f68e31d5e3ceaf928be46b8d830b2d41937d6b9811ac97dfd"
+    "10a2aec28ec83d950afa759acb4812daaa886435df56da23a3f97db8e0e3507a",
+    "26589ebd66f7a5ee01d2c12168fc303d076b804763ba68152bf23ba53ea1170e"
   ],
   "retention_status": "compacted",
   "protected_batch_ids": [
-    "batch:structural:338bebc0bac54bd4353d09cb2b91f8a1"
+    "batch:structural:1ec46bb452163e70a4fc8e7a5f921735"
   ],
   "removed_batch_ids": [
-    "batch:structural:862ea7654cd7cdd4b7723bd9bfe9fed9"
+    "batch:structural:01983adff5050b6843caccb366064525"
   ],
   "metrics": {
     "independent_batches_exist": true,
