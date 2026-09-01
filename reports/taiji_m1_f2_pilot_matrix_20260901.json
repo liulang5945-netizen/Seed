@@ -1,0 +1,62 @@
+{
+  "format": "taiji-native-memory-training-matrix-v1",
+  "version": 1,
+  "stage": "M1-3",
+  "ability": "b2_delayed_memory",
+  "profile": "pilot",
+  "corpus_digest": "53ed3250341551d680eecdfc9a88bc0768a3aa6b2b9f7ea03d75a9717231850e",
+  "sample_counts": {
+    "train": 64,
+    "holdout": 64,
+    "retention": 64
+  },
+  "code_revision": "1be0aeeb3294471b7eb69078e0170e439e7cc516",
+  "seeds": [
+    {
+      "seed": 11,
+      "parent_holdout_recall": 0.5625,
+      "final_holdout_recall": 0.671875,
+      "final_retention_recall": 0.671875,
+      "final_memory_lesion_recall": 0.5625,
+      "child_checkpoint_digest": "4c6c0b07d2dab1b3873db324fe3b548471c043ab22fec790fe6df95e8d69b2b8",
+      "fresh_process_eval_only": true
+    },
+    {
+      "seed": 29,
+      "parent_holdout_recall": 0.484375,
+      "final_holdout_recall": 0.53125,
+      "final_retention_recall": 0.53125,
+      "final_memory_lesion_recall": 0.484375,
+      "child_checkpoint_digest": "d2518af4bf6c651127243409810bb581f9af15bc8ed9153d37abf37efea18b14",
+      "fresh_process_eval_only": true
+    },
+    {
+      "seed": 47,
+      "parent_holdout_recall": 0.53125,
+      "final_holdout_recall": 0.703125,
+      "final_retention_recall": 0.703125,
+      "final_memory_lesion_recall": 0.53125,
+      "child_checkpoint_digest": "f095efe53297cadcb159a37e899fd49d405185b99250995a3d331bf837370bd6",
+      "fresh_process_eval_only": true
+    }
+  ],
+  "smoke_red_case": {
+    "sample_counts": {
+      "train": 8,
+      "holdout": 8,
+      "retention": 8
+    },
+    "parent_holdout_recall": 0.75,
+    "final_holdout_recall": 0.625,
+    "final_memory_lesion_recall": 0.75,
+    "interpretation": "too_small_for_causal_gain"
+  },
+  "decision": {
+    "status": "pilot_passed_stage_exit",
+    "causal_gain_all_seeds": true,
+    "retention_non_degraded_all_seeds": true,
+    "holdout_updates": 0,
+    "m1_overall_promotion": false,
+    "next_stage": "M1-4 F3 world and action pilot"
+  }
+}

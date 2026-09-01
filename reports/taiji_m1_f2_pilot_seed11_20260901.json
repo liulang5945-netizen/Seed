@@ -1,0 +1,78 @@
+{
+  "format": "taiji-native-memory-training-v1",
+  "version": 1,
+  "status": "completed",
+  "model_tier": "memory",
+  "corpus_digest": "53ed3250341551d680eecdfc9a88bc0768a3aa6b2b9f7ea03d75a9717231850e",
+  "corpus_sample_counts": {
+    "train": 64,
+    "holdout": 64,
+    "retention": 64
+  },
+  "parent_checkpoint_digest": "1325740b9cacf5adfbe101107e7fd396136b19f56c28b4c708352fcee6e6e0f4",
+  "parent_holdout_recall": 0.5625,
+  "child_checkpoint_digest": "4c6c0b07d2dab1b3873db324fe3b548471c043ab22fec790fe6df95e8d69b2b8",
+  "epoch": 1,
+  "cursor": 0,
+  "global_step": 64,
+  "total_epochs": 1,
+  "best_holdout_recall": 0.671875,
+  "final_holdout_recall": 0.671875,
+  "final_retention_recall": 0.671875,
+  "final_memory_lesion_recall": 0.5625,
+  "holdout_updates": 0,
+  "history": [
+    {
+      "epoch": 0,
+      "cursor": 16,
+      "global_step": 16,
+      "holdout_recall": 0.53125,
+      "retention_recall": 0.53125,
+      "memory_lesion_recall": 0.5625,
+      "train_memory_id": "m1-f2-train-15"
+    },
+    {
+      "epoch": 0,
+      "cursor": 32,
+      "global_step": 32,
+      "holdout_recall": 0.546875,
+      "retention_recall": 0.546875,
+      "memory_lesion_recall": 0.5625,
+      "train_memory_id": "m1-f2-train-31"
+    },
+    {
+      "epoch": 0,
+      "cursor": 48,
+      "global_step": 48,
+      "holdout_recall": 0.625,
+      "retention_recall": 0.625,
+      "memory_lesion_recall": 0.5625,
+      "train_memory_id": "m1-f2-train-47"
+    },
+    {
+      "epoch": 0,
+      "cursor": 64,
+      "global_step": 64,
+      "holdout_recall": 0.671875,
+      "retention_recall": 0.671875,
+      "memory_lesion_recall": 0.5625,
+      "train_memory_id": "m1-f2-train-63"
+    },
+    {
+      "epoch": 1,
+      "cursor": 0,
+      "global_step": 64,
+      "holdout_recall": 0.671875,
+      "retention_recall": 0.671875,
+      "memory_lesion_recall": 0.5625
+    }
+  ],
+  "checkpoint_paths": {
+    "parent": "outputs\\taiji_m1_f2_pilot_seed11_v2_20260901\\parent.pt",
+    "last": "outputs\\taiji_m1_f2_pilot_seed11_v2_20260901\\last.pt",
+    "best_holdout": "outputs\\taiji_m1_f2_pilot_seed11_v2_20260901\\best-holdout.pt"
+  },
+  "code_revision": "1be0aeeb3294471b7eb69078e0170e439e7cc516",
+  "started_from_checkpoint": false,
+  "report_path": "reports\\taiji_m1_f2_pilot_seed11_20260901.json"
+}

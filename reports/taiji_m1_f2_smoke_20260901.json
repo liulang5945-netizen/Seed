@@ -1,0 +1,114 @@
+{
+  "format": "taiji-native-memory-training-v1",
+  "version": 1,
+  "status": "completed",
+  "model_tier": "memory",
+  "corpus_digest": "fcad50880d39ca50b65f3e822791748b1a87f36bc3b1d1ef7d03ed6a3bb847e7",
+  "corpus_sample_counts": {
+    "train": 8,
+    "holdout": 8,
+    "retention": 8
+  },
+  "parent_checkpoint_digest": "1325740b9cacf5adfbe101107e7fd396136b19f56c28b4c708352fcee6e6e0f4",
+  "parent_holdout_recall": 0.75,
+  "child_checkpoint_digest": "6357e9d66028f75e30927f9498ba4a26a9c437dcc2ae708df6f4cd8cf889479f",
+  "epoch": 1,
+  "cursor": 0,
+  "global_step": 8,
+  "total_epochs": 1,
+  "best_holdout_recall": 0.625,
+  "final_holdout_recall": 0.625,
+  "final_retention_recall": 0.625,
+  "final_memory_lesion_recall": 0.75,
+  "holdout_updates": 0,
+  "history": [
+    {
+      "epoch": 0,
+      "cursor": 1,
+      "global_step": 1,
+      "holdout_recall": 0.5,
+      "retention_recall": 0.5,
+      "memory_lesion_recall": 0.75,
+      "train_memory_id": "m1-f2-train-0"
+    },
+    {
+      "epoch": 0,
+      "cursor": 2,
+      "global_step": 2,
+      "holdout_recall": 0.5,
+      "retention_recall": 0.5,
+      "memory_lesion_recall": 0.75,
+      "train_memory_id": "m1-f2-train-1"
+    },
+    {
+      "epoch": 0,
+      "cursor": 3,
+      "global_step": 3,
+      "holdout_recall": 0.5,
+      "retention_recall": 0.5,
+      "memory_lesion_recall": 0.75,
+      "train_memory_id": "m1-f2-train-2"
+    },
+    {
+      "epoch": 0,
+      "cursor": 4,
+      "global_step": 4,
+      "holdout_recall": 0.5,
+      "retention_recall": 0.5,
+      "memory_lesion_recall": 0.75,
+      "train_memory_id": "m1-f2-train-3"
+    },
+    {
+      "epoch": 0,
+      "cursor": 5,
+      "global_step": 5,
+      "holdout_recall": 0.5,
+      "retention_recall": 0.5,
+      "memory_lesion_recall": 0.75,
+      "train_memory_id": "m1-f2-train-4"
+    },
+    {
+      "epoch": 0,
+      "cursor": 6,
+      "global_step": 6,
+      "holdout_recall": 0.625,
+      "retention_recall": 0.625,
+      "memory_lesion_recall": 0.75,
+      "train_memory_id": "m1-f2-train-5"
+    },
+    {
+      "epoch": 0,
+      "cursor": 7,
+      "global_step": 7,
+      "holdout_recall": 0.5,
+      "retention_recall": 0.5,
+      "memory_lesion_recall": 0.75,
+      "train_memory_id": "m1-f2-train-6"
+    },
+    {
+      "epoch": 0,
+      "cursor": 8,
+      "global_step": 8,
+      "holdout_recall": 0.625,
+      "retention_recall": 0.625,
+      "memory_lesion_recall": 0.75,
+      "train_memory_id": "m1-f2-train-7"
+    },
+    {
+      "epoch": 1,
+      "cursor": 0,
+      "global_step": 8,
+      "holdout_recall": 0.625,
+      "retention_recall": 0.625,
+      "memory_lesion_recall": 0.75
+    }
+  ],
+  "checkpoint_paths": {
+    "parent": "outputs\\taiji_m1_f2_smoke_v3_20260901\\parent.pt",
+    "last": "outputs\\taiji_m1_f2_smoke_v3_20260901\\last.pt",
+    "best_holdout": "outputs\\taiji_m1_f2_smoke_v3_20260901\\best-holdout.pt"
+  },
+  "code_revision": "1be0aeeb3294471b7eb69078e0170e439e7cc516",
+  "started_from_checkpoint": false,
+  "report_path": "reports\\taiji_m1_f2_smoke_20260901.json"
+}
