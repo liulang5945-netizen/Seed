@@ -1,0 +1,106 @@
+{
+  "format": "taiji-foundation-baseline-v1",
+  "version": 1,
+  "purpose": "CPU truth baseline before native foundation training",
+  "split_policy": "source-document-environment-disjoint",
+  "partitions": ["train", "holdout", "retention", "control"],
+  "seeds": [11, 29, 47],
+  "baselines": ["random", "frozen_parent", "simple_rule", "hash_only", "taiji"],
+  "checkpoint_gate": "taiji-m0-checkpoint-preflight",
+  "data_contract": {
+    "required_fields": [
+      "sample_id",
+      "source",
+      "license",
+      "objective",
+      "partition",
+      "payload",
+      "target_or_outcome",
+      "provenance",
+      "taint",
+      "content_digest"
+    ],
+    "forbidden_sources": ["provider_answer", "holdout_answer", "secret", "executor_output"],
+    "partition_rule": "no source, document, environment family, or episode may cross train/holdout/retention",
+    "holdout_rule": "evaluation is read-only; weight, memory, cursor, RNG, and ledger changes fail closed"
+  },
+  "baseline_protocol": {
+    "required_controls": ["random", "frozen_parent", "simple_rule", "hash_only"],
+    "seeds_are_shared": true,
+    "report_mean_std_worst_seed": true,
+    "strictly_beats_strongest_control": true
+  },
+  "tasks": [
+    {
+      "ability_id": "b1_sequence_prediction",
+      "name": "B1 sequence prediction and compositional generalization",
+      "input_kind": "raw_byte_sequence",
+      "primary_metric": "bits_per_byte",
+      "metric_direction": "lower_is_better",
+      "minimum_train_units": 1048576,
+      "minimum_holdout_units": 131072,
+      "minimum_retention_units": 131072
+    },
+    {
+      "ability_id": "b2_delayed_memory",
+      "name": "B2 delayed memory and associative recall",
+      "input_kind": "cue_event_delay_interference_episode",
+      "primary_metric": "recall_accuracy",
+      "metric_direction": "higher_is_better",
+      "minimum_train_units": 1000,
+      "minimum_holdout_units": 200,
+      "minimum_retention_units": 200
+    },
+    {
+      "ability_id": "b3_world_transition",
+      "name": "B3 world state and causal transition",
+      "input_kind": "state_action_next_state_outcome",
+      "primary_metric": "transition_error",
+      "metric_direction": "lower_is_better",
+      "minimum_train_units": 1000,
+      "minimum_holdout_units": 200,
+      "minimum_retention_units": 200
+    },
+    {
+      "ability_id": "b4_goal_action",
+      "name": "B4 goal-directed action and credit assignment",
+      "input_kind": "goal_affordance_action_outcome",
+      "primary_metric": "success_rate",
+      "metric_direction": "higher_is_better",
+      "minimum_train_units": 1000,
+      "minimum_holdout_units": 200,
+      "minimum_retention_units": 200
+    },
+    {
+      "ability_id": "b5_continual_learning",
+      "name": "B5 continual learning and old-ability retention",
+      "input_kind": "ordered_task_stream_with_replay",
+      "primary_metric": "backward_transfer",
+      "metric_direction": "higher_is_better",
+      "minimum_train_units": 1000,
+      "minimum_holdout_units": 200,
+      "minimum_retention_units": 200
+    }
+  ],
+  "report_schema": {
+    "required_fields": [
+      "manifest_digest",
+      "checkpoint_gate_status",
+      "status",
+      "can_promote",
+      "failure_reasons",
+      "measurements"
+    ],
+    "measurement_required_fields": [
+      "ability_id",
+      "status",
+      "primary_metric",
+      "metric_direction",
+      "metric_value",
+      "baseline_metrics",
+      "sample_counts",
+      "holdout_updates",
+      "evidence"
+    ]
+  }
+}
