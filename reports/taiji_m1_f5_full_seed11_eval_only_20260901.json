@@ -1,0 +1,23 @@
+{
+  "format": "taiji-native-joint-training-v1",
+  "version": 1,
+  "status": "evaluated",
+  "model_tier": "joint",
+  "corpus_digest": "d87003266dd561c1356e492736dcae80268b0b865faf6e8133e15163abdf9d51",
+  "checkpoint_digest": "7fb3826c6752f739502e6f3856e3e7fc1344caa6feeea9007f4a7739ef965a33",
+  "metrics": {
+    "sequence_holdout_bpb": 4.864846281941491,
+    "sequence_retention_bpb": 4.830251558653949,
+    "memory_holdout_recall": 0.536,
+    "memory_retention_recall": 0.536,
+    "world_holdout_error": 3.161307304822003e-08,
+    "world_retention_error": 3.161307304822003e-08,
+    "goal_holdout_success": 1.0,
+    "goal_retention_success": 1.0
+  },
+  "checkpoint_read_only": true,
+  "metric_interval": 4096,
+  "code_revision": "edf798599791e01c24cb9f1a628c89539c121f54",
+  "continuation_source_checkpoint_digest": "b5025dbb581c39093389c43e0932cd07723238f1b56bef806ecb9a6f5400076e",
+  "report_path": "reports\\taiji_m1_f5_full_seed11_eval_only_20260901.json"
+}
