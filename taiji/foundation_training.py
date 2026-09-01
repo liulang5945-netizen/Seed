@@ -1396,6 +1396,8 @@ class JointTrainingRun:
         world_repeats: int = 8,
         replay_dataset: FoundationTrainingDataset | None = None,
         replay_epochs: int = 1,
+        replay_memory_corpus: DelayedMemoryCorpus | None = None,
+        replay_memory_epochs: int = 1,
         parent_checkpoint_digest: str | None = None,
         parent_metrics: Mapping[str, float] | None = None,
         code_revision: str | None = None,
@@ -1420,6 +1422,12 @@ class JointTrainingRun:
             raise ValueError("joint world learning settings must be positive")
         if int(replay_epochs) <= 0:
             raise ValueError("joint replay epochs must be positive")
+        if replay_memory_corpus is not None and not isinstance(
+            replay_memory_corpus, DelayedMemoryCorpus
+        ):
+            raise TypeError("joint memory replay requires DelayedMemoryCorpus")
+        if int(replay_memory_epochs) <= 0:
+            raise ValueError("joint memory replay epochs must be positive")
         if metric_interval is not None and int(metric_interval) <= 0:
             raise ValueError("joint metric_interval must be positive")
         self.model = model
@@ -1440,6 +1448,8 @@ class JointTrainingRun:
         self.world_repeats = int(world_repeats)
         self.replay_dataset = replay_dataset
         self.replay_epochs = int(replay_epochs)
+        self.replay_memory_corpus = replay_memory_corpus
+        self.replay_memory_epochs = int(replay_memory_epochs)
         self.code_revision = str(code_revision or _code_revision())
         self.parent_model_payload = deepcopy(model.checkpoint())
         self.parent_world_payload = deepcopy(_world_learner_payload(world_learner))
@@ -1458,6 +1468,8 @@ class JointTrainingRun:
         self.goal_cursor = 0
         self.replay_epoch = 0
         self.replay_cursor = 0
+        self.replay_memory_epoch = 0
+        self.replay_memory_cursor = 0
         self.global_step = 0
         self.history: list[dict[str, Any]] = []
         self.best_holdout_score = 0.0
@@ -1477,6 +1489,8 @@ class JointTrainingRun:
         }
         if self.replay_dataset is not None:
             payload["replay_dataset_digest"] = self.replay_dataset.digest
+        if self.replay_memory_corpus is not None:
+            payload["replay_memory_digest"] = _memory_corpus_digest(self.replay_memory_corpus)
         return content_digest(payload)
 
     @property
@@ -1564,6 +1578,14 @@ class JointTrainingRun:
             "replay_epochs": self.replay_epochs,
             "replay_epoch": self.replay_epoch,
             "replay_cursor": self.replay_cursor,
+            "replay_memory_digest": (
+                _memory_corpus_digest(self.replay_memory_corpus)
+                if self.replay_memory_corpus is not None
+                else None
+            ),
+            "replay_memory_epochs": self.replay_memory_epochs,
+            "replay_memory_epoch": self.replay_memory_epoch,
+            "replay_memory_cursor": self.replay_memory_cursor,
             "history": list(self.history),
             "best_holdout_score": self.best_holdout_score,
             "code_revision": self.code_revision,
@@ -1607,6 +1629,8 @@ class JointTrainingRun:
             "goal_cursor": self.goal_cursor,
             "replay_epoch": self.replay_epoch,
             "replay_cursor": self.replay_cursor,
+            "replay_memory_epoch": self.replay_memory_epoch,
+            "replay_memory_cursor": self.replay_memory_cursor,
             "global_step": self.global_step,
             **metrics,
             "joint_holdout_gain": score,
@@ -1718,6 +1742,27 @@ class JointTrainingRun:
                     self.replay_epoch += 1
                     self.replay_cursor = 0
 
+            if self.replay_memory_corpus is not None:
+                self.phase = "replay-memory"
+                while self.replay_memory_epoch < self.replay_memory_epochs:
+                    while self.replay_memory_cursor < len(self.replay_memory_corpus.train):
+                        _joint_train_memory_episode(
+                            self.model,
+                            self.replay_memory_corpus.train[self.replay_memory_cursor],
+                        )
+                        self.replay_memory_cursor += 1
+                        self.global_step += 1
+                        if (
+                            self.global_step % self.metric_interval == 0
+                            or self.replay_memory_cursor
+                            == len(self.replay_memory_corpus.train)
+                        ):
+                            self._save_progress(train_kind="replay-memory")
+                        else:
+                            self.save(self.last_checkpoint_path)
+                    self.replay_memory_epoch += 1
+                    self.replay_memory_cursor = 0
+
             self.epoch += 1
             self.phase = "sequence"
             self.sequence_cursor = 0
@@ -1726,6 +1771,8 @@ class JointTrainingRun:
             self.goal_cursor = 0
             self.replay_epoch = 0
             self.replay_cursor = 0
+            self.replay_memory_epoch = 0
+            self.replay_memory_cursor = 0
             self._save_progress()
 
         final_metrics = self._measure_metrics()
@@ -1760,6 +1807,14 @@ class JointTrainingRun:
             "replay_epochs": self.replay_epochs,
             "replay_epoch": self.replay_epoch,
             "replay_cursor": self.replay_cursor,
+            "replay_memory_digest": (
+                _memory_corpus_digest(self.replay_memory_corpus)
+                if self.replay_memory_corpus is not None
+                else None
+            ),
+            "replay_memory_epochs": self.replay_memory_epochs,
+            "replay_memory_epoch": self.replay_memory_epoch,
+            "replay_memory_cursor": self.replay_memory_cursor,
             "epoch": self.epoch,
             "phase": self.phase,
             "sequence_cursor": self.sequence_cursor,
@@ -1821,6 +1876,8 @@ class JointTrainingRun:
         world_repeats: int | None = None,
         replay_dataset: FoundationTrainingDataset | None = None,
         replay_epochs: int | None = None,
+        replay_memory_corpus: DelayedMemoryCorpus | None = None,
+        replay_memory_epochs: int | None = None,
         code_revision: str | None = None,
     ) -> JointTrainingRun:
         """Start a new course from an existing child with an explicit data extension.
@@ -1892,6 +1949,12 @@ class JointTrainingRun:
                 if replay_epochs is not None
                 else payload.get("replay_epochs", 1)
             ),
+            replay_memory_corpus=replay_memory_corpus,
+            replay_memory_epochs=int(
+                replay_memory_epochs
+                if replay_memory_epochs is not None
+                else payload.get("replay_memory_epochs", 1)
+            ),
             code_revision=code_revision or _code_revision(),
         )
         run.continuation_source_checkpoint_digest = str(payload["checkpoint_digest"])
@@ -1913,6 +1976,8 @@ class JointTrainingRun:
         metric_interval: int | None = None,
         replay_dataset: FoundationTrainingDataset | None = None,
         replay_epochs: int | None = None,
+        replay_memory_corpus: DelayedMemoryCorpus | None = None,
+        replay_memory_epochs: int | None = None,
         code_revision: str | None = None,
     ) -> JointTrainingRun:
         checkpoint_path = Path(path)
@@ -1932,6 +1997,14 @@ class JointTrainingRun:
         requested_replay_digest = replay_dataset.digest if replay_dataset is not None else None
         if stored_replay_digest != requested_replay_digest:
             raise ValueError("joint training replay corpus digest mismatch")
+        stored_replay_memory_digest = payload.get("replay_memory_digest")
+        requested_replay_memory_digest = (
+            _memory_corpus_digest(replay_memory_corpus)
+            if replay_memory_corpus is not None
+            else None
+        )
+        if stored_replay_memory_digest != requested_replay_memory_digest:
+            raise ValueError("joint training replay memory digest mismatch")
         corpus_payload = {
             "format": JOINT_TRAINING_FORMAT,
             "version": JOINT_TRAINING_VERSION,
@@ -1941,6 +2014,8 @@ class JointTrainingRun:
         }
         if replay_dataset is not None:
             corpus_payload["replay_dataset_digest"] = replay_dataset.digest
+        if replay_memory_corpus is not None:
+            corpus_payload["replay_memory_digest"] = _memory_corpus_digest(replay_memory_corpus)
         expected_corpus = content_digest(corpus_payload)
         if str(payload.get("corpus_digest")) != expected_corpus:
             raise ValueError("joint training corpus digest mismatch")
@@ -1978,6 +2053,12 @@ class JointTrainingRun:
                 if replay_epochs is not None
                 else payload.get("replay_epochs", 1)
             ),
+            replay_memory_corpus=replay_memory_corpus,
+            replay_memory_epochs=int(
+                replay_memory_epochs
+                if replay_memory_epochs is not None
+                else payload.get("replay_memory_epochs", 1)
+            ),
             parent_checkpoint_digest=str(payload["parent_checkpoint_digest"]),
             parent_metrics=dict(payload["parent_metrics"]),
             code_revision=code_revision or str(payload.get("code_revision", "working-tree")),
@@ -1996,6 +2077,8 @@ class JointTrainingRun:
         run.goal_cursor = int(payload.get("goal_cursor", 0))
         run.replay_epoch = int(payload.get("replay_epoch", 0))
         run.replay_cursor = int(payload.get("replay_cursor", 0))
+        run.replay_memory_epoch = int(payload.get("replay_memory_epoch", 0))
+        run.replay_memory_cursor = int(payload.get("replay_memory_cursor", 0))
         run.global_step = int(payload.get("global_step", 0))
         run.history = [dict(item) for item in payload.get("history", ())]
         run.best_holdout_score = float(payload.get("best_holdout_score", 0.0))

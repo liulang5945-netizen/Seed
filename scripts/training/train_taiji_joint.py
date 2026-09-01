@@ -73,6 +73,8 @@ def main() -> int:
     parser.add_argument("--replay-profile", choices=("smoke", "pilot", "foundation"), default="pilot")
     parser.add_argument("--replay-partition-seed", type=int, default=11)
     parser.add_argument("--replay-epochs", type=int, default=1)
+    parser.add_argument("--replay-memory-count", type=int)
+    parser.add_argument("--replay-memory-epochs", type=int, default=1)
     parser.add_argument(
         "--output-dir",
         type=Path,
@@ -110,6 +112,11 @@ def main() -> int:
             partition_seed=args.replay_partition_seed,
         )
     memory_corpus = build_memory_corpus(count=count)
+    replay_memory_corpus = (
+        build_memory_corpus(count=args.replay_memory_count)
+        if args.replay_memory_count is not None
+        else None
+    )
     world_corpus = build_world_corpus(count=count)
     goal_corpus = build_goal_corpus(count=count)
     if args.continue_from is not None:
@@ -128,6 +135,8 @@ def main() -> int:
             world_repeats=args.world_repeats,
             replay_dataset=replay_dataset,
             replay_epochs=args.replay_epochs,
+            replay_memory_corpus=replay_memory_corpus,
+            replay_memory_epochs=args.replay_memory_epochs,
         )
     elif args.resume is not None:
         run = JointTrainingRun.from_checkpoint(
@@ -141,6 +150,8 @@ def main() -> int:
             metric_interval=args.metric_interval,
             replay_dataset=replay_dataset,
             replay_epochs=args.replay_epochs,
+            replay_memory_corpus=replay_memory_corpus,
+            replay_memory_epochs=args.replay_memory_epochs,
         )
     else:
         model = Taiji(_config(args.seed), episode_id="joint-train")
@@ -162,6 +173,8 @@ def main() -> int:
             world_repeats=args.world_repeats,
             replay_dataset=replay_dataset,
             replay_epochs=args.replay_epochs,
+            replay_memory_corpus=replay_memory_corpus,
+            replay_memory_epochs=args.replay_memory_epochs,
         )
     result: dict[str, Any]
     if args.eval_only:
