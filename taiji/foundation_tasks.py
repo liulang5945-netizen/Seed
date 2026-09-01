@@ -37,6 +37,191 @@ class SequencePredictionCorpus:
         }
 
 
+@dataclass(frozen=True)
+class MemoryEpisode:
+    """A train-only cue/action/outcome binding written into Taiji memory."""
+
+    memory_id: str
+    cue: int
+    action: int
+    outcome: int
+
+    def __post_init__(self) -> None:
+        if not self.memory_id.strip():
+            raise ValueError("memory episode id must be non-empty")
+        if any(int(value) < 0 for value in (self.cue, self.action, self.outcome)):
+            raise ValueError("memory episode symbols cannot be negative")
+
+
+@dataclass(frozen=True)
+class DelayedMemoryQuery:
+    """A read-only cue query whose answer was written during training."""
+
+    query_id: str
+    cue: int
+    expected_action: int
+
+    def __post_init__(self) -> None:
+        if not self.query_id.strip():
+            raise ValueError("memory query id must be non-empty")
+        if any(int(value) < 0 for value in (self.cue, self.expected_action)):
+            raise ValueError("memory query symbols cannot be negative")
+
+
+@dataclass(frozen=True)
+class DelayedMemoryCorpus:
+    train: tuple[MemoryEpisode, ...]
+    holdout: tuple[DelayedMemoryQuery, ...]
+    retention: tuple[DelayedMemoryQuery, ...]
+
+    def __post_init__(self) -> None:
+        if not self.train or not self.holdout or not self.retention:
+            raise ValueError("delayed memory partitions cannot be empty")
+        train_cues = {episode.cue for episode in self.train}
+        if any(query.cue not in train_cues for query in (*self.holdout, *self.retention)):
+            raise ValueError("delayed memory queries must target a train-written cue")
+        if len({episode.memory_id for episode in self.train}) != len(self.train):
+            raise ValueError("delayed memory train ids must be unique")
+        query_ids = {query.query_id for query in (*self.holdout, *self.retention)}
+        if len(query_ids) != len(self.holdout) + len(self.retention):
+            raise ValueError("delayed memory query ids must be unique")
+
+    @property
+    def sample_counts(self) -> dict[str, int]:
+        return {
+            "train": len(self.train),
+            "holdout": len(self.holdout),
+            "retention": len(self.retention),
+        }
+
+
+class DelayedMemoryTask:
+    """Measure cue recall after interference using Taiji's episodic field."""
+
+    ability_id = "b2_delayed_memory"
+
+    def __init__(
+        self,
+        config: TaijiConfig,
+        *,
+        seeds: Sequence[int] = (11, 29, 47),
+    ) -> None:
+        if not seeds or len(set(int(seed) for seed in seeds)) != len(seeds):
+            raise ValueError("delayed memory needs unique seeds")
+        self.config = config
+        self.seeds = tuple(int(seed) for seed in seeds)
+
+    def evaluate(self, corpus: DelayedMemoryCorpus) -> FoundationMeasurement:
+        actions = tuple(dict.fromkeys(episode.action for episode in corpus.train))
+        if len(actions) < 2:
+            raise ValueError("delayed memory needs at least two action classes")
+        seed_records: list[dict[str, float | int]] = []
+        for seed in self.seeds:
+            model = Taiji(self._with_seed(seed), episode_id=f"m0-b2-seed-{seed}")
+            for episode in corpus.train:
+                self._write_episode(model, episode)
+            holdout = self._recall_accuracy(model, corpus.holdout, actions, use_memory=True)
+            persistent_before = _persistent_digest(model)
+            retention = self._recall_accuracy(model, corpus.retention, actions, use_memory=True)
+            persistent_after = _persistent_digest(model)
+            memory_lesion = self._recall_accuracy(model, corpus.holdout, actions, use_memory=False)
+            frozen = Taiji(self._with_seed(seed), episode_id=f"m0-b2-frozen-{seed}")
+            frozen_accuracy = self._recall_accuracy(
+                frozen, corpus.holdout, actions, use_memory=True
+            )
+            seed_records.append(
+                {
+                    "seed": seed,
+                    "taiji": holdout,
+                    "retention": retention,
+                    "memory_lesion": memory_lesion,
+                    "frozen_parent": frozen_accuracy,
+                    "holdout_updates": int(persistent_before != persistent_after),
+                    "parameter_count": model.parameter_count(),
+                }
+            )
+        native_values = [float(record["taiji"]) for record in seed_records]
+        frozen_values = [float(record["frozen_parent"]) for record in seed_records]
+        lesion_values = [float(record["memory_lesion"]) for record in seed_records]
+        baseline_metrics = {
+            "random": 1.0 / len(actions),
+            "frozen_parent": min(frozen_values),
+            "simple_rule": _majority_accuracy(corpus.train, corpus.holdout),
+            "hash_only": min(
+                _hash_memory_accuracy(corpus.holdout, actions, seed=seed)
+                for seed in self.seeds
+            ),
+            "memory_lesion": min(lesion_values),
+        }
+        worst_native = min(native_values)
+        holdout_updates = max(int(record["holdout_updates"]) for record in seed_records)
+        beats_controls = all(worst_native > value for value in baseline_metrics.values())
+        causal_memory_gain = all(
+            float(record["taiji"]) > float(record["memory_lesion"])
+            for record in seed_records
+        )
+        return FoundationMeasurement(
+            ability_id=self.ability_id,
+            status=(
+                "passed"
+                if beats_controls and causal_memory_gain and holdout_updates == 0
+                else "failed"
+            ),
+            primary_metric="recall_accuracy",
+            metric_direction="higher_is_better",
+            metric_value=worst_native,
+            baseline_metrics=baseline_metrics,
+            sample_counts=corpus.sample_counts,
+            holdout_updates=holdout_updates,
+            evidence=(
+                "seed_metrics=" + json.dumps(seed_records, sort_keys=True),
+                "memory_write_partition=train; holdout_and_retention_learning=false",
+            ),
+        )
+
+    def _with_seed(self, seed: int) -> TaijiConfig:
+        values = self.config.to_dict()
+        values["seed"] = int(seed)
+        return TaijiConfig.from_dict(values)
+
+    @staticmethod
+    def _write_episode(model: Taiji, episode: MemoryEpisode) -> None:
+        model.reset_dynamics(episode_id=f"m0-b2-train-{episode.memory_id}")
+        model.observe(model.config.boundary_symbol, learn=False, learn_motor=False)
+        model.observe(episode.cue, learn=False, learn_motor=False)
+        model.act((episode.action,), sample=False)
+        model.settle_action(1.0, learn=False, learn_memory=True)
+        model.observe(episode.outcome, learn=False, learn_motor=False)
+
+    @staticmethod
+    def _recall_accuracy(
+        model: Taiji,
+        queries: Sequence[DelayedMemoryQuery],
+        actions: tuple[int, ...],
+        *,
+        use_memory: bool,
+    ) -> float:
+        correct = 0
+        for query in queries:
+            model.reset_dynamics(episode_id=f"m0-b2-query-{query.query_id}")
+            model.observe(
+                model.config.boundary_symbol,
+                learn=False,
+                learn_motor=False,
+                use_memory=use_memory,
+            )
+            model.observe(
+                query.cue,
+                learn=False,
+                learn_motor=False,
+                use_memory=use_memory,
+            )
+            probabilities = model.snapshot().motor_probabilities
+            prediction = max(actions, key=lambda action: float(probabilities[action].item()))
+            correct += int(prediction == query.expected_action)
+        return correct / len(queries)
+
+
 class SequencePredictionTask:
     """Measure native Taiji byte prediction against four fixed controls.
 
@@ -152,3 +337,35 @@ def _hash_only_bpb(data: bytes, *, seed: int, alphabet_size: int) -> float:
         probability = 1.0 - (alphabet_size - 1) * epsilon if prediction == target else epsilon
         losses.append(-math.log2(probability))
     return sum(losses) / len(losses)
+
+
+def _persistent_digest(model: Taiji) -> str:
+    checkpoint = model.checkpoint()
+    return content_digest(
+        {
+            "fabric": checkpoint["fabric"],
+            "motor": checkpoint["motor"],
+            "memory": checkpoint["memory"],
+        }
+    )
+
+
+def _majority_accuracy(
+    train: Sequence[MemoryEpisode], holdout: Sequence[DelayedMemoryQuery]
+) -> float:
+    counts: dict[int, int] = {}
+    for episode in train:
+        counts[episode.action] = counts.get(episode.action, 0) + 1
+    majority = min(counts, key=lambda action: (-counts[action], action))
+    return sum(int(query.expected_action == majority) for query in holdout) / len(holdout)
+
+
+def _hash_memory_accuracy(
+    queries: Sequence[DelayedMemoryQuery], actions: tuple[int, ...], *, seed: int
+) -> float:
+    correct = 0
+    for query in queries:
+        digest = hashlib.sha256(f"{int(seed)}\0{int(query.cue)}".encode()).digest()
+        prediction = actions[int.from_bytes(digest[:8], "big") % len(actions)]
+        correct += int(prediction == query.expected_action)
+    return correct / len(queries)
