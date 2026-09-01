@@ -243,6 +243,8 @@ seed 29 的 full-coverage continuation 已完成，报告为 `reports/taiji_m1_f
 
 seed 47 的 full-coverage continuation 已完成，报告为 `reports/taiji_m1_f5_full_seed47_20260901.json`，独立进程复核为 `reports/taiji_m1_f5_full_seed47_eval_only_20260902.json`。B1/B2/B3/B4 覆盖分别为 `1,048,576/1,000/1,000/1,000`，replay 实际消费 `16,384` 字节，`world_transition_rejections=0`、`holdout_updates=0`；训练报告和 eval-only 的 checkpoint digest 均为 `6f548721…`，8 项指标逐项一致，且 `checkpoint_read_only=true`。seed 47 的扩展 parent→final 为 sequence `5.4107→4.8173 BPB`、memory `0.585→0.493`、world `7.9789e-6→3.0604e-8`、goal `1.0→1.0`；sequence/world/goal 有净收益，但 memory 退化，因此该 seed 不能单独晋级。
 
+在 seed 47 完成后的代码审计中确认：此前“联合训练保存已重试”的记录与实现不一致，重试只存在于旧的 `FoundationTrainingRun.save()`，`JointTrainingRun.save()` 仍会在首次 `PermissionError` 时失败。新增的回归测试先在旧实现上复现失败，再验证联合训练保存的五次有限指数退避；该修复已通过 `tests/taiji_native/test_foundation_training.py` 全部 `7 passed`、ruff 和 `git diff --check`，不改变 checkpoint 内容或原子替换语义。
+
 三个 full-coverage seed 已全部完成，当前唯一下一步是 **M1-6 F5 三 seed 聚合 Gate**：汇总 seed 11/29/47 的训练与 eval-only 报告，验证三个 child digest、8 项指标一致性、foundation 样本覆盖、checkpoint 只读、holdout 无更新、world rejection 为零，并补齐 B5 phase-A→phase-B→replay 的 backward-transfer 审计。聚合结果若未同时满足预注册 M1 Gate，则继续在 M1 内修复 memory 保持/回放目标，不进入 M2，也不切换到 provider、Workbench、Skill/MCP 或客户端外围。
 
 ## 7. M2～M8 的开发日程与外围任务安置
