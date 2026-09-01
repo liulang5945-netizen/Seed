@@ -29,6 +29,9 @@ from .internalization_learner import (
 EVOLUTION_TRAINING_FORMAT = "taiji-native-evolution-training-v1"
 EVOLUTION_TRAINING_VERSION = 1
 EVOLUTION_TRAINING_MANIFEST_REVISION = "taiji-w7-e3-1-route-credit-v1"
+EVOLUTION_REPLAY_SELECTION_FORMAT = "taiji-native-evolution-replay-selection-v1"
+EVOLUTION_REPLAY_TIERS = ("correction", "failure", "success")
+EVOLUTION_REPLAY_RETAINED_TIERS = ("correction", "failure")
 
 
 def _finite_bound(value: float, name: str) -> float:
@@ -410,11 +413,140 @@ class NativeEvolutionTrainer:
         return trainer
 
 
+def _replay_tier(experience: EvolutionExperience) -> str:
+    if experience.user_correction_digest:
+        return "correction"
+    if not experience.success:
+        return "failure"
+    return "success"
+
+
+@dataclass(frozen=True)
+class BoundedReplaySelection:
+    """A capacity-bounded train replay sample that never drops corrective evidence."""
+
+    capacity: int
+    considered_experiences: int
+    selected_experience_ids: tuple[str, ...]
+    tier_counts: Mapping[str, int]
+    selection_digest: str
+
+    def __post_init__(self) -> None:
+        if int(self.capacity) <= 0:
+            raise ValueError("replay capacity must be positive")
+        object.__setattr__(self, "capacity", int(self.capacity))
+        object.__setattr__(self, "considered_experiences", int(self.considered_experiences))
+        selected = tuple(str(item).strip() for item in self.selected_experience_ids)
+        if any(not item for item in selected):
+            raise ValueError("replay selection must not contain empty experience IDs")
+        if len(set(selected)) != len(selected):
+            raise ValueError("replay selection must not contain duplicate experience IDs")
+        if len(selected) > self.capacity:
+            raise ValueError("replay selection cannot exceed capacity")
+        object.__setattr__(self, "selected_experience_ids", selected)
+        counts = {tier: int(self.tier_counts.get(tier, 0)) for tier in EVOLUTION_REPLAY_TIERS}
+        if any(value < 0 for value in counts.values()):
+            raise ValueError("replay tier counts cannot be negative")
+        if sum(counts.values()) != len(selected):
+            raise ValueError("replay tier counts must total the selected experiences")
+        object.__setattr__(self, "tier_counts", counts)
+        if not str(self.selection_digest):
+            raise ValueError("replay selection_digest must not be empty")
+
+    def _identity(self) -> dict[str, Any]:
+        return {
+            "format": EVOLUTION_REPLAY_SELECTION_FORMAT,
+            "version": EVOLUTION_TRAINING_VERSION,
+            "capacity": self.capacity,
+            "considered_experiences": self.considered_experiences,
+            "selected_experience_ids": list(self.selected_experience_ids),
+            "tier_counts": {tier: self.tier_counts[tier] for tier in EVOLUTION_REPLAY_TIERS},
+        }
+
+    def to_payload(self) -> dict[str, Any]:
+        payload = self._identity()
+        payload["selection_digest"] = self.selection_digest
+        return payload
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> BoundedReplaySelection:
+        if payload.get("format") != EVOLUTION_REPLAY_SELECTION_FORMAT:
+            raise ValueError("unsupported evolution replay selection format")
+        identity = {key: value for key, value in payload.items() if key != "selection_digest"}
+        expected = content_digest(identity)
+        if str(payload.get("selection_digest", "")) != expected:
+            raise ValueError("evolution replay selection digest mismatch")
+        return cls(
+            capacity=int(payload["capacity"]),
+            considered_experiences=int(payload["considered_experiences"]),
+            selected_experience_ids=tuple(
+                str(item) for item in payload.get("selected_experience_ids", ())
+            ),
+            tier_counts=dict(payload.get("tier_counts", {})),
+            selection_digest=expected,
+        )
+
+
+def select_bounded_replay(
+    experiences: Iterable[EvolutionExperience],
+    *,
+    capacity: int,
+) -> BoundedReplaySelection:
+    """Sample at most ``capacity`` train experiences, retaining corrective evidence first."""
+
+    if int(capacity) <= 0:
+        raise ValueError("replay capacity must be positive")
+    capacity = int(capacity)
+    items = _experience_tuple(experiences, partition="train")
+    tiers: dict[str, list[str]] = {tier: [] for tier in EVOLUTION_REPLAY_TIERS}
+    for item in items:
+        tiers[_replay_tier(item)].append(item.experience_id)
+
+    retained = sum(len(tiers[tier]) for tier in EVOLUTION_REPLAY_RETAINED_TIERS)
+    if retained > capacity:
+        raise ValueError(
+            "replay capacity cannot drop retained evidence: "
+            f"{retained} corrective samples exceed capacity {capacity}"
+        )
+
+    selected: list[str] = []
+    counts: dict[str, int] = {tier: 0 for tier in EVOLUTION_REPLAY_TIERS}
+    for tier in EVOLUTION_REPLAY_TIERS:
+        room = capacity - len(selected)
+        if room <= 0:
+            break
+        chosen = tiers[tier][:room]
+        selected.extend(chosen)
+        counts[tier] = len(chosen)
+
+    ordered = tuple(sorted(selected))
+    identity = {
+        "format": EVOLUTION_REPLAY_SELECTION_FORMAT,
+        "version": EVOLUTION_TRAINING_VERSION,
+        "capacity": capacity,
+        "considered_experiences": len(items),
+        "selected_experience_ids": list(ordered),
+        "tier_counts": {tier: counts[tier] for tier in EVOLUTION_REPLAY_TIERS},
+    }
+    return BoundedReplaySelection(
+        capacity=capacity,
+        considered_experiences=len(items),
+        selected_experience_ids=ordered,
+        tier_counts=counts,
+        selection_digest=content_digest(identity),
+    )
+
+
 __all__ = [
+    "EVOLUTION_REPLAY_RETAINED_TIERS",
+    "EVOLUTION_REPLAY_SELECTION_FORMAT",
+    "EVOLUTION_REPLAY_TIERS",
     "EVOLUTION_TRAINING_FORMAT",
     "EVOLUTION_TRAINING_MANIFEST_REVISION",
     "EVOLUTION_TRAINING_VERSION",
+    "BoundedReplaySelection",
     "EvolutionExperienceEncoder",
     "NativeEvolutionLearningReport",
     "NativeEvolutionTrainer",
+    "select_bounded_replay",
 ]
