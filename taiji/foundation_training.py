@@ -13,6 +13,7 @@ import json
 import math
 import subprocess
 from collections.abc import Iterable, Mapping, Sequence
+from copy import deepcopy
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -20,14 +21,19 @@ from typing import Any
 import torch
 
 from .config import TaijiConfig
+from .contracts import WorldTransition
 from .foundation_tasks import (
     DelayedMemoryCorpus,
     DelayedMemoryQuery,
+    GoalActionCorpus,
+    GoalActionEpisode,
     MemoryEpisode,
     SequencePredictionCorpus,
+    WorldTransitionCorpus,
 )
 from .internalization import content_digest
 from .model import Taiji
+from .world_learning import WorldDynamicsLearner, WorldSchema, WorldSchemaRegistry
 
 FOUNDATION_TRAINING_FORMAT = "taiji-native-foundation-training-v1"
 FOUNDATION_TRAINING_VERSION = 1
@@ -39,6 +45,8 @@ FOUNDATION_TRAINING_PROFILE_BUDGETS = {
 }
 MEMORY_TRAINING_FORMAT = "taiji-native-memory-training-v1"
 MEMORY_TRAINING_VERSION = 1
+WORLD_ACTION_TRAINING_FORMAT = "taiji-native-world-action-training-v1"
+WORLD_ACTION_TRAINING_VERSION = 1
 
 
 def _text_from_record(record: Any) -> str | None:
@@ -804,6 +812,507 @@ class MemoryTrainingRun:
         return run
 
 
+def _world_action_corpus_digest(
+    world_corpus: WorldTransitionCorpus,
+    goal_corpus: GoalActionCorpus,
+) -> str:
+    return content_digest(
+        {
+            "format": WORLD_ACTION_TRAINING_FORMAT,
+            "version": WORLD_ACTION_TRAINING_VERSION,
+            "world": {
+                partition: [case.to_payload() for case in getattr(world_corpus, partition)]
+                for partition in ("train", "holdout", "retention")
+            },
+            "goal": {
+                partition: [episode.__dict__ for episode in getattr(goal_corpus, partition)]
+                for partition in ("train", "holdout", "retention")
+            },
+        }
+    )
+
+
+def _world_learner_payload(learner: WorldDynamicsLearner) -> dict[str, Any]:
+    return {
+        "schema": learner.schema.payload(),
+        "schema_registry": learner.schema_registry.checkpoint(),
+        "hidden_dim": learner.hidden_dim,
+        "online_updates": learner.online_updates,
+        "transition_acceptances": learner.transition_acceptances,
+        "transition_rejections": learner.transition_rejections,
+        "schema_evolution_count": learner.schema_evolution_count,
+        "state_dict": {
+            name: tensor.detach().cpu().clone() for name, tensor in learner.state_dict().items()
+        },
+        "schema_snapshots": {
+            str(version): {
+                name: tensor.detach().cpu().clone() for name, tensor in snapshot.items()
+            }
+            for version, snapshot in learner._schema_snapshots.items()
+        },
+    }
+
+
+def _world_learner_from_payload(payload: Mapping[str, Any]) -> WorldDynamicsLearner:
+    schema = WorldSchema.from_payload(dict(payload["schema"]))
+    registry = WorldSchemaRegistry.from_checkpoint(dict(payload["schema_registry"]))
+    if registry.schema != schema:
+        raise ValueError("world action checkpoint schema registry does not match learner schema")
+    learner = WorldDynamicsLearner(
+        schema,
+        hidden_dim=int(payload["hidden_dim"]),
+        seed=0,
+        schema_registry=registry,
+    )
+    learner.load_state_dict(payload["state_dict"])
+    learner.online_updates = int(payload.get("online_updates", 0))
+    learner.transition_acceptances = int(payload.get("transition_acceptances", 0))
+    learner.transition_rejections = int(payload.get("transition_rejections", 0))
+    learner.schema_evolution_count = int(payload.get("schema_evolution_count", 0))
+    snapshots = payload.get("schema_snapshots")
+    if isinstance(snapshots, Mapping):
+        learner._schema_snapshots = {
+            int(version): {
+                str(name): tensor.detach().cpu().clone() for name, tensor in snapshot.items()
+            }
+            for version, snapshot in snapshots.items()
+            if isinstance(snapshot, Mapping)
+        }
+        learner._schema_snapshots.setdefault(
+            learner.schema_registry.active_version,
+            learner._snapshot_state_dict(),
+        )
+    return learner
+
+
+def _world_action_persistent_digest(
+    model: Taiji,
+    world_learner: WorldDynamicsLearner,
+) -> str:
+    checkpoint = model.checkpoint()
+    return content_digest(
+        {
+            "model": {
+                "fabric": checkpoint["fabric"],
+                "motor": checkpoint["motor"],
+                "memory": checkpoint["memory"],
+            },
+            "world": _world_learner_payload(world_learner),
+        }
+    )
+
+
+def _world_action_error(
+    learner: WorldDynamicsLearner,
+    cases: Sequence[Any],
+) -> float:
+    errors: list[float] = []
+    schema = learner.schema
+    for case in cases:
+        prediction = learner.predict(case.initial, case.action, register_parameters=False)
+        expected_success = float(
+            case.expected_outcome.success
+            if case.expected_outcome.success is not None
+            else case.expected_outcome.reward > 0.0
+        )
+        errors.append(
+            schema.normalized_state_error(prediction.state, case.expected_state)
+            + (prediction.reward - float(case.expected_outcome.reward)) ** 2
+            + (prediction.success_probability - expected_success) ** 2
+        )
+    return sum(errors) / len(errors)
+
+
+def _cold_start_action_organ(model: Taiji) -> None:
+    with torch.no_grad():
+        model.motor.synapses.edge_weight.zero_()
+        model.motor.bias.zero_()
+        model.motor.reward_baseline = 0.0
+        model.motor.reward_updates = 0
+
+
+def _train_goal_episode(
+    model: Taiji,
+    episode: GoalActionEpisode,
+    *,
+    learn: bool,
+) -> bool:
+    model.reset_dynamics(episode_id=f"m1-f3-train-{episode.episode_id}")
+    model.observe(model.config.boundary_symbol, learn=False, learn_motor=False, use_memory=False)
+    model.observe(episode.cue, learn=learn, learn_motor=False, use_memory=False)
+    decision = model.act(
+        tuple(sorted((episode.preferred_action, episode.alternate_action))),
+        sample=True,
+    )
+    success = decision.action_symbol == episode.preferred_action
+    model.settle_action(1.0 if success else -1.0, learn=learn, learn_memory=False)
+    model.observe(model.config.boundary_symbol, learn=False, learn_motor=False, use_memory=False)
+    return success
+
+
+def _goal_action_accuracy(model: Taiji, episodes: Sequence[GoalActionEpisode]) -> float:
+    correct = 0
+    for episode in episodes:
+        model.reset_dynamics(episode_id=f"m1-f3-eval-{episode.episode_id}")
+        model.observe(model.config.boundary_symbol, learn=False, learn_motor=False, use_memory=False)
+        model.observe(episode.cue, learn=False, learn_motor=False, use_memory=False)
+        decision = model.act(
+            tuple(sorted((episode.preferred_action, episode.alternate_action))),
+            sample=False,
+        )
+        correct += int(decision.action_symbol == episode.preferred_action)
+        model.settle_action(0.0, learn=False, learn_memory=False)
+        model.observe(model.config.boundary_symbol, learn=False, learn_motor=False, use_memory=False)
+    return correct / len(episodes)
+
+
+class WorldActionTrainingRun:
+    """A resumable native world-transition and goal-credit training run."""
+
+    def __init__(
+        self,
+        model: Taiji,
+        world_learner: WorldDynamicsLearner,
+        world_corpus: WorldTransitionCorpus,
+        goal_corpus: GoalActionCorpus,
+        *,
+        output_dir: str | Path,
+        model_tier: str = "world-action",
+        epochs: int = 1,
+        checkpoint_interval: int = 1,
+        world_learning_rate: float = 0.01,
+        world_repeats: int = 4,
+        parent_checkpoint_digest: str | None = None,
+        parent_world_error: float | None = None,
+        parent_goal_success: float | None = None,
+        code_revision: str | None = None,
+    ) -> None:
+        if not isinstance(world_corpus, WorldTransitionCorpus):
+            raise TypeError("world action training requires WorldTransitionCorpus")
+        if not isinstance(goal_corpus, GoalActionCorpus):
+            raise TypeError("world action training requires GoalActionCorpus")
+        if not isinstance(world_learner, WorldDynamicsLearner):
+            raise TypeError("world action training requires WorldDynamicsLearner")
+        if int(epochs) <= 0 or int(checkpoint_interval) <= 0:
+            raise ValueError("world action training epochs and checkpoint_interval must be positive")
+        if float(world_learning_rate) <= 0.0 or int(world_repeats) <= 0:
+            raise ValueError("world action learning settings must be positive")
+        self.model = model
+        self.world_learner = world_learner
+        self.world_corpus = world_corpus
+        self.goal_corpus = goal_corpus
+        self.output_dir = Path(output_dir)
+        self.model_tier = str(model_tier)
+        self.total_epochs = int(epochs)
+        self.checkpoint_interval = int(checkpoint_interval)
+        self.world_learning_rate = float(world_learning_rate)
+        self.world_repeats = int(world_repeats)
+        self.code_revision = str(code_revision or _code_revision())
+        self.parent_model_payload = deepcopy(model.checkpoint())
+        self.parent_world_payload = deepcopy(_world_learner_payload(world_learner))
+        self.parent_checkpoint_digest = parent_checkpoint_digest or content_digest(
+            {"model": self.parent_model_payload, "world": self.parent_world_payload}
+        )
+        self.parent_world_error = (
+            float(parent_world_error)
+            if parent_world_error is not None
+            else _world_action_error(world_learner, world_corpus.holdout)
+        )
+        self.parent_goal_success = (
+            float(parent_goal_success)
+            if parent_goal_success is not None
+            else _goal_action_accuracy(model, goal_corpus.holdout)
+        )
+        self.epoch = 0
+        self.phase = "world"
+        self.world_cursor = 0
+        self.goal_cursor = 0
+        self.global_step = 0
+        self.history: list[dict[str, Any]] = []
+        self.best_holdout_score = 0.0
+        self.started_from_checkpoint = False
+
+    @property
+    def corpus_digest(self) -> str:
+        return _world_action_corpus_digest(self.world_corpus, self.goal_corpus)
+
+    @property
+    def parent_checkpoint_path(self) -> Path:
+        return self.output_dir / "parent.pt"
+
+    @property
+    def last_checkpoint_path(self) -> Path:
+        return self.output_dir / "last.pt"
+
+    @property
+    def best_checkpoint_path(self) -> Path:
+        return self.output_dir / "best-holdout.pt"
+
+    def _checkpoint_payload(self) -> dict[str, Any]:
+        payload: dict[str, Any] = {
+            "format": WORLD_ACTION_TRAINING_FORMAT,
+            "version": WORLD_ACTION_TRAINING_VERSION,
+            "model_tier": self.model_tier,
+            "model": self.model.checkpoint(),
+            "world_learner": _world_learner_payload(self.world_learner),
+            "corpus_digest": self.corpus_digest,
+            "corpus_sample_counts": {
+                "world": self.world_corpus.sample_counts,
+                "goal": self.goal_corpus.sample_counts,
+            },
+            "parent_checkpoint_digest": self.parent_checkpoint_digest,
+            "parent_model": self.parent_model_payload,
+            "parent_world_learner": self.parent_world_payload,
+            "parent_world_error": self.parent_world_error,
+            "parent_goal_success": self.parent_goal_success,
+            "epoch": self.epoch,
+            "phase": self.phase,
+            "world_cursor": self.world_cursor,
+            "goal_cursor": self.goal_cursor,
+            "global_step": self.global_step,
+            "total_epochs": self.total_epochs,
+            "checkpoint_interval": self.checkpoint_interval,
+            "world_learning_rate": self.world_learning_rate,
+            "world_repeats": self.world_repeats,
+            "history": list(self.history),
+            "best_holdout_score": self.best_holdout_score,
+            "code_revision": self.code_revision,
+        }
+        payload["checkpoint_digest"] = content_digest(payload)
+        return payload
+
+    def save(self, path: str | Path) -> Path:
+        target = Path(path)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        temporary = target.with_name(target.name + ".tmp")
+        torch.save(self._checkpoint_payload(), temporary)
+        temporary.replace(target)
+        return target
+
+    def _holdout_metrics(self) -> tuple[float, float, float, bool]:
+        persistent_before = _world_action_persistent_digest(self.model, self.world_learner)
+        world_error = _world_action_error(self.world_learner, self.world_corpus.holdout)
+        goal_success = _goal_action_accuracy(self.model, self.goal_corpus.holdout)
+        persistent_after = _world_action_persistent_digest(self.model, self.world_learner)
+        return world_error, goal_success, persistent_before, persistent_before == persistent_after
+
+    def _save_progress(self, *, train_kind: str | None = None, train_success: bool | None = None) -> None:
+        world_error, goal_success, _persistent, read_only = self._holdout_metrics()
+        if not read_only:
+            raise RuntimeError("world action holdout evaluation mutated persistent state")
+        score = (self.parent_world_error - world_error) + (goal_success - self.parent_goal_success)
+        record: dict[str, Any] = {
+            "epoch": self.epoch,
+            "phase": self.phase,
+            "world_cursor": self.world_cursor,
+            "goal_cursor": self.goal_cursor,
+            "global_step": self.global_step,
+            "world_holdout_error": world_error,
+            "goal_holdout_success": goal_success,
+            "joint_holdout_gain": score,
+        }
+        if train_kind is not None:
+            record["train_kind"] = train_kind
+        if train_success is not None:
+            record["train_success"] = bool(train_success)
+        self.history.append(record)
+        if score > self.best_holdout_score:
+            self.best_holdout_score = score
+            self.save(self.best_checkpoint_path)
+        self.save(self.last_checkpoint_path)
+
+    def run(self) -> dict[str, Any]:
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        if not self.started_from_checkpoint and not self.parent_checkpoint_path.exists():
+            self.save(self.parent_checkpoint_path)
+            self.save(self.best_checkpoint_path)
+        while self.epoch < self.total_epochs:
+            self.phase = "world"
+            while self.world_cursor < len(self.world_corpus.train):
+                case = self.world_corpus.train[self.world_cursor]
+                transition = WorldTransition(
+                    before=case.initial,
+                    action=case.action,
+                    after=case.expected_state,
+                    outcome=case.expected_outcome,
+                )
+                self.world_learner.online_update(
+                    transition,
+                    learning_rate=self.world_learning_rate,
+                    repeats=self.world_repeats,
+                    register_parameters=True,
+                )
+                self.world_cursor += 1
+                self.global_step += 1
+                if (
+                    self.global_step % self.checkpoint_interval == 0
+                    or self.world_cursor == len(self.world_corpus.train)
+                ):
+                    self._save_progress(train_kind="world")
+                else:
+                    self.save(self.last_checkpoint_path)
+            self.phase = "goal"
+            while self.goal_cursor < len(self.goal_corpus.train):
+                episode = self.goal_corpus.train[self.goal_cursor]
+                success = _train_goal_episode(self.model, episode, learn=True)
+                self.goal_cursor += 1
+                self.global_step += 1
+                if (
+                    self.global_step % self.checkpoint_interval == 0
+                    or self.goal_cursor == len(self.goal_corpus.train)
+                ):
+                    self._save_progress(train_kind="goal", train_success=success)
+                else:
+                    self.save(self.last_checkpoint_path)
+            self.epoch += 1
+            self.phase = "world"
+            self.world_cursor = 0
+            self.goal_cursor = 0
+            self._save_progress()
+        final_world_error, final_goal_success, _persistent, read_only = self._holdout_metrics()
+        if not read_only:
+            raise RuntimeError("world action final holdout evaluation mutated persistent state")
+        lesion = Taiji.from_checkpoint(self.parent_model_payload)
+        _cold_start_action_organ(lesion)
+        for episode in self.goal_corpus.train:
+            _train_goal_episode(lesion, episode, learn=False)
+        credit_lesion = _goal_action_accuracy(lesion, self.goal_corpus.holdout)
+        return {
+            "format": WORLD_ACTION_TRAINING_FORMAT,
+            "version": WORLD_ACTION_TRAINING_VERSION,
+            "status": "completed",
+            "model_tier": self.model_tier,
+            "corpus_digest": self.corpus_digest,
+            "corpus_sample_counts": {
+                "world": self.world_corpus.sample_counts,
+                "goal": self.goal_corpus.sample_counts,
+            },
+            "parent_checkpoint_digest": self.parent_checkpoint_digest,
+            "parent_world_error": self.parent_world_error,
+            "final_world_error": final_world_error,
+            "parent_goal_success": self.parent_goal_success,
+            "final_goal_success": final_goal_success,
+            "final_credit_lesion_success": credit_lesion,
+            "joint_holdout_gain": (
+                self.parent_world_error
+                - final_world_error
+                + final_goal_success
+                - self.parent_goal_success
+            ),
+            "world_online_updates": self.world_learner.online_updates,
+            "world_transition_rejections": self.world_learner.transition_rejections,
+            "holdout_updates": 0,
+            "epoch": self.epoch,
+            "phase": self.phase,
+            "world_cursor": self.world_cursor,
+            "goal_cursor": self.goal_cursor,
+            "global_step": self.global_step,
+            "total_epochs": self.total_epochs,
+            "best_holdout_score": self.best_holdout_score,
+            "child_checkpoint_digest": _world_action_persistent_digest(
+                self.model, self.world_learner
+            ),
+            "history": list(self.history),
+            "checkpoint_paths": {
+                "parent": str(self.parent_checkpoint_path),
+                "last": str(self.last_checkpoint_path),
+                "best_holdout": str(self.best_checkpoint_path),
+            },
+            "code_revision": self.code_revision,
+            "started_from_checkpoint": self.started_from_checkpoint,
+        }
+
+    def evaluate_only(self) -> dict[str, Any]:
+        world_error, goal_success, persistent_before, read_only = self._holdout_metrics()
+        if not read_only:
+            raise RuntimeError("world action eval-only mutated persistent state")
+        return {
+            "format": WORLD_ACTION_TRAINING_FORMAT,
+            "version": WORLD_ACTION_TRAINING_VERSION,
+            "status": "evaluated",
+            "model_tier": self.model_tier,
+            "corpus_digest": self.corpus_digest,
+            "corpus_sample_counts": {
+                "world": self.world_corpus.sample_counts,
+                "goal": self.goal_corpus.sample_counts,
+            },
+            "checkpoint_digest": persistent_before,
+            "world_holdout_error": world_error,
+            "goal_holdout_success": goal_success,
+            "checkpoint_read_only": True,
+            "code_revision": self.code_revision,
+        }
+
+    @classmethod
+    def from_checkpoint(
+        cls,
+        path: str | Path,
+        world_corpus: WorldTransitionCorpus,
+        goal_corpus: GoalActionCorpus,
+        *,
+        output_dir: str | Path | None = None,
+        epochs: int | None = None,
+        code_revision: str | None = None,
+    ) -> WorldActionTrainingRun:
+        checkpoint_path = Path(path)
+        payload = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
+        if not isinstance(payload, Mapping):
+            raise ValueError("world action training checkpoint must contain a mapping")
+        if payload.get("format") != WORLD_ACTION_TRAINING_FORMAT:
+            raise ValueError("unsupported world action training checkpoint format")
+        if int(payload.get("version", -1)) != WORLD_ACTION_TRAINING_VERSION:
+            raise ValueError("unsupported world action training checkpoint version")
+        expected = content_digest(
+            {key: value for key, value in payload.items() if key != "checkpoint_digest"}
+        )
+        if str(payload.get("checkpoint_digest", "")) != expected:
+            raise ValueError("world action training checkpoint digest mismatch")
+        if str(payload.get("corpus_digest")) != _world_action_corpus_digest(
+            world_corpus, goal_corpus
+        ):
+            raise ValueError("world action training corpus digest mismatch")
+        model_payload = payload.get("model")
+        learner_payload = payload.get("world_learner")
+        if not isinstance(model_payload, Mapping) or not isinstance(learner_payload, Mapping):
+            raise ValueError("world action training checkpoint is missing model or world learner")
+        model = Taiji(
+            TaijiConfig.from_dict(dict(model_payload["config"])),
+            episode_id="world-action-resume",
+        )
+        model.restore(model_payload)
+        run = cls(
+            model,
+            _world_learner_from_payload(learner_payload),
+            world_corpus,
+            goal_corpus,
+            output_dir=output_dir or checkpoint_path.parent,
+            model_tier=str(payload["model_tier"]),
+            epochs=int(epochs if epochs is not None else payload["total_epochs"]),
+            checkpoint_interval=int(payload["checkpoint_interval"]),
+            world_learning_rate=float(payload["world_learning_rate"]),
+            world_repeats=int(payload["world_repeats"]),
+            parent_checkpoint_digest=str(payload["parent_checkpoint_digest"]),
+            parent_world_error=float(payload["parent_world_error"]),
+            parent_goal_success=float(payload["parent_goal_success"]),
+            code_revision=code_revision or str(payload.get("code_revision", "working-tree")),
+        )
+        parent_model = payload.get("parent_model")
+        parent_world = payload.get("parent_world_learner")
+        if not isinstance(parent_model, Mapping) or not isinstance(parent_world, Mapping):
+            raise ValueError("world action checkpoint is missing parent lineage")
+        run.parent_model_payload = deepcopy(parent_model)
+        run.parent_world_payload = deepcopy(parent_world)
+        run.epoch = int(payload["epoch"])
+        run.phase = str(payload.get("phase", "world"))
+        run.world_cursor = int(payload.get("world_cursor", 0))
+        run.goal_cursor = int(payload.get("goal_cursor", 0))
+        run.global_step = int(payload.get("global_step", 0))
+        run.history = [dict(item) for item in payload.get("history", ())]
+        run.best_holdout_score = float(payload.get("best_holdout_score", 0.0))
+        run.started_from_checkpoint = True
+        return run
+
+
 __all__ = [
     "MEMORY_TRAINING_FORMAT",
     "MEMORY_TRAINING_VERSION",
@@ -814,4 +1323,7 @@ __all__ = [
     "FoundationTrainingDataset",
     "FoundationTrainingRun",
     "MemoryTrainingRun",
+    "WORLD_ACTION_TRAINING_FORMAT",
+    "WORLD_ACTION_TRAINING_VERSION",
+    "WorldActionTrainingRun",
 ]
