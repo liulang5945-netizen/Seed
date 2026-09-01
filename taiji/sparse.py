@@ -483,7 +483,23 @@ class SparseSynapses:
     @torch.no_grad()
     def _bound_rows(self) -> None:
         norms = self.edge_weight.norm(dim=1, keepdim=True).clamp_min(1e-8)
-        scales = torch.clamp(self.max_weight_norm / norms, max=1.0)
+        # A row that was bounded in float32 can measure one ulp above the
+        # configured limit when it is loaded and reduced again.  Reapplying
+        # the scale in that case changes the checkpoint payload despite no
+        # learning having happened, which breaks read-only restore/digests.
+        # Keep the numerical boundary idempotent while still correcting real
+        # violations beyond a small dtype-relative reduction tolerance.
+        tolerance = (
+            8.0
+            * torch.finfo(self.edge_weight.dtype).eps
+            * max(1.0, abs(self.max_weight_norm))
+        )
+        needs_scaling = norms > (self.max_weight_norm + tolerance)
+        scales = torch.where(
+            needs_scaling,
+            torch.clamp(self.max_weight_norm / norms, max=1.0),
+            torch.ones_like(norms),
+        )
         self.edge_weight.mul_(scales)
 
     def to_payload(self) -> dict[str, Any]:

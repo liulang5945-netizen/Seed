@@ -120,3 +120,31 @@ def test_sparse_kernel_stores_only_existing_edges_and_roundtrips() -> None:
     restored.load_payload(payload)
     assert torch.equal(restored.pre_index, synapses.pre_index)
     assert torch.equal(restored.edge_weight, synapses.edge_weight)
+
+
+def test_payload_restore_is_lossless_at_float_norm_boundary() -> None:
+    synapses = SparseSynapses(
+        out_features=1,
+        in_features=4,
+        fan_in=2,
+        generator=torch.Generator().manual_seed(71),
+        init_scale=0.45,
+        max_weight_norm=2.5,
+    )
+    with torch.no_grad():
+        synapses.edge_weight.zero_()
+        synapses.edge_weight[0, 0] = 2.5000002
+    payload = synapses.to_payload()
+    assert float(payload["edge_weight"].norm()) > 2.5
+
+    restored = SparseSynapses(
+        out_features=1,
+        in_features=4,
+        fan_in=2,
+        generator=torch.Generator().manual_seed(71),
+        init_scale=0.45,
+        max_weight_norm=2.5,
+    )
+    restored.load_payload(payload)
+
+    assert torch.equal(restored.edge_weight, payload["edge_weight"])
