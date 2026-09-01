@@ -1435,7 +1435,7 @@ class JointTrainingRun:
         self.parent_checkpoint_digest = parent_checkpoint_digest or content_digest(
             {"model": self.parent_model_payload, "world": self.parent_world_payload}
         )
-        measured_parent = self._measure_metrics()
+        measured_parent = self._measure_metrics() if parent_metrics is None else parent_metrics
         self.parent_metrics = {
             key: float(value) for key, value in (parent_metrics or measured_parent).items()
         }
