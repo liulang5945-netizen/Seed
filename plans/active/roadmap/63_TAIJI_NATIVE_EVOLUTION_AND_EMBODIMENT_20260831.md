@@ -563,7 +563,7 @@ E1–E7 优先按现有 owner 增量接线，避免继续膨胀 `taiji/adapter.p
 - E1、E3、E5 是强 checkpoint Gate；任一损坏恢复或 lineage 错误立即停止功能推进。
 - E3 完成后是第一个需要讨论的决策点：若直接原生训练没有超过 frozen/route/memory 对照，应先修学习目标和 credit，不扩大参数规模。
 - E5 完成后是第二个决策点：只有隔离、状态迁移和 rollback 可靠，才允许接真实第三方 MCP/plugin。
-- 本轮完成 E6-4 实现、定向测试、evaluator、report 和计划同步后提交；不推送、不运行全量 CI。全量 CI 仍按用户决定在阶段收口时统一修复。
+- 本轮已提交 E6-4 实现、定向测试、evaluator、report 和计划同步，commit 为 `9c31fa3`；不推送、不运行全量 CI。全量 CI 仍按用户决定在阶段收口时统一修复。
 
 ## 15. E1 首个执行切片
 
