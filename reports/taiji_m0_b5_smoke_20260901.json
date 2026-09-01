@@ -1,0 +1,99 @@
+{
+  "format": "taiji-foundation-evaluation-v1",
+  "manifest_digest": "c5f178d4e18018f5085c3f56d1ae6d7596df304aee975f81c12db3b72e7e74f8",
+  "checkpoint_gate_status": "not_run",
+  "status": "not_evaluated",
+  "can_promote": false,
+  "failure_reasons": [
+    "b1_sequence_prediction:not_evaluated",
+    "b2_delayed_memory:not_evaluated",
+    "b3_world_transition:not_evaluated",
+    "b4_goal_action:not_evaluated",
+    "b5_continual_learning:measurement_failed",
+    "checkpoint_gate_not_passed"
+  ],
+  "measurements": [
+    {
+      "ability_id": "b1_sequence_prediction",
+      "status": "not_evaluated",
+      "primary_metric": "bits_per_byte",
+      "metric_direction": "lower_is_better",
+      "metric_value": null,
+      "baseline_metrics": {},
+      "sample_counts": {},
+      "holdout_updates": 0,
+      "evidence": [
+        "m0-1-contract-only; task runner pending"
+      ]
+    },
+    {
+      "ability_id": "b2_delayed_memory",
+      "status": "not_evaluated",
+      "primary_metric": "recall_accuracy",
+      "metric_direction": "higher_is_better",
+      "metric_value": null,
+      "baseline_metrics": {},
+      "sample_counts": {},
+      "holdout_updates": 0,
+      "evidence": [
+        "m0-1-contract-only; task runner pending"
+      ]
+    },
+    {
+      "ability_id": "b3_world_transition",
+      "status": "not_evaluated",
+      "primary_metric": "transition_error",
+      "metric_direction": "lower_is_better",
+      "metric_value": null,
+      "baseline_metrics": {},
+      "sample_counts": {},
+      "holdout_updates": 0,
+      "evidence": [
+        "m0-1-contract-only; task runner pending"
+      ]
+    },
+    {
+      "ability_id": "b4_goal_action",
+      "status": "not_evaluated",
+      "primary_metric": "success_rate",
+      "metric_direction": "higher_is_better",
+      "metric_value": null,
+      "baseline_metrics": {},
+      "sample_counts": {},
+      "holdout_updates": 0,
+      "evidence": [
+        "m0-1-contract-only; task runner pending"
+      ]
+    },
+    {
+      "ability_id": "b5_continual_learning",
+      "status": "failed",
+      "primary_metric": "backward_transfer",
+      "metric_direction": "higher_is_better",
+      "metric_value": -0.24420859958696206,
+      "baseline_metrics": {
+        "frozen_parent": 0.0,
+        "hash_only": 0.0,
+        "random": 0.0,
+        "replay_lesion": -0.5993931025567913,
+        "simple_rule": 0.0
+      },
+      "sample_counts": {
+        "holdout": 288,
+        "retention": 144,
+        "train": 1152
+      },
+      "holdout_updates": 0,
+      "evidence": [
+        "seed_metrics=[{\"backward_transfer\": -0.24420859958696206, \"continued_checkpoint_digest\": \"80276fe4813b2e158dcbe8101b838be0530e30fcfdf4d067cae5199d6a24a069\", \"continued_from_parent\": 1, \"fresh_new\": 2.4826346333137934, \"holdout_updates\": 0, \"new_after\": 2.7048281254072353, \"old_after\": 2.0906835752756683, \"old_before\": 1.8464749756887062, \"parameter_count\": 69505, \"parent_checkpoint_digest\": \"00e0f7d8a0eac945a7f5ba57ddb04dd91c6a7559bd415e375a515e0b380b4111\", \"replay_lesion\": -0.5993931025567913, \"retention\": 2.632888348621607, \"seed\": 11}, {\"backward_transfer\": -0.10586856829187985, \"continued_checkpoint_digest\": \"3d2d04b0f29a9340008e15b8e48641dbfe3accc13a401412081d90472bf35d57\", \"continued_from_parent\": 1, \"fresh_new\": 2.3728381673197543, \"holdout_updates\": 0, \"new_after\": 2.4191404447190177, \"old_after\": 2.412957751349437, \"old_before\": 2.307089183057557, \"parameter_count\": 69505, \"parent_checkpoint_digest\": \"814253115bbd806cba880f929ca8487a7081b3cca52497b8d8544160ed2f0a7b\", \"replay_lesion\": -0.12989235857533776, \"retention\": 2.4478253940367756, \"seed\": 29}, {\"backward_transfer\": 0.005556396344295056, \"continued_checkpoint_digest\": \"07ac7ddb07b5b11054a259e3aa691181cbdf8a1f14e34cf9b2fa4d47170dd55c\", \"continued_from_parent\": 1, \"fresh_new\": 2.552652872451301, \"holdout_updates\": 0, \"new_after\": 2.694610056149844, \"old_after\": 2.141396627862258, \"old_before\": 2.146953024206553, \"parameter_count\": 69505, \"parent_checkpoint_digest\": \"9865cd1e7bd86482bff5aed82b21ffa808169644749acf4edbf106521fb082d1\", \"replay_lesion\": -0.22811964929916106, \"retention\": 2.0671876340012876, \"seed\": 47}]",
+        "phase_b_continues_phase_a_checkpoint=true; phase_a_replay_is_train_only=true"
+      ]
+    }
+  ],
+  "manifest_path": "E:\\Seed\\plans\\manifests\\taiji_foundation_baseline_v1.json",
+  "contract_status": "validated",
+  "capability_measurements": "b5_continual_learning",
+  "profile": "smoke",
+  "model_tier": null,
+  "report_written": true
+}

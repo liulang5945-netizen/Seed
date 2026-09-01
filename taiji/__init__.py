@@ -181,6 +181,8 @@ from .foundation_evaluation import (
     FoundationTaskSpec,
 )
 from .foundation_tasks import (
+    ContinualLearningCorpus,
+    ContinualLearningTask,
     DelayedMemoryCorpus,
     DelayedMemoryQuery,
     DelayedMemoryTask,
@@ -599,6 +601,8 @@ __all__ = [
     "DelayedMemoryCorpus",
     "DelayedMemoryQuery",
     "DelayedMemoryTask",
+    "ContinualLearningCorpus",
+    "ContinualLearningTask",
     "GoalActionCorpus",
     "GoalActionEpisode",
     "GoalActionTask",

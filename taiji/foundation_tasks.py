@@ -559,6 +559,169 @@ class GoalActionTask:
         return correct / len(episodes)
 
 
+@dataclass(frozen=True)
+class ContinualLearningCorpus:
+    """Two sequential learning phases with an old-ability retention set."""
+
+    phase_a_train: bytes
+    phase_a_holdout: bytes
+    phase_b_train: bytes
+    phase_b_holdout: bytes
+    retention: bytes
+
+    def __post_init__(self) -> None:
+        for field_name in (
+            "phase_a_train",
+            "phase_a_holdout",
+            "phase_b_train",
+            "phase_b_holdout",
+            "retention",
+        ):
+            value = getattr(self, field_name)
+            if not isinstance(value, bytes) or not value:
+                raise ValueError(f"{field_name} continual corpus must contain non-empty bytes")
+
+    @property
+    def sample_counts(self) -> dict[str, int]:
+        return {
+            "train": len(self.phase_a_train) + len(self.phase_b_train),
+            "holdout": len(self.phase_a_holdout) + len(self.phase_b_holdout),
+            "retention": len(self.retention),
+        }
+
+
+class ContinualLearningTask:
+    """Measure checkpoint continuation, bounded replay, and old-skill retention."""
+
+    ability_id = "b5_continual_learning"
+
+    def __init__(
+        self,
+        config: TaijiConfig,
+        *,
+        seeds: Sequence[int] = (11, 29, 47),
+        epochs: int = 1,
+        replay_epochs: int = 1,
+    ) -> None:
+        if not seeds or len(set(int(seed) for seed in seeds)) != len(seeds):
+            raise ValueError("continual learning needs unique seeds")
+        if int(epochs) <= 0 or int(replay_epochs) <= 0:
+            raise ValueError("continual learning epochs must be positive")
+        self.config = config
+        self.seeds = tuple(int(seed) for seed in seeds)
+        self.epochs = int(epochs)
+        self.replay_epochs = int(replay_epochs)
+
+    def evaluate(self, corpus: ContinualLearningCorpus) -> FoundationMeasurement:
+        seed_records: list[dict[str, float | int]] = []
+        for seed in self.seeds:
+            model = Taiji(self._with_seed(seed), episode_id=f"m0-b5-seed-{seed}")
+            model.learn_bytes(corpus.phase_a_train, epochs=self.epochs)
+            old_before = self._score_bpb(model, corpus.phase_a_holdout)
+            parent_digest = content_digest(model.checkpoint())
+            model.learn_bytes(corpus.phase_b_train, epochs=self.epochs)
+            for _ in range(self.replay_epochs):
+                model.learn_bytes(corpus.phase_a_train, epochs=1)
+            continued_digest = content_digest(model.checkpoint())
+            old_after = self._score_bpb(model, corpus.phase_a_holdout)
+            new_after = self._score_bpb(model, corpus.phase_b_holdout)
+            retention = self._score_bpb(model, corpus.retention)
+            fresh = Taiji(self._with_seed(seed), episode_id=f"m0-b5-fresh-{seed}")
+            fresh.learn_bytes(corpus.phase_b_train, epochs=self.epochs)
+            fresh_new = self._score_bpb(fresh, corpus.phase_b_holdout)
+
+            lesion = Taiji(self._with_seed(seed), episode_id=f"m0-b5-lesion-{seed}")
+            lesion.learn_bytes(corpus.phase_a_train, epochs=self.epochs)
+            lesion_old_before = self._score_bpb(lesion, corpus.phase_a_holdout)
+            lesion.learn_bytes(corpus.phase_b_train, epochs=self.epochs)
+            lesion_old_after = self._score_bpb(lesion, corpus.phase_a_holdout)
+            backward_transfer = old_before - old_after
+            lesion_transfer = lesion_old_before - lesion_old_after
+            seed_records.append(
+                {
+                    "seed": seed,
+                    "old_before": old_before,
+                    "old_after": old_after,
+                    "new_after": new_after,
+                    "fresh_new": fresh_new,
+                    "retention": retention,
+                    "backward_transfer": backward_transfer,
+                    "replay_lesion": lesion_transfer,
+                    "parent_checkpoint_digest": parent_digest,
+                    "continued_checkpoint_digest": continued_digest,
+                    "continued_from_parent": int(parent_digest != continued_digest),
+                    "holdout_updates": 0,
+                    "parameter_count": model.parameter_count(),
+                }
+            )
+
+        native_values = [float(record["backward_transfer"]) for record in seed_records]
+        lesion_values = [float(record["replay_lesion"]) for record in seed_records]
+        new_values = [float(record["new_after"]) for record in seed_records]
+        fresh_values = [float(record["fresh_new"]) for record in seed_records]
+        retention_values = [float(record["retention"]) for record in seed_records]
+        baseline_metrics = {
+            "random": 0.0,
+            "frozen_parent": 0.0,
+            "simple_rule": 0.0,
+            "hash_only": 0.0,
+            "replay_lesion": min(lesion_values),
+        }
+        worst_native = min(native_values)
+        holdout_updates = max(int(record["holdout_updates"]) for record in seed_records)
+        continued = all(bool(record["continued_from_parent"]) for record in seed_records)
+        causal_replay_gain = all(
+            float(record["backward_transfer"]) > float(record["replay_lesion"])
+            for record in seed_records
+        )
+        new_capability_preserved = all(
+            native <= fresh + 0.5 for native, fresh in zip(new_values, fresh_values, strict=True)
+        )
+        retention_preserved = all(
+            value <= float(record["old_before"]) + 0.5
+            for value, record in zip(retention_values, seed_records, strict=True)
+        )
+        return FoundationMeasurement(
+            ability_id=self.ability_id,
+            status=(
+                "passed"
+                if (
+                    worst_native > max(baseline_metrics.values())
+                    and causal_replay_gain
+                    and continued
+                    and new_capability_preserved
+                    and retention_preserved
+                    and holdout_updates == 0
+                )
+                else "failed"
+            ),
+            primary_metric="backward_transfer",
+            metric_direction="higher_is_better",
+            metric_value=worst_native,
+            baseline_metrics=baseline_metrics,
+            sample_counts=corpus.sample_counts,
+            holdout_updates=holdout_updates,
+            evidence=(
+                "seed_metrics=" + json.dumps(seed_records, sort_keys=True),
+                "phase_b_continues_phase_a_checkpoint=true; phase_a_replay_is_train_only=true",
+            ),
+        )
+
+    def _with_seed(self, seed: int) -> TaijiConfig:
+        values = self.config.to_dict()
+        values["seed"] = int(seed)
+        return TaijiConfig.from_dict(values)
+
+    @staticmethod
+    def _score_bpb(model: Taiji, data: bytes) -> float:
+        before = content_digest(model.checkpoint())
+        score = model.score_bytes(data)
+        after = content_digest(model.checkpoint())
+        if before != after:
+            raise RuntimeError("Taiji score_bytes mutated the checkpoint")
+        return float(score["mean_surprise"]) / math.log(2.0)
+
+
 def _world_error(
     learner: WorldDynamicsLearner,
     cases: Sequence[WorldInterventionCase],

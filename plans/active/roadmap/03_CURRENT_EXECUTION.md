@@ -52,7 +52,7 @@ Taiji 采用“站在巨人肩膀上”的双边界：原始 byte 输入继续�
 
 | 顺序 | 阶段 | 状态 | 主要产物 | 允许进入下一阶段的条件 |
 |---|---|---|---|---|
-| 0 | M0 CPU 五项基础能力真实性基线 | **当前进行（M0-0/M0-1/B1/B2/B3/B4 已完成，M0-2 B5 进行中）** | 数据合同、对照 evaluator、checkpoint preflight、基线报告 | 测量链可信且能保存/恢复；模型得分可以失败，但失败必须被如实记录 |
+| 0 | M0 CPU 五项基础能力真实性基线 | **当前进行（M0-0/M0-1/B1/B2/B3/B4/B5 适配器已完成，完整 M0 矩阵待运行）** | 数据合同、对照 evaluator、checkpoint preflight、基线报告 | 测量链可信且能保存/恢复；模型得分可以失败，但失败必须被如实记录 |
 | 1 | M1 Taiji foundation 训练管线与首次 CPU 训练 | 待开始，M0 后立即进入 | 原生 trainer、数据流水线、训练曲线、首个 child checkpoint | 未见数据相对父 checkpoint/对照有稳定净提升 |
 | 2 | M2 世界—行动—语言后训练 | 待开始 | 世界预测、行动信用、ContentPlan/语言蒸馏和受控 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
 | 3 | M3 综合能力晋级与真实 Workbench 验证 | 待开始 | 独立评测套件、真实 Workbench longitudinal report、晋级 checkpoint | 至少一个真实任务族获得可重复净收益 |
@@ -82,13 +82,15 @@ B3 适配器已完成并通过 `reports/taiji_m0_b3_smoke_20260901.json`：三 s
 
 B4 适配器已完成并通过 `reports/taiji_m0_b4_smoke_20260901.json`：动作器从冷启动状态出发，训练只用 cue→action→reward 的原生动作突触更新；三 seed 的 holdout success rate 均为 `1.0`，无奖励归因消融组均为 `0.5`，retention 为 `1.0`，且 holdout 更新数为 0。该结果只证明 B4 的因果测量链在 smoke 规模上成立，不替代 manifest 的 foundation 样本下限。
 
-当前唯一下一步是完成 **B5 持续学习与旧能力保持适配器**，随后运行完整 M0 矩阵并冻结 M1 首轮训练目标。
+B5 适配器已完成并通过 `reports/taiji_m0_b5_smoke_20260901.json`：phase-B 确实从 phase-A 的 checkpoint 继续，holdout 更新数为 0，并记录了 replay 与无 replay 的旧能力变化；当前 smoke 的最差 backward transfer 为负，说明 Taiji 现有序列学习仍会遗忘，B5 任务保持失败而不是伪造通过。这是进入 M1 的直接训练目标：先改善持续学习与旧能力保持，再扩大训练规模。
+
+当前唯一下一步是运行 **完整 M0 五项矩阵**（接入真实 B1 数据和 B2～B5 适配器），再依据真实失败项冻结 M1 首轮训练目标；不因 smoke 失败回到外围建设。
 
 本步只允许创建或修改以下 owner：
 
 - `plans/manifests/taiji_foundation_baseline_v1.json`：五项能力、数据分区、对照、seed、资源和报告 schema；
 - `taiji/foundation_evaluation.py`：不带训练副作用的统一 evaluator；
-- `taiji/foundation_tasks.py`：原生 B1～B5 任务适配器；当前已完成 B1、B2、B3、B4；
+- `taiji/foundation_tasks.py`：原生 B1～B5 任务适配器；当前已完成 B1、B2、B3、B4、B5；
 - `tests/taiji_native/test_foundation_evaluation.py`：数据泄漏、对照、checkpoint 和失败口径 red；
 - `tests/taiji_native/test_foundation_tasks.py`：原生任务适配器的真实状态和 holdout 只读回归；
 - `scripts/training/eval_taiji_foundation_baseline.py`：CPU 基线入口；
@@ -97,6 +99,7 @@ B4 适配器已完成并通过 `reports/taiji_m0_b4_smoke_20260901.json`：动�
 - `reports/taiji_m0_b2_smoke_<date>.json`：B2 smoke 真实性证据。
 - `reports/taiji_m0_b3_smoke_<date>.json`：B3 smoke 真实性证据。
 - `reports/taiji_m0_b4_smoke_<date>.json`：B4 smoke 真实性证据。
+- `reports/taiji_m0_b5_smoke_<date>.json`：B5 smoke 真实性证据。
 
 开始写 evaluator 前先核对已登记的 OpenAPI snapshot 漂移，确保现有 CI 基线没有被误当作本步新增失败。M0 报告生成后，不因模型分数低而回到外围建设；只要 checkpoint 和测量链可信，就立即进入 M1，低分直接成为首轮训练目标。
 
