@@ -8,10 +8,19 @@ import math
 from collections.abc import Sequence
 from dataclasses import dataclass
 
+import torch
+
 from .config import TaijiConfig
+from .contracts import WorldInterventionCase, WorldInterventionCorpus
 from .foundation_evaluation import FoundationMeasurement
 from .internalization import content_digest
 from .model import Taiji
+from .world_learning import (
+    WorldDynamicsLearner,
+    WorldPrediction,
+    WorldSchema,
+    _replace_numeric_state,
+)
 
 
 @dataclass(frozen=True)
@@ -220,6 +229,229 @@ class DelayedMemoryTask:
             prediction = max(actions, key=lambda action: float(probabilities[action].item()))
             correct += int(prediction == query.expected_action)
         return correct / len(queries)
+
+
+@dataclass(frozen=True)
+class WorldTransitionCorpus:
+    train: tuple[WorldInterventionCase, ...]
+    holdout: tuple[WorldInterventionCase, ...]
+    retention: tuple[WorldInterventionCase, ...]
+
+    def __post_init__(self) -> None:
+        if not self.train or not self.holdout or not self.retention:
+            raise ValueError("world transition partitions cannot be empty")
+        seen: set[str] = set()
+        for partition, cases in (
+            ("train", self.train),
+            ("holdout", self.holdout),
+            ("retention", self.retention),
+        ):
+            if any(not isinstance(case, WorldInterventionCase) for case in cases):
+                raise TypeError(f"{partition} must contain WorldInterventionCase values")
+            ids = {case.case_id for case in cases}
+            if len(ids) != len(cases) or seen.intersection(ids):
+                raise ValueError("world transition case ids must be unique across partitions")
+            seen.update(ids)
+
+    @property
+    def sample_counts(self) -> dict[str, int]:
+        return {
+            "train": len(self.train),
+            "holdout": len(self.holdout),
+            "retention": len(self.retention),
+        }
+
+
+class WorldTransitionTask:
+    """Measure train-only native world transition learning and controls."""
+
+    ability_id = "b3_world_transition"
+
+    def __init__(
+        self,
+        *,
+        seeds: Sequence[int] = (11, 29, 47),
+        hidden_dim: int = 32,
+        epochs: int = 50,
+        learning_rate: float = 0.01,
+    ) -> None:
+        if not seeds or len(set(int(seed) for seed in seeds)) != len(seeds):
+            raise ValueError("world transition needs unique seeds")
+        if int(hidden_dim) <= 0 or int(epochs) <= 0 or float(learning_rate) <= 0.0:
+            raise ValueError("world transition model settings must be positive")
+        self.seeds = tuple(int(seed) for seed in seeds)
+        self.hidden_dim = int(hidden_dim)
+        self.epochs = int(epochs)
+        self.learning_rate = float(learning_rate)
+
+    def evaluate(self, corpus: WorldTransitionCorpus) -> FoundationMeasurement:
+        schema = WorldSchema.from_corpus(
+            WorldInterventionCorpus(train=corpus.train, holdout=corpus.holdout)
+        )
+        seed_records: list[dict[str, float | int]] = []
+        for seed in self.seeds:
+            frozen = WorldDynamicsLearner(schema, hidden_dim=self.hidden_dim, seed=seed)
+            frozen_error = _world_error(frozen, corpus.holdout, schema)
+            learner = WorldDynamicsLearner(schema, hidden_dim=self.hidden_dim, seed=seed)
+            losses = learner.fit(
+                corpus.train,
+                epochs=self.epochs,
+                learning_rate=self.learning_rate,
+            )
+            persistent_before = _world_learner_digest(learner)
+            native_error = _world_error(learner, corpus.holdout, schema)
+            persistent_after = _world_learner_digest(learner)
+            retention_error = _world_error(learner, corpus.retention, schema)
+            frozen_retention_error = _world_error(frozen, corpus.retention, schema)
+            seed_records.append(
+                {
+                    "seed": seed,
+                    "taiji": native_error,
+                    "frozen_parent": frozen_error,
+                    "retention": retention_error,
+                    "frozen_retention": frozen_retention_error,
+                    "simple_rule": _no_change_error(corpus.holdout, schema),
+                    "hash_only": _hash_world_error(corpus.holdout, schema, seed=seed),
+                    "holdout_updates": int(persistent_before != persistent_after),
+                    "training_loss": float(losses[-1]),
+                    "parameter_count": sum(parameter.numel() for parameter in learner.parameters()),
+                }
+            )
+        native_values = [float(record["taiji"]) for record in seed_records]
+        retention_values = [float(record["retention"]) for record in seed_records]
+        frozen_retention_values = [float(record["frozen_retention"]) for record in seed_records]
+        baseline_metrics = {
+            "random": min(
+                _random_world_error(corpus.holdout, schema, seed=seed) for seed in self.seeds
+            ),
+            "frozen_parent": min(float(record["frozen_parent"]) for record in seed_records),
+            "simple_rule": min(float(record["simple_rule"]) for record in seed_records),
+            "hash_only": min(float(record["hash_only"]) for record in seed_records),
+        }
+        worst_native = max(native_values)
+        holdout_updates = max(int(record["holdout_updates"]) for record in seed_records)
+        retention_preserved = all(
+            actual <= frozen + 0.05
+            for actual, frozen in zip(retention_values, frozen_retention_values, strict=True)
+        )
+        beats_controls = all(worst_native < value for value in baseline_metrics.values())
+        return FoundationMeasurement(
+            ability_id=self.ability_id,
+            status=(
+                "passed"
+                if beats_controls and retention_preserved and holdout_updates == 0
+                else "failed"
+            ),
+            primary_metric="transition_error",
+            metric_direction="lower_is_better",
+            metric_value=worst_native,
+            baseline_metrics=baseline_metrics,
+            sample_counts=corpus.sample_counts,
+            holdout_updates=holdout_updates,
+            evidence=(
+                "seed_metrics=" + json.dumps(seed_records, sort_keys=True),
+                "schema_source=train_only; holdout_and_retention_register_parameters=false",
+            ),
+        )
+
+
+def _world_error(
+    learner: WorldDynamicsLearner,
+    cases: Sequence[WorldInterventionCase],
+    schema: WorldSchema,
+) -> float:
+    errors: list[float] = []
+    for case in cases:
+        prediction = learner.predict(
+            case.initial,
+            case.action,
+            register_parameters=False,
+        )
+        errors.append(_prediction_error(prediction, case, schema))
+    return sum(errors) / len(errors)
+
+
+def _world_learner_digest(learner: WorldDynamicsLearner) -> str:
+    return content_digest(
+        {
+            name: tensor.detach().cpu().clone()
+            for name, tensor in learner.state_dict().items()
+        }
+    )
+
+
+def _prediction_error(
+    prediction: WorldPrediction,
+    case: WorldInterventionCase,
+    schema: WorldSchema,
+) -> float:
+    state_error = schema.normalized_state_error(prediction.state, case.expected_state)
+    expected_success = float(
+        case.expected_outcome.success
+        if case.expected_outcome.success is not None
+        else case.expected_outcome.reward > 0.0
+    )
+    return (
+        state_error
+        + (prediction.reward - float(case.expected_outcome.reward)) ** 2
+        + (prediction.success_probability - expected_success) ** 2
+    )
+
+
+def _no_change_error(
+    cases: Sequence[WorldInterventionCase], schema: WorldSchema
+) -> float:
+    predictions = tuple(
+        WorldPrediction(state=case.initial, reward=0.0, success_probability=0.5)
+        for case in cases
+    )
+    return sum(
+        _prediction_error(prediction, case, schema)
+        for prediction, case in zip(predictions, cases, strict=True)
+    ) / len(cases)
+
+
+def _random_world_error(
+    cases: Sequence[WorldInterventionCase], schema: WorldSchema, *, seed: int
+) -> float:
+    generator = torch.Generator(device="cpu")
+    generator.manual_seed(int(seed))
+    scales = torch.tensor(schema.state_scales, dtype=torch.float32)
+    errors: list[float] = []
+    for case in cases:
+        values = schema.state_values(case.initial) + (
+            torch.rand(schema.state_dim, generator=generator) - 0.5
+        ) * 2.0 * scales
+        prediction = WorldPrediction(
+            state=_replace_numeric_state(case.initial, schema, values),
+            reward=float(torch.rand((), generator=generator).item() * 2.0 - 1.0),
+            success_probability=float(torch.rand((), generator=generator).item()),
+        )
+        errors.append(_prediction_error(prediction, case, schema))
+    return sum(errors) / len(errors)
+
+
+def _hash_world_error(
+    cases: Sequence[WorldInterventionCase], schema: WorldSchema, *, seed: int
+) -> float:
+    scales = torch.tensor(schema.state_scales, dtype=torch.float32)
+    errors: list[float] = []
+    for case in cases:
+        digest = hashlib.sha256(
+            f"{int(seed)}\0{case.action.action_id}\0{case.action.kind}".encode()
+        ).digest()
+        signs = torch.tensor(
+            [1.0 if digest[index % len(digest)] & 1 else -1.0 for index in range(schema.state_dim)],
+            dtype=torch.float32,
+        )
+        values = schema.state_values(case.initial) + 0.25 * signs * scales
+        prediction = WorldPrediction(
+            state=_replace_numeric_state(case.initial, schema, values),
+            reward=0.0,
+            success_probability=0.5,
+        )
+        errors.append(_prediction_error(prediction, case, schema))
+    return sum(errors) / len(errors)
 
 
 class SequencePredictionTask:

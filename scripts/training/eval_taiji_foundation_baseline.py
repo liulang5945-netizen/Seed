@@ -1,4 +1,4 @@
-"""M0-1 contract canary for the five Taiji foundation abilities.
+"""M0 foundation evaluation entry point for the five Taiji abilities.
 
 The task runners are intentionally not hidden behind this command yet.  Until
 they produce real measurements, this entry point emits ``not_evaluated`` and
@@ -14,10 +14,19 @@ import sys
 from pathlib import Path
 from typing import Any
 
+import torch
+
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+from taiji import (  # noqa: E402
+    Outcome,
+    WorldAction,
+    WorldInterventionCase,
+    WorldObject,
+    WorldState,
+)
 from taiji.foundation_evaluation import (
     FOUNDATION_REQUIRED_ABILITIES,
     FoundationEvaluation,
@@ -31,6 +40,8 @@ from taiji.foundation_tasks import (  # noqa: E402
     MemoryEpisode,
     SequencePredictionCorpus,
     SequencePredictionTask,
+    WorldTransitionCorpus,
+    WorldTransitionTask,
 )
 
 DEFAULT_MANIFEST = PROJECT_ROOT / "plans" / "manifests" / "taiji_foundation_baseline_v1.json"
@@ -57,6 +68,7 @@ def build_contract_report(
     checkpoint_gate_status: str,
     b1_measurement: FoundationMeasurement | None = None,
     b2_measurement: FoundationMeasurement | None = None,
+    b3_measurement: FoundationMeasurement | None = None,
 ) -> FoundationEvaluation:
     measurements = {
         ability_id: FoundationMeasurement(
@@ -76,6 +88,8 @@ def build_contract_report(
         measurements[b1_measurement.ability_id] = b1_measurement
     if b2_measurement is not None:
         measurements[b2_measurement.ability_id] = b2_measurement
+    if b3_measurement is not None:
+        measurements[b3_measurement.ability_id] = b3_measurement
     return FoundationEvaluation.evaluate(
         manifest,
         measurements,
@@ -189,6 +203,60 @@ def build_delayed_memory_smoke_corpus(*, count: int = 8) -> DelayedMemoryCorpus:
     return DelayedMemoryCorpus(train=train, holdout=holdout, retention=retention)
 
 
+def build_world_transition_smoke_corpus(*, count: int = 8) -> WorldTransitionCorpus:
+    if int(count) < 4:
+        raise ValueError("B3 smoke corpus needs at least four transitions")
+
+    def case(case_id: str, position: float) -> WorldInterventionCase:
+        before = WorldState(
+            tick=0,
+            latent=torch.zeros(1),
+            objects=(
+                WorldObject("agent", attributes={"energy": 1.0}),
+                WorldObject("target", attributes={"position": position}),
+            ),
+        )
+        action = WorldAction(
+            action_id=case_id,
+            kind="push",
+            tick=0,
+            actor_id="agent",
+            target_id="target",
+            parameters={"amount": 1.0},
+        )
+        after = WorldState(
+            tick=1,
+            latent=torch.zeros(1),
+            objects=(
+                WorldObject("agent", attributes={"energy": 1.0}),
+                WorldObject("target", attributes={"position": position + 1.0}),
+            ),
+        )
+        return WorldInterventionCase(
+            case_id=case_id,
+            initial=before,
+            action=action,
+            expected_state=after,
+            expected_outcome=Outcome(
+                intent_id=case_id,
+                reward=1.0,
+                success=True,
+                tick=1,
+            ),
+        )
+
+    return WorldTransitionCorpus(
+        train=tuple(case(f"m0-b3-train-{index}", float(index)) for index in range(int(count))),
+        holdout=tuple(
+            case(f"m0-b3-holdout-{index}", 10.0 + index) for index in range(max(3, count // 2))
+        ),
+        retention=tuple(
+            case(f"m0-b3-retention-{index}", 20.0 + index)
+            for index in range(max(3, count // 2))
+        ),
+    )
+
+
 def _model_config(tier: str, seed: int) -> Any:
     from taiji import TaijiConfig
 
@@ -236,6 +304,7 @@ def main() -> int:
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
     parser.add_argument("--b1-corpus", nargs="+", type=Path)
     parser.add_argument("--b2-smoke", action="store_true")
+    parser.add_argument("--b3-smoke", action="store_true")
     parser.add_argument("--model-tier", choices=("micro", "default"), default="micro")
     parser.add_argument("--epochs", type=int, default=1)
     parser.add_argument("--profile", choices=("smoke", "foundation"), default="smoke")
@@ -247,6 +316,7 @@ def main() -> int:
     checkpoint_status = _checkpoint_gate_status(manifest, args.checkpoint_report)
     b1_measurement = None
     b2_measurement = None
+    b3_measurement = None
     if args.b1_corpus:
         if args.profile == "smoke":
             budgets = (4_096, 1_024, 1_024)
@@ -269,11 +339,17 @@ def main() -> int:
             _memory_config(manifest.seeds[0]),
             seeds=manifest.seeds,
         ).evaluate(build_delayed_memory_smoke_corpus())
+    if args.b3_smoke:
+        b3_measurement = WorldTransitionTask(
+            seeds=manifest.seeds,
+            epochs=10 if args.profile == "smoke" else 50,
+        ).evaluate(build_world_transition_smoke_corpus())
     evaluation = build_contract_report(
         manifest,
         checkpoint_gate_status=checkpoint_status,
         b1_measurement=b1_measurement,
         b2_measurement=b2_measurement,
+        b3_measurement=b3_measurement,
     )
     result = evaluation.to_payload()
     result["manifest_path"] = str(args.manifest)
@@ -283,11 +359,12 @@ def main() -> int:
         for ability_id, measurement in (
             ("b1_sequence_prediction", b1_measurement),
             ("b2_delayed_memory", b2_measurement),
+            ("b3_world_transition", b3_measurement),
         )
         if measurement is not None
     ]
     result["capability_measurements"] = (
-        "; ".join((*measured, "b3-b5_not_evaluated")) if measured else "not_evaluated"
+        "; ".join((*measured, "b4-b5_not_evaluated")) if measured else "not_evaluated"
     )
     result["profile"] = args.profile
     result["model_tier"] = args.model_tier if b1_measurement is not None else None

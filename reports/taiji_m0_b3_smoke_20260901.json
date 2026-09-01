@@ -1,0 +1,99 @@
+{
+  "format": "taiji-foundation-evaluation-v1",
+  "manifest_digest": "c5f178d4e18018f5085c3f56d1ae6d7596df304aee975f81c12db3b72e7e74f8",
+  "checkpoint_gate_status": "passed",
+  "status": "not_evaluated",
+  "can_promote": false,
+  "failure_reasons": [
+    "b1_sequence_prediction:not_evaluated",
+    "b2_delayed_memory:not_evaluated",
+    "b3_world_transition:insufficient_train",
+    "b3_world_transition:insufficient_holdout",
+    "b3_world_transition:insufficient_retention",
+    "b4_goal_action:not_evaluated",
+    "b5_continual_learning:not_evaluated"
+  ],
+  "measurements": [
+    {
+      "ability_id": "b1_sequence_prediction",
+      "status": "not_evaluated",
+      "primary_metric": "bits_per_byte",
+      "metric_direction": "lower_is_better",
+      "metric_value": null,
+      "baseline_metrics": {},
+      "sample_counts": {},
+      "holdout_updates": 0,
+      "evidence": [
+        "m0-1-contract-only; task runner pending"
+      ]
+    },
+    {
+      "ability_id": "b2_delayed_memory",
+      "status": "not_evaluated",
+      "primary_metric": "recall_accuracy",
+      "metric_direction": "higher_is_better",
+      "metric_value": null,
+      "baseline_metrics": {},
+      "sample_counts": {},
+      "holdout_updates": 0,
+      "evidence": [
+        "m0-1-contract-only; task runner pending"
+      ]
+    },
+    {
+      "ability_id": "b3_world_transition",
+      "status": "passed",
+      "primary_metric": "transition_error",
+      "metric_direction": "lower_is_better",
+      "metric_value": 0.12364016296073732,
+      "baseline_metrics": {
+        "frozen_parent": 0.15802806307637862,
+        "hash_only": 1.2890625,
+        "random": 1.374416684046741,
+        "simple_rule": 1.2578125
+      },
+      "sample_counts": {
+        "holdout": 4,
+        "retention": 4,
+        "train": 8
+      },
+      "holdout_updates": 0,
+      "evidence": [
+        "seed_metrics=[{\"frozen_parent\": 2.101193549379307, \"frozen_retention\": 2.105617684531773, \"hash_only\": 1.3046875, \"holdout_updates\": 0, \"parameter_count\": 388, \"retention\": 0.07159028471095485, \"seed\": 11, \"simple_rule\": 1.2578125, \"taiji\": 0.051071504993917216, \"training_loss\": 0.4078698456287384}, {\"frozen_parent\": 0.15802806307637862, \"frozen_retention\": 0.15584727155142364, \"hash_only\": 1.3046875, \"holdout_updates\": 0, \"parameter_count\": 388, \"retention\": 0.02925313214036951, \"seed\": 29, \"simple_rule\": 1.2578125, \"taiji\": 0.027236440194579714, \"training_loss\": 0.21778252720832825}, {\"frozen_parent\": 0.3540195272604434, \"frozen_retention\": 0.39211925362882916, \"hash_only\": 1.2890625, \"holdout_updates\": 0, \"parameter_count\": 388, \"retention\": 0.3322875162624115, \"seed\": 47, \"simple_rule\": 1.2578125, \"taiji\": 0.12364016296073732, \"training_loss\": 0.25807011127471924}]",
+        "schema_source=train_only; holdout_and_retention_register_parameters=false"
+      ]
+    },
+    {
+      "ability_id": "b4_goal_action",
+      "status": "not_evaluated",
+      "primary_metric": "success_rate",
+      "metric_direction": "higher_is_better",
+      "metric_value": null,
+      "baseline_metrics": {},
+      "sample_counts": {},
+      "holdout_updates": 0,
+      "evidence": [
+        "m0-1-contract-only; task runner pending"
+      ]
+    },
+    {
+      "ability_id": "b5_continual_learning",
+      "status": "not_evaluated",
+      "primary_metric": "backward_transfer",
+      "metric_direction": "higher_is_better",
+      "metric_value": null,
+      "baseline_metrics": {},
+      "sample_counts": {},
+      "holdout_updates": 0,
+      "evidence": [
+        "m0-1-contract-only; task runner pending"
+      ]
+    }
+  ],
+  "manifest_path": "E:\\Seed\\plans\\manifests\\taiji_foundation_baseline_v1.json",
+  "contract_status": "validated",
+  "capability_measurements": "b3_world_transition; b4-b5_not_evaluated",
+  "profile": "smoke",
+  "model_tier": null,
+  "report_written": true
+}

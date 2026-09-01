@@ -187,6 +187,8 @@ from .foundation_tasks import (
     MemoryEpisode,
     SequencePredictionCorpus,
     SequencePredictionTask,
+    WorldTransitionCorpus,
+    WorldTransitionTask,
 )
 from .generation import (
     GENERATION_CHECKPOINT_FORMAT,
@@ -597,6 +599,8 @@ __all__ = [
     "MemoryEpisode",
     "SequencePredictionCorpus",
     "SequencePredictionTask",
+    "WorldTransitionCorpus",
+    "WorldTransitionTask",
     "AssemblyRelationCorpus",
     "AssemblyRelationExample",
     "AssemblyRelationEvaluationConfig",
