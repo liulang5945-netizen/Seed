@@ -251,6 +251,10 @@ seed 47 的 full-coverage continuation 已完成，报告为 `reports/taiji_m1_f
 
 M1-7 的第一片已完成：新增 `plans/manifests/taiji_continual_memory_v1.json`、`ContinualMemoryCorpus`/`ContinualMemoryTask` 和 `scripts/training/eval_taiji_b5_memory.py`。B5 现在有显式 phase-A train/holdout/retention、phase-B 干扰与 novel-cue 控制、replay train，并实际比较 no-replay counterfactual 与 replay 的旧能力变化；所有 holdout/retention 读操作保持 `holdout_updates=0`，语料 digest 可复现。canary 报告 `reports/taiji_m1_b5_memory_canary_20260902.json` 为 `failed`：phase-A 旧 recall `0.75`，no-replay 后 `0.50`，replay 后 `0.625`，replay 相对 no-replay 有 `+0.125` 因果增益，但仍有旧记忆回退，说明仅有当前事件重放还不足以恢复 memory。该失败是下一片 memory replay 接线的输入，不进入 full retrain。
 
+M1-7 的第二片已完成：`JointTrainingRun` 与 `scripts/training/train_taiji_joint.py` 新增可校验的 `replay_memory_corpus`、epoch/cursor/digest 和 `phase=replay-memory`，byte replay 后会真正重放 phase-A memory episodes；普通 resume 会拒绝 replay memory digest 不一致。canary `reports/taiji_m1_f7_memory_replay_canary_20260902.json` 及独立复核 `reports/taiji_m1_f7_memory_replay_canary_eval_only_20260902.json` 均通过链路校验，memory recall `0.75→0.875`，checkpoint digest `e0033f12…`，`checkpoint_read_only=true`；相关训练/任务测试共 `13 passed`。这证明接线有效，但还不代表 foundation full-coverage 的三 seed B5 已通过。
+
+当前唯一下一步是 **M1-8：用 memory replay 重跑三 seed full-coverage F5**：从三个 F4 `best-holdout.pt` 沿原 lineage 继续，保持 B1/B2/B3/B4 foundation 配置与 byte replay，同时加入 phase-A memory replay（初始 count `64`），重新生成三 seed child、独立 eval-only 和 B5 backward-transfer/no-replay 审计。结果未满足旧 memory 不退化前，不进入 M2，也不切换到 provider、Workbench、Skill/MCP 或客户端外围。
+
 ## 7. M2～M8 的开发日程与外围任务安置
 
 ### M2：世界—行动—语言后训练

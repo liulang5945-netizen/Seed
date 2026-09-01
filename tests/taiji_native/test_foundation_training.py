@@ -301,6 +301,7 @@ def test_joint_training_starts_an_explicit_continuation_from_child_checkpoint() 
         profile="smoke",
     )
     memory_corpus = build_memory_corpus(count=4)
+    replay_memory_corpus = build_memory_corpus(count=4)
     world_corpus = build_world_corpus(count=4)
     goal_corpus = build_goal_corpus(count=4)
     output_dir = Path(".seed_test_tmp") / "m1-continuation-parent"
@@ -348,6 +349,8 @@ def test_joint_training_starts_an_explicit_continuation_from_child_checkpoint() 
         world_repeats=1,
         replay_dataset=dataset,
         replay_epochs=1,
+        replay_memory_corpus=replay_memory_corpus,
+        replay_memory_epochs=1,
     )
 
     assert continuation.continuation_source_checkpoint_digest
@@ -361,8 +364,10 @@ def test_joint_training_starts_an_explicit_continuation_from_child_checkpoint() 
     assert report["parent_checkpoint_digest"]
     assert report["parent_checkpoint_digest"] != original_report["child_checkpoint_digest"]
     assert report["replay_dataset_digest"] == dataset.digest
+    assert report["replay_memory_digest"]
     assert report["metric_interval"] == 100
     assert any(item.get("train_kind") == "replay" for item in report["history"])
+    assert any(item.get("train_kind") == "replay-memory" for item in report["history"])
 
     restored = JointTrainingRun.from_checkpoint(
         continuation_dir / "last.pt",
@@ -372,5 +377,6 @@ def test_joint_training_starts_an_explicit_continuation_from_child_checkpoint() 
         continuation.goal_corpus,
         output_dir=continuation_dir,
         replay_dataset=dataset,
+        replay_memory_corpus=replay_memory_corpus,
     )
     assert restored.evaluate_only()["checkpoint_read_only"] is True
