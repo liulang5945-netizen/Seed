@@ -1,0 +1,122 @@
+{
+  "format": "taiji-native-joint-training-v1",
+  "version": 1,
+  "status": "passed",
+  "stage": "M1-5",
+  "course": "F4 joint short training",
+  "code_revision": "ab4b079cf7acc23e274cd95cabf7cef5bca17fe9",
+  "dataset_digest": "291de982a45ae6e7ddf5f01196a913a4ad4fd0f72f25cf1b03d967303cf105be",
+  "memory_digest": "53ed3250341551d680eecdfc9a88bc0768a3aa6b2b9f7ea03d75a9717231850e",
+  "world_action_digest": "765c09efdc6c2c239082082db84f53ce17cfc87e199a1c94d600216539355fbc",
+  "profile": "pilot",
+  "partition_seed": 11,
+  "sample_counts": {
+    "sequence_train_bytes": 16384,
+    "memory_train": 64,
+    "world_train": 64,
+    "goal_train": 64
+  },
+  "gate": {
+    "holdout_and_retention_improved_or_retained_for_all_seeds": true,
+    "credit_lesion_remained_nontrivial": true,
+    "holdout_updates_zero_for_all_seeds": true,
+    "world_transition_rejections_zero_for_all_seeds": true,
+    "fresh_process_eval_only_read_only_for_all_seeds": true,
+    "decision": "passed"
+  },
+  "seeds": [
+    {
+      "seed": 11,
+      "parent_metrics": {
+        "sequence_holdout_bpb": 8.005624549529761,
+        "sequence_retention_bpb": 8.005624549529761,
+        "memory_holdout_recall": 0.5,
+        "memory_retention_recall": 0.5,
+        "world_holdout_error": 1.8870715521654553,
+        "world_retention_error": 1.7805430581212112,
+        "goal_holdout_success": 0.5,
+        "goal_retention_success": 0.5
+      },
+      "final_metrics": {
+        "sequence_holdout_bpb": 5.20961744655671,
+        "sequence_retention_bpb": 5.395149347908938,
+        "memory_holdout_recall": 0.65625,
+        "memory_retention_recall": 0.65625,
+        "world_holdout_error": 1.369973624673615e-05,
+        "world_retention_error": 1.5841345809342045e-05,
+        "goal_holdout_success": 1.0,
+        "goal_retention_success": 1.0
+      },
+      "final_credit_lesion_success": 0.5,
+      "joint_holdout_gain": 5.339314955402259,
+      "holdout_updates": 0,
+      "world_transition_rejections": 0,
+      "checkpoint_digest": "dc1f1096fe0b917d4fca1003aba6e315a82496cb50dafb272888ce8ea4dce9b1",
+      "fresh_eval_read_only": true,
+      "resumed_after_checkpoint_restore_fix": true
+    },
+    {
+      "seed": 29,
+      "parent_metrics": {
+        "sequence_holdout_bpb": 8.005624549529761,
+        "sequence_retention_bpb": 8.005624549529761,
+        "memory_holdout_recall": 0.5,
+        "memory_retention_recall": 0.5,
+        "world_holdout_error": 0.15701291697986353,
+        "world_retention_error": 0.1558750048923221,
+        "goal_holdout_success": 0.5,
+        "goal_retention_success": 0.5
+      },
+      "final_metrics": {
+        "sequence_holdout_bpb": 5.411829856405694,
+        "sequence_retention_bpb": 5.58634545874929,
+        "memory_holdout_recall": 0.53125,
+        "memory_retention_recall": 0.53125,
+        "world_holdout_error": 7.42145751272405e-05,
+        "world_retention_error": 0.0004550090744452895,
+        "goal_holdout_success": 1.0,
+        "goal_retention_success": 1.0
+      },
+      "final_credit_lesion_success": 0.5,
+      "joint_holdout_gain": 3.281983395528804,
+      "holdout_updates": 0,
+      "world_transition_rejections": 0,
+      "checkpoint_digest": "ce66e8e7584685cdfd9c34fde4f1f8d7378d85ee84e3ce5e50c42d5f6cfcf126",
+      "fresh_eval_read_only": true
+    },
+    {
+      "seed": 47,
+      "parent_metrics": {
+        "sequence_holdout_bpb": 8.005624549529761,
+        "sequence_retention_bpb": 8.005624549529761,
+        "memory_holdout_recall": 0.5,
+        "memory_retention_recall": 0.5,
+        "world_holdout_error": 0.4283408084274465,
+        "world_retention_error": 0.4291996413922319,
+        "goal_holdout_success": 0.5,
+        "goal_retention_success": 0.5
+      },
+      "final_metrics": {
+        "sequence_holdout_bpb": 5.404504379935294,
+        "sequence_retention_bpb": 5.56834830097436,
+        "memory_holdout_recall": 0.65625,
+        "memory_retention_recall": 0.65625,
+        "world_holdout_error": 7.94823436090419e-06,
+        "world_retention_error": 7.978088869514677e-06,
+        "goal_holdout_success": 1.0,
+        "goal_retention_success": 1.0
+      },
+      "final_credit_lesion_success": 0.5,
+      "joint_holdout_gain": 3.685703029787552,
+      "holdout_updates": 0,
+      "world_transition_rejections": 0,
+      "checkpoint_digest": "b52f6de895af5852e8bd3ba338bc8e95946b403c0de210f2562387108b49d31d",
+      "fresh_eval_read_only": true
+    }
+  ],
+  "notes": [
+    "seed 11 resumed from its saved last.pt after ab4b079 fixed float32 norm-boundary restore drift; the remaining course completed under the fixed implementation.",
+    "F4 is a stage pass only. It does not promote M1 or claim the M0 five-ability matrix has passed.",
+    "The F4 smoke red case remains preserved separately; its tiny sample size is not used for this pilot decision."
+  ]
+}
