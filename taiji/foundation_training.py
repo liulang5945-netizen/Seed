@@ -12,6 +12,7 @@ import hashlib
 import json
 import math
 import subprocess
+import time
 from collections.abc import Iterable, Mapping, Sequence
 from copy import deepcopy
 from dataclasses import dataclass
@@ -315,7 +316,17 @@ class FoundationTrainingRun:
         target.parent.mkdir(parents=True, exist_ok=True)
         temporary = target.with_name(target.name + ".tmp")
         torch.save(self._checkpoint_payload(), temporary)
-        temporary.replace(target)
+        # Windows can briefly hold the previous target open while a separate
+        # eval-only process reads it.  Keep the write atomic, but retry the
+        # replace so a transient reader lock cannot abort a valid training run.
+        for attempt in range(5):
+            try:
+                temporary.replace(target)
+                break
+            except PermissionError:
+                if attempt == 4:
+                    raise
+                time.sleep(0.05 * (2**attempt))
         return target
 
     def _save_progress(
