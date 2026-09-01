@@ -1,0 +1,18 @@
+{
+  "format": "taiji-native-memory-training-v1",
+  "version": 1,
+  "status": "evaluated",
+  "model_tier": "memory",
+  "corpus_digest": "53ed3250341551d680eecdfc9a88bc0768a3aa6b2b9f7ea03d75a9717231850e",
+  "corpus_sample_counts": {
+    "train": 64,
+    "holdout": 64,
+    "retention": 64
+  },
+  "checkpoint_digest": "83cdfe219d3abcc89443d4754bc96a585493edfe3d455c1daff4928d4f1e4810",
+  "holdout_recall": 0.53125,
+  "retention_recall": 0.53125,
+  "checkpoint_read_only": true,
+  "code_revision": "1be0aeeb3294471b7eb69078e0170e439e7cc516",
+  "report_path": "reports\\taiji_m1_f2_pilot_seed29_eval_20260901.json"
+}
