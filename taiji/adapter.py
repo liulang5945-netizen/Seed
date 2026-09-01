@@ -862,12 +862,9 @@ class TSKV8Adapter(Taiji):
 
     @property
     def structural_candidate_batches(self) -> tuple[StructuralCandidateBatch, ...]:
-        """Return checkpointed multi-candidate arbitration decisions."""
+        """Return checkpointed multi-candidate arbitration decisions in arbitration order."""
 
-        return tuple(
-            self._structural_candidate_batches[key]
-            for key in sorted(self._structural_candidate_batches)
-        )
+        return tuple(self._structural_candidate_batches.values())
 
     def _structural_candidate_batch_has_live_lineage(
         self,
