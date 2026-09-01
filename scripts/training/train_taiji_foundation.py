@@ -89,8 +89,8 @@ def main() -> int:
         result = run.run()
     report_path = args.report or args.output_dir / ("eval_report.json" if args.eval_only else "training_report.json")
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     result["report_path"] = str(report_path)
+    report_path.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

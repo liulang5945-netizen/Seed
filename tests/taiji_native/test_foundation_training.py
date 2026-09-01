@@ -4,7 +4,16 @@ import subprocess
 import sys
 from pathlib import Path
 
-from taiji import FoundationTrainingDataset, FoundationTrainingRun, Taiji, TaijiConfig
+from taiji import (
+    DelayedMemoryCorpus,
+    DelayedMemoryQuery,
+    FoundationTrainingDataset,
+    FoundationTrainingRun,
+    MemoryEpisode,
+    MemoryTrainingRun,
+    Taiji,
+    TaijiConfig,
+)
 
 
 def _dataset() -> FoundationTrainingDataset:
@@ -82,3 +91,51 @@ def test_foundation_training_saves_and_resumes_from_disk_checkpoint() -> None:
         "assert r.evaluate_only()['checkpoint_read_only']"
     )
     subprocess.run((sys.executable, "-c", code), cwd=Path.cwd(), check=True)
+
+
+def test_memory_training_saves_a_read_only_recall_checkpoint() -> None:
+    train = tuple(
+        MemoryEpisode(
+            memory_id=f"m1-f2-test-{index}",
+            cue=65 + index,
+            action=48 + index % 2,
+            outcome=43 + index % 2,
+        )
+        for index in range(4)
+    )
+    corpus = DelayedMemoryCorpus(
+        train=train,
+        holdout=tuple(
+            DelayedMemoryQuery(f"holdout-{index}", item.cue, item.action)
+            for index, item in enumerate(train)
+        ),
+        retention=tuple(
+            DelayedMemoryQuery(f"retention-{index}", item.cue, item.action)
+            for index, item in enumerate(train)
+        ),
+    )
+    output_dir = Path(".seed_test_tmp") / "m1-memory-training"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    for filename in ("parent.pt", "last.pt", "best-holdout.pt"):
+        (output_dir / filename).unlink(missing_ok=True)
+
+    run = MemoryTrainingRun(
+        Taiji(_config(), episode_id="memory-training-test"),
+        corpus,
+        output_dir=output_dir,
+        epochs=1,
+        checkpoint_interval=1,
+    )
+    report = run.run()
+
+    assert report["status"] == "completed"
+    assert report["holdout_updates"] == 0
+    assert report["corpus_sample_counts"] == {"train": 4, "holdout": 4, "retention": 4}
+    assert Path(report["checkpoint_paths"]["last"]).is_file()
+    restored = MemoryTrainingRun.from_checkpoint(
+        output_dir / "last.pt",
+        corpus,
+        output_dir=output_dir,
+    )
+    evaluation = restored.evaluate_only()
+    assert evaluation["checkpoint_read_only"] is True
