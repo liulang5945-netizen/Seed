@@ -249,6 +249,8 @@ seed 47 的 full-coverage continuation 已完成，报告为 `reports/taiji_m1_f
 
 当前唯一下一步是 **M1-7：修复 memory 保持与 B5 Gate 口径**：先为 phase-A replay 建立独立、可计数的 B5 train/holdout/retention 分区和 no-replay counterfactual，再调整回放/记忆学习规则，使三 seed 的旧 memory 能力不低于 parent；之后重新执行 full-coverage 训练、只读复核和完整 M0 controls。该 Gate 未通过前不进入 M2，也不切换到 provider、Workbench、Skill/MCP 或客户端外围。
 
+M1-7 的第一片已完成：新增 `plans/manifests/taiji_continual_memory_v1.json`、`ContinualMemoryCorpus`/`ContinualMemoryTask` 和 `scripts/training/eval_taiji_b5_memory.py`。B5 现在有显式 phase-A train/holdout/retention、phase-B 干扰与 novel-cue 控制、replay train，并实际比较 no-replay counterfactual 与 replay 的旧能力变化；所有 holdout/retention 读操作保持 `holdout_updates=0`，语料 digest 可复现。canary 报告 `reports/taiji_m1_b5_memory_canary_20260902.json` 为 `failed`：phase-A 旧 recall `0.75`，no-replay 后 `0.50`，replay 后 `0.625`，replay 相对 no-replay 有 `+0.125` 因果增益，但仍有旧记忆回退，说明仅有当前事件重放还不足以恢复 memory。该失败是下一片 memory replay 接线的输入，不进入 full retrain。
+
 ## 7. M2～M8 的开发日程与外围任务安置
 
 ### M2：世界—行动—语言后训练
