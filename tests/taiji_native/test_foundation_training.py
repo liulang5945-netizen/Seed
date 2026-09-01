@@ -252,6 +252,45 @@ def test_joint_training_preserves_three_organs_in_one_checkpoint() -> None:
     assert continued["global_step"] > report["global_step"]
 
 
+def test_joint_training_retries_transient_checkpoint_replace_lock(monkeypatch) -> None:
+    dataset = _dataset()
+    memory_corpus = build_memory_corpus(count=4)
+    world_corpus = build_world_corpus(count=4)
+    goal_corpus = build_goal_corpus(count=4)
+    output_dir = Path(".seed_test_tmp") / "m1-joint-save-retry"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    target = output_dir / "last.pt"
+    target.unlink(missing_ok=True)
+    (output_dir / "last.pt.tmp").unlink(missing_ok=True)
+
+    run = JointTrainingRun(
+        Taiji(_config(), episode_id="joint-save-retry-test"),
+        build_world_learner(world_corpus, seed=11),
+        dataset,
+        memory_corpus,
+        world_corpus,
+        goal_corpus,
+        output_dir=output_dir,
+        epochs=1,
+        chunk_bytes=32,
+        checkpoint_interval=2,
+        world_repeats=1,
+    )
+    original_replace = Path.replace
+    attempts = {"count": 0}
+
+    def flaky_replace(self: Path, destination: str | Path) -> Path:
+        if self.name == "last.pt.tmp" and attempts["count"] < 2:
+            attempts["count"] += 1
+            raise PermissionError("transient reader lock")
+        return original_replace(self, destination)
+
+    monkeypatch.setattr(Path, "replace", flaky_replace)
+    assert run.save(target) == target
+    assert attempts["count"] == 2
+    assert target.is_file()
+
+
 def test_joint_training_starts_an_explicit_continuation_from_child_checkpoint() -> None:
     dataset = FoundationTrainingDataset(
         train=b"ABCD1234-" * 16,
