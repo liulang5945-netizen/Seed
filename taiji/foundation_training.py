@@ -12,7 +12,7 @@ import hashlib
 import json
 import math
 import subprocess
-from collections.abc import Iterable, Mapping
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -20,7 +20,12 @@ from typing import Any
 import torch
 
 from .config import TaijiConfig
-from .foundation_tasks import SequencePredictionCorpus
+from .foundation_tasks import (
+    DelayedMemoryCorpus,
+    DelayedMemoryQuery,
+    MemoryEpisode,
+    SequencePredictionCorpus,
+)
 from .internalization import content_digest
 from .model import Taiji
 
@@ -32,6 +37,8 @@ FOUNDATION_TRAINING_PROFILE_BUDGETS = {
     "pilot": (16_384, 4_096, 4_096),
     "foundation": (1_048_576, 131_072, 131_072),
 }
+MEMORY_TRAINING_FORMAT = "taiji-native-memory-training-v1"
+MEMORY_TRAINING_VERSION = 1
 
 
 def _text_from_record(record: Any) -> str | None:
@@ -455,11 +462,356 @@ class FoundationTrainingRun:
         return run
 
 
+def _memory_corpus_digest(corpus: DelayedMemoryCorpus) -> str:
+    return content_digest(
+        {
+            "format": MEMORY_TRAINING_FORMAT,
+            "version": MEMORY_TRAINING_VERSION,
+            "train": [
+                {
+                    "memory_id": item.memory_id,
+                    "cue": item.cue,
+                    "action": item.action,
+                    "outcome": item.outcome,
+                }
+                for item in corpus.train
+            ],
+            "holdout": [
+                {
+                    "query_id": item.query_id,
+                    "cue": item.cue,
+                    "expected_action": item.expected_action,
+                }
+                for item in corpus.holdout
+            ],
+            "retention": [
+                {
+                    "query_id": item.query_id,
+                    "cue": item.cue,
+                    "expected_action": item.expected_action,
+                }
+                for item in corpus.retention
+            ],
+        }
+    )
+
+
+class MemoryTrainingRun:
+    """A resumable cue/episode memory pilot using only native memory writes."""
+
+    def __init__(
+        self,
+        model: Taiji,
+        corpus: DelayedMemoryCorpus,
+        *,
+        output_dir: str | Path,
+        model_tier: str = "memory",
+        epochs: int = 1,
+        checkpoint_interval: int = 1,
+        parent_checkpoint_digest: str | None = None,
+        parent_holdout_recall: float | None = None,
+        code_revision: str | None = None,
+    ) -> None:
+        if not isinstance(corpus, DelayedMemoryCorpus):
+            raise TypeError("memory training corpus must be DelayedMemoryCorpus")
+        if int(epochs) <= 0 or int(checkpoint_interval) <= 0:
+            raise ValueError("memory training epochs and checkpoint_interval must be positive")
+        self.model = model
+        self.corpus = corpus
+        self.output_dir = Path(output_dir)
+        self.model_tier = str(model_tier)
+        self.total_epochs = int(epochs)
+        self.checkpoint_interval = int(checkpoint_interval)
+        self.code_revision = str(code_revision or _code_revision())
+        self.parent_checkpoint_digest = parent_checkpoint_digest or content_digest(
+            model.checkpoint()
+        )
+        self.actions = tuple(dict.fromkeys(item.action for item in corpus.train))
+        if len(self.actions) < 2:
+            raise ValueError("memory training needs at least two action classes")
+        self.parent_holdout_recall = (
+            float(parent_holdout_recall)
+            if parent_holdout_recall is not None
+            else self._recall_accuracy(corpus.holdout, use_memory=True)
+        )
+        if not math.isfinite(self.parent_holdout_recall):
+            raise ValueError("parent_holdout_recall must be finite")
+        self.epoch = 0
+        self.cursor = 0
+        self.global_step = 0
+        self.history: list[dict[str, Any]] = []
+        self.best_holdout_recall = 0.0
+        self.started_from_checkpoint = False
+
+    @property
+    def parent_checkpoint_path(self) -> Path:
+        return self.output_dir / "parent.pt"
+
+    @property
+    def last_checkpoint_path(self) -> Path:
+        return self.output_dir / "last.pt"
+
+    @property
+    def best_checkpoint_path(self) -> Path:
+        return self.output_dir / "best-holdout.pt"
+
+    @property
+    def corpus_digest(self) -> str:
+        return _memory_corpus_digest(self.corpus)
+
+    @staticmethod
+    def _persistent_digest(model: Taiji) -> str:
+        checkpoint = model.checkpoint()
+        return content_digest(
+            {
+                "fabric": checkpoint["fabric"],
+                "motor": checkpoint["motor"],
+                "memory": checkpoint["memory"],
+            }
+        )
+
+    def _recall_accuracy(
+        self,
+        queries: Sequence[DelayedMemoryQuery],
+        *,
+        use_memory: bool,
+    ) -> float:
+        persistent_before = self._persistent_digest(self.model)
+        correct = 0
+        for query in queries:
+            self.model.reset_dynamics(episode_id=f"m1-f2-query-{query.query_id}")
+            self.model.observe(
+                self.model.config.boundary_symbol,
+                learn=False,
+                learn_motor=False,
+                use_memory=use_memory,
+            )
+            self.model.observe(
+                query.cue,
+                learn=False,
+                learn_motor=False,
+                use_memory=use_memory,
+            )
+            probabilities = self.model.snapshot().motor_probabilities
+            prediction = max(
+                self.actions,
+                key=lambda action: float(probabilities[action].item()),
+            )
+            correct += int(prediction == query.expected_action)
+        persistent_after = self._persistent_digest(self.model)
+        if persistent_before != persistent_after:
+            raise RuntimeError("memory holdout evaluation mutated persistent state")
+        return correct / len(queries)
+
+    def _train_episode(self, episode: MemoryEpisode) -> None:
+        self.model.reset_dynamics(episode_id=f"m1-f2-train-{episode.memory_id}")
+        self.model.observe(
+            self.model.config.boundary_symbol,
+            learn=False,
+            learn_motor=False,
+            use_memory=False,
+        )
+        self.model.observe(episode.cue, learn=False, learn_motor=False, use_memory=False)
+        self.model.act((episode.action,), sample=False)
+        self.model.settle_action(1.0, learn=False, learn_memory=True)
+        self.model.observe(episode.outcome, learn=False, learn_motor=False, use_memory=False)
+
+    def _checkpoint_payload(self) -> dict[str, Any]:
+        payload: dict[str, Any] = {
+            "format": MEMORY_TRAINING_FORMAT,
+            "version": MEMORY_TRAINING_VERSION,
+            "model_tier": self.model_tier,
+            "model": self.model.checkpoint(),
+            "corpus_digest": self.corpus_digest,
+            "corpus_sample_counts": {
+                "train": len(self.corpus.train),
+                "holdout": len(self.corpus.holdout),
+                "retention": len(self.corpus.retention),
+            },
+            "parent_checkpoint_digest": self.parent_checkpoint_digest,
+            "parent_holdout_recall": self.parent_holdout_recall,
+            "epoch": self.epoch,
+            "cursor": self.cursor,
+            "global_step": self.global_step,
+            "total_epochs": self.total_epochs,
+            "checkpoint_interval": self.checkpoint_interval,
+            "history": list(self.history),
+            "best_holdout_recall": self.best_holdout_recall,
+            "code_revision": self.code_revision,
+        }
+        payload["checkpoint_digest"] = content_digest(payload)
+        return payload
+
+    def save(self, path: str | Path) -> Path:
+        target = Path(path)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        temporary = target.with_name(target.name + ".tmp")
+        torch.save(self._checkpoint_payload(), temporary)
+        temporary.replace(target)
+        return target
+
+    def _save_progress(self, *, train_episode: MemoryEpisode | None = None) -> None:
+        holdout = self._recall_accuracy(self.corpus.holdout, use_memory=True)
+        retention = self._recall_accuracy(self.corpus.retention, use_memory=True)
+        lesion = self._recall_accuracy(self.corpus.holdout, use_memory=False)
+        record: dict[str, Any] = {
+            "epoch": self.epoch,
+            "cursor": self.cursor,
+            "global_step": self.global_step,
+            "holdout_recall": holdout,
+            "retention_recall": retention,
+            "memory_lesion_recall": lesion,
+        }
+        if train_episode is not None:
+            record["train_memory_id"] = train_episode.memory_id
+        self.history.append(record)
+        if holdout > self.best_holdout_recall:
+            self.best_holdout_recall = holdout
+            self.save(self.best_checkpoint_path)
+        self.save(self.last_checkpoint_path)
+
+    def run(self) -> dict[str, Any]:
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        if not self.started_from_checkpoint and not self.parent_checkpoint_path.exists():
+            self.save(self.parent_checkpoint_path)
+        while self.epoch < self.total_epochs:
+            while self.cursor < len(self.corpus.train):
+                episode = self.corpus.train[self.cursor]
+                self._train_episode(episode)
+                self.cursor += 1
+                self.global_step += 1
+                if (
+                    self.global_step % self.checkpoint_interval == 0
+                    or self.cursor == len(self.corpus.train)
+                ):
+                    self._save_progress(train_episode=episode)
+                else:
+                    self.save(self.last_checkpoint_path)
+            self.epoch += 1
+            self.cursor = 0
+            self._save_progress()
+        final_holdout = self._recall_accuracy(self.corpus.holdout, use_memory=True)
+        final_retention = self._recall_accuracy(self.corpus.retention, use_memory=True)
+        final_lesion = self._recall_accuracy(self.corpus.holdout, use_memory=False)
+        return {
+            "format": MEMORY_TRAINING_FORMAT,
+            "version": MEMORY_TRAINING_VERSION,
+            "status": "completed",
+            "model_tier": self.model_tier,
+            "corpus_digest": self.corpus_digest,
+            "corpus_sample_counts": {
+                "train": len(self.corpus.train),
+                "holdout": len(self.corpus.holdout),
+                "retention": len(self.corpus.retention),
+            },
+            "parent_checkpoint_digest": self.parent_checkpoint_digest,
+            "parent_holdout_recall": self.parent_holdout_recall,
+            "child_checkpoint_digest": content_digest(self.model.checkpoint()),
+            "epoch": self.epoch,
+            "cursor": self.cursor,
+            "global_step": self.global_step,
+            "total_epochs": self.total_epochs,
+            "best_holdout_recall": self.best_holdout_recall,
+            "final_holdout_recall": final_holdout,
+            "final_retention_recall": final_retention,
+            "final_memory_lesion_recall": final_lesion,
+            "holdout_updates": 0,
+            "history": list(self.history),
+            "checkpoint_paths": {
+                "parent": str(self.parent_checkpoint_path),
+                "last": str(self.last_checkpoint_path),
+                "best_holdout": str(self.best_checkpoint_path),
+            },
+            "code_revision": self.code_revision,
+            "started_from_checkpoint": self.started_from_checkpoint,
+        }
+
+    def evaluate_only(self) -> dict[str, Any]:
+        before = self._persistent_digest(self.model)
+        holdout = self._recall_accuracy(self.corpus.holdout, use_memory=True)
+        retention = self._recall_accuracy(self.corpus.retention, use_memory=True)
+        after = self._persistent_digest(self.model)
+        if before != after:
+            raise RuntimeError("memory eval-only mutated persistent state")
+        return {
+            "format": MEMORY_TRAINING_FORMAT,
+            "version": MEMORY_TRAINING_VERSION,
+            "status": "evaluated",
+            "model_tier": self.model_tier,
+            "corpus_digest": self.corpus_digest,
+            "corpus_sample_counts": {
+                "train": len(self.corpus.train),
+                "holdout": len(self.corpus.holdout),
+                "retention": len(self.corpus.retention),
+            },
+            "checkpoint_digest": content_digest(self.model.checkpoint()),
+            "holdout_recall": holdout,
+            "retention_recall": retention,
+            "checkpoint_read_only": True,
+            "code_revision": self.code_revision,
+        }
+
+    @classmethod
+    def from_checkpoint(
+        cls,
+        path: str | Path,
+        corpus: DelayedMemoryCorpus,
+        *,
+        output_dir: str | Path | None = None,
+        epochs: int | None = None,
+        code_revision: str | None = None,
+    ) -> MemoryTrainingRun:
+        checkpoint_path = Path(path)
+        payload = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
+        if not isinstance(payload, Mapping):
+            raise ValueError("memory training checkpoint must contain a mapping")
+        if payload.get("format") != MEMORY_TRAINING_FORMAT:
+            raise ValueError("unsupported memory training checkpoint format")
+        if int(payload.get("version", -1)) != MEMORY_TRAINING_VERSION:
+            raise ValueError("unsupported memory training checkpoint version")
+        expected = content_digest(
+            {key: value for key, value in payload.items() if key != "checkpoint_digest"}
+        )
+        if str(payload.get("checkpoint_digest", "")) != expected:
+            raise ValueError("memory training checkpoint digest mismatch")
+        if str(payload.get("corpus_digest")) != _memory_corpus_digest(corpus):
+            raise ValueError("memory training corpus digest mismatch")
+        model_payload = payload.get("model")
+        if not isinstance(model_payload, Mapping):
+            raise ValueError("memory training checkpoint is missing model payload")
+        model = Taiji(
+            TaijiConfig.from_dict(dict(model_payload["config"])),
+            episode_id="memory-resume",
+        )
+        model.restore(model_payload)
+        run = cls(
+            model,
+            corpus,
+            output_dir=output_dir or checkpoint_path.parent,
+            model_tier=str(payload["model_tier"]),
+            epochs=int(epochs if epochs is not None else payload["total_epochs"]),
+            checkpoint_interval=int(payload["checkpoint_interval"]),
+            parent_checkpoint_digest=str(payload["parent_checkpoint_digest"]),
+            parent_holdout_recall=float(payload["parent_holdout_recall"]),
+            code_revision=code_revision or str(payload.get("code_revision", "working-tree")),
+        )
+        run.epoch = int(payload["epoch"])
+        run.cursor = int(payload["cursor"])
+        run.global_step = int(payload["global_step"])
+        run.history = [dict(item) for item in payload.get("history", ())]
+        run.best_holdout_recall = float(payload.get("best_holdout_recall", 0.0))
+        run.started_from_checkpoint = True
+        return run
+
+
 __all__ = [
+    "MEMORY_TRAINING_FORMAT",
+    "MEMORY_TRAINING_VERSION",
     "FOUNDATION_TRAINING_FORMAT",
     "FOUNDATION_TRAINING_PROFILE_BUDGETS",
     "FOUNDATION_TRAINING_PROFILES",
     "FOUNDATION_TRAINING_VERSION",
     "FoundationTrainingDataset",
     "FoundationTrainingRun",
+    "MemoryTrainingRun",
 ]
