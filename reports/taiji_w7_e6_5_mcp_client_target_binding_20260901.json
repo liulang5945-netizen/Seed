@@ -1,0 +1,24 @@
+{
+  "gate": "taiji-e6-5-mcp-client-target-binding",
+  "status": "passed",
+  "checks": {
+    "binds_only_authorized_target": true,
+    "requires_explicit_transport_identity_and_owners": true,
+    "inherits_authorization_time_window": true,
+    "binds_current_snapshots_and_authorized_scope": true,
+    "checkpoint_roundtrip_and_revocation_hold": true,
+    "target_payload_has_no_endpoint_or_secret": true,
+    "fail_closed_on_identity_snapshot_and_expiry": true,
+    "authorization_revoke_cascades_to_target": true,
+    "no_client_activation_or_external_connection": true,
+    "no_external_or_execution_boundary": true,
+    "connection_is_never_attempted": true
+  },
+  "scope": {
+    "declarative_target_binding_only": true,
+    "real_third_party_mcp_connected": false,
+    "client_organ_activated": false,
+    "connection_attempted": false,
+    "taiji_cognition_mutated": false
+  }
+}

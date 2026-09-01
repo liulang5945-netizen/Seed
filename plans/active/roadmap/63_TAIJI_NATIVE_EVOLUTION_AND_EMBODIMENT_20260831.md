@@ -1,6 +1,6 @@
 # Taiji 原生认知训练、经验进化与 Seed 客户端热插拔总路线
 
-> 状态：`E0 complete / E1 complete / E2-A complete / E2-B complete / E3-0 complete / E3-1 complete / E3-2 complete / E3-3 complete / E3-4 complete / E4 complete / E5 complete / E6-0 complete / E6-1 complete / E6-2 complete / E6-3 complete / E6-4 complete / E6-5 decision pending`。本文件自 2026-08-31 起取代原 P7-1a provider artifact 升级作为当前主线，并于 2026-09-01 按“Skill/MCP 可成为知识语料、MCP 执行侧由客户端继承”完成修订。Qwen/provider 质量问题保留为语言器官支线，不再阻塞 Taiji 本体训练；唯一执行事实源 `03_CURRENT_EXECUTION.md` 当前指向 E6-5：真实第三方 MCP 目标与权限确认。
+> 状态：`E0 complete / E1 complete / E2-A complete / E2-B complete / E3-0 complete / E3-1 complete / E3-2 complete / E3-3 complete / E3-4 complete / E4 complete / E5 complete / E6-0 complete / E6-1 complete / E6-2 complete / E6-3 complete / E6-4 complete / E6-5a complete / E6-5b decision pending`。本文件自 2026-08-31 起取代原 P7-1a provider artifact 升级作为当前主线，并于 2026-09-01 按“Skill/MCP 可成为知识语料、MCP 执行侧由客户端继承”完成修订。Qwen/provider 质量问题保留为语言器官支线，不再阻塞 Taiji 本体训练；唯一执行事实源 `03_CURRENT_EXECUTION.md` 当前指向 E6-5b：真实第三方 MCP 目标与权限确认。
 
 ## 1. 路线决策
 
@@ -351,7 +351,7 @@ discovered
 
 交付：统一术语、现状缺口、DeepSeek Harness 采纳边界、数据合同、生命周期、阶段 Gate 和唯一下一步。
 
-退出 Gate：只有 `03_CURRENT_EXECUTION.md` 决定当前动作；阶段总计划、implementation status 和 manifest 均必须与当前阶段一致，P7-1a 降为语言支线；当前 E6-5 是真实连接/激活前的具体目标与权限确认点。
+退出 Gate：只有 `03_CURRENT_EXECUTION.md` 决定当前动作；阶段总计划、implementation status 和 manifest 均必须与当前阶段一致，P7-1a 降为语言支线；当前 E6-5b 是真实连接/激活前的具体目标与权限确认点。
 
 ### E1：统一进化语料/经验合同与 checkpoint 前置 Gate
 
@@ -451,6 +451,8 @@ Gate：知识问答不是唯一指标；必须同时通过未见任务规划/能
 **E6-3 已完成（2026-09-01）**：`seed_platform/mcp_client_activation_dry_run.py` 将已通过 shadow 的候选映射为声明式 `ClientPluginManifest`，仅调用现有 `ClientExtensionHost.prepare`，不调用 `commit`；dry-run 绑定 MCP candidate、激活提案和 Workbench capability snapshot，生成内容寻址的目标 client snapshot，但源 host 的 active snapshot、MCP registry 和 Taiji cognition 均不改变。`api/routes_mcp_client_capabilities.py` 增加 `activation-dry-run` 入口，只返回 `dry_run/not_committed`，客户端 manifest 不含 executor/source/secret；旧 client snapshot fail-closed。E6-3 [Gate report](../../../reports/taiji_w7_e6_3_mcp_client_activation_dry_run_20260901.json) 的 10/10 检查和 9 个定向回归测试通过。
 
 **E6-4 已完成（2026-09-01）**：`seed_platform/mcp_client_connection_authorization.py` 建立真实连接前的独立授权合同与 checkpointable store。授权必须绑定 shadow-validated candidate、proposed activation、当前 MCP/Workbench capability snapshot、E6-3 dry-run digest、显式 approval/issuer、声明式网络 scope/credential reference 和有限时效；合同不可表达 endpoint、secret、executor、source 或连接结果，授权只能 `authorized/revoked`，且 `connection_attempted` 永远为 false。`api/routes_mcp_client_capabilities.py` 增加授权与撤销入口，所有快照漂移、范围越权、审批缺失、时效超限和 digest 不匹配均 fail-closed；API 与 store 不连接真实第三方、不提交 ClientExtensionHost、不激活客户端器官、不改变 Taiji cognition。E6-4 [Gate report](../../../reports/taiji_w7_e6_4_mcp_client_connection_authorization_20260901.json) 的 10/10 检查和 7 个定向回归测试通过；当前进入 E6-5：在任何真实连接前确认具体 MCP 目标、连接方式、权限和责任人。
+
+**E6-5a 已完成（2026-09-01）**：`seed_platform/mcp_client_connection_target.py` 建立真实连接前的声明式 target binding 合同与 checkpointable store。目标绑定只能引用已授权的 server identity/version 和受支持 transport class，同时带入 authorization 的有效时间窗、MCP/Workbench snapshot、已授权 scope/reference、连接所有者、凭据所有者和审批人；目标不包含 endpoint、command、executor、source、secret 或连接结果。target store 支持 checkpoint、独立撤销及 authorization revoke 级联撤销，目标过期、快照漂移、身份/transport/范围不匹配均 fail-closed。`api/routes_mcp_client_capabilities.py` 增加 target binding/revoke 入口，E6-5a [Gate report](../../../reports/taiji_w7_e6_5_mcp_client_target_binding_20260901.json) 的 11/11 检查和 10 个定向回归测试通过；真实第三方 MCP、客户端器官和 Taiji cognition 仍未改变。当前进入 E6-5b：确认具体第三方目标与实际连接授权。
 
 Gate：旧 client/capability snapshot 可恢复，旧路由/组件/监听器/executor 注册无泄漏，在途调用不丢失，资源 reservation 归还，异常插件 quarantine，Taiji cognition checkpoint 不被插件覆盖。
 
@@ -567,6 +569,6 @@ E1–E7 优先按现有 owner 增量接线，避免继续膨胀 `taiji/adapter.p
 
 ## 15. E1 首个执行切片
 
-`03_CURRENT_EXECUTION.md` 当前指向 **E6-5：真实第三方 MCP 目标与权限确认**；E1 已完成并作为全部后续训练与客户端继承的事实源，E5-0/E5-1/E5-2/E5-3 已分别冻结 host contract、完成 API/Vue 接线、退役 Legacy plugin surface 并通过真实 slot runtime canary，E6-0 已冻结 MCP capability inheritance candidate 合同，E6-1 已完成 API/registry shadow projection，E6-2 已完成显式 activation proposal，E6-3 已完成 prepare-only activation dry-run，E6-4 已完成显式限时授权、撤销和 checkpoint store。
+`03_CURRENT_EXECUTION.md` 当前指向 **E6-5b：真实第三方 MCP 目标与权限确认**；E1 已完成并作为全部后续训练与客户端继承的事实源，E5-0/E5-1/E5-2/E5-3 已分别冻结 host contract、完成 API/Vue 接线、退役 Legacy plugin surface 并通过真实 slot runtime canary，E6-0 已冻结 MCP capability inheritance candidate 合同，E6-1 已完成 API/registry shadow projection，E6-2 已完成显式 activation proposal，E6-3 已完成 prepare-only activation dry-run，E6-4 已完成显式限时授权、撤销和 checkpoint store，E6-5a 已完成 target identity/transport/owner/approver 绑定、授权时间窗继承和级联撤销。
 
-它优先于真实第三方 MCP 和插件 HMR，因为必须先对已投影的候选执行独立 shadow canary、显式 proposal、本地 prepare-only dry-run 和可撤销授权；E6-5 在目标、连接方式、权限范围和责任人未确认前仍不连接真实第三方 MCP、不激活客户端器官，也不把插件执行器写入 Taiji cognition checkpoint。
+它优先于真实第三方 MCP 和插件 HMR，因为必须先对已投影的候选执行独立 shadow canary、显式 proposal、本地 prepare-only dry-run、可撤销授权和 target binding；E6-5b 在目标、连接方式、权限范围和责任人未确认前仍不连接真实第三方 MCP、不激活客户端器官，也不把插件执行器写入 Taiji cognition checkpoint。
