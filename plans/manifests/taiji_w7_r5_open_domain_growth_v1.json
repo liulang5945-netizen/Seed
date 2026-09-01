@@ -3,7 +3,7 @@
   "version": 1,
   "work_package": "W7-R5",
   "title": "open-domain structural growth and self-evolution",
-  "status": "e6_5a_target_binding_boundary_passed_e6_5b_concrete_target_pending",
+  "status": "contract_frozen",
   "claim": {
     "to_prove": "Taiji can grow local structure or memory in response to persistent real-task error, capacity pressure, or recovery deficiency, while retaining old abilities and remaining checkpointable and reversible.",
     "must_not_claim": "Growth is not automatic intelligence, unlimited weight addition, neuron-count scaling, or a return to full retraining from scratch."
@@ -68,6 +68,8 @@
     "new_test_entry": "tests/taiji_native/test_open_domain_growth_gate.py",
     "new_eval_entry": "scripts/training/eval_taiji_open_domain_growth.py",
     "status": "e6_5a_target_binding_boundary_passed",
+    "pending_next": "E6-5b concrete third-party MCP target, connection method, network scope, credential reference, approver and revocation owner must be designated by the user before any real connection or client organ activation.",
+    "contract_field_note": "Top-level status is the contract freeze state and must stay contract_frozen or hardware-blocked; phase progress belongs only to this implementation block.",
     "e1_artifact": "taiji/evolution_experience.py and seed_platform/evolution_ledger.py",
     "e1_test": "tests/taiji_native/test_evolution_ledger.py",
     "e1_scope": "versioned content-addressed corpus and experience DTOs, Workbench digest-only projection, append-only identity/hash chain, train/holdout partitioning, redaction, checkpoint restore and continuation",

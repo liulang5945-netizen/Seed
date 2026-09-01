@@ -71,7 +71,34 @@
     "s2_report": "reports/taiji_w7_r3_visual_desktop_s2_20260829.json",
     "s2_passed_scope": ["Chrome life route", "900px IDE layout", "760px IDE layout", "responsive top bar", "no horizontal overflow"],
     "s2_missing_scope": ["Windows taskbar", "tray notification", "high DPI", "keyboard-only shell navigation", "reduced-motion shell evidence"],
-    "blocker": "Windows Computer Use enumerates Seed but cannot activate the captured window; desktop-background screenshots are not accepted as shell evidence."
+    "blocker": "Windows Computer Use enumerates Seed but cannot activate the captured window; desktop-background screenshots are not accepted as shell evidence.",
+    "s2_void_attempts": [
+      {
+        "recorded_at": "2026-09-01",
+        "attempt": "packaged client launched from a fresh build on holdout port 8151",
+        "bound_facts": {
+          "package_digest": "EABF273DCC55A253282B8ED8A4DE18421F79B6A01E4D1B1E46270CEB0A759C66",
+          "process_id": 11428,
+          "backend_bound": 8151,
+          "health_status": 200,
+          "capability_snapshot_revision": 4,
+          "window_handle": 7932064
+        },
+        "void_reason": "The bound process exited before any shell evidence was captured, so package digest, port, capability revision and window handle no longer refer to one live observation.",
+        "capture_failure_cause": "Every screenshot returned the LockApp.exe lock screen; the desktop was never actually unlocked during the attempt.",
+        "lesson": "Neither input desktop name 'Default' nor a visible Shell_TrayWnd proves an unlocked session, because modern Windows draws the lock screen on the Default desktop. The admissible criterion is the foreground window's owning process: LockApp or LogonUI means not capturable.",
+        "resumption_requirement": "Any future S2 attempt must rebuild the full binding chain in one live session; no fact from this attempt may be reused.",
+        "rejected_artifacts_removed": [
+          "output/seed-r3-s2-printwindow.png",
+          "output/seed-r3-s2-screen.png",
+          "output/seed-r3-s2-window.png",
+          "output/seed-r3-s2-window-real.png",
+          "output/seed-r3-s2-window-8144.png",
+          "output/r3s2/01-desktop-window-taskbar.png"
+        ],
+        "removal_justification": "These captures were blank-window or desktop-background images already rejected as shell evidence and referenced by no report; keeping them invites mistaking a rejected artifact for evidence. The accepted page-layer captures under output/playwright are retained."
+      }
+    ]
   },
   "boundary": [
     "No visual state may be a second source of truth for Taiji or provider state.",
