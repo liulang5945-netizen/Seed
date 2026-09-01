@@ -99,7 +99,7 @@ P2-11 已由 [IDE language chain report](../../../reports/taiji_w7_p2_11_ide_lan
 
 客户端热插拔的对象明确为 Seed 客户端：Vue 页面/路由/侧栏/IDE panel/命令/设置/可视化与后端 Workbench/Skill/MCP capability 通过 `client snapshot + capability snapshot` 两阶段原子切换；`desktop/main.py` 的 PyQt/QWebEngine 根壳、托盘、任务栏、QWebChannel 和进程管理属于保护域，只能安全重启更新。一次 MCP 内化产生两个独立候选：Taiji-owned `CognitiveInternalizationArtifact` 和 Seed-owned `ClientCapabilityInheritanceCandidate`；前者学习知识/程序/affordance，后者让客户端继承连接与执行能力，二者独立准入和回滚。
 
-**当前唯一下一步：运行全量测试确认合并后零红，提交本次 62/63 合并归档。** `62_POST_S51_PROJECT_CONVERGENCE_20260831.md` 与 `63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md` 的活动内容已并入 `01_SCOPE_AND_PHASES.md` 第 6–7 节与 `04_EXECUTION_PLAN.md` 第 9–18 节，原件已 `git mv` 到 `plans/archive/history/` 作为 superseded 快照，全仓库引用已改写，`plans/active/roadmap/` 已恒为 `01`～`04` 四个骨干文件。`test_active_plans_have_one_execution_owner_and_resolvable_links` 断言应转绿。绿后下一步：修复 CI 暂缓，解锁 E7 脑—客户端协同选择器。
+**当前唯一下一步：实现 E7 脑—客户端协同选择器，先把六类输出的互斥合同与 Gate 判据冻成 red。** 合同已在 [04_EXECUTION_PLAN.md](04_EXECUTION_PLAN.md) 第 17 节 E7 小节生效：选择器输出必须收敛为 `weight_update`、`memory_consolidation`、`route_update`、`structure_candidate`、`client_capability_candidate`、`clarify_or_stop` 六者之一，不得并出。四条 Gate 分别是：已有能力可解决时不申请插件；缺少 affordance 时不靠增加突触伪造执行器；语言失败不触发结构增长；资源不足时降级/停止而不是无限增长。owner 文件按第 18 节为 `taiji/evolution_credit.py` 与 `taiji/evolution_experience.py`，`taiji/` 不得 import `seed_platform`；`client_capability_candidate` 只能产出候选，不得直接安装或连接任何插件。首个 red 应落在“已有能力可解决时不申请插件”：给定一个已注册能力已覆盖的任务经验，选择器必须输出 `weight_update`/`memory_consolidation` 而非 `client_capability_candidate`。CI 暂缓与 E6-5b 搂置不阻塞本步。
 
 ## 5. 当前阻塞与暂缓项
 
@@ -107,7 +107,7 @@ P2-11 已由 [IDE language chain report](../../../reports/taiji_w7_p2_11_ide_lan
 
 - **CI：按用户决定暂缓。** 未运行/未修复不能标记为通过，恢复后统一收口累积问题。
 
-- **plans 目录清单红：已关闭。** `62`/`63` 的活动内容已并入 `01_SCOPE_AND_PHASES.md` 第 6–7 节与 `04_EXECUTION_PLAN.md` 第 9–18 节，原件已归档，`plans/active/roadmap/` 恒为 `01`～`04` 四个骨干文件。`test_active_plans_have_one_execution_owner_and_resolvable_links` 应转绿。
+- **plans 目录清单红：已关闭。** `62`/`63` 的活动内容已并入 `01_SCOPE_AND_PHASES.md` 第 6–7 节、`02_GATES_AND_CI.md` 第 5–6 节与 `04_EXECUTION_PLAN.md` 第 9–18 节，原件已归档为 superseded 快照，`plans/active/roadmap/` 恒为 `01`～`04` 四个骨干文件。实证：`tests/seed/test_project_identity.py` 5 passed，`tests/seed` + `tests/taiji_native` 全量 530 passed / 1 skipped（上一轮为 529 passed + 本红），收口提交 `3e76a55`。
 
 - **CUDA：`hardware-blocked`。** 当前主机无可用 CUDA，不用 CPU 结果替代 GPU 结论。
 
@@ -115,7 +115,7 @@ P2-11 已由 [IDE language chain report](../../../reports/taiji_w7_p2_11_ide_lan
 
 - **Git 收束：暂缓。** attached worktree 含未提交变化，必须先审计再决定吸收或删除。
 
-- **提交/推送：本轮已提交，暂不推送。** E6-0 为 `90616a7`，E6-1 为 `f8abd0a`，E6-2 为 `68ab08b`，E6-4 为 `9c31fa3`，E6-5a 为 `4d72ce8`，S34 批次时序修复与 E6-5b 搁置为 `a86851f`，命名边界红收口为 `0ca96f7`，57 个已完成分片归档与引用改写为 `699e7a6`；不执行远端同步。
+- **提交/推送：本轮已提交，暂不推送。** E6-0 为 `90616a7`，E6-1 为 `f8abd0a`，E6-2 为 `68ab08b`，E6-4 为 `9c31fa3`，E6-5a 为 `4d72ce8`，S34 批次时序修复与 E6-5b 搁置为 `a86851f`，命名边界红收口为 `0ca96f7`，57 个已完成分片归档与引用改写为 `699e7a6`，`62`/`63` 活动内容并入骨干与归档为 `3e76a55`；不执行远端同步。
 
 - **语义 provider 质量：Gate 未通过但不阻塞 E1–E3。** 当前 Qwen2.5-0.5B-Instruct 保留在实验/回退路径，不进入生产默认语义入口；结构化 Workbench/Skill/MCP 经验可先驱动 Taiji 原生学习。
 
