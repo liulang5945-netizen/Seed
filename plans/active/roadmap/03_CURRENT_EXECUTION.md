@@ -245,7 +245,9 @@ seed 47 的 full-coverage continuation 已完成，报告为 `reports/taiji_m1_f
 
 在 seed 47 完成后的代码审计中确认：此前“联合训练保存已重试”的记录与实现不一致，重试只存在于旧的 `FoundationTrainingRun.save()`，`JointTrainingRun.save()` 仍会在首次 `PermissionError` 时失败。新增的回归测试先在旧实现上复现失败，再验证联合训练保存的五次有限指数退避；该修复已通过 `tests/taiji_native/test_foundation_training.py` 全部 `7 passed`、ruff 和 `git diff --check`，不改变 checkpoint 内容或原子替换语义。
 
-三个 full-coverage seed 已全部完成，当前唯一下一步是 **M1-6 F5 三 seed 聚合 Gate**：汇总 seed 11/29/47 的训练与 eval-only 报告，验证三个 child digest、8 项指标一致性、foundation 样本覆盖、checkpoint 只读、holdout 无更新、world rejection 为零，并补齐 B5 phase-A→phase-B→replay 的 backward-transfer 审计。聚合结果若未同时满足预注册 M1 Gate，则继续在 M1 内修复 memory 保持/回放目标，不进入 M2，也不切换到 provider、Workbench、Skill/MCP 或客户端外围。
+三个 full-coverage seed 的聚合审计已完成，报告为 `reports/taiji_m1_f5_full_promotion_20260902.json`，状态必须记录为 `blocked`。B1 覆盖为 `1,048,576/131,072/131,072`，B2/B3/B4 覆盖分别达到 `1000/1000/1000`、`1000/500/500`、`1000/500/500`；三个 seed 的训练报告与独立 eval-only 在 checkpoint digest 和 8 项联合指标上逐项一致，`checkpoint_read_only=true`、`holdout_updates=0`、`world_transition_rejections=0`，且 replay history 真实执行。phase-A 旧能力审计显示 memory holdout recall 在三个 seed 均下降，backward-transfer score 分别为 `-0.140625`、`-0.015625`、`-0.0625`，所以 F5 不能晋级；同时 B5 专用 task-unit holdout/retention 和 random/simple-rule/hash-only/full M0 controls 仍未注册或重算。
+
+当前唯一下一步是 **M1-7：修复 memory 保持与 B5 Gate 口径**：先为 phase-A replay 建立独立、可计数的 B5 train/holdout/retention 分区和 no-replay counterfactual，再调整回放/记忆学习规则，使三 seed 的旧 memory 能力不低于 parent；之后重新执行 full-coverage 训练、只读复核和完整 M0 controls。该 Gate 未通过前不进入 M2，也不切换到 provider、Workbench、Skill/MCP 或客户端外围。
 
 ## 7. M2～M8 的开发日程与外围任务安置
 
