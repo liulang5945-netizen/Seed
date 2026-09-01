@@ -16,6 +16,8 @@
 
 ## 最近一次路线拆分
 
+2026-09-01 最新一次收束将原活动 `SEED_DEVELOPMENT_ROADMAP` 与 `roadmap/01～04` 全文移入 [roadmap_convergence_20260901](history/roadmap_convergence_20260901/README.md)。活动路径保留短兼容入口，所有当前优先级、日程、Gate 和下一步统一由 `plans/active/roadmap/03_CURRENT_EXECUTION.md` 承载。
+
 | 文档 | 归档原因 |
 |---|---|
 | [SEED_ROADMAP_RELEASE_LOG_2026_08.md](history/SEED_ROADMAP_RELEASE_LOG_2026_08.md) | 原总路线 P8 产品与发布记录已完成，移出当前执行文件 |
@@ -38,7 +40,7 @@
 ## 使用规则
 
 - 项目使命和长期核心讨论必须保留在 `plans/active/TAIJI_CORE_REQUIREMENTS.md` 与 `plans/active/TAIJI_NATIVE_ARCHITECTURE_V1.md`。
-- 当前执行顺序只看 `plans/active/SEED_DEVELOPMENT_ROADMAP_2026_08.md`，当前唯一下一步只看 `plans/active/roadmap/03_CURRENT_EXECUTION.md`。
+- 当前执行顺序、优先级、日程、Gate 和唯一下一步只看 `plans/active/roadmap/03_CURRENT_EXECUTION.md`。
 - 当前身份、所有权和产品边界只看 `plans/active/ARCHITECTURE_DIRECTION_2026_08.md` 与 `plans/active/SEED_ARCHITECTURE.md`。
 - 归档文档中的“下一步”均是历史记录，不得直接恢复执行。
-- `plans/active/roadmap/` 恒为 `01`～`04` 四个骨干文件，由 `tests/seed/test_project_identity.py::test_active_plans_have_one_execution_owner_and_resolvable_links` 断言；新增阶段内容必须并入这四个文件的对应小节，不得新增编号分片。
+- `plans/active/roadmap/` 保留 `01`～`04` 四个稳定路径，其中只有 `03_CURRENT_EXECUTION.md` 承载计划；`01`、`02`、`04` 是历史引用兼容入口。新增阶段内容只能更新 `03`，不得新增并行路线或编号分片。

@@ -99,7 +99,7 @@ neuroplex ─X─> seed / taiji
 
 不能再把 byte-cycle accuracy、N0–N11/M5–M7 或旧 800K/16M 训练写成“Taiji 已完成智能架构”。这些是 kernel 证据。
 
-完整目标见 [TAIJI_NATIVE_ARCHITECTURE_V1.md](TAIJI_NATIVE_ARCHITECTURE_V1.md)，执行顺序见 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](SEED_DEVELOPMENT_ROADMAP_2026_08.md)。
+完整目标见 [TAIJI_NATIVE_ARCHITECTURE_V1.md](TAIJI_NATIVE_ARCHITECTURE_V1.md)，执行顺序只看 [模型优先统一开发计划](roadmap/03_CURRENT_EXECUTION.md)。
 
 ## 8. 产品执行平面与工作台边界
 
@@ -148,7 +148,7 @@ Taiji 不直接点击 Vue/Monaco DOM，也不把任意自然语言翻译成未�
 - `seed_platform/workbench.py` 仍存在硬编码 capability 分派；知识内化转换器与可注册效应器生命周期尚未实现。
 - 外部 provider artifact 的真实 packaged-client 轮换/重启重绑、Windows shell 现场证据和 CUDA 实测仍未关闭。
 
-以上缺口按 [后续详细计划](roadmap/04_EXECUTION_PLAN.md) 的 R5A/R5B、语言/provider、R3 和 R4 分线处理；即时动作只看 [03_CURRENT_EXECUTION.md](roadmap/03_CURRENT_EXECUTION.md)。
+以上缺口按 [模型优先统一开发计划](roadmap/03_CURRENT_EXECUTION.md) 的 M0～M8 单线顺序处理；历史 R5A/R5B、语言/provider、R3 和 R4 仅保留为证据标签。
 
 ## 9. Legacy 边界
 
@@ -158,5 +158,5 @@ Legacy NeuroPlex 继续作为冻结的 Transformer 离线对照和显式兼容�
 
 ## 10. 执行入口边界
 
-当前路线入口只看 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](SEED_DEVELOPMENT_ROADMAP_2026_08.md)，当前唯一下一步只看其指向的 [03_CURRENT_EXECUTION.md](roadmap/03_CURRENT_EXECUTION.md)。
+当前路线、优先级和唯一下一步只看 [模型优先统一开发计划](roadmap/03_CURRENT_EXECUTION.md)。
 本文件只固定所有权和执行平面边界，不另设实现顺序。

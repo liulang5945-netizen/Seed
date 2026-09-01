@@ -151,7 +151,7 @@ Taiji 应复用 Transformer 时代成熟的 embedding、attention、optimizer、
 | CR-9 递归改进 | A6、A8 |
 | CR-10 跨域多模态 | A3、A9 |
 
-Gate 的可执行定义见 [TAIJI_NATIVE_ARCHITECTURE_V1.md](TAIJI_NATIVE_ARCHITECTURE_V1.md)，阶段顺序见 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](SEED_DEVELOPMENT_ROADMAP_2026_08.md)。
+Gate 的架构定义见 [TAIJI_NATIVE_ARCHITECTURE_V1.md](TAIJI_NATIVE_ARCHITECTURE_V1.md)，阶段顺序、验证和训练日程只看 [模型优先统一开发计划](roadmap/03_CURRENT_EXECUTION.md)。
 
 ## 7. 维护规则
 
