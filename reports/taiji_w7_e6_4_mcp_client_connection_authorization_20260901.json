@@ -1,0 +1,23 @@
+{
+  "gate": "taiji-e6-4-mcp-client-connection-authorization",
+  "status": "passed",
+  "checks": {
+    "requires_shadow_validated_activation": true,
+    "requires_explicit_approval_issuer_and_bounded_lifetime": true,
+    "binds_current_mcp_and_client_snapshots": true,
+    "stores_references_without_secrets_or_endpoint": true,
+    "connection_is_never_attempted": true,
+    "store_issue_revoke_checkpoint_roundtrip": true,
+    "fail_closed_on_approval_snapshot_scope_and_lifetime": true,
+    "api_requires_dry_run_and_supports_revoke": true,
+    "mcp_registry_and_client_activation_remain_unchanged": true,
+    "no_external_or_execution_boundary": true
+  },
+  "scope": {
+    "explicit_authorization_record_only": true,
+    "real_third_party_mcp_connected": false,
+    "client_organ_activated": false,
+    "connection_attempted": false,
+    "taiji_cognition_mutated": false
+  }
+}
