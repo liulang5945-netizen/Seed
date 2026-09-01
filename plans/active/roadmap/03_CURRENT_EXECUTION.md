@@ -235,6 +235,8 @@ replay CLI canary `reports/taiji_m1_f5_replay_canary_20260901.json` 已通过：
 
 继续验证恢复流程时又发现：普通 `--resume` 已携带 checkpoint 中的 `parent_metrics`，但构造器仍无条件重算一次大 holdout。现在改为有已保存 parent metrics 时直接复用，只有新课程 continuation 必须重新测量扩展数据 parent；这不改变 Gate 数值，只去除 resume 的重复 CPU 扫描。该修复提交前会重新跑训练恢复回归。
 
+seed 11 的 full-coverage continuation 已完成，报告为 `reports/taiji_m1_f5_full_seed11_20260901.json`，独立进程复核为 `reports/taiji_m1_f5_full_seed11_eval_only_20260901.json`。B1/B2/B3/B4 训练覆盖分别为 `1,048,576/1,000/1,000/1,000`，replay 实际消费 `16,384` 字节，`world_transition_rejections=0`、`holdout_updates=0`；训练报告与 eval-only 的 8 项指标和 checkpoint digest 完全一致。seed 11 的扩展 parent→final 为 sequence `5.3649→4.8648 BPB`、memory `0.570→0.536`、world `1.57e-5→3.16e-8`、goal `1.0→1.0`，所以 memory 退化使该 seed 不能单独晋级，但它证明 full-coverage 课程和恢复链路可运行。
+
 当前唯一下一步仍是 **M1-6 F5 full-coverage continuation**：从三个 F4 `best-holdout.pt` 沿 parent/child lineage 继续训练，生成覆盖 B1 `1 MiB + 128 KiB + 128 KiB`、B2/B3/B4 至少 `1000/200/200`、B5 phase-A→phase-B→replay 的新 child；训练前先做真实磁盘 save→新进程 restore→继续一步→再 save canary，再按三 seed 重算 M0 controls、holdout、retention 和 backward transfer。未完成该 full-coverage Gate 前不进入 M2，也不切换到 provider、Workbench、Skill/MCP 或客户端外围。
 
 ## 7. M2～M8 的开发日程与外围任务安置
