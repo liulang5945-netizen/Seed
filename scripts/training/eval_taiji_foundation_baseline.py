@@ -34,6 +34,8 @@ from taiji.foundation_evaluation import (
     FoundationMeasurement,
 )  # noqa: E402
 from taiji.foundation_tasks import (  # noqa: E402
+    ContinualLearningCorpus,
+    ContinualLearningTask,
     DelayedMemoryCorpus,
     DelayedMemoryQuery,
     DelayedMemoryTask,
@@ -73,6 +75,7 @@ def build_contract_report(
     b2_measurement: FoundationMeasurement | None = None,
     b3_measurement: FoundationMeasurement | None = None,
     b4_measurement: FoundationMeasurement | None = None,
+    b5_measurement: FoundationMeasurement | None = None,
 ) -> FoundationEvaluation:
     measurements = {
         ability_id: FoundationMeasurement(
@@ -96,6 +99,8 @@ def build_contract_report(
         measurements[b3_measurement.ability_id] = b3_measurement
     if b4_measurement is not None:
         measurements[b4_measurement.ability_id] = b4_measurement
+    if b5_measurement is not None:
+        measurements[b5_measurement.ability_id] = b5_measurement
     return FoundationEvaluation.evaluate(
         manifest,
         measurements,
@@ -299,6 +304,16 @@ def build_goal_action_smoke_corpus(*, count: int = 32) -> GoalActionCorpus:
     )
 
 
+def build_continual_learning_smoke_corpus() -> ContinualLearningCorpus:
+    return ContinualLearningCorpus(
+        phase_a_train=(b"ABCD1234-" * 64),
+        phase_a_holdout=(b"ABCD1234+" * 16),
+        phase_b_train=(b"wxyz5678:" * 64),
+        phase_b_holdout=(b"wxyz5678;" * 16),
+        retention=(b"ABCD1234?" * 16),
+    )
+
+
 def _model_config(tier: str, seed: int) -> Any:
     from taiji import TaijiConfig
 
@@ -348,6 +363,7 @@ def main() -> int:
     parser.add_argument("--b2-smoke", action="store_true")
     parser.add_argument("--b3-smoke", action="store_true")
     parser.add_argument("--b4-smoke", action="store_true")
+    parser.add_argument("--b5-smoke", action="store_true")
     parser.add_argument("--model-tier", choices=("micro", "default"), default="micro")
     parser.add_argument("--epochs", type=int, default=1)
     parser.add_argument("--profile", choices=("smoke", "foundation"), default="smoke")
@@ -361,6 +377,7 @@ def main() -> int:
     b2_measurement = None
     b3_measurement = None
     b4_measurement = None
+    b5_measurement = None
     if args.b1_corpus:
         if args.profile == "smoke":
             budgets = (4_096, 1_024, 1_024)
@@ -393,6 +410,12 @@ def main() -> int:
             _memory_config(manifest.seeds[0]),
             seeds=manifest.seeds,
         ).evaluate(build_goal_action_smoke_corpus())
+    if args.b5_smoke:
+        b5_measurement = ContinualLearningTask(
+            _memory_config(manifest.seeds[0]),
+            seeds=manifest.seeds,
+            epochs=args.epochs,
+        ).evaluate(build_continual_learning_smoke_corpus())
     evaluation = build_contract_report(
         manifest,
         checkpoint_gate_status=checkpoint_status,
@@ -400,6 +423,7 @@ def main() -> int:
         b2_measurement=b2_measurement,
         b3_measurement=b3_measurement,
         b4_measurement=b4_measurement,
+        b5_measurement=b5_measurement,
     )
     result = evaluation.to_payload()
     result["manifest_path"] = str(args.manifest)
@@ -411,12 +435,11 @@ def main() -> int:
             ("b2_delayed_memory", b2_measurement),
             ("b3_world_transition", b3_measurement),
             ("b4_goal_action", b4_measurement),
+            ("b5_continual_learning", b5_measurement),
         )
         if measurement is not None
     ]
-    result["capability_measurements"] = (
-        "; ".join((*measured, "b5_not_evaluated")) if measured else "not_evaluated"
-    )
+    result["capability_measurements"] = "; ".join(measured) if measured else "not_evaluated"
     result["profile"] = args.profile
     result["model_tier"] = args.model_tier if b1_measurement is not None else None
     args.report.parent.mkdir(parents=True, exist_ok=True)

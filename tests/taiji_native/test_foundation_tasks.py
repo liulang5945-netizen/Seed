@@ -4,6 +4,8 @@ import torch
 
 from taiji import Outcome, TaijiConfig, WorldAction, WorldInterventionCase, WorldObject, WorldState
 from taiji.foundation_tasks import (
+    ContinualLearningCorpus,
+    ContinualLearningTask,
     DelayedMemoryCorpus,
     DelayedMemoryQuery,
     DelayedMemoryTask,
@@ -218,3 +220,28 @@ def test_goal_action_task_uses_outcome_credit_without_holdout_writes() -> None:
     assert measurement.holdout_updates == 0
     assert measurement.sample_counts == {"train": 8, "holdout": 4, "retention": 4}
     assert "credit_lesion" in measurement.baseline_metrics
+
+
+def test_continual_task_records_checkpoint_continuation_and_replay_retention() -> None:
+    corpus = ContinualLearningCorpus(
+        phase_a_train=b"ABCD1234-" * 8,
+        phase_a_holdout=b"ABCD1234+" * 4,
+        phase_b_train=b"wxyz5678:" * 8,
+        phase_b_holdout=b"wxyz5678;" * 4,
+        retention=b"ABCD1234?" * 4,
+    )
+
+    measurement = ContinualLearningTask(
+        _config(11),
+        seeds=(11,),
+        epochs=1,
+        replay_epochs=1,
+    ).evaluate(corpus)
+
+    assert measurement.ability_id == "b5_continual_learning"
+    assert measurement.status in {"passed", "failed"}
+    assert measurement.metric_direction == "higher_is_better"
+    assert measurement.holdout_updates == 0
+    assert measurement.sample_counts == {"train": 144, "holdout": 72, "retention": 36}
+    assert "replay_lesion" in measurement.baseline_metrics
+    assert any("continued_from_parent" in item for item in measurement.evidence)
