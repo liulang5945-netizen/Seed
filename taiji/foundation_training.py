@@ -1433,6 +1433,7 @@ class JointTrainingRun:
         self.history: list[dict[str, Any]] = []
         self.best_holdout_score = 0.0
         self.started_from_checkpoint = False
+        self.continuation_source_checkpoint_digest: str | None = None
 
     @property
     def corpus_digest(self) -> str:
@@ -1529,6 +1530,7 @@ class JointTrainingRun:
             "history": list(self.history),
             "best_holdout_score": self.best_holdout_score,
             "code_revision": self.code_revision,
+            "continuation_source_checkpoint_digest": self.continuation_source_checkpoint_digest,
         }
         payload["checkpoint_digest"] = content_digest(payload)
         return payload
@@ -1697,6 +1699,7 @@ class JointTrainingRun:
             },
             "code_revision": self.code_revision,
             "started_from_checkpoint": self.started_from_checkpoint,
+            "continuation_source_checkpoint_digest": self.continuation_source_checkpoint_digest,
         }
 
     def evaluate_only(self) -> dict[str, Any]:
@@ -1715,7 +1718,90 @@ class JointTrainingRun:
             "metrics": metrics,
             "checkpoint_read_only": True,
             "code_revision": self.code_revision,
+            "continuation_source_checkpoint_digest": self.continuation_source_checkpoint_digest,
         }
+
+    @classmethod
+    def from_continuation_checkpoint(
+        cls,
+        path: str | Path,
+        dataset: FoundationTrainingDataset,
+        memory_corpus: DelayedMemoryCorpus,
+        world_corpus: WorldTransitionCorpus,
+        goal_corpus: GoalActionCorpus,
+        *,
+        output_dir: str | Path,
+        epochs: int | None = None,
+        chunk_bytes: int | None = None,
+        checkpoint_interval: int | None = None,
+        world_learning_rate: float | None = None,
+        world_repeats: int | None = None,
+        code_revision: str | None = None,
+    ) -> JointTrainingRun:
+        """Start a new course from an existing child with an explicit data extension.
+
+        Ordinary ``from_checkpoint`` remains strict about corpus identity so a
+        resume cannot silently skip or replay data.  F5 needs a different,
+        auditable operation: an already-trained F4 child becomes the parent of
+        a new course whose expanded corpora and parent metrics are measured
+        afresh.  The original checkpoint digest is retained as lineage, while
+        all new cursors start at zero because this is a new course, not a
+        resume of the old pilot.
+        """
+
+        checkpoint_path = Path(path)
+        payload = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
+        if not isinstance(payload, Mapping):
+            raise ValueError("joint continuation checkpoint must contain a mapping")
+        if payload.get("format") != JOINT_TRAINING_FORMAT:
+            raise ValueError("unsupported joint continuation checkpoint format")
+        if int(payload.get("version", -1)) != JOINT_TRAINING_VERSION:
+            raise ValueError("unsupported joint continuation checkpoint version")
+        expected = content_digest(
+            {key: value for key, value in payload.items() if key != "checkpoint_digest"}
+        )
+        if str(payload.get("checkpoint_digest", "")) != expected:
+            raise ValueError("joint continuation checkpoint digest mismatch")
+        model_payload = payload.get("model")
+        learner_payload = payload.get("world_learner")
+        if not isinstance(model_payload, Mapping) or not isinstance(learner_payload, Mapping):
+            raise ValueError("joint continuation checkpoint is missing model or world learner")
+
+        model = Taiji(
+            TaijiConfig.from_dict(dict(model_payload["config"])),
+            episode_id="joint-continuation",
+        )
+        model.restore(model_payload)
+        run = cls(
+            model,
+            _world_learner_from_payload(learner_payload),
+            dataset,
+            memory_corpus,
+            world_corpus,
+            goal_corpus,
+            output_dir=output_dir,
+            model_tier=str(payload["model_tier"]),
+            epochs=int(epochs if epochs is not None else payload["total_epochs"]),
+            chunk_bytes=int(chunk_bytes if chunk_bytes is not None else payload["chunk_bytes"]),
+            checkpoint_interval=int(
+                checkpoint_interval
+                if checkpoint_interval is not None
+                else payload["checkpoint_interval"]
+            ),
+            world_learning_rate=float(
+                world_learning_rate
+                if world_learning_rate is not None
+                else payload["world_learning_rate"]
+            ),
+            world_repeats=int(
+                world_repeats if world_repeats is not None else payload["world_repeats"]
+            ),
+            code_revision=code_revision or _code_revision(),
+        )
+        run.continuation_source_checkpoint_digest = str(payload["checkpoint_digest"])
+        run.started_from_checkpoint = True
+        run.save(run.parent_checkpoint_path)
+        return run
 
     @classmethod
     def from_checkpoint(
@@ -1797,6 +1883,10 @@ class JointTrainingRun:
         run.history = [dict(item) for item in payload.get("history", ())]
         run.best_holdout_score = float(payload.get("best_holdout_score", 0.0))
         run.started_from_checkpoint = True
+        source_digest = payload.get("continuation_source_checkpoint_digest")
+        run.continuation_source_checkpoint_digest = (
+            str(source_digest) if source_digest is not None else None
+        )
         return run
 
 
