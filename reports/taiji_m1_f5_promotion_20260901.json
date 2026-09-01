@@ -1,0 +1,210 @@
+{
+  "format": "taiji-native-f5-promotion-v1",
+  "version": 1,
+  "status": "blocked",
+  "can_promote": false,
+  "manifest_digest": "c5f178d4e18018f5085c3f56d1ae6d7596df304aee975f81c12db3b72e7e74f8",
+  "code_revision": "d2ea1f3c5720943e57e080a82fea9bd1154595dd",
+  "dataset_digest": "291de982a45ae6e7ddf5f01196a913a4ad4fd0f72f25cf1b03d967303cf105be",
+  "dataset_profile": "pilot",
+  "checkpoint_count": 3,
+  "partition_seed": 11,
+  "coverage": {
+    "b1_sequence_prediction": {
+      "observed": {
+        "train": 16384,
+        "holdout": 4096,
+        "retention": 4096
+      },
+      "required": {
+        "train": 1048576,
+        "holdout": 131072,
+        "retention": 131072
+      },
+      "meets_requirement": false
+    },
+    "b2_delayed_memory": {
+      "observed": {
+        "train": 64,
+        "holdout": 64,
+        "retention": 64
+      },
+      "required": {
+        "train": 1000,
+        "holdout": 200,
+        "retention": 200
+      },
+      "meets_requirement": false
+    },
+    "b3_world_transition": {
+      "observed": {
+        "train": 64,
+        "holdout": 32,
+        "retention": 32
+      },
+      "required": {
+        "train": 1000,
+        "holdout": 200,
+        "retention": 200
+      },
+      "meets_requirement": false
+    },
+    "b4_goal_action": {
+      "observed": {
+        "train": 64,
+        "holdout": 32,
+        "retention": 32
+      },
+      "required": {
+        "train": 1000,
+        "holdout": 200,
+        "retention": 200
+      },
+      "meets_requirement": false
+    },
+    "b5_continual_learning": {
+      "observed": {
+        "train": 0,
+        "holdout": 0,
+        "retention": 0
+      },
+      "required": {
+        "train": 1000,
+        "holdout": 200,
+        "retention": 200
+      },
+      "meets_requirement": false
+    }
+  },
+  "checkpoint_canaries": [
+    {
+      "seed": 11,
+      "checkpoint": "outputs\\taiji_m1_f4_pilot_seed11_20260901\\best-holdout.pt",
+      "checkpoint_digest": "22dc3136498f139a741a8d7f5a2ebcabbf8816ca39126eab5ea79794a6dca2e5",
+      "parent_metrics": {
+        "sequence_holdout_bpb": 8.005624549529761,
+        "sequence_retention_bpb": 8.005624549529761,
+        "memory_holdout_recall": 0.5,
+        "memory_retention_recall": 0.5,
+        "world_holdout_error": 1.8870715521654553,
+        "world_retention_error": 1.7805430581212112,
+        "goal_holdout_success": 0.5,
+        "goal_retention_success": 0.5
+      },
+      "final_metrics": {
+        "sequence_holdout_bpb": 5.209922225779571,
+        "sequence_retention_bpb": 5.394127967778946,
+        "memory_holdout_recall": 0.671875,
+        "memory_retention_recall": 0.671875,
+        "world_holdout_error": 1.369973624673615e-05,
+        "world_retention_error": 1.5841345809342045e-05,
+        "goal_holdout_success": 1.0,
+        "goal_retention_success": 1.0
+      },
+      "metric_comparison": {
+        "sequence_holdout_improved": true,
+        "sequence_retention_improved": true,
+        "memory_holdout_improved": true,
+        "memory_retention_improved": true,
+        "world_holdout_improved": true,
+        "world_retention_improved": true,
+        "goal_holdout_improved": true,
+        "goal_retention_improved": true
+      },
+      "checkpoint_read_only": true
+    },
+    {
+      "seed": 29,
+      "checkpoint": "outputs\\taiji_m1_f4_pilot_seed29_20260901\\best-holdout.pt",
+      "checkpoint_digest": "dc83866049dcacde5e1c73c1f3cd263a61ef6683680e26aad7011e9f2d2cf99b",
+      "parent_metrics": {
+        "sequence_holdout_bpb": 8.005624549529761,
+        "sequence_retention_bpb": 8.005624549529761,
+        "memory_holdout_recall": 0.5,
+        "memory_retention_recall": 0.5,
+        "world_holdout_error": 0.15701291697986353,
+        "world_retention_error": 0.1558750048923221,
+        "goal_holdout_success": 0.5,
+        "goal_retention_success": 0.5
+      },
+      "final_metrics": {
+        "sequence_holdout_bpb": 5.409390296418848,
+        "sequence_retention_bpb": 5.584339720659384,
+        "memory_holdout_recall": 0.53125,
+        "memory_retention_recall": 0.53125,
+        "world_holdout_error": 7.42145751272405e-05,
+        "world_retention_error": 0.0004550090744452895,
+        "goal_holdout_success": 1.0,
+        "goal_retention_success": 1.0
+      },
+      "metric_comparison": {
+        "sequence_holdout_improved": true,
+        "sequence_retention_improved": true,
+        "memory_holdout_improved": true,
+        "memory_retention_improved": true,
+        "world_holdout_improved": true,
+        "world_retention_improved": true,
+        "goal_holdout_improved": true,
+        "goal_retention_improved": true
+      },
+      "checkpoint_read_only": true
+    },
+    {
+      "seed": 47,
+      "checkpoint": "outputs\\taiji_m1_f4_pilot_seed47_20260901\\best-holdout.pt",
+      "checkpoint_digest": "e05275b9851b48004291c6d81f9360759f5db15c7ecd0362210d2bd77656bc4e",
+      "parent_metrics": {
+        "sequence_holdout_bpb": 8.005624549529761,
+        "sequence_retention_bpb": 8.005624549529761,
+        "memory_holdout_recall": 0.5,
+        "memory_retention_recall": 0.5,
+        "world_holdout_error": 0.4283408084274465,
+        "world_retention_error": 0.4291996413922319,
+        "goal_holdout_success": 0.5,
+        "goal_retention_success": 0.5
+      },
+      "final_metrics": {
+        "sequence_holdout_bpb": 5.383133598587739,
+        "sequence_retention_bpb": 5.545731178103531,
+        "memory_holdout_recall": 0.640625,
+        "memory_retention_recall": 0.640625,
+        "world_holdout_error": 7.94823436090419e-06,
+        "world_retention_error": 7.978088869514677e-06,
+        "goal_holdout_success": 1.0,
+        "goal_retention_success": 1.0
+      },
+      "metric_comparison": {
+        "sequence_holdout_improved": true,
+        "sequence_retention_improved": true,
+        "memory_holdout_improved": true,
+        "memory_retention_improved": true,
+        "world_holdout_improved": true,
+        "world_retention_improved": true,
+        "goal_holdout_improved": true,
+        "goal_retention_improved": true
+      },
+      "checkpoint_read_only": true
+    }
+  ],
+  "failure_reasons": [
+    "b1_sequence_prediction:train",
+    "b1_sequence_prediction:holdout",
+    "b1_sequence_prediction:retention",
+    "b2_delayed_memory:train",
+    "b2_delayed_memory:holdout",
+    "b2_delayed_memory:retention",
+    "b3_world_transition:train",
+    "b3_world_transition:holdout",
+    "b3_world_transition:retention",
+    "b4_goal_action:train",
+    "b4_goal_action:holdout",
+    "b4_goal_action:retention",
+    "b5_continual_learning:train",
+    "b5_continual_learning:holdout",
+    "b5_continual_learning:retention",
+    "b5_continual_learning:not_evaluated_from_f4_checkpoint",
+    "m0_controls_not_recomputed_for_f4_child"
+  ],
+  "next_gate": "run full-coverage M0 five-ability matrix from a fresh continuation protocol",
+  "report_path": "reports\\taiji_m1_f5_promotion_20260901.json"
+}
