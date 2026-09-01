@@ -1,0 +1,75 @@
+{
+  "format": "taiji-native-foundation-training-v1",
+  "version": 1,
+  "status": "completed",
+  "profile": "smoke",
+  "model_tier": "micro",
+  "dataset_digest": "0e37a0a1dd86573753ac64d480d1caf549a006d9063eff46afc0dfb6838aef08",
+  "dataset_sample_counts": {
+    "train": 4096,
+    "holdout": 1024,
+    "retention": 1024
+  },
+  "parent_checkpoint_digest": "aa2466f9ceb51b4b93ccc5ba4c0ddacb16feefe4b6b4b157e40e2275e75c8e3c",
+  "parent_holdout_bpb": 9.0246378050867,
+  "child_checkpoint_digest": "3afb1c59c58154b1bc78e11d8da717e21a3f0acce82cbf84debfa55da2f81b2d",
+  "epoch": 1,
+  "cursor": 0,
+  "global_step": 4,
+  "total_epochs": 1,
+  "best_holdout_bpb": 6.864374522516697,
+  "final_holdout_bpb": 6.955901515241751,
+  "final_retention_bpb": 7.163573377236803,
+  "history": [
+    {
+      "epoch": 0,
+      "cursor": 1024,
+      "global_step": 1,
+      "holdout_bpb": 7.7729750223951966,
+      "retention_bpb": 7.7001369866247,
+      "train_accuracy": 0.07317073170731707,
+      "train_observations": 1025
+    },
+    {
+      "epoch": 0,
+      "cursor": 2048,
+      "global_step": 2,
+      "holdout_bpb": 6.936262562008525,
+      "retention_bpb": 7.073466961701508,
+      "train_accuracy": 0.06731707317073171,
+      "train_observations": 1025
+    },
+    {
+      "epoch": 0,
+      "cursor": 3072,
+      "global_step": 3,
+      "holdout_bpb": 6.864374522516697,
+      "retention_bpb": 6.946321765669785,
+      "train_accuracy": 0.06048780487804878,
+      "train_observations": 1025
+    },
+    {
+      "epoch": 0,
+      "cursor": 4096,
+      "global_step": 4,
+      "holdout_bpb": 6.955901515241751,
+      "retention_bpb": 7.163573377236803,
+      "train_accuracy": 0.06536585365853659,
+      "train_observations": 1025
+    },
+    {
+      "epoch": 1,
+      "cursor": 0,
+      "global_step": 4,
+      "holdout_bpb": 6.955901515241751,
+      "retention_bpb": 7.163573377236803
+    }
+  ],
+  "checkpoint_paths": {
+    "parent": "outputs\\taiji_m1_smoke_v3_20260901\\parent.pt",
+    "last": "outputs\\taiji_m1_smoke_v3_20260901\\last.pt",
+    "best_holdout": "outputs\\taiji_m1_smoke_v3_20260901\\best-holdout.pt"
+  },
+  "code_revision": "10b00233d038a04f66e4dd9afbe59b09b4922002",
+  "started_from_checkpoint": false
+}
