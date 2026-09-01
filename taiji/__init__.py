@@ -120,6 +120,13 @@ from .episodic_memory import (
     EpisodicMemoryStore,
 )
 from .evaluation import A1EvaluationConfig, PerceptionCorpus, PerceptionEvaluator
+from .evolution_credit import (
+    EVOLUTION_CREDIT_CANDIDATE_KINDS,
+    EVOLUTION_CREDIT_FORMAT,
+    EVOLUTION_CREDIT_VERSION,
+    BrainClientCreditDecision,
+    BrainClientCreditSelector,
+)
 from .evolution_experience import (
     EVOLUTION_CONTRACT_VERSION,
     EVOLUTION_CORPUS_FORMAT,
@@ -592,6 +599,11 @@ __all__ = [
     "EVOLUTION_CORPUS_FORMAT",
     "EVOLUTION_CORPUS_STATUSES",
     "EVOLUTION_CORPUS_UNIT_KINDS",
+    "EVOLUTION_CREDIT_CANDIDATE_KINDS",
+    "EVOLUTION_CREDIT_FORMAT",
+    "EVOLUTION_CREDIT_VERSION",
+    "BrainClientCreditDecision",
+    "BrainClientCreditSelector",
     "EVOLUTION_EXPERIENCE_FORMAT",
     "EVOLUTION_EXPERIENCE_SOURCE_KINDS",
     "EVOLUTION_EXPERIENCE_STATUSES",

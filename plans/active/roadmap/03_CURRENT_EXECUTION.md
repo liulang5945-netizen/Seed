@@ -99,7 +99,15 @@ P2-11 已由 [IDE language chain report](../../../reports/taiji_w7_p2_11_ide_lan
 
 客户端热插拔的对象明确为 Seed 客户端：Vue 页面/路由/侧栏/IDE panel/命令/设置/可视化与后端 Workbench/Skill/MCP capability 通过 `client snapshot + capability snapshot` 两阶段原子切换；`desktop/main.py` 的 PyQt/QWebEngine 根壳、托盘、任务栏、QWebChannel 和进程管理属于保护域，只能安全重启更新。一次 MCP 内化产生两个独立候选：Taiji-owned `CognitiveInternalizationArtifact` 和 Seed-owned `ClientCapabilityInheritanceCandidate`；前者学习知识/程序/affordance，后者让客户端继承连接与执行能力，二者独立准入和回滚。
 
-**当前唯一下一步：实现 E7 脑—客户端协同选择器，先把六类输出的互斥合同与 Gate 判据冻成 red。** 合同已在 [04_EXECUTION_PLAN.md](04_EXECUTION_PLAN.md) 第 17 节 E7 小节生效：选择器输出必须收敛为 `weight_update`、`memory_consolidation`、`route_update`、`structure_candidate`、`client_capability_candidate`、`clarify_or_stop` 六者之一，不得并出。四条 Gate 分别是：已有能力可解决时不申请插件；缺少 affordance 时不靠增加突触伪造执行器；语言失败不触发结构增长；资源不足时降级/停止而不是无限增长。owner 文件按第 18 节为 `taiji/evolution_credit.py` 与 `taiji/evolution_experience.py`，`taiji/` 不得 import `seed_platform`；`client_capability_candidate` 只能产出候选，不得直接安装或连接任何插件。首个 red 应落在“已有能力可解决时不申请插件”：给定一个已注册能力已覆盖的任务经验，选择器必须输出 `weight_update`/`memory_consolidation` 而非 `client_capability_candidate`。CI 暂缓与 E6-5b 搂置不阻塞本步。
+**E7 四条可测 Gate 与六类输出互斥已完成（GREEN）。** owner 为 [taiji/evolution_credit.py](../../../taiji/evolution_credit.py)，回归为 [test_evolution_credit.py](../../../tests/taiji_native/test_evolution_credit.py) 6 passed。`BrainClientCreditSelector.select()` 对一条 `EvolutionExperience` 只产出一个内容寻址的 `BrainClientCreditDecision`，六类候选均已证明可达且互斥；`to_payload()`/`from_payload()` 重算 digest，篡改 `candidate_kind` 在 fail-closed 处报 `digest mismatch`，因此收益归属事后不可被改写。
+
+关键设计取舍是**收敛而非复制机制**：`taiji/affordance.py` 的真实公开面是 `WorldAffordanceGroundingProducer` 与 `LearnedAffordanceFeatures`，它是特征/grounding 生产者，并非「哪些执行器存在」的注册表，因此不能当作 Gate「缺少 affordance」的布尔判据；而结构增长的准入判据（EMA 残差、持续失败步数、capacity pressure、retention 回退、structural budget）已由 `CapacityGrowthTrigger` 拥有。所以 E7 不再造第二套 affordance 开关、也不复制任何阈值，而是只消费一个许可位 `growth_permitted`（待接线时由 `CapacityGrowthTrigger.observe(...).should_propose` 供给）。三条 Gate 因而由**分支可达性**而非可漂移的数值保证：`resources_exhausted` 最先短路；provider 来源的失败在 `growth_permitted` 被读取之前就短路；`structure_candidate` 仅在「能力已注册」分支可达，因此未注册能力即使已获得增长许可也只能输出 `client_capability_candidate`。选择器仍不安装、不连接、不执行任何插件。
+
+**同时把文档规则硬化为机器约束。** 第 18 节「`taiji/` 不得 import `seed_platform`」此前只存在于文档：`test_naming_boundary_contract.py` 的禁止集为 `{seed, neuroplex, transformers}`，而 `seed_platform` 是**独立顶层包**、不被 `seed.*` 覆盖。已将其加入禁止集，该守卫直接为绿，说明边界一直被遵守，但从本轮起才不依赖人工自律。
+
+**E7 尚未闭合的是第五条 Gate**（client-plugin-only 与 brain-only 对照能够解释收益归属）：它不是单次分类不变量，而是第 16 节要求的**消融对照**，需要两组同任务经验分别只走 brain-only 与只走 client-plugin-only，并证明 `reasons` 能把差值归到正确一侧。
+
+**当前唯一下一步：为 E7 第五条 Gate 写 red——client-plugin-only 与 brain-only 消融对照的收益归属。** 在 [test_evolution_credit.py](../../../tests/taiji_native/test_evolution_credit.py) 新增一个 red：同一任务经验集在「能力已注册」与「能力未注册」两种 registry 下分别选择，选择器必须产出一个可审计的归属结果，将差值归给 `brain_only` 或 `client_plugin_only` 其中一侧，而不得把全部收益笼统归于「自进化」；归属结果同样内容寻址、篡改即 fail-closed。owner 仍为 `taiji/evolution_credit.py`，不得 import `seed_platform`，不得新增任何安装/连接路径。CI 暂缓、E6-5b 搁置与下文登记的 openapi 基线红均不阻塞本步。
 
 ## 5. 当前阻塞与暂缓项
 
@@ -108,6 +116,8 @@ P2-11 已由 [IDE language chain report](../../../reports/taiji_w7_p2_11_ide_lan
 - **CI：按用户决定暂缓。** 未运行/未修复不能标记为通过，恢复后统一收口累积问题。
 
 - **plans 目录清单红：已关闭。** `62`/`63` 的活动内容已并入 `01_SCOPE_AND_PHASES.md` 第 6–7 节、`02_GATES_AND_CI.md` 第 5–6 节与 `04_EXECUTION_PLAN.md` 第 9–18 节，原件已归档为 superseded 快照，`plans/active/roadmap/` 恒为 `01`～`04` 四个骨干文件。实证：`tests/seed/test_project_identity.py` 5 passed，`tests/seed` + `tests/taiji_native` 全量 530 passed / 1 skipped（上一轮为 529 passed + 本红），收口提交 `3e76a55`。
+
+- **openapi 基线红：既存漂移，已登记不掩盖。** `tests/test_openapi_snapshot.py::test_openapi_snapshot` 失败，全量为 `1 failed, 831 passed, 6 skipped`。实证判据：失败信息只有 `New endpoints`、没有 `Removed endpoints`，新增的是 E4–E6 建的 `/api/client-extensions/*`、`/api/mcp-client-capabilities/*` 与 `/api/plugins/*` tombstone 路由；而本轮 `git status` 只动了 `taiji/__init__.py`、`taiji/evolution_credit.py` 及其两个测试，未触碰 `api/`，故与本轮改动无因果。基线文件为 `tests/snapshots/openapi_baseline.json`，刷新需显式 `--snapshot-update`；不在本步顺手刷新，因为那属于让红静默消失，应当作为一次显式的 API 表面核对单独收口。
 
 - **CUDA：`hardware-blocked`。** 当前主机无可用 CUDA，不用 CPU 结果替代 GPU 结论。
 

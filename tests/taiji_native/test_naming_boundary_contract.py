@@ -71,20 +71,25 @@ def _top_level(module: str) -> str:
 
 
 def test_taiji_substrate_never_imports_legacy_or_transformers() -> None:
-    """递归覆盖 taiji/，含未来新增的子包。"""
+    """递归覆盖 taiji/，含未来新增的子包。
+
+    seed_platform 是独立顶层包，不属于 seed.*，必须单独列入禁止集，
+    否则 04_EXECUTION_PLAN.md 第 18 节的所有权边界只是文档约定。
+    """
     offenders: dict[str, set[str]] = {}
     for path in _iter_python_files("taiji"):
         forbidden = {
             module
             for module in _imported_modules(path)
-            if _top_level(module) in {"seed", "neuroplex", "transformers"}
+            if _top_level(module)
+            in {"seed", "seed_platform", "neuroplex", "transformers"}
         }
         if forbidden:
             offenders[path.relative_to(REPO).as_posix()] = forbidden
 
     assert not offenders, (
-        "Taiji 是自足认知架构，不得依赖 Seed 运行时、Legacy NeuroPlex "
-        f"或 HuggingFace transformers：{offenders}"
+        "Taiji 是自足认知架构，不得依赖 Seed 运行时、seed_platform 治理层、"
+        f"Legacy NeuroPlex 或 HuggingFace transformers：{offenders}"
     )
 
 
