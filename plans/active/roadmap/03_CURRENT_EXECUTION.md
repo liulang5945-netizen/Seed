@@ -72,22 +72,25 @@ M0-0 已完成并通过 `reports/taiji_m0_checkpoint_preflight_20260901.json`：
 
 M0-1 已完成并通过 `plans/manifests/taiji_foundation_baseline_v1.json`、`taiji/foundation_evaluation.py` 和 `reports/taiji_foundation_baseline_20260901.json` 的契约 canary。五项能力、四类对照、三 seed、四分区、样本下限、holdout 只读和报告字段已统一；当前报告为 `not_evaluated`，因为真实任务适配器尚未运行，这个失败/未评估状态是预期且必须保留的。
 
-当前唯一下一步是**实施 M0-2：实现五项真实任务适配器并接入统一 evaluator**。适配器先复用现有 Taiji perception、memory、world、action 和 continual-learning 接口，统一输出真实 measurement；不得调用 provider、前端或 MCP，也不得在 holdout 阶段学习。
+M0-2 已启动：适配器复用现有 Taiji perception、memory、world、action 和 continual-learning 接口，统一输出真实 measurement；不得调用 provider、前端或 MCP，也不得在 holdout 阶段学习。
 
 M0-2 的 B1 适配器已完成并通过 smoke 证据 `reports/taiji_m0_b1_smoke_20260901.json`：真实 Taiji 在 3 个 seed 上优于 random 和 frozen-parent，但仍落后于 unigram 对照，故 B1 当前为失败而非晋级；holdout 更新数为 0。B1 smoke 只证明测量链和适配器可运行，不替代 manifest 规定的 foundation 数据量。
 
-当前唯一下一步是完成 **B2 延迟记忆适配器**，随后按 B3、B4、B5 顺序接入；五项都完成后再运行一次完整 M0 矩阵并立即冻结 M1 首轮训练目标。
+B2 适配器也已完成并通过 `reports/taiji_m0_b2_smoke_20260901.json`：Taiji episodic memory 能在训练分区写入并在 holdout/retention 只读召回，但三个 seed 中都没有稳定超过 memory lesion，故 B2 判失败。这说明当前记忆路径还没有形成可归因的因果增益，不能把“召回结果存在”当作记忆能力已经成立。
+
+当前唯一下一步是完成 **B3 世界状态与因果转移适配器**，随后按 B4、B5 顺序接入；五项都完成后再运行一次完整 M0 矩阵并立即冻结 M1 首轮训练目标。
 
 本步只允许创建或修改以下 owner：
 
 - `plans/manifests/taiji_foundation_baseline_v1.json`：五项能力、数据分区、对照、seed、资源和报告 schema；
 - `taiji/foundation_evaluation.py`：不带训练副作用的统一 evaluator；
-- `taiji/foundation_tasks.py`：原生 B1～B5 任务适配器；当前已完成 B1；
+- `taiji/foundation_tasks.py`：原生 B1～B5 任务适配器；当前已完成 B1、B2；
 - `tests/taiji_native/test_foundation_evaluation.py`：数据泄漏、对照、checkpoint 和失败口径 red；
 - `tests/taiji_native/test_foundation_tasks.py`：原生任务适配器的真实状态和 holdout 只读回归；
 - `scripts/training/eval_taiji_foundation_baseline.py`：CPU 基线入口；
 - `reports/taiji_foundation_baseline_<date>.json`：首次真实性报告；
 - `reports/taiji_m0_b1_smoke_<date>.json`：B1 smoke 真实性证据。
+- `reports/taiji_m0_b2_smoke_<date>.json`：B2 smoke 真实性证据。
 
 开始写 evaluator 前先核对已登记的 OpenAPI snapshot 漂移，确保现有 CI 基线没有被误当作本步新增失败。M0 报告生成后，不因模型分数低而回到外围建设；只要 checkpoint 和测量链可信，就立即进入 M1，低分直接成为首轮训练目标。
 

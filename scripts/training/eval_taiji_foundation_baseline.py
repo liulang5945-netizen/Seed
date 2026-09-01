@@ -24,7 +24,14 @@ from taiji.foundation_evaluation import (
     FoundationManifest,
     FoundationMeasurement,
 )  # noqa: E402
-from taiji.foundation_tasks import SequencePredictionCorpus, SequencePredictionTask  # noqa: E402
+from taiji.foundation_tasks import (  # noqa: E402
+    DelayedMemoryCorpus,
+    DelayedMemoryQuery,
+    DelayedMemoryTask,
+    MemoryEpisode,
+    SequencePredictionCorpus,
+    SequencePredictionTask,
+)
 
 DEFAULT_MANIFEST = PROJECT_ROOT / "plans" / "manifests" / "taiji_foundation_baseline_v1.json"
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_foundation_baseline_20260901.json"
@@ -49,6 +56,7 @@ def build_contract_report(
     *,
     checkpoint_gate_status: str,
     b1_measurement: FoundationMeasurement | None = None,
+    b2_measurement: FoundationMeasurement | None = None,
 ) -> FoundationEvaluation:
     measurements = {
         ability_id: FoundationMeasurement(
@@ -66,6 +74,8 @@ def build_contract_report(
     }
     if b1_measurement is not None:
         measurements[b1_measurement.ability_id] = b1_measurement
+    if b2_measurement is not None:
+        measurements[b2_measurement.ability_id] = b2_measurement
     return FoundationEvaluation.evaluate(
         manifest,
         measurements,
@@ -148,6 +158,37 @@ def build_sequence_corpus(
     )
 
 
+def build_delayed_memory_smoke_corpus(*, count: int = 8) -> DelayedMemoryCorpus:
+    if int(count) < 4:
+        raise ValueError("B2 smoke corpus needs at least four memory episodes")
+    train = tuple(
+        MemoryEpisode(
+            memory_id=f"m0-b2-smoke-{index}",
+            cue=65 + index,
+            action=48 + index % 2,
+            outcome=43 if index % 2 == 0 else 45,
+        )
+        for index in range(int(count))
+    )
+    holdout = tuple(
+        DelayedMemoryQuery(
+            query_id=f"m0-b2-holdout-{index}",
+            cue=episode.cue,
+            expected_action=episode.action,
+        )
+        for index, episode in enumerate(train)
+    )
+    retention = tuple(
+        DelayedMemoryQuery(
+            query_id=f"m0-b2-retention-{index}",
+            cue=episode.cue,
+            expected_action=episode.action,
+        )
+        for index, episode in enumerate(train)
+    )
+    return DelayedMemoryCorpus(train=train, holdout=holdout, retention=retention)
+
+
 def _model_config(tier: str, seed: int) -> Any:
     from taiji import TaijiConfig
 
@@ -173,10 +214,28 @@ def _model_config(tier: str, seed: int) -> Any:
     return TaijiConfig.from_dict(values)
 
 
+def _memory_config(seed: int) -> Any:
+    from taiji import TaijiConfig
+
+    values = TaijiConfig(
+        region_sizes=(64, 48),
+        synapse_fan_in=16,
+        motor_fan_in=48,
+        memory_units=128,
+        memory_fan_in=32,
+        memory_meta_dim=32,
+        memory_readout_fan_in=32,
+        memory_iterations=3,
+    ).to_dict()
+    values["seed"] = int(seed)
+    return TaijiConfig.from_dict(values)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
     parser.add_argument("--b1-corpus", nargs="+", type=Path)
+    parser.add_argument("--b2-smoke", action="store_true")
     parser.add_argument("--model-tier", choices=("micro", "default"), default="micro")
     parser.add_argument("--epochs", type=int, default=1)
     parser.add_argument("--profile", choices=("smoke", "foundation"), default="smoke")
@@ -187,6 +246,7 @@ def main() -> int:
     manifest = FoundationManifest.load(args.manifest)
     checkpoint_status = _checkpoint_gate_status(manifest, args.checkpoint_report)
     b1_measurement = None
+    b2_measurement = None
     if args.b1_corpus:
         if args.profile == "smoke":
             budgets = (4_096, 1_024, 1_024)
@@ -204,16 +264,30 @@ def main() -> int:
             seeds=manifest.seeds,
             epochs=args.epochs,
         ).evaluate(corpus)
+    if args.b2_smoke:
+        b2_measurement = DelayedMemoryTask(
+            _memory_config(manifest.seeds[0]),
+            seeds=manifest.seeds,
+        ).evaluate(build_delayed_memory_smoke_corpus())
     evaluation = build_contract_report(
         manifest,
         checkpoint_gate_status=checkpoint_status,
         b1_measurement=b1_measurement,
+        b2_measurement=b2_measurement,
     )
     result = evaluation.to_payload()
     result["manifest_path"] = str(args.manifest)
     result["contract_status"] = "validated"
+    measured = [
+        ability_id
+        for ability_id, measurement in (
+            ("b1_sequence_prediction", b1_measurement),
+            ("b2_delayed_memory", b2_measurement),
+        )
+        if measurement is not None
+    ]
     result["capability_measurements"] = (
-        "b1_measured; b2-b5_not_evaluated" if b1_measurement is not None else "not_evaluated"
+        "; ".join((*measured, "b3-b5_not_evaluated")) if measured else "not_evaluated"
     )
     result["profile"] = args.profile
     result["model_tier"] = args.model_tier if b1_measurement is not None else None

@@ -180,7 +180,14 @@ from .foundation_evaluation import (
     FoundationMeasurement,
     FoundationTaskSpec,
 )
-from .foundation_tasks import SequencePredictionCorpus, SequencePredictionTask
+from .foundation_tasks import (
+    DelayedMemoryCorpus,
+    DelayedMemoryQuery,
+    DelayedMemoryTask,
+    MemoryEpisode,
+    SequencePredictionCorpus,
+    SequencePredictionTask,
+)
 from .generation import (
     GENERATION_CHECKPOINT_FORMAT,
     TEXT_EXPRESSION_CODEC_FORMAT,
@@ -584,6 +591,10 @@ __all__ = [
     "FoundationManifest",
     "FoundationMeasurement",
     "FoundationTaskSpec",
+    "DelayedMemoryCorpus",
+    "DelayedMemoryQuery",
+    "DelayedMemoryTask",
+    "MemoryEpisode",
     "SequencePredictionCorpus",
     "SequencePredictionTask",
     "AssemblyRelationCorpus",
