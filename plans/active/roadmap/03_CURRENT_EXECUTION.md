@@ -271,6 +271,14 @@ M1-10 的 replay ablation 已完成并被 Gate 阻断，报告为 `reports/taiji
 
 当前唯一下一步为 **M1-11：受保护的 cue-selective readout consolidation 原型**：在不增加基础模型宽度、不开启 full foundation 的前提下，为记忆 cue 建立可检查的局部 action payload 路由，使 replay 只更新与被重激活 cue 绑定的读出，不覆盖其他 cue 的共享 action evidence；保留 shared/local fallback，加入 cue collision、old/new holdout、repeated-replay、no-change 和 checkpoint round-trip Gate。只有三 seed 的旧能力与新能力都不退化，才允许把该路径接入真实 foundation replay；否则继续停留在 M1 诊断，不进入 M2。
 
+M1-11 的 cue-selective 首轮原型已完成，但 Gate 仍阻断。`reports/taiji_m1_b11_cue_selective_ablation_canary_20260902.json` 显示该模式没有改善三 seed 的 old/new 联合保持；单条记忆可读出，多条记忆下仍发生退化。随后完成的 pattern 诊断排除了“训练 pattern 与查询 pattern 不一致”这一主因：write→query cosine 最低仍为 `0.921`，但 cue population 的 pairwise cosine 最高达到 `0.659～0.814`，且 action readout 的有效 fan-in 对单个 cue 最低只有 `4～7/32`。因此当前瓶颈是 cue code 的可分性和局部支持覆盖，而不是继续调 replay 学习率；`cue_selective` 保持实验模式，不成为默认路径。
+
+当前唯一下一步为 **M1-12：cue-binding population 与支持覆盖原型**：在不建立 Python cue→answer 表、不过早扩大 foundation 的前提下，为 cue pattern 增加固定容量、可审计的竞争性 binding population，并让 action payload 的物理支持从该 population 均衡取样；用同一 B5 corpus 验证 cue 间分离度、readout support、old/new holdout、repeated-replay、no-change 和 checkpoint round-trip。若分离度提高但能力仍退化，再转向 replay provenance 的双时间尺度读出；在此之前不重跑 full foundation、不进入 M2。
+
+M1-12 的独立 binding diagnostic 已完成，报告为 `reports/taiji_m1_b12_binding_diagnostic_canary_20260902.json`。固定 sparse projection 加 top-k competition 只使部分 seed 的 cue 平均相似度小幅下降，跨 phase 最高 cosine 仍为 `0.610～0.773`；它没有改变现有 action readout 的物理支持覆盖，也没有通过 old/new 能力 Gate。因此该 binding 方案不接入主模型，不能把随机映射当作 cue 分离的解决方案。
+
+当前唯一下一步为 **M1-13：replay provenance 双时间尺度 protected readout**：保留 waking fast readout 与 replay slow readout 两条可回滚的本地塑性路径，按 cue-local activity 和 provenance 分别更新，在 recall 时以可测的 cue familiarity/支持度进行融合；加入 repeated-replay、no-change、old/new holdout、cue collision、checkpoint round-trip 及参数预算 Gate。若 slow path 仍无法在不损伤 phase-B 的情况下恢复 phase-A，则停止继续增加 memory decoder，转入基础 cue population 的结构性重设计；在 Gate 通过前不重跑 full foundation、不进入 M2。
+
 ## 7. M2～M8 的开发日程与外围任务安置
 
 ### M2：世界—行动—语言后训练
