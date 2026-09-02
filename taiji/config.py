@@ -8,6 +8,15 @@ from typing import Any
 
 DEFAULT_RECOVERY_INTERACTION_RESIDUAL_TOLERANCE = 1e-7
 DEFAULT_RECOVERY_INTERACTION_ORDER_TOLERANCE = 1e-7
+EPISODIC_EVENT_COMPONENTS = (
+    "action",
+    "outcome",
+    "reward",
+    "time",
+    "episode",
+    "provenance",
+)
+DEFAULT_EPISODIC_EVENT_COMPONENT_GAINS = (1.0,) * len(EPISODIC_EVENT_COMPONENTS)
 
 
 @dataclass(frozen=True)
@@ -234,6 +243,7 @@ class TaijiConfig:
     memory_feedback_gain: float = 0.25
     memory_novelty_gain: float = 0.70
     memory_reward_gain: float = 0.30
+    memory_event_component_gains: tuple[float, ...] = DEFAULT_EPISODIC_EVENT_COMPONENT_GAINS
     replay_memory_learning_scale: float = 0.25
 
     replay_seed_gain: float = 0.65
@@ -381,6 +391,17 @@ class TaijiConfig:
         ):
             if float(getattr(self, name)) <= 0.0:
                 raise ValueError(f"{name} must be positive")
+        if len(self.memory_event_component_gains) != len(EPISODIC_EVENT_COMPONENTS):
+            raise ValueError(
+                "memory_event_component_gains must provide one gain per episodic event component"
+            )
+        if any(
+            not math.isfinite(float(value)) or float(value) < 0.0
+            for value in self.memory_event_component_gains
+        ):
+            raise ValueError("memory_event_component_gains must be finite and non-negative")
+        if sum(float(value) for value in self.memory_event_component_gains) <= 0.0:
+            raise ValueError("at least one episodic event component gain must be positive")
         if self.synapse_decay < 0.0:
             raise ValueError("synapse_decay cannot be negative")
         if self.memory_feedback_gain < 0.0:
@@ -703,6 +724,10 @@ class TaijiConfig:
             values["concept_signal_weights"] = tuple(values["concept_signal_weights"])
         if "concept_branch_owner_weights" in values:
             values["concept_branch_owner_weights"] = tuple(values["concept_branch_owner_weights"])
+        if "memory_event_component_gains" in values:
+            values["memory_event_component_gains"] = tuple(
+                float(value) for value in values["memory_event_component_gains"]
+            )
         perception = values.get("perception")
         if perception is not None and not isinstance(perception, PerceptionConfig):
             values["perception"] = PerceptionConfig.from_dict(dict(perception))

@@ -16,7 +16,7 @@ from typing import Any
 
 import torch
 
-from .config import TaijiConfig
+from .config import EPISODIC_EVENT_COMPONENTS, TaijiConfig
 from .organs import SparseReceptorBank
 from .sparse import SparseSynapses, bound_norm
 from .state import MemoryRecall, MemoryState
@@ -484,13 +484,27 @@ class EpisodicField:
         episode_drive = self._normalize_drive(self.episode_encoder.forward(episode_code))
         provenance_drive = self._normalize_drive(self.provenance_encoder.forward(provenance_code))
         cue_drive = self._encode_cue(cortical_context)
-        event_components = (
-            action_drive,
-            outcome_drive,
-            reward * self.reward_code,
-            time_drive,
-            episode_drive,
-            provenance_drive,
+        event_components = dict(
+            zip(
+                EPISODIC_EVENT_COMPONENTS,
+                (
+                    action_drive,
+                    outcome_drive,
+                    reward * self.reward_code,
+                    time_drive,
+                    episode_drive,
+                    provenance_drive,
+                ),
+                strict=True,
+            )
+        )
+        event_components = tuple(
+            event_components[name] * float(gain)
+            for name, gain in zip(
+                EPISODIC_EVENT_COMPONENTS,
+                self.config.memory_event_component_gains,
+                strict=True,
+            )
         )
         event_scale = self.config.memory_event_gain / math.sqrt(len(event_components))
         event_drive = cue_drive + event_scale * torch.stack(event_components, dim=0).sum(dim=0)
