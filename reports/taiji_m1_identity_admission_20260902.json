@@ -1,0 +1,491 @@
+{
+  "format": "taiji-native-m1-identity-admission-v1",
+  "version": 1,
+  "status": "admission-review",
+  "identity_route_default": "disabled",
+  "shared_decoder_default_fallback": true,
+  "action_intent_execution": false,
+  "diagnostics": {
+    "seeds": [
+      11,
+      29,
+      47
+    ],
+    "larger_b2_train_count": 32,
+    "larger_b5_train_count_per_phase": 32,
+    "b5_holdout_count_per_phase": 16,
+    "default_identity_organ_enabled": false,
+    "gain_sweep_calibration_seed": 11,
+    "gain_sweep": [
+      {
+        "gain": 4.0,
+        "parent_old": 0.6875,
+        "child_old": 0.0,
+        "child_new": 0.8125
+      },
+      {
+        "gain": 8.0,
+        "parent_old": 0.875,
+        "child_old": 0.0,
+        "child_new": 0.9375
+      },
+      {
+        "gain": 16.0,
+        "parent_old": 1.0,
+        "child_old": 0.375,
+        "child_new": 1.0
+      },
+      {
+        "gain": 32.0,
+        "parent_old": 1.0,
+        "child_old": 1.0,
+        "child_new": 1.0
+      }
+    ],
+    "records": [
+      {
+        "seed": 11,
+        "b2": {
+          "identity_holdout": 1.0,
+          "shared_control_holdout": 0.6875
+        },
+        "b5": {
+          "parent_old_holdout": 1.0,
+          "parent_retention": 1.0,
+          "child_old_holdout": 1.0,
+          "child_old_retention": 1.0,
+          "child_new_holdout": 1.0,
+          "shared_control_old_holdout": 0.0,
+          "shared_control_new_holdout": 0.6875,
+          "identity_lesion_old_holdout": 0.0,
+          "identity_lesion_new_holdout": 0.6875
+        },
+        "route": {
+          "phase_a_unique_slots": 32,
+          "phase_b_unique_slots": 32,
+          "cross_phase_slot_collisions": 0,
+          "unbound_slots": 0,
+          "replacement_count": 0
+        },
+        "provenance": {
+          "bound_sources": [
+            "identity-route"
+          ],
+          "unbound_source": "shared-fallback",
+          "unbound_provenance": "identity-organ:unbound→shared-fallback",
+          "final_action_owner": "ByteMotor",
+          "action_intent_generated": false
+        },
+        "no_change": {
+          "all_bound": true,
+          "unbound_is_fallback": true,
+          "organ_digest_unchanged": true
+        },
+        "budget": {
+          "model_parameter_count": 147521,
+          "planned_parameter_count": 147521,
+          "identity_total_parameters": 61568
+        },
+        "checkpoint": {
+          "parent_core_digest_matches_lineage": true,
+          "child_core_digest_matches_lineage": true,
+          "restored_bundle_digest_matches": true,
+          "restored_old_holdout": 1.0,
+          "restored_new_holdout": 1.0,
+          "fresh_process_source": "identity-route",
+          "fresh_process_persistent_digest_unchanged": true,
+          "fresh_process_checkpoint_digest_matches": true
+        },
+        "boundary": {
+          "match_threshold": 0.9,
+          "base_slot": 0,
+          "near_slot": 0,
+          "split_slot": 1,
+          "near_similarity": 0.995948314666748,
+          "split_similarity": 1.0,
+          "near_duplicate_reused": true,
+          "below_threshold_split": true,
+          "near_action": 48,
+          "split_action": 49,
+          "organ_digest_read_only": true
+        },
+        "capacity": [
+          {
+            "capacity": 32,
+            "attempted_writes": 40,
+            "occupied_count": 32,
+            "allocation_count": 40,
+            "replacement_count": 8,
+            "occupied_within_capacity": true,
+            "expected_replacements": 8,
+            "parameter_count_matches_plan": true
+          },
+          {
+            "capacity": 64,
+            "attempted_writes": 72,
+            "occupied_count": 64,
+            "allocation_count": 72,
+            "replacement_count": 8,
+            "occupied_within_capacity": true,
+            "expected_replacements": 8,
+            "parameter_count_matches_plan": true
+          },
+          {
+            "capacity": 128,
+            "attempted_writes": 136,
+            "occupied_count": 128,
+            "allocation_count": 136,
+            "replacement_count": 8,
+            "occupied_within_capacity": true,
+            "expected_replacements": 8,
+            "parameter_count_matches_plan": true
+          }
+        ]
+      },
+      {
+        "seed": 29,
+        "b2": {
+          "identity_holdout": 1.0,
+          "shared_control_holdout": 0.53125
+        },
+        "b5": {
+          "parent_old_holdout": 1.0,
+          "parent_retention": 1.0,
+          "child_old_holdout": 1.0,
+          "child_old_retention": 1.0,
+          "child_new_holdout": 1.0,
+          "shared_control_old_holdout": 0.0,
+          "shared_control_new_holdout": 0.4375,
+          "identity_lesion_old_holdout": 0.0,
+          "identity_lesion_new_holdout": 0.4375
+        },
+        "route": {
+          "phase_a_unique_slots": 32,
+          "phase_b_unique_slots": 32,
+          "cross_phase_slot_collisions": 0,
+          "unbound_slots": 0,
+          "replacement_count": 0
+        },
+        "provenance": {
+          "bound_sources": [
+            "identity-route"
+          ],
+          "unbound_source": "shared-fallback",
+          "unbound_provenance": "identity-organ:unbound→shared-fallback",
+          "final_action_owner": "ByteMotor",
+          "action_intent_generated": false
+        },
+        "no_change": {
+          "all_bound": true,
+          "unbound_is_fallback": true,
+          "organ_digest_unchanged": true
+        },
+        "budget": {
+          "model_parameter_count": 147521,
+          "planned_parameter_count": 147521,
+          "identity_total_parameters": 61568
+        },
+        "checkpoint": {
+          "parent_core_digest_matches_lineage": true,
+          "child_core_digest_matches_lineage": true,
+          "restored_bundle_digest_matches": true,
+          "restored_old_holdout": 1.0,
+          "restored_new_holdout": 1.0,
+          "fresh_process_source": "identity-route",
+          "fresh_process_persistent_digest_unchanged": true,
+          "fresh_process_checkpoint_digest_matches": true
+        },
+        "boundary": {
+          "match_threshold": 0.9,
+          "base_slot": 0,
+          "near_slot": 0,
+          "split_slot": 1,
+          "near_similarity": 0.995948314666748,
+          "split_similarity": 1.0,
+          "near_duplicate_reused": true,
+          "below_threshold_split": true,
+          "near_action": 48,
+          "split_action": 49,
+          "organ_digest_read_only": true
+        },
+        "capacity": [
+          {
+            "capacity": 32,
+            "attempted_writes": 40,
+            "occupied_count": 32,
+            "allocation_count": 40,
+            "replacement_count": 8,
+            "occupied_within_capacity": true,
+            "expected_replacements": 8,
+            "parameter_count_matches_plan": true
+          },
+          {
+            "capacity": 64,
+            "attempted_writes": 72,
+            "occupied_count": 64,
+            "allocation_count": 72,
+            "replacement_count": 8,
+            "occupied_within_capacity": true,
+            "expected_replacements": 8,
+            "parameter_count_matches_plan": true
+          },
+          {
+            "capacity": 128,
+            "attempted_writes": 136,
+            "occupied_count": 128,
+            "allocation_count": 136,
+            "replacement_count": 8,
+            "occupied_within_capacity": true,
+            "expected_replacements": 8,
+            "parameter_count_matches_plan": true
+          }
+        ]
+      },
+      {
+        "seed": 47,
+        "b2": {
+          "identity_holdout": 1.0,
+          "shared_control_holdout": 0.59375
+        },
+        "b5": {
+          "parent_old_holdout": 1.0,
+          "parent_retention": 1.0,
+          "child_old_holdout": 1.0,
+          "child_old_retention": 1.0,
+          "child_new_holdout": 1.0,
+          "shared_control_old_holdout": 0.0,
+          "shared_control_new_holdout": 0.5625,
+          "identity_lesion_old_holdout": 0.0,
+          "identity_lesion_new_holdout": 0.5625
+        },
+        "route": {
+          "phase_a_unique_slots": 32,
+          "phase_b_unique_slots": 32,
+          "cross_phase_slot_collisions": 0,
+          "unbound_slots": 0,
+          "replacement_count": 0
+        },
+        "provenance": {
+          "bound_sources": [
+            "identity-route"
+          ],
+          "unbound_source": "shared-fallback",
+          "unbound_provenance": "identity-organ:unbound→shared-fallback",
+          "final_action_owner": "ByteMotor",
+          "action_intent_generated": false
+        },
+        "no_change": {
+          "all_bound": true,
+          "unbound_is_fallback": true,
+          "organ_digest_unchanged": true
+        },
+        "budget": {
+          "model_parameter_count": 147521,
+          "planned_parameter_count": 147521,
+          "identity_total_parameters": 61568
+        },
+        "checkpoint": {
+          "parent_core_digest_matches_lineage": true,
+          "child_core_digest_matches_lineage": true,
+          "restored_bundle_digest_matches": true,
+          "restored_old_holdout": 1.0,
+          "restored_new_holdout": 1.0,
+          "fresh_process_source": "identity-route",
+          "fresh_process_persistent_digest_unchanged": true,
+          "fresh_process_checkpoint_digest_matches": true
+        },
+        "boundary": {
+          "match_threshold": 0.9,
+          "base_slot": 0,
+          "near_slot": 0,
+          "split_slot": 1,
+          "near_similarity": 0.995948314666748,
+          "split_similarity": 1.0,
+          "near_duplicate_reused": true,
+          "below_threshold_split": true,
+          "near_action": 48,
+          "split_action": 49,
+          "organ_digest_read_only": true
+        },
+        "capacity": [
+          {
+            "capacity": 32,
+            "attempted_writes": 40,
+            "occupied_count": 32,
+            "allocation_count": 40,
+            "replacement_count": 8,
+            "occupied_within_capacity": true,
+            "expected_replacements": 8,
+            "parameter_count_matches_plan": true
+          },
+          {
+            "capacity": 64,
+            "attempted_writes": 72,
+            "occupied_count": 64,
+            "allocation_count": 72,
+            "replacement_count": 8,
+            "occupied_within_capacity": true,
+            "expected_replacements": 8,
+            "parameter_count_matches_plan": true
+          },
+          {
+            "capacity": 128,
+            "attempted_writes": 136,
+            "occupied_count": 128,
+            "allocation_count": 136,
+            "replacement_count": 8,
+            "occupied_within_capacity": true,
+            "expected_replacements": 8,
+            "parameter_count_matches_plan": true
+          }
+        ]
+      }
+    ],
+    "boundary_records": [
+      {
+        "match_threshold": 0.9,
+        "base_slot": 0,
+        "near_slot": 0,
+        "split_slot": 1,
+        "near_similarity": 0.995948314666748,
+        "split_similarity": 1.0,
+        "near_duplicate_reused": true,
+        "below_threshold_split": true,
+        "near_action": 48,
+        "split_action": 49,
+        "organ_digest_read_only": true
+      },
+      {
+        "match_threshold": 0.9,
+        "base_slot": 0,
+        "near_slot": 0,
+        "split_slot": 1,
+        "near_similarity": 0.995948314666748,
+        "split_similarity": 1.0,
+        "near_duplicate_reused": true,
+        "below_threshold_split": true,
+        "near_action": 48,
+        "split_action": 49,
+        "organ_digest_read_only": true
+      },
+      {
+        "match_threshold": 0.9,
+        "base_slot": 0,
+        "near_slot": 0,
+        "split_slot": 1,
+        "near_similarity": 0.995948314666748,
+        "split_similarity": 1.0,
+        "near_duplicate_reused": true,
+        "below_threshold_split": true,
+        "near_action": 48,
+        "split_action": 49,
+        "organ_digest_read_only": true
+      }
+    ],
+    "capacity_records": [
+      [
+        {
+          "capacity": 32,
+          "attempted_writes": 40,
+          "occupied_count": 32,
+          "allocation_count": 40,
+          "replacement_count": 8,
+          "occupied_within_capacity": true,
+          "expected_replacements": 8,
+          "parameter_count_matches_plan": true
+        },
+        {
+          "capacity": 64,
+          "attempted_writes": 72,
+          "occupied_count": 64,
+          "allocation_count": 72,
+          "replacement_count": 8,
+          "occupied_within_capacity": true,
+          "expected_replacements": 8,
+          "parameter_count_matches_plan": true
+        },
+        {
+          "capacity": 128,
+          "attempted_writes": 136,
+          "occupied_count": 128,
+          "allocation_count": 136,
+          "replacement_count": 8,
+          "occupied_within_capacity": true,
+          "expected_replacements": 8,
+          "parameter_count_matches_plan": true
+        }
+      ],
+      [
+        {
+          "capacity": 32,
+          "attempted_writes": 40,
+          "occupied_count": 32,
+          "allocation_count": 40,
+          "replacement_count": 8,
+          "occupied_within_capacity": true,
+          "expected_replacements": 8,
+          "parameter_count_matches_plan": true
+        },
+        {
+          "capacity": 64,
+          "attempted_writes": 72,
+          "occupied_count": 64,
+          "allocation_count": 72,
+          "replacement_count": 8,
+          "occupied_within_capacity": true,
+          "expected_replacements": 8,
+          "parameter_count_matches_plan": true
+        },
+        {
+          "capacity": 128,
+          "attempted_writes": 136,
+          "occupied_count": 128,
+          "allocation_count": 136,
+          "replacement_count": 8,
+          "occupied_within_capacity": true,
+          "expected_replacements": 8,
+          "parameter_count_matches_plan": true
+        }
+      ],
+      [
+        {
+          "capacity": 32,
+          "attempted_writes": 40,
+          "occupied_count": 32,
+          "allocation_count": 40,
+          "replacement_count": 8,
+          "occupied_within_capacity": true,
+          "expected_replacements": 8,
+          "parameter_count_matches_plan": true
+        },
+        {
+          "capacity": 64,
+          "attempted_writes": 72,
+          "occupied_count": 64,
+          "allocation_count": 72,
+          "replacement_count": 8,
+          "occupied_within_capacity": true,
+          "expected_replacements": 8,
+          "parameter_count_matches_plan": true
+        },
+        {
+          "capacity": 128,
+          "attempted_writes": 136,
+          "occupied_count": 128,
+          "allocation_count": 136,
+          "replacement_count": 8,
+          "occupied_within_capacity": true,
+          "expected_replacements": 8,
+          "parameter_count_matches_plan": true
+        }
+      ]
+    ],
+    "all_records_pass": true,
+    "recommended_gain": 32.0,
+    "default_candidate_ready": false
+  },
+  "canary_passed": true,
+  "recommended_gain": 32.0,
+  "default_candidate_ready": false,
+  "report_path": "reports\\taiji_m1_identity_admission_20260902.json"
+}
