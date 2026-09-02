@@ -1,0 +1,330 @@
+{
+  "format": "taiji-native-m1-32-reentry-v1",
+  "version": 1,
+  "status": "blocked",
+  "identity_organ_enabled": false,
+  "preflight": {
+    "gate": "taiji-m0-checkpoint-preflight",
+    "status": "passed",
+    "checks": {
+      "parent_saved": true,
+      "child_saved_after_fresh_restore": true,
+      "fresh_process_completed": true,
+      "fresh_process_next_step_matches": true,
+      "fresh_process_checkpoint_matches": true,
+      "report_written": true
+    },
+    "parent_checkpoint": {
+      "path": "output\\m1-32-checkpoint-preflight\\parent.pt",
+      "digest": "76c791e53309416f58550fa3f9d361603c2d3c8a06ba5a4c2f0dec514b74b0e2"
+    },
+    "child_checkpoint": {
+      "predicted_symbol": 145,
+      "model_digest": "7b78967cff77e3d340704d28686784c7caa8be676b8db5088cedb0af5f2ad274",
+      "child_checkpoint_digest": "77cc83d710a730fbb1402f53156e389de0d58e2a6f800f57d55254a68da11906",
+      "child_path": "output\\m1-32-checkpoint-preflight\\child-after-fresh-restore.pt"
+    },
+    "fresh_process": {
+      "returncode": 0,
+      "stderr": ""
+    }
+  },
+  "b1": {
+    "records": [
+      {
+        "seed": 11,
+        "dataset_digest": "370e9edc96ebbad1a27a9b3032bf6a97947efafed95643c37a22b60ff55bf5ea",
+        "sample_counts": {
+          "train": 16384,
+          "holdout": 4096,
+          "retention": 4096
+        },
+        "parent_holdout_bpb": 9.06320072307867,
+        "final_holdout_bpb": 6.38379082218851,
+        "final_retention_bpb": 6.43542152259442,
+        "child_checkpoint_digest": "588576f6bfe16ea84b55f9a6d14d35b25b4ab51a522cc5728337240aa5b1553b",
+        "eval_checkpoint_digest": "588576f6bfe16ea84b55f9a6d14d35b25b4ab51a522cc5728337240aa5b1553b",
+        "eval_holdout_bpb": 6.38379082218851,
+        "eval_retention_bpb": 6.43542152259442,
+        "checkpoint_paths": {
+          "parent": "output\\m1-32-foundation-pilot-seed11\\parent.pt",
+          "last": "output\\m1-32-foundation-pilot-seed11\\last.pt",
+          "best_holdout": "output\\m1-32-foundation-pilot-seed11\\best-holdout.pt"
+        },
+        "checkpoint_files_exist": {
+          "parent": true,
+          "last": true,
+          "best_holdout": true
+        },
+        "checkpoint_read_only": true,
+        "identity_contract": {
+          "identity_organ_enabled": false,
+          "identity_payload_absent": true
+        },
+        "training_status": "completed",
+        "eval_status": "evaluated"
+      },
+      {
+        "seed": 29,
+        "dataset_digest": "370e9edc96ebbad1a27a9b3032bf6a97947efafed95643c37a22b60ff55bf5ea",
+        "sample_counts": {
+          "train": 16384,
+          "holdout": 4096,
+          "retention": 4096
+        },
+        "parent_holdout_bpb": 8.73808956756809,
+        "final_holdout_bpb": 6.394500561581539,
+        "final_retention_bpb": 6.435785595592601,
+        "child_checkpoint_digest": "3720b960778505b0dbae00b2f016bd893ffc92379c54ae2477b7bd1b2a915124",
+        "eval_checkpoint_digest": "3720b960778505b0dbae00b2f016bd893ffc92379c54ae2477b7bd1b2a915124",
+        "eval_holdout_bpb": 6.394500561581539,
+        "eval_retention_bpb": 6.435785595592601,
+        "checkpoint_paths": {
+          "parent": "output\\m1-32-foundation-pilot-seed29\\parent.pt",
+          "last": "output\\m1-32-foundation-pilot-seed29\\last.pt",
+          "best_holdout": "output\\m1-32-foundation-pilot-seed29\\best-holdout.pt"
+        },
+        "checkpoint_files_exist": {
+          "parent": true,
+          "last": true,
+          "best_holdout": true
+        },
+        "checkpoint_read_only": true,
+        "identity_contract": {
+          "identity_organ_enabled": false,
+          "identity_payload_absent": true
+        },
+        "training_status": "completed",
+        "eval_status": "evaluated"
+      },
+      {
+        "seed": 47,
+        "dataset_digest": "370e9edc96ebbad1a27a9b3032bf6a97947efafed95643c37a22b60ff55bf5ea",
+        "sample_counts": {
+          "train": 16384,
+          "holdout": 4096,
+          "retention": 4096
+        },
+        "parent_holdout_bpb": 9.39715471200569,
+        "final_holdout_bpb": 6.246121885163592,
+        "final_retention_bpb": 6.288163294084788,
+        "child_checkpoint_digest": "343539f777e40a6f9f2f262f062f5becd6cff2759f29ffebd0d5dd033e8a6720",
+        "eval_checkpoint_digest": "343539f777e40a6f9f2f262f062f5becd6cff2759f29ffebd0d5dd033e8a6720",
+        "eval_holdout_bpb": 6.246121885163592,
+        "eval_retention_bpb": 6.288163294084788,
+        "checkpoint_paths": {
+          "parent": "output\\m1-32-foundation-pilot-seed47\\parent.pt",
+          "last": "output\\m1-32-foundation-pilot-seed47\\last.pt",
+          "best_holdout": "output\\m1-32-foundation-pilot-seed47\\best-holdout.pt"
+        },
+        "checkpoint_files_exist": {
+          "parent": true,
+          "last": true,
+          "best_holdout": true
+        },
+        "checkpoint_read_only": true,
+        "identity_contract": {
+          "identity_organ_enabled": false,
+          "identity_payload_absent": true
+        },
+        "training_status": "completed",
+        "eval_status": "evaluated"
+      }
+    ],
+    "passed": true
+  },
+  "b2": {
+    "records": [
+      {
+        "seed": 11,
+        "corpus_digest": "53ed3250341551d680eecdfc9a88bc0768a3aa6b2b9f7ea03d75a9717231850e",
+        "sample_counts": {
+          "train": 64,
+          "holdout": 64,
+          "retention": 64
+        },
+        "parent_holdout_recall": 0.5625,
+        "best_holdout_recall": 0.640625,
+        "final_holdout_recall": 0.640625,
+        "final_retention_recall": 0.640625,
+        "final_memory_lesion_recall": 0.5625,
+        "child_checkpoint_digest": "840bba19b77875da47a46629231f75171cac4cfd28f3b1aad42b1909370eeea2",
+        "eval_checkpoint_digest": "d40deae6ada8925ed612e02a28d1dd6e808bab8c610629e222bb5eecbfc120c5",
+        "eval_holdout_recall": 0.640625,
+        "eval_retention_recall": 0.640625,
+        "checkpoint_paths": {
+          "parent": "output\\m1-32-memory-pilot-seed11\\parent.pt",
+          "last": "output\\m1-32-memory-pilot-seed11\\last.pt",
+          "best_holdout": "output\\m1-32-memory-pilot-seed11\\best-holdout.pt"
+        },
+        "checkpoint_files_exist": {
+          "parent": true,
+          "last": true,
+          "best_holdout": true
+        },
+        "checkpoint_read_only": true,
+        "identity_contract": {
+          "identity_organ_enabled": false,
+          "identity_payload_absent": true
+        },
+        "training_status": "completed",
+        "eval_status": "evaluated"
+      },
+      {
+        "seed": 29,
+        "corpus_digest": "53ed3250341551d680eecdfc9a88bc0768a3aa6b2b9f7ea03d75a9717231850e",
+        "sample_counts": {
+          "train": 64,
+          "holdout": 64,
+          "retention": 64
+        },
+        "parent_holdout_recall": 0.484375,
+        "best_holdout_recall": 0.546875,
+        "final_holdout_recall": 0.546875,
+        "final_retention_recall": 0.546875,
+        "final_memory_lesion_recall": 0.484375,
+        "child_checkpoint_digest": "526769a073509bb2ec18fb93e9d9628e7cb551d87c8d1e80cff45f3a38b4a190",
+        "eval_checkpoint_digest": "43d5bd44cafe57e427771875726762d63cd2baa987574f305fabc2603b7fc328",
+        "eval_holdout_recall": 0.546875,
+        "eval_retention_recall": 0.546875,
+        "checkpoint_paths": {
+          "parent": "output\\m1-32-memory-pilot-seed29\\parent.pt",
+          "last": "output\\m1-32-memory-pilot-seed29\\last.pt",
+          "best_holdout": "output\\m1-32-memory-pilot-seed29\\best-holdout.pt"
+        },
+        "checkpoint_files_exist": {
+          "parent": true,
+          "last": true,
+          "best_holdout": true
+        },
+        "checkpoint_read_only": true,
+        "identity_contract": {
+          "identity_organ_enabled": false,
+          "identity_payload_absent": true
+        },
+        "training_status": "completed",
+        "eval_status": "evaluated"
+      },
+      {
+        "seed": 47,
+        "corpus_digest": "53ed3250341551d680eecdfc9a88bc0768a3aa6b2b9f7ea03d75a9717231850e",
+        "sample_counts": {
+          "train": 64,
+          "holdout": 64,
+          "retention": 64
+        },
+        "parent_holdout_recall": 0.53125,
+        "best_holdout_recall": 0.703125,
+        "final_holdout_recall": 0.6875,
+        "final_retention_recall": 0.6875,
+        "final_memory_lesion_recall": 0.53125,
+        "child_checkpoint_digest": "0dfde5c5d253c61a38db33195a615622b0af32e7849b33c3b8e092e9fadb7b3a",
+        "eval_checkpoint_digest": "d9731c91afedecba9d52cb46bacb117d04e0b8dc0f1687416cf0aebe4f25ae92",
+        "eval_holdout_recall": 0.703125,
+        "eval_retention_recall": 0.703125,
+        "checkpoint_paths": {
+          "parent": "output\\m1-32-memory-pilot-seed47\\parent.pt",
+          "last": "output\\m1-32-memory-pilot-seed47\\last.pt",
+          "best_holdout": "output\\m1-32-memory-pilot-seed47\\best-holdout.pt"
+        },
+        "checkpoint_files_exist": {
+          "parent": true,
+          "last": true,
+          "best_holdout": true
+        },
+        "checkpoint_read_only": true,
+        "identity_contract": {
+          "identity_organ_enabled": false,
+          "identity_payload_absent": true
+        },
+        "training_status": "completed",
+        "eval_status": "evaluated"
+      }
+    ],
+    "passed": true
+  },
+  "b5": {
+    "summary": {
+      "corpus_digest": "19687ae8d7bd135af49e1c3f80b6fa58a16ab0180d1c70e4934fec3eb037cabc",
+      "status": "failed",
+      "primary_metric": "backward_transfer",
+      "metric_value": -0.09375,
+      "sample_counts": {
+        "holdout": 64,
+        "phase_a_holdout": 32,
+        "phase_a_retention": 32,
+        "phase_a_train": 64,
+        "phase_b_holdout": 32,
+        "phase_b_retention": 32,
+        "phase_b_train": 64,
+        "replay_train": 64,
+        "retention": 64,
+        "train": 128
+      },
+      "holdout_updates": 0,
+      "seed_metrics": [
+        {
+          "continued_from_phase_a": 1,
+          "holdout_updates": 0,
+          "no_replay_backward_transfer": -0.6875,
+          "no_replay_new_after": 0.65625,
+          "no_replay_old_after": 0.0,
+          "old_before": 0.6875,
+          "old_retention_before": 0.625,
+          "phase_a_checkpoint_digest": "7cef0daefc34172b1e0465d334c5059be07971270158146e2609b55af16b3c98",
+          "replay_backward_transfer": -0.0625,
+          "replay_causal_gain": 0.625,
+          "replay_checkpoint_digest": "aac9f4cde61438f616869b5f918c8223b98b2cba34e10513fda67fc098e1f17d",
+          "replay_new_after": 0.03125,
+          "replay_old_after": 0.625,
+          "replay_retention_after": 0.65625,
+          "seed": 11
+        },
+        {
+          "continued_from_phase_a": 1,
+          "holdout_updates": 0,
+          "no_replay_backward_transfer": -0.53125,
+          "no_replay_new_after": 0.53125,
+          "no_replay_old_after": 0.0,
+          "old_before": 0.53125,
+          "old_retention_before": 0.59375,
+          "phase_a_checkpoint_digest": "2689820f50abd07ad2d042fc593f5f72642068b324761caaf484af7c0a992414",
+          "replay_backward_transfer": 0.0625,
+          "replay_causal_gain": 0.59375,
+          "replay_checkpoint_digest": "2e4daffcc1f96c85ec4a153b3a17d8c652daa9d60c095c7bbacd0666dbafdb1a",
+          "replay_new_after": 0.03125,
+          "replay_old_after": 0.59375,
+          "replay_retention_after": 0.53125,
+          "seed": 29
+        },
+        {
+          "continued_from_phase_a": 1,
+          "holdout_updates": 0,
+          "no_replay_backward_transfer": -0.59375,
+          "no_replay_new_after": 0.5625,
+          "no_replay_old_after": 0.0,
+          "old_before": 0.59375,
+          "old_retention_before": 0.625,
+          "phase_a_checkpoint_digest": "0dd439286460c310a2cbd0719d991187e7c08b3f6d171cefaa10f3ec3a2a7b0b",
+          "replay_backward_transfer": -0.09375,
+          "replay_causal_gain": 0.5,
+          "replay_checkpoint_digest": "1e55153a12428e9763b3e599af86060f31b18a9755bf6fb4c8a123bc4e249ef5",
+          "replay_new_after": 0.0,
+          "replay_old_after": 0.5,
+          "replay_retention_after": 0.65625,
+          "seed": 47
+        }
+      ]
+    },
+    "passed": false
+  },
+  "gate": {
+    "checkpoint_preflight_passed": true,
+    "b1_pilot_passed": true,
+    "b2_pilot_passed": true,
+    "b5_pilot_passed": false,
+    "overall_passed": false,
+    "reason": "B5 replay has causal gain but does not preserve old and new memory together across seeds; restrict the next change to shared-memory training signal/data curriculum."
+  },
+  "report_path": "reports\\taiji_m1_32_reentry_20260902.json"
+}

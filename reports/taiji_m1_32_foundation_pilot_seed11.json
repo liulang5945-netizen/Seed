@@ -1,0 +1,49 @@
+{
+  "format": "taiji-native-foundation-training-v1",
+  "version": 1,
+  "status": "completed",
+  "profile": "pilot",
+  "model_tier": "micro",
+  "dataset_digest": "370e9edc96ebbad1a27a9b3032bf6a97947efafed95643c37a22b60ff55bf5ea",
+  "dataset_sample_counts": {
+    "train": 16384,
+    "holdout": 4096,
+    "retention": 4096
+  },
+  "parent_checkpoint_digest": "050575b20e10a8079651c9842df244c7ceeb26f27a2b013d1b0f0e26fdfa6606",
+  "parent_holdout_bpb": 9.06320072307867,
+  "child_checkpoint_digest": "588576f6bfe16ea84b55f9a6d14d35b25b4ab51a522cc5728337240aa5b1553b",
+  "epoch": 1,
+  "cursor": 0,
+  "global_step": 16,
+  "total_epochs": 1,
+  "best_holdout_bpb": 6.38379082218851,
+  "final_holdout_bpb": 6.38379082218851,
+  "final_retention_bpb": 6.43542152259442,
+  "history": [
+    {
+      "epoch": 0,
+      "cursor": 16384,
+      "global_step": 16,
+      "holdout_bpb": 6.38379082218851,
+      "retention_bpb": 6.43542152259442,
+      "train_accuracy": 0.06341463414634146,
+      "train_observations": 1025
+    },
+    {
+      "epoch": 1,
+      "cursor": 0,
+      "global_step": 16,
+      "holdout_bpb": 6.38379082218851,
+      "retention_bpb": 6.43542152259442
+    }
+  ],
+  "checkpoint_paths": {
+    "parent": "output\\m1-32-foundation-pilot-seed11\\parent.pt",
+    "last": "output\\m1-32-foundation-pilot-seed11\\last.pt",
+    "best_holdout": "output\\m1-32-foundation-pilot-seed11\\best-holdout.pt"
+  },
+  "code_revision": "ee9e3fa0646a8ef82f143d0b370e9024e4cf0cf6",
+  "started_from_checkpoint": false,
+  "report_path": "reports\\taiji_m1_32_foundation_pilot_seed11.json"
+}
