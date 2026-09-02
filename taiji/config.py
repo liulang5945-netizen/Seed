@@ -305,8 +305,10 @@ class TaijiConfig:
             raise ValueError("memory_time_dim must be a positive even dimension")
         if self.memory_episode_dim <= 0:
             raise ValueError("memory_episode_dim must be positive")
-        if self.memory_action_decoder not in {"shared", "local"}:
-            raise ValueError("memory_action_decoder must be 'shared' or 'local'")
+        if self.memory_action_decoder not in {"shared", "local", "cue_selective"}:
+            raise ValueError(
+                "memory_action_decoder must be 'shared', 'local', or 'cue_selective'"
+            )
         for name in (
             "membrane_decay",
             "trace_decay",

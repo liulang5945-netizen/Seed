@@ -1,0 +1,189 @@
+{
+  "format": "taiji-native-b5-cue-collision-v1",
+  "version": 1,
+  "status": "diagnostic",
+  "can_promote": false,
+  "decoder": "cue_selective",
+  "train_count": 16,
+  "holdout_count": 8,
+  "records": [
+    {
+      "seed": 11,
+      "phase_a_pairwise_cosine": {
+        "max": 0.8142683029973536,
+        "mean": 0.2942665773688472
+      },
+      "phase_b_pairwise_cosine": {
+        "max": 0.6448913810572213,
+        "mean": 0.3163242141687964
+      },
+      "cross_phase_pairwise_cosine": {
+        "max": 0.8124128474340645,
+        "mean": 0.3176886175179895
+      },
+      "write_to_query_cosine": {
+        "phase_a_min": 0.9770728106146588,
+        "phase_a_mean": 0.9827045536644962,
+        "phase_b_min": 0.9722982577587073,
+        "phase_b_mean": 0.9926336155474869
+      },
+      "competitive_binding": {
+        "units": 128,
+        "top_k": 15,
+        "phase_a_pairwise_cosine": {
+          "max": 0.7347143048657725,
+          "mean": 0.26855112425824007
+        },
+        "phase_b_pairwise_cosine": {
+          "max": 0.7305441623064176,
+          "mean": 0.2986202966933186
+        },
+        "cross_phase_pairwise_cosine": {
+          "max": 0.7730762264293976,
+          "mean": 0.29539775738083907
+        }
+      },
+      "action_support": {
+        "48": {
+          "fan_in": 32,
+          "phase_a_active_support_min": 7,
+          "phase_b_active_support_min": 6
+        },
+        "49": {
+          "fan_in": 32,
+          "phase_a_active_support_min": 5,
+          "phase_b_active_support_min": 7
+        },
+        "50": {
+          "fan_in": 32,
+          "phase_a_active_support_min": 6,
+          "phase_b_active_support_min": 6
+        },
+        "51": {
+          "fan_in": 32,
+          "phase_a_active_support_min": 7,
+          "phase_b_active_support_min": 6
+        }
+      }
+    },
+    {
+      "seed": 29,
+      "phase_a_pairwise_cosine": {
+        "max": 0.7089866829888453,
+        "mean": 0.2632881767807237
+      },
+      "phase_b_pairwise_cosine": {
+        "max": 0.6489412315700522,
+        "mean": 0.36955110584405154
+      },
+      "cross_phase_pairwise_cosine": {
+        "max": 0.6597423308149434,
+        "mean": 0.3009769754875785
+      },
+      "write_to_query_cosine": {
+        "phase_a_min": 0.9831883775028997,
+        "phase_a_mean": 0.9910754492066147,
+        "phase_b_min": 0.9895922096406203,
+        "phase_b_mean": 0.9944627031227067
+      },
+      "competitive_binding": {
+        "units": 128,
+        "top_k": 15,
+        "phase_a_pairwise_cosine": {
+          "max": 0.6000931201584218,
+          "mean": 0.2510050876282725
+        },
+        "phase_b_pairwise_cosine": {
+          "max": 0.6423732960867452,
+          "mean": 0.2886804200272305
+        },
+        "cross_phase_pairwise_cosine": {
+          "max": 0.6106530544808402,
+          "mean": 0.25571773382235463
+        }
+      },
+      "action_support": {
+        "48": {
+          "fan_in": 32,
+          "phase_a_active_support_min": 6,
+          "phase_b_active_support_min": 7
+        },
+        "49": {
+          "fan_in": 32,
+          "phase_a_active_support_min": 5,
+          "phase_b_active_support_min": 5
+        },
+        "50": {
+          "fan_in": 32,
+          "phase_a_active_support_min": 6,
+          "phase_b_active_support_min": 5
+        },
+        "51": {
+          "fan_in": 32,
+          "phase_a_active_support_min": 6,
+          "phase_b_active_support_min": 6
+        }
+      }
+    },
+    {
+      "seed": 47,
+      "phase_a_pairwise_cosine": {
+        "max": 0.7191096799482507,
+        "mean": 0.3055470810346611
+      },
+      "phase_b_pairwise_cosine": {
+        "max": 0.7268040795847355,
+        "mean": 0.3598951770834134
+      },
+      "cross_phase_pairwise_cosine": {
+        "max": 0.8106634853796073,
+        "mean": 0.3426236901637211
+      },
+      "write_to_query_cosine": {
+        "phase_a_min": 0.9212806108226163,
+        "phase_a_mean": 0.9669472932178865,
+        "phase_b_min": 0.9471644601924436,
+        "phase_b_mean": 0.9771522811807262
+      },
+      "competitive_binding": {
+        "units": 128,
+        "top_k": 15,
+        "phase_a_pairwise_cosine": {
+          "max": 0.6469022924905261,
+          "mean": 0.26687905635101866
+        },
+        "phase_b_pairwise_cosine": {
+          "max": 0.7469645334815895,
+          "mean": 0.3138568288663545
+        },
+        "cross_phase_pairwise_cosine": {
+          "max": 0.7248962131371777,
+          "mean": 0.30122001430106804
+        }
+      },
+      "action_support": {
+        "48": {
+          "fan_in": 32,
+          "phase_a_active_support_min": 7,
+          "phase_b_active_support_min": 4
+        },
+        "49": {
+          "fan_in": 32,
+          "phase_a_active_support_min": 4,
+          "phase_b_active_support_min": 4
+        },
+        "50": {
+          "fan_in": 32,
+          "phase_a_active_support_min": 4,
+          "phase_b_active_support_min": 5
+        },
+        "51": {
+          "fan_in": 32,
+          "phase_a_active_support_min": 6,
+          "phase_b_active_support_min": 4
+        }
+      }
+    }
+  ],
+  "report_path": "reports\\taiji_m1_b12_binding_diagnostic_canary_20260902.json"
+}

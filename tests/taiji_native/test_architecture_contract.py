@@ -132,6 +132,19 @@ def test_learning_is_local_masked_and_has_no_autograd_parameters() -> None:
             assert torch.equal(torch.sort(row).values, expected)
 
 
+def test_cue_selective_action_decoder_round_trips_and_uses_native_config() -> None:
+    config = TaijiConfig(**{**_config().to_dict(), "memory_action_decoder": "cue_selective"})
+    model = Taiji(config)
+    restored = Taiji.from_checkpoint(model.checkpoint())
+
+    assert restored.config.memory_action_decoder == "cue_selective"
+    assert restored.parameter_count() == config.planned_active_parameter_count
+    assert torch.equal(
+        model.memory.local_action_readout.pre_index,
+        restored.memory.local_action_readout.pre_index,
+    )
+
+
 def test_motor_receptors_cover_every_cortical_coordinate_once() -> None:
     model = Taiji(_config())
     receptors = model.motor.receptors

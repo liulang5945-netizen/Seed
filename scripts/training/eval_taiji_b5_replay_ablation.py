@@ -17,7 +17,7 @@ from taiji.foundation_tasks import ContinualMemoryTask  # noqa: E402
 
 FORMAT = "taiji-native-b5-replay-ablation-v1"
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m1_b10_replay_ablation.json"
-DECODERS = ("shared", "local")
+DECODERS = ("shared", "local", "cue_selective")
 LEARNING_TARGETS = ("all", "association", "readout")
 
 

@@ -162,8 +162,11 @@ class EpisodicField:
         self.action_readout = self._blank_readout(alphabet, generator)
         # Optional direct decoder.  It reads the settled engram population
         # itself instead of routing every episode through one shared low-
-        # dimensional receptor bottleneck.  The legacy shared head remains
-        # available as a compatibility fallback.
+        # dimensional receptor bottleneck.  In ``cue_selective`` mode the
+        # same physical projection is trained and read from the cue-local
+        # activity, so replay can protect one cue's payload from another
+        # cue's readout update.  The legacy shared head remains available as
+        # a compatibility fallback.
         self.local_action_readout = SparseSynapses(
             alphabet,
             units,
@@ -302,6 +305,7 @@ class EpisodicField:
         """Complete a distributed cue and expose recalled causal evidence."""
 
         cue_drive = self._encode_cue(cortical_context)
+        cue_pattern = self._cue_pattern(cortical_context, previous.threshold)
         drive = cue_drive + (1.0 - self.config.memory_trace_decay) * previous.trace
         activity, inhibition = self._activate(drive, previous.threshold)
         long_term = bool(use_long_term and self.write_count > 0)
@@ -333,8 +337,12 @@ class EpisodicField:
             recurrent_support = self.association.forward(activity)
             context = self.readout_receptors.forward(activity)
             action_evidence = (
-                self.local_action_readout.forward(activity)
-                if self.config.memory_action_decoder == "local"
+                self.local_action_readout.forward(
+                    cue_pattern
+                    if self.config.memory_action_decoder == "cue_selective"
+                    else activity
+                )
+                if self.config.memory_action_decoder in {"local", "cue_selective"}
                 else self.action_readout.forward(context)
             )
             outcome_evidence = self.outcome_readout.forward(context)
@@ -614,17 +622,23 @@ class EpisodicField:
             for _ in range(int(self.config.episodic_write_repeats)):
                 action_policy = torch.softmax(
                     (
-                        self.local_action_readout.forward(event_pattern)
-                        if self.config.memory_action_decoder == "local"
+                        self.local_action_readout.forward(
+                            cue_pattern
+                            if self.config.memory_action_decoder == "cue_selective"
+                            else event_pattern
+                        )
+                        if self.config.memory_action_decoder in {"local", "cue_selective"}
                         else self.action_readout.forward(context)
                     ),
                     dim=0,
                 )
                 action_error = bounded_reward * (action_target - action_policy)
-                if self.config.memory_action_decoder == "local":
+                if self.config.memory_action_decoder in {"local", "cue_selective"}:
                     self.local_action_readout.local_update(
                         action_error,
-                        event_pattern,
+                        cue_pattern
+                        if self.config.memory_action_decoder == "cue_selective"
+                        else event_pattern,
                         learning_rate=readout_rate,
                         weight_decay=self.config.synapse_decay,
                     )
