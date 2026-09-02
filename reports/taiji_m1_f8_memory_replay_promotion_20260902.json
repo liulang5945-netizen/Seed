@@ -1,0 +1,323 @@
+{
+  "format": "taiji-native-m1-8-memory-replay-promotion-v1",
+  "version": 1,
+  "status": "blocked",
+  "can_promote": false,
+  "manifest_digest": "c5f178d4e18018f5085c3f56d1ae6d7596df304aee975f81c12db3b72e7e74f8",
+  "foundation_dataset_digest": "d05f4acaf487de5517c4308a3cd8619d037bf525f277bd690d4033da5931119b",
+  "foundation_dataset_sample_counts": {
+    "train": 1048576,
+    "holdout": 131072,
+    "retention": 131072
+  },
+  "code_revision": "3b598f5f0aece821b0d5d1093393567d6c353406",
+  "replay_memory_count": 64,
+  "replay_memory_digests": [
+    "53ed3250341551d680eecdfc9a88bc0768a3aa6b2b9f7ea03d75a9717231850e"
+  ],
+  "coverage": {
+    "b1_sequence_prediction": {
+      "observed": {
+        "train": 1048576,
+        "holdout": 131072,
+        "retention": 131072
+      },
+      "required": {
+        "train": 1048576,
+        "holdout": 131072,
+        "retention": 131072
+      },
+      "meets_requirement": true
+    },
+    "b2_delayed_memory": {
+      "observed": {
+        "train": 1000,
+        "holdout": 1000,
+        "retention": 1000
+      },
+      "required": {
+        "train": 1000,
+        "holdout": 200,
+        "retention": 200
+      },
+      "meets_requirement": true
+    },
+    "b3_world_transition": {
+      "observed": {
+        "train": 1000,
+        "holdout": 500,
+        "retention": 500
+      },
+      "required": {
+        "train": 1000,
+        "holdout": 200,
+        "retention": 200
+      },
+      "meets_requirement": true
+    },
+    "b4_goal_action": {
+      "observed": {
+        "train": 1000,
+        "holdout": 500,
+        "retention": 500
+      },
+      "required": {
+        "train": 1000,
+        "holdout": 200,
+        "retention": 200
+      },
+      "meets_requirement": true
+    },
+    "b5_continual_learning": {
+      "observed": {
+        "phase_b_train": 0,
+        "dedicated_holdout_units": 0,
+        "dedicated_retention_units": 0,
+        "no_replay_counterfactual": false
+      },
+      "required": {
+        "train": 1000,
+        "holdout": 200,
+        "retention": 200
+      },
+      "meets_requirement": false,
+      "note": "Dedicated B5 full audit is still a separate Gate."
+    }
+  },
+  "seeds": [
+    {
+      "seed": 11,
+      "training_report": "reports\\taiji_m1_f8_full_memory_replay_seed11_20260902.json",
+      "eval_report": "reports\\taiji_m1_f8_full_memory_replay_seed11_20260902_eval_only.json",
+      "training_final_metrics": {
+        "sequence_holdout_bpb": 4.8649402252314164,
+        "sequence_retention_bpb": 4.830285210171865,
+        "memory_holdout_recall": 0.536,
+        "memory_retention_recall": 0.536,
+        "world_holdout_error": 3.161307304822003e-08,
+        "world_retention_error": 3.161307304822003e-08,
+        "goal_holdout_success": 1.0,
+        "goal_retention_success": 1.0
+      },
+      "eval_metrics": {
+        "sequence_holdout_bpb": 4.8649402252314164,
+        "sequence_retention_bpb": 4.830285210171865,
+        "memory_holdout_recall": 0.536,
+        "memory_retention_recall": 0.536,
+        "world_holdout_error": 3.161307304822003e-08,
+        "world_retention_error": 3.161307304822003e-08,
+        "goal_holdout_success": 1.0,
+        "goal_retention_success": 1.0
+      },
+      "checkpoint_digest": "9f6584b8937c44083b60e210f03ae1253ce2c041f49a2ad1760d78be3fc90b19",
+      "replay_memory_digest": "53ed3250341551d680eecdfc9a88bc0768a3aa6b2b9f7ea03d75a9717231850e",
+      "phase_a_backward_transfer": {
+        "before": {
+          "sequence_holdout_bpb": 5.209922225779571,
+          "sequence_retention_bpb": 5.394127967778946,
+          "memory_holdout_recall": 0.671875,
+          "memory_retention_recall": 0.671875,
+          "world_holdout_error": 1.369973624673615e-05,
+          "world_retention_error": 1.5841345809342045e-05,
+          "goal_holdout_success": 1.0,
+          "goal_retention_success": 1.0
+        },
+        "after": {
+          "sequence_holdout_bpb": 4.779445154664023,
+          "sequence_retention_bpb": 4.890455700507964,
+          "memory_holdout_recall": 0.53125,
+          "memory_retention_recall": 0.53125,
+          "world_holdout_error": 2.067174465381072e-06,
+          "world_retention_error": 1.8045358263218958e-10,
+          "goal_holdout_success": 1.0,
+          "goal_retention_success": 1.0
+        },
+        "transfer": {
+          "sequence_holdout_bpb": 0.4304770711155479,
+          "memory_holdout_recall": -0.140625,
+          "world_holdout_error": 1.1632561781355077e-05,
+          "goal_holdout_success": 0.0
+        },
+        "all_old_metrics_retained_or_improved": false,
+        "backward_transfer_score": -0.140625
+      },
+      "checks": {
+        "training_completed": true,
+        "eval_only_completed": true,
+        "checkpoint_digest_matches_eval": true,
+        "metrics_match_eval": true,
+        "checkpoint_read_only": true,
+        "source_lineage_matches": true,
+        "holdout_updates_zero": true,
+        "world_transition_rejections_zero": true,
+        "byte_replay_executed": true,
+        "memory_replay_executed": true,
+        "phase_a_old_metrics_retained": false
+      }
+    },
+    {
+      "seed": 29,
+      "training_report": "reports\\taiji_m1_f8_full_memory_replay_seed29_20260902.json",
+      "eval_report": "reports\\taiji_m1_f8_full_memory_replay_seed29_20260902_eval_only.json",
+      "training_final_metrics": {
+        "sequence_holdout_bpb": 4.89359880656194,
+        "sequence_retention_bpb": 4.8790785036002795,
+        "memory_holdout_recall": 0.476,
+        "memory_retention_recall": 0.476,
+        "world_holdout_error": 2.9631564757437445e-08,
+        "world_retention_error": 2.9631564757437445e-08,
+        "goal_holdout_success": 1.0,
+        "goal_retention_success": 1.0
+      },
+      "eval_metrics": {
+        "sequence_holdout_bpb": 4.89359880656194,
+        "sequence_retention_bpb": 4.8790785036002795,
+        "memory_holdout_recall": 0.476,
+        "memory_retention_recall": 0.476,
+        "world_holdout_error": 2.9631564757437445e-08,
+        "world_retention_error": 2.9631564757437445e-08,
+        "goal_holdout_success": 1.0,
+        "goal_retention_success": 1.0
+      },
+      "checkpoint_digest": "8f8ecb3094ba24107a1072fd0e5419268d9d7c7172e3079639a1bc628d7161f4",
+      "replay_memory_digest": "53ed3250341551d680eecdfc9a88bc0768a3aa6b2b9f7ea03d75a9717231850e",
+      "phase_a_backward_transfer": {
+        "before": {
+          "sequence_holdout_bpb": 5.3752095906446264,
+          "sequence_retention_bpb": 5.2144603776621965,
+          "memory_holdout_recall": 0.53125,
+          "memory_retention_recall": 0.53125,
+          "world_holdout_error": 7.42145751272405e-05,
+          "world_retention_error": 0.0004550090744452895,
+          "goal_holdout_success": 1.0,
+          "goal_retention_success": 1.0
+        },
+        "after": {
+          "sequence_holdout_bpb": 4.999466842712456,
+          "sequence_retention_bpb": 4.904712112793348,
+          "memory_holdout_recall": 0.5,
+          "memory_retention_recall": 0.5,
+          "world_holdout_error": 2.424812041823543e-06,
+          "world_retention_error": 8.309785370225198e-09,
+          "goal_holdout_success": 1.0,
+          "goal_retention_success": 1.0
+        },
+        "transfer": {
+          "sequence_holdout_bpb": 0.3757427479321702,
+          "memory_holdout_recall": -0.03125,
+          "world_holdout_error": 7.178976308541696e-05,
+          "goal_holdout_success": 0.0
+        },
+        "all_old_metrics_retained_or_improved": false,
+        "backward_transfer_score": -0.03125
+      },
+      "checks": {
+        "training_completed": true,
+        "eval_only_completed": true,
+        "checkpoint_digest_matches_eval": true,
+        "metrics_match_eval": true,
+        "checkpoint_read_only": true,
+        "source_lineage_matches": true,
+        "holdout_updates_zero": true,
+        "world_transition_rejections_zero": true,
+        "byte_replay_executed": true,
+        "memory_replay_executed": true,
+        "phase_a_old_metrics_retained": false
+      }
+    },
+    {
+      "seed": 47,
+      "training_report": "reports\\taiji_m1_f8_full_memory_replay_seed47_20260902.json",
+      "eval_report": "reports\\taiji_m1_f8_full_memory_replay_seed47_20260902_eval_only.json",
+      "training_final_metrics": {
+        "sequence_holdout_bpb": 4.850613954294211,
+        "sequence_retention_bpb": 4.843386890861336,
+        "memory_holdout_recall": 0.535,
+        "memory_retention_recall": 0.535,
+        "world_holdout_error": 3.0603874989765245e-08,
+        "world_retention_error": 3.0603874989765245e-08,
+        "goal_holdout_success": 1.0,
+        "goal_retention_success": 1.0
+      },
+      "eval_metrics": {
+        "sequence_holdout_bpb": 4.850613954294211,
+        "sequence_retention_bpb": 4.843386890861336,
+        "memory_holdout_recall": 0.535,
+        "memory_retention_recall": 0.535,
+        "world_holdout_error": 3.0603874989765245e-08,
+        "world_retention_error": 3.0603874989765245e-08,
+        "goal_holdout_success": 1.0,
+        "goal_retention_success": 1.0
+      },
+      "checkpoint_digest": "29c1781244ab9cdf33d5120cefe60d67a7a43a1318b4b853988dd51c65375b1e",
+      "replay_memory_digest": "53ed3250341551d680eecdfc9a88bc0768a3aa6b2b9f7ea03d75a9717231850e",
+      "phase_a_backward_transfer": {
+        "before": {
+          "sequence_holdout_bpb": 5.227495564009944,
+          "sequence_retention_bpb": 5.304059232639254,
+          "memory_holdout_recall": 0.640625,
+          "memory_retention_recall": 0.640625,
+          "world_holdout_error": 7.94823436090419e-06,
+          "world_retention_error": 7.978088869514677e-06,
+          "goal_holdout_success": 1.0,
+          "goal_retention_success": 1.0
+        },
+        "after": {
+          "sequence_holdout_bpb": 4.638967692619863,
+          "sequence_retention_bpb": 5.021009428455131,
+          "memory_holdout_recall": 0.625,
+          "memory_retention_recall": 0.625,
+          "world_holdout_error": 2.2250970810750717e-09,
+          "world_retention_error": 8.659739592076221e-15,
+          "goal_holdout_success": 1.0,
+          "goal_retention_success": 1.0
+        },
+        "transfer": {
+          "sequence_holdout_bpb": 0.588527871390081,
+          "memory_holdout_recall": -0.015625,
+          "world_holdout_error": 7.946009263823115e-06,
+          "goal_holdout_success": 0.0
+        },
+        "all_old_metrics_retained_or_improved": false,
+        "backward_transfer_score": -0.015625
+      },
+      "checks": {
+        "training_completed": true,
+        "eval_only_completed": true,
+        "checkpoint_digest_matches_eval": true,
+        "metrics_match_eval": true,
+        "checkpoint_read_only": true,
+        "source_lineage_matches": true,
+        "holdout_updates_zero": true,
+        "world_transition_rejections_zero": true,
+        "byte_replay_executed": true,
+        "memory_replay_executed": true,
+        "phase_a_old_metrics_retained": false
+      }
+    }
+  ],
+  "controls": {
+    "recomputed": [
+      "frozen_parent",
+      "credit_lesion"
+    ],
+    "missing": [
+      "random",
+      "simple_rule",
+      "hash_only",
+      "full_m0_task_matrix"
+    ]
+  },
+  "failure_reasons": [
+    "seed_11:phase_a_old_metrics_retained",
+    "seed_29:phase_a_old_metrics_retained",
+    "seed_47:phase_a_old_metrics_retained",
+    "foundation_coverage_gate_failed",
+    "b5_dedicated_task_holdout_and_retention_not_audited",
+    "m0_controls_not_recomputed_for_full_child",
+    "missing_controls:random,simple_rule,hash_only",
+    "no_replay_counterfactual_for_dedicated_b5"
+  ],
+  "next_gate": "run the dedicated full B5 no-replay/replay audit, then recompute the full M0 control matrix before any M1 promotion",
+  "report_path": "reports\\taiji_m1_f8_memory_replay_promotion_20260902.json"
+}
