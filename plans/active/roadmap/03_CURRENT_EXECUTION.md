@@ -297,6 +297,10 @@ M1-17 的 cue encoder 可分性训练实验已完成并失败。隔离 probe 在
 
 当前唯一下一步为 **M1-18：冻结结构并进入原生训练基线**：保留当前固定 cue encoder、shared action decoder 默认路径与已验证的 checkpoint lineage，把失败的 cue plasticity、slot-routed readout 和新增 decoder 明确列为禁止接入项；先执行全新模型的 checkpoint save→load→eval-only canary，确认训练前保存可逆，再用现有 native joint-training 入口做三 seed 小规模基线，报告 sequence、memory、world、goal、checkpoint digest 和五项 M0 control，不修改架构参数。只有基线报告证明保存/恢复稳定且训练确实改善可读指标，才允许在真实训练数据上扩大课程；若 memory/B5 仍失败，下一片只针对训练信号和数据课程定位，不再增加外围结构。
 
+M1-18 已完成并未晋级 M1。训练前 checkpoint preflight 报告 `reports/taiji_m1_b18_checkpoint_preflight_20260902.json` 为 `passed`，全新进程恢复后的下一步、模型 digest 与 child checkpoint 均一致。默认 shared action decoder、固定 cue encoder、无 replay/slot/probe 的 native joint smoke 已在 seed 11/29/47 完成，训练报告和独立 eval-only 报告逐项一致，`checkpoint_read_only=true`；sequence holdout BPB 分别为 `8.0056→5.5823/5.7423/5.7330`，memory recall 为 `0.625/0.625/1.0`，world error 均下降，goal success 均为 `1.0`。统一 M0 smoke 矩阵 `reports/taiji_m1_b18_m0_matrix_20260902.json` 仍为 `failed`：B1 `7.2191` 仍差于 simple-rule `6.0767`，B2 `0.75` 未形成稳定因果优势，B5 backward transfer 为 `-0.2442`；B3/B4 的 smoke metric 通过但样本量未达到 foundation 下限。因此本片只证明 native 训练和恢复链路可继续，不能宣称五项能力或 M1 晋级。
+
+当前唯一下一步为 **M1-19：B1/B5 训练信号与数据课程诊断**：冻结所有模型结构和 decoder 选项，先在现有 checkpoint contract 上做 train-only signal ablation——B1 分离 byte 边界/预测更新与 simple-rule、frozen-parent 对照，B5 分离 phase-A retention、phase-B 干扰、replay 目标与 write/read 更新比例；每个实验都必须有同一 corpus digest、holdout/retention 只读、checkpoint round-trip 和 no-op/lesion 对照。只根据三 seed 的可重复收益定位下一条训练规则，不再新增 cue slot、readout、provider 或客户端结构；定位完成后再进入下一次受控训练，而不是直接扩大 foundation。
+
 ## 7. M2～M8 的开发日程与外围任务安置
 
 ### M2：世界—行动—语言后训练

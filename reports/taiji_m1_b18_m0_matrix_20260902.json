@@ -1,0 +1,144 @@
+{
+  "format": "taiji-foundation-evaluation-v1",
+  "manifest_digest": "c5f178d4e18018f5085c3f56d1ae6d7596df304aee975f81c12db3b72e7e74f8",
+  "checkpoint_gate_status": "passed",
+  "status": "failed",
+  "can_promote": false,
+  "failure_reasons": [
+    "b1_sequence_prediction:measurement_failed",
+    "b2_delayed_memory:measurement_failed",
+    "b3_world_transition:insufficient_train",
+    "b3_world_transition:insufficient_holdout",
+    "b3_world_transition:insufficient_retention",
+    "b4_goal_action:insufficient_train",
+    "b4_goal_action:insufficient_holdout",
+    "b4_goal_action:insufficient_retention",
+    "b5_continual_learning:measurement_failed"
+  ],
+  "measurements": [
+    {
+      "ability_id": "b1_sequence_prediction",
+      "status": "failed",
+      "primary_metric": "bits_per_byte",
+      "metric_direction": "lower_is_better",
+      "metric_value": 7.219065617842044,
+      "baseline_metrics": {
+        "frozen_parent": 8.856963080368393,
+        "hash_only": 15.93309652769855,
+        "random": 8.005624549193879,
+        "simple_rule": 6.076705107929062
+      },
+      "sample_counts": {
+        "holdout": 1024,
+        "retention": 1024,
+        "train": 4096
+      },
+      "holdout_updates": 0,
+      "evidence": [
+        "seed_metrics=[{\"frozen_parent\": 9.0246378050867, \"holdout_updates\": 0, \"parameter_count\": 6027, \"retention\": 7.176103053340723, \"seed\": 11, \"taiji\": 6.972787198038773, \"train_observations\": 4097}, {\"frozen_parent\": 8.856963080368393, \"holdout_updates\": 0, \"parameter_count\": 6027, \"retention\": 7.165494471004094, \"seed\": 29, \"taiji\": 7.219065617842044, \"train_observations\": 4097}, {\"frozen_parent\": 9.347188598146497, \"holdout_updates\": 0, \"parameter_count\": 6027, \"retention\": 6.949165340859788, \"seed\": 47, \"taiji\": 6.920904862096907, \"train_observations\": 4097}]",
+        "native_model_checkpoint_is_read_only_during_score=true"
+      ]
+    },
+    {
+      "ability_id": "b2_delayed_memory",
+      "status": "failed",
+      "primary_metric": "recall_accuracy",
+      "metric_direction": "higher_is_better",
+      "metric_value": 0.75,
+      "baseline_metrics": {
+        "frozen_parent": 0.625,
+        "hash_only": 0.0,
+        "memory_lesion": 0.625,
+        "random": 0.5,
+        "simple_rule": 0.5
+      },
+      "sample_counts": {
+        "holdout": 8,
+        "retention": 8,
+        "train": 8
+      },
+      "holdout_updates": 0,
+      "evidence": [
+        "seed_metrics=[{\"frozen_parent\": 0.75, \"holdout_updates\": 0, \"memory_lesion\": 0.75, \"parameter_count\": 85953, \"retention\": 0.75, \"seed\": 11, \"taiji\": 0.75}, {\"frozen_parent\": 0.625, \"holdout_updates\": 0, \"memory_lesion\": 0.625, \"parameter_count\": 85953, \"retention\": 0.875, \"seed\": 29, \"taiji\": 0.875}, {\"frozen_parent\": 0.875, \"holdout_updates\": 0, \"memory_lesion\": 0.875, \"parameter_count\": 85953, \"retention\": 1.0, \"seed\": 47, \"taiji\": 1.0}]",
+        "memory_write_partition=train; holdout_and_retention_learning=false"
+      ]
+    },
+    {
+      "ability_id": "b3_world_transition",
+      "status": "passed",
+      "primary_metric": "transition_error",
+      "metric_direction": "lower_is_better",
+      "metric_value": 0.12364016296073732,
+      "baseline_metrics": {
+        "frozen_parent": 0.15802806307637862,
+        "hash_only": 1.2890625,
+        "random": 1.374416684046741,
+        "simple_rule": 1.2578125
+      },
+      "sample_counts": {
+        "holdout": 4,
+        "retention": 4,
+        "train": 8
+      },
+      "holdout_updates": 0,
+      "evidence": [
+        "seed_metrics=[{\"frozen_parent\": 2.101193549379307, \"frozen_retention\": 2.105617684531773, \"hash_only\": 1.3046875, \"holdout_updates\": 0, \"parameter_count\": 388, \"retention\": 0.07159028471095485, \"seed\": 11, \"simple_rule\": 1.2578125, \"taiji\": 0.051071504993917216, \"training_loss\": 0.4078698456287384}, {\"frozen_parent\": 0.15802806307637862, \"frozen_retention\": 0.15584727155142364, \"hash_only\": 1.3046875, \"holdout_updates\": 0, \"parameter_count\": 388, \"retention\": 0.02925313214036951, \"seed\": 29, \"simple_rule\": 1.2578125, \"taiji\": 0.027236440194579714, \"training_loss\": 0.21778252720832825}, {\"frozen_parent\": 0.3540195272604434, \"frozen_retention\": 0.39211925362882916, \"hash_only\": 1.2890625, \"holdout_updates\": 0, \"parameter_count\": 388, \"retention\": 0.3322875162624115, \"seed\": 47, \"simple_rule\": 1.2578125, \"taiji\": 0.12364016296073732, \"training_loss\": 0.25807011127471924}]",
+        "schema_source=train_only; holdout_and_retention_register_parameters=false"
+      ]
+    },
+    {
+      "ability_id": "b4_goal_action",
+      "status": "passed",
+      "primary_metric": "success_rate",
+      "metric_direction": "higher_is_better",
+      "metric_value": 1.0,
+      "baseline_metrics": {
+        "credit_lesion": 0.5,
+        "frozen_parent": 0.5,
+        "hash_only": 0.5,
+        "random": 0.5,
+        "simple_rule": 0.5
+      },
+      "sample_counts": {
+        "holdout": 16,
+        "retention": 16,
+        "train": 32
+      },
+      "holdout_updates": 0,
+      "evidence": [
+        "seed_metrics=[{\"credit_lesion\": 0.5, \"frozen_parent\": 0.5, \"holdout_updates\": 0, \"parameter_count\": 85953, \"retention\": 1.0, \"seed\": 11, \"taiji\": 1.0}, {\"credit_lesion\": 0.5, \"frozen_parent\": 0.5, \"holdout_updates\": 0, \"parameter_count\": 85953, \"retention\": 1.0, \"seed\": 29, \"taiji\": 1.0}, {\"credit_lesion\": 0.5, \"frozen_parent\": 0.5, \"holdout_updates\": 0, \"parameter_count\": 85953, \"retention\": 1.0, \"seed\": 47, \"taiji\": 1.0}]",
+        "train_only_reward_credit=true; holdout_and_retention_learning=false"
+      ]
+    },
+    {
+      "ability_id": "b5_continual_learning",
+      "status": "failed",
+      "primary_metric": "backward_transfer",
+      "metric_direction": "higher_is_better",
+      "metric_value": -0.24420859958696206,
+      "baseline_metrics": {
+        "frozen_parent": 0.0,
+        "hash_only": 0.0,
+        "random": 0.0,
+        "replay_lesion": -0.5993931025567913,
+        "simple_rule": 0.0
+      },
+      "sample_counts": {
+        "holdout": 288,
+        "retention": 144,
+        "train": 1152
+      },
+      "holdout_updates": 0,
+      "evidence": [
+        "seed_metrics=[{\"backward_transfer\": -0.24420859958696206, \"continued_checkpoint_digest\": \"e7014bcc894db617f536872472a549c60454eaa6f6474cc54c408e176e41bf1e\", \"continued_from_parent\": 1, \"fresh_new\": 2.4826346333137934, \"holdout_updates\": 0, \"new_after\": 2.7048281254072353, \"old_after\": 2.0906835752756683, \"old_before\": 1.8464749756887062, \"parameter_count\": 85953, \"parent_checkpoint_digest\": \"ad9ad4b76ce0cd3199a0dda22183ac74c9f0a9d8775583a6971332d20a9c9f78\", \"replay_lesion\": -0.5993931025567913, \"retention\": 2.632888348621607, \"seed\": 11}, {\"backward_transfer\": -0.10586856829187985, \"continued_checkpoint_digest\": \"46f22223ecbbc0087b308fa26afbc6b23e7a9580113b31061c8ee47293a61a15\", \"continued_from_parent\": 1, \"fresh_new\": 2.3728381673197543, \"holdout_updates\": 0, \"new_after\": 2.4191404447190177, \"old_after\": 2.412957751349437, \"old_before\": 2.307089183057557, \"parameter_count\": 85953, \"parent_checkpoint_digest\": \"0404244302888a16fd2ae3ee18ca3618a6eb567f64d73193bea2c92d04246669\", \"replay_lesion\": -0.12989235857533776, \"retention\": 2.4478253940367756, \"seed\": 29}, {\"backward_transfer\": 0.005556396344295056, \"continued_checkpoint_digest\": \"f29b1962ad44ebec00e7ba74c08951df913adcf388e5d95470360d0fe738b0e5\", \"continued_from_parent\": 1, \"fresh_new\": 2.552652872451301, \"holdout_updates\": 0, \"new_after\": 2.694610056149844, \"old_after\": 2.141396627862258, \"old_before\": 2.146953024206553, \"parameter_count\": 85953, \"parent_checkpoint_digest\": \"94ed127a7fc0ca5bac7bd86436e1f3fc8abb8be1e18741141792d91c69f179ed\", \"replay_lesion\": -0.22811964929916106, \"retention\": 2.0671876340012876, \"seed\": 47}]",
+        "phase_b_continues_phase_a_checkpoint=true; phase_a_replay_is_train_only=true"
+      ]
+    }
+  ],
+  "manifest_path": "E:\\Seed\\plans\\manifests\\taiji_foundation_baseline_v1.json",
+  "contract_status": "validated",
+  "capability_measurements": "b1_sequence_prediction; b2_delayed_memory; b3_world_transition; b4_goal_action; b5_continual_learning",
+  "profile": "smoke",
+  "model_tier": "micro",
+  "report_written": true
+}
