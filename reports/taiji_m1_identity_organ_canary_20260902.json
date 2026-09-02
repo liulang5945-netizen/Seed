@@ -1,0 +1,272 @@
+{
+  "format": "taiji-native-m1-identity-organ-canary-v1",
+  "version": 1,
+  "status": "canary",
+  "identity_route_default": "disabled",
+  "shared_decoder_default_fallback": true,
+  "action_intent_execution": false,
+  "checkpoint_lineage": "identity-organ payload is parent-digested against Taiji core",
+  "capacity_replacement": "least-used occupied slot; replacement clears stale action edges",
+  "action_evidence_ownership": "identity organ emits evidence; ByteMotor owns final action distribution",
+  "rollback": "restore a pre-organ checkpoint under identity_organ_enabled=false",
+  "diagnostics": {
+    "seeds": [
+      11,
+      29,
+      47
+    ],
+    "modes": [
+      "shared_control",
+      "identity_organ"
+    ],
+    "default_identity_organ_enabled": false,
+    "architecture_default_unchanged": true,
+    "canary_passed": true,
+    "records": {
+      "shared_control": [
+        {
+          "seed": 11,
+          "provided_by": "identity_organ.b2/b5.shared_control"
+        },
+        {
+          "seed": 29,
+          "provided_by": "identity_organ.b2/b5.shared_control"
+        },
+        {
+          "seed": 47,
+          "provided_by": "identity_organ.b2/b5.shared_control"
+        }
+      ],
+      "identity_organ": [
+        {
+          "seed": 11,
+          "b2": {
+            "identity_holdout": 1.0,
+            "identity_retention": 1.0,
+            "shared_control_holdout": 0.75,
+            "identity_lesion_holdout": 0.75
+          },
+          "b5": {
+            "parent_old_holdout": 1.0,
+            "parent_retention": 1.0,
+            "child_old_holdout": 1.0,
+            "child_old_retention": 1.0,
+            "child_new_holdout": 1.0,
+            "shared_control_old_holdout": 0.0,
+            "shared_control_new_holdout": 0.5,
+            "identity_lesion_old_holdout": 0.0,
+            "identity_lesion_new_holdout": 0.5
+          },
+          "provenance": {
+            "bound_sources": [
+              "identity-route"
+            ],
+            "bound_provenance": [
+              "identity-organ:bound→motor-evidence"
+            ],
+            "unbound_source": "shared-fallback",
+            "unbound_provenance": "identity-organ:unbound→shared-fallback",
+            "action_intent_generated": false,
+            "final_action_owner": "ByteMotor"
+          },
+          "repeated_replay": {
+            "same_slot_rate": 1.0,
+            "old_holdout_after": 1.0,
+            "new_holdout_after": 1.0,
+            "organ_digest_changed": true,
+            "expected_slots_bound": true
+          },
+          "no_change": {
+            "bound_count": 8,
+            "all_bound": true,
+            "unbound_is_fallback": true,
+            "organ_digest_unchanged": true
+          },
+          "capacity": {
+            "capacity": 8,
+            "attempted_writes": 12,
+            "occupied_count": 8,
+            "allocation_count": 12,
+            "replacement_count": 4,
+            "occupied_within_capacity": true,
+            "replacement_policy": "least-used occupied slot"
+          },
+          "budget": {
+            "model_parameter_count": 147521,
+            "planned_parameter_count": 147521,
+            "identity_prototype_parameters": 28672,
+            "identity_action_edges": 32896,
+            "identity_total_parameters": 61568
+          },
+          "checkpoint": {
+            "format": "taiji-native-identity-organ-v1",
+            "version": 1,
+            "parent_core_digest_matches_lineage": true,
+            "child_core_digest_matches_lineage": true,
+            "restored_bundle_digest_matches": true,
+            "restored_old_holdout": 1.0,
+            "restored_new_holdout": 1.0,
+            "fresh_process_source": "identity-route",
+            "fresh_process_provenance": "identity-organ:bound→motor-evidence",
+            "fresh_process_persistent_digest_unchanged": true,
+            "fresh_process_checkpoint_digest_matches": true,
+            "rollback_disabled_has_no_identity_payload": true
+          }
+        },
+        {
+          "seed": 29,
+          "b2": {
+            "identity_holdout": 1.0,
+            "identity_retention": 1.0,
+            "shared_control_holdout": 0.875,
+            "identity_lesion_holdout": 0.875
+          },
+          "b5": {
+            "parent_old_holdout": 1.0,
+            "parent_retention": 1.0,
+            "child_old_holdout": 1.0,
+            "child_old_retention": 1.0,
+            "child_new_holdout": 1.0,
+            "shared_control_old_holdout": 0.0,
+            "shared_control_new_holdout": 0.625,
+            "identity_lesion_old_holdout": 0.0,
+            "identity_lesion_new_holdout": 0.625
+          },
+          "provenance": {
+            "bound_sources": [
+              "identity-route"
+            ],
+            "bound_provenance": [
+              "identity-organ:bound→motor-evidence"
+            ],
+            "unbound_source": "shared-fallback",
+            "unbound_provenance": "identity-organ:unbound→shared-fallback",
+            "action_intent_generated": false,
+            "final_action_owner": "ByteMotor"
+          },
+          "repeated_replay": {
+            "same_slot_rate": 1.0,
+            "old_holdout_after": 1.0,
+            "new_holdout_after": 1.0,
+            "organ_digest_changed": true,
+            "expected_slots_bound": true
+          },
+          "no_change": {
+            "bound_count": 8,
+            "all_bound": true,
+            "unbound_is_fallback": true,
+            "organ_digest_unchanged": true
+          },
+          "capacity": {
+            "capacity": 8,
+            "attempted_writes": 12,
+            "occupied_count": 8,
+            "allocation_count": 12,
+            "replacement_count": 4,
+            "occupied_within_capacity": true,
+            "replacement_policy": "least-used occupied slot"
+          },
+          "budget": {
+            "model_parameter_count": 147521,
+            "planned_parameter_count": 147521,
+            "identity_prototype_parameters": 28672,
+            "identity_action_edges": 32896,
+            "identity_total_parameters": 61568
+          },
+          "checkpoint": {
+            "format": "taiji-native-identity-organ-v1",
+            "version": 1,
+            "parent_core_digest_matches_lineage": true,
+            "child_core_digest_matches_lineage": true,
+            "restored_bundle_digest_matches": true,
+            "restored_old_holdout": 1.0,
+            "restored_new_holdout": 1.0,
+            "fresh_process_source": "identity-route",
+            "fresh_process_provenance": "identity-organ:bound→motor-evidence",
+            "fresh_process_persistent_digest_unchanged": true,
+            "fresh_process_checkpoint_digest_matches": true,
+            "rollback_disabled_has_no_identity_payload": true
+          }
+        },
+        {
+          "seed": 47,
+          "b2": {
+            "identity_holdout": 1.0,
+            "identity_retention": 1.0,
+            "shared_control_holdout": 1.0,
+            "identity_lesion_holdout": 1.0
+          },
+          "b5": {
+            "parent_old_holdout": 1.0,
+            "parent_retention": 1.0,
+            "child_old_holdout": 1.0,
+            "child_old_retention": 1.0,
+            "child_new_holdout": 1.0,
+            "shared_control_old_holdout": 0.0,
+            "shared_control_new_holdout": 0.875,
+            "identity_lesion_old_holdout": 0.0,
+            "identity_lesion_new_holdout": 0.875
+          },
+          "provenance": {
+            "bound_sources": [
+              "identity-route"
+            ],
+            "bound_provenance": [
+              "identity-organ:bound→motor-evidence"
+            ],
+            "unbound_source": "shared-fallback",
+            "unbound_provenance": "identity-organ:unbound→shared-fallback",
+            "action_intent_generated": false,
+            "final_action_owner": "ByteMotor"
+          },
+          "repeated_replay": {
+            "same_slot_rate": 1.0,
+            "old_holdout_after": 1.0,
+            "new_holdout_after": 1.0,
+            "organ_digest_changed": true,
+            "expected_slots_bound": true
+          },
+          "no_change": {
+            "bound_count": 8,
+            "all_bound": true,
+            "unbound_is_fallback": true,
+            "organ_digest_unchanged": true
+          },
+          "capacity": {
+            "capacity": 8,
+            "attempted_writes": 12,
+            "occupied_count": 8,
+            "allocation_count": 12,
+            "replacement_count": 4,
+            "occupied_within_capacity": true,
+            "replacement_policy": "least-used occupied slot"
+          },
+          "budget": {
+            "model_parameter_count": 147521,
+            "planned_parameter_count": 147521,
+            "identity_prototype_parameters": 28672,
+            "identity_action_edges": 32896,
+            "identity_total_parameters": 61568
+          },
+          "checkpoint": {
+            "format": "taiji-native-identity-organ-v1",
+            "version": 1,
+            "parent_core_digest_matches_lineage": true,
+            "child_core_digest_matches_lineage": true,
+            "restored_bundle_digest_matches": true,
+            "restored_old_holdout": 1.0,
+            "restored_new_holdout": 1.0,
+            "fresh_process_source": "identity-route",
+            "fresh_process_provenance": "identity-organ:bound→motor-evidence",
+            "fresh_process_persistent_digest_unchanged": true,
+            "fresh_process_checkpoint_digest_matches": true,
+            "rollback_disabled_has_no_identity_payload": true
+          }
+        }
+      ]
+    }
+  },
+  "canary_passed": true,
+  "can_promote_for_review": true,
+  "report_path": "reports\\taiji_m1_identity_organ_canary_20260902.json"
+}\n

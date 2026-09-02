@@ -235,6 +235,15 @@ from .homeostasis import (
     HomeostaticController,
     HomeostaticDrive,
 )
+from .identity_organ import (
+    IDENTITY_ORGAN_BOUND_PROVENANCE,
+    IDENTITY_ORGAN_CHECKPOINT_FORMAT,
+    IDENTITY_ORGAN_DISABLED_PROVENANCE,
+    IDENTITY_ORGAN_UNBOUND_PROVENANCE,
+    IDENTITY_ORGAN_VERSION,
+    CueIdentityOrgan,
+    IdentityRecall,
+)
 from .input_boundary import INPUT_BOUNDARY_FORMAT, InputFrame, InputTrace
 from .interaction_group_learning import (
     INTERACTION_GROUP_LEARNING_CHECKPOINT_FORMAT,
@@ -741,6 +750,13 @@ __all__ = [
     "EpisodicField",
     "CueBindingBank",
     "CueBindingResult",
+    "CueIdentityOrgan",
+    "IdentityRecall",
+    "IDENTITY_ORGAN_BOUND_PROVENANCE",
+    "IDENTITY_ORGAN_CHECKPOINT_FORMAT",
+    "IDENTITY_ORGAN_DISABLED_PROVENANCE",
+    "IDENTITY_ORGAN_UNBOUND_PROVENANCE",
+    "IDENTITY_ORGAN_VERSION",
     "EpisodicReplay",
     "EpisodicWrite",
     "ContentPlan",
