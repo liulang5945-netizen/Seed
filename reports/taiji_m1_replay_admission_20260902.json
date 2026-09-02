@@ -1,0 +1,1611 @@
+{
+  "format": "taiji-native-m1-replay-admission-v1",
+  "version": 1,
+  "status": "diagnostic",
+  "architecture_unchanged": true,
+  "decoder": "shared",
+  "admission_only": true,
+  "interleaved_after_phase_b": true,
+  "answer_table": false,
+  "diagnostics": {
+    "corpus_digest": "839feff22948df7eb1feec76f574214571495de3f7129b60bf8acc6403c0f433",
+    "sample_counts": {
+      "train": 32,
+      "holdout": 16,
+      "retention": 16,
+      "phase_a_train": 16,
+      "phase_a_holdout": 8,
+      "phase_a_retention": 8,
+      "phase_b_train": 16,
+      "phase_b_holdout": 8,
+      "phase_b_retention": 8,
+      "replay_train": 16
+    },
+    "policies": [
+      "no_gate",
+      "familiarity_gate",
+      "conflict_reject_gate"
+    ],
+    "thresholds": {
+      "familiarity": 0.9,
+      "phase_b_conflict": 0.82
+    },
+    "promotable_policies": [],
+    "records": {
+      "no_gate": [
+        {
+          "seed": 11,
+          "policy": "no_gate",
+          "parent": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "no_replay": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.5
+          },
+          "child": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.75
+          },
+          "restored": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.75
+          },
+          "replay": {
+            "replay_considered": 16,
+            "replay_admitted": 16,
+            "replay_rejected": 0,
+            "decisions": [
+              {
+                "memory_id": "m1-b5-phase-a-0",
+                "cue_familiarity": 0.9303272645149447,
+                "phase_b_conflict": 0.6299769282341003,
+                "phase_b_memory_id": "m1-b5-phase-b-0",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-1",
+                "cue_familiarity": 0.9005100049869669,
+                "phase_b_conflict": 0.5122089982032776,
+                "phase_b_memory_id": "m1-b5-phase-b-1",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-2",
+                "cue_familiarity": 0.9175856868027386,
+                "phase_b_conflict": 0.4341786503791809,
+                "phase_b_memory_id": "m1-b5-phase-b-2",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-3",
+                "cue_familiarity": 0.8813602097886473,
+                "phase_b_conflict": 0.8170450925827026,
+                "phase_b_memory_id": "m1-b5-phase-b-3",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-4",
+                "cue_familiarity": 0.8762239902861902,
+                "phase_b_conflict": 0.5089855194091797,
+                "phase_b_memory_id": "m1-b5-phase-b-4",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-5",
+                "cue_familiarity": 0.9379951924044097,
+                "phase_b_conflict": 0.6479125022888184,
+                "phase_b_memory_id": "m1-b5-phase-b-5",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-6",
+                "cue_familiarity": 0.9201797256981857,
+                "phase_b_conflict": 0.7199945449829102,
+                "phase_b_memory_id": "m1-b5-phase-b-6",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-7",
+                "cue_familiarity": 0.8905036825042667,
+                "phase_b_conflict": 0.6931796073913574,
+                "phase_b_memory_id": "m1-b5-phase-b-7",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-8",
+                "cue_familiarity": 0.9155982726707949,
+                "phase_b_conflict": 0.572683572769165,
+                "phase_b_memory_id": "m1-b5-phase-b-8",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-9",
+                "cue_familiarity": 0.9345576243800414,
+                "phase_b_conflict": 0.5848546028137207,
+                "phase_b_memory_id": "m1-b5-phase-b-9",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-10",
+                "cue_familiarity": 0.8786577714480036,
+                "phase_b_conflict": 0.7509613037109375,
+                "phase_b_memory_id": "m1-b5-phase-b-10",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-11",
+                "cue_familiarity": 0.9149059259384245,
+                "phase_b_conflict": 0.6533294916152954,
+                "phase_b_memory_id": "m1-b5-phase-b-11",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-12",
+                "cue_familiarity": 0.9138511335957844,
+                "phase_b_conflict": 0.5313244462013245,
+                "phase_b_memory_id": "m1-b5-phase-b-12",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-13",
+                "cue_familiarity": 0.8400759884497956,
+                "phase_b_conflict": 0.6497449278831482,
+                "phase_b_memory_id": "m1-b5-phase-b-13",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-14",
+                "cue_familiarity": 0.8646524964420366,
+                "phase_b_conflict": 0.5244260430335999,
+                "phase_b_memory_id": "m1-b5-phase-b-14",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-15",
+                "cue_familiarity": 0.888709990252112,
+                "phase_b_conflict": 0.6670753955841064,
+                "phase_b_memory_id": "m1-b5-phase-b-15",
+                "admitted": true,
+                "learning_scale": 0.25
+              }
+            ],
+            "base_learning_scale": 0.25,
+            "cue_familiarity_min": 0.8400759884497956,
+            "cue_familiarity_max": 0.9379951924044097,
+            "phase_b_conflict_min": 0.4341786503791809,
+            "phase_b_conflict_max": 0.8170450925827026
+          },
+          "replay_causal_gain_vs_parent": -0.75,
+          "new_gain_vs_no_replay": 0.25,
+          "checkpoint": {
+            "parent_digest": "f120076e7d1f03aee42070f82ad2d3a5d26b7dce09e8885d814795f2cca141b3",
+            "child_digest": "231ac74c832eaa2486d0cd9f628c9da0661e767bcb94c0275dacbf9769f7089f",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 29,
+          "policy": "no_gate",
+          "parent": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "no_replay": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.625
+          },
+          "child": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.625
+          },
+          "restored": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.625
+          },
+          "replay": {
+            "replay_considered": 16,
+            "replay_admitted": 16,
+            "replay_rejected": 0,
+            "decisions": [
+              {
+                "memory_id": "m1-b5-phase-a-0",
+                "cue_familiarity": 0.9502089433146168,
+                "phase_b_conflict": 0.6259209513664246,
+                "phase_b_memory_id": "m1-b5-phase-b-0",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-1",
+                "cue_familiarity": 0.9055116383293359,
+                "phase_b_conflict": 0.4774317741394043,
+                "phase_b_memory_id": "m1-b5-phase-b-1",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-2",
+                "cue_familiarity": 0.895612844444348,
+                "phase_b_conflict": 0.5269439816474915,
+                "phase_b_memory_id": "m1-b5-phase-b-2",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-3",
+                "cue_familiarity": 0.9306018252604716,
+                "phase_b_conflict": 0.667206883430481,
+                "phase_b_memory_id": "m1-b5-phase-b-3",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-4",
+                "cue_familiarity": 0.9162503691453442,
+                "phase_b_conflict": 0.5628358721733093,
+                "phase_b_memory_id": "m1-b5-phase-b-4",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-5",
+                "cue_familiarity": 0.9341831770019594,
+                "phase_b_conflict": 0.7658704519271851,
+                "phase_b_memory_id": "m1-b5-phase-b-5",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-6",
+                "cue_familiarity": 0.921394544265749,
+                "phase_b_conflict": 0.8245100975036621,
+                "phase_b_memory_id": "m1-b5-phase-b-6",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-7",
+                "cue_familiarity": 0.9202523883915315,
+                "phase_b_conflict": 0.7346305847167969,
+                "phase_b_memory_id": "m1-b5-phase-b-7",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-8",
+                "cue_familiarity": 0.9082977356877453,
+                "phase_b_conflict": 0.8441089391708374,
+                "phase_b_memory_id": "m1-b5-phase-b-8",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-9",
+                "cue_familiarity": 0.8057778366888321,
+                "phase_b_conflict": 0.36838841438293457,
+                "phase_b_memory_id": "m1-b5-phase-b-9",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-10",
+                "cue_familiarity": 0.917183350695926,
+                "phase_b_conflict": 0.596218466758728,
+                "phase_b_memory_id": "m1-b5-phase-b-10",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-11",
+                "cue_familiarity": 0.9146492449499732,
+                "phase_b_conflict": 0.7167628407478333,
+                "phase_b_memory_id": "m1-b5-phase-b-11",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-12",
+                "cue_familiarity": 0.9078105628092982,
+                "phase_b_conflict": 0.33826491236686707,
+                "phase_b_memory_id": "m1-b5-phase-b-12",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-13",
+                "cue_familiarity": 0.9151290191874023,
+                "phase_b_conflict": 0.5244529247283936,
+                "phase_b_memory_id": "m1-b5-phase-b-13",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-14",
+                "cue_familiarity": 0.8957079492835115,
+                "phase_b_conflict": 0.7260459065437317,
+                "phase_b_memory_id": "m1-b5-phase-b-14",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-15",
+                "cue_familiarity": 0.9091971311679162,
+                "phase_b_conflict": 0.6195340156555176,
+                "phase_b_memory_id": "m1-b5-phase-b-15",
+                "admitted": true,
+                "learning_scale": 0.25
+              }
+            ],
+            "base_learning_scale": 0.25,
+            "cue_familiarity_min": 0.8057778366888321,
+            "cue_familiarity_max": 0.9502089433146168,
+            "phase_b_conflict_min": 0.33826491236686707,
+            "phase_b_conflict_max": 0.8441089391708374
+          },
+          "replay_causal_gain_vs_parent": -0.875,
+          "new_gain_vs_no_replay": 0.0,
+          "checkpoint": {
+            "parent_digest": "a34f0fbcf9dcdeb660076bf50a92e05ce06a792cbc76c241f6f19747fab58d8e",
+            "child_digest": "fc042cf7966e7d04fa5ddc514e4bb77764fe3ef2ac7c923583f7f4dec68b3929",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 47,
+          "policy": "no_gate",
+          "parent": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "no_replay": {
+            "old_holdout": 0.0,
+            "old_retention": 0.125,
+            "new_holdout": 0.875
+          },
+          "child": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.875
+          },
+          "restored": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.875
+          },
+          "replay": {
+            "replay_considered": 16,
+            "replay_admitted": 16,
+            "replay_rejected": 0,
+            "decisions": [
+              {
+                "memory_id": "m1-b5-phase-a-0",
+                "cue_familiarity": 0.9401265314274982,
+                "phase_b_conflict": 0.7403289079666138,
+                "phase_b_memory_id": "m1-b5-phase-b-0",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-1",
+                "cue_familiarity": 0.9313053410094588,
+                "phase_b_conflict": 0.8012705445289612,
+                "phase_b_memory_id": "m1-b5-phase-b-1",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-2",
+                "cue_familiarity": 0.9259480802532974,
+                "phase_b_conflict": 0.8651560544967651,
+                "phase_b_memory_id": "m1-b5-phase-b-2",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-3",
+                "cue_familiarity": 0.9295866690548145,
+                "phase_b_conflict": 0.5910616517066956,
+                "phase_b_memory_id": "m1-b5-phase-b-3",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-4",
+                "cue_familiarity": 0.9231827043737143,
+                "phase_b_conflict": 0.752212405204773,
+                "phase_b_memory_id": "m1-b5-phase-b-4",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-5",
+                "cue_familiarity": 0.9231181288813528,
+                "phase_b_conflict": 0.510138750076294,
+                "phase_b_memory_id": "m1-b5-phase-b-5",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-6",
+                "cue_familiarity": 0.9444250774678142,
+                "phase_b_conflict": 0.7532393336296082,
+                "phase_b_memory_id": "m1-b5-phase-b-6",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-7",
+                "cue_familiarity": 0.9150345514006059,
+                "phase_b_conflict": 0.5746715664863586,
+                "phase_b_memory_id": "m1-b5-phase-b-7",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-8",
+                "cue_familiarity": 0.9303494110003646,
+                "phase_b_conflict": 0.8179361820220947,
+                "phase_b_memory_id": "m1-b5-phase-b-8",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-9",
+                "cue_familiarity": 0.9261284872225851,
+                "phase_b_conflict": 0.815247118473053,
+                "phase_b_memory_id": "m1-b5-phase-b-9",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-10",
+                "cue_familiarity": 0.9385089895027381,
+                "phase_b_conflict": 0.7243739366531372,
+                "phase_b_memory_id": "m1-b5-phase-b-10",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-11",
+                "cue_familiarity": 0.9412299670121392,
+                "phase_b_conflict": 0.6399915814399719,
+                "phase_b_memory_id": "m1-b5-phase-b-11",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-12",
+                "cue_familiarity": 0.9517550548828946,
+                "phase_b_conflict": 0.8786516189575195,
+                "phase_b_memory_id": "m1-b5-phase-b-12",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-13",
+                "cue_familiarity": 0.9028159031316227,
+                "phase_b_conflict": 0.8426180481910706,
+                "phase_b_memory_id": "m1-b5-phase-b-13",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-14",
+                "cue_familiarity": 0.9179920763890289,
+                "phase_b_conflict": 0.6048585772514343,
+                "phase_b_memory_id": "m1-b5-phase-b-14",
+                "admitted": true,
+                "learning_scale": 0.25
+              },
+              {
+                "memory_id": "m1-b5-phase-a-15",
+                "cue_familiarity": 0.9193182254268902,
+                "phase_b_conflict": 0.5350648164749146,
+                "phase_b_memory_id": "m1-b5-phase-b-15",
+                "admitted": true,
+                "learning_scale": 0.25
+              }
+            ],
+            "base_learning_scale": 0.25,
+            "cue_familiarity_min": 0.9028159031316227,
+            "cue_familiarity_max": 0.9517550548828946,
+            "phase_b_conflict_min": 0.510138750076294,
+            "phase_b_conflict_max": 0.8786516189575195
+          },
+          "replay_causal_gain_vs_parent": -0.625,
+          "new_gain_vs_no_replay": 0.0,
+          "checkpoint": {
+            "parent_digest": "d3ba85aadf4c64c008e69d1da55a6617f8894c2e4156bf47d0edb004e8b5948f",
+            "child_digest": "ea7f64fd6b37f7b0ddba78bb928da282467c4389bad14aa2b85f8e4e56b3d863",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        }
+      ],
+      "familiarity_gate": [
+        {
+          "seed": 11,
+          "policy": "familiarity_gate",
+          "parent": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "no_replay": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.5
+          },
+          "child": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.625
+          },
+          "restored": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.625
+          },
+          "replay": {
+            "replay_considered": 16,
+            "replay_admitted": 9,
+            "replay_rejected": 7,
+            "decisions": [
+              {
+                "memory_id": "m1-b5-phase-a-0",
+                "cue_familiarity": 0.9303272645149447,
+                "phase_b_conflict": 0.6299769282341003,
+                "phase_b_memory_id": "m1-b5-phase-b-0",
+                "admitted": true,
+                "learning_scale": 0.23258181612873619
+              },
+              {
+                "memory_id": "m1-b5-phase-a-1",
+                "cue_familiarity": 0.9005642549351899,
+                "phase_b_conflict": 0.512695848941803,
+                "phase_b_memory_id": "m1-b5-phase-b-1",
+                "admitted": true,
+                "learning_scale": 0.22514106373379747
+              },
+              {
+                "memory_id": "m1-b5-phase-a-2",
+                "cue_familiarity": 0.9175339118134619,
+                "phase_b_conflict": 0.435165137052536,
+                "phase_b_memory_id": "m1-b5-phase-b-2",
+                "admitted": true,
+                "learning_scale": 0.22938347795336547
+              },
+              {
+                "memory_id": "m1-b5-phase-a-3",
+                "cue_familiarity": 0.881595427215415,
+                "phase_b_conflict": 0.8173820972442627,
+                "phase_b_memory_id": "m1-b5-phase-b-3",
+                "admitted": false,
+                "learning_scale": 0.22039885680385374
+              },
+              {
+                "memory_id": "m1-b5-phase-a-4",
+                "cue_familiarity": 0.8779750011029247,
+                "phase_b_conflict": 0.5135113596916199,
+                "phase_b_memory_id": "m1-b5-phase-b-4",
+                "admitted": false,
+                "learning_scale": 0.21949375027573118
+              },
+              {
+                "memory_id": "m1-b5-phase-a-5",
+                "cue_familiarity": 0.938090776322669,
+                "phase_b_conflict": 0.6434913873672485,
+                "phase_b_memory_id": "m1-b5-phase-b-5",
+                "admitted": true,
+                "learning_scale": 0.23452269408066725
+              },
+              {
+                "memory_id": "m1-b5-phase-a-6",
+                "cue_familiarity": 0.9211704259162501,
+                "phase_b_conflict": 0.725964367389679,
+                "phase_b_memory_id": "m1-b5-phase-b-6",
+                "admitted": true,
+                "learning_scale": 0.23029260647906252
+              },
+              {
+                "memory_id": "m1-b5-phase-a-7",
+                "cue_familiarity": 0.8926403160218409,
+                "phase_b_conflict": 0.697053074836731,
+                "phase_b_memory_id": "m1-b5-phase-b-7",
+                "admitted": false,
+                "learning_scale": 0.22316007900546023
+              },
+              {
+                "memory_id": "m1-b5-phase-a-8",
+                "cue_familiarity": 0.9158049435385452,
+                "phase_b_conflict": 0.5689222812652588,
+                "phase_b_memory_id": "m1-b5-phase-b-8",
+                "admitted": true,
+                "learning_scale": 0.2289512358846363
+              },
+              {
+                "memory_id": "m1-b5-phase-a-9",
+                "cue_familiarity": 0.9344047140066147,
+                "phase_b_conflict": 0.5845459699630737,
+                "phase_b_memory_id": "m1-b5-phase-b-9",
+                "admitted": true,
+                "learning_scale": 0.23360117850165368
+              },
+              {
+                "memory_id": "m1-b5-phase-a-10",
+                "cue_familiarity": 0.87656037794424,
+                "phase_b_conflict": 0.7521507740020752,
+                "phase_b_memory_id": "m1-b5-phase-b-10",
+                "admitted": false,
+                "learning_scale": 0.21914009448606
+              },
+              {
+                "memory_id": "m1-b5-phase-a-11",
+                "cue_familiarity": 0.9145200713297019,
+                "phase_b_conflict": 0.6502206325531006,
+                "phase_b_memory_id": "m1-b5-phase-b-11",
+                "admitted": true,
+                "learning_scale": 0.22863001783242548
+              },
+              {
+                "memory_id": "m1-b5-phase-a-12",
+                "cue_familiarity": 0.9129353621022073,
+                "phase_b_conflict": 0.5244542360305786,
+                "phase_b_memory_id": "m1-b5-phase-b-12",
+                "admitted": true,
+                "learning_scale": 0.22823384052555182
+              },
+              {
+                "memory_id": "m1-b5-phase-a-13",
+                "cue_familiarity": 0.8398662568082237,
+                "phase_b_conflict": 0.6537251472473145,
+                "phase_b_memory_id": "m1-b5-phase-b-13",
+                "admitted": false,
+                "learning_scale": 0.20996656420205592
+              },
+              {
+                "memory_id": "m1-b5-phase-a-14",
+                "cue_familiarity": 0.8680039757144621,
+                "phase_b_conflict": 0.5323848724365234,
+                "phase_b_memory_id": "m1-b5-phase-b-14",
+                "admitted": false,
+                "learning_scale": 0.21700099392861552
+              },
+              {
+                "memory_id": "m1-b5-phase-a-15",
+                "cue_familiarity": 0.8918379427712508,
+                "phase_b_conflict": 0.6578468084335327,
+                "phase_b_memory_id": "m1-b5-phase-b-15",
+                "admitted": false,
+                "learning_scale": 0.2229594856928127
+              }
+            ],
+            "base_learning_scale": 0.25,
+            "cue_familiarity_min": 0.8398662568082237,
+            "cue_familiarity_max": 0.938090776322669,
+            "phase_b_conflict_min": 0.435165137052536,
+            "phase_b_conflict_max": 0.8173820972442627
+          },
+          "replay_causal_gain_vs_parent": -0.75,
+          "new_gain_vs_no_replay": 0.125,
+          "checkpoint": {
+            "parent_digest": "f120076e7d1f03aee42070f82ad2d3a5d26b7dce09e8885d814795f2cca141b3",
+            "child_digest": "9e7c48bf7bf40f7f4cd4a5fce710bfaee94b6a87a539d3e8ad4b72def30d5eb6",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 29,
+          "policy": "familiarity_gate",
+          "parent": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "no_replay": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.625
+          },
+          "child": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.625
+          },
+          "restored": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.625
+          },
+          "replay": {
+            "replay_considered": 16,
+            "replay_admitted": 13,
+            "replay_rejected": 3,
+            "decisions": [
+              {
+                "memory_id": "m1-b5-phase-a-0",
+                "cue_familiarity": 0.9502089433146168,
+                "phase_b_conflict": 0.6259209513664246,
+                "phase_b_memory_id": "m1-b5-phase-b-0",
+                "admitted": true,
+                "learning_scale": 0.2375522358286542
+              },
+              {
+                "memory_id": "m1-b5-phase-a-1",
+                "cue_familiarity": 0.9054909752605285,
+                "phase_b_conflict": 0.4777199923992157,
+                "phase_b_memory_id": "m1-b5-phase-b-1",
+                "admitted": true,
+                "learning_scale": 0.22637274381513212
+              },
+              {
+                "memory_id": "m1-b5-phase-a-2",
+                "cue_familiarity": 0.8960120728788376,
+                "phase_b_conflict": 0.5282937288284302,
+                "phase_b_memory_id": "m1-b5-phase-b-2",
+                "admitted": false,
+                "learning_scale": 0.2240030182197094
+              },
+              {
+                "memory_id": "m1-b5-phase-a-3",
+                "cue_familiarity": 0.9306551557852812,
+                "phase_b_conflict": 0.6700645685195923,
+                "phase_b_memory_id": "m1-b5-phase-b-3",
+                "admitted": true,
+                "learning_scale": 0.2326637889463203
+              },
+              {
+                "memory_id": "m1-b5-phase-a-4",
+                "cue_familiarity": 0.9170847411189943,
+                "phase_b_conflict": 0.5692387819290161,
+                "phase_b_memory_id": "m1-b5-phase-b-4",
+                "admitted": true,
+                "learning_scale": 0.22927118527974857
+              },
+              {
+                "memory_id": "m1-b5-phase-a-5",
+                "cue_familiarity": 0.9350465155398814,
+                "phase_b_conflict": 0.7687995433807373,
+                "phase_b_memory_id": "m1-b5-phase-b-5",
+                "admitted": true,
+                "learning_scale": 0.23376162888497035
+              },
+              {
+                "memory_id": "m1-b5-phase-a-6",
+                "cue_familiarity": 0.92199345936644,
+                "phase_b_conflict": 0.826784074306488,
+                "phase_b_memory_id": "m1-b5-phase-b-6",
+                "admitted": true,
+                "learning_scale": 0.23049836484161
+              },
+              {
+                "memory_id": "m1-b5-phase-a-7",
+                "cue_familiarity": 0.9211517273207273,
+                "phase_b_conflict": 0.7377103567123413,
+                "phase_b_memory_id": "m1-b5-phase-b-7",
+                "admitted": true,
+                "learning_scale": 0.2302879318301818
+              },
+              {
+                "memory_id": "m1-b5-phase-a-8",
+                "cue_familiarity": 0.9095533515212961,
+                "phase_b_conflict": 0.8416869640350342,
+                "phase_b_memory_id": "m1-b5-phase-b-8",
+                "admitted": true,
+                "learning_scale": 0.22738833788032403
+              },
+              {
+                "memory_id": "m1-b5-phase-a-9",
+                "cue_familiarity": 0.8062285973810335,
+                "phase_b_conflict": 0.3705376982688904,
+                "phase_b_memory_id": "m1-b5-phase-b-9",
+                "admitted": false,
+                "learning_scale": 0.20155714934525837
+              },
+              {
+                "memory_id": "m1-b5-phase-a-10",
+                "cue_familiarity": 0.9186315470375163,
+                "phase_b_conflict": 0.5995979905128479,
+                "phase_b_memory_id": "m1-b5-phase-b-10",
+                "admitted": true,
+                "learning_scale": 0.22965788675937907
+              },
+              {
+                "memory_id": "m1-b5-phase-a-11",
+                "cue_familiarity": 0.9147911394295647,
+                "phase_b_conflict": 0.7187264561653137,
+                "phase_b_memory_id": "m1-b5-phase-b-11",
+                "admitted": true,
+                "learning_scale": 0.22869778485739117
+              },
+              {
+                "memory_id": "m1-b5-phase-a-12",
+                "cue_familiarity": 0.9076664011262106,
+                "phase_b_conflict": 0.34528231620788574,
+                "phase_b_memory_id": "m1-b5-phase-b-12",
+                "admitted": true,
+                "learning_scale": 0.22691660028155264
+              },
+              {
+                "memory_id": "m1-b5-phase-a-13",
+                "cue_familiarity": 0.915070543375193,
+                "phase_b_conflict": 0.5290639400482178,
+                "phase_b_memory_id": "m1-b5-phase-b-13",
+                "admitted": true,
+                "learning_scale": 0.22876763584379825
+              },
+              {
+                "memory_id": "m1-b5-phase-a-14",
+                "cue_familiarity": 0.8960799740050834,
+                "phase_b_conflict": 0.7235761284828186,
+                "phase_b_memory_id": "m1-b5-phase-b-14",
+                "admitted": false,
+                "learning_scale": 0.22401999350127086
+              },
+              {
+                "memory_id": "m1-b5-phase-a-15",
+                "cue_familiarity": 0.909038065704353,
+                "phase_b_conflict": 0.6236344575881958,
+                "phase_b_memory_id": "m1-b5-phase-b-15",
+                "admitted": true,
+                "learning_scale": 0.22725951642608824
+              }
+            ],
+            "base_learning_scale": 0.25,
+            "cue_familiarity_min": 0.8062285973810335,
+            "cue_familiarity_max": 0.9502089433146168,
+            "phase_b_conflict_min": 0.34528231620788574,
+            "phase_b_conflict_max": 0.8416869640350342
+          },
+          "replay_causal_gain_vs_parent": -0.875,
+          "new_gain_vs_no_replay": 0.0,
+          "checkpoint": {
+            "parent_digest": "a34f0fbcf9dcdeb660076bf50a92e05ce06a792cbc76c241f6f19747fab58d8e",
+            "child_digest": "f2c9c82dcd6f75a4a1c943d4316aab7e6f385f67720d53a805d1ea7d92bff9ad",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 47,
+          "policy": "familiarity_gate",
+          "parent": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "no_replay": {
+            "old_holdout": 0.0,
+            "old_retention": 0.125,
+            "new_holdout": 0.875
+          },
+          "child": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.875
+          },
+          "restored": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.875
+          },
+          "replay": {
+            "replay_considered": 16,
+            "replay_admitted": 16,
+            "replay_rejected": 0,
+            "decisions": [
+              {
+                "memory_id": "m1-b5-phase-a-0",
+                "cue_familiarity": 0.9401265314274982,
+                "phase_b_conflict": 0.7403289079666138,
+                "phase_b_memory_id": "m1-b5-phase-b-0",
+                "admitted": true,
+                "learning_scale": 0.23503163285687456
+              },
+              {
+                "memory_id": "m1-b5-phase-a-1",
+                "cue_familiarity": 0.9313623557882604,
+                "phase_b_conflict": 0.8015641570091248,
+                "phase_b_memory_id": "m1-b5-phase-b-1",
+                "admitted": true,
+                "learning_scale": 0.2328405889470651
+              },
+              {
+                "memory_id": "m1-b5-phase-a-2",
+                "cue_familiarity": 0.9260369247082996,
+                "phase_b_conflict": 0.8657718300819397,
+                "phase_b_memory_id": "m1-b5-phase-b-2",
+                "admitted": true,
+                "learning_scale": 0.2315092311770749
+              },
+              {
+                "memory_id": "m1-b5-phase-a-3",
+                "cue_familiarity": 0.9296210505263989,
+                "phase_b_conflict": 0.5914140343666077,
+                "phase_b_memory_id": "m1-b5-phase-b-3",
+                "admitted": true,
+                "learning_scale": 0.23240526263159972
+              },
+              {
+                "memory_id": "m1-b5-phase-a-4",
+                "cue_familiarity": 0.9232859614015997,
+                "phase_b_conflict": 0.7528960108757019,
+                "phase_b_memory_id": "m1-b5-phase-b-4",
+                "admitted": true,
+                "learning_scale": 0.23082149035039992
+              },
+              {
+                "memory_id": "m1-b5-phase-a-5",
+                "cue_familiarity": 0.9230041387573371,
+                "phase_b_conflict": 0.5107131004333496,
+                "phase_b_memory_id": "m1-b5-phase-b-5",
+                "admitted": true,
+                "learning_scale": 0.23075103468933428
+              },
+              {
+                "memory_id": "m1-b5-phase-a-6",
+                "cue_familiarity": 0.9443283496974483,
+                "phase_b_conflict": 0.7534710764884949,
+                "phase_b_memory_id": "m1-b5-phase-b-6",
+                "admitted": true,
+                "learning_scale": 0.23608208742436207
+              },
+              {
+                "memory_id": "m1-b5-phase-a-7",
+                "cue_familiarity": 0.9149003472543893,
+                "phase_b_conflict": 0.5746777057647705,
+                "phase_b_memory_id": "m1-b5-phase-b-7",
+                "admitted": true,
+                "learning_scale": 0.22872508681359732
+              },
+              {
+                "memory_id": "m1-b5-phase-a-8",
+                "cue_familiarity": 0.9302051123171695,
+                "phase_b_conflict": 0.817840576171875,
+                "phase_b_memory_id": "m1-b5-phase-b-8",
+                "admitted": true,
+                "learning_scale": 0.23255127807929238
+              },
+              {
+                "memory_id": "m1-b5-phase-a-9",
+                "cue_familiarity": 0.9260675562628037,
+                "phase_b_conflict": 0.8159749507904053,
+                "phase_b_memory_id": "m1-b5-phase-b-9",
+                "admitted": true,
+                "learning_scale": 0.23151688906570092
+              },
+              {
+                "memory_id": "m1-b5-phase-a-10",
+                "cue_familiarity": 0.9385705835593422,
+                "phase_b_conflict": 0.7249428033828735,
+                "phase_b_memory_id": "m1-b5-phase-b-10",
+                "admitted": true,
+                "learning_scale": 0.23464264588983555
+              },
+              {
+                "memory_id": "m1-b5-phase-a-11",
+                "cue_familiarity": 0.9411164131376681,
+                "phase_b_conflict": 0.6397364735603333,
+                "phase_b_memory_id": "m1-b5-phase-b-11",
+                "admitted": true,
+                "learning_scale": 0.23527910328441703
+              },
+              {
+                "memory_id": "m1-b5-phase-a-12",
+                "cue_familiarity": 0.9517896484728878,
+                "phase_b_conflict": 0.8790799975395203,
+                "phase_b_memory_id": "m1-b5-phase-b-12",
+                "admitted": true,
+                "learning_scale": 0.23794741211822196
+              },
+              {
+                "memory_id": "m1-b5-phase-a-13",
+                "cue_familiarity": 0.90280196448527,
+                "phase_b_conflict": 0.8426018357276917,
+                "phase_b_memory_id": "m1-b5-phase-b-13",
+                "admitted": true,
+                "learning_scale": 0.2257004911213175
+              },
+              {
+                "memory_id": "m1-b5-phase-a-14",
+                "cue_familiarity": 0.9182258918609303,
+                "phase_b_conflict": 0.6059286594390869,
+                "phase_b_memory_id": "m1-b5-phase-b-14",
+                "admitted": true,
+                "learning_scale": 0.22955647296523257
+              },
+              {
+                "memory_id": "m1-b5-phase-a-15",
+                "cue_familiarity": 0.919480084650644,
+                "phase_b_conflict": 0.5346683859825134,
+                "phase_b_memory_id": "m1-b5-phase-b-15",
+                "admitted": true,
+                "learning_scale": 0.229870021162661
+              }
+            ],
+            "base_learning_scale": 0.25,
+            "cue_familiarity_min": 0.90280196448527,
+            "cue_familiarity_max": 0.9517896484728878,
+            "phase_b_conflict_min": 0.5107131004333496,
+            "phase_b_conflict_max": 0.8790799975395203
+          },
+          "replay_causal_gain_vs_parent": -0.625,
+          "new_gain_vs_no_replay": 0.0,
+          "checkpoint": {
+            "parent_digest": "d3ba85aadf4c64c008e69d1da55a6617f8894c2e4156bf47d0edb004e8b5948f",
+            "child_digest": "7b4fe6c530216fd7ca4e0cd5bf82882e8939da96c6510652afa46b0199d08e52",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        }
+      ],
+      "conflict_reject_gate": [
+        {
+          "seed": 11,
+          "policy": "conflict_reject_gate",
+          "parent": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "no_replay": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.5
+          },
+          "child": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.625
+          },
+          "restored": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.625
+          },
+          "replay": {
+            "replay_considered": 16,
+            "replay_admitted": 15,
+            "replay_rejected": 1,
+            "decisions": [
+              {
+                "memory_id": "m1-b5-phase-a-0",
+                "cue_familiarity": 0.9303272645149447,
+                "phase_b_conflict": 0.6299769282341003,
+                "phase_b_memory_id": "m1-b5-phase-b-0",
+                "admitted": true,
+                "learning_scale": 0.09250576794147491
+              },
+              {
+                "memory_id": "m1-b5-phase-a-1",
+                "cue_familiarity": 0.90099491044917,
+                "phase_b_conflict": 0.5172426104545593,
+                "phase_b_memory_id": "m1-b5-phase-b-1",
+                "admitted": true,
+                "learning_scale": 0.12068934738636017
+              },
+              {
+                "memory_id": "m1-b5-phase-a-2",
+                "cue_familiarity": 0.9173165656539986,
+                "phase_b_conflict": 0.4413938522338867,
+                "phase_b_memory_id": "m1-b5-phase-b-2",
+                "admitted": true,
+                "learning_scale": 0.13965153694152832
+              },
+              {
+                "memory_id": "m1-b5-phase-a-3",
+                "cue_familiarity": 0.8831225220502267,
+                "phase_b_conflict": 0.8200230598449707,
+                "phase_b_memory_id": "m1-b5-phase-b-3",
+                "admitted": false,
+                "learning_scale": 0.044994235038757324
+              },
+              {
+                "memory_id": "m1-b5-phase-a-4",
+                "cue_familiarity": 0.878129076842739,
+                "phase_b_conflict": 0.5146762728691101,
+                "phase_b_memory_id": "m1-b5-phase-b-4",
+                "admitted": true,
+                "learning_scale": 0.12133093178272247
+              },
+              {
+                "memory_id": "m1-b5-phase-a-5",
+                "cue_familiarity": 0.9374527715462598,
+                "phase_b_conflict": 0.6476811766624451,
+                "phase_b_memory_id": "m1-b5-phase-b-5",
+                "admitted": true,
+                "learning_scale": 0.08807970583438873
+              },
+              {
+                "memory_id": "m1-b5-phase-a-6",
+                "cue_familiarity": 0.9211358187022709,
+                "phase_b_conflict": 0.7294670343399048,
+                "phase_b_memory_id": "m1-b5-phase-b-6",
+                "admitted": true,
+                "learning_scale": 0.0676332414150238
+              },
+              {
+                "memory_id": "m1-b5-phase-a-7",
+                "cue_familiarity": 0.8949851615073802,
+                "phase_b_conflict": 0.6999495029449463,
+                "phase_b_memory_id": "m1-b5-phase-b-7",
+                "admitted": true,
+                "learning_scale": 0.07501262426376343
+              },
+              {
+                "memory_id": "m1-b5-phase-a-8",
+                "cue_familiarity": 0.9167345894797695,
+                "phase_b_conflict": 0.5719946026802063,
+                "phase_b_memory_id": "m1-b5-phase-b-8",
+                "admitted": true,
+                "learning_scale": 0.10700134932994843
+              },
+              {
+                "memory_id": "m1-b5-phase-a-9",
+                "cue_familiarity": 0.9345793995139762,
+                "phase_b_conflict": 0.5845117568969727,
+                "phase_b_memory_id": "m1-b5-phase-b-9",
+                "admitted": true,
+                "learning_scale": 0.10387206077575684
+              },
+              {
+                "memory_id": "m1-b5-phase-a-10",
+                "cue_familiarity": 0.8734868376825634,
+                "phase_b_conflict": 0.7516661882400513,
+                "phase_b_memory_id": "m1-b5-phase-b-10",
+                "admitted": true,
+                "learning_scale": 0.06208345293998718
+              },
+              {
+                "memory_id": "m1-b5-phase-a-11",
+                "cue_familiarity": 0.9150930181680578,
+                "phase_b_conflict": 0.6523703932762146,
+                "phase_b_memory_id": "m1-b5-phase-b-11",
+                "admitted": true,
+                "learning_scale": 0.08690740168094635
+              },
+              {
+                "memory_id": "m1-b5-phase-a-12",
+                "cue_familiarity": 0.9144283810628047,
+                "phase_b_conflict": 0.5306282639503479,
+                "phase_b_memory_id": "m1-b5-phase-b-12",
+                "admitted": true,
+                "learning_scale": 0.11734293401241302
+              },
+              {
+                "memory_id": "m1-b5-phase-a-13",
+                "cue_familiarity": 0.8447043582492643,
+                "phase_b_conflict": 0.6659246683120728,
+                "phase_b_memory_id": "m1-b5-phase-b-13",
+                "admitted": true,
+                "learning_scale": 0.08351883292198181
+              },
+              {
+                "memory_id": "m1-b5-phase-a-14",
+                "cue_familiarity": 0.8720700352701382,
+                "phase_b_conflict": 0.536536455154419,
+                "phase_b_memory_id": "m1-b5-phase-b-14",
+                "admitted": true,
+                "learning_scale": 0.11586588621139526
+              },
+              {
+                "memory_id": "m1-b5-phase-a-15",
+                "cue_familiarity": 0.8893805876892111,
+                "phase_b_conflict": 0.6619564890861511,
+                "phase_b_memory_id": "m1-b5-phase-b-15",
+                "admitted": true,
+                "learning_scale": 0.08451087772846222
+              }
+            ],
+            "base_learning_scale": 0.25,
+            "cue_familiarity_min": 0.8447043582492643,
+            "cue_familiarity_max": 0.9374527715462598,
+            "phase_b_conflict_min": 0.4413938522338867,
+            "phase_b_conflict_max": 0.8200230598449707
+          },
+          "replay_causal_gain_vs_parent": -0.75,
+          "new_gain_vs_no_replay": 0.125,
+          "checkpoint": {
+            "parent_digest": "f120076e7d1f03aee42070f82ad2d3a5d26b7dce09e8885d814795f2cca141b3",
+            "child_digest": "5a808fe4bf778cc524ab02681a07fa83a91418c18264a1ea90fb1db3cafbc811",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 29,
+          "policy": "conflict_reject_gate",
+          "parent": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "no_replay": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.625
+          },
+          "child": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.625
+          },
+          "restored": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.625
+          },
+          "replay": {
+            "replay_considered": 16,
+            "replay_admitted": 14,
+            "replay_rejected": 2,
+            "decisions": [
+              {
+                "memory_id": "m1-b5-phase-a-0",
+                "cue_familiarity": 0.9502089433146168,
+                "phase_b_conflict": 0.6259209513664246,
+                "phase_b_memory_id": "m1-b5-phase-b-0",
+                "admitted": true,
+                "learning_scale": 0.09351976215839386
+              },
+              {
+                "memory_id": "m1-b5-phase-a-1",
+                "cue_familiarity": 0.9052402555919907,
+                "phase_b_conflict": 0.4810938537120819,
+                "phase_b_memory_id": "m1-b5-phase-b-1",
+                "admitted": true,
+                "learning_scale": 0.12972653657197952
+              },
+              {
+                "memory_id": "m1-b5-phase-a-2",
+                "cue_familiarity": 0.8986142719480461,
+                "phase_b_conflict": 0.5364584922790527,
+                "phase_b_memory_id": "m1-b5-phase-b-2",
+                "admitted": true,
+                "learning_scale": 0.11588537693023682
+              },
+              {
+                "memory_id": "m1-b5-phase-a-3",
+                "cue_familiarity": 0.9307134713249161,
+                "phase_b_conflict": 0.6695780158042908,
+                "phase_b_memory_id": "m1-b5-phase-b-3",
+                "admitted": true,
+                "learning_scale": 0.08260549604892731
+              },
+              {
+                "memory_id": "m1-b5-phase-a-4",
+                "cue_familiarity": 0.9183099367366908,
+                "phase_b_conflict": 0.5735039710998535,
+                "phase_b_memory_id": "m1-b5-phase-b-4",
+                "admitted": true,
+                "learning_scale": 0.10662400722503662
+              },
+              {
+                "memory_id": "m1-b5-phase-a-5",
+                "cue_familiarity": 0.935934116125225,
+                "phase_b_conflict": 0.7761915326118469,
+                "phase_b_memory_id": "m1-b5-phase-b-5",
+                "admitted": true,
+                "learning_scale": 0.05595211684703827
+              },
+              {
+                "memory_id": "m1-b5-phase-a-6",
+                "cue_familiarity": 0.9227111195316119,
+                "phase_b_conflict": 0.8281332850456238,
+                "phase_b_memory_id": "m1-b5-phase-b-6",
+                "admitted": false,
+                "learning_scale": 0.042966678738594055
+              },
+              {
+                "memory_id": "m1-b5-phase-a-7",
+                "cue_familiarity": 0.9219384500648109,
+                "phase_b_conflict": 0.7407835721969604,
+                "phase_b_memory_id": "m1-b5-phase-b-7",
+                "admitted": true,
+                "learning_scale": 0.06480410695075989
+              },
+              {
+                "memory_id": "m1-b5-phase-a-8",
+                "cue_familiarity": 0.9104662071768036,
+                "phase_b_conflict": 0.8425131440162659,
+                "phase_b_memory_id": "m1-b5-phase-b-8",
+                "admitted": false,
+                "learning_scale": 0.03937171399593353
+              },
+              {
+                "memory_id": "m1-b5-phase-a-9",
+                "cue_familiarity": 0.8080931330341223,
+                "phase_b_conflict": 0.3810393810272217,
+                "phase_b_memory_id": "m1-b5-phase-b-9",
+                "admitted": true,
+                "learning_scale": 0.15474015474319458
+              },
+              {
+                "memory_id": "m1-b5-phase-a-10",
+                "cue_familiarity": 0.9182535972143422,
+                "phase_b_conflict": 0.6040801405906677,
+                "phase_b_memory_id": "m1-b5-phase-b-10",
+                "admitted": true,
+                "learning_scale": 0.09897996485233307
+              },
+              {
+                "memory_id": "m1-b5-phase-a-11",
+                "cue_familiarity": 0.9187687591800293,
+                "phase_b_conflict": 0.7277807593345642,
+                "phase_b_memory_id": "m1-b5-phase-b-11",
+                "admitted": true,
+                "learning_scale": 0.06805481016635895
+              },
+              {
+                "memory_id": "m1-b5-phase-a-12",
+                "cue_familiarity": 0.9128498441011973,
+                "phase_b_conflict": 0.3708021342754364,
+                "phase_b_memory_id": "m1-b5-phase-b-12",
+                "admitted": true,
+                "learning_scale": 0.1572994664311409
+              },
+              {
+                "memory_id": "m1-b5-phase-a-13",
+                "cue_familiarity": 0.9153952717504625,
+                "phase_b_conflict": 0.5341350436210632,
+                "phase_b_memory_id": "m1-b5-phase-b-13",
+                "admitted": true,
+                "learning_scale": 0.11646623909473419
+              },
+              {
+                "memory_id": "m1-b5-phase-a-14",
+                "cue_familiarity": 0.897229314350892,
+                "phase_b_conflict": 0.7275509834289551,
+                "phase_b_memory_id": "m1-b5-phase-b-14",
+                "admitted": true,
+                "learning_scale": 0.06811225414276123
+              },
+              {
+                "memory_id": "m1-b5-phase-a-15",
+                "cue_familiarity": 0.9114988146049625,
+                "phase_b_conflict": 0.6329163312911987,
+                "phase_b_memory_id": "m1-b5-phase-b-15",
+                "admitted": true,
+                "learning_scale": 0.09177091717720032
+              }
+            ],
+            "base_learning_scale": 0.25,
+            "cue_familiarity_min": 0.8080931330341223,
+            "cue_familiarity_max": 0.9502089433146168,
+            "phase_b_conflict_min": 0.3708021342754364,
+            "phase_b_conflict_max": 0.8425131440162659
+          },
+          "replay_causal_gain_vs_parent": -0.875,
+          "new_gain_vs_no_replay": 0.0,
+          "checkpoint": {
+            "parent_digest": "a34f0fbcf9dcdeb660076bf50a92e05ce06a792cbc76c241f6f19747fab58d8e",
+            "child_digest": "80beac02949296f96dfcdba5d66325db683b42297d07a8f23d0be47bea6bf857",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 47,
+          "policy": "conflict_reject_gate",
+          "parent": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "no_replay": {
+            "old_holdout": 0.0,
+            "old_retention": 0.125,
+            "new_holdout": 0.875
+          },
+          "child": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.875
+          },
+          "restored": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.875
+          },
+          "replay": {
+            "replay_considered": 16,
+            "replay_admitted": 12,
+            "replay_rejected": 4,
+            "decisions": [
+              {
+                "memory_id": "m1-b5-phase-a-0",
+                "cue_familiarity": 0.9401265314274982,
+                "phase_b_conflict": 0.7403289079666138,
+                "phase_b_memory_id": "m1-b5-phase-b-0",
+                "admitted": true,
+                "learning_scale": 0.06491777300834656
+              },
+              {
+                "memory_id": "m1-b5-phase-a-1",
+                "cue_familiarity": 0.9319015694887497,
+                "phase_b_conflict": 0.8052526116371155,
+                "phase_b_memory_id": "m1-b5-phase-b-1",
+                "admitted": true,
+                "learning_scale": 0.04868684709072113
+              },
+              {
+                "memory_id": "m1-b5-phase-a-2",
+                "cue_familiarity": 0.9269558702630303,
+                "phase_b_conflict": 0.8725882172584534,
+                "phase_b_memory_id": "m1-b5-phase-b-2",
+                "admitted": false,
+                "learning_scale": 0.03185294568538666
+              },
+              {
+                "memory_id": "m1-b5-phase-a-3",
+                "cue_familiarity": 0.9298739875686571,
+                "phase_b_conflict": 0.5948768258094788,
+                "phase_b_memory_id": "m1-b5-phase-b-3",
+                "admitted": true,
+                "learning_scale": 0.10128079354763031
+              },
+              {
+                "memory_id": "m1-b5-phase-a-4",
+                "cue_familiarity": 0.9242954389348501,
+                "phase_b_conflict": 0.7594363689422607,
+                "phase_b_memory_id": "m1-b5-phase-b-4",
+                "admitted": true,
+                "learning_scale": 0.060140907764434814
+              },
+              {
+                "memory_id": "m1-b5-phase-a-5",
+                "cue_familiarity": 0.9236114090845496,
+                "phase_b_conflict": 0.5192714929580688,
+                "phase_b_memory_id": "m1-b5-phase-b-5",
+                "admitted": true,
+                "learning_scale": 0.12018212676048279
+              },
+              {
+                "memory_id": "m1-b5-phase-a-6",
+                "cue_familiarity": 0.9429890524179707,
+                "phase_b_conflict": 0.7549434900283813,
+                "phase_b_memory_id": "m1-b5-phase-b-6",
+                "admitted": true,
+                "learning_scale": 0.06126412749290466
+              },
+              {
+                "memory_id": "m1-b5-phase-a-7",
+                "cue_familiarity": 0.9133348313690426,
+                "phase_b_conflict": 0.577716588973999,
+                "phase_b_memory_id": "m1-b5-phase-b-7",
+                "admitted": true,
+                "learning_scale": 0.10557085275650024
+              },
+              {
+                "memory_id": "m1-b5-phase-a-8",
+                "cue_familiarity": 0.9281781741309281,
+                "phase_b_conflict": 0.8185739517211914,
+                "phase_b_memory_id": "m1-b5-phase-b-8",
+                "admitted": true,
+                "learning_scale": 0.04535651206970215
+              },
+              {
+                "memory_id": "m1-b5-phase-a-9",
+                "cue_familiarity": 0.9256827098224369,
+                "phase_b_conflict": 0.822823703289032,
+                "phase_b_memory_id": "m1-b5-phase-b-9",
+                "admitted": false,
+                "learning_scale": 0.044294074177742004
+              },
+              {
+                "memory_id": "m1-b5-phase-a-10",
+                "cue_familiarity": 0.9394064534807902,
+                "phase_b_conflict": 0.7321540713310242,
+                "phase_b_memory_id": "m1-b5-phase-b-10",
+                "admitted": true,
+                "learning_scale": 0.06696148216724396
+              },
+              {
+                "memory_id": "m1-b5-phase-a-11",
+                "cue_familiarity": 0.9406279319091069,
+                "phase_b_conflict": 0.6454738974571228,
+                "phase_b_memory_id": "m1-b5-phase-b-11",
+                "admitted": true,
+                "learning_scale": 0.0886315256357193
+              },
+              {
+                "memory_id": "m1-b5-phase-a-12",
+                "cue_familiarity": 0.9525806800077935,
+                "phase_b_conflict": 0.8841106295585632,
+                "phase_b_memory_id": "m1-b5-phase-b-12",
+                "admitted": false,
+                "learning_scale": 0.028972342610359192
+              },
+              {
+                "memory_id": "m1-b5-phase-a-13",
+                "cue_familiarity": 0.9020554171568511,
+                "phase_b_conflict": 0.839607834815979,
+                "phase_b_memory_id": "m1-b5-phase-b-13",
+                "admitted": false,
+                "learning_scale": 0.04009804129600525
+              },
+              {
+                "memory_id": "m1-b5-phase-a-14",
+                "cue_familiarity": 0.9209642424671163,
+                "phase_b_conflict": 0.6143839955329895,
+                "phase_b_memory_id": "m1-b5-phase-b-14",
+                "admitted": true,
+                "learning_scale": 0.09640400111675262
+              },
+              {
+                "memory_id": "m1-b5-phase-a-15",
+                "cue_familiarity": 0.9217313560247239,
+                "phase_b_conflict": 0.5296340584754944,
+                "phase_b_memory_id": "m1-b5-phase-b-15",
+                "admitted": true,
+                "learning_scale": 0.1175914853811264
+              }
+            ],
+            "base_learning_scale": 0.25,
+            "cue_familiarity_min": 0.9020554171568511,
+            "cue_familiarity_max": 0.9525806800077935,
+            "phase_b_conflict_min": 0.5192714929580688,
+            "phase_b_conflict_max": 0.8841106295585632
+          },
+          "replay_causal_gain_vs_parent": -0.625,
+          "new_gain_vs_no_replay": 0.0,
+          "checkpoint": {
+            "parent_digest": "d3ba85aadf4c64c008e69d1da55a6617f8894c2e4156bf47d0edb004e8b5948f",
+            "child_digest": "add79b2bfc22f9c07c0b056bbbfdd570e64b3f8c8db4f53ec8dbcd640319594e",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        }
+      ]
+    }
+  },
+  "can_promote": false,
+  "report_path": "reports\\taiji_m1_replay_admission_20260902.json"
+}
