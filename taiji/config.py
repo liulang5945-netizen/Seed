@@ -194,7 +194,10 @@ class TaijiConfig:
     cortical_readout_repeats: int = 8
     readout_episode_saturation: float = 8.0
     readout_value_saturation: float = 8.0
-    memory_confidence_decay: float = 5e-3
+    # Lifetime write count is provenance, not evidence quality.  A non-zero
+    # value is retained only as a legacy compatibility knob; the native
+    # default does not make recall weaker merely because the field grew.
+    memory_confidence_decay: float = 0.0
     synapse_decay: float = 1e-5
 
     weight_init_scale: float = 0.45
@@ -212,6 +215,7 @@ class TaijiConfig:
     memory_feedback_gain: float = 0.25
     memory_novelty_gain: float = 0.70
     memory_reward_gain: float = 0.30
+    replay_memory_learning_scale: float = 0.25
 
     replay_seed_gain: float = 0.65
     replay_noise_scale: float = 0.75
@@ -338,6 +342,7 @@ class TaijiConfig:
             "memory_read_gain",
             "replay_seed_gain",
             "replay_learning_scale",
+            "replay_memory_learning_scale",
             "consolidation_read_gain",
         ):
             if float(getattr(self, name)) <= 0.0:

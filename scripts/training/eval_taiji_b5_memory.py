@@ -64,12 +64,12 @@ def build_corpus(
     phase_b_train = tuple(
         MemoryEpisode(
             memory_id=f"m1-b5-phase-b-{index}",
-            # The first half deliberately collides with phase-A cues; the
-            # second half is a novel-cue control used to measure new-skill
-            # preservation after old-memory replay.
-            cue=(65 + index % 80) if index < int(train_count) // 2 else 145 + (index - int(train_count) // 2) % 80,
-            action=(49 - index % 2) if index < int(train_count) // 2 else 50 + index % 2,
-            outcome=(45 if index % 2 == 0 else 43) if index < int(train_count) // 2 else 43 + index % 2 * 2,
+            # Phase-B cues are disjoint from phase A.  Continual learning
+            # should measure interference from shared capacity, not ask one
+            # cue-only query to have two contradictory answers.
+            cue=145 + index % 80,
+            action=50 + index % 2,
+            outcome=43 + index % 2 * 2,
         )
         for index in range(int(train_count))
     )

@@ -257,9 +257,13 @@ M1-7 的第二片已完成：`JointTrainingRun` 与 `scripts/training/train_taij
 
 M1-8 的三 seed full-coverage 重跑与独立 eval-only 已完成，训练报告分别为 `reports/taiji_m1_f8_full_memory_replay_seed11_20260902.json`、`reports/taiji_m1_f8_full_memory_replay_seed29_20260902.json`、`reports/taiji_m1_f8_full_memory_replay_seed47_20260902.json`，复评报告使用同名 `_eval_only` 后缀。三组均满足 B1 `1,048,576/131,072/131,072`、B2 `1000/1000/1000`、B3/B4 `1000/500/500`，checkpoint digest 与复评指标逐项一致，`checkpoint_read_only=true`、`holdout_updates=0`、`world_transition_rejections=0`，并真实写入 byte replay 与 `phase=replay-memory` history；但 phase-A old memory 仍分别下降 `-0.140625`、`-0.03125`、`-0.015625`，因此不能晋级。聚合报告为 `reports/taiji_m1_f8_memory_replay_promotion_20260902.json`，状态 `blocked`。
 
-M1-8 的 B5 专项 foundation 审计已完成，报告为 `reports/taiji_m1_b5_memory_foundation_20260902.json`。三 seed 的 no-replay 与 replay 旧能力结果没有产生正的回放因果增益，`replay_causal_gain=0.0`，总体 backward transfer 为 `-0.145`；这说明当前“回放阶段已执行”不等于“旧记忆已被巩固”，不能把新增 episode 的重复写入当成持续学习。当前失败不是 checkpoint 或 evaluator 只读问题，而是 memory consolidation 的训练语义与保持 Gate 尚未对齐。
+M1-8 的 B5 专项 foundation 审计报告 `reports/taiji_m1_b5_memory_foundation_20260902.json` 是旧测试合同下的历史结果，不能再作为当前 Gate 依据：它把同一 cue 绑定到 phase-A/phase-B 的相反 action，属于不可判定的输入输出合同，且旧配置中的 lifetime confidence decay 会让写入越多回忆越弱。
 
-当前唯一下一步改为 **M1-9：修复真实 memory consolidation 的数据语义与保持机制**：先把 phase-A 的完整可追溯 memory corpus、其 digest 和 replay provenance 绑定到 continuation checkpoint，禁止使用无法证明来源的任意 replay 子集；再以小规模 canary 对比 no-replay、原始 phase-A replay、重复 replay 和稳定性控制，确认 replay 确实提高 old holdout/retention 且不损害 phase-B；通过后才重新跑三 seed foundation、完整 M0 controls 和 B5 Gate。M1-9 未通过前不进入 M2，也不切换到 provider、Workbench、Skill/MCP 或客户端外围。
+M1-9 已完成第一轮修复但仍未晋级。`TaijiConfig.memory_confidence_decay` 的 native 默认改为 `0`，保留非零值仅作 legacy 兼容；memory replay 学习比例进入配置、PendingExperience、checkpoint 和 report；joint CLI 现在拒绝 partial/unrelated replay，启用 replay 时必须使用与当前 memory course 完全相同的 corpus digest，并记录 `exact-current-memory-corpus` 关系。相关 focused tests 为 `13 passed`，代码与 checkpoint 语义检查通过。
+
+B5 合同同步改为 disjoint cue，测量共享容量干扰而不是同一输入的矛盾答案。有效 foundation 报告为 `reports/taiji_m1_m9_b5_disjoint_foundation_20260902.json`，三 seed 的 replay causal gain 分别为 `0.665/0.560/0.725`，old backward transfer 分别为 `0.050/0.005/-0.020`，但 replay 后 phase-B new recall 全部降为 `0`，总体 Gate 仍为 `blocked`。joint exact-memory canary `reports/taiji_m1_m9_exact_memory_canary_v2_20260902.json` 记录了 corpus 关系正确，但 memory recall 仍从 `0.75` 降至 `0.6875`。因此当前可以确认：生命周期衰减是一个规模硬编码问题，重复写回又是一个会覆盖新读出的巩固问题；不能继续用 full retrain 掩盖这两个问题。
+
+当前唯一下一步改为 **M1-10：实现非破坏性 memory consolidation**：把 replay 从“再次写入完整 episode”改成可验证的 reactivation/consolidation 路径，分别控制 association、action readout、new-skill readout 的更新；新增 no-replay、replay、repeated-replay、readout-only、association-only 和 no-change 对照，并要求旧 holdout/retention 与 phase-B new holdout 同时不退化。M1-10 canary 未通过前不重新跑三 seed foundation，不进入 M2，也不切换到 provider、Workbench、Skill/MCP 或客户端外围。
 
 ## 7. M2～M8 的开发日程与外围任务安置
 

@@ -73,8 +73,19 @@ def main() -> int:
     parser.add_argument("--replay-profile", choices=("smoke", "pilot", "foundation"), default="pilot")
     parser.add_argument("--replay-partition-seed", type=int, default=11)
     parser.add_argument("--replay-epochs", type=int, default=1)
-    parser.add_argument("--replay-memory-count", type=int)
+    parser.add_argument(
+        "--replay-memory-count",
+        type=int,
+        help="Exact replay count; must equal the current memory course count.",
+    )
     parser.add_argument("--replay-memory-epochs", type=int, default=1)
+    parser.add_argument("--replay-memory-learning-scale", type=float)
+    parser.add_argument(
+        "--memory-confidence-decay",
+        type=float,
+        default=0.0,
+        help="Legacy lifetime confidence decay; native training defaults to 0.",
+    )
     parser.add_argument(
         "--output-dir",
         type=Path,
@@ -99,6 +110,11 @@ def main() -> int:
         "pilot": 16,
         "foundation": 256,
     }[args.profile]
+    if args.replay_memory_count is not None and args.replay_memory_count != count:
+        parser.error(
+            "--replay-memory-count must equal the current memory course count; "
+            "partial or unrelated replay corpora are not accepted"
+        )
     dataset = FoundationTrainingDataset.from_jsonl(
         args.corpus,
         profile=args.profile,
@@ -113,7 +129,7 @@ def main() -> int:
         )
     memory_corpus = build_memory_corpus(count=count)
     replay_memory_corpus = (
-        build_memory_corpus(count=args.replay_memory_count)
+        build_memory_corpus(count=count)
         if args.replay_memory_count is not None
         else None
     )
@@ -137,6 +153,8 @@ def main() -> int:
             replay_epochs=args.replay_epochs,
             replay_memory_corpus=replay_memory_corpus,
             replay_memory_epochs=args.replay_memory_epochs,
+            replay_memory_learning_scale=args.replay_memory_learning_scale,
+            memory_confidence_decay=args.memory_confidence_decay,
         )
     elif args.resume is not None:
         run = JointTrainingRun.from_checkpoint(
@@ -152,6 +170,7 @@ def main() -> int:
             replay_epochs=args.replay_epochs,
             replay_memory_corpus=replay_memory_corpus,
             replay_memory_epochs=args.replay_memory_epochs,
+            replay_memory_learning_scale=args.replay_memory_learning_scale,
         )
     else:
         model = Taiji(_config(args.seed), episode_id="joint-train")
@@ -175,6 +194,7 @@ def main() -> int:
             replay_epochs=args.replay_epochs,
             replay_memory_corpus=replay_memory_corpus,
             replay_memory_epochs=args.replay_memory_epochs,
+            replay_memory_learning_scale=args.replay_memory_learning_scale,
         )
     result: dict[str, Any]
     if args.eval_only:

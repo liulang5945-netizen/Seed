@@ -195,12 +195,22 @@ class DelayedMemoryTask:
         return TaijiConfig.from_dict(values)
 
     @staticmethod
-    def _write_episode(model: Taiji, episode: MemoryEpisode) -> None:
+    def _write_episode(
+        model: Taiji,
+        episode: MemoryEpisode,
+        *,
+        memory_learning_scale: float = 1.0,
+    ) -> None:
         model.reset_dynamics(episode_id=f"m0-b2-train-{episode.memory_id}")
         model.observe(model.config.boundary_symbol, learn=False, learn_motor=False)
         model.observe(episode.cue, learn=False, learn_motor=False)
         model.act((episode.action,), sample=False)
-        model.settle_action(1.0, learn=False, learn_memory=True)
+        model.settle_action(
+            1.0,
+            learn=False,
+            learn_memory=True,
+            memory_learning_scale=memory_learning_scale,
+        )
         model.observe(episode.outcome, learn=False, learn_motor=False)
 
     @staticmethod
@@ -397,7 +407,11 @@ class ContinualMemoryTask:
             for episode in corpus.phase_b_train:
                 DelayedMemoryTask._write_episode(replay, episode)
             for episode in corpus.replay_train:
-                DelayedMemoryTask._write_episode(replay, episode)
+                DelayedMemoryTask._write_episode(
+                    replay,
+                    episode,
+                    memory_learning_scale=self.config.replay_memory_learning_scale,
+                )
             replay_old_after = DelayedMemoryTask._recall_accuracy(
                 replay, corpus.phase_a_holdout, actions, use_memory=True
             )
