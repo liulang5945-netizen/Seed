@@ -9,8 +9,9 @@ Seed, Workbench and provider imports.
 
 from __future__ import annotations
 
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
-from typing import Any, Iterable, Mapping
+from typing import Any
 
 from .evolution_experience import EvolutionExperience
 from .internalization import content_digest
