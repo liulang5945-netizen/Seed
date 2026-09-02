@@ -484,7 +484,7 @@ class EpisodicField:
         episode_drive = self._normalize_drive(self.episode_encoder.forward(episode_code))
         provenance_drive = self._normalize_drive(self.provenance_encoder.forward(provenance_code))
         cue_drive = self._encode_cue(cortical_context)
-        event_components = dict(
+        raw_event_components = dict(
             zip(
                 EPISODIC_EVENT_COMPONENTS,
                 (
@@ -499,7 +499,7 @@ class EpisodicField:
             )
         )
         event_components = tuple(
-            event_components[name] * float(gain)
+            raw_event_components[name] * float(gain)
             for name, gain in zip(
                 EPISODIC_EVENT_COMPONENTS,
                 self.config.memory_event_component_gains,
@@ -548,12 +548,31 @@ class EpisodicField:
             * learning_scale
         )
         if learning_targets in {"all", "association"}:
+            association_components = tuple(
+                raw_event_components[name] * float(gain)
+                for name, gain in zip(
+                    EPISODIC_EVENT_COMPONENTS,
+                    self.config.memory_association_component_gains,
+                    strict=True,
+                )
+            )
+            association_event_pattern = event_pattern
+            if (
+                self.config.memory_association_component_gains
+                != self.config.memory_event_component_gains
+            ):
+                association_drive = cue_drive + event_scale * torch.stack(
+                    association_components
+                ).sum(dim=0)
+                association_event_pattern, _ = self._activate(
+                    association_drive, threshold
+                )
             association_target = (
-                event_pattern
+                association_event_pattern
                 if float(self.config.memory_association_event_target_mix) >= 1.0
                 else cue_pattern
                 + float(self.config.memory_association_event_target_mix)
-                * (event_pattern - cue_pattern)
+                * (association_event_pattern - cue_pattern)
             )
             for _ in range(int(self.config.episodic_write_repeats)):
                 self.association.local_update(
