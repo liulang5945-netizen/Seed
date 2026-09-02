@@ -366,6 +366,13 @@ from .language_organ import (
     language_provider_content_digest,
 )
 from .memory import EpisodicField, EpisodicReplay, EpisodicWrite
+from .memory_objective import (
+    MEMORY_OBJECTIVE_COMPONENTS,
+    MEMORY_OBJECTIVE_CREDIT_AXES,
+    MEMORY_OBJECTIVE_FORMAT,
+    MEMORY_OBJECTIVE_VERSION,
+    EpisodicObjectiveContract,
+)
 from .model import Taiji
 from .neuron_network import (
     ADAPTIVE_NEURON_NETWORK_CHECKPOINT_FORMAT,
@@ -648,6 +655,11 @@ __all__ = [
     "MEMORY_TRAINING_FORMAT",
     "MEMORY_TRAINING_VERSION",
     "MemoryTrainingRun",
+    "MEMORY_OBJECTIVE_COMPONENTS",
+    "MEMORY_OBJECTIVE_CREDIT_AXES",
+    "MEMORY_OBJECTIVE_FORMAT",
+    "MEMORY_OBJECTIVE_VERSION",
+    "EpisodicObjectiveContract",
     "WORLD_ACTION_TRAINING_FORMAT",
     "WORLD_ACTION_TRAINING_VERSION",
     "WorldActionTrainingRun",
