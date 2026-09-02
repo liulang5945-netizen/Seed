@@ -1,0 +1,335 @@
+{
+  "format": "taiji-native-m1-43-association-rewire-v1",
+  "version": 1,
+  "status": "failed",
+  "variable_changed": "governed memory.association topology rewiring only",
+  "control_condition": "no_rewire",
+  "candidate_condition": "governed_rewire",
+  "structural_policy": {
+    "turnover_ratio": 0.25,
+    "capture_target": 0.9,
+    "error_threshold": 0.35
+  },
+  "cue_curriculum": "maximally separated byte cues",
+  "action_curriculum": "phase-A/phase-B overlap on 48/49",
+  "memory_units": 128,
+  "memory_action_decoder": "shared",
+  "identity_organ_enabled": false,
+  "corpus_digest": "52c31b5475ab86893998b82fa34441e7f9fae765b381eafae8108b588f824d96",
+  "conditions": [
+    {
+      "condition": "no_rewire",
+      "records": [
+        {
+          "seed": 11,
+          "condition": "no_rewire",
+          "old_before": 0.59375,
+          "old_retention_before": 0.5,
+          "no_replay_old_after": 0.46875,
+          "no_replay_new_after": 0.6875,
+          "replay_old_after": 0.59375,
+          "replay_retention_after": 0.53125,
+          "replay_new_after": 0.75,
+          "replay_backward_transfer": 0.0,
+          "replay_causal_gain": 0.125,
+          "replay_new_delta_vs_no_replay": 0.0625,
+          "phase_a_train": {
+            "event_count": 64,
+            "moved_edges": 0,
+            "capture_before_mean": null,
+            "capture_after_mean": null
+          },
+          "phase_b_no_replay": {
+            "event_count": 64,
+            "moved_edges": 0,
+            "capture_before_mean": null,
+            "capture_after_mean": null
+          },
+          "phase_b_replay": {
+            "event_count": 64,
+            "moved_edges": 0,
+            "capture_before_mean": null,
+            "capture_after_mean": null
+          },
+          "replay_train": {
+            "event_count": 64,
+            "moved_edges": 0,
+            "capture_before_mean": null,
+            "capture_after_mean": null
+          },
+          "phase_a_checkpoint_digest": "f195d019ed8d154da1c9cb2b6124794420eb2dd1d23657dbe3d24d04c7b585e8",
+          "phase_a_topology_digest": "ca7504c48bd362fd259f9949a93fe0210cd0793d82d1627db878d738845c125f",
+          "replay_checkpoint_digest": "1705fd0d07c992e4fee3a9dfb303fb201ffa82971fa0b56125f6a09cc32dbb9c",
+          "replay_topology_digest": "ca7504c48bd362fd259f9949a93fe0210cd0793d82d1627db878d738845c125f",
+          "topology_changed": false,
+          "continued_from_phase_a": true,
+          "checkpoint_roundtrip_exact": true,
+          "active_parameter_count": 85953,
+          "planned_active_parameter_count": 85953,
+          "parameter_count_matches_plan": true,
+          "holdout_updates": 0
+        },
+        {
+          "seed": 29,
+          "condition": "no_rewire",
+          "old_before": 0.5,
+          "old_retention_before": 0.65625,
+          "no_replay_old_after": 0.46875,
+          "no_replay_new_after": 0.53125,
+          "replay_old_after": 0.5,
+          "replay_retention_after": 0.65625,
+          "replay_new_after": 0.53125,
+          "replay_backward_transfer": 0.0,
+          "replay_causal_gain": 0.03125,
+          "replay_new_delta_vs_no_replay": 0.0,
+          "phase_a_train": {
+            "event_count": 64,
+            "moved_edges": 0,
+            "capture_before_mean": null,
+            "capture_after_mean": null
+          },
+          "phase_b_no_replay": {
+            "event_count": 64,
+            "moved_edges": 0,
+            "capture_before_mean": null,
+            "capture_after_mean": null
+          },
+          "phase_b_replay": {
+            "event_count": 64,
+            "moved_edges": 0,
+            "capture_before_mean": null,
+            "capture_after_mean": null
+          },
+          "replay_train": {
+            "event_count": 64,
+            "moved_edges": 0,
+            "capture_before_mean": null,
+            "capture_after_mean": null
+          },
+          "phase_a_checkpoint_digest": "ad5f41910b950c8121d24da9bf7546c8c6c0d7fbcaa737c6537b703b778a8187",
+          "phase_a_topology_digest": "69679584e9de21d4b2521298b168b90f2dce2debe862791e3fb67291c0a35976",
+          "replay_checkpoint_digest": "3507f4d423a585c57af9118df45cd4cd3449d59e4c1c6cb54d9ea0fcf0697260",
+          "replay_topology_digest": "69679584e9de21d4b2521298b168b90f2dce2debe862791e3fb67291c0a35976",
+          "topology_changed": false,
+          "continued_from_phase_a": true,
+          "checkpoint_roundtrip_exact": true,
+          "active_parameter_count": 85953,
+          "planned_active_parameter_count": 85953,
+          "parameter_count_matches_plan": true,
+          "holdout_updates": 0
+        },
+        {
+          "seed": 47,
+          "condition": "no_rewire",
+          "old_before": 0.5625,
+          "old_retention_before": 0.625,
+          "no_replay_old_after": 0.5625,
+          "no_replay_new_after": 0.5625,
+          "replay_old_after": 0.5625,
+          "replay_retention_after": 0.625,
+          "replay_new_after": 0.4375,
+          "replay_backward_transfer": 0.0,
+          "replay_causal_gain": 0.0,
+          "replay_new_delta_vs_no_replay": -0.125,
+          "phase_a_train": {
+            "event_count": 64,
+            "moved_edges": 0,
+            "capture_before_mean": null,
+            "capture_after_mean": null
+          },
+          "phase_b_no_replay": {
+            "event_count": 64,
+            "moved_edges": 0,
+            "capture_before_mean": null,
+            "capture_after_mean": null
+          },
+          "phase_b_replay": {
+            "event_count": 64,
+            "moved_edges": 0,
+            "capture_before_mean": null,
+            "capture_after_mean": null
+          },
+          "replay_train": {
+            "event_count": 64,
+            "moved_edges": 0,
+            "capture_before_mean": null,
+            "capture_after_mean": null
+          },
+          "phase_a_checkpoint_digest": "89a7b3f1ed09435aa941629514fe388e781dff91f29b3f354711cc1304fea9a9",
+          "phase_a_topology_digest": "d4ba29940fd6ed18a97e766817b761c0109d6eb627b1b6f3582a2678f0c8448f",
+          "replay_checkpoint_digest": "93cdca6dd33d9c460cb5e11f2849c10d2383559d96a132f638d2831332368567",
+          "replay_topology_digest": "d4ba29940fd6ed18a97e766817b761c0109d6eb627b1b6f3582a2678f0c8448f",
+          "topology_changed": false,
+          "continued_from_phase_a": true,
+          "checkpoint_roundtrip_exact": true,
+          "active_parameter_count": 85953,
+          "planned_active_parameter_count": 85953,
+          "parameter_count_matches_plan": true,
+          "holdout_updates": 0
+        }
+      ],
+      "cpu_seconds": 8.158,
+      "condition_gate_passed": false
+    },
+    {
+      "condition": "governed_rewire",
+      "records": [
+        {
+          "seed": 11,
+          "condition": "governed_rewire",
+          "old_before": 0.625,
+          "old_retention_before": 0.625,
+          "no_replay_old_after": 0.5625,
+          "no_replay_new_after": 0.625,
+          "replay_old_after": 0.59375,
+          "replay_retention_after": 0.6875,
+          "replay_new_after": 0.75,
+          "replay_backward_transfer": -0.03125,
+          "replay_causal_gain": 0.03125,
+          "replay_new_delta_vs_no_replay": 0.125,
+          "phase_a_train": {
+            "event_count": 64,
+            "moved_edges": 1960,
+            "capture_before_mean": 0.29748100717552006,
+            "capture_after_mean": 0.31442313455045223
+          },
+          "phase_b_no_replay": {
+            "event_count": 64,
+            "moved_edges": 1456,
+            "capture_before_mean": 0.3232543892227113,
+            "capture_after_mean": 0.3355007148347795
+          },
+          "phase_b_replay": {
+            "event_count": 64,
+            "moved_edges": 1456,
+            "capture_before_mean": 0.3232543892227113,
+            "capture_after_mean": 0.3355007148347795
+          },
+          "replay_train": {
+            "event_count": 64,
+            "moved_edges": 1112,
+            "capture_before_mean": 0.3432066971436143,
+            "capture_after_mean": 0.35130789084360003
+          },
+          "phase_a_checkpoint_digest": "c07b46784459e60845324338e76c4c17cb93ec26443fed2e906cefc1c3915848",
+          "phase_a_topology_digest": "76e2d34a3ea2a0b3d14586f0d61fcc642bcecb5f3cc4bb5e179a7df0d37d1ed2",
+          "replay_checkpoint_digest": "2a3ab406d474cd15d1ba7793e5c1096ca7ac682fd016177ba0426a442bc65ef0",
+          "replay_topology_digest": "01c23e9107e52a1918b3417062f74519e4c732128d6c94ae57cf867909f46b89",
+          "topology_changed": true,
+          "continued_from_phase_a": true,
+          "checkpoint_roundtrip_exact": true,
+          "active_parameter_count": 85953,
+          "planned_active_parameter_count": 85953,
+          "parameter_count_matches_plan": true,
+          "holdout_updates": 0
+        },
+        {
+          "seed": 29,
+          "condition": "governed_rewire",
+          "old_before": 0.53125,
+          "old_retention_before": 0.65625,
+          "no_replay_old_after": 0.46875,
+          "no_replay_new_after": 0.59375,
+          "replay_old_after": 0.46875,
+          "replay_retention_after": 0.65625,
+          "replay_new_after": 0.5,
+          "replay_backward_transfer": -0.0625,
+          "replay_causal_gain": 0.0,
+          "replay_new_delta_vs_no_replay": -0.09375,
+          "phase_a_train": {
+            "event_count": 64,
+            "moved_edges": 2000,
+            "capture_before_mean": 0.3020752950105816,
+            "capture_after_mean": 0.3199974801391363
+          },
+          "phase_b_no_replay": {
+            "event_count": 64,
+            "moved_edges": 1432,
+            "capture_before_mean": 0.3420914704911411,
+            "capture_after_mean": 0.353622127790004
+          },
+          "phase_b_replay": {
+            "event_count": 64,
+            "moved_edges": 1432,
+            "capture_before_mean": 0.3420914704911411,
+            "capture_after_mean": 0.353622127790004
+          },
+          "replay_train": {
+            "event_count": 64,
+            "moved_edges": 1120,
+            "capture_before_mean": 0.3499832511879504,
+            "capture_after_mean": 0.3589031593874097
+          },
+          "phase_a_checkpoint_digest": "e031280d3421da2c01e61cf9e4b415b69d362305aeeebddf1fd7ed3015661094",
+          "phase_a_topology_digest": "ba164e2b501a67302869c4b42b44cd829d8012748573e08b6e92c697e40fae8c",
+          "replay_checkpoint_digest": "36d2ffd645bdbdb84e5d18b7afaed41cf623803b583e94e1a105666e9fb3989c",
+          "replay_topology_digest": "7a44697cb905bed82743ee9424b8fb7daf1ed89b222cc4cda303f71acbb3b2d0",
+          "topology_changed": true,
+          "continued_from_phase_a": true,
+          "checkpoint_roundtrip_exact": true,
+          "active_parameter_count": 85953,
+          "planned_active_parameter_count": 85953,
+          "parameter_count_matches_plan": true,
+          "holdout_updates": 0
+        },
+        {
+          "seed": 47,
+          "condition": "governed_rewire",
+          "old_before": 0.53125,
+          "old_retention_before": 0.5625,
+          "no_replay_old_after": 0.5,
+          "no_replay_new_after": 0.5625,
+          "replay_old_after": 0.5,
+          "replay_retention_after": 0.625,
+          "replay_new_after": 0.5,
+          "replay_backward_transfer": -0.03125,
+          "replay_causal_gain": 0.0,
+          "replay_new_delta_vs_no_replay": -0.0625,
+          "phase_a_train": {
+            "event_count": 64,
+            "moved_edges": 1872,
+            "capture_before_mean": 0.2960368681233376,
+            "capture_after_mean": 0.31267996970564127
+          },
+          "phase_b_no_replay": {
+            "event_count": 64,
+            "moved_edges": 1504,
+            "capture_before_mean": 0.3300252165645361,
+            "capture_after_mean": 0.342773019336164
+          },
+          "phase_b_replay": {
+            "event_count": 64,
+            "moved_edges": 1504,
+            "capture_before_mean": 0.3300252165645361,
+            "capture_after_mean": 0.342773019336164
+          },
+          "replay_train": {
+            "event_count": 64,
+            "moved_edges": 1016,
+            "capture_before_mean": 0.34154565492644906,
+            "capture_after_mean": 0.34896612586453557
+          },
+          "phase_a_checkpoint_digest": "d3db08b8b85a478e3682619a67fa7b75e818cb5ae02f42f00f3fb40bdd0fac5d",
+          "phase_a_topology_digest": "d0197be1d506f59c226ad9964afec397cf825135c58e9789ea9544d3b49fe91d",
+          "replay_checkpoint_digest": "d5a91e7d50b0dc0591d5b2ffe32a37849bafefcdbf72b098ea7febd090063b65",
+          "replay_topology_digest": "43f3e5bbd75bf2da71f13937a50dfe5fe7d5143ed9bd8c204e2f2cafbe4be0bf",
+          "topology_changed": true,
+          "continued_from_phase_a": true,
+          "checkpoint_roundtrip_exact": true,
+          "active_parameter_count": 85953,
+          "planned_active_parameter_count": 85953,
+          "parameter_count_matches_plan": true,
+          "holdout_updates": 0
+        }
+      ],
+      "cpu_seconds": 11.087,
+      "condition_gate_passed": false
+    }
+  ],
+  "conclusion": {
+    "candidate_passed": false,
+    "candidate_is_sufficient_explanation": false,
+    "next_boundary": "association rewiring did not pass B5; do not retain topology mutation and return to event encoding geometry"
+  },
+  "report_path": "reports\\taiji_m1_43_association_rewire_20260902.json"
+}
