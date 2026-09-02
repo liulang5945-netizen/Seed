@@ -357,10 +357,10 @@ class EpisodicField:
             context = self.readout_receptors.forward(activity)
             if self.config.memory_action_decoder == "dual":
                 fast_evidence = self.action_readout.forward(context)
-                slow_evidence = self.replay_action_readout.forward(cue_pattern)
                 edge_activity = cue_pattern[self.replay_action_readout.pre_index]
                 support = float((edge_activity.abs() > 1e-8).to(torch.float32).mean().item())
                 support_gate = math.sqrt(max(0.0, min(1.0, support)))
+                slow_evidence = self.replay_action_readout.forward(cue_pattern)
                 action_evidence = fast_evidence + (
                     float(self.config.memory_replay_read_gain) * support_gate * slow_evidence
                 )

@@ -1,0 +1,565 @@
+{
+  "format": "taiji-native-b5-replay-ablation-v1",
+  "version": 1,
+  "status": "blocked",
+  "can_promote": false,
+  "profile": "canary",
+  "replay_scale": 0.5,
+  "corpus_digest": "839feff22948df7eb1feec76f574214571495de3f7129b60bf8acc6403c0f433",
+  "corpus_sample_counts": {
+    "train": 32,
+    "holdout": 16,
+    "retention": 16,
+    "phase_a_train": 16,
+    "phase_a_holdout": 8,
+    "phase_a_retention": 8,
+    "phase_b_train": 16,
+    "phase_b_holdout": 8,
+    "phase_b_retention": 8,
+    "replay_train": 16
+  },
+  "candidates_passing_all_b5_checks": [],
+  "records": [
+    {
+      "decoder": "shared",
+      "replay_learning_targets": "all",
+      "measurement": {
+        "ability_id": "b5_continual_learning",
+        "status": "failed",
+        "primary_metric": "backward_transfer",
+        "metric_direction": "higher_is_better",
+        "metric_value": 0.0,
+        "baseline_metrics": {
+          "frozen_parent": 0.0,
+          "hash_only": 0.0,
+          "no_replay": -0.875,
+          "random": 0.0,
+          "simple_rule": 0.0
+        },
+        "sample_counts": {
+          "holdout": 16,
+          "phase_a_holdout": 8,
+          "phase_a_retention": 8,
+          "phase_a_train": 16,
+          "phase_b_holdout": 8,
+          "phase_b_retention": 8,
+          "phase_b_train": 16,
+          "replay_train": 16,
+          "retention": 16,
+          "train": 32
+        },
+        "holdout_updates": 0,
+        "evidence": [
+          "corpus_digest=839feff22948df7eb1feec76f574214571495de3f7129b60bf8acc6403c0f433",
+          "seed_metrics=[{\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.125, \"no_replay_new_after\": 0.0, \"no_replay_old_after\": 0.5, \"old_before\": 0.625, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"35226086529a93ad190bb89244ff8a3711ecd6c419981a06f7a3b926f9272bb7\", \"replay_backward_transfer\": 0.25, \"replay_causal_gain\": 0.375, \"replay_checkpoint_digest\": \"9881406849c34ab0ab9efcfc31efd520062951edfa6542efa3bd6081e9195c71\", \"replay_new_after\": 0.0, \"replay_old_after\": 0.875, \"replay_retention_after\": 0.625, \"seed\": 11}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.375, \"no_replay_new_after\": 0.875, \"no_replay_old_after\": 0.125, \"old_before\": 0.5, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"872c7c2fa0dc23471aa971af4fc737d1ac71daa434d6b53276a7ca267bcc78e3\", \"replay_backward_transfer\": 0.25, \"replay_causal_gain\": 0.625, \"replay_checkpoint_digest\": \"51c263ce40daceb2dd462a126220da062133cd4e890348a9baf37e02708e77de\", \"replay_new_after\": 0.0, \"replay_old_after\": 0.75, \"replay_retention_after\": 0.5, \"seed\": 29}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.875, \"no_replay_new_after\": 0.75, \"no_replay_old_after\": 0.0, \"old_before\": 0.875, \"old_retention_before\": 0.625, \"phase_a_checkpoint_digest\": \"5bcebd8346916e582b989d9893524720846e55c3f7a11a1bd3f17e57f9407f67\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.875, \"replay_checkpoint_digest\": \"fc00ddf8fad679805552d78b2eacafbf61467121df0710deb948bf22292bbe47\", \"replay_new_after\": 0.125, \"replay_old_after\": 0.875, \"replay_retention_after\": 0.625, \"seed\": 47}]",
+          "phase_a_then_phase_b_with_no_replay_counterfactual_then_phase_a_replay=true"
+        ]
+      }
+    },
+    {
+      "decoder": "shared",
+      "replay_learning_targets": "association",
+      "measurement": {
+        "ability_id": "b5_continual_learning",
+        "status": "failed",
+        "primary_metric": "backward_transfer",
+        "metric_direction": "higher_is_better",
+        "metric_value": -0.75,
+        "baseline_metrics": {
+          "frozen_parent": 0.0,
+          "hash_only": 0.0,
+          "no_replay": -0.875,
+          "random": 0.0,
+          "simple_rule": 0.0
+        },
+        "sample_counts": {
+          "holdout": 16,
+          "phase_a_holdout": 8,
+          "phase_a_retention": 8,
+          "phase_a_train": 16,
+          "phase_b_holdout": 8,
+          "phase_b_retention": 8,
+          "phase_b_train": 16,
+          "replay_train": 16,
+          "retention": 16,
+          "train": 32
+        },
+        "holdout_updates": 0,
+        "evidence": [
+          "corpus_digest=839feff22948df7eb1feec76f574214571495de3f7129b60bf8acc6403c0f433",
+          "seed_metrics=[{\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.125, \"no_replay_new_after\": 0.0, \"no_replay_old_after\": 0.5, \"old_before\": 0.625, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"35226086529a93ad190bb89244ff8a3711ecd6c419981a06f7a3b926f9272bb7\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.125, \"replay_checkpoint_digest\": \"b7bdc10176b72a484418561e96b1862baf56274a4df8075c4972ec0a180a9426\", \"replay_new_after\": 0.125, \"replay_old_after\": 0.625, \"replay_retention_after\": 0.375, \"seed\": 11}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.375, \"no_replay_new_after\": 0.875, \"no_replay_old_after\": 0.125, \"old_before\": 0.5, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"872c7c2fa0dc23471aa971af4fc737d1ac71daa434d6b53276a7ca267bcc78e3\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.375, \"replay_checkpoint_digest\": \"74eceac38fc22965db5b82ea4644af2bd00007377a5cc67509d9d7060d751f4b\", \"replay_new_after\": 0.625, \"replay_old_after\": 0.5, \"replay_retention_after\": 0.125, \"seed\": 29}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.875, \"no_replay_new_after\": 0.75, \"no_replay_old_after\": 0.0, \"old_before\": 0.875, \"old_retention_before\": 0.625, \"phase_a_checkpoint_digest\": \"5bcebd8346916e582b989d9893524720846e55c3f7a11a1bd3f17e57f9407f67\", \"replay_backward_transfer\": -0.75, \"replay_causal_gain\": 0.125, \"replay_checkpoint_digest\": \"831831b868bdd03128cb4748baf8da0e75f63749f827e9609b9134fed5cccd24\", \"replay_new_after\": 0.75, \"replay_old_after\": 0.125, \"replay_retention_after\": 0.0, \"seed\": 47}]",
+          "phase_a_then_phase_b_with_no_replay_counterfactual_then_phase_a_replay=true"
+        ]
+      }
+    },
+    {
+      "decoder": "shared",
+      "replay_learning_targets": "readout",
+      "measurement": {
+        "ability_id": "b5_continual_learning",
+        "status": "failed",
+        "primary_metric": "backward_transfer",
+        "metric_direction": "higher_is_better",
+        "metric_value": 0.0,
+        "baseline_metrics": {
+          "frozen_parent": 0.0,
+          "hash_only": 0.0,
+          "no_replay": -0.875,
+          "random": 0.0,
+          "simple_rule": 0.0
+        },
+        "sample_counts": {
+          "holdout": 16,
+          "phase_a_holdout": 8,
+          "phase_a_retention": 8,
+          "phase_a_train": 16,
+          "phase_b_holdout": 8,
+          "phase_b_retention": 8,
+          "phase_b_train": 16,
+          "replay_train": 16,
+          "retention": 16,
+          "train": 32
+        },
+        "holdout_updates": 0,
+        "evidence": [
+          "corpus_digest=839feff22948df7eb1feec76f574214571495de3f7129b60bf8acc6403c0f433",
+          "seed_metrics=[{\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.125, \"no_replay_new_after\": 0.0, \"no_replay_old_after\": 0.5, \"old_before\": 0.625, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"35226086529a93ad190bb89244ff8a3711ecd6c419981a06f7a3b926f9272bb7\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.125, \"replay_checkpoint_digest\": \"48f3a5ef8efd9c1c3173a8972c5b21030d42381e5b934779ce3dcdadeccefd25\", \"replay_new_after\": 0.0, \"replay_old_after\": 0.625, \"replay_retention_after\": 0.375, \"seed\": 11}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.375, \"no_replay_new_after\": 0.875, \"no_replay_old_after\": 0.125, \"old_before\": 0.5, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"872c7c2fa0dc23471aa971af4fc737d1ac71daa434d6b53276a7ca267bcc78e3\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.375, \"replay_checkpoint_digest\": \"98c9bc88d170e02d208216b7486ee0b916946abc0d4c03d14a85c3c49dc03b9c\", \"replay_new_after\": 0.0, \"replay_old_after\": 0.5, \"replay_retention_after\": 0.5, \"seed\": 29}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.875, \"no_replay_new_after\": 0.75, \"no_replay_old_after\": 0.0, \"old_before\": 0.875, \"old_retention_before\": 0.625, \"phase_a_checkpoint_digest\": \"5bcebd8346916e582b989d9893524720846e55c3f7a11a1bd3f17e57f9407f67\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.875, \"replay_checkpoint_digest\": \"b23652ab594e35d6918084e7c955474c2d27b86fb43da6ed0a051e7e1d2664c5\", \"replay_new_after\": 0.375, \"replay_old_after\": 0.875, \"replay_retention_after\": 0.375, \"seed\": 47}]",
+          "phase_a_then_phase_b_with_no_replay_counterfactual_then_phase_a_replay=true"
+        ]
+      }
+    },
+    {
+      "decoder": "local",
+      "replay_learning_targets": "all",
+      "measurement": {
+        "ability_id": "b5_continual_learning",
+        "status": "failed",
+        "primary_metric": "backward_transfer",
+        "metric_direction": "higher_is_better",
+        "metric_value": 0.0,
+        "baseline_metrics": {
+          "frozen_parent": 0.0,
+          "hash_only": 0.0,
+          "no_replay": -0.125,
+          "random": 0.0,
+          "simple_rule": 0.0
+        },
+        "sample_counts": {
+          "holdout": 16,
+          "phase_a_holdout": 8,
+          "phase_a_retention": 8,
+          "phase_a_train": 16,
+          "phase_b_holdout": 8,
+          "phase_b_retention": 8,
+          "phase_b_train": 16,
+          "replay_train": 16,
+          "retention": 16,
+          "train": 32
+        },
+        "holdout_updates": 0,
+        "evidence": [
+          "corpus_digest=839feff22948df7eb1feec76f574214571495de3f7129b60bf8acc6403c0f433",
+          "seed_metrics=[{\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.125, \"no_replay_new_after\": 0.375, \"no_replay_old_after\": 0.375, \"old_before\": 0.5, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"77362fe6450f49df2183135b3d641b36539cb592843d9043c13f0c0dfcdf26d6\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.125, \"replay_checkpoint_digest\": \"8b8c84c69360137c50a41760f15120bfc3208695fad1894510a56c931eec372f\", \"replay_new_after\": 0.125, \"replay_old_after\": 0.5, \"replay_retention_after\": 0.5, \"seed\": 11}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": 0.125, \"no_replay_new_after\": 0.0, \"no_replay_old_after\": 0.625, \"old_before\": 0.5, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"931c78f4328d38965c635f9764a57eab06d372c4162d70f5fff0c1d7bff86863\", \"replay_backward_transfer\": 0.125, \"replay_causal_gain\": 0.0, \"replay_checkpoint_digest\": \"6a34797a0b704b17abfdbb815ac88e9e75c2cc4ad0dd74d474b4d238ef58a9b5\", \"replay_new_after\": 0.0, \"replay_old_after\": 0.625, \"replay_retention_after\": 0.5, \"seed\": 29}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": 0.0, \"no_replay_new_after\": 0.0, \"no_replay_old_after\": 0.5, \"old_before\": 0.5, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"0fa0d78576461f8b0be2ab433bb26065c51629c75c2303e5432048f98f2d2b5b\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.0, \"replay_checkpoint_digest\": \"f15d08a3b421eb9af250db3f00b68303cf4f8406c47c5a84c6c7147603b9b31e\", \"replay_new_after\": 0.0, \"replay_old_after\": 0.5, \"replay_retention_after\": 0.5, \"seed\": 47}]",
+          "phase_a_then_phase_b_with_no_replay_counterfactual_then_phase_a_replay=true"
+        ]
+      }
+    },
+    {
+      "decoder": "local",
+      "replay_learning_targets": "association",
+      "measurement": {
+        "ability_id": "b5_continual_learning",
+        "status": "failed",
+        "primary_metric": "backward_transfer",
+        "metric_direction": "higher_is_better",
+        "metric_value": -0.375,
+        "baseline_metrics": {
+          "frozen_parent": 0.0,
+          "hash_only": 0.0,
+          "no_replay": -0.125,
+          "random": 0.0,
+          "simple_rule": 0.0
+        },
+        "sample_counts": {
+          "holdout": 16,
+          "phase_a_holdout": 8,
+          "phase_a_retention": 8,
+          "phase_a_train": 16,
+          "phase_b_holdout": 8,
+          "phase_b_retention": 8,
+          "phase_b_train": 16,
+          "replay_train": 16,
+          "retention": 16,
+          "train": 32
+        },
+        "holdout_updates": 0,
+        "evidence": [
+          "corpus_digest=839feff22948df7eb1feec76f574214571495de3f7129b60bf8acc6403c0f433",
+          "seed_metrics=[{\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.125, \"no_replay_new_after\": 0.375, \"no_replay_old_after\": 0.375, \"old_before\": 0.5, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"77362fe6450f49df2183135b3d641b36539cb592843d9043c13f0c0dfcdf26d6\", \"replay_backward_transfer\": -0.375, \"replay_causal_gain\": -0.25, \"replay_checkpoint_digest\": \"695c22c03830c3a8a67c4ea9148584ef0c6fe0ae45da570b20c754f6153e235f\", \"replay_new_after\": 0.375, \"replay_old_after\": 0.125, \"replay_retention_after\": 0.375, \"seed\": 11}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": 0.125, \"no_replay_new_after\": 0.0, \"no_replay_old_after\": 0.625, \"old_before\": 0.5, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"931c78f4328d38965c635f9764a57eab06d372c4162d70f5fff0c1d7bff86863\", \"replay_backward_transfer\": 0.125, \"replay_causal_gain\": 0.0, \"replay_checkpoint_digest\": \"8ed2a9ec828a3ad93c86a06d49fd0e8872644a47ded66233174962abd8828e5f\", \"replay_new_after\": 0.0, \"replay_old_after\": 0.625, \"replay_retention_after\": 0.5, \"seed\": 29}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": 0.0, \"no_replay_new_after\": 0.0, \"no_replay_old_after\": 0.5, \"old_before\": 0.5, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"0fa0d78576461f8b0be2ab433bb26065c51629c75c2303e5432048f98f2d2b5b\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.0, \"replay_checkpoint_digest\": \"d236d7f37a39ecaabcff273f9ac4a6b86c3ae8eb57f9df9285eaf3f53cc4ca2a\", \"replay_new_after\": 0.0, \"replay_old_after\": 0.5, \"replay_retention_after\": 0.5, \"seed\": 47}]",
+          "phase_a_then_phase_b_with_no_replay_counterfactual_then_phase_a_replay=true"
+        ]
+      }
+    },
+    {
+      "decoder": "local",
+      "replay_learning_targets": "readout",
+      "measurement": {
+        "ability_id": "b5_continual_learning",
+        "status": "failed",
+        "primary_metric": "backward_transfer",
+        "metric_direction": "higher_is_better",
+        "metric_value": 0.0,
+        "baseline_metrics": {
+          "frozen_parent": 0.0,
+          "hash_only": 0.0,
+          "no_replay": -0.125,
+          "random": 0.0,
+          "simple_rule": 0.0
+        },
+        "sample_counts": {
+          "holdout": 16,
+          "phase_a_holdout": 8,
+          "phase_a_retention": 8,
+          "phase_a_train": 16,
+          "phase_b_holdout": 8,
+          "phase_b_retention": 8,
+          "phase_b_train": 16,
+          "replay_train": 16,
+          "retention": 16,
+          "train": 32
+        },
+        "holdout_updates": 0,
+        "evidence": [
+          "corpus_digest=839feff22948df7eb1feec76f574214571495de3f7129b60bf8acc6403c0f433",
+          "seed_metrics=[{\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.125, \"no_replay_new_after\": 0.375, \"no_replay_old_after\": 0.375, \"old_before\": 0.5, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"77362fe6450f49df2183135b3d641b36539cb592843d9043c13f0c0dfcdf26d6\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.125, \"replay_checkpoint_digest\": \"bb53c38a6b6a07812f0250754457e333ee157b11414d5cf03659baef1e0bac5a\", \"replay_new_after\": 0.0, \"replay_old_after\": 0.5, \"replay_retention_after\": 0.5, \"seed\": 11}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": 0.125, \"no_replay_new_after\": 0.0, \"no_replay_old_after\": 0.625, \"old_before\": 0.5, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"931c78f4328d38965c635f9764a57eab06d372c4162d70f5fff0c1d7bff86863\", \"replay_backward_transfer\": 0.125, \"replay_causal_gain\": 0.0, \"replay_checkpoint_digest\": \"f620d5b29f60ca52d870186c59082c55fa777e3812046059fef6569baedf0bc3\", \"replay_new_after\": 0.0, \"replay_old_after\": 0.625, \"replay_retention_after\": 0.5, \"seed\": 29}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": 0.0, \"no_replay_new_after\": 0.0, \"no_replay_old_after\": 0.5, \"old_before\": 0.5, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"0fa0d78576461f8b0be2ab433bb26065c51629c75c2303e5432048f98f2d2b5b\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.0, \"replay_checkpoint_digest\": \"ecb16a577a9d572d10b16fcfe9c6e20aa0fdf06c80b4797e65a39e812a94cb48\", \"replay_new_after\": 0.0, \"replay_old_after\": 0.5, \"replay_retention_after\": 0.5, \"seed\": 47}]",
+          "phase_a_then_phase_b_with_no_replay_counterfactual_then_phase_a_replay=true"
+        ]
+      }
+    },
+    {
+      "decoder": "cue_selective",
+      "replay_learning_targets": "all",
+      "measurement": {
+        "ability_id": "b5_continual_learning",
+        "status": "failed",
+        "primary_metric": "backward_transfer",
+        "metric_direction": "higher_is_better",
+        "metric_value": -0.375,
+        "baseline_metrics": {
+          "frozen_parent": 0.0,
+          "hash_only": 0.0,
+          "no_replay": -0.5,
+          "random": 0.0,
+          "simple_rule": 0.0
+        },
+        "sample_counts": {
+          "holdout": 16,
+          "phase_a_holdout": 8,
+          "phase_a_retention": 8,
+          "phase_a_train": 16,
+          "phase_b_holdout": 8,
+          "phase_b_retention": 8,
+          "phase_b_train": 16,
+          "replay_train": 16,
+          "retention": 16,
+          "train": 32
+        },
+        "holdout_updates": 0,
+        "evidence": [
+          "corpus_digest=839feff22948df7eb1feec76f574214571495de3f7129b60bf8acc6403c0f433",
+          "seed_metrics=[{\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.5, \"no_replay_new_after\": 0.5, \"no_replay_old_after\": 0.0, \"old_before\": 0.5, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"a745c4e70e45928e3be2d850e0d99bf3f23589d647eca96ad2637861bb45f7a8\", \"replay_backward_transfer\": -0.375, \"replay_causal_gain\": 0.125, \"replay_checkpoint_digest\": \"cd3d88c9b9f71c9ee686e71439c1d7acf53dae1fce72f26f12d186b962b01ab4\", \"replay_new_after\": 0.5, \"replay_old_after\": 0.125, \"replay_retention_after\": 0.125, \"seed\": 11}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": 0.0, \"no_replay_new_after\": 0.0, \"no_replay_old_after\": 0.5, \"old_before\": 0.5, \"old_retention_before\": 0.375, \"phase_a_checkpoint_digest\": \"ef5cf5e36c6031c0028a20173d126cf24f0a305360d45086c39a9fb5d59dc3ae\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.0, \"replay_checkpoint_digest\": \"060a55dceb942193a4f3e02e8aaf55f2c221641d35d6c621222dc2dc9bcbea46\", \"replay_new_after\": 0.0, \"replay_old_after\": 0.5, \"replay_retention_after\": 0.5, \"seed\": 29}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": 0.0, \"no_replay_new_after\": 0.25, \"no_replay_old_after\": 0.5, \"old_before\": 0.5, \"old_retention_before\": 0.625, \"phase_a_checkpoint_digest\": \"b54537e848ef5268378f28dd549adf4820b2d0f0b24c50add090d1ea1085b1f7\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.0, \"replay_checkpoint_digest\": \"5cca211477f7ae20329603e69aacef3829e502b85e6ff9a7b0442a89c48d0e76\", \"replay_new_after\": 0.0, \"replay_old_after\": 0.5, \"replay_retention_after\": 0.75, \"seed\": 47}]",
+          "phase_a_then_phase_b_with_no_replay_counterfactual_then_phase_a_replay=true"
+        ]
+      }
+    },
+    {
+      "decoder": "cue_selective",
+      "replay_learning_targets": "association",
+      "measurement": {
+        "ability_id": "b5_continual_learning",
+        "status": "failed",
+        "primary_metric": "backward_transfer",
+        "metric_direction": "higher_is_better",
+        "metric_value": -0.5,
+        "baseline_metrics": {
+          "frozen_parent": 0.0,
+          "hash_only": 0.0,
+          "no_replay": -0.5,
+          "random": 0.0,
+          "simple_rule": 0.0
+        },
+        "sample_counts": {
+          "holdout": 16,
+          "phase_a_holdout": 8,
+          "phase_a_retention": 8,
+          "phase_a_train": 16,
+          "phase_b_holdout": 8,
+          "phase_b_retention": 8,
+          "phase_b_train": 16,
+          "replay_train": 16,
+          "retention": 16,
+          "train": 32
+        },
+        "holdout_updates": 0,
+        "evidence": [
+          "corpus_digest=839feff22948df7eb1feec76f574214571495de3f7129b60bf8acc6403c0f433",
+          "seed_metrics=[{\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.5, \"no_replay_new_after\": 0.5, \"no_replay_old_after\": 0.0, \"old_before\": 0.5, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"a745c4e70e45928e3be2d850e0d99bf3f23589d647eca96ad2637861bb45f7a8\", \"replay_backward_transfer\": -0.5, \"replay_causal_gain\": 0.0, \"replay_checkpoint_digest\": \"8e1755f8d9e308cd89fb4c34ac319dfc9f95a86f43e6b16b9cb8e67db4ee72ca\", \"replay_new_after\": 0.5, \"replay_old_after\": 0.0, \"replay_retention_after\": 0.0, \"seed\": 11}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": 0.0, \"no_replay_new_after\": 0.0, \"no_replay_old_after\": 0.5, \"old_before\": 0.5, \"old_retention_before\": 0.375, \"phase_a_checkpoint_digest\": \"ef5cf5e36c6031c0028a20173d126cf24f0a305360d45086c39a9fb5d59dc3ae\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.0, \"replay_checkpoint_digest\": \"80b9a537c7b2d91bc3c5483684137f62bf7826bf7e6289e95275a73e50d518b1\", \"replay_new_after\": 0.0, \"replay_old_after\": 0.5, \"replay_retention_after\": 0.5, \"seed\": 29}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": 0.0, \"no_replay_new_after\": 0.25, \"no_replay_old_after\": 0.5, \"old_before\": 0.5, \"old_retention_before\": 0.625, \"phase_a_checkpoint_digest\": \"b54537e848ef5268378f28dd549adf4820b2d0f0b24c50add090d1ea1085b1f7\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.0, \"replay_checkpoint_digest\": \"611f55660f32e3cea1b11bfef3bdc0d0b501d8bcdc6ce32b051fa8c41b36b455\", \"replay_new_after\": 0.125, \"replay_old_after\": 0.5, \"replay_retention_after\": 0.5, \"seed\": 47}]",
+          "phase_a_then_phase_b_with_no_replay_counterfactual_then_phase_a_replay=true"
+        ]
+      }
+    },
+    {
+      "decoder": "cue_selective",
+      "replay_learning_targets": "readout",
+      "measurement": {
+        "ability_id": "b5_continual_learning",
+        "status": "failed",
+        "primary_metric": "backward_transfer",
+        "metric_direction": "higher_is_better",
+        "metric_value": -0.375,
+        "baseline_metrics": {
+          "frozen_parent": 0.0,
+          "hash_only": 0.0,
+          "no_replay": -0.5,
+          "random": 0.0,
+          "simple_rule": 0.0
+        },
+        "sample_counts": {
+          "holdout": 16,
+          "phase_a_holdout": 8,
+          "phase_a_retention": 8,
+          "phase_a_train": 16,
+          "phase_b_holdout": 8,
+          "phase_b_retention": 8,
+          "phase_b_train": 16,
+          "replay_train": 16,
+          "retention": 16,
+          "train": 32
+        },
+        "holdout_updates": 0,
+        "evidence": [
+          "corpus_digest=839feff22948df7eb1feec76f574214571495de3f7129b60bf8acc6403c0f433",
+          "seed_metrics=[{\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.5, \"no_replay_new_after\": 0.5, \"no_replay_old_after\": 0.0, \"old_before\": 0.5, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"a745c4e70e45928e3be2d850e0d99bf3f23589d647eca96ad2637861bb45f7a8\", \"replay_backward_transfer\": -0.375, \"replay_causal_gain\": 0.125, \"replay_checkpoint_digest\": \"e7690037cc52a4a426379aacfa228a9caf3c77807fdfe5cf4bc902fa7f0fe5e8\", \"replay_new_after\": 0.5, \"replay_old_after\": 0.125, \"replay_retention_after\": 0.125, \"seed\": 11}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": 0.0, \"no_replay_new_after\": 0.0, \"no_replay_old_after\": 0.5, \"old_before\": 0.5, \"old_retention_before\": 0.375, \"phase_a_checkpoint_digest\": \"ef5cf5e36c6031c0028a20173d126cf24f0a305360d45086c39a9fb5d59dc3ae\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.0, \"replay_checkpoint_digest\": \"3bf946526206e80f5a58aa65d6c2bcde6a06d8a7ef1529901bc662c5cf0f021c\", \"replay_new_after\": 0.0, \"replay_old_after\": 0.5, \"replay_retention_after\": 0.5, \"seed\": 29}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": 0.0, \"no_replay_new_after\": 0.25, \"no_replay_old_after\": 0.5, \"old_before\": 0.5, \"old_retention_before\": 0.625, \"phase_a_checkpoint_digest\": \"b54537e848ef5268378f28dd549adf4820b2d0f0b24c50add090d1ea1085b1f7\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.0, \"replay_checkpoint_digest\": \"1057e9b8b6ed601828498fe7dc3fb1d18708f3fb5cb9a986c2957a9ae144126a\", \"replay_new_after\": 0.0, \"replay_old_after\": 0.5, \"replay_retention_after\": 0.625, \"seed\": 47}]",
+          "phase_a_then_phase_b_with_no_replay_counterfactual_then_phase_a_replay=true"
+        ]
+      }
+    },
+    {
+      "decoder": "dual",
+      "replay_learning_targets": "all",
+      "measurement": {
+        "ability_id": "b5_continual_learning",
+        "status": "failed",
+        "primary_metric": "backward_transfer",
+        "metric_direction": "higher_is_better",
+        "metric_value": -0.75,
+        "baseline_metrics": {
+          "frozen_parent": 0.0,
+          "hash_only": 0.0,
+          "no_replay": -0.875,
+          "random": 0.0,
+          "simple_rule": 0.0
+        },
+        "sample_counts": {
+          "holdout": 16,
+          "phase_a_holdout": 8,
+          "phase_a_retention": 8,
+          "phase_a_train": 16,
+          "phase_b_holdout": 8,
+          "phase_b_retention": 8,
+          "phase_b_train": 16,
+          "replay_train": 16,
+          "retention": 16,
+          "train": 32
+        },
+        "holdout_updates": 0,
+        "evidence": [
+          "corpus_digest=839feff22948df7eb1feec76f574214571495de3f7129b60bf8acc6403c0f433",
+          "seed_metrics=[{\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.125, \"no_replay_new_after\": 0.0, \"no_replay_old_after\": 0.5, \"old_before\": 0.625, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"e92c2b19338e774190729e46a7463abdedb104f273ebdb137f52ee9138b179e5\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.125, \"replay_checkpoint_digest\": \"5f7f668b69695691ad1b284b1bf8b421a4d8218ace2de59380c026dd4ab40455\", \"replay_new_after\": 0.0, \"replay_old_after\": 0.625, \"replay_retention_after\": 0.5, \"seed\": 11}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.375, \"no_replay_new_after\": 0.875, \"no_replay_old_after\": 0.125, \"old_before\": 0.5, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"1effdfcff9a50234b6cb1d05906b7728cdf6a226b9d9db3401c17008a39e2958\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.375, \"replay_checkpoint_digest\": \"96d0570e46f357c9f33ff74f10953d92b29bf1a646d9aaf77dbaadd860bc3275\", \"replay_new_after\": 0.5, \"replay_old_after\": 0.5, \"replay_retention_after\": 0.125, \"seed\": 29}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.875, \"no_replay_new_after\": 0.75, \"no_replay_old_after\": 0.0, \"old_before\": 0.875, \"old_retention_before\": 0.625, \"phase_a_checkpoint_digest\": \"f0130f48c8ceff7203fb38902fa14f320a190517d607a8c31577a2db968021eb\", \"replay_backward_transfer\": -0.75, \"replay_causal_gain\": 0.125, \"replay_checkpoint_digest\": \"e0c606844bf1857f56f195bd28d4783f1564b5e2cea9439c1fef7697bbd583ef\", \"replay_new_after\": 0.75, \"replay_old_after\": 0.125, \"replay_retention_after\": 0.0, \"seed\": 47}]",
+          "phase_a_then_phase_b_with_no_replay_counterfactual_then_phase_a_replay=true"
+        ]
+      }
+    },
+    {
+      "decoder": "dual",
+      "replay_learning_targets": "association",
+      "measurement": {
+        "ability_id": "b5_continual_learning",
+        "status": "failed",
+        "primary_metric": "backward_transfer",
+        "metric_direction": "higher_is_better",
+        "metric_value": -0.75,
+        "baseline_metrics": {
+          "frozen_parent": 0.0,
+          "hash_only": 0.0,
+          "no_replay": -0.875,
+          "random": 0.0,
+          "simple_rule": 0.0
+        },
+        "sample_counts": {
+          "holdout": 16,
+          "phase_a_holdout": 8,
+          "phase_a_retention": 8,
+          "phase_a_train": 16,
+          "phase_b_holdout": 8,
+          "phase_b_retention": 8,
+          "phase_b_train": 16,
+          "replay_train": 16,
+          "retention": 16,
+          "train": 32
+        },
+        "holdout_updates": 0,
+        "evidence": [
+          "corpus_digest=839feff22948df7eb1feec76f574214571495de3f7129b60bf8acc6403c0f433",
+          "seed_metrics=[{\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.125, \"no_replay_new_after\": 0.0, \"no_replay_old_after\": 0.5, \"old_before\": 0.625, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"e92c2b19338e774190729e46a7463abdedb104f273ebdb137f52ee9138b179e5\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.125, \"replay_checkpoint_digest\": \"c906be9ebf3e4a1aee6993ee4ae145888709c616af010b3fa7787eb8cf6ae677\", \"replay_new_after\": 0.125, \"replay_old_after\": 0.625, \"replay_retention_after\": 0.375, \"seed\": 11}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.375, \"no_replay_new_after\": 0.875, \"no_replay_old_after\": 0.125, \"old_before\": 0.5, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"1effdfcff9a50234b6cb1d05906b7728cdf6a226b9d9db3401c17008a39e2958\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.375, \"replay_checkpoint_digest\": \"21ea360d1da5d4e524f321c54b4ad9b63f16f0b401008df8b2fbb0b647f40d51\", \"replay_new_after\": 0.625, \"replay_old_after\": 0.5, \"replay_retention_after\": 0.125, \"seed\": 29}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.875, \"no_replay_new_after\": 0.75, \"no_replay_old_after\": 0.0, \"old_before\": 0.875, \"old_retention_before\": 0.625, \"phase_a_checkpoint_digest\": \"f0130f48c8ceff7203fb38902fa14f320a190517d607a8c31577a2db968021eb\", \"replay_backward_transfer\": -0.75, \"replay_causal_gain\": 0.125, \"replay_checkpoint_digest\": \"2db3bcb57d30063bb2310c72365f41d5212aac22e61c95cd3c2993bb2515008e\", \"replay_new_after\": 0.75, \"replay_old_after\": 0.125, \"replay_retention_after\": 0.0, \"seed\": 47}]",
+          "phase_a_then_phase_b_with_no_replay_counterfactual_then_phase_a_replay=true"
+        ]
+      }
+    },
+    {
+      "decoder": "dual",
+      "replay_learning_targets": "readout",
+      "measurement": {
+        "ability_id": "b5_continual_learning",
+        "status": "failed",
+        "primary_metric": "backward_transfer",
+        "metric_direction": "higher_is_better",
+        "metric_value": -0.875,
+        "baseline_metrics": {
+          "frozen_parent": 0.0,
+          "hash_only": 0.0,
+          "no_replay": -0.875,
+          "random": 0.0,
+          "simple_rule": 0.0
+        },
+        "sample_counts": {
+          "holdout": 16,
+          "phase_a_holdout": 8,
+          "phase_a_retention": 8,
+          "phase_a_train": 16,
+          "phase_b_holdout": 8,
+          "phase_b_retention": 8,
+          "phase_b_train": 16,
+          "replay_train": 16,
+          "retention": 16,
+          "train": 32
+        },
+        "holdout_updates": 0,
+        "evidence": [
+          "corpus_digest=839feff22948df7eb1feec76f574214571495de3f7129b60bf8acc6403c0f433",
+          "seed_metrics=[{\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.125, \"no_replay_new_after\": 0.0, \"no_replay_old_after\": 0.5, \"old_before\": 0.625, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"e92c2b19338e774190729e46a7463abdedb104f273ebdb137f52ee9138b179e5\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.125, \"replay_checkpoint_digest\": \"8f0853b6794a9f53c9ba19a803ab559a84c64a7ff4341eea5d466e5cbb08911d\", \"replay_new_after\": 0.0, \"replay_old_after\": 0.625, \"replay_retention_after\": 0.5, \"seed\": 11}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.375, \"no_replay_new_after\": 0.875, \"no_replay_old_after\": 0.125, \"old_before\": 0.5, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"1effdfcff9a50234b6cb1d05906b7728cdf6a226b9d9db3401c17008a39e2958\", \"replay_backward_transfer\": -0.375, \"replay_causal_gain\": 0.0, \"replay_checkpoint_digest\": \"2af01a91c03874662120661f4b3bcc0c024d82598cc0ed7b0c51933bfe626694\", \"replay_new_after\": 0.875, \"replay_old_after\": 0.125, \"replay_retention_after\": 0.0, \"seed\": 29}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.875, \"no_replay_new_after\": 0.75, \"no_replay_old_after\": 0.0, \"old_before\": 0.875, \"old_retention_before\": 0.625, \"phase_a_checkpoint_digest\": \"f0130f48c8ceff7203fb38902fa14f320a190517d607a8c31577a2db968021eb\", \"replay_backward_transfer\": -0.875, \"replay_causal_gain\": 0.0, \"replay_checkpoint_digest\": \"5296c38c2fbd1246b5aef21eeb8536af6ee03d176894ac23faf801e4aa09b175\", \"replay_new_after\": 0.75, \"replay_old_after\": 0.0, \"replay_retention_after\": 0.0, \"seed\": 47}]",
+          "phase_a_then_phase_b_with_no_replay_counterfactual_then_phase_a_replay=true"
+        ]
+      }
+    },
+    {
+      "decoder": "slot_dual",
+      "replay_learning_targets": "all",
+      "measurement": {
+        "ability_id": "b5_continual_learning",
+        "status": "failed",
+        "primary_metric": "backward_transfer",
+        "metric_direction": "higher_is_better",
+        "metric_value": -0.75,
+        "baseline_metrics": {
+          "frozen_parent": 0.0,
+          "hash_only": 0.0,
+          "no_replay": -0.875,
+          "random": 0.0,
+          "simple_rule": 0.0
+        },
+        "sample_counts": {
+          "holdout": 16,
+          "phase_a_holdout": 8,
+          "phase_a_retention": 8,
+          "phase_a_train": 16,
+          "phase_b_holdout": 8,
+          "phase_b_retention": 8,
+          "phase_b_train": 16,
+          "replay_train": 16,
+          "retention": 16,
+          "train": 32
+        },
+        "holdout_updates": 0,
+        "evidence": [
+          "corpus_digest=839feff22948df7eb1feec76f574214571495de3f7129b60bf8acc6403c0f433",
+          "seed_metrics=[{\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.125, \"no_replay_new_after\": 0.0, \"no_replay_old_after\": 0.5, \"old_before\": 0.625, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"fe470af859ec4f78f9f7c6f5ff2476cc5d6344363a50725a93fa66033d01a2ec\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.125, \"replay_checkpoint_digest\": \"20e8a40c989c67b998d5abefe084ed37be1ac59a0236c210729e81b7f42fb48b\", \"replay_new_after\": 0.125, \"replay_old_after\": 0.625, \"replay_retention_after\": 0.625, \"seed\": 11}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.375, \"no_replay_new_after\": 0.875, \"no_replay_old_after\": 0.125, \"old_before\": 0.5, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"a24a690da5ee2ead350a3113926ea7dbf7e6baa76cc5f17bbc20ce0224ee75b5\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.375, \"replay_checkpoint_digest\": \"1299969cd9b8cbb23ef6add8e40f6d65dde59a975f05636fdc53ffd8db576415\", \"replay_new_after\": 0.625, \"replay_old_after\": 0.5, \"replay_retention_after\": 0.25, \"seed\": 29}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.875, \"no_replay_new_after\": 0.75, \"no_replay_old_after\": 0.0, \"old_before\": 0.875, \"old_retention_before\": 0.625, \"phase_a_checkpoint_digest\": \"8df105cbb0e2939e139f83e415a84e484b1009822295f46017c04378e224b51d\", \"replay_backward_transfer\": -0.75, \"replay_causal_gain\": 0.125, \"replay_checkpoint_digest\": \"fb3fa17d8a469b7ce6082f1fe6fd62e48d6de755495b408a649efc4040e882a5\", \"replay_new_after\": 0.75, \"replay_old_after\": 0.125, \"replay_retention_after\": 0.0, \"seed\": 47}]",
+          "phase_a_then_phase_b_with_no_replay_counterfactual_then_phase_a_replay=true"
+        ]
+      }
+    },
+    {
+      "decoder": "slot_dual",
+      "replay_learning_targets": "association",
+      "measurement": {
+        "ability_id": "b5_continual_learning",
+        "status": "failed",
+        "primary_metric": "backward_transfer",
+        "metric_direction": "higher_is_better",
+        "metric_value": -0.75,
+        "baseline_metrics": {
+          "frozen_parent": 0.0,
+          "hash_only": 0.0,
+          "no_replay": -0.875,
+          "random": 0.0,
+          "simple_rule": 0.0
+        },
+        "sample_counts": {
+          "holdout": 16,
+          "phase_a_holdout": 8,
+          "phase_a_retention": 8,
+          "phase_a_train": 16,
+          "phase_b_holdout": 8,
+          "phase_b_retention": 8,
+          "phase_b_train": 16,
+          "replay_train": 16,
+          "retention": 16,
+          "train": 32
+        },
+        "holdout_updates": 0,
+        "evidence": [
+          "corpus_digest=839feff22948df7eb1feec76f574214571495de3f7129b60bf8acc6403c0f433",
+          "seed_metrics=[{\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.125, \"no_replay_new_after\": 0.0, \"no_replay_old_after\": 0.5, \"old_before\": 0.625, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"fe470af859ec4f78f9f7c6f5ff2476cc5d6344363a50725a93fa66033d01a2ec\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.125, \"replay_checkpoint_digest\": \"48edb1c684a8d12c5cc64e1eefa2ab49a3d928468d72276d4b553e1c201c6654\", \"replay_new_after\": 0.125, \"replay_old_after\": 0.625, \"replay_retention_after\": 0.375, \"seed\": 11}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.375, \"no_replay_new_after\": 0.875, \"no_replay_old_after\": 0.125, \"old_before\": 0.5, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"a24a690da5ee2ead350a3113926ea7dbf7e6baa76cc5f17bbc20ce0224ee75b5\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.375, \"replay_checkpoint_digest\": \"f4c36de663a612eb0c90028f111fe0d239510aeb88c2374ad2284cae93b6d852\", \"replay_new_after\": 0.625, \"replay_old_after\": 0.5, \"replay_retention_after\": 0.125, \"seed\": 29}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.875, \"no_replay_new_after\": 0.75, \"no_replay_old_after\": 0.0, \"old_before\": 0.875, \"old_retention_before\": 0.625, \"phase_a_checkpoint_digest\": \"8df105cbb0e2939e139f83e415a84e484b1009822295f46017c04378e224b51d\", \"replay_backward_transfer\": -0.75, \"replay_causal_gain\": 0.125, \"replay_checkpoint_digest\": \"81bdd4dfc64024d357a1cad357f54ff8d08a9fca5da0d276a7cfad1ec5954701\", \"replay_new_after\": 0.75, \"replay_old_after\": 0.125, \"replay_retention_after\": 0.0, \"seed\": 47}]",
+          "phase_a_then_phase_b_with_no_replay_counterfactual_then_phase_a_replay=true"
+        ]
+      }
+    },
+    {
+      "decoder": "slot_dual",
+      "replay_learning_targets": "readout",
+      "measurement": {
+        "ability_id": "b5_continual_learning",
+        "status": "failed",
+        "primary_metric": "backward_transfer",
+        "metric_direction": "higher_is_better",
+        "metric_value": -0.875,
+        "baseline_metrics": {
+          "frozen_parent": 0.0,
+          "hash_only": 0.0,
+          "no_replay": -0.875,
+          "random": 0.0,
+          "simple_rule": 0.0
+        },
+        "sample_counts": {
+          "holdout": 16,
+          "phase_a_holdout": 8,
+          "phase_a_retention": 8,
+          "phase_a_train": 16,
+          "phase_b_holdout": 8,
+          "phase_b_retention": 8,
+          "phase_b_train": 16,
+          "replay_train": 16,
+          "retention": 16,
+          "train": 32
+        },
+        "holdout_updates": 0,
+        "evidence": [
+          "corpus_digest=839feff22948df7eb1feec76f574214571495de3f7129b60bf8acc6403c0f433",
+          "seed_metrics=[{\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.125, \"no_replay_new_after\": 0.0, \"no_replay_old_after\": 0.5, \"old_before\": 0.625, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"fe470af859ec4f78f9f7c6f5ff2476cc5d6344363a50725a93fa66033d01a2ec\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.125, \"replay_checkpoint_digest\": \"bd157ab36b24e02a360d663670de849a979aeeb1c6482cf2fba65865c1ada3f2\", \"replay_new_after\": 0.0, \"replay_old_after\": 0.625, \"replay_retention_after\": 0.5, \"seed\": 11}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.375, \"no_replay_new_after\": 0.875, \"no_replay_old_after\": 0.125, \"old_before\": 0.5, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"a24a690da5ee2ead350a3113926ea7dbf7e6baa76cc5f17bbc20ce0224ee75b5\", \"replay_backward_transfer\": -0.375, \"replay_causal_gain\": 0.0, \"replay_checkpoint_digest\": \"c66c6931fb97bfad5b0e8344afe701e135e520a904e1195d0f15bd8f100bc42a\", \"replay_new_after\": 0.875, \"replay_old_after\": 0.125, \"replay_retention_after\": 0.0, \"seed\": 29}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.875, \"no_replay_new_after\": 0.75, \"no_replay_old_after\": 0.0, \"old_before\": 0.875, \"old_retention_before\": 0.625, \"phase_a_checkpoint_digest\": \"8df105cbb0e2939e139f83e415a84e484b1009822295f46017c04378e224b51d\", \"replay_backward_transfer\": -0.875, \"replay_causal_gain\": 0.0, \"replay_checkpoint_digest\": \"70c405f3552e3d2fa8d92600a5ac5aa3a162a6b5467df0a391a59fe23bca465b\", \"replay_new_after\": 0.75, \"replay_old_after\": 0.0, \"replay_retention_after\": 0.0, \"seed\": 47}]",
+          "phase_a_then_phase_b_with_no_replay_counterfactual_then_phase_a_replay=true"
+        ]
+      }
+    }
+  ],
+  "report_path": "reports\\taiji_m1_b15_slot_dual_ablation_canary_20260902.json"
+}
