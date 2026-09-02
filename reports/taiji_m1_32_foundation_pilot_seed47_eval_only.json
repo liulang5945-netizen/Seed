@@ -1,0 +1,19 @@
+{
+  "format": "taiji-native-foundation-training-v1",
+  "version": 1,
+  "status": "evaluated",
+  "profile": "pilot",
+  "model_tier": "micro",
+  "dataset_digest": "370e9edc96ebbad1a27a9b3032bf6a97947efafed95643c37a22b60ff55bf5ea",
+  "dataset_sample_counts": {
+    "train": 16384,
+    "holdout": 4096,
+    "retention": 4096
+  },
+  "checkpoint_digest": "343539f777e40a6f9f2f262f062f5becd6cff2759f29ffebd0d5dd033e8a6720",
+  "holdout_bpb": 6.246121885163592,
+  "retention_bpb": 6.288163294084788,
+  "code_revision": "ee9e3fa0646a8ef82f143d0b370e9024e4cf0cf6",
+  "checkpoint_read_only": true,
+  "report_path": "reports\\taiji_m1_32_foundation_pilot_seed47_eval_only.json"
+}
