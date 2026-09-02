@@ -19,6 +19,17 @@ EPISODIC_EVENT_COMPONENTS = (
 DEFAULT_EPISODIC_EVENT_COMPONENT_GAINS = (1.0,) * len(EPISODIC_EVENT_COMPONENTS)
 
 
+def _validate_event_component_gains(name: str, gains: tuple[float, ...]) -> None:
+    if len(gains) != len(EPISODIC_EVENT_COMPONENTS):
+        raise ValueError(
+            f"{name} must provide one gain per episodic event component"
+        )
+    if any(not math.isfinite(float(value)) or float(value) < 0.0 for value in gains):
+        raise ValueError(f"{name} must be finite and non-negative")
+    if sum(float(value) for value in gains) <= 0.0:
+        raise ValueError(f"at least one {name} value must be positive")
+
+
 @dataclass(frozen=True)
 class CapacityPolicy:
     """Structural proportions used by the parameter-budget planner.
@@ -244,6 +255,9 @@ class TaijiConfig:
     memory_novelty_gain: float = 0.70
     memory_reward_gain: float = 0.30
     memory_event_component_gains: tuple[float, ...] = DEFAULT_EPISODIC_EVENT_COMPONENT_GAINS
+    memory_association_component_gains: tuple[float, ...] = (
+        DEFAULT_EPISODIC_EVENT_COMPONENT_GAINS
+    )
     memory_association_event_target_mix: float = 1.0
     replay_memory_learning_scale: float = 0.25
 
@@ -392,17 +406,13 @@ class TaijiConfig:
         ):
             if float(getattr(self, name)) <= 0.0:
                 raise ValueError(f"{name} must be positive")
-        if len(self.memory_event_component_gains) != len(EPISODIC_EVENT_COMPONENTS):
-            raise ValueError(
-                "memory_event_component_gains must provide one gain per episodic event component"
-            )
-        if any(
-            not math.isfinite(float(value)) or float(value) < 0.0
-            for value in self.memory_event_component_gains
-        ):
-            raise ValueError("memory_event_component_gains must be finite and non-negative")
-        if sum(float(value) for value in self.memory_event_component_gains) <= 0.0:
-            raise ValueError("at least one episodic event component gain must be positive")
+        _validate_event_component_gains(
+            "memory_event_component_gains", self.memory_event_component_gains
+        )
+        _validate_event_component_gains(
+            "memory_association_component_gains",
+            self.memory_association_component_gains,
+        )
         if not math.isfinite(float(self.memory_association_event_target_mix)) or not 0.0 <= float(
             self.memory_association_event_target_mix
         ) <= 1.0:
@@ -732,6 +742,10 @@ class TaijiConfig:
         if "memory_event_component_gains" in values:
             values["memory_event_component_gains"] = tuple(
                 float(value) for value in values["memory_event_component_gains"]
+            )
+        if "memory_association_component_gains" in values:
+            values["memory_association_component_gains"] = tuple(
+                float(value) for value in values["memory_association_component_gains"]
             )
         perception = values.get("perception")
         if perception is not None and not isinstance(perception, PerceptionConfig):
