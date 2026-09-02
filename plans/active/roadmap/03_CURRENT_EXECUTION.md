@@ -315,7 +315,9 @@ M1-25 已完成并通过隔离 Gate，报告为 `reports/taiji_m1_identity_route
 
 M1-26 已完成并通过边界 Gate，报告为 `reports/taiji_m1_identity_boundary_20260902.json`。三 seed 的 learned old/new holdout 均为 `1.0`，未见 cue unbound rate 均为 `1.0` 且 non-mutating query 不改 route digest，repeated replay same-slot rate 均为 `1.0`；正常 32 cue 阶段 cross-phase collision/replacement 均为 `0`。容量压力 `136/128` 时 replacement 被显式记录为 `4/8/7`（seed 11/29/47），occupied 始终不超过 capacity，stress bundle 与正常 bundle 均可恢复。该片确认 identity route 是可恢复、可解释的情景身份层，但未证明通用泛化，也没有接入默认 Taiji checkpoint。
 
-当前唯一下一步为 **M1-27：identity route native integration contract Gate**：在不改默认 Taiji checkpoint 的前提下，定义并验证 identity route 与现有 `MemoryState/action_evidence/act` 的边界契约：cue 输入、slot/confidence 输出、物理 action evidence、unbound fallback、provenance、replay/no-change 与 checkpoint bundle lineage；比较“shared only”和“identity route→shared fallback”两条隔离 runtime path，确认 identity route 不能绕过 Taiji motor、不能直接执行 ActionIntent，也不能把 route 权重伪装成 shared memory。该片只验证连接语义、回退与归因，不引入生产接线；若 contract 通过，才讨论是否把身份层作为 native memory 的可选器官；否则删除 integration adapter，保留已通过的独立 route。
+M1-27 已完成并通过 integration contract Gate，报告为 `reports/taiji_m1_identity_integration_20260902.json`。三 seed 的 `shared_only` 全部走 `shared-fallback`，`identity_route_fallback` 对已绑定 cue 全部走 identity evidence、对未绑定 cue 全部走 shared fallback；两条路径均不生成或执行 `ActionIntent`，bound/unbound provenance、route non-mutating query、fresh-process output 和 bundle digest 全部通过。identity route 仍只存在于 evaluator，未修改默认 Taiji checkpoint、motor、shared memory 或生产 adapter。
+
+当前唯一下一步为 **M1-28：可选 identity organ 的 native memory integration canary**：基于已通过的 contract，把 identity route 作为显式 feature-gated optional organ 接入隔离的 Taiji memory runtime，保留 shared decoder 为默认 fallback；必须先定义 checkpoint version/lineage、capacity/replacement、unbound behavior、provenance、action evidence ownership 和 rollback semantics，再跑 B2/B5 old/new、repeated replay、no-change、lesion、参数/edge budget、fresh-process checkpoint Gate。该片不得默认启用、不得绕过 Taiji motor 或生成 ActionIntent；只有 integration canary 同时证明 identity route 的收益可归因且 shared fallback 无退化，才允许评审是否进入 default configuration。
 
 ## 7. M2～M8 的开发日程与外围任务安置
 
