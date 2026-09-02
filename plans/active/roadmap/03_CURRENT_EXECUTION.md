@@ -293,7 +293,9 @@ M1-15 的 slot-routed slow action readout 已完成 canary，但 Gate 阻断，�
 
 M1-16 的 slot lifecycle Gate 已完成，报告为 `reports/taiji_m1_b16_slot_gate_canary_20260902.json`。三 seed 的 repeated replay same-slot rate 为 `1.0`，no-change 查询全部路由且 state preserved，release 后读为 unbound、重新学习回到释放 slot，checkpoint round-trip query mismatch 为 `0`，cross-phase collision 为 `0`。这些结果证明 CueBindingBank 的状态机和可逆性成立；M1-15 已证明把它直接接进 action readout 仍不能通过 old/new 能力 Gate，因此 slot bank 继续保持独立，不进入默认 checkpoint。
 
-当前唯一下一步为 **M1-17：cue encoder 可分性训练实验**：在不使用 action/outcome 答案、不改 fast/slow action readout 的前提下，给固定 cue encoder 增加基于 cue 重复一致性、跨 cue 排斥和 homeostasis 的本地塑性 probe；用 slot collision、write→query fidelity、active support、old/new holdout、no-change 和 checkpoint round-trip 对照当前固定 cue encoder。只有 cue population 的分离度和 memory 能力同时改善，才允许把 cue encoder 学习规则接入 Taiji 主路径；否则撤销该 probe，冻结 M1 memory decoder 结构。
+M1-17 的 cue encoder 可分性训练实验已完成并失败。隔离 probe 在不使用 action/outcome 标签的条件下对固定 cue encoder 做了 winner、最近邻跨 cue 排斥和 homeostasis 更新；三 seed canary 均出现同一塌缩：seed 11/29/47 的训练后最大跨 cue cosine 为 `0.999849/0.999748/0.999868`，active support 全为 `128/128`，slot 占用均从 `96` 降为 `1`，`can_promote=false`。这说明当前自选 winner + 局部 anti-Hebbian 规则产生了正反馈，不能作为 cue population 学习规则。probe、评估器、测试和临时报告已删除，默认 Taiji checkpoint、fast/slow action readout 与 cue encoder 均未被改动。
+
+当前唯一下一步为 **M1-18：冻结结构并进入原生训练基线**：保留当前固定 cue encoder、shared action decoder 默认路径与已验证的 checkpoint lineage，把失败的 cue plasticity、slot-routed readout 和新增 decoder 明确列为禁止接入项；先执行全新模型的 checkpoint save→load→eval-only canary，确认训练前保存可逆，再用现有 native joint-training 入口做三 seed 小规模基线，报告 sequence、memory、world、goal、checkpoint digest 和五项 M0 control，不修改架构参数。只有基线报告证明保存/恢复稳定且训练确实改善可读指标，才允许在真实训练数据上扩大课程；若 memory/B5 仍失败，下一片只针对训练信号和数据课程定位，不再增加外围结构。
 
 ## 7. M2～M8 的开发日程与外围任务安置
 
