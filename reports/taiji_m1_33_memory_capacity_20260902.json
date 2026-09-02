@@ -1,0 +1,362 @@
+{
+  "format": "taiji-native-m1-33-memory-capacity-v1",
+  "version": 1,
+  "status": "failed",
+  "variable_changed": "shared memory_units only",
+  "identity_organ_enabled": false,
+  "learning_rule_changed": false,
+  "decoder_changed": false,
+  "corpus_digest": "19687ae8d7bd135af49e1c3f80b6fa58a16ab0180d1c70e4934fec3eb037cabc",
+  "capacities": [
+    96,
+    192,
+    384
+  ],
+  "seeds": [
+    11,
+    29,
+    47
+  ],
+  "records": [
+    {
+      "memory_units": 96,
+      "status": "failed",
+      "metric_value": -0.0625,
+      "baseline_metrics": {
+        "random": 0.0,
+        "frozen_parent": 0.0,
+        "simple_rule": 0.0,
+        "hash_only": 0.0,
+        "no_replay": -0.71875
+      },
+      "sample_counts": {
+        "train": 128,
+        "holdout": 64,
+        "retention": 64,
+        "phase_a_train": 64,
+        "phase_a_holdout": 32,
+        "phase_a_retention": 32,
+        "phase_b_train": 64,
+        "phase_b_holdout": 32,
+        "phase_b_retention": 32,
+        "replay_train": 64
+      },
+      "holdout_updates": 0,
+      "seed_metrics": [
+        {
+          "continued_from_phase_a": 1,
+          "holdout_updates": 0,
+          "no_replay_backward_transfer": -0.71875,
+          "no_replay_new_after": 0.625,
+          "no_replay_old_after": 0.0,
+          "old_before": 0.71875,
+          "old_retention_before": 0.71875,
+          "phase_a_checkpoint_digest": "22c039ffdd4751dc6335f33dbabc0d14a5b0471b9f32d8cfc8a087916cd92849",
+          "replay_backward_transfer": 0.0,
+          "replay_causal_gain": 0.71875,
+          "replay_checkpoint_digest": "b9f5818d05245dac76c0fa22366ac5d9c5431a3cbbc537b899cef1d90cb6cc70",
+          "replay_new_after": 0.0,
+          "replay_old_after": 0.71875,
+          "replay_retention_after": 0.78125,
+          "seed": 11
+        },
+        {
+          "continued_from_phase_a": 1,
+          "holdout_updates": 0,
+          "no_replay_backward_transfer": -0.65625,
+          "no_replay_new_after": 0.59375,
+          "no_replay_old_after": 0.0,
+          "old_before": 0.65625,
+          "old_retention_before": 0.625,
+          "phase_a_checkpoint_digest": "b25c73de3bf9b8ee6d2f21c8efdccca84f516979c700cae5b787c8a3af795190",
+          "replay_backward_transfer": -0.0625,
+          "replay_causal_gain": 0.59375,
+          "replay_checkpoint_digest": "6690f0f457f805f45c90cc41a574b12c767c04c19bda623a2b1460ea00b7ca85",
+          "replay_new_after": 0.0,
+          "replay_old_after": 0.59375,
+          "replay_retention_after": 0.5625,
+          "seed": 29
+        },
+        {
+          "continued_from_phase_a": 1,
+          "holdout_updates": 0,
+          "no_replay_backward_transfer": -0.65625,
+          "no_replay_new_after": 0.625,
+          "no_replay_old_after": 0.0,
+          "old_before": 0.65625,
+          "old_retention_before": 0.59375,
+          "phase_a_checkpoint_digest": "8f51c7b5486b7108503af7489b8552222e9ce4a8a5e7b512a1617081bbd6db46",
+          "replay_backward_transfer": -0.0625,
+          "replay_causal_gain": 0.59375,
+          "replay_checkpoint_digest": "5f5e2af02716ee7f6e58810de3810649f5c6e0949e38a2401ff61f9d3b97c30a",
+          "replay_new_after": 0.0,
+          "replay_old_after": 0.59375,
+          "replay_retention_after": 0.5,
+          "seed": 47
+        }
+      ],
+      "budget": {
+        "memory_units": 96,
+        "identity_organ_enabled": false,
+        "active_parameter_count": 84929,
+        "planned_active_parameter_count": 84929,
+        "parameter_count_matches_plan": true
+      },
+      "checkpoint": {
+        "records": [
+          {
+            "seed": 11,
+            "checkpoint_digest": "4abd9fc068f5936142a41e251b1dffdb83563d1b1284966065d1866210e49e49",
+            "same_process_digest_matches": true,
+            "fresh_process_digest_matches": true
+          },
+          {
+            "seed": 29,
+            "checkpoint_digest": "d7ce125deef43d29b4f80bfc753da3d665340c7b3e3156ecce055a12033609cf",
+            "same_process_digest_matches": true,
+            "fresh_process_digest_matches": true
+          },
+          {
+            "seed": 47,
+            "checkpoint_digest": "d4aae879de0b6c436a9bc6b4ef641c834cc29adce6c23203d01cb22306931f6a",
+            "same_process_digest_matches": true,
+            "fresh_process_digest_matches": true
+          }
+        ],
+        "all_same_process_match": true,
+        "all_fresh_process_match": true
+      },
+      "cpu_seconds": 7.973,
+      "capacity_gate_passed": false
+    },
+    {
+      "memory_units": 192,
+      "status": "failed",
+      "metric_value": -0.15625,
+      "baseline_metrics": {
+        "random": 0.0,
+        "frozen_parent": 0.0,
+        "simple_rule": 0.0,
+        "hash_only": 0.0,
+        "no_replay": -0.6875
+      },
+      "sample_counts": {
+        "train": 128,
+        "holdout": 64,
+        "retention": 64,
+        "phase_a_train": 64,
+        "phase_a_holdout": 32,
+        "phase_a_retention": 32,
+        "phase_b_train": 64,
+        "phase_b_holdout": 32,
+        "phase_b_retention": 32,
+        "replay_train": 64
+      },
+      "holdout_updates": 0,
+      "seed_metrics": [
+        {
+          "continued_from_phase_a": 1,
+          "holdout_updates": 0,
+          "no_replay_backward_transfer": -0.6875,
+          "no_replay_new_after": 0.46875,
+          "no_replay_old_after": 0.0,
+          "old_before": 0.6875,
+          "old_retention_before": 0.65625,
+          "phase_a_checkpoint_digest": "4c2398c1dc61b7a7dacc3063a1c125364a17a042a69a5d9738dc310ad5b97a7d",
+          "replay_backward_transfer": 0.03125,
+          "replay_causal_gain": 0.71875,
+          "replay_checkpoint_digest": "9292dc36ba4989bbc29081c7db70b33db9c73e1d90b8a174c78a4e3e67eb9612",
+          "replay_new_after": 0.0,
+          "replay_old_after": 0.71875,
+          "replay_retention_after": 0.6875,
+          "seed": 11
+        },
+        {
+          "continued_from_phase_a": 1,
+          "holdout_updates": 0,
+          "no_replay_backward_transfer": -0.625,
+          "no_replay_new_after": 0.40625,
+          "no_replay_old_after": 0.0,
+          "old_before": 0.625,
+          "old_retention_before": 0.6875,
+          "phase_a_checkpoint_digest": "94298f748077591d58e9b7f3483205b082bb3f48e9651e319fb4521b06b3a519",
+          "replay_backward_transfer": -0.15625,
+          "replay_causal_gain": 0.46875,
+          "replay_checkpoint_digest": "f68fae43518359fcdf1b0f97db1cfccd83521d339f7f3327ebace25873796565",
+          "replay_new_after": 0.125,
+          "replay_old_after": 0.46875,
+          "replay_retention_after": 0.375,
+          "seed": 29
+        },
+        {
+          "continued_from_phase_a": 1,
+          "holdout_updates": 0,
+          "no_replay_backward_transfer": -0.5625,
+          "no_replay_new_after": 0.59375,
+          "no_replay_old_after": 0.0,
+          "old_before": 0.5625,
+          "old_retention_before": 0.53125,
+          "phase_a_checkpoint_digest": "1ff91fe1dc3e3f5bf4f87b24c1875b53d5d69286d9d7e74c4f762b4519d7cb95",
+          "replay_backward_transfer": -0.03125,
+          "replay_causal_gain": 0.53125,
+          "replay_checkpoint_digest": "fedda4667520616e57685b89c4b02e958ec8547465235bd4438c97c8ac5dda1f",
+          "replay_new_after": 0.0625,
+          "replay_old_after": 0.53125,
+          "replay_retention_after": 0.5625,
+          "seed": 47
+        }
+      ],
+      "budget": {
+        "memory_units": 192,
+        "identity_organ_enabled": false,
+        "active_parameter_count": 88001,
+        "planned_active_parameter_count": 88001,
+        "parameter_count_matches_plan": true
+      },
+      "checkpoint": {
+        "records": [
+          {
+            "seed": 11,
+            "checkpoint_digest": "8e756ceffa5e011577c76941abbc3d3b0f2a463689c961fb224c5e84fffba977",
+            "same_process_digest_matches": true,
+            "fresh_process_digest_matches": true
+          },
+          {
+            "seed": 29,
+            "checkpoint_digest": "0f1328a554c28d7b6365e8a9bb11745ab3b56a7e5af6cca5bea7e0a45fc7631a",
+            "same_process_digest_matches": true,
+            "fresh_process_digest_matches": true
+          },
+          {
+            "seed": 47,
+            "checkpoint_digest": "3689f98a6662ba316c807fbe6a866ffd4feb85c1f2a40bc44d1264571604ffdd",
+            "same_process_digest_matches": true,
+            "fresh_process_digest_matches": true
+          }
+        ],
+        "all_same_process_match": true,
+        "all_fresh_process_match": true
+      },
+      "cpu_seconds": 8.749,
+      "capacity_gate_passed": false
+    },
+    {
+      "memory_units": 384,
+      "status": "failed",
+      "metric_value": -0.21875,
+      "baseline_metrics": {
+        "random": 0.0,
+        "frozen_parent": 0.0,
+        "simple_rule": 0.0,
+        "hash_only": 0.0,
+        "no_replay": -0.75
+      },
+      "sample_counts": {
+        "train": 128,
+        "holdout": 64,
+        "retention": 64,
+        "phase_a_train": 64,
+        "phase_a_holdout": 32,
+        "phase_a_retention": 32,
+        "phase_b_train": 64,
+        "phase_b_holdout": 32,
+        "phase_b_retention": 32,
+        "replay_train": 64
+      },
+      "holdout_updates": 0,
+      "seed_metrics": [
+        {
+          "continued_from_phase_a": 1,
+          "holdout_updates": 0,
+          "no_replay_backward_transfer": -0.6875,
+          "no_replay_new_after": 0.5625,
+          "no_replay_old_after": 0.0,
+          "old_before": 0.6875,
+          "old_retention_before": 0.53125,
+          "phase_a_checkpoint_digest": "189914730b2853ab75b1628581965cff4e982524e586e6f987c6d601a7ae3e61",
+          "replay_backward_transfer": -0.03125,
+          "replay_causal_gain": 0.65625,
+          "replay_checkpoint_digest": "45d86f51b60c68e0cb6cb19f1e3987d70618d83d6d050b3fa62f7bf24877270c",
+          "replay_new_after": 0.15625,
+          "replay_old_after": 0.65625,
+          "replay_retention_after": 0.3125,
+          "seed": 11
+        },
+        {
+          "continued_from_phase_a": 1,
+          "holdout_updates": 0,
+          "no_replay_backward_transfer": -0.46875,
+          "no_replay_new_after": 0.6875,
+          "no_replay_old_after": 0.0,
+          "old_before": 0.46875,
+          "old_retention_before": 0.625,
+          "phase_a_checkpoint_digest": "42ad07046592f45b6f02472584d594c1c3cdb19b217d8c895224686096c61fad",
+          "replay_backward_transfer": 0.0,
+          "replay_causal_gain": 0.46875,
+          "replay_checkpoint_digest": "3e162b38f331d938267eebc5547ed148d9306f5f6b1f20e3b3aa2e6963368f70",
+          "replay_new_after": 0.0,
+          "replay_old_after": 0.46875,
+          "replay_retention_after": 0.65625,
+          "seed": 29
+        },
+        {
+          "continued_from_phase_a": 1,
+          "holdout_updates": 0,
+          "no_replay_backward_transfer": -0.75,
+          "no_replay_new_after": 0.71875,
+          "no_replay_old_after": 0.0,
+          "old_before": 0.75,
+          "old_retention_before": 0.53125,
+          "phase_a_checkpoint_digest": "493b95379d5f302e712642da6bb83999c653694fecb651d9ede87543a3d987d9",
+          "replay_backward_transfer": -0.21875,
+          "replay_causal_gain": 0.53125,
+          "replay_checkpoint_digest": "7f41f4c1fb01e0077c46862f343bba1db02c9b690406977bfc974fd72ae18172",
+          "replay_new_after": 0.0625,
+          "replay_old_after": 0.53125,
+          "replay_retention_after": 0.6875,
+          "seed": 47
+        }
+      ],
+      "budget": {
+        "memory_units": 384,
+        "identity_organ_enabled": false,
+        "active_parameter_count": 94145,
+        "planned_active_parameter_count": 94145,
+        "parameter_count_matches_plan": true
+      },
+      "checkpoint": {
+        "records": [
+          {
+            "seed": 11,
+            "checkpoint_digest": "5d7c91128c98c2c10a51186d062d7f5246c6542d41cd6b45c3ff3dd6a9771659",
+            "same_process_digest_matches": true,
+            "fresh_process_digest_matches": true
+          },
+          {
+            "seed": 29,
+            "checkpoint_digest": "8b2912ee53326d562c5ebed64e90caed23eaa4980856f413fed698ddfd9145a5",
+            "same_process_digest_matches": true,
+            "fresh_process_digest_matches": true
+          },
+          {
+            "seed": 47,
+            "checkpoint_digest": "6279195a89bbc5a9ecbdc4185092ac97a3bde9385db98ee171130b370b823219",
+            "same_process_digest_matches": true,
+            "fresh_process_digest_matches": true
+          }
+        ],
+        "all_same_process_match": true,
+        "all_fresh_process_match": true
+      },
+      "cpu_seconds": 9.762,
+      "capacity_gate_passed": false
+    }
+  ],
+  "conclusion": {
+    "highest_capacity": 384,
+    "highest_capacity_b5_status": "failed",
+    "capacity_alone_sufficient": false,
+    "next_boundary": "capacity expansion alone did not pass B5; diagnose cue/action training signal or data curriculum"
+  },
+  "report_path": "reports\\taiji_m1_33_memory_capacity_20260902.json"
+}
