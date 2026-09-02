@@ -49,12 +49,17 @@ def test_planned_parameter_count_matches_constructed_substrate() -> None:
 
 
 def test_capacity_profile_fits_a_parameter_budget_deterministically() -> None:
-    budget = 300_000
+    # The invariant is "a budget above the default substrate yields a strictly
+    # larger substrate", so the budget is derived from the default rather than
+    # hardcoded: M1-63 promoted the identity organ onto the default path, and a
+    # fixed literal would silently start describing a *smaller* target.
+    default = TaijiConfig(seed=311)
+    budget = int(default.planned_active_parameter_count * 1.5)
     profile = TaijiConfig.capacity_profile(budget, seed=311)
 
     assert profile.planned_active_parameter_count <= budget
     assert profile.planned_active_parameter_count >= int(budget * 0.75)
-    assert profile.region_sizes > TaijiConfig(seed=311).region_sizes
+    assert profile.region_sizes > default.region_sizes
     assert profile == TaijiConfig.capacity_profile(budget, seed=311)
     assert Taiji(profile).parameter_count() == profile.planned_active_parameter_count
 

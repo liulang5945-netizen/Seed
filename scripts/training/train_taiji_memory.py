@@ -34,6 +34,16 @@ def _memory_config(seed: int) -> TaijiConfig:
         memory_iterations=3,
     ).to_dict()
     values["seed"] = int(seed)
+    # This is the pre-organ memory substrate baseline.  Every historical figure
+    # measured through it (B5 onward) was recorded with no identity organ, and
+    # the diagnostics built on it exist to isolate one mechanism's marginal
+    # contribution.  Once M1-63 flipped ``identity_organ_enabled`` to True by
+    # default, inheriting that default let organ recall supply the binding those
+    # diagnostics were supposed to attribute to the mechanism under test, which
+    # made several "diagnostic only, nothing promotable" arms look promotable.
+    # Pinning it False keeps the baseline comparable across the flip; evaluators
+    # that actually study the organ override this key explicitly per arm.
+    values["identity_organ_enabled"] = False
     return TaijiConfig.from_dict(values)
 
 

@@ -199,10 +199,14 @@ class TaijiConfig:
     memory_time_dim: int = 8
     memory_episode_dim: int = 16
     memory_action_decoder: str = "shared"
-    # The identity organ is an explicitly disabled optional organ.  Keeping
-    # its structural budget in the core config makes growth and checkpoint
-    # lineage inspectable without changing the default native path.
-    identity_organ_enabled: bool = False
+    # M1-63 promoted the identity organ from an opt-in reference ceiling to a
+    # first-class key/value memory organ on the default path.  The promotion is
+    # gated on evidence, not preference: the organ must show per-row positive
+    # binding on the stable course, rejection of the negative control, no
+    # regression of organ-free ability, and a checkpoint/parameter budget that
+    # matches the plan.  It stays a named field so it remains lesionable and
+    # its parameter contribution stays inspectable before allocation.
+    identity_organ_enabled: bool = True
     identity_organ_capacity: int = 128
     identity_organ_match_threshold: float = 0.90
     identity_organ_update_rate: float = 0.10
@@ -212,6 +216,17 @@ class TaijiConfig:
     # shared episodic decoder is also active; it is still additive evidence,
     # never a second final-action owner.
     identity_organ_evidence_gain: float = 16.00
+    # Write eligibility baseline for the organ's value heads.  The organ sits
+    # on the default path now, so every settled action reaches it, including
+    # punished ones.  ``modulation = reward - identity_organ_write_baseline``
+    # mirrors the motor's three-factor rule: a rewarded binding is reinforced
+    # and a punished one is pushed away, instead of both being bound with
+    # equal strength.  At the default ``0.0`` a reward of ``1.0`` reproduces
+    # the unmodulated pre-M1-63 update exactly, so it is not a free scalar to
+    # tune away a red -- it is the boundary between "bind what happened" and
+    # "bind what worked".  It may legitimately be zero or negative, so it is
+    # deliberately excluded from the strictly-positive validation below.
+    identity_organ_write_baseline: float = 0.00
 
     membrane_decay: float = 0.65
     trace_decay: float = 0.82
@@ -432,6 +447,8 @@ class TaijiConfig:
             raise ValueError("memory_association_event_target_mix must be finite and in [0, 1]")
         if self.synapse_decay < 0.0:
             raise ValueError("synapse_decay cannot be negative")
+        if not math.isfinite(float(self.identity_organ_write_baseline)):
+            raise ValueError("identity_organ_write_baseline must be finite")
         if self.memory_feedback_gain < 0.0:
             raise ValueError("memory_feedback_gain cannot be negative")
         if self.memory_confidence_decay < 0.0:
@@ -728,6 +745,9 @@ class TaijiConfig:
         identity = 0
         if self.identity_organ_enabled:
             identity = self.identity_organ_capacity * self.cortical_context_dim
+            # Two first-class heads per slot: action evidence for the motor and
+            # a read-only outcome prediction channel.
+            identity += self.identity_organ_capacity * self.alphabet_size
             identity += self.identity_organ_capacity * self.alphabet_size
         return int(fabric + motor + memory + identity)
 

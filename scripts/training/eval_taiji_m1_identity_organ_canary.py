@@ -85,6 +85,7 @@ def _organ_digest(model: Taiji) -> str:
         {
             "bank": organ.bank.to_payload(),
             "action_synapses": organ.action_synapses.to_payload(),
+            "outcome_synapses": organ.outcome_synapses.to_payload(),
             "write_count": organ.write_count,
             "replacement_count": organ.replacement_count,
         }
@@ -113,6 +114,7 @@ before_organ = content_digest(
     {
         "bank": model.identity_organ.bank.to_payload(),
         "action_synapses": model.identity_organ.action_synapses.to_payload(),
+        "outcome_synapses": model.identity_organ.outcome_synapses.to_payload(),
         "write_count": model.identity_organ.write_count,
         "replacement_count": model.identity_organ.replacement_count,
     }
@@ -125,6 +127,7 @@ after_organ = content_digest(
     {
         "bank": model.identity_organ.bank.to_payload(),
         "action_synapses": model.identity_organ.action_synapses.to_payload(),
+        "outcome_synapses": model.identity_organ.outcome_synapses.to_payload(),
         "write_count": model.identity_organ.write_count,
         "replacement_count": model.identity_organ.replacement_count,
     }
@@ -209,7 +212,11 @@ def _identity_record(seed: int) -> dict[str, Any]:
         pattern = _cue_pattern(child, episode.cue)
         binding = child.identity_organ.recall(pattern)
         expected_slots.append(binding.slot_index)
-        learned = child.identity_organ.learn(pattern, episode.action)
+        learned = child.identity_organ.learn(
+            pattern,
+            episode.action,
+            outcome_symbol=episode.outcome,
+        )
         repeated_slots.append(learned.slot_index == binding.slot_index)
     repeated_after = _organ_digest(child)
     repeated_old = _accuracy(child, b5.phase_a_holdout, b5_actions)
@@ -239,7 +246,11 @@ def _identity_record(seed: int) -> dict[str, Any]:
         stress.config.cortical_context_dim,
     )
     for index, pattern in enumerate(stress_patterns):
-        stress.identity_organ.learn(pattern, 48 + index % 2)
+        stress.identity_organ.learn(
+            pattern,
+            48 + index % 2,
+            outcome_symbol=43 if index % 2 == 0 else 45,
+        )
 
     lineage = child_checkpoint["identity_organ"]["lineage"]
     return {
@@ -299,7 +310,8 @@ def _identity_record(seed: int) -> dict[str, Any]:
             "model_parameter_count": child.parameter_count(),
             "planned_parameter_count": child.config.planned_active_parameter_count,
             "identity_prototype_parameters": child.identity_organ.bank.prototypes.numel(),
-            "identity_action_edges": child.identity_organ.edge_count,
+            "identity_action_edges": child.identity_organ.action_synapses.edge_count,
+            "identity_outcome_edges": child.identity_organ.outcome_synapses.edge_count,
             "identity_total_parameters": child.identity_organ.parameter_count,
         },
         "checkpoint": {
