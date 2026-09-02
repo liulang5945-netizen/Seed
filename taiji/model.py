@@ -111,11 +111,15 @@ class Taiji:
         learn: bool = True,
         learn_motor: bool | None = None,
         use_memory: bool = True,
+        use_identity: bool | None = None,
     ) -> TaijiStep:
         """Advance one sensation tick.
 
         ``learn_motor=False`` keeps local fabric learning active without
         treating an externally caused sensation as the correct motor action.
+        ``use_identity`` scopes the optional episodic identity evidence to
+        action/memory queries; byte prediction and language generation disable
+        it explicitly so a cue route cannot contaminate their decoder.
         """
 
         if self._state.pending_action is not None:
@@ -171,9 +175,12 @@ class Taiji:
         identity_recall: IdentityRecall | None = None
         identity_evidence: torch.Tensor | None = None
         if self.identity_organ is not None:
+            identity_enabled = use_memory and (
+                use_identity is None or bool(use_identity)
+            )
             identity_recall = self.identity_organ.recall(
                 cortical_state,
-                enabled=use_memory,
+                enabled=identity_enabled,
             )
             if identity_recall.used:
                 identity_evidence = (
@@ -670,7 +677,7 @@ class Taiji:
         for epoch in range(epochs):
             self.reset_dynamics(episode_id=f"learn-{epoch}")
             for symbol in self.sensor.symbols(data, include_boundary=include_boundary):
-                step = self.observe(symbol, learn=True)
+                step = self.observe(symbol, learn=True, use_identity=False)
                 if step.prior_prediction is not None:
                     observations += 1
                     correct += int(step.prior_prediction == symbol)
@@ -696,7 +703,7 @@ class Taiji:
         surprise_sum = 0.0
         try:
             for symbol in self.sensor.symbols(data, include_boundary=include_boundary):
-                step = self.observe(symbol, learn=False)
+                step = self.observe(symbol, learn=False, use_identity=False)
                 if step.prior_prediction is not None:
                     observations += 1
                     correct += int(step.prior_prediction == symbol)
@@ -723,9 +730,13 @@ class Taiji:
             raise ValueError("length cannot be negative")
         if reset:
             self.reset_dynamics(episode_id="generation")
-        step = self.observe(self.config.boundary_symbol, learn=False)
+        step = self.observe(
+            self.config.boundary_symbol,
+            learn=False,
+            use_identity=False,
+        )
         for symbol in prompt:
-            step = self.observe(int(symbol), learn=False)
+            step = self.observe(int(symbol), learn=False, use_identity=False)
 
         generated = bytearray()
         for _ in range(length):
@@ -742,7 +753,7 @@ class Taiji:
             if not 0 <= next_symbol <= 255:
                 next_symbol = 0
             generated.append(next_symbol)
-            step = self.observe(next_symbol, learn=False)
+            step = self.observe(next_symbol, learn=False, use_identity=False)
         return bytes(generated)
 
     def parameter_tensors(self) -> tuple[torch.Tensor, ...]:

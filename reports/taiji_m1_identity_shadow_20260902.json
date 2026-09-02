@@ -1,0 +1,267 @@
+{
+  "format": "taiji-native-m1-identity-shadow-v1",
+  "version": 1,
+  "status": "shadow-admission",
+  "identity_route_default": "disabled",
+  "shared_decoder_default_fallback": true,
+  "action_intent_execution": false,
+  "diagnostics": {
+    "seeds": [
+      11,
+      29,
+      47
+    ],
+    "default_identity_organ_enabled": false,
+    "identity_evidence_scope": "explicit episodic/action query; byte prediction and generation disabled",
+    "records": [
+      {
+        "seed": 11,
+        "review_gain": 32.0,
+        "b1": {
+          "after_b2_identity": {
+            "observations": 293.0,
+            "accuracy": 0.14675767918088736,
+            "mean_surprise": 3.820504157439281
+          },
+          "after_b2_shared_control": {
+            "observations": 293.0,
+            "accuracy": 0.14675767918088736,
+            "mean_surprise": 3.820504157439281
+          },
+          "after_b2_mean_surprise_delta": 0.0,
+          "after_b2_retention_identity": {
+            "observations": 273.0,
+            "accuracy": 0.1978021978021978,
+            "mean_surprise": 4.01677558794311
+          },
+          "after_b2_retention_shared_control": {
+            "observations": 273.0,
+            "accuracy": 0.1978021978021978,
+            "mean_surprise": 4.01677558794311
+          },
+          "after_b2_retention_mean_surprise_delta": 0.0,
+          "after_b5_identity": {
+            "observations": 293.0,
+            "accuracy": 0.13310580204778158,
+            "mean_surprise": 4.458525000230177
+          },
+          "after_b5_shared_control": {
+            "observations": 293.0,
+            "accuracy": 0.13310580204778158,
+            "mean_surprise": 4.458525000230177
+          },
+          "after_b5_mean_surprise_delta": 0.0,
+          "after_b5_retention_identity": {
+            "observations": 273.0,
+            "accuracy": 0.14652014652014653,
+            "mean_surprise": 4.7174203081428425
+          },
+          "after_b5_retention_shared_control": {
+            "observations": 273.0,
+            "accuracy": 0.14652014652014653,
+            "mean_surprise": 4.7174203081428425
+          },
+          "after_b5_retention_mean_surprise_delta": 0.0,
+          "identity_checkpoint_digest_after_b2": "8a557aeec908026e04219bb4a24710aafa70e39267a28004ca805c13a6b75a84"
+        },
+        "b2": {
+          "identity_holdout": 1.0,
+          "shared_control_holdout": 0.6875
+        },
+        "b5": {
+          "parent_identity_old_holdout": 1.0,
+          "parent_shared_control_old_holdout": 0.5,
+          "child_identity_old_holdout": 1.0,
+          "child_identity_new_holdout": 1.0,
+          "child_shared_control_old_holdout": 0.0,
+          "child_shared_control_new_holdout": 0.5
+        },
+        "provenance": {
+          "bound_source": "identity-route",
+          "bound_provenance": "identity-organ:bound→motor-evidence",
+          "unbound_source": "shared-fallback",
+          "unbound_provenance": "identity-organ:unbound→shared-fallback",
+          "final_action_owner": "ByteMotor",
+          "action_intent_generated": false
+        },
+        "no_change": {
+          "bound_used": true,
+          "unbound_fallback": true,
+          "organ_digest_unchanged": true
+        },
+        "checkpoint": {
+          "fresh_process_source": "identity-route",
+          "fresh_process_persistent_digest_unchanged": true,
+          "fresh_process_checkpoint_digest_matches": true
+        }
+      },
+      {
+        "seed": 29,
+        "review_gain": 32.0,
+        "b1": {
+          "after_b2_identity": {
+            "observations": 293.0,
+            "accuracy": 0.2150170648464164,
+            "mean_surprise": 3.971561818646418
+          },
+          "after_b2_shared_control": {
+            "observations": 293.0,
+            "accuracy": 0.2150170648464164,
+            "mean_surprise": 3.971561818646418
+          },
+          "after_b2_mean_surprise_delta": 0.0,
+          "after_b2_retention_identity": {
+            "observations": 273.0,
+            "accuracy": 0.17582417582417584,
+            "mean_surprise": 3.8587736842869003
+          },
+          "after_b2_retention_shared_control": {
+            "observations": 273.0,
+            "accuracy": 0.17582417582417584,
+            "mean_surprise": 3.8587736842869003
+          },
+          "after_b2_retention_mean_surprise_delta": 0.0,
+          "after_b5_identity": {
+            "observations": 293.0,
+            "accuracy": 0.14675767918088736,
+            "mean_surprise": 5.136509345159998
+          },
+          "after_b5_shared_control": {
+            "observations": 293.0,
+            "accuracy": 0.14675767918088736,
+            "mean_surprise": 5.136509345159998
+          },
+          "after_b5_mean_surprise_delta": 0.0,
+          "after_b5_retention_identity": {
+            "observations": 273.0,
+            "accuracy": 0.09523809523809523,
+            "mean_surprise": 5.234636987293291
+          },
+          "after_b5_retention_shared_control": {
+            "observations": 273.0,
+            "accuracy": 0.09523809523809523,
+            "mean_surprise": 5.234636987293291
+          },
+          "after_b5_retention_mean_surprise_delta": 0.0,
+          "identity_checkpoint_digest_after_b2": "dffd763eb042c13a2ff7ab877e7170865af3f0d274df91348eb605fd62593737"
+        },
+        "b2": {
+          "identity_holdout": 1.0,
+          "shared_control_holdout": 0.8125
+        },
+        "b5": {
+          "parent_identity_old_holdout": 1.0,
+          "parent_shared_control_old_holdout": 0.875,
+          "child_identity_old_holdout": 1.0,
+          "child_identity_new_holdout": 1.0,
+          "child_shared_control_old_holdout": 0.0,
+          "child_shared_control_new_holdout": 0.625
+        },
+        "provenance": {
+          "bound_source": "identity-route",
+          "bound_provenance": "identity-organ:bound→motor-evidence",
+          "unbound_source": "shared-fallback",
+          "unbound_provenance": "identity-organ:unbound→shared-fallback",
+          "final_action_owner": "ByteMotor",
+          "action_intent_generated": false
+        },
+        "no_change": {
+          "bound_used": true,
+          "unbound_fallback": true,
+          "organ_digest_unchanged": true
+        },
+        "checkpoint": {
+          "fresh_process_source": "identity-route",
+          "fresh_process_persistent_digest_unchanged": true,
+          "fresh_process_checkpoint_digest_matches": true
+        }
+      },
+      {
+        "seed": 47,
+        "review_gain": 32.0,
+        "b1": {
+          "after_b2_identity": {
+            "observations": 293.0,
+            "accuracy": 0.18771331058020477,
+            "mean_surprise": 3.6917530924457482
+          },
+          "after_b2_shared_control": {
+            "observations": 293.0,
+            "accuracy": 0.18771331058020477,
+            "mean_surprise": 3.6917530924457482
+          },
+          "after_b2_mean_surprise_delta": 0.0,
+          "after_b2_retention_identity": {
+            "observations": 273.0,
+            "accuracy": 0.18681318681318682,
+            "mean_surprise": 3.999416657809617
+          },
+          "after_b2_retention_shared_control": {
+            "observations": 273.0,
+            "accuracy": 0.18681318681318682,
+            "mean_surprise": 3.999416657809617
+          },
+          "after_b2_retention_mean_surprise_delta": 0.0,
+          "after_b5_identity": {
+            "observations": 293.0,
+            "accuracy": 0.15699658703071673,
+            "mean_surprise": 4.338572557629802
+          },
+          "after_b5_shared_control": {
+            "observations": 293.0,
+            "accuracy": 0.15699658703071673,
+            "mean_surprise": 4.338572557629802
+          },
+          "after_b5_mean_surprise_delta": 0.0,
+          "after_b5_retention_identity": {
+            "observations": 273.0,
+            "accuracy": 0.11355311355311355,
+            "mean_surprise": 4.570432407080706
+          },
+          "after_b5_retention_shared_control": {
+            "observations": 273.0,
+            "accuracy": 0.11355311355311355,
+            "mean_surprise": 4.570432407080706
+          },
+          "after_b5_retention_mean_surprise_delta": 0.0,
+          "identity_checkpoint_digest_after_b2": "909a36619da5c34e40e62c5501a66f38e24ccb04c213f1cdb7c50b906717b321"
+        },
+        "b2": {
+          "identity_holdout": 1.0,
+          "shared_control_holdout": 0.75
+        },
+        "b5": {
+          "parent_identity_old_holdout": 1.0,
+          "parent_shared_control_old_holdout": 0.75,
+          "child_identity_old_holdout": 1.0,
+          "child_identity_new_holdout": 1.0,
+          "child_shared_control_old_holdout": 0.125,
+          "child_shared_control_new_holdout": 0.875
+        },
+        "provenance": {
+          "bound_source": "identity-route",
+          "bound_provenance": "identity-organ:bound→motor-evidence",
+          "unbound_source": "shared-fallback",
+          "unbound_provenance": "identity-organ:unbound→shared-fallback",
+          "final_action_owner": "ByteMotor",
+          "action_intent_generated": false
+        },
+        "no_change": {
+          "bound_used": true,
+          "unbound_fallback": true,
+          "organ_digest_unchanged": true
+        },
+        "checkpoint": {
+          "fresh_process_source": "identity-route",
+          "fresh_process_persistent_digest_unchanged": true,
+          "fresh_process_checkpoint_digest_matches": true
+        }
+      }
+    ],
+    "all_records_pass": true,
+    "default_candidate_ready": false
+  },
+  "canary_passed": true,
+  "default_candidate_ready": false,
+  "report_path": "reports\\taiji_m1_identity_shadow_20260902.json"
+}
