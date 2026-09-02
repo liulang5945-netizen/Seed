@@ -1,7 +1,8 @@
 """Review native identity-organ admission across scale, cue boundaries and gain.
 
-The organ remains feature-gated and disabled by default.  This review is a
-larger follow-up to M1-28, not a default-checkpoint promotion.
+This review is a larger follow-up to M1-28.  It predates the M1-63 promotion, so
+it reports the live default rather than asserting one: the promotion decision
+itself belongs to ``eval_taiji_m1_63_identity_organ_promotion``.
 """
 
 from __future__ import annotations
@@ -73,9 +74,9 @@ def _boundary_record(seed: int) -> dict[str, Any]:
     orthogonal[1] = 1.0
     near = _unit(0.995 * base + (1.0 - 0.995**2) ** 0.5 * orthogonal)
     split = _unit(0.88 * base + (1.0 - 0.88**2) ** 0.5 * orthogonal)
-    first = model.identity_organ.learn(base, 48)
-    near_binding = model.identity_organ.learn(near, 48)
-    split_binding = model.identity_organ.learn(split, 49)
+    first = model.identity_organ.learn(base, 48, outcome_symbol=43)
+    near_binding = model.identity_organ.learn(near, 48, outcome_symbol=43)
+    split_binding = model.identity_organ.learn(split, 49, outcome_symbol=45)
     before_read = _organ_digest(model)
     near_read = model.identity_organ.recall(near)
     split_read = model.identity_organ.recall(split)
@@ -101,7 +102,11 @@ def _capacity_records(seed: int) -> list[dict[str, Any]]:
         model = Taiji(_config(seed, enabled=True, capacity=capacity))
         patterns = torch.eye(capacity + 8, model.config.cortical_context_dim)
         for index, pattern in enumerate(patterns):
-            model.identity_organ.learn(pattern, 48 + index % 2)
+            model.identity_organ.learn(
+                pattern,
+                48 + index % 2,
+                outcome_symbol=43 if index % 2 == 0 else 45,
+            )
         records.append(
             {
                 "capacity": capacity,
@@ -334,7 +339,10 @@ def run_admission(*, seeds: tuple[int, ...]) -> dict[str, Any]:
         "larger_b2_train_count": 32,
         "larger_b5_train_count_per_phase": 32,
         "b5_holdout_count_per_phase": 16,
-        "default_identity_organ_enabled": False,
+        # M1-63 promoted the organ onto the default path.  These fields are read
+        # from the live default instead of being hardcoded, so this older review
+        # can never keep asserting a default that the codebase no longer has.
+        "default_identity_organ_enabled": bool(TaijiConfig().identity_organ_enabled),
         "gain_sweep_calibration_seed": calibration_seed,
         "gain_sweep": gain_sweep,
         "records": records,
@@ -342,7 +350,7 @@ def run_admission(*, seeds: tuple[int, ...]) -> dict[str, Any]:
         "capacity_records": capacity_records,
         "all_records_pass": all(_record_passes(record) for record in records),
         "recommended_gain": REVIEW_GAIN,
-        "default_candidate_ready": False,
+        "default_candidate_ready": bool(TaijiConfig().identity_organ_enabled),
     }
 
 
@@ -356,13 +364,15 @@ def main() -> int:
         "format": FORMAT,
         "version": 1,
         "status": "admission-review",
-        "identity_route_default": "disabled",
+        "identity_route_default": (
+            "enabled" if TaijiConfig().identity_organ_enabled else "disabled"
+        ),
         "shared_decoder_default_fallback": True,
         "action_intent_execution": False,
         "diagnostics": diagnostics,
         "canary_passed": bool(diagnostics["all_records_pass"]),
         "recommended_gain": diagnostics["recommended_gain"],
-        "default_candidate_ready": False,
+        "default_candidate_ready": diagnostics["default_candidate_ready"],
         "report_path": str(args.report),
     }
     args.report.parent.mkdir(parents=True, exist_ok=True)

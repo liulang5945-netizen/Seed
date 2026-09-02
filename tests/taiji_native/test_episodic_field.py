@@ -21,6 +21,13 @@ def _config() -> TaijiConfig:
         memory_readout_fan_in=32,
         memory_iterations=3,
         seed=23,
+        # This test measures the episodic field's own marginal contribution by
+        # lesioning the recurrent association inside a copied checkpoint.  The
+        # identity organ is a second, independent binding path, so leaving it on
+        # would both supply recall the lesion cannot remove and invalidate the
+        # organ's lineage digest, which correctly refuses to load an organ over a
+        # core it was never trained on.
+        identity_organ_enabled=False,
     )
 
 

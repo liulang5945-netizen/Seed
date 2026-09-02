@@ -66,7 +66,7 @@ Taiji 采用“站在巨人肩膀上”的双边界：原始 byte 输入继续�
 
 估算日程按单开发者和当前 CPU 环境计算：M0 约 3～5 个开发日，M1 约 7～14 个开发日加实际训练墙钟时间，M2 约 7～14 个开发日，M3 约 4～7 个开发日，M4/M5 各约 1～2 周，M6 约 1～2 周，M7 约 3～7 个开发日；估算只用于排程，不替代 Gate。训练墙钟时间由资源 preflight 后写入 manifest，不提前虚构日期。
 
-## 4. 当前进度与唯一下一步
+## 4. 当前唯一下一步
 
 M0-0 已完成并通过 `reports/taiji_m0_checkpoint_preflight_20260901.json`：父 checkpoint 落盘后关闭原进程，由全新 Python 进程恢复；恢复后的下一步预测和模型摘要与同状态期望值一致；child checkpoint 再次成功落盘。该门禁验证了训练前最关键的“能保存、能恢复、能继续”，但不代表五项能力已经形成。
 
@@ -86,25 +86,21 @@ B5 适配器已完成并通过 `reports/taiji_m0_b5_smoke_20260901.json`：phase
 
 M0-3/M0-4 已完成：统一矩阵报告为 `reports/taiji_foundation_baseline_20260901.json`，checkpoint gate 为 `passed`，整体 `status=failed`、`can_promote=false`。B1 使用真实中文数据的 foundation 分区（train `1,048,576`、holdout `131,072`、retention `131,072`），最差 seed 为 `6.497 BPB`，仍高于 unigram `5.942`，所以 F1 必须先改善 byte/边界/组合预测。B2 的 `0.75` 没有超过 memory lesion，说明记忆写入尚未形成稳定因果增益；B3 task-level 通过但只有 `8/4/4` 样本，B4 task-level 通过但只有 `32/16/16` 样本，二者都不能晋级 foundation；B5 最差 backward transfer 为 `-0.244`，但 phase-B checkpoint continuation 已被验证，旧能力遗忘是 F5 的直接目标。
 
-M0 的零点已经足够可信，不能因 capability failed 继续扩大外围建设。M1-0～M1-5 已完成并进入 **M1-6：F5 首次晋级**；首轮固定 F1→F2→F3→F4→F5 顺序，优先目标是让 child checkpoint 在 B1/B2/B5 上出现可归因净提升，同时保持 B3/B4 不退化。
+M0 的零点已经足够可信，不能因 capability failed 继续扩大外围建设。M1 首轮固定 F1→F2→F3→F4→F5 顺序，优先目标是让 child checkpoint 在 B1/B2/B5 上出现可归因净提升，同时保持 B3/B4 不退化。本节只记录 M0 零点事实；M1 的逐片进展、唯一下一步和已完成结论统一记录在第 6 节的执行流水，不在此处重复维护第二份进度。
 
-本步只允许创建或修改以下 owner：
+当前唯一下一步的正文见第 6 节执行流水的末条；本节只保留该步的 owner 边界，避免同一事实出现两份维护。本步（M1-63：identity 记忆器官晋级为一等可训练器官）只允许创建或修改以下 owner：
 
-- `plans/manifests/taiji_foundation_baseline_v1.json`：五项能力、数据分区、对照、seed、资源和报告 schema；
-- `taiji/foundation_evaluation.py`：不带训练副作用的统一 evaluator；
-- `taiji/foundation_tasks.py`：原生 B1～B5 任务适配器；当前已完成 B1、B2、B3、B4、B5；
-- `tests/taiji_native/test_foundation_evaluation.py`：数据泄漏、对照、checkpoint 和失败口径 red；
-- `tests/taiji_native/test_foundation_tasks.py`：原生任务适配器的真实状态和 holdout 只读回归；
-- `scripts/training/eval_taiji_foundation_baseline.py`：CPU 基线入口；
-- `scripts/training/eval_taiji_f5_promotion.py`：从 F4 child 全新进程恢复并执行 M0 晋级覆盖审计；
-- `reports/taiji_foundation_baseline_<date>.json`：首次真实性报告；
-- `reports/taiji_m0_b1_smoke_<date>.json`：B1 smoke 真实性证据。
-- `reports/taiji_m0_b2_smoke_<date>.json`：B2 smoke 真实性证据。
-- `reports/taiji_m0_b3_smoke_<date>.json`：B3 smoke 真实性证据。
-- `reports/taiji_m0_b4_smoke_<date>.json`：B4 smoke 真实性证据。
-- `reports/taiji_m0_b5_smoke_<date>.json`：B5 smoke 真实性证据。
+- `taiji/identity_organ.py`：slot 容量、写入资格、相似度检索、provenance 与覆盖/遗忘规则，以及 key/value 分离的三因子写入；
+- `taiji/config.py`：`identity_organ_enabled` 默认值、`identity_organ_write_baseline` 与参数预算；
+- `taiji/model.py`：默认路径上向器官传递 `outcome_symbol` 与 `reward`；
+- `scripts/training/eval_taiji_m1_63_identity_organ_promotion.py`：复用 M1-62 课程与契约 digest 的晋级 evaluator；
+- `reports/taiji_m1_63_identity_organ_promotion_<date>.json`：decision-path 与 native-recall 两通路的晋级证据；
+- `scripts/training/train_taiji_memory.py`：把机制隔离用的记忆底座基线钉在「无器官」，使翻默认值前后的历史数字仍可比较；
+- `scripts/training/eval_taiji_m1_identity_{candidate,admission,organ_canary}.py`：按臂显式声明器官开关，不再继承默认值；
+- `tests/taiji_native/test_m1_identity_organ_canary.py`、`tests/taiji_native/test_m1_identity_admission.py`：器官写入受奖励调制、默认奖励与未调制写入逐位一致的 red；
+- `tests/taiji_native/test_episodic_field.py`、`tests/taiji_native/test_region_growth.py`、`tests/taiji_native/test_training_profile.py`：翻默认值暴露出的隔离污染与偶然前置条件的定向回归。
 
-开始写 evaluator 前先核对已登记的 OpenAPI snapshot 漂移，确保现有 CI 基线没有被误当作本步新增失败。M0 报告生成后，不因模型分数低而回到外围建设；只要 checkpoint 和测量链可信，就立即进入 M1，低分直接成为首轮训练目标。
+翻默认开关前先确认：既有诊断口径不会因为多了一条绑定通路而被动变「可晋级」，checkpoint lineage 校验不因无关器官而误报，且任何原本靠随机初始化侥幸成立的断言都要改成由构造保证。不因单臂分数好看就写入默认配置；三 seed 同时满足「稳定课程正绑定、负对照被拒、旧能力不退化、checkpoint 与参数预算一致」才允许晋级。
 
 ## 5. M0：CPU 五项最小能力验证方案
 
@@ -392,6 +388,12 @@ M1-61 已完成但三方边界 Gate 全部阻断，报告为 `reports/taiji_m1_6
 M1-62 已完成，数据契约通过而 native association 被判定为不合适的训练承载层，报告为 `reports/taiji_m1_62_learning_data_contract_20260902.json`。新增 `taiji/memory_learning_example.py` 的 `MemoryLearningExample`/`MemoryLearningCurriculum` 契约：稳定 `cue_key` 为 key，action `{48,49}` × outcome `{43,45}` 为可独立组合的 value，reward 显式声明，`time`/`episode`/`provenance` 为旁路字段并逐分区做泄漏审计（同一分区内旁路字段取值数 `>1` 且 `<样本数`、且值→答案确定且答案多于一个才算泄漏），`repeated_observation`/`one_shot` role 必须与实际观测次数一致，契约测试 `8 passed`。两个对照课程为稳定 key 的重复观测课程与故意多值冲突的 negative control，digest 分别为 `30d67ccd…` 与 `29cb6a01…`；`data_contract_pass`、`checkpoint_preflight_pass`、`checkpoint_after_train_pass`、`negative_control_rejected` 全部通过，`holdout_updates=0`、`retention_updates=0`、trace-only、默认 checkpoint 未改。首版 evaluator 曾报 `gate_passed`，但被实盘数据证伪并已修正三处判据缺陷：参照臂原先只读 `step.memory_recall`（identity organ 只经 `episodic_evidence → motor.probabilities` 生效，导致两臂逐字节相同），现增加读 `step.probabilities` 的 decision-path 探针（已验证运动通路 `mass_on_actions=1.0`、`mass_on_outcomes=0.0`，故 outcome 仍只能从 native recall 通路读）；holdout 与 retention 原先共用同一 `key % 4` 映射而不可分，现拆为 `key 0-7` 与 `key 8-15` 两个互斥且各自 factorial-complete 的分区；正绑定判据原先取「逐 seed 均值的最小值」而让负对照也通过，现改为逐行边际最小值 `row_action_margin_min`/`row_outcome_margin_min` 必须 `>0`。修正后的可信结论是：native association 在两条读出通路上都没有正绑定，holdout/retention 的逐行 action 边际最小值为 `-0.4325/-0.1328`（native 通路）与 `-0.986/-0.8669`（决策通路），outcome 逐行边际最小值为 `-0.3834/-0.2465`，retention action 准确率下探到 `0.5` 的随机水平；negative control 在两臂上都被正确拒绝（逐行边际约 `-0.20 ~ -0.95`）。作为上限参照，identity organ 在决策通路上 holdout 与 retention 三 seed 全部 action 准确率 `1.0`、逐行边际最小值 `0.8518` 与 `1.0`、`identity_recall_used_ratio=1.0`，而它在 native recall 通路上与 native 臂逐字节相同——即能力增益完全来自器官侧的 key/value 检索，而非 association 几何。非阻断门 `identity_organ_reference_beats_native` 为 `false`，原因是 native 有一个 seed 的决策通路准确率也达到 `1.0`，使「参照臂最小值 > native 臂最大值」的严格不等式不成立；真正稳定的区分力在逐行边际上（参照 `+0.8518` 对 native `-0.986`），因此该门不作为阻断条件，只作为提醒不要用准确率均值代替逐行边际判据。因此按本片预设的分支条件，正式承认 native association 不是合适的训练承载层。
 
 当前唯一下一步为 **M1-63：identity 记忆器官从上限参照升级为一等可训练器官**。M1-62 已用同一份数据契约在同一课程、同一 seed 集上证明：native association 无正绑定，而 identity organ 在决策通路上达到满准确率与正的逐行边际，且该增益不来自 evaluator 预置答案（negative control 在两臂均被拒绝）。下一片不再改 `EpisodicField`、replay filter 或 objective scalar，而是把 identity organ 提升为默认路径上的一等 key/value 记忆器官：明确它的 slot 容量、写入资格、相似度检索、provenance 与遗忘/覆盖规则，使 `identity_organ_enabled=True` 成为可训练、可 checkpoint、可 lesion 的正式配置，并把参数增量（`85953 → 147521`）纳入参数预算规划而不是临时开关。评估必须复用 M1-62 的课程与契约 digest，且在 decision-path 与 native-recall 两条通路上分别报告：稳定 key 课程的 holdout/retention 逐行正绑定、negative control 必须仍被拒绝、跨 cue 竞争、one-shot 与 repeated 观测的差异、slot 覆盖后的旧能力保持，以及开启器官前后的 same-process 与 fresh-process checkpoint audit、`holdout_updates=0`、`retention_updates=0`。只有器官在三 seed 上同时满足「稳定课程正绑定、负对照被拒、旧能力不退化、checkpoint 与参数预算一致」，才允许把 `identity_organ_enabled=True` 写入默认配置并进入 M1 的真实训练；否则冻结该器官形态，转向更高容量的可塑性结构设计而不是继续调其标量。
+
+M1-63 已完成并通过晋级 Gate，报告为 `reports/taiji_m1_63_identity_organ_promotion_20260902.json`，`status=gate_passed`、`blocking_gates=[]`、三 seed 为 `[11,29,47]`，15 项 Gate 全部为 `true`。器官已从「上限参照」变成默认路径上的一等 key/value 记忆器官：`identity_organ.py` 升到 v2，key（cue prototype）与 value（action/outcome 两个读出头）分离，写入改为三因子形式 `modulation = reward - identity_organ_write_baseline`，key 无条件学习而 value 受奖励调制；`identity_organ_write_baseline` 默认为 `0.00`，因此在默认 `reward=1.0` 下 modulation 恰为 `1.0`、更新与晋级前逐位一致，故未升 `IDENTITY_ORGAN_VERSION`，M1-62 的证据与 `"taiji-native-identity-organ-v2"` 断言继续有效。课程与契约 digest 复用 M1-62 原值（stable `30d67ccd…`、conflicting `29cb6a01…`，`stable_key_matches_m1_62=true`、`conflicting_key_matches_m1_62=true`），新增 one-shot 课程 digest `38168a24…`。参数预算以实测取代 M1-62 的计划值：evaluator 课程配置下为 `85953 → 180417`（器官增量 `94464`，其中第二个读出头 `32896`，`pin_increment_explained_by_second_head=true`），而 `TaijiConfig()` 默认底座为 `171561 → 311081`、器官份额 `139520`；上一段计划里写的 `85953 → 147521` 是加 outcome 头之前的旧估算，已作废。`identity_organ_enabled=True` 已写入 `taiji/config.py` 默认配置，并在参数预算规划中显式登记，不再是临时开关。稳定 key 课程在 decision-path 与 native-recall 两通路上的 holdout/retention 逐行正绑定、negative control 仍被拒绝、跨 cue 竞争、one-shot 与 repeated 差异、slot 覆盖后旧能力保持（`overwrite_actually_evicted=true` 且 `overwrite_keeps_bound_rows_positive=true`、`overwrite_evicted_rows_not_below_baseline=true`）、`identity_gain_is_causal=true`、same-process 与 fresh-process checkpoint audit、`holdout_updates=0`、`retention_updates=0` 全部通过。
+
+翻默认开关本身暴露并已修掉四处真实缺陷，它们比器官分数更重要，必须留痕：其一，`taiji/model.py` 向器官 `learn()` 传了 cue/action/outcome 却**没传 reward**，而同一处的 `memory.write(reward=...)` 已经在传；由于 `test_active_environment` 有一半 trial 带 `reward=-1.0`，奖励盲的器官把错误动作绑得和正确动作一样强，`identity_organ_evidence_gain=16.00` 又压过奖励调制的运动通路，把准确率打到 `0.5`（要求 `≥0.90`）——修法是补 `reward=pending_experience.reward` 并做 key/value 分离的三因子写入，而不是调小 evidence gain。其二，`scripts/training/train_taiji_memory.py::_memory_config` 是 14 个 evaluator 共用的**无器官记忆底座基线**，它继承了新默认值，于是器官召回替 4 个「仅诊断、不可晋级」的臂提供了本应归因于被测机制的绑定，使它们被动变成「可晋级」；已把该键显式钉为 `False`，需要研究器官的 evaluator 按臂自行覆盖。其三，`test_episodic_field` 故意把 checkpoint 里的 association 边权清零来做消融，这会合法地破坏器官的 `parent_checkpoint_digest` lineage 校验——该校验在机制上是**正确的**，所以修法是把无关器官从隔离测试里关掉，而不是放松校验。其四，`test_region_growth` 的一条断言原本靠随机初始化侥幸成立：实测 2×2 真值表显示，开器官时新生区的 holdout 分数为 `0.0597`、恰好越过 `0.05` 阈值，关器官时为 `0.0`；把子区 `incoming.edge_weight` 清零后两种状态都恒为 `0.0`——已改为由构造保证零增益（与同文件的正向姊妹测试一致）并加断 `validation_score == 0.0`，且用 `minimum_holdout_gain=0.0` 反证该测试仍真正依赖连接门禁而非被削弱。全量套件 `906 passed, 6 skipped, 0 failed`（678.28s），本步 owner 文件 ruff 全绿。
+
+当前唯一下一步为 **M1-64：用已晋级的 identity 器官在 foundation 规模上重测 B2，判定记忆能力是否真正成立**。M1-63 的证据只覆盖 evaluator 自建的 16-key 小课程，而 M0 判 B2 失败的实盘理由是 foundation 规模下 `0.75` 没有超过 memory lesion 对照——两者不是同一件事，绝不能用小课程的满准确率宣称 B2 已通过。下一片不再改器官形态、不再调其标量、不再新增 objective：只把 `identity_organ_enabled=True` 的默认底座接入 `taiji/foundation_tasks.py` 的 B2 适配器，按 `plans/manifests/taiji_foundation_baseline_v1.json` 已登记的样本下限（每项至少 `1,000` 训练样本、各 `200` holdout/retention）和固定三 seed 跑真实 foundation 评估，并与 random、frozen-parent、简单统计规则、hash-only 以及**memory lesion 与 identity-organ lesion 两条消融**对照；报告必须给出逐行边际（不得用准确率均值代替）、最差 seed、`holdout_updates=0`、`retention_updates=0`、同进程与 fresh-process checkpoint audit，以及 B1/B3/B4/B5 是否因翻默认开关而退化的回归数字。同时必须补一条**带负奖励的课程**进入 M1-63 的晋级 Gate 覆盖：`MemoryLearningExample.reward` 默认为 `1.0`，这正是原 Gate 15/15 全绿却漏掉「奖励盲写入」这一缺陷的原因，晋级门禁必须能自己看见该失败模式。只有 B2 在三 seed 上同时超过 memory lesion 与 identity-organ lesion、且 B1/B3/B4/B5 不退化，才允许宣称记忆能力成立并按 F1→F5 顺序进入首轮真实训练；否则说明器官容量或写入资格仍不足以承载 foundation 规模，转向更高容量的可塑性结构，而不是继续在小课程上加指标。
 
 ## 7. M2～M8 的开发日程与外围任务安置
 

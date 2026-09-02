@@ -149,6 +149,8 @@ class Taiji:
                     self.identity_organ.learn(
                         pending_experience.cortical_context,
                         pending_experience.action_symbol,
+                        outcome_symbol=symbol,
+                        reward=pending_experience.reward,
                     )
 
         prior_prediction: int | None = None
@@ -791,6 +793,7 @@ class Taiji:
         if self.identity_organ is not None:
             count += self.identity_organ.capacity * self.identity_organ.pattern_dim
             count += self.identity_organ.action_synapses.dense_equivalent_count
+            count += self.identity_organ.outcome_synapses.dense_equivalent_count
         return count
 
     def _checkpoint_core(self) -> dict[str, Any]:

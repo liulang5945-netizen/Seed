@@ -207,6 +207,18 @@ def test_region_connection_is_blocked_until_holdout_gain_clears_threshold() -> N
         )
     assert proposal is not None
     assert model.commit_region_add("cortex", proposal) is True
+    # The mechanism under test is the connection gate, not the newborn region's
+    # random draw.  Silencing the child makes it provably indistinguishable from
+    # the lesioned baseline, so the holdout gain is exactly zero by construction
+    # instead of by luck; a freshly initialised region can legitimately beat
+    # silence by a few percent on a single holdout sample, which used to make
+    # this precondition hostage to any unrelated shift in RNG consumption order.
+    child = next(
+        region
+        for region in model.neuron_networks[0].regions
+        if region.region_id == proposal.substrate_id
+    )
+    child.incoming.edge_weight.zero_()
     assert (
         model.validate_region_growth_holdout(
             network_id="cortex",
@@ -216,6 +228,7 @@ def test_region_connection_is_blocked_until_holdout_gain_clears_threshold() -> N
         )
         is False
     )
+    assert model.topology_proposals[-1].validation_score == 0.0
     assert model.cognitive_snapshot().development.last_validation_status == "rejected"
     connection = model.propose_cross_region_connection(
         network_id="cortex",
