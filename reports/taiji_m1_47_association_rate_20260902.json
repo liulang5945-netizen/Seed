@@ -1,0 +1,230 @@
+{
+  "format": "taiji-native-m1-47-association-rate-v1",
+  "version": 1,
+  "status": "passed",
+  "variable_changed": "episodic_learning_rate only",
+  "baseline_rate": 0.6,
+  "candidate_rate": 1.2,
+  "memory_event_component_gains": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+  ],
+  "cue_curriculum": "maximally separated byte cues",
+  "action_curriculum": "phase-A/phase-B overlap on 48/49",
+  "memory_units": 128,
+  "memory_action_decoder": "shared",
+  "identity_organ_enabled": false,
+  "corpus_digest": "52c31b5475ab86893998b82fa34441e7f9fae765b381eafae8108b588f824d96",
+  "conditions": [
+    {
+      "episodic_learning_rate": 0.6,
+      "component_gains": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "component_gain_digest": "85835db9e3073f280ed1024ff1e5740d60e17e33beddcb7f383c93602b951035",
+      "records": [
+        {
+          "seed": 11,
+          "episodic_learning_rate": 0.6,
+          "old_before": 0.59375,
+          "old_retention_before": 0.5,
+          "no_replay_old_after": 0.46875,
+          "no_replay_new_after": 0.6875,
+          "replay_old_after": 0.59375,
+          "replay_retention_after": 0.53125,
+          "replay_new_after": 0.75,
+          "replay_backward_transfer": 0.0,
+          "replay_causal_gain": 0.125,
+          "replay_new_delta_vs_no_replay": 0.0625,
+          "phase_a_geometry": {
+            "cue_event_cosine_mean": 0.6131272781640291,
+            "association_completion_ratio_mean": 0.6769592596471843,
+            "association_error_ratio_mean": 0.728277593574989,
+            "event_active_support_mean": 48.84375
+          },
+          "phase_a_checkpoint_digest": "7116d8ba15c4d74879478efae6338dd95c4d00859acbcbb5596de53b8d9d10c0",
+          "replay_checkpoint_digest": "54db8be1c37a6c22f30324fc6af0c90093759369bc7f2735fde600294e28b591",
+          "continued_from_phase_a": true,
+          "checkpoint_roundtrip_exact": true,
+          "active_parameter_count": 85953,
+          "planned_active_parameter_count": 85953,
+          "parameter_count_matches_plan": true,
+          "holdout_updates": 0
+        },
+        {
+          "seed": 29,
+          "episodic_learning_rate": 0.6,
+          "old_before": 0.5,
+          "old_retention_before": 0.65625,
+          "no_replay_old_after": 0.46875,
+          "no_replay_new_after": 0.53125,
+          "replay_old_after": 0.5,
+          "replay_retention_after": 0.65625,
+          "replay_new_after": 0.53125,
+          "replay_backward_transfer": 0.0,
+          "replay_causal_gain": 0.03125,
+          "replay_new_delta_vs_no_replay": 0.0,
+          "phase_a_geometry": {
+            "cue_event_cosine_mean": 0.5937248994596303,
+            "association_completion_ratio_mean": 0.675317255069382,
+            "association_error_ratio_mean": 0.7163293956471359,
+            "event_active_support_mean": 53.578125
+          },
+          "phase_a_checkpoint_digest": "b7d0a7be52dae466e5bcebfb17ff707db1088a5337d7b80efab88e7ebe58d01a",
+          "replay_checkpoint_digest": "3856153fca4587b21496863ed2b09b6efcc46c019cdcb5d7727c5f8940ff1914",
+          "continued_from_phase_a": true,
+          "checkpoint_roundtrip_exact": true,
+          "active_parameter_count": 85953,
+          "planned_active_parameter_count": 85953,
+          "parameter_count_matches_plan": true,
+          "holdout_updates": 0
+        },
+        {
+          "seed": 47,
+          "episodic_learning_rate": 0.6,
+          "old_before": 0.5625,
+          "old_retention_before": 0.625,
+          "no_replay_old_after": 0.5625,
+          "no_replay_new_after": 0.5625,
+          "replay_old_after": 0.5625,
+          "replay_retention_after": 0.625,
+          "replay_new_after": 0.4375,
+          "replay_backward_transfer": 0.0,
+          "replay_causal_gain": 0.0,
+          "replay_new_delta_vs_no_replay": -0.125,
+          "phase_a_geometry": {
+            "cue_event_cosine_mean": 0.633206008002162,
+            "association_completion_ratio_mean": 0.6977928667198615,
+            "association_error_ratio_mean": 0.7116337668138646,
+            "event_active_support_mean": 50.015625
+          },
+          "phase_a_checkpoint_digest": "e02d01035726d8a5d10e75d07ea26e0a810f463a9f3ae201f1288f096ff1132b",
+          "replay_checkpoint_digest": "bfe837ba1b916c85ab3e7e9f833d206796be683c4b07b957b98a709643fa95a2",
+          "continued_from_phase_a": true,
+          "checkpoint_roundtrip_exact": true,
+          "active_parameter_count": 85953,
+          "planned_active_parameter_count": 85953,
+          "parameter_count_matches_plan": true,
+          "holdout_updates": 0
+        }
+      ],
+      "cpu_seconds": 8.673,
+      "condition_gate_passed": false
+    },
+    {
+      "episodic_learning_rate": 1.2,
+      "component_gains": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "component_gain_digest": "85835db9e3073f280ed1024ff1e5740d60e17e33beddcb7f383c93602b951035",
+      "records": [
+        {
+          "seed": 11,
+          "episodic_learning_rate": 1.2,
+          "old_before": 0.5,
+          "old_retention_before": 0.59375,
+          "no_replay_old_after": 0.46875,
+          "no_replay_new_after": 0.625,
+          "replay_old_after": 0.5625,
+          "replay_retention_after": 0.625,
+          "replay_new_after": 0.6875,
+          "replay_backward_transfer": 0.0625,
+          "replay_causal_gain": 0.09375,
+          "replay_new_delta_vs_no_replay": 0.0625,
+          "phase_a_geometry": {
+            "cue_event_cosine_mean": 0.6131272781640291,
+            "association_completion_ratio_mean": 0.7620617773395876,
+            "association_error_ratio_mean": 0.7569688983428905,
+            "event_active_support_mean": 48.84375
+          },
+          "phase_a_checkpoint_digest": "62c5c55164098f94f6e74a2dfecbe1aad5ce0f9dfa0e1a5c16a51895756bf7ce",
+          "replay_checkpoint_digest": "6a98764494e7458ded39b5a4b85fe9284492da67b41d0d88a286c9801c2779b2",
+          "continued_from_phase_a": true,
+          "checkpoint_roundtrip_exact": true,
+          "active_parameter_count": 85953,
+          "planned_active_parameter_count": 85953,
+          "parameter_count_matches_plan": true,
+          "holdout_updates": 0
+        },
+        {
+          "seed": 29,
+          "episodic_learning_rate": 1.2,
+          "old_before": 0.46875,
+          "old_retention_before": 0.65625,
+          "no_replay_old_after": 0.46875,
+          "no_replay_new_after": 0.5625,
+          "replay_old_after": 0.5,
+          "replay_retention_after": 0.65625,
+          "replay_new_after": 0.59375,
+          "replay_backward_transfer": 0.03125,
+          "replay_causal_gain": 0.03125,
+          "replay_new_delta_vs_no_replay": 0.03125,
+          "phase_a_geometry": {
+            "cue_event_cosine_mean": 0.5937248994596303,
+            "association_completion_ratio_mean": 0.753333930455573,
+            "association_error_ratio_mean": 0.7213830010740085,
+            "event_active_support_mean": 53.578125
+          },
+          "phase_a_checkpoint_digest": "f4c36ae7fd5ed25fad4a2220a85f6a4aef9c4ab68b79237e8c892788fb78e05a",
+          "replay_checkpoint_digest": "1da26fbf94d105255c7efb617989c6c655d30e619b9cee2d8d768db872e0db4a",
+          "continued_from_phase_a": true,
+          "checkpoint_roundtrip_exact": true,
+          "active_parameter_count": 85953,
+          "planned_active_parameter_count": 85953,
+          "parameter_count_matches_plan": true,
+          "holdout_updates": 0
+        },
+        {
+          "seed": 47,
+          "episodic_learning_rate": 1.2,
+          "old_before": 0.5,
+          "old_retention_before": 0.59375,
+          "no_replay_old_after": 0.5,
+          "no_replay_new_after": 0.53125,
+          "replay_old_after": 0.5625,
+          "replay_retention_after": 0.625,
+          "replay_new_after": 0.5,
+          "replay_backward_transfer": 0.0625,
+          "replay_causal_gain": 0.0625,
+          "replay_new_delta_vs_no_replay": -0.03125,
+          "phase_a_geometry": {
+            "cue_event_cosine_mean": 0.633206008002162,
+            "association_completion_ratio_mean": 0.7974894026868283,
+            "association_error_ratio_mean": 0.7221156654007598,
+            "event_active_support_mean": 50.015625
+          },
+          "phase_a_checkpoint_digest": "b2e0948a3faa3096ec42e9af8515e0c27dedfeb9bc5a1d3c0b2fab1657e0f8fe",
+          "replay_checkpoint_digest": "9f72d11270538a1ea68603f1adfb938282510563e9f4f1167adab48bb390d3c9",
+          "continued_from_phase_a": true,
+          "checkpoint_roundtrip_exact": true,
+          "active_parameter_count": 85953,
+          "planned_active_parameter_count": 85953,
+          "parameter_count_matches_plan": true,
+          "holdout_updates": 0
+        }
+      ],
+      "cpu_seconds": 9.055,
+      "condition_gate_passed": true
+    }
+  ],
+  "conclusion": {
+    "candidate_passed": true,
+    "association_rate_is_sufficient_explanation": true,
+    "next_boundary": "association rate candidate passed; hold for M1-48 stability review"
+  },
+  "report_path": "reports\\taiji_m1_47_association_rate_20260902.json"
+}
