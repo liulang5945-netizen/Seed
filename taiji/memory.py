@@ -548,9 +548,16 @@ class EpisodicField:
             * learning_scale
         )
         if learning_targets in {"all", "association"}:
+            association_target = (
+                event_pattern
+                if float(self.config.memory_association_event_target_mix) >= 1.0
+                else cue_pattern
+                + float(self.config.memory_association_event_target_mix)
+                * (event_pattern - cue_pattern)
+            )
             for _ in range(int(self.config.episodic_write_repeats)):
                 self.association.local_update(
-                    event_pattern - self.association.forward(cue_pattern),
+                    association_target - self.association.forward(cue_pattern),
                     cue_pattern,
                     learning_rate=association_rate,
                     weight_decay=self.config.synapse_decay,
