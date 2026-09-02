@@ -1,0 +1,354 @@
+{
+  "format": "taiji-native-m1-identity-candidate-v1",
+  "version": 1,
+  "status": "candidate-review",
+  "candidate": {
+    "candidate_digest": "7f5f93e7994119e9749814bb1c792c8ceea09abbb42eb7d0098d0e1e473eb5e5",
+    "artifact_kind": "content-addressed-review-manifest",
+    "checkpoint_payload": "generated-and-verified-in-memory",
+    "candidate_kind": "episodic-identity-organ",
+    "activation": "manual-admission-required",
+    "default_replacement": false
+  },
+  "manifest": {
+    "format": "taiji-native-m1-identity-candidate-v1",
+    "version": 1,
+    "status": "candidate-review",
+    "candidate_kind": "episodic-identity-organ",
+    "activation": "manual-admission-required",
+    "default_identity_organ_enabled": false,
+    "shared_decoder_default_fallback": true,
+    "review_gain": 32.0,
+    "records": [
+      {
+        "seed": 11,
+        "candidate_checkpoint_digest": "89e56135731f19d4fa594c8fb12ec4e82822173ada47881b525d4ad954b5a5db",
+        "lesion_checkpoint_digest": "648858228a58279693d3a29eec717ef8c6333426770dd28dc898d6127b7089bf",
+        "passed": true
+      },
+      {
+        "seed": 29,
+        "candidate_checkpoint_digest": "39256a9f6e5b1c10ecd114ca48fe186375f3ef936e36e448e15b0d79f62aa233",
+        "lesion_checkpoint_digest": "2dfbde0607972cb11cde336a32e1c43ab282feb33e1560ad8fa74b27da98ca1b",
+        "passed": true
+      },
+      {
+        "seed": 47,
+        "candidate_checkpoint_digest": "27e7f93974ce4b74375c66766a295f84f01f381d8a9aaeaed83f4e00e7e74ffc",
+        "lesion_checkpoint_digest": "aa4a084627659b486ee9f0e2aadcfc0d233eac3c920a3f831c038ccdc2498e9c",
+        "passed": true
+      }
+    ]
+  },
+  "diagnostics": {
+    "records": [
+      {
+        "seed": 11,
+        "review_gain": 32.0,
+        "default_config_enabled": false,
+        "candidate_config_enabled": true,
+        "candidate_start_checkpoint_digest": "82fd4b8608da5bfe1820d8bd8a78a0b741c36f8a38489a3ef9fb8b813553556b",
+        "candidate_checkpoint_digest": "89e56135731f19d4fa594c8fb12ec4e82822173ada47881b525d4ad954b5a5db",
+        "lesion_checkpoint_digest": "648858228a58279693d3a29eec717ef8c6333426770dd28dc898d6127b7089bf",
+        "schema": {
+          "default_has_identity_payload": false,
+          "candidate_has_identity_payload": true,
+          "lesion_has_identity_payload": true,
+          "candidate_format": "taiji-native-identity-organ-v1",
+          "candidate_version": 1,
+          "lesion_format": "taiji-native-identity-organ-v1",
+          "candidate_lineage_core_matches": true,
+          "lesion_lineage_core_matches": true,
+          "candidate_restore_exact": true,
+          "lesion_restore_exact": true
+        },
+        "budget": {
+          "default": {
+            "identity_organ_enabled": false,
+            "active_parameter_count": 85953,
+            "planned_active_parameter_count": 85953,
+            "parameter_count_matches_plan": true,
+            "identity_parameter_count": null
+          },
+          "candidate": {
+            "identity_organ_enabled": true,
+            "active_parameter_count": 147521,
+            "planned_active_parameter_count": 147521,
+            "parameter_count_matches_plan": true,
+            "identity_parameter_count": 61568
+          },
+          "lesion": {
+            "identity_organ_enabled": true,
+            "active_parameter_count": 147521,
+            "planned_active_parameter_count": 147521,
+            "parameter_count_matches_plan": true,
+            "identity_parameter_count": 61568
+          }
+        },
+        "metrics": {
+          "b1": {
+            "default": {
+              "observations": 293.0,
+              "accuracy": 0.15358361774744028,
+              "mean_surprise": 4.174822466145736
+            },
+            "candidate": {
+              "observations": 293.0,
+              "accuracy": 0.15358361774744028,
+              "mean_surprise": 4.174822466145736
+            },
+            "lesion": {
+              "observations": 293.0,
+              "accuracy": 0.15358361774744028,
+              "mean_surprise": 4.174822466145736
+            },
+            "candidate_mean_surprise_delta": 0.0,
+            "lesion_mean_surprise_delta": 0.0
+          },
+          "b2": {
+            "default_holdout": 0.6875,
+            "candidate_holdout": 1.0,
+            "lesion_holdout": 0.6875
+          },
+          "b5": {
+            "default": {
+              "parent_old_holdout": 0.75,
+              "parent_retention": 0.75,
+              "child_old_holdout": 0.0,
+              "child_retention": 0.0,
+              "child_new_holdout": 0.5
+            },
+            "candidate": {
+              "parent_old_holdout": 1.0,
+              "parent_retention": 1.0,
+              "child_old_holdout": 1.0,
+              "child_retention": 1.0,
+              "child_new_holdout": 1.0
+            },
+            "lesion": {
+              "child_old_holdout": 0.0,
+              "child_new_holdout": 0.5
+            }
+          }
+        },
+        "checkpoint": {
+          "candidate_fresh_process_source": "identity-route",
+          "candidate_fresh_process_persistent_digest_unchanged": true,
+          "candidate_fresh_process_digest_matches": true,
+          "default_rollback_exact": true,
+          "candidate_organ_digest": "e6fc2b5fa497389a83a5cd0f515fc5e1e3399e5752f06a8cd845685a71a582a3",
+          "lesion_organ_digest": "72082afa6dfd17e483e508d62610e0d88222a288ffea8d5a915799a904b67994",
+          "lesion_digest_differs_from_candidate": true
+        },
+        "passed": true
+      },
+      {
+        "seed": 29,
+        "review_gain": 32.0,
+        "default_config_enabled": false,
+        "candidate_config_enabled": true,
+        "candidate_start_checkpoint_digest": "8fc283c0196b3cf615adce3be0ab651cdd273c992fe7be4ddbccc249d7733113",
+        "candidate_checkpoint_digest": "39256a9f6e5b1c10ecd114ca48fe186375f3ef936e36e448e15b0d79f62aa233",
+        "lesion_checkpoint_digest": "2dfbde0607972cb11cde336a32e1c43ab282feb33e1560ad8fa74b27da98ca1b",
+        "schema": {
+          "default_has_identity_payload": false,
+          "candidate_has_identity_payload": true,
+          "lesion_has_identity_payload": true,
+          "candidate_format": "taiji-native-identity-organ-v1",
+          "candidate_version": 1,
+          "lesion_format": "taiji-native-identity-organ-v1",
+          "candidate_lineage_core_matches": true,
+          "lesion_lineage_core_matches": true,
+          "candidate_restore_exact": true,
+          "lesion_restore_exact": true
+        },
+        "budget": {
+          "default": {
+            "identity_organ_enabled": false,
+            "active_parameter_count": 85953,
+            "planned_active_parameter_count": 85953,
+            "parameter_count_matches_plan": true,
+            "identity_parameter_count": null
+          },
+          "candidate": {
+            "identity_organ_enabled": true,
+            "active_parameter_count": 147521,
+            "planned_active_parameter_count": 147521,
+            "parameter_count_matches_plan": true,
+            "identity_parameter_count": 61568
+          },
+          "lesion": {
+            "identity_organ_enabled": true,
+            "active_parameter_count": 147521,
+            "planned_active_parameter_count": 147521,
+            "parameter_count_matches_plan": true,
+            "identity_parameter_count": 61568
+          }
+        },
+        "metrics": {
+          "b1": {
+            "default": {
+              "observations": 293.0,
+              "accuracy": 0.18771331058020477,
+              "mean_surprise": 4.228974044019734
+            },
+            "candidate": {
+              "observations": 293.0,
+              "accuracy": 0.18771331058020477,
+              "mean_surprise": 4.228974044019734
+            },
+            "lesion": {
+              "observations": 293.0,
+              "accuracy": 0.18771331058020477,
+              "mean_surprise": 4.228974044019734
+            },
+            "candidate_mean_surprise_delta": 0.0,
+            "lesion_mean_surprise_delta": 0.0
+          },
+          "b2": {
+            "default_holdout": 0.8125,
+            "candidate_holdout": 1.0,
+            "lesion_holdout": 0.8125
+          },
+          "b5": {
+            "default": {
+              "parent_old_holdout": 0.875,
+              "parent_retention": 0.875,
+              "child_old_holdout": 0.0,
+              "child_retention": 0.0,
+              "child_new_holdout": 0.625
+            },
+            "candidate": {
+              "parent_old_holdout": 1.0,
+              "parent_retention": 1.0,
+              "child_old_holdout": 1.0,
+              "child_retention": 1.0,
+              "child_new_holdout": 1.0
+            },
+            "lesion": {
+              "child_old_holdout": 0.0,
+              "child_new_holdout": 0.625
+            }
+          }
+        },
+        "checkpoint": {
+          "candidate_fresh_process_source": "identity-route",
+          "candidate_fresh_process_persistent_digest_unchanged": true,
+          "candidate_fresh_process_digest_matches": true,
+          "default_rollback_exact": true,
+          "candidate_organ_digest": "9a065ffa46915f2dfe30fe0cec9eefabf9420ae2ba785ae6e4ce0285e71c2bc7",
+          "lesion_organ_digest": "83b8adb324bc2d4656882bdc7aec00eb41e2caeebcae5fe0c7ef223115f545e4",
+          "lesion_digest_differs_from_candidate": true
+        },
+        "passed": true
+      },
+      {
+        "seed": 47,
+        "review_gain": 32.0,
+        "default_config_enabled": false,
+        "candidate_config_enabled": true,
+        "candidate_start_checkpoint_digest": "b1e5e07edee6fdf818a6d0c00ed0d215dffc307a4e64610897103f0d7206879b",
+        "candidate_checkpoint_digest": "27e7f93974ce4b74375c66766a295f84f01f381d8a9aaeaed83f4e00e7e74ffc",
+        "lesion_checkpoint_digest": "aa4a084627659b486ee9f0e2aadcfc0d233eac3c920a3f831c038ccdc2498e9c",
+        "schema": {
+          "default_has_identity_payload": false,
+          "candidate_has_identity_payload": true,
+          "lesion_has_identity_payload": true,
+          "candidate_format": "taiji-native-identity-organ-v1",
+          "candidate_version": 1,
+          "lesion_format": "taiji-native-identity-organ-v1",
+          "candidate_lineage_core_matches": true,
+          "lesion_lineage_core_matches": true,
+          "candidate_restore_exact": true,
+          "lesion_restore_exact": true
+        },
+        "budget": {
+          "default": {
+            "identity_organ_enabled": false,
+            "active_parameter_count": 85953,
+            "planned_active_parameter_count": 85953,
+            "parameter_count_matches_plan": true,
+            "identity_parameter_count": null
+          },
+          "candidate": {
+            "identity_organ_enabled": true,
+            "active_parameter_count": 147521,
+            "planned_active_parameter_count": 147521,
+            "parameter_count_matches_plan": true,
+            "identity_parameter_count": 61568
+          },
+          "lesion": {
+            "identity_organ_enabled": true,
+            "active_parameter_count": 147521,
+            "planned_active_parameter_count": 147521,
+            "parameter_count_matches_plan": true,
+            "identity_parameter_count": 61568
+          }
+        },
+        "metrics": {
+          "b1": {
+            "default": {
+              "observations": 293.0,
+              "accuracy": 0.17406143344709898,
+              "mean_surprise": 3.919069198440984
+            },
+            "candidate": {
+              "observations": 293.0,
+              "accuracy": 0.17406143344709898,
+              "mean_surprise": 3.919069198440984
+            },
+            "lesion": {
+              "observations": 293.0,
+              "accuracy": 0.17406143344709898,
+              "mean_surprise": 3.919069198440984
+            },
+            "candidate_mean_surprise_delta": 0.0,
+            "lesion_mean_surprise_delta": 0.0
+          },
+          "b2": {
+            "default_holdout": 0.75,
+            "candidate_holdout": 1.0,
+            "lesion_holdout": 0.75
+          },
+          "b5": {
+            "default": {
+              "parent_old_holdout": 0.875,
+              "parent_retention": 0.625,
+              "child_old_holdout": 0.375,
+              "child_retention": 0.125,
+              "child_new_holdout": 0.75
+            },
+            "candidate": {
+              "parent_old_holdout": 1.0,
+              "parent_retention": 1.0,
+              "child_old_holdout": 1.0,
+              "child_retention": 1.0,
+              "child_new_holdout": 1.0
+            },
+            "lesion": {
+              "child_old_holdout": 0.375,
+              "child_new_holdout": 0.75
+            }
+          }
+        },
+        "checkpoint": {
+          "candidate_fresh_process_source": "identity-route",
+          "candidate_fresh_process_persistent_digest_unchanged": true,
+          "candidate_fresh_process_digest_matches": true,
+          "default_rollback_exact": true,
+          "candidate_organ_digest": "908e63958d73e62edc2be96f988f486a74589302a1547d0d1d302525326a5b2b",
+          "lesion_organ_digest": "a66a015f539e41a8c2ba1939f4556e84bb62c6f55c57f234b02a88b2d3bb8d1d",
+          "lesion_digest_differs_from_candidate": true
+        },
+        "passed": true
+      }
+    ],
+    "all_records_pass": true,
+    "default_candidate_ready": false
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "candidate identity checkpoint must round-trip with lineage, preserve the B1 decoder boundary, outperform shared B2/B5 controls, and remain manual/non-default"
+  },
+  "report_path": "reports\\taiji_m1_identity_candidate_20260902.json"
+}
