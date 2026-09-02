@@ -1,0 +1,280 @@
+{
+  "format": "taiji-native-m1-36-cue-curriculum-v1",
+  "version": 1,
+  "status": "failed",
+  "variable_changed": "phase-A/phase-B cue numeric distribution only",
+  "memory_units": 128,
+  "memory_action_decoder": "shared",
+  "identity_organ_enabled": false,
+  "replay_scale": 1.0,
+  "records": [
+    {
+      "condition": "overlapping_action_baseline",
+      "corpus_digest": "84f9f12b506832657d08d538c4717e288a54c5cc64ddf226f93ba80dbbc59608",
+      "phase_a_cue_min_max": [
+        65,
+        128
+      ],
+      "phase_b_cue_min_max": [
+        145,
+        208
+      ],
+      "cue_value_overlap_count": 0,
+      "phase_a_actions": [
+        48,
+        49
+      ],
+      "phase_b_actions": [
+        48,
+        49
+      ],
+      "measurement": {
+        "ability_id": "b5_continual_learning",
+        "status": "failed",
+        "primary_metric": "backward_transfer",
+        "metric_direction": "higher_is_better",
+        "metric_value": -0.03125,
+        "baseline_metrics": {
+          "frozen_parent": 0.0,
+          "hash_only": 0.0,
+          "no_replay": -0.125,
+          "random": 0.0,
+          "simple_rule": 0.0
+        },
+        "sample_counts": {
+          "holdout": 64,
+          "phase_a_holdout": 32,
+          "phase_a_retention": 32,
+          "phase_a_train": 64,
+          "phase_b_holdout": 32,
+          "phase_b_retention": 32,
+          "phase_b_train": 64,
+          "replay_train": 64,
+          "retention": 64,
+          "train": 128
+        },
+        "holdout_updates": 0,
+        "evidence": [
+          "corpus_digest=84f9f12b506832657d08d538c4717e288a54c5cc64ddf226f93ba80dbbc59608",
+          "seed_metrics=[{\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.125, \"no_replay_new_after\": 0.59375, \"no_replay_old_after\": 0.5, \"old_before\": 0.625, \"old_retention_before\": 0.6875, \"phase_a_checkpoint_digest\": \"0c6a3e6bdb20757ca299b40711e700063b234f14a26effbcadf297288f395f04\", \"replay_backward_transfer\": 0.03125, \"replay_causal_gain\": 0.15625, \"replay_checkpoint_digest\": \"3385db55d409d417a0e2ed2da40b1afa781f7e22d5ecde132aef097498851649\", \"replay_new_after\": 0.5625, \"replay_old_after\": 0.65625, \"replay_retention_after\": 0.71875, \"seed\": 11}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": 0.03125, \"no_replay_new_after\": 0.46875, \"no_replay_old_after\": 0.53125, \"old_before\": 0.5, \"old_retention_before\": 0.53125, \"phase_a_checkpoint_digest\": \"38849bee07f008abfbdaa19f426a23b766cfbb9e34c1a120c138b9c9d8d9f03d\", \"replay_backward_transfer\": 0.0625, \"replay_causal_gain\": 0.03125, \"replay_checkpoint_digest\": \"42f3dc11355f5c9bef048c8511466c1a5db1e0eaf3d87e49f671c06bb22ec9c4\", \"replay_new_after\": 0.46875, \"replay_old_after\": 0.5625, \"replay_retention_after\": 0.5625, \"seed\": 29}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.0625, \"no_replay_new_after\": 0.65625, \"no_replay_old_after\": 0.5625, \"old_before\": 0.625, \"old_retention_before\": 0.6875, \"phase_a_checkpoint_digest\": \"bb1e6696575f0d71a2eb8d3ce0104187faf8e107cab180c2a7e4ddbe645d3060\", \"replay_backward_transfer\": -0.03125, \"replay_causal_gain\": 0.03125, \"replay_checkpoint_digest\": \"de448fd4410c91482d0ed4a80f266599cd46b291b3c4f0cfd91be381f463b2e9\", \"replay_new_after\": 0.5625, \"replay_old_after\": 0.59375, \"replay_retention_after\": 0.65625, \"seed\": 47}]",
+          "phase_a_then_phase_b_with_no_replay_counterfactual_then_phase_a_replay=true"
+        ]
+      },
+      "seed_metrics": [
+        {
+          "continued_from_phase_a": 1,
+          "holdout_updates": 0,
+          "no_replay_backward_transfer": -0.125,
+          "no_replay_new_after": 0.59375,
+          "no_replay_old_after": 0.5,
+          "old_before": 0.625,
+          "old_retention_before": 0.6875,
+          "phase_a_checkpoint_digest": "0c6a3e6bdb20757ca299b40711e700063b234f14a26effbcadf297288f395f04",
+          "replay_backward_transfer": 0.03125,
+          "replay_causal_gain": 0.15625,
+          "replay_checkpoint_digest": "3385db55d409d417a0e2ed2da40b1afa781f7e22d5ecde132aef097498851649",
+          "replay_new_after": 0.5625,
+          "replay_old_after": 0.65625,
+          "replay_retention_after": 0.71875,
+          "seed": 11
+        },
+        {
+          "continued_from_phase_a": 1,
+          "holdout_updates": 0,
+          "no_replay_backward_transfer": 0.03125,
+          "no_replay_new_after": 0.46875,
+          "no_replay_old_after": 0.53125,
+          "old_before": 0.5,
+          "old_retention_before": 0.53125,
+          "phase_a_checkpoint_digest": "38849bee07f008abfbdaa19f426a23b766cfbb9e34c1a120c138b9c9d8d9f03d",
+          "replay_backward_transfer": 0.0625,
+          "replay_causal_gain": 0.03125,
+          "replay_checkpoint_digest": "42f3dc11355f5c9bef048c8511466c1a5db1e0eaf3d87e49f671c06bb22ec9c4",
+          "replay_new_after": 0.46875,
+          "replay_old_after": 0.5625,
+          "replay_retention_after": 0.5625,
+          "seed": 29
+        },
+        {
+          "continued_from_phase_a": 1,
+          "holdout_updates": 0,
+          "no_replay_backward_transfer": -0.0625,
+          "no_replay_new_after": 0.65625,
+          "no_replay_old_after": 0.5625,
+          "old_before": 0.625,
+          "old_retention_before": 0.6875,
+          "phase_a_checkpoint_digest": "bb1e6696575f0d71a2eb8d3ce0104187faf8e107cab180c2a7e4ddbe645d3060",
+          "replay_backward_transfer": -0.03125,
+          "replay_causal_gain": 0.03125,
+          "replay_checkpoint_digest": "de448fd4410c91482d0ed4a80f266599cd46b291b3c4f0cfd91be381f463b2e9",
+          "replay_new_after": 0.5625,
+          "replay_old_after": 0.59375,
+          "replay_retention_after": 0.65625,
+          "seed": 47
+        }
+      ],
+      "context_records": [
+        {
+          "seed": 11,
+          "cross_phase_context_cosine_max": 0.8489079475402832,
+          "cross_phase_context_cosine_mean": 0.18694035708904266,
+          "cross_phase_context_near_collision_count": 0,
+          "cross_phase_context_pairs": 4096
+        },
+        {
+          "seed": 29,
+          "cross_phase_context_cosine_max": 0.8905513286590576,
+          "cross_phase_context_cosine_mean": 0.19316516816616058,
+          "cross_phase_context_near_collision_count": 0,
+          "cross_phase_context_pairs": 4096
+        },
+        {
+          "seed": 47,
+          "cross_phase_context_cosine_max": 0.7863965630531311,
+          "cross_phase_context_cosine_mean": 0.21562674641609192,
+          "cross_phase_context_near_collision_count": 0,
+          "cross_phase_context_pairs": 4096
+        }
+      ],
+      "cpu_seconds": 8.643,
+      "condition_gate_passed": false
+    },
+    {
+      "condition": "maximally_separated_byte_cues",
+      "corpus_digest": "52c31b5475ab86893998b82fa34441e7f9fae765b381eafae8108b588f824d96",
+      "phase_a_cue_min_max": [
+        0,
+        63
+      ],
+      "phase_b_cue_min_max": [
+        192,
+        255
+      ],
+      "cue_value_overlap_count": 0,
+      "phase_a_actions": [
+        48,
+        49
+      ],
+      "phase_b_actions": [
+        48,
+        49
+      ],
+      "measurement": {
+        "ability_id": "b5_continual_learning",
+        "status": "failed",
+        "primary_metric": "backward_transfer",
+        "metric_direction": "higher_is_better",
+        "metric_value": 0.0,
+        "baseline_metrics": {
+          "frozen_parent": 0.0,
+          "hash_only": 0.0,
+          "no_replay": -0.125,
+          "random": 0.0,
+          "simple_rule": 0.0
+        },
+        "sample_counts": {
+          "holdout": 64,
+          "phase_a_holdout": 32,
+          "phase_a_retention": 32,
+          "phase_a_train": 64,
+          "phase_b_holdout": 32,
+          "phase_b_retention": 32,
+          "phase_b_train": 64,
+          "replay_train": 64,
+          "retention": 64,
+          "train": 128
+        },
+        "holdout_updates": 0,
+        "evidence": [
+          "corpus_digest=52c31b5475ab86893998b82fa34441e7f9fae765b381eafae8108b588f824d96",
+          "seed_metrics=[{\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.125, \"no_replay_new_after\": 0.6875, \"no_replay_old_after\": 0.46875, \"old_before\": 0.59375, \"old_retention_before\": 0.5, \"phase_a_checkpoint_digest\": \"2601760513d14157dcc83950821fbf6792d4812567d96cfd3f0e1bb8eb1a18f4\", \"replay_backward_transfer\": 0.03125, \"replay_causal_gain\": 0.15625, \"replay_checkpoint_digest\": \"1cd3a857a96cef39df296445f06085d7229972e3a8bc2142ec727d9740203087\", \"replay_new_after\": 0.65625, \"replay_old_after\": 0.625, \"replay_retention_after\": 0.5625, \"seed\": 11}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.03125, \"no_replay_new_after\": 0.53125, \"no_replay_old_after\": 0.46875, \"old_before\": 0.5, \"old_retention_before\": 0.65625, \"phase_a_checkpoint_digest\": \"ea15c3f943fbdda39cdd520e42adea6d8a7acd7a6856931f1911fe7c0d4250c3\", \"replay_backward_transfer\": 0.0, \"replay_causal_gain\": 0.03125, \"replay_checkpoint_digest\": \"30ded97356d20cc7754f3e08cfbc6b8fb8e613e039094a4fc2902c648c4e48e8\", \"replay_new_after\": 0.5, \"replay_old_after\": 0.5, \"replay_retention_after\": 0.6875, \"seed\": 29}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": 0.0, \"no_replay_new_after\": 0.5625, \"no_replay_old_after\": 0.5625, \"old_before\": 0.5625, \"old_retention_before\": 0.625, \"phase_a_checkpoint_digest\": \"c55f9484a4c20baa0a5ded21ea3050089fa70c32f986b76bfe0a012a8d46d8e9\", \"replay_backward_transfer\": 0.03125, \"replay_causal_gain\": 0.03125, \"replay_checkpoint_digest\": \"d18c5ebb849a64e2fb563d9c6d71f43af540eae6ab06384f34a47379035f4aa5\", \"replay_new_after\": 0.4375, \"replay_old_after\": 0.59375, \"replay_retention_after\": 0.625, \"seed\": 47}]",
+          "phase_a_then_phase_b_with_no_replay_counterfactual_then_phase_a_replay=true"
+        ]
+      },
+      "seed_metrics": [
+        {
+          "continued_from_phase_a": 1,
+          "holdout_updates": 0,
+          "no_replay_backward_transfer": -0.125,
+          "no_replay_new_after": 0.6875,
+          "no_replay_old_after": 0.46875,
+          "old_before": 0.59375,
+          "old_retention_before": 0.5,
+          "phase_a_checkpoint_digest": "2601760513d14157dcc83950821fbf6792d4812567d96cfd3f0e1bb8eb1a18f4",
+          "replay_backward_transfer": 0.03125,
+          "replay_causal_gain": 0.15625,
+          "replay_checkpoint_digest": "1cd3a857a96cef39df296445f06085d7229972e3a8bc2142ec727d9740203087",
+          "replay_new_after": 0.65625,
+          "replay_old_after": 0.625,
+          "replay_retention_after": 0.5625,
+          "seed": 11
+        },
+        {
+          "continued_from_phase_a": 1,
+          "holdout_updates": 0,
+          "no_replay_backward_transfer": -0.03125,
+          "no_replay_new_after": 0.53125,
+          "no_replay_old_after": 0.46875,
+          "old_before": 0.5,
+          "old_retention_before": 0.65625,
+          "phase_a_checkpoint_digest": "ea15c3f943fbdda39cdd520e42adea6d8a7acd7a6856931f1911fe7c0d4250c3",
+          "replay_backward_transfer": 0.0,
+          "replay_causal_gain": 0.03125,
+          "replay_checkpoint_digest": "30ded97356d20cc7754f3e08cfbc6b8fb8e613e039094a4fc2902c648c4e48e8",
+          "replay_new_after": 0.5,
+          "replay_old_after": 0.5,
+          "replay_retention_after": 0.6875,
+          "seed": 29
+        },
+        {
+          "continued_from_phase_a": 1,
+          "holdout_updates": 0,
+          "no_replay_backward_transfer": 0.0,
+          "no_replay_new_after": 0.5625,
+          "no_replay_old_after": 0.5625,
+          "old_before": 0.5625,
+          "old_retention_before": 0.625,
+          "phase_a_checkpoint_digest": "c55f9484a4c20baa0a5ded21ea3050089fa70c32f986b76bfe0a012a8d46d8e9",
+          "replay_backward_transfer": 0.03125,
+          "replay_causal_gain": 0.03125,
+          "replay_checkpoint_digest": "d18c5ebb849a64e2fb563d9c6d71f43af540eae6ab06384f34a47379035f4aa5",
+          "replay_new_after": 0.4375,
+          "replay_old_after": 0.59375,
+          "replay_retention_after": 0.625,
+          "seed": 47
+        }
+      ],
+      "context_records": [
+        {
+          "seed": 11,
+          "cross_phase_context_cosine_max": 0.8901297450065613,
+          "cross_phase_context_cosine_mean": 0.18516482412815094,
+          "cross_phase_context_near_collision_count": 0,
+          "cross_phase_context_pairs": 4096
+        },
+        {
+          "seed": 29,
+          "cross_phase_context_cosine_max": 0.9306346774101257,
+          "cross_phase_context_cosine_mean": 0.20834285020828247,
+          "cross_phase_context_near_collision_count": 1,
+          "cross_phase_context_pairs": 4096
+        },
+        {
+          "seed": 47,
+          "cross_phase_context_cosine_max": 0.8671538233757019,
+          "cross_phase_context_cosine_mean": 0.20965157449245453,
+          "cross_phase_context_near_collision_count": 0,
+          "cross_phase_context_pairs": 4096
+        }
+      ],
+      "cpu_seconds": 8.951,
+      "condition_gate_passed": false
+    }
+  ],
+  "conclusion": {
+    "separated_condition_passed": false,
+    "cue_distribution_is_sufficient_explanation": false,
+    "next_boundary": "maximum byte-cue separation did not pass B5; freeze input-range explanations and diagnose event representation/training signal"
+  },
+  "report_path": "reports\\taiji_m1_36_cue_curriculum_20260902.json"
+}
