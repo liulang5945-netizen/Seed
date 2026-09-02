@@ -213,6 +213,7 @@ class TaijiConfig:
     memory_event_gain: float = 0.80
     memory_action_binding_gain: float = 2.00
     memory_read_gain: float = 3.00
+    memory_replay_read_gain: float = 1.00
     memory_feedback_gain: float = 0.25
     memory_novelty_gain: float = 0.70
     memory_reward_gain: float = 0.30
@@ -305,9 +306,9 @@ class TaijiConfig:
             raise ValueError("memory_time_dim must be a positive even dimension")
         if self.memory_episode_dim <= 0:
             raise ValueError("memory_episode_dim must be positive")
-        if self.memory_action_decoder not in {"shared", "local", "cue_selective"}:
+        if self.memory_action_decoder not in {"shared", "local", "cue_selective", "dual"}:
             raise ValueError(
-                "memory_action_decoder must be 'shared', 'local', or 'cue_selective'"
+                "memory_action_decoder must be 'shared', 'local', 'cue_selective', or 'dual'"
             )
         for name in (
             "membrane_decay",
@@ -345,6 +346,7 @@ class TaijiConfig:
             "memory_event_gain",
             "memory_action_binding_gain",
             "memory_read_gain",
+            "memory_replay_read_gain",
             "replay_seed_gain",
             "replay_learning_scale",
             "replay_memory_learning_scale",
@@ -632,6 +634,7 @@ class TaijiConfig:
         # The local action decoder is allocated even when the shared decoder
         # is selected, so both modes can be compared without changing the
         # rest of the topology or checkpoint shape.
+        memory += self.alphabet_size * min(self.memory_readout_fan_in, self.memory_units)
         memory += self.alphabet_size * min(self.memory_readout_fan_in, self.memory_units)
         return int(fabric + motor + memory)
 

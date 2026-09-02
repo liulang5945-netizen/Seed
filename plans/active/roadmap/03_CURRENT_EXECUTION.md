@@ -279,6 +279,10 @@ M1-12 的独立 binding diagnostic 已完成，报告为 `reports/taiji_m1_b12_b
 
 当前唯一下一步为 **M1-13：replay provenance 双时间尺度 protected readout**：保留 waking fast readout 与 replay slow readout 两条可回滚的本地塑性路径，按 cue-local activity 和 provenance 分别更新，在 recall 时以可测的 cue familiarity/支持度进行融合；加入 repeated-replay、no-change、old/new holdout、cue collision、checkpoint round-trip 及参数预算 Gate。若 slow path 仍无法在不损伤 phase-B 的情况下恢复 phase-A，则停止继续增加 memory decoder，转入基础 cue population 的结构性重设计；在 Gate 通过前不重跑 full foundation、不进入 M2。
 
+M1-13 的 dual readout 原型与 provenance 隔离已完成，但 Gate 仍阻断，报告为 `reports/taiji_m1_b13_dual_readout_ablation_canary_20260902.json`。replayed 写入确实不会修改 fast action readout，且 checkpoint/参数预算回归通过；但三 seed 的 old/new 联合能力仍未通过。只改变 slow read gain 的受控检查从 `1` 到 `8` 仍未通过，说明继续调融合增益不能替代 cue 分离和支持覆盖。该 dual 模式保留为实验候选，默认 shared 不变。
+
+当前唯一下一步为 **M1-14：可审计的结构性 cue slot allocation**：停止继续叠加 action decoder，改为让 cue population 在固定容量内通过可验证的 slot 竞争和占用/释放规则形成低碰撞绑定，并把 slot 选择、碰撞率、支持覆盖和可逆性写入 checkpoint/report；只在 B5 的 repeated-replay、no-change、old/new holdout 和 checkpoint round-trip 全部通过后，才允许把 slot route 接到 slow readout。否则保留现有 native memory，不重跑 full foundation、不进入 M2。
+
 ## 7. M2～M8 的开发日程与外围任务安置
 
 ### M2：世界—行动—语言后训练

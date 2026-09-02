@@ -201,6 +201,7 @@ class DelayedMemoryTask:
         *,
         memory_learning_scale: float = 1.0,
         memory_learning_targets: str = "all",
+        provenance: str = "experienced",
     ) -> None:
         model.reset_dynamics(episode_id=f"m0-b2-train-{episode.memory_id}")
         model.observe(model.config.boundary_symbol, learn=False, learn_motor=False)
@@ -210,6 +211,7 @@ class DelayedMemoryTask:
             1.0,
             learn=False,
             learn_memory=True,
+            provenance=provenance,
             memory_learning_scale=memory_learning_scale,
             memory_learning_targets=memory_learning_targets,
         )
@@ -418,6 +420,7 @@ class ContinualMemoryTask:
                 DelayedMemoryTask._write_episode(
                     replay,
                     episode,
+                    provenance="replayed",
                     memory_learning_scale=self.config.replay_memory_learning_scale,
                     memory_learning_targets=self.replay_learning_targets,
                 )
