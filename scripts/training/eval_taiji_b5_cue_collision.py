@@ -20,6 +20,8 @@ from taiji.sparse import SparseSynapses, bound_norm  # noqa: E402
 
 FORMAT = "taiji-native-b5-cue-collision-v1"
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m1_b12_binding_diagnostic_canary.json"
+SLOT_MATCH_THRESHOLD = 0.85
+SLOT_UPDATE_RATE = 0.10
 
 
 def _cosine(left: torch.Tensor, right: torch.Tensor) -> float:
@@ -123,8 +125,8 @@ def _seed_record(seed: int, train_count: int, holdout_count: int) -> dict[str, o
     binding = CueBindingBank(
         config.memory_units,
         config.memory_units,
-        match_threshold=0.85,
-        update_rate=0.10,
+        match_threshold=SLOT_MATCH_THRESHOLD,
+        update_rate=SLOT_UPDATE_RATE,
         device=model.device,
     )
     phase_a_slots = {
@@ -138,8 +140,8 @@ def _seed_record(seed: int, train_count: int, holdout_count: int) -> dict[str, o
     restored_binding = CueBindingBank(
         config.memory_units,
         config.memory_units,
-        match_threshold=0.85,
-        update_rate=0.10,
+        match_threshold=SLOT_MATCH_THRESHOLD,
+        update_rate=SLOT_UPDATE_RATE,
         device=model.device,
     )
     restored_binding.load_payload(binding.to_payload())
@@ -153,6 +155,61 @@ def _seed_record(seed: int, train_count: int, holdout_count: int) -> dict[str, o
         query_slot_mismatches += int(routed.slot_index != expected_slot)
     occupied_slots = set(slot for slot in (*phase_a_slots.values(), *phase_b_slots.values()) if slot is not None)
     cross_phase_collisions = len(set(phase_a_slots.values()) & set(phase_b_slots.values()))
+    repeated_replay = [
+        binding.route(pattern, learn=True)
+        for pattern in (*phase_a_patterns.values(), *phase_b_patterns.values())
+        for _ in range(2)
+    ]
+    repeated_expected = [
+        slot
+        for slot in (*phase_a_slots.values(), *phase_b_slots.values())
+        for _ in range(2)
+    ]
+    no_change_bank = CueBindingBank(
+        config.memory_units,
+        config.memory_units,
+        match_threshold=SLOT_MATCH_THRESHOLD,
+        update_rate=SLOT_UPDATE_RATE,
+        device=model.device,
+    )
+    no_change_bank.load_payload(binding.to_payload())
+    no_change_before = no_change_bank.to_payload()
+    no_change_routes = [
+        no_change_bank.route(
+            _query_pattern(model, query.cue, query.query_id),
+            learn=False,
+        )
+        for query in (*corpus.phase_a_holdout, *corpus.phase_b_holdout)
+    ]
+    no_change_after = no_change_bank.to_payload()
+    no_change_preserved = all(
+        torch.equal(no_change_before[name], no_change_after[name])
+        for name in ("prototypes", "occupied", "visits")
+    ) and all(
+        no_change_before[name] == no_change_after[name]
+        for name in ("allocation_count", "match_count", "replacement_count")
+    )
+    lifecycle_bank = CueBindingBank(
+        config.memory_units,
+        config.memory_units,
+        match_threshold=SLOT_MATCH_THRESHOLD,
+        update_rate=SLOT_UPDATE_RATE,
+        device=model.device,
+    )
+    lifecycle_slots = {
+        cue: lifecycle_bank.route(pattern, learn=True).slot_index
+        for cue, pattern in phase_a_patterns.items()
+    }
+    released_slot = next(slot for slot in lifecycle_slots.values() if slot is not None)
+    lifecycle_bank.release(released_slot)
+    released_read = lifecycle_bank.route(
+        phase_a_patterns[next(cue for cue, slot in lifecycle_slots.items() if slot == released_slot)],
+        learn=False,
+    )
+    reallocated = lifecycle_bank.route(
+        phase_a_patterns[next(cue for cue, slot in lifecycle_slots.items() if slot == released_slot)],
+        learn=True,
+    )
     binding_generator = torch.Generator(device="cpu")
     binding_generator.manual_seed(int(seed) + 100_003)
     binding_projection = SparseSynapses(
@@ -253,6 +310,25 @@ def _seed_record(seed: int, train_count: int, holdout_count: int) -> dict[str, o
             "allocation_count": binding.allocation_count,
             "match_count": binding.match_count,
             "replacement_count": binding.replacement_count,
+            "repeated_replay": {
+                "route_count": len(repeated_replay),
+                "same_slot_rate": sum(
+                    int(route.slot_index == expected and not route.allocated)
+                    for route, expected in zip(repeated_replay, repeated_expected, strict=False)
+                )
+                / len(repeated_replay),
+            },
+            "no_change": {
+                "query_count": len(no_change_routes),
+                "all_queries_routed": all(route.slot_index is not None for route in no_change_routes),
+                "state_preserved": no_change_preserved,
+            },
+            "release_reallocate": {
+                "released_slot": released_slot,
+                "read_after_release_is_unbound": released_read.slot_index is None,
+                "reallocated_slot": reallocated.slot_index,
+                "reallocated_to_released_slot": reallocated.slot_index == released_slot,
+            },
         },
         "action_support": action_support,
     }
