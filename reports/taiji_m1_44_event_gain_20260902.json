@@ -1,0 +1,331 @@
+{
+  "format": "taiji-native-m1-44-event-gain-v1",
+  "version": 1,
+  "status": "failed",
+  "variable_changed": "memory_event_gain only",
+  "baseline_event_gain": 0.8,
+  "candidate_event_gain": 0.05,
+  "candidate_information_loss": "action/outcome/reward/time/episode/provenance event components are strongly attenuated in event pattern",
+  "cue_curriculum": "maximally separated byte cues",
+  "action_curriculum": "phase-A/phase-B overlap on 48/49",
+  "memory_units": 128,
+  "memory_action_decoder": "shared",
+  "identity_organ_enabled": false,
+  "corpus_digest": "52c31b5475ab86893998b82fa34441e7f9fae765b381eafae8108b588f824d96",
+  "conditions": [
+    {
+      "event_gain": 0.8,
+      "records": [
+        {
+          "seed": 11,
+          "event_gain": 0.8,
+          "old_before": 0.59375,
+          "old_retention_before": 0.5,
+          "no_replay_old_after": 0.46875,
+          "no_replay_new_after": 0.6875,
+          "replay_old_after": 0.59375,
+          "replay_retention_after": 0.53125,
+          "replay_new_after": 0.75,
+          "replay_backward_transfer": 0.0,
+          "replay_causal_gain": 0.125,
+          "replay_new_delta_vs_no_replay": 0.0625,
+          "phase_a_geometry": {
+            "phase_a": {
+              "event_active_support": {
+                "mean": 48.84375,
+                "min": 39.0,
+                "max": 59.0
+              },
+              "cue_event_cosine": {
+                "mean": 0.6131272781640291,
+                "min": 0.4552916884422302,
+                "max": 0.759986162185669
+              },
+              "association_completion_ratio": {
+                "mean": 0.6769592596471843,
+                "min": 0.4413110591225359,
+                "max": 0.8881197403042345
+              },
+              "association_error_ratio": {
+                "mean": 0.728277593574989,
+                "min": 0.6107237005512338,
+                "max": 0.9135083459425367
+              }
+            },
+            "cross_phase_event_cosine_mean": 0.5499336123466492,
+            "cross_phase_event_cosine_max": 0.8787000775337219,
+            "cross_phase_event_near_collision_count": 0
+          },
+          "phase_a_checkpoint_digest": "852f61b27f296a552f1efe311d4d09690a4f62d056e26793888ed8f8eaee1f9a",
+          "replay_checkpoint_digest": "2c387ed47137900e9ac7ed0a8c1304640454fef443f046c8f8ca1e43df69814f",
+          "continued_from_phase_a": true,
+          "checkpoint_roundtrip_exact": true,
+          "active_parameter_count": 85953,
+          "planned_active_parameter_count": 85953,
+          "parameter_count_matches_plan": true,
+          "holdout_updates": 0
+        },
+        {
+          "seed": 29,
+          "event_gain": 0.8,
+          "old_before": 0.5,
+          "old_retention_before": 0.65625,
+          "no_replay_old_after": 0.46875,
+          "no_replay_new_after": 0.53125,
+          "replay_old_after": 0.5,
+          "replay_retention_after": 0.65625,
+          "replay_new_after": 0.53125,
+          "replay_backward_transfer": 0.0,
+          "replay_causal_gain": 0.03125,
+          "replay_new_delta_vs_no_replay": 0.0,
+          "phase_a_geometry": {
+            "phase_a": {
+              "event_active_support": {
+                "mean": 53.578125,
+                "min": 45.0,
+                "max": 62.0
+              },
+              "cue_event_cosine": {
+                "mean": 0.5937248994596303,
+                "min": 0.44271475076675415,
+                "max": 0.7709891200065613
+              },
+              "association_completion_ratio": {
+                "mean": 0.675317255069382,
+                "min": 0.3694228485822363,
+                "max": 0.9935449808974253
+              },
+              "association_error_ratio": {
+                "mean": 0.7163293956471359,
+                "min": 0.5411624018696057,
+                "max": 0.854984227240397
+              }
+            },
+            "cross_phase_event_cosine_mean": 0.5487772226333618,
+            "cross_phase_event_cosine_max": 0.8639518022537231,
+            "cross_phase_event_near_collision_count": 0
+          },
+          "phase_a_checkpoint_digest": "5382253aaa47c9818245602f7cdadff49d2add6f49f5a2ab7e27a6b93584d539",
+          "replay_checkpoint_digest": "efcb2346460a6c7c5d82de32ac1d8922299653390939819e353c699baa1549a5",
+          "continued_from_phase_a": true,
+          "checkpoint_roundtrip_exact": true,
+          "active_parameter_count": 85953,
+          "planned_active_parameter_count": 85953,
+          "parameter_count_matches_plan": true,
+          "holdout_updates": 0
+        },
+        {
+          "seed": 47,
+          "event_gain": 0.8,
+          "old_before": 0.5625,
+          "old_retention_before": 0.625,
+          "no_replay_old_after": 0.5625,
+          "no_replay_new_after": 0.5625,
+          "replay_old_after": 0.5625,
+          "replay_retention_after": 0.625,
+          "replay_new_after": 0.4375,
+          "replay_backward_transfer": 0.0,
+          "replay_causal_gain": 0.0,
+          "replay_new_delta_vs_no_replay": -0.125,
+          "phase_a_geometry": {
+            "phase_a": {
+              "event_active_support": {
+                "mean": 50.015625,
+                "min": 42.0,
+                "max": 58.0
+              },
+              "cue_event_cosine": {
+                "mean": 0.633206008002162,
+                "min": 0.4388241767883301,
+                "max": 0.7833302021026611
+              },
+              "association_completion_ratio": {
+                "mean": 0.6977928667198615,
+                "min": 0.5364544076774598,
+                "max": 1.0519931903891395
+              },
+              "association_error_ratio": {
+                "mean": 0.7116337668138646,
+                "min": 0.5748240769700461,
+                "max": 0.8441508670113564
+              }
+            },
+            "cross_phase_event_cosine_mean": 0.5531785488128662,
+            "cross_phase_event_cosine_max": 0.9033733010292053,
+            "cross_phase_event_near_collision_count": 1
+          },
+          "phase_a_checkpoint_digest": "8d4da0ee46021acde8b2a3e89146f6a2cb7730bd5ee0c1a1b00758fbeabd2a71",
+          "replay_checkpoint_digest": "4f33658320f994995e8ba0c719dd3dd73ba710283cb8e7f389887a5f5a35f9e7",
+          "continued_from_phase_a": true,
+          "checkpoint_roundtrip_exact": true,
+          "active_parameter_count": 85953,
+          "planned_active_parameter_count": 85953,
+          "parameter_count_matches_plan": true,
+          "holdout_updates": 0
+        }
+      ],
+      "cpu_seconds": 9.314,
+      "condition_gate_passed": false
+    },
+    {
+      "event_gain": 0.05,
+      "records": [
+        {
+          "seed": 11,
+          "event_gain": 0.05,
+          "old_before": 0.71875,
+          "old_retention_before": 0.65625,
+          "no_replay_old_after": 0.625,
+          "no_replay_new_after": 0.65625,
+          "replay_old_after": 0.6875,
+          "replay_retention_after": 0.65625,
+          "replay_new_after": 0.46875,
+          "replay_backward_transfer": -0.03125,
+          "replay_causal_gain": 0.0625,
+          "replay_new_delta_vs_no_replay": -0.1875,
+          "phase_a_geometry": {
+            "phase_a": {
+              "event_active_support": {
+                "mean": 25.859375,
+                "min": 17.0,
+                "max": 33.0
+              },
+              "cue_event_cosine": {
+                "mean": 0.9905395386740565,
+                "min": 0.9836951494216919,
+                "max": 0.9956907629966736
+              },
+              "association_completion_ratio": {
+                "mean": 0.7827900027932639,
+                "min": 0.5437551320256432,
+                "max": 1.0436902289539938
+              },
+              "association_error_ratio": {
+                "mean": 0.8181083318678899,
+                "min": 0.6628758437523056,
+                "max": 1.031642692208075
+              }
+            },
+            "cross_phase_event_cosine_mean": 0.22740867733955383,
+            "cross_phase_event_cosine_max": 0.8570119142532349,
+            "cross_phase_event_near_collision_count": 0
+          },
+          "phase_a_checkpoint_digest": "040e71c3c0ffc8dec456a3cfd80fb8f369c9f6bef1165bcdeea4b8c97acc5ca0",
+          "replay_checkpoint_digest": "aa9203f923c673a66906a2f75e47d70a4ca0136d243b6cb532442fc04c38fa50",
+          "continued_from_phase_a": true,
+          "checkpoint_roundtrip_exact": true,
+          "active_parameter_count": 85953,
+          "planned_active_parameter_count": 85953,
+          "parameter_count_matches_plan": true,
+          "holdout_updates": 0
+        },
+        {
+          "seed": 29,
+          "event_gain": 0.05,
+          "old_before": 0.53125,
+          "old_retention_before": 0.625,
+          "no_replay_old_after": 0.5625,
+          "no_replay_new_after": 0.71875,
+          "replay_old_after": 0.53125,
+          "replay_retention_after": 0.6875,
+          "replay_new_after": 0.6875,
+          "replay_backward_transfer": 0.0,
+          "replay_causal_gain": -0.03125,
+          "replay_new_delta_vs_no_replay": -0.03125,
+          "phase_a_geometry": {
+            "phase_a": {
+              "event_active_support": {
+                "mean": 25.296875,
+                "min": 18.0,
+                "max": 31.0
+              },
+              "cue_event_cosine": {
+                "mean": 0.9897284964099526,
+                "min": 0.9801248908042908,
+                "max": 0.9955285787582397
+              },
+              "association_completion_ratio": {
+                "mean": 0.7674460295983163,
+                "min": 0.48177742172392035,
+                "max": 1.028164295900548
+              },
+              "association_error_ratio": {
+                "mean": 0.844453618454284,
+                "min": 0.635039972561003,
+                "max": 1.0544689052859162
+              }
+            },
+            "cross_phase_event_cosine_mean": 0.22059427201747894,
+            "cross_phase_event_cosine_max": 0.9323946833610535,
+            "cross_phase_event_near_collision_count": 1
+          },
+          "phase_a_checkpoint_digest": "f1a049e5cfc794c74428941e68fee24a0ff1f13fbb26981332e8940c15f47471",
+          "replay_checkpoint_digest": "62a50421b00c1e5dd73acf371ec670680c5c5d4563b0b2f2ab7c8ac747597b8d",
+          "continued_from_phase_a": true,
+          "checkpoint_roundtrip_exact": true,
+          "active_parameter_count": 85953,
+          "planned_active_parameter_count": 85953,
+          "parameter_count_matches_plan": true,
+          "holdout_updates": 0
+        },
+        {
+          "seed": 47,
+          "event_gain": 0.05,
+          "old_before": 0.6875,
+          "old_retention_before": 0.6875,
+          "no_replay_old_after": 0.5625,
+          "no_replay_new_after": 0.84375,
+          "replay_old_after": 0.75,
+          "replay_retention_after": 0.6875,
+          "replay_new_after": 0.5625,
+          "replay_backward_transfer": 0.0625,
+          "replay_causal_gain": 0.1875,
+          "replay_new_delta_vs_no_replay": -0.28125,
+          "phase_a_geometry": {
+            "phase_a": {
+              "event_active_support": {
+                "mean": 24.640625,
+                "min": 17.0,
+                "max": 32.0
+              },
+              "cue_event_cosine": {
+                "mean": 0.9907053075730801,
+                "min": 0.9842089414596558,
+                "max": 0.9958366751670837
+              },
+              "association_completion_ratio": {
+                "mean": 0.7928104966005136,
+                "min": 0.5660113323186604,
+                "max": 1.1104134590460366
+              },
+              "association_error_ratio": {
+                "mean": 0.8414476755517393,
+                "min": 0.6709845995525254,
+                "max": 1.0010263446164815
+              }
+            },
+            "cross_phase_event_cosine_mean": 0.21209964156150818,
+            "cross_phase_event_cosine_max": 0.8683158159255981,
+            "cross_phase_event_near_collision_count": 0
+          },
+          "phase_a_checkpoint_digest": "659201f2eeb7562c772641fa6eb3627f360e8fa681bf1829b30ee1af9cfbbf3f",
+          "replay_checkpoint_digest": "df16a7a42df7081c31f4e73c4081404536ba5a1d90d67bc5bf9143338826aab7",
+          "continued_from_phase_a": true,
+          "checkpoint_roundtrip_exact": true,
+          "active_parameter_count": 85953,
+          "planned_active_parameter_count": 85953,
+          "parameter_count_matches_plan": true,
+          "holdout_updates": 0
+        }
+      ],
+      "cpu_seconds": 9.552,
+      "condition_gate_passed": false
+    }
+  ],
+  "conclusion": {
+    "cue_only_passed": false,
+    "event_gain_is_sufficient_explanation": false,
+    "next_boundary": "cue-only did not pass B5; preserve event gain and diagnose event encoder geometry"
+  },
+  "report_path": "reports\\taiji_m1_44_event_gain_20260902.json"
+}
