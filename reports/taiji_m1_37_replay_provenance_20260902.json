@@ -1,0 +1,179 @@
+{
+  "format": "taiji-native-m1-37-replay-provenance-v1",
+  "version": 1,
+  "status": "failed",
+  "variable_changed": "replay provenance only",
+  "cue_curriculum": "maximally separated byte cues",
+  "action_curriculum": "phase-A/phase-B overlap on 48/49",
+  "memory_units": 128,
+  "memory_action_decoder": "shared",
+  "identity_organ_enabled": false,
+  "replay_scale": 1.0,
+  "corpus_digest": "52c31b5475ab86893998b82fa34441e7f9fae765b381eafae8108b588f824d96",
+  "conditions": [
+    {
+      "provenance": "replayed",
+      "records": [
+        {
+          "seed": 11,
+          "provenance": "replayed",
+          "old_before": 0.59375,
+          "old_retention_before": 0.5,
+          "no_replay_old_after": 0.46875,
+          "no_replay_new_after": 0.6875,
+          "replay_old_after": 0.625,
+          "replay_retention_after": 0.5625,
+          "replay_new_after": 0.65625,
+          "replay_backward_transfer": 0.03125,
+          "replay_causal_gain": 0.15625,
+          "replay_new_delta_vs_no_replay": -0.03125,
+          "replay_provenance_readout": {
+            "phase_a_holdout": 0.9521787129342556,
+            "phase_a_retention": 0.9318875167518854,
+            "phase_b_holdout": 0.9491793680936098
+          },
+          "phase_a_checkpoint_digest": "5ba2296b02cfb31517000c6f6f746d6cbc351bd9de58781ee16a1d10084b041d",
+          "replay_checkpoint_digest": "609b0a8d17295109f740d30b34635f2661b8379f04d073d6c2752c2bde461de0",
+          "continued_from_phase_a": true,
+          "checkpoint_roundtrip_exact": true,
+          "holdout_updates": 0
+        },
+        {
+          "seed": 29,
+          "provenance": "replayed",
+          "old_before": 0.5,
+          "old_retention_before": 0.65625,
+          "no_replay_old_after": 0.46875,
+          "no_replay_new_after": 0.53125,
+          "replay_old_after": 0.5,
+          "replay_retention_after": 0.6875,
+          "replay_new_after": 0.5,
+          "replay_backward_transfer": 0.0,
+          "replay_causal_gain": 0.03125,
+          "replay_new_delta_vs_no_replay": -0.03125,
+          "replay_provenance_readout": {
+            "phase_a_holdout": 0.9758948758244514,
+            "phase_a_retention": 0.9666311647742987,
+            "phase_b_holdout": 0.971495445817709
+          },
+          "phase_a_checkpoint_digest": "8d29915515ead06b51abb5495dccd89f02acf873e181c20afb6ea38fad82a6bd",
+          "replay_checkpoint_digest": "df18d5e5f653f8062e79b88905d78abb602c334e3d1198ec41c243f55b89d097",
+          "continued_from_phase_a": true,
+          "checkpoint_roundtrip_exact": true,
+          "holdout_updates": 0
+        },
+        {
+          "seed": 47,
+          "provenance": "replayed",
+          "old_before": 0.5625,
+          "old_retention_before": 0.625,
+          "no_replay_old_after": 0.5625,
+          "no_replay_new_after": 0.5625,
+          "replay_old_after": 0.59375,
+          "replay_retention_after": 0.625,
+          "replay_new_after": 0.4375,
+          "replay_backward_transfer": 0.03125,
+          "replay_causal_gain": 0.03125,
+          "replay_new_delta_vs_no_replay": -0.125,
+          "replay_provenance_readout": {
+            "phase_a_holdout": 0.9688290636986494,
+            "phase_a_retention": 0.9650356788188219,
+            "phase_b_holdout": 0.9679861161857843
+          },
+          "phase_a_checkpoint_digest": "2be7104b489920e18db2fb591027bb4a97268ee11795c2bf126f25f1c3bb7030",
+          "replay_checkpoint_digest": "14573222159977a257f994b0a3878b7201db1f0786ec8de6b093d735762cba86",
+          "continued_from_phase_a": true,
+          "checkpoint_roundtrip_exact": true,
+          "holdout_updates": 0
+        }
+      ],
+      "cpu_seconds": 7.934,
+      "condition_gate_passed": false
+    },
+    {
+      "provenance": "experienced",
+      "records": [
+        {
+          "seed": 11,
+          "provenance": "experienced",
+          "old_before": 0.59375,
+          "old_retention_before": 0.5,
+          "no_replay_old_after": 0.46875,
+          "no_replay_new_after": 0.6875,
+          "replay_old_after": 0.59375,
+          "replay_retention_after": 0.53125,
+          "replay_new_after": 0.75,
+          "replay_backward_transfer": 0.0,
+          "replay_causal_gain": 0.125,
+          "replay_new_delta_vs_no_replay": 0.0625,
+          "replay_provenance_readout": {
+            "phase_a_holdout": 0.004607550898072077,
+            "phase_a_retention": 0.008636213107820367,
+            "phase_b_holdout": 0.00457899763569003
+          },
+          "phase_a_checkpoint_digest": "5ba2296b02cfb31517000c6f6f746d6cbc351bd9de58781ee16a1d10084b041d",
+          "replay_checkpoint_digest": "685ac0dc32c3ea7e0907b6a531dd93e9b6d3b40e5eaeaec0001df7a1686bde6b",
+          "continued_from_phase_a": true,
+          "checkpoint_roundtrip_exact": true,
+          "holdout_updates": 0
+        },
+        {
+          "seed": 29,
+          "provenance": "experienced",
+          "old_before": 0.5,
+          "old_retention_before": 0.65625,
+          "no_replay_old_after": 0.46875,
+          "no_replay_new_after": 0.53125,
+          "replay_old_after": 0.5,
+          "replay_retention_after": 0.65625,
+          "replay_new_after": 0.53125,
+          "replay_backward_transfer": 0.0,
+          "replay_causal_gain": 0.03125,
+          "replay_new_delta_vs_no_replay": 0.0,
+          "replay_provenance_readout": {
+            "phase_a_holdout": 0.003536952635840862,
+            "phase_a_retention": 0.0038334371311066207,
+            "phase_b_holdout": 0.0032846027588675497
+          },
+          "phase_a_checkpoint_digest": "8d29915515ead06b51abb5495dccd89f02acf873e181c20afb6ea38fad82a6bd",
+          "replay_checkpoint_digest": "355834d549f49c089aa49bb9fe470dbcc720ba69ee3f109f36fe49ffe68ba79f",
+          "continued_from_phase_a": true,
+          "checkpoint_roundtrip_exact": true,
+          "holdout_updates": 0
+        },
+        {
+          "seed": 47,
+          "provenance": "experienced",
+          "old_before": 0.5625,
+          "old_retention_before": 0.625,
+          "no_replay_old_after": 0.5625,
+          "no_replay_new_after": 0.5625,
+          "replay_old_after": 0.5625,
+          "replay_retention_after": 0.625,
+          "replay_new_after": 0.4375,
+          "replay_backward_transfer": 0.0,
+          "replay_causal_gain": 0.0,
+          "replay_new_delta_vs_no_replay": -0.125,
+          "replay_provenance_readout": {
+            "phase_a_holdout": 0.0034955072660523,
+            "phase_a_retention": 0.004117157655855408,
+            "phase_b_holdout": 0.0035677480445883702
+          },
+          "phase_a_checkpoint_digest": "2be7104b489920e18db2fb591027bb4a97268ee11795c2bf126f25f1c3bb7030",
+          "replay_checkpoint_digest": "b525816acd87d6a230c8dd9a30328fee653ee56e2471034ea11fe1db6df7842c",
+          "continued_from_phase_a": true,
+          "checkpoint_roundtrip_exact": true,
+          "holdout_updates": 0
+        }
+      ],
+      "cpu_seconds": 8.363,
+      "condition_gate_passed": false
+    }
+  ],
+  "conclusion": {
+    "experienced_provenance_passed": false,
+    "provenance_is_sufficient_explanation": false,
+    "next_boundary": "preserving experienced provenance did not pass B5; freeze provenance as the sole explanation and diagnose cue/action event binding"
+  },
+  "report_path": "reports\\taiji_m1_37_replay_provenance_20260902.json"
+}
