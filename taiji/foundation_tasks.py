@@ -11,7 +11,7 @@ from dataclasses import dataclass
 
 import torch
 
-from .config import TaijiConfig
+from .config import TaijiConfig, validate_episodic_learning_target
 from .contracts import WorldInterventionCase, WorldInterventionCorpus
 from .foundation_evaluation import FoundationMeasurement
 from .internalization import content_digest
@@ -372,10 +372,9 @@ class ContinualMemoryTask:
             raise ValueError("continual memory needs unique seeds")
         self.config = config
         self.seeds = tuple(int(seed) for seed in seeds)
-        if replay_learning_targets not in {"all", "association", "readout"}:
-            raise ValueError(
-                "continual replay learning targets must be 'all', 'association', or 'readout'"
-            )
+        validate_episodic_learning_target(
+            "continual replay learning targets", replay_learning_targets
+        )
         self.replay_learning_targets = replay_learning_targets
 
     def evaluate(self, corpus: ContinualMemoryCorpus) -> FoundationMeasurement:

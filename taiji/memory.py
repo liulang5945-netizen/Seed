@@ -16,7 +16,11 @@ from typing import Any
 
 import torch
 
-from .config import EPISODIC_EVENT_COMPONENTS, TaijiConfig
+from .config import (
+    EPISODIC_EVENT_COMPONENTS,
+    TaijiConfig,
+    validate_episodic_learning_target,
+)
 from .organs import SparseReceptorBank
 from .sparse import SparseSynapses, bound_norm
 from .state import MemoryRecall, MemoryState
@@ -466,10 +470,7 @@ class EpisodicField:
         learning_scale = float(learning_scale)
         if not math.isfinite(learning_scale) or learning_scale <= 0.0:
             raise ValueError("episodic learning_scale must be finite and positive")
-        if learning_targets not in {"all", "association", "readout"}:
-            raise ValueError(
-                "episodic learning_targets must be 'all', 'association', or 'readout'"
-            )
+        validate_episodic_learning_target("episodic learning_targets", learning_targets)
         cue_pattern = self._cue_pattern(cortical_context, threshold)
         action_drive = self._normalize_drive(
             self.action_encoder.forward(self._one_hot(action_symbol))
@@ -687,7 +688,7 @@ class EpisodicField:
             bound_norm(cortical_context.to(self.device), self.config.max_membrane_norm)
             / cortical_scale
         )
-        if learning_targets in {"all", "readout"}:
+        if learning_targets in {"all", "readout", "action_readout"}:
             for _ in range(int(self.config.episodic_write_repeats)):
                 action_policy = torch.softmax(
                     (
@@ -728,6 +729,8 @@ class EpisodicField:
                         learning_rate=readout_rate,
                         weight_decay=self.config.synapse_decay,
                     )
+        if learning_targets in {"all", "readout", "outcome_readout"}:
+            for _ in range(int(self.config.episodic_write_repeats)):
                 outcome_error = outcome_target - torch.softmax(
                     self.outcome_readout.forward(context), dim=0
                 )
@@ -737,6 +740,7 @@ class EpisodicField:
                     learning_rate=readout_rate,
                     weight_decay=self.config.synapse_decay,
                 )
+        if learning_targets in {"all", "readout"}:
             for _ in range(int(self.config.cortical_readout_repeats)):
                 self.cortical_readout.local_update(
                     cortical_target - self.cortical_readout.forward(context),
