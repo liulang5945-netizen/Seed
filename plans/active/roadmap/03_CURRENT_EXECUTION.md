@@ -265,6 +265,8 @@ B5 合同同步改为 disjoint cue，测量共享容量干扰而不是同一输�
 
 当前唯一下一步改为 **M1-10：实现非破坏性 memory consolidation**：把 replay 从“再次写入完整 episode”改成可验证的 reactivation/consolidation 路径，分别控制 association、action readout、new-skill readout 的更新；新增 no-replay、replay、repeated-replay、readout-only、association-only 和 no-change 对照，并要求旧 holdout/retention 与 phase-B new holdout 同时不退化。M1-10 canary 未通过前不重新跑三 seed foundation，不进入 M2，也不切换到 provider、Workbench、Skill/MCP 或客户端外围。
 
+M1-10 的第一轮诊断已完成：固定 action encoder 作为 recall 解码参照的对照，在 disjoint B5 canary 上仍只能把 old recall 从 `0.125` 提到 `0.25`，无法同时保留 phase-B new recall，因此不接入主路径。当前应重构的是共享低维 `readout_receptors → action_readout` 的塑性边界：下一片只实现一个可迁移的局部 readout/consolidation 原型，保留现有 readout 作为 compatibility fallback，并用同一 B5 corpus 做 readout-only、association-only、no-change 消融；没有同时满足 old/new retention 前，不再扩大 meta 维度或重跑 foundation。
+
 ## 7. M2～M8 的开发日程与外围任务安置
 
 ### M2：世界—行动—语言后训练
