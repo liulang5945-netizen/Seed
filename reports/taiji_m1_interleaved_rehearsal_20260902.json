@@ -1,0 +1,398 @@
+{
+  "format": "taiji-native-m1-interleaved-rehearsal-v1",
+  "version": 1,
+  "status": "diagnostic",
+  "architecture_unchanged": true,
+  "decoder": "shared",
+  "replay_order_only": true,
+  "diagnostics": {
+    "corpus_digest": "839feff22948df7eb1feec76f574214571495de3f7129b60bf8acc6403c0f433",
+    "sample_counts": {
+      "train": 32,
+      "holdout": 16,
+      "retention": 16,
+      "phase_a_train": 16,
+      "phase_a_holdout": 8,
+      "phase_a_retention": 8,
+      "phase_b_train": 16,
+      "phase_b_holdout": 8,
+      "phase_b_retention": 8,
+      "replay_train": 16
+    },
+    "schedule_replay_counts": {
+      "no_replay": [
+        0
+      ],
+      "posthoc": [
+        16
+      ],
+      "interleave_every_1": [
+        16
+      ],
+      "interleave_every_4": [
+        16
+      ]
+    },
+    "promotable_schedules": [],
+    "records": {
+      "no_replay": [
+        {
+          "seed": 11,
+          "schedule": "no_replay",
+          "replay_count": 0,
+          "parent": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.5
+          },
+          "restored": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.5
+          },
+          "replay_causal_gain_vs_parent": -0.75,
+          "checkpoint": {
+            "parent_digest": "f120076e7d1f03aee42070f82ad2d3a5d26b7dce09e8885d814795f2cca141b3",
+            "child_digest": "38a25fa6fa370791c47c8e8d1c9d4d86545303d560966a8e44e5d9f14e7b0435",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "holdout_updates": 0,
+          "no_replay_new_holdout": 0.5
+        },
+        {
+          "seed": 29,
+          "schedule": "no_replay",
+          "replay_count": 0,
+          "parent": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.625
+          },
+          "restored": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.625
+          },
+          "replay_causal_gain_vs_parent": -0.875,
+          "checkpoint": {
+            "parent_digest": "a34f0fbcf9dcdeb660076bf50a92e05ce06a792cbc76c241f6f19747fab58d8e",
+            "child_digest": "e1de512621a80750b321744f5de86dec48d79cc95fee49ae10a4eae81335bc73",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "holdout_updates": 0,
+          "no_replay_new_holdout": 0.625
+        },
+        {
+          "seed": 47,
+          "schedule": "no_replay",
+          "replay_count": 0,
+          "parent": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.0,
+            "old_retention": 0.125,
+            "new_holdout": 0.875
+          },
+          "restored": {
+            "old_holdout": 0.0,
+            "old_retention": 0.125,
+            "new_holdout": 0.875
+          },
+          "replay_causal_gain_vs_parent": -0.625,
+          "checkpoint": {
+            "parent_digest": "d3ba85aadf4c64c008e69d1da55a6617f8894c2e4156bf47d0edb004e8b5948f",
+            "child_digest": "5caf848d5daf00a5bde5bcf40ebb5dd763390916ad512a89ea1e6568befe3272",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "holdout_updates": 0,
+          "no_replay_new_holdout": 0.875
+        }
+      ],
+      "posthoc": [
+        {
+          "seed": 11,
+          "schedule": "posthoc",
+          "replay_count": 16,
+          "parent": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.625,
+            "old_retention": 0.625,
+            "new_holdout": 0.25
+          },
+          "restored": {
+            "old_holdout": 0.625,
+            "old_retention": 0.625,
+            "new_holdout": 0.25
+          },
+          "replay_causal_gain_vs_parent": -0.125,
+          "checkpoint": {
+            "parent_digest": "f120076e7d1f03aee42070f82ad2d3a5d26b7dce09e8885d814795f2cca141b3",
+            "child_digest": "144c9ebd028da0c8120249b1fe57148350cde67fe9010ffe06990780c309f5e9",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "holdout_updates": 0,
+          "no_replay_new_holdout": 0.5
+        },
+        {
+          "seed": 29,
+          "schedule": "posthoc",
+          "replay_count": 16,
+          "parent": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.375,
+            "old_retention": 0.75,
+            "new_holdout": 0.5
+          },
+          "restored": {
+            "old_holdout": 0.375,
+            "old_retention": 0.75,
+            "new_holdout": 0.5
+          },
+          "replay_causal_gain_vs_parent": -0.5,
+          "checkpoint": {
+            "parent_digest": "a34f0fbcf9dcdeb660076bf50a92e05ce06a792cbc76c241f6f19747fab58d8e",
+            "child_digest": "f22e975312a1b4cf55f6a31d8b1ef4561b951df7d0d8e959a872a3211bdbca40",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "holdout_updates": 0,
+          "no_replay_new_holdout": 0.625
+        },
+        {
+          "seed": 47,
+          "schedule": "posthoc",
+          "replay_count": 16,
+          "parent": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.75,
+            "old_retention": 0.375,
+            "new_holdout": 0.25
+          },
+          "restored": {
+            "old_holdout": 0.75,
+            "old_retention": 0.375,
+            "new_holdout": 0.25
+          },
+          "replay_causal_gain_vs_parent": 0.125,
+          "checkpoint": {
+            "parent_digest": "d3ba85aadf4c64c008e69d1da55a6617f8894c2e4156bf47d0edb004e8b5948f",
+            "child_digest": "a21d17e95b7b5853141501341b4e810dc640d9ee9f23fc2cbb6e9764273a5df5",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "holdout_updates": 0,
+          "no_replay_new_holdout": 0.875
+        }
+      ],
+      "interleave_every_1": [
+        {
+          "seed": 11,
+          "schedule": "interleave_every_1",
+          "replay_count": 16,
+          "parent": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.0,
+            "old_retention": 0.125,
+            "new_holdout": 0.625
+          },
+          "restored": {
+            "old_holdout": 0.0,
+            "old_retention": 0.125,
+            "new_holdout": 0.625
+          },
+          "replay_causal_gain_vs_parent": -0.75,
+          "checkpoint": {
+            "parent_digest": "f120076e7d1f03aee42070f82ad2d3a5d26b7dce09e8885d814795f2cca141b3",
+            "child_digest": "2a42a45f5ffe6183fb14736fa449b0066bb923416067c0ca0ec933ac0f9204c1",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "holdout_updates": 0,
+          "no_replay_new_holdout": 0.5
+        },
+        {
+          "seed": 29,
+          "schedule": "interleave_every_1",
+          "replay_count": 16,
+          "parent": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.625
+          },
+          "restored": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.625
+          },
+          "replay_causal_gain_vs_parent": -0.875,
+          "checkpoint": {
+            "parent_digest": "a34f0fbcf9dcdeb660076bf50a92e05ce06a792cbc76c241f6f19747fab58d8e",
+            "child_digest": "ad5fa106f2a5544992edf509a39ba858714956337600f2c7c3e0d35176a22234",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "holdout_updates": 0,
+          "no_replay_new_holdout": 0.625
+        },
+        {
+          "seed": 47,
+          "schedule": "interleave_every_1",
+          "replay_count": 16,
+          "parent": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.375,
+            "old_retention": 0.125,
+            "new_holdout": 0.75
+          },
+          "restored": {
+            "old_holdout": 0.375,
+            "old_retention": 0.125,
+            "new_holdout": 0.75
+          },
+          "replay_causal_gain_vs_parent": -0.25,
+          "checkpoint": {
+            "parent_digest": "d3ba85aadf4c64c008e69d1da55a6617f8894c2e4156bf47d0edb004e8b5948f",
+            "child_digest": "14c3fb7dedfae96984454c5b0962778a011d93dd29c949b2b319e759f600e123",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "holdout_updates": 0,
+          "no_replay_new_holdout": 0.875
+        }
+      ],
+      "interleave_every_4": [
+        {
+          "seed": 11,
+          "schedule": "interleave_every_4",
+          "replay_count": 16,
+          "parent": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.5,
+            "old_retention": 0.375,
+            "new_holdout": 0.375
+          },
+          "restored": {
+            "old_holdout": 0.5,
+            "old_retention": 0.375,
+            "new_holdout": 0.375
+          },
+          "replay_causal_gain_vs_parent": -0.25,
+          "checkpoint": {
+            "parent_digest": "f120076e7d1f03aee42070f82ad2d3a5d26b7dce09e8885d814795f2cca141b3",
+            "child_digest": "28ab40d5a8d9c1be48ff9c5fe82880ebb9131128dce502a1c591fc3c8b5fcc60",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "holdout_updates": 0,
+          "no_replay_new_holdout": 0.5
+        },
+        {
+          "seed": 29,
+          "schedule": "interleave_every_4",
+          "replay_count": 16,
+          "parent": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.0,
+            "old_retention": 0.125,
+            "new_holdout": 0.625
+          },
+          "restored": {
+            "old_holdout": 0.0,
+            "old_retention": 0.125,
+            "new_holdout": 0.625
+          },
+          "replay_causal_gain_vs_parent": -0.875,
+          "checkpoint": {
+            "parent_digest": "a34f0fbcf9dcdeb660076bf50a92e05ce06a792cbc76c241f6f19747fab58d8e",
+            "child_digest": "368255ccb2869a0fef832a226eb3c69672afb6aaeeeab80f4f9d31987e634422",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "holdout_updates": 0,
+          "no_replay_new_holdout": 0.625
+        },
+        {
+          "seed": 47,
+          "schedule": "interleave_every_4",
+          "replay_count": 16,
+          "parent": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.375,
+            "old_retention": 0.125,
+            "new_holdout": 0.75
+          },
+          "restored": {
+            "old_holdout": 0.375,
+            "old_retention": 0.125,
+            "new_holdout": 0.75
+          },
+          "replay_causal_gain_vs_parent": -0.25,
+          "checkpoint": {
+            "parent_digest": "d3ba85aadf4c64c008e69d1da55a6617f8894c2e4156bf47d0edb004e8b5948f",
+            "child_digest": "489d9ee0820afc6abdeabc24c5f80424d374064b81448af0480c88af4a2b55a2",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "holdout_updates": 0,
+          "no_replay_new_holdout": 0.875
+        }
+      ]
+    }
+  },
+  "can_promote": false,
+  "report_path": "reports\\taiji_m1_interleaved_rehearsal_20260902.json"
+}
