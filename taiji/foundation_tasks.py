@@ -200,6 +200,7 @@ class DelayedMemoryTask:
         episode: MemoryEpisode,
         *,
         memory_learning_scale: float = 1.0,
+        memory_learning_targets: str = "all",
     ) -> None:
         model.reset_dynamics(episode_id=f"m0-b2-train-{episode.memory_id}")
         model.observe(model.config.boundary_symbol, learn=False, learn_motor=False)
@@ -210,6 +211,7 @@ class DelayedMemoryTask:
             learn=False,
             learn_memory=True,
             memory_learning_scale=memory_learning_scale,
+            memory_learning_targets=memory_learning_targets,
         )
         model.observe(episode.outcome, learn=False, learn_motor=False)
 
@@ -362,11 +364,17 @@ class ContinualMemoryTask:
         config: TaijiConfig,
         *,
         seeds: Sequence[int] = (11, 29, 47),
+        replay_learning_targets: str = "all",
     ) -> None:
         if not seeds or len(set(int(seed) for seed in seeds)) != len(seeds):
             raise ValueError("continual memory needs unique seeds")
         self.config = config
         self.seeds = tuple(int(seed) for seed in seeds)
+        if replay_learning_targets not in {"all", "association", "readout"}:
+            raise ValueError(
+                "continual replay learning targets must be 'all', 'association', or 'readout'"
+            )
+        self.replay_learning_targets = replay_learning_targets
 
     def evaluate(self, corpus: ContinualMemoryCorpus) -> FoundationMeasurement:
         actions = tuple(
@@ -411,6 +419,7 @@ class ContinualMemoryTask:
                     replay,
                     episode,
                     memory_learning_scale=self.config.replay_memory_learning_scale,
+                    memory_learning_targets=self.replay_learning_targets,
                 )
             replay_old_after = DelayedMemoryTask._recall_accuracy(
                 replay, corpus.phase_a_holdout, actions, use_memory=True

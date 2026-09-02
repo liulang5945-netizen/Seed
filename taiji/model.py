@@ -130,6 +130,7 @@ class Taiji:
                     episode_id=pending_experience.episode_id,
                     provenance=pending_experience.provenance,
                     learning_scale=pending_experience.memory_learning_scale,
+                    learning_targets=pending_experience.memory_learning_targets,
                     threshold=previous.memory.threshold,
                 )
                 memory_write_strength = memory_write.strength
@@ -255,6 +256,7 @@ class Taiji:
         learn_memory: bool | None = None,
         provenance: str = "experienced",
         memory_learning_scale: float = 1.0,
+        memory_learning_targets: str = "all",
     ) -> TaijiOutcome:
         """Consume the pending action with a scalar environment outcome."""
 
@@ -268,6 +270,10 @@ class Taiji:
             raise ValueError(f"unsupported episodic provenance: {provenance}")
         if not math.isfinite(float(memory_learning_scale)) or float(memory_learning_scale) <= 0.0:
             raise ValueError("memory_learning_scale must be finite and positive")
+        if memory_learning_targets not in {"all", "association", "readout"}:
+            raise ValueError(
+                "memory_learning_targets must be 'all', 'association', or 'readout'"
+            )
         modulation = reward - self.motor.reward_baseline
         error_norm = 0.0
         if learn:
@@ -288,6 +294,7 @@ class Taiji:
             provenance=provenance,
             learn_memory=(bool(learn) if learn_memory is None else bool(learn_memory)),
             memory_learning_scale=float(memory_learning_scale),
+            memory_learning_targets=memory_learning_targets,
         )
         return TaijiOutcome(
             tick=pending.tick,
@@ -798,6 +805,13 @@ class Taiji:
                 raise ValueError("checkpoint pending experience episode is invalid")
             if experience.provenance not in self.memory.PROVENANCE_KINDS:
                 raise ValueError("checkpoint pending experience provenance is invalid")
+            if experience.memory_learning_targets not in {"all", "association", "readout"}:
+                raise ValueError("checkpoint pending experience learning targets are invalid")
+            if (
+                not math.isfinite(experience.memory_learning_scale)
+                or experience.memory_learning_scale <= 0.0
+            ):
+                raise ValueError("checkpoint pending experience learning scale is invalid")
         self._state = state
         self._rng.set_state(checkpoint["rng_state"].detach().cpu())
 

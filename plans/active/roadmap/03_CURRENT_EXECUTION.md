@@ -267,6 +267,10 @@ B5 合同同步改为 disjoint cue，测量共享容量干扰而不是同一输�
 
 M1-10 的第一轮诊断已完成：固定 action encoder 作为 recall 解码参照的对照，在 disjoint B5 canary 上仍只能把 old recall 从 `0.125` 提到 `0.25`，无法同时保留 phase-B new recall，因此不接入主路径。当前应重构的是共享低维 `readout_receptors → action_readout` 的塑性边界：下一片只实现一个可迁移的局部 readout/consolidation 原型，保留现有 readout 作为 compatibility fallback，并用同一 B5 corpus 做 readout-only、association-only、no-change 消融；没有同时满足 old/new retention 前，不再扩大 meta 维度或重跑 foundation。
 
+M1-10 的 replay ablation 已完成并被 Gate 阻断，报告为 `reports/taiji_m1_b10_replay_ablation_canary_20260902.json`。在相同 disjoint B5 corpus、三个 seed、replay scale `0.5` 下比较了 shared/local action decoder 与 all/association/readout 学习目标：shared/all 是最强候选，但 phase-B new recall 仍被压到 `0/0/0.125`；readout-only 只能部分保留旧能力，association-only 不能恢复新读出，local decoder 也没有带来可晋级收益。因此没有任何组合满足 old holdout、retention 和 new holdout 同时不退化，`can_promote=false`。本轮新增的局部 decoder 已纳入 checkpoint、参数预算、架构契约和旧 checkpoint 兼容路径，但保持 shared decoder 为默认，不把失败原型伪装成主路径。
+
+当前唯一下一步为 **M1-11：受保护的 cue-selective readout consolidation 原型**：在不增加基础模型宽度、不开启 full foundation 的前提下，为记忆 cue 建立可检查的局部 action payload 路由，使 replay 只更新与被重激活 cue 绑定的读出，不覆盖其他 cue 的共享 action evidence；保留 shared/local fallback，加入 cue collision、old/new holdout、repeated-replay、no-change 和 checkpoint round-trip Gate。只有三 seed 的旧能力与新能力都不退化，才允许把该路径接入真实 foundation replay；否则继续停留在 M1 诊断，不进入 M2。
+
 ## 7. M2～M8 的开发日程与外围任务安置
 
 ### M2：世界—行动—语言后训练
