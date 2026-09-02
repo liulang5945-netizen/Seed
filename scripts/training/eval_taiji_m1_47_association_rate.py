@@ -84,11 +84,15 @@ def _geometry(model: Taiji, corpus: Any) -> dict[str, float]:
     }
 
 
-def _condition_record(rate: float, corpus: Any) -> dict[str, Any]:
+def _condition_record(
+    rate: float,
+    corpus: Any,
+    seeds: tuple[int, ...],
+) -> dict[str, Any]:
     started = time.perf_counter()
     actions = _actions(*corpus.phase_a_train, *corpus.phase_b_train)
     records: list[dict[str, Any]] = []
-    for seed in SEEDS:
+    for seed in seeds:
         config = _config_for_rate(seed, rate)
         model = Taiji(config, episode_id=f"m1-47-rate-{rate}-{seed}")
         for episode in corpus.phase_a_train:
@@ -167,9 +171,11 @@ def _condition_passed(condition: dict[str, Any]) -> bool:
     )
 
 
-def run_diagnosis() -> dict[str, Any]:
+def run_diagnosis(*, seeds: tuple[int, ...] = SEEDS) -> dict[str, Any]:
+    if not seeds or len(set(seeds)) != len(seeds):
+        raise ValueError("association-rate review requires unique seeds")
     corpus = _curriculum(phase_a_start=0, phase_b_start=192)
-    conditions = [_condition_record(rate, corpus) for rate in RATES]
+    conditions = [_condition_record(rate, corpus, seeds) for rate in RATES]
     for condition in conditions:
         condition["condition_gate_passed"] = _condition_passed(condition)
     default, candidate = conditions
@@ -181,6 +187,7 @@ def run_diagnosis() -> dict[str, Any]:
         "baseline_rate": RATES[0],
         "candidate_rate": RATES[1],
         "memory_event_component_gains": [1.0] * 6,
+        "seed_cohort": list(seeds),
         "cue_curriculum": "maximally separated byte cues",
         "action_curriculum": "phase-A/phase-B overlap on 48/49",
         "memory_units": _config(SEEDS[0]).memory_units,
@@ -205,9 +212,10 @@ def run_diagnosis() -> dict[str, Any]:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
+    parser.add_argument("--seeds", nargs="+", type=int, default=list(SEEDS))
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
     args = parser.parse_args()
-    result = run_diagnosis()
+    result = run_diagnosis(seeds=tuple(int(seed) for seed in args.seeds))
     result["report_path"] = str(args.report)
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
