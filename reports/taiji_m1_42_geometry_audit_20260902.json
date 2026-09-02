@@ -1,0 +1,275 @@
+{
+  "format": "taiji-native-m1-42-geometry-audit-v1",
+  "version": 1,
+  "status": "diagnostic",
+  "architecture_unchanged": true,
+  "variable_changed": "none; post-phase-A geometry observation only",
+  "cue_curriculum": "maximally separated byte cues",
+  "action_curriculum": "phase-A/phase-B overlap on 48/49",
+  "memory_units": 128,
+  "memory_action_decoder": "shared",
+  "identity_organ_enabled": false,
+  "corpus_digest": "52c31b5475ab86893998b82fa34441e7f9fae765b381eafae8108b588f824d96",
+  "records": [
+    {
+      "seed": 11,
+      "phase_a_checkpoint_digest": "6b9557b9f928873c4f19701856c09e210dcc25927d3df92ec27185a0f61dac5a",
+      "post_a_checkpoint_digest": "852f61b27f296a552f1efe311d4d09690a4f62d056e26793888ed8f8eaee1f9a",
+      "checkpoint_roundtrip_exact": true,
+      "active_parameter_count": 85953,
+      "planned_active_parameter_count": 85953,
+      "parameter_count_matches_plan": true,
+      "phase_a_metrics": {
+        "cue_active_support": {
+          "mean": 36.8125,
+          "min": 29.0,
+          "max": 46.0
+        },
+        "event_active_support": {
+          "mean": 48.84375,
+          "min": 39.0,
+          "max": 59.0
+        },
+        "cue_event_cosine": {
+          "mean": 0.6131272781640291,
+          "min": 0.4552916884422302,
+          "max": 0.759986162185669
+        },
+        "association_completion_ratio": {
+          "mean": 0.6769592596471843,
+          "min": 0.4413110591225359,
+          "max": 0.8881197403042345
+        },
+        "association_error_ratio": {
+          "mean": 0.728277593574989,
+          "min": 0.6107237005512338,
+          "max": 0.9135083459425367
+        },
+        "association_row_capture_ratio": {
+          "mean": 0.2517924967687577,
+          "min": 0.23095792531967163,
+          "max": 0.2785777151584625
+        },
+        "readout_row_capture_ratio": {
+          "mean": 1.0000000018626451,
+          "min": 0.9999998807907104,
+          "max": 1.0000001192092896
+        }
+      },
+      "all_phase_metrics": {
+        "cue_action_cosine": {
+          "mean": -0.004313735706091393,
+          "min": -0.31710392236709595,
+          "max": 0.2117345780134201
+        },
+        "cue_outcome_cosine": {
+          "mean": -0.00036279932919569546,
+          "min": -0.31936943531036377,
+          "max": 0.2238268256187439
+        },
+        "action_outcome_cosine": {
+          "mean": -0.10220609977841377,
+          "min": -0.12509684264659882,
+          "max": -0.07931535691022873
+        },
+        "action_energy_share": {
+          "mean": 0.16666667547542602,
+          "min": 0.1666666567325592,
+          "max": 0.1666666865348816
+        },
+        "outcome_energy_share": {
+          "mean": 0.16666666802484542,
+          "min": 0.1666666567325592,
+          "max": 0.1666666716337204
+        }
+      },
+      "cross_phase": {
+        "cue_cosine_mean": 0.26657724380493164,
+        "cue_cosine_max": 0.8630957007408142,
+        "cue_near_collision_count": 0,
+        "event_cosine_mean": 0.5499336123466492,
+        "event_cosine_max": 0.8787000775337219,
+        "event_near_collision_count": 0
+      },
+      "phase_a_sample_count": 64,
+      "phase_b_sample_count": 64,
+      "holdout_updates": 0,
+      "cpu_seconds": 0.851
+    },
+    {
+      "seed": 29,
+      "phase_a_checkpoint_digest": "c83f14a23ebebf879d8ddd7e8894e07fc85a3234ff9142a41ceffe0727f32674",
+      "post_a_checkpoint_digest": "5382253aaa47c9818245602f7cdadff49d2add6f49f5a2ab7e27a6b93584d539",
+      "checkpoint_roundtrip_exact": true,
+      "active_parameter_count": 85953,
+      "planned_active_parameter_count": 85953,
+      "parameter_count_matches_plan": true,
+      "phase_a_metrics": {
+        "cue_active_support": {
+          "mean": 36.3125,
+          "min": 27.0,
+          "max": 46.0
+        },
+        "event_active_support": {
+          "mean": 53.578125,
+          "min": 45.0,
+          "max": 62.0
+        },
+        "cue_event_cosine": {
+          "mean": 0.5937248994596303,
+          "min": 0.44271475076675415,
+          "max": 0.7709891200065613
+        },
+        "association_completion_ratio": {
+          "mean": 0.675317255069382,
+          "min": 0.3694228485822363,
+          "max": 0.9935449808974253
+        },
+        "association_error_ratio": {
+          "mean": 0.7163293956471359,
+          "min": 0.5411624018696057,
+          "max": 0.854984227240397
+        },
+        "association_row_capture_ratio": {
+          "mean": 0.2529633059166372,
+          "min": 0.23096172511577606,
+          "max": 0.29242271184921265
+        },
+        "readout_row_capture_ratio": {
+          "mean": 0.9999999981373549,
+          "min": 0.9999998807907104,
+          "max": 1.0000001192092896
+        }
+      },
+      "all_phase_metrics": {
+        "cue_action_cosine": {
+          "mean": -0.041148398000586894,
+          "min": -0.27509909868240356,
+          "max": 0.12512458860874176
+        },
+        "cue_outcome_cosine": {
+          "mean": 0.0062061621324573935,
+          "min": -0.1471666842699051,
+          "max": 0.2908079922199249
+        },
+        "action_outcome_cosine": {
+          "mean": -0.031272001564502716,
+          "min": -0.12661945819854736,
+          "max": 0.06407545506954193
+        },
+        "action_energy_share": {
+          "mean": 0.1666666796663776,
+          "min": 0.1666666567325592,
+          "max": 0.16666670143604279
+        },
+        "outcome_energy_share": {
+          "mean": 0.1666666573146358,
+          "min": 0.166666641831398,
+          "max": 0.1666666865348816
+        }
+      },
+      "cross_phase": {
+        "cue_cosine_mean": 0.26483622193336487,
+        "cue_cosine_max": 0.9373153448104858,
+        "cue_near_collision_count": 1,
+        "event_cosine_mean": 0.5487772226333618,
+        "event_cosine_max": 0.8639518022537231,
+        "event_near_collision_count": 0
+      },
+      "phase_a_sample_count": 64,
+      "phase_b_sample_count": 64,
+      "holdout_updates": 0,
+      "cpu_seconds": 0.959
+    },
+    {
+      "seed": 47,
+      "phase_a_checkpoint_digest": "900a9ab5256f60ce272f87298f1ba27000df0a29d8c930c3cf2df1d1dfe75ad9",
+      "post_a_checkpoint_digest": "8d4da0ee46021acde8b2a3e89146f6a2cb7730bd5ee0c1a1b00758fbeabd2a71",
+      "checkpoint_roundtrip_exact": true,
+      "active_parameter_count": 85953,
+      "planned_active_parameter_count": 85953,
+      "parameter_count_matches_plan": true,
+      "phase_a_metrics": {
+        "cue_active_support": {
+          "mean": 35.640625,
+          "min": 25.0,
+          "max": 46.0
+        },
+        "event_active_support": {
+          "mean": 50.015625,
+          "min": 42.0,
+          "max": 58.0
+        },
+        "cue_event_cosine": {
+          "mean": 0.633206008002162,
+          "min": 0.4388241767883301,
+          "max": 0.7833302021026611
+        },
+        "association_completion_ratio": {
+          "mean": 0.6977928667198615,
+          "min": 0.5364544076774598,
+          "max": 1.0519931903891395
+        },
+        "association_error_ratio": {
+          "mean": 0.7116337668138646,
+          "min": 0.5748240769700461,
+          "max": 0.8441508670113564
+        },
+        "association_row_capture_ratio": {
+          "mean": 0.24873067322187126,
+          "min": 0.2234719842672348,
+          "max": 0.2886406183242798
+        },
+        "readout_row_capture_ratio": {
+          "mean": 0.9999999962747097,
+          "min": 0.9999998807907104,
+          "max": 1.0
+        }
+      },
+      "all_phase_metrics": {
+        "cue_action_cosine": {
+          "mean": -0.007429320692608599,
+          "min": -0.3296435475349426,
+          "max": 0.20305468142032623
+        },
+        "cue_outcome_cosine": {
+          "mean": 0.057909970159016666,
+          "min": -0.10022830963134766,
+          "max": 0.22912444174289703
+        },
+        "action_outcome_cosine": {
+          "mean": -0.1351974569261074,
+          "min": -0.29029762744903564,
+          "max": 0.01990271359682083
+        },
+        "action_energy_share": {
+          "mean": 0.16666667093522847,
+          "min": 0.1666666567325592,
+          "max": 0.16666670143604279
+        },
+        "outcome_energy_share": {
+          "mean": 0.16666665580123663,
+          "min": 0.166666641831398,
+          "max": 0.1666666716337204
+        }
+      },
+      "cross_phase": {
+        "cue_cosine_mean": 0.2517733573913574,
+        "cue_cosine_max": 0.877955973148346,
+        "cue_near_collision_count": 0,
+        "event_cosine_mean": 0.5531785488128662,
+        "event_cosine_max": 0.9033733010292053,
+        "event_near_collision_count": 1
+      },
+      "phase_a_sample_count": 64,
+      "phase_b_sample_count": 64,
+      "holdout_updates": 0,
+      "cpu_seconds": 1.002
+    }
+  ],
+  "diagnostic_boundary": {
+    "does_not_promote": true,
+    "interpretation": "Use the recorded support, cosine, association completion and readout capture to choose one next repair; this report is not a B5 capability claim."
+  },
+  "report_path": "reports\\taiji_m1_42_geometry_audit_20260902.json"
+}
