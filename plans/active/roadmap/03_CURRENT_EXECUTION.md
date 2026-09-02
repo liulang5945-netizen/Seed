@@ -255,6 +255,12 @@ M1-7 的第二片已完成：`JointTrainingRun` 与 `scripts/training/train_taij
 
 当前唯一下一步是 **M1-8：用 memory replay 重跑三 seed full-coverage F5**：从三个 F4 `best-holdout.pt` 沿原 lineage 继续，保持 B1/B2/B3/B4 foundation 配置与 byte replay，同时加入 phase-A memory replay（初始 count `64`），重新生成三 seed child、独立 eval-only 和 B5 backward-transfer/no-replay 审计。结果未满足旧 memory 不退化前，不进入 M2，也不切换到 provider、Workbench、Skill/MCP 或客户端外围。
 
+M1-8 的三 seed full-coverage 重跑与独立 eval-only 已完成，训练报告分别为 `reports/taiji_m1_f8_full_memory_replay_seed11_20260902.json`、`reports/taiji_m1_f8_full_memory_replay_seed29_20260902.json`、`reports/taiji_m1_f8_full_memory_replay_seed47_20260902.json`，复评报告使用同名 `_eval_only` 后缀。三组均满足 B1 `1,048,576/131,072/131,072`、B2 `1000/1000/1000`、B3/B4 `1000/500/500`，checkpoint digest 与复评指标逐项一致，`checkpoint_read_only=true`、`holdout_updates=0`、`world_transition_rejections=0`，并真实写入 byte replay 与 `phase=replay-memory` history；但 phase-A old memory 仍分别下降 `-0.140625`、`-0.03125`、`-0.015625`，因此不能晋级。聚合报告为 `reports/taiji_m1_f8_memory_replay_promotion_20260902.json`，状态 `blocked`。
+
+M1-8 的 B5 专项 foundation 审计已完成，报告为 `reports/taiji_m1_b5_memory_foundation_20260902.json`。三 seed 的 no-replay 与 replay 旧能力结果没有产生正的回放因果增益，`replay_causal_gain=0.0`，总体 backward transfer 为 `-0.145`；这说明当前“回放阶段已执行”不等于“旧记忆已被巩固”，不能把新增 episode 的重复写入当成持续学习。当前失败不是 checkpoint 或 evaluator 只读问题，而是 memory consolidation 的训练语义与保持 Gate 尚未对齐。
+
+当前唯一下一步改为 **M1-9：修复真实 memory consolidation 的数据语义与保持机制**：先把 phase-A 的完整可追溯 memory corpus、其 digest 和 replay provenance 绑定到 continuation checkpoint，禁止使用无法证明来源的任意 replay 子集；再以小规模 canary 对比 no-replay、原始 phase-A replay、重复 replay 和稳定性控制，确认 replay 确实提高 old holdout/retention 且不损害 phase-B；通过后才重新跑三 seed foundation、完整 M0 controls 和 B5 Gate。M1-9 未通过前不进入 M2，也不切换到 provider、Workbench、Skill/MCP 或客户端外围。
+
 ## 7. M2～M8 的开发日程与外围任务安置
 
 ### M2：世界—行动—语言后训练
