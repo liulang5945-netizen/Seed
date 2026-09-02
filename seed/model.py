@@ -76,12 +76,14 @@ class Seed:
         learn: bool = True,
         learn_motor: bool | None = None,
         use_memory: bool = True,
+        use_identity: bool | None = None,
     ) -> TaijiStep:
         return self.substrate.observe(
             symbol,
             learn=learn,
             learn_motor=learn_motor,
             use_memory=use_memory,
+            use_identity=use_identity,
         )
 
     def act(
