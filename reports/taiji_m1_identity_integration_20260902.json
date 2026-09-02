@@ -1,0 +1,1118 @@
+{
+  "format": "taiji-native-m1-identity-integration-v1",
+  "version": 1,
+  "status": "diagnostic",
+  "architecture_unchanged": true,
+  "identity_route_isolated": true,
+  "action_intent_execution": false,
+  "diagnostics": {
+    "sample_counts": {
+      "phase_train": 16,
+      "holdout": 8,
+      "retention": 8,
+      "learned_queries": 4,
+      "unseen_queries": 4
+    },
+    "modes": [
+      "shared_only",
+      "identity_route_fallback"
+    ],
+    "route_capacity": 128,
+    "match_threshold": 0.9,
+    "promotable": true,
+    "records": {
+      "shared_only": [
+        {
+          "seed": 11,
+          "mode": "shared_only",
+          "learned": [
+            {
+              "cue": 65,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 50,
+              "action_evidence_norm": 0.06572703272104263,
+              "action_intent": null
+            },
+            {
+              "cue": 66,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 50,
+              "action_evidence_norm": 0.06596744805574417,
+              "action_intent": null
+            },
+            {
+              "cue": 67,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 49,
+              "action_evidence_norm": 0.06587831676006317,
+              "action_intent": null
+            },
+            {
+              "cue": 68,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 50,
+              "action_evidence_norm": 0.06631595641374588,
+              "action_intent": null
+            }
+          ],
+          "unseen": [
+            {
+              "cue": 210,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 50,
+              "action_evidence_norm": 0.06570758670568466,
+              "action_intent": null
+            },
+            {
+              "cue": 211,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 49,
+              "action_evidence_norm": 0.06537173688411713,
+              "action_intent": null
+            },
+            {
+              "cue": 212,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06610122323036194,
+              "action_intent": null
+            },
+            {
+              "cue": 213,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06661243736743927,
+              "action_intent": null
+            }
+          ],
+          "restored_learned": [
+            {
+              "cue": 65,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 50,
+              "action_evidence_norm": 0.06572703272104263,
+              "action_intent": null
+            },
+            {
+              "cue": 66,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 50,
+              "action_evidence_norm": 0.06596744805574417,
+              "action_intent": null
+            },
+            {
+              "cue": 67,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 49,
+              "action_evidence_norm": 0.06587831676006317,
+              "action_intent": null
+            },
+            {
+              "cue": 68,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 50,
+              "action_evidence_norm": 0.06631595641374588,
+              "action_intent": null
+            }
+          ],
+          "restored_unseen": [
+            {
+              "cue": 210,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 50,
+              "action_evidence_norm": 0.06570758670568466,
+              "action_intent": null
+            },
+            {
+              "cue": 211,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 49,
+              "action_evidence_norm": 0.06537173688411713,
+              "action_intent": null
+            },
+            {
+              "cue": 212,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06610122323036194,
+              "action_intent": null
+            },
+            {
+              "cue": 213,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06661243736743927,
+              "action_intent": null
+            }
+          ],
+          "route_digest_unchanged_during_queries": true,
+          "fallback_count": 4,
+          "identity_bound_count": 0,
+          "no_action_intent": true,
+          "checkpoint": {
+            "bundle_digest_matches": true,
+            "restored_outputs_match": true
+          },
+          "holdout_updates": 0
+        },
+        {
+          "seed": 29,
+          "mode": "shared_only",
+          "learned": [
+            {
+              "cue": 65,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 49,
+              "action_evidence_norm": 0.06562510877847672,
+              "action_intent": null
+            },
+            {
+              "cue": 66,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.0654907152056694,
+              "action_intent": null
+            },
+            {
+              "cue": 67,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.0660138726234436,
+              "action_intent": null
+            },
+            {
+              "cue": 68,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 50,
+              "action_evidence_norm": 0.0658993199467659,
+              "action_intent": null
+            }
+          ],
+          "unseen": [
+            {
+              "cue": 210,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 48,
+              "action_evidence_norm": 0.06572727859020233,
+              "action_intent": null
+            },
+            {
+              "cue": 211,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06630595773458481,
+              "action_intent": null
+            },
+            {
+              "cue": 212,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06562687456607819,
+              "action_intent": null
+            },
+            {
+              "cue": 213,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 49,
+              "action_evidence_norm": 0.06613156944513321,
+              "action_intent": null
+            }
+          ],
+          "restored_learned": [
+            {
+              "cue": 65,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 49,
+              "action_evidence_norm": 0.06562510877847672,
+              "action_intent": null
+            },
+            {
+              "cue": 66,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.0654907152056694,
+              "action_intent": null
+            },
+            {
+              "cue": 67,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.0660138726234436,
+              "action_intent": null
+            },
+            {
+              "cue": 68,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 50,
+              "action_evidence_norm": 0.0658993199467659,
+              "action_intent": null
+            }
+          ],
+          "restored_unseen": [
+            {
+              "cue": 210,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 48,
+              "action_evidence_norm": 0.06572727859020233,
+              "action_intent": null
+            },
+            {
+              "cue": 211,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06630595773458481,
+              "action_intent": null
+            },
+            {
+              "cue": 212,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06562687456607819,
+              "action_intent": null
+            },
+            {
+              "cue": 213,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 49,
+              "action_evidence_norm": 0.06613156944513321,
+              "action_intent": null
+            }
+          ],
+          "route_digest_unchanged_during_queries": true,
+          "fallback_count": 4,
+          "identity_bound_count": 0,
+          "no_action_intent": true,
+          "checkpoint": {
+            "bundle_digest_matches": true,
+            "restored_outputs_match": true
+          },
+          "holdout_updates": 0
+        },
+        {
+          "seed": 47,
+          "mode": "shared_only",
+          "learned": [
+            {
+              "cue": 65,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 50,
+              "action_evidence_norm": 0.06703095883131027,
+              "action_intent": null
+            },
+            {
+              "cue": 66,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06651991605758667,
+              "action_intent": null
+            },
+            {
+              "cue": 67,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 48,
+              "action_evidence_norm": 0.0660751610994339,
+              "action_intent": null
+            },
+            {
+              "cue": 68,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06600307673215866,
+              "action_intent": null
+            }
+          ],
+          "unseen": [
+            {
+              "cue": 210,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 48,
+              "action_evidence_norm": 0.06638377159833908,
+              "action_intent": null
+            },
+            {
+              "cue": 211,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06549099832773209,
+              "action_intent": null
+            },
+            {
+              "cue": 212,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06564685702323914,
+              "action_intent": null
+            },
+            {
+              "cue": 213,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06587260216474533,
+              "action_intent": null
+            }
+          ],
+          "restored_learned": [
+            {
+              "cue": 65,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 50,
+              "action_evidence_norm": 0.06703095883131027,
+              "action_intent": null
+            },
+            {
+              "cue": 66,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06651991605758667,
+              "action_intent": null
+            },
+            {
+              "cue": 67,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 48,
+              "action_evidence_norm": 0.0660751610994339,
+              "action_intent": null
+            },
+            {
+              "cue": 68,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06600307673215866,
+              "action_intent": null
+            }
+          ],
+          "restored_unseen": [
+            {
+              "cue": 210,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 48,
+              "action_evidence_norm": 0.06638377159833908,
+              "action_intent": null
+            },
+            {
+              "cue": 211,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06549099832773209,
+              "action_intent": null
+            },
+            {
+              "cue": 212,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06564685702323914,
+              "action_intent": null
+            },
+            {
+              "cue": 213,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06587260216474533,
+              "action_intent": null
+            }
+          ],
+          "route_digest_unchanged_during_queries": true,
+          "fallback_count": 4,
+          "identity_bound_count": 0,
+          "no_action_intent": true,
+          "checkpoint": {
+            "bundle_digest_matches": true,
+            "restored_outputs_match": true
+          },
+          "holdout_updates": 0
+        }
+      ],
+      "identity_route_fallback": [
+        {
+          "seed": 11,
+          "mode": "identity_route_fallback",
+          "learned": [
+            {
+              "cue": 65,
+              "slot_index": 0,
+              "source": "identity-route",
+              "provenance": "identity-route:bound→motor-evidence",
+              "confidence": 1.0,
+              "selected_action": 48,
+              "action_evidence_norm": 0.06578440219163895,
+              "action_intent": null
+            },
+            {
+              "cue": 66,
+              "slot_index": 1,
+              "source": "identity-route",
+              "provenance": "identity-route:bound→motor-evidence",
+              "confidence": 0.9999998807907104,
+              "selected_action": 50,
+              "action_evidence_norm": 0.0659574642777443,
+              "action_intent": null
+            },
+            {
+              "cue": 67,
+              "slot_index": 2,
+              "source": "identity-route",
+              "provenance": "identity-route:bound→motor-evidence",
+              "confidence": 1.0,
+              "selected_action": 48,
+              "action_evidence_norm": 0.0659153088927269,
+              "action_intent": null
+            },
+            {
+              "cue": 68,
+              "slot_index": 3,
+              "source": "identity-route",
+              "provenance": "identity-route:bound→motor-evidence",
+              "confidence": 1.0,
+              "selected_action": 49,
+              "action_evidence_norm": 0.06634048372507095,
+              "action_intent": null
+            }
+          ],
+          "unseen": [
+            {
+              "cue": 210,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 50,
+              "action_evidence_norm": 0.06570758670568466,
+              "action_intent": null
+            },
+            {
+              "cue": 211,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 49,
+              "action_evidence_norm": 0.06537173688411713,
+              "action_intent": null
+            },
+            {
+              "cue": 212,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06610122323036194,
+              "action_intent": null
+            },
+            {
+              "cue": 213,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06661243736743927,
+              "action_intent": null
+            }
+          ],
+          "restored_learned": [
+            {
+              "cue": 65,
+              "slot_index": 0,
+              "source": "identity-route",
+              "provenance": "identity-route:bound→motor-evidence",
+              "confidence": 1.0,
+              "selected_action": 48,
+              "action_evidence_norm": 0.06578440219163895,
+              "action_intent": null
+            },
+            {
+              "cue": 66,
+              "slot_index": 1,
+              "source": "identity-route",
+              "provenance": "identity-route:bound→motor-evidence",
+              "confidence": 0.9999998807907104,
+              "selected_action": 50,
+              "action_evidence_norm": 0.0659574642777443,
+              "action_intent": null
+            },
+            {
+              "cue": 67,
+              "slot_index": 2,
+              "source": "identity-route",
+              "provenance": "identity-route:bound→motor-evidence",
+              "confidence": 1.0,
+              "selected_action": 48,
+              "action_evidence_norm": 0.0659153088927269,
+              "action_intent": null
+            },
+            {
+              "cue": 68,
+              "slot_index": 3,
+              "source": "identity-route",
+              "provenance": "identity-route:bound→motor-evidence",
+              "confidence": 1.0,
+              "selected_action": 49,
+              "action_evidence_norm": 0.06634048372507095,
+              "action_intent": null
+            }
+          ],
+          "restored_unseen": [
+            {
+              "cue": 210,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 50,
+              "action_evidence_norm": 0.06570758670568466,
+              "action_intent": null
+            },
+            {
+              "cue": 211,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 49,
+              "action_evidence_norm": 0.06537173688411713,
+              "action_intent": null
+            },
+            {
+              "cue": 212,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06610122323036194,
+              "action_intent": null
+            },
+            {
+              "cue": 213,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06661243736743927,
+              "action_intent": null
+            }
+          ],
+          "route_digest_unchanged_during_queries": true,
+          "fallback_count": 4,
+          "identity_bound_count": 4,
+          "no_action_intent": true,
+          "checkpoint": {
+            "bundle_digest_matches": true,
+            "restored_outputs_match": true
+          },
+          "holdout_updates": 0
+        },
+        {
+          "seed": 29,
+          "mode": "identity_route_fallback",
+          "learned": [
+            {
+              "cue": 65,
+              "slot_index": 0,
+              "source": "identity-route",
+              "provenance": "identity-route:bound→motor-evidence",
+              "confidence": 0.9999999403953552,
+              "selected_action": 48,
+              "action_evidence_norm": 0.06564981490373611,
+              "action_intent": null
+            },
+            {
+              "cue": 66,
+              "slot_index": 1,
+              "source": "identity-route",
+              "provenance": "identity-route:bound→motor-evidence",
+              "confidence": 1.0,
+              "selected_action": 49,
+              "action_evidence_norm": 0.06557906419038773,
+              "action_intent": null
+            },
+            {
+              "cue": 67,
+              "slot_index": 2,
+              "source": "identity-route",
+              "provenance": "identity-route:bound→motor-evidence",
+              "confidence": 1.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06597907841205597,
+              "action_intent": null
+            },
+            {
+              "cue": 68,
+              "slot_index": 3,
+              "source": "identity-route",
+              "provenance": "identity-route:bound→motor-evidence",
+              "confidence": 1.0,
+              "selected_action": 49,
+              "action_evidence_norm": 0.0658748522400856,
+              "action_intent": null
+            }
+          ],
+          "unseen": [
+            {
+              "cue": 210,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 48,
+              "action_evidence_norm": 0.06572727859020233,
+              "action_intent": null
+            },
+            {
+              "cue": 211,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06630595773458481,
+              "action_intent": null
+            },
+            {
+              "cue": 212,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06562687456607819,
+              "action_intent": null
+            },
+            {
+              "cue": 213,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 49,
+              "action_evidence_norm": 0.06613156944513321,
+              "action_intent": null
+            }
+          ],
+          "restored_learned": [
+            {
+              "cue": 65,
+              "slot_index": 0,
+              "source": "identity-route",
+              "provenance": "identity-route:bound→motor-evidence",
+              "confidence": 0.9999999403953552,
+              "selected_action": 48,
+              "action_evidence_norm": 0.06564981490373611,
+              "action_intent": null
+            },
+            {
+              "cue": 66,
+              "slot_index": 1,
+              "source": "identity-route",
+              "provenance": "identity-route:bound→motor-evidence",
+              "confidence": 1.0,
+              "selected_action": 49,
+              "action_evidence_norm": 0.06557906419038773,
+              "action_intent": null
+            },
+            {
+              "cue": 67,
+              "slot_index": 2,
+              "source": "identity-route",
+              "provenance": "identity-route:bound→motor-evidence",
+              "confidence": 1.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06597907841205597,
+              "action_intent": null
+            },
+            {
+              "cue": 68,
+              "slot_index": 3,
+              "source": "identity-route",
+              "provenance": "identity-route:bound→motor-evidence",
+              "confidence": 1.0,
+              "selected_action": 49,
+              "action_evidence_norm": 0.0658748522400856,
+              "action_intent": null
+            }
+          ],
+          "restored_unseen": [
+            {
+              "cue": 210,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 48,
+              "action_evidence_norm": 0.06572727859020233,
+              "action_intent": null
+            },
+            {
+              "cue": 211,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06630595773458481,
+              "action_intent": null
+            },
+            {
+              "cue": 212,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06562687456607819,
+              "action_intent": null
+            },
+            {
+              "cue": 213,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 49,
+              "action_evidence_norm": 0.06613156944513321,
+              "action_intent": null
+            }
+          ],
+          "route_digest_unchanged_during_queries": true,
+          "fallback_count": 4,
+          "identity_bound_count": 4,
+          "no_action_intent": true,
+          "checkpoint": {
+            "bundle_digest_matches": true,
+            "restored_outputs_match": true
+          },
+          "holdout_updates": 0
+        },
+        {
+          "seed": 47,
+          "mode": "identity_route_fallback",
+          "learned": [
+            {
+              "cue": 65,
+              "slot_index": 0,
+              "source": "identity-route",
+              "provenance": "identity-route:bound→motor-evidence",
+              "confidence": 1.0,
+              "selected_action": 48,
+              "action_evidence_norm": 0.06703490018844604,
+              "action_intent": null
+            },
+            {
+              "cue": 66,
+              "slot_index": 1,
+              "source": "identity-route",
+              "provenance": "identity-route:bound→motor-evidence",
+              "confidence": 1.0000001192092896,
+              "selected_action": 49,
+              "action_evidence_norm": 0.06662703305482864,
+              "action_intent": null
+            },
+            {
+              "cue": 67,
+              "slot_index": 2,
+              "source": "identity-route",
+              "provenance": "identity-route:bound→motor-evidence",
+              "confidence": 1.0000001192092896,
+              "selected_action": 48,
+              "action_evidence_norm": 0.06623326241970062,
+              "action_intent": null
+            },
+            {
+              "cue": 68,
+              "slot_index": 3,
+              "source": "identity-route",
+              "provenance": "identity-route:bound→motor-evidence",
+              "confidence": 0.9999999403953552,
+              "selected_action": 49,
+              "action_evidence_norm": 0.06603915989398956,
+              "action_intent": null
+            }
+          ],
+          "unseen": [
+            {
+              "cue": 210,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 48,
+              "action_evidence_norm": 0.06638377159833908,
+              "action_intent": null
+            },
+            {
+              "cue": 211,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06549099832773209,
+              "action_intent": null
+            },
+            {
+              "cue": 212,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06564685702323914,
+              "action_intent": null
+            },
+            {
+              "cue": 213,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06587260216474533,
+              "action_intent": null
+            }
+          ],
+          "restored_learned": [
+            {
+              "cue": 65,
+              "slot_index": 0,
+              "source": "identity-route",
+              "provenance": "identity-route:bound→motor-evidence",
+              "confidence": 1.0,
+              "selected_action": 48,
+              "action_evidence_norm": 0.06703490018844604,
+              "action_intent": null
+            },
+            {
+              "cue": 66,
+              "slot_index": 1,
+              "source": "identity-route",
+              "provenance": "identity-route:bound→motor-evidence",
+              "confidence": 1.0000001192092896,
+              "selected_action": 49,
+              "action_evidence_norm": 0.06662703305482864,
+              "action_intent": null
+            },
+            {
+              "cue": 67,
+              "slot_index": 2,
+              "source": "identity-route",
+              "provenance": "identity-route:bound→motor-evidence",
+              "confidence": 1.0000001192092896,
+              "selected_action": 48,
+              "action_evidence_norm": 0.06623326241970062,
+              "action_intent": null
+            },
+            {
+              "cue": 68,
+              "slot_index": 3,
+              "source": "identity-route",
+              "provenance": "identity-route:bound→motor-evidence",
+              "confidence": 0.9999999403953552,
+              "selected_action": 49,
+              "action_evidence_norm": 0.06603915989398956,
+              "action_intent": null
+            }
+          ],
+          "restored_unseen": [
+            {
+              "cue": 210,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 48,
+              "action_evidence_norm": 0.06638377159833908,
+              "action_intent": null
+            },
+            {
+              "cue": 211,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06549099832773209,
+              "action_intent": null
+            },
+            {
+              "cue": 212,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06564685702323914,
+              "action_intent": null
+            },
+            {
+              "cue": 213,
+              "slot_index": null,
+              "source": "shared-fallback",
+              "provenance": "identity-route:unbound→shared-fallback",
+              "confidence": 0.0,
+              "selected_action": 51,
+              "action_evidence_norm": 0.06587260216474533,
+              "action_intent": null
+            }
+          ],
+          "route_digest_unchanged_during_queries": true,
+          "fallback_count": 4,
+          "identity_bound_count": 4,
+          "no_action_intent": true,
+          "checkpoint": {
+            "bundle_digest_matches": true,
+            "restored_outputs_match": true
+          },
+          "holdout_updates": 0
+        }
+      ]
+    }
+  },
+  "can_promote": true,
+  "report_path": "reports\\taiji_m1_identity_integration_20260902.json"
+}
