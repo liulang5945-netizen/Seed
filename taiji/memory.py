@@ -399,6 +399,7 @@ class EpisodicField:
         tick: int,
         episode_id: str,
         provenance: str,
+        learning_scale: float = 1.0,
         threshold: torch.Tensor,
     ) -> EpisodicWrite:
         """Bind one real action transition into overlapping local synapses."""
@@ -406,6 +407,9 @@ class EpisodicField:
         reward = float(reward)
         if not math.isfinite(reward):
             raise ValueError("episodic reward must be finite")
+        learning_scale = float(learning_scale)
+        if not math.isfinite(learning_scale) or learning_scale <= 0.0:
+            raise ValueError("episodic learning_scale must be finite and positive")
         cue_pattern = self._cue_pattern(cortical_context, threshold)
         action_drive = self._normalize_drive(
             self.action_encoder.forward(self._one_hot(action_symbol))
@@ -463,7 +467,12 @@ class EpisodicField:
         identity_gate = 1.0 / math.sqrt(
             1.0 + self._episode_write_index / self.config.readout_episode_saturation
         )
-        association_rate = self.config.episodic_learning_rate * strength * identity_gate
+        association_rate = (
+            self.config.episodic_learning_rate
+            * strength
+            * identity_gate
+            * learning_scale
+        )
         for _ in range(int(self.config.episodic_write_repeats)):
             self.association.local_update(
                 event_pattern - self.association.forward(cue_pattern),
@@ -531,7 +540,11 @@ class EpisodicField:
         self._last_event_episode = episode_id
         readout_gate = (1.0 - redundancy) ** 2
         readout_rate = (
-            self.config.episodic_readout_learning_rate * strength * readout_gate * value_gate
+            self.config.episodic_readout_learning_rate
+            * strength
+            * readout_gate
+            * value_gate
+            * learning_scale
         )
         # The cortical readout regresses a high-dimensional value, unlike the
         # softmax readouts whose error is a probability residual bounded by one.
@@ -542,10 +555,18 @@ class EpisodicField:
         # a sub-stable rate for the receptor norm, and extra repeats let the
         # regression converge instead of oscillating.
         cortical_rate = (
-            self.config.cortical_readout_learning_rate * strength * readout_gate * value_gate
+            self.config.cortical_readout_learning_rate
+            * strength
+            * readout_gate
+            * value_gate
+            * learning_scale
         )
         identity_rate = (
-            self.config.episodic_readout_learning_rate * strength * readout_gate * identity_gate
+            self.config.episodic_readout_learning_rate
+            * strength
+            * readout_gate
+            * identity_gate
+            * learning_scale
         )
         cortical_scale = float(self.config.max_membrane_norm)
         # The episodic action projection is value-bearing: the field records

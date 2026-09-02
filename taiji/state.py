@@ -152,6 +152,7 @@ class PendingExperience:
     episode_id: str
     provenance: str
     learn_memory: bool
+    memory_learning_scale: float = 1.0
 
     def clone(self) -> PendingExperience:
         return PendingExperience(
@@ -162,6 +163,7 @@ class PendingExperience:
             episode_id=str(self.episode_id),
             provenance=str(self.provenance),
             learn_memory=bool(self.learn_memory),
+            memory_learning_scale=float(self.memory_learning_scale),
         )
 
     def to_payload(self) -> dict[str, Any]:
@@ -174,6 +176,7 @@ class PendingExperience:
             "episode_id": cloned.episode_id,
             "provenance": cloned.provenance,
             "learn_memory": cloned.learn_memory,
+            "memory_learning_scale": cloned.memory_learning_scale,
         }
 
     @classmethod
@@ -188,6 +191,7 @@ class PendingExperience:
             episode_id=str(payload["episode_id"]),
             provenance=str(payload["provenance"]),
             learn_memory=bool(payload["learn_memory"]),
+            memory_learning_scale=float(payload.get("memory_learning_scale", 1.0)),
         )
 
 

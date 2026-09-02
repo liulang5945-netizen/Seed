@@ -365,6 +365,7 @@ def test_joint_training_starts_an_explicit_continuation_from_child_checkpoint() 
     assert report["parent_checkpoint_digest"] != original_report["child_checkpoint_digest"]
     assert report["replay_dataset_digest"] == dataset.digest
     assert report["replay_memory_digest"]
+    assert report["replay_memory_relation"] == "different-explicit-corpus"
     assert report["metric_interval"] == 100
     assert any(item.get("train_kind") == "replay" for item in report["history"])
     assert any(item.get("train_kind") == "replay-memory" for item in report["history"])
@@ -380,3 +381,4 @@ def test_joint_training_starts_an_explicit_continuation_from_child_checkpoint() 
         replay_memory_corpus=replay_memory_corpus,
     )
     assert restored.evaluate_only()["checkpoint_read_only"] is True
+    assert restored.evaluate_only()["replay_memory_relation"] == "different-explicit-corpus"

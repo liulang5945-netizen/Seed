@@ -129,6 +129,7 @@ class Taiji:
                     tick=pending_experience.tick,
                     episode_id=pending_experience.episode_id,
                     provenance=pending_experience.provenance,
+                    learning_scale=pending_experience.memory_learning_scale,
                     threshold=previous.memory.threshold,
                 )
                 memory_write_strength = memory_write.strength
@@ -253,6 +254,7 @@ class Taiji:
         learn: bool = True,
         learn_memory: bool | None = None,
         provenance: str = "experienced",
+        memory_learning_scale: float = 1.0,
     ) -> TaijiOutcome:
         """Consume the pending action with a scalar environment outcome."""
 
@@ -264,6 +266,8 @@ class Taiji:
             raise ValueError("reward must be finite")
         if provenance not in self.memory.PROVENANCE_KINDS:
             raise ValueError(f"unsupported episodic provenance: {provenance}")
+        if not math.isfinite(float(memory_learning_scale)) or float(memory_learning_scale) <= 0.0:
+            raise ValueError("memory_learning_scale must be finite and positive")
         modulation = reward - self.motor.reward_baseline
         error_norm = 0.0
         if learn:
@@ -283,6 +287,7 @@ class Taiji:
             episode_id=self._state.episode_id,
             provenance=provenance,
             learn_memory=(bool(learn) if learn_memory is None else bool(learn_memory)),
+            memory_learning_scale=float(memory_learning_scale),
         )
         return TaijiOutcome(
             tick=pending.tick,

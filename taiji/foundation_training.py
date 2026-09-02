@@ -1365,12 +1365,22 @@ def _joint_memory_recall(
     return correct / len(corpus.holdout)
 
 
-def _joint_train_memory_episode(model: Taiji, episode: MemoryEpisode) -> None:
+def _joint_train_memory_episode(
+    model: Taiji,
+    episode: MemoryEpisode,
+    *,
+    memory_learning_scale: float = 1.0,
+) -> None:
     model.reset_dynamics(episode_id=f"m1-f4-train-{episode.memory_id}")
     model.observe(model.config.boundary_symbol, learn=False, learn_motor=False, use_memory=False)
     model.observe(episode.cue, learn=False, learn_motor=False, use_memory=False)
     model.act((episode.action,), sample=False)
-    model.settle_action(1.0, learn=False, learn_memory=True)
+    model.settle_action(
+        1.0,
+        learn=False,
+        learn_memory=True,
+        memory_learning_scale=memory_learning_scale,
+    )
     model.observe(episode.outcome, learn=False, learn_motor=False, use_memory=False)
 
 
@@ -1398,6 +1408,7 @@ class JointTrainingRun:
         replay_epochs: int = 1,
         replay_memory_corpus: DelayedMemoryCorpus | None = None,
         replay_memory_epochs: int = 1,
+        replay_memory_learning_scale: float | None = None,
         parent_checkpoint_digest: str | None = None,
         parent_metrics: Mapping[str, float] | None = None,
         code_revision: str | None = None,
@@ -1428,6 +1439,11 @@ class JointTrainingRun:
             raise TypeError("joint memory replay requires DelayedMemoryCorpus")
         if int(replay_memory_epochs) <= 0:
             raise ValueError("joint memory replay epochs must be positive")
+        if replay_memory_learning_scale is not None and (
+            not math.isfinite(float(replay_memory_learning_scale))
+            or float(replay_memory_learning_scale) <= 0.0
+        ):
+            raise ValueError("joint replay memory learning scale must be finite and positive")
         if metric_interval is not None and int(metric_interval) <= 0:
             raise ValueError("joint metric_interval must be positive")
         self.model = model
@@ -1450,6 +1466,11 @@ class JointTrainingRun:
         self.replay_epochs = int(replay_epochs)
         self.replay_memory_corpus = replay_memory_corpus
         self.replay_memory_epochs = int(replay_memory_epochs)
+        self.replay_memory_learning_scale = float(
+            replay_memory_learning_scale
+            if replay_memory_learning_scale is not None
+            else model.config.replay_memory_learning_scale
+        )
         self.code_revision = str(code_revision or _code_revision())
         self.parent_model_payload = deepcopy(model.checkpoint())
         self.parent_world_payload = deepcopy(_world_learner_payload(world_learner))
@@ -1492,6 +1513,18 @@ class JointTrainingRun:
         if self.replay_memory_corpus is not None:
             payload["replay_memory_digest"] = _memory_corpus_digest(self.replay_memory_corpus)
         return content_digest(payload)
+
+    @property
+    def replay_memory_relation(self) -> str | None:
+        """Describe whether memory replay covers the current memory course exactly."""
+
+        if self.replay_memory_corpus is None:
+            return None
+        if _memory_corpus_digest(self.replay_memory_corpus) == _memory_corpus_digest(
+            self.memory_corpus
+        ):
+            return "exact-current-memory-corpus"
+        return "different-explicit-corpus"
 
     @property
     def parent_checkpoint_path(self) -> Path:
@@ -1583,9 +1616,11 @@ class JointTrainingRun:
                 if self.replay_memory_corpus is not None
                 else None
             ),
+            "replay_memory_relation": self.replay_memory_relation,
             "replay_memory_epochs": self.replay_memory_epochs,
             "replay_memory_epoch": self.replay_memory_epoch,
             "replay_memory_cursor": self.replay_memory_cursor,
+            "replay_memory_learning_scale": self.replay_memory_learning_scale,
             "history": list(self.history),
             "best_holdout_score": self.best_holdout_score,
             "code_revision": self.code_revision,
@@ -1749,6 +1784,7 @@ class JointTrainingRun:
                         _joint_train_memory_episode(
                             self.model,
                             self.replay_memory_corpus.train[self.replay_memory_cursor],
+                            memory_learning_scale=self.replay_memory_learning_scale,
                         )
                         self.replay_memory_cursor += 1
                         self.global_step += 1
@@ -1812,9 +1848,11 @@ class JointTrainingRun:
                 if self.replay_memory_corpus is not None
                 else None
             ),
+            "replay_memory_relation": self.replay_memory_relation,
             "replay_memory_epochs": self.replay_memory_epochs,
             "replay_memory_epoch": self.replay_memory_epoch,
             "replay_memory_cursor": self.replay_memory_cursor,
+            "replay_memory_learning_scale": self.replay_memory_learning_scale,
             "epoch": self.epoch,
             "phase": self.phase,
             "sequence_cursor": self.sequence_cursor,
@@ -1854,6 +1892,8 @@ class JointTrainingRun:
             "metrics": metrics,
             "checkpoint_read_only": True,
             "metric_interval": self.metric_interval,
+            "replay_memory_relation": self.replay_memory_relation,
+            "replay_memory_learning_scale": self.replay_memory_learning_scale,
             "code_revision": self.code_revision,
             "continuation_source_checkpoint_digest": self.continuation_source_checkpoint_digest,
         }
@@ -1878,6 +1918,8 @@ class JointTrainingRun:
         replay_epochs: int | None = None,
         replay_memory_corpus: DelayedMemoryCorpus | None = None,
         replay_memory_epochs: int | None = None,
+        replay_memory_learning_scale: float | None = None,
+        memory_confidence_decay: float | None = None,
         code_revision: str | None = None,
     ) -> JointTrainingRun:
         """Start a new course from an existing child with an explicit data extension.
@@ -1909,11 +1951,16 @@ class JointTrainingRun:
         if not isinstance(model_payload, Mapping) or not isinstance(learner_payload, Mapping):
             raise ValueError("joint continuation checkpoint is missing model or world learner")
 
+        model_config_payload = dict(model_payload["config"])
+        if memory_confidence_decay is not None:
+            model_config_payload["memory_confidence_decay"] = float(memory_confidence_decay)
         model = Taiji(
-            TaijiConfig.from_dict(dict(model_payload["config"])),
+            TaijiConfig.from_dict(model_config_payload),
             episode_id="joint-continuation",
         )
-        model.restore(model_payload)
+        model_payload_for_restore = deepcopy(model_payload)
+        model_payload_for_restore["config"] = model_config_payload
+        model.restore(model_payload_for_restore)
         run = cls(
             model,
             _world_learner_from_payload(learner_payload),
@@ -1955,6 +2002,11 @@ class JointTrainingRun:
                 if replay_memory_epochs is not None
                 else payload.get("replay_memory_epochs", 1)
             ),
+            replay_memory_learning_scale=(
+                replay_memory_learning_scale
+                if replay_memory_learning_scale is not None
+                else payload.get("replay_memory_learning_scale")
+            ),
             code_revision=code_revision or _code_revision(),
         )
         run.continuation_source_checkpoint_digest = str(payload["checkpoint_digest"])
@@ -1978,6 +2030,7 @@ class JointTrainingRun:
         replay_epochs: int | None = None,
         replay_memory_corpus: DelayedMemoryCorpus | None = None,
         replay_memory_epochs: int | None = None,
+        replay_memory_learning_scale: float | None = None,
         code_revision: str | None = None,
     ) -> JointTrainingRun:
         checkpoint_path = Path(path)
@@ -2058,6 +2111,11 @@ class JointTrainingRun:
                 replay_memory_epochs
                 if replay_memory_epochs is not None
                 else payload.get("replay_memory_epochs", 1)
+            ),
+            replay_memory_learning_scale=(
+                replay_memory_learning_scale
+                if replay_memory_learning_scale is not None
+                else payload.get("replay_memory_learning_scale")
             ),
             parent_checkpoint_digest=str(payload["parent_checkpoint_digest"]),
             parent_metrics=dict(payload["parent_metrics"]),

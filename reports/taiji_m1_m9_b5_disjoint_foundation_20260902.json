@@ -1,0 +1,39 @@
+{
+  "format": "taiji-native-continual-memory-v1",
+  "version": 1,
+  "profile": "foundation",
+  "corpus_digest": "ebafe3c4dfc155987c74f5d37cbd737a94cce1af0724340813bf0c8e50fa78eb",
+  "measurement": {
+    "ability_id": "b5_continual_learning",
+    "status": "failed",
+    "primary_metric": "backward_transfer",
+    "metric_direction": "higher_is_better",
+    "metric_value": -0.020000000000000018,
+    "baseline_metrics": {
+      "frozen_parent": 0.0,
+      "hash_only": 0.0,
+      "no_replay": -0.745,
+      "random": 0.0,
+      "simple_rule": 0.0
+    },
+    "sample_counts": {
+      "holdout": 400,
+      "phase_a_holdout": 200,
+      "phase_a_retention": 200,
+      "phase_a_train": 1000,
+      "phase_b_holdout": 200,
+      "phase_b_retention": 200,
+      "phase_b_train": 1000,
+      "replay_train": 1000,
+      "retention": 400,
+      "train": 2000
+    },
+    "holdout_updates": 0,
+    "evidence": [
+      "corpus_digest=ebafe3c4dfc155987c74f5d37cbd737a94cce1af0724340813bf0c8e50fa78eb",
+      "seed_metrics=[{\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.615, \"no_replay_new_after\": 0.59, \"no_replay_old_after\": 0.0, \"old_before\": 0.615, \"old_retention_before\": 0.61, \"phase_a_checkpoint_digest\": \"8b5e17663b8e23214bc3e35f18cc55a13c0705ab4c9129bbe305d1dc702f8dc2\", \"replay_backward_transfer\": 0.050000000000000044, \"replay_causal_gain\": 0.665, \"replay_checkpoint_digest\": \"af05d9e1a9587bc730dd8f2416f26ed1e95042436e6d53e144018f8309132eec\", \"replay_new_after\": 0.0, \"replay_old_after\": 0.665, \"replay_retention_after\": 0.66, \"seed\": 11}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.555, \"no_replay_new_after\": 0.56, \"no_replay_old_after\": 0.0, \"old_before\": 0.555, \"old_retention_before\": 0.545, \"phase_a_checkpoint_digest\": \"6b6ffa8806b2e7a2d6d53a3a7b2470cd463bb93f65296be616dba2e0d41057a3\", \"replay_backward_transfer\": 0.0050000000000000044, \"replay_causal_gain\": 0.56, \"replay_checkpoint_digest\": \"f80bd0c885571f2bf3831a1cd4e06a743fdd96863d55b01dd7443da2e1862143\", \"replay_new_after\": 0.0, \"replay_old_after\": 0.56, \"replay_retention_after\": 0.565, \"seed\": 29}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.745, \"no_replay_new_after\": 0.705, \"no_replay_old_after\": 0.0, \"old_before\": 0.745, \"old_retention_before\": 0.73, \"phase_a_checkpoint_digest\": \"f01b6c4f5a831e7cabd179d321240bff541d8ffd83f0a566032b19c07ea7a77c\", \"replay_backward_transfer\": -0.020000000000000018, \"replay_causal_gain\": 0.725, \"replay_checkpoint_digest\": \"79e46a97c8409670fa74e060bd4d7e65fb9b5042f11d613f93e562bf9ca0fa50\", \"replay_new_after\": 0.0, \"replay_old_after\": 0.725, \"replay_retention_after\": 0.725, \"seed\": 47}]",
+      "phase_a_then_phase_b_with_no_replay_counterfactual_then_phase_a_replay=true"
+    ]
+  },
+  "report_path": "reports\\taiji_m1_m9_b5_disjoint_foundation_20260902.json"
+}

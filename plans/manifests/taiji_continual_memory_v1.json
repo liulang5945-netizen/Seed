@@ -5,7 +5,7 @@
   "ability_id": "b5_continual_learning",
   "phases": {
     "phase_a": "old memory episodes written before the task switch",
-    "phase_b": "same-cue contradictory interference followed by novel-cue control episodes",
+    "phase_b": "disjoint-cue interference over shared capacity with a deterministic new-skill control",
     "replay": "phase-A train episodes replayed after phase B"
   },
   "minimum_counts": {
