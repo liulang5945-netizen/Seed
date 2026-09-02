@@ -103,6 +103,7 @@ def test_learning_is_local_masked_and_has_no_autograd_parameters() -> None:
         model.memory.association,
         model.memory.action_readout,
         model.memory.local_action_readout,
+        model.memory.replay_action_readout,
         model.memory.outcome_readout,
         model.memory.reward_readout,
         model.memory.familiarity_readout,
@@ -145,6 +146,48 @@ def test_cue_selective_action_decoder_round_trips_and_uses_native_config() -> No
     )
 
 
+def test_dual_action_decoder_round_trips_replay_readout() -> None:
+    config = TaijiConfig(**{**_config().to_dict(), "memory_action_decoder": "dual"})
+    model = Taiji(config)
+    restored = Taiji.from_checkpoint(model.checkpoint())
+
+    assert restored.config.memory_action_decoder == "dual"
+    assert restored.parameter_count() == config.planned_active_parameter_count
+    assert torch.equal(
+        model.memory.replay_action_readout.pre_index,
+        restored.memory.replay_action_readout.pre_index,
+    )
+
+
+def test_dual_replayed_write_isolated_from_fast_action_readout() -> None:
+    config = TaijiConfig(**{**_config().to_dict(), "memory_action_decoder": "dual"})
+    model = Taiji(config)
+
+    model.reset_dynamics(episode_id="dual-experienced")
+    model.observe(config.boundary_symbol, learn=False, learn_motor=False)
+    model.observe(65, learn=False, learn_motor=False)
+    model.act((48,), sample=False)
+    model.settle_action(1.0, learn=False, learn_memory=True)
+    model.observe(43, learn=False, learn_motor=False)
+    fast_before = model.memory.action_readout.edge_weight.clone()
+    slow_before = model.memory.replay_action_readout.edge_weight.clone()
+
+    model.reset_dynamics(episode_id="dual-replayed")
+    model.observe(config.boundary_symbol, learn=False, learn_motor=False)
+    model.observe(65, learn=False, learn_motor=False)
+    model.act((48,), sample=False)
+    model.settle_action(
+        1.0,
+        learn=False,
+        learn_memory=True,
+        provenance="replayed",
+    )
+    model.observe(43, learn=False, learn_motor=False)
+
+    assert torch.equal(fast_before, model.memory.action_readout.edge_weight)
+    assert not torch.equal(slow_before, model.memory.replay_action_readout.edge_weight)
+
+
 def test_motor_receptors_cover_every_cortical_coordinate_once() -> None:
     model = Taiji(_config())
     receptors = model.motor.receptors
@@ -180,6 +223,7 @@ def test_consolidation_rng_does_not_shift_existing_organs() -> None:
         left.memory.association,
         left.memory.action_readout,
         left.memory.local_action_readout,
+        left.memory.replay_action_readout,
         left.memory.outcome_readout,
     )
     right_existing = (
@@ -190,6 +234,7 @@ def test_consolidation_rng_does_not_shift_existing_organs() -> None:
         right.memory.association,
         right.memory.action_readout,
         right.memory.local_action_readout,
+        right.memory.replay_action_readout,
         right.memory.outcome_readout,
     )
     for original, changed in zip(left_existing, right_existing, strict=False):

@@ -177,6 +177,7 @@ class EpisodicField:
             device=self.device,
         )
         self.local_action_readout.edge_weight.zero_()
+        self.replay_action_readout = self._local_readout(alphabet, units, generator)
         self.outcome_readout = self._blank_readout(alphabet, generator)
         self.reward_readout = self._blank_readout(1, generator)
         self.familiarity_readout = self._blank_readout(1, generator)
@@ -199,6 +200,24 @@ class EpisodicField:
                 self.config.memory_readout_fan_in,
                 self.config.memory_meta_dim,
             ),
+            generator=generator,
+            init_scale=self.config.weight_init_scale,
+            max_weight_norm=self.config.max_weight_norm,
+            device=self.device,
+        )
+        readout.edge_weight.zero_()
+        return readout
+
+    def _local_readout(
+        self,
+        out_features: int,
+        in_features: int,
+        generator: torch.Generator,
+    ) -> SparseSynapses:
+        readout = SparseSynapses(
+            out_features,
+            in_features,
+            min(self.config.memory_readout_fan_in, in_features),
             generator=generator,
             init_scale=self.config.weight_init_scale,
             max_weight_norm=self.config.max_weight_norm,
@@ -336,15 +355,25 @@ class EpisodicField:
         if long_term:
             recurrent_support = self.association.forward(activity)
             context = self.readout_receptors.forward(activity)
-            action_evidence = (
-                self.local_action_readout.forward(
-                    cue_pattern
-                    if self.config.memory_action_decoder == "cue_selective"
-                    else activity
+            if self.config.memory_action_decoder == "dual":
+                fast_evidence = self.action_readout.forward(context)
+                slow_evidence = self.replay_action_readout.forward(cue_pattern)
+                edge_activity = cue_pattern[self.replay_action_readout.pre_index]
+                support = float((edge_activity.abs() > 1e-8).to(torch.float32).mean().item())
+                support_gate = math.sqrt(max(0.0, min(1.0, support)))
+                action_evidence = fast_evidence + (
+                    float(self.config.memory_replay_read_gain) * support_gate * slow_evidence
                 )
-                if self.config.memory_action_decoder in {"local", "cue_selective"}
-                else self.action_readout.forward(context)
-            )
+            else:
+                action_evidence = (
+                    self.local_action_readout.forward(
+                        cue_pattern
+                        if self.config.memory_action_decoder == "cue_selective"
+                        else activity
+                    )
+                    if self.config.memory_action_decoder in {"local", "cue_selective"}
+                    else self.action_readout.forward(context)
+                )
             outcome_evidence = self.outcome_readout.forward(context)
             time_code = self.time_readout.forward(context)
             episode_code = self.episode_readout.forward(context)
@@ -622,7 +651,10 @@ class EpisodicField:
             for _ in range(int(self.config.episodic_write_repeats)):
                 action_policy = torch.softmax(
                     (
-                        self.local_action_readout.forward(
+                        self.replay_action_readout.forward(cue_pattern)
+                        if self.config.memory_action_decoder == "dual"
+                        and provenance == "replayed"
+                        else self.local_action_readout.forward(
                             cue_pattern
                             if self.config.memory_action_decoder == "cue_selective"
                             else event_pattern
@@ -633,7 +665,14 @@ class EpisodicField:
                     dim=0,
                 )
                 action_error = bounded_reward * (action_target - action_policy)
-                if self.config.memory_action_decoder in {"local", "cue_selective"}:
+                if self.config.memory_action_decoder == "dual" and provenance == "replayed":
+                    self.replay_action_readout.local_update(
+                        action_error,
+                        cue_pattern,
+                        learning_rate=readout_rate,
+                        weight_decay=self.config.synapse_decay,
+                    )
+                elif self.config.memory_action_decoder in {"local", "cue_selective"}:
                     self.local_action_readout.local_update(
                         action_error,
                         cue_pattern
@@ -884,6 +923,7 @@ class EpisodicField:
             self.association.edge_weight,
             self.action_readout.edge_weight,
             self.local_action_readout.edge_weight,
+            self.replay_action_readout.edge_weight,
             self.outcome_readout.edge_weight,
             self.reward_readout.edge_weight,
             self.familiarity_readout.edge_weight,
@@ -900,6 +940,7 @@ class EpisodicField:
                 self.association,
                 self.action_readout,
                 self.local_action_readout,
+                self.replay_action_readout,
                 self.outcome_readout,
                 self.reward_readout,
                 self.familiarity_readout,
@@ -917,6 +958,7 @@ class EpisodicField:
                 self.association,
                 self.action_readout,
                 self.local_action_readout,
+                self.replay_action_readout,
                 self.outcome_readout,
                 self.reward_readout,
                 self.familiarity_readout,
@@ -940,6 +982,7 @@ class EpisodicField:
             "readout_receptors": self.readout_receptors.to_payload(),
             "action_readout": self.action_readout.to_payload(),
             "local_action_readout": self.local_action_readout.to_payload(),
+            "replay_action_readout": self.replay_action_readout.to_payload(),
             "outcome_readout": self.outcome_readout.to_payload(),
             "reward_readout": self.reward_readout.to_payload(),
             "familiarity_readout": self.familiarity_readout.to_payload(),
@@ -969,6 +1012,8 @@ class EpisodicField:
         self.action_readout.load_payload(payload["action_readout"])
         if "local_action_readout" in payload:
             self.local_action_readout.load_payload(payload["local_action_readout"])
+        if "replay_action_readout" in payload:
+            self.replay_action_readout.load_payload(payload["replay_action_readout"])
         self.outcome_readout.load_payload(payload["outcome_readout"])
         self.reward_readout.load_payload(payload["reward_readout"])
         self.familiarity_readout.load_payload(payload["familiarity_readout"])

@@ -1371,6 +1371,7 @@ def _joint_train_memory_episode(
     *,
     memory_learning_scale: float = 1.0,
     memory_learning_targets: str = "all",
+    provenance: str = "experienced",
 ) -> None:
     model.reset_dynamics(episode_id=f"m1-f4-train-{episode.memory_id}")
     model.observe(model.config.boundary_symbol, learn=False, learn_motor=False, use_memory=False)
@@ -1380,6 +1381,7 @@ def _joint_train_memory_episode(
         1.0,
         learn=False,
         learn_memory=True,
+        provenance=provenance,
         memory_learning_scale=memory_learning_scale,
         memory_learning_targets=memory_learning_targets,
     )
@@ -1793,6 +1795,7 @@ class JointTrainingRun:
                         _joint_train_memory_episode(
                             self.model,
                             self.replay_memory_corpus.train[self.replay_memory_cursor],
+                            provenance="replayed",
                             memory_learning_scale=self.replay_memory_learning_scale,
                             memory_learning_targets=self.replay_memory_learning_targets,
                         )
