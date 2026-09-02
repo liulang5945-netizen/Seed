@@ -10,6 +10,8 @@ import torch
 
 from .config import TaijiConfig
 from .fabric import TaijiFabric
+from .identity_organ import CueIdentityOrgan, IdentityRecall
+from .internalization import content_digest
 from .memory import EpisodicField
 from .organs import ByteMotor, ByteSensor
 from .state import (
@@ -51,6 +53,11 @@ class Taiji:
         self._memory_rng = torch.Generator(device="cpu")
         self._memory_rng.set_state(self._rng.get_state().clone())
         self.memory = EpisodicField(self.config, generator=self._memory_rng, device=self.device)
+        self.identity_organ = (
+            CueIdentityOrgan(self.config, generator=self._rng, device=self.device)
+            if self.config.identity_organ_enabled
+            else None
+        )
         # Lifetime development ticks survive episode boundaries: state.tick
         # restarts at every reset_dynamics, so it cannot carry the replay
         # maturity gate -- an experienced text resets it to tens of ticks and
@@ -134,6 +141,11 @@ class Taiji:
                     threshold=previous.memory.threshold,
                 )
                 memory_write_strength = memory_write.strength
+                if self.identity_organ is not None:
+                    self.identity_organ.learn(
+                        pending_experience.cortical_context,
+                        pending_experience.action_symbol,
+                    )
 
         prior_prediction: int | None = None
         prior_probability: float | None = None
@@ -156,6 +168,18 @@ class Taiji:
             episodic_feedback=previous.memory.cortical_feedback,
         )
         cortical_state = self.fabric.cortical_context(regions)
+        identity_recall: IdentityRecall | None = None
+        identity_evidence: torch.Tensor | None = None
+        if self.identity_organ is not None:
+            identity_recall = self.identity_organ.recall(
+                cortical_state,
+                enabled=use_memory,
+            )
+            if identity_recall.used:
+                identity_evidence = (
+                    float(self.config.identity_organ_evidence_gain)
+                    * identity_recall.action_evidence
+                )
         memory_state, memory_recall = self.memory.recall(
             cortical_state,
             previous.memory,
@@ -168,6 +192,8 @@ class Taiji:
         episodic_evidence = cortical_prediction_evidence + (
             self.config.memory_read_gain * memory_recall.confidence * memory_recall.action_evidence
         )
+        if identity_evidence is not None:
+            episodic_evidence = episodic_evidence + identity_evidence
         probabilities = self.motor.probabilities(
             context,
             episodic_evidence=episodic_evidence,
@@ -197,6 +223,7 @@ class Taiji:
             local_error_norms=error_norms,
             memory_recall=memory_recall,
             memory_write_strength=float(memory_write_strength),
+            identity_recall=identity_recall,
         )
 
     @torch.no_grad()
@@ -719,12 +746,15 @@ class Taiji:
         return bytes(generated)
 
     def parameter_tensors(self) -> tuple[torch.Tensor, ...]:
-        return (
+        tensors = (
             *self.fabric.parameter_tensors(),
             self.motor.synapses.edge_weight,
             self.motor.bias,
             *self.memory.parameter_tensors(),
         )
+        if self.identity_organ is not None:
+            tensors += self.identity_organ.parameter_tensors()
+        return tensors
 
     def parameter_count(self, *, active_only: bool = True) -> int:
         active = (
@@ -733,6 +763,8 @@ class Taiji:
             + self.motor.bias.numel()
             + self.memory.active_edge_count()
         )
+        if self.identity_organ is not None:
+            active += self.identity_organ.parameter_count
         if active_only:
             return active
         return active
@@ -740,14 +772,18 @@ class Taiji:
     def dense_equivalent_parameter_count(self) -> int:
         """Return the learned scalar count a dense implementation would store."""
 
-        return (
+        count = (
             self.fabric.dense_equivalent_edge_count()
             + self.motor.synapses.dense_equivalent_count
             + self.motor.bias.numel()
             + self.memory.dense_equivalent_edge_count()
         )
+        if self.identity_organ is not None:
+            count += self.identity_organ.capacity * self.identity_organ.pattern_dim
+            count += self.identity_organ.action_synapses.dense_equivalent_count
+        return count
 
-    def checkpoint(self) -> dict[str, Any]:
+    def _checkpoint_core(self) -> dict[str, Any]:
         return {
             "format": self.CHECKPOINT_FORMAT,
             "config": self.config.to_dict(),
@@ -756,6 +792,20 @@ class Taiji:
             "memory": self.memory.to_payload(),
             "state": self._state.to_payload(),
             "rng_state": self._rng.get_state().clone(),
+        }
+
+    def checkpoint(self) -> dict[str, Any]:
+        core = self._checkpoint_core()
+        if self.identity_organ is None:
+            # Keep the default checkpoint byte-for-byte compatible with the
+            # existing native v8 payload.  The feature gate is represented by
+            # config only until the optional organ is actually enabled.
+            return core
+        return {
+            **core,
+            "identity_organ": self.identity_organ.to_payload(
+                parent_checkpoint_digest=content_digest(core),
+            ),
         }
 
     def restore(self, checkpoint: Mapping[str, Any]) -> None:
@@ -767,6 +817,22 @@ class Taiji:
         self.fabric.load_payload(checkpoint["fabric"])
         self.motor.load_payload(checkpoint["motor"])
         self.memory.load_payload(checkpoint["memory"])
+        identity_payload = checkpoint.get("identity_organ")
+        if self.identity_organ is None:
+            if identity_payload is not None:
+                raise ValueError("checkpoint contains an enabled identity organ")
+        else:
+            if not isinstance(identity_payload, Mapping):
+                raise ValueError("enabled identity organ checkpoint payload is missing")
+            lineage = identity_payload.get("lineage")
+            expected_parent_digest = content_digest(
+                {key: checkpoint[key] for key in self._checkpoint_core_keys()}
+            )
+            if not isinstance(lineage, Mapping) or str(
+                lineage.get("parent_checkpoint_digest", "")
+            ) != expected_parent_digest:
+                raise ValueError("identity organ checkpoint lineage does not match Taiji core")
+            self.identity_organ.load_payload(identity_payload)
         state = TaijiState.from_payload(checkpoint["state"], device=self.device)
         if state.version != self.STATE_VERSION:
             raise ValueError("unsupported Taiji state version")
@@ -814,6 +880,18 @@ class Taiji:
                 raise ValueError("checkpoint pending experience learning scale is invalid")
         self._state = state
         self._rng.set_state(checkpoint["rng_state"].detach().cpu())
+
+    @staticmethod
+    def _checkpoint_core_keys() -> tuple[str, ...]:
+        return (
+            "format",
+            "config",
+            "fabric",
+            "motor",
+            "memory",
+            "state",
+            "rng_state",
+        )
 
     @classmethod
     def from_checkpoint(

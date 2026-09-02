@@ -8,6 +8,8 @@ from typing import Any
 
 import torch
 
+from .identity_organ import IdentityRecall
+
 
 @dataclass
 class RegionState:
@@ -287,6 +289,7 @@ class TaijiStep:
     local_error_norms: tuple[float, ...]
     memory_recall: MemoryRecall
     memory_write_strength: float
+    identity_recall: IdentityRecall | None = None
 
 
 @dataclass(frozen=True, eq=False)

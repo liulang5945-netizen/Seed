@@ -29,6 +29,7 @@ class CapacityPolicy:
     memory_readout_fan_in_ratio: float = 0.375
     memory_time_ratio: float = 0.0625
     memory_episode_ratio: float = 0.125
+    identity_capacity_ratio: float = 1.0
     lateral_fan_in_ratio: float = 0.125
     alignment: int = 8
 
@@ -44,6 +45,7 @@ class CapacityPolicy:
             "memory_readout_fan_in_ratio",
             "memory_time_ratio",
             "memory_episode_ratio",
+            "identity_capacity_ratio",
             "lateral_fan_in_ratio",
         ):
             if float(getattr(self, name)) <= 0.0:
@@ -71,6 +73,7 @@ class CapacityPolicy:
             memory_readout_fan_in_ratio=float(config.memory_readout_fan_in) / width,
             memory_time_ratio=float(config.memory_time_dim) / width,
             memory_episode_ratio=float(config.memory_episode_dim) / width,
+            identity_capacity_ratio=float(config.identity_organ_capacity) / width,
             lateral_fan_in_ratio=float(config.lateral_fan_in) / width,
             alignment=int(alignment),
         )
@@ -88,6 +91,7 @@ class CapacityPolicy:
         # loadable while allowing new searches to control those dimensions.
         values.setdefault("memory_time_ratio", cls.memory_time_ratio)
         values.setdefault("memory_episode_ratio", cls.memory_episode_ratio)
+        values.setdefault("identity_capacity_ratio", cls.identity_capacity_ratio)
         return cls(**values)
 
 
@@ -162,6 +166,19 @@ class TaijiConfig:
     memory_time_dim: int = 8
     memory_episode_dim: int = 16
     memory_action_decoder: str = "shared"
+    # The identity organ is an explicitly disabled optional organ.  Keeping
+    # its structural budget in the core config makes growth and checkpoint
+    # lineage inspectable without changing the default native path.
+    identity_organ_enabled: bool = False
+    identity_organ_capacity: int = 128
+    identity_organ_match_threshold: float = 0.90
+    identity_organ_update_rate: float = 0.10
+    identity_organ_learning_rate: float = 0.50
+    identity_organ_learning_repeats: int = 1
+    # Identity evidence must be strong enough to remain causal when the
+    # shared episodic decoder is also active; it is still additive evidence,
+    # never a second final-action owner.
+    identity_organ_evidence_gain: float = 16.00
 
     membrane_decay: float = 0.65
     trace_decay: float = 0.82
@@ -310,6 +327,14 @@ class TaijiConfig:
             raise ValueError(
                 "memory_action_decoder must be 'shared', 'local', 'cue_selective', or 'dual'"
             )
+        if self.identity_organ_capacity <= 0:
+            raise ValueError("identity_organ_capacity must be positive")
+        if not 0.0 < self.identity_organ_match_threshold <= 1.0:
+            raise ValueError("identity_organ_match_threshold must be in (0, 1]")
+        if not 0.0 < self.identity_organ_update_rate <= 1.0:
+            raise ValueError("identity_organ_update_rate must be in (0, 1]")
+        if self.identity_organ_learning_repeats <= 0:
+            raise ValueError("identity_organ_learning_repeats must be positive")
         for name in (
             "membrane_decay",
             "trace_decay",
@@ -351,6 +376,8 @@ class TaijiConfig:
             "replay_learning_scale",
             "replay_memory_learning_scale",
             "consolidation_read_gain",
+            "identity_organ_learning_rate",
+            "identity_organ_evidence_gain",
         ):
             if float(getattr(self, name)) <= 0.0:
                 raise ValueError(f"{name} must be positive")
@@ -481,6 +508,11 @@ class TaijiConfig:
             memory_meta_dim=base.memory_meta_dim * scale,
             memory_time_dim=base.memory_time_dim * scale,
             memory_episode_dim=base.memory_episode_dim * scale,
+            identity_organ_capacity=(
+                base.identity_organ_capacity * scale
+                if base.identity_organ_enabled
+                else base.identity_organ_capacity
+            ),
             perception=base.perception,
             seed=seed,
         )
@@ -569,6 +601,14 @@ class TaijiConfig:
                         primary_width * capacity.memory_episode_ratio,
                         minimum=1,
                     ),
+                    "identity_organ_capacity": max(
+                        1,
+                        int(
+                            round(
+                                primary_width * capacity.identity_capacity_ratio
+                            )
+                        ),
+                    ),
                     "lateral_fan_in": max(
                         1,
                         int(round(primary_width * capacity.lateral_fan_in_ratio)),
@@ -636,7 +676,11 @@ class TaijiConfig:
         # rest of the topology or checkpoint shape.
         memory += self.alphabet_size * min(self.memory_readout_fan_in, self.memory_units)
         memory += self.alphabet_size * min(self.memory_readout_fan_in, self.memory_units)
-        return int(fabric + motor + memory)
+        identity = 0
+        if self.identity_organ_enabled:
+            identity = self.identity_organ_capacity * self.cortical_context_dim
+            identity += self.identity_organ_capacity * self.alphabet_size
+        return int(fabric + motor + memory + identity)
 
     @property
     def cortical_context_dim(self) -> int:

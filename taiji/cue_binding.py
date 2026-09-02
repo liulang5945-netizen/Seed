@@ -7,8 +7,6 @@ from typing import Any
 
 import torch
 
-from .sparse import bound_norm
-
 
 @dataclass(frozen=True)
 class CueBindingResult:
@@ -69,13 +67,20 @@ class CueBindingBank:
         value = pattern.to(self.device, dtype=torch.float32)
         if float(value.norm().item()) <= 1e-8:
             raise ValueError("cue binding pattern cannot be empty")
-        return bound_norm(value, 1.0)
+        return value / value.norm().clamp_min(1e-8)
 
     def route(self, pattern: torch.Tensor, *, learn: bool) -> CueBindingResult:
         """Match or allocate one assembly; reads do not mutate any state."""
 
         normalized = self._normalize(pattern)
         occupied_indices = torch.nonzero(self.occupied, as_tuple=False).flatten()
+        if not occupied_indices.numel() and not learn:
+            return CueBindingResult(
+                slot_index=None,
+                similarity=0.0,
+                allocated=False,
+                replaced=False,
+            )
         if occupied_indices.numel():
             scores = torch.full((self.capacity,), float("-inf"), device=self.device)
             scores[occupied_indices] = self.prototypes[occupied_indices] @ normalized
@@ -87,7 +92,7 @@ class CueBindingBank:
                         (1.0 - self.update_rate) * self.prototypes[best_index]
                         + self.update_rate * normalized
                     )
-                    self.prototypes[best_index] = bound_norm(blended, 1.0)
+                    self.prototypes[best_index] = self._normalize(blended)
                     self.visits[best_index] += 1
                     self.match_count += 1
                 return CueBindingResult(
