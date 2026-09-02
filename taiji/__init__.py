@@ -113,6 +113,7 @@ from .cross_region_learning import (
     CrossRegionLearningDynamics,
     CrossRegionRouteState,
 )
+from .cue_binding import CueBindingBank, CueBindingResult
 from .environment import EnvironmentOutcome, TaijiEnvironment, TaijiToolEnvironment
 from .episodic_memory import (
     EPISODIC_MEMORY_CHECKPOINT_FORMAT,
@@ -738,6 +739,8 @@ __all__ = [
     "ExecutiveDecision",
     "ExecutiveTrainingExample",
     "EpisodicField",
+    "CueBindingBank",
+    "CueBindingResult",
     "EpisodicReplay",
     "EpisodicWrite",
     "ContentPlan",

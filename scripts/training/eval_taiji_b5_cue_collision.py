@@ -15,7 +15,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from scripts.training.eval_taiji_b5_memory import build_corpus  # noqa: E402
 from scripts.training.train_taiji_memory import _memory_config  # noqa: E402
-from taiji import Taiji, TaijiConfig  # noqa: E402
+from taiji import CueBindingBank, Taiji, TaijiConfig  # noqa: E402
 from taiji.sparse import SparseSynapses, bound_norm  # noqa: E402
 
 FORMAT = "taiji-native-b5-cue-collision-v1"
@@ -120,6 +120,39 @@ def _seed_record(seed: int, train_count: int, holdout_count: int) -> dict[str, o
         )
         for query in corpus.phase_b_holdout
     ]
+    binding = CueBindingBank(
+        config.memory_units,
+        config.memory_units,
+        match_threshold=0.85,
+        update_rate=0.10,
+        device=model.device,
+    )
+    phase_a_slots = {
+        cue: binding.route(pattern, learn=True).slot_index
+        for cue, pattern in phase_a_patterns.items()
+    }
+    phase_b_slots = {
+        cue: binding.route(pattern, learn=True).slot_index
+        for cue, pattern in phase_b_patterns.items()
+    }
+    restored_binding = CueBindingBank(
+        config.memory_units,
+        config.memory_units,
+        match_threshold=0.85,
+        update_rate=0.10,
+        device=model.device,
+    )
+    restored_binding.load_payload(binding.to_payload())
+    query_slot_mismatches = 0
+    for query in (*corpus.phase_a_holdout, *corpus.phase_b_holdout):
+        routed = restored_binding.route(
+            _query_pattern(model, query.cue, query.query_id),
+            learn=False,
+        )
+        expected_slot = phase_a_slots.get(query.cue, phase_b_slots.get(query.cue))
+        query_slot_mismatches += int(routed.slot_index != expected_slot)
+    occupied_slots = set(slot for slot in (*phase_a_slots.values(), *phase_b_slots.values()) if slot is not None)
+    cross_phase_collisions = len(set(phase_a_slots.values()) & set(phase_b_slots.values()))
     binding_generator = torch.Generator(device="cpu")
     binding_generator.manual_seed(int(seed) + 100_003)
     binding_projection = SparseSynapses(
@@ -207,6 +240,19 @@ def _seed_record(seed: int, train_count: int, holdout_count: int) -> dict[str, o
                 )
                 / (len(phase_a_binding) * len(phase_b_binding)),
             },
+        },
+        "slot_binding": {
+            "capacity": binding.capacity,
+            "match_threshold": binding.match_threshold,
+            "occupied_count": binding.occupied_count,
+            "occupied_slot_count_from_corpus": len(occupied_slots),
+            "phase_a_slots": phase_a_slots,
+            "phase_b_slots": phase_b_slots,
+            "cross_phase_collisions": cross_phase_collisions,
+            "query_slot_mismatches_after_checkpoint_roundtrip": query_slot_mismatches,
+            "allocation_count": binding.allocation_count,
+            "match_count": binding.match_count,
+            "replacement_count": binding.replacement_count,
         },
         "action_support": action_support,
     }

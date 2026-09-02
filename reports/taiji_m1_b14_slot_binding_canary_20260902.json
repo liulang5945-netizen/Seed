@@ -1,0 +1,330 @@
+{
+  "format": "taiji-native-b5-cue-collision-v1",
+  "version": 1,
+  "status": "diagnostic",
+  "can_promote": false,
+  "decoder": "cue_selective",
+  "train_count": 16,
+  "holdout_count": 8,
+  "records": [
+    {
+      "seed": 11,
+      "phase_a_pairwise_cosine": {
+        "max": 0.8142682092298368,
+        "mean": 0.29426657351524155
+      },
+      "phase_b_pairwise_cosine": {
+        "max": 0.6448915077585562,
+        "mean": 0.31632421482978007
+      },
+      "cross_phase_pairwise_cosine": {
+        "max": 0.8124128474340645,
+        "mean": 0.3176886146266863
+      },
+      "write_to_query_cosine": {
+        "phase_a_min": 0.9770728106146588,
+        "phase_a_mean": 0.9827045603745238,
+        "phase_b_min": 0.9722982577587073,
+        "phase_b_mean": 0.9926336167242213
+      },
+      "competitive_binding": {
+        "units": 128,
+        "top_k": 15,
+        "phase_a_pairwise_cosine": {
+          "max": 0.734714406147122,
+          "mean": 0.2685511248584949
+        },
+        "phase_b_pairwise_cosine": {
+          "max": 0.7305441623064176,
+          "mean": 0.2986202998977493
+        },
+        "cross_phase_pairwise_cosine": {
+          "max": 0.7730761660733974,
+          "mean": 0.2953977564349958
+        }
+      },
+      "slot_binding": {
+        "capacity": 128,
+        "match_threshold": 0.85,
+        "occupied_count": 32,
+        "occupied_slot_count_from_corpus": 32,
+        "phase_a_slots": {
+          "65": 0,
+          "66": 1,
+          "67": 2,
+          "68": 3,
+          "69": 4,
+          "70": 5,
+          "71": 6,
+          "72": 7,
+          "73": 8,
+          "74": 9,
+          "75": 10,
+          "76": 11,
+          "77": 12,
+          "78": 13,
+          "79": 14,
+          "80": 15
+        },
+        "phase_b_slots": {
+          "145": 16,
+          "146": 17,
+          "147": 18,
+          "148": 19,
+          "149": 20,
+          "150": 21,
+          "151": 22,
+          "152": 23,
+          "153": 24,
+          "154": 25,
+          "155": 26,
+          "156": 27,
+          "157": 28,
+          "158": 29,
+          "159": 30,
+          "160": 31
+        },
+        "cross_phase_collisions": 0,
+        "query_slot_mismatches_after_checkpoint_roundtrip": 0,
+        "allocation_count": 32,
+        "match_count": 0,
+        "replacement_count": 0
+      },
+      "action_support": {
+        "48": {
+          "fan_in": 32,
+          "phase_a_active_support_min": 7,
+          "phase_b_active_support_min": 6
+        },
+        "49": {
+          "fan_in": 32,
+          "phase_a_active_support_min": 5,
+          "phase_b_active_support_min": 7
+        },
+        "50": {
+          "fan_in": 32,
+          "phase_a_active_support_min": 6,
+          "phase_b_active_support_min": 6
+        },
+        "51": {
+          "fan_in": 32,
+          "phase_a_active_support_min": 7,
+          "phase_b_active_support_min": 6
+        }
+      }
+    },
+    {
+      "seed": 29,
+      "phase_a_pairwise_cosine": {
+        "max": 0.7089866829888453,
+        "mean": 0.2632881706542929
+      },
+      "phase_b_pairwise_cosine": {
+        "max": 0.6489411898726303,
+        "mean": 0.3695510992836744
+      },
+      "cross_phase_pairwise_cosine": {
+        "max": 0.6597423308149434,
+        "mean": 0.3009769710127995
+      },
+      "write_to_query_cosine": {
+        "phase_a_min": 0.9831882729900561,
+        "phase_a_mean": 0.9910754361425093,
+        "phase_b_min": 0.9895920463662309,
+        "phase_b_mean": 0.9944627114271232
+      },
+      "competitive_binding": {
+        "units": 128,
+        "top_k": 15,
+        "phase_a_pairwise_cosine": {
+          "max": 0.6000931201584218,
+          "mean": 0.25100508818424017
+        },
+        "phase_b_pairwise_cosine": {
+          "max": 0.6423734004154795,
+          "mean": 0.2886804282895536
+        },
+        "cross_phase_pairwise_cosine": {
+          "max": 0.6106531255814408,
+          "mean": 0.2557177361760503
+        }
+      },
+      "slot_binding": {
+        "capacity": 128,
+        "match_threshold": 0.85,
+        "occupied_count": 32,
+        "occupied_slot_count_from_corpus": 32,
+        "phase_a_slots": {
+          "65": 0,
+          "66": 1,
+          "67": 2,
+          "68": 3,
+          "69": 4,
+          "70": 5,
+          "71": 6,
+          "72": 7,
+          "73": 8,
+          "74": 9,
+          "75": 10,
+          "76": 11,
+          "77": 12,
+          "78": 13,
+          "79": 14,
+          "80": 15
+        },
+        "phase_b_slots": {
+          "145": 16,
+          "146": 17,
+          "147": 18,
+          "148": 19,
+          "149": 20,
+          "150": 21,
+          "151": 22,
+          "152": 23,
+          "153": 24,
+          "154": 25,
+          "155": 26,
+          "156": 27,
+          "157": 28,
+          "158": 29,
+          "159": 30,
+          "160": 31
+        },
+        "cross_phase_collisions": 0,
+        "query_slot_mismatches_after_checkpoint_roundtrip": 0,
+        "allocation_count": 32,
+        "match_count": 0,
+        "replacement_count": 0
+      },
+      "action_support": {
+        "48": {
+          "fan_in": 32,
+          "phase_a_active_support_min": 6,
+          "phase_b_active_support_min": 7
+        },
+        "49": {
+          "fan_in": 32,
+          "phase_a_active_support_min": 5,
+          "phase_b_active_support_min": 5
+        },
+        "50": {
+          "fan_in": 32,
+          "phase_a_active_support_min": 6,
+          "phase_b_active_support_min": 5
+        },
+        "51": {
+          "fan_in": 32,
+          "phase_a_active_support_min": 6,
+          "phase_b_active_support_min": 6
+        }
+      }
+    },
+    {
+      "seed": 47,
+      "phase_a_pairwise_cosine": {
+        "max": 0.7191096799482507,
+        "mean": 0.30554707162370104
+      },
+      "phase_b_pairwise_cosine": {
+        "max": 0.7268040795847355,
+        "mean": 0.35989516428421925
+      },
+      "cross_phase_pairwise_cosine": {
+        "max": 0.8106634349406319,
+        "mean": 0.34262368101071694
+      },
+      "write_to_query_cosine": {
+        "phase_a_min": 0.9212805087848402,
+        "phase_a_mean": 0.9669472896319731,
+        "phase_b_min": 0.9471644092524497,
+        "phase_b_mean": 0.9771522655100189
+      },
+      "competitive_binding": {
+        "units": 128,
+        "top_k": 15,
+        "phase_a_pairwise_cosine": {
+          "max": 0.646902253711837,
+          "mean": 0.2668790552704099
+        },
+        "phase_b_pairwise_cosine": {
+          "max": 0.7469645826915531,
+          "mean": 0.3138568216899996
+        },
+        "cross_phase_pairwise_cosine": {
+          "max": 0.7248961696917162,
+          "mean": 0.3012200095708773
+        }
+      },
+      "slot_binding": {
+        "capacity": 128,
+        "match_threshold": 0.85,
+        "occupied_count": 32,
+        "occupied_slot_count_from_corpus": 32,
+        "phase_a_slots": {
+          "65": 0,
+          "66": 1,
+          "67": 2,
+          "68": 3,
+          "69": 4,
+          "70": 5,
+          "71": 6,
+          "72": 7,
+          "73": 8,
+          "74": 9,
+          "75": 10,
+          "76": 11,
+          "77": 12,
+          "78": 13,
+          "79": 14,
+          "80": 15
+        },
+        "phase_b_slots": {
+          "145": 16,
+          "146": 17,
+          "147": 18,
+          "148": 19,
+          "149": 20,
+          "150": 21,
+          "151": 22,
+          "152": 23,
+          "153": 24,
+          "154": 25,
+          "155": 26,
+          "156": 27,
+          "157": 28,
+          "158": 29,
+          "159": 30,
+          "160": 31
+        },
+        "cross_phase_collisions": 0,
+        "query_slot_mismatches_after_checkpoint_roundtrip": 0,
+        "allocation_count": 32,
+        "match_count": 0,
+        "replacement_count": 0
+      },
+      "action_support": {
+        "48": {
+          "fan_in": 32,
+          "phase_a_active_support_min": 7,
+          "phase_b_active_support_min": 4
+        },
+        "49": {
+          "fan_in": 32,
+          "phase_a_active_support_min": 4,
+          "phase_b_active_support_min": 4
+        },
+        "50": {
+          "fan_in": 32,
+          "phase_a_active_support_min": 4,
+          "phase_b_active_support_min": 5
+        },
+        "51": {
+          "fan_in": 32,
+          "phase_a_active_support_min": 6,
+          "phase_b_active_support_min": 4
+        }
+      }
+    }
+  ],
+  "report_path": "reports\\taiji_m1_b14_slot_binding_canary_20260902.json"
+}
