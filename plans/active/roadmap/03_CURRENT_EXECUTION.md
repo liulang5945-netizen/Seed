@@ -313,7 +313,9 @@ M1-24 已完成但 Gate 阻断，报告为 `reports/taiji_m1_support_alignment_2
 
 M1-25 已完成并通过隔离 Gate，报告为 `reports/taiji_m1_identity_route_20260902.json`。固定容量 `128`、match threshold `0.90`、slot→action 物理 synapse route 在三 seed 上均取得 parent old holdout/retention `1.0/1.0`，phase-B new holdout `1.0`；phase-A/phase-B 各占 `16` 个独立 slot，cross-phase slot collision 与 replacement 均为 `0`，repeated replay same-slot rate `1.0`，no-change 查询不改变 route digest，fresh-process bundle digest 全部通过。shared control 仍在 phase-B 后 old 崩溃而 new 只能部分恢复。该结果证明 identity route 作为情景记忆身份层有效，但不是通用语言能力证明；它包含 `49,280` 个固定 route 参数，仍保持 evaluator-only，不进入默认 Taiji checkpoint 或生产路径。
 
-当前唯一下一步为 **M1-26：identity route 的容量边界与未见 cue 行为 Gate**：保持 M1-25 的物理 slot/prototype/synapse 定义不变，加入 train/holdout disjoint cue、未见 cue 的严格 non-mutating query、重复 replay、超过固定 capacity 的压力边界与可审计 eviction/replacement；同时测量 old/new recall、unbound rate、collision、per-cue support、route 参数/edge budget 和 checkpoint round-trip。该片要明确 identity route 的职责是“已学习情景的身份保持”而不是隐式答案表或通用泛化器；未见 cue 必须保持 unbound 且不写入，容量不足必须显式报告而不能静默覆盖。只有边界行为可恢复、可解释，才进入 native memory integration design；在此之前不替换 shared decoder、不重跑 full foundation、不进入 M2。
+M1-26 已完成并通过边界 Gate，报告为 `reports/taiji_m1_identity_boundary_20260902.json`。三 seed 的 learned old/new holdout 均为 `1.0`，未见 cue unbound rate 均为 `1.0` 且 non-mutating query 不改 route digest，repeated replay same-slot rate 均为 `1.0`；正常 32 cue 阶段 cross-phase collision/replacement 均为 `0`。容量压力 `136/128` 时 replacement 被显式记录为 `4/8/7`（seed 11/29/47），occupied 始终不超过 capacity，stress bundle 与正常 bundle 均可恢复。该片确认 identity route 是可恢复、可解释的情景身份层，但未证明通用泛化，也没有接入默认 Taiji checkpoint。
+
+当前唯一下一步为 **M1-27：identity route native integration contract Gate**：在不改默认 Taiji checkpoint 的前提下，定义并验证 identity route 与现有 `MemoryState/action_evidence/act` 的边界契约：cue 输入、slot/confidence 输出、物理 action evidence、unbound fallback、provenance、replay/no-change 与 checkpoint bundle lineage；比较“shared only”和“identity route→shared fallback”两条隔离 runtime path，确认 identity route 不能绕过 Taiji motor、不能直接执行 ActionIntent，也不能把 route 权重伪装成 shared memory。该片只验证连接语义、回退与归因，不引入生产接线；若 contract 通过，才讨论是否把身份层作为 native memory 的可选器官；否则删除 integration adapter，保留已通过的独立 route。
 
 ## 7. M2～M8 的开发日程与外围任务安置
 

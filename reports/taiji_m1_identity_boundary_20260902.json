@@ -1,0 +1,176 @@
+{
+  "format": "taiji-native-m1-identity-boundary-v1",
+  "version": 1,
+  "status": "diagnostic",
+  "architecture_unchanged": true,
+  "identity_route_boundary_only": true,
+  "diagnostics": {
+    "sample_counts": {
+      "phase_train": 16,
+      "learned_holdout": 8,
+      "unseen_queries": 8,
+      "stress": 136
+    },
+    "capacity": 128,
+    "match_threshold": 0.9,
+    "route_learning_rate": 0.5,
+    "promotable": true,
+    "records": [
+      {
+        "seed": 11,
+        "parent_old_holdout": 1.0,
+        "learned": {
+          "old_holdout": 1.0,
+          "new_holdout": 1.0,
+          "old_bound_queries": 8,
+          "new_bound_queries": 8
+        },
+        "unseen": {
+          "query_count": 8,
+          "unbound_rate": 1.0,
+          "route_digest_unchanged": true
+        },
+        "repeated_replay": {
+          "same_slot_rate": 1.0,
+          "old_holdout_after": 1.0,
+          "new_holdout_after": 1.0,
+          "final_old_holdout": 1.0,
+          "final_new_holdout": 1.0
+        },
+        "identity": {
+          "phase_a_unique_slots": 16,
+          "phase_b_unique_slots": 16,
+          "cross_phase_slot_collisions": 0,
+          "occupied_count": 32,
+          "replacement_count": 0
+        },
+        "capacity_stress": {
+          "requested": 136,
+          "capacity": 128,
+          "unique_slots": 128,
+          "occupied_count": 128,
+          "replacement_count": 4,
+          "old_bound_rate_after_pressure": 0.9921875,
+          "new_bound_rate_after_pressure": 0.625,
+          "replacement_is_explicit": true,
+          "bundle_digest_matches": true
+        },
+        "budget": {
+          "capacity": 128,
+          "pattern_dim": 128,
+          "action_count": 257,
+          "identity_total_parameters": 49280,
+          "identity_action_edges": 32896
+        },
+        "checkpoint": {
+          "bundle_digest_matches": true
+        },
+        "holdout_updates": 0
+      },
+      {
+        "seed": 29,
+        "parent_old_holdout": 1.0,
+        "learned": {
+          "old_holdout": 1.0,
+          "new_holdout": 1.0,
+          "old_bound_queries": 8,
+          "new_bound_queries": 8
+        },
+        "unseen": {
+          "query_count": 8,
+          "unbound_rate": 1.0,
+          "route_digest_unchanged": true
+        },
+        "repeated_replay": {
+          "same_slot_rate": 1.0,
+          "old_holdout_after": 1.0,
+          "new_holdout_after": 1.0,
+          "final_old_holdout": 1.0,
+          "final_new_holdout": 1.0
+        },
+        "identity": {
+          "phase_a_unique_slots": 16,
+          "phase_b_unique_slots": 16,
+          "cross_phase_slot_collisions": 0,
+          "occupied_count": 32,
+          "replacement_count": 0
+        },
+        "capacity_stress": {
+          "requested": 136,
+          "capacity": 128,
+          "unique_slots": 128,
+          "occupied_count": 128,
+          "replacement_count": 8,
+          "old_bound_rate_after_pressure": 0.9921875,
+          "new_bound_rate_after_pressure": 0.125,
+          "replacement_is_explicit": true,
+          "bundle_digest_matches": true
+        },
+        "budget": {
+          "capacity": 128,
+          "pattern_dim": 128,
+          "action_count": 257,
+          "identity_total_parameters": 49280,
+          "identity_action_edges": 32896
+        },
+        "checkpoint": {
+          "bundle_digest_matches": true
+        },
+        "holdout_updates": 0
+      },
+      {
+        "seed": 47,
+        "parent_old_holdout": 1.0,
+        "learned": {
+          "old_holdout": 1.0,
+          "new_holdout": 1.0,
+          "old_bound_queries": 8,
+          "new_bound_queries": 8
+        },
+        "unseen": {
+          "query_count": 8,
+          "unbound_rate": 1.0,
+          "route_digest_unchanged": true
+        },
+        "repeated_replay": {
+          "same_slot_rate": 1.0,
+          "old_holdout_after": 1.0,
+          "new_holdout_after": 1.0,
+          "final_old_holdout": 1.0,
+          "final_new_holdout": 1.0
+        },
+        "identity": {
+          "phase_a_unique_slots": 16,
+          "phase_b_unique_slots": 16,
+          "cross_phase_slot_collisions": 0,
+          "occupied_count": 32,
+          "replacement_count": 0
+        },
+        "capacity_stress": {
+          "requested": 136,
+          "capacity": 128,
+          "unique_slots": 128,
+          "occupied_count": 128,
+          "replacement_count": 7,
+          "old_bound_rate_after_pressure": 0.9921875,
+          "new_bound_rate_after_pressure": 0.25,
+          "replacement_is_explicit": true,
+          "bundle_digest_matches": true
+        },
+        "budget": {
+          "capacity": 128,
+          "pattern_dim": 128,
+          "action_count": 257,
+          "identity_total_parameters": 49280,
+          "identity_action_edges": 32896
+        },
+        "checkpoint": {
+          "bundle_digest_matches": true
+        },
+        "holdout_updates": 0
+      }
+    ]
+  },
+  "can_promote": true,
+  "report_path": "reports\\taiji_m1_identity_boundary_20260902.json"
+}
