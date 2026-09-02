@@ -1,0 +1,1850 @@
+{
+  "format": "taiji-native-m1-phase-b-write-ablation-v1",
+  "version": 1,
+  "status": "diagnostic",
+  "architecture_unchanged": true,
+  "decoder": "shared",
+  "memory_learning_target_ablation": true,
+  "answer_table": false,
+  "diagnostics": {
+    "corpus_digest": "839feff22948df7eb1feec76f574214571495de3f7129b60bf8acc6403c0f433",
+    "sample_counts": {
+      "train": 32,
+      "holdout": 16,
+      "retention": 16,
+      "phase_a_train": 16,
+      "phase_a_holdout": 8,
+      "phase_a_retention": 8,
+      "phase_b_train": 16,
+      "phase_b_holdout": 8,
+      "phase_b_retention": 8,
+      "replay_train": 16
+    },
+    "targets": [
+      "all",
+      "association",
+      "readout"
+    ],
+    "scales": [
+      0.05,
+      0.1,
+      0.25,
+      0.5,
+      1.0
+    ],
+    "replay_disabled": true,
+    "promotable_candidates": [],
+    "records": {
+      "no_write": [
+        {
+          "seed": 11,
+          "candidate": "no_write",
+          "target": null,
+          "learning_scale": null,
+          "parent": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "f120076e7d1f03aee42070f82ad2d3a5d26b7dce09e8885d814795f2cca141b3",
+            "child_digest": "f120076e7d1f03aee42070f82ad2d3a5d26b7dce09e8885d814795f2cca141b3",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 16,
+          "phase_b_memory_writes": 0,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 29,
+          "candidate": "no_write",
+          "target": null,
+          "learning_scale": null,
+          "parent": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "a34f0fbcf9dcdeb660076bf50a92e05ce06a792cbc76c241f6f19747fab58d8e",
+            "child_digest": "a34f0fbcf9dcdeb660076bf50a92e05ce06a792cbc76c241f6f19747fab58d8e",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 16,
+          "phase_b_memory_writes": 0,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 47,
+          "candidate": "no_write",
+          "target": null,
+          "learning_scale": null,
+          "parent": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "d3ba85aadf4c64c008e69d1da55a6617f8894c2e4156bf47d0edb004e8b5948f",
+            "child_digest": "d3ba85aadf4c64c008e69d1da55a6617f8894c2e4156bf47d0edb004e8b5948f",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 16,
+          "phase_b_memory_writes": 0,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        }
+      ],
+      "all@0.05": [
+        {
+          "seed": 11,
+          "candidate": "all@0.05",
+          "target": "all",
+          "learning_scale": 0.05,
+          "parent": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "f120076e7d1f03aee42070f82ad2d3a5d26b7dce09e8885d814795f2cca141b3",
+            "child_digest": "8f54539234891570646440499440bb8e4a7e4c3264c05f17acee1ea41205802f",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 29,
+          "candidate": "all@0.05",
+          "target": "all",
+          "learning_scale": 0.05,
+          "parent": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "a34f0fbcf9dcdeb660076bf50a92e05ce06a792cbc76c241f6f19747fab58d8e",
+            "child_digest": "a89c447b811fd2ec223f2ef0758cd721115e4d6fac3751c0c0d2409645bccc2e",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 47,
+          "candidate": "all@0.05",
+          "target": "all",
+          "learning_scale": 0.05,
+          "parent": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "d3ba85aadf4c64c008e69d1da55a6617f8894c2e4156bf47d0edb004e8b5948f",
+            "child_digest": "3609fd7607ef29886ddada4fd25af9341951b9f7d2ae99f34182346c5f56e747",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        }
+      ],
+      "all@0.1": [
+        {
+          "seed": 11,
+          "candidate": "all@0.1",
+          "target": "all",
+          "learning_scale": 0.1,
+          "parent": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "f120076e7d1f03aee42070f82ad2d3a5d26b7dce09e8885d814795f2cca141b3",
+            "child_digest": "b11b50d0df87a15db1de717b91543c45b4c54f5f5db7459582a95d7b3cfdbae2",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 29,
+          "candidate": "all@0.1",
+          "target": "all",
+          "learning_scale": 0.1,
+          "parent": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "a34f0fbcf9dcdeb660076bf50a92e05ce06a792cbc76c241f6f19747fab58d8e",
+            "child_digest": "bf8875d8089a2d7adcdd9d059eb727d27f8a43ffbb976407956765d721be04d1",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 47,
+          "candidate": "all@0.1",
+          "target": "all",
+          "learning_scale": 0.1,
+          "parent": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.75,
+            "old_retention": 0.375,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.75,
+            "old_retention": 0.375,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "d3ba85aadf4c64c008e69d1da55a6617f8894c2e4156bf47d0edb004e8b5948f",
+            "child_digest": "e70e569500fd4336e2f8fc8e0b145618594e5f9f7e3e0c9caf1a83d63804c4b9",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        }
+      ],
+      "all@0.25": [
+        {
+          "seed": 11,
+          "candidate": "all@0.25",
+          "target": "all",
+          "learning_scale": 0.25,
+          "parent": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.75,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.75,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "f120076e7d1f03aee42070f82ad2d3a5d26b7dce09e8885d814795f2cca141b3",
+            "child_digest": "c4d2d8e67a6aa84f3c172f486153688e61ba48e3b5972f9d7a39647ea809c18d",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 29,
+          "candidate": "all@0.25",
+          "target": "all",
+          "learning_scale": 0.25,
+          "parent": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.875,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.875,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "a34f0fbcf9dcdeb660076bf50a92e05ce06a792cbc76c241f6f19747fab58d8e",
+            "child_digest": "b01fa7ef20e913c662b13ad5ab46c87e091c44e651c6b8ef391d8e1331fbf18f",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 47,
+          "candidate": "all@0.25",
+          "target": "all",
+          "learning_scale": 0.25,
+          "parent": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.75,
+            "old_retention": 0.375,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.75,
+            "old_retention": 0.375,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "d3ba85aadf4c64c008e69d1da55a6617f8894c2e4156bf47d0edb004e8b5948f",
+            "child_digest": "306b52c8f58ae2273af5b270f9486eb7b9c5fea5babfa3e0b7b165b7cb65812e",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        }
+      ],
+      "all@0.5": [
+        {
+          "seed": 11,
+          "candidate": "all@0.5",
+          "target": "all",
+          "learning_scale": 0.5,
+          "parent": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.75,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.75,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "f120076e7d1f03aee42070f82ad2d3a5d26b7dce09e8885d814795f2cca141b3",
+            "child_digest": "86bb8405a864392734b4444d636e020783872ac11bc89249f235ee8df835d447",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 29,
+          "candidate": "all@0.5",
+          "target": "all",
+          "learning_scale": 0.5,
+          "parent": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.875,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.875,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "a34f0fbcf9dcdeb660076bf50a92e05ce06a792cbc76c241f6f19747fab58d8e",
+            "child_digest": "0f19f361baeccedb2202f1420ecab6463e22629a84bc12752a8e1c7bc8139af5",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 47,
+          "candidate": "all@0.5",
+          "target": "all",
+          "learning_scale": 0.5,
+          "parent": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.75,
+            "old_retention": 0.375,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.75,
+            "old_retention": 0.375,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "d3ba85aadf4c64c008e69d1da55a6617f8894c2e4156bf47d0edb004e8b5948f",
+            "child_digest": "b337b1420e6e1bfe363e61f20134f6037489a7e7659638819bfb1d515e4b3f43",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        }
+      ],
+      "all@1": [
+        {
+          "seed": 11,
+          "candidate": "all@1",
+          "target": "all",
+          "learning_scale": 1.0,
+          "parent": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.5
+          },
+          "restored": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.5
+          },
+          "new_gain_vs_no_write": 0.5,
+          "checkpoint": {
+            "parent_digest": "f120076e7d1f03aee42070f82ad2d3a5d26b7dce09e8885d814795f2cca141b3",
+            "child_digest": "38a25fa6fa370791c47c8e8d1c9d4d86545303d560966a8e44e5d9f14e7b0435",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 29,
+          "candidate": "all@1",
+          "target": "all",
+          "learning_scale": 1.0,
+          "parent": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.625
+          },
+          "restored": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.625
+          },
+          "new_gain_vs_no_write": 0.625,
+          "checkpoint": {
+            "parent_digest": "a34f0fbcf9dcdeb660076bf50a92e05ce06a792cbc76c241f6f19747fab58d8e",
+            "child_digest": "e1de512621a80750b321744f5de86dec48d79cc95fee49ae10a4eae81335bc73",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 47,
+          "candidate": "all@1",
+          "target": "all",
+          "learning_scale": 1.0,
+          "parent": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.0,
+            "old_retention": 0.125,
+            "new_holdout": 0.875
+          },
+          "restored": {
+            "old_holdout": 0.0,
+            "old_retention": 0.125,
+            "new_holdout": 0.875
+          },
+          "new_gain_vs_no_write": 0.875,
+          "checkpoint": {
+            "parent_digest": "d3ba85aadf4c64c008e69d1da55a6617f8894c2e4156bf47d0edb004e8b5948f",
+            "child_digest": "5caf848d5daf00a5bde5bcf40ebb5dd763390916ad512a89ea1e6568befe3272",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        }
+      ],
+      "association@0.05": [
+        {
+          "seed": 11,
+          "candidate": "association@0.05",
+          "target": "association",
+          "learning_scale": 0.05,
+          "parent": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.75,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.75,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "f120076e7d1f03aee42070f82ad2d3a5d26b7dce09e8885d814795f2cca141b3",
+            "child_digest": "4ceba240523bc1304be844093693cfaf16f8c8cc5e1ffcb72dfb83103c6dc2fd",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 29,
+          "candidate": "association@0.05",
+          "target": "association",
+          "learning_scale": 0.05,
+          "parent": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "a34f0fbcf9dcdeb660076bf50a92e05ce06a792cbc76c241f6f19747fab58d8e",
+            "child_digest": "f7d371405525a46fb2811969750026b38e09363e49c9312a397e44429b519618",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 47,
+          "candidate": "association@0.05",
+          "target": "association",
+          "learning_scale": 0.05,
+          "parent": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.875,
+            "old_retention": 0.375,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.875,
+            "old_retention": 0.375,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "d3ba85aadf4c64c008e69d1da55a6617f8894c2e4156bf47d0edb004e8b5948f",
+            "child_digest": "d6170c6859e18df587585d782d45af6eafc1640eda8af4708c357cba7d8a6cb4",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        }
+      ],
+      "association@0.1": [
+        {
+          "seed": 11,
+          "candidate": "association@0.1",
+          "target": "association",
+          "learning_scale": 0.1,
+          "parent": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.75,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.75,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "f120076e7d1f03aee42070f82ad2d3a5d26b7dce09e8885d814795f2cca141b3",
+            "child_digest": "3c8d9b7693013a50b8523d4245038eb176e3e3607c424ca87077f6328565d6e4",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 29,
+          "candidate": "association@0.1",
+          "target": "association",
+          "learning_scale": 0.1,
+          "parent": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.875,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.875,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "a34f0fbcf9dcdeb660076bf50a92e05ce06a792cbc76c241f6f19747fab58d8e",
+            "child_digest": "8b1b43b43a950b1711578eae6371038f5160b03aaec47d82c6b6880dbc114b83",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 47,
+          "candidate": "association@0.1",
+          "target": "association",
+          "learning_scale": 0.1,
+          "parent": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 1.0,
+            "old_retention": 0.375,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 1.0,
+            "old_retention": 0.375,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "d3ba85aadf4c64c008e69d1da55a6617f8894c2e4156bf47d0edb004e8b5948f",
+            "child_digest": "f431c126350d497a3ec6edc4f3e87f8d4dd0e20ab1fca1e0b6803e881c4357cf",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        }
+      ],
+      "association@0.25": [
+        {
+          "seed": 11,
+          "candidate": "association@0.25",
+          "target": "association",
+          "learning_scale": 0.25,
+          "parent": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.875,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.875,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "f120076e7d1f03aee42070f82ad2d3a5d26b7dce09e8885d814795f2cca141b3",
+            "child_digest": "3ed851005d9115ddcde3bd4c167a33ae6a12cd56e1eb9ba575d6690288992dfd",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 29,
+          "candidate": "association@0.25",
+          "target": "association",
+          "learning_scale": 0.25,
+          "parent": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.625,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.625,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "a34f0fbcf9dcdeb660076bf50a92e05ce06a792cbc76c241f6f19747fab58d8e",
+            "child_digest": "68b80893d332939ae87fb2ccbcccbf4e168feac21e551f29b3a7de07b5b0f030",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 47,
+          "candidate": "association@0.25",
+          "target": "association",
+          "learning_scale": 0.25,
+          "parent": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 1.0,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 1.0,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "d3ba85aadf4c64c008e69d1da55a6617f8894c2e4156bf47d0edb004e8b5948f",
+            "child_digest": "2d86e5a4211907b3ec1e1eba7317a995f98d429d7b2f3c91df0d192f3d08e5b4",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        }
+      ],
+      "association@0.5": [
+        {
+          "seed": 11,
+          "candidate": "association@0.5",
+          "target": "association",
+          "learning_scale": 0.5,
+          "parent": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.875,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.875,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "f120076e7d1f03aee42070f82ad2d3a5d26b7dce09e8885d814795f2cca141b3",
+            "child_digest": "6d4467af71c51ac43e07c9f60a77e694815ed1bf182fba4a9ed374ba0ba274e7",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 29,
+          "candidate": "association@0.5",
+          "target": "association",
+          "learning_scale": 0.5,
+          "parent": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.625,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.625,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "a34f0fbcf9dcdeb660076bf50a92e05ce06a792cbc76c241f6f19747fab58d8e",
+            "child_digest": "99f161128c4ab4204cd13d0cf42489da68ecc9ae52508cedaa978eef28dff299",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 47,
+          "candidate": "association@0.5",
+          "target": "association",
+          "learning_scale": 0.5,
+          "parent": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 1.0,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 1.0,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "d3ba85aadf4c64c008e69d1da55a6617f8894c2e4156bf47d0edb004e8b5948f",
+            "child_digest": "793920981f3f0397b4421c8e1718bf0da4d75174ee459418bddb8f8ed4fb9a99",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        }
+      ],
+      "association@1": [
+        {
+          "seed": 11,
+          "candidate": "association@1",
+          "target": "association",
+          "learning_scale": 1.0,
+          "parent": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.875,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.875,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "f120076e7d1f03aee42070f82ad2d3a5d26b7dce09e8885d814795f2cca141b3",
+            "child_digest": "c14f4bb0f3d1df07d02e21c166abeb1969928cf802e345cc4cc41209b62a1350",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 29,
+          "candidate": "association@1",
+          "target": "association",
+          "learning_scale": 1.0,
+          "parent": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.625,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.625,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "a34f0fbcf9dcdeb660076bf50a92e05ce06a792cbc76c241f6f19747fab58d8e",
+            "child_digest": "568b603e474277a1ffd7390b1d9f7191d59b3d32c9cddda99fd6b5281c14384c",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 47,
+          "candidate": "association@1",
+          "target": "association",
+          "learning_scale": 1.0,
+          "parent": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 1.0,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 1.0,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "d3ba85aadf4c64c008e69d1da55a6617f8894c2e4156bf47d0edb004e8b5948f",
+            "child_digest": "b28a85ef64aa398b269e3daf6b8759756fb6d9fd068e6e95da0c8660ce64f086",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        }
+      ],
+      "readout@0.05": [
+        {
+          "seed": 11,
+          "candidate": "readout@0.05",
+          "target": "readout",
+          "learning_scale": 0.05,
+          "parent": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "f120076e7d1f03aee42070f82ad2d3a5d26b7dce09e8885d814795f2cca141b3",
+            "child_digest": "9ea9a4f01b673fcdf9d680c682a630ec432707752dfd91560e5cfdb9999639ff",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 29,
+          "candidate": "readout@0.05",
+          "target": "readout",
+          "learning_scale": 0.05,
+          "parent": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "a34f0fbcf9dcdeb660076bf50a92e05ce06a792cbc76c241f6f19747fab58d8e",
+            "child_digest": "1243c0113780122c91769dd33648219314a0cd2416c57d95ff4267cfed8dd9b6",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 47,
+          "candidate": "readout@0.05",
+          "target": "readout",
+          "learning_scale": 0.05,
+          "parent": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.625,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.625,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "d3ba85aadf4c64c008e69d1da55a6617f8894c2e4156bf47d0edb004e8b5948f",
+            "child_digest": "5c78202d4412f1aae566a6e91a0df8ff29ba70b4ad67821efa41ef5a88fa5f5b",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        }
+      ],
+      "readout@0.1": [
+        {
+          "seed": 11,
+          "candidate": "readout@0.1",
+          "target": "readout",
+          "learning_scale": 0.1,
+          "parent": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "f120076e7d1f03aee42070f82ad2d3a5d26b7dce09e8885d814795f2cca141b3",
+            "child_digest": "074f02952d41139fe1f956d13e304162fa87d51c7ab01cc129a9f67163ba2bd6",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 29,
+          "candidate": "readout@0.1",
+          "target": "readout",
+          "learning_scale": 0.1,
+          "parent": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "a34f0fbcf9dcdeb660076bf50a92e05ce06a792cbc76c241f6f19747fab58d8e",
+            "child_digest": "2744bcdf1b9486536d9a907c8996a28fb05d658e7d58332d971381f864a3bba2",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 47,
+          "candidate": "readout@0.1",
+          "target": "readout",
+          "learning_scale": 0.1,
+          "parent": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.625,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.625,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "d3ba85aadf4c64c008e69d1da55a6617f8894c2e4156bf47d0edb004e8b5948f",
+            "child_digest": "d94d9e32987ba79367e0fc3a1ddc75a2b5cf7f2952b4ab2d707536432b7ad722",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        }
+      ],
+      "readout@0.25": [
+        {
+          "seed": 11,
+          "candidate": "readout@0.25",
+          "target": "readout",
+          "learning_scale": 0.25,
+          "parent": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "f120076e7d1f03aee42070f82ad2d3a5d26b7dce09e8885d814795f2cca141b3",
+            "child_digest": "1c1ca8550444f2d11c9dbe69c85f9ebd1f9a6e5f8aee1e1872e7a8977c6db506",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 29,
+          "candidate": "readout@0.25",
+          "target": "readout",
+          "learning_scale": 0.25,
+          "parent": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "a34f0fbcf9dcdeb660076bf50a92e05ce06a792cbc76c241f6f19747fab58d8e",
+            "child_digest": "f4371c1344f652fbd5ff0a96e67483d9e29cdc36e69969344bf130f2506abc0f",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 47,
+          "candidate": "readout@0.25",
+          "target": "readout",
+          "learning_scale": 0.25,
+          "parent": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.625,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.625,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "d3ba85aadf4c64c008e69d1da55a6617f8894c2e4156bf47d0edb004e8b5948f",
+            "child_digest": "efd7ab2f4500c13860f4e34fe392226c116733db5b8c67b995af9fb27afba02e",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        }
+      ],
+      "readout@0.5": [
+        {
+          "seed": 11,
+          "candidate": "readout@0.5",
+          "target": "readout",
+          "learning_scale": 0.5,
+          "parent": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "f120076e7d1f03aee42070f82ad2d3a5d26b7dce09e8885d814795f2cca141b3",
+            "child_digest": "bfd6d8811c20387308e78df81b20ad4ecbe884f3de15ea8d3f86f6e840ee952f",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 29,
+          "candidate": "readout@0.5",
+          "target": "readout",
+          "learning_scale": 0.5,
+          "parent": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "a34f0fbcf9dcdeb660076bf50a92e05ce06a792cbc76c241f6f19747fab58d8e",
+            "child_digest": "3ce59ab01322f6f29df59b7ad0e7087f75a0594c2f50625af29601e0d102bb2f",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 47,
+          "candidate": "readout@0.5",
+          "target": "readout",
+          "learning_scale": 0.5,
+          "parent": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "restored": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "new_gain_vs_no_write": 0.0,
+          "checkpoint": {
+            "parent_digest": "d3ba85aadf4c64c008e69d1da55a6617f8894c2e4156bf47d0edb004e8b5948f",
+            "child_digest": "eb646b9ccde831357482f30ed66dd68f6bd98f2555f2056ce280fce776738518",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        }
+      ],
+      "readout@1": [
+        {
+          "seed": 11,
+          "candidate": "readout@1",
+          "target": "readout",
+          "learning_scale": 1.0,
+          "parent": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.5,
+            "old_retention": 0.625,
+            "new_holdout": 0.375
+          },
+          "restored": {
+            "old_holdout": 0.5,
+            "old_retention": 0.625,
+            "new_holdout": 0.375
+          },
+          "new_gain_vs_no_write": 0.375,
+          "checkpoint": {
+            "parent_digest": "f120076e7d1f03aee42070f82ad2d3a5d26b7dce09e8885d814795f2cca141b3",
+            "child_digest": "dca7cf0d2f52f017c8f2c92fc4f178a4ba19fb8d3b56c42fd78b3a96ee4cea2d",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 29,
+          "candidate": "readout@1",
+          "target": "readout",
+          "learning_scale": 1.0,
+          "parent": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.625
+          },
+          "restored": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.625
+          },
+          "new_gain_vs_no_write": 0.625,
+          "checkpoint": {
+            "parent_digest": "a34f0fbcf9dcdeb660076bf50a92e05ce06a792cbc76c241f6f19747fab58d8e",
+            "child_digest": "973bda27a9fe6c53855dd8b316f9286f9546ee0ee2af30f705924fb058d3844d",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        },
+        {
+          "seed": 47,
+          "candidate": "readout@1",
+          "target": "readout",
+          "learning_scale": 1.0,
+          "parent": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.375,
+            "old_retention": 0.125,
+            "new_holdout": 0.625
+          },
+          "restored": {
+            "old_holdout": 0.375,
+            "old_retention": 0.125,
+            "new_holdout": 0.625
+          },
+          "new_gain_vs_no_write": 0.625,
+          "checkpoint": {
+            "parent_digest": "d3ba85aadf4c64c008e69d1da55a6617f8894c2e4156bf47d0edb004e8b5948f",
+            "child_digest": "b3808ad16a5455009793f5d2e89d2681d14f02a74330d56458bb9db17c2b3cfd",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "memory_write_count": 32,
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0,
+          "restored_scores_match": true
+        }
+      ]
+    }
+  },
+  "can_promote": false,
+  "report_path": "reports\\taiji_m1_phase_b_write_ablation_20260902.json"
+}
