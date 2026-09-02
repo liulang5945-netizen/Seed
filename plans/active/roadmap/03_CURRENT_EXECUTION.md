@@ -329,7 +329,9 @@ M1-32 已完成但总体 Gate 被 B5 阻断，聚合报告为 `reports/taiji_m1_
 
 M1-33 已完成并否定“容量单独足够”的假设，报告为 `reports/taiji_m1_33_memory_capacity_20260902.json`。在完全相同的 `64/32/32` phase-A/phase-B/replay B5 课程和 seed `11/29/47` 下，只改变 shared `memory_units` 为 `96/192/384`，不改变学习规则、identity organ、decoder 或数据。三档实际参数量分别为 `84,929/88,001/94,145`，均与 `planned_active_parameter_count` 一致；每档三 seed 的同进程与全新进程 checkpoint digest 均匹配。B5 仍全部失败，最差 replay backward transfer 分别为 `-0.0625/-0.15625/-0.21875`，没有任何容量档同时满足 old holdout、old retention 和 new holdout；最高容量的 new recall 也不稳定。结论是 shared memory 的可增长容量不是当前充分条件，继续盲目扩容没有依据；identity organ 仍保持关闭，默认 checkpoint 未改变。
 
-当前唯一下一步为 **M1-34：cue/action training-signal admission**：在固定 `memory_units=192`、shared decoder、默认 identity 关闭和当前 B5 数据合同下，只比较 replay 的 `all`、`association`、`readout` 三种训练目标（统一 replay scale `1.0`），记录 old holdout、old retention、new holdout、causal gain、holdout side effects 与 checkpoint lineage。该片只允许改变 replay target 这一训练信号变量；若三种目标仍无法同时保住 old/new，则停止继续枚举 decoder/scale，把问题转入 cue/action 数据课程与事件表示的单变量诊断。
+M1-34 已完成但三种训练信号均未通过 B5，报告为 `reports/taiji_m1_34_signal_admission_20260902.json`。固定 `memory_units=192`、shared decoder、identity organ 关闭、`64/32/32` disjoint cue 课程和 replay scale `1.0`，只比较 `all`、`association`、`readout`：`all` 的 replay causal gain 为 `0.59375/0.5/0.5625`，但 new recall 三 seed 均为 `0`，old backward transfer 为 `-0.0625/-0.03125/-0.03125`；`association` 的 causal gain 全为 `0`，old 与 retention 直接退化；`readout` 能留下少量 new recall `0.03125/0.4375/0.0625`，但 old backward transfer 为 `-0.09375/-0.28125/-0.03125`。三种目标均 `status=failed`，holdout updates 为 `0`，shared decoder 与架构未改变。结论是“把 replay 写入哪条现有突触路径”不是充分条件，停止继续枚举 decoder/scale。
+
+当前唯一下一步为 **M1-35：action-alphabet data curriculum diagnosis**：保持 cue disjoint、`memory_units=192`、shared decoder、默认 identity 关闭和 replay target `all@1.0` 不变，只把 phase-B 的 action alphabet 从与 phase-A 完全分离改为与 phase-A 重叠，比较 old holdout、old retention、new holdout、causal gain、action collision、checkpoint continuation 和资源。该实验用于识别当前 B5 是否被“新阶段同时引入新 action 行”这一数据合同放大；若 action 重叠仍失败，则冻结 B5 结构与该课程，下一片转向 cue representation 的训练数据分布，而不是继续加 decoder。
 
 ## 7. M2～M8 的开发日程与外围任务安置
 

@@ -1,0 +1,287 @@
+{
+  "format": "taiji-native-m1-signal-diagnostics-v1",
+  "version": 1,
+  "status": "diagnostic",
+  "architecture_unchanged": true,
+  "decoder": "shared",
+  "b1": {
+    "dataset_digest": "1b26091d54370f91acee9a67809d18c7c991f8943f9976659ce35257a0a0142a",
+    "sample_counts": {
+      "train": 4096,
+      "holdout": 1024,
+      "retention": 1024
+    },
+    "best_variant_by_holdout_mean": "chunked_without_boundary",
+    "summary": {
+      "chunked_with_boundary": {
+        "holdout_bpb_mean": 5.603373491906663,
+        "holdout_bpb_min": 5.52231843695895,
+        "retention_bpb_mean": 5.761040653519525,
+        "non_degrading_seed_count": 3
+      },
+      "chunked_without_boundary": {
+        "holdout_bpb_mean": 5.603092530746447,
+        "holdout_bpb_min": 5.523366687877677,
+        "retention_bpb_mean": 5.762003953749532,
+        "non_degrading_seed_count": 3
+      },
+      "stream_with_boundary": {
+        "holdout_bpb_mean": 5.6037024780730915,
+        "holdout_bpb_min": 5.520425533633577,
+        "retention_bpb_mean": 5.762433330007496,
+        "non_degrading_seed_count": 3
+      },
+      "stream_without_boundary": {
+        "holdout_bpb_mean": 5.6047171462060446,
+        "holdout_bpb_min": 5.52396281419395,
+        "retention_bpb_mean": 5.761923234405219,
+        "non_degrading_seed_count": 3
+      }
+    },
+    "records": {
+      "chunked_with_boundary": [
+        {
+          "seed": 11,
+          "chunk_bytes": 1024,
+          "include_boundary": true,
+          "parent_holdout_bpb": 8.098683285843135,
+          "holdout_bpb": 5.52231843695895,
+          "retention_bpb": 5.715190151668221,
+          "parameter_count": 85953
+        },
+        {
+          "seed": 29,
+          "chunk_bytes": 1024,
+          "include_boundary": true,
+          "parent_holdout_bpb": 8.055410334101513,
+          "holdout_bpb": 5.646826776958363,
+          "retention_bpb": 5.758795043680986,
+          "parameter_count": 85953
+        },
+        {
+          "seed": 47,
+          "chunk_bytes": 1024,
+          "include_boundary": true,
+          "parent_holdout_bpb": 8.12476218507766,
+          "holdout_bpb": 5.640975261802677,
+          "retention_bpb": 5.8091367652093675,
+          "parameter_count": 85953
+        }
+      ],
+      "chunked_without_boundary": [
+        {
+          "seed": 11,
+          "chunk_bytes": 1024,
+          "include_boundary": false,
+          "parent_holdout_bpb": 8.098683285843135,
+          "holdout_bpb": 5.523366687877677,
+          "retention_bpb": 5.717379639920896,
+          "parameter_count": 85953
+        },
+        {
+          "seed": 29,
+          "chunk_bytes": 1024,
+          "include_boundary": false,
+          "parent_holdout_bpb": 8.055410334101513,
+          "holdout_bpb": 5.64709470318154,
+          "retention_bpb": 5.760341711297736,
+          "parameter_count": 85953
+        },
+        {
+          "seed": 47,
+          "chunk_bytes": 1024,
+          "include_boundary": false,
+          "parent_holdout_bpb": 8.12476218507766,
+          "holdout_bpb": 5.6388162011801235,
+          "retention_bpb": 5.808290510029964,
+          "parameter_count": 85953
+        }
+      ],
+      "stream_with_boundary": [
+        {
+          "seed": 11,
+          "chunk_bytes": 4096,
+          "include_boundary": true,
+          "parent_holdout_bpb": 8.098683285843135,
+          "holdout_bpb": 5.520425533633577,
+          "retention_bpb": 5.714785745795073,
+          "parameter_count": 85953
+        },
+        {
+          "seed": 29,
+          "chunk_bytes": 4096,
+          "include_boundary": true,
+          "parent_holdout_bpb": 8.055410334101513,
+          "holdout_bpb": 5.650124804178183,
+          "retention_bpb": 5.758574950297122,
+          "parameter_count": 85953
+        },
+        {
+          "seed": 47,
+          "chunk_bytes": 4096,
+          "include_boundary": true,
+          "parent_holdout_bpb": 8.12476218507766,
+          "holdout_bpb": 5.640557096407515,
+          "retention_bpb": 5.81393929393029,
+          "parameter_count": 85953
+        }
+      ],
+      "stream_without_boundary": [
+        {
+          "seed": 11,
+          "chunk_bytes": 4096,
+          "include_boundary": false,
+          "parent_holdout_bpb": 8.098683285843135,
+          "holdout_bpb": 5.52396281419395,
+          "retention_bpb": 5.714957334060335,
+          "parameter_count": 85953
+        },
+        {
+          "seed": 29,
+          "chunk_bytes": 4096,
+          "include_boundary": false,
+          "parent_holdout_bpb": 8.055410334101513,
+          "holdout_bpb": 5.6502018103651945,
+          "retention_bpb": 5.759434058026433,
+          "parameter_count": 85953
+        },
+        {
+          "seed": 47,
+          "chunk_bytes": 4096,
+          "include_boundary": false,
+          "parent_holdout_bpb": 8.12476218507766,
+          "holdout_bpb": 5.639986814058989,
+          "retention_bpb": 5.81137831112889,
+          "parameter_count": 85953
+        }
+      ]
+    }
+  },
+  "b5": {
+    "corpus_digest": "19687ae8d7bd135af49e1c3f80b6fa58a16ab0180d1c70e4934fec3eb037cabc",
+    "sample_counts": {
+      "train": 128,
+      "holdout": 64,
+      "retention": 64,
+      "phase_a_train": 64,
+      "phase_a_holdout": 32,
+      "phase_a_retention": 32,
+      "phase_b_train": 64,
+      "phase_b_holdout": 32,
+      "phase_b_retention": 32,
+      "replay_train": 64
+    },
+    "records": [
+      {
+        "replay_scale": 1.0,
+        "replay_learning_targets": "all",
+        "measurement": {
+          "ability_id": "b5_continual_learning",
+          "status": "failed",
+          "primary_metric": "backward_transfer",
+          "metric_direction": "higher_is_better",
+          "metric_value": -0.0625,
+          "baseline_metrics": {
+            "frozen_parent": 0.0,
+            "hash_only": 0.0,
+            "no_replay": -0.65625,
+            "random": 0.0,
+            "simple_rule": 0.0
+          },
+          "sample_counts": {
+            "holdout": 64,
+            "phase_a_holdout": 32,
+            "phase_a_retention": 32,
+            "phase_a_train": 64,
+            "phase_b_holdout": 32,
+            "phase_b_retention": 32,
+            "phase_b_train": 64,
+            "replay_train": 64,
+            "retention": 64,
+            "train": 128
+          },
+          "holdout_updates": 0,
+          "evidence": [
+            "corpus_digest=19687ae8d7bd135af49e1c3f80b6fa58a16ab0180d1c70e4934fec3eb037cabc",
+            "seed_metrics=[{\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.65625, \"no_replay_new_after\": 0.65625, \"no_replay_old_after\": 0.0, \"old_before\": 0.65625, \"old_retention_before\": 0.65625, \"phase_a_checkpoint_digest\": \"aaff3ce534e50d49e56b1a12c3c503a54a59cdaa4ed00f64f8a553b138e46d5f\", \"replay_backward_transfer\": -0.0625, \"replay_causal_gain\": 0.59375, \"replay_checkpoint_digest\": \"f1850db6def6ad89a04f60429a78550ce0115c22d410b7da47e31ca98d348d7f\", \"replay_new_after\": 0.0, \"replay_old_after\": 0.59375, \"replay_retention_after\": 0.59375, \"seed\": 11}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.53125, \"no_replay_new_after\": 0.53125, \"no_replay_old_after\": 0.0, \"old_before\": 0.53125, \"old_retention_before\": 0.5625, \"phase_a_checkpoint_digest\": \"aa7c3dcec255c5d9e821b5dde455b13b13f5faf15ceebe7722172c1b402759b4\", \"replay_backward_transfer\": -0.03125, \"replay_causal_gain\": 0.5, \"replay_checkpoint_digest\": \"008aed701bc61f3d4a8b4d177d9eea1c872c25715d9f7e9cc3fc45f494bd6d0b\", \"replay_new_after\": 0.0, \"replay_old_after\": 0.5, \"replay_retention_after\": 0.53125, \"seed\": 29}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.59375, \"no_replay_new_after\": 0.5, \"no_replay_old_after\": 0.0, \"old_before\": 0.59375, \"old_retention_before\": 0.53125, \"phase_a_checkpoint_digest\": \"3cfdebbd74de7896e27d8ecd5b0dd015424f46a4e25ea596cc97c7d14984a750\", \"replay_backward_transfer\": -0.03125, \"replay_causal_gain\": 0.5625, \"replay_checkpoint_digest\": \"9fc8d8af3a16a567331d7dc269fe7a52d138c7d80cd53aae979b60ebee2c482f\", \"replay_new_after\": 0.0, \"replay_old_after\": 0.5625, \"replay_retention_after\": 0.5625, \"seed\": 47}]",
+            "phase_a_then_phase_b_with_no_replay_counterfactual_then_phase_a_replay=true"
+          ]
+        }
+      },
+      {
+        "replay_scale": 1.0,
+        "replay_learning_targets": "association",
+        "measurement": {
+          "ability_id": "b5_continual_learning",
+          "status": "failed",
+          "primary_metric": "backward_transfer",
+          "metric_direction": "higher_is_better",
+          "metric_value": -0.65625,
+          "baseline_metrics": {
+            "frozen_parent": 0.0,
+            "hash_only": 0.0,
+            "no_replay": -0.65625,
+            "random": 0.0,
+            "simple_rule": 0.0
+          },
+          "sample_counts": {
+            "holdout": 64,
+            "phase_a_holdout": 32,
+            "phase_a_retention": 32,
+            "phase_a_train": 64,
+            "phase_b_holdout": 32,
+            "phase_b_retention": 32,
+            "phase_b_train": 64,
+            "replay_train": 64,
+            "retention": 64,
+            "train": 128
+          },
+          "holdout_updates": 0,
+          "evidence": [
+            "corpus_digest=19687ae8d7bd135af49e1c3f80b6fa58a16ab0180d1c70e4934fec3eb037cabc",
+            "seed_metrics=[{\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.65625, \"no_replay_new_after\": 0.65625, \"no_replay_old_after\": 0.0, \"old_before\": 0.65625, \"old_retention_before\": 0.65625, \"phase_a_checkpoint_digest\": \"aaff3ce534e50d49e56b1a12c3c503a54a59cdaa4ed00f64f8a553b138e46d5f\", \"replay_backward_transfer\": -0.65625, \"replay_causal_gain\": 0.0, \"replay_checkpoint_digest\": \"0d443d0a61dbc3e67991db6fe010a34286ddc8cbe6d135a477854f52769cf8f7\", \"replay_new_after\": 0.625, \"replay_old_after\": 0.0, \"replay_retention_after\": 0.0, \"seed\": 11}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.53125, \"no_replay_new_after\": 0.53125, \"no_replay_old_after\": 0.0, \"old_before\": 0.53125, \"old_retention_before\": 0.5625, \"phase_a_checkpoint_digest\": \"aa7c3dcec255c5d9e821b5dde455b13b13f5faf15ceebe7722172c1b402759b4\", \"replay_backward_transfer\": -0.53125, \"replay_causal_gain\": 0.0, \"replay_checkpoint_digest\": \"6a2ac62369cc8fe401696aef33598290c610d2108bdffff990f61a002e64b6e2\", \"replay_new_after\": 0.625, \"replay_old_after\": 0.0, \"replay_retention_after\": 0.0, \"seed\": 29}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.59375, \"no_replay_new_after\": 0.5, \"no_replay_old_after\": 0.0, \"old_before\": 0.59375, \"old_retention_before\": 0.53125, \"phase_a_checkpoint_digest\": \"3cfdebbd74de7896e27d8ecd5b0dd015424f46a4e25ea596cc97c7d14984a750\", \"replay_backward_transfer\": -0.59375, \"replay_causal_gain\": 0.0, \"replay_checkpoint_digest\": \"881f9467888d5f6e9ebd6ee7ee206bc0245c94ccfc8edb66ae39c4ed36ebad84\", \"replay_new_after\": 0.625, \"replay_old_after\": 0.0, \"replay_retention_after\": 0.0, \"seed\": 47}]",
+            "phase_a_then_phase_b_with_no_replay_counterfactual_then_phase_a_replay=true"
+          ]
+        }
+      },
+      {
+        "replay_scale": 1.0,
+        "replay_learning_targets": "readout",
+        "measurement": {
+          "ability_id": "b5_continual_learning",
+          "status": "failed",
+          "primary_metric": "backward_transfer",
+          "metric_direction": "higher_is_better",
+          "metric_value": -0.28125,
+          "baseline_metrics": {
+            "frozen_parent": 0.0,
+            "hash_only": 0.0,
+            "no_replay": -0.65625,
+            "random": 0.0,
+            "simple_rule": 0.0
+          },
+          "sample_counts": {
+            "holdout": 64,
+            "phase_a_holdout": 32,
+            "phase_a_retention": 32,
+            "phase_a_train": 64,
+            "phase_b_holdout": 32,
+            "phase_b_retention": 32,
+            "phase_b_train": 64,
+            "replay_train": 64,
+            "retention": 64,
+            "train": 128
+          },
+          "holdout_updates": 0,
+          "evidence": [
+            "corpus_digest=19687ae8d7bd135af49e1c3f80b6fa58a16ab0180d1c70e4934fec3eb037cabc",
+            "seed_metrics=[{\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.65625, \"no_replay_new_after\": 0.65625, \"no_replay_old_after\": 0.0, \"old_before\": 0.65625, \"old_retention_before\": 0.65625, \"phase_a_checkpoint_digest\": \"aaff3ce534e50d49e56b1a12c3c503a54a59cdaa4ed00f64f8a553b138e46d5f\", \"replay_backward_transfer\": -0.09375, \"replay_causal_gain\": 0.5625, \"replay_checkpoint_digest\": \"a162e551e3333717a9e589d468910138e59f44009708985f7926c2d5bae7b712\", \"replay_new_after\": 0.03125, \"replay_old_after\": 0.5625, \"replay_retention_after\": 0.53125, \"seed\": 11}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.53125, \"no_replay_new_after\": 0.53125, \"no_replay_old_after\": 0.0, \"old_before\": 0.53125, \"old_retention_before\": 0.5625, \"phase_a_checkpoint_digest\": \"aa7c3dcec255c5d9e821b5dde455b13b13f5faf15ceebe7722172c1b402759b4\", \"replay_backward_transfer\": -0.28125, \"replay_causal_gain\": 0.25, \"replay_checkpoint_digest\": \"5fc9287675d9726fb106acedb305aecdb10937a62e214ff70871c66fd06087da\", \"replay_new_after\": 0.4375, \"replay_old_after\": 0.25, \"replay_retention_after\": 0.125, \"seed\": 29}, {\"continued_from_phase_a\": 1, \"holdout_updates\": 0, \"no_replay_backward_transfer\": -0.59375, \"no_replay_new_after\": 0.5, \"no_replay_old_after\": 0.0, \"old_before\": 0.59375, \"old_retention_before\": 0.53125, \"phase_a_checkpoint_digest\": \"3cfdebbd74de7896e27d8ecd5b0dd015424f46a4e25ea596cc97c7d14984a750\", \"replay_backward_transfer\": -0.03125, \"replay_causal_gain\": 0.5625, \"replay_checkpoint_digest\": \"d1796dd2ba1226f856bf054e1fc8dd33abe8f6d682f49296474ee88929b32981\", \"replay_new_after\": 0.0625, \"replay_old_after\": 0.5625, \"replay_retention_after\": 0.4375, \"seed\": 47}]",
+            "phase_a_then_phase_b_with_no_replay_counterfactual_then_phase_a_replay=true"
+          ]
+        }
+      }
+    ],
+    "candidates_passing_b5": []
+  },
+  "report_path": "reports\\taiji_m1_34_signal_admission_20260902.json"
+}
