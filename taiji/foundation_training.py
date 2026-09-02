@@ -21,7 +21,7 @@ from typing import Any
 
 import torch
 
-from .config import TaijiConfig
+from .config import TaijiConfig, validate_episodic_learning_target
 from .contracts import WorldTransition
 from .foundation_tasks import (
     DelayedMemoryCorpus,
@@ -1449,10 +1449,9 @@ class JointTrainingRun:
             or float(replay_memory_learning_scale) <= 0.0
         ):
             raise ValueError("joint replay memory learning scale must be finite and positive")
-        if replay_memory_learning_targets not in {"all", "association", "readout"}:
-            raise ValueError(
-                "joint replay memory learning targets must be 'all', 'association', or 'readout'"
-            )
+        validate_episodic_learning_target(
+            "joint replay memory learning targets", replay_memory_learning_targets
+        )
         if metric_interval is not None and int(metric_interval) <= 0:
             raise ValueError("joint metric_interval must be positive")
         self.model = model

@@ -8,7 +8,7 @@ from typing import Any
 
 import torch
 
-from .config import TaijiConfig
+from .config import TaijiConfig, validate_episodic_learning_target
 from .fabric import TaijiFabric
 from .identity_organ import CueIdentityOrgan, IdentityRecall
 from .internalization import content_digest
@@ -304,10 +304,9 @@ class Taiji:
             raise ValueError(f"unsupported episodic provenance: {provenance}")
         if not math.isfinite(float(memory_learning_scale)) or float(memory_learning_scale) <= 0.0:
             raise ValueError("memory_learning_scale must be finite and positive")
-        if memory_learning_targets not in {"all", "association", "readout"}:
-            raise ValueError(
-                "memory_learning_targets must be 'all', 'association', or 'readout'"
-            )
+        validate_episodic_learning_target(
+            "memory_learning_targets", memory_learning_targets
+        )
         modulation = reward - self.motor.reward_baseline
         error_norm = 0.0
         if learn:
@@ -882,8 +881,10 @@ class Taiji:
                 raise ValueError("checkpoint pending experience episode is invalid")
             if experience.provenance not in self.memory.PROVENANCE_KINDS:
                 raise ValueError("checkpoint pending experience provenance is invalid")
-            if experience.memory_learning_targets not in {"all", "association", "readout"}:
-                raise ValueError("checkpoint pending experience learning targets are invalid")
+            validate_episodic_learning_target(
+                "checkpoint pending experience learning targets",
+                experience.memory_learning_targets,
+            )
             if (
                 not math.isfinite(experience.memory_learning_scale)
                 or experience.memory_learning_scale <= 0.0

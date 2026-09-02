@@ -52,7 +52,12 @@ from .concept_formation import (
     ConceptFormationOrgan,
     ConceptMatch,
 )
-from .config import CapacityPolicy, PerceptionConfig, TaijiConfig
+from .config import (
+    EPISODIC_LEARNING_TARGETS,
+    CapacityPolicy,
+    PerceptionConfig,
+    TaijiConfig,
+)
 from .content_selection import (
     CONTENT_SELECTION_CHECKPOINT_FORMAT,
     ContentCandidate,
@@ -678,6 +683,7 @@ __all__ = [
     "CapacityGrowthTriggerDecision",
     "CapacityGrowthTriggerPolicy",
     "CapacityPolicy",
+    "EPISODIC_LEARNING_TARGETS",
     "ConceptFormationOrgan",
     "ConceptMatch",
     "CONCEPT_FORMATION_CHECKPOINT_FORMAT",

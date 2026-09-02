@@ -17,6 +17,19 @@ EPISODIC_EVENT_COMPONENTS = (
     "provenance",
 )
 DEFAULT_EPISODIC_EVENT_COMPONENT_GAINS = (1.0,) * len(EPISODIC_EVENT_COMPONENTS)
+EPISODIC_LEARNING_TARGETS = (
+    "all",
+    "association",
+    "readout",
+    "action_readout",
+    "outcome_readout",
+)
+
+
+def validate_episodic_learning_target(name: str, target: str) -> None:
+    if target not in EPISODIC_LEARNING_TARGETS:
+        choices = ", ".join(EPISODIC_LEARNING_TARGETS)
+        raise ValueError(f"{name} must be one of: {choices}")
 
 
 def _validate_event_component_gains(name: str, gains: tuple[float, ...]) -> None:

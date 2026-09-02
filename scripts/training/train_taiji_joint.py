@@ -82,7 +82,7 @@ def main() -> int:
     parser.add_argument("--replay-memory-learning-scale", type=float)
     parser.add_argument(
         "--replay-memory-learning-targets",
-        choices=("all", "association", "readout"),
+        choices=("all", "association", "readout", "action_readout", "outcome_readout"),
         default="all",
     )
     parser.add_argument(
