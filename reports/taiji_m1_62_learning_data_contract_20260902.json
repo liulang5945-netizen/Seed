@@ -1,0 +1,4042 @@
+{
+  "format": "taiji-native-m1-62-learning-data-contract-v1",
+  "status": "blocked",
+  "blocking_gates": [
+    "native_positive_binding_on_stable_keys",
+    "native_stable_beats_conflicting_control"
+  ],
+  "seeds": [
+    11,
+    29,
+    47
+  ],
+  "data_contract": {
+    "stable_well_formed": true,
+    "stable_key_value_deterministic": true,
+    "negative_control_declares_conflict": true,
+    "no_bypass_field_leak": true,
+    "no_train_query_id_overlap": true,
+    "all_partitions_factorial_complete": true,
+    "train_keys_repeatedly_observed": true
+  },
+  "gates": {
+    "data_contract_pass": true,
+    "checkpoint_preflight_pass": true,
+    "checkpoint_after_train_pass": true,
+    "native_positive_binding_on_stable_keys": false,
+    "native_stable_beats_conflicting_control": false,
+    "negative_control_rejected": true,
+    "identity_organ_reference_positive_binding": true,
+    "identity_organ_reference_beats_native": false
+  },
+  "courses": {
+    "stable_key": {
+      "curriculum_digest": "30d67ccda51decee0aabaab9a5413eb10f662733753586baca6e438c6e58ad31",
+      "audit": {
+        "format": "taiji-native-memory-learning-curriculum-v1",
+        "version": 1,
+        "name": "stable_key",
+        "declared_key_value_deterministic": true,
+        "observed_key_value_deterministic": true,
+        "declaration_matches_observation": true,
+        "partitions": {
+          "train": {
+            "example_count": 64,
+            "key_count": 16,
+            "value_count": 4,
+            "action_count": 2,
+            "outcome_count": 2,
+            "factorial_complete": true,
+            "observations_per_key": {
+              "mean": 4.0,
+              "min": 4.0,
+              "max": 4.0
+            },
+            "roles": {
+              "repeated_observation": 64,
+              "one_shot_experience": 0
+            },
+            "role_labels_match_observation_counts": true,
+            "values_per_key": {
+              "mean": 1.0,
+              "min": 1.0,
+              "max": 1.0
+            },
+            "conflicting_key_count": 0,
+            "conflicting_keys": [],
+            "key_value_deterministic": true,
+            "reward": {
+              "mean": 1.0,
+              "min": 1.0,
+              "max": 1.0
+            },
+            "combination_counts": {
+              "48/43": 16,
+              "48/45": 16,
+              "49/43": 16,
+              "49/45": 16
+            },
+            "bypass_field_value_leak": {
+              "time_index": false,
+              "episode_tag": false,
+              "provenance": false
+            },
+            "any_bypass_field_leak": false
+          },
+          "holdout": {
+            "example_count": 8,
+            "key_count": 8,
+            "value_count": 4,
+            "action_count": 2,
+            "outcome_count": 2,
+            "factorial_complete": true,
+            "observations_per_key": {
+              "mean": 1.0,
+              "min": 1.0,
+              "max": 1.0
+            },
+            "roles": {
+              "repeated_observation": 0,
+              "one_shot_experience": 8
+            },
+            "role_labels_match_observation_counts": true,
+            "values_per_key": {
+              "mean": 1.0,
+              "min": 1.0,
+              "max": 1.0
+            },
+            "conflicting_key_count": 0,
+            "conflicting_keys": [],
+            "key_value_deterministic": true,
+            "reward": {
+              "mean": 1.0,
+              "min": 1.0,
+              "max": 1.0
+            },
+            "combination_counts": {
+              "48/43": 2,
+              "48/45": 2,
+              "49/43": 2,
+              "49/45": 2
+            },
+            "bypass_field_value_leak": {
+              "time_index": false,
+              "episode_tag": false,
+              "provenance": false
+            },
+            "any_bypass_field_leak": false
+          },
+          "retention": {
+            "example_count": 8,
+            "key_count": 8,
+            "value_count": 4,
+            "action_count": 2,
+            "outcome_count": 2,
+            "factorial_complete": true,
+            "observations_per_key": {
+              "mean": 1.0,
+              "min": 1.0,
+              "max": 1.0
+            },
+            "roles": {
+              "repeated_observation": 0,
+              "one_shot_experience": 8
+            },
+            "role_labels_match_observation_counts": true,
+            "values_per_key": {
+              "mean": 1.0,
+              "min": 1.0,
+              "max": 1.0
+            },
+            "conflicting_key_count": 0,
+            "conflicting_keys": [],
+            "key_value_deterministic": true,
+            "reward": {
+              "mean": 1.0,
+              "min": 1.0,
+              "max": 1.0
+            },
+            "combination_counts": {
+              "48/43": 2,
+              "48/45": 2,
+              "49/43": 2,
+              "49/45": 2
+            },
+            "bypass_field_value_leak": {
+              "time_index": false,
+              "episode_tag": false,
+              "provenance": false
+            },
+            "any_bypass_field_leak": false
+          }
+        },
+        "query_relations": {
+          "holdout": {
+            "query_count": 8,
+            "keys_covered_by_train": true,
+            "answers_present_in_train": 8,
+            "answers_present_in_train_ratio": 1.0,
+            "answer_matches_train_taught_value": true,
+            "ambiguous_key_query_count": 0
+          },
+          "retention": {
+            "query_count": 8,
+            "keys_covered_by_train": true,
+            "answers_present_in_train": 8,
+            "answers_present_in_train_ratio": 1.0,
+            "answer_matches_train_taught_value": true,
+            "ambiguous_key_query_count": 0
+          }
+        },
+        "leakage": {
+          "train_query_id_overlap": 0,
+          "bypass_field_value_leak": {
+            "time_index": false,
+            "episode_tag": false,
+            "provenance": false
+          },
+          "any_bypass_field_leak": false
+        },
+        "well_formed": true
+      },
+      "arms": {
+        "native_association": {
+          "records": [
+            {
+              "seed": 11,
+              "arm": "native_association",
+              "identity_organ_enabled": false,
+              "train_examples_written": 64,
+              "partitions_written": [
+                "train"
+              ],
+              "holdout_updates": 0,
+              "retention_updates": 0,
+              "checkpoint_preflight": {
+                "digest": "64d12e19a483a59c2b443b960bc548409f02d23df8b9da58bdc2d97135bdb23f",
+                "same_process_digest_matches": true,
+                "fresh_process_digest_matches": true,
+                "active_parameter_count": 85953,
+                "planned_active_parameter_count": 85953,
+                "parameter_count_matches_plan": true,
+                "saveable_before_training": true
+              },
+              "checkpoint_after_train": {
+                "digest": "41b02fab50fddce8423fbc9ca70821f99a75ac53fbe729cebbd78e98b4e45134",
+                "same_process_digest_matches": true,
+                "fresh_process_digest_matches": true,
+                "active_parameter_count": 85953,
+                "planned_active_parameter_count": 85953,
+                "parameter_count_matches_plan": true
+              },
+              "holdout": {
+                "all": {
+                  "sample_count": 8,
+                  "action_accuracy": 0.875,
+                  "outcome_accuracy": 0.875,
+                  "action_margin": {
+                    "mean": 0.2558810980990529,
+                    "min": -0.43251030147075653,
+                    "max": 0.7071509286761284
+                  },
+                  "outcome_margin": {
+                    "mean": 0.22158945119008422,
+                    "min": -0.28035202622413635,
+                    "max": 0.760260783135891
+                  },
+                  "action_outcome_margin_gap": {
+                    "mean": 0.03429164690896869,
+                    "min": -0.5947912856936455,
+                    "max": 0.6701032146811485
+                  }
+                },
+                "by_combination": {
+                  "48/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.1234416663646698,
+                      "min": 0.08141383528709412,
+                      "max": 0.16546949744224548
+                    },
+                    "outcome_margin": {
+                      "mean": 0.5782862789928913,
+                      "min": 0.39631177484989166,
+                      "max": 0.760260783135891
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.4548446126282215,
+                      "min": -0.5947912856936455,
+                      "max": -0.31489793956279755
+                    }
+                  },
+                  "48/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.5,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": -0.19260410219430923,
+                      "min": -0.43251030147075653,
+                      "max": 0.04730209708213806
+                    },
+                    "outcome_margin": {
+                      "mean": 0.01886368729174137,
+                      "min": -0.28035202622413635,
+                      "max": 0.3180794008076191
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.2114677894860506,
+                      "min": -0.27077730372548103,
+                      "max": -0.15215827524662018
+                    }
+                  },
+                  "49/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.5886201299726963,
+                      "min": 0.4700893312692642,
+                      "max": 0.7071509286761284
+                    },
+                    "outcome_margin": {
+                      "mean": 0.0651712417602539,
+                      "min": 0.03704771399497986,
+                      "max": 0.09329476952552795
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.5234488882124424,
+                      "min": 0.37679456174373627,
+                      "max": 0.6701032146811485
+                    }
+                  },
+                  "49/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.5040666982531548,
+                      "min": 0.47830186039209366,
+                      "max": 0.5298315361142159
+                    },
+                    "outcome_margin": {
+                      "mean": 0.2240365967154503,
+                      "min": 0.031480222940444946,
+                      "max": 0.4165929704904556
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.28003010153770447,
+                      "min": 0.11323856562376022,
+                      "max": 0.4468216374516487
+                    }
+                  }
+                }
+              },
+              "retention": {
+                "all": {
+                  "sample_count": 8,
+                  "action_accuracy": 0.5,
+                  "outcome_accuracy": 0.625,
+                  "action_margin": {
+                    "mean": 0.16192916128784418,
+                    "min": -0.13280871510505676,
+                    "max": 0.5000413060188293
+                  },
+                  "outcome_margin": {
+                    "mean": 0.05371497431769967,
+                    "min": -0.2146860957145691,
+                    "max": 0.25873539224267006
+                  },
+                  "action_outcome_margin_gap": {
+                    "mean": 0.10821418697014451,
+                    "min": -0.26517995074391365,
+                    "max": 0.6451771706342697
+                  }
+                },
+                "by_combination": {
+                  "48/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.0,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": -0.0639546811580658,
+                      "min": -0.09931185841560364,
+                      "max": -0.028597503900527954
+                    },
+                    "outcome_margin": {
+                      "mean": 0.05600552260875702,
+                      "min": -0.010302692651748657,
+                      "max": 0.1223137378692627
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.11996020376682281,
+                      "min": -0.15091124176979065,
+                      "max": -0.08900916576385498
+                    }
+                  },
+                  "48/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": -0.06962663680315018,
+                      "min": -0.13280871510505676,
+                      "max": -0.006444558501243591
+                    },
+                    "outcome_margin": {
+                      "mean": 0.15853853709995747,
+                      "min": 0.05834168195724487,
+                      "max": 0.25873539224267006
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.22816517390310764,
+                      "min": -0.26517995074391365,
+                      "max": -0.19115039706230164
+                    }
+                  },
+                  "49/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.3464757464826107,
+                      "min": 0.3251165598630905,
+                      "max": 0.3678349331021309
+                    },
+                    "outcome_margin": {
+                      "mean": 0.18022681772708893,
+                      "min": 0.11914035677909851,
+                      "max": 0.24131327867507935
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.16624892875552177,
+                      "min": 0.08380328118801117,
+                      "max": 0.24869457632303238
+                    }
+                  },
+                  "49/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 0.0,
+                    "action_margin": {
+                      "mean": 0.434822216629982,
+                      "min": 0.36960312724113464,
+                      "max": 0.5000413060188293
+                    },
+                    "outcome_margin": {
+                      "mean": -0.17991098016500473,
+                      "min": -0.2146860957145691,
+                      "max": -0.14513586461544037
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.6147331967949867,
+                      "min": 0.5842892229557037,
+                      "max": 0.6451771706342697
+                    }
+                  }
+                }
+              },
+              "holdout_decision": {
+                "sample_count": 8,
+                "action_accuracy": 0.875,
+                "action_margin": {
+                  "mean": 0.5694909260773784,
+                  "min": -0.9859906546771526,
+                  "max": 0.9997599862326751
+                },
+                "row_action_margin_min": -0.9859906546771526,
+                "identity_recall_used_ratio": 0.0
+              },
+              "retention_decision": {
+                "sample_count": 8,
+                "action_accuracy": 0.625,
+                "action_margin": {
+                  "mean": 0.2972390149880084,
+                  "min": -0.8669426217675209,
+                  "max": 0.9984226107480936
+                },
+                "row_action_margin_min": -0.8669426217675209,
+                "identity_recall_used_ratio": 0.0
+              },
+              "row_action_margin_min": {
+                "holdout": -0.43251030147075653,
+                "retention": -0.13280871510505676
+              },
+              "row_outcome_margin_min": {
+                "holdout": -0.28035202622413635,
+                "retention": -0.2146860957145691
+              },
+              "cpu_seconds": 3.855
+            },
+            {
+              "seed": 29,
+              "arm": "native_association",
+              "identity_organ_enabled": false,
+              "train_examples_written": 64,
+              "partitions_written": [
+                "train"
+              ],
+              "holdout_updates": 0,
+              "retention_updates": 0,
+              "checkpoint_preflight": {
+                "digest": "d24bbec17459d4f7a4b2b90d512f3f5bb9b3a15c0c787d7141044619c8e34de0",
+                "same_process_digest_matches": true,
+                "fresh_process_digest_matches": true,
+                "active_parameter_count": 85953,
+                "planned_active_parameter_count": 85953,
+                "parameter_count_matches_plan": true,
+                "saveable_before_training": true
+              },
+              "checkpoint_after_train": {
+                "digest": "803bf4265c746c357240566e01f4792c445afc6f48bbb31aea4be4ae20a982be",
+                "same_process_digest_matches": true,
+                "fresh_process_digest_matches": true,
+                "active_parameter_count": 85953,
+                "planned_active_parameter_count": 85953,
+                "parameter_count_matches_plan": true
+              },
+              "holdout": {
+                "all": {
+                  "sample_count": 8,
+                  "action_accuracy": 1.0,
+                  "outcome_accuracy": 0.625,
+                  "action_margin": {
+                    "mean": 0.32828193716704845,
+                    "min": 0.10203450173139572,
+                    "max": 0.6626399457454681
+                  },
+                  "outcome_margin": {
+                    "mean": 0.11452419497072697,
+                    "min": -0.38336388766765594,
+                    "max": 0.6453908234834671
+                  },
+                  "action_outcome_margin_gap": {
+                    "mean": 0.2137577421963215,
+                    "min": -0.2283875048160553,
+                    "max": 0.8579711243510246
+                  }
+                },
+                "by_combination": {
+                  "48/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.43645817041397095,
+                      "min": 0.21027639508247375,
+                      "max": 0.6626399457454681
+                    },
+                    "outcome_margin": {
+                      "mean": 0.5420273616909981,
+                      "min": 0.43866389989852905,
+                      "max": 0.6453908234834671
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.10556919127702713,
+                      "min": -0.2283875048160553,
+                      "max": 0.017249122262001038
+                    }
+                  },
+                  "48/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": 0.2978854477405548,
+                      "min": 0.10203450173139572,
+                      "max": 0.4937363937497139
+                    },
+                    "outcome_margin": {
+                      "mean": -0.14412852749228477,
+                      "min": -0.36423473060131073,
+                      "max": 0.07597767561674118
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.4420139752328396,
+                      "min": 0.02605682611465454,
+                      "max": 0.8579711243510246
+                    }
+                  },
+                  "49/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.34694239497184753,
+                      "min": 0.1741747409105301,
+                      "max": 0.519710049033165
+                    },
+                    "outcome_margin": {
+                      "mean": 0.34112556651234627,
+                      "min": 0.32385022938251495,
+                      "max": 0.3584009036421776
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.0058168284595012665,
+                      "min": -0.14967548847198486,
+                      "max": 0.1613091453909874
+                    }
+                  },
+                  "49/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 0.0,
+                    "action_margin": {
+                      "mean": 0.23184173554182053,
+                      "min": 0.16410842537879944,
+                      "max": 0.2995750457048416
+                    },
+                    "outcome_margin": {
+                      "mean": -0.2809276208281517,
+                      "min": -0.38336388766765594,
+                      "max": -0.17849135398864746
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.5127693563699722,
+                      "min": 0.3425997793674469,
+                      "max": 0.6829389333724976
+                    }
+                  }
+                }
+              },
+              "retention": {
+                "all": {
+                  "sample_count": 8,
+                  "action_accuracy": 0.875,
+                  "outcome_accuracy": 0.5,
+                  "action_margin": {
+                    "mean": 0.1052578492090106,
+                    "min": -0.11354206502437592,
+                    "max": 0.262261301279068
+                  },
+                  "outcome_margin": {
+                    "mean": 0.0593008347786963,
+                    "min": -0.24654005467891693,
+                    "max": 0.3588680550456047
+                  },
+                  "action_outcome_margin_gap": {
+                    "mean": 0.0459570144303143,
+                    "min": -0.18421941995620728,
+                    "max": 0.18393966555595398
+                  }
+                },
+                "by_combination": {
+                  "48/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.1498292163014412,
+                      "min": 0.1339017003774643,
+                      "max": 0.1657567322254181
+                    },
+                    "outcome_margin": {
+                      "mean": 0.25413565523922443,
+                      "min": 0.1901501901447773,
+                      "max": 0.31812112033367157
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.10430643893778324,
+                      "min": -0.18421941995620728,
+                      "max": -0.024393457919359207
+                    }
+                  },
+                  "48/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.5,
+                    "outcome_accuracy": 0.0,
+                    "action_margin": {
+                      "mean": -0.01923343539237976,
+                      "min": -0.11354206502437592,
+                      "max": 0.0750751942396164
+                    },
+                    "outcome_margin": {
+                      "mean": -0.15684888511896133,
+                      "min": -0.24654005467891693,
+                      "max": -0.06715771555900574
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.13761544972658157,
+                      "min": 0.13299798965454102,
+                      "max": 0.14223290979862213
+                    }
+                  },
+                  "49/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.25881781429052353,
+                      "min": 0.25537432730197906,
+                      "max": 0.262261301279068
+                    },
+                    "outcome_margin": {
+                      "mean": 0.2468598447740078,
+                      "min": 0.1348516345024109,
+                      "max": 0.3588680550456047
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.011957969516515732,
+                      "min": -0.10349372774362564,
+                      "max": 0.1274096667766571
+                    }
+                  },
+                  "49/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 0.0,
+                    "action_margin": {
+                      "mean": 0.03161780163645744,
+                      "min": 0.030391693115234375,
+                      "max": 0.03284391015768051
+                    },
+                    "outcome_margin": {
+                      "mean": -0.1069432757794857,
+                      "min": -0.1535479724407196,
+                      "max": -0.0603385791182518
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.13856107741594315,
+                      "min": 0.09318248927593231,
+                      "max": 0.18393966555595398
+                    }
+                  }
+                }
+              },
+              "holdout_decision": {
+                "sample_count": 8,
+                "action_accuracy": 1.0,
+                "action_margin": {
+                  "mean": 0.9207942169041416,
+                  "min": 0.7792457714676857,
+                  "max": 0.9997594259111793
+                },
+                "row_action_margin_min": 0.7792457714676857,
+                "identity_recall_used_ratio": 0.0
+              },
+              "retention_decision": {
+                "sample_count": 8,
+                "action_accuracy": 0.875,
+                "action_margin": {
+                  "mean": 0.5388095741800498,
+                  "min": -0.5824600160121918,
+                  "max": 0.9927960315253586
+                },
+                "row_action_margin_min": -0.5824600160121918,
+                "identity_recall_used_ratio": 0.0
+              },
+              "row_action_margin_min": {
+                "holdout": 0.10203450173139572,
+                "retention": -0.11354206502437592
+              },
+              "row_outcome_margin_min": {
+                "holdout": -0.38336388766765594,
+                "retention": -0.24654005467891693
+              },
+              "cpu_seconds": 3.762
+            },
+            {
+              "seed": 47,
+              "arm": "native_association",
+              "identity_organ_enabled": false,
+              "train_examples_written": 64,
+              "partitions_written": [
+                "train"
+              ],
+              "holdout_updates": 0,
+              "retention_updates": 0,
+              "checkpoint_preflight": {
+                "digest": "67fd56958ddce0358bd8c8ae278dac42218c94352947eb03297a4c4c75b101c6",
+                "same_process_digest_matches": true,
+                "fresh_process_digest_matches": true,
+                "active_parameter_count": 85953,
+                "planned_active_parameter_count": 85953,
+                "parameter_count_matches_plan": true,
+                "saveable_before_training": true
+              },
+              "checkpoint_after_train": {
+                "digest": "2488fabbf372edca639eda20c207fade0dbe1f6295f99203801a14118d6b8dd6",
+                "same_process_digest_matches": true,
+                "fresh_process_digest_matches": true,
+                "active_parameter_count": 85953,
+                "planned_active_parameter_count": 85953,
+                "parameter_count_matches_plan": true
+              },
+              "holdout": {
+                "all": {
+                  "sample_count": 8,
+                  "action_accuracy": 0.75,
+                  "outcome_accuracy": 0.75,
+                  "action_margin": {
+                    "mean": 0.117209292948246,
+                    "min": -0.04821935296058655,
+                    "max": 0.31527388095855713
+                  },
+                  "outcome_margin": {
+                    "mean": 0.18147008935920894,
+                    "min": -0.29034237563610077,
+                    "max": 0.47695282101631165
+                  },
+                  "action_outcome_margin_gap": {
+                    "mean": -0.06426079641096294,
+                    "min": -0.3492921367287636,
+                    "max": 0.24212302267551422
+                  }
+                },
+                "by_combination": {
+                  "48/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": 0.17886018007993698,
+                      "min": 0.042446479201316833,
+                      "max": 0.31527388095855713
+                    },
+                    "outcome_margin": {
+                      "mean": 0.18735811114311218,
+                      "min": -0.10223659873008728,
+                      "max": 0.47695282101631165
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.008497931063175201,
+                      "min": -0.16167894005775452,
+                      "max": 0.1446830779314041
+                    }
+                  },
+                  "48/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.11471065133810043,
+                      "min": 0.030184537172317505,
+                      "max": 0.19923676550388336
+                    },
+                    "outcome_margin": {
+                      "mean": 0.3603446325287223,
+                      "min": 0.32005561888217926,
+                      "max": 0.4006336461752653
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.24563398119062185,
+                      "min": -0.28987108170986176,
+                      "max": -0.20139688067138195
+                    }
+                  },
+                  "49/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.5,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": 0.07835274189710617,
+                      "min": -0.04821935296058655,
+                      "max": 0.2049248367547989
+                    },
+                    "outcome_margin": {
+                      "mean": -0.006055921316146851,
+                      "min": -0.29034237563610077,
+                      "max": 0.27823053300380707
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.08440866321325302,
+                      "min": -0.07330569624900818,
+                      "max": 0.24212302267551422
+                    }
+                  },
+                  "49/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.5,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.09691359847784042,
+                      "min": -0.039182886481285095,
+                      "max": 0.23301008343696594
+                    },
+                    "outcome_margin": {
+                      "mean": 0.18423353508114815,
+                      "min": 0.05835781991481781,
+                      "max": 0.3101092502474785
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.08731993660330772,
+                      "min": -0.3492921367287636,
+                      "max": 0.17465226352214813
+                    }
+                  }
+                }
+              },
+              "retention": {
+                "all": {
+                  "sample_count": 8,
+                  "action_accuracy": 1.0,
+                  "outcome_accuracy": 0.625,
+                  "action_margin": {
+                    "mean": 0.0968893738463521,
+                    "min": 0.019960254430770874,
+                    "max": 0.1583411693572998
+                  },
+                  "outcome_margin": {
+                    "mean": 0.12153761275112629,
+                    "min": -0.18090291321277618,
+                    "max": 0.3798896297812462
+                  },
+                  "action_outcome_margin_gap": {
+                    "mean": -0.02464823890477419,
+                    "min": -0.29301200807094574,
+                    "max": 0.31210221350193024
+                  }
+                },
+                "by_combination": {
+                  "48/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": 0.10655204951763153,
+                      "min": 0.08190479874610901,
+                      "max": 0.13119930028915405
+                    },
+                    "outcome_margin": {
+                      "mean": 0.07003939151763916,
+                      "min": -0.18090291321277618,
+                      "max": 0.3209816962480545
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.03651265799999237,
+                      "min": -0.2390768975019455,
+                      "max": 0.31210221350193024
+                    }
+                  },
+                  "48/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.059020522981882095,
+                      "min": 0.031163424253463745,
+                      "max": 0.08687762171030045
+                    },
+                    "outcome_margin": {
+                      "mean": 0.33078234270215034,
+                      "min": 0.2816750556230545,
+                      "max": 0.3798896297812462
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.27176181972026825,
+                      "min": -0.29301200807094574,
+                      "max": -0.25051163136959076
+                    }
+                  },
+                  "49/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 0.0,
+                    "action_margin": {
+                      "mean": 0.13599567860364914,
+                      "min": 0.11365018784999847,
+                      "max": 0.1583411693572998
+                    },
+                    "outcome_margin": {
+                      "mean": -0.12582353875041008,
+                      "min": -0.1311863735318184,
+                      "max": -0.12046070396900177
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.2618192173540592,
+                      "min": 0.24483656138181686,
+                      "max": 0.2788018733263016
+                    }
+                  },
+                  "49/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.08598924428224564,
+                      "min": 0.019960254430770874,
+                      "max": 0.1520182341337204
+                    },
+                    "outcome_margin": {
+                      "mean": 0.21115225553512573,
+                      "min": 0.20914869755506516,
+                      "max": 0.2131558135151863
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.1251630112528801,
+                      "min": -0.18918844312429428,
+                      "max": -0.06113757938146591
+                    }
+                  }
+                }
+              },
+              "holdout_decision": {
+                "sample_count": 8,
+                "action_accuracy": 0.75,
+                "action_margin": {
+                  "mean": 0.41065049287863076,
+                  "min": -0.5601657330989838,
+                  "max": 0.9942427230998874
+                },
+                "row_action_margin_min": -0.5601657330989838,
+                "identity_recall_used_ratio": 0.0
+              },
+              "retention_decision": {
+                "sample_count": 8,
+                "action_accuracy": 0.875,
+                "action_margin": {
+                  "mean": 0.5549026592634618,
+                  "min": -0.1866546869277954,
+                  "max": 0.9075258374214172
+                },
+                "row_action_margin_min": -0.1866546869277954,
+                "identity_recall_used_ratio": 0.0
+              },
+              "row_action_margin_min": {
+                "holdout": -0.04821935296058655,
+                "retention": 0.019960254430770874
+              },
+              "row_outcome_margin_min": {
+                "holdout": -0.29034237563610077,
+                "retention": -0.18090291321277618
+              },
+              "cpu_seconds": 3.723
+            }
+          ],
+          "summary": {
+            "holdout": {
+              "action_accuracy": {
+                "mean": 0.875,
+                "min": 0.75,
+                "max": 1.0
+              },
+              "outcome_accuracy": {
+                "mean": 0.75,
+                "min": 0.625,
+                "max": 0.875
+              },
+              "action_margin": {
+                "mean": 0.23379077607144913,
+                "min": 0.117209292948246,
+                "max": 0.32828193716704845
+              },
+              "outcome_margin": {
+                "mean": 0.1725279118400067,
+                "min": 0.11452419497072697,
+                "max": 0.22158945119008422
+              },
+              "action_outcome_margin_gap": {
+                "mean": 0.061262864231442414,
+                "min": -0.06426079641096294,
+                "max": 0.2137577421963215
+              }
+            },
+            "retention": {
+              "action_accuracy": {
+                "mean": 0.7916666666666666,
+                "min": 0.5,
+                "max": 1.0
+              },
+              "outcome_accuracy": {
+                "mean": 0.5833333333333334,
+                "min": 0.5,
+                "max": 0.625
+              },
+              "action_margin": {
+                "mean": 0.12135879478106897,
+                "min": 0.0968893738463521,
+                "max": 0.16192916128784418
+              },
+              "outcome_margin": {
+                "mean": 0.07818447394917409,
+                "min": 0.05371497431769967,
+                "max": 0.12153761275112629
+              },
+              "action_outcome_margin_gap": {
+                "mean": 0.043174320831894875,
+                "min": -0.02464823890477419,
+                "max": 0.10821418697014451
+              }
+            },
+            "holdout_decision": {
+              "action_accuracy": {
+                "mean": 0.875,
+                "min": 0.75,
+                "max": 1.0
+              },
+              "action_margin": {
+                "mean": 0.6336452119533836,
+                "min": 0.41065049287863076,
+                "max": 0.9207942169041416
+              },
+              "row_action_margin_min": -0.9859906546771526,
+              "identity_recall_used_ratio": {
+                "mean": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              }
+            },
+            "retention_decision": {
+              "action_accuracy": {
+                "mean": 0.7916666666666666,
+                "min": 0.625,
+                "max": 0.875
+              },
+              "action_margin": {
+                "mean": 0.46365041614384,
+                "min": 0.2972390149880084,
+                "max": 0.5549026592634618
+              },
+              "row_action_margin_min": -0.8669426217675209,
+              "identity_recall_used_ratio": {
+                "mean": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              }
+            },
+            "row_action_margin_min": {
+              "holdout": -0.43251030147075653,
+              "retention": -0.13280871510505676
+            },
+            "row_outcome_margin_min": {
+              "holdout": -0.38336388766765594,
+              "retention": -0.24654005467891693
+            },
+            "positive_binding_all_seeds": false,
+            "decision_positive_binding_all_seeds": false,
+            "any_positive_binding_all_seeds": false,
+            "checkpoint_preflight_all_seeds": true,
+            "checkpoint_after_train_all_seeds": true
+          }
+        },
+        "identity_organ_reference": {
+          "records": [
+            {
+              "seed": 11,
+              "arm": "identity_organ_reference",
+              "identity_organ_enabled": true,
+              "train_examples_written": 64,
+              "partitions_written": [
+                "train"
+              ],
+              "holdout_updates": 0,
+              "retention_updates": 0,
+              "checkpoint_preflight": {
+                "digest": "43ab5178fb2b596eee3e0b3b33e8e27b34f30c119e5c3dea8890aa0e63517a0a",
+                "same_process_digest_matches": true,
+                "fresh_process_digest_matches": true,
+                "active_parameter_count": 147521,
+                "planned_active_parameter_count": 147521,
+                "parameter_count_matches_plan": true,
+                "saveable_before_training": true
+              },
+              "checkpoint_after_train": {
+                "digest": "8147c0999b3d30391d2e1acf12e649646102347d5e9fbc5175241b5a93e96276",
+                "same_process_digest_matches": true,
+                "fresh_process_digest_matches": true,
+                "active_parameter_count": 147521,
+                "planned_active_parameter_count": 147521,
+                "parameter_count_matches_plan": true
+              },
+              "holdout": {
+                "all": {
+                  "sample_count": 8,
+                  "action_accuracy": 0.875,
+                  "outcome_accuracy": 0.875,
+                  "action_margin": {
+                    "mean": 0.2558810980990529,
+                    "min": -0.43251030147075653,
+                    "max": 0.7071509286761284
+                  },
+                  "outcome_margin": {
+                    "mean": 0.22158945119008422,
+                    "min": -0.28035202622413635,
+                    "max": 0.760260783135891
+                  },
+                  "action_outcome_margin_gap": {
+                    "mean": 0.03429164690896869,
+                    "min": -0.5947912856936455,
+                    "max": 0.6701032146811485
+                  }
+                },
+                "by_combination": {
+                  "48/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.1234416663646698,
+                      "min": 0.08141383528709412,
+                      "max": 0.16546949744224548
+                    },
+                    "outcome_margin": {
+                      "mean": 0.5782862789928913,
+                      "min": 0.39631177484989166,
+                      "max": 0.760260783135891
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.4548446126282215,
+                      "min": -0.5947912856936455,
+                      "max": -0.31489793956279755
+                    }
+                  },
+                  "48/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.5,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": -0.19260410219430923,
+                      "min": -0.43251030147075653,
+                      "max": 0.04730209708213806
+                    },
+                    "outcome_margin": {
+                      "mean": 0.01886368729174137,
+                      "min": -0.28035202622413635,
+                      "max": 0.3180794008076191
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.2114677894860506,
+                      "min": -0.27077730372548103,
+                      "max": -0.15215827524662018
+                    }
+                  },
+                  "49/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.5886201299726963,
+                      "min": 0.4700893312692642,
+                      "max": 0.7071509286761284
+                    },
+                    "outcome_margin": {
+                      "mean": 0.0651712417602539,
+                      "min": 0.03704771399497986,
+                      "max": 0.09329476952552795
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.5234488882124424,
+                      "min": 0.37679456174373627,
+                      "max": 0.6701032146811485
+                    }
+                  },
+                  "49/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.5040666982531548,
+                      "min": 0.47830186039209366,
+                      "max": 0.5298315361142159
+                    },
+                    "outcome_margin": {
+                      "mean": 0.2240365967154503,
+                      "min": 0.031480222940444946,
+                      "max": 0.4165929704904556
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.28003010153770447,
+                      "min": 0.11323856562376022,
+                      "max": 0.4468216374516487
+                    }
+                  }
+                }
+              },
+              "retention": {
+                "all": {
+                  "sample_count": 8,
+                  "action_accuracy": 0.5,
+                  "outcome_accuracy": 0.625,
+                  "action_margin": {
+                    "mean": 0.16192916128784418,
+                    "min": -0.13280871510505676,
+                    "max": 0.5000413060188293
+                  },
+                  "outcome_margin": {
+                    "mean": 0.05371497431769967,
+                    "min": -0.2146860957145691,
+                    "max": 0.25873539224267006
+                  },
+                  "action_outcome_margin_gap": {
+                    "mean": 0.10821418697014451,
+                    "min": -0.26517995074391365,
+                    "max": 0.6451771706342697
+                  }
+                },
+                "by_combination": {
+                  "48/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.0,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": -0.0639546811580658,
+                      "min": -0.09931185841560364,
+                      "max": -0.028597503900527954
+                    },
+                    "outcome_margin": {
+                      "mean": 0.05600552260875702,
+                      "min": -0.010302692651748657,
+                      "max": 0.1223137378692627
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.11996020376682281,
+                      "min": -0.15091124176979065,
+                      "max": -0.08900916576385498
+                    }
+                  },
+                  "48/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": -0.06962663680315018,
+                      "min": -0.13280871510505676,
+                      "max": -0.006444558501243591
+                    },
+                    "outcome_margin": {
+                      "mean": 0.15853853709995747,
+                      "min": 0.05834168195724487,
+                      "max": 0.25873539224267006
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.22816517390310764,
+                      "min": -0.26517995074391365,
+                      "max": -0.19115039706230164
+                    }
+                  },
+                  "49/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.3464757464826107,
+                      "min": 0.3251165598630905,
+                      "max": 0.3678349331021309
+                    },
+                    "outcome_margin": {
+                      "mean": 0.18022681772708893,
+                      "min": 0.11914035677909851,
+                      "max": 0.24131327867507935
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.16624892875552177,
+                      "min": 0.08380328118801117,
+                      "max": 0.24869457632303238
+                    }
+                  },
+                  "49/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 0.0,
+                    "action_margin": {
+                      "mean": 0.434822216629982,
+                      "min": 0.36960312724113464,
+                      "max": 0.5000413060188293
+                    },
+                    "outcome_margin": {
+                      "mean": -0.17991098016500473,
+                      "min": -0.2146860957145691,
+                      "max": -0.14513586461544037
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.6147331967949867,
+                      "min": 0.5842892229557037,
+                      "max": 0.6451771706342697
+                    }
+                  }
+                }
+              },
+              "holdout_decision": {
+                "sample_count": 8,
+                "action_accuracy": 1.0,
+                "action_margin": {
+                  "mean": 0.9814398245479372,
+                  "min": 0.8518229946494102,
+                  "max": 0.9999999934131467
+                },
+                "row_action_margin_min": 0.8518229946494102,
+                "identity_recall_used_ratio": 1.0
+              },
+              "retention_decision": {
+                "sample_count": 8,
+                "action_accuracy": 1.0,
+                "action_margin": {
+                  "mean": 0.9999998537774355,
+                  "min": 0.9999988338586263,
+                  "max": 1.0
+                },
+                "row_action_margin_min": 0.9999988338586263,
+                "identity_recall_used_ratio": 1.0
+              },
+              "row_action_margin_min": {
+                "holdout": -0.43251030147075653,
+                "retention": -0.13280871510505676
+              },
+              "row_outcome_margin_min": {
+                "holdout": -0.28035202622413635,
+                "retention": -0.2146860957145691
+              },
+              "cpu_seconds": 3.998
+            },
+            {
+              "seed": 29,
+              "arm": "identity_organ_reference",
+              "identity_organ_enabled": true,
+              "train_examples_written": 64,
+              "partitions_written": [
+                "train"
+              ],
+              "holdout_updates": 0,
+              "retention_updates": 0,
+              "checkpoint_preflight": {
+                "digest": "796ca4df2cc92d6c8b26acf180a0899a867d188c06b8571ce82e58c9aa1b825e",
+                "same_process_digest_matches": true,
+                "fresh_process_digest_matches": true,
+                "active_parameter_count": 147521,
+                "planned_active_parameter_count": 147521,
+                "parameter_count_matches_plan": true,
+                "saveable_before_training": true
+              },
+              "checkpoint_after_train": {
+                "digest": "cd63ccb21cdc67095ffcd5912d843e832bd9525da76588dca0791de3195226bf",
+                "same_process_digest_matches": true,
+                "fresh_process_digest_matches": true,
+                "active_parameter_count": 147521,
+                "planned_active_parameter_count": 147521,
+                "parameter_count_matches_plan": true
+              },
+              "holdout": {
+                "all": {
+                  "sample_count": 8,
+                  "action_accuracy": 1.0,
+                  "outcome_accuracy": 0.625,
+                  "action_margin": {
+                    "mean": 0.32828193716704845,
+                    "min": 0.10203450173139572,
+                    "max": 0.6626399457454681
+                  },
+                  "outcome_margin": {
+                    "mean": 0.11452419497072697,
+                    "min": -0.38336388766765594,
+                    "max": 0.6453908234834671
+                  },
+                  "action_outcome_margin_gap": {
+                    "mean": 0.2137577421963215,
+                    "min": -0.2283875048160553,
+                    "max": 0.8579711243510246
+                  }
+                },
+                "by_combination": {
+                  "48/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.43645817041397095,
+                      "min": 0.21027639508247375,
+                      "max": 0.6626399457454681
+                    },
+                    "outcome_margin": {
+                      "mean": 0.5420273616909981,
+                      "min": 0.43866389989852905,
+                      "max": 0.6453908234834671
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.10556919127702713,
+                      "min": -0.2283875048160553,
+                      "max": 0.017249122262001038
+                    }
+                  },
+                  "48/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": 0.2978854477405548,
+                      "min": 0.10203450173139572,
+                      "max": 0.4937363937497139
+                    },
+                    "outcome_margin": {
+                      "mean": -0.14412852749228477,
+                      "min": -0.36423473060131073,
+                      "max": 0.07597767561674118
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.4420139752328396,
+                      "min": 0.02605682611465454,
+                      "max": 0.8579711243510246
+                    }
+                  },
+                  "49/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.34694239497184753,
+                      "min": 0.1741747409105301,
+                      "max": 0.519710049033165
+                    },
+                    "outcome_margin": {
+                      "mean": 0.34112556651234627,
+                      "min": 0.32385022938251495,
+                      "max": 0.3584009036421776
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.0058168284595012665,
+                      "min": -0.14967548847198486,
+                      "max": 0.1613091453909874
+                    }
+                  },
+                  "49/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 0.0,
+                    "action_margin": {
+                      "mean": 0.23184173554182053,
+                      "min": 0.16410842537879944,
+                      "max": 0.2995750457048416
+                    },
+                    "outcome_margin": {
+                      "mean": -0.2809276208281517,
+                      "min": -0.38336388766765594,
+                      "max": -0.17849135398864746
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.5127693563699722,
+                      "min": 0.3425997793674469,
+                      "max": 0.6829389333724976
+                    }
+                  }
+                }
+              },
+              "retention": {
+                "all": {
+                  "sample_count": 8,
+                  "action_accuracy": 0.875,
+                  "outcome_accuracy": 0.5,
+                  "action_margin": {
+                    "mean": 0.1052578492090106,
+                    "min": -0.11354206502437592,
+                    "max": 0.262261301279068
+                  },
+                  "outcome_margin": {
+                    "mean": 0.0593008347786963,
+                    "min": -0.24654005467891693,
+                    "max": 0.3588680550456047
+                  },
+                  "action_outcome_margin_gap": {
+                    "mean": 0.0459570144303143,
+                    "min": -0.18421941995620728,
+                    "max": 0.18393966555595398
+                  }
+                },
+                "by_combination": {
+                  "48/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.1498292163014412,
+                      "min": 0.1339017003774643,
+                      "max": 0.1657567322254181
+                    },
+                    "outcome_margin": {
+                      "mean": 0.25413565523922443,
+                      "min": 0.1901501901447773,
+                      "max": 0.31812112033367157
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.10430643893778324,
+                      "min": -0.18421941995620728,
+                      "max": -0.024393457919359207
+                    }
+                  },
+                  "48/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.5,
+                    "outcome_accuracy": 0.0,
+                    "action_margin": {
+                      "mean": -0.01923343539237976,
+                      "min": -0.11354206502437592,
+                      "max": 0.0750751942396164
+                    },
+                    "outcome_margin": {
+                      "mean": -0.15684888511896133,
+                      "min": -0.24654005467891693,
+                      "max": -0.06715771555900574
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.13761544972658157,
+                      "min": 0.13299798965454102,
+                      "max": 0.14223290979862213
+                    }
+                  },
+                  "49/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.25881781429052353,
+                      "min": 0.25537432730197906,
+                      "max": 0.262261301279068
+                    },
+                    "outcome_margin": {
+                      "mean": 0.2468598447740078,
+                      "min": 0.1348516345024109,
+                      "max": 0.3588680550456047
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.011957969516515732,
+                      "min": -0.10349372774362564,
+                      "max": 0.1274096667766571
+                    }
+                  },
+                  "49/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 0.0,
+                    "action_margin": {
+                      "mean": 0.03161780163645744,
+                      "min": 0.030391693115234375,
+                      "max": 0.03284391015768051
+                    },
+                    "outcome_margin": {
+                      "mean": -0.1069432757794857,
+                      "min": -0.1535479724407196,
+                      "max": -0.0603385791182518
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.13856107741594315,
+                      "min": 0.09318248927593231,
+                      "max": 0.18393966555595398
+                    }
+                  }
+                }
+              },
+              "holdout_decision": {
+                "sample_count": 8,
+                "action_accuracy": 1.0,
+                "action_margin": {
+                  "mean": 0.9999861866281898,
+                  "min": 0.9999518977965636,
+                  "max": 0.9999999986206287
+                },
+                "row_action_margin_min": 0.9999518977965636,
+                "identity_recall_used_ratio": 1.0
+              },
+              "retention_decision": {
+                "sample_count": 8,
+                "action_accuracy": 1.0,
+                "action_margin": {
+                  "mean": 0.9999999961569778,
+                  "min": 0.9999999777613322,
+                  "max": 0.9999999999999998
+                },
+                "row_action_margin_min": 0.9999999777613322,
+                "identity_recall_used_ratio": 1.0
+              },
+              "row_action_margin_min": {
+                "holdout": 0.10203450173139572,
+                "retention": -0.11354206502437592
+              },
+              "row_outcome_margin_min": {
+                "holdout": -0.38336388766765594,
+                "retention": -0.24654005467891693
+              },
+              "cpu_seconds": 3.949
+            },
+            {
+              "seed": 47,
+              "arm": "identity_organ_reference",
+              "identity_organ_enabled": true,
+              "train_examples_written": 64,
+              "partitions_written": [
+                "train"
+              ],
+              "holdout_updates": 0,
+              "retention_updates": 0,
+              "checkpoint_preflight": {
+                "digest": "84de27d15478a58042c7a0a76e3194feb9b27ab283c7c739bccc9e37a1ed00ed",
+                "same_process_digest_matches": true,
+                "fresh_process_digest_matches": true,
+                "active_parameter_count": 147521,
+                "planned_active_parameter_count": 147521,
+                "parameter_count_matches_plan": true,
+                "saveable_before_training": true
+              },
+              "checkpoint_after_train": {
+                "digest": "8844147f2a887e4a6f6aba3dec1e06aebf2e071b4e4893fd6495b473ca128ed2",
+                "same_process_digest_matches": true,
+                "fresh_process_digest_matches": true,
+                "active_parameter_count": 147521,
+                "planned_active_parameter_count": 147521,
+                "parameter_count_matches_plan": true
+              },
+              "holdout": {
+                "all": {
+                  "sample_count": 8,
+                  "action_accuracy": 0.75,
+                  "outcome_accuracy": 0.75,
+                  "action_margin": {
+                    "mean": 0.117209292948246,
+                    "min": -0.04821935296058655,
+                    "max": 0.31527388095855713
+                  },
+                  "outcome_margin": {
+                    "mean": 0.18147008935920894,
+                    "min": -0.29034237563610077,
+                    "max": 0.47695282101631165
+                  },
+                  "action_outcome_margin_gap": {
+                    "mean": -0.06426079641096294,
+                    "min": -0.3492921367287636,
+                    "max": 0.24212302267551422
+                  }
+                },
+                "by_combination": {
+                  "48/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": 0.17886018007993698,
+                      "min": 0.042446479201316833,
+                      "max": 0.31527388095855713
+                    },
+                    "outcome_margin": {
+                      "mean": 0.18735811114311218,
+                      "min": -0.10223659873008728,
+                      "max": 0.47695282101631165
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.008497931063175201,
+                      "min": -0.16167894005775452,
+                      "max": 0.1446830779314041
+                    }
+                  },
+                  "48/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.11471065133810043,
+                      "min": 0.030184537172317505,
+                      "max": 0.19923676550388336
+                    },
+                    "outcome_margin": {
+                      "mean": 0.3603446325287223,
+                      "min": 0.32005561888217926,
+                      "max": 0.4006336461752653
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.24563398119062185,
+                      "min": -0.28987108170986176,
+                      "max": -0.20139688067138195
+                    }
+                  },
+                  "49/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.5,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": 0.07835274189710617,
+                      "min": -0.04821935296058655,
+                      "max": 0.2049248367547989
+                    },
+                    "outcome_margin": {
+                      "mean": -0.006055921316146851,
+                      "min": -0.29034237563610077,
+                      "max": 0.27823053300380707
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.08440866321325302,
+                      "min": -0.07330569624900818,
+                      "max": 0.24212302267551422
+                    }
+                  },
+                  "49/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.5,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.09691359847784042,
+                      "min": -0.039182886481285095,
+                      "max": 0.23301008343696594
+                    },
+                    "outcome_margin": {
+                      "mean": 0.18423353508114815,
+                      "min": 0.05835781991481781,
+                      "max": 0.3101092502474785
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.08731993660330772,
+                      "min": -0.3492921367287636,
+                      "max": 0.17465226352214813
+                    }
+                  }
+                }
+              },
+              "retention": {
+                "all": {
+                  "sample_count": 8,
+                  "action_accuracy": 1.0,
+                  "outcome_accuracy": 0.625,
+                  "action_margin": {
+                    "mean": 0.0968893738463521,
+                    "min": 0.019960254430770874,
+                    "max": 0.1583411693572998
+                  },
+                  "outcome_margin": {
+                    "mean": 0.12153761275112629,
+                    "min": -0.18090291321277618,
+                    "max": 0.3798896297812462
+                  },
+                  "action_outcome_margin_gap": {
+                    "mean": -0.02464823890477419,
+                    "min": -0.29301200807094574,
+                    "max": 0.31210221350193024
+                  }
+                },
+                "by_combination": {
+                  "48/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": 0.10655204951763153,
+                      "min": 0.08190479874610901,
+                      "max": 0.13119930028915405
+                    },
+                    "outcome_margin": {
+                      "mean": 0.07003939151763916,
+                      "min": -0.18090291321277618,
+                      "max": 0.3209816962480545
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.03651265799999237,
+                      "min": -0.2390768975019455,
+                      "max": 0.31210221350193024
+                    }
+                  },
+                  "48/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.059020522981882095,
+                      "min": 0.031163424253463745,
+                      "max": 0.08687762171030045
+                    },
+                    "outcome_margin": {
+                      "mean": 0.33078234270215034,
+                      "min": 0.2816750556230545,
+                      "max": 0.3798896297812462
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.27176181972026825,
+                      "min": -0.29301200807094574,
+                      "max": -0.25051163136959076
+                    }
+                  },
+                  "49/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 0.0,
+                    "action_margin": {
+                      "mean": 0.13599567860364914,
+                      "min": 0.11365018784999847,
+                      "max": 0.1583411693572998
+                    },
+                    "outcome_margin": {
+                      "mean": -0.12582353875041008,
+                      "min": -0.1311863735318184,
+                      "max": -0.12046070396900177
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.2618192173540592,
+                      "min": 0.24483656138181686,
+                      "max": 0.2788018733263016
+                    }
+                  },
+                  "49/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.08598924428224564,
+                      "min": 0.019960254430770874,
+                      "max": 0.1520182341337204
+                    },
+                    "outcome_margin": {
+                      "mean": 0.21115225553512573,
+                      "min": 0.20914869755506516,
+                      "max": 0.2131558135151863
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.1251630112528801,
+                      "min": -0.18918844312429428,
+                      "max": -0.06113757938146591
+                    }
+                  }
+                }
+              },
+              "holdout_decision": {
+                "sample_count": 8,
+                "action_accuracy": 1.0,
+                "action_margin": {
+                  "mean": 0.9998939978272574,
+                  "min": 0.9995168906316394,
+                  "max": 0.9999967020276017
+                },
+                "row_action_margin_min": 0.9995168906316394,
+                "identity_recall_used_ratio": 1.0
+              },
+              "retention_decision": {
+                "sample_count": 8,
+                "action_accuracy": 1.0,
+                "action_margin": {
+                  "mean": 0.999999991528317,
+                  "min": 0.9999999601153142,
+                  "max": 0.9999999999999999
+                },
+                "row_action_margin_min": 0.9999999601153142,
+                "identity_recall_used_ratio": 1.0
+              },
+              "row_action_margin_min": {
+                "holdout": -0.04821935296058655,
+                "retention": 0.019960254430770874
+              },
+              "row_outcome_margin_min": {
+                "holdout": -0.29034237563610077,
+                "retention": -0.18090291321277618
+              },
+              "cpu_seconds": 4.105
+            }
+          ],
+          "summary": {
+            "holdout": {
+              "action_accuracy": {
+                "mean": 0.875,
+                "min": 0.75,
+                "max": 1.0
+              },
+              "outcome_accuracy": {
+                "mean": 0.75,
+                "min": 0.625,
+                "max": 0.875
+              },
+              "action_margin": {
+                "mean": 0.23379077607144913,
+                "min": 0.117209292948246,
+                "max": 0.32828193716704845
+              },
+              "outcome_margin": {
+                "mean": 0.1725279118400067,
+                "min": 0.11452419497072697,
+                "max": 0.22158945119008422
+              },
+              "action_outcome_margin_gap": {
+                "mean": 0.061262864231442414,
+                "min": -0.06426079641096294,
+                "max": 0.2137577421963215
+              }
+            },
+            "retention": {
+              "action_accuracy": {
+                "mean": 0.7916666666666666,
+                "min": 0.5,
+                "max": 1.0
+              },
+              "outcome_accuracy": {
+                "mean": 0.5833333333333334,
+                "min": 0.5,
+                "max": 0.625
+              },
+              "action_margin": {
+                "mean": 0.12135879478106897,
+                "min": 0.0968893738463521,
+                "max": 0.16192916128784418
+              },
+              "outcome_margin": {
+                "mean": 0.07818447394917409,
+                "min": 0.05371497431769967,
+                "max": 0.12153761275112629
+              },
+              "action_outcome_margin_gap": {
+                "mean": 0.043174320831894875,
+                "min": -0.02464823890477419,
+                "max": 0.10821418697014451
+              }
+            },
+            "holdout_decision": {
+              "action_accuracy": {
+                "mean": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              },
+              "action_margin": {
+                "mean": 0.9937733363344615,
+                "min": 0.9814398245479372,
+                "max": 0.9999861866281898
+              },
+              "row_action_margin_min": 0.8518229946494102,
+              "identity_recall_used_ratio": {
+                "mean": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              }
+            },
+            "retention_decision": {
+              "action_accuracy": {
+                "mean": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              },
+              "action_margin": {
+                "mean": 0.9999999471542435,
+                "min": 0.9999998537774355,
+                "max": 0.9999999961569778
+              },
+              "row_action_margin_min": 0.9999988338586263,
+              "identity_recall_used_ratio": {
+                "mean": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              }
+            },
+            "row_action_margin_min": {
+              "holdout": -0.43251030147075653,
+              "retention": -0.13280871510505676
+            },
+            "row_outcome_margin_min": {
+              "holdout": -0.38336388766765594,
+              "retention": -0.24654005467891693
+            },
+            "positive_binding_all_seeds": false,
+            "decision_positive_binding_all_seeds": true,
+            "any_positive_binding_all_seeds": true,
+            "checkpoint_preflight_all_seeds": true,
+            "checkpoint_after_train_all_seeds": true
+          }
+        }
+      }
+    },
+    "conflicting_key": {
+      "curriculum_digest": "29cb6a01614cd8a454bc61b77b4273f2b6e0eff4347fe17c7a6dc85ffe76f4fe",
+      "audit": {
+        "format": "taiji-native-memory-learning-curriculum-v1",
+        "version": 1,
+        "name": "conflicting_key",
+        "declared_key_value_deterministic": false,
+        "observed_key_value_deterministic": false,
+        "declaration_matches_observation": true,
+        "partitions": {
+          "train": {
+            "example_count": 64,
+            "key_count": 16,
+            "value_count": 4,
+            "action_count": 2,
+            "outcome_count": 2,
+            "factorial_complete": true,
+            "observations_per_key": {
+              "mean": 4.0,
+              "min": 4.0,
+              "max": 4.0
+            },
+            "roles": {
+              "repeated_observation": 64,
+              "one_shot_experience": 0
+            },
+            "role_labels_match_observation_counts": true,
+            "values_per_key": {
+              "mean": 4.0,
+              "min": 4.0,
+              "max": 4.0
+            },
+            "conflicting_key_count": 16,
+            "conflicting_keys": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ],
+            "key_value_deterministic": false,
+            "reward": {
+              "mean": 1.0,
+              "min": 1.0,
+              "max": 1.0
+            },
+            "combination_counts": {
+              "48/43": 16,
+              "48/45": 16,
+              "49/43": 16,
+              "49/45": 16
+            },
+            "bypass_field_value_leak": {
+              "time_index": false,
+              "episode_tag": false,
+              "provenance": false
+            },
+            "any_bypass_field_leak": false
+          },
+          "holdout": {
+            "example_count": 8,
+            "key_count": 8,
+            "value_count": 4,
+            "action_count": 2,
+            "outcome_count": 2,
+            "factorial_complete": true,
+            "observations_per_key": {
+              "mean": 1.0,
+              "min": 1.0,
+              "max": 1.0
+            },
+            "roles": {
+              "repeated_observation": 0,
+              "one_shot_experience": 8
+            },
+            "role_labels_match_observation_counts": true,
+            "values_per_key": {
+              "mean": 1.0,
+              "min": 1.0,
+              "max": 1.0
+            },
+            "conflicting_key_count": 0,
+            "conflicting_keys": [],
+            "key_value_deterministic": true,
+            "reward": {
+              "mean": 1.0,
+              "min": 1.0,
+              "max": 1.0
+            },
+            "combination_counts": {
+              "48/43": 2,
+              "48/45": 2,
+              "49/43": 2,
+              "49/45": 2
+            },
+            "bypass_field_value_leak": {
+              "time_index": false,
+              "episode_tag": false,
+              "provenance": false
+            },
+            "any_bypass_field_leak": false
+          },
+          "retention": {
+            "example_count": 8,
+            "key_count": 8,
+            "value_count": 4,
+            "action_count": 2,
+            "outcome_count": 2,
+            "factorial_complete": true,
+            "observations_per_key": {
+              "mean": 1.0,
+              "min": 1.0,
+              "max": 1.0
+            },
+            "roles": {
+              "repeated_observation": 0,
+              "one_shot_experience": 8
+            },
+            "role_labels_match_observation_counts": true,
+            "values_per_key": {
+              "mean": 1.0,
+              "min": 1.0,
+              "max": 1.0
+            },
+            "conflicting_key_count": 0,
+            "conflicting_keys": [],
+            "key_value_deterministic": true,
+            "reward": {
+              "mean": 1.0,
+              "min": 1.0,
+              "max": 1.0
+            },
+            "combination_counts": {
+              "48/43": 2,
+              "48/45": 2,
+              "49/43": 2,
+              "49/45": 2
+            },
+            "bypass_field_value_leak": {
+              "time_index": false,
+              "episode_tag": false,
+              "provenance": false
+            },
+            "any_bypass_field_leak": false
+          }
+        },
+        "query_relations": {
+          "holdout": {
+            "query_count": 8,
+            "keys_covered_by_train": true,
+            "answers_present_in_train": 8,
+            "answers_present_in_train_ratio": 1.0,
+            "answer_matches_train_taught_value": true,
+            "ambiguous_key_query_count": 8
+          },
+          "retention": {
+            "query_count": 8,
+            "keys_covered_by_train": true,
+            "answers_present_in_train": 8,
+            "answers_present_in_train_ratio": 1.0,
+            "answer_matches_train_taught_value": true,
+            "ambiguous_key_query_count": 8
+          }
+        },
+        "leakage": {
+          "train_query_id_overlap": 0,
+          "bypass_field_value_leak": {
+            "time_index": false,
+            "episode_tag": false,
+            "provenance": false
+          },
+          "any_bypass_field_leak": false
+        },
+        "well_formed": true
+      },
+      "arms": {
+        "native_association": {
+          "records": [
+            {
+              "seed": 11,
+              "arm": "native_association",
+              "identity_organ_enabled": false,
+              "train_examples_written": 64,
+              "partitions_written": [
+                "train"
+              ],
+              "holdout_updates": 0,
+              "retention_updates": 0,
+              "checkpoint_preflight": {
+                "digest": "96d674497985214dd596039c033ce0a27b0b6c791c9db2a4c820294309686021",
+                "same_process_digest_matches": true,
+                "fresh_process_digest_matches": true,
+                "active_parameter_count": 85953,
+                "planned_active_parameter_count": 85953,
+                "parameter_count_matches_plan": true,
+                "saveable_before_training": true
+              },
+              "checkpoint_after_train": {
+                "digest": "9cb96d8b376a999b914dd71fcc1eca4b158b2be89f0dba45d95e885d181f0697",
+                "same_process_digest_matches": true,
+                "fresh_process_digest_matches": true,
+                "active_parameter_count": 85953,
+                "planned_active_parameter_count": 85953,
+                "parameter_count_matches_plan": true
+              },
+              "holdout": {
+                "all": {
+                  "sample_count": 8,
+                  "action_accuracy": 0.625,
+                  "outcome_accuracy": 0.625,
+                  "action_margin": {
+                    "mean": 0.1407024823129177,
+                    "min": -0.21045640110969543,
+                    "max": 0.6279160678386688
+                  },
+                  "outcome_margin": {
+                    "mean": 0.18653770349919796,
+                    "min": -0.4957175701856613,
+                    "max": 0.7981647253036499
+                  },
+                  "action_outcome_margin_gap": {
+                    "mean": -0.04583522118628025,
+                    "min": -0.7243327647447586,
+                    "max": 0.6253320872783661
+                  }
+                },
+                "by_combination": {
+                  "48/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.5,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": -0.060947075486183167,
+                      "min": -0.21045640110969543,
+                      "max": 0.0885622501373291
+                    },
+                    "outcome_margin": {
+                      "mean": 0.6560205444693565,
+                      "min": 0.5138763636350632,
+                      "max": 0.7981647253036499
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.7169676199555397,
+                      "min": -0.7243327647447586,
+                      "max": -0.7096024751663208
+                    }
+                  },
+                  "48/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.0,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": -0.11989634484052658,
+                      "min": -0.12530311942100525,
+                      "max": -0.11448957026004791
+                    },
+                    "outcome_margin": {
+                      "mean": -0.10265526175498962,
+                      "min": -0.4957175701856613,
+                      "max": 0.29040704667568207
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.017241083085536957,
+                      "min": -0.40489661693573,
+                      "max": 0.37041445076465607
+                    }
+                  },
+                  "49/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.46391522884368896,
+                      "min": 0.2999143898487091,
+                      "max": 0.6279160678386688
+                    },
+                    "outcome_margin": {
+                      "mean": 0.30825265496969223,
+                      "min": 0.2832898795604706,
+                      "max": 0.3332154303789139
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.15566257387399673,
+                      "min": 0.016624510288238525,
+                      "max": 0.29470063745975494
+                    }
+                  },
+                  "49/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 0.0,
+                    "action_margin": {
+                      "mean": 0.2797381207346916,
+                      "min": 0.1550176739692688,
+                      "max": 0.40445856750011444
+                    },
+                    "outcome_margin": {
+                      "mean": -0.1154671236872673,
+                      "min": -0.22087351977825165,
+                      "max": -0.010060727596282959
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.3952052444219589,
+                      "min": 0.16507840156555176,
+                      "max": 0.6253320872783661
+                    }
+                  }
+                }
+              },
+              "retention": {
+                "all": {
+                  "sample_count": 8,
+                  "action_accuracy": 0.625,
+                  "outcome_accuracy": 0.625,
+                  "action_margin": {
+                    "mean": 0.07637799438089132,
+                    "min": -0.19823352992534637,
+                    "max": 0.3310408890247345
+                  },
+                  "outcome_margin": {
+                    "mean": 0.04368611890822649,
+                    "min": -0.39183826744556427,
+                    "max": 0.3531064912676811
+                  },
+                  "action_outcome_margin_gap": {
+                    "mean": 0.03269187547266483,
+                    "min": -0.3667403310537338,
+                    "max": 0.6773428022861481
+                  }
+                },
+                "by_combination": {
+                  "48/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.5,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": -0.029596984386444092,
+                      "min": -0.06024309992790222,
+                      "max": 0.001049131155014038
+                    },
+                    "outcome_margin": {
+                      "mean": 0.24051925539970398,
+                      "min": 0.1412700116634369,
+                      "max": 0.33976849913597107
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.27011623978614807,
+                      "min": -0.33871936798095703,
+                      "max": -0.2015131115913391
+                    }
+                  },
+                  "48/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.0,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": -0.1435198113322258,
+                      "min": -0.19823352992534637,
+                      "max": -0.08880609273910522
+                    },
+                    "outcome_margin": {
+                      "mean": 0.05979838967323303,
+                      "min": -0.04891002178192139,
+                      "max": 0.16850680112838745
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.20331820100545883,
+                      "min": -0.3667403310537338,
+                      "max": -0.03989607095718384
+                    }
+                  },
+                  "49/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.17035606130957603,
+                      "min": 0.07786741852760315,
+                      "max": 0.2628447040915489
+                    },
+                    "outcome_margin": {
+                      "mean": 0.23281924799084663,
+                      "min": 0.11253200471401215,
+                      "max": 0.3531064912676811
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.0624631866812706,
+                      "min": -0.275239072740078,
+                      "max": 0.15031269937753677
+                    }
+                  },
+                  "49/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 0.0,
+                    "action_margin": {
+                      "mean": 0.30827271193265915,
+                      "min": 0.2855045348405838,
+                      "max": 0.3310408890247345
+                    },
+                    "outcome_margin": {
+                      "mean": -0.3583924174308777,
+                      "min": -0.39183826744556427,
+                      "max": -0.3249465674161911
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.6666651293635368,
+                      "min": 0.6559874564409256,
+                      "max": 0.6773428022861481
+                    }
+                  }
+                }
+              },
+              "holdout_decision": {
+                "sample_count": 8,
+                "action_accuracy": 0.625,
+                "action_margin": {
+                  "mean": 0.2202737944026012,
+                  "min": -0.797504611313343,
+                  "max": 0.9984912077197805
+                },
+                "row_action_margin_min": -0.797504611313343,
+                "identity_recall_used_ratio": 0.0
+              },
+              "retention_decision": {
+                "sample_count": 8,
+                "action_accuracy": 0.625,
+                "action_margin": {
+                  "mean": 0.22222756512928754,
+                  "min": -0.9476195964962244,
+                  "max": 0.9892294341698289
+                },
+                "row_action_margin_min": -0.9476195964962244,
+                "identity_recall_used_ratio": 0.0
+              },
+              "row_action_margin_min": {
+                "holdout": -0.21045640110969543,
+                "retention": -0.19823352992534637
+              },
+              "row_outcome_margin_min": {
+                "holdout": -0.4957175701856613,
+                "retention": -0.39183826744556427
+              },
+              "cpu_seconds": 3.919
+            },
+            {
+              "seed": 29,
+              "arm": "native_association",
+              "identity_organ_enabled": false,
+              "train_examples_written": 64,
+              "partitions_written": [
+                "train"
+              ],
+              "holdout_updates": 0,
+              "retention_updates": 0,
+              "checkpoint_preflight": {
+                "digest": "5d4be89db45a02df75a8febe8370d63809ee4ec5de21a6bbf72c0b8fea36432a",
+                "same_process_digest_matches": true,
+                "fresh_process_digest_matches": true,
+                "active_parameter_count": 85953,
+                "planned_active_parameter_count": 85953,
+                "parameter_count_matches_plan": true,
+                "saveable_before_training": true
+              },
+              "checkpoint_after_train": {
+                "digest": "f8a888bf9b0de60121901b2eb16d243b83f257fdacb7e18c563e98e4abc95f11",
+                "same_process_digest_matches": true,
+                "fresh_process_digest_matches": true,
+                "active_parameter_count": 85953,
+                "planned_active_parameter_count": 85953,
+                "parameter_count_matches_plan": true
+              },
+              "holdout": {
+                "all": {
+                  "sample_count": 8,
+                  "action_accuracy": 0.875,
+                  "outcome_accuracy": 0.625,
+                  "action_margin": {
+                    "mean": 0.21459492947906256,
+                    "min": -0.08897238969802856,
+                    "max": 0.7105423957109451
+                  },
+                  "outcome_margin": {
+                    "mean": 0.11583393765613437,
+                    "min": -0.4833570420742035,
+                    "max": 0.7919804193079472
+                  },
+                  "action_outcome_margin_gap": {
+                    "mean": 0.09876099182292819,
+                    "min": -0.37240681052207947,
+                    "max": 0.7746039628982544
+                  }
+                },
+                "by_combination": {
+                  "48/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.447212316095829,
+                      "min": 0.1838822364807129,
+                      "max": 0.7105423957109451
+                    },
+                    "outcome_margin": {
+                      "mean": 0.6278756503015757,
+                      "min": 0.46377088129520416,
+                      "max": 0.7919804193079472
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.18066333420574665,
+                      "min": -0.27988864481449127,
+                      "max": -0.08143802359700203
+                    }
+                  },
+                  "48/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": 0.1993844471871853,
+                      "min": 0.10752197355031967,
+                      "max": 0.2912469208240509
+                    },
+                    "outcome_margin": {
+                      "mean": -0.1858939193189144,
+                      "min": -0.4833570420742035,
+                      "max": 0.11156920343637466
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.3852783665060997,
+                      "min": -0.004047229886054993,
+                      "max": 0.7746039628982544
+                    }
+                  },
+                  "49/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.1913273185491562,
+                      "min": 0.08396214246749878,
+                      "max": 0.2986924946308136
+                    },
+                    "outcome_margin": {
+                      "mean": 0.3216942399740219,
+                      "min": 0.18701952695846558,
+                      "max": 0.45636895298957825
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.13036692142486572,
+                      "min": -0.37240681052207947,
+                      "max": 0.11167296767234802
+                    }
+                  },
+                  "49/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.5,
+                    "outcome_accuracy": 0.0,
+                    "action_margin": {
+                      "mean": 0.020455636084079742,
+                      "min": -0.08897238969802856,
+                      "max": 0.12988366186618805
+                    },
+                    "outcome_margin": {
+                      "mean": -0.3003402203321457,
+                      "min": -0.3139028698205948,
+                      "max": -0.2867775708436966
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.32079585641622543,
+                      "min": 0.19780518114566803,
+                      "max": 0.44378653168678284
+                    }
+                  }
+                }
+              },
+              "retention": {
+                "all": {
+                  "sample_count": 8,
+                  "action_accuracy": 0.875,
+                  "outcome_accuracy": 0.625,
+                  "action_margin": {
+                    "mean": 0.0724470023997128,
+                    "min": -0.07004758715629578,
+                    "max": 0.20610705018043518
+                  },
+                  "outcome_margin": {
+                    "mean": 0.02469767350703478,
+                    "min": -0.3492930233478546,
+                    "max": 0.38770791888237
+                  },
+                  "action_outcome_margin_gap": {
+                    "mean": 0.04774932889267802,
+                    "min": -0.32976579666137695,
+                    "max": 0.36244601011276245
+                  }
+                },
+                "by_combination": {
+                  "48/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.1108082253485918,
+                      "min": 0.05794212222099304,
+                      "max": 0.16367432847619057
+                    },
+                    "outcome_margin": {
+                      "mean": 0.28421812877058983,
+                      "min": 0.18072833865880966,
+                      "max": 0.38770791888237
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.17340990342199802,
+                      "min": -0.32976579666137695,
+                      "max": -0.017054010182619095
+                    }
+                  },
+                  "48/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": 0.06176801025867462,
+                      "min": 0.013152986764907837,
+                      "max": 0.1103830337524414
+                    },
+                    "outcome_margin": {
+                      "mean": -0.16887293756008148,
+                      "min": -0.3492930233478546,
+                      "max": 0.01154714822769165
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.2306409478187561,
+                      "min": 0.09883588552474976,
+                      "max": 0.36244601011276245
+                    }
+                  },
+                  "49/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.13170989602804184,
+                      "min": 0.0573127418756485,
+                      "max": 0.20610705018043518
+                    },
+                    "outcome_margin": {
+                      "mean": 0.1301678866147995,
+                      "min": 0.10054704546928406,
+                      "max": 0.15978872776031494
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.00154200941324234,
+                      "min": -0.10247598588466644,
+                      "max": 0.10556000471115112
+                    }
+                  },
+                  "49/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.5,
+                    "outcome_accuracy": 0.0,
+                    "action_margin": {
+                      "mean": -0.014498122036457062,
+                      "min": -0.07004758715629578,
+                      "max": 0.04105134308338165
+                    },
+                    "outcome_margin": {
+                      "mean": -0.14672238379716873,
+                      "min": -0.21875697374343872,
+                      "max": -0.07468779385089874
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.13222426176071167,
+                      "min": 0.1157391369342804,
+                      "max": 0.14870938658714294
+                    }
+                  }
+                }
+              },
+              "holdout_decision": {
+                "sample_count": 8,
+                "action_accuracy": 0.875,
+                "action_margin": {
+                  "mean": 0.6013210533219535,
+                  "min": -0.6875031739473343,
+                  "max": 0.9997522801422747
+                },
+                "row_action_margin_min": -0.6875031739473343,
+                "identity_recall_used_ratio": 0.0
+              },
+              "retention_decision": {
+                "sample_count": 8,
+                "action_accuracy": 0.875,
+                "action_margin": {
+                  "mean": 0.4004015472601168,
+                  "min": -0.7820020839571953,
+                  "max": 0.9885019822977483
+                },
+                "row_action_margin_min": -0.7820020839571953,
+                "identity_recall_used_ratio": 0.0
+              },
+              "row_action_margin_min": {
+                "holdout": -0.08897238969802856,
+                "retention": -0.07004758715629578
+              },
+              "row_outcome_margin_min": {
+                "holdout": -0.4833570420742035,
+                "retention": -0.3492930233478546
+              },
+              "cpu_seconds": 3.87
+            },
+            {
+              "seed": 47,
+              "arm": "native_association",
+              "identity_organ_enabled": false,
+              "train_examples_written": 64,
+              "partitions_written": [
+                "train"
+              ],
+              "holdout_updates": 0,
+              "retention_updates": 0,
+              "checkpoint_preflight": {
+                "digest": "d6a8c354671c1c2516473c312904d3e265506a16504b350068bf12b639a188c1",
+                "same_process_digest_matches": true,
+                "fresh_process_digest_matches": true,
+                "active_parameter_count": 85953,
+                "planned_active_parameter_count": 85953,
+                "parameter_count_matches_plan": true,
+                "saveable_before_training": true
+              },
+              "checkpoint_after_train": {
+                "digest": "6758cf5fc54a1092c3bb1a463f31190c9d00c563966f23259142b1990902e78e",
+                "same_process_digest_matches": true,
+                "fresh_process_digest_matches": true,
+                "active_parameter_count": 85953,
+                "planned_active_parameter_count": 85953,
+                "parameter_count_matches_plan": true
+              },
+              "holdout": {
+                "all": {
+                  "sample_count": 8,
+                  "action_accuracy": 0.75,
+                  "outcome_accuracy": 0.75,
+                  "action_margin": {
+                    "mean": 0.05077266879379749,
+                    "min": -0.23431450128555298,
+                    "max": 0.2546750158071518
+                  },
+                  "outcome_margin": {
+                    "mean": 0.15890198340639472,
+                    "min": -0.1746310293674469,
+                    "max": 0.564575519412756
+                  },
+                  "action_outcome_margin_gap": {
+                    "mean": -0.10812931461259723,
+                    "min": -0.38836076855659485,
+                    "max": 0.3864760845899582
+                  }
+                },
+                "by_combination": {
+                  "48/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.08816631138324738,
+                      "min": 0.083743155002594,
+                      "max": 0.09258946776390076
+                    },
+                    "outcome_margin": {
+                      "mean": 0.2635893300175667,
+                      "min": 0.05507473647594452,
+                      "max": 0.47210392355918884
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.1754230186343193,
+                      "min": -0.38836076855659485,
+                      "max": 0.03751473128795624
+                    }
+                  },
+                  "48/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.11349718272686005,
+                      "min": 0.011691004037857056,
+                      "max": 0.21530336141586304
+                    },
+                    "outcome_margin": {
+                      "mean": 0.32421777956187725,
+                      "min": 0.08386003971099854,
+                      "max": 0.564575519412756
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.2107205968350172,
+                      "min": -0.34927215799689293,
+                      "max": -0.07216903567314148
+                    }
+                  },
+                  "49/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.5,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": -0.10263906419277191,
+                      "min": -0.23431450128555298,
+                      "max": 0.029036372900009155
+                    },
+                    "outcome_margin": {
+                      "mean": -0.020359456539154053,
+                      "min": -0.1746310293674469,
+                      "max": 0.1339121162891388
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.08227960765361786,
+                      "min": -0.10487574338912964,
+                      "max": -0.05968347191810608
+                    }
+                  },
+                  "49/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.5,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": 0.10406624525785446,
+                      "min": -0.04654252529144287,
+                      "max": 0.2546750158071518
+                    },
+                    "outcome_margin": {
+                      "mean": 0.068160280585289,
+                      "min": -0.1318010687828064,
+                      "max": 0.2681216299533844
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.03590596467256546,
+                      "min": -0.31466415524482727,
+                      "max": 0.3864760845899582
+                    }
+                  }
+                }
+              },
+              "retention": {
+                "all": {
+                  "sample_count": 8,
+                  "action_accuracy": 0.75,
+                  "outcome_accuracy": 0.75,
+                  "action_margin": {
+                    "mean": 0.04818662256002426,
+                    "min": -0.1060573160648346,
+                    "max": 0.1302226036787033
+                  },
+                  "outcome_margin": {
+                    "mean": 0.13760132808238268,
+                    "min": -0.18824633955955505,
+                    "max": 0.4891989156603813
+                  },
+                  "action_outcome_margin_gap": {
+                    "mean": -0.08941470552235842,
+                    "min": -0.43122368305921555,
+                    "max": 0.2994630038738251
+                  }
+                },
+                "by_combination": {
+                  "48/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.5,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": -0.003901183605194092,
+                      "min": -0.1060573160648346,
+                      "max": 0.09825494885444641
+                    },
+                    "outcome_margin": {
+                      "mean": 0.1340044066309929,
+                      "min": -0.04201069474220276,
+                      "max": 0.31001950800418854
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.13790559023618698,
+                      "min": -0.41607682406902313,
+                      "max": 0.14026564359664917
+                    }
+                  },
+                  "48/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.03076675534248352,
+                      "min": 0.0035582780838012695,
+                      "max": 0.05797523260116577
+                    },
+                    "outcome_margin": {
+                      "mean": 0.3428669385612011,
+                      "min": 0.19653496146202087,
+                      "max": 0.4891989156603813
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.3121001832187176,
+                      "min": -0.43122368305921555,
+                      "max": -0.1929766833782196
+                    }
+                  },
+                  "49/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": 0.12071963399648666,
+                      "min": 0.11121666431427002,
+                      "max": 0.1302226036787033
+                    },
+                    "outcome_margin": {
+                      "mean": -0.08471479266881943,
+                      "min": -0.18824633955955505,
+                      "max": 0.0188167542219162
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.2054344266653061,
+                      "min": 0.11140584945678711,
+                      "max": 0.2994630038738251
+                    }
+                  },
+                  "49/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.5,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.04516128450632095,
+                      "min": -0.017328083515167236,
+                      "max": 0.10765065252780914
+                    },
+                    "outcome_margin": {
+                      "mean": 0.15824875980615616,
+                      "min": 0.09510086476802826,
+                      "max": 0.22139665484428406
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.1130874752998352,
+                      "min": -0.11374600231647491,
+                      "max": -0.1124289482831955
+                    }
+                  }
+                }
+              },
+              "holdout_decision": {
+                "sample_count": 8,
+                "action_accuracy": 0.625,
+                "action_margin": {
+                  "mean": 0.22547846380621195,
+                  "min": -0.8398544043302536,
+                  "max": 0.9543999284505844
+                },
+                "row_action_margin_min": -0.8398544043302536,
+                "identity_recall_used_ratio": 0.0
+              },
+              "retention_decision": {
+                "sample_count": 8,
+                "action_accuracy": 0.625,
+                "action_margin": {
+                  "mean": 0.19499059114605188,
+                  "min": -0.5285714715719223,
+                  "max": 0.7699638232588768
+                },
+                "row_action_margin_min": -0.5285714715719223,
+                "identity_recall_used_ratio": 0.0
+              },
+              "row_action_margin_min": {
+                "holdout": -0.23431450128555298,
+                "retention": -0.1060573160648346
+              },
+              "row_outcome_margin_min": {
+                "holdout": -0.1746310293674469,
+                "retention": -0.18824633955955505
+              },
+              "cpu_seconds": 3.825
+            }
+          ],
+          "summary": {
+            "holdout": {
+              "action_accuracy": {
+                "mean": 0.75,
+                "min": 0.625,
+                "max": 0.875
+              },
+              "outcome_accuracy": {
+                "mean": 0.6666666666666666,
+                "min": 0.625,
+                "max": 0.75
+              },
+              "action_margin": {
+                "mean": 0.1353566935285926,
+                "min": 0.05077266879379749,
+                "max": 0.21459492947906256
+              },
+              "outcome_margin": {
+                "mean": 0.15375787485390902,
+                "min": 0.11583393765613437,
+                "max": 0.18653770349919796
+              },
+              "action_outcome_margin_gap": {
+                "mean": -0.01840118132531643,
+                "min": -0.10812931461259723,
+                "max": 0.09876099182292819
+              }
+            },
+            "retention": {
+              "action_accuracy": {
+                "mean": 0.75,
+                "min": 0.625,
+                "max": 0.875
+              },
+              "outcome_accuracy": {
+                "mean": 0.6666666666666666,
+                "min": 0.625,
+                "max": 0.75
+              },
+              "action_margin": {
+                "mean": 0.06567053978020947,
+                "min": 0.04818662256002426,
+                "max": 0.07637799438089132
+              },
+              "outcome_margin": {
+                "mean": 0.06866170683254798,
+                "min": 0.02469767350703478,
+                "max": 0.13760132808238268
+              },
+              "action_outcome_margin_gap": {
+                "mean": -0.0029911670523385205,
+                "min": -0.08941470552235842,
+                "max": 0.04774932889267802
+              }
+            },
+            "holdout_decision": {
+              "action_accuracy": {
+                "mean": 0.7083333333333334,
+                "min": 0.625,
+                "max": 0.875
+              },
+              "action_margin": {
+                "mean": 0.3490244371769222,
+                "min": 0.2202737944026012,
+                "max": 0.6013210533219535
+              },
+              "row_action_margin_min": -0.8398544043302536,
+              "identity_recall_used_ratio": {
+                "mean": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              }
+            },
+            "retention_decision": {
+              "action_accuracy": {
+                "mean": 0.7083333333333334,
+                "min": 0.625,
+                "max": 0.875
+              },
+              "action_margin": {
+                "mean": 0.2725399011784854,
+                "min": 0.19499059114605188,
+                "max": 0.4004015472601168
+              },
+              "row_action_margin_min": -0.9476195964962244,
+              "identity_recall_used_ratio": {
+                "mean": 0.0,
+                "min": 0.0,
+                "max": 0.0
+              }
+            },
+            "row_action_margin_min": {
+              "holdout": -0.23431450128555298,
+              "retention": -0.19823352992534637
+            },
+            "row_outcome_margin_min": {
+              "holdout": -0.4957175701856613,
+              "retention": -0.39183826744556427
+            },
+            "positive_binding_all_seeds": false,
+            "decision_positive_binding_all_seeds": false,
+            "any_positive_binding_all_seeds": false,
+            "checkpoint_preflight_all_seeds": true,
+            "checkpoint_after_train_all_seeds": true
+          }
+        },
+        "identity_organ_reference": {
+          "records": [
+            {
+              "seed": 11,
+              "arm": "identity_organ_reference",
+              "identity_organ_enabled": true,
+              "train_examples_written": 64,
+              "partitions_written": [
+                "train"
+              ],
+              "holdout_updates": 0,
+              "retention_updates": 0,
+              "checkpoint_preflight": {
+                "digest": "643157083c77e9ba98774c42bc4c9950ce141907eb802e3aba3c4b2704768e71",
+                "same_process_digest_matches": true,
+                "fresh_process_digest_matches": true,
+                "active_parameter_count": 147521,
+                "planned_active_parameter_count": 147521,
+                "parameter_count_matches_plan": true,
+                "saveable_before_training": true
+              },
+              "checkpoint_after_train": {
+                "digest": "a5fc664aecbbb4b1635cc9c57a796f050c863655d9b807d53a00ad183a10dc62",
+                "same_process_digest_matches": true,
+                "fresh_process_digest_matches": true,
+                "active_parameter_count": 147521,
+                "planned_active_parameter_count": 147521,
+                "parameter_count_matches_plan": true
+              },
+              "holdout": {
+                "all": {
+                  "sample_count": 8,
+                  "action_accuracy": 0.625,
+                  "outcome_accuracy": 0.625,
+                  "action_margin": {
+                    "mean": 0.1407024823129177,
+                    "min": -0.21045640110969543,
+                    "max": 0.6279160678386688
+                  },
+                  "outcome_margin": {
+                    "mean": 0.18653770349919796,
+                    "min": -0.4957175701856613,
+                    "max": 0.7981647253036499
+                  },
+                  "action_outcome_margin_gap": {
+                    "mean": -0.04583522118628025,
+                    "min": -0.7243327647447586,
+                    "max": 0.6253320872783661
+                  }
+                },
+                "by_combination": {
+                  "48/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.5,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": -0.060947075486183167,
+                      "min": -0.21045640110969543,
+                      "max": 0.0885622501373291
+                    },
+                    "outcome_margin": {
+                      "mean": 0.6560205444693565,
+                      "min": 0.5138763636350632,
+                      "max": 0.7981647253036499
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.7169676199555397,
+                      "min": -0.7243327647447586,
+                      "max": -0.7096024751663208
+                    }
+                  },
+                  "48/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.0,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": -0.11989634484052658,
+                      "min": -0.12530311942100525,
+                      "max": -0.11448957026004791
+                    },
+                    "outcome_margin": {
+                      "mean": -0.10265526175498962,
+                      "min": -0.4957175701856613,
+                      "max": 0.29040704667568207
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.017241083085536957,
+                      "min": -0.40489661693573,
+                      "max": 0.37041445076465607
+                    }
+                  },
+                  "49/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.46391522884368896,
+                      "min": 0.2999143898487091,
+                      "max": 0.6279160678386688
+                    },
+                    "outcome_margin": {
+                      "mean": 0.30825265496969223,
+                      "min": 0.2832898795604706,
+                      "max": 0.3332154303789139
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.15566257387399673,
+                      "min": 0.016624510288238525,
+                      "max": 0.29470063745975494
+                    }
+                  },
+                  "49/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 0.0,
+                    "action_margin": {
+                      "mean": 0.2797381207346916,
+                      "min": 0.1550176739692688,
+                      "max": 0.40445856750011444
+                    },
+                    "outcome_margin": {
+                      "mean": -0.1154671236872673,
+                      "min": -0.22087351977825165,
+                      "max": -0.010060727596282959
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.3952052444219589,
+                      "min": 0.16507840156555176,
+                      "max": 0.6253320872783661
+                    }
+                  }
+                }
+              },
+              "retention": {
+                "all": {
+                  "sample_count": 8,
+                  "action_accuracy": 0.625,
+                  "outcome_accuracy": 0.625,
+                  "action_margin": {
+                    "mean": 0.07637799438089132,
+                    "min": -0.19823352992534637,
+                    "max": 0.3310408890247345
+                  },
+                  "outcome_margin": {
+                    "mean": 0.04368611890822649,
+                    "min": -0.39183826744556427,
+                    "max": 0.3531064912676811
+                  },
+                  "action_outcome_margin_gap": {
+                    "mean": 0.03269187547266483,
+                    "min": -0.3667403310537338,
+                    "max": 0.6773428022861481
+                  }
+                },
+                "by_combination": {
+                  "48/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.5,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": -0.029596984386444092,
+                      "min": -0.06024309992790222,
+                      "max": 0.001049131155014038
+                    },
+                    "outcome_margin": {
+                      "mean": 0.24051925539970398,
+                      "min": 0.1412700116634369,
+                      "max": 0.33976849913597107
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.27011623978614807,
+                      "min": -0.33871936798095703,
+                      "max": -0.2015131115913391
+                    }
+                  },
+                  "48/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.0,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": -0.1435198113322258,
+                      "min": -0.19823352992534637,
+                      "max": -0.08880609273910522
+                    },
+                    "outcome_margin": {
+                      "mean": 0.05979838967323303,
+                      "min": -0.04891002178192139,
+                      "max": 0.16850680112838745
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.20331820100545883,
+                      "min": -0.3667403310537338,
+                      "max": -0.03989607095718384
+                    }
+                  },
+                  "49/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.17035606130957603,
+                      "min": 0.07786741852760315,
+                      "max": 0.2628447040915489
+                    },
+                    "outcome_margin": {
+                      "mean": 0.23281924799084663,
+                      "min": 0.11253200471401215,
+                      "max": 0.3531064912676811
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.0624631866812706,
+                      "min": -0.275239072740078,
+                      "max": 0.15031269937753677
+                    }
+                  },
+                  "49/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 0.0,
+                    "action_margin": {
+                      "mean": 0.30827271193265915,
+                      "min": 0.2855045348405838,
+                      "max": 0.3310408890247345
+                    },
+                    "outcome_margin": {
+                      "mean": -0.3583924174308777,
+                      "min": -0.39183826744556427,
+                      "max": -0.3249465674161911
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.6666651293635368,
+                      "min": 0.6559874564409256,
+                      "max": 0.6773428022861481
+                    }
+                  }
+                }
+              },
+              "holdout_decision": {
+                "sample_count": 8,
+                "action_accuracy": 0.625,
+                "action_margin": {
+                  "mean": 0.2142042026607669,
+                  "min": -0.7971335500478745,
+                  "max": 0.9983932199538685
+                },
+                "row_action_margin_min": -0.7971335500478745,
+                "identity_recall_used_ratio": 1.0
+              },
+              "retention_decision": {
+                "sample_count": 8,
+                "action_accuracy": 0.625,
+                "action_margin": {
+                  "mean": 0.20668383548036218,
+                  "min": -0.9475859515368938,
+                  "max": 0.9884944129735231
+                },
+                "row_action_margin_min": -0.9475859515368938,
+                "identity_recall_used_ratio": 1.0
+              },
+              "row_action_margin_min": {
+                "holdout": -0.21045640110969543,
+                "retention": -0.19823352992534637
+              },
+              "row_outcome_margin_min": {
+                "holdout": -0.4957175701856613,
+                "retention": -0.39183826744556427
+              },
+              "cpu_seconds": 4.084
+            },
+            {
+              "seed": 29,
+              "arm": "identity_organ_reference",
+              "identity_organ_enabled": true,
+              "train_examples_written": 64,
+              "partitions_written": [
+                "train"
+              ],
+              "holdout_updates": 0,
+              "retention_updates": 0,
+              "checkpoint_preflight": {
+                "digest": "da268ccaa837a981a11f9ed256f815a59c749271b4b6e171006a733f3c5d561b",
+                "same_process_digest_matches": true,
+                "fresh_process_digest_matches": true,
+                "active_parameter_count": 147521,
+                "planned_active_parameter_count": 147521,
+                "parameter_count_matches_plan": true,
+                "saveable_before_training": true
+              },
+              "checkpoint_after_train": {
+                "digest": "7e1a6158a153a55b4d8cc3f8982711dab0788c102c8206c2b1d581fa789b1213",
+                "same_process_digest_matches": true,
+                "fresh_process_digest_matches": true,
+                "active_parameter_count": 147521,
+                "planned_active_parameter_count": 147521,
+                "parameter_count_matches_plan": true
+              },
+              "holdout": {
+                "all": {
+                  "sample_count": 8,
+                  "action_accuracy": 0.875,
+                  "outcome_accuracy": 0.625,
+                  "action_margin": {
+                    "mean": 0.21459492947906256,
+                    "min": -0.08897238969802856,
+                    "max": 0.7105423957109451
+                  },
+                  "outcome_margin": {
+                    "mean": 0.11583393765613437,
+                    "min": -0.4833570420742035,
+                    "max": 0.7919804193079472
+                  },
+                  "action_outcome_margin_gap": {
+                    "mean": 0.09876099182292819,
+                    "min": -0.37240681052207947,
+                    "max": 0.7746039628982544
+                  }
+                },
+                "by_combination": {
+                  "48/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.447212316095829,
+                      "min": 0.1838822364807129,
+                      "max": 0.7105423957109451
+                    },
+                    "outcome_margin": {
+                      "mean": 0.6278756503015757,
+                      "min": 0.46377088129520416,
+                      "max": 0.7919804193079472
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.18066333420574665,
+                      "min": -0.27988864481449127,
+                      "max": -0.08143802359700203
+                    }
+                  },
+                  "48/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": 0.1993844471871853,
+                      "min": 0.10752197355031967,
+                      "max": 0.2912469208240509
+                    },
+                    "outcome_margin": {
+                      "mean": -0.1858939193189144,
+                      "min": -0.4833570420742035,
+                      "max": 0.11156920343637466
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.3852783665060997,
+                      "min": -0.004047229886054993,
+                      "max": 0.7746039628982544
+                    }
+                  },
+                  "49/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.1913273185491562,
+                      "min": 0.08396214246749878,
+                      "max": 0.2986924946308136
+                    },
+                    "outcome_margin": {
+                      "mean": 0.3216942399740219,
+                      "min": 0.18701952695846558,
+                      "max": 0.45636895298957825
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.13036692142486572,
+                      "min": -0.37240681052207947,
+                      "max": 0.11167296767234802
+                    }
+                  },
+                  "49/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.5,
+                    "outcome_accuracy": 0.0,
+                    "action_margin": {
+                      "mean": 0.020455636084079742,
+                      "min": -0.08897238969802856,
+                      "max": 0.12988366186618805
+                    },
+                    "outcome_margin": {
+                      "mean": -0.3003402203321457,
+                      "min": -0.3139028698205948,
+                      "max": -0.2867775708436966
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.32079585641622543,
+                      "min": 0.19780518114566803,
+                      "max": 0.44378653168678284
+                    }
+                  }
+                }
+              },
+              "retention": {
+                "all": {
+                  "sample_count": 8,
+                  "action_accuracy": 0.875,
+                  "outcome_accuracy": 0.625,
+                  "action_margin": {
+                    "mean": 0.0724470023997128,
+                    "min": -0.07004758715629578,
+                    "max": 0.20610705018043518
+                  },
+                  "outcome_margin": {
+                    "mean": 0.02469767350703478,
+                    "min": -0.3492930233478546,
+                    "max": 0.38770791888237
+                  },
+                  "action_outcome_margin_gap": {
+                    "mean": 0.04774932889267802,
+                    "min": -0.32976579666137695,
+                    "max": 0.36244601011276245
+                  }
+                },
+                "by_combination": {
+                  "48/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.1108082253485918,
+                      "min": 0.05794212222099304,
+                      "max": 0.16367432847619057
+                    },
+                    "outcome_margin": {
+                      "mean": 0.28421812877058983,
+                      "min": 0.18072833865880966,
+                      "max": 0.38770791888237
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.17340990342199802,
+                      "min": -0.32976579666137695,
+                      "max": -0.017054010182619095
+                    }
+                  },
+                  "48/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": 0.06176801025867462,
+                      "min": 0.013152986764907837,
+                      "max": 0.1103830337524414
+                    },
+                    "outcome_margin": {
+                      "mean": -0.16887293756008148,
+                      "min": -0.3492930233478546,
+                      "max": 0.01154714822769165
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.2306409478187561,
+                      "min": 0.09883588552474976,
+                      "max": 0.36244601011276245
+                    }
+                  },
+                  "49/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.13170989602804184,
+                      "min": 0.0573127418756485,
+                      "max": 0.20610705018043518
+                    },
+                    "outcome_margin": {
+                      "mean": 0.1301678866147995,
+                      "min": 0.10054704546928406,
+                      "max": 0.15978872776031494
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.00154200941324234,
+                      "min": -0.10247598588466644,
+                      "max": 0.10556000471115112
+                    }
+                  },
+                  "49/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.5,
+                    "outcome_accuracy": 0.0,
+                    "action_margin": {
+                      "mean": -0.014498122036457062,
+                      "min": -0.07004758715629578,
+                      "max": 0.04105134308338165
+                    },
+                    "outcome_margin": {
+                      "mean": -0.14672238379716873,
+                      "min": -0.21875697374343872,
+                      "max": -0.07468779385089874
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.13222426176071167,
+                      "min": 0.1157391369342804,
+                      "max": 0.14870938658714294
+                    }
+                  }
+                }
+              },
+              "holdout_decision": {
+                "sample_count": 8,
+                "action_accuracy": 0.875,
+                "action_margin": {
+                  "mean": 0.596597060924978,
+                  "min": -0.6811902076005936,
+                  "max": 0.9997327561723068
+                },
+                "row_action_margin_min": -0.6811902076005936,
+                "identity_recall_used_ratio": 1.0
+              },
+              "retention_decision": {
+                "sample_count": 8,
+                "action_accuracy": 0.875,
+                "action_margin": {
+                  "mean": 0.3930607418878935,
+                  "min": -0.7736307606101036,
+                  "max": 0.9871793198399246
+                },
+                "row_action_margin_min": -0.7736307606101036,
+                "identity_recall_used_ratio": 1.0
+              },
+              "row_action_margin_min": {
+                "holdout": -0.08897238969802856,
+                "retention": -0.07004758715629578
+              },
+              "row_outcome_margin_min": {
+                "holdout": -0.4833570420742035,
+                "retention": -0.3492930233478546
+              },
+              "cpu_seconds": 4.048
+            },
+            {
+              "seed": 47,
+              "arm": "identity_organ_reference",
+              "identity_organ_enabled": true,
+              "train_examples_written": 64,
+              "partitions_written": [
+                "train"
+              ],
+              "holdout_updates": 0,
+              "retention_updates": 0,
+              "checkpoint_preflight": {
+                "digest": "c6c175f337a86e36d2e2d257ca901c309cc73aa5e3c7a3e879adb2234b68f4ee",
+                "same_process_digest_matches": true,
+                "fresh_process_digest_matches": true,
+                "active_parameter_count": 147521,
+                "planned_active_parameter_count": 147521,
+                "parameter_count_matches_plan": true,
+                "saveable_before_training": true
+              },
+              "checkpoint_after_train": {
+                "digest": "0d6b620071d0930198d424a54d90b4365aae8905e720a5ef53f4f2e22dffc7b0",
+                "same_process_digest_matches": true,
+                "fresh_process_digest_matches": true,
+                "active_parameter_count": 147521,
+                "planned_active_parameter_count": 147521,
+                "parameter_count_matches_plan": true
+              },
+              "holdout": {
+                "all": {
+                  "sample_count": 8,
+                  "action_accuracy": 0.75,
+                  "outcome_accuracy": 0.75,
+                  "action_margin": {
+                    "mean": 0.05077266879379749,
+                    "min": -0.23431450128555298,
+                    "max": 0.2546750158071518
+                  },
+                  "outcome_margin": {
+                    "mean": 0.15890198340639472,
+                    "min": -0.1746310293674469,
+                    "max": 0.564575519412756
+                  },
+                  "action_outcome_margin_gap": {
+                    "mean": -0.10812931461259723,
+                    "min": -0.38836076855659485,
+                    "max": 0.3864760845899582
+                  }
+                },
+                "by_combination": {
+                  "48/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.08816631138324738,
+                      "min": 0.083743155002594,
+                      "max": 0.09258946776390076
+                    },
+                    "outcome_margin": {
+                      "mean": 0.2635893300175667,
+                      "min": 0.05507473647594452,
+                      "max": 0.47210392355918884
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.1754230186343193,
+                      "min": -0.38836076855659485,
+                      "max": 0.03751473128795624
+                    }
+                  },
+                  "48/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.11349718272686005,
+                      "min": 0.011691004037857056,
+                      "max": 0.21530336141586304
+                    },
+                    "outcome_margin": {
+                      "mean": 0.32421777956187725,
+                      "min": 0.08386003971099854,
+                      "max": 0.564575519412756
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.2107205968350172,
+                      "min": -0.34927215799689293,
+                      "max": -0.07216903567314148
+                    }
+                  },
+                  "49/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.5,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": -0.10263906419277191,
+                      "min": -0.23431450128555298,
+                      "max": 0.029036372900009155
+                    },
+                    "outcome_margin": {
+                      "mean": -0.020359456539154053,
+                      "min": -0.1746310293674469,
+                      "max": 0.1339121162891388
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.08227960765361786,
+                      "min": -0.10487574338912964,
+                      "max": -0.05968347191810608
+                    }
+                  },
+                  "49/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.5,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": 0.10406624525785446,
+                      "min": -0.04654252529144287,
+                      "max": 0.2546750158071518
+                    },
+                    "outcome_margin": {
+                      "mean": 0.068160280585289,
+                      "min": -0.1318010687828064,
+                      "max": 0.2681216299533844
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.03590596467256546,
+                      "min": -0.31466415524482727,
+                      "max": 0.3864760845899582
+                    }
+                  }
+                }
+              },
+              "retention": {
+                "all": {
+                  "sample_count": 8,
+                  "action_accuracy": 0.75,
+                  "outcome_accuracy": 0.75,
+                  "action_margin": {
+                    "mean": 0.04818662256002426,
+                    "min": -0.1060573160648346,
+                    "max": 0.1302226036787033
+                  },
+                  "outcome_margin": {
+                    "mean": 0.13760132808238268,
+                    "min": -0.18824633955955505,
+                    "max": 0.4891989156603813
+                  },
+                  "action_outcome_margin_gap": {
+                    "mean": -0.08941470552235842,
+                    "min": -0.43122368305921555,
+                    "max": 0.2994630038738251
+                  }
+                },
+                "by_combination": {
+                  "48/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.5,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": -0.003901183605194092,
+                      "min": -0.1060573160648346,
+                      "max": 0.09825494885444641
+                    },
+                    "outcome_margin": {
+                      "mean": 0.1340044066309929,
+                      "min": -0.04201069474220276,
+                      "max": 0.31001950800418854
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.13790559023618698,
+                      "min": -0.41607682406902313,
+                      "max": 0.14026564359664917
+                    }
+                  },
+                  "48/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.03076675534248352,
+                      "min": 0.0035582780838012695,
+                      "max": 0.05797523260116577
+                    },
+                    "outcome_margin": {
+                      "mean": 0.3428669385612011,
+                      "min": 0.19653496146202087,
+                      "max": 0.4891989156603813
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.3121001832187176,
+                      "min": -0.43122368305921555,
+                      "max": -0.1929766833782196
+                    }
+                  },
+                  "49/43": {
+                    "sample_count": 2,
+                    "action_accuracy": 1.0,
+                    "outcome_accuracy": 0.5,
+                    "action_margin": {
+                      "mean": 0.12071963399648666,
+                      "min": 0.11121666431427002,
+                      "max": 0.1302226036787033
+                    },
+                    "outcome_margin": {
+                      "mean": -0.08471479266881943,
+                      "min": -0.18824633955955505,
+                      "max": 0.0188167542219162
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": 0.2054344266653061,
+                      "min": 0.11140584945678711,
+                      "max": 0.2994630038738251
+                    }
+                  },
+                  "49/45": {
+                    "sample_count": 2,
+                    "action_accuracy": 0.5,
+                    "outcome_accuracy": 1.0,
+                    "action_margin": {
+                      "mean": 0.04516128450632095,
+                      "min": -0.017328083515167236,
+                      "max": 0.10765065252780914
+                    },
+                    "outcome_margin": {
+                      "mean": 0.15824875980615616,
+                      "min": 0.09510086476802826,
+                      "max": 0.22139665484428406
+                    },
+                    "action_outcome_margin_gap": {
+                      "mean": -0.1130874752998352,
+                      "min": -0.11374600231647491,
+                      "max": -0.1124289482831955
+                    }
+                  }
+                }
+              },
+              "holdout_decision": {
+                "sample_count": 8,
+                "action_accuracy": 0.625,
+                "action_margin": {
+                  "mean": 0.21639689058065414,
+                  "min": -0.8489039912819862,
+                  "max": 0.9544907286763191
+                },
+                "row_action_margin_min": -0.8489039912819862,
+                "identity_recall_used_ratio": 1.0
+              },
+              "retention_decision": {
+                "sample_count": 8,
+                "action_accuracy": 0.625,
+                "action_margin": {
+                  "mean": 0.18430348485708237,
+                  "min": -0.5364564508199692,
+                  "max": 0.7560656666755676
+                },
+                "row_action_margin_min": -0.5364564508199692,
+                "identity_recall_used_ratio": 1.0
+              },
+              "row_action_margin_min": {
+                "holdout": -0.23431450128555298,
+                "retention": -0.1060573160648346
+              },
+              "row_outcome_margin_min": {
+                "holdout": -0.1746310293674469,
+                "retention": -0.18824633955955505
+              },
+              "cpu_seconds": 4.114
+            }
+          ],
+          "summary": {
+            "holdout": {
+              "action_accuracy": {
+                "mean": 0.75,
+                "min": 0.625,
+                "max": 0.875
+              },
+              "outcome_accuracy": {
+                "mean": 0.6666666666666666,
+                "min": 0.625,
+                "max": 0.75
+              },
+              "action_margin": {
+                "mean": 0.1353566935285926,
+                "min": 0.05077266879379749,
+                "max": 0.21459492947906256
+              },
+              "outcome_margin": {
+                "mean": 0.15375787485390902,
+                "min": 0.11583393765613437,
+                "max": 0.18653770349919796
+              },
+              "action_outcome_margin_gap": {
+                "mean": -0.01840118132531643,
+                "min": -0.10812931461259723,
+                "max": 0.09876099182292819
+              }
+            },
+            "retention": {
+              "action_accuracy": {
+                "mean": 0.75,
+                "min": 0.625,
+                "max": 0.875
+              },
+              "outcome_accuracy": {
+                "mean": 0.6666666666666666,
+                "min": 0.625,
+                "max": 0.75
+              },
+              "action_margin": {
+                "mean": 0.06567053978020947,
+                "min": 0.04818662256002426,
+                "max": 0.07637799438089132
+              },
+              "outcome_margin": {
+                "mean": 0.06866170683254798,
+                "min": 0.02469767350703478,
+                "max": 0.13760132808238268
+              },
+              "action_outcome_margin_gap": {
+                "mean": -0.0029911670523385205,
+                "min": -0.08941470552235842,
+                "max": 0.04774932889267802
+              }
+            },
+            "holdout_decision": {
+              "action_accuracy": {
+                "mean": 0.7083333333333334,
+                "min": 0.625,
+                "max": 0.875
+              },
+              "action_margin": {
+                "mean": 0.342399384722133,
+                "min": 0.2142042026607669,
+                "max": 0.596597060924978
+              },
+              "row_action_margin_min": -0.8489039912819862,
+              "identity_recall_used_ratio": {
+                "mean": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              }
+            },
+            "retention_decision": {
+              "action_accuracy": {
+                "mean": 0.7083333333333334,
+                "min": 0.625,
+                "max": 0.875
+              },
+              "action_margin": {
+                "mean": 0.26134935407511267,
+                "min": 0.18430348485708237,
+                "max": 0.3930607418878935
+              },
+              "row_action_margin_min": -0.9475859515368938,
+              "identity_recall_used_ratio": {
+                "mean": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              }
+            },
+            "row_action_margin_min": {
+              "holdout": -0.23431450128555298,
+              "retention": -0.19823352992534637
+            },
+            "row_outcome_margin_min": {
+              "holdout": -0.4957175701856613,
+              "retention": -0.39183826744556427
+            },
+            "positive_binding_all_seeds": false,
+            "decision_positive_binding_all_seeds": false,
+            "any_positive_binding_all_seeds": false,
+            "checkpoint_preflight_all_seeds": true,
+            "checkpoint_after_train_all_seeds": true
+          }
+        }
+      }
+    }
+  },
+  "prohibited_partitions_used": [],
+  "holdout_updates": 0,
+  "retention_updates": 0,
+  "trace_only": true,
+  "default_training_changed": false,
+  "default_checkpoint_changed": false,
+  "cpu_seconds": 47.257
+}
