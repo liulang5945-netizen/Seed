@@ -84,7 +84,14 @@ def _event_patterns(model: Taiji, episode: Any) -> dict[str, torch.Tensor | floa
         provenance_drive,
     )
     event_scale = model.config.memory_event_gain / len(components) ** 0.5
-    event_drive = cue_pattern + event_scale * torch.stack(components).sum(dim=0)
+    component_gains = torch.tensor(
+        model.config.memory_event_component_gains,
+        device=model.device,
+        dtype=components[0].dtype,
+    ).unsqueeze(1)
+    event_drive = cue_pattern + event_scale * (
+        torch.stack(components) * component_gains
+    ).sum(dim=0)
     event_pattern, _ = memory._activate(event_drive, state.memory.threshold)
     completion = memory.association.forward(cue_pattern)
     context_for_readout = memory.readout_receptors.forward(event_pattern)

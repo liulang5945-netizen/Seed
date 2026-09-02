@@ -1,0 +1,623 @@
+{
+  "format": "taiji-native-m1-45-component-geometry-v1",
+  "version": 1,
+  "status": "diagnostic",
+  "architecture_unchanged": true,
+  "variable_changed": "none; component geometry observation only",
+  "components": [
+    "action",
+    "outcome",
+    "reward",
+    "time",
+    "episode",
+    "provenance"
+  ],
+  "cue_curriculum": "maximally separated byte cues",
+  "action_curriculum": "phase-A/phase-B overlap on 48/49",
+  "memory_units": 128,
+  "memory_event_gain": 0.8,
+  "memory_action_decoder": "shared",
+  "identity_organ_enabled": false,
+  "corpus_digest": "52c31b5475ab86893998b82fa34441e7f9fae765b381eafae8108b588f824d96",
+  "records": [
+    {
+      "seed": 11,
+      "phase_a_checkpoint_digest": "527ba7be4d6fbcbd413918ba164aa7220fb0c7bc67142d86351eea51c23bbb0c",
+      "checkpoint_roundtrip_exact": true,
+      "active_parameter_count": 85953,
+      "planned_active_parameter_count": 85953,
+      "parameter_count_matches_plan": true,
+      "event_pattern": {
+        "active_support": {
+          "mean": 49.171875,
+          "min": 39.0,
+          "max": 59.0
+        },
+        "cue_event_cosine": {
+          "mean": 0.6256212319713086,
+          "min": 0.4552916884422302,
+          "max": 0.7909168601036072
+        },
+        "association_completion_ratio": {
+          "mean": 0.6769592596471843,
+          "min": 0.4413110591225359,
+          "max": 0.8881197403042345
+        },
+        "association_error_ratio": {
+          "mean": 0.728277593574989,
+          "min": 0.6107237005512338,
+          "max": 0.9135083459425367
+        }
+      },
+      "components": {
+        "action": {
+          "active_support": {
+            "mean": 18.5,
+            "min": 16.0,
+            "max": 21.0
+          },
+          "cue_cosine": {
+            "mean": -0.004313735706091393,
+            "min": -0.31710392236709595,
+            "max": 0.2117345780134201
+          },
+          "energy_share": {
+            "mean": 0.16666667547542602,
+            "min": 0.1666666567325592,
+            "max": 0.1666666865348816
+          },
+          "pair_cosine_mean": {
+            "mean": 0.16690625352142283,
+            "min": -0.19381588697433472,
+            "max": 1.0000001192092896
+          }
+        },
+        "outcome": {
+          "active_support": {
+            "mean": 15.5,
+            "min": 14.0,
+            "max": 17.0
+          },
+          "cue_cosine": {
+            "mean": -0.00036279932919569546,
+            "min": -0.31936943531036377,
+            "max": 0.2238268256187439
+          },
+          "energy_share": {
+            "mean": 0.16666666802484542,
+            "min": 0.1666666567325592,
+            "max": 0.1666666716337204
+          },
+          "pair_cosine_mean": {
+            "mean": 0.11772157089823547,
+            "min": -0.19234639406204224,
+            "max": 1.0
+          }
+        },
+        "reward": {
+          "active_support": {
+            "mean": 128.0,
+            "min": 128.0,
+            "max": 128.0
+          },
+          "cue_cosine": {
+            "mean": -0.03673441574210301,
+            "min": -0.2477615773677826,
+            "max": 0.1397925317287445
+          },
+          "energy_share": {
+            "mean": 0.16666666802484542,
+            "min": 0.1666666567325592,
+            "max": 0.1666666716337204
+          },
+          "pair_cosine_mean": {
+            "mean": 0.19682681740596308,
+            "min": -0.19428390264511108,
+            "max": 1.0000001192092896
+          }
+        },
+        "time": {
+          "active_support": {
+            "mean": 128.0,
+            "min": 128.0,
+            "max": 128.0
+          },
+          "cue_cosine": {
+            "mean": 0.00809134464179806,
+            "min": -0.23705995082855225,
+            "max": 0.17637941241264343
+          },
+          "energy_share": {
+            "mean": 0.16666668292600662,
+            "min": 0.1666666716337204,
+            "max": 0.1666666865348816
+          },
+          "pair_cosine_mean": {
+            "mean": 0.1514535813415326,
+            "min": -0.1760580688714981,
+            "max": 0.9999999403953552
+          }
+        },
+        "episode": {
+          "active_support": {
+            "mean": 128.0,
+            "min": 128.0,
+            "max": 128.0
+          },
+          "cue_cosine": {
+            "mean": 0.0006507618163595907,
+            "min": -0.20857210457324982,
+            "max": 0.19339312613010406
+          },
+          "energy_share": {
+            "mean": 0.16666666278615594,
+            "min": 0.16666662693023682,
+            "max": 0.16666670143604279
+          },
+          "pair_cosine_mean": {
+            "mean": 0.1655918738585266,
+            "min": -0.19428390264511108,
+            "max": 1.0000001192092896
+          }
+        },
+        "provenance": {
+          "active_support": {
+            "mean": 128.0,
+            "min": 128.0,
+            "max": 128.0
+          },
+          "cue_cosine": {
+            "mean": -0.027728419510822278,
+            "min": -0.307099312543869,
+            "max": 0.16320203244686127
+          },
+          "energy_share": {
+            "mean": 0.16666666802484542,
+            "min": 0.1666666567325592,
+            "max": 0.1666666716337204
+          },
+          "pair_cosine_mean": {
+            "mean": 0.16820805399523428,
+            "min": -0.19234639406204224,
+            "max": 1.0
+          }
+        }
+      },
+      "phase_cross_component_cosine": {
+        "action": {
+          "mean": 0.5436110496520996,
+          "max": 1.0,
+          "near_collision_count": 2048
+        },
+        "outcome": {
+          "mean": 0.49066826701164246,
+          "max": 1.0,
+          "near_collision_count": 2048
+        },
+        "reward": {
+          "mean": 1.0000001192092896,
+          "max": 1.0000001192092896,
+          "near_collision_count": 4096
+        },
+        "time": {
+          "mean": 0.9999999403953552,
+          "max": 0.9999999403953552,
+          "near_collision_count": 4096
+        },
+        "episode": {
+          "mean": -0.005871918518096209,
+          "max": 0.899106502532959,
+          "near_collision_count": 0
+        },
+        "provenance": {
+          "mean": 1.0,
+          "max": 1.0,
+          "near_collision_count": 4096
+        }
+      },
+      "holdout_updates": 0,
+      "cpu_seconds": 0.845
+    },
+    {
+      "seed": 29,
+      "phase_a_checkpoint_digest": "e194ea7b42a901d29ece289fa8dd25a18a21cc903f091073bcd76a275ed4e0a5",
+      "checkpoint_roundtrip_exact": true,
+      "active_parameter_count": 85953,
+      "planned_active_parameter_count": 85953,
+      "parameter_count_matches_plan": true,
+      "event_pattern": {
+        "active_support": {
+          "mean": 53.3203125,
+          "min": 45.0,
+          "max": 62.0
+        },
+        "cue_event_cosine": {
+          "mean": 0.5971381803974509,
+          "min": 0.44271475076675415,
+          "max": 0.7709891200065613
+        },
+        "association_completion_ratio": {
+          "mean": 0.675317255069382,
+          "min": 0.3694228485822363,
+          "max": 0.9935449808974253
+        },
+        "association_error_ratio": {
+          "mean": 0.7163293956471359,
+          "min": 0.5411624018696057,
+          "max": 0.854984227240397
+        }
+      },
+      "components": {
+        "action": {
+          "active_support": {
+            "mean": 19.0,
+            "min": 14.0,
+            "max": 24.0
+          },
+          "cue_cosine": {
+            "mean": -0.041148398000586894,
+            "min": -0.27509909868240356,
+            "max": 0.12512458860874176
+          },
+          "energy_share": {
+            "mean": 0.1666666796663776,
+            "min": 0.1666666567325592,
+            "max": 0.16666670143604279
+          },
+          "pair_cosine_mean": {
+            "mean": 0.15781814482882814,
+            "min": -0.24562659859657288,
+            "max": 1.0
+          }
+        },
+        "outcome": {
+          "active_support": {
+            "mean": 13.5,
+            "min": 13.0,
+            "max": 14.0
+          },
+          "cue_cosine": {
+            "mean": 0.0062061621324573935,
+            "min": -0.1471666842699051,
+            "max": 0.2908079922199249
+          },
+          "energy_share": {
+            "mean": 0.1666666573146358,
+            "min": 0.166666641831398,
+            "max": 0.1666666865348816
+          },
+          "pair_cosine_mean": {
+            "mean": 0.18383832802404262,
+            "min": -0.1530887633562088,
+            "max": 1.0
+          }
+        },
+        "reward": {
+          "active_support": {
+            "mean": 128.0,
+            "min": 128.0,
+            "max": 128.0
+          },
+          "cue_cosine": {
+            "mean": -0.09604616981232539,
+            "min": -0.2592655420303345,
+            "max": 0.1346745789051056
+          },
+          "energy_share": {
+            "mean": 0.166666672215797,
+            "min": 0.1666666567325592,
+            "max": 0.1666666865348816
+          },
+          "pair_cosine_mean": {
+            "mean": 0.16285741435058299,
+            "min": -0.2403169572353363,
+            "max": 1.0000001192092896
+          }
+        },
+        "time": {
+          "active_support": {
+            "mean": 128.0,
+            "min": 128.0,
+            "max": 128.0
+          },
+          "cue_cosine": {
+            "mean": 0.056506302680645604,
+            "min": -0.14570355415344238,
+            "max": 0.23485709726810455
+          },
+          "energy_share": {
+            "mean": 0.166666672215797,
+            "min": 0.1666666567325592,
+            "max": 0.1666666865348816
+          },
+          "pair_cosine_mean": {
+            "mean": 0.1334749880746434,
+            "min": -0.25979337096214294,
+            "max": 1.0
+          }
+        },
+        "episode": {
+          "active_support": {
+            "mean": 128.0,
+            "min": 128.0,
+            "max": 128.0
+          },
+          "cue_cosine": {
+            "mean": -0.009433788520254893,
+            "min": -0.2571357786655426,
+            "max": 0.1798548847436905
+          },
+          "energy_share": {
+            "mean": 0.16666666755918413,
+            "min": 0.16666662693023682,
+            "max": 0.16666670143604279
+          },
+          "pair_cosine_mean": {
+            "mean": 0.1673964610793822,
+            "min": -0.25979337096214294,
+            "max": 1.0000001192092896
+          }
+        },
+        "provenance": {
+          "active_support": {
+            "mean": 128.0,
+            "min": 128.0,
+            "max": 128.0
+          },
+          "cue_cosine": {
+            "mean": 0.09193203508039005,
+            "min": -0.12729157507419586,
+            "max": 0.2818717956542969
+          },
+          "energy_share": {
+            "mean": 0.1666666573146358,
+            "min": 0.166666641831398,
+            "max": 0.1666666716337204
+          },
+          "pair_cosine_mean": {
+            "mean": 0.18851011058723088,
+            "min": -0.16027428209781647,
+            "max": 1.0
+          }
+        }
+      },
+      "phase_cross_component_cosine": {
+        "action": {
+          "mean": 0.5052891969680786,
+          "max": 0.9999999403953552,
+          "near_collision_count": 2048
+        },
+        "outcome": {
+          "mean": 0.33703896403312683,
+          "max": 1.0000001192092896,
+          "near_collision_count": 2048
+        },
+        "reward": {
+          "mean": 1.0000001192092896,
+          "max": 1.0000001192092896,
+          "near_collision_count": 4096
+        },
+        "time": {
+          "mean": 0.9999999403953552,
+          "max": 0.9999998211860657,
+          "near_collision_count": 4096
+        },
+        "episode": {
+          "mean": -0.0064209215342998505,
+          "max": 0.8676573038101196,
+          "near_collision_count": 0
+        },
+        "provenance": {
+          "mean": 0.9999999403953552,
+          "max": 0.9999998807907104,
+          "near_collision_count": 4096
+        }
+      },
+      "holdout_updates": 0,
+      "cpu_seconds": 0.871
+    },
+    {
+      "seed": 47,
+      "phase_a_checkpoint_digest": "eeb7d2d22d7ca204c321c87343843fac19d69f5b9b3197049cc2d81d69577401",
+      "checkpoint_roundtrip_exact": true,
+      "active_parameter_count": 85953,
+      "planned_active_parameter_count": 85953,
+      "parameter_count_matches_plan": true,
+      "event_pattern": {
+        "active_support": {
+          "mean": 50.125,
+          "min": 42.0,
+          "max": 61.0
+        },
+        "cue_event_cosine": {
+          "mean": 0.6427091101650149,
+          "min": 0.4388241767883301,
+          "max": 0.7833302021026611
+        },
+        "association_completion_ratio": {
+          "mean": 0.6977928667198615,
+          "min": 0.5364544076774598,
+          "max": 1.0519931903891395
+        },
+        "association_error_ratio": {
+          "mean": 0.7116337668138646,
+          "min": 0.5748240769700461,
+          "max": 0.8441508670113564
+        }
+      },
+      "components": {
+        "action": {
+          "active_support": {
+            "mean": 18.0,
+            "min": 16.0,
+            "max": 20.0
+          },
+          "cue_cosine": {
+            "mean": -0.007429320692608599,
+            "min": -0.3296435475349426,
+            "max": 0.20305468142032623
+          },
+          "energy_share": {
+            "mean": 0.16666667093522847,
+            "min": 0.1666666567325592,
+            "max": 0.16666670143604279
+          },
+          "pair_cosine_mean": {
+            "mean": 0.12534899141610367,
+            "min": -0.29029762744903564,
+            "max": 1.0000001192092896
+          }
+        },
+        "outcome": {
+          "active_support": {
+            "mean": 14.0,
+            "min": 8.0,
+            "max": 20.0
+          },
+          "cue_cosine": {
+            "mean": 0.057909970159016666,
+            "min": -0.10022830963134766,
+            "max": 0.22912444174289703
+          },
+          "energy_share": {
+            "mean": 0.16666665580123663,
+            "min": 0.166666641831398,
+            "max": 0.1666666716337204
+          },
+          "pair_cosine_mean": {
+            "mean": 0.1349546779050191,
+            "min": -0.29029762744903564,
+            "max": 1.0000001192092896
+          }
+        },
+        "reward": {
+          "active_support": {
+            "mean": 128.0,
+            "min": 128.0,
+            "max": 128.0
+          },
+          "cue_cosine": {
+            "mean": 0.00913369313639123,
+            "min": -0.20506536960601807,
+            "max": 0.18069811165332794
+          },
+          "energy_share": {
+            "mean": 0.16666667070239782,
+            "min": 0.1666666567325592,
+            "max": 0.1666666865348816
+          },
+          "pair_cosine_mean": {
+            "mean": 0.14758826940427147,
+            "min": -0.24318552017211914,
+            "max": 1.0000001192092896
+          }
+        },
+        "time": {
+          "active_support": {
+            "mean": 128.0,
+            "min": 128.0,
+            "max": 128.0
+          },
+          "cue_cosine": {
+            "mean": -0.034957175335875945,
+            "min": -0.2528873682022095,
+            "max": 0.1388905942440033
+          },
+          "energy_share": {
+            "mean": 0.16666667140088975,
+            "min": 0.1666666567325592,
+            "max": 0.16666670143604279
+          },
+          "pair_cosine_mean": {
+            "mean": 0.181508185894927,
+            "min": -0.21939824521541595,
+            "max": 1.0
+          }
+        },
+        "episode": {
+          "active_support": {
+            "mean": 128.0,
+            "min": 128.0,
+            "max": 128.0
+          },
+          "cue_cosine": {
+            "mean": 0.004868479831202421,
+            "min": -0.16825149953365326,
+            "max": 0.1974283903837204
+          },
+          "energy_share": {
+            "mean": 0.16666666639503092,
+            "min": 0.16666662693023682,
+            "max": 0.16666670143604279
+          },
+          "pair_cosine_mean": {
+            "mean": 0.16608937352005645,
+            "min": -0.24318552017211914,
+            "max": 1.0000001192092896
+          }
+        },
+        "provenance": {
+          "active_support": {
+            "mean": 128.0,
+            "min": 128.0,
+            "max": 128.0
+          },
+          "cue_cosine": {
+            "mean": 0.045126836688723415,
+            "min": -0.18988613784313202,
+            "max": 0.19744718074798584
+          },
+          "energy_share": {
+            "mean": 0.16666667070239782,
+            "min": 0.1666666567325592,
+            "max": 0.1666666865348816
+          },
+          "pair_cosine_mean": {
+            "mean": 0.13944012779878298,
+            "min": -0.20905949175357819,
+            "max": 0.9999998807907104
+          }
+        }
+      },
+      "phase_cross_component_cosine": {
+        "action": {
+          "mean": 0.5394108891487122,
+          "max": 1.0000001192092896,
+          "near_collision_count": 2048
+        },
+        "outcome": {
+          "mean": 0.4916853606700897,
+          "max": 1.0000001192092896,
+          "near_collision_count": 2048
+        },
+        "reward": {
+          "mean": 1.0000001192092896,
+          "max": 1.0000001192092896,
+          "near_collision_count": 4096
+        },
+        "time": {
+          "mean": 1.0000001192092896,
+          "max": 1.0000001192092896,
+          "near_collision_count": 4096
+        },
+        "episode": {
+          "mean": -0.004786828998476267,
+          "max": 0.8954156637191772,
+          "near_collision_count": 0
+        },
+        "provenance": {
+          "mean": 0.9999999403953552,
+          "max": 0.9999997615814209,
+          "near_collision_count": 4096
+        }
+      },
+      "holdout_updates": 0,
+      "cpu_seconds": 1.064
+    }
+  ],
+  "diagnostic_boundary": {
+    "does_not_promote": true,
+    "interpretation": "Component correlations identify a candidate nuisance or collision; this report is not a B5 capability claim."
+  },
+  "report_path": "reports\\taiji_m1_45_component_geometry_20260902.json"
+}
