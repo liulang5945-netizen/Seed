@@ -291,6 +291,10 @@ M1-15 的 slot-routed slow action readout 已完成 canary，但 Gate 阻断，�
 
 当前唯一下一步为 **M1-16：slot-aware repeated-replay/no-change Gate**：不再添加新的 action decoder，先把 CueBindingBank 接入一个隔离的实验 evaluator，完整测量 repeated replay、no-change、slot release/reallocate、old/new holdout、cue collision、支持覆盖与 checkpoint round-trip；实验结果只写 report，不改变默认 Taiji checkpoint。只有在这些条件与能力保持同时通过后，才允许重新评审是否接入 slow readout；否则冻结 memory 结构，转向基础 cue encoder 的训练数据/可分性改造。
 
+M1-16 的 slot lifecycle Gate 已完成，报告为 `reports/taiji_m1_b16_slot_gate_canary_20260902.json`。三 seed 的 repeated replay same-slot rate 为 `1.0`，no-change 查询全部路由且 state preserved，release 后读为 unbound、重新学习回到释放 slot，checkpoint round-trip query mismatch 为 `0`，cross-phase collision 为 `0`。这些结果证明 CueBindingBank 的状态机和可逆性成立；M1-15 已证明把它直接接进 action readout 仍不能通过 old/new 能力 Gate，因此 slot bank 继续保持独立，不进入默认 checkpoint。
+
+当前唯一下一步为 **M1-17：cue encoder 可分性训练实验**：在不使用 action/outcome 答案、不改 fast/slow action readout 的前提下，给固定 cue encoder 增加基于 cue 重复一致性、跨 cue 排斥和 homeostasis 的本地塑性 probe；用 slot collision、write→query fidelity、active support、old/new holdout、no-change 和 checkpoint round-trip 对照当前固定 cue encoder。只有 cue population 的分离度和 memory 能力同时改善，才允许把 cue encoder 学习规则接入 Taiji 主路径；否则撤销该 probe，冻结 M1 memory decoder 结构。
+
 ## 7. M2～M8 的开发日程与外围任务安置
 
 ### M2：世界—行动—语言后训练
