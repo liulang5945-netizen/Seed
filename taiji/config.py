@@ -161,6 +161,7 @@ class TaijiConfig:
     memory_iterations: int = 3
     memory_time_dim: int = 8
     memory_episode_dim: int = 16
+    memory_action_decoder: str = "shared"
 
     membrane_decay: float = 0.65
     trace_decay: float = 0.82
@@ -304,6 +305,8 @@ class TaijiConfig:
             raise ValueError("memory_time_dim must be a positive even dimension")
         if self.memory_episode_dim <= 0:
             raise ValueError("memory_episode_dim must be positive")
+        if self.memory_action_decoder not in {"shared", "local"}:
+            raise ValueError("memory_action_decoder must be 'shared' or 'local'")
         for name in (
             "membrane_decay",
             "trace_decay",
@@ -624,6 +627,10 @@ class TaijiConfig:
         )
         memory = self.memory_units * min(self.memory_fan_in, self.memory_units - 1)
         memory += readout_outputs * readout_width
+        # The local action decoder is allocated even when the shared decoder
+        # is selected, so both modes can be compared without changing the
+        # rest of the topology or checkpoint shape.
+        memory += self.alphabet_size * min(self.memory_readout_fan_in, self.memory_units)
         return int(fabric + motor + memory)
 
     @property

@@ -102,6 +102,7 @@ def test_learning_is_local_masked_and_has_no_autograd_parameters() -> None:
         model.memory.provenance_encoder,
         model.memory.association,
         model.memory.action_readout,
+        model.memory.local_action_readout,
         model.memory.outcome_readout,
         model.memory.reward_readout,
         model.memory.familiarity_readout,
@@ -165,6 +166,7 @@ def test_consolidation_rng_does_not_shift_existing_organs() -> None:
         left.motor.synapses,
         left.memory.association,
         left.memory.action_readout,
+        left.memory.local_action_readout,
         left.memory.outcome_readout,
     )
     right_existing = (
@@ -174,6 +176,7 @@ def test_consolidation_rng_does_not_shift_existing_organs() -> None:
         right.motor.synapses,
         right.memory.association,
         right.memory.action_readout,
+        right.memory.local_action_readout,
         right.memory.outcome_readout,
     )
     for original, changed in zip(left_existing, right_existing, strict=False):

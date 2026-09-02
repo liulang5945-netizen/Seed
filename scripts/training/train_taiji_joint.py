@@ -81,6 +81,11 @@ def main() -> int:
     parser.add_argument("--replay-memory-epochs", type=int, default=1)
     parser.add_argument("--replay-memory-learning-scale", type=float)
     parser.add_argument(
+        "--replay-memory-learning-targets",
+        choices=("all", "association", "readout"),
+        default="all",
+    )
+    parser.add_argument(
         "--memory-confidence-decay",
         type=float,
         default=0.0,
@@ -154,6 +159,7 @@ def main() -> int:
             replay_memory_corpus=replay_memory_corpus,
             replay_memory_epochs=args.replay_memory_epochs,
             replay_memory_learning_scale=args.replay_memory_learning_scale,
+            replay_memory_learning_targets=args.replay_memory_learning_targets,
             memory_confidence_decay=args.memory_confidence_decay,
         )
     elif args.resume is not None:
@@ -171,6 +177,7 @@ def main() -> int:
             replay_memory_corpus=replay_memory_corpus,
             replay_memory_epochs=args.replay_memory_epochs,
             replay_memory_learning_scale=args.replay_memory_learning_scale,
+            replay_memory_learning_targets=args.replay_memory_learning_targets,
         )
     else:
         model = Taiji(_config(args.seed), episode_id="joint-train")
@@ -195,6 +202,7 @@ def main() -> int:
             replay_memory_corpus=replay_memory_corpus,
             replay_memory_epochs=args.replay_memory_epochs,
             replay_memory_learning_scale=args.replay_memory_learning_scale,
+            replay_memory_learning_targets=args.replay_memory_learning_targets,
         )
     result: dict[str, Any]
     if args.eval_only:
