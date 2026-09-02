@@ -283,6 +283,10 @@ M1-13 的 dual readout 原型与 provenance 隔离已完成，但 Gate 仍阻断
 
 当前唯一下一步为 **M1-14：可审计的结构性 cue slot allocation**：停止继续叠加 action decoder，改为让 cue population 在固定容量内通过可验证的 slot 竞争和占用/释放规则形成低碰撞绑定，并把 slot 选择、碰撞率、支持覆盖和可逆性写入 checkpoint/report；只在 B5 的 repeated-replay、no-change、old/new holdout 和 checkpoint round-trip 全部通过后，才允许把 slot route 接到 slow readout。否则保留现有 native memory，不重跑 full foundation、不进入 M2。
 
+M1-14 的 `CueBindingBank` 独立原型和 B5 诊断已完成，报告为 `reports/taiji_m1_b14_slot_binding_canary_20260902.json`。它只保存 cue prototype 与 slot 使用状态，不保存 action/answer 表；三 seed 的 32 个 cue 在 128 个固定容量内占用 32 个 slot，跨 phase collision 为 `0`，checkpoint round-trip 后 query slot mismatch 为 `0`，并通过 release/读不写单测。该结果只准许把 binding 接入实验 slow readout，不准许晋级能力或重跑 foundation。
+
+当前唯一下一步为 **M1-15：slot-routed slow action readout 实验**：将已通过结构 Gate 的 slot code 作为 dual slow readout 的输入，保持 fast action readout 与默认 shared 完全不变；加入 slot support-balanced topology、repeated-replay、no-change、old/new holdout、collision、checkpoint round-trip 和参数预算对照。只有 slow slot route 在三 seed 上恢复旧能力且不损伤新能力，才考虑替换当前 dual cue-local slow path；否则回滚实验 route，保留 CueBindingBank 作为独立结构组件。
+
 ## 7. M2～M8 的开发日程与外围任务安置
 
 ### M2：世界—行动—语言后训练
