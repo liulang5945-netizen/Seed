@@ -1,0 +1,459 @@
+{
+  "format": "taiji-native-m1-support-mask-v1",
+  "version": 1,
+  "status": "diagnostic",
+  "architecture_unchanged": true,
+  "decoder": "shared",
+  "support_mask_isolated": true,
+  "diagnostics": {
+    "corpus_digest": "839feff22948df7eb1feec76f574214571495de3f7129b60bf8acc6403c0f433",
+    "sample_counts": {
+      "train": 32,
+      "holdout": 16,
+      "retention": 16,
+      "phase_a_train": 16,
+      "phase_a_holdout": 8,
+      "phase_a_retention": 8,
+      "phase_b_train": 16,
+      "phase_b_holdout": 8,
+      "phase_b_retention": 8,
+      "replay_train": 16
+    },
+    "modes": [
+      "shared",
+      "cue_mask"
+    ],
+    "mask_fraction": 0.5,
+    "replay_disabled": true,
+    "answer_table": false,
+    "promotable_modes": [],
+    "records": {
+      "shared": [
+        {
+          "seed": 11,
+          "mode": "shared",
+          "mask_fraction": null,
+          "parent": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.5
+          },
+          "restored": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.5
+          },
+          "restored_after_read": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.5
+          },
+          "new_gain_vs_no_write": 0.5,
+          "support": {
+            "phase_a": {
+              "episode_count": 16,
+              "mean_effective_fan_in": 7163.875,
+              "min_effective_fan_in": 6425,
+              "max_effective_fan_in": 7710,
+              "active_edge_union": 8224,
+              "cue_cosine_max_off_diagonal": 0.9203822612762451,
+              "cue_confidence_min": 0.6512356346844672,
+              "cue_confidence_max": 0.8801321528758088
+            },
+            "phase_b": {
+              "episode_count": 16,
+              "mean_effective_fan_in": 6858.6875,
+              "min_effective_fan_in": 6168,
+              "max_effective_fan_in": 7710,
+              "active_edge_union": 8224,
+              "cue_cosine_max_off_diagonal": 0.8889404535293579,
+              "cue_confidence_min": 0.8081354545958335,
+              "cue_confidence_max": 0.9327405971021461
+            },
+            "cross_phase": {
+              "shared_edge_count": 8224.0,
+              "edge_union_count": 8224.0,
+              "shared_edge_ratio": 1.0,
+              "cross_cue_edge_jaccard_mean": 0.789500134617811,
+              "cross_cue_edge_jaccard_max": 0.9666666666666667,
+              "cross_phase_cue_cosine_max": 0.819674015045166,
+              "all_cue_norm_mean": 3.345529317855835
+            }
+          },
+          "checkpoint": {
+            "parent_digest": "b6551950b79b6afc7312e60191676aab87d747762ea7f5a6d11b18dc9cb26ad6",
+            "child_digest": "38a25fa6fa370791c47c8e8d1c9d4d86545303d560966a8e44e5d9f14e7b0435",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0
+        },
+        {
+          "seed": 29,
+          "mode": "shared",
+          "mask_fraction": null,
+          "parent": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.875,
+            "old_retention": 0.875,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.625
+          },
+          "restored": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.625
+          },
+          "restored_after_read": {
+            "old_holdout": 0.0,
+            "old_retention": 0.0,
+            "new_holdout": 0.625
+          },
+          "new_gain_vs_no_write": 0.625,
+          "support": {
+            "phase_a": {
+              "episode_count": 16,
+              "mean_effective_fan_in": 7196.0,
+              "min_effective_fan_in": 6168,
+              "max_effective_fan_in": 7967,
+              "active_edge_union": 8224,
+              "cue_cosine_max_off_diagonal": 0.9034997820854187,
+              "cue_confidence_min": 0.6924693562592645,
+              "cue_confidence_max": 0.9239953129272022
+            },
+            "phase_b": {
+              "episode_count": 16,
+              "mean_effective_fan_in": 7308.4375,
+              "min_effective_fan_in": 6939,
+              "max_effective_fan_in": 7710,
+              "active_edge_union": 8224,
+              "cue_cosine_max_off_diagonal": 0.8640894293785095,
+              "cue_confidence_min": 0.7222165676809578,
+              "cue_confidence_max": 0.9067240748672718
+            },
+            "cross_phase": {
+              "shared_edge_count": 8224.0,
+              "edge_union_count": 8224.0,
+              "shared_edge_ratio": 1.0,
+              "cross_cue_edge_jaccard_mean": 0.8343363026957863,
+              "cross_cue_edge_jaccard_max": 0.9655172413793104,
+              "cross_phase_cue_cosine_max": 0.7856022119522095,
+              "all_cue_norm_mean": 3.158622980117798
+            }
+          },
+          "checkpoint": {
+            "parent_digest": "51a039cef230550ca56bdeb346c0a618716458404e99b45ba4fa5ee99abb8573",
+            "child_digest": "e1de512621a80750b321744f5de86dec48d79cc95fee49ae10a4eae81335bc73",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0
+        },
+        {
+          "seed": 47,
+          "mode": "shared",
+          "mask_fraction": null,
+          "parent": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.625,
+            "old_retention": 0.5,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.0,
+            "old_retention": 0.125,
+            "new_holdout": 0.875
+          },
+          "restored": {
+            "old_holdout": 0.0,
+            "old_retention": 0.125,
+            "new_holdout": 0.875
+          },
+          "restored_after_read": {
+            "old_holdout": 0.0,
+            "old_retention": 0.125,
+            "new_holdout": 0.875
+          },
+          "new_gain_vs_no_write": 0.875,
+          "support": {
+            "phase_a": {
+              "episode_count": 16,
+              "mean_effective_fan_in": 7099.625,
+              "min_effective_fan_in": 6168,
+              "max_effective_fan_in": 7967,
+              "active_edge_union": 8224,
+              "cue_cosine_max_off_diagonal": 0.8780017495155334,
+              "cue_confidence_min": 0.7817014977559866,
+              "cue_confidence_max": 0.9083980945177954
+            },
+            "phase_b": {
+              "episode_count": 16,
+              "mean_effective_fan_in": 7244.1875,
+              "min_effective_fan_in": 6168,
+              "max_effective_fan_in": 7710,
+              "active_edge_union": 8224,
+              "cue_cosine_max_off_diagonal": 0.9000287055969238,
+              "cue_confidence_min": 0.8875326706588349,
+              "cue_confidence_max": 0.9486659520145967
+            },
+            "cross_phase": {
+              "shared_edge_count": 8224.0,
+              "edge_union_count": 8224.0,
+              "shared_edge_ratio": 1.0,
+              "cross_cue_edge_jaccard_mean": 0.8061696763248021,
+              "cross_cue_edge_jaccard_max": 0.967741935483871,
+              "cross_phase_cue_cosine_max": 0.8203989863395691,
+              "all_cue_norm_mean": 3.477849006652832
+            }
+          },
+          "checkpoint": {
+            "parent_digest": "84fa353c73370846c850dedd7fbdbcd6abbbc6ddf7e248f6e29daabf6be91eb7",
+            "child_digest": "5caf848d5daf00a5bde5bcf40ebb5dd763390916ad512a89ea1e6568befe3272",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0
+        }
+      ],
+      "cue_mask": [
+        {
+          "seed": 11,
+          "mode": "cue_mask",
+          "mask_fraction": 0.5,
+          "parent": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.25,
+            "old_retention": 0.25,
+            "new_holdout": 0.5
+          },
+          "restored": {
+            "old_holdout": 0.25,
+            "old_retention": 0.25,
+            "new_holdout": 0.5
+          },
+          "restored_after_read": {
+            "old_holdout": 0.25,
+            "old_retention": 0.25,
+            "new_holdout": 0.5
+          },
+          "new_gain_vs_no_write": 0.5,
+          "support": {
+            "phase_a": {
+              "episode_count": 16,
+              "mean_effective_fan_in": 4112.0,
+              "min_effective_fan_in": 4112,
+              "max_effective_fan_in": 4112,
+              "active_edge_union": 8224,
+              "cue_cosine_max_off_diagonal": 0.9203822612762451,
+              "cue_confidence_min": 0.6512356346844672,
+              "cue_confidence_max": 0.8801321528758088
+            },
+            "phase_b": {
+              "episode_count": 16,
+              "mean_effective_fan_in": 4095.9375,
+              "min_effective_fan_in": 3855,
+              "max_effective_fan_in": 4112,
+              "active_edge_union": 8224,
+              "cue_cosine_max_off_diagonal": 0.8889404535293579,
+              "cue_confidence_min": 0.8081354545958335,
+              "cue_confidence_max": 0.9327405971021461
+            },
+            "cross_phase": {
+              "shared_edge_count": 8224.0,
+              "edge_union_count": 8224.0,
+              "shared_edge_ratio": 1.0,
+              "cross_cue_edge_jaccard_mean": 0.39113720367796456,
+              "cross_cue_edge_jaccard_max": 0.7222222222222222,
+              "cross_phase_cue_cosine_max": 0.819674015045166,
+              "all_cue_norm_mean": 3.345529317855835
+            }
+          },
+          "checkpoint": {
+            "parent_digest": "f22ff449f1ab71680581bf9fbb7051e42648f0aa6cb106201bc7137d157ec12d",
+            "child_digest": "254251464aefbd6b34207f7108cf7f8fd46e725d52522a14882338badec85915",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0
+        },
+        {
+          "seed": 29,
+          "mode": "cue_mask",
+          "mask_fraction": 0.5,
+          "parent": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.75,
+            "old_retention": 0.75,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.0,
+            "old_retention": 0.25,
+            "new_holdout": 0.625
+          },
+          "restored": {
+            "old_holdout": 0.0,
+            "old_retention": 0.25,
+            "new_holdout": 0.625
+          },
+          "restored_after_read": {
+            "old_holdout": 0.0,
+            "old_retention": 0.25,
+            "new_holdout": 0.625
+          },
+          "new_gain_vs_no_write": 0.625,
+          "support": {
+            "phase_a": {
+              "episode_count": 16,
+              "mean_effective_fan_in": 4112.0,
+              "min_effective_fan_in": 4112,
+              "max_effective_fan_in": 4112,
+              "active_edge_union": 8224,
+              "cue_cosine_max_off_diagonal": 0.9034997820854187,
+              "cue_confidence_min": 0.6924693562592645,
+              "cue_confidence_max": 0.9239953129272022
+            },
+            "phase_b": {
+              "episode_count": 16,
+              "mean_effective_fan_in": 4112.0,
+              "min_effective_fan_in": 4112,
+              "max_effective_fan_in": 4112,
+              "active_edge_union": 8224,
+              "cue_cosine_max_off_diagonal": 0.8640894293785095,
+              "cue_confidence_min": 0.7222165676809578,
+              "cue_confidence_max": 0.9067240748672718
+            },
+            "cross_phase": {
+              "shared_edge_count": 8224.0,
+              "edge_union_count": 8224.0,
+              "shared_edge_ratio": 1.0,
+              "cross_cue_edge_jaccard_mean": 0.38760498559411605,
+              "cross_cue_edge_jaccard_max": 0.6,
+              "cross_phase_cue_cosine_max": 0.7856022119522095,
+              "all_cue_norm_mean": 3.158622980117798
+            }
+          },
+          "checkpoint": {
+            "parent_digest": "b592e218cbb2b25db52fcd15a72f2e7ea022f06f5d858b891cc31c29c67b6421",
+            "child_digest": "d2685bf4178bacb588d6862cf280701aaef2533afd118f5d1a92e96b45ffae11",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0
+        },
+        {
+          "seed": 47,
+          "mode": "cue_mask",
+          "mask_fraction": 0.5,
+          "parent": {
+            "old_holdout": 0.875,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "no_write": {
+            "old_holdout": 0.875,
+            "old_retention": 0.625,
+            "new_holdout": 0.0
+          },
+          "child": {
+            "old_holdout": 0.375,
+            "old_retention": 0.25,
+            "new_holdout": 0.5
+          },
+          "restored": {
+            "old_holdout": 0.375,
+            "old_retention": 0.25,
+            "new_holdout": 0.5
+          },
+          "restored_after_read": {
+            "old_holdout": 0.375,
+            "old_retention": 0.25,
+            "new_holdout": 0.5
+          },
+          "new_gain_vs_no_write": 0.5,
+          "support": {
+            "phase_a": {
+              "episode_count": 16,
+              "mean_effective_fan_in": 4095.9375,
+              "min_effective_fan_in": 3855,
+              "max_effective_fan_in": 4112,
+              "active_edge_union": 8224,
+              "cue_cosine_max_off_diagonal": 0.8780017495155334,
+              "cue_confidence_min": 0.7817014977559866,
+              "cue_confidence_max": 0.9083980945177954
+            },
+            "phase_b": {
+              "episode_count": 16,
+              "mean_effective_fan_in": 4112.0,
+              "min_effective_fan_in": 4112,
+              "max_effective_fan_in": 4112,
+              "active_edge_union": 8224,
+              "cue_cosine_max_off_diagonal": 0.9000287055969238,
+              "cue_confidence_min": 0.8875326706588349,
+              "cue_confidence_max": 0.9486659520145967
+            },
+            "cross_phase": {
+              "shared_edge_count": 8224.0,
+              "edge_union_count": 8224.0,
+              "shared_edge_ratio": 1.0,
+              "cross_cue_edge_jaccard_mean": 0.4230003972109682,
+              "cross_cue_edge_jaccard_max": 0.6842105263157895,
+              "cross_phase_cue_cosine_max": 0.8203989863395691,
+              "all_cue_norm_mean": 3.477849006652832
+            }
+          },
+          "checkpoint": {
+            "parent_digest": "26bb955ce5e611dcfb7cf1b8ec9004c1d8651820e2ed2c85786026767b20b29c",
+            "child_digest": "3a9d1e86ad8d00b4506bed0a4c2db7c00f7ca5650b6ed3876236597e2660051f",
+            "restore_digest_matches": true,
+            "read_only_persistent_state": true
+          },
+          "phase_b_memory_writes": 16,
+          "holdout_updates": 0
+        }
+      ]
+    }
+  },
+  "can_promote": false,
+  "report_path": "reports\\taiji_m1_support_mask_20260902.json"
+}
