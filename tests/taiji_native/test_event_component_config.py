@@ -10,7 +10,8 @@ def test_event_component_gains_roundtrip_and_default() -> None:
     assert restored == config
 
     candidate = TaijiConfig(
-        memory_event_component_gains=(1.0, 1.0, 1.0, 1.0, 0.05, 1.0)
+        memory_event_component_gains=(1.0, 1.0, 1.0, 1.0, 0.05, 1.0),
+        memory_association_event_target_mix=0.5,
     )
     assert TaijiConfig.from_dict(candidate.to_dict()) == candidate
 
@@ -22,3 +23,5 @@ def test_event_component_gains_require_six_non_negative_values() -> None:
         TaijiConfig(memory_event_component_gains=(1.0, 1.0, 1.0, 1.0, -0.1, 1.0))
     with pytest.raises(ValueError, match="at least one"):
         TaijiConfig(memory_event_component_gains=(0.0,) * 6)
+    with pytest.raises(ValueError, match="target_mix"):
+        TaijiConfig(memory_association_event_target_mix=1.1)

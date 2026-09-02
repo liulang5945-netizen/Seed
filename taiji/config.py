@@ -244,6 +244,7 @@ class TaijiConfig:
     memory_novelty_gain: float = 0.70
     memory_reward_gain: float = 0.30
     memory_event_component_gains: tuple[float, ...] = DEFAULT_EPISODIC_EVENT_COMPONENT_GAINS
+    memory_association_event_target_mix: float = 1.0
     replay_memory_learning_scale: float = 0.25
 
     replay_seed_gain: float = 0.65
@@ -402,6 +403,10 @@ class TaijiConfig:
             raise ValueError("memory_event_component_gains must be finite and non-negative")
         if sum(float(value) for value in self.memory_event_component_gains) <= 0.0:
             raise ValueError("at least one episodic event component gain must be positive")
+        if not math.isfinite(float(self.memory_association_event_target_mix)) or not 0.0 <= float(
+            self.memory_association_event_target_mix
+        ) <= 1.0:
+            raise ValueError("memory_association_event_target_mix must be finite and in [0, 1]")
         if self.synapse_decay < 0.0:
             raise ValueError("synapse_decay cannot be negative")
         if self.memory_feedback_gain < 0.0:
