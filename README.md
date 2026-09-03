@@ -5,7 +5,7 @@ a native cognitive architecture being built from online predictive-coding mechan
 a Transformer wrapper. The kernel learns from **local prediction errors** (no backpropagation,
 no attention matrix, no context window, no teacher model at runtime); beyond the kernel, Taiji
 owns its own representations, persistent state, memory, goals, planning and action selection,
-while deliberately reusing mature algorithms (embeddings, SSMs, MoE-style routing, optimizers, retrieval) where they fit. At its core, Taiji is designed to **self-evolve** — to revise, grow and reorganize its own architecture as it learns (see [What Taiji is](#what-taiji-is)).
+while deliberately reusing mature algorithms (embeddings, SSMs, MoE-style routing, optimizers, retrieval) where they fit. A key capability the architecture is designed for is **self-evolution** — to revise, grow and reorganize its own structure as it learns (see [Structural growth and collaboration](#structural-growth-and-collaboration--the-self-evolution-capability)).
 
 For the non-hype picture: the executable today is the **Taiji Substrate Kernel v8 (TSK-v8)** —
 a byte-level predictive-coding research kernel. It is a working substrate, not yet a completed
@@ -25,18 +25,7 @@ being trained (see [Status](#status)).
 
 ### What Taiji is
 
-The starting point is not a particular mechanism — it is a question: **can an architecture
-discover its own correct design?** Taiji is designed to be **self-evolving**: its perception,
-memory, world model, skills and structure are all *candidates* that the system itself may
-revise, grow, split, merge or prune as it learns; its goals, confidence and perceived
-capability gaps drive when and how it explores, trains, sleeps and restructures. The current
-kernel, organ contracts and even the Taiji v1 design are proposals — not the final answer.
-This direction is fixed in the [core requirements](plans/active/TAIJI_CORE_REQUIREMENTS.md)
-(CR-4 structural plasticity, CR-7 sleep/dream/play, CR-9 recursive improvement) and gated by
-A8 as a falsifiable capability; what is already executable vs. what is still scaffolding is
-stated in [Capabilities](#capabilities) and [Status](#status), not decorated.
-
-Taiji targets a **complete native cognitive architecture** (contract: [Taiji Native Architecture v1](plans/active/TAIJI_NATIVE_ARCHITECTURE_V1.md)):
+Taiji targets a **complete native cognitive architecture** (contract: [Taiji Native Architecture v1](plans/active/TAIJI_NATIVE_ARCHITECTURE_V1.md), requirements: [Taiji Core Requirements](plans/active/TAIJI_CORE_REQUIREMENTS.md)):
 
 - **One cognitive subject.** Taiji owns the cognitive state and decision path end to end. No
   Transformer hidden state, teacher logits or external model thinks for it at runtime; Seed is
@@ -140,9 +129,9 @@ re-execution with digest comparison, and explicit `failed` verdicts where they a
 | Action credit (N11) | 100% vs 50% random, 57.5% without action learning |
 | Episodic field, one-shot (M5) | 8 episodes in one shared field, zero per-event slots; recall 87.5% vs 25% controls |
 
-### Structural growth and collaboration — the seeds of self-evolution
+### Structural growth and collaboration — the self-evolution capability
 
-The executable seeds of self-evolution (CR-4), gated like every claim:
+The architecture is designed to revise its own structure (CR-4). The executable seeds, gated like every claim:
 
 - Region **growth / split / merge / prune** and connection pruning pass holdout, budget, trial
   roundtrip and reverse-rollback gates; proposals come from real predictive-error/resource
