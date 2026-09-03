@@ -10,7 +10,11 @@ import torch
 
 from .config import TaijiConfig, validate_episodic_learning_target
 from .fabric import TaijiFabric
-from .identity_organ import CueIdentityOrgan, IdentityRecall
+from .identity_organ import (
+    IDENTITY_ORGAN_UNBOUND_PROVENANCE,
+    CueIdentityOrgan,
+    IdentityRecall,
+)
 from .internalization import content_digest
 from .memory import EpisodicField
 from .organs import ByteMotor, ByteSensor
@@ -177,6 +181,7 @@ class Taiji:
         cortical_state = self.fabric.cortical_context(regions)
         identity_recall: IdentityRecall | None = None
         identity_evidence: torch.Tensor | None = None
+        identity_addressing_used = False
         if self.identity_organ is not None:
             identity_enabled = use_memory and (
                 use_identity is None or bool(use_identity)
@@ -192,6 +197,7 @@ class Taiji:
                 # observed later cannot wash the cue away, so a delayed read
                 # addresses the same key it wrote under.
                 self.fabric.stamp_cue_snapshot(cortical_state)
+                identity_addressing_used = True
                 identity_evidence = (
                     float(self.config.identity_organ_evidence_gain)
                     * identity_recall.action_evidence
@@ -210,10 +216,39 @@ class Taiji:
         )
         if identity_evidence is not None:
             episodic_evidence = episodic_evidence + identity_evidence
-        probabilities = self.motor.probabilities(
-            context,
-            episodic_evidence=episodic_evidence,
-        )
+        if identity_addressing_used:
+            # M1-66: once the identity organ routes a cue, it owns the value
+            # readout.  The motor's shared readout and the episodic field's
+            # value head both stay chance-level on foundation-scale courses
+            # (EpisodicField 0.462/0.769 measured), so an equal-weight sum would
+            # bury the organ's correct value under high-confidence wrong
+            # evidence.  Routing success therefore makes the organ's own
+            # action distribution the decision, not one input among equals;
+            # the motor and memory evidence are still computed (they feed
+            # prediction/surprise/consolidation) but do not dilute the verdict.
+            probabilities = identity_recall.action_probabilities
+        elif (
+            identity_recall is not None
+            and identity_recall.provenance == IDENTITY_ORGAN_UNBOUND_PROVENANCE
+        ):
+            # The organ is on the default path and was asked, but no prototype
+            # matched.  A routed read that cannot bind its cue must not fabricate
+            # a confident verdict from the shared readout, so the decision is a
+            # near-uniform distribution: "no recall" is a real answer, and the
+            # motor/memory synthesis is not allowed to leak a high-confidence
+            # guess into the margin audit.  Disabled reads (B1's
+            # use_identity=False, and the lesion arms) emit the DISABLED
+            # provenance and stay on the original motor synthesis untouched.
+            probabilities = torch.full(
+                (self.config.alphabet_size,),
+                1.0 / self.config.alphabet_size,
+                device=self.device,
+            )
+        else:
+            probabilities = self.motor.probabilities(
+                context,
+                episodic_evidence=episodic_evidence,
+            )
         predicted_symbol = int(probabilities.argmax().item())
         self._state = TaijiState(
             version=self.STATE_VERSION,
