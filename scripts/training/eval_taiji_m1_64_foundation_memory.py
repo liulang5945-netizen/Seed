@@ -28,6 +28,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import random
 import statistics
 import sys
@@ -240,7 +241,15 @@ def _read_rows(
     The observation sequence mirrors ``DelayedMemoryTask._recall_accuracy``
     exactly; ``read_path_matches_task_metric`` below re-derives the task's own
     accuracy from these rows so the two paths cannot silently drift apart.
+
+    When the identity organ routes a cue (M1-66 organ-first verdict), the margin
+    is read from the organ's own evidence restricted to the queried action set.
+    A plain motor-softmax over the 256-symbol alphabet would squeeze the two
+    action probabilities to ~1e-4 and flatten the margin to noise; the verdict
+    lives in the organ's action evidence, so the margin is expanded in that
+    space the same way the evaluator already reduces prediction to ``actions``.
     """
+
     rows: list[dict[str, Any]] = []
     for query in queries:
         model.reset_dynamics(episode_id=f"m1-64-query-{query.query_id}")
@@ -250,15 +259,32 @@ def _read_rows(
             query.cue,
             *interference_symbols,
         ):
-            model.observe(
+            step = model.observe(
                 symbol,
                 learn=False,
                 learn_motor=False,
                 use_memory=use_memory,
                 use_identity=use_identity,
             )
+        identity_recall = step.identity_recall
         probabilities = model.snapshot().motor_probabilities
-        scores = {action: float(probabilities[action].item()) for action in actions}
+        evidence = identity_recall.action_evidence
+        if (
+            identity_recall is not None
+            and identity_recall.used
+            and evidence is not None
+        ):
+            # organ verdict: expand the margin over the action set only
+            logits = tuple(float(evidence[int(action)].item()) for action in actions)
+            peak = max(logits)
+            expanded = tuple(math.exp(value - peak) for value in logits)
+            total = sum(expanded)
+            scores = {
+                action: expanded[index] / total
+                for index, action in enumerate(actions)
+            }
+        else:
+            scores = {action: float(probabilities[action].item()) for action in actions}
         prediction = max(actions, key=lambda action: scores[action])
         alternatives = [
             value for action, value in scores.items() if action != query.expected_action

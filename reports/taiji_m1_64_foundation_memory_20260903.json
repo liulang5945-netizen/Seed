@@ -9,11 +9,7 @@
   "manifest_path": "E:\\Seed\\plans\\manifests\\taiji_foundation_baseline_v1.json",
   "manifest_digest": "c5f178d4e18018f5085c3f56d1ae6d7596df304aee975f81c12db3b72e7e74f8",
   "blocking_gates": [
-    "beats_frozen_parent_every_seed",
-    "beats_identity_lesion_every_seed",
-    "beats_memory_lesion_every_seed",
     "memory_ability_established",
-    "task_measurement_passed",
     "worst_seed_margin_positive"
   ],
   "gates": {
@@ -25,11 +21,11 @@
     "tail_only_reader_at_chance": true,
     "context_only_reader_at_chance": true,
     "read_path_matches_task_metric": true,
-    "beats_memory_lesion_every_seed": false,
-    "beats_identity_lesion_every_seed": false,
-    "beats_frozen_parent_every_seed": false,
+    "beats_memory_lesion_every_seed": true,
+    "beats_identity_lesion_every_seed": true,
+    "beats_frozen_parent_every_seed": true,
     "worst_seed_margin_positive": false,
-    "task_measurement_passed": false,
+    "task_measurement_passed": true,
     "holdout_updates_zero": true,
     "retention_updates_zero": true,
     "checkpoint_same_process_matches": true,
@@ -75,13 +71,13 @@
   },
   "measurement": {
     "ability_id": "b2_delayed_memory",
-    "status": "failed",
+    "status": "passed",
     "primary_metric": "recall_accuracy",
     "metric_direction": "higher_is_better",
-    "metric_value": 0.495,
+    "metric_value": 0.655,
     "baseline_metrics": {
       "random": 0.5,
-      "frozen_parent": 0.49,
+      "frozen_parent": 0.505,
       "simple_rule": 0.505,
       "hash_only": 0.435,
       "memory_lesion": 0.49,
@@ -91,10 +87,10 @@
   },
   "margins": {
     "taiji": {
-      "mean": 0.003208198671524467,
-      "std": 0.017469352253732518,
-      "min": -0.009374068103252284,
-      "max": 0.027912162486463787
+      "mean": -0.0002545248221011804,
+      "std": 0.00780574755451041,
+      "min": -0.010519888903311564,
+      "max": 0.008394016649320983
     },
     "memory_lesion": {
       "mean": 7.935381339242062e-06,
@@ -103,24 +99,24 @@
       "max": 2.9775100992992522e-05
     },
     "identity_lesion": {
-      "mean": 0.003208198671524467,
-      "std": 0.017469352253732518,
-      "min": -0.009374068103252284,
-      "max": 0.027912162486463787
+      "mean": 0.004075195537578413,
+      "std": 0.01860588499214603,
+      "min": -0.009371745644925796,
+      "max": 0.03038573492784053
     },
     "retention": {
-      "mean": -0.025405417088528944,
-      "std": 0.02066230613121189,
-      "min": -0.04009309088914051,
-      "max": 0.0038153601996600626
+      "mean": -0.0005004425324546957,
+      "std": 0.005702173119844653,
+      "min": -0.007631760955156875,
+      "max": 0.006325644656714603
     }
   },
   "accuracy": {
     "taiji": {
-      "mean": 0.505,
-      "std": 0.014142135623730963,
-      "min": 0.495,
-      "max": 0.525
+      "mean": 0.6883333333333334,
+      "std": 0.023921166824012175,
+      "min": 0.655,
+      "max": 0.71
     },
     "memory_lesion": {
       "mean": 0.5016666666666666,
@@ -129,28 +125,28 @@
       "max": 0.51
     },
     "identity_lesion": {
-      "mean": 0.505,
-      "std": 0.014142135623730963,
+      "mean": 0.51,
+      "std": 0.021213203435596444,
       "min": 0.495,
-      "max": 0.525
+      "max": 0.54
     },
     "retention": {
-      "mean": 0.48166666666666663,
-      "std": 0.0023570226039551605,
-      "min": 0.48,
-      "max": 0.485
+      "mean": 0.515,
+      "std": 0.008164965809277268,
+      "min": 0.505,
+      "max": 0.525
     },
     "frozen_parent": {
-      "mean": 0.5016666666666666,
-      "std": 0.008498365855987983,
-      "min": 0.49,
-      "max": 0.51
+      "mean": 0.505,
+      "std": 0.0,
+      "min": 0.505,
+      "max": 0.505
     }
   },
   "worst_seed": {
-    "taiji_accuracy": 0.495,
-    "taiji_margin_mean": -0.009374068103252284,
-    "retention_accuracy": 0.48
+    "taiji_accuracy": 0.655,
+    "taiji_margin_mean": -0.010519888903311564,
+    "retention_accuracy": 0.505
   },
   "neighbour_abilities": {
     "b1_sequence_prediction": {
@@ -192,12 +188,12 @@
       "channels": {
         "taiji": {
           "count": 200,
-          "accuracy": 0.525,
-          "margin_mean": 0.027912162486463787,
-          "margin_std": 0.5283402516926123,
-          "margin_min": -0.9590849988162518,
-          "margin_max": 0.9790735132992268,
-          "positive_margin_share": 0.525
+          "accuracy": 0.655,
+          "margin_mean": 0.008394016649320983,
+          "margin_std": 0.1056128315688963,
+          "margin_min": -0.3951101233895951,
+          "margin_max": 0.3951101233895951,
+          "positive_margin_share": 0.595
         },
         "memory_lesion": {
           "count": 200,
@@ -210,34 +206,34 @@
         },
         "identity_lesion": {
           "count": 200,
-          "accuracy": 0.525,
-          "margin_mean": 0.027912162486463787,
-          "margin_std": 0.5283402516926123,
-          "margin_min": -0.9590849988162518,
-          "margin_max": 0.9790735132992268,
-          "positive_margin_share": 0.525
+          "accuracy": 0.54,
+          "margin_mean": 0.03038573492784053,
+          "margin_std": 0.5279163700201246,
+          "margin_min": -0.967621324583888,
+          "margin_max": 0.981402900069952,
+          "positive_margin_share": 0.54
         },
         "retention": {
           "count": 200,
-          "accuracy": 0.485,
-          "margin_mean": 0.0038153601996600626,
-          "margin_std": 0.5245868806473513,
-          "margin_min": -0.9837717292830348,
-          "margin_max": 0.9808103190734982,
-          "positive_margin_share": 0.485
+          "accuracy": 0.515,
+          "margin_mean": -0.00019521129892181494,
+          "margin_std": 0.1316206138848737,
+          "margin_min": -0.3951101233895951,
+          "margin_max": 0.3951101233895951,
+          "positive_margin_share": 0.165
         },
         "frozen_parent": {
           "count": 200,
-          "accuracy": 0.49,
-          "margin_mean": 4.124235128983856e-06,
-          "margin_std": 0.0006862183865259741,
-          "margin_min": -0.0015335753560066223,
-          "margin_max": 0.001708128023892641,
-          "positive_margin_share": 0.49
+          "accuracy": 0.505,
+          "margin_mean": 0.0,
+          "margin_std": 0.0,
+          "margin_min": 0.0,
+          "margin_max": 0.0,
+          "positive_margin_share": 0.0
         }
       },
       "beats_memory_lesion": true,
-      "beats_identity_lesion": false,
+      "beats_identity_lesion": true,
       "beats_frozen_parent": true,
       "holdout_updates": 0,
       "retention_updates": 0,
@@ -250,7 +246,7 @@
         "fresh_process_digest_matches": true
       },
       "checkpoint_after_train": {
-        "digest": "149b0c6cd483fc2aa46c22bf474e32a2221c38e4b07ff62adf7b2cb8ae4b9f4b",
+        "digest": "21ad300b7d770a2c4681565750e2d8c5d30d9901987e603c5f911c0ee0c1bccf",
         "same_process_digest_matches": true,
         "fresh_process_digest_matches": true
       },
@@ -260,13 +256,13 @@
         "version": 2,
         "capacity": 128,
         "write_count": 1000,
-        "replacement_count": 710,
+        "replacement_count": 678,
         "skipped_write_count": 0,
         "punished_write_count": 0,
         "occupied_count": 128,
-        "allocation_count": 838,
-        "match_count": 162,
-        "bank_replacement_count": 710,
+        "allocation_count": 806,
+        "match_count": 194,
+        "bank_replacement_count": 678,
         "parameter_count": 94464
       },
       "slot_pressure": {
@@ -275,19 +271,19 @@
         "keys_per_slot": 7.8125
       },
       "parameter_count": 180417,
-      "train_seconds": 11.075037600006908
+      "train_seconds": 9.360823500028346
     },
     {
       "seed": 29,
       "channels": {
         "taiji": {
           "count": 200,
-          "accuracy": 0.495,
-          "margin_mean": -0.008913498368638102,
-          "margin_std": 0.9718756229043871,
-          "margin_min": -0.9991966608504299,
-          "margin_max": 0.999290281557478,
-          "positive_margin_share": 0.495
+          "accuracy": 0.7,
+          "margin_mean": -0.010519888903311564,
+          "margin_std": 0.07412851239823676,
+          "margin_min": -0.32338579434188836,
+          "margin_max": 0.25125717525106356,
+          "positive_margin_share": 0.645
         },
         "memory_lesion": {
           "count": 200,
@@ -301,34 +297,34 @@
         "identity_lesion": {
           "count": 200,
           "accuracy": 0.495,
-          "margin_mean": -0.008913498368638102,
-          "margin_std": 0.9718756229043871,
-          "margin_min": -0.9991966608504299,
-          "margin_max": 0.999290281557478,
+          "margin_mean": -0.008788402670179494,
+          "margin_std": 0.9748493675900878,
+          "margin_min": -0.9994398104026914,
+          "margin_max": 0.9994916252035182,
           "positive_margin_share": 0.495
         },
         "retention": {
           "count": 200,
-          "accuracy": 0.48,
-          "margin_mean": -0.03993852057610638,
-          "margin_std": 0.9306826148582583,
-          "margin_min": -0.9986622161231935,
-          "margin_max": 0.9975216616876423,
-          "positive_margin_share": 0.48
+          "accuracy": 0.525,
+          "margin_mean": 0.006325644656714603,
+          "margin_std": 0.047264744571843355,
+          "margin_min": -0.25125717525106356,
+          "margin_max": 0.32338579434188836,
+          "positive_margin_share": 0.345
         },
         "frozen_parent": {
           "count": 200,
           "accuracy": 0.505,
-          "margin_mean": -1.0093192104250193e-05,
-          "margin_std": 0.0011177234587950837,
-          "margin_min": -0.0019761878065764904,
-          "margin_max": 0.0018854818772524595,
-          "positive_margin_share": 0.505
+          "margin_mean": 0.0,
+          "margin_std": 0.0,
+          "margin_min": 0.0,
+          "margin_max": 0.0,
+          "positive_margin_share": 0.0
         }
       },
-      "beats_memory_lesion": false,
-      "beats_identity_lesion": false,
-      "beats_frozen_parent": false,
+      "beats_memory_lesion": true,
+      "beats_identity_lesion": true,
+      "beats_frozen_parent": true,
       "holdout_updates": 0,
       "retention_updates": 0,
       "partitions_written": [
@@ -340,7 +336,7 @@
         "fresh_process_digest_matches": true
       },
       "checkpoint_after_train": {
-        "digest": "a0c5bc06f79562e82af446702ad8db739c0243a55001b909c44c722ba82432f0",
+        "digest": "5d6c86c9aa38b510a3d1c762f8c453a30839902ddbf33d28772a1619569194b0",
         "same_process_digest_matches": true,
         "fresh_process_digest_matches": true
       },
@@ -350,13 +346,13 @@
         "version": 2,
         "capacity": 128,
         "write_count": 1000,
-        "replacement_count": 735,
+        "replacement_count": 625,
         "skipped_write_count": 0,
         "punished_write_count": 0,
         "occupied_count": 128,
-        "allocation_count": 863,
-        "match_count": 137,
-        "bank_replacement_count": 735,
+        "allocation_count": 753,
+        "match_count": 247,
+        "bank_replacement_count": 625,
         "parameter_count": 94464
       },
       "slot_pressure": {
@@ -365,19 +361,19 @@
         "keys_per_slot": 7.8125
       },
       "parameter_count": 180417,
-      "train_seconds": 10.843969200010179
+      "train_seconds": 9.414023699995596
     },
     {
       "seed": 47,
       "channels": {
         "taiji": {
           "count": 200,
-          "accuracy": 0.495,
-          "margin_mean": -0.009374068103252284,
-          "margin_std": 0.9953958655109015,
-          "margin_min": -0.9999659046679881,
-          "margin_max": 0.9999480293354281,
-          "positive_margin_share": 0.495
+          "accuracy": 0.71,
+          "margin_mean": 0.00136229778768704,
+          "margin_std": 0.09737980701159123,
+          "margin_min": -0.6228945727285025,
+          "margin_max": 0.6228945727285025,
+          "positive_margin_share": 0.54
         },
         "memory_lesion": {
           "count": 200,
@@ -391,34 +387,34 @@
         "identity_lesion": {
           "count": 200,
           "accuracy": 0.495,
-          "margin_mean": -0.009374068103252284,
-          "margin_std": 0.9953958655109015,
-          "margin_min": -0.9999659046679881,
-          "margin_max": 0.9999480293354281,
+          "margin_mean": -0.009371745644925796,
+          "margin_std": 0.9956431087554266,
+          "margin_min": -0.9999711625669079,
+          "margin_max": 0.9999542402820225,
           "positive_margin_share": 0.495
         },
         "retention": {
           "count": 200,
-          "accuracy": 0.48,
-          "margin_mean": -0.04009309088914051,
-          "margin_std": 0.9978739235968624,
-          "margin_min": -0.9999678437270632,
-          "margin_max": 0.9999588104456052,
-          "positive_margin_share": 0.48
+          "accuracy": 0.505,
+          "margin_mean": -0.007631760955156875,
+          "margin_std": 0.1404924919998495,
+          "margin_min": -0.6228945727285025,
+          "margin_max": 0.2006146205929985,
+          "positive_margin_share": 0.185
         },
         "frozen_parent": {
           "count": 200,
-          "accuracy": 0.51,
-          "margin_mean": 2.9775100992992522e-05,
-          "margin_std": 0.0007109522268176753,
-          "margin_min": -0.001802434679120779,
-          "margin_max": 0.0018333455082029104,
-          "positive_margin_share": 0.51
+          "accuracy": 0.505,
+          "margin_mean": 0.0,
+          "margin_std": 0.0,
+          "margin_min": 0.0,
+          "margin_max": 0.0,
+          "positive_margin_share": 0.0
         }
       },
-      "beats_memory_lesion": false,
-      "beats_identity_lesion": false,
-      "beats_frozen_parent": false,
+      "beats_memory_lesion": true,
+      "beats_identity_lesion": true,
+      "beats_frozen_parent": true,
       "holdout_updates": 0,
       "retention_updates": 0,
       "partitions_written": [
@@ -430,7 +426,7 @@
         "fresh_process_digest_matches": true
       },
       "checkpoint_after_train": {
-        "digest": "246e54c9156dd3c8227fd06408c869b0c60203330bd2bdd9c693c89295ced3c5",
+        "digest": "929010d4cc054829749b30e5ad769c41bc669358ed23a3eaf6705695cba20dc3",
         "same_process_digest_matches": true,
         "fresh_process_digest_matches": true
       },
@@ -440,13 +436,13 @@
         "version": 2,
         "capacity": 128,
         "write_count": 1000,
-        "replacement_count": 809,
+        "replacement_count": 777,
         "skipped_write_count": 0,
         "punished_write_count": 0,
         "occupied_count": 128,
-        "allocation_count": 937,
-        "match_count": 63,
-        "bank_replacement_count": 809,
+        "allocation_count": 905,
+        "match_count": 95,
+        "bank_replacement_count": 777,
         "parameter_count": 94464
       },
       "slot_pressure": {
@@ -455,12 +451,12 @@
         "keys_per_slot": 7.8125
       },
       "parameter_count": 180417,
-      "train_seconds": 10.726378599996679
+      "train_seconds": 9.404164500010666
     }
   ],
   "prohibited_partitions_used": [],
   "holdout_updates": 0,
   "retention_updates": 0,
   "substrate_changed": false,
-  "cpu_seconds": 2809.087705600017
+  "cpu_seconds": 3261.4588820000063
 }
