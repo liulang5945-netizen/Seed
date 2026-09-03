@@ -1,0 +1,26 @@
+{
+  "gate": "taiji-m0-checkpoint-preflight",
+  "status": "passed",
+  "checks": {
+    "parent_saved": true,
+    "child_saved_after_fresh_restore": true,
+    "fresh_process_completed": true,
+    "fresh_process_next_step_matches": true,
+    "fresh_process_checkpoint_matches": true,
+    "report_written": true
+  },
+  "parent_checkpoint": {
+    "path": "output\\taiji-m2-checkpoint-preflight\\parent.pt",
+    "digest": "25f03b1b9c9b0ff1418dc253f87de6a5db61a45e2db086d7a307c7cc6a5f5ecf"
+  },
+  "child_checkpoint": {
+    "predicted_symbol": 145,
+    "model_digest": "b529e288661c86b024b055bcb18483c26f75a92b4db05403527173fc21e233d2",
+    "child_checkpoint_digest": "e782ac5b13935ffdcb9a4cd32cd7fbafdbd23c5b36ed31c0723f7982d47f642b",
+    "child_path": "output\\taiji-m2-checkpoint-preflight\\child-after-fresh-restore.pt"
+  },
+  "fresh_process": {
+    "returncode": 0,
+    "stderr": ""
+  }
+}
