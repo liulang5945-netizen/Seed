@@ -8,7 +8,7 @@ Taiji is the native cognitive architecture; Seed is its product/runtime. Contrib
 git clone https://github.com/<your-username>/Seed.git
 cd Seed
 python -m pip install -e ".[dev]"
-python scripts/training/verify_taiji_native_v1.py
+python scripts/training/verify_taiji_native_v7.py
 python -m pytest tests/taiji_native -q
 ```
 
