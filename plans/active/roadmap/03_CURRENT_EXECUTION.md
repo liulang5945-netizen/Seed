@@ -494,3 +494,9 @@ CI 不是最后才运行的支线：每个 slice 都运行相关 pytest/lint/typ
 - Legacy NeuroPlex/TinyStories Transformer 训练脚本：只作冻结对照和训练工程参考，不能充当 Taiji foundation trainer。
 
 计划历史完整快照见 [roadmap_convergence_20260901](../../archive/history/roadmap_convergence_20260901/README.md)。
+
+## 10. 项目介绍与文档同步记录
+
+| 日期 | 内容 |
+|---|---|
+| 2026-09-03 | 按"文档事实同步随主阶段执行"原则：`README.md` 全面更新至 M0 完成、M1-65 现状（可复现内核结果、M0 可信零点、M1 联合训练、identity 器官晋升与 foundation 规模诚实判定、唯一下一步验收探针）；新增 `README.zh-CN.md` 中文介绍，事实与英文版逐条一致；全部数字均取自本文第 4/6 节与 `reports/` 编号报告，未新增任何断言。`CONTRIBUTING.md` 内对不存在的 `verify_taiji_native_v1.py` 的引用待 M7 文档收口时一并修正（当前仍存在）。
