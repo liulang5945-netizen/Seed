@@ -1,15 +1,17 @@
 # Seed — runtime for the Taiji Native Cognitive Architecture
 
-A byte-level predictive-coding kernel that learns **online from local prediction errors** — no
-backpropagation, no attention matrix, no context window, no teacher model. Sparse fixed-fan-in
-synapses carry every update, and episodic memory is a shared distributed field that allocates
-**zero slots per event**.
+Seed is the project, product and runtime that trains, evaluates, deploys and hosts **Taiji** —
+a native cognitive architecture being built from online predictive-coding mechanisms, not from
+a Transformer wrapper. The kernel learns from **local prediction errors** (no backpropagation,
+no attention matrix, no context window, no teacher model at runtime); beyond the kernel, Taiji
+owns its own representations, persistent state, memory, goals, planning and action selection,
+while deliberately reusing mature algorithms (embeddings, SSMs, MoE-style routing, optimizers,
+retrieval) where they fit.
 
-What makes this project different is not the ambition — it is the **verification discipline**.
-Every number in this README comes from committed, lesion-controlled harnesses that run fixed
-seeds against explicit baselines (random / frozen parent / simple rule / hash-only), keep
-holdout and retention read-only, re-open the checkpoint in a **fresh process**, and compare
-content digests. Failures are reported as failures.
+For the non-hype picture: the executable today is the **Taiji Substrate Kernel v8 (TSK-v8)** —
+a byte-level predictive-coding research kernel. It is a working substrate, not yet a completed
+cognitive architecture: built-in capabilities are verified; language-level intelligence is still
+being trained (see [Status](#status)).
 
 ## Language / 语言
 
@@ -20,183 +22,169 @@ content digests. Failures are reported as failures.
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![tests](https://img.shields.io/badge/tests-900%2B-green.svg)](.github/workflows/ci.yml)
 
-## Status — stated plainly
+## The architecture
 
-Latest work: **2026-09-03 · 1044 commits · M0 completed, M1 in progress (M1-65)**.
+### What Taiji is
 
-| Stage | Verdict |
-|---|---|
-| Substrate kernel (TSK-v8) | reproducible: byte-cycle accuracy **0% → 94.12%**, surprise **−98.02%**, free generation exact, seed-fixed and committed |
-| M0 five-ability baseline | **completed and trusted as a zero point** — the measurement chain works end-to-end (checkpoint preflight passes, all controls wired); **none of the five abilities is yet proven** — each is recorded as `failed` where it failed |
-| M1 foundation training pipeline | built and running: F1–F5 courses, three seeds, content-addressed data partitions, `parent/last/best` atomic checkpoints, fresh-process read-only evaluation |
-| M1 memory | identity organ v2 promoted to a **first-class trainable key/value memory organ** (15/15 gates) — then **foundation-scale B2 judged honestly: memory ability not yet established**; root cause located (addressing key lost under interference); acceptance probe committed, currently red, fix under construction |
+Taiji targets a **complete native cognitive architecture** (contract: [Taiji Native Architecture v1](plans/active/TAIJI_NATIVE_ARCHITECTURE_V1.md), requirements: [Taiji Core Requirements](plans/active/TAIJI_CORE_REQUIREMENTS.md)):
 
-The architecture direction is unchanged: **Taiji is a native cognitive architecture, not a
-Transformer wrapper** (it imports neither `transformers` nor the legacy `neuroplex` runtime;
-PyTorch is used only as a tensor execution engine). The current model is a
-**learning-mechanism prototype** — not a completed cognitive architecture, not a language
-model, and not a claim about AGI. Garbled text replies are expected kernel behavior.
+- **One cognitive subject.** Taiji owns the cognitive state and decision path end to end. No
+  Transformer hidden state, teacher logits or external model thinks for it at runtime; Seed is
+  the hosting/product runtime, external models/tools are environment facilities.
+- **Persistent, multi-timescale state** instead of restarting per request — sensory, working,
+  episodic, semantic, procedural and developmental scales.
+- **Body → real causal outcome.** Observations become internal `PerceptEvent`s; actions are
+  `ActionIntent → WorldAction` that change the environment; the real `Outcome` feeds back into
+  world calibration, memory writes, credit and learning.
+- **Heterogeneous specialization instead of one huge homogeneous net.** Groups of neurons with
+  different receptive fields, timescales and learning rules cooperate; the bar is a pre-registered
+  task only the *combination* can solve (`1 + 1 > 2`).
+- **Reuses the toolbox, owns the mind.** Learned embeddings, SSM blocks, attention-as-routing,
+  MoE-style experts, optimizers and retrieval are allowed as mechanisms — the invariant is that
+  Taiji's continuous state, memory, goals and decisions remain Taiji-owned, saveable, lesionalble
+  and replaceable.
 
-## Why you can trust the numbers
-
-1. **Every claim has a lesion control.** A result only counts if removing the mechanism in
-   question (memory, action credit, trace, identity organ) makes the score collapse — and those
-   lesion arms are part of the committed harness, not an afterthought.
-2. **The harness cannot cheat for the model.** Holdout/retention partitions are byte-identical
-   between training report and an independent re-opening process (`holdout_updates = 0`,
-   `checkpoint_read_only = true`, digest match). A permutation null distribution guards against
-   accidental shortcuts in the curriculum itself.
-3. **Failures are part of the product.** The ledger records the honest verdicts: a foundation
-   baseline that is trusted-but-failing (`can_promote = false`), a candidate memory substrate
-   that was *judged unsuitable and rejected* by its own data contract, and a promoted organ
-   that a larger-scale judgment later showed to be insufficient — with **three sequential
-   counter-falsification probes** that pinned the mechanism, not the hyperparameters.
-4. **Single-source governance.** `plans/active/roadmap/03_CURRENT_EXECUTION.md` is the only
-   execution plan and the only "next step" authority; historical plan numbers are migration
-   labels only. Every milestone in this README can be traced to a numbered report in
-   `reports/` with a matching JSON.
-
-## Architecture at a glance
+### Layer overview
 
 ```mermaid
 flowchart LR
-    obs[multimodal observations] --> perc[learned perception + abstractions]
-    perc --> state[world / self state + workspace]
-    state <--> mem[(working / episodic / semantic / procedural memory)]
-    state --> goals[goals / reasoning / imagination / planning]
-    goals --> act[language / tool / body action]
-    act --> outcome[real outcome + continued learning]
-    outcome --> obs
+    obs[text / image / audio / tool / body] --> L0[L0 organ adapters + codecs]
+    L0 --> L1[L1 learned perceptual hierarchies<br/>features → assemblies → events]
+    L1 --> L2[L2 multi-timescale predictive dynamics]
+    L2 --> L3[L3 workspace<br/>selective routing + binding]
+    L2 --> L4[L4 memory system<br/>working / episodic / semantic / procedural]
+    L3 --> L5[L5 world + self model<br/>entities / relations / causality]
+    L4 --> L5
+    L5 --> L6[L6 executive cognition<br/>goals / reasoning / planning]
+    L6 --> L7[L7 decoders + effectors<br/>language / tools / body]
+    L7 --> fb[environment feedback] --> L0
 ```
 
-The invariant: **Taiji owns the cognitive state and decision path.** Neither qwen/provider as
-teacher, nor any Transformer, Legacy runtime, or Skill/MCP artifact may become the runtime
-cognitive subject. Mature algorithms (optimizers, embeddings, distillation) are only reused
-where they fit, under provenance constraints and holdout isolation — "standing on the
-shoulders of giants" with a double boundary, not a transplant.
+A cross-cutting **homeostatic / developmental regulation** system drives curiosity, fatigue,
+stress, sleep/play and structural budget from internal state — not from a UI scheduler.
 
-## What a Transformer does — what this kernel does instead
+### Memory and cognition contracts
 
-| Transformer | Taiji native kernel |
-|---|---|
-| tokenizer + learned embedding | 256 raw-byte receptors + boundary receptor |
-| self-attention | sparse reciprocal prediction and recurrent transitions |
-| KV cache / external retrieval | one shared engram field, no per-event K/V slots |
-| global backpropagation | local prediction/state/motor/memory deltas |
-| autoregressive decode | motor byte fed back through the same sensor |
+Taiji's state is versioned and observable: `PerceptState`, `PredictiveState`,
+`WorkspaceState`, `WorldState`, `MemoryState`, `GoalState`, `PlanState`, `SelfState`,
+`HomeostaticState`, `DevelopmentState`, `LearningState`. The memory system is multi-system —
+**working** (current variables), **episodic** (one-shot real experience), **semantic**
+(stable concepts distilled across experiences) and **procedural** (skills) — not a context
+window, a KV cache, a RAG hit, or a Python list.
 
-## Verified results
+### Learning: two planes
 
-### Substrate kernel (TSK-v8) — reproducible, committed
+1. **Developmental training** — batch offline formation of perceptual hierarchies, world
+   model, semantic memory and language organs. When it uses optimizers/distillation they are
+   explicitly marked `native-assisted`; the native kernel meanwhile runs its own local delta
+   rules (no `backward()` anywhere in `taiji/` since 2026-08-26).
+2. **Lifetime learning** — runtime adaptation through local prediction errors, eligibility
+   traces, reward/novelty modulation, episodic write, replay and structural plasticity, without
+   catastrophic forgetting.
 
-Measured on the committed two-region `[64, 48]` byte-cycle benchmark (seed `7`):
+### The current executable kernel (TSK-v8)
 
-| Metric | Result |
+`taiji/` today runs the substrate kernel: raw-byte codec + predictive fabric + distributed
+episodic field prototype + byte motor, wired into one observable, checkpointable loop with no
+Transformer and with PyTorch used only as a tensor engine. Updates are restricted to fixed
+fixed-fan-in edges — no dense structural mask, no attention matrix, no context window, no
+optimizer, no `backward()`:
+
+```math
+u_t^r = \mathrm{Bound}\left(\lambda_u u_{t-1}^r + \alpha_g (D^r)^T e_{t-1}^{r} + \alpha_T \hat a_t^r + \alpha_c c_t^r\right)
+```
+
+```math
+\Delta D^r=\eta_D\, e_{t-1}^{r}(q_{t-1}^r)^T, \qquad
+\Delta T^r=\eta_T\,(a_t^r-T^r q_{t-1}^r)(q_{t-1}^r)^T
+```
+
+Episodic storage is a shared distributed field: writing an event excites one overlapping
+engram population `h` — no row, key or value is appended:
+
+```math
+h^{event}=\phi(Qs+\gamma_e(Aa+Oo+r\rho+Tt+Ee+Pp)), \qquad
+\Delta W^{mem}=\eta_m g(h^{event}-W^{mem}h^{cue})(h^{cue})^T
+```
+
+(Tensor shapes, update order and state contract: [TSK-v8 spec](plans/archive/implementation/TAIJI_SUBSTRATE_KERNEL_V8_SPEC.md).)
+
+## Capabilities
+
+The project has an **adversarial verification culture**: every capability below is measured by
+committed, lesion-controlled harnesses — fixed seeds, explicit baselines (random / frozen
+parent / simple rule / hash-only), read-only holdout+retention, fresh-process checkpoint
+re-execution with digest comparison, and explicit `failed` verdicts where they apply. The
+[M0 five-ability contract](plans/manifests/taiji_foundation_baseline_v1.json) fixes what counts.
+
+### Verified kernel mechanisms (reproducible, committed)
+
+| Capability | Result |
 |---|---:|
-| active learned parameters | 83,841 |
-| byte-cycle accuracy | 0% → 94.12% |
-| mean surprise | 5.4041 → 0.1069 (**−98.02%**) |
-| free generation | `a → bcdabcda` (all eight steps correct) |
-| sparse vs dense forward diff | ≤ 2.98e-8 (N10); storage 98.59% of dense-equivalent |
-| N7 ambiguous stream | full model 100% vs first-order 50% |
-| N8 delayed trace | trace-only 100%; removing trace or dynamic state → 50% |
-| N9 free run | 128 motor actions, no teacher forcing, all exact |
-| N11 action credit | 100% vs 50% random, 57.5% without action learning |
-| M5 episodic field | 8 one-shot episodes, zero per-event slots; action recall 87.5% vs 25% controls |
+| Online byte-cycle prediction (no backprop) | 0% → **94.12%** accuracy; mean surprise −98.02% |
+| Free generation | `a → bcdabcda`, all 8 steps exact |
+| Ambiguity resolution (N7) | 100% vs 50% for a first-order model |
+| Delay / trace memory (N8) | trace-only 100%; removing trace or dynamic state → 50% |
+| Teacher-free long free-run (N9) | 128 actions, all exact |
+| Sparse migration (N10) | ≤ 2.98e-8 forward diff vs dense; 98.59% storage |
+| Action credit (N11) | 100% vs 50% random, 57.5% without action learning |
+| Episodic field, one-shot (M5) | 8 episodes in one shared field, zero per-event slots; recall 87.5% vs 25% controls |
 
-Mechanism-level decisions read the M6 **seed panel** (12 seeds) rather than a single run, and a
-baseline is re-executed from a clean worktree instead of being read out of a committed report.
+### Structural growth and collaboration (gated)
 
-### M0 — a trusted zero point (five abilities, honest failures)
+- Region **growth / split / merge / prune** and connection pruning pass holdout, budget, trial
+  roundtrip and reverse-rollback gates; proposals come from real predictive-error/resource
+  signals in the runtime tick, never from pre-written intent tables.
+- A **cross-region cooperation learner** selects explicit inter-region connections by measured
+  prediction-error transfer and resource state (3-seed gated).
 
-M0 built the measurement machine, not the capabilities (overall `status = failed`,
-`can_promote = false` — by design). The delivery is that this verdict is now *trustworthy*:
+### Capability gates A0–A9 (the contract for "smart")
 
-- **Checkpoint preflight passes**: save → close process → restore in a fresh interpreter →
-  identical next-step prediction and digest → save child again (report `taiji_m0_checkpoint_preflight`).
-- **A frozen contract**: `plans/manifests/taiji_foundation_baseline_v1.json` fixes five
-  abilities, four control kinds, three seeds, four partitions, sample minima, and read-only
-  holdout rules. Leakage or side-effect tests had to fail first before the evaluator existed.
-- **B1 sequence prediction** — `failed`: worst seed 6.497 BPB vs unigram 5.942, on a real
-  Chinese corpus (`1,048,576` train / `131,072` holdout / `131,072` retention).
-- **B2 delayed memory** — `failed`: 0.75 did not exceed the memory-lesion arm; no attributable
-  causal gain.
-- **B3 transition / B4 action credit** — task-level signals passed but at smoke sample sizes;
-  not promotable to foundation scale.
-- **B5 continual learning** — `failed`: worst backward transfer −0.244; phase-B continuation
-  itself is verified working (no hidden re-initialization).
+Each gate must prove the mechanism on *unseen* data against explicit baselines; none is passed
+by training scores (definitions in the [architecture contract](plans/active/TAIJI_NATIVE_ARCHITECTURE_V1.md#11-能力反证门槛)):
 
-With the zero point trusted, the plan deliberately stops expanding the periphery (plugins, UI,
-gates) and uses the failing curves to drive the training curriculum.
+| Gate | Must prove | Progress |
+|---|---|---|
+| A0 ownership | Taiji completes a cognitive slice without Seed decision logic | contract + slice closed |
+| A1 learned abstraction | variable-duration assemblies transfer to unseen combinations | relation subgate closed; full assembly open |
+| A2 world state | entity/event persistence + predicts intervention outcomes | narrow world gates closed |
+| A3 adaptive collaboration | heterogeneous groups out-perform any single group | workspace basics; full gate open |
+| A4 episodic → semantic | concepts transfer, not episode copy | prototype + runtime ownership; consolidation open |
+| A5 homeostatic regulation | drives exploration/learning/sleep, not UI numbers | prototypes gated; breadth open |
+| A6 goals & planning | imagined rollout improves real success | single-step planning gates closed |
+| A7 native generation | internal intent → readable language/tool actions | structured generation closed; fluency in training |
+| A8 continual evolution | old abilities survive; gated growth/prune | growth gates closed; B5 under training |
+| A9 embodiment | organs share world state; cross-modal transfer | contracts exist; full gate open |
 
-### M1 — first real joint training, three seeds
+### Unified ability evaluation (M0) and current training (M1)
 
-A full foundation pipeline with a **course split F1 (perception) → F2 (memory) → F3
-(world/action) → F4 (joint) → F5 (promotion)**, all in one checkpoint lineage:
+M0 built the **measurement machine** and a trusted zero point (`status=failed` by design):
 
-- **F1 byte prediction**: holdout BPB per seed `9.063→6.384`, `8.738→6.395`, `9.397→6.246`
-  (pilot), then full-coverage at `1,048,576` bytes → `5.3649→4.8648` etc.
-- **F3 world/action**: world error `1.8871 → ~1e-5`; goal success `0.5 → 1.0`; ablating
-  outcome credit drops it back to `0.5`.
-- **F4 joint training**: all four objectives trained to one checkpoint — sequence BPB
-  `8.0056 → ~5.2`, memory recall `0.5 → 0.63+`, world error → `~1e-5`, goal success `1.0`,
-  with retention improving in sync.
-- The harness found and fixed a real restore bug: a 1-ulp float32 rounding edge in
-  `SparseSynapses.load_payload()` was silently rewriting weights on recovery; a tolerance
-  idempotency boundary and regression test now lock it down (commit `ab4b079`).
-- Full-coverage promotion audit: three seeds, `1,048,576 / 1,000 / 1,000 / 1,000` samples,
-  training report and independent eval-only **byte-identical** on every metric and checkpoint
-  digest — and honest `blocked` verdicts when memory regressed.
+- B1 byte/compositional prediction — not yet better than a unigram baseline at 1 MiB scale.
+- B2 delayed memory — recall exists but shows no causal gain over the memory-lesion arm.
+- B3 world transition / B4 goal-driven action — task-level signals passed at pilot scale
+  (world error → ~1e-5, goal success 0.5 → 1.0), not yet foundation-scale.
+- B5 continual learning — continuation verified; backward transfer still negative.
 
-Two-timescale learning policy (kept honest, not dogmatic): during development epochs, the
-trainer may attach mature optimizers/distillation to *differentiable* modules; at runtime,
-synapses keep local prediction-error learning. Both write the same versioned checkpoint but
-can be lesioned independently.
+M1 then trains this loop on CPU (courses F1→F5, three fixed seeds, content-addressed data,
+atomic `parent/last/best` checkpoints, fresh-process read-only re-evaluation). F1 byte
+prediction dropped holdout BPB ≈ 30% at 1 MiB scale; F3 world/action courses reached their
+stage gates; the **memory course is the current frontier**: the native association substrate
+was judged unsuitable by its own data contract, a first-class **identity key/value organ** was
+promoted to default-on (15/15 gates), and a foundation-scale judgment then showed the organ's
+addressing still fails under interference — three falsification probes pinned the root cause;
+the fix is under construction (M1-65). Reports are under `reports/` with a matching plan entry:
+[the single execution plan](plans/active/roadmap/03_CURRENT_EXECUTION.md).
 
-### M1 memory — an organ that got promoted, then honestly re-judged
+## Status
 
-- The **native episodic association** was first judged *unsuitable as a training substrate*:
-  a data contract (`MemoryLearningExample`: stable `cue_key` → independent `action`/`outcome`
-  values, per-partition provenance audit) showed negative row-wise binding margins and a
-  negative control that reacted identically (`reports/taiji_m1_62_*`).
-- The **identity organ v2** was then promoted to a first-class, default-on trainable key/value
-  memory organ (15/15 gates; reward-modulated three-factor write; parameters
-  `171,561 → 311,081` with the `+139,520` organ share registered in the budget, not hidden).
-  Flipping the default exposed four real defects that were fixed and recorded — including a
-  **reward-blind write** that would have bound wrong actions as strongly as correct ones.
-- Foundation-scale B2 at the manifest minimum (`1,000/200/200`, ~2,809 CPU-seconds across
-  three seeds) then produced the honest judgment: **memory ability is not yet established**.
-  Lesion-identity scored bitwise-identical to full Taiji on all three seeds; the read path was
-  statistically indistinguishable from "nothing was ever written" — and a permutation null
-  proved the curriculum has no shortcut.
-- **Three sequential counter-falsification probes** pinned the root cause: capacity is *not*
-  the issue (128 → 4096 slots changes nothing, bitwise-identical); course difficulty is *not*
-  the issue (one interference symbol suffices to break addressing); the issue is **addressing
-  key loss under interference** — the write basis and the post-interference read basis have
-  cosine `≈ 0.098` while the match threshold is `0.9`, because the organ addresses the memory
-  by the fabric's *transient activity state*, which interference destroys.
-- The one-step answer (M1-65) is already fixed in stone: an **acceptance probe committed as a
-  permanent test** asserts "write basis vs read basis cosine ≥ threshold after ≥ 1
-  interference symbol" — red today (`min 0.047`), and the mechanism has to turn it green before
-  the same B2 evaluator is re-run unchanged. This decouples "fixable addressing" from "fancy
-  accuracy", so a small-course pass can never masquerade as a foundation-scale win again.
-
-## Project scope
-
-**Taiji** is the native cognitive architecture and model. **Seed** is the project, product and
-runtime that trains, evaluates, deploys and hosts Taiji. Taiji is being redesigned around
-learned perception, world state, workspace, memory, goals, reasoning, planning and generation
-while reusing mature algorithms where they fit — not rebuilding intelligence from primitive
-one-hot mechanisms.
-
-## Naming
-
-| Name | Meaning |
-|---|---|
-| **Seed** | project, product, distribution and runtime; package `seed` |
-| **Taiji** | complete native cognitive architecture and model; target package `taiji/` |
-| **TSK-v8** | current executable byte/fabric/memory/motor research kernel and compatibility line |
-| **Legacy NeuroPlex** | the frozen Transformer baseline in `neuroplex/`; retained only for reproducibility and same-budget comparison; never imported by Taiji |
+- Completed and committed: substrate kernel + verification chain (900+ tests), structural
+  growth gates, M0 measurement machine, M1 training pipeline (F1–F5, three seeds), memory data
+  contract and identity organ v2 as a default-on trainable organ.
+- In progress: M1-65 (interference-surviving memory addressing) — the one current next step.
+- Honest boundary: this is a learning-mechanism prototype under training, **not** a completed
+  cognitive architecture, not a language model, and not a claim about AGI. Garbled replies are
+  expected kernel behavior.
 
 ## Quick start
 
@@ -221,63 +209,43 @@ checkpoint = model.checkpoint()
 restored = Seed.from_checkpoint(checkpoint)
 ```
 
-Training entry points (M1, CPU): `scripts/training/train_taiji_foundation.py`,
-`train_taiji_memory.py`, `train_taiji_world_action.py`, `train_taiji_joint.py`
-(see `plans/active/roadmap/03_CURRENT_EXECUTION.md` §6 — the single authority for the
-current curriculum and the one next step).
+Training entry points (CPU): `scripts/training/train_taiji_foundation.py`,
+`train_taiji_memory.py`, `train_taiji_world_action.py`, `train_taiji_joint.py`.
 
 ## Product shell
 
 Seed ships as a self-contained Windows desktop build (dual-entry `Seed.exe` +
-`SeedBackend.exe`): double-click launches the backend, activates the native runtime, and serves
+`SeedBackend.exe`): double-click launches the backend, activates the native runtime and serves
 the web UI on `http://127.0.0.1:8000` — chat, training dashboard, lifecycle dashboard, IDE
-workspace and agent configuration are typically reachable within a few seconds. Development
-mode:
+workspace and agent configuration within a few seconds. Development mode:
 
 ```bash
-python -m uvicorn api.app:app --host 127.0.0.1 --port 8000   # backend + web UI (serves frontend/dist)
-python desktop/main.py                                         # desktop shell (window + backend + WebSocket 8765)
-cd frontend && npm run dev                                     # frontend dev server
+python -m uvicorn api.app:app --host 127.0.0.1 --port 8000   # backend + web UI
+python desktop/main.py                                       # desktop shell
+cd frontend && npm run dev                                   # frontend dev server
 ```
 
 Environment knobs: `SEED_PORT` (default 8000), `SEED_HOST` (default 127.0.0.1),
-`SEED_RUNTIME=1` (activate the Seed native runtime on startup). Historical beta evidence lives
-in `reports/seed_public_beta_release_20260823.md` and `reports/`.
-
-The product shell documents the *runtime*, not the capability: the UI is deliberately not
-allowed to overstate the model (visual polish must express only real state). Capability is
-being built model-first, below.
-
-## Reproducibility & evidence rules
-
-- Fixed seed sets (default `[11, 29, 47]`, 12-seed panels for mechanism decisions); a single
-  favorable seed never promotes.
-- Evaluators touch no provider, frontend, MCP executor or training interface during evaluation;
-  holdout/retention updates are asserted `= 0`.
-- Every promoted artifact keeps a parent/child lineage, content-digest genealogy, parameter
-  budget you can audit (planned = active), and a fresh-process read-only re-check.
-- Historical checkpoints that serialized `taiji.*` names load through the scoped
-  `neuroplex.legacy_checkpoint` compatibility utility; importing NeuroPlex no longer shadows
-  the native `taiji` package. Legacy dependencies are installed only when reproducing that
-  baseline: `python -m pip install -e ".[legacy]"`.
+`SEED_RUNTIME=1` (activate the Seed native runtime on startup). Historical beta evidence in
+`reports/seed_public_beta_release_20260823.md`.
 
 ## Source layout
 
 ```text
-taiji/                      native cognitive architecture (imports no seed/neuroplex/transformers)
-├── fabric.py               predictive recurrent tick
-├── sparse.py               fixed fan-in synapses and local updates
-├── memory.py               distributed episodic encoding, completion, readback
-├── identity_organ.py       first-class key/value memory organ (default-on after M1-63)
-├── organs.py               raw-byte sensor, sparse receptor bank, reward-aware motor
-├── foundation_tasks.py     B1–B5 ability adapters (M0 contract)
-├── foundation_training.py  joint F1–F5 training runs, checkpoints, lineage
-└── model.py                observe, learn, score, generate, checkpoint
+taiji/                  native cognitive architecture (imports no seed/neuroplex/transformers)
+├── fabric.py           predictive recurrent tick
+├── sparse.py           fixed fan-in synapses, local updates
+├── memory.py           distributed episodic encoding / completion / readback
+├── identity_organ.py   first-class trainable key/value memory organ
+├── organs.py           raw-byte sensor, sparse receptor bank, reward-aware motor
+├── foundation_tasks.py B1–B5 ability adapters (M0 contract)
+├── foundation_training.py  joint F1–F5 training, checkpoints, lineage
+└── model.py            observe / learn / score / generate / checkpoint
 
-scripts/training/           verify_* regression chain, train_taiji_* entry points, eval_taiji_m1_*
-tests/taiji_native/         kernel regression and ownership contracts (900+ tests repo-wide)
-plans/active/roadmap/03_CURRENT_EXECUTION.md    the single execution plan and next-step authority
-reports/                    numbered, committed evidence per milestone
+scripts/training/       verify_* chain, train_taiji_* entries, eval_taiji_m1_*
+tests/taiji_native/     kernel regression + ownership contracts
+reports/                numbered, committed evidence per milestone
+plans/active/           core requirements · architecture v1 · single execution plan
 ```
 
 ## License
