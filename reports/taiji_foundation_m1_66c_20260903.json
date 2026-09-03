@@ -1,0 +1,99 @@
+{
+  "format": "taiji-foundation-evaluation-v1",
+  "manifest_digest": "c5f178d4e18018f5085c3f56d1ae6d7596df304aee975f81c12db3b72e7e74f8",
+  "checkpoint_gate_status": "not_run",
+  "status": "not_evaluated",
+  "can_promote": false,
+  "failure_reasons": [
+    "b1_sequence_prediction:not_evaluated",
+    "b3_world_transition:not_evaluated",
+    "b4_goal_action:not_evaluated",
+    "b5_continual_learning:not_evaluated",
+    "checkpoint_gate_not_passed"
+  ],
+  "measurements": [
+    {
+      "ability_id": "b1_sequence_prediction",
+      "status": "not_evaluated",
+      "primary_metric": "bits_per_byte",
+      "metric_direction": "lower_is_better",
+      "metric_value": null,
+      "baseline_metrics": {},
+      "sample_counts": {},
+      "holdout_updates": 0,
+      "evidence": [
+        "m0-1-contract-only; task runner pending"
+      ]
+    },
+    {
+      "ability_id": "b2_delayed_memory",
+      "status": "passed",
+      "primary_metric": "recall_accuracy",
+      "metric_direction": "higher_is_better",
+      "metric_value": 0.715,
+      "baseline_metrics": {
+        "frozen_parent": 0.505,
+        "hash_only": 0.435,
+        "identity_lesion": 0.495,
+        "memory_lesion": 0.49,
+        "random": 0.5,
+        "simple_rule": 0.505
+      },
+      "sample_counts": {
+        "holdout": 200,
+        "retention": 200,
+        "train": 1000
+      },
+      "holdout_updates": 0,
+      "evidence": [
+        "seed_metrics=[{\"frozen_parent\": 0.505, \"holdout_updates\": 0, \"identity_lesion\": 0.54, \"memory_lesion\": 0.49, \"parameter_count\": 180417, \"retention\": 0.57, \"seed\": 11, \"taiji\": 0.715}, {\"frozen_parent\": 0.505, \"holdout_updates\": 0, \"identity_lesion\": 0.495, \"memory_lesion\": 0.505, \"parameter_count\": 180417, \"retention\": 0.56, \"seed\": 29, \"taiji\": 0.86}, {\"frozen_parent\": 0.505, \"holdout_updates\": 0, \"identity_lesion\": 0.495, \"memory_lesion\": 0.51, \"parameter_count\": 180417, \"retention\": 0.505, \"seed\": 47, \"taiji\": 0.73}]",
+        "memory_write_partition=train; holdout_and_retention_learning=false"
+      ]
+    },
+    {
+      "ability_id": "b3_world_transition",
+      "status": "not_evaluated",
+      "primary_metric": "transition_error",
+      "metric_direction": "lower_is_better",
+      "metric_value": null,
+      "baseline_metrics": {},
+      "sample_counts": {},
+      "holdout_updates": 0,
+      "evidence": [
+        "m0-1-contract-only; task runner pending"
+      ]
+    },
+    {
+      "ability_id": "b4_goal_action",
+      "status": "not_evaluated",
+      "primary_metric": "success_rate",
+      "metric_direction": "higher_is_better",
+      "metric_value": null,
+      "baseline_metrics": {},
+      "sample_counts": {},
+      "holdout_updates": 0,
+      "evidence": [
+        "m0-1-contract-only; task runner pending"
+      ]
+    },
+    {
+      "ability_id": "b5_continual_learning",
+      "status": "not_evaluated",
+      "primary_metric": "backward_transfer",
+      "metric_direction": "higher_is_better",
+      "metric_value": null,
+      "baseline_metrics": {},
+      "sample_counts": {},
+      "holdout_updates": 0,
+      "evidence": [
+        "m0-1-contract-only; task runner pending"
+      ]
+    }
+  ],
+  "manifest_path": "E:\\Seed\\plans\\manifests\\taiji_foundation_baseline_v1.json",
+  "contract_status": "validated",
+  "capability_measurements": "b2_delayed_memory",
+  "profile": "foundation",
+  "model_tier": null,
+  "report_written": true
+}

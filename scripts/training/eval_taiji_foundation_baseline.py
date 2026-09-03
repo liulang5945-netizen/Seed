@@ -361,6 +361,7 @@ def main() -> int:
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
     parser.add_argument("--b1-corpus", nargs="+", type=Path)
     parser.add_argument("--b2-smoke", action="store_true")
+    parser.add_argument("--b2-corpus", nargs="+", type=Path)
     parser.add_argument("--b3-smoke", action="store_true")
     parser.add_argument("--b4-smoke", action="store_true")
     parser.add_argument("--b5-smoke", action="store_true")
@@ -400,6 +401,19 @@ def main() -> int:
             _memory_config(manifest.seeds[0]),
             seeds=manifest.seeds,
         ).evaluate(build_delayed_memory_smoke_corpus())
+    if args.b2_corpus:
+        # Foundation-scale B2 on the M1-64 delayed-memory course.  The task's
+        # own read path carries the M1-66 organ-first verdict for the full arm
+        # and keeps the lesion arms on the original synthesis (M1-66b), so this
+        # measurement is the real B2 result, not the smoke placeholder.
+        from scripts.training.eval_taiji_m1_64_foundation_memory import (  # noqa: PLC0415
+            build_foundation_delayed_memory_corpus,
+        )
+
+        b2_measurement = DelayedMemoryTask(
+            _memory_config(manifest.seeds[0]),
+            seeds=manifest.seeds,
+        ).evaluate(build_foundation_delayed_memory_corpus())
     if args.b3_smoke:
         b3_measurement = WorldTransitionTask(
             seeds=manifest.seeds,
