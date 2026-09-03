@@ -101,6 +101,7 @@ class Taiji:
         if self._state.pending_experience is not None:
             raise RuntimeError("pending experience must observe its outcome before reset")
         self._development_ticks = max(self._development_ticks, int(self._state.tick))
+        self.fabric.clear_cue_snapshot()
         self._state = self._initial_state(episode_id or self._state.episode_id)
 
     @torch.no_grad()
@@ -185,6 +186,12 @@ class Taiji:
                 enabled=identity_enabled,
             )
             if identity_recall.used:
+                # M1-65: a successfully routed cue freezes the addressing key.
+                # The identity organ and the episodic field route on the live
+                # cortical context; freezing it here means interference symbols
+                # observed later cannot wash the cue away, so a delayed read
+                # addresses the same key it wrote under.
+                self.fabric.stamp_cue_snapshot(cortical_state)
                 identity_evidence = (
                     float(self.config.identity_organ_evidence_gain)
                     * identity_recall.action_evidence
@@ -194,7 +201,7 @@ class Taiji:
             previous.memory,
             use_long_term=use_memory,
         )
-        context = self.motor.encode_context(cortical_state)
+        context = self.motor.encode_context(self.fabric.predictive_context(regions))
         cortical_prediction_evidence = float(
             self.config.consolidation_read_gain
         ) * self.fabric.consolidated_decode(0, regions[0].trace)
@@ -634,8 +641,7 @@ class Taiji:
                 error_sum += sum(error_norms) / len(error_norms)
                 error_count += 1
 
-        cortical_state = self.fabric.cortical_context(regions)
-        context = self.motor.encode_context(cortical_state)
+        context = self.motor.encode_context(self.fabric.predictive_context(regions))
         self._state = TaijiState(
             version=self.STATE_VERSION,
             tick=tick,
