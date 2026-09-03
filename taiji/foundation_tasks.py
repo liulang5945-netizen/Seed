@@ -8,6 +8,7 @@ import math
 from collections.abc import Sequence
 from copy import deepcopy
 from dataclasses import dataclass
+from typing import Any
 
 import torch
 
@@ -55,12 +56,21 @@ class MemoryEpisode:
     cue: int
     action: int
     outcome: int
+    context: tuple[int, ...] = ()
 
     def __post_init__(self) -> None:
         if not self.memory_id.strip():
             raise ValueError("memory episode id must be non-empty")
         if any(int(value) < 0 for value in (self.cue, self.action, self.outcome)):
             raise ValueError("memory episode symbols cannot be negative")
+        if any(int(value) < 0 for value in self.context):
+            raise ValueError("memory episode context symbols cannot be negative")
+
+    @property
+    def recall_key(self) -> tuple[int, ...]:
+        """The full symbol sequence that identifies this binding."""
+
+        return (*self.context, self.cue)
 
 
 @dataclass(frozen=True)
@@ -70,12 +80,21 @@ class DelayedMemoryQuery:
     query_id: str
     cue: int
     expected_action: int
+    context: tuple[int, ...] = ()
 
     def __post_init__(self) -> None:
         if not self.query_id.strip():
             raise ValueError("memory query id must be non-empty")
         if any(int(value) < 0 for value in (self.cue, self.expected_action)):
             raise ValueError("memory query symbols cannot be negative")
+        if any(int(value) < 0 for value in self.context):
+            raise ValueError("memory query context symbols cannot be negative")
+
+    @property
+    def recall_key(self) -> tuple[int, ...]:
+        """The full symbol sequence that identifies this binding."""
+
+        return (*self.context, self.cue)
 
 
 @dataclass(frozen=True)
@@ -83,12 +102,13 @@ class DelayedMemoryCorpus:
     train: tuple[MemoryEpisode, ...]
     holdout: tuple[DelayedMemoryQuery, ...]
     retention: tuple[DelayedMemoryQuery, ...]
+    interference_symbols: tuple[int, ...] = ()
 
     def __post_init__(self) -> None:
         if not self.train or not self.holdout or not self.retention:
             raise ValueError("delayed memory partitions cannot be empty")
-        train_cues = {episode.cue for episode in self.train}
-        if any(query.cue not in train_cues for query in (*self.holdout, *self.retention)):
+        train_keys = {episode.recall_key for episode in self.train}
+        if any(query.recall_key not in train_keys for query in (*self.holdout, *self.retention)):
             raise ValueError("delayed memory queries must target a train-written cue")
         if len({episode.memory_id for episode in self.train}) != len(self.train):
             raise ValueError("delayed memory train ids must be unique")
@@ -130,14 +150,45 @@ class DelayedMemoryTask:
             model = Taiji(self._with_seed(seed), episode_id=f"m0-b2-seed-{seed}")
             for episode in corpus.train:
                 self._write_episode(model, episode)
-            holdout = self._recall_accuracy(model, corpus.holdout, actions, use_memory=True)
+            interference = corpus.interference_symbols
+            holdout = self._recall_accuracy(
+                model,
+                corpus.holdout,
+                actions,
+                use_memory=True,
+                interference_symbols=interference,
+            )
             persistent_before = _persistent_digest(model)
-            retention = self._recall_accuracy(model, corpus.retention, actions, use_memory=True)
+            retention = self._recall_accuracy(
+                model,
+                corpus.retention,
+                actions,
+                use_memory=True,
+                interference_symbols=interference,
+            )
             persistent_after = _persistent_digest(model)
-            memory_lesion = self._recall_accuracy(model, corpus.holdout, actions, use_memory=False)
+            memory_lesion = self._recall_accuracy(
+                model,
+                corpus.holdout,
+                actions,
+                use_memory=False,
+                interference_symbols=interference,
+            )
+            identity_lesion = self._recall_accuracy(
+                model,
+                corpus.holdout,
+                actions,
+                use_memory=True,
+                use_identity=False,
+                interference_symbols=interference,
+            )
             frozen = Taiji(self._with_seed(seed), episode_id=f"m0-b2-frozen-{seed}")
             frozen_accuracy = self._recall_accuracy(
-                frozen, corpus.holdout, actions, use_memory=True
+                frozen,
+                corpus.holdout,
+                actions,
+                use_memory=True,
+                interference_symbols=interference,
             )
             seed_records.append(
                 {
@@ -145,6 +196,7 @@ class DelayedMemoryTask:
                     "taiji": holdout,
                     "retention": retention,
                     "memory_lesion": memory_lesion,
+                    "identity_lesion": identity_lesion,
                     "frozen_parent": frozen_accuracy,
                     "holdout_updates": int(persistent_before != persistent_after),
                     "parameter_count": model.parameter_count(),
@@ -153,6 +205,7 @@ class DelayedMemoryTask:
         native_values = [float(record["taiji"]) for record in seed_records]
         frozen_values = [float(record["frozen_parent"]) for record in seed_records]
         lesion_values = [float(record["memory_lesion"]) for record in seed_records]
+        identity_lesion_values = [float(record["identity_lesion"]) for record in seed_records]
         baseline_metrics = {
             "random": 1.0 / len(actions),
             "frozen_parent": min(frozen_values),
@@ -162,6 +215,7 @@ class DelayedMemoryTask:
                 for seed in self.seeds
             ),
             "memory_lesion": min(lesion_values),
+            "identity_lesion": min(identity_lesion_values),
         }
         worst_native = min(native_values)
         holdout_updates = max(int(record["holdout_updates"]) for record in seed_records)
@@ -170,11 +224,15 @@ class DelayedMemoryTask:
             float(record["taiji"]) > float(record["memory_lesion"])
             for record in seed_records
         )
+        causal_identity_gain = all(
+            float(record["taiji"]) > float(record["identity_lesion"])
+            for record in seed_records
+        )
         return FoundationMeasurement(
             ability_id=self.ability_id,
             status=(
                 "passed"
-                if beats_controls and causal_memory_gain and holdout_updates == 0
+                if beats_controls and causal_memory_gain and causal_identity_gain and holdout_updates == 0
                 else "failed"
             ),
             primary_metric="recall_accuracy",
@@ -199,16 +257,19 @@ class DelayedMemoryTask:
         model: Taiji,
         episode: MemoryEpisode,
         *,
+        reward: float = 1.0,
         memory_learning_scale: float = 1.0,
         memory_learning_targets: str = "all",
         provenance: str = "experienced",
     ) -> None:
         model.reset_dynamics(episode_id=f"m0-b2-train-{episode.memory_id}")
         model.observe(model.config.boundary_symbol, learn=False, learn_motor=False)
+        for symbol in episode.context:
+            model.observe(symbol, learn=False, learn_motor=False)
         model.observe(episode.cue, learn=False, learn_motor=False)
         model.act((episode.action,), sample=False)
         model.settle_action(
-            1.0,
+            reward,
             learn=False,
             learn_memory=True,
             provenance=provenance,
@@ -224,6 +285,8 @@ class DelayedMemoryTask:
         actions: tuple[int, ...],
         *,
         use_memory: bool,
+        use_identity: bool | None = None,
+        interference_symbols: tuple[int, ...] = (),
     ) -> float:
         correct = 0
         for query in queries:
@@ -233,13 +296,31 @@ class DelayedMemoryTask:
                 learn=False,
                 learn_motor=False,
                 use_memory=use_memory,
+                use_identity=use_identity,
             )
+            for symbol in query.context:
+                model.observe(
+                    symbol,
+                    learn=False,
+                    learn_motor=False,
+                    use_memory=use_memory,
+                    use_identity=use_identity,
+                )
             model.observe(
                 query.cue,
                 learn=False,
                 learn_motor=False,
                 use_memory=use_memory,
+                use_identity=use_identity,
             )
+            for symbol in interference_symbols:
+                model.observe(
+                    symbol,
+                    learn=False,
+                    learn_motor=False,
+                    use_memory=use_memory,
+                    use_identity=use_identity,
+                )
             probabilities = model.snapshot().motor_probabilities
             prediction = max(actions, key=lambda action: float(probabilities[action].item()))
             correct += int(prediction == query.expected_action)
@@ -1216,13 +1297,23 @@ def _hash_only_bpb(data: bytes, *, seed: int, alphabet_size: int) -> float:
 
 def _persistent_digest(model: Taiji) -> str:
     checkpoint = model.checkpoint()
-    return content_digest(
-        {
-            "fabric": checkpoint["fabric"],
-            "motor": checkpoint["motor"],
-            "memory": checkpoint["memory"],
+    persistent: dict[str, Any] = {
+        "fabric": checkpoint["fabric"],
+        "motor": checkpoint["motor"],
+        "memory": checkpoint["memory"],
+    }
+    organ = checkpoint.get("identity_organ")
+    if organ is not None:
+        # The identity organ is a persistent structure now that it is on the
+        # default path, so a read-only audit that ignores it is vacuous.  Its
+        # ``lineage.parent_checkpoint_digest`` is derived from the transient
+        # core (``state`` and ``rng_state`` advance on every observation) and
+        # must be dropped: the audit asks whether learning mutated a durable
+        # structure, not whether dynamics settled.
+        persistent["identity_organ"] = {
+            key: value for key, value in organ.items() if key != "lineage"
         }
-    )
+    return content_digest(persistent)
 
 
 def _majority_accuracy(
@@ -1240,7 +1331,7 @@ def _hash_memory_accuracy(
 ) -> float:
     correct = 0
     for query in queries:
-        digest = hashlib.sha256(f"{int(seed)}\0{int(query.cue)}".encode()).digest()
+        digest = hashlib.sha256(f"{int(seed)}\0{query.recall_key}".encode()).digest()
         prediction = actions[int.from_bytes(digest[:8], "big") % len(actions)]
         correct += int(prediction == query.expected_action)
     return correct / len(queries)

@@ -139,7 +139,10 @@ def _write_train(model: Taiji, curriculum: MemoryLearningCurriculum) -> int:
                 f"m1-62 refuses to write a non-train partition: {example.partition}"
             )
         DelayedMemoryTask._write_episode(
-            model, _episode(example), provenance=example.provenance
+            model,
+            _episode(example),
+            reward=float(example.reward),
+            provenance=example.provenance,
         )
         written += 1
     return written

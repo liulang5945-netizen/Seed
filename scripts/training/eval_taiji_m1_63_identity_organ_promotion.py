@@ -31,6 +31,7 @@ import argparse
 import json
 import sys
 import time
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -59,6 +60,7 @@ from scripts.training.eval_taiji_m1_62_learning_data_contract import (  # noqa: 
     _write_train,
 )
 from taiji import (  # noqa: E402
+    MEMORY_LEARNING_EXAMPLE_FIELDS,
     MEMORY_LEARNING_PARTITIONS,
     MemoryLearningCurriculum,
     MemoryLearningExample,
@@ -92,6 +94,12 @@ ORGAN_SECOND_HEAD_PARAMETERS = 32896
 QUERY_PARTITIONS = ("holdout", "retention")
 # Forcing eviction: half the slots for twice the keys.
 OVERWRITE_CAPACITY = KEY_COUNT // 2
+# The punished course teaches the correct answer under a negative reward.  With
+# ``identity_organ_write_baseline == 0.0`` the organ's modulation becomes -1.0,
+# which is a full-strength push away from the taught action rather than a merely
+# weakened write -- the failure mode has to be loud to be gradeable.
+PUNISHED_REWARD = -1.0
+REWARDED_REWARD = 1.0
 
 
 def _promotion_config(seed: int, *, enabled: bool, capacity: int | None) -> TaijiConfig:
@@ -150,6 +158,113 @@ def _one_shot_curriculum(name: str) -> MemoryLearningCurriculum:
         retention=queries("retention", RETENTION_KEYS),
         declared_key_value_deterministic=True,
     )
+
+
+def _punished_curriculum(
+    source: MemoryLearningCurriculum, name: str
+) -> MemoryLearningCurriculum:
+    """``source`` re-taught under punishment, derived rather than re-authored.
+
+    The course is built by rewriting exactly one field of ``source``'s train
+    partition -- ``reward`` flips from ``REWARDED_REWARD`` to
+    ``PUNISHED_REWARD``.  Deriving instead of hand-writing a parallel course is
+    the point: "these two courses differ only in reward sign" becomes structurally
+    true rather than something a reader has to verify by eye, so the gate below
+    can attribute any behavioural difference to the reward and nothing else.
+    Query partitions are copied untouched because reward is a write-time signal
+    and holdout/retention are read-only.
+
+    This course exists because the original 15/15-green promotion Gate could not
+    express it: ``MemoryLearningExample.reward`` defaults to ``1.0`` and the write
+    path discarded it, so "the organ binds a punished action exactly as hard as a
+    rewarded one" was an invisible failure mode.  A gate that cannot fail on
+    reward sign is not evidence about a reward-driven organ.
+    """
+
+    train = tuple(
+        replace(
+            example,
+            example_id=example.example_id.replace(source.name, name, 1),
+            reward=PUNISHED_REWARD,
+            episode_tag=example.episode_tag.replace(source.name, name, 1),
+        )
+        for example in source.train
+    )
+
+    def queries(partition: str) -> tuple[MemoryLearningExample, ...]:
+        return tuple(
+            replace(
+                example,
+                example_id=example.example_id.replace(source.name, name, 1),
+                episode_tag=example.episode_tag.replace(source.name, name, 1),
+            )
+            for example in getattr(source, partition)
+        )
+
+    return MemoryLearningCurriculum(
+        name=name,
+        train=train,
+        holdout=queries("holdout"),
+        retention=queries("retention"),
+        declared_key_value_deterministic=source.declared_key_value_deterministic,
+    )
+
+
+def _reward_contrast(
+    rewarded: MemoryLearningCurriculum, punished: MemoryLearningCurriculum
+) -> dict[str, Any]:
+    """Prove the two courses differ in reward and in nothing else that can teach.
+
+    ``example_id`` and ``episode_tag`` necessarily differ (ids must be unique
+    within a curriculum, and both are declared bypass fields that must never
+    determine the answer).  Every other field, including the key and both value
+    channels, must match position for position.
+    """
+
+    graded = [
+        field
+        for field in MEMORY_LEARNING_EXAMPLE_FIELDS
+        if field not in {"example_id", "episode_tag"}
+    ]
+    train_pairs = list(zip(rewarded.train, punished.train, strict=True))
+    differing = sorted(
+        {
+            field
+            for field in graded
+            for left, right in train_pairs
+            if left.to_dict()[field] != right.to_dict()[field]
+        }
+    )
+    query_pairs = [
+        pair
+        for partition in QUERY_PARTITIONS
+        for pair in zip(
+            getattr(rewarded, partition), getattr(punished, partition), strict=True
+        )
+    ]
+    return {
+        "graded_fields_compared": graded,
+        "train_differing_fields": differing,
+        "differs_only_by_reward": differing == ["reward"],
+        "rewarded_train_reward": _summary(
+            [float(example.reward) for example in rewarded.train]
+        ),
+        "punished_train_reward": _summary(
+            [float(example.reward) for example in punished.train]
+        ),
+        "punished_train_all_negative": all(
+            float(example.reward) < 0.0 for example in punished.train
+        ),
+        "rewarded_train_all_at_pin": all(
+            float(example.reward) == REWARDED_REWARD for example in rewarded.train
+        ),
+        "punished_train_all_at_pin": all(
+            float(example.reward) == PUNISHED_REWARD for example in punished.train
+        ),
+        "query_partitions_reward_unchanged": all(
+            float(left.reward) == float(right.reward) for left, right in query_pairs
+        ),
+    }
 
 
 def _decision_row(
@@ -298,6 +413,8 @@ def _organ_telemetry(model: Taiji) -> dict[str, Any]:
         "capacity": int(organ.capacity),
         "write_count": int(organ.write_count),
         "replacement_count": int(organ.replacement_count),
+        "skipped_write_count": int(organ.skipped_write_count),
+        "punished_write_count": int(organ.punished_write_count),
         "occupied_count": int(bank.occupied_count),
         "allocation_count": int(bank.allocation_count),
         "match_count": int(bank.match_count),
@@ -491,6 +608,30 @@ def _course_summary(
         == int(record["train_examples_written"])
         for record in organ_records
     )
+    # Reward telemetry is reported unconditionally, not only for the punished
+    # course.  A rewarded course must show zero punished writes; if it ever shows
+    # a non-zero count the write path has a sign bug, and that is exactly as
+    # gradeable a failure as the punished course binding anyway.
+    summary["organ_punished_write_count_min"] = min(
+        int(record["organ_telemetry"]["punished_write_count"])
+        for record in organ_records
+    )
+    summary["organ_punished_write_count_max"] = max(
+        int(record["organ_telemetry"]["punished_write_count"])
+        for record in organ_records
+    )
+    summary["organ_punishes_all_train_examples"] = all(
+        int(record["organ_telemetry"]["punished_write_count"])
+        == int(record["train_examples_written"])
+        for record in organ_records
+    )
+    summary["organ_punishes_no_train_examples"] = all(
+        int(record["organ_telemetry"]["punished_write_count"]) == 0
+        for record in organ_records
+    )
+    summary["organ_skipped_write_count_max"] = max(
+        int(record["organ_telemetry"]["skipped_write_count"]) for record in organ_records
+    )
     summary["organ_replacement_count_max"] = max(
         int(record["organ_telemetry"]["replacement_count"]) for record in organ_records
     )
@@ -536,14 +677,22 @@ def _data_contract_verdict(courses: dict[str, dict[str, Any]]) -> dict[str, Any]
     stable = courses["stable_key"]["audit"]
     negative = courses["conflicting_key"]["audit"]
     one_shot = courses["one_shot_key"]["audit"]
+    punished = courses["punished_key"]["audit"]
     return {
         "stable_well_formed": bool(stable["well_formed"]),
         "one_shot_well_formed": bool(one_shot["well_formed"]),
+        "punished_well_formed": bool(punished["well_formed"]),
         "stable_key_value_deterministic": bool(
             stable["observed_key_value_deterministic"]
         ),
         "one_shot_key_value_deterministic": bool(
             one_shot["observed_key_value_deterministic"]
+        ),
+        # The punished course carries the *correct* key/value relation; only the
+        # reward sign is inverted.  If determinism broke here the course would be
+        # testing conflicting labels rather than punishment.
+        "punished_key_value_deterministic": bool(
+            punished["observed_key_value_deterministic"]
         ),
         "negative_control_declares_conflict": (
             not negative["declared_key_value_deterministic"]
@@ -585,10 +734,13 @@ def run(report_path: Path, seeds: tuple[int, ...]) -> dict[str, Any]:
     stable = _curriculum("stable_key", deterministic=True)
     conflicting = _curriculum("conflicting_key", deterministic=False)
     one_shot = _one_shot_curriculum("one_shot_key")
+    punished = _punished_curriculum(stable, "punished_key")
+    reward_contrast = _reward_contrast(stable, punished)
     digest_reuse = {
         "stable_key_digest": stable.digest,
         "conflicting_key_digest": conflicting.digest,
         "one_shot_key_digest": one_shot.digest,
+        "punished_key_digest": punished.digest,
         "stable_key_matches_m1_62": stable.digest == STABLE_KEY_DIGEST,
         "conflicting_key_matches_m1_62": conflicting.digest == CONFLICTING_KEY_DIGEST,
     }
@@ -600,6 +752,7 @@ def run(report_path: Path, seeds: tuple[int, ...]) -> dict[str, Any]:
         "stable_key_overwrite": _course(
             "stable_key_overwrite", stable, seeds, capacity=OVERWRITE_CAPACITY
         ),
+        "punished_key": _course("punished_key", punished, seeds),
     }
 
     data_contract = _data_contract_verdict(courses)
@@ -607,6 +760,7 @@ def run(report_path: Path, seeds: tuple[int, ...]) -> dict[str, Any]:
     negative_summary = courses["conflicting_key"]["summary"]
     one_shot_summary = courses["one_shot_key"]["summary"]
     overwrite_summary = courses["stable_key_overwrite"]["summary"]
+    punished_summary = courses["punished_key"]["summary"]
 
     budget = {
         "organ_off_parameter_count": sorted(
@@ -752,6 +906,44 @@ def run(report_path: Path, seeds: tuple[int, ...]) -> dict[str, Any]:
         ),
         "overwrite_actually_evicted": int(overwrite_summary["organ_replacement_count_max"])
         > 0,
+        # --- reward sensitivity -------------------------------------------------
+        # Four gates, because "the punished course did not bind" is only evidence
+        # if the punishment actually arrived, nothing but the reward differed, and
+        # the organ did not simply refuse to write.
+        #
+        # 1. The courses are identical apart from the reward sign.
+        "punished_course_differs_only_by_reward": bool(
+            reward_contrast["differs_only_by_reward"]
+            and reward_contrast["punished_train_all_negative"]
+            and reward_contrast["rewarded_train_all_at_pin"]
+            and reward_contrast["punished_train_all_at_pin"]
+            and reward_contrast["query_partitions_reward_unchanged"]
+        ),
+        # 2. The negative reward reached the organ.  Without this the gate below
+        #    could pass vacuously on a write path that silently drops reward --
+        #    which is precisely the defect that made the original 15/15 green.
+        "punished_write_reaches_organ": bool(
+            punished_summary["organ_punishes_all_train_examples"]
+            and int(punished_summary["organ_punished_write_count_min"]) > 0
+            and bool(stable_summary["organ_punishes_no_train_examples"])
+        ),
+        # 3. Cue identity is not reward-gated: a cue observed during a punished
+        #    episode is still that cue, so slots must still be allocated.  Only the
+        #    value heads are reward-modulated.  Without this gate a write path that
+        #    refused to write at all under punishment would look identical to one
+        #    that correctly anti-bound the action.
+        "punished_cue_identity_preserved": bool(
+            punished_summary["organ_writes_all_train_examples"]
+            and int(punished_summary["organ_skipped_write_count_max"]) == 0
+            and int(punished_summary["organ_occupied_count_max"])
+            == int(stable_summary["organ_occupied_count_max"])
+        ),
+        # 4. The decision must not come out positively bound.  Teaching an action
+        #    under full punishment and still recalling it as the answer would mean
+        #    the organ stores co-occurrence, not reward-weighted value.
+        "punished_course_rejected": bool(
+            not punished_summary["decision_positive_binding_all_seeds"]
+        ),
     }
     blocking = [
         name
@@ -771,6 +963,10 @@ def run(report_path: Path, seeds: tuple[int, ...]) -> dict[str, Any]:
             "overwrite_keeps_bound_rows_positive",
             "overwrite_evicted_rows_not_below_baseline",
             "overwrite_actually_evicted",
+            "punished_course_differs_only_by_reward",
+            "punished_write_reaches_organ",
+            "punished_cue_identity_preserved",
+            "punished_course_rejected",
         )
         if not gates[name]
     ]
@@ -781,6 +977,7 @@ def run(report_path: Path, seeds: tuple[int, ...]) -> dict[str, Any]:
         "seeds": list(seeds),
         "digest_reuse": digest_reuse,
         "data_contract": data_contract,
+        "reward_contrast": reward_contrast,
         "parameter_budget": budget,
         "gates": gates,
         "courses": courses,
@@ -814,6 +1011,7 @@ def main() -> None:
     print(f"blocking_gates: {result['blocking_gates']}")
     print(f"gates: {result['gates']}")
     print(f"digest_reuse: {result['digest_reuse']}")
+    print(f"reward_contrast: {result['reward_contrast']}")
     print(f"parameter_budget: {result['parameter_budget']}")
 
 

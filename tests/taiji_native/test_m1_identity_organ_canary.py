@@ -2,6 +2,15 @@ from __future__ import annotations
 
 from copy import deepcopy
 
+from scripts.training.eval_taiji_m1_62_learning_data_contract import (
+    _curriculum,
+    _write_train,
+)
+from scripts.training.eval_taiji_m1_63_identity_organ_promotion import (
+    _promotion_config,
+    _punished_curriculum,
+    _reward_contrast,
+)
 from scripts.training.eval_taiji_m1_identity_organ_canary import (
     _cue_pattern,
     _query,
@@ -180,6 +189,75 @@ def test_identity_organ_checkpoint_lineage_and_roundtrip_are_exact() -> None:
     assert checkpoint["identity_organ"]["lineage"]["organ_id"] == "cue-identity-route"
     assert restored.identity_organ is not None
     assert content_digest(restored.checkpoint()) == content_digest(checkpoint)
+
+
+def test_evaluator_write_path_threads_example_reward_to_the_organ() -> None:
+    # The organ-level canary above proves ``learn(reward=-1.0)`` anti-binds, but
+    # that was never the defect.  The defect was three layers up: the reward sat
+    # on MemoryLearningExample and was dropped by _episode -> _write_episode, so
+    # no evaluator could construct a punished write at all and the M1-63 gate
+    # went 15/15 green while blind.  This test asserts the *transport*, through
+    # the real evaluator write path, not a re-implementation of it.
+    rewarded_course = _curriculum("stable_key", deterministic=True)
+    punished_course = _punished_curriculum(rewarded_course, "punished_key")
+
+    rewarded = Taiji(
+        _promotion_config(11, enabled=True, capacity=None), episode_id="reward-transport"
+    )
+    punished = Taiji(
+        _promotion_config(11, enabled=True, capacity=None), episode_id="reward-transport"
+    )
+
+    written = _write_train(rewarded, rewarded_course)
+    assert _write_train(punished, punished_course) == written
+
+    # The punishment arrived: every train write was modulated negatively.  If
+    # reward were dropped anywhere on the path this count would be zero.
+    assert punished.identity_organ.punished_write_count == written
+    assert rewarded.identity_organ.punished_write_count == 0
+
+    # Cue identity is not reward-gated, so the punished run must own exactly the
+    # same slots.  Without this, "did not bind" is indistinguishable from
+    # "refused to write", and the gate would be vacuous in the other direction.
+    assert punished.identity_organ.write_count == written
+    assert punished.identity_organ.skipped_write_count == 0
+    assert (
+        punished.identity_organ.bank.occupied_count
+        == rewarded.identity_organ.bank.occupied_count
+    )
+
+    # And the two runs must actually differ, or reward is decorative.
+    assert content_digest(
+        punished.identity_organ.to_payload(parent_checkpoint_digest="x")
+    ) != content_digest(
+        rewarded.identity_organ.to_payload(parent_checkpoint_digest="x")
+    )
+
+
+def test_punished_course_is_derived_so_only_reward_can_explain_the_difference() -> None:
+    # The punished course is derived from the rewarded one via dataclasses.replace
+    # rather than hand-authored, so "these differ only in reward" is structural
+    # instead of eyeballed.  This locks that claim mechanically: any future edit
+    # that lets a second field drift turns the experiment into a confound and
+    # must fail here rather than silently producing a wrong causal conclusion.
+    rewarded_course = _curriculum("stable_key", deterministic=True)
+    punished_course = _punished_curriculum(rewarded_course, "punished_key")
+    contrast = _reward_contrast(rewarded_course, punished_course)
+
+    assert contrast["train_differing_fields"] == ["reward"]
+    assert contrast["differs_only_by_reward"] is True
+    assert contrast["rewarded_train_all_at_pin"] is True
+    assert contrast["punished_train_all_at_pin"] is True
+    assert contrast["query_partitions_reward_unchanged"] is True
+    assert "reward" in contrast["graded_fields_compared"]
+
+    # Derivation must not smuggle in a shared id: the curriculum contract
+    # enforces uniqueness per course, and a collision across courses would make
+    # the two runs share episode provenance.
+    rewarded_ids = {example.example_id for example in rewarded_course.train}
+    punished_ids = {example.example_id for example in punished_course.train}
+    assert rewarded_ids.isdisjoint(punished_ids)
+    assert punished_course.digest != rewarded_course.digest
 
 
 def test_m1_identity_organ_canary_passes_one_seed() -> None:
