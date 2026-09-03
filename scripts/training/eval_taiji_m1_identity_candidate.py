@@ -207,7 +207,7 @@ def _record_passes(record: dict[str, Any]) -> bool:
         and schema["candidate_has_identity_payload"]
         and schema["lesion_has_identity_payload"]
         and schema["candidate_format"] == "taiji-native-identity-organ-v2"
-        and schema["candidate_version"] == 2
+        and schema["candidate_version"] == 3
         and schema["candidate_lineage_core_matches"]
         and schema["lesion_lineage_core_matches"]
         and schema["candidate_restore_exact"]

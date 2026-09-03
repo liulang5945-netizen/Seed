@@ -251,6 +251,9 @@ def _read_rows(
     """
 
     rows: list[dict[str, Any]] = []
+    # M1-66 organ-first only applies to the full integral arm; each ablation
+    # keeps the original motor synthesis (lesion semantics).
+    verdict_enabled = bool(use_memory) and (use_identity is None or bool(use_identity))
     for query in queries:
         model.reset_dynamics(episode_id=f"m1-64-query-{query.query_id}")
         for symbol in (
@@ -265,12 +268,14 @@ def _read_rows(
                 learn_motor=False,
                 use_memory=use_memory,
                 use_identity=use_identity,
+                use_delayed_memory_verdict=verdict_enabled,
             )
         identity_recall = step.identity_recall
         probabilities = model.snapshot().motor_probabilities
         evidence = identity_recall.action_evidence
         if (
-            identity_recall is not None
+            verdict_enabled
+            and identity_recall is not None
             and identity_recall.used
             and evidence is not None
         ):

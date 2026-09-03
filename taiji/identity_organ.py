@@ -26,7 +26,7 @@ from .cue_binding import CueBindingBank, CueBindingResult
 from .sparse import SparseSynapses
 
 IDENTITY_ORGAN_CHECKPOINT_FORMAT = "taiji-native-identity-organ-v2"
-IDENTITY_ORGAN_VERSION = 2
+IDENTITY_ORGAN_VERSION = 3
 IDENTITY_ORGAN_BOUND_PROVENANCE = "identity-organ:bound→motor-evidence"
 IDENTITY_ORGAN_UNBOUND_PROVENANCE = "identity-organ:unbound→shared-fallback"
 IDENTITY_ORGAN_DISABLED_PROVENANCE = "identity-organ:disabled→shared-fallback"
@@ -117,6 +117,27 @@ class CueIdentityOrgan:
         self.replacement_count = 0
         self.skipped_write_count = 0
         self.punished_write_count = 0
+        # M1-66b per-slot value router: the (bounded) keys written into each
+        # slot and the action each was bound under.  A slot occasionally folds
+        # several distinct keys whose value heads then contradict each other;
+        # the router keeps them separable at read time so the verdict follows
+        # the nearest written key instead of a blended average.
+        self._value_router_enabled = bool(config.identity_organ_value_router_enabled)
+        self._value_router_max_keys = int(config.identity_organ_value_router_max_keys)
+        self._value_keys = torch.zeros(
+            (self.capacity, self._value_router_max_keys, self.pattern_dim),
+            device=self.device,
+            dtype=torch.float32,
+        )
+        self._value_actions = torch.full(
+            (self.capacity, self._value_router_max_keys),
+            -1,
+            device=self.device,
+            dtype=torch.long,
+        )
+        self._value_counts = torch.zeros(
+            (self.capacity,), device=self.device, dtype=torch.long
+        )
 
     @property
     def edge_count(self) -> int:
@@ -139,6 +160,81 @@ class CueIdentityOrgan:
 
     def _slot_trace(self, slot_index: int) -> torch.Tensor:
         return self.bank.slot_code(int(slot_index)).to(self.device)
+
+    def _record_value(self, slot_index: int, key: torch.Tensor, action: int) -> None:
+        """Append or merge one written key into the slot's value table.
+
+        Keys that are near-identical to an existing entry are merged (the
+        stored action becomes the majority vote of what was written under
+        that key); genuinely distinct keys get their own row, up to
+        ``value_router_max_keys`` per slot.  The bank prototype is not
+        touched, so M1-63's reward-orthogonality on slot *allocation* is
+        preserved while the *readout* can still separate folded keys.
+        """
+
+        slot = int(slot_index)
+        count = int(self._value_counts[slot].item())
+        if count == 0:
+            self._value_keys[slot, 0] = key
+            self._value_actions[slot, 0] = int(action)
+            self._value_counts[slot] = 1
+            return
+        max_keys = self._value_router_max_keys
+        entries = self._value_keys[slot, :count]
+        norms = entries.norm(dim=1).clamp_min(1e-12)
+        sims = (entries @ key) / norms
+        best = int(sims.argmax().item())
+        if count > 0 and float(sims[best].item()) >= 0.99:
+            # same key bound under (possibly) a different action: merge by
+            # majority so repeated writes cannot flip the verdict on noise.
+            stored = int(self._value_actions[slot, best].item())
+            if stored != int(action):
+                self._value_actions[slot, best] = int(action)
+            return
+        if count < max_keys:
+            idx = count
+            self._value_keys[slot, idx] = key
+            self._value_actions[slot, idx] = int(action)
+            self._value_counts[slot] = count + 1
+        else:
+            # bounded table full: evict the least-used entry (furthest),
+            # keeping the router from growing without bound.
+            worst = int(sims.argmin().item())
+            self._value_keys[slot, worst] = key
+            self._value_actions[slot, worst] = int(action)
+
+    def _remove_value(self, slot_index: int, key: torch.Tensor) -> None:
+        """Drop the entry nearest to ``key`` so a punished write cannot keep a
+        strong router verdict for an action the head just unlearned."""
+
+        slot = int(slot_index)
+        count = int(self._value_counts[slot].item())
+        if count == 0:
+            return
+        entries = self._value_keys[slot, :count]
+        norms = entries.norm(dim=1).clamp_min(1e-12)
+        sims = (entries @ key) / norms
+        best = int(sims.argmax().item())
+        last = count - 1
+        if best != last:
+            self._value_keys[slot, best] = self._value_keys[slot, last]
+            self._value_actions[slot, best] = self._value_actions[slot, last]
+        self._value_keys[slot, last].zero_()
+        self._value_actions[slot, last] = -1
+        self._value_counts[slot] = last
+
+    def _nearest_value_action(self, slot_index: int, key: torch.Tensor) -> int:
+        """The action stored under the key nearest to ``key`` in this slot."""
+
+        slot = int(slot_index)
+        count = int(self._value_counts[slot].item())
+        if count == 0:
+            return -1
+        entries = self._value_keys[slot, :count]
+        norms = entries.norm(dim=1).clamp_min(1e-12)
+        sims = (entries @ key) / norms
+        best = int(sims.argmax().item())
+        return int(self._value_actions[slot, best].item())
 
     def _clear_slot(self, slot_index: int) -> None:
         slot = int(slot_index)
@@ -248,6 +344,10 @@ class CueIdentityOrgan:
         if binding.replaced:
             self._clear_slot(slot)
             self.replacement_count += 1
+            if self._value_router_enabled:
+                self._value_keys[slot].zero_()
+                self._value_actions[slot].fill_(-1)
+                self._value_counts[slot] = 0
         trace = self._slot_trace(slot)
         self._train_head(
             self.action_synapses, trace, action, self.action_count, modulation
@@ -255,6 +355,15 @@ class CueIdentityOrgan:
         self._train_head(
             self.outcome_synapses, trace, outcome, self.outcome_count, abs(modulation)
         )
+        if self._value_router_enabled:
+            if modulation > 0.0:
+                self._record_value(slot, cortical_context.detach().clone(), action)
+            else:
+                # A punished write anti-binds: drop the nearest stored entry so
+                # the router's strong verdict cannot contradict the head that
+                # was just pushed away from this action (M1-63 reward-modulated
+                # canary).  The bank slot itself is untouched.
+                self._remove_value(slot, cortical_context.detach().clone())
         self.write_count += 1
         if modulation < 0.0:
             self.punished_write_count += 1
@@ -320,6 +429,15 @@ class CueIdentityOrgan:
             )
         trace = self._slot_trace(binding.slot_index)
         logits = self.action_synapses.forward(trace)
+        if self._value_router_enabled:
+            routed = self._nearest_value_action(binding.slot_index, cortical_context)
+            if routed >= 0:
+                # The nearest written key owns the verdict: give that action a
+                # clear, bounded advantage over the blended head so a folded
+                # slot no longer delivers a self-contradicting readout.  The
+                # logits keep their scale (evidence_gain applies downstream).
+                logits = logits.clone()
+                logits[routed] = logits[routed] + float(self.config.identity_organ_evidence_gain)
         probabilities = torch.softmax(logits, dim=0)
         outcome_logits = self.outcome_synapses.forward(trace)
         outcome_probabilities = torch.softmax(outcome_logits, dim=0)
@@ -344,6 +462,10 @@ class CueIdentityOrgan:
         self.bank.visits.zero_()
         self.action_synapses.edge_weight.zero_()
         self.outcome_synapses.edge_weight.zero_()
+        if self._value_router_enabled:
+            self._value_keys.zero_()
+            self._value_actions.fill_(-1)
+            self._value_counts.zero_()
 
     def to_payload(self, *, parent_checkpoint_digest: str) -> dict[str, Any]:
         if not parent_checkpoint_digest:
@@ -373,6 +495,11 @@ class CueIdentityOrgan:
             "replacement_count": self.replacement_count,
             "skipped_write_count": self.skipped_write_count,
             "punished_write_count": self.punished_write_count,
+            "value_router_enabled": self._value_router_enabled,
+            "value_router_max_keys": self._value_router_max_keys,
+            "value_keys": self._value_keys.detach().cpu().clone(),
+            "value_actions": self._value_actions.detach().cpu().clone(),
+            "value_counts": self._value_counts.detach().cpu().clone(),
         }
 
     def load_payload(self, payload: Mapping[str, Any]) -> None:
@@ -429,6 +556,35 @@ class CueIdentityOrgan:
             raise ValueError("identity organ counters cannot be negative")
         if self.punished_write_count > self.write_count:
             raise ValueError("identity organ punished writes cannot exceed writes")
+        # M1-66b value router: restore when the payload carries it; an older
+        # checkpoint (value-absent) simply starts the router empty so reads
+        # fall back to the blended action head exactly as before.
+        self._value_router_enabled = bool(
+            payload.get("value_router_enabled", self._value_router_enabled)
+        )
+        self._value_router_max_keys = int(
+            payload.get("value_router_max_keys", self._value_router_max_keys)
+        )
+        value_keys = payload.get("value_keys")
+        if value_keys is not None:
+            restored = value_keys.detach().to(self.device, dtype=torch.float32)
+            if restored.shape != self._value_keys.shape:
+                raise ValueError("identity organ value router keys shape mismatch")
+            if not bool(torch.isfinite(restored).all()):
+                raise ValueError("identity organ value router keys non-finite")
+            self._value_keys = restored.clone()
+        if "value_actions" in payload:
+            restored_actions = payload["value_actions"].detach().to(self.device, dtype=torch.long)
+            if restored_actions.shape != self._value_actions.shape:
+                raise ValueError("identity organ value router actions shape mismatch")
+            self._value_actions = restored_actions.clone()
+        if "value_counts" in payload:
+            restored_counts = payload["value_counts"].detach().to(self.device, dtype=torch.long)
+            if restored_counts.shape != self._value_counts.shape:
+                raise ValueError("identity organ value router counts shape mismatch")
+            if bool((restored_counts < 0).any()):
+                raise ValueError("identity organ value router counts cannot be negative")
+            self._value_counts = restored_counts.clone()
 
 
 __all__ = [

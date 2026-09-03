@@ -117,6 +117,7 @@ class Taiji:
         learn_motor: bool | None = None,
         use_memory: bool = True,
         use_identity: bool | None = None,
+        use_delayed_memory_verdict: bool = False,
     ) -> TaijiStep:
         """Advance one sensation tick.
 
@@ -125,6 +126,11 @@ class Taiji:
         ``use_identity`` scopes the optional episodic identity evidence to
         action/memory queries; byte prediction and language generation disable
         it explicitly so a cue route cannot contaminate their decoder.
+        ``use_delayed_memory_verdict`` is the M1-66 organ-first gate: when
+        True, a successfully routed cue owns the decision instead of being one
+        input among equals.  Only delayed-memory evaluation paths (B2)
+        enable it; continuous/instantaneous kernels stay on the original motor
+        synthesis so the organ's default presence cannot hijack their intent.
         """
 
         if self._state.pending_action is not None:
@@ -216,7 +222,7 @@ class Taiji:
         )
         if identity_evidence is not None:
             episodic_evidence = episodic_evidence + identity_evidence
-        if identity_addressing_used:
+        if identity_addressing_used and use_delayed_memory_verdict:
             # M1-66: once the identity organ routes a cue, it owns the value
             # readout.  The motor's shared readout and the episodic field's
             # value head both stay chance-level on foundation-scale courses
@@ -228,7 +234,8 @@ class Taiji:
             # prediction/surprise/consolidation) but do not dilute the verdict.
             probabilities = identity_recall.action_probabilities
         elif (
-            identity_recall is not None
+            use_delayed_memory_verdict
+            and identity_recall is not None
             and identity_recall.provenance == IDENTITY_ORGAN_UNBOUND_PROVENANCE
         ):
             # The organ is on the default path and was asked, but no prototype

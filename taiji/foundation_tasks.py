@@ -289,6 +289,12 @@ class DelayedMemoryTask:
         interference_symbols: tuple[int, ...] = (),
     ) -> float:
         correct = 0
+        # M1-66 organ-first only applies to the full integral arm: the ablation
+        # arms exist to show what the organ contributes, so they must keep the
+        # original motor synthesis (lesion semantics) untouched.
+        verdict_enabled = bool(use_memory) and (
+            use_identity is None or bool(use_identity)
+        )
         for query in queries:
             model.reset_dynamics(episode_id=f"m0-b2-query-{query.query_id}")
             model.observe(
@@ -297,6 +303,7 @@ class DelayedMemoryTask:
                 learn_motor=False,
                 use_memory=use_memory,
                 use_identity=use_identity,
+                use_delayed_memory_verdict=verdict_enabled,
             )
             for symbol in query.context:
                 model.observe(
@@ -305,6 +312,7 @@ class DelayedMemoryTask:
                     learn_motor=False,
                     use_memory=use_memory,
                     use_identity=use_identity,
+                    use_delayed_memory_verdict=verdict_enabled,
                 )
             model.observe(
                 query.cue,
@@ -312,6 +320,7 @@ class DelayedMemoryTask:
                 learn_motor=False,
                 use_memory=use_memory,
                 use_identity=use_identity,
+                use_delayed_memory_verdict=verdict_enabled,
             )
             for symbol in interference_symbols:
                 model.observe(
@@ -320,6 +329,7 @@ class DelayedMemoryTask:
                     learn_motor=False,
                     use_memory=use_memory,
                     use_identity=use_identity,
+                    use_delayed_memory_verdict=verdict_enabled,
                 )
             probabilities = model.snapshot().motor_probabilities
             prediction = max(actions, key=lambda action: float(probabilities[action].item()))
