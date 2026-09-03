@@ -32,6 +32,13 @@ class TaijiFabric:
     ) -> None:
         self.config = config
         self.device = torch.device(device)
+        # M1-65: the addressing key is recovered, not recomputed.  When the
+        # identity organ routes a cue successfully, the full cortical context
+        # of that instant is frozen here so a later interference symbol cannot
+        # wash it away; reads then address the frozen snapshot instead of the
+        # interfered live state.  The snapshot is transient (per episode) and
+        # never enters the persistent payload.
+        self._cue_snapshot: torch.Tensor | None = None
         lower_sizes = (config.alphabet_size, *config.region_sizes[:-1])
         self.decoders = tuple(
             SparseSynapses(
@@ -503,8 +510,66 @@ class TaijiFabric:
             for region in regions
         )
 
+    def stamp_cue_snapshot(
+        self,
+        addressing_key: torch.Tensor,
+    ) -> None:
+        """Freeze the current addressing key so interference cannot overwrite it.
+
+        Called by ``Taiji.observe`` when the identity organ routes a cue
+        successfully: the live cortical context of that instant becomes the
+        key every later read addresses against, so symbols observed afterwards
+        (interference) no longer shift it.
+        """
+
+        if addressing_key.shape != (self.config.cortical_context_dim,):
+            raise ValueError(
+                f"cue snapshot must be {self.config.cortical_context_dim}, "
+                f"got {tuple(addressing_key.shape)}"
+            )
+        if not bool(torch.isfinite(addressing_key).all()):
+            raise ValueError("cue snapshot must be finite")
+        self._cue_snapshot = addressing_key.detach().clone()
+
+    def clear_cue_snapshot(self) -> None:
+        """Drop the frozen key; called on dynamics reset so one episode cannot
+        leak its cue into the next."""
+
+        self._cue_snapshot = None
+
+    def addressing_key(self) -> torch.Tensor | None:
+        """Return the frozen cue key, or None when nothing has been frozen."""
+
+        if self._cue_snapshot is None:
+            return None
+        return self._cue_snapshot
+
     def cortical_context(self, regions: Sequence[RegionState]) -> torch.Tensor:
-        """Expose time-separated fast activity and slow trace to an organ."""
+        """Expose the addressing key: fast activity plus slow trace.
+
+        While a cue snapshot is frozen the addressing key is that snapshot --
+        the identity organ and the episodic field keep routing on the cue it
+        bound even after interference symbols have rewritten the live fabric.
+        Without a snapshot this is simply the live two-segment context.
+        """
+
+        if self._cue_snapshot is not None:
+            return self._cue_snapshot
+        return torch.cat(
+            [
+                *(region.activity for region in regions),
+                *(region.trace for region in regions),
+            ],
+            dim=0,
+        )
+
+    def predictive_context(self, regions: Sequence[RegionState]) -> torch.Tensor:
+        """Expose the raw live two-segment context for byte/prediction paths.
+
+        The motor's byte prediction and consolidation decode read this unscaled
+        vector so the frozen addressing snapshot cannot distort them; B1 stays
+        bit-identical because it never sees the cue snapshot.
+        """
 
         return torch.cat(
             [
