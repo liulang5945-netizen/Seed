@@ -216,6 +216,16 @@ class TaijiConfig:
     # shared episodic decoder is also active; it is still additive evidence,
     # never a second final-action owner.
     identity_organ_evidence_gain: float = 16.00
+    # M1-66b: per-slot value router.  A cue slot occasionally folds several
+    # distinct keys (similarity at the write threshold but different context),
+    # and a single blended value head then contradicts itself on half the
+    # reads.  When enabled, the organ keeps, per slot, a bounded table of the
+    # keys actually written there plus the action each was written under, and
+    # the read verdict is the nearest key's stored action instead of the
+    # blended head.  The slot allocation itself is untouched, so M1-63's
+    # reward-orthogonality (a punished write owns the same slots) is preserved.
+    identity_organ_value_router_enabled: bool = True
+    identity_organ_value_router_max_keys: int = 64
     # Write eligibility baseline for the organ's value heads.  The organ sits
     # on the default path now, so every settled action reaches it, including
     # punished ones.  ``modulation = reward - identity_organ_write_baseline``

@@ -1,6 +1,6 @@
 {
   "format": "taiji-native-m1-64-foundation-memory-v1",
-  "status": "blocked",
+  "status": "gate_passed",
   "seeds": [
     11,
     29,
@@ -8,10 +8,7 @@
   ],
   "manifest_path": "E:\\Seed\\plans\\manifests\\taiji_foundation_baseline_v1.json",
   "manifest_digest": "c5f178d4e18018f5085c3f56d1ae6d7596df304aee975f81c12db3b72e7e74f8",
-  "blocking_gates": [
-    "memory_ability_established",
-    "worst_seed_margin_positive"
-  ],
+  "blocking_gates": [],
   "gates": {
     "train_units_meet_manifest": true,
     "holdout_units_meet_manifest": true,
@@ -24,7 +21,7 @@
     "beats_memory_lesion_every_seed": true,
     "beats_identity_lesion_every_seed": true,
     "beats_frozen_parent_every_seed": true,
-    "worst_seed_margin_positive": false,
+    "worst_seed_margin_positive": true,
     "task_measurement_passed": true,
     "holdout_updates_zero": true,
     "retention_updates_zero": true,
@@ -34,7 +31,7 @@
     "b3_world_transition_not_regressed": true,
     "b4_goal_action_not_regressed": true,
     "b5_continual_learning_not_regressed": true,
-    "memory_ability_established": false
+    "memory_ability_established": true
   },
   "corpus": {
     "sample_counts": {
@@ -74,7 +71,7 @@
     "status": "passed",
     "primary_metric": "recall_accuracy",
     "metric_direction": "higher_is_better",
-    "metric_value": 0.655,
+    "metric_value": 0.715,
     "baseline_metrics": {
       "random": 0.5,
       "frozen_parent": 0.505,
@@ -87,10 +84,10 @@
   },
   "margins": {
     "taiji": {
-      "mean": -0.0002545248221011804,
-      "std": 0.00780574755451041,
-      "min": -0.010519888903311564,
-      "max": 0.008394016649320983
+      "mean": 0.5449998737040908,
+      "std": 0.11923363440339803,
+      "min": 0.40999990693353894,
+      "max": 0.6999998347380907
     },
     "memory_lesion": {
       "mean": 7.935381339242062e-06,
@@ -105,18 +102,18 @@
       "max": 0.03038573492784053
     },
     "retention": {
-      "mean": -0.0005004425324546957,
-      "std": 0.005702173119844653,
-      "min": -0.007631760955156875,
-      "max": 0.006325644656714603
+      "mean": 0.06999998134421409,
+      "std": 0.03488074290600509,
+      "min": 0.02499998743002542,
+      "max": 0.10999997113857762
     }
   },
   "accuracy": {
     "taiji": {
-      "mean": 0.6883333333333334,
-      "std": 0.023921166824012175,
-      "min": 0.655,
-      "max": 0.71
+      "mean": 0.7683333333333332,
+      "std": 0.06510674994874871,
+      "min": 0.715,
+      "max": 0.86
     },
     "memory_lesion": {
       "mean": 0.5016666666666666,
@@ -131,10 +128,10 @@
       "max": 0.54
     },
     "retention": {
-      "mean": 0.515,
-      "std": 0.008164965809277268,
+      "mean": 0.545,
+      "std": 0.028577380332470405,
       "min": 0.505,
-      "max": 0.525
+      "max": 0.57
     },
     "frozen_parent": {
       "mean": 0.505,
@@ -144,8 +141,8 @@
     }
   },
   "worst_seed": {
-    "taiji_accuracy": 0.655,
-    "taiji_margin_mean": -0.010519888903311564,
+    "taiji_accuracy": 0.715,
+    "taiji_margin_mean": 0.40999990693353894,
     "retention_accuracy": 0.505
   },
   "neighbour_abilities": {
@@ -188,12 +185,12 @@
       "channels": {
         "taiji": {
           "count": 200,
-          "accuracy": 0.655,
-          "margin_mean": 0.008394016649320983,
-          "margin_std": 0.1056128315688963,
-          "margin_min": -0.3951101233895951,
-          "margin_max": 0.3951101233895951,
-          "positive_margin_share": 0.595
+          "accuracy": 0.715,
+          "margin_mean": 0.40999990693353894,
+          "margin_std": 0.8555113502807468,
+          "margin_min": -0.9999998768532916,
+          "margin_max": 0.9999999024142274,
+          "positive_margin_share": 0.655
         },
         "memory_lesion": {
           "count": 200,
@@ -215,12 +212,12 @@
         },
         "retention": {
           "count": 200,
-          "accuracy": 0.515,
-          "margin_mean": -0.00019521129892181494,
-          "margin_std": 0.1316206138848737,
-          "margin_min": -0.3951101233895951,
-          "margin_max": 0.3951101233895951,
-          "positive_margin_share": 0.165
+          "accuracy": 0.57,
+          "margin_mean": 0.10999997113857762,
+          "margin_std": 0.5638260888308335,
+          "margin_min": -0.9999999024142274,
+          "margin_max": 0.9999999024142274,
+          "positive_margin_share": 0.22
         },
         "frozen_parent": {
           "count": 200,
@@ -241,19 +238,19 @@
         "train"
       ],
       "checkpoint_preflight": {
-        "digest": "635e4e8446ef7b5dfd1a84965927cd917200460cbc86475fd93c79e47725a935",
+        "digest": "803fdfae87db5a0ea3324730885c6650af410103ba35bf012bb1ad2c7be0d628",
         "same_process_digest_matches": true,
         "fresh_process_digest_matches": true
       },
       "checkpoint_after_train": {
-        "digest": "21ad300b7d770a2c4681565750e2d8c5d30d9901987e603c5f911c0ee0c1bccf",
+        "digest": "26335ddd8170728a1ae8cf65612d3bcdbf306d419b2b768f30a87f7d52fa748e",
         "same_process_digest_matches": true,
         "fresh_process_digest_matches": true
       },
       "identity_organ": {
         "present": true,
         "checkpoint_format": "taiji-native-identity-organ-v2",
-        "version": 2,
+        "version": 3,
         "capacity": 128,
         "write_count": 1000,
         "replacement_count": 678,
@@ -271,19 +268,19 @@
         "keys_per_slot": 7.8125
       },
       "parameter_count": 180417,
-      "train_seconds": 9.360823500028346
+      "train_seconds": 9.578273100021761
     },
     {
       "seed": 29,
       "channels": {
         "taiji": {
           "count": 200,
-          "accuracy": 0.7,
-          "margin_mean": -0.010519888903311564,
-          "margin_std": 0.07412851239823676,
-          "margin_min": -0.32338579434188836,
-          "margin_max": 0.25125717525106356,
-          "positive_margin_share": 0.645
+          "accuracy": 0.86,
+          "margin_mean": 0.6999998347380907,
+          "margin_std": 0.64807392169442,
+          "margin_min": -0.9999998539224516,
+          "margin_max": 0.9999998653195028,
+          "positive_margin_share": 0.805
         },
         "memory_lesion": {
           "count": 200,
@@ -305,12 +302,12 @@
         },
         "retention": {
           "count": 200,
-          "accuracy": 0.525,
-          "margin_mean": 0.006325644656714603,
-          "margin_std": 0.047264744571843355,
-          "margin_min": -0.25125717525106356,
-          "margin_max": 0.32338579434188836,
-          "positive_margin_share": 0.345
+          "accuracy": 0.56,
+          "margin_mean": 0.07499998546403924,
+          "margin_std": 0.8242418906009377,
+          "margin_min": -0.9999998653195028,
+          "margin_max": 0.9999998849271273,
+          "positive_margin_share": 0.38
         },
         "frozen_parent": {
           "count": 200,
@@ -331,19 +328,19 @@
         "train"
       ],
       "checkpoint_preflight": {
-        "digest": "6c0eb7f56fdd93a9b6126d6bf419f071470302765ec5e4092d37a52918625cb6",
+        "digest": "21029054320bc563011b947d1ff52bc9e27c3f3bc387cab9787d12ee328698b3",
         "same_process_digest_matches": true,
         "fresh_process_digest_matches": true
       },
       "checkpoint_after_train": {
-        "digest": "5d6c86c9aa38b510a3d1c762f8c453a30839902ddbf33d28772a1619569194b0",
+        "digest": "4a89326c938790666891e1d71ad7072a9e98af8d39e9473a9cc9ab0405f8311d",
         "same_process_digest_matches": true,
         "fresh_process_digest_matches": true
       },
       "identity_organ": {
         "present": true,
         "checkpoint_format": "taiji-native-identity-organ-v2",
-        "version": 2,
+        "version": 3,
         "capacity": 128,
         "write_count": 1000,
         "replacement_count": 625,
@@ -361,19 +358,19 @@
         "keys_per_slot": 7.8125
       },
       "parameter_count": 180417,
-      "train_seconds": 9.414023699995596
+      "train_seconds": 9.550115500052925
     },
     {
       "seed": 47,
       "channels": {
         "taiji": {
           "count": 200,
-          "accuracy": 0.71,
-          "margin_mean": 0.00136229778768704,
-          "margin_std": 0.09737980701159123,
-          "margin_min": -0.6228945727285025,
-          "margin_max": 0.6228945727285025,
-          "positive_margin_share": 0.54
+          "accuracy": 0.73,
+          "margin_mean": 0.5249998794406426,
+          "margin_std": 0.5651325833417995,
+          "margin_min": -0.9999998823981019,
+          "margin_max": 0.9999998823981019,
+          "positive_margin_share": 0.56
         },
         "memory_lesion": {
           "count": 200,
@@ -396,10 +393,10 @@
         "retention": {
           "count": 200,
           "accuracy": 0.505,
-          "margin_mean": -0.007631760955156875,
-          "margin_std": 0.1404924919998495,
-          "margin_min": -0.6228945727285025,
-          "margin_max": 0.2006146205929985,
+          "margin_mean": 0.02499998743002542,
+          "margin_std": 0.5868345475967885,
+          "margin_min": -0.9999999477013298,
+          "margin_max": 0.9999998501450709,
           "positive_margin_share": 0.185
         },
         "frozen_parent": {
@@ -421,19 +418,19 @@
         "train"
       ],
       "checkpoint_preflight": {
-        "digest": "8c0a4b94f160ed760521ed9cee28e9a0a8c2aea8696bebc755af3c66833c8f0b",
+        "digest": "c3ff98505bf1d80affedbc72342a57305cfcbcb209cedd3a6102180f524fedc1",
         "same_process_digest_matches": true,
         "fresh_process_digest_matches": true
       },
       "checkpoint_after_train": {
-        "digest": "929010d4cc054829749b30e5ad769c41bc669358ed23a3eaf6705695cba20dc3",
+        "digest": "28a4f44225e60bd607fef759c51ab5a92ddce6e4dcd0a958f9057829387d8199",
         "same_process_digest_matches": true,
         "fresh_process_digest_matches": true
       },
       "identity_organ": {
         "present": true,
         "checkpoint_format": "taiji-native-identity-organ-v2",
-        "version": 2,
+        "version": 3,
         "capacity": 128,
         "write_count": 1000,
         "replacement_count": 777,
@@ -451,12 +448,12 @@
         "keys_per_slot": 7.8125
       },
       "parameter_count": 180417,
-      "train_seconds": 9.404164500010666
+      "train_seconds": 9.560633899993263
     }
   ],
   "prohibited_partitions_used": [],
   "holdout_updates": 0,
   "retention_updates": 0,
   "substrate_changed": false,
-  "cpu_seconds": 3261.4588820000063
+  "cpu_seconds": 3127.0063448
 }
