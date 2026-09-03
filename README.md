@@ -11,7 +11,10 @@ seeds against explicit baselines (random / frozen parent / simple rule / hash-on
 holdout and retention read-only, re-open the checkpoint in a **fresh process**, and compare
 content digests. Failures are reported as failures.
 
-中文版介绍：[README.zh-CN.md](README.zh-CN.md)（Chinese introduction）
+## Language / 语言
+
+- **简体中文**：请阅读 [README.zh-CN.md](README.zh-CN.md)——中文项目介绍，与英文版逐条一致
+- **English**: continue below
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
