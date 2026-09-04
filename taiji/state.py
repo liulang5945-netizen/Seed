@@ -210,6 +210,10 @@ class TaijiState:
     memory: MemoryState
     motor_context: torch.Tensor
     motor_probabilities: torch.Tensor
+    # The context space is shared and fixed, but the probabilities belong to
+    # one explicit consumer.  This prevents a predictive F1 tick from being
+    # reused accidentally as an F4 action policy.
+    readout_kind: str
     last_symbol: int | None
     pending_action: PendingAction | None
     pending_experience: PendingExperience | None
@@ -223,6 +227,7 @@ class TaijiState:
             memory=self.memory.clone(),
             motor_context=self.motor_context.detach().clone(),
             motor_probabilities=self.motor_probabilities.detach().clone(),
+            readout_kind=str(self.readout_kind),
             last_symbol=None if self.last_symbol is None else int(self.last_symbol),
             pending_action=(None if self.pending_action is None else self.pending_action.clone()),
             pending_experience=(
@@ -239,6 +244,7 @@ class TaijiState:
             "memory": self.memory.to_payload(),
             "motor_context": self.motor_context.detach().cpu().clone(),
             "motor_probabilities": self.motor_probabilities.detach().cpu().clone(),
+            "readout_kind": str(self.readout_kind),
             "last_symbol": self.last_symbol,
             "pending_action": (
                 None if self.pending_action is None else self.pending_action.to_payload()
@@ -260,6 +266,9 @@ class TaijiState:
             memory=MemoryState.from_payload(payload["memory"], device=device),
             motor_context=payload["motor_context"].detach().to(device).clone(),
             motor_probabilities=(payload["motor_probabilities"].detach().to(device).clone()),
+            # v8 checkpoints predate the F1/F4 split. Their state belongs to
+            # the only available owner, ByteMotor, so preserve that semantics.
+            readout_kind=str(payload.get("readout_kind", "action")),
             last_symbol=(
                 None if payload.get("last_symbol") is None else int(payload["last_symbol"])
             ),

@@ -1,4 +1,10 @@
+from copy import deepcopy
+
+import pytest
+import torch
+
 from taiji import Taiji, TaijiConfig
+from taiji.internalization import content_digest
 
 
 def test_native_taiji_learns_a_raw_byte_cycle_online() -> None:
@@ -56,3 +62,144 @@ def test_byte_interfaces_isolate_long_term_memory_by_default(monkeypatch) -> Non
     model.score_bytes(b"abcd", use_memory=True)
     assert memory_flags
     assert all(memory_flags)
+
+
+def test_byte_learning_has_a_dedicated_predictive_readout_and_preserves_action_memory_reads() -> None:
+    """F1 may improve byte prediction without rewriting F2/F4 value readouts.
+
+    M2-2d/e established that the old shared ``ByteMotor`` was trained both as
+    a next-byte decoder and as the action policy.  This fixture deliberately
+    enables the identity organ, then verifies the narrower contract required
+    for continuous sequence learning: byte updates belong to a predictive
+    readout; action policy and identity key/value state are read-only.
+    """
+
+    data = b"abcd" * 16
+    model = Taiji(
+        TaijiConfig(
+            region_sizes=(32,),
+            synapse_fan_in=8,
+            motor_fan_in=16,
+            memory_units=32,
+            memory_fan_in=8,
+            memory_readout_fan_in=16,
+            memory_meta_dim=16,
+            identity_organ_capacity=16,
+            identity_organ_value_router_max_keys=8,
+            seed=29,
+        )
+    )
+    assert model.identity_organ is not None
+
+    action_before = content_digest(model.motor.to_payload())
+    identity_before = content_digest(
+        model.identity_organ.to_payload(parent_checkpoint_digest="sequence-readout-test")
+    )
+    predictive_before = model.predictive_readout.synapses.edge_weight.clone()
+    before = model.score_bytes(data)
+
+    model.learn_bytes(data, epochs=80)
+
+    after = model.score_bytes(data)
+    assert content_digest(model.motor.to_payload()) == action_before
+    assert content_digest(
+        model.identity_organ.to_payload(parent_checkpoint_digest="sequence-readout-test")
+    ) == identity_before
+    assert not torch.equal(
+        model.predictive_readout.synapses.edge_weight, predictive_before
+    )
+    assert after["mean_surprise"] < before["mean_surprise"]
+
+
+def test_legacy_shared_motor_checkpoint_migrates_to_a_separate_predictive_readout() -> None:
+    """An existing F1/F4 checkpoint must remain loadable without relearning."""
+
+    model = Taiji(
+        TaijiConfig(
+            region_sizes=(32,),
+            synapse_fan_in=8,
+            motor_fan_in=16,
+            memory_units=32,
+            memory_fan_in=8,
+            memory_readout_fan_in=16,
+            memory_meta_dim=16,
+            identity_organ_capacity=16,
+            identity_organ_value_router_max_keys=8,
+            seed=31,
+        )
+    )
+    for symbol in b"action-owner":
+        model.observe(symbol, learn=True)
+
+    legacy = deepcopy(model.checkpoint())
+    legacy["format"] = "taiji-native-v8"
+    legacy.pop("predictive_readout")
+    legacy["config"].pop("predictive_readout_seed_offset")
+    legacy["state"]["version"] = 5
+    legacy["state"].pop("readout_kind")
+    assert "identity_organ" in legacy
+    legacy["identity_organ"]["lineage"]["parent_checkpoint_digest"] = content_digest(
+        {
+            key: legacy[key]
+            for key in Taiji._checkpoint_core_keys(include_predictive=False)
+        }
+    )
+
+    restored = Taiji.from_checkpoint(legacy)
+
+    assert restored.snapshot().readout_kind == "action"
+    migrated_payload = restored.checkpoint()
+    assert migrated_payload["format"] == "taiji-native-v9"
+    assert migrated_payload["state"]["version"] == 6
+    assert torch.equal(
+        restored.motor.synapses.edge_weight, model.motor.synapses.edge_weight
+    )
+    assert torch.equal(restored.motor.bias, model.motor.bias)
+    assert torch.equal(
+        restored.predictive_readout.synapses.edge_weight,
+        model.motor.synapses.edge_weight,
+    )
+    assert torch.equal(restored.predictive_readout.bias, model.motor.bias)
+
+    migrated = Taiji.from_checkpoint(restored.checkpoint())
+    assert torch.equal(
+        migrated.predictive_readout.synapses.edge_weight,
+        restored.predictive_readout.synapses.edge_weight,
+    )
+
+
+def test_cross_readout_rejection_cannot_commit_a_pending_action_memory_write() -> None:
+    """A rejected F4→F1 switch must fail before any delayed write commits."""
+
+    model = Taiji(
+        TaijiConfig(
+            region_sizes=(32,),
+            synapse_fan_in=8,
+            motor_fan_in=16,
+            memory_units=32,
+            memory_fan_in=8,
+            memory_readout_fan_in=16,
+            memory_meta_dim=16,
+            seed=37,
+        )
+    )
+    model.observe(ord("a"), learn=True, readout="action")
+    model.act((ord("b"), ord("c")), sample=False)
+    model.settle_action(1.0, learn=True)
+    memory_before = content_digest(model.memory.to_payload())
+    identity_before = (
+        None
+        if model.identity_organ is None
+        else content_digest(
+            model.identity_organ.to_payload(parent_checkpoint_digest="readout-switch")
+        )
+    )
+
+    with pytest.raises(RuntimeError, match="readout changed"):
+        model.observe(ord("d"), learn=True, readout="predictive")
+
+    assert content_digest(model.memory.to_payload()) == memory_before
+    if model.identity_organ is not None:
+        assert content_digest(
+            model.identity_organ.to_payload(parent_checkpoint_digest="readout-switch")
+        ) == identity_before

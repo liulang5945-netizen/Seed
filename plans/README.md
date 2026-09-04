@@ -9,7 +9,7 @@
 - M0 完成可信测量后，无论模型分数高低都必须进入 M1；低分是训练目标，不是继续外围建设的理由。
 - MiniMind 只作为小模型训练工程参考：采纳分阶段训练、分级数据、checkpoint/resume、独立评估和推理入口，不把 Transformer 复制成 Taiji 核心。
 - E1～E7 的完成状态保持有效但不代表通用能力；E8 bounded replay 冻结到 M4；真实第三方 MCP 连接冻结到 M5；CUDA 保持 `hardware-blocked`。
-- M2-1 已排除 F2→F1 的错误读出串扰；M2-2a 已建立 content-addressed 的 phase-A/phase-B 真实语料隔离，M2-2b/2c 已完成可恢复 sequence-only runner 与 seed 11 checkpoint fresh-process 预检。当前唯一开发步骤是 M2-2d：运行真实 phase-B sequence-only、no-replay course，只有测到真实旧能力下降才允许 bounded replay。
+- M2-1 已排除 F2→F1 的错误读出串扰；M2-2a～2c 已建立 content-addressed 的 phase-A/phase-B 真实语料隔离、可恢复 sequence-only runner 与 seed 11 checkpoint fresh-process 预检；M2-2d/e 又实测排除了“缺少 byte replay”解释。M2-2f 已完成 F1 predictive readout 隔离、v8/v1→v9/v2 断点迁移与真实旧 parent 的只读预检；当前唯一开发步骤是：在干净提交 revision 上运行 seed 11 的真实 phase-B sequence-only course，以旧 goal／memory 指标和逐位 readout digest 共同 Gate 其结果。
 
 ## 当前权威文档
 

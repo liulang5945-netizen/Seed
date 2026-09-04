@@ -241,3 +241,105 @@ class ByteMotor:
         self.bias = bias
         self.reward_baseline = float(payload["reward_baseline"])
         self.reward_updates = int(payload["reward_updates"])
+
+
+class BytePredictiveReadout:
+    """Dedicated F1 next-byte decoder over the motor's fixed cortical basis.
+
+    ``ByteMotor`` is an action policy: its reward update owns F4 decisions and
+    must not be repurposed as a language loss.  The predictive readout shares
+    only the *fixed* cortical-to-context receptor basis, supplied by the
+    caller, while owning separate physical synapses and a bias for F1 local
+    prediction error.  That gives sequence learning a real plasticity target
+    without rewriting action policy or episodic value evidence.
+
+    The legacy checkpoint migration intentionally seeds this decoder from the
+    former shared motor decoder.  It preserves an already learned F1 surface
+    at the migration boundary; all subsequent byte updates are isolated here.
+    """
+
+    PAYLOAD_FORMAT = "taiji-byte-predictive-readout-v1"
+
+    def __init__(
+        self,
+        config: TaijiConfig,
+        *,
+        generator: torch.Generator,
+        device: torch.device | str = "cpu",
+    ) -> None:
+        self.config = config
+        self.device = torch.device(device)
+        self.synapses = SparseSynapses(
+            config.alphabet_size,
+            config.motor_context_dim,
+            config.motor_context_dim,
+            generator=generator,
+            init_scale=config.weight_init_scale,
+            max_weight_norm=config.max_weight_norm,
+            device=self.device,
+        )
+        self.bias = torch.zeros(config.alphabet_size, device=self.device)
+
+    def probabilities(
+        self,
+        context: torch.Tensor,
+        *,
+        episodic_evidence: torch.Tensor | None = None,
+    ) -> torch.Tensor:
+        evidence = self.synapses.forward(context) + self.bias
+        if episodic_evidence is not None:
+            if episodic_evidence.shape != (self.config.alphabet_size,):
+                raise ValueError("episodic evidence dimension mismatch")
+            evidence = evidence + episodic_evidence.to(self.device)
+        evidence = evidence / float(self.config.motor_temperature)
+        return torch.softmax(evidence, dim=0)
+
+    @torch.no_grad()
+    def learn(
+        self,
+        context: torch.Tensor,
+        predicted: torch.Tensor,
+        observed_symbol: int,
+    ) -> torch.Tensor:
+        target = torch.zeros(self.config.alphabet_size, device=self.device)
+        target[int(observed_symbol)] = 1.0
+        error = target - predicted.to(self.device)
+        self.synapses.local_update(
+            error,
+            context,
+            # M2-2f preserves the old F1 local-update scale while moving its
+            # destination.  A future evidence-backed schedule may add a
+            # dedicated rate, but the migration itself must not silently tune
+            # the training semantics it is measuring.
+            learning_rate=self.config.motor_learning_rate,
+            weight_decay=self.config.synapse_decay,
+        )
+        self.bias.add_(self.config.bias_learning_rate * error)
+        self.bias.sub_(self.bias.mean())
+        self.bias.clamp_(-self.config.max_weight_norm, self.config.max_weight_norm)
+        return error
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": self.PAYLOAD_FORMAT,
+            "synapses": self.synapses.to_payload(),
+            "bias": self.bias.detach().cpu().clone(),
+        }
+
+    def load_payload(self, payload: Mapping[str, Any]) -> None:
+        if payload.get("format") != self.PAYLOAD_FORMAT:
+            raise ValueError("unsupported predictive readout payload")
+        self.synapses.load_payload(payload["synapses"])
+        bias = payload["bias"].detach().to(self.device).clone()
+        if bias.shape != (self.config.alphabet_size,):
+            raise ValueError("predictive readout bias shape does not match architecture")
+        self.bias = bias
+
+    def load_legacy_motor_payload(self, payload: Mapping[str, Any]) -> None:
+        """Copy the pre-M2-2f shared decoder into this isolated F1 owner."""
+
+        self.synapses.load_payload(payload["synapses"])
+        bias = payload["bias"].detach().to(self.device).clone()
+        if bias.shape != (self.config.alphabet_size,):
+            raise ValueError("legacy motor bias shape does not match architecture")
+        self.bias = bias

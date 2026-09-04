@@ -210,6 +210,7 @@ from .foundation_training import (
     FOUNDATION_TRAINING_PROFILE_BUDGETS,
     FOUNDATION_TRAINING_PROFILES,
     FOUNDATION_TRAINING_VERSION,
+    JOINT_SEQUENCE_READOUT_MODE,
     JOINT_TRAINING_BASE_PHASES,
     JOINT_TRAINING_FORMAT,
     JOINT_TRAINING_PHASES,
@@ -399,7 +400,7 @@ from .neuron_region import (
     AdaptiveNeuronRegion,
     NeuronRegionDynamics,
 )
-from .organs import ByteMotor, ByteSensor, SparseReceptorBank
+from .organs import ByteMotor, BytePredictiveReadout, ByteSensor, SparseReceptorBank
 from .perception import LearnedPerception
 from .planning import (
     PLANNING_CHECKPOINT_FORMAT,
@@ -638,6 +639,7 @@ from .world_learning import (
 
 __all__ = [
     "ByteMotor",
+    "BytePredictiveReadout",
     "ByteSensor",
     "ADAPTIVE_NEURON_REGION_CHECKPOINT_FORMAT",
     "AdaptiveNeuronRegion",
@@ -667,6 +669,7 @@ __all__ = [
     "JOINT_TRAINING_FORMAT",
     "JOINT_TRAINING_PHASES",
     "JOINT_TRAINING_REPLAY_PHASES",
+    "JOINT_SEQUENCE_READOUT_MODE",
     "JOINT_TRAINING_VERSION",
     "FoundationTrainingDataset",
     "FoundationTrainingRun",
