@@ -391,7 +391,7 @@ def test_joint_training_retries_transient_checkpoint_replace_lock(monkeypatch) -
     assert target.is_file()
 
 
-def test_joint_sequence_only_continuation_protects_phase_a_metrics() -> None:
+def test_joint_sequence_only_continuation_protects_phase_a_metrics(monkeypatch) -> None:
     phase_a, phase_b = _phase_datasets()
     memory_corpus = build_memory_corpus(count=4)
     world_corpus = build_world_corpus(count=4)
@@ -414,10 +414,19 @@ def test_joint_sequence_only_continuation_protects_phase_a_metrics() -> None:
         epochs=1,
         chunk_bytes=32,
         checkpoint_interval=2,
+        metric_interval=1_000,
         world_repeats=1,
         protected_dataset=phase_a,
         training_phases=("sequence",),
     )
+    original_measure = run._measure_metrics
+    measurements = {"count": 0}
+
+    def count_terminal_measurement() -> dict[str, float]:
+        measurements["count"] += 1
+        return original_measure()
+
+    monkeypatch.setattr(run, "_measure_metrics", count_terminal_measurement)
 
     report = run.run()
 
@@ -425,6 +434,7 @@ def test_joint_sequence_only_continuation_protects_phase_a_metrics() -> None:
     assert report["protected_dataset_digest"] == phase_a.digest
     assert report["world_online_updates"] == initial_world_updates
     assert report["global_step"] == len(phase_b.train) // 32
+    assert measurements["count"] == 1
     assert all(item.get("train_kind") in {None, "sequence"} for item in report["history"])
     for key in (
         "protected_sequence_holdout_bpb",
