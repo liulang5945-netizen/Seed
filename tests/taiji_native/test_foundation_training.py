@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -52,6 +53,80 @@ def _config() -> TaijiConfig:
         concept_capacity=8,
         seed=11,
     )
+
+
+def test_phase_b_dataset_excludes_every_selected_phase_a_record() -> None:
+    """F5 cannot call a reused source stream a new language course."""
+
+    corpus = Path(".seed_test_tmp") / "m2-phase-exclusion.jsonl"
+    corpus.parent.mkdir(parents=True, exist_ok=True)
+
+    def record_for_phase_a_partition(
+        partition: str,
+        label: str,
+        *,
+        late_marker: str = "",
+    ) -> dict[str, str]:
+        for attempt in range(10_000):
+            prefix = f"<{label}:{attempt:04d}>"
+            text = prefix + ("x" * 256) + late_marker
+            text += "x" * (1_000 - len(text))
+            if FoundationTrainingDataset._partition_for_text(text, 11) == partition:
+                return {"text": text}
+        raise AssertionError(f"could not find phase-A {partition} record for {label}")
+
+    # Four 1,000-byte train records leave only 96 bytes in phase A. The fifth
+    # selected record therefore contributes a prefix only; its late marker
+    # must not leak into B through the unused suffix of that record.
+    phase_a_only_suffix = "<phase-a-only-suffix>"
+    records = [
+        record_for_phase_a_partition("train", f"train-{index}")
+        for index in range(4)
+    ]
+    records.append(
+        record_for_phase_a_partition(
+            "train",
+            "partial-train",
+            late_marker=phase_a_only_suffix,
+        )
+    )
+    records.extend(
+        record_for_phase_a_partition("holdout", f"holdout-{index}")
+        for index in range(2)
+    )
+    records.extend(
+        record_for_phase_a_partition("retention", f"retention-{index}")
+        for index in range(2)
+    )
+    records.extend(
+        {"text": f"<phase-b-candidate:{index:04d}>" + ("z" * 968)}
+        for index in range(256)
+    )
+    corpus.write_text(
+        "\n".join(json.dumps(record) for record in records) + "\n",
+        encoding="utf-8",
+    )
+
+    phase_a = FoundationTrainingDataset.from_jsonl(
+        (corpus,),
+        profile="smoke",
+        partition_seed=11,
+    )
+    phase_b = FoundationTrainingDataset.from_jsonl(
+        (corpus,),
+        profile="smoke",
+        partition_seed=29,
+        exclude_dataset=phase_a,
+    )
+
+    phase_a_bytes = phase_a.train + phase_a.holdout + phase_a.retention
+    phase_b_bytes = phase_b.train + phase_b.holdout + phase_b.retention
+
+    assert phase_b.excluded_dataset_digest == phase_a.digest
+    assert b"<partial-train:" in phase_a_bytes
+    assert b"<partial-train:" not in phase_b_bytes
+    assert phase_a_only_suffix.encode() not in phase_a_bytes
+    assert phase_a_only_suffix.encode() not in phase_b_bytes
 
 
 def test_foundation_training_saves_and_resumes_from_disk_checkpoint() -> None:
