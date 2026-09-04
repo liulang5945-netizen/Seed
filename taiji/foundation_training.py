@@ -49,11 +49,12 @@ MEMORY_TRAINING_VERSION = 1
 WORLD_ACTION_TRAINING_FORMAT = "taiji-native-world-action-training-v1"
 WORLD_ACTION_TRAINING_VERSION = 1
 JOINT_TRAINING_FORMAT = "taiji-native-joint-training-v1"
-# v2 records the F1/F4 readout ownership contract.  v1 remains readable so
-# established courses can become explicit M2-2f continuations rather than
-# being silently discarded or resumed with their old shared-decoder semantics.
-JOINT_TRAINING_VERSION = 2
-JOINT_TRAINING_LEGACY_VERSIONS = frozenset({1})
+# v3 records whether F1 sequence learning may write the shared fabric.  v2
+# established the F1/F4 readout boundary and remains resumable with its
+# implicit fabric-plastic behaviour; v1 remains readable so established courses
+# can become explicit M2-2f/M2-2g continuations rather than being discarded.
+JOINT_TRAINING_VERSION = 3
+JOINT_TRAINING_LEGACY_VERSIONS = frozenset({1, 2})
 JOINT_TRAINING_BASE_PHASES = ("sequence", "memory", "world", "goal")
 JOINT_TRAINING_REPLAY_PHASES = ("replay", "replay-memory")
 JOINT_TRAINING_PHASES = JOINT_TRAINING_BASE_PHASES + JOINT_TRAINING_REPLAY_PHASES
@@ -1043,6 +1044,12 @@ def _sequence_readout_preserved(
     return {key: before.get(key) == after.get(key) for key in keys}
 
 
+def _sequence_fabric_digest(model: Taiji) -> str:
+    """Address the shared persistent representation below F1/F2/F4 readers."""
+
+    return content_digest(model.fabric.to_payload())
+
+
 def _world_action_error(
     learner: WorldDynamicsLearner,
     cases: Sequence[Any],
@@ -1570,6 +1577,7 @@ class JointTrainingRun:
         world_repeats: int = 8,
         protected_dataset: FoundationTrainingDataset | None = None,
         training_phases: Iterable[str] | None = None,
+        sequence_fabric_learning: bool = True,
         replay_dataset: FoundationTrainingDataset | None = None,
         replay_epochs: int = 1,
         replay_memory_corpus: DelayedMemoryCorpus | None = None,
@@ -1655,6 +1663,8 @@ class JointTrainingRun:
         )
         if metric_interval is not None and int(metric_interval) <= 0:
             raise ValueError("joint metric_interval must be positive")
+        if not isinstance(sequence_fabric_learning, bool):
+            raise TypeError("joint sequence fabric learning must be a bool")
         self.model = model
         self.world_learner = world_learner
         self.dataset = dataset
@@ -1673,6 +1683,8 @@ class JointTrainingRun:
         self.world_repeats = int(world_repeats)
         self.protected_dataset = protected_dataset
         self.training_phases = normalized_training_phases
+        self.training_version = JOINT_TRAINING_VERSION
+        self.sequence_fabric_learning = sequence_fabric_learning
         self.replay_dataset = replay_dataset
         self.replay_epochs = int(replay_epochs)
         self.replay_memory_corpus = replay_memory_corpus
@@ -1711,12 +1723,14 @@ class JointTrainingRun:
         self.sequence_readout_mode = JOINT_SEQUENCE_READOUT_MODE
         self.sequence_readout_parent = _sequence_readout_contract(model)
         self.sequence_readout_phase_checks: list[dict[str, Any]] = []
+        self.sequence_fabric_parent = _sequence_fabric_digest(model)
+        self.sequence_fabric_phase_checks: list[dict[str, Any]] = []
 
     @property
     def corpus_digest(self) -> str:
         payload = {
             "format": JOINT_TRAINING_FORMAT,
-            "version": JOINT_TRAINING_VERSION,
+            "version": self.training_version,
             "dataset_digest": self.dataset.digest,
             "memory_digest": _memory_corpus_digest(self.memory_corpus),
             "world_action_digest": _world_action_corpus_digest(
@@ -1733,6 +1747,8 @@ class JointTrainingRun:
             self.replay_dataset, self.replay_memory_corpus
         ):
             payload["training_phases"] = list(self.training_phases)
+        if self.training_version >= 3:
+            payload["sequence_fabric_learning"] = self.sequence_fabric_learning
         return content_digest(payload)
 
     @property
@@ -1833,6 +1849,22 @@ class JointTrainingRun:
                 "sequence learning changed protected action/memory readouts: " + changed
             )
 
+    def _record_sequence_fabric_phase(self, *, phase: str, before: str) -> None:
+        """Audit the M2-2g shared-context write boundary for every F1 phase."""
+
+        after = _sequence_fabric_digest(self.model)
+        preserved = before == after
+        record = {
+            "epoch": self.epoch,
+            "phase": phase,
+            "before": before,
+            "after": after,
+            "preserved": preserved,
+        }
+        self.sequence_fabric_phase_checks.append(record)
+        if not self.sequence_fabric_learning and not preserved:
+            raise RuntimeError("predictor-only sequence learning changed the shared fabric")
+
     def _sequence_only_keep_gate(
         self,
         metrics: Mapping[str, float],
@@ -1866,7 +1898,7 @@ class JointTrainingRun:
     def _checkpoint_payload(self) -> dict[str, Any]:
         payload: dict[str, Any] = {
             "format": JOINT_TRAINING_FORMAT,
-            "version": JOINT_TRAINING_VERSION,
+            "version": self.training_version,
             "model_tier": self.model_tier,
             "model": self.model.checkpoint(),
             "world_learner": _world_learner_payload(self.world_learner),
@@ -1922,6 +1954,16 @@ class JointTrainingRun:
             "code_revision": self.code_revision,
             "continuation_source_checkpoint_digest": self.continuation_source_checkpoint_digest,
         }
+        if self.training_version >= 3:
+            payload.update(
+                {
+                    "sequence_fabric_learning": self.sequence_fabric_learning,
+                    "sequence_fabric_parent": self.sequence_fabric_parent,
+                    "sequence_fabric_phase_checks": list(
+                        self.sequence_fabric_phase_checks
+                    ),
+                }
+            )
         payload["checkpoint_digest"] = content_digest(payload)
         return payload
 
@@ -2000,10 +2042,13 @@ class JointTrainingRun:
             if "sequence" in self.training_phases:
                 self.phase = "sequence"
                 sequence_readouts_before = _sequence_readout_contract(self.model)
+                sequence_fabric_before = _sequence_fabric_digest(self.model)
                 while self.sequence_cursor < len(self.dataset.train):
                     end = min(self.sequence_cursor + self.chunk_bytes, len(self.dataset.train))
                     self.model.learn_bytes(
-                        self.dataset.train[self.sequence_cursor:end], epochs=1
+                        self.dataset.train[self.sequence_cursor:end],
+                        epochs=1,
+                        learn_fabric=self.sequence_fabric_learning,
                     )
                     self.sequence_cursor = end
                     self.global_step += 1
@@ -2017,6 +2062,10 @@ class JointTrainingRun:
                 self._record_sequence_readout_phase(
                     phase="sequence",
                     before=sequence_readouts_before,
+                )
+                self._record_sequence_fabric_phase(
+                    phase="sequence",
+                    before=sequence_fabric_before,
                 )
 
             if "memory" in self.training_phases:
@@ -2081,13 +2130,16 @@ class JointTrainingRun:
                 self.phase = "replay"
                 while self.replay_epoch < self.replay_epochs:
                     replay_readouts_before = _sequence_readout_contract(self.model)
+                    replay_fabric_before = _sequence_fabric_digest(self.model)
                     while self.replay_cursor < len(self.replay_dataset.train):
                         end = min(
                             self.replay_cursor + self.chunk_bytes,
                             len(self.replay_dataset.train),
                         )
                         self.model.learn_bytes(
-                            self.replay_dataset.train[self.replay_cursor:end], epochs=1
+                            self.replay_dataset.train[self.replay_cursor:end],
+                            epochs=1,
+                            learn_fabric=self.sequence_fabric_learning,
                         )
                         self.replay_cursor = end
                         self.global_step += 1
@@ -2101,6 +2153,10 @@ class JointTrainingRun:
                     self._record_sequence_readout_phase(
                         phase="replay",
                         before=replay_readouts_before,
+                    )
+                    self._record_sequence_fabric_phase(
+                        phase="replay",
+                        before=replay_fabric_before,
                     )
                     self.replay_epoch += 1
                     self.replay_cursor = 0
@@ -2157,9 +2213,9 @@ class JointTrainingRun:
         for episode in self.goal_corpus.train:
             _train_goal_episode(lesion, episode, learn=False)
         credit_lesion = _goal_action_accuracy(lesion, self.goal_corpus.holdout)
-        return {
+        report: dict[str, Any] = {
             "format": JOINT_TRAINING_FORMAT,
-            "version": JOINT_TRAINING_VERSION,
+            "version": self.training_version,
             "status": "completed",
             "model_tier": self.model_tier,
             "corpus_digest": self.corpus_digest,
@@ -2227,6 +2283,13 @@ class JointTrainingRun:
             "started_from_checkpoint": self.started_from_checkpoint,
             "continuation_source_checkpoint_digest": self.continuation_source_checkpoint_digest,
         }
+        report["sequence_fabric_learning"] = self.sequence_fabric_learning
+        report["sequence_fabric_contract"] = {
+            "parent": self.sequence_fabric_parent,
+            "final": _sequence_fabric_digest(self.model),
+            "phase_checks": list(self.sequence_fabric_phase_checks),
+        }
+        return report
 
     def evaluate_only(self) -> dict[str, Any]:
         before = _world_action_persistent_digest(self.model, self.world_learner)
@@ -2235,9 +2298,9 @@ class JointTrainingRun:
         if before != after:
             raise RuntimeError("joint eval-only mutated persistent state")
         current_readouts = _sequence_readout_contract(self.model)
-        return {
+        report: dict[str, Any] = {
             "format": JOINT_TRAINING_FORMAT,
-            "version": JOINT_TRAINING_VERSION,
+            "version": self.training_version,
             "status": "evaluated",
             "model_tier": self.model_tier,
             "corpus_digest": self.corpus_digest,
@@ -2264,6 +2327,13 @@ class JointTrainingRun:
             "code_revision": self.code_revision,
             "continuation_source_checkpoint_digest": self.continuation_source_checkpoint_digest,
         }
+        report["sequence_fabric_learning"] = self.sequence_fabric_learning
+        report["sequence_fabric_contract"] = {
+            "parent": self.sequence_fabric_parent,
+            "current": _sequence_fabric_digest(self.model),
+            "phase_checks": list(self.sequence_fabric_phase_checks),
+        }
+        return report
 
     @classmethod
     def from_continuation_checkpoint(
@@ -2283,6 +2353,7 @@ class JointTrainingRun:
         world_repeats: int | None = None,
         protected_dataset: FoundationTrainingDataset | None = None,
         training_phases: Iterable[str] | None = None,
+        sequence_fabric_learning: bool | None = None,
         replay_dataset: FoundationTrainingDataset | None = None,
         replay_epochs: int | None = None,
         replay_memory_corpus: DelayedMemoryCorpus | None = None,
@@ -2315,6 +2386,21 @@ class JointTrainingRun:
             *JOINT_TRAINING_LEGACY_VERSIONS,
         }:
             raise ValueError("unsupported joint continuation checkpoint version")
+        if payload_version >= 3:
+            if "sequence_fabric_learning" not in payload:
+                raise ValueError("joint continuation sequence fabric learning is missing")
+            stored_sequence_fabric_learning = payload["sequence_fabric_learning"]
+        else:
+            stored_sequence_fabric_learning = True
+        if not isinstance(stored_sequence_fabric_learning, bool):
+            raise ValueError("joint continuation sequence fabric learning is invalid")
+        effective_sequence_fabric_learning = (
+            stored_sequence_fabric_learning
+            if sequence_fabric_learning is None
+            else sequence_fabric_learning
+        )
+        if not isinstance(effective_sequence_fabric_learning, bool):
+            raise TypeError("joint continuation sequence fabric learning must be a bool or None")
         expected = content_digest(
             {key: value for key, value in payload.items() if key != "checkpoint_digest"}
         )
@@ -2366,6 +2452,7 @@ class JointTrainingRun:
             ),
             protected_dataset=protected_dataset,
             training_phases=training_phases,
+            sequence_fabric_learning=effective_sequence_fabric_learning,
             replay_dataset=replay_dataset,
             replay_epochs=int(
                 replay_epochs
@@ -2409,6 +2496,7 @@ class JointTrainingRun:
         metric_interval: int | None = None,
         protected_dataset: FoundationTrainingDataset | None = None,
         training_phases: Iterable[str] | None = None,
+        sequence_fabric_learning: bool | None = None,
         replay_dataset: FoundationTrainingDataset | None = None,
         replay_epochs: int | None = None,
         replay_memory_corpus: DelayedMemoryCorpus | None = None,
@@ -2429,6 +2517,24 @@ class JointTrainingRun:
             *JOINT_TRAINING_LEGACY_VERSIONS,
         }:
             raise ValueError("unsupported joint training checkpoint version")
+        if payload_version >= 3:
+            if "sequence_fabric_learning" not in payload:
+                raise ValueError("joint training sequence fabric learning is missing")
+            stored_sequence_fabric_learning = payload["sequence_fabric_learning"]
+        else:
+            # v1/v2 never had this switch; their F1 path was necessarily
+            # fabric-plastic, which remains the only compatible interpretation.
+            stored_sequence_fabric_learning = True
+        if not isinstance(stored_sequence_fabric_learning, bool):
+            raise ValueError("joint training sequence fabric learning is invalid")
+        if sequence_fabric_learning is None:
+            effective_sequence_fabric_learning = stored_sequence_fabric_learning
+        else:
+            if not isinstance(sequence_fabric_learning, bool):
+                raise TypeError("joint sequence fabric learning must be a bool or None")
+            effective_sequence_fabric_learning = sequence_fabric_learning
+            if effective_sequence_fabric_learning != stored_sequence_fabric_learning:
+                raise ValueError("joint training sequence fabric learning mismatch")
         expected = content_digest(
             {key: value for key, value in payload.items() if key != "checkpoint_digest"}
         )
@@ -2482,6 +2588,8 @@ class JointTrainingRun:
             replay_dataset, replay_memory_corpus
         ):
             corpus_payload["training_phases"] = list(effective_training_phases)
+        if payload_version >= 3:
+            corpus_payload["sequence_fabric_learning"] = stored_sequence_fabric_learning
         expected_corpus = content_digest(corpus_payload)
         if str(payload.get("corpus_digest")) != expected_corpus:
             raise ValueError("joint training corpus digest mismatch")
@@ -2515,6 +2623,7 @@ class JointTrainingRun:
             world_repeats=int(payload["world_repeats"]),
             protected_dataset=protected_dataset,
             training_phases=effective_training_phases,
+            sequence_fabric_learning=effective_sequence_fabric_learning,
             replay_dataset=replay_dataset,
             replay_epochs=int(
                 replay_epochs
@@ -2541,12 +2650,44 @@ class JointTrainingRun:
             parent_metrics=dict(payload["parent_metrics"]),
             code_revision=code_revision or str(payload.get("code_revision", "working-tree")),
         )
+        # A strict in-place resume keeps the source course schema.  A new
+        # continuation, by contrast, is constructed above and therefore starts
+        # at the current v3 schema with an explicit fabric-write policy.
+        run.training_version = payload_version
+        if run.corpus_digest != expected_corpus:
+            raise ValueError("joint training corpus digest does not match resume semantics")
         parent_model = payload.get("parent_model")
         parent_world = payload.get("parent_world_learner")
         if not isinstance(parent_model, Mapping) or not isinstance(parent_world, Mapping):
             raise ValueError("joint training checkpoint is missing parent lineage")
         run.parent_model_payload = deepcopy(parent_model)
         run.parent_world_payload = deepcopy(parent_world)
+        expected_fabric_parent = _sequence_fabric_digest(
+            Taiji.from_checkpoint(run.parent_model_payload)
+        )
+        if payload_version >= 3:
+            stored_fabric_parent = payload.get("sequence_fabric_parent")
+            if not isinstance(stored_fabric_parent, str):
+                raise ValueError("joint training sequence fabric parent is invalid")
+            stored_fabric_phase_checks = payload.get("sequence_fabric_phase_checks", ())
+            if not isinstance(stored_fabric_phase_checks, Sequence) or isinstance(
+                stored_fabric_phase_checks, (str, bytes)
+            ):
+                raise ValueError("joint training sequence fabric checks are invalid")
+            fabric_phase_checks = [
+                dict(item)
+                for item in stored_fabric_phase_checks
+                if isinstance(item, Mapping)
+            ]
+            if len(fabric_phase_checks) != len(stored_fabric_phase_checks):
+                raise ValueError("joint training sequence fabric check is invalid")
+        else:
+            stored_fabric_parent = expected_fabric_parent
+            fabric_phase_checks = []
+        if stored_fabric_parent != expected_fabric_parent:
+            raise ValueError("joint training sequence fabric parent does not match lineage")
+        run.sequence_fabric_parent = stored_fabric_parent
+        run.sequence_fabric_phase_checks = fabric_phase_checks
         stored_readout_mode = str(
             payload.get("sequence_readout_mode", "legacy-shared-readout-v0")
         )

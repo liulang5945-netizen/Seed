@@ -99,6 +99,14 @@ def main() -> int:
             "must start with the sequence-only no-replay counterfactual."
         ),
     )
+    parser.add_argument(
+        "--freeze-sequence-fabric",
+        action="store_true",
+        help=(
+            "Train the dedicated F1 predictive readout while preserving shared "
+            "fabric parameters; requires a sequence phase."
+        ),
+    )
     parser.add_argument("--replay-corpus", nargs="+", type=Path)
     parser.add_argument("--replay-profile", choices=("smoke", "pilot", "foundation"), default="pilot")
     parser.add_argument("--replay-partition-seed", type=int, default=11)
@@ -134,6 +142,14 @@ def main() -> int:
 
     if args.resume is not None and args.continue_from is not None:
         parser.error("--resume and --continue-from are mutually exclusive")
+    if args.freeze_sequence_fabric and (
+        args.training_phases is None or "sequence" not in args.training_phases
+    ):
+        parser.error("--freeze-sequence-fabric requires a sequence training phase")
+
+    # ``None`` means preserve a resumed/continued course's stored semantics;
+    # only the explicit flag creates the M2-2g predictor-only intervention.
+    sequence_fabric_learning = False if args.freeze_sequence_fabric else None
 
     count = args.count if args.count is not None else {
         "smoke": 8,
@@ -229,6 +245,7 @@ def main() -> int:
             world_repeats=args.world_repeats,
             protected_dataset=protected_dataset,
             training_phases=args.training_phases,
+            sequence_fabric_learning=sequence_fabric_learning,
             replay_dataset=replay_dataset,
             replay_epochs=args.replay_epochs,
             replay_memory_corpus=replay_memory_corpus,
@@ -249,6 +266,7 @@ def main() -> int:
             metric_interval=args.metric_interval,
             protected_dataset=protected_dataset,
             training_phases=args.training_phases,
+            sequence_fabric_learning=sequence_fabric_learning,
             replay_dataset=replay_dataset,
             replay_epochs=args.replay_epochs,
             replay_memory_corpus=replay_memory_corpus,
@@ -277,6 +295,9 @@ def main() -> int:
             world_repeats=args.world_repeats,
             protected_dataset=protected_dataset,
             training_phases=args.training_phases,
+            sequence_fabric_learning=(
+                True if sequence_fabric_learning is None else sequence_fabric_learning
+            ),
             replay_dataset=replay_dataset,
             replay_epochs=args.replay_epochs,
             replay_memory_corpus=replay_memory_corpus,

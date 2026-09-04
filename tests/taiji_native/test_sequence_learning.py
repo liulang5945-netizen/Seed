@@ -111,6 +111,42 @@ def test_byte_learning_has_a_dedicated_predictive_readout_and_preserves_action_m
     assert after["mean_surprise"] < before["mean_surprise"]
 
 
+def test_byte_learning_can_freeze_shared_fabric_without_freezing_predictive_readout() -> None:
+    """M2-2g needs a causal F1-only plasticity control, not a global freeze.
+
+    The live fabric dynamics still provide the predictor's context, but the
+    sequence update must be able to leave its persistent substrate untouched.
+    This is deliberately narrower than ``learn=False``: the predictive decoder
+    must still improve from the same byte evidence.
+    """
+
+    data = b"abcd" * 16
+    model = Taiji(
+        TaijiConfig(
+            region_sizes=(32,),
+            synapse_fan_in=8,
+            motor_fan_in=16,
+            memory_units=32,
+            memory_fan_in=8,
+            memory_readout_fan_in=16,
+            memory_meta_dim=16,
+            seed=41,
+        )
+    )
+    fabric_before = content_digest(model.fabric.to_payload())
+    predictive_before = model.predictive_readout.synapses.edge_weight.clone()
+    before = model.score_bytes(data)
+
+    model.learn_bytes(data, epochs=80, learn_fabric=False)
+
+    after = model.score_bytes(data)
+    assert content_digest(model.fabric.to_payload()) == fabric_before
+    assert not torch.equal(
+        model.predictive_readout.synapses.edge_weight, predictive_before
+    )
+    assert after["mean_surprise"] < before["mean_surprise"]
+
+
 def test_legacy_shared_motor_checkpoint_migrates_to_a_separate_predictive_readout() -> None:
     """An existing F1/F4 checkpoint must remain loadable without relearning."""
 
