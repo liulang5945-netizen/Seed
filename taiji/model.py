@@ -17,7 +17,7 @@ from .identity_organ import (
 )
 from .internalization import content_digest
 from .memory import EpisodicField
-from .organs import ByteMotor, ByteSensor
+from .organs import ByteMotor, BytePredictiveReadout, ByteSensor
 from .state import (
     PendingAction,
     PendingExperience,
@@ -37,8 +37,13 @@ class Taiji:
     The class intentionally exposes no loss.backward() or optimizer contract.
     """
 
-    CHECKPOINT_FORMAT = "taiji-native-v8"
-    STATE_VERSION = 5
+    # v9 makes the F1/F4 split explicit.  v8 remains readable only through
+    # the one-way migration below; writing it again would let an older runtime
+    # mistake an isolated predictive checkpoint for the former shared decoder.
+    CHECKPOINT_FORMAT = "taiji-native-v9"
+    LEGACY_CHECKPOINT_FORMATS = frozenset({"taiji-native-v8"})
+    STATE_VERSION = 6
+    LEGACY_STATE_VERSIONS = frozenset({5})
 
     def __init__(
         self,
@@ -54,6 +59,18 @@ class Taiji:
         self.sensor = ByteSensor(self.config, device=self.device)
         self.fabric = TaijiFabric(self.config, generator=self._rng, device=self.device)
         self.motor = ByteMotor(self.config, generator=self._rng, device=self.device)
+        # This generator is deliberately independent of ``self._rng``.  The
+        # M2-2f organ must not re-seed existing fabric/memory/identity topology
+        # merely by being introduced into an old checkpoint lineage.
+        predictive_rng = torch.Generator(device="cpu")
+        predictive_rng.manual_seed(
+            int(self.config.seed) + int(self.config.predictive_readout_seed_offset)
+        )
+        self.predictive_readout = BytePredictiveReadout(
+            self.config,
+            generator=predictive_rng,
+            device=self.device,
+        )
         self._memory_rng = torch.Generator(device="cpu")
         self._memory_rng.set_state(self._rng.get_state().clone())
         self.memory = EpisodicField(self.config, generator=self._memory_rng, device=self.device)
@@ -85,6 +102,7 @@ class Taiji:
             memory=self.memory.initial_state(),
             motor_context=torch.zeros(self.config.motor_context_dim, device=self.device),
             motor_probabilities=uniform,
+            readout_kind="action",
             last_symbol=None,
             pending_action=None,
             pending_experience=None,
@@ -115,6 +133,7 @@ class Taiji:
         *,
         learn: bool = True,
         learn_motor: bool | None = None,
+        readout: str = "action",
         use_memory: bool = True,
         use_identity: bool | None = None,
         use_delayed_memory_verdict: bool = False,
@@ -123,6 +142,10 @@ class Taiji:
 
         ``learn_motor=False`` keeps local fabric learning active without
         treating an externally caused sensation as the correct motor action.
+        ``readout="predictive"`` sends next-byte error to the dedicated F1
+        decoder; it never writes the F4 action policy.  A single dynamics
+        episode cannot silently switch readout ownership, because the prior
+        probability would otherwise come from a different organ.
         ``use_identity`` scopes the optional episodic identity evidence to
         action/memory queries; byte prediction and language generation disable
         it explicitly so a cue route cannot contaminate their decoder.
@@ -135,9 +158,25 @@ class Taiji:
 
         if self._state.pending_action is not None:
             raise RuntimeError("pending action must be settled before observation")
+        if readout not in {"action", "predictive"}:
+            raise ValueError("readout must be 'action' or 'predictive'")
+        if readout == "predictive" and learn_motor is True:
+            raise ValueError("predictive readout cannot train the action motor")
+        if readout == "predictive" and use_delayed_memory_verdict:
+            raise ValueError("predictive readout cannot request a delayed-memory verdict")
         symbol = int(symbol)
         sensory = self.sensor.encode(symbol)
         previous = self._state
+        if (
+            previous.readout_kind != readout
+            and (
+                previous.last_symbol is not None
+                or previous.pending_experience is not None
+            )
+        ):
+            raise RuntimeError(
+                "readout changed inside an active dynamics episode; reset before switching"
+            )
         motor_learning = learn if learn_motor is None else bool(learn_motor)
         memory_write_strength = 0.0
         if previous.pending_experience is not None:
@@ -171,7 +210,13 @@ class Taiji:
             prior_prediction = int(previous.motor_probabilities.argmax().item())
             prior_probability = float(previous.motor_probabilities[symbol].item())
             surprise = -math.log(max(prior_probability, 1e-12))
-            if motor_learning:
+            if readout == "predictive" and learn:
+                self.predictive_readout.learn(
+                    previous.motor_context,
+                    previous.motor_probabilities,
+                    symbol,
+                )
+            elif readout == "action" and motor_learning:
                 self.motor.learn(
                     previous.motor_context,
                     previous.motor_probabilities,
@@ -222,7 +267,12 @@ class Taiji:
         )
         if identity_evidence is not None:
             episodic_evidence = episodic_evidence + identity_evidence
-        if identity_addressing_used and use_delayed_memory_verdict:
+        if readout == "predictive":
+            probabilities = self.predictive_readout.probabilities(
+                context,
+                episodic_evidence=episodic_evidence,
+            )
+        elif identity_addressing_used and use_delayed_memory_verdict:
             # M1-66: once the identity organ routes a cue, it owns the value
             # readout.  The motor's shared readout and the episodic field's
             # value head both stay chance-level on foundation-scale courses
@@ -265,6 +315,7 @@ class Taiji:
             memory=memory_state,
             motor_context=context,
             motor_probabilities=probabilities,
+            readout_kind=readout,
             last_symbol=symbol,
             pending_action=None,
             pending_experience=None,
@@ -297,6 +348,8 @@ class Taiji:
             raise RuntimeError("pending action must be settled before acting again")
         if self._state.pending_experience is not None:
             raise RuntimeError("pending experience must observe its outcome before acting")
+        if self._state.readout_kind != "action":
+            raise RuntimeError("action requires an action-readout observation after reset")
         actions = tuple(int(value) for value in available_actions)
         if not actions:
             raise ValueError("available_actions cannot be empty")
@@ -692,6 +745,7 @@ class Taiji:
             memory=memory_state,
             motor_context=context,
             motor_probabilities=self.motor.probabilities(context),
+            readout_kind="action",
             last_symbol=None,
             pending_action=None,
             pending_experience=None,
@@ -737,6 +791,7 @@ class Taiji:
                 step = self.observe(
                     symbol,
                     learn=True,
+                    readout="predictive",
                     use_memory=use_memory,
                     use_identity=False,
                 )
@@ -774,6 +829,7 @@ class Taiji:
                 step = self.observe(
                     symbol,
                     learn=False,
+                    readout="predictive",
                     use_memory=use_memory,
                     use_identity=False,
                 )
@@ -814,6 +870,7 @@ class Taiji:
         step = self.observe(
             self.config.boundary_symbol,
             learn=False,
+            readout="predictive",
             use_memory=use_memory,
             use_identity=False,
         )
@@ -821,6 +878,7 @@ class Taiji:
             step = self.observe(
                 int(symbol),
                 learn=False,
+                readout="predictive",
                 use_memory=use_memory,
                 use_identity=False,
             )
@@ -843,6 +901,7 @@ class Taiji:
             step = self.observe(
                 next_symbol,
                 learn=False,
+                readout="predictive",
                 use_memory=use_memory,
                 use_identity=False,
             )
@@ -853,6 +912,8 @@ class Taiji:
             *self.fabric.parameter_tensors(),
             self.motor.synapses.edge_weight,
             self.motor.bias,
+            self.predictive_readout.synapses.edge_weight,
+            self.predictive_readout.bias,
             *self.memory.parameter_tensors(),
         )
         if self.identity_organ is not None:
@@ -864,6 +925,8 @@ class Taiji:
             self.fabric.active_edge_count()
             + self.motor.synapses.edge_count
             + self.motor.bias.numel()
+            + self.predictive_readout.synapses.edge_count
+            + self.predictive_readout.bias.numel()
             + self.memory.active_edge_count()
         )
         if self.identity_organ is not None:
@@ -879,6 +942,8 @@ class Taiji:
             self.fabric.dense_equivalent_edge_count()
             + self.motor.synapses.dense_equivalent_count
             + self.motor.bias.numel()
+            + self.predictive_readout.synapses.dense_equivalent_count
+            + self.predictive_readout.bias.numel()
             + self.memory.dense_equivalent_edge_count()
         )
         if self.identity_organ is not None:
@@ -893,6 +958,7 @@ class Taiji:
             "config": self.config.to_dict(),
             "fabric": self.fabric.to_payload(),
             "motor": self.motor.to_payload(),
+            "predictive_readout": self.predictive_readout.to_payload(),
             "memory": self.memory.to_payload(),
             "state": self._state.to_payload(),
             "rng_state": self._rng.get_state().clone(),
@@ -901,9 +967,8 @@ class Taiji:
     def checkpoint(self) -> dict[str, Any]:
         core = self._checkpoint_core()
         if self.identity_organ is None:
-            # Keep the default checkpoint byte-for-byte compatible with the
-            # existing native v8 payload.  The feature gate is represented by
-            # config only until the optional organ is actually enabled.
+            # The optional identity organ remains absent until enabled; the
+            # F1 predictive readout is part of every v9 core checkpoint.
             return core
         return {
             **core,
@@ -913,13 +978,30 @@ class Taiji:
         }
 
     def restore(self, checkpoint: Mapping[str, Any]) -> None:
-        if checkpoint.get("format") != self.CHECKPOINT_FORMAT:
+        checkpoint_format = str(checkpoint.get("format", ""))
+        if checkpoint_format not in {
+            self.CHECKPOINT_FORMAT,
+            *self.LEGACY_CHECKPOINT_FORMATS,
+        }:
             raise ValueError("unsupported Taiji checkpoint format")
+        is_legacy_checkpoint = checkpoint_format in self.LEGACY_CHECKPOINT_FORMATS
         actual = TaijiConfig.from_dict(dict(checkpoint["config"]))
         if actual != self.config:
             raise ValueError("checkpoint configuration does not match architecture")
         self.fabric.load_payload(checkpoint["fabric"])
         self.motor.load_payload(checkpoint["motor"])
+        predictive_payload = checkpoint.get("predictive_readout")
+        if predictive_payload is None and not is_legacy_checkpoint:
+            raise ValueError("v9 checkpoint is missing its predictive readout")
+        if predictive_payload is None:
+            # M2-2f migration: legacy v8 stored F1 and F4 in the same motor
+            # decoder.  Copy that learned F1 surface once, then make all future
+            # byte updates land on the dedicated predictive organ.
+            self.predictive_readout.load_legacy_motor_payload(checkpoint["motor"])
+        elif not isinstance(predictive_payload, Mapping):
+            raise ValueError("predictive readout checkpoint payload is invalid")
+        else:
+            self.predictive_readout.load_payload(predictive_payload)
         self.memory.load_payload(checkpoint["memory"])
         identity_payload = checkpoint.get("identity_organ")
         if self.identity_organ is None:
@@ -930,7 +1012,12 @@ class Taiji:
                 raise ValueError("enabled identity organ checkpoint payload is missing")
             lineage = identity_payload.get("lineage")
             expected_parent_digest = content_digest(
-                {key: checkpoint[key] for key in self._checkpoint_core_keys()}
+                {
+                    key: checkpoint[key]
+                    for key in self._checkpoint_core_keys(
+                        include_predictive="predictive_readout" in checkpoint
+                    )
+                }
             )
             if not isinstance(lineage, Mapping) or str(
                 lineage.get("parent_checkpoint_digest", "")
@@ -938,8 +1025,10 @@ class Taiji:
                 raise ValueError("identity organ checkpoint lineage does not match Taiji core")
             self.identity_organ.load_payload(identity_payload)
         state = TaijiState.from_payload(checkpoint["state"], device=self.device)
-        if state.version != self.STATE_VERSION:
+        if state.version not in {self.STATE_VERSION, *self.LEGACY_STATE_VERSIONS}:
             raise ValueError("unsupported Taiji state version")
+        if not is_legacy_checkpoint and state.version != self.STATE_VERSION:
+            raise ValueError("v9 checkpoint must carry the v6 Taiji state")
         if len(state.regions) != len(self.config.region_sizes):
             raise ValueError("checkpoint region state does not match architecture")
         memory_shape = (self.config.memory_units,)
@@ -955,7 +1044,11 @@ class Taiji:
             raise ValueError("checkpoint motor context does not match architecture")
         if state.motor_probabilities.shape != (self.config.alphabet_size,):
             raise ValueError("checkpoint motor probabilities do not match architecture")
+        if state.readout_kind not in {"action", "predictive"}:
+            raise ValueError("checkpoint readout kind is invalid")
         if state.pending_action is not None:
+            if state.readout_kind != "action":
+                raise ValueError("predictive checkpoint state cannot hold an action")
             pending = state.pending_action
             if pending.context.shape != (self.config.motor_context_dim,):
                 raise ValueError("checkpoint pending context does not match architecture")
@@ -984,20 +1077,24 @@ class Taiji:
                 or experience.memory_learning_scale <= 0.0
             ):
                 raise ValueError("checkpoint pending experience learning scale is invalid")
+        # The state schema gains readout ownership in v6.  A v8 state never
+        # had a predictive owner, so its explicit migration is always action.
+        if is_legacy_checkpoint:
+            state.version = self.STATE_VERSION
         self._state = state
         self._rng.set_state(checkpoint["rng_state"].detach().cpu())
 
     @staticmethod
-    def _checkpoint_core_keys() -> tuple[str, ...]:
-        return (
+    def _checkpoint_core_keys(*, include_predictive: bool = True) -> tuple[str, ...]:
+        keys = (
             "format",
             "config",
             "fabric",
             "motor",
-            "memory",
-            "state",
-            "rng_state",
         )
+        if include_predictive:
+            keys += ("predictive_readout",)
+        return (*keys, "memory", "state", "rng_state")
 
     @classmethod
     def from_checkpoint(

@@ -849,7 +849,7 @@ def test_seed_delegates_cognitive_checkpoint_to_taiji() -> None:
     assert isinstance(model.architecture, TSKV8Adapter)
     assert checkpoint["taiji"]["format"] == CONTRACT_FORMAT
     assert checkpoint["taiji"]["cognitive_state"]["tick"] == model.tick
-    assert checkpoint["substrate"]["format"] == "taiji-native-v8"
+    assert checkpoint["substrate"]["format"] == "taiji-native-v9"
 
 
 def test_seed_reads_pre_p1_checkpoint_with_substrate_only() -> None:
@@ -862,7 +862,7 @@ def test_seed_reads_pre_p1_checkpoint_with_substrate_only() -> None:
     restored = Seed.from_checkpoint(legacy)
 
     assert restored.tick == model.tick
-    assert restored.substrate.checkpoint()["format"] == "taiji-native-v8"
+    assert restored.substrate.checkpoint()["format"] == "taiji-native-v9"
 
 
 def test_native_memory_state_is_distinct_from_kernel_memory_state() -> None:

@@ -246,6 +246,9 @@ class TaijiConfig:
     lateral_learning_rate: float = 0.02
     lateral_seed_offset: int = 977
     consolidation_seed_offset: int = 1951
+    # The F1 readout has an independent RNG stream so adding it never shifts
+    # existing fabric, motor, memory or identity topology for a fixed seed.
+    predictive_readout_seed_offset: int = 3137
     bottom_up_gain: float = 1.00
     recurrent_gain: float = 0.55
     top_down_gain: float = 0.30
@@ -368,6 +371,15 @@ class TaijiConfig:
             )
         if self.consolidation_seed_offset == self.lateral_seed_offset:
             raise ValueError("consolidation and lateral banks require distinct random streams")
+        if self.predictive_readout_seed_offset <= 0:
+            raise ValueError("predictive_readout_seed_offset must select a positive random stream")
+        if self.predictive_readout_seed_offset in {
+            self.lateral_seed_offset,
+            self.consolidation_seed_offset,
+        }:
+            raise ValueError(
+                "predictive readout, consolidation and lateral banks require distinct random streams"
+            )
         if self.motor_fan_in > 2 * sum(self.region_sizes):
             raise ValueError("motor_fan_in cannot exceed the available cortical state")
         if self.memory_units <= 1:
@@ -736,6 +748,7 @@ class TaijiConfig:
             fabric += region_size * min(self.lateral_fan_in, region_size - 1)
 
         motor = self.alphabet_size * self.motor_context_dim + self.alphabet_size
+        predictive_readout = self.alphabet_size * self.motor_context_dim + self.alphabet_size
         readout_width = min(self.memory_readout_fan_in, self.memory_meta_dim)
         readout_outputs = (
             2 * self.alphabet_size
@@ -759,7 +772,7 @@ class TaijiConfig:
             # a read-only outcome prediction channel.
             identity += self.identity_organ_capacity * self.alphabet_size
             identity += self.identity_organ_capacity * self.alphabet_size
-        return int(fabric + motor + memory + identity)
+        return int(fabric + motor + predictive_readout + memory + identity)
 
     @property
     def cortical_context_dim(self) -> int:

@@ -49,10 +49,15 @@ MEMORY_TRAINING_VERSION = 1
 WORLD_ACTION_TRAINING_FORMAT = "taiji-native-world-action-training-v1"
 WORLD_ACTION_TRAINING_VERSION = 1
 JOINT_TRAINING_FORMAT = "taiji-native-joint-training-v1"
-JOINT_TRAINING_VERSION = 1
+# v2 records the F1/F4 readout ownership contract.  v1 remains readable so
+# established courses can become explicit M2-2f continuations rather than
+# being silently discarded or resumed with their old shared-decoder semantics.
+JOINT_TRAINING_VERSION = 2
+JOINT_TRAINING_LEGACY_VERSIONS = frozenset({1})
 JOINT_TRAINING_BASE_PHASES = ("sequence", "memory", "world", "goal")
 JOINT_TRAINING_REPLAY_PHASES = ("replay", "replay-memory")
 JOINT_TRAINING_PHASES = JOINT_TRAINING_BASE_PHASES + JOINT_TRAINING_REPLAY_PHASES
+JOINT_SEQUENCE_READOUT_MODE = "dedicated-predictive-v1"
 
 
 def _text_from_record(record: Any) -> str | None:
@@ -269,13 +274,32 @@ class FoundationTrainingDataset:
 
 
 def _code_revision() -> str:
+    root = Path(__file__).resolve().parents[1]
     try:
-        return subprocess.check_output(
+        head = subprocess.check_output(
             ("git", "rev-parse", "HEAD"),
-            cwd=Path(__file__).resolve().parents[1],
+            cwd=root,
             text=True,
             stderr=subprocess.DEVNULL,
         ).strip()
+        status = subprocess.check_output(
+            ("git", "status", "--porcelain", "--untracked-files=no"),
+            cwd=root,
+            text=True,
+            stderr=subprocess.DEVNULL,
+        )
+        if not status.strip():
+            return head
+        # A long course must never label an uncommitted implementation as its
+        # clean HEAD.  Hash the staged+unstaged tracked patch so the artifact
+        # remains auditable even for an intentional local canary.
+        patch = subprocess.check_output(
+            ("git", "diff", "--binary", "HEAD"),
+            cwd=root,
+            stderr=subprocess.DEVNULL,
+        )
+        fingerprint = hashlib.sha256(patch).hexdigest()[:16]
+        return f"{head}+dirty-{fingerprint}"
     except (OSError, subprocess.CalledProcessError):
         return "working-tree"
 
@@ -965,16 +989,58 @@ def _world_action_persistent_digest(
     world_learner: WorldDynamicsLearner,
 ) -> str:
     checkpoint = model.checkpoint()
+    identity_payload = checkpoint.get("identity_organ")
+    identity_persistent = (
+        {key: value for key, value in identity_payload.items() if key != "lineage"}
+        if isinstance(identity_payload, Mapping)
+        else identity_payload
+    )
     return content_digest(
         {
             "model": {
                 "fabric": checkpoint["fabric"],
                 "motor": checkpoint["motor"],
+                "predictive_readout": checkpoint.get("predictive_readout"),
                 "memory": checkpoint["memory"],
+                "identity_organ": identity_persistent,
             },
             "world": _world_learner_payload(world_learner),
         }
     )
+
+
+def _sequence_readout_contract(model: Taiji) -> dict[str, str | None]:
+    """Hash the persistent readers that F1 sequence updates must not own.
+
+    Identity payloads include a lineage hash of the whole Taiji core.  That
+    outer hash necessarily changes when the predictive fabric learns, even if
+    every identity slot remains byte-for-byte unchanged.  The contract removes
+    lineage before hashing identity state so a provenance update cannot be
+    mistaken for an organ write.
+    """
+
+    identity_digest: str | None = None
+    if model.identity_organ is not None:
+        identity_payload = model.identity_organ.to_payload(
+            parent_checkpoint_digest="sequence-readout-contract"
+        )
+        identity_payload.pop("lineage")
+        identity_digest = content_digest(identity_payload)
+    return {
+        "action_motor_digest": content_digest(model.motor.to_payload()),
+        "memory_field_digest": content_digest(model.memory.to_payload()),
+        "identity_value_digest": identity_digest,
+        "predictive_readout_digest": content_digest(model.predictive_readout.to_payload()),
+    }
+
+
+def _sequence_readout_preserved(
+    before: Mapping[str, str | None], after: Mapping[str, str | None]
+) -> dict[str, bool]:
+    """Compare the no-write portion of a sequence learning boundary."""
+
+    keys = ("action_motor_digest", "memory_field_digest", "identity_value_digest")
+    return {key: before.get(key) == after.get(key) for key in keys}
 
 
 def _world_action_error(
@@ -1642,6 +1708,9 @@ class JointTrainingRun:
         self.best_holdout_score = 0.0
         self.started_from_checkpoint = False
         self.continuation_source_checkpoint_digest: str | None = None
+        self.sequence_readout_mode = JOINT_SEQUENCE_READOUT_MODE
+        self.sequence_readout_parent = _sequence_readout_contract(model)
+        self.sequence_readout_phase_checks: list[dict[str, Any]] = []
 
     @property
     def corpus_digest(self) -> str:
@@ -1740,6 +1809,60 @@ class JointTrainingRun:
             )
         return score
 
+    def _record_sequence_readout_phase(
+        self,
+        *,
+        phase: str,
+        before: Mapping[str, str | None],
+    ) -> None:
+        """Fail closed if byte updates crossed into action or memory readers."""
+
+        after = _sequence_readout_contract(self.model)
+        preserved = _sequence_readout_preserved(before, after)
+        record = {
+            "epoch": self.epoch,
+            "phase": phase,
+            "before": dict(before),
+            "after": dict(after),
+            "preserved": preserved,
+        }
+        self.sequence_readout_phase_checks.append(record)
+        if not all(preserved.values()):
+            changed = ", ".join(key for key, valid in preserved.items() if not valid)
+            raise RuntimeError(
+                "sequence learning changed protected action/memory readouts: " + changed
+            )
+
+    def _sequence_only_keep_gate(
+        self,
+        metrics: Mapping[str, float],
+        current_readouts: Mapping[str, str | None],
+    ) -> dict[str, Any]:
+        """Report the M2 F5 keep gate without turning a measurement into training."""
+
+        applies = self.training_phases == ("sequence",)
+        if not applies:
+            return {"applies": False, "passed": None}
+        readout_checks = _sequence_readout_preserved(
+            self.sequence_readout_parent, current_readouts
+        )
+        metric_checks = {
+            "memory_holdout_kept": metrics["memory_holdout_recall"]
+            >= self.parent_metrics["memory_holdout_recall"] - 1e-12,
+            "memory_retention_kept": metrics["memory_retention_recall"]
+            >= self.parent_metrics["memory_retention_recall"] - 1e-12,
+            "goal_holdout_kept": metrics["goal_holdout_success"]
+            >= self.parent_metrics["goal_holdout_success"] - 1e-12,
+            "goal_retention_kept": metrics["goal_retention_success"]
+            >= self.parent_metrics["goal_retention_success"] - 1e-12,
+        }
+        return {
+            "applies": True,
+            "readout_preserved": readout_checks,
+            **metric_checks,
+            "passed": all(readout_checks.values()) and all(metric_checks.values()),
+        }
+
     def _checkpoint_payload(self) -> dict[str, Any]:
         payload: dict[str, Any] = {
             "format": JOINT_TRAINING_FORMAT,
@@ -1757,6 +1880,9 @@ class JointTrainingRun:
             "parent_model": self.parent_model_payload,
             "parent_world_learner": self.parent_world_payload,
             "parent_metrics": dict(self.parent_metrics),
+            "sequence_readout_mode": self.sequence_readout_mode,
+            "sequence_readout_parent": dict(self.sequence_readout_parent),
+            "sequence_readout_phase_checks": list(self.sequence_readout_phase_checks),
             "epoch": self.epoch,
             "phase": self.phase,
             "sequence_cursor": self.sequence_cursor,
@@ -1858,12 +1984,22 @@ class JointTrainingRun:
 
     def run(self) -> dict[str, Any]:
         self.output_dir.mkdir(parents=True, exist_ok=True)
+        if (
+            self.sequence_readout_mode != JOINT_SEQUENCE_READOUT_MODE
+            and self.epoch < self.total_epochs
+            and ({"sequence", "replay"} & set(self.training_phases))
+        ):
+            raise RuntimeError(
+                "legacy shared-readout checkpoint cannot continue sequence training; "
+                "start an explicit continuation course for M2-2f migration"
+            )
         if not self.started_from_checkpoint and not self.parent_checkpoint_path.exists():
             self.save(self.parent_checkpoint_path)
             self.save(self.best_checkpoint_path)
         while self.epoch < self.total_epochs:
             if "sequence" in self.training_phases:
                 self.phase = "sequence"
+                sequence_readouts_before = _sequence_readout_contract(self.model)
                 while self.sequence_cursor < len(self.dataset.train):
                     end = min(self.sequence_cursor + self.chunk_bytes, len(self.dataset.train))
                     self.model.learn_bytes(
@@ -1878,6 +2014,10 @@ class JointTrainingRun:
                         self._save_progress(train_kind="sequence")
                     else:
                         self.save(self.last_checkpoint_path)
+                self._record_sequence_readout_phase(
+                    phase="sequence",
+                    before=sequence_readouts_before,
+                )
 
             if "memory" in self.training_phases:
                 self.phase = "memory"
@@ -1940,6 +2080,7 @@ class JointTrainingRun:
                 assert self.replay_dataset is not None
                 self.phase = "replay"
                 while self.replay_epoch < self.replay_epochs:
+                    replay_readouts_before = _sequence_readout_contract(self.model)
                     while self.replay_cursor < len(self.replay_dataset.train):
                         end = min(
                             self.replay_cursor + self.chunk_bytes,
@@ -1957,6 +2098,10 @@ class JointTrainingRun:
                             self._save_progress(train_kind="replay")
                         else:
                             self.save(self.last_checkpoint_path)
+                    self._record_sequence_readout_phase(
+                        phase="replay",
+                        before=replay_readouts_before,
+                    )
                     self.replay_epoch += 1
                     self.replay_cursor = 0
 
@@ -2003,6 +2148,10 @@ class JointTrainingRun:
         final_metrics = self._last_measured_metrics
         if final_metrics is None:
             final_metrics = self._measure_metrics()
+        final_readouts = _sequence_readout_contract(self.model)
+        sequence_only_keep_gate = self._sequence_only_keep_gate(
+            final_metrics, final_readouts
+        )
         lesion = Taiji.from_checkpoint(self.parent_model_payload)
         _cold_start_action_organ(lesion)
         for episode in self.goal_corpus.train:
@@ -2026,6 +2175,13 @@ class JointTrainingRun:
             "parent_checkpoint_digest": self.parent_checkpoint_digest,
             "parent_metrics": dict(self.parent_metrics),
             "final_metrics": final_metrics,
+            "sequence_readout_mode": self.sequence_readout_mode,
+            "sequence_readout_contract": {
+                "parent": dict(self.sequence_readout_parent),
+                "final": final_readouts,
+                "phase_checks": list(self.sequence_readout_phase_checks),
+            },
+            "sequence_only_keep_gate": sequence_only_keep_gate,
             "final_credit_lesion_success": credit_lesion,
             "joint_holdout_gain": self._joint_holdout_score(final_metrics),
             "world_online_updates": self.world_learner.online_updates,
@@ -2078,6 +2234,7 @@ class JointTrainingRun:
         after = _world_action_persistent_digest(self.model, self.world_learner)
         if before != after:
             raise RuntimeError("joint eval-only mutated persistent state")
+        current_readouts = _sequence_readout_contract(self.model)
         return {
             "format": JOINT_TRAINING_FORMAT,
             "version": JOINT_TRAINING_VERSION,
@@ -2091,6 +2248,15 @@ class JointTrainingRun:
             "checkpoint_digest": before,
             "metrics": metrics,
             "checkpoint_read_only": True,
+            "sequence_readout_mode": self.sequence_readout_mode,
+            "sequence_readout_contract": {
+                "parent": dict(self.sequence_readout_parent),
+                "current": current_readouts,
+                "phase_checks": list(self.sequence_readout_phase_checks),
+            },
+            "sequence_only_keep_gate": self._sequence_only_keep_gate(
+                metrics, current_readouts
+            ),
             "metric_interval": self.metric_interval,
             "replay_memory_relation": self.replay_memory_relation,
             "replay_memory_learning_scale": self.replay_memory_learning_scale,
@@ -2143,7 +2309,11 @@ class JointTrainingRun:
             raise ValueError("joint continuation checkpoint must contain a mapping")
         if payload.get("format") != JOINT_TRAINING_FORMAT:
             raise ValueError("unsupported joint continuation checkpoint format")
-        if int(payload.get("version", -1)) != JOINT_TRAINING_VERSION:
+        payload_version = int(payload.get("version", -1))
+        if payload_version not in {
+            JOINT_TRAINING_VERSION,
+            *JOINT_TRAINING_LEGACY_VERSIONS,
+        }:
             raise ValueError("unsupported joint continuation checkpoint version")
         expected = content_digest(
             {key: value for key, value in payload.items() if key != "checkpoint_digest"}
@@ -2253,7 +2423,11 @@ class JointTrainingRun:
             raise ValueError("joint training checkpoint must contain a mapping")
         if payload.get("format") != JOINT_TRAINING_FORMAT:
             raise ValueError("unsupported joint training checkpoint format")
-        if int(payload.get("version", -1)) != JOINT_TRAINING_VERSION:
+        payload_version = int(payload.get("version", -1))
+        if payload_version not in {
+            JOINT_TRAINING_VERSION,
+            *JOINT_TRAINING_LEGACY_VERSIONS,
+        }:
             raise ValueError("unsupported joint training checkpoint version")
         expected = content_digest(
             {key: value for key, value in payload.items() if key != "checkpoint_digest"}
@@ -2293,7 +2467,7 @@ class JointTrainingRun:
                 raise ValueError("joint training phase plan mismatch")
         corpus_payload = {
             "format": JOINT_TRAINING_FORMAT,
-            "version": JOINT_TRAINING_VERSION,
+            "version": payload_version,
             "dataset_digest": dataset.digest,
             "memory_digest": _memory_corpus_digest(memory_corpus),
             "world_action_digest": _world_action_corpus_digest(world_corpus, goal_corpus),
@@ -2373,6 +2547,42 @@ class JointTrainingRun:
             raise ValueError("joint training checkpoint is missing parent lineage")
         run.parent_model_payload = deepcopy(parent_model)
         run.parent_world_payload = deepcopy(parent_world)
+        stored_readout_mode = str(
+            payload.get("sequence_readout_mode", "legacy-shared-readout-v0")
+        )
+        if stored_readout_mode not in {
+            "legacy-shared-readout-v0",
+            JOINT_SEQUENCE_READOUT_MODE,
+        }:
+            raise ValueError("joint training sequence readout mode is unsupported")
+        run.sequence_readout_mode = stored_readout_mode
+        stored_readout_parent = payload.get("sequence_readout_parent")
+        if stored_readout_parent is None:
+            # Old joint payloads have no explicit F1/F4 boundary. Reconstruct
+            # the parent-side audit after Taiji's model-level migration so they
+            # remain inspectable, but do not claim they trained under M2-2f.
+            run.sequence_readout_parent = _sequence_readout_contract(
+                Taiji.from_checkpoint(run.parent_model_payload)
+            )
+        elif not isinstance(stored_readout_parent, Mapping):
+            raise ValueError("joint training sequence readout parent is invalid")
+        else:
+            run.sequence_readout_parent = {
+                key: (
+                    None if value is None else str(value)
+                )
+                for key, value in stored_readout_parent.items()
+            }
+        stored_phase_checks = payload.get("sequence_readout_phase_checks", ())
+        if not isinstance(stored_phase_checks, Sequence) or isinstance(
+            stored_phase_checks, (str, bytes)
+        ):
+            raise ValueError("joint training sequence readout checks are invalid")
+        run.sequence_readout_phase_checks = [
+            dict(item) for item in stored_phase_checks if isinstance(item, Mapping)
+        ]
+        if len(run.sequence_readout_phase_checks) != len(stored_phase_checks):
+            raise ValueError("joint training sequence readout check is invalid")
         run.epoch = int(payload["epoch"])
         run.phase = str(payload.get("phase", run.training_phases[0]))
         run.sequence_cursor = int(payload.get("sequence_cursor", 0))
@@ -2411,6 +2621,7 @@ __all__ = [
     "JOINT_TRAINING_BASE_PHASES",
     "JOINT_TRAINING_PHASES",
     "JOINT_TRAINING_REPLAY_PHASES",
+    "JOINT_SEQUENCE_READOUT_MODE",
     "JOINT_TRAINING_VERSION",
     "JointTrainingRun",
 ]

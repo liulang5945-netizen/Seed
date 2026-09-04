@@ -15,6 +15,7 @@ from scripts.training.train_taiji_world_action import (
     build_world_learner,
 )
 from taiji import (
+    JOINT_SEQUENCE_READOUT_MODE,
     DelayedMemoryCorpus,
     DelayedMemoryQuery,
     FoundationTrainingDataset,
@@ -25,6 +26,7 @@ from taiji import (
     Taiji,
     TaijiConfig,
     WorldActionTrainingRun,
+    content_digest,
 )
 
 
@@ -432,6 +434,7 @@ def test_joint_sequence_only_continuation_protects_phase_a_metrics(monkeypatch) 
 
     assert report["training_phases"] == ["sequence"]
     assert report["protected_dataset_digest"] == phase_a.digest
+    assert report["sequence_readout_mode"] == JOINT_SEQUENCE_READOUT_MODE
     assert report["world_online_updates"] == initial_world_updates
     assert report["global_step"] == len(phase_b.train) // 32
     assert measurements["count"] == 1
@@ -443,9 +446,24 @@ def test_joint_sequence_only_continuation_protects_phase_a_metrics(monkeypatch) 
         assert key in report["parent_metrics"]
         assert key in report["final_metrics"]
 
+    readout_contract = report["sequence_readout_contract"]
+    assert set(readout_contract) == {"parent", "final", "phase_checks"}
+    assert (
+        readout_contract["parent"]["predictive_readout_digest"]
+        != readout_contract["final"]["predictive_readout_digest"]
+    )
+    assert len(readout_contract["phase_checks"]) == 1
+    assert all(readout_contract["phase_checks"][0]["preserved"].values())
+    keep_gate = report["sequence_only_keep_gate"]
+    assert keep_gate["applies"] is True
+    assert all(keep_gate["readout_preserved"].values())
+
     payload = torch.load(output_dir / "last.pt", map_location="cpu", weights_only=False)
     assert payload["training_phases"] == ["sequence"]
     assert payload["protected_dataset_digest"] == phase_a.digest
+    assert payload["sequence_readout_mode"] == JOINT_SEQUENCE_READOUT_MODE
+    assert payload["sequence_readout_parent"] == readout_contract["parent"]
+    assert payload["sequence_readout_phase_checks"] == readout_contract["phase_checks"]
     restored = JointTrainingRun.from_checkpoint(
         output_dir / "last.pt",
         phase_b,
@@ -456,7 +474,15 @@ def test_joint_sequence_only_continuation_protects_phase_a_metrics(monkeypatch) 
         protected_dataset=phase_a,
     )
     assert restored.training_phases == ("sequence",)
-    assert restored.evaluate_only()["checkpoint_read_only"] is True
+    restored_evaluation = restored.evaluate_only()
+    assert restored_evaluation["checkpoint_read_only"] is True
+    assert restored_evaluation["sequence_readout_mode"] == JOINT_SEQUENCE_READOUT_MODE
+    assert restored_evaluation["sequence_readout_contract"]["parent"] == readout_contract[
+        "parent"
+    ]
+    assert all(
+        restored_evaluation["sequence_only_keep_gate"]["readout_preserved"].values()
+    )
     with pytest.raises(ValueError, match="phase plan"):
         JointTrainingRun.from_checkpoint(
             output_dir / "last.pt",
@@ -501,6 +527,73 @@ def test_joint_protected_replay_requires_exact_phase_a_dataset() -> None:
             replay_dataset=other_old_course,
             training_phases=("sequence", "replay"),
         )
+
+
+def test_joint_legacy_shared_readout_checkpoint_requires_explicit_continuation() -> None:
+    """A pre-M2-2f sequence course may be inspected, never silently resumed."""
+
+    phase_a, phase_b = _phase_datasets()
+    memory_corpus = build_memory_corpus(count=4)
+    world_corpus = build_world_corpus(count=4)
+    goal_corpus = build_goal_corpus(count=4)
+    output_dir = Path(".seed_test_tmp") / "m2-legacy-shared-readout"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    checkpoint_path = output_dir / "legacy-last.pt"
+    checkpoint_path.unlink(missing_ok=True)
+
+    original = JointTrainingRun(
+        Taiji(_config(), episode_id="m2-legacy-shared-readout"),
+        build_world_learner(world_corpus, seed=11),
+        phase_b,
+        memory_corpus,
+        world_corpus,
+        goal_corpus,
+        output_dir=output_dir,
+        epochs=1,
+        chunk_bytes=32,
+        checkpoint_interval=2,
+        world_repeats=1,
+        protected_dataset=phase_a,
+        training_phases=("sequence",),
+    )
+    original.save(checkpoint_path)
+    legacy = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
+    legacy.pop("sequence_readout_mode")
+    legacy.pop("sequence_readout_parent")
+    legacy.pop("sequence_readout_phase_checks")
+    legacy["checkpoint_digest"] = content_digest(
+        {key: value for key, value in legacy.items() if key != "checkpoint_digest"}
+    )
+    torch.save(legacy, checkpoint_path)
+
+    restored = JointTrainingRun.from_checkpoint(
+        checkpoint_path,
+        phase_b,
+        memory_corpus,
+        world_corpus,
+        goal_corpus,
+        output_dir=output_dir,
+        protected_dataset=phase_a,
+    )
+    assert restored.sequence_readout_mode == "legacy-shared-readout-v0"
+    with pytest.raises(RuntimeError, match="explicit continuation course"):
+        restored.run()
+
+    continuation = JointTrainingRun.from_continuation_checkpoint(
+        checkpoint_path,
+        phase_b,
+        memory_corpus,
+        world_corpus,
+        goal_corpus,
+        output_dir=output_dir / "m2f-child",
+        epochs=1,
+        chunk_bytes=32,
+        checkpoint_interval=2,
+        world_repeats=1,
+        protected_dataset=phase_a,
+        training_phases=("sequence",),
+    )
+    assert continuation.sequence_readout_mode == JOINT_SEQUENCE_READOUT_MODE
 
 
 def test_joint_training_starts_an_explicit_continuation_from_child_checkpoint() -> None:

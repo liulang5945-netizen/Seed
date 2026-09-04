@@ -252,7 +252,8 @@ class TSKV8Adapter(Taiji):
     """Keep the TSK-v8 API while making v1 ownership explicit.
 
     This subclass is intentional: old callers still see a ``Taiji`` and old
-    ``taiji-native-v8`` checkpoints remain readable.  New callers can use
+    ``taiji-native-v8`` checkpoints remain readable through the v9 migration.
+    New callers can use
     ``native_checkpoint`` and ``cognitive_snapshot`` without treating the
     kernel's byte prediction state as the complete v1 cognitive state.
     """
