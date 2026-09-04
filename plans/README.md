@@ -2,14 +2,14 @@
 
 > 当前只有一份执行计划：[模型优先统一开发计划](active/roadmap/03_CURRENT_EXECUTION.md)。历史文档中的“下一步”一律失效。
 
-## 当前收敛结论（2026-09-04）
+## 当前收敛结论（2026-09-05）
 
 - Taiji 当前是原生学习机制原型，基础认知能力尚未得到可信证明；已有 checkpoint、局部学习、结构成长、Skill/MCP 投影和客户端隔离成果全部保留为训练底座。
 - 当前唯一主线是 `M0 CPU 五项基础能力真实性基线 → M1 foundation 训练 → M2 世界/行动/语言后训练 → M3 综合晋级 → M4 持续进化 → M5 Skill/MCP 与客户端身体 → M6 provider/产品体验 → M7 CI/发布 → M8 CUDA`。
 - M0 完成可信测量后，无论模型分数高低都必须进入 M1；低分是训练目标，不是继续外围建设的理由。
 - MiniMind 只作为小模型训练工程参考：采纳分阶段训练、分级数据、checkpoint/resume、独立评估和推理入口，不把 Transformer 复制成 Taiji 核心。
 - E1～E7 的完成状态保持有效但不代表通用能力；E8 bounded replay 冻结到 M4；真实第三方 MCP 连接冻结到 M5；CUDA 保持 `hardware-blocked`。
-- M2-1 已排除 F2→F1 的错误读出串扰；M2-2a～2c 已建立 content-addressed 的 phase-A/phase-B 真实语料隔离、可恢复 sequence-only runner 与 seed 11 checkpoint fresh-process 预检；M2-2d/e 又实测排除了“缺少 byte replay”解释。M2-2f 已完成 F1 predictive readout 隔离、v8/v1→v9/v2 断点迁移与真实旧 parent 的只读预检；当前唯一开发步骤是：在干净提交 revision 上运行 seed 11 的真实 phase-B sequence-only course，以旧 goal／memory 指标和逐位 readout digest 共同 Gate 其结果。
+- M2-1 已排除 F2→F1 的错误读出串扰；M2-2a～2c 已建立 content-addressed 的 phase-A/phase-B 真实语料隔离、可恢复 sequence-only runner 与 seed 11 checkpoint fresh-process 预检；M2-2d/e 又实测排除了“缺少 byte replay”解释。M2-2f 已完成 F1 predictive readout 隔离、v8/v1→v9/v2 断点迁移，并在 clean revision 的真实 seed 11 course 与 fresh-process 复验中证明 action/memory/identity readout 全部逐位受保护、B4 保持 `1.0`、old/new 四项 BPB 均略改善；但 B2 从 `0.870` 降至 `0.813`，完整 F5 因而仍失败。memory field payload 未变，证据将剩余干扰收窄为 F1 对共享 fabric 表征/检索线索的持久更新。当前唯一开发步骤是 M2-2g：以同一旧 parent 做「F1 仅训练独立 predictive readout、冻结共享 fabric 持久写入但保留前向动态」的因果消融，判定此边界能否同时保住 B2/B4 与语言进展；它是验证路径，不是以冻结共享表征作为最终成长架构。
 
 ## 当前权威文档
 

@@ -54,7 +54,7 @@ Taiji 采用“站在巨人肩膀上”的双边界：原始 byte 输入继续�
 |---|---|---|---|---|
 | 0 | M0 CPU 五项基础能力真实性基线 | **已完成（M0-0/M0-1/B1/B2/B3/B4/B5/M0-3/M0-4）** | 数据合同、对照 evaluator、checkpoint preflight、基线报告 | 测量链可信且能保存/恢复；模型得分可以失败，但失败必须被如实记录 |
 | 1 | M1 Taiji foundation 训练管线与首次 CPU 训练 | **已完成（M0-0~M0-4/M1-32~M1-66c）** | 原生 trainer、数据流水线、B2 因果链（寻址→裁决→折叠→契约）、首个 joint checkpoint | M1-66c 收尾：B2 在三 seed 上通过全部 foundation 门禁 |
-| 2 | M2 世界—行动—语言后训练 | **当前进行（M2-2f：sequence 训练保护行动性 readout）** | 世界预测、行动信用、F1 隔离读出、受控的旧/新语言保持 Gate，随后才是 ContentPlan/语言蒸馏和 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
+| 2 | M2 世界—行动—语言后训练 | **当前进行（M2-2g：F1 共享 fabric 持久写入的因果消融）** | 世界预测、行动信用、F1 隔离读出、受控的旧/新语言保持 Gate，随后才是 ContentPlan/语言蒸馏和 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
 | 3 | M3 综合能力晋级与真实 Workbench 验证 | 待开始 | 独立评测套件、真实 Workbench longitudinal report、晋级 checkpoint | 至少一个真实任务族获得可重复净收益 |
 | 4 | M4 持续学习、自进化和结构成长 | 冻结等待 M3 | bounded replay 接线、多周期保持、结构候选与单项回滚 | 真实 checkpoint 连续学习收益大于固定容量/weight-only 对照 |
 | 5 | M5 Skill/MCP 数据飞轮与客户端身体 | 冻结等待 M4 | 知识内化、经验回流、IDE/Workbench 身体、客户端插件准入 | 认知收益与客户端执行收益可消融归因，权限和回滚闭合 |
@@ -88,15 +88,15 @@ M0-3/M0-4 已完成：统一矩阵报告为 `reports/taiji_foundation_baseline_2
 
 M0 的零点已经足够可信，不能因 capability failed 继续扩大外围建设。M1 首轮固定 F1→F2→F3→F4→F5 顺序，优先目标是让 child checkpoint 在 B1/B2/B5 上出现可归因净提升，同时保持 B3/B4 不退化。本节只记录 M0 零点事实；M1 的逐片进展、唯一下一步和已完成结论统一记录在第 6 节的执行流水，不在此处重复维护第二份进度。
 
-当前唯一下一步的正文见第 6 节执行流水的末条；本节只保留该步的 owner 边界，避免同一事实出现两份维护。M2-2a～2e 已完成真实语料隔离、可恢复 continuation、no-replay 与 exact-replay 对照；M2-2f 已完成 readout 隔离、断点 schema 迁移与真实旧 parent 的只读 canary。当前本步是**干净 revision 上的 seed 11 foundation course**，只允许创建或修改以下 owner：
+当前唯一下一步的正文见第 6 节执行流水的末条；本节只保留该步的 owner 边界，避免同一事实出现两份维护。M2-2a～2e 已完成真实语料隔离、可恢复 continuation、no-replay 与 exact-replay 对照；M2-2f 已在 clean revision 的 seed 11 course 中完成结构性验证但 B2 keep 未通过。当前本步是**M2-2g：F1 共享 fabric 持久写入的因果消融**，只允许创建或修改以下 owner：
 
 
-- `scripts/training/train_taiji_joint.py`、`output/taiji-m2-f5-seed11-readout-protected-course-20260904/` 与 `reports/taiji_m2_f5_seed11_readout_protected_course_20260904*.json`：从已验证的旧 `output/taiji-m2-f5-seed11-no-replay-20260904/parent.pt` 用 `--continue-from` 创建新的 v9/v2 parent；保持 `--training-phases sequence`、phase-A=11、phase-B=10011 和 `replay_dataset_digest=null`，先执行 checkpoint save preflight，再完成 1 MiB course 与 fresh-process resume；不得覆盖 M2-2d/e 或本轮 migration canary；
-- `taiji/foundation_training.py` 与同源 tests：只有真实 course 发现 checkpoint 保存、fresh-process 恢复、只读 old 指标、readout contract 或 phase 边界的核心错误时才允许修改；不得因数值好坏调学习率、重放参数或 Gate 语义；
-- `reports/taiji_m2_f5_*.json`：同时记录 old/new BPB、B2/B4 keep、action/memory/identity readout digest、predictive readout digest、holdout-update 审计与 clean code revision；不得把 code-level 迁移 canary 误写成 F5 已通过；
-- 本文件与 `plans/README.md`：只同步已测量的结果和迁移语义；M2-2f 只有在三 seed old/new 与 B2/B4 不退化、fresh-process 一致且持久审计全绿后才闭合。
+- `taiji/model.py`、`taiji/foundation_training.py`、`scripts/training/train_taiji_joint.py` 与同源 tests：给 F1 sequence 学习增加显式且内容寻址的 `sequence_fabric_learning` 合同；默认 `true` 必须保持既有行为，M2-2g 试验值为 `false`，即仍执行 F1 前向动态并训练独立 predictive readout，但不让 F1 训练写入共享 fabric 的持久参数。该选择必须进入 checkpoint、resume 一致性检查和报告，旧 checkpoint 缺省解释为 `true`；不得改变 F2/F3/F4、学习率、数据、replay 或 keep Gate。
+- `output/taiji-m2-f5-seed11-predictor-only-*/` 与 `reports/taiji_m2_f5_seed11_predictor_only_*.json`：从同一旧 `output/taiji-m2-f5-seed11-no-replay-20260904/parent.pt` 用 `--continue-from` 建立新的 course，保持 `--training-phases sequence`、phase-A=11、phase-B=10011、`replay_dataset_digest=null`；先做 checkpoint save/fresh-process preflight，再运行与 M2-2f 等量的 1 MiB course 和全新进程复验；不得覆盖此前反事实或把 M2-2f child 误作此因果对照的 parent。
+- `reports/taiji_m2_f5_*.json`：同时记录 old/new BPB、B2/B4 keep、action/memory/identity readout digest、predictive readout digest、共享 fabric 的持久 digest、sequence-fabric 模式、holdout-update 审计与 clean code revision；不得把 frozen-fabric 消融误称为最终成长架构。
+- 本文件与 `plans/README.md`：只同步已测量的结果和因果假设。M2-2g 只有在 fresh-process 一致、结构审计全绿并明确显示「predictor-only」对 B2/B4 与语言的净影响后才结束；若 B2 保持而语言仍可进展，下一项才是将该隔离升级为可成长的专属 predictive plastic context，而不是永久冻结共享 fabric。
 
-本步明确禁止：重训或覆盖既有 M2-0 checkpoint、修改已经通过的 identity/B2 因果链、把 provider/ContentPlan/IDE 接入 F5 评估，或用同一语料伪装 phase-B 新能力。seed 11 的 run 必须是 `training_phases=["sequence"]` 且 `replay_dataset_digest=null`；只有它在隔离后的 F1 path 上使 old holdout/retention 下降，才允许在下一切片接入既已受限为 exact protected phase-A 的 bounded replay。M2-2 只有在三 seed 上 old 与 new 两套留出指标均不退化、checkpoint 可 fresh-process 恢复且 holdout/retention 始终只读时才闭合；否则按证据修训练信号或 replay，而不是回退到已经排除的「F2 覆盖了 F1 权重」解释。
+本步明确禁止：重训或覆盖既有 M2-0 checkpoint、修改已经通过的 identity/B2 因果链、把 provider/ContentPlan/IDE 接入 F5 评估，或用同一语料伪装 phase-B 新能力。seed 11 的 run 必须是 `training_phases=["sequence"]`、`replay_dataset_digest=null` 和显式的 `sequence_fabric_learning=false`；它是单变量反事实，不允许在同一 slice 内同时调学习率、重放或 Gate。M2-2 只有在三 seed 上 old 与 new 两套留出指标均不退化、checkpoint 可 fresh-process 恢复且 holdout/retention 始终只读时才闭合；否则按证据修训练信号，而不是回退到已经排除的「F2 覆盖了 F1 权重」或“缺少 replay”解释。
 
 ## 5. M0：CPU 五项最小能力验证方案
 
@@ -441,6 +441,8 @@ M1-64 已完成，B2 在真实 foundation 规模上被判定为**记忆能力不
 
 **M2-2f code-level 隔离与旧断点迁移完成（20260904，尚未形成正式 course 结论）**：新增 `BytePredictiveReadout`，它复用固定 cortical→context basis，但独占 sparse decoder/bias；`learn_bytes`、`score_bytes` 与 native `generate` 只走它，F4 `ByteMotor` 只保留行动/奖励更新。`TaijiState` 显式带 `readout_kind`，跨 F4→F1 的活动 episode 切换会在任何 pending memory/identity 写入前 fail closed；常驻红绿测试同时证明 F1 surprise 下降、action motor 与 identity value payload 逐位不变。checkpoint 由 `taiji-native-v8`/state v5 提升到 v9/v6，joint payload 由 v1 提升到 v2；当前代码仍可读取旧 v8/v1，复制旧 motor decoder 到 new predictive readout，并禁止 legacy shared-readout checkpoint 继续 sequence/replay（只能 `--continue-from` 开新 course）。joint checkpoint/report 记录 `dedicated-predictive-v1`、parent/current digest 与 phase checks；identity 的 lineage 是派生 core hash，持久审计和 readout contract 均剥离该字段但继续保护真实 organ slots。真实旧 seed 11 parent（joint v1、model v8、无 predictive field，source digest `9ec78802…0ba6f`）已成功迁移并以 `reports/taiji_m2_f5_seed11_readout_protected_preflight_20260904.json` 做只读 canary：old/new BPB、B2=`0.87`、B3=`3.622e-08`、B4=`1.0` 与 parent 一致，三个受保护 readout digest 都保持，预检 Gate 为 true。该 canary 发生在 clean commit 之前，不能作为正式训练谱系；同时已把 `code_revision` 改为 dirty patch fingerprint，防止未来把未提交实现误标为 HEAD。**唯一下一步**：提交此实现，在 clean revision 从相同旧 parent 新建 seed 11、phase-B sequence-only foundation course，随后 fresh-process 恢复并按真实 B2/B4 keep Gate 决定下一轮。
 
+**M2-2f 正式 seed 11 course 完成（20260904-05）：F4 readout 隔离成功，F5 仍因 B2 保持失败而不能闭合**。在 clean revision `e4ec6f3`，从同一旧 v1/v8 parent（outer digest `9ec78802…0ba6f`）用 `--continue-from` 建立 v2/v9 parent，完成 `training_phases=[sequence]` 的 1 MiB phase-B course（A seed=11、B seed=10011、无 replay）。预检与正式训练均有新进程复验；正式 child digest `c209f7d2…85bd7` 的 fresh-process 报告与训练结束报告在 checkpoint、数据 digest、指标、读出契约、phase checks 和 keep gate 上逐项一致，且 `checkpoint_read_only=true`。**已证明的正结果**：action motor、memory field、identity value 三个受保护 digest 全程逐位相同；B4 goal holdout/retention 均保持 `1.0`；new B BPB `4.794851/4.798177 → 4.790522/4.790490`，protected old A BPB `4.826468/4.793161 → 4.821849/4.771811`，四项均略改善；B3 仍为 `3.622e-08`。**未通过的门禁**：B2 holdout/retention `0.870/0.870 → 0.813/0.813`，所以 `sequence_only_keep_gate.passed=false`，完整 F5 绝不能宣称完成。memory field payload 与 identity/action readout 均未被改写，这将剩余干扰**收窄为假设**：F1 sequence 学习对共享 fabric 的持久表征更新改变了 B2 检索所依赖的 cue/context；该假设尚缺单变量因果证据。**M2-2g 唯一下一步**：以同一旧 parent 保持所有训练数据和超参数不变，仅冻结 F1 的共享 fabric 持久写入、保留前向动态与独立 predictive readout 学习；用同一 old/new B1、B2、B3、B4 和 fresh-process Gate 验证该变化是否同时保护 B2/B4 且仍允许语言学习。若成立，后续设计是专属 predictive plastic context，不是把共享 fabric 永久冻结。
+
 ## 7. M2～M8 的开发日程与外围任务安置
 
 ### M2：世界—行动—语言后训练
@@ -532,6 +534,7 @@ CI 不是最后才运行的支线：每个 slice 都运行相关 pytest/lint/typ
 
 | 日期 | 内容 |
 |---|---|
+| 2026-09-05 | M2-2f 正式 course 同步：clean revision `e4ec6f3` 从同一旧 seed 11 parent 完成 1 MiB 的独立 predictive readout sequence-only course；训练结束与全新进程只读恢复的 checkpoint、数据、指标、readout contract、phase checks、keep gate 全部一致。action/memory/identity readout digest 和 B4 `1.0` 均保持，old/new 四项 BPB 均略改善；但 B2 `0.870→0.813`，故 F5 仍失败。计划不调 replay/学习率，收束为 M2-2g 的单变量 F1 shared-fabric persistent-write 消融；它将验证剩余 B2 干扰是否来自共享检索线索，并为可成长的专属 predictive context 提供因果依据。 |
 | 2026-09-04 | M2-2c 同步：seed 11 的 phase-A/phase-B protected sequence-only course 已保存并通过 fresh-process 只读恢复（所有指标逐位一致，报告 `taiji_m2_f5_seed11_no_replay_preflight_20260904.json`）；runner 消除了同一 terminal state 的两次重复评估，不改变度量口径。计划推进到 M2-2d 的真实 no-replay course，未产生任何 F5 通过结论。 |
 | 2026-09-04 | M2-2b 同步：`JointTrainingRun` 增加内容寻址的 `training_phases`、`protected_dataset` 与 exact protected replay 限制；sequence-only runner、checkpoint round-trip、phase mismatch 和旧课程误回放拒绝均由 10 项 foundation training tests 覆盖。计划推进到 seed 11 foundation no-replay 实验；此时尚无 F5 数值结论。 |
 | 2026-09-04 | M2-2a 同步：完成 F5 phase-B 的真实数据隔离合同。`FoundationTrainingDataset` 在有 `exclude_dataset` 时按 phase-A 的实际 source-order/hash/byte-budget 选择状态排除整条已选记录，phase-B digest 明确链接被排除的 phase-A digest，而既有 M2-0 数据 digest 不变。`reports/taiji_m2_f5_phase_b_preflight_20260904.json` 记录三 seed 的真实 source 地址、phase-A 对齐、phase-B 预算和排除地址；唯一下一步收敛为 M2-2b 的 sequence-only/no-replay continuation。 |
