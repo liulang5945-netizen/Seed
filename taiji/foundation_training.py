@@ -50,6 +50,9 @@ WORLD_ACTION_TRAINING_FORMAT = "taiji-native-world-action-training-v1"
 WORLD_ACTION_TRAINING_VERSION = 1
 JOINT_TRAINING_FORMAT = "taiji-native-joint-training-v1"
 JOINT_TRAINING_VERSION = 1
+JOINT_TRAINING_BASE_PHASES = ("sequence", "memory", "world", "goal")
+JOINT_TRAINING_REPLAY_PHASES = ("replay", "replay-memory")
+JOINT_TRAINING_PHASES = JOINT_TRAINING_BASE_PHASES + JOINT_TRAINING_REPLAY_PHASES
 
 
 def _text_from_record(record: Any) -> str | None:
@@ -1447,6 +1450,37 @@ def _joint_train_memory_episode(
     model.observe(episode.outcome, learn=False, learn_motor=False, use_memory=False)
 
 
+def _legacy_joint_training_phases(
+    replay_dataset: FoundationTrainingDataset | None,
+    replay_memory_corpus: DelayedMemoryCorpus | None,
+) -> tuple[str, ...]:
+    """Return the phase plan implied by the pre-M2-2b joint runner."""
+
+    phases = list(JOINT_TRAINING_BASE_PHASES)
+    if replay_dataset is not None:
+        phases.append("replay")
+    if replay_memory_corpus is not None:
+        phases.append("replay-memory")
+    return tuple(phases)
+
+
+def _normalize_joint_training_phases(training_phases: Iterable[str]) -> tuple[str, ...]:
+    if isinstance(training_phases, (str, bytes)):
+        raise TypeError("joint training phases must be an iterable of phase names")
+    phases = tuple(str(phase).strip() for phase in training_phases)
+    if not phases:
+        raise ValueError("joint training needs at least one phase")
+    unsupported = tuple(phase for phase in phases if phase not in JOINT_TRAINING_PHASES)
+    if unsupported:
+        raise ValueError(f"unsupported joint training phases: {unsupported!r}")
+    if len(set(phases)) != len(phases):
+        raise ValueError("joint training phases must be unique")
+    canonical = tuple(phase for phase in JOINT_TRAINING_PHASES if phase in phases)
+    if phases != canonical:
+        raise ValueError("joint training phases must use canonical execution order")
+    return phases
+
+
 class JointTrainingRun:
     """A resumable short course combining F1, F2 and F3 on one lineage."""
 
@@ -1467,6 +1501,8 @@ class JointTrainingRun:
         metric_interval: int | None = None,
         world_learning_rate: float = 0.02,
         world_repeats: int = 8,
+        protected_dataset: FoundationTrainingDataset | None = None,
+        training_phases: Iterable[str] | None = None,
         replay_dataset: FoundationTrainingDataset | None = None,
         replay_epochs: int = 1,
         replay_memory_corpus: DelayedMemoryCorpus | None = None,
@@ -1491,6 +1527,45 @@ class JointTrainingRun:
             replay_dataset, FoundationTrainingDataset
         ):
             raise TypeError("joint replay requires FoundationTrainingDataset")
+        if protected_dataset is not None and not isinstance(
+            protected_dataset, FoundationTrainingDataset
+        ):
+            raise TypeError("joint protected course requires FoundationTrainingDataset")
+        if (
+            protected_dataset is not None
+            and dataset.excluded_dataset_digest != protected_dataset.digest
+        ):
+            raise ValueError(
+                "joint protected phase-A dataset must match the phase-B exclusion digest"
+            )
+        if (
+            protected_dataset is not None
+            and replay_dataset is not None
+            and replay_dataset.digest != protected_dataset.digest
+        ):
+            raise ValueError(
+                "joint replay dataset must be the exact protected phase-A dataset"
+            )
+        if training_phases is None:
+            normalized_training_phases = _legacy_joint_training_phases(
+                replay_dataset, replay_memory_corpus
+            )
+        else:
+            normalized_training_phases = _normalize_joint_training_phases(training_phases)
+            if replay_dataset is not None and "replay" not in normalized_training_phases:
+                raise ValueError("joint replay dataset requires the replay phase")
+            if (
+                replay_memory_corpus is not None
+                and "replay-memory" not in normalized_training_phases
+            ):
+                raise ValueError("joint memory replay corpus requires the replay-memory phase")
+        if "replay" in normalized_training_phases and replay_dataset is None:
+            raise ValueError("joint replay phase requires a replay dataset")
+        if (
+            "replay-memory" in normalized_training_phases
+            and replay_memory_corpus is None
+        ):
+            raise ValueError("joint replay-memory phase requires a replay memory corpus")
         if int(epochs) <= 0 or int(chunk_bytes) <= 0 or int(checkpoint_interval) <= 0:
             raise ValueError("joint training epochs, chunk_bytes, and checkpoint_interval must be positive")
         if float(world_learning_rate) <= 0.0 or int(world_repeats) <= 0:
@@ -1529,6 +1604,8 @@ class JointTrainingRun:
         )
         self.world_learning_rate = float(world_learning_rate)
         self.world_repeats = int(world_repeats)
+        self.protected_dataset = protected_dataset
+        self.training_phases = normalized_training_phases
         self.replay_dataset = replay_dataset
         self.replay_epochs = int(replay_epochs)
         self.replay_memory_corpus = replay_memory_corpus
@@ -1550,7 +1627,7 @@ class JointTrainingRun:
             key: float(value) for key, value in (parent_metrics or measured_parent).items()
         }
         self.epoch = 0
-        self.phase = "sequence"
+        self.phase = self.training_phases[0]
         self.sequence_cursor = 0
         self.memory_cursor = 0
         self.world_cursor = 0
@@ -1580,6 +1657,12 @@ class JointTrainingRun:
             payload["replay_dataset_digest"] = self.replay_dataset.digest
         if self.replay_memory_corpus is not None:
             payload["replay_memory_digest"] = _memory_corpus_digest(self.replay_memory_corpus)
+        if self.protected_dataset is not None:
+            payload["protected_dataset_digest"] = self.protected_dataset.digest
+        if self.training_phases != _legacy_joint_training_phases(
+            self.replay_dataset, self.replay_memory_corpus
+        ):
+            payload["training_phases"] = list(self.training_phases)
         return content_digest(payload)
 
     @property
@@ -1630,18 +1713,31 @@ class JointTrainingRun:
                 self.model, self.goal_corpus.retention
             ),
         }
+        if self.protected_dataset is not None:
+            metrics["protected_sequence_holdout_bpb"] = _joint_sequence_bpb(
+                self.model, self.protected_dataset.holdout
+            )
+            metrics["protected_sequence_retention_bpb"] = _joint_sequence_bpb(
+                self.model, self.protected_dataset.retention
+            )
         persistent_after = _world_action_persistent_digest(self.model, self.world_learner)
         if persistent_before != persistent_after:
             raise RuntimeError("joint holdout evaluation mutated persistent state")
         return metrics
 
     def _joint_holdout_score(self, metrics: Mapping[str, float]) -> float:
-        return (
+        score = (
             self.parent_metrics["sequence_holdout_bpb"] - metrics["sequence_holdout_bpb"]
             + metrics["memory_holdout_recall"] - self.parent_metrics["memory_holdout_recall"]
             + self.parent_metrics["world_holdout_error"] - metrics["world_holdout_error"]
             + metrics["goal_holdout_success"] - self.parent_metrics["goal_holdout_success"]
         )
+        if self.protected_dataset is not None:
+            score += (
+                self.parent_metrics["protected_sequence_holdout_bpb"]
+                - metrics["protected_sequence_holdout_bpb"]
+            )
+        return score
 
     def _checkpoint_payload(self) -> dict[str, Any]:
         payload: dict[str, Any] = {
@@ -1673,6 +1769,10 @@ class JointTrainingRun:
             "metric_interval": self.metric_interval,
             "world_learning_rate": self.world_learning_rate,
             "world_repeats": self.world_repeats,
+            "protected_dataset_digest": (
+                self.protected_dataset.digest if self.protected_dataset is not None else None
+            ),
+            "training_phases": list(self.training_phases),
             "replay_dataset_digest": (
                 self.replay_dataset.digest if self.replay_dataset is not None else None
             ),
@@ -1755,75 +1855,82 @@ class JointTrainingRun:
             self.save(self.parent_checkpoint_path)
             self.save(self.best_checkpoint_path)
         while self.epoch < self.total_epochs:
-            self.phase = "sequence"
-            while self.sequence_cursor < len(self.dataset.train):
-                end = min(self.sequence_cursor + self.chunk_bytes, len(self.dataset.train))
-                self.model.learn_bytes(self.dataset.train[self.sequence_cursor:end], epochs=1)
-                self.sequence_cursor = end
-                self.global_step += 1
-                if (
-                    self.global_step % self.metric_interval == 0
-                    or self.sequence_cursor == len(self.dataset.train)
-                ):
-                    self._save_progress(train_kind="sequence")
-                else:
-                    self.save(self.last_checkpoint_path)
+            if "sequence" in self.training_phases:
+                self.phase = "sequence"
+                while self.sequence_cursor < len(self.dataset.train):
+                    end = min(self.sequence_cursor + self.chunk_bytes, len(self.dataset.train))
+                    self.model.learn_bytes(
+                        self.dataset.train[self.sequence_cursor:end], epochs=1
+                    )
+                    self.sequence_cursor = end
+                    self.global_step += 1
+                    if (
+                        self.global_step % self.metric_interval == 0
+                        or self.sequence_cursor == len(self.dataset.train)
+                    ):
+                        self._save_progress(train_kind="sequence")
+                    else:
+                        self.save(self.last_checkpoint_path)
 
-            self.phase = "memory"
-            while self.memory_cursor < len(self.memory_corpus.train):
-                _joint_train_memory_episode(
-                    self.model, self.memory_corpus.train[self.memory_cursor]
-                )
-                self.memory_cursor += 1
-                self.global_step += 1
-                if (
-                    self.global_step % self.metric_interval == 0
-                    or self.memory_cursor == len(self.memory_corpus.train)
-                ):
-                    self._save_progress(train_kind="memory")
-                else:
-                    self.save(self.last_checkpoint_path)
+            if "memory" in self.training_phases:
+                self.phase = "memory"
+                while self.memory_cursor < len(self.memory_corpus.train):
+                    _joint_train_memory_episode(
+                        self.model, self.memory_corpus.train[self.memory_cursor]
+                    )
+                    self.memory_cursor += 1
+                    self.global_step += 1
+                    if (
+                        self.global_step % self.metric_interval == 0
+                        or self.memory_cursor == len(self.memory_corpus.train)
+                    ):
+                        self._save_progress(train_kind="memory")
+                    else:
+                        self.save(self.last_checkpoint_path)
 
-            self.phase = "world"
-            while self.world_cursor < len(self.world_corpus.train):
-                case = self.world_corpus.train[self.world_cursor]
-                self.world_learner.online_update(
-                    WorldTransition(
-                        before=case.initial,
-                        action=case.action,
-                        after=case.expected_state,
-                        outcome=case.expected_outcome,
-                    ),
-                    learning_rate=self.world_learning_rate,
-                    repeats=self.world_repeats,
-                    register_parameters=True,
-                )
-                self.world_cursor += 1
-                self.global_step += 1
-                if (
-                    self.global_step % self.metric_interval == 0
-                    or self.world_cursor == len(self.world_corpus.train)
-                ):
-                    self._save_progress(train_kind="world")
-                else:
-                    self.save(self.last_checkpoint_path)
+            if "world" in self.training_phases:
+                self.phase = "world"
+                while self.world_cursor < len(self.world_corpus.train):
+                    case = self.world_corpus.train[self.world_cursor]
+                    self.world_learner.online_update(
+                        WorldTransition(
+                            before=case.initial,
+                            action=case.action,
+                            after=case.expected_state,
+                            outcome=case.expected_outcome,
+                        ),
+                        learning_rate=self.world_learning_rate,
+                        repeats=self.world_repeats,
+                        register_parameters=True,
+                    )
+                    self.world_cursor += 1
+                    self.global_step += 1
+                    if (
+                        self.global_step % self.metric_interval == 0
+                        or self.world_cursor == len(self.world_corpus.train)
+                    ):
+                        self._save_progress(train_kind="world")
+                    else:
+                        self.save(self.last_checkpoint_path)
 
-            self.phase = "goal"
-            while self.goal_cursor < len(self.goal_corpus.train):
-                success = _train_goal_episode(
-                    self.model, self.goal_corpus.train[self.goal_cursor], learn=True
-                )
-                self.goal_cursor += 1
-                self.global_step += 1
-                if (
-                    self.global_step % self.metric_interval == 0
-                    or self.goal_cursor == len(self.goal_corpus.train)
-                ):
-                    self._save_progress(train_kind="goal", train_success=success)
-                else:
-                    self.save(self.last_checkpoint_path)
+            if "goal" in self.training_phases:
+                self.phase = "goal"
+                while self.goal_cursor < len(self.goal_corpus.train):
+                    success = _train_goal_episode(
+                        self.model, self.goal_corpus.train[self.goal_cursor], learn=True
+                    )
+                    self.goal_cursor += 1
+                    self.global_step += 1
+                    if (
+                        self.global_step % self.metric_interval == 0
+                        or self.goal_cursor == len(self.goal_corpus.train)
+                    ):
+                        self._save_progress(train_kind="goal", train_success=success)
+                    else:
+                        self.save(self.last_checkpoint_path)
 
-            if self.replay_dataset is not None:
+            if "replay" in self.training_phases:
+                assert self.replay_dataset is not None
                 self.phase = "replay"
                 while self.replay_epoch < self.replay_epochs:
                     while self.replay_cursor < len(self.replay_dataset.train):
@@ -1846,7 +1953,8 @@ class JointTrainingRun:
                     self.replay_epoch += 1
                     self.replay_cursor = 0
 
-            if self.replay_memory_corpus is not None:
+            if "replay-memory" in self.training_phases:
+                assert self.replay_memory_corpus is not None
                 self.phase = "replay-memory"
                 while self.replay_memory_epoch < self.replay_memory_epochs:
                     while self.replay_memory_cursor < len(self.replay_memory_corpus.train):
@@ -1871,7 +1979,7 @@ class JointTrainingRun:
                     self.replay_memory_cursor = 0
 
             self.epoch += 1
-            self.phase = "sequence"
+            self.phase = self.training_phases[0]
             self.sequence_cursor = 0
             self.memory_cursor = 0
             self.world_cursor = 0
@@ -1895,6 +2003,10 @@ class JointTrainingRun:
             "model_tier": self.model_tier,
             "corpus_digest": self.corpus_digest,
             "dataset_digest": self.dataset.digest,
+            "protected_dataset_digest": (
+                self.protected_dataset.digest if self.protected_dataset is not None else None
+            ),
+            "training_phases": list(self.training_phases),
             "memory_digest": _memory_corpus_digest(self.memory_corpus),
             "world_action_digest": _world_action_corpus_digest(
                 self.world_corpus, self.goal_corpus
@@ -1960,6 +2072,10 @@ class JointTrainingRun:
             "status": "evaluated",
             "model_tier": self.model_tier,
             "corpus_digest": self.corpus_digest,
+            "protected_dataset_digest": (
+                self.protected_dataset.digest if self.protected_dataset is not None else None
+            ),
+            "training_phases": list(self.training_phases),
             "checkpoint_digest": before,
             "metrics": metrics,
             "checkpoint_read_only": True,
@@ -1987,6 +2103,8 @@ class JointTrainingRun:
         metric_interval: int | None = None,
         world_learning_rate: float | None = None,
         world_repeats: int | None = None,
+        protected_dataset: FoundationTrainingDataset | None = None,
+        training_phases: Iterable[str] | None = None,
         replay_dataset: FoundationTrainingDataset | None = None,
         replay_epochs: int | None = None,
         replay_memory_corpus: DelayedMemoryCorpus | None = None,
@@ -2064,6 +2182,8 @@ class JointTrainingRun:
             world_repeats=int(
                 world_repeats if world_repeats is not None else payload["world_repeats"]
             ),
+            protected_dataset=protected_dataset,
+            training_phases=training_phases,
             replay_dataset=replay_dataset,
             replay_epochs=int(
                 replay_epochs
@@ -2105,6 +2225,8 @@ class JointTrainingRun:
         output_dir: str | Path | None = None,
         epochs: int | None = None,
         metric_interval: int | None = None,
+        protected_dataset: FoundationTrainingDataset | None = None,
+        training_phases: Iterable[str] | None = None,
         replay_dataset: FoundationTrainingDataset | None = None,
         replay_epochs: int | None = None,
         replay_memory_corpus: DelayedMemoryCorpus | None = None,
@@ -2126,6 +2248,12 @@ class JointTrainingRun:
         )
         if str(payload.get("checkpoint_digest", "")) != expected:
             raise ValueError("joint training checkpoint digest mismatch")
+        stored_protected_digest = payload.get("protected_dataset_digest")
+        requested_protected_digest = (
+            protected_dataset.digest if protected_dataset is not None else None
+        )
+        if stored_protected_digest != requested_protected_digest:
+            raise ValueError("joint training protected phase-A corpus digest mismatch")
         stored_replay_digest = payload.get("replay_dataset_digest")
         requested_replay_digest = replay_dataset.digest if replay_dataset is not None else None
         if stored_replay_digest != requested_replay_digest:
@@ -2138,6 +2266,19 @@ class JointTrainingRun:
         )
         if stored_replay_memory_digest != requested_replay_memory_digest:
             raise ValueError("joint training replay memory digest mismatch")
+        stored_training_phases = payload.get("training_phases")
+        if stored_training_phases is None:
+            stored_phase_plan = _legacy_joint_training_phases(
+                replay_dataset, replay_memory_corpus
+            )
+        else:
+            stored_phase_plan = _normalize_joint_training_phases(stored_training_phases)
+        if training_phases is None:
+            effective_training_phases = stored_phase_plan
+        else:
+            effective_training_phases = _normalize_joint_training_phases(training_phases)
+            if effective_training_phases != stored_phase_plan:
+                raise ValueError("joint training phase plan mismatch")
         corpus_payload = {
             "format": JOINT_TRAINING_FORMAT,
             "version": JOINT_TRAINING_VERSION,
@@ -2149,6 +2290,12 @@ class JointTrainingRun:
             corpus_payload["replay_dataset_digest"] = replay_dataset.digest
         if replay_memory_corpus is not None:
             corpus_payload["replay_memory_digest"] = _memory_corpus_digest(replay_memory_corpus)
+        if protected_dataset is not None:
+            corpus_payload["protected_dataset_digest"] = protected_dataset.digest
+        if effective_training_phases != _legacy_joint_training_phases(
+            replay_dataset, replay_memory_corpus
+        ):
+            corpus_payload["training_phases"] = list(effective_training_phases)
         expected_corpus = content_digest(corpus_payload)
         if str(payload.get("corpus_digest")) != expected_corpus:
             raise ValueError("joint training corpus digest mismatch")
@@ -2180,6 +2327,8 @@ class JointTrainingRun:
             ),
             world_learning_rate=float(payload["world_learning_rate"]),
             world_repeats=int(payload["world_repeats"]),
+            protected_dataset=protected_dataset,
+            training_phases=effective_training_phases,
             replay_dataset=replay_dataset,
             replay_epochs=int(
                 replay_epochs
@@ -2213,7 +2362,7 @@ class JointTrainingRun:
         run.parent_model_payload = deepcopy(parent_model)
         run.parent_world_payload = deepcopy(parent_world)
         run.epoch = int(payload["epoch"])
-        run.phase = str(payload.get("phase", "sequence"))
+        run.phase = str(payload.get("phase", run.training_phases[0]))
         run.sequence_cursor = int(payload.get("sequence_cursor", 0))
         run.memory_cursor = int(payload.get("memory_cursor", 0))
         run.world_cursor = int(payload.get("world_cursor", 0))
@@ -2247,6 +2396,9 @@ __all__ = [
     "WORLD_ACTION_TRAINING_VERSION",
     "WorldActionTrainingRun",
     "JOINT_TRAINING_FORMAT",
+    "JOINT_TRAINING_BASE_PHASES",
+    "JOINT_TRAINING_PHASES",
+    "JOINT_TRAINING_REPLAY_PHASES",
     "JOINT_TRAINING_VERSION",
     "JointTrainingRun",
 ]
