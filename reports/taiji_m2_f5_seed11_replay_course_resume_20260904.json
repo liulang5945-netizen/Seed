@@ -1,0 +1,33 @@
+{
+  "format": "taiji-native-joint-training-v1",
+  "version": 1,
+  "status": "evaluated",
+  "model_tier": "joint",
+  "corpus_digest": "383b0e33c7f5360af3a9163c4659c46b2cc2c4b6b2dadfcc4b63cf2ef8a1d1cc",
+  "protected_dataset_digest": "6c4abbb01d30134867573396b784b2c77fef5e137e2e660dfa262c2645f2e7f6",
+  "training_phases": [
+    "sequence",
+    "replay"
+  ],
+  "checkpoint_digest": "83f19dce030af5d17300d452ca529a2cdcc777cb462abe1a52d6473d8b265f7e",
+  "metrics": {
+    "sequence_holdout_bpb": 4.849522470647364,
+    "sequence_retention_bpb": 4.851712996306121,
+    "memory_holdout_recall": 0.594,
+    "memory_retention_recall": 0.594,
+    "world_holdout_error": 3.622080058107713e-08,
+    "world_retention_error": 3.622080058107713e-08,
+    "goal_holdout_success": 0.5,
+    "goal_retention_success": 0.5,
+    "protected_sequence_holdout_bpb": 4.875867305911507,
+    "protected_sequence_retention_bpb": 4.842921213846002
+  },
+  "checkpoint_read_only": true,
+  "metric_interval": 256,
+  "replay_memory_relation": null,
+  "replay_memory_learning_scale": 0.25,
+  "replay_memory_learning_targets": "all",
+  "code_revision": "20818edb41077a47c875701d68dd6d768f318c7d",
+  "continuation_source_checkpoint_digest": "9ec788025a8e00683ea36e878b54d87c6fc53f99229f5e4b2172cb0fb300ba6f",
+  "report_path": "reports\\taiji_m2_f5_seed11_replay_course_resume_20260904.json"
+}
