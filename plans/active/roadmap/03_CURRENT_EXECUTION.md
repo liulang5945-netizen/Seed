@@ -54,7 +54,7 @@ Taiji 采用“站在巨人肩膀上”的双边界：原始 byte 输入继续�
 |---|---|---|---|---|
 | 0 | M0 CPU 五项基础能力真实性基线 | **已完成（M0-0/M0-1/B1/B2/B3/B4/B5/M0-3/M0-4）** | 数据合同、对照 evaluator、checkpoint preflight、基线报告 | 测量链可信且能保存/恢复；模型得分可以失败，但失败必须被如实记录 |
 | 1 | M1 Taiji foundation 训练管线与首次 CPU 训练 | **已完成（M0-0~M0-4/M1-32~M1-66c）** | 原生 trainer、数据流水线、B2 因果链（寻址→裁决→折叠→契约）、首个 joint checkpoint | M1-66c 收尾：B2 在三 seed 上通过全部 foundation 门禁 |
-| 2 | M2 世界—行动—语言后训练 | **当前进行（F1→F5 首轮真实训练）** | 世界预测、行动信用、ContentPlan/语言蒸馏和受控 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
+| 2 | M2 世界—行动—语言后训练 | **当前进行（M2-2：真实 F5 连续字节课程）** | 世界预测、行动信用、F1 隔离读出、受控的旧/新语言保持 Gate，随后才是 ContentPlan/语言蒸馏和 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
 | 3 | M3 综合能力晋级与真实 Workbench 验证 | 待开始 | 独立评测套件、真实 Workbench longitudinal report、晋级 checkpoint | 至少一个真实任务族获得可重复净收益 |
 | 4 | M4 持续学习、自进化和结构成长 | 冻结等待 M3 | bounded replay 接线、多周期保持、结构候选与单项回滚 | 真实 checkpoint 连续学习收益大于固定容量/weight-only 对照 |
 | 5 | M5 Skill/MCP 数据飞轮与客户端身体 | 冻结等待 M4 | 知识内化、经验回流、IDE/Workbench 身体、客户端插件准入 | 认知收益与客户端执行收益可消融归因，权限和回滚闭合 |
@@ -88,16 +88,15 @@ M0-3/M0-4 已完成：统一矩阵报告为 `reports/taiji_foundation_baseline_2
 
 M0 的零点已经足够可信，不能因 capability failed 继续扩大外围建设。M1 首轮固定 F1→F2→F3→F4→F5 顺序，优先目标是让 child checkpoint 在 B1/B2/B5 上出现可归因净提升，同时保持 B3/B4 不退化。本节只记录 M0 零点事实；M1 的逐片进展、唯一下一步和已完成结论统一记录在第 6 节的执行流水，不在此处重复维护第二份进度。
 
-当前唯一下一步的正文见第 6 节执行流水的末条；本节只保留该步的 owner 边界，避免同一事实出现两份维护。本步（M1-64：用已晋级的 identity 器官在 foundation 规模上重测 B2）只允许创建或修改以下 owner：
+当前唯一下一步的正文见第 6 节执行流水的末条；本节只保留该步的 owner 边界，避免同一事实出现两份维护。本步（M2-2：真实 F5 连续字节课程）只允许创建或修改以下 owner：
 
-- `taiji/foundation_tasks.py`：B2 适配器的 `use_identity` 显式参数、identity-organ lesion 臂，以及被 B2/B4 共用的 `_persistent_digest` 审计口径；
-- `tests/taiji_native/test_foundation_tasks.py`：identity lesion 必须作为独立基线出现、`_persistent_digest` 必须对器官写入敏感的 red；
-- `scripts/training/eval_taiji_m1_64_*.py`：manifest 样本下限下的 foundation 规模 B2 evaluator（逐行边际、最差 seed、两条消融、同进程与 fresh-process audit）；
-- `reports/taiji_m1_64_*.json`：foundation 规模 B2 与 B1/B3/B4/B5 非退化回归的证据；
-- `plans/manifests/taiji_foundation_baseline_v1.json`：仅允许把 `identity_lesion` 补进 B2 的 `baselines` 列表，**不得**修改 `baseline_protocol.required_controls`（该字段被契约按严格相等校验）；
-- `scripts/training/eval_taiji_m1_63_identity_organ_promotion.py`、`tests/taiji_native/test_m1_identity_organ_canary.py`：负奖励课程进入 M1-63 晋级 Gate 的补测。
+- `taiji/foundation_training.py`：为 joint checkpoint 增加可恢复、可内容寻址的 phase-A/phase-B F1 课程状态与 no-replay/replay counterfactual；不得改变 F2 的 memory write、B2 organ-first verdict 或 B3/B4 的训练语义；
+- `scripts/training/train_taiji_joint.py`：显式接收 phase-B 语料、旧语料 replay 和三 seed 分区参数；恢复必须严格校验所有语料 digest，不能从 checkpoint 或默认值猜测分区；
+- `tests/taiji_native/test_foundation_training.py`、`tests/taiji_native/test_sequence_learning.py`：先写出旧能力被 phase-B 损伤的 red，再验证 bounded replay 只在有因果必要性时改善 old/new 同时保持，并覆盖 checkpoint round-trip；
+- `reports/taiji_m2_f5_*.json`：逐 seed 的 phase-A parent、no-replay、replay child、old/new holdout/retention、数据 digest、fresh-process 和 holdout-update 审计；
+- 本文件与 `README.md`、`README.zh-CN.md`：只同步已测量的结论、F1 隔离语义和 M2-2 Gate，不把 F1 隔离误写成 F5 已通过。
 
-本步明确禁止：改器官形态、调其标量、新增 objective、改 `taiji/identity_organ.py` 与 `taiji/model.py` 的写入语义。任何红都必须先跑出失败再修实现，不允许为了让红消失而改断言。B2 只有在三 seed 上同时严格超过 memory lesion 与 identity-organ lesion、且 B1/B3/B4/B5 不退化时才算通过；否则按第 6 节末条的分支条款转向更高容量的可塑性结构，而不是继续在小课程上加指标。
+本步明确禁止：重训或覆盖既有 M2-0 checkpoint、修改已经通过的 identity/B2 因果链、把 provider/ContentPlan/IDE 接入 F5 评估，或用同一语料伪装 phase-B 新能力。先运行 no-replay counterfactual；只有它在隔离后的 F1 path 上使 old holdout/retention 下降，才允许接入现有 bounded replay。M2-2 只有在三 seed 上 old 与 new 两套留出指标均不退化、checkpoint 可 fresh-process 恢复且 holdout/retention 始终只读时才闭合；否则按证据修训练信号或 replay，而不是回退到已经排除的「F2 覆盖了 F1 权重」解释。
 
 ## 5. M0：CPU 五项最小能力验证方案
 
@@ -426,6 +425,8 @@ M1-64 已完成，B2 在真实 foundation 规模上被判定为**记忆能力不
 
 **M2-0 完成（F1→F4 首轮真实训练跑通，20260903 深夜）**：foundation 规模 joint 训练在三 seed `[11,29,47]` 全部 `status=completed`，child checkpoint 均可 fresh-process 恢复（`--resume last.pt --eval-only` 后指标与训练结束逐位一致、`checkpoint_read_only=true`，seed 11 报告 `reports/taiji_m2_f1f5_foundation_seed11_resume_20260903.json`），训练报告 `reports/taiji_m2_f1f5_foundation_seed{11,29,47}_20260903.json`。**最终指标（parent → child，三 seed）**：B1 sequence holdout BPB `8.006 → 7.380/7.336/6.533`（最差 seed 7.380）；B2 memory recall `0.5 → 0.87/0.85/0.87`；B3 world error `1.71/0.161/0.429 → 3.6e-08`；B4 goal success `0.5 → 1.0/1.0/1.0`；`joint_holdout_gain` `3.21/1.68/2.77`；`final_credit_lesion_success=0.5`（从 parent 冷启动 action organ 且 `learn=False` 重放后 holdout 仅 0.5=chance，证明 goal 的 1.0 不是预置/构造答案，是训练学来的）；`holdout_updates=0`、`world_online_updates=1000`、`transition_rejections=0`。**两个必须如实记录的结论**。其一，B2/B3/B4 在三 seed 上相对 parent 的净提升是显著且稳定的，M2 的世界/行动/记忆后训练目标初步达成。其二，**B1 最终未超 unigram 对照（5.942），且存在灾难性遗忘**：F1 sequence 阶段结束时 holdout BPB 曾达 `4.72-4.93`（已低于 unigram 5.942），但进入 F2/F3/F4 阶段后逐步回退到最终 `6.53-7.38`——语言能力被后续阶段训练侵蚀，这正是 roadmap M1 早已记录的 B5「旧能力保持/持续学习」目标在 M2 规模的直接体现，也是 F5 阶段（或 M2 的 replay/keep 机制）必须解决的第一优先问题。按 roadmap 纪律不把「相对 parent 提升」宣称为「B1 通过」：B1 的正式 foundation 判定仍需在后续处理遗忘后以「未训练时不退化」门禁闭合。邻居能力数值位移在本轮为训练性（joint 训练天然改变权重），非机制回归，需在后续以固定 `PRIOR_BASELINE` 复核。**M2-0 唯一下一步建议**：先处理 F1 语言在 F2+ 阶段的灾难性遗忘——用 bounded replay（M4 已冻结的 replay 接线可在 M2 以「旧语料 replay 保持」形态先接入 joint 训练的 replay 通道，`--replay-corpus`/`--replay-memory-corpus` 已存在但本轮未启用）重跑一轮，验证 B1 保持且 B2/B3/B4 不退化；在验证「保持」成立前不进入 M2 的 ContentPlan/语言蒸馏子阶段。
 
+**M2-1 完成（F1 预测—记忆隔离复核，20260904）**：M2-0 的“F2+ 阶段造成 F1 灾难性遗忘”被系统化诊断推翻为**读出边界错误**，不是已学习的 F1 参数被主要覆盖。根因是 `Taiji.learn_bytes`/`score_bytes`/native `generate` 虽关闭 `identity`，却默认保留 `use_memory=True`；F2 写入的长期情景场于是向原始字节预测注入 cortical feedback 与 action evidence。先在真实 seed 11 checkpoint 上做同一 2,048-byte holdout 的有/无长期记忆只读对照，BPB `7.691 → 4.547`，再把三个 API 的默认改为 `use_memory=False`（显式 `True` 仍可用于记忆增强实验），并先红后绿固化为常驻测试。随后用**原 M2-0 的三份 `last.pt`、各自原始 content-addressed partition（11/29/47）和全新 Python 进程**做完整 `131,072` 字节 holdout/retention 重评：B1 holdout `7.380/7.336/6.533 → 4.826/4.931/4.805`，retention `7.347/7.298/6.554 → 4.793/4.892/4.819`，三 seed 全部优于 unigram `5.942172`；B2 recall 保持 `0.87/0.85/0.87`，B3 error 保持约 `3.5e-08`，B4 success 保持 `1.0`，三份均 `checkpoint_read_only=true`。证据链：`reports/taiji_m2_f1_isolation_20260904.json` 及逐 seed `_seed{11,29,47}_20260904.json`。因此不再以 replay 伪修 F2→F1 串扰，也不把“隔离后 F1 恢复”错误宣称成 F5 持续学习已完成；它只关闭了 M2-0 的错误归因并恢复了可比较的 F1 量尺。**M2-2 唯一下一步**：用彼此隔离的 phase-A/phase-B 语言分区建立真正的 F5 old/new 保持 Gate，先跑 no-replay counterfactual，只有出现真实旧能力下降才启用 bounded replay；在三 seed old/new 同时通过前不进入 ContentPlan、语言教师或 IDE 行动阶段。
+
 ## 7. M2～M8 的开发日程与外围任务安置
 
 ### M2：世界—行动—语言后训练
@@ -517,6 +518,7 @@ CI 不是最后才运行的支线：每个 slice 都运行相关 pytest/lint/typ
 
 | 日期 | 内容 |
 |---|---|
+| 2026-09-04 | M2-1 同步：README 中英文与唯一执行计划从过时的 M1-65 状态更新为 M1-66c 已闭合、M2-0 首轮真实联合训练、M2-1 F1 预测—记忆隔离复核和 M2-2 真实 F5 Gate。数字只取自 `reports/taiji_m2_f1_isolation_20260904.json` 与其三份 fresh-process 子报告；同时把 README 中与 `tests/seed/test_project_identity.py` 冲突的旧身份句式改为 “Seed provides…”，不改变 Taiji 为认知架构、Seed 为项目/产品/运行时的合同。 |
 | 2026-09-03 | 按"文档事实同步随主阶段执行"原则：`README.md` 全面更新至 M0 完成、M1-65 现状（可复现内核结果、M0 可信零点、M1 联合训练、identity 器官晋升与 foundation 规模诚实判定、唯一下一步验收探针）；新增 `README.zh-CN.md` 中文介绍，事实与英文版逐条一致；全部数字均取自本文第 4/6 节与 `reports/` 编号报告，未新增任何断言。同日修复 `CONTRIBUTING.md` 对不存在的 `verify_taiji_native_v1.py` 的引用（改指 v7，与 README/CI 一致）。|
 | 2026-09-03 | 根据评审调整 README 定位：从"进度汇报"改为"项目核心介绍"——结构重排为「架构（Taiji v1 设计原则/L0–L7 分层/认知状态合同/两平面学习/当前可执行内核）→ 能力（内核已验证机制/结构成长/A0–A9 反证门槛/M0+M1 统一评估）→ 现状（已完成/进行中/诚实边界）」，M1 执行细节压缩为一段并指向 `03_CURRENT_EXECUTION.md`；中英文两版同步改写并推送 `origin/main`。|
 | 2026-09-03 | README 叙事补强：把 CR-4/CR-7/CR-9 支撑的「自我进化/架构自寻正确设计」明文写成项目核心出发点（"What Taiji is" 段首 + 顶部定位段一句），Capabilities 中结构成长小节改为「自我进化的种子」标题并注明当前可执行边界；中英文同步，未新增任何未经验证断言。|

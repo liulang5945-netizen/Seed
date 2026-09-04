@@ -1,0 +1,26 @@
+{
+  "format": "taiji-native-joint-training-v1",
+  "version": 1,
+  "status": "evaluated",
+  "model_tier": "joint",
+  "corpus_digest": "73e0e1fc7188670903312351ff02aada403e5f94d64897d229fcabd46e28e1ad",
+  "checkpoint_digest": "37217d88a332aecdb314031d3d63e59ea302d0185108cde6cf2efd30eb5a0b31",
+  "metrics": {
+    "sequence_holdout_bpb": 4.804610577669548,
+    "sequence_retention_bpb": 4.818898034213449,
+    "memory_holdout_recall": 0.87,
+    "memory_retention_recall": 0.87,
+    "world_holdout_error": 3.563332384715068e-08,
+    "world_retention_error": 3.563332384715068e-08,
+    "goal_holdout_success": 1.0,
+    "goal_retention_success": 1.0
+  },
+  "checkpoint_read_only": true,
+  "metric_interval": 256,
+  "replay_memory_relation": null,
+  "replay_memory_learning_scale": 0.25,
+  "replay_memory_learning_targets": "all",
+  "code_revision": "a5a212ac6fa4bc6f826046f4f25cd2e28f40cbef",
+  "continuation_source_checkpoint_digest": null,
+  "report_path": "reports\\taiji_m2_f1_isolation_seed47_20260904.json"
+}

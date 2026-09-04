@@ -124,12 +124,14 @@ M0 建造了**测量机器**和一个可信零点（`status=failed` 是设计使
 - B3 世界转移 / B4 目标驱动行动 —— task 级信号在 pilot 规模通过（world error → ~1e-5、goal success 0.5 → 1.0），尚未到 foundation 规模。
 - B5 持续学习 —— 延续已验证；backward transfer 仍为负。
 
-M1 随后在 CPU 上开始训练这个闭环（课程 F1→F5、三个固定种子、内容寻址数据、原子 `parent/last/best` checkpoint、全新进程只读复核）。F1 字节预测在 1 MiB 规模下降 holdout BPB 约 30%；F3 世界/行动课程达到阶段 Gate；**记忆课程是当前前沿**：原生关联基座被自己的数据契约判定为不适合，一级 **identity key/value 器官**已晋升为默认开启（15/15 门禁），而 foundation 规模的判定又显示该器官在干扰下寻址仍失败——三次反证探针锁定根因；修复进行中（M1-65）。证据在 `reports/` 下与编号计划一一对应：[唯一执行计划](plans/active/roadmap/03_CURRENT_EXECUTION.md)。
+M1 随后在 CPU 上训练这个闭环（课程 F1→F5、三个固定种子、内容寻址数据、原子 `parent/last/best` checkpoint、全新进程只读复核）。原生 association 基座被自己的数据合同判定为不适合 foundation 规模延迟召回，因此一级 **identity key/value 器官**被晋升；其寻址、裁决和折叠 key 的 value 路由分别经过反证并闭合，M1-66c 由此得到正式的 foundation B2 通过结果。
+
+M2-0 完成三 seed 的首轮真实 F1→F4：延迟记忆召回达到 `0.87/0.85/0.87`，世界误差降到约 `3.5e-08`，目标行动成功率达到 `1.0`。M2-1 随后纠正了一项关键测量误区：F2 后看似 F1 崩塌的主因是长期情景记忆反馈泄漏进原始 byte 语言评分，而不是 F2 覆盖了 F1 权重。现在 raw-byte 学习、评分和 native generation 默认隔离长期记忆；将既有三个 child checkpoint 放入全新进程恢复后，F1 holdout 分别为 `4.826/4.931/4.805 BPB`，均优于 `5.942` unigram 基线，B2/B3/B4 同时保持不变。当前剩余门禁是一个真实的 F5 phase-A/phase-B 连续语言课程，而不是用 replay 掩盖已经解决的读出错误。证据在 `reports/` 下与计划一一对应：[唯一执行计划](plans/active/roadmap/03_CURRENT_EXECUTION.md)。
 
 ## 现状
 
-- 已完成并提交：基座内核与验证链（900+ 测试）、结构成长 Gate、M0 测量机器、M1 训练管线（F1–F5、三 seed）、记忆数据契约、identity 器官 v2 默认开启。
-- 进行中：M1-65（抗干扰记忆寻址）——当前唯一下一步。
+- 已完成并提交：基座内核与验证链、结构成长 Gate、M0 测量机器、M1 foundation 训练与 B2 因果链，以及 M2-0 真实联合训练。
+- 进行中：M2-2——内容寻址的 phase-A/phase-B F5 连续语言 Gate；M2-1 已在既有 checkpoint 上恢复正确的 F1 测量边界。
 - 诚实边界：这是一个训练中的学习机制原型，**不是**完整的认知架构，不是语言模型，也不构成任何 AGI 主张。乱码输出是预期的内核行为。
 
 ## 快速开始

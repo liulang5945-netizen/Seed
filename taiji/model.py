@@ -715,8 +715,16 @@ class Taiji:
         *,
         epochs: int = 1,
         include_boundary: bool = True,
+        use_memory: bool = False,
     ) -> dict[str, float]:
-        """Develop on a byte stream using only online local updates."""
+        """Develop on a byte stream using only online local updates.
+
+        Raw-byte prediction is the F1 predictive pathway, not an episodic
+        recall task. Keep the long-term episodic field lesioned by default so
+        an unrelated F2 memory course cannot silently alter the language
+        learning signal. Experiments studying memory-augmented prediction can
+        explicitly opt in with ``use_memory=True``.
+        """
 
         if epochs <= 0:
             raise ValueError("epochs must be positive")
@@ -726,7 +734,12 @@ class Taiji:
         for epoch in range(epochs):
             self.reset_dynamics(episode_id=f"learn-{epoch}")
             for symbol in self.sensor.symbols(data, include_boundary=include_boundary):
-                step = self.observe(symbol, learn=True, use_identity=False)
+                step = self.observe(
+                    symbol,
+                    learn=True,
+                    use_memory=use_memory,
+                    use_identity=False,
+                )
                 if step.prior_prediction is not None:
                     observations += 1
                     correct += int(step.prior_prediction == symbol)
@@ -742,8 +755,14 @@ class Taiji:
         data: bytes,
         *,
         include_boundary: bool = True,
+        use_memory: bool = False,
     ) -> dict[str, float]:
-        """Evaluate without changing learned parameters or persistent state."""
+        """Evaluate raw-byte prediction without mutating persistent state.
+
+        The default deliberately matches :meth:`learn_bytes`: F1 scores the
+        predictive path without long-term episodic feedback. This makes a
+        score comparable before and after a separate F2 memory course.
+        """
 
         checkpoint = self.checkpoint()
         self.reset_dynamics(episode_id="evaluation")
@@ -752,7 +771,12 @@ class Taiji:
         surprise_sum = 0.0
         try:
             for symbol in self.sensor.symbols(data, include_boundary=include_boundary):
-                step = self.observe(symbol, learn=False, use_identity=False)
+                step = self.observe(
+                    symbol,
+                    learn=False,
+                    use_memory=use_memory,
+                    use_identity=False,
+                )
                 if step.prior_prediction is not None:
                     observations += 1
                     correct += int(step.prior_prediction == symbol)
@@ -774,7 +798,15 @@ class Taiji:
         stop_at_boundary: bool = False,
         sample: bool = False,
         reset: bool = True,
+        use_memory: bool = False,
     ) -> bytes:
+        """Generate from the raw-byte predictive path.
+
+        As with training and scoring, episodic augmentation is opt-in. The
+        default prevents a populated delayed-memory field from hijacking
+        native language generation outside an explicit memory-query task.
+        """
+
         if length < 0:
             raise ValueError("length cannot be negative")
         if reset:
@@ -782,10 +814,16 @@ class Taiji:
         step = self.observe(
             self.config.boundary_symbol,
             learn=False,
+            use_memory=use_memory,
             use_identity=False,
         )
         for symbol in prompt:
-            step = self.observe(int(symbol), learn=False, use_identity=False)
+            step = self.observe(
+                int(symbol),
+                learn=False,
+                use_memory=use_memory,
+                use_identity=False,
+            )
 
         generated = bytearray()
         for _ in range(length):
@@ -802,7 +840,12 @@ class Taiji:
             if not 0 <= next_symbol <= 255:
                 next_symbol = 0
             generated.append(next_symbol)
-            step = self.observe(next_symbol, learn=False, use_identity=False)
+            step = self.observe(
+                next_symbol,
+                learn=False,
+                use_memory=use_memory,
+                use_identity=False,
+            )
         return bytes(generated)
 
     def parameter_tensors(self) -> tuple[torch.Tensor, ...]:

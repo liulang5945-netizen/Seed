@@ -123,11 +123,13 @@ class Seed:
         *,
         epochs: int = 1,
         include_boundary: bool = True,
+        use_memory: bool = False,
     ) -> dict[str, float]:
         return self.substrate.learn_bytes(
             data,
             epochs=epochs,
             include_boundary=include_boundary,
+            use_memory=use_memory,
         )
 
     def score_bytes(
@@ -135,8 +137,13 @@ class Seed:
         data: bytes,
         *,
         include_boundary: bool = True,
+        use_memory: bool = False,
     ) -> dict[str, float]:
-        return self.substrate.score_bytes(data, include_boundary=include_boundary)
+        return self.substrate.score_bytes(
+            data,
+            include_boundary=include_boundary,
+            use_memory=use_memory,
+        )
 
     def generate(
         self,
@@ -146,6 +153,7 @@ class Seed:
         stop_at_boundary: bool = False,
         sample: bool = False,
         reset: bool = True,
+        use_memory: bool = False,
     ) -> bytes:
         return self.substrate.generate(
             prompt,
@@ -153,6 +161,7 @@ class Seed:
             stop_at_boundary=stop_at_boundary,
             sample=sample,
             reset=reset,
+            use_memory=use_memory,
         )
 
     def generate_input(

@@ -1,6 +1,6 @@
 # Seed — runtime for the Taiji Native Cognitive Architecture
 
-Seed is the project, product and runtime that trains, evaluates, deploys and hosts **Taiji** —
+Seed provides the project, product and runtime that trains, evaluates, deploys and hosts **Taiji** —
 a native cognitive architecture being built from online predictive-coding mechanisms, not from
 a Transformer wrapper. The kernel learns from **local prediction errors** (no backpropagation,
 no attention matrix, no context window, no teacher model at runtime); beyond the kernel, Taiji
@@ -167,22 +167,29 @@ M0 built the **measurement machine** and a trusted zero point (`status=failed` b
   (world error → ~1e-5, goal success 0.5 → 1.0), not yet foundation-scale.
 - B5 continual learning — continuation verified; backward transfer still negative.
 
-M1 then trains this loop on CPU (courses F1→F5, three fixed seeds, content-addressed data,
-atomic `parent/last/best` checkpoints, fresh-process read-only re-evaluation). F1 byte
-prediction dropped holdout BPB ≈ 30% at 1 MiB scale; F3 world/action courses reached their
-stage gates; the **memory course is the current frontier**: the native association substrate
-was judged unsuitable by its own data contract, a first-class **identity key/value organ** was
-promoted to default-on (15/15 gates), and a foundation-scale judgment then showed the organ's
-addressing still fails under interference — three falsification probes pinned the root cause;
-the fix is under construction (M1-65). Reports are under `reports/` with a matching plan entry:
-[the single execution plan](plans/active/roadmap/03_CURRENT_EXECUTION.md).
+M1 then trained this loop on CPU (courses F1→F5, three fixed seeds, content-addressed data,
+atomic `parent/last/best` checkpoints, fresh-process read-only re-evaluation). The native
+association substrate was judged unsuitable for foundation-scale delayed recall, so a
+first-class **identity key/value organ** was promoted, then its address, verdict, and folded-key
+value routes were separately falsified and closed. M1-66c is the resulting foundation B2 pass.
+
+M2-0 completed the first real F1→F4 course on three seeds: delayed-memory recall rose to
+`0.87/0.85/0.87`, world error fell to about `3.5e-08`, and goal success reached `1.0`. M2-1
+then corrected a crucial measurement mistake: the apparent post-F2 F1 collapse was chiefly
+long-term episodic feedback leaking into raw-byte language scoring, not evidence that F2 had
+overwritten F1 weights. Raw-byte learning, scoring, and native generation now isolate memory by
+default; the three existing child checkpoints, restored in fresh processes, score F1 holdout at
+`4.826/4.931/4.805 BPB`, all below the `5.942` unigram baseline, while B2/B3/B4 remain unchanged.
+The remaining current gate is a genuine F5 phase-A/phase-B continual-language course, not a
+replay workaround for that resolved readout bug. Reports are under `reports/` with a matching
+plan entry: [the single execution plan](plans/active/roadmap/03_CURRENT_EXECUTION.md).
 
 ## Status
 
-- Completed and committed: substrate kernel + verification chain (900+ tests), structural
-  growth gates, M0 measurement machine, M1 training pipeline (F1–F5, three seeds), memory data
-  contract and identity organ v2 as a default-on trainable organ.
-- In progress: M1-65 (interference-surviving memory addressing) — the one current next step.
+- Completed and committed: substrate kernel + verification chain, structural growth gates, M0
+  measurement machine, M1 foundation training and B2 causal chain, plus M2-0 real joint training.
+- In progress: M2-2, a content-addressed phase-A/phase-B F5 continual-language gate; M2-1 has
+  already restored the correct F1 measurement boundary on the existing checkpoints.
 - Honest boundary: this is a learning-mechanism prototype under training, **not** a completed
   cognitive architecture, not a language model, and not a claim about AGI. Garbled replies are
   expected kernel behavior.
