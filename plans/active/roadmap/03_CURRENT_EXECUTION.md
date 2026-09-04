@@ -90,7 +90,7 @@ M0 的零点已经足够可信，不能因 capability failed 继续扩大外围�
 
 当前唯一下一步的正文见第 6 节执行流水的末条；本节只保留该步的 owner 边界，避免同一事实出现两份维护。M2-2a 的真实语料隔离、M2-2b 的可恢复 sequence-only runner 与 M2-2c 的 fresh-process checkpoint preflight 均已完成；本步（M2-2d：seed 11 foundation no-replay course）只允许创建或修改以下 owner：
 
-- `scripts/training/train_taiji_joint.py`：从已验证的 `output/taiji-m2-f5-seed11-no-replay-20260904/parent.pt` resume，保持 `--training-phases sequence`、phase-A=11、phase-B=10011 和 `replay_dataset_digest=null`；不得传 replay 输入、不得改变 M2-0 source checkpoint；
+- `scripts/training/train_taiji_joint.py`：从已验证的 `output/taiji-m2-f5-seed11-no-replay-20260904/parent.pt` resume，保持 `--training-phases sequence`、phase-A=11、phase-B=10011 和 `replay_dataset_digest=null`，并在 child payload 记录实际执行代码 revision；不得传 replay 输入、不得改变 M2-0 source checkpoint；
 - `taiji/foundation_training.py` 与 `tests/taiji_native/test_foundation_training.py`：仅在实际 course 发现保存、fresh-process 恢复、只读旧指标或 phase 边界的核心错误时修复，并补同源回归测试；不得因数值好坏调整训练语义；
 - `reports/taiji_m2_f5_*.json`：记录 seed 11 的 phase-A parent、phase-B no-replay child、old/new holdout/retention、全量数据 digest、fresh-process 指标比对和 holdout-update 审计；
 - 本文件与 `README.md`、`README.zh-CN.md`：只同步已测量的结论、F1 隔离语义和 M2-2 Gate，不把 F1 隔离误写成 F5 已通过。
