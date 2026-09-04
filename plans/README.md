@@ -2,13 +2,14 @@
 
 > 当前只有一份执行计划：[模型优先统一开发计划](active/roadmap/03_CURRENT_EXECUTION.md)。历史文档中的“下一步”一律失效。
 
-## 当前收敛结论（2026-09-01）
+## 当前收敛结论（2026-09-04）
 
 - Taiji 当前是原生学习机制原型，基础认知能力尚未得到可信证明；已有 checkpoint、局部学习、结构成长、Skill/MCP 投影和客户端隔离成果全部保留为训练底座。
 - 当前唯一主线是 `M0 CPU 五项基础能力真实性基线 → M1 foundation 训练 → M2 世界/行动/语言后训练 → M3 综合晋级 → M4 持续进化 → M5 Skill/MCP 与客户端身体 → M6 provider/产品体验 → M7 CI/发布 → M8 CUDA`。
 - M0 完成可信测量后，无论模型分数高低都必须进入 M1；低分是训练目标，不是继续外围建设的理由。
 - MiniMind 只作为小模型训练工程参考：采纳分阶段训练、分级数据、checkpoint/resume、独立评估和推理入口，不把 Transformer 复制成 Taiji 核心。
 - E1～E7 的完成状态保持有效但不代表通用能力；E8 bounded replay 冻结到 M4；真实第三方 MCP 连接冻结到 M5；CUDA 保持 `hardware-blocked`。
+- M2-1 已排除 F2→F1 的错误读出串扰；M2-2a 已建立 content-addressed 的 phase-A/phase-B 真实语料隔离。当前唯一开发步骤是 M2-2b：先做 sequence-only、no-replay 的旧/新语言保持对照，只有测到真实旧能力下降才允许 bounded replay。
 
 ## 当前权威文档
 

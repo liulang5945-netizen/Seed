@@ -88,11 +88,11 @@ M0-3/M0-4 已完成：统一矩阵报告为 `reports/taiji_foundation_baseline_2
 
 M0 的零点已经足够可信，不能因 capability failed 继续扩大外围建设。M1 首轮固定 F1→F2→F3→F4→F5 顺序，优先目标是让 child checkpoint 在 B1/B2/B5 上出现可归因净提升，同时保持 B3/B4 不退化。本节只记录 M0 零点事实；M1 的逐片进展、唯一下一步和已完成结论统一记录在第 6 节的执行流水，不在此处重复维护第二份进度。
 
-当前唯一下一步的正文见第 6 节执行流水的末条；本节只保留该步的 owner 边界，避免同一事实出现两份维护。本步（M2-2：真实 F5 连续字节课程）只允许创建或修改以下 owner：
+当前唯一下一步的正文见第 6 节执行流水的末条；本节只保留该步的 owner 边界，避免同一事实出现两份维护。M2-2a 已完成 phase-A/phase-B 的真实语料隔离；本步（M2-2b：sequence-only continuation 与 no-replay 对照）只允许创建或修改以下 owner：
 
-- `taiji/foundation_training.py`：为 joint checkpoint 增加可恢复、可内容寻址的 phase-A/phase-B F1 课程状态与 no-replay/replay counterfactual；不得改变 F2 的 memory write、B2 organ-first verdict 或 B3/B4 的训练语义；
-- `scripts/training/train_taiji_joint.py`：显式接收 phase-B 语料、旧语料 replay 和三 seed 分区参数；恢复必须严格校验所有语料 digest，不能从 checkpoint 或默认值猜测分区；
-- `tests/taiji_native/test_foundation_training.py`、`tests/taiji_native/test_sequence_learning.py`：先写出旧能力被 phase-B 损伤的 red，再验证 bounded replay 只在有因果必要性时改善 old/new 同时保持，并覆盖 checkpoint round-trip；
+- `taiji/foundation_training.py`：保留已完成的 `exclude_dataset` 内容寻址合同；为 joint checkpoint 增加可恢复的 sequence-only phase plan、受保护 phase-A 指标及 no-replay/replay counterfactual，且 replay 只能引用该受保护课程；不得改变 F2 的 memory write、B2 organ-first verdict 或 B3/B4 的训练语义；
+- `scripts/training/train_taiji_joint.py`：显式接收 phase-B 语料、受保护 phase-A 语料、旧语料 replay 和三 seed 分区参数；恢复必须严格校验所有语料 digest 与 phase plan，不能从 checkpoint 或默认值猜测分区；
+- `tests/taiji_native/test_foundation_training.py`、`tests/taiji_native/test_sequence_learning.py`：已覆盖 phase-B 对 phase-A 实际选中记录的全记录排除；下一步先写 sequence-only/no-replay 的 red，再验证 bounded replay 只在有因果必要性时改善 old/new 同时保持，并覆盖 checkpoint round-trip；
 - `reports/taiji_m2_f5_*.json`：逐 seed 的 phase-A parent、no-replay、replay child、old/new holdout/retention、数据 digest、fresh-process 和 holdout-update 审计；
 - 本文件与 `README.md`、`README.zh-CN.md`：只同步已测量的结论、F1 隔离语义和 M2-2 Gate，不把 F1 隔离误写成 F5 已通过。
 
@@ -427,6 +427,8 @@ M1-64 已完成，B2 在真实 foundation 规模上被判定为**记忆能力不
 
 **M2-1 完成（F1 预测—记忆隔离复核，20260904）**：M2-0 的“F2+ 阶段造成 F1 灾难性遗忘”被系统化诊断推翻为**读出边界错误**，不是已学习的 F1 参数被主要覆盖。根因是 `Taiji.learn_bytes`/`score_bytes`/native `generate` 虽关闭 `identity`，却默认保留 `use_memory=True`；F2 写入的长期情景场于是向原始字节预测注入 cortical feedback 与 action evidence。先在真实 seed 11 checkpoint 上做同一 2,048-byte holdout 的有/无长期记忆只读对照，BPB `7.691 → 4.547`，再把三个 API 的默认改为 `use_memory=False`（显式 `True` 仍可用于记忆增强实验），并先红后绿固化为常驻测试。随后用**原 M2-0 的三份 `last.pt`、各自原始 content-addressed partition（11/29/47）和全新 Python 进程**做完整 `131,072` 字节 holdout/retention 重评：B1 holdout `7.380/7.336/6.533 → 4.826/4.931/4.805`，retention `7.347/7.298/6.554 → 4.793/4.892/4.819`，三 seed 全部优于 unigram `5.942172`；B2 recall 保持 `0.87/0.85/0.87`，B3 error 保持约 `3.5e-08`，B4 success 保持 `1.0`，三份均 `checkpoint_read_only=true`。证据链：`reports/taiji_m2_f1_isolation_20260904.json` 及逐 seed `_seed{11,29,47}_20260904.json`。因此不再以 replay 伪修 F2→F1 串扰，也不把“隔离后 F1 恢复”错误宣称成 F5 持续学习已完成；它只关闭了 M2-0 的错误归因并恢复了可比较的 F1 量尺。**M2-2 唯一下一步**：用彼此隔离的 phase-A/phase-B 语言分区建立真正的 F5 old/new 保持 Gate，先跑 no-replay counterfactual，只有出现真实旧能力下降才启用 bounded replay；在三 seed old/new 同时通过前不进入 ContentPlan、语言教师或 IDE 行动阶段。
 
+**M2-2a 完成（真实 phase-B 语料隔离，20260904）**：F5 的“新课程”不再仅靠换一个随机分区 seed 口头保证。`FoundationTrainingDataset.from_jsonl(..., exclude_dataset=phase_a)` 现按 phase-A 的**原始 source 顺序、去重、hash 分桶和逐 split 字节预算**重放其实际选择状态；凡是 phase-A 的 train/holdout/retention 消耗过哪怕一个前缀字节的 JSONL 记录，phase-B 都排除整条记录，避免 phase-A 最后一个截断记录的 suffix 伪装成新能力。phase-B 数据 digest 显式包含 `excluded_dataset_digest`，而无排除关系的旧数据集保留原有 digest，保证 M2-0 checkpoint 仍可精确寻址。先红后绿常驻测试证明 phase-A 实际选中的记录标记不会进入 phase-B。真实预检报告 `reports/taiji_m2_f5_phase_b_preflight_20260904.json` 使用规范源 `data/simple_zh/dialogue_extended_clean.jsonl`（source digest `c2cfd3c8…0973c6b`）：三 seed 的 phase-A digest 仍逐位匹配 M2-0（11 `6c4abbb0…f2e7f6`、29 `229f5fa5…3f7bc`、47 `5df0c182…99a05d`），而 phase-B seed `10011/10029/10047` 全部达到 `1,048,576/131,072/131,072` byte budget，并各自携带对应 phase-A 排除地址。**这只建立 F5 可测量的数据前提，不代表旧/新能力保持已经通过。M2-2b 唯一下一步**：为 joint continuation 增加 sequence-only phase plan 与只读 protected phase-A 测量，先运行 no-replay counterfactual；只有它确实降低 old 指标才允许 bounded replay。
+
 ## 7. M2～M8 的开发日程与外围任务安置
 
 ### M2：世界—行动—语言后训练
@@ -518,6 +520,7 @@ CI 不是最后才运行的支线：每个 slice 都运行相关 pytest/lint/typ
 
 | 日期 | 内容 |
 |---|---|
+| 2026-09-04 | M2-2a 同步：完成 F5 phase-B 的真实数据隔离合同。`FoundationTrainingDataset` 在有 `exclude_dataset` 时按 phase-A 的实际 source-order/hash/byte-budget 选择状态排除整条已选记录，phase-B digest 明确链接被排除的 phase-A digest，而既有 M2-0 数据 digest 不变。`reports/taiji_m2_f5_phase_b_preflight_20260904.json` 记录三 seed 的真实 source 地址、phase-A 对齐、phase-B 预算和排除地址；唯一下一步收敛为 M2-2b 的 sequence-only/no-replay continuation。 |
 | 2026-09-04 | M2-1 同步：README 中英文与唯一执行计划从过时的 M1-65 状态更新为 M1-66c 已闭合、M2-0 首轮真实联合训练、M2-1 F1 预测—记忆隔离复核和 M2-2 真实 F5 Gate。数字只取自 `reports/taiji_m2_f1_isolation_20260904.json` 与其三份 fresh-process 子报告；同时把 README 中与 `tests/seed/test_project_identity.py` 冲突的旧身份句式改为 “Seed provides…”，不改变 Taiji 为认知架构、Seed 为项目/产品/运行时的合同。 |
 | 2026-09-03 | 按"文档事实同步随主阶段执行"原则：`README.md` 全面更新至 M0 完成、M1-65 现状（可复现内核结果、M0 可信零点、M1 联合训练、identity 器官晋升与 foundation 规模诚实判定、唯一下一步验收探针）；新增 `README.zh-CN.md` 中文介绍，事实与英文版逐条一致；全部数字均取自本文第 4/6 节与 `reports/` 编号报告，未新增任何断言。同日修复 `CONTRIBUTING.md` 对不存在的 `verify_taiji_native_v1.py` 的引用（改指 v7，与 README/CI 一致）。|
 | 2026-09-03 | 根据评审调整 README 定位：从"进度汇报"改为"项目核心介绍"——结构重排为「架构（Taiji v1 设计原则/L0–L7 分层/认知状态合同/两平面学习/当前可执行内核）→ 能力（内核已验证机制/结构成长/A0–A9 反证门槛/M0+M1 统一评估）→ 现状（已完成/进行中/诚实边界）」，M1 执行细节压缩为一段并指向 `03_CURRENT_EXECUTION.md`；中英文两版同步改写并推送 `origin/main`。|

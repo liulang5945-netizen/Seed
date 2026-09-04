@@ -82,6 +82,7 @@ class FoundationTrainingDataset:
     source_files: tuple[tuple[str, str], ...] = ()
     partition_seed: int = 0
     profile: str = "smoke"
+    excluded_dataset_digest: str | None = None
 
     def __post_init__(self) -> None:
         for field_name in ("train", "holdout", "retention"):
@@ -97,8 +98,14 @@ class FoundationTrainingDataset:
         )
         if any(not path or not digest for path, digest in normalized_sources):
             raise ValueError("source_files must contain non-empty path/digest pairs")
+        excluded_dataset_digest = self.excluded_dataset_digest
+        if excluded_dataset_digest is not None:
+            excluded_dataset_digest = str(excluded_dataset_digest).strip()
+            if not excluded_dataset_digest:
+                raise ValueError("excluded_dataset_digest must be non-empty when provided")
         object.__setattr__(self, "source_files", normalized_sources)
         object.__setattr__(self, "partition_seed", int(self.partition_seed))
+        object.__setattr__(self, "excluded_dataset_digest", excluded_dataset_digest)
 
     @property
     def sample_counts(self) -> dict[str, int]:
@@ -110,18 +117,35 @@ class FoundationTrainingDataset:
 
     @property
     def digest(self) -> str:
-        return content_digest(
-            {
-                "format": FOUNDATION_TRAINING_FORMAT,
-                "version": FOUNDATION_TRAINING_VERSION,
-                "profile": self.profile,
-                "partition_seed": self.partition_seed,
-                "source_files": [list(item) for item in self.source_files],
-                "train": self.train,
-                "holdout": self.holdout,
-                "retention": self.retention,
-            }
-        )
+        payload: dict[str, Any] = {
+            "format": FOUNDATION_TRAINING_FORMAT,
+            "version": FOUNDATION_TRAINING_VERSION,
+            "profile": self.profile,
+            "partition_seed": self.partition_seed,
+            "source_files": [list(item) for item in self.source_files],
+            "train": self.train,
+            "holdout": self.holdout,
+            "retention": self.retention,
+        }
+        # Preserve the exact legacy digest for existing datasets/checkpoints.
+        # A phase-B dataset alone carries an explicit link to the phase-A
+        # dataset it excluded, so its lineage cannot be mistaken for a normal
+        # differently-seeded split of the same source.
+        if self.excluded_dataset_digest is not None:
+            payload["excluded_dataset_digest"] = self.excluded_dataset_digest
+        return content_digest(payload)
+
+    @staticmethod
+    def _partition_for_text(text: str, partition_seed: int) -> str:
+        bucket = int.from_bytes(
+            hashlib.sha256(f"{int(partition_seed)}\0{text}".encode()).digest()[:4],
+            "big",
+        ) % 10_000
+        if bucket < 8_000:
+            return "train"
+        if bucket < 9_000:
+            return "holdout"
+        return "retention"
 
     @classmethod
     def from_jsonl(
@@ -130,6 +154,7 @@ class FoundationTrainingDataset:
         *,
         profile: str = "pilot",
         partition_seed: int = 11,
+        exclude_dataset: FoundationTrainingDataset | None = None,
     ) -> FoundationTrainingDataset:
         profile = str(profile)
         if profile not in FOUNDATION_TRAINING_PROFILE_BUDGETS:
@@ -147,6 +172,29 @@ class FoundationTrainingDataset:
         normalized_paths = tuple(Path(path) for path in paths)
         if not normalized_paths:
             raise ValueError("training dataset needs at least one JSONL path")
+        source_files = tuple((str(path), _file_digest(path)) for path in normalized_paths)
+        exclusion_selected: dict[str, int] | None = None
+        exclusion_budgets: dict[str, int] | None = None
+        if exclude_dataset is not None:
+            expected_sources = tuple(
+                (Path(path).resolve(), digest)
+                for path, digest in exclude_dataset.source_files
+            )
+            actual_sources = tuple(
+                (Path(path).resolve(), digest) for path, digest in source_files
+            )
+            if actual_sources != expected_sources:
+                raise ValueError(
+                    "excluded dataset must use the same ordered, content-addressed sources"
+                )
+            exclusion_profile = exclude_dataset.profile
+            exclusion_budget_values = FOUNDATION_TRAINING_PROFILE_BUDGETS[
+                exclusion_profile
+            ]
+            exclusion_budgets = dict(
+                zip(("train", "holdout", "retention"), exclusion_budget_values, strict=True)
+            )
+            exclusion_selected = {partition: 0 for partition in exclusion_budgets}
         for path in normalized_paths:
             if not path.is_file():
                 raise FileNotFoundError(path)
@@ -163,20 +211,29 @@ class FoundationTrainingDataset:
                     if text_digest in seen_text_digests:
                         continue
                     seen_text_digests.add(text_digest)
-                    bucket = int.from_bytes(
-                        hashlib.sha256(f"{int(partition_seed)}\0{text}".encode()).digest()[:4],
-                        "big",
-                    ) % 10_000
-                    partition = (
-                        "train"
-                        if bucket < 8_000
-                        else "holdout"
-                        if bucket < 9_000
-                        else "retention"
-                    )
+                    encoded = text.encode("utf-8")
+                    if exclusion_selected is not None and exclusion_budgets is not None:
+                        excluded_partition = cls._partition_for_text(
+                            text,
+                            exclude_dataset.partition_seed,
+                        )
+                        excluded_remaining = (
+                            exclusion_budgets[excluded_partition]
+                            - exclusion_selected[excluded_partition]
+                        )
+                        if excluded_remaining > 0:
+                            # The original course may have consumed only the
+                            # prefix at its final byte boundary. Exclude the
+                            # whole source record here: retaining its suffix
+                            # would create a false new-language example.
+                            exclusion_selected[excluded_partition] += min(
+                                len(encoded), excluded_remaining
+                            )
+                            continue
+                    partition = cls._partition_for_text(text, partition_seed)
                     remaining = budgets[partition] - len(buffers[partition])
                     if remaining > 0:
-                        buffers[partition].extend(text.encode("utf-8")[:remaining])
+                        buffers[partition].extend(encoded[:remaining])
                     if all(len(buffers[name]) >= budgets[name] for name in budgets):
                         break
             if all(len(buffers[name]) >= budgets[name] for name in budgets):
@@ -188,7 +245,6 @@ class FoundationTrainingDataset:
         }
         if missing:
             raise ValueError("training dataset did not meet byte budgets: " + json.dumps(missing))
-        source_files = tuple((str(path), _file_digest(path)) for path in normalized_paths)
         return cls(
             train=bytes(buffers["train"]),
             holdout=bytes(buffers["holdout"]),
@@ -196,6 +252,9 @@ class FoundationTrainingDataset:
             source_files=source_files,
             partition_seed=int(partition_seed),
             profile=profile,
+            excluded_dataset_digest=(
+                exclude_dataset.digest if exclude_dataset is not None else None
+            ),
         )
 
     def as_sequence_corpus(self) -> SequencePredictionCorpus:

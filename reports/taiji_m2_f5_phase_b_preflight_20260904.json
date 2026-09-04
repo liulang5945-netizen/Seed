@@ -1,0 +1,65 @@
+{
+  "format": "taiji-m2-f5-phase-b-preflight-v1",
+  "status": "validated",
+  "date": "2026-09-04",
+  "purpose": "Construct a real phase-B raw-byte language course without reusing any source record selected by the corresponding M2-0 phase-A course.",
+  "source": {
+    "path": "data/simple_zh/dialogue_extended_clean.jsonl",
+    "digest": "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+  },
+  "course_contract": {
+    "phase_a_profile": "foundation",
+    "phase_b_profile": "foundation",
+    "phase_b_partition_seed_rule": "10000 + phase_a_seed",
+    "exclusion_rule": "Replay phase-A's exact source-order, hash-bucket, byte-budget selection. Any source record whose prefix entered phase-A train, holdout, or retention is entirely excluded from phase B.",
+    "why_full_record_exclusion": "A final phase-A byte boundary can consume only a record prefix; admitting its suffix to phase B would create a false new-language example."
+  },
+  "seed_records": [
+    {
+      "seed": 11,
+      "phase_a_partition_seed": 11,
+      "phase_b_partition_seed": 10011,
+      "phase_a_dataset_digest": "6c4abbb01d30134867573396b784b2c77fef5e137e2e660dfa262c2645f2e7f6",
+      "phase_b_dataset_digest": "d4888d6ad21cba8ebbf422452feb7ce9bec4e879011b1b7c507ed778a4880be6",
+      "phase_b_excluded_dataset_digest": "6c4abbb01d30134867573396b784b2c77fef5e137e2e660dfa262c2645f2e7f6",
+      "phase_b_sample_counts": {
+        "train": 1048576,
+        "holdout": 131072,
+        "retention": 131072
+      }
+    },
+    {
+      "seed": 29,
+      "phase_a_partition_seed": 29,
+      "phase_b_partition_seed": 10029,
+      "phase_a_dataset_digest": "229f5fa5b3885f45784c25760818a63f5736b76311a51c245cb4bc29adb3f7bc",
+      "phase_b_dataset_digest": "0b11bfc9fda7ac7d3baee8dd010f136e43ea541b7243c6ca99384af39800b100",
+      "phase_b_excluded_dataset_digest": "229f5fa5b3885f45784c25760818a63f5736b76311a51c245cb4bc29adb3f7bc",
+      "phase_b_sample_counts": {
+        "train": 1048576,
+        "holdout": 131072,
+        "retention": 131072
+      }
+    },
+    {
+      "seed": 47,
+      "phase_a_partition_seed": 47,
+      "phase_b_partition_seed": 10047,
+      "phase_a_dataset_digest": "5df0c182120f08bce83a77bcf7357448880e3eaf16aa407d5657a5a55499a05d",
+      "phase_b_dataset_digest": "a20fdd9c81e72851fa7c28c247e146a4b6adf2cf7bdf18d2b509c55951ff0e2c",
+      "phase_b_excluded_dataset_digest": "5df0c182120f08bce83a77bcf7357448880e3eaf16aa407d5657a5a55499a05d",
+      "phase_b_sample_counts": {
+        "train": 1048576,
+        "holdout": 131072,
+        "retention": 131072
+      }
+    }
+  ],
+  "gates": {
+    "all_phase_a_digests_match_m2_0": true,
+    "all_phase_b_courses_reach_foundation_budget": true,
+    "phase_b_carries_phase_a_exclusion_digest": true,
+    "fixture_proves_selected_phase_a_markers_absent_from_phase_b": true
+  },
+  "next_gate": "M2-2b: extend the joint continuation runner with an explicit sequence-only course plan and protected phase-A measurements, then run the no-replay counterfactual before permitting byte replay."
+}
