@@ -21,6 +21,7 @@ from scripts.training.train_taiji_world_action import (  # noqa: E402
     build_world_learner,
 )
 from taiji import (  # noqa: E402
+    JOINT_TRAINING_PHASES,
     FoundationTrainingDataset,
     JointTrainingRun,
     Taiji,
@@ -55,20 +56,48 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--corpus",
+        "--phase-b-corpus",
+        dest="corpus",
         nargs="+",
         type=Path,
         default=[PROJECT_ROOT / "data" / "simple_zh" / "dialogue_extended_clean.jsonl"],
     )
-    parser.add_argument("--profile", choices=("smoke", "pilot", "foundation"), default="smoke")
+    parser.add_argument(
+        "--profile",
+        "--phase-b-profile",
+        dest="profile",
+        choices=("smoke", "pilot", "foundation"),
+        default="smoke",
+    )
     parser.add_argument("--count", type=int)
     parser.add_argument("--seed", type=int, default=11)
-    parser.add_argument("--partition-seed", type=int, default=11)
+    parser.add_argument(
+        "--partition-seed",
+        "--phase-b-partition-seed",
+        dest="partition_seed",
+        type=int,
+    )
     parser.add_argument("--epochs", type=int, default=1)
     parser.add_argument("--chunk-bytes", type=int, default=1_024)
     parser.add_argument("--checkpoint-interval", type=int)
     parser.add_argument("--metric-interval", type=int)
     parser.add_argument("--world-learning-rate", type=float, default=0.02)
     parser.add_argument("--world-repeats", type=int, default=8)
+    parser.add_argument("--protected-corpus", nargs="+", type=Path)
+    parser.add_argument(
+        "--protected-profile",
+        choices=("smoke", "pilot", "foundation"),
+    )
+    parser.add_argument("--protected-partition-seed", type=int)
+    parser.add_argument(
+        "--training-phases",
+        nargs="+",
+        choices=JOINT_TRAINING_PHASES,
+        help=(
+            "Explicit ordered course plan. M2 F5 requires --protected-corpus and "
+            "must start with the sequence-only no-replay counterfactual."
+        ),
+    )
     parser.add_argument("--replay-corpus", nargs="+", type=Path)
     parser.add_argument("--replay-profile", choices=("smoke", "pilot", "foundation"), default="pilot")
     parser.add_argument("--replay-partition-seed", type=int, default=11)
@@ -120,24 +149,67 @@ def main() -> int:
             "--replay-memory-count must equal the current memory course count; "
             "partial or unrelated replay corpora are not accepted"
         )
-    dataset = FoundationTrainingDataset.from_jsonl(
-        args.corpus,
-        profile=args.profile,
-        partition_seed=args.partition_seed,
-    )
-    replay_dataset = None
-    if args.replay_corpus is not None:
-        replay_dataset = FoundationTrainingDataset.from_jsonl(
-            args.replay_corpus,
-            profile=args.replay_profile,
-            partition_seed=args.replay_partition_seed,
+    if args.protected_corpus is not None:
+        if args.protected_profile is None or args.protected_partition_seed is None:
+            parser.error(
+                "--protected-corpus requires --protected-profile and "
+                "--protected-partition-seed"
+            )
+        if args.partition_seed is None:
+            parser.error(
+                "M2 F5 phase-B construction requires --phase-b-partition-seed"
+            )
+        if args.training_phases is None:
+            parser.error(
+                "M2 F5 requires an explicit --training-phases plan; begin with sequence"
+            )
+        if args.replay_corpus is not None:
+            parser.error(
+                "with --protected-corpus, replay is the exact protected phase-A course; "
+                "do not pass --replay-corpus"
+            )
+        protected_dataset = FoundationTrainingDataset.from_jsonl(
+            args.protected_corpus,
+            profile=args.protected_profile,
+            partition_seed=args.protected_partition_seed,
         )
+        dataset = FoundationTrainingDataset.from_jsonl(
+            args.corpus,
+            profile=args.profile,
+            partition_seed=args.partition_seed,
+            exclude_dataset=protected_dataset,
+        )
+        replay_dataset = (
+            protected_dataset if "replay" in args.training_phases else None
+        )
+    else:
+        protected_dataset = None
+        dataset = FoundationTrainingDataset.from_jsonl(
+            args.corpus,
+            profile=args.profile,
+            partition_seed=(args.partition_seed if args.partition_seed is not None else 11),
+        )
+        replay_dataset = None
+        if args.replay_corpus is not None:
+            replay_dataset = FoundationTrainingDataset.from_jsonl(
+                args.replay_corpus,
+                profile=args.replay_profile,
+                partition_seed=args.replay_partition_seed,
+            )
+    if args.training_phases is not None and "replay" in args.training_phases and replay_dataset is None:
+        parser.error("the replay phase requires --protected-corpus or --replay-corpus")
     memory_corpus = build_memory_corpus(count=count)
     replay_memory_corpus = (
         build_memory_corpus(count=count)
         if args.replay_memory_count is not None
         else None
     )
+    if (
+        args.training_phases is not None
+        and replay_memory_corpus is not None
+        and "replay-memory" not in args.training_phases
+    ):
+        parser.error("--replay-memory-count requires the replay-memory phase")
     world_corpus = build_world_corpus(count=count)
     goal_corpus = build_goal_corpus(count=count)
     if args.continue_from is not None:
@@ -154,6 +226,8 @@ def main() -> int:
             metric_interval=args.metric_interval,
             world_learning_rate=args.world_learning_rate,
             world_repeats=args.world_repeats,
+            protected_dataset=protected_dataset,
+            training_phases=args.training_phases,
             replay_dataset=replay_dataset,
             replay_epochs=args.replay_epochs,
             replay_memory_corpus=replay_memory_corpus,
@@ -172,6 +246,8 @@ def main() -> int:
             output_dir=args.output_dir,
             epochs=args.epochs,
             metric_interval=args.metric_interval,
+            protected_dataset=protected_dataset,
+            training_phases=args.training_phases,
             replay_dataset=replay_dataset,
             replay_epochs=args.replay_epochs,
             replay_memory_corpus=replay_memory_corpus,
@@ -197,6 +273,8 @@ def main() -> int:
             metric_interval=args.metric_interval,
             world_learning_rate=args.world_learning_rate,
             world_repeats=args.world_repeats,
+            protected_dataset=protected_dataset,
+            training_phases=args.training_phases,
             replay_dataset=replay_dataset,
             replay_epochs=args.replay_epochs,
             replay_memory_corpus=replay_memory_corpus,

@@ -5,6 +5,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
 import torch
 
 from scripts.training.train_taiji_memory import build_corpus as build_memory_corpus
@@ -53,6 +54,30 @@ def _config() -> TaijiConfig:
         concept_capacity=8,
         seed=11,
     )
+
+
+def _phase_datasets() -> tuple[FoundationTrainingDataset, FoundationTrainingDataset]:
+    """Small content-addressed stand-ins for an M2 F5 phase-A/phase-B pair."""
+
+    source_files = (("inline-m2-phase-course", "phase-course-source"),)
+    phase_a = FoundationTrainingDataset(
+        train=b"phase-a-old-train|" * 16,
+        holdout=b"phase-a-old-holdout|" * 8,
+        retention=b"phase-a-old-retention|" * 8,
+        source_files=source_files,
+        partition_seed=11,
+        profile="smoke",
+    )
+    phase_b = FoundationTrainingDataset(
+        train=b"phase-b-new-train|" * 16,
+        holdout=b"phase-b-new-holdout|" * 8,
+        retention=b"phase-b-new-retention|" * 8,
+        source_files=source_files,
+        partition_seed=10011,
+        profile="smoke",
+        excluded_dataset_digest=phase_a.digest,
+    )
+    return phase_a, phase_b
 
 
 def test_phase_b_dataset_excludes_every_selected_phase_a_record() -> None:
@@ -364,6 +389,108 @@ def test_joint_training_retries_transient_checkpoint_replace_lock(monkeypatch) -
     assert run.save(target) == target
     assert attempts["count"] == 2
     assert target.is_file()
+
+
+def test_joint_sequence_only_continuation_protects_phase_a_metrics() -> None:
+    phase_a, phase_b = _phase_datasets()
+    memory_corpus = build_memory_corpus(count=4)
+    world_corpus = build_world_corpus(count=4)
+    goal_corpus = build_goal_corpus(count=4)
+    output_dir = Path(".seed_test_tmp") / "m2-sequence-only-continuation"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    for filename in ("parent.pt", "last.pt", "best-holdout.pt"):
+        (output_dir / filename).unlink(missing_ok=True)
+
+    world_learner = build_world_learner(world_corpus, seed=11)
+    initial_world_updates = world_learner.online_updates
+    run = JointTrainingRun(
+        Taiji(_config(), episode_id="m2-sequence-only-test"),
+        world_learner,
+        phase_b,
+        memory_corpus,
+        world_corpus,
+        goal_corpus,
+        output_dir=output_dir,
+        epochs=1,
+        chunk_bytes=32,
+        checkpoint_interval=2,
+        world_repeats=1,
+        protected_dataset=phase_a,
+        training_phases=("sequence",),
+    )
+
+    report = run.run()
+
+    assert report["training_phases"] == ["sequence"]
+    assert report["protected_dataset_digest"] == phase_a.digest
+    assert report["world_online_updates"] == initial_world_updates
+    assert report["global_step"] == len(phase_b.train) // 32
+    assert all(item.get("train_kind") in {None, "sequence"} for item in report["history"])
+    for key in (
+        "protected_sequence_holdout_bpb",
+        "protected_sequence_retention_bpb",
+    ):
+        assert key in report["parent_metrics"]
+        assert key in report["final_metrics"]
+
+    payload = torch.load(output_dir / "last.pt", map_location="cpu", weights_only=False)
+    assert payload["training_phases"] == ["sequence"]
+    assert payload["protected_dataset_digest"] == phase_a.digest
+    restored = JointTrainingRun.from_checkpoint(
+        output_dir / "last.pt",
+        phase_b,
+        memory_corpus,
+        world_corpus,
+        goal_corpus,
+        output_dir=output_dir,
+        protected_dataset=phase_a,
+    )
+    assert restored.training_phases == ("sequence",)
+    assert restored.evaluate_only()["checkpoint_read_only"] is True
+    with pytest.raises(ValueError, match="phase plan"):
+        JointTrainingRun.from_checkpoint(
+            output_dir / "last.pt",
+            phase_b,
+            memory_corpus,
+            world_corpus,
+            goal_corpus,
+            output_dir=output_dir,
+            protected_dataset=phase_a,
+            training_phases=("sequence", "memory"),
+        )
+
+
+def test_joint_protected_replay_requires_exact_phase_a_dataset() -> None:
+    phase_a, phase_b = _phase_datasets()
+    other_old_course = FoundationTrainingDataset(
+        train=b"different-old-train|" * 16,
+        holdout=b"different-old-holdout|" * 8,
+        retention=b"different-old-retention|" * 8,
+        source_files=(("inline-other-old-course", "other-source"),),
+        partition_seed=47,
+        profile="smoke",
+    )
+    memory_corpus = build_memory_corpus(count=4)
+    world_corpus = build_world_corpus(count=4)
+    goal_corpus = build_goal_corpus(count=4)
+
+    with pytest.raises(ValueError, match="exact protected phase-A dataset"):
+        JointTrainingRun(
+            Taiji(_config(), episode_id="m2-replay-contract-test"),
+            build_world_learner(world_corpus, seed=11),
+            phase_b,
+            memory_corpus,
+            world_corpus,
+            goal_corpus,
+            output_dir=Path(".seed_test_tmp") / "m2-replay-contract",
+            epochs=1,
+            chunk_bytes=32,
+            checkpoint_interval=2,
+            world_repeats=1,
+            protected_dataset=phase_a,
+            replay_dataset=other_old_course,
+            training_phases=("sequence", "replay"),
+        )
 
 
 def test_joint_training_starts_an_explicit_continuation_from_child_checkpoint() -> None:
