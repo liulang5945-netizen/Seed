@@ -16,6 +16,7 @@ from scripts.training.train_taiji_world_action import (
 )
 from taiji import (
     JOINT_SEQUENCE_READOUT_MODE,
+    JOINT_TRAINING_VERSION,
     DelayedMemoryCorpus,
     DelayedMemoryQuery,
     FoundationTrainingDataset,
@@ -493,6 +494,75 @@ def test_joint_sequence_only_continuation_protects_phase_a_metrics(monkeypatch) 
             output_dir=output_dir,
             protected_dataset=phase_a,
             training_phases=("sequence", "memory"),
+        )
+
+
+def test_joint_sequence_fabric_mode_is_content_addressed_and_resumable() -> None:
+    """A predictor-only F1 course must not silently resume as fabric-plastic."""
+
+    phase_a, phase_b = _phase_datasets()
+    memory_corpus = build_memory_corpus(count=4)
+    world_corpus = build_world_corpus(count=4)
+    goal_corpus = build_goal_corpus(count=4)
+    output_dir = Path(".seed_test_tmp") / "m2-predictor-only-sequence"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    for filename in ("parent.pt", "last.pt", "best-holdout.pt"):
+        (output_dir / filename).unlink(missing_ok=True)
+
+    run = JointTrainingRun(
+        Taiji(_config(), episode_id="m2-predictor-only-test"),
+        build_world_learner(world_corpus, seed=11),
+        phase_b,
+        memory_corpus,
+        world_corpus,
+        goal_corpus,
+        output_dir=output_dir,
+        epochs=1,
+        chunk_bytes=32,
+        checkpoint_interval=2,
+        metric_interval=1_000,
+        world_repeats=1,
+        protected_dataset=phase_a,
+        training_phases=("sequence",),
+        sequence_fabric_learning=False,
+    )
+    report = run.run()
+
+    assert report["sequence_fabric_learning"] is False
+    fabric_contract = report["sequence_fabric_contract"]
+    assert fabric_contract["parent"] == fabric_contract["final"]
+    assert len(fabric_contract["phase_checks"]) == 1
+    assert fabric_contract["phase_checks"][0]["preserved"] is True
+
+    payload = torch.load(output_dir / "last.pt", map_location="cpu", weights_only=False)
+    assert payload["version"] == JOINT_TRAINING_VERSION
+    assert payload["sequence_fabric_learning"] is False
+    assert payload["sequence_fabric_parent"] == fabric_contract["parent"]
+    assert payload["sequence_fabric_phase_checks"] == fabric_contract["phase_checks"]
+
+    restored = JointTrainingRun.from_checkpoint(
+        output_dir / "last.pt",
+        phase_b,
+        memory_corpus,
+        world_corpus,
+        goal_corpus,
+        output_dir=output_dir,
+        protected_dataset=phase_a,
+    )
+    assert restored.sequence_fabric_learning is False
+    evaluation = restored.evaluate_only()
+    assert evaluation["sequence_fabric_learning"] is False
+    assert evaluation["sequence_fabric_contract"]["parent"] == fabric_contract["parent"]
+    with pytest.raises(ValueError, match="sequence fabric learning"):
+        JointTrainingRun.from_checkpoint(
+            output_dir / "last.pt",
+            phase_b,
+            memory_corpus,
+            world_corpus,
+            goal_corpus,
+            output_dir=output_dir,
+            protected_dataset=phase_a,
+            sequence_fabric_learning=True,
         )
 
 

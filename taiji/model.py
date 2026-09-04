@@ -133,6 +133,7 @@ class Taiji:
         *,
         learn: bool = True,
         learn_motor: bool | None = None,
+        learn_fabric: bool | None = None,
         readout: str = "action",
         use_memory: bool = True,
         use_identity: bool | None = None,
@@ -142,6 +143,10 @@ class Taiji:
 
         ``learn_motor=False`` keeps local fabric learning active without
         treating an externally caused sensation as the correct motor action.
+        ``learn_fabric=False`` keeps the same forward cortical dynamics while
+        withholding only persistent fabric plasticity.  It exists for causal
+        sequence-learning experiments: F1 may still train its dedicated
+        predictive readout without silently changing the shared F2/F4 context.
         ``readout="predictive"`` sends next-byte error to the dedicated F1
         decoder; it never writes the F4 action policy.  A single dynamics
         episode cannot silently switch readout ownership, because the prior
@@ -164,6 +169,10 @@ class Taiji:
             raise ValueError("predictive readout cannot train the action motor")
         if readout == "predictive" and use_delayed_memory_verdict:
             raise ValueError("predictive readout cannot request a delayed-memory verdict")
+        if learn_fabric is not None and not isinstance(learn_fabric, bool):
+            raise TypeError("learn_fabric must be a bool or None")
+        if not learn and learn_fabric is True:
+            raise ValueError("fabric learning requires learn=True")
         symbol = int(symbol)
         sensory = self.sensor.encode(symbol)
         previous = self._state
@@ -178,6 +187,7 @@ class Taiji:
                 "readout changed inside an active dynamics episode; reset before switching"
             )
         motor_learning = learn if learn_motor is None else bool(learn_motor)
+        fabric_learning = learn if learn_fabric is None else bool(learn_fabric)
         memory_write_strength = 0.0
         if previous.pending_experience is not None:
             pending_experience = previous.pending_experience
@@ -226,7 +236,7 @@ class Taiji:
         regions, activity_rates, error_norms = self.fabric.step(
             sensory,
             previous.regions,
-            learn=learn,
+            learn=fabric_learning,
             episodic_feedback=previous.memory.cortical_feedback,
         )
         cortical_state = self.fabric.cortical_context(regions)
@@ -770,6 +780,7 @@ class Taiji:
         epochs: int = 1,
         include_boundary: bool = True,
         use_memory: bool = False,
+        learn_fabric: bool = True,
     ) -> dict[str, float]:
         """Develop on a byte stream using only online local updates.
 
@@ -778,10 +789,16 @@ class Taiji:
         an unrelated F2 memory course cannot silently alter the language
         learning signal. Experiments studying memory-augmented prediction can
         explicitly opt in with ``use_memory=True``.
+
+        ``learn_fabric=False`` is a causal isolation mode: it keeps the live
+        forward dynamics and trains the predictive decoder, while leaving the
+        shared fabric's persistent synapses and homeostatic statistics intact.
         """
 
         if epochs <= 0:
             raise ValueError("epochs must be positive")
+        if not isinstance(learn_fabric, bool):
+            raise TypeError("learn_fabric must be a bool")
         observations = 0
         correct = 0
         surprise_sum = 0.0
@@ -791,6 +808,7 @@ class Taiji:
                 step = self.observe(
                     symbol,
                     learn=True,
+                    learn_fabric=learn_fabric,
                     readout="predictive",
                     use_memory=use_memory,
                     use_identity=False,
