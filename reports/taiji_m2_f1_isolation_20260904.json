@@ -1,0 +1,114 @@
+{
+  "format": "taiji-m2-f1-isolation-v1",
+  "status": "validated",
+  "date": "2026-09-04",
+  "purpose": "Resolve whether the M2-0 F1 regression was parameter forgetting or long-term episodic feedback entering the raw-byte prediction path.",
+  "decision": "Raw-byte learn, score, and native generation default to use_memory=false. Episodic augmentation remains available only through an explicit use_memory=true request.",
+  "protocol": {
+    "training_performed": false,
+    "checkpoint_mutated": false,
+    "fresh_process_per_seed": true,
+    "sequence_path": {
+      "use_memory": false,
+      "use_identity": false
+    },
+    "comparison": "The exact M2-0 last checkpoint is evaluated against its own content-addressed foundation partition. B2/B3/B4 use their unchanged task-specific paths.",
+    "unigram_bpb": 5.942172196993842
+  },
+  "seed_results": [
+    {
+      "seed": 11,
+      "corpus_digest": "542855037f6fc988634b7821d2cf0ed051a67c55d85dca6ce2c5981850c9e7e1",
+      "checkpoint_digest": "58fd6d2de111d54cd1bfa168a027421895d18e5c922c46684427b90dee99a0dd",
+      "source_report": "reports/taiji_m2_f1f5_foundation_seed11_20260903.json",
+      "reevaluation_report": "reports/taiji_m2_f1_isolation_seed11_20260904.json",
+      "original_sequence": {
+        "holdout_bpb": 7.379595233060937,
+        "retention_bpb": 7.346731843543431
+      },
+      "isolated_sequence": {
+        "holdout_bpb": 4.826467621262923,
+        "retention_bpb": 4.793160756933984
+      },
+      "removed_memory_penalty": {
+        "holdout_bpb": 2.553127611798014,
+        "retention_bpb": 2.5535710866094465
+      },
+      "unchanged_neighbor_metrics": {
+        "memory_holdout_recall": 0.87,
+        "memory_retention_recall": 0.87,
+        "world_holdout_error": 3.622080058107713e-08,
+        "world_retention_error": 3.622080058107713e-08,
+        "goal_holdout_success": 1.0,
+        "goal_retention_success": 1.0
+      },
+      "checkpoint_read_only": true
+    },
+    {
+      "seed": 29,
+      "corpus_digest": "dbefe54acf11a94c05775a074a3fc5ab7364141b22a9e7de0921cd0190191ee8",
+      "checkpoint_digest": "e619617b65242bb7466ede295563aaaab9eddf2ab3f7c5cc2b47ca4a7b1ed8b7",
+      "source_report": "reports/taiji_m2_f1f5_foundation_seed29_20260903.json",
+      "reevaluation_report": "reports/taiji_m2_f1_isolation_seed29_20260904.json",
+      "original_sequence": {
+        "holdout_bpb": 7.335747986765509,
+        "retention_bpb": 7.298372294397741
+      },
+      "isolated_sequence": {
+        "holdout_bpb": 4.930721997662566,
+        "retention_bpb": 4.891779266206889
+      },
+      "removed_memory_penalty": {
+        "holdout_bpb": 2.405025989102943,
+        "retention_bpb": 2.4065930281908523
+      },
+      "unchanged_neighbor_metrics": {
+        "memory_holdout_recall": 0.85,
+        "memory_retention_recall": 0.85,
+        "world_holdout_error": 3.545352811329394e-08,
+        "world_retention_error": 3.545352811329394e-08,
+        "goal_holdout_success": 1.0,
+        "goal_retention_success": 1.0
+      },
+      "checkpoint_read_only": true
+    },
+    {
+      "seed": 47,
+      "corpus_digest": "73e0e1fc7188670903312351ff02aada403e5f94d64897d229fcabd46e28e1ad",
+      "checkpoint_digest": "37217d88a332aecdb314031d3d63e59ea302d0185108cde6cf2efd30eb5a0b31",
+      "source_report": "reports/taiji_m2_f1f5_foundation_seed47_20260903.json",
+      "reevaluation_report": "reports/taiji_m2_f1_isolation_seed47_20260904.json",
+      "original_sequence": {
+        "holdout_bpb": 6.5334429725559495,
+        "retention_bpb": 6.554247846883684
+      },
+      "isolated_sequence": {
+        "holdout_bpb": 4.804610577669548,
+        "retention_bpb": 4.818898034213449
+      },
+      "removed_memory_penalty": {
+        "holdout_bpb": 1.7288323948864015,
+        "retention_bpb": 1.7353498126702354
+      },
+      "unchanged_neighbor_metrics": {
+        "memory_holdout_recall": 0.87,
+        "memory_retention_recall": 0.87,
+        "world_holdout_error": 3.563332384715068e-08,
+        "world_retention_error": 3.563332384715068e-08,
+        "goal_holdout_success": 1.0,
+        "goal_retention_success": 1.0
+      },
+      "checkpoint_read_only": true
+    }
+  ],
+  "gates": {
+    "all_three_checkpoints_restored": true,
+    "all_three_evaluations_read_only": true,
+    "all_three_holdout_bpb_beat_unigram": true,
+    "all_three_retention_bpb_beat_unigram": true,
+    "b2_b3_b4_unchanged_from_m2_0": true,
+    "parameter_forgetting_is_primary_explanation": false,
+    "long_term_memory_readout_interference_is_primary_explanation": true
+  },
+  "next_gate": "M2-2 is a real F5 continual-byte course: introduce a disjoint phase-B language partition, measure old and new F1 ability under the isolated path, and use bounded replay only if the no-replay counterfactual loses old ability. Do not enter ContentPlan or language-teacher work before that causal gate is closed."
+}
