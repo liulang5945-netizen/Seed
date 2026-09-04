@@ -27,6 +27,7 @@ from taiji import (  # noqa: E402
     Taiji,
     TaijiConfig,
 )
+from taiji.foundation_training import _code_revision  # noqa: E402
 
 
 def _config(seed: int) -> TaijiConfig:
@@ -254,6 +255,7 @@ def main() -> int:
             replay_memory_epochs=args.replay_memory_epochs,
             replay_memory_learning_scale=args.replay_memory_learning_scale,
             replay_memory_learning_targets=args.replay_memory_learning_targets,
+            code_revision=_code_revision(),
         )
     else:
         model = Taiji(_config(args.seed), episode_id="joint-train")
