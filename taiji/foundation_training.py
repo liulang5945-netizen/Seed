@@ -1105,6 +1105,7 @@ class WorldActionTrainingRun:
         self.global_step = 0
         self.history: list[dict[str, Any]] = []
         self.best_holdout_score = 0.0
+        self._last_measured_metrics: dict[str, float] | None = None
         self.started_from_checkpoint = False
 
     @property
@@ -1821,9 +1822,15 @@ class JointTrainingRun:
         *,
         train_kind: str | None = None,
         train_success: bool | None = None,
+        metrics: Mapping[str, float] | None = None,
     ) -> None:
-        metrics = self._measure_metrics()
-        score = self._joint_holdout_score(metrics)
+        measured_metrics = (
+            self._measure_metrics()
+            if metrics is None
+            else {key: float(value) for key, value in metrics.items()}
+        )
+        self._last_measured_metrics = dict(measured_metrics)
+        score = self._joint_holdout_score(measured_metrics)
         record: dict[str, Any] = {
             "epoch": self.epoch,
             "phase": self.phase,
@@ -1836,7 +1843,7 @@ class JointTrainingRun:
             "replay_memory_epoch": self.replay_memory_epoch,
             "replay_memory_cursor": self.replay_memory_cursor,
             "global_step": self.global_step,
-            **metrics,
+            **measured_metrics,
             "joint_holdout_gain": score,
         }
         if train_kind is not None:
@@ -1988,9 +1995,14 @@ class JointTrainingRun:
             self.replay_cursor = 0
             self.replay_memory_epoch = 0
             self.replay_memory_cursor = 0
-            self._save_progress()
+            terminal_metrics = self._last_measured_metrics
+            if terminal_metrics is None:
+                terminal_metrics = self._measure_metrics()
+            self._save_progress(metrics=terminal_metrics)
 
-        final_metrics = self._measure_metrics()
+        final_metrics = self._last_measured_metrics
+        if final_metrics is None:
+            final_metrics = self._measure_metrics()
         lesion = Taiji.from_checkpoint(self.parent_model_payload)
         _cold_start_action_organ(lesion)
         for episode in self.goal_corpus.train:

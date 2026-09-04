@@ -1,0 +1,46 @@
+{
+  "format": "taiji-m2-f5-seed11-no-replay-preflight-v1",
+  "status": "validated",
+  "date": "2026-09-04",
+  "purpose": "Verify that the M2-2 protected sequence-only child can save and fresh-process restore before any phase-B learning update.",
+  "source_checkpoint": {
+    "path": "outputs/taiji-m2-f1f5-foundation-seed11/last.pt",
+    "checkpoint_payload_digest": "b581abc28b586feac419a251ac7df303e30b5d79f4d76f10fd91c0f89b3b9dce",
+    "persistent_model_world_digest": "58fd6d2de111d54cd1bfa168a027421895d18e5c922c46684427b90dee99a0dd"
+  },
+  "course": {
+    "training_phases": [
+      "sequence"
+    ],
+    "replay_dataset_digest": null,
+    "phase_a_partition_seed": 11,
+    "phase_a_dataset_digest": "6c4abbb01d30134867573396b784b2c77fef5e137e2e660dfa262c2645f2e7f6",
+    "phase_b_partition_seed": 10011,
+    "phase_b_dataset_digest": "d4888d6ad21cba8ebbf422452feb7ce9bec4e879011b1b7c507ed778a4880be6",
+    "course_digest": "f313a143370a3256f1dd1f371d52da1735e08c542caff857a8dbe6cc46e08acb",
+    "new_parent_checkpoint_payload_digest": "9ec788025a8e00683ea36e878b54d87c6fc53f99229f5e4b2172cb0fb300ba6f"
+  },
+  "reports": {
+    "in_memory_parent_eval": "reports/taiji_m2_f5_seed11_no_replay_parent_preflight_20260904.json",
+    "fresh_process_parent_eval": "reports/taiji_m2_f5_seed11_no_replay_parent_resume_20260904.json"
+  },
+  "fresh_process_gate": {
+    "checkpoint_read_only": true,
+    "course_digest_matches": true,
+    "training_phases_match": true,
+    "protected_dataset_digest_matches": true,
+    "persistent_checkpoint_digest_matches": true,
+    "all_metrics_match_abs_tol": 1e-12
+  },
+  "parent_metrics": {
+    "phase_b_sequence_holdout_bpb": 4.794850899786519,
+    "phase_b_sequence_retention_bpb": 4.798176542781731,
+    "phase_a_protected_holdout_bpb": 4.826467621262923,
+    "phase_a_protected_retention_bpb": 4.793160756933984,
+    "memory_holdout_recall": 0.87,
+    "world_holdout_error": 3.622080058107713e-08,
+    "goal_holdout_success": 1.0
+  },
+  "resource_measurement_policy": "The runner now reuses the terminal read-only measurement when checkpointing the post-epoch cursor state and when building the final report. It does not reduce data, omit a metric, or reuse a measure after an update.",
+  "next_gate": "M2-2d: resume this validated parent checkpoint for the real foundation phase-B sequence-only no-replay course, then fresh-process evaluate old and new holdout/retention before considering replay."
+}
