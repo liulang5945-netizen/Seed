@@ -44,6 +44,7 @@ class Taiji:
     LEGACY_CHECKPOINT_FORMATS = frozenset({"taiji-native-v8", "taiji-native-v9"})
     STATE_VERSION = 7
     LEGACY_STATE_VERSIONS = frozenset({5, 6})
+    IDENTITY_GROWTH_FORMAT = "taiji-native-identity-growth-v1"
 
     def __init__(
         self,
@@ -93,6 +94,7 @@ class Taiji:
         # maturity gate -- an experienced text resets it to tens of ticks and
         # a lived checkpoint would read as a fresh field (A2, diagnosis 24).
         self._development_ticks = 0
+        self._identity_growth_history: list[dict[str, Any]] = []
         self._state = self._initial_state(episode_id)
 
     def _initial_state(self, episode_id: str) -> TaijiState:
@@ -135,6 +137,46 @@ class Taiji:
         self._development_ticks = max(self._development_ticks, int(self._state.tick))
         self.fabric.clear_cue_snapshot()
         self._state = self._initial_state(episode_id or self._state.episode_id)
+
+    @property
+    def identity_growth_history(self) -> tuple[dict[str, Any], ...]:
+        """Return the append-only identity-capacity growth ledger."""
+
+        return tuple(dict(item) for item in self._identity_growth_history)
+
+    @torch.no_grad()
+    def grow_identity_organ(
+        self, new_capacity: int, *, reason: str = "capacity-pressure"
+    ) -> dict[str, Any]:
+        """Append identity slots without resetting any learned substrate."""
+
+        if self.identity_organ is None:
+            raise RuntimeError("cannot grow an identity organ that is disabled")
+        if self._state.pending_action is not None or self._state.pending_experience is not None:
+            raise RuntimeError("identity growth requires a settled dynamics state")
+        target = int(new_capacity)
+        old_capacity = int(self.identity_organ.capacity)
+        if target <= old_capacity:
+            raise ValueError("identity organ growth must increase capacity")
+        if not str(reason).strip():
+            raise ValueError("identity growth reason cannot be empty")
+        parent_checkpoint_digest = content_digest(self.checkpoint())
+        values = self.config.to_dict()
+        values["identity_organ_capacity"] = target
+        next_config = TaijiConfig.from_dict(values)
+        growth = self.identity_organ.expand_capacity(next_config)
+        self.config = next_config
+        event = {
+            "format": self.IDENTITY_GROWTH_FORMAT,
+            "from_capacity": int(growth["from_capacity"]),
+            "to_capacity": int(growth["to_capacity"]),
+            "preserved_slots": int(growth["preserved_slots"]),
+            "appended_slots": int(growth["appended_slots"]),
+            "parent_checkpoint_digest": parent_checkpoint_digest,
+            "reason": str(reason),
+        }
+        self._identity_growth_history.append(event)
+        return dict(event)
 
     @torch.no_grad()
     def observe(
@@ -1024,13 +1066,24 @@ class Taiji:
         if self.identity_organ is None:
             # The optional identity organ remains absent until enabled; the
             # F1 predictive context/readout are part of every v10 core.
-            return core
-        return {
-            **core,
-            "identity_organ": self.identity_organ.to_payload(
-                parent_checkpoint_digest=content_digest(core),
-            ),
-        }
+            payload = core
+        else:
+            payload = {
+                **core,
+                "identity_organ": self.identity_organ.to_payload(
+                    parent_checkpoint_digest=content_digest(core),
+                ),
+            }
+        if self._identity_growth_history:
+            payload = {
+                **payload,
+                "identity_growth": {
+                    "format": self.IDENTITY_GROWTH_FORMAT,
+                    "version": 1,
+                    "events": [dict(item) for item in self._identity_growth_history],
+                },
+            }
+        return payload
 
     def restore(self, checkpoint: Mapping[str, Any]) -> None:
         checkpoint_format = str(checkpoint.get("format", ""))
@@ -1093,6 +1146,27 @@ class Taiji:
             ):
                 raise ValueError("identity organ checkpoint lineage does not match Taiji core")
             self.identity_organ.load_payload(identity_payload)
+        growth_payload = checkpoint.get("identity_growth")
+        if growth_payload is None:
+            self._identity_growth_history = []
+        else:
+            if not isinstance(growth_payload, Mapping):
+                raise ValueError("identity growth checkpoint payload is invalid")
+            if growth_payload.get("format") != self.IDENTITY_GROWTH_FORMAT:
+                raise ValueError("unsupported identity growth checkpoint format")
+            if int(growth_payload.get("version", -1)) != 1:
+                raise ValueError("unsupported identity growth checkpoint version")
+            events = growth_payload.get("events")
+            if not isinstance(events, list):
+                raise ValueError("identity growth checkpoint events must be a list")
+            restored_events: list[dict[str, Any]] = []
+            for event in events:
+                if not isinstance(event, Mapping):
+                    raise ValueError("identity growth checkpoint event must be a mapping")
+                if event.get("format") != self.IDENTITY_GROWTH_FORMAT:
+                    raise ValueError("identity growth checkpoint event format is invalid")
+                restored_events.append(dict(event))
+            self._identity_growth_history = restored_events
         state = TaijiState.from_payload(checkpoint["state"], device=self.device)
         if state.version not in {self.STATE_VERSION, *self.LEGACY_STATE_VERSIONS}:
             raise ValueError("unsupported Taiji state version")

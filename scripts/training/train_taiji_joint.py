@@ -107,6 +107,14 @@ def main() -> int:
             "B2 delayed/interference evaluator and requires --count 1000."
         ),
     )
+    parser.add_argument(
+        "--identity-growth-to",
+        type=int,
+        help=(
+            "Append identity-organ slots before a continuation course. Existing slots "
+            "and learned values are preserved; requires --continue-from."
+        ),
+    )
     parser.add_argument("--protected-corpus", nargs="+", type=Path)
     parser.add_argument(
         "--protected-profile",
@@ -167,6 +175,10 @@ def main() -> int:
 
     if args.resume is not None and args.continue_from is not None:
         parser.error("--resume and --continue-from are mutually exclusive")
+    if args.identity_growth_to is not None and args.continue_from is None:
+        parser.error("--identity-growth-to requires --continue-from")
+    if args.identity_growth_to is not None and args.eval_only:
+        parser.error("--identity-growth-to cannot be combined with --eval-only")
     if args.freeze_sequence_fabric and (
         args.training_phases is None or "sequence" not in args.training_phases
     ):
@@ -337,6 +349,8 @@ def main() -> int:
             replay_memory_learning_scale=args.replay_memory_learning_scale,
             replay_memory_learning_targets=args.replay_memory_learning_targets,
         )
+    if args.identity_growth_to is not None:
+        run.model.grow_identity_organ(args.identity_growth_to)
     result: dict[str, Any]
     if args.eval_only:
         result = run.evaluate_only()

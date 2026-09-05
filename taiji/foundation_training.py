@@ -2005,6 +2005,7 @@ class JointTrainingRun:
             "best_holdout_score": self.best_holdout_score,
             "code_revision": self.code_revision,
             "continuation_source_checkpoint_digest": self.continuation_source_checkpoint_digest,
+            "identity_growth": list(self.model.identity_growth_history),
         }
         if self.training_version >= 3:
             payload.update(
@@ -2375,6 +2376,7 @@ class JointTrainingRun:
             "code_revision": self.code_revision,
             "started_from_checkpoint": self.started_from_checkpoint,
             "continuation_source_checkpoint_digest": self.continuation_source_checkpoint_digest,
+            "identity_growth": list(self.model.identity_growth_history),
         }
         report["sequence_fabric_learning"] = self.sequence_fabric_learning
         report["sequence_fabric_contract"] = {
@@ -2423,6 +2425,7 @@ class JointTrainingRun:
             "replay_memory_learning_targets": self.replay_memory_learning_targets,
             "code_revision": self.code_revision,
             "continuation_source_checkpoint_digest": self.continuation_source_checkpoint_digest,
+            "identity_growth": list(self.model.identity_growth_history),
         }
         report["sequence_fabric_learning"] = self.sequence_fabric_learning
         report["sequence_fabric_contract"] = {
