@@ -588,7 +588,7 @@ class CueIdentityOrgan:
     def to_payload(self, *, parent_checkpoint_digest: str) -> dict[str, Any]:
         if not parent_checkpoint_digest:
             raise ValueError("identity organ checkpoint needs a parent digest")
-        return {
+        payload = {
             "format": self.CHECKPOINT_FORMAT,
             "version": self.VERSION,
             "lineage": {
@@ -618,8 +618,13 @@ class CueIdentityOrgan:
             "value_keys": self._value_keys.detach().cpu().clone(),
             "value_actions": self._value_actions.detach().cpu().clone(),
             "value_counts": self._value_counts.detach().cpu().clone(),
-            "active_slot_start": self.active_slot_start,
         }
+        # Keep pre-generation checkpoints byte-compatible when they are
+        # re-serialized.  A non-zero value is the durable marker that this
+        # organ has grown and therefore needs generation-aware reads.
+        if self.active_slot_start:
+            payload["active_slot_start"] = self.active_slot_start
+        return payload
 
     def load_payload(self, payload: Mapping[str, Any]) -> None:
         if payload.get("format") != self.CHECKPOINT_FORMAT:

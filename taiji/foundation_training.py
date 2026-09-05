@@ -1494,18 +1494,31 @@ def _joint_memory_recall(
     corpus: DelayedMemoryCorpus,
     *,
     use_memory: bool,
+    queries: Sequence[DelayedMemoryQuery] | None = None,
+    identity_generation_scope: str | None = None,
 ) -> float:
     actions = tuple(dict.fromkeys(item.action for item in corpus.train))
     if len(actions) < 2:
         raise ValueError("joint memory corpus needs at least two action classes")
+    if queries is None:
+        queries = corpus.holdout
+    if not queries:
+        raise ValueError("joint memory recall needs at least one query")
+    if identity_generation_scope is None:
+        identity_generation_scope = (
+            "active"
+            if model.identity_organ is not None and model.identity_organ.active_slot_start
+            else "all"
+        )
     correct = 0
-    for query in corpus.holdout:
+    for query in queries:
         model.reset_dynamics(episode_id=f"m1-f4-query-{query.query_id}")
         model.observe(
             model.config.boundary_symbol,
             learn=False,
             learn_motor=False,
             use_memory=use_memory,
+            identity_generation_scope=identity_generation_scope,
         )
         for symbol in query.context:
             model.observe(
@@ -1513,17 +1526,19 @@ def _joint_memory_recall(
                 learn=False,
                 learn_motor=False,
                 use_memory=use_memory,
+                identity_generation_scope=identity_generation_scope,
             )
         model.observe(
             query.cue,
             learn=False,
             learn_motor=False,
             use_memory=use_memory,
+            identity_generation_scope=identity_generation_scope,
         )
         probabilities = model.snapshot().motor_probabilities
         prediction = max(actions, key=lambda action: float(probabilities[action].item()))
         correct += int(prediction == query.expected_action)
-    return correct / len(corpus.holdout)
+    return correct / len(queries)
 
 
 def _joint_train_memory_episode(
@@ -1809,7 +1824,10 @@ class JointTrainingRun:
                 self.model, self.memory_corpus, use_memory=True
             ),
             "memory_retention_recall": _joint_memory_recall(
-                self.model, self.memory_corpus, use_memory=True
+                self.model,
+                self.memory_corpus,
+                use_memory=True,
+                queries=self.memory_corpus.retention,
             ),
             "world_holdout_error": _world_action_error(
                 self.world_learner, self.world_corpus.holdout
