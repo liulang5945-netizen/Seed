@@ -459,6 +459,8 @@ M1-64 已完成，B2 在真实 foundation 规模上被判定为**记忆能力不
 
 **M2-2j 正式 B1 child report 完成（20260905）**：修正 seed-specific 数据地址后，`reports/taiji_m2j_foundation_child_b1_20260905.json` 在全新 Python 进程中直接加载三份 v4 private-context `last.pt` 及其 `parent_model`，并以 `reports/taiji_m2_checkpoint_preflight_20260903.json` 通过 checkpoint gate。B1 使用 foundation 预算 `1,048,576/131,072/131,072`，三 seed child holdout BPB 为 `4.288321/4.383969/4.373164`，最差 `4.383969`；最强对照为 unigram `5.937711`，同时优于 random `8.005624`、frozen-parent `4.788622`、hash-only `15.945552`，`strictly_beats_strongest_control=true`、`holdout_updates=0`。报告还记录三份 child 与 phase-B、protected phase-A digest 逐一匹配，score 前后 checkpoint 不变。整体 `status=not_evaluated`、`can_promote=false` 是正确结果：B2～B5 尚未有 child-bound foundation measurement，不能用 M2-2i 的 joint keep 指标或 fresh task 结果填充。**M2-2k 唯一下一步**：为同一 formal evaluator 接入 checkpoint-bound B2/B3/B4 只读 full-coverage measurement，并为 B5 建立从 child 继续的 dedicated phase-A/phase-B no-replay/replay 对照；先完成数据与 checkpoint 归属审计，再运行正式课程。
 
+**M2-2k B2/B3/B4 child-bound 接线完成（20260905，尚未运行 full coverage）**：`eval_taiji_foundation_baseline.py --child-foundation` 现在对同一组三份 v4 child 做 B2 1000/200/200 延迟干扰只读测量、B3 1000/500/500 world learner 只读测量和 B4 1000/500/500 action readout 只读测量；每项都从 child payload 加载对应的真实 organ/learner，parent/frozen、random、simple-rule、hash-only 由同一课程重新计算，holdout/retention digest 变化会 fail closed。缩小 8/4/4 canary 已运行，B2/B3/B4 均返回真实 `failed`（不是异常或伪通过）且 `holdout_updates=0`，说明入口和失败语义可用。当前唯一下一步是用 `--child-foundation` 跑 manifest floor，形成 B2/B3/B4 的真实结果；B5 仍必须随后以独立 continuation course 进入正式报告。
+
 ## 7. M2～M8 的开发日程与外围任务安置
 
 ### M2：世界—行动—语言后训练
