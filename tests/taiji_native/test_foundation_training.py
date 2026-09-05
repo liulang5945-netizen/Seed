@@ -9,6 +9,7 @@ from pathlib import Path
 import pytest
 import torch
 
+from scripts.training.train_taiji_joint import _build_memory_course
 from scripts.training.train_taiji_memory import build_corpus as build_memory_corpus
 from scripts.training.train_taiji_world_action import (
     build_goal_corpus,
@@ -696,6 +697,18 @@ def test_organ_only_goal_training_does_not_write_shared_fabric() -> None:
     _train_goal_episode(model, episode, learn=True, learn_fabric=False)
 
     assert _sequence_fabric_digest(model) == before
+
+
+def test_joint_foundation_memory_course_matches_formal_b2() -> None:
+    from scripts.training.eval_taiji_m1_64_foundation_memory import (
+        build_foundation_delayed_memory_corpus,
+    )
+
+    selected = _build_memory_course("foundation", count=1_000)
+    formal = build_foundation_delayed_memory_corpus()
+
+    assert selected == formal
+    assert selected.interference_symbols == (200, 201, 202, 203)
 
 
 def test_joint_v3_fixed_basis_checkpoint_requires_explicit_m2_2h_continuation() -> None:

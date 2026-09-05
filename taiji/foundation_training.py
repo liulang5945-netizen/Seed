@@ -1507,6 +1507,13 @@ def _joint_memory_recall(
             learn_motor=False,
             use_memory=use_memory,
         )
+        for symbol in query.context:
+            model.observe(
+                symbol,
+                learn=False,
+                learn_motor=False,
+                use_memory=use_memory,
+            )
         model.observe(
             query.cue,
             learn=False,
@@ -1529,6 +1536,8 @@ def _joint_train_memory_episode(
 ) -> None:
     model.reset_dynamics(episode_id=f"m1-f4-train-{episode.memory_id}")
     model.observe(model.config.boundary_symbol, learn=False, learn_motor=False, use_memory=False)
+    for symbol in episode.context:
+        model.observe(symbol, learn=False, learn_motor=False, use_memory=False)
     model.observe(episode.cue, learn=False, learn_motor=False, use_memory=False)
     model.act((episode.action,), sample=False)
     model.settle_action(
