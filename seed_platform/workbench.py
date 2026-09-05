@@ -25,6 +25,11 @@ from pathlib import Path
 from typing import Any
 
 from taiji.environment import EnvironmentOutcome
+from taiji.workbench_boundary import (
+    WorkbenchBoundaryAuthorization,
+    WorkbenchBoundaryDecision,
+    WorkbenchTaskBoundary,
+)
 
 from .capability_registry import CapabilityRegistry
 from .mcp_registry import McpToolRegistry
@@ -58,6 +63,9 @@ WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_FORMAT = "seed-taiji-recovery-portfolio-v1"
 WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_VERSION = 1
 WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_MAX_BRANCHES = 8
 WORKBENCH_TAIJI_RECOVERY_BRANCH_TTL_TICKS = 256
+WORKBENCH_TASK_BOUNDARY_STATE_FORMAT = "seed-workbench-task-boundary-state-v1"
+WORKBENCH_TASK_BOUNDARY_STATE_VERSION = 1
+WORKBENCH_TASK_BOUNDARY_HISTORY_LIMIT = 64
 # Workbench sensations cross into Taiji's native byte sensor. Keep the
 # digest-derived marker inside the raw-byte domain; Taiji's boundary symbol
 # is reserved for stream framing and is not emitted here.
@@ -642,6 +650,7 @@ class WorkbenchActionRequest:
     approval_token: str = ""
     mcp_registry_snapshot_id: str = ""
     capability_registry_snapshot_id: str = ""
+    boundary_token_digest: str = ""
 
     def __post_init__(self) -> None:
         if self.version != WORKBENCH_CONTRACT_VERSION:
@@ -671,6 +680,7 @@ class WorkbenchActionRequest:
         approval_token: str = "",
         mcp_registry_snapshot_id: str = "",
         capability_registry_snapshot_id: str = "",
+        boundary_token_digest: str = "",
     ) -> WorkbenchActionRequest:
         """Bind a Taiji-owned intent to the current Seed capability snapshot."""
 
@@ -687,6 +697,7 @@ class WorkbenchActionRequest:
             approval_token=str(approval_token or ""),
             mcp_registry_snapshot_id=str(mcp_registry_snapshot_id or ""),
             capability_registry_snapshot_id=str(capability_registry_snapshot_id or ""),
+            boundary_token_digest=str(boundary_token_digest or ""),
         )
 
     def binding_payload(self) -> dict[str, str | int]:
@@ -697,6 +708,7 @@ class WorkbenchActionRequest:
             "capability_snapshot_id": self.snapshot_id,
             "mcp_registry_snapshot_id": self.mcp_registry_snapshot_id,
             "capability_registry_snapshot_id": self.capability_registry_snapshot_id,
+            "boundary_token_digest": self.boundary_token_digest,
         }
 
     def to_payload(self) -> dict[str, Any]:
@@ -713,6 +725,7 @@ class WorkbenchActionRequest:
             "approval_granted": bool(self.approval_token),
             "mcp_registry_snapshot_id": self.mcp_registry_snapshot_id,
             "capability_registry_snapshot_id": self.capability_registry_snapshot_id,
+            "boundary_token_digest": self.boundary_token_digest,
         }
 
 
@@ -1393,6 +1406,8 @@ class WorkbenchEnvironment:
         self._approval_records: dict[str, dict[str, Any]] = {}
         self._last_result: dict[str, Any] = {}
         self._request_id = ""
+        self._active_task_boundary: WorkbenchTaskBoundary | None = None
+        self._task_boundary_history: list[WorkbenchTaskBoundary] = []
         self._lock = threading.RLock()
 
     @property
@@ -1415,7 +1430,219 @@ class WorkbenchEnvironment:
             with self._lock:
                 self._request_id = previous
 
+    @property
+    def active_task_boundary(self) -> WorkbenchTaskBoundary | None:
+        """Return the current task boundary without issuing or mutating one."""
+
+        with self._lock:
+            return self._active_task_boundary
+
+    def issue_task_boundary(
+        self,
+        *,
+        project_id: str,
+        task_id: str,
+        session_id: str,
+        language_id: str,
+        capability_ids: Sequence[str],
+        generation_scope: str = "active",
+        issued_tick: int = 0,
+        ttl_ticks: int = 128,
+    ) -> WorkbenchTaskBoundary:
+        """Open or rotate one client-owned task boundary.
+
+        Repeating the exact live context is idempotent.  Any task, language,
+        capability, or generation change closes the old task and links the new
+        token to that closed predecessor.
+        """
+
+        normalized_capabilities = tuple(str(item).strip() for item in capability_ids)
+        if not normalized_capabilities:
+            raise ValueError("task boundary requires at least one capability")
+        enabled = {
+            item.capability_id
+            for item in self.snapshot.capabilities
+            if item.enabled
+        }
+        unknown = sorted(set(normalized_capabilities) - enabled)
+        if unknown:
+            raise ValueError(f"task boundary contains unavailable capabilities: {unknown}")
+        issued = int(issued_tick)
+        with self._lock:
+            current = self._active_task_boundary
+            if current is not None and (
+                current.project_id == str(project_id).strip()
+                and current.task_id == str(task_id).strip()
+                and current.session_id == str(session_id).strip()
+                and current.language_id == str(language_id).strip()
+                and current.capability_ids == tuple(sorted(normalized_capabilities))
+                and current.generation_scope == str(generation_scope).strip()
+                and current.issued_tick <= issued <= current.expires_tick
+            ):
+                return current
+            parent_digest = ""
+            if current is not None:
+                closed = current.close(closed_tick=issued)
+                self._remember_task_boundary(closed)
+                parent_digest = closed.token_digest
+            token = WorkbenchTaskBoundary.issue(
+                project_id=project_id,
+                task_id=task_id,
+                session_id=session_id,
+                language_id=language_id,
+                capability_snapshot_id=self.snapshot.snapshot_id,
+                capability_ids=normalized_capabilities,
+                generation_scope=generation_scope,
+                issued_tick=issued,
+                ttl_ticks=ttl_ticks,
+                parent_token_digest=parent_digest,
+            )
+            self._active_task_boundary = token
+            return token
+
+    def close_task_boundary(
+        self,
+        boundary: WorkbenchTaskBoundary | Mapping[str, Any],
+        *,
+        closed_tick: int,
+    ) -> WorkbenchTaskBoundary:
+        """Close the current task and retain it for explicit read-only replay."""
+
+        token = (
+            boundary
+            if isinstance(boundary, WorkbenchTaskBoundary)
+            else WorkbenchTaskBoundary.from_payload(boundary)
+        )
+        with self._lock:
+            current = self._active_task_boundary
+            if current is None or current.token_digest != token.token_digest:
+                raise ValueError("task boundary is not the current active boundary")
+            closed = current.close(closed_tick=int(closed_tick))
+            self._remember_task_boundary(closed)
+            self._active_task_boundary = None
+            return closed
+
+    def authorize_task_boundary(
+        self,
+        boundary: WorkbenchTaskBoundary | Mapping[str, Any] | None,
+        *,
+        usage: str = "execute",
+        current_tick: int = 0,
+        capability_id: str | None = None,
+    ) -> WorkbenchBoundaryDecision:
+        """Authorize a task token against this environment's live lifecycle."""
+
+        if boundary is None:
+            return WorkbenchBoundaryDecision(
+                accepted=False,
+                reason_code="task_boundary_required",
+                boundary_digest="",
+            )
+        try:
+            token = (
+                boundary
+                if isinstance(boundary, WorkbenchTaskBoundary)
+                else WorkbenchTaskBoundary.from_payload(boundary)
+            )
+        except (TypeError, ValueError):
+            return WorkbenchBoundaryDecision(
+                accepted=False,
+                reason_code="invalid_task_boundary",
+                boundary_digest="",
+            )
+        with self._lock:
+            current = self._active_task_boundary
+            known = {
+                item.token_digest for item in self._task_boundary_history
+            }
+            if current is not None:
+                known.add(current.token_digest)
+            if token.token_digest not in known:
+                return WorkbenchBoundaryDecision(
+                    accepted=False,
+                    reason_code="unknown_task_boundary",
+                    boundary_digest=token.token_digest,
+                )
+            active_digest = "" if current is None else current.token_digest
+            context = WorkbenchBoundaryAuthorization(
+                project_id=token.project_id,
+                task_id=token.task_id,
+                session_id=token.session_id,
+                capability_snapshot_id=self.snapshot.snapshot_id,
+                authorized_capability_ids=tuple(
+                    item.capability_id
+                    for item in self.snapshot.capabilities
+                    if item.enabled
+                ),
+                active_boundary_digest=active_digest,
+                current_tick=int(current_tick),
+                usage=usage,
+            )
+            decision = token.authorize(context)
+            if decision.accepted and capability_id is not None:
+                if str(capability_id) not in token.capability_ids:
+                    return WorkbenchBoundaryDecision(
+                        accepted=False,
+                        reason_code="capability_not_in_task_boundary",
+                        boundary_digest=token.token_digest,
+                    )
+            return decision
+
+    def _remember_task_boundary(self, boundary: WorkbenchTaskBoundary) -> None:
+        self._task_boundary_history.append(boundary)
+        del self._task_boundary_history[:-WORKBENCH_TASK_BOUNDARY_HISTORY_LIMIT]
+
+    def task_boundary_checkpoint(self) -> dict[str, Any]:
+        """Persist lifecycle tokens but no approvals or executable work."""
+
+        with self._lock:
+            return {
+                "format": WORKBENCH_TASK_BOUNDARY_STATE_FORMAT,
+                "version": WORKBENCH_TASK_BOUNDARY_STATE_VERSION,
+                "active": (
+                    None
+                    if self._active_task_boundary is None
+                    else self._active_task_boundary.to_payload()
+                ),
+                "history": [item.to_payload() for item in self._task_boundary_history],
+            }
+
+    def restore_task_boundary_state(self, payload: Mapping[str, Any] | None) -> None:
+        """Restore only content-addressed task lifecycle state."""
+
+        if not payload:
+            return
+        if payload.get("format") != WORKBENCH_TASK_BOUNDARY_STATE_FORMAT:
+            raise ValueError("unsupported task boundary state format")
+        if int(payload.get("version", 0)) != WORKBENCH_TASK_BOUNDARY_STATE_VERSION:
+            raise ValueError("unsupported task boundary state version")
+        active_payload = payload.get("active")
+        active = (
+            None
+            if active_payload is None
+            else WorkbenchTaskBoundary.from_payload(active_payload)
+        )
+        raw_history = payload.get("history", ())
+        if isinstance(raw_history, (str, bytes)) or not isinstance(raw_history, Sequence):
+            raise ValueError("task boundary history must be a sequence")
+        history = [
+            WorkbenchTaskBoundary.from_payload(item)
+            for item in raw_history[-WORKBENCH_TASK_BOUNDARY_HISTORY_LIMIT:]
+        ]
+        if active is not None and active.lifecycle != "active":
+            raise ValueError("active task boundary must have active lifecycle")
+        if any(item.lifecycle != "closed" for item in history):
+            raise ValueError("task boundary history must contain only closed tokens")
+        if any(item.capability_snapshot_id != self.snapshot.snapshot_id for item in history):
+            raise ValueError("task boundary history capability snapshot drifted")
+        if active is not None and active.capability_snapshot_id != self.snapshot.snapshot_id:
+            raise ValueError("active task boundary capability snapshot drifted")
+        with self._lock:
+            self._active_task_boundary = active
+            self._task_boundary_history = history
+
     def status(self) -> dict[str, Any]:
+        active_boundary = self.active_task_boundary
         return {
             "root": str(self.root),
             "snapshot_id": self.snapshot.snapshot_id,
@@ -1431,6 +1658,13 @@ class WorkbenchEnvironment:
             "mcp_registry": self.mcp_registry.to_payload(),
             "capability_registry_snapshot_id": self.capability_registry.snapshot_id,
             "capability_registry_revision": self.capability_registry.snapshot.revision,
+            "task_boundary": {
+                "active": (
+                    None if active_boundary is None else active_boundary.to_payload()
+                ),
+                "history_count": len(self._task_boundary_history),
+                "state_format": WORKBENCH_TASK_BOUNDARY_STATE_FORMAT,
+            },
         }
 
     def preflight_loop(

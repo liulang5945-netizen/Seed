@@ -29,12 +29,32 @@ class TaijiWorkbenchTaskRequest(BaseModel):
     snapshot_id: str
     novelty: float = 0.0
     resource_budget: float = 1.0
+    boundary_token: dict[str, Any] | None = None
 
 
 class TaijiWorkbenchExecuteTaskRequest(TaijiWorkbenchTaskRequest):
     """Request execution after Taiji-owned read-only admission."""
 
     learn: bool = False
+
+
+class TaijiWorkbenchBoundaryOpenRequest(BaseModel):
+    """Open a content-addressed task context for Taiji Workbench routing."""
+
+    snapshot_id: str
+    project_id: str
+    task_id: str
+    session_id: str
+    language_id: str
+    capability_ids: list[str]
+    generation_scope: str = "active"
+    ttl_ticks: int = 128
+
+
+class TaijiWorkbenchBoundaryCloseRequest(BaseModel):
+    """Close the current task context for explicit read-only replay."""
+
+    boundary_token: dict[str, Any]
 
 
 class TaijiWorkbenchProjectionRequest(BaseModel):

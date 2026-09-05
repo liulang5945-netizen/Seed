@@ -54,7 +54,7 @@ Taiji 采用“站在巨人肩膀上”的双边界：原始 byte 输入继续�
 |---|---|---|---|---|
 | 0 | M0 CPU 五项基础能力真实性基线 | **已完成（M0-0/M0-1/B1/B2/B3/B4/B5/M0-3/M0-4）** | 数据合同、对照 evaluator、checkpoint preflight、基线报告 | 测量链可信且能保存/恢复；模型得分可以失败，但失败必须被如实记录 |
 | 1 | M1 Taiji foundation 训练管线与首次 CPU 训练 | **已完成（M0-0~M0-4/M1-32~M1-66c）** | 原生 trainer、数据流水线、B2 因果链（寻址→裁决→折叠→契约）、首个 joint checkpoint | M1-66c 收尾：B2 在三 seed 上通过全部 foundation 门禁 |
-| 2 | M2 世界—行动—语言后训练 | **当前进行（M2-2aa：Workbench boundary 接入真实任务生命周期）** | 世界预测、行动信用、F1 隔离读出、受控的旧/新语言保持 Gate，随后才是 ContentPlan/语言蒸馏和 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
+| 2 | M2 世界—行动—语言后训练 | **当前进行（M2-2ab：Taiji generation 消费 boundary）** | 世界预测、行动信用、F1 隔离读出、受控的旧/新语言保持 Gate，随后才是 ContentPlan/语言蒸馏和 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
 | 3 | M3 综合能力晋级与真实 Workbench 验证 | 待开始 | 独立评测套件、真实 Workbench longitudinal report、晋级 checkpoint | 至少一个真实任务族获得可重复净收益 |
 | 4 | M4 持续学习、自进化和结构成长 | 冻结等待 M3 | bounded replay 接线、多周期保持、结构候选与单项回滚 | 真实 checkpoint 连续学习收益大于固定容量/weight-only 对照 |
 | 5 | M5 Skill/MCP 数据飞轮与客户端身体 | 冻结等待 M4 | 知识内化、经验回流、IDE/Workbench 身体、客户端插件准入 | 认知收益与客户端执行收益可消融归因，权限和回滚闭合 |
@@ -501,7 +501,9 @@ M1-64 已完成，B2 在真实 foundation 规模上被判定为**记忆能力不
 
 **M2-2z 显式 Workbench task boundary 合同完成（20260905）**：新增 `taiji/workbench_boundary.py` 与 `scripts/training/eval_taiji_m2z_workbench_boundary.py`。boundary token 采用内容寻址，固定承载项目/任务/会话/语言/能力快照/能力权限/生命周期/generation scope/时间窗/父代际；未知字段 fail closed，明确拒绝 `phase`、`target_bytes`、`answer_map`、`prompt` 等教师信号。旧任务必须先封存才能只读回放，过期、跨项目、任务代际过期和未授权 capability 均拒绝；新任务通过父 token 链接到 active generation。真实 seed 11 checkpoint canary 10/10 通过，`checkpoint_read_only=true`，模型 digest 前后一致。该合同取代无标签 surprise 启发式作为产品路由入口，但仍不改变 Taiji 默认 observe/learn 语义，也不代表 B5 已通过。
 
-**M2-2aa 唯一下一步**：把 boundary token 接入 Seed Workbench 的任务生命周期，而不是直接把它塞进模型默认 `observe`。为 `WorkbenchEnvironment` 增加当前 boundary 的 issue/rotate/close/restore 与审计状态；`WorkbenchActionRequest`/Taiji task admission/execute 只有携带当前、快照绑定、能力集合匹配的 active token 才能执行，closed token 只允许显式 read-only replay。先覆盖真实 API 的 admit/execute/preflight canary、任务切换、语言切换、能力快照漂移和跨项目拒绝，并保持旧请求缺少 token 时 fail closed；所有 boundary 生命周期变化必须可 checkpoint/恢复且不恢复 approval token。通过后再让 Taiji 的 generation caller 消费 `select_readout_generation`，继续禁止目标答案、phase 标签、无条件平均和默认 checkpoint 语义改动。
+**M2-2aa Workbench boundary 生命周期接入完成（20260905）**：`WorkbenchEnvironment` 现提供 idempotent issue、task/language/capability/generation 变化时的 rotate、close、content-addressed history、checkpoint/restore 与状态投影；SeedRuntime save/load 持久 boundary 生命周期但不恢复 approval token。Taiji `/api/workbench/taiji/boundary/open|close` 已接入，`/taiji/admit|execute` 必须携带当前 active token，且候选 capability 必须属于 token 权限集合；缺 token、旧 generation、closed token、过期、快照漂移和未授权 capability 均 fail closed，closed token 不可通过 execute。OpenAPI snapshot 已同步，完整 Workbench/API 回归 `88 passed, 1 skipped`，新增任务生命周期 round-trip 与 API close/replay 证据通过。普通显式 Workbench intent 仍保持独立旧路径；此切片没有修改默认 `Taiji.observe/learn`。
+
+**M2-2ab 唯一下一步**：让 Taiji 的 generation caller 消费已验证的 boundary，而不是继续让 Workbench 只在执行前验证。新增可选、显式的 `generate(..., boundary, authorization)` 路径：先调用 `select_readout_generation`，只允许得到已授权的 `protected/active` scope；scope 没有对应的已挂载 readout 时必须 fail closed，禁止静默回退到另一个 generation。保留无 boundary 的现有生成行为以避免破坏普通本地调用；同时把 boundary digest、generation scope 和 readout owner 记录到 generation trace/评估报告，不把 token 内容写入模型权重。先做 protected-only/active-missing/closed-replay/expired/cross-project canary 和 checkpoint read-only，再决定是否把 evaluator 的 active readout 复制逻辑升级为可保存的核心 generation registry。
 
 ## 7. M2～M8 的开发日程与外围任务安置
 
@@ -600,6 +602,7 @@ CI 不是最后才运行的支线：每个 slice 都运行相关 pytest/lint/typ
 | 2026-09-05 | M2-2o seed 11 五项 child-bound canary 完成：B3 通过，B1/B2/B4 无新增净收益，B5 仍遗忘；checkpoint/digest/只读证据通过。下一步对齐 B2 formal delayed/interference 训练课程。 |
 | 2026-09-05 | M2-2y 在线 novelty 路由诊断完成：一步滞后旧模型 surprise 路由在 phase-A 误触发 `0.5%`、phase-B 命中 `62.7%`，但 new BPB `6.462876`、old BWT `-0.001907`、retention BPB `4.854481`，尚未达到 B5 Gate；原型不接入默认核心，下一步建立显式 Workbench task boundary / readout generation contract。 |
 | 2026-09-05 | M2-2z Workbench task boundary 合同与真实 checkpoint canary 完成：10/10 合同检查通过，内容寻址、代际切换、旧任务只读回放、越权/过期/跨项目 fail-closed、教师字段拒绝和 checkpoint read-only 全部有证据；下一步接入 Seed Workbench 任务生命周期，仍不改变 Taiji 默认 observe/learn。 |
+| 2026-09-05 | M2-2aa Workbench boundary 生命周期接入完成：issue/rotate/close/restore、API open/close、Taiji admit/execute token Gate、候选 capability 权限匹配、缺 token/旧代际/closed/过期/快照漂移 fail-closed 均完成；OpenAPI snapshot 与 `88 passed, 1 skipped` 回归通过，下一步让 generation caller 消费 boundary。 |
 | 2026-09-05 | M2-2n 补训前置发现并修复 `JointTrainingRun` 每步写 checkpoint 的性能问题；旧运行安全停在 memory `531/1000`，将从可恢复 `last.pt` 继续。 |
 | 2026-09-05 | M2-2m 统一五项 child foundation report 完成：B1 通过；B2/B3/B4 未形成相对冻结父模型的新增净收益；B5 replay 三 seed 均改善 no-replay 但最差 BWT `-0.262874`，整体 failed。下一步收束为从 child 进行 `memory→world→goal` 器官补训。 |
 | 2026-09-05 | M2-2l 真实三 seed B5 continuation 完成：replay 相对 no-replay 的 BWT 增益三 seed 均为正，但最差 replay BWT 为 `-0.262874`，仍未超过零基线；B5 保持 failed，下一步改 continuation 更新规则/容量分配。M2-2m 接入受 provenance 校验的 B1 report reuse，准备生成统一五项 child foundation report。 |
