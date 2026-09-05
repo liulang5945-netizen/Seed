@@ -10,7 +10,9 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import sys
+from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
@@ -21,6 +23,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from taiji import (  # noqa: E402
+    FoundationTrainingDataset,
     Outcome,
     WorldAction,
     WorldInterventionCase,
@@ -48,6 +51,7 @@ from taiji.foundation_tasks import (  # noqa: E402
     WorldTransitionCorpus,
     WorldTransitionTask,
 )
+from taiji.internalization import content_digest  # noqa: E402
 
 DEFAULT_MANIFEST = PROJECT_ROOT / "plans" / "manifests" / "taiji_foundation_baseline_v1.json"
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_foundation_baseline_20260901.json"
@@ -65,6 +69,178 @@ def _checkpoint_gate_status(manifest: FoundationManifest, path: Path | None) -> 
     if not isinstance(checks, dict) or not checks or not all(checks.values()):
         return "failed"
     return "passed"
+
+
+def _indexed_checkpoint_paths(
+    values: list[list[str]] | None,
+    *,
+    seeds: tuple[int, ...],
+) -> dict[int, Path]:
+    """Parse the explicit seed→checkpoint mapping used by child audits."""
+
+    if values is None:
+        return {}
+    indexed: dict[int, Path] = {}
+    for value in values:
+        if len(value) != 2:
+            raise ValueError("each --checkpoint entry needs SEED PATH")
+        seed = int(value[0])
+        if seed not in seeds:
+            raise ValueError(f"unsupported checkpoint seed: {seed}")
+        if seed in indexed:
+            raise ValueError(f"duplicate checkpoint seed: {seed}")
+        path = Path(value[1])
+        if not path.is_file():
+            raise FileNotFoundError(path)
+        indexed[seed] = path
+    if set(indexed) != set(seeds):
+        raise ValueError(f"expected exactly one checkpoint for seeds {seeds}")
+    return indexed
+
+
+def _load_joint_child(path: Path, *, expected_seed: int) -> tuple[dict[str, Any], Any, Any]:
+    """Load and verify a joint child without mutating it or inventing metrics."""
+
+    payload = torch.load(path, map_location="cpu", weights_only=False)
+    if not isinstance(payload, Mapping):
+        raise ValueError(f"joint child checkpoint must contain a mapping: {path}")
+    expected_digest = content_digest(
+        {key: value for key, value in payload.items() if key != "checkpoint_digest"}
+    )
+    if str(payload.get("checkpoint_digest", "")) != expected_digest:
+        raise ValueError(f"joint child checkpoint digest mismatch: {path}")
+    if payload.get("format") != "taiji-native-joint-training-v1":
+        raise ValueError(f"unsupported joint child checkpoint format: {path}")
+    if int(payload.get("version", -1)) < 4:
+        raise ValueError("M2-2j child audit requires a v4 private-context checkpoint")
+    phases = payload.get("training_phases")
+    if phases != ["sequence"]:
+        raise ValueError("M2-2j child audit requires a sequence-only checkpoint")
+    if payload.get("sequence_fabric_learning") is not False:
+        raise ValueError("M2-2j child audit requires sequence_fabric_learning=false")
+    if payload.get("sequence_predictive_context_mode") != "private-plastic-temporal-v1":
+        raise ValueError("M2-2j child audit requires the private predictive context")
+    model_payload = payload.get("model")
+    parent_payload = payload.get("parent_model")
+    if not isinstance(model_payload, Mapping) or not isinstance(parent_payload, Mapping):
+        raise ValueError(f"joint child checkpoint is missing model lineage: {path}")
+    from taiji import Taiji
+
+    model = Taiji.from_checkpoint(model_payload)
+    parent = Taiji.from_checkpoint(parent_payload)
+    if int(model.config.seed) != int(expected_seed):
+        raise ValueError(
+            f"checkpoint seed mismatch for {path}: "
+            f"expected {expected_seed}, got {model.config.seed}"
+        )
+    return dict(payload), model, parent
+
+
+def _score_loaded_model(model: Any, data: bytes) -> float:
+    before = content_digest(model.checkpoint())
+    score = model.score_bytes(data)
+    after = content_digest(model.checkpoint())
+    if before != after:
+        raise RuntimeError("loaded child score mutated the checkpoint")
+    return float(score["mean_surprise"]) / math.log(2.0)
+
+
+def _evaluate_loaded_b1(
+    checkpoints: Mapping[int, Path],
+    corpus: SequencePredictionCorpus,
+    *,
+    expected_dataset_digest: str | None = None,
+    expected_protected_dataset_digest: str | None = None,
+) -> FoundationMeasurement:
+    """Evaluate B1 on trained children and their own frozen parent controls."""
+
+    seed_records: list[dict[str, float | int | str | bool]] = []
+    for seed, path in sorted(checkpoints.items()):
+        payload, model, parent = _load_joint_child(path, expected_seed=seed)
+        if expected_dataset_digest is not None and str(payload.get("dataset_digest")) != (
+            expected_dataset_digest
+        ):
+            raise ValueError(f"child dataset digest does not match B1 corpus: {path}")
+        if expected_protected_dataset_digest is not None and str(
+            payload.get("protected_dataset_digest")
+        ) != expected_protected_dataset_digest:
+            raise ValueError(f"child protected dataset digest does not match B1 corpus: {path}")
+        child_bpb = _score_loaded_model(model, corpus.holdout)
+        retention_bpb = _score_loaded_model(model, corpus.retention)
+        frozen_bpb = _score_loaded_model(parent, corpus.holdout)
+        seed_records.append(
+            {
+                "seed": seed,
+                "taiji": child_bpb,
+                "retention": retention_bpb,
+                "frozen_parent": frozen_bpb,
+                "holdout_updates": 0,
+                "parameter_count": model.parameter_count(),
+                "checkpoint_digest": str(payload["checkpoint_digest"]),
+                "dataset_digest": str(payload["dataset_digest"]),
+                "protected_dataset_digest": str(payload.get("protected_dataset_digest")),
+                "trained_child_checkpoint": True,
+            }
+        )
+
+    native_values = [float(record["taiji"]) for record in seed_records]
+    frozen_values = [float(record["frozen_parent"]) for record in seed_records]
+    seeds = tuple(int(record["seed"]) for record in seed_records)
+    config = model.config
+    baseline_metrics = {
+        "random": math.log2(float(config.alphabet_size)),
+        "frozen_parent": min(frozen_values),
+        "simple_rule": _unigram_bpb(corpus.train, corpus.holdout, config),
+        "hash_only": min(
+            _hash_only_bpb(corpus.holdout, seed=seed, alphabet_size=config.alphabet_size)
+            for seed in seeds
+        ),
+    }
+    worst_native = max(native_values)
+    return FoundationMeasurement(
+        ability_id="b1_sequence_prediction",
+        status=(
+            "passed"
+            if max(native_values) < min(baseline_metrics.values())
+            else "failed"
+        ),
+        primary_metric="bits_per_byte",
+        metric_direction="lower_is_better",
+        metric_value=worst_native,
+        baseline_metrics=baseline_metrics,
+        sample_counts=corpus.sample_counts,
+        holdout_updates=max(int(record["holdout_updates"]) for record in seed_records),
+        evidence=(
+            "seed_metrics=" + json.dumps(seed_records, sort_keys=True),
+            "trained_child_checkpoint_evaluation=true",
+            "native_model_checkpoint_is_read_only_during_score=true",
+            "strictly_beats_strongest_control="
+            + str(worst_native < min(baseline_metrics.values())),
+        ),
+    )
+
+
+def _unigram_bpb(train: bytes, holdout: bytes, config: Any) -> float:
+    counts = [1.0] * int(config.alphabet_size)
+    symbols = (config.boundary_symbol, *tuple(int(value) for value in train))
+    for symbol in symbols:
+        counts[symbol] += 1.0
+    total = sum(counts)
+    targets = tuple(int(value) for value in holdout) + (config.boundary_symbol,)
+    return sum(-math.log2(counts[symbol] / total) for symbol in targets) / len(targets)
+
+
+def _hash_only_bpb(data: bytes, *, seed: int, alphabet_size: int) -> float:
+    symbols = tuple(int(value) for value in data) + (alphabet_size - 1,)
+    epsilon = 1.0 / float(alphabet_size * alphabet_size)
+    losses: list[float] = []
+    for index, target in enumerate(symbols[1:], start=1):
+        previous = symbols[index - 1]
+        digest = hashlib.sha256(f"{int(seed)}\0{index}\0{previous}".encode()).digest()
+        prediction = int.from_bytes(digest[:8], "big") % int(alphabet_size)
+        probability = 1.0 - (alphabet_size - 1) * epsilon if prediction == target else epsilon
+        losses.append(-math.log2(probability))
+    return sum(losses) / len(losses)
 
 
 def build_contract_report(
@@ -360,6 +536,29 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
     parser.add_argument("--b1-corpus", nargs="+", type=Path)
+    parser.add_argument(
+        "--checkpoint",
+        action="append",
+        nargs=2,
+        metavar=("SEED", "PATH"),
+        help="Evaluate a trained joint child; provide exactly one path for every manifest seed.",
+    )
+    parser.add_argument(
+        "--b1-partition-seed",
+        type=int,
+        help="Content-addressed phase-B partition seed for --checkpoint B1 evaluation.",
+    )
+    parser.add_argument(
+        "--b1-protected-corpus",
+        nargs="+",
+        type=Path,
+        help="The protected phase-A source used to verify a child checkpoint's lineage.",
+    )
+    parser.add_argument(
+        "--b1-protected-partition-seed",
+        type=int,
+        help="Content-addressed phase-A partition seed for --b1-protected-corpus.",
+    )
     parser.add_argument("--b2-smoke", action="store_true")
     parser.add_argument("--b2-corpus", nargs="+", type=Path)
     parser.add_argument("--b3-smoke", action="store_true")
@@ -374,12 +573,43 @@ def main() -> int:
 
     manifest = FoundationManifest.load(args.manifest)
     checkpoint_status = _checkpoint_gate_status(manifest, args.checkpoint_report)
+    checkpoint_paths = _indexed_checkpoint_paths(args.checkpoint, seeds=manifest.seeds)
+    b1_dataset: FoundationTrainingDataset | None = None
     b1_measurement = None
     b2_measurement = None
     b3_measurement = None
     b4_measurement = None
     b5_measurement = None
-    if args.b1_corpus:
+    if checkpoint_paths:
+        if not args.b1_corpus:
+            parser.error("--checkpoint requires --b1-corpus")
+        if args.profile != "foundation":
+            parser.error("--checkpoint evaluation requires --profile foundation")
+        if args.b1_partition_seed is None:
+            parser.error("--checkpoint requires --b1-partition-seed")
+        if args.b1_protected_corpus is None or args.b1_protected_partition_seed is None:
+            parser.error(
+                "--checkpoint requires --b1-protected-corpus and "
+                "--b1-protected-partition-seed"
+            )
+        b1_dataset = FoundationTrainingDataset.from_jsonl(
+            args.b1_protected_corpus,
+            profile="foundation",
+            partition_seed=args.b1_protected_partition_seed,
+        )
+        b1_dataset = FoundationTrainingDataset.from_jsonl(
+            args.b1_corpus,
+            profile="foundation",
+            partition_seed=args.b1_partition_seed,
+            exclude_dataset=b1_dataset,
+        )
+        b1_measurement = _evaluate_loaded_b1(
+            checkpoint_paths,
+            b1_dataset.as_sequence_corpus(),
+            expected_dataset_digest=b1_dataset.digest,
+            expected_protected_dataset_digest=b1_dataset.excluded_dataset_digest,
+        )
+    elif args.b1_corpus:
         if args.profile == "smoke":
             budgets = (4_096, 1_024, 1_024)
         else:
@@ -456,6 +686,17 @@ def main() -> int:
     result["capability_measurements"] = "; ".join(measured) if measured else "not_evaluated"
     result["profile"] = args.profile
     result["model_tier"] = args.model_tier if b1_measurement is not None else None
+    result["checkpoint_evaluation"] = {
+        "mode": bool(checkpoint_paths),
+        "checkpoints": [
+            {"seed": seed, "path": str(path)}
+            for seed, path in sorted(checkpoint_paths.items())
+        ],
+        "b1_dataset_digest": b1_dataset.digest if b1_dataset is not None else None,
+        "b1_protected_dataset_digest": (
+            b1_dataset.excluded_dataset_digest if b1_dataset is not None else None
+        ),
+    }
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     result["report_written"] = args.report.is_file()
