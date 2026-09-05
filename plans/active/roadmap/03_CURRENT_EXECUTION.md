@@ -471,6 +471,8 @@ M1-64 已完成，B2 在真实 foundation 规模上被判定为**记忆能力不
 
 **M2-2m 统一五项 child foundation report 完成（20260905）**：`reports/taiji_m2l_foundation_child_20260905.json` 以受 provenance 校验的 B1 复用加上 B2/B3/B4/B5 真实 child measurement 闭合，checkpoint gate 为 `passed`，五项 holdout/retention 均为只读。B1 通过（最差 `4.383969 BPB`）；B2 最差 recall `0.505`，与 frozen/simple-rule 持平；B3 最差 transition error `3.622080e-08`，略差于 frozen parent `3.545353e-08`；B4 success `1.0`，与 frozen parent 持平；B5 replay BWT 最差 `-0.262874`，但三 seed 相对 no-replay 的增益为正。整体 `failed`、`can_promote=false`，说明现有 child 只形成 F1 语言收益，B2～B4 仍是继承保持而非新增学习，B5 的 replay 仍不足以消除遗忘。**M2-2n 唯一下一步**：从现有三份 v4 child 各自继续一个不含 `sequence` 的 `memory→world→goal` 器官补训 course，先用 seed 11 做完整 checkpoint/fresh-process/五项复评；不得重训 F1、改写 shared fabric 或扩展外围范围。
 
+**M2-2n 训练器性能修复（20260905）**：seed 11 补训前置运行暴露 `JointTrainingRun` 的 `checkpoint_interval` 未生效：五个 phase 在未到 metric 点时仍每一步写入约 18MB 的 `last.pt`，造成不必要的 CPU/磁盘开销。已将 sequence、memory、world、goal、replay、replay-memory 的非 metric 路径统一改为仅在 `global_step % checkpoint_interval == 0` 时保存；阶段末仍强制测量并保存，resume 游标和 checkpoint 安全边界不变。旧运行已在 `memory 531/1000` 前安全停止，现有 `parent.pt`/`last.pt` 可继续恢复。**唯一下一步**：从该 `last.pt` 以低频 metric 配置恢复 seed 11 器官补训。
+
 ## 7. M2～M8 的开发日程与外围任务安置
 
 ### M2：世界—行动—语言后训练
@@ -562,6 +564,7 @@ CI 不是最后才运行的支线：每个 slice 都运行相关 pytest/lint/typ
 
 | 日期 | 内容 |
 |---|---|
+| 2026-09-05 | M2-2n 补训前置发现并修复 `JointTrainingRun` 每步写 checkpoint 的性能问题；旧运行安全停在 memory `531/1000`，将从可恢复 `last.pt` 继续。 |
 | 2026-09-05 | M2-2m 统一五项 child foundation report 完成：B1 通过；B2/B3/B4 未形成相对冻结父模型的新增净收益；B5 replay 三 seed 均改善 no-replay 但最差 BWT `-0.262874`，整体 failed。下一步收束为从 child 进行 `memory→world→goal` 器官补训。 |
 | 2026-09-05 | M2-2l 真实三 seed B5 continuation 完成：replay 相对 no-replay 的 BWT 增益三 seed 均为正，但最差 replay BWT 为 `-0.262874`，仍未超过零基线；B5 保持 failed，下一步改 continuation 更新规则/容量分配。M2-2m 接入受 provenance 校验的 B1 report reuse，准备生成统一五项 child foundation report。 |
 | 2026-09-05 | M2-2h 代码合同完成：F1 新增 `BytePredictiveContext`（独立 receptor map、零初始 sparse temporal residual、由 decoder 的因果反投影误差局部更新）；shared fabric/F4 motor/F2 memory/identity value 不在该路径的写入范围。`Taiji` checkpoint 升至 v10/state v7，joint course 升至 v4，private-context mode/digest/phase audit/resume mismatch 均内容寻址；v8/v9 迁移采用旧 motor receptor map + neutral residual，v1～v3 可只读但不得原地继续 sequence/replay。定向测试验证 context 实际变化、predictor-only 隔离、v8/v9 roundtrip、v3 explicit-continuation 边界；尚未跑新 1 MiB course。唯一下一步为 clean v4 preflight 与 fresh-process eval-only 交叉核验。 |
