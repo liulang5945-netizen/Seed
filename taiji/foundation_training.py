@@ -2112,7 +2112,7 @@ class JointTrainingRun:
                         self.dataset.train
                     ):
                         self._save_progress(train_kind="sequence")
-                    else:
+                    elif self.global_step % self.checkpoint_interval == 0:
                         self.save(self.last_checkpoint_path)
                 self._record_sequence_readout_phase(
                     phase="sequence",
@@ -2139,7 +2139,7 @@ class JointTrainingRun:
                         self.memory_corpus.train
                     ):
                         self._save_progress(train_kind="memory")
-                    else:
+                    elif self.global_step % self.checkpoint_interval == 0:
                         self.save(self.last_checkpoint_path)
 
             if "world" in self.training_phases:
@@ -2163,7 +2163,7 @@ class JointTrainingRun:
                         self.world_corpus.train
                     ):
                         self._save_progress(train_kind="world")
-                    else:
+                    elif self.global_step % self.checkpoint_interval == 0:
                         self.save(self.last_checkpoint_path)
 
             if "goal" in self.training_phases:
@@ -2178,7 +2178,7 @@ class JointTrainingRun:
                         self.goal_corpus.train
                     ):
                         self._save_progress(train_kind="goal", train_success=success)
-                    else:
+                    elif self.global_step % self.checkpoint_interval == 0:
                         self.save(self.last_checkpoint_path)
 
             if "replay" in self.training_phases:
@@ -2205,7 +2205,7 @@ class JointTrainingRun:
                             or self.replay_cursor == len(self.replay_dataset.train)
                         ):
                             self._save_progress(train_kind="replay")
-                        else:
+                        elif self.global_step % self.checkpoint_interval == 0:
                             self.save(self.last_checkpoint_path)
                     self._record_sequence_readout_phase(
                         phase="replay",
@@ -2241,7 +2241,7 @@ class JointTrainingRun:
                             or self.replay_memory_cursor == len(self.replay_memory_corpus.train)
                         ):
                             self._save_progress(train_kind="replay-memory")
-                        else:
+                        elif self.global_step % self.checkpoint_interval == 0:
                             self.save(self.last_checkpoint_path)
                     self.replay_memory_epoch += 1
                     self.replay_memory_cursor = 0
