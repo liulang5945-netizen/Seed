@@ -455,6 +455,8 @@ M1-64 已完成，B2 在真实 foundation 规模上被判定为**记忆能力不
 
 **M2-2j 评估入口接线完成（20260905，尚未运行正式 foundation 全量报告）**：`scripts/training/eval_taiji_foundation_baseline.py` 新增 `--checkpoint SEED PATH` 映射，强制要求三 seed v4、`training_phases=[sequence]`、`sequence_fabric_learning=false`、`private-plastic-temporal-v1` child；它会校验 outer checkpoint digest、模型 seed、phase-B/受保护 phase-A 的内容地址，并直接在训练后的 child 与其 `parent_model` 上测量 B1，四类对照仍由同一 holdout 数据计算，score 前后 checkpoint digest 必须不变。对应常驻测试为 `tests/taiji_native/test_foundation_child_evaluation.py`，覆盖 seed 映射、child/parent 读取和错误的 fabric-plastic child 拒绝。**边界明确**：checkpoint 模式暂只把 B1 作为正式 child measurement；B2～B5 不从旧 joint `metrics` 或 fresh model 伪装成 child 结果，仍显示 `not_evaluated`，因此本入口即使 B1 通过，整体也不会错误晋级。当前唯一下一步仍是用三份 `last.pt`、精确 phase-B/phase-A source 路径和 `reports/taiji_m2_checkpoint_preflight_20260903.json` 跑正式 B1 child report；随后按报告事实决定是否建立 B3/B4/B5 的独立 foundation child coverage。
 
+**M2-2j seed-specific 数据地址纠偏（20260905）**：首次正式命令在 seed 29 处被 child digest 校验拒绝，原因是把三 seed 的 phase-B 分区错误当成同一个 `--b1-partition-seed`；实际训练谱系是 seed 11/29/47 分别对应 phase-B `10011/10029/10047` 与 phase-A `11/29/47`，三份 child 的数据 digest 必须分别计算。入口已改为 `--b1-partition-seed SEED PARTITION_SEED` 和 `--b1-protected-partition-seed SEED PARTITION_SEED` 的显式映射，并逐 child 构造 corpus 后再做 worst-seed 聚合；该次拒绝没有生成报告、没有修改 checkpoint。修正后的唯一下一步仍是重新运行正式三 seed B1 child report。
+
 ## 7. M2～M8 的开发日程与外围任务安置
 
 ### M2：世界—行动—语言后训练
