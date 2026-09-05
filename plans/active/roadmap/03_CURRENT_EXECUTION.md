@@ -463,6 +463,8 @@ M1-64 已完成，B2 在真实 foundation 规模上被判定为**记忆能力不
 
 **M2-2k manifest full coverage 完成（20260905）**：`reports/taiji_m2k_foundation_child_20260905.json` 直接从三份 v4 child 读取 B2/B3/B4，checkpoint gate 为 `passed`，所有 child 读路径 `holdout_updates=0`。B2 使用真实 delayed/interference `1000/200/200`，最差 child recall `0.505`，与 frozen/simple-rule `0.505` 持平，未严格超过 random/hash/两条因果读出控制；B3 使用 `1000/500/500`，最差 transition error `3.622080e-08`，与 frozen parent `3.545353e-08` 的 strongest control 比较失败；B4 使用 `1000/500/500`，child success `1.0`，但 frozen parent 也是 `1.0`，按严格优于控制失败。三项 failure 是 inherited child 没有在对应 full-coverage 任务上形成新增可归因收益的真实结论，不是 evaluator bug。B1 在同一报告继续保持通过（最差 `4.383969 BPB` < unigram `5.937711`），B5 保持 `not_evaluated`，因此整体 `status=not_evaluated`、`can_promote=false`。**M2-2l 唯一下一步**：建立从三份 child 继续的 dedicated B5 phase-A/phase-B no-replay 与 bounded-replay 对照，先验证 checkpoint continuation、old-ability retention 和 replay causal gain，再决定是否把 B5 measurement 写入正式 foundation report。
 
+**M2-2l B5 continuation 接线完成（20260905，尚未运行真实 child 课程）**：正式 evaluator 新增 `--b5-child`，从每个 v4 child 复制 no-replay/replay 两个独立模型；phase-A 使用对应 protected dataset 的训练/holdout/retention，phase-B 使用 deterministic、独立的 4096/200 字节课程，replay 只重放 exact protected phase-A train，且两臂均以 `learn_fabric=false` 保持 M2 private-context 所有权。B5 主指标为三 seed 最差 `backward_transfer_replay`，对照含零基线与 no-replay，holdout score 前后 digest 必须不变。单 seed synthetic canary 已真实执行并返回 `failed`：replay BWT `1.0433` 低于 no-replay `3.0621`，说明入口正确暴露 replay 净负收益而没有伪通过；样本统计为 train `8192`/holdout `400`/retention `200`。当前唯一下一步是用三份实际 protected phase-A 数据运行 `--b5-child`，以判断该结果在 child 上是否稳定。
+
 ## 7. M2～M8 的开发日程与外围任务安置
 
 ### M2：世界—行动—语言后训练
