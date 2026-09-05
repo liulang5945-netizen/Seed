@@ -1,0 +1,176 @@
+{
+  "format": "taiji-foundation-evaluation-v1",
+  "manifest_digest": "c5f178d4e18018f5085c3f56d1ae6d7596df304aee975f81c12db3b72e7e74f8",
+  "checkpoint_gate_status": "passed",
+  "status": "failed",
+  "can_promote": false,
+  "failure_reasons": [
+    "b1_sequence_prediction:measurement_failed",
+    "b2_delayed_memory:measurement_failed",
+    "b4_goal_action:measurement_failed",
+    "b5_continual_learning:measurement_failed"
+  ],
+  "measurements": [
+    {
+      "ability_id": "b1_sequence_prediction",
+      "status": "failed",
+      "primary_metric": "bits_per_byte",
+      "metric_direction": "lower_is_better",
+      "metric_value": 4.288320818766926,
+      "baseline_metrics": {
+        "frozen_parent": 4.288320818766926,
+        "hash_only": 15.951047196278727,
+        "random": 8.005624549193879,
+        "simple_rule": 5.937710796122961
+      },
+      "sample_counts": {
+        "holdout": 131072,
+        "retention": 131072,
+        "train": 1048576
+      },
+      "holdout_updates": 0,
+      "evidence": [
+        "seed_metrics=[{\"checkpoint_digest\": \"56dd1ee44f687399edcb73a6c9c6b0a34f2268f5b7506a8c9080453ec3d3200d\", \"dataset_digest\": \"99ab9846193ccc2897d74c96be8245784f213ac7bc5a9886c928e38bf906132e\", \"frozen_parent\": 4.288320818766926, \"holdout_updates\": 0, \"parameter_count\": 193586, \"protected_dataset_digest\": \"8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038\", \"retention\": 4.295988190247012, \"seed\": 11, \"taiji\": 4.288320818766926, \"trained_child_checkpoint\": true}]",
+        "trained_child_checkpoint_evaluation=true",
+        "native_model_checkpoint_is_read_only_during_score=true",
+        "strictly_beats_strongest_control=False"
+      ]
+    },
+    {
+      "ability_id": "b2_delayed_memory",
+      "status": "failed",
+      "primary_metric": "recall_accuracy",
+      "metric_direction": "higher_is_better",
+      "metric_value": 0.505,
+      "baseline_metrics": {
+        "frozen_parent": 0.505,
+        "hash_only": 0.51,
+        "identity_lesion": 0.42,
+        "memory_lesion": 0.5,
+        "random": 0.5,
+        "simple_rule": 0.505
+      },
+      "sample_counts": {
+        "holdout": 200,
+        "retention": 200,
+        "train": 1000
+      },
+      "holdout_updates": 0,
+      "evidence": [
+        "seed_metrics=[{\"checkpoint_digest\": \"56dd1ee44f687399edcb73a6c9c6b0a34f2268f5b7506a8c9080453ec3d3200d\", \"frozen_parent\": 0.505, \"holdout_updates\": 0, \"identity_lesion\": 0.42, \"memory_lesion\": 0.5, \"retention\": 0.54, \"retention_updates\": 0, \"seed\": 11, \"taiji\": 0.505, \"trained_child_checkpoint\": true}]",
+        "trained_child_checkpoint_evaluation=true",
+        "delayed_interference_symbols=[200, 201, 202, 203]",
+        "checkpoint_read_only=True"
+      ]
+    },
+    {
+      "ability_id": "b3_world_transition",
+      "status": "passed",
+      "primary_metric": "transition_error",
+      "metric_direction": "lower_is_better",
+      "metric_value": 8.186603395188286e-09,
+      "baseline_metrics": {
+        "frozen_parent": 3.622080058107713e-08,
+        "hash_only": 1.3124948783367871,
+        "random": 1.9940379082760205,
+        "simple_rule": 1.2500000799999926
+      },
+      "sample_counts": {
+        "holdout": 500,
+        "retention": 500,
+        "train": 1000
+      },
+      "holdout_updates": 0,
+      "evidence": [
+        "seed_metrics=[{\"checkpoint_digest\": \"56dd1ee44f687399edcb73a6c9c6b0a34f2268f5b7506a8c9080453ec3d3200d\", \"frozen_parent\": 3.622080058107713e-08, \"hash_only\": 1.3124948783367871, \"holdout_updates\": 0, \"random\": 1.9940379082760205, \"retention\": 8.186603395188286e-09, \"retention_updates\": 0, \"seed\": 11, \"simple_rule\": 1.2500000799999926, \"taiji\": 8.186603395188286e-09, \"trained_child_checkpoint\": true}]",
+        "trained_child_checkpoint_evaluation=true",
+        "world_schema_register_parameters=false"
+      ]
+    },
+    {
+      "ability_id": "b4_goal_action",
+      "status": "failed",
+      "primary_metric": "success_rate",
+      "metric_direction": "higher_is_better",
+      "metric_value": 1.0,
+      "baseline_metrics": {
+        "frozen_parent": 1.0,
+        "hash_only": 0.5,
+        "random": 0.5,
+        "simple_rule": 0.5
+      },
+      "sample_counts": {
+        "holdout": 500,
+        "retention": 500,
+        "train": 1000
+      },
+      "holdout_updates": 0,
+      "evidence": [
+        "seed_metrics=[{\"checkpoint_digest\": \"56dd1ee44f687399edcb73a6c9c6b0a34f2268f5b7506a8c9080453ec3d3200d\", \"frozen_parent\": 1.0, \"holdout_updates\": 0, \"retention\": 1.0, \"retention_updates\": 0, \"seed\": 11, \"taiji\": 1.0, \"trained_child_checkpoint\": true}]",
+        "trained_child_checkpoint_evaluation=true",
+        "action_readout_evaluation_is_read_only=true"
+      ]
+    },
+    {
+      "ability_id": "b5_continual_learning",
+      "status": "failed",
+      "primary_metric": "backward_transfer",
+      "metric_direction": "higher_is_better",
+      "metric_value": -0.2628735399938491,
+      "baseline_metrics": {
+        "frozen_parent": 0.0,
+        "hash_only": 0.0,
+        "no_replay": -1.1247310256368164,
+        "random": 0.0,
+        "simple_rule": 0.0
+      },
+      "sample_counts": {
+        "holdout": 400,
+        "retention": 200,
+        "train": 8192
+      },
+      "holdout_updates": 0,
+      "evidence": [
+        "seed_metrics=[{\"backward_transfer_no_replay\": -1.1247310256368164, \"backward_transfer_replay\": -0.2628735399938491, \"checkpoint_digest\": \"56dd1ee44f687399edcb73a6c9c6b0a34f2268f5b7506a8c9080453ec3d3200d\", \"continued_from_child\": true, \"holdout_updates\": 0, \"new_after_no_replay\": 3.1472696166775767, \"new_after_replay\": 4.517827798248205, \"old_after_no_replay\": 4.993234453409032, \"old_after_replay\": 4.131376967766065, \"old_before\": 3.868503427772216, \"phase_b_old_loss_before_replay\": -1.1247310256368164, \"replay_corpus_digest\": \"26b575e95d2e7cace043c363e7384263494310369c6c6df5e5a04ebe3b231133\", \"replay_executed\": true, \"replay_gain_vs_no_replay\": 0.8618574856429673, \"retention_after_replay\": 5.150375802949506, \"seed\": 11, \"trained_with_private_context_only\": true}]",
+        "trained_child_checkpoint_evaluation=true",
+        "phase_a_replay_is_exact_protected_train=true",
+        "sequence_learning_fabric_write=false",
+        "checkpoint_read_only_during_score=true"
+      ]
+    }
+  ],
+  "manifest_path": "plans/manifests/taiji_foundation_baseline_v1.json",
+  "contract_status": "validated",
+  "profile": "foundation",
+  "model_tier": "joint-child-v4-organ-only",
+  "code_revision": "c9998232729976c99add1226d1def7e3033781bc+dirty-e3b0c44298fc1c14",
+  "capability_measurements": "b1_sequence_prediction; b2_delayed_memory; b3_world_transition; b4_goal_action; b5_continual_learning",
+  "evaluation_scope": {
+    "kind": "single_seed_canary",
+    "seed": 11,
+    "manifest_seeds": [
+      11,
+      29,
+      47
+    ],
+    "complete": false
+  },
+  "checkpoint_evaluation": {
+    "mode": true,
+    "checkpoints": [
+      {
+        "seed": 11,
+        "path": "output\\taiji-m2n-seed11-organ-isolated-20260905\\last.pt"
+      }
+    ],
+    "child_foundation": true,
+    "b5_child": true,
+    "b1_dataset_digests": {
+      "11": "99ab9846193ccc2897d74c96be8245784f213ac7bc5a9886c928e38bf906132e"
+    },
+    "b1_protected_dataset_digests": {
+      "11": "8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038"
+    }
+  },
+  "report_written": true
+}
