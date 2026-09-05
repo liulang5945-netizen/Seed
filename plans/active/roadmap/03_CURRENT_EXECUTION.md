@@ -54,7 +54,7 @@ Taiji 采用“站在巨人肩膀上”的双边界：原始 byte 输入继续�
 |---|---|---|---|---|
 | 0 | M0 CPU 五项基础能力真实性基线 | **已完成（M0-0/M0-1/B1/B2/B3/B4/B5/M0-3/M0-4）** | 数据合同、对照 evaluator、checkpoint preflight、基线报告 | 测量链可信且能保存/恢复；模型得分可以失败，但失败必须被如实记录 |
 | 1 | M1 Taiji foundation 训练管线与首次 CPU 训练 | **已完成（M0-0~M0-4/M1-32~M1-66c）** | 原生 trainer、数据流水线、B2 因果链（寻址→裁决→折叠→契约）、首个 joint checkpoint | M1-66c 收尾：B2 在三 seed 上通过全部 foundation 门禁 |
-| 2 | M2 世界—行动—语言后训练 | **当前进行（M2-2w：B5 private-context/readout 归因诊断）** | 世界预测、行动信用、F1 隔离读出、受控的旧/新语言保持 Gate，随后才是 ContentPlan/语言蒸馏和 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
+| 2 | M2 世界—行动—语言后训练 | **当前进行（M2-2x：readout generation isolation 原型）** | 世界预测、行动信用、F1 隔离读出、受控的旧/新语言保持 Gate，随后才是 ContentPlan/语言蒸馏和 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
 | 3 | M3 综合能力晋级与真实 Workbench 验证 | 待开始 | 独立评测套件、真实 Workbench longitudinal report、晋级 checkpoint | 至少一个真实任务族获得可重复净收益 |
 | 4 | M4 持续学习、自进化和结构成长 | 冻结等待 M3 | bounded replay 接线、多周期保持、结构候选与单项回滚 | 真实 checkpoint 连续学习收益大于固定容量/weight-only 对照 |
 | 5 | M5 Skill/MCP 数据飞轮与客户端身体 | 冻结等待 M4 | 知识内化、经验回流、IDE/Workbench 身体、客户端插件准入 | 认知收益与客户端执行收益可消融归因，权限和回滚闭合 |
@@ -493,7 +493,9 @@ M1-64 已完成，B2 在真实 foundation 规模上被判定为**记忆能力不
 
 **M2-2v 三 seed identity-generation child foundation report 完成（20260905）**：`reports/taiji_m2v_three_seed_child_foundation_20260905.json` 对 seed 11/29/47 的新 child 统一执行 B1～B5 foundation child-bound 评估，三 seed 映射、各自 phase-B 数据 digest、checkpoint gate、样本下限和 `holdout_updates=0` 均通过。B1 最差 `4.383969 BPB`，低于 unigram 但未严格优于新 child 各自 frozen parent，故报告按当前“child 必须形成新增收益”的严格语义记为 failed；B3 最差 `3.622080e-08`、B4 `1.0` 同样与 parent 持平或略差，属于 inherited/no-new-gain，不是结构增长回归；B2 active-generation 通过，最差 recall `0.99`、retention `0.975`；B5 replay BWT 最差 `-0.262874`，仍低于零基线。整体 `status=failed` 是诚实结果：identity generation 已闭合 B2，但不能把邻居能力保持误报为整体 foundation 晋级。
 
-**M2-2w 唯一下一步**：建立 B5 的 private-context/readout 正交归因诊断，先用 seed 11 新 child 做小规模、可重复、evaluator-owned 对照，分别冻结/开放 `BytePredictiveContext` 与 `BytePredictiveReadout` 的学习所有权，比较 no-replay、exact protected replay、private-context-only、readout-only 四条路径的 old holdout、new holdout、retention、BWT、replay causal gain 和 checkpoint digest。诊断必须保持 shared fabric、motor、memory、identity 不写，holdout/retention 只读，并在 fresh process 中复核；不先调学习率、replay 次数或再扩 identity 容量。只有确定 B5 的遗忘主要来自 private context、predictive readout 或两者耦合后，才实施一个单变量修复并重新跑三 seed。
+**M2-2w B5 owner 归因诊断完成（20260905）**：新增 `scripts/training/eval_taiji_b5_owner_diagnosis.py` 和 `Taiji.learn_bytes` 的两个显式 F1 owner 开关，默认行为保持不变；seed 11 新 identity-generation child 的报告为 `reports/taiji_m2w_seed11_b5_owner_diagnosis_20260905.json`。四条路径均以同一 child checkpoint 独立复制，shared fabric、motor、memory、identity 均保持，所有 score 都通过 checkpoint read-only 审计。`full_no_replay` 的 BWT 为 `-1.117159`；exact protected replay 改善到 `-0.258316`；private-context-only 为 `-0.308121`，但 new holdout BPB `10.937943`；predictive-readout-only 为 `-0.978537`。因此 predictive readout 塑性是当前主要遗忘压力，private context 也参与权衡但不是单独根因；replay 能减轻而不能消除 trade-off。不能继续仅调 replay scalar，也不能把 context-only 当修复，因为它以新能力崩溃换取旧能力保持。
+
+**M2-2x 唯一下一步**：在 evaluator-owned 原型中实现 readout generation isolation：冻结旧 `BytePredictiveReadout` 作为 protected generation，新增一个内容寻址、可回滚的 active readout generation，只让新 phase 的预测误差写 active generation；先定义不依赖 Python key→answer 表的熟悉度/路由边界，并用 old/new/retention、BWT、new capability、generation collision、参数预算和 fresh-process round-trip 做 seed 11 对照。原生默认 readout、shared fabric、private context、identity organ 与生产 checkpoint 在原型 Gate 通过前不得改变；若无可靠输入内路由，宁可报告“无法无标签区分代际”，也不把新旧 readout 做无条件平均。
 
 ## 7. M2～M8 的开发日程与外围任务安置
 
