@@ -23,6 +23,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from taiji import (  # noqa: E402
+    JOINT_TRAINING_PHASES,
     FoundationTrainingDataset,
     Outcome,
     Taiji,
@@ -149,8 +150,13 @@ def _load_joint_child(path: Path, *, expected_seed: int) -> tuple[dict[str, Any]
     if int(payload.get("version", -1)) < 4:
         raise ValueError("M2-2j child audit requires a v4 private-context checkpoint")
     phases = payload.get("training_phases")
-    if phases != ["sequence"]:
-        raise ValueError("M2-2j child audit requires a sequence-only checkpoint")
+    if not isinstance(phases, list) or not phases or any(
+        not isinstance(phase, str) for phase in phases
+    ):
+        raise ValueError("M2-2j child audit requires a non-empty phase plan")
+    canonical_phases = [phase for phase in JOINT_TRAINING_PHASES if phase in phases]
+    if phases != canonical_phases:
+        raise ValueError("M2-2j child audit requires a canonical joint phase plan")
     if payload.get("sequence_fabric_learning") is not False:
         raise ValueError("M2-2j child audit requires sequence_fabric_learning=false")
     if payload.get("sequence_predictive_context_mode") != "private-plastic-temporal-v1":
