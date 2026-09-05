@@ -95,6 +95,11 @@ class FoundationTrainingDataset:
     partition_seed: int = 0
     profile: str = "smoke"
     excluded_dataset_digest: str | None = None
+    excluded_dataset_digests: tuple[str, ...] = ()
+    # Optional record-level provenance is used only when building a
+    # multi-stage exclusion chain.  It is derived metadata and is deliberately
+    # not part of the legacy single-stage dataset digest.
+    selected_record_digests: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         for field_name in ("train", "holdout", "retention"):
@@ -115,9 +120,29 @@ class FoundationTrainingDataset:
             excluded_dataset_digest = str(excluded_dataset_digest).strip()
             if not excluded_dataset_digest:
                 raise ValueError("excluded_dataset_digest must be non-empty when provided")
+        excluded_dataset_digests = tuple(
+            str(value).strip() for value in self.excluded_dataset_digests
+        )
+        if any(not value for value in excluded_dataset_digests):
+            raise ValueError("excluded_dataset_digests must contain non-empty values")
+        if len(set(excluded_dataset_digests)) != len(excluded_dataset_digests):
+            raise ValueError("excluded_dataset_digests cannot contain duplicates")
+        if excluded_dataset_digest is not None and excluded_dataset_digests:
+            raise ValueError(
+                "use excluded_dataset_digest or excluded_dataset_digests, not both"
+            )
+        selected_record_digests = tuple(
+            str(value).strip() for value in self.selected_record_digests
+        )
+        if any(not value for value in selected_record_digests):
+            raise ValueError("selected_record_digests must contain non-empty values")
+        if len(set(selected_record_digests)) != len(selected_record_digests):
+            raise ValueError("selected_record_digests cannot contain duplicates")
         object.__setattr__(self, "source_files", normalized_sources)
         object.__setattr__(self, "partition_seed", int(self.partition_seed))
         object.__setattr__(self, "excluded_dataset_digest", excluded_dataset_digest)
+        object.__setattr__(self, "excluded_dataset_digests", excluded_dataset_digests)
+        object.__setattr__(self, "selected_record_digests", selected_record_digests)
 
     @property
     def sample_counts(self) -> dict[str, int]:
@@ -143,7 +168,9 @@ class FoundationTrainingDataset:
         # A phase-B dataset alone carries an explicit link to the phase-A
         # dataset it excluded, so its lineage cannot be mistaken for a normal
         # differently-seeded split of the same source.
-        if self.excluded_dataset_digest is not None:
+        if self.excluded_dataset_digests:
+            payload["excluded_dataset_digests"] = list(self.excluded_dataset_digests)
+        elif self.excluded_dataset_digest is not None:
             payload["excluded_dataset_digest"] = self.excluded_dataset_digest
         return content_digest(payload)
 
@@ -170,6 +197,8 @@ class FoundationTrainingDataset:
         profile: str = "pilot",
         partition_seed: int = 11,
         exclude_dataset: FoundationTrainingDataset | None = None,
+        exclude_datasets: Sequence[FoundationTrainingDataset] | None = None,
+        track_record_digests: bool = False,
     ) -> FoundationTrainingDataset:
         profile = str(profile)
         if profile not in FOUNDATION_TRAINING_PROFILE_BUDGETS:
@@ -188,23 +217,62 @@ class FoundationTrainingDataset:
         if not normalized_paths:
             raise ValueError("training dataset needs at least one JSONL path")
         source_files = tuple((str(path), _file_digest(path)) for path in normalized_paths)
+        if exclude_dataset is not None and exclude_datasets is not None:
+            raise ValueError("use exclude_dataset or exclude_datasets, not both")
+        if exclude_datasets is None:
+            normalized_exclusions = (
+                (exclude_dataset,) if exclude_dataset is not None else ()
+            )
+        else:
+            normalized_exclusions = tuple(exclude_datasets)
+            if not normalized_exclusions:
+                raise ValueError("exclude_datasets must contain at least one dataset")
+        if any(
+            not isinstance(dataset, FoundationTrainingDataset)
+            for dataset in normalized_exclusions
+        ):
+            raise TypeError("exclude_datasets must contain FoundationTrainingDataset values")
         exclusion_selected: dict[str, int] | None = None
         exclusion_budgets: dict[str, int] | None = None
-        if exclude_dataset is not None:
+        excluded_record_digests: set[str] | None = None
+        if normalized_exclusions:
+            if len(normalized_exclusions) > 1 and any(
+                not dataset.selected_record_digests for dataset in normalized_exclusions
+            ):
+                raise ValueError(
+                    "multi-stage exclusion requires selected_record_digests on every dataset"
+                )
             expected_sources = tuple(
-                (Path(path).resolve(), digest) for path, digest in exclude_dataset.source_files
+                (Path(path).resolve(), digest)
+                for path, digest in normalized_exclusions[0].source_files
             )
             actual_sources = tuple((Path(path).resolve(), digest) for path, digest in source_files)
             if actual_sources != expected_sources:
                 raise ValueError(
                     "excluded dataset must use the same ordered, content-addressed sources"
                 )
-            exclusion_profile = exclude_dataset.profile
-            exclusion_budget_values = FOUNDATION_TRAINING_PROFILE_BUDGETS[exclusion_profile]
-            exclusion_budgets = dict(
-                zip(("train", "holdout", "retention"), exclusion_budget_values, strict=True)
-            )
-            exclusion_selected = {partition: 0 for partition in exclusion_budgets}
+            for dataset in normalized_exclusions[1:]:
+                dataset_sources = tuple(
+                    (Path(path).resolve(), digest) for path, digest in dataset.source_files
+                )
+                if dataset_sources != expected_sources:
+                    raise ValueError(
+                        "all excluded datasets must use the same ordered, content-addressed sources"
+                    )
+            if len(normalized_exclusions) > 1 or normalized_exclusions[0].selected_record_digests:
+                excluded_record_digests = {
+                    digest
+                    for dataset in normalized_exclusions
+                    for digest in dataset.selected_record_digests
+                }
+            if len(normalized_exclusions) == 1 and excluded_record_digests is None:
+                exclusion_profile = normalized_exclusions[0].profile
+                exclusion_budget_values = FOUNDATION_TRAINING_PROFILE_BUDGETS[exclusion_profile]
+                exclusion_budgets = dict(
+                    zip(("train", "holdout", "retention"), exclusion_budget_values, strict=True)
+                )
+                exclusion_selected = {partition: 0 for partition in exclusion_budgets}
+        selected_record_digests: list[str] = []
         for path in normalized_paths:
             if not path.is_file():
                 raise FileNotFoundError(path)
@@ -222,10 +290,12 @@ class FoundationTrainingDataset:
                         continue
                     seen_text_digests.add(text_digest)
                     encoded = text.encode("utf-8")
+                    if excluded_record_digests is not None and text_digest in excluded_record_digests:
+                        continue
                     if exclusion_selected is not None and exclusion_budgets is not None:
                         excluded_partition = cls._partition_for_text(
                             text,
-                            exclude_dataset.partition_seed,
+                            normalized_exclusions[0].partition_seed,
                         )
                         excluded_remaining = (
                             exclusion_budgets[excluded_partition]
@@ -244,6 +314,8 @@ class FoundationTrainingDataset:
                     remaining = budgets[partition] - len(buffers[partition])
                     if remaining > 0:
                         buffers[partition].extend(encoded[:remaining])
+                        if track_record_digests and text_digest not in selected_record_digests:
+                            selected_record_digests.append(text_digest)
                     if all(len(buffers[name]) >= budgets[name] for name in budgets):
                         break
             if all(len(buffers[name]) >= budgets[name] for name in budgets):
@@ -263,7 +335,17 @@ class FoundationTrainingDataset:
             partition_seed=int(partition_seed),
             profile=profile,
             excluded_dataset_digest=(
-                exclude_dataset.digest if exclude_dataset is not None else None
+                normalized_exclusions[0].digest
+                if len(normalized_exclusions) == 1
+                else None
+            ),
+            excluded_dataset_digests=(
+                tuple(dataset.digest for dataset in normalized_exclusions)
+                if len(normalized_exclusions) > 1
+                else ()
+            ),
+            selected_record_digests=(
+                tuple(selected_record_digests) if track_record_digests else ()
             ),
         )
 

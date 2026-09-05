@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import subprocess
 import sys
@@ -153,6 +154,88 @@ def test_phase_b_dataset_excludes_every_selected_phase_a_record() -> None:
     assert b"<partial-train:" not in phase_b_bytes
     assert phase_a_only_suffix.encode() not in phase_a_bytes
     assert phase_a_only_suffix.encode() not in phase_b_bytes
+
+
+def test_multi_stage_exclusion_keeps_phase_c_disjoint_and_content_addressed() -> None:
+    """Phase C must exclude both earlier courses at record granularity."""
+
+    corpus = Path(".seed_test_tmp") / "m2-multi-stage-exclusion.jsonl"
+    corpus.parent.mkdir(parents=True, exist_ok=True)
+    records = [
+        {"text": f"<phase-chain:{index:04d}> " + ("Taiji grows locally. " * 4)}
+        for index in range(1_600)
+    ]
+    corpus.write_text(
+        "\n".join(json.dumps(record, ensure_ascii=False) for record in records) + "\n",
+        encoding="utf-8",
+    )
+
+    phase_a = FoundationTrainingDataset.from_jsonl(
+        (corpus,),
+        profile="smoke",
+        partition_seed=11,
+        track_record_digests=True,
+    )
+    phase_b = FoundationTrainingDataset.from_jsonl(
+        (corpus,),
+        profile="smoke",
+        partition_seed=29,
+        exclude_dataset=phase_a,
+        track_record_digests=True,
+    )
+    phase_a_legacy = FoundationTrainingDataset(
+        train=phase_a.train,
+        holdout=phase_a.holdout,
+        retention=phase_a.retention,
+        source_files=phase_a.source_files,
+        partition_seed=phase_a.partition_seed,
+        profile=phase_a.profile,
+    )
+    phase_c = FoundationTrainingDataset.from_jsonl(
+        (corpus,),
+        profile="smoke",
+        partition_seed=47,
+        exclude_datasets=(phase_a, phase_b),
+        track_record_digests=True,
+    )
+    phase_b_legacy = FoundationTrainingDataset.from_jsonl(
+        (corpus,),
+        profile="smoke",
+        partition_seed=29,
+        exclude_dataset=phase_a_legacy,
+    )
+
+    assert phase_b.digest == phase_b_legacy.digest
+    assert phase_b.train == phase_b_legacy.train
+    assert phase_b.excluded_dataset_digest == phase_a.digest
+    assert phase_c.excluded_dataset_digests == (phase_a.digest, phase_b.digest)
+    assert set(phase_a.selected_record_digests).isdisjoint(phase_b.selected_record_digests)
+    assert set(phase_a.selected_record_digests).isdisjoint(phase_c.selected_record_digests)
+    assert set(phase_b.selected_record_digests).isdisjoint(phase_c.selected_record_digests)
+    corpus.unlink(missing_ok=True)
+
+
+def test_multi_stage_exclusion_requires_record_level_provenance() -> None:
+    corpus = Path(".seed_test_tmp") / "m2-multi-stage-missing-provenance.jsonl"
+    corpus.parent.mkdir(parents=True, exist_ok=True)
+    corpus.write_text("{}\n", encoding="utf-8")
+    dataset = FoundationTrainingDataset(
+        train=b"a",
+        holdout=b"b",
+        retention=b"c",
+        source_files=((str(corpus), hashlib.sha256(corpus.read_bytes()).hexdigest()),),
+        partition_seed=11,
+        profile="smoke",
+    )
+
+    with pytest.raises(ValueError, match="multi-stage exclusion"):
+        FoundationTrainingDataset.from_jsonl(
+            (corpus,),
+            profile="smoke",
+            partition_seed=47,
+            exclude_datasets=(dataset, dataset),
+        )
+    corpus.unlink(missing_ok=True)
 
 
 def test_foundation_training_saves_and_resumes_from_disk_checkpoint() -> None:
