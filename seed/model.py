@@ -15,6 +15,8 @@ from taiji import (
     TaijiState,
     TaijiStep,
     TSKV8Adapter,
+    WorkbenchBoundaryAuthorization,
+    WorkbenchTaskBoundary,
 )
 
 from .config import SeedConfig
@@ -138,11 +140,15 @@ class Seed:
         *,
         include_boundary: bool = True,
         use_memory: bool = False,
-    ) -> dict[str, float]:
+        boundary: WorkbenchTaskBoundary | Mapping[str, Any] | None = None,
+        authorization: WorkbenchBoundaryAuthorization | None = None,
+    ) -> dict[str, Any]:
         return self.substrate.score_bytes(
             data,
             include_boundary=include_boundary,
             use_memory=use_memory,
+            boundary=boundary,
+            authorization=authorization,
         )
 
     def generate(

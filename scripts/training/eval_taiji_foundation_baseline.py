@@ -60,6 +60,8 @@ from taiji.foundation_tasks import (  # noqa: E402
     _no_change_error,
     _persistent_digest,
     _random_world_error,
+    build_generalization_partitions,
+    detect_partition_overlap,
 )
 from taiji.foundation_training import _code_revision  # noqa: E402
 from taiji.internalization import content_digest  # noqa: E402
@@ -1032,12 +1034,33 @@ def build_goal_action_smoke_corpus(*, count: int = 32) -> GoalActionCorpus:
 
 
 def build_continual_learning_smoke_corpus() -> ContinualLearningCorpus:
+    # R0.4 downgrade: this corpus is periodic, so every holdout shares the
+    # training template family (mutated delimiter only).  It is retained as a
+    # *forgetting-pressure* test: a low BPB here is memorization/retention
+    # evidence, not generalization.  Generalization must be measured on
+    # build_generalization_partitions, which clears detect_partition_overlap.
     return ContinualLearningCorpus(
         phase_a_train=(b"ABCD1234-" * 64),
         phase_a_holdout=(b"ABCD1234+" * 16),
         phase_b_train=(b"wxyz5678:" * 64),
         phase_b_holdout=(b"wxyz5678;" * 16),
         retention=(b"ABCD1234?" * 16),
+    )
+
+
+def build_continual_generalization_corpus() -> ContinualLearningCorpus:
+    # R0.4: distinct rule (letter-then-digit) and combination set for phase A,
+    # and a disjoint-alphabet reversed rule for phase B.  Both holdouts clear
+    # detect_partition_overlap, so they measure transfer rather than
+    # memorized n-grams.  The retention set reuses the phase A template
+    # family by design: retention is a memory probe, not generalization.
+    partitions = build_generalization_partitions(count=64)
+    return ContinualLearningCorpus(
+        phase_a_train=partitions["train"],
+        phase_a_holdout=b"ABCDE01234" * 16,
+        phase_b_train=b"56789fghij" * 64,
+        phase_b_holdout=partitions["holdout"],
+        retention=b"ABCDE01234?" * 16,
     )
 
 

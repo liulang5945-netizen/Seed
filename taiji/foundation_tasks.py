@@ -926,6 +926,107 @@ class GoalActionTask:
         return correct / len(episodes)
 
 
+def _period_unit(data: bytes) -> bytes | None:
+    """Return the shortest repeating unit of ``data``, or None if not periodic."""
+    for size in range(1, len(data)):
+        if len(data) % size == 0 and data == data[:size] * (len(data) // size):
+            return data[:size]
+    return None
+
+
+def detect_partition_overlap(
+    *,
+    train: bytes,
+    holdout: bytes,
+    min_ngram: int = 8,
+) -> dict[str, object]:
+    """Detect whether ``holdout`` reuses training content rather than measuring
+    generalization.
+
+    The B5 periodic smoke stream fails this detector on purpose: its holdout
+    shares the full template family (same period unit, mutated delimiter) with
+    training, so a low BPB there is retention/memorization evidence, not
+    generalization.  Generalization partitions must clear this contract: no
+    whole-segment duplicate, no long shared n-gram, and no shared template
+    family.  Queries against memory-stored episodes (B2 recall) are memory
+    evidence and must be labelled as such, never as generalization.
+
+    Returns a read-only report with ``whole_segment_duplicate``,
+    ``max_ngram_overlap``, ``ngram_overlap_count`` and
+    ``template_family_match``.
+    """
+
+    if not isinstance(train, bytes) or not isinstance(holdout, bytes):
+        raise TypeError("partition overlap detection needs bytes inputs")
+    min_ngram = int(min_ngram)
+    if min_ngram <= 0:
+        raise ValueError("min_ngram must be positive")
+
+    whole_segment_duplicate = bool(train and holdout and holdout in train)
+    max_ngram_overlap = 0
+    ngram_overlap_count = 0
+    if train and holdout:
+        train_ngrams = {
+            train[index : index + min_ngram]
+            for index in range(len(train) - min_ngram + 1)
+        }
+        for index in range(len(holdout) - min_ngram + 1):
+            ngram = holdout[index : index + min_ngram]
+            if ngram in train_ngrams:
+                ngram_overlap_count += 1
+                for size in range(len(ngram), 0, -1):
+                    if ngram[:size] in train:
+                        max_ngram_overlap = max(max_ngram_overlap, size)
+                        break
+
+    train_unit = _period_unit(train)
+    holdout_unit = _period_unit(holdout)
+    template_family_match = bool(
+        train_unit is not None
+        and holdout_unit is not None
+        and len(train_unit) == len(holdout_unit)
+        and train_unit[:-1] == holdout_unit[:-1]
+    )
+    return {
+        "whole_segment_duplicate": whole_segment_duplicate,
+        "max_ngram_overlap": max_ngram_overlap,
+        "ngram_overlap_count": ngram_overlap_count,
+        "template_family_match": template_family_match,
+    }
+
+
+def build_generalization_partitions(*, count: int = 32) -> dict[str, bytes]:
+    """Build train/holdout byte streams under distinct rule and combination sets.
+
+    Training records follow rule A (letter then digit) over an uppercase
+    alphabet; holdout records follow rule B (digit then letter) over a
+    disjoint alphabet.  The disjoint alphabets guarantee the holdout clears
+    :func:`detect_partition_overlap` at every n-gram length, so a low BPB on
+    the holdout is transfer evidence rather than memorization of training
+    n-grams.
+    """
+
+    count = int(count)
+    if count <= 0:
+        raise ValueError("generalization partition count must be positive")
+
+    def rule_records(alphabet: bytes, digits: bytes, *, reverse: bool) -> bytes:
+        records = bytearray()
+        for index in range(count):
+            letter = alphabet[index % len(alphabet)]
+            digit = digits[index % len(digits)]
+            if reverse:
+                records += bytes((digit, letter))
+            else:
+                records += bytes((letter, digit))
+        return bytes(records)
+
+    return {
+        "train": rule_records(b"ABCDE", b"01234", reverse=False),
+        "holdout": rule_records(b"fghij", b"56789", reverse=True),
+    }
+
+
 @dataclass(frozen=True)
 class ContinualLearningCorpus:
     """Two sequential learning phases with an old-ability retention set."""

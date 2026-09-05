@@ -272,3 +272,170 @@ def test_active_readout_registry_rejects_a_foreign_parent() -> None:
 
     with pytest.raises(ValueError, match="registry parent"):
         Taiji.from_checkpoint(checkpoint)
+
+
+def test_scoring_distinguishes_active_and_protected_owners() -> None:
+    model = Taiji(TaijiConfig(seed=17), episode_id="active-readout")
+    protected = _boundary()
+    active = protected.successor(
+        task_id="task:beta",
+        generation_scope="active",
+        issued_tick=12,
+        ttl_ticks=20,
+    )
+    protected_context = _authorization(protected, current_tick=10)
+    active_context = _authorization(active, current_tick=12)
+    data = b"abcdabcdabcd"
+
+    model.learn_bytes(data, epochs=2)
+    before_protected = model.score_bytes(
+        data,
+        boundary=protected,
+        authorization=protected_context,
+    )
+    assert before_protected["scope"] == "protected"
+    assert before_protected["owner"] == "predictive_readout"
+    assert before_protected["boundary_digest"] == protected.token_digest
+
+    model.clone_protected_predictive_readout_as_active(
+        boundary_digest=active.token_digest,
+    )
+    model.learn_bytes(
+        data,
+        epochs=2,
+        learn_fabric=False,
+        learn_predictive_context=False,
+        boundary=active,
+        authorization=active_context,
+    )
+
+    after_protected = model.score_bytes(
+        data,
+        boundary=protected,
+        authorization=protected_context,
+    )
+    active_score = model.score_bytes(
+        data,
+        boundary=active,
+        authorization=active_context,
+    )
+
+    # Mutating the active branch must not move the protected score, and the
+    # two scopes must resolve to distinct owners/readouts.
+    assert after_protected == before_protected
+    assert active_score["scope"] == "active"
+    assert active_score["owner"] == "predictive_readout.active"
+    assert active_score["boundary_digest"] == active.token_digest
+    assert active_score["readout_digest"] != after_protected["readout_digest"]
+    assert active_score["mean_surprise"] != after_protected["mean_surprise"]
+    assert model.last_generation_route["operation"] == "score"
+
+
+def test_scoring_rejects_foreign_registry_boundary() -> None:
+    model = Taiji(TaijiConfig(seed=23), episode_id="active-readout-foreign")
+    protected = _boundary()
+    active = protected.successor(
+        task_id="task:beta",
+        generation_scope="active",
+        issued_tick=12,
+        ttl_ticks=20,
+    )
+    model.clone_protected_predictive_readout_as_active(
+        boundary_digest=active.token_digest,
+    )
+
+    # A self-consistent boundary for a *different* active generation must not
+    # read the branch mounted under ``active``.
+    foreign = protected.successor(
+        task_id="task:gamma",
+        generation_scope="active",
+        issued_tick=13,
+        ttl_ticks=20,
+    )
+    with pytest.raises(PermissionError, match="does not match mounted branch"):
+        model.score_bytes(
+            b"abcd",
+            boundary=foreign,
+            authorization=_authorization(foreign, current_tick=13),
+        )
+    with pytest.raises(PermissionError, match="does not match mounted branch"):
+        model.generate(
+            b"hi",
+            2,
+            boundary=foreign,
+            authorization=_authorization(foreign, current_tick=13),
+        )
+
+
+def test_scoring_rejects_expired_and_missing_active_boundaries() -> None:
+    model = Taiji(TaijiConfig(seed=29), episode_id="active-readout-expiry")
+    protected = _boundary()
+    active = protected.successor(
+        task_id="task:beta",
+        generation_scope="active",
+        issued_tick=12,
+        ttl_ticks=20,
+    )
+
+    with pytest.raises(PermissionError, match="expired_boundary"):
+        model.score_bytes(
+            b"abcd",
+            boundary=active,
+            authorization=_authorization(active, current_tick=33),
+        )
+    with pytest.raises(RuntimeError, match="not attached"):
+        model.score_bytes(
+            b"abcd",
+            boundary=active,
+            authorization=_authorization(active, current_tick=12),
+        )
+
+
+def test_scoring_after_restore_matches_and_enforces_mounted_boundary() -> None:
+    model = Taiji(TaijiConfig(seed=31), episode_id="active-readout-restore")
+    protected = _boundary()
+    active = protected.successor(
+        task_id="task:beta",
+        generation_scope="active",
+        issued_tick=12,
+        ttl_ticks=20,
+    )
+    active_context = _authorization(active, current_tick=12)
+    data = b"abcdabcdabcd"
+    model.clone_protected_predictive_readout_as_active(
+        boundary_digest=active.token_digest,
+    )
+    model.learn_bytes(
+        data,
+        epochs=2,
+        learn_fabric=False,
+        learn_predictive_context=False,
+        boundary=active,
+        authorization=active_context,
+    )
+    live_score = model.score_bytes(
+        data,
+        boundary=active,
+        authorization=active_context,
+    )
+
+    restored = Taiji.from_checkpoint(model.checkpoint())
+    restored_score = restored.score_bytes(
+        data,
+        boundary=active,
+        authorization=active_context,
+    )
+    assert restored_score == live_score
+
+    foreign = active.successor(
+        task_id="task:delta",
+        generation_scope="active",
+        issued_tick=14,
+        ttl_ticks=20,
+    )
+    with pytest.raises(PermissionError, match="does not match mounted branch"):
+        restored.score_bytes(
+            data,
+            boundary=foreign,
+            authorization=_authorization(foreign, current_tick=14),
+        )

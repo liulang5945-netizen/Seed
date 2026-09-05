@@ -274,7 +274,12 @@ class Taiji:
         self._active_predictive_readout = None
         self._active_predictive_readout_metadata = None
 
-    def _predictive_readout_for_scope(self, scope: str) -> BytePredictiveReadout:
+    def _predictive_readout_for_scope(
+        self,
+        scope: str,
+        *,
+        boundary_digest: str | None = None,
+    ) -> BytePredictiveReadout:
         if scope == "protected":
             return self.predictive_readout
         if scope != "active":
@@ -282,6 +287,17 @@ class Taiji:
         if self._active_predictive_readout is None:
             raise RuntimeError(
                 "requested readout generation is not attached to this Taiji instance"
+            )
+        mounted = str(
+            (self._active_predictive_readout_metadata or {}).get("boundary_digest", "")
+        ).strip()
+        if boundary_digest is not None and mounted and boundary_digest != mounted:
+            # A content-valid boundary token is not enough: the caller must
+            # consume the exact generation mounted on this instance.  Otherwise
+            # a fresh task boundary could silently read a branch that belongs
+            # to a different (foreign) registry boundary.
+            raise PermissionError(
+                "active predictive readout boundary digest does not match mounted branch"
             )
         return self._active_predictive_readout
 
@@ -1196,12 +1212,20 @@ class Taiji:
             raise ValueError("boundary and authorization must be supplied together")
         active_readout: BytePredictiveReadout | None = None
         if boundary is not None and authorization is not None:
-            generation_scope = select_readout_generation(boundary, authorization)
+            resolved_boundary = (
+                boundary
+                if isinstance(boundary, WorkbenchTaskBoundary)
+                else WorkbenchTaskBoundary.from_payload(boundary)
+            )
+            generation_scope = select_readout_generation(resolved_boundary, authorization)
             if generation_scope != "active":
                 raise RuntimeError("protected predictive readout is read-only under an explicit boundary")
             if authorization.usage != "execute":
                 raise PermissionError("active predictive readout training requires execute authorization")
-            active_readout = self._predictive_readout_for_scope(generation_scope)
+            active_readout = self._predictive_readout_for_scope(
+                generation_scope,
+                boundary_digest=resolved_boundary.token_digest,
+            )
             if learn_fabric or learn_predictive_context:
                 raise ValueError(
                     "active readout training requires learn_fabric=False and "
@@ -1240,14 +1264,57 @@ class Taiji:
         *,
         include_boundary: bool = True,
         use_memory: bool = False,
-    ) -> dict[str, float]:
+        boundary: WorkbenchTaskBoundary | Mapping[str, Any] | None = None,
+        authorization: WorkbenchBoundaryAuthorization | None = None,
+    ) -> dict[str, Any]:
         """Evaluate raw-byte prediction without mutating persistent state.
 
         The default deliberately matches :meth:`learn_bytes`: F1 scores the
         predictive path without long-term episodic feedback. This makes a
         score comparable before and after a separate F2 memory course.
+
+        When ``boundary`` and ``authorization`` are supplied together, the
+        effective readout owner is resolved with the same content-addressed
+        rules as :meth:`generate`.  A protected scope reads the stable parent
+        readout; an active scope reads the isolated task branch and raises if
+        it is not attached.  The returned score and the auditable
+        :attr:`last_generation_route` both record the effective owner, readout
+        digest and boundary digest, so an active/protected comparison cannot
+        silently compare the wrong organ.
         """
 
+        if (boundary is None) != (authorization is None):
+            raise ValueError("boundary and authorization must be supplied together")
+        predictive_readout: BytePredictiveReadout | None = None
+        scope = "protected"
+        boundary_digest: str | None = None
+        read_only_replay = False
+        if boundary is not None and authorization is not None:
+            resolved_boundary = (
+                boundary
+                if isinstance(boundary, WorkbenchTaskBoundary)
+                else WorkbenchTaskBoundary.from_payload(boundary)
+            )
+            scope = select_readout_generation(resolved_boundary, authorization)
+            predictive_readout = self._predictive_readout_for_scope(
+                scope,
+                boundary_digest=resolved_boundary.token_digest,
+            )
+            boundary_digest = resolved_boundary.token_digest
+            read_only_replay = authorization.usage == "read_only_replay"
+        effective_readout = (
+            self.predictive_readout if predictive_readout is None else predictive_readout
+        )
+        readout_digest = content_digest(effective_readout.to_payload())
+        owner = "predictive_readout" if scope == "protected" else "predictive_readout.active"
+        self._last_generation_route = {
+            "operation": "score",
+            "boundary_digest": boundary_digest,
+            "generation_scope": scope,
+            "readout_owner": owner,
+            "readout_digest": readout_digest,
+            "read_only_replay": read_only_replay,
+        }
         checkpoint = self.checkpoint()
         self.reset_dynamics(episode_id="evaluation")
         observations = 0
@@ -1261,6 +1328,7 @@ class Taiji:
                     readout="predictive",
                     use_memory=use_memory,
                     use_identity=False,
+                    _predictive_readout=predictive_readout,
                 )
                 if step.prior_prediction is not None:
                     observations += 1
@@ -1270,6 +1338,10 @@ class Taiji:
                 "observations": float(observations),
                 "accuracy": correct / max(1, observations),
                 "mean_surprise": surprise_sum / max(1, observations),
+                "scope": scope,
+                "owner": owner,
+                "readout_digest": readout_digest,
+                "boundary_digest": boundary_digest,
             }
         finally:
             self.restore(checkpoint)
@@ -1300,12 +1372,15 @@ class Taiji:
             raise ValueError("boundary and authorization must be supplied together")
         predictive_readout: BytePredictiveReadout | None = None
         if boundary is not None and authorization is not None:
-            generation_scope = select_readout_generation(boundary, authorization)
-            predictive_readout = self._predictive_readout_for_scope(generation_scope)
             resolved_boundary = (
                 boundary
                 if isinstance(boundary, WorkbenchTaskBoundary)
                 else WorkbenchTaskBoundary.from_payload(boundary)
+            )
+            generation_scope = select_readout_generation(resolved_boundary, authorization)
+            predictive_readout = self._predictive_readout_for_scope(
+                generation_scope,
+                boundary_digest=resolved_boundary.token_digest,
             )
             self._last_generation_route = {
                 "boundary_digest": resolved_boundary.token_digest,

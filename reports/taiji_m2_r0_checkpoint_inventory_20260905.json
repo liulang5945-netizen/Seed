@@ -1,0 +1,322 @@
+{
+  "format": "taiji-checkpoint-owner-inventory-v1",
+  "version": 1,
+  "count": 5,
+  "entries": [
+    {
+      "path": "e:\\Seed\\output\\taiji-m2r-seed11-identity-generation-20260905\\last.pt",
+      "exists": true,
+      "checkpoint_digest": "4c89b1e75b40de39dfe975bbce4a903c12e03b34a13528dbbe5f289c65850daa",
+      "digest_verified": true,
+      "format": "taiji-native-joint-training-v1",
+      "version": 4,
+      "model_tier": "joint",
+      "parent_checkpoint_digest": "750977f3cfc4c2474bb0e918e10c803ff82d3ec5db8b227d740a0ffe164bd335",
+      "ancestor_checkpoint_digest": "9533f47665bf73c8ea4941be87d0c13cce339650e8c3786b1478c0b9f02decef",
+      "training_phases": [
+        "memory"
+      ],
+      "current_phase": "memory",
+      "global_step": 1000,
+      "code_revision": "48494e51b5f8d23119cecc06cc07ef1d9a8b68f7+dirty-e3b0c44298fc1c14",
+      "data_digests": {
+        "corpus_digest": "fe7cc313635f4a7f5964932693aaf8d0c264db4993c556dc5baff2874be9ebc3",
+        "dataset_digest": "99ab9846193ccc2897d74c96be8245784f213ac7bc5a9886c928e38bf906132e",
+        "protected_dataset_digest": "8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038",
+        "memory_digest": "c8f161a99619212db921ed0f45054fe50648fdfb40a3e30315329d24a3ae132c",
+        "world_action_digest": "d64222da5a227fe2196f0792d8825dc6afa21a85e00ca64229dc42b25d6d64c0"
+      },
+      "organ_coverage": {
+        "fabric": {
+          "trained": false,
+          "sequence_fabric_learning": false,
+          "phase_checks": 1
+        },
+        "predictive_context": {
+          "trained": false,
+          "mode": "private-plastic-temporal-v1",
+          "phase_checks": 0
+        },
+        "predictive_readout": {
+          "trained": false,
+          "mode": "dedicated-predictive-v1",
+          "phase_checks": 0
+        },
+        "memory": {
+          "trained": true
+        },
+        "world": {
+          "trained": false
+        },
+        "goal": {
+          "trained": false
+        },
+        "identity": {
+          "trained": true,
+          "growth_events": 1
+        }
+      },
+      "model_organs": [
+        "fabric",
+        "identity_organ",
+        "memory",
+        "motor",
+        "predictive_context",
+        "predictive_readout"
+      ],
+      "sequence_derived_admission": true
+    },
+    {
+      "path": "e:\\Seed\\output\\taiji-m2r-seed11-identity-generation-20260905\\parent.pt",
+      "exists": true,
+      "checkpoint_digest": "75d17e9f6912391df8706f28fecbb2357c7276e70251ab8e37d18dcdceb8be21",
+      "digest_verified": true,
+      "format": "taiji-native-joint-training-v1",
+      "version": 4,
+      "model_tier": "joint",
+      "parent_checkpoint_digest": "750977f3cfc4c2474bb0e918e10c803ff82d3ec5db8b227d740a0ffe164bd335",
+      "ancestor_checkpoint_digest": "9533f47665bf73c8ea4941be87d0c13cce339650e8c3786b1478c0b9f02decef",
+      "training_phases": [
+        "memory"
+      ],
+      "current_phase": "memory",
+      "global_step": 0,
+      "code_revision": "48494e51b5f8d23119cecc06cc07ef1d9a8b68f7+dirty-e3b0c44298fc1c14",
+      "data_digests": {
+        "corpus_digest": "fe7cc313635f4a7f5964932693aaf8d0c264db4993c556dc5baff2874be9ebc3",
+        "dataset_digest": "99ab9846193ccc2897d74c96be8245784f213ac7bc5a9886c928e38bf906132e",
+        "protected_dataset_digest": "8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038",
+        "memory_digest": "c8f161a99619212db921ed0f45054fe50648fdfb40a3e30315329d24a3ae132c",
+        "world_action_digest": "d64222da5a227fe2196f0792d8825dc6afa21a85e00ca64229dc42b25d6d64c0"
+      },
+      "organ_coverage": {
+        "fabric": {
+          "trained": false,
+          "sequence_fabric_learning": false,
+          "phase_checks": 0
+        },
+        "predictive_context": {
+          "trained": false,
+          "mode": "private-plastic-temporal-v1",
+          "phase_checks": 0
+        },
+        "predictive_readout": {
+          "trained": false,
+          "mode": "dedicated-predictive-v1",
+          "phase_checks": 0
+        },
+        "memory": {
+          "trained": true
+        },
+        "world": {
+          "trained": false
+        },
+        "goal": {
+          "trained": false
+        },
+        "identity": {
+          "trained": false,
+          "growth_events": 0
+        }
+      },
+      "model_organs": [
+        "fabric",
+        "identity_organ",
+        "memory",
+        "motor",
+        "predictive_context",
+        "predictive_readout"
+      ],
+      "sequence_derived_admission": true
+    },
+    {
+      "path": "e:\\Seed\\output\\taiji-m2s-seed11-identity-generation-20260905\\best-holdout.pt",
+      "exists": true,
+      "checkpoint_digest": "d588e16a4e0266929aeff6f7c86670233c356e4cb68220a3174dc7c35109deb9",
+      "digest_verified": true,
+      "format": "taiji-native-joint-training-v1",
+      "version": 4,
+      "model_tier": "joint",
+      "parent_checkpoint_digest": "611696634b6917845b35f534c450347b6f744e0fd1e492b00e886f1e7042607a",
+      "ancestor_checkpoint_digest": "9533f47665bf73c8ea4941be87d0c13cce339650e8c3786b1478c0b9f02decef",
+      "training_phases": [
+        "memory"
+      ],
+      "current_phase": "memory",
+      "global_step": 1000,
+      "code_revision": "f235f77614eab19a53316eb00cc55988a4dba73c+dirty-e3b0c44298fc1c14",
+      "data_digests": {
+        "corpus_digest": "fe7cc313635f4a7f5964932693aaf8d0c264db4993c556dc5baff2874be9ebc3",
+        "dataset_digest": "99ab9846193ccc2897d74c96be8245784f213ac7bc5a9886c928e38bf906132e",
+        "protected_dataset_digest": "8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038",
+        "memory_digest": "c8f161a99619212db921ed0f45054fe50648fdfb40a3e30315329d24a3ae132c",
+        "world_action_digest": "d64222da5a227fe2196f0792d8825dc6afa21a85e00ca64229dc42b25d6d64c0"
+      },
+      "organ_coverage": {
+        "fabric": {
+          "trained": false,
+          "sequence_fabric_learning": false,
+          "phase_checks": 0
+        },
+        "predictive_context": {
+          "trained": false,
+          "mode": "private-plastic-temporal-v1",
+          "phase_checks": 0
+        },
+        "predictive_readout": {
+          "trained": false,
+          "mode": "dedicated-predictive-v1",
+          "phase_checks": 0
+        },
+        "memory": {
+          "trained": true
+        },
+        "world": {
+          "trained": false
+        },
+        "goal": {
+          "trained": false
+        },
+        "identity": {
+          "trained": true,
+          "growth_events": 1
+        }
+      },
+      "model_organs": [
+        "fabric",
+        "identity_organ",
+        "memory",
+        "motor",
+        "predictive_context",
+        "predictive_readout"
+      ],
+      "sequence_derived_admission": true
+    },
+    {
+      "path": "e:\\Seed\\output\\taiji-m2s-seed11-identity-generation-20260905\\last.pt",
+      "exists": true,
+      "checkpoint_digest": "9524f35a89626a562d549b72fb5d657454f9b2831bbc9fffe7bd310328a48210",
+      "digest_verified": true,
+      "format": "taiji-native-joint-training-v1",
+      "version": 4,
+      "model_tier": "joint",
+      "parent_checkpoint_digest": "611696634b6917845b35f534c450347b6f744e0fd1e492b00e886f1e7042607a",
+      "ancestor_checkpoint_digest": "9533f47665bf73c8ea4941be87d0c13cce339650e8c3786b1478c0b9f02decef",
+      "training_phases": [
+        "memory"
+      ],
+      "current_phase": "memory",
+      "global_step": 1000,
+      "code_revision": "f235f77614eab19a53316eb00cc55988a4dba73c+dirty-e3b0c44298fc1c14",
+      "data_digests": {
+        "corpus_digest": "fe7cc313635f4a7f5964932693aaf8d0c264db4993c556dc5baff2874be9ebc3",
+        "dataset_digest": "99ab9846193ccc2897d74c96be8245784f213ac7bc5a9886c928e38bf906132e",
+        "protected_dataset_digest": "8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038",
+        "memory_digest": "c8f161a99619212db921ed0f45054fe50648fdfb40a3e30315329d24a3ae132c",
+        "world_action_digest": "d64222da5a227fe2196f0792d8825dc6afa21a85e00ca64229dc42b25d6d64c0"
+      },
+      "organ_coverage": {
+        "fabric": {
+          "trained": false,
+          "sequence_fabric_learning": false,
+          "phase_checks": 1
+        },
+        "predictive_context": {
+          "trained": false,
+          "mode": "private-plastic-temporal-v1",
+          "phase_checks": 0
+        },
+        "predictive_readout": {
+          "trained": false,
+          "mode": "dedicated-predictive-v1",
+          "phase_checks": 0
+        },
+        "memory": {
+          "trained": true
+        },
+        "world": {
+          "trained": false
+        },
+        "goal": {
+          "trained": false
+        },
+        "identity": {
+          "trained": true,
+          "growth_events": 1
+        }
+      },
+      "model_organs": [
+        "fabric",
+        "identity_organ",
+        "memory",
+        "motor",
+        "predictive_context",
+        "predictive_readout"
+      ],
+      "sequence_derived_admission": true
+    },
+    {
+      "path": "e:\\Seed\\output\\taiji-m2s-seed11-identity-generation-20260905\\parent.pt",
+      "exists": true,
+      "checkpoint_digest": "70e238aba59099e08ff9004c18556a49b1736b53f77ced7144d2c841a3c41279",
+      "digest_verified": true,
+      "format": "taiji-native-joint-training-v1",
+      "version": 4,
+      "model_tier": "joint",
+      "parent_checkpoint_digest": "611696634b6917845b35f534c450347b6f744e0fd1e492b00e886f1e7042607a",
+      "ancestor_checkpoint_digest": "9533f47665bf73c8ea4941be87d0c13cce339650e8c3786b1478c0b9f02decef",
+      "training_phases": [
+        "memory"
+      ],
+      "current_phase": "memory",
+      "global_step": 0,
+      "code_revision": "f235f77614eab19a53316eb00cc55988a4dba73c+dirty-e3b0c44298fc1c14",
+      "data_digests": {
+        "corpus_digest": "fe7cc313635f4a7f5964932693aaf8d0c264db4993c556dc5baff2874be9ebc3",
+        "dataset_digest": "99ab9846193ccc2897d74c96be8245784f213ac7bc5a9886c928e38bf906132e",
+        "protected_dataset_digest": "8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038",
+        "memory_digest": "c8f161a99619212db921ed0f45054fe50648fdfb40a3e30315329d24a3ae132c",
+        "world_action_digest": "d64222da5a227fe2196f0792d8825dc6afa21a85e00ca64229dc42b25d6d64c0"
+      },
+      "organ_coverage": {
+        "fabric": {
+          "trained": false,
+          "sequence_fabric_learning": false,
+          "phase_checks": 0
+        },
+        "predictive_context": {
+          "trained": false,
+          "mode": "private-plastic-temporal-v1",
+          "phase_checks": 0
+        },
+        "predictive_readout": {
+          "trained": false,
+          "mode": "dedicated-predictive-v1",
+          "phase_checks": 0
+        },
+        "memory": {
+          "trained": true
+        },
+        "world": {
+          "trained": false
+        },
+        "goal": {
+          "trained": false
+        },
+        "identity": {
+          "trained": false,
+          "growth_events": 0
+        }
+      },
+      "model_organs": [
+        "fabric",
+        "identity_organ",
+        "memory",
+        "motor",
+        "predictive_context",
+        "predictive_readout"
+      ],
+      "sequence_derived_admission": true
+    }
+  ]
+}

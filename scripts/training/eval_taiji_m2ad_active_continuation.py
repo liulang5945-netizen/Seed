@@ -42,8 +42,19 @@ def _load_joint_child(path: Path, *, expected_seed: int) -> tuple[dict[str, Any]
         raise ValueError("active continuation requires a joint training checkpoint")
     if int(payload.get("version", -1)) < 4:
         raise ValueError("active continuation requires a v4 private-context child")
-    if payload.get("training_phases") != ["sequence"]:
-        raise ValueError("active continuation requires a sequence-trained child")
+    # R0.6: the old check required training_phases == ["sequence"], which
+    # excluded memory/identity-phase children that legitimately continue a
+    # sequence child with the shared fabric frozen.  A child is
+    # sequence-derived when it trained sequence at least once, or when its
+    # sequence owners were frozen on a private substrate; pure phase labels
+    # must not decide loadability.
+    phases = payload.get("training_phases")
+    if not isinstance(phases, list) or not phases:
+        raise ValueError("active continuation requires a joint-trained child")
+    if "sequence" not in phases and payload.get("sequence_fabric_learning") is not False:
+        raise ValueError(
+            "active continuation requires a sequence-trained or sequence-derived child"
+        )
     if payload.get("sequence_fabric_learning") is not False:
         raise ValueError("active continuation requires frozen shared fabric")
     if payload.get("sequence_predictive_context_mode") != "private-plastic-temporal-v1":

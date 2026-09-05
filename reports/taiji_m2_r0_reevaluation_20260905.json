@@ -1,0 +1,337 @@
+{
+  "format": "taiji-r0-reevaluation-v1",
+  "version": 1,
+  "count": 2,
+  "entries": [
+    {
+      "report_path": "e:\\Seed\\reports\\taiji_m2r_seed11_identity_generation_20260905.json",
+      "format": "taiji-native-joint-training-v1",
+      "version": 4,
+      "training_phases": [
+        "memory"
+      ],
+      "parent_checkpoint_digest": "750977f3cfc4c2474bb0e918e10c803ff82d3ec5db8b227d740a0ffe164bd335",
+      "child_checkpoint_digest": "4d9e0af1a4d9f47cf8d454c9668ebbc9cadd4e1e3168e15823c7722f82ee86f9",
+      "continuation_source_checkpoint_digest": "9533f47665bf73c8ea4941be87d0c13cce339650e8c3786b1478c0b9f02decef",
+      "checkpoint_paths": {
+        "parent": "output\\taiji-m2r-seed11-identity-generation-20260905\\parent.pt",
+        "last": "output\\taiji-m2r-seed11-identity-generation-20260905\\last.pt",
+        "best_holdout": "output\\taiji-m2r-seed11-identity-generation-20260905\\best-holdout.pt"
+      },
+      "behavior_frozen": true,
+      "behavior_gains": [],
+      "verdicts": [
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "goal_holdout_success",
+          "kind": "absolute",
+          "judgement": "passed",
+          "metric": "success_rate",
+          "value": 1.0,
+          "threshold": 0.5,
+          "comparator": ">=",
+          "detail": "R0 fixed absolute threshold"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "goal_holdout_success",
+          "kind": "incremental",
+          "judgement": "passed",
+          "metric": "success_rate",
+          "value": 1.0,
+          "threshold": null,
+          "comparator": ">=",
+          "detail": "no gain required for this course"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "goal_holdout_success",
+          "kind": "retention",
+          "judgement": "passed",
+          "metric": "success_rate",
+          "value": 1.0,
+          "threshold": 0.95,
+          "comparator": ">=",
+          "detail": "continued child vs direct parent"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "memory_holdout_recall",
+          "kind": "absolute",
+          "judgement": "passed",
+          "metric": "recall",
+          "value": 0.505,
+          "threshold": 0.5,
+          "comparator": ">=",
+          "detail": "R0 fixed absolute threshold"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "memory_holdout_recall",
+          "kind": "incremental",
+          "judgement": "passed",
+          "metric": "recall",
+          "value": 0.505,
+          "threshold": null,
+          "comparator": ">=",
+          "detail": "no gain required for this course"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "memory_holdout_recall",
+          "kind": "retention",
+          "judgement": "passed",
+          "metric": "recall",
+          "value": 0.505,
+          "threshold": 0.455,
+          "comparator": ">=",
+          "detail": "continued child vs direct parent"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "sequence_holdout_bpb",
+          "kind": "absolute",
+          "judgement": "passed",
+          "metric": "bpb",
+          "value": 4.288320818766926,
+          "threshold": 6.5,
+          "comparator": "<=",
+          "detail": "R0 fixed absolute threshold"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "sequence_holdout_bpb",
+          "kind": "incremental",
+          "judgement": "passed",
+          "metric": "bpb",
+          "value": 4.288320818766926,
+          "threshold": null,
+          "comparator": ">=",
+          "detail": "no gain required for this course"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "sequence_holdout_bpb",
+          "kind": "retention",
+          "judgement": "passed",
+          "metric": "bpb",
+          "value": 4.288320818766926,
+          "threshold": 4.538320818766926,
+          "comparator": "<=",
+          "detail": "continued child vs direct parent"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "world_holdout_error",
+          "kind": "absolute",
+          "judgement": "passed",
+          "metric": "error",
+          "value": 3.622080058107713e-08,
+          "threshold": 0.1,
+          "comparator": "<=",
+          "detail": "R0 fixed absolute threshold"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "world_holdout_error",
+          "kind": "incremental",
+          "judgement": "passed",
+          "metric": "error",
+          "value": 3.622080058107713e-08,
+          "threshold": null,
+          "comparator": ">=",
+          "detail": "no gain required for this course"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "world_holdout_error",
+          "kind": "retention",
+          "judgement": "passed",
+          "metric": "error",
+          "value": 3.622080058107713e-08,
+          "threshold": 0.010000036220800581,
+          "comparator": "<=",
+          "detail": "continued child vs direct parent"
+        }
+      ]
+    },
+    {
+      "report_path": "e:\\Seed\\reports\\taiji_m2s_seed11_identity_generation_20260905.json",
+      "format": "taiji-native-joint-training-v1",
+      "version": 4,
+      "training_phases": [
+        "memory"
+      ],
+      "parent_checkpoint_digest": "611696634b6917845b35f534c450347b6f744e0fd1e492b00e886f1e7042607a",
+      "child_checkpoint_digest": "3a222f9fba16a465f52650fb8d5807bd1eb08bf162e82868052a0de4208f0421",
+      "continuation_source_checkpoint_digest": "9533f47665bf73c8ea4941be87d0c13cce339650e8c3786b1478c0b9f02decef",
+      "checkpoint_paths": {
+        "parent": "output\\taiji-m2s-seed11-identity-generation-20260905\\parent.pt",
+        "last": "output\\taiji-m2s-seed11-identity-generation-20260905\\last.pt",
+        "best_holdout": "output\\taiji-m2s-seed11-identity-generation-20260905\\best-holdout.pt"
+      },
+      "behavior_frozen": false,
+      "behavior_gains": [
+        "memory_holdout_recall:0.490000"
+      ],
+      "verdicts": [
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "goal_holdout_success",
+          "kind": "absolute",
+          "judgement": "passed",
+          "metric": "success_rate",
+          "value": 1.0,
+          "threshold": 0.5,
+          "comparator": ">=",
+          "detail": "R0 fixed absolute threshold"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "goal_holdout_success",
+          "kind": "incremental",
+          "judgement": "passed",
+          "metric": "success_rate",
+          "value": 1.0,
+          "threshold": null,
+          "comparator": ">=",
+          "detail": "no gain required for this course"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "goal_holdout_success",
+          "kind": "retention",
+          "judgement": "passed",
+          "metric": "success_rate",
+          "value": 1.0,
+          "threshold": 0.95,
+          "comparator": ">=",
+          "detail": "continued child vs direct parent"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "memory_holdout_recall",
+          "kind": "absolute",
+          "judgement": "passed",
+          "metric": "recall",
+          "value": 0.995,
+          "threshold": 0.5,
+          "comparator": ">=",
+          "detail": "R0 fixed absolute threshold"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "memory_holdout_recall",
+          "kind": "incremental",
+          "judgement": "passed",
+          "metric": "recall",
+          "value": 0.995,
+          "threshold": null,
+          "comparator": ">=",
+          "detail": "no gain required for this course"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "memory_holdout_recall",
+          "kind": "retention",
+          "judgement": "passed",
+          "metric": "recall",
+          "value": 0.995,
+          "threshold": 0.455,
+          "comparator": ">=",
+          "detail": "continued child vs direct parent"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "sequence_holdout_bpb",
+          "kind": "absolute",
+          "judgement": "passed",
+          "metric": "bpb",
+          "value": 4.288320818766926,
+          "threshold": 6.5,
+          "comparator": "<=",
+          "detail": "R0 fixed absolute threshold"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "sequence_holdout_bpb",
+          "kind": "incremental",
+          "judgement": "passed",
+          "metric": "bpb",
+          "value": 4.288320818766926,
+          "threshold": null,
+          "comparator": ">=",
+          "detail": "no gain required for this course"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "sequence_holdout_bpb",
+          "kind": "retention",
+          "judgement": "passed",
+          "metric": "bpb",
+          "value": 4.288320818766926,
+          "threshold": 4.538320818766926,
+          "comparator": "<=",
+          "detail": "continued child vs direct parent"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "world_holdout_error",
+          "kind": "absolute",
+          "judgement": "passed",
+          "metric": "error",
+          "value": 3.622080058107713e-08,
+          "threshold": 0.1,
+          "comparator": "<=",
+          "detail": "R0 fixed absolute threshold"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "world_holdout_error",
+          "kind": "incremental",
+          "judgement": "passed",
+          "metric": "error",
+          "value": 3.622080058107713e-08,
+          "threshold": null,
+          "comparator": ">=",
+          "detail": "no gain required for this course"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "world_holdout_error",
+          "kind": "retention",
+          "judgement": "passed",
+          "metric": "error",
+          "value": 3.622080058107713e-08,
+          "threshold": 0.010000036220800581,
+          "comparator": "<=",
+          "detail": "continued child vs direct parent"
+        }
+      ]
+    }
+  ]
+}
