@@ -14,6 +14,9 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+from scripts.training.eval_taiji_m1_64_foundation_memory import (  # noqa: E402
+    build_foundation_delayed_memory_corpus,
+)
 from scripts.training.train_taiji_memory import build_corpus as build_memory_corpus  # noqa: E402
 from scripts.training.train_taiji_world_action import (  # noqa: E402
     build_goal_corpus,
@@ -22,6 +25,7 @@ from scripts.training.train_taiji_world_action import (  # noqa: E402
 )
 from taiji import (  # noqa: E402
     JOINT_TRAINING_PHASES,
+    DelayedMemoryCorpus,
     FoundationTrainingDataset,
     JointTrainingRun,
     Taiji,
@@ -51,6 +55,16 @@ def _cold_start_action_organ(model: Taiji) -> None:
         model.motor.bias.zero_()
         model.motor.reward_baseline = 0.0
         model.motor.reward_updates = 0
+
+
+def _build_memory_course(course: str, *, count: int) -> DelayedMemoryCorpus:
+    if course == "generic":
+        return build_memory_corpus(count=count)
+    if course == "foundation":
+        if int(count) != 1_000:
+            raise ValueError("the formal B2 memory course requires count=1000")
+        return build_foundation_delayed_memory_corpus()
+    raise ValueError(f"unsupported joint memory course: {course}")
 
 
 def main() -> int:
@@ -84,6 +98,15 @@ def main() -> int:
     parser.add_argument("--metric-interval", type=int)
     parser.add_argument("--world-learning-rate", type=float, default=0.02)
     parser.add_argument("--world-repeats", type=int, default=8)
+    parser.add_argument(
+        "--memory-course",
+        choices=("generic", "foundation"),
+        default="generic",
+        help=(
+            "Select the content-addressed memory course. 'foundation' matches the formal "
+            "B2 delayed/interference evaluator and requires --count 1000."
+        ),
+    )
     parser.add_argument("--protected-corpus", nargs="+", type=Path)
     parser.add_argument(
         "--protected-profile",
@@ -221,9 +244,14 @@ def main() -> int:
         and replay_dataset is None
     ):
         parser.error("the replay phase requires --protected-corpus or --replay-corpus")
-    memory_corpus = build_memory_corpus(count=count)
+    try:
+        memory_corpus = _build_memory_course(args.memory_course, count=count)
+    except ValueError as exc:
+        parser.error(str(exc))
     replay_memory_corpus = (
-        build_memory_corpus(count=count) if args.replay_memory_count is not None else None
+        _build_memory_course(args.memory_course, count=count)
+        if args.replay_memory_count is not None
+        else None
     )
     if (
         args.training_phases is not None
@@ -319,6 +347,7 @@ def main() -> int:
     )
     report_path.parent.mkdir(parents=True, exist_ok=True)
     result["report_path"] = str(report_path)
+    result["memory_course"] = args.memory_course
     report_path.write_text(
         json.dumps(result, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
