@@ -1,0 +1,107 @@
+{
+  "format": "taiji-foundation-b5-readout-generation-v1",
+  "ability_id": "b5_continual_learning",
+  "seed": 11,
+  "checkpoint": "output\\taiji-m2s-seed11-identity-generation-20260905\\last.pt",
+  "checkpoint_digest": "9524f35a89626a562d549b72fb5d657454f9b2831bbc9fffe7bd310328a48210",
+  "protected_partition_seed": 11,
+  "phase_b_seed": 10011,
+  "generation_contract": {
+    "old_generation": "protected_readout_v1",
+    "active_generation": "phase_b_readout_v1",
+    "old_generation_mutable": false,
+    "active_generation_learns_readout_only": true,
+    "answer_table": false,
+    "unconditional_average": false
+  },
+  "router": {
+    "kind": "phase_a_context_familiarity_centroid_v1",
+    "centroid_digest": "06a70e3f9a61d5c34f7da78b2ae905aeb7e04f5e4ce1b170fe7ca66c99786929",
+    "threshold": 4.228089332580566,
+    "phase_a_profile_samples": 4098,
+    "phase_a_distance_mean": 3.804391622543335,
+    "phase_a_distance_max": 4.379194736480713
+  },
+  "sample_counts": {
+    "phase_a_train": 4096,
+    "phase_a_holdout": 200,
+    "phase_b_train": 4096,
+    "phase_b_holdout": 200,
+    "retention": 200
+  },
+  "metrics": {
+    "old_before": {
+      "bpb": 3.8685034171422052,
+      "accuracy": 0.29850746268656714,
+      "observations": 201,
+      "active_routes": 0,
+      "active_route_ratio": 0.0
+    },
+    "old_after": {
+      "bpb": 3.8685034171422052,
+      "accuracy": 0.29850746268656714,
+      "observations": 201,
+      "active_routes": 0,
+      "active_route_ratio": 0.0
+    },
+    "new_after": {
+      "bpb": 12.16687190454791,
+      "accuracy": 0.0,
+      "observations": 201,
+      "active_routes": 0,
+      "active_route_ratio": 0.0
+    },
+    "retention_after": {
+      "bpb": 4.900853078436938,
+      "accuracy": 0.1691542288557214,
+      "observations": 201,
+      "active_routes": 0,
+      "active_route_ratio": 0.0
+    },
+    "backward_transfer": 0.0,
+    "active_only_new_bpb": 3.4259245178084985,
+    "protected_only_old_bpb": 3.868503427772216
+  },
+  "owner_audit": {
+    "protected_generation": {
+      "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+      "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+      "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+      "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+      "predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+      "identity": "693dc213ddb9772afd626492ae9d0c46abbd37338c5b5257591366720488996e"
+    },
+    "active_before": {
+      "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+      "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+      "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+      "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+      "predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+      "identity": "693dc213ddb9772afd626492ae9d0c46abbd37338c5b5257591366720488996e"
+    },
+    "active_after": {
+      "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+      "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+      "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+      "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+      "predictive_readout": "8613e37c33b4df2880790240cf5a74237238e7c96ae204cc6c3dffe6962ee819",
+      "identity": "693dc213ddb9772afd626492ae9d0c46abbd37338c5b5257591366720488996e"
+    },
+    "active_owner_changes": {
+      "fabric": false,
+      "motor": false,
+      "memory": false,
+      "predictive_context": false,
+      "predictive_readout": true,
+      "identity": false
+    },
+    "shared_owners_preserved": true,
+    "private_context_preserved": true,
+    "score_checkpoint_read_only": true
+  },
+  "round_trip": {
+    "source_checkpoint_load_verified": true,
+    "active_generation_is_evaluator_owned": true
+  },
+  "report_written": true
+}

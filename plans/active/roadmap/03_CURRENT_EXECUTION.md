@@ -54,7 +54,7 @@ Taiji 采用“站在巨人肩膀上”的双边界：原始 byte 输入继续�
 |---|---|---|---|---|
 | 0 | M0 CPU 五项基础能力真实性基线 | **已完成（M0-0/M0-1/B1/B2/B3/B4/B5/M0-3/M0-4）** | 数据合同、对照 evaluator、checkpoint preflight、基线报告 | 测量链可信且能保存/恢复；模型得分可以失败，但失败必须被如实记录 |
 | 1 | M1 Taiji foundation 训练管线与首次 CPU 训练 | **已完成（M0-0~M0-4/M1-32~M1-66c）** | 原生 trainer、数据流水线、B2 因果链（寻址→裁决→折叠→契约）、首个 joint checkpoint | M1-66c 收尾：B2 在三 seed 上通过全部 foundation 门禁 |
-| 2 | M2 世界—行动—语言后训练 | **当前进行（M2-2x：readout generation isolation 原型）** | 世界预测、行动信用、F1 隔离读出、受控的旧/新语言保持 Gate，随后才是 ContentPlan/语言蒸馏和 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
+| 2 | M2 世界—行动—语言后训练 | **当前进行（M2-2y：在线 novelty 路由诊断）** | 世界预测、行动信用、F1 隔离读出、受控的旧/新语言保持 Gate，随后才是 ContentPlan/语言蒸馏和 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
 | 3 | M3 综合能力晋级与真实 Workbench 验证 | 待开始 | 独立评测套件、真实 Workbench longitudinal report、晋级 checkpoint | 至少一个真实任务族获得可重复净收益 |
 | 4 | M4 持续学习、自进化和结构成长 | 冻结等待 M3 | bounded replay 接线、多周期保持、结构候选与单项回滚 | 真实 checkpoint 连续学习收益大于固定容量/weight-only 对照 |
 | 5 | M5 Skill/MCP 数据飞轮与客户端身体 | 冻结等待 M4 | 知识内化、经验回流、IDE/Workbench 身体、客户端插件准入 | 认知收益与客户端执行收益可消融归因，权限和回滚闭合 |
@@ -495,7 +495,9 @@ M1-64 已完成，B2 在真实 foundation 规模上被判定为**记忆能力不
 
 **M2-2w B5 owner 归因诊断完成（20260905）**：新增 `scripts/training/eval_taiji_b5_owner_diagnosis.py` 和 `Taiji.learn_bytes` 的两个显式 F1 owner 开关，默认行为保持不变；seed 11 新 identity-generation child 的报告为 `reports/taiji_m2w_seed11_b5_owner_diagnosis_20260905.json`。四条路径均以同一 child checkpoint 独立复制，shared fabric、motor、memory、identity 均保持，所有 score 都通过 checkpoint read-only 审计。`full_no_replay` 的 BWT 为 `-1.117159`；exact protected replay 改善到 `-0.258316`；private-context-only 为 `-0.308121`，但 new holdout BPB `10.937943`；predictive-readout-only 为 `-0.978537`。因此 predictive readout 塑性是当前主要遗忘压力，private context 也参与权衡但不是单独根因；replay 能减轻而不能消除 trade-off。不能继续仅调 replay scalar，也不能把 context-only 当修复，因为它以新能力崩溃换取旧能力保持。
 
-**M2-2x 唯一下一步**：在 evaluator-owned 原型中实现 readout generation isolation：冻结旧 `BytePredictiveReadout` 作为 protected generation，新增一个内容寻址、可回滚的 active readout generation，只让新 phase 的预测误差写 active generation；先定义不依赖 Python key→answer 表的熟悉度/路由边界，并用 old/new/retention、BWT、new capability、generation collision、参数预算和 fresh-process round-trip 做 seed 11 对照。原生默认 readout、shared fabric、private context、identity organ 与生产 checkpoint 在原型 Gate 通过前不得改变；若无可靠输入内路由，宁可报告“无法无标签区分代际”，也不把新旧 readout 做无条件平均。
+**M2-2x readout generation isolation 原型完成（20260905）**：新增 `scripts/training/eval_taiji_b5_readout_generation.py`，在 evaluator-owned 双模型原型中冻结 protected old readout，只训练复制出的 active readout；active generation 只写 predictive readout，shared fabric、motor、memory、identity 和 private context 均保持，路由不存 cue→answer 表且不做无条件平均。报告 `reports/taiji_m2x_seed11_b5_readout_generation_20260905.json` 记录：active-only new holdout `3.425925 BPB`，protected-only old holdout `3.868503 BPB`；phase-A context centroid 路由的 old/new/retention active route ratio 均为 `0.0`，组合路由 old BWT `0.0`、new BPB `12.166872`、retention `4.900853`，说明它没有识别 phase-B。owner digest 与 round-trip 审计全绿。结论是“代际 readout 隔离”结构方向有收益，但当前 phase-A 输入几何不能提供足够的无标签路由信号；原型不接入默认 Taiji，也不通过调阈值伪造 Gate。
+
+**M2-2y 唯一下一步**：测试严格时序的在线 novelty 路由：用旧 generation 在当前已观察输入上产生的 prediction error/surprise，经过只由 phase-A train 分布确定的阈值，作为下一 tick 的 active-generation 路由信号；active readout 继续只学习 phase-B，old readout 继续只读。必须显式记录路由延迟、phase-A 误触发、phase-B 命中率、old/new/retention BPB、BWT、shared-owner digest 和 fresh-process read-only；不得用当前目标字节提前选择本 tick 的答案头，不得加入 phase 标签、Python answer map、无条件平均或默认 checkpoint 改动。若 one-step novelty 仍不能把 phase-B 与 phase-A 分开，则承认无任务标签的 readout generation route 在当前状态空间不可识别，转向有明确 Workbench task boundary 的路由合同，而不是继续堆叠启发式阈值。
 
 ## 7. M2～M8 的开发日程与外围任务安置
 
