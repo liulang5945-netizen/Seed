@@ -175,3 +175,100 @@ def test_taiji_generation_consumes_boundary_and_rejects_missing_readout() -> Non
             boundary=active,
             authorization=_authorization(active, current_tick=12),
         )
+
+
+def test_active_readout_registry_trains_and_round_trips_as_an_isolated_owner() -> None:
+    model = Taiji(TaijiConfig(seed=17), episode_id="active-readout")
+    protected = _boundary()
+    active = protected.successor(
+        task_id="task:beta",
+        generation_scope="active",
+        issued_tick=12,
+        ttl_ticks=20,
+    )
+    active_context = _authorization(active, current_tick=12)
+    model.clone_protected_predictive_readout_as_active(
+        boundary_digest=active.token_digest,
+    )
+    before_protected = model.readout_registry_status()["protected"]["readout_digest"]
+    before_active = model.active_predictive_readout_metadata
+    assert before_active is not None
+
+    model.learn_bytes(
+        b"abcabcabc",
+        epochs=2,
+        learn_fabric=False,
+        learn_predictive_context=False,
+        boundary=active,
+        authorization=active_context,
+    )
+
+    after_active = model.active_predictive_readout_metadata
+    assert after_active is not None
+    assert after_active["readout_digest"] != before_active["readout_digest"]
+    assert model.readout_registry_status()["protected"]["readout_digest"] == before_protected
+    checkpoint = model.checkpoint()
+    assert checkpoint["predictive_readout_registry"]["format"] == (
+        "taiji-predictive-readout-registry-v1"
+    )
+
+    restored = Taiji.from_checkpoint(checkpoint)
+    assert restored.active_predictive_readout_metadata == after_active
+    assert restored.generate(
+        b"hi",
+        4,
+        boundary=active,
+        authorization=active_context,
+    ) == model.generate(
+        b"hi",
+        4,
+        boundary=active,
+        authorization=active_context,
+    )
+
+
+def test_active_readout_training_requires_explicit_active_boundary() -> None:
+    model = Taiji(TaijiConfig(seed=19), episode_id="active-readout-gate")
+    protected = _boundary()
+    with pytest.raises(RuntimeError, match="readout is read-only"):
+        model.learn_bytes(
+            b"abc",
+            learn_fabric=False,
+            learn_predictive_context=False,
+            boundary=protected,
+            authorization=_authorization(protected, current_tick=10),
+        )
+
+    active = protected.successor(
+        task_id="task:beta",
+        generation_scope="active",
+        issued_tick=12,
+        ttl_ticks=20,
+    )
+    with pytest.raises(RuntimeError, match="not attached"):
+        model.learn_bytes(
+            b"abc",
+            learn_fabric=False,
+            learn_predictive_context=False,
+            boundary=active,
+            authorization=_authorization(active, current_tick=12),
+        )
+
+
+def test_active_readout_registry_rejects_a_foreign_parent() -> None:
+    model = Taiji(TaijiConfig(seed=23), episode_id="active-readout-foreign")
+    protected = _boundary()
+    active = protected.successor(
+        task_id="task:beta",
+        generation_scope="active",
+        issued_tick=12,
+        ttl_ticks=20,
+    )
+    model.clone_protected_predictive_readout_as_active(
+        boundary_digest=active.token_digest,
+    )
+    checkpoint = model.checkpoint()
+    checkpoint["predictive_readout_registry"]["parent_checkpoint_digest"] = "foreign"
+
+    with pytest.raises(ValueError, match="registry parent"):
+        Taiji.from_checkpoint(checkpoint)

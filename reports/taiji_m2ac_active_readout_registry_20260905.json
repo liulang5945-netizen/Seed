@@ -1,0 +1,51 @@
+{
+  "format": "taiji-active-readout-registry-canary-v1",
+  "version": 1,
+  "status": "passed",
+  "can_promote": false,
+  "checkpoint": "checkpoints\\seed_corpus.pt",
+  "parent_checkpoint_digest": "a0e726524c739cbe83051e12e348b76f04214933bb82c94802c7aa67159b1ab4",
+  "active_checkpoint_digest": "353c4a06127d540dd7233853d08f068feb2a86ed17a9f5cc18d133b3c69346c3",
+  "checks": {
+    "registry_metadata_has_owner_parent_boundary_and_digest": true,
+    "active_branch_starts_from_protected_readout": true,
+    "active_training_changes_only_active_readout": true,
+    "active_registry_is_checkpointed": true,
+    "active_registry_fresh_process_round_trip": true,
+    "active_generation_uses_active_owner": true,
+    "active_generation_output_round_trips": true,
+    "missing_active_registry_fails_closed": true
+  },
+  "registry": {
+    "registered": {
+      "scope": "active",
+      "owner": "predictive_readout.active",
+      "mutable": true,
+      "parent_checkpoint_digest": "619b940196c076742de25a253f4d5efac8bca526803e8f8f21fa14984312fa8f",
+      "boundary_digest": "704f53dfbec603338d4e75ad0a68a0b51b5d92ff929dcc7072452f9eb868912c",
+      "readout_digest": "249427ae1fce3fcaa89c55c00248920c11660e4ddba7d3d9ebe364737bf9675e"
+    },
+    "after_training": {
+      "scope": "active",
+      "owner": "predictive_readout.active",
+      "mutable": true,
+      "parent_checkpoint_digest": "619b940196c076742de25a253f4d5efac8bca526803e8f8f21fa14984312fa8f",
+      "boundary_digest": "704f53dfbec603338d4e75ad0a68a0b51b5d92ff929dcc7072452f9eb868912c",
+      "readout_digest": "0be1a79e98c9b06a061e79637e5e7ba8f31bd4e825a68fbdc1000428e94376fc"
+    },
+    "restored": {
+      "scope": "active",
+      "owner": "predictive_readout.active",
+      "mutable": true,
+      "parent_checkpoint_digest": "619b940196c076742de25a253f4d5efac8bca526803e8f8f21fa14984312fa8f",
+      "boundary_digest": "704f53dfbec603338d4e75ad0a68a0b51b5d92ff929dcc7072452f9eb868912c",
+      "readout_digest": "0be1a79e98c9b06a061e79637e5e7ba8f31bd4e825a68fbdc1000428e94376fc"
+    }
+  },
+  "owner_audit": {
+    "protected_owner_digest_before": "55c7492b7ec5518adb95b8b9a03c3a87e19d2f81f04ff90abeeec0eb3fca6101",
+    "protected_owner_digest_after_active_training": "55c7492b7ec5518adb95b8b9a03c3a87e19d2f81f04ff90abeeec0eb3fca6101",
+    "protected_owners_unchanged": true,
+    "missing_registry_rejection": "requested readout generation is not attached to this Taiji instance"
+  }
+}
