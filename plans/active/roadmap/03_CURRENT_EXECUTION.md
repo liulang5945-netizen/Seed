@@ -54,7 +54,7 @@ Taiji 采用“站在巨人肩膀上”的双边界：原始 byte 输入继续�
 |---|---|---|---|---|
 | 0 | M0 CPU 五项基础能力真实性基线 | **已完成（M0-0/M0-1/B1/B2/B3/B4/B5/M0-3/M0-4）** | 数据合同、对照 evaluator、checkpoint preflight、基线报告 | 测量链可信且能保存/恢复；模型得分可以失败，但失败必须被如实记录 |
 | 1 | M1 Taiji foundation 训练管线与首次 CPU 训练 | **已完成（M0-0~M0-4/M1-32~M1-66c）** | 原生 trainer、数据流水线、B2 因果链（寻址→裁决→折叠→契约）、首个 joint checkpoint | M1-66c 收尾：B2 在三 seed 上通过全部 foundation 门禁 |
-| 2 | M2 世界—行动—语言后训练 | **当前进行（M2-2p：B2 训练—评估课程对齐）** | 世界预测、行动信用、F1 隔离读出、受控的旧/新语言保持 Gate，随后才是 ContentPlan/语言蒸馏和 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
+| 2 | M2 世界—行动—语言后训练 | **当前进行（M2-2u：三 seed identity generation foundation 复验）** | 世界预测、行动信用、F1 隔离读出、受控的旧/新语言保持 Gate，随后才是 ContentPlan/语言蒸馏和 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
 | 3 | M3 综合能力晋级与真实 Workbench 验证 | 待开始 | 独立评测套件、真实 Workbench longitudinal report、晋级 checkpoint | 至少一个真实任务族获得可重复净收益 |
 | 4 | M4 持续学习、自进化和结构成长 | 冻结等待 M3 | bounded replay 接线、多周期保持、结构候选与单项回滚 | 真实 checkpoint 连续学习收益大于固定容量/weight-only 对照 |
 | 5 | M5 Skill/MCP 数据飞轮与客户端身体 | 冻结等待 M4 | 知识内化、经验回流、IDE/Workbench 身体、客户端插件准入 | 认知收益与客户端执行收益可消融归因，权限和回滚闭合 |
@@ -94,7 +94,7 @@ M0 的零点已经足够可信，不能因 capability failed 继续扩大外围�
 
 checkpoint 已升级为 `taiji-native-v10`/state v7，joint course 升级为 v4：private-context mode、parent/current digest 和每个 sequence/replay phase 的 changed audit 进入 checkpoint、corpus digest、completion/eval report 与 strict resume contract；F1 phase 在 private context 未变化时 fail closed。v8/v9 模型在迁移边界复制旧 motor receptor map、把 private residual 置零，因此不改写旧 F1 表面；v1～v3 joint course 可以只读检查，但 in-place sequence/replay 必须拒绝，只有 `--continue-from` 才会创建新 v4 private-context course。定向回归已验证 private context 会增长、predictor-only 下 shared fabric/F4/F2 不写、v8/v9 roundtrip、v3 resume 拒绝和显式 continuation；这一结果不等于能力 Gate 或三 seed F5 通过。
 
-当前唯一下一步是**M2-2h clean preflight**：从同一 v3 seed 11 predictor-only parent 以 `--continue-from --freeze-sequence-fabric` 创建 v4 private-context parent，只做 in-process 与全新 Python `--resume --eval-only` 的 checkpoint/报告交叉核验。预检必须同时证明 mode/digest/phase plan 一致、private context 尚未被训练时 audit 正确、shared fabric 与行动/记忆 readout 未写、old/new BPB 与 B2/B4 均与 parent 一致、`checkpoint_read_only=true`；通过前不允许运行 1 MiB course 或扩大 seed。
+M2-2h clean preflight 已完成；本段保留其历史边界。当前唯一下一步见第 6 节执行流水末条。该预检曾要求从同一 v3 seed 11 predictor-only parent 以 `--continue-from --freeze-sequence-fabric` 创建 v4 private-context parent，并同时证明 mode/digest/phase plan 一致、private context 尚未被训练时 audit 正确、shared fabric 与行动/记忆 readout 未写、old/new BPB 与 B2/B4 均与 parent 一致、`checkpoint_read_only=true`。
 
 本步明确禁止：重训或覆盖既有 M2-0/M2-2g checkpoint、修改已经通过的 identity/B2 因果链、把 provider/ContentPlan/IDE 接入 F5 评估，或用同一语料伪装 phase-B 新能力。不得在这一 slice 同时调学习率、重放、Gate 或 shared fabric；先证明 private context 的所有权、可保存性和隔离性，再测训练收益。M2-2 只有在三 seed 上 old 与 new 两套留出指标均不退化、checkpoint 可 fresh-process 恢复且 holdout/retention 始终只读时才闭合；否则按证据修训练信号，而不是回退到已经排除的「F2 覆盖了 F1 权重」或“缺少 replay”解释。
 
@@ -481,7 +481,13 @@ M1-64 已完成，B2 在真实 foundation 规模上被判定为**记忆能力不
 
 **M2-2o seed 11 五项 child-bound canary 完成（20260905）**：全新 Python 进程从 isolated organ-only child 运行 B1～B5，报告为 `reports/taiji_m2o_seed11_child_foundation_canary_20260905.json`，checkpoint gate `passed`、所有 score `holdout_updates=0`。B3 通过：transition error `3.622080e-8→8.186603e-9`；B1 因 organ-only course 未改变 F1、相对 continuation parent 持平而为 failed；B2 recall `0.505` 与 frozen/simple-rule 持平；B4 `1.0` 与 frozen parent 持平；B5 仍 `-0.262874`。这不是 checkpoint/evaluator 故障，而是 child 尚未在 B2/B4 形成新增净收益，B5 仍有遗忘。**M2-2p 唯一下一步**：审计并统一 B2 的正式 delayed/interference foundation corpus 与 joint trainer 的实际 memory course，先在 seed 11 做同一课程的可恢复补训/复评，不扩展 seed 或外围范围。
 
-**M2-2p 课程错位已定位（20260905）**：正式 evaluator 的 B2 使用 `build_foundation_delayed_memory_corpus()`（含 delayed/interference foundation 样本），而 `scripts/training/train_taiji_joint.py` 的 `memory` phase 仍使用 `build_memory_corpus(count=1000)` generic course；两者不是同一 corpus，故不能把 memory phase 的更新归因到 B2 formal holdout。下一步将让 trainer 显式选择并内容寻址 formal B2 course，同时保留 generic course 作为独立旧对照，避免静默改变既有 checkpoint 语义。
+**M2-2p 课程错位已定位并完成修正（20260905）**：正式 evaluator 的 B2 使用 `build_foundation_delayed_memory_corpus()`（含 delayed/interference foundation 样本），而 `scripts/training/train_taiji_joint.py` 的 `memory` phase 仍使用 `build_memory_corpus(count=1000)` generic course；两者不是同一 corpus，故不能把 memory phase 的更新归因到 B2 formal holdout。trainer 现支持显式 `--memory-course foundation`，并把 formal course 选择写入 report；generic course 仍保留为独立旧对照，避免静默改变既有 checkpoint 语义。由此进入下一片 identity generation 验证。
+
+**M2-2s 正式 identity generation course 完成（20260905）**：在 `f235f77` 修复联合训练指标口径后，从原始 seed 11 M2-F5 private-context child 继续训练，使用 formal B2 delayed/interference course，把 identity organ 从 `128 → 512` 扩展；增长事件写入 `taiji-native-identity-growth-v1` lineage，保留旧 `128` 个槽位并新增 `384` 个 active-generation 槽位。训练报告 `reports/taiji_m2s_seed11_identity_generation_20260905.json` 为 `completed`：B2 memory holdout/retention `0.505/0.54 → 0.995/0.985`，sequence/world/goal/protected sequence 指标逐位保持，`holdout_updates=0`。联合训练的 B2 指标现正确读取 formal holdout 与 retention 两个不同分区，不再把 holdout 误报为 retention。全新 Python 的独立 B2 报告 `reports/taiji_m2s_seed11_b2_active_generation_20260905.json` 进一步得到 active-scope holdout `1.0`、retention `0.995`、status `passed`；active 代际关闭旧 generation fallback，四个干扰符仍被执行，score 前后 checkpoint 不变。
+
+**M2-2t seed 11 五项 child-bound canary 完成（20260905）**：全新 Python 对 `m2s` child 运行 B1～B5 foundation child-bound 复评，报告 `reports/taiji_m2t_seed11_child_foundation_canary_20260905.json` 的 B2 为 `passed`（recall `1.0`、retention `0.995`、memory/identity lesion 分别为 `0.5/0.505`、`holdout_updates=0`）。B1 `4.288321` 与父模型持平、B3 `3.622080e-08` 与父模型持平、B4 `1.0` 与父模型持平、B5 `-0.262874` 保持既有失败，均没有因结构增长回归；因此整体仍 `failed`，不能把单 seed B2 结果升级为 foundation 五项通过。独立 checkpoint round-trip 已验证容量 `512`、active 起点 `128`、growth history 完整且模型 payload digest 一致。过程中发现并修复本报告生成命令的字面量换行问题，所有本轮新增 JSON 报告均已重新解析校验。
+
+**M2-2u 唯一下一步**：从 seed 29 与 seed 47 各自原始 M2-F5 private-context child（不得从已污染的 organ-only 或 seed 11 child 继续），使用与 M2-2s 完全相同的 formal B2 course、`128 → 512` identity generation、`--training-phases memory`、`learn_fabric=false` 和 fresh-process checkpoint 复核，随后运行同一五项 child-bound canary。只有两 seed 都通过 active-generation B2 的 holdout、retention、memory/identity lesion、只读和 round-trip 条件，才把 identity generation 提交到三 seed B2 聚合；任何一 seed 失败都只根据其具体证据调整容量/写入边界，不进入 ContentPlan、provider、Workbench、客户端或 CUDA。
 
 ## 7. M2～M8 的开发日程与外围任务安置
 
