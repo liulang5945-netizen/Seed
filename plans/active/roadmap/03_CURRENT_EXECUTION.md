@@ -54,7 +54,7 @@ Taiji 采用“站在巨人肩膀上”的双边界：原始 byte 输入继续�
 |---|---|---|---|---|
 | 0 | M0 CPU 五项基础能力真实性基线 | **已完成（M0-0/M0-1/B1/B2/B3/B4/B5/M0-3/M0-4）** | 数据合同、对照 evaluator、checkpoint preflight、基线报告 | 测量链可信且能保存/恢复；模型得分可以失败，但失败必须被如实记录 |
 | 1 | M1 Taiji foundation 训练管线与首次 CPU 训练 | **已完成（M0-0~M0-4/M1-32~M1-66c）** | 原生 trainer、数据流水线、B2 因果链（寻址→裁决→折叠→契约）、首个 joint checkpoint | M1-66c 收尾：B2 在三 seed 上通过全部 foundation 门禁 |
-| 2 | M2 世界—行动—语言后训练 | **当前进行（M2-2n：child 器官补训）** | 世界预测、行动信用、F1 隔离读出、受控的旧/新语言保持 Gate，随后才是 ContentPlan/语言蒸馏和 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
+| 2 | M2 世界—行动—语言后训练 | **当前进行（M2-2o：seed 11 child 五项复评）** | 世界预测、行动信用、F1 隔离读出、受控的旧/新语言保持 Gate，随后才是 ContentPlan/语言蒸馏和 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
 | 3 | M3 综合能力晋级与真实 Workbench 验证 | 待开始 | 独立评测套件、真实 Workbench longitudinal report、晋级 checkpoint | 至少一个真实任务族获得可重复净收益 |
 | 4 | M4 持续学习、自进化和结构成长 | 冻结等待 M3 | bounded replay 接线、多周期保持、结构候选与单项回滚 | 真实 checkpoint 连续学习收益大于固定容量/weight-only 对照 |
 | 5 | M5 Skill/MCP 数据飞轮与客户端身体 | 冻结等待 M4 | 知识内化、经验回流、IDE/Workbench 身体、客户端插件准入 | 认知收益与客户端执行收益可消融归因，权限和回滚闭合 |
@@ -477,6 +477,8 @@ M1-64 已完成，B2 在真实 foundation 规模上被判定为**记忆能力不
 
 **M2-2n isolated organ-only course 完成（20260905）**：从未污染的原始 v4 private-context child 重跑 `memory→world→goal`，报告为 `reports/taiji_m2n_seed11_organ_isolated_20260905.json`。checkpoint `status=completed`、`global_step=3000`、`holdout_updates=0`；memory holdout/retention `0.87→0.87`，world error `3.622080e-8→8.186603e-9`，goal `1.0→1.0`，protected/F1 sequence 指标逐位保持。`sequence_fabric_contract` parent/final 相同，memory/world/goal 三个 phase audit 全部 preserved，predictive context 也保持不变；因此该 child 满足结构隔离和可恢复训练边界，但 B2 没有新增净收益，尚不能晋级。**M2-2n 唯一下一步**：由全新 Python 进程恢复该 `last.pt` 做 `eval-only` 和 seed 11 的五项 child-bound measurement，确认 checkpoint digest、只读性与复评结果一致后再决定是否扩展 seed 29/47。
 
+**M2-2n fresh-process eval-only 完成（20260905）**：全新 Python 进程从 `output/taiji-m2n-seed11-organ-isolated-20260905/last.pt` 恢复，报告为 `reports/taiji_m2n_seed11_organ_isolated_eval_20260905.json`；checkpoint digest 为 `1cbb6139…6dfe6a`，与训练报告一致，`checkpoint_read_only=true`。sequence `4.2883208/4.2959882 BPB`、memory `0.87`、world `8.186603e-9`、goal `1.0` 逐项一致，shared fabric parent/current 相同、三个 phase audit preserved。恢复合同通过，但这仍只是单 seed eval-only，不等于五项 child Gate 通过。**M2-2o 唯一下一步**：在全新 Python 进程中运行 seed 11 的五项 child-bound evaluator，记录单 seed 的 B1～B5 结果和 read-only/digest 证据；不得把单 seed canary 聚合为三 seed 晋级。
+
 ## 7. M2～M8 的开发日程与外围任务安置
 
 ### M2：世界—行动—语言后训练
@@ -570,6 +572,7 @@ CI 不是最后才运行的支线：每个 slice 都运行相关 pytest/lint/typ
 |---|---|
 | 2026-09-05 | M2-2n seed 11 首次补训因 goal cue 写入 shared fabric 被判为不可晋级；根因已修复为显式 `learn_fabric=false` 与非 sequence phase audit，并从原始 v4 child 重跑。 |
 | 2026-09-05 | M2-2n isolated organ-only course 通过结构边界：shared fabric parent/final 相同，memory 保持、world 改善、goal 保持；尚无 B2 新增净收益，下一步做 fresh-process 五项 child-bound 复评。 |
+| 2026-09-05 | M2-2n fresh-process eval-only 通过：seed 11 checkpoint digest、十项终值指标、只读性、shared fabric 隔离均与训练报告一致；下一步做单 seed 五项 child-bound 复评。 |
 | 2026-09-05 | M2-2n 补训前置发现并修复 `JointTrainingRun` 每步写 checkpoint 的性能问题；旧运行安全停在 memory `531/1000`，将从可恢复 `last.pt` 继续。 |
 | 2026-09-05 | M2-2m 统一五项 child foundation report 完成：B1 通过；B2/B3/B4 未形成相对冻结父模型的新增净收益；B5 replay 三 seed 均改善 no-replay 但最差 BWT `-0.262874`，整体 failed。下一步收束为从 child 进行 `memory→world→goal` 器官补训。 |
 | 2026-09-05 | M2-2l 真实三 seed B5 continuation 完成：replay 相对 no-replay 的 BWT 增益三 seed 均为正，但最差 replay BWT 为 `-0.262874`，仍未超过零基线；B5 保持 failed，下一步改 continuation 更新规则/容量分配。M2-2m 接入受 provenance 校验的 B1 report reuse，准备生成统一五项 child foundation report。 |
