@@ -34,9 +34,7 @@ def validate_episodic_learning_target(name: str, target: str) -> None:
 
 def _validate_event_component_gains(name: str, gains: tuple[float, ...]) -> None:
     if len(gains) != len(EPISODIC_EVENT_COMPONENTS):
-        raise ValueError(
-            f"{name} must provide one gain per episodic event component"
-        )
+        raise ValueError(f"{name} must provide one gain per episodic event component")
     if any(not math.isfinite(float(value)) or float(value) < 0.0 for value in gains):
         raise ValueError(f"{name} must be finite and non-negative")
     if sum(float(value) for value in gains) <= 0.0:
@@ -56,6 +54,11 @@ class CapacityPolicy:
     region_ratios: tuple[float, ...] = (1.0, 0.75, 0.50)
     synapse_fan_in_ratio: float = 0.1875
     motor_fan_in_ratio: float = 0.375
+    # The F1-only temporal residual is capacity-planned separately from the
+    # shared cortical fabric and F4 motor.  It is a ratio of the first cortical
+    # region so scaling a substrate never turns a sparse predictive context
+    # into an accidental dense one.
+    predictive_context_fan_in_ratio: float = 0.09375
     memory_units_ratio: float = 1.50
     memory_fan_in_ratio: float = 0.25
     memory_meta_ratio: float = 0.375
@@ -72,6 +75,7 @@ class CapacityPolicy:
         for name in (
             "synapse_fan_in_ratio",
             "motor_fan_in_ratio",
+            "predictive_context_fan_in_ratio",
             "memory_units_ratio",
             "memory_fan_in_ratio",
             "memory_meta_ratio",
@@ -100,6 +104,7 @@ class CapacityPolicy:
             region_ratios=tuple(float(size) / width for size in config.region_sizes),
             synapse_fan_in_ratio=float(config.synapse_fan_in) / width,
             motor_fan_in_ratio=float(config.motor_fan_in) / width,
+            predictive_context_fan_in_ratio=(float(config.predictive_context_fan_in) / width),
             memory_units_ratio=float(config.memory_units) / width,
             memory_fan_in_ratio=float(config.memory_fan_in) / width,
             memory_meta_ratio=float(config.memory_meta_dim) / width,
@@ -125,6 +130,10 @@ class CapacityPolicy:
         values.setdefault("memory_time_ratio", cls.memory_time_ratio)
         values.setdefault("memory_episode_ratio", cls.memory_episode_ratio)
         values.setdefault("identity_capacity_ratio", cls.identity_capacity_ratio)
+        values.setdefault(
+            "predictive_context_fan_in_ratio",
+            cls.predictive_context_fan_in_ratio,
+        )
         return cls(**values)
 
 
@@ -190,6 +199,10 @@ class TaijiConfig:
     region_sizes: tuple[int, ...] = (128, 96, 64)
     synapse_fan_in: int = 24
     motor_fan_in: int = 48
+    # F1 has a private sparse temporal context.  The recurrent residual is
+    # deliberately sized by a visible capacity field rather than an implicit
+    # multiple of motor width, so growth remains auditable under each profile.
+    predictive_context_fan_in: int = 12
 
     memory_units: int = 192
     memory_fan_in: int = 32
@@ -249,6 +262,10 @@ class TaijiConfig:
     # The F1 readout has an independent RNG stream so adding it never shifts
     # existing fabric, motor, memory or identity topology for a fixed seed.
     predictive_readout_seed_offset: int = 3137
+    # M2-2h gives F1 a second independent stream for its private cortical
+    # receptor map and temporal residual.  It must never perturb the shared
+    # fabric or F4 topology when added to an existing lineage.
+    predictive_context_seed_offset: int = 4219
     bottom_up_gain: float = 1.00
     recurrent_gain: float = 0.55
     top_down_gain: float = 0.30
@@ -262,6 +279,8 @@ class TaijiConfig:
     consolidation_read_gain: float = 1.00
 
     predictive_learning_rate: float = 0.025
+    predictive_context_learning_rate: float = 0.025
+    predictive_context_recurrent_gain: float = 0.20
     transition_learning_rate: float = 0.012
     motor_learning_rate: float = 0.10
     bias_learning_rate: float = 0.025
@@ -296,9 +315,7 @@ class TaijiConfig:
     memory_novelty_gain: float = 0.70
     memory_reward_gain: float = 0.30
     memory_event_component_gains: tuple[float, ...] = DEFAULT_EPISODIC_EVENT_COMPONENT_GAINS
-    memory_association_component_gains: tuple[float, ...] = (
-        DEFAULT_EPISODIC_EVENT_COMPONENT_GAINS
-    )
+    memory_association_component_gains: tuple[float, ...] = DEFAULT_EPISODIC_EVENT_COMPONENT_GAINS
     memory_association_event_target_mix: float = 1.0
     replay_memory_learning_scale: float = 0.25
 
@@ -356,6 +373,7 @@ class TaijiConfig:
         if (
             self.synapse_fan_in <= 0
             or self.motor_fan_in <= 0
+            or self.predictive_context_fan_in <= 0
             or self.memory_fan_in <= 0
             or self.lateral_fan_in <= 0
         ):
@@ -373,12 +391,18 @@ class TaijiConfig:
             raise ValueError("consolidation and lateral banks require distinct random streams")
         if self.predictive_readout_seed_offset <= 0:
             raise ValueError("predictive_readout_seed_offset must select a positive random stream")
-        if self.predictive_readout_seed_offset in {
+        if self.predictive_context_seed_offset <= 0:
+            raise ValueError("predictive_context_seed_offset must select a positive random stream")
+        seed_offsets = {
             self.lateral_seed_offset,
             self.consolidation_seed_offset,
-        }:
+            self.predictive_readout_seed_offset,
+            self.predictive_context_seed_offset,
+        }
+        if len(seed_offsets) != 4:
             raise ValueError(
-                "predictive readout, consolidation and lateral banks require distinct random streams"
+                "lateral, consolidation, predictive readout and predictive context "
+                "banks require distinct random streams"
             )
         if self.motor_fan_in > 2 * sum(self.region_sizes):
             raise ValueError("motor_fan_in cannot exceed the available cortical state")
@@ -426,6 +450,8 @@ class TaijiConfig:
             "homeostasis_rate",
             "inhibition_gain",
             "predictive_learning_rate",
+            "predictive_context_learning_rate",
+            "predictive_context_recurrent_gain",
             "transition_learning_rate",
             "lateral_learning_rate",
             "motor_learning_rate",
@@ -463,9 +489,10 @@ class TaijiConfig:
             "memory_association_component_gains",
             self.memory_association_component_gains,
         )
-        if not math.isfinite(float(self.memory_association_event_target_mix)) or not 0.0 <= float(
-            self.memory_association_event_target_mix
-        ) <= 1.0:
+        if (
+            not math.isfinite(float(self.memory_association_event_target_mix))
+            or not 0.0 <= float(self.memory_association_event_target_mix) <= 1.0
+        ):
             raise ValueError("memory_association_event_target_mix must be finite and in [0, 1]")
         if self.synapse_decay < 0.0:
             raise ValueError("synapse_decay cannot be negative")
@@ -590,6 +617,7 @@ class TaijiConfig:
             region_sizes=tuple(size * scale for size in base.region_sizes),
             synapse_fan_in=base.synapse_fan_in * scale,
             motor_fan_in=base.motor_fan_in * scale,
+            predictive_context_fan_in=base.predictive_context_fan_in * scale,
             memory_units=base.memory_units * scale,
             memory_fan_in=base.memory_fan_in * scale,
             memory_readout_fan_in=base.memory_readout_fan_in * scale,
@@ -665,6 +693,10 @@ class TaijiConfig:
                         1,
                         int(round(primary_width * capacity.motor_fan_in_ratio)),
                     ),
+                    "predictive_context_fan_in": max(
+                        1,
+                        int(round(primary_width * capacity.predictive_context_fan_in_ratio)),
+                    ),
                     "memory_units": aligned_dimension(
                         primary_width * capacity.memory_units_ratio,
                         minimum=max(2, dimension_alignment),
@@ -691,11 +723,7 @@ class TaijiConfig:
                     ),
                     "identity_organ_capacity": max(
                         1,
-                        int(
-                            round(
-                                primary_width * capacity.identity_capacity_ratio
-                            )
-                        ),
+                        int(round(primary_width * capacity.identity_capacity_ratio)),
                     ),
                     "lateral_fan_in": max(
                         1,
@@ -749,6 +777,10 @@ class TaijiConfig:
 
         motor = self.alphabet_size * self.motor_context_dim + self.alphabet_size
         predictive_readout = self.alphabet_size * self.motor_context_dim + self.alphabet_size
+        predictive_context = self.motor_context_dim * min(
+            self.predictive_context_fan_in,
+            self.motor_context_dim if self.motor_context_dim <= 1 else self.motor_context_dim - 1,
+        )
         readout_width = min(self.memory_readout_fan_in, self.memory_meta_dim)
         readout_outputs = (
             2 * self.alphabet_size
@@ -772,7 +804,7 @@ class TaijiConfig:
             # a read-only outcome prediction channel.
             identity += self.identity_organ_capacity * self.alphabet_size
             identity += self.identity_organ_capacity * self.alphabet_size
-        return int(fabric + motor + predictive_readout + memory + identity)
+        return int(fabric + motor + predictive_context + predictive_readout + memory + identity)
 
     @property
     def cortical_context_dim(self) -> int:

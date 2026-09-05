@@ -94,6 +94,8 @@ def test_learning_is_local_masked_and_has_no_autograd_parameters() -> None:
         *model.fabric.transitions,
         *model.fabric.laterals,
         model.motor.synapses,
+        model.predictive_context.recurrent,
+        model.predictive_readout.synapses,
         model.memory.cue_encoder,
         model.memory.action_encoder,
         model.memory.outcome_encoder,

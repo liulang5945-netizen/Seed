@@ -103,12 +103,14 @@ def main() -> int:
         "--freeze-sequence-fabric",
         action="store_true",
         help=(
-            "Train the dedicated F1 predictive readout while preserving shared "
-            "fabric parameters; requires a sequence phase."
+            "Train F1's dedicated predictive readout and private temporal context "
+            "while preserving shared fabric parameters; requires a sequence phase."
         ),
     )
     parser.add_argument("--replay-corpus", nargs="+", type=Path)
-    parser.add_argument("--replay-profile", choices=("smoke", "pilot", "foundation"), default="pilot")
+    parser.add_argument(
+        "--replay-profile", choices=("smoke", "pilot", "foundation"), default="pilot"
+    )
     parser.add_argument("--replay-partition-seed", type=int, default=11)
     parser.add_argument("--replay-epochs", type=int, default=1)
     parser.add_argument(
@@ -151,16 +153,23 @@ def main() -> int:
     # only the explicit flag creates the M2-2g predictor-only intervention.
     sequence_fabric_learning = False if args.freeze_sequence_fabric else None
 
-    count = args.count if args.count is not None else {
-        "smoke": 8,
-        "pilot": 64,
-        "foundation": 1_000,
-    }[args.profile]
-    checkpoint_interval = args.checkpoint_interval or {
-        "smoke": 4,
-        "pilot": 16,
-        "foundation": 256,
-    }[args.profile]
+    count = (
+        args.count
+        if args.count is not None
+        else {
+            "smoke": 8,
+            "pilot": 64,
+            "foundation": 1_000,
+        }[args.profile]
+    )
+    checkpoint_interval = (
+        args.checkpoint_interval
+        or {
+            "smoke": 4,
+            "pilot": 16,
+            "foundation": 256,
+        }[args.profile]
+    )
     if args.replay_memory_count is not None and args.replay_memory_count != count:
         parser.error(
             "--replay-memory-count must equal the current memory course count; "
@@ -169,17 +178,12 @@ def main() -> int:
     if args.protected_corpus is not None:
         if args.protected_profile is None or args.protected_partition_seed is None:
             parser.error(
-                "--protected-corpus requires --protected-profile and "
-                "--protected-partition-seed"
+                "--protected-corpus requires --protected-profile and " "--protected-partition-seed"
             )
         if args.partition_seed is None:
-            parser.error(
-                "M2 F5 phase-B construction requires --phase-b-partition-seed"
-            )
+            parser.error("M2 F5 phase-B construction requires --phase-b-partition-seed")
         if args.training_phases is None:
-            parser.error(
-                "M2 F5 requires an explicit --training-phases plan; begin with sequence"
-            )
+            parser.error("M2 F5 requires an explicit --training-phases plan; begin with sequence")
         if args.replay_corpus is not None:
             parser.error(
                 "with --protected-corpus, replay is the exact protected phase-A course; "
@@ -196,9 +200,7 @@ def main() -> int:
             partition_seed=args.partition_seed,
             exclude_dataset=protected_dataset,
         )
-        replay_dataset = (
-            protected_dataset if "replay" in args.training_phases else None
-        )
+        replay_dataset = protected_dataset if "replay" in args.training_phases else None
     else:
         protected_dataset = None
         dataset = FoundationTrainingDataset.from_jsonl(
@@ -213,13 +215,15 @@ def main() -> int:
                 profile=args.replay_profile,
                 partition_seed=args.replay_partition_seed,
             )
-    if args.training_phases is not None and "replay" in args.training_phases and replay_dataset is None:
+    if (
+        args.training_phases is not None
+        and "replay" in args.training_phases
+        and replay_dataset is None
+    ):
         parser.error("the replay phase requires --protected-corpus or --replay-corpus")
     memory_corpus = build_memory_corpus(count=count)
     replay_memory_corpus = (
-        build_memory_corpus(count=count)
-        if args.replay_memory_count is not None
-        else None
+        build_memory_corpus(count=count) if args.replay_memory_count is not None else None
     )
     if (
         args.training_phases is not None

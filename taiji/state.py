@@ -209,6 +209,11 @@ class TaijiState:
     regions: tuple[RegionState, ...]
     memory: MemoryState
     motor_context: torch.Tensor
+    # The private F1 residual records the prior context it actually consumed.
+    # Keeping this eligibility trace in state makes its local update causal and
+    # allows a checkpoint to resume a predictive episode without inventing a
+    # hidden temporal history.
+    predictive_context_trace: torch.Tensor
     motor_probabilities: torch.Tensor
     # The context space is shared and fixed, but the probabilities belong to
     # one explicit consumer.  This prevents a predictive F1 tick from being
@@ -226,6 +231,7 @@ class TaijiState:
             regions=tuple(region.clone() for region in self.regions),
             memory=self.memory.clone(),
             motor_context=self.motor_context.detach().clone(),
+            predictive_context_trace=self.predictive_context_trace.detach().clone(),
             motor_probabilities=self.motor_probabilities.detach().clone(),
             readout_kind=str(self.readout_kind),
             last_symbol=None if self.last_symbol is None else int(self.last_symbol),
@@ -243,6 +249,7 @@ class TaijiState:
             "regions": [region.to_payload() for region in self.regions],
             "memory": self.memory.to_payload(),
             "motor_context": self.motor_context.detach().cpu().clone(),
+            "predictive_context_trace": self.predictive_context_trace.detach().cpu().clone(),
             "motor_probabilities": self.motor_probabilities.detach().cpu().clone(),
             "readout_kind": str(self.readout_kind),
             "last_symbol": self.last_symbol,
@@ -256,6 +263,13 @@ class TaijiState:
 
     @classmethod
     def from_payload(cls, payload: Mapping[str, Any], *, device: torch.device | str) -> TaijiState:
+        motor_context = payload["motor_context"].detach().to(device).clone()
+        trace_payload = payload.get("predictive_context_trace")
+        predictive_context_trace = (
+            torch.zeros_like(motor_context)
+            if trace_payload is None
+            else trace_payload.detach().to(device).clone()
+        )
         return cls(
             version=int(payload["version"]),
             tick=int(payload["tick"]),
@@ -264,7 +278,8 @@ class TaijiState:
                 RegionState.from_payload(region, device=device) for region in payload["regions"]
             ),
             memory=MemoryState.from_payload(payload["memory"], device=device),
-            motor_context=payload["motor_context"].detach().to(device).clone(),
+            motor_context=motor_context,
+            predictive_context_trace=predictive_context_trace,
             motor_probabilities=(payload["motor_probabilities"].detach().to(device).clone()),
             # v8 checkpoints predate the F1/F4 split. Their state belongs to
             # the only available owner, ByteMotor, so preserve that semantics.

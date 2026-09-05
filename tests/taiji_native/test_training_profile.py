@@ -18,6 +18,7 @@ def test_training_profile_scales_regions_dimensions_and_edge_density() -> None:
     assert profile.region_sizes > default.region_sizes
     assert profile.synapse_fan_in > default.synapse_fan_in
     assert profile.motor_fan_in > default.motor_fan_in
+    assert profile.predictive_context_fan_in > default.predictive_context_fan_in
     assert profile.memory_units > default.memory_units
     assert profile.memory_fan_in > default.memory_fan_in
     assert profile.memory_time_dim > default.memory_time_dim
