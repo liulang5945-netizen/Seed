@@ -1,0 +1,33 @@
+{
+  "format": "taiji-foundation-child-measurement-v1",
+  "ability_id": "b2_delayed_memory",
+  "scope": "single_seed_active_generation_canary",
+  "checkpoint": "output\\taiji-m2u-seed29-identity-generation-20260905\\last.pt",
+  "measurement": {
+    "ability_id": "b2_delayed_memory",
+    "status": "passed",
+    "primary_metric": "recall_accuracy",
+    "metric_direction": "higher_is_better",
+    "metric_value": 0.995,
+    "baseline_metrics": {
+      "frozen_parent": 0.505,
+      "hash_only": 0.47,
+      "identity_lesion": 0.505,
+      "memory_lesion": 0.505,
+      "random": 0.5,
+      "simple_rule": 0.505
+    },
+    "sample_counts": {
+      "holdout": 200,
+      "retention": 200,
+      "train": 1000
+    },
+    "holdout_updates": 0,
+    "evidence": [
+      "seed_metrics=[{\"checkpoint_digest\": \"0497d4fd1648733e2592b6172c09cf37564c33275a39df3534514f978bdad0ef\", \"frozen_parent\": 0.505, \"holdout_updates\": 0, \"identity_generation_scope\": \"active\", \"identity_lesion\": 0.505, \"memory_lesion\": 0.505, \"retention\": 0.975, \"retention_updates\": 0, \"seed\": 29, \"taiji\": 0.995, \"trained_child_checkpoint\": true}]",
+      "trained_child_checkpoint_evaluation=true",
+      "delayed_interference_symbols=[200, 201, 202, 203]",
+      "checkpoint_read_only=True"
+    ]
+  }
+}
