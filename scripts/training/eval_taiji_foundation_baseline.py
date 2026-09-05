@@ -51,6 +51,7 @@ from taiji.foundation_tasks import (  # noqa: E402
     WorldTransitionCorpus,
     WorldTransitionTask,
 )
+from taiji.foundation_training import _code_revision  # noqa: E402
 from taiji.internalization import content_digest  # noqa: E402
 
 DEFAULT_MANIFEST = PROJECT_ROOT / "plans" / "manifests" / "taiji_foundation_baseline_v1.json"
@@ -747,7 +748,10 @@ def main() -> int:
     ]
     result["capability_measurements"] = "; ".join(measured) if measured else "not_evaluated"
     result["profile"] = args.profile
-    result["model_tier"] = args.model_tier if b1_measurement is not None else None
+    result["model_tier"] = (
+        "joint-child-v4" if checkpoint_paths else args.model_tier if b1_measurement is not None else None
+    )
+    result["code_revision"] = _code_revision()
     result["checkpoint_evaluation"] = {
         "mode": bool(checkpoint_paths),
         "checkpoints": [

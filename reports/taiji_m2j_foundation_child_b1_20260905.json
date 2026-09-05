@@ -1,0 +1,126 @@
+{
+  "format": "taiji-foundation-evaluation-v1",
+  "manifest_digest": "c5f178d4e18018f5085c3f56d1ae6d7596df304aee975f81c12db3b72e7e74f8",
+  "checkpoint_gate_status": "passed",
+  "status": "not_evaluated",
+  "can_promote": false,
+  "failure_reasons": [
+    "b2_delayed_memory:not_evaluated",
+    "b3_world_transition:not_evaluated",
+    "b4_goal_action:not_evaluated",
+    "b5_continual_learning:not_evaluated"
+  ],
+  "measurements": [
+    {
+      "ability_id": "b1_sequence_prediction",
+      "status": "passed",
+      "primary_metric": "bits_per_byte",
+      "metric_direction": "lower_is_better",
+      "metric_value": 4.383968737446336,
+      "baseline_metrics": {
+        "frozen_parent": 4.788621683409842,
+        "hash_only": 15.945552093652143,
+        "random": 8.005624549193879,
+        "simple_rule": 5.937710796122961
+      },
+      "sample_counts": {
+        "holdout": 131072,
+        "retention": 131072,
+        "train": 1048576
+      },
+      "holdout_updates": 0,
+      "evidence": [
+        "seed_metrics=[{\"checkpoint_digest\": \"9533f47665bf73c8ea4941be87d0c13cce339650e8c3786b1478c0b9f02decef\", \"dataset_digest\": \"99ab9846193ccc2897d74c96be8245784f213ac7bc5a9886c928e38bf906132e\", \"frozen_parent\": 4.794850899468133, \"holdout_updates\": 0, \"parameter_count\": 193586, \"protected_dataset_digest\": \"8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038\", \"retention\": 4.295988190247012, \"seed\": 11, \"taiji\": 4.288320818766926, \"trained_child_checkpoint\": true}, {\"checkpoint_digest\": \"fee2c05100e73a85f5d718da533d5ef817134ecce7f824f9eaccd17435d4f7ad\", \"dataset_digest\": \"a01a0206365ca30e132095350d59bc04cea39e09ee86b33681bab0f45663499d\", \"frozen_parent\": 4.909905049572527, \"holdout_updates\": 0, \"parameter_count\": 193586, \"protected_dataset_digest\": \"b193f4e25dee8b88c3bab71d3fd51a79dbfa973b972af37681334cfa32d13408\", \"retention\": 4.357845611977233, \"seed\": 29, \"taiji\": 4.383968737446336, \"trained_child_checkpoint\": true}, {\"checkpoint_digest\": \"8a71b0e6e522a754ff73e990c4b20756fc0845b0261ec30abe73bfbc5bdfb3dc\", \"dataset_digest\": \"070f0584743edce90e3b6685504cd097fe2423b10c218194231c6cf92d5f9eb6\", \"frozen_parent\": 4.788621683409842, \"holdout_updates\": 0, \"parameter_count\": 193586, \"protected_dataset_digest\": \"8ff929545031de2b082589b4927be641863744947802146f9767b1d14dc26a57\", \"retention\": 4.389392046977198, \"seed\": 47, \"taiji\": 4.373164453091312, \"trained_child_checkpoint\": true}]",
+        "trained_child_checkpoint_evaluation=true",
+        "native_model_checkpoint_is_read_only_during_score=true",
+        "strictly_beats_strongest_control=True"
+      ]
+    },
+    {
+      "ability_id": "b2_delayed_memory",
+      "status": "not_evaluated",
+      "primary_metric": "recall_accuracy",
+      "metric_direction": "higher_is_better",
+      "metric_value": null,
+      "baseline_metrics": {},
+      "sample_counts": {},
+      "holdout_updates": 0,
+      "evidence": [
+        "m0-1-contract-only; task runner pending"
+      ]
+    },
+    {
+      "ability_id": "b3_world_transition",
+      "status": "not_evaluated",
+      "primary_metric": "transition_error",
+      "metric_direction": "lower_is_better",
+      "metric_value": null,
+      "baseline_metrics": {},
+      "sample_counts": {},
+      "holdout_updates": 0,
+      "evidence": [
+        "m0-1-contract-only; task runner pending"
+      ]
+    },
+    {
+      "ability_id": "b4_goal_action",
+      "status": "not_evaluated",
+      "primary_metric": "success_rate",
+      "metric_direction": "higher_is_better",
+      "metric_value": null,
+      "baseline_metrics": {},
+      "sample_counts": {},
+      "holdout_updates": 0,
+      "evidence": [
+        "m0-1-contract-only; task runner pending"
+      ]
+    },
+    {
+      "ability_id": "b5_continual_learning",
+      "status": "not_evaluated",
+      "primary_metric": "backward_transfer",
+      "metric_direction": "higher_is_better",
+      "metric_value": null,
+      "baseline_metrics": {},
+      "sample_counts": {},
+      "holdout_updates": 0,
+      "evidence": [
+        "m0-1-contract-only; task runner pending"
+      ]
+    }
+  ],
+  "manifest_path": "plans\\manifests\\taiji_foundation_baseline_v1.json",
+  "contract_status": "validated",
+  "capability_measurements": "b1_sequence_prediction",
+  "profile": "foundation",
+  "model_tier": "joint-child-v4",
+  "code_revision": "22483a0401d73022f8d8ff9ccf1532a7a920fb38",
+  "checkpoint_evaluation": {
+    "mode": true,
+    "checkpoints": [
+      {
+        "seed": 11,
+        "path": "output\\taiji-m2-f5-seed11-private-context-20260905\\last.pt"
+      },
+      {
+        "seed": 29,
+        "path": "output\\taiji-m2-f5-seed29-private-context-20260905\\last.pt"
+      },
+      {
+        "seed": 47,
+        "path": "output\\taiji-m2-f5-seed47-private-context-20260905\\last.pt"
+      }
+    ],
+    "b1_dataset_digests": {
+      "11": "99ab9846193ccc2897d74c96be8245784f213ac7bc5a9886c928e38bf906132e",
+      "29": "a01a0206365ca30e132095350d59bc04cea39e09ee86b33681bab0f45663499d",
+      "47": "070f0584743edce90e3b6685504cd097fe2423b10c218194231c6cf92d5f9eb6"
+    },
+    "b1_protected_dataset_digests": {
+      "11": "8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038",
+      "29": "b193f4e25dee8b88c3bab71d3fd51a79dbfa973b972af37681334cfa32d13408",
+      "47": "8ff929545031de2b082589b4927be641863744947802146f9767b1d14dc26a57"
+    }
+  },
+  "report_written": true
+}
