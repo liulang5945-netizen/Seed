@@ -1,0 +1,116 @@
+{
+  "format": "taiji-native-joint-training-v1",
+  "version": 4,
+  "status": "evaluated",
+  "model_tier": "joint",
+  "corpus_digest": "f00704902dd5342e8f8fddc8e39109f1263303381efe6f14763a2036a23fdf7d",
+  "protected_dataset_digest": "8ff929545031de2b082589b4927be641863744947802146f9767b1d14dc26a57",
+  "training_phases": [
+    "sequence"
+  ],
+  "checkpoint_digest": "1f72ac56aa7179938de790c4bcc839d89d3835053a04f7842c1db7216e3c4e90",
+  "metrics": {
+    "sequence_holdout_bpb": 4.373164453091312,
+    "sequence_retention_bpb": 4.389392046977198,
+    "memory_holdout_recall": 0.87,
+    "memory_retention_recall": 0.87,
+    "world_holdout_error": 3.563332384715068e-08,
+    "world_retention_error": 3.563332384715068e-08,
+    "goal_holdout_success": 1.0,
+    "goal_retention_success": 1.0,
+    "protected_sequence_holdout_bpb": 4.378988190806959,
+    "protected_sequence_retention_bpb": 4.416274098091329
+  },
+  "checkpoint_read_only": true,
+  "sequence_readout_mode": "dedicated-predictive-v1",
+  "sequence_readout_contract": {
+    "parent": {
+      "action_motor_digest": "1615c032c59690fda25bb055d0f6106d23f81b35bcdc484b6c6d7286be1f89fa",
+      "memory_field_digest": "132eac0f90a53994b826cdeb28fcb99d164e5b3facfcab6f2f4aae3b2c4c43a2",
+      "identity_value_digest": "b9eec61d69e2e150cdfd801087a88c5fc29b78011c033238ab3f6ad4fd85ca99",
+      "predictive_context_digest": "fd2a562e224225abf60adecaaf732da203d5e7ce31b892abddc8933a002074eb",
+      "predictive_readout_digest": "6c6cfd454047b107596182f116a4cd273ec98bcb3df3ac5f17608082ae2e9706"
+    },
+    "current": {
+      "action_motor_digest": "1615c032c59690fda25bb055d0f6106d23f81b35bcdc484b6c6d7286be1f89fa",
+      "memory_field_digest": "132eac0f90a53994b826cdeb28fcb99d164e5b3facfcab6f2f4aae3b2c4c43a2",
+      "identity_value_digest": "b9eec61d69e2e150cdfd801087a88c5fc29b78011c033238ab3f6ad4fd85ca99",
+      "predictive_context_digest": "e2c34bd44d64c932ed95b54cd32bfaa72a552ab06f22a99494e2eb04e64f3443",
+      "predictive_readout_digest": "54c921a6876f6761f9a7725187d756f66ce86cd63bd177b378c1688418c98987"
+    },
+    "phase_checks": [
+      {
+        "epoch": 0,
+        "phase": "sequence",
+        "before": {
+          "action_motor_digest": "1615c032c59690fda25bb055d0f6106d23f81b35bcdc484b6c6d7286be1f89fa",
+          "memory_field_digest": "132eac0f90a53994b826cdeb28fcb99d164e5b3facfcab6f2f4aae3b2c4c43a2",
+          "identity_value_digest": "b9eec61d69e2e150cdfd801087a88c5fc29b78011c033238ab3f6ad4fd85ca99",
+          "predictive_context_digest": "fd2a562e224225abf60adecaaf732da203d5e7ce31b892abddc8933a002074eb",
+          "predictive_readout_digest": "6c6cfd454047b107596182f116a4cd273ec98bcb3df3ac5f17608082ae2e9706"
+        },
+        "after": {
+          "action_motor_digest": "1615c032c59690fda25bb055d0f6106d23f81b35bcdc484b6c6d7286be1f89fa",
+          "memory_field_digest": "132eac0f90a53994b826cdeb28fcb99d164e5b3facfcab6f2f4aae3b2c4c43a2",
+          "identity_value_digest": "b9eec61d69e2e150cdfd801087a88c5fc29b78011c033238ab3f6ad4fd85ca99",
+          "predictive_context_digest": "e2c34bd44d64c932ed95b54cd32bfaa72a552ab06f22a99494e2eb04e64f3443",
+          "predictive_readout_digest": "54c921a6876f6761f9a7725187d756f66ce86cd63bd177b378c1688418c98987"
+        },
+        "preserved": {
+          "action_motor_digest": true,
+          "memory_field_digest": true,
+          "identity_value_digest": true
+        }
+      }
+    ]
+  },
+  "sequence_only_keep_gate": {
+    "applies": true,
+    "readout_preserved": {
+      "action_motor_digest": true,
+      "memory_field_digest": true,
+      "identity_value_digest": true
+    },
+    "predictive_context_grew": true,
+    "memory_holdout_kept": true,
+    "memory_retention_kept": true,
+    "goal_holdout_kept": true,
+    "goal_retention_kept": true,
+    "passed": true
+  },
+  "metric_interval": 256,
+  "replay_memory_relation": null,
+  "replay_memory_learning_scale": 0.25,
+  "replay_memory_learning_targets": "all",
+  "code_revision": "56aaf88a07a147b756c56d2cb2c62130543b3155",
+  "continuation_source_checkpoint_digest": "101d0815c44308e7b14e1b727cdb9f48c0e78ffd3fe2c6d8887dd41b22e8dd9e",
+  "sequence_fabric_learning": false,
+  "sequence_fabric_contract": {
+    "parent": "a6659ade479f15c2887d48539e96ba92d39a98d3e1a4ba0a3ca46c5c03656b0f",
+    "current": "a6659ade479f15c2887d48539e96ba92d39a98d3e1a4ba0a3ca46c5c03656b0f",
+    "phase_checks": [
+      {
+        "epoch": 0,
+        "phase": "sequence",
+        "before": "a6659ade479f15c2887d48539e96ba92d39a98d3e1a4ba0a3ca46c5c03656b0f",
+        "after": "a6659ade479f15c2887d48539e96ba92d39a98d3e1a4ba0a3ca46c5c03656b0f",
+        "preserved": true
+      }
+    ]
+  },
+  "sequence_predictive_context_mode": "private-plastic-temporal-v1",
+  "sequence_predictive_context_contract": {
+    "parent": "fd2a562e224225abf60adecaaf732da203d5e7ce31b892abddc8933a002074eb",
+    "current": "e2c34bd44d64c932ed95b54cd32bfaa72a552ab06f22a99494e2eb04e64f3443",
+    "phase_checks": [
+      {
+        "epoch": 0,
+        "phase": "sequence",
+        "before": "fd2a562e224225abf60adecaaf732da203d5e7ce31b892abddc8933a002074eb",
+        "after": "e2c34bd44d64c932ed95b54cd32bfaa72a552ab06f22a99494e2eb04e64f3443",
+        "changed": true
+      }
+    ]
+  },
+  "report_path": "reports\\taiji_m2_f5_seed47_private_context_course_resume_20260905.json"
+}
