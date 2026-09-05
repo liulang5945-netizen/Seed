@@ -717,6 +717,66 @@ def _evaluate_loaded_b5(
     )
 
 
+def _reuse_b1_measurement(
+    path: Path,
+    *,
+    manifest: FoundationManifest,
+    checkpoints: Mapping[int, Path],
+    datasets: Mapping[int, FoundationTrainingDataset],
+) -> FoundationMeasurement:
+    """Reuse an immutable B1 child report only after checking its provenance."""
+
+    if not path.is_file():
+        raise ValueError(f"reused B1 report does not exist: {path}")
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if payload.get("format") != "taiji-foundation-evaluation-v1":
+        raise ValueError("reused B1 report format is not supported")
+    if payload.get("manifest_digest") != manifest.digest:
+        raise ValueError("reused B1 report manifest digest does not match")
+    if payload.get("checkpoint_gate_status") != "passed":
+        raise ValueError("reused B1 report checkpoint gate is not passed")
+    checkpoint_evaluation = payload.get("checkpoint_evaluation")
+    if not isinstance(checkpoint_evaluation, Mapping) or not checkpoint_evaluation.get("mode"):
+        raise ValueError("reused B1 report is not a checkpoint evaluation")
+    measurements = payload.get("measurements")
+    if not isinstance(measurements, list):
+        raise ValueError("reused B1 report is missing measurements")
+    b1_payload = next(
+        (
+            item
+            for item in measurements
+            if isinstance(item, Mapping) and item.get("ability_id") == "b1_sequence_prediction"
+        ),
+        None,
+    )
+    if not isinstance(b1_payload, Mapping):
+        raise ValueError("reused B1 report is missing the B1 measurement")
+    measurement = FoundationMeasurement.from_payload(b1_payload)
+    if measurement.status != "passed" or measurement.holdout_updates != 0:
+        raise ValueError("reused B1 report is not a passed read-only child measurement")
+    if not any("trained_child_checkpoint_evaluation=true" in item for item in measurement.evidence):
+        raise ValueError("reused B1 report is not a trained-child evaluation")
+    stored_checkpoints = {
+        int(item["seed"]): Path(item["path"])
+        for item in checkpoint_evaluation.get("checkpoints", [])
+        if isinstance(item, Mapping) and "seed" in item and "path" in item
+    }
+    if {
+        seed: str(path)
+        for seed, path in sorted(stored_checkpoints.items())
+    } != {seed: str(path) for seed, path in sorted(checkpoints.items())}:
+        raise ValueError("reused B1 report checkpoints do not match the requested child set")
+    stored_digests = checkpoint_evaluation.get("b1_dataset_digests", {})
+    stored_protected = checkpoint_evaluation.get("b1_protected_dataset_digests", {})
+    expected_digests = {str(seed): dataset.digest for seed, dataset in datasets.items()}
+    expected_protected = {
+        str(seed): dataset.excluded_dataset_digest for seed, dataset in datasets.items()
+    }
+    if stored_digests != expected_digests or stored_protected != expected_protected:
+        raise ValueError("reused B1 report data digests do not match the requested child set")
+    return measurement
+
+
 def build_contract_report(
     manifest: FoundationManifest,
     *,
@@ -1028,6 +1088,11 @@ def main() -> int:
         help="Run the dedicated child continuation no-replay/replay contrast.",
     )
     parser.add_argument(
+        "--reuse-b1-report",
+        type=Path,
+        help="Reuse a previously validated B1 child measurement after provenance checks.",
+    )
+    parser.add_argument(
         "--b1-partition-seed",
         action="append",
         nargs=2,
@@ -1106,15 +1171,25 @@ def main() -> int:
                 partition_seed=phase_b_seeds[seed],
                 exclude_dataset=protected_dataset,
             )
-        b1_measurement = _evaluate_loaded_b1(
-            checkpoint_paths,
-            {seed: dataset.as_sequence_corpus() for seed, dataset in b1_datasets.items()},
-            expected_dataset_digest={seed: dataset.digest for seed, dataset in b1_datasets.items()},
-            expected_protected_dataset_digest={
-                seed: str(dataset.excluded_dataset_digest)
-                for seed, dataset in b1_datasets.items()
-            },
-        )
+        if args.reuse_b1_report is not None:
+            b1_measurement = _reuse_b1_measurement(
+                args.reuse_b1_report,
+                manifest=manifest,
+                checkpoints=checkpoint_paths,
+                datasets=b1_datasets,
+            )
+        else:
+            b1_measurement = _evaluate_loaded_b1(
+                checkpoint_paths,
+                {seed: dataset.as_sequence_corpus() for seed, dataset in b1_datasets.items()},
+                expected_dataset_digest={
+                    seed: dataset.digest for seed, dataset in b1_datasets.items()
+                },
+                expected_protected_dataset_digest={
+                    seed: str(dataset.excluded_dataset_digest)
+                    for seed, dataset in b1_datasets.items()
+                },
+            )
         if args.child_foundation:
             b2_measurement = _evaluate_loaded_b2(checkpoint_paths)
             b3_measurement = _evaluate_loaded_b3(checkpoint_paths)
@@ -1209,6 +1284,7 @@ def main() -> int:
         ],
         "child_foundation": bool(args.child_foundation),
         "b5_child": bool(args.b5_child),
+        "b1_reused_report": str(args.reuse_b1_report) if args.reuse_b1_report else None,
         "b1_dataset_digests": {
             str(seed): dataset.digest for seed, dataset in sorted(b1_datasets.items())
         },
