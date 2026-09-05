@@ -27,6 +27,8 @@ from taiji.foundation_tasks import (
     WorldTransitionCorpus,
     WorldTransitionTask,
     _persistent_digest,
+    build_generalization_partitions,
+    detect_partition_overlap,
 )
 
 
@@ -512,3 +514,43 @@ def test_continual_task_records_checkpoint_continuation_and_replay_retention() -
     assert measurement.sample_counts == {"train": 144, "holdout": 72, "retention": 36}
     assert "replay_lesion" in measurement.baseline_metrics
     assert any("continued_from_parent" in item for item in measurement.evidence)
+
+
+def test_periodic_b5_smoke_is_flagged_as_template_family_not_generalization() -> None:
+    corpus = ContinualLearningCorpus(
+        phase_a_train=b"ABCD1234-" * 64,
+        phase_a_holdout=b"ABCD1234+" * 16,
+        phase_b_train=b"wxyz5678:" * 64,
+        phase_b_holdout=b"wxyz5678;" * 16,
+        retention=b"ABCD1234?" * 16,
+    )
+
+    report = detect_partition_overlap(
+        train=corpus.phase_a_train,
+        holdout=corpus.phase_a_holdout,
+        min_ngram=8,
+    )
+
+    # The holdout shares the full 8-byte template with training; only the
+    # delimiter differs.  A low BPB here is retention/memorization evidence,
+    # so the detector must refuse to call it generalization.
+    assert report["template_family_match"] is True
+    assert report["max_ngram_overlap"] >= 8
+    assert report["ngram_overlap_count"] > 0
+
+
+def test_generalization_partitions_clear_overlap_contract() -> None:
+    partitions = build_generalization_partitions(count=64)
+    report = detect_partition_overlap(
+        train=partitions["train"],
+        holdout=partitions["holdout"],
+        min_ngram=4,
+    )
+
+    # Disjoint alphabets and reversed combination rules mean no whole-segment
+    # duplicate, no shared 4-gram, and no shared template family.
+    assert report["whole_segment_duplicate"] is False
+    assert report["max_ngram_overlap"] == 0
+    assert report["ngram_overlap_count"] == 0
+    assert report["template_family_match"] is False
+    assert len(partitions["train"]) == len(partitions["holdout"])
