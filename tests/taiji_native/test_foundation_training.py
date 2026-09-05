@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
+from copy import deepcopy
 from pathlib import Path
 
 import pytest
@@ -15,6 +16,7 @@ from scripts.training.train_taiji_world_action import (
     build_world_learner,
 )
 from taiji import (
+    JOINT_SEQUENCE_PREDICTIVE_CONTEXT_MODE,
     JOINT_SEQUENCE_READOUT_MODE,
     JOINT_TRAINING_VERSION,
     DelayedMemoryCorpus,
@@ -107,10 +109,7 @@ def test_phase_b_dataset_excludes_every_selected_phase_a_record() -> None:
     # selected record therefore contributes a prefix only; its late marker
     # must not leak into B through the unused suffix of that record.
     phase_a_only_suffix = "<phase-a-only-suffix>"
-    records = [
-        record_for_phase_a_partition("train", f"train-{index}")
-        for index in range(4)
-    ]
+    records = [record_for_phase_a_partition("train", f"train-{index}") for index in range(4)]
     records.append(
         record_for_phase_a_partition(
             "train",
@@ -119,16 +118,13 @@ def test_phase_b_dataset_excludes_every_selected_phase_a_record() -> None:
         )
     )
     records.extend(
-        record_for_phase_a_partition("holdout", f"holdout-{index}")
-        for index in range(2)
+        record_for_phase_a_partition("holdout", f"holdout-{index}") for index in range(2)
     )
     records.extend(
-        record_for_phase_a_partition("retention", f"retention-{index}")
-        for index in range(2)
+        record_for_phase_a_partition("retention", f"retention-{index}") for index in range(2)
     )
     records.extend(
-        {"text": f"<phase-b-candidate:{index:04d}>" + ("z" * 968)}
-        for index in range(256)
+        {"text": f"<phase-b-candidate:{index:04d}>" + ("z" * 968)} for index in range(256)
     )
     corpus.write_text(
         "\n".join(json.dumps(record) for record in records) + "\n",
@@ -338,7 +334,10 @@ def test_joint_training_preserves_three_organs_in_one_checkpoint() -> None:
 
     assert report["status"] == "completed"
     assert report["holdout_updates"] == 0
-    assert report["final_metrics"]["sequence_holdout_bpb"] < report["parent_metrics"]["sequence_holdout_bpb"]
+    assert (
+        report["final_metrics"]["sequence_holdout_bpb"]
+        < report["parent_metrics"]["sequence_holdout_bpb"]
+    )
     assert Path(report["checkpoint_paths"]["last"]).is_file()
     restored = JointTrainingRun.from_checkpoint(
         output_dir / "last.pt",
@@ -436,6 +435,7 @@ def test_joint_sequence_only_continuation_protects_phase_a_metrics(monkeypatch) 
     assert report["training_phases"] == ["sequence"]
     assert report["protected_dataset_digest"] == phase_a.digest
     assert report["sequence_readout_mode"] == JOINT_SEQUENCE_READOUT_MODE
+    assert report["sequence_predictive_context_mode"] == JOINT_SEQUENCE_PREDICTIVE_CONTEXT_MODE
     assert report["world_online_updates"] == initial_world_updates
     assert report["global_step"] == len(phase_b.train) // 32
     assert measurements["count"] == 1
@@ -453,11 +453,20 @@ def test_joint_sequence_only_continuation_protects_phase_a_metrics(monkeypatch) 
         readout_contract["parent"]["predictive_readout_digest"]
         != readout_contract["final"]["predictive_readout_digest"]
     )
+    assert (
+        readout_contract["parent"]["predictive_context_digest"]
+        != readout_contract["final"]["predictive_context_digest"]
+    )
     assert len(readout_contract["phase_checks"]) == 1
     assert all(readout_contract["phase_checks"][0]["preserved"].values())
+    context_contract = report["sequence_predictive_context_contract"]
+    assert context_contract["parent"] != context_contract["final"]
+    assert len(context_contract["phase_checks"]) == 1
+    assert context_contract["phase_checks"][0]["changed"] is True
     keep_gate = report["sequence_only_keep_gate"]
     assert keep_gate["applies"] is True
     assert all(keep_gate["readout_preserved"].values())
+    assert keep_gate["predictive_context_grew"] is True
 
     payload = torch.load(output_dir / "last.pt", map_location="cpu", weights_only=False)
     assert payload["training_phases"] == ["sequence"]
@@ -465,6 +474,9 @@ def test_joint_sequence_only_continuation_protects_phase_a_metrics(monkeypatch) 
     assert payload["sequence_readout_mode"] == JOINT_SEQUENCE_READOUT_MODE
     assert payload["sequence_readout_parent"] == readout_contract["parent"]
     assert payload["sequence_readout_phase_checks"] == readout_contract["phase_checks"]
+    assert payload["sequence_predictive_context_mode"] == JOINT_SEQUENCE_PREDICTIVE_CONTEXT_MODE
+    assert payload["sequence_predictive_context_parent"] == context_contract["parent"]
+    assert payload["sequence_predictive_context_phase_checks"] == context_contract["phase_checks"]
     restored = JointTrainingRun.from_checkpoint(
         output_dir / "last.pt",
         phase_b,
@@ -478,12 +490,13 @@ def test_joint_sequence_only_continuation_protects_phase_a_metrics(monkeypatch) 
     restored_evaluation = restored.evaluate_only()
     assert restored_evaluation["checkpoint_read_only"] is True
     assert restored_evaluation["sequence_readout_mode"] == JOINT_SEQUENCE_READOUT_MODE
-    assert restored_evaluation["sequence_readout_contract"]["parent"] == readout_contract[
-        "parent"
-    ]
-    assert all(
-        restored_evaluation["sequence_only_keep_gate"]["readout_preserved"].values()
+    assert (
+        restored_evaluation["sequence_predictive_context_mode"]
+        == JOINT_SEQUENCE_PREDICTIVE_CONTEXT_MODE
     )
+    assert restored_evaluation["sequence_readout_contract"]["parent"] == readout_contract["parent"]
+    assert all(restored_evaluation["sequence_only_keep_gate"]["readout_preserved"].values())
+    assert restored_evaluation["sequence_only_keep_gate"]["predictive_context_grew"] is True
     with pytest.raises(ValueError, match="phase plan"):
         JointTrainingRun.from_checkpoint(
             output_dir / "last.pt",
@@ -533,12 +546,17 @@ def test_joint_sequence_fabric_mode_is_content_addressed_and_resumable() -> None
     assert fabric_contract["parent"] == fabric_contract["final"]
     assert len(fabric_contract["phase_checks"]) == 1
     assert fabric_contract["phase_checks"][0]["preserved"] is True
+    context_contract = report["sequence_predictive_context_contract"]
+    assert context_contract["parent"] != context_contract["final"]
+    assert context_contract["phase_checks"][0]["changed"] is True
 
     payload = torch.load(output_dir / "last.pt", map_location="cpu", weights_only=False)
     assert payload["version"] == JOINT_TRAINING_VERSION
     assert payload["sequence_fabric_learning"] is False
     assert payload["sequence_fabric_parent"] == fabric_contract["parent"]
     assert payload["sequence_fabric_phase_checks"] == fabric_contract["phase_checks"]
+    assert payload["sequence_predictive_context_mode"] == JOINT_SEQUENCE_PREDICTIVE_CONTEXT_MODE
+    assert payload["sequence_predictive_context_parent"] == context_contract["parent"]
 
     restored = JointTrainingRun.from_checkpoint(
         output_dir / "last.pt",
@@ -553,6 +571,9 @@ def test_joint_sequence_fabric_mode_is_content_addressed_and_resumable() -> None
     evaluation = restored.evaluate_only()
     assert evaluation["sequence_fabric_learning"] is False
     assert evaluation["sequence_fabric_contract"]["parent"] == fabric_contract["parent"]
+    assert (
+        evaluation["sequence_predictive_context_contract"]["parent"] == context_contract["parent"]
+    )
     with pytest.raises(ValueError, match="sequence fabric learning"):
         JointTrainingRun.from_checkpoint(
             output_dir / "last.pt",
@@ -666,6 +687,116 @@ def test_joint_legacy_shared_readout_checkpoint_requires_explicit_continuation()
     assert continuation.sequence_readout_mode == JOINT_SEQUENCE_READOUT_MODE
 
 
+def test_joint_v3_fixed_basis_checkpoint_requires_explicit_m2_2h_continuation() -> None:
+    """A v3 predictor-only course cannot silently gain a plastic F1 context."""
+
+    phase_a, phase_b = _phase_datasets()
+    memory_corpus = build_memory_corpus(count=4)
+    world_corpus = build_world_corpus(count=4)
+    goal_corpus = build_goal_corpus(count=4)
+    output_dir = Path(".seed_test_tmp") / "m2-legacy-fixed-basis"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    checkpoint_path = output_dir / "legacy-v3-last.pt"
+    checkpoint_path.unlink(missing_ok=True)
+
+    original = JointTrainingRun(
+        Taiji(_config(), episode_id="m2-legacy-fixed-basis"),
+        build_world_learner(world_corpus, seed=11),
+        phase_b,
+        memory_corpus,
+        world_corpus,
+        goal_corpus,
+        output_dir=output_dir,
+        epochs=1,
+        chunk_bytes=32,
+        checkpoint_interval=2,
+        world_repeats=1,
+        protected_dataset=phase_a,
+        training_phases=("sequence",),
+        sequence_fabric_learning=False,
+    )
+    original.save(checkpoint_path)
+    legacy = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
+
+    def v9_model_payload(payload: dict) -> dict:
+        migrated = deepcopy(payload)
+        migrated["format"] = "taiji-native-v9"
+        migrated.pop("predictive_context")
+        for field in (
+            "predictive_context_seed_offset",
+            "predictive_context_fan_in",
+            "predictive_context_learning_rate",
+            "predictive_context_recurrent_gain",
+        ):
+            migrated["config"].pop(field)
+        migrated["state"]["version"] = 6
+        migrated["state"].pop("predictive_context_trace")
+        identity = migrated.get("identity_organ")
+        if isinstance(identity, dict):
+            identity["lineage"]["parent_checkpoint_digest"] = content_digest(
+                {
+                    key: migrated[key]
+                    for key in Taiji._checkpoint_core_keys(
+                        include_predictive=True,
+                        include_predictive_context=False,
+                    )
+                }
+            )
+        return migrated
+
+    legacy["model"] = v9_model_payload(legacy["model"])
+    legacy["parent_model"] = v9_model_payload(legacy["parent_model"])
+    legacy["version"] = 3
+    legacy.pop("sequence_predictive_context_mode")
+    legacy.pop("sequence_predictive_context_parent")
+    legacy.pop("sequence_predictive_context_phase_checks")
+    legacy["corpus_digest"] = content_digest(
+        {
+            "format": legacy["format"],
+            "version": 3,
+            "dataset_digest": phase_b.digest,
+            "memory_digest": legacy["memory_digest"],
+            "world_action_digest": legacy["world_action_digest"],
+            "protected_dataset_digest": phase_a.digest,
+            "training_phases": ["sequence"],
+            "sequence_fabric_learning": False,
+        }
+    )
+    legacy["checkpoint_digest"] = content_digest(
+        {key: value for key, value in legacy.items() if key != "checkpoint_digest"}
+    )
+    torch.save(legacy, checkpoint_path)
+
+    restored = JointTrainingRun.from_checkpoint(
+        checkpoint_path,
+        phase_b,
+        memory_corpus,
+        world_corpus,
+        goal_corpus,
+        output_dir=output_dir,
+        protected_dataset=phase_a,
+    )
+    assert restored.sequence_predictive_context_mode == "legacy-fixed-basis-v0"
+    with pytest.raises(RuntimeError, match="M2-2h migration"):
+        restored.run()
+
+    continuation = JointTrainingRun.from_continuation_checkpoint(
+        checkpoint_path,
+        phase_b,
+        memory_corpus,
+        world_corpus,
+        goal_corpus,
+        output_dir=output_dir / "m2h-child",
+        epochs=1,
+        chunk_bytes=32,
+        checkpoint_interval=2,
+        world_repeats=1,
+        protected_dataset=phase_a,
+        training_phases=("sequence",),
+    )
+    assert continuation.sequence_predictive_context_mode == JOINT_SEQUENCE_PREDICTIVE_CONTEXT_MODE
+
+
 def test_joint_training_starts_an_explicit_continuation_from_child_checkpoint() -> None:
     dataset = FoundationTrainingDataset(
         train=b"ABCD1234-" * 16,
@@ -733,9 +864,7 @@ def test_joint_training_starts_an_explicit_continuation_from_child_checkpoint() 
     report = continuation.run()
     assert report["status"] == "completed"
     assert report["continuation_source_checkpoint_digest"]
-    assert (
-        report["continuation_source_checkpoint_digest"] == source_payload["checkpoint_digest"]
-    )
+    assert report["continuation_source_checkpoint_digest"] == source_payload["checkpoint_digest"]
     assert report["parent_checkpoint_digest"]
     assert report["parent_checkpoint_digest"] != original_report["child_checkpoint_digest"]
     assert report["replay_dataset_digest"] == dataset.digest

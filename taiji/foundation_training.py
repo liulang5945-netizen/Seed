@@ -49,16 +49,19 @@ MEMORY_TRAINING_VERSION = 1
 WORLD_ACTION_TRAINING_FORMAT = "taiji-native-world-action-training-v1"
 WORLD_ACTION_TRAINING_VERSION = 1
 JOINT_TRAINING_FORMAT = "taiji-native-joint-training-v1"
-# v3 records whether F1 sequence learning may write the shared fabric.  v2
-# established the F1/F4 readout boundary and remains resumable with its
-# implicit fabric-plastic behaviour; v1 remains readable so established courses
-# can become explicit M2-2f/M2-2g continuations rather than being discarded.
-JOINT_TRAINING_VERSION = 3
-JOINT_TRAINING_LEGACY_VERSIONS = frozenset({1, 2})
+# v4 records the private F1 plastic-context owner.  v3 established a
+# predictor-only frozen-fabric intervention but still used a fixed F1 basis;
+# it remains inspectable, never silently reinterpreted as a plastic-context
+# course.  v1/v2 remain readable so established courses can become explicit
+# continuations rather than being discarded.
+JOINT_TRAINING_VERSION = 4
+JOINT_TRAINING_LEGACY_VERSIONS = frozenset({1, 2, 3})
 JOINT_TRAINING_BASE_PHASES = ("sequence", "memory", "world", "goal")
 JOINT_TRAINING_REPLAY_PHASES = ("replay", "replay-memory")
 JOINT_TRAINING_PHASES = JOINT_TRAINING_BASE_PHASES + JOINT_TRAINING_REPLAY_PHASES
 JOINT_SEQUENCE_READOUT_MODE = "dedicated-predictive-v1"
+JOINT_SEQUENCE_PREDICTIVE_CONTEXT_MODE = "private-plastic-temporal-v1"
+JOINT_LEGACY_PREDICTIVE_CONTEXT_MODE = "legacy-fixed-basis-v0"
 
 
 def _text_from_record(record: Any) -> str | None:
@@ -146,10 +149,13 @@ class FoundationTrainingDataset:
 
     @staticmethod
     def _partition_for_text(text: str, partition_seed: int) -> str:
-        bucket = int.from_bytes(
-            hashlib.sha256(f"{int(partition_seed)}\0{text}".encode()).digest()[:4],
-            "big",
-        ) % 10_000
+        bucket = (
+            int.from_bytes(
+                hashlib.sha256(f"{int(partition_seed)}\0{text}".encode()).digest()[:4],
+                "big",
+            )
+            % 10_000
+        )
         if bucket < 8_000:
             return "train"
         if bucket < 9_000:
@@ -186,20 +192,15 @@ class FoundationTrainingDataset:
         exclusion_budgets: dict[str, int] | None = None
         if exclude_dataset is not None:
             expected_sources = tuple(
-                (Path(path).resolve(), digest)
-                for path, digest in exclude_dataset.source_files
+                (Path(path).resolve(), digest) for path, digest in exclude_dataset.source_files
             )
-            actual_sources = tuple(
-                (Path(path).resolve(), digest) for path, digest in source_files
-            )
+            actual_sources = tuple((Path(path).resolve(), digest) for path, digest in source_files)
             if actual_sources != expected_sources:
                 raise ValueError(
                     "excluded dataset must use the same ordered, content-addressed sources"
                 )
             exclusion_profile = exclude_dataset.profile
-            exclusion_budget_values = FOUNDATION_TRAINING_PROFILE_BUDGETS[
-                exclusion_profile
-            ]
+            exclusion_budget_values = FOUNDATION_TRAINING_PROFILE_BUDGETS[exclusion_profile]
             exclusion_budgets = dict(
                 zip(("train", "holdout", "retention"), exclusion_budget_values, strict=True)
             )
@@ -326,7 +327,9 @@ class FoundationTrainingRun:
         if profile is not None and profile not in FOUNDATION_TRAINING_PROFILES:
             raise ValueError("unsupported foundation training profile")
         if int(epochs) <= 0 or int(chunk_bytes) <= 0 or int(checkpoint_interval) <= 0:
-            raise ValueError("training epochs, chunk_bytes, and checkpoint_interval must be positive")
+            raise ValueError(
+                "training epochs, chunk_bytes, and checkpoint_interval must be positive"
+            )
         self.model = model
         self.dataset = dataset
         self.output_dir = Path(output_dir)
@@ -450,12 +453,11 @@ class FoundationTrainingRun:
         while self.epoch < self.total_epochs:
             while self.cursor < len(self.dataset.train):
                 end = min(self.cursor + self.chunk_bytes, len(self.dataset.train))
-                metrics = self.model.learn_bytes(self.dataset.train[self.cursor:end], epochs=1)
+                metrics = self.model.learn_bytes(self.dataset.train[self.cursor : end], epochs=1)
                 self.cursor = end
                 self.global_step += 1
-                if (
-                    self.global_step % self.checkpoint_interval == 0
-                    or self.cursor == len(self.dataset.train)
+                if self.global_step % self.checkpoint_interval == 0 or self.cursor == len(
+                    self.dataset.train
                 ):
                     self._save_progress(evaluate=True, train_metrics=metrics)
                 else:
@@ -788,9 +790,8 @@ class MemoryTrainingRun:
                 self._train_episode(episode)
                 self.cursor += 1
                 self.global_step += 1
-                if (
-                    self.global_step % self.checkpoint_interval == 0
-                    or self.cursor == len(self.corpus.train)
+                if self.global_step % self.checkpoint_interval == 0 or self.cursor == len(
+                    self.corpus.train
                 ):
                     self._save_progress(train_episode=episode)
                 else:
@@ -945,9 +946,7 @@ def _world_learner_payload(learner: WorldDynamicsLearner) -> dict[str, Any]:
             name: tensor.detach().cpu().clone() for name, tensor in learner.state_dict().items()
         },
         "schema_snapshots": {
-            str(version): {
-                name: tensor.detach().cpu().clone() for name, tensor in snapshot.items()
-            }
+            str(version): {name: tensor.detach().cpu().clone() for name, tensor in snapshot.items()}
             for version, snapshot in learner._schema_snapshots.items()
         },
     }
@@ -1001,6 +1000,7 @@ def _world_action_persistent_digest(
             "model": {
                 "fabric": checkpoint["fabric"],
                 "motor": checkpoint["motor"],
+                "predictive_context": checkpoint.get("predictive_context"),
                 "predictive_readout": checkpoint.get("predictive_readout"),
                 "memory": checkpoint["memory"],
                 "identity_organ": identity_persistent,
@@ -1011,7 +1011,7 @@ def _world_action_persistent_digest(
 
 
 def _sequence_readout_contract(model: Taiji) -> dict[str, str | None]:
-    """Hash the persistent readers that F1 sequence updates must not own.
+    """Hash protected readers plus the F1-owned substrates that may change.
 
     Identity payloads include a lineage hash of the whole Taiji core.  That
     outer hash necessarily changes when the predictive fabric learns, even if
@@ -1031,6 +1031,7 @@ def _sequence_readout_contract(model: Taiji) -> dict[str, str | None]:
         "action_motor_digest": content_digest(model.motor.to_payload()),
         "memory_field_digest": content_digest(model.memory.to_payload()),
         "identity_value_digest": identity_digest,
+        "predictive_context_digest": content_digest(model.predictive_context.to_payload()),
         "predictive_readout_digest": content_digest(model.predictive_readout.to_payload()),
     }
 
@@ -1048,6 +1049,12 @@ def _sequence_fabric_digest(model: Taiji) -> str:
     """Address the shared persistent representation below F1/F2/F4 readers."""
 
     return content_digest(model.fabric.to_payload())
+
+
+def _sequence_predictive_context_digest(model: Taiji) -> str:
+    """Address the F1-only temporal substrate separately from shared fabric."""
+
+    return content_digest(model.predictive_context.to_payload())
 
 
 def _world_action_error(
@@ -1102,7 +1109,9 @@ def _goal_action_accuracy(model: Taiji, episodes: Sequence[GoalActionEpisode]) -
     correct = 0
     for episode in episodes:
         model.reset_dynamics(episode_id=f"m1-f3-eval-{episode.episode_id}")
-        model.observe(model.config.boundary_symbol, learn=False, learn_motor=False, use_memory=False)
+        model.observe(
+            model.config.boundary_symbol, learn=False, learn_motor=False, use_memory=False
+        )
         model.observe(episode.cue, learn=False, learn_motor=False, use_memory=False)
         decision = model.act(
             tuple(sorted((episode.preferred_action, episode.alternate_action))),
@@ -1110,7 +1119,9 @@ def _goal_action_accuracy(model: Taiji, episodes: Sequence[GoalActionEpisode]) -
         )
         correct += int(decision.action_symbol == episode.preferred_action)
         model.settle_action(0.0, learn=False, learn_memory=False)
-        model.observe(model.config.boundary_symbol, learn=False, learn_motor=False, use_memory=False)
+        model.observe(
+            model.config.boundary_symbol, learn=False, learn_motor=False, use_memory=False
+        )
     return correct / len(episodes)
 
 
@@ -1142,7 +1153,9 @@ class WorldActionTrainingRun:
         if not isinstance(world_learner, WorldDynamicsLearner):
             raise TypeError("world action training requires WorldDynamicsLearner")
         if int(epochs) <= 0 or int(checkpoint_interval) <= 0:
-            raise ValueError("world action training epochs and checkpoint_interval must be positive")
+            raise ValueError(
+                "world action training epochs and checkpoint_interval must be positive"
+            )
         if float(world_learning_rate) <= 0.0 or int(world_repeats) <= 0:
             raise ValueError("world action learning settings must be positive")
         self.model = model
@@ -1245,7 +1258,9 @@ class WorldActionTrainingRun:
         persistent_after = _world_action_persistent_digest(self.model, self.world_learner)
         return world_error, goal_success, persistent_before, persistent_before == persistent_after
 
-    def _save_progress(self, *, train_kind: str | None = None, train_success: bool | None = None) -> None:
+    def _save_progress(
+        self, *, train_kind: str | None = None, train_success: bool | None = None
+    ) -> None:
         world_error, goal_success, _persistent, read_only = self._holdout_metrics()
         if not read_only:
             raise RuntimeError("world action holdout evaluation mutated persistent state")
@@ -1293,9 +1308,8 @@ class WorldActionTrainingRun:
                 )
                 self.world_cursor += 1
                 self.global_step += 1
-                if (
-                    self.global_step % self.checkpoint_interval == 0
-                    or self.world_cursor == len(self.world_corpus.train)
+                if self.global_step % self.checkpoint_interval == 0 or self.world_cursor == len(
+                    self.world_corpus.train
                 ):
                     self._save_progress(train_kind="world")
                 else:
@@ -1306,9 +1320,8 @@ class WorldActionTrainingRun:
                 success = _train_goal_episode(self.model, episode, learn=True)
                 self.goal_cursor += 1
                 self.global_step += 1
-                if (
-                    self.global_step % self.checkpoint_interval == 0
-                    or self.goal_cursor == len(self.goal_corpus.train)
+                if self.global_step % self.checkpoint_interval == 0 or self.goal_cursor == len(
+                    self.goal_corpus.train
                 ):
                     self._save_progress(train_kind="goal", train_success=success)
                 else:
@@ -1598,9 +1611,7 @@ class JointTrainingRun:
             raise TypeError("joint training requires GoalActionCorpus")
         if not isinstance(world_learner, WorldDynamicsLearner):
             raise TypeError("joint training requires WorldDynamicsLearner")
-        if replay_dataset is not None and not isinstance(
-            replay_dataset, FoundationTrainingDataset
-        ):
+        if replay_dataset is not None and not isinstance(replay_dataset, FoundationTrainingDataset):
             raise TypeError("joint replay requires FoundationTrainingDataset")
         if protected_dataset is not None and not isinstance(
             protected_dataset, FoundationTrainingDataset
@@ -1618,9 +1629,7 @@ class JointTrainingRun:
             and replay_dataset is not None
             and replay_dataset.digest != protected_dataset.digest
         ):
-            raise ValueError(
-                "joint replay dataset must be the exact protected phase-A dataset"
-            )
+            raise ValueError("joint replay dataset must be the exact protected phase-A dataset")
         if training_phases is None:
             normalized_training_phases = _legacy_joint_training_phases(
                 replay_dataset, replay_memory_corpus
@@ -1636,13 +1645,12 @@ class JointTrainingRun:
                 raise ValueError("joint memory replay corpus requires the replay-memory phase")
         if "replay" in normalized_training_phases and replay_dataset is None:
             raise ValueError("joint replay phase requires a replay dataset")
-        if (
-            "replay-memory" in normalized_training_phases
-            and replay_memory_corpus is None
-        ):
+        if "replay-memory" in normalized_training_phases and replay_memory_corpus is None:
             raise ValueError("joint replay-memory phase requires a replay memory corpus")
         if int(epochs) <= 0 or int(chunk_bytes) <= 0 or int(checkpoint_interval) <= 0:
-            raise ValueError("joint training epochs, chunk_bytes, and checkpoint_interval must be positive")
+            raise ValueError(
+                "joint training epochs, chunk_bytes, and checkpoint_interval must be positive"
+            )
         if float(world_learning_rate) <= 0.0 or int(world_repeats) <= 0:
             raise ValueError("joint world learning settings must be positive")
         if int(replay_epochs) <= 0:
@@ -1723,6 +1731,9 @@ class JointTrainingRun:
         self.sequence_readout_mode = JOINT_SEQUENCE_READOUT_MODE
         self.sequence_readout_parent = _sequence_readout_contract(model)
         self.sequence_readout_phase_checks: list[dict[str, Any]] = []
+        self.sequence_predictive_context_mode = JOINT_SEQUENCE_PREDICTIVE_CONTEXT_MODE
+        self.sequence_predictive_context_parent = _sequence_predictive_context_digest(model)
+        self.sequence_predictive_context_phase_checks: list[dict[str, Any]] = []
         self.sequence_fabric_parent = _sequence_fabric_digest(model)
         self.sequence_fabric_phase_checks: list[dict[str, Any]] = []
 
@@ -1733,9 +1744,7 @@ class JointTrainingRun:
             "version": self.training_version,
             "dataset_digest": self.dataset.digest,
             "memory_digest": _memory_corpus_digest(self.memory_corpus),
-            "world_action_digest": _world_action_corpus_digest(
-                self.world_corpus, self.goal_corpus
-            ),
+            "world_action_digest": _world_action_corpus_digest(self.world_corpus, self.goal_corpus),
         }
         if self.replay_dataset is not None:
             payload["replay_dataset_digest"] = self.replay_dataset.digest
@@ -1749,6 +1758,8 @@ class JointTrainingRun:
             payload["training_phases"] = list(self.training_phases)
         if self.training_version >= 3:
             payload["sequence_fabric_learning"] = self.sequence_fabric_learning
+        if self.training_version >= 4:
+            payload["sequence_predictive_context_mode"] = self.sequence_predictive_context_mode
         return content_digest(payload)
 
     @property
@@ -1792,12 +1803,8 @@ class JointTrainingRun:
             "world_retention_error": _world_action_error(
                 self.world_learner, self.world_corpus.retention
             ),
-            "goal_holdout_success": _goal_action_accuracy(
-                self.model, self.goal_corpus.holdout
-            ),
-            "goal_retention_success": _goal_action_accuracy(
-                self.model, self.goal_corpus.retention
-            ),
+            "goal_holdout_success": _goal_action_accuracy(self.model, self.goal_corpus.holdout),
+            "goal_retention_success": _goal_action_accuracy(self.model, self.goal_corpus.retention),
         }
         if self.protected_dataset is not None:
             metrics["protected_sequence_holdout_bpb"] = _joint_sequence_bpb(
@@ -1813,10 +1820,14 @@ class JointTrainingRun:
 
     def _joint_holdout_score(self, metrics: Mapping[str, float]) -> float:
         score = (
-            self.parent_metrics["sequence_holdout_bpb"] - metrics["sequence_holdout_bpb"]
-            + metrics["memory_holdout_recall"] - self.parent_metrics["memory_holdout_recall"]
-            + self.parent_metrics["world_holdout_error"] - metrics["world_holdout_error"]
-            + metrics["goal_holdout_success"] - self.parent_metrics["goal_holdout_success"]
+            self.parent_metrics["sequence_holdout_bpb"]
+            - metrics["sequence_holdout_bpb"]
+            + metrics["memory_holdout_recall"]
+            - self.parent_metrics["memory_holdout_recall"]
+            + self.parent_metrics["world_holdout_error"]
+            - metrics["world_holdout_error"]
+            + metrics["goal_holdout_success"]
+            - self.parent_metrics["goal_holdout_success"]
         )
         if self.protected_dataset is not None:
             score += (
@@ -1865,6 +1876,25 @@ class JointTrainingRun:
         if not self.sequence_fabric_learning and not preserved:
             raise RuntimeError("predictor-only sequence learning changed the shared fabric")
 
+    def _record_sequence_predictive_context_phase(self, *, phase: str, before: str) -> None:
+        """Prove an F1 phase updates the private substrate it claims to own."""
+
+        after = _sequence_predictive_context_digest(self.model)
+        changed = before != after
+        record = {
+            "epoch": self.epoch,
+            "phase": phase,
+            "before": before,
+            "after": after,
+            "changed": changed,
+        }
+        self.sequence_predictive_context_phase_checks.append(record)
+        if (
+            self.sequence_predictive_context_mode == JOINT_SEQUENCE_PREDICTIVE_CONTEXT_MODE
+            and not changed
+        ):
+            raise RuntimeError("private predictive context did not change during sequence learning")
+
     def _sequence_only_keep_gate(
         self,
         metrics: Mapping[str, float],
@@ -1875,9 +1905,7 @@ class JointTrainingRun:
         applies = self.training_phases == ("sequence",)
         if not applies:
             return {"applies": False, "passed": None}
-        readout_checks = _sequence_readout_preserved(
-            self.sequence_readout_parent, current_readouts
-        )
+        readout_checks = _sequence_readout_preserved(self.sequence_readout_parent, current_readouts)
         metric_checks = {
             "memory_holdout_kept": metrics["memory_holdout_recall"]
             >= self.parent_metrics["memory_holdout_recall"] - 1e-12,
@@ -1888,11 +1916,23 @@ class JointTrainingRun:
             "goal_retention_kept": metrics["goal_retention_success"]
             >= self.parent_metrics["goal_retention_success"] - 1e-12,
         }
+        context_grew = (
+            self.sequence_predictive_context_parent
+            != _sequence_predictive_context_digest(self.model)
+        )
+        context_growth_required = (
+            self.sequence_predictive_context_mode == JOINT_SEQUENCE_PREDICTIVE_CONTEXT_MODE
+        )
         return {
             "applies": True,
             "readout_preserved": readout_checks,
+            "predictive_context_grew": (context_grew if context_growth_required else None),
             **metric_checks,
-            "passed": all(readout_checks.values()) and all(metric_checks.values()),
+            "passed": (
+                all(readout_checks.values())
+                and all(metric_checks.values())
+                and (context_grew or not context_growth_required)
+            ),
         }
 
     def _checkpoint_payload(self) -> dict[str, Any]:
@@ -1904,9 +1944,7 @@ class JointTrainingRun:
             "world_learner": _world_learner_payload(self.world_learner),
             "dataset_digest": self.dataset.digest,
             "memory_digest": _memory_corpus_digest(self.memory_corpus),
-            "world_action_digest": _world_action_corpus_digest(
-                self.world_corpus, self.goal_corpus
-            ),
+            "world_action_digest": _world_action_corpus_digest(self.world_corpus, self.goal_corpus),
             "corpus_digest": self.corpus_digest,
             "parent_checkpoint_digest": self.parent_checkpoint_digest,
             "parent_model": self.parent_model_payload,
@@ -1959,8 +1997,16 @@ class JointTrainingRun:
                 {
                     "sequence_fabric_learning": self.sequence_fabric_learning,
                     "sequence_fabric_parent": self.sequence_fabric_parent,
-                    "sequence_fabric_phase_checks": list(
-                        self.sequence_fabric_phase_checks
+                    "sequence_fabric_phase_checks": list(self.sequence_fabric_phase_checks),
+                }
+            )
+        if self.training_version >= 4:
+            payload.update(
+                {
+                    "sequence_predictive_context_mode": (self.sequence_predictive_context_mode),
+                    "sequence_predictive_context_parent": (self.sequence_predictive_context_parent),
+                    "sequence_predictive_context_phase_checks": list(
+                        self.sequence_predictive_context_phase_checks
                     ),
                 }
             )
@@ -2035,6 +2081,15 @@ class JointTrainingRun:
                 "legacy shared-readout checkpoint cannot continue sequence training; "
                 "start an explicit continuation course for M2-2f migration"
             )
+        if (
+            self.sequence_predictive_context_mode != JOINT_SEQUENCE_PREDICTIVE_CONTEXT_MODE
+            and self.epoch < self.total_epochs
+            and ({"sequence", "replay"} & set(self.training_phases))
+        ):
+            raise RuntimeError(
+                "legacy fixed-basis checkpoint cannot continue sequence training; "
+                "start an explicit continuation course for M2-2h migration"
+            )
         if not self.started_from_checkpoint and not self.parent_checkpoint_path.exists():
             self.save(self.parent_checkpoint_path)
             self.save(self.best_checkpoint_path)
@@ -2043,18 +2098,18 @@ class JointTrainingRun:
                 self.phase = "sequence"
                 sequence_readouts_before = _sequence_readout_contract(self.model)
                 sequence_fabric_before = _sequence_fabric_digest(self.model)
+                sequence_context_before = _sequence_predictive_context_digest(self.model)
                 while self.sequence_cursor < len(self.dataset.train):
                     end = min(self.sequence_cursor + self.chunk_bytes, len(self.dataset.train))
                     self.model.learn_bytes(
-                        self.dataset.train[self.sequence_cursor:end],
+                        self.dataset.train[self.sequence_cursor : end],
                         epochs=1,
                         learn_fabric=self.sequence_fabric_learning,
                     )
                     self.sequence_cursor = end
                     self.global_step += 1
-                    if (
-                        self.global_step % self.metric_interval == 0
-                        or self.sequence_cursor == len(self.dataset.train)
+                    if self.global_step % self.metric_interval == 0 or self.sequence_cursor == len(
+                        self.dataset.train
                     ):
                         self._save_progress(train_kind="sequence")
                     else:
@@ -2067,6 +2122,10 @@ class JointTrainingRun:
                     phase="sequence",
                     before=sequence_fabric_before,
                 )
+                self._record_sequence_predictive_context_phase(
+                    phase="sequence",
+                    before=sequence_context_before,
+                )
 
             if "memory" in self.training_phases:
                 self.phase = "memory"
@@ -2076,9 +2135,8 @@ class JointTrainingRun:
                     )
                     self.memory_cursor += 1
                     self.global_step += 1
-                    if (
-                        self.global_step % self.metric_interval == 0
-                        or self.memory_cursor == len(self.memory_corpus.train)
+                    if self.global_step % self.metric_interval == 0 or self.memory_cursor == len(
+                        self.memory_corpus.train
                     ):
                         self._save_progress(train_kind="memory")
                     else:
@@ -2101,9 +2159,8 @@ class JointTrainingRun:
                     )
                     self.world_cursor += 1
                     self.global_step += 1
-                    if (
-                        self.global_step % self.metric_interval == 0
-                        or self.world_cursor == len(self.world_corpus.train)
+                    if self.global_step % self.metric_interval == 0 or self.world_cursor == len(
+                        self.world_corpus.train
                     ):
                         self._save_progress(train_kind="world")
                     else:
@@ -2117,9 +2174,8 @@ class JointTrainingRun:
                     )
                     self.goal_cursor += 1
                     self.global_step += 1
-                    if (
-                        self.global_step % self.metric_interval == 0
-                        or self.goal_cursor == len(self.goal_corpus.train)
+                    if self.global_step % self.metric_interval == 0 or self.goal_cursor == len(
+                        self.goal_corpus.train
                     ):
                         self._save_progress(train_kind="goal", train_success=success)
                     else:
@@ -2131,13 +2187,14 @@ class JointTrainingRun:
                 while self.replay_epoch < self.replay_epochs:
                     replay_readouts_before = _sequence_readout_contract(self.model)
                     replay_fabric_before = _sequence_fabric_digest(self.model)
+                    replay_context_before = _sequence_predictive_context_digest(self.model)
                     while self.replay_cursor < len(self.replay_dataset.train):
                         end = min(
                             self.replay_cursor + self.chunk_bytes,
                             len(self.replay_dataset.train),
                         )
                         self.model.learn_bytes(
-                            self.replay_dataset.train[self.replay_cursor:end],
+                            self.replay_dataset.train[self.replay_cursor : end],
                             epochs=1,
                             learn_fabric=self.sequence_fabric_learning,
                         )
@@ -2158,6 +2215,10 @@ class JointTrainingRun:
                         phase="replay",
                         before=replay_fabric_before,
                     )
+                    self._record_sequence_predictive_context_phase(
+                        phase="replay",
+                        before=replay_context_before,
+                    )
                     self.replay_epoch += 1
                     self.replay_cursor = 0
 
@@ -2177,8 +2238,7 @@ class JointTrainingRun:
                         self.global_step += 1
                         if (
                             self.global_step % self.metric_interval == 0
-                            or self.replay_memory_cursor
-                            == len(self.replay_memory_corpus.train)
+                            or self.replay_memory_cursor == len(self.replay_memory_corpus.train)
                         ):
                             self._save_progress(train_kind="replay-memory")
                         else:
@@ -2205,9 +2265,7 @@ class JointTrainingRun:
         if final_metrics is None:
             final_metrics = self._measure_metrics()
         final_readouts = _sequence_readout_contract(self.model)
-        sequence_only_keep_gate = self._sequence_only_keep_gate(
-            final_metrics, final_readouts
-        )
+        sequence_only_keep_gate = self._sequence_only_keep_gate(final_metrics, final_readouts)
         lesion = Taiji.from_checkpoint(self.parent_model_payload)
         _cold_start_action_organ(lesion)
         for episode in self.goal_corpus.train:
@@ -2225,9 +2283,7 @@ class JointTrainingRun:
             ),
             "training_phases": list(self.training_phases),
             "memory_digest": _memory_corpus_digest(self.memory_corpus),
-            "world_action_digest": _world_action_corpus_digest(
-                self.world_corpus, self.goal_corpus
-            ),
+            "world_action_digest": _world_action_corpus_digest(self.world_corpus, self.goal_corpus),
             "parent_checkpoint_digest": self.parent_checkpoint_digest,
             "parent_metrics": dict(self.parent_metrics),
             "final_metrics": final_metrics,
@@ -2289,6 +2345,12 @@ class JointTrainingRun:
             "final": _sequence_fabric_digest(self.model),
             "phase_checks": list(self.sequence_fabric_phase_checks),
         }
+        report["sequence_predictive_context_mode"] = self.sequence_predictive_context_mode
+        report["sequence_predictive_context_contract"] = {
+            "parent": self.sequence_predictive_context_parent,
+            "final": _sequence_predictive_context_digest(self.model),
+            "phase_checks": list(self.sequence_predictive_context_phase_checks),
+        }
         return report
 
     def evaluate_only(self) -> dict[str, Any]:
@@ -2317,9 +2379,7 @@ class JointTrainingRun:
                 "current": current_readouts,
                 "phase_checks": list(self.sequence_readout_phase_checks),
             },
-            "sequence_only_keep_gate": self._sequence_only_keep_gate(
-                metrics, current_readouts
-            ),
+            "sequence_only_keep_gate": self._sequence_only_keep_gate(metrics, current_readouts),
             "metric_interval": self.metric_interval,
             "replay_memory_relation": self.replay_memory_relation,
             "replay_memory_learning_scale": self.replay_memory_learning_scale,
@@ -2332,6 +2392,12 @@ class JointTrainingRun:
             "parent": self.sequence_fabric_parent,
             "current": _sequence_fabric_digest(self.model),
             "phase_checks": list(self.sequence_fabric_phase_checks),
+        }
+        report["sequence_predictive_context_mode"] = self.sequence_predictive_context_mode
+        report["sequence_predictive_context_contract"] = {
+            "parent": self.sequence_predictive_context_parent,
+            "current": _sequence_predictive_context_digest(self.model),
+            "phase_checks": list(self.sequence_predictive_context_phase_checks),
         }
         return report
 
@@ -2401,6 +2467,10 @@ class JointTrainingRun:
         )
         if not isinstance(effective_sequence_fabric_learning, bool):
             raise TypeError("joint continuation sequence fabric learning must be a bool or None")
+        if payload_version >= 4:
+            stored_context_mode = payload.get("sequence_predictive_context_mode")
+            if stored_context_mode != JOINT_SEQUENCE_PREDICTIVE_CONTEXT_MODE:
+                raise ValueError("joint continuation predictive context mode is invalid")
         expected = content_digest(
             {key: value for key, value in payload.items() if key != "checkpoint_digest"}
         )
@@ -2455,9 +2525,7 @@ class JointTrainingRun:
             sequence_fabric_learning=effective_sequence_fabric_learning,
             replay_dataset=replay_dataset,
             replay_epochs=int(
-                replay_epochs
-                if replay_epochs is not None
-                else payload.get("replay_epochs", 1)
+                replay_epochs if replay_epochs is not None else payload.get("replay_epochs", 1)
             ),
             replay_memory_corpus=replay_memory_corpus,
             replay_memory_epochs=int(
@@ -2535,6 +2603,15 @@ class JointTrainingRun:
             effective_sequence_fabric_learning = sequence_fabric_learning
             if effective_sequence_fabric_learning != stored_sequence_fabric_learning:
                 raise ValueError("joint training sequence fabric learning mismatch")
+        if payload_version >= 4:
+            stored_predictive_context_mode = payload.get("sequence_predictive_context_mode")
+            if stored_predictive_context_mode != JOINT_SEQUENCE_PREDICTIVE_CONTEXT_MODE:
+                raise ValueError("joint training predictive context mode is invalid")
+        else:
+            # v1-v3 did not own a private F1 plastic substrate.  Model-level
+            # migration can make them evaluable, but an in-place resume must
+            # not silently reinterpret their completed course semantics.
+            stored_predictive_context_mode = JOINT_LEGACY_PREDICTIVE_CONTEXT_MODE
         expected = content_digest(
             {key: value for key, value in payload.items() if key != "checkpoint_digest"}
         )
@@ -2560,9 +2637,7 @@ class JointTrainingRun:
             raise ValueError("joint training replay memory digest mismatch")
         stored_training_phases = payload.get("training_phases")
         if stored_training_phases is None:
-            stored_phase_plan = _legacy_joint_training_phases(
-                replay_dataset, replay_memory_corpus
-            )
+            stored_phase_plan = _legacy_joint_training_phases(replay_dataset, replay_memory_corpus)
         else:
             stored_phase_plan = _normalize_joint_training_phases(stored_training_phases)
         if training_phases is None:
@@ -2590,6 +2665,8 @@ class JointTrainingRun:
             corpus_payload["training_phases"] = list(effective_training_phases)
         if payload_version >= 3:
             corpus_payload["sequence_fabric_learning"] = stored_sequence_fabric_learning
+        if payload_version >= 4:
+            corpus_payload["sequence_predictive_context_mode"] = stored_predictive_context_mode
         expected_corpus = content_digest(corpus_payload)
         if str(payload.get("corpus_digest")) != expected_corpus:
             raise ValueError("joint training corpus digest mismatch")
@@ -2626,9 +2703,7 @@ class JointTrainingRun:
             sequence_fabric_learning=effective_sequence_fabric_learning,
             replay_dataset=replay_dataset,
             replay_epochs=int(
-                replay_epochs
-                if replay_epochs is not None
-                else payload.get("replay_epochs", 1)
+                replay_epochs if replay_epochs is not None else payload.get("replay_epochs", 1)
             ),
             replay_memory_corpus=replay_memory_corpus,
             replay_memory_epochs=int(
@@ -2652,8 +2727,9 @@ class JointTrainingRun:
         )
         # A strict in-place resume keeps the source course schema.  A new
         # continuation, by contrast, is constructed above and therefore starts
-        # at the current v3 schema with an explicit fabric-write policy.
+        # at the current v4 schema with explicit fabric/context ownership.
         run.training_version = payload_version
+        run.sequence_predictive_context_mode = stored_predictive_context_mode
         if run.corpus_digest != expected_corpus:
             raise ValueError("joint training corpus digest does not match resume semantics")
         parent_model = payload.get("parent_model")
@@ -2675,9 +2751,7 @@ class JointTrainingRun:
             ):
                 raise ValueError("joint training sequence fabric checks are invalid")
             fabric_phase_checks = [
-                dict(item)
-                for item in stored_fabric_phase_checks
-                if isinstance(item, Mapping)
+                dict(item) for item in stored_fabric_phase_checks if isinstance(item, Mapping)
             ]
             if len(fabric_phase_checks) != len(stored_fabric_phase_checks):
                 raise ValueError("joint training sequence fabric check is invalid")
@@ -2688,9 +2762,33 @@ class JointTrainingRun:
             raise ValueError("joint training sequence fabric parent does not match lineage")
         run.sequence_fabric_parent = stored_fabric_parent
         run.sequence_fabric_phase_checks = fabric_phase_checks
-        stored_readout_mode = str(
-            payload.get("sequence_readout_mode", "legacy-shared-readout-v0")
+        expected_context_parent = _sequence_predictive_context_digest(
+            Taiji.from_checkpoint(run.parent_model_payload)
         )
+        if payload_version >= 4:
+            stored_context_parent = payload.get("sequence_predictive_context_parent")
+            if not isinstance(stored_context_parent, str):
+                raise ValueError("joint training predictive context parent is invalid")
+            stored_context_phase_checks = payload.get(
+                "sequence_predictive_context_phase_checks", ()
+            )
+            if not isinstance(stored_context_phase_checks, Sequence) or isinstance(
+                stored_context_phase_checks, (str, bytes)
+            ):
+                raise ValueError("joint training predictive context checks are invalid")
+            context_phase_checks = [
+                dict(item) for item in stored_context_phase_checks if isinstance(item, Mapping)
+            ]
+            if len(context_phase_checks) != len(stored_context_phase_checks):
+                raise ValueError("joint training predictive context check is invalid")
+        else:
+            stored_context_parent = expected_context_parent
+            context_phase_checks = []
+        if stored_context_parent != expected_context_parent:
+            raise ValueError("joint training predictive context parent does not match lineage")
+        run.sequence_predictive_context_parent = stored_context_parent
+        run.sequence_predictive_context_phase_checks = context_phase_checks
+        stored_readout_mode = str(payload.get("sequence_readout_mode", "legacy-shared-readout-v0"))
         if stored_readout_mode not in {
             "legacy-shared-readout-v0",
             JOINT_SEQUENCE_READOUT_MODE,
@@ -2709,9 +2807,7 @@ class JointTrainingRun:
             raise ValueError("joint training sequence readout parent is invalid")
         else:
             run.sequence_readout_parent = {
-                key: (
-                    None if value is None else str(value)
-                )
+                key: (None if value is None else str(value))
                 for key, value in stored_readout_parent.items()
             }
         stored_phase_checks = payload.get("sequence_readout_phase_checks", ())
@@ -2762,6 +2858,7 @@ __all__ = [
     "JOINT_TRAINING_BASE_PHASES",
     "JOINT_TRAINING_PHASES",
     "JOINT_TRAINING_REPLAY_PHASES",
+    "JOINT_SEQUENCE_PREDICTIVE_CONTEXT_MODE",
     "JOINT_SEQUENCE_READOUT_MODE",
     "JOINT_TRAINING_VERSION",
     "JointTrainingRun",

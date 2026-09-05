@@ -252,7 +252,8 @@ class TSKV8Adapter(Taiji):
     """Keep the TSK-v8 API while making v1 ownership explicit.
 
     This subclass is intentional: old callers still see a ``Taiji`` and old
-    ``taiji-native-v8`` checkpoints remain readable through the v9 migration.
+    ``taiji-native-v8`` and ``taiji-native-v9`` checkpoints remain readable
+    through the current native migration path.
     New callers can use
     ``native_checkpoint`` and ``cognitive_snapshot`` without treating the
     kernel's byte prediction state as the complete v1 cognitive state.
@@ -305,20 +306,22 @@ class TSKV8Adapter(Taiji):
         self._structural_candidate_proposals: dict[str, str] = {}
         self._structural_maintenance_results: list[StructuralMaintenanceResult] = []
         self._structural_candidate_validations: list[StructuralCandidateValidation] = []
-        self._structural_validation_artifacts: list[
-            WorkbenchStructuralValidationArtifact
-        ] = []
+        self._structural_validation_artifacts: list[WorkbenchStructuralValidationArtifact] = []
         self._structural_validation_artifact_batches: dict[
             str, StructuralValidationArtifactBatch
         ] = {}
-        self._structural_validation_gate_decisions: list[
-            StructuralValidationGateDecision
-        ] = []
+        self._structural_validation_gate_decisions: list[StructuralValidationGateDecision] = []
         self._structural_admission_results: list[StructuralAdmissionResult] = []
         self._artifact_consumption_policy = ArtifactConsumptionPolicy.verified_only()
-        self._last_structural_lineage_retention_result: StructuralLineageRetentionResult | None = None
-        self._last_structural_lineage_retention_policy: StructuralLineageRetentionPolicy | None = None
-        self._last_structural_lineage_retention_policy_migration: StructuralLineageRetentionPolicyMigration | None = None
+        self._last_structural_lineage_retention_result: StructuralLineageRetentionResult | None = (
+            None
+        )
+        self._last_structural_lineage_retention_policy: StructuralLineageRetentionPolicy | None = (
+            None
+        )
+        self._last_structural_lineage_retention_policy_migration: (
+            StructuralLineageRetentionPolicyMigration | None
+        ) = None
         self._procedural_memory: ProceduralMemoryLearner | None = None
         self._homeostatic_controller: HomeostaticController | None = None
         self._goal_planner: GoalPlanner | None = None
@@ -593,8 +596,7 @@ class TSKV8Adapter(Taiji):
             for batch_id, batch in batch_items
             if batch_id not in protected_batch_ids
             and not any(
-                candidate_id in candidate_live_before
-                for candidate_id in batch.candidate_ids
+                candidate_id in candidate_live_before for candidate_id in batch.candidate_ids
             )
         ]
         remove_count = max(0, len(batch_items) - limit)
@@ -621,10 +623,7 @@ class TSKV8Adapter(Taiji):
         artifact_batch_remove_ids = {
             batch_id
             for batch_id, artifact_batch in self._structural_validation_artifact_batches.items()
-            if (
-                batch_id in removed_batch_id_set
-                or batch_id not in retained_batch_ids
-            )
+            if (batch_id in removed_batch_id_set or batch_id not in retained_batch_ids)
             and not any(
                 candidate_id in protected_candidate_ids
                 for candidate_id in artifact_batch.candidate_ids
@@ -674,7 +673,9 @@ class TSKV8Adapter(Taiji):
                 for result in self._structural_growth_schedule_results
                 if result.candidate_id not in removed_candidate_ids
             ]
-            removed_count("growth_schedule_results", before, len(self._structural_growth_schedule_results))
+            removed_count(
+                "growth_schedule_results", before, len(self._structural_growth_schedule_results)
+            )
 
             before = len(self._structural_workbench_batch_schedule_results)
             self._structural_workbench_batch_schedule_results = [
@@ -723,7 +724,9 @@ class TSKV8Adapter(Taiji):
                 for result in self._structural_candidate_validations
                 if result.candidate_id not in removed_candidate_ids
             ]
-            removed_count("candidate_validations", before, len(self._structural_candidate_validations))
+            removed_count(
+                "candidate_validations", before, len(self._structural_candidate_validations)
+            )
 
             before = len(self._structural_validation_artifacts)
             self._structural_validation_artifacts = [
@@ -731,7 +734,9 @@ class TSKV8Adapter(Taiji):
                 for artifact in self._structural_validation_artifacts
                 if artifact.candidate_id not in removed_candidate_ids
             ]
-            removed_count("validation_artifacts", before, len(self._structural_validation_artifacts))
+            removed_count(
+                "validation_artifacts", before, len(self._structural_validation_artifacts)
+            )
 
             before = len(self._structural_validation_artifact_batches)
             self._structural_validation_artifact_batches = {
@@ -780,9 +785,7 @@ class TSKV8Adapter(Taiji):
             self._structural_validation_artifact_batches = before_state[
                 "validation_artifact_batches"
             ]
-            self._structural_validation_gate_decisions = before_state[
-                "validation_gate_decisions"
-            ]
+            self._structural_validation_gate_decisions = before_state["validation_gate_decisions"]
             self._structural_admission_results = before_state["admission_results"]
             self._last_structural_lineage_retention_result = before_state[
                 "last_lineage_retention_result"
@@ -815,11 +818,7 @@ class TSKV8Adapter(Taiji):
             "removed_record_counts": tuple(sorted(record_counts.items())),
         }
         result = StructuralLineageRetentionResult(
-            **{
-                key: value
-                for key, value in constructor_payload.items()
-                if key != "format"
-            },
+            **{key: value for key, value in constructor_payload.items() if key != "format"},
             result_digest=structural_lineage_retention_digest(result_payload),
         )
         self._last_structural_lineage_retention_result = result
@@ -888,10 +887,7 @@ class TSKV8Adapter(Taiji):
         }
         return any(
             state in {"reserved", "deferred"}
-            or (
-                state == "admitted"
-                and (batch.batch_id, candidate_id) not in rollback_keys
-            )
+            or (state == "admitted" and (batch.batch_id, candidate_id) not in rollback_keys)
             for candidate_id, state in batch.candidate_states
         )
 
@@ -988,7 +984,12 @@ class TSKV8Adapter(Taiji):
     ) -> tuple[float, int, int, str]:
         """Return the explicit, deterministic arbitration order."""
 
-        return (-candidate.priority, -candidate.source_tick, candidate.resource_cost, candidate.candidate_id)
+        return (
+            -candidate.priority,
+            -candidate.source_tick,
+            candidate.resource_cost,
+            candidate.candidate_id,
+        )
 
     def arbitrate_structural_candidate_batch(
         self,
@@ -1090,7 +1091,9 @@ class TSKV8Adapter(Taiji):
             selected_candidate_ids=tuple(selected),
             deferred_candidate_ids=tuple(deferred),
             rejected_candidate_ids=tuple(rejected),
-            candidate_states=tuple((candidate_id, states[candidate_id]) for candidate_id in normalized_ids),
+            candidate_states=tuple(
+                (candidate_id, states[candidate_id]) for candidate_id in normalized_ids
+            ),
             reasons=tuple(sorted(reasons.items())),
             reserved_resource_cost=available_budget - remaining_budget,
             reservation_remaining=available_budget - remaining_budget,
@@ -1488,9 +1491,7 @@ class TSKV8Adapter(Taiji):
         state = self._structural_growth_scheduler_state
         last_evaluated_tick = state.last_evaluated_tick_for(stream_key)
         unseen = tuple(
-            item
-            for item in summaries
-            if item.window_digest not in state.evaluated_window_digests
+            item for item in summaries if item.window_digest not in state.evaluated_window_digests
         )
         trigger_tick = max((item.last_tick for item in summaries), default=last_evaluated_tick)
         if not unseen:
@@ -1616,9 +1617,7 @@ class TSKV8Adapter(Taiji):
                     "target_kind": str(item["target_kind"]),
                     "operation": str(item["operation"]),
                     "substrate_ids": tuple(str(value) for value in substrate_ids),
-                    "specification": {
-                        str(key): value for key, value in specification.items()
-                    },
+                    "specification": {str(key): value for key, value in specification.items()},
                     "minimum_train_task_slices": int(item.get("minimum_train_task_slices", 2)),
                     "minimum_train_windows": int(item.get("minimum_train_windows", 2)),
                     "require_holdout": bool(item.get("require_holdout", True)),
@@ -1720,6 +1719,7 @@ class TSKV8Adapter(Taiji):
         )
         self._record_structural_workbench_batch_schedule_result(result)
         return result
+
     @property
     def structural_pressure_projection_digests(self) -> tuple[str, ...]:
         """Return pressure projections already consumed by the controller bridge."""
@@ -1783,8 +1783,7 @@ class TSKV8Adapter(Taiji):
             source_tick=projection.last_tick,
             priority=min(
                 1.0,
-                projection.mean_prediction_error
-                * max(projection.mean_holdout_transfer, 0.0),
+                projection.mean_prediction_error * max(projection.mean_holdout_transfer, 0.0),
             ),
             specification=tuple((str(key), value) for key, value in specification.items()),
             resource_cost=self._structural_growth_controller.dynamics.growth_resource_cost,
@@ -1940,9 +1939,9 @@ class TSKV8Adapter(Taiji):
                 candidate_id=key,
                 proposal_id=current_proposal_id,
                 status="failed_closed",
-                validation_score=0.0
-                if current_proposal is None
-                else current_proposal.validation_score,
+                validation_score=(
+                    0.0 if current_proposal is None else current_proposal.validation_score
+                ),
                 parent_checkpoint_digest=parent_checkpoint_digest,
                 validation_checkpoint_digest=_checkpoint_digest(validation_checkpoint),
                 topology_before_digest=topology_before_digest,
@@ -1983,8 +1982,7 @@ class TSKV8Adapter(Taiji):
             (
                 item
                 for item in reversed(self._structural_candidate_validations)
-                if item.candidate_id == validation.candidate_id
-                and item == validation
+                if item.candidate_id == validation.candidate_id and item == validation
             ),
             None,
         )
@@ -2008,13 +2006,13 @@ class TSKV8Adapter(Taiji):
         proposal = self._topology_proposals.get(proposal_id)
         if proposal is None or proposal.status != "pending":
             raise ValueError("candidate gate requires a pending topology proposal")
-        metric_ids = tuple(dict.fromkeys((*validation.evidence_ids, *(str(item) for item in evidence_ids))))
+        metric_ids = tuple(
+            dict.fromkeys((*validation.evidence_ids, *(str(item) for item in evidence_ids)))
+        )
         decision = evaluate_structural_candidate_validation(
             validation.candidate_id,
             holdout_gain=(
-                validation.validation_score
-                if holdout_gain is None
-                else float(holdout_gain)
+                validation.validation_score if holdout_gain is None else float(holdout_gain)
             ),
             retention_regression=retention_regression,
             lesion_effect=lesion_effect,
@@ -2439,16 +2437,12 @@ class TSKV8Adapter(Taiji):
                 artifacts=consumed_artifacts,
             )
             artifact_batch = (
-                submitted_batch
-                if artifact_batch is None
-                else artifact_batch.merge(submitted_batch)
+                submitted_batch if artifact_batch is None else artifact_batch.merge(submitted_batch)
             )
             self._record_structural_validation_artifact_batch(artifact_batch)
         return {
             "batch": current.to_payload(),
-            "artifact_batch": (
-                None if artifact_batch is None else artifact_batch.to_payload()
-            ),
+            "artifact_batch": (None if artifact_batch is None else artifact_batch.to_payload()),
             "results": results,
         }
 
@@ -2542,9 +2536,7 @@ class TSKV8Adapter(Taiji):
                     parent_checkpoint_digest=parent_checkpoint_digest,
                     child_checkpoint_digest=_checkpoint_digest(rolled_back_checkpoint),
                     topology_before_digest=topology_before_digest,
-                    topology_after_digest=self._structural_topology_digest(
-                        rolled_back_checkpoint
-                    ),
+                    topology_after_digest=self._structural_topology_digest(rolled_back_checkpoint),
                     structural_budget_before=budget_before,
                     structural_budget_after=int(
                         self._cognitive_state.development.structural_budget
@@ -2669,9 +2661,7 @@ class TSKV8Adapter(Taiji):
         """
 
         if policy is not None and require_verified_measurements is not None:
-            raise ValueError(
-                "artifact consumption accepts a policy or legacy boolean, not both"
-            )
+            raise ValueError("artifact consumption accepts a policy or legacy boolean, not both")
         if require_verified_measurements is not None:
             return (
                 ArtifactConsumptionPolicy.verified_only(
@@ -2802,8 +2792,7 @@ class TSKV8Adapter(Taiji):
                 unit_id=str(specification["unit_id"]),
                 evidence_ids=candidate.evidence_ids,
                 parent_checkpoint_id=(
-                    candidate.parent_checkpoint_id
-                    or f"candidate-parent:{candidate.candidate_id}"
+                    candidate.parent_checkpoint_id or f"candidate-parent:{candidate.candidate_id}"
                 ),
                 resource_cost=candidate.resource_cost,
             )
@@ -3201,7 +3190,9 @@ class TSKV8Adapter(Taiji):
         expected_activities_by_candidate: Mapping[str, Sequence[Any]],
         candidate_ids: Sequence[str] | None = None,
         lineage_retention_max_batches: int | None = None,
-        lineage_retention_policy: StructuralLineageRetentionPolicy | Mapping[str, Any] | None = None,
+        lineage_retention_policy: (
+            StructuralLineageRetentionPolicy | Mapping[str, Any] | None
+        ) = None,
     ) -> tuple[StructuralMaintenanceResult, ...]:
         """Process candidates and optionally run explicit lineage maintenance.
 
@@ -6631,8 +6622,7 @@ class TSKV8Adapter(Taiji):
                 result.to_payload() for result in self._structural_growth_schedule_results
             ],
             "workbench_batch_schedule_results": [
-                result.to_payload()
-                for result in self._structural_workbench_batch_schedule_results
+                result.to_payload() for result in self._structural_workbench_batch_schedule_results
             ],
             "candidate_batches": [
                 batch.to_payload() for batch in self._structural_candidate_batches.values()
@@ -6641,12 +6631,9 @@ class TSKV8Adapter(Taiji):
                 record.to_payload() for record in self._structural_candidate_rollbacks
             ],
             "capacity_pressure_snapshots": [
-                snapshot.to_payload()
-                for snapshot in self._structural_capacity_pressure_snapshots
+                snapshot.to_payload() for snapshot in self._structural_capacity_pressure_snapshots
             ],
-            "pressure_projection_digests": sorted(
-                self._structural_pressure_projection_digests
-            ),
+            "pressure_projection_digests": sorted(self._structural_pressure_projection_digests),
             "previous_errors": dict(self._structural_runtime_previous_errors),
             "proposal_candidates": [
                 candidate.to_payload()
@@ -6667,8 +6654,7 @@ class TSKV8Adapter(Taiji):
                 for batch in self._structural_validation_artifact_batches.values()
             ],
             "validation_gate_decisions": [
-                decision.to_payload()
-                for decision in self._structural_validation_gate_decisions
+                decision.to_payload() for decision in self._structural_validation_gate_decisions
             ],
             "admission_results": [
                 result.to_payload() for result in self._structural_admission_results
@@ -6901,9 +6887,7 @@ class TSKV8Adapter(Taiji):
         for item in admission_results:
             if not isinstance(item, Mapping):
                 raise ValueError("structural admission result entry must be a mapping")
-            self._record_structural_admission_result(
-                StructuralAdmissionResult.from_payload(item)
-            )
+            self._record_structural_admission_result(StructuralAdmissionResult.from_payload(item))
         restored_retention = (
             None
             if lineage_retention_result is None
@@ -8164,7 +8148,9 @@ class TSKV8Adapter(Taiji):
         if proposal.input_id != frame.input_id:
             raise ValueError("semantic provider evidence input_id does not match the live frame")
         if proposal.input_digest != expected_digest:
-            raise ValueError("semantic provider evidence input digest does not match the live frame")
+            raise ValueError(
+                "semantic provider evidence input digest does not match the live frame"
+            )
         if proposal.modality != frame.modality:
             raise ValueError("semantic provider evidence modality does not match the live frame")
         if proposal.tick != self.tick or frame.timestamp != self.tick:
@@ -8174,8 +8160,14 @@ class TSKV8Adapter(Taiji):
             proposal.confidence >= SEMANTIC_PROVIDER_CONFIDENCE_FLOOR
             and proposal.ambiguity <= SEMANTIC_PROVIDER_AMBIGUITY_CEILING
         )
-        interpretation_status = "resolved" if resolved else (
-            "ambiguous" if proposal.ambiguity > SEMANTIC_PROVIDER_AMBIGUITY_CEILING else "candidate"
+        interpretation_status = (
+            "resolved"
+            if resolved
+            else (
+                "ambiguous"
+                if proposal.ambiguity > SEMANTIC_PROVIDER_AMBIGUITY_CEILING
+                else "candidate"
+            )
         )
         provenance = f"{proposal.provenance}:{proposal.provider_id}"
         interpretation = TaskInterpretation.from_input(
@@ -12163,7 +12155,9 @@ class TSKV8Adapter(Taiji):
         )
 
     def _restore_semantic_provider_evidence(self, payload: Any) -> None:
-        item = payload.get("last_semantic_provider_evidence") if isinstance(payload, Mapping) else None
+        item = (
+            payload.get("last_semantic_provider_evidence") if isinstance(payload, Mapping) else None
+        )
         self._last_semantic_provider_evidence = (
             None if item is None else SemanticEvidenceProposal.from_payload(dict(item))
         )
