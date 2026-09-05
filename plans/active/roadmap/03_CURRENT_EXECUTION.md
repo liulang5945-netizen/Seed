@@ -54,7 +54,7 @@ Taiji 采用“站在巨人肩膀上”的双边界：原始 byte 输入继续�
 |---|---|---|---|---|
 | 0 | M0 CPU 五项基础能力真实性基线 | **已完成（M0-0/M0-1/B1/B2/B3/B4/B5/M0-3/M0-4）** | 数据合同、对照 evaluator、checkpoint preflight、基线报告 | 测量链可信且能保存/恢复；模型得分可以失败，但失败必须被如实记录 |
 | 1 | M1 Taiji foundation 训练管线与首次 CPU 训练 | **已完成（M0-0~M0-4/M1-32~M1-66c）** | 原生 trainer、数据流水线、B2 因果链（寻址→裁决→折叠→契约）、首个 joint checkpoint | M1-66c 收尾：B2 在三 seed 上通过全部 foundation 门禁 |
-| 2 | M2 世界—行动—语言后训练 | **当前进行（M2-2k：child 全能力覆盖接线）** | 世界预测、行动信用、F1 隔离读出、受控的旧/新语言保持 Gate，随后才是 ContentPlan/语言蒸馏和 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
+| 2 | M2 世界—行动—语言后训练 | **当前进行（M2-2l：B5 child continuation）** | 世界预测、行动信用、F1 隔离读出、受控的旧/新语言保持 Gate，随后才是 ContentPlan/语言蒸馏和 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
 | 3 | M3 综合能力晋级与真实 Workbench 验证 | 待开始 | 独立评测套件、真实 Workbench longitudinal report、晋级 checkpoint | 至少一个真实任务族获得可重复净收益 |
 | 4 | M4 持续学习、自进化和结构成长 | 冻结等待 M3 | bounded replay 接线、多周期保持、结构候选与单项回滚 | 真实 checkpoint 连续学习收益大于固定容量/weight-only 对照 |
 | 5 | M5 Skill/MCP 数据飞轮与客户端身体 | 冻结等待 M4 | 知识内化、经验回流、IDE/Workbench 身体、客户端插件准入 | 认知收益与客户端执行收益可消融归因，权限和回滚闭合 |
@@ -460,6 +460,8 @@ M1-64 已完成，B2 在真实 foundation 规模上被判定为**记忆能力不
 **M2-2j 正式 B1 child report 完成（20260905）**：修正 seed-specific 数据地址后，`reports/taiji_m2j_foundation_child_b1_20260905.json` 在全新 Python 进程中直接加载三份 v4 private-context `last.pt` 及其 `parent_model`，并以 `reports/taiji_m2_checkpoint_preflight_20260903.json` 通过 checkpoint gate。B1 使用 foundation 预算 `1,048,576/131,072/131,072`，三 seed child holdout BPB 为 `4.288321/4.383969/4.373164`，最差 `4.383969`；最强对照为 unigram `5.937711`，同时优于 random `8.005624`、frozen-parent `4.788622`、hash-only `15.945552`，`strictly_beats_strongest_control=true`、`holdout_updates=0`。报告还记录三份 child 与 phase-B、protected phase-A digest 逐一匹配，score 前后 checkpoint 不变。整体 `status=not_evaluated`、`can_promote=false` 是正确结果：B2～B5 尚未有 child-bound foundation measurement，不能用 M2-2i 的 joint keep 指标或 fresh task 结果填充。**M2-2k 唯一下一步**：为同一 formal evaluator 接入 checkpoint-bound B2/B3/B4 只读 full-coverage measurement，并为 B5 建立从 child 继续的 dedicated phase-A/phase-B no-replay/replay 对照；先完成数据与 checkpoint 归属审计，再运行正式课程。
 
 **M2-2k B2/B3/B4 child-bound 接线完成（20260905，尚未运行 full coverage）**：`eval_taiji_foundation_baseline.py --child-foundation` 现在对同一组三份 v4 child 做 B2 1000/200/200 延迟干扰只读测量、B3 1000/500/500 world learner 只读测量和 B4 1000/500/500 action readout 只读测量；每项都从 child payload 加载对应的真实 organ/learner，parent/frozen、random、simple-rule、hash-only 由同一课程重新计算，holdout/retention digest 变化会 fail closed。缩小 8/4/4 canary 已运行，B2/B3/B4 均返回真实 `failed`（不是异常或伪通过）且 `holdout_updates=0`，说明入口和失败语义可用。当前唯一下一步是用 `--child-foundation` 跑 manifest floor，形成 B2/B3/B4 的真实结果；B5 仍必须随后以独立 continuation course 进入正式报告。
+
+**M2-2k manifest full coverage 完成（20260905）**：`reports/taiji_m2k_foundation_child_20260905.json` 直接从三份 v4 child 读取 B2/B3/B4，checkpoint gate 为 `passed`，所有 child 读路径 `holdout_updates=0`。B2 使用真实 delayed/interference `1000/200/200`，最差 child recall `0.505`，与 frozen/simple-rule `0.505` 持平，未严格超过 random/hash/两条因果读出控制；B3 使用 `1000/500/500`，最差 transition error `3.622080e-08`，与 frozen parent `3.545353e-08` 的 strongest control 比较失败；B4 使用 `1000/500/500`，child success `1.0`，但 frozen parent 也是 `1.0`，按严格优于控制失败。三项 failure 是 inherited child 没有在对应 full-coverage 任务上形成新增可归因收益的真实结论，不是 evaluator bug。B1 在同一报告继续保持通过（最差 `4.383969 BPB` < unigram `5.937711`），B5 保持 `not_evaluated`，因此整体 `status=not_evaluated`、`can_promote=false`。**M2-2l 唯一下一步**：建立从三份 child 继续的 dedicated B5 phase-A/phase-B no-replay 与 bounded-replay 对照，先验证 checkpoint continuation、old-ability retention 和 replay causal gain，再决定是否把 B5 measurement 写入正式 foundation report。
 
 ## 7. M2～M8 的开发日程与外围任务安置
 
