@@ -54,7 +54,7 @@ Taiji 采用“站在巨人肩膀上”的双边界：原始 byte 输入继续�
 |---|---|---|---|---|
 | 0 | M0 CPU 五项基础能力真实性基线 | **已完成（M0-0/M0-1/B1/B2/B3/B4/B5/M0-3/M0-4）** | 数据合同、对照 evaluator、checkpoint preflight、基线报告 | 测量链可信且能保存/恢复；模型得分可以失败，但失败必须被如实记录 |
 | 1 | M1 Taiji foundation 训练管线与首次 CPU 训练 | **已完成（M0-0~M0-4/M1-32~M1-66c）** | 原生 trainer、数据流水线、B2 因果链（寻址→裁决→折叠→契约）、首个 joint checkpoint | M1-66c 收尾：B2 在三 seed 上通过全部 foundation 门禁 |
-| 2 | M2 世界—行动—语言后训练 | **当前进行（M2-2ad：active registry 与训练课程边界）** | 世界预测、行动信用、F1 隔离读出、受控的旧/新语言保持 Gate，随后才是 ContentPlan/语言蒸馏和 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
+| 2 | M2 世界—行动—语言后训练 | **当前进行（M2-2ae：disjoint phase-C active gain）** | 世界预测、行动信用、F1 隔离读出、受控的旧/新语言保持 Gate，随后才是 ContentPlan/语言蒸馏和 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
 | 3 | M3 综合能力晋级与真实 Workbench 验证 | 待开始 | 独立评测套件、真实 Workbench longitudinal report、晋级 checkpoint | 至少一个真实任务族获得可重复净收益 |
 | 4 | M4 持续学习、自进化和结构成长 | 冻结等待 M3 | bounded replay 接线、多周期保持、结构候选与单项回滚 | 真实 checkpoint 连续学习收益大于固定容量/weight-only 对照 |
 | 5 | M5 Skill/MCP 数据飞轮与客户端身体 | 冻结等待 M4 | 知识内化、经验回流、IDE/Workbench 身体、客户端插件准入 | 认知收益与客户端执行收益可消融归因，权限和回滚闭合 |
@@ -509,6 +509,10 @@ M1-64 已完成，B2 在真实 foundation 规模上被判定为**记忆能力不
 
 **M2-2ad 唯一下一步**：把 active registry 接入真正的 seed11 continuation evaluator，形成“protected parent → active boundary course → fresh-process restore → active/ protected/retention 三路对照”的可重复训练报告；只允许 active readout 更新，必须同时记录 active/protected/context/fabric/memory owner digest、checkpoint 字节/恢复耗时、holdout 与 retention 只读证据。先验证 active branch 在真实 phase-B 数据上的增益和 protected retention，再决定是否把该分支纳入 B5 continuation；不得把普通无 boundary 基础训练或 evaluator prototype 结果混入 registry Gate。
 
+**M2-2ad 完成（2026-09-06）**：`scripts/training/eval_taiji_m2ad_active_continuation.py` 已接入真实 seed11 v4 private-context child 与 phase-A/phase-B 内容地址，active branch 以 Workbench `execute` boundary 训练真实 phase-B 前缀 `262,144` bytes；评估使用 phase-B holdout 与 protected phase-A retention，各 `131,072` bytes。11/11 技术检查通过：active readout digest 发生真实变化，protected fabric/motor/predictive-context/protected-readout/memory owners 全部保持，holdout/retention score 前后均 `holdout_updates=0`，registry 在进程内和全新 Python 进程均 round-trip，active generation 正确路由到 `predictive_readout.active`，无 registry 仍 fail closed。checkpoint `9,128,385` bytes，fresh-process restore `2.527s`。**能力结果必须单独解读**：active phase-B BPB `4.2883208` 与 protected 对照完全相同，gain `0.0`；protected retention `4.2711828` 与 active retention 完全相同，delta `0.0`。因此本片通过 registry/persistence/isolation Gate，但没有证明 active branch 的能力增益——输入 child 已经在同一 phase-B 完整训练，重复该数据不能构造新能力证据。中止的首轮 1 MiB 运行只因系统拒绝临时 checkpoint 写入而无报告，不计入结果；随后 256 KiB 运行使用 `output` 探针并成功恢复。相关最小 canary `11/11` 与 M2-2ac/architecture/sequence/P6 回归均通过。
+
+**M2-2ae 唯一下一步**：建立真正与 phase-A、phase-B 均不重叠的 real phase-C 数据合同，再重复同一 active/protected/retention 三路课程；phase-C 训练必须只更新 active readout、保留 active boundary 和 parent digest，protected phase-A retention 与 phase-B holdout 均作为只读旧能力对照，并在 fresh-process checkpoint 恢复后复测。必须先解决多阶段 exclusion 的内容地址（不能只更换 partition seed 造成 phase-B 重用），再用 `active gain > 0` 且旧 retention 不退化作为能力候选条件；在此之前不把 active registry 接入 B5 主线，也不扩展 Provider、客户端或 CUDA。
+
 ## 7. M2～M8 的开发日程与外围任务安置
 
 ### M2：世界—行动—语言后训练
@@ -609,6 +613,7 @@ CI 不是最后才运行的支线：每个 slice 都运行相关 pytest/lint/typ
 | 2026-09-05 | M2-2aa Workbench boundary 生命周期接入完成：issue/rotate/close/restore、API open/close、Taiji admit/execute token Gate、候选 capability 权限匹配、缺 token/旧代际/closed/过期/快照漂移 fail-closed 均完成；OpenAPI snapshot 与 `88 passed, 1 skipped` 回归通过，下一步让 generation caller 消费 boundary。 |
 | 2026-09-05 | M2-2ab Taiji generation boundary 接入完成：protected/closed replay 可生成，active 缺少已挂载 readout 时 fail-closed；seed 11 报告 7/7 通过，持久 owner digest 保持，生成动态 state 变化被单独记录；相关回归 `19 passed`，下一步建立可保存 active readout registry。 |
 | 2026-09-05 | M2-2ac active readout registry 完成：Taiji 核心保存/恢复带 owner、readout、parent 和 Workbench boundary digest 的 active 分支；active 训练必须持有 execute boundary 且冻结 shared fabric/private context，protected owners 保持不变。seed11 registry canary `8/8` 通过，缺 registry、foreign parent、checkpoint round-trip 与 active generation 路由均有证据；相关回归 `13 passed`，下一步把 registry 接入真实 seed11 continuation evaluator。 |
+| 2026-09-06 | M2-2ad 真实 seed11 active continuation 完成：256 KiB phase-B 真实前缀课程的 registry/persistence/isolation 技术检查 `11/11`，checkpoint `9,128,385` bytes、fresh-process restore `2.527s`；active readout 确实改变但 phase-B gain `0.0 BPB`、retention delta `0.0`，因为 child 已经训练过同一 phase-B。结论是技术 Gate 通过、能力增益未证明；下一步建立 phase-A/phase-B 均排除的 disjoint phase-C 数据合同。 |
 | 2026-09-05 | M2-2n 补训前置发现并修复 `JointTrainingRun` 每步写 checkpoint 的性能问题；旧运行安全停在 memory `531/1000`，将从可恢复 `last.pt` 继续。 |
 | 2026-09-05 | M2-2m 统一五项 child foundation report 完成：B1 通过；B2/B3/B4 未形成相对冻结父模型的新增净收益；B5 replay 三 seed 均改善 no-replay 但最差 BWT `-0.262874`，整体 failed。下一步收束为从 child 进行 `memory→world→goal` 器官补训。 |
 | 2026-09-05 | M2-2l 真实三 seed B5 continuation 完成：replay 相对 no-replay 的 BWT 增益三 seed 均为正，但最差 replay BWT 为 `-0.262874`，仍未超过零基线；B5 保持 failed，下一步改 continuation 更新规则/容量分配。M2-2m 接入受 provenance 校验的 B1 report reuse，准备生成统一五项 child foundation report。 |
