@@ -187,6 +187,8 @@ class Taiji:
         learn: bool = True,
         learn_motor: bool | None = None,
         learn_fabric: bool | None = None,
+        learn_predictive_context: bool | None = None,
+        learn_predictive_readout: bool | None = None,
         readout: str = "action",
         use_memory: bool = True,
         use_identity: bool | None = None,
@@ -202,6 +204,10 @@ class Taiji:
         sequence-learning experiments: F1 may still train its dedicated
         predictive readout and private temporal context without silently
         changing the shared F2/F4 context.
+        ``learn_predictive_context`` and ``learn_predictive_readout`` expose
+        the two F1 owners independently for causal continual-learning
+        diagnostics.  ``None`` follows ``learn``; an explicit ``False``
+        freezes only that owner while preserving the same forward path.
         ``readout="predictive"`` sends next-byte error to the dedicated F1
         decoder; it never writes the F4 action policy.  A single dynamics
         episode cannot silently switch readout ownership, because the prior
@@ -230,6 +236,18 @@ class Taiji:
             raise TypeError("learn_fabric must be a bool or None")
         if not learn and learn_fabric is True:
             raise ValueError("fabric learning requires learn=True")
+        for name, value in (
+            ("learn_predictive_context", learn_predictive_context),
+            ("learn_predictive_readout", learn_predictive_readout),
+        ):
+            if value is not None and not isinstance(value, bool):
+                raise TypeError(f"{name} must be a bool or None")
+            if not learn and value is True:
+                raise ValueError(f"{name} requires learn=True")
+        if readout != "predictive" and (
+            learn_predictive_context is True or learn_predictive_readout is True
+        ):
+            raise ValueError("predictive owner learning requires readout='predictive'")
         symbol = int(symbol)
         sensory = self.sensor.encode(symbol)
         previous = self._state
@@ -241,6 +259,12 @@ class Taiji:
             )
         motor_learning = learn if learn_motor is None else bool(learn_motor)
         fabric_learning = learn if learn_fabric is None else bool(learn_fabric)
+        predictive_context_learning = (
+            learn if learn_predictive_context is None else bool(learn_predictive_context)
+        )
+        predictive_readout_learning = (
+            learn if learn_predictive_readout is None else bool(learn_predictive_readout)
+        )
         memory_write_strength = 0.0
         if previous.pending_experience is not None:
             pending_experience = previous.pending_experience
@@ -273,7 +297,9 @@ class Taiji:
             prior_prediction = int(previous.motor_probabilities.argmax().item())
             prior_probability = float(previous.motor_probabilities[symbol].item())
             surprise = -math.log(max(prior_probability, 1e-12))
-            if readout == "predictive" and learn:
+            if readout == "predictive" and learn and (
+                predictive_readout_learning or predictive_context_learning
+            ):
                 # Take the F1 feedback before changing decoder contacts: the
                 # private residual must learn from the causal surface that
                 # made this prior prediction, never from the post-update one.
@@ -281,16 +307,20 @@ class Taiji:
                     previous.motor_probabilities,
                     symbol,
                 )
-                predictive_feedback = self.predictive_readout.context_feedback(predictive_error)
-                self.predictive_readout.learn(
-                    previous.motor_context,
-                    previous.motor_probabilities,
-                    symbol,
-                )
-                self.predictive_context.learn(
-                    previous.predictive_context_trace,
-                    predictive_feedback,
-                )
+                if predictive_readout_learning:
+                    self.predictive_readout.learn(
+                        previous.motor_context,
+                        previous.motor_probabilities,
+                        symbol,
+                    )
+                if predictive_context_learning:
+                    predictive_feedback = self.predictive_readout.context_feedback(
+                        predictive_error
+                    )
+                    self.predictive_context.learn(
+                        previous.predictive_context_trace,
+                        predictive_feedback,
+                    )
             elif readout == "action" and motor_learning:
                 self.motor.learn(
                     previous.motor_context,
@@ -861,6 +891,8 @@ class Taiji:
         include_boundary: bool = True,
         use_memory: bool = False,
         learn_fabric: bool = True,
+        learn_predictive_context: bool = True,
+        learn_predictive_readout: bool = True,
     ) -> dict[str, float]:
         """Develop on a byte stream using only online local updates.
 
@@ -879,6 +911,10 @@ class Taiji:
             raise ValueError("epochs must be positive")
         if not isinstance(learn_fabric, bool):
             raise TypeError("learn_fabric must be a bool")
+        if not isinstance(learn_predictive_context, bool):
+            raise TypeError("learn_predictive_context must be a bool")
+        if not isinstance(learn_predictive_readout, bool):
+            raise TypeError("learn_predictive_readout must be a bool")
         observations = 0
         correct = 0
         surprise_sum = 0.0
@@ -889,6 +925,8 @@ class Taiji:
                     symbol,
                     learn=True,
                     learn_fabric=learn_fabric,
+                    learn_predictive_context=learn_predictive_context,
+                    learn_predictive_readout=learn_predictive_readout,
                     readout="predictive",
                     use_memory=use_memory,
                     use_identity=False,

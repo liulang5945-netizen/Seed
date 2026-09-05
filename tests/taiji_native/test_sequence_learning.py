@@ -154,6 +154,46 @@ def test_byte_learning_can_freeze_shared_fabric_without_freezing_predictive_read
     assert after["mean_surprise"] < before["mean_surprise"]
 
 
+def test_byte_learning_can_isolate_predictive_context_and_readout_owners() -> None:
+    """B5 diagnosis must be able to freeze either F1 owner independently."""
+
+    data = b"abcd" * 16
+    config = TaijiConfig(
+        region_sizes=(32,),
+        synapse_fan_in=8,
+        motor_fan_in=16,
+        memory_units=32,
+        memory_fan_in=8,
+        memory_readout_fan_in=16,
+        memory_meta_dim=16,
+        seed=53,
+    )
+
+    readout_only = Taiji(config)
+    context_before = content_digest(readout_only.predictive_context.to_payload())
+    readout_before = content_digest(readout_only.predictive_readout.to_payload())
+    readout_only.learn_bytes(
+        data,
+        epochs=20,
+        learn_fabric=False,
+        learn_predictive_context=False,
+    )
+    assert content_digest(readout_only.predictive_context.to_payload()) == context_before
+    assert content_digest(readout_only.predictive_readout.to_payload()) != readout_before
+
+    context_only = Taiji(config)
+    context_before = content_digest(context_only.predictive_context.to_payload())
+    readout_before = content_digest(context_only.predictive_readout.to_payload())
+    context_only.learn_bytes(
+        data,
+        epochs=20,
+        learn_fabric=False,
+        learn_predictive_readout=False,
+    )
+    assert content_digest(context_only.predictive_context.to_payload()) != context_before
+    assert content_digest(context_only.predictive_readout.to_payload()) == readout_before
+
+
 def test_legacy_shared_motor_checkpoint_migrates_to_a_separate_predictive_readout() -> None:
     """An existing F1/F4 checkpoint must remain loadable without relearning."""
 
