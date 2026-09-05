@@ -25,6 +25,7 @@ if str(PROJECT_ROOT) not in sys.path:
 from taiji import (  # noqa: E402
     FoundationTrainingDataset,
     Outcome,
+    Taiji,
     WorldAction,
     WorldInterventionCase,
     WorldObject,
@@ -158,8 +159,6 @@ def _load_joint_child(path: Path, *, expected_seed: int) -> tuple[dict[str, Any]
     parent_payload = payload.get("parent_model")
     if not isinstance(model_payload, Mapping) or not isinstance(parent_payload, Mapping):
         raise ValueError(f"joint child checkpoint is missing model lineage: {path}")
-    from taiji import Taiji
-
     model = Taiji.from_checkpoint(model_payload)
     parent = Taiji.from_checkpoint(parent_payload)
     if int(model.config.seed) != int(expected_seed):
@@ -605,6 +604,119 @@ def _evaluate_loaded_b4(
     )
 
 
+def _b5_phase_b_stream(seed: int, *, length: int, offset: int) -> bytes:
+    """Create a deterministic phase-B byte stream disjoint from phase-A slices."""
+
+    return bytes(32 + ((index * 37 + int(seed) + int(offset)) % 224) for index in range(length))
+
+
+def _evaluate_loaded_b5(
+    checkpoints: Mapping[int, Path],
+    protected_datasets: Mapping[int, FoundationTrainingDataset],
+) -> FoundationMeasurement:
+    """Run the dedicated B5 continuation/replay contrast from each child."""
+
+    seed_records: list[dict[str, float | int | str | bool]] = []
+    course_sample_counts: dict[str, int] | None = None
+    for seed, path in sorted(checkpoints.items()):
+        payload, source_model, _parent = _load_joint_child(path, expected_seed=seed)
+        protected = protected_datasets[seed]
+        corpus = ContinualLearningCorpus(
+            phase_a_train=protected.train[:4_096],
+            phase_a_holdout=protected.holdout[:200],
+            phase_b_train=_b5_phase_b_stream(seed, length=4_096, offset=0),
+            phase_b_holdout=_b5_phase_b_stream(seed, length=200, offset=1),
+            retention=protected.retention[:200],
+        )
+        if course_sample_counts is None:
+            course_sample_counts = corpus.sample_counts
+        no_replay = Taiji.from_checkpoint(source_model.checkpoint())
+        old_before = _score_loaded_model(no_replay, corpus.phase_a_holdout)
+        no_replay.learn_bytes(corpus.phase_b_train, epochs=1, learn_fabric=False)
+        old_after_no_replay = _score_loaded_model(no_replay, corpus.phase_a_holdout)
+        new_after_no_replay = _score_loaded_model(no_replay, corpus.phase_b_holdout)
+        no_replay_bwt = old_before - old_after_no_replay
+
+        replay = Taiji.from_checkpoint(source_model.checkpoint())
+        replay_old_before = _score_loaded_model(replay, corpus.phase_a_holdout)
+        replay.learn_bytes(corpus.phase_b_train, epochs=1, learn_fabric=False)
+        replay_after_phase_b = _score_loaded_model(replay, corpus.phase_a_holdout)
+        replay.learn_bytes(corpus.phase_a_train, epochs=1, learn_fabric=False)
+        old_after_replay = _score_loaded_model(replay, corpus.phase_a_holdout)
+        new_after_replay = _score_loaded_model(replay, corpus.phase_b_holdout)
+        retention_after_replay = _score_loaded_model(replay, corpus.retention)
+        replay_bwt = replay_old_before - old_after_replay
+        seed_records.append(
+            {
+                "seed": seed,
+                "old_before": replay_old_before,
+                "old_after_no_replay": old_after_no_replay,
+                "old_after_replay": old_after_replay,
+                "new_after_no_replay": new_after_no_replay,
+                "new_after_replay": new_after_replay,
+                "retention_after_replay": retention_after_replay,
+                "backward_transfer_no_replay": no_replay_bwt,
+                "backward_transfer_replay": replay_bwt,
+                "replay_gain_vs_no_replay": replay_bwt - no_replay_bwt,
+                "phase_b_old_loss_before_replay": replay_old_before - replay_after_phase_b,
+                "continued_from_child": True,
+                "replay_executed": True,
+                "checkpoint_digest": str(payload["checkpoint_digest"]),
+                "replay_corpus_digest": content_digest(corpus.phase_a_train),
+                "holdout_updates": 0,
+                "trained_with_private_context_only": True,
+            }
+        )
+
+    replay_values = [float(record["backward_transfer_replay"]) for record in seed_records]
+    no_replay_values = [
+        float(record["backward_transfer_no_replay"]) for record in seed_records
+    ]
+    baseline_metrics = {
+        "random": 0.0,
+        "frozen_parent": 0.0,
+        "simple_rule": 0.0,
+        "hash_only": 0.0,
+        "no_replay": min(no_replay_values),
+    }
+    worst_replay = min(replay_values)
+    replay_beats_no_replay = all(
+        float(record["backward_transfer_replay"])
+        > float(record["backward_transfer_no_replay"])
+        for record in seed_records
+    )
+    new_capability_preserved = all(
+        float(record["new_after_replay"])
+        <= float(record["new_after_no_replay"]) + 0.5
+        for record in seed_records
+    )
+    return FoundationMeasurement(
+        ability_id="b5_continual_learning",
+        status=(
+            "passed"
+            if (
+                worst_replay > max(baseline_metrics.values())
+                and replay_beats_no_replay
+                and new_capability_preserved
+            )
+            else "failed"
+        ),
+        primary_metric="backward_transfer",
+        metric_direction="higher_is_better",
+        metric_value=worst_replay,
+        baseline_metrics=baseline_metrics,
+        sample_counts=course_sample_counts or {},
+        holdout_updates=0,
+        evidence=(
+            "seed_metrics=" + json.dumps(seed_records, sort_keys=True),
+            "trained_child_checkpoint_evaluation=true",
+            "phase_a_replay_is_exact_protected_train=true",
+            "sequence_learning_fabric_write=false",
+            "checkpoint_read_only_during_score=true",
+        ),
+    )
+
+
 def build_contract_report(
     manifest: FoundationManifest,
     *,
@@ -911,6 +1023,11 @@ def main() -> int:
         help="Also evaluate child-bound B2/B3/B4 at manifest sample floors.",
     )
     parser.add_argument(
+        "--b5-child",
+        action="store_true",
+        help="Run the dedicated child continuation no-replay/replay contrast.",
+    )
+    parser.add_argument(
         "--b1-partition-seed",
         action="append",
         nargs=2,
@@ -945,7 +1062,10 @@ def main() -> int:
     manifest = FoundationManifest.load(args.manifest)
     checkpoint_status = _checkpoint_gate_status(manifest, args.checkpoint_report)
     checkpoint_paths = _indexed_checkpoint_paths(args.checkpoint, seeds=manifest.seeds)
+    if (args.child_foundation or args.b5_child) and not checkpoint_paths:
+        parser.error("--child-foundation/--b5-child require --checkpoint")
     b1_datasets: dict[int, FoundationTrainingDataset] = {}
+    protected_datasets: dict[int, FoundationTrainingDataset] = {}
     b1_measurement = None
     b2_measurement = None
     b3_measurement = None
@@ -979,6 +1099,7 @@ def main() -> int:
                 profile="foundation",
                 partition_seed=protected_seeds[seed],
             )
+            protected_datasets[seed] = protected_dataset
             b1_datasets[seed] = FoundationTrainingDataset.from_jsonl(
                 args.b1_corpus,
                 profile="foundation",
@@ -998,6 +1119,8 @@ def main() -> int:
             b2_measurement = _evaluate_loaded_b2(checkpoint_paths)
             b3_measurement = _evaluate_loaded_b3(checkpoint_paths)
             b4_measurement = _evaluate_loaded_b4(checkpoint_paths)
+        if args.b5_child:
+            b5_measurement = _evaluate_loaded_b5(checkpoint_paths, protected_datasets)
     elif args.b1_corpus:
         if args.profile == "smoke":
             budgets = (4_096, 1_024, 1_024)
@@ -1085,6 +1208,7 @@ def main() -> int:
             for seed, path in sorted(checkpoint_paths.items())
         ],
         "child_foundation": bool(args.child_foundation),
+        "b5_child": bool(args.b5_child),
         "b1_dataset_digests": {
             str(seed): dataset.digest for seed, dataset in sorted(b1_datasets.items())
         },
