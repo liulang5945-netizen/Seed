@@ -50,6 +50,14 @@ from taiji.foundation_tasks import (  # noqa: E402
     SequencePredictionTask,
     WorldTransitionCorpus,
     WorldTransitionTask,
+    _hash_goal_action_accuracy,
+    _hash_memory_accuracy,
+    _hash_world_error,
+    _majority_accuracy,
+    _majority_goal_action_accuracy,
+    _no_change_error,
+    _persistent_digest,
+    _random_world_error,
 )
 from taiji.foundation_training import _code_revision  # noqa: E402
 from taiji.internalization import content_digest  # noqa: E402
@@ -286,6 +294,315 @@ def _hash_only_bpb(data: bytes, *, seed: int, alphabet_size: int) -> float:
         probability = 1.0 - (alphabet_size - 1) * epsilon if prediction == target else epsilon
         losses.append(-math.log2(probability))
     return sum(losses) / len(losses)
+
+
+def _evaluate_loaded_b2(
+    checkpoints: Mapping[int, Path],
+    *,
+    train_units: int = 1_000,
+    holdout_units: int = 200,
+    retention_units: int = 200,
+) -> FoundationMeasurement:
+    """Read B2 from trained children on the manifest-scale delayed course."""
+
+    from scripts.training.eval_taiji_m1_64_foundation_memory import (
+        _read_rows,
+        _row_summary,
+        build_foundation_delayed_memory_corpus,
+    )
+
+    corpus = build_foundation_delayed_memory_corpus(
+        train_units=train_units,
+        holdout_units=holdout_units,
+        retention_units=retention_units,
+    )
+    actions = tuple(dict.fromkeys(episode.action for episode in corpus.train))
+    seed_records: list[dict[str, float | int | str | bool]] = []
+    for seed, path in sorted(checkpoints.items()):
+        payload, model, parent = _load_joint_child(path, expected_seed=seed)
+        before = _persistent_digest(model)
+        native_rows = _read_rows(
+            model,
+            corpus.holdout,
+            actions,
+            use_memory=True,
+            use_identity=None,
+            interference_symbols=corpus.interference_symbols,
+        )
+        after_holdout = _persistent_digest(model)
+        retention_rows = _read_rows(
+            model,
+            corpus.retention,
+            actions,
+            use_memory=True,
+            use_identity=None,
+            interference_symbols=corpus.interference_symbols,
+        )
+        after_retention = _persistent_digest(model)
+        memory_lesion = _row_summary(
+            _read_rows(
+                model,
+                corpus.holdout,
+                actions,
+                use_memory=False,
+                use_identity=None,
+                interference_symbols=corpus.interference_symbols,
+            )
+        )
+        identity_lesion = _row_summary(
+            _read_rows(
+                model,
+                corpus.holdout,
+                actions,
+                use_memory=True,
+                use_identity=False,
+                interference_symbols=corpus.interference_symbols,
+            )
+        )
+        frozen = _row_summary(
+            _read_rows(
+                parent,
+                corpus.holdout,
+                actions,
+                use_memory=True,
+                use_identity=None,
+                interference_symbols=corpus.interference_symbols,
+            )
+        )
+        native = _row_summary(native_rows)
+        retention = _row_summary(retention_rows)
+        seed_records.append(
+            {
+                "seed": seed,
+                "taiji": float(native["accuracy"]),
+                "retention": float(retention["accuracy"]),
+                "memory_lesion": float(memory_lesion["accuracy"]),
+                "identity_lesion": float(identity_lesion["accuracy"]),
+                "frozen_parent": float(frozen["accuracy"]),
+                "holdout_updates": int(before != after_holdout),
+                "retention_updates": int(after_holdout != after_retention),
+                "checkpoint_digest": str(payload["checkpoint_digest"]),
+                "trained_child_checkpoint": True,
+            }
+        )
+
+    native_values = [float(record["taiji"]) for record in seed_records]
+    retention_values = [float(record["retention"]) for record in seed_records]
+    baseline_metrics = {
+        "random": 1.0 / len(actions),
+        "frozen_parent": min(float(record["frozen_parent"]) for record in seed_records),
+        "simple_rule": _majority_accuracy(corpus.train, corpus.holdout),
+        "hash_only": min(
+            _hash_memory_accuracy(corpus.holdout, actions, seed=seed)
+            for seed in checkpoints
+        ),
+        "memory_lesion": min(float(record["memory_lesion"]) for record in seed_records),
+        "identity_lesion": min(
+            float(record["identity_lesion"]) for record in seed_records
+        ),
+    }
+    worst_native = min(native_values)
+    beats_controls = worst_native > max(baseline_metrics.values())
+    causal_memory_gain = all(
+        float(record["taiji"]) > float(record["memory_lesion"]) for record in seed_records
+    )
+    causal_identity_gain = all(
+        float(record["taiji"]) > float(record["identity_lesion"])
+        for record in seed_records
+    )
+    retention_preserved = all(
+        retention >= native - 0.05
+        for retention, native in zip(retention_values, native_values, strict=True)
+    )
+    return FoundationMeasurement(
+        ability_id="b2_delayed_memory",
+        status=(
+            "passed"
+            if (
+                beats_controls
+                and causal_memory_gain
+                and causal_identity_gain
+                and retention_preserved
+                and max(int(record["holdout_updates"]) for record in seed_records) == 0
+                and max(int(record["retention_updates"]) for record in seed_records) == 0
+            )
+            else "failed"
+        ),
+        primary_metric="recall_accuracy",
+        metric_direction="higher_is_better",
+        metric_value=worst_native,
+        baseline_metrics=baseline_metrics,
+        sample_counts=corpus.sample_counts,
+        holdout_updates=max(int(record["holdout_updates"]) for record in seed_records),
+        evidence=(
+            "seed_metrics=" + json.dumps(seed_records, sort_keys=True),
+            "trained_child_checkpoint_evaluation=true",
+            "delayed_interference_symbols=" + json.dumps(corpus.interference_symbols),
+            "checkpoint_read_only="
+            + str(
+                all(
+                    int(record["holdout_updates"]) == 0
+                    and int(record["retention_updates"]) == 0
+                    for record in seed_records
+                )
+            ),
+        ),
+    )
+
+
+def _evaluate_loaded_b3(
+    checkpoints: Mapping[int, Path],
+    *,
+    train_units: int = 1_000,
+    holdout_units: int = 500,
+    retention_units: int = 500,
+) -> FoundationMeasurement:
+    """Read B3 from trained child world learners without registering holdout data."""
+
+    from scripts.training.train_taiji_joint import build_world_corpus
+    from taiji.foundation_training import (
+        _world_action_error,
+        _world_learner_from_payload,
+        _world_learner_payload,
+    )
+
+    corpus = build_world_corpus(count=train_units)
+    # ``build_world_corpus`` fixes the two read partitions to count // 2.
+    if len(corpus.holdout) != holdout_units or len(corpus.retention) != retention_units:
+        raise ValueError("B3 child course requires train_units=2*holdout_units=2*retention_units")
+    seed_records: list[dict[str, float | int | str | bool]] = []
+    for seed, path in sorted(checkpoints.items()):
+        payload, _model, _parent = _load_joint_child(path, expected_seed=seed)
+        learner_payload = payload.get("world_learner")
+        parent_payload = payload.get("parent_world_learner")
+        if not isinstance(learner_payload, Mapping) or not isinstance(parent_payload, Mapping):
+            raise ValueError(f"joint child checkpoint is missing world learner lineage: {path}")
+        learner = _world_learner_from_payload(learner_payload)
+        frozen = _world_learner_from_payload(parent_payload)
+        before = content_digest(_world_learner_payload(learner))
+        native_error = _world_action_error(learner, corpus.holdout)
+        after_holdout = content_digest(_world_learner_payload(learner))
+        retention_error = _world_action_error(learner, corpus.retention)
+        after_retention = content_digest(_world_learner_payload(learner))
+        frozen_error = _world_action_error(frozen, corpus.holdout)
+        schema = learner.schema
+        seed_records.append(
+            {
+                "seed": seed,
+                "taiji": native_error,
+                "retention": retention_error,
+                "frozen_parent": frozen_error,
+                "random": _random_world_error(corpus.holdout, schema, seed=seed),
+                "simple_rule": _no_change_error(corpus.holdout, schema),
+                "hash_only": _hash_world_error(corpus.holdout, schema, seed=seed),
+                "holdout_updates": int(before != after_holdout),
+                "retention_updates": int(after_holdout != after_retention),
+                "checkpoint_digest": str(payload["checkpoint_digest"]),
+                "trained_child_checkpoint": True,
+            }
+        )
+    native_values = [float(record["taiji"]) for record in seed_records]
+    baseline_metrics = {
+        "random": min(float(record["random"]) for record in seed_records),
+        "frozen_parent": min(float(record["frozen_parent"]) for record in seed_records),
+        "simple_rule": min(float(record["simple_rule"]) for record in seed_records),
+        "hash_only": min(float(record["hash_only"]) for record in seed_records),
+    }
+    worst_native = max(native_values)
+    return FoundationMeasurement(
+        ability_id="b3_world_transition",
+        status=(
+            "passed"
+            if worst_native < min(baseline_metrics.values())
+            and max(int(record["holdout_updates"]) for record in seed_records) == 0
+            and max(int(record["retention_updates"]) for record in seed_records) == 0
+            else "failed"
+        ),
+        primary_metric="transition_error",
+        metric_direction="lower_is_better",
+        metric_value=worst_native,
+        baseline_metrics=baseline_metrics,
+        sample_counts=corpus.sample_counts,
+        holdout_updates=max(int(record["holdout_updates"]) for record in seed_records),
+        evidence=(
+            "seed_metrics=" + json.dumps(seed_records, sort_keys=True),
+            "trained_child_checkpoint_evaluation=true",
+            "world_schema_register_parameters=false",
+        ),
+    )
+
+
+def _evaluate_loaded_b4(
+    checkpoints: Mapping[int, Path],
+    *,
+    train_units: int = 1_000,
+    holdout_units: int = 500,
+    retention_units: int = 500,
+) -> FoundationMeasurement:
+    """Read B4 from trained child action organs on the foundation course."""
+
+    from scripts.training.train_taiji_joint import build_goal_corpus
+
+    corpus = build_goal_corpus(count=train_units)
+    if len(corpus.holdout) != holdout_units or len(corpus.retention) != retention_units:
+        raise ValueError("B4 child course requires train_units=2*holdout_units=2*retention_units")
+    seed_records: list[dict[str, float | int | str | bool]] = []
+    for seed, path in sorted(checkpoints.items()):
+        payload, model, parent = _load_joint_child(path, expected_seed=seed)
+        before = _persistent_digest(model)
+        native = GoalActionTask._evaluate_partition(model, corpus.holdout)
+        after_holdout = _persistent_digest(model)
+        retention = GoalActionTask._evaluate_partition(model, corpus.retention)
+        after_retention = _persistent_digest(model)
+        frozen = GoalActionTask._evaluate_partition(parent, corpus.holdout)
+        seed_records.append(
+            {
+                "seed": seed,
+                "taiji": native,
+                "retention": retention,
+                "frozen_parent": frozen,
+                "holdout_updates": int(before != after_holdout),
+                "retention_updates": int(after_holdout != after_retention),
+                "checkpoint_digest": str(payload["checkpoint_digest"]),
+                "trained_child_checkpoint": True,
+            }
+        )
+    native_values = [float(record["taiji"]) for record in seed_records]
+    baseline_metrics = {
+        "random": 0.5,
+        "frozen_parent": min(float(record["frozen_parent"]) for record in seed_records),
+        "simple_rule": _majority_goal_action_accuracy(corpus.train, corpus.holdout),
+        "hash_only": min(
+            _hash_goal_action_accuracy(corpus.holdout, seed=seed) for seed in checkpoints
+        ),
+    }
+    worst_native = min(native_values)
+    retention_preserved = all(
+        float(record["retention"]) >= float(record["taiji"]) - 0.05
+        for record in seed_records
+    )
+    return FoundationMeasurement(
+        ability_id="b4_goal_action",
+        status=(
+            "passed"
+            if worst_native > max(baseline_metrics.values())
+            and retention_preserved
+            and max(int(record["holdout_updates"]) for record in seed_records) == 0
+            and max(int(record["retention_updates"]) for record in seed_records) == 0
+            else "failed"
+        ),
+        primary_metric="success_rate",
+        metric_direction="higher_is_better",
+        metric_value=worst_native,
+        baseline_metrics=baseline_metrics,
+        sample_counts=corpus.sample_counts,
+        holdout_updates=max(int(record["holdout_updates"]) for record in seed_records),
+        evidence=(
+            "seed_metrics=" + json.dumps(seed_records, sort_keys=True),
+            "trained_child_checkpoint_evaluation=true",
+            "action_readout_evaluation_is_read_only=true",
+        ),
+    )
 
 
 def build_contract_report(
@@ -589,6 +906,11 @@ def main() -> int:
         help="Evaluate a trained joint child; provide exactly one path for every manifest seed.",
     )
     parser.add_argument(
+        "--child-foundation",
+        action="store_true",
+        help="Also evaluate child-bound B2/B3/B4 at manifest sample floors.",
+    )
+    parser.add_argument(
         "--b1-partition-seed",
         action="append",
         nargs=2,
@@ -672,6 +994,10 @@ def main() -> int:
                 for seed, dataset in b1_datasets.items()
             },
         )
+        if args.child_foundation:
+            b2_measurement = _evaluate_loaded_b2(checkpoint_paths)
+            b3_measurement = _evaluate_loaded_b3(checkpoint_paths)
+            b4_measurement = _evaluate_loaded_b4(checkpoint_paths)
     elif args.b1_corpus:
         if args.profile == "smoke":
             budgets = (4_096, 1_024, 1_024)
@@ -758,6 +1084,7 @@ def main() -> int:
             {"seed": seed, "path": str(path)}
             for seed, path in sorted(checkpoint_paths.items())
         ],
+        "child_foundation": bool(args.child_foundation),
         "b1_dataset_digests": {
             str(seed): dataset.digest for seed, dataset in sorted(b1_datasets.items())
         },
