@@ -690,7 +690,7 @@ def test_joint_legacy_shared_readout_checkpoint_requires_explicit_continuation()
 
 def test_organ_only_goal_training_does_not_write_shared_fabric() -> None:
     model = Taiji(_config(), episode_id="organ-only-goal-test")
-    episode = build_goal_corpus(count=1).train[0]
+    episode = build_goal_corpus(count=4).train[0]
     before = _sequence_fabric_digest(model)
 
     _train_goal_episode(model, episode, learn=True, learn_fabric=False)
