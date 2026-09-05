@@ -475,6 +475,8 @@ M1-64 已完成，B2 在真实 foundation 规模上被判定为**记忆能力不
 
 **M2-2n 补训边界审计与修复（20260905）**：seed 11 从旧 `last.pt` 恢复并完成 `memory→world→goal` 后，发现 `sequence_predictive_context` 保持不变但 `sequence_fabric_contract` 改变；该 course 不可作为合格 child。根因是 goal episode 的 cue `observe(learn=True)` 仍写 shared fabric，`sequence_fabric_learning=false` 只约束 byte/replay 路径，且非 sequence phase 没有即时边界审计。已新增 `learn_fabric` 显式参数：joint organ-only course 传 `false`，普通 world-action course 保持原语义；并对 memory/world/goal/replay-memory 增加 phase-level fabric audit，违规立即 fail closed。旧补训产物只保留为诊断证据，不能晋级或作为后续输入。**唯一下一步**：从原始 v4 private-context child 重新运行 seed 11 organ-only course，并确认 shared fabric parent/final 相同后再复评。
 
+**M2-2n isolated organ-only course 完成（20260905）**：从未污染的原始 v4 private-context child 重跑 `memory→world→goal`，报告为 `reports/taiji_m2n_seed11_organ_isolated_20260905.json`。checkpoint `status=completed`、`global_step=3000`、`holdout_updates=0`；memory holdout/retention `0.87→0.87`，world error `3.622080e-8→8.186603e-9`，goal `1.0→1.0`，protected/F1 sequence 指标逐位保持。`sequence_fabric_contract` parent/final 相同，memory/world/goal 三个 phase audit 全部 preserved，predictive context 也保持不变；因此该 child 满足结构隔离和可恢复训练边界，但 B2 没有新增净收益，尚不能晋级。**M2-2n 唯一下一步**：由全新 Python 进程恢复该 `last.pt` 做 `eval-only` 和 seed 11 的五项 child-bound measurement，确认 checkpoint digest、只读性与复评结果一致后再决定是否扩展 seed 29/47。
+
 ## 7. M2～M8 的开发日程与外围任务安置
 
 ### M2：世界—行动—语言后训练
@@ -566,7 +568,8 @@ CI 不是最后才运行的支线：每个 slice 都运行相关 pytest/lint/typ
 
 | 日期 | 内容 |
 |---|---|
-| 2026-09-05 | M2-2n seed 11 补训完成但边界审计发现 goal cue 写入 shared fabric，产物判为不可晋级；根因已修复为显式 `learn_fabric=false` 与非 sequence phase audit，下一步从原始 v4 child 重跑。 |
+| 2026-09-05 | M2-2n seed 11 首次补训因 goal cue 写入 shared fabric 被判为不可晋级；根因已修复为显式 `learn_fabric=false` 与非 sequence phase audit，并从原始 v4 child 重跑。 |
+| 2026-09-05 | M2-2n isolated organ-only course 通过结构边界：shared fabric parent/final 相同，memory 保持、world 改善、goal 保持；尚无 B2 新增净收益，下一步做 fresh-process 五项 child-bound 复评。 |
 | 2026-09-05 | M2-2n 补训前置发现并修复 `JointTrainingRun` 每步写 checkpoint 的性能问题；旧运行安全停在 memory `531/1000`，将从可恢复 `last.pt` 继续。 |
 | 2026-09-05 | M2-2m 统一五项 child foundation report 完成：B1 通过；B2/B3/B4 未形成相对冻结父模型的新增净收益；B5 replay 三 seed 均改善 no-replay 但最差 BWT `-0.262874`，整体 failed。下一步收束为从 child 进行 `memory→world→goal` 器官补训。 |
 | 2026-09-05 | M2-2l 真实三 seed B5 continuation 完成：replay 相对 no-replay 的 BWT 增益三 seed 均为正，但最差 replay BWT 为 `-0.262874`，仍未超过零基线；B5 保持 failed，下一步改 continuation 更新规则/容量分配。M2-2m 接入受 provenance 校验的 B1 report reuse，准备生成统一五项 child foundation report。 |
