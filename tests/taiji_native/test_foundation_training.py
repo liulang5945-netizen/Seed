@@ -31,6 +31,7 @@ from taiji import (
     WorldActionTrainingRun,
     content_digest,
 )
+from taiji.foundation_training import _sequence_fabric_digest, _train_goal_episode
 
 
 def _dataset() -> FoundationTrainingDataset:
@@ -685,6 +686,16 @@ def test_joint_legacy_shared_readout_checkpoint_requires_explicit_continuation()
         training_phases=("sequence",),
     )
     assert continuation.sequence_readout_mode == JOINT_SEQUENCE_READOUT_MODE
+
+
+def test_organ_only_goal_training_does_not_write_shared_fabric() -> None:
+    model = Taiji(_config(), episode_id="organ-only-goal-test")
+    episode = build_goal_corpus(count=1).train[0]
+    before = _sequence_fabric_digest(model)
+
+    _train_goal_episode(model, episode, learn=True, learn_fabric=False)
+
+    assert _sequence_fabric_digest(model) == before
 
 
 def test_joint_v3_fixed_basis_checkpoint_requires_explicit_m2_2h_continuation() -> None:
