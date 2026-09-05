@@ -1,0 +1,42 @@
+{
+  "format": "taiji-workbench-generation-boundary-canary-v1",
+  "version": 1,
+  "status": "passed",
+  "can_promote": false,
+  "checkpoint": "output\\taiji-m2s-seed11-identity-generation-20260905\\last.pt",
+  "checkpoint_digest_before": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+  "checkpoint_digest_after_generation": "c6007bf7166e4d2f0afee5e52a1505a7b28655a3b76e2c96ae9062dac7edba89",
+  "checkpoint_dynamics_changed": true,
+  "checks": {
+    "protected_generation_succeeded": true,
+    "protected_route_recorded": true,
+    "active_generation_missing_readout_fails_closed": true,
+    "active_rejection_does_not_change_persistent_owners": true,
+    "closed_generation_replay_succeeded": true,
+    "closed_generation_replay_is_read_only": true,
+    "persistent_owners_unchanged": true
+  },
+  "routes": {
+    "protected": {
+      "boundary_digest": "fccd179d3c7a86d21db2138cd7793ae509437da6b615af9badcb23e3d933cfda",
+      "generation_scope": "protected",
+      "readout_owner": "predictive_readout",
+      "read_only_replay": false
+    },
+    "closed_replay": {
+      "boundary_digest": "a9dc9031d5392c791b15067d882ef90e7e0ecf930bc90170ef27297a042bd41d",
+      "generation_scope": "protected",
+      "readout_owner": "predictive_readout",
+      "read_only_replay": true
+    },
+    "active_rejection": "requested readout generation is not attached to this Taiji instance"
+  },
+  "owner_audit": {
+    "persistent_owner_digest_before": "31afce0d48f6744b9bc5cd935ed0101be1117b8f28930b17f94421bd66ddc709",
+    "persistent_owner_digest_after_protected": "31afce0d48f6744b9bc5cd935ed0101be1117b8f28930b17f94421bd66ddc709",
+    "persistent_owner_digest_after_active_rejection": "31afce0d48f6744b9bc5cd935ed0101be1117b8f28930b17f94421bd66ddc709",
+    "persistent_owner_digest_after_replay": "31afce0d48f6744b9bc5cd935ed0101be1117b8f28930b17f94421bd66ddc709",
+    "persistent_owners_read_only": true,
+    "note": "generation advances dynamic state; no learning owner is modified"
+  }
+}
