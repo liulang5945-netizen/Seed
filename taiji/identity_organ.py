@@ -138,6 +138,10 @@ class CueIdentityOrgan:
         self._value_counts = torch.zeros(
             (self.capacity,), device=self.device, dtype=torch.long
         )
+        # Writes after an explicit capacity expansion use only the appended
+        # generation. Older slots remain readable as a fallback, so a new
+        # course cannot replace or blend its keys with legacy bindings.
+        self.active_slot_start = 0
 
     @property
     def edge_count(self) -> int:
@@ -236,12 +240,20 @@ class CueIdentityOrgan:
         self._value_keys = value_keys
         self._value_actions = value_actions
         self._value_counts = value_counts
+        self.active_slot_start = old_capacity
         return {
             "from_capacity": old_capacity,
             "to_capacity": target,
             "preserved_slots": old_capacity,
             "appended_slots": target - old_capacity,
+            "new_generation_start": old_capacity,
         }
+
+    def _active_slots(self) -> range:
+        return range(int(self.active_slot_start), int(self.capacity))
+
+    def _legacy_slots(self) -> range:
+        return range(0, int(self.active_slot_start))
 
     def _slot_trace(self, slot_index: int) -> torch.Tensor:
         return self.bank.slot_code(int(slot_index)).to(self.device)
@@ -422,7 +434,11 @@ class CueIdentityOrgan:
                 replaced=False,
             )
         modulation = reward - float(self.config.identity_organ_write_baseline)
-        binding = self.bank.route(cortical_context, learn=True)
+        binding = self.bank.route(
+            cortical_context,
+            learn=True,
+            slot_indices=self._active_slots(),
+        )
         if binding.slot_index is None:
             raise RuntimeError("identity organ binding did not return a slot")
         slot = int(binding.slot_index)
@@ -460,8 +476,12 @@ class CueIdentityOrgan:
         cortical_context: torch.Tensor,
         *,
         enabled: bool = True,
+        generation_scope: str = "all",
     ) -> IdentityRecall:
         """Read identity evidence without changing prototypes or synapses."""
+
+        if generation_scope not in {"all", "active"}:
+            raise ValueError("identity generation scope must be 'all' or 'active'")
 
         zero = torch.zeros(self.action_count, device=self.device)
         uniform = torch.full(
@@ -499,7 +519,19 @@ class CueIdentityOrgan:
                 provenance=IDENTITY_ORGAN_UNBOUND_PROVENANCE,
                 used=False,
             )
-        binding = self.bank.route(cortical_context, learn=False)
+        binding = self.bank.route(
+            cortical_context,
+            learn=False,
+            slot_indices=self._active_slots(),
+        )
+        if binding.slot_index is None and self.active_slot_start and generation_scope == "all":
+            # New generations own writes, but reads fall back to preserved
+            # legacy slots so growth does not erase prior knowledge.
+            binding = self.bank.route(
+                cortical_context,
+                learn=False,
+                slot_indices=self._legacy_slots(),
+            )
         if binding.slot_index is None:
             return IdentityRecall(
                 action_evidence=zero,
@@ -545,6 +577,7 @@ class CueIdentityOrgan:
         self.bank.occupied.zero_()
         self.bank.prototypes.zero_()
         self.bank.visits.zero_()
+        self.active_slot_start = 0
         self.action_synapses.edge_weight.zero_()
         self.outcome_synapses.edge_weight.zero_()
         if self._value_router_enabled:
@@ -585,6 +618,7 @@ class CueIdentityOrgan:
             "value_keys": self._value_keys.detach().cpu().clone(),
             "value_actions": self._value_actions.detach().cpu().clone(),
             "value_counts": self._value_counts.detach().cpu().clone(),
+            "active_slot_start": self.active_slot_start,
         }
 
     def load_payload(self, payload: Mapping[str, Any]) -> None:
@@ -669,7 +703,10 @@ class CueIdentityOrgan:
                 raise ValueError("identity organ value router counts shape mismatch")
             if bool((restored_counts < 0).any()):
                 raise ValueError("identity organ value router counts cannot be negative")
-            self._value_counts = restored_counts.clone()
+        self._value_counts = restored_counts.clone()
+        self.active_slot_start = int(payload.get("active_slot_start", 0))
+        if not 0 <= self.active_slot_start < self.capacity:
+            raise ValueError("identity organ active generation is outside capacity")
 
 
 __all__ = [

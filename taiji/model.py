@@ -172,6 +172,7 @@ class Taiji:
             "to_capacity": int(growth["to_capacity"]),
             "preserved_slots": int(growth["preserved_slots"]),
             "appended_slots": int(growth["appended_slots"]),
+            "new_generation_start": int(growth["new_generation_start"]),
             "parent_checkpoint_digest": parent_checkpoint_digest,
             "reason": str(reason),
         }
@@ -190,6 +191,7 @@ class Taiji:
         use_memory: bool = True,
         use_identity: bool | None = None,
         use_delayed_memory_verdict: bool = False,
+        identity_generation_scope: str = "all",
     ) -> TaijiStep:
         """Advance one sensation tick.
 
@@ -218,6 +220,8 @@ class Taiji:
             raise RuntimeError("pending action must be settled before observation")
         if readout not in {"action", "predictive"}:
             raise ValueError("readout must be 'action' or 'predictive'")
+        if identity_generation_scope not in {"all", "active"}:
+            raise ValueError("identity generation scope must be 'all' or 'active'")
         if readout == "predictive" and learn_motor is True:
             raise ValueError("predictive readout cannot train the action motor")
         if readout == "predictive" and use_delayed_memory_verdict:
@@ -309,6 +313,7 @@ class Taiji:
             identity_recall = self.identity_organ.recall(
                 cortical_state,
                 enabled=identity_enabled,
+                generation_scope=identity_generation_scope,
             )
             if identity_recall.used:
                 # M1-65: a successfully routed cue freezes the addressing key.

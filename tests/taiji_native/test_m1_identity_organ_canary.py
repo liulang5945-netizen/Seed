@@ -137,6 +137,8 @@ def test_identity_growth_preserves_slots_and_roundtrips() -> None:
     model = Taiji(
         _promotion_config(11, enabled=True, capacity=128), episode_id="identity-growth"
     )
+    pattern = _cue_pattern(model, 65)
+    model.identity_organ.learn(pattern, 48, outcome_symbol=43)
     before = model.checkpoint()
     old_bank = model.identity_organ.bank.prototypes.clone()
     old_action_index = model.identity_organ.action_synapses.pre_index.clone()
@@ -147,8 +149,12 @@ def test_identity_growth_preserves_slots_and_roundtrips() -> None:
 
     assert event["from_capacity"] == 128
     assert event["to_capacity"] == 256
+    assert event["new_generation_start"] == 128
     assert model.identity_organ.capacity == 256
     assert model.config.identity_organ_capacity == 256
+    assert model.identity_organ.active_slot_start == 128
+    assert model.identity_organ.recall(pattern, generation_scope="active").used is False
+    assert model.identity_organ.recall(pattern, generation_scope="all").used is True
     assert torch.equal(model.identity_organ.bank.prototypes[:128], old_bank)
     assert torch.equal(model.identity_organ.action_synapses.pre_index[:, :128], old_action_index)
     assert torch.equal(model.identity_organ.action_synapses.edge_weight[:, :128], old_action_weight)
@@ -161,6 +167,7 @@ def test_identity_growth_preserves_slots_and_roundtrips() -> None:
     restored = Taiji.from_checkpoint(model.checkpoint())
     assert restored.identity_growth_history == model.identity_growth_history
     assert restored.parameter_count() == restored.config.planned_active_parameter_count
+    assert restored.identity_organ.active_slot_start == 128
     assert restored.checkpoint()["identity_growth"] == model.checkpoint()["identity_growth"]
 
 

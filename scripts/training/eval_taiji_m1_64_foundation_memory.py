@@ -235,6 +235,7 @@ def _read_rows(
     use_memory: bool,
     use_identity: bool | None,
     interference_symbols: tuple[int, ...],
+    identity_generation_scope: str = "all",
 ) -> list[dict[str, Any]]:
     """Read every query and keep the per-row margin, not just the hit count.
 
@@ -269,6 +270,7 @@ def _read_rows(
                 use_memory=use_memory,
                 use_identity=use_identity,
                 use_delayed_memory_verdict=verdict_enabled,
+                identity_generation_scope=identity_generation_scope,
             )
         identity_recall = step.identity_recall
         probabilities = model.snapshot().motor_probabilities
