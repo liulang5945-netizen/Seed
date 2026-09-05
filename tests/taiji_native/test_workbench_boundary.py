@@ -3,6 +3,8 @@ from __future__ import annotations
 import pytest
 
 from taiji import (
+    Taiji,
+    TaijiConfig,
     WorkbenchBoundaryAuthorization,
     WorkbenchTaskBoundary,
     select_readout_generation,
@@ -138,3 +140,38 @@ def test_read_only_replay_does_not_mutate_boundary_payload() -> None:
 
     assert decision.read_only is True
     assert boundary.to_payload() == before
+
+
+def test_taiji_generation_consumes_boundary_and_rejects_missing_readout() -> None:
+    model = Taiji(TaijiConfig(seed=7), episode_id="workbench-generation")
+    protected = _boundary()
+    protected_context = _authorization(protected, current_tick=10)
+
+    generated = model.generate(
+        b"hi",
+        2,
+        boundary=protected,
+        authorization=protected_context,
+    )
+
+    assert isinstance(generated, bytes)
+    assert model.last_generation_route == {
+        "boundary_digest": protected.token_digest,
+        "generation_scope": "protected",
+        "readout_owner": "predictive_readout",
+        "read_only_replay": False,
+    }
+
+    active = protected.successor(
+        task_id="task:beta",
+        generation_scope="active",
+        issued_tick=12,
+        ttl_ticks=20,
+    )
+    with pytest.raises(RuntimeError, match="not attached"):
+        model.generate(
+            b"hi",
+            2,
+            boundary=active,
+            authorization=_authorization(active, current_tick=12),
+        )

@@ -28,6 +28,11 @@ from .state import (
     TaijiState,
     TaijiStep,
 )
+from .workbench_boundary import (
+    WorkbenchBoundaryAuthorization,
+    WorkbenchTaskBoundary,
+    select_readout_generation,
+)
 
 
 class Taiji:
@@ -95,6 +100,7 @@ class Taiji:
         # a lived checkpoint would read as a fresh field (A2, diagnosis 24).
         self._development_ticks = 0
         self._identity_growth_history: list[dict[str, Any]] = []
+        self._last_generation_route: dict[str, Any] | None = None
         self._state = self._initial_state(episode_id)
 
     def _initial_state(self, episode_id: str) -> TaijiState:
@@ -123,6 +129,12 @@ class Taiji:
     @property
     def tick(self) -> int:
         return self._state.tick
+
+    @property
+    def last_generation_route(self) -> dict[str, Any] | None:
+        """Return the latest boundary-to-readout audit without exposing tensors."""
+
+        return None if self._last_generation_route is None else dict(self._last_generation_route)
 
     def snapshot(self) -> TaijiState:
         return self._state.clone()
@@ -991,6 +1003,8 @@ class Taiji:
         sample: bool = False,
         reset: bool = True,
         use_memory: bool = False,
+        boundary: WorkbenchTaskBoundary | Mapping[str, Any] | None = None,
+        authorization: WorkbenchBoundaryAuthorization | None = None,
     ) -> bytes:
         """Generate from the raw-byte predictive path.
 
@@ -1001,6 +1015,25 @@ class Taiji:
 
         if length < 0:
             raise ValueError("length cannot be negative")
+        if (boundary is None) != (authorization is None):
+            raise ValueError("boundary and authorization must be supplied together")
+        if boundary is not None and authorization is not None:
+            generation_scope = select_readout_generation(boundary, authorization)
+            if generation_scope != "protected":
+                raise RuntimeError(
+                    "requested readout generation is not attached to this Taiji instance"
+                )
+            resolved_boundary = (
+                boundary
+                if isinstance(boundary, WorkbenchTaskBoundary)
+                else WorkbenchTaskBoundary.from_payload(boundary)
+            )
+            self._last_generation_route = {
+                "boundary_digest": resolved_boundary.token_digest,
+                "generation_scope": generation_scope,
+                "readout_owner": "predictive_readout",
+                "read_only_replay": authorization.usage == "read_only_replay",
+            }
         if reset:
             self.reset_dynamics(episode_id="generation")
         step = self.observe(
