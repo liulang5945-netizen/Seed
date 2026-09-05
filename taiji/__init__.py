@@ -606,6 +606,17 @@ from .task_interpretation import (
     TaskInterpretation,
     task_input_digest,
 )
+from .workbench_boundary import (
+    WORKBENCH_BOUNDARY_LIFECYCLES,
+    WORKBENCH_BOUNDARY_USAGES,
+    WORKBENCH_READOUT_GENERATIONS,
+    WORKBENCH_TASK_BOUNDARY_FORMAT,
+    WORKBENCH_TASK_BOUNDARY_VERSION,
+    WorkbenchBoundaryAuthorization,
+    WorkbenchBoundaryDecision,
+    WorkbenchTaskBoundary,
+    select_readout_generation,
+)
 from .workspace import (
     WorkspaceCollaborationEvaluator,
     WorkspaceCompositionSample,
@@ -1051,6 +1062,15 @@ __all__ = [
     "STRUCTURAL_ADMISSION_RESULT_FORMAT",
     "STRUCTURAL_VALIDATION_ARTIFACT_FORMAT",
     "WorkbenchStructuralValidationArtifact",
+    "WORKBENCH_BOUNDARY_LIFECYCLES",
+    "WORKBENCH_BOUNDARY_USAGES",
+    "WORKBENCH_READOUT_GENERATIONS",
+    "WORKBENCH_TASK_BOUNDARY_FORMAT",
+    "WORKBENCH_TASK_BOUNDARY_VERSION",
+    "WorkbenchBoundaryAuthorization",
+    "WorkbenchBoundaryDecision",
+    "WorkbenchTaskBoundary",
+    "select_readout_generation",
     "STRUCTURAL_ARTIFACT_STORE_FORMAT",
     "STRUCTURAL_ARTIFACT_STORE_AUDIT_FORMAT",
     "STRUCTURAL_ARTIFACT_STORE_PROJECTION_FORMAT",

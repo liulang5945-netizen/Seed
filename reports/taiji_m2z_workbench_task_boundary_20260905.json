@@ -1,0 +1,84 @@
+{
+  "format": "taiji-workbench-task-boundary-canary-v1",
+  "version": 1,
+  "status": "passed",
+  "can_promote": false,
+  "contract": {
+    "boundary_format": "taiji-workbench-task-boundary-v1",
+    "allowed_context": [
+      "project_id",
+      "task_id",
+      "session_id",
+      "language_id",
+      "capability_snapshot_id",
+      "capability_ids",
+      "lifecycle",
+      "generation_scope",
+      "issued_tick",
+      "expires_tick",
+      "parent_token_digest"
+    ],
+    "forbidden_teacher_fields": [
+      "phase",
+      "target_bytes",
+      "answer_map",
+      "prompt"
+    ],
+    "default_model_routing_changed": false
+  },
+  "checks": {
+    "same_task_is_stable": {
+      "passed": true,
+      "reason": ""
+    },
+    "task_switch_creates_new_generation": {
+      "passed": true,
+      "reason": ""
+    },
+    "active_generation_is_authorized": {
+      "passed": true,
+      "reason": ""
+    },
+    "closed_old_task_is_read_only_replay": {
+      "passed": true,
+      "reason": ""
+    },
+    "closed_old_task_cannot_execute": {
+      "passed": true,
+      "reason": ""
+    },
+    "old_generation_is_stale_after_switch": {
+      "passed": true,
+      "reason": ""
+    },
+    "unauthorized_capability_fails_closed": {
+      "passed": true,
+      "reason": ""
+    },
+    "expired_boundary_fails_closed": {
+      "passed": true,
+      "reason": ""
+    },
+    "cross_project_boundary_fails_closed": {
+      "passed": true,
+      "reason": ""
+    },
+    "covert_teacher_fields_are_rejected": {
+      "passed": true,
+      "reason": "Workbench task boundary contains unknown fields: ['phase', 'target_bytes']"
+    }
+  },
+  "routes": {
+    "active_generation": "active",
+    "closed_old_replay": "protected",
+    "active_boundary_digest": "f2955b142c31e32c619f423403c38c2de7b5da46eed0a5f338bf8dca5838c3d5",
+    "closed_old_boundary_digest": "3611bfb60fe2d342eaa4d86fdcfd51d1d17cd662ebd0a6292f31498ce090f85a"
+  },
+  "owner_audit": {
+    "boundary_owner_digest": "7e2825c5c0b8ee508f63df5592543b1a01ff744b6a4d5bc7831b3ced2ea08b84",
+    "checkpoint_before_digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+    "checkpoint_after_digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+    "checkpoint_read_only": true,
+    "model_state_mutated": false
+  }
+}
