@@ -85,6 +85,8 @@ logs/
 # Test artifacts
 .pytest_cache/
 .pytest_cache*/
+.pytest-*/
+_pytest_*/
 .pytest_tmp/
 pytest-cache-files-*/
 .coverage
