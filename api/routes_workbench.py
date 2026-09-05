@@ -13,6 +13,8 @@ from uuid import uuid4
 from fastapi import APIRouter, HTTPException
 
 from api.models import (
+    TaijiWorkbenchBoundaryCloseRequest,
+    TaijiWorkbenchBoundaryOpenRequest,
     TaijiWorkbenchExecuteTaskRequest,
     TaijiWorkbenchProjectionRequest,
     TaijiWorkbenchRecoveryBranchRequest,
@@ -216,6 +218,47 @@ def execute_workbench_intent(request: WorkbenchIntentRequest) -> dict[str, Any]:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
+@router.post("/taiji/boundary/open")
+def open_taiji_workbench_boundary(
+    request: TaijiWorkbenchBoundaryOpenRequest,
+) -> dict[str, Any]:
+    """Open or reuse one client-owned task boundary."""
+
+    runtime = get_seed_runtime()
+    if runtime is None:
+        raise HTTPException(status_code=409, detail="Seed runtime is not active")
+    try:
+        return runtime.open_workbench_task_boundary(
+            project_id=request.project_id,
+            task_id=request.task_id,
+            session_id=request.session_id,
+            language_id=request.language_id,
+            capability_ids=request.capability_ids,
+            generation_scope=request.generation_scope,
+            ttl_ticks=request.ttl_ticks,
+            snapshot_id=request.snapshot_id,
+        )
+    except (TypeError, ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.post("/taiji/boundary/close")
+def close_taiji_workbench_boundary(
+    request: TaijiWorkbenchBoundaryCloseRequest,
+) -> dict[str, Any]:
+    """Close one active boundary without granting any execution authority."""
+
+    runtime = get_seed_runtime()
+    if runtime is None:
+        raise HTTPException(status_code=409, detail="Seed runtime is not active")
+    try:
+        return runtime.close_workbench_task_boundary(
+            boundary_token=request.boundary_token,
+        )
+    except (TypeError, ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
 @router.post("/taiji/admit")
 def admit_taiji_workbench_task(request: TaijiWorkbenchTaskRequest) -> dict[str, Any]:
     """Select and validate Taiji's current candidate without executing it."""
@@ -228,6 +271,7 @@ def admit_taiji_workbench_task(request: TaijiWorkbenchTaskRequest) -> dict[str, 
             snapshot_id=request.snapshot_id,
             novelty=request.novelty,
             resource_budget=request.resource_budget,
+            boundary_token=request.boundary_token,
         )
     except (TypeError, ValueError, RuntimeError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
@@ -264,6 +308,7 @@ def execute_taiji_workbench_task(request: TaijiWorkbenchExecuteTaskRequest) -> d
             novelty=request.novelty,
             resource_budget=request.resource_budget,
             learn=request.learn,
+            boundary_token=request.boundary_token,
         )
     except (TypeError, ValueError, RuntimeError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc

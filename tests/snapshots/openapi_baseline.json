@@ -827,9 +827,88 @@
         "title": "SemanticProviderEvidenceRequest",
         "type": "object"
       },
+      "TaijiWorkbenchBoundaryCloseRequest": {
+        "description": "Close the current task context for explicit read-only replay.",
+        "properties": {
+          "boundary_token": {
+            "additionalProperties": true,
+            "title": "Boundary Token",
+            "type": "object"
+          }
+        },
+        "required": [
+          "boundary_token"
+        ],
+        "title": "TaijiWorkbenchBoundaryCloseRequest",
+        "type": "object"
+      },
+      "TaijiWorkbenchBoundaryOpenRequest": {
+        "description": "Open a content-addressed task context for Taiji Workbench routing.",
+        "properties": {
+          "capability_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Capability Ids",
+            "type": "array"
+          },
+          "generation_scope": {
+            "default": "active",
+            "title": "Generation Scope",
+            "type": "string"
+          },
+          "language_id": {
+            "title": "Language Id",
+            "type": "string"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "session_id": {
+            "title": "Session Id",
+            "type": "string"
+          },
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          },
+          "task_id": {
+            "title": "Task Id",
+            "type": "string"
+          },
+          "ttl_ticks": {
+            "default": 128,
+            "title": "Ttl Ticks",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "snapshot_id",
+          "project_id",
+          "task_id",
+          "session_id",
+          "language_id",
+          "capability_ids"
+        ],
+        "title": "TaijiWorkbenchBoundaryOpenRequest",
+        "type": "object"
+      },
       "TaijiWorkbenchExecuteTaskRequest": {
         "description": "Request execution after Taiji-owned read-only admission.",
         "properties": {
+          "boundary_token": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Boundary Token"
+          },
           "learn": {
             "default": false,
             "title": "Learn",
@@ -1130,6 +1209,18 @@
       "TaijiWorkbenchTaskRequest": {
         "description": "Request Taiji to select one current candidate for the read-only Gate.",
         "properties": {
+          "boundary_token": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Boundary Token"
+          },
           "novelty": {
             "default": 0.0,
             "title": "Novelty",
@@ -5333,6 +5424,94 @@
           }
         },
         "summary": "Admit Taiji Workbench Task",
+        "tags": [
+          "workbench"
+        ]
+      }
+    },
+    "/api/workbench/taiji/boundary/close": {
+      "post": {
+        "description": "Close one active boundary without granting any execution authority.",
+        "operationId": "close_taiji_workbench_boundary_api_workbench_taiji_boundary_close_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaijiWorkbenchBoundaryCloseRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Close Taiji Workbench Boundary Api Workbench Taiji Boundary Close Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Close Taiji Workbench Boundary",
+        "tags": [
+          "workbench"
+        ]
+      }
+    },
+    "/api/workbench/taiji/boundary/open": {
+      "post": {
+        "description": "Open or reuse one client-owned task boundary.",
+        "operationId": "open_taiji_workbench_boundary_api_workbench_taiji_boundary_open_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaijiWorkbenchBoundaryOpenRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Open Taiji Workbench Boundary Api Workbench Taiji Boundary Open Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Open Taiji Workbench Boundary",
         "tags": [
           "workbench"
         ]

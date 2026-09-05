@@ -64,6 +64,23 @@ def _grounded_read_candidate(*, tick: int = 0, kind: str = "workspace.read", par
     )
 
 
+def _open_taiji_boundary(
+    runtime: SeedRuntime,
+    *,
+    task_id: str,
+    capability_ids: tuple[str, ...],
+) -> dict:
+    snapshot_id = runtime.workbench_environment.capability_snapshot.snapshot_id
+    return runtime.open_workbench_task_boundary(
+        project_id="project:test",
+        task_id=task_id,
+        session_id="session:test",
+        language_id="python",
+        capability_ids=capability_ids,
+        snapshot_id=snapshot_id,
+    )["boundary"]
+
+
 def test_workbench_snapshot_is_content_addressed() -> None:
     snapshot = CapabilitySnapshot.default()
     restored = CapabilitySnapshot.from_payload(snapshot.to_payload())
@@ -86,6 +103,36 @@ def test_workbench_snapshot_is_content_addressed() -> None:
         assert "digest" in str(exc)
     else:  # pragma: no cover - protects the red-path contract
         raise AssertionError("tampered workbench snapshot was accepted")
+
+
+def test_workbench_task_boundary_lifecycle_checkpoint_and_replay(tmp_path) -> None:
+    environment = WorkbenchEnvironment(tmp_path)
+    token = environment.issue_task_boundary(
+        project_id="project:test",
+        task_id="task:lifecycle",
+        session_id="session:test",
+        language_id="python",
+        capability_ids=("workspace.read",),
+        issued_tick=3,
+        ttl_ticks=10,
+    )
+    assert environment.authorize_task_boundary(token, current_tick=3).accepted is True
+
+    restored = WorkbenchEnvironment(tmp_path)
+    restored.restore_task_boundary_state(environment.task_boundary_checkpoint())
+    assert restored.active_task_boundary == token
+
+    closed = restored.close_task_boundary(token, closed_tick=4)
+    replay = restored.authorize_task_boundary(
+        closed,
+        usage="read_only_replay",
+        current_tick=4,
+    )
+    execute = restored.authorize_task_boundary(closed, current_tick=4)
+    assert replay.accepted is True
+    assert replay.read_only is True
+    assert execute.accepted is False
+    assert execute.reason_code == "closed_boundary_not_executable"
 
 
 def test_workbench_snapshot_projects_explicit_read_only_affordances() -> None:
@@ -628,9 +675,21 @@ def test_runtime_native_executive_canary_needs_no_manual_candidate(tmp_path, mon
         snapshot_id=snapshot_id,
         parameter_bindings={"workspace.list": {"path": "."}},
     )
+    boundary_token = _open_taiji_boundary(
+        runtime,
+        task_id="task:native-canary",
+        capability_ids=("workspace.list", "workspace.read", "workspace.stat"),
+    )
 
-    admission = runtime.admit_taiji_workbench_task(snapshot_id=snapshot_id)
-    execution = runtime.execute_taiji_workbench_task(snapshot_id=snapshot_id, learn=False)
+    admission = runtime.admit_taiji_workbench_task(
+        snapshot_id=snapshot_id,
+        boundary_token=boundary_token,
+    )
+    execution = runtime.execute_taiji_workbench_task(
+        snapshot_id=snapshot_id,
+        learn=False,
+        boundary_token=boundary_token,
+    )
 
     assert admission["admission"]["accepted"] is True
     assert execution["admission"]["accepted"] is True
@@ -648,7 +707,16 @@ def test_runtime_native_executive_canary_needs_no_manual_candidate(tmp_path, mon
         "workspace.read",
         "workspace.stat",
     }
-    resumed = runtime.execute_taiji_workbench_task(snapshot_id=snapshot_id, learn=False)
+    boundary_token = _open_taiji_boundary(
+        runtime,
+        task_id="task:native-canary",
+        capability_ids=("workspace.list", "workspace.read", "workspace.stat"),
+    )
+    resumed = runtime.execute_taiji_workbench_task(
+        snapshot_id=snapshot_id,
+        learn=False,
+        boundary_token=boundary_token,
+    )
     assert resumed["admission"]["accepted"] is True
     assert resumed["execution"]["outcome"]["status"] == "success"
     evidence_capabilities = [
@@ -677,11 +745,20 @@ def test_native_workbench_execution_records_learning_and_roundtrips(tmp_path, mo
         snapshot_id=snapshot_id,
         parameter_bindings={"workspace.list": {"path": "."}},
     )
+    boundary_token = _open_taiji_boundary(
+        runtime,
+        task_id="task:learning-channel",
+        capability_ids=("workspace.list",),
+    )
 
     source = runtime.model.architecture._affordance_features
     assert source is not None
     before = (source.fit_updates, source.online_updates)
-    execution = runtime.execute_taiji_workbench_task(snapshot_id=snapshot_id, learn=True)
+    execution = runtime.execute_taiji_workbench_task(
+        snapshot_id=snapshot_id,
+        learn=True,
+        boundary_token=boundary_token,
+    )
 
     assert execution["admission"]["accepted"] is True
     assert execution["execution"]["outcome"]["status"] == "success"
@@ -944,10 +1021,16 @@ def test_runtime_taiji_task_selects_then_executes_the_admitted_candidate(
         context=context,
     )
     monkeypatch.setattr(runtime, "_select_taiji_workbench_candidate", lambda **_: decision)
+    boundary_token = _open_taiji_boundary(
+        runtime,
+        task_id="task:taiji-admission",
+        capability_ids=("workspace.read",),
+    )
 
     result = runtime.execute_taiji_workbench_task(
         snapshot_id=runtime.workbench_environment.capability_snapshot.snapshot_id,
         learn=False,
+        boundary_token=boundary_token,
     )
 
     assert result["admission"]["accepted"] is True
@@ -993,13 +1076,29 @@ def test_taiji_task_routes_expose_the_same_read_only_gate(tmp_path, monkeypatch)
                 "parameter_bindings": {"workspace.read": {"path": "README.md"}},
             },
         )
-        admitted = client.post(
+        missing_boundary = client.post(
             "/api/workbench/taiji/admit",
             json={"snapshot_id": snapshot_id},
         )
+        opened = client.post(
+            "/api/workbench/taiji/boundary/open",
+            json={
+                "snapshot_id": snapshot_id,
+                "project_id": "project:test",
+                "task_id": "task:route-admission",
+                "session_id": "session:test",
+                "language_id": "python",
+                "capability_ids": ["workspace.read"],
+            },
+        )
+        boundary_token = opened.json()["boundary"]
+        admitted = client.post(
+            "/api/workbench/taiji/admit",
+            json={"snapshot_id": snapshot_id, "boundary_token": boundary_token},
+        )
         executed = client.post(
             "/api/workbench/taiji/execute",
-            json={"snapshot_id": snapshot_id},
+            json={"snapshot_id": snapshot_id, "boundary_token": boundary_token},
         )
         reprojected = client.post(
             "/api/workbench/taiji/reproject",
@@ -1008,6 +1107,9 @@ def test_taiji_task_routes_expose_the_same_read_only_gate(tmp_path, monkeypatch)
 
     assert projected.status_code == 200
     assert projected.json()["affordances"][0]["action_kind"] == "workspace.read"
+    assert missing_boundary.status_code == 200
+    assert missing_boundary.json()["admission"]["reason_code"] == "task_boundary_required"
+    assert opened.status_code == 200
     assert admitted.status_code == 200
     assert admitted.json()["admission"]["accepted"] is True
     assert executed.status_code == 200
@@ -1015,6 +1117,20 @@ def test_taiji_task_routes_expose_the_same_read_only_gate(tmp_path, monkeypatch)
     assert executed.json()["execution"]["outcome"]["status"] == "success"
     assert reprojected.status_code == 200
     assert reprojected.json()["affordances"][0]["action_kind"] == "workspace.stat"
+    closed = client.post(
+        "/api/workbench/taiji/boundary/close",
+        json={"boundary_token": boundary_token},
+    )
+    replay_attempt = client.post(
+        "/api/workbench/taiji/execute",
+        json={"snapshot_id": snapshot_id, "boundary_token": closed.json()["boundary"]},
+    )
+    assert closed.status_code == 200
+    assert replay_attempt.status_code == 200
+    assert (
+        replay_attempt.json()["admission"]["reason_code"]
+        == "closed_boundary_not_executable"
+    )
 
 
 def test_taiji_successor_loop_route_runs_native_bounded_graph(tmp_path, monkeypatch) -> None:

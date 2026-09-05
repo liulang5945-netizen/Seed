@@ -1284,6 +1284,7 @@ class SeedRuntime:
                         "audit": self._workbench_audit.to_payload(),
                         "language_state": workbench.language_state_checkpoint(),
                         "transaction_state": workbench.transaction_state_checkpoint(),
+                        "task_boundary": workbench.task_boundary_checkpoint(),
                         "loop_state": dict(self._workbench_loop_state),
                         "artifact_consumption_audit": self._last_artifact_consumption_audit,
                     },
@@ -1417,6 +1418,55 @@ class SeedRuntime:
 
         return self._workbench_audit
 
+    def open_workbench_task_boundary(
+        self,
+        *,
+        project_id: str,
+        task_id: str,
+        session_id: str,
+        language_id: str,
+        capability_ids: Sequence[str],
+        generation_scope: str = "active",
+        ttl_ticks: int = 128,
+        snapshot_id: str,
+    ) -> dict[str, Any]:
+        """Open an explicit client task context for Taiji Workbench routing."""
+
+        environment = self._sync_workbench_root()
+        if str(snapshot_id) != environment.capability_snapshot.snapshot_id:
+            raise ValueError("task boundary capability snapshot drifted")
+        boundary = environment.issue_task_boundary(
+            project_id=project_id,
+            task_id=task_id,
+            session_id=session_id,
+            language_id=language_id,
+            capability_ids=capability_ids,
+            generation_scope=generation_scope,
+            issued_tick=int(self.model.tick),
+            ttl_ticks=ttl_ticks,
+        )
+        return {
+            "boundary": boundary.to_payload(),
+            "task_boundary": environment.status()["task_boundary"],
+        }
+
+    def close_workbench_task_boundary(
+        self,
+        *,
+        boundary_token: Mapping[str, Any],
+    ) -> dict[str, Any]:
+        """Close the current task boundary and retain it for read-only replay."""
+
+        environment = self._sync_workbench_root()
+        closed = environment.close_task_boundary(
+            boundary_token,
+            closed_tick=int(self.model.tick),
+        )
+        return {
+            "boundary": closed.to_payload(),
+            "task_boundary": environment.status()["task_boundary"],
+        }
+
     def _restore_workbench_metadata(self, payload: Any) -> None:
         if not isinstance(payload, Mapping):
             return
@@ -1461,6 +1511,9 @@ class SeedRuntime:
         transaction_payload = payload.get("transaction_state")
         if isinstance(transaction_payload, Mapping):
             self._workbench_environment.restore_transaction_state(transaction_payload)
+        task_boundary_payload = payload.get("task_boundary")
+        if isinstance(task_boundary_payload, Mapping):
+            self._workbench_environment.restore_task_boundary_state(task_boundary_payload)
         artifact_consumption_payload = payload.get("artifact_consumption_audit")
         if artifact_consumption_payload is not None:
             from taiji import ArtifactConsumptionAudit
@@ -1802,14 +1855,53 @@ class SeedRuntime:
         snapshot_id: str,
         novelty: float = 0.0,
         resource_budget: float = 1.0,
+        boundary_token: Mapping[str, Any] | None = None,
     ) -> dict[str, Any]:
         """Run the Taiji-owned read-only task admission Gate without execution."""
 
+        environment = self._sync_workbench_root()
+        boundary = environment.authorize_task_boundary(
+            boundary_token,
+            current_tick=int(self.model.tick),
+        )
+        if not boundary.accepted:
+            return {
+                "admission": {
+                    "accepted": False,
+                    "candidate_id": "",
+                    "snapshot_id": environment.capability_snapshot.snapshot_id,
+                    "capability_revision": environment.capability_snapshot.revision,
+                    "reason_code": boundary.reason_code,
+                    "reason": "Taiji task boundary was not admitted",
+                    "boundary": boundary.to_payload(),
+                },
+                "decision": None,
+                "execution": None,
+            }
         decision = self._select_taiji_workbench_candidate(
             novelty=novelty,
             resource_budget=resource_budget,
         )
-        environment = self._sync_workbench_root()
+        capability_boundary = environment.authorize_task_boundary(
+            boundary_token,
+            current_tick=int(self.model.tick),
+            capability_id=decision.selected.action_intent.kind,
+        )
+        if not capability_boundary.accepted:
+            return {
+                "admission": {
+                    "accepted": False,
+                    "candidate_id": decision.selected.candidate_id,
+                    "snapshot_id": environment.capability_snapshot.snapshot_id,
+                    "capability_revision": environment.capability_snapshot.revision,
+                    "reason_code": capability_boundary.reason_code,
+                    "reason": "Taiji candidate capability is outside the task boundary",
+                    "boundary": capability_boundary.to_payload(),
+                },
+                "decision": self._taiji_workbench_decision_payload(decision),
+                "execution": None,
+            }
+        boundary = capability_boundary
         world = self.model.architecture.cognitive_snapshot().world
         admission = environment.admit_taiji_candidate(
             decision.selected,
@@ -1822,6 +1914,7 @@ class SeedRuntime:
             "admission": admission.to_payload(),
             "decision": self._taiji_workbench_decision_payload(decision),
             "execution": None,
+            "boundary": boundary.to_payload(),
         }
 
     def project_workbench_affordances(
@@ -2004,14 +2097,53 @@ class SeedRuntime:
         novelty: float = 0.0,
         resource_budget: float = 1.0,
         learn: bool = False,
+        boundary_token: Mapping[str, Any] | None = None,
     ) -> dict[str, Any]:
         """Select, admit, and execute one Taiji-owned read-only task."""
 
+        environment = self._sync_workbench_root()
+        boundary = environment.authorize_task_boundary(
+            boundary_token,
+            current_tick=int(self.model.tick),
+        )
+        if not boundary.accepted:
+            return {
+                "admission": {
+                    "accepted": False,
+                    "candidate_id": "",
+                    "snapshot_id": environment.capability_snapshot.snapshot_id,
+                    "capability_revision": environment.capability_snapshot.revision,
+                    "reason_code": boundary.reason_code,
+                    "reason": "Taiji task boundary was not admitted",
+                    "boundary": boundary.to_payload(),
+                },
+                "decision": None,
+                "execution": None,
+            }
         decision = self._select_taiji_workbench_candidate(
             novelty=novelty,
             resource_budget=resource_budget,
         )
-        environment = self._sync_workbench_root()
+        capability_boundary = environment.authorize_task_boundary(
+            boundary_token,
+            current_tick=int(self.model.tick),
+            capability_id=decision.selected.action_intent.kind,
+        )
+        if not capability_boundary.accepted:
+            return {
+                "admission": {
+                    "accepted": False,
+                    "candidate_id": decision.selected.candidate_id,
+                    "snapshot_id": environment.capability_snapshot.snapshot_id,
+                    "capability_revision": environment.capability_snapshot.revision,
+                    "reason_code": capability_boundary.reason_code,
+                    "reason": "Taiji candidate capability is outside the task boundary",
+                    "boundary": capability_boundary.to_payload(),
+                },
+                "decision": self._taiji_workbench_decision_payload(decision),
+                "execution": None,
+            }
+        boundary = capability_boundary
         world = self.model.architecture.cognitive_snapshot().world
         admission = environment.admit_taiji_candidate(
             decision.selected,
@@ -2024,6 +2156,7 @@ class SeedRuntime:
             "admission": admission.to_payload(),
             "decision": self._taiji_workbench_decision_payload(decision),
             "execution": None,
+            "boundary": boundary.to_payload(),
         }
         if not admission.accepted:
             return payload
@@ -2036,6 +2169,7 @@ class SeedRuntime:
             # Only online learning needs the identity-bound decision context;
             # read-only execution must remain valid after admission alone.
             executive_decision=decision if learn else None,
+            boundary_token_digest=boundary.boundary_digest,
         )
         payload["execution"] = execution
         return payload
@@ -4263,6 +4397,7 @@ class SeedRuntime:
         learn: bool = False,
         event_sink: Callable[[Any], None] | None = None,
         executive_decision: Any | None = None,
+        boundary_token_digest: str = "",
     ) -> dict[str, Any]:
         """Execute one Taiji-owned intent through Seed's workbench."""
 
@@ -4337,6 +4472,7 @@ class SeedRuntime:
             capability_registry_snapshot_id=(
                 capability_registry_snapshot_id or environment.capability_registry.snapshot_id
             ),
+            boundary_token_digest=boundary_token_digest,
         )
         tick = int(self.model.tick)
         append_event(
