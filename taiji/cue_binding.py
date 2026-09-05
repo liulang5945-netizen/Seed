@@ -135,6 +135,26 @@ class CueBindingBank:
         self.occupied[index] = False
         self.visits[index] = 0
 
+    @torch.no_grad()
+    def expand_capacity(self, new_capacity: int) -> None:
+        """Append empty assemblies while preserving every existing slot."""
+
+        target = int(new_capacity)
+        if target <= self.capacity:
+            raise ValueError("cue binding expansion must increase capacity")
+        prototypes = torch.zeros(
+            (target, self.pattern_dim), device=self.device, dtype=self.prototypes.dtype
+        )
+        occupied = torch.zeros(target, device=self.device, dtype=self.occupied.dtype)
+        visits = torch.zeros(target, device=self.device, dtype=self.visits.dtype)
+        prototypes[: self.capacity] = self.prototypes
+        occupied[: self.capacity] = self.occupied
+        visits[: self.capacity] = self.visits
+        self.capacity = target
+        self.prototypes = prototypes
+        self.occupied = occupied
+        self.visits = visits
+
     @property
     def occupied_count(self) -> int:
         return int(self.occupied.sum().item())

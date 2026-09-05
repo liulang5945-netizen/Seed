@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from copy import deepcopy
 
+import torch
+
 from scripts.training.eval_taiji_m1_62_learning_data_contract import (
     _curriculum,
     _write_train,
@@ -129,6 +131,37 @@ def test_default_config_carries_the_identity_organ_as_a_first_class_organ() -> N
     assert model.identity_organ.capacity == config.identity_organ_capacity
     assert "identity_organ" in model.checkpoint()
     assert model.parameter_count() == config.planned_active_parameter_count
+
+
+def test_identity_growth_preserves_slots_and_roundtrips() -> None:
+    model = Taiji(
+        _promotion_config(11, enabled=True, capacity=128), episode_id="identity-growth"
+    )
+    before = model.checkpoint()
+    old_bank = model.identity_organ.bank.prototypes.clone()
+    old_action_index = model.identity_organ.action_synapses.pre_index.clone()
+    old_action_weight = model.identity_organ.action_synapses.edge_weight.clone()
+    old_outcome_weight = model.identity_organ.outcome_synapses.edge_weight.clone()
+
+    event = model.grow_identity_organ(256, reason="test-capacity-pressure")
+
+    assert event["from_capacity"] == 128
+    assert event["to_capacity"] == 256
+    assert model.identity_organ.capacity == 256
+    assert model.config.identity_organ_capacity == 256
+    assert torch.equal(model.identity_organ.bank.prototypes[:128], old_bank)
+    assert torch.equal(model.identity_organ.action_synapses.pre_index[:, :128], old_action_index)
+    assert torch.equal(model.identity_organ.action_synapses.edge_weight[:, :128], old_action_weight)
+    assert torch.equal(model.identity_organ.outcome_synapses.edge_weight[:, :128], old_outcome_weight)
+    assert torch.count_nonzero(model.identity_organ.action_synapses.edge_weight[:, 128:]) == 0
+    assert model.parameter_count() == model.config.planned_active_parameter_count
+    assert model.identity_growth_history == (event,)
+    assert before["config"]["identity_organ_capacity"] == 128
+
+    restored = Taiji.from_checkpoint(model.checkpoint())
+    assert restored.identity_growth_history == model.identity_growth_history
+    assert restored.parameter_count() == restored.config.planned_active_parameter_count
+    assert restored.checkpoint()["identity_growth"] == model.checkpoint()["identity_growth"]
 
 
 def test_identity_organ_budget_is_planned_before_allocation() -> None:

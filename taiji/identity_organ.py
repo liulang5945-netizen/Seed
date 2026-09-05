@@ -158,6 +158,91 @@ class CueIdentityOrgan:
             self.outcome_synapses.edge_weight,
         )
 
+    @staticmethod
+    def _expand_slot_synapses(
+        source: SparseSynapses, new_capacity: int
+    ) -> SparseSynapses:
+        """Create a larger full-slot projection without rewriting old edges."""
+
+        old_capacity = int(source.in_features)
+        target = int(new_capacity)
+        if target <= old_capacity:
+            raise ValueError("identity synapse expansion must increase capacity")
+        if source.row_fan_in != old_capacity or source.fan_in != old_capacity:
+            raise ValueError("identity synapse expansion requires full slot fan-in")
+        # New contacts are initialized to zero below, so constructor randomness
+        # is only needed to satisfy SparseSynapses' topology contract. A local
+        # generator keeps expansion independent of the model's learned RNG.
+        generator = torch.Generator(device="cpu")
+        generator.manual_seed(0)
+        expanded = SparseSynapses(
+            source.out_features,
+            target,
+            target,
+            generator=generator,
+            init_scale=1.0,
+            max_weight_norm=source.max_weight_norm,
+            device=source.device,
+            allow_self=not source.excludes_self,
+        )
+        expanded.pre_index[:, :old_capacity] = source.pre_index
+        expanded.pre_index[:, old_capacity:] = torch.arange(
+            old_capacity,
+            target,
+            device=source.device,
+            dtype=torch.int32,
+        ).unsqueeze(0)
+        expanded.edge_weight.zero_()
+        expanded.edge_weight[:, :old_capacity] = source.edge_weight
+        expanded._bound_rows()
+        return expanded
+
+    @torch.no_grad()
+    def expand_capacity(self, config: TaijiConfig) -> dict[str, int]:
+        """Grow the identity population while preserving its learned values."""
+
+        target = int(config.identity_organ_capacity)
+        old_capacity = int(self.capacity)
+        if target <= old_capacity:
+            raise ValueError("identity organ expansion must increase capacity")
+        if not config.identity_organ_enabled:
+            raise ValueError("identity organ expansion requires the organ to remain enabled")
+        if int(config.cortical_context_dim) != self.pattern_dim:
+            raise ValueError("identity organ expansion cannot change cortical context width")
+        if int(config.alphabet_size) != self.action_count:
+            raise ValueError("identity organ expansion cannot change the action alphabet")
+        action_synapses = self._expand_slot_synapses(self.action_synapses, target)
+        outcome_synapses = self._expand_slot_synapses(self.outcome_synapses, target)
+        self.bank.expand_capacity(target)
+        value_keys = torch.zeros(
+            (target, self._value_router_max_keys, self.pattern_dim),
+            device=self.device,
+            dtype=self._value_keys.dtype,
+        )
+        value_actions = torch.full(
+            (target, self._value_router_max_keys),
+            -1,
+            device=self.device,
+            dtype=self._value_actions.dtype,
+        )
+        value_counts = torch.zeros(target, device=self.device, dtype=self._value_counts.dtype)
+        value_keys[:old_capacity] = self._value_keys
+        value_actions[:old_capacity] = self._value_actions
+        value_counts[:old_capacity] = self._value_counts
+        self.capacity = target
+        self.config = config
+        self.action_synapses = action_synapses
+        self.outcome_synapses = outcome_synapses
+        self._value_keys = value_keys
+        self._value_actions = value_actions
+        self._value_counts = value_counts
+        return {
+            "from_capacity": old_capacity,
+            "to_capacity": target,
+            "preserved_slots": old_capacity,
+            "appended_slots": target - old_capacity,
+        }
+
     def _slot_trace(self, slot_index: int) -> torch.Tensor:
         return self.bank.slot_code(int(slot_index)).to(self.device)
 
