@@ -34,13 +34,19 @@ def _config(seed: int) -> TaijiConfig:
     )
 
 
-def _joint_child(path, *, seed: int = 11, fabric_learning: bool = False) -> None:
+def _joint_child(
+    path,
+    *,
+    seed: int = 11,
+    fabric_learning: bool = False,
+    training_phases: tuple[str, ...] = ("sequence",),
+) -> None:
     child = Taiji(_config(seed), episode_id="child")
     parent = Taiji(_config(seed), episode_id="parent")
     payload = {
         "format": "taiji-native-joint-training-v1",
         "version": 4,
-        "training_phases": ["sequence"],
+        "training_phases": list(training_phases),
         "sequence_fabric_learning": fabric_learning,
         "sequence_predictive_context_mode": "private-plastic-temporal-v1",
         "dataset_digest": "dataset",
@@ -95,6 +101,17 @@ def test_loaded_b1_rejects_fabric_plastic_child(tmp_path) -> None:
 
     with pytest.raises(ValueError, match="sequence_fabric_learning=false"):
         _evaluate_loaded_b1({11: checkpoint}, corpus)
+
+
+def test_loaded_b1_accepts_child_after_organ_only_continuation(tmp_path) -> None:
+    checkpoint = tmp_path / "child.pt"
+    _joint_child(checkpoint, training_phases=("memory", "world", "goal"))
+    corpus = SequencePredictionCorpus(train=b"abcd", holdout=b"bcda", retention=b"cdab")
+
+    measurement = _evaluate_loaded_b1({11: checkpoint}, corpus)
+
+    assert measurement.ability_id == "b1_sequence_prediction"
+    assert measurement.holdout_updates == 0
 
 
 def test_reused_b1_report_requires_checkpoint_provenance(tmp_path) -> None:
