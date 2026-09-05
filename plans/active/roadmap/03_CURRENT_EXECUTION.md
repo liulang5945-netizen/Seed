@@ -54,7 +54,7 @@ Taiji 采用“站在巨人肩膀上”的双边界：原始 byte 输入继续�
 |---|---|---|---|---|
 | 0 | M0 CPU 五项基础能力真实性基线 | **已完成（M0-0/M0-1/B1/B2/B3/B4/B5/M0-3/M0-4）** | 数据合同、对照 evaluator、checkpoint preflight、基线报告 | 测量链可信且能保存/恢复；模型得分可以失败，但失败必须被如实记录 |
 | 1 | M1 Taiji foundation 训练管线与首次 CPU 训练 | **已完成（M0-0~M0-4/M1-32~M1-66c）** | 原生 trainer、数据流水线、B2 因果链（寻址→裁决→折叠→契约）、首个 joint checkpoint | M1-66c 收尾：B2 在三 seed 上通过全部 foundation 门禁 |
-| 2 | M2 世界—行动—语言后训练 | **当前进行（M2-2y：在线 novelty 路由诊断）** | 世界预测、行动信用、F1 隔离读出、受控的旧/新语言保持 Gate，随后才是 ContentPlan/语言蒸馏和 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
+| 2 | M2 世界—行动—语言后训练 | **当前进行（M2-2z：Workbench task boundary / readout generation contract）** | 世界预测、行动信用、F1 隔离读出、受控的旧/新语言保持 Gate，随后才是 ContentPlan/语言蒸馏和 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
 | 3 | M3 综合能力晋级与真实 Workbench 验证 | 待开始 | 独立评测套件、真实 Workbench longitudinal report、晋级 checkpoint | 至少一个真实任务族获得可重复净收益 |
 | 4 | M4 持续学习、自进化和结构成长 | 冻结等待 M3 | bounded replay 接线、多周期保持、结构候选与单项回滚 | 真实 checkpoint 连续学习收益大于固定容量/weight-only 对照 |
 | 5 | M5 Skill/MCP 数据飞轮与客户端身体 | 冻结等待 M4 | 知识内化、经验回流、IDE/Workbench 身体、客户端插件准入 | 认知收益与客户端执行收益可消融归因，权限和回滚闭合 |
@@ -497,7 +497,9 @@ M1-64 已完成，B2 在真实 foundation 规模上被判定为**记忆能力不
 
 **M2-2x readout generation isolation 原型完成（20260905）**：新增 `scripts/training/eval_taiji_b5_readout_generation.py`，在 evaluator-owned 双模型原型中冻结 protected old readout，只训练复制出的 active readout；active generation 只写 predictive readout，shared fabric、motor、memory、identity 和 private context 均保持，路由不存 cue→answer 表且不做无条件平均。报告 `reports/taiji_m2x_seed11_b5_readout_generation_20260905.json` 记录：active-only new holdout `3.425925 BPB`，protected-only old holdout `3.868503 BPB`；phase-A context centroid 路由的 old/new/retention active route ratio 均为 `0.0`，组合路由 old BWT `0.0`、new BPB `12.166872`、retention `4.900853`，说明它没有识别 phase-B。owner digest 与 round-trip 审计全绿。结论是“代际 readout 隔离”结构方向有收益，但当前 phase-A 输入几何不能提供足够的无标签路由信号；原型不接入默认 Taiji，也不通过调阈值伪造 Gate。
 
-**M2-2y 唯一下一步**：测试严格时序的在线 novelty 路由：用旧 generation 在当前已观察输入上产生的 prediction error/surprise，经过只由 phase-A train 分布确定的阈值，作为下一 tick 的 active-generation 路由信号；active readout 继续只学习 phase-B，old readout 继续只读。必须显式记录路由延迟、phase-A 误触发、phase-B 命中率、old/new/retention BPB、BWT、shared-owner digest 和 fresh-process read-only；不得用当前目标字节提前选择本 tick 的答案头，不得加入 phase 标签、Python answer map、无条件平均或默认 checkpoint 改动。若 one-step novelty 仍不能把 phase-B 与 phase-A 分开，则承认无任务标签的 readout generation route 在当前状态空间不可识别，转向有明确 Workbench task boundary 的路由合同，而不是继续堆叠启发式阈值。
+**M2-2y 在线 novelty 路由诊断完成（20260905）**：新增严格时序的一步滞后路由评估，阈值只由 phase-A train 的旧模型 surprise 分布确定，当前 tick 的答案头选择不读取当前目标字节。报告 `reports/taiji_m2y_seed11_b5_online_novelty_20260905.json` 记录：phase-A 误触发 `0.5%`、phase-B active 路由命中率 `62.7%`、retention active 路由 `4.0%`；在线组合 old BWT `-0.001907`、new BPB `6.462876`、retention BPB `4.854481`。这证明 prediction surprise 是可用的候选路由信号，并显著优于 phase-A context centroid 的全零命中，但仍不能把新知识保持在 active-only 的 `3.425925 BPB` 水平，也没有形成完整 B5 通过；shared owner、checkpoint round-trip 和 read-only 证据保持通过。该路由继续限定为 evaluator 原型，不进入默认核心，也不再通过堆叠启发式阈值追求伪 Gate。
+
+**M2-2z 唯一下一步**：建立显式的 Workbench task boundary / readout generation contract。由客户端当前明确的工作台任务上下文（任务身份、会话生命周期、语言类型、能力权限和 generation scope）创建可验证的 boundary token；模型只能消费经授权、内容寻址且可回滚的 token 来选择 old/active readout，token 不得携带目标答案、phase 标签或 Python answer map。先做纯合同与 evaluator canary：验证同一任务内路由稳定、任务切换产生新 generation、旧任务只读回放、未授权/过期/跨项目 token fail closed，并记录 owner digest、checkpoint read-only 和路由审计；通过后才把它接到真实 IDE/Workbench trajectory。该合同明确取代无标签 surprise 启发式作为产品路由入口，但不改变 Taiji 默认 observe/learn 语义。
 
 ## 7. M2～M8 的开发日程与外围任务安置
 
@@ -594,6 +596,7 @@ CI 不是最后才运行的支线：每个 slice 都运行相关 pytest/lint/typ
 | 2026-09-05 | M2-2n isolated organ-only course 通过结构边界：shared fabric parent/final 相同，memory 保持、world 改善、goal 保持；尚无 B2 新增净收益，下一步做 fresh-process 五项 child-bound 复评。 |
 | 2026-09-05 | M2-2n fresh-process eval-only 通过：seed 11 checkpoint digest、十项终值指标、只读性、shared fabric 隔离均与训练报告一致；下一步做单 seed 五项 child-bound 复评。 |
 | 2026-09-05 | M2-2o seed 11 五项 child-bound canary 完成：B3 通过，B1/B2/B4 无新增净收益，B5 仍遗忘；checkpoint/digest/只读证据通过。下一步对齐 B2 formal delayed/interference 训练课程。 |
+| 2026-09-05 | M2-2y 在线 novelty 路由诊断完成：一步滞后旧模型 surprise 路由在 phase-A 误触发 `0.5%`、phase-B 命中 `62.7%`，但 new BPB `6.462876`、old BWT `-0.001907`、retention BPB `4.854481`，尚未达到 B5 Gate；原型不接入默认核心，下一步建立显式 Workbench task boundary / readout generation contract。 |
 | 2026-09-05 | M2-2n 补训前置发现并修复 `JointTrainingRun` 每步写 checkpoint 的性能问题；旧运行安全停在 memory `531/1000`，将从可恢复 `last.pt` 继续。 |
 | 2026-09-05 | M2-2m 统一五项 child foundation report 完成：B1 通过；B2/B3/B4 未形成相对冻结父模型的新增净收益；B5 replay 三 seed 均改善 no-replay 但最差 BWT `-0.262874`，整体 failed。下一步收束为从 child 进行 `memory→world→goal` 器官补训。 |
 | 2026-09-05 | M2-2l 真实三 seed B5 continuation 完成：replay 相对 no-replay 的 BWT 增益三 seed 均为正，但最差 replay BWT 为 `-0.262874`，仍未超过零基线；B5 保持 failed，下一步改 continuation 更新规则/容量分配。M2-2m 接入受 provenance 校验的 B1 report reuse，准备生成统一五项 child foundation report。 |
