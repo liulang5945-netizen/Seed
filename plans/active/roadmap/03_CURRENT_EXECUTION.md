@@ -54,7 +54,7 @@ Taiji 采用“站在巨人肩膀上”的双边界：原始 byte 输入继续�
 |---|---|---|---|---|
 | 0 | M0 CPU 五项基础能力真实性基线 | **已完成（M0-0/M0-1/B1/B2/B3/B4/B5/M0-3/M0-4）** | 数据合同、对照 evaluator、checkpoint preflight、基线报告 | 测量链可信且能保存/恢复；模型得分可以失败，但失败必须被如实记录 |
 | 1 | M1 Taiji foundation 训练管线与首次 CPU 训练 | **已完成（M0-0~M0-4/M1-32~M1-66c）** | 原生 trainer、数据流水线、B2 因果链（寻址→裁决→折叠→契约）、首个 joint checkpoint | M1-66c 收尾：B2 在三 seed 上通过全部 foundation 门禁 |
-| 2 | M2 世界—行动—语言后训练 | **当前进行（M2-2m：统一五项 child foundation report）** | 世界预测、行动信用、F1 隔离读出、受控的旧/新语言保持 Gate，随后才是 ContentPlan/语言蒸馏和 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
+| 2 | M2 世界—行动—语言后训练 | **当前进行（M2-2n：child 器官补训）** | 世界预测、行动信用、F1 隔离读出、受控的旧/新语言保持 Gate，随后才是 ContentPlan/语言蒸馏和 SFT checkpoint | 任务成功、事实约束、旧能力保持同时通过 |
 | 3 | M3 综合能力晋级与真实 Workbench 验证 | 待开始 | 独立评测套件、真实 Workbench longitudinal report、晋级 checkpoint | 至少一个真实任务族获得可重复净收益 |
 | 4 | M4 持续学习、自进化和结构成长 | 冻结等待 M3 | bounded replay 接线、多周期保持、结构候选与单项回滚 | 真实 checkpoint 连续学习收益大于固定容量/weight-only 对照 |
 | 5 | M5 Skill/MCP 数据飞轮与客户端身体 | 冻结等待 M4 | 知识内化、经验回流、IDE/Workbench 身体、客户端插件准入 | 认知收益与客户端执行收益可消融归因，权限和回滚闭合 |
@@ -469,6 +469,8 @@ M1-64 已完成，B2 在真实 foundation 规模上被判定为**记忆能力不
 
 **M2-2m 统一报告前置接线完成（20260905）**：evaluator 新增 `--reuse-b1-report`，仅在报告格式、manifest digest、checkpoint gate、checkpoint 映射、phase-B/phase-A 数据 digest 和 B1 read-only/trained-child evidence 全部匹配时复用已完成的 B1 measurement；否则 fail closed。这样可以把已完成的 foundation B1 与新跑的 B2～B5 合并为一份可追溯报告，而不重复约 15 分钟的三 seed B1 score。常驻测试覆盖复用入口的 provenance 合同。**M2-2m 唯一下一步**：用已提交的 `reports/taiji_m2j_foundation_child_b1_20260905.json` 复用 B1，运行 `--child-foundation --b5-child` 生成统一五项 child report；报告完成后按 B2～B5 的真实失败形态进入下一轮模型训练，不扩展客户端/Provider/CUDA 范围。
 
+**M2-2m 统一五项 child foundation report 完成（20260905）**：`reports/taiji_m2l_foundation_child_20260905.json` 以受 provenance 校验的 B1 复用加上 B2/B3/B4/B5 真实 child measurement 闭合，checkpoint gate 为 `passed`，五项 holdout/retention 均为只读。B1 通过（最差 `4.383969 BPB`）；B2 最差 recall `0.505`，与 frozen/simple-rule 持平；B3 最差 transition error `3.622080e-08`，略差于 frozen parent `3.545353e-08`；B4 success `1.0`，与 frozen parent 持平；B5 replay BWT 最差 `-0.262874`，但三 seed 相对 no-replay 的增益为正。整体 `failed`、`can_promote=false`，说明现有 child 只形成 F1 语言收益，B2～B4 仍是继承保持而非新增学习，B5 的 replay 仍不足以消除遗忘。**M2-2n 唯一下一步**：从现有三份 v4 child 各自继续一个不含 `sequence` 的 `memory→world→goal` 器官补训 course，先用 seed 11 做完整 checkpoint/fresh-process/五项复评；不得重训 F1、改写 shared fabric 或扩展外围范围。
+
 ## 7. M2～M8 的开发日程与外围任务安置
 
 ### M2：世界—行动—语言后训练
@@ -560,6 +562,7 @@ CI 不是最后才运行的支线：每个 slice 都运行相关 pytest/lint/typ
 
 | 日期 | 内容 |
 |---|---|
+| 2026-09-05 | M2-2m 统一五项 child foundation report 完成：B1 通过；B2/B3/B4 未形成相对冻结父模型的新增净收益；B5 replay 三 seed 均改善 no-replay 但最差 BWT `-0.262874`，整体 failed。下一步收束为从 child 进行 `memory→world→goal` 器官补训。 |
 | 2026-09-05 | M2-2l 真实三 seed B5 continuation 完成：replay 相对 no-replay 的 BWT 增益三 seed 均为正，但最差 replay BWT 为 `-0.262874`，仍未超过零基线；B5 保持 failed，下一步改 continuation 更新规则/容量分配。M2-2m 接入受 provenance 校验的 B1 report reuse，准备生成统一五项 child foundation report。 |
 | 2026-09-05 | M2-2h 代码合同完成：F1 新增 `BytePredictiveContext`（独立 receptor map、零初始 sparse temporal residual、由 decoder 的因果反投影误差局部更新）；shared fabric/F4 motor/F2 memory/identity value 不在该路径的写入范围。`Taiji` checkpoint 升至 v10/state v7，joint course 升至 v4，private-context mode/digest/phase audit/resume mismatch 均内容寻址；v8/v9 迁移采用旧 motor receptor map + neutral residual，v1～v3 可只读但不得原地继续 sequence/replay。定向测试验证 context 实际变化、predictor-only 隔离、v8/v9 roundtrip、v3 explicit-continuation 边界；尚未跑新 1 MiB course。唯一下一步为 clean v4 preflight 与 fresh-process eval-only 交叉核验。 |
 | 2026-09-05 | M2-2g seed 11 predictor-only course 通过：从 v3 parent 跑完整 1 MiB 后，fresh-process 只读恢复与 completion report 的 child digest、十项最终指标、数据/模式合同、readout/fabric phase checks 和 keep gate 全部一致。B2=`0.870`、B4=`1.0` 保持，old/new 四项 BPB 均改善；shared fabric 与行动性读出逐位未写，只有 predictive readout 改变。该结果验证因果隔离，不等于永久冻结或三 seed F5 闭合；计划推进到 M2-2h 的 private predictive plastic context 合同。 |
