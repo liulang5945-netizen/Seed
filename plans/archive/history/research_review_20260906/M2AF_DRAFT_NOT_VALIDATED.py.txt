@@ -1,0 +1,375 @@
+"""Evaluate active-readout learning on a real phase-C continuation corpus.
+
+M2-2af is the first capability probe after the M2-2ae multi-stage data
+contract.  The protected branch is the existing seed11 v4 child (trained on
+phase A + phase B); the active branch receives only phase-C bytes through the
+explicit Workbench ``execute`` boundary.  Phase-C is record-disjoint from
+both earlier courses, so a positive result is evidence of continuation rather
+than a replay of the child course.
+"""
+
+from __future__ import annotations
+
+import argparse
+import copy
+import json
+import sys
+from collections.abc import Mapping, Sequence
+from pathlib import Path
+from typing import Any
+
+import torch
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from scripts.training.eval_taiji_m2ad_active_continuation import (  # noqa: E402
+    _authorization,
+    _fresh_process_digest,
+    _load_joint_child,
+    _protected_owner_digest,
+    _score_read_only,
+)
+from taiji import (  # noqa: E402
+    FoundationTrainingDataset,
+    Taiji,
+    WorkbenchTaskBoundary,
+)
+from taiji.internalization import content_digest  # noqa: E402
+
+FORMAT = "taiji-active-readout-phase-c-capability-v1"
+
+
+def _disjoint_record_sets(
+    datasets: Mapping[str, FoundationTrainingDataset],
+) -> dict[str, int]:
+    names = tuple(datasets)
+    overlaps: dict[str, int] = {}
+    for index, left_name in enumerate(names):
+        left = set(datasets[left_name].selected_record_digests)
+        for right_name in names[index + 1 :]:
+            right = set(datasets[right_name].selected_record_digests)
+            overlaps[f"{left_name}__{right_name}"] = len(left & right)
+    return overlaps
+
+
+def _require_record_provenance(
+    datasets: Mapping[str, FoundationTrainingDataset],
+) -> None:
+    for name, dataset in datasets.items():
+        if not dataset.selected_record_digests:
+            raise ValueError(f"{name} dataset is missing selected-record provenance")
+
+
+def run_gate(
+    checkpoint: Path,
+    *,
+    corpus_paths: Sequence[Path],
+    partition_seeds: tuple[int, int, int],
+    epochs: int,
+    train_bytes: int,
+    eval_bytes: int | None,
+) -> dict[str, Any]:
+    if len(partition_seeds) != 3:
+        raise ValueError("phase-C evaluator requires three partition seeds")
+    joint_payload, source_model = _load_joint_child(checkpoint, expected_seed=11)
+    phase_a = FoundationTrainingDataset.from_jsonl(
+        corpus_paths,
+        profile="foundation",
+        partition_seed=partition_seeds[0],
+        track_record_digests=True,
+    )
+    phase_b = FoundationTrainingDataset.from_jsonl(
+        corpus_paths,
+        profile="foundation",
+        partition_seed=partition_seeds[1],
+        exclude_dataset=phase_a,
+        track_record_digests=True,
+    )
+    phase_c = FoundationTrainingDataset.from_jsonl(
+        corpus_paths,
+        profile="foundation",
+        partition_seed=partition_seeds[2],
+        exclude_datasets=(phase_a, phase_b),
+        track_record_digests=True,
+    )
+    datasets = {"phase_a": phase_a, "phase_b": phase_b, "phase_c": phase_c}
+    _require_record_provenance(datasets)
+    overlaps = _disjoint_record_sets(datasets)
+    if any(overlaps.values()):
+        raise ValueError(f"phase datasets are not record-disjoint: {overlaps}")
+    if str(joint_payload.get("dataset_digest")) != phase_b.digest:
+        raise ValueError("child dataset digest does not match phase-B continuation corpus")
+    if str(joint_payload.get("protected_dataset_digest")) != phase_a.digest:
+        raise ValueError("child protected dataset digest does not match phase-A corpus")
+    if train_bytes <= 0 or train_bytes > len(phase_c.train):
+        raise ValueError("train_bytes must be within the phase-C training partition")
+    if eval_bytes is not None and eval_bytes <= 0:
+        raise ValueError("eval_bytes must be positive when provided")
+    score_bytes = eval_bytes or min(
+        len(phase_a.retention), len(phase_b.holdout), len(phase_c.holdout)
+    )
+    if score_bytes > min(len(phase_a.retention), len(phase_b.holdout), len(phase_c.holdout)):
+        raise ValueError("eval_bytes must fit phase-A retention and phase-B/C holdouts")
+
+    source_model.clear_active_predictive_readout()
+    protected_model = Taiji.from_checkpoint(source_model.checkpoint())
+    active_model = Taiji.from_checkpoint(source_model.checkpoint())
+    protected_before = _protected_owner_digest(active_model)
+    protected_readout_digest = active_model.readout_registry_status()["protected"][
+        "readout_digest"
+    ]
+    boundary = WorkbenchTaskBoundary.issue(
+        project_id="project:seed",
+        task_id="task:active-phase-c",
+        session_id="session:seed11",
+        language_id="python",
+        capability_snapshot_id="capability:snapshot:1",
+        capability_ids=("workspace.read",),
+        generation_scope="active",
+        issued_tick=10,
+        ttl_ticks=40,
+    )
+    authorization = _authorization(boundary)
+    active_model.clone_protected_predictive_readout_as_active(
+        boundary_digest=boundary.token_digest,
+    )
+    active_before = active_model.active_predictive_readout_metadata
+    if active_before is None:
+        raise RuntimeError("active readout was not registered")
+    active_model.learn_bytes(
+        phase_c.train[:train_bytes],
+        epochs=epochs,
+        include_boundary=True,
+        use_memory=False,
+        learn_fabric=False,
+        learn_predictive_context=False,
+        learn_predictive_readout=True,
+        boundary=boundary,
+        authorization=authorization,
+    )
+    active_after = active_model.active_predictive_readout_metadata
+    if active_after is None:
+        raise RuntimeError("active readout disappeared after phase-C continuation")
+    protected_after = _protected_owner_digest(active_model)
+    active_checkpoint = active_model.checkpoint()
+    active_checkpoint_digest = content_digest(active_checkpoint)
+
+    protected_phase_c_bpb, protected_c_read_only = _score_read_only(
+        protected_model, phase_c.holdout[:score_bytes]
+    )
+    active_phase_c_bpb, active_c_read_only = _score_read_only(
+        active_model, phase_c.holdout[:score_bytes]
+    )
+    protected_phase_b_bpb, protected_b_read_only = _score_read_only(
+        protected_model, phase_b.holdout[:score_bytes]
+    )
+    active_phase_b_bpb, active_b_read_only = _score_read_only(
+        active_model, phase_b.holdout[:score_bytes]
+    )
+    protected_phase_a_bpb, protected_a_read_only = _score_read_only(
+        protected_model, phase_a.retention[:score_bytes]
+    )
+    active_phase_a_bpb, active_a_read_only = _score_read_only(
+        active_model, phase_a.retention[:score_bytes]
+    )
+
+    restored = Taiji.from_checkpoint(copy.deepcopy(active_checkpoint))
+    restored_metadata = restored.active_predictive_readout_metadata
+    restored_checkpoint_digest = content_digest(restored.checkpoint())
+    active_output = active_model.generate(
+        b"Taiji", 16, boundary=boundary, authorization=authorization
+    )
+    restored_output = restored.generate(
+        b"Taiji", 16, boundary=boundary, authorization=authorization
+    )
+
+    disk_path = PROJECT_ROOT / "output" / "taiji_m2af_active_phase_c_probe.pt"
+    try:
+        torch.save(active_checkpoint, disk_path)
+        fresh_digest, restore_seconds = _fresh_process_digest(disk_path)
+        checkpoint_bytes = disk_path.stat().st_size
+    finally:
+        disk_path.unlink(missing_ok=True)
+
+    protected_only = Taiji.from_checkpoint(source_model.checkpoint())
+    try:
+        protected_only.generate(
+            b"Taiji", 4, boundary=boundary, authorization=authorization
+        )
+    except RuntimeError as exc:
+        missing_registry_rejection = str(exc)
+    else:
+        missing_registry_rejection = ""
+
+    checks = {
+        "phase_a_b_phase_b_phase_c_record_disjoint": all(
+            value == 0 for value in overlaps.values()
+        ),
+        "child_lineage_matches_phase_a_and_phase_b": (
+            joint_payload.get("dataset_digest") == phase_b.digest
+            and joint_payload.get("protected_dataset_digest") == phase_a.digest
+        ),
+        "active_registry_has_parent_and_boundary": all(
+            bool(active_before.get(key))
+            for key in ("parent_checkpoint_digest", "boundary_digest", "readout_digest")
+        ),
+        "active_readout_changes": active_before["readout_digest"]
+        != active_after["readout_digest"],
+        "protected_owners_unchanged": protected_before == protected_after,
+        "protected_readout_digest_unchanged": protected_readout_digest
+        == active_model.readout_registry_status()["protected"]["readout_digest"],
+        "all_scores_are_read_only": all(
+            (
+                protected_c_read_only,
+                active_c_read_only,
+                protected_b_read_only,
+                active_b_read_only,
+                protected_a_read_only,
+                active_a_read_only,
+            )
+        ),
+        "active_registry_round_trips_in_process": (
+            restored_metadata == active_after
+            and restored_checkpoint_digest == active_checkpoint_digest
+        ),
+        "active_registry_round_trips_in_fresh_process": fresh_digest
+        == active_checkpoint_digest,
+        "active_generation_uses_active_owner": (
+            active_model.last_generation_route is not None
+            and active_model.last_generation_route["generation_scope"] == "active"
+            and active_model.last_generation_route["readout_owner"]
+            == "predictive_readout.active"
+        ),
+        "active_generation_output_round_trips": active_output == restored_output,
+        "missing_registry_fails_closed": "not attached" in missing_registry_rejection,
+    }
+    capability = {
+        "active_phase_c_bpb": active_phase_c_bpb,
+        "protected_phase_c_bpb": protected_phase_c_bpb,
+        "phase_c_gain_bpb": protected_phase_c_bpb - active_phase_c_bpb,
+        "active_phase_b_bpb": active_phase_b_bpb,
+        "protected_phase_b_bpb": protected_phase_b_bpb,
+        "phase_b_retention_gain_bpb": protected_phase_b_bpb - active_phase_b_bpb,
+        "active_phase_a_retention_bpb": active_phase_a_bpb,
+        "protected_phase_a_retention_bpb": protected_phase_a_bpb,
+        "phase_a_retention_delta_bpb": active_phase_a_bpb - protected_phase_a_bpb,
+        "phase_c_improved": active_phase_c_bpb < protected_phase_c_bpb,
+        "phase_b_old_capability_not_degraded": active_phase_b_bpb
+        <= protected_phase_b_bpb + 0.05,
+        "phase_a_retention_within_0_05_bpb": active_phase_a_bpb
+        <= protected_phase_a_bpb + 0.05,
+        "b5_capability_candidate": (
+            active_phase_c_bpb < protected_phase_c_bpb
+            and active_phase_b_bpb <= protected_phase_b_bpb + 0.05
+            and active_phase_a_bpb <= protected_phase_a_bpb + 0.05
+        ),
+    }
+    return {
+        "format": FORMAT,
+        "version": 1,
+        "status": "passed" if all(checks.values()) else "failed",
+        "can_promote": bool(all(checks.values()) and capability["b5_capability_candidate"]),
+        "checkpoint": str(checkpoint),
+        "seed": 11,
+        "epochs": int(epochs),
+        "train_bytes": int(train_bytes),
+        "eval_bytes": int(score_bytes),
+        "datasets": {
+            name: {
+                "digest": dataset.digest,
+                "partition_seed": dataset.partition_seed,
+                "sample_counts": dataset.sample_counts,
+                "selected_record_count": len(dataset.selected_record_digests),
+            }
+            for name, dataset in datasets.items()
+        },
+        "record_overlap_counts": overlaps,
+        "checks": checks,
+        "capability": capability,
+        "registry": {
+            "before_training": active_before,
+            "after_training": active_after,
+            "restored": restored_metadata,
+        },
+        "checkpoint_audit": {
+            "active_checkpoint_digest": active_checkpoint_digest,
+            "fresh_process_digest": fresh_digest,
+            "checkpoint_bytes": int(checkpoint_bytes),
+            "fresh_process_restore_seconds": restore_seconds,
+            "holdout_updates": 0,
+            "retention_updates": 0,
+        },
+        "owner_audit": {
+            "protected_owner_digest_before": protected_before,
+            "protected_owner_digest_after": protected_after,
+            "protected_owners_unchanged": protected_before == protected_after,
+            "missing_registry_rejection": missing_registry_rejection,
+        },
+        "boundary": boundary.to_payload(),
+    }
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--checkpoint", type=Path, required=True)
+    parser.add_argument("--corpus", type=Path, nargs="+", required=True)
+    parser.add_argument("--phase-a-seed", type=int, default=11)
+    parser.add_argument("--phase-b-seed", type=int, default=10011)
+    parser.add_argument("--phase-c-seed", type=int, default=20011)
+    parser.add_argument("--epochs", type=int, default=1)
+    parser.add_argument(
+        "--train-bytes",
+        type=int,
+        default=262_144,
+        help="Real phase-C train prefix used for the CPU continuation (default: 256 KiB).",
+    )
+    parser.add_argument(
+        "--eval-bytes",
+        type=int,
+        help="Optional score prefix; default uses the largest common A/B/C evaluation prefix.",
+    )
+    parser.add_argument("--report", type=Path, required=True)
+    args = parser.parse_args()
+    if args.epochs <= 0:
+        parser.error("--epochs must be positive")
+    if args.train_bytes <= 0:
+        parser.error("--train-bytes must be positive")
+    if args.eval_bytes is not None and args.eval_bytes <= 0:
+        parser.error("--eval-bytes must be positive")
+    result = run_gate(
+        args.checkpoint,
+        corpus_paths=args.corpus,
+        partition_seeds=(args.phase_a_seed, args.phase_b_seed, args.phase_c_seed),
+        epochs=args.epochs,
+        train_bytes=args.train_bytes,
+        eval_bytes=args.eval_bytes,
+    )
+    args.report.parent.mkdir(parents=True, exist_ok=True)
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    json.loads(args.report.read_text(encoding="utf-8"))
+    print(
+        json.dumps(
+            {
+                "report": str(args.report),
+                "status": result["status"],
+                "checks_passed": sum(int(value) for value in result["checks"].values()),
+                "checks_total": len(result["checks"]),
+                "phase_c_gain_bpb": result["capability"]["phase_c_gain_bpb"],
+                "b5_capability_candidate": result["capability"][
+                    "b5_capability_candidate"
+                ],
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
+    return 0 if result["status"] == "passed" else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

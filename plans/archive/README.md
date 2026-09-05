@@ -16,6 +16,8 @@
 
 ## 最近一次路线拆分
 
+2026-09-06 研究重审将累计的 M0/M1/M2 执行日志及旧“下一步”完整保存到 [research_review_20260906](history/research_review_20260906/README.md)，同时把未验证的 M2af 草案保存为不可执行文本。核心需求仍常驻 active；活动执行计划已改为详细阶段、对照、验收与失败出口。本次审视纠正了 active 评分错 owner、B5 holdout 重复和 Gate 语义，历史报告原样保留，不能绕过[研究审视](../reference/TAIJI_RESEARCH_REVIEW_2026_09_06.md)直接继承旧能力结论。
+
 2026-09-01 最新一次收束将原活动 `SEED_DEVELOPMENT_ROADMAP` 与 `roadmap/01～04` 全文移入 [roadmap_convergence_20260901](history/roadmap_convergence_20260901/README.md)。活动路径保留短兼容入口，所有当前优先级、日程、Gate 和下一步统一由 `plans/active/roadmap/03_CURRENT_EXECUTION.md` 承载。
 
 | 文档 | 归档原因 |

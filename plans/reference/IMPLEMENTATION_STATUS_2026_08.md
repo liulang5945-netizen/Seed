@@ -1,8 +1,12 @@
 # Seed / Taiji 实现事实参考
 
-> 事实快照：2026-09-01。本文件只描述当前代码事实、能力边界和证据入口，不决定执行顺序。当前 M0～M8 模型优先路线和唯一动作见 [03_CURRENT_EXECUTION.md](../active/roadmap/03_CURRENT_EXECUTION.md)，纠偏前计划见 [roadmap_convergence_20260901](../archive/history/roadmap_convergence_20260901/README.md)。
+> 最新事实覆盖：2026-09-06。本文件只描述代码事实、能力边界与证据入口，不决定执行顺序。当前统一路线见 [03_CURRENT_EXECUTION.md](../active/roadmap/03_CURRENT_EXECUTION.md)，本次重审的复现与纠正见 [研究审视](TAIJI_RESEARCH_REVIEW_2026_09_06.md)。下文未逐项复验的产品/旧阶段记录保留其原有证据范围。
 
-> 最新状态覆盖：P7-1 真实 Qwen 语义质量 Gate 已完成测量但未通过；Qwen2.5-0.5B-Instruct 仅保留为实验/回退 provider。E1～E7 已完成的 ledger、checkpoint、内化、客户端边界与归因机制保留为训练底座，E6-5b 真实第三方 MCP 继续冻结，E8 bounded replay 暂停接线。当前主阶段已纠正为 M0 CPU 五项基础能力真实性基线，随后必须进入 M1 foundation 训练。
+> 最新状态覆盖：M0/M1 与 M2 部分真实训练已执行；B1 具备中文 byte 统计学习证据，B2 identity-generation 三 seed 最差 recall 为 0.99。B3/B4 当前课程仍很窄。M2-2ad 的 active 评分实际读取 protected，active 能力结论无效；旧 B5 新任务 holdout 重复，不能证明泛化。相关程序修复尚未实施，旧 JSON 原样保留。
+
+最近的模型计量必须区分谱系：seed11 sequence child 为 193,586 个 parameter_tensors 标量；memory-growth child 为 476,978 个。joint 文件分别为 18,771,087 与 42,908,047 字节，不能当作纯参数大小或完整 runtime 参数规模。当前 runner 的 kernel 训练不证明 adapter 的全部语义/规划器官都已训练。
+
+E1～E7、provider、Workbench 与客户端成果保留为底座；Skill/MCP 本地知识可用于受控训练，真实第三方连接和客户端扩展依统一路线解冻。本轮仅修订计划与审计文档，没有启动新课程或完成量尺修复。
 
 ## 1. 身份、所有权与依赖
 
