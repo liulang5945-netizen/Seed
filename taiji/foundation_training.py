@@ -1091,10 +1091,15 @@ def _train_goal_episode(
     episode: GoalActionEpisode,
     *,
     learn: bool,
+    learn_fabric: bool | None = None,
 ) -> bool:
+    if learn_fabric is None:
+        learn_fabric = learn
+    elif not isinstance(learn_fabric, bool):
+        raise TypeError("goal episode fabric learning must be a bool or None")
     model.reset_dynamics(episode_id=f"m1-f3-train-{episode.episode_id}")
     model.observe(model.config.boundary_symbol, learn=False, learn_motor=False, use_memory=False)
-    model.observe(episode.cue, learn=learn, learn_motor=False, use_memory=False)
+    model.observe(episode.cue, learn=learn_fabric, learn_motor=False, use_memory=False)
     decision = model.act(
         tuple(sorted((episode.preferred_action, episode.alternate_action))),
         sample=True,
@@ -1861,7 +1866,7 @@ class JointTrainingRun:
             )
 
     def _record_sequence_fabric_phase(self, *, phase: str, before: str) -> None:
-        """Audit the M2-2g shared-context write boundary for every F1 phase."""
+        """Audit the protected shared-fabric write boundary for one course phase."""
 
         after = _sequence_fabric_digest(self.model)
         preserved = before == after
@@ -1874,7 +1879,7 @@ class JointTrainingRun:
         }
         self.sequence_fabric_phase_checks.append(record)
         if not self.sequence_fabric_learning and not preserved:
-            raise RuntimeError("predictor-only sequence learning changed the shared fabric")
+            raise RuntimeError(f"joint training phase changed the protected shared fabric: {phase}")
 
     def _record_sequence_predictive_context_phase(self, *, phase: str, before: str) -> None:
         """Prove an F1 phase updates the private substrate it claims to own."""
@@ -2129,6 +2134,7 @@ class JointTrainingRun:
 
             if "memory" in self.training_phases:
                 self.phase = "memory"
+                memory_fabric_before = _sequence_fabric_digest(self.model)
                 while self.memory_cursor < len(self.memory_corpus.train):
                     _joint_train_memory_episode(
                         self.model, self.memory_corpus.train[self.memory_cursor]
@@ -2141,9 +2147,14 @@ class JointTrainingRun:
                         self._save_progress(train_kind="memory")
                     elif self.global_step % self.checkpoint_interval == 0:
                         self.save(self.last_checkpoint_path)
+                self._record_sequence_fabric_phase(
+                    phase="memory",
+                    before=memory_fabric_before,
+                )
 
             if "world" in self.training_phases:
                 self.phase = "world"
+                world_fabric_before = _sequence_fabric_digest(self.model)
                 while self.world_cursor < len(self.world_corpus.train):
                     case = self.world_corpus.train[self.world_cursor]
                     self.world_learner.online_update(
@@ -2165,12 +2176,20 @@ class JointTrainingRun:
                         self._save_progress(train_kind="world")
                     elif self.global_step % self.checkpoint_interval == 0:
                         self.save(self.last_checkpoint_path)
+                self._record_sequence_fabric_phase(
+                    phase="world",
+                    before=world_fabric_before,
+                )
 
             if "goal" in self.training_phases:
                 self.phase = "goal"
+                goal_fabric_before = _sequence_fabric_digest(self.model)
                 while self.goal_cursor < len(self.goal_corpus.train):
                     success = _train_goal_episode(
-                        self.model, self.goal_corpus.train[self.goal_cursor], learn=True
+                        self.model,
+                        self.goal_corpus.train[self.goal_cursor],
+                        learn=True,
+                        learn_fabric=self.sequence_fabric_learning,
                     )
                     self.goal_cursor += 1
                     self.global_step += 1
@@ -2180,6 +2199,10 @@ class JointTrainingRun:
                         self._save_progress(train_kind="goal", train_success=success)
                     elif self.global_step % self.checkpoint_interval == 0:
                         self.save(self.last_checkpoint_path)
+                self._record_sequence_fabric_phase(
+                    phase="goal",
+                    before=goal_fabric_before,
+                )
 
             if "replay" in self.training_phases:
                 assert self.replay_dataset is not None
@@ -2225,6 +2248,7 @@ class JointTrainingRun:
             if "replay-memory" in self.training_phases:
                 assert self.replay_memory_corpus is not None
                 self.phase = "replay-memory"
+                replay_memory_fabric_before = _sequence_fabric_digest(self.model)
                 while self.replay_memory_epoch < self.replay_memory_epochs:
                     while self.replay_memory_cursor < len(self.replay_memory_corpus.train):
                         _joint_train_memory_episode(
@@ -2245,6 +2269,10 @@ class JointTrainingRun:
                             self.save(self.last_checkpoint_path)
                     self.replay_memory_epoch += 1
                     self.replay_memory_cursor = 0
+                self._record_sequence_fabric_phase(
+                    phase="replay-memory",
+                    before=replay_memory_fabric_before,
+                )
 
             self.epoch += 1
             self.phase = self.training_phases[0]

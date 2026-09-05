@@ -473,6 +473,8 @@ M1-64 已完成，B2 在真实 foundation 规模上被判定为**记忆能力不
 
 **M2-2n 训练器性能修复（20260905）**：seed 11 补训前置运行暴露 `JointTrainingRun` 的 `checkpoint_interval` 未生效：五个 phase 在未到 metric 点时仍每一步写入约 18MB 的 `last.pt`，造成不必要的 CPU/磁盘开销。已将 sequence、memory、world、goal、replay、replay-memory 的非 metric 路径统一改为仅在 `global_step % checkpoint_interval == 0` 时保存；阶段末仍强制测量并保存，resume 游标和 checkpoint 安全边界不变。旧运行已在 `memory 531/1000` 前安全停止，现有 `parent.pt`/`last.pt` 可继续恢复。**唯一下一步**：从该 `last.pt` 以低频 metric 配置恢复 seed 11 器官补训。
 
+**M2-2n 补训边界审计与修复（20260905）**：seed 11 从旧 `last.pt` 恢复并完成 `memory→world→goal` 后，发现 `sequence_predictive_context` 保持不变但 `sequence_fabric_contract` 改变；该 course 不可作为合格 child。根因是 goal episode 的 cue `observe(learn=True)` 仍写 shared fabric，`sequence_fabric_learning=false` 只约束 byte/replay 路径，且非 sequence phase 没有即时边界审计。已新增 `learn_fabric` 显式参数：joint organ-only course 传 `false`，普通 world-action course 保持原语义；并对 memory/world/goal/replay-memory 增加 phase-level fabric audit，违规立即 fail closed。旧补训产物只保留为诊断证据，不能晋级或作为后续输入。**唯一下一步**：从原始 v4 private-context child 重新运行 seed 11 organ-only course，并确认 shared fabric parent/final 相同后再复评。
+
 ## 7. M2～M8 的开发日程与外围任务安置
 
 ### M2：世界—行动—语言后训练
@@ -564,6 +566,7 @@ CI 不是最后才运行的支线：每个 slice 都运行相关 pytest/lint/typ
 
 | 日期 | 内容 |
 |---|---|
+| 2026-09-05 | M2-2n seed 11 补训完成但边界审计发现 goal cue 写入 shared fabric，产物判为不可晋级；根因已修复为显式 `learn_fabric=false` 与非 sequence phase audit，下一步从原始 v4 child 重跑。 |
 | 2026-09-05 | M2-2n 补训前置发现并修复 `JointTrainingRun` 每步写 checkpoint 的性能问题；旧运行安全停在 memory `531/1000`，将从可恢复 `last.pt` 继续。 |
 | 2026-09-05 | M2-2m 统一五项 child foundation report 完成：B1 通过；B2/B3/B4 未形成相对冻结父模型的新增净收益；B5 replay 三 seed 均改善 no-replay 但最差 BWT `-0.262874`，整体 failed。下一步收束为从 child 进行 `memory→world→goal` 器官补训。 |
 | 2026-09-05 | M2-2l 真实三 seed B5 continuation 完成：replay 相对 no-replay 的 BWT 增益三 seed 均为正，但最差 replay BWT 为 `-0.262874`，仍未超过零基线；B5 保持 failed，下一步改 continuation 更新规则/容量分配。M2-2m 接入受 provenance 校验的 B1 report reuse，准备生成统一五项 child foundation report。 |
