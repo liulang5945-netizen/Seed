@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Any
 
@@ -69,11 +70,26 @@ class CueBindingBank:
             raise ValueError("cue binding pattern cannot be empty")
         return value / value.norm().clamp_min(1e-8)
 
-    def route(self, pattern: torch.Tensor, *, learn: bool) -> CueBindingResult:
+    def route(
+        self,
+        pattern: torch.Tensor,
+        *,
+        learn: bool,
+        slot_indices: Sequence[int] | None = None,
+    ) -> CueBindingResult:
         """Match or allocate one assembly; reads do not mutate any state."""
 
         normalized = self._normalize(pattern)
-        occupied_indices = torch.nonzero(self.occupied, as_tuple=False).flatten()
+        if slot_indices is None:
+            candidates = torch.arange(self.capacity, device=self.device)
+        else:
+            values = tuple(int(index) for index in slot_indices)
+            if len(set(values)) != len(values) or any(
+                not 0 <= index < self.capacity for index in values
+            ):
+                raise ValueError("cue binding route slots are outside capacity")
+            candidates = torch.tensor(values, device=self.device, dtype=torch.long)
+        occupied_indices = candidates[self.occupied[candidates]]
         if not occupied_indices.numel() and not learn:
             return CueBindingResult(
                 slot_index=None,
@@ -109,10 +125,11 @@ class CueBindingBank:
                     replaced=False,
                 )
 
-        free_indices = torch.nonzero(~self.occupied, as_tuple=False).flatten()
+        free_indices = candidates[~self.occupied[candidates]]
         replaced = not bool(free_indices.numel())
         if replaced:
-            slot_index = int(self.visits.argmin().item())
+            scoped_visits = self.visits[candidates]
+            slot_index = int(candidates[scoped_visits.argmin()].item())
             self.replacement_count += 1
         else:
             slot_index = int(free_indices[0].item())

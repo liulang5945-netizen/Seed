@@ -325,6 +325,11 @@ def _evaluate_loaded_b2(
     seed_records: list[dict[str, float | int | str | bool]] = []
     for seed, path in sorted(checkpoints.items()):
         payload, model, parent = _load_joint_child(path, expected_seed=seed)
+        identity_generation_scope = (
+            "active"
+            if model.identity_organ is not None and model.identity_organ.active_slot_start
+            else "all"
+        )
         before = _persistent_digest(model)
         native_rows = _read_rows(
             model,
@@ -333,6 +338,7 @@ def _evaluate_loaded_b2(
             use_memory=True,
             use_identity=None,
             interference_symbols=corpus.interference_symbols,
+            identity_generation_scope=identity_generation_scope,
         )
         after_holdout = _persistent_digest(model)
         retention_rows = _read_rows(
@@ -342,6 +348,7 @@ def _evaluate_loaded_b2(
             use_memory=True,
             use_identity=None,
             interference_symbols=corpus.interference_symbols,
+            identity_generation_scope=identity_generation_scope,
         )
         after_retention = _persistent_digest(model)
         memory_lesion = _row_summary(
@@ -352,6 +359,7 @@ def _evaluate_loaded_b2(
                 use_memory=False,
                 use_identity=None,
                 interference_symbols=corpus.interference_symbols,
+                identity_generation_scope=identity_generation_scope,
             )
         )
         identity_lesion = _row_summary(
@@ -362,6 +370,7 @@ def _evaluate_loaded_b2(
                 use_memory=True,
                 use_identity=False,
                 interference_symbols=corpus.interference_symbols,
+                identity_generation_scope=identity_generation_scope,
             )
         )
         frozen = _row_summary(
@@ -372,6 +381,7 @@ def _evaluate_loaded_b2(
                 use_memory=True,
                 use_identity=None,
                 interference_symbols=corpus.interference_symbols,
+                identity_generation_scope=identity_generation_scope,
             )
         )
         native = _row_summary(native_rows)
@@ -388,6 +398,7 @@ def _evaluate_loaded_b2(
                 "retention_updates": int(after_holdout != after_retention),
                 "checkpoint_digest": str(payload["checkpoint_digest"]),
                 "trained_child_checkpoint": True,
+                "identity_generation_scope": identity_generation_scope,
             }
         )
 
