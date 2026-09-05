@@ -78,6 +78,34 @@ def _phase_a_context_profile(model: Taiji, data: bytes) -> dict[str, Any]:
     }
 
 
+def _phase_a_surprise_profile(model: Taiji, data: bytes) -> dict[str, float | int]:
+    """Profile old-generation surprise without using target bytes for routing."""
+
+    checkpoint = model.checkpoint()
+    model.reset_dynamics(episode_id="b5-readout-generation-surprise-profile")
+    surprises: list[float] = []
+    for symbol in model.sensor.symbols(data, include_boundary=True):
+        step = model.observe(
+            symbol,
+            learn=False,
+            readout="predictive",
+            use_memory=False,
+            use_identity=False,
+        )
+        if step.prior_probability is not None:
+            surprises.append(-torch.log(torch.tensor(step.prior_probability)).item())
+    model.restore(checkpoint)
+    if not surprises:
+        raise ValueError("phase-A surprise profile needs at least one prediction")
+    values = torch.tensor(surprises)
+    return {
+        "threshold": float(torch.quantile(values, 0.99).item()),
+        "surprise_mean": float(values.mean().item()),
+        "surprise_max": float(values.max().item()),
+        "sample_count": len(surprises),
+    }
+
+
 def _route_score(
     protected_model: Taiji,
     active_model: Taiji,
@@ -122,6 +150,66 @@ def _route_score(
             observations += 1
             correct += int(selected.prior_prediction == symbol)
             surprise_sum += float(selected.surprise or 0.0)
+    protected_model.restore(protected_checkpoint)
+    active_model.restore(active_checkpoint)
+    return {
+        "bpb": (surprise_sum / max(1, observations)) / torch.log(torch.tensor(2.0)).item(),
+        "accuracy": correct / max(1, observations),
+        "observations": observations,
+        "active_routes": active_routes,
+        "active_route_ratio": active_routes / max(1, observations),
+    }
+
+
+def _online_novelty_score(
+    protected_model: Taiji,
+    active_model: Taiji,
+    data: bytes,
+    *,
+    threshold: float,
+) -> dict[str, float | int]:
+    """Route tick t+1 from old-generation surprise observed at tick t."""
+
+    protected_checkpoint = protected_model.checkpoint()
+    active_checkpoint = active_model.checkpoint()
+    protected_model.reset_dynamics(episode_id="b5-readout-generation-online-old")
+    active_model.reset_dynamics(episode_id="b5-readout-generation-online-active")
+    observations = 0
+    correct = 0
+    surprise_sum = 0.0
+    active_routes = 0
+    route_active_next = False
+    for symbol in protected_model.sensor.symbols(data, include_boundary=True):
+        route_active = route_active_next
+        protected_step = protected_model.observe(
+            symbol,
+            learn=False,
+            readout="predictive",
+            use_memory=False,
+            use_identity=False,
+        )
+        active_step = active_model.observe(
+            symbol,
+            learn=False,
+            readout="predictive",
+            use_memory=False,
+            use_identity=False,
+        )
+        selected = active_step if route_active else protected_step
+        active_routes += int(route_active)
+        if selected.prior_prediction is not None:
+            observations += 1
+            correct += int(selected.prior_prediction == symbol)
+            surprise_sum += float(selected.surprise or 0.0)
+        # This surprise uses the just-observed symbol only to set the route for
+        # the next prediction.  It never changes which head scored this tick.
+        if protected_step.prior_probability is None:
+            route_active_next = False
+        else:
+            observed_surprise = -torch.log(
+                torch.tensor(protected_step.prior_probability)
+            ).item()
+            route_active_next = observed_surprise > threshold
     protected_model.restore(protected_checkpoint)
     active_model.restore(active_checkpoint)
     return {
@@ -204,6 +292,35 @@ def run_diagnosis(
         centroid=centroid,
         threshold=threshold,
     )
+    surprise_profile_model = Taiji.from_checkpoint(source_model.checkpoint())
+    surprise_profile = _phase_a_surprise_profile(surprise_profile_model, phase_a_train)
+    surprise_threshold = float(surprise_profile["threshold"])
+    online_before_protected = Taiji.from_checkpoint(source_model.checkpoint())
+    online_before_active = Taiji.from_checkpoint(source_model.checkpoint())
+    online_old_before = _online_novelty_score(
+        online_before_protected,
+        online_before_active,
+        phase_a_holdout,
+        threshold=surprise_threshold,
+    )
+    online_old_after = _online_novelty_score(
+        protected_model,
+        active_model,
+        phase_a_holdout,
+        threshold=surprise_threshold,
+    )
+    online_new_after = _online_novelty_score(
+        protected_model,
+        active_model,
+        phase_b_holdout,
+        threshold=surprise_threshold,
+    )
+    online_retention_after = _online_novelty_score(
+        protected_model,
+        active_model,
+        retention,
+        threshold=surprise_threshold,
+    )
     active_only_new = _score_loaded_model(active_model, phase_b_holdout)
     protected_only_old = _score_loaded_model(protected_model, phase_a_holdout)
     return {
@@ -230,6 +347,14 @@ def run_diagnosis(
             "phase_a_distance_mean": profile["distance_mean"],
             "phase_a_distance_max": profile["distance_max"],
         },
+        "online_novelty_router": {
+            "kind": "one_step_lagged_old_prediction_surprise_v1",
+            "phase_a_threshold": surprise_threshold,
+            "phase_a_profile_samples": surprise_profile["sample_count"],
+            "phase_a_surprise_mean": surprise_profile["surprise_mean"],
+            "phase_a_surprise_max": surprise_profile["surprise_max"],
+            "uses_current_target_for_current_route": False,
+        },
         "sample_counts": {
             "phase_a_train": len(phase_a_train),
             "phase_a_holdout": len(phase_a_holdout),
@@ -245,6 +370,13 @@ def run_diagnosis(
             "backward_transfer": old_before["bpb"] - old_after["bpb"],
             "active_only_new_bpb": active_only_new,
             "protected_only_old_bpb": protected_only_old,
+        },
+        "online_novelty_metrics": {
+            "old_before": online_old_before,
+            "old_after": online_old_after,
+            "new_after": online_new_after,
+            "retention_after": online_retention_after,
+            "backward_transfer": online_old_before["bpb"] - online_old_after["bpb"],
         },
         "owner_audit": {
             "protected_generation": _owner_digests(protected_model),
@@ -305,6 +437,19 @@ def main() -> int:
                 "active_route_ratios": {
                     label: result["metrics"][label]["active_route_ratio"]
                     for label in ("old_after", "new_after", "retention_after")
+                },
+                "online_novelty": {
+                    "backward_transfer": result["online_novelty_metrics"][
+                        "backward_transfer"
+                    ],
+                    "new_after_bpb": result["online_novelty_metrics"]["new_after"]["bpb"],
+                    "retention_after_bpb": result["online_novelty_metrics"][
+                        "retention_after"
+                    ]["bpb"],
+                    "active_route_ratios": {
+                        label: result["online_novelty_metrics"][label]["active_route_ratio"]
+                        for label in ("old_after", "new_after", "retention_after")
+                    },
                 },
             },
             ensure_ascii=False,
