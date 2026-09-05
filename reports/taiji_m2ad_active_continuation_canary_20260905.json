@@ -1,0 +1,112 @@
+{
+  "format": "taiji-active-readout-continuation-canary-v1",
+  "version": 1,
+  "status": "passed",
+  "can_promote": false,
+  "checkpoint": "output\\taiji-m2-f5-seed11-private-context-20260905\\last.pt",
+  "seed": 11,
+  "epochs": 1,
+  "train_bytes": 4096,
+  "eval_bytes": 4096,
+  "datasets": {
+    "active": {
+      "digest": "99ab9846193ccc2897d74c96be8245784f213ac7bc5a9886c928e38bf906132e",
+      "partition_seed": 10011,
+      "sample_counts": {
+        "train": 1048576,
+        "holdout": 131072,
+        "retention": 131072
+      }
+    },
+    "protected": {
+      "digest": "8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038",
+      "partition_seed": 11,
+      "sample_counts": {
+        "train": 1048576,
+        "holdout": 131072,
+        "retention": 131072
+      }
+    }
+  },
+  "checks": {
+    "child_lineage_matches_real_phase_a_and_phase_b_data": true,
+    "active_registry_has_parent_and_boundary": true,
+    "active_readout_changes": true,
+    "protected_owners_unchanged": true,
+    "protected_readout_digest_unchanged": true,
+    "holdout_and_retention_are_read_only": true,
+    "active_registry_round_trips_in_process": true,
+    "active_registry_round_trips_in_fresh_process": true,
+    "active_generation_uses_active_owner": true,
+    "active_generation_output_round_trips": true,
+    "missing_registry_fails_closed": true
+  },
+  "capability": {
+    "active_phase_b_bpb": 4.649767728979813,
+    "protected_phase_b_bpb": 4.649767728979813,
+    "phase_b_gain_bpb": 0.0,
+    "active_protected_retention_bpb": 4.333152080901433,
+    "protected_retention_bpb": 4.333152080901433,
+    "retention_delta_bpb": 0.0,
+    "active_phase_b_improved": false,
+    "retention_within_0_05_bpb": true
+  },
+  "registry": {
+    "before_training": {
+      "scope": "active",
+      "owner": "predictive_readout.active",
+      "mutable": true,
+      "parent_checkpoint_digest": "a851fa80491970f4d2a8600610e6091a6ea39d6a2854005ebe6ef81e9a330689",
+      "boundary_digest": "84414a3d263243156950164084c614ade3929b314a8f6458a454f8a84268c5dd",
+      "readout_digest": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b"
+    },
+    "after_training": {
+      "scope": "active",
+      "owner": "predictive_readout.active",
+      "mutable": true,
+      "parent_checkpoint_digest": "a851fa80491970f4d2a8600610e6091a6ea39d6a2854005ebe6ef81e9a330689",
+      "boundary_digest": "84414a3d263243156950164084c614ade3929b314a8f6458a454f8a84268c5dd",
+      "readout_digest": "964b32abd8c66ce45a65419b3bf3379d9aa722a90b2d9c0968ff8a27b68d30bf"
+    },
+    "restored": {
+      "scope": "active",
+      "owner": "predictive_readout.active",
+      "mutable": true,
+      "parent_checkpoint_digest": "a851fa80491970f4d2a8600610e6091a6ea39d6a2854005ebe6ef81e9a330689",
+      "boundary_digest": "84414a3d263243156950164084c614ade3929b314a8f6458a454f8a84268c5dd",
+      "readout_digest": "964b32abd8c66ce45a65419b3bf3379d9aa722a90b2d9c0968ff8a27b68d30bf"
+    }
+  },
+  "checkpoint_audit": {
+    "active_checkpoint_digest": "bb120518ea18d4850fdee517e2a8648ca65b1c6b03edd665cafa4eec1a67e351",
+    "fresh_process_digest": "bb120518ea18d4850fdee517e2a8648ca65b1c6b03edd665cafa4eec1a67e351",
+    "checkpoint_bytes": 9128385,
+    "fresh_process_restore_seconds": 2.4909139000228606,
+    "holdout_updates": 0,
+    "retention_updates": 0
+  },
+  "owner_audit": {
+    "protected_owner_digest_before": "0a88dd259fdfd6877669b487c08027a73d2de66794ecb00ba5cd700c2322ca05",
+    "protected_owner_digest_after": "0a88dd259fdfd6877669b487c08027a73d2de66794ecb00ba5cd700c2322ca05",
+    "protected_owners_unchanged": true,
+    "missing_registry_rejection": "requested readout generation is not attached to this Taiji instance"
+  },
+  "boundary": {
+    "format": "taiji-workbench-task-boundary-v1",
+    "version": 1,
+    "project_id": "project:seed",
+    "task_id": "task:active-continuation",
+    "session_id": "session:seed11",
+    "lifecycle": "active",
+    "language_id": "python",
+    "capability_snapshot_id": "capability:snapshot:1",
+    "capability_ids": [
+      "workspace.read"
+    ],
+    "generation_scope": "active",
+    "issued_tick": 10,
+    "expires_tick": 50,
+    "parent_token_digest": "",
+    "token_digest": "84414a3d263243156950164084c614ade3929b314a8f6458a454f8a84268c5dd"
+  }
+}
