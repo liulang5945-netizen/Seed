@@ -1175,6 +1175,9 @@ class Taiji:
         *,
         epochs: int = 1,
         include_boundary: bool = True,
+        include_start_boundary: bool | None = None,
+        include_end_boundary: bool | None = None,
+        reset: bool = True,
         use_memory: bool = False,
         learn_fabric: bool = True,
         learn_predictive_context: bool = True,
@@ -1194,6 +1197,14 @@ class Taiji:
         forward dynamics and trains the predictive decoder, while leaving the
         shared fabric's persistent synapses and homeostatic statistics intact.
 
+        ``include_start_boundary`` and ``include_end_boundary`` split the
+        compatibility ``include_boundary`` switch into independent stream-edge
+        markers.  A resumable caller can therefore continue adjacent chunks
+        without teaching an artificial boundary between them.  ``reset=False``
+        continues the current dynamics episode; it is intended for such a
+        chunk continuation and leaves the default whole-stream behavior
+        unchanged.
+
         When a Workbench boundary is supplied, only an ``active`` generation
         may be trained.  The protected generation remains the stable parent;
         active training must therefore explicitly freeze the shared fabric and
@@ -1202,6 +1213,14 @@ class Taiji:
 
         if epochs <= 0:
             raise ValueError("epochs must be positive")
+        if not isinstance(include_boundary, bool):
+            raise TypeError("include_boundary must be a bool")
+        if include_start_boundary is not None and not isinstance(include_start_boundary, bool):
+            raise TypeError("include_start_boundary must be a bool or None")
+        if include_end_boundary is not None and not isinstance(include_end_boundary, bool):
+            raise TypeError("include_end_boundary must be a bool or None")
+        if not isinstance(reset, bool):
+            raise TypeError("reset must be a bool")
         if not isinstance(learn_fabric, bool):
             raise TypeError("learn_fabric must be a bool")
         if not isinstance(learn_predictive_context, bool):
@@ -1235,8 +1254,14 @@ class Taiji:
         correct = 0
         surprise_sum = 0.0
         for epoch in range(epochs):
-            self.reset_dynamics(episode_id=f"learn-{epoch}")
-            for symbol in self.sensor.symbols(data, include_boundary=include_boundary):
+            if reset or epoch > 0:
+                self.reset_dynamics(episode_id=f"learn-{epoch}")
+            for symbol in self.sensor.symbols(
+                data,
+                include_boundary=include_boundary,
+                include_start_boundary=include_start_boundary,
+                include_end_boundary=include_end_boundary,
+            ):
                 step = self.observe(
                     symbol,
                     learn=True,
