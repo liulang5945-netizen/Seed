@@ -60,16 +60,23 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 
 ## 4. 当前唯一下一步
 
-**唯一下一步：M2.R1——用修复后的评分口径对已确认 B2 增长 child 做真实 phase-C 续训，测量真实学习收益、遗忘与 CPU 成本。**
+**唯一下一步：M2.R1——四臂 pilot 已通过，将唯一显示正向线索的 replay 干预扩展到 1 MiB train / 128 KiB evaluation 正式确认，重跑 A/B/C 指定 owner 分数与固定输出 canary。**
 
 R0（测量纠正）已完成并提交（2026-09-06）：`score_bytes` 显式 owner/scope 路径与挂载 boundary digest 校验、状态恢复验证、B5 周期流降级 + 泛化分区重复检测、版本化绝对/保持/增量三类判定、checkpoint/owner 清单与 m2ad loader 硬编码修复、seed11/29/47 identity-generation child 只读复评。
 
-R0 关键结论：
-- **m2s seed11 identity-generation child 是 B2 增长 child**（memory_holdout_recall 0.505 → 0.995，sequence_bpb 保持 4.288 无遗忘）；m2r 为行为冻结（所有指标与 parent 相同），重评报告明确标注"保持但无增量，不算学习成功"，不得据此宣布旧 B5 通过。
-- 旧 B5 周期流 holdout 与训练共享模板族（`detect_partition_overlap` 判定 `template_family_match=True`），仅作遗忘压力测试。
-- m2ad active-continuation loader 不再用 `training_phases == ["sequence"]` 排除 memory/identity child（真实 memory child 已验证可加载）。
+R1 进展（2026-09-06）：技术 canary 与四臂 pilot 均全绿。
+- canary 4 KiB/1 KiB：14/14 checks；修正评分 owner 后 active/protected 分数开始分离（+0.020 BPB @4KiB），证明"同一模型两个明显不同 readout 必须得到不同评分"这一 R0 失败用例已被测量链修复实测验证。
+- 四臂 pilot（64 KiB C train / 32 KiB eval，m2s seed11 identity-generation child 为父代，A=partition_seed 11，C=partition_seed 43，同一 dialogue 语料）：
+  - no_update：C 4.3049 / A 4.2051（冻结基线）
+  - protected_only：C 4.3160（+0.011 退化）/ A 4.2772（+0.072 遗忘）——无增益且有遗忘
+  - active_only：C 4.3323（-0.027）/ A 4.2865（+0.081 遗忘）——C 无增益、A 轻微遗忘
+  - replay（active 学 C 后重放等字节 A train）：C 4.2602（**+0.045 gain**）/ A 4.2512（恢复性改善）——唯一正向线索
+- 各臂 fresh-process checkpoint digest、owner 审计、只读评分、registry 往返全部通过，因此上述数字可信（不是测量错误）。
+- 结论：pilot 尺度下无干预的两种单分支（active-only / protected-only）没有可靠 C 增益；exact train-only replay 是唯一显示双向改善的干预。计划允许可靠负结果 + 不重掷数据种子。
 
-从"同一模型的两个明显不同 readout 必须得到不同评分"的已绿回归开始，R1 按 §5 近期实施规格执行：先 4 KiB/1 KiB canary，再 64 KiB/32 KiB CPU pilot，通过后扩展到 1 MiB/128 KiB 正式预算。
+R1 关键结论（R0 阶段）：m2s seed11 identity-generation child 是 B2 增长 child（memory_holdout_recall 0.505 → 0.995，sequence_bpb 保持）；m2r 为行为冻结，重评明确标注"保持但无增量，不算学习成功"。
+
+从四臂 pilot 结果开始，R1 正式确认：同一父代、1 MiB phase-C train / 128 KiB eval、与 pilot 相同的 owner/测量合同，优先运行 replay 臂与 active-only 臂对照，各臂独立保存 parent/last/final checkpoint，训练后 fresh process 核对 digest + 重跑 A retention / B holdout / C holdout 指定 owner 分数 + 固定输出 canary。
 
 ## 5. 近期实施规格
 
