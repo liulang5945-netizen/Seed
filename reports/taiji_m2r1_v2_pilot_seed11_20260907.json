@@ -1,0 +1,460 @@
+{
+  "format": "taiji-r1-phase-c-arms-v2",
+  "version": 1,
+  "status": "passed",
+  "can_promote": false,
+  "source_checkpoint": "output\\taiji-m2s-seed11-identity-generation-20260905\\last.pt",
+  "source_digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+  "epochs": 1,
+  "replay_epochs": 1,
+  "c_train_bytes": 65536,
+  "eval_bytes": 32768,
+  "replay_bytes": null,
+  "datasets": {
+    "phase_a": {
+      "digest": "8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038",
+      "partition_seed": 11,
+      "profile": "foundation",
+      "sample_counts": {
+        "train": 1048576,
+        "holdout": 131072,
+        "retention": 131072
+      },
+      "source_files": [
+        [
+          "data\\simple_zh\\dialogue_extended_clean.jsonl",
+          "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+        ]
+      ],
+      "excluded_dataset_digest": null,
+      "excluded_dataset_digests": [],
+      "selected_record_count": 1618
+    },
+    "phase_b": {
+      "digest": "99ab9846193ccc2897d74c96be8245784f213ac7bc5a9886c928e38bf906132e",
+      "partition_seed": 10011,
+      "profile": "foundation",
+      "sample_counts": {
+        "train": 1048576,
+        "holdout": 131072,
+        "retention": 131072
+      },
+      "source_files": [
+        [
+          "data\\simple_zh\\dialogue_extended_clean.jsonl",
+          "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+        ]
+      ],
+      "excluded_dataset_digest": "8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038",
+      "excluded_dataset_digests": [],
+      "selected_record_count": 1494
+    },
+    "phase_c": {
+      "digest": "ac97455f1583b90f7e2d62ca3c682c8e27f0c56bb7275ebee6abdb17fc6476bd",
+      "partition_seed": 43,
+      "profile": "foundation",
+      "sample_counts": {
+        "train": 1048576,
+        "holdout": 131072,
+        "retention": 131072
+      },
+      "source_files": [
+        [
+          "data\\simple_zh\\dialogue_extended_clean.jsonl",
+          "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+        ]
+      ],
+      "excluded_dataset_digest": null,
+      "excluded_dataset_digests": [
+        "8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038",
+        "99ab9846193ccc2897d74c96be8245784f213ac7bc5a9886c928e38bf906132e",
+        "b193f4e25dee8b88c3bab71d3fd51a79dbfa973b972af37681334cfa32d13408",
+        "a01a0206365ca30e132095350d59bc04cea39e09ee86b33681bab0f45663499d",
+        "8ff929545031de2b082589b4927be641863744947802146f9767b1d14dc26a57",
+        "070f0584743edce90e3b6685504cd097fe2423b10c218194231c6cf92d5f9eb6"
+      ],
+      "selected_record_count": 1567
+    },
+    "phase_c2": {
+      "digest": "13dee7b2f7d38cd3688a5af76264c24cb6156ea371e9db88d812f5ea283598c1",
+      "partition_seed": 44,
+      "profile": "foundation",
+      "sample_counts": {
+        "train": 1048576,
+        "holdout": 131072,
+        "retention": 131072
+      },
+      "source_files": [
+        [
+          "data\\simple_zh\\dialogue_extended_clean.jsonl",
+          "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+        ]
+      ],
+      "excluded_dataset_digest": null,
+      "excluded_dataset_digests": [
+        "8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038",
+        "99ab9846193ccc2897d74c96be8245784f213ac7bc5a9886c928e38bf906132e",
+        "b193f4e25dee8b88c3bab71d3fd51a79dbfa973b972af37681334cfa32d13408",
+        "a01a0206365ca30e132095350d59bc04cea39e09ee86b33681bab0f45663499d",
+        "8ff929545031de2b082589b4927be641863744947802146f9767b1d14dc26a57",
+        "070f0584743edce90e3b6685504cd097fe2423b10c218194231c6cf92d5f9eb6",
+        "ac97455f1583b90f7e2d62ca3c682c8e27f0c56bb7275ebee6abdb17fc6476bd"
+      ],
+      "selected_record_count": 1555
+    }
+  },
+  "data_contract": {
+    "format": "taiji-m2r1-record-disjoint-course-v1",
+    "version": 1,
+    "current_seed": 11,
+    "source_lineage": {
+      "phase_a_expected_digest": "8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038",
+      "phase_a_actual_digest": "8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038",
+      "phase_b_expected_digest": "99ab9846193ccc2897d74c96be8245784f213ac7bc5a9886c928e38bf906132e",
+      "phase_b_actual_digest": "99ab9846193ccc2897d74c96be8245784f213ac7bc5a9886c928e38bf906132e",
+      "matches_source_checkpoint": true
+    },
+    "phase_chain": {
+      "cohort_seeds": [
+        11,
+        29,
+        47
+      ],
+      "phase_b_seed_offset": 10000,
+      "phase_a_by_seed": {
+        "11": {
+          "digest": "8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038",
+          "partition_seed": 11,
+          "profile": "foundation",
+          "sample_counts": {
+            "train": 1048576,
+            "holdout": 131072,
+            "retention": 131072
+          },
+          "source_files": [
+            [
+              "data\\simple_zh\\dialogue_extended_clean.jsonl",
+              "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+            ]
+          ],
+          "excluded_dataset_digest": null,
+          "excluded_dataset_digests": [],
+          "selected_record_count": 1618
+        },
+        "29": {
+          "digest": "b193f4e25dee8b88c3bab71d3fd51a79dbfa973b972af37681334cfa32d13408",
+          "partition_seed": 29,
+          "profile": "foundation",
+          "sample_counts": {
+            "train": 1048576,
+            "holdout": 131072,
+            "retention": 131072
+          },
+          "source_files": [
+            [
+              "data\\simple_zh\\dialogue_extended_clean.jsonl",
+              "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+            ]
+          ],
+          "excluded_dataset_digest": null,
+          "excluded_dataset_digests": [],
+          "selected_record_count": 1605
+        },
+        "47": {
+          "digest": "8ff929545031de2b082589b4927be641863744947802146f9767b1d14dc26a57",
+          "partition_seed": 47,
+          "profile": "foundation",
+          "sample_counts": {
+            "train": 1048576,
+            "holdout": 131072,
+            "retention": 131072
+          },
+          "source_files": [
+            [
+              "data\\simple_zh\\dialogue_extended_clean.jsonl",
+              "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+            ]
+          ],
+          "excluded_dataset_digest": null,
+          "excluded_dataset_digests": [],
+          "selected_record_count": 1611
+        }
+      },
+      "phase_b_by_seed": {
+        "11": {
+          "digest": "99ab9846193ccc2897d74c96be8245784f213ac7bc5a9886c928e38bf906132e",
+          "partition_seed": 10011,
+          "profile": "foundation",
+          "sample_counts": {
+            "train": 1048576,
+            "holdout": 131072,
+            "retention": 131072
+          },
+          "source_files": [
+            [
+              "data\\simple_zh\\dialogue_extended_clean.jsonl",
+              "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+            ]
+          ],
+          "excluded_dataset_digest": "8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038",
+          "excluded_dataset_digests": [],
+          "selected_record_count": 1494
+        },
+        "29": {
+          "digest": "a01a0206365ca30e132095350d59bc04cea39e09ee86b33681bab0f45663499d",
+          "partition_seed": 10029,
+          "profile": "foundation",
+          "sample_counts": {
+            "train": 1048576,
+            "holdout": 131072,
+            "retention": 131072
+          },
+          "source_files": [
+            [
+              "data\\simple_zh\\dialogue_extended_clean.jsonl",
+              "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+            ]
+          ],
+          "excluded_dataset_digest": "b193f4e25dee8b88c3bab71d3fd51a79dbfa973b972af37681334cfa32d13408",
+          "excluded_dataset_digests": [],
+          "selected_record_count": 1505
+        },
+        "47": {
+          "digest": "070f0584743edce90e3b6685504cd097fe2423b10c218194231c6cf92d5f9eb6",
+          "partition_seed": 10047,
+          "profile": "foundation",
+          "sample_counts": {
+            "train": 1048576,
+            "holdout": 131072,
+            "retention": 131072
+          },
+          "source_files": [
+            [
+              "data\\simple_zh\\dialogue_extended_clean.jsonl",
+              "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+            ]
+          ],
+          "excluded_dataset_digest": "8ff929545031de2b082589b4927be641863744947802146f9767b1d14dc26a57",
+          "excluded_dataset_digests": [],
+          "selected_record_count": 1501
+        }
+      },
+      "phase_c": {
+        "digest": "ac97455f1583b90f7e2d62ca3c682c8e27f0c56bb7275ebee6abdb17fc6476bd",
+        "partition_seed": 43,
+        "profile": "foundation",
+        "sample_counts": {
+          "train": 1048576,
+          "holdout": 131072,
+          "retention": 131072
+        },
+        "source_files": [
+          [
+            "data\\simple_zh\\dialogue_extended_clean.jsonl",
+            "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+          ]
+        ],
+        "excluded_dataset_digest": null,
+        "excluded_dataset_digests": [
+          "8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038",
+          "99ab9846193ccc2897d74c96be8245784f213ac7bc5a9886c928e38bf906132e",
+          "b193f4e25dee8b88c3bab71d3fd51a79dbfa973b972af37681334cfa32d13408",
+          "a01a0206365ca30e132095350d59bc04cea39e09ee86b33681bab0f45663499d",
+          "8ff929545031de2b082589b4927be641863744947802146f9767b1d14dc26a57",
+          "070f0584743edce90e3b6685504cd097fe2423b10c218194231c6cf92d5f9eb6"
+        ],
+        "selected_record_count": 1567
+      },
+      "phase_c2": {
+        "digest": "13dee7b2f7d38cd3688a5af76264c24cb6156ea371e9db88d812f5ea283598c1",
+        "partition_seed": 44,
+        "profile": "foundation",
+        "sample_counts": {
+          "train": 1048576,
+          "holdout": 131072,
+          "retention": 131072
+        },
+        "source_files": [
+          [
+            "data\\simple_zh\\dialogue_extended_clean.jsonl",
+            "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+          ]
+        ],
+        "excluded_dataset_digest": null,
+        "excluded_dataset_digests": [
+          "8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038",
+          "99ab9846193ccc2897d74c96be8245784f213ac7bc5a9886c928e38bf906132e",
+          "b193f4e25dee8b88c3bab71d3fd51a79dbfa973b972af37681334cfa32d13408",
+          "a01a0206365ca30e132095350d59bc04cea39e09ee86b33681bab0f45663499d",
+          "8ff929545031de2b082589b4927be641863744947802146f9767b1d14dc26a57",
+          "070f0584743edce90e3b6685504cd097fe2423b10c218194231c6cf92d5f9eb6",
+          "ac97455f1583b90f7e2d62ca3c682c8e27f0c56bb7275ebee6abdb17fc6476bd"
+        ],
+        "selected_record_count": 1555
+      },
+      "overlap_counts": {
+        "phase_a_seed11__vs__phase_b_seed11": 0,
+        "phase_a_seed29__vs__phase_b_seed29": 0,
+        "phase_a_seed47__vs__phase_b_seed47": 0,
+        "phase_a_seed11__vs__phase_c": 0,
+        "phase_b_seed11__vs__phase_c": 0,
+        "phase_a_seed29__vs__phase_c": 0,
+        "phase_b_seed29__vs__phase_c": 0,
+        "phase_a_seed47__vs__phase_c": 0,
+        "phase_b_seed47__vs__phase_c": 0,
+        "phase_a_seed11__vs__phase_c2": 0,
+        "phase_b_seed11__vs__phase_c2": 0,
+        "phase_a_seed29__vs__phase_c2": 0,
+        "phase_b_seed29__vs__phase_c2": 0,
+        "phase_a_seed47__vs__phase_c2": 0,
+        "phase_b_seed47__vs__phase_c2": 0,
+        "phase_c__vs__phase_c2": 0
+      },
+      "record_disjoint": true
+    },
+    "gate": {
+      "record_disjoint": true,
+      "source_lineage_matches": true
+    }
+  },
+  "preflight": {
+    "source_digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+    "source_fresh_digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+    "source_generation_canary": "32303031303030303030303030303031",
+    "source_fresh_canary": "32303031303030303030303030303031",
+    "source_checkpoint_bytes": 33173827,
+    "source_fresh_restore_seconds": 2.3615062999306247
+  },
+  "arms": [
+    {
+      "arm": "no_update",
+      "checks": {
+        "scores_are_read_only": true,
+        "score_uses_protected_owner": true
+      },
+      "capability": {
+        "protected_c_holdout_bpb": 4.13591379964577,
+        "protected_a_retention_bpb": 4.205069218715619,
+        "active_c_holdout_bpb": 4.13591379964577,
+        "active_a_retention_bpb": 4.205069218715619,
+        "c_holdout_gain_bpb": 0.0
+      }
+    },
+    {
+      "arm": "protected_only",
+      "checks": {
+        "predictive_readout_changes": true,
+        "shared_fabric_unchanged": true,
+        "scores_are_read_only": true,
+        "score_uses_protected_owner": true
+      },
+      "capability": {
+        "protected_c_holdout_bpb": 4.17832541676664,
+        "protected_a_retention_bpb": 4.237625745226024,
+        "active_c_holdout_bpb": 4.17832541676664,
+        "active_a_retention_bpb": 4.237625745226024,
+        "c_holdout_gain_bpb": 0.0
+      }
+    },
+    {
+      "arm": "active_only",
+      "checks": {
+        "active_readout_changes": true,
+        "active_readout_changes_during_replay": true,
+        "shared_fabric_unchanged": true,
+        "protected_owners_unchanged": true,
+        "protected_readout_unchanged": true,
+        "scores_are_read_only": true,
+        "active_score_uses_active_owner": true,
+        "protected_score_uses_protected_owner": true,
+        "registry_round_trips_in_process": true,
+        "registry_round_trips_in_fresh_process": true,
+        "generation_canary_round_trips": true,
+        "fresh_process_generation_canary_matches": true,
+        "generation_route_records_active_owner": true,
+        "final_checkpoint_persisted_with_matching_digest": true
+      },
+      "capability": {
+        "protected_c_holdout_bpb": 4.13591379964577,
+        "active_c_holdout_bpb": 4.195294622368056,
+        "active_a_retention_bpb": 4.257646787219382,
+        "c_holdout_gain_bpb": -0.05938082272228584
+      },
+      "round_trip": {
+        "active_checkpoint_digest": "a0e4ecd96955f6fc4338ead7f9d34b18d7d7e4a11a3b6cb7019fe765937c8374",
+        "fresh_process_digest": "a0e4ecd96955f6fc4338ead7f9d34b18d7d7e4a11a3b6cb7019fe765937c8374",
+        "final_checkpoint_path": "E:\\Seed\\output\\taiji-m2r1-phase-c-actives-v2\\seed11_active_only_c65536_r0.pt",
+        "saved_final_digest": "a0e4ecd96955f6fc4338ead7f9d34b18d7d7e4a11a3b6cb7019fe765937c8374",
+        "checkpoint_bytes": 33275528,
+        "fresh_process_restore_seconds": 3.9077433000784367
+      }
+    },
+    {
+      "arm": "replay",
+      "checks": {
+        "active_readout_changes": true,
+        "active_readout_changes_during_replay": true,
+        "shared_fabric_unchanged": true,
+        "protected_owners_unchanged": true,
+        "protected_readout_unchanged": true,
+        "scores_are_read_only": true,
+        "active_score_uses_active_owner": true,
+        "protected_score_uses_protected_owner": true,
+        "registry_round_trips_in_process": true,
+        "registry_round_trips_in_fresh_process": true,
+        "generation_canary_round_trips": true,
+        "fresh_process_generation_canary_matches": true,
+        "generation_route_records_active_owner": true,
+        "final_checkpoint_persisted_with_matching_digest": true
+      },
+      "capability": {
+        "protected_c_holdout_bpb": 4.13591379964577,
+        "active_c_holdout_bpb": 4.196639042098211,
+        "active_a_retention_bpb": 4.245081284023395,
+        "c_holdout_gain_bpb": -0.06072524245244093
+      },
+      "round_trip": {
+        "active_checkpoint_digest": "a689f98d4a7901d0aba79bf365b8f37d8416b2caab6f6e9fe7c6c23b4543054e",
+        "fresh_process_digest": "a689f98d4a7901d0aba79bf365b8f37d8416b2caab6f6e9fe7c6c23b4543054e",
+        "final_checkpoint_path": "E:\\Seed\\output\\taiji-m2r1-phase-c-actives-v2\\seed11_replay_c65536_r0.pt",
+        "saved_final_digest": "a689f98d4a7901d0aba79bf365b8f37d8416b2caab6f6e9fe7c6c23b4543054e",
+        "checkpoint_bytes": 33274919,
+        "fresh_process_restore_seconds": 3.731655200012028
+      }
+    },
+    {
+      "arm": "cascade",
+      "checks": {
+        "active_readout_changes": true,
+        "active_readout_changes_during_cycle2": true,
+        "shared_fabric_unchanged": true,
+        "protected_owners_unchanged": true,
+        "protected_readout_unchanged": true,
+        "scores_are_read_only": true,
+        "registry_round_trips_in_process": true,
+        "registry_round_trips_in_fresh_process": true,
+        "generation_canary_round_trips": true,
+        "fresh_process_generation_canary_matches": true,
+        "generation_route_records_active_owner": true,
+        "final_checkpoint_persisted_with_matching_digest": true
+      },
+      "capability": {
+        "protected_c2_holdout_bpb": 4.299052691214911,
+        "active_c2_holdout_bpb": 4.347003542067726,
+        "c2_holdout_gain_bpb": -0.04795085085281503,
+        "active_c_holdout_bpb_after_cycle2": 4.218567738098465,
+        "c_holdout_after_cycle1_bpb": 4.195294622368056,
+        "c_cycle2_delta_bpb": 0.02327311573040891,
+        "active_a_retention_bpb": 4.268328441554522
+      },
+      "round_trip": {
+        "active_checkpoint_digest": "bfff79102496ce2114d594d1f6d5bbfc81c60013711eb872125759d7c42ae31a",
+        "fresh_process_digest": "bfff79102496ce2114d594d1f6d5bbfc81c60013711eb872125759d7c42ae31a",
+        "final_checkpoint_path": "E:\\Seed\\output\\taiji-m2r1-phase-c-actives-v2\\seed11_cascade_c65536.pt",
+        "saved_final_digest": "bfff79102496ce2114d594d1f6d5bbfc81c60013711eb872125759d7c42ae31a",
+        "checkpoint_bytes": 33275092,
+        "fresh_process_restore_seconds": 3.7874652999453247
+      }
+    }
+  ]
+}
