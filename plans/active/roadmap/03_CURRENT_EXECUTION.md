@@ -60,23 +60,23 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 
 ## 4. 当前唯一下一步
 
-**唯一下一步：M2.R1——四臂 pilot 已通过，将唯一显示正向线索的 replay 干预扩展到 1 MiB train / 128 KiB evaluation 正式确认，重跑 A/B/C 指定 owner 分数与固定输出 canary。**
+**唯一下一步：M2.R2——基于已确认的 active-only 增益（C +0.033 均值、A 无遗忘），做等总更新预算的 bounded-replay 对照与 R1 产物收口（fresh 子进程复评、三类判定报告入库），随后按固定协议扩展到更多 C 数据源。**
 
 R0（测量纠正）已完成并提交（2026-09-06）：`score_bytes` 显式 owner/scope 路径与挂载 boundary digest 校验、状态恢复验证、B5 周期流降级 + 泛化分区重复检测、版本化绝对/保持/增量三类判定、checkpoint/owner 清单与 m2ad loader 硬编码修复、seed11/29/47 identity-generation child 只读复评。
 
-R1 进展（2026-09-06）：技术 canary 与四臂 pilot 均全绿。
-- canary 4 KiB/1 KiB：14/14 checks；修正评分 owner 后 active/protected 分数开始分离（+0.020 BPB @4KiB），证明"同一模型两个明显不同 readout 必须得到不同评分"这一 R0 失败用例已被测量链修复实测验证。
-- 四臂 pilot（64 KiB C train / 32 KiB eval，m2s seed11 identity-generation child 为父代，A=partition_seed 11，C=partition_seed 43，同一 dialogue 语料）：
-  - no_update：C 4.3049 / A 4.2051（冻结基线）
-  - protected_only：C 4.3160（+0.011 退化）/ A 4.2772（+0.072 遗忘）——无增益且有遗忘
-  - active_only：C 4.3323（-0.027）/ A 4.2865（+0.081 遗忘）——C 无增益、A 轻微遗忘
-  - replay（active 学 C 后重放等字节 A train）：C 4.2602（**+0.045 gain**）/ A 4.2512（恢复性改善）——唯一正向线索
-- 各臂 fresh-process checkpoint digest、owner 审计、只读评分、registry 往返全部通过，因此上述数字可信（不是测量错误）。
-- 结论：pilot 尺度下无干预的两种单分支（active-only / protected-only）没有可靠 C 增益；exact train-only replay 是唯一显示双向改善的干预。计划允许可靠负结果 + 不重掷数据种子。
+R1（phase-C 续训）已完成并提交（2026-09-06）：技术 canary、四臂 pilot 与 1 MiB 正式确认与三 seed 判定。
 
-R1 关键结论（R0 阶段）：m2s seed11 identity-generation child 是 B2 增长 child（memory_holdout_recall 0.505 → 0.995，sequence_bpb 保持）；m2r 为行为冻结，重评明确标注"保持但无增量，不算学习成功"。
+- canary 4 KiB/1 KiB：14/14 checks；修正评分 owner 后 active/protected 分数分离（+0.020 BPB @4KiB），实测验证 R0 失败用例已修复。
+- 四臂 pilot（64 KiB C/32 KiB eval）：replay 唯一正向线索；active_only 无增益（-0.027）。
+- 1 MiB 正式确认（1 MiB C train / 128 KiB eval，A=partition_seed 11、C=partition_seed 43）——效果随规模翻转，**active_only 是唯一双向改善臂**：
+  - seed11：C 4.357→4.325（-0.032）、A 4.271→4.252（-0.019）
+  - seed29：C 4.416→4.380（-0.037）、A 4.319→4.303（-0.017）
+  - seed47：C 4.418→4.387（-0.031）、A 4.348→4.311（-0.036）
+  - protected_only C +0.030 / A +0.048 退化；replay（2×总更新）C -0.017 但 A +0.045 退化。
+- R0.5 版本化三 seed 判定：absolute / retention / incremental 全部 passed（mean gain 0.033 BPB ≥ 预注册 0.01；每 seed gain>0；A retention 均无退化）。`reports/taiji_m2r1_verdict_aggregation_20260906.json`。
+- 各臂 fresh-process checkpoint digest、owner 审计、只读评分、registry 往返全部通过。
 
-从四臂 pilot 结果开始，R1 正式确认：同一父代、1 MiB phase-C train / 128 KiB eval、与 pilot 相同的 owner/测量合同，优先运行 replay 臂与 active-only 臂对照，各臂独立保存 parent/last/final checkpoint，训练后 fresh process 核对 digest + 重跑 A retention / B holdout / C holdout 指定 owner 分数 + 固定输出 canary。
+R1 结论：隔离 active 分支在 1 MiB 新记录上产生可靠、可审计的正向 C 增益且 A 保持改善（无遗忘）；公开 protected 更新与 2× 总更新的 replay 均伤害 A 保持。单 seed candidate → 三 seed 确认，`can_promote=false` 保持，正式通用能力声明仍等待更广评估。
 
 ## 5. 近期实施规格
 

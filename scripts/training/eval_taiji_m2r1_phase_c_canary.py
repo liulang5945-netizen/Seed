@@ -464,8 +464,9 @@ def run_arms(
     train_bytes: int,
     eval_bytes: int,
     arms: Sequence[str],
+    seed: int = 11,
 ) -> dict[str, Any]:
-    joint_payload, source_model = load_joint_child(checkpoint, expected_seed=11)
+    joint_payload, source_model = load_joint_child(checkpoint, expected_seed=seed)
     c_dataset = FoundationTrainingDataset.from_jsonl(
         corpus_paths,
         profile="foundation",
@@ -584,6 +585,7 @@ def main() -> int:
     parser.add_argument("--train-bytes", type=int, default=64 * 1024)
     parser.add_argument("--eval-bytes", type=int, default=32 * 1024)
     parser.add_argument("--arms", nargs="+", choices=ALL_ARMS, default=list(ALL_ARMS))
+    parser.add_argument("--seed", type=int, default=11)
     parser.add_argument("--report", type=Path, required=True)
     args = parser.parse_args()
     if args.epochs <= 0 or args.replay_epochs <= 0:
@@ -598,6 +600,7 @@ def main() -> int:
         train_bytes=args.train_bytes,
         eval_bytes=args.eval_bytes,
         arms=args.arms,
+        seed=args.seed,
     )
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(

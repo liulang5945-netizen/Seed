@@ -1,0 +1,86 @@
+{
+  "format": "taiji-r1-phase-c-arms-v1",
+  "version": 1,
+  "status": "passed",
+  "can_promote": false,
+  "source_checkpoint": "e:\\Seed\\output\\taiji-m2u-seed47-identity-generation-20260905\\last.pt",
+  "source_digest": "9e381dbdfe9ca837f05f55e7ccc28192536b30a703dffefda519b0b235a0d7d8",
+  "epochs": 1,
+  "replay_epochs": 1,
+  "c_train_bytes": 1048576,
+  "eval_bytes": 131072,
+  "datasets": {
+    "phase_c": {
+      "digest": "d3d89274478e56955796d4c7b01a5cee8090e5575dc2d8fcbe5d6d1b14b6776b",
+      "partition_seed": 43,
+      "sample_counts": {
+        "train": 1048576,
+        "holdout": 131072,
+        "retention": 131072
+      }
+    },
+    "phase_a": {
+      "digest": "1fe30428d1245726f4e43bbce2f79a392dc0b4d7e31591165fc321bce9cd8554",
+      "partition_seed": 11,
+      "sample_counts": {
+        "train": 1048576,
+        "holdout": 131072,
+        "retention": 131072
+      }
+    }
+  },
+  "preflight": {
+    "source_digest": "9e381dbdfe9ca837f05f55e7ccc28192536b30a703dffefda519b0b235a0d7d8",
+    "source_fresh_digest": "9e381dbdfe9ca837f05f55e7ccc28192536b30a703dffefda519b0b235a0d7d8",
+    "source_generation_canary": "b7a5aeb6e7a784e68081e79a84e69e87",
+    "source_fresh_canary": "b7a5aeb6e7a784e68081e79a84e69e87",
+    "source_checkpoint_bytes": 33173827,
+    "source_fresh_restore_seconds": 2.0197735999827273
+  },
+  "arms": [
+    {
+      "arm": "no_update",
+      "checks": {
+        "scores_are_read_only": true,
+        "score_uses_protected_owner": true
+      },
+      "capability": {
+        "protected_c_holdout_bpb": 4.41805887944077,
+        "protected_a_retention_bpb": 4.347545533096642,
+        "active_c_holdout_bpb": 4.41805887944077,
+        "active_a_retention_bpb": 4.347545533096642,
+        "c_holdout_gain_bpb": 0.0
+      }
+    },
+    {
+      "arm": "active_only",
+      "checks": {
+        "active_readout_changes": true,
+        "active_readout_changes_during_replay": true,
+        "shared_fabric_unchanged": true,
+        "protected_owners_unchanged": true,
+        "protected_readout_unchanged": true,
+        "scores_are_read_only": true,
+        "active_score_uses_active_owner": true,
+        "protected_score_uses_protected_owner": true,
+        "registry_round_trips_in_process": true,
+        "registry_round_trips_in_fresh_process": true,
+        "generation_canary_round_trips": true,
+        "fresh_process_generation_canary_matches": true,
+        "generation_route_records_active_owner": true
+      },
+      "capability": {
+        "protected_c_holdout_bpb": 4.41805887944077,
+        "active_c_holdout_bpb": 4.386603907566788,
+        "active_a_retention_bpb": 4.311183913069965,
+        "c_holdout_gain_bpb": 0.031454971873982274
+      },
+      "round_trip": {
+        "active_checkpoint_digest": "a8bd10a243179f50259f21ad4e9d07252b9fdd7caa3cc91aa9ea3893dd136d46",
+        "fresh_process_digest": "a8bd10a243179f50259f21ad4e9d07252b9fdd7caa3cc91aa9ea3893dd136d46",
+        "checkpoint_bytes": 33275528,
+        "fresh_process_restore_seconds": 3.5571224000304937
+      }
+    }
+  ]
+}
