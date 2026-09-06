@@ -46,8 +46,9 @@ from taiji.internalization import content_digest  # noqa: E402
 
 FORMAT = "taiji-r1-phase-c-arms-v1"
 C_PARTITION_SEED = 43
+C2_PARTITION_SEED = 44
 A_PARTITION_SEED = 11
-ALL_ARMS = ("no_update", "protected_only", "active_only", "replay")
+ALL_ARMS = ("no_update", "protected_only", "active_only", "replay", "cascade")
 CHECKPOINT_OUTPUT_DIR = PROJECT_ROOT / "output" / "taiji-m2r1-phase-c-actives"
 
 
@@ -358,6 +359,200 @@ def _run_branch_arm(
     }
 
 
+def _run_cascade_arm(
+    *,
+    source_model: Taiji,
+    c_train: bytes,
+    c2_train: bytes,
+    c_holdout: bytes,
+    c2_holdout: bytes,
+    a_retention: bytes,
+    epochs: int,
+    seed: int = 11,
+) -> dict[str, Any]:
+    """Two-cycle cascade: one active branch trains on phase-C then phase-C'.
+
+    Measures the second-cycle gain on C' holdout, the retention of cycle-1 (C
+    holdout after cycle-2) and the long-run A retention, all on the same
+    isolated active owner with shared fabric/context/protected readout frozen.
+    """
+
+    boundary = WorkbenchTaskBoundary.issue(
+        project_id="project:seed",
+        task_id="task:r1-phase-c-cascade",
+        session_id="session:seed11",
+        language_id="python",
+        capability_snapshot_id="capability:snapshot:1",
+        capability_ids=("workspace.read",),
+        generation_scope="active",
+        issued_tick=10,
+        ttl_ticks=60,
+    )
+    authorization = _authorization(boundary)
+    protected_boundary = WorkbenchTaskBoundary.issue(
+        project_id="project:seed",
+        task_id="task:r1-phase-c-cascade-protected",
+        session_id="session:seed11",
+        language_id="python",
+        capability_snapshot_id="capability:snapshot:1",
+        capability_ids=("workspace.read",),
+        generation_scope="protected",
+        issued_tick=10,
+        ttl_ticks=60,
+    )
+    protected_authorization = _authorization(protected_boundary)
+
+    model = Taiji.from_checkpoint(source_model.checkpoint())
+    shared_before = content_digest(model.fabric.to_payload())
+    protected_before = _protected_owner_digest(model)
+    protected_readout_before = model.readout_registry_status()["protected"]["readout_digest"]
+    model.clone_protected_predictive_readout_as_active(
+        boundary_digest=boundary.token_digest,
+    )
+    active_before = model.active_predictive_readout_metadata
+    if active_before is None:
+        raise RuntimeError("active readout was not registered")
+
+    model.learn_bytes(
+        c_train,
+        epochs=epochs,
+        include_boundary=True,
+        use_memory=False,
+        learn_fabric=False,
+        learn_predictive_context=False,
+        learn_predictive_readout=True,
+        boundary=boundary,
+        authorization=authorization,
+    )
+    after_cycle1 = model.active_predictive_readout_metadata
+    if after_cycle1 is None:
+        raise RuntimeError("active readout disappeared after cycle 1")
+    c_after_cycle1 = float(
+        _score_read_only(
+            model,
+            c_holdout,
+            boundary=boundary,
+            authorization=authorization,
+        )[0]
+    )
+    model.learn_bytes(
+        c2_train,
+        epochs=epochs,
+        include_boundary=True,
+        use_memory=False,
+        learn_fabric=False,
+        learn_predictive_context=False,
+        learn_predictive_readout=True,
+        boundary=boundary,
+        authorization=authorization,
+    )
+    active_after = model.active_predictive_readout_metadata
+    if active_after is None:
+        raise RuntimeError("active readout disappeared after cycle 2")
+
+    c2_bpb, c2_ro, _, _ = _score_read_only(
+        model,
+        c2_holdout,
+        boundary=boundary,
+        authorization=authorization,
+    )
+    c_final_bpb, c_ro, _, _ = _score_read_only(
+        model,
+        c_holdout,
+        boundary=boundary,
+        authorization=authorization,
+    )
+    a_final_bpb, a_ro, _, _ = _score_read_only(
+        model,
+        a_retention,
+        boundary=boundary,
+        authorization=authorization,
+    )
+    p_c2_bpb, p_c2_ro, _, _ = _score_read_only(
+        model,
+        c2_holdout,
+        boundary=protected_boundary,
+        authorization=protected_authorization,
+    )
+
+    active_checkpoint = model.checkpoint()
+    active_checkpoint_digest = content_digest(active_checkpoint)
+    restored = Taiji.from_checkpoint(copy.deepcopy(active_checkpoint))
+    restored_digest = content_digest(restored.checkpoint())
+    restored_metadata = restored.active_predictive_readout_metadata
+    active_canary = model.generate(
+        b"Taiji", 16, boundary=boundary, authorization=authorization
+    ).hex()
+    restored_canary = restored.generate(
+        b"Taiji", 16, boundary=boundary, authorization=authorization
+    ).hex()
+    route = model.last_generation_route
+    disk_path = PROJECT_ROOT / "output" / "taiji_r1_cascade_probe.pt"
+    try:
+        torch.save(active_checkpoint, disk_path)
+        fresh_digest, fresh_canary, restore_seconds = _fresh_process_digest(
+            disk_path,
+            b"Taiji",
+            16,
+            boundary_payload=boundary.to_payload(),
+            authorization_payload=authorization.to_payload(),
+        )
+        checkpoint_bytes = disk_path.stat().st_size
+    finally:
+        disk_path.unlink(missing_ok=True)
+
+    CHECKPOINT_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    final_path = CHECKPOINT_OUTPUT_DIR / f"seed{seed}_cascade_c{len(c_train)}.pt"
+    torch.save(active_checkpoint, final_path)
+    saved_final_digest = content_digest(
+        torch.load(final_path, map_location="cpu", weights_only=False)
+    )
+
+    checks = {
+        "active_readout_changes": active_before["readout_digest"]
+        != active_after["readout_digest"],
+        "active_readout_changes_during_cycle2": after_cycle1["readout_digest"]
+        != active_after["readout_digest"],
+        "shared_fabric_unchanged": content_digest(model.fabric.to_payload()) == shared_before,
+        "protected_owners_unchanged": _protected_owner_digest(model) == protected_before,
+        "protected_readout_unchanged": protected_readout_before
+        == model.readout_registry_status()["protected"]["readout_digest"],
+        "scores_are_read_only": all((c2_ro, c_ro, a_ro, p_c2_ro)),
+        "registry_round_trips_in_process": (
+            restored_metadata == active_after and restored_digest == active_checkpoint_digest
+        ),
+        "registry_round_trips_in_fresh_process": fresh_digest == active_checkpoint_digest,
+        "generation_canary_round_trips": active_canary == restored_canary,
+        "fresh_process_generation_canary_matches": fresh_canary == active_canary,
+        "generation_route_records_active_owner": route is not None
+        and route["generation_scope"] == "active"
+        and route["readout_owner"] == "predictive_readout.active",
+        "final_checkpoint_persisted_with_matching_digest": saved_final_digest
+        == active_checkpoint_digest,
+    }
+    return {
+        "arm": "cascade",
+        "checks": checks,
+        "capability": {
+            "protected_c2_holdout_bpb": p_c2_bpb,
+            "active_c2_holdout_bpb": c2_bpb,
+            "c2_holdout_gain_bpb": p_c2_bpb - c2_bpb,
+            "active_c_holdout_bpb_after_cycle2": c_final_bpb,
+            "c_holdout_after_cycle1_bpb": c_after_cycle1,
+            "c_cycle2_delta_bpb": c_final_bpb - c_after_cycle1,
+            "active_a_retention_bpb": a_final_bpb,
+        },
+        "round_trip": {
+            "active_checkpoint_digest": active_checkpoint_digest,
+            "fresh_process_digest": fresh_digest,
+            "final_checkpoint_path": str(final_path),
+            "saved_final_digest": saved_final_digest,
+            "checkpoint_bytes": int(checkpoint_bytes),
+            "fresh_process_restore_seconds": restore_seconds,
+        },
+    }
+
+
 def _run_protected_only_arm(
     *,
     source_model: Taiji,
@@ -559,6 +754,28 @@ def run_arms(
                 seed=seed,
             )
         )
+    if "cascade" in arms:
+        c2_dataset = FoundationTrainingDataset.from_jsonl(
+            corpus_paths,
+            profile="foundation",
+            partition_seed=C2_PARTITION_SEED,
+        )
+        if train_bytes <= 0 or train_bytes > len(c2_dataset.train):
+            raise ValueError("cascade train_bytes must be within the phase-C' partition")
+        results.append(
+            _run_cascade_arm(
+                source_model=source_model,
+                c_train=c_train,
+                c2_train=c2_dataset.train[:train_bytes],
+                c_holdout=c_holdout,
+                c2_holdout=c2_dataset.holdout[:eval_bytes],
+                a_retention=a_retention,
+                epochs=epochs,
+                seed=seed,
+            )
+        )
+    else:
+        c2_dataset = None
 
     all_passed = all(
         bool(result["checks"]) and all(bool(value) for value in result["checks"].values())
@@ -581,6 +798,11 @@ def run_arms(
                 "digest": c_dataset.digest,
                 "partition_seed": int(C_PARTITION_SEED),
                 "sample_counts": c_dataset.sample_counts,
+            },
+            "phase_c2": {
+                "digest": None if c2_dataset is None else c2_dataset.digest,
+                "partition_seed": int(C2_PARTITION_SEED),
+                "sample_counts": None if c2_dataset is None else c2_dataset.sample_counts,
             },
             "phase_a": {
                 "digest": a_dataset.digest,
@@ -651,7 +873,10 @@ def main() -> int:
                 "arm": arm["arm"],
                 "checks_passed": sum(int(v) for v in arm["checks"].values()),
                 "checks_total": len(arm["checks"]),
-                "c_holdout_gain_bpb": arm["capability"]["c_holdout_gain_bpb"],
+                "c_holdout_gain_bpb": arm["capability"].get(
+                    "c_holdout_gain_bpb",
+                    arm["capability"].get("c2_holdout_gain_bpb"),
+                ),
             }
             for arm in result["arms"]
         ],
