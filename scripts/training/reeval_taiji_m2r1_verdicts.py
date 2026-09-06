@@ -45,10 +45,11 @@ def judge_seed(
     *,
     seed: int,
     baseline_report: dict[str, Any] | None = None,
+    arm: str = "active_only",
 ) -> dict[str, Any]:
-    active = next(arm for arm in report["arms"] if arm["arm"] == "active_only")
+    active = next(arm_run for arm_run in report["arms"] if arm_run["arm"] == arm)
     baseline = report if baseline_report is None else baseline_report
-    no_update = next(arm for arm in baseline["arms"] if arm["arm"] == "no_update")
+    no_update = next(arm_run for arm_run in baseline["arms"] if arm_run["arm"] == "no_update")
     a_c_bpb = float(no_update["capability"]["protected_c_holdout_bpb"])
     a_ret = float(no_update["capability"]["protected_a_retention_bpb"])
     f_c_bpb = float(active["capability"]["active_c_holdout_bpb"])
@@ -112,11 +113,16 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--arm",
+        default="active_only",
+        help="Arm name to judge inside each seed report (default: active_only).",
+    )
+    parser.add_argument(
         "--report",
         type=Path,
         default=PROJECT_ROOT
         / "reports"
-        / f"taiji_m2r1_verdict_aggregation_{datetime.now(timezone.utc):%Y%m%d}.json",
+        / f"taiji_m2r_verdict_aggregation_{datetime.now(timezone.utc):%Y%m%d}.json",
     )
     args = parser.parse_args(argv)
 
@@ -135,7 +141,9 @@ def main(argv: list[str] | None = None) -> int:
             if baseline_path is None
             else json.loads(baseline_path.read_text(encoding="utf-8"))
         )
-        entries.append(judge_seed(report, seed=seed, baseline_report=baseline_report))
+        entries.append(
+            judge_seed(report, seed=seed, baseline_report=baseline_report, arm=args.arm)
+        )
 
     gains = [float(entry["c_holdout_gain_bpb"]) for entry in entries]
     mean_gain = sum(gains) / len(gains) if gains else 0.0

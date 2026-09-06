@@ -47,6 +47,36 @@ def inspect_checkpoint(path: Path) -> dict[str, Any]:
         entry["load_error"] = "checkpoint payload is not a mapping"
         return entry
 
+    is_pure_taiji = str(payload.get("format")) == "taiji-native-v10"
+    if is_pure_taiji:
+        # A bare Taiji checkpoint (e.g. a persisted active readout branch from
+        # the R1/R2 phase-C arms) has no joint-training wrapper.  Its content
+        # digest is the content-addressed identifier; registry/boundary owner
+        # audit lives in the "predictive_readout_registry" payload.
+        entry["checkpoint_digest"] = content_digest(payload)
+        entry["digest_verified"] = True
+        entry["format"] = "taiji-native-v10"
+        entry["version"] = payload.get("state_version", payload.get("version"))
+        registry = payload.get("predictive_readout_registry")
+        if isinstance(registry, Mapping):
+            generations = registry.get("generations")
+            entry["active_readout_generation"] = (
+                len(generations) if isinstance(generations, list) else 0
+            )
+        entry["model_organs"] = sorted(
+            key
+            for key in (
+                "fabric",
+                "motor",
+                "predictive_context",
+                "predictive_readout",
+                "memory",
+                "identity_organ",
+            )
+            if key in payload
+        )
+        return entry
+
     expected_digest = content_digest(
         {key: value for key, value in payload.items() if key != "checkpoint_digest"}
     )
@@ -160,12 +190,13 @@ def main(argv: list[str] | None = None) -> int:
     args.report.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
 
     for entry in entries:
-        digest = entry.get("checkpoint_digest", "-")[:12]
+        digest = str(entry.get("checkpoint_digest") or "-")[:16]
         verified = entry.get("digest_verified", False)
         phases = ",".join(entry.get("training_phases") or [])
         admitted = entry.get("sequence_derived_admission")
+        ckpt_format = entry.get("format")
         print(
-            f"{Path(entry['path']).name:32s} v{entry.get('version', '-')} "
+            f"{Path(entry['path']).name:44s} fmt={ckpt_format} "
             f"phases=[{phases}] digest={digest} ok={verified} seq-admit={admitted}"
         )
     print(f"wrote {args.report}")
