@@ -1,8 +1,8 @@
 # Seed / Taiji 模型优先统一开发计划
 
-> 修订：2026-09-06。状态：研究重审完成，等待按本计划实施。本文是唯一执行顺序与“下一步”来源。
+> 修订：2026-09-06。状态：R0 测量链完成；R1～R3 首轮能力报告因数据重叠被撤回，record-disjoint v2 数据链已修复，正式重跑待执行。本文是唯一执行顺序与“下一步”来源。
 >
-> 本轮只修订计划和证据口径，不执行新训练、不修模型代码。历史 M0/M1/M2-2a～2ae 的有效成果保留；旧“下一步”全部失效。重审依据见 [研究审视](../../reference/TAIJI_RESEARCH_REVIEW_2026_09_06.md)，原文见 [历史快照](../../archive/history/research_review_20260906/README.md)。
+> 本轮已完成数据契约代码、审计报告和回归测试；不会改写旧报告，下一步只从原始 child 重新生成独立证据。历史 M0/M1/M2-2a～2ae 的有效成果保留；旧“下一步”全部失效。重审依据见 [研究审视](../../reference/TAIJI_RESEARCH_REVIEW_2026_09_06.md)，原文见 [历史快照](../../archive/history/research_review_20260906/README.md)。
 >
 > **审计范围声明：** 本版不是只读 plans 得出的排程。它已对当前 `main` 的关键模型、数据、训练和 evaluator 代码、实际 JSON 报告与现存 checkpoint 做定向交叉核对，并对 active/protected 评分调用链和 B5 数据流做最小复现；但没有逐行审计仓库全部客户端、前端、CI 和历史模块。因此“当前证据”有代码或产物支撑，“后续候选/待验证”仍是计划假设，不能提前当作已实现能力。
 
@@ -32,6 +32,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | B5 持续学习 | 旧 replay 可减轻遗忘，最差 BWT -0.262874 | 原设置中仍有遗忘；新课程“holdout”重复，泛化证据不足 |
 | M2-2ad active | 权重改变、owner 隔离、保存恢复检查通过；评分却全走 protected | active 能力结论撤回，状态为 measurement-invalid，不能归因为重复训练或容量不足 |
 | M2-2ae phase-C | 按完整记录排除 A/B，可提供 C 数据 | 整条记录不重复；尚未证明近重复隔离、领域变化或语义新颖性 |
+| M2.R1～R3 首轮报告 | 仅用不同 `partition_seed`，A/C 交集 `1597`、A/C′ `1577`、C/C′ `1563` | 技术 owner/保存检查仍可留作诊断；所有 phase-C 能力与多周期结论撤回，不能聚合或晋级 |
 | M2-2af 草案 | 继承评分错误、训练后才保存、仅 fresh digest、可单 seed promote | 中止且无正式报告；退出可执行主线，保留归档供重构参考 |
 | 完整认知层 | joint runner 使用 Taiji；Seed runtime 使用包含更多器官的 TSKV8Adapter | 不能把 kernel child 的成绩归给所有 adapter 器官，需逐 owner 训练覆盖映射 |
 
@@ -44,8 +45,8 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | 顺序 | 阶段 | 状态与交付 | 退出条件 |
 |---|---|---|---|
 | 0 | M0 / M1 | 历史基线与首轮训练已执行 | 历史证据按任务范围保留，不重跑整段流程 |
-| 1 | M2.R0 测量纠正 | **唯一下一步**；评分/数据/Gate/谱系合同修正 | 正反例能识别错 owner、重复、回归和无效恢复 |
-| 2 | M2.R1 真实续训 | 从可用 child 做受控 phase-C 更新并保存结果 | 技术合格报告 + 能力结果，不要求实验一定成功 |
+| 1 | M2.R0 测量纠正 | 已完成；评分 owner、数据排除基础、Gate/谱系合同修正 | 正反例能识别错 owner、重复、回归和无效恢复 |
+| 2 | M2.R1～R3 证据重建 | **当前进行**；record-disjoint v2 数据链已落地，待三 seed 重新训练/聚合 | 技术合格报告 + 独立 C/C′ 能力结果，不要求实验一定成功 |
 | 3 | M2.R2 表征与时间学习 | 学习曲线、强对照、一个候选可塑上下文 | 未见组合与长程能力出现收益；或形成有证据的设计决策 |
 | 4 | M2.R3 语义与表达训练 | Taiji-owned Percept/Goal/ContentPlan 的训练和独立输出 | 核心语义/事实指标有效，provider 表达收益独立统计 |
 | 5 | M2.R4 联合课程与保持 | 整合通过验证的器官，重跑绝对能力/保持/增益 | 三 seed 正式报告；目标改善且非目标能力不退化 |
@@ -60,14 +61,14 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 
 ## 4. 当前唯一下一步
 
-**唯一下一步：M2.R4——为第二周期加入保护性巩固（学 C' 前的 exact C/A bounded replay 或冻结保护），验证能否消除 R3 观测的多周期遗忘（C +0.09、A +0.10）；消除成功后多周期学习才成立，对应 M4 固定容量周期学习的"巩固"证据点。**
+**唯一下一步：完成 M2.R1～R3 的 record-disjoint v2 正式重跑——三份源 child 各自复核 A/B lineage，三 seed 共用排除所有 A/B 的 C/C′，重新执行 1 MiB active、等预算 replay 和 C→C′ cascade；只有这组新证据成立后才进入 R4 保护性巩固。**
 
-R0（测量纠正）、R1（1 MiB 正式确认）、R2（等预算 replay 对照）、R3（两级联 C→C'）均已提交（2026-09-06）。核心结论链：
-- 单周期 active 学习 1 MiB 新记录：可靠 C 增益（active_only mean +0.033、等预算 replay mean +0.045），A 保持安全（三类判定三 seed 全过）。
-- R3 正式级联（C 1 MiB → C' 1 MiB，三 seed，checks 12/12 全绿）——**第二周期在直学下失效**：C' 无增益（-0.070~-0.090，负 gain），C 遗忘 +0.089/+0.102/+0.102，A 遗忘 +0.100/+0.115/+0.085。冒烟 64 KiB 时 cycle2 曾显示 C 改善（-0.070），正式 1 MiB 翻转——规模效应再次表现为"小数据帮助、大数据冲刷"。
-- R1/R2/R3 合起来划定"直学第一周期的增益上限"：隔离 active 分支（fabric/context 冻结）的容量在 1 MiB 即饱和，继续第二周期只产生遗忘，需要保护性巩固而非更多直学。
+2026-09-06 实际审计已证明首轮报告不能作为能力证据：旧 evaluator 的 C/C′ 只是换 partition seed，不是新记录。当前已落地的修复为 `scripts/training/eval_taiji_m2r1_phase_c_canary.py` v2、`scripts/training/audit_taiji_m2r1_data_contract.py` 和 `reports/taiji_m2r1_data_contract_20260906.json`：
 
-`can_promote=false` 保持：单周期增益证据仅来自同一 dialogue 语料的 A/C 分区；R4 巩固成功且多周期成立后，才具备 M4 多周期学习证据并考虑更广数据源。
+- 对 seed `11/29/47` 分别重建与 checkpoint 对齐的 phase-A protected 和 phase-B active；A/B digest 与现有 child lineage 逐一相等。
+- 共同 phase-C 排除六份 A/B 记录并集，phase-C′ 再排除 phase-C；相对路径 canonical corpus 下 C digest=`ac97455f…6476bd`、C′ digest=`13dee7b2f…3598c1`，选中记录数 `1567/1555`，所有 lineage↔C/C′ 与 C↔C′ overlap 为 `0`。
+- v2 aggregator 已取消硬编码旧 C digest，并拒绝缺少 `source_lineage`、`record_disjoint` 或旧 v1 格式的报告；旧 JSON 保留为历史失效证据，不原地改绿。
+- 首轮数值暂不保留为“第一周期增益上限”或“第二周期失效”；重跑前只能说它们是测量管线通过、数据契约不成立的诊断结果。重跑仍必须 `can_promote=false`，即使出现正增益也需先完成预注册的三 seed 判定。
 
 ## 5. 近期实施规格
 
@@ -109,7 +110,7 @@ R0（测量纠正）、R1（1 MiB 正式确认）、R2（等预算 replay 对照
 
 **数据与实验臂：**
 
-- 复用 A/B/C 内容地址；C 是同源记录不重复续训，不称为新领域。记录文本抽取方式、规范化、全记录排除、截断边界及近重复审计结果。
+- v2 采用 cohort 级记录链：每个 seed 的 A=`partition_seed=seed`、B=`10000+seed` 且 B 排除 A；共同 C 排除所有六份 A/B 的完整记录，共同 C′ 再排除 C。记录文本抽取、规范化、全记录排除、截断边界和 digest/overlap 必须写入报告；同源 C 只能称为未见记录，不能称为新领域。
 - 同一父代复制四个顺序执行的臂：不更新、单分支可塑、exact train-only replay、protected+active readout。使用同一数据和评估切片。
 - 先做 4 KiB train / 1 KiB evaluation 技术 canary；通过后从原父代重新开始正式臂，canary 不影响正式随机状态。
 - CPU pilot 默认 64 KiB train / 32 KiB evaluation；正式确认扩展到现有 1 MiB train / 128 KiB evaluation 预算。缩减运行必须显式报告，不冒充 full foundation。
