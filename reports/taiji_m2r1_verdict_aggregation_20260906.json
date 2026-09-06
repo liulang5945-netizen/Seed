@@ -1,0 +1,161 @@
+{
+  "format": "taiji-r1-verdict-aggregation-v1",
+  "version": 1,
+  "phase_c_dataset_digest": "d3d89274478e56955796d4c7b01a5cee8090e5575dc2d8fcbe5d6d1b14b6776b",
+  "train_bytes": 1048576,
+  "eval_bytes": 131072,
+  "seeds": [
+    {
+      "seed": 11,
+      "parent_c_holdout_bpb": 4.356672253503354,
+      "active_c_holdout_bpb": 4.325029323694501,
+      "c_holdout_gain_bpb": 0.03164292980885275,
+      "parent_a_retention_bpb": 4.271182766168976,
+      "active_a_retention_bpb": 4.251750220089805,
+      "a_retention_delta_bpb": -0.019432546079170443,
+      "checks_passed": "13/13",
+      "verdicts": [
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "b1_sequence",
+          "kind": "absolute",
+          "judgement": "passed",
+          "metric": "bpb",
+          "value": 4.325029323694501,
+          "threshold": 6.5,
+          "comparator": "<=",
+          "detail": "active readout on phase-C holdout vs fixed threshold"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "b1_sequence",
+          "kind": "retention",
+          "judgement": "passed",
+          "metric": "bpb",
+          "value": 4.251750220089805,
+          "threshold": 4.321182766168976,
+          "comparator": "<=",
+          "detail": "trained child vs frozen parent on phase-A retention"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "b1_sequence",
+          "kind": "incremental",
+          "judgement": "passed",
+          "metric": "bpb",
+          "value": 4.325029323694501,
+          "threshold": 4.346672253503354,
+          "comparator": "<=",
+          "detail": "pre-registered gain target 0.01 BPB"
+        }
+      ]
+    },
+    {
+      "seed": 29,
+      "parent_c_holdout_bpb": 4.4162804321458955,
+      "active_c_holdout_bpb": 4.379687856442404,
+      "c_holdout_gain_bpb": 0.036592575703491725,
+      "parent_a_retention_bpb": 4.319432553978346,
+      "active_a_retention_bpb": 4.302660443295557,
+      "a_retention_delta_bpb": -0.01677211068278872,
+      "checks_passed": "13/13",
+      "verdicts": [
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "b1_sequence",
+          "kind": "absolute",
+          "judgement": "passed",
+          "metric": "bpb",
+          "value": 4.379687856442404,
+          "threshold": 6.5,
+          "comparator": "<=",
+          "detail": "active readout on phase-C holdout vs fixed threshold"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "b1_sequence",
+          "kind": "retention",
+          "judgement": "passed",
+          "metric": "bpb",
+          "value": 4.302660443295557,
+          "threshold": 4.369432553978346,
+          "comparator": "<=",
+          "detail": "trained child vs frozen parent on phase-A retention"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "b1_sequence",
+          "kind": "incremental",
+          "judgement": "passed",
+          "metric": "bpb",
+          "value": 4.379687856442404,
+          "threshold": 4.406280432145896,
+          "comparator": "<=",
+          "detail": "pre-registered gain target 0.01 BPB"
+        }
+      ]
+    },
+    {
+      "seed": 47,
+      "parent_c_holdout_bpb": 4.41805887944077,
+      "active_c_holdout_bpb": 4.386603907566788,
+      "c_holdout_gain_bpb": 0.031454971873982274,
+      "parent_a_retention_bpb": 4.347545533096642,
+      "active_a_retention_bpb": 4.311183913069965,
+      "a_retention_delta_bpb": -0.03636162002667653,
+      "checks_passed": "13/13",
+      "verdicts": [
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "b1_sequence",
+          "kind": "absolute",
+          "judgement": "passed",
+          "metric": "bpb",
+          "value": 4.386603907566788,
+          "threshold": 6.5,
+          "comparator": "<=",
+          "detail": "active readout on phase-C holdout vs fixed threshold"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "b1_sequence",
+          "kind": "retention",
+          "judgement": "passed",
+          "metric": "bpb",
+          "value": 4.311183913069965,
+          "threshold": 4.3975455330966415,
+          "comparator": "<=",
+          "detail": "trained child vs frozen parent on phase-A retention"
+        },
+        {
+          "format": "taiji-measurement-verdict-v1",
+          "version": 1,
+          "ability_id": "b1_sequence",
+          "kind": "incremental",
+          "judgement": "passed",
+          "metric": "bpb",
+          "value": 4.386603907566788,
+          "threshold": 4.4080588794407705,
+          "comparator": "<=",
+          "detail": "pre-registered gain target 0.01 BPB"
+        }
+      ]
+    }
+  ],
+  "aggregate": {
+    "mean_c_holdout_gain_bpb": 0.03323015912877558,
+    "per_seed_positive": true,
+    "overall_absolute": true,
+    "overall_retention": true,
+    "overall_incremental": true,
+    "overall": true
+  }
+}
