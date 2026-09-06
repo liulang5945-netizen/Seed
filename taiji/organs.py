@@ -28,12 +28,38 @@ class ByteSensor:
         value[int(symbol)] = 1.0
         return value
 
-    def symbols(self, data: bytes, *, include_boundary: bool = True) -> tuple[int, ...]:
+    def symbols(
+        self,
+        data: bytes,
+        *,
+        include_boundary: bool = True,
+        include_start_boundary: bool | None = None,
+        include_end_boundary: bool | None = None,
+    ) -> tuple[int, ...]:
+        """Return a byte stream with independently controlled edge markers.
+
+        ``include_boundary`` remains the compatibility switch for callers
+        that want both markers.  The split controls let a resumable learner
+        feed adjacent chunks without inserting a synthetic boundary between
+        them: only the first chunk receives the opening marker and only the
+        last chunk receives the closing marker.
+        """
+
+        if not isinstance(include_boundary, bool):
+            raise TypeError("include_boundary must be a bool")
+        if include_start_boundary is None:
+            include_start_boundary = include_boundary
+        if include_end_boundary is None:
+            include_end_boundary = include_boundary
+        if not isinstance(include_start_boundary, bool):
+            raise TypeError("include_start_boundary must be a bool or None")
+        if not isinstance(include_end_boundary, bool):
+            raise TypeError("include_end_boundary must be a bool or None")
         body = tuple(int(value) for value in data)
-        if not include_boundary:
-            return body
         boundary = self.config.boundary_symbol
-        return (boundary, *body, boundary)
+        prefix = (boundary,) if include_start_boundary else ()
+        suffix = (boundary,) if include_end_boundary else ()
+        return (*prefix, *body, *suffix)
 
 
 class SparseReceptorBank:
