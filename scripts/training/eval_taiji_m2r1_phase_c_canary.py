@@ -27,6 +27,7 @@ import subprocess
 import sys
 import time
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -44,12 +45,169 @@ from taiji import (  # noqa: E402
 )
 from taiji.internalization import content_digest  # noqa: E402
 
-FORMAT = "taiji-r1-phase-c-arms-v1"
+FORMAT = "taiji-r1-phase-c-arms-v2"
 C_PARTITION_SEED = 43
 C2_PARTITION_SEED = 44
-A_PARTITION_SEED = 11
+PHASE_B_SEED_OFFSET = 10_000
+COHORT_SEEDS = (11, 29, 47)
 ALL_ARMS = ("no_update", "protected_only", "active_only", "replay", "cascade")
 CHECKPOINT_OUTPUT_DIR = PROJECT_ROOT / "output" / "taiji-m2r1-phase-c-actives"
+
+
+@dataclass(frozen=True)
+class M2R1PhaseChain:
+    """Content-addressed, record-disjoint continuation courses.
+
+    Each evaluated source has its own phase-A/phase-B lineage because the
+    existing children were trained with seed-specific partition addresses.
+    Phase C and C' are shared across the cohort, but exclude the union of all
+    source lineages so no child can receive a record it already consumed.
+    """
+
+    lineage_seeds: tuple[int, ...]
+    phase_a_by_seed: dict[int, FoundationTrainingDataset]
+    phase_b_by_seed: dict[int, FoundationTrainingDataset]
+    phase_c: FoundationTrainingDataset
+    phase_c2: FoundationTrainingDataset
+    overlap_counts: dict[str, int]
+
+
+def _dataset_metadata(dataset: FoundationTrainingDataset) -> dict[str, Any]:
+    return {
+        "digest": dataset.digest,
+        "partition_seed": int(dataset.partition_seed),
+        "profile": dataset.profile,
+        "sample_counts": dataset.sample_counts,
+        "source_files": [list(item) for item in dataset.source_files],
+        "excluded_dataset_digest": dataset.excluded_dataset_digest,
+        "excluded_dataset_digests": list(dataset.excluded_dataset_digests),
+        "selected_record_count": len(dataset.selected_record_digests),
+    }
+
+
+def _record_set(dataset: FoundationTrainingDataset) -> set[str]:
+    if not dataset.selected_record_digests:
+        raise ValueError(
+            "M2.R1 data contract requires record provenance on every phase dataset"
+        )
+    return set(dataset.selected_record_digests)
+
+
+def build_disjoint_phase_chain(
+    corpus_paths: Sequence[Path],
+    *,
+    cohort_seeds: Sequence[int] = COHORT_SEEDS,
+    phase_c_seed: int = C_PARTITION_SEED,
+    phase_c2_seed: int = C2_PARTITION_SEED,
+    profile: str = "foundation",
+) -> M2R1PhaseChain:
+    """Build the A/B lineage and record-disjoint C/C' continuation chain.
+
+    Different partition seeds alone are not a novelty guarantee.  A and B are
+    rebuilt with their real source lineage, then C/C' exclude the selected
+    record digests from every cohort lineage.  The function fails before any
+    model training if the record-level boundary is not closed.
+    """
+
+    normalized_seeds = tuple(dict.fromkeys(int(seed) for seed in cohort_seeds))
+    if not normalized_seeds or any(seed <= 0 for seed in normalized_seeds):
+        raise ValueError("cohort_seeds must contain positive values")
+    if int(phase_c_seed) <= 0 or int(phase_c2_seed) <= 0:
+        raise ValueError("phase C partition seeds must be positive")
+    if not corpus_paths:
+        raise ValueError("M2.R1 data contract needs at least one corpus path")
+
+    phase_a_by_seed: dict[int, FoundationTrainingDataset] = {}
+    phase_b_by_seed: dict[int, FoundationTrainingDataset] = {}
+    for seed in normalized_seeds:
+        phase_a = FoundationTrainingDataset.from_jsonl(
+            corpus_paths,
+            profile=profile,
+            partition_seed=seed,
+            track_record_digests=True,
+        )
+        phase_b = FoundationTrainingDataset.from_jsonl(
+            corpus_paths,
+            profile=profile,
+            partition_seed=PHASE_B_SEED_OFFSET + seed,
+            exclude_dataset=phase_a,
+            track_record_digests=True,
+        )
+        phase_a_by_seed[seed] = phase_a
+        phase_b_by_seed[seed] = phase_b
+
+    lineage_datasets: list[tuple[str, FoundationTrainingDataset]] = []
+    for seed in normalized_seeds:
+        lineage_datasets.extend(
+            (
+                (f"phase_a_seed{seed}", phase_a_by_seed[seed]),
+                (f"phase_b_seed{seed}", phase_b_by_seed[seed]),
+            )
+        )
+    lineage_exclusions = tuple(dataset for _name, dataset in lineage_datasets)
+    phase_c = FoundationTrainingDataset.from_jsonl(
+        corpus_paths,
+        profile=profile,
+        partition_seed=phase_c_seed,
+        exclude_datasets=lineage_exclusions,
+        track_record_digests=True,
+    )
+    phase_c2 = FoundationTrainingDataset.from_jsonl(
+        corpus_paths,
+        profile=profile,
+        partition_seed=phase_c2_seed,
+        exclude_datasets=lineage_exclusions + (phase_c,),
+        track_record_digests=True,
+    )
+
+    overlap_counts: dict[str, int] = {}
+    record_sets = {
+        name: _record_set(dataset)
+        for name, dataset in (*lineage_datasets, ("phase_c", phase_c), ("phase_c2", phase_c2))
+    }
+    for seed in normalized_seeds:
+        key = f"phase_a_seed{seed}__vs__phase_b_seed{seed}"
+        overlap_counts[key] = len(
+            record_sets[f"phase_a_seed{seed}"] & record_sets[f"phase_b_seed{seed}"]
+        )
+    for course_name in ("phase_c", "phase_c2"):
+        for lineage_name, _dataset in lineage_datasets:
+            key = f"{lineage_name}__vs__{course_name}"
+            overlap_counts[key] = len(record_sets[lineage_name] & record_sets[course_name])
+    overlap_counts["phase_c__vs__phase_c2"] = len(
+        record_sets["phase_c"] & record_sets["phase_c2"]
+    )
+    overlap_failures = {key: value for key, value in overlap_counts.items() if value}
+    if overlap_failures:
+        raise ValueError(f"M2.R1 record-disjoint Gate failed: {overlap_failures}")
+
+    return M2R1PhaseChain(
+        lineage_seeds=normalized_seeds,
+        phase_a_by_seed=phase_a_by_seed,
+        phase_b_by_seed=phase_b_by_seed,
+        phase_c=phase_c,
+        phase_c2=phase_c2,
+        overlap_counts=overlap_counts,
+    )
+
+
+def _phase_chain_metadata(chain: M2R1PhaseChain) -> dict[str, Any]:
+    return {
+        "cohort_seeds": list(chain.lineage_seeds),
+        "phase_b_seed_offset": PHASE_B_SEED_OFFSET,
+        "phase_a_by_seed": {
+            str(seed): _dataset_metadata(chain.phase_a_by_seed[seed])
+            for seed in chain.lineage_seeds
+        },
+        "phase_b_by_seed": {
+            str(seed): _dataset_metadata(chain.phase_b_by_seed[seed])
+            for seed in chain.lineage_seeds
+        },
+        "phase_c": _dataset_metadata(chain.phase_c),
+        "phase_c2": _dataset_metadata(chain.phase_c2),
+        "overlap_counts": dict(chain.overlap_counts),
+        "record_disjoint": not any(chain.overlap_counts.values()),
+    }
 
 
 def load_joint_child(path: Path, *, expected_seed: int) -> tuple[dict[str, Any], Taiji]:
@@ -683,22 +841,29 @@ def run_arms(
     replay_bytes: int | None = None,
 ) -> dict[str, Any]:
     joint_payload, source_model = load_joint_child(checkpoint, expected_seed=seed)
-    c_dataset = FoundationTrainingDataset.from_jsonl(
+    lineage_seeds = tuple(dict.fromkeys((*COHORT_SEEDS, int(seed))))
+    phase_chain = build_disjoint_phase_chain(
         corpus_paths,
-        profile="foundation",
-        partition_seed=C_PARTITION_SEED,
+        cohort_seeds=lineage_seeds,
     )
-    a_dataset = FoundationTrainingDataset.from_jsonl(
-        corpus_paths,
-        profile="foundation",
-        partition_seed=A_PARTITION_SEED,
-    )
+    a_dataset = phase_chain.phase_a_by_seed[int(seed)]
+    b_dataset = phase_chain.phase_b_by_seed[int(seed)]
+    if str(joint_payload.get("protected_dataset_digest")) != a_dataset.digest:
+        raise ValueError(
+            "source checkpoint protected_dataset_digest does not match the rebuilt "
+            "phase-A lineage; use the exact corpus path used to create the child"
+        )
+    if str(joint_payload.get("dataset_digest")) != b_dataset.digest:
+        raise ValueError(
+            "source checkpoint dataset_digest does not match the rebuilt phase-B "
+            "lineage; use the exact corpus path used to create the child"
+        )
+    c_dataset = phase_chain.phase_c
     if train_bytes <= 0 or train_bytes > len(c_dataset.train):
         raise ValueError("train_bytes must be within the phase-C training partition")
     if eval_bytes <= 0 or eval_bytes > min(len(a_dataset.retention), len(c_dataset.holdout)):
         raise ValueError("eval_bytes must fit both A retention and C holdout prefixes")
     c_train = c_dataset.train[:train_bytes]
-    a_train = a_dataset.train[:train_bytes]
     c_holdout = c_dataset.holdout[:eval_bytes]
     a_retention = a_dataset.retention[:eval_bytes]
     for arm in arms:
@@ -755,11 +920,7 @@ def run_arms(
             )
         )
     if "cascade" in arms:
-        c2_dataset = FoundationTrainingDataset.from_jsonl(
-            corpus_paths,
-            profile="foundation",
-            partition_seed=C2_PARTITION_SEED,
-        )
+        c2_dataset = phase_chain.phase_c2
         if train_bytes <= 0 or train_bytes > len(c2_dataset.train):
             raise ValueError("cascade train_bytes must be within the phase-C' partition")
         results.append(
@@ -794,20 +955,28 @@ def run_arms(
         "eval_bytes": int(eval_bytes),
         "replay_bytes": None if replay_bytes is None else int(replay_bytes),
         "datasets": {
-            "phase_c": {
-                "digest": c_dataset.digest,
-                "partition_seed": int(C_PARTITION_SEED),
-                "sample_counts": c_dataset.sample_counts,
+            "phase_a": _dataset_metadata(a_dataset),
+            "phase_b": _dataset_metadata(b_dataset),
+            "phase_c": _dataset_metadata(c_dataset),
+            "phase_c2": (
+                None if c2_dataset is None else _dataset_metadata(c2_dataset)
+            ),
+        },
+        "data_contract": {
+            "format": "taiji-m2r1-record-disjoint-course-v1",
+            "version": 1,
+            "current_seed": int(seed),
+            "source_lineage": {
+                "phase_a_expected_digest": str(joint_payload["protected_dataset_digest"]),
+                "phase_a_actual_digest": a_dataset.digest,
+                "phase_b_expected_digest": str(joint_payload["dataset_digest"]),
+                "phase_b_actual_digest": b_dataset.digest,
+                "matches_source_checkpoint": True,
             },
-            "phase_c2": {
-                "digest": None if c2_dataset is None else c2_dataset.digest,
-                "partition_seed": int(C2_PARTITION_SEED),
-                "sample_counts": None if c2_dataset is None else c2_dataset.sample_counts,
-            },
-            "phase_a": {
-                "digest": a_dataset.digest,
-                "partition_seed": int(A_PARTITION_SEED),
-                "sample_counts": a_dataset.sample_counts,
+            "phase_chain": _phase_chain_metadata(phase_chain),
+            "gate": {
+                "record_disjoint": not any(phase_chain.overlap_counts.values()),
+                "source_lineage_matches": True,
             },
         },
         "preflight": {

@@ -33,11 +33,61 @@ from taiji.measurement_verdict import (  # noqa: E402
     judge_retention,
 )
 
-AGG_FORMAT = "taiji-r1-verdict-aggregation-v1"
-AGG_VERSION = 1
+AGG_FORMAT = "taiji-r1-verdict-aggregation-v2"
+AGG_VERSION = 2
 ABSOLUTE_BPB_THRESHOLD = 6.5
 RETENTION_TOLERANCE_BPB = 0.05
 GAIN_TARGET_BPB = 0.01
+
+
+def _validate_data_contract(report: dict[str, Any], *, seed: int) -> dict[str, Any]:
+    """Require the v2 evaluator's record-disjoint and lineage gates."""
+
+    if report.get("format") != "taiji-r1-phase-c-arms-v2":
+        raise ValueError(
+            f"seed {seed} report is not the record-disjoint evaluator format; "
+            "old R1 reports cannot be aggregated"
+        )
+    contract = report.get("data_contract")
+    if not isinstance(contract, dict):
+        raise ValueError(f"seed {seed} report is missing data_contract")
+    if contract.get("current_seed") != int(seed):
+        raise ValueError(f"seed {seed} data_contract current_seed mismatch")
+    source_lineage = contract.get("source_lineage")
+    if not isinstance(source_lineage, dict) or not source_lineage.get(
+        "matches_source_checkpoint"
+    ):
+        raise ValueError(f"seed {seed} source lineage Gate is not passed")
+    if source_lineage.get("phase_a_expected_digest") != source_lineage.get(
+        "phase_a_actual_digest"
+    ) or source_lineage.get("phase_b_expected_digest") != source_lineage.get(
+        "phase_b_actual_digest"
+    ):
+        raise ValueError(f"seed {seed} source lineage digest mismatch")
+    gate = contract.get("gate")
+    if not isinstance(gate, dict) or not all(
+        bool(gate.get(name)) for name in ("record_disjoint", "source_lineage_matches")
+    ):
+        raise ValueError(f"seed {seed} record-disjoint data Gate is not passed")
+    phase_chain = contract.get("phase_chain")
+    if not isinstance(phase_chain, dict) or not phase_chain.get("record_disjoint"):
+        raise ValueError(f"seed {seed} phase chain is not record-disjoint")
+    overlap_counts = phase_chain.get("overlap_counts")
+    if not isinstance(overlap_counts, dict) or any(bool(value) for value in overlap_counts.values()):
+        raise ValueError(f"seed {seed} phase chain contains record overlap")
+    datasets = report.get("datasets")
+    if not isinstance(datasets, dict) or not isinstance(datasets.get("phase_c"), dict):
+        raise ValueError(f"seed {seed} report is missing phase-C dataset metadata")
+    phase_c = phase_chain.get("phase_c")
+    if not isinstance(phase_c, dict) or datasets["phase_c"].get("digest") != phase_c.get(
+        "digest"
+    ):
+        raise ValueError(f"seed {seed} report phase-C digest is not content-addressed")
+    return {
+        "phase_c_dataset_digest": str(phase_c["digest"]),
+        "phase_c2_dataset_digest": str(phase_chain["phase_c2"]["digest"]),
+        "cohort_seeds": tuple(int(value) for value in phase_chain["cohort_seeds"]),
+    }
 
 
 def judge_seed(
@@ -133,9 +183,11 @@ def main(argv: list[str] | None = None) -> int:
         baselines = list(args.baseline_report)
 
     entries: list[dict[str, Any]] = []
+    contract_entries: list[dict[str, Any]] = []
     for path, baseline_path in zip(args.seed_report, baselines, strict=True):
         report = json.loads(path.read_text(encoding="utf-8"))
         seed = int(report["source_checkpoint"].rsplit("seed", 1)[1].split("-", 1)[0])
+        contract_entries.append(_validate_data_contract(report, seed=seed))
         baseline_report = (
             None
             if baseline_path is None
@@ -158,11 +210,25 @@ def main(argv: list[str] | None = None) -> int:
         )
         for entry in entries
     )
+    phase_c_digests = {entry["phase_c_dataset_digest"] for entry in contract_entries}
+    phase_c2_digests = {entry["phase_c2_dataset_digest"] for entry in contract_entries}
+    cohort_sets = {entry["cohort_seeds"] for entry in contract_entries}
+    if len(phase_c_digests) != 1 or len(phase_c2_digests) != 1 or len(cohort_sets) != 1:
+        raise ValueError(
+            "seed reports must share one record-disjoint phase-C/C' chain and cohort"
+        )
+    cohort_seeds = next(iter(cohort_sets))
 
     payload = {
         "format": AGG_FORMAT,
         "version": AGG_VERSION,
-        "phase_c_dataset_digest": "d3d89274478e56955796d4c7b01a5cee8090e5575dc2d8fcbe5d6d1b14b6776b",
+        "phase_c_dataset_digest": next(iter(phase_c_digests)),
+        "phase_c2_dataset_digest": next(iter(phase_c2_digests)),
+        "data_contract": {
+            "format": "taiji-m2r1-record-disjoint-course-v1",
+            "record_disjoint": True,
+            "cohort_seeds": list(cohort_seeds),
+        },
         "train_bytes": 1_048_576,
         "eval_bytes": 131_072,
         "seeds": entries,
