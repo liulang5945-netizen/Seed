@@ -1,0 +1,86 @@
+{
+  "format": "taiji-r1-phase-c-arms-v1",
+  "version": 1,
+  "status": "passed",
+  "can_promote": false,
+  "source_checkpoint": "e:\\Seed\\output\\taiji-m2u-seed47-identity-generation-20260905\\last.pt",
+  "source_digest": "9e381dbdfe9ca837f05f55e7ccc28192536b30a703dffefda519b0b235a0d7d8",
+  "epochs": 1,
+  "replay_epochs": 1,
+  "c_train_bytes": 1048576,
+  "eval_bytes": 131072,
+  "replay_bytes": null,
+  "datasets": {
+    "phase_c": {
+      "digest": "d3d89274478e56955796d4c7b01a5cee8090e5575dc2d8fcbe5d6d1b14b6776b",
+      "partition_seed": 43,
+      "sample_counts": {
+        "train": 1048576,
+        "holdout": 131072,
+        "retention": 131072
+      }
+    },
+    "phase_c2": {
+      "digest": "18a661adc36ed77cf0704ff9933f8f953ef6beb250940fcc96442e8559aff0a7",
+      "partition_seed": 44,
+      "sample_counts": {
+        "train": 1048576,
+        "holdout": 131072,
+        "retention": 131072
+      }
+    },
+    "phase_a": {
+      "digest": "1fe30428d1245726f4e43bbce2f79a392dc0b4d7e31591165fc321bce9cd8554",
+      "partition_seed": 11,
+      "sample_counts": {
+        "train": 1048576,
+        "holdout": 131072,
+        "retention": 131072
+      }
+    }
+  },
+  "preflight": {
+    "source_digest": "9e381dbdfe9ca837f05f55e7ccc28192536b30a703dffefda519b0b235a0d7d8",
+    "source_fresh_digest": "9e381dbdfe9ca837f05f55e7ccc28192536b30a703dffefda519b0b235a0d7d8",
+    "source_generation_canary": "b7a5aeb6e7a784e68081e79a84e69e87",
+    "source_fresh_canary": "b7a5aeb6e7a784e68081e79a84e69e87",
+    "source_checkpoint_bytes": 33173827,
+    "source_fresh_restore_seconds": 2.110415400005877
+  },
+  "arms": [
+    {
+      "arm": "cascade",
+      "checks": {
+        "active_readout_changes": true,
+        "active_readout_changes_during_cycle2": true,
+        "shared_fabric_unchanged": true,
+        "protected_owners_unchanged": true,
+        "protected_readout_unchanged": true,
+        "scores_are_read_only": true,
+        "registry_round_trips_in_process": true,
+        "registry_round_trips_in_fresh_process": true,
+        "generation_canary_round_trips": true,
+        "fresh_process_generation_canary_matches": true,
+        "generation_route_records_active_owner": true,
+        "final_checkpoint_persisted_with_matching_digest": true
+      },
+      "capability": {
+        "protected_c2_holdout_bpb": 4.377656901583178,
+        "active_c2_holdout_bpb": 4.448031601183855,
+        "c2_holdout_gain_bpb": -0.0703746996006771,
+        "active_c_holdout_bpb_after_cycle2": 4.48879295632687,
+        "c_holdout_after_cycle1_bpb": 4.386603907566788,
+        "c_cycle2_delta_bpb": 0.10218904876008228,
+        "active_a_retention_bpb": 4.433031552143946
+      },
+      "round_trip": {
+        "active_checkpoint_digest": "d96e6dfd7da2c9bf592e5a3db3f78f0a15e8483b79e4f4c74d34c5e82e1ff50c",
+        "fresh_process_digest": "d96e6dfd7da2c9bf592e5a3db3f78f0a15e8483b79e4f4c74d34c5e82e1ff50c",
+        "final_checkpoint_path": "E:\\Seed\\output\\taiji-m2r1-phase-c-actives\\seed47_cascade_c1048576.pt",
+        "saved_final_digest": "d96e6dfd7da2c9bf592e5a3db3f78f0a15e8483b79e4f4c74d34c5e82e1ff50c",
+        "checkpoint_bytes": 33275092,
+        "fresh_process_restore_seconds": 3.629057699930854
+      }
+    }
+  ]
+}

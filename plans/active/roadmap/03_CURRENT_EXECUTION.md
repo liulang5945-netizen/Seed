@@ -60,15 +60,14 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 
 ## 4. 当前唯一下一步
 
-**唯一下一步：M2.R3——新增第二门 phase-C' 课程（同语料第三个 partition_seed），复用 R2 验收的等预算 replay 干预在 active 分支上做两级联续训（C→C'），测多周期学习的增益上限与遗忘曲线；正增益成立即进入 M4 的多周期证据链。**
+**唯一下一步：M2.R4——为第二周期加入保护性巩固（学 C' 前的 exact C/A bounded replay 或冻结保护），验证能否消除 R3 观测的多周期遗忘（C +0.09、A +0.10）；消除成功后多周期学习才成立，对应 M4 固定容量周期学习的"巩固"证据点。**
 
-R0（测量纠正）、R1（1 MiB 正式确认）与 R2（等预算 replay 对照）均已提交（2026-09-06）。R1/R2 核心结论：隔离 active 分支 + 1 MiB 新记录产生可靠、可审计的正向 C 增益且 A 保持安全（三 seed 判定全部 passed）。
+R0（测量纠正）、R1（1 MiB 正式确认）、R2（等预算 replay 对照）、R3（两级联 C→C'）均已提交（2026-09-06）。核心结论链：
+- 单周期 active 学习 1 MiB 新记录：可靠 C 增益（active_only mean +0.033、等预算 replay mean +0.045），A 保持安全（三类判定三 seed 全过）。
+- R3 正式级联（C 1 MiB → C' 1 MiB，三 seed，checks 12/12 全绿）——**第二周期在直学下失效**：C' 无增益（-0.070~-0.090，负 gain），C 遗忘 +0.089/+0.102/+0.102，A 遗忘 +0.100/+0.115/+0.085。冒烟 64 KiB 时 cycle2 曾显示 C 改善（-0.070），正式 1 MiB 翻转——规模效应再次表现为"小数据帮助、大数据冲刷"。
+- R1/R2/R3 合起来划定"直学第一周期的增益上限"：隔离 active 分支（fabric/context 冻结）的容量在 1 MiB 即饱和，继续第二周期只产生遗忘，需要保护性巩固而非更多直学。
 
-- R1 1 MiB 正式确认（三 seed）：active_only C gain +0.032/+0.037/+0.031（mean 0.033）、A retention 全部改善；protected_only 无增益且有遗忘；旧 2× 预算 replay（1C+1A=2 MiB）C gain 0.017 且 A 退化。
-- R2 等预算 replay（0.5 MiB C + 0.5 MiB A，总 1 MiB，三 seed）：C gain +0.032/+0.046/+0.056（mean 0.045）、A delta +0.006/+0.002/-0.043（全在 0.05 容差内）。结论：**旧 replay 的弱点来自 2× 总更新预算而非 replay 本身**；等总更新预算下 replay 与 active-only 相当或更强。判定：absolute/retention/incremental 三 seed 全部 passed。R2 验收的 active checkpoints 已持久化至 `output/taiji-m2r1-phase-c-actives/` 并通过 R0.6 清单复核（纯 Taiji 格式、内容寻址 digest 校验通过）；R1 时期仅临时探针未持久化的问题已修正。
-- 报告：`reports/taiji_m2r1_verdict_aggregation_20260906.json`（R1）、`reports/taiji_m2r2_verdict_aggregation_20260906.json`（R2）、`reports/taiji_m2_r0_checkpoint_inventory_20260906.json`。
-
-`can_promote=false` 保持：全部证据来自同一 dialogue 语料的 A/C 分区，正式通用能力声明仍等待更广数据源与 M4 多周期学习证据。
+`can_promote=false` 保持：单周期增益证据仅来自同一 dialogue 语料的 A/C 分区；R4 巩固成功且多周期成立后，才具备 M4 多周期学习证据并考虑更广数据源。
 
 ## 5. 近期实施规格
 
