@@ -51,7 +51,7 @@ C2_PARTITION_SEED = 44
 PHASE_B_SEED_OFFSET = 10_000
 COHORT_SEEDS = (11, 29, 47)
 ALL_ARMS = ("no_update", "protected_only", "active_only", "replay", "cascade")
-CHECKPOINT_OUTPUT_DIR = PROJECT_ROOT / "output" / "taiji-m2r1-phase-c-actives"
+CHECKPOINT_OUTPUT_DIR = PROJECT_ROOT / "output" / "taiji-m2r1-phase-c-actives-v2"
 
 
 @dataclass(frozen=True)
