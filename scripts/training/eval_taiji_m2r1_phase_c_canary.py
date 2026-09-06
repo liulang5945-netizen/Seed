@@ -48,6 +48,7 @@ FORMAT = "taiji-r1-phase-c-arms-v1"
 C_PARTITION_SEED = 43
 A_PARTITION_SEED = 11
 ALL_ARMS = ("no_update", "protected_only", "active_only", "replay")
+CHECKPOINT_OUTPUT_DIR = PROJECT_ROOT / "output" / "taiji-m2r1-phase-c-actives"
 
 
 def load_joint_child(path: Path, *, expected_seed: int) -> tuple[dict[str, Any], Taiji]:
@@ -181,6 +182,8 @@ def _run_branch_arm(
     a_retention: bytes,
     epochs: int,
     replay_epochs: int,
+    replay_bytes: int | None = None,
+    seed: int = 11,
 ) -> dict[str, Any]:
     """Train one branch arm and return its capability + technical checks."""
 
@@ -232,8 +235,11 @@ def _run_branch_arm(
         authorization=authorization,
     )
     if arm == "replay":
+        replay_slice = a_train if replay_bytes is None else a_train[:replay_bytes]
+        if not replay_slice:
+            raise ValueError("replay byte slice is empty")
         model.learn_bytes(
-            a_train,
+            replay_slice,
             epochs=replay_epochs,
             include_boundary=True,
             use_memory=False,
@@ -292,6 +298,16 @@ def _run_branch_arm(
     finally:
         disk_path.unlink(missing_ok=True)
 
+    # The accepted active checkpoint is a primary artifact, not just a probe:
+    # persist it under the run output directory so later inventory/re-evaluation
+    # (R0.6/R0.7) can audit it from disk.
+    CHECKPOINT_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    final_path = CHECKPOINT_OUTPUT_DIR / f"seed{seed}_{arm}_c{len(c_train)}_r{replay_bytes or 0}.pt"
+    torch.save(active_checkpoint, final_path)
+    saved_final_digest = content_digest(
+        torch.load(final_path, map_location="cpu", weights_only=False)
+    )
+
     checks = {
         "active_readout_changes": active_before["readout_digest"]
         != active_after["readout_digest"],
@@ -319,6 +335,8 @@ def _run_branch_arm(
         "generation_route_records_active_owner": route is not None
         and route["generation_scope"] == "active"
         and route["readout_owner"] == "predictive_readout.active",
+        "final_checkpoint_persisted_with_matching_digest": saved_final_digest
+        == active_checkpoint_digest,
     }
     return {
         "arm": arm,
@@ -332,6 +350,8 @@ def _run_branch_arm(
         "round_trip": {
             "active_checkpoint_digest": active_checkpoint_digest,
             "fresh_process_digest": fresh_digest,
+            "final_checkpoint_path": str(final_path),
+            "saved_final_digest": saved_final_digest,
             "checkpoint_bytes": int(checkpoint_bytes),
             "fresh_process_restore_seconds": restore_seconds,
         },
@@ -465,6 +485,7 @@ def run_arms(
     eval_bytes: int,
     arms: Sequence[str],
     seed: int = 11,
+    replay_bytes: int | None = None,
 ) -> dict[str, Any]:
     joint_payload, source_model = load_joint_child(checkpoint, expected_seed=seed)
     c_dataset = FoundationTrainingDataset.from_jsonl(
@@ -529,11 +550,13 @@ def run_arms(
                 arm=arm,
                 source_model=source_model,
                 c_train=c_train,
-                a_train=a_train,
+                a_train=a_dataset.train[:train_bytes],
                 c_holdout=c_holdout,
                 a_retention=a_retention,
                 epochs=epochs,
                 replay_epochs=replay_epochs,
+                replay_bytes=replay_bytes,
+                seed=seed,
             )
         )
 
@@ -552,6 +575,7 @@ def run_arms(
         "replay_epochs": int(replay_epochs),
         "c_train_bytes": int(train_bytes),
         "eval_bytes": int(eval_bytes),
+        "replay_bytes": None if replay_bytes is None else int(replay_bytes),
         "datasets": {
             "phase_c": {
                 "digest": c_dataset.digest,
@@ -582,6 +606,11 @@ def main() -> int:
     parser.add_argument("--corpus", type=Path, nargs="+", required=True)
     parser.add_argument("--epochs", type=int, default=1)
     parser.add_argument("--replay-epochs", type=int, default=1)
+    parser.add_argument(
+        "--replay-bytes",
+        type=int,
+        help="Replay byte slice from the phase-A train partition; default equals train-bytes.",
+    )
     parser.add_argument("--train-bytes", type=int, default=64 * 1024)
     parser.add_argument("--eval-bytes", type=int, default=32 * 1024)
     parser.add_argument("--arms", nargs="+", choices=ALL_ARMS, default=list(ALL_ARMS))
@@ -592,6 +621,10 @@ def main() -> int:
         parser.error("epochs and replay_epochs must be positive")
     if args.train_bytes <= 0 or args.eval_bytes <= 0:
         parser.error("train_bytes and eval_bytes must be positive")
+    if args.replay_bytes is not None and (
+        args.replay_bytes <= 0 or args.replay_bytes > args.train_bytes
+    ):
+        parser.error("--replay-bytes must be positive and within train-bytes")
     result = run_arms(
         args.checkpoint,
         corpus_paths=args.corpus,
@@ -601,6 +634,7 @@ def main() -> int:
         eval_bytes=args.eval_bytes,
         arms=args.arms,
         seed=args.seed,
+        replay_bytes=args.replay_bytes,
     )
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(

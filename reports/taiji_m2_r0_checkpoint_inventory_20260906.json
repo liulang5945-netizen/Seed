@@ -1,0 +1,58 @@
+{
+  "format": "taiji-checkpoint-owner-inventory-v1",
+  "version": 1,
+  "count": 3,
+  "entries": [
+    {
+      "path": "e:\\Seed\\output\\taiji-m2r1-phase-c-actives\\seed11_replay_c524288_r524288.pt",
+      "exists": true,
+      "checkpoint_digest": "9e331e777a2832d00533a4500797a4e22c224bb88c7ee73f34531cc3636aaa2a",
+      "digest_verified": true,
+      "format": "taiji-native-v10",
+      "version": null,
+      "active_readout_generation": 1,
+      "model_organs": [
+        "fabric",
+        "identity_organ",
+        "memory",
+        "motor",
+        "predictive_context",
+        "predictive_readout"
+      ]
+    },
+    {
+      "path": "e:\\Seed\\output\\taiji-m2r1-phase-c-actives\\seed29_replay_c524288_r524288.pt",
+      "exists": true,
+      "checkpoint_digest": "f1fb7a33bfe132e4a386088fb7282ecec22d5d73288442c678d38d7ce530af46",
+      "digest_verified": true,
+      "format": "taiji-native-v10",
+      "version": null,
+      "active_readout_generation": 1,
+      "model_organs": [
+        "fabric",
+        "identity_organ",
+        "memory",
+        "motor",
+        "predictive_context",
+        "predictive_readout"
+      ]
+    },
+    {
+      "path": "e:\\Seed\\output\\taiji-m2r1-phase-c-actives\\seed47_replay_c524288_r524288.pt",
+      "exists": true,
+      "checkpoint_digest": "7afd35dd5848e9d13d979010bfc0febb7e6acb3daaea4f601af7683a46b19462",
+      "digest_verified": true,
+      "format": "taiji-native-v10",
+      "version": null,
+      "active_readout_generation": 1,
+      "model_organs": [
+        "fabric",
+        "identity_organ",
+        "memory",
+        "motor",
+        "predictive_context",
+        "predictive_readout"
+      ]
+    }
+  ]
+}

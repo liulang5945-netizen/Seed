@@ -1,0 +1,90 @@
+{
+  "format": "taiji-r1-phase-c-arms-v1",
+  "version": 1,
+  "status": "passed",
+  "can_promote": false,
+  "source_checkpoint": "e:\\Seed\\output\\taiji-m2s-seed11-identity-generation-20260905\\last.pt",
+  "source_digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+  "epochs": 1,
+  "replay_epochs": 1,
+  "c_train_bytes": 524288,
+  "eval_bytes": 131072,
+  "replay_bytes": 524288,
+  "datasets": {
+    "phase_c": {
+      "digest": "d3d89274478e56955796d4c7b01a5cee8090e5575dc2d8fcbe5d6d1b14b6776b",
+      "partition_seed": 43,
+      "sample_counts": {
+        "train": 1048576,
+        "holdout": 131072,
+        "retention": 131072
+      }
+    },
+    "phase_a": {
+      "digest": "1fe30428d1245726f4e43bbce2f79a392dc0b4d7e31591165fc321bce9cd8554",
+      "partition_seed": 11,
+      "sample_counts": {
+        "train": 1048576,
+        "holdout": 131072,
+        "retention": 131072
+      }
+    }
+  },
+  "preflight": {
+    "source_digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+    "source_fresh_digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+    "source_generation_canary": "32303031303030303030303030303031",
+    "source_fresh_canary": "32303031303030303030303030303031",
+    "source_checkpoint_bytes": 33173827,
+    "source_fresh_restore_seconds": 2.428468399972189
+  },
+  "arms": [
+    {
+      "arm": "no_update",
+      "checks": {
+        "scores_are_read_only": true,
+        "score_uses_protected_owner": true
+      },
+      "capability": {
+        "protected_c_holdout_bpb": 4.356672253503354,
+        "protected_a_retention_bpb": 4.271182766168976,
+        "active_c_holdout_bpb": 4.356672253503354,
+        "active_a_retention_bpb": 4.271182766168976,
+        "c_holdout_gain_bpb": 0.0
+      }
+    },
+    {
+      "arm": "replay",
+      "checks": {
+        "active_readout_changes": true,
+        "active_readout_changes_during_replay": true,
+        "shared_fabric_unchanged": true,
+        "protected_owners_unchanged": true,
+        "protected_readout_unchanged": true,
+        "scores_are_read_only": true,
+        "active_score_uses_active_owner": true,
+        "protected_score_uses_protected_owner": true,
+        "registry_round_trips_in_process": true,
+        "registry_round_trips_in_fresh_process": true,
+        "generation_canary_round_trips": true,
+        "fresh_process_generation_canary_matches": true,
+        "generation_route_records_active_owner": true,
+        "final_checkpoint_persisted_with_matching_digest": true
+      },
+      "capability": {
+        "protected_c_holdout_bpb": 4.356672253503354,
+        "active_c_holdout_bpb": 4.3243792985069165,
+        "active_a_retention_bpb": 4.2772824762768575,
+        "c_holdout_gain_bpb": 0.03229295499643747
+      },
+      "round_trip": {
+        "active_checkpoint_digest": "9e331e777a2832d00533a4500797a4e22c224bb88c7ee73f34531cc3636aaa2a",
+        "fresh_process_digest": "9e331e777a2832d00533a4500797a4e22c224bb88c7ee73f34531cc3636aaa2a",
+        "final_checkpoint_path": "E:\\Seed\\output\\taiji-m2r1-phase-c-actives\\seed11_replay_c524288_r524288.pt",
+        "saved_final_digest": "9e331e777a2832d00533a4500797a4e22c224bb88c7ee73f34531cc3636aaa2a",
+        "checkpoint_bytes": 33274919,
+        "fresh_process_restore_seconds": 3.478830999985803
+      }
+    }
+  ]
+}
