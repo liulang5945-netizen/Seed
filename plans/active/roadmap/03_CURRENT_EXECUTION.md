@@ -192,6 +192,8 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 
 **R3.R3 已完成（2026-09-07）：** 新增独立 `StructuredSemanticTransitionLearner`，输入为当前 `WorldState` 与当前 `PerceptEvent`，先学习事实 delta，再物化下一时刻 `WorldState`，最后读取 Goal 与 ContentPlan；transition 输入使用通用的当前事实×事件上下文交互基，以表达状态条件事件，而不是把 `release/move/block` 写成模型外规则。三 seed 各使用 32/8/8 record-disjoint episodes，训练/验证/测试事实、Goal、ContentPlan 均为 `1.0`；事件删除、事件顺序、三步持久性、mid-sequence checkpoint、unknown/conflict fail-closed 与 transition owner lesion 全部通过。由于 checkpoint 输入形状发生变化，transition schema 升为 v2；该结果仍是 native-only 结构化 CPU canary，`can_promote=false`，不等价于自然语言或开放域世界模型。
 
+**M2.R4 已完成（2026-09-07）：** 以 transition v2 的 7 个事实目录为统一 vocabulary，构造静态 state-encoding 24/12/12 split（每个 state/resource 组合有不同 metadata variant）并与 32/8/8 transition split 组成一门联合课程；frozen-parent、static-only、transition-only、joint-native 四个控制路径分别验证写入范围和负对照，joint-native 再通过 `TSKV8Adapter` 同时挂载两个 owner，执行静态初态感知与三步持久转移。三 seed 的 joint static/transition test fact F1 均为 `1.0`，联合序列 `3/3`，双组件 checkpoint、CognitiveState 只读、旧能力保持和无执行副作用全部通过；这证明的是模块组合，不是共享权重优化、自然语言表达或真实工具成功。
+
 1. 中文短指令、事实提取、实体/关系与约束：同义改写和模板族严格跨 split，包含歧义、未知和冲突。
 2. 上下文事件 → 持续世界状态 → 目标满足条件；用延迟查询和事实变更检验记忆更新，加入拒答/澄清。
 3. Goal/WorldState → 有依据的 ContentPlan；检验字段事实覆盖、无根据内容、约束违背、不同表述下语义一致。
