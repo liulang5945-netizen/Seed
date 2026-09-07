@@ -1,6 +1,6 @@
 # Seed / Taiji 模型优先统一开发计划
 
-> 修订：2026-09-07。状态：R0 测量链完成；R1～R3 首轮能力报告因数据重叠被撤回，record-disjoint v2 数据链已修复；seed11/29/47 的 R1 formal aggregate 已完成但不晋级。R2.R0 三 seed 固定结构 context 复现、R2.R0.1 seed11 context/ordering 消融、R2.R0.2 seed11 延迟依赖 probe v2、R2.R1 gated multi-timescale temporal candidate smoke/full probe 均已完成：技术检查全部通过；candidate 在相同 delay probe 上没有超过 joint/readout-only，distance≥32 仍无新能力，因此明确否决 promotion，保留为默认关闭的可回滚实验资产。下一阶段转入 M2.R3 结构化语义训练，不再继续调这个候选。连续流切块、资源遥测和中断恢复均已通过。本文是唯一执行顺序与“下一步”来源。
+> 修订：2026-09-07。状态：R0 测量链完成；R1～R3 首轮能力报告因数据重叠被撤回，record-disjoint v2 数据链已修复；seed11/29/47 的 R1 formal aggregate 已完成但不晋级。R2.R0～R2.R1 时间表征候选已完成并否决 promotion；M2.R3.R0 已完成一条真实 CPU structured semantic canary：`PerceptEvent → relation facts/WorldState → Goal → ContentPlan` 的 train/dev/test、未知/冲突/澄清、owner lesion 和 checkpoint restore 全部通过；这证明的是结构化语义桥，不是自然语言流畅或开放域理解。下一步只接入 runtime owner/checkpoint，不扩 provider 或客户端外围。连续流切块、资源遥测和中断恢复均已通过。本文是唯一执行顺序与“下一步”来源。
 >
 > 本轮已完成数据契约代码、审计报告和回归测试；不会改写旧报告，下一步只从原始 child 重新生成独立证据。历史 M0/M1/M2-2a～2ae 的有效成果保留；旧“下一步”全部失效。重审依据见 [研究审视](../../reference/TAIJI_RESEARCH_REVIEW_2026_09_06.md)，原文见 [历史快照](../../archive/history/research_review_20260906/README.md)。
 >
@@ -49,6 +49,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | M2.R2.R0.1 seed11 context/ordering ablation | 固定 seed11 parent，frozen/normal_context/shuffled_context/readout_only 四臂、4/16/64 KiB、12 点；60/60 技术检查通过；包含 temporal-residual clone lesion、unigram/2-gram/3-gram 参照 | normal context gain `+0.001515/+0.023738/-0.016105`；shuffle gain `-0.240627/-0.532733/-0.697068`；readout-only `-0.062549/-0.141091/-0.165254`；正常 residual lesion 后 holdout `4.718034 BPB`，说明有序输入和 residual 有因果参与，但尚未测直接依赖跨度，不扩架构 |
 | M2.R2.R0.2 seed11 delay probe v2 | 受控 record-disjoint copy 任务，distance `1/8/32/128/512`，frozen/joint/shuffled/readout-only 四臂，3 epochs、32/16/16 records；20 点、100/100 技术检查通过；v1 低剂量报告已删除，不作为证据 | joint test accuracy：`0.938/0.062/0/0/0`；readout-only：`0.938/0.062/0/0/0`；frozen 全 0；shuffled joint：`0.625/0/0/0/0`；joint temporal lesion 与 joint 相同，说明当前 candidate 在此 copy probe 上没有被证明提供超出 readout 的长程 credit，当前不宣称 32～512 距离能力 |
 | M2.R2.R1 gated temporal candidate probe | 在旧 checkpoint 上启用零初始化 fast/slow gated residual；smoke 8 点/40 检查、full 20 点/100 检查均通过；candidate owner、checkpoint round-trip、lesion 与 read-only scoring 全部闭合；报告 `taiji_m2r2_r1_candidate_smoke_seed11_20260907.json` / `taiji_m2r2_r1_candidate_probe_seed11_20260907.json` | gated_joint 在 distance=1/8 与 joint/readout-only 同为约 `0.938/0.062`，distance≥32 均为 `0`；full probe 没有形成额外长程能力，且部分 BPB 更差；`can_promote=false`。实现保留为默认关闭的迁移/反事实资产，不作为当前主架构 |
+| M2.R3.R0 structured semantic CPU canary | 新增 `taiji/semantic_training.py` 与 `eval_taiji_m2r3_r0_structured_semantics.py`；8/4/4 record-disjoint train/dev/test，122 个参数标量；15/15 Gate 检查通过；报告 `taiji_m2r3_r0_structured_semantics_20260907.json` | train/dev/test fact F1、Goal accuracy、ContentPlan accuracy 均 `1.0`；未知输入 `unknown`、互斥事实 `conflict`、blocked 目标 `clarify`；checkpoint 输出一致，fact-owner lesion 使 test F1/Goal accuracy 降为 `0`；`can_promote=false`，不宣称自然语言能力 |
 | M2.R1～R3 首轮报告 | 仅用不同 `partition_seed`，A/C 交集 `1597`、A/C′ `1577`、C/C′ `1563` | 技术 owner/保存检查仍可留作诊断；所有 phase-C 能力与多周期结论撤回，不能聚合或晋级 |
 | M2-2af 草案 | 继承评分错误、训练后才保存、仅 fresh digest、可单 seed promote | 中止且无正式报告；退出可执行主线，保留归档供重构参考 |
 | 完整认知层 | joint runner 使用 Taiji；Seed runtime 使用包含更多器官的 TSKV8Adapter | 不能把 kernel child 的成绩归给所有 adapter 器官，需逐 owner 训练覆盖映射 |
@@ -65,7 +66,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | 1 | M2.R0 测量纠正 | 已完成；评分 owner、数据排除基础、Gate/谱系合同修正 | 正反例能识别错 owner、重复、回归和无效恢复 |
 | 2 | M2.R1～R3 证据重建 | **已完成本轮 R1 证据**；三 seed active/replay/cascade 全部正式臂和 aggregate 均完成，active 分支有受控留出收益但 replay/第二周期保持不稳定，不能晋级 | 技术合格报告 + 独立 C/C′ 能力结果，不要求实验一定成功 |
 | 3 | M2.R2 表征与时间学习 | **R2.R0～R2.R1 已完成；gated multi-timescale temporal candidate 技术闭环通过但 promotion 否决**，候选默认关闭并保留为可回滚实验资产，不继续调参 | 已通过旧输出保持、owner、保存恢复和移除/冻结反事实；未通过“同一 delay probe 上形成额外长程能力”，不替换默认结构 |
-| 4 | M2.R3 语义与表达训练 | **下一阶段**：先做 Taiji-owned `Percept → WorldState/Fact → Goal → ContentPlan` 的结构化训练合同与 CPU canary，再接可读表达 | 核心语义/事实/约束指标有效；provider 表达收益与 native-only 分开统计 |
+| 4 | M2.R3 语义与表达训练 | **R3.R0 已完成**结构化语义训练合同与 CPU canary；当前进入 R3.R1，把 learner 作为可选 semantic owner 接入 `TSKV8Adapter` 的 runtime、native checkpoint 和恢复路径 | runtime 输入只来自当前 `PerceptEvent`；事实/Goal/ContentPlan 结果可审计；provider 表达收益与 native-only 分开统计 |
 | 5 | M2.R4 联合课程与保持 | 整合通过验证的器官，重跑绝对能力/保持/增益 | 三 seed 正式报告；目标改善且非目标能力不退化 |
 | 6 | M3 最小真实任务验证 | 留出 Workbench 项目的可恢复闭环 | 至少一个预注册真实任务族获得可重复净收益 |
 | 7 | M4 连续成长 | 多轮续训、巩固、必要时结构增长与压缩 | 优于固定容量和等预算对照，且保持/成本/回滚达标 |
@@ -78,7 +79,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 
 ## 4. 当前唯一下一步
 
-**唯一下一步：进入 M2.R3.R0，建立结构化语义训练合同并做最小 CPU canary。** R2.R0～R2.R1 的事实是：现有 predictive context 有短程字节信号，但当前候选没有证明长程 credit；继续调时间模块的边际证据不足。下一轮只实现一条可审计训练链：`Percept → Fact/WorldState → Goal → ContentPlan`，用严格 train/dev/test 模板族、未知/冲突/澄清样本和来源 digest；训练前必须完成 checkpoint save/restore preflight，训练时只允许声明的 semantic owners 写入，评分只读。canary 先验证事实支持、未知拒答、冲突澄清、目标约束和 ContentPlan 字段完整性，暂不把 provider 语言输出当作 native 能力；候选代码保持 opt-in/disabled。退出条件是不靠固定模板匹配取得 dev/test 通过，并能从 checkpoint 恢复后复现同一结果；若语义器官未接线，先修 owner 接线再扩数据或模型规模。R1 aggregate、R2.R0 aggregate、R2.R0.1、R2.R0.2 和 R2.R1 报告均保留为基线。
+**唯一下一步：进入 M2.R3.R1，把 `StructuredSemanticLearner` 接入 `TSKV8Adapter` 的可选 runtime owner 和 native checkpoint。** R3.R0 已证明实际局部更新能够在 CPU 上从 `PerceptEvent` 学出关系事实、Goal 和 ContentPlan，并且对未知/冲突输入 fail-closed；但当前 learner 还是独立训练对象，尚未成为客户端认知状态的一部分。下一轮只做一条接线：adapter 显式 attach/detach learner，当前 percept 只读推理，结果写入独立 semantic snapshot，native checkpoint 保存/恢复 learner 与上次结果；不自动执行 ActionIntent、不调用 provider、不替换现有 GoalPlanner/ContentSelector。必须验证旧 adapter 无 learner 行为不变、启用后 owner 只读边界、checkpoint digest/恢复一致、detach 后不残留语义结果，再用同一 8/4/4 canary 重跑。R1 aggregate、R2.R0 aggregate、R2.R0.1、R2.R0.2、R2.R1 和 R3.R0 报告均保留为基线。
 
 2026-09-06 实际审计已证明首轮报告不能作为能力证据：旧 evaluator 的 C/C′ 只是换 partition seed，不是新记录。当前已落地的修复为 `scripts/training/eval_taiji_m2r1_phase_c_canary.py` v2、`scripts/training/audit_taiji_m2r1_data_contract.py` 和 `reports/taiji_m2r1_data_contract_20260906.json`：
 
@@ -181,6 +182,8 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 **研究问题：** Taiji 能否从输入形成可验证内部内容，并通过语言或结构化行动表达？
 
 **课程按依赖递进：**
+
+**R3.R0 已完成（2026-09-07）：** 新增 `taiji/semantic_training.py` 的三段 native learner。事实 head 使用 `PerceptEvent.features + confidence/boundary metadata` 预测 relation facts 并物化 `WorldState`；Goal head 只消费事实概率；ContentPlan head 只消费事实与 Goal 概率。训练使用 detached local-delta，checkpoint 包含 corpus source digest、三个 owner 的参数和训练步数。CPU canary 使用 8/4/4 record-disjoint splits，并覆盖未知、互斥事实冲突、澄清计划、owner lesion 与恢复一致性；这一步不输入文本，不加载 Qwen/provider，不执行工具。
 
 1. 中文短指令、事实提取、实体/关系与约束：同义改写和模板族严格跨 split，包含歧义、未知和冲突。
 2. 上下文事件 → 持续世界状态 → 目标满足条件；用延迟查询和事实变更检验记忆更新，加入拒答/澄清。
