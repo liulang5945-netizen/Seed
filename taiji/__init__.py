@@ -449,6 +449,16 @@ from .procedural_memory import (
     ProceduralMemoryLearner,
     ProceduralSequenceLearner,
 )
+from .read_only_intent import (
+    READ_ONLY_INTENT_CAPABILITIES,
+    READ_ONLY_INTENT_PLANNER_FORMAT,
+    READ_ONLY_INTENT_PLANNER_VERSION,
+    READ_ONLY_INTENT_POLICY_FORMAT,
+    READ_ONLY_INTENT_POLICY_VERSION,
+    NativeReadOnlyIntentPlanner,
+    ReadOnlyIntentDecision,
+    ReadOnlyIntentPolicy,
+)
 from .semantic_memory import (
     SEMANTIC_MEMORY_CHECKPOINT_FORMAT,
     SemanticMemoryLearner,
@@ -965,6 +975,14 @@ __all__ = [
     "recovery_reader_credit_profile",
     "recovery_reader_credit_structure_digest",
     "PLANNING_CHECKPOINT_FORMAT",
+    "READ_ONLY_INTENT_CAPABILITIES",
+    "READ_ONLY_INTENT_PLANNER_FORMAT",
+    "READ_ONLY_INTENT_PLANNER_VERSION",
+    "READ_ONLY_INTENT_POLICY_FORMAT",
+    "READ_ONLY_INTENT_POLICY_VERSION",
+    "NativeReadOnlyIntentPlanner",
+    "ReadOnlyIntentDecision",
+    "ReadOnlyIntentPolicy",
     "ProceduralMemoryLearner",
     "PROCEDURAL_MEMORY_CHECKPOINT_FORMAT",
     "ProceduralSequenceLearner",

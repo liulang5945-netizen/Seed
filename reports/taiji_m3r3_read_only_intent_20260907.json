@@ -1,0 +1,633 @@
+{
+  "format": "taiji-m3r3-native-read-only-intent-v1",
+  "version": 1,
+  "gate": "M3.R3",
+  "status": "passed",
+  "can_promote": false,
+  "promotion_reason": "native read-only ActionIntent planning is a bounded CPU canary; preview approval, writes, terminal, MCP, and language selection remain frozen for M3.R4.",
+  "course": {
+    "manifest": {
+      "format": "taiji-structured-semantic-transition-v2",
+      "version": 2,
+      "source_digest": "0f2821ba4aff42cafc5bb92b91d39dedf58f9ac5b9aa5075c9694b47a910bceb",
+      "event_dim": 19,
+      "split_sizes": {
+        "train": 5,
+        "dev": 5,
+        "test": 5
+      },
+      "fact_keys": [
+        "workbench::diagnostics::disconnected",
+        "workbench::language::python",
+        "workbench::language::rust",
+        "workbench::language::typescript",
+        "workbench::language::unknown",
+        "workbench::language_state::ambiguous",
+        "workbench::language_state::resolved",
+        "workbench::language_state::unknown",
+        "workbench::read::failure",
+        "workbench::read::success",
+        "workbench::target::file",
+        "workbench::target::missing",
+        "workbench::toolchain::available",
+        "workbench::toolchain::missing"
+      ],
+      "goal_ids": [
+        "goal:clarify-language",
+        "goal:clarify-toolchain",
+        "goal:inspect-language",
+        "goal:recover-target"
+      ],
+      "content_ids": [
+        "content:clarify-language",
+        "content:clarify-toolchain",
+        "content:inspect-language",
+        "content:recover-target"
+      ],
+      "record_disjoint": true,
+      "provider_attached": false,
+      "runtime_only": false
+    },
+    "parameter_count": 5176,
+    "learning_epochs": 280,
+    "learning_rate": 0.2,
+    "losses": {
+      "transition_loss": 1.9738347359978285e-15,
+      "goal_loss": 0.000261024571955204,
+      "content_loss": 0.00010359568113926798
+    },
+    "read_only_policy": {
+      "format": "taiji-read-only-intent-policy-v1",
+      "version": 1,
+      "routes": {
+        "content:clarify-toolchain": "workspace.programming_language.resolve",
+        "content:inspect-language": "workspace.read"
+      }
+    },
+    "static_routes_are_host_policy": true
+  },
+  "metrics": {
+    "native": {
+      "arm": "native",
+      "steps": 5,
+      "expected_intent_steps": 3,
+      "accepted_intents": 3,
+      "intent_coverage": 1.0,
+      "route_accuracy": 1.0,
+      "policy_allow_accuracy": 1.0,
+      "evidence_accuracy": 1.0,
+      "clarification_accuracy": 1.0,
+      "side_effect_free": true,
+      "rows": [
+        {
+          "path": "app.py",
+          "expected_capability": "workspace.read",
+          "accepted": true,
+          "reason_code": "native_read_only_intent_ready",
+          "intent_capability": "workspace.read",
+          "policy": {
+            "decision": "allow",
+            "reason_code": "read_only_or_reversible",
+            "snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850"
+          },
+          "evidence": {
+            "operation": "workspace.read.evidence",
+            "digest": "cf2fbd0ff62e73d026ff1d5883191510e3ac526660a89f013d32daa1e3115aed",
+            "path": "app.py",
+            "matches_observation": true
+          },
+          "route_correct": true,
+          "clarification_correct": false,
+          "side_effect_free": true,
+          "evidence_match": true,
+          "tick": 1,
+          "arm": "native"
+        },
+        {
+          "path": "index.ts",
+          "expected_capability": "workspace.programming_language.resolve",
+          "accepted": true,
+          "reason_code": "native_read_only_intent_ready",
+          "intent_capability": "workspace.programming_language.resolve",
+          "policy": {
+            "decision": "allow",
+            "reason_code": "read_only_or_reversible",
+            "snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850"
+          },
+          "evidence": {
+            "operation": "workspace.programming_language.resolve.evidence",
+            "file_digest": "b01b4cb9e889e2499de2f0f8106415d68ecff65383ff8ad3c6927df7ac6a3ffb",
+            "programming_language_id": "typescript",
+            "selection_state": "resolved",
+            "matches_observation": true
+          },
+          "route_correct": true,
+          "clarification_correct": false,
+          "side_effect_free": true,
+          "evidence_match": true,
+          "tick": 2,
+          "arm": "native"
+        },
+        {
+          "path": "main.rs",
+          "expected_capability": "workspace.programming_language.resolve",
+          "accepted": true,
+          "reason_code": "native_read_only_intent_ready",
+          "intent_capability": "workspace.programming_language.resolve",
+          "policy": {
+            "decision": "allow",
+            "reason_code": "read_only_or_reversible",
+            "snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850"
+          },
+          "evidence": {
+            "operation": "workspace.programming_language.resolve.evidence",
+            "file_digest": "ed7eff41bbaedca75561b7a32b430102084852f3277f0e94677a2522faefd2f5",
+            "programming_language_id": "rust",
+            "selection_state": "resolved",
+            "matches_observation": true
+          },
+          "route_correct": true,
+          "clarification_correct": false,
+          "side_effect_free": true,
+          "evidence_match": true,
+          "tick": 3,
+          "arm": "native"
+        },
+        {
+          "path": "shared.h",
+          "expected_capability": null,
+          "accepted": false,
+          "reason_code": "clarification_required",
+          "intent_capability": null,
+          "policy": null,
+          "evidence": null,
+          "route_correct": true,
+          "clarification_correct": true,
+          "side_effect_free": true,
+          "tick": 4,
+          "arm": "native"
+        },
+        {
+          "path": "missing_test.rs",
+          "expected_capability": null,
+          "accepted": false,
+          "reason_code": null,
+          "intent_capability": null,
+          "policy": null,
+          "evidence": null,
+          "route_correct": true,
+          "clarification_correct": true,
+          "side_effect_free": true,
+          "tick": 5,
+          "arm": "native"
+        }
+      ]
+    },
+    "static_only": {
+      "arm": "static-only",
+      "steps": 5,
+      "expected_intent_steps": 3,
+      "accepted_intents": 0,
+      "intent_coverage": 0.0,
+      "route_accuracy": 0.4,
+      "policy_allow_accuracy": 0.0,
+      "evidence_accuracy": 0.0,
+      "clarification_accuracy": 1.0,
+      "side_effect_free": true,
+      "rows": [
+        {
+          "path": "app.py",
+          "expected_capability": "workspace.read",
+          "accepted": false,
+          "reason_code": "stale_world_observation",
+          "intent_capability": null,
+          "policy": null,
+          "evidence": null,
+          "route_correct": false,
+          "clarification_correct": false,
+          "side_effect_free": true,
+          "tick": 1,
+          "arm": "static-only"
+        },
+        {
+          "path": "index.ts",
+          "expected_capability": "workspace.programming_language.resolve",
+          "accepted": false,
+          "reason_code": "stale_world_observation",
+          "intent_capability": null,
+          "policy": null,
+          "evidence": null,
+          "route_correct": false,
+          "clarification_correct": false,
+          "side_effect_free": true,
+          "tick": 2,
+          "arm": "static-only"
+        },
+        {
+          "path": "main.rs",
+          "expected_capability": "workspace.programming_language.resolve",
+          "accepted": false,
+          "reason_code": "stale_world_observation",
+          "intent_capability": null,
+          "policy": null,
+          "evidence": null,
+          "route_correct": false,
+          "clarification_correct": false,
+          "side_effect_free": true,
+          "tick": 3,
+          "arm": "static-only"
+        },
+        {
+          "path": "shared.h",
+          "expected_capability": null,
+          "accepted": false,
+          "reason_code": "stale_world_observation",
+          "intent_capability": null,
+          "policy": null,
+          "evidence": null,
+          "route_correct": true,
+          "clarification_correct": true,
+          "side_effect_free": true,
+          "tick": 4,
+          "arm": "static-only"
+        },
+        {
+          "path": "missing_test.rs",
+          "expected_capability": null,
+          "accepted": false,
+          "reason_code": "clarification_required",
+          "intent_capability": null,
+          "policy": null,
+          "evidence": null,
+          "route_correct": true,
+          "clarification_correct": true,
+          "side_effect_free": true,
+          "tick": 5,
+          "arm": "static-only"
+        }
+      ]
+    },
+    "provider_assisted_upper_bound": {
+      "arm": "provider",
+      "steps": 5,
+      "expected_intent_steps": 3,
+      "accepted_intents": 3,
+      "intent_coverage": 1.0,
+      "route_accuracy": 1.0,
+      "policy_allow_accuracy": 1.0,
+      "evidence_accuracy": 1.0,
+      "clarification_accuracy": 1.0,
+      "side_effect_free": true,
+      "rows": [
+        {
+          "path": "app.py",
+          "expected_capability": "workspace.read",
+          "accepted": true,
+          "reason_code": "native_read_only_intent_ready",
+          "intent_capability": "workspace.read",
+          "policy": {
+            "decision": "allow",
+            "reason_code": "read_only_or_reversible",
+            "snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850"
+          },
+          "evidence": {
+            "operation": "workspace.read.evidence",
+            "digest": "cf2fbd0ff62e73d026ff1d5883191510e3ac526660a89f013d32daa1e3115aed",
+            "path": "app.py",
+            "matches_observation": true
+          },
+          "route_correct": true,
+          "clarification_correct": false,
+          "side_effect_free": true,
+          "evidence_match": true,
+          "tick": 1,
+          "arm": "provider"
+        },
+        {
+          "path": "index.ts",
+          "expected_capability": "workspace.programming_language.resolve",
+          "accepted": true,
+          "reason_code": "native_read_only_intent_ready",
+          "intent_capability": "workspace.programming_language.resolve",
+          "policy": {
+            "decision": "allow",
+            "reason_code": "read_only_or_reversible",
+            "snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850"
+          },
+          "evidence": {
+            "operation": "workspace.programming_language.resolve.evidence",
+            "file_digest": "b01b4cb9e889e2499de2f0f8106415d68ecff65383ff8ad3c6927df7ac6a3ffb",
+            "programming_language_id": "typescript",
+            "selection_state": "resolved",
+            "matches_observation": true
+          },
+          "route_correct": true,
+          "clarification_correct": false,
+          "side_effect_free": true,
+          "evidence_match": true,
+          "tick": 2,
+          "arm": "provider"
+        },
+        {
+          "path": "main.rs",
+          "expected_capability": "workspace.programming_language.resolve",
+          "accepted": true,
+          "reason_code": "native_read_only_intent_ready",
+          "intent_capability": "workspace.programming_language.resolve",
+          "policy": {
+            "decision": "allow",
+            "reason_code": "read_only_or_reversible",
+            "snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850"
+          },
+          "evidence": {
+            "operation": "workspace.programming_language.resolve.evidence",
+            "file_digest": "ed7eff41bbaedca75561b7a32b430102084852f3277f0e94677a2522faefd2f5",
+            "programming_language_id": "rust",
+            "selection_state": "resolved",
+            "matches_observation": true
+          },
+          "route_correct": true,
+          "clarification_correct": false,
+          "side_effect_free": true,
+          "evidence_match": true,
+          "tick": 3,
+          "arm": "provider"
+        },
+        {
+          "path": "shared.h",
+          "expected_capability": null,
+          "accepted": false,
+          "reason_code": "clarification_required",
+          "intent_capability": null,
+          "policy": null,
+          "evidence": null,
+          "route_correct": true,
+          "clarification_correct": true,
+          "side_effect_free": true,
+          "tick": 4,
+          "arm": "provider"
+        },
+        {
+          "path": "missing_test.rs",
+          "expected_capability": null,
+          "accepted": false,
+          "reason_code": "clarification_required",
+          "intent_capability": null,
+          "policy": null,
+          "evidence": null,
+          "route_correct": true,
+          "clarification_correct": true,
+          "side_effect_free": true,
+          "tick": 5,
+          "arm": "provider"
+        }
+      ]
+    },
+    "empty": {
+      "arm": "empty",
+      "steps": 5,
+      "expected_intent_steps": 3,
+      "accepted_intents": 0,
+      "intent_coverage": 0.0,
+      "route_accuracy": 0.4,
+      "policy_allow_accuracy": 0.0,
+      "evidence_accuracy": 0.0,
+      "clarification_accuracy": 1.0,
+      "side_effect_free": true,
+      "rows": [
+        {
+          "path": "app.py",
+          "expected_capability": "workspace.read",
+          "accepted": false,
+          "reason_code": null,
+          "intent_capability": null,
+          "policy": null,
+          "evidence": null,
+          "route_correct": false,
+          "clarification_correct": false,
+          "side_effect_free": true,
+          "tick": 1,
+          "arm": "empty"
+        },
+        {
+          "path": "index.ts",
+          "expected_capability": "workspace.programming_language.resolve",
+          "accepted": false,
+          "reason_code": null,
+          "intent_capability": null,
+          "policy": null,
+          "evidence": null,
+          "route_correct": false,
+          "clarification_correct": false,
+          "side_effect_free": true,
+          "tick": 2,
+          "arm": "empty"
+        },
+        {
+          "path": "main.rs",
+          "expected_capability": "workspace.programming_language.resolve",
+          "accepted": false,
+          "reason_code": null,
+          "intent_capability": null,
+          "policy": null,
+          "evidence": null,
+          "route_correct": false,
+          "clarification_correct": false,
+          "side_effect_free": true,
+          "tick": 3,
+          "arm": "empty"
+        },
+        {
+          "path": "shared.h",
+          "expected_capability": null,
+          "accepted": false,
+          "reason_code": null,
+          "intent_capability": null,
+          "policy": null,
+          "evidence": null,
+          "route_correct": true,
+          "clarification_correct": true,
+          "side_effect_free": true,
+          "tick": 4,
+          "arm": "empty"
+        },
+        {
+          "path": "missing_test.rs",
+          "expected_capability": null,
+          "accepted": false,
+          "reason_code": null,
+          "intent_capability": null,
+          "policy": null,
+          "evidence": null,
+          "route_correct": true,
+          "clarification_correct": true,
+          "side_effect_free": true,
+          "tick": 5,
+          "arm": "empty"
+        }
+      ]
+    },
+    "lesion": {
+      "arm": "native",
+      "steps": 5,
+      "expected_intent_steps": 3,
+      "accepted_intents": 0,
+      "intent_coverage": 0.0,
+      "route_accuracy": 0.4,
+      "policy_allow_accuracy": 0.0,
+      "evidence_accuracy": 0.0,
+      "clarification_accuracy": 1.0,
+      "side_effect_free": true,
+      "rows": [
+        {
+          "path": "app.py",
+          "expected_capability": "workspace.read",
+          "accepted": false,
+          "reason_code": "stale_world_observation",
+          "intent_capability": null,
+          "policy": null,
+          "evidence": null,
+          "route_correct": false,
+          "clarification_correct": false,
+          "side_effect_free": true,
+          "tick": 1,
+          "arm": "native"
+        },
+        {
+          "path": "index.ts",
+          "expected_capability": "workspace.programming_language.resolve",
+          "accepted": false,
+          "reason_code": "stale_world_observation",
+          "intent_capability": null,
+          "policy": null,
+          "evidence": null,
+          "route_correct": false,
+          "clarification_correct": false,
+          "side_effect_free": true,
+          "tick": 2,
+          "arm": "native"
+        },
+        {
+          "path": "main.rs",
+          "expected_capability": "workspace.programming_language.resolve",
+          "accepted": false,
+          "reason_code": "stale_world_observation",
+          "intent_capability": null,
+          "policy": null,
+          "evidence": null,
+          "route_correct": false,
+          "clarification_correct": false,
+          "side_effect_free": true,
+          "tick": 3,
+          "arm": "native"
+        },
+        {
+          "path": "shared.h",
+          "expected_capability": null,
+          "accepted": false,
+          "reason_code": "stale_world_observation",
+          "intent_capability": null,
+          "policy": null,
+          "evidence": null,
+          "route_correct": true,
+          "clarification_correct": true,
+          "side_effect_free": true,
+          "tick": 4,
+          "arm": "native"
+        },
+        {
+          "path": "missing_test.rs",
+          "expected_capability": null,
+          "accepted": false,
+          "reason_code": null,
+          "intent_capability": null,
+          "policy": null,
+          "evidence": null,
+          "route_correct": true,
+          "clarification_correct": true,
+          "side_effect_free": true,
+          "tick": 5,
+          "arm": "native"
+        }
+      ]
+    },
+    "decision_roundtrip": {
+      "digest_stable": true,
+      "accepted_preserved": true,
+      "intent_kind_preserved": true
+    },
+    "stale_snapshot": {
+      "accepted_source_intent": true,
+      "stale_request_denied": true,
+      "reason_code": "stale_capability_snapshot"
+    }
+  },
+  "checkpoint": {
+    "preflight_saved": true,
+    "preflight_output_stable": true,
+    "post_training_saved": true,
+    "post_training_output_stable": true,
+    "planner": {
+      "saved": true,
+      "payload_stable": true,
+      "policy_stable": true,
+      "routes": {
+        "content:clarify-toolchain": "workspace.programming_language.resolve",
+        "content:inspect-language": "workspace.read"
+      }
+    },
+    "training_steps": 1400
+  },
+  "runtime": {
+    "owner_attached": true,
+    "checkpoint_component_present": true,
+    "restored_owner_present": true,
+    "output_stable_after_runtime_restore": true,
+    "cognitive_state_read_only": true,
+    "runtime_checkpoint_stable": true,
+    "output_digest": "dd14474e3c34181a7d9f7d762cb08f8a2add76eff9c354b0533efa67d400a076",
+    "restored_output_digest": "dd14474e3c34181a7d9f7d762cb08f8a2add76eff9c354b0533efa67d400a076"
+  },
+  "fixtures": {
+    "before": {
+      "train": "b8d28fb3425b8d190a5bb581b45e323b067be643301407c287b77dfcc75fa4c2",
+      "dev": "636cb061b3b05da59eebc6a765a73fec585e0c3b3bb5c44c7cc380bbbce6d406",
+      "test": "375dcdfc059b5beca391a27a1dd0dcad6a949a43bf5f31f4d35eb6f5129a8e00"
+    },
+    "after": {
+      "train": "b8d28fb3425b8d190a5bb581b45e323b067be643301407c287b77dfcc75fa4c2",
+      "dev": "636cb061b3b05da59eebc6a765a73fec585e0c3b3bb5c44c7cc380bbbce6d406",
+      "test": "375dcdfc059b5beca391a27a1dd0dcad6a949a43bf5f31f4d35eb6f5129a8e00"
+    },
+    "unchanged": true
+  },
+  "boundaries": {
+    "provider_final_binding": false,
+    "raw_text_language_learning": false,
+    "workspace_read_execution": false,
+    "workspace_write": false,
+    "terminal": false,
+    "mcp": false,
+    "editor_set_language": false,
+    "cuda": false
+  },
+  "gates": {
+    "project_disjoint": true,
+    "native_expected_intents": true,
+    "native_route_accuracy": true,
+    "native_policy_allow": true,
+    "native_evidence_accuracy": true,
+    "native_clarification_accuracy": true,
+    "native_side_effect_free": true,
+    "native_beats_static_only": true,
+    "provider_upper_bound": true,
+    "empty_arm_is_empty": true,
+    "stale_snapshot_denied": true,
+    "decision_roundtrip": true,
+    "checkpoint_save_restore": true,
+    "runtime_owner_roundtrip": true,
+    "transition_lesion_changes_intent": true,
+    "fixture_workspaces_unchanged": true,
+    "provider_not_attached": true
+  }
+}
