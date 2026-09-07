@@ -120,6 +120,7 @@ from .semantic_provider import (
     SEMANTIC_PROVIDER_CONFIDENCE_FLOOR,
     SemanticEvidenceProposal,
 )
+from .semantic_training import StructuredSemanticLearner, StructuredSemanticResult
 from .state import TaijiDecision, TaijiOutcome, TaijiStep
 from .structural_arbitration import (
     StructuralCandidateBatch,
@@ -271,6 +272,8 @@ class TSKV8Adapter(Taiji):
         self._workspace_router: WorkspaceRouter | None = None
         self._episodic_memory: EpisodicMemoryStore | None = None
         self._semantic_memory: SemanticMemoryLearner | None = None
+        self._structured_semantic_learner: StructuredSemanticLearner | None = None
+        self._last_structured_semantic_result: StructuredSemanticResult | None = None
         self._procedural_sequence_memory: ProceduralSequenceLearner | None = None
         self._concept_formation = ConceptFormationOrgan(
             similarity_threshold=self.config.concept_similarity_threshold,
@@ -439,6 +442,49 @@ class TSKV8Adapter(Taiji):
         """Return the latest provider proposal accepted as Taiji evidence."""
 
         return self._last_semantic_provider_evidence
+
+    @property
+    def structured_semantic_learner(self) -> StructuredSemanticLearner | None:
+        """Return the optional native structured semantic owner."""
+
+        return self._structured_semantic_learner
+
+    @property
+    def last_structured_semantic_result(self) -> StructuredSemanticResult | None:
+        """Return the latest read-only structured semantic snapshot."""
+
+        return self._last_structured_semantic_result
+
+    def attach_structured_semantic_learner(
+        self, learner: StructuredSemanticLearner | None
+    ) -> None:
+        """Attach or detach the optional native semantic owner.
+
+        Attachment does not run inference or mutate the cognitive state.  The
+        caller must explicitly request a read-only prediction through
+        :meth:`infer_structured_semantics`.
+        """
+
+        if learner is not None and not isinstance(learner, StructuredSemanticLearner):
+            raise TypeError("learner must be a StructuredSemanticLearner or None")
+        self._structured_semantic_learner = learner
+        self._last_structured_semantic_result = None
+
+    def infer_structured_semantics(
+        self, percept: PerceptEvent | None = None
+    ) -> StructuredSemanticResult:
+        """Run the attached semantic owner without planning or executing."""
+
+        if self._structured_semantic_learner is None:
+            raise RuntimeError("structured semantic learner is not attached")
+        selected = self._cognitive_state.percept if percept is None else percept
+        if selected is None:
+            raise RuntimeError("structured semantic inference requires a current percept")
+        if not isinstance(selected, PerceptEvent):
+            raise TypeError("structured semantic inference requires a PerceptEvent")
+        result = self._structured_semantic_learner.predict(selected)
+        self._last_structured_semantic_result = result
+        return result
 
     @property
     def concept_formation(self) -> ConceptFormationOrgan:
@@ -11883,6 +11929,27 @@ class TSKV8Adapter(Taiji):
             else SemanticMemoryLearner.from_checkpoint(dict(payload), device=self.device)
         )
 
+    def _restore_structured_semantic(self, payload: Any) -> None:
+        if payload is None:
+            self._structured_semantic_learner = None
+            self._last_structured_semantic_result = None
+            return
+        if not isinstance(payload, Mapping):
+            raise ValueError("structured semantic checkpoint payload is invalid")
+        learner_payload = payload.get("learner")
+        if not isinstance(learner_payload, Mapping):
+            raise ValueError("structured semantic learner checkpoint payload is invalid")
+        self._structured_semantic_learner = StructuredSemanticLearner.from_checkpoint(
+            learner_payload,
+            device=self.device,
+        )
+        result_payload = payload.get("last_result")
+        self._last_structured_semantic_result = (
+            None
+            if result_payload is None
+            else StructuredSemanticResult.from_payload(result_payload, device=self.device)
+        )
+
     def _restore_concept_formation(self, payload: Any) -> None:
         self._concept_formation = (
             ConceptFormationOrgan(
@@ -12266,6 +12333,15 @@ class TSKV8Adapter(Taiji):
             components["episodic_memory"] = self._episodic_memory.checkpoint()
         if self._semantic_memory is not None:
             components["semantic_memory"] = self._semantic_memory.checkpoint()
+        if self._structured_semantic_learner is not None:
+            components["structured_semantic"] = {
+                "learner": self._structured_semantic_learner.checkpoint(),
+                "last_result": (
+                    None
+                    if self._last_structured_semantic_result is None
+                    else self._last_structured_semantic_result.to_payload()
+                ),
+            }
         components["concept_formation"] = self._concept_formation.checkpoint()
         components["growth_requests"] = self._growth_requests_checkpoint()
         components["topology_proposals"] = self._topology_proposals_checkpoint()
@@ -12393,6 +12469,7 @@ class TSKV8Adapter(Taiji):
         self._restore_workspace_router(envelope.components.get("workspace_router"))
         self._restore_episodic_memory(envelope.components.get("episodic_memory"))
         self._restore_semantic_memory(envelope.components.get("semantic_memory"))
+        self._restore_structured_semantic(envelope.components.get("structured_semantic"))
         self._restore_concept_formation(envelope.components.get("concept_formation"))
         self._restore_growth_requests(envelope.components.get("growth_requests"))
         self._restore_topology_proposals(envelope.components.get("topology_proposals"))

@@ -1,0 +1,82 @@
+{
+  "format": "taiji-m2r3-r1-runtime-semantic-owner-v1",
+  "version": 1,
+  "status": "passed",
+  "can_promote": false,
+  "source_corpus_digest": "6bcdcee4033abce9ee8d54590390c945da85052d009e1cf11b0649858ab45614",
+  "preflight": {
+    "checkpoint_digest": "c61f6fc5d756217f6cfc9ace3a58a47b143981190bd5588c4cca38ab3b60bd34",
+    "component_keys": [
+      "concept_formation",
+      "content_feedback_applied",
+      "growth_requests",
+      "language_backend_registry",
+      "language_fallback_count",
+      "language_fallback_requires_replan",
+      "language_provider_artifact",
+      "language_provider_artifact_registry",
+      "language_provider_health",
+      "last_affordance_prediction_error",
+      "last_content_prediction_error",
+      "last_content_selection",
+      "last_delayed_executive_prediction_error",
+      "last_executive_decision",
+      "last_executive_prediction_error",
+      "last_executive_world_action",
+      "last_generation_trace",
+      "last_language_emission",
+      "last_rollout_calibrated_confidence",
+      "last_rollout_prediction_error",
+      "last_semantic_provider_evidence",
+      "last_task_decomposition",
+      "last_task_interpretation",
+      "neuron_networks",
+      "neuron_regions",
+      "online_concept_branches",
+      "pending_executive_credit",
+      "perception",
+      "planned_rollout",
+      "planning_recovery",
+      "recovery_archive",
+      "recovery_generation",
+      "recovery_memory_epochs",
+      "recovery_memory_rebuild_count",
+      "recovery_portfolio",
+      "recovery_procedural_learning_rate",
+      "recovery_reader_dependencies",
+      "recovery_semantic_learning_rate",
+      "recovery_strategy_ledger",
+      "replan_required",
+      "structural_growth",
+      "structural_pruning",
+      "structural_runtime",
+      "structured_semantic",
+      "topology_proposals"
+    ],
+    "learner_parameter_count": 122,
+    "training_losses": {
+      "fact_loss": 0.0015361587284132838,
+      "goal_loss": 9.791659067559522e-06,
+      "content_loss": 3.4582350053824484e-05
+    }
+  },
+  "result": {
+    "status": "resolved",
+    "goal_id": "goal:report",
+    "content_id": "content:report:cache",
+    "digest": "061a7063f842d28369190996dc20d7af81adb44be0014f301f420761781e75cc"
+  },
+  "gate": {
+    "passed": true,
+    "checks": {
+      "explicit_attach_required": true,
+      "inference_is_state_read_only": true,
+      "result_is_structured": true,
+      "native_checkpoint_contains_owner": true,
+      "checkpoint_round_trip": true,
+      "restored_inference_matches": true,
+      "detach_clears_snapshot": true,
+      "no_provider_or_execution": true
+    }
+  }
+}
