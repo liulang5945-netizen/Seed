@@ -1,0 +1,228 @@
+{
+  "format": "taiji-m3r1-native-workbench-observation-v1",
+  "version": 1,
+  "gate": "M3.R1",
+  "status": "passed",
+  "can_promote": false,
+  "promotion_reason": "native Workbench observation learning is admitted only as a bounded CPU Gate; it is not open-domain language generation or executable Workbench autonomy.",
+  "course": {
+    "manifest": {
+      "format": "taiji-structured-semantic-training-v1",
+      "version": 1,
+      "source_digest": "c652cd2cf3608ce2c01df6c4b073c7326223f668a6f7a90da7327ffec9bf4293",
+      "feature_dim": 19,
+      "split_sizes": {
+        "train": 5,
+        "dev": 5,
+        "test": 5
+      },
+      "fact_keys": [
+        "workbench::diagnostics::disconnected",
+        "workbench::language::python",
+        "workbench::language::rust",
+        "workbench::language::typescript",
+        "workbench::language::unknown",
+        "workbench::language_state::ambiguous",
+        "workbench::language_state::resolved",
+        "workbench::language_state::unknown",
+        "workbench::read::failure",
+        "workbench::read::success",
+        "workbench::target::file",
+        "workbench::target::missing",
+        "workbench::toolchain::available",
+        "workbench::toolchain::missing"
+      ],
+      "goal_ids": [
+        "goal:clarify-language",
+        "goal:clarify-toolchain",
+        "goal:inspect-language",
+        "goal:recover-target"
+      ],
+      "content_ids": [
+        "content:clarify-language",
+        "content:clarify-toolchain",
+        "content:inspect-language",
+        "content:recover-target"
+      ],
+      "record_disjoint": true,
+      "provider_attached": false,
+      "runtime_only": false
+    },
+    "project_ids": [
+      "m3r1-project-dev",
+      "m3r1-project-test",
+      "m3r1-project-train"
+    ],
+    "observation_schema": {
+      "format": "taiji-workbench-observation-v1",
+      "version": 1,
+      "language_ids": [
+        "python",
+        "rust",
+        "typescript",
+        "unknown"
+      ],
+      "selection_states": [
+        "ambiguous",
+        "resolved",
+        "unknown"
+      ],
+      "task_kinds": [
+        "inspect-language"
+      ],
+      "extensions": [
+        ".h",
+        ".py",
+        ".rs",
+        ".ts",
+        "<none>"
+      ],
+      "feature_names": [
+        "language:python",
+        "language:rust",
+        "language:typescript",
+        "language:unknown",
+        "selection:ambiguous",
+        "selection:resolved",
+        "selection:unknown",
+        "task:inspect-language",
+        "extension:.h",
+        "extension:.py",
+        "extension:.rs",
+        "extension:.ts",
+        "extension:<none>",
+        "read_success",
+        "file_is_file",
+        "byte_length_fraction",
+        "language_confidence",
+        "toolchain_available",
+        "diagnostics_connected"
+      ],
+      "feature_dim": 19,
+      "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3"
+    },
+    "parameter_count": 472,
+    "owner_digests_changed": {
+      "semantic_fact": true,
+      "semantic_goal": true,
+      "semantic_content": true
+    },
+    "losses": {
+      "fact_loss": 0.0024425978772342205,
+      "goal_loss": 5.976558895781636e-06,
+      "content_loss": 2.388431767030852e-06
+    }
+  },
+  "metrics": {
+    "native_train": {
+      "examples": 5,
+      "fact_f1": 1.0,
+      "goal_accuracy": 0.8,
+      "content_accuracy": 0.8,
+      "status_accuracy": 0.8
+    },
+    "native_dev": {
+      "examples": 5,
+      "fact_f1": 1.0,
+      "goal_accuracy": 0.8,
+      "content_accuracy": 0.8,
+      "status_accuracy": 0.8
+    },
+    "native_test": {
+      "examples": 5,
+      "fact_f1": 1.0,
+      "goal_accuracy": 0.8,
+      "content_accuracy": 0.8,
+      "status_accuracy": 0.8
+    },
+    "native_lesion_test": {
+      "examples": 5,
+      "fact_f1": 0.0,
+      "goal_accuracy": 0.0,
+      "content_accuracy": 0.0,
+      "status_accuracy": 0.0
+    },
+    "controls": {
+      "provider_assisted_upper_bound": {
+        "examples": 5,
+        "fact_f1": 1.0,
+        "goal_accuracy": 1.0,
+        "content_accuracy": 1.0,
+        "status_accuracy": 1.0
+      },
+      "empty_plan": {
+        "examples": 5,
+        "fact_f1": 0.0,
+        "goal_accuracy": 0.0,
+        "content_accuracy": 0.0,
+        "status_accuracy": 0.0
+      },
+      "untrained_static_only": {
+        "examples": 5,
+        "fact_f1": 0.0,
+        "goal_accuracy": 0.0,
+        "content_accuracy": 0.0,
+        "status_accuracy": 0.0
+      }
+    }
+  },
+  "checkpoint": {
+    "preflight_saved": true,
+    "preflight_prediction_stable": true,
+    "preflight_owner_digest": "2b9623fea75169b5d306516277cc4c3e703cd8ca7ae74dd9c97a43c169f11ef6",
+    "post_training_saved": true,
+    "post_training_prediction_stable": true,
+    "post_training_owner_digest": "f0e21021edc6f783278a40f3692ecbe571a22e99f7e4f04d914b9464565c5f1d",
+    "training_steps": 1100
+  },
+  "observation": {
+    "observation_digest_equal": true,
+    "event_digest_equal": true,
+    "feature_vector_equal": true,
+    "capability_revision_preserved": true
+  },
+  "runtime": {
+    "owner_attached": true,
+    "checkpoint_component_present": true,
+    "restored_owner_present": true,
+    "output_digest": "a52815f9ccdc2e88a36e4aac54cc54c203f882e5aec7ca3eb18320bdcb5efb5e",
+    "restored_output_digest": "a52815f9ccdc2e88a36e4aac54cc54c203f882e5aec7ca3eb18320bdcb5efb5e",
+    "output_stable_after_runtime_restore": true,
+    "cognitive_state_read_only": true,
+    "runtime_checkpoint_stable": true
+  },
+  "fixtures": {
+    "before": {
+      "train": "b8d28fb3425b8d190a5bb581b45e323b067be643301407c287b77dfcc75fa4c2",
+      "dev": "636cb061b3b05da59eebc6a765a73fec585e0c3b3bb5c44c7cc380bbbce6d406",
+      "test": "375dcdfc059b5beca391a27a1dd0dcad6a949a43bf5f31f4d35eb6f5129a8e00"
+    },
+    "after": {
+      "train": "b8d28fb3425b8d190a5bb581b45e323b067be643301407c287b77dfcc75fa4c2",
+      "dev": "636cb061b3b05da59eebc6a765a73fec585e0c3b3bb5c44c7cc380bbbce6d406",
+      "test": "375dcdfc059b5beca391a27a1dd0dcad6a949a43bf5f31f4d35eb6f5129a8e00"
+    },
+    "unchanged": true
+  },
+  "boundaries": {
+    "provider_final_binding": false,
+    "raw_text_language_learning": false,
+    "workspace_write": false,
+    "terminal": false,
+    "mcp": false,
+    "cuda": false
+  },
+  "gates": {
+    "project_disjoint": true,
+    "native_test_fact_f1": true,
+    "native_test_goal_accuracy": true,
+    "native_test_content_accuracy": true,
+    "native_test_status_accuracy": true,
+    "checkpoint_save_restore": true,
+    "observation_roundtrip": true,
+    "runtime_owner_roundtrip": true,
+    "fixture_workspaces_unchanged": true,
+    "provider_not_attached": true,
+    "lesion_changes_fact_owner": true
+  }
+}
