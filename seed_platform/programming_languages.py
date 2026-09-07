@@ -526,6 +526,46 @@ class ProgrammingLanguageRegistry:
             "languages": [definition.to_payload() for definition in self._definitions],
         }
 
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> ProgrammingLanguageRegistry:
+        """Restore a registry without silently falling back to host defaults."""
+
+        if payload.get("format") != PROGRAMMING_LANGUAGE_CONTRACT_FORMAT:
+            raise ValueError("unsupported programming language registry format")
+        if int(payload.get("version", -1)) != PROGRAMMING_LANGUAGE_CONTRACT_VERSION:
+            raise ValueError("unsupported programming language registry version")
+        raw_languages = payload.get("languages", ())
+        if isinstance(raw_languages, (str, bytes)) or not isinstance(raw_languages, Iterable):
+            raise ValueError("programming language registry languages must be iterable")
+        definitions = tuple(
+            ProgrammingLanguageDefinition(
+                language_id=str(item["language_id"]),
+                label=str(item["label"]),
+                editor_language_id=str(item["editor_language_id"]),
+                extensions=tuple(str(value) for value in item.get("extensions", ())),
+                shebangs=tuple(str(value) for value in item.get("shebangs", ())),
+                content_patterns=tuple(
+                    str(value) for value in item.get("content_patterns", ())
+                ),
+                manifest_files=tuple(
+                    str(value) for value in item.get("manifest_files", ())
+                ),
+                toolchain_commands=tuple(
+                    str(value) for value in item.get("toolchain_commands", ())
+                ),
+                runner_id=str(item.get("runner_id") or ""),
+                lsp_id=str(item.get("lsp_id") or ""),
+            )
+            for item in raw_languages
+            if isinstance(item, Mapping)
+        )
+        if not definitions:
+            raise ValueError("programming language registry cannot be empty")
+        registry = cls(definitions)
+        if str(payload.get("revision", "")) != registry.revision:
+            raise ValueError("programming language registry revision digest mismatch")
+        return registry
+
     def available_toolchains(self) -> tuple[str, ...]:
         commands = {
             command
@@ -615,6 +655,9 @@ class ProgrammingLanguageRegistry:
 
         candidate_ids = {item.language_id for item in evidence}
         manifest_candidates = {item.language_id for item in evidence if item.source == "manifest"}
+        extension_candidates = {
+            item.language_id for item in evidence if item.source == "extension"
+        }
         for definition in self._definitions:
             if (
                 definition.language_id in candidate_ids
@@ -622,6 +665,15 @@ class ProgrammingLanguageRegistry:
                     command.lower() in toolchain_set for command in definition.toolchain_commands
                 )
                 and (len(candidate_ids) == 1 or definition.language_id in manifest_candidates)
+                # A host toolchain is supporting evidence, not permission to
+                # override another candidate's explicit filename extension.
+                # This keeps ``.ts`` from becoming JavaScript merely because
+                # node is installed, while leaving genuinely ambiguous
+                # shared extensions (for example ``.h``) unresolved.
+                and (
+                    not extension_candidates
+                    or definition.language_id in extension_candidates
+                )
             ):
                 add(definition, "toolchain", "declared toolchain is available")
 

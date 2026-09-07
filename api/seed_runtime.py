@@ -1281,6 +1281,9 @@ class SeedRuntime:
                     "workbench": {
                         "snapshot": workbench.capability_snapshot.to_payload(),
                         "mcp_registry": workbench.mcp_registry.to_payload(),
+                        "programming_language_registry": (
+                            workbench.programming_language_registry.to_payload()
+                        ),
                         "audit": self._workbench_audit.to_payload(),
                         "language_state": workbench.language_state_checkpoint(),
                         "transaction_state": workbench.transaction_state_checkpoint(),
@@ -1471,6 +1474,7 @@ class SeedRuntime:
         if not isinstance(payload, Mapping):
             return
         from seed_platform.mcp_registry import McpToolRegistry
+        from seed_platform.programming_languages import ProgrammingLanguageRegistry
         from seed_platform.workbench import (
             CapabilitySnapshot,
             WorkbenchAuditLog,
@@ -1482,6 +1486,13 @@ class SeedRuntime:
         registry = self._workbench_environment.mcp_registry
         if isinstance(registry_payload, Mapping):
             registry = McpToolRegistry.from_payload(registry_payload)
+        language_registry_payload = payload.get("programming_language_registry")
+        language_registry = self._workbench_environment.programming_language_registry
+        if isinstance(language_registry_payload, Mapping):
+            language_registry = ProgrammingLanguageRegistry.from_payload(
+                language_registry_payload
+            )
+        target_snapshot = self._workbench_environment.capability_snapshot
         if isinstance(snapshot_payload, Mapping):
             snapshot = CapabilitySnapshot.from_payload(snapshot_payload)
             current = self._workbench_environment.capability_snapshot
@@ -1491,17 +1502,27 @@ class SeedRuntime:
             ):
                 raise ValueError("workbench capability snapshot drifted during restore")
             if snapshot.snapshot_id == current.snapshot_id:
-                self._workbench_environment = WorkbenchEnvironment(
-                    self._workbench_environment.root,
-                    snapshot=snapshot,
-                    mcp_registry=registry,
-                )
+                target_snapshot = snapshot
             else:
                 logger.info(
                     "migrating workbench capability snapshot revision %s to %s",
                     snapshot.revision,
                     current.revision,
                 )
+        if (
+            isinstance(snapshot_payload, Mapping)
+            and target_snapshot.snapshot_id != self._workbench_environment.capability_snapshot.snapshot_id
+        ):
+            target_snapshot = self._workbench_environment.capability_snapshot
+        if isinstance(snapshot_payload, Mapping) or isinstance(
+            language_registry_payload, Mapping
+        ) or isinstance(registry_payload, Mapping):
+            self._workbench_environment = WorkbenchEnvironment(
+                self._workbench_environment.root,
+                snapshot=target_snapshot,
+                programming_language_registry=language_registry,
+                mcp_registry=registry,
+            )
         audit_payload = payload.get("audit")
         if isinstance(audit_payload, Mapping):
             self._workbench_audit = WorkbenchAuditLog.from_payload(audit_payload)

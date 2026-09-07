@@ -1,0 +1,175 @@
+{
+  "format": "taiji-m3-workbench-readonly-v1",
+  "version": 1,
+  "status": "passed",
+  "task": "M3 first project-disjoint Taiji Workbench read-only task",
+  "projects": [
+    {
+      "project_id": "python",
+      "project_root": "python_app",
+      "path": "src/app.py",
+      "expected_language": "python",
+      "status": "completed",
+      "goal_present": true,
+      "content_plan_present": true,
+      "provider_has_no_final_language_id": true,
+      "language_evidence_language": "python",
+      "language_result_language": "python",
+      "language_result_state": "resolved",
+      "language_evidence_digest": "ee67ffdd3ef694365038cb9d9b242815fddc3fefd1dde21ce035452945ee1458",
+      "language_result_digest": "ee67ffdd3ef694365038cb9d9b242815fddc3fefd1dde21ce035452945ee1458",
+      "available_for_language": [
+        "python",
+        "python3"
+      ],
+      "planning_sources": [
+        "taiji-semantic-contract",
+        "taiji-semantic-contract"
+      ],
+      "execution_capabilities": [
+        "workspace.read",
+        "workspace.programming_language.resolve"
+      ],
+      "execution_status": "completed",
+      "step_successes": [
+        true,
+        true
+      ],
+      "side_effects": false,
+      "checkpoint_saved": true,
+      "restored_selection_state": "resolved",
+      "restored_language_digest": "ee67ffdd3ef694365038cb9d9b242815fddc3fefd1dde21ce035452945ee1458",
+      "recovery_status": "completed",
+      "recovery_step_success": true,
+      "workspace_unchanged": true
+    },
+    {
+      "project_id": "typescript",
+      "project_root": "typescript_app",
+      "path": "src/index.ts",
+      "expected_language": "typescript",
+      "status": "completed",
+      "goal_present": true,
+      "content_plan_present": true,
+      "provider_has_no_final_language_id": true,
+      "language_evidence_language": "typescript",
+      "language_result_language": "typescript",
+      "language_result_state": "resolved",
+      "language_evidence_digest": "275154af9502328d76aa3729d212cd93d3a9f4509ffbf8912d4421b2f0c51dfa",
+      "language_result_digest": "275154af9502328d76aa3729d212cd93d3a9f4509ffbf8912d4421b2f0c51dfa",
+      "available_for_language": [],
+      "planning_sources": [
+        "taiji-semantic-contract",
+        "taiji-semantic-contract"
+      ],
+      "execution_capabilities": [
+        "workspace.read",
+        "workspace.programming_language.resolve"
+      ],
+      "execution_status": "completed",
+      "step_successes": [
+        true,
+        true
+      ],
+      "side_effects": false,
+      "checkpoint_saved": true,
+      "restored_selection_state": "resolved",
+      "restored_language_digest": "275154af9502328d76aa3729d212cd93d3a9f4509ffbf8912d4421b2f0c51dfa",
+      "recovery_status": "completed",
+      "recovery_step_success": true,
+      "workspace_unchanged": true
+    },
+    {
+      "project_id": "missing-toolchain",
+      "project_root": "missing_toolchain",
+      "path": "src/main.rs",
+      "expected_language": "rust",
+      "status": "completed",
+      "goal_present": true,
+      "content_plan_present": true,
+      "provider_has_no_final_language_id": true,
+      "language_evidence_language": "rust",
+      "language_result_language": "rust",
+      "language_result_state": "resolved",
+      "language_evidence_digest": "47a0aa5e7e6face49c6c21ec1a3e3b90859afb8cdcd4cebd60f584072cb42c56",
+      "language_result_digest": "47a0aa5e7e6face49c6c21ec1a3e3b90859afb8cdcd4cebd60f584072cb42c56",
+      "available_for_language": [],
+      "planning_sources": [
+        "taiji-semantic-contract",
+        "taiji-semantic-contract"
+      ],
+      "execution_capabilities": [
+        "workspace.read",
+        "workspace.programming_language.resolve"
+      ],
+      "execution_status": "completed",
+      "step_successes": [
+        true,
+        true
+      ],
+      "side_effects": false,
+      "checkpoint_saved": true,
+      "restored_selection_state": "resolved",
+      "restored_language_digest": "47a0aa5e7e6face49c6c21ec1a3e3b90859afb8cdcd4cebd60f584072cb42c56",
+      "recovery_status": "completed",
+      "recovery_step_success": true,
+      "workspace_unchanged": true
+    }
+  ],
+  "clarification_cases": {
+    "ambiguous_language": {
+      "case_id": "ambiguous-language",
+      "project_root": "ambiguous_header",
+      "path": "src/shared.h",
+      "status": "needs_clarification",
+      "reason_code": "language_evidence_ambiguous",
+      "expected_reason": "language_evidence_ambiguous",
+      "has_action_intents": false,
+      "side_effects": false,
+      "audit_phases": [],
+      "workspace_unchanged": true
+    },
+    "invalid_target": {
+      "case_id": "invalid-target",
+      "project_root": "python_app",
+      "path": "src/does_not_exist.py",
+      "status": "needs_clarification",
+      "reason_code": "workspace_target_not_found",
+      "expected_reason": "workspace_target_not_found",
+      "has_action_intents": false,
+      "side_effects": false,
+      "audit_phases": [],
+      "workspace_unchanged": true
+    }
+  },
+  "boundary_controls": {
+    "stale_status": "rejected",
+    "stale_reason": "stale_capability_snapshot",
+    "stale_has_execution_phase": false,
+    "diagnostics_status": "rejected",
+    "diagnostics_reason": "capability_not_connected",
+    "diagnostics_has_execution_phase": false,
+    "diagnostics_descriptor_disabled": true
+  },
+  "metrics": {
+    "project_disjoint_fixture_families": true,
+    "readonly_projects_complete": true,
+    "goal_and_content_plan_are_structured": true,
+    "provider_submits_semantics_not_final_language": true,
+    "language_is_derived_from_live_evidence": true,
+    "missing_toolchain_is_observed_without_execution": true,
+    "only_read_capabilities_are_executed": true,
+    "checkpoint_and_restart_recover_language_evidence": true,
+    "ambiguous_language_clarifies_before_execution": true,
+    "invalid_target_clarifies_before_execution": true,
+    "stale_snapshot_fails_closed": true,
+    "diagnostics_capability_fails_closed_without_editor": true,
+    "fixture_workspaces_are_unchanged": true
+  },
+  "gate": {
+    "passed": true,
+    "can_promote": false,
+    "criterion": "Taiji must form a structured goal/content plan from provider semantics, bind file/language facts from the live Workbench, recover after restart, and clarify before execution on ambiguity, invalid targets, stale snapshots, or disconnected diagnostics."
+  },
+  "boundary": "This is a provider-assisted, native Workbench boundary canary. It does not prove open-domain language understanding, native semantic learning from raw text, diagnostics from a connected editor, write/terminal/MCP autonomy, CUDA, or AGI."
+}
