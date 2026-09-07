@@ -1,6 +1,6 @@
 # Seed / Taiji 模型优先统一开发计划
 
-> 修订：2026-09-07。状态：R0 测量链完成；R1～R3 首轮能力报告因数据重叠被撤回，record-disjoint v2 数据链已修复；seed11/29/47 的 R1 formal aggregate 已完成但不晋级。R2.R0～R2.R1 时间表征候选已完成并否决 promotion；M2.R3.R0～R3.R4 的 structured semantic CPU canary、runtime owner/checkpoint、多实体/关系/约束多 seed 组合训练、多步持久 WorldState 转移及 runtime adapter 接线均已完成；M2.R4 联合课程与能力保持也已完成：事实、Goal、ContentPlan、未知/冲突/澄清、事件删除/顺序、持久性、owner lesion、旧 adapter 行为保持、新进程恢复、detach 清理、双 owner 组合和受保护能力保持全部通过。M3.R0 的 project-disjoint Workbench 只读边界 canary 已完成；M3.R1 的 native Workbench observation CPU canary、learner/adapter checkpoint 恢复和只读 runtime 接线也已完成。R0/R1 证明的是受限 Workbench 证据到结构化语义的边界，不是 native raw-text learning、自然语言流畅或可执行自治。下一步进入 M3.R2 native task-state sequence canary，不改变 provider/native-only 证据边界。连续流切块、资源遥测和中断恢复均已通过。本文是唯一执行顺序与“下一步”来源。
+> 修订：2026-09-07。状态：R0 测量链完成；R1～R3 首轮能力报告因数据重叠被撤回，record-disjoint v2 数据链已修复；seed11/29/47 的 R1 formal aggregate 已完成但不晋级。R2.R0～R2.R1 时间表征候选已完成并否决 promotion；M2.R3.R0～R3.R4 的 structured semantic CPU canary、runtime owner/checkpoint、多实体/关系/约束多 seed 组合训练、多步持久 WorldState 转移及 runtime adapter 接线均已完成；M2.R4 联合课程与能力保持也已完成：事实、Goal、ContentPlan、未知/冲突/澄清、事件删除/顺序、持久性、owner lesion、旧 adapter 行为保持、新进程恢复、detach 清理、双 owner 组合和受保护能力保持全部通过。M3.R0 的 project-disjoint Workbench 只读边界、M3.R1 的 native Workbench observation 静态课程、M3.R2 的 native task-state sequence 与 transition runtime 接线均已完成。R0～R2 证明的是受限 verified Workbench 证据到结构化语义/状态更新的边界，不是 native raw-text learning、自然语言流畅或可执行自治。下一步进入 M3.R3 native read-only ActionIntent planning，不改变 provider/native-only 证据边界。连续流切块、资源遥测和中断恢复均已通过。本文是唯一执行顺序与“下一步”来源。
 >
 > 本轮已完成数据契约代码、审计报告和回归测试；不会改写旧报告，下一步只从原始 child 重新生成独立证据。历史 M0/M1/M2-2a～2ae 的有效成果保留；旧“下一步”全部失效。重审依据见 [研究审视](../../reference/TAIJI_RESEARCH_REVIEW_2026_09_06.md)，原文见 [历史快照](../../archive/history/research_review_20260906/README.md)。
 >
@@ -57,6 +57,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | M2.R4 joint course and retention | 三个 seed；静态 state-encoding 24/12/12、transition 32/8/8 record-disjoint；frozen-parent/static-only/transition-only/joint-native 四条控制路径；每个控制 13/13 检查通过，报告 `taiji_m2r4_joint_course_20260907.json` | joint-native 静态 test fact F1=`1.0`、transition test fact F1=`1.0`、三步组合=`3/3`；双 owner 同时写入、native 双组件 checkpoint 恢复、CognitiveState 只读和旧能力保持全部通过；`can_promote=false`，这是独立 owner 的联合课程/组合证据，不是共享权重联合优化 |
 | M3.R0 Workbench read-only boundary | 三个互不重叠的微型项目族（Python/TypeScript/缺 toolchain Rust）；实时 `workspace.read` + `workspace.programming_language.resolve`，另含 `.h` 歧义、无效路径、stale snapshot、断开 diagnostics 控制；13/13 Gate 指标通过 | Goal/ContentPlan 存在，provider 未提交最终语言 id，语言/文件 digest 来自当前 Workbench；只执行两个 read-only capability；三项目 checkpoint/restart 恢复；歧义/无效目标在 ActionIntent 前澄清；语言 registry 随 checkpoint 恢复；`can_promote=false`，provider-assisted 边界证据，不等于 native raw-text learning |
 | M3.R1 native Workbench observation | 新增 `taiji/workbench_observation.py` 版本化 observation schema；3 个互不重叠项目 split、5 条 observation 各；`StructuredSemanticLearner` 训练 472 个参数标量；formal report `taiji_m3r1_native_observation_20260907.json` | native test fact F1=`1.0`，Goal/ContentPlan/status=`0.8`；pre/post-training learner checkpoint、`TSKV8Adapter` component checkpoint/restart、observation/event round-trip、owner lesion 和工作区零副作用均通过；provider 未接入，`can_promote=false`。这是结构化 Workbench observation 的 native CPU 证据，不是 raw text 或开放域语言能力 |
+| M3.R2 native task-state sequence | 新增 `eval_taiji_m3r2_task_state_sequence.py`；复用 3 个 project-disjoint fixture，按 `missing → Python → TypeScript → Rust → ambiguous .h → missing` 构造 5 步 transition course；transition learner 5,176 个参数标量；formal report `taiji_m3r2_task_state_sequence_20260907.json` | native transition test fact F1=`0.9`；未见项目 sequence fact exact/Goal/ContentPlan/status=`0.8`；static-only fact exact=`0.2`；删除/打乱事件、过期语言事实清除、transition-owner lesion、learner/adapter checkpoint/restart、CognitiveState 只读和 provider 未接入均通过；训练学习率 `0.2` 防止 interaction basis 在 CPU 上发散；`can_promote=false`。这是跨 tick 状态更新证据，不是自然语言或执行能力 |
 | M2.R1～R3 首轮报告 | 仅用不同 `partition_seed`，A/C 交集 `1597`、A/C′ `1577`、C/C′ `1563` | 技术 owner/保存检查仍可留作诊断；所有 phase-C 能力与多周期结论撤回，不能聚合或晋级 |
 | M2-2af 草案 | 继承评分错误、训练后才保存、仅 fresh digest、可单 seed promote | 中止且无正式报告；退出可执行主线，保留归档供重构参考 |
 | 完整认知层 | joint runner 使用 Taiji；Seed runtime 使用包含更多器官的 TSKV8Adapter | 不能把 kernel child 的成绩归给所有 adapter 器官，需逐 owner 训练覆盖映射 |
@@ -75,7 +76,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | 3 | M2.R2 表征与时间学习 | **R2.R0～R2.R1 已完成；gated multi-timescale temporal candidate 技术闭环通过但 promotion 否决**，候选默认关闭并保留为可回滚实验资产，不继续调参 | 已通过旧输出保持、owner、保存恢复和移除/冻结反事实；未通过“同一 delay probe 上形成额外长程能力”，不替换默认结构 |
 | 4 | M2.R3 语义与表达训练 | **R3.R0～R3.R4 已完成**：结构化语义训练合同、可选 runtime owner/checkpoint、多实体/关系/约束多 seed canary、多步事件到持久 WorldState/Goal satisfaction、runtime adapter 接线已闭合；当前进入 M2.R4 联合课程与能力保持 | runtime 输入只来自当前 `PerceptEvent`；事实/Goal/ContentPlan/WorldState 结果可审计；provider 表达收益与 native-only 分开统计 |
 | 5 | M2.R4 联合课程与保持 | **已完成**：frozen/static-only/transition-only/joint-native 对照、双 owner 组合、runtime 双组件 checkpoint 和 protected retention 已闭合；不把独立 owner 的串行课程称为共享权重联合优化 | 三 seed 正式报告；joint-native 新组合通过且两个受保护 owner 均保持 |
-| 6 | M3 最小真实任务验证 | **M3.R0/R1 已完成；下一步 M3.R2**：R0 闭合只读证据边界，R1 将 verified observation 变成 native `PerceptEvent` 并接入 `TSKV8Adapter`；下一步先验证跨 tick 的 task-state sequence 与澄清保持，仍不开放 preview/approval 写入 | R2 需在未见项目/事件序列上形成 native transition 的可复现实证，与静态-only、provider-assisted、删除/打乱事件对照；runtime、checkpoint、权限、Outcome 同一链路可追溯 |
+| 6 | M3 最小真实任务验证 | **M3.R0/R1/R2 已完成；下一步 M3.R3**：R0 闭合只读证据边界，R1 训练静态 observation，R2 训练跨 tick task-state transition；下一步把 native Goal/ContentPlan 约束为只读 `ActionIntent` 候选，仍不执行、不开放 preview/approval 写入 | R3 需在未见项目/任务上形成 native intent 的可复现实证，与人工/provider/static 对照；参数来源、capability snapshot、权限、Outcome 和 checkpoint 同一链路可追溯 |
 | 7 | M4 连续成长 | 多轮续训、巩固、必要时结构增长与压缩 | 优于固定容量和等预算对照，且保持/成本/回滚达标 |
 | 8 | M5 知识与身体 | Skill/MCP 数据内化、真实调用与客户端插件 | 认知与执行收益可分别归因，权限/撤销闭合 |
 | 9 | M6 产品收口 | provider 稳定性、UI/桌面、遗留格式清理 | packaged client 与真实能力一致 |
@@ -86,7 +87,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 
 ## 4. 当前唯一下一步
 
-**唯一下一步：进入 M3.R2 native task-state sequence canary。** M3.R1 已在三个 project-disjoint 项目族上完成 verified observation → `PerceptEvent` → native semantic owner 的训练，测试 fact F1=`1.0`，Goal/ContentPlan/status=`0.8`；learner checkpoint、adapter component checkpoint/restart、observation round-trip、owner lesion、CognitiveState 只读和工作区零副作用均闭合。它仍是静态 observation 课程：尚未证明模型能在文件/语言/工具链变化后保持任务状态、删除过期事实并产生正确澄清。因此下一步只扩展一件事：用现有 `StructuredSemanticTransitionLearner` 把同一项目的 verified observations 排成 `read → language/diagnostics change → re-read` 的跨 tick sequence，比较 native transition、静态-only、provider-assisted 上界、删除/打乱事件四臂；输入仍禁止 provider final binding、raw command、patch、terminal、MCP。训练前先做 learner 与 `TSKV8Adapter` 双层 checkpoint save/restore/续接预检，再验证未见项目序列中的事实变更、Goal/ContentPlan/status、过期事实清除、事件顺序敏感性、transition-owner lesion、runtime CognitiveState 只读、三类 checkpoint 稳定性和零副作用。只有 native transition 在未见 sequence 上相对静态-only 有可复现净收益且 M3.R1 静态能力保持，才进入 M3.R3 的 read-only ActionIntent 规划；否则停止这条适配层并回到数据/表示诊断。R1 formal report、M2.R4 与 M3.R0 均保留为基线。
+**唯一下一步：进入 M3.R3 native read-only ActionIntent planning canary。** M3.R2 已在未见项目 sequence 上证明 native transition 能把 verified observation 的变化带入持久状态：transition fact F1=`0.9`，sequence fact exact/Goal/ContentPlan/status=`0.8`，static-only fact exact=`0.2`；事件删除/打乱、过期语言清除、transition-owner lesion、learner/adapter checkpoint/restart 和 runtime 只读均通过。下一步只做一件事：把 native `WorldState + Goal + ContentPlan` 转换为受 capability snapshot 约束的只读 `ActionIntent` 候选，限定在 `workspace.read` 与 `workspace.programming_language.resolve`，并与人工指定 intent、provider-assisted intent、空计划四臂比较。native 层不得生成 patch 内容、终端命令、MCP 参数或未经 snapshot 校验的 capability id；Workbench 只负责校验/执行候选，先只做 dry-run/authorization decision，不产生文件或编辑器副作用。训练前保存并恢复 transition + intent owner，验证同一 snapshot/boundary lineage 下的参数完整性；指标固定为 capability 合法率、目标/事实支持率、无效调用率、歧义澄清率、read/resolve 只读执行一致性、ActionIntent checkpoint/restart、owner lesion、CognitiveState 只读和工作区 digest 不变。只有 native intent 在未见项目/任务上超过静态-only 且无越权/无副作用，才进入 M3.R4 preview/approval；否则回到 task-state 表示诊断。R2 formal report、R1 formal report、M2.R4 与 M3.R0 均保留为基线。
 
 2026-09-06 实际审计已证明首轮报告不能作为能力证据：旧 evaluator 的 C/C′ 只是换 partition seed，不是新记录。当前已落地的修复为 `scripts/training/eval_taiji_m2r1_phase_c_canary.py` v2、`scripts/training/audit_taiji_m2r1_data_contract.py` 和 `reports/taiji_m2r1_data_contract_20260906.json`：
 
@@ -262,20 +263,21 @@ R0 只证明语义 provider 能把当前 Workbench 证据安全送进 runtime，
 
 该结果的边界是“verified Workbench observation 的 native 结构化学习”，不是 raw text 语言学习、自然语言流畅、诊断解释能力或可执行自治。M3.R1 的静态 owner 已进入 runtime，但跨 tick 的状态变化仍需单独验证。
 
-### M3.R2：native task-state sequence（下一步）
+### M3.R2：native task-state sequence（已完成，2026-09-07）
 
-R1 的缺口是静态 observation 会把每个快照独立分类，尚未证明文件、语言、toolchain 或 diagnostics 变化后能更新持久 WorldState、清理过期事实并保持正确 Goal/ContentPlan。因此 R2 只增加时间轴，不开放新的执行能力：从同一项目构造 verified observation 序列 `read → language/diagnostics change → re-read`，必要时加入 stale snapshot / missing target 作为明确的 fail-closed 事件；用现有 `StructuredSemanticTransitionLearner` 学习当前 WorldState 与新 `PerceptEvent` 的状态条件 delta。
+R1 的缺口是静态 observation 会把每个快照独立分类，尚未证明文件、语言、toolchain 或 diagnostics 变化后能更新持久 WorldState、清理过期事实并保持正确 Goal/ContentPlan。R2 复用现有 `StructuredSemanticTransitionLearner`，只增加时间轴，不开放新的执行能力：三组 project-disjoint fixture 均构造 `missing → Python → TypeScript → Rust → ambiguous .h → missing` 五步 sequence，transition 输入使用通用 fact×event interaction basis。
 
-R2 的四臂固定为：native transition、static-only、provider-assisted 上界、删除/打乱事件；项目仍按 train/dev/test 隔离，序列中的事件内容与顺序都必须跨 split 独立。训练前执行 transition learner checkpoint、adapter native checkpoint 和首个续接输出的 save/restore preflight；训练后保存完整 owner、恢复到中间 tick、继续下一事件并比较 direct/restored output。指标固定为事实增删 F1、Goal/ContentPlan/status、过期事实清除率、事件顺序敏感性、未知/歧义澄清率、transition-owner lesion、runtime CognitiveState 只读、checkpoint digest 稳定和工作区零副作用。
+交付物：`scripts/training/eval_taiji_m3r2_task_state_sequence.py`、`tests/taiji_native/test_m3r2_task_state_sequence.py` 和 `reports/taiji_m3r2_task_state_sequence_20260907.json`。四臂为 native transition、static-only、provider-assisted 上界、删除/打乱事件；native transition test fact F1=`0.9`，未见项目 sequence fact exact/Goal/ContentPlan/status=`0.8`，static-only fact exact=`0.2`。删除/打乱事件会改变中间状态，最终 missing 会清除旧语言事实。transition owner lesion、训练前/后 checkpoint、`TSKV8Adapter` transition component restart、CognitiveState 只读、provider 未接入和无执行副作用全部通过；native interaction course 的 stable CPU 学习率为 `0.2`，旧 `0.5` 在本课程产生非有限 loss，已作为数值边界固定记录而非静默过滤。`can_promote=false`。
 
-R2 不读取 provider final language id，不把 raw text、命令、patch、terminal、MCP 或客户端按钮状态作为训练标签；provider 仅作为标注上界。native transition 若没有相对 static-only 的未见 sequence 净收益，立即停止该适配层并回到 observation 表示/课程诊断；只有在 R1 静态能力保持且 R2 跨 tick 净收益可复现时，才进入 M3.R3 的 read-only ActionIntent 规划。此前的 `preview/approval` 写入、运行测试、失败恢复仍然冻结。
+R2 仍不读取 provider final language id，不把 raw text、命令、patch、terminal、MCP 或客户端按钮状态作为训练标签；它证明的是跨 tick 结构状态更新，不是自然语言解释、ActionIntent 执行或自主 IDE 操作。
 
-- 先选一个任务族：在留出的微型项目中定位文件、判断语言、解释诊断并提出可逆补丁；依次验收只读、语言切换、preview/approval 写入、运行测试、失败恢复。
-- Taiji 形成目标/内容/意图；Seed 只执行能力、权限和事务；provider 不返回未审计最终命令。
-- 数据按项目划分，覆盖扩展名与内容冲突、用户指定语言、缺 toolchain 和陈旧快照。
-- 模型接通客户端后，真实按钮、任务进度、语言选择和 Outcome 必须来自同一 runtime 状态。
-- 成功率、无效工具调用、恢复率、审批遵从、重启续接和耗时共同验收；人写好的 intent 只算执行基础设施对照。
-- 通过后再考虑扩大任务族，不同时启动浏览器、外部 MCP 和插件市场。
+### M3.R3：native read-only ActionIntent planning（唯一下一步）
+
+R2 已经证明 native state owner 能在事件变化后更新事实与澄清目标，但还没有证明 Goal/ContentPlan 能被约束性地转为可审计的 Workbench `ActionIntent`。R3 只接一条只读规划链：`WorldState + Goal + ContentPlan + capability snapshot/boundary lineage → ActionIntent candidate`，允许的 capability 仅为 `workspace.read` 和 `workspace.programming_language.resolve`；`editor.diagnostics.read` 仍因无真实连接保持 disabled。
+
+R3 固定比较人工指定 intent、provider-assisted intent、native intent、空计划四臂。native planner 不得生成 patch 文本、terminal 命令、MCP 参数、任意路径或未经 snapshot 校验的 capability id；Workbench 只做参数/权限/快照校验和 dry-run authorization decision，首轮不写文件、不切编辑器语言、不执行终端。数据按未见项目与未见任务分割，覆盖 resolved、ambiguous、missing target、缺 toolchain、stale snapshot 和 diagnostics disconnected。
+
+训练前保存并恢复 transition owner、intent owner 与 `TSKV8Adapter` native checkpoint，比较首个 dry-run 输出；训练后指标固定为 capability 合法率、目标/事实支持率、无效调用率、歧义澄清率、read/resolve dry-run 一致性、owner lesion、checkpoint/restart、CognitiveState 只读和工作区 digest 不变。只有 native intent 在未见项目/任务上超过 static-only 且无越权/无副作用，才进入 M3.R4 preview/approval；否则回到 task-state 表示诊断。R3 不开放浏览器、外部 MCP、插件市场或 CUDA。
 
 ## 8. M4：在原有知识上成长的研究日程
 

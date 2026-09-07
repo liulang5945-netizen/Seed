@@ -1,0 +1,426 @@
+{
+  "format": "taiji-m3r2-native-task-state-sequence-v1",
+  "version": 1,
+  "gate": "M3.R2",
+  "status": "passed",
+  "can_promote": false,
+  "promotion_reason": "native Workbench task-state transition remains a bounded CPU Gate; read-only ActionIntent and executable side effects stay frozen.",
+  "course": {
+    "manifest": {
+      "format": "taiji-structured-semantic-transition-v2",
+      "version": 2,
+      "source_digest": "0f2821ba4aff42cafc5bb92b91d39dedf58f9ac5b9aa5075c9694b47a910bceb",
+      "event_dim": 19,
+      "split_sizes": {
+        "train": 5,
+        "dev": 5,
+        "test": 5
+      },
+      "fact_keys": [
+        "workbench::diagnostics::disconnected",
+        "workbench::language::python",
+        "workbench::language::rust",
+        "workbench::language::typescript",
+        "workbench::language::unknown",
+        "workbench::language_state::ambiguous",
+        "workbench::language_state::resolved",
+        "workbench::language_state::unknown",
+        "workbench::read::failure",
+        "workbench::read::success",
+        "workbench::target::file",
+        "workbench::target::missing",
+        "workbench::toolchain::available",
+        "workbench::toolchain::missing"
+      ],
+      "goal_ids": [
+        "goal:clarify-language",
+        "goal:clarify-toolchain",
+        "goal:inspect-language",
+        "goal:recover-target"
+      ],
+      "content_ids": [
+        "content:clarify-language",
+        "content:clarify-toolchain",
+        "content:inspect-language",
+        "content:recover-target"
+      ],
+      "record_disjoint": true,
+      "provider_attached": false,
+      "runtime_only": false
+    },
+    "static_manifest": {
+      "format": "taiji-structured-semantic-training-v1",
+      "version": 1,
+      "source_digest": "c652cd2cf3608ce2c01df6c4b073c7326223f668a6f7a90da7327ffec9bf4293",
+      "feature_dim": 19,
+      "split_sizes": {
+        "train": 5,
+        "dev": 5,
+        "test": 5
+      },
+      "fact_keys": [
+        "workbench::diagnostics::disconnected",
+        "workbench::language::python",
+        "workbench::language::rust",
+        "workbench::language::typescript",
+        "workbench::language::unknown",
+        "workbench::language_state::ambiguous",
+        "workbench::language_state::resolved",
+        "workbench::language_state::unknown",
+        "workbench::read::failure",
+        "workbench::read::success",
+        "workbench::target::file",
+        "workbench::target::missing",
+        "workbench::toolchain::available",
+        "workbench::toolchain::missing"
+      ],
+      "goal_ids": [
+        "goal:clarify-language",
+        "goal:clarify-toolchain",
+        "goal:inspect-language",
+        "goal:recover-target"
+      ],
+      "content_ids": [
+        "content:clarify-language",
+        "content:clarify-toolchain",
+        "content:inspect-language",
+        "content:recover-target"
+      ],
+      "record_disjoint": true,
+      "provider_attached": false,
+      "runtime_only": false
+    },
+    "parameter_count": 5176,
+    "owner_digests_changed": {
+      "semantic_transition": true,
+      "semantic_transition_goal": true,
+      "semantic_transition_content": true
+    },
+    "losses": {
+      "transition_loss": 1.9738347359978285e-15,
+      "goal_loss": 0.000261024571955204,
+      "content_loss": 0.00010359568113926798
+    },
+    "sequence_paths": [
+      "missing",
+      "app.py",
+      "index.ts",
+      "main.rs",
+      "shared.h",
+      "missing"
+    ]
+  },
+  "metrics": {
+    "native_transition_test": {
+      "examples": 5,
+      "fact_f1": 0.9,
+      "goal_accuracy": 0.8,
+      "content_accuracy": 0.8,
+      "status_accuracy": 0.8
+    },
+    "native_sequence_test": {
+      "steps": 5,
+      "fact_exact_accuracy": 0.8,
+      "goal_accuracy": 0.8,
+      "content_accuracy": 0.8,
+      "status_accuracy": 0.8,
+      "rows": [
+        {
+          "tick": 1,
+          "path": "app.py",
+          "expected_facts": [
+            "workbench::diagnostics::disconnected",
+            "workbench::language::python",
+            "workbench::language_state::resolved",
+            "workbench::read::success",
+            "workbench::target::file",
+            "workbench::toolchain::available"
+          ],
+          "actual_facts": [
+            "workbench::diagnostics::disconnected",
+            "workbench::language::python",
+            "workbench::language_state::resolved",
+            "workbench::read::success",
+            "workbench::target::file",
+            "workbench::toolchain::available"
+          ],
+          "goal": "goal:inspect-language",
+          "content": "content:inspect-language",
+          "status": "resolved"
+        },
+        {
+          "tick": 2,
+          "path": "index.ts",
+          "expected_facts": [
+            "workbench::diagnostics::disconnected",
+            "workbench::language::typescript",
+            "workbench::language_state::resolved",
+            "workbench::read::success",
+            "workbench::target::file",
+            "workbench::toolchain::missing"
+          ],
+          "actual_facts": [
+            "workbench::diagnostics::disconnected",
+            "workbench::language::typescript",
+            "workbench::language_state::resolved",
+            "workbench::read::success",
+            "workbench::target::file",
+            "workbench::toolchain::missing"
+          ],
+          "goal": "goal:clarify-toolchain",
+          "content": "content:clarify-toolchain",
+          "status": "clarify"
+        },
+        {
+          "tick": 3,
+          "path": "main.rs",
+          "expected_facts": [
+            "workbench::diagnostics::disconnected",
+            "workbench::language::rust",
+            "workbench::language_state::resolved",
+            "workbench::read::success",
+            "workbench::target::file",
+            "workbench::toolchain::missing"
+          ],
+          "actual_facts": [
+            "workbench::diagnostics::disconnected",
+            "workbench::language::rust",
+            "workbench::language_state::resolved",
+            "workbench::read::success",
+            "workbench::target::file",
+            "workbench::toolchain::missing"
+          ],
+          "goal": "goal:clarify-toolchain",
+          "content": "content:clarify-toolchain",
+          "status": "clarify"
+        },
+        {
+          "tick": 4,
+          "path": "shared.h",
+          "expected_facts": [
+            "workbench::diagnostics::disconnected",
+            "workbench::language::unknown",
+            "workbench::language_state::ambiguous",
+            "workbench::read::success",
+            "workbench::target::file",
+            "workbench::toolchain::missing"
+          ],
+          "actual_facts": [
+            "workbench::diagnostics::disconnected",
+            "workbench::language::unknown",
+            "workbench::language_state::ambiguous",
+            "workbench::read::success",
+            "workbench::target::file",
+            "workbench::toolchain::missing"
+          ],
+          "goal": "goal:clarify-language",
+          "content": "content:clarify-language",
+          "status": "clarify"
+        },
+        {
+          "tick": 5,
+          "path": "missing_test.rs",
+          "expected_facts": [
+            "workbench::diagnostics::disconnected",
+            "workbench::language::unknown",
+            "workbench::language_state::unknown",
+            "workbench::read::failure",
+            "workbench::target::missing",
+            "workbench::toolchain::missing"
+          ],
+          "actual_facts": [
+            "workbench::diagnostics::disconnected",
+            "workbench::language::unknown",
+            "workbench::language_state::ambiguous",
+            "workbench::read::success",
+            "workbench::target::file",
+            "workbench::toolchain::missing"
+          ],
+          "goal": null,
+          "content": null,
+          "status": "unknown"
+        }
+      ],
+      "final_world_digest": "1ee32b9d38a9fd52835005186da1074d391e7a450732742554277285c8d6a34f"
+    },
+    "native_lesion_sequence_test": {
+      "steps": 5,
+      "fact_exact_accuracy": 0.2,
+      "goal_accuracy": 0.0,
+      "content_accuracy": 0.0,
+      "status_accuracy": 0.6,
+      "rows": [
+        {
+          "tick": 1,
+          "path": "app.py",
+          "expected_facts": [
+            "workbench::diagnostics::disconnected",
+            "workbench::language::python",
+            "workbench::language_state::resolved",
+            "workbench::read::success",
+            "workbench::target::file",
+            "workbench::toolchain::available"
+          ],
+          "actual_facts": [
+            "workbench::diagnostics::disconnected",
+            "workbench::language::unknown",
+            "workbench::language_state::unknown",
+            "workbench::read::failure",
+            "workbench::target::missing",
+            "workbench::toolchain::missing"
+          ],
+          "goal": "goal:recover-target",
+          "content": "content:recover-target",
+          "status": "clarify"
+        },
+        {
+          "tick": 2,
+          "path": "index.ts",
+          "expected_facts": [
+            "workbench::diagnostics::disconnected",
+            "workbench::language::typescript",
+            "workbench::language_state::resolved",
+            "workbench::read::success",
+            "workbench::target::file",
+            "workbench::toolchain::missing"
+          ],
+          "actual_facts": [
+            "workbench::diagnostics::disconnected",
+            "workbench::language::unknown",
+            "workbench::language_state::unknown",
+            "workbench::read::failure",
+            "workbench::target::missing",
+            "workbench::toolchain::missing"
+          ],
+          "goal": "goal:recover-target",
+          "content": "content:recover-target",
+          "status": "clarify"
+        },
+        {
+          "tick": 3,
+          "path": "main.rs",
+          "expected_facts": [
+            "workbench::diagnostics::disconnected",
+            "workbench::language::rust",
+            "workbench::language_state::resolved",
+            "workbench::read::success",
+            "workbench::target::file",
+            "workbench::toolchain::missing"
+          ],
+          "actual_facts": [
+            "workbench::diagnostics::disconnected",
+            "workbench::language::unknown",
+            "workbench::language_state::unknown",
+            "workbench::read::failure",
+            "workbench::target::missing",
+            "workbench::toolchain::missing"
+          ],
+          "goal": "goal:recover-target",
+          "content": "content:recover-target",
+          "status": "clarify"
+        },
+        {
+          "tick": 4,
+          "path": "shared.h",
+          "expected_facts": [
+            "workbench::diagnostics::disconnected",
+            "workbench::language::unknown",
+            "workbench::language_state::ambiguous",
+            "workbench::read::success",
+            "workbench::target::file",
+            "workbench::toolchain::missing"
+          ],
+          "actual_facts": [
+            "workbench::diagnostics::disconnected",
+            "workbench::language::unknown",
+            "workbench::language_state::unknown",
+            "workbench::read::failure",
+            "workbench::target::missing",
+            "workbench::toolchain::missing"
+          ],
+          "goal": "goal:recover-target",
+          "content": "content:recover-target",
+          "status": "clarify"
+        },
+        {
+          "tick": 5,
+          "path": "missing_test.rs",
+          "expected_facts": [
+            "workbench::diagnostics::disconnected",
+            "workbench::language::unknown",
+            "workbench::language_state::unknown",
+            "workbench::read::failure",
+            "workbench::target::missing",
+            "workbench::toolchain::missing"
+          ],
+          "actual_facts": [
+            "workbench::diagnostics::disconnected",
+            "workbench::language::unknown",
+            "workbench::language_state::unknown",
+            "workbench::read::failure",
+            "workbench::target::missing",
+            "workbench::toolchain::missing"
+          ],
+          "goal": null,
+          "content": null,
+          "status": "unknown"
+        }
+      ],
+      "final_world_digest": "f1739a04d3af6bc3d8f79ead881ea32a47bd70c2b6115b446dc0f5ebfbeaa5cf"
+    },
+    "static_only_sequence_test": {
+      "steps": 5,
+      "fact_exact_accuracy": 0.2
+    },
+    "provider_assisted_upper_bound": {
+      "fact_exact_accuracy": 1.0,
+      "goal_accuracy": 1.0,
+      "content_accuracy": 1.0,
+      "status_accuracy": 1.0
+    }
+  },
+  "checkpoint": {
+    "preflight_saved": true,
+    "preflight_output_stable": true,
+    "post_training_saved": true,
+    "post_training_output_stable": true,
+    "training_steps": 1400
+  },
+  "runtime": {
+    "owner_attached": true,
+    "checkpoint_component_present": true,
+    "restored_owner_present": true,
+    "output_stable_after_runtime_restore": true,
+    "cognitive_state_read_only": true,
+    "runtime_checkpoint_stable": true,
+    "output_digest": "dd14474e3c34181a7d9f7d762cb08f8a2add76eff9c354b0533efa67d400a076",
+    "restored_output_digest": "dd14474e3c34181a7d9f7d762cb08f8a2add76eff9c354b0533efa67d400a076"
+  },
+  "event_controls": {
+    "deleted_event_changes_intermediate_state": true,
+    "shuffled_event_changes_ordered_state": true,
+    "final_missing_clears_language": true
+  },
+  "boundaries": {
+    "provider_final_binding": false,
+    "raw_text_language_learning": false,
+    "workspace_write": false,
+    "terminal": false,
+    "mcp": false,
+    "cuda": false
+  },
+  "gates": {
+    "project_disjoint": true,
+    "native_test_fact_f1": true,
+    "native_sequence_fact_accuracy": true,
+    "native_sequence_goal_accuracy": true,
+    "native_sequence_content_accuracy": true,
+    "native_sequence_status_accuracy": true,
+    "native_beats_static_only": true,
+    "event_order_and_deletion": true,
+    "checkpoint_save_restore": true,
+    "runtime_owner_roundtrip": true,
+    "transition_lesion_changes_sequence": true,
+    "provider_not_attached": true
+  }
+}
