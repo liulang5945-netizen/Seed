@@ -17,7 +17,13 @@ from .identity_organ import (
 )
 from .internalization import content_digest
 from .memory import EpisodicField
-from .organs import ByteMotor, BytePredictiveContext, BytePredictiveReadout, ByteSensor
+from .organs import (
+    ByteMotor,
+    BytePredictiveContext,
+    BytePredictiveReadout,
+    ByteSensor,
+    GatedMultiTimescaleTemporalResidual,
+)
 from .state import (
     PendingAction,
     PendingExperience,
@@ -50,6 +56,8 @@ class Taiji:
     STATE_VERSION = 7
     LEGACY_STATE_VERSIONS = frozenset({5, 6})
     IDENTITY_GROWTH_FORMAT = "taiji-native-identity-growth-v1"
+    GATED_TEMPORAL_CANDIDATE_KEY = "gated_temporal_candidate"
+    GATED_TEMPORAL_CANDIDATE_SEED_OFFSET = 5927
     READOUT_REGISTRY_FORMAT = "taiji-predictive-readout-registry-v1"
     READOUT_REGISTRY_VERSION = 1
 
@@ -88,6 +96,10 @@ class Taiji:
             generator=predictive_context_rng,
             device=self.device,
         )
+        # Optional R2 candidate.  It is lazy and absent from legacy
+        # checkpoints, so the default v10 path retains its original payload
+        # and prediction behavior exactly.
+        self._gated_temporal_candidate: GatedMultiTimescaleTemporalResidual | None = None
         self._memory_rng = torch.Generator(device="cpu")
         self._memory_rng.set_state(self._rng.get_state().clone())
         self.memory = EpisodicField(self.config, generator=self._memory_rng, device=self.device)
@@ -157,6 +169,96 @@ class Taiji:
             )
         return metadata
 
+    @property
+    def gated_temporal_candidate_enabled(self) -> bool:
+        """Whether the opt-in R2 multi-timescale temporal candidate is attached."""
+
+        return self._gated_temporal_candidate is not None
+
+    def _new_gated_temporal_candidate(
+        self,
+        *,
+        fast_decay: float,
+        slow_decay: float,
+        gate_temperature: float,
+        residual_gain: float,
+    ) -> GatedMultiTimescaleTemporalResidual:
+        generator = torch.Generator(device="cpu")
+        generator.manual_seed(
+            int(self.config.seed) + int(self.GATED_TEMPORAL_CANDIDATE_SEED_OFFSET)
+        )
+        return GatedMultiTimescaleTemporalResidual(
+            self.config,
+            generator=generator,
+            fast_decay=fast_decay,
+            slow_decay=slow_decay,
+            gate_temperature=gate_temperature,
+            residual_gain=residual_gain,
+            device=self.device,
+        )
+
+    @torch.no_grad()
+    def enable_gated_temporal_candidate(
+        self,
+        *,
+        fast_decay: float = 0.50,
+        slow_decay: float = 0.98,
+        gate_temperature: float = 1.0,
+        residual_gain: float = 0.20,
+    ) -> dict[str, Any]:
+        """Attach the zero-initialized R2 temporal candidate explicitly.
+
+        Attaching it is an experimental state transition, not an implicit
+        default.  The candidate starts with zero residual weights and an
+        isolated RNG stream, so a generation canary is unchanged until the
+        candidate is trained.
+        """
+
+        if self._gated_temporal_candidate is not None:
+            raise RuntimeError("gated temporal candidate is already enabled")
+        if self._state.pending_action is not None or self._state.pending_experience is not None:
+            raise RuntimeError("temporal candidate attachment requires a settled state")
+        candidate = self._new_gated_temporal_candidate(
+            fast_decay=fast_decay,
+            slow_decay=slow_decay,
+            gate_temperature=gate_temperature,
+            residual_gain=residual_gain,
+        )
+        self._gated_temporal_candidate = candidate
+        self._state.predictive_context_slow_trace = torch.zeros(
+            self.config.motor_context_dim,
+            device=self.device,
+        )
+        return {
+            "format": GatedMultiTimescaleTemporalResidual.PAYLOAD_FORMAT,
+            "version": GatedMultiTimescaleTemporalResidual.PAYLOAD_VERSION,
+            "enabled": True,
+            "fast_decay": candidate.fast_decay,
+            "slow_decay": candidate.slow_decay,
+            "gate_temperature": candidate.gate_temperature,
+            "residual_gain": candidate.residual_gain,
+            "candidate_digest": content_digest(candidate.to_payload()),
+        }
+
+    @torch.no_grad()
+    def disable_gated_temporal_candidate(self) -> None:
+        """Remove the opt-in candidate and its optional slow trace."""
+
+        self._gated_temporal_candidate = None
+        self._state.predictive_context_slow_trace = None
+
+    @torch.no_grad()
+    def zero_gated_temporal_candidate(self) -> tuple[str, str]:
+        """Lesion candidate residual weights and return before/after digests."""
+
+        if self._gated_temporal_candidate is None:
+            raise RuntimeError("gated temporal candidate is not enabled")
+        before = content_digest(self._gated_temporal_candidate.to_payload())
+        self._gated_temporal_candidate.fast.edge_weight.zero_()
+        self._gated_temporal_candidate.slow.edge_weight.zero_()
+        after = content_digest(self._gated_temporal_candidate.to_payload())
+        return before, after
+
     def _protected_readout_parent_digest(self) -> str:
         """Digest the stable owners an active readout is allowed to branch from.
 
@@ -175,6 +277,10 @@ class Taiji:
             "predictive_readout": self.predictive_readout.to_payload(),
             "memory": self.memory.to_payload(),
         }
+        if self._gated_temporal_candidate is not None:
+            payload[self.GATED_TEMPORAL_CANDIDATE_KEY] = (
+                self._gated_temporal_candidate.to_payload()
+            )
         if self.identity_organ is not None:
             payload["identity_organ"] = self.identity_organ.to_payload(
                 parent_checkpoint_digest=content_digest(payload),
@@ -603,10 +709,19 @@ class Taiji:
                     predictive_feedback = predictive_readout.context_feedback(
                         predictive_error
                     )
-                    self.predictive_context.learn(
-                        previous.predictive_context_trace,
-                        predictive_feedback,
-                    )
+                    if self._gated_temporal_candidate is None:
+                        self.predictive_context.learn(
+                            previous.predictive_context_trace,
+                            predictive_feedback,
+                        )
+                    else:
+                        self._gated_temporal_candidate.learn(
+                            previous.motor_context,
+                            previous.predictive_context_slow_trace,
+                            predictive_feedback,
+                            learning_rate=self.config.predictive_context_learning_rate,
+                            weight_decay=self.config.synapse_decay,
+                        )
             elif readout == "action" and motor_learning:
                 self.motor.learn(
                     previous.motor_context,
@@ -652,16 +767,32 @@ class Taiji:
             prior_predictive_context = (
                 previous.motor_context if previous.readout_kind == "predictive" else None
             )
-            context, predictive_context_trace = self.predictive_context.encode(
+            base_context, predictive_context_trace = self.predictive_context.encode(
                 self.fabric.predictive_context(regions),
                 prior_context=prior_predictive_context,
             )
+            if self._gated_temporal_candidate is None:
+                context = base_context
+                predictive_context_slow_trace = None
+            else:
+                context, predictive_context_slow_trace = (
+                    self._gated_temporal_candidate.encode(
+                        base_context,
+                        prior_context=prior_predictive_context,
+                        prior_slow_context=(
+                            previous.predictive_context_slow_trace
+                            if previous.readout_kind == "predictive"
+                            else None
+                        ),
+                    )
+                )
         else:
             context = self.motor.encode_context(self.fabric.predictive_context(regions))
             predictive_context_trace = torch.zeros(
                 self.config.motor_context_dim,
                 device=self.device,
             )
+            predictive_context_slow_trace = None
         cortical_prediction_evidence = float(
             self.config.consolidation_read_gain
         ) * self.fabric.consolidated_decode(0, regions[0].trace)
@@ -723,6 +854,7 @@ class Taiji:
             last_symbol=symbol,
             pending_action=None,
             pending_experience=None,
+            predictive_context_slow_trace=predictive_context_slow_trace,
         )
         return TaijiStep(
             tick=previous.tick,
@@ -1472,6 +1604,8 @@ class Taiji:
             self.predictive_readout.bias,
             *self.memory.parameter_tensors(),
         )
+        if self._gated_temporal_candidate is not None:
+            tensors += self._gated_temporal_candidate.parameter_tensors()
         if self._active_predictive_readout is not None:
             tensors += (
                 self._active_predictive_readout.synapses.edge_weight,
@@ -1491,6 +1625,8 @@ class Taiji:
             + self.predictive_readout.bias.numel()
             + self.memory.active_edge_count()
         )
+        if self._gated_temporal_candidate is not None:
+            active += sum(tensor.numel() for tensor in self._gated_temporal_candidate.parameter_tensors())
         if self._active_predictive_readout is not None:
             active += (
                 self._active_predictive_readout.synapses.edge_count
@@ -1514,6 +1650,11 @@ class Taiji:
             + self.predictive_readout.bias.numel()
             + self.memory.dense_equivalent_edge_count()
         )
+        if self._gated_temporal_candidate is not None:
+            count += (
+                self._gated_temporal_candidate.fast.dense_equivalent_count
+                + self._gated_temporal_candidate.slow.dense_equivalent_count
+            )
         if self._active_predictive_readout is not None:
             count += (
                 self._active_predictive_readout.synapses.dense_equivalent_count
@@ -1526,7 +1667,7 @@ class Taiji:
         return count
 
     def _checkpoint_core(self) -> dict[str, Any]:
-        return {
+        core = {
             "format": self.CHECKPOINT_FORMAT,
             "config": self.config.to_dict(),
             "fabric": self.fabric.to_payload(),
@@ -1537,6 +1678,11 @@ class Taiji:
             "state": self._state.to_payload(),
             "rng_state": self._rng.get_state().clone(),
         }
+        if self._gated_temporal_candidate is not None:
+            core[self.GATED_TEMPORAL_CANDIDATE_KEY] = (
+                self._gated_temporal_candidate.to_payload()
+            )
+        return core
 
     def checkpoint(self) -> dict[str, Any]:
         core = self._checkpoint_core()
@@ -1606,6 +1752,21 @@ class Taiji:
             raise ValueError("predictive readout checkpoint payload is invalid")
         else:
             self.predictive_readout.load_payload(predictive_payload)
+        candidate_payload = checkpoint.get(self.GATED_TEMPORAL_CANDIDATE_KEY)
+        self._gated_temporal_candidate = None
+        if candidate_payload is not None:
+            if is_legacy_checkpoint:
+                raise ValueError("legacy checkpoint cannot contain a gated temporal candidate")
+            if not isinstance(candidate_payload, Mapping):
+                raise ValueError("gated temporal candidate checkpoint payload is invalid")
+            candidate = self._new_gated_temporal_candidate(
+                fast_decay=float(candidate_payload["fast_decay"]),
+                slow_decay=float(candidate_payload["slow_decay"]),
+                gate_temperature=float(candidate_payload["gate_temperature"]),
+                residual_gain=float(candidate_payload["residual_gain"]),
+            )
+            candidate.load_payload(candidate_payload)
+            self._gated_temporal_candidate = candidate
         self.memory.load_payload(checkpoint["memory"])
         identity_payload = checkpoint.get("identity_organ")
         if self.identity_organ is None:
@@ -1621,6 +1782,9 @@ class Taiji:
                     for key in self._checkpoint_core_keys(
                         include_predictive="predictive_readout" in checkpoint,
                         include_predictive_context="predictive_context" in checkpoint,
+                        include_temporal_candidate=(
+                            self.GATED_TEMPORAL_CANDIDATE_KEY in checkpoint
+                        ),
                     )
                 }
             )
@@ -1672,6 +1836,19 @@ class Taiji:
             raise ValueError("checkpoint motor context does not match architecture")
         if state.predictive_context_trace.shape != (self.config.motor_context_dim,):
             raise ValueError("checkpoint predictive context trace does not match architecture")
+        if self._gated_temporal_candidate is None:
+            if state.predictive_context_slow_trace is not None:
+                raise ValueError("checkpoint carries a slow temporal trace without its candidate")
+        else:
+            if state.predictive_context_slow_trace is None:
+                state.predictive_context_slow_trace = torch.zeros(
+                    self.config.motor_context_dim,
+                    device=self.device,
+                )
+            elif state.predictive_context_slow_trace.shape != (
+                self.config.motor_context_dim,
+            ):
+                raise ValueError("checkpoint slow temporal trace does not match architecture")
         if state.motor_probabilities.shape != (self.config.alphabet_size,):
             raise ValueError("checkpoint motor probabilities do not match architecture")
         if state.readout_kind not in {"action", "predictive"}:
@@ -1720,6 +1897,7 @@ class Taiji:
         *,
         include_predictive: bool = True,
         include_predictive_context: bool | None = None,
+        include_temporal_candidate: bool = False,
     ) -> tuple[str, ...]:
         if include_predictive_context is None:
             # Existing callers reconstructing a v8 lineage pass only
@@ -1739,6 +1917,8 @@ class Taiji:
             keys += ("predictive_readout",)
         if include_predictive_context:
             keys += ("predictive_context",)
+        if include_temporal_candidate:
+            keys += (Taiji.GATED_TEMPORAL_CANDIDATE_KEY,)
         return (*keys, "memory", "state", "rng_state")
 
     @classmethod
