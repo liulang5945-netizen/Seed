@@ -1,0 +1,398 @@
+{
+  "format": "taiji-r1-phase-c-arms-v2",
+  "version": 1,
+  "status": "passed",
+  "can_promote": false,
+  "source_checkpoint": "output\\taiji-m2u-seed29-identity-generation-20260905\\last.pt",
+  "source_digest": "9f49bbd4f241d5c27487315a3a3cd67d8d406ac3c67357e931f040cc9d3e50c6",
+  "epochs": 1,
+  "replay_epochs": 1,
+  "c_train_bytes": 1048576,
+  "eval_bytes": 131072,
+  "replay_bytes": null,
+  "chunk_bytes": 65536,
+  "checkpoint_interval": 1,
+  "progress_dir": "E:\\Seed\\output\\taiji-m2r1-phase-c-progress-v2",
+  "resumed": false,
+  "datasets": {
+    "phase_a": {
+      "digest": "b193f4e25dee8b88c3bab71d3fd51a79dbfa973b972af37681334cfa32d13408",
+      "partition_seed": 29,
+      "profile": "foundation",
+      "sample_counts": {
+        "train": 1048576,
+        "holdout": 131072,
+        "retention": 131072
+      },
+      "source_files": [
+        [
+          "data\\simple_zh\\dialogue_extended_clean.jsonl",
+          "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+        ]
+      ],
+      "excluded_dataset_digest": null,
+      "excluded_dataset_digests": [],
+      "selected_record_count": 1605
+    },
+    "phase_b": {
+      "digest": "a01a0206365ca30e132095350d59bc04cea39e09ee86b33681bab0f45663499d",
+      "partition_seed": 10029,
+      "profile": "foundation",
+      "sample_counts": {
+        "train": 1048576,
+        "holdout": 131072,
+        "retention": 131072
+      },
+      "source_files": [
+        [
+          "data\\simple_zh\\dialogue_extended_clean.jsonl",
+          "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+        ]
+      ],
+      "excluded_dataset_digest": "b193f4e25dee8b88c3bab71d3fd51a79dbfa973b972af37681334cfa32d13408",
+      "excluded_dataset_digests": [],
+      "selected_record_count": 1505
+    },
+    "phase_c": {
+      "digest": "ac97455f1583b90f7e2d62ca3c682c8e27f0c56bb7275ebee6abdb17fc6476bd",
+      "partition_seed": 43,
+      "profile": "foundation",
+      "sample_counts": {
+        "train": 1048576,
+        "holdout": 131072,
+        "retention": 131072
+      },
+      "source_files": [
+        [
+          "data\\simple_zh\\dialogue_extended_clean.jsonl",
+          "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+        ]
+      ],
+      "excluded_dataset_digest": null,
+      "excluded_dataset_digests": [
+        "8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038",
+        "99ab9846193ccc2897d74c96be8245784f213ac7bc5a9886c928e38bf906132e",
+        "b193f4e25dee8b88c3bab71d3fd51a79dbfa973b972af37681334cfa32d13408",
+        "a01a0206365ca30e132095350d59bc04cea39e09ee86b33681bab0f45663499d",
+        "8ff929545031de2b082589b4927be641863744947802146f9767b1d14dc26a57",
+        "070f0584743edce90e3b6685504cd097fe2423b10c218194231c6cf92d5f9eb6"
+      ],
+      "selected_record_count": 1567
+    },
+    "phase_c2": null
+  },
+  "data_contract": {
+    "format": "taiji-m2r1-record-disjoint-course-v1",
+    "version": 1,
+    "current_seed": 29,
+    "source_lineage": {
+      "phase_a_expected_digest": "b193f4e25dee8b88c3bab71d3fd51a79dbfa973b972af37681334cfa32d13408",
+      "phase_a_actual_digest": "b193f4e25dee8b88c3bab71d3fd51a79dbfa973b972af37681334cfa32d13408",
+      "phase_b_expected_digest": "a01a0206365ca30e132095350d59bc04cea39e09ee86b33681bab0f45663499d",
+      "phase_b_actual_digest": "a01a0206365ca30e132095350d59bc04cea39e09ee86b33681bab0f45663499d",
+      "matches_source_checkpoint": true
+    },
+    "phase_chain": {
+      "cohort_seeds": [
+        11,
+        29,
+        47
+      ],
+      "phase_b_seed_offset": 10000,
+      "phase_a_by_seed": {
+        "11": {
+          "digest": "8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038",
+          "partition_seed": 11,
+          "profile": "foundation",
+          "sample_counts": {
+            "train": 1048576,
+            "holdout": 131072,
+            "retention": 131072
+          },
+          "source_files": [
+            [
+              "data\\simple_zh\\dialogue_extended_clean.jsonl",
+              "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+            ]
+          ],
+          "excluded_dataset_digest": null,
+          "excluded_dataset_digests": [],
+          "selected_record_count": 1618
+        },
+        "29": {
+          "digest": "b193f4e25dee8b88c3bab71d3fd51a79dbfa973b972af37681334cfa32d13408",
+          "partition_seed": 29,
+          "profile": "foundation",
+          "sample_counts": {
+            "train": 1048576,
+            "holdout": 131072,
+            "retention": 131072
+          },
+          "source_files": [
+            [
+              "data\\simple_zh\\dialogue_extended_clean.jsonl",
+              "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+            ]
+          ],
+          "excluded_dataset_digest": null,
+          "excluded_dataset_digests": [],
+          "selected_record_count": 1605
+        },
+        "47": {
+          "digest": "8ff929545031de2b082589b4927be641863744947802146f9767b1d14dc26a57",
+          "partition_seed": 47,
+          "profile": "foundation",
+          "sample_counts": {
+            "train": 1048576,
+            "holdout": 131072,
+            "retention": 131072
+          },
+          "source_files": [
+            [
+              "data\\simple_zh\\dialogue_extended_clean.jsonl",
+              "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+            ]
+          ],
+          "excluded_dataset_digest": null,
+          "excluded_dataset_digests": [],
+          "selected_record_count": 1611
+        }
+      },
+      "phase_b_by_seed": {
+        "11": {
+          "digest": "99ab9846193ccc2897d74c96be8245784f213ac7bc5a9886c928e38bf906132e",
+          "partition_seed": 10011,
+          "profile": "foundation",
+          "sample_counts": {
+            "train": 1048576,
+            "holdout": 131072,
+            "retention": 131072
+          },
+          "source_files": [
+            [
+              "data\\simple_zh\\dialogue_extended_clean.jsonl",
+              "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+            ]
+          ],
+          "excluded_dataset_digest": "8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038",
+          "excluded_dataset_digests": [],
+          "selected_record_count": 1494
+        },
+        "29": {
+          "digest": "a01a0206365ca30e132095350d59bc04cea39e09ee86b33681bab0f45663499d",
+          "partition_seed": 10029,
+          "profile": "foundation",
+          "sample_counts": {
+            "train": 1048576,
+            "holdout": 131072,
+            "retention": 131072
+          },
+          "source_files": [
+            [
+              "data\\simple_zh\\dialogue_extended_clean.jsonl",
+              "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+            ]
+          ],
+          "excluded_dataset_digest": "b193f4e25dee8b88c3bab71d3fd51a79dbfa973b972af37681334cfa32d13408",
+          "excluded_dataset_digests": [],
+          "selected_record_count": 1505
+        },
+        "47": {
+          "digest": "070f0584743edce90e3b6685504cd097fe2423b10c218194231c6cf92d5f9eb6",
+          "partition_seed": 10047,
+          "profile": "foundation",
+          "sample_counts": {
+            "train": 1048576,
+            "holdout": 131072,
+            "retention": 131072
+          },
+          "source_files": [
+            [
+              "data\\simple_zh\\dialogue_extended_clean.jsonl",
+              "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+            ]
+          ],
+          "excluded_dataset_digest": "8ff929545031de2b082589b4927be641863744947802146f9767b1d14dc26a57",
+          "excluded_dataset_digests": [],
+          "selected_record_count": 1501
+        }
+      },
+      "phase_c": {
+        "digest": "ac97455f1583b90f7e2d62ca3c682c8e27f0c56bb7275ebee6abdb17fc6476bd",
+        "partition_seed": 43,
+        "profile": "foundation",
+        "sample_counts": {
+          "train": 1048576,
+          "holdout": 131072,
+          "retention": 131072
+        },
+        "source_files": [
+          [
+            "data\\simple_zh\\dialogue_extended_clean.jsonl",
+            "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+          ]
+        ],
+        "excluded_dataset_digest": null,
+        "excluded_dataset_digests": [
+          "8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038",
+          "99ab9846193ccc2897d74c96be8245784f213ac7bc5a9886c928e38bf906132e",
+          "b193f4e25dee8b88c3bab71d3fd51a79dbfa973b972af37681334cfa32d13408",
+          "a01a0206365ca30e132095350d59bc04cea39e09ee86b33681bab0f45663499d",
+          "8ff929545031de2b082589b4927be641863744947802146f9767b1d14dc26a57",
+          "070f0584743edce90e3b6685504cd097fe2423b10c218194231c6cf92d5f9eb6"
+        ],
+        "selected_record_count": 1567
+      },
+      "phase_c2": {
+        "digest": "13dee7b2f7d38cd3688a5af76264c24cb6156ea371e9db88d812f5ea283598c1",
+        "partition_seed": 44,
+        "profile": "foundation",
+        "sample_counts": {
+          "train": 1048576,
+          "holdout": 131072,
+          "retention": 131072
+        },
+        "source_files": [
+          [
+            "data\\simple_zh\\dialogue_extended_clean.jsonl",
+            "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+          ]
+        ],
+        "excluded_dataset_digest": null,
+        "excluded_dataset_digests": [
+          "8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038",
+          "99ab9846193ccc2897d74c96be8245784f213ac7bc5a9886c928e38bf906132e",
+          "b193f4e25dee8b88c3bab71d3fd51a79dbfa973b972af37681334cfa32d13408",
+          "a01a0206365ca30e132095350d59bc04cea39e09ee86b33681bab0f45663499d",
+          "8ff929545031de2b082589b4927be641863744947802146f9767b1d14dc26a57",
+          "070f0584743edce90e3b6685504cd097fe2423b10c218194231c6cf92d5f9eb6",
+          "ac97455f1583b90f7e2d62ca3c682c8e27f0c56bb7275ebee6abdb17fc6476bd"
+        ],
+        "selected_record_count": 1555
+      },
+      "overlap_counts": {
+        "phase_a_seed11__vs__phase_b_seed11": 0,
+        "phase_a_seed29__vs__phase_b_seed29": 0,
+        "phase_a_seed47__vs__phase_b_seed47": 0,
+        "phase_a_seed11__vs__phase_c": 0,
+        "phase_b_seed11__vs__phase_c": 0,
+        "phase_a_seed29__vs__phase_c": 0,
+        "phase_b_seed29__vs__phase_c": 0,
+        "phase_a_seed47__vs__phase_c": 0,
+        "phase_b_seed47__vs__phase_c": 0,
+        "phase_a_seed11__vs__phase_c2": 0,
+        "phase_b_seed11__vs__phase_c2": 0,
+        "phase_a_seed29__vs__phase_c2": 0,
+        "phase_b_seed29__vs__phase_c2": 0,
+        "phase_a_seed47__vs__phase_c2": 0,
+        "phase_b_seed47__vs__phase_c2": 0,
+        "phase_c__vs__phase_c2": 0
+      },
+      "record_disjoint": true
+    },
+    "gate": {
+      "record_disjoint": true,
+      "source_lineage_matches": true
+    }
+  },
+  "preflight": {
+    "source_digest": "9f49bbd4f241d5c27487315a3a3cd67d8d406ac3c67357e931f040cc9d3e50c6",
+    "source_fresh_digest": "9f49bbd4f241d5c27487315a3a3cd67d8d406ac3c67357e931f040cc9d3e50c6",
+    "source_generation_canary": "babababae5ade5ada6e7bb84e7bba6e5",
+    "source_fresh_canary": "babababae5ade5ada6e7bb84e7bba6e5",
+    "source_checkpoint_bytes": 33173827,
+    "source_fresh_restore_seconds": 2.523425899911672
+  },
+  "arms": [
+    {
+      "arm": "replay",
+      "checks": {
+        "active_readout_changes": true,
+        "active_readout_changes_during_replay": true,
+        "shared_fabric_unchanged": true,
+        "protected_owners_unchanged": true,
+        "protected_readout_unchanged": true,
+        "scores_are_read_only": true,
+        "active_score_uses_active_owner": true,
+        "protected_score_uses_protected_owner": true,
+        "registry_round_trips_in_process": true,
+        "registry_round_trips_in_fresh_process": true,
+        "generation_canary_round_trips": true,
+        "fresh_process_generation_canary_matches": true,
+        "generation_route_records_active_owner": true,
+        "final_checkpoint_persisted_with_matching_digest": true
+      },
+      "capability": {
+        "protected_c_holdout_bpb": 4.308150081160751,
+        "active_c_holdout_bpb": 4.400429983281701,
+        "active_a_retention_bpb": 4.444565209838406,
+        "c_holdout_gain_bpb": -0.09227990212094994
+      },
+      "round_trip": {
+        "active_checkpoint_digest": "ecdda4ecfb875cda3a2ee99b7b7f5031dcd62f16d2d9ddaa31b14c1c8c635756",
+        "fresh_process_digest": "ecdda4ecfb875cda3a2ee99b7b7f5031dcd62f16d2d9ddaa31b14c1c8c635756",
+        "final_checkpoint_path": "E:\\Seed\\output\\taiji-m2r1-phase-c-actives-v2\\seed29_replay_c1048576_r0.pt",
+        "saved_final_digest": "ecdda4ecfb875cda3a2ee99b7b7f5031dcd62f16d2d9ddaa31b14c1c8c635756",
+        "checkpoint_bytes": 33274919,
+        "fresh_process_restore_seconds": 3.8718241000315174
+      },
+      "training": {
+        "metrics": {
+          "observations": 1048577.0,
+          "online_accuracy": 0.27816650565480644,
+          "mean_surprise": 2.8152614571340875
+        },
+        "resource": {
+          "phases": [
+            {
+              "elapsed_seconds": 1045.5973417999921,
+              "learn_seconds": 1023.2928725001402,
+              "checkpoint_save_seconds": 23.521688099950552,
+              "trained_body_bytes": 1048576,
+              "stream_symbols": 1048578,
+              "body_bytes_per_second": 1024.7076161471616,
+              "chunk_count": 16,
+              "peak_working_set_bytes": 369577984,
+              "torch_num_threads": 12,
+              "resumed_from_checkpoint": false,
+              "progress_checkpoint": "E:\\Seed\\output\\taiji-m2r1-phase-c-progress-v2\\seed29_replay_phase_c_c1048576.pt",
+              "resume_cursor": 0,
+              "resume_epoch": 1
+            },
+            {
+              "elapsed_seconds": 1045.9211364999646,
+              "learn_seconds": 1023.5233890999807,
+              "checkpoint_save_seconds": 23.650532999890856,
+              "trained_body_bytes": 1048576,
+              "stream_symbols": 1048578,
+              "body_bytes_per_second": 1024.4768328372534,
+              "chunk_count": 16,
+              "peak_working_set_bytes": 367759360,
+              "torch_num_threads": 12,
+              "resumed_from_checkpoint": false,
+              "progress_checkpoint": "E:\\Seed\\output\\taiji-m2r1-phase-c-progress-v2\\seed29_replay_replay_c1048576.pt",
+              "resume_cursor": 0,
+              "resume_epoch": 1
+            }
+          ],
+          "elapsed_seconds": 2091.5184782999568,
+          "learn_seconds": 2046.816261600121,
+          "checkpoint_save_seconds": 47.17222109984141,
+          "trained_body_bytes": 2097152,
+          "stream_symbols": 2097156,
+          "body_bytes_per_second": 1024.5922114965651,
+          "chunk_count": 32,
+          "peak_working_set_bytes": 369577984,
+          "torch_num_threads": 12,
+          "resumed_from_checkpoint": false
+        }
+      },
+      "resources": {
+        "scoring_seconds": 325.6745793999871,
+        "probe_checkpoint_save_seconds": 0.024786400026641786,
+        "final_checkpoint_save_seconds": 0.02400480001233518,
+        "fresh_process_restore_seconds": 3.8718241000315174
+      }
+    }
+  ]
+}
