@@ -1,6 +1,6 @@
 # Seed / Taiji 模型优先统一开发计划
 
-> 修订：2026-09-07。状态：R0 测量链完成；R1～R3 首轮能力报告因数据重叠被撤回，record-disjoint v2 数据链已修复；seed11 的 64 KiB 五臂 CPU pilot 技术通过但能力增益为负，1 MiB active-only/replay/cascade 分别为 `+0.02444/-0.05893/+0.00592 BPB`（cascade 的 C 保持退化）；seed29 active/replay/cascade 分别为 `+0.05344/-0.09228/+0.02592 BPB`（cascade 的 C 保持同样退化）；seed47 active/replay/cascade 分别为 `+0.07520/+0.01154/+0.04975 BPB`，replay 的 A retention 退化、cascade 的 C 保持仍退化；三 seed aggregate 已完成，当前不晋级。连续流切块、资源遥测和中断恢复均已通过。本文是唯一执行顺序与“下一步”来源。
+> 修订：2026-09-07。状态：R0 测量链完成；R1～R3 首轮能力报告因数据重叠被撤回，record-disjoint v2 数据链已修复；seed11 的 64 KiB 五臂 CPU pilot 技术通过但能力增益为负，1 MiB active-only/replay/cascade 分别为 `+0.02444/-0.05893/+0.00592 BPB`（cascade 的 C 保持退化）；seed29 active/replay/cascade 分别为 `+0.05344/-0.09228/+0.02592 BPB`（cascade 的 C 保持同样退化）；seed47 active/replay/cascade 分别为 `+0.07520/+0.01154/+0.04975 BPB`，replay 的 A retention 退化、cascade 的 C 保持仍退化；三 seed aggregate 已完成，当前不晋级。R2.R0 三 seed 固定结构 context 复现也已完成：24 点、120/120 技术检查通过；4 KiB 均值为正，16 KiB 均值为正但一 seed 为负，64 KiB 均值转负，因此短程信号不能升级为长程时间建模。当前转入 context/ordering 消融与简单参照，不扩结构。连续流切块、资源遥测和中断恢复均已通过。本文是唯一执行顺序与“下一步”来源。
 >
 > 本轮已完成数据契约代码、审计报告和回归测试；不会改写旧报告，下一步只从原始 child 重新生成独立证据。历史 M0/M1/M2-2a～2ae 的有效成果保留；旧“下一步”全部失效。重审依据见 [研究审视](../../reference/TAIJI_RESEARCH_REVIEW_2026_09_06.md)，原文见 [历史快照](../../archive/history/research_review_20260906/README.md)。
 >
@@ -43,6 +43,9 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | M2.R1 v2 seed47 formal replay | 同一 untouched parent、同一 1 MiB C 预算、C→replay 两周期、32 chunks；14/14 技术检查通过，训练约 2,479 秒、评分约 396 秒、约 846 B/s、峰值工作集约 369 MB | C holdout protected `4.3199` → replay `4.3083 BPB`，增益 `+0.01154`；但 A retention `4.3844`，相对 protected 退化约 `+0.06451 BPB` |
 | M2.R1 v2 seed47 formal cascade | 同一 untouched parent、1 MiB C→C′ 两周期、32 chunks；12/12 技术检查通过，训练约 2,461 秒、评分约 1,910 秒、约 852 B/s、峰值工作集约 370 MB | C′/C2 protected `4.3779` → active `4.3281 BPB`，新 holdout 增益 `+0.04975`；但 C 在 cycle1 `4.2447` → cycle2 `4.2489 BPB`，退化 `+0.00417`，第二周期保持仍未通过 |
 | M2.R1 v2 three-seed aggregate | 9 个正式臂全部 `status=passed`；active/replay 各 3×14/14，cascade 各 3×12/12；来源报告 SHA-256 已写入 aggregate | active-only 均值/最差 `+0.05102/+0.02444 BPB`（3/3 正）；replay `-0.04656/-0.09228`（1/3 正）；cascade C2 `+0.02720/+0.00592`（3/3 正），但 C cycle2 delta 均值 `+0.01110 BPB` 且 3/3 退化；测量链完成但不晋级 |
+| M2.R2.R0 seed11 smoke | 固定 seed11 parent，frozen/active_readout 两臂、4/16 KiB、4 点；20/20 技术检查通过；曾捕获默认绝对 corpus path 导致 lineage digest 不一致，已修正为 child 生成时的相对 canonical path | checkpoint preflight digest 一致；active owner 只写 active slot，但 holdout gain 为 `-0.06255/-0.14109 BPB`；smoke 仅作执行链证据，不晋级 |
+| M2.R2.R0 seed11 formal curve | 固定 seed11 parent，frozen/active_readout/predictive_context/joint_predictive 四臂、4/16/64 KiB、12 点；60/60 技术检查通过；preflight checkpoint `33,174,421` bytes，峰值工作集约 `535–569 MB` | protected holdout baseline `4.049390 BPB`；context gain 为 `+0.001515/+0.023738/-0.016105`，16 KiB 之外不稳定；active gain `-0.062549/-0.141091/-0.165254`，joint gain `-0.058237/-0.120990/-0.153693`；owner 写入集合与 read-only scoring 全部正确，当前不引入新架构 |
+| M2.R2.R0 context aggregate | seed11 formal + seed29/47 context 复现共 24 点、120/120 技术检查通过，来源报告 SHA-256 已写入 aggregate | 4 KiB gain 均值 `+0.007681`（3/3 正）；16 KiB `+0.018081`（2/3 正）；64 KiB `-0.010650`（1/3 正）；结论是短/中预算有信号但长预算不成立，先做消融与参照，不做时间架构晋级 |
 | M2.R1～R3 首轮报告 | 仅用不同 `partition_seed`，A/C 交集 `1597`、A/C′ `1577`、C/C′ `1563` | 技术 owner/保存检查仍可留作诊断；所有 phase-C 能力与多周期结论撤回，不能聚合或晋级 |
 | M2-2af 草案 | 继承评分错误、训练后才保存、仅 fresh digest、可单 seed promote | 中止且无正式报告；退出可执行主线，保留归档供重构参考 |
 | 完整认知层 | joint runner 使用 Taiji；Seed runtime 使用包含更多器官的 TSKV8Adapter | 不能把 kernel child 的成绩归给所有 adapter 器官，需逐 owner 训练覆盖映射 |
@@ -58,7 +61,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | 0 | M0 / M1 | 历史基线与首轮训练已执行 | 历史证据按任务范围保留，不重跑整段流程 |
 | 1 | M2.R0 测量纠正 | 已完成；评分 owner、数据排除基础、Gate/谱系合同修正 | 正反例能识别错 owner、重复、回归和无效恢复 |
 | 2 | M2.R1～R3 证据重建 | **已完成本轮 R1 证据**；三 seed active/replay/cascade 全部正式臂和 aggregate 均完成，active 分支有受控留出收益但 replay/第二周期保持不稳定，不能晋级 | 技术合格报告 + 独立 C/C′ 能力结果，不要求实验一定成功 |
-| 3 | M2.R2 表征与时间学习 | **当前进行**；先做固定结构学习曲线、owner attribution 和上下文消融，再决定是否引入一个可塑时间候选 | 未见组合与长程能力出现收益；或形成有证据的设计决策 |
+| 3 | M2.R2 表征与时间学习 | **R2.R0 三 seed 已完成；当前做 context/ordering 消融与简单参考模型**，暂不引入时间候选 | 证明收益来自可迁移上下文而非顺序/短统计；或形成“不扩结构”的否决结论 |
 | 4 | M2.R3 语义与表达训练 | Taiji-owned Percept/Goal/ContentPlan 的训练和独立输出 | 核心语义/事实指标有效，provider 表达收益独立统计 |
 | 5 | M2.R4 联合课程与保持 | 整合通过验证的器官，重跑绝对能力/保持/增益 | 三 seed 正式报告；目标改善且非目标能力不退化 |
 | 6 | M3 最小真实任务验证 | 留出 Workbench 项目的可恢复闭环 | 至少一个预注册真实任务族获得可重复净收益 |
@@ -72,7 +75,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 
 ## 4. 当前唯一下一步
 
-**唯一下一步：执行 M2.R2.R0 固定结构学习曲线与 owner-attribution preflight。** R1 三 seed aggregate 已证明：active-only 的 C 留出收益可重复，但 replay 只有 1/3 seed 为正，cascade 虽对新 C2 为正却在旧 C 上 3/3 退化；因此先不改架构、不晋级 checkpoint，锁定一个 untouched identity-generation parent，使用至少三个 CPU 训练预算点和固定 dev/holdout，分别测量 `BytePredictiveContext`、`BytePredictiveReadout`、protected owner 的实际写入与收益曲线，再决定是否提出一个零初始残差的可塑时间候选。R1 的 aggregate 与 9 个来源报告保留为 R2 的基线。
+**唯一下一步：执行 M2.R2.R0.1 context/ordering 消融与简单参考。** 三 seed R2.R0 已完成且所有技术 Gate 通过：`predictive_context` 在 4 KiB 均值 `+0.007681`、16 KiB 均值 `+0.018081`，但 64 KiB 均值 `-0.010650`；因此只能暂定为短/中程统计适应信号，不能称为长程时间学习，也不能引入新递归/门控组件。下一步固定 seed11/同一 C train-holdout，比较正常顺序、打乱顺序、清空/固定上下文和只读出更新，并加入简单 byte unigram/n-gram 参照；只有收益超出短统计参照且随上下文保持，才提出零初始残差时间候选。R1 aggregate、R2.R0 aggregate 与来源报告均保留为基线。
 
 2026-09-06 实际审计已证明首轮报告不能作为能力证据：旧 evaluator 的 C/C′ 只是换 partition seed，不是新记录。当前已落地的修复为 `scripts/training/eval_taiji_m2r1_phase_c_canary.py` v2、`scripts/training/audit_taiji_m2r1_data_contract.py` 和 `reports/taiji_m2r1_data_contract_20260906.json`：
 

@@ -1,0 +1,81 @@
+{
+  "format": "taiji-r2-learning-curve-context-aggregate-v1",
+  "version": 1,
+  "status": "passed",
+  "can_promote": false,
+  "protocol": {
+    "seeds": [11, 29, 47],
+    "arms": ["frozen", "predictive_context"],
+    "budgets": [4096, 16384, 65536],
+    "eval_bytes": 4096,
+    "record_disjoint_data_contract": "taiji-m2r1-data-contract-v2",
+    "source_checkpoint_family": "taiji-m2u-identity-generation-20260905",
+    "bpb_direction": "lower_is_better",
+    "gain_direction": "positive_is_better"
+  },
+  "summary": {
+    "technical_gates": {
+      "points": 24,
+      "passed": 24,
+      "checks_passed": 120,
+      "checks_total": 120
+    },
+    "predictive_context_holdout_gain_bpb": {
+      "4096": {
+        "per_seed": {
+          "11": 0.0015148124241388672,
+          "29": 0.0031677012821615946,
+          "47": 0.018361740400052895
+        },
+        "mean": 0.007681418035451119,
+        "min": 0.0015148124241388672,
+        "max": 0.018361740400052895,
+        "positive_seeds": 3
+      },
+      "16384": {
+        "per_seed": {
+          "11": 0.023737706336783404,
+          "29": -0.010158079228434147,
+          "47": 0.040664494970926945
+        },
+        "mean": 0.0180813740264254,
+        "min": -0.010158079228434147,
+        "max": 0.040664494970926945,
+        "positive_seeds": 2
+      },
+      "65536": {
+        "per_seed": {
+          "11": -0.016105014659567374,
+          "29": -0.0560713099735306,
+          "47": 0.040225619597253015
+        },
+        "mean": -0.01065023501194832,
+        "min": -0.0560713099735306,
+        "max": 0.040225619597253015,
+        "positive_seeds": 1
+      }
+    },
+    "decision": "short_context_signal_without_long_context_evidence",
+    "interpretation": "The protected predictive context owner can produce a small repeatable short-budget holdout improvement, while the 16 KiB result is mixed and the 64 KiB mean is negative. This is not evidence of a learned long-range temporal mechanism or a reason to promote a checkpoint. Keep the current structure fixed and move to context/ordering ablations and simple references before proposing a new temporal component."
+  },
+  "sources": [
+    {
+      "seed": 11,
+      "path": "reports/taiji_m2r2_r0_learning_curve_seed11_20260907.json",
+      "sha256": "d7691e0c0f0f067aff863d0be21b4a9af64647440ae3c9bc8cab9d01b24f584d",
+      "source_digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb"
+    },
+    {
+      "seed": 29,
+      "path": "reports/taiji_m2r2_r0_context_seed29_20260907.json",
+      "sha256": "4df28e6ca70f072c66a84b989e2c28089cd24a0e98ef12083ffd05e62f95a416",
+      "source_digest": "9f49bbd4f241d5c27487315a3a3cd67d8d406ac3c67357e931f040cc9d3e50c6"
+    },
+    {
+      "seed": 47,
+      "path": "reports/taiji_m2r2_r0_context_seed47_20260907.json",
+      "sha256": "1cc74247be418229f3e78fbb0e824169171942e54dcda838215045725d5050f5",
+      "source_digest": "9e381dbdfe9ca837f05f55e7ccc28192536b30a703dffefda519b0b235a0d7d8"
+    }
+  ]
+}
