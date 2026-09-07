@@ -1,6 +1,6 @@
 # Seed / Taiji 模型优先统一开发计划
 
-> 修订：2026-09-07。状态：R0 测量链完成；R1～R3 首轮能力报告因数据重叠被撤回，record-disjoint v2 数据链已修复；seed11 的 64 KiB 五臂 CPU pilot 技术通过但能力增益为负，1 MiB active-only/replay/cascade 分别为 `+0.02444/-0.05893/+0.00592 BPB`（cascade 的 C 保持退化）；seed29 active/replay/cascade 分别为 `+0.05344/-0.09228/+0.02592 BPB`（cascade 的 C 保持同样退化）；seed47 active/replay 分别为 `+0.07520/+0.01154 BPB`，但 replay 的 A retention 退化；连续流切块、资源遥测和中断恢复均已通过。本文是唯一执行顺序与“下一步”来源。
+> 修订：2026-09-07。状态：R0 测量链完成；R1～R3 首轮能力报告因数据重叠被撤回，record-disjoint v2 数据链已修复；seed11 的 64 KiB 五臂 CPU pilot 技术通过但能力增益为负，1 MiB active-only/replay/cascade 分别为 `+0.02444/-0.05893/+0.00592 BPB`（cascade 的 C 保持退化）；seed29 active/replay/cascade 分别为 `+0.05344/-0.09228/+0.02592 BPB`（cascade 的 C 保持同样退化）；seed47 active/replay/cascade 分别为 `+0.07520/+0.01154/+0.04975 BPB`，replay 的 A retention 退化、cascade 的 C 保持仍退化；三 seed aggregate 已完成，当前不晋级。连续流切块、资源遥测和中断恢复均已通过。本文是唯一执行顺序与“下一步”来源。
 >
 > 本轮已完成数据契约代码、审计报告和回归测试；不会改写旧报告，下一步只从原始 child 重新生成独立证据。历史 M0/M1/M2-2a～2ae 的有效成果保留；旧“下一步”全部失效。重审依据见 [研究审视](../../reference/TAIJI_RESEARCH_REVIEW_2026_09_06.md)，原文见 [历史快照](../../archive/history/research_review_20260906/README.md)。
 >
@@ -33,14 +33,16 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | M2-2ad active | 权重改变、owner 隔离、保存恢复检查通过；评分却全走 protected | active 能力结论撤回，状态为 measurement-invalid，不能归因为重复训练或容量不足 |
 | M2-2ae phase-C | 按完整记录排除 A/B，可提供 C 数据 | 整条记录不重复；尚未证明近重复隔离、领域变化或语义新颖性 |
 | M2.R1 v2 seed11 pilot | 64 KiB C 训练、32 KiB 评估，五臂均完成；no-update/protected/active/replay/cascade 技术检查分别为 2/2、4/4、14/14、14/14、12/12 | 数据契约、owner 路由和 fresh checkpoint 均通过；active `-0.0594` BPB、replay `-0.0607`、cascade C′ `-0.0480`，当前预算下未见留出收益，不能晋级 |
-| M2.R1 v2 seed11 formal active | 1 MiB C 训练、128 KiB 评估，16 chunks；14/14 技术检查通过，训练约 1,220 秒、评分约 403 秒、约 860 B/s、峰值工作集约 368 MB | C holdout protected `4.2194` → active `4.1950 BPB`，增益 `+0.02444`；这是单 seed candidate，replay/cascade 和 seed29/47 尚未完成，不能晋级 |
-| M2.R1 v2 seed11 formal replay | 同一 untouched parent、同一 1 MiB C 预算、C→replay 两周期、32 chunks；14/14 技术检查通过，训练约 2,579 秒、评分约 414 秒、约 813 B/s、峰值工作集约 369 MB | C holdout protected `4.2194` → replay `4.2784 BPB`，增益 `-0.05893`；等预算 replay 未复现 active-only 正收益，不能晋级；cascade 仍待验证 |
+| M2.R1 v2 seed11 formal active | 1 MiB C 训练、128 KiB 评估，16 chunks；14/14 技术检查通过，训练约 1,220 秒、评分约 403 秒、约 860 B/s、峰值工作集约 368 MB | C holdout protected `4.2194` → active `4.1950 BPB`，增益 `+0.02444`；三 seed 对照已完成，aggregate 仍不晋级 |
+| M2.R1 v2 seed11 formal replay | 同一 untouched parent、同一 1 MiB C 预算、C→replay 两周期、32 chunks；14/14 技术检查通过，训练约 2,579 秒、评分约 414 秒、约 813 B/s、峰值工作集约 369 MB | C holdout protected `4.2194` → replay `4.2784 BPB`，增益 `-0.05893`；等预算 replay 未复现 active-only 正收益，不能晋级 |
 | M2.R1 v2 seed11 formal cascade | 同一 untouched parent、1 MiB C→C′ 两周期、32 chunks；12/12 技术检查通过，训练约 2,519 秒、评分约 1,945 秒、约 832 B/s、峰值工作集约 369 MB | C′/C2 protected `4.2925` → active `4.2866 BPB`，新 holdout 增益 `+0.00592`；但 C 在 cycle1 `4.1950` → cycle2 `4.2132 BPB`，退化 `+0.01827`，第二周期保持失败，不能晋级 |
-| M2.R1 v2 seed29 formal active | 1 MiB C 训练、128 KiB 评估，16 chunks；14/14 技术检查通过，训练约 1,020 秒、评分约 319 秒、约 1,028 B/s、峰值工作集约 370 MB | C holdout protected `4.3082` → active `4.2547 BPB`，增益 `+0.05344`；独立 seed 的 active-only 结果为正，但 replay/cascade 与 seed47 未完成，不能晋级 |
-| M2.R1 v2 seed29 formal replay | 同一 untouched parent、同一 1 MiB C 预算、C→replay 两周期、32 chunks；14/14 技术检查通过，训练约 2,047 秒、评分约 326 秒、约 1,025 B/s、峰值工作集约 370 MB | C holdout protected `4.3082` → replay `4.4004 BPB`，增益 `-0.09228`；A retention `4.4446 BPB`，等预算 replay 明显未复现 active-only 正收益，cascade 仍待验证 |
+| M2.R1 v2 seed29 formal active | 1 MiB C 训练、128 KiB 评估，16 chunks；14/14 技术检查通过，训练约 1,020 秒、评分约 319 秒、约 1,028 B/s、峰值工作集约 370 MB | C holdout protected `4.3082` → active `4.2547 BPB`，增益 `+0.05344`；独立 seed 的 active-only 结果为正，但 aggregate 不晋级 |
+| M2.R1 v2 seed29 formal replay | 同一 untouched parent、同一 1 MiB C 预算、C→replay 两周期、32 chunks；14/14 技术检查通过，训练约 2,047 秒、评分约 326 秒、约 1,025 B/s、峰值工作集约 370 MB | C holdout protected `4.3082` → replay `4.4004 BPB`，增益 `-0.09228`；A retention `4.4446 BPB`，等预算 replay 明显未复现 active-only 正收益 |
 | M2.R1 v2 seed29 formal cascade | 同一 untouched parent、1 MiB C→C′ 两周期、32 chunks；12/12 技术检查通过，训练约 2,513 秒、评分约 1,933 秒、约 835 B/s、峰值工作集约 369 MB | C′/C2 protected `4.3551` → active `4.3292 BPB`，新 holdout 增益 `+0.02592`；但 C 在 cycle1 `4.2547` → cycle2 `4.2656 BPB`，退化 `+0.01088`，第二周期保持失败，不能晋级 |
-| M2.R1 v2 seed47 formal active | 1 MiB C 训练、128 KiB 评估，16 chunks；14/14 技术检查通过，训练约 1,238 秒、评分约 394 秒、约 847 B/s、峰值工作集约 368 MB | C holdout protected `4.3199` → active `4.2447 BPB`，增益 `+0.07520`；第三个 seed 的 active-only 仍为正，但 replay/cascade 未完成，不能晋级 |
-| M2.R1 v2 seed47 formal replay | 同一 untouched parent、同一 1 MiB C 预算、C→replay 两周期、32 chunks；14/14 技术检查通过，训练约 2,479 秒、评分约 396 秒、约 846 B/s、峰值工作集约 369 MB | C holdout protected `4.3199` → replay `4.3083 BPB`，增益 `+0.01154`；但 A retention `4.3844`，相对 protected 退化约 `+0.06451 BPB`，cascade 仍待验证 |
+| M2.R1 v2 seed47 formal active | 1 MiB C 训练、128 KiB 评估，16 chunks；14/14 技术检查通过，训练约 1,238 秒、评分约 394 秒、约 847 B/s、峰值工作集约 368 MB | C holdout protected `4.3199` → active `4.2447 BPB`，增益 `+0.07520`；第三个 seed 的 active-only 仍为正，但 aggregate 不晋级 |
+| M2.R1 v2 seed47 formal replay | 同一 untouched parent、同一 1 MiB C 预算、C→replay 两周期、32 chunks；14/14 技术检查通过，训练约 2,479 秒、评分约 396 秒、约 846 B/s、峰值工作集约 369 MB | C holdout protected `4.3199` → replay `4.3083 BPB`，增益 `+0.01154`；但 A retention `4.3844`，相对 protected 退化约 `+0.06451 BPB` |
+| M2.R1 v2 seed47 formal cascade | 同一 untouched parent、1 MiB C→C′ 两周期、32 chunks；12/12 技术检查通过，训练约 2,461 秒、评分约 1,910 秒、约 852 B/s、峰值工作集约 370 MB | C′/C2 protected `4.3779` → active `4.3281 BPB`，新 holdout 增益 `+0.04975`；但 C 在 cycle1 `4.2447` → cycle2 `4.2489 BPB`，退化 `+0.00417`，第二周期保持仍未通过 |
+| M2.R1 v2 three-seed aggregate | 9 个正式臂全部 `status=passed`；active/replay 各 3×14/14，cascade 各 3×12/12；来源报告 SHA-256 已写入 aggregate | active-only 均值/最差 `+0.05102/+0.02444 BPB`（3/3 正）；replay `-0.04656/-0.09228`（1/3 正）；cascade C2 `+0.02720/+0.00592`（3/3 正），但 C cycle2 delta 均值 `+0.01110 BPB` 且 3/3 退化；测量链完成但不晋级 |
 | M2.R1～R3 首轮报告 | 仅用不同 `partition_seed`，A/C 交集 `1597`、A/C′ `1577`、C/C′ `1563` | 技术 owner/保存检查仍可留作诊断；所有 phase-C 能力与多周期结论撤回，不能聚合或晋级 |
 | M2-2af 草案 | 继承评分错误、训练后才保存、仅 fresh digest、可单 seed promote | 中止且无正式报告；退出可执行主线，保留归档供重构参考 |
 | 完整认知层 | joint runner 使用 Taiji；Seed runtime 使用包含更多器官的 TSKV8Adapter | 不能把 kernel child 的成绩归给所有 adapter 器官，需逐 owner 训练覆盖映射 |
@@ -55,8 +57,8 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 |---|---|---|---|
 | 0 | M0 / M1 | 历史基线与首轮训练已执行 | 历史证据按任务范围保留，不重跑整段流程 |
 | 1 | M2.R0 测量纠正 | 已完成；评分 owner、数据排除基础、Gate/谱系合同修正 | 正反例能识别错 owner、重复、回归和无效恢复 |
-| 2 | M2.R1～R3 证据重建 | **当前进行**；seed11 与 seed29 三个正式臂均完成，seed47 active/replay 已完成且 replay 出现小幅正收益但 retention 退化，下一步执行 seed47 cascade | 技术合格报告 + 独立 C/C′ 能力结果，不要求实验一定成功 |
-| 3 | M2.R2 表征与时间学习 | 学习曲线、强对照、一个候选可塑上下文 | 未见组合与长程能力出现收益；或形成有证据的设计决策 |
+| 2 | M2.R1～R3 证据重建 | **已完成本轮 R1 证据**；三 seed active/replay/cascade 全部正式臂和 aggregate 均完成，active 分支有受控留出收益但 replay/第二周期保持不稳定，不能晋级 | 技术合格报告 + 独立 C/C′ 能力结果，不要求实验一定成功 |
+| 3 | M2.R2 表征与时间学习 | **当前进行**；先做固定结构学习曲线、owner attribution 和上下文消融，再决定是否引入一个可塑时间候选 | 未见组合与长程能力出现收益；或形成有证据的设计决策 |
 | 4 | M2.R3 语义与表达训练 | Taiji-owned Percept/Goal/ContentPlan 的训练和独立输出 | 核心语义/事实指标有效，provider 表达收益独立统计 |
 | 5 | M2.R4 联合课程与保持 | 整合通过验证的器官，重跑绝对能力/保持/增益 | 三 seed 正式报告；目标改善且非目标能力不退化 |
 | 6 | M3 最小真实任务验证 | 留出 Workbench 项目的可恢复闭环 | 至少一个预注册真实任务族获得可重复净收益 |
@@ -70,7 +72,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 
 ## 4. 当前唯一下一步
 
-**唯一下一步：按相同 1 MiB / 128 KiB / record-disjoint v2 协议执行 seed47 C→C′ cascade。** seed47 replay 的 C holdout 小幅转正 `+0.01154 BPB`，但 A retention 退化约 `+0.06451 BPB`；cascade 用于确认第三个 seed 的第二周期新数据是否改善保持，随后再汇总三 seed 证据。正式晋级或架构扩展仍保持冻结。64 KiB pilot 的负增益保留为预算/泛化诊断，不自动推翻或确认正式结果。
+**唯一下一步：执行 M2.R2.R0 固定结构学习曲线与 owner-attribution preflight。** R1 三 seed aggregate 已证明：active-only 的 C 留出收益可重复，但 replay 只有 1/3 seed 为正，cascade 虽对新 C2 为正却在旧 C 上 3/3 退化；因此先不改架构、不晋级 checkpoint，锁定一个 untouched identity-generation parent，使用至少三个 CPU 训练预算点和固定 dev/holdout，分别测量 `BytePredictiveContext`、`BytePredictiveReadout`、protected owner 的实际写入与收益曲线，再决定是否提出一个零初始残差的可塑时间候选。R1 的 aggregate 与 9 个来源报告保留为 R2 的基线。
 
 2026-09-06 实际审计已证明首轮报告不能作为能力证据：旧 evaluator 的 C/C′ 只是换 partition seed，不是新记录。当前已落地的修复为 `scripts/training/eval_taiji_m2r1_phase_c_canary.py` v2、`scripts/training/audit_taiji_m2r1_data_contract.py` 和 `reports/taiji_m2r1_data_contract_20260906.json`：
 
@@ -122,7 +124,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 - v2 采用 cohort 级记录链：每个 seed 的 A=`partition_seed=seed`、B=`10000+seed` 且 B 排除 A；共同 C 排除所有六份 A/B 的完整记录，共同 C′ 再排除 C。记录文本抽取、规范化、全记录排除、截断边界和 digest/overlap 必须写入报告；同源 C 只能称为未见记录，不能称为新领域。
 - 同一父代复制四个顺序执行的臂：不更新、单分支可塑、exact train-only replay、protected+active readout。使用同一数据和评估切片。
 - 4 KiB train / 1 KiB evaluation 技术 canary 已通过；seed11 的 64 KiB train / 32 KiB evaluation 五臂 CPU pilot 也已通过全部技术 Gate，但 active/replay/cascade 的 C/C′ 留出增益均为负，不能当作能力晋级。
-- v2 evaluator 已记录训练/评分/保存/恢复耗时、吞吐、峰值工作集、torch CPU 线程数，并按连续字节流边界保存可续接游标；4 KiB active chunked canary、`--resume` canary 和 seed11 1 MiB active 正式臂均通过。replay/cascade 仍必须使用同一 1 MiB / 128 KiB 口径，缩减运行必须显式报告，不冒充 full foundation。
+- v2 evaluator 已记录训练/评分/保存/恢复耗时、吞吐、峰值工作集、torch CPU 线程数，并按连续字节流边界保存可续接游标；4 KiB active chunked canary、`--resume` canary 和 seed11/29/47 的 1 MiB active/replay/cascade 正式臂均通过技术 Gate。三 seed aggregate 已固定为 R2 基线；后续缩减运行必须显式报告，不冒充 full foundation。
 - active-only、protected-only 是器官能力测量；显式 boundary 组合是已知任务边界下的系统测量。无任务边界的自主路由单列未评估。
 
 **训练执行：**
@@ -201,7 +203,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 - 构造跨阶段能力矩阵：阶段完成后测全部旧任务和当前新任务。BWT、旧任务最差变化、新任务收益及成本分别呈现。
 - B3 引入不同动作效果/多对象/噪声和多步预测；B4 引入未见目标、变化动作映射和多步成功，避免天花板任务持续占据训练预算。
 - 绝对能力对固定基准与认证祖先，保持对直接父代，本轮增量对预注册目标；不得因换了 parent 让“已会的能力”自动变成不具备。
-- seed11 pilot 后再按固定协议执行 29/47；同时报告每 seed 成对差值、均值、最差值及按记录/任务重采样的不确定性，不能只交叉比较最强控制与最弱模型。
+- R1 已按固定协议完成 seed11/29/47；aggregate 已报告每 seed 成对差值、均值、最差值和技术 Gate，但尚未做按记录/任务重采样的不确定性。R2 必须把这些不确定性与 owner/上下文消融分开，不能只交叉比较最强控制与最弱模型。
 - M2 完成条件是至少一项目标有可信新收益且全部受保护项保持，不是五个数字每一轮都提高。正式通用能力声明仍等待更广泛评估。
 
 ## 6. 公共评测与防误判规则
