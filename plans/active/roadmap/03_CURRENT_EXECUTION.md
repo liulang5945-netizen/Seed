@@ -1,6 +1,6 @@
 # Seed / Taiji 模型优先统一开发计划
 
-> 修订：2026-09-07。状态：R0 测量链完成；R1～R3 首轮能力报告因数据重叠被撤回，record-disjoint v2 数据链已修复；seed11 的 64 KiB 五臂 CPU pilot 技术通过但能力增益为负，1 MiB active-only 正式臂已取得 `+0.02444 BPB`；连续流切块、资源遥测和中断恢复均已通过。本文是唯一执行顺序与“下一步”来源。
+> 修订：2026-09-07。状态：R0 测量链完成；R1～R3 首轮能力报告因数据重叠被撤回，record-disjoint v2 数据链已修复；seed11 的 64 KiB 五臂 CPU pilot 技术通过但能力增益为负，1 MiB active-only 正式臂取得 `+0.02444 BPB`，同预算 replay 为 `-0.05893 BPB`；连续流切块、资源遥测和中断恢复均已通过。本文是唯一执行顺序与“下一步”来源。
 >
 > 本轮已完成数据契约代码、审计报告和回归测试；不会改写旧报告，下一步只从原始 child 重新生成独立证据。历史 M0/M1/M2-2a～2ae 的有效成果保留；旧“下一步”全部失效。重审依据见 [研究审视](../../reference/TAIJI_RESEARCH_REVIEW_2026_09_06.md)，原文见 [历史快照](../../archive/history/research_review_20260906/README.md)。
 >
@@ -34,6 +34,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | M2-2ae phase-C | 按完整记录排除 A/B，可提供 C 数据 | 整条记录不重复；尚未证明近重复隔离、领域变化或语义新颖性 |
 | M2.R1 v2 seed11 pilot | 64 KiB C 训练、32 KiB 评估，五臂均完成；no-update/protected/active/replay/cascade 技术检查分别为 2/2、4/4、14/14、14/14、12/12 | 数据契约、owner 路由和 fresh checkpoint 均通过；active `-0.0594` BPB、replay `-0.0607`、cascade C′ `-0.0480`，当前预算下未见留出收益，不能晋级 |
 | M2.R1 v2 seed11 formal active | 1 MiB C 训练、128 KiB 评估，16 chunks；14/14 技术检查通过，训练约 1,220 秒、评分约 403 秒、约 860 B/s、峰值工作集约 368 MB | C holdout protected `4.2194` → active `4.1950 BPB`，增益 `+0.02444`；这是单 seed candidate，replay/cascade 和 seed29/47 尚未完成，不能晋级 |
+| M2.R1 v2 seed11 formal replay | 同一 untouched parent、同一 1 MiB C 预算、C→replay 两周期、32 chunks；14/14 技术检查通过，训练约 2,579 秒、评分约 414 秒、约 813 B/s、峰值工作集约 369 MB | C holdout protected `4.2194` → replay `4.2784 BPB`，增益 `-0.05893`；等预算 replay 未复现 active-only 正收益，不能晋级；cascade 仍待验证 |
 | M2.R1～R3 首轮报告 | 仅用不同 `partition_seed`，A/C 交集 `1597`、A/C′ `1577`、C/C′ `1563` | 技术 owner/保存检查仍可留作诊断；所有 phase-C 能力与多周期结论撤回，不能聚合或晋级 |
 | M2-2af 草案 | 继承评分错误、训练后才保存、仅 fresh digest、可单 seed promote | 中止且无正式报告；退出可执行主线，保留归档供重构参考 |
 | 完整认知层 | joint runner 使用 Taiji；Seed runtime 使用包含更多器官的 TSKV8Adapter | 不能把 kernel child 的成绩归给所有 adapter 器官，需逐 owner 训练覆盖映射 |
@@ -63,7 +64,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 
 ## 4. 当前唯一下一步
 
-**唯一下一步：从同一未改动的 seed11 parent 继续执行 1 MiB 等预算 replay 与 C→C′ cascade。** active-only 正式臂已取得单 seed `+0.02444 BPB`，但这还不能区分一次新数据适应、等预算 replay 的贡献和第二周期保持；必须先完成这两个对照，再按同一 record-disjoint v2 协议扩展 seed29/47。64 KiB pilot 的负增益保留为预算/泛化诊断，不自动推翻或确认正式结果。
+**唯一下一步：从同一未改动的 seed11 parent 执行 1 MiB C→C′ cascade。** active-only 正式臂取得单 seed `+0.02444 BPB`，而等预算 replay 为 `-0.05893 BPB`；现在需要验证第一周期 active 的收益在第二周期接收 C′ 后是否保持、改善或退化。cascade 完成后，才能按同一 record-disjoint v2 协议扩展 seed29/47。64 KiB pilot 的负增益保留为预算/泛化诊断，不自动推翻或确认正式结果。
 
 2026-09-06 实际审计已证明首轮报告不能作为能力证据：旧 evaluator 的 C/C′ 只是换 partition seed，不是新记录。当前已落地的修复为 `scripts/training/eval_taiji_m2r1_phase_c_canary.py` v2、`scripts/training/audit_taiji_m2r1_data_contract.py` 和 `reports/taiji_m2r1_data_contract_20260906.json`：
 
