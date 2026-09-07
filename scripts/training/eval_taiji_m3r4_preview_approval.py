@@ -75,12 +75,13 @@ def _intent_request(
     environment: WorkbenchEnvironment,
     parameters: dict[str, Any],
     *,
+    kind: str = "workspace.apply_patch",
     snapshot_id: str | None = None,
     request_id: str = "m3r4-preview-patch",
 ) -> WorkbenchActionRequest:
     intent = ActionIntent(
         intent_id=f"intent:{request_id}",
-        kind="workspace.apply_patch",
+        kind=kind,
         parameters=parameters,
         expected_outcome="preview one digest-checked text replacement",
         confidence=1.0,
