@@ -404,6 +404,180 @@ class BytePredictiveContext:
         self.recurrent.edge_weight.zero_()
 
 
+class GatedMultiTimescaleTemporalResidual:
+    """Optional F1 candidate with fast and slow causal eligibility traces.
+
+    The candidate is deliberately separate from ``BytePredictiveContext`` so
+    an old v10 checkpoint can remain byte-for-byte compatible when the
+    candidate is not enabled.  Both residual banks start at zero: attaching
+    the candidate therefore does not change the current prediction until it
+    has learned.  The gate is activity-dependent, while the decay constants
+    are explicit candidate metadata rather than hidden architecture values.
+    """
+
+    PAYLOAD_FORMAT = "taiji-gated-multiscale-temporal-residual-v1"
+    PAYLOAD_VERSION = 1
+
+    def __init__(
+        self,
+        config: TaijiConfig,
+        *,
+        generator: torch.Generator,
+        fast_decay: float,
+        slow_decay: float,
+        gate_temperature: float,
+        residual_gain: float,
+        device: torch.device | str = "cpu",
+    ) -> None:
+        self.config = config
+        self.device = torch.device(device)
+        self.fast_decay = float(fast_decay)
+        self.slow_decay = float(slow_decay)
+        self.gate_temperature = float(gate_temperature)
+        self.residual_gain = float(residual_gain)
+        self._validate_hyperparameters()
+        allow_self = config.motor_context_dim <= 1
+        self.fast = SparseSynapses(
+            config.motor_context_dim,
+            config.motor_context_dim,
+            config.predictive_context_fan_in,
+            generator=generator,
+            init_scale=0.0,
+            max_weight_norm=config.max_weight_norm,
+            device=self.device,
+            allow_self=allow_self,
+        )
+        self.slow = SparseSynapses(
+            config.motor_context_dim,
+            config.motor_context_dim,
+            config.predictive_context_fan_in,
+            generator=generator,
+            init_scale=0.0,
+            max_weight_norm=config.max_weight_norm,
+            device=self.device,
+            allow_self=allow_self,
+        )
+
+    def _validate_hyperparameters(self) -> None:
+        if not 0.0 <= self.fast_decay < 1.0:
+            raise ValueError("fast_decay must be in [0, 1)")
+        if not 0.0 < self.slow_decay < 1.0:
+            raise ValueError("slow_decay must be in (0, 1)")
+        if not 0.0 < self.gate_temperature:
+            raise ValueError("gate_temperature must be positive")
+        if not 0.0 < self.residual_gain:
+            raise ValueError("residual_gain must be positive")
+
+    def _slow_trace(
+        self,
+        prior_context: torch.Tensor,
+        prior_slow_context: torch.Tensor | None,
+    ) -> torch.Tensor:
+        if prior_context.shape != (self.config.motor_context_dim,):
+            raise ValueError("candidate prior context dimension mismatch")
+        if prior_slow_context is None:
+            prior_slow_context = torch.zeros_like(prior_context)
+        elif prior_slow_context.shape != (self.config.motor_context_dim,):
+            raise ValueError("candidate slow context dimension mismatch")
+        return self.slow_decay * prior_slow_context + (
+            1.0 - self.slow_decay
+        ) * prior_context
+
+    def encode(
+        self,
+        base_context: torch.Tensor,
+        *,
+        prior_context: torch.Tensor | None,
+        prior_slow_context: torch.Tensor | None,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        """Add a gated fast/slow residual and return the next slow trace."""
+
+        if base_context.shape != (self.config.motor_context_dim,):
+            raise ValueError("candidate base context dimension mismatch")
+        if prior_context is None:
+            prior_context = torch.zeros_like(base_context)
+        else:
+            prior_context = prior_context.detach().to(self.device).clone()
+        slow_trace = self._slow_trace(prior_context, prior_slow_context)
+        fast_norm = prior_context.norm()
+        slow_norm = slow_trace.norm()
+        slow_gate = torch.sigmoid(
+            (slow_norm - fast_norm) / float(self.gate_temperature)
+        )
+        fast_gate = 1.0 - slow_gate
+        residual = float(self.residual_gain) * (
+            fast_gate * self.fast.forward(prior_context)
+            + slow_gate * self.slow.forward(slow_trace)
+        )
+        return bound_norm(
+            base_context + residual,
+            self.config.motor_context_norm,
+        ), slow_trace
+
+    @torch.no_grad()
+    def learn(
+        self,
+        prior_context: torch.Tensor,
+        prior_slow_context: torch.Tensor | None,
+        feedback: torch.Tensor,
+        *,
+        learning_rate: float,
+        weight_decay: float,
+    ) -> None:
+        """Write both eligibility scales from the same causal F1 feedback."""
+
+        if feedback.shape != (self.config.motor_context_dim,):
+            raise ValueError("candidate feedback dimension mismatch")
+        prior_context = prior_context.detach().to(self.device).clone()
+        slow_trace = self._slow_trace(prior_context, prior_slow_context)
+        self.fast.local_update(
+            feedback,
+            prior_context,
+            learning_rate=learning_rate,
+            weight_decay=weight_decay,
+        )
+        self.slow.local_update(
+            feedback,
+            slow_trace,
+            learning_rate=learning_rate,
+            weight_decay=weight_decay,
+        )
+
+    def parameter_tensors(self) -> tuple[torch.Tensor, ...]:
+        return self.fast.edge_weight, self.slow.edge_weight
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": self.PAYLOAD_FORMAT,
+            "version": self.PAYLOAD_VERSION,
+            "fast_decay": self.fast_decay,
+            "slow_decay": self.slow_decay,
+            "gate_temperature": self.gate_temperature,
+            "residual_gain": self.residual_gain,
+            "fast": self.fast.to_payload(),
+            "slow": self.slow.to_payload(),
+        }
+
+    def load_payload(self, payload: Mapping[str, Any]) -> None:
+        if payload.get("format") != self.PAYLOAD_FORMAT:
+            raise ValueError("unsupported gated temporal residual payload")
+        if int(payload.get("version", -1)) != self.PAYLOAD_VERSION:
+            raise ValueError("unsupported gated temporal residual version")
+        values = {
+            "fast_decay": float(payload["fast_decay"]),
+            "slow_decay": float(payload["slow_decay"]),
+            "gate_temperature": float(payload["gate_temperature"]),
+            "residual_gain": float(payload["residual_gain"]),
+        }
+        self.fast_decay = values["fast_decay"]
+        self.slow_decay = values["slow_decay"]
+        self.gate_temperature = values["gate_temperature"]
+        self.residual_gain = values["residual_gain"]
+        self._validate_hyperparameters()
+        self.fast.load_payload(payload["fast"])
+        self.slow.load_payload(payload["slow"])
+
+
 class BytePredictiveReadout:
     """Dedicated F1 next-byte decoder over its private predictive context.
 

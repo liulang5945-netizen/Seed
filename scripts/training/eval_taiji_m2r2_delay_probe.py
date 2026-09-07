@@ -44,7 +44,13 @@ from taiji.internalization import content_digest  # noqa: E402
 
 FORMAT = "taiji-r2-delay-probe-v1"
 DEFAULT_DISTANCES = (1, 8, 32, 128, 512)
-DEFAULT_ARMS = ("frozen", "joint_predictive", "shuffled_joint", "readout_only")
+DEFAULT_ARMS = (
+    "frozen",
+    "joint_predictive",
+    "shuffled_joint",
+    "readout_only",
+    "gated_joint",
+)
 ALL_ARMS = frozenset(DEFAULT_ARMS)
 DEFAULT_TRAIN_RECORDS = 32
 DEFAULT_DEV_RECORDS = 16
@@ -121,6 +127,7 @@ def _arm_write_set(arm: str) -> set[str]:
         "joint_predictive": {"predictive_context", "protected_predictive_readout"},
         "shuffled_joint": {"predictive_context", "protected_predictive_readout"},
         "readout_only": {"protected_predictive_readout"},
+        "gated_joint": {"gated_temporal_candidate", "protected_predictive_readout"},
     }[arm]
 
 
@@ -171,8 +178,13 @@ def _train_arm(
         for index, record in enumerate(shuffled_records):
             model.reset_dynamics(episode_id=f"delay-{arm}-{distance}-{epoch}-{index}")
             learn = arm != "frozen"
-            learn_context = arm in {"joint_predictive", "shuffled_joint"}
-            learn_readout = arm in {"joint_predictive", "shuffled_joint", "readout_only"}
+            learn_context = arm in {"joint_predictive", "shuffled_joint", "gated_joint"}
+            learn_readout = arm in {
+                "joint_predictive",
+                "shuffled_joint",
+                "readout_only",
+                "gated_joint",
+            }
             for symbol in record:
                 step = model.observe(
                     int(symbol),
@@ -270,12 +282,26 @@ def _lesion_score(
     *,
     distance: int,
     seed: int,
+    candidate: bool,
 ) -> dict[str, Any]:
     lesioned = Taiji.from_checkpoint(model.checkpoint())
-    recurrent_before = content_digest(lesioned.predictive_context.recurrent.to_payload())
-    with torch.no_grad():
-        lesioned.predictive_context.recurrent.edge_weight.zero_()
-    recurrent_after = content_digest(lesioned.predictive_context.recurrent.to_payload())
+    if candidate:
+        if not lesioned.gated_temporal_candidate_enabled:
+            raise RuntimeError("candidate lesion requires an enabled candidate")
+        owner_before = content_digest(
+            lesioned.checkpoint()["gated_temporal_candidate"]
+        )
+        lesioned.zero_gated_temporal_candidate()
+        owner_after = content_digest(
+            lesioned.checkpoint()["gated_temporal_candidate"]
+        )
+        owner = "gated_temporal_candidate"
+    else:
+        owner_before = content_digest(lesioned.predictive_context.recurrent.to_payload())
+        with torch.no_grad():
+            lesioned.predictive_context.recurrent.edge_weight.zero_()
+        owner_after = content_digest(lesioned.predictive_context.recurrent.to_payload())
+        owner = "predictive_context"
     score = _evaluate_records(
         lesioned,
         records,
@@ -284,9 +310,10 @@ def _lesion_score(
     )
     return {
         "score": score,
-        "lesion_applied": recurrent_before != recurrent_after,
-        "recurrent_digest_before": recurrent_before,
-        "recurrent_digest_after": recurrent_after,
+        "lesion_owner": owner,
+        "lesion_applied": owner_before != owner_after,
+        "owner_digest_before": owner_before,
+        "owner_digest_after": owner_after,
     }
 
 
@@ -300,7 +327,13 @@ def _run_point(
     seed: int,
 ) -> dict[str, Any]:
     model = Taiji.from_checkpoint(source_payload)
+    if arm == "gated_joint":
+        model.enable_gated_temporal_candidate()
     before = _owner_digests(model)
+    if model.gated_temporal_candidate_enabled:
+        before["gated_temporal_candidate"] = content_digest(
+            model.checkpoint()["gated_temporal_candidate"]
+        )
     train_metrics = _train_arm(
         model,
         records["train"],
@@ -310,6 +343,10 @@ def _run_point(
         seed=seed,
     )
     after = _owner_digests(model)
+    if model.gated_temporal_candidate_enabled:
+        after["gated_temporal_candidate"] = content_digest(
+            model.checkpoint()["gated_temporal_candidate"]
+        )
     attribution = _owner_contract(arm, before, after)
     train_score = _evaluate_records(
         model,
@@ -330,12 +367,13 @@ def _run_point(
         seed=seed + 2,
     )
     lesion = None
-    if arm in {"joint_predictive", "shuffled_joint"}:
+    if arm in {"joint_predictive", "shuffled_joint", "gated_joint"}:
         lesion = _lesion_score(
             model,
             records["test"],
             distance=distance,
             seed=seed + 3,
+            candidate=arm == "gated_joint",
         )
     payload = model.checkpoint()
     checkpoint_digest = content_digest(payload)

@@ -222,6 +222,10 @@ class TaijiState:
     last_symbol: int | None
     pending_action: PendingAction | None
     pending_experience: PendingExperience | None
+    # Optional slow eligibility trace for the gated multi-timescale F1
+    # candidate.  ``None`` is intentionally omitted from legacy payloads so
+    # attaching no candidate preserves the v10 checkpoint bytes exactly.
+    predictive_context_slow_trace: torch.Tensor | None = None
 
     def clone(self) -> TaijiState:
         return TaijiState(
@@ -239,10 +243,15 @@ class TaijiState:
             pending_experience=(
                 None if self.pending_experience is None else self.pending_experience.clone()
             ),
+            predictive_context_slow_trace=(
+                None
+                if self.predictive_context_slow_trace is None
+                else self.predictive_context_slow_trace.detach().clone()
+            ),
         )
 
     def to_payload(self) -> dict[str, Any]:
-        return {
+        payload = {
             "version": int(self.version),
             "tick": int(self.tick),
             "episode_id": str(self.episode_id),
@@ -260,6 +269,11 @@ class TaijiState:
                 None if self.pending_experience is None else self.pending_experience.to_payload()
             ),
         }
+        if self.predictive_context_slow_trace is not None:
+            payload["predictive_context_slow_trace"] = (
+                self.predictive_context_slow_trace.detach().cpu().clone()
+            )
+        return payload
 
     @classmethod
     def from_payload(cls, payload: Mapping[str, Any], *, device: torch.device | str) -> TaijiState:
@@ -296,6 +310,11 @@ class TaijiState:
                 None
                 if payload.get("pending_experience") is None
                 else PendingExperience.from_payload(payload["pending_experience"], device=device)
+            ),
+            predictive_context_slow_trace=(
+                None
+                if payload.get("predictive_context_slow_trace") is None
+                else payload["predictive_context_slow_trace"].detach().to(device).clone()
             ),
         )
 

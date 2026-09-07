@@ -1,6 +1,6 @@
 # Seed / Taiji 模型优先统一开发计划
 
-> 修订：2026-09-07。状态：R0 测量链完成；R1～R3 首轮能力报告因数据重叠被撤回，record-disjoint v2 数据链已修复；seed11 的 64 KiB 五臂 CPU pilot 技术通过但能力增益为负，1 MiB active-only/replay/cascade 分别为 `+0.02444/-0.05893/+0.00592 BPB`（cascade 的 C 保持退化）；seed29 active/replay/cascade 分别为 `+0.05344/-0.09228/+0.02592 BPB`（cascade 的 C 保持同样退化）；seed47 active/replay/cascade 分别为 `+0.07520/+0.01154/+0.04975 BPB`，replay 的 A retention 退化、cascade 的 C 保持仍退化；三 seed aggregate 已完成，当前不晋级。R2.R0 三 seed 固定结构 context 复现、R2.R0.1 seed11 context/ordering 消融、R2.R0.2 seed11 延迟依赖 probe v2 均已完成：技术检查全部通过；正常顺序的 residual 有短程信号，但受控 copy 任务中 joint 与 readout-only 在 distance=1/8 分别约 `0.938/0.062`，distance≥32 均为 `0`，joint lesion 未显示额外长程能力。当前进入单一 gated multi-timescale temporal candidate 的设计与迁移前置，不扩其他模块。连续流切块、资源遥测和中断恢复均已通过。本文是唯一执行顺序与“下一步”来源。
+> 修订：2026-09-07。状态：R0 测量链完成；R1～R3 首轮能力报告因数据重叠被撤回，record-disjoint v2 数据链已修复；seed11/29/47 的 R1 formal aggregate 已完成但不晋级。R2.R0 三 seed 固定结构 context 复现、R2.R0.1 seed11 context/ordering 消融、R2.R0.2 seed11 延迟依赖 probe v2、R2.R1 gated multi-timescale temporal candidate smoke/full probe 均已完成：技术检查全部通过；candidate 在相同 delay probe 上没有超过 joint/readout-only，distance≥32 仍无新能力，因此明确否决 promotion，保留为默认关闭的可回滚实验资产。下一阶段转入 M2.R3 结构化语义训练，不再继续调这个候选。连续流切块、资源遥测和中断恢复均已通过。本文是唯一执行顺序与“下一步”来源。
 >
 > 本轮已完成数据契约代码、审计报告和回归测试；不会改写旧报告，下一步只从原始 child 重新生成独立证据。历史 M0/M1/M2-2a～2ae 的有效成果保留；旧“下一步”全部失效。重审依据见 [研究审视](../../reference/TAIJI_RESEARCH_REVIEW_2026_09_06.md)，原文见 [历史快照](../../archive/history/research_review_20260906/README.md)。
 >
@@ -48,6 +48,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | M2.R2.R0 context aggregate | seed11 formal + seed29/47 context 复现共 24 点、120/120 技术检查通过，来源报告 SHA-256 已写入 aggregate | 4 KiB gain 均值 `+0.007681`（3/3 正）；16 KiB `+0.018081`（2/3 正）；64 KiB `-0.010650`（1/3 正）；结论是短/中预算有信号但长预算不成立，先做消融与参照，不做时间架构晋级 |
 | M2.R2.R0.1 seed11 context/ordering ablation | 固定 seed11 parent，frozen/normal_context/shuffled_context/readout_only 四臂、4/16/64 KiB、12 点；60/60 技术检查通过；包含 temporal-residual clone lesion、unigram/2-gram/3-gram 参照 | normal context gain `+0.001515/+0.023738/-0.016105`；shuffle gain `-0.240627/-0.532733/-0.697068`；readout-only `-0.062549/-0.141091/-0.165254`；正常 residual lesion 后 holdout `4.718034 BPB`，说明有序输入和 residual 有因果参与，但尚未测直接依赖跨度，不扩架构 |
 | M2.R2.R0.2 seed11 delay probe v2 | 受控 record-disjoint copy 任务，distance `1/8/32/128/512`，frozen/joint/shuffled/readout-only 四臂，3 epochs、32/16/16 records；20 点、100/100 技术检查通过；v1 低剂量报告已删除，不作为证据 | joint test accuracy：`0.938/0.062/0/0/0`；readout-only：`0.938/0.062/0/0/0`；frozen 全 0；shuffled joint：`0.625/0/0/0/0`；joint temporal lesion 与 joint 相同，说明当前 candidate 在此 copy probe 上没有被证明提供超出 readout 的长程 credit，当前不宣称 32～512 距离能力 |
+| M2.R2.R1 gated temporal candidate probe | 在旧 checkpoint 上启用零初始化 fast/slow gated residual；smoke 8 点/40 检查、full 20 点/100 检查均通过；candidate owner、checkpoint round-trip、lesion 与 read-only scoring 全部闭合；报告 `taiji_m2r2_r1_candidate_smoke_seed11_20260907.json` / `taiji_m2r2_r1_candidate_probe_seed11_20260907.json` | gated_joint 在 distance=1/8 与 joint/readout-only 同为约 `0.938/0.062`，distance≥32 均为 `0`；full probe 没有形成额外长程能力，且部分 BPB 更差；`can_promote=false`。实现保留为默认关闭的迁移/反事实资产，不作为当前主架构 |
 | M2.R1～R3 首轮报告 | 仅用不同 `partition_seed`，A/C 交集 `1597`、A/C′ `1577`、C/C′ `1563` | 技术 owner/保存检查仍可留作诊断；所有 phase-C 能力与多周期结论撤回，不能聚合或晋级 |
 | M2-2af 草案 | 继承评分错误、训练后才保存、仅 fresh digest、可单 seed promote | 中止且无正式报告；退出可执行主线，保留归档供重构参考 |
 | 完整认知层 | joint runner 使用 Taiji；Seed runtime 使用包含更多器官的 TSKV8Adapter | 不能把 kernel child 的成绩归给所有 adapter 器官，需逐 owner 训练覆盖映射 |
@@ -63,8 +64,8 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | 0 | M0 / M1 | 历史基线与首轮训练已执行 | 历史证据按任务范围保留，不重跑整段流程 |
 | 1 | M2.R0 测量纠正 | 已完成；评分 owner、数据排除基础、Gate/谱系合同修正 | 正反例能识别错 owner、重复、回归和无效恢复 |
 | 2 | M2.R1～R3 证据重建 | **已完成本轮 R1 证据**；三 seed active/replay/cascade 全部正式臂和 aggregate 均完成，active 分支有受控留出收益但 replay/第二周期保持不稳定，不能晋级 | 技术合格报告 + 独立 C/C′ 能力结果，不要求实验一定成功 |
-| 3 | M2.R2 表征与时间学习 | **R2.R0～R2.R0.2 已完成；当前设计一个 gated multi-timescale temporal candidate**，先做 checkpoint/输出保持和最小迁移，不同时改 router、scale 或 memory | 候选在相同 delay probe 上提升 dev/test 距离曲线，并通过旧行为保持、owner、保存恢复和移除/冻结反事实 |
-| 4 | M2.R3 语义与表达训练 | Taiji-owned Percept/Goal/ContentPlan 的训练和独立输出 | 核心语义/事实指标有效，provider 表达收益独立统计 |
+| 3 | M2.R2 表征与时间学习 | **R2.R0～R2.R1 已完成；gated multi-timescale temporal candidate 技术闭环通过但 promotion 否决**，候选默认关闭并保留为可回滚实验资产，不继续调参 | 已通过旧输出保持、owner、保存恢复和移除/冻结反事实；未通过“同一 delay probe 上形成额外长程能力”，不替换默认结构 |
+| 4 | M2.R3 语义与表达训练 | **下一阶段**：先做 Taiji-owned `Percept → WorldState/Fact → Goal → ContentPlan` 的结构化训练合同与 CPU canary，再接可读表达 | 核心语义/事实/约束指标有效；provider 表达收益与 native-only 分开统计 |
 | 5 | M2.R4 联合课程与保持 | 整合通过验证的器官，重跑绝对能力/保持/增益 | 三 seed 正式报告；目标改善且非目标能力不退化 |
 | 6 | M3 最小真实任务验证 | 留出 Workbench 项目的可恢复闭环 | 至少一个预注册真实任务族获得可重复净收益 |
 | 7 | M4 连续成长 | 多轮续训、巩固、必要时结构增长与压缩 | 优于固定容量和等预算对照，且保持/成本/回滚达标 |
@@ -77,7 +78,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 
 ## 4. 当前唯一下一步
 
-**唯一下一步：实现一个可选的 gated multi-timescale temporal candidate，并先做迁移/保持 preflight。** R2.R0～R2.R0.2 的事实是：正常顺序和 private residual 对自然字节预测有短程作用，但受控延迟 copy 在 distance=1/8 之外迅速失效，joint 与 readout-only 几乎一致；当前实现不能宣称长程 credit。候选只增加一个 Taiji-owned fast/slow gated temporal residual：旧 checkpoint 导入时新增状态零初始化、候选关闭时输出必须与 parent 一致；不同时改 fabric、router、memory 或 readout 语义。先做 checkpoint schema/参数迁移、旧输出保持、candidate owner attribution、冻结/移除 lesion 和保存恢复，再在同一 `1/8/32/128/512` probe 上比较 train/dev/test；若候选只改善 train 或破坏 distance=1/旧 B1，立即否决并回到“不扩结构”。R1 aggregate、R2.R0 aggregate、R2.R0.1 和 R2.R0.2 报告均保留为基线。
+**唯一下一步：进入 M2.R3.R0，建立结构化语义训练合同并做最小 CPU canary。** R2.R0～R2.R1 的事实是：现有 predictive context 有短程字节信号，但当前候选没有证明长程 credit；继续调时间模块的边际证据不足。下一轮只实现一条可审计训练链：`Percept → Fact/WorldState → Goal → ContentPlan`，用严格 train/dev/test 模板族、未知/冲突/澄清样本和来源 digest；训练前必须完成 checkpoint save/restore preflight，训练时只允许声明的 semantic owners 写入，评分只读。canary 先验证事实支持、未知拒答、冲突澄清、目标约束和 ContentPlan 字段完整性，暂不把 provider 语言输出当作 native 能力；候选代码保持 opt-in/disabled。退出条件是不靠固定模板匹配取得 dev/test 通过，并能从 checkpoint 恢复后复现同一结果；若语义器官未接线，先修 owner 接线再扩数据或模型规模。R1 aggregate、R2.R0 aggregate、R2.R0.1、R2.R0.2 和 R2.R1 报告均保留为基线。
 
 2026-09-06 实际审计已证明首轮报告不能作为能力证据：旧 evaluator 的 C/C′ 只是换 partition seed，不是新记录。当前已落地的修复为 `scripts/training/eval_taiji_m2r1_phase_c_canary.py` v2、`scripts/training/audit_taiji_m2r1_data_contract.py` 和 `reports/taiji_m2r1_data_contract_20260906.json`：
 
