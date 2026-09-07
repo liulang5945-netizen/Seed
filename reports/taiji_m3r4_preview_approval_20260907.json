@@ -1,0 +1,148 @@
+{
+  "format": "taiji-m3r4-preview-approval-dry-run-v1",
+  "version": 1,
+  "gate": "M3.R4",
+  "status": "passed",
+  "can_promote": false,
+  "promotion_reason": "M3.R4 only validates preview and approval binding; no executor, file write, editor selection, terminal, or MCP call is admitted.",
+  "candidate": {
+    "source": "host-authored-controlled-patch",
+    "capability_id": "workspace.apply_patch",
+    "parameters": {
+      "path": "app.py",
+      "before_digest": "cf2fbd0ff62e73d026ff1d5883191510e3ac526660a89f013d32daa1e3115aed",
+      "expected_after_digest": "5eb3238cf2f17b4eb6c368d074c59b7f10a35aea8a398b7ba49c3f604981b916",
+      "patch_bytes": 87
+    },
+    "parameter_contract": {
+      "descriptor_present": true,
+      "unknown": [],
+      "missing": [],
+      "exact": true
+    }
+  },
+  "preview": {
+    "validated": true,
+    "capability_id": "workspace.apply_patch",
+    "risk": "file_write",
+    "mutation_operation": "workspace.apply_patch",
+    "path": "app.py",
+    "before_digest": "cf2fbd0ff62e73d026ff1d5883191510e3ac526660a89f013d32daa1e3115aed",
+    "after_digest": "5eb3238cf2f17b4eb6c368d074c59b7f10a35aea8a398b7ba49c3f604981b916",
+    "before_byte_length": 67,
+    "after_byte_length": 67,
+    "operations": 1,
+    "patch_bytes": 87
+  },
+  "approval": {
+    "policy": {
+      "version": 1,
+      "request_id": "workbench:intent:m3r4-preview-patch",
+      "capability_id": "workspace.apply_patch",
+      "decision": "ask_user",
+      "reason_code": "capability_requires_approval",
+      "snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850"
+    },
+    "approved_policy": {
+      "version": 1,
+      "request_id": "workbench:intent:m3r4-preview-patch",
+      "capability_id": "workspace.apply_patch",
+      "decision": "allow",
+      "reason_code": "explicit_approval",
+      "snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850"
+    },
+    "restored_policy": {
+      "version": 1,
+      "request_id": "workbench:intent:m3r4-preview-patch",
+      "capability_id": "workspace.apply_patch",
+      "decision": "ask_user",
+      "reason_code": "approval_invalid",
+      "snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850"
+    },
+    "tampered_policy": {
+      "version": 1,
+      "request_id": "workbench:intent:m3r4-preview-patch",
+      "capability_id": "workspace.apply_patch",
+      "decision": "ask_user",
+      "reason_code": "approval_invalid",
+      "snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850"
+    },
+    "stale_snapshot_policy": {
+      "version": 1,
+      "request_id": "workbench:intent:m3r4-preview-patch",
+      "capability_id": "workspace.apply_patch",
+      "decision": "deny",
+      "reason_code": "stale_capability_snapshot",
+      "snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850"
+    },
+    "checkpoint": {
+      "format": "seed-workbench-transaction-state-v1",
+      "version": 1,
+      "max_records": 64,
+      "records": [],
+      "approvals_restored": false
+    },
+    "token_exposed": false
+  },
+  "controls": {
+    "stale_file": {
+      "rejected": true,
+      "error_type": "WorkbenchConflictError"
+    },
+    "invalid_patch": {
+      "rejected": true,
+      "error_type": "ValueError"
+    },
+    "parameter_drift": {
+      "descriptor_present": true,
+      "unknown": [
+        "undeclared_parameter"
+      ],
+      "missing": [],
+      "exact": false
+    },
+    "duplicate_consume": {
+      "rejected": true,
+      "error_type": "WorkbenchConflictError"
+    },
+    "consumed_policy": {
+      "version": 1,
+      "request_id": "workbench:intent:m3r4-preview-patch",
+      "capability_id": "workspace.apply_patch",
+      "decision": "ask_user",
+      "reason_code": "approval_invalid",
+      "snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850"
+    }
+  },
+  "fixtures": {
+    "before": "375dcdfc059b5beca391a27a1dd0dcad6a949a43bf5f31f4d35eb6f5129a8e00",
+    "after": "375dcdfc059b5beca391a27a1dd0dcad6a949a43bf5f31f4d35eb6f5129a8e00",
+    "unchanged": true
+  },
+  "boundaries": {
+    "native_write_head": false,
+    "workbench_preview": true,
+    "workbench_executor": false,
+    "workspace_write": false,
+    "editor_set_language": false,
+    "terminal": false,
+    "mcp": false,
+    "cuda": false
+  },
+  "gates": {
+    "patch_parameter_contract": true,
+    "policy_requires_approval": true,
+    "preview_is_valid_and_digest_bound": true,
+    "preview_repeat_is_stable": true,
+    "approval_is_exactly_bound": true,
+    "tampered_request_rejected": true,
+    "stale_snapshot_rejected": true,
+    "stale_file_preview_rejected": true,
+    "invalid_patch_rejected": true,
+    "parameter_drift_rejected_before_preview": true,
+    "approval_not_checkpointed": true,
+    "approval_is_single_use": true,
+    "preview_has_no_workspace_side_effect": true,
+    "fixture_unchanged": true
+  }
+}
