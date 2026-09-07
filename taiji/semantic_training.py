@@ -172,11 +172,12 @@ class StructuredSemanticCorpus:
     goals: tuple[Goal, ...]
     content_plans: tuple[ContentPlan, ...]
     source_digest: str
+    runtime_only: bool = False
 
     def __post_init__(self) -> None:
         for name in ("train", "dev", "test"):
             values = tuple(getattr(self, name))
-            if not values:
+            if not self.runtime_only and not values:
                 raise ValueError(f"semantic corpus {name} split cannot be empty")
             if any(not isinstance(item, StructuredSemanticExample) for item in values):
                 raise TypeError(f"semantic corpus {name} split contains an invalid example")
@@ -198,6 +199,8 @@ class StructuredSemanticCorpus:
             raise ValueError("semantic corpus content catalog does not match content_ids")
         if len(self.source_digest) != 64 or not self.source_digest:
             raise ValueError("semantic corpus source_digest is invalid")
+        if self.runtime_only and self.all_examples:
+            raise ValueError("runtime-only semantic corpus cannot contain examples")
 
     @property
     def all_examples(self) -> tuple[StructuredSemanticExample, ...]:
@@ -315,7 +318,32 @@ class StructuredSemanticCorpus:
             "content_ids": list(self.content_ids),
             "record_disjoint": True,
             "provider_attached": False,
+            "runtime_only": self.runtime_only,
         }
+
+    @classmethod
+    def from_catalog_payload(cls, payload: Mapping[str, Any]) -> StructuredSemanticCorpus:
+        """Reconstruct the inference vocabulary from a learner checkpoint."""
+
+        goals = tuple(Goal.from_payload(item) for item in payload.get("goal_catalog", ()))
+        content_plans = tuple(
+            ContentPlan.from_payload(item) for item in payload.get("content_catalog", ())
+        )
+        source_digest = str(payload.get("source_digest", ""))
+        corpus = cls(
+            train=(),
+            dev=(),
+            test=(),
+            feature_dim=int(payload["feature_dim"]),
+            fact_keys=tuple(str(item) for item in payload.get("fact_keys", ())),
+            goal_ids=tuple(str(item) for item in payload.get("goal_ids", ())),
+            content_ids=tuple(str(item) for item in payload.get("content_ids", ())),
+            goals=goals,
+            content_plans=content_plans,
+            source_digest=source_digest,
+            runtime_only=True,
+        )
+        return corpus
 
 
 @dataclass(frozen=True)
@@ -348,6 +376,39 @@ class StructuredSemanticResult:
             "confidence": float(self.confidence),
             "ambiguity": float(self.ambiguity),
         }
+
+    @classmethod
+    def from_payload(
+        cls,
+        payload: Mapping[str, Any],
+        *,
+        device: torch.device | str = "cpu",
+    ) -> StructuredSemanticResult:
+        world_payload = payload.get("world")
+        goal_payload = payload.get("goal")
+        content_payload = payload.get("content_plan")
+        return cls(
+            status=str(payload["status"]),
+            world=(
+                None
+                if world_payload is None
+                else WorldState.from_payload(world_payload, device=device)
+            ),
+            goal=None if goal_payload is None else Goal.from_payload(goal_payload),
+            content_plan=(
+                None
+                if content_payload is None
+                else ContentPlan.from_payload(content_payload)
+            ),
+            fact_scores={str(key): float(value) for key, value in payload.get("fact_scores", {}).items()},
+            goal_scores={str(key): float(value) for key, value in payload.get("goal_scores", {}).items()},
+            content_scores={
+                str(key): float(value)
+                for key, value in payload.get("content_scores", {}).items()
+            },
+            confidence=float(payload.get("confidence", 0.0)),
+            ambiguity=float(payload.get("ambiguity", 1.0)),
+        )
 
 
 def _one_hot(indices: torch.Tensor, width: int) -> torch.Tensor:
@@ -701,6 +762,10 @@ class StructuredSemanticLearner(nn.Module):
             "fact_keys": list(self.fact_keys),
             "goal_ids": list(self.goal_ids),
             "content_ids": list(self.content_ids),
+            "goal_catalog": [goal.to_payload() for goal in self._goals.values()],
+            "content_catalog": [
+                plan.to_payload() for plan in self._content_plans.values()
+            ],
             "fact_threshold": self.fact_threshold,
             "confidence_floor": self.confidence_floor,
             "ambiguity_ceiling": self.ambiguity_ceiling,
@@ -714,7 +779,7 @@ class StructuredSemanticLearner(nn.Module):
     def from_checkpoint(
         cls,
         payload: Mapping[str, Any],
-        corpus: StructuredSemanticCorpus,
+        corpus: StructuredSemanticCorpus | None = None,
         *,
         device: torch.device | str = "cpu",
     ) -> StructuredSemanticLearner:
@@ -722,6 +787,8 @@ class StructuredSemanticLearner(nn.Module):
             raise ValueError("unsupported structured semantic checkpoint format")
         if int(payload.get("version", -1)) != cls.CHECKPOINT_VERSION:
             raise ValueError("unsupported structured semantic checkpoint version")
+        if corpus is None:
+            corpus = StructuredSemanticCorpus.from_catalog_payload(payload)
         if payload.get("source_digest") != corpus.source_digest:
             raise ValueError("structured semantic checkpoint corpus digest mismatch")
         for key, expected in (
