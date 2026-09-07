@@ -121,6 +121,10 @@ from .semantic_provider import (
     SemanticEvidenceProposal,
 )
 from .semantic_training import StructuredSemanticLearner, StructuredSemanticResult
+from .semantic_transition import (
+    StructuredSemanticTransitionLearner,
+    StructuredSemanticTransitionResult,
+)
 from .state import TaijiDecision, TaijiOutcome, TaijiStep
 from .structural_arbitration import (
     StructuralCandidateBatch,
@@ -274,6 +278,12 @@ class TSKV8Adapter(Taiji):
         self._semantic_memory: SemanticMemoryLearner | None = None
         self._structured_semantic_learner: StructuredSemanticLearner | None = None
         self._last_structured_semantic_result: StructuredSemanticResult | None = None
+        self._structured_semantic_transition_learner: (
+            StructuredSemanticTransitionLearner | None
+        ) = None
+        self._last_structured_semantic_transition_result: (
+            StructuredSemanticTransitionResult | None
+        ) = None
         self._procedural_sequence_memory: ProceduralSequenceLearner | None = None
         self._concept_formation = ConceptFormationOrgan(
             similarity_threshold=self.config.concept_similarity_threshold,
@@ -484,6 +494,51 @@ class TSKV8Adapter(Taiji):
             raise TypeError("structured semantic inference requires a PerceptEvent")
         result = self._structured_semantic_learner.predict(selected)
         self._last_structured_semantic_result = result
+        return result
+
+    @property
+    def structured_semantic_transition_learner(
+        self,
+    ) -> StructuredSemanticTransitionLearner | None:
+        """Return the optional native persistent semantic transition owner."""
+
+        return self._structured_semantic_transition_learner
+
+    @property
+    def last_structured_semantic_transition_result(
+        self,
+    ) -> StructuredSemanticTransitionResult | None:
+        """Return the latest read-only persistent transition snapshot."""
+
+        return self._last_structured_semantic_transition_result
+
+    def attach_structured_semantic_transition_learner(
+        self, learner: StructuredSemanticTransitionLearner | None
+    ) -> None:
+        """Attach or detach the optional native persistent transition owner."""
+
+        if learner is not None and not isinstance(learner, StructuredSemanticTransitionLearner):
+            raise TypeError(
+                "learner must be a StructuredSemanticTransitionLearner or None"
+            )
+        self._structured_semantic_transition_learner = learner
+        self._last_structured_semantic_transition_result = None
+
+    def infer_structured_transition(
+        self,
+        previous: WorldState,
+        event: PerceptEvent,
+    ) -> StructuredSemanticTransitionResult:
+        """Run the attached transition owner without mutating cognitive state."""
+
+        if self._structured_semantic_transition_learner is None:
+            raise RuntimeError("structured semantic transition learner is not attached")
+        if not isinstance(previous, WorldState):
+            raise TypeError("structured semantic transition requires a WorldState")
+        if not isinstance(event, PerceptEvent):
+            raise TypeError("structured semantic transition requires a PerceptEvent")
+        result = self._structured_semantic_transition_learner.predict(previous, event)
+        self._last_structured_semantic_transition_result = result
         return result
 
     @property
@@ -11950,6 +12005,34 @@ class TSKV8Adapter(Taiji):
             else StructuredSemanticResult.from_payload(result_payload, device=self.device)
         )
 
+    def _restore_structured_semantic_transition(self, payload: Any) -> None:
+        if payload is None:
+            self._structured_semantic_transition_learner = None
+            self._last_structured_semantic_transition_result = None
+            return
+        if not isinstance(payload, Mapping):
+            raise ValueError("structured semantic transition checkpoint payload is invalid")
+        learner_payload = payload.get("learner")
+        if not isinstance(learner_payload, Mapping):
+            raise ValueError(
+                "structured semantic transition learner checkpoint payload is invalid"
+            )
+        self._structured_semantic_transition_learner = (
+            StructuredSemanticTransitionLearner.from_checkpoint(
+                learner_payload,
+                device=self.device,
+            )
+        )
+        result_payload = payload.get("last_result")
+        self._last_structured_semantic_transition_result = (
+            None
+            if result_payload is None
+            else StructuredSemanticTransitionResult.from_payload(
+                result_payload,
+                device=self.device,
+            )
+        )
+
     def _restore_concept_formation(self, payload: Any) -> None:
         self._concept_formation = (
             ConceptFormationOrgan(
@@ -12342,6 +12425,15 @@ class TSKV8Adapter(Taiji):
                     else self._last_structured_semantic_result.to_payload()
                 ),
             }
+        if self._structured_semantic_transition_learner is not None:
+            components["structured_semantic_transition"] = {
+                "learner": self._structured_semantic_transition_learner.checkpoint(),
+                "last_result": (
+                    None
+                    if self._last_structured_semantic_transition_result is None
+                    else self._last_structured_semantic_transition_result.to_payload()
+                ),
+            }
         components["concept_formation"] = self._concept_formation.checkpoint()
         components["growth_requests"] = self._growth_requests_checkpoint()
         components["topology_proposals"] = self._topology_proposals_checkpoint()
@@ -12470,6 +12562,9 @@ class TSKV8Adapter(Taiji):
         self._restore_episodic_memory(envelope.components.get("episodic_memory"))
         self._restore_semantic_memory(envelope.components.get("semantic_memory"))
         self._restore_structured_semantic(envelope.components.get("structured_semantic"))
+        self._restore_structured_semantic_transition(
+            envelope.components.get("structured_semantic_transition")
+        )
         self._restore_concept_formation(envelope.components.get("concept_formation"))
         self._restore_growth_requests(envelope.components.get("growth_requests"))
         self._restore_topology_proposals(envelope.components.get("topology_proposals"))
