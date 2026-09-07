@@ -1,0 +1,348 @@
+{
+  "format": "taiji-r2-delay-probe-v1",
+  "version": 1,
+  "status": "passed",
+  "can_promote": false,
+  "source_checkpoint": "E:\\Seed\\output\\taiji-m2s-seed11-identity-generation-20260905\\last.pt",
+  "source_digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+  "seed": 11,
+  "distances": [
+    1
+  ],
+  "arms": [
+    "frozen",
+    "joint_predictive",
+    "readout_only"
+  ],
+  "epochs": 3,
+  "dataset": {
+    "prefix_size": 2,
+    "cue_values": [
+      16,
+      32,
+      64,
+      96
+    ],
+    "distractor_range": [
+      128,
+      239
+    ],
+    "prefix_range": [
+      240,
+      255
+    ],
+    "by_distance": {
+      "1": {
+        "distance": 1,
+        "record_counts": {
+          "train": 32,
+          "dev": 16,
+          "test": 16
+        },
+        "split_digests": {
+          "train": "59d20d22a203fe7303a641acce4189fa76c61fe733bf3a7ba7c1ff5d9fd59c87",
+          "dev": "c36015498dc0feb05163586a34518c919ed7b3ab19355839a10fa046de25da99",
+          "test": "ebc877f6a1799e066f673793f9403182586f5747d5cee50146184dc47e741bea"
+        },
+        "record_overlap": {
+          "train_dev": 0,
+          "train_test": 0,
+          "dev_test": 0
+        }
+      }
+    }
+  },
+  "lineage": {
+    "phase_a_digest": "8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038",
+    "phase_b_digest": "99ab9846193ccc2897d74c96be8245784f213ac7bc5a9886c928e38bf906132e",
+    "corpus_paths": [
+      "data\\simple_zh\\dialogue_extended_clean.jsonl"
+    ]
+  },
+  "preflight": {
+    "saved_before_training": true,
+    "path": "E:\\Seed\\output\\taiji-m2r2-delay-preflight.pt",
+    "source_digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+    "restored_digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+    "matching_digest": true,
+    "bytes": 33174421
+  },
+  "points": [
+    {
+      "distance": 1,
+      "arm": "frozen",
+      "dataset_digests": {
+        "train": "59d20d22a203fe7303a641acce4189fa76c61fe733bf3a7ba7c1ff5d9fd59c87",
+        "dev": "c36015498dc0feb05163586a34518c919ed7b3ab19355839a10fa046de25da99",
+        "test": "ebc877f6a1799e066f673793f9403182586f5747d5cee50146184dc47e741bea"
+      },
+      "train": {
+        "epochs": 3,
+        "records": 32,
+        "observations": 288,
+        "online_accuracy": 0.0,
+        "seconds": 0.39611109998077154,
+        "working_set_bytes": 398761984
+      },
+      "train_target": {
+        "records": 32,
+        "target_accuracy": 0.0,
+        "target_bpb": 13.73109026800226,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "dev": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 11.712519478637669,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "test": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 13.476289952891571,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "temporal_lesion": null,
+      "target_unigram_bpb": 4.8055415076930705,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": false,
+            "protected_predictive_readout": false
+          },
+          "expected_writable_owners": [],
+          "changed_expected_owners": [],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": false
+        }
+      },
+      "checkpoint": {
+        "digest": "4a8ba34c3d1ac7593fef9ec6105b0892f58589f4ebd8dedd2d9a561b30f02508",
+        "restored_digest": "4a8ba34c3d1ac7593fef9ec6105b0892f58589f4ebd8dedd2d9a561b30f02508",
+        "bytes": 33173933
+      },
+      "checks": {
+        "owner_contract": true,
+        "evaluation_read_only": true,
+        "checkpoint_round_trip": true,
+        "lesion_effective": true,
+        "lesion_evaluation_read_only": true
+      }
+    },
+    {
+      "distance": 1,
+      "arm": "joint_predictive",
+      "dataset_digests": {
+        "train": "59d20d22a203fe7303a641acce4189fa76c61fe733bf3a7ba7c1ff5d9fd59c87",
+        "dev": "c36015498dc0feb05163586a34518c919ed7b3ab19355839a10fa046de25da99",
+        "test": "ebc877f6a1799e066f673793f9403182586f5747d5cee50146184dc47e741bea"
+      },
+      "train": {
+        "epochs": 3,
+        "records": 32,
+        "observations": 288,
+        "online_accuracy": 0.0763888888888889,
+        "seconds": 0.47394159995019436,
+        "working_set_bytes": 421105664
+      },
+      "train_target": {
+        "records": 32,
+        "target_accuracy": 0.9375,
+        "target_bpb": 1.5094801581450261,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "dev": {
+        "records": 16,
+        "target_accuracy": 0.8125,
+        "target_bpb": 2.6685109233132236,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "test": {
+        "records": 16,
+        "target_accuracy": 0.9375,
+        "target_bpb": 1.4782050952408743,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "temporal_lesion": {
+        "score": {
+          "records": 16,
+          "target_accuracy": 0.9375,
+          "target_bpb": 1.3100069875311446,
+          "chance_accuracy": 0.0038910505836575876,
+          "read_only": true
+        },
+        "lesion_applied": true,
+        "recurrent_digest_before": "8e2042c79cb9a9612345f87f11a0a613415f08fb25ea085bff01b7d0d0495b0e",
+        "recurrent_digest_after": "a1acfa0e1a7ec054270326ce3013cf9c8e0f9015155c840b1e0194b3dbfc8ab2"
+      },
+      "target_unigram_bpb": 4.8055415076930705,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "79b1bf413e5610a6502c622bef235ffc4abbfdb2e798d136a46767d1106896db",
+          "protected_predictive_readout": "24dbda353e7f835d5a7dce35bda4427328aefeccf1002bfec7b4cdd9d9c524c9",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": true,
+            "protected_predictive_readout": true
+          },
+          "expected_writable_owners": [
+            "predictive_context",
+            "protected_predictive_readout"
+          ],
+          "changed_expected_owners": [
+            "predictive_context",
+            "protected_predictive_readout"
+          ],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": true
+        }
+      },
+      "checkpoint": {
+        "digest": "37cc9b9402acb2ea7613bb6fbb83ecc96069e83f6fd2610e009607b03c703365",
+        "restored_digest": "37cc9b9402acb2ea7613bb6fbb83ecc96069e83f6fd2610e009607b03c703365",
+        "bytes": 33173933
+      },
+      "checks": {
+        "owner_contract": true,
+        "evaluation_read_only": true,
+        "checkpoint_round_trip": true,
+        "lesion_effective": true,
+        "lesion_evaluation_read_only": true
+      }
+    },
+    {
+      "distance": 1,
+      "arm": "readout_only",
+      "dataset_digests": {
+        "train": "59d20d22a203fe7303a641acce4189fa76c61fe733bf3a7ba7c1ff5d9fd59c87",
+        "dev": "c36015498dc0feb05163586a34518c919ed7b3ab19355839a10fa046de25da99",
+        "test": "ebc877f6a1799e066f673793f9403182586f5747d5cee50146184dc47e741bea"
+      },
+      "train": {
+        "epochs": 3,
+        "records": 32,
+        "observations": 288,
+        "online_accuracy": 0.0763888888888889,
+        "seconds": 0.46902349998708814,
+        "working_set_bytes": 419225600
+      },
+      "train_target": {
+        "records": 32,
+        "target_accuracy": 0.84375,
+        "target_bpb": 1.6378852924255045,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "dev": {
+        "records": 16,
+        "target_accuracy": 0.8125,
+        "target_bpb": 2.832627765621409,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "test": {
+        "records": 16,
+        "target_accuracy": 0.9375,
+        "target_bpb": 1.5789731437257495,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "temporal_lesion": null,
+      "target_unigram_bpb": 4.8055415076930705,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "fbf84c16989eff3fceba8174cf537b954376e69aa8916d81069eeb01e7d1cc4d",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": false,
+            "protected_predictive_readout": true
+          },
+          "expected_writable_owners": [
+            "protected_predictive_readout"
+          ],
+          "changed_expected_owners": [
+            "protected_predictive_readout"
+          ],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": true
+        }
+      },
+      "checkpoint": {
+        "digest": "76cc6527f9175ee1333ae813dc84d9809be6da939f3d4bb863fb924d5a88c3f6",
+        "restored_digest": "76cc6527f9175ee1333ae813dc84d9809be6da939f3d4bb863fb924d5a88c3f6",
+        "bytes": 33173933
+      },
+      "checks": {
+        "owner_contract": true,
+        "evaluation_read_only": true,
+        "checkpoint_round_trip": true,
+        "lesion_effective": true,
+        "lesion_evaluation_read_only": true
+      }
+    }
+  ]
+}

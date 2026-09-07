@@ -1,0 +1,2039 @@
+{
+  "format": "taiji-r2-delay-probe-v1",
+  "version": 1,
+  "status": "passed",
+  "can_promote": false,
+  "source_checkpoint": "E:\\Seed\\output\\taiji-m2s-seed11-identity-generation-20260905\\last.pt",
+  "source_digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+  "seed": 11,
+  "distances": [
+    1,
+    8,
+    32,
+    128,
+    512
+  ],
+  "arms": [
+    "frozen",
+    "joint_predictive",
+    "shuffled_joint",
+    "readout_only"
+  ],
+  "epochs": 3,
+  "dataset": {
+    "prefix_size": 2,
+    "cue_values": [
+      16,
+      32,
+      64,
+      96
+    ],
+    "distractor_range": [
+      128,
+      239
+    ],
+    "prefix_range": [
+      240,
+      255
+    ],
+    "by_distance": {
+      "1": {
+        "distance": 1,
+        "record_counts": {
+          "train": 32,
+          "dev": 16,
+          "test": 16
+        },
+        "split_digests": {
+          "train": "59d20d22a203fe7303a641acce4189fa76c61fe733bf3a7ba7c1ff5d9fd59c87",
+          "dev": "c36015498dc0feb05163586a34518c919ed7b3ab19355839a10fa046de25da99",
+          "test": "ebc877f6a1799e066f673793f9403182586f5747d5cee50146184dc47e741bea"
+        },
+        "record_overlap": {
+          "train_dev": 0,
+          "train_test": 0,
+          "dev_test": 0
+        }
+      },
+      "8": {
+        "distance": 8,
+        "record_counts": {
+          "train": 32,
+          "dev": 16,
+          "test": 16
+        },
+        "split_digests": {
+          "train": "bb2f5885f5659cb7831fe01581fb460c85f692b90e9eb35fc4944cf02417b9aa",
+          "dev": "8e990d839a08c1f231cdd4fb9c03d4bb0653cf908c3baaa6e4769d0966e34e62",
+          "test": "61d88f7f1a85a949465e41fc1965ce1d459d6ff67619c4ba979fa11261175add"
+        },
+        "record_overlap": {
+          "train_dev": 0,
+          "train_test": 0,
+          "dev_test": 0
+        }
+      },
+      "32": {
+        "distance": 32,
+        "record_counts": {
+          "train": 32,
+          "dev": 16,
+          "test": 16
+        },
+        "split_digests": {
+          "train": "cc8be34fcaa6aa14f7d79390bf3d74a1e5167d3e1406c45d9420789ece010c63",
+          "dev": "2364835b6a757d2efd246c399d98c11449d3c417caa1f3a84f29131ec85e304b",
+          "test": "0f8f5a0d5c0db458e16fc8f1e27415dfffd538c46640a92f8c74a2b68164ddcd"
+        },
+        "record_overlap": {
+          "train_dev": 0,
+          "train_test": 0,
+          "dev_test": 0
+        }
+      },
+      "128": {
+        "distance": 128,
+        "record_counts": {
+          "train": 32,
+          "dev": 16,
+          "test": 16
+        },
+        "split_digests": {
+          "train": "0e7a105371d557d0301b892ed31132a3c6cad8ff772291d499560f327a7d1398",
+          "dev": "cc2d18f792349f57b105ea8d09e3944e2c36da78aa1dc1d1c3270d18c4813536",
+          "test": "dafb8928adc5ca6f51129b976f7bbf2f71c949e151594c2178dca84b17796fc7"
+        },
+        "record_overlap": {
+          "train_dev": 0,
+          "train_test": 0,
+          "dev_test": 0
+        }
+      },
+      "512": {
+        "distance": 512,
+        "record_counts": {
+          "train": 32,
+          "dev": 16,
+          "test": 16
+        },
+        "split_digests": {
+          "train": "4ebc60f715fbce3da6fe169b61e34fefab3c35e30e0f0bfe0c47a679734c5b6b",
+          "dev": "f4c4d98906cfabe58c825ccae28ca8ae924bf1f4f1f4225b291386ba2d33c5db",
+          "test": "09347963aee33c269575117de60c4c728c541a27bb75e49d2796a6650c88016e"
+        },
+        "record_overlap": {
+          "train_dev": 0,
+          "train_test": 0,
+          "dev_test": 0
+        }
+      }
+    }
+  },
+  "lineage": {
+    "phase_a_digest": "8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038",
+    "phase_b_digest": "99ab9846193ccc2897d74c96be8245784f213ac7bc5a9886c928e38bf906132e",
+    "corpus_paths": [
+      "data\\simple_zh\\dialogue_extended_clean.jsonl"
+    ]
+  },
+  "preflight": {
+    "saved_before_training": true,
+    "path": "E:\\Seed\\output\\taiji-m2r2-delay-preflight.pt",
+    "source_digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+    "restored_digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+    "matching_digest": true,
+    "bytes": 33174421
+  },
+  "points": [
+    {
+      "distance": 1,
+      "arm": "frozen",
+      "dataset_digests": {
+        "train": "59d20d22a203fe7303a641acce4189fa76c61fe733bf3a7ba7c1ff5d9fd59c87",
+        "dev": "c36015498dc0feb05163586a34518c919ed7b3ab19355839a10fa046de25da99",
+        "test": "ebc877f6a1799e066f673793f9403182586f5747d5cee50146184dc47e741bea"
+      },
+      "train": {
+        "epochs": 3,
+        "records": 32,
+        "observations": 288,
+        "online_accuracy": 0.0,
+        "seconds": 0.40231019991915673,
+        "working_set_bytes": 397586432
+      },
+      "train_target": {
+        "records": 32,
+        "target_accuracy": 0.0,
+        "target_bpb": 13.73109026800226,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "dev": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 11.712519478637669,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "test": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 13.476289952891571,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "temporal_lesion": null,
+      "target_unigram_bpb": 4.8055415076930705,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": false,
+            "protected_predictive_readout": false
+          },
+          "expected_writable_owners": [],
+          "changed_expected_owners": [],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": false
+        }
+      },
+      "checkpoint": {
+        "digest": "4a8ba34c3d1ac7593fef9ec6105b0892f58589f4ebd8dedd2d9a561b30f02508",
+        "restored_digest": "4a8ba34c3d1ac7593fef9ec6105b0892f58589f4ebd8dedd2d9a561b30f02508",
+        "bytes": 33173933
+      },
+      "checks": {
+        "owner_contract": true,
+        "evaluation_read_only": true,
+        "checkpoint_round_trip": true,
+        "lesion_effective": true,
+        "lesion_evaluation_read_only": true
+      }
+    },
+    {
+      "distance": 1,
+      "arm": "joint_predictive",
+      "dataset_digests": {
+        "train": "59d20d22a203fe7303a641acce4189fa76c61fe733bf3a7ba7c1ff5d9fd59c87",
+        "dev": "c36015498dc0feb05163586a34518c919ed7b3ab19355839a10fa046de25da99",
+        "test": "ebc877f6a1799e066f673793f9403182586f5747d5cee50146184dc47e741bea"
+      },
+      "train": {
+        "epochs": 3,
+        "records": 32,
+        "observations": 288,
+        "online_accuracy": 0.0763888888888889,
+        "seconds": 0.492033600108698,
+        "working_set_bytes": 417673216
+      },
+      "train_target": {
+        "records": 32,
+        "target_accuracy": 0.9375,
+        "target_bpb": 1.5094801581450261,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "dev": {
+        "records": 16,
+        "target_accuracy": 0.8125,
+        "target_bpb": 2.6685109233132236,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "test": {
+        "records": 16,
+        "target_accuracy": 0.9375,
+        "target_bpb": 1.4782050952408743,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "temporal_lesion": {
+        "score": {
+          "records": 16,
+          "target_accuracy": 0.9375,
+          "target_bpb": 1.3100069875311446,
+          "chance_accuracy": 0.0038910505836575876,
+          "read_only": true
+        },
+        "lesion_applied": true,
+        "recurrent_digest_before": "8e2042c79cb9a9612345f87f11a0a613415f08fb25ea085bff01b7d0d0495b0e",
+        "recurrent_digest_after": "a1acfa0e1a7ec054270326ce3013cf9c8e0f9015155c840b1e0194b3dbfc8ab2"
+      },
+      "target_unigram_bpb": 4.8055415076930705,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "79b1bf413e5610a6502c622bef235ffc4abbfdb2e798d136a46767d1106896db",
+          "protected_predictive_readout": "24dbda353e7f835d5a7dce35bda4427328aefeccf1002bfec7b4cdd9d9c524c9",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": true,
+            "protected_predictive_readout": true
+          },
+          "expected_writable_owners": [
+            "predictive_context",
+            "protected_predictive_readout"
+          ],
+          "changed_expected_owners": [
+            "predictive_context",
+            "protected_predictive_readout"
+          ],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": true
+        }
+      },
+      "checkpoint": {
+        "digest": "37cc9b9402acb2ea7613bb6fbb83ecc96069e83f6fd2610e009607b03c703365",
+        "restored_digest": "37cc9b9402acb2ea7613bb6fbb83ecc96069e83f6fd2610e009607b03c703365",
+        "bytes": 33173933
+      },
+      "checks": {
+        "owner_contract": true,
+        "evaluation_read_only": true,
+        "checkpoint_round_trip": true,
+        "lesion_effective": true,
+        "lesion_evaluation_read_only": true
+      }
+    },
+    {
+      "distance": 1,
+      "arm": "shuffled_joint",
+      "dataset_digests": {
+        "train": "59d20d22a203fe7303a641acce4189fa76c61fe733bf3a7ba7c1ff5d9fd59c87",
+        "dev": "c36015498dc0feb05163586a34518c919ed7b3ab19355839a10fa046de25da99",
+        "test": "ebc877f6a1799e066f673793f9403182586f5747d5cee50146184dc47e741bea"
+      },
+      "train": {
+        "epochs": 3,
+        "records": 32,
+        "observations": 288,
+        "online_accuracy": 0.06944444444444445,
+        "seconds": 0.4687036999966949,
+        "working_set_bytes": 400195584
+      },
+      "train_target": {
+        "records": 32,
+        "target_accuracy": 0.59375,
+        "target_bpb": 3.0590665209643197,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "dev": {
+        "records": 16,
+        "target_accuracy": 0.375,
+        "target_bpb": 3.7952307997145103,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "test": {
+        "records": 16,
+        "target_accuracy": 0.625,
+        "target_bpb": 2.6813332375341257,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "temporal_lesion": {
+        "score": {
+          "records": 16,
+          "target_accuracy": 0.6875,
+          "target_bpb": 2.3371654944618654,
+          "chance_accuracy": 0.0038910505836575876,
+          "read_only": true
+        },
+        "lesion_applied": true,
+        "recurrent_digest_before": "3e831b8575d647835aed7c87a37248b6a0e21851c42cd62328d928b53a129edb",
+        "recurrent_digest_after": "a1acfa0e1a7ec054270326ce3013cf9c8e0f9015155c840b1e0194b3dbfc8ab2"
+      },
+      "target_unigram_bpb": 4.8055415076930705,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "4eccdb6868982a328a855a6d8e449ed1065acf25a870188a1aa5c26b9c2b64af",
+          "protected_predictive_readout": "571cd0917ad9fcf3bd8f3f670d82685a679e0029b847f392693a91330efb3b08",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": true,
+            "protected_predictive_readout": true
+          },
+          "expected_writable_owners": [
+            "predictive_context",
+            "protected_predictive_readout"
+          ],
+          "changed_expected_owners": [
+            "predictive_context",
+            "protected_predictive_readout"
+          ],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": true
+        }
+      },
+      "checkpoint": {
+        "digest": "bca88fac35bb94ca1fb06d7f8343cd2516172888b631505582beb08241688520",
+        "restored_digest": "bca88fac35bb94ca1fb06d7f8343cd2516172888b631505582beb08241688520",
+        "bytes": 33173933
+      },
+      "checks": {
+        "owner_contract": true,
+        "evaluation_read_only": true,
+        "checkpoint_round_trip": true,
+        "lesion_effective": true,
+        "lesion_evaluation_read_only": true
+      }
+    },
+    {
+      "distance": 1,
+      "arm": "readout_only",
+      "dataset_digests": {
+        "train": "59d20d22a203fe7303a641acce4189fa76c61fe733bf3a7ba7c1ff5d9fd59c87",
+        "dev": "c36015498dc0feb05163586a34518c919ed7b3ab19355839a10fa046de25da99",
+        "test": "ebc877f6a1799e066f673793f9403182586f5747d5cee50146184dc47e741bea"
+      },
+      "train": {
+        "epochs": 3,
+        "records": 32,
+        "observations": 288,
+        "online_accuracy": 0.0763888888888889,
+        "seconds": 0.43772489996626973,
+        "working_set_bytes": 399626240
+      },
+      "train_target": {
+        "records": 32,
+        "target_accuracy": 0.84375,
+        "target_bpb": 1.6378852924255045,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "dev": {
+        "records": 16,
+        "target_accuracy": 0.8125,
+        "target_bpb": 2.832627765621409,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "test": {
+        "records": 16,
+        "target_accuracy": 0.9375,
+        "target_bpb": 1.5789731437257495,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "temporal_lesion": null,
+      "target_unigram_bpb": 4.8055415076930705,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "fbf84c16989eff3fceba8174cf537b954376e69aa8916d81069eeb01e7d1cc4d",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": false,
+            "protected_predictive_readout": true
+          },
+          "expected_writable_owners": [
+            "protected_predictive_readout"
+          ],
+          "changed_expected_owners": [
+            "protected_predictive_readout"
+          ],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": true
+        }
+      },
+      "checkpoint": {
+        "digest": "76cc6527f9175ee1333ae813dc84d9809be6da939f3d4bb863fb924d5a88c3f6",
+        "restored_digest": "76cc6527f9175ee1333ae813dc84d9809be6da939f3d4bb863fb924d5a88c3f6",
+        "bytes": 33173933
+      },
+      "checks": {
+        "owner_contract": true,
+        "evaluation_read_only": true,
+        "checkpoint_round_trip": true,
+        "lesion_effective": true,
+        "lesion_evaluation_read_only": true
+      }
+    },
+    {
+      "distance": 8,
+      "arm": "frozen",
+      "dataset_digests": {
+        "train": "bb2f5885f5659cb7831fe01581fb460c85f692b90e9eb35fc4944cf02417b9aa",
+        "dev": "8e990d839a08c1f231cdd4fb9c03d4bb0653cf908c3baaa6e4769d0966e34e62",
+        "test": "61d88f7f1a85a949465e41fc1965ce1d459d6ff67619c4ba979fa11261175add"
+      },
+      "train": {
+        "epochs": 3,
+        "records": 32,
+        "observations": 960,
+        "online_accuracy": 0.003125,
+        "seconds": 1.0616552999708802,
+        "working_set_bytes": 397873152
+      },
+      "train_target": {
+        "records": 32,
+        "target_accuracy": 0.0,
+        "target_bpb": 13.20444089979975,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "dev": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 13.664138491189222,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "test": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 14.862278475509493,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "temporal_lesion": null,
+      "target_unigram_bpb": 5.086814211369699,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": false,
+            "protected_predictive_readout": false
+          },
+          "expected_writable_owners": [],
+          "changed_expected_owners": [],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": false
+        }
+      },
+      "checkpoint": {
+        "digest": "b1fb0d51014a488342d618a0c72180190d667ffc05770aaa8f57775b0f883c34",
+        "restored_digest": "b1fb0d51014a488342d618a0c72180190d667ffc05770aaa8f57775b0f883c34",
+        "bytes": 33173933
+      },
+      "checks": {
+        "owner_contract": true,
+        "evaluation_read_only": true,
+        "checkpoint_round_trip": true,
+        "lesion_effective": true,
+        "lesion_evaluation_read_only": true
+      }
+    },
+    {
+      "distance": 8,
+      "arm": "joint_predictive",
+      "dataset_digests": {
+        "train": "bb2f5885f5659cb7831fe01581fb460c85f692b90e9eb35fc4944cf02417b9aa",
+        "dev": "8e990d839a08c1f231cdd4fb9c03d4bb0653cf908c3baaa6e4769d0966e34e62",
+        "test": "61d88f7f1a85a949465e41fc1965ce1d459d6ff67619c4ba979fa11261175add"
+      },
+      "train": {
+        "epochs": 3,
+        "records": 32,
+        "observations": 960,
+        "online_accuracy": 0.017708333333333333,
+        "seconds": 1.360054500051774,
+        "working_set_bytes": 398946304
+      },
+      "train_target": {
+        "records": 32,
+        "target_accuracy": 0.0625,
+        "target_bpb": 7.804260461066721,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "dev": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 8.717292073897188,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "test": {
+        "records": 16,
+        "target_accuracy": 0.0625,
+        "target_bpb": 9.94496329768655,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "temporal_lesion": {
+        "score": {
+          "records": 16,
+          "target_accuracy": 0.0625,
+          "target_bpb": 10.470793122083583,
+          "chance_accuracy": 0.0038910505836575876,
+          "read_only": true
+        },
+        "lesion_applied": true,
+        "recurrent_digest_before": "f98cf54147bb141ecde4cd5f1de9c96c7562040a17fd142b4ea2cb209d110efd",
+        "recurrent_digest_after": "a1acfa0e1a7ec054270326ce3013cf9c8e0f9015155c840b1e0194b3dbfc8ab2"
+      },
+      "target_unigram_bpb": 5.086814211369699,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "ee1494f384b19ea703a87f5c950c65697c2473b968a96fd15e9ebed5872f469a",
+          "protected_predictive_readout": "e1dfd203c98f851015b1fcf7d1aac34271e8900cdc9cf2cd7e4a0decc532db2d",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": true,
+            "protected_predictive_readout": true
+          },
+          "expected_writable_owners": [
+            "predictive_context",
+            "protected_predictive_readout"
+          ],
+          "changed_expected_owners": [
+            "predictive_context",
+            "protected_predictive_readout"
+          ],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": true
+        }
+      },
+      "checkpoint": {
+        "digest": "0f3af1dfa63e3f823b526b8aa867ed7331f1b8b81b3879c816a44b79cb4be08d",
+        "restored_digest": "0f3af1dfa63e3f823b526b8aa867ed7331f1b8b81b3879c816a44b79cb4be08d",
+        "bytes": 33173933
+      },
+      "checks": {
+        "owner_contract": true,
+        "evaluation_read_only": true,
+        "checkpoint_round_trip": true,
+        "lesion_effective": true,
+        "lesion_evaluation_read_only": true
+      }
+    },
+    {
+      "distance": 8,
+      "arm": "shuffled_joint",
+      "dataset_digests": {
+        "train": "bb2f5885f5659cb7831fe01581fb460c85f692b90e9eb35fc4944cf02417b9aa",
+        "dev": "8e990d839a08c1f231cdd4fb9c03d4bb0653cf908c3baaa6e4769d0966e34e62",
+        "test": "61d88f7f1a85a949465e41fc1965ce1d459d6ff67619c4ba979fa11261175add"
+      },
+      "train": {
+        "epochs": 3,
+        "records": 32,
+        "observations": 960,
+        "online_accuracy": 0.030208333333333334,
+        "seconds": 1.3552143999841064,
+        "working_set_bytes": 398086144
+      },
+      "train_target": {
+        "records": 32,
+        "target_accuracy": 0.0625,
+        "target_bpb": 8.081001369280886,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "dev": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 9.059512443985943,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "test": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 10.116942792150542,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "temporal_lesion": {
+        "score": {
+          "records": 16,
+          "target_accuracy": 0.0,
+          "target_bpb": 10.61376560782144,
+          "chance_accuracy": 0.0038910505836575876,
+          "read_only": true
+        },
+        "lesion_applied": true,
+        "recurrent_digest_before": "a844e917a420c57609694f9da7739870deda0a6ef3fbcbee9a317d2efe013977",
+        "recurrent_digest_after": "a1acfa0e1a7ec054270326ce3013cf9c8e0f9015155c840b1e0194b3dbfc8ab2"
+      },
+      "target_unigram_bpb": 5.086814211369699,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "6f2e8377d2ada4f69da31859dcf1747b3186adb61fd1dfbe8c3fec8b4350ff93",
+          "protected_predictive_readout": "3f94fb1c8a02c9775f03c810761318d7bdc8aba83a2adc6c5a5ed9b811aeee83",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": true,
+            "protected_predictive_readout": true
+          },
+          "expected_writable_owners": [
+            "predictive_context",
+            "protected_predictive_readout"
+          ],
+          "changed_expected_owners": [
+            "predictive_context",
+            "protected_predictive_readout"
+          ],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": true
+        }
+      },
+      "checkpoint": {
+        "digest": "28f8229e176b5d7df31ef44f272e52d3413309d0736a8591da304143ae346ead",
+        "restored_digest": "28f8229e176b5d7df31ef44f272e52d3413309d0736a8591da304143ae346ead",
+        "bytes": 33173933
+      },
+      "checks": {
+        "owner_contract": true,
+        "evaluation_read_only": true,
+        "checkpoint_round_trip": true,
+        "lesion_effective": true,
+        "lesion_evaluation_read_only": true
+      }
+    },
+    {
+      "distance": 8,
+      "arm": "readout_only",
+      "dataset_digests": {
+        "train": "bb2f5885f5659cb7831fe01581fb460c85f692b90e9eb35fc4944cf02417b9aa",
+        "dev": "8e990d839a08c1f231cdd4fb9c03d4bb0653cf908c3baaa6e4769d0966e34e62",
+        "test": "61d88f7f1a85a949465e41fc1965ce1d459d6ff67619c4ba979fa11261175add"
+      },
+      "train": {
+        "epochs": 3,
+        "records": 32,
+        "observations": 960,
+        "online_accuracy": 0.016666666666666666,
+        "seconds": 1.2247750000096858,
+        "working_set_bytes": 399081472
+      },
+      "train_target": {
+        "records": 32,
+        "target_accuracy": 0.0625,
+        "target_bpb": 7.898030435002575,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "dev": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 8.793109216437719,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "test": {
+        "records": 16,
+        "target_accuracy": 0.0625,
+        "target_bpb": 10.00946366200387,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "temporal_lesion": null,
+      "target_unigram_bpb": 5.086814211369699,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "b517890867ca911fda4d49927faa1e98b788f1410c9bf01088cf6d0a6537d975",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": false,
+            "protected_predictive_readout": true
+          },
+          "expected_writable_owners": [
+            "protected_predictive_readout"
+          ],
+          "changed_expected_owners": [
+            "protected_predictive_readout"
+          ],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": true
+        }
+      },
+      "checkpoint": {
+        "digest": "34fc64b8ec0a60abe07a7bfd30983c4fc8cf5e008637234364473edba340ae25",
+        "restored_digest": "34fc64b8ec0a60abe07a7bfd30983c4fc8cf5e008637234364473edba340ae25",
+        "bytes": 33173933
+      },
+      "checks": {
+        "owner_contract": true,
+        "evaluation_read_only": true,
+        "checkpoint_round_trip": true,
+        "lesion_effective": true,
+        "lesion_evaluation_read_only": true
+      }
+    },
+    {
+      "distance": 32,
+      "arm": "frozen",
+      "dataset_digests": {
+        "train": "cc8be34fcaa6aa14f7d79390bf3d74a1e5167d3e1406c45d9420789ece010c63",
+        "dev": "2364835b6a757d2efd246c399d98c11449d3c417caa1f3a84f29131ec85e304b",
+        "test": "0f8f5a0d5c0db458e16fc8f1e27415dfffd538c46640a92f8c74a2b68164ddcd"
+      },
+      "train": {
+        "epochs": 3,
+        "records": 32,
+        "observations": 3264,
+        "online_accuracy": 0.009191176470588236,
+        "seconds": 3.2350057000294328,
+        "working_set_bytes": 398897152
+      },
+      "train_target": {
+        "records": 32,
+        "target_accuracy": 0.0,
+        "target_bpb": 14.000718532610295,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "dev": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 13.752252950076205,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "test": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 13.369724761663337,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "temporal_lesion": null,
+      "target_unigram_bpb": 4.979860458786907,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": false,
+            "protected_predictive_readout": false
+          },
+          "expected_writable_owners": [],
+          "changed_expected_owners": [],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": false
+        }
+      },
+      "checkpoint": {
+        "digest": "18dcd14293fdb7e3e66aaab4450d252d4f09a2b9e9c9bda860b4a966016d51d0",
+        "restored_digest": "18dcd14293fdb7e3e66aaab4450d252d4f09a2b9e9c9bda860b4a966016d51d0",
+        "bytes": 33173933
+      },
+      "checks": {
+        "owner_contract": true,
+        "evaluation_read_only": true,
+        "checkpoint_round_trip": true,
+        "lesion_effective": true,
+        "lesion_evaluation_read_only": true
+      }
+    },
+    {
+      "distance": 32,
+      "arm": "joint_predictive",
+      "dataset_digests": {
+        "train": "cc8be34fcaa6aa14f7d79390bf3d74a1e5167d3e1406c45d9420789ece010c63",
+        "dev": "2364835b6a757d2efd246c399d98c11449d3c417caa1f3a84f29131ec85e304b",
+        "test": "0f8f5a0d5c0db458e16fc8f1e27415dfffd538c46640a92f8c74a2b68164ddcd"
+      },
+      "train": {
+        "epochs": 3,
+        "records": 32,
+        "observations": 3264,
+        "online_accuracy": 0.013786764705882353,
+        "seconds": 4.358376299962401,
+        "working_set_bytes": 398483456
+      },
+      "train_target": {
+        "records": 32,
+        "target_accuracy": 0.0,
+        "target_bpb": 7.181554432528094,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "dev": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 8.477751154718211,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "test": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 8.420415711361262,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "temporal_lesion": {
+        "score": {
+          "records": 16,
+          "target_accuracy": 0.0,
+          "target_bpb": 8.740501341347478,
+          "chance_accuracy": 0.0038910505836575876,
+          "read_only": true
+        },
+        "lesion_applied": true,
+        "recurrent_digest_before": "bc2e97a192e8147c9dbc46ca80a05e9c6b2b53145aa19b55e3edd6dcb83521ae",
+        "recurrent_digest_after": "a1acfa0e1a7ec054270326ce3013cf9c8e0f9015155c840b1e0194b3dbfc8ab2"
+      },
+      "target_unigram_bpb": 4.979860458786907,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "7ec8a65d46ee686001100e34596ec2b8617a28fe07c4dd58de893e0c711d75b2",
+          "protected_predictive_readout": "ef908b2dc0b26866eacb35cc5136e436d5024f053825831e7a60a02f46e18250",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": true,
+            "protected_predictive_readout": true
+          },
+          "expected_writable_owners": [
+            "predictive_context",
+            "protected_predictive_readout"
+          ],
+          "changed_expected_owners": [
+            "predictive_context",
+            "protected_predictive_readout"
+          ],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": true
+        }
+      },
+      "checkpoint": {
+        "digest": "3f5f9c92e5804899e49d118c9a5c0316ea0839800c0fca28b72d104027aa03f2",
+        "restored_digest": "3f5f9c92e5804899e49d118c9a5c0316ea0839800c0fca28b72d104027aa03f2",
+        "bytes": 33173997
+      },
+      "checks": {
+        "owner_contract": true,
+        "evaluation_read_only": true,
+        "checkpoint_round_trip": true,
+        "lesion_effective": true,
+        "lesion_evaluation_read_only": true
+      }
+    },
+    {
+      "distance": 32,
+      "arm": "shuffled_joint",
+      "dataset_digests": {
+        "train": "cc8be34fcaa6aa14f7d79390bf3d74a1e5167d3e1406c45d9420789ece010c63",
+        "dev": "2364835b6a757d2efd246c399d98c11449d3c417caa1f3a84f29131ec85e304b",
+        "test": "0f8f5a0d5c0db458e16fc8f1e27415dfffd538c46640a92f8c74a2b68164ddcd"
+      },
+      "train": {
+        "epochs": 3,
+        "records": 32,
+        "observations": 3264,
+        "online_accuracy": 0.012867647058823529,
+        "seconds": 4.369618299999274,
+        "working_set_bytes": 398909440
+      },
+      "train_target": {
+        "records": 32,
+        "target_accuracy": 0.0,
+        "target_bpb": 8.017825463557278,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "dev": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 8.580671949296862,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "test": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 7.996818713224144,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "temporal_lesion": {
+        "score": {
+          "records": 16,
+          "target_accuracy": 0.0,
+          "target_bpb": 8.445719824406966,
+          "chance_accuracy": 0.0038910505836575876,
+          "read_only": true
+        },
+        "lesion_applied": true,
+        "recurrent_digest_before": "99465f4376d9b301602efac24fea276ace6512fddfb12c0989dbbd7845a533f6",
+        "recurrent_digest_after": "a1acfa0e1a7ec054270326ce3013cf9c8e0f9015155c840b1e0194b3dbfc8ab2"
+      },
+      "target_unigram_bpb": 4.979860458786907,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "9436e0d4d872d36f16b1b4be4d812f3409ea2d9a7a3e05a20bed941b51ca0de3",
+          "protected_predictive_readout": "dbdc7c35e8e86f14c8ff92b5727d9b91c31fc512028d57a6b55c37a18df680fc",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": true,
+            "protected_predictive_readout": true
+          },
+          "expected_writable_owners": [
+            "predictive_context",
+            "protected_predictive_readout"
+          ],
+          "changed_expected_owners": [
+            "predictive_context",
+            "protected_predictive_readout"
+          ],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": true
+        }
+      },
+      "checkpoint": {
+        "digest": "d5102e1d7f5d9d36905230cd4904ab98ad207cbc0f002787158e560e0bb3375a",
+        "restored_digest": "d5102e1d7f5d9d36905230cd4904ab98ad207cbc0f002787158e560e0bb3375a",
+        "bytes": 33173933
+      },
+      "checks": {
+        "owner_contract": true,
+        "evaluation_read_only": true,
+        "checkpoint_round_trip": true,
+        "lesion_effective": true,
+        "lesion_evaluation_read_only": true
+      }
+    },
+    {
+      "distance": 32,
+      "arm": "readout_only",
+      "dataset_digests": {
+        "train": "cc8be34fcaa6aa14f7d79390bf3d74a1e5167d3e1406c45d9420789ece010c63",
+        "dev": "2364835b6a757d2efd246c399d98c11449d3c417caa1f3a84f29131ec85e304b",
+        "test": "0f8f5a0d5c0db458e16fc8f1e27415dfffd538c46640a92f8c74a2b68164ddcd"
+      },
+      "train": {
+        "epochs": 3,
+        "records": 32,
+        "observations": 3264,
+        "online_accuracy": 0.014093137254901961,
+        "seconds": 3.848843100015074,
+        "working_set_bytes": 396939264
+      },
+      "train_target": {
+        "records": 32,
+        "target_accuracy": 0.0,
+        "target_bpb": 7.315024377984748,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "dev": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 8.55413232456622,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "test": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 8.372191254472297,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "temporal_lesion": null,
+      "target_unigram_bpb": 4.979860458786907,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "21999b222d78438fe3db3065e6d94c63a991e1809613ba2368c36d89ea3949fb",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": false,
+            "protected_predictive_readout": true
+          },
+          "expected_writable_owners": [
+            "protected_predictive_readout"
+          ],
+          "changed_expected_owners": [
+            "protected_predictive_readout"
+          ],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": true
+        }
+      },
+      "checkpoint": {
+        "digest": "a4146bd73e394b9088fa5437a12529649724b1eea7f3a695eb28ab2628ca41b0",
+        "restored_digest": "a4146bd73e394b9088fa5437a12529649724b1eea7f3a695eb28ab2628ca41b0",
+        "bytes": 33173933
+      },
+      "checks": {
+        "owner_contract": true,
+        "evaluation_read_only": true,
+        "checkpoint_round_trip": true,
+        "lesion_effective": true,
+        "lesion_evaluation_read_only": true
+      }
+    },
+    {
+      "distance": 128,
+      "arm": "frozen",
+      "dataset_digests": {
+        "train": "0e7a105371d557d0301b892ed31132a3c6cad8ff772291d499560f327a7d1398",
+        "dev": "cc2d18f792349f57b105ea8d09e3944e2c36da78aa1dc1d1c3270d18c4813536",
+        "test": "dafb8928adc5ca6f51129b976f7bbf2f71c949e151594c2178dca84b17796fc7"
+      },
+      "train": {
+        "epochs": 3,
+        "records": 32,
+        "observations": 12480,
+        "online_accuracy": 0.009134615384615385,
+        "seconds": 12.343568000011146,
+        "working_set_bytes": 398467072
+      },
+      "train_target": {
+        "records": 32,
+        "target_accuracy": 0.0,
+        "target_bpb": 13.816498309032351,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "dev": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 14.352163481977545,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "test": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 15.612660642210638,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "temporal_lesion": null,
+      "target_unigram_bpb": 5.045927176567342,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": false,
+            "protected_predictive_readout": false
+          },
+          "expected_writable_owners": [],
+          "changed_expected_owners": [],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": false
+        }
+      },
+      "checkpoint": {
+        "digest": "faefe0bc1454949ff172ca5701899859dbd089a2e37fb55dca5f23ecdc056d20",
+        "restored_digest": "faefe0bc1454949ff172ca5701899859dbd089a2e37fb55dca5f23ecdc056d20",
+        "bytes": 33173933
+      },
+      "checks": {
+        "owner_contract": true,
+        "evaluation_read_only": true,
+        "checkpoint_round_trip": true,
+        "lesion_effective": true,
+        "lesion_evaluation_read_only": true
+      }
+    },
+    {
+      "distance": 128,
+      "arm": "joint_predictive",
+      "dataset_digests": {
+        "train": "0e7a105371d557d0301b892ed31132a3c6cad8ff772291d499560f327a7d1398",
+        "dev": "cc2d18f792349f57b105ea8d09e3944e2c36da78aa1dc1d1c3270d18c4813536",
+        "test": "dafb8928adc5ca6f51129b976f7bbf2f71c949e151594c2178dca84b17796fc7"
+      },
+      "train": {
+        "epochs": 3,
+        "records": 32,
+        "observations": 12480,
+        "online_accuracy": 0.01610576923076923,
+        "seconds": 16.243642500019632,
+        "working_set_bytes": 399151104
+      },
+      "train_target": {
+        "records": 32,
+        "target_accuracy": 0.0,
+        "target_bpb": 8.537686377372234,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "dev": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 9.7470191388691,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "test": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 10.02265209076703,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "temporal_lesion": {
+        "score": {
+          "records": 16,
+          "target_accuracy": 0.0,
+          "target_bpb": 10.22176791088025,
+          "chance_accuracy": 0.0038910505836575876,
+          "read_only": true
+        },
+        "lesion_applied": true,
+        "recurrent_digest_before": "e17ebbae1ea8c10e8a7bae1049f522a1a34cbd755a1b700d160553a7ec8628c3",
+        "recurrent_digest_after": "a1acfa0e1a7ec054270326ce3013cf9c8e0f9015155c840b1e0194b3dbfc8ab2"
+      },
+      "target_unigram_bpb": 5.045927176567342,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "1e4e8d63d10ac557e660717eeed945996c24e893034d353d8e648988d7f5c524",
+          "protected_predictive_readout": "d1c8a3f3da6c75ba8642b90c0bb6a71a631c981e6d25b6f2b22da9695544ba2d",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": true,
+            "protected_predictive_readout": true
+          },
+          "expected_writable_owners": [
+            "predictive_context",
+            "protected_predictive_readout"
+          ],
+          "changed_expected_owners": [
+            "predictive_context",
+            "protected_predictive_readout"
+          ],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": true
+        }
+      },
+      "checkpoint": {
+        "digest": "7efb87c14eac58e474f60cabffb186bb96c473b9cc3d13835a21324ff117482d",
+        "restored_digest": "7efb87c14eac58e474f60cabffb186bb96c473b9cc3d13835a21324ff117482d",
+        "bytes": 33173997
+      },
+      "checks": {
+        "owner_contract": true,
+        "evaluation_read_only": true,
+        "checkpoint_round_trip": true,
+        "lesion_effective": true,
+        "lesion_evaluation_read_only": true
+      }
+    },
+    {
+      "distance": 128,
+      "arm": "shuffled_joint",
+      "dataset_digests": {
+        "train": "0e7a105371d557d0301b892ed31132a3c6cad8ff772291d499560f327a7d1398",
+        "dev": "cc2d18f792349f57b105ea8d09e3944e2c36da78aa1dc1d1c3270d18c4813536",
+        "test": "dafb8928adc5ca6f51129b976f7bbf2f71c949e151594c2178dca84b17796fc7"
+      },
+      "train": {
+        "epochs": 3,
+        "records": 32,
+        "observations": 12480,
+        "online_accuracy": 0.018509615384615385,
+        "seconds": 16.440563600044698,
+        "working_set_bytes": 416989184
+      },
+      "train_target": {
+        "records": 32,
+        "target_accuracy": 0.0,
+        "target_bpb": 9.23388341851854,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "dev": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 9.57111578985448,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "test": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 9.076635220834692,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "temporal_lesion": {
+        "score": {
+          "records": 16,
+          "target_accuracy": 0.0,
+          "target_bpb": 9.495575507960808,
+          "chance_accuracy": 0.0038910505836575876,
+          "read_only": true
+        },
+        "lesion_applied": true,
+        "recurrent_digest_before": "2b86c748134159c740f89ff84d7ffa2b63b3e499be542758858917b3b69e856d",
+        "recurrent_digest_after": "a1acfa0e1a7ec054270326ce3013cf9c8e0f9015155c840b1e0194b3dbfc8ab2"
+      },
+      "target_unigram_bpb": 5.045927176567342,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "17cc5bda3ba5e96af2c1d46b332fb877812f7de3716ba0e9fed7958bbf14fca5",
+          "protected_predictive_readout": "c40e77c22fce34fc87a6e7dee8bebdeafed1a938e2f5013fb6672fcd8a8212f5",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": true,
+            "protected_predictive_readout": true
+          },
+          "expected_writable_owners": [
+            "predictive_context",
+            "protected_predictive_readout"
+          ],
+          "changed_expected_owners": [
+            "predictive_context",
+            "protected_predictive_readout"
+          ],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": true
+        }
+      },
+      "checkpoint": {
+        "digest": "f352776b3c119eb39f5adbe5917d9cd42c98cad888ca9e885cefe14b5dcebc6c",
+        "restored_digest": "f352776b3c119eb39f5adbe5917d9cd42c98cad888ca9e885cefe14b5dcebc6c",
+        "bytes": 33173933
+      },
+      "checks": {
+        "owner_contract": true,
+        "evaluation_read_only": true,
+        "checkpoint_round_trip": true,
+        "lesion_effective": true,
+        "lesion_evaluation_read_only": true
+      }
+    },
+    {
+      "distance": 128,
+      "arm": "readout_only",
+      "dataset_digests": {
+        "train": "0e7a105371d557d0301b892ed31132a3c6cad8ff772291d499560f327a7d1398",
+        "dev": "cc2d18f792349f57b105ea8d09e3944e2c36da78aa1dc1d1c3270d18c4813536",
+        "test": "dafb8928adc5ca6f51129b976f7bbf2f71c949e151594c2178dca84b17796fc7"
+      },
+      "train": {
+        "epochs": 3,
+        "records": 32,
+        "observations": 12480,
+        "online_accuracy": 0.016506410256410257,
+        "seconds": 14.691152999992482,
+        "working_set_bytes": 398712832
+      },
+      "train_target": {
+        "records": 32,
+        "target_accuracy": 0.0,
+        "target_bpb": 8.588477552961729,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "dev": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 9.782121534617186,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "test": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 10.04431569056208,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "temporal_lesion": null,
+      "target_unigram_bpb": 5.045927176567342,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "5fa9e0cf6653276de75211eaffc7be07e7c3ffa214f13b3e10b0156b556ceaae",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": false,
+            "protected_predictive_readout": true
+          },
+          "expected_writable_owners": [
+            "protected_predictive_readout"
+          ],
+          "changed_expected_owners": [
+            "protected_predictive_readout"
+          ],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": true
+        }
+      },
+      "checkpoint": {
+        "digest": "6cf908dae2bf295b1bb836a010b84502a92fa2263a1a16b981474cf95c7c282d",
+        "restored_digest": "6cf908dae2bf295b1bb836a010b84502a92fa2263a1a16b981474cf95c7c282d",
+        "bytes": 33173933
+      },
+      "checks": {
+        "owner_contract": true,
+        "evaluation_read_only": true,
+        "checkpoint_round_trip": true,
+        "lesion_effective": true,
+        "lesion_evaluation_read_only": true
+      }
+    },
+    {
+      "distance": 512,
+      "arm": "frozen",
+      "dataset_digests": {
+        "train": "4ebc60f715fbce3da6fe169b61e34fefab3c35e30e0f0bfe0c47a679734c5b6b",
+        "dev": "f4c4d98906cfabe58c825ccae28ca8ae924bf1f4f1f4225b291386ba2d33c5db",
+        "test": "09347963aee33c269575117de60c4c728c541a27bb75e49d2796a6650c88016e"
+      },
+      "train": {
+        "epochs": 3,
+        "records": 32,
+        "observations": 49344,
+        "online_accuracy": 0.00924124513618677,
+        "seconds": 48.062248199945316,
+        "working_set_bytes": 398372864
+      },
+      "train_target": {
+        "records": 32,
+        "target_accuracy": 0.0,
+        "target_bpb": 14.132673928222053,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "dev": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 14.032200080972002,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "test": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 14.445295632270478,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "temporal_lesion": null,
+      "target_unigram_bpb": 5.194944432140101,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": false,
+            "protected_predictive_readout": false
+          },
+          "expected_writable_owners": [],
+          "changed_expected_owners": [],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": false
+        }
+      },
+      "checkpoint": {
+        "digest": "b72f628f67f4c6e0aa73010abb905f9ae99243b2b16a73102beb4b8b18daf397",
+        "restored_digest": "b72f628f67f4c6e0aa73010abb905f9ae99243b2b16a73102beb4b8b18daf397",
+        "bytes": 33173933
+      },
+      "checks": {
+        "owner_contract": true,
+        "evaluation_read_only": true,
+        "checkpoint_round_trip": true,
+        "lesion_effective": true,
+        "lesion_evaluation_read_only": true
+      }
+    },
+    {
+      "distance": 512,
+      "arm": "joint_predictive",
+      "dataset_digests": {
+        "train": "4ebc60f715fbce3da6fe169b61e34fefab3c35e30e0f0bfe0c47a679734c5b6b",
+        "dev": "f4c4d98906cfabe58c825ccae28ca8ae924bf1f4f1f4225b291386ba2d33c5db",
+        "test": "09347963aee33c269575117de60c4c728c541a27bb75e49d2796a6650c88016e"
+      },
+      "train": {
+        "epochs": 3,
+        "records": 32,
+        "observations": 49344,
+        "online_accuracy": 0.01270671206225681,
+        "seconds": 64.69372770003974,
+        "working_set_bytes": 399052800
+      },
+      "train_target": {
+        "records": 32,
+        "target_accuracy": 0.0,
+        "target_bpb": 9.742414324484734,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "dev": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 11.256040645231966,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "test": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 11.874778089743176,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "temporal_lesion": {
+        "score": {
+          "records": 16,
+          "target_accuracy": 0.0,
+          "target_bpb": 11.339720248474707,
+          "chance_accuracy": 0.0038910505836575876,
+          "read_only": true
+        },
+        "lesion_applied": true,
+        "recurrent_digest_before": "c7fdc0bb25f5fd0bc29bff92303f27b936566abfdcf250f4ef02e64b71ce3572",
+        "recurrent_digest_after": "a1acfa0e1a7ec054270326ce3013cf9c8e0f9015155c840b1e0194b3dbfc8ab2"
+      },
+      "target_unigram_bpb": 5.194944432140101,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "5ae5649cc3e3ce4ae6dd0c0a58a87a403c905727d54064d0997d7e47ad9c5b22",
+          "protected_predictive_readout": "6f995cdf22fd6ff17682bb1901995fcd72028bc9b65eb91f4d970320eb4eb74a",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": true,
+            "protected_predictive_readout": true
+          },
+          "expected_writable_owners": [
+            "predictive_context",
+            "protected_predictive_readout"
+          ],
+          "changed_expected_owners": [
+            "predictive_context",
+            "protected_predictive_readout"
+          ],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": true
+        }
+      },
+      "checkpoint": {
+        "digest": "8146b41893f03277fbec02d9b6088b680b9472b05c057927a44f364956df7c9d",
+        "restored_digest": "8146b41893f03277fbec02d9b6088b680b9472b05c057927a44f364956df7c9d",
+        "bytes": 33173997
+      },
+      "checks": {
+        "owner_contract": true,
+        "evaluation_read_only": true,
+        "checkpoint_round_trip": true,
+        "lesion_effective": true,
+        "lesion_evaluation_read_only": true
+      }
+    },
+    {
+      "distance": 512,
+      "arm": "shuffled_joint",
+      "dataset_digests": {
+        "train": "4ebc60f715fbce3da6fe169b61e34fefab3c35e30e0f0bfe0c47a679734c5b6b",
+        "dev": "f4c4d98906cfabe58c825ccae28ca8ae924bf1f4f1f4225b291386ba2d33c5db",
+        "test": "09347963aee33c269575117de60c4c728c541a27bb75e49d2796a6650c88016e"
+      },
+      "train": {
+        "epochs": 3,
+        "records": 32,
+        "observations": 49344,
+        "online_accuracy": 0.01226086251621271,
+        "seconds": 65.96154359995853,
+        "working_set_bytes": 399388672
+      },
+      "train_target": {
+        "records": 32,
+        "target_accuracy": 0.0,
+        "target_bpb": 10.71346130810839,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "dev": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 10.766672858107246,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "test": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 11.104655371180083,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "temporal_lesion": {
+        "score": {
+          "records": 16,
+          "target_accuracy": 0.0,
+          "target_bpb": 10.875307346732798,
+          "chance_accuracy": 0.0038910505836575876,
+          "read_only": true
+        },
+        "lesion_applied": true,
+        "recurrent_digest_before": "8e4833b243b42d548d0dabdb05ce3e933d7683146576438650844ecc7f74bced",
+        "recurrent_digest_after": "a1acfa0e1a7ec054270326ce3013cf9c8e0f9015155c840b1e0194b3dbfc8ab2"
+      },
+      "target_unigram_bpb": 5.194944432140101,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "af6e881d6c9ce901e08d6d5f05fef8aae483686c57fa6e0a9100c9d30f59ba8a",
+          "protected_predictive_readout": "7315170ee6891784bba1c65f67e63fc4b782ca4266ba1596239e44cafa479018",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": true,
+            "protected_predictive_readout": true
+          },
+          "expected_writable_owners": [
+            "predictive_context",
+            "protected_predictive_readout"
+          ],
+          "changed_expected_owners": [
+            "predictive_context",
+            "protected_predictive_readout"
+          ],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": true
+        }
+      },
+      "checkpoint": {
+        "digest": "7a02b5a23dfd5e0db1bf9cb0f08de4a7fd37774daba060cbf755d777e298fc37",
+        "restored_digest": "7a02b5a23dfd5e0db1bf9cb0f08de4a7fd37774daba060cbf755d777e298fc37",
+        "bytes": 33173997
+      },
+      "checks": {
+        "owner_contract": true,
+        "evaluation_read_only": true,
+        "checkpoint_round_trip": true,
+        "lesion_effective": true,
+        "lesion_evaluation_read_only": true
+      }
+    },
+    {
+      "distance": 512,
+      "arm": "readout_only",
+      "dataset_digests": {
+        "train": "4ebc60f715fbce3da6fe169b61e34fefab3c35e30e0f0bfe0c47a679734c5b6b",
+        "dev": "f4c4d98906cfabe58c825ccae28ca8ae924bf1f4f1f4225b291386ba2d33c5db",
+        "test": "09347963aee33c269575117de60c4c728c541a27bb75e49d2796a6650c88016e"
+      },
+      "train": {
+        "epochs": 3,
+        "records": 32,
+        "observations": 49344,
+        "online_accuracy": 0.011916342412451361,
+        "seconds": 59.58175799995661,
+        "working_set_bytes": 398913536
+      },
+      "train_target": {
+        "records": 32,
+        "target_accuracy": 0.0,
+        "target_bpb": 9.433050046095108,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "dev": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 11.136654403092964,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "test": {
+        "records": 16,
+        "target_accuracy": 0.0,
+        "target_bpb": 11.77369700079873,
+        "chance_accuracy": 0.0038910505836575876,
+        "read_only": true
+      },
+      "temporal_lesion": null,
+      "target_unigram_bpb": 5.194944432140101,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "aca51963b17b87b79864675e6efb01de82863eb2e0a635f616372db09da615f5",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": false,
+            "protected_predictive_readout": true
+          },
+          "expected_writable_owners": [
+            "protected_predictive_readout"
+          ],
+          "changed_expected_owners": [
+            "protected_predictive_readout"
+          ],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": true
+        }
+      },
+      "checkpoint": {
+        "digest": "437b9cca54911669ef03ac709c54b606baf7e2c11ea81dd27fe471a14e3fa490",
+        "restored_digest": "437b9cca54911669ef03ac709c54b606baf7e2c11ea81dd27fe471a14e3fa490",
+        "bytes": 33173933
+      },
+      "checks": {
+        "owner_contract": true,
+        "evaluation_read_only": true,
+        "checkpoint_round_trip": true,
+        "lesion_effective": true,
+        "lesion_evaluation_read_only": true
+      }
+    }
+  ]
+}
