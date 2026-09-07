@@ -1,0 +1,312 @@
+{
+  "format": "taiji-m2r3-r0-structured-semantics-v1",
+  "version": 1,
+  "status": "passed",
+  "can_promote": false,
+  "corpus": {
+    "format": "taiji-structured-semantic-training-v1",
+    "version": 1,
+    "source_digest": "6bcdcee4033abce9ee8d54590390c945da85052d009e1cf11b0649858ab45614",
+    "feature_dim": 7,
+    "split_sizes": {
+      "train": 8,
+      "dev": 4,
+      "test": 4
+    },
+    "fact_keys": [
+      "agent::holds::cache",
+      "agent::holds::queue",
+      "agent::state::blocked",
+      "agent::state::ready",
+      "agent::tracks::alpha",
+      "agent::tracks::beta"
+    ],
+    "goal_ids": [
+      "goal:clarify",
+      "goal:report"
+    ],
+    "content_ids": [
+      "content:clarify:cache",
+      "content:clarify:queue",
+      "content:report:cache",
+      "content:report:queue"
+    ],
+    "record_disjoint": true,
+    "provider_attached": false
+  },
+  "preflight": {
+    "checkpoint_digest": "17aa5ea5d4f3d657979c81646d275e1a20dd6322b108d028afc33eafe9f30fb2",
+    "checkpoint_matches_after_restore": true,
+    "parameter_count": 122,
+    "training_steps": 1920,
+    "owner_digests_before": {
+      "semantic_fact": "43e2515055ba6d87bd40f5b697ece4f6a20fe0b8e0bbed975066ea0b9ad3b038",
+      "semantic_goal": "1b6e11520cfdcffc667d43e5177cf68069f7b96c39dcae33d2153091e108d36b",
+      "semantic_content": "12c6cc230d6da530d5b8ce3d2b88d43b9b14f732045d589724ed7295f21d65ff"
+    },
+    "owner_digests_after": {
+      "semantic_fact": "606ec688e8a7a98761335a13814a94de356856dd98f7e89cc19b1d829484c54d",
+      "semantic_goal": "979810c173f36f40eb79ecb8660740332b4a31eb5b0406c16dab4fed2b886fa2",
+      "semantic_content": "9ccfea55853c0fc0170f917c19489b0df2e10199ef9b99c9d0082f675d885813"
+    }
+  },
+  "training": {
+    "epochs": 240,
+    "learning_rate": 2.0,
+    "losses": {
+      "fact_loss": 0.0006761311087757349,
+      "goal_loss": 4.347899903223151e-06,
+      "content_loss": 1.532836540718563e-05
+    }
+  },
+  "metrics": {
+    "train": {
+      "examples": 8,
+      "fact_precision": 1.0,
+      "fact_recall": 1.0,
+      "fact_f1": 1.0,
+      "goal_accuracy": 1.0,
+      "content_accuracy": 1.0,
+      "status_accuracy": 1.0,
+      "points": [
+        {
+          "example_id": "train-alpha-ready-cache",
+          "status": "resolved",
+          "goal": "goal:report",
+          "content": "content:report:cache",
+          "goal_expected": "goal:report",
+          "content_expected": "content:report:cache",
+          "fact_recall": 1.0
+        },
+        {
+          "example_id": "train-alpha-ready-queue",
+          "status": "resolved",
+          "goal": "goal:report",
+          "content": "content:report:queue",
+          "goal_expected": "goal:report",
+          "content_expected": "content:report:queue",
+          "fact_recall": 1.0
+        },
+        {
+          "example_id": "train-alpha-blocked-cache",
+          "status": "clarify",
+          "goal": "goal:clarify",
+          "content": "content:clarify:cache",
+          "goal_expected": "goal:clarify",
+          "content_expected": "content:clarify:cache",
+          "fact_recall": 1.0
+        },
+        {
+          "example_id": "train-alpha-blocked-queue",
+          "status": "clarify",
+          "goal": "goal:clarify",
+          "content": "content:clarify:queue",
+          "goal_expected": "goal:clarify",
+          "content_expected": "content:clarify:queue",
+          "fact_recall": 1.0
+        },
+        {
+          "example_id": "train-beta-ready-cache",
+          "status": "resolved",
+          "goal": "goal:report",
+          "content": "content:report:cache",
+          "goal_expected": "goal:report",
+          "content_expected": "content:report:cache",
+          "fact_recall": 1.0
+        },
+        {
+          "example_id": "train-beta-ready-queue",
+          "status": "resolved",
+          "goal": "goal:report",
+          "content": "content:report:queue",
+          "goal_expected": "goal:report",
+          "content_expected": "content:report:queue",
+          "fact_recall": 1.0
+        },
+        {
+          "example_id": "train-beta-blocked-cache",
+          "status": "clarify",
+          "goal": "goal:clarify",
+          "content": "content:clarify:cache",
+          "goal_expected": "goal:clarify",
+          "content_expected": "content:clarify:cache",
+          "fact_recall": 1.0
+        },
+        {
+          "example_id": "train-beta-blocked-queue",
+          "status": "clarify",
+          "goal": "goal:clarify",
+          "content": "content:clarify:queue",
+          "goal_expected": "goal:clarify",
+          "content_expected": "content:clarify:queue",
+          "fact_recall": 1.0
+        }
+      ]
+    },
+    "dev": {
+      "examples": 4,
+      "fact_precision": 1.0,
+      "fact_recall": 1.0,
+      "fact_f1": 1.0,
+      "goal_accuracy": 1.0,
+      "content_accuracy": 1.0,
+      "status_accuracy": 1.0,
+      "points": [
+        {
+          "example_id": "dev-beta-ready-cache",
+          "status": "resolved",
+          "goal": "goal:report",
+          "content": "content:report:cache",
+          "goal_expected": "goal:report",
+          "content_expected": "content:report:cache",
+          "fact_recall": 1.0
+        },
+        {
+          "example_id": "dev-alpha-blocked-cache",
+          "status": "clarify",
+          "goal": "goal:clarify",
+          "content": "content:clarify:cache",
+          "goal_expected": "goal:clarify",
+          "content_expected": "content:clarify:cache",
+          "fact_recall": 1.0
+        },
+        {
+          "example_id": "dev-beta-ready-queue",
+          "status": "resolved",
+          "goal": "goal:report",
+          "content": "content:report:queue",
+          "goal_expected": "goal:report",
+          "content_expected": "content:report:queue",
+          "fact_recall": 1.0
+        },
+        {
+          "example_id": "dev-alpha-blocked-queue",
+          "status": "clarify",
+          "goal": "goal:clarify",
+          "content": "content:clarify:queue",
+          "goal_expected": "goal:clarify",
+          "content_expected": "content:clarify:queue",
+          "fact_recall": 1.0
+        }
+      ]
+    },
+    "test": {
+      "examples": 4,
+      "fact_precision": 1.0,
+      "fact_recall": 1.0,
+      "fact_f1": 1.0,
+      "goal_accuracy": 1.0,
+      "content_accuracy": 1.0,
+      "status_accuracy": 1.0,
+      "points": [
+        {
+          "example_id": "test-alpha-ready-cache",
+          "status": "resolved",
+          "goal": "goal:report",
+          "content": "content:report:cache",
+          "goal_expected": "goal:report",
+          "content_expected": "content:report:cache",
+          "fact_recall": 1.0
+        },
+        {
+          "example_id": "test-beta-blocked-cache",
+          "status": "clarify",
+          "goal": "goal:clarify",
+          "content": "content:clarify:cache",
+          "goal_expected": "goal:clarify",
+          "content_expected": "content:clarify:cache",
+          "fact_recall": 1.0
+        },
+        {
+          "example_id": "test-alpha-ready-queue",
+          "status": "resolved",
+          "goal": "goal:report",
+          "content": "content:report:queue",
+          "goal_expected": "goal:report",
+          "content_expected": "content:report:queue",
+          "fact_recall": 1.0
+        },
+        {
+          "example_id": "test-beta-blocked-queue",
+          "status": "clarify",
+          "goal": "goal:clarify",
+          "content": "content:clarify:queue",
+          "goal_expected": "goal:clarify",
+          "content_expected": "content:clarify:queue",
+          "fact_recall": 1.0
+        }
+      ]
+    },
+    "lesion_test": {
+      "examples": 4,
+      "fact_precision": 0.0,
+      "fact_recall": 0.0,
+      "fact_f1": 0.0,
+      "goal_accuracy": 0.0,
+      "content_accuracy": 0.0,
+      "status_accuracy": 0.0,
+      "points": [
+        {
+          "example_id": "test-alpha-ready-cache",
+          "status": "conflict",
+          "goal": null,
+          "content": null,
+          "goal_expected": "goal:report",
+          "content_expected": "content:report:cache",
+          "fact_recall": 0.0
+        },
+        {
+          "example_id": "test-beta-blocked-cache",
+          "status": "conflict",
+          "goal": null,
+          "content": null,
+          "goal_expected": "goal:clarify",
+          "content_expected": "content:clarify:cache",
+          "fact_recall": 0.0
+        },
+        {
+          "example_id": "test-alpha-ready-queue",
+          "status": "conflict",
+          "goal": null,
+          "content": null,
+          "goal_expected": "goal:report",
+          "content_expected": "content:report:queue",
+          "fact_recall": 0.0
+        },
+        {
+          "example_id": "test-beta-blocked-queue",
+          "status": "conflict",
+          "goal": null,
+          "content": null,
+          "goal_expected": "goal:clarify",
+          "content_expected": "content:clarify:queue",
+          "fact_recall": 0.0
+        }
+      ]
+    },
+    "unknown_status": "unknown",
+    "conflict_status": "conflict",
+    "clarification_status": "clarify",
+    "clarification_content": "content:clarify:cache"
+  },
+  "gate": {
+    "passed": true,
+    "checks": {
+      "record_disjoint": true,
+      "train_fact_learning": true,
+      "dev_fact_learning": true,
+      "test_fact_learning": true,
+      "dev_goal_learning": true,
+      "test_goal_learning": true,
+      "dev_content_learning": true,
+      "test_content_learning": true,
+      "unknown_fail_closed": true,
+      "conflict_fail_closed": true,
+      "clarification_plan": true,
+      "checkpoint_save_restore": true,
+      "all_declared_owners_changed": true,
+      "fact_lesion_effective": true,
+      "provider_not_attached": true
+    }
+  }
+}

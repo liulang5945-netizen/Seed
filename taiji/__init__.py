@@ -465,6 +465,17 @@ from .semantic_provider import (
     SemanticEvidenceProvider,
     SemanticProviderRequest,
 )
+from .semantic_training import (
+    SEMANTIC_FACT_SEPARATOR,
+    SEMANTIC_TRAINING_CHECKPOINT_FORMAT,
+    SEMANTIC_TRAINING_VERSION,
+    StructuredSemanticCorpus,
+    StructuredSemanticExample,
+    StructuredSemanticLearner,
+    StructuredSemanticResult,
+    semantic_fact_key,
+    semantic_input_digest,
+)
 from .sparse import SparseSynapses
 from .state import (
     MemoryRecall,
@@ -960,6 +971,15 @@ __all__ = [
     "SparseReceptorBank",
     "SparseSynapses",
     "SemanticMemoryLearner",
+    "SEMANTIC_FACT_SEPARATOR",
+    "SEMANTIC_TRAINING_CHECKPOINT_FORMAT",
+    "SEMANTIC_TRAINING_VERSION",
+    "StructuredSemanticCorpus",
+    "StructuredSemanticExample",
+    "StructuredSemanticLearner",
+    "StructuredSemanticResult",
+    "semantic_fact_key",
+    "semantic_input_digest",
     "SEMANTIC_MEMORY_CHECKPOINT_FORMAT",
     "SEMANTIC_PROVIDER_AMBIGUITY_CEILING",
     "SEMANTIC_PROVIDER_CONFIDENCE_FLOOR",
