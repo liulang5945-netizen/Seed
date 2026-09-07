@@ -1,6 +1,6 @@
 # Seed / Taiji 模型优先统一开发计划
 
-> 修订：2026-09-07。状态：R0 测量链完成；R1～R3 首轮能力报告因数据重叠被撤回，record-disjoint v2 数据链已修复；seed11/29/47 的 R1 formal aggregate 已完成但不晋级。R2.R0～R2.R1 时间表征候选已完成并否决 promotion；M2.R3.R0～R3.R3 的 structured semantic CPU canary、runtime owner/checkpoint、多实体/关系/约束多 seed 组合训练、多步持久 WorldState 转移均已完成：事实、Goal、ContentPlan、未知/冲突/澄清、事件删除/顺序、持久性、owner lesion、旧 adapter 行为保持和新进程恢复全部通过；这证明的是结构化语义桥和 runtime 边界，不是自然语言流畅或开放域理解。下一步进入 R3.R4，把独立 transition owner 接入 runtime adapter，不改变 provider 边界。连续流切块、资源遥测和中断恢复均已通过。本文是唯一执行顺序与“下一步”来源。
+> 修订：2026-09-07。状态：R0 测量链完成；R1～R3 首轮能力报告因数据重叠被撤回，record-disjoint v2 数据链已修复；seed11/29/47 的 R1 formal aggregate 已完成但不晋级。R2.R0～R2.R1 时间表征候选已完成并否决 promotion；M2.R3.R0～R3.R4 的 structured semantic CPU canary、runtime owner/checkpoint、多实体/关系/约束多 seed 组合训练、多步持久 WorldState 转移及 runtime adapter 接线均已完成：事实、Goal、ContentPlan、未知/冲突/澄清、事件删除/顺序、持久性、owner lesion、旧 adapter 行为保持、新进程恢复、detach 清理全部通过；这证明的是结构化语义桥、持久转移和 runtime 边界，不是自然语言流畅或开放域理解。下一步进入 M2.R4 联合课程与能力保持，不改变 provider 边界。连续流切块、资源遥测和中断恢复均已通过。本文是唯一执行顺序与“下一步”来源。
 >
 > 本轮已完成数据契约代码、审计报告和回归测试；不会改写旧报告，下一步只从原始 child 重新生成独立证据。历史 M0/M1/M2-2a～2ae 的有效成果保留；旧“下一步”全部失效。重审依据见 [研究审视](../../reference/TAIJI_RESEARCH_REVIEW_2026_09_06.md)，原文见 [历史快照](../../archive/history/research_review_20260906/README.md)。
 >
@@ -53,6 +53,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | M2.R3.R1 runtime semantic owner | `TSKV8Adapter` 增加显式 attach/detach、read-only inference、独立 `structured_semantic` native checkpoint component 与恢复；8/8 Gate 检查通过；报告 `taiji_m2r3_r1_runtime_owner_20260907.json` | 未 attach 的旧 adapter 不产生新 component；推理不改变 `CognitiveState`、不产生 TaskInterpretation/ActionIntent；新进程恢复 learner 与上次结果，detach 后无残留；`can_promote=false` |
 | M2.R3.R2 multi-seed semantic composition | 3 个独立 feature-layout seed；每个 36/10/8 record-disjoint split，11 个关系事实、3 个 Goal、18 个 ContentPlan、482 个参数标量；每个 seed 14/14 检查通过，报告 `taiji_m2r3_r2_multiseed_20260907.json` | 三 seed test fact F1/Goal/ContentPlan accuracy 均 `1.0`；未知、互斥 constraint、blocked 澄清、pending plan、checkpoint 和 fact-owner lesion 全通过；`can_promote=false`，仍不宣称文本语言能力 |
 | M2.R3.R3 multi-step semantic transition | 3 个独立 feature-layout seed；每个 32/8/8 record-disjoint transition split，7 个事实、3 个 Goal、6 个 ContentPlan；transition v2 使用通用 fact×event interaction basis，594 个参数标量；每个 seed 14/14 检查通过，报告 `taiji_m2r3_r3_multistep_20260907.json` | 三 seed train/dev/test fact F1、Goal、ContentPlan 均 `1.0`；`release → move → block` 持久序列、事件删除/顺序、mid-sequence checkpoint、unknown/conflict fail-closed、transition lesion 与三个 owner 变化全部通过；`can_promote=false`，证明的是受控结构化多步状态转移，不是开放域世界模型 |
+| M2.R3.R4 runtime transition owner | 复用 R3.R3 三个 seed 的 transition v2 learner；通过 `TSKV8Adapter` 显式 attach/detach、read-only inference、独立 `structured_semantic_transition` native component 和新进程恢复；每个 seed 10/10 runtime checks 通过，报告 `taiji_m2r3_r4_runtime_transition_owner_20260907.json` | 三 seed 的组件可选性、三步序列、checkpoint round-trip/source digest、CognitiveState 只读、无执行副作用、transition lesion、detach 清理和旧 adapter 无组件全部通过；`can_promote=false`，只证明 runtime 所有权和恢复边界 |
 | M2.R1～R3 首轮报告 | 仅用不同 `partition_seed`，A/C 交集 `1597`、A/C′ `1577`、C/C′ `1563` | 技术 owner/保存检查仍可留作诊断；所有 phase-C 能力与多周期结论撤回，不能聚合或晋级 |
 | M2-2af 草案 | 继承评分错误、训练后才保存、仅 fresh digest、可单 seed promote | 中止且无正式报告；退出可执行主线，保留归档供重构参考 |
 | 完整认知层 | joint runner 使用 Taiji；Seed runtime 使用包含更多器官的 TSKV8Adapter | 不能把 kernel child 的成绩归给所有 adapter 器官，需逐 owner 训练覆盖映射 |
@@ -69,7 +70,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | 1 | M2.R0 测量纠正 | 已完成；评分 owner、数据排除基础、Gate/谱系合同修正 | 正反例能识别错 owner、重复、回归和无效恢复 |
 | 2 | M2.R1～R3 证据重建 | **已完成本轮 R1 证据**；三 seed active/replay/cascade 全部正式臂和 aggregate 均完成，active 分支有受控留出收益但 replay/第二周期保持不稳定，不能晋级 | 技术合格报告 + 独立 C/C′ 能力结果，不要求实验一定成功 |
 | 3 | M2.R2 表征与时间学习 | **R2.R0～R2.R1 已完成；gated multi-timescale temporal candidate 技术闭环通过但 promotion 否决**，候选默认关闭并保留为可回滚实验资产，不继续调参 | 已通过旧输出保持、owner、保存恢复和移除/冻结反事实；未通过“同一 delay probe 上形成额外长程能力”，不替换默认结构 |
-| 4 | M2.R3 语义与表达训练 | **R3.R0～R3.R3 已完成**：结构化语义训练合同、可选 runtime owner/checkpoint、多实体/关系/约束多 seed canary、多步事件到持久 WorldState/Goal satisfaction 已闭合；当前进入 R3.R4，把 transition owner 接入 runtime adapter | runtime 输入只来自当前 `PerceptEvent`；事实/Goal/ContentPlan/WorldState 结果可审计；provider 表达收益与 native-only 分开统计 |
+| 4 | M2.R3 语义与表达训练 | **R3.R0～R3.R4 已完成**：结构化语义训练合同、可选 runtime owner/checkpoint、多实体/关系/约束多 seed canary、多步事件到持久 WorldState/Goal satisfaction、runtime adapter 接线已闭合；当前进入 M2.R4 联合课程与能力保持 | runtime 输入只来自当前 `PerceptEvent`；事实/Goal/ContentPlan/WorldState 结果可审计；provider 表达收益与 native-only 分开统计 |
 | 5 | M2.R4 联合课程与保持 | 整合通过验证的器官，重跑绝对能力/保持/增益 | 三 seed 正式报告；目标改善且非目标能力不退化 |
 | 6 | M3 最小真实任务验证 | 留出 Workbench 项目的可恢复闭环 | 至少一个预注册真实任务族获得可重复净收益 |
 | 7 | M4 连续成长 | 多轮续训、巩固、必要时结构增长与压缩 | 优于固定容量和等预算对照，且保持/成本/回滚达标 |
@@ -82,7 +83,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 
 ## 4. 当前唯一下一步
 
-**唯一下一步：进入 M2.R3.R4，把独立 transition owner 接入 runtime adapter。** R3.R0～R3.R2 已证明单步事实→Goal→ContentPlan，R3.R3 又在三个 feature-layout seed 上证明了 `WorldState + PerceptEvent → learned fact delta → persistent WorldState → Goal/ContentPlan` 的受控多步链；但 transition learner 目前仍是独立组件，还没有经过现有 `TSKV8Adapter` 的 attach/detach、native checkpoint component、新进程恢复和旧 adapter 兼容边界。下一轮只接 runtime owner：显式 attach/detach 与 read-only `infer_structured_transition`，保存 transition v2 的 catalog/source digest/owner 参数，验证同一事件序列的直接运行与恢复运行一致；未 attach 的旧 adapter 不产生新组件，推理不修改 `CognitiveState`、不生成 `TaskInterpretation`/`ActionIntent`，detach 后无残留，transition lesion 能改变结果。仍不接语言 provider、不生成自然语言、不执行工具；通过后再进入 M2.R4 联合课程与保持。R1 aggregate、R2.R0 aggregate、R2.R0.1、R2.R0.2、R2.R1、R3.R0、R3.R1、R3.R2 和 R3.R3 报告均保留为基线。
+**唯一下一步：进入 M2.R4 联合课程与能力保持。** R3.R0～R3.R4 已分别证明单步事实→Goal→ContentPlan、多步 `WorldState + PerceptEvent → learned fact delta → persistent WorldState`，以及 transition owner 在 `TSKV8Adapter` 中的可选接入、保存恢复和撤销边界；但这些能力还没有在同一训练/评估协议下证明组合后不互相破坏。下一轮只做联合课程：以 R3.R0/R3.R2 的静态事实/关系/约束任务和 R3.R3 的多步 episode 建立 record-disjoint 多任务 train/dev/test；显式比较 frozen parent、static-semantic-only、transition-only、joint-native 四个 owner 路径，记录每个 owner 的写入集合、训练步数和 checkpoint 恢复。训练前先保存初态并做 fresh-process checkpoint canary；训练后同时测旧静态能力保持、持久状态/Goal/ContentPlan 新能力、unknown/conflict/clarify fail-closed、事件顺序/删除和 runtime detach。不得接语言 provider、ActionIntent、工具或客户端 UI；只有 joint-native 在三 seed 上取得预注册新收益且全部 protected 能力保持，才允许进入 M3 真实 Workbench 任务。R1 aggregate、R2.R0 aggregate、R2.R0.1、R2.R0.2、R2.R1、R3.R0、R3.R1、R3.R2、R3.R3 和 R3.R4 报告均保留为基线。
 
 2026-09-06 实际审计已证明首轮报告不能作为能力证据：旧 evaluator 的 C/C′ 只是换 partition seed，不是新记录。当前已落地的修复为 `scripts/training/eval_taiji_m2r1_phase_c_canary.py` v2、`scripts/training/audit_taiji_m2r1_data_contract.py` 和 `reports/taiji_m2r1_data_contract_20260906.json`：
 
