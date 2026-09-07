@@ -1,6 +1,6 @@
 # Seed / Taiji 模型优先统一开发计划
 
-> 修订：2026-09-07。状态：R0 测量链完成；R1～R3 首轮能力报告因数据重叠被撤回，record-disjoint v2 数据链已修复；seed11 的 64 KiB 五臂 CPU pilot 技术通过但能力增益为负，1 MiB active-only/replay/cascade 分别为 `+0.02444/-0.05893/+0.00592 BPB`（cascade 的 C 保持退化）；seed29 active-only 为 `+0.05344 BPB`；连续流切块、资源遥测和中断恢复均已通过。本文是唯一执行顺序与“下一步”来源。
+> 修订：2026-09-07。状态：R0 测量链完成；R1～R3 首轮能力报告因数据重叠被撤回，record-disjoint v2 数据链已修复；seed11 的 64 KiB 五臂 CPU pilot 技术通过但能力增益为负，1 MiB active-only/replay/cascade 分别为 `+0.02444/-0.05893/+0.00592 BPB`（cascade 的 C 保持退化）；seed29 active/replay 分别为 `+0.05344/-0.09228 BPB`；连续流切块、资源遥测和中断恢复均已通过。本文是唯一执行顺序与“下一步”来源。
 >
 > 本轮已完成数据契约代码、审计报告和回归测试；不会改写旧报告，下一步只从原始 child 重新生成独立证据。历史 M0/M1/M2-2a～2ae 的有效成果保留；旧“下一步”全部失效。重审依据见 [研究审视](../../reference/TAIJI_RESEARCH_REVIEW_2026_09_06.md)，原文见 [历史快照](../../archive/history/research_review_20260906/README.md)。
 >
@@ -37,6 +37,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | M2.R1 v2 seed11 formal replay | 同一 untouched parent、同一 1 MiB C 预算、C→replay 两周期、32 chunks；14/14 技术检查通过，训练约 2,579 秒、评分约 414 秒、约 813 B/s、峰值工作集约 369 MB | C holdout protected `4.2194` → replay `4.2784 BPB`，增益 `-0.05893`；等预算 replay 未复现 active-only 正收益，不能晋级；cascade 仍待验证 |
 | M2.R1 v2 seed11 formal cascade | 同一 untouched parent、1 MiB C→C′ 两周期、32 chunks；12/12 技术检查通过，训练约 2,519 秒、评分约 1,945 秒、约 832 B/s、峰值工作集约 369 MB | C′/C2 protected `4.2925` → active `4.2866 BPB`，新 holdout 增益 `+0.00592`；但 C 在 cycle1 `4.1950` → cycle2 `4.2132 BPB`，退化 `+0.01827`，第二周期保持失败，不能晋级 |
 | M2.R1 v2 seed29 formal active | 1 MiB C 训练、128 KiB 评估，16 chunks；14/14 技术检查通过，训练约 1,020 秒、评分约 319 秒、约 1,028 B/s、峰值工作集约 370 MB | C holdout protected `4.3082` → active `4.2547 BPB`，增益 `+0.05344`；独立 seed 的 active-only 结果为正，但 replay/cascade 与 seed47 未完成，不能晋级 |
+| M2.R1 v2 seed29 formal replay | 同一 untouched parent、同一 1 MiB C 预算、C→replay 两周期、32 chunks；14/14 技术检查通过，训练约 2,047 秒、评分约 326 秒、约 1,025 B/s、峰值工作集约 370 MB | C holdout protected `4.3082` → replay `4.4004 BPB`，增益 `-0.09228`；A retention `4.4446 BPB`，等预算 replay 明显未复现 active-only 正收益，cascade 仍待验证 |
 | M2.R1～R3 首轮报告 | 仅用不同 `partition_seed`，A/C 交集 `1597`、A/C′ `1577`、C/C′ `1563` | 技术 owner/保存检查仍可留作诊断；所有 phase-C 能力与多周期结论撤回，不能聚合或晋级 |
 | M2-2af 草案 | 继承评分错误、训练后才保存、仅 fresh digest、可单 seed promote | 中止且无正式报告；退出可执行主线，保留归档供重构参考 |
 | 完整认知层 | joint runner 使用 Taiji；Seed runtime 使用包含更多器官的 TSKV8Adapter | 不能把 kernel child 的成绩归给所有 adapter 器官，需逐 owner 训练覆盖映射 |
@@ -51,7 +52,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 |---|---|---|---|
 | 0 | M0 / M1 | 历史基线与首轮训练已执行 | 历史证据按任务范围保留，不重跑整段流程 |
 | 1 | M2.R0 测量纠正 | 已完成；评分 owner、数据排除基础、Gate/谱系合同修正 | 正反例能识别错 owner、重复、回归和无效恢复 |
-| 2 | M2.R1～R3 证据重建 | **当前进行**；seed11 三个正式臂完成，seed29 active-only 完成且为正，下一步执行 seed29 replay/cascade，再执行 seed47 | 技术合格报告 + 独立 C/C′ 能力结果，不要求实验一定成功 |
+| 2 | M2.R1～R3 证据重建 | **当前进行**；seed11 三个正式臂完成，seed29 active/replay 已完成且分歧明显，下一步执行 seed29 cascade，再执行 seed47 | 技术合格报告 + 独立 C/C′ 能力结果，不要求实验一定成功 |
 | 3 | M2.R2 表征与时间学习 | 学习曲线、强对照、一个候选可塑上下文 | 未见组合与长程能力出现收益；或形成有证据的设计决策 |
 | 4 | M2.R3 语义与表达训练 | Taiji-owned Percept/Goal/ContentPlan 的训练和独立输出 | 核心语义/事实指标有效，provider 表达收益独立统计 |
 | 5 | M2.R4 联合课程与保持 | 整合通过验证的器官，重跑绝对能力/保持/增益 | 三 seed 正式报告；目标改善且非目标能力不退化 |
@@ -66,7 +67,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 
 ## 4. 当前唯一下一步
 
-**唯一下一步：按相同 1 MiB / 128 KiB / record-disjoint v2 协议执行 seed29 replay。** seed29 active-only 获得 `+0.05344 BPB`，但仍需用同一 untouched parent 的等预算 replay 判断收益是否来自 C 适应而非随机波动；随后继续 seed29 cascade，最后处理 seed47。三 seed 成对结果完成前不做晋级或架构扩展。64 KiB pilot 的负增益保留为预算/泛化诊断，不自动推翻或确认正式结果。
+**唯一下一步：按相同 1 MiB / 128 KiB / record-disjoint v2 协议执行 seed29 C→C′ cascade。** seed29 active-only 为 `+0.05344 BPB`，等预算 replay 为 `-0.09228 BPB`；cascade 是最后一个 seed29 对照，用来判断第二周期新数据是否能恢复 C 保持或只扩大遗忘。完成后再处理 seed47；三 seed 成对结果完成前不做晋级或架构扩展。64 KiB pilot 的负增益保留为预算/泛化诊断，不自动推翻或确认正式结果。
 
 2026-09-06 实际审计已证明首轮报告不能作为能力证据：旧 evaluator 的 C/C′ 只是换 partition seed，不是新记录。当前已落地的修复为 `scripts/training/eval_taiji_m2r1_phase_c_canary.py` v2、`scripts/training/audit_taiji_m2r1_data_contract.py` 和 `reports/taiji_m2r1_data_contract_20260906.json`：
 
