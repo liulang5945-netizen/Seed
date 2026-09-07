@@ -13,6 +13,8 @@ import hashlib
 from collections.abc import Mapping
 from typing import Any
 
+from seed_platform.workbench import WorkbenchPathError
+
 
 def ground_natural_language_workbench_step(
     environment: Any,
@@ -46,6 +48,47 @@ def ground_natural_language_workbench_step(
         for capability_id, bindings in grounded.items()
     }
     language_evidence: dict[str, Any] | None = None
+
+    read_bindings = normalized.get("workspace.read")
+    if read_bindings is not None:
+        if len(read_bindings) != 1:
+            return {}, "semantic_grounding_ambiguous", None, ""
+        path = str(read_bindings[0].get("path", "")).strip()
+        if not path:
+            return {}, "workspace_target_invalid", None, ""
+        try:
+            read_evidence = environment.read_workspace_evidence({"path": path})
+        except WorkbenchPathError:
+            return {}, "workspace_target_invalid", None, ""
+        except FileNotFoundError:
+            return {}, "workspace_target_not_found", None, ""
+        except IsADirectoryError:
+            return {}, "workspace_target_not_file", None, ""
+        return normalized, "", read_evidence, "workspace_read_evidence"
+
+    resolve_bindings = normalized.get("workspace.programming_language.resolve")
+    if resolve_bindings is not None:
+        if len(resolve_bindings) != 1:
+            return {}, "semantic_grounding_ambiguous", None, ""
+        path = str(resolve_bindings[0].get("path", "")).strip()
+        if not path:
+            return {}, "workspace_target_invalid", None, ""
+        try:
+            assessment = environment.resolve_programming_language_evidence({"path": path})
+        except WorkbenchPathError:
+            return {}, "workspace_target_invalid", None, ""
+        except FileNotFoundError:
+            return {}, "workspace_target_not_found", None, ""
+        except IsADirectoryError:
+            return {}, "workspace_target_not_file", None, ""
+        selection_state = str(assessment.get("selection_state", "unknown"))
+        if selection_state in {"ambiguous", "unknown"}:
+            return {}, "language_evidence_ambiguous", assessment, "language_evidence"
+        # Keep the legacy planner lineage for a read-only resolver step.  The
+        # evidence is still exposed on the step payload, but only the later
+        # editor.set_language step is an actual Taiji-derived UI selection.
+        return normalized, "", assessment, "language_resolution_evidence"
+
     language_bindings = normalized.get("editor.set_language")
     if language_bindings is not None:
         rebound: list[dict[str, Any]] = []
