@@ -1,6 +1,6 @@
 # Seed / Taiji 模型优先统一开发计划
 
-> 修订：2026-09-07。状态：R0 测量链完成；R1～R3 首轮能力报告因数据重叠被撤回，record-disjoint v2 数据链已修复；seed11/29/47 的 R1 formal aggregate 已完成但不晋级。R2.R0～R2.R1 时间表征候选已完成并否决 promotion；M2.R3.R0～R3.R4 的 structured semantic CPU canary、runtime owner/checkpoint、多实体/关系/约束多 seed 组合训练、多步持久 WorldState 转移及 runtime adapter 接线均已完成；M2.R4 联合课程与能力保持也已完成：事实、Goal、ContentPlan、未知/冲突/澄清、事件删除/顺序、持久性、owner lesion、旧 adapter 行为保持、新进程恢复、detach 清理、双 owner 组合和受保护能力保持全部通过。M3.R0 的 project-disjoint Workbench 只读边界、M3.R1 的 native Workbench observation 静态课程、M3.R2 的 native task-state sequence、M3.R3 的 native read-only ActionIntent planning、M3.R4 的 preview/approval dry-run 均已完成。R0～R4 证明的是受限 verified Workbench 证据到结构化语义/状态/只读意图/副作用前置审计的边界，不是 native raw-text learning、自然语言流畅或已获授权的真实自治写入。下一步仅在隔离临时工作区中验证一次明确批准后的最小执行 canary，不改变 provider/native-only 证据边界。连续流切块、资源遥测和中断恢复均已通过。本文是唯一执行顺序与“下一步”来源。
+> 修订：2026-09-07。状态：R0 测量链完成；R1～R3 首轮能力报告因数据重叠被撤回，record-disjoint v2 数据链已修复；seed11/29/47 的 R1 formal aggregate 已完成但不晋级。R2.R0～R2.R1 时间表征候选已完成并否决 promotion；M2.R3.R0～R3.R4 的 structured semantic CPU canary、runtime owner/checkpoint、多实体/关系/约束多 seed 组合训练、多步持久 WorldState 转移及 runtime adapter 接线均已完成；M2.R4 联合课程与能力保持也已完成：事实、Goal、ContentPlan、未知/冲突/澄清、事件删除/顺序、持久性、owner lesion、旧 adapter 行为保持、新进程恢复、detach 清理、双 owner 组合和受保护能力保持全部通过。M3.R0 的 project-disjoint Workbench 只读边界、M3.R1 的 native Workbench observation 静态课程、M3.R2 的 native task-state sequence、M3.R3 的 native read-only ActionIntent planning、M3.R4 的 preview/approval dry-run、M3.R5 的隔离临时工作区批准执行 canary 均已完成。R0～R5 证明的是受限 verified Workbench 证据到结构化语义/状态/只读意图/副作用审计/隔离执行恢复的边界，不是 native raw-text learning、自然语言流畅或已获授权的真实客户端自治写入。下一步进入真实客户端批准流的接线决策点；在用户明确授权前不对真实工作区执行写入。连续流切块、资源遥测和中断恢复均已通过。本文是唯一执行顺序与“下一步”来源。
 >
 > 本轮已完成数据契约代码、审计报告和回归测试；不会改写旧报告，下一步只从原始 child 重新生成独立证据。历史 M0/M1/M2-2a～2ae 的有效成果保留；旧“下一步”全部失效。重审依据见 [研究审视](../../reference/TAIJI_RESEARCH_REVIEW_2026_09_06.md)，原文见 [历史快照](../../archive/history/research_review_20260906/README.md)。
 >
@@ -60,6 +60,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | M3.R2 native task-state sequence | 新增 `eval_taiji_m3r2_task_state_sequence.py`；复用 3 个 project-disjoint fixture，按 `missing → Python → TypeScript → Rust → ambiguous .h → missing` 构造 5 步 transition course；transition learner 5,176 个参数标量；formal report `taiji_m3r2_task_state_sequence_20260907.json` | native transition test fact F1=`0.9`；未见项目 sequence fact exact/Goal/ContentPlan/status=`0.8`；static-only fact exact=`0.2`；删除/打乱事件、过期语言事实清除、transition-owner lesion、learner/adapter checkpoint/restart、CognitiveState 只读和 provider 未接入均通过；训练学习率 `0.2` 防止 interaction basis 在 CPU 上发散；`can_promote=false`。这是跨 tick 状态更新证据，不是自然语言或执行能力 |
 | M3.R3 native read-only ActionIntent planning | 新增 `taiji/read_only_intent.py` 与 `eval_taiji_m3r3_read_only_intent.py`；版本化 host `ReadOnlyIntentPolicy` 只声明 `workspace.read` / `workspace.programming_language.resolve`；5 步 test sequence、native/static-only/provider-gold/empty 四臂，transition learner 5,176 个参数标量；formal report `taiji_m3r3_read_only_intent_20260907.json` | native 接受 3/3 应读步骤；intent coverage、route、Workbench policy allow、live evidence、clarification 均 `1.0`；static-only `0`、provider/gold `3`、empty `0`；stale snapshot、WorldState event/assembly lineage、planner/learner/adapter checkpoint、transition lesion、CognitiveState 只读、fixture digest 全通过；R3 只做 evidence probe，未执行任何 Workbench side effect，`can_promote=false`。这是受限只读意图规划，不是写入自治或开放域语言能力 |
 | M3.R4 preview/approval dry-run | 新增 `eval_taiji_m3r4_preview_approval.py`、测试和 formal report `taiji_m3r4_preview_approval_20260907.json`；host-authored `workspace.apply_patch` 受 capability descriptor 参数契约、before/after digest 与 snapshot 绑定；不增加 native write head | preview 重复输出稳定；正确 patch、stale file、invalid patch、parameter drift、stale snapshot、tampered request、approval checkpoint 恢复失效、single-use consume 全部 fail-closed；preview/approval 前后 fixture digest 相等，未调用 executor，`can_promote=false`。这是副作用前置审计证据，不是实际写入授权 |
+| M3.R5 isolated approved execution | 新增 `eval_taiji_m3r5_approved_execution.py`、测试和 formal report `taiji_m3r5_approved_execution_20260907.json`；复制 fixture 到临时目录，使用 exact approval token 执行一条 `workspace.apply_patch`，随后用审批后的 `workspace.undo` 恢复；真实 fixture 只读 | R5 `passed`：执行与 undo 均成功，after/before digest 精确匹配，审批篡改、stale snapshot、approval checkpoint 恢复、replay、stale file、重复 undo 全部拒绝；临时 workspace 恢复、临时目录清理、source fixture unchanged 全部通过；R5 不接 native write head，`can_promote=false`。这是隔离 executor 边界证据，不是实际客户端授权 |
 | M2.R1～R3 首轮报告 | 仅用不同 `partition_seed`，A/C 交集 `1597`、A/C′ `1577`、C/C′ `1563` | 技术 owner/保存检查仍可留作诊断；所有 phase-C 能力与多周期结论撤回，不能聚合或晋级 |
 | M2-2af 草案 | 继承评分错误、训练后才保存、仅 fresh digest、可单 seed promote | 中止且无正式报告；退出可执行主线，保留归档供重构参考 |
 | 完整认知层 | joint runner 使用 Taiji；Seed runtime 使用包含更多器官的 TSKV8Adapter | 不能把 kernel child 的成绩归给所有 adapter 器官，需逐 owner 训练覆盖映射 |
@@ -78,7 +79,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | 3 | M2.R2 表征与时间学习 | **R2.R0～R2.R1 已完成；gated multi-timescale temporal candidate 技术闭环通过但 promotion 否决**，候选默认关闭并保留为可回滚实验资产，不继续调参 | 已通过旧输出保持、owner、保存恢复和移除/冻结反事实；未通过“同一 delay probe 上形成额外长程能力”，不替换默认结构 |
 | 4 | M2.R3 语义与表达训练 | **R3.R0～R3.R4 已完成**：结构化语义训练合同、可选 runtime owner/checkpoint、多实体/关系/约束多 seed canary、多步事件到持久 WorldState/Goal satisfaction、runtime adapter 接线已闭合 | runtime 输入只来自当前 `PerceptEvent`；事实/Goal/ContentPlan/WorldState 结果可审计；provider 表达收益与 native-only 分开统计 |
 | 5 | M2.R4 联合课程与保持 | **已完成**：frozen/static-only/transition-only/joint-native 对照、双 owner 组合、runtime 双组件 checkpoint 和 protected retention 已闭合；不把独立 owner 的串行课程称为共享权重联合优化 | 三 seed 正式报告；joint-native 新组合通过且两个受保护 owner 均保持 |
-| 6 | M3 最小真实任务验证 | **M3.R0/R1/R2/R3/R4 已完成；下一步 M3.R5**：R0 闭合只读证据边界，R1 训练静态 observation，R2 训练跨 tick task-state transition，R3 形成 snapshot 绑定只读 `ActionIntent`，R4 闭合写入前 preview/approval；下一步仅在隔离临时工作区执行一条明确批准的 patch 并验证回滚/恢复 | R4 已证明写入候选只能进入预览/审批；R5 必须证明批准 token 只允许 exact request 一次执行、stale digest/重放/恢复均拒绝，并且测试结束后临时工作区可恢复且真实仓库不变 |
+| 6 | M3 最小真实任务验证 | **M3.R0/R1/R2/R3/R4/R5 已完成；下一步为真实客户端批准流的接线决策**：R0 闭合只读证据边界，R1 训练静态 observation，R2 训练跨 tick task-state transition，R3 形成 snapshot 绑定只读 `ActionIntent`，R4 闭合 preview/approval，R5 在隔离副本验证一次执行与 undo | R5 已证明 exact approval token、digest、执行一次、undo 和恢复拒绝；真实客户端 API/UI 接线会扩大外部副作用范围，必须先明确是否开放以及默认是否保持 preview-only |
 | 7 | M4 连续成长 | 多轮续训、巩固、必要时结构增长与压缩 | 优于固定容量和等预算对照，且保持/成本/回滚达标 |
 | 8 | M5 知识与身体 | Skill/MCP 数据内化、真实调用与客户端插件 | 认知与执行收益可分别归因，权限/撤销闭合 |
 | 9 | M6 产品收口 | provider 稳定性、UI/桌面、遗留格式清理 | packaged client 与真实能力一致 |
@@ -89,7 +90,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 
 ## 4. 当前唯一下一步
 
-**唯一下一步：进入 M3.R5 隔离临时工作区的最小批准执行 canary。** M3.R4 已证明 host-authored patch 的 preview、before/after digest、参数契约、snapshot 绑定、审批篡改/过期/重复消费/恢复失效均 fail-closed，且 workspace digest 始终不变。下一步只做一件事：在测试专用临时目录复制一个 fixture，使用现有 `execute_tool` 在明确 approval token 下执行一条 `workspace.apply_patch`，验证 exact request 只成功一次、文件 before/after digest 正确、undo token 可恢复、stale file/snapshot/replay/新进程恢复均拒绝；测试结束必须清理临时目录，绝不对 `E:\Seed` 或真实用户工作区执行写入。R5 仍不训练 write head、不开放 native 自动批准、不接 terminal/MCP/editor.set_language；完成后才到需要用户授权的真实客户端批准流讨论。M3.R4/R3/R2/R1 report、M2.R4 与 M3.R0 均保留为基线。
+**唯一下一步：决定是否开放真实客户端的“明确批准后执行”入口。** M3.R5 已在隔离临时副本证明 exact approval token 只允许一次精确 patch，执行后 digest 正确、undo 恢复成功，stale snapshot/file、篡改、重放、checkpoint 恢复和重复 undo 均拒绝；真实源 fixture 未变化。下一步若获授权，只接现有 preview/approval/executor contract 到客户端确认按钮，并默认保留 preview-only、显式显示 before/after digest、单次 token、失败即停和 undo；不把批准动作交给 native planner，不开放自动批准、terminal、MCP 或 editor.set_language。若不开放真实执行，则维持当前 R5 证据并转入 M4 的持续学习/能力保持。这个节点涉及真实用户工作区副作用，需用户明确选择后再改代码或运行。
 
 2026-09-06 实际审计已证明首轮报告不能作为能力证据：旧 evaluator 的 C/C′ 只是换 partition seed，不是新记录。当前已落地的修复为 `scripts/training/eval_taiji_m2r1_phase_c_canary.py` v2、`scripts/training/audit_taiji_m2r1_data_contract.py` 和 `reports/taiji_m2r1_data_contract_20260906.json`：
 
@@ -287,11 +288,15 @@ R4 只研究“候选如何进入副作用边界”，不研究“模型是否�
 
 R4 已交付 `scripts/training/eval_taiji_m3r4_preview_approval.py`、`tests/taiji_native/test_m3r4_preview_approval.py` 与 `reports/taiji_m3r4_preview_approval_20260907.json`。Gate 以 test fixture 的 `app.py` 构造一条 host-authored text replacement，仅调用现有 `preview_tool` 与 approval contract，不调用 `execute_tool`；覆盖正确 patch、stale file、参数漂移、无效 patch、stale capability、审批篡改、重复消费与 checkpoint 恢复失效。preview 合法、before/after digest、参数契约和 approval exact binding 全部通过，workspace digest 前后相等，`can_promote=false`。
 
-### M3.R5：隔离临时工作区的最小批准执行 canary（下一步）
+### M3.R5：隔离临时工作区的最小批准执行 canary（已完成，2026-09-07）
 
 R5 只验证现有 Workbench executor 的批准边界，不把它接到 native planner，也不触碰真实项目。测试复制 fixture 到临时目录，创建一条明确 host-approved `workspace.apply_patch` request，验证 exact approval token 只能被一个 exact request 消费一次；执行后检查 before/after digest 和 undo token，再回滚并检查恢复 digest。另测 stale file、stale capability、request 参数篡改、approval replay、新环境恢复和重复 undo 均拒绝。
 
-R5 的 Gate 必须记录临时目录 before/after digest、执行 outcome、undo outcome、approval/transaction checkpoint 是否泄漏、真实 `E:\Seed` 工作区 digest 是否未变。R5 只允许 `workspace.apply_patch`，不接真实客户端批准、不接 native write head、不训练新参数、不执行 terminal/MCP/editor.set_language；若通过，下一决策点才是是否为真实用户批准流增加 API/UI 入口。
+R5 已交付 `scripts/training/eval_taiji_m3r5_approved_execution.py`、`tests/taiji_native/test_m3r5_approved_execution.py` 和 `reports/taiji_m3r5_approved_execution_20260907.json`。Gate 只在系统临时目录的复制 fixture 上执行：明确 approval token 消费一次后调用现有 `execute_tool`，验证 patch after digest，再通过另一个明确审批的 `workspace.undo` 恢复 before digest；approval 不随 transaction checkpoint 恢复，篡改/重放/stale file/stale snapshot/重复 undo 均拒绝。执行和 undo 的结果分开采集，报告不保存明文 undo token；临时目录清理、source fixture digest 不变均通过，`can_promote=false`。
+
+### M3.R6：真实客户端批准入口（决策点）
+
+R6 不是默认继续开发的自动执行阶段。若用户明确开放真实批准入口，才审计并接线现有客户端 preview → user confirmation → exact approval token → executor → outcome/undo 展示链；首版必须 preview-only 默认、显式 before/after digest、当前 capability snapshot/boundary、一次性 token、失败即停、可撤销，并保留 native planner 不能自发批准的硬边界。接线前先做 API/UI contract test 和真实客户端根目录 deny-by-default 检查；不在此节点训练新的 write head，也不接 terminal/MCP/editor.set_language。
 
 ## 8. M4：在原有知识上成长的研究日程
 

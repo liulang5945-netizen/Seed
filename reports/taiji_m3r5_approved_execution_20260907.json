@@ -1,0 +1,145 @@
+{
+  "format": "taiji-m3r5-isolated-approved-execution-v1",
+  "version": 1,
+  "gate": "M3.R5",
+  "status": "passed",
+  "can_promote": false,
+  "promotion_reason": "one approved patch executed only inside a temporary copied fixture and was reverted; native write learning and real workspace execution remain closed.",
+  "execution": {
+    "capability_id": "workspace.apply_patch",
+    "before_digest": "cf2fbd0ff62e73d026ff1d5883191510e3ac526660a89f013d32daa1e3115aed",
+    "expected_after_digest": "5eb3238cf2f17b4eb6c368d074c59b7f10a35aea8a398b7ba49c3f604981b916",
+    "executed": {
+      "success": true,
+      "reward": 1.0,
+      "last_result_digest": "e1f461a2f3197a52292a69422aaf64341c4a2e84213acbc9c0f8d706a138425a",
+      "last_result": {
+        "path": "app.py",
+        "digest": "5eb3238cf2f17b4eb6c368d074c59b7f10a35aea8a398b7ba49c3f604981b916",
+        "before_digest": "cf2fbd0ff62e73d026ff1d5883191510e3ac526660a89f013d32daa1e3115aed",
+        "after_digest": "5eb3238cf2f17b4eb6c368d074c59b7f10a35aea8a398b7ba49c3f604981b916",
+        "transaction": {
+          "version": 1,
+          "operation": "workspace.apply_patch",
+          "path": "app.py",
+          "before_digest": "cf2fbd0ff62e73d026ff1d5883191510e3ac526660a89f013d32daa1e3115aed",
+          "after_digest": "5eb3238cf2f17b4eb6c368d074c59b7f10a35aea8a398b7ba49c3f604981b916",
+          "reversible": true,
+          "undo_token_present": true
+        }
+      }
+    },
+    "undone": {
+      "success": true,
+      "reward": 1.0,
+      "last_result_digest": "3d0ed748563434696b0efa22d8e190b2893a7312a80fe11d3e350dd3d75eb7f1",
+      "last_result": {
+        "path": "app.py",
+        "digest": "cf2fbd0ff62e73d026ff1d5883191510e3ac526660a89f013d32daa1e3115aed",
+        "before_digest": "5eb3238cf2f17b4eb6c368d074c59b7f10a35aea8a398b7ba49c3f604981b916",
+        "after_digest": "cf2fbd0ff62e73d026ff1d5883191510e3ac526660a89f013d32daa1e3115aed",
+        "transaction": {
+          "version": 1,
+          "operation": "workspace.undo",
+          "path": "app.py",
+          "before_digest": "5eb3238cf2f17b4eb6c368d074c59b7f10a35aea8a398b7ba49c3f604981b916",
+          "after_digest": "cf2fbd0ff62e73d026ff1d5883191510e3ac526660a89f013d32daa1e3115aed",
+          "reversible": false,
+          "undo_token_present": false
+        }
+      }
+    },
+    "transaction": {
+      "version": 1,
+      "operation": "workspace.apply_patch",
+      "path": "app.py",
+      "before_digest": "cf2fbd0ff62e73d026ff1d5883191510e3ac526660a89f013d32daa1e3115aed",
+      "after_digest": "5eb3238cf2f17b4eb6c368d074c59b7f10a35aea8a398b7ba49c3f604981b916",
+      "reversible": true
+    },
+    "undo_token_present": true,
+    "undo_transaction": {
+      "version": 1,
+      "operation": "workspace.undo",
+      "path": "app.py",
+      "before_digest": "5eb3238cf2f17b4eb6c368d074c59b7f10a35aea8a398b7ba49c3f604981b916",
+      "after_digest": "cf2fbd0ff62e73d026ff1d5883191510e3ac526660a89f013d32daa1e3115aed",
+      "reversible": false
+    },
+    "workspace_before": "375dcdfc059b5beca391a27a1dd0dcad6a949a43bf5f31f4d35eb6f5129a8e00",
+    "workspace_after": "375dcdfc059b5beca391a27a1dd0dcad6a949a43bf5f31f4d35eb6f5129a8e00"
+  },
+  "controls": {
+    "tampered_policy": {
+      "version": 1,
+      "request_id": "workbench:intent:m3r5-approved-patch",
+      "capability_id": "workspace.apply_patch",
+      "decision": "ask_user",
+      "reason_code": "approval_invalid",
+      "snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850"
+    },
+    "stale_snapshot_policy": {
+      "version": 1,
+      "request_id": "workbench:intent:m3r5-approved-patch",
+      "capability_id": "workspace.apply_patch",
+      "decision": "deny",
+      "reason_code": "stale_capability_snapshot",
+      "snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850"
+    },
+    "restored_policy": {
+      "version": 1,
+      "request_id": "workbench:intent:m3r5-approved-patch",
+      "capability_id": "workspace.apply_patch",
+      "decision": "ask_user",
+      "reason_code": "approval_invalid",
+      "snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850"
+    },
+    "replay_policy": {
+      "version": 1,
+      "request_id": "workbench:intent:m3r5-approved-patch",
+      "capability_id": "workspace.apply_patch",
+      "decision": "ask_user",
+      "reason_code": "approval_invalid",
+      "snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850"
+    },
+    "stale_file": {
+      "rejected": true,
+      "error_type": "WorkbenchConflictError"
+    },
+    "duplicate_undo": {
+      "rejected": true,
+      "error_type": "ValueError"
+    }
+  },
+  "fixtures": {
+    "source_before": "375dcdfc059b5beca391a27a1dd0dcad6a949a43bf5f31f4d35eb6f5129a8e00",
+    "source_after": "375dcdfc059b5beca391a27a1dd0dcad6a949a43bf5f31f4d35eb6f5129a8e00",
+    "source_unchanged": true,
+    "temporary_workspace_restored": true,
+    "temporary_directory_cleaned": true
+  },
+  "boundaries": {
+    "native_write_head": false,
+    "temporary_executor_only": true,
+    "real_workspace_write": false,
+    "editor_set_language": false,
+    "terminal": false,
+    "mcp": false,
+    "cuda": false
+  },
+  "gates": {
+    "isolated_executor_root": true,
+    "policy_requires_approval": true,
+    "tampered_request_rejected": true,
+    "stale_snapshot_rejected": true,
+    "approval_not_restored": true,
+    "exact_request_executes_once": true,
+    "after_digest_matches_preview": true,
+    "undo_is_approved_and_restores": true,
+    "duplicate_undo_rejected": true,
+    "stale_file_rejected": true,
+    "temporary_workspace_restored": true,
+    "temporary_directory_cleaned": true,
+    "source_fixture_unchanged": true
+  }
+}
