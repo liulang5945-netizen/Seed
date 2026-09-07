@@ -636,6 +636,12 @@ from .workbench_boundary import (
     WorkbenchTaskBoundary,
     select_readout_generation,
 )
+from .workbench_observation import (
+    WORKBENCH_OBSERVATION_FORMAT,
+    WORKBENCH_OBSERVATION_VERSION,
+    WorkbenchObservation,
+    WorkbenchObservationSchema,
+)
 from .workspace import (
     WorkspaceCollaborationEvaluator,
     WorkspaceCompositionSample,
@@ -994,6 +1000,10 @@ __all__ = [
     "StructuredSemanticTransitionExample",
     "StructuredSemanticTransitionLearner",
     "StructuredSemanticTransitionResult",
+    "WORKBENCH_OBSERVATION_FORMAT",
+    "WORKBENCH_OBSERVATION_VERSION",
+    "WorkbenchObservation",
+    "WorkbenchObservationSchema",
     "SEMANTIC_MEMORY_CHECKPOINT_FORMAT",
     "SEMANTIC_PROVIDER_AMBIGUITY_CEILING",
     "SEMANTIC_PROVIDER_CONFIDENCE_FLOOR",
