@@ -476,6 +476,14 @@ from .semantic_training import (
     semantic_fact_key,
     semantic_input_digest,
 )
+from .semantic_transition import (
+    SEMANTIC_TRANSITION_CHECKPOINT_FORMAT,
+    SEMANTIC_TRANSITION_VERSION,
+    StructuredSemanticTransitionCorpus,
+    StructuredSemanticTransitionExample,
+    StructuredSemanticTransitionLearner,
+    StructuredSemanticTransitionResult,
+)
 from .sparse import SparseSynapses
 from .state import (
     MemoryRecall,
@@ -980,6 +988,12 @@ __all__ = [
     "StructuredSemanticResult",
     "semantic_fact_key",
     "semantic_input_digest",
+    "SEMANTIC_TRANSITION_CHECKPOINT_FORMAT",
+    "SEMANTIC_TRANSITION_VERSION",
+    "StructuredSemanticTransitionCorpus",
+    "StructuredSemanticTransitionExample",
+    "StructuredSemanticTransitionLearner",
+    "StructuredSemanticTransitionResult",
     "SEMANTIC_MEMORY_CHECKPOINT_FORMAT",
     "SEMANTIC_PROVIDER_AMBIGUITY_CEILING",
     "SEMANTIC_PROVIDER_CONFIDENCE_FLOOR",

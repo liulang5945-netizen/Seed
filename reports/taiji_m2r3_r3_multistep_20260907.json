@@ -1,0 +1,347 @@
+{
+  "format": "taiji-m2r3-r3-multistep-semantic-transition-v1",
+  "version": 1,
+  "status": "passed",
+  "can_promote": false,
+  "seeds": [
+    11,
+    29,
+    47
+  ],
+  "runs": [
+    {
+      "seed": 11,
+      "status": "passed",
+      "corpus": {
+        "format": "taiji-structured-semantic-transition-v2",
+        "version": 2,
+        "source_digest": "34ab6341ca7c8d168ca2eb58307b0f9837b158c850c0f815522a83dba7f8bbbf",
+        "event_dim": 4,
+        "split_sizes": {
+          "train": 32,
+          "dev": 8,
+          "test": 8
+        },
+        "fact_keys": [
+          "agent::holds::cache",
+          "agent::holds::queue",
+          "agent::state::blocked",
+          "agent::state::pending",
+          "agent::state::ready",
+          "agent::tracks::alpha",
+          "agent::tracks::beta"
+        ],
+        "goal_ids": [
+          "goal:blocked",
+          "goal:pending",
+          "goal:ready"
+        ],
+        "content_ids": [
+          "content:blocked:cache",
+          "content:blocked:queue",
+          "content:pending:cache",
+          "content:pending:queue",
+          "content:ready:cache",
+          "content:ready:queue"
+        ],
+        "record_disjoint": true,
+        "provider_attached": false,
+        "runtime_only": false
+      },
+      "training": {
+        "epochs": 240,
+        "learning_rate": 0.5,
+        "losses": {
+          "transition_loss": 0.00020973854407202452,
+          "goal_loss": 0.00018470351642463356,
+          "content_loss": 0.0005531974020414054
+        }
+      },
+      "metrics": {
+        "train": {
+          "examples": 32,
+          "fact_f1": 1.0,
+          "goal_accuracy": 1.0,
+          "content_accuracy": 1.0,
+          "status_accuracy": 1.0
+        },
+        "dev": {
+          "examples": 8,
+          "fact_f1": 1.0,
+          "goal_accuracy": 1.0,
+          "content_accuracy": 1.0,
+          "status_accuracy": 1.0
+        },
+        "test": {
+          "examples": 8,
+          "fact_f1": 1.0,
+          "goal_accuracy": 1.0,
+          "content_accuracy": 1.0,
+          "status_accuracy": 1.0
+        },
+        "unknown_status": "unknown",
+        "conflict_status": "conflict",
+        "sequence_statuses": [
+          "resolved",
+          "resolved",
+          "clarify"
+        ],
+        "final_world_digest": "c73e64479da2fc0a13dd26d8c98b2d846bbc83685e50c7abd635c8580dced051"
+      },
+      "preflight": {
+        "checkpoint_matches_mid_sequence": true,
+        "parameter_count": 594,
+        "owner_changes": {
+          "semantic_transition": true,
+          "semantic_transition_goal": true,
+          "semantic_transition_content": true
+        }
+      },
+      "gate": {
+        "passed": true,
+        "checks": {
+          "record_disjoint": true,
+          "dev_transition_learning": true,
+          "test_transition_learning": true,
+          "dev_goal_learning": true,
+          "test_content_learning": true,
+          "sequence_persistence": true,
+          "event_deletion_changes_state": true,
+          "event_order_changes_state": true,
+          "checkpoint_mid_sequence": true,
+          "unknown_event_fail_closed": true,
+          "world_conflict_fail_closed": true,
+          "transition_lesion_effective": true,
+          "all_transition_owners_changed": true,
+          "provider_not_attached": true
+        }
+      }
+    },
+    {
+      "seed": 29,
+      "status": "passed",
+      "corpus": {
+        "format": "taiji-structured-semantic-transition-v2",
+        "version": 2,
+        "source_digest": "46f4a67a025d71200207b16f685750a288181cf0977c3b3326de11f16a6628e0",
+        "event_dim": 4,
+        "split_sizes": {
+          "train": 32,
+          "dev": 8,
+          "test": 8
+        },
+        "fact_keys": [
+          "agent::holds::cache",
+          "agent::holds::queue",
+          "agent::state::blocked",
+          "agent::state::pending",
+          "agent::state::ready",
+          "agent::tracks::alpha",
+          "agent::tracks::beta"
+        ],
+        "goal_ids": [
+          "goal:blocked",
+          "goal:pending",
+          "goal:ready"
+        ],
+        "content_ids": [
+          "content:blocked:cache",
+          "content:blocked:queue",
+          "content:pending:cache",
+          "content:pending:queue",
+          "content:ready:cache",
+          "content:ready:queue"
+        ],
+        "record_disjoint": true,
+        "provider_attached": false,
+        "runtime_only": false
+      },
+      "training": {
+        "epochs": 240,
+        "learning_rate": 0.5,
+        "losses": {
+          "transition_loss": 0.0002097386895911768,
+          "goal_loss": 0.00018470351642463356,
+          "content_loss": 0.0005531974020414054
+        }
+      },
+      "metrics": {
+        "train": {
+          "examples": 32,
+          "fact_f1": 1.0,
+          "goal_accuracy": 1.0,
+          "content_accuracy": 1.0,
+          "status_accuracy": 1.0
+        },
+        "dev": {
+          "examples": 8,
+          "fact_f1": 1.0,
+          "goal_accuracy": 1.0,
+          "content_accuracy": 1.0,
+          "status_accuracy": 1.0
+        },
+        "test": {
+          "examples": 8,
+          "fact_f1": 1.0,
+          "goal_accuracy": 1.0,
+          "content_accuracy": 1.0,
+          "status_accuracy": 1.0
+        },
+        "unknown_status": "unknown",
+        "conflict_status": "conflict",
+        "sequence_statuses": [
+          "resolved",
+          "resolved",
+          "clarify"
+        ],
+        "final_world_digest": "cf83f70c229d9db43574770f44ff0e2efdd27bf8d2e50c5a5d4b0e57041709fb"
+      },
+      "preflight": {
+        "checkpoint_matches_mid_sequence": true,
+        "parameter_count": 594,
+        "owner_changes": {
+          "semantic_transition": true,
+          "semantic_transition_goal": true,
+          "semantic_transition_content": true
+        }
+      },
+      "gate": {
+        "passed": true,
+        "checks": {
+          "record_disjoint": true,
+          "dev_transition_learning": true,
+          "test_transition_learning": true,
+          "dev_goal_learning": true,
+          "test_content_learning": true,
+          "sequence_persistence": true,
+          "event_deletion_changes_state": true,
+          "event_order_changes_state": true,
+          "checkpoint_mid_sequence": true,
+          "unknown_event_fail_closed": true,
+          "world_conflict_fail_closed": true,
+          "transition_lesion_effective": true,
+          "all_transition_owners_changed": true,
+          "provider_not_attached": true
+        }
+      }
+    },
+    {
+      "seed": 47,
+      "status": "passed",
+      "corpus": {
+        "format": "taiji-structured-semantic-transition-v2",
+        "version": 2,
+        "source_digest": "ac81cbd885ed3f18144515e02f6ac8833451280078cd33a17595d9dc72252475",
+        "event_dim": 4,
+        "split_sizes": {
+          "train": 32,
+          "dev": 8,
+          "test": 8
+        },
+        "fact_keys": [
+          "agent::holds::cache",
+          "agent::holds::queue",
+          "agent::state::blocked",
+          "agent::state::pending",
+          "agent::state::ready",
+          "agent::tracks::alpha",
+          "agent::tracks::beta"
+        ],
+        "goal_ids": [
+          "goal:blocked",
+          "goal:pending",
+          "goal:ready"
+        ],
+        "content_ids": [
+          "content:blocked:cache",
+          "content:blocked:queue",
+          "content:pending:cache",
+          "content:pending:queue",
+          "content:ready:cache",
+          "content:ready:queue"
+        ],
+        "record_disjoint": true,
+        "provider_attached": false,
+        "runtime_only": false
+      },
+      "training": {
+        "epochs": 240,
+        "learning_rate": 0.5,
+        "losses": {
+          "transition_loss": 0.0002097385877277702,
+          "goal_loss": 0.00018470351642463356,
+          "content_loss": 0.0005531974020414054
+        }
+      },
+      "metrics": {
+        "train": {
+          "examples": 32,
+          "fact_f1": 1.0,
+          "goal_accuracy": 1.0,
+          "content_accuracy": 1.0,
+          "status_accuracy": 1.0
+        },
+        "dev": {
+          "examples": 8,
+          "fact_f1": 1.0,
+          "goal_accuracy": 1.0,
+          "content_accuracy": 1.0,
+          "status_accuracy": 1.0
+        },
+        "test": {
+          "examples": 8,
+          "fact_f1": 1.0,
+          "goal_accuracy": 1.0,
+          "content_accuracy": 1.0,
+          "status_accuracy": 1.0
+        },
+        "unknown_status": "unknown",
+        "conflict_status": "conflict",
+        "sequence_statuses": [
+          "resolved",
+          "resolved",
+          "clarify"
+        ],
+        "final_world_digest": "d34fb7a5af78e7dbe956d0ab32438fc28ebf37c065f8d08862c0e7b99d54ea6b"
+      },
+      "preflight": {
+        "checkpoint_matches_mid_sequence": true,
+        "parameter_count": 594,
+        "owner_changes": {
+          "semantic_transition": true,
+          "semantic_transition_goal": true,
+          "semantic_transition_content": true
+        }
+      },
+      "gate": {
+        "passed": true,
+        "checks": {
+          "record_disjoint": true,
+          "dev_transition_learning": true,
+          "test_transition_learning": true,
+          "dev_goal_learning": true,
+          "test_content_learning": true,
+          "sequence_persistence": true,
+          "event_deletion_changes_state": true,
+          "event_order_changes_state": true,
+          "checkpoint_mid_sequence": true,
+          "unknown_event_fail_closed": true,
+          "world_conflict_fail_closed": true,
+          "transition_lesion_effective": true,
+          "all_transition_owners_changed": true,
+          "provider_not_attached": true
+        }
+      }
+    }
+  ],
+  "aggregate": {
+    "all_seeds_passed": true,
+    "mean_test_fact_f1": 1.0,
+    "mean_test_goal_accuracy": 1.0,
+    "mean_test_content_accuracy": 1.0
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "every independent seed passes every transition check"
+  }
+}
