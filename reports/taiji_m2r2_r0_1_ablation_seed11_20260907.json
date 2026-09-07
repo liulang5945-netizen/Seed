@@ -1,0 +1,1279 @@
+{
+  "format": "taiji-r2-ablation-v1",
+  "version": 1,
+  "status": "passed",
+  "can_promote": false,
+  "source_checkpoint": "E:\\Seed\\output\\taiji-m2s-seed11-identity-generation-20260905\\last.pt",
+  "source_digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+  "seed": 11,
+  "budgets": [
+    4096,
+    16384,
+    65536
+  ],
+  "eval_bytes": 4096,
+  "variants": [
+    "frozen",
+    "normal_context",
+    "shuffled_context",
+    "readout_only"
+  ],
+  "shuffle_seed": 7012,
+  "preflight": {
+    "saved_before_training": true,
+    "path": "E:\\Seed\\output\\taiji-m2r2-ablation-preflight.pt",
+    "source_digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+    "restored_digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+    "matching_digest": true,
+    "bytes": 33174739
+  },
+  "datasets": {
+    "phase_a": {
+      "digest": "8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038",
+      "selected_record_count": 1618
+    },
+    "phase_b": {
+      "digest": "99ab9846193ccc2897d74c96be8245784f213ac7bc5a9886c928e38bf906132e",
+      "selected_record_count": 1494
+    },
+    "phase_c": {
+      "digest": "ac97455f1583b90f7e2d62ca3c682c8e27f0c56bb7275ebee6abdb17fc6476bd",
+      "selected_record_count": 1567
+    },
+    "overlap_counts": {
+      "phase_a_seed11__vs__phase_b_seed11": 0,
+      "phase_a_seed29__vs__phase_b_seed29": 0,
+      "phase_a_seed47__vs__phase_b_seed47": 0,
+      "phase_a_seed11__vs__phase_c": 0,
+      "phase_b_seed11__vs__phase_c": 0,
+      "phase_a_seed29__vs__phase_c": 0,
+      "phase_b_seed29__vs__phase_c": 0,
+      "phase_a_seed47__vs__phase_c": 0,
+      "phase_b_seed47__vs__phase_c": 0,
+      "phase_a_seed11__vs__phase_c2": 0,
+      "phase_b_seed11__vs__phase_c2": 0,
+      "phase_a_seed29__vs__phase_c2": 0,
+      "phase_b_seed29__vs__phase_c2": 0,
+      "phase_a_seed47__vs__phase_c2": 0,
+      "phase_b_seed47__vs__phase_c2": 0,
+      "phase_c__vs__phase_c2": 0
+    },
+    "record_disjoint": true
+  },
+  "baseline": {
+    "holdout_score": {
+      "bpb": 4.049390189551058,
+      "accuracy": 0.260678545277032,
+      "observations": 4097,
+      "owner": "predictive_readout",
+      "scope": "protected",
+      "persistent_digest_before": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+      "persistent_digest_after": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+      "read_only": true,
+      "seconds": 3.973733799997717
+    },
+    "holdout_bpb": 4.049390189551058
+  },
+  "points": [
+    {
+      "variant": "frozen",
+      "arm": "frozen",
+      "budget_bytes": 4096,
+      "train_stream_digest": "2d76727e15341a602dfa0d65f61073b818a803ea3838a74377e6eac4dc3abc5a",
+      "train": {
+        "metrics": null,
+        "seconds": 8.00006091594696e-07,
+        "working_set_bytes": 472174592
+      },
+      "train_score": {
+        "bpb": 4.110739718705895,
+        "accuracy": 0.2418843055894557,
+        "observations": 4097,
+        "owner": "predictive_readout",
+        "scope": "protected",
+        "persistent_digest_before": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+        "persistent_digest_after": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+        "read_only": true,
+        "seconds": 4.009210099931806
+      },
+      "holdout_score": {
+        "bpb": 4.049390189551058,
+        "accuracy": 0.260678545277032,
+        "observations": 4097,
+        "owner": "predictive_readout",
+        "scope": "protected",
+        "persistent_digest_before": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+        "persistent_digest_after": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+        "read_only": true,
+        "seconds": 3.979301100014709
+      },
+      "holdout_gain_bpb": 0.0,
+      "references": {
+        "unigram_bpb": 6.002547315862876,
+        "ngram2_bpb": 6.936738793790084,
+        "ngram3_bpb": 7.499334007547381
+      },
+      "temporal_lesion": null,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": false,
+            "protected_predictive_readout": false
+          },
+          "expected_writable_owners": [],
+          "changed_expected_owners": [],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": false
+        }
+      },
+      "checkpoint": {
+        "digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+        "restored_digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+        "bytes": 33174315
+      },
+      "checks": {
+        "owner_contract": true,
+        "scores_are_read_only": true,
+        "checkpoint_round_trip": true,
+        "temporal_lesion_is_effective": true,
+        "temporal_lesion_score_is_read_only": true
+      }
+    },
+    {
+      "variant": "frozen",
+      "arm": "frozen",
+      "budget_bytes": 16384,
+      "train_stream_digest": "2d76727e15341a602dfa0d65f61073b818a803ea3838a74377e6eac4dc3abc5a",
+      "train": {
+        "metrics": null,
+        "seconds": 7.00005330145359e-07,
+        "working_set_bytes": 472518656
+      },
+      "train_score": {
+        "bpb": 4.1557129163169835,
+        "accuracy": 0.24363747329874885,
+        "observations": 16385,
+        "owner": "predictive_readout",
+        "scope": "protected",
+        "persistent_digest_before": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+        "persistent_digest_after": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+        "read_only": true,
+        "seconds": 16.176488800090738
+      },
+      "holdout_score": {
+        "bpb": 4.049390189551058,
+        "accuracy": 0.260678545277032,
+        "observations": 4097,
+        "owner": "predictive_readout",
+        "scope": "protected",
+        "persistent_digest_before": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+        "persistent_digest_after": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+        "read_only": true,
+        "seconds": 4.014683800050989
+      },
+      "holdout_gain_bpb": 0.0,
+      "references": {
+        "unigram_bpb": 5.9549531235028095,
+        "ngram2_bpb": 6.005629551046387,
+        "ngram3_bpb": 6.884650632532009
+      },
+      "temporal_lesion": null,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": false,
+            "protected_predictive_readout": false
+          },
+          "expected_writable_owners": [],
+          "changed_expected_owners": [],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": false
+        }
+      },
+      "checkpoint": {
+        "digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+        "restored_digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+        "bytes": 33174315
+      },
+      "checks": {
+        "owner_contract": true,
+        "scores_are_read_only": true,
+        "checkpoint_round_trip": true,
+        "temporal_lesion_is_effective": true,
+        "temporal_lesion_score_is_read_only": true
+      }
+    },
+    {
+      "variant": "frozen",
+      "arm": "frozen",
+      "budget_bytes": 65536,
+      "train_stream_digest": "2d76727e15341a602dfa0d65f61073b818a803ea3838a74377e6eac4dc3abc5a",
+      "train": {
+        "metrics": null,
+        "seconds": 5.00003807246685e-07,
+        "working_set_bytes": 472850432
+      },
+      "train_score": {
+        "bpb": 4.298530778396342,
+        "accuracy": 0.23261668980881028,
+        "observations": 65537,
+        "owner": "predictive_readout",
+        "scope": "protected",
+        "persistent_digest_before": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+        "persistent_digest_after": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+        "read_only": true,
+        "seconds": 63.732581899967045
+      },
+      "holdout_score": {
+        "bpb": 4.049390189551058,
+        "accuracy": 0.260678545277032,
+        "observations": 4097,
+        "owner": "predictive_readout",
+        "scope": "protected",
+        "persistent_digest_before": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+        "persistent_digest_after": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+        "read_only": true,
+        "seconds": 4.058330400031991
+      },
+      "holdout_gain_bpb": 0.0,
+      "references": {
+        "unigram_bpb": 5.948279729556153,
+        "ngram2_bpb": 4.881650146155429,
+        "ngram3_bpb": 5.943323405252822
+      },
+      "temporal_lesion": null,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": false,
+            "protected_predictive_readout": false
+          },
+          "expected_writable_owners": [],
+          "changed_expected_owners": [],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": false
+        }
+      },
+      "checkpoint": {
+        "digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+        "restored_digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+        "bytes": 33174315
+      },
+      "checks": {
+        "owner_contract": true,
+        "scores_are_read_only": true,
+        "checkpoint_round_trip": true,
+        "temporal_lesion_is_effective": true,
+        "temporal_lesion_score_is_read_only": true
+      }
+    },
+    {
+      "variant": "normal_context",
+      "arm": "predictive_context",
+      "budget_bytes": 4096,
+      "train_stream_digest": "2d76727e15341a602dfa0d65f61073b818a803ea3838a74377e6eac4dc3abc5a",
+      "train": {
+        "metrics": {
+          "observations": 4097.0,
+          "online_accuracy": 0.2462777642177203,
+          "mean_surprise": 2.836377658429975
+        },
+        "seconds": 4.699739899951965,
+        "working_set_bytes": 473923584
+      },
+      "train_score": {
+        "bpb": 4.0631634127640295,
+        "accuracy": 0.25091530388088845,
+        "observations": 4097,
+        "owner": "predictive_readout",
+        "scope": "protected",
+        "persistent_digest_before": "e062df4f6f76ddedcba7f513ce19ca5837c5c887208cc0db5939052b81582cab",
+        "persistent_digest_after": "e062df4f6f76ddedcba7f513ce19ca5837c5c887208cc0db5939052b81582cab",
+        "read_only": true,
+        "seconds": 4.043307999963872
+      },
+      "holdout_score": {
+        "bpb": 4.047875377126919,
+        "accuracy": 0.26189895045154993,
+        "observations": 4097,
+        "owner": "predictive_readout",
+        "scope": "protected",
+        "persistent_digest_before": "e062df4f6f76ddedcba7f513ce19ca5837c5c887208cc0db5939052b81582cab",
+        "persistent_digest_after": "e062df4f6f76ddedcba7f513ce19ca5837c5c887208cc0db5939052b81582cab",
+        "read_only": true,
+        "seconds": 4.039503299980424
+      },
+      "holdout_gain_bpb": 0.0015148124241388672,
+      "references": {
+        "unigram_bpb": 6.002547315862876,
+        "ngram2_bpb": 6.936738793790084,
+        "ngram3_bpb": 7.499334007547381
+      },
+      "temporal_lesion": {
+        "score": {
+          "bpb": 4.7180335904638735,
+          "accuracy": 0.19013912618989504,
+          "observations": 4097,
+          "owner": "predictive_readout",
+          "scope": "protected",
+          "persistent_digest_before": "5f777afdbdda7e9bc8ea392598a6484e5a8dfab770304862ac187350086f9188",
+          "persistent_digest_after": "5f777afdbdda7e9bc8ea392598a6484e5a8dfab770304862ac187350086f9188",
+          "read_only": true,
+          "seconds": 4.040461000055075
+        },
+        "lesion_applied": true,
+        "recurrent_digest_before": "44bcec701a95ecb0545770391e91f51d057ffaa6dcef4da6db30de3729e571fe",
+        "recurrent_digest_after": "a1acfa0e1a7ec054270326ce3013cf9c8e0f9015155c840b1e0194b3dbfc8ab2",
+        "clone_digest_before_score": "5f777afdbdda7e9bc8ea392598a6484e5a8dfab770304862ac187350086f9188",
+        "clone_digest_after_score": "5f777afdbdda7e9bc8ea392598a6484e5a8dfab770304862ac187350086f9188",
+        "score_read_only_after_lesion": true
+      },
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "5f0dec1895df909c4a7097746e7f0885eaf9db897b6e25219619d1f6535c4a2c",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": true,
+            "protected_predictive_readout": false
+          },
+          "expected_writable_owners": [
+            "predictive_context"
+          ],
+          "changed_expected_owners": [
+            "predictive_context"
+          ],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": true
+        }
+      },
+      "checkpoint": {
+        "digest": "e062df4f6f76ddedcba7f513ce19ca5837c5c887208cc0db5939052b81582cab",
+        "restored_digest": "e062df4f6f76ddedcba7f513ce19ca5837c5c887208cc0db5939052b81582cab",
+        "bytes": 33174251
+      },
+      "checks": {
+        "owner_contract": true,
+        "scores_are_read_only": true,
+        "checkpoint_round_trip": true,
+        "temporal_lesion_is_effective": true,
+        "temporal_lesion_score_is_read_only": true
+      }
+    },
+    {
+      "variant": "normal_context",
+      "arm": "predictive_context",
+      "budget_bytes": 16384,
+      "train_stream_digest": "2d76727e15341a602dfa0d65f61073b818a803ea3838a74377e6eac4dc3abc5a",
+      "train": {
+        "metrics": {
+          "observations": 16385.0,
+          "online_accuracy": 0.2483368935001526,
+          "mean_surprise": 2.858980642039793
+        },
+        "seconds": 18.660687800031155,
+        "working_set_bytes": 474087424
+      },
+      "train_score": {
+        "bpb": 4.086083998856051,
+        "accuracy": 0.25523344522429053,
+        "observations": 16385,
+        "owner": "predictive_readout",
+        "scope": "protected",
+        "persistent_digest_before": "9377ef02074d15640e8c6b267bf82cf8573a84805757ab60e6c0204362f0a41f",
+        "persistent_digest_after": "9377ef02074d15640e8c6b267bf82cf8573a84805757ab60e6c0204362f0a41f",
+        "read_only": true,
+        "seconds": 15.891125099966303
+      },
+      "holdout_score": {
+        "bpb": 4.025652483214275,
+        "accuracy": 0.26702465218452526,
+        "observations": 4097,
+        "owner": "predictive_readout",
+        "scope": "protected",
+        "persistent_digest_before": "9377ef02074d15640e8c6b267bf82cf8573a84805757ab60e6c0204362f0a41f",
+        "persistent_digest_after": "9377ef02074d15640e8c6b267bf82cf8573a84805757ab60e6c0204362f0a41f",
+        "read_only": true,
+        "seconds": 4.0711680999957025
+      },
+      "holdout_gain_bpb": 0.023737706336783404,
+      "references": {
+        "unigram_bpb": 5.9549531235028095,
+        "ngram2_bpb": 6.005629551046387,
+        "ngram3_bpb": 6.884650632532009
+      },
+      "temporal_lesion": {
+        "score": {
+          "bpb": 4.7180335904638735,
+          "accuracy": 0.19013912618989504,
+          "observations": 4097,
+          "owner": "predictive_readout",
+          "scope": "protected",
+          "persistent_digest_before": "73c1f3b7249ae46576ec9ec43e5645676690db9079dc091cf75b8d98c87ff6de",
+          "persistent_digest_after": "73c1f3b7249ae46576ec9ec43e5645676690db9079dc091cf75b8d98c87ff6de",
+          "read_only": true,
+          "seconds": 4.001244999933988
+        },
+        "lesion_applied": true,
+        "recurrent_digest_before": "7aeca5687873fa38d6de27f6a0945a75502d299976f1aeab623e03e0ac4a3d50",
+        "recurrent_digest_after": "a1acfa0e1a7ec054270326ce3013cf9c8e0f9015155c840b1e0194b3dbfc8ab2",
+        "clone_digest_before_score": "73c1f3b7249ae46576ec9ec43e5645676690db9079dc091cf75b8d98c87ff6de",
+        "clone_digest_after_score": "73c1f3b7249ae46576ec9ec43e5645676690db9079dc091cf75b8d98c87ff6de",
+        "score_read_only_after_lesion": true
+      },
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "d8c4b5234aea38da787201362d5a9bceded72ad8de43989e041a93a03a5c814a",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": true,
+            "protected_predictive_readout": false
+          },
+          "expected_writable_owners": [
+            "predictive_context"
+          ],
+          "changed_expected_owners": [
+            "predictive_context"
+          ],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": true
+        }
+      },
+      "checkpoint": {
+        "digest": "9377ef02074d15640e8c6b267bf82cf8573a84805757ab60e6c0204362f0a41f",
+        "restored_digest": "9377ef02074d15640e8c6b267bf82cf8573a84805757ab60e6c0204362f0a41f",
+        "bytes": 33174251
+      },
+      "checks": {
+        "owner_contract": true,
+        "scores_are_read_only": true,
+        "checkpoint_round_trip": true,
+        "temporal_lesion_is_effective": true,
+        "temporal_lesion_score_is_read_only": true
+      }
+    },
+    {
+      "variant": "normal_context",
+      "arm": "predictive_context",
+      "budget_bytes": 65536,
+      "train_stream_digest": "2d76727e15341a602dfa0d65f61073b818a803ea3838a74377e6eac4dc3abc5a",
+      "train": {
+        "metrics": {
+          "observations": 65537.0,
+          "online_accuracy": 0.24035277782016265,
+          "mean_surprise": 2.9511951710105535
+        },
+        "seconds": 73.69501540006604,
+        "working_set_bytes": 474169344
+      },
+      "train_score": {
+        "bpb": 4.27078749833142,
+        "accuracy": 0.2402612264827502,
+        "observations": 65537,
+        "owner": "predictive_readout",
+        "scope": "protected",
+        "persistent_digest_before": "15008c0d7ebd9557f98cbb87183c8038400724197890beb754d91ef9cb6e7358",
+        "persistent_digest_after": "15008c0d7ebd9557f98cbb87183c8038400724197890beb754d91ef9cb6e7358",
+        "read_only": true,
+        "seconds": 63.49072630004957
+      },
+      "holdout_score": {
+        "bpb": 4.065495204210626,
+        "accuracy": 0.26751281425433243,
+        "observations": 4097,
+        "owner": "predictive_readout",
+        "scope": "protected",
+        "persistent_digest_before": "15008c0d7ebd9557f98cbb87183c8038400724197890beb754d91ef9cb6e7358",
+        "persistent_digest_after": "15008c0d7ebd9557f98cbb87183c8038400724197890beb754d91ef9cb6e7358",
+        "read_only": true,
+        "seconds": 4.048212299938314
+      },
+      "holdout_gain_bpb": -0.016105014659567374,
+      "references": {
+        "unigram_bpb": 5.948279729556153,
+        "ngram2_bpb": 4.881650146155429,
+        "ngram3_bpb": 5.943323405252822
+      },
+      "temporal_lesion": {
+        "score": {
+          "bpb": 4.7180335904638735,
+          "accuracy": 0.19013912618989504,
+          "observations": 4097,
+          "owner": "predictive_readout",
+          "scope": "protected",
+          "persistent_digest_before": "b01bbb3b79e608f363cb2d4bf4d05a0d0044802c4304ca9fca17e440d1075419",
+          "persistent_digest_after": "b01bbb3b79e608f363cb2d4bf4d05a0d0044802c4304ca9fca17e440d1075419",
+          "read_only": true,
+          "seconds": 4.023862099973485
+        },
+        "lesion_applied": true,
+        "recurrent_digest_before": "126828fccd76261788e4d743954bebf3c3a76b382a85588b52c0a2dd629288b7",
+        "recurrent_digest_after": "a1acfa0e1a7ec054270326ce3013cf9c8e0f9015155c840b1e0194b3dbfc8ab2",
+        "clone_digest_before_score": "b01bbb3b79e608f363cb2d4bf4d05a0d0044802c4304ca9fca17e440d1075419",
+        "clone_digest_after_score": "b01bbb3b79e608f363cb2d4bf4d05a0d0044802c4304ca9fca17e440d1075419",
+        "score_read_only_after_lesion": true
+      },
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "36ca2a1073430ddfcb6bbb178c29b8bd3ef7dfef43dd472dd10618021de21957",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": true,
+            "protected_predictive_readout": false
+          },
+          "expected_writable_owners": [
+            "predictive_context"
+          ],
+          "changed_expected_owners": [
+            "predictive_context"
+          ],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": true
+        }
+      },
+      "checkpoint": {
+        "digest": "15008c0d7ebd9557f98cbb87183c8038400724197890beb754d91ef9cb6e7358",
+        "restored_digest": "15008c0d7ebd9557f98cbb87183c8038400724197890beb754d91ef9cb6e7358",
+        "bytes": 33174251
+      },
+      "checks": {
+        "owner_contract": true,
+        "scores_are_read_only": true,
+        "checkpoint_round_trip": true,
+        "temporal_lesion_is_effective": true,
+        "temporal_lesion_score_is_read_only": true
+      }
+    },
+    {
+      "variant": "shuffled_context",
+      "arm": "predictive_context",
+      "budget_bytes": 4096,
+      "train_stream_digest": "592c7ae7b12d343b7577c308b585b88587d93f0ff728c4e5822d558de51d7956",
+      "train": {
+        "metrics": {
+          "observations": 4097.0,
+          "online_accuracy": 0.02660483280449109,
+          "mean_surprise": 5.5691837541791145
+        },
+        "seconds": 4.681374799925834,
+        "working_set_bytes": 473718784
+      },
+      "train_score": {
+        "bpb": 7.906385898695293,
+        "accuracy": 0.02806931901391262,
+        "observations": 4097,
+        "owner": "predictive_readout",
+        "scope": "protected",
+        "persistent_digest_before": "6b0d5fd9d545b3a91276260d78952f43da3c0c3b1421a0295bd899e3319f7296",
+        "persistent_digest_after": "6b0d5fd9d545b3a91276260d78952f43da3c0c3b1421a0295bd899e3319f7296",
+        "read_only": true,
+        "seconds": 4.0569906999589875
+      },
+      "holdout_score": {
+        "bpb": 4.2900167946761645,
+        "accuracy": 0.2435928728337808,
+        "observations": 4097,
+        "owner": "predictive_readout",
+        "scope": "protected",
+        "persistent_digest_before": "6b0d5fd9d545b3a91276260d78952f43da3c0c3b1421a0295bd899e3319f7296",
+        "persistent_digest_after": "6b0d5fd9d545b3a91276260d78952f43da3c0c3b1421a0295bd899e3319f7296",
+        "read_only": true,
+        "seconds": 4.0394322000211105
+      },
+      "holdout_gain_bpb": -0.24062660512510625,
+      "references": {
+        "unigram_bpb": 5.972028782872759,
+        "ngram2_bpb": 7.981937929316159,
+        "ngram3_bpb": 8.004606520270288
+      },
+      "temporal_lesion": {
+        "score": {
+          "bpb": 4.7180335904638735,
+          "accuracy": 0.19013912618989504,
+          "observations": 4097,
+          "owner": "predictive_readout",
+          "scope": "protected",
+          "persistent_digest_before": "d842a982674872121c9d1cbb012ed2cbd7b2f12bdb492e2241bacf12e58b603d",
+          "persistent_digest_after": "d842a982674872121c9d1cbb012ed2cbd7b2f12bdb492e2241bacf12e58b603d",
+          "read_only": true,
+          "seconds": 3.92962529999204
+        },
+        "lesion_applied": true,
+        "recurrent_digest_before": "a239a2854976e27316ec091262f2066b91e89da7cd765b6d07b746292aa69d20",
+        "recurrent_digest_after": "a1acfa0e1a7ec054270326ce3013cf9c8e0f9015155c840b1e0194b3dbfc8ab2",
+        "clone_digest_before_score": "d842a982674872121c9d1cbb012ed2cbd7b2f12bdb492e2241bacf12e58b603d",
+        "clone_digest_after_score": "d842a982674872121c9d1cbb012ed2cbd7b2f12bdb492e2241bacf12e58b603d",
+        "score_read_only_after_lesion": true
+      },
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "bd52811f4cfc7cb95dd99a670d8013acd466399824fe9a7116eee0ad779677df",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": true,
+            "protected_predictive_readout": false
+          },
+          "expected_writable_owners": [
+            "predictive_context"
+          ],
+          "changed_expected_owners": [
+            "predictive_context"
+          ],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": true
+        }
+      },
+      "checkpoint": {
+        "digest": "6b0d5fd9d545b3a91276260d78952f43da3c0c3b1421a0295bd899e3319f7296",
+        "restored_digest": "6b0d5fd9d545b3a91276260d78952f43da3c0c3b1421a0295bd899e3319f7296",
+        "bytes": 33174251
+      },
+      "checks": {
+        "owner_contract": true,
+        "scores_are_read_only": true,
+        "checkpoint_round_trip": true,
+        "temporal_lesion_is_effective": true,
+        "temporal_lesion_score_is_read_only": true
+      }
+    },
+    {
+      "variant": "shuffled_context",
+      "arm": "predictive_context",
+      "budget_bytes": 16384,
+      "train_stream_digest": "592c7ae7b12d343b7577c308b585b88587d93f0ff728c4e5822d558de51d7956",
+      "train": {
+        "metrics": {
+          "observations": 16385.0,
+          "online_accuracy": 0.030393652731156545,
+          "mean_surprise": 5.426880169355184
+        },
+        "seconds": 18.754116200027056,
+        "working_set_bytes": 473743360
+      },
+      "train_score": {
+        "bpb": 7.738160301049706,
+        "accuracy": 0.03185840707964602,
+        "observations": 16385,
+        "owner": "predictive_readout",
+        "scope": "protected",
+        "persistent_digest_before": "ee0e8bb4784248917123bd7a7965760c6dd16b878d61517e404bb1e2b13ecbec",
+        "persistent_digest_after": "ee0e8bb4784248917123bd7a7965760c6dd16b878d61517e404bb1e2b13ecbec",
+        "read_only": true,
+        "seconds": 16.0635159999365
+      },
+      "holdout_score": {
+        "bpb": 4.5821231222052905,
+        "accuracy": 0.20917744691237491,
+        "observations": 4097,
+        "owner": "predictive_readout",
+        "scope": "protected",
+        "persistent_digest_before": "ee0e8bb4784248917123bd7a7965760c6dd16b878d61517e404bb1e2b13ecbec",
+        "persistent_digest_after": "ee0e8bb4784248917123bd7a7965760c6dd16b878d61517e404bb1e2b13ecbec",
+        "read_only": true,
+        "seconds": 4.212282899999991
+      },
+      "holdout_gain_bpb": -0.5327329326542323,
+      "references": {
+        "unigram_bpb": 5.924866554821149,
+        "ngram2_bpb": 7.917005304947364,
+        "ngram3_bpb": 8.004704557004784
+      },
+      "temporal_lesion": {
+        "score": {
+          "bpb": 4.7180335904638735,
+          "accuracy": 0.19013912618989504,
+          "observations": 4097,
+          "owner": "predictive_readout",
+          "scope": "protected",
+          "persistent_digest_before": "ce9d6cb8da2c512d50733c240b3653a9f4372455275432cce9a7f6c0bd352dfd",
+          "persistent_digest_after": "ce9d6cb8da2c512d50733c240b3653a9f4372455275432cce9a7f6c0bd352dfd",
+          "read_only": true,
+          "seconds": 4.042095499928109
+        },
+        "lesion_applied": true,
+        "recurrent_digest_before": "217234a2305ea5a2299a909137f9ef301c20794404674f0c45d84fa6ad9b2420",
+        "recurrent_digest_after": "a1acfa0e1a7ec054270326ce3013cf9c8e0f9015155c840b1e0194b3dbfc8ab2",
+        "clone_digest_before_score": "ce9d6cb8da2c512d50733c240b3653a9f4372455275432cce9a7f6c0bd352dfd",
+        "clone_digest_after_score": "ce9d6cb8da2c512d50733c240b3653a9f4372455275432cce9a7f6c0bd352dfd",
+        "score_read_only_after_lesion": true
+      },
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "a2dbcae45ff04a58cb0f31abbf1dfef674a76a214d430fbab810952af41f56f5",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": true,
+            "protected_predictive_readout": false
+          },
+          "expected_writable_owners": [
+            "predictive_context"
+          ],
+          "changed_expected_owners": [
+            "predictive_context"
+          ],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": true
+        }
+      },
+      "checkpoint": {
+        "digest": "ee0e8bb4784248917123bd7a7965760c6dd16b878d61517e404bb1e2b13ecbec",
+        "restored_digest": "ee0e8bb4784248917123bd7a7965760c6dd16b878d61517e404bb1e2b13ecbec",
+        "bytes": 33174251
+      },
+      "checks": {
+        "owner_contract": true,
+        "scores_are_read_only": true,
+        "checkpoint_round_trip": true,
+        "temporal_lesion_is_effective": true,
+        "temporal_lesion_score_is_read_only": true
+      }
+    },
+    {
+      "variant": "shuffled_context",
+      "arm": "predictive_context",
+      "budget_bytes": 65536,
+      "train_stream_digest": "592c7ae7b12d343b7577c308b585b88587d93f0ff728c4e5822d558de51d7956",
+      "train": {
+        "metrics": {
+          "observations": 65537.0,
+          "online_accuracy": 0.03318735981201459,
+          "mean_surprise": 5.37590940306062
+        },
+        "seconds": 73.03127079992555,
+        "working_set_bytes": 473808896
+      },
+      "train_score": {
+        "bpb": 7.711380184381259,
+        "accuracy": 0.03285167157483559,
+        "observations": 65537,
+        "owner": "predictive_readout",
+        "scope": "protected",
+        "persistent_digest_before": "9063ea53d970a26a94ffd8d87110f8b8ead3f3b44290084a85c7d2b4d6b3acbb",
+        "persistent_digest_after": "9063ea53d970a26a94ffd8d87110f8b8ead3f3b44290084a85c7d2b4d6b3acbb",
+        "read_only": true,
+        "seconds": 63.44441609992646
+      },
+      "holdout_score": {
+        "bpb": 4.746458091034783,
+        "accuracy": 0.19453258481815963,
+        "observations": 4097,
+        "owner": "predictive_readout",
+        "scope": "protected",
+        "persistent_digest_before": "9063ea53d970a26a94ffd8d87110f8b8ead3f3b44290084a85c7d2b4d6b3acbb",
+        "persistent_digest_after": "9063ea53d970a26a94ffd8d87110f8b8ead3f3b44290084a85c7d2b4d6b3acbb",
+        "read_only": true,
+        "seconds": 4.070105299935676
+      },
+      "holdout_gain_bpb": -0.6970679014837247,
+      "references": {
+        "unigram_bpb": 5.921099348038702,
+        "ngram2_bpb": 7.7398121684660435,
+        "ngram3_bpb": 8.00043201740075
+      },
+      "temporal_lesion": {
+        "score": {
+          "bpb": 4.7180335904638735,
+          "accuracy": 0.19013912618989504,
+          "observations": 4097,
+          "owner": "predictive_readout",
+          "scope": "protected",
+          "persistent_digest_before": "dc4b2912f9d620ea809bc860ec5702f17ac5446f8d6834a4b45330aeca015774",
+          "persistent_digest_after": "dc4b2912f9d620ea809bc860ec5702f17ac5446f8d6834a4b45330aeca015774",
+          "read_only": true,
+          "seconds": 4.058575200033374
+        },
+        "lesion_applied": true,
+        "recurrent_digest_before": "3908182f89edff094a193439ec04c5a0324cfa655309951ac65dabdc43742ed3",
+        "recurrent_digest_after": "a1acfa0e1a7ec054270326ce3013cf9c8e0f9015155c840b1e0194b3dbfc8ab2",
+        "clone_digest_before_score": "dc4b2912f9d620ea809bc860ec5702f17ac5446f8d6834a4b45330aeca015774",
+        "clone_digest_after_score": "dc4b2912f9d620ea809bc860ec5702f17ac5446f8d6834a4b45330aeca015774",
+        "score_read_only_after_lesion": true
+      },
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "96abb0b5c34036a1f5dd523dbf3f404276f018b66233085b205a84b36cffb385",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": true,
+            "protected_predictive_readout": false
+          },
+          "expected_writable_owners": [
+            "predictive_context"
+          ],
+          "changed_expected_owners": [
+            "predictive_context"
+          ],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": true
+        }
+      },
+      "checkpoint": {
+        "digest": "9063ea53d970a26a94ffd8d87110f8b8ead3f3b44290084a85c7d2b4d6b3acbb",
+        "restored_digest": "9063ea53d970a26a94ffd8d87110f8b8ead3f3b44290084a85c7d2b4d6b3acbb",
+        "bytes": 33174251
+      },
+      "checks": {
+        "owner_contract": true,
+        "scores_are_read_only": true,
+        "checkpoint_round_trip": true,
+        "temporal_lesion_is_effective": true,
+        "temporal_lesion_score_is_read_only": true
+      }
+    },
+    {
+      "variant": "readout_only",
+      "arm": "protected_readout",
+      "budget_bytes": 4096,
+      "train_stream_digest": "2d76727e15341a602dfa0d65f61073b818a803ea3838a74377e6eac4dc3abc5a",
+      "train": {
+        "metrics": {
+          "observations": 4097.0,
+          "online_accuracy": 0.29973151086160604,
+          "mean_surprise": 2.6934273227300736
+        },
+        "seconds": 4.880592300090939,
+        "working_set_bytes": 474411008
+      },
+      "train_score": {
+        "bpb": 3.6273853977125143,
+        "accuracy": 0.34439834024896265,
+        "observations": 4097,
+        "owner": "predictive_readout",
+        "scope": "protected",
+        "persistent_digest_before": "06b997c66673ed5df19b7bda3237dddf8d942751c026156f5bb0112cee7e63bc",
+        "persistent_digest_after": "06b997c66673ed5df19b7bda3237dddf8d942751c026156f5bb0112cee7e63bc",
+        "read_only": true,
+        "seconds": 3.9384998999303207
+      },
+      "holdout_score": {
+        "bpb": 4.11193881217573,
+        "accuracy": 0.26360751769587504,
+        "observations": 4097,
+        "owner": "predictive_readout",
+        "scope": "protected",
+        "persistent_digest_before": "06b997c66673ed5df19b7bda3237dddf8d942751c026156f5bb0112cee7e63bc",
+        "persistent_digest_after": "06b997c66673ed5df19b7bda3237dddf8d942751c026156f5bb0112cee7e63bc",
+        "read_only": true,
+        "seconds": 3.9205639000283554
+      },
+      "holdout_gain_bpb": -0.06254862262467142,
+      "references": {
+        "unigram_bpb": 6.002547315862876,
+        "ngram2_bpb": 6.936738793790084,
+        "ngram3_bpb": 7.499334007547381
+      },
+      "temporal_lesion": null,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "685987edfaaed5c0c3116bfb1e953ea3c36737d6d84bd91ec48f26104dbf0b5b",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": false,
+            "protected_predictive_readout": true
+          },
+          "expected_writable_owners": [
+            "protected_predictive_readout"
+          ],
+          "changed_expected_owners": [
+            "protected_predictive_readout"
+          ],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": true
+        }
+      },
+      "checkpoint": {
+        "digest": "06b997c66673ed5df19b7bda3237dddf8d942751c026156f5bb0112cee7e63bc",
+        "restored_digest": "06b997c66673ed5df19b7bda3237dddf8d942751c026156f5bb0112cee7e63bc",
+        "bytes": 33174251
+      },
+      "checks": {
+        "owner_contract": true,
+        "scores_are_read_only": true,
+        "checkpoint_round_trip": true,
+        "temporal_lesion_is_effective": true,
+        "temporal_lesion_score_is_read_only": true
+      }
+    },
+    {
+      "variant": "readout_only",
+      "arm": "protected_readout",
+      "budget_bytes": 16384,
+      "train_stream_digest": "2d76727e15341a602dfa0d65f61073b818a803ea3838a74377e6eac4dc3abc5a",
+      "train": {
+        "metrics": {
+          "observations": 16385.0,
+          "online_accuracy": 0.29679584986267926,
+          "mean_surprise": 2.7092457886426478
+        },
+        "seconds": 19.050930800032802,
+        "working_set_bytes": 474992640
+      },
+      "train_score": {
+        "bpb": 3.831147501717473,
+        "accuracy": 0.29130302105584377,
+        "observations": 16385,
+        "owner": "predictive_readout",
+        "scope": "protected",
+        "persistent_digest_before": "3346efb4d795fd9ecb63f27a9d773129c9fcd01a169b1d89a97add08ce3e4871",
+        "persistent_digest_after": "3346efb4d795fd9ecb63f27a9d773129c9fcd01a169b1d89a97add08ce3e4871",
+        "read_only": true,
+        "seconds": 15.978246599901468
+      },
+      "holdout_score": {
+        "bpb": 4.190481186728219,
+        "accuracy": 0.25433243836953867,
+        "observations": 4097,
+        "owner": "predictive_readout",
+        "scope": "protected",
+        "persistent_digest_before": "3346efb4d795fd9ecb63f27a9d773129c9fcd01a169b1d89a97add08ce3e4871",
+        "persistent_digest_after": "3346efb4d795fd9ecb63f27a9d773129c9fcd01a169b1d89a97add08ce3e4871",
+        "read_only": true,
+        "seconds": 4.016728000016883
+      },
+      "holdout_gain_bpb": -0.14109099717716056,
+      "references": {
+        "unigram_bpb": 5.9549531235028095,
+        "ngram2_bpb": 6.005629551046387,
+        "ngram3_bpb": 6.884650632532009
+      },
+      "temporal_lesion": null,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "078ff82b1e6910a3dccbce8fde3a6c77d6010037aca2bfa5dc3d69df6e1516c7",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": false,
+            "protected_predictive_readout": true
+          },
+          "expected_writable_owners": [
+            "protected_predictive_readout"
+          ],
+          "changed_expected_owners": [
+            "protected_predictive_readout"
+          ],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": true
+        }
+      },
+      "checkpoint": {
+        "digest": "3346efb4d795fd9ecb63f27a9d773129c9fcd01a169b1d89a97add08ce3e4871",
+        "restored_digest": "3346efb4d795fd9ecb63f27a9d773129c9fcd01a169b1d89a97add08ce3e4871",
+        "bytes": 33174251
+      },
+      "checks": {
+        "owner_contract": true,
+        "scores_are_read_only": true,
+        "checkpoint_round_trip": true,
+        "temporal_lesion_is_effective": true,
+        "temporal_lesion_score_is_read_only": true
+      }
+    },
+    {
+      "variant": "readout_only",
+      "arm": "protected_readout",
+      "budget_bytes": 65536,
+      "train_stream_digest": "2d76727e15341a602dfa0d65f61073b818a803ea3838a74377e6eac4dc3abc5a",
+      "train": {
+        "metrics": {
+          "observations": 65537.0,
+          "online_accuracy": 0.28232906602377283,
+          "mean_surprise": 2.778673962064232
+        },
+        "seconds": 76.4258683999069,
+        "working_set_bytes": 475947008
+      },
+      "train_score": {
+        "bpb": 4.114476601586913,
+        "accuracy": 0.25472633779391796,
+        "observations": 65537,
+        "owner": "predictive_readout",
+        "scope": "protected",
+        "persistent_digest_before": "ce17a80df5d078a0287493a3f77c579b00a3833297b82e6880220253993e42b4",
+        "persistent_digest_after": "ce17a80df5d078a0287493a3f77c579b00a3833297b82e6880220253993e42b4",
+        "read_only": true,
+        "seconds": 64.38486910006031
+      },
+      "holdout_score": {
+        "bpb": 4.214644372930245,
+        "accuracy": 0.24603368318281668,
+        "observations": 4097,
+        "owner": "predictive_readout",
+        "scope": "protected",
+        "persistent_digest_before": "ce17a80df5d078a0287493a3f77c579b00a3833297b82e6880220253993e42b4",
+        "persistent_digest_after": "ce17a80df5d078a0287493a3f77c579b00a3833297b82e6880220253993e42b4",
+        "read_only": true,
+        "seconds": 3.9911997000453994
+      },
+      "holdout_gain_bpb": -0.16525418337918651,
+      "references": {
+        "unigram_bpb": 5.948279729556153,
+        "ngram2_bpb": 4.881650146155429,
+        "ngram3_bpb": 5.943323405252822
+      },
+      "temporal_lesion": null,
+      "owners": {
+        "before": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+          "active_predictive_readout": ""
+        },
+        "after": {
+          "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+          "motor": "ab9f42e8ac99701386ed76cf0960591cad9e898761d57611390a831d26f650be",
+          "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7",
+          "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+          "protected_predictive_readout": "6d7e6808eacc650e779bda96b13b754794a459a1e94bb5cfe24ae3fc5d4dbc38",
+          "active_predictive_readout": ""
+        },
+        "attribution": {
+          "changed": {
+            "active_predictive_readout": false,
+            "fabric": false,
+            "memory": false,
+            "motor": false,
+            "predictive_context": false,
+            "protected_predictive_readout": true
+          },
+          "expected_writable_owners": [
+            "protected_predictive_readout"
+          ],
+          "changed_expected_owners": [
+            "protected_predictive_readout"
+          ],
+          "unexpected_changed_owners": [],
+          "contract_passed": true,
+          "required_owner_changed": true
+        }
+      },
+      "checkpoint": {
+        "digest": "ce17a80df5d078a0287493a3f77c579b00a3833297b82e6880220253993e42b4",
+        "restored_digest": "ce17a80df5d078a0287493a3f77c579b00a3833297b82e6880220253993e42b4",
+        "bytes": 33174251
+      },
+      "checks": {
+        "owner_contract": true,
+        "scores_are_read_only": true,
+        "checkpoint_round_trip": true,
+        "temporal_lesion_is_effective": true,
+        "temporal_lesion_score_is_read_only": true
+      }
+    }
+  ]
+}
