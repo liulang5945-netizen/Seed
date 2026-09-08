@@ -156,6 +156,17 @@ class AdaptiveResidualShadow:
             raise ValueError("adaptive residual shadow credit dimension mismatch")
         if self._gate == 0.0 or self._lesioned:
             return
+        parent_unit_count = int(self.candidate.parent_unit_count)
+        parent_incoming = self.region.incoming.edge_weight[:parent_unit_count].detach().clone()
+        parent_recurrent = (
+            None
+            if self.region.recurrent is None
+            else self.region.recurrent.edge_weight[:parent_unit_count].detach().clone()
+        )
+        parent_threshold = self.region.threshold[:parent_unit_count].detach().clone()
+        candidate_index = self.region.unit_index(self.candidate.unit_id)
+        parent_projection_mask = self.output_projection.pre_index != candidate_index
+        parent_projection = self.output_projection.edge_weight.detach().clone()
         region_error = self.output_projection.backproject(postsynaptic_error)
         self.output_projection.local_update(
             postsynaptic_error * float(self._gate) * float(self.residual_gain),
@@ -167,6 +178,16 @@ class AdaptiveResidualShadow:
             self._last_input,
             region_error * float(self._gate) * float(self.residual_gain),
         )
+        # R4 shadow training is deliberately candidate-only.  The copied
+        # parent substrate is a frozen control; only the appended row and the
+        # new projection contacts may absorb the causal error.
+        self.region.incoming.edge_weight[:parent_unit_count].copy_(parent_incoming)
+        if self.region.recurrent is not None and parent_recurrent is not None:
+            self.region.recurrent.edge_weight[:parent_unit_count].copy_(parent_recurrent)
+        self.region.threshold[:parent_unit_count].copy_(parent_threshold)
+        self.output_projection.edge_weight[parent_projection_mask] = parent_projection[
+            parent_projection_mask
+        ]
 
     def parameter_tensors(self) -> tuple[torch.Tensor, ...]:
         return (*self.region.parameter_tensors(), self.output_projection.edge_weight)
