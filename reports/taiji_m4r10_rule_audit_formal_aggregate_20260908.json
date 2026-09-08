@@ -1,0 +1,163 @@
+{
+  "format": "taiji-m4r10-rule-audit-aggregate-v1",
+  "version": 1,
+  "status": "retention-gate-failed",
+  "can_promote": false,
+  "formal_gate_passed": false,
+  "retention_gate": {
+    "candidate_c3_gain_all_positive": true,
+    "candidate_cycle2_degradation_seeds": 0,
+    "candidate_cycle3_degradation_seeds": 2
+  },
+  "seeds": [
+    {
+      "seed": 11,
+      "source_report": "reports\\taiji_m4r10_rule_audit_formal_seed11_20260908.json",
+      "technical_gate_all_passed": true
+    },
+    {
+      "seed": 29,
+      "source_report": "reports\\taiji_m4r10_rule_audit_formal_seed29_20260908.json",
+      "technical_gate_all_passed": true
+    },
+    {
+      "seed": 47,
+      "source_report": "reports\\taiji_m4r10_rule_audit_formal_seed47_20260908.json",
+      "technical_gate_all_passed": true
+    }
+  ],
+  "variants": {
+    "baseline": {
+      "metrics": {
+        "c3_holdout_gain_bpb": {
+          "values": [
+            0.11525027901739993,
+            0.15925912061584224,
+            0.17314570967275866
+          ],
+          "mean": 0.14921836976866695,
+          "min": 0.11525027901739993,
+          "max": 0.17314570967275866,
+          "positive_seed_count": 3
+        },
+        "c2_cycle3_delta_bpb": {
+          "values": [
+            -0.002938788590054031,
+            -0.0042215416943935935,
+            -0.0016149414424191377
+          ],
+          "mean": -0.0029250905756222543,
+          "min": -0.0042215416943935935,
+          "max": -0.0016149414424191377,
+          "degradation_seed_count": 0
+        },
+        "c_cycle2_delta_bpb": {
+          "values": [
+            -0.0032436709984953183,
+            -0.017692751543418872,
+            -0.030853995209626284
+          ],
+          "mean": -0.017263472583846824,
+          "min": -0.030853995209626284,
+          "max": -0.0032436709984953183,
+          "degradation_seed_count": 0
+        },
+        "c_cycle3_delta_bpb": {
+          "values": [
+            -0.0020793616052889874,
+            -0.020997871741991858,
+            0.008124641671927613
+          ],
+          "mean": -0.004984197225117744,
+          "min": -0.020997871741991858,
+          "max": 0.008124641671927613,
+          "degradation_seed_count": 1
+        },
+        "active_a_retention_bpb": {
+          "values": [
+            4.13469387854378,
+            4.243791701074528,
+            4.343148605266776
+          ],
+          "mean": 4.240544728295028,
+          "min": 4.13469387854378,
+          "max": 4.343148605266776,
+          "degradation_seed_count": 3
+        }
+      }
+    },
+    "candidate": {
+      "metrics": {
+        "c3_holdout_gain_bpb": {
+          "values": [
+            0.1313442145663526,
+            0.1637150696783083,
+            0.1791182512286955
+          ],
+          "mean": 0.1580591784911188,
+          "min": 0.1313442145663526,
+          "max": 0.1791182512286955,
+          "positive_seed_count": 3
+        },
+        "c2_cycle3_delta_bpb": {
+          "values": [
+            -0.006376414915227002,
+            -0.013231241224690216,
+            -0.005614347891249594
+          ],
+          "mean": -0.008407334677055603,
+          "min": -0.013231241224690216,
+          "max": -0.005614347891249594,
+          "degradation_seed_count": 0
+        },
+        "c_cycle2_delta_bpb": {
+          "values": [
+            -0.004288424154502479,
+            -0.0035217644685676674,
+            -0.027037935531978086
+          ],
+          "mean": -0.011616041385016077,
+          "min": -0.027037935531978086,
+          "max": -0.0035217644685676674,
+          "degradation_seed_count": 0
+        },
+        "c_cycle3_delta_bpb": {
+          "values": [
+            0.004673090303157323,
+            -0.01687920130374998,
+            0.011253384265960342
+          ],
+          "mean": -0.0003175755782107714,
+          "min": -0.01687920130374998,
+          "max": 0.011253384265960342,
+          "degradation_seed_count": 2
+        },
+        "active_a_retention_bpb": {
+          "values": [
+            4.108921326820651,
+            4.2175175089219525,
+            4.332169045216857
+          ],
+          "mean": 4.219535960319821,
+          "min": 4.108921326820651,
+          "max": 4.332169045216857,
+          "degradation_seed_count": 3
+        }
+      }
+    }
+  },
+  "configuration": {
+    "profile": "foundation",
+    "train_bytes": 65536,
+    "eval_bytes": 16384,
+    "predictive_update_scale": 0.5,
+    "baseline_consolidation_strength": 0.0,
+    "candidate_consolidation_strength": 0.5,
+    "fixed_capacity": true
+  },
+  "source_reports": [
+    "reports\\taiji_m4r10_rule_audit_formal_seed11_20260908.json",
+    "reports\\taiji_m4r10_rule_audit_formal_seed29_20260908.json",
+    "reports\\taiji_m4r10_rule_audit_formal_seed47_20260908.json"
+  ]
+}
