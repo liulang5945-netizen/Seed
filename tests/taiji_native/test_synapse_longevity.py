@@ -1,4 +1,4 @@
-"""长时间流式训练下突触权重不得蒸发的守护测试。
+"""长时间 F1 流式训练下突触权重不得蒸发的守护测试。
 
 实测根因（800K 语料训练）：``synapse_decay=1e-5`` 以全局乘性方式挂在
 每个学习 tick 的 ``local_update`` 上，(1-1e-5)^800000 ≈ e^-8 ≈ 3e-4。
@@ -45,8 +45,8 @@ def test_streaming_training_does_not_evaporate_cortical_synapses() -> None:
     model = Seed(_tiny_config())
     data = ("问：你好。\n答：你好，很高兴见到你。" "水的沸点在标准大气压下是一百摄氏度。").encode()
 
-    # 先建立记忆，再长时间持续暴露于同一内容（学会之后误差变小，
-    # 正是旧全局衰减蒸发占主导的区间）。
+    # 先建立 F1 predictive 记忆，再长时间持续暴露于同一内容（学会之后
+    # 误差变小，正是旧全局衰减蒸发占主导的区间）。
     model.learn_bytes(data, epochs=6)
     learned_mass = _decoder_mass(model)
     learned_surprise = model.score_bytes(data)["mean_surprise"]
@@ -54,7 +54,13 @@ def test_streaming_training_does_not_evaporate_cortical_synapses() -> None:
     for _ in range(150):
         model.reset_dynamics(episode_id="stream")
         for symbol in model.substrate.sensor.symbols(data):
-            model.observe(symbol, learn=True)
+            model.substrate.observe(
+                symbol,
+                learn=True,
+                readout="predictive",
+                use_memory=False,
+                use_identity=False,
+            )
 
     final_mass = _decoder_mass(model)
     assert (

@@ -170,7 +170,11 @@ R4 收束审计已完成其研究边界部分：R4 定向 6 项测试通过，ho
 
 M7 CI 基线收敛第一批已完成：tracked source 的主 ruff 门禁从 9 项降为 0，安全自动修复涉及的 14 个脚本/平台/测试文件已通过 `py_compile`、ruff、black diff 和 `git diff --check`；R4 代码路径与默认 parent 未改变。随后完成 B/SIM 显式契约审计，`51 → 42 → 0`，所有 `zip` 改动都基于已确认的等长输入，未使用 unsafe 批量改写；受影响模块回归 `23 passed`。本轮完成 core mypy 棘轮：`mypy --follow-imports=silent seed taiji` 从 `175 errors / 24 files` 收敛到 `0 errors / 95 files`，同时通过源码范围 ruff、B/SIM、py_compile；与类型边界相邻的回归分组共 `85 passed`，Qwen provider 的 `tmp_path` 组受本机 pytest 临时目录权限阻塞，代码未出现断言失败。
 
-**当前唯一下一步**：进入既有 native 回归归因，先在仓库可写 basetemp 下复现 `context/delayed memory` 准确率失败，判断是当前行为回归、过期阈值还是测试环境噪声；保持 R4 shadow/默认 parent 不变，不通过放宽阈值消除失败，确认根因后再修复并回归，R5 learned router 及 Skill/MCP/provider/客户端外围继续冻结。
+`context/delayed memory` 两个 native 失败已复现并归因：`learn_bytes()` 的现行合同训练 F1 predictive readout，而旧测试仍用默认 action readout 评估，因而得到 `0.0`；没有改模型或放宽阈值。测试现已显式选择 `readout="predictive"` 并关闭 identity 污染，context 为 `1.0 vs 0.5`，delayed 为 `1.0 / 0.5 / 1.0 / 0.5`，原 Gate 仍成立。
+
+`test_synapse_longevity.py` 的失败也已完成归因：`SparseSynapses.local_update()` 已按接触资格门控 decay，decoder mass 没有发生蒸发；旧测试在 `learn_bytes()` 之后通过 `Seed.observe()` 默认进入 action readout，并继续学习共享 fabric，使 predictive decoder 的输入表征漂移，surprise 从 `2.481` 升到 `2.704`。测试现已沿 M2 合同显式使用 `readout="predictive"`、`use_memory=False`、`use_identity=False`；150 轮后 decoder mass 保持且 surprise 降至约 `1.356`，原阈值未放宽。
+
+**当前唯一下一步**：继续处理剩余 native 回归中的 `Workbench neutral baseline`，先在仓库可写 basetemp 下复现并区分默认基线契约与真实行为回归；保持 R4 shadow/默认 parent 不变，不通过放宽阈值消除失败，R5 learned router 及 Skill/MCP/provider/客户端外围继续冻结。
 
 R0 完成条件（已满足）：
 
