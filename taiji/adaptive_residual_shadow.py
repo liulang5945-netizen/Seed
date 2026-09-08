@@ -210,22 +210,41 @@ class AdaptiveResidualShadow:
         )
 
     @torch.no_grad()
-    def learn(self, postsynaptic_error: torch.Tensor) -> None:
+    def learn(
+        self,
+        postsynaptic_error: torch.Tensor,
+        *,
+        freeze_parent: bool = True,
+    ) -> None:
         if postsynaptic_error.shape != (self.output_dim,):
             raise ValueError("adaptive residual shadow credit dimension mismatch")
+        if not isinstance(freeze_parent, bool):
+            raise TypeError("adaptive residual shadow freeze_parent must be a bool")
         if self._gate == 0.0 or self._lesioned:
             return
         parent_unit_count = int(self.candidate.parent_unit_count)
-        parent_incoming = self.region.incoming.edge_weight[:parent_unit_count].detach().clone()
+        parent_incoming = (
+            self.region.incoming.edge_weight[:parent_unit_count].detach().clone()
+            if freeze_parent
+            else None
+        )
         parent_recurrent = (
             None
-            if self.region.recurrent is None
+            if self.region.recurrent is None or not freeze_parent
             else self.region.recurrent.edge_weight[:parent_unit_count].detach().clone()
         )
-        parent_threshold = self.region.threshold[:parent_unit_count].detach().clone()
+        parent_threshold = (
+            self.region.threshold[:parent_unit_count].detach().clone()
+            if freeze_parent
+            else None
+        )
         candidate_index = self.region.unit_index(self.candidate.unit_id)
         parent_projection_mask = self.output_projection.pre_index != candidate_index
-        parent_projection = self.output_projection.edge_weight.detach().clone()
+        parent_projection = (
+            self.output_projection.edge_weight.detach().clone()
+            if freeze_parent
+            else None
+        )
         region_error = self.output_projection.backproject(postsynaptic_error)
         self._last_candidate_credit_norm = float(abs(region_error[candidate_index]).item())
         candidate_projection_before = self.output_projection.edge_weight[
@@ -250,13 +269,17 @@ class AdaptiveResidualShadow:
         # R4 shadow training is deliberately candidate-only.  The copied
         # parent substrate is a frozen control; only the appended row and the
         # new projection contacts may absorb the causal error.
-        self.region.incoming.edge_weight[:parent_unit_count].copy_(parent_incoming)
-        if self.region.recurrent is not None and parent_recurrent is not None:
-            self.region.recurrent.edge_weight[:parent_unit_count].copy_(parent_recurrent)
-        self.region.threshold[:parent_unit_count].copy_(parent_threshold)
-        self.output_projection.edge_weight[parent_projection_mask] = parent_projection[
-            parent_projection_mask
-        ]
+        if freeze_parent:
+            assert parent_incoming is not None
+            assert parent_threshold is not None
+            assert parent_projection is not None
+            self.region.incoming.edge_weight[:parent_unit_count].copy_(parent_incoming)
+            if self.region.recurrent is not None and parent_recurrent is not None:
+                self.region.recurrent.edge_weight[:parent_unit_count].copy_(parent_recurrent)
+            self.region.threshold[:parent_unit_count].copy_(parent_threshold)
+            self.output_projection.edge_weight[parent_projection_mask] = parent_projection[
+                parent_projection_mask
+            ]
         self._last_candidate_projection_update_norm = float(
             (
                 self.output_projection.edge_weight[~parent_projection_mask]

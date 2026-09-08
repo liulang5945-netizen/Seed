@@ -1167,6 +1167,7 @@ class Taiji:
         _predictive_update_scale: float = 1.0,
         _adaptive_residual_shadow: AdaptiveResidualShadow | None = None,
         _learn_adaptive_residual_shadow: bool = False,
+        _adaptive_residual_shadow_freeze_parent: bool = True,
     ) -> TaijiStep:
         """Advance one sensation tick.
 
@@ -1250,6 +1251,8 @@ class Taiji:
                 raise ValueError(f"{name} requires learn=True")
         if not isinstance(_learn_adaptive_residual_shadow, bool):
             raise TypeError("_learn_adaptive_residual_shadow must be a bool")
+        if not isinstance(_adaptive_residual_shadow_freeze_parent, bool):
+            raise TypeError("_adaptive_residual_shadow_freeze_parent must be a bool")
         if not learn and _learn_adaptive_residual_shadow:
             raise ValueError("_learn_adaptive_residual_shadow requires learn=True")
         if readout != "predictive" and (
@@ -1416,7 +1419,10 @@ class Taiji:
                     if adaptive_residual_bridge_learning:
                         self._adaptive_residual_bridge.learn(predictive_feedback)
                     if adaptive_residual_shadow_learning:
-                        _adaptive_residual_shadow.learn(predictive_feedback)
+                        _adaptive_residual_shadow.learn(
+                            predictive_feedback,
+                            freeze_parent=_adaptive_residual_shadow_freeze_parent,
+                        )
                     if developmental_f1_mode in {"fast", "fast_slow"}:
                         self._record_developmental_f1_replay(
                             observed_symbol=symbol,
@@ -1474,7 +1480,10 @@ class Taiji:
                         if adaptive_residual_bridge_learning:
                             self._adaptive_residual_bridge.learn(predictive_feedback)
                         if adaptive_residual_shadow_learning:
-                            _adaptive_residual_shadow.learn(predictive_feedback)
+                            _adaptive_residual_shadow.learn(
+                                predictive_feedback,
+                                freeze_parent=_adaptive_residual_shadow_freeze_parent,
+                            )
             elif readout == "action" and motor_learning:
                 self.motor.learn(
                     previous.motor_context,

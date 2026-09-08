@@ -118,6 +118,7 @@ def _stream(
     shadow: AdaptiveResidualShadow | None = None,
     learn: bool,
     learn_bridge: bool = False,
+    shadow_freeze_parent: bool = True,
     trace: list[dict[str, Any]] | None = None,
 ) -> float:
     model.reset_dynamics(episode_id="r4-shadow-stream")
@@ -139,6 +140,7 @@ def _stream(
             use_identity=False,
             _adaptive_residual_shadow=shadow,
             _learn_adaptive_residual_shadow=bool(learn and shadow is not None),
+            _adaptive_residual_shadow_freeze_parent=shadow_freeze_parent,
         )
         if shadow is not None and trace is not None:
             trace.append({"symbol": int(symbol), **shadow.diagnostics})
@@ -153,6 +155,7 @@ def _course_train(
     *,
     shadow: AdaptiveResidualShadow | None = None,
     learn_bridge: bool = False,
+    shadow_freeze_parent: bool = True,
     trace: list[dict[str, Any]] | None = None,
 ) -> None:
     _stream(
@@ -161,6 +164,7 @@ def _course_train(
         shadow=shadow,
         learn=True,
         learn_bridge=learn_bridge,
+        shadow_freeze_parent=shadow_freeze_parent,
         trace=trace,
     )
     for old_count, new_count in G_SCHEDULE:
@@ -170,12 +174,52 @@ def _course_train(
             shadow=shadow,
             learn=True,
             learn_bridge=learn_bridge,
+            shadow_freeze_parent=shadow_freeze_parent,
             trace=trace,
         )
 
 
 def _score(model: Taiji, data: bytes, *, shadow: AdaptiveResidualShadow | None = None) -> float:
     return _stream(model, data, shadow=shadow, learn=False)
+
+
+def _shadow_parent_payload(shadow: AdaptiveResidualShadow) -> dict[str, Any]:
+    """Capture persistent parent substrate without mutable runtime state."""
+
+    parent_count = int(shadow.candidate.parent_unit_count)
+    candidate_index = shadow.region.unit_index(shadow.candidate.unit_id)
+    parent_projection_mask = shadow.output_projection.pre_index != candidate_index
+    recurrent = shadow.region.recurrent
+    return {
+        "incoming_pre_index": shadow.region.incoming.pre_index[:parent_count].detach().cpu().clone(),
+        "incoming_edge_weight": shadow.region.incoming.edge_weight[:parent_count]
+        .detach()
+        .cpu()
+        .clone(),
+        "recurrent_pre_index": (
+            None
+            if recurrent is None
+            else recurrent.pre_index[:parent_count].detach().cpu().clone()
+        ),
+        "recurrent_edge_weight": (
+            None
+            if recurrent is None
+            else recurrent.edge_weight[:parent_count].detach().cpu().clone()
+        ),
+        "threshold": shadow.region.threshold[:parent_count].detach().cpu().clone(),
+        "projection_pre_index": shadow.output_projection.pre_index[
+            parent_projection_mask
+        ]
+        .detach()
+        .cpu()
+        .clone(),
+        "projection_edge_weight": shadow.output_projection.edge_weight[
+            parent_projection_mask
+        ]
+        .detach()
+        .cpu()
+        .clone(),
+    }
 
 
 def _counts(model: Taiji, shadow: AdaptiveResidualShadow | None) -> dict[str, int]:
@@ -243,6 +287,7 @@ def _growth_arm(
     *,
     candidate: AdaptiveResidualGrowthCandidate | None = None,
     train_from_parent: bool = True,
+    freeze_parent: bool = True,
     label: str,
 ) -> dict[str, Any]:
     model = Taiji.from_checkpoint(copy.deepcopy(parent_checkpoint))
@@ -258,11 +303,17 @@ def _growth_arm(
     )
     bare_shadow = shadow.to_payload()
     bare_shadow_digest = content_digest(bare_shadow)
+    parent_substrate_digest = content_digest(_shadow_parent_payload(shadow))
     mature_context = content_digest(model.predictive_context.to_payload())
     mature_readout = content_digest(model.predictive_readout.to_payload())
     training_trace: list[dict[str, Any]] = []
     if train_from_parent:
-        _course_train(model, shadow=shadow, trace=training_trace)
+        _course_train(
+            model,
+            shadow=shadow,
+            shadow_freeze_parent=freeze_parent,
+            trace=training_trace,
+        )
     active_trace = [
         item for item in training_trace if item["candidate_activity"] > 1e-8
     ]
@@ -282,6 +333,9 @@ def _growth_arm(
         "G": _score(model, G_HOLDOUT, shadow=shadow),
     }
     trained_shadow = shadow.to_payload()
+    parent_substrate_unchanged = (
+        content_digest(_shadow_parent_payload(shadow)) == parent_substrate_digest
+    )
     restored_shadow = AdaptiveResidualShadow.from_checkpoint(model.config, trained_shadow)
     fresh_restore = content_digest(restored_shadow.to_payload()) == content_digest(trained_shadow)
     lesioned = AdaptiveResidualShadow.from_checkpoint(model.config, trained_shadow)
@@ -333,7 +387,12 @@ def _growth_arm(
             ),
             "trace": training_trace,
         },
-        "candidate_only_training_changed": content_digest(bare_shadow) != content_digest(trained_shadow),
+        "candidate_only_training_changed": bool(
+            freeze_parent and content_digest(bare_shadow) != content_digest(trained_shadow)
+        ),
+        "shadow_training_changed": content_digest(bare_shadow) != content_digest(trained_shadow),
+        "parent_frozen": freeze_parent,
+        "parent_substrate_unchanged": parent_substrate_unchanged,
         "shadow_fresh_restore": fresh_restore,
         "shadow_rollback_matches_bare": rollback_matches_bare,
         "mature_f1_owners_unchanged": (
@@ -348,13 +407,13 @@ def _growth_arm(
 
 def run_canary() -> dict[str, Any]:
     r3_parent, pressure_parent, checkpoint_preflight = _prepared_parents()
-    frozen = Taiji.from_checkpoint(copy.deepcopy(r3_parent))
+    frozen = Taiji.from_checkpoint(copy.deepcopy(pressure_parent))
     frozen_scores = {
         "S": _score(frozen, S_HOLDOUT),
         "G": _score(frozen, G_HOLDOUT),
     }
 
-    fixed_capacity = Taiji.from_checkpoint(copy.deepcopy(r3_parent))
+    fixed_capacity = Taiji.from_checkpoint(copy.deepcopy(pressure_parent))
     _course_train(fixed_capacity, learn_bridge=True)
     fixed_capacity_scores = {
         "S": _score(fixed_capacity, S_HOLDOUT),
@@ -365,9 +424,16 @@ def run_canary() -> dict[str, Any]:
     pressure_candidate = pressure_model.adaptive_residual_growth_candidate
     if pressure_candidate is None:
         raise RuntimeError("prepared pressure parent has no candidate artifact")
+    candidate_only_smoke = _growth_arm(
+        pressure_parent,
+        candidate=pressure_candidate,
+        freeze_parent=True,
+        label="candidate-only-smoke",
+    )
     pressure = _growth_arm(
         pressure_parent,
         candidate=pressure_candidate,
+        freeze_parent=False,
         label="pressure-driven-growth",
     )
 
@@ -380,18 +446,20 @@ def run_canary() -> dict[str, Any]:
     random_growth = _growth_arm(
         pressure_parent,
         candidate=random_candidate,
+        freeze_parent=False,
         label="random-growth",
     )
 
-    fixed_large_parent = Taiji.from_checkpoint(copy.deepcopy(r3_parent))
+    fixed_large_parent = Taiji.from_checkpoint(copy.deepcopy(pressure_parent))
     fixed_large_candidate = _random_candidate(
         fixed_large_parent,
-        r3_parent,
+        pressure_parent,
         label="fixed-large",
     )
     fixed_large = _growth_arm(
-        r3_parent,
+        pressure_parent,
         candidate=fixed_large_candidate,
+        freeze_parent=False,
         label="fixed-large",
     )
 
@@ -416,13 +484,34 @@ def run_canary() -> dict[str, Any]:
     technical_gates = {
         "checkpoint_preflight": checkpoint_preflight,
         "pressure_candidate_present": pressure_candidate is not None,
-        "pressure_shadow_training_changed": pressure["candidate_only_training_changed"],
+        "candidate_only_smoke_training_changed": candidate_only_smoke[
+            "candidate_only_training_changed"
+        ],
+        "candidate_only_smoke_parent_frozen": candidate_only_smoke[
+            "parent_substrate_unchanged"
+        ],
+        "candidate_only_smoke_fresh_restore": candidate_only_smoke[
+            "shadow_fresh_restore"
+        ],
+        "candidate_only_smoke_rollback": candidate_only_smoke[
+            "shadow_rollback_matches_bare"
+        ],
+        "pressure_shadow_training_changed": pressure["shadow_training_changed"],
         "pressure_shadow_fresh_restore": pressure["shadow_fresh_restore"],
         "pressure_shadow_rollback": pressure["shadow_rollback_matches_bare"],
         "pressure_mature_f1_owners_unchanged": pressure["mature_f1_owners_unchanged"],
         "random_shadow_fresh_restore": random_growth["shadow_fresh_restore"],
         "fixed_large_shadow_fresh_restore": fixed_large["shadow_fresh_restore"],
         "matched_growth_capacity": matched_capacity,
+        "shared_efficacy_parent": True,
+        "matched_parent_learning_boundary": (
+            pressure["parent_frozen"] is False
+            and random_growth["parent_frozen"] is False
+            and fixed_large["parent_frozen"] is False
+            and pressure["parent_substrate_unchanged"] is False
+            and random_growth["parent_substrate_unchanged"] is False
+            and fixed_large["parent_substrate_unchanged"] is False
+        ),
     }
     return {
         "format": CANARY_FORMAT,
@@ -439,6 +528,22 @@ def run_canary() -> dict[str, Any]:
         "parents": {
             "r3_checkpoint_digest": content_digest(r3_parent),
             "pressure_checkpoint_digest": content_digest(pressure_parent),
+            "efficacy_parent_digest": content_digest(pressure_parent),
+        },
+        "candidate_only_smoke": {
+            "candidate_lesion_delta": candidate_only_smoke["candidate_lesion_delta"],
+            "mature_f1_owners_unchanged": candidate_only_smoke[
+                "mature_f1_owners_unchanged"
+            ],
+            "parent_substrate_unchanged": candidate_only_smoke[
+                "parent_substrate_unchanged"
+            ],
+            "shadow_fresh_restore": candidate_only_smoke["shadow_fresh_restore"],
+            "shadow_rollback_matches_bare": candidate_only_smoke[
+                "shadow_rollback_matches_bare"
+            ],
+            "shadow_training_changed": candidate_only_smoke["shadow_training_changed"],
+            "trace_digest": candidate_only_smoke["training_diagnostics"]["trace_digest"],
         },
         "arms": arms,
         "technical_gates": technical_gates,
