@@ -127,6 +127,13 @@ class AdaptiveResidualShadow:
         self._lesioned = False
 
     @torch.no_grad()
+    def lesion_candidate(self) -> None:
+        """Remove only the appended unit's output contacts for causal ablation."""
+
+        candidate_index = self.region.unit_index(self.candidate.unit_id)
+        self.output_projection.edge_weight[self.output_projection.pre_index == candidate_index] = 0.0
+
+    @torch.no_grad()
     def reset_dynamics(self) -> None:
         self.region.membrane.zero_()
         self.region.activity.zero_()

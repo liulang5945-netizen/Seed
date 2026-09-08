@@ -1,0 +1,170 @@
+{
+  "arms": {
+    "fixed-large": {
+      "arm": "fixed-large",
+      "candidate_activity": 0.0,
+      "candidate_digest": "80c8492614be88535e5d4ef3ba5e71628bac5e04755331462891b6a4f1be4ce6",
+      "candidate_lesion_delta": {
+        "G": -0.001375389544314487,
+        "S": 0.006282246811465164
+      },
+      "candidate_lesion_scores": {
+        "G": 5.784253881763273,
+        "S": 5.620213659836039
+      },
+      "candidate_only_training_changed": true,
+      "candidate_unit_id": "predictive_residual.bridge.u12",
+      "checkpoint_digest": "915d8aca70b0cec385e621794029a642188f4929e0a28b35fd16b8f184188328",
+      "counts": {
+        "mature_model_parameter_count": 28552,
+        "shadow_edge_count": 228,
+        "shadow_parameter_count": 228,
+        "shadow_unit_count": 13
+      },
+      "mature_f1_owners_unchanged": true,
+      "scores": {
+        "G": 5.785629271307587,
+        "S": 5.613931413024574
+      },
+      "shadow_digest": "ab4cff068aaa7ab86132473b481112e25a5e70a0dc0162114c593e6dcf95b5ad",
+      "shadow_fresh_restore": true,
+      "shadow_rollback_matches_bare": true
+    },
+    "frozen-parent": {
+      "arm": "frozen-parent",
+      "counts": {
+        "mature_model_parameter_count": 28552,
+        "shadow_edge_count": 0,
+        "shadow_parameter_count": 0,
+        "shadow_unit_count": 0
+      },
+      "scores": {
+        "G": 5.784253881763273,
+        "S": 5.620306289991547
+      }
+    },
+    "pressure-driven-growth": {
+      "arm": "pressure-driven-growth",
+      "candidate_activity": 0.0,
+      "candidate_digest": "9b192ca77312c7745d5302200206f8dea45ce00fdbf7bd173347913d86373df1",
+      "candidate_lesion_delta": {
+        "G": 0.00200339099072,
+        "S": -8.167892998311999e-05
+      },
+      "candidate_lesion_scores": {
+        "G": 5.784081191121771,
+        "S": 5.6195571885192805
+      },
+      "candidate_only_training_changed": true,
+      "candidate_unit_id": "predictive_residual.bridge.u12",
+      "checkpoint_digest": "f801153a7d5f6befa8b58d869958460a553cdff4f5d11f92dfa442a5c5b078dd",
+      "counts": {
+        "mature_model_parameter_count": 28552,
+        "shadow_edge_count": 228,
+        "shadow_parameter_count": 228,
+        "shadow_unit_count": 13
+      },
+      "mature_f1_owners_unchanged": true,
+      "scores": {
+        "G": 5.782077800131051,
+        "S": 5.619638867449264
+      },
+      "shadow_digest": "3fab7f4bbc6bb5643f795bc89ff3461c5c43ba48e1c7e6ccece4121935347732",
+      "shadow_fresh_restore": true,
+      "shadow_rollback_matches_bare": true
+    },
+    "r3-fixed-capacity": {
+      "arm": "r3-fixed-capacity",
+      "checkpoint_digest": "be92c5b576596eca36aa2ac1324b865d00bedf1c4c37193fdd73a67aa55415e2",
+      "counts": {
+        "mature_model_parameter_count": 28552,
+        "shadow_edge_count": 0,
+        "shadow_parameter_count": 0,
+        "shadow_unit_count": 0
+      },
+      "scores": {
+        "G": 5.6252018590392465,
+        "S": 5.56367810140241
+      }
+    },
+    "random-growth": {
+      "arm": "random-growth",
+      "candidate_activity": 0.0,
+      "candidate_digest": "833be5dbe4b72f9f26c06a3239a0b9086850cdcc93e55e09ed495e542e606935",
+      "candidate_lesion_delta": {
+        "G": 0.0,
+        "S": 0.052077189376539046
+      },
+      "candidate_lesion_scores": {
+        "G": 5.784081191121771,
+        "S": 5.619025223098482
+      },
+      "candidate_only_training_changed": true,
+      "candidate_unit_id": "predictive_residual.bridge.u12",
+      "checkpoint_digest": "f801153a7d5f6befa8b58d869958460a553cdff4f5d11f92dfa442a5c5b078dd",
+      "counts": {
+        "mature_model_parameter_count": 28552,
+        "shadow_edge_count": 228,
+        "shadow_parameter_count": 228,
+        "shadow_unit_count": 13
+      },
+      "mature_f1_owners_unchanged": true,
+      "scores": {
+        "G": 5.784081191121771,
+        "S": 5.566948033721943
+      },
+      "shadow_digest": "d770eb8cda46ab0231e23b60bbab2e5cdecc882b91df7e1add403b9931350096",
+      "shadow_fresh_restore": true,
+      "shadow_rollback_matches_bare": true
+    }
+  },
+  "can_promote": false,
+  "course": {
+    "G_holdout_digest": "1d6bbf7bd7c44a945ba09797a9b69dc5faa61e300b966a10cb08131d20b972b1",
+    "G_schedule": [
+      [
+        8,
+        2
+      ],
+      [
+        6,
+        4
+      ],
+      [
+        4,
+        6
+      ],
+      [
+        2,
+        8
+      ]
+    ],
+    "S_holdout_digest": "90bfd99a0173f27b5043fccad5f706c5790a3f7d438a78f1f34fe6a27e80eb17",
+    "S_train_digest": "5b14f4585589f02dd3cb108224459cce8cef619740c46ad06c9bd717d0366813"
+  },
+  "format": "taiji-m4v2-r4-shadow-canary-v1",
+  "interpretation": {
+    "candidate_lesion_positive_delta_means_candidate_helped": true,
+    "lower_mean_surprise_is_better": true,
+    "matched_capacity_is_required_before_growth_claim": true,
+    "short_course_is_not_A8": true
+  },
+  "parents": {
+    "pressure_checkpoint_digest": "4606820663d79fb3edcb08b3e00973ef67c606f037d1fb82125f8d3195f3a8be",
+    "r3_checkpoint_digest": "0772d5d4f7f503570bf36364443632206e2db57ea64e368fc7bfd1c4bfb8dceb"
+  },
+  "promotion_reason": "R4 is a short CPU shadow canary; holdout and matched-capacity results do not promote structure",
+  "status": "passed",
+  "technical_gates": {
+    "checkpoint_preflight": true,
+    "fixed_large_shadow_fresh_restore": true,
+    "matched_growth_capacity": true,
+    "pressure_candidate_present": true,
+    "pressure_mature_f1_owners_unchanged": true,
+    "pressure_shadow_fresh_restore": true,
+    "pressure_shadow_rollback": true,
+    "pressure_shadow_training_changed": true,
+    "random_shadow_fresh_restore": true
+  },
+  "version": 1
+}
