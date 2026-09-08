@@ -409,6 +409,7 @@ def _growth_arm(
     utility_values = [
         float(item["candidate_utility"]) for item in training_trace
     ]
+    gate_values = [float(item["candidate_gate"]) for item in training_trace]
     residual_ratios = [
         item["candidate_residual_norm"] / item["parent_residual_norm"]
         for item in training_trace
@@ -458,6 +459,11 @@ def _growth_arm(
                 (item["candidate_eligibility_norm"] for item in training_trace),
                 default=0.0,
             ),
+            "mean_candidate_gate": (
+                sum(gate_values) / len(gate_values) if gate_values else 0.0
+            ),
+            "min_candidate_gate": min(gate_values, default=0.0),
+            "max_candidate_gate": max(gate_values, default=0.0),
             "max_candidate_residual_norm": max(
                 (item["candidate_residual_norm"] for item in training_trace), default=0.0
             ),
