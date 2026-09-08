@@ -7,6 +7,8 @@
 
 > 2026-09-06 研究重审：长期架构目标与认知所有权保持。本页旧 P1/P2 记录描述各自实验边界，不决定当前优先级；当前状态和证据更正见[研究审视](../reference/TAIJI_RESEARCH_REVIEW_2026_09_06.md)，唯一顺序见[执行计划](roadmap/03_CURRENT_EXECUTION.md)。最新 M2 字节/记忆成绩只覆盖相应训练 owner，不能推定全部 v1 器官已获得能力。active readout 分支是受控适应机制，尚未证明自主路由或开放成长。
 
+> 2026-09-09 M4 设计复审：R0～R12 只关闭了若干 F1 fixed-capacity 候选，不能关闭 CR-4/A8。继承式成长现行细化设计为 [Taiji 继承式成长架构 v2](architecture/TAIJI_CONTINUAL_DEVELOPMENT_V2.md)：旧 checkpoint 无损迁移为慢知识，在线 fast state、真实经历 replay、主路径 zero-gated structural shadow 与 learned router 依序验证；固定等权 readout 槽、人工 active boundary 和旁路结构网络不再作为成长完成证据。
+
 当前实现状态：尚未完成。仓库顶层 `taiji/` 当前运行的是 Taiji Substrate Kernel v8（TSK-v8），它是本架构可复用的低层实验内核，不是完整 Taiji。
 
 P1 兼容纵切片已完成：版本化 v1 合同、Taiji-owned `CognitiveState`/`NativeCheckpoint`、
@@ -503,6 +505,17 @@ Taiji 同时拥有两条学习平面。
 - homeostasis、遗忘和结构预算防止无界增长。
 
 长期 credit assignment 可以跨 tick、episode 和 imagined rollout 保存 eligibility；“局部”不等于“只能看相邻一个 tick”。
+
+M4 v1 的实验说明需要进一步约束“终身学习”一词：在同一 `BytePredictiveReadout` 上继续写权重，只能称 fixed-capacity continuation；克隆 protected/active readout 只能称权限隔离或受控适应；创建但未进入普通 forward/credit 的 `AdaptiveNeuronNetwork` 只能称 shadow substrate。当前正式定义要求：
+
+- 旧权重迁移为可保存的 slow state，fast state 从零开始且不改变父代函数；
+- wake、episodic write、sleep replay、slow consolidation 和 rollback 拥有不同且可审计的状态转移；
+- 结构候选以 zero-gated residual 进入同一认知主路径，在 shadow 期学习，准入后才消费真实路由预算；
+- 增长压力由持续残差、fast/slow 冲突、重要性、replay 收益和资源共同产生，而不是只看槽位占用；
+- learned router 不读取 evaluator task ID，候选必须胜过 fixed-large、random-growth 和 lesion 对照；
+- 能力 Gate 使用累计能力矩阵、预校准非劣界和灾难上限，exact-zero 仍报告但不单独承担全部判定。
+
+详细状态、课程和里程碑见 [Taiji 继承式成长架构 v2](architecture/TAIJI_CONTINUAL_DEVELOPMENT_V2.md)。
 
 ## 7. 输入、输出与智能形成
 
