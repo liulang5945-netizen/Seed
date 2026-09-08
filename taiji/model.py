@@ -579,6 +579,7 @@ class Taiji:
         _predictive_readout: BytePredictiveReadout | None = None,
         _preservation_readout: BytePredictiveReadout | None = None,
         _preservation_strength: float = 0.0,
+        _predictive_update_scale: float = 1.0,
     ) -> TaijiStep:
         """Advance one sensation tick.
 
@@ -628,6 +629,9 @@ class Taiji:
             raise ValueError("preservation strength must be finite and non-negative")
         if preservation_strength > 0.0 and _preservation_readout is None:
             raise ValueError("positive preservation strength requires a preservation readout")
+        predictive_update_scale = float(_predictive_update_scale)
+        if not math.isfinite(predictive_update_scale) or predictive_update_scale < 0.0:
+            raise ValueError("predictive update scale must be finite and non-negative")
         if identity_generation_scope not in {"all", "active"}:
             raise ValueError("identity generation scope must be 'all' or 'active'")
         if readout == "predictive" and learn_motor is True:
@@ -726,6 +730,7 @@ class Taiji:
                         symbol,
                         preservation_probabilities=preservation_probabilities,
                         preservation_strength=preservation_strength,
+                        learning_rate_scale=predictive_update_scale,
                     )
                 if predictive_context_learning:
                     predictive_feedback = predictive_readout.context_feedback(
@@ -735,13 +740,17 @@ class Taiji:
                         self.predictive_context.learn(
                             previous.predictive_context_trace,
                             predictive_feedback,
+                            learning_rate_scale=predictive_update_scale,
                         )
                     else:
                         self._gated_temporal_candidate.learn(
                             previous.motor_context,
                             previous.predictive_context_slow_trace,
                             predictive_feedback,
-                            learning_rate=self.config.predictive_context_learning_rate,
+                            learning_rate=(
+                                self.config.predictive_context_learning_rate
+                                * predictive_update_scale
+                            ),
                             weight_decay=self.config.synapse_decay,
                         )
             elif readout == "action" and motor_learning:
@@ -1337,6 +1346,7 @@ class Taiji:
         learn_predictive_context: bool = True,
         learn_predictive_readout: bool = True,
         consolidation_strength: float = 0.0,
+        predictive_update_scale: float = 1.0,
         boundary: WorkbenchTaskBoundary | Mapping[str, Any] | None = None,
         authorization: WorkbenchBoundaryAuthorization | None = None,
     ) -> dict[str, float]:
@@ -1370,6 +1380,12 @@ class Taiji:
         distribution as a local preservation signal to active readout updates.
         It is rejected without an explicit active Workbench generation, so the
         default training path and protected owner remain unchanged.
+
+        ``predictive_update_scale`` is an explicit M4.R5 experiment control.
+        The default ``1.0`` preserves the existing local update semantics;
+        ``0.0`` freezes the F1 predictive owners and positive values scale both
+        predictive readout and private predictive-context updates.  It does
+        not change topology, checkpoint schema, or shared-fabric learning.
         """
 
         if epochs <= 0:
@@ -1391,6 +1407,9 @@ class Taiji:
         consolidation_strength = float(consolidation_strength)
         if not math.isfinite(consolidation_strength) or consolidation_strength < 0.0:
             raise ValueError("consolidation_strength must be finite and non-negative")
+        predictive_update_scale = float(predictive_update_scale)
+        if not math.isfinite(predictive_update_scale) or predictive_update_scale < 0.0:
+            raise ValueError("predictive_update_scale must be finite and non-negative")
         if consolidation_strength > 0.0 and not learn_predictive_readout:
             raise ValueError("consolidation requires learn_predictive_readout=True")
         if (boundary is None) != (authorization is None):
@@ -1444,6 +1463,7 @@ class Taiji:
                         self.predictive_readout if consolidation_strength > 0.0 else None
                     ),
                     _preservation_strength=consolidation_strength,
+                    _predictive_update_scale=predictive_update_scale,
                 )
                 if step.prior_prediction is not None:
                     observations += 1

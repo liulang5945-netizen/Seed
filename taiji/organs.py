@@ -358,8 +358,18 @@ class BytePredictiveContext:
         return context, trace
 
     @torch.no_grad()
-    def learn(self, trace: torch.Tensor, feedback: torch.Tensor) -> None:
+    def learn(
+        self,
+        trace: torch.Tensor,
+        feedback: torch.Tensor,
+        *,
+        learning_rate_scale: float = 1.0,
+    ) -> None:
         """Apply F1 decoder feedback to private temporal contacts only."""
+
+        learning_rate_scale = float(learning_rate_scale)
+        if not math.isfinite(learning_rate_scale) or learning_rate_scale < 0.0:
+            raise ValueError("learning_rate_scale must be finite and non-negative")
 
         if trace.shape != (self.config.motor_context_dim,):
             raise ValueError("predictive context trace dimension mismatch")
@@ -367,12 +377,14 @@ class BytePredictiveContext:
             raise ValueError("predictive context feedback dimension mismatch")
         # The first F1 tick has no predecessor.  Skipping it keeps the causal
         # eligibility trace explicit instead of relying on a zero update.
-        if not bool(trace.detach().abs().any()):
+        if learning_rate_scale == 0.0 or not bool(trace.detach().abs().any()):
             return
         self.recurrent.local_update(
             feedback,
             trace,
-            learning_rate=self.config.predictive_context_learning_rate,
+            learning_rate=(
+                self.config.predictive_context_learning_rate * learning_rate_scale
+            ),
             weight_decay=self.config.synapse_decay,
         )
 
@@ -658,7 +670,11 @@ class BytePredictiveReadout:
         *,
         preservation_probabilities: torch.Tensor | None = None,
         preservation_strength: float = 0.0,
+        learning_rate_scale: float = 1.0,
     ) -> torch.Tensor:
+        learning_rate_scale = float(learning_rate_scale)
+        if not math.isfinite(learning_rate_scale) or learning_rate_scale < 0.0:
+            raise ValueError("learning_rate_scale must be finite and non-negative")
         strength = float(preservation_strength)
         if not math.isfinite(strength) or strength < 0.0:
             raise ValueError("preservation_strength must be finite and non-negative")
@@ -672,6 +688,8 @@ class BytePredictiveReadout:
             if not bool(torch.isfinite(reference).all()):
                 raise ValueError("preservation probabilities must be finite")
             error = error + strength * (reference - predicted.to(self.device))
+        if learning_rate_scale == 0.0:
+            return error
         self.synapses.local_update(
             error,
             context,
@@ -679,10 +697,10 @@ class BytePredictiveReadout:
             # destination.  A future evidence-backed schedule may add a
             # dedicated rate, but the migration itself must not silently tune
             # the training semantics it is measuring.
-            learning_rate=self.config.motor_learning_rate,
+            learning_rate=self.config.motor_learning_rate * learning_rate_scale,
             weight_decay=self.config.synapse_decay,
         )
-        self.bias.add_(self.config.bias_learning_rate * error)
+        self.bias.add_(self.config.bias_learning_rate * learning_rate_scale * error)
         self.bias.sub_(self.bias.mean())
         self.bias.clamp_(-self.config.max_weight_norm, self.config.max_weight_norm)
         return error
