@@ -1,0 +1,632 @@
+{
+  "format": "taiji-m4r4-course-shift-audit-v1",
+  "version": 1,
+  "generated_at_epoch": 1788868936.3080957,
+  "status": "passed",
+  "can_promote": false,
+  "configuration": {
+    "profile": "pilot",
+    "train_bytes": 16384,
+    "eval_bytes": 4096,
+    "seeds": [
+      11,
+      29,
+      47
+    ],
+    "arms": [
+      "readout_only",
+      "context_only",
+      "joint"
+    ],
+    "training_performed": false
+  },
+  "corpus": "E:\\Seed\\data\\simple_zh\\dialogue_extended_clean.jsonl",
+  "reports": [
+    {
+      "seed": 11,
+      "source_checkpoint": "E:\\Seed\\output\\taiji-m2s-seed11-identity-generation-20260905\\last.pt",
+      "source_checkpoint_digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+      "pilot_report": "E:\\Seed\\reports\\taiji_m4r3_update_interference_pilot_seed11_20260908.json",
+      "data_chain": {
+        "phase_c": {
+          "digest": "54abc64676b9e95cef0cd63689cad3b0c840adee94c97019c29a2007b12a33cd",
+          "selected_record_count": 35
+        },
+        "phase_c2": {
+          "digest": "43a7855752d7564df1162c17f1f5ff3d644bdb2c0908c9e866dbee49569170e7",
+          "selected_record_count": 32
+        },
+        "phase_c3": {
+          "digest": "076b898cfe6b88bfe61ff46e7a8601ecba0f192935b0195f42df7aaa0e3a4961",
+          "selected_record_count": 28
+        },
+        "overlap_counts": {
+          "phase_a_seed11__vs__phase_b_seed11": 0,
+          "phase_a_seed29__vs__phase_b_seed29": 0,
+          "phase_a_seed47__vs__phase_b_seed47": 0,
+          "phase_a_seed11__vs__phase_c": 0,
+          "phase_b_seed11__vs__phase_c": 0,
+          "phase_a_seed29__vs__phase_c": 0,
+          "phase_b_seed29__vs__phase_c": 0,
+          "phase_a_seed47__vs__phase_c": 0,
+          "phase_b_seed47__vs__phase_c": 0,
+          "phase_a_seed11__vs__phase_c2": 0,
+          "phase_b_seed11__vs__phase_c2": 0,
+          "phase_a_seed29__vs__phase_c2": 0,
+          "phase_b_seed29__vs__phase_c2": 0,
+          "phase_a_seed47__vs__phase_c2": 0,
+          "phase_b_seed47__vs__phase_c2": 0,
+          "phase_a_seed11__vs__phase_c3": 0,
+          "phase_b_seed11__vs__phase_c3": 0,
+          "phase_a_seed29__vs__phase_c3": 0,
+          "phase_b_seed29__vs__phase_c3": 0,
+          "phase_a_seed47__vs__phase_c3": 0,
+          "phase_b_seed47__vs__phase_c3": 0,
+          "phase_c__vs__phase_c2": 0,
+          "phase_c__vs__phase_c3": 0,
+          "phase_c2__vs__phase_c3": 0
+        }
+      },
+      "phases": [
+        {
+          "phase": "phase_c",
+          "dataset_digest": "54abc64676b9e95cef0cd63689cad3b0c840adee94c97019c29a2007b12a33cd",
+          "partition_seed": 43,
+          "selected_record_count": 35,
+          "train": {
+            "bytes": 16384,
+            "unique_bytes": 131,
+            "unique_ratio": 0.51171875,
+            "entropy_bits": 5.954742312981066,
+            "top_byte_probability": 0.0810546875
+          },
+          "holdout": {
+            "bytes": 4096,
+            "unique_bytes": 116,
+            "unique_ratio": 0.453125,
+            "entropy_bits": 5.864102918170284,
+            "top_byte_probability": 0.091064453125
+          },
+          "train_holdout_js_nats": 0.015421546598335764,
+          "frozen_holdout": {
+            "bpb": 4.2876202610789305,
+            "accuracy": 0.23871125213570907,
+            "observations": 4097,
+            "read_only": true,
+            "owner": "predictive_readout",
+            "scope": "protected"
+          }
+        },
+        {
+          "phase": "phase_c2",
+          "dataset_digest": "43a7855752d7564df1162c17f1f5ff3d644bdb2c0908c9e866dbee49569170e7",
+          "partition_seed": 44,
+          "selected_record_count": 32,
+          "train": {
+            "bytes": 16384,
+            "unique_bytes": 114,
+            "unique_ratio": 0.4453125,
+            "entropy_bits": 5.888470749545393,
+            "top_byte_probability": 0.08050537109375
+          },
+          "holdout": {
+            "bytes": 4096,
+            "unique_bytes": 114,
+            "unique_ratio": 0.4453125,
+            "entropy_bits": 5.896229728660341,
+            "top_byte_probability": 0.072021484375
+          },
+          "train_holdout_js_nats": 0.02118084666787234,
+          "frozen_holdout": {
+            "bpb": 4.094566847815299,
+            "accuracy": 0.25652916768367096,
+            "observations": 4097,
+            "read_only": true,
+            "owner": "predictive_readout",
+            "scope": "protected"
+          },
+          "train_vs_previous_train_js_nats": 0.013593269826799448,
+          "holdout_vs_previous_holdout_js_nats": 0.017074161525273683
+        },
+        {
+          "phase": "phase_c3",
+          "dataset_digest": "076b898cfe6b88bfe61ff46e7a8601ecba0f192935b0195f42df7aaa0e3a4961",
+          "partition_seed": 45,
+          "selected_record_count": 28,
+          "train": {
+            "bytes": 16384,
+            "unique_bytes": 133,
+            "unique_ratio": 0.51953125,
+            "entropy_bits": 5.891102162951838,
+            "top_byte_probability": 0.0792236328125
+          },
+          "holdout": {
+            "bytes": 4096,
+            "unique_bytes": 79,
+            "unique_ratio": 0.30859375,
+            "entropy_bits": 5.726293992689046,
+            "top_byte_probability": 0.07958984375
+          },
+          "train_holdout_js_nats": 0.016101669943515157,
+          "frozen_holdout": {
+            "bpb": 4.061452748257206,
+            "accuracy": 0.25067122284598486,
+            "observations": 4097,
+            "read_only": true,
+            "owner": "predictive_readout",
+            "scope": "protected"
+          },
+          "train_vs_previous_train_js_nats": 0.011374659905299928,
+          "holdout_vs_previous_holdout_js_nats": 0.02259017211551236
+        }
+      ],
+      "owner_updates": {
+        "readout_only": {
+          "active_predictive_readout": {
+            "l2_delta": 7.56777812473139,
+            "relative_l2_delta": 0.23182604328946316,
+            "max_abs_delta": 0.5394368767738342,
+            "changed_scalars": 12593,
+            "total_scalars": 12593
+          },
+          "predictive_context": {
+            "l2_delta": 0.0,
+            "relative_l2_delta": 0.0,
+            "max_abs_delta": 0.0,
+            "changed_scalars": 0,
+            "total_scalars": 576
+          }
+        },
+        "context_only": {
+          "predictive_readout": {
+            "l2_delta": 0.0,
+            "relative_l2_delta": 0.0,
+            "max_abs_delta": 0.0,
+            "changed_scalars": 0,
+            "total_scalars": 12593
+          },
+          "predictive_context": {
+            "l2_delta": 5.3977474318132455,
+            "relative_l2_delta": 0.31939000292351394,
+            "max_abs_delta": 0.9151594638824463,
+            "changed_scalars": 576,
+            "total_scalars": 576
+          }
+        },
+        "joint": {
+          "predictive_readout": {
+            "l2_delta": 7.419495259286351,
+            "relative_l2_delta": 0.22728364928462208,
+            "max_abs_delta": 0.5383131504058838,
+            "changed_scalars": 12593,
+            "total_scalars": 12593
+          },
+          "predictive_context": {
+            "l2_delta": 3.7852073957296613,
+            "relative_l2_delta": 0.22397442941899234,
+            "max_abs_delta": 0.5004391670227051,
+            "changed_scalars": 576,
+            "total_scalars": 576
+          }
+        }
+      }
+    },
+    {
+      "seed": 29,
+      "source_checkpoint": "E:\\Seed\\output\\taiji-m2u-seed29-identity-generation-20260905\\last.pt",
+      "source_checkpoint_digest": "9f49bbd4f241d5c27487315a3a3cd67d8d406ac3c67357e931f040cc9d3e50c6",
+      "pilot_report": "E:\\Seed\\reports\\taiji_m4r3_update_interference_pilot_seed29_20260908.json",
+      "data_chain": {
+        "phase_c": {
+          "digest": "54abc64676b9e95cef0cd63689cad3b0c840adee94c97019c29a2007b12a33cd",
+          "selected_record_count": 35
+        },
+        "phase_c2": {
+          "digest": "43a7855752d7564df1162c17f1f5ff3d644bdb2c0908c9e866dbee49569170e7",
+          "selected_record_count": 32
+        },
+        "phase_c3": {
+          "digest": "076b898cfe6b88bfe61ff46e7a8601ecba0f192935b0195f42df7aaa0e3a4961",
+          "selected_record_count": 28
+        },
+        "overlap_counts": {
+          "phase_a_seed11__vs__phase_b_seed11": 0,
+          "phase_a_seed29__vs__phase_b_seed29": 0,
+          "phase_a_seed47__vs__phase_b_seed47": 0,
+          "phase_a_seed11__vs__phase_c": 0,
+          "phase_b_seed11__vs__phase_c": 0,
+          "phase_a_seed29__vs__phase_c": 0,
+          "phase_b_seed29__vs__phase_c": 0,
+          "phase_a_seed47__vs__phase_c": 0,
+          "phase_b_seed47__vs__phase_c": 0,
+          "phase_a_seed11__vs__phase_c2": 0,
+          "phase_b_seed11__vs__phase_c2": 0,
+          "phase_a_seed29__vs__phase_c2": 0,
+          "phase_b_seed29__vs__phase_c2": 0,
+          "phase_a_seed47__vs__phase_c2": 0,
+          "phase_b_seed47__vs__phase_c2": 0,
+          "phase_a_seed11__vs__phase_c3": 0,
+          "phase_b_seed11__vs__phase_c3": 0,
+          "phase_a_seed29__vs__phase_c3": 0,
+          "phase_b_seed29__vs__phase_c3": 0,
+          "phase_a_seed47__vs__phase_c3": 0,
+          "phase_b_seed47__vs__phase_c3": 0,
+          "phase_c__vs__phase_c2": 0,
+          "phase_c__vs__phase_c3": 0,
+          "phase_c2__vs__phase_c3": 0
+        }
+      },
+      "phases": [
+        {
+          "phase": "phase_c",
+          "dataset_digest": "54abc64676b9e95cef0cd63689cad3b0c840adee94c97019c29a2007b12a33cd",
+          "partition_seed": 43,
+          "selected_record_count": 35,
+          "train": {
+            "bytes": 16384,
+            "unique_bytes": 131,
+            "unique_ratio": 0.51171875,
+            "entropy_bits": 5.954742312981066,
+            "top_byte_probability": 0.0810546875
+          },
+          "holdout": {
+            "bytes": 4096,
+            "unique_bytes": 116,
+            "unique_ratio": 0.453125,
+            "entropy_bits": 5.864102918170284,
+            "top_byte_probability": 0.091064453125
+          },
+          "train_holdout_js_nats": 0.015421546598335764,
+          "frozen_holdout": {
+            "bpb": 4.283289837604444,
+            "accuracy": 0.23065657798389066,
+            "observations": 4097,
+            "read_only": true,
+            "owner": "predictive_readout",
+            "scope": "protected"
+          }
+        },
+        {
+          "phase": "phase_c2",
+          "dataset_digest": "43a7855752d7564df1162c17f1f5ff3d644bdb2c0908c9e866dbee49569170e7",
+          "partition_seed": 44,
+          "selected_record_count": 32,
+          "train": {
+            "bytes": 16384,
+            "unique_bytes": 114,
+            "unique_ratio": 0.4453125,
+            "entropy_bits": 5.888470749545393,
+            "top_byte_probability": 0.08050537109375
+          },
+          "holdout": {
+            "bytes": 4096,
+            "unique_bytes": 114,
+            "unique_ratio": 0.4453125,
+            "entropy_bits": 5.896229728660341,
+            "top_byte_probability": 0.072021484375
+          },
+          "train_holdout_js_nats": 0.02118084666787234,
+          "frozen_holdout": {
+            "bpb": 4.166786714825441,
+            "accuracy": 0.24310471076397364,
+            "observations": 4097,
+            "read_only": true,
+            "owner": "predictive_readout",
+            "scope": "protected"
+          },
+          "train_vs_previous_train_js_nats": 0.013593269826799448,
+          "holdout_vs_previous_holdout_js_nats": 0.017074161525273683
+        },
+        {
+          "phase": "phase_c3",
+          "dataset_digest": "076b898cfe6b88bfe61ff46e7a8601ecba0f192935b0195f42df7aaa0e3a4961",
+          "partition_seed": 45,
+          "selected_record_count": 28,
+          "train": {
+            "bytes": 16384,
+            "unique_bytes": 133,
+            "unique_ratio": 0.51953125,
+            "entropy_bits": 5.891102162951838,
+            "top_byte_probability": 0.0792236328125
+          },
+          "holdout": {
+            "bytes": 4096,
+            "unique_bytes": 79,
+            "unique_ratio": 0.30859375,
+            "entropy_bits": 5.726293992689046,
+            "top_byte_probability": 0.07958984375
+          },
+          "train_holdout_js_nats": 0.016101669943515157,
+          "frozen_holdout": {
+            "bpb": 4.252246541465422,
+            "accuracy": 0.22089333658774712,
+            "observations": 4097,
+            "read_only": true,
+            "owner": "predictive_readout",
+            "scope": "protected"
+          },
+          "train_vs_previous_train_js_nats": 0.011374659905299928,
+          "holdout_vs_previous_holdout_js_nats": 0.02259017211551236
+        }
+      ],
+      "owner_updates": {
+        "readout_only": {
+          "active_predictive_readout": {
+            "l2_delta": 7.867684432911406,
+            "relative_l2_delta": 0.23677098503476315,
+            "max_abs_delta": 0.5586840510368347,
+            "changed_scalars": 12593,
+            "total_scalars": 12593
+          },
+          "predictive_context": {
+            "l2_delta": 0.0,
+            "relative_l2_delta": 0.0,
+            "max_abs_delta": 0.0,
+            "changed_scalars": 0,
+            "total_scalars": 576
+          }
+        },
+        "context_only": {
+          "predictive_readout": {
+            "l2_delta": 0.0,
+            "relative_l2_delta": 0.0,
+            "max_abs_delta": 0.0,
+            "changed_scalars": 0,
+            "total_scalars": 12593
+          },
+          "predictive_context": {
+            "l2_delta": 5.1171025159927845,
+            "relative_l2_delta": 0.30436304065043285,
+            "max_abs_delta": 0.8618706464767456,
+            "changed_scalars": 576,
+            "total_scalars": 576
+          }
+        },
+        "joint": {
+          "predictive_readout": {
+            "l2_delta": 7.7701374812832364,
+            "relative_l2_delta": 0.23383539604144693,
+            "max_abs_delta": 0.5686166286468506,
+            "changed_scalars": 12593,
+            "total_scalars": 12593
+          },
+          "predictive_context": {
+            "l2_delta": 3.8238965406268473,
+            "relative_l2_delta": 0.2274437095212379,
+            "max_abs_delta": 0.8671666383743286,
+            "changed_scalars": 576,
+            "total_scalars": 576
+          }
+        }
+      }
+    },
+    {
+      "seed": 47,
+      "source_checkpoint": "E:\\Seed\\output\\taiji-m2u-seed47-identity-generation-20260905\\last.pt",
+      "source_checkpoint_digest": "9e381dbdfe9ca837f05f55e7ccc28192536b30a703dffefda519b0b235a0d7d8",
+      "pilot_report": "E:\\Seed\\reports\\taiji_m4r3_update_interference_pilot_seed47_20260908.json",
+      "data_chain": {
+        "phase_c": {
+          "digest": "54abc64676b9e95cef0cd63689cad3b0c840adee94c97019c29a2007b12a33cd",
+          "selected_record_count": 35
+        },
+        "phase_c2": {
+          "digest": "43a7855752d7564df1162c17f1f5ff3d644bdb2c0908c9e866dbee49569170e7",
+          "selected_record_count": 32
+        },
+        "phase_c3": {
+          "digest": "076b898cfe6b88bfe61ff46e7a8601ecba0f192935b0195f42df7aaa0e3a4961",
+          "selected_record_count": 28
+        },
+        "overlap_counts": {
+          "phase_a_seed11__vs__phase_b_seed11": 0,
+          "phase_a_seed29__vs__phase_b_seed29": 0,
+          "phase_a_seed47__vs__phase_b_seed47": 0,
+          "phase_a_seed11__vs__phase_c": 0,
+          "phase_b_seed11__vs__phase_c": 0,
+          "phase_a_seed29__vs__phase_c": 0,
+          "phase_b_seed29__vs__phase_c": 0,
+          "phase_a_seed47__vs__phase_c": 0,
+          "phase_b_seed47__vs__phase_c": 0,
+          "phase_a_seed11__vs__phase_c2": 0,
+          "phase_b_seed11__vs__phase_c2": 0,
+          "phase_a_seed29__vs__phase_c2": 0,
+          "phase_b_seed29__vs__phase_c2": 0,
+          "phase_a_seed47__vs__phase_c2": 0,
+          "phase_b_seed47__vs__phase_c2": 0,
+          "phase_a_seed11__vs__phase_c3": 0,
+          "phase_b_seed11__vs__phase_c3": 0,
+          "phase_a_seed29__vs__phase_c3": 0,
+          "phase_b_seed29__vs__phase_c3": 0,
+          "phase_a_seed47__vs__phase_c3": 0,
+          "phase_b_seed47__vs__phase_c3": 0,
+          "phase_c__vs__phase_c2": 0,
+          "phase_c__vs__phase_c3": 0,
+          "phase_c2__vs__phase_c3": 0
+        }
+      },
+      "phases": [
+        {
+          "phase": "phase_c",
+          "dataset_digest": "54abc64676b9e95cef0cd63689cad3b0c840adee94c97019c29a2007b12a33cd",
+          "partition_seed": 43,
+          "selected_record_count": 35,
+          "train": {
+            "bytes": 16384,
+            "unique_bytes": 131,
+            "unique_ratio": 0.51171875,
+            "entropy_bits": 5.954742312981066,
+            "top_byte_probability": 0.0810546875
+          },
+          "holdout": {
+            "bytes": 4096,
+            "unique_bytes": 116,
+            "unique_ratio": 0.453125,
+            "entropy_bits": 5.864102918170284,
+            "top_byte_probability": 0.091064453125
+          },
+          "train_holdout_js_nats": 0.015421546598335764,
+          "frozen_holdout": {
+            "bpb": 4.31297682123028,
+            "accuracy": 0.22626311935562607,
+            "observations": 4097,
+            "read_only": true,
+            "owner": "predictive_readout",
+            "scope": "protected"
+          }
+        },
+        {
+          "phase": "phase_c2",
+          "dataset_digest": "43a7855752d7564df1162c17f1f5ff3d644bdb2c0908c9e866dbee49569170e7",
+          "partition_seed": 44,
+          "selected_record_count": 32,
+          "train": {
+            "bytes": 16384,
+            "unique_bytes": 114,
+            "unique_ratio": 0.4453125,
+            "entropy_bits": 5.888470749545393,
+            "top_byte_probability": 0.08050537109375
+          },
+          "holdout": {
+            "bytes": 4096,
+            "unique_bytes": 114,
+            "unique_ratio": 0.4453125,
+            "entropy_bits": 5.896229728660341,
+            "top_byte_probability": 0.072021484375
+          },
+          "train_holdout_js_nats": 0.02118084666787234,
+          "frozen_holdout": {
+            "bpb": 4.263066072544683,
+            "accuracy": 0.23675860385648034,
+            "observations": 4097,
+            "read_only": true,
+            "owner": "predictive_readout",
+            "scope": "protected"
+          },
+          "train_vs_previous_train_js_nats": 0.013593269826799448,
+          "holdout_vs_previous_holdout_js_nats": 0.017074161525273683
+        },
+        {
+          "phase": "phase_c3",
+          "dataset_digest": "076b898cfe6b88bfe61ff46e7a8601ecba0f192935b0195f42df7aaa0e3a4961",
+          "partition_seed": 45,
+          "selected_record_count": 28,
+          "train": {
+            "bytes": 16384,
+            "unique_bytes": 133,
+            "unique_ratio": 0.51953125,
+            "entropy_bits": 5.891102162951838,
+            "top_byte_probability": 0.0792236328125
+          },
+          "holdout": {
+            "bytes": 4096,
+            "unique_bytes": 79,
+            "unique_ratio": 0.30859375,
+            "entropy_bits": 5.726293992689046,
+            "top_byte_probability": 0.07958984375
+          },
+          "train_holdout_js_nats": 0.016101669943515157,
+          "frozen_holdout": {
+            "bpb": 4.2581778660321765,
+            "accuracy": 0.22992433487917988,
+            "observations": 4097,
+            "read_only": true,
+            "owner": "predictive_readout",
+            "scope": "protected"
+          },
+          "train_vs_previous_train_js_nats": 0.011374659905299928,
+          "holdout_vs_previous_holdout_js_nats": 0.02259017211551236
+        }
+      ],
+      "owner_updates": {
+        "readout_only": {
+          "active_predictive_readout": {
+            "l2_delta": 8.041592569619255,
+            "relative_l2_delta": 0.23565504145240843,
+            "max_abs_delta": 0.5541039705276489,
+            "changed_scalars": 12593,
+            "total_scalars": 12593
+          },
+          "predictive_context": {
+            "l2_delta": 0.0,
+            "relative_l2_delta": 0.0,
+            "max_abs_delta": 0.0,
+            "changed_scalars": 0,
+            "total_scalars": 576
+          }
+        },
+        "context_only": {
+          "predictive_readout": {
+            "l2_delta": 0.0,
+            "relative_l2_delta": 0.0,
+            "max_abs_delta": 0.0,
+            "changed_scalars": 0,
+            "total_scalars": 12593
+          },
+          "predictive_context": {
+            "l2_delta": 5.444276642754462,
+            "relative_l2_delta": 0.32081678343957665,
+            "max_abs_delta": 1.002524733543396,
+            "changed_scalars": 576,
+            "total_scalars": 576
+          }
+        },
+        "joint": {
+          "predictive_readout": {
+            "l2_delta": 7.924709106545827,
+            "relative_l2_delta": 0.2322298272181372,
+            "max_abs_delta": 0.5637015104293823,
+            "changed_scalars": 12593,
+            "total_scalars": 12593
+          },
+          "predictive_context": {
+            "l2_delta": 3.6819034067773124,
+            "relative_l2_delta": 0.2169648027474032,
+            "max_abs_delta": 0.6184777617454529,
+            "changed_scalars": 576,
+            "total_scalars": 576
+          }
+        }
+      }
+    }
+  ],
+  "checks": {
+    "seed11_checkpoint_seed": true,
+    "seed11_pilot_seed": true,
+    "seed11_readout_only_source_digest": true,
+    "seed11_readout_only_score_read_only": true,
+    "seed11_context_only_source_digest": true,
+    "seed11_context_only_score_read_only": true,
+    "seed11_joint_source_digest": true,
+    "seed11_joint_score_read_only": true,
+    "seed11_record_disjoint": true,
+    "seed11_frozen_scores_read_only": true,
+    "seed29_checkpoint_seed": true,
+    "seed29_pilot_seed": true,
+    "seed29_readout_only_source_digest": true,
+    "seed29_readout_only_score_read_only": true,
+    "seed29_context_only_source_digest": true,
+    "seed29_context_only_score_read_only": true,
+    "seed29_joint_source_digest": true,
+    "seed29_joint_score_read_only": true,
+    "seed29_record_disjoint": true,
+    "seed29_frozen_scores_read_only": true,
+    "seed47_checkpoint_seed": true,
+    "seed47_pilot_seed": true,
+    "seed47_readout_only_source_digest": true,
+    "seed47_readout_only_score_read_only": true,
+    "seed47_context_only_source_digest": true,
+    "seed47_context_only_score_read_only": true,
+    "seed47_joint_source_digest": true,
+    "seed47_joint_score_read_only": true,
+    "seed47_record_disjoint": true,
+    "seed47_frozen_scores_read_only": true
+  },
+  "technical_gate_all_passed": true,
+  "diagnosis": {
+    "interpretation": "course difficulty and owner update scale are now measured; no architecture or formal training decision is made by this audit"
+  },
+  "resources": {
+    "elapsed_seconds": 114.16271699999925
+  }
+}
