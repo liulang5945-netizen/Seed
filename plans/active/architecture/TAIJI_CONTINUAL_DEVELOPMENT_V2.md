@@ -210,3 +210,6 @@ R4 已完成 pressure、candidate、shadow materialization、candidate-only caus
 随后发现多步 grounding/recovery 评估的负向分支仍假设“不存在路径会进入执行层再失败”，而 live semantic grounding 已正确 fail-closed 为 `workspace_target_not_found`，导致该分支没有 checkpoint。修复保持生产安全边界不变，只在受控负向探针中使用显式 `parameter_bindings` 注入执行失败；成功分支仍验证 Taiji-owned semantic grounding。memory/objective/naming/multistep 相关分组现为 `16 passed`，评估脚本 Ruff、编译和 diff 检查通过。
 
 当前唯一出口仍是：继续在仓库可写 basetemp 下刷新完整 native 失败账本，按首个真实失败处理；Windows pytest 临时目录 `WinError 5` 仅作为环境清理噪声记录，不能写成代码通过。R4 shadow/默认 parent 不变，R5 learned router、Skill/MCP/provider、客户端与 CUDA 继续冻结。
+完整 native 回归首个真实失败现已归因并修复：M3.R5 评估器使用 `tempfile.TemporaryDirectory` 创建 0700 隔离根，在本机 Windows ACL 下导致 workspace 复制前失败。实现改为在 `SEED_M3R5_TMPDIR` 或系统临时父目录下创建普通唯一目录并显式清理；测试将父目录绑定到可写 fixture，M3.R1～R5 共 `8 passed`。该修复只恢复评估器的可复现性，不改变 Workbench 审批、隔离执行、撤销或真实 workspace 边界。
+
+当前唯一出口：用仓库可写 fixture 重新跑完整 native 账本，继续处理首个真实失败；R4 shadow/默认 parent、R5 learned router、Skill/MCP/provider、客户端与 CUDA 仍冻结。

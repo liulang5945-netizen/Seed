@@ -258,3 +258,6 @@ S/G 的 BPB 只证明低层预测变化，K 是 A8 的主要能力证据。正�
 - [M4 fixed-capacity 证据复盘](../../reference/M4_FIXED_CAPACITY_EVIDENCE_REVIEW_2026_09_09.md)：R0～R12 数值、资产及复审后的解释边界。
 - [研究审视](../../reference/TAIJI_RESEARCH_REVIEW_2026_09_06.md)：M0～M3 的事实、失效结论和复现。
 - [实现事实](../../reference/IMPLEMENTATION_STATUS_2026_08.md)：代码能力边界；更新晚于该文档的事实以本计划和版本化报告为准。
+完整 native 回归在前 296 项均通过后，首个真实失败为 `test_m3r5_isolated_approved_execution_gate`：评估器内部 `tempfile.TemporaryDirectory` 在本机创建 0700 临时根，导致隔离 workspace 尚未复制就被 Windows ACL 拒绝；不是 Workbench 执行或审批 Gate 失败。M3.R5 现改为在 `SEED_M3R5_TMPDIR` 或系统临时父目录下用普通目录创建唯一隔离根并显式清理，测试把该父目录绑定到可写 fixture；隔离执行、审批、撤销和清理语义不变。M3.R1～R5 相邻回归为 `8 passed`，相关脚本 Ruff/编译检查通过。
+
+**当前唯一下一步**：在同一仓库可写 fixture 机制下从头重跑完整 `tests/taiji_native`，继续按首个真实失败刷新账本；不修改 R4 shadow、默认 parent 或任何执行安全边界。
