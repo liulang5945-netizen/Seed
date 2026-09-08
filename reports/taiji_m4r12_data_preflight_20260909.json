@@ -1,0 +1,43 @@
+{
+  "format": "taiji-m4r12-data-preflight-v1",
+  "version": 1,
+  "generated_at_epoch": 1788884866,
+  "status": "passed",
+  "can_promote": false,
+  "corpus": "data/ultradata/derived/ultradata_sft_nothink_simplezh.jsonl",
+  "manifest": "reports/taiji_m4r12_ultradata_conversion_manifest_20260909.json",
+  "manifest_output_sha256": "66d67d5c1ce66ce909f215536e050ec1d1fa43e5052fea4df646129cd84dbe26",
+  "computed_output_sha256": "66d67d5c1ce66ce909f215536e050ec1d1fa43e5052fea4df646129cd84dbe26",
+  "records": {
+    "total": 20000,
+    "well_formed": 20000,
+    "malformed": 0,
+    "qa_prefix": 20000
+  },
+  "single_dataset_probe": {
+    "train_bytes": 1048576,
+    "holdout_bytes": 131072,
+    "retention_bytes": 131072,
+    "selected_records": 891
+  },
+  "phase_chain_probe": {
+    "phase_c_selected_records": 874,
+    "phase_c2_selected_records": 873,
+    "phase_c3_selected_records": 890,
+    "phase_c_train_bytes": 1048576,
+    "phase_c_holdout_bytes": 131072
+  },
+  "checks": {
+    "manifest_digest_matches_output": true,
+    "record_count_at_least_1000": true,
+    "all_records_well_formed": true,
+    "qa_prefix_style_present": true,
+    "foundation_budget_filled": true,
+    "phase_chain_record_disjoint": true,
+    "phase_chain_budgets_filled": true
+  },
+  "technical_gate_all_passed": true,
+  "resources": {
+    "total_elapsed_seconds": 0.8013489000732079
+  }
+}

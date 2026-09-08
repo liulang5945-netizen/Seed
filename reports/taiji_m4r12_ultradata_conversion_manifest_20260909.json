@@ -1,0 +1,27 @@
+{
+  "format": "taiji-m4r12-ultradata-conversion-manifest-v1",
+  "version": 1,
+  "generated_at_epoch": 1788884811,
+  "source_root": "E:/Seed/data/ultradata/SFT-2605/data/no_think",
+  "domains": [
+    "Chinese-general",
+    "IF",
+    "Knowledge"
+  ],
+  "quotas": {
+    "Chinese-general": 6000,
+    "IF": 6000,
+    "Knowledge": 8000
+  },
+  "records_per_domain": {
+    "Chinese-general": 6000,
+    "IF": 6000,
+    "Knowledge": 8000
+  },
+  "total_records": 20000,
+  "max_record_bytes": 16384,
+  "conversion_style": "问：{user}\\n答：{assistant} (simple_zh prefix style)",
+  "output": "E:/Seed/data/ultradata/derived/ultradata_sft_nothink_simplezh.jsonl",
+  "output_sha256": "66d67d5c1ce66ce909f215536e050ec1d1fa43e5052fea4df646129cd84dbe26",
+  "elapsed_seconds": 0.38372939999680966
+}
