@@ -14,9 +14,12 @@ import os
 import shutil
 import sys
 import tempfile
+from collections.abc import Iterator
+from contextlib import contextmanager
 from dataclasses import replace
 from pathlib import Path
 from typing import Any
+from uuid import uuid4
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
@@ -74,14 +77,27 @@ def _outcome_payload(outcome: Any, environment: WorkbenchEnvironment) -> dict[st
     }
 
 
+@contextmanager
+def _isolated_temp_root() -> Iterator[Path]:
+    """Create a writable process-owned root without Windows 0700 ACLs."""
+    temp_parent = Path(
+        os.environ.get("SEED_M3R5_TMPDIR") or tempfile.gettempdir()
+    )
+    temp_parent.mkdir(parents=True, exist_ok=True)
+    temp_root = temp_parent / f"seed-m3r5-{uuid4().hex}"
+    temp_root.mkdir()
+    try:
+        yield temp_root
+    finally:
+        shutil.rmtree(temp_root)
+
+
 def run_gate(output_path: Path | None = None) -> dict[str, Any]:
     source_before = _fixture_digest(SOURCE_FIXTURE)
     temp_root_path: Path | None = None
     cleaned = False
-    temp_parent = os.environ.get("SEED_M3R5_TMPDIR") or None
-    temp_kwargs = {} if temp_parent is None else {"dir": temp_parent}
-    with tempfile.TemporaryDirectory(prefix="seed-m3r5-", **temp_kwargs) as raw_temp_root:
-        temp_root_path = Path(raw_temp_root)
+    with _isolated_temp_root() as isolated_root:
+        temp_root_path = isolated_root
         workspace_root = temp_root_path / "workspace"
         shutil.copytree(SOURCE_FIXTURE, workspace_root)
         environment = _environment(workspace_root)
