@@ -4,7 +4,7 @@
 
 M4.R0～R12 已完成并归档，但 2026-09-09 的代码/报告复审发现：该系列主要测量 F1 byte-prediction 的固定容量 continuation，R2 的固定等权读出槽、R7/R10 不一致的 owner 图、未进入普通主路径的 adaptive network，以及 exact-zero Gate 都不足以代表 CR-4/A8 的继承式结构成长。历史报告保留，过度外推已撤销。
 
-当前唯一下一步是 **M4.V2.R0：建立连续成长量尺合同并只读重审 R7/R10/R12**。它不改模型、不训练；先消除 absolute/delta、父基线、owner、跨域 BPB 和非劣 Gate 的语义错误，再进入 checkpoint-compatible fast/slow 突触迁移。Skill/MCP、客户端热插拔、provider、视觉和 CUDA 均保留在统一计划的解冻顺序中。
+M4.V2.R0 已完成：连续成长量尺合同已版本化、内容寻址，R7/R10/R12 已生成只读语义审计；旧报告未改写，且 `can_promote=false`。当前唯一下一步是 **M4.V2.R1：checkpoint-compatible fast/slow 突触零变化迁移**，先证明 `slow=old/fast=0` 时输出、score、owner、参数计数和 fresh restore 不变，再进入真实学习。Skill/MCP、客户端热插拔、provider、视觉和 CUDA 均保留在统一计划的解冻顺序中。
 
 ## 权威文档
 
