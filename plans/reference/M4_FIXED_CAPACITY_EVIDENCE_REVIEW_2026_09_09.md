@@ -1,6 +1,8 @@
 # M4 固定容量连续成长证据链复盘（R0～R12）
 
-> 归档日期：2026-09-09。范围：M4.R0～M4.R12 十三轮实验的全部能力结论、因果判定与开放假设。本文是证据解释与决策依据，不含执行顺序；执行状态以 [03_CURRENT_EXECUTION.md](../active/roadmap/03_CURRENT_EXECUTION.md) §4 为唯一来源。所有数值均来自 `reports/` 下的版本化 JSON 报告，原始文件未改动。
+> 归档日期：2026-09-09；设计复审：2026-09-09。范围：M4.R0～M4.R12 十三轮实验的原始结果及复审后的有效解释边界。本文不含执行顺序；执行状态以 [03_CURRENT_EXECUTION.md](../active/roadmap/03_CURRENT_EXECUTION.md) 为唯一来源，替代设计见 [Taiji 继承式成长架构 v2](../active/architecture/TAIJI_CONTINUAL_DEVELOPMENT_V2.md)。所有数值均来自 `reports/` 下的版本化 JSON 报告，原始文件未改动。
+
+> **复审更正：** R0～R12 可靠地关闭了若干 F1 byte-prediction 候选，但没有证明 Taiji 的结构成长无效，也没有穷尽持续学习规则。原归档中的“更新规则轴已穷尽”“分布切换主导遗忘”“cycle3 是固有难度”超出了实验设计可支持的范围；下文 §4、§8 已按代码、report schema 和对照臂重新限定。决策链图保留当时的推进逻辑，不再作为当前架构结论。
 
 ## 1. 主线问题
 
@@ -22,8 +24,8 @@ R0  固定容量三周期 cascade ──技术链闭合，能力不晋级（C″
  │                   └─ R8 失败归因──非 owner 幅度 → R9 课程审计──非课程 outlier
  │                       └─ R10 consolidation × scale 0.5 单规则 audit ──cycle3 3/3 恶化
  │                           └─ R11 只读归因──保守项机制证实但“参数稳定性换不来边界泛化”
- └─ R12 数据源替换（UltraData）──A 跨语料遗忘 +1.62 BPB、语料内 cycle3 +0.249（均 3/3）
-     → 分布切换是数量级最大的遗忘源，替换源否决
+ └─ R12 数据源替换（UltraData）──A 指标比 simple_zh continuation 臂差 +1.62 BPB、语料内 cycle3 +0.249（均 3/3）
+     → abrupt replacement 风险很高，数据密度假设被分布变化混淆，替换源否决
 ```
 
 ## 3. 各轮结论表
@@ -32,35 +34,37 @@ R0  固定容量三周期 cascade ──技术链闭合，能力不晋级（C″
 |---|---|---|---|---|
 | R0 | 固定容量 readout cascade 是否可重复成长 | C″ gain `-0.01078`（1/3 正）；cycle2/3 退化 `3/3` | 技术成功、能力失败 | `taiji_m4r0_cascade3_aggregate_20260908.json` |
 | R1 | 巩固规则（`consolidation_strength=0.5`）能否修复保持 | C″ `+0.0565` 3/3 正；cycle2 `+0.0132` 3/3、cycle3 `+0.0051` 3/3 退化 | 否决 | `taiji_m4r1_consolidation_aggregate_20260908.json` |
-| R2 | 旧能力退化能否被增量容量解除 | A/B 旧能力不退化但 C″ `-0.0028/-0.0197`；`capacity_pressure_supported=false` | 不支持扩容 | `taiji_m4r2_capacity_diagnosis_canary_seed11_20260908.json` |
+| R2 | 零读出槽 + 固定等权混合能否解除退化 | A/B 旧 C 指标未退化但 C″ `-0.0028/-0.0197`；`capacity_pressure_supported=false` | 此容量实现无收益；不能否定表征扩宽 | `taiji_m4r2_capacity_diagnosis_canary_seed11_20260908.json` |
 | R3 | 退化来自 readout、context 还是 joint 更新 | joint smoke `+0.0509` 3/3 正；pilot `+0.0171` 2/3 正且 cycle2 2/3 | owner 归因链可信，无 formalization | `taiji_m4r3_update_interference_pilot_aggregate_20260908.json` |
 | R4 | 课程分布与更新幅度哪个是优先变量 | 相邻 phase JS≈0.01；readout relative L2≈0.23 | 优先变量是 update scale | `taiji_m4r4_course_shift_audit_20260908.json` |
 | R5 | 半速更新（scale 0.5）能否修复 | pilot C″ `+0.1157` 3/3 正；cycle2 1/3 退化 | 改善但不过严格 Gate | `taiji_m4r5_update_scale_pilot_aggregate_20260908.json` |
 | R6 | cycle 级退化定位 | scale 0.5 仅 seed47 cycle2 `+0.0037`；非 owner outlier | 允许一次 formal | `taiji_m4r6_cycle_retention_attribution_20260908.json` |
 | R7 | 大预算 formal | C″ `+0.1528` 3/3 正；cycle3 退化 2/3（seed11/47） | 否决 | `taiji_m4r7_formal_aggregate_20260908.json` |
 | R8 | cycle3 失败=更新幅度？ | 失败组 relative L2 ≤ 通过组 1.10× | 非 owner magnitude outlier | `taiji_m4r8_cycle3_failure_attribution_20260908.json` |
-| R9 | C3 课程边界异常？ | C3/C2 最大 boundary JS 1.19×，无共享异常分布 | 非课程 outlier | `taiji_m4r9_foundation_course_audit_20260908.json` |
-| R10 | consolidation × scale 0.5 单规则 audit | candidate cycle3 3/3 恶化（seed11 由过转不过） | 否决，固定规则撤回 | `taiji_m4r12_data_source_aggregate_20260909.json` 同目录系列 |
-| R11 | consolidation 为何加重 cycle3 | candidate cycle3 位移更小 3/3（0.143~0.151 vs 0.162~0.173）但 delta 变差 3/3 | **参数稳定性换不来边界泛化**；巩固方向冻结 | `taiji_m4r11_cycle3_interaction_attribution_20260909.json` |
-| R12 | 数据密度（换语料）能否改善 | 语料内 cycle3 `+0.2489` 3/3；A 跨语料遗忘 `+1.62` 3/3 | 替换源否决；**分布切换主导** | `taiji_m4r12_data_source_aggregate_20260909.json` |
+| R9 | C3 的 byte 边际分布是否异常 | C3/C2 最大 boundary JS 1.19×，无共享 byte-level 异常 | 未见 byte-marginal outlier；未排除序列/语义差异 | `taiji_m4r9_foundation_course_audit_20260908.json` |
+| R10 | readout-only 路径上的 consolidation × scale 0.5 | candidate C cycle3 2/3 退化且比 baseline 变差 3/3 | 当前静态 preservation 规则否决 | `taiji_m4r10_rule_audit_formal_aggregate_20260908.json` |
+| R11 | R10 preservation 为何加重 C cycle3 | candidate 位移更小 3/3（0.143~0.151 vs 0.162~0.173）但 delta 变差 3/3 | 在该 readout-only 路径上，限制位移未改善 Gate | `taiji_m4r11_cycle3_interaction_attribution_20260909.json` |
+| R12 | abrupt UltraData replacement 能否改善 | 语料内 C cycle3 `+0.2489` 3/3；A 指标比 simple_zh 臂差 `+1.62` | 替换源否决；数据密度假设被分布变化混淆 | `taiji_m4r12_data_source_aggregate_20260909.json` |
 
 注：R10 报告名为 `taiji_m4r10_rule_audit_formal_aggregate_20260908.json`（同目录含三 seed formal 与 smoke）。
 
-## 4. 已确认的因果结论
+## 4. 复审后的因果结论与边界
 
-**C1（技术底座闭合）**：owner 隔离、原子 checkpoint、fresh-process 恢复、record-disjoint 数据链、read-only scoring 在全部十三轮均通过 Gate。M4 的失败全部是能力失败，没有任何一轮是测量或保存失败。
+**C1（技术底座闭合，保留）**：owner 隔离、原子 checkpoint、fresh-process 恢复、record-disjoint 数据链、read-only scoring 在全部十三轮均通过各自技术 Gate。报告可以用于分析其实际训练路径；这不等于不同轮次拥有相同 owner 图或相同能力 Gate。
 
-**C2（更新规则轴已穷尽）**：巩固强度（R1/R10）、容量槽（R2）、owner 组合（R3）、更新尺度（R5/R7）逐一否决。R11 给出机制级解释：保守项把 active readout 拉向 protected（位移更小、距离更近，3/3 可观测），但 cycle3 边界处 holdout 需要**参数移动去适应分布变化**——限制移动只会更差。门控保守项候选即使完美实现，上限也只是 baseline（仍 1/3 退化），因此该方向整体冻结，候选闸门 2 关闭。
+**C2（窄规则结论）**：已测试的全局 update scale 与“在当前输入上逼近 protected logits”的固定 preservation 规则不满足原 Gate；后者在 R10 的 readout-only 路径上确实减少参数位移但没有改善 C cycle3。实验没有实现 fast/slow synaptic state、importance、真实经历 replay、learned router 或成熟结构扩宽，因此不能称“更新规则轴已穷尽”。
 
-**C3（分布主导，数量级证据）**：R12 的单变量语料切换显示——语料内 cycle3 退化 `+0.249 BPB`（simple_zh 参考臂 `−0.005`）、A 跨语料灾难遗忘 `+1.62 BPB`，比 R5～R10 全部更新规则效应（±0.05 内）大 **5～50 倍**。遗忘的主导变量是训练分布与旧知识的分布差异，不是任何已实现的更新/巩固机制。
+**C3（abrupt replacement 结论）**：R12 的 UltraData 臂相对 simple_zh continuation 臂，C cycle3 差约 `+0.254 BPB`，A 绝对 BPB 的臂间差为 `+1.62`。报告没有记录同一臂训练前的 A parent baseline，因此 `+1.62` 不能直接命名为“相对父代遗忘”；它证明的是突然全量换语料在当前 kernel 上风险远高于同源 continuation。数据密度、文体、领域和序列结构同时变化，不能由该实验分离。
 
-**C4（课程结构属性）**：R9 证明 C3 phase 本身无分布异常、R8/R11 证明 cycle3 失败对更新规则不敏感、R12 证明分布切换使遗忘放大——三条证据合起来：**在同源连续课程上，第三周期的旧能力保持是当前架构+课程的固有难度属性**，不是可以通过单一规则修复的缺陷。
+**C4（Gate/课程结论）**：R7 的 scale 0.5 在 C3 新能力上 `+0.1528 BPB`（3/3），C cycle3 平均 delta 为 `−0.0050 BPB`，但 seed11/47 分别有 `+0.0021/+0.0095`，因 exact-zero all-seed Gate 被否决。该 Gate 的否决判定必须保留，但在没有 course-order 复现、非劣界和完整 A/B/C 累计矩阵时，不能外推为“第三周期是固有难度”。R9 只测 byte marginal，也不能排除更高阶序列差异。
+
+**C5（成长实现错位）**：R2 是新旧 readout 概率固定 50/50 的实验 artifact；R7 更新 protected predictive context+readout，R10/R12 则因 Workbench active boundary 冻结 context、只更新 active readout；`AdaptiveNeuronNetwork` 也未被 M4 课程的普通 forward/credit 路径消费。因此 R0～R12 没有测试“进入主路径、零影响出生、学习路由、成熟后准入”的结构成长，不能据此关闭 CR-4/A8。
 
 ## 5. 开放假设（已登记、未预注册）
 
-1. **混合语料课程**：UltraData 与 simple_zh 按比例混合以降低分布冲击——R12 的 +1.62 BPB 跨语料遗忘只否定“替换”，未检验“渐进混合”。转换语料与 preflight Gate 已保留（`data/ultradata/derived/ultradata_sft_nothink_simplezh.jsonl`，7/7）。
-2. **继承式增长（容量扩宽）**：R2 否决的是“零初始化 readout 槽修复保持”，不是“有证据的容量压力下扩宽表征”；若未来 cycle3 退化被证明伴随真实容量压力（而非分布适应），该线按 §8 日程重开。
-3. **架构外挂（attention/递归跨时间信用）**：候选闸门 1 保持关闭——前提 (a) 巩固方向完成（已满足）但 (b) 归因指向时间信用（当前归因指向分布适应，不满足）。
+1. **渐进混合课程**：UltraData 与 simple_zh 按比例过渡以分开数据密度与 abrupt shift；转换语料与 preflight 资产保留，但须先使用 v2 scorecard，不能沿用 R12 Gate 直接长跑。
+2. **继承式结构增长**：旧权重迁移为 slow state，新结构以 zero-gated residual shadow 出生并学习路由；R2 的固定等权读出混合不是这个假设的反证。
+3. **快适应—慢巩固**：fast delta、eligibility、importance、真实 episodic replay 到 slow weights 的机制尚未测试；当前 logits preservation 只作为否决对照。
 
 ## 6. 成本事实（CPU，Windows，12 线程）
 
@@ -76,10 +80,11 @@ R0  固定容量三周期 cascade ──技术链闭合，能力不晋级（C″
 - 报告：`reports/taiji_m4r*`（版本化 JSON，SHA-256 互链）
 - 撤回/冻结候选：consolidation（R1/R10）、增量槽（R2）、gated temporal（M2.R2）、UltraData 替换（R12）——全部保留为可回滚 artifact，默认关闭
 
-## 8. 对下一步的含义
+## 8. 对下一步的修订含义
 
-M4 主线问题已有答案：**固定容量下的连续成长瓶颈是分布适应，不是规则缺失**。这意味着：
+M4 v1 的正确答案是：**当前 F1 continuation harness 能可靠保存和测量，但它的学习对象、扩容方式、owner 一致性、课程和 Gate 都不足以代表 Taiji 的继承式成长。** 因此：
 
-1. 任何“先修规则再成长”的路线已无剩余单变量；继续在固定容量 + 同构课程上做规则实验的期望收益为零。
-2. 若要继续能力成长研究，剩余可检验假设集中在：混合/课程式数据引入（开放假设 1）、有容量压力证据的继承式增长（开放假设 2）、或转向 M5 的知识内化与真实任务（能力验证场景不同，不再以三周期 retention Gate 为唯一量尺）。
-3. 三 seed cascade + 预注册 retention Gate 的测量资产完全可复用，是后续任何路线的公共量尺。
+1. 不再继续 R13 式标量调参，也不直接在 R12 后启动混合语料长跑；先修量尺语义与累计能力矩阵。
+2. R0～R12 的技术 Gate、数据 lineage、checkpoint 和 scorer 资产复用；exact-zero Gate 作为历史严格观测保留，但由预校准非劣界、最坏域上限和多 course-order 共同决定 v2 晋级。
+3. M4 v2 先做 checkpoint-compatible fast/slow 状态，再做真实 replay，最后才允许 zero-gated structural shadow；结构必须进入主 forward/credit 路径。
+4. 当前唯一执行入口见 [03_CURRENT_EXECUTION.md](../active/roadmap/03_CURRENT_EXECUTION.md)，完整替代设计见 [Taiji 继承式成长架构 v2](../active/architecture/TAIJI_CONTINUAL_DEVELOPMENT_V2.md)。

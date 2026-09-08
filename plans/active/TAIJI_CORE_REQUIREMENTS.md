@@ -2,7 +2,7 @@
 
 状态：**长期维护的项目根需求，不随单次实现归档**
 
-更新时间：2026-08-25
+更新时间：2026-09-09
 
 ## 1. 本文为什么必须常驻 active
 
@@ -54,6 +54,8 @@ Taiji 是唯一认知主体。Seed 是产品/runtime，器官是感官与效应�
 ### CR-4：结构可塑性与开放式成长
 
 Taiji 不能把固定层数、固定专家数、固定 fan-in 或固定 memory slots 当作永久身份。它必须在资源治理下支持 assembly 分化、连接生长/剪枝、专家 split/merge、区域扩容和技能固化；结构变化要有证据、回滚和 checkpoint 迁移。
+
+成长必须发生在认知主路径并继承父代函数：新结构以零影响候选出生，经 residual 学习、无任务 ID 路由、保持/损伤/资源 Gate 后准入。旁路中存在一个网络、固定平均多个读出、人工选择 active head 或 checkpoint 参数变多，都不能单独作为开放式成长证据。
 
 来源：[设计原则](../archive/authored/DESIGN_PRINCIPLES.md) 中的自我进化、新生/凋亡和可塑性目标。旧外部脚本创建/删除整个 Transformer checkpoint 的方法不继承。
 
