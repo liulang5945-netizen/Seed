@@ -75,7 +75,7 @@ Taiji 是唯一认知主体，Seed 是产品/runtime、Workbench、设备、权�
 
 ## 4. 当前唯一下一步
 
-M4.V2.R0、M4.V2.R1、R2 与 R3 已完成当前阶段的量尺、迁移、快/慢学习和第一条主路径结构桥 Gate；R2 候选被接受，R3 canary 通过，但整体仍保持 `can_promote=false`。当前唯一下一步是 **M4.V2.R4：shadow 生长与 matched-capacity 对照**，只在 R3 已证明候选能进入真实 observation→prediction/credit 主路径之后，验证容量压力是否能产生可归因的新增结构收益。
+M4.V2.R0、M4.V2.R1、R2 与 R3 已完成当前阶段的量尺、迁移、快/慢学习和第一条主路径结构桥 Gate；R2 候选被接受，R3 canary 通过；R4 的 residual/conflict/utility pressure 合同已完成，但尚未接入实时 bridge。整体仍保持 `can_promote=false`。当前唯一下一步是 **M4.V2.R4：把 pressure 观测接入 R3 bridge 的真实主路径**，确认每条证据来自同一 observation→prediction/credit tick 后，才允许产生 shadow growth proposal。
 
 R0 的实现与审计产物如下：
 
@@ -145,13 +145,13 @@ R4 要回答的不是“能否再创建一个区域”，而是“固定容量�
 
 实施顺序固定为：
 
-1. **压力合同**：从同一主路径记录 residual error、fast/slow conflict、局部饱和、候选 utility 和资源上限；压力必须来自模型可见的输入/结果，禁止用 evaluator task ID 或人工“该任务创建专家”规则。
+1. **压力合同（已完成第一子步）**：`taiji/adaptive_residual_growth.py` 已定义 residual error、fast/slow conflict、activity saturation、utility gap、resource state 的 versioned/content-addressed observation；`AdaptiveResidualGrowthTrigger` 提供 EMA、连续压力、预算、parent digest、重复 evidence 和 checkpointable decision。它不改拓扑、不接受 task ID，也不自动创建候选。下一步必须把这些字段由 R3 bridge 的真实 observation tick 填入，不能继续只用独立 synthetic caller。
 2. **候选提议**：在 `gate=0` bridge 上按稳定身份追加一个或一组最小 unit，保存 parent digest、proposal evidence、topology diff 和预算；提议本身不改变 parent 函数。
 3. **shadow 训练**：只给候选 residual credit，成熟 F1 trunk 与 parent readout 可冻结；候选在 S/G 短课程上训练，所有更新可回滚，训练前先做 bare checkpoint 保存、fresh-process restore、一次小更新后再次保存/恢复/续步检查。
 4. **准入对照**：至少比较 frozen parent、R3 fixed-capacity bridge、pressure-driven growth、random growth、同等最终参数量的 fixed-large；没有 matched-capacity 与 random baseline，不得把收益归因于“生长”。
 5. **因果 Gate**：候选增益必须在未见 holdout 上出现；growth lesion 必须消除新增增益；旧能力满足 calibrated non-inferiority；fresh restore、rollback、参数/内存/延迟预算全通过。任何一项失败恢复 R3 parent，不进入 R5 router。
 
-R4 的最小交付是 `pressure/proposal → shadow train → validate → lesion/admit/rollback` 的一个可复现 CPU canary 和 versioned report；不能把 proposal 创建、参数变多或单次 BPB 下降写成成功。R4 通过后才解冻 R5 自主路由，Skill/MCP/provider/客户端继续按第 6 节冻结。
+R4 的最小交付仍是 `pressure/proposal → shadow train → validate → lesion/admit/rollback` 的一个可复现 CPU canary 和 versioned report；当前只完成 pressure 合同，不能把 proposal 创建、参数变多或单次 BPB 下降写成成功。R4 通过后才解冻 R5 自主路由，Skill/MCP/provider/客户端继续按第 6 节冻结。
 
 R0 完成条件（已满足）：
 
@@ -162,7 +162,7 @@ R0 完成条件（已满足）：
 5. 定向 pytest、ruff、`git diff --check` 通过；
 6. 仍保持 `can_promote=false`。
 
-R1 通过后的唯一下一步是 R2 S/G canary；R2 formal 通过后的唯一下一步是 R3 主路径结构桥；R3 canary 通过后的唯一下一步是 R4 shadow 生长。R4 未通过则恢复 R3 parent，不得用 R5 路由、客户端外围或新语料掩盖容量/准入失败。
+R1 通过后的唯一下一步是 R2 S/G canary；R2 formal 通过后的唯一下一步是 R3 主路径结构桥；R3 canary 通过后的 R4 第一个动作是接入 bridge pressure，再进入 shadow 生长。R4 未通过则恢复 R3 parent，不得用 R5 路由、客户端外围或新语料掩盖容量/准入失败。
 
 ## 5. v2 课程与 Gate
 

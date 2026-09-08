@@ -10,6 +10,14 @@ from .adaptive_residual_bridge import (
     ADAPTIVE_RESIDUAL_BRIDGE_VERSION,
     AdaptiveResidualBridge,
 )
+from .adaptive_residual_growth import (
+    ADAPTIVE_RESIDUAL_GROWTH_FORMAT,
+    ADAPTIVE_RESIDUAL_GROWTH_VERSION,
+    AdaptiveResidualGrowthDecision,
+    AdaptiveResidualGrowthPolicy,
+    AdaptiveResidualGrowthPressure,
+    AdaptiveResidualGrowthTrigger,
+)
 from .affordance import (
     AFFORDANCE_FEATURE_CHECKPOINT_FORMAT,
     AffordanceFeatureTrainingExample,
@@ -728,6 +736,12 @@ __all__ = [
     "ADAPTIVE_RESIDUAL_BRIDGE_FORMAT",
     "ADAPTIVE_RESIDUAL_BRIDGE_VERSION",
     "AdaptiveResidualBridge",
+    "ADAPTIVE_RESIDUAL_GROWTH_FORMAT",
+    "ADAPTIVE_RESIDUAL_GROWTH_VERSION",
+    "AdaptiveResidualGrowthDecision",
+    "AdaptiveResidualGrowthPolicy",
+    "AdaptiveResidualGrowthPressure",
+    "AdaptiveResidualGrowthTrigger",
     "AFFORDANCE_FEATURE_CHECKPOINT_FORMAT",
     "AffordanceFeatureTrainingExample",
     "ActionIntent",
