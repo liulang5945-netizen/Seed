@@ -108,3 +108,57 @@ def test_r1_disk_migration_gate_preserves_source_and_fresh_restore() -> None:
     finally:
         source_path.unlink(missing_ok=True)
         output_path.unlink(missing_ok=True)
+
+
+def test_r2_fast_wake_keeps_parent_owners_immutable_and_persists_replay() -> None:
+    model = Taiji(_config(), episode_id="r2-fast")
+    model.learn_bytes(b"abba-caba", epochs=1, learn_fabric=False)
+    model.migrate_f1_to_developmental_synapses()
+    parent = deepcopy(model.checkpoint())
+    parent_readout_digest = content_digest(parent["predictive_readout"])
+    parent_context_digest = content_digest(parent["predictive_context"])
+
+    model.set_developmental_f1_learning_mode("fast")
+    model.learn_bytes(b"caba-abba", epochs=1, learn_fabric=False)
+
+    assert model.developmental_f1_bundle is not None
+    assert model.developmental_f1_bundle.fast_is_zero is False
+    assert model.developmental_f1_replay_count > 0
+    assert content_digest(model.predictive_readout.to_payload()) == parent_readout_digest
+    assert content_digest(model.predictive_context.to_payload()) == parent_context_digest
+
+    checkpoint = model.checkpoint()
+    assert Taiji.DEVELOPMENTAL_F1_REPLAY_KEY in checkpoint
+    restored = Taiji.from_checkpoint(deepcopy(checkpoint))
+    assert restored.developmental_f1_learning_mode == "read_only"
+    assert restored.developmental_f1_replay_count == model.developmental_f1_replay_count
+    assert content_digest(restored.checkpoint()) == content_digest(checkpoint)
+
+    with pytest.raises(RuntimeError, match="read-only until R2"):
+        restored.observe(97, learn=True, readout="predictive")
+
+
+def test_r2_slow_only_and_fast_replay_consolidation_are_distinct() -> None:
+    slow = Taiji(_config(), episode_id="r2-slow")
+    slow.learn_bytes(b"abba-caba", epochs=1, learn_fabric=False)
+    slow.migrate_f1_to_developmental_synapses()
+    slow_parent = deepcopy(slow.checkpoint())
+    slow.set_developmental_f1_learning_mode("slow")
+    slow.learn_bytes(b"caba-abba", epochs=1, learn_fabric=False)
+    assert slow.developmental_f1_bundle is not None
+    assert slow.developmental_f1_bundle.fast_is_zero
+    assert content_digest(slow.checkpoint()[Taiji.DEVELOPMENTAL_F1_KEY]) != content_digest(
+        slow_parent[Taiji.DEVELOPMENTAL_F1_KEY]
+    )
+
+    candidate = Taiji.from_checkpoint(deepcopy(slow_parent))
+    candidate.set_developmental_f1_learning_mode("fast_slow")
+    candidate.learn_bytes(b"caba-abba", epochs=1, learn_fabric=False)
+    assert candidate.developmental_f1_bundle is not None
+    assert candidate.developmental_f1_bundle.fast_is_zero is False
+    before_replay = content_digest(candidate.checkpoint()[Taiji.DEVELOPMENTAL_F1_KEY])
+    replay = candidate.replay_developmental_f1(consolidate=True, clear_replay=True)
+    assert replay["events"] > 0
+    assert replay["changed"] is True
+    assert candidate.developmental_f1_bundle.fast_is_zero
+    assert content_digest(candidate.checkpoint()[Taiji.DEVELOPMENTAL_F1_KEY]) != before_replay

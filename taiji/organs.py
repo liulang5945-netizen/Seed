@@ -663,14 +663,20 @@ class BytePredictiveReadout:
         target[int(observed_symbol)] = 1.0
         return target - predicted.to(self.device)
 
-    def context_feedback(self, error: torch.Tensor) -> torch.Tensor:
+    def context_feedback(
+        self,
+        error: torch.Tensor,
+        *,
+        synapses_override: DevelopmentalSynapseBank | None = None,
+    ) -> torch.Tensor:
         """Project causal F1 error into the private context space."""
 
         if error.shape != (self.config.alphabet_size,):
             raise ValueError("predictive error dimension mismatch")
         # Callers take this before ``learn`` mutates decoder contacts, so the
         # temporal residual learns from the surface that made the prediction.
-        return self.synapses.backproject(error) / float(self.config.motor_temperature)
+        synapses = self.synapses if synapses_override is None else synapses_override
+        return synapses.backproject(error) / float(self.config.motor_temperature)
 
     @torch.no_grad()
     def learn(

@@ -10,6 +10,8 @@ import torch
 
 from .config import TaijiConfig, validate_episodic_learning_target
 from .developmental_synapse import (
+    DevelopmentalReplayBuffer,
+    DevelopmentalReplayEvent,
     DevelopmentalSynapseBundle,
     DevelopmentalSynapseContractError,
 )
@@ -65,6 +67,9 @@ class Taiji:
     READOUT_REGISTRY_FORMAT = "taiji-predictive-readout-registry-v1"
     READOUT_REGISTRY_VERSION = 1
     DEVELOPMENTAL_F1_KEY = "developmental_f1"
+    DEVELOPMENTAL_F1_REPLAY_KEY = "developmental_f1_replay"
+    DEVELOPMENTAL_F1_LEARNING_MODES = frozenset({"read_only", "fast", "slow", "fast_slow"})
+    DEVELOPMENTAL_F1_REPLAY_MAX_EVENTS = 2048
 
     def __init__(
         self,
@@ -109,6 +114,9 @@ class Taiji:
         # absent from ordinary v10 checkpoints, so the default path remains
         # byte-for-byte compatible with the pre-R1 architecture.
         self._developmental_f1_bundle: DevelopmentalSynapseBundle | None = None
+        self._developmental_f1_learning_mode = "read_only"
+        self._developmental_f1_replay: list[DevelopmentalReplayEvent] = []
+        self._developmental_f1_replay_serial = 0
         self._memory_rng = torch.Generator(device="cpu")
         self._memory_rng.set_state(self._rng.get_state().clone())
         self.memory = EpisodicField(self.config, generator=self._memory_rng, device=self.device)
@@ -305,6 +313,8 @@ class Taiji:
                 "developmental F1 bundle configuration does not match model"
             )
         self._developmental_f1_bundle = bundle
+        self._developmental_f1_learning_mode = "read_only"
+        self._developmental_f1_replay.clear()
         return {
             "format": "taiji-developmental-f1-migration-v1",
             "source_checkpoint_digest": bundle.source_checkpoint_digest,
@@ -317,9 +327,185 @@ class Taiji:
 
     @torch.no_grad()
     def unmount_developmental_f1(self) -> None:
-        """Remove the read-only R1 overlay and return to the original F1 path."""
+        """Remove the R1/R2 overlay and return to the original F1 path."""
 
         self._developmental_f1_bundle = None
+        self._developmental_f1_learning_mode = "read_only"
+        self._developmental_f1_replay.clear()
+
+    @property
+    def developmental_f1_learning_mode(self) -> str:
+        """Return the explicit R2 write mode for the mounted F1 overlay."""
+
+        return self._developmental_f1_learning_mode
+
+    @property
+    def developmental_f1_replay_count(self) -> int:
+        """Return the number of bounded, real wake traces available for replay."""
+
+        return len(self._developmental_f1_replay)
+
+    @torch.no_grad()
+    def set_developmental_f1_learning_mode(self, mode: str) -> dict[str, Any]:
+        """Select read-only, fast-only, slow-only or fast-then-slow writes.
+
+        ``fast_slow`` means wake updates go to ``fast_delta``; the caller must
+        explicitly invoke replay/consolidation to write ``slow_weight``.  The
+        runtime mode is intentionally not persisted as authority in a
+        checkpoint: a fresh restore always returns to ``read_only``.
+        """
+
+        normalized = str(mode).strip().lower()
+        if normalized not in self.DEVELOPMENTAL_F1_LEARNING_MODES:
+            allowed = ", ".join(sorted(self.DEVELOPMENTAL_F1_LEARNING_MODES))
+            raise ValueError(f"unsupported developmental F1 learning mode; expected one of {allowed}")
+        if self._developmental_f1_bundle is None:
+            raise RuntimeError("developmental F1 state must be mounted before selecting a write mode")
+        if self._state.pending_action is not None or self._state.pending_experience is not None:
+            raise RuntimeError("developmental F1 learning mode requires a settled state")
+        self._developmental_f1_learning_mode = normalized
+        return {
+            "mode": normalized,
+            "owner_graph_digest": self._developmental_f1_bundle.owner_graph_digest,
+            "fast_is_zero": self._developmental_f1_bundle.fast_is_zero,
+        }
+
+    @torch.no_grad()
+    def clear_developmental_f1_replay(self) -> None:
+        """Discard only transient replay records; synapse state is unchanged."""
+
+        self._developmental_f1_replay.clear()
+
+    def _developmental_f1_replay_payload(self) -> dict[str, Any] | None:
+        if not self._developmental_f1_replay:
+            return None
+        return DevelopmentalReplayBuffer(
+            events=tuple(self._developmental_f1_replay),
+            max_events=self.DEVELOPMENTAL_F1_REPLAY_MAX_EVENTS,
+        ).to_payload()
+
+    @torch.no_grad()
+    def _record_developmental_f1_replay(
+        self,
+        *,
+        observed_symbol: int,
+        predicted_probability: float,
+        readout_error: torch.Tensor,
+        readout_trace: torch.Tensor,
+        context_feedback: torch.Tensor,
+        context_trace: torch.Tensor,
+    ) -> None:
+        event_id = f"wake-{self._developmental_f1_replay_serial}"
+        self._developmental_f1_replay_serial += 1
+        event = DevelopmentalReplayEvent(
+            event_id=event_id,
+            source="wake",
+            tick=int(self._development_ticks + self._state.tick),
+            observed_symbol=int(observed_symbol),
+            predicted_probability=float(predicted_probability),
+            readout_error=readout_error,
+            readout_trace=readout_trace,
+            context_feedback=context_feedback,
+            context_trace=context_trace,
+        )
+        self._developmental_f1_replay.append(event)
+        if len(self._developmental_f1_replay) > self.DEVELOPMENTAL_F1_REPLAY_MAX_EVENTS:
+            self._developmental_f1_replay.pop(0)
+
+    @torch.no_grad()
+    def consolidate_developmental_f1(
+        self,
+        *,
+        rate: float = 1.0,
+        clear_fast: bool = True,
+    ) -> dict[str, Any]:
+        """Move current fast residuals into slow state at an explicit boundary."""
+
+        if self._developmental_f1_bundle is None:
+            raise RuntimeError("developmental F1 state is not mounted")
+        if self._developmental_f1_learning_mode == "read_only":
+            raise RuntimeError("developmental F1 state is read-only")
+        if self._state.pending_action is not None or self._state.pending_experience is not None:
+            raise RuntimeError("developmental F1 consolidation requires a settled state")
+        before = content_digest(self._developmental_f1_bundle.to_payload())
+        for _owner, bank in self._developmental_f1_bundle.banks:
+            bank.consolidate_fast(rate=rate, clear_fast=clear_fast)
+        after = content_digest(self._developmental_f1_bundle.to_payload())
+        return {
+            "rate": float(rate),
+            "clear_fast": bool(clear_fast),
+            "changed": before != after,
+            "fast_is_zero": self._developmental_f1_bundle.fast_is_zero,
+            "bundle_digest": after,
+        }
+
+    @torch.no_grad()
+    def replay_developmental_f1(
+        self,
+        events: Sequence[DevelopmentalReplayEvent] | None = None,
+        *,
+        learning_rate_scale: float = 0.25,
+        consolidate: bool = True,
+        consolidation_rate: float = 1.0,
+        clear_fast: bool = True,
+        clear_replay: bool = False,
+    ) -> dict[str, Any]:
+        """Replay captured local credit traces, then optionally consolidate.
+
+        The default source is the bounded buffer of actual wake prediction
+        events.  No raw byte prefix or static teacher logits are fabricated by
+        this method.  The records are local traces, so they can be replayed
+        without presenting an evaluator task id to the model.
+        """
+
+        if self._developmental_f1_bundle is None:
+            raise RuntimeError("developmental F1 state is not mounted")
+        if self._developmental_f1_learning_mode == "read_only":
+            raise RuntimeError("developmental F1 state is read-only")
+        if not math.isfinite(float(learning_rate_scale)) or float(learning_rate_scale) < 0.0:
+            raise ValueError("replay learning_rate_scale must be finite and non-negative")
+        selected = tuple(self._developmental_f1_replay if events is None else events)
+        if any(not isinstance(event, DevelopmentalReplayEvent) for event in selected):
+            raise TypeError("developmental replay events must be DevelopmentalReplayEvent values")
+        before = content_digest(self._developmental_f1_bundle.to_payload())
+        context_bank = self._developmental_f1_bundle.bank("predictive_context.recurrent")
+        readout_bank = self._developmental_f1_bundle.bank("predictive_readout.synapses")
+        for event in selected:
+            if bool(event.readout_error.detach().abs().any()):
+                readout_bank.learn_fast(
+                    event.readout_error,
+                    event.readout_trace,
+                    learning_rate=(
+                        self.config.motor_learning_rate * float(learning_rate_scale)
+                    ),
+                    weight_decay=self.config.synapse_decay,
+                )
+            if bool(event.context_feedback.detach().abs().any()):
+                context_bank.learn_fast(
+                    event.context_feedback,
+                    event.context_trace,
+                    learning_rate=(
+                        self.config.predictive_context_learning_rate
+                        * float(learning_rate_scale)
+                    ),
+                    weight_decay=self.config.synapse_decay,
+                )
+        consolidation = None
+        if consolidate and selected:
+            consolidation = self.consolidate_developmental_f1(
+                rate=consolidation_rate,
+                clear_fast=clear_fast,
+            )
+        if clear_replay:
+            self._developmental_f1_replay.clear()
+        after = content_digest(self._developmental_f1_bundle.to_payload())
+        return {
+            "events": len(selected),
+            "changed": before != after,
+            "consolidation": consolidation,
+            "fast_is_zero": self._developmental_f1_bundle.fast_is_zero,
+            "bundle_digest": after,
+        }
 
     def _protected_readout_parent_digest(self) -> str:
         """Digest the stable owners an active readout is allowed to branch from.
@@ -345,6 +531,9 @@ class Taiji:
             )
         if self._developmental_f1_bundle is not None:
             payload[self.DEVELOPMENTAL_F1_KEY] = self._developmental_f1_bundle.to_payload()
+        replay_payload = self._developmental_f1_replay_payload()
+        if replay_payload is not None:
+            payload[self.DEVELOPMENTAL_F1_REPLAY_KEY] = replay_payload
         if self.identity_organ is not None:
             payload["identity_organ"] = self.identity_organ.to_payload(
                 parent_checkpoint_digest=content_digest(payload),
@@ -740,14 +929,27 @@ class Taiji:
         predictive_readout_learning = (
             learn if learn_predictive_readout is None else bool(learn_predictive_readout)
         )
-        developmental_f1_read_only = (
+        developmental_f1_overlay = (
             self._developmental_f1_bundle is not None
             and predictive_readout is self.predictive_readout
         )
-        if developmental_f1_read_only and readout == "predictive" and learn and (
+        developmental_f1_mode = (
+            self._developmental_f1_learning_mode if developmental_f1_overlay else "read_only"
+        )
+        if developmental_f1_overlay and readout == "predictive" and learn and (
             predictive_readout_learning or predictive_context_learning
+        ) and developmental_f1_mode == "read_only":
+            raise RuntimeError(
+                "developmental F1 state is read-only until R2; select an R2 learning mode"
+            )
+        if (
+            developmental_f1_overlay
+            and learn
+            and preservation_strength > 0.0
         ):
-            raise RuntimeError("developmental F1 R1 state is read-only until R2")
+            raise ValueError(
+                "developmental F1 learning uses real replay, not static preservation logits"
+            )
         memory_write_strength = 0.0
         if previous.pending_experience is not None:
             pending_experience = previous.pending_experience
@@ -790,41 +992,99 @@ class Taiji:
                     previous.motor_probabilities,
                     symbol,
                 )
-                if predictive_readout_learning:
-                    preservation_probabilities = None
-                    if _preservation_readout is not None and preservation_strength > 0.0:
-                        preservation_probabilities = _preservation_readout.probabilities(
-                            previous.motor_context
-                        )
-                    predictive_readout.learn(
-                        previous.motor_context,
-                        previous.motor_probabilities,
-                        symbol,
-                        preservation_probabilities=preservation_probabilities,
-                        preservation_strength=preservation_strength,
-                        learning_rate_scale=predictive_update_scale,
+                if developmental_f1_overlay:
+                    readout_bank = self._developmental_f1_bundle.bank(
+                        "predictive_readout.synapses"
                     )
-                if predictive_context_learning:
+                    context_bank = self._developmental_f1_bundle.bank(
+                        "predictive_context.recurrent"
+                    )
                     predictive_feedback = predictive_readout.context_feedback(
-                        predictive_error
+                        predictive_error,
+                        synapses_override=readout_bank,
                     )
-                    if self._gated_temporal_candidate is None:
-                        self.predictive_context.learn(
-                            previous.predictive_context_trace,
-                            predictive_feedback,
-                            learning_rate_scale=predictive_update_scale,
+                    if predictive_readout_learning:
+                        updater = (
+                            readout_bank.learn_slow
+                            if developmental_f1_mode == "slow"
+                            else readout_bank.learn_fast
                         )
-                    else:
-                        self._gated_temporal_candidate.learn(
+                        updater(
+                            predictive_error,
                             previous.motor_context,
-                            previous.predictive_context_slow_trace,
+                            learning_rate=(
+                                self.config.motor_learning_rate * predictive_update_scale
+                            ),
+                            weight_decay=self.config.synapse_decay,
+                        )
+                    context_feedback_for_replay = torch.zeros_like(predictive_feedback)
+                    if predictive_context_learning and bool(
+                        previous.predictive_context_trace.detach().abs().any()
+                    ):
+                        context_feedback_for_replay = predictive_feedback
+                        updater = (
+                            context_bank.learn_slow
+                            if developmental_f1_mode == "slow"
+                            else context_bank.learn_fast
+                        )
+                        updater(
                             predictive_feedback,
+                            previous.predictive_context_trace,
                             learning_rate=(
                                 self.config.predictive_context_learning_rate
                                 * predictive_update_scale
                             ),
                             weight_decay=self.config.synapse_decay,
                         )
+                    if developmental_f1_mode in {"fast", "fast_slow"}:
+                        self._record_developmental_f1_replay(
+                            observed_symbol=symbol,
+                            predicted_probability=prior_probability or 0.0,
+                            readout_error=(
+                                predictive_error
+                                if predictive_readout_learning
+                                else torch.zeros_like(predictive_error)
+                            ),
+                            readout_trace=previous.motor_context,
+                            context_feedback=context_feedback_for_replay,
+                            context_trace=previous.predictive_context_trace,
+                        )
+                else:
+                    if predictive_readout_learning:
+                        preservation_probabilities = None
+                        if _preservation_readout is not None and preservation_strength > 0.0:
+                            preservation_probabilities = _preservation_readout.probabilities(
+                                previous.motor_context
+                            )
+                        predictive_readout.learn(
+                            previous.motor_context,
+                            previous.motor_probabilities,
+                            symbol,
+                            preservation_probabilities=preservation_probabilities,
+                            preservation_strength=preservation_strength,
+                            learning_rate_scale=predictive_update_scale,
+                        )
+                    if predictive_context_learning:
+                        predictive_feedback = predictive_readout.context_feedback(
+                            predictive_error
+                        )
+                        if self._gated_temporal_candidate is None:
+                            self.predictive_context.learn(
+                                previous.predictive_context_trace,
+                                predictive_feedback,
+                                learning_rate_scale=predictive_update_scale,
+                            )
+                        else:
+                            self._gated_temporal_candidate.learn(
+                                previous.motor_context,
+                                previous.predictive_context_slow_trace,
+                                predictive_feedback,
+                                learning_rate=(
+                                    self.config.predictive_context_learning_rate
+                                    * predictive_update_scale
+                                ),
+                                weight_decay=self.config.synapse_decay,
+                            )
             elif readout == "action" and motor_learning:
                 self.motor.learn(
                     previous.motor_context,
@@ -875,7 +1135,7 @@ class Taiji:
                 prior_context=prior_predictive_context,
                 recurrent_override=(
                     self._developmental_f1_bank("predictive_context.recurrent")
-                    if developmental_f1_read_only
+                    if developmental_f1_overlay
                     else None
                 ),
             )
@@ -915,7 +1175,7 @@ class Taiji:
                 episodic_evidence=episodic_evidence,
                 synapses_override=(
                     self._developmental_f1_bank("predictive_readout.synapses")
-                    if developmental_f1_read_only
+                    if developmental_f1_overlay
                     else None
                 ),
             )
@@ -1615,6 +1875,7 @@ class Taiji:
             "read_only_replay": read_only_replay,
         }
         checkpoint = self.checkpoint()
+        developmental_learning_mode = self._developmental_f1_learning_mode
         self.reset_dynamics(episode_id="evaluation")
         observations = 0
         correct = 0
@@ -1644,6 +1905,11 @@ class Taiji:
             }
         finally:
             self.restore(checkpoint)
+            if (
+                self._developmental_f1_bundle is not None
+                and developmental_learning_mode != "read_only"
+            ):
+                self._developmental_f1_learning_mode = developmental_learning_mode
 
     @torch.no_grad()
     def generate(
@@ -1826,6 +2092,9 @@ class Taiji:
             )
         if self._developmental_f1_bundle is not None:
             core[self.DEVELOPMENTAL_F1_KEY] = self._developmental_f1_bundle.to_payload()
+        replay_payload = self._developmental_f1_replay_payload()
+        if replay_payload is not None:
+            core[self.DEVELOPMENTAL_F1_REPLAY_KEY] = replay_payload
         return core
 
     def checkpoint(self) -> dict[str, Any]:
@@ -1913,6 +2182,9 @@ class Taiji:
             self._gated_temporal_candidate = candidate
         developmental_payload = checkpoint.get(self.DEVELOPMENTAL_F1_KEY)
         self._developmental_f1_bundle = None
+        self._developmental_f1_learning_mode = "read_only"
+        self._developmental_f1_replay = []
+        self._developmental_f1_replay_serial = 0
         if developmental_payload is not None:
             if is_legacy_checkpoint:
                 raise ValueError("legacy checkpoint cannot contain developmental F1 state")
@@ -1922,6 +2194,15 @@ class Taiji:
             if bundle.config_digest != content_digest(self.config.to_dict()):
                 raise ValueError("developmental F1 checkpoint configuration does not match")
             self._developmental_f1_bundle = bundle
+        replay_payload = checkpoint.get(self.DEVELOPMENTAL_F1_REPLAY_KEY)
+        if replay_payload is not None:
+            if self._developmental_f1_bundle is None:
+                raise ValueError("developmental replay exists without developmental F1 state")
+            if not isinstance(replay_payload, Mapping):
+                raise ValueError("developmental replay checkpoint payload is invalid")
+            replay = DevelopmentalReplayBuffer.from_payload(replay_payload)
+            self._developmental_f1_replay = list(replay.events)
+            self._developmental_f1_replay_serial = len(self._developmental_f1_replay)
         self.memory.load_payload(checkpoint["memory"])
         identity_payload = checkpoint.get("identity_organ")
         if self.identity_organ is None:
@@ -1941,6 +2222,9 @@ class Taiji:
                             self.GATED_TEMPORAL_CANDIDATE_KEY in checkpoint
                         ),
                         include_developmental_f1=self.DEVELOPMENTAL_F1_KEY in checkpoint,
+                        include_developmental_f1_replay=(
+                            self.DEVELOPMENTAL_F1_REPLAY_KEY in checkpoint
+                        ),
                     )
                 }
             )
@@ -2055,6 +2339,7 @@ class Taiji:
         include_predictive_context: bool | None = None,
         include_temporal_candidate: bool = False,
         include_developmental_f1: bool = False,
+        include_developmental_f1_replay: bool = False,
     ) -> tuple[str, ...]:
         if include_predictive_context is None:
             # Existing callers reconstructing a v8 lineage pass only
@@ -2078,6 +2363,8 @@ class Taiji:
             keys += (Taiji.GATED_TEMPORAL_CANDIDATE_KEY,)
         if include_developmental_f1:
             keys += (Taiji.DEVELOPMENTAL_F1_KEY,)
+        if include_developmental_f1_replay:
+            keys += (Taiji.DEVELOPMENTAL_F1_REPLAY_KEY,)
         return (*keys, "memory", "state", "rng_state")
 
     @classmethod

@@ -1,11 +1,10 @@
 """Checkpoint-compatible fast/slow synapse state for Taiji growth.
 
-R1 is a migration boundary, not a learning rule.  It copies an existing F1
-fixed-fan-in bank into ``slow_weight`` and creates a zero ``fast_delta`` plus
-explicit developmental metadata.  The effective connection is
-``slow_weight + fast_delta``; with the migration defaults this is exactly the
-old connection.  The bundle is read-only until a later milestone defines and
-gates fast adaptation and consolidation.
+R1 is a migration boundary: it copies an existing F1 fixed-fan-in bank into
+``slow_weight`` and creates a zero ``fast_delta`` plus explicit developmental
+metadata.  R2 adds deliberately small local update primitives.  The model
+still owns the learning schedule and Gate; this module only owns the sparse
+state transition and its content-addressed representation.
 """
 
 from __future__ import annotations
@@ -23,6 +22,10 @@ DEVELOPMENTAL_SYNAPSE_FORMAT = "taiji-developmental-synapse-v1"
 DEVELOPMENTAL_SYNAPSE_VERSION = 1
 DEVELOPMENTAL_SYNAPSE_BUNDLE_FORMAT = "taiji-developmental-synapse-bundle-v1"
 DEVELOPMENTAL_SYNAPSE_BUNDLE_VERSION = 1
+DEVELOPMENTAL_REPLAY_EVENT_FORMAT = "taiji-developmental-replay-event-v1"
+DEVELOPMENTAL_REPLAY_EVENT_VERSION = 1
+DEVELOPMENTAL_REPLAY_BUFFER_FORMAT = "taiji-developmental-replay-buffer-v1"
+DEVELOPMENTAL_REPLAY_BUFFER_VERSION = 1
 _SPARSE_STORAGE_FORMAT = "fixed-fan-in-v1"
 
 
@@ -203,6 +206,166 @@ class DevelopmentalSynapseBank:
         weight = self.effective_weight.to(device=device, dtype=presynaptic.dtype)
         return (weight * presynaptic[pre_index]).sum(dim=1)
 
+    def backproject(self, postsynaptic_error: torch.Tensor) -> torch.Tensor:
+        """Project an output error through the current effective contacts."""
+
+        if postsynaptic_error.shape != (self.out_features,):
+            raise ValueError(
+                f"postsynaptic error shape must be ({self.out_features},), "
+                f"got {tuple(postsynaptic_error.shape)}"
+            )
+        device = postsynaptic_error.device
+        pre_index = self.pre_index.to(device=device, dtype=torch.long)
+        weight = self.effective_weight.to(device=device, dtype=postsynaptic_error.dtype)
+        projected = torch.zeros(
+            self.in_features,
+            device=device,
+            dtype=postsynaptic_error.dtype,
+        )
+        projected.scatter_add_(
+            0,
+            pre_index.reshape(-1),
+            (postsynaptic_error[:, None] * weight).reshape(-1),
+        )
+        return projected
+
+    def _validate_local_update(
+        self,
+        postsynaptic_error: torch.Tensor,
+        presynaptic_trace: torch.Tensor,
+        learning_rate: float,
+        weight_decay: float,
+    ) -> tuple[torch.Tensor, torch.Tensor, float, float]:
+        if postsynaptic_error.shape != (self.out_features,):
+            raise ValueError("developmental postsynaptic error shape mismatch")
+        if presynaptic_trace.shape != (self.in_features,):
+            raise ValueError("developmental presynaptic trace shape mismatch")
+        learning_rate = float(learning_rate)
+        weight_decay = float(weight_decay)
+        if not math.isfinite(learning_rate) or learning_rate < 0.0:
+            raise ValueError("developmental learning_rate must be finite and non-negative")
+        if not math.isfinite(weight_decay) or weight_decay < 0.0:
+            raise ValueError("developmental weight_decay must be finite and non-negative")
+        if not bool(torch.isfinite(postsynaptic_error).all()):
+            raise ValueError("developmental postsynaptic error must be finite")
+        if not bool(torch.isfinite(presynaptic_trace).all()):
+            raise ValueError("developmental presynaptic trace must be finite")
+        return (
+            postsynaptic_error.to(self.slow_weight.device, dtype=self.slow_weight.dtype),
+            presynaptic_trace.to(self.slow_weight.device, dtype=self.slow_weight.dtype),
+            learning_rate,
+            weight_decay,
+        )
+
+    @torch.no_grad()
+    def _apply_local_update(
+        self,
+        target: torch.Tensor,
+        postsynaptic_error: torch.Tensor,
+        presynaptic_trace: torch.Tensor,
+        *,
+        learning_rate: float,
+        weight_decay: float,
+    ) -> None:
+        error, trace, learning_rate, weight_decay = self._validate_local_update(
+            postsynaptic_error,
+            presynaptic_trace,
+            learning_rate,
+            weight_decay,
+        )
+        pre_index = self.pre_index.to(device=target.device, dtype=torch.long)
+        active = trace[pre_index]
+        active_scale = max(1.0, float(active.abs().sum().item()))
+        if weight_decay > 0.0:
+            target.mul_(max(0.0, 1.0 - weight_decay))
+        if learning_rate > 0.0:
+            target.add_(learning_rate * error[:, None] * active / active_scale)
+        activity = active.abs()
+        self.eligibility.mul_(0.95).add_(activity).clamp_(max=1e6)
+        self.usage.add_((activity > 0.0).to(self.usage.dtype))
+        self.age.add_(1.0)
+
+    @torch.no_grad()
+    def _bound_rows(self, weight: torch.Tensor) -> None:
+        norms = weight.norm(dim=1, keepdim=True)
+        scale = torch.clamp(
+            float(self.max_weight_norm) / torch.clamp(norms, min=1e-12),
+            max=1.0,
+        )
+        weight.mul_(scale)
+
+    @torch.no_grad()
+    def _bound_effective(self) -> None:
+        """Keep the effective bank bounded without rewriting consolidated state."""
+
+        effective = self.effective_weight
+        norms = effective.norm(dim=1, keepdim=True)
+        scale = torch.clamp(
+            float(self.max_weight_norm) / torch.clamp(norms, min=1e-12),
+            max=1.0,
+        )
+        # The slow store is the stable parent.  If a combined row exceeds its
+        # budget, adjust only the fast residual to the bounded effective
+        # target; rollback and consolidation can therefore audit slow state.
+        self.fast_delta.copy_(effective * scale - self.slow_weight)
+
+    @torch.no_grad()
+    def learn_fast(
+        self,
+        postsynaptic_error: torch.Tensor,
+        presynaptic_trace: torch.Tensor,
+        *,
+        learning_rate: float,
+        weight_decay: float,
+    ) -> None:
+        """Apply one wake-style update to the reversible fast residual."""
+
+        self._apply_local_update(
+            self.fast_delta,
+            postsynaptic_error,
+            presynaptic_trace,
+            learning_rate=learning_rate,
+            weight_decay=weight_decay,
+        )
+        self._bound_effective()
+
+    @torch.no_grad()
+    def learn_slow(
+        self,
+        postsynaptic_error: torch.Tensor,
+        presynaptic_trace: torch.Tensor,
+        *,
+        learning_rate: float,
+        weight_decay: float,
+    ) -> None:
+        """Apply the controlled slow-only comparison update."""
+
+        self._apply_local_update(
+            self.slow_weight,
+            postsynaptic_error,
+            presynaptic_trace,
+            learning_rate=learning_rate,
+            weight_decay=weight_decay,
+        )
+        self._bound_rows(self.slow_weight)
+
+    @torch.no_grad()
+    def consolidate_fast(self, *, rate: float = 1.0, clear_fast: bool = True) -> None:
+        """Move a validated fraction of fast state into the slow store."""
+
+        rate = float(rate)
+        if not math.isfinite(rate) or not 0.0 <= rate <= 1.0:
+            raise ValueError("consolidation rate must be finite and in [0, 1]")
+        self.slow_weight.add_(rate * self.fast_delta * self.plasticity)
+        self.importance.add_(rate * self.fast_delta.abs()).clamp_(max=1e6)
+        self.age.add_(1.0)
+        if clear_fast:
+            self.fast_delta.zero_()
+        else:
+            self.fast_delta.mul_(1.0 - rate)
+        self._bound_rows(self.slow_weight)
+        self._bound_effective()
+
     def _unsigned_payload(self) -> dict[str, Any]:
         return {
             "format": DEVELOPMENTAL_SYNAPSE_FORMAT,
@@ -248,6 +411,126 @@ class DevelopmentalSynapseBank:
             age=payload["age"].detach().cpu().to(dtype=torch.float32).clone(),
             plasticity=payload["plasticity"].detach().cpu().to(dtype=torch.float32).clone(),
             source_synapse_digest=str(payload["source_synapse_digest"]),
+        )
+
+
+@dataclass(frozen=True)
+class DevelopmentalReplayEvent:
+    """A local credit trace captured from one real wake prediction."""
+
+    event_id: str
+    source: str
+    tick: int
+    observed_symbol: int
+    predicted_probability: float
+    readout_error: torch.Tensor
+    readout_trace: torch.Tensor
+    context_feedback: torch.Tensor
+    context_trace: torch.Tensor
+
+    def __post_init__(self) -> None:
+        _require_text(self.event_id, "event_id")
+        _require_text(self.source, "source")
+        if int(self.tick) < 0:
+            raise DevelopmentalSynapseContractError("replay event tick cannot be negative")
+        if int(self.observed_symbol) < 0:
+            raise DevelopmentalSynapseContractError("replay event symbol cannot be negative")
+        _require_finite(self.predicted_probability, "predicted_probability")
+        if not 0.0 <= float(self.predicted_probability) <= 1.0:
+            raise DevelopmentalSynapseContractError("predicted_probability must be in [0, 1]")
+        for name in (
+            "readout_error",
+            "readout_trace",
+            "context_feedback",
+            "context_trace",
+        ):
+            tensor = getattr(self, name)
+            if tensor.ndim != 1 or tensor.numel() == 0:
+                raise DevelopmentalSynapseContractError(
+                    f"replay event {name} must be a non-empty vector"
+                )
+            if not bool(torch.isfinite(tensor).all()):
+                raise DevelopmentalSynapseContractError(f"replay event {name} is not finite")
+            object.__setattr__(self, name, tensor.detach().cpu().to(dtype=torch.float32).clone())
+
+    def _unsigned_payload(self) -> dict[str, Any]:
+        return {
+            "format": DEVELOPMENTAL_REPLAY_EVENT_FORMAT,
+            "version": DEVELOPMENTAL_REPLAY_EVENT_VERSION,
+            "event_id": self.event_id,
+            "source": self.source,
+            "tick": int(self.tick),
+            "observed_symbol": int(self.observed_symbol),
+            "predicted_probability": float(self.predicted_probability),
+            "readout_error": self.readout_error,
+            "readout_trace": self.readout_trace,
+            "context_feedback": self.context_feedback,
+            "context_trace": self.context_trace,
+        }
+
+    def to_payload(self) -> dict[str, Any]:
+        unsigned = self._unsigned_payload()
+        return {**unsigned, "event_digest": content_digest(unsigned)}
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> DevelopmentalReplayEvent:
+        _verify_envelope(payload, DEVELOPMENTAL_REPLAY_EVENT_FORMAT, DEVELOPMENTAL_REPLAY_EVENT_VERSION)
+        _verify_digest(payload, "event_digest")
+        return cls(
+            event_id=str(payload["event_id"]),
+            source=str(payload["source"]),
+            tick=int(payload["tick"]),
+            observed_symbol=int(payload["observed_symbol"]),
+            predicted_probability=float(payload["predicted_probability"]),
+            readout_error=payload["readout_error"],
+            readout_trace=payload["readout_trace"],
+            context_feedback=payload["context_feedback"],
+            context_trace=payload["context_trace"],
+        )
+
+
+@dataclass(frozen=True)
+class DevelopmentalReplayBuffer:
+    """Bounded, checkpointable local experiences used by sleep replay."""
+
+    events: tuple[DevelopmentalReplayEvent, ...]
+    max_events: int = 2048
+
+    def __post_init__(self) -> None:
+        if int(self.max_events) <= 0:
+            raise DevelopmentalSynapseContractError("replay buffer max_events must be positive")
+        if len(self.events) > int(self.max_events):
+            raise DevelopmentalSynapseContractError("replay buffer exceeds max_events")
+        ids = [event.event_id for event in self.events]
+        if len(ids) != len(set(ids)):
+            raise DevelopmentalSynapseContractError("replay event ids must be unique")
+
+    @property
+    def event_count(self) -> int:
+        return len(self.events)
+
+    def _unsigned_payload(self) -> dict[str, Any]:
+        return {
+            "format": DEVELOPMENTAL_REPLAY_BUFFER_FORMAT,
+            "version": DEVELOPMENTAL_REPLAY_BUFFER_VERSION,
+            "max_events": int(self.max_events),
+            "events": [event.to_payload() for event in self.events],
+        }
+
+    def to_payload(self) -> dict[str, Any]:
+        unsigned = self._unsigned_payload()
+        return {**unsigned, "buffer_digest": content_digest(unsigned)}
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> DevelopmentalReplayBuffer:
+        _verify_envelope(payload, DEVELOPMENTAL_REPLAY_BUFFER_FORMAT, DEVELOPMENTAL_REPLAY_BUFFER_VERSION)
+        _verify_digest(payload, "buffer_digest")
+        events = payload.get("events")
+        if not isinstance(events, list):
+            raise DevelopmentalSynapseContractError("replay buffer events must be a list")
+        return cls(
+            events=tuple(DevelopmentalReplayEvent.from_payload(event) for event in events),
+            max_events=int(payload["max_events"]),
         )
 
 
