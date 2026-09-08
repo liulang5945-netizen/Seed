@@ -1,0 +1,282 @@
+{
+  "format": "taiji-m4r11-cycle3-interaction-attribution-v1",
+  "version": 1,
+  "generated_at_epoch": 1788884277,
+  "status": "passed",
+  "can_promote": false,
+  "technical_gate_all_passed": true,
+  "checks": {
+    "r10_reports_technical_all_passed": true,
+    "r10_not_promoted": true,
+    "r10_data_chain_intact": true,
+    "r7_reports_technical_all_passed": true,
+    "r10_same_update_scale_base": true,
+    "source_checkpoints_identical_across_rounds": true,
+    "all_rows_loaded": true,
+    "all_metrics_finite": true,
+    "read_only_no_training": true
+  },
+  "inputs": {
+    "r10_reports": [
+      "reports\\taiji_m4r10_rule_audit_formal_seed11_20260908.json",
+      "reports\\taiji_m4r10_rule_audit_formal_seed29_20260908.json",
+      "reports\\taiji_m4r10_rule_audit_formal_seed47_20260908.json"
+    ],
+    "r7_reports": [
+      "reports\\taiji_m4r7_formal_seed11_20260908.json",
+      "reports\\taiji_m4r7_formal_seed29_20260908.json",
+      "reports\\taiji_m4r7_formal_seed47_20260908.json"
+    ]
+  },
+  "rows": [
+    {
+      "seed": 11,
+      "arms": {
+        "baseline": {
+          "consolidation_strength": 0.0,
+          "c_cycle3_delta_bpb": -0.0020793616052889874,
+          "c_cycle2_delta_bpb": -0.0032436709984953183,
+          "c2_cycle3_delta_bpb": -0.002938788590054031,
+          "c3_holdout_gain_bpb": 0.11525027901739993,
+          "active_a_retention_bpb": 4.13469387854378,
+          "final_checkpoint": "E:\\Seed\\output\\taiji_m4r10_rule_audit\\baseline\\seed11_cascade_c65536.pt",
+          "cycle2_progress_checkpoint": "E:\\Seed\\output\\taiji_m4r10_rule_audit\\baseline\\seed11_cascade_cycle2_c65536.pt",
+          "cycle3_active_readout_delta": {
+            "l2_delta": 5.685648480539101,
+            "relative_l2_delta": 0.1734816028544459,
+            "max_abs_delta": 0.47343093156814575,
+            "changed_scalars": 12593,
+            "total_scalars": 12593
+          },
+          "final_active_distance_to_protected": {
+            "l2_distance": 7.643021377433758,
+            "relative_to_protected_norm": 0.23413099267760848
+          },
+          "cycle2_active_distance_to_protected": {
+            "l2_distance": 7.145332771170745,
+            "relative_to_protected_norm": 0.21888514660778902
+          }
+        },
+        "candidate": {
+          "consolidation_strength": 0.5,
+          "c_cycle3_delta_bpb": 0.004673090303157323,
+          "c_cycle2_delta_bpb": -0.004288424154502479,
+          "c2_cycle3_delta_bpb": -0.006376414915227002,
+          "c3_holdout_gain_bpb": 0.1313442145663526,
+          "active_a_retention_bpb": 4.108921326820651,
+          "final_checkpoint": "E:\\Seed\\output\\taiji_m4r10_rule_audit\\candidate\\seed11_cascade_c65536.pt",
+          "cycle2_progress_checkpoint": "E:\\Seed\\output\\taiji_m4r10_rule_audit\\candidate\\seed11_cascade_cycle2_c65536.pt",
+          "cycle3_active_readout_delta": {
+            "l2_delta": 4.968092269069797,
+            "relative_l2_delta": 0.1513402959105991,
+            "max_abs_delta": 0.37745359539985657,
+            "changed_scalars": 12593,
+            "total_scalars": 12593
+          },
+          "final_active_distance_to_protected": {
+            "l2_distance": 6.022478475061116,
+            "relative_to_protected_norm": 0.18448841029135402
+          },
+          "cycle2_active_distance_to_protected": {
+            "l2_distance": 5.594412460738709,
+            "relative_to_protected_norm": 0.1713753342033078
+          }
+        }
+      },
+      "cycle3_delta_candidate_minus_baseline": 0.006752451908446311,
+      "joint_reference": {
+        "harness": "m4r7 protected joint update (context+readout), NOT the same owner path as R10",
+        "artifact": "E:\\Seed\\output\\taiji-m4r7-formal-seed11\\scale_0p5_seed11.pt",
+        "c_cycle3_delta_bpb": 0.0021258557176091486,
+        "c_cycle2_delta_bpb": -0.0060201162356561255,
+        "c3_holdout_gain_bpb": 0.1273572411802828,
+        "predictive_readout_cycle3_relative_l2": 0.22896974252935548,
+        "predictive_context_cycle3_relative_l2": 0.22607026567706157
+      }
+    },
+    {
+      "seed": 29,
+      "arms": {
+        "baseline": {
+          "consolidation_strength": 0.0,
+          "c_cycle3_delta_bpb": -0.020997871741991858,
+          "c_cycle2_delta_bpb": -0.017692751543418872,
+          "c2_cycle3_delta_bpb": -0.0042215416943935935,
+          "c3_holdout_gain_bpb": 0.15925912061584224,
+          "active_a_retention_bpb": 4.243791701074528,
+          "final_checkpoint": "E:\\Seed\\output\\taiji_m4r10_rule_audit\\baseline\\seed29_cascade_c65536.pt",
+          "cycle2_progress_checkpoint": "E:\\Seed\\output\\taiji_m4r10_rule_audit\\baseline\\seed29_cascade_cycle2_c65536.pt",
+          "cycle3_active_readout_delta": {
+            "l2_delta": 5.686663807193325,
+            "relative_l2_delta": 0.16968311047224247,
+            "max_abs_delta": 0.530988872051239,
+            "changed_scalars": 12593,
+            "total_scalars": 12593
+          },
+          "final_active_distance_to_protected": {
+            "l2_distance": 8.04318020632042,
+            "relative_to_protected_norm": 0.24205237468553154
+          },
+          "cycle2_active_distance_to_protected": {
+            "l2_distance": 7.339571214359647,
+            "relative_to_protected_norm": 0.22087788611441056
+          }
+        },
+        "candidate": {
+          "consolidation_strength": 0.5,
+          "c_cycle3_delta_bpb": -0.01687920130374998,
+          "c_cycle2_delta_bpb": -0.0035217644685676674,
+          "c2_cycle3_delta_bpb": -0.013231241224690216,
+          "c3_holdout_gain_bpb": 0.1637150696783083,
+          "active_a_retention_bpb": 4.2175175089219525,
+          "final_checkpoint": "E:\\Seed\\output\\taiji_m4r10_rule_audit\\candidate\\seed29_cascade_c65536.pt",
+          "cycle2_progress_checkpoint": "E:\\Seed\\output\\taiji_m4r10_rule_audit\\candidate\\seed29_cascade_cycle2_c65536.pt",
+          "cycle3_active_readout_delta": {
+            "l2_delta": 4.984384961252812,
+            "relative_l2_delta": 0.14861786096804008,
+            "max_abs_delta": 0.4752461314201355,
+            "changed_scalars": 12593,
+            "total_scalars": 12593
+          },
+          "final_active_distance_to_protected": {
+            "l2_distance": 6.317074053300242,
+            "relative_to_protected_norm": 0.19010674092122481
+          },
+          "cycle2_active_distance_to_protected": {
+            "l2_distance": 5.7268629112394995,
+            "relative_to_protected_norm": 0.17234486006849944
+          }
+        }
+      },
+      "cycle3_delta_candidate_minus_baseline": 0.004118670438241878,
+      "joint_reference": {
+        "harness": "m4r7 protected joint update (context+readout), NOT the same owner path as R10",
+        "artifact": "E:\\Seed\\output\\taiji-m4r7-formal-seed29\\scale_0p5_seed29.pt",
+        "c_cycle3_delta_bpb": -0.026773012982310718,
+        "c_cycle2_delta_bpb": -0.018653338630855387,
+        "c3_holdout_gain_bpb": 0.16485696095366542,
+        "predictive_readout_cycle3_relative_l2": 0.24034251061238918,
+        "predictive_context_cycle3_relative_l2": 0.2322596268981583
+      }
+    },
+    {
+      "seed": 47,
+      "arms": {
+        "baseline": {
+          "consolidation_strength": 0.0,
+          "c_cycle3_delta_bpb": 0.008124641671927613,
+          "c_cycle2_delta_bpb": -0.030853995209626284,
+          "c2_cycle3_delta_bpb": -0.0016149414424191377,
+          "c3_holdout_gain_bpb": 0.17314570967275866,
+          "active_a_retention_bpb": 4.343148605266776,
+          "final_checkpoint": "E:\\Seed\\output\\taiji_m4r10_rule_audit\\baseline\\seed47_cascade_c65536.pt",
+          "cycle2_progress_checkpoint": "E:\\Seed\\output\\taiji_m4r10_rule_audit\\baseline\\seed47_cascade_cycle2_c65536.pt",
+          "cycle3_active_readout_delta": {
+            "l2_delta": 5.63526748723019,
+            "relative_l2_delta": 0.1622848569255897,
+            "max_abs_delta": 0.5334160327911377,
+            "changed_scalars": 12593,
+            "total_scalars": 12593
+          },
+          "final_active_distance_to_protected": {
+            "l2_distance": 8.236415892421272,
+            "relative_to_protected_norm": 0.24136424616693913
+          },
+          "cycle2_active_distance_to_protected": {
+            "l2_distance": 7.523996207624146,
+            "relative_to_protected_norm": 0.2204871265045179
+          }
+        },
+        "candidate": {
+          "consolidation_strength": 0.5,
+          "c_cycle3_delta_bpb": 0.011253384265960342,
+          "c_cycle2_delta_bpb": -0.027037935531978086,
+          "c2_cycle3_delta_bpb": -0.005614347891249594,
+          "c3_holdout_gain_bpb": 0.1791182512286955,
+          "active_a_retention_bpb": 4.332169045216857,
+          "final_checkpoint": "E:\\Seed\\output\\taiji_m4r10_rule_audit\\candidate\\seed47_cascade_c65536.pt",
+          "cycle2_progress_checkpoint": "E:\\Seed\\output\\taiji_m4r10_rule_audit\\candidate\\seed47_cascade_cycle2_c65536.pt",
+          "cycle3_active_readout_delta": {
+            "l2_delta": 4.954411035846749,
+            "relative_l2_delta": 0.14268647591631484,
+            "max_abs_delta": 0.48532310128211975,
+            "changed_scalars": 12593,
+            "total_scalars": 12593
+          },
+          "final_active_distance_to_protected": {
+            "l2_distance": 6.413808671247644,
+            "relative_to_protected_norm": 0.1879536093386341
+          },
+          "cycle2_active_distance_to_protected": {
+            "l2_distance": 5.867231691399769,
+            "relative_to_protected_norm": 0.1719364311829542
+          }
+        }
+      },
+      "cycle3_delta_candidate_minus_baseline": 0.0031287425940327296,
+      "joint_reference": {
+        "harness": "m4r7 protected joint update (context+readout), NOT the same owner path as R10",
+        "artifact": "E:\\Seed\\output\\taiji-m4r7-formal-seed47\\scale_0p5_seed47.pt",
+        "c_cycle3_delta_bpb": 0.009497186207913622,
+        "c_cycle2_delta_bpb": -0.022253988143789094,
+        "c3_holdout_gain_bpb": 0.16605571592699508,
+        "predictive_readout_cycle3_relative_l2": 0.23725514957003752,
+        "predictive_context_cycle3_relative_l2": 0.23623294989241733
+      }
+    }
+  ],
+  "per_seed_summary": [
+    {
+      "seed": 11,
+      "cycle3_relative_l2_baseline": 0.1734816028544459,
+      "cycle3_relative_l2_candidate": 0.1513402959105991,
+      "final_distance_to_protected_baseline": 0.23413099267760848,
+      "final_distance_to_protected_candidate": 0.18448841029135402,
+      "cycle3_delta_candidate_minus_baseline": 0.006752451908446311,
+      "joint_cycle3_delta": 0.0021258557176091486,
+      "active_only_minus_joint_cycle3": -0.004205217322898136
+    },
+    {
+      "seed": 29,
+      "cycle3_relative_l2_baseline": 0.16968311047224247,
+      "cycle3_relative_l2_candidate": 0.14861786096804008,
+      "final_distance_to_protected_baseline": 0.24205237468553154,
+      "final_distance_to_protected_candidate": 0.19010674092122481,
+      "cycle3_delta_candidate_minus_baseline": 0.004118670438241878,
+      "joint_cycle3_delta": -0.026773012982310718,
+      "active_only_minus_joint_cycle3": 0.0057751412403188596
+    },
+    {
+      "seed": 47,
+      "cycle3_relative_l2_baseline": 0.1622848569255897,
+      "cycle3_relative_l2_candidate": 0.14268647591631484,
+      "final_distance_to_protected_baseline": 0.24136424616693913,
+      "final_distance_to_protected_candidate": 0.1879536093386341,
+      "cycle3_delta_candidate_minus_baseline": 0.0031287425940327296,
+      "joint_cycle3_delta": 0.009497186207913622,
+      "active_only_minus_joint_cycle3": -0.001372544535986009
+    }
+  ],
+  "diagnosis": {
+    "candidate_worse_cycle3_seeds": [
+      11,
+      29,
+      47
+    ],
+    "candidate_closer_to_protected_seeds": [
+      11,
+      29,
+      47
+    ],
+    "active_only_better_than_joint_seeds": [
+      11,
+      47
+    ],
+    "interaction_direction_consistent": true,
+    "interpretation": "CONSISTENT NEGATIVE INTERACTION: the consolidation rule pulls the active readout toward the frozen protected readout (long-run retention improves) while worsening cycle-3 boundary adaptation across the cohort.",
+    "gate_exit_recommendation": "evidence supports a pre-registered conditional-rule candidate (cycle/uncertainty gated preservation) only if interaction_direction_consistent and the joint-vs-active-only contrast is confirmed by a dedicated single-variable smoke"
+  },
+  "resources": {
+    "total_elapsed_seconds": 15.915331299998797
+  }
+}
