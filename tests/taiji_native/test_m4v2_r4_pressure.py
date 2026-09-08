@@ -219,10 +219,9 @@ def test_r4_live_pressure_is_emitted_by_bridge_tick_and_restores_exactly() -> No
     candidate_index = shadow.region.unit_index(candidate.unit_id)
     candidate_projection = shadow.output_projection.pre_index == candidate_index
     assert bool(candidate_projection.any())
-    assert torch.equal(
-        shadow.output_projection.edge_weight[candidate_projection],
-        torch.zeros_like(shadow.output_projection.edge_weight[candidate_projection]),
-    )
+    candidate_weights = shadow.output_projection.edge_weight[candidate_projection]
+    assert bool(candidate_weights.abs().any())
+    assert float(candidate_weights.abs().sum().item()) == pytest.approx(1.0)
     shadow_before_gate = content_digest(shadow.region.to_payload())
     context = torch.zeros(model.config.motor_context_dim)
     assert torch.equal(shadow.forward(context), context)

@@ -666,6 +666,7 @@ class AdaptiveResidualShadow:
             raise ValueError("adaptive residual shadow candidate was not appended")
         birth_anchor_unit_ids: tuple[str, ...] = ()
         birth_anchor_weights: tuple[float, ...] = ()
+        birth_anchor_indices: tuple[int, ...] = ()
         if birth_mode in {"pressure_anchor", "pressure_mixture"}:
             parent_activity = region.activity[: candidate.parent_unit_count].abs()
             parent_eligibility = region.trace[: candidate.parent_unit_count].abs()
@@ -681,6 +682,7 @@ class AdaptiveResidualShadow:
                     sorted=True,
                 ).indices.tolist()
             )
+            birth_anchor_indices = anchor_indices
             selected_scores = anchor_score[list(anchor_indices)]
             if float(selected_scores.sum().item()) <= 1e-8:
                 anchor_weights = torch.full_like(
@@ -711,6 +713,13 @@ class AdaptiveResidualShadow:
             generator=growth_generator,
             device=device,
         )
+        if birth_anchor_indices:
+            cls._seed_birth_output_projection(
+                projection,
+                anchor_indices=birth_anchor_indices,
+                anchor_weights=birth_anchor_weights,
+                candidate_index=region.unit_index(candidate.unit_id),
+            )
         gate_projection = cls._new_gate_projection(
             config,
             input_dim=(
@@ -796,6 +805,34 @@ class AdaptiveResidualShadow:
             identity_positions = projection.pre_index[output_index] == output_index
             projection.edge_weight[output_index, identity_positions] = 1.0
         return projection
+
+    @staticmethod
+    @torch.no_grad()
+    def _seed_birth_output_projection(
+        projection: SparseSynapses,
+        *,
+        anchor_indices: tuple[int, ...],
+        anchor_weights: tuple[float, ...],
+        candidate_index: int,
+    ) -> None:
+        """Align a pressure-born unit's output mapping with its anchors.
+
+        The R3 bridge exposes its region through an identity unit→context
+        mapping.  A pressure-born candidate that inherits only dendritic and
+        recurrent rows would still enter the readout with a zero axon.  Seed
+        the candidate edge at each anchor's identity output row so a mixture
+        birth starts as the same functional mixture before local credit
+        refines it.  Random births retain the zero candidate output edge.
+        """
+
+        for anchor_index, anchor_weight in zip(anchor_indices, anchor_weights):
+            if not 0 <= int(anchor_index) < projection.out_features:
+                continue
+            candidate_positions = projection.pre_index[int(anchor_index)] == candidate_index
+            if bool(candidate_positions.any()):
+                projection.edge_weight[int(anchor_index), candidate_positions] = float(
+                    anchor_weight
+                )
 
     @classmethod
     def from_checkpoint(
