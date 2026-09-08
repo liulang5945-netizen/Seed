@@ -433,6 +433,13 @@ R8/R9 已把候选空间收敛为 stable course 上的连续更新与巩固交�
 - **证据**：CPU smoke 先验证 owner 写集合、scale/规则参数、record-disjoint、checkpoint/fresh-restore、read-only score；再比较 C cycle2/cycle3 retention 与 C″ increment。
 - **停止线**：任一技术或 retention Gate 失败，撤回该规则并回到规则设计；不得扩容、换 UltraData、继续试 scale 或接外围系统，全部保持 `can_promote=false`。
 
+### 架构/巩固候选闸门（决策记录 2026-09-08，不改变唯一下一步）
+
+与外部讨论（CPU/GPU、transformer 取舍、脑机制 CLS 映射）收敛出的两条**条件性候选**。它们不是本轮计划、不提前实现，只登记"什么证据出现才允许评估"，防止以后在错误时机重开或无限追加模块：
+
+1. **跨时间信用/长程协作外挂闸门**：M2.R2 的 gated temporal candidate 已否决（distance≥32 无长程信用）；attention/递归外挂 **仅当**满足以下全部条件才可作为候选评估——(a) M4.R10 及巩固方向完成且 retention 仍失败，(b) 归因明确指向时间信用而非容量/更新干扰，(c) 候选保持本地、稀疏、可审计并可整体移除（含梯度对照与移除后行为证据，计划 §5 L211-212 已允许 autograd/optimizer 评估但 AST 禁令保持到评审通过）。不满足任一条件则不再以"需要更强架构"为由重开此线。
+2. **巩固强度按证据调制候选**：M4.R1 用的是固定 `consolidation_strength=0.5` 且被 retention Gate 否决。若 M4.R10 证明"单一巩固/更新规则"仍有方向，后续候选**只允许**在固定课程、固定容量、scale 0.5 下把强度改为按惊讶度/不确定性门控（而非手工 replay 或再次多参数扫参），且必须先过同规格 CPU smoke 再谈 formal。
+
 ## 8. M4：在原有知识上成长的研究日程
 
 目标是持续利用已有参数与状态，按证据扩展容量；不是每次训练从零开始，也不是无限追加互不协作的副本。
@@ -463,6 +470,8 @@ R8/R9 已把候选空间收敛为 stable course 上的连续更新与巩固交�
 | 视觉/桌面 | 修复影响训练/运行的崩溃即可 | M6 统一水墨 Taiji logo、任务栏/托盘/通知、圆角/DPI、侧栏无需常态滚动、生命状态入口去重与雷达图 |
 | CI/仓库/发布 | 每轮定向回归、lint、diff，阶段末全量 | M7 绑定 release manifest，验证 Windows/Linux、API、前端、Legacy-off、打包与 main 状态 |
 | CUDA | 当前仅记录 CPU workload/吞吐，保持硬件阻塞 | M8 实机 CPU↔CUDA checkpoint、数值与成本对照，再做热点优化 |
+| 多流并行（批处理化） | 不改学习规则；仅当语料 ≥ 百 MiB、seed/任务矩阵膨胀或容量放大任一出现时才评估"多记录/多实例并行"调度 | 在并行后同一 checkpoint 复跑固定输出 canary + A/B/C 指定 owner 分数，digest 与逐位输出一致方可替代当前逐符号路径；单实例逐 tick 语义不变 |
+| AMD/DirectML 后端 | 决策记录 2026-09-08：Windows 无成熟训练路径（ROCm 实验性、DirectML 稀疏算子覆盖风险），本轮不装卡、训练主链保持 CPU | 仅当"多流并行或容量放大"给出 GPU 可兑现加速的实测证据后，再评估 Linux+ROCm 或 DirectML 核心算子冒烟；否则保持搁置 |
 
 第三方服务的网络、凭据和副作用权限在实际接入时单独确认；本计划不授权购买算力或发布/推送。现有第三方/客户端成果继续保留为底座。
 
