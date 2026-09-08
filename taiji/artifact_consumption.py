@@ -86,7 +86,7 @@ class ArtifactConsumptionPolicy:
         reason: str,
         revision: int = ARTIFACT_CONSUMPTION_POLICY_REVISION,
     ) -> ArtifactConsumptionPolicy:
-        payload = {
+        payload: dict[str, Any] = {
             "format": ARTIFACT_CONSUMPTION_POLICY_FORMAT,
             "revision": int(revision),
             "mode": str(mode),
@@ -192,20 +192,21 @@ class ArtifactConsumptionAudit:
         result: str,
         error_code: str = "",
     ) -> ArtifactConsumptionAudit:
-        payload = {
+        normalized_statuses = tuple(
+            (str(key), str(value)) for key, value in sorted(artifact_statuses.items())
+        )
+        payload: dict[str, Any] = {
             "format": ARTIFACT_CONSUMPTION_AUDIT_FORMAT,
             "batch_id": str(batch_id),
             "policy": policy.to_payload(),
-            "artifact_statuses": {
-                str(key): str(value) for key, value in sorted(artifact_statuses.items())
-            },
+            "artifact_statuses": dict(normalized_statuses),
             "result": str(result),
             "error_code": str(error_code),
         }
         return cls(
             batch_id=str(batch_id),
             policy=policy,
-            artifact_statuses=tuple(payload["artifact_statuses"].items()),
+            artifact_statuses=normalized_statuses,
             result=str(result),
             error_code=str(error_code),
             audit_digest=artifact_consumption_audit_digest(payload),

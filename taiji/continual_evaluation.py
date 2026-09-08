@@ -243,7 +243,7 @@ class ContinualCourseManifest:
 
     @property
     def content_digest(self) -> str:
-        return self.to_payload()["manifest_digest"]
+        return str(self.to_payload()["manifest_digest"])
 
     @classmethod
     def from_payload(cls, payload: Mapping[str, Any]) -> ContinualCourseManifest:
@@ -411,7 +411,7 @@ class ContinualEvaluationSnapshot:
 
     @property
     def content_digest(self) -> str:
-        return self.to_payload()["snapshot_digest"]
+        return str(self.to_payload()["snapshot_digest"])
 
     @classmethod
     def from_payload(cls, payload: Mapping[str, Any]) -> ContinualEvaluationSnapshot:
@@ -518,7 +518,10 @@ class ContinualScorecard:
         observations = self._observations(metric_name, domain_id)
         valid = tuple(item for item in observations if item.parent_delta is not None)
         missing_count = len(observations) - len(valid)
-        gains = tuple(self._gain(spec, float(item.parent_delta)) for item in valid)
+        parent_deltas = tuple(
+            item.parent_delta for item in valid if item.parent_delta is not None
+        )
+        gains = tuple(self._gain(spec, float(delta)) for delta in parent_deltas)
         forgetting = tuple(max(0.0, -gain) for gain in gains)
         non_inferiority = (
             missing_count == 0 and all(gain >= -self.epsilon for gain in gains)
@@ -556,7 +559,10 @@ class ContinualScorecard:
         observations = self._observations(metric_name, domain_id)
         valid = tuple(item for item in observations if item.comparison_delta is not None)
         missing_count = len(observations) - len(valid)
-        gains = tuple(self._gain(spec, float(item.comparison_delta)) for item in valid)
+        comparison_deltas = tuple(
+            item.comparison_delta for item in valid if item.comparison_delta is not None
+        )
+        gains = tuple(self._gain(spec, float(delta)) for delta in comparison_deltas)
         return {
             "metric_name": metric_name,
             "domain_id": domain_id or observations[0].domain_id,
@@ -631,7 +637,7 @@ class ContinualScorecard:
 
     @property
     def content_digest(self) -> str:
-        return self.to_payload()["scorecard_digest"]
+        return str(self.to_payload()["scorecard_digest"])
 
     @classmethod
     def from_payload(cls, payload: Mapping[str, Any]) -> ContinualScorecard:

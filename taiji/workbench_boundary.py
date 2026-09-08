@@ -188,7 +188,7 @@ class WorkbenchTaskBoundary:
             raise ValueError("issued_tick cannot be negative")
         if ttl <= 0:
             raise ValueError("ttl_ticks must be positive")
-        identity = {
+        identity: dict[str, Any] = {
             "format": WORKBENCH_TASK_BOUNDARY_FORMAT,
             "version": WORKBENCH_TASK_BOUNDARY_VERSION,
             "project_id": _required_text(project_id, "project_id"),
@@ -236,7 +236,7 @@ class WorkbenchTaskBoundary:
         tick = int(closed_tick)
         if tick < self.issued_tick:
             raise ValueError("closed_tick cannot precede issued_tick")
-        identity = {
+        identity: dict[str, Any] = {
             **self._identity_payload(),
             "lifecycle": "closed",
             "parent_token_digest": self.token_digest,

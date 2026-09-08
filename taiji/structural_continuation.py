@@ -134,7 +134,7 @@ def measure_structural_region_capacity_pressure(
     queue_pressure = min(1.0, max(0.0, float(pending_candidate_count) / limit))
     reservation_pressure = min(1.0, max(0.0, float(reserved_resource_cost) / limit))
     pressure = max(occupancy, queue_pressure, reservation_pressure)
-    identity = {
+    identity: dict[str, Any] = {
         "region_id": str(region_id),
         "unit_count": int(unit_count),
         "capacity_limit": limit,
@@ -241,4 +241,3 @@ class StructuralCandidateRollback:
             resource_cost=int(payload["resource_cost"]),
             reason=str(payload.get("reason", "")),
         )
-

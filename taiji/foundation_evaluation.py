@@ -13,7 +13,7 @@ import math
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal, overload
 
 FOUNDATION_MANIFEST_FORMAT = "taiji-foundation-baseline-v1"
 FOUNDATION_EVALUATION_FORMAT = "taiji-foundation-evaluation-v1"
@@ -98,6 +98,18 @@ def _non_negative_int(value: Any, field_name: str) -> int:
     if isinstance(value, bool) or not isinstance(value, int) or value < 0:
         raise ValueError(f"{field_name} must be a non-negative integer")
     return value
+
+
+@overload
+def _float(value: Any, field_name: str, *, required: Literal[True]) -> float: ...
+
+
+@overload
+def _float(value: Any, field_name: str, *, required: Literal[False]) -> float | None: ...
+
+
+@overload
+def _float(value: Any, field_name: str, *, required: bool) -> float | None: ...
 
 
 def _float(value: Any, field_name: str, *, required: bool) -> float | None:

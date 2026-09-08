@@ -68,7 +68,8 @@ class CueBindingBank:
         value = pattern.to(self.device, dtype=torch.float32)
         if float(value.norm().item()) <= 1e-8:
             raise ValueError("cue binding pattern cannot be empty")
-        return value / value.norm().clamp_min(1e-8)
+        normalized: torch.Tensor = value / value.norm().clamp_min(1e-8)
+        return normalized
 
     def route(
         self,

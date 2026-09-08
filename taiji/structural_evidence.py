@@ -515,10 +515,15 @@ class StructuralEvidencePressureSnapshot:
         train = tuple(item for item in items if cls._partition(item) == "train")
         holdout = tuple(item for item in items if cls._partition(item) == "holdout")
         retention = tuple(item for item in items if cls._partition(item) == "retention")
-        if any(item.mean_prediction_error is None for item in train):
+        train_prediction_errors = tuple(
+            item.mean_prediction_error
+            for item in train
+            if item.mean_prediction_error is not None
+        )
+        if len(train_prediction_errors) != len(train):
             raise ValueError("structural evidence pressure snapshot train windows require prediction error")
         evidence_ids = tuple(dict.fromkeys(item_id for item in items for item_id in item.evidence_ids))
-        payload = {
+        payload: dict[str, Any] = {
             "format": STRUCTURAL_EVIDENCE_PRESSURE_SNAPSHOT_FORMAT,
             "network_id": items[0].network_id,
             "region_id": items[0].region_id,
@@ -539,7 +544,7 @@ class StructuralEvidencePressureSnapshot:
             "retention_window_count": len(retention),
             "prediction_observation_count": sum(item.prediction_observation_count for item in train),
             "train_prediction_error_sum": float(
-                sum(float(item.mean_prediction_error) for item in train)
+                sum(float(value) for value in train_prediction_errors)
             ),
             "train_resource_state_sum": float(
                 sum(1.0 - float(item.mean_resource_pressure) for item in train)
@@ -576,7 +581,7 @@ class StructuralEvidencePressureSnapshot:
             raise ValueError("structural evidence pressure snapshots cannot reuse windows")
         def _merge_ids(first: tuple[str, ...], second: tuple[str, ...]) -> tuple[str, ...]:
             return tuple(dict.fromkeys((*first, *second)))
-        payload = {
+        payload: dict[str, Any] = {
             "format": STRUCTURAL_EVIDENCE_PRESSURE_SNAPSHOT_FORMAT,
             "network_id": self.network_id,
             "region_id": self.region_id,
@@ -956,7 +961,7 @@ class StructuralEvidenceWindow:
             (partition, sum(item.partition == partition for item in observations))
             for partition in sorted({item.partition for item in observations})
         )
-        payload = {
+        payload: dict[str, Any] = {
             "format": STRUCTURAL_EVIDENCE_WINDOW_CHECKPOINT_FORMAT,
             "window_id": self.window_id,
             "network_id": self.network_id,
@@ -1224,7 +1229,7 @@ class StructuralEvidenceLedger:
         return summary
 
     def seal_all(self) -> tuple[StructuralEvidenceWindowSummary, ...]:
-        summaries = []
+        summaries: list[StructuralEvidenceWindowSummary] = []
         for key in tuple(self._open_windows):
             window = self._open_windows[key]
             if len(self._sealed_windows) + len(summaries) >= self.max_sealed_windows:
@@ -1372,10 +1377,13 @@ class StructuralEvidenceLedger:
             stream_windows.setdefault(stream, []).append(
                 (item.window_digest, item.window_digest in evaluated_set)
             )
-        for item in self._compacted_windows:
-            stream = f"{item.network_id}:{item.region_id}"
+        for compacted_window in self._compacted_windows:
+            stream = f"{compacted_window.network_id}:{compacted_window.region_id}"
             stream_windows.setdefault(stream, []).append(
-                (item.window_digest, item.window_digest in evaluated_set)
+                (
+                    compacted_window.window_digest,
+                    compacted_window.window_digest in evaluated_set,
+                )
             )
         stream_status = tuple(
             (

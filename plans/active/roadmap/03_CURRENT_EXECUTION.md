@@ -166,11 +166,11 @@ R4 要回答的不是“能否再创建一个区域”，而是“固定容量�
 
 R4 的最小交付 `pressure/proposal → shadow materialize → shadow train → validate → lesion/admit/rollback` 已形成可复现 CPU canary 和 versioned report；birth homeostasis 已把 G candidate lesion 从此前的负均值修复到正均值，但相对 fixed-large 的 G 仍未达 Gate，因此 R4 以“技术闭合、结构不晋级”收束。后续只允许做收束审计、默认路径保护和计划证据整理，不得继续用 gate 输入、出生缩放或新语料无边界试探来掩盖 fixed-large 反证；R5 自主路由、Skill/MCP/provider/客户端外围继续冻结，直到新的架构决策明确解除停止线。
 
-R4 收束审计已完成其研究边界部分：R4 定向 6 项测试通过，homeostasis 只存在于独立 shadow，materialize 不改变默认 parent checkpoint/forward，版本一致性检查通过，本轮涉及文件的 ruff、B/SIM 和 black 约束通过。全量 native 回归得到 `627 passed, 17 failed, 15 errors, 1 skipped`；15 个 error 主要是本机历史 pytest 临时目录锁权限，切换到仓库可写 basetemp 后代表性测试可正常执行；剩余失败集中在既有 context/delayed memory、Workbench neutral baseline、interaction structural gate 和 synapse longevity 基线，不属于本轮 R4 代码路径。tracked source 的全仓 ruff/B/SIM 与 core mypy 也仍有历史门禁债务，因此不能把仓库 CI 写成已通过。
+R4 收束审计已完成其研究边界部分：R4 定向 6 项测试通过，homeostasis 只存在于独立 shadow，materialize 不改变默认 parent checkpoint/forward，版本一致性检查通过，本轮涉及文件的 ruff、B/SIM 和 black 约束通过。全量 native 回归得到 `627 passed, 17 failed, 15 errors, 1 skipped`；15 个 error 主要是本机历史 pytest 临时目录锁权限，切换到仓库可写 basetemp 后代表性测试可正常执行；剩余失败集中在既有 context/delayed memory、Workbench neutral baseline、interaction structural gate 和 synapse longevity 基线，不属于本轮 R4 代码路径。tracked source 的 ruff、B/SIM 与 core mypy 在本轮已分别收敛到 0，但全量 native 回归仍未绿，不能把仓库 CI 写成已通过。
 
-M7 CI 基线收敛第一批已完成：tracked source 的主 ruff 门禁从 9 项降为 0，安全自动修复涉及的 14 个脚本/平台/测试文件已通过 `py_compile`、ruff、black diff 和 `git diff --check`；R4 代码路径与默认 parent 未改变。随后完成 B/SIM 显式契约审计，`51 → 42 → 0`，所有 `zip` 改动都基于已确认的等长输入，未使用 unsafe 批量改写；受影响模块回归 `23 passed`。
+M7 CI 基线收敛第一批已完成：tracked source 的主 ruff 门禁从 9 项降为 0，安全自动修复涉及的 14 个脚本/平台/测试文件已通过 `py_compile`、ruff、black diff 和 `git diff --check`；R4 代码路径与默认 parent 未改变。随后完成 B/SIM 显式契约审计，`51 → 42 → 0`，所有 `zip` 改动都基于已确认的等长输入，未使用 unsafe 批量改写；受影响模块回归 `23 passed`。本轮完成 core mypy 棘轮：`mypy --follow-imports=silent seed taiji` 从 `175 errors / 24 files` 收敛到 `0 errors / 95 files`，同时通过源码范围 ruff、B/SIM、py_compile；与类型边界相邻的回归分组共 `85 passed`，Qwen provider 的 `tmp_path` 组受本机 pytest 临时目录权限阻塞，代码未出现断言失败。
 
-**当前唯一下一步**：处理 core mypy 棘轮，先复现并按模块归因当前 `seed taiji` 类型错误，优先修复本轮 CI 收敛触及的类型路径和公共边界；保持 R4 shadow/默认 parent 不变，修复后再处理既有 native 回归，R5 learned router 及 Skill/MCP/provider/客户端外围继续冻结。
+**当前唯一下一步**：进入既有 native 回归归因，先在仓库可写 basetemp 下复现 `context/delayed memory` 准确率失败，判断是当前行为回归、过期阈值还是测试环境噪声；保持 R4 shadow/默认 parent 不变，不通过放宽阈值消除失败，确认根因后再修复并回归，R5 learned router 及 Skill/MCP/provider/客户端外围继续冻结。
 
 R0 完成条件（已满足）：
 

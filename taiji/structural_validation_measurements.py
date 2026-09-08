@@ -230,7 +230,7 @@ class StructuralValidationMeasurements:
             name="lesion",
         )
         pressure = _resource_pressure(resource_measurement)
-        values = {
+        values: dict[str, Any] = {
             "holdout_gain": _bounded_gain(holdout_baseline_error - holdout_candidate_error),
             "retention_regression": _bounded_gain(
                 retention_candidate_error - retention_baseline_error
@@ -268,7 +268,7 @@ class StructuralValidationMeasurements:
     def from_payload(cls, payload: Mapping[str, Any]) -> StructuralValidationMeasurements:
         if payload.get("format") != STRUCTURAL_VALIDATION_MEASUREMENT_FORMAT:
             raise ValueError("unsupported structural validation measurement format")
-        values = {
+        values: dict[str, Any] = {
             "holdout_gain": float(payload["holdout_gain"]),
             "retention_regression": float(payload["retention_regression"]),
             "lesion_effect": float(payload["lesion_effect"]),

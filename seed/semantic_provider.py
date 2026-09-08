@@ -240,6 +240,7 @@ class QwenSemanticEvidenceProvider:
         if not isinstance(model_constraints, (list, tuple)):
             raise TypeError("Qwen semantic proposal constraints must be a list")
         singular_constraint = payload.get("constraint", ())
+        singular_constraints: tuple[str, ...]
         if isinstance(singular_constraint, str):
             singular_constraints = (singular_constraint,) if singular_constraint else ()
         elif isinstance(singular_constraint, (list, tuple)):
@@ -428,9 +429,11 @@ class _QwenTextGenerationBackend:
                 pad_token_id=self.tokenizer.eos_token_id,
             )
         prompt_length = encoded["input_ids"].shape[1]
-        return self.tokenizer.decode(
-            generated[0, prompt_length:],
-            skip_special_tokens=True,
+        return str(
+            self.tokenizer.decode(
+                generated[0, prompt_length:],
+                skip_special_tokens=True,
+            )
         ).strip()
 
 
