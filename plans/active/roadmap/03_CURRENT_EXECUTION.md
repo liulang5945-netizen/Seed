@@ -1,6 +1,6 @@
 # Seed / Taiji 模型优先统一开发计划
 
-> 修订：2026-09-08。状态：R0 测量链完成；R1～R3 首轮能力报告因数据重叠被撤回，record-disjoint v2 数据链已修复；seed11/29/47 的 R1 formal aggregate 已完成但不晋级。R2.R0～R2.R1 时间表征候选已完成并否决 promotion；M2.R3.R0～R3.R4 的 structured semantic CPU canary、runtime owner/checkpoint、多实体/关系/约束多 seed 组合训练、多步持久 WorldState 转移及 runtime adapter 接线均已完成；M2.R4 联合课程与能力保持也已完成：事实、Goal、ContentPlan、未知/冲突/澄清、事件删除/顺序、持久性、owner lesion、旧 adapter 行为保持、新进程恢复、detach 清理、双 owner 组合和受保护能力保持全部通过。M3.R0 的 project-disjoint Workbench 只读边界、M3.R1 的 native Workbench observation 静态课程、M3.R2 的 native task-state sequence、M3.R3 的 native read-only ActionIntent planning、M3.R4 的 preview/approval dry-run、M3.R5 的隔离临时工作区批准执行 canary 均已完成。M4.R0 的 record-disjoint C→C′→C″ 三周期已完成：seed11/29/47 正式报告均通过 13/13 技术、owner、checkpoint、fresh-process 和只读评分 Gate；三 seed 的 C″ gain 均值 `-0.01078 BPB`、仅 `1/3` 为正，C/C′ 后续 retention 三 seed 全部退化，aggregate `can_promote=false`。M4.R1 的固定容量巩固候选已完成 core/评估器接线、10/10 CPU canary、seed11 smoke 与 seed11/29/47 formal aggregate；三 seed formal 均通过 13/13 技术/owner/checkpoint/fresh-process Gate，C″ gain `3/3` 为正且均值 `+0.056549 BPB`，但 C cycle2 与 cycle3 retention 均 `3/3` 退化，`retention_gate_passed=false`，候选否决、不扩容结论转入 M4.R2 容量诊断。证据指向“新记录可吸收但旧能力保持失败”的稳定—可塑性/容量边界问题，尚不能把它归因于纯容量不足。R0～R5 证明的是受限 verified Workbench 证据到结构化语义/状态/只读意图/副作用审计/隔离执行恢复的边界，不是 native raw-text learning、自然语言流畅或已获授权的真实客户端自治写入。真实客户端批准流仍保持决策闸门；在用户明确授权前不对真实工作区执行写入。连续流切块、资源遥测和中断恢复均已通过。本文是唯一执行顺序与“下一步”来源。
+> 修订：2026-09-08。状态：R0 测量链完成；R1～R3 首轮能力报告因数据重叠被撤回，record-disjoint v2 数据链已修复；seed11/29/47 的 R1 formal aggregate 已完成但不晋级。R2.R0～R2.R1 时间表征候选已完成并否决 promotion；M2.R3.R0～R3.R4 的 structured semantic CPU canary、runtime owner/checkpoint、多实体/关系/约束多 seed 组合训练、多步持久 WorldState 转移及 runtime adapter 接线均已完成；M2.R4 联合课程与能力保持也已完成：事实、Goal、ContentPlan、未知/冲突/澄清、事件删除/顺序、持久性、owner lesion、旧 adapter 行为保持、新进程恢复、detach 清理、双 owner 组合和受保护能力保持全部通过。M3.R0 的 project-disjoint Workbench 只读边界、M3.R1 的 native Workbench observation 静态课程、M3.R2 的 native task-state sequence、M3.R3 的 native read-only ActionIntent planning、M3.R4 的 preview/approval dry-run、M3.R5 的隔离临时工作区批准执行 canary 均已完成。M4.R0 的 record-disjoint C→C′→C″ 三周期已完成：seed11/29/47 正式报告均通过 13/13 技术、owner、checkpoint、fresh-process 和只读评分 Gate；三 seed 的 C″ gain 均值 `-0.01078 BPB`、仅 `1/3` 为正，C/C′ 后续 retention 三 seed 全部退化，aggregate `can_promote=false`。M4.R1 的固定容量巩固候选已完成 core/评估器接线、10/10 CPU canary、seed11 smoke 与 seed11/29/47 formal aggregate；三 seed formal 均通过 13/13 技术/owner/checkpoint/fresh-process Gate，C″ gain `3/3` 为正且均值 `+0.056549 BPB`，但 C cycle2 与 cycle3 retention 均 `3/3` 退化，`retention_gate_passed=false`，候选否决、不扩容结论转入 M4.R2 容量诊断。M4.R2 的固定容量 vs 增量容量归因 canary 已完成：19/19 技术、owner、detach/rollback、checkpoint/fresh-restore Gate 全部通过；A/B 都保持旧 C 课程，但小预算 C″ gain 分别为 `-0.002763/-0.019737 BPB`，`capacity_pressure_supported=false`，增量槽不进入 formal。当前证据指向需要先分离更新干扰与表征/credit 瓶颈，而不是继续扩容。R0～R5 证明的是受限 verified Workbench 证据到结构化语义/状态/只读意图/副作用审计/隔离执行恢复的边界，不是 native raw-text learning、自然语言流畅或已获授权的真实客户端自治写入。真实客户端批准流仍保持决策闸门；在用户明确授权前不对真实工作区执行写入。连续流切块、资源遥测和中断恢复均已通过。本文是唯一执行顺序与“下一步”来源。
 >
 > 本轮已完成数据契约代码、审计报告和回归测试；不会改写旧报告，下一步只从原始 child 重新生成独立证据。历史 M0/M1/M2-2a～2ae 的有效成果保留；旧“下一步”全部失效。重审依据见 [研究审视](../../reference/TAIJI_RESEARCH_REVIEW_2026_09_06.md)，原文见 [历史快照](../../archive/history/research_review_20260906/README.md)。
 >
@@ -46,6 +46,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | M4.R0 three-cycle continuation（已完成） | record-disjoint C→C′→C″；seed11/29/47 三个 formal cascade 均 `status=passed`、13/13 checks，三周期 active owner 均保存并 fresh-process 恢复；aggregate `reports/taiji_m4r0_cascade3_aggregate_20260908.json` | C″ gain 均值 `-0.01078 BPB`、min/max `-0.03579/+0.03202`、正向 seed `1/3`；C′→C″ delta 退化 `3/3`、C cycle2/cycle3 退化 `3/3`；技术 Gate 通过但固定容量 cascade 不晋级，先转 M4.R1 巩固 |
 | M4.R1 consolidation canary/smoke（已完成首轮） | `BytePredictiveReadout` 增加显式 preservation signal；`Taiji.learn_bytes(..., consolidation_strength=...)` 默认关闭且只允许 active readout；core 21 项定向测试、canary 10/10、seed11 cascade wiring smoke 13/13 通过 | canary 的 zero-strength compatibility、owner 隔离、checkpoint/fresh restore、source 不变全部通过；smoke `consolidation_strength=0.5` 且技术/谱系 Gate 通过，但 C cycle2 delta `-0.04001`、C2 cycle3 delta `+0.04484`，仍不能证明保持改善，`can_promote=false`；进入三 seed formal |
 | M4.R1 consolidation formal（已完成且否决） | `consolidation_strength=0.5`；seed11/29/47 三个 formal cascade 均 `status=passed`、13/13 checks；aggregate `reports/taiji_m4r1_consolidation_aggregate_20260908.json` | C″ gain 均值 `+0.056549 BPB`、min/max `+0.034825/+0.086067`、正向 seed `3/3`；但 C cycle2 与 cycle3 retention 退化均 `3/3`，训练耗时均值约 `4679.6 s`、评分均值约 `906.1 s`、峰值工作集约 `354 MiB`；技术 Gate 通过、retention Gate 失败，候选不晋级，转 M4.R2 容量诊断 |
+| M4.R2 capacity diagnosis canary（已完成且不支持扩容） | 实验 artifact `eval_taiji_m4r2_capacity_diagnosis_canary.py`；A fixed-capacity active slot vs B frozen old slot + zero-initialized incremental slot；19/19 technical/owner/detach/rollback/fresh-restore checks；报告 `reports/taiji_m4r2_capacity_diagnosis_canary_seed11_20260908.json` | A/B 旧 C cycle2/cycle3 均未退化，但 C″ gain 为 `-0.002763/-0.019737 BPB`；B 增量槽 `50372 bytes`，容量压力 Gate 为 false，不进入 formal；下一步转 M4.R3 更新干扰/表征归因 |
 | M2.R2.R0 seed11 smoke | 固定 seed11 parent，frozen/active_readout 两臂、4/16 KiB、4 点；20/20 技术检查通过；曾捕获默认绝对 corpus path 导致 lineage digest 不一致，已修正为 child 生成时的相对 canonical path | checkpoint preflight digest 一致；active owner 只写 active slot，但 holdout gain 为 `-0.06255/-0.14109 BPB`；smoke 仅作执行链证据，不晋级 |
 | M2.R2.R0 seed11 formal curve | 固定 seed11 parent，frozen/active_readout/predictive_context/joint_predictive 四臂、4/16/64 KiB、12 点；60/60 技术检查通过；preflight checkpoint `33,174,421` bytes，峰值工作集约 `535–569 MB` | protected holdout baseline `4.049390 BPB`；context gain 为 `+0.001515/+0.023738/-0.016105`，16 KiB 之外不稳定；active gain `-0.062549/-0.141091/-0.165254`，joint gain `-0.058237/-0.120990/-0.153693`；owner 写入集合与 read-only scoring 全部正确，当前不引入新架构 |
 | M2.R2.R0 context aggregate | seed11 formal + seed29/47 context 复现共 24 点、120/120 技术检查通过，来源报告 SHA-256 已写入 aggregate | 4 KiB gain 均值 `+0.007681`（3/3 正）；16 KiB `+0.018081`（2/3 正）；64 KiB `-0.010650`（1/3 正）；结论是短/中预算有信号但长预算不成立，先做消融与参照，不做时间架构晋级 |
@@ -83,7 +84,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | 4 | M2.R3 语义与表达训练 | **R3.R0～R3.R4 已完成**：结构化语义训练合同、可选 runtime owner/checkpoint、多实体/关系/约束多 seed canary、多步事件到持久 WorldState/Goal satisfaction、runtime adapter 接线已闭合 | runtime 输入只来自当前 `PerceptEvent`；事实/Goal/ContentPlan/WorldState 结果可审计；provider 表达收益与 native-only 分开统计 |
 | 5 | M2.R4 联合课程与保持 | **已完成**：frozen/static-only/transition-only/joint-native 对照、双 owner 组合、runtime 双组件 checkpoint 和 protected retention 已闭合；不把独立 owner 的串行课程称为共享权重联合优化 | 三 seed 正式报告；joint-native 新组合通过且两个受保护 owner 均保持 |
 | 6 | M3 最小真实任务验证 | **M3.R0/R1/R2/R3/R4/R5 已完成；真实客户端批准流仍是决策闸门**：R0 闭合只读证据边界，R1 训练静态 observation，R2 训练跨 tick task-state transition，R3 形成 snapshot 绑定只读 `ActionIntent`，R4 闭合 preview/approval，R5 在隔离副本验证一次执行与 undo | R5 已证明 exact approval token、digest、执行一次、undo 和恢复拒绝；真实客户端 API/UI 接线会扩大外部副作用范围，未获明确授权不接线 |
-| 7 | M4 连续成长 | **M4.R0 已完成且不晋级；M4.R1 formal 已完成但 retention Gate 否决；进入 M4.R2 容量诊断**：先区分固定容量读出干扰、保持机制边界和真正容量压力，再决定是否提出零初始残差结构增长 | M4.R2 必须在同一 record-disjoint 三周期课程上提供固定容量与增量容量的成对归因、旧能力矩阵、checkpoint/回滚和成本证据；未完成归因前不扩容、不把新分支当作成长成功 |
+| 7 | M4 连续成长 | **M4.R0 已完成且不晋级；M4.R1 formal 已完成但 retention Gate 否决；M4.R2 capacity diagnosis canary 已完成且不支持扩容；进入 M4.R3 更新干扰/表征归因** | M4.R3 必须在同一 record-disjoint 三周期课程上分离 readout 更新、predictive context 表征更新和联合更新的因果贡献；在归因完成前不扩容、不把新分支当作成长成功 |
 | 8 | M5 知识与身体 | Skill/MCP 数据内化、真实调用与客户端插件 | 认知与执行收益可分别归因，权限/撤销闭合 |
 | 9 | M6 产品收口 | provider 稳定性、UI/桌面、遗留格式清理 | packaged client 与真实能力一致 |
 | 横向 | M7 工程质量 | 每轮相关检查，阶段末全矩阵，发布时集中核验 | 无新增 CI 退化；正式发布绑定代码/数据/模型/包 |
@@ -93,7 +94,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 
 ## 4. 当前唯一下一步
 
-**唯一下一步：实现 M4.R2 的固定容量 vs 增量容量归因 canary。** M4.R1 三 seed 已证明 `consolidation_strength=0.5` 能带来 C″ 新留出收益（`3/3` 正），但不能阻止旧 C retention 退化（cycle2/cycle3 均 `3/3`）；因此现在不能继续调巩固强度，也不能直接宣称“必须扩容”。先在同一 record-disjoint C→C′→C″ 课程上建立两个严格成对的候选：A 为当前固定容量 active readout（无巩固，作为已验证基线），B 为零初始化、独立 owner、可回滚的增量 readout/容量槽；两者共享同一 frozen source、相同数据游标/预算和相同 read-only scorer。canary 必须验证旧能力矩阵、C/C′/C″ 新收益、owner 写集合、容量增量字节、checkpoint/fresh-process、训练/评分成本和 source 不变；若 B 只改善新 C″ 而旧 retention 仍退化，判定不是简单容量问题；若 B 在同等旧能力保持约束下显著降低退化，才允许提出 M4.R2 formal 增量容量候选。不要同时启用 gated temporal candidate、接入 provider/MCP 或接线真实客户端写入。
+**唯一下一步：实现 M4.R3 的固定容量更新干扰/表征 credit 归因 canary。** M4.R2 已验证 A/B 的旧 C cycle2/cycle3 均未退化，但零初始化增量槽没有带来 C″ 新留出收益（A/B gain 均为负），因此当前没有容量压力证据，不能继续扩容。下一轮在同一 record-disjoint C→C′→C″ 课程、同一 fixed-capacity 资源预算下建立三个严格可比的候选：A 为 active readout-only，B 为 predictive-context-only，C 为 context+readout joint；共享同一 frozen source、数据游标和 read-only scorer。canary 必须验证每个候选的实际写 owner、protected readout/fabric/memory 不变量、C/C′/C″ 新收益、旧能力 retention、update/representation credit 诊断、checkpoint/fresh-process 和成本；若 context-only 或 joint 能在不扩大容量的情况下解释新收益且不造成旧能力退化，才进入针对学习率/更新规则的下一轮；若三者均无稳定信号，回到数据密度/任务难度审计。不要启用 gated temporal candidate、接入 provider/MCP 或接线真实客户端写入。
 
 2026-09-06 实际审计已证明首轮报告不能作为能力证据：旧 evaluator 的 C/C′ 只是换 partition seed，不是新记录。当前已落地的修复为 `scripts/training/eval_taiji_m2r1_phase_c_canary.py` v2、`scripts/training/audit_taiji_m2r1_data_contract.py` 和 `reports/taiji_m2r1_data_contract_20260906.json`：
 
@@ -322,15 +323,26 @@ M4.R0 的正负边界已经足够明确：active readout 能在部分 seed 上�
 - **成本结果**：三 seed 训练耗时均值 `4679.6 s`，评分耗时均值 `906.1 s`，峰值工作集最大 `371011584 bytes`；相对 M4.R0 的额外保护计算成本不能忽略，因此下一轮不能在没有收益/保持证据的情况下继续堆叠巩固路径。
 - **停止线结论**：巩固 owner 可独立归因、checkpoint/fresh-process/source lineage 全部通过，但旧 retention 没有改善；候选正式撤回，不继续调 `consolidation_strength`，转 M4.R2 的固定容量 vs 增量容量归因 canary。
 
-### M4.R2：固定容量 vs 增量容量归因（下一步）
+### M4.R2：固定容量 vs 增量容量归因（canary 已完成，不支持扩容，2026-09-08）
 
-M4.R1 已把“只要给 active readout 加保持项就能自然巩固”的假设否决。下一轮必须先回答更窄的问题：旧能力退化来自同一 readout 的新旧梯度干扰，还是当前表示/读出容量确实不够。M4.R2 不是直接扩宽生产架构，而是用一个零初始化、可回滚的增量容量候选建立成对因果证据。
+M4.R1 已把“只要给 active readout 加保持项就能自然巩固”的假设否决。M4.R2 用一个零初始化、可回滚的增量容量候选回答了更窄的问题：旧能力退化是否能被额外容量解除。它是实验 artifact，不是默认运行时的多槽路由，也不是开放式成长实现。
 
 - **A 基线**：当前已经通过测量链的 fixed-capacity active readout；不启用 consolidation，保持 M4.R0 的训练/数据/评分预算。
 - **B 候选**：新增一个零初始化的独立 predictive readout/容量槽，只允许写入声明的增量 owner；shared fabric、predictive context、protected readout、WorldState、provider 和真实客户端保持不变。新槽的 checkpoint 必须显式记录 parent digest、slot schema、新增参数/状态字节和 owner 写集合。
 - **配对课程**：A/B 从同一 identity-generation source checkpoint、同一 C/C′/C″ record-disjoint chain、同一游标和三周期预算开始；read-only scorer 同时读取 protected old capability、active new capability 和 composite route，不能用不同 scorer 选择性隐藏旧能力退化。
 - **canary Gate**：先做小预算 CPU smoke，至少验证 zero-init 输出兼容、A/B owner lesion、source/old owner 不变、C/C′/C″ 评分同一 lineage、checkpoint/fresh restore、slot detach/rollback、参数与状态字节、训练/评分耗时；任何 Gate 失败不跑 formal。
-- **诊断判定**：B 只有在不降低旧 C/C′ retention 的前提下提高 C″ 新留出，才构成容量压力证据；若 B 仍退化，说明主要瓶颈不是容量，撤回增量候选并回到学习率/更新干扰或表征 credit 诊断。无论结果如何，`can_promote=false`，不接入默认运行时。
+- **实际结果**：`reports/taiji_m4r2_capacity_diagnosis_canary_seed11_20260908.json` 通过 19/19 technical/owner/detach/rollback/checkpoint/fresh-restore checks；A/B 旧 C cycle2/cycle3 均未退化，但 C″ gain 分别为 `-0.002763/-0.019737 BPB`，B 的增量槽为 `50372 bytes`，`capacity_pressure_supported=false`。
+- **停止线结论**：B 没有在同等旧能力保持约束下产生新 C″ 收益，因此不跑 formal、不接入默认运行时、不再继续扩宽；下一步转 M4.R3，直接区分 readout 更新、predictive context 表征更新和联合更新的 credit/干扰。
+
+### M4.R3：固定容量更新干扰与表征 credit 归因（下一步）
+
+M4.R2 排除了“只要增加一个零初始化 readout 槽就能解释当前瓶颈”。M4.R3 不改生产架构、不增加容量，而是在同一 inherited source 和同一 record-disjoint C→C′→C″ 课程上把可塑性分成三个 owner 路径，回答新能力与旧能力退化究竟来自 readout 更新、predictive context 表征更新，还是两者联合时的相互干扰。
+
+- **A readout-only**：沿用 active boundary、固定容量、`learn_predictive_context=False`，作为 M4.R2 A 的可比基线。
+- **B context-only**：只允许 `predictive_context` plastic，冻结 predictive readout、shared fabric、memory 和外部边界；评分仍由原 protected readout 完成，明确记录 context owner 的 digest/参数变化。
+- **C joint**：只在 A/B owner 合同均闭合后启用 context+readout 联合更新；不启用 gated temporal candidate、consolidation 或任何新增槽。
+- **canary Gate**：CPU smoke 必须通过三臂 record-disjoint lineage、每臂写集合与 lesion、protected readout/fabric/memory 不变（除 B/C 明确声明的 context owner）、C/C′/C″ read-only score、旧 retention、checkpoint/fresh-process、source digest、训练/评分成本和失败回滚；任一 Gate 失败不跑 formal。
+- **诊断判定**：只有当 B/C 在固定容量下稳定改善 C″ 且不损害旧 C/C′ retention，才允许提出更新规则或表征 credit 的下一轮；若 A 有效而 B 无效，优先归因 readout/credit；若 B 有效而 A 无效，优先归因 representation；若三臂均不稳定，先回到数据密度、课程难度和学习率审计。所有结果先保持 `can_promote=false`。
 
 ## 8. M4：在原有知识上成长的研究日程
 
@@ -338,7 +350,7 @@ M4.R1 已把“只要给 active readout 加保持项就能自然巩固”的假�
 
 1. **固定容量多周期学习**：先至少三个顺序任务周期，测 train/dev/test、旧能力矩阵与写入成本。
 2. **巩固**：复用 bounded replay，只读取已批准 train/Outcome；尝试把短期适应合并进慢参数，保护稳定知识。
-3. **容量诊断**：仅在固定容量学习/重放仍有证据支持的瓶颈时提出结构候选；保留“不是容量问题”的否决出口。
+3. **固定容量归因**：先分离 readout 更新、表征更新和联合更新的干扰/credit；只有仍有独立数据支持的容量压力时才提出结构候选，保留“不是容量问题”的否决出口。
 4. **继承式增长**：零初始残差、保持函数的扩宽、群体/连接增量等一次一个候选；旧权重、身份、记忆和状态可迁移，新增参数受资源预算控制。
 5. **自主路由与协作**：区分已知任务边界和未知切换；训练路由，用最强单体/随机组/平均组/路由损伤证明协作。
 6. **压缩与回收**：有无增长、固定大容量、合并/剪枝前后的能力和成本配对；失败可回到上代 checkpoint。
@@ -346,7 +358,7 @@ M4.R1 已把“只要给 active readout 加保持项就能自然巩固”的假�
 
 退出须展示连续多轮净收益与受控资源增长。不得以“主干永久冻结 + 手动任务 ID + 每任务新头”宣布开放式成长完成。
 
-**数据源升级候选（决策 2026-09-08，T0 已本地化，formal 未启动）：** 引入面壁智能/OpenBMB UltraData 高质量开源数据（L0-L4 分级治理，Apache-2.0）作为固定容量数据密度假设的验证数据源。本地仓库已建于 `data/ultradata/`（`data/` 整目录已被 .gitignore 忽略，不入库），T0 已完成下载并逐文件校验：`UltraData-SFT-Agent-2609` 全量 57 文件 50.5 GB（注意：HF datasets-server 报 11.3 GB 是 parquet 换算体积，仓库原始 JSONL 为其约 4.5 倍）+ `UltraData-RL-2609` 的 Knowledge/Math/Long_Context 子集 8 文件 3.4 GB（跳过 175 GB Code 域）+ `UltraData-SFT-2605` 的 Knowledge/IF/Chinese-general 三域 no_think 子集 150 文件 2.8 GB（gated=auto 已授权）。记录 schema 为标准 chat messages JSONL（`uid` + `messages[{role,content}]` + `source`/`domain`/`think_type`），与 simple_zh 对话数据同构，learn_bytes 适配成本低。研究依据：L3 合成形态（QA 对生成 + 多风格改写）对应“固定容量下最大化单位 token 信息密度”，与 M4.R0/R1 暴露的容量饱和与 retention 退化同构。验证顺序固定：M4.R2 容量归因完成且仍有数据密度/容量压力证据之后 → 格式抽样与 learn_bytes/digest 契约适配（forward-slash 相对路径）→ 同预算单变量数据源对比（C 分支，三 seed retention/increment 判定）→ 决定是否引入。本项不改变当前唯一下一步，当前留在 M4.R2 之后的候选队列，不提前替代容量归因。
+**数据源升级候选（决策 2026-09-08，T0 已本地化，formal 未启动）：** 引入面壁智能/OpenBMB UltraData 高质量开源数据（L0-L4 分级治理，Apache-2.0）作为固定容量数据密度假设的验证数据源。本地仓库已建于 `data/ultradata/`（`data/` 整目录已被 .gitignore 忽略，不入库），T0 已完成下载并逐文件校验：`UltraData-SFT-Agent-2609` 全量 57 文件 50.5 GB（注意：HF datasets-server 报 11.3 GB 是 parquet 换算体积，仓库原始 JSONL 为其约 4.5 倍）+ `UltraData-RL-2609` 的 Knowledge/Math/Long_Context 子集 8 文件 3.4 GB（跳过 175 GB Code 域）+ `UltraData-SFT-2605` 的 Knowledge/IF/Chinese-general 三域 no_think 子集 150 文件 2.8 GB（gated=auto 已授权）。记录 schema 为标准 chat messages JSONL（`uid` + `messages[{role,content}]` + `source`/`domain`/`think_type`），与 simple_zh 对话数据同构，learn_bytes 适配成本低。研究依据：L3 合成形态（QA 对生成 + 多风格改写）对应“固定容量下最大化单位 token 信息密度”，与 M4.R0/R1 暴露的容量饱和与 retention 退化同构。验证顺序固定：M4.R3 固定容量归因完成且仍有数据密度/容量压力证据之后 → 格式抽样与 learn_bytes/digest 契约适配（forward-slash 相对路径）→ 同预算单变量数据源对比（C 分支，三 seed retention/increment 判定）→ 决定是否引入。本项不改变当前唯一下一步，当前留在 M4.R3 之后的候选队列，不提前替代归因实验。
 
 ## 9. M5～M8 外围任务的具体安排
 
