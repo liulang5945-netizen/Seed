@@ -259,11 +259,11 @@ class InteractionGroupTransferLearner:
         minimum_utility: float = 0.0,
         maximum_uncertainty: float = 1.0,
     ) -> None:
-        if not 0.0 < float(ridge):
+        if not float(ridge) > 0.0:
             raise ValueError("interaction transfer ridge must be positive")
         if not math.isfinite(float(minimum_utility)):
             raise ValueError("interaction transfer minimum_utility must be finite")
-        if not 0.0 <= float(maximum_uncertainty):
+        if not float(maximum_uncertainty) >= 0.0:
             raise ValueError("interaction transfer maximum_uncertainty cannot be negative")
         self.ridge = float(ridge)
         self.minimum_utility = float(minimum_utility)

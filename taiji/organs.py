@@ -480,9 +480,9 @@ class GatedMultiTimescaleTemporalResidual:
             raise ValueError("fast_decay must be in [0, 1)")
         if not 0.0 < self.slow_decay < 1.0:
             raise ValueError("slow_decay must be in (0, 1)")
-        if not 0.0 < self.gate_temperature:
+        if not self.gate_temperature > 0.0:
             raise ValueError("gate_temperature must be positive")
-        if not 0.0 < self.residual_gain:
+        if not self.residual_gain > 0.0:
             raise ValueError("residual_gain must be positive")
 
     def _slow_trace(

@@ -23,8 +23,6 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from taiji.measurement_verdict import (  # noqa: E402
-    MEASUREMENT_VERDICT_FORMAT,
-    MEASUREMENT_VERDICT_VERSION,
     CapabilityVerdict,
     judge_absolute,
     judge_incremental,

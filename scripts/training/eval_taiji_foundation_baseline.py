@@ -61,7 +61,6 @@ from taiji.foundation_tasks import (  # noqa: E402
     _persistent_digest,
     _random_world_error,
     build_generalization_partitions,
-    detect_partition_overlap,
 )
 from taiji.foundation_training import _code_revision  # noqa: E402
 from taiji.internalization import content_digest  # noqa: E402

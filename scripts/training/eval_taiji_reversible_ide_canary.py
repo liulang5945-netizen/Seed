@@ -17,7 +17,7 @@ if str(PROJECT_ROOT) not in sys.path:
 import seed_platform.workbench as workbench_module  # noqa: E402
 from api.seed_runtime import SeedRuntime  # noqa: E402
 from seed import Seed  # noqa: E402
-from taiji import ActionIntent, InputFrame, TaskInterpretation  # noqa: E402
+from taiji import ActionIntent, InputFrame  # noqa: E402
 
 REPORT_FORMAT = "taiji-w7-p2-reversible-ide-canary-v1"
 TARGET_PATH = "api/app.py"

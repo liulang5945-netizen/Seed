@@ -134,7 +134,7 @@ class StructuralValidationArtifactBatch:
         artifacts: Mapping[str, Any],
     ) -> StructuralValidationArtifactBatch:
         digest_map = {
-            str(candidate_id): str(getattr(artifact, "artifact_digest"))
+            str(candidate_id): str(artifact.artifact_digest)
             for candidate_id, artifact in artifacts.items()
         }
         return cls.from_digest_map(

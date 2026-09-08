@@ -343,7 +343,7 @@ def evaluate() -> dict[str, object]:
             for item in runs
         ),
         "restart_continues_admission_audit": all(
-            any("applied" == status for status in item["rounds"][0]["restart_admission_statuses"])
+            any(status == "applied" for status in item["rounds"][0]["restart_admission_statuses"])
             for item in runs
         ),
         "rollback_is_audited_and_restored": all(
