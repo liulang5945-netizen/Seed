@@ -28,7 +28,12 @@ def _probe_accuracy(model: Taiji, mode: str) -> float:
     for index, symbol in enumerate(sequence[:-1]):
         if symbol == PROBE and mode != "full":
             _intervene(model, mode, index)
-        step = model.observe(symbol, learn=False)
+        step = model.observe(
+            symbol,
+            learn=False,
+            readout="predictive",
+            use_identity=False,
+        )
         if symbol == PROBE:
             hits.append(step.predicted_symbol == sequence[index + 1])
     return sum(hits) / len(hits)

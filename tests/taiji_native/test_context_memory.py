@@ -13,7 +13,12 @@ def _ambiguous_accuracy(model: Taiji, data: bytes, *, lesion: str) -> float:
             for region in model._state.regions:
                 region.trace.zero_()
             model._state.motor_context.zero_()
-        step = model.observe(symbol, learn=False)
+        step = model.observe(
+            symbol,
+            learn=False,
+            readout="predictive",
+            use_identity=False,
+        )
         if symbol == ord("x"):
             count += 1
             correct += int(step.predicted_symbol == sequence[index + 1])
