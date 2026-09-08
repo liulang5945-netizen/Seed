@@ -110,7 +110,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | 4 | M2.R3 语义与表达训练 | **R3.R0～R3.R4 已完成**：结构化语义训练合同、可选 runtime owner/checkpoint、多实体/关系/约束多 seed canary、多步事件到持久 WorldState/Goal satisfaction、runtime adapter 接线已闭合 | runtime 输入只来自当前 `PerceptEvent`；事实/Goal/ContentPlan/WorldState 结果可审计；provider 表达收益与 native-only 分开统计 |
 | 5 | M2.R4 联合课程与保持 | **已完成**：frozen/static-only/transition-only/joint-native 对照、双 owner 组合、runtime 双组件 checkpoint 和 protected retention 已闭合；不把独立 owner 的串行课程称为共享权重联合优化 | 三 seed 正式报告；joint-native 新组合通过且两个受保护 owner 均保持 |
 | 6 | M3 最小真实任务验证 | **M3.R0/R1/R2/R3/R4/R5 已完成；真实客户端批准流仍是决策闸门**：R0 闭合只读证据边界，R1 训练静态 observation，R2 训练跨 tick task-state transition，R3 形成 snapshot 绑定只读 `ActionIntent`，R4 闭合 preview/approval，R5 在隔离副本验证一次执行与 undo | R5 已证明 exact approval token、digest、执行一次、undo 和恢复拒绝；真实客户端 API/UI 接线会扩大外部副作用范围，未获明确授权不接线 |
-| 7 | M4 连续成长 | **M4.R0～R9 均已完成：R0 不晋级、R1/R7 formal 被 retention Gate 否决、R2 不支持扩容、R5 半速改善但 cycle3 退化、R8/R9 排除 owner 幅度与课程 outlier；M4.R10 formal 已完成且否决——consolidation 改善远期保留但加重 cycle3 边界遗忘（2/3 退化），固定规则撤回，闸门 2 保持关闭** | M4.R11 只做 cycle3 交互归因（只读）：consolidation 保守项 × phase 边界的负交互机制 + active-only 与 joint 更新路径的 cycle3 并排对照；归因前不启动任何新训练 |
+| 7 | M4 连续成长 | **M4.R0～R11 均已完成：R1/R7/R10 formal 均被 retention Gate 否决；R11 归因证明 consolidation 保守项“参数稳定性换不来边界泛化”（cycle3 位移更小 3/3 但 delta 变差 3/3），固定容量巩固方向冻结，闸门 2 关闭** | cycle3 退化指向课程结构属性；下一个单变量是 §8 数据源升级候选（UltraData），先做 R12 前置适配（无训练），formal 对比另行预注册 |
 | 8 | M5 知识与身体 | Skill/MCP 数据内化、真实调用与客户端插件 | 认知与执行收益可分别归因，权限/撤销闭合 |
 | 9 | M6 产品收口 | provider 稳定性、UI/桌面、遗留格式清理 | packaged client 与真实能力一致 |
 | 横向 | M7 工程质量 | 每轮相关检查，阶段末全矩阵，发布时集中核验 | 无新增 CI 退化；正式发布绑定代码/数据/模型/包 |
@@ -120,7 +120,9 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 
 ## 4. 当前唯一下一步
 
-**唯一下一步：执行 M4.R11 的 cycle3 交互归因（只读，不训练）。** R10 formal 已给出方向性因果证据：consolidation 改善远期 A 保留与 C″ 增益，却加重 cycle3 边界遗忘（candidate 2/3 退化，seed11 由过转不过、seed47 恶化）；且 active-only 更新路径（R10 baseline）的 cycle3 退化仅 1/3，轻于 R7 的 joint 更新路径（2/3）。R11 复用 R6/R8 的只读归因工具，输入 R10 三 seed × 两臂 formal artifacts，输出两件事：(a) consolidation 保守项与 cycle3 退化的 per-seed 参数差分对照（active readout 相对 L2、changed scalars、退化幅度），(b) active-only 与 joint 更新在 cycle2→cycle3 的 owner 写入结构并排对照（R10 baseline vs R7 scale-0.5 臂，标注 harness 差异防止过度归因）。归因结论只允许两个出口：形成一个新的预注册单一规则候选（如按周期或惊讶度条件启用的保守项），或冻结固定容量巩固方向并转入课程结构属性论证；两个出口都必须先过同规格 CPU smoke 再谈 formal。归因前不启动任何新训练，不得同时换数据、扩容、改拓扑或接 provider/MCP，全部保持 `can_promote=false`。
+**唯一下一步：执行 M4.R12 前置——UltraData 数据契约适配与格式抽样（纯工程准备，不训练）。** M4.R11 已按预注册出口冻结固定容量巩固方向：归因证明 consolidation 保守项机制生效（cycle3 位移更小 3/3、active 更靠近 protected 3/3）但 cycle3 delta 同步变差 3/3，参数稳定性换不来边界泛化；active-only vs joint 对照 2/3 不一致，不构成候选。cycle3 退化指向课程结构属性，而检验“结构属性 vs 数据属性”的下一个已登记单变量就是 §8 数据源升级候选的既定验证序列（M4.R1 formal 已完成，序列解锁）。R12 前置只做三件事：(1) 将 `data/ultradata/SFT-2605` 的 Knowledge/IF/Chinese-general no_think JSONL 转换为 simple_zh 同构对话 JSONL（保留 source/domain 字段，forward-slash 相对路径），(2) 抽样 ≥1000 条做格式、digest 稳定性与 `build_disjoint_phase_chain` 兼容性验证，(3) 产出一条可复用的转换脚本与固定数据文件；不做任何 `learn_bytes` 训练、不改 evaluator 语义、不动三 seed 谱系。数据源单变量对比 formal（同预算 C 分支、三 seed retention/increment 判定）须在适配产物过 Gate 后另行预注册。全部保持 `can_promote=false`。
+
+> **M4.R11 已完成（2026-09-09）**：归因报告 `reports/taiji_m4r11_cycle3_interaction_attribution_20260909.json`，机制与出口判定详见 §7；固定容量巩固方向（consolidation/scale 组合、门控保守项候选）自本日起冻结，闸门 2 关闭。
 
 2026-09-06 实际审计已证明首轮报告不能作为能力证据：旧 evaluator 的 C/C′ 只是换 partition seed，不是新记录。当前已落地的修复为 `scripts/training/eval_taiji_m2r1_phase_c_canary.py` v2、`scripts/training/audit_taiji_m2r1_data_contract.py` 和 `reports/taiji_m2r1_data_contract_20260906.json`：
 
@@ -437,6 +439,16 @@ R8/R9 已把候选空间收敛为 stable course 上的连续更新与巩固交�
 - **候选闸门联动**：候选闸门 2（惊讶度门控）的解锁条件「M4.R10 证明单一巩固规则仍有方向」未满足，保持关闭。
 - **停止线执行**：撤回 `consolidation_strength` 固定规则；不扩容、不换 UltraData、不试其他 scale、不接外围系统，全部保持 `can_promote=false`。
 
+### M4.R11：cycle3 交互归因（只读，已完成，2026-09-09）
+
+R10 的否决留下两个待归因问题：consolidation 为何加重 cycle3 遗忘，以及 active-only 路径是否真的轻于 joint。R11 复用 R8 的参数差分工具，对 R10 三 seed × 两臂 artifacts（final checkpoint 与 cycle2 progress checkpoint 差分出 cycle3 单周期位移）与 R7 scale-0.5 臂做只读对照，不训练。
+
+- **归因证据（3/3 方向一致）**：candidate 臂的 cycle3 单周期 active readout 位移更小（relative L2 `0.151/0.149/0.143` vs baseline `0.173/0.170/0.162`），final active 到 protected 的距离更近（`0.184/0.190/0.188` vs `0.234/0.242/0.241`）——保守项机制被直接观测；但 cycle3 delta 同步变差 3/3（`+0.0068/+0.0041/+0.0031`）。
+- **结论一（机制）**：cycle3 的 holdout 退化需要参数移动去适应 phase 边界分布变化；限制移动（无论以何种保守强度）只会更差。**参数稳定性换不来边界泛化**，R8 的“更新幅度过大”假设被彻底排除。
+- **结论二（路径对照不可靠）**：active-only vs joint 的 cycle3 对照仅 2/3 一致（seed29 反向 `+0.00578`），不构成预注册候选依据。
+- **出口判定：冻结固定容量巩固方向**。门控保守项候选即使完美实现（cycle3 时完全关闭），上限也只是 R10 baseline（仍 1/3 退化，严格 Gate 不过），不值得预注册；cycle3 退化对更新规则不敏感，指向课程结构属性。
+- **报告**：`reports/taiji_m4r11_cycle3_interaction_attribution_20260909.json`，technical Gate 全过（含跨轮 source 文件一致性、只读、数值有限性）。
+
 ### 架构/巩固候选闸门（决策记录 2026-09-08，不改变唯一下一步）
 
 与外部讨论（CPU/GPU、transformer 取舍、脑机制 CLS 映射）收敛出的两条**条件性候选**。它们不是本轮计划、不提前实现，只登记"什么证据出现才允许评估"，防止以后在错误时机重开或无限追加模块：
@@ -458,7 +470,7 @@ R8/R9 已把候选空间收敛为 stable course 上的连续更新与巩固交�
 
 退出须展示连续多轮净收益与受控资源增长。不得以“主干永久冻结 + 手动任务 ID + 每任务新头”宣布开放式成长完成。
 
-**数据源升级候选（决策 2026-09-08，T0 已本地化，formal 未启动）：** 引入面壁智能/OpenBMB UltraData 高质量开源数据（L0-L4 分级治理，Apache-2.0）作为固定容量数据密度假设的验证数据源。本地仓库已建于 `data/ultradata/`（`data/` 整目录已被 .gitignore 忽略，不入库），T0 已完成下载并逐文件校验：`UltraData-SFT-Agent-2609` 全量 57 文件 50.5 GB（注意：HF datasets-server 报 11.3 GB 是 parquet 换算体积，仓库原始 JSONL 为其约 4.5 倍）+ `UltraData-RL-2609` 的 Knowledge/Math/Long_Context 子集 8 文件 3.4 GB（跳过 175 GB Code 域）+ `UltraData-SFT-2605` 的 Knowledge/IF/Chinese-general 三域 no_think 子集 150 文件 2.8 GB（gated=auto 已授权）。记录 schema 为标准 chat messages JSONL（`uid` + `messages[{role,content}]` + `source`/`domain`/`think_type`），与 simple_zh 对话数据同构，learn_bytes 适配成本低。研究依据：L3 合成形态（QA 对生成 + 多风格改写）对应“固定容量下最大化单位 token 信息密度”，与 M4.R0/R1 暴露的容量饱和与 retention 退化同构。验证顺序固定：M4.R5 update-scale canary 及其三 seed pilot 完成，且仍有独立数据密度/容量压力证据之后 → 格式抽样与 learn_bytes/digest 契约适配（forward-slash 相对路径）→ 同预算单变量数据源对比（C 分支，三 seed retention/increment 判定）→ 决定是否引入。本项不改变当前唯一下一步，当前留在 M4.R5 之后的候选队列，不提前替代 update-scale 归因。
+**数据源升级候选（决策 2026-09-08，T0 已本地化；R11 冻结出口后序列已解锁，R12 前置为当前唯一下一步）：** 引入面壁智能/OpenBMB UltraData 高质量开源数据（L0-L4 分级治理，Apache-2.0）作为固定容量数据密度假设的验证数据源。本地仓库已建于 `data/ultradata/`（`data/` 整目录已被 .gitignore 忽略，不入库），T0 已完成下载并逐文件校验：`UltraData-SFT-Agent-2609` 全量 57 文件 50.5 GB（注意：HF datasets-server 报 11.3 GB 是 parquet 换算体积，仓库原始 JSONL 为其约 4.5 倍）+ `UltraData-RL-2609` 的 Knowledge/Math/Long_Context 子集 8 文件 3.4 GB（跳过 175 GB Code 域）+ `UltraData-SFT-2605` 的 Knowledge/IF/Chinese-general 三域 no_think 子集 150 文件 2.8 GB（gated=auto 已授权）。记录 schema 为标准 chat messages JSONL（`uid` + `messages[{role,content}]` + `source`/`domain`/`think_type`），与 simple_zh 对话数据同构，learn_bytes 适配成本低。研究依据：L3 合成形态（QA 对生成 + 多风格改写）对应“固定容量下最大化单位 token 信息密度”，与 M4.R0/R1 暴露的容量饱和与 retention 退化同构。验证顺序固定：M4.R5 update-scale canary 及其三 seed pilot 完成，且仍有独立数据密度/容量压力证据之后 → 格式抽样与 learn_bytes/digest 契约适配（forward-slash 相对路径）→ 同预算单变量数据源对比（C 分支，三 seed retention/increment 判定）→ 决定是否引入。前置条件已满足（M4.R11 已按出口判定冻结巩固方向，且 R11 证明 cycle3 退化对更新规则不敏感，数据密度是下一个可检验单变量）；若 UltraData 数据源下 cycle3 仍退化，则坐实课程结构属性并关闭该假设线。
 
 ## 9. M5～M8 外围任务的具体安排
 
