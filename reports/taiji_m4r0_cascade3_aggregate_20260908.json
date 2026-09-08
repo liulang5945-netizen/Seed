@@ -1,0 +1,302 @@
+{
+  "format": "taiji-m4r0-cascade3-aggregate-v1",
+  "version": 1,
+  "generated_at": "2026-09-08T05:15:21.097327+00:00",
+  "status": "passed",
+  "can_promote": false,
+  "seeds": [
+    {
+      "seed": 11,
+      "source_checkpoint": "e:\\Seed\\output\\taiji-m2s-seed11-identity-generation-20260905\\last.pt",
+      "source_digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+      "checks_passed": 13,
+      "checks_total": 13,
+      "data_chain": {
+        "phase_c": "ac97455f1583b90f7e2d62ca3c682c8e27f0c56bb7275ebee6abdb17fc6476bd",
+        "phase_c2": "13dee7b2f7d38cd3688a5af76264c24cb6156ea371e9db88d812f5ea283598c1",
+        "phase_c3": "33d3a0d9a755d4d315e875a42266a4f4ec74a6a7b54f9831bfa676bee4d2d1cd",
+        "cohort_seeds": [
+          11,
+          29,
+          47
+        ]
+      },
+      "metrics": {
+        "c3_holdout_gain_bpb": -0.028564182735807186,
+        "c2_cycle3_delta_bpb": 0.013278849568219009,
+        "c_cycle2_delta_bpb": 0.018265095229746287,
+        "c_cycle3_delta_bpb": 0.021345670866883104,
+        "active_a_retention_bpb": 4.26590884582784
+      },
+      "resources": {
+        "phases": [
+          {
+            "elapsed_seconds": 1263.750118899974,
+            "learn_seconds": 1240.1805250000907,
+            "checkpoint_save_seconds": 24.888384699937887,
+            "trained_body_bytes": 1048576,
+            "stream_symbols": 1048578,
+            "body_bytes_per_second": 845.5027142116454,
+            "chunk_count": 16,
+            "peak_working_set_bytes": 370069504,
+            "torch_num_threads": 12,
+            "resumed_from_checkpoint": false,
+            "progress_checkpoint": "E:\\Seed\\output\\taiji-m2r1-phase-c-progress-v2\\seed11_cascade_cycle1_c1048576.pt",
+            "resume_cursor": 0,
+            "resume_epoch": 1
+          },
+          {
+            "elapsed_seconds": 1295.7693395999959,
+            "learn_seconds": 1271.4932842998533,
+            "checkpoint_save_seconds": 25.59253849997185,
+            "trained_body_bytes": 1048576,
+            "stream_symbols": 1048578,
+            "body_bytes_per_second": 824.6807222244964,
+            "chunk_count": 16,
+            "peak_working_set_bytes": 370917376,
+            "torch_num_threads": 12,
+            "resumed_from_checkpoint": false,
+            "progress_checkpoint": "E:\\Seed\\output\\taiji-m2r1-phase-c-progress-v2\\seed11_cascade_cycle2_c1048576.pt",
+            "resume_cursor": 0,
+            "resume_epoch": 1
+          },
+          {
+            "elapsed_seconds": 1287.0603455000091,
+            "learn_seconds": 1262.9926864003064,
+            "checkpoint_save_seconds": 25.412903400254436,
+            "trained_body_bytes": 1048576,
+            "stream_symbols": 1048578,
+            "body_bytes_per_second": 830.2312525566384,
+            "chunk_count": 16,
+            "peak_working_set_bytes": 368979968,
+            "torch_num_threads": 12,
+            "resumed_from_checkpoint": false,
+            "progress_checkpoint": "E:\\Seed\\output\\taiji-m2r1-phase-c-progress-v2\\seed11_cascade_cycle3_c1048576.pt",
+            "resume_cursor": 0,
+            "resume_epoch": 1
+          }
+        ],
+        "elapsed_seconds": 3846.579803999979,
+        "learn_seconds": 3774.6664957002504,
+        "checkpoint_save_seconds": 75.89382660016418,
+        "trained_body_bytes": 3145728,
+        "stream_symbols": 3145734,
+        "body_bytes_per_second": 833.3790557611702,
+        "chunk_count": 48,
+        "peak_working_set_bytes": 370917376,
+        "torch_num_threads": 12,
+        "resumed_from_checkpoint": false
+      }
+    },
+    {
+      "seed": 29,
+      "source_checkpoint": "e:\\Seed\\output\\taiji-m2u-seed29-identity-generation-20260905\\last.pt",
+      "source_digest": "9f49bbd4f241d5c27487315a3a3cd67d8d406ac3c67357e931f040cc9d3e50c6",
+      "checks_passed": 13,
+      "checks_total": 13,
+      "data_chain": {
+        "phase_c": "ac97455f1583b90f7e2d62ca3c682c8e27f0c56bb7275ebee6abdb17fc6476bd",
+        "phase_c2": "13dee7b2f7d38cd3688a5af76264c24cb6156ea371e9db88d812f5ea283598c1",
+        "phase_c3": "33d3a0d9a755d4d315e875a42266a4f4ec74a6a7b54f9831bfa676bee4d2d1cd",
+        "cohort_seeds": [
+          11,
+          29,
+          47
+        ]
+      },
+      "metrics": {
+        "c3_holdout_gain_bpb": -0.03579158224353929,
+        "c2_cycle3_delta_bpb": 0.041990321141152975,
+        "c_cycle2_delta_bpb": 0.010879148947892325,
+        "c_cycle3_delta_bpb": 0.03427887221247605,
+        "active_a_retention_bpb": 4.347676780012712
+      },
+      "resources": {
+        "phases": [
+          {
+            "elapsed_seconds": 1300.9080814000918,
+            "learn_seconds": 1276.8277043000562,
+            "checkpoint_save_seconds": 25.43533570028376,
+            "trained_body_bytes": 1048576,
+            "stream_symbols": 1048578,
+            "body_bytes_per_second": 821.2353134793692,
+            "chunk_count": 16,
+            "peak_working_set_bytes": 372314112,
+            "torch_num_threads": 12,
+            "resumed_from_checkpoint": false,
+            "progress_checkpoint": "E:\\Seed\\output\\taiji-m2r1-phase-c-progress-v2\\seed29_cascade_cycle1_c1048576.pt",
+            "resume_cursor": 0,
+            "resume_epoch": 1
+          },
+          {
+            "elapsed_seconds": 1222.328352899989,
+            "learn_seconds": 1198.6045502001652,
+            "checkpoint_save_seconds": 25.077663099975325,
+            "trained_body_bytes": 1048576,
+            "stream_symbols": 1048578,
+            "body_bytes_per_second": 874.8306518817147,
+            "chunk_count": 16,
+            "peak_working_set_bytes": 372334592,
+            "torch_num_threads": 12,
+            "resumed_from_checkpoint": false,
+            "progress_checkpoint": "E:\\Seed\\output\\taiji-m2r1-phase-c-progress-v2\\seed29_cascade_cycle2_c1048576.pt",
+            "resume_cursor": 0,
+            "resume_epoch": 1
+          },
+          {
+            "elapsed_seconds": 1116.2892092000693,
+            "learn_seconds": 1093.0527634997852,
+            "checkpoint_save_seconds": 24.484947000048123,
+            "trained_body_bytes": 1048576,
+            "stream_symbols": 1048578,
+            "body_bytes_per_second": 959.309591462559,
+            "chunk_count": 16,
+            "peak_working_set_bytes": 372465664,
+            "torch_num_threads": 12,
+            "resumed_from_checkpoint": false,
+            "progress_checkpoint": "E:\\Seed\\output\\taiji-m2r1-phase-c-progress-v2\\seed29_cascade_cycle3_c1048576.pt",
+            "resume_cursor": 0,
+            "resume_epoch": 1
+          }
+        ],
+        "elapsed_seconds": 3639.52564350015,
+        "learn_seconds": 3568.4850180000067,
+        "checkpoint_save_seconds": 74.9979458003072,
+        "trained_body_bytes": 3145728,
+        "stream_symbols": 3145734,
+        "body_bytes_per_second": 881.530392906919,
+        "chunk_count": 48,
+        "peak_working_set_bytes": 372465664,
+        "torch_num_threads": 12,
+        "resumed_from_checkpoint": false
+      }
+    },
+    {
+      "seed": 47,
+      "source_checkpoint": "output\\taiji-m2u-seed47-identity-generation-20260905\\last.pt",
+      "source_digest": "9e381dbdfe9ca837f05f55e7ccc28192536b30a703dffefda519b0b235a0d7d8",
+      "checks_passed": 13,
+      "checks_total": 13,
+      "data_chain": {
+        "phase_c": "ac97455f1583b90f7e2d62ca3c682c8e27f0c56bb7275ebee6abdb17fc6476bd",
+        "phase_c2": "13dee7b2f7d38cd3688a5af76264c24cb6156ea371e9db88d812f5ea283598c1",
+        "phase_c3": "33d3a0d9a755d4d315e875a42266a4f4ec74a6a7b54f9831bfa676bee4d2d1cd",
+        "cohort_seeds": [
+          11,
+          29,
+          47
+        ]
+      },
+      "metrics": {
+        "c3_holdout_gain_bpb": 0.03201618558483332,
+        "c2_cycle3_delta_bpb": 0.019449083399707412,
+        "c_cycle2_delta_bpb": 0.0041668780837058605,
+        "c_cycle3_delta_bpb": 0.02098309461149217,
+        "active_a_retention_bpb": 4.384893988690788
+      },
+      "resources": {
+        "phases": [
+          {
+            "elapsed_seconds": 1378.4932024000445,
+            "learn_seconds": 1352.4167951998534,
+            "checkpoint_save_seconds": 27.85405760013964,
+            "trained_body_bytes": 1048576,
+            "stream_symbols": 1048578,
+            "body_bytes_per_second": 775.3349438736057,
+            "chunk_count": 16,
+            "peak_working_set_bytes": 368574464,
+            "torch_num_threads": 12,
+            "resumed_from_checkpoint": false,
+            "progress_checkpoint": "output\\taiji-m4r0-phase-c-progress-v3\\seed47_cascade_cycle1_c1048576.pt",
+            "resume_cursor": 0,
+            "resume_epoch": 1
+          },
+          {
+            "elapsed_seconds": 1244.6418602000922,
+            "learn_seconds": 1220.8459756000666,
+            "checkpoint_save_seconds": 25.097564799827524,
+            "trained_body_bytes": 1048576,
+            "stream_symbols": 1048578,
+            "body_bytes_per_second": 858.892948788734,
+            "chunk_count": 16,
+            "peak_working_set_bytes": 368529408,
+            "torch_num_threads": 12,
+            "resumed_from_checkpoint": false,
+            "progress_checkpoint": "output\\taiji-m4r0-phase-c-progress-v3\\seed47_cascade_cycle2_c1048576.pt",
+            "resume_cursor": 0,
+            "resume_epoch": 1
+          },
+          {
+            "elapsed_seconds": 1184.6000601999694,
+            "learn_seconds": 1160.9510662000393,
+            "checkpoint_save_seconds": 24.971548999892548,
+            "trained_body_bytes": 1048576,
+            "stream_symbols": 1048578,
+            "body_bytes_per_second": 903.204304236647,
+            "chunk_count": 16,
+            "peak_working_set_bytes": 370597888,
+            "torch_num_threads": 12,
+            "resumed_from_checkpoint": false,
+            "progress_checkpoint": "output\\taiji-m4r0-phase-c-progress-v3\\seed47_cascade_cycle3_c1048576.pt",
+            "resume_cursor": 0,
+            "resume_epoch": 1
+          }
+        ],
+        "elapsed_seconds": 3807.735122800106,
+        "learn_seconds": 3734.2138369999593,
+        "checkpoint_save_seconds": 77.92317139985971,
+        "trained_body_bytes": 3145728,
+        "stream_symbols": 3145734,
+        "body_bytes_per_second": 842.4070332638624,
+        "chunk_count": 48,
+        "peak_working_set_bytes": 370597888,
+        "torch_num_threads": 12,
+        "resumed_from_checkpoint": false
+      }
+    }
+  ],
+  "data_chain": {
+    "phase_c": "ac97455f1583b90f7e2d62ca3c682c8e27f0c56bb7275ebee6abdb17fc6476bd",
+    "phase_c2": "13dee7b2f7d38cd3688a5af76264c24cb6156ea371e9db88d812f5ea283598c1",
+    "phase_c3": "33d3a0d9a755d4d315e875a42266a4f4ec74a6a7b54f9831bfa676bee4d2d1cd",
+    "cohort_seeds": [
+      11,
+      29,
+      47
+    ]
+  },
+  "configuration": {
+    "epochs": 1,
+    "c_train_bytes": 1048576,
+    "eval_bytes": 131072,
+    "chunk_bytes": 65536,
+    "checkpoint_interval": 1
+  },
+  "aggregate": {
+    "technical_gate_all_passed": true,
+    "c3_holdout_gain_bpb": {
+      "mean": -0.010779859798171051,
+      "min": -0.03579158224353929,
+      "max": 0.03201618558483332,
+      "positive_seed_count": 1
+    },
+    "c2_cycle3_delta_bpb": {
+      "mean": 0.024906084703026465,
+      "degradation_seed_count": 3
+    },
+    "c_cycle2_delta_bpb": {
+      "mean": 0.011103707420448158,
+      "degradation_seed_count": 3
+    },
+    "c_cycle3_delta_bpb": {
+      "mean": 0.025535879230283776,
+      "degradation_seed_count": 3
+    },
+    "interpretation": "technical continuation and checkpoint gates passed, but fixed-capacity three-cycle cascade is not promoted: only one of three C'' holdouts improved and all three seeds degraded on the prior C retention after cycle 3"
+  },
+  "source_reports": [
+    "reports\\taiji_m4r0_cascade3_seed11_20260907.json",
+    "reports\\taiji_m4r0_cascade3_seed29_20260908.json",
+    "reports\\taiji_m4r0_cascade3_seed47_20260908.json"
+  ]
+}
