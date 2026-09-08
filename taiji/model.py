@@ -1297,6 +1297,25 @@ class Taiji:
         adaptive_residual_shadow_learning = bool(
             _adaptive_residual_shadow is not None and _learn_adaptive_residual_shadow
         )
+        if (
+            adaptive_residual_shadow_learning
+            and previous.last_symbol is not None
+            and previous.readout_kind == "predictive"
+        ):
+            counterfactual_parent_probabilities = (
+                _adaptive_residual_shadow.counterfactual_parent_probabilities
+            )
+            if counterfactual_parent_probabilities is not None:
+                candidate_probability = float(
+                    previous.motor_probabilities[symbol].item()
+                )
+                parent_probability = float(
+                    counterfactual_parent_probabilities[symbol].item()
+                )
+                _adaptive_residual_shadow.record_counterfactual_utility(
+                    math.log(max(parent_probability, 1e-12))
+                    - math.log(max(candidate_probability, 1e-12))
+                )
         developmental_f1_overlay = (
             self._developmental_f1_bundle is not None
             and predictive_readout is self.predictive_readout
@@ -1583,6 +1602,18 @@ class Taiji:
                     else None
                 ),
             )
+            if adaptive_residual_shadow_learning:
+                _adaptive_residual_shadow.record_counterfactual_parent_probabilities(
+                    predictive_readout.probabilities(
+                        _adaptive_residual_shadow.last_parent_context,
+                        episodic_evidence=episodic_evidence,
+                        synapses_override=(
+                            self._developmental_f1_bank("predictive_readout.synapses")
+                            if developmental_f1_overlay
+                            else None
+                        ),
+                    )
+                )
         elif identity_addressing_used and use_delayed_memory_verdict:
             # M1-66: once the identity organ routes a cue, it owns the value
             # readout.  The motor's shared readout and the episodic field's

@@ -110,6 +110,12 @@ class AdaptiveResidualShadow:
         self._last_input = torch.zeros(self.output_dim, device=self.device)
         self._last_activity = torch.zeros(self.unit_count, device=self.device)
         self._last_gate_input = torch.zeros(candidate.parent_unit_count, device=self.device)
+        self._last_parent_context = torch.zeros(self.output_dim, device=self.device)
+        self._last_counterfactual_parent_probabilities = torch.zeros(
+            self.config.alphabet_size,
+            device=self.device,
+        )
+        self._counterfactual_parent_ready = False
         self._last_candidate_residual = torch.zeros(self.output_dim, device=self.device)
         self._last_candidate_activity = 0.0
         self._last_candidate_eligibility_norm = 0.0
@@ -118,6 +124,8 @@ class AdaptiveResidualShadow:
         self._last_candidate_credit_norm = 0.0
         self._last_candidate_projection_update_norm = 0.0
         self._last_candidate_utility = 0.0
+        self._last_counterfactual_utility = 0.0
+        self._counterfactual_utility_ready = False
         self._candidate_gate_bias = torch.zeros((), device=self.device)
         self._candidate_utility_baseline = 0.0
         self._last_candidate_gate = 1.0 if gate_projection is None else 0.5
@@ -198,6 +206,10 @@ class AdaptiveResidualShadow:
         return self._last_candidate_utility
 
     @property
+    def candidate_counterfactual_utility(self) -> float:
+        return self._last_counterfactual_utility
+
+    @property
     def candidate_gate(self) -> float:
         return self._last_candidate_gate
 
@@ -211,6 +223,7 @@ class AdaptiveResidualShadow:
             "candidate_credit_norm": self.candidate_credit_norm,
             "candidate_projection_update_norm": self.candidate_projection_update_norm,
             "candidate_utility": self.candidate_utility,
+            "candidate_counterfactual_utility": self.candidate_counterfactual_utility,
             "candidate_gate": self.candidate_gate,
         }
 
@@ -218,12 +231,58 @@ class AdaptiveResidualShadow:
     def last_activity(self) -> torch.Tensor:
         return self._last_activity.detach().clone()
 
+    @property
+    def last_parent_context(self) -> torch.Tensor:
+        """Return the same context with the candidate residual removed."""
+
+        return self._last_parent_context.detach().clone()
+
+    @property
+    def counterfactual_parent_probabilities(self) -> torch.Tensor | None:
+        """Return the readout surface saved for the most recent candidate output."""
+
+        if not self._counterfactual_parent_ready:
+            return None
+        return self._last_counterfactual_parent_probabilities.detach().clone()
+
     @torch.no_grad()
     def set_gate(self, gate: float) -> None:
         value = float(gate)
         if not math.isfinite(value) or not 0.0 <= value <= 1.0:
             raise ValueError("adaptive residual shadow gate must be finite and in [0, 1]")
         self._gate = value
+
+    @torch.no_grad()
+    def record_counterfactual_parent_probabilities(
+        self,
+        probabilities: torch.Tensor,
+    ) -> None:
+        """Save the exact candidate-off readout for the next causal target.
+
+        The model records this immediately after the candidate-on readout while
+        the same decoder weights and episodic evidence are still live.  The
+        next ``observe`` call supplies the actual target symbol and converts
+        the two probabilities into an exact loss delta before any learning
+        step mutates the decoder or shadow.
+        """
+
+        if probabilities.shape != (self.config.alphabet_size,):
+            raise ValueError("adaptive residual shadow counterfactual probability dimension mismatch")
+        values = probabilities.detach().to(self.device)
+        if not bool(torch.isfinite(values).all()) or bool((values < 0.0).any()):
+            raise ValueError("adaptive residual shadow counterfactual probabilities must be finite and non-negative")
+        self._last_counterfactual_parent_probabilities.copy_(values)
+        self._counterfactual_parent_ready = True
+
+    @torch.no_grad()
+    def record_counterfactual_utility(self, value: float) -> None:
+        """Record candidate-off loss minus candidate-on loss for one target."""
+
+        utility = float(value)
+        if not math.isfinite(utility):
+            raise ValueError("adaptive residual shadow counterfactual utility must be finite")
+        self._last_counterfactual_utility = utility
+        self._counterfactual_utility_ready = True
 
     @torch.no_grad()
     def lesion(self) -> None:
@@ -328,6 +387,9 @@ class AdaptiveResidualShadow:
         self._last_input.zero_()
         self._last_activity.zero_()
         self._last_gate_input.zero_()
+        self._last_parent_context.zero_()
+        self._last_counterfactual_parent_probabilities.zero_()
+        self._counterfactual_parent_ready = False
         self._last_candidate_residual.zero_()
         self._last_candidate_activity = 0.0
         self._last_candidate_eligibility_norm = 0.0
@@ -336,6 +398,8 @@ class AdaptiveResidualShadow:
         self._last_candidate_credit_norm = 0.0
         self._last_candidate_projection_update_norm = 0.0
         self._last_candidate_utility = 0.0
+        self._last_counterfactual_utility = 0.0
+        self._counterfactual_utility_ready = False
         self._last_candidate_gate = 1.0 if self.gate_projection is None else 0.5
 
     @torch.no_grad()
@@ -343,6 +407,8 @@ class AdaptiveResidualShadow:
         if context.shape != (self.output_dim,):
             raise ValueError("adaptive residual shadow context dimension mismatch")
         if self._gate == 0.0 or self._lesioned:
+            self._last_parent_context.copy_(context.detach().to(self.device))
+            self._counterfactual_parent_ready = False
             return context.clone()
         input_context = context.detach().to(self.device).clone()
         activity = self.region.step(input_context)
@@ -363,14 +429,21 @@ class AdaptiveResidualShadow:
             candidate_gate = float(torch.sigmoid(gate_logit).item())
         self._last_candidate_gate = candidate_gate
         gated_candidate_residual = candidate_residual * candidate_gate
-        residual = residual - candidate_residual + gated_candidate_residual
+        parent_residual = residual - candidate_residual
+        residual = parent_residual + gated_candidate_residual
         self._last_candidate_residual.copy_(gated_candidate_residual)
         self._last_candidate_activity = float(abs(activity[candidate_index]).item())
         self._last_candidate_eligibility_norm = float(abs(candidate_eligibility).item())
         self._last_candidate_residual_norm = float(candidate_residual.norm().item())
-        self._last_parent_residual_norm = float((residual - candidate_residual).norm().item())
+        self._last_parent_residual_norm = float(parent_residual.norm().item())
+        self._last_parent_context.copy_(
+            bound_norm(
+                input_context + float(self._gate) * float(self.residual_gain) * parent_residual,
+                float(self.config.motor_context_norm),
+            )
+        )
         return bound_norm(
-            context.to(self.device) + float(self._gate) * float(self.residual_gain) * residual,
+            input_context + float(self._gate) * float(self.residual_gain) * residual,
             float(self.config.motor_context_norm),
         )
 
@@ -421,12 +494,17 @@ class AdaptiveResidualShadow:
             ).item()
         )
         if self.gate_projection is not None:
+            gate_utility = (
+                self._last_counterfactual_utility
+                if self._counterfactual_utility_ready
+                else self._last_candidate_utility
+            )
             utility_advantage = float(
-                self._last_candidate_utility - self._candidate_utility_baseline
+                gate_utility - self._candidate_utility_baseline
             )
             self._candidate_utility_baseline = (
                 0.9 * self._candidate_utility_baseline
-                + 0.1 * self._last_candidate_utility
+                + 0.1 * gate_utility
             )
             gate_error = torch.tensor(
                 [utility_advantage * float(self._gate) * float(self.residual_gain)],
@@ -441,6 +519,7 @@ class AdaptiveResidualShadow:
             self._candidate_gate_bias.add_(
                 float(self.config.predictive_context_learning_rate) * utility_advantage
             ).clamp_(-4.0, 4.0)
+            self._counterfactual_utility_ready = False
         candidate_projection_before = self.output_projection.edge_weight[
             ~parent_projection_mask
         ].detach().clone()
@@ -502,6 +581,12 @@ class AdaptiveResidualShadow:
             "output_projection": self.output_projection.to_payload(),
             "last_input": self._last_input.detach().cpu().clone(),
             "last_activity": self._last_activity.detach().cpu().clone(),
+            "last_parent_context": self._last_parent_context.detach().cpu().clone(),
+            "counterfactual_parent_probabilities": (
+                self._last_counterfactual_parent_probabilities.detach().cpu().clone()
+            ),
+            "counterfactual_parent_ready": self._counterfactual_parent_ready,
+            "counterfactual_utility_ready": self._counterfactual_utility_ready,
             "diagnostics": dict(self.diagnostics),
         }
         if self.gate_projection is not None:
@@ -774,6 +859,36 @@ class AdaptiveResidualShadow:
             raise ValueError("adaptive residual shadow last_activity shape mismatch")
         shadow._last_input = last_input
         shadow._last_activity = last_activity
+        last_parent_context = payload.get(
+            "last_parent_context",
+            torch.zeros(shadow.output_dim, device=shadow.device),
+        )
+        last_parent_context = last_parent_context.detach().to(shadow.device).clone()
+        if last_parent_context.shape != (shadow.output_dim,):
+            raise ValueError("adaptive residual shadow last_parent_context shape mismatch")
+        shadow._last_parent_context = last_parent_context
+        parent_probabilities = payload.get(
+            "counterfactual_parent_probabilities",
+            torch.zeros(shadow.config.alphabet_size, device=shadow.device),
+        )
+        parent_probabilities = parent_probabilities.detach().to(shadow.device).clone()
+        if parent_probabilities.shape != (shadow.config.alphabet_size,):
+            raise ValueError(
+                "adaptive residual shadow counterfactual probability shape mismatch"
+            )
+        if not bool(torch.isfinite(parent_probabilities).all()) or bool(
+            (parent_probabilities < 0.0).any()
+        ):
+            raise ValueError(
+                "adaptive residual shadow counterfactual probabilities must be finite and non-negative"
+            )
+        shadow._last_counterfactual_parent_probabilities = parent_probabilities
+        shadow._counterfactual_parent_ready = bool(
+            payload.get("counterfactual_parent_ready", False)
+        )
+        shadow._counterfactual_utility_ready = bool(
+            payload.get("counterfactual_utility_ready", False)
+        )
         if gate_projection is not None:
             gate_input = payload.get("last_gate_input")
             if gate_input is None:
@@ -803,15 +918,21 @@ class AdaptiveResidualShadow:
             "candidate_credit_norm",
             "candidate_projection_update_norm",
             "candidate_utility",
+            "candidate_counterfactual_utility",
             "candidate_gate",
         ):
             default = 1.0 if name == "candidate_gate" else 0.0
             value = float(diagnostics.get(name, default))
             if not math.isfinite(value) or (
-                name not in {"candidate_utility"} and value < 0.0
+                name
+                not in {"candidate_utility", "candidate_counterfactual_utility"}
+                and value < 0.0
             ):
                 raise ValueError("adaptive residual shadow diagnostics must be finite")
-            setattr(shadow, f"_last_{name}", value)
+            if name == "candidate_counterfactual_utility":
+                shadow._last_counterfactual_utility = value
+            else:
+                setattr(shadow, f"_last_{name}", value)
         return shadow
 
 
