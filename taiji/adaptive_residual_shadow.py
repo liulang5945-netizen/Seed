@@ -102,12 +102,14 @@ class AdaptiveResidualShadow:
         self._lesioned = False
         self._last_input = torch.zeros(self.output_dim, device=self.device)
         self._last_activity = torch.zeros(self.unit_count, device=self.device)
+        self._last_candidate_residual = torch.zeros(self.output_dim, device=self.device)
         self._last_candidate_activity = 0.0
         self._last_candidate_eligibility_norm = 0.0
         self._last_parent_residual_norm = 0.0
         self._last_candidate_residual_norm = 0.0
         self._last_candidate_credit_norm = 0.0
         self._last_candidate_projection_update_norm = 0.0
+        self._last_candidate_utility = 0.0
 
     @staticmethod
     def _validate_gain(value: float) -> None:
@@ -179,6 +181,10 @@ class AdaptiveResidualShadow:
         return self._last_candidate_projection_update_norm
 
     @property
+    def candidate_utility(self) -> float:
+        return self._last_candidate_utility
+
+    @property
     def diagnostics(self) -> dict[str, float]:
         return {
             "candidate_activity": self.candidate_activity,
@@ -187,6 +193,7 @@ class AdaptiveResidualShadow:
             "candidate_residual_norm": self.candidate_residual_norm,
             "candidate_credit_norm": self.candidate_credit_norm,
             "candidate_projection_update_norm": self.candidate_projection_update_norm,
+            "candidate_utility": self.candidate_utility,
         }
 
     @property
@@ -302,12 +309,14 @@ class AdaptiveResidualShadow:
         self.region.trace.zero_()
         self._last_input.zero_()
         self._last_activity.zero_()
+        self._last_candidate_residual.zero_()
         self._last_candidate_activity = 0.0
         self._last_candidate_eligibility_norm = 0.0
         self._last_parent_residual_norm = 0.0
         self._last_candidate_residual_norm = 0.0
         self._last_candidate_credit_norm = 0.0
         self._last_candidate_projection_update_norm = 0.0
+        self._last_candidate_utility = 0.0
 
     @torch.no_grad()
     def forward(self, context: torch.Tensor) -> torch.Tensor:
@@ -326,6 +335,7 @@ class AdaptiveResidualShadow:
             self.output_projection.edge_weight * candidate_edges.to(self.output_projection.edge_weight.dtype)
         ).sum(dim=1) * activity[candidate_index]
         residual = self.output_projection.forward(activity)
+        self._last_candidate_residual.copy_(candidate_residual)
         self._last_candidate_activity = float(abs(activity[candidate_index]).item())
         self._last_candidate_eligibility_norm = float(abs(candidate_eligibility).item())
         self._last_candidate_residual_norm = float(candidate_residual.norm().item())
@@ -373,6 +383,14 @@ class AdaptiveResidualShadow:
         )
         region_error = self.output_projection.backproject(postsynaptic_error)
         self._last_candidate_credit_norm = float(abs(region_error[candidate_index]).item())
+        self._last_candidate_utility = float(
+            torch.dot(
+                self._last_candidate_residual
+                * float(self._gate)
+                * float(self.residual_gain),
+                postsynaptic_error.to(self.device),
+            ).item()
+        )
         candidate_projection_before = self.output_projection.edge_weight[
             ~parent_projection_mask
         ].detach().clone()
@@ -665,10 +683,13 @@ class AdaptiveResidualShadow:
             "candidate_residual_norm",
             "candidate_credit_norm",
             "candidate_projection_update_norm",
+            "candidate_utility",
         ):
             value = float(diagnostics.get(name, 0.0))
-            if not math.isfinite(value) or value < 0.0:
-                raise ValueError("adaptive residual shadow diagnostics must be finite and non-negative")
+            if not math.isfinite(value) or (
+                name != "candidate_utility" and value < 0.0
+            ):
+                raise ValueError("adaptive residual shadow diagnostics must be finite")
             setattr(shadow, f"_last_{name}", value)
         return shadow
 
