@@ -1,0 +1,121 @@
+{
+  "format": "taiji-m4r12-data-source-aggregate-v1",
+  "version": 1,
+  "status": "retention-gate-failed",
+  "can_promote": false,
+  "retention_gate": {
+    "ultra_c3_gain_positive_seeds": 3,
+    "ultra_cycle2_degradation_seeds": 1,
+    "ultra_cycle3_degradation_seeds": 3,
+    "retention_gate_passed": false
+  },
+  "ultra_arm": {
+    "c3_holdout_gain_bpb": {
+      "values": [
+        1.89181825802076,
+        1.8300412404122444,
+        1.6295685968510751
+      ],
+      "mean": 1.7838093650946931,
+      "min": 1.6295685968510751,
+      "max": 1.89181825802076
+    },
+    "c_cycle2_delta_bpb": {
+      "values": [
+        -0.002427955598393261,
+        0.0344032302697439,
+        -0.01516273427470427
+      ],
+      "mean": 0.005604180132215457,
+      "min": -0.01516273427470427,
+      "max": 0.0344032302697439
+    },
+    "c_cycle3_delta_bpb": {
+      "values": [
+        0.18708428115866926,
+        0.3056576513970741,
+        0.2539919024621664
+      ],
+      "mean": 0.24891127833930327,
+      "min": 0.18708428115866926,
+      "max": 0.3056576513970741
+    },
+    "c2_cycle3_delta_bpb": {
+      "values": [
+        -0.002137275508105496,
+        0.06398511031557419,
+        -0.0004297903285710447
+      ],
+      "mean": 0.020472681492965883,
+      "min": -0.002137275508105496,
+      "max": 0.06398511031557419
+    },
+    "active_a_retention_bpb": {
+      "values": [
+        5.556135403703921,
+        6.121115091924905,
+        5.9177342340079875
+      ],
+      "mean": 5.864994909878938,
+      "min": 5.556135403703921,
+      "max": 6.121115091924905
+    }
+  },
+  "simple_zh_reference": {
+    "c3_holdout_gain_bpb": {
+      "values": [
+        0.11525027901739993,
+        0.15925912061584224,
+        0.17314570967275866
+      ],
+      "mean": 0.14921836976866695
+    },
+    "c_cycle2_delta_bpb": {
+      "values": [
+        -0.0032436709984953183,
+        -0.017692751543418872,
+        -0.030853995209626284
+      ],
+      "mean": -0.017263472583846824
+    },
+    "c_cycle3_delta_bpb": {
+      "values": [
+        -0.0020793616052889874,
+        -0.020997871741991858,
+        0.008124641671927613
+      ],
+      "mean": -0.004984197225117744
+    },
+    "c2_cycle3_delta_bpb": {
+      "values": [
+        -0.002938788590054031,
+        -0.0042215416943935935,
+        -0.0016149414424191377
+      ],
+      "mean": -0.0029250905756222543
+    },
+    "active_a_retention_bpb": {
+      "values": [
+        4.13469387854378,
+        4.243791701074528,
+        4.343148605266776
+      ],
+      "mean": 4.240544728295028
+    }
+  },
+  "a_retention_shift_vs_reference": {
+    "values": [
+      1.4214415251601409,
+      1.8773233908503766,
+      1.5745856287412119
+    ],
+    "mean": 1.6244501815839099
+  },
+  "interpretation": "corpus switch to UltraData triggers severe within-corpus cycle degradation and cross-corpus A retention loss; the data-density hypothesis is confounded by the distribution shift",
+  "source_reports": [
+    "reports\\taiji_m4r12_data_source_canary_seed11_20260909.json",
+    "reports\\taiji_m4r12_data_source_canary_seed29_20260909.json",
+    "reports\\taiji_m4r12_data_source_canary_seed47_20260909.json"
+  ],
+  "reference_report": "reports\\taiji_m4r10_rule_audit_formal_aggregate_20260908.json"
+}
