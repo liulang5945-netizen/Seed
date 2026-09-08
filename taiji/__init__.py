@@ -132,6 +132,15 @@ from .cross_region_learning import (
     CrossRegionRouteState,
 )
 from .cue_binding import CueBindingBank, CueBindingResult
+from .developmental_synapse import (
+    DEVELOPMENTAL_SYNAPSE_BUNDLE_FORMAT,
+    DEVELOPMENTAL_SYNAPSE_BUNDLE_VERSION,
+    DEVELOPMENTAL_SYNAPSE_FORMAT,
+    DEVELOPMENTAL_SYNAPSE_VERSION,
+    DevelopmentalSynapseBank,
+    DevelopmentalSynapseBundle,
+    DevelopmentalSynapseContractError,
+)
 from .environment import EnvironmentOutcome, TaijiEnvironment, TaijiToolEnvironment
 from .episodic_memory import (
     EPISODIC_MEMORY_CHECKPOINT_FORMAT,
@@ -800,6 +809,13 @@ __all__ = [
     "MetricObservation",
     "MetricSpec",
     "MissingParentBaselineError",
+    "DEVELOPMENTAL_SYNAPSE_BUNDLE_FORMAT",
+    "DEVELOPMENTAL_SYNAPSE_BUNDLE_VERSION",
+    "DEVELOPMENTAL_SYNAPSE_FORMAT",
+    "DEVELOPMENTAL_SYNAPSE_VERSION",
+    "DevelopmentalSynapseBank",
+    "DevelopmentalSynapseBundle",
+    "DevelopmentalSynapseContractError",
     "EPISODIC_LEARNING_TARGETS",
     "ConceptFormationOrgan",
     "ConceptMatch",

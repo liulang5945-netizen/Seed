@@ -202,4 +202,4 @@ BPB 只能在同一数据域内比较。跨语料必须分别对各自 frozen-pa
 
 ## 9. 当前唯一设计出口
 
-M4.V2.R0 已完成：量尺合同、课程 manifest、累计 scorecard 和 R7/R10/R12 只读语义审计已经落地，旧报告没有被原地改写，审计仍保持 `can_promote=false`。当前唯一下一步是 R1 的 checkpoint-compatible fast/slow 突触迁移：先证明 `slow=old/fast=0` 的零变化、保存和 fresh restore，再进入 R2 的真实快适应—慢巩固。不得跳到混合语料长跑、结构扩容、M5 外围或客户端美化。
+M4.V2.R0 已完成量尺合同与语义审计；R1 也已完成 checkpoint-compatible fast/slow 零变化迁移，并在真实 v10 joint-training checkpoint 上通过源不变、outer/inner digest、fresh restore 和 `fast=0` smoke，仍保持 `can_promote=false`。当前唯一下一步是 R2 的 S/G 快适应—慢巩固 canary：允许写 developmental state，但不允许结构扩容或跳过 slow-only/fast-only/真实 replay 对照。不得跳到 R3 结构桥、M5 外围或客户端美化。

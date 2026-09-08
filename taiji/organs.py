@@ -9,6 +9,7 @@ from typing import Any
 import torch
 
 from .config import TaijiConfig
+from .developmental_synapse import DevelopmentalSynapseBank
 from .sparse import SparseSynapses, bound_norm
 
 
@@ -341,6 +342,7 @@ class BytePredictiveContext:
         cortical_state: torch.Tensor,
         *,
         prior_context: torch.Tensor | None,
+        recurrent_override: DevelopmentalSynapseBank | None = None,
     ) -> tuple[torch.Tensor, torch.Tensor]:
         """Return the current context and exact prior trace used to form it."""
 
@@ -351,9 +353,12 @@ class BytePredictiveContext:
             if prior_context.shape != (self.config.motor_context_dim,):
                 raise ValueError("predictive context trace dimension mismatch")
             trace = prior_context.detach().to(self.device).clone()
-        residual = float(self.config.predictive_context_recurrent_gain) * self.recurrent.forward(
-            trace
+        recurrent = (
+            self.recurrent.forward(trace)
+            if recurrent_override is None
+            else recurrent_override.forward(trace)
         )
+        residual = float(self.config.predictive_context_recurrent_gain) * recurrent
         context = bound_norm(base + residual, self.config.motor_context_norm)
         return context, trace
 
@@ -630,8 +635,14 @@ class BytePredictiveReadout:
         context: torch.Tensor,
         *,
         episodic_evidence: torch.Tensor | None = None,
+        synapses_override: DevelopmentalSynapseBank | None = None,
     ) -> torch.Tensor:
-        evidence = self.synapses.forward(context) + self.bias
+        synapses = (
+            self.synapses.forward(context)
+            if synapses_override is None
+            else synapses_override.forward(context)
+        )
+        evidence = synapses + self.bias
         if episodic_evidence is not None:
             if episodic_evidence.shape != (self.config.alphabet_size,):
                 raise ValueError("episodic evidence dimension mismatch")

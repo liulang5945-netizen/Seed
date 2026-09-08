@@ -75,7 +75,7 @@ Taiji 是唯一认知主体，Seed 是产品/runtime、Workbench、设备、权�
 
 ## 4. 当前唯一下一步
 
-M4.V2.R0 已完成，当前唯一下一步是 **M4.V2.R1：checkpoint-compatible fast/slow 突触零变化迁移**。
+M4.V2.R0 与 M4.V2.R1 已完成，当前唯一下一步是 **M4.V2.R2：快适应—慢巩固 S/G canary**。
 
 R0 的实现与审计产物如下：
 
@@ -85,14 +85,34 @@ R0 的实现与审计产物如下：
 
 R0 的技术结论是“量尺语义审计通过”，不是模型晋级：审计报告仍保持 `can_promote=false`。
 
-### 4.1 R1：零变化迁移（下一步）
+### 4.1 R1：零变化迁移（已完成）
 
 本步骤只迁移已有 F1 checkpoint 的表示，不写入新学习权重，不改变 forward：
 
 - 新建 versioned developmental-synapse payload：`slow_weight=old checkpoint`、`fast_delta=0`，并保存 eligibility/importance/usage/age/plasticity 元数据的默认值；
 - 对旧 F1 checkpoint 做迁移、保存、fresh restore、二次迁移四路一致性比较；
 - 固定同一输入流和同一 owner graph，比较输出 logits、loss/BPB、参数计数、checkpoint digest、评估输入 digest；
-- 迁移失败或任一关键量超容差时停止，不运行 R2 真实学习。
+- `taiji/developmental_synapse.py`：完成 F1 两个稀疏 owner 的 versioned bundle；旧 edge topology/weight 进入 `slow_weight`，`fast_delta=0`，eligibility/importance/usage/age/plasticity 显式保存；有效 forward 为 `slow + fast`。
+- `scripts/training/migrate_taiji_f1_checkpoint.py`：支持裸 `taiji-native-v10` 和外层 `taiji-native-joint-training-v1`；源文件不覆盖，外层 digest 重算，磁盘 save/load/fresh restore 逐项校验。
+- `taiji/model.py` / `taiji/organs.py`：R1 overlay 只读接入 F1 predictive context/readout；默认无 overlay 路径不变，挂载态写入明确拒绝。
+- 真实 `output/taiji-m2-f5-seed11-private-context-20260905/last.pt` smoke 通过：`source_unchanged=true`、`source_checkpoint_digest_valid=true`、`restored_outer_digest_valid=true`、`fresh_restore_matches=true`、`fast_is_zero=true`；smoke 产物已清理。
+- `tests/taiji_native/test_developmental_synapse.py`：磁盘迁移、forward/score/generate 等价、fresh restore、只读停止线均覆盖。
+
+R1 完成条件：
+
+1. 旧 F1 权重、topology、owner graph 无损可寻址；
+2. `slow=old/fast=0` 时输出、score、generate、参数计数和 restore 在容差内等价；
+3. source checkpoint 不被覆盖，outer/inner digest 都能验证；
+4. R1 overlay 不允许写入，未通过 R2 前不启动真实 fast/slow 学习。
+
+### 4.2 R2：快适应—慢巩固（下一步）
+
+本步骤第一次允许写 developmental state，但仍不扩容、不接入新的 adaptive region：
+
+- 先做 S 同分布 smoke，再做 G 渐进混合 canary；每个 checkpoint 都生成绝对能力、parent delta、comparison delta 和资源记录；
+- 固定同一 parent/owner graph，比较 slow-only、fast-only、fast + 真实经历 replay + consolidation；禁止把旧字节前缀或静态 preservation logits 当作经历 replay；
+- wake 只写 fast/episodic evidence，sleep/replay 才允许写 slow；记录 eligibility、importance、usage、age、plasticity 的变化；
+- 通过 calibrated epsilon、worst-domain catastrophe、fresh restore、rollback 和 read-only Gate 后，才允许保留 R2 候选；失败则恢复 R1 parent，不运行 R3/R4。
 
 本步骤不修改模型权重、不运行长训练、不引入新语料。建议实现位置：
 
@@ -124,7 +144,7 @@ R0 完成条件（已满足）：
 5. 定向 pytest、ruff、`git diff --check` 通过；
 6. 仍保持 `can_promote=false`。
 
-R0 通过后的唯一下一步是 R1 checkpoint-compatible fast/slow migration；R1 未通过则不准写新权重，也不准进入 R2。
+R1 通过后的唯一下一步是 R2 S/G canary；R2 未通过则回退学习/巩固规则，不得用结构扩容或客户端外围掩盖失败。
 
 ## 5. v2 课程与 Gate
 
