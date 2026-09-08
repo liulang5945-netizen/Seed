@@ -183,8 +183,10 @@ class AdaptiveResidualShadow:
 
     @property
     def edge_count(self) -> int:
-        return self.region.edge_count + self.output_projection.edge_count + (
-            0 if self.gate_projection is None else self.gate_projection.edge_count
+        return (
+            self.region.edge_count
+            + self.output_projection.edge_count
+            + (0 if self.gate_projection is None else self.gate_projection.edge_count)
         )
 
     @property
@@ -277,10 +279,14 @@ class AdaptiveResidualShadow:
         """
 
         if probabilities.shape != (self.config.alphabet_size,):
-            raise ValueError("adaptive residual shadow counterfactual probability dimension mismatch")
+            raise ValueError(
+                "adaptive residual shadow counterfactual probability dimension mismatch"
+            )
         values = probabilities.detach().to(self.device)
         if not bool(torch.isfinite(values).all()) or bool((values < 0.0).any()):
-            raise ValueError("adaptive residual shadow counterfactual probabilities must be finite and non-negative")
+            raise ValueError(
+                "adaptive residual shadow counterfactual probabilities must be finite and non-negative"
+            )
         self._last_counterfactual_parent_probabilities.copy_(values)
         self._counterfactual_parent_ready = True
 
@@ -308,7 +314,9 @@ class AdaptiveResidualShadow:
         """Remove only the appended unit's output contacts for causal ablation."""
 
         candidate_index = self.region.unit_index(self.candidate.unit_id)
-        self.output_projection.edge_weight[self.output_projection.pre_index == candidate_index] = 0.0
+        self.output_projection.edge_weight[self.output_projection.pre_index == candidate_index] = (
+            0.0
+        )
 
     @staticmethod
     @torch.no_grad()
@@ -320,9 +328,7 @@ class AdaptiveResidualShadow:
     ) -> None:
         """Give a pressure-born unit a stable local substrate to specialize."""
 
-        region.incoming.pre_index[candidate_index].copy_(
-            region.incoming.pre_index[source_index]
-        )
+        region.incoming.pre_index[candidate_index].copy_(region.incoming.pre_index[source_index])
         region.incoming.edge_weight[candidate_index].copy_(
             region.incoming.edge_weight[source_index]
         )
@@ -354,7 +360,7 @@ class AdaptiveResidualShadow:
             exclude_index: int | None = None,
         ) -> None:
             dense = torch.zeros(input_dim, device=edge_weight.device, dtype=edge_weight.dtype)
-            for anchor_index, anchor_weight in zip(anchor_indices, anchor_weights):
+            for anchor_index, anchor_weight in zip(anchor_indices, anchor_weights, strict=True):
                 dense.scatter_add_(
                     0,
                     pre_index[anchor_index].to(torch.long),
@@ -376,14 +382,15 @@ class AdaptiveResidualShadow:
                 device=edge_weight.device,
                 dtype=edge_weight.dtype,
             )
-            for anchor_index, anchor_weight in zip(anchor_indices, anchor_weights):
+            for anchor_index, anchor_weight in zip(anchor_indices, anchor_weights, strict=True):
                 target_squared_norm = target_squared_norm + float(anchor_weight) * (
                     edge_weight[anchor_index].pow(2).sum()
                 )
             candidate_squared_norm = edge_weight[candidate_index].pow(2).sum()
-            if float(target_squared_norm.item()) > 1e-12 and float(
-                candidate_squared_norm.item()
-            ) > 1e-12:
+            if (
+                float(target_squared_norm.item()) > 1e-12
+                and float(candidate_squared_norm.item()) > 1e-12
+            ):
                 edge_weight[candidate_index].copy_(
                     edge_weight[candidate_index]
                     * torch.sqrt(target_squared_norm / candidate_squared_norm)
@@ -402,7 +409,7 @@ class AdaptiveResidualShadow:
                 exclude_index=candidate_index,
             )
         threshold = torch.zeros((), device=region.device, dtype=region.threshold.dtype)
-        for anchor_index, anchor_weight in zip(anchor_indices, anchor_weights):
+        for anchor_index, anchor_weight in zip(anchor_indices, anchor_weights, strict=True):
             threshold = threshold + region.threshold[anchor_index] * float(anchor_weight)
         region.threshold[candidate_index] = threshold
 
@@ -445,7 +452,8 @@ class AdaptiveResidualShadow:
         candidate_eligibility = self.region.trace[candidate_index]
         candidate_edges = self.output_projection.pre_index == candidate_index
         candidate_residual = (
-            self.output_projection.edge_weight * candidate_edges.to(self.output_projection.edge_weight.dtype)
+            self.output_projection.edge_weight
+            * candidate_edges.to(self.output_projection.edge_weight.dtype)
         ).sum(dim=1) * activity[candidate_index]
         residual = self.output_projection.forward(activity)
         candidate_gate = 1.0
@@ -509,24 +517,18 @@ class AdaptiveResidualShadow:
             else self.region.recurrent.edge_weight[:parent_unit_count].detach().clone()
         )
         parent_threshold = (
-            self.region.threshold[:parent_unit_count].detach().clone()
-            if freeze_parent
-            else None
+            self.region.threshold[:parent_unit_count].detach().clone() if freeze_parent else None
         )
         candidate_index = self.region.unit_index(self.candidate.unit_id)
         parent_projection_mask = self.output_projection.pre_index != candidate_index
         parent_projection = (
-            self.output_projection.edge_weight.detach().clone()
-            if freeze_parent
-            else None
+            self.output_projection.edge_weight.detach().clone() if freeze_parent else None
         )
         region_error = self.output_projection.backproject(postsynaptic_error)
         self._last_candidate_credit_norm = float(abs(region_error[candidate_index]).item())
         self._last_candidate_utility = float(
             torch.dot(
-                self._last_candidate_residual
-                * float(self._gate)
-                * float(self.residual_gain),
+                self._last_candidate_residual * float(self._gate) * float(self.residual_gain),
                 postsynaptic_error.to(self.device),
             ).item()
         )
@@ -540,12 +542,9 @@ class AdaptiveResidualShadow:
                 utility_advantage = float(gate_utility)
             else:
                 gate_utility = self._last_candidate_utility
-                utility_advantage = float(
-                    gate_utility - self._candidate_utility_baseline
-                )
+                utility_advantage = float(gate_utility - self._candidate_utility_baseline)
             self._candidate_utility_baseline = (
-                0.9 * self._candidate_utility_baseline
-                + 0.1 * gate_utility
+                0.9 * self._candidate_utility_baseline + 0.1 * gate_utility
             )
             gate_error = torch.tensor(
                 [utility_advantage * float(self._gate) * float(self.residual_gain)],
@@ -561,9 +560,9 @@ class AdaptiveResidualShadow:
                 float(self.config.predictive_context_learning_rate) * utility_advantage
             ).clamp_(-4.0, 4.0)
             self._counterfactual_utility_ready = False
-        candidate_projection_before = self.output_projection.edge_weight[
-            ~parent_projection_mask
-        ].detach().clone()
+        candidate_projection_before = (
+            self.output_projection.edge_weight[~parent_projection_mask].detach().clone()
+        )
         projection_trace = self._last_activity.detach().clone()
         # The mature parent keeps its instantaneous trace.  The appended
         # candidate uses its own causal eligibility trace so a brief burst of
@@ -598,7 +597,8 @@ class AdaptiveResidualShadow:
             (
                 self.output_projection.edge_weight[~parent_projection_mask]
                 - candidate_projection_before
-            ).norm()
+            )
+            .norm()
             .item()
         )
 
@@ -689,7 +689,9 @@ class AdaptiveResidualShadow:
             parent_eligibility = region.trace[: candidate.parent_unit_count].abs()
             anchor_score = parent_activity + parent_eligibility
             candidate_index = region.unit_index(candidate.unit_id)
-            anchor_count = 1 if birth_mode == "pressure_anchor" else min(2, candidate.parent_unit_count)
+            anchor_count = (
+                1 if birth_mode == "pressure_anchor" else min(2, candidate.parent_unit_count)
+            )
             anchor_indices = tuple(
                 int(index)
                 for index in torch.topk(
@@ -739,10 +741,7 @@ class AdaptiveResidualShadow:
             )
         gate_projection = cls._new_gate_projection(
             config,
-            input_dim=(
-                int(config.motor_context_dim)
-                + 2 * int(candidate.parent_unit_count)
-            ),
+            input_dim=(int(config.motor_context_dim) + 2 * int(candidate.parent_unit_count)),
             generator=growth_generator,
             device=device,
         )
@@ -842,7 +841,7 @@ class AdaptiveResidualShadow:
         refines it.  Random births retain the zero candidate output edge.
         """
 
-        for anchor_index, anchor_weight in zip(anchor_indices, anchor_weights):
+        for anchor_index, anchor_weight in zip(anchor_indices, anchor_weights, strict=True):
             if not 0 <= int(anchor_index) < projection.out_features:
                 continue
             candidate_positions = projection.pre_index[int(anchor_index)] == candidate_index
@@ -967,9 +966,7 @@ class AdaptiveResidualShadow:
         )
         parent_probabilities = parent_probabilities.detach().to(shadow.device).clone()
         if parent_probabilities.shape != (shadow.config.alphabet_size,):
-            raise ValueError(
-                "adaptive residual shadow counterfactual probability shape mismatch"
-            )
+            raise ValueError("adaptive residual shadow counterfactual probability shape mismatch")
         if not bool(torch.isfinite(parent_probabilities).all()) or bool(
             (parent_probabilities < 0.0).any()
         ):
@@ -1018,8 +1015,7 @@ class AdaptiveResidualShadow:
             default = 1.0 if name == "candidate_gate" else 0.0
             value = float(diagnostics.get(name, default))
             if not math.isfinite(value) or (
-                name
-                not in {"candidate_utility", "candidate_counterfactual_utility"}
+                name not in {"candidate_utility", "candidate_counterfactual_utility"}
                 and value < 0.0
             ):
                 raise ValueError("adaptive residual shadow diagnostics must be finite")

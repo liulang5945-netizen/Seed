@@ -50,10 +50,7 @@ def _arm_summary(arm: Mapping[str, Any]) -> dict[str, Any]:
         "candidate_lesion_delta": (
             None
             if arm.get("candidate_lesion_delta") is None
-            else {
-                phase: float(arm["candidate_lesion_delta"][phase])
-                for phase in PHASES
-            }
+            else {phase: float(arm["candidate_lesion_delta"][phase]) for phase in PHASES}
         ),
         "candidate_digest": arm.get("candidate_digest"),
         "candidate_unit_id": arm.get("candidate_unit_id"),
@@ -99,11 +96,7 @@ def _mean(values: Sequence[float]) -> float:
 def _stats(values: Sequence[float], *, positive_is_better: bool = False) -> dict[str, Any]:
     values = tuple(float(value) for value in values)
     better = (lambda value: value > 0.0) if positive_is_better else (lambda value: value < 0.0)
-    non_worse = (
-        (lambda value: value >= 0.0)
-        if positive_is_better
-        else (lambda value: value <= 0.0)
-    )
+    non_worse = (lambda value: value >= 0.0) if positive_is_better else (lambda value: value <= 0.0)
     return {
         "count": len(values),
         "mean": _mean(values),
@@ -122,8 +115,7 @@ def _deltas(
     phase: str,
 ) -> tuple[float, ...]:
     return tuple(
-        float(cell["arms"][arm]["scores"][phase])
-        - float(cell["arms"][baseline]["scores"][phase])
+        float(cell["arms"][arm]["scores"][phase]) - float(cell["arms"][baseline]["scores"][phase])
         for cell in cells
     )
 
@@ -208,8 +200,7 @@ def run_formal(
         "technical_gates": {
             "all_cells_technical_passed": technical_passed,
             "all_cells_have_candidate_only_smoke": all(
-                bool(cell["candidate_only_smoke"]["parent_substrate_unchanged"])
-                for cell in cells
+                bool(cell["candidate_only_smoke"]["parent_substrate_unchanged"]) for cell in cells
             ),
             "all_cells_have_shared_parent_boundary": all(
                 bool(cell["technical_gates"].get("shared_efficacy_parent"))
