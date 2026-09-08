@@ -1,0 +1,311 @@
+{
+  "format": "taiji-m4r2-capacity-diagnosis-canary-v1",
+  "version": 1,
+  "generated_at_epoch": 1788865168.8702564,
+  "status": "passed",
+  "can_promote": false,
+  "seed": 11,
+  "source_checkpoint": "output\\taiji-m2s-seed11-identity-generation-20260905\\last.pt",
+  "source_checkpoint_digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+  "corpus": "data\\simple_zh\\dialogue_extended_clean.jsonl",
+  "configuration": {
+    "train_bytes": 4096,
+    "eval_bytes": 1024,
+    "cohort_seeds": [
+      11,
+      29,
+      47
+    ],
+    "profile": "smoke",
+    "scorer": "readout-only equal probability mixture"
+  },
+  "data_chain": {
+    "phase_c": {
+      "digest": "5e4de68573dcbd317fd81d2ba9a6a1e5ca84c2fa6ef5fd03aea94b3e9570302b",
+      "partition_seed": 43,
+      "profile": "smoke",
+      "sample_counts": {
+        "train": 4096,
+        "holdout": 1024,
+        "retention": 1024
+      },
+      "source_files": [
+        [
+          "data\\simple_zh\\dialogue_extended_clean.jsonl",
+          "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+        ]
+      ],
+      "excluded_dataset_digest": null,
+      "excluded_dataset_digests": [
+        "0e37a0a1dd86573753ac64d480d1caf549a006d9063eff46afc0dfb6838aef08",
+        "42a761284e39579201ac623c6f6f756e0bbb122893e671bec4fa6cdaa19313c9",
+        "c7b300d6701bd6b10fa1009850e2f69c3dc4317a4e826cc1a736957881e74ae4",
+        "c875c22be21a09d042520a7b23527a3efb6f8e7a5542409acf601b738e9de29d",
+        "6bcc82b96f31adf2917904e80d4644cbb7d8855980942204329fbd8bf0f49bad",
+        "565abe31db96bbae708d18ffdb78ee1bca7678f7b516d7c1f19b7e07185ee274"
+      ],
+      "selected_record_count": 12
+    },
+    "phase_c2": {
+      "digest": "c6e9a921371621440d6353931bd3e9ab0fb39ff88e7fe48d02a83f27782ec790",
+      "partition_seed": 44,
+      "profile": "smoke",
+      "sample_counts": {
+        "train": 4096,
+        "holdout": 1024,
+        "retention": 1024
+      },
+      "source_files": [
+        [
+          "data\\simple_zh\\dialogue_extended_clean.jsonl",
+          "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+        ]
+      ],
+      "excluded_dataset_digest": null,
+      "excluded_dataset_digests": [
+        "0e37a0a1dd86573753ac64d480d1caf549a006d9063eff46afc0dfb6838aef08",
+        "42a761284e39579201ac623c6f6f756e0bbb122893e671bec4fa6cdaa19313c9",
+        "c7b300d6701bd6b10fa1009850e2f69c3dc4317a4e826cc1a736957881e74ae4",
+        "c875c22be21a09d042520a7b23527a3efb6f8e7a5542409acf601b738e9de29d",
+        "6bcc82b96f31adf2917904e80d4644cbb7d8855980942204329fbd8bf0f49bad",
+        "565abe31db96bbae708d18ffdb78ee1bca7678f7b516d7c1f19b7e07185ee274",
+        "5e4de68573dcbd317fd81d2ba9a6a1e5ca84c2fa6ef5fd03aea94b3e9570302b"
+      ],
+      "selected_record_count": 13
+    },
+    "phase_c3": {
+      "digest": "2fd29822e0066cc5e72de3cdb934246a5ad3dfac7c93c4c90126f359a44348f4",
+      "partition_seed": 45,
+      "profile": "smoke",
+      "sample_counts": {
+        "train": 4096,
+        "holdout": 1024,
+        "retention": 1024
+      },
+      "source_files": [
+        [
+          "data\\simple_zh\\dialogue_extended_clean.jsonl",
+          "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+        ]
+      ],
+      "excluded_dataset_digest": null,
+      "excluded_dataset_digests": [
+        "0e37a0a1dd86573753ac64d480d1caf549a006d9063eff46afc0dfb6838aef08",
+        "42a761284e39579201ac623c6f6f756e0bbb122893e671bec4fa6cdaa19313c9",
+        "c7b300d6701bd6b10fa1009850e2f69c3dc4317a4e826cc1a736957881e74ae4",
+        "c875c22be21a09d042520a7b23527a3efb6f8e7a5542409acf601b738e9de29d",
+        "6bcc82b96f31adf2917904e80d4644cbb7d8855980942204329fbd8bf0f49bad",
+        "565abe31db96bbae708d18ffdb78ee1bca7678f7b516d7c1f19b7e07185ee274",
+        "5e4de68573dcbd317fd81d2ba9a6a1e5ca84c2fa6ef5fd03aea94b3e9570302b",
+        "c6e9a921371621440d6353931bd3e9ab0fb39ff88e7fe48d02a83f27782ec790"
+      ],
+      "selected_record_count": 11
+    },
+    "overlap_counts": {
+      "phase_a_seed11__vs__phase_b_seed11": 0,
+      "phase_a_seed29__vs__phase_b_seed29": 0,
+      "phase_a_seed47__vs__phase_b_seed47": 0,
+      "phase_a_seed11__vs__phase_c": 0,
+      "phase_b_seed11__vs__phase_c": 0,
+      "phase_a_seed29__vs__phase_c": 0,
+      "phase_b_seed29__vs__phase_c": 0,
+      "phase_a_seed47__vs__phase_c": 0,
+      "phase_b_seed47__vs__phase_c": 0,
+      "phase_a_seed11__vs__phase_c2": 0,
+      "phase_b_seed11__vs__phase_c2": 0,
+      "phase_a_seed29__vs__phase_c2": 0,
+      "phase_b_seed29__vs__phase_c2": 0,
+      "phase_a_seed47__vs__phase_c2": 0,
+      "phase_b_seed47__vs__phase_c2": 0,
+      "phase_a_seed11__vs__phase_c3": 0,
+      "phase_b_seed11__vs__phase_c3": 0,
+      "phase_a_seed29__vs__phase_c3": 0,
+      "phase_b_seed29__vs__phase_c3": 0,
+      "phase_a_seed47__vs__phase_c3": 0,
+      "phase_b_seed47__vs__phase_c3": 0,
+      "phase_c__vs__phase_c2": 0,
+      "phase_c__vs__phase_c3": 0,
+      "phase_c2__vs__phase_c3": 0
+    }
+  },
+  "protected_baseline": {
+    "c_bpb": 4.027256568905823,
+    "c3_bpb": 4.535117522065711
+  },
+  "variant_a": {
+    "kind": "fixed_capacity_active_readout",
+    "train_metrics": [
+      {
+        "observations": 4097.0,
+        "online_accuracy": 0.31779350744447155,
+        "mean_surprise": 2.7206610092960424
+      },
+      {
+        "observations": 4097.0,
+        "online_accuracy": 0.27117402977788624,
+        "mean_surprise": 2.856561405406411
+      },
+      {
+        "observations": 4097.0,
+        "online_accuracy": 0.2987551867219917,
+        "mean_surprise": 2.73171675639208
+      }
+    ],
+    "metrics": {
+      "c3_holdout_bpb": 4.5378804183939865,
+      "c3_holdout_gain_bpb": -0.0027628963282753105,
+      "c_holdout_cycle1_bpb": 4.0865320713363875,
+      "c_holdout_cycle2_bpb": 4.054141702946706,
+      "c_holdout_cycle3_bpb": 3.9976242132764375,
+      "c_cycle2_delta_bpb": -0.03239036838968179,
+      "c_cycle3_delta_bpb": -0.05651748967026826,
+      "c2_holdout_cycle2_bpb": 3.7586906633393733,
+      "c2_holdout_cycle3_bpb": 3.6600629913318627,
+      "c2_cycle3_delta_bpb": -0.09862767200751055,
+      "c_retention_gain_bpb": 0.02963235562938582
+    },
+    "scores": [
+      {
+        "c_bpb": 4.0865320713363875,
+        "c2_bpb": 3.918596604512175,
+        "c3_bpb": 4.557350102802899,
+        "read_only": true
+      },
+      {
+        "c_bpb": 4.054141702946706,
+        "c2_bpb": 3.7586906633393733,
+        "c3_bpb": 4.509831604254439,
+        "read_only": true
+      },
+      {
+        "c_bpb": 3.9976242132764375,
+        "c2_bpb": 3.6600629913318627,
+        "c3_bpb": 4.5378804183939865,
+        "read_only": true
+      }
+    ],
+    "read_only_scoring": true,
+    "active_slot_before_digest": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+    "active_slot_after_digest": "712a0c2320cd35b12c3e3b491b0a17eb3143f6fc4a605cd18b3094d3e30e53b8",
+    "active_slot_bytes": 50372
+  },
+  "variant_b": {
+    "kind": "incremental_old_plus_zero_initialized_slot",
+    "train_metrics": [
+      {
+        "observations": 4097.0,
+        "online_accuracy": 0.21723212106419332,
+        "mean_surprise": 3.787476763423199
+      },
+      {
+        "observations": 4097.0,
+        "online_accuracy": 0.23090065901879425,
+        "mean_surprise": 3.2888543249548303
+      },
+      {
+        "observations": 4097.0,
+        "online_accuracy": 0.2762997315108616,
+        "mean_surprise": 3.03503666038601
+      }
+    ],
+    "metrics": {
+      "c3_holdout_bpb": 4.554854087698512,
+      "c3_holdout_gain_bpb": -0.019736565632801018,
+      "c_holdout_cycle1_bpb": 4.1487201495298045,
+      "c_holdout_cycle2_bpb": 4.077291220613578,
+      "c_holdout_cycle3_bpb": 4.001461538748381,
+      "c_cycle2_delta_bpb": -0.07142892891622665,
+      "c_cycle3_delta_bpb": -0.0758296818651969,
+      "c2_holdout_cycle2_bpb": 3.9634090034027016,
+      "c2_holdout_cycle3_bpb": 3.8422881620715854,
+      "c2_cycle3_delta_bpb": -0.12112084133111622,
+      "c_retention_gain_bpb": 0.025795030157442334
+    },
+    "scores": [
+      {
+        "c_bpb": 4.1487201495298045,
+        "c2_bpb": 4.112405536603735,
+        "c3_bpb": 4.667623219380356,
+        "read_only": true
+      },
+      {
+        "c_bpb": 4.077291220613578,
+        "c2_bpb": 3.9634090034027016,
+        "c3_bpb": 4.592361214960541,
+        "read_only": true
+      },
+      {
+        "c_bpb": 4.001461538748381,
+        "c2_bpb": 3.8422881620715854,
+        "c3_bpb": 4.554854087698512,
+        "read_only": true
+      }
+    ],
+    "read_only_scoring": true,
+    "protected_readout_digest": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+    "protected_readout_after_digest": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+    "old_slot_before_digest": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+    "old_slot_after_digest": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+    "new_slot_before_digest": "1eb6738512e25546d8931b2b542bd38d52625992f905df79af7d4382c3560fcc",
+    "new_slot_after_digest": "48c156a8f70740b4580c26a0315a076a723f7d32d3dd6d185a06971c29c9cf0d",
+    "old_slot_bytes": 50372,
+    "new_slot_bytes": 50372,
+    "zero_init_uniform": true,
+    "before_owners": {
+      "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+      "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+      "predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+      "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7"
+    },
+    "after_owners": {
+      "fabric": "97410c3995151658c93fecc087419da0336176eae6a73e1edb87c4d0bb7638f2",
+      "predictive_context": "892fb39ada9388741d444803b2afea34ec09f7961b6f78907e722abaebf7ff20",
+      "predictive_readout": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+      "memory": "682f2a73bef89253ccbf60a0559bf324e236a4fa5bf4386d7d05e3d93d6d77f7"
+    }
+  },
+  "fresh_restore": {
+    "a_probe_bpb": 4.5378804183939865,
+    "b_probe_bpb": 4.554854087698512,
+    "a_score_round_trip": true,
+    "b_score_round_trip": true
+  },
+  "artifacts": {
+    "variant_a": "output\\taiji-m4r2-capacity-canary-v2\\variant_a_seed11.pt",
+    "variant_b": "output\\taiji-m4r2-capacity-canary-v2\\variant_b_seed11.pt",
+    "variant_b_old_slot_digest": "d68a14457f85c1599c36d11b5c256b06574089092ae5f39cdbbe2844db05a98b",
+    "variant_b_new_slot_digest": "48c156a8f70740b4580c26a0315a076a723f7d32d3dd6d185a06971c29c9cf0d"
+  },
+  "checks": {
+    "record_disjoint_chain": true,
+    "source_checkpoint_unchanged": true,
+    "zero_init_uniform": true,
+    "a_active_changes": true,
+    "b_new_slot_changes": true,
+    "b_old_slot_unchanged": true,
+    "b_protected_readout_unchanged": true,
+    "b_fabric_unchanged": true,
+    "b_predictive_context_unchanged": true,
+    "b_memory_unchanged": true,
+    "a_read_only_scoring": true,
+    "b_read_only_scoring": true,
+    "a_checkpoint_round_trip": true,
+    "b_checkpoint_round_trip": true,
+    "owner_lesion_changes": true,
+    "slot_detach": true,
+    "slot_rollback": true,
+    "capacity_bytes_recorded": true
+  },
+  "technical_gate_all_passed": true,
+  "diagnosis": {
+    "capacity_pressure_supported": false,
+    "interpretation": "incremental capacity is not supported by this canary: the diagnostic requires positive new holdout gain and no C retention degradation; formal validation remains blocked until both conditions hold"
+  },
+  "resources": {
+    "elapsed_seconds": 148.00550730002578,
+    "variant_a_active_slot_bytes": 50372,
+    "variant_b_old_slot_bytes": 50372,
+    "variant_b_new_slot_bytes": 50372,
+    "variant_b_incremental_slot_bytes": 50372
+  }
+}
