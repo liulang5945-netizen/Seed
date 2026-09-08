@@ -110,7 +110,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | 4 | M2.R3 语义与表达训练 | **R3.R0～R3.R4 已完成**：结构化语义训练合同、可选 runtime owner/checkpoint、多实体/关系/约束多 seed canary、多步事件到持久 WorldState/Goal satisfaction、runtime adapter 接线已闭合 | runtime 输入只来自当前 `PerceptEvent`；事实/Goal/ContentPlan/WorldState 结果可审计；provider 表达收益与 native-only 分开统计 |
 | 5 | M2.R4 联合课程与保持 | **已完成**：frozen/static-only/transition-only/joint-native 对照、双 owner 组合、runtime 双组件 checkpoint 和 protected retention 已闭合；不把独立 owner 的串行课程称为共享权重联合优化 | 三 seed 正式报告；joint-native 新组合通过且两个受保护 owner 均保持 |
 | 6 | M3 最小真实任务验证 | **M3.R0/R1/R2/R3/R4/R5 已完成；真实客户端批准流仍是决策闸门**：R0 闭合只读证据边界，R1 训练静态 observation，R2 训练跨 tick task-state transition，R3 形成 snapshot 绑定只读 `ActionIntent`，R4 闭合 preview/approval，R5 在隔离副本验证一次执行与 undo | R5 已证明 exact approval token、digest、执行一次、undo 和恢复拒绝；真实客户端 API/UI 接线会扩大外部副作用范围，未获明确授权不接线 |
-| 7 | M4 连续成长 | **M4.R0～R11 均已完成：R1/R7/R10 formal 均被 retention Gate 否决；R11 归因证明 consolidation 保守项“参数稳定性换不来边界泛化”（cycle3 位移更小 3/3 但 delta 变差 3/3），固定容量巩固方向冻结，闸门 2 关闭** | cycle3 退化指向课程结构属性；下一个单变量是 §8 数据源升级候选（UltraData），先做 R12 前置适配（无训练），formal 对比另行预注册 |
+| 7 | M4 连续成长 | **M4.R0～R12 均已完成：R1/R7/R10 formal 被 retention Gate 否决；R11 归因证明“参数稳定性换不来边界泛化”并冻结巩固方向；R12 数据源 canary 证明语料分布切换是数量级最大的遗忘源（A 跨语料遗忘 +1.62 BPB、语料内 cycle3 +0.249，均 3/3），替换源否决** | 固定容量的更新规则线与数据源替换线均已按证据关闭；cycle3 遗忘确认为分布适应问题；M4 剩余日程（继承式增长/自主路由/压缩回收）与 M5 外围待与用户重新收敛下一步 |
 | 8 | M5 知识与身体 | Skill/MCP 数据内化、真实调用与客户端插件 | 认知与执行收益可分别归因，权限/撤销闭合 |
 | 9 | M6 产品收口 | provider 稳定性、UI/桌面、遗留格式清理 | packaged client 与真实能力一致 |
 | 横向 | M7 工程质量 | 每轮相关检查，阶段末全矩阵，发布时集中核验 | 无新增 CI 退化；正式发布绑定代码/数据/模型/包 |
@@ -120,9 +120,9 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 
 ## 4. 当前唯一下一步
 
-**唯一下一步：预注册 M4.R12 数据源对比 canary 的实验设计（用户确认点）。** R12 前置已完成且全绿：转换脚本 `scripts/data_prep/convert_ultradata_sft_nothink.py` 将 UltraData-SFT-2605 no_think 三域（Knowledge 8000 / IF 6000 / Chinese-general 6000）转为 simple_zh 同构 `{"text": "问：…\n答：…"}` 共 20000 条，输出 `data/ultradata/derived/ultradata_sft_nothink_simplezh.jsonl`（SHA-256 `66d67d5c…bdbe26`，manifest `reports/taiji_m4r12_ultradata_conversion_manifest_20260909.json`）；preflight Gate `reports/taiji_m4r12_data_preflight_20260909.json` 7/7 通过（digest 稳定、全记录 well-formed、foundation 预算填满、真实 cohort seeds 的 `build_disjoint_phase_chain` record-disjoint 且预算填满）。待确认的设计变量：(a) 对照臂语料 = `data/simple_zh/dialogue_extended_clean.jsonl`（现役 foundation 课程源）vs 候选臂 = UltraData 转换语料；(b) 预算 = 沿用 R7 formal 的 65536/16384（快，先出信号）或 M2.R1 formal 的 1048576/131072（终判口径）；(c) 其余冻结——同一 scale `0.5`、同一 cascade 三周期 harness、同一三 seed、同预注册 retention Gate。确认后先 CPU smoke 再 formal；全部保持 `can_promote=false`。
+**唯一下一步：向 M4 主线汇报 R12 判定并归档（本项完成后需重新收敛下一步，见下）。** R12 数据源 canary 三 seed 已完成，aggregate `reports/taiji_m4r12_data_source_aggregate_20260909.json` 判定 `retention_gate_passed=false`：UltraData 臂 cycle3 退化 `3/3`（均值 `+0.2489 BPB`，simple_zh 参考臂 `−0.0050`）、A 跨语料遗忘 `3/3`（`+1.42/+1.88/+1.58`，均值 `+1.62 BPB`）、cycle2 退化 `1/3`；`c3_gain 均值 1.78` 是 protected 基线在异语料上塌缩（6.82 vs 4.37）造成的假信号。**结论：语料分布切换本身就是数量级最大的遗忘源（±0.25 与 ±1.6 BPB，比 R5～R10 全部更新规则效应 ±0.05 大 5～50 倍），R11 的“cycle3 遗忘是分布适应问题”判定被强化坐实；UltraData 作为替换源被否决，数据密度假设与文体分布差异混淆、无法在单变量设计下干净验证。** 已确认事实登记：(a) 转换语料与 preflight Gate 保留（`data/ultradata/derived/ultradata_sft_nothink_simplezh.jsonl`，7/7），(b) 与 simple_zh 混合以降低分布冲击是另一个未预注册假设，只登记不启动，(c) 固定容量方向（更新规则 + 数据源替换）双线关闭后，M4 的剩余日程只有 §8 的继承式增长/自主路由/压缩回收与 M5 外围，下一步需在汇报后与用户重新收敛。全部保持 `can_promote=false`。
 
-> **M4.R11 已完成（2026-09-09）**：归因报告 `reports/taiji_m4r11_cycle3_interaction_attribution_20260909.json`，机制与出口判定详见 §7；固定容量巩固方向（consolidation/scale 组合、门控保守项候选）自本日起冻结，闸门 2 关闭。**M4.R12 前置已完成（2026-09-09）**：UltraData 契约适配与 preflight Gate 全绿（见上），数据源单变量对比进入可预注册状态。
+> **M4.R11 已完成（2026-09-09）**：归因报告 `reports/taiji_m4r11_cycle3_interaction_attribution_20260909.json`，机制与出口判定详见 §7；固定容量巩固方向（consolidation/scale 组合、门控保守项候选）自本日起冻结，闸门 2 关闭。**M4.R12 已完成（2026-09-09）**：前置适配 preflight 7/7 全绿；数据源 canary 判定如上——分布切换遗忘效应主导，替换源否决。
 
 2026-09-06 实际审计已证明首轮报告不能作为能力证据：旧 evaluator 的 C/C′ 只是换 partition seed，不是新记录。当前已落地的修复为 `scripts/training/eval_taiji_m2r1_phase_c_canary.py` v2、`scripts/training/audit_taiji_m2r1_data_contract.py` 和 `reports/taiji_m2r1_data_contract_20260906.json`：
 
@@ -448,6 +448,15 @@ R10 的否决留下两个待归因问题：consolidation 为何加重 cycle3 遗
 - **结论二（路径对照不可靠）**：active-only vs joint 的 cycle3 对照仅 2/3 一致（seed29 反向 `+0.00578`），不构成预注册候选依据。
 - **出口判定：冻结固定容量巩固方向**。门控保守项候选即使完美实现（cycle3 时完全关闭），上限也只是 R10 baseline（仍 1/3 退化，严格 Gate 不过），不值得预注册；cycle3 退化对更新规则不敏感，指向课程结构属性。
 - **报告**：`reports/taiji_m4r11_cycle3_interaction_attribution_20260909.json`，technical Gate 全过（含跨轮 source 文件一致性、只读、数值有限性）。
+
+### M4.R12：数据源单变量对比 canary（已完成，替换源否决，2026-09-09）
+
+R11 冻结巩固方向后，按 §8 既定序列检验数据密度假设。前置适配先行：`scripts/data_prep/convert_ultradata_sft_nothink.py` 将 UltraData-SFT-2605 no_think 三域（Knowledge 8000 / IF 6000 / Chinese-general 6000）转为 simple_zh 同构 `{"text": "问：…\n答：…"}` 共 20000 条（`data/ultradata/derived/ultradata_sft_nothink_simplezh.jsonl`，SHA-256 `66d67d5c…`）；preflight `reports/taiji_m4r12_data_preflight_20260909.json` 7/7 通过（digest 稳定、foundation 预算填满、真实 cohort seeds 的 record-disjoint 链构建成功）。
+
+- **设计**：同一 identity-generation child、A/B protected lineage 保持 simple_zh（child 出身，digest 校验通过）、仅 C→C2→C3 换 UltraData 语料（分区 seed 不变；跨语料 record-disjoint 结构性成立并显式断言）；scale `0.5`、consolidation `0`（冻结方向不混入）、R7 预算 65536/16384；对照臂直接引用 R10 formal baseline（同配置同语料）。工程教训：A/B 重建必须用与 child 相同的相对路径（绝对路径会使 source_files 字段漂移 digest，已用 `_relative_to_project` 强制归一）。
+- **结果（aggregate `reports/taiji_m4r12_data_source_aggregate_20260909.json`）**：`retention_gate_passed=false`。UltraData 臂 cycle3 退化 `3/3`（`+0.187/+0.306/+0.254`，均值 `+0.2489`；simple_zh 参考臂均值 `−0.0050`）；**A 跨语料遗忘 `3/3`**（`+1.42/+1.88/+1.58`，均值 `+1.62 BPB`）；`c3_gain` 均值 `1.78` 为 protected 基线在异语料塌缩（6.82 vs 4.37）的假信号。
+- **结论**：语料分布切换是数量级最大的遗忘源（比 R5～R10 全部更新规则效应大 5～50 倍），R11 的“分布适应”判定被坐实；UltraData 替换源否决，数据密度假设与文体差异混淆、单变量设计无法干净验证。转换语料与 preflight 保留；「与 simple_zh 混合降低分布冲击」登记为未预注册假设，不启动。
+- **方向状态**：固定容量的更新规则线（R5～R10）与数据源替换线（R12）均已按证据关闭；M4 剩余日程为 §8 的继承式增长、自主路由、压缩回收与 M5 外围，下一步待与用户重新收敛。
 
 ### 架构/巩固候选闸门（决策记录 2026-09-08，不改变唯一下一步）
 

@@ -1,0 +1,154 @@
+{
+  "format": "taiji-m4r12-data-source-canary-v1",
+  "version": 1,
+  "generated_at_epoch": 1788886397,
+  "status": "passed",
+  "can_promote": false,
+  "seed": 29,
+  "source_checkpoint": "output\\taiji-m2u-seed29-identity-generation-20260905\\last.pt",
+  "source_checkpoint_digest": "0497d4fd1648733e2592b6172c09cf37564c33275a39df3534514f978bdad0ef",
+  "simple_zh_corpus": "data/simple_zh/dialogue_extended_clean.jsonl",
+  "ultradata_corpus": "data/ultradata/derived/ultradata_sft_nothink_simplezh.jsonl",
+  "configuration": {
+    "profile": "foundation",
+    "epochs": 1,
+    "train_bytes": 65536,
+    "eval_bytes": 16384,
+    "chunk_bytes": 65536,
+    "predictive_update_scale": 0.5,
+    "consolidation_strength": 0.0,
+    "fixed_capacity": true,
+    "partition_seeds": [
+      43,
+      44,
+      45
+    ]
+  },
+  "data_checks": {
+    "ultra_parts_disjoint_from_lineage": true,
+    "ultra_parts_fully_selected": true,
+    "phase_c_vs_phase_c2_disjoint": true,
+    "phase_c_vs_phase_c3_disjoint": true,
+    "phase_c2_vs_phase_c3_disjoint": true,
+    "ab_protected_digest_matches_child": true,
+    "ab_active_digest_matches_child": true,
+    "ultra_budgets_filled": true
+  },
+  "checks": {
+    "active_readout_changes": true,
+    "active_readout_changes_during_cycle2": true,
+    "active_readout_changes_during_cycle3": true,
+    "shared_fabric_unchanged": true,
+    "protected_owners_unchanged": true,
+    "protected_readout_unchanged": true,
+    "scores_are_read_only": true,
+    "registry_round_trips_in_process": true,
+    "registry_round_trips_in_fresh_process": true,
+    "generation_canary_round_trips": true,
+    "fresh_process_generation_canary_matches": true,
+    "generation_route_records_active_owner": true,
+    "final_checkpoint_persisted_with_matching_digest": true,
+    "ab_lineage_matches_child": true,
+    "ultra_data_chain_disjoint": true
+  },
+  "technical_gate_all_passed": true,
+  "capability": {
+    "protected_c3_holdout_bpb": 7.093345049015843,
+    "active_c3_holdout_bpb": 5.263303808603599,
+    "c3_holdout_gain_bpb": 1.8300412404122444,
+    "active_c2_holdout_bpb_after_cycle3": 5.033199871833202,
+    "c2_holdout_after_cycle2_bpb": 4.969214761517628,
+    "c2_cycle3_delta_bpb": 0.06398511031557419,
+    "active_c_holdout_bpb_after_cycle3": 5.224119237019844,
+    "c_holdout_after_cycle1_bpb": 4.884058355353026,
+    "c_holdout_after_cycle2_bpb": 4.91846158562277,
+    "c_cycle2_delta_bpb": 0.0344032302697439,
+    "c_cycle3_delta_bpb": 0.3056576513970741,
+    "active_a_retention_bpb": 6.121115091924905
+  },
+  "round_trip": {
+    "active_checkpoint_digest": "688a38f999d2232644e7376c8fe68dee4f39f1206ad893e2dbf22b6cc8fa427e",
+    "fresh_process_digest": "688a38f999d2232644e7376c8fe68dee4f39f1206ad893e2dbf22b6cc8fa427e",
+    "final_checkpoint_path": "E:\\Seed\\output\\taiji_m4r12_data_source_canary\\seed29\\seed29_cascade_c65536.pt",
+    "saved_final_digest": "688a38f999d2232644e7376c8fe68dee4f39f1206ad893e2dbf22b6cc8fa427e",
+    "checkpoint_bytes": 33275092,
+    "fresh_process_restore_seconds": 3.580038300016895
+  },
+  "training": {
+    "metrics": {
+      "observations": 65537.0,
+      "online_accuracy": 0.2289088606436059,
+      "mean_surprise": 3.129853674619695
+    },
+    "resource": {
+      "phases": [
+        {
+          "elapsed_seconds": 85.09391830000095,
+          "learn_seconds": 81.84670790005475,
+          "checkpoint_save_seconds": 5.050984999863431,
+          "trained_body_bytes": 65536,
+          "stream_symbols": 65538,
+          "body_bytes_per_second": 800.7163840973029,
+          "chunk_count": 1,
+          "peak_working_set_bytes": 375140352,
+          "torch_num_threads": 12,
+          "resumed_from_checkpoint": false,
+          "progress_checkpoint": "E:\\Seed\\output\\taiji_m4r12_data_source_canary\\seed29\\seed29_cascade_cycle1_c65536.pt",
+          "resume_cursor": 0,
+          "resume_epoch": 1
+        },
+        {
+          "elapsed_seconds": 83.12882300000638,
+          "learn_seconds": 80.01014739996754,
+          "checkpoint_save_seconds": 4.922558000078425,
+          "trained_body_bytes": 65536,
+          "stream_symbols": 65538,
+          "body_bytes_per_second": 819.0961038027858,
+          "chunk_count": 1,
+          "peak_working_set_bytes": 372977664,
+          "torch_num_threads": 12,
+          "resumed_from_checkpoint": false,
+          "progress_checkpoint": "E:\\Seed\\output\\taiji_m4r12_data_source_canary\\seed29\\seed29_cascade_cycle2_c65536.pt",
+          "resume_cursor": 0,
+          "resume_epoch": 1
+        },
+        {
+          "elapsed_seconds": 81.19360870006494,
+          "learn_seconds": 78.12454009999055,
+          "checkpoint_save_seconds": 4.539856500108726,
+          "trained_body_bytes": 65536,
+          "stream_symbols": 65538,
+          "body_bytes_per_second": 838.8657381678196,
+          "chunk_count": 1,
+          "peak_working_set_bytes": 373121024,
+          "torch_num_threads": 12,
+          "resumed_from_checkpoint": false,
+          "progress_checkpoint": "E:\\Seed\\output\\taiji_m4r12_data_source_canary\\seed29\\seed29_cascade_cycle3_c65536.pt",
+          "resume_cursor": 0,
+          "resume_epoch": 1
+        }
+      ],
+      "elapsed_seconds": 249.41635000007227,
+      "learn_seconds": 239.98139540001284,
+      "checkpoint_save_seconds": 14.513399500050582,
+      "trained_body_bytes": 196608,
+      "stream_symbols": 196614,
+      "body_bytes_per_second": 819.2635086244252,
+      "chunk_count": 3,
+      "peak_working_set_bytes": 375140352,
+      "torch_num_threads": 12,
+      "resumed_from_checkpoint": false
+    }
+  },
+  "resources": {
+    "scoring_seconds": 121.43061710009351,
+    "probe_checkpoint_save_seconds": 0.028007899993099272,
+    "final_checkpoint_save_seconds": 0.022956399945542216,
+    "fresh_process_restore_seconds": 3.580038300016895,
+    "total_elapsed_seconds": 427.61133109999355
+  },
+  "reference_arm": {
+    "description": "M4.R10 formal baseline arm (identical config, simple_zh C/C2/C3)",
+    "aggregate_report": "reports/taiji_m4r10_rule_audit_formal_aggregate_20260908.json"
+  }
+}
