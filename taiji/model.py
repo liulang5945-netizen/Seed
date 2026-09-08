@@ -577,6 +577,8 @@ class Taiji:
         use_delayed_memory_verdict: bool = False,
         identity_generation_scope: str = "all",
         _predictive_readout: BytePredictiveReadout | None = None,
+        _preservation_readout: BytePredictiveReadout | None = None,
+        _preservation_strength: float = 0.0,
     ) -> TaijiStep:
         """Advance one sensation tick.
 
@@ -615,6 +617,17 @@ class Taiji:
             raise TypeError("_predictive_readout must be a BytePredictiveReadout or None")
         if _predictive_readout is not None and readout != "predictive":
             raise ValueError("a predictive readout owner requires readout='predictive'")
+        if _preservation_readout is not None and readout != "predictive":
+            raise ValueError("a preservation readout requires readout='predictive'")
+        if _preservation_readout is not None and not isinstance(
+            _preservation_readout, BytePredictiveReadout
+        ):
+            raise TypeError("_preservation_readout must be a BytePredictiveReadout or None")
+        preservation_strength = float(_preservation_strength)
+        if not math.isfinite(preservation_strength) or preservation_strength < 0.0:
+            raise ValueError("preservation strength must be finite and non-negative")
+        if preservation_strength > 0.0 and _preservation_readout is None:
+            raise ValueError("positive preservation strength requires a preservation readout")
         if identity_generation_scope not in {"all", "active"}:
             raise ValueError("identity generation scope must be 'all' or 'active'")
         if readout == "predictive" and learn_motor is True:
@@ -640,6 +653,8 @@ class Taiji:
         predictive_readout = (
             self.predictive_readout if _predictive_readout is None else _predictive_readout
         )
+        if _preservation_readout is predictive_readout:
+            raise RuntimeError("preservation readout must be distinct from the trained readout")
         symbol = int(symbol)
         sensory = self.sensor.encode(symbol)
         previous = self._state
@@ -700,10 +715,17 @@ class Taiji:
                     symbol,
                 )
                 if predictive_readout_learning:
+                    preservation_probabilities = None
+                    if _preservation_readout is not None and preservation_strength > 0.0:
+                        preservation_probabilities = _preservation_readout.probabilities(
+                            previous.motor_context
+                        )
                     predictive_readout.learn(
                         previous.motor_context,
                         previous.motor_probabilities,
                         symbol,
+                        preservation_probabilities=preservation_probabilities,
+                        preservation_strength=preservation_strength,
                     )
                 if predictive_context_learning:
                     predictive_feedback = predictive_readout.context_feedback(
@@ -1314,6 +1336,7 @@ class Taiji:
         learn_fabric: bool = True,
         learn_predictive_context: bool = True,
         learn_predictive_readout: bool = True,
+        consolidation_strength: float = 0.0,
         boundary: WorkbenchTaskBoundary | Mapping[str, Any] | None = None,
         authorization: WorkbenchBoundaryAuthorization | None = None,
     ) -> dict[str, float]:
@@ -1341,6 +1364,12 @@ class Taiji:
         may be trained.  The protected generation remains the stable parent;
         active training must therefore explicitly freeze the shared fabric and
         predictive context owners.
+
+        ``consolidation_strength`` is an opt-in M4.R1 candidate.  It keeps the
+        protected predictive readout read-only and adds its probability
+        distribution as a local preservation signal to active readout updates.
+        It is rejected without an explicit active Workbench generation, so the
+        default training path and protected owner remain unchanged.
         """
 
         if epochs <= 0:
@@ -1359,6 +1388,11 @@ class Taiji:
             raise TypeError("learn_predictive_context must be a bool")
         if not isinstance(learn_predictive_readout, bool):
             raise TypeError("learn_predictive_readout must be a bool")
+        consolidation_strength = float(consolidation_strength)
+        if not math.isfinite(consolidation_strength) or consolidation_strength < 0.0:
+            raise ValueError("consolidation_strength must be finite and non-negative")
+        if consolidation_strength > 0.0 and not learn_predictive_readout:
+            raise ValueError("consolidation requires learn_predictive_readout=True")
         if (boundary is None) != (authorization is None):
             raise ValueError("boundary and authorization must be supplied together")
         active_readout: BytePredictiveReadout | None = None
@@ -1382,6 +1416,8 @@ class Taiji:
                     "active readout training requires learn_fabric=False and "
                     "learn_predictive_context=False"
                 )
+        if consolidation_strength > 0.0 and active_readout is None:
+            raise RuntimeError("consolidation requires an explicit active readout boundary")
         observations = 0
         correct = 0
         surprise_sum = 0.0
@@ -1404,6 +1440,10 @@ class Taiji:
                     use_memory=use_memory,
                     use_identity=False,
                     _predictive_readout=active_readout,
+                    _preservation_readout=(
+                        self.predictive_readout if consolidation_strength > 0.0 else None
+                    ),
+                    _preservation_strength=consolidation_strength,
                 )
                 if step.prior_prediction is not None:
                     observations += 1

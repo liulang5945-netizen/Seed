@@ -1,0 +1,27 @@
+{
+  "format": "taiji-m4r1-consolidation-canary-v1",
+  "version": 1,
+  "status": "passed",
+  "can_promote": false,
+  "candidate": {
+    "owner": "predictive_readout.active",
+    "reference_owner": "predictive_readout",
+    "consolidation_strength": 0.5,
+    "shared_fabric_learned": false,
+    "predictive_context_learned": false
+  },
+  "gate": {
+    "zero_strength_checkpoint_compatible": true,
+    "active_owner_changes": true,
+    "protected_owner_unchanged": true,
+    "shared_fabric_unchanged": true,
+    "predictive_context_unchanged": true,
+    "checkpoint_round_trip": true,
+    "registry_metadata_round_trip": true,
+    "score_round_trip": true,
+    "source_checkpoint_unchanged": true,
+    "positive_strength_is_finite": true
+  },
+  "source_checkpoint_digest": "3b2160fd6f99235f370f112a9e3bd94b5a5934f9d1324e75d1c49c7a7bb39c90",
+  "trained_checkpoint_digest": "616684caff785e7262c9aeb80ab112aea8aab8423e7b7784380bf82eabfa3c60"
+}

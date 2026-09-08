@@ -25,6 +25,7 @@ import copy
 import ctypes
 import hashlib
 import json
+import math
 import os
 import subprocess
 import sys
@@ -994,6 +995,7 @@ def _run_cascade_arm(
     checkpoint_interval: int = 1,
     progress_dir: Path | None = PROGRESS_OUTPUT_DIR,
     resume: bool = False,
+    consolidation_strength: float = 0.0,
 ) -> dict[str, Any]:
     """Three-cycle cascade: one active branch trains on phase-C, -C', -C''.
 
@@ -1002,6 +1004,10 @@ def _run_cascade_arm(
     same isolated active owner with shared fabric/context/protected readout
     frozen.
     """
+
+    consolidation_strength = float(consolidation_strength)
+    if not math.isfinite(consolidation_strength) or consolidation_strength < 0.0:
+        raise ValueError("consolidation_strength must be finite and non-negative")
 
     boundary = WorkbenchTaskBoundary.issue(
         project_id="project:seed",
@@ -1060,6 +1066,7 @@ def _run_cascade_arm(
             "learn_fabric": False,
             "learn_predictive_context": False,
             "learn_predictive_readout": True,
+            "consolidation_strength": consolidation_strength,
         },
     )
     training_runs.append(cycle1_training)
@@ -1096,6 +1103,7 @@ def _run_cascade_arm(
             "learn_fabric": False,
             "learn_predictive_context": False,
             "learn_predictive_readout": True,
+            "consolidation_strength": consolidation_strength,
         },
     )
     training_runs.append(cycle2_training)
@@ -1138,6 +1146,7 @@ def _run_cascade_arm(
             "learn_fabric": False,
             "learn_predictive_context": False,
             "learn_predictive_readout": True,
+            "consolidation_strength": consolidation_strength,
         },
     )
     training_runs.append(cycle3_training)
@@ -1241,6 +1250,7 @@ def _run_cascade_arm(
     }
     return {
         "arm": "cascade",
+        "consolidation_strength": consolidation_strength,
         "checks": checks,
         "capability": {
             "protected_c3_holdout_bpb": p_c3_bpb,
@@ -1438,9 +1448,13 @@ def run_arms(
     checkpoint_interval: int = 1,
     progress_dir: Path | None = PROGRESS_OUTPUT_DIR,
     resume: bool = False,
+    consolidation_strength: float = 0.0,
 ) -> dict[str, Any]:
     if int(chunk_bytes) <= 0 or int(checkpoint_interval) <= 0:
         raise ValueError("chunk_bytes and checkpoint_interval must be positive")
+    consolidation_strength = float(consolidation_strength)
+    if not math.isfinite(consolidation_strength) or consolidation_strength < 0.0:
+        raise ValueError("consolidation_strength must be finite and non-negative")
     joint_payload, source_model = load_joint_child(checkpoint, expected_seed=seed)
     lineage_seeds = tuple(dict.fromkeys((*COHORT_SEEDS, int(seed))))
     phase_chain = build_disjoint_phase_chain(
@@ -1554,6 +1568,7 @@ def run_arms(
                 checkpoint_interval=checkpoint_interval,
                 progress_dir=progress_dir,
                 resume=resume,
+                consolidation_strength=consolidation_strength,
             )
         )
     else:
@@ -1578,6 +1593,7 @@ def run_arms(
         "replay_bytes": None if replay_bytes is None else int(replay_bytes),
         "chunk_bytes": int(chunk_bytes),
         "checkpoint_interval": int(checkpoint_interval),
+        "consolidation_strength": consolidation_strength,
         "progress_dir": None if progress_dir is None else str(progress_dir),
         "resumed": bool(resume),
         "datasets": {
@@ -1635,6 +1651,7 @@ def main() -> int:
     parser.add_argument("--eval-bytes", type=int, default=32 * 1024)
     parser.add_argument("--chunk-bytes", type=int, default=64 * 1024)
     parser.add_argument("--checkpoint-interval", type=int, default=1)
+    parser.add_argument("--consolidation-strength", type=float, default=0.0)
     parser.add_argument("--progress-dir", type=Path, default=PROGRESS_OUTPUT_DIR)
     parser.add_argument(
         "--resume",
@@ -1651,6 +1668,8 @@ def main() -> int:
         parser.error("train_bytes and eval_bytes must be positive")
     if args.chunk_bytes <= 0 or args.checkpoint_interval <= 0:
         parser.error("chunk_bytes and checkpoint_interval must be positive")
+    if not math.isfinite(args.consolidation_strength) or args.consolidation_strength < 0.0:
+        parser.error("--consolidation-strength must be finite and non-negative")
     if args.replay_bytes is not None and (
         args.replay_bytes <= 0 or args.replay_bytes > args.train_bytes
     ):
@@ -1669,6 +1688,7 @@ def main() -> int:
         checkpoint_interval=args.checkpoint_interval,
         progress_dir=args.progress_dir,
         resume=args.resume,
+        consolidation_strength=args.consolidation_strength,
     )
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(

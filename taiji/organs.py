@@ -655,8 +655,23 @@ class BytePredictiveReadout:
         context: torch.Tensor,
         predicted: torch.Tensor,
         observed_symbol: int,
+        *,
+        preservation_probabilities: torch.Tensor | None = None,
+        preservation_strength: float = 0.0,
     ) -> torch.Tensor:
+        strength = float(preservation_strength)
+        if not math.isfinite(strength) or strength < 0.0:
+            raise ValueError("preservation_strength must be finite and non-negative")
+        if strength > 0.0 and preservation_probabilities is None:
+            raise ValueError("positive preservation_strength requires reference probabilities")
         error = self.prediction_error(predicted, observed_symbol)
+        if preservation_probabilities is not None:
+            if preservation_probabilities.shape != (self.config.alphabet_size,):
+                raise ValueError("preservation probability dimension mismatch")
+            reference = preservation_probabilities.to(self.device)
+            if not bool(torch.isfinite(reference).all()):
+                raise ValueError("preservation probabilities must be finite")
+            error = error + strength * (reference - predicted.to(self.device))
         self.synapses.local_update(
             error,
             context,
