@@ -310,7 +310,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--train-bytes", type=int, default=4_096)
     parser.add_argument("--eval-bytes", type=int, default=1_024)
     parser.add_argument("--seed", type=int, default=DEFAULT_SEED)
-    parser.add_argument("--profile", choices=("smoke", "pilot"), default="smoke")
+    parser.add_argument(
+        "--profile",
+        choices=("smoke", "pilot", "foundation"),
+        default="smoke",
+    )
     parser.add_argument("--report", type=Path, required=True)
     args = parser.parse_args(argv)
     report = run_canary(
