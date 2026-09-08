@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import pytest
+import torch
 
 from taiji import (
     AdaptiveResidualGrowthDecision,
     AdaptiveResidualGrowthPolicy,
     AdaptiveResidualGrowthPressure,
     AdaptiveResidualGrowthTrigger,
+    AdaptiveResidualShadow,
     Taiji,
     TaijiConfig,
 )
@@ -181,6 +183,49 @@ def test_r4_live_pressure_is_emitted_by_bridge_tick_and_restores_exactly() -> No
 
     with pytest.raises(RuntimeError, match="already pending"):
         model.propose_adaptive_residual_growth_candidate()
+
+    model_before_shadow = content_digest(model.checkpoint())
+    parent_region = bridge.region
+    parent_region_payload = parent_region.to_payload()
+    shadow = model.materialize_adaptive_residual_shadow()
+    assert shadow.gate == 0.0
+    assert shadow.unit_count == candidate.proposed_unit_count
+    assert candidate.unit_id in shadow.region.unit_ids
+    assert shadow.region.unit_ids[: candidate.parent_unit_count] == parent_region.unit_ids
+    assert torch.equal(
+        shadow.region.incoming.pre_index[: candidate.parent_unit_count],
+        parent_region.incoming.pre_index,
+    )
+    assert torch.equal(
+        shadow.region.incoming.edge_weight[: candidate.parent_unit_count],
+        parent_region.incoming.edge_weight,
+    )
+    assert torch.equal(
+        shadow.region.membrane[: candidate.parent_unit_count],
+        parent_region.membrane,
+    )
+    assert torch.equal(
+        shadow.region.activity[: candidate.parent_unit_count],
+        parent_region.activity,
+    )
+    assert shadow.region.to_payload()["unit_ids"][-1] == candidate.unit_id
+    candidate_index = shadow.region.unit_index(candidate.unit_id)
+    candidate_projection = shadow.output_projection.pre_index == candidate_index
+    assert bool(candidate_projection.any())
+    assert torch.equal(
+        shadow.output_projection.edge_weight[candidate_projection],
+        torch.zeros_like(shadow.output_projection.edge_weight[candidate_projection]),
+    )
+    shadow_before_gate = content_digest(shadow.region.to_payload())
+    context = torch.zeros(model.config.motor_context_dim)
+    assert torch.equal(shadow.forward(context), context)
+    assert content_digest(shadow.region.to_payload()) == shadow_before_gate
+    assert content_digest(model.checkpoint()) == model_before_shadow
+
+    shadow_checkpoint = shadow.to_payload()
+    restored_shadow = AdaptiveResidualShadow.from_checkpoint(model.config, shadow_checkpoint)
+    assert content_digest(restored_shadow.to_payload()) == content_digest(shadow_checkpoint)
+    assert content_digest(parent_region_payload) == content_digest(parent_region.to_payload())
 
     checkpoint = model.checkpoint()
     restored = Taiji.from_checkpoint(checkpoint)

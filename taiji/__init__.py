@@ -23,6 +23,11 @@ from .adaptive_residual_growth import (
     AdaptiveResidualGrowthPressure,
     AdaptiveResidualGrowthTrigger,
 )
+from .adaptive_residual_shadow import (
+    ADAPTIVE_RESIDUAL_SHADOW_FORMAT,
+    ADAPTIVE_RESIDUAL_SHADOW_VERSION,
+    AdaptiveResidualShadow,
+)
 from .affordance import (
     AFFORDANCE_FEATURE_CHECKPOINT_FORMAT,
     AffordanceFeatureTrainingExample,
@@ -750,6 +755,9 @@ __all__ = [
     "AdaptiveResidualGrowthPolicy",
     "AdaptiveResidualGrowthPressure",
     "AdaptiveResidualGrowthTrigger",
+    "ADAPTIVE_RESIDUAL_SHADOW_FORMAT",
+    "ADAPTIVE_RESIDUAL_SHADOW_VERSION",
+    "AdaptiveResidualShadow",
     "AFFORDANCE_FEATURE_CHECKPOINT_FORMAT",
     "AffordanceFeatureTrainingExample",
     "ActionIntent",
