@@ -11638,6 +11638,8 @@
   },
   "course": {
     "G_holdout_digest": "1d6bbf7bd7c44a945ba09797a9b69dc5faa61e300b966a10cb08131d20b972b1",
+    "G_new_digest": "3f58e596a2b85ede6c5cedebd682008a8391b6b924a9ca07c94d54ad4c0b1569",
+    "G_old_digest": "b0b2a9e10c4a38a79b5a26a7a9727b52812182befebfdaab9edb2353daabfef9",
     "G_schedule": [
       [
         8,
@@ -11657,7 +11659,9 @@
       ]
     ],
     "S_holdout_digest": "90bfd99a0173f27b5043fccad5f706c5790a3f7d438a78f1f34fe6a27e80eb17",
-    "S_train_digest": "5b14f4585589f02dd3cb108224459cce8cef619740c46ad06c9bd717d0366813"
+    "S_train_digest": "5b14f4585589f02dd3cb108224459cce8cef619740c46ad06c9bd717d0366813",
+    "course_seed": 0,
+    "label": "canonical"
   },
   "format": "taiji-m4v2-r4-shadow-canary-v1",
   "interpretation": {
