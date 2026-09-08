@@ -120,9 +120,9 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 
 ## 4. 当前唯一下一步
 
-**唯一下一步：执行 M4.R12 前置——UltraData 数据契约适配与格式抽样（纯工程准备，不训练）。** M4.R11 已按预注册出口冻结固定容量巩固方向：归因证明 consolidation 保守项机制生效（cycle3 位移更小 3/3、active 更靠近 protected 3/3）但 cycle3 delta 同步变差 3/3，参数稳定性换不来边界泛化；active-only vs joint 对照 2/3 不一致，不构成候选。cycle3 退化指向课程结构属性，而检验“结构属性 vs 数据属性”的下一个已登记单变量就是 §8 数据源升级候选的既定验证序列（M4.R1 formal 已完成，序列解锁）。R12 前置只做三件事：(1) 将 `data/ultradata/SFT-2605` 的 Knowledge/IF/Chinese-general no_think JSONL 转换为 simple_zh 同构对话 JSONL（保留 source/domain 字段，forward-slash 相对路径），(2) 抽样 ≥1000 条做格式、digest 稳定性与 `build_disjoint_phase_chain` 兼容性验证，(3) 产出一条可复用的转换脚本与固定数据文件；不做任何 `learn_bytes` 训练、不改 evaluator 语义、不动三 seed 谱系。数据源单变量对比 formal（同预算 C 分支、三 seed retention/increment 判定）须在适配产物过 Gate 后另行预注册。全部保持 `can_promote=false`。
+**唯一下一步：预注册 M4.R12 数据源对比 canary 的实验设计（用户确认点）。** R12 前置已完成且全绿：转换脚本 `scripts/data_prep/convert_ultradata_sft_nothink.py` 将 UltraData-SFT-2605 no_think 三域（Knowledge 8000 / IF 6000 / Chinese-general 6000）转为 simple_zh 同构 `{"text": "问：…\n答：…"}` 共 20000 条，输出 `data/ultradata/derived/ultradata_sft_nothink_simplezh.jsonl`（SHA-256 `66d67d5c…bdbe26`，manifest `reports/taiji_m4r12_ultradata_conversion_manifest_20260909.json`）；preflight Gate `reports/taiji_m4r12_data_preflight_20260909.json` 7/7 通过（digest 稳定、全记录 well-formed、foundation 预算填满、真实 cohort seeds 的 `build_disjoint_phase_chain` record-disjoint 且预算填满）。待确认的设计变量：(a) 对照臂语料 = `data/simple_zh/dialogue_extended_clean.jsonl`（现役 foundation 课程源）vs 候选臂 = UltraData 转换语料；(b) 预算 = 沿用 R7 formal 的 65536/16384（快，先出信号）或 M2.R1 formal 的 1048576/131072（终判口径）；(c) 其余冻结——同一 scale `0.5`、同一 cascade 三周期 harness、同一三 seed、同预注册 retention Gate。确认后先 CPU smoke 再 formal；全部保持 `can_promote=false`。
 
-> **M4.R11 已完成（2026-09-09）**：归因报告 `reports/taiji_m4r11_cycle3_interaction_attribution_20260909.json`，机制与出口判定详见 §7；固定容量巩固方向（consolidation/scale 组合、门控保守项候选）自本日起冻结，闸门 2 关闭。
+> **M4.R11 已完成（2026-09-09）**：归因报告 `reports/taiji_m4r11_cycle3_interaction_attribution_20260909.json`，机制与出口判定详见 §7；固定容量巩固方向（consolidation/scale 组合、门控保守项候选）自本日起冻结，闸门 2 关闭。**M4.R12 前置已完成（2026-09-09）**：UltraData 契约适配与 preflight Gate 全绿（见上），数据源单变量对比进入可预注册状态。
 
 2026-09-06 实际审计已证明首轮报告不能作为能力证据：旧 evaluator 的 C/C′ 只是换 partition seed，不是新记录。当前已落地的修复为 `scripts/training/eval_taiji_m2r1_phase_c_canary.py` v2、`scripts/training/audit_taiji_m2r1_data_contract.py` 和 `reports/taiji_m2r1_data_contract_20260906.json`：
 
