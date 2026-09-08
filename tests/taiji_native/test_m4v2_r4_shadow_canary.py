@@ -25,3 +25,6 @@ def test_r4_shadow_canary_closes_technical_gates_without_promotion() -> None:
     assert report["arms"]["pressure-driven-growth"]["birth_anchor_unit_id"]
     assert len(report["arms"]["pressure-driven-growth"]["birth_anchor_unit_ids"]) == 2
     assert report["arms"]["random-growth"]["birth_anchor_unit_id"] is None
+    pressure_diagnostics = report["arms"]["pressure-driven-growth"]["training_diagnostics"]
+    assert pressure_diagnostics["counterfactual_utility_ticks"] > 0
+    assert pressure_diagnostics["mean_counterfactual_utility"] != 0.0

@@ -406,9 +406,28 @@ def _growth_arm(
         ]
         for phase in ("S", "G")
     }
+    counterfactual_utility_by_phase = {
+        phase: [
+            float(item["candidate_counterfactual_utility"])
+            for item in training_trace
+            if item["phase"] == phase
+        ]
+        for phase in ("S", "G")
+    }
     utility_values = [
         float(item["candidate_utility"]) for item in training_trace
     ]
+    counterfactual_utility_values = [
+        float(item["candidate_counterfactual_utility"]) for item in training_trace
+    ]
+    gate_by_phase = {
+        phase: [
+            float(item["candidate_gate"])
+            for item in training_trace
+            if item["phase"] == phase
+        ]
+        for phase in ("S", "G")
+    }
     gate_values = [float(item["candidate_gate"]) for item in training_trace]
     residual_ratios = [
         item["candidate_residual_norm"] / item["parent_residual_norm"]
@@ -464,6 +483,20 @@ def _growth_arm(
             ),
             "min_candidate_gate": min(gate_values, default=0.0),
             "max_candidate_gate": max(gate_values, default=0.0),
+            "mean_candidate_gate_by_phase": {
+                phase: (
+                    sum(values) / len(values) if values else 0.0
+                )
+                for phase, values in gate_by_phase.items()
+            },
+            "min_candidate_gate_by_phase": {
+                phase: min(values, default=0.0)
+                for phase, values in gate_by_phase.items()
+            },
+            "max_candidate_gate_by_phase": {
+                phase: max(values, default=0.0)
+                for phase, values in gate_by_phase.items()
+            },
             "max_candidate_residual_norm": max(
                 (item["candidate_residual_norm"] for item in training_trace), default=0.0
             ),
@@ -490,6 +523,27 @@ def _growth_arm(
                     sum(values) / len(values) if values else 0.0
                 )
                 for phase, values in utility_by_phase.items()
+            },
+            "counterfactual_utility_ticks": sum(
+                1 for value in counterfactual_utility_values if abs(value) > 1e-8
+            ),
+            "positive_counterfactual_utility_ticks": sum(
+                1 for value in counterfactual_utility_values if value > 1e-8
+            ),
+            "mean_counterfactual_utility": (
+                sum(counterfactual_utility_values) / len(counterfactual_utility_values)
+                if counterfactual_utility_values
+                else 0.0
+            ),
+            "mean_counterfactual_utility_by_phase": {
+                phase: (
+                    sum(values) / len(values) if values else 0.0
+                )
+                for phase, values in counterfactual_utility_by_phase.items()
+            },
+            "positive_counterfactual_utility_ticks_by_phase": {
+                phase: sum(1 for value in values if value > 1e-8)
+                for phase, values in counterfactual_utility_by_phase.items()
             },
             "positive_utility_ticks_by_phase": {
                 phase: sum(1 for value in values if value > 1e-8)
