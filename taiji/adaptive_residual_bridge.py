@@ -99,6 +99,19 @@ class AdaptiveResidualBridge:
     def edge_count(self) -> int:
         return self.region.edge_count
 
+    @property
+    def activity_saturation(self) -> float:
+        """Fraction of units at or above their target activity set point."""
+
+        target = float(self.region.dynamics.target_activity)
+        if target <= 0.0:
+            return 1.0 if bool(self.region.activity.abs().any()) else 0.0
+        return float((self.region.activity.abs() >= target).to(torch.float32).mean().item())
+
+    @property
+    def last_activity(self) -> torch.Tensor:
+        return self._last_activity.detach().clone()
+
     @torch.no_grad()
     def set_gate(self, gate: float) -> None:
         value = float(gate)

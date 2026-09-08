@@ -3,10 +3,14 @@ from __future__ import annotations
 import pytest
 
 from taiji import (
+    AdaptiveResidualGrowthDecision,
     AdaptiveResidualGrowthPolicy,
     AdaptiveResidualGrowthPressure,
     AdaptiveResidualGrowthTrigger,
+    Taiji,
+    TaijiConfig,
 )
+from taiji.internalization import content_digest
 
 PARENT_DIGEST = "p" * 64
 
@@ -78,6 +82,7 @@ def test_r4_trigger_requires_native_pressure_persistence_and_emits_no_task_route
     assert decision.proposal_ordinal == 1
     assert decision.evidence_ids == ("pressure:2", "pressure:3", "pressure:4")
     assert "persistent_native_pressure" in decision.reasons
+    assert AdaptiveResidualGrowthDecision.from_payload(decision.to_payload()) == decision
 
 
 def test_r4_trigger_is_budget_gated_parent_bound_and_checkpointable() -> None:
@@ -98,3 +103,67 @@ def test_r4_trigger_is_budget_gated_parent_bound_and_checkpointable() -> None:
         restored.observe(_pressure(3), structural_budget=1)
     with pytest.raises(ValueError, match="parent checkpoint changed"):
         restored.observe(_pressure(4, parent_digest="q" * 64), structural_budget=1)
+
+
+def _taiji_config() -> TaijiConfig:
+    return TaijiConfig(
+        region_sizes=(16,),
+        synapse_fan_in=4,
+        motor_fan_in=8,
+        predictive_context_fan_in=4,
+        memory_units=16,
+        memory_fan_in=4,
+        memory_meta_dim=8,
+        memory_readout_fan_in=4,
+        identity_organ_enabled=False,
+        seed=321,
+    )
+
+
+def test_r4_live_pressure_is_emitted_by_bridge_tick_and_restores_exactly() -> None:
+    model = Taiji(_taiji_config(), episode_id="r4-live")
+    model.enable_adaptive_residual_bridge(gate=1.0, residual_gain=1.0)
+    policy = AdaptiveResidualGrowthPolicy(
+        ema_rate=1.0,
+        minimum_pressure=0.0,
+        minimum_residual_error=0.0,
+        minimum_fast_slow_conflict=0.0,
+        minimum_activity_saturation=0.0,
+        minimum_utility_gap=0.0,
+        minimum_resource_state=0.0,
+        required_pressure_steps=1,
+        growth_resource_cost=1,
+    )
+    metadata = model.enable_adaptive_residual_growth(policy=policy)
+    parent_digest = str(metadata["parent_checkpoint_digest"])
+    unit_count = model.adaptive_residual_bridge.unit_count
+
+    model.reset_dynamics(episode_id="r4-live-probe")
+    for symbol in (97, 98):
+        model.observe(
+            symbol,
+            learn=True,
+            learn_fabric=False,
+            learn_predictive_context=False,
+            learn_predictive_readout=False,
+            learn_adaptive_residual_bridge=True,
+            readout="predictive",
+        )
+
+    trigger = model.adaptive_residual_growth_trigger
+    assert trigger is not None
+    assert trigger.last_pressure is not None
+    assert trigger.last_pressure.parent_checkpoint_digest == parent_digest
+    assert trigger.last_pressure.bridge_id == "predictive_residual.bridge"
+    assert "task_id" not in trigger.last_pressure.to_payload()
+    decision = model.adaptive_residual_growth_decision
+    assert decision is not None
+    assert decision.should_propose is True
+    assert AdaptiveResidualGrowthDecision.from_payload(decision.to_payload()) == decision
+    assert model.adaptive_residual_bridge.unit_count == unit_count
+
+    checkpoint = model.checkpoint()
+    restored = Taiji.from_checkpoint(checkpoint)
+    assert content_digest(restored.checkpoint()) == content_digest(checkpoint)
+    assert restored.adaptive_residual_growth_decision == decision
+    assert restored.adaptive_residual_growth_trigger.last_pressure == trigger.last_pressure

@@ -13,6 +13,12 @@ from .adaptive_residual_bridge import (
     ADAPTIVE_RESIDUAL_BRIDGE_VERSION,
     AdaptiveResidualBridge,
 )
+from .adaptive_residual_growth import (
+    AdaptiveResidualGrowthDecision,
+    AdaptiveResidualGrowthPolicy,
+    AdaptiveResidualGrowthPressure,
+    AdaptiveResidualGrowthTrigger,
+)
 from .config import TaijiConfig, validate_episodic_learning_target
 from .developmental_synapse import (
     DevelopmentalReplayBuffer,
@@ -71,6 +77,7 @@ class Taiji:
     GATED_TEMPORAL_CANDIDATE_SEED_OFFSET = 5927
     ADAPTIVE_RESIDUAL_BRIDGE_KEY = "adaptive_residual_bridge"
     ADAPTIVE_RESIDUAL_BRIDGE_SEED_OFFSET = 7183
+    ADAPTIVE_RESIDUAL_GROWTH_KEY = "adaptive_residual_growth"
     READOUT_REGISTRY_FORMAT = "taiji-predictive-readout-registry-v1"
     READOUT_REGISTRY_VERSION = 1
     DEVELOPMENTAL_F1_KEY = "developmental_f1"
@@ -118,6 +125,7 @@ class Taiji:
         # and prediction behavior exactly.
         self._gated_temporal_candidate: GatedMultiTimescaleTemporalResidual | None = None
         self._adaptive_residual_bridge: AdaptiveResidualBridge | None = None
+        self._adaptive_residual_growth_trigger: AdaptiveResidualGrowthTrigger | None = None
         # R1 migration state is an explicit, read-only F1 overlay.  It is
         # absent from ordinary v10 checkpoints, so the default path remains
         # byte-for-byte compatible with the pre-R1 architecture.
@@ -372,7 +380,112 @@ class Taiji:
 
         if self._state.pending_action is not None or self._state.pending_experience is not None:
             raise RuntimeError("adaptive residual bridge removal requires a settled state")
+        if self._adaptive_residual_growth_trigger is not None:
+            raise RuntimeError("disable adaptive residual growth before removing its bridge")
         self._adaptive_residual_bridge = None
+
+    @property
+    def adaptive_residual_growth_enabled(self) -> bool:
+        return self._adaptive_residual_growth_trigger is not None
+
+    @property
+    def adaptive_residual_growth_trigger(self) -> AdaptiveResidualGrowthTrigger | None:
+        return self._adaptive_residual_growth_trigger
+
+    @property
+    def adaptive_residual_growth_decision(self) -> AdaptiveResidualGrowthDecision | None:
+        """Return the latest proposal decision emitted on the native path."""
+
+        if self._adaptive_residual_growth_trigger is None:
+            return None
+        return self._adaptive_residual_growth_trigger.last_decision
+
+    @torch.no_grad()
+    def enable_adaptive_residual_growth(
+        self,
+        *,
+        policy: AdaptiveResidualGrowthPolicy | None = None,
+    ) -> dict[str, Any]:
+        """Attach an evidence-only R4 pressure trigger to the live bridge."""
+
+        if self._adaptive_residual_bridge is None:
+            raise RuntimeError("adaptive residual bridge must be enabled before growth pressure")
+        if self._adaptive_residual_growth_trigger is not None:
+            raise RuntimeError("adaptive residual growth pressure is already enabled")
+        if self._state.pending_action is not None or self._state.pending_experience is not None:
+            raise RuntimeError("adaptive residual growth pressure requires a settled state")
+        parent_checkpoint_digest = content_digest(self.checkpoint())
+        trigger = AdaptiveResidualGrowthTrigger(
+            bridge_id="predictive_residual.bridge",
+            policy=policy,
+            parent_checkpoint_digest=parent_checkpoint_digest,
+        )
+        self._adaptive_residual_growth_trigger = trigger
+        return {
+            "format": trigger.checkpoint()["format"],
+            "version": trigger.checkpoint()["version"],
+            "bridge_id": trigger.bridge_id,
+            "parent_checkpoint_digest": parent_checkpoint_digest,
+            "trigger_digest": content_digest(trigger.checkpoint()),
+        }
+
+    @torch.no_grad()
+    def disable_adaptive_residual_growth(self) -> None:
+        """Remove only the R4 pressure trigger; the bridge remains intact."""
+
+        if self._state.pending_action is not None or self._state.pending_experience is not None:
+            raise RuntimeError("adaptive residual growth removal requires a settled state")
+        self._adaptive_residual_growth_trigger = None
+
+    def _developmental_f1_fast_slow_conflict(self) -> float:
+        bundle = self._developmental_f1_bundle
+        if bundle is None:
+            return 0.0
+        ratios: list[float] = []
+        for _owner_id, bank in bundle.banks:
+            slow_norm = float(bank.slow_weight.norm().item())
+            fast_norm = float(bank.fast_delta.norm().item())
+            ratios.append(min(1.0, fast_norm / max(1e-6, slow_norm)))
+        return sum(ratios) / max(1, len(ratios))
+
+    @torch.no_grad()
+    def _record_adaptive_residual_growth_pressure(
+        self,
+        *,
+        symbol: int,
+        previous: TaijiState,
+        prior_probability: float,
+    ) -> AdaptiveResidualGrowthDecision | None:
+        trigger = self._adaptive_residual_growth_trigger
+        bridge = self._adaptive_residual_bridge
+        if trigger is None or bridge is None:
+            return None
+        residual_error = min(1.0, max(0.0, 1.0 - float(prior_probability)))
+        activity_saturation = bridge.activity_saturation
+        utility_gap = min(1.0, residual_error * (0.5 + 0.5 * activity_saturation))
+        structural_budget = int(self.config.development_structural_budget)
+        resource_state = 1.0 if structural_budget >= trigger.policy.growth_resource_cost else 0.0
+        tick = int(self._development_ticks + previous.tick + 1)
+        evidence_identity = {
+            "bridge_id": trigger.bridge_id,
+            "tick": tick,
+            "episode_id": previous.episode_id,
+            "symbol": int(symbol),
+            "parent_checkpoint_digest": trigger.parent_checkpoint_digest,
+            "observation_count": trigger.observation_count + 1,
+        }
+        pressure = AdaptiveResidualGrowthPressure.create(
+            bridge_id=trigger.bridge_id,
+            tick=tick,
+            residual_error=residual_error,
+            fast_slow_conflict=self._developmental_f1_fast_slow_conflict(),
+            activity_saturation=activity_saturation,
+            utility_gap=utility_gap,
+            resource_state=resource_state,
+            evidence_id=f"r4-pressure:{content_digest(evidence_identity)}",
+            parent_checkpoint_digest=trigger.parent_checkpoint_digest,
+        )
+        return trigger.observe(pressure, structural_budget=structural_budget)
 
     @property
     def developmental_f1_enabled(self) -> bool:
@@ -1115,6 +1228,15 @@ class Taiji:
                     previous.motor_probabilities,
                     symbol,
                 )
+                if (
+                    self._adaptive_residual_growth_trigger is not None
+                    and predictive_readout is self.predictive_readout
+                ):
+                    self._record_adaptive_residual_growth_pressure(
+                        symbol=symbol,
+                        previous=previous,
+                        prior_probability=prior_probability,
+                    )
                 if developmental_f1_overlay:
                     readout_bank = self._developmental_f1_bundle.bank(
                         "predictive_readout.synapses"
@@ -2230,6 +2352,10 @@ class Taiji:
             )
         if self._adaptive_residual_bridge is not None:
             core[self.ADAPTIVE_RESIDUAL_BRIDGE_KEY] = self._adaptive_residual_bridge.to_payload()
+        if self._adaptive_residual_growth_trigger is not None:
+            core[self.ADAPTIVE_RESIDUAL_GROWTH_KEY] = (
+                self._adaptive_residual_growth_trigger.checkpoint()
+            )
         if self._developmental_f1_bundle is not None:
             core[self.DEVELOPMENTAL_F1_KEY] = self._developmental_f1_bundle.to_payload()
         replay_payload = self._developmental_f1_replay_payload()
@@ -2337,6 +2463,19 @@ class Taiji:
             )
             bridge.load_payload(bridge_payload)
             self._adaptive_residual_bridge = bridge
+        growth_payload = checkpoint.get(self.ADAPTIVE_RESIDUAL_GROWTH_KEY)
+        self._adaptive_residual_growth_trigger = None
+        if growth_payload is not None:
+            if is_legacy_checkpoint:
+                raise ValueError("legacy checkpoint cannot contain adaptive residual growth")
+            if self._adaptive_residual_bridge is None:
+                raise ValueError("adaptive residual growth requires an adaptive residual bridge")
+            if not isinstance(growth_payload, Mapping):
+                raise ValueError("adaptive residual growth checkpoint payload is invalid")
+            trigger = AdaptiveResidualGrowthTrigger.from_checkpoint(growth_payload)
+            if trigger.bridge_id != "predictive_residual.bridge":
+                raise ValueError("adaptive residual growth bridge identity does not match")
+            self._adaptive_residual_growth_trigger = trigger
         developmental_payload = checkpoint.get(self.DEVELOPMENTAL_F1_KEY)
         self._developmental_f1_bundle = None
         self._developmental_f1_learning_mode = "read_only"
@@ -2380,6 +2519,9 @@ class Taiji:
                         ),
                         include_adaptive_residual_bridge=(
                             self.ADAPTIVE_RESIDUAL_BRIDGE_KEY in checkpoint
+                        ),
+                        include_adaptive_residual_growth=(
+                            self.ADAPTIVE_RESIDUAL_GROWTH_KEY in checkpoint
                         ),
                         include_developmental_f1=self.DEVELOPMENTAL_F1_KEY in checkpoint,
                         include_developmental_f1_replay=(
@@ -2499,6 +2641,7 @@ class Taiji:
         include_predictive_context: bool | None = None,
         include_temporal_candidate: bool = False,
         include_adaptive_residual_bridge: bool = False,
+        include_adaptive_residual_growth: bool = False,
         include_developmental_f1: bool = False,
         include_developmental_f1_replay: bool = False,
     ) -> tuple[str, ...]:
@@ -2524,6 +2667,8 @@ class Taiji:
             keys += (Taiji.GATED_TEMPORAL_CANDIDATE_KEY,)
         if include_adaptive_residual_bridge:
             keys += (Taiji.ADAPTIVE_RESIDUAL_BRIDGE_KEY,)
+        if include_adaptive_residual_growth:
+            keys += (Taiji.ADAPTIVE_RESIDUAL_GROWTH_KEY,)
         if include_developmental_f1:
             keys += (Taiji.DEVELOPMENTAL_F1_KEY,)
         if include_developmental_f1_replay:

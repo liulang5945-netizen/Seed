@@ -345,6 +345,7 @@ class AdaptiveResidualGrowthTrigger:
         *,
         bridge_id: str,
         policy: AdaptiveResidualGrowthPolicy | None = None,
+        parent_checkpoint_digest: str | None = None,
     ) -> None:
         self.bridge_id = _text(bridge_id, "adaptive residual trigger bridge_id")
         self.policy = policy or AdaptiveResidualGrowthPolicy()
@@ -357,7 +358,25 @@ class AdaptiveResidualGrowthTrigger:
         self.proposal_count = 0
         self.observation_count = 0
         self._evidence_ids: list[str] = []
-        self._parent_checkpoint_digest = ""
+        self._parent_checkpoint_digest = (
+            ""
+            if parent_checkpoint_digest is None
+            else _text(parent_checkpoint_digest, "adaptive residual trigger parent digest")
+        )
+        self._last_pressure: AdaptiveResidualGrowthPressure | None = None
+        self._last_decision: AdaptiveResidualGrowthDecision | None = None
+
+    @property
+    def parent_checkpoint_digest(self) -> str:
+        return self._parent_checkpoint_digest
+
+    @property
+    def last_pressure(self) -> AdaptiveResidualGrowthPressure | None:
+        return self._last_pressure
+
+    @property
+    def last_decision(self) -> AdaptiveResidualGrowthDecision | None:
+        return self._last_decision
 
     @property
     def pressure_ema(self) -> float:
@@ -386,6 +405,7 @@ class AdaptiveResidualGrowthTrigger:
         if self._parent_checkpoint_digest and pressure.parent_checkpoint_digest != self._parent_checkpoint_digest:
             raise ValueError("adaptive residual pressure parent checkpoint changed")
         self._parent_checkpoint_digest = pressure.parent_checkpoint_digest
+        self._last_pressure = pressure
         self._evidence_ids.append(pressure.evidence_id)
         max_evidence = max(1, int(self.policy.required_pressure_steps))
         self._evidence_ids = self._evidence_ids[-max_evidence:]
@@ -452,10 +472,12 @@ class AdaptiveResidualGrowthTrigger:
             "parent_checkpoint_digest": self._parent_checkpoint_digest,
             "reasons": reasons,
         }
-        return AdaptiveResidualGrowthDecision(
+        decision = AdaptiveResidualGrowthDecision(
             **{key: value for key, value in identity.items() if key not in {"format", "version", "kind"}},
             decision_digest=content_digest(identity),
         )
+        self._last_decision = decision
+        return decision
 
     def checkpoint(self) -> dict[str, Any]:
         payload = {
@@ -475,6 +497,10 @@ class AdaptiveResidualGrowthTrigger:
             "evidence_ids": list(self._evidence_ids),
             "parent_checkpoint_digest": self._parent_checkpoint_digest,
         }
+        if self._last_decision is not None:
+            payload["last_decision"] = self._last_decision.to_payload()
+        if self._last_pressure is not None:
+            payload["last_pressure"] = self._last_pressure.to_payload()
         return {**payload, "checkpoint_digest": content_digest(payload)}
 
     @classmethod
@@ -493,6 +519,11 @@ class AdaptiveResidualGrowthTrigger:
         trigger = cls(
             bridge_id=str(payload["bridge_id"]),
             policy=AdaptiveResidualGrowthPolicy.from_payload(payload["policy"]),
+            parent_checkpoint_digest=(
+                None
+                if not str(payload.get("parent_checkpoint_digest", ""))
+                else str(payload["parent_checkpoint_digest"])
+            ),
         )
         trigger.residual_error_ema = _unit(
             float(payload["residual_error_ema"]), "adaptive residual trigger residual_error_ema"
@@ -526,11 +557,32 @@ class AdaptiveResidualGrowthTrigger:
         ):
             raise ValueError("adaptive residual trigger evidence_ids must be unique and non-empty")
         trigger._parent_checkpoint_digest = str(payload.get("parent_checkpoint_digest", ""))
-        if trigger._parent_checkpoint_digest:
-            _text(
-                trigger._parent_checkpoint_digest,
-                "adaptive residual trigger parent checkpoint digest",
-            )
+        last_pressure = payload.get("last_pressure")
+        if last_pressure is not None:
+            if not isinstance(last_pressure, Mapping):
+                raise ValueError("adaptive residual trigger last_pressure must be a mapping")
+            trigger._last_pressure = AdaptiveResidualGrowthPressure.from_payload(last_pressure)
+            if trigger._last_pressure.bridge_id != trigger.bridge_id:
+                raise ValueError("adaptive residual trigger last_pressure targets another bridge")
+            if (
+                trigger._parent_checkpoint_digest
+                and trigger._last_pressure.parent_checkpoint_digest
+                != trigger._parent_checkpoint_digest
+            ):
+                raise ValueError("adaptive residual trigger last_pressure parent changed")
+        last_decision = payload.get("last_decision")
+        if last_decision is not None:
+            if not isinstance(last_decision, Mapping):
+                raise ValueError("adaptive residual trigger last_decision must be a mapping")
+            trigger._last_decision = AdaptiveResidualGrowthDecision.from_payload(last_decision)
+            if trigger._last_decision.bridge_id != trigger.bridge_id:
+                raise ValueError("adaptive residual trigger last_decision targets another bridge")
+            if (
+                trigger._parent_checkpoint_digest
+                and trigger._last_decision.parent_checkpoint_digest
+                != trigger._parent_checkpoint_digest
+            ):
+                raise ValueError("adaptive residual trigger last_decision parent changed")
         return trigger
 
 
