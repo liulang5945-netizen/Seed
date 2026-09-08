@@ -548,7 +548,7 @@ class Taiji:
             self.config,
             bridge.to_payload(),
             candidate,
-            birth_mode="pressure_anchor",
+            birth_mode="pressure_mixture",
             device=self.device,
         )
 

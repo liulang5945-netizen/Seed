@@ -19,7 +19,9 @@ def test_r4_shadow_canary_closes_technical_gates_without_promotion() -> None:
     assert report["interpretation"]["matched_capacity_is_required_before_growth_claim"] is True
     assert report["candidate_only_smoke"]["parent_substrate_unchanged"] is True
     assert report["candidate_only_smoke"]["birth_anchor_unit_id"]
+    assert len(report["candidate_only_smoke"]["birth_anchor_unit_ids"]) == 2
     assert report["arms"]["pressure-driven-growth"]["parent_frozen"] is False
     assert report["arms"]["pressure-driven-growth"]["parent_substrate_unchanged"] is False
     assert report["arms"]["pressure-driven-growth"]["birth_anchor_unit_id"]
+    assert len(report["arms"]["pressure-driven-growth"]["birth_anchor_unit_ids"]) == 2
     assert report["arms"]["random-growth"]["birth_anchor_unit_id"] is None

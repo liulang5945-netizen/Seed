@@ -428,6 +428,8 @@ def _growth_arm(
         "candidate_digest": candidate.candidate_digest,
         "candidate_unit_id": candidate.unit_id,
         "birth_anchor_unit_id": shadow.birth_anchor_unit_id,
+        "birth_anchor_unit_ids": list(shadow.birth_anchor_unit_ids),
+        "birth_anchor_weights": list(shadow.birth_anchor_weights),
         "candidate_activity": float(shadow.candidate_activity),
         "training_diagnostics": {
             "trace_digest": content_digest(training_trace),
@@ -506,7 +508,7 @@ def run_canary(
         candidate=pressure_candidate,
         freeze_parent=True,
         course=course,
-        birth_mode="pressure_anchor",
+        birth_mode="pressure_mixture",
         label="candidate-only-smoke",
     )
     pressure = _growth_arm(
@@ -514,7 +516,7 @@ def run_canary(
         candidate=pressure_candidate,
         freeze_parent=False,
         course=course,
-        birth_mode="pressure_anchor",
+        birth_mode="pressure_mixture",
         label="pressure-driven-growth",
     )
 
@@ -619,6 +621,8 @@ def run_canary(
         },
         "candidate_only_smoke": {
             "birth_anchor_unit_id": candidate_only_smoke["birth_anchor_unit_id"],
+            "birth_anchor_unit_ids": candidate_only_smoke["birth_anchor_unit_ids"],
+            "birth_anchor_weights": candidate_only_smoke["birth_anchor_weights"],
             "candidate_lesion_delta": candidate_only_smoke["candidate_lesion_delta"],
             "mature_f1_owners_unchanged": candidate_only_smoke[
                 "mature_f1_owners_unchanged"

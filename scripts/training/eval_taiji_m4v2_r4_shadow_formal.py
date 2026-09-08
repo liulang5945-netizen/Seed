@@ -58,6 +58,8 @@ def _arm_summary(arm: Mapping[str, Any]) -> dict[str, Any]:
         "candidate_digest": arm.get("candidate_digest"),
         "candidate_unit_id": arm.get("candidate_unit_id"),
         "birth_anchor_unit_id": arm.get("birth_anchor_unit_id"),
+        "birth_anchor_unit_ids": arm.get("birth_anchor_unit_ids"),
+        "birth_anchor_weights": arm.get("birth_anchor_weights"),
         "counts": dict(arm.get("counts", {})),
         "parent_frozen": arm.get("parent_frozen"),
         "parent_substrate_unchanged": arm.get("parent_substrate_unchanged"),

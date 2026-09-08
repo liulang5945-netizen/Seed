@@ -4,55 +4,55 @@
     "positive_lesion_delta_means_candidate_helped": true,
     "pressure_candidate_lesion": {
       "G": {
-        "better_count": 6,
+        "better_count": 2,
         "count": 9,
-        "max": 0.04147995021080764,
-        "mean": 0.006707989413255788,
-        "min": -0.0146942231858187,
+        "max": 0.003355736852002522,
+        "mean": -0.004376269911430895,
+        "min": -0.020826319674180915,
         "non_worse_count": 6
       },
       "S": {
         "better_count": 9,
         "count": 9,
-        "max": 0.3197858558053124,
-        "mean": 0.227702607751166,
-        "min": 0.15065480450808177,
+        "max": 0.28146541874725806,
+        "mean": 0.19837287609844811,
+        "min": 0.1011489559708032,
         "non_worse_count": 9
       }
     },
     "pressure_vs_fixed_capacity": {
       "G": {
-        "better_count": 9,
+        "better_count": 8,
         "count": 9,
-        "max": -0.0012959591412089466,
-        "mean": -0.02515759954295227,
-        "min": -0.06152453314095041,
-        "non_worse_count": 9
+        "max": 0.007736540242119894,
+        "mean": -0.014060357575848868,
+        "min": -0.03377666166682669,
+        "non_worse_count": 8
       },
       "S": {
         "better_count": 9,
         "count": 9,
-        "max": -0.16408739886237012,
-        "mean": -0.23054104072598194,
-        "min": -0.31399760182379755,
+        "max": -0.10240966389973494,
+        "mean": -0.20452586797743916,
+        "min": -0.27800355830541346,
         "non_worse_count": 9
       }
     },
     "pressure_vs_fixed_large": {
       "G": {
-        "better_count": 5,
+        "better_count": 4,
         "count": 9,
-        "max": 0.0271938877528477,
-        "mean": -0.002596105688386135,
-        "min": -0.04042083879963165,
-        "non_worse_count": 5
+        "max": 0.03622638713617654,
+        "mean": 0.008501136278717267,
+        "min": -0.004078089850345634,
+        "non_worse_count": 4
       },
       "S": {
         "better_count": 8,
         "count": 9,
-        "max": 0.019296863705763556,
-        "mean": -0.11446790389467892,
-        "min": -0.2673919483594993,
+        "max": 0.031037546035422636,
+        "mean": -0.08845273114613612,
+        "min": -0.25253968263800886,
         "non_worse_count": 8
       }
     }
@@ -63,6 +63,8 @@
       "arms": {
         "fixed-large": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": [],
+          "birth_anchor_weights": [],
           "candidate_digest": "f0276cfe663a3634f7038f3af77fb22542dfe19adce94976c9e4c107675ce02e",
           "candidate_lesion_delta": {
             "G": 0.020133692511025814,
@@ -101,6 +103,8 @@
         },
         "frozen-parent": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": null,
+          "birth_anchor_weights": null,
           "candidate_digest": null,
           "candidate_lesion_delta": null,
           "candidate_unit_id": null,
@@ -123,10 +127,18 @@
         },
         "pressure-driven-growth": {
           "birth_anchor_unit_id": "predictive_residual.bridge.u7",
+          "birth_anchor_unit_ids": [
+            "predictive_residual.bridge.u7",
+            "predictive_residual.bridge.u11"
+          ],
+          "birth_anchor_weights": [
+            0.5668388605117798,
+            0.4331611096858978
+          ],
           "candidate_digest": "9b192ca77312c7745d5302200206f8dea45ce00fdbf7bd173347913d86373df1",
           "candidate_lesion_delta": {
-            "G": -0.0028188290747177547,
-            "S": 0.25434004321926373
+            "G": -0.0055547234870418905,
+            "S": 0.2562776831892499
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -139,28 +151,30 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.587250102003093,
-            "S": 5.310089389767948
+            "G": 5.593856033953267,
+            "S": 5.308484047045335
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
           "training_diagnostics": {
-            "active_ticks": 178,
+            "active_ticks": 211,
             "credit_ticks": 417,
-            "max_activity": 0.9559879302978516,
-            "max_candidate_credit_norm": 0.6005898714065552,
-            "max_candidate_residual_norm": 1.346879243850708,
-            "max_candidate_residual_ratio": 3.044032664284315,
-            "max_eligibility_norm": 3.505450963973999,
-            "max_projection_update_norm": 0.04038820415735245,
-            "mean_candidate_residual_ratio": 0.27713243223634254,
-            "residual_ticks": 177,
+            "max_activity": 0.9113647937774658,
+            "max_candidate_credit_norm": 0.576215386390686,
+            "max_candidate_residual_norm": 1.2633975744247437,
+            "max_candidate_residual_ratio": 3.243550039434066,
+            "max_eligibility_norm": 3.4970831871032715,
+            "max_projection_update_norm": 0.040098100900650024,
+            "mean_candidate_residual_ratio": 0.28539406253058003,
+            "residual_ticks": 210,
             "ticks": 424,
-            "trace_digest": "98022b30009a13a32f4fd7392ab68a7350d13ac1aa5cb9736228fc6428f033bf"
+            "trace_digest": "c640acab49268bb8bed4ece3d83164f4384e9172745ab5283459499dc45c86b3"
           }
         },
         "r3-fixed-capacity": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": null,
+          "birth_anchor_weights": null,
           "candidate_digest": null,
           "candidate_lesion_delta": null,
           "candidate_unit_id": null,
@@ -183,6 +197,8 @@
         },
         "random-growth": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": [],
+          "birth_anchor_weights": [],
           "candidate_digest": "833be5dbe4b72f9f26c06a3239a0b9086850cdcc93e55e09ed495e542e606935",
           "candidate_lesion_delta": {
             "G": -0.021841101671991048,
@@ -222,16 +238,24 @@
       },
       "candidate_only_smoke": {
         "birth_anchor_unit_id": "predictive_residual.bridge.u7",
+        "birth_anchor_unit_ids": [
+          "predictive_residual.bridge.u7",
+          "predictive_residual.bridge.u11"
+        ],
+        "birth_anchor_weights": [
+          0.5668388605117798,
+          0.4331611096858978
+        ],
         "candidate_lesion_delta": {
-          "G": -0.00015312551581647682,
-          "S": 0.15027568908426048
+          "G": -0.010470322127176246,
+          "S": 0.152503864101881
         },
         "mature_f1_owners_unchanged": true,
         "parent_substrate_unchanged": true,
         "shadow_fresh_restore": true,
         "shadow_rollback_matches_bare": true,
         "shadow_training_changed": true,
-        "trace_digest": "ca7184c5a5f8cbe1a438a0d29791c5fca8978294d2ffeac0674b65aab6945643"
+        "trace_digest": "169fb5177575a3b1504216a8b4d3004446159ae50e4ca9faaa51dcb7f8934648"
       },
       "course": {
         "G_holdout_digest": "1d6bbf7bd7c44a945ba09797a9b69dc5faa61e300b966a10cb08131d20b972b1",
@@ -263,7 +287,7 @@
       "course_label": "canonical-order",
       "course_seed": 101,
       "model_seed": 71,
-      "report_digest": "2a410439485f724e470e7630e73dff240c226710cae259a0098e6e34093ffdbb",
+      "report_digest": "f28adb23886596742ce5abd2ab1041c1a0b14a735534de931070be2059045496",
       "technical_gates": {
         "candidate_only_smoke_fresh_restore": true,
         "candidate_only_smoke_parent_frozen": true,
@@ -287,6 +311,8 @@
       "arms": {
         "fixed-large": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": [],
+          "birth_anchor_weights": [],
           "candidate_digest": "f0276cfe663a3634f7038f3af77fb22542dfe19adce94976c9e4c107675ce02e",
           "candidate_lesion_delta": {
             "G": 0.01428220732715868,
@@ -325,6 +351,8 @@
         },
         "frozen-parent": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": null,
+          "birth_anchor_weights": null,
           "candidate_digest": null,
           "candidate_lesion_delta": null,
           "candidate_unit_id": null,
@@ -347,10 +375,18 @@
         },
         "pressure-driven-growth": {
           "birth_anchor_unit_id": "predictive_residual.bridge.u7",
+          "birth_anchor_unit_ids": [
+            "predictive_residual.bridge.u7",
+            "predictive_residual.bridge.u11"
+          ],
+          "birth_anchor_weights": [
+            0.5668388605117798,
+            0.4331611096858978
+          ],
           "candidate_digest": "9b192ca77312c7745d5302200206f8dea45ce00fdbf7bd173347913d86373df1",
           "candidate_lesion_delta": {
-            "G": -0.0146942231858187,
-            "S": 0.1850351528324774
+            "G": -0.020826319674180915,
+            "S": 0.1011489559708032
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -363,28 +399,30 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.720734580375297,
-            "S": 5.396556255314143
+            "G": 5.729767079758626,
+            "S": 5.4781445393654264
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
           "training_diagnostics": {
-            "active_ticks": 177,
+            "active_ticks": 263,
             "credit_ticks": 417,
-            "max_activity": 0.8739016056060791,
-            "max_candidate_credit_norm": 0.551821231842041,
-            "max_candidate_residual_norm": 0.8982658982276917,
-            "max_candidate_residual_ratio": 1.6909009760869003,
-            "max_eligibility_norm": 2.948496103286743,
-            "max_projection_update_norm": 0.02047945372760296,
-            "mean_candidate_residual_ratio": 0.14905150179899979,
-            "residual_ticks": 176,
+            "max_activity": 0.7363946437835693,
+            "max_candidate_credit_norm": 0.3989008963108063,
+            "max_candidate_residual_norm": 0.3847688138484955,
+            "max_candidate_residual_ratio": 1.4690172171680154,
+            "max_eligibility_norm": 2.3145365715026855,
+            "max_projection_update_norm": 0.016174396499991417,
+            "mean_candidate_residual_ratio": 0.08996300147304538,
+            "residual_ticks": 262,
             "ticks": 424,
-            "trace_digest": "ea2d895546dc7ef1fc6425c59c6eff4dc67762bc1568bcee8e7a2c38111350fa"
+            "trace_digest": "48603f09e9911448ceb3f1e771efda7dc1e05a06eeef9505207151688935628b"
           }
         },
         "r3-fixed-capacity": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": null,
+          "birth_anchor_weights": null,
           "candidate_digest": null,
           "candidate_lesion_delta": null,
           "candidate_unit_id": null,
@@ -407,6 +445,8 @@
         },
         "random-growth": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": [],
+          "birth_anchor_weights": [],
           "candidate_digest": "833be5dbe4b72f9f26c06a3239a0b9086850cdcc93e55e09ed495e542e606935",
           "candidate_lesion_delta": {
             "G": -0.02827036687614015,
@@ -446,16 +486,24 @@
       },
       "candidate_only_smoke": {
         "birth_anchor_unit_id": "predictive_residual.bridge.u7",
+        "birth_anchor_unit_ids": [
+          "predictive_residual.bridge.u7",
+          "predictive_residual.bridge.u11"
+        ],
+        "birth_anchor_weights": [
+          0.5668388605117798,
+          0.4331611096858978
+        ],
         "candidate_lesion_delta": {
-          "G": -0.005153843722362161,
-          "S": 0.11621851858034749
+          "G": -0.008105270176272938,
+          "S": 0.08102753844524369
         },
         "mature_f1_owners_unchanged": true,
         "parent_substrate_unchanged": true,
         "shadow_fresh_restore": true,
         "shadow_rollback_matches_bare": true,
         "shadow_training_changed": true,
-        "trace_digest": "52357409fcdb370c06be83d4df3ad23ab4f47695e8f8f4e05424cee1bc44e48e"
+        "trace_digest": "0cb54d314853e435de9a7cf2a51a0a896230bd41fc4e159c3051b80deca60274"
       },
       "course": {
         "G_holdout_digest": "1d6bbf7bd7c44a945ba09797a9b69dc5faa61e300b966a10cb08131d20b972b1",
@@ -487,7 +535,7 @@
       "course_label": "order-202",
       "course_seed": 202,
       "model_seed": 71,
-      "report_digest": "5cdddb0ba35d63d7118cedddbabfa946a43978fecab82f2935e1da193d08f466",
+      "report_digest": "e7bdc20b1f92e2655f739bd7d4e2e2885c19041c8737d00a69fe0103ae10a2e9",
       "technical_gates": {
         "candidate_only_smoke_fresh_restore": true,
         "candidate_only_smoke_parent_frozen": true,
@@ -511,6 +559,8 @@
       "arms": {
         "fixed-large": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": [],
+          "birth_anchor_weights": [],
           "candidate_digest": "f0276cfe663a3634f7038f3af77fb22542dfe19adce94976c9e4c107675ce02e",
           "candidate_lesion_delta": {
             "G": 0.005629313023876925,
@@ -549,6 +599,8 @@
         },
         "frozen-parent": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": null,
+          "birth_anchor_weights": null,
           "candidate_digest": null,
           "candidate_lesion_delta": null,
           "candidate_unit_id": null,
@@ -571,10 +623,18 @@
         },
         "pressure-driven-growth": {
           "birth_anchor_unit_id": "predictive_residual.bridge.u7",
+          "birth_anchor_unit_ids": [
+            "predictive_residual.bridge.u7",
+            "predictive_residual.bridge.u11"
+          ],
+          "birth_anchor_weights": [
+            0.5668388605117798,
+            0.4331611096858978
+          ],
           "candidate_digest": "9b192ca77312c7745d5302200206f8dea45ce00fdbf7bd173347913d86373df1",
           "candidate_lesion_delta": {
-            "G": -0.003264243497606678,
-            "S": 0.2705863021403285
+            "G": -0.017188622332610315,
+            "S": 0.2133422697610472
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -587,28 +647,30 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.667024284631395,
-            "S": 5.291482049518737
+            "G": 5.681633740972866,
+            "S": 5.3477195637760575
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
           "training_diagnostics": {
-            "active_ticks": 178,
+            "active_ticks": 227,
             "credit_ticks": 417,
-            "max_activity": 0.9543909430503845,
-            "max_candidate_credit_norm": 0.6873519420623779,
-            "max_candidate_residual_norm": 1.2585632801055908,
-            "max_candidate_residual_ratio": 3.2899747398886245,
-            "max_eligibility_norm": 3.2805471420288086,
-            "max_projection_update_norm": 0.030605560168623924,
-            "mean_candidate_residual_ratio": 0.22388577412409252,
-            "residual_ticks": 177,
+            "max_activity": 0.8806010484695435,
+            "max_candidate_credit_norm": 0.6033977270126343,
+            "max_candidate_residual_norm": 0.9640643000602722,
+            "max_candidate_residual_ratio": 2.7382566680826437,
+            "max_eligibility_norm": 3.0583035945892334,
+            "max_projection_update_norm": 0.027960143983364105,
+            "mean_candidate_residual_ratio": 0.20328497722273833,
+            "residual_ticks": 226,
             "ticks": 424,
-            "trace_digest": "0310f3ae3c1462d12f803cf75e9fbe71b964b4898f6e6afb91cf7c572ce3aadd"
+            "trace_digest": "3b7fe3135faeb808e751eec4d8857f5eaac7ac36d574bd94c89060dfd5aa5065"
           }
         },
         "r3-fixed-capacity": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": null,
+          "birth_anchor_weights": null,
           "candidate_digest": null,
           "candidate_lesion_delta": null,
           "candidate_unit_id": null,
@@ -631,6 +693,8 @@
         },
         "random-growth": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": [],
+          "birth_anchor_weights": [],
           "candidate_digest": "833be5dbe4b72f9f26c06a3239a0b9086850cdcc93e55e09ed495e542e606935",
           "candidate_lesion_delta": {
             "G": -0.045062309047605886,
@@ -670,16 +734,24 @@
       },
       "candidate_only_smoke": {
         "birth_anchor_unit_id": "predictive_residual.bridge.u7",
+        "birth_anchor_unit_ids": [
+          "predictive_residual.bridge.u7",
+          "predictive_residual.bridge.u11"
+        ],
+        "birth_anchor_weights": [
+          0.5668388605117798,
+          0.4331611096858978
+        ],
         "candidate_lesion_delta": {
-          "G": -0.001803707084254924,
-          "S": 0.1614993496808239
+          "G": -0.012969502033493896,
+          "S": 0.1358817162187087
         },
         "mature_f1_owners_unchanged": true,
         "parent_substrate_unchanged": true,
         "shadow_fresh_restore": true,
         "shadow_rollback_matches_bare": true,
         "shadow_training_changed": true,
-        "trace_digest": "dbdc248f668dcb758b0b97a96d0b5ebb0b4f8cff6995b4474dcedd51e00b8de3"
+        "trace_digest": "06894961de6c3948ac81433129e5b3cd53cd0f6b7ab9a798267247e72ec9f35a"
       },
       "course": {
         "G_holdout_digest": "1d6bbf7bd7c44a945ba09797a9b69dc5faa61e300b966a10cb08131d20b972b1",
@@ -711,7 +783,7 @@
       "course_label": "order-303",
       "course_seed": 303,
       "model_seed": 71,
-      "report_digest": "24c58b7316e9d60b7c62e33cf428ffa3b0776fd4d1e5706dd40fd3cb5c17445e",
+      "report_digest": "501c63b453edaaa8c52a82dbbe40094a7e2ed52884774c7767bb389a99524981",
       "technical_gates": {
         "candidate_only_smoke_fresh_restore": true,
         "candidate_only_smoke_parent_frozen": true,
@@ -735,6 +807,8 @@
       "arms": {
         "fixed-large": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": [],
+          "birth_anchor_weights": [],
           "candidate_digest": "8682c0d37186e4982b3d424c071d9a14c77c12e87b596e46930022b9730585b2",
           "candidate_lesion_delta": {
             "G": 0.0008841964226924404,
@@ -773,6 +847,8 @@
         },
         "frozen-parent": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": null,
+          "birth_anchor_weights": null,
           "candidate_digest": null,
           "candidate_lesion_delta": null,
           "candidate_unit_id": null,
@@ -795,10 +871,18 @@
         },
         "pressure-driven-growth": {
           "birth_anchor_unit_id": "predictive_residual.bridge.u1",
+          "birth_anchor_unit_ids": [
+            "predictive_residual.bridge.u1",
+            "predictive_residual.bridge.u7"
+          ],
+          "birth_anchor_weights": [
+            0.5580733418464661,
+            0.44192665815353394
+          ],
           "candidate_digest": "5b79011cbbfd45781320aa598e96e7b50a2eefe71a3ed61e55d2a69d44a8637c",
           "candidate_lesion_delta": {
-            "G": 0.0008573033015188969,
-            "S": 0.16857026045475543
+            "G": 0.0,
+            "S": 0.16290910475766118
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -811,28 +895,30 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.822286826699667,
-            "S": 5.645227091060799
+            "G": 5.822398054494115,
+            "S": 5.648898857112726
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
           "training_diagnostics": {
-            "active_ticks": 205,
+            "active_ticks": 204,
             "credit_ticks": 418,
-            "max_activity": 0.9872662425041199,
-            "max_candidate_credit_norm": 0.5742282271385193,
-            "max_candidate_residual_norm": 0.7544927597045898,
-            "max_candidate_residual_ratio": 0.7459273100025857,
-            "max_eligibility_norm": 2.4679219722747803,
-            "max_projection_update_norm": 0.0211882796138525,
-            "mean_candidate_residual_ratio": 0.08718075344985876,
-            "residual_ticks": 204,
+            "max_activity": 0.9647624492645264,
+            "max_candidate_credit_norm": 0.60737144947052,
+            "max_candidate_residual_norm": 0.7192104458808899,
+            "max_candidate_residual_ratio": 0.677674391646728,
+            "max_eligibility_norm": 2.3266518115997314,
+            "max_projection_update_norm": 0.018103374168276787,
+            "mean_candidate_residual_ratio": 0.09638871379925469,
+            "residual_ticks": 203,
             "ticks": 424,
-            "trace_digest": "8630eb38d1223a96a6759537ecf2ec83bf36d3a4f301379d3af08adc19aa2889"
+            "trace_digest": "5bd39cdec30e60f35aca15f2336c5d21e2f6dd84bf2f39eac506b5517ba0aabe"
           }
         },
         "r3-fixed-capacity": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": null,
+          "birth_anchor_weights": null,
           "candidate_digest": null,
           "candidate_lesion_delta": null,
           "candidate_unit_id": null,
@@ -855,6 +941,8 @@
         },
         "random-growth": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": [],
+          "birth_anchor_weights": [],
           "candidate_digest": "b66b3f32053bd0e7e2f4b97fae520048327a9956d72908093674bbe02ea54713",
           "candidate_lesion_delta": {
             "G": 0.027851834654484264,
@@ -894,16 +982,24 @@
       },
       "candidate_only_smoke": {
         "birth_anchor_unit_id": "predictive_residual.bridge.u1",
+        "birth_anchor_unit_ids": [
+          "predictive_residual.bridge.u1",
+          "predictive_residual.bridge.u7"
+        ],
+        "birth_anchor_weights": [
+          0.5580733418464661,
+          0.44192665815353394
+        ],
         "candidate_lesion_delta": {
-          "G": 0.0014056455849296157,
-          "S": 0.23820865150301707
+          "G": 0.0,
+          "S": 0.2691791770001606
         },
         "mature_f1_owners_unchanged": true,
         "parent_substrate_unchanged": true,
         "shadow_fresh_restore": true,
         "shadow_rollback_matches_bare": true,
         "shadow_training_changed": true,
-        "trace_digest": "e18ff1a3edfdc0d350a0c668599a5de105750abc1eeb5bc03c28806f4f517f52"
+        "trace_digest": "6fdc4a1332b1749b5f71d17970ed2d472dcde78820018d9d9fd3e1f9ba050df9"
       },
       "course": {
         "G_holdout_digest": "1d6bbf7bd7c44a945ba09797a9b69dc5faa61e300b966a10cb08131d20b972b1",
@@ -935,7 +1031,7 @@
       "course_label": "canonical-order",
       "course_seed": 101,
       "model_seed": 83,
-      "report_digest": "a9a66d514b6c6b94815aa4fc3e7f4fc1188b8d5ed84a6297864f413070d511b9",
+      "report_digest": "0772f3bfdb01760662a9009646194595429002f52409bb75fa6f97cf99e834b3",
       "technical_gates": {
         "candidate_only_smoke_fresh_restore": true,
         "candidate_only_smoke_parent_frozen": true,
@@ -959,6 +1055,8 @@
       "arms": {
         "fixed-large": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": [],
+          "birth_anchor_weights": [],
           "candidate_digest": "8682c0d37186e4982b3d424c071d9a14c77c12e87b596e46930022b9730585b2",
           "candidate_lesion_delta": {
             "G": -0.0005354847343532754,
@@ -997,6 +1095,8 @@
         },
         "frozen-parent": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": null,
+          "birth_anchor_weights": null,
           "candidate_digest": null,
           "candidate_lesion_delta": null,
           "candidate_unit_id": null,
@@ -1019,10 +1119,18 @@
         },
         "pressure-driven-growth": {
           "birth_anchor_unit_id": "predictive_residual.bridge.u1",
+          "birth_anchor_unit_ids": [
+            "predictive_residual.bridge.u1",
+            "predictive_residual.bridge.u7"
+          ],
+          "birth_anchor_weights": [
+            0.5580733418464661,
+            0.44192665815353394
+          ],
           "candidate_digest": "5b79011cbbfd45781320aa598e96e7b50a2eefe71a3ed61e55d2a69d44a8637c",
           "candidate_lesion_delta": {
-            "G": 0.0016196829046579708,
-            "S": 0.15065480450808177
+            "G": 0.0,
+            "S": 0.14105493368808197
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -1035,28 +1143,30 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.900201269355582,
-            "S": 5.746608490522931
+            "G": 5.90187504962944,
+            "S": 5.750964333233756
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
           "training_diagnostics": {
-            "active_ticks": 224,
+            "active_ticks": 208,
             "credit_ticks": 418,
-            "max_activity": 0.9818224906921387,
-            "max_candidate_credit_norm": 0.618510901927948,
-            "max_candidate_residual_norm": 0.7150685787200928,
-            "max_candidate_residual_ratio": 0.7598381165719238,
-            "max_eligibility_norm": 2.5074462890625,
-            "max_projection_update_norm": 0.016724128276109695,
-            "mean_candidate_residual_ratio": 0.11599603650476938,
-            "residual_ticks": 223,
+            "max_activity": 0.9585795998573303,
+            "max_candidate_credit_norm": 0.6401395797729492,
+            "max_candidate_residual_norm": 0.6973525285720825,
+            "max_candidate_residual_ratio": 0.6719655393968668,
+            "max_eligibility_norm": 2.3567452430725098,
+            "max_projection_update_norm": 0.01666446030139923,
+            "mean_candidate_residual_ratio": 0.11856231315025939,
+            "residual_ticks": 207,
             "ticks": 424,
-            "trace_digest": "8b18116a787beb3bcedb82b2b1033322746988fc550d410909c48546d6d12c44"
+            "trace_digest": "926bd50a44108a7a64ffbbc65e682b5259398a7cecaee9da15f90b34ab8c1563"
           }
         },
         "r3-fixed-capacity": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": null,
+          "birth_anchor_weights": null,
           "candidate_digest": null,
           "candidate_lesion_delta": null,
           "candidate_unit_id": null,
@@ -1079,6 +1189,8 @@
         },
         "random-growth": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": [],
+          "birth_anchor_weights": [],
           "candidate_digest": "b66b3f32053bd0e7e2f4b97fae520048327a9956d72908093674bbe02ea54713",
           "candidate_lesion_delta": {
             "G": 0.02336296880133215,
@@ -1118,16 +1230,24 @@
       },
       "candidate_only_smoke": {
         "birth_anchor_unit_id": "predictive_residual.bridge.u1",
+        "birth_anchor_unit_ids": [
+          "predictive_residual.bridge.u1",
+          "predictive_residual.bridge.u7"
+        ],
+        "birth_anchor_weights": [
+          0.5580733418464661,
+          0.44192665815353394
+        ],
         "candidate_lesion_delta": {
-          "G": 0.0013290833669596935,
-          "S": 0.2974814705905571
+          "G": 0.0,
+          "S": 0.3041830366029572
         },
         "mature_f1_owners_unchanged": true,
         "parent_substrate_unchanged": true,
         "shadow_fresh_restore": true,
         "shadow_rollback_matches_bare": true,
         "shadow_training_changed": true,
-        "trace_digest": "766df07757d61b91d6c1374d1e2dca53a1f2ee51b566278ec5ea616bb4c54280"
+        "trace_digest": "7cfec730a871d13cc020e7719f3eda497ff568b39e8a9c5eb2dff200b404480c"
       },
       "course": {
         "G_holdout_digest": "1d6bbf7bd7c44a945ba09797a9b69dc5faa61e300b966a10cb08131d20b972b1",
@@ -1159,7 +1279,7 @@
       "course_label": "order-202",
       "course_seed": 202,
       "model_seed": 83,
-      "report_digest": "a4a30813c8c2108b48743555761022296f6d5f41fd1e53e1ae95588bbb6248ec",
+      "report_digest": "c6b75881e8cf3001efebeeecff5bc27432b3d98172d3f896adb36318d6e07498",
       "technical_gates": {
         "candidate_only_smoke_fresh_restore": true,
         "candidate_only_smoke_parent_frozen": true,
@@ -1183,6 +1303,8 @@
       "arms": {
         "fixed-large": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": [],
+          "birth_anchor_weights": [],
           "candidate_digest": "8682c0d37186e4982b3d424c071d9a14c77c12e87b596e46930022b9730585b2",
           "candidate_lesion_delta": {
             "G": 0.0,
@@ -1221,6 +1343,8 @@
         },
         "frozen-parent": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": null,
+          "birth_anchor_weights": null,
           "candidate_digest": null,
           "candidate_lesion_delta": null,
           "candidate_unit_id": null,
@@ -1243,10 +1367,18 @@
         },
         "pressure-driven-growth": {
           "birth_anchor_unit_id": "predictive_residual.bridge.u1",
+          "birth_anchor_unit_ids": [
+            "predictive_residual.bridge.u1",
+            "predictive_residual.bridge.u7"
+          ],
+          "birth_anchor_weights": [
+            0.5580733418464661,
+            0.44192665815353394
+          ],
           "candidate_digest": "5b79011cbbfd45781320aa598e96e7b50a2eefe71a3ed61e55d2a69d44a8637c",
           "candidate_lesion_delta": {
-            "G": 0.0015207370612566606,
-            "S": 0.22104016374701807
+            "G": 0.0,
+            "S": 0.2089494940669736
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -1259,28 +1391,30 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.8488184878368115,
-            "S": 5.643893783984633
+            "G": 5.8524695468485985,
+            "S": 5.648518735091945
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
           "training_diagnostics": {
-            "active_ticks": 212,
+            "active_ticks": 206,
             "credit_ticks": 418,
-            "max_activity": 0.9787370562553406,
-            "max_candidate_credit_norm": 0.692276120185852,
-            "max_candidate_residual_norm": 0.9996047019958496,
-            "max_candidate_residual_ratio": 1.0228616058803537,
-            "max_eligibility_norm": 2.715555429458618,
-            "max_projection_update_norm": 0.019663069397211075,
-            "mean_candidate_residual_ratio": 0.14798921364181572,
-            "residual_ticks": 211,
+            "max_activity": 0.9562259912490845,
+            "max_candidate_credit_norm": 0.6728384494781494,
+            "max_candidate_residual_norm": 0.8548847436904907,
+            "max_candidate_residual_ratio": 0.8312764399963138,
+            "max_eligibility_norm": 2.567862033843994,
+            "max_projection_update_norm": 0.01773603819310665,
+            "mean_candidate_residual_ratio": 0.13976464557892535,
+            "residual_ticks": 205,
             "ticks": 424,
-            "trace_digest": "535da66220c14c48906c0ddbb90652ed49bc633c5d184982fa85b2825456ca31"
+            "trace_digest": "188d6a0b39f5030d20de919642512412982ca7faf7cd699823e20e9c0959df48"
           }
         },
         "r3-fixed-capacity": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": null,
+          "birth_anchor_weights": null,
           "candidate_digest": null,
           "candidate_lesion_delta": null,
           "candidate_unit_id": null,
@@ -1303,6 +1437,8 @@
         },
         "random-growth": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": [],
+          "birth_anchor_weights": [],
           "candidate_digest": "b66b3f32053bd0e7e2f4b97fae520048327a9956d72908093674bbe02ea54713",
           "candidate_lesion_delta": {
             "G": 0.01681192598803083,
@@ -1342,16 +1478,24 @@
       },
       "candidate_only_smoke": {
         "birth_anchor_unit_id": "predictive_residual.bridge.u1",
+        "birth_anchor_unit_ids": [
+          "predictive_residual.bridge.u1",
+          "predictive_residual.bridge.u7"
+        ],
+        "birth_anchor_weights": [
+          0.5580733418464661,
+          0.44192665815353394
+        ],
         "candidate_lesion_delta": {
-          "G": 0.0010075906659414713,
-          "S": 0.30694724923759775
+          "G": 0.0,
+          "S": 0.3150594450607169
         },
         "mature_f1_owners_unchanged": true,
         "parent_substrate_unchanged": true,
         "shadow_fresh_restore": true,
         "shadow_rollback_matches_bare": true,
         "shadow_training_changed": true,
-        "trace_digest": "78298666da8de4ce9df2d5c6f36a1501fb6e7481bd2ab09d179ada7f3e77266e"
+        "trace_digest": "d0f733924207e3e1c9f9c4725777e2073e09dd7cfe5a54667f8a6e80dd77305d"
       },
       "course": {
         "G_holdout_digest": "1d6bbf7bd7c44a945ba09797a9b69dc5faa61e300b966a10cb08131d20b972b1",
@@ -1383,7 +1527,7 @@
       "course_label": "order-303",
       "course_seed": 303,
       "model_seed": 83,
-      "report_digest": "9e02186e09c681e742ff44aba1e5bbddd02daf92d7e1efa2998eb05cbc3ddcd3",
+      "report_digest": "6fd113a5cbed653f46534b103cc0a9abf02631f8444a6487c5ef183b640137d7",
       "technical_gates": {
         "candidate_only_smoke_fresh_restore": true,
         "candidate_only_smoke_parent_frozen": true,
@@ -1407,6 +1551,8 @@
       "arms": {
         "fixed-large": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": [],
+          "birth_anchor_weights": [],
           "candidate_digest": "a2df9efd8016341931d88658c65a0739fb317cb16cf0932b1ddaf683be383f26",
           "candidate_lesion_delta": {
             "G": 9.373435689319365e-05,
@@ -1445,6 +1591,8 @@
         },
         "frozen-parent": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": null,
+          "birth_anchor_weights": null,
           "candidate_digest": null,
           "candidate_lesion_delta": null,
           "candidate_unit_id": null,
@@ -1467,10 +1615,18 @@
         },
         "pressure-driven-growth": {
           "birth_anchor_unit_id": "predictive_residual.bridge.u6",
+          "birth_anchor_unit_ids": [
+            "predictive_residual.bridge.u6",
+            "predictive_residual.bridge.u4"
+          ],
+          "birth_anchor_weights": [
+            0.6341387033462524,
+            0.36586129665374756
+          ],
           "candidate_digest": "da340e8d06abfabb851cde84f11b18f530f4ab894efac55963fb27f0c1338953",
           "candidate_lesion_delta": {
-            "G": 0.0005071917529875236,
-            "S": 0.2778092553044491
+            "G": 0.0,
+            "S": 0.23177913171481368
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -1483,28 +1639,30 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.915891228175625,
-            "S": 5.4258459628133915
+            "G": 5.914157694030679,
+            "S": 5.463374776246179
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
           "training_diagnostics": {
-            "active_ticks": 242,
+            "active_ticks": 201,
             "credit_ticks": 417,
-            "max_activity": 0.9753689765930176,
-            "max_candidate_credit_norm": 0.7107395529747009,
-            "max_candidate_residual_norm": 1.4516977071762085,
-            "max_candidate_residual_ratio": 6.009957358036244,
-            "max_eligibility_norm": 3.723581552505493,
-            "max_projection_update_norm": 0.03880727291107178,
-            "mean_candidate_residual_ratio": 0.46006032744911185,
-            "residual_ticks": 241,
+            "max_activity": 0.9227373003959656,
+            "max_candidate_credit_norm": 0.6004260778427124,
+            "max_candidate_residual_norm": 1.166802167892456,
+            "max_candidate_residual_ratio": 3.644570578850924,
+            "max_eligibility_norm": 3.58841609954834,
+            "max_projection_update_norm": 0.03625674173235893,
+            "mean_candidate_residual_ratio": 0.2675655167259463,
+            "residual_ticks": 200,
             "ticks": 424,
-            "trace_digest": "41a49ef1dc02c3adfe6f1b57df415b43471494f52539d3db3ae28b0acf5e4b41"
+            "trace_digest": "b09031be0bf6c569b270ee163a8f89410607732e2b3ea900ab462fcb624bb19c"
           }
         },
         "r3-fixed-capacity": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": null,
+          "birth_anchor_weights": null,
           "candidate_digest": null,
           "candidate_lesion_delta": null,
           "candidate_unit_id": null,
@@ -1527,6 +1685,8 @@
         },
         "random-growth": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": [],
+          "birth_anchor_weights": [],
           "candidate_digest": "65511d22cd9ac08afa810ce902886ac46d6501f263d945cdaf0c467713cf104d",
           "candidate_lesion_delta": {
             "G": 0.08492484410056544,
@@ -1566,16 +1726,24 @@
       },
       "candidate_only_smoke": {
         "birth_anchor_unit_id": "predictive_residual.bridge.u6",
+        "birth_anchor_unit_ids": [
+          "predictive_residual.bridge.u6",
+          "predictive_residual.bridge.u4"
+        ],
+        "birth_anchor_weights": [
+          0.6341387033462524,
+          0.36586129665374756
+        ],
         "candidate_lesion_delta": {
-          "G": 0.0002580830811664825,
-          "S": 0.2090682839056539
+          "G": 0.0,
+          "S": 0.1688150009612137
         },
         "mature_f1_owners_unchanged": true,
         "parent_substrate_unchanged": true,
         "shadow_fresh_restore": true,
         "shadow_rollback_matches_bare": true,
         "shadow_training_changed": true,
-        "trace_digest": "f2ab711b1331a2b0805ad6219241c9bab48b70b67911462f4960650517e58be4"
+        "trace_digest": "141c41c5df232ada16b00d4a2a05bda8c52a3ba88900dc03c2b98474bf31c6f6"
       },
       "course": {
         "G_holdout_digest": "1d6bbf7bd7c44a945ba09797a9b69dc5faa61e300b966a10cb08131d20b972b1",
@@ -1607,7 +1775,7 @@
       "course_label": "canonical-order",
       "course_seed": 101,
       "model_seed": 97,
-      "report_digest": "0fc1aac08f9f2394d709320467ea3b376a565cdeac36c5f0702494d71df8a503",
+      "report_digest": "de01cf2a20b7aa8ce33b946ed1dd91d617216e53cd6104b94df975d966e0d498",
       "technical_gates": {
         "candidate_only_smoke_fresh_restore": true,
         "candidate_only_smoke_parent_frozen": true,
@@ -1631,6 +1799,8 @@
       "arms": {
         "fixed-large": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": [],
+          "birth_anchor_weights": [],
           "candidate_digest": "a2df9efd8016341931d88658c65a0739fb317cb16cf0932b1ddaf683be383f26",
           "candidate_lesion_delta": {
             "G": 0.0,
@@ -1669,6 +1839,8 @@
         },
         "frozen-parent": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": null,
+          "birth_anchor_weights": null,
           "candidate_digest": null,
           "candidate_lesion_delta": null,
           "candidate_unit_id": null,
@@ -1691,10 +1863,18 @@
         },
         "pressure-driven-growth": {
           "birth_anchor_unit_id": "predictive_residual.bridge.u6",
+          "birth_anchor_unit_ids": [
+            "predictive_residual.bridge.u6",
+            "predictive_residual.bridge.u4"
+          ],
+          "birth_anchor_weights": [
+            0.6341387033462524,
+            0.36586129665374756
+          ],
           "candidate_digest": "da340e8d06abfabb851cde84f11b18f530f4ab894efac55963fb27f0c1338953",
           "candidate_lesion_delta": {
-            "G": 0.04147995021080764,
-            "S": 0.20150163174880742
+            "G": 0.003355736852002522,
+            "S": 0.1884288929901441
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -1707,28 +1887,30 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.945198935588167,
-            "S": 5.562567336349237
+            "G": 5.982825225728063,
+            "S": 5.574308018678896
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
           "training_diagnostics": {
-            "active_ticks": 307,
+            "active_ticks": 264,
             "credit_ticks": 416,
-            "max_activity": 0.9738101959228516,
-            "max_candidate_credit_norm": 0.5119825005531311,
-            "max_candidate_residual_norm": 1.2965258359909058,
-            "max_candidate_residual_ratio": 4.401097187632026,
-            "max_eligibility_norm": 3.5216727256774902,
-            "max_projection_update_norm": 0.03948409855365753,
-            "mean_candidate_residual_ratio": 0.3944975258274145,
-            "residual_ticks": 306,
+            "max_activity": 0.9352938532829285,
+            "max_candidate_credit_norm": 0.5656482577323914,
+            "max_candidate_residual_norm": 1.0850530862808228,
+            "max_candidate_residual_ratio": 3.745105401166347,
+            "max_eligibility_norm": 3.4798264503479004,
+            "max_projection_update_norm": 0.03911002352833748,
+            "mean_candidate_residual_ratio": 0.25887508772772977,
+            "residual_ticks": 263,
             "ticks": 424,
-            "trace_digest": "63df88e626d2b0a1591a7a6f014a4297757fe9b4f126d61ff0e2c5ec36b7d1cd"
+            "trace_digest": "2b7013137f50cdc00d8677186858d9ea45170187feffd09d076514269f7ee5a6"
           }
         },
         "r3-fixed-capacity": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": null,
+          "birth_anchor_weights": null,
           "candidate_digest": null,
           "candidate_lesion_delta": null,
           "candidate_unit_id": null,
@@ -1751,6 +1933,8 @@
         },
         "random-growth": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": [],
+          "birth_anchor_weights": [],
           "candidate_digest": "65511d22cd9ac08afa810ce902886ac46d6501f263d945cdaf0c467713cf104d",
           "candidate_lesion_delta": {
             "G": 0.05563339713383453,
@@ -1790,16 +1974,24 @@
       },
       "candidate_only_smoke": {
         "birth_anchor_unit_id": "predictive_residual.bridge.u6",
+        "birth_anchor_unit_ids": [
+          "predictive_residual.bridge.u6",
+          "predictive_residual.bridge.u4"
+        ],
+        "birth_anchor_weights": [
+          0.6341387033462524,
+          0.36586129665374756
+        ],
         "candidate_lesion_delta": {
-          "G": 0.03204023278062973,
-          "S": 0.1503924401931016
+          "G": 8.54949060675736e-05,
+          "S": 0.13327400778864007
         },
         "mature_f1_owners_unchanged": true,
         "parent_substrate_unchanged": true,
         "shadow_fresh_restore": true,
         "shadow_rollback_matches_bare": true,
         "shadow_training_changed": true,
-        "trace_digest": "13da92a36fdd2218645464ea27256d2fca726f03b6312beaeb61755886f8f820"
+        "trace_digest": "f02f84d79e4747746b0991ef38d392b3c6aafd1f3fc6452e4efc275d916d8e43"
       },
       "course": {
         "G_holdout_digest": "1d6bbf7bd7c44a945ba09797a9b69dc5faa61e300b966a10cb08131d20b972b1",
@@ -1831,7 +2023,7 @@
       "course_label": "order-202",
       "course_seed": 202,
       "model_seed": 97,
-      "report_digest": "c9beb4d50fcf044562efe25546d39a73c1e37420f4469eea8faf9a81dff54747",
+      "report_digest": "7ad0ceff1ba7cc8e961fdc675b6b91b8c087163de6f5e651d2929df0b3ec0971",
       "technical_gates": {
         "candidate_only_smoke_fresh_restore": true,
         "candidate_only_smoke_parent_frozen": true,
@@ -1855,6 +2047,8 @@
       "arms": {
         "fixed-large": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": [],
+          "birth_anchor_weights": [],
           "candidate_digest": "a2df9efd8016341931d88658c65a0739fb317cb16cf0932b1ddaf683be383f26",
           "candidate_lesion_delta": {
             "G": 0.0,
@@ -1893,6 +2087,8 @@
         },
         "frozen-parent": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": null,
+          "birth_anchor_weights": null,
           "candidate_digest": null,
           "candidate_lesion_delta": null,
           "candidate_unit_id": null,
@@ -1915,10 +2111,18 @@
         },
         "pressure-driven-growth": {
           "birth_anchor_unit_id": "predictive_residual.bridge.u6",
+          "birth_anchor_unit_ids": [
+            "predictive_residual.bridge.u6",
+            "predictive_residual.bridge.u4"
+          ],
+          "birth_anchor_weights": [
+            0.6341387033462524,
+            0.36586129665374756
+          ],
           "candidate_digest": "da340e8d06abfabb851cde84f11b18f530f4ab894efac55963fb27f0c1338953",
           "candidate_lesion_delta": {
-            "G": 0.03516433524621654,
-            "S": 0.3197858558053124
+            "G": 0.0008274994389525503,
+            "S": 0.28146541874725806
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -1931,28 +2135,30 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.93090691986693,
-            "S": 5.381130664598141
+            "G": 5.959205386820847,
+            "S": 5.417124708116525
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
           "training_diagnostics": {
-            "active_ticks": 321,
+            "active_ticks": 271,
             "credit_ticks": 417,
-            "max_activity": 0.9577685594558716,
-            "max_candidate_credit_norm": 0.7428787350654602,
-            "max_candidate_residual_norm": 1.7160282135009766,
-            "max_candidate_residual_ratio": 82.49311732263483,
-            "max_eligibility_norm": 3.771324634552002,
-            "max_projection_update_norm": 0.06441802531480789,
-            "mean_candidate_residual_ratio": 0.9282391297844321,
-            "residual_ticks": 320,
+            "max_activity": 0.8725531101226807,
+            "max_candidate_credit_norm": 0.6928648948669434,
+            "max_candidate_residual_norm": 1.4235873222351074,
+            "max_candidate_residual_ratio": 820.228533915159,
+            "max_eligibility_norm": 3.642284870147705,
+            "max_projection_update_norm": 0.060457173734903336,
+            "mean_candidate_residual_ratio": 2.367732907239225,
+            "residual_ticks": 270,
             "ticks": 424,
-            "trace_digest": "ce796f8d2037785e8ca9f63731485272823d67153329358adcb489764110f961"
+            "trace_digest": "8d4d77b35df847bb8261d2029a8056a980be21153facf74a663c3743b8d88ab5"
           }
         },
         "r3-fixed-capacity": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": null,
+          "birth_anchor_weights": null,
           "candidate_digest": null,
           "candidate_lesion_delta": null,
           "candidate_unit_id": null,
@@ -1975,6 +2181,8 @@
         },
         "random-growth": {
           "birth_anchor_unit_id": null,
+          "birth_anchor_unit_ids": [],
+          "birth_anchor_weights": [],
           "candidate_digest": "65511d22cd9ac08afa810ce902886ac46d6501f263d945cdaf0c467713cf104d",
           "candidate_lesion_delta": {
             "G": 0.05852069500390833,
@@ -2014,16 +2222,24 @@
       },
       "candidate_only_smoke": {
         "birth_anchor_unit_id": "predictive_residual.bridge.u6",
+        "birth_anchor_unit_ids": [
+          "predictive_residual.bridge.u6",
+          "predictive_residual.bridge.u4"
+        ],
+        "birth_anchor_weights": [
+          0.6341387033462524,
+          0.36586129665374756
+        ],
         "candidate_lesion_delta": {
-          "G": 0.03054955033805662,
-          "S": 0.19584042063302132
+          "G": 0.0002938959754015258,
+          "S": 0.15721014503688924
         },
         "mature_f1_owners_unchanged": true,
         "parent_substrate_unchanged": true,
         "shadow_fresh_restore": true,
         "shadow_rollback_matches_bare": true,
         "shadow_training_changed": true,
-        "trace_digest": "43be739d78f494cfd629097c91f96ec76913943235473c349abf24e0245cafe1"
+        "trace_digest": "96d74153adbcbe1667bc76bfee8fcbf917c3de9b28d0f587a5d6e5b1f0a39c69"
       },
       "course": {
         "G_holdout_digest": "1d6bbf7bd7c44a945ba09797a9b69dc5faa61e300b966a10cb08131d20b972b1",
@@ -2055,7 +2271,7 @@
       "course_label": "order-303",
       "course_seed": 303,
       "model_seed": 97,
-      "report_digest": "caf9f5f2ed9115cdb02b41d96a402d7ce6a3b0e5118f441bc8f3ee7766727627",
+      "report_digest": "2cf3d48dd0b112a3947b0f22f4376e09ad4eaaa8f0a125c85e9b682ca597811e",
       "technical_gates": {
         "candidate_only_smoke_fresh_restore": true,
         "candidate_only_smoke_parent_frozen": true,
