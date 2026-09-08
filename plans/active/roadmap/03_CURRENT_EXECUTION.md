@@ -75,7 +75,24 @@ Taiji 是唯一认知主体，Seed 是产品/runtime、Workbench、设备、权�
 
 ## 4. 当前唯一下一步
 
-**M4.V2.R0：建立连续成长量尺合同并只读重审 R7/R10/R12。**
+M4.V2.R0 已完成，当前唯一下一步是 **M4.V2.R1：checkpoint-compatible fast/slow 突触零变化迁移**。
+
+R0 的实现与审计产物如下：
+
+- `taiji/continual_evaluation.py`：完成 versioned/content-addressed 的 metric spec、课程 manifest、累计 snapshot/scorecard；绝对值、parent delta、comparison delta、owner 和 read-only 输入 digest 已分离；缺少 parent baseline 时非劣判定 fail-closed；跨域 raw BPB 不可隐式聚合；phase 标签不进入 model context。
+- `scripts/training/audit_taiji_m4v2_measurement_contract.py`：只读重审 R7/R10/R12，生成 `reports/taiji_m4v2_measurement_audit_20260909.json`；R10 A 被标为 absolute BPB，R12 `+1.62` 被标为 arm-vs-arm，历史 exact-zero Gate 保留但不再作为全局架构否决。
+- `tests/taiji_native/test_continual_evaluation.py`：13 项定向测试通过；目标模块 ruff 与 `git diff --check` 通过；没有训练、checkpoint 权重或旧 JSON 改动。
+
+R0 的技术结论是“量尺语义审计通过”，不是模型晋级：审计报告仍保持 `can_promote=false`。
+
+### 4.1 R1：零变化迁移（下一步）
+
+本步骤只迁移已有 F1 checkpoint 的表示，不写入新学习权重，不改变 forward：
+
+- 新建 versioned developmental-synapse payload：`slow_weight=old checkpoint`、`fast_delta=0`，并保存 eligibility/importance/usage/age/plasticity 元数据的默认值；
+- 对旧 F1 checkpoint 做迁移、保存、fresh restore、二次迁移四路一致性比较；
+- 固定同一输入流和同一 owner graph，比较输出 logits、loss/BPB、参数计数、checkpoint digest、评估输入 digest；
+- 迁移失败或任一关键量超容差时停止，不运行 R2 真实学习。
 
 本步骤不修改模型权重、不运行长训练、不引入新语料。建议实现位置：
 
@@ -98,7 +115,7 @@ Taiji 是唯一认知主体，Seed 是产品/runtime、Workbench、设备、权�
   - scorecard round-trip/content digest；
   - exact-zero 与 calibrated non-inferiority 同时报告。
 
-R0 完成条件：
+R0 完成条件（已满足）：
 
 1. 所有合同 versioned、content-addressed、checkpoint-independent 且 Python 3.10 兼容；
 2. 旧 JSON 不改写，audit 生成新的版本化报告；
@@ -107,7 +124,7 @@ R0 完成条件：
 5. 定向 pytest、ruff、`git diff --check` 通过；
 6. 仍保持 `can_promote=false`。
 
-R0 通过后的唯一下一步是 R1 checkpoint-compatible fast/slow migration；R0 未通过则继续修量尺，不得训练。
+R0 通过后的唯一下一步是 R1 checkpoint-compatible fast/slow migration；R1 未通过则不准写新权重，也不准进入 R2。
 
 ## 5. v2 课程与 Gate
 

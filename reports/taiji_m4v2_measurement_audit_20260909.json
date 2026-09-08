@@ -1,0 +1,68 @@
+{
+  "format": "taiji-m4v2-measurement-audit-v1",
+  "version": 1,
+  "audit_status": "passed",
+  "can_promote": false,
+  "measurement_contract": {
+    "format": "taiji-continual-evaluation-v1",
+    "version": 1,
+    "required_separation": [
+      "absolute_value",
+      "parent_delta",
+      "comparison_delta",
+      "owner_id",
+      "read_only_input_digest"
+    ],
+    "course_phase_visibility": "evaluator_only"
+  },
+  "semantic_checks": {
+    "r7_historical_gate_is_preserved": true,
+    "r10_active_a_is_absolute_bpb": true,
+    "r10_absolute_metric_not_reclassified_as_forgetting": true,
+    "r12_shift_is_arm_vs_arm": true,
+    "r7_r10_owner_graphs_not_claimed_comparable": true,
+    "missing_parent_baseline_blocks_forgetting_claim": true,
+    "cross_domain_bpb_is_not_merged": true
+  },
+  "technical_facts": {
+    "r7_scale_0p5": {
+      "c3_gain_positive_seeds": 3,
+      "cycle3_degradation_seeds": 2,
+      "cycle3_delta_mean_bpb": -0.0050499903522626495
+    },
+    "r10_candidate_active_a_retention_bpb": {
+      "kind": "absolute",
+      "mean": 4.219535960319821,
+      "values": [
+        4.108921326820651,
+        4.2175175089219525,
+        4.332169045216857
+      ]
+    },
+    "r12_a_retention_shift_vs_reference": {
+      "kind": "arm_vs_arm",
+      "mean": 1.6244501815839099,
+      "values": [
+        1.4214415251601409,
+        1.8773233908503766,
+        1.5745856287412119
+      ]
+    }
+  },
+  "historical_gate": {
+    "r7_strict_all_seed_gate_passed": false,
+    "r7_strict_gate_semantics": "positive C3 holdout gain on every seed plus zero C-cycle-2/C-cycle-3 degradation seeds",
+    "r7_exact_zero_result_is_historical_only": true,
+    "interpretation": "The historical strict Gate failed because two seeds had positive cycle-3 degradation deltas, even though the aggregate cycle-3 delta was negative. This is not a global capacity or architecture veto."
+  },
+  "architecture_conclusion": {
+    "parent_forgetting_claim_allowed": false,
+    "reason": "R10 A is an absolute BPB measurement and R12 compares separate arms; neither report contains a valid parent checkpoint baseline.",
+    "next_gate": "calibrated epsilon plus worst-domain catastrophe threshold"
+  },
+  "source_reports": {
+    "r7": "reports/taiji_m4r7_formal_aggregate_20260908.json",
+    "r10": "reports/taiji_m4r10_rule_audit_formal_aggregate_20260908.json",
+    "r12": "reports/taiji_m4r12_data_source_aggregate_20260909.json"
+  }
+}
