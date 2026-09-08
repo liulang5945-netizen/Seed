@@ -13,8 +13,10 @@ import argparse
 import copy
 import json
 import math
+import random
 import sys
 from collections.abc import Mapping
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -43,7 +45,72 @@ G_HOLDOUT = b"zyx-uvw-xyz"
 G_SCHEDULE = ((8, 2), (6, 4), (4, 6), (2, 8))
 
 
-def _tiny_config() -> TaijiConfig:
+@dataclass(frozen=True)
+class R4Course:
+    """One pre-registered short course used by the R4 canary."""
+
+    course_seed: int
+    label: str
+    s_train: bytes
+    s_holdout: bytes
+    g_old: bytes
+    g_new: bytes
+    g_holdout: bytes
+    g_schedule: tuple[tuple[int, int], ...]
+
+
+DEFAULT_COURSE = R4Course(
+    course_seed=0,
+    label="canonical",
+    s_train=S_TRAIN,
+    s_holdout=S_HOLDOUT,
+    g_old=G_OLD,
+    g_new=G_NEW,
+    g_holdout=G_HOLDOUT,
+    g_schedule=G_SCHEDULE,
+)
+
+
+def _shuffle_bytes(data: bytes, seed: int) -> bytes:
+    values = list(data)
+    random.Random(seed).shuffle(values)
+    return bytes(values)
+
+
+def course_variant(course_seed: int) -> R4Course:
+    """Return one deterministic order variant without changing holdout domains."""
+
+    seed = int(course_seed)
+    if seed == 101:
+        return R4Course(
+            course_seed=seed,
+            label="canonical-order",
+            s_train=S_TRAIN,
+            s_holdout=S_HOLDOUT,
+            g_old=G_OLD,
+            g_new=G_NEW,
+            g_holdout=G_HOLDOUT,
+            g_schedule=G_SCHEDULE,
+        )
+    if seed == 202:
+        schedule = tuple(reversed(G_SCHEDULE))
+    elif seed == 303:
+        schedule = ((4, 6), (8, 2), (2, 8), (6, 4))
+    else:
+        raise ValueError("unsupported R4 course seed")
+    return R4Course(
+        course_seed=seed,
+        label=f"order-{seed}",
+        s_train=_shuffle_bytes(S_TRAIN, seed),
+        s_holdout=S_HOLDOUT,
+        g_old=_shuffle_bytes(G_OLD, seed + 1),
+        g_new=_shuffle_bytes(G_NEW, seed + 2),
+        g_holdout=G_HOLDOUT,
+        g_schedule=schedule,
+    )
+
+
+def _tiny_config(seed: int = 71) -> TaijiConfig:
     return TaijiConfig(
         region_sizes=(24,),
         synapse_fan_in=6,
@@ -54,7 +121,7 @@ def _tiny_config() -> TaijiConfig:
         memory_meta_dim=16,
         memory_readout_fan_in=12,
         identity_organ_enabled=False,
-        seed=71,
+        seed=int(seed),
     )
 
 
@@ -86,8 +153,8 @@ def _observe_pressure(model: Taiji) -> None:
         )
 
 
-def _prepared_parents() -> tuple[dict[str, Any], dict[str, Any], bool]:
-    model = Taiji(_tiny_config(), episode_id="r4-shadow-parent")
+def _prepared_parents(model_seed: int = 71) -> tuple[dict[str, Any], dict[str, Any], bool]:
+    model = Taiji(_tiny_config(model_seed), episode_id="r4-shadow-parent")
     model.enable_adaptive_residual_bridge(gate=1.0, residual_gain=1.0)
     r3_parent = model.checkpoint()
     r3_restored = Taiji.from_checkpoint(copy.deepcopy(r3_parent))
@@ -107,8 +174,8 @@ def _prepared_parents() -> tuple[dict[str, Any], dict[str, Any], bool]:
     return r3_parent, pressure_parent, checkpoint_preflight
 
 
-def _blended_train(old_count: int, new_count: int) -> bytes:
-    return G_OLD * old_count + G_NEW * new_count
+def _blended_train(course: R4Course, old_count: int, new_count: int) -> bytes:
+    return course.g_old * old_count + course.g_new * new_count
 
 
 def _stream(
@@ -156,21 +223,22 @@ def _course_train(
     shadow: AdaptiveResidualShadow | None = None,
     learn_bridge: bool = False,
     shadow_freeze_parent: bool = True,
+    course: R4Course = DEFAULT_COURSE,
     trace: list[dict[str, Any]] | None = None,
 ) -> None:
     _stream(
         model,
-        S_TRAIN,
+        course.s_train,
         shadow=shadow,
         learn=True,
         learn_bridge=learn_bridge,
         shadow_freeze_parent=shadow_freeze_parent,
         trace=trace,
     )
-    for old_count, new_count in G_SCHEDULE:
+    for old_count, new_count in course.g_schedule:
         _stream(
             model,
-            _blended_train(old_count, new_count),
+            _blended_train(course, old_count, new_count),
             shadow=shadow,
             learn=True,
             learn_bridge=learn_bridge,
@@ -288,6 +356,7 @@ def _growth_arm(
     candidate: AdaptiveResidualGrowthCandidate | None = None,
     train_from_parent: bool = True,
     freeze_parent: bool = True,
+    course: R4Course = DEFAULT_COURSE,
     label: str,
 ) -> dict[str, Any]:
     model = Taiji.from_checkpoint(copy.deepcopy(parent_checkpoint))
@@ -312,6 +381,7 @@ def _growth_arm(
             model,
             shadow=shadow,
             shadow_freeze_parent=freeze_parent,
+            course=course,
             trace=training_trace,
         )
     active_trace = [
@@ -329,8 +399,8 @@ def _growth_arm(
         if item["parent_residual_norm"] > 1e-8
     ]
     scores = {
-        "S": _score(model, S_HOLDOUT, shadow=shadow),
-        "G": _score(model, G_HOLDOUT, shadow=shadow),
+        "S": _score(model, course.s_holdout, shadow=shadow),
+        "G": _score(model, course.g_holdout, shadow=shadow),
     }
     trained_shadow = shadow.to_payload()
     parent_substrate_unchanged = (
@@ -341,8 +411,8 @@ def _growth_arm(
     lesioned = AdaptiveResidualShadow.from_checkpoint(model.config, trained_shadow)
     lesioned.lesion_candidate()
     lesion_scores = {
-        "S": _score(model, S_HOLDOUT, shadow=lesioned),
-        "G": _score(model, G_HOLDOUT, shadow=lesioned),
+        "S": _score(model, course.s_holdout, shadow=lesioned),
+        "G": _score(model, course.g_holdout, shadow=lesioned),
     }
     rollback = AdaptiveResidualShadow.from_checkpoint(model.config, bare_shadow)
     rollback_matches_bare = content_digest(rollback.to_payload()) == bare_shadow_digest
@@ -405,19 +475,23 @@ def _growth_arm(
     }
 
 
-def run_canary() -> dict[str, Any]:
-    r3_parent, pressure_parent, checkpoint_preflight = _prepared_parents()
+def run_canary(
+    *,
+    model_seed: int = 71,
+    course: R4Course = DEFAULT_COURSE,
+) -> dict[str, Any]:
+    r3_parent, pressure_parent, checkpoint_preflight = _prepared_parents(model_seed)
     frozen = Taiji.from_checkpoint(copy.deepcopy(pressure_parent))
     frozen_scores = {
-        "S": _score(frozen, S_HOLDOUT),
-        "G": _score(frozen, G_HOLDOUT),
+        "S": _score(frozen, course.s_holdout),
+        "G": _score(frozen, course.g_holdout),
     }
 
     fixed_capacity = Taiji.from_checkpoint(copy.deepcopy(pressure_parent))
-    _course_train(fixed_capacity, learn_bridge=True)
+    _course_train(fixed_capacity, learn_bridge=True, course=course)
     fixed_capacity_scores = {
-        "S": _score(fixed_capacity, S_HOLDOUT),
-        "G": _score(fixed_capacity, G_HOLDOUT),
+        "S": _score(fixed_capacity, course.s_holdout),
+        "G": _score(fixed_capacity, course.g_holdout),
     }
 
     pressure_model = Taiji.from_checkpoint(copy.deepcopy(pressure_parent))
@@ -428,12 +502,14 @@ def run_canary() -> dict[str, Any]:
         pressure_parent,
         candidate=pressure_candidate,
         freeze_parent=True,
+        course=course,
         label="candidate-only-smoke",
     )
     pressure = _growth_arm(
         pressure_parent,
         candidate=pressure_candidate,
         freeze_parent=False,
+        course=course,
         label="pressure-driven-growth",
     )
 
@@ -447,6 +523,7 @@ def run_canary() -> dict[str, Any]:
         pressure_parent,
         candidate=random_candidate,
         freeze_parent=False,
+        course=course,
         label="random-growth",
     )
 
@@ -460,6 +537,7 @@ def run_canary() -> dict[str, Any]:
         pressure_parent,
         candidate=fixed_large_candidate,
         freeze_parent=False,
+        course=course,
         label="fixed-large",
     )
 
@@ -520,10 +598,14 @@ def run_canary() -> dict[str, Any]:
         "can_promote": False,
         "promotion_reason": "R4 is a short CPU shadow canary; holdout and matched-capacity results do not promote structure",
         "course": {
-            "S_train_digest": content_digest(S_TRAIN),
-            "S_holdout_digest": content_digest(S_HOLDOUT),
-            "G_holdout_digest": content_digest(G_HOLDOUT),
-            "G_schedule": [list(item) for item in G_SCHEDULE],
+            "course_seed": course.course_seed,
+            "label": course.label,
+            "S_train_digest": content_digest(course.s_train),
+            "S_holdout_digest": content_digest(course.s_holdout),
+            "G_old_digest": content_digest(course.g_old),
+            "G_new_digest": content_digest(course.g_new),
+            "G_holdout_digest": content_digest(course.g_holdout),
+            "G_schedule": [list(item) for item in course.g_schedule],
         },
         "parents": {
             "r3_checkpoint_digest": content_digest(r3_parent),
