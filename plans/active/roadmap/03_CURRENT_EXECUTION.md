@@ -176,7 +176,9 @@ M7 CI 基线收敛第一批已完成：tracked source 的主 ruff 门禁从 9 �
 
 `Workbench neutral baseline` 已完成归因：新的 Workbench task-boundary 合同要求 `execute_taiji_workbench_task()` 携带显式 token，运行时拒绝无 token 是安全行为，不是要放宽的基线；旧 longitudinal evaluator 没有打开 boundary。评估器现已为每个 episode 打开覆盖实际 capability 的 boundary，并让 neutral、正常动作和 recovery 共享同一 token，Workbench longitudinal、interaction-group Workbench 与 structural bridge 相关回归共 `24 passed`。
 
-**当前唯一下一步**：在仓库可写 basetemp 下重新运行完整 `tests/taiji_native`，刷新修复后的失败账本并按首个真实失败继续归因；保持 R4 shadow/默认 parent 不变，不通过放宽阈值消除失败，R5 learned router 及 Skill/MCP/provider/客户端外围继续冻结。
+随后按同一失败账本继续验证时，首个真实失败收敛到 `test_multistep_grounding_recovery.py`：负向场景使用不存在路径，但当前 live semantic grounding 会在执行前按设计返回 `workspace_target_not_found`，因此旧评估器错误地期待已保存的失败 checkpoint。没有放宽生产 grounding；评估器现仅在这个受控负向探针中传入显式 `parameter_bindings`，让故障落到真实执行层并验证 checkpoint/fresh recovery，成功路径仍保持 Taiji-owned semantic grounding。相关 memory/objective/naming/multistep 分组现为 `16 passed`，评估脚本 Ruff/编译/diff 检查通过。
+
+**当前唯一下一步**：继续在仓库可写 basetemp 下刷新完整 `tests/taiji_native` 的失败账本；先用不触发 pytest 临时目录 fixture 的分组锁定首个真实失败，再对需要 `tmp_path` 的失败单独处理 Windows 清理权限噪声。保持 R4 shadow/默认 parent 不变，不通过放宽阈值消除失败，R5 learned router 及 Skill/MCP/provider/客户端外围继续冻结。
 
 R0 完成条件（已满足）：
 

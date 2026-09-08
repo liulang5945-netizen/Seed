@@ -102,6 +102,14 @@ def _run_failure_and_recovery() -> dict[str, object]:
     checkpoint_path.unlink(missing_ok=True)
     failed_prompt = "请读取并检查缺失文件"
     failed_steps = (("read", "missing/p2-10.md"), ("stat", "missing/p2-10.md"))
+    # The live semantic path intentionally rejects a missing target during
+    # grounding.  Use explicit bindings only for this negative probe so the
+    # task reaches execution and can verify checkpointed failure/recovery;
+    # production grounding remains fail-closed.
+    failure_bindings = (
+        {"workspace.read": {"path": "missing/p2-10.md"}},
+        {"workspace.stat": {"path": "missing/p2-10.md"}},
+    )
     recovered_prompt = "请读取 README.md"
     recovered_steps = (("read", "README.md"),)
     with patch(
@@ -115,6 +123,7 @@ def _run_failure_and_recovery() -> dict[str, object]:
             failed_prompt,
             _proposal(runtime, failed_prompt, failed_steps),
             snapshot_id=runtime.workbench_environment.capability_snapshot.snapshot_id,
+            parameter_bindings=failure_bindings,
             loop_id="p2-10-failure-loop",
             max_steps=2,
             max_budget_units=2.0,
