@@ -4,7 +4,7 @@
 
 M4.R0～R12 已完成并归档，但 2026-09-09 的代码/报告复审发现：该系列主要测量 F1 byte-prediction 的固定容量 continuation，R2 的固定等权读出槽、R7/R10 不一致的 owner 图、未进入普通主路径的 adaptive network，以及 exact-zero Gate 都不足以代表 CR-4/A8 的继承式结构成长。历史报告保留，过度外推已撤销。
 
-M4.V2.R0 已完成：连续成长量尺合同已版本化、内容寻址，R7/R10/R12 已生成只读语义审计；M4.V2.R1 已在真实 v10 joint-training checkpoint 上完成零变化迁移 smoke；R2 已完成 fast/slow 局部状态、真实 wake replay、三臂对照和 3 个 course seed/order 的 S/G formal Gate；R3 已把一个 zero-gated adaptive residual bridge 接入真实 observation→prediction/credit 主路径，gate=0、local credit、lesion、fresh restore 和 rollback smoke 全通过；R4 已完成 pressure 合同，并已把 pressure/decision 接入 R3 bridge 的真实 predictive observation tick，proposal 仍是 evidence-only，不会改拓扑。校准超上限时已正确 fail-closed，修正后的 epsilon=`0.0176304`；整体仍保持 `can_promote=false`。当前唯一下一步是 **M4.V2.R4：把已通过压力决策固化为零影响 candidate artifact**。Skill/MCP、客户端热插拔、provider、视觉和 CUDA 均保留在统一计划的解冻顺序中。
+M4.V2.R0 已完成：连续成长量尺合同已版本化、内容寻址，R7/R10/R12 已生成只读语义审计；M4.V2.R1 已在真实 v10 joint-training checkpoint 上完成零变化迁移 smoke；R2 已完成 fast/slow 局部状态、真实 wake replay、三臂对照和 3 个 course seed/order 的 S/G formal Gate；R3 已把一个 zero-gated adaptive residual bridge 接入真实 observation→prediction/credit 主路径，gate=0、local credit、lesion、fresh restore 和 rollback smoke 全通过；R4 已完成 pressure/decision 主路径接线，并将通过 decision 固化为 zero-impact candidate artifact，创建、内容寻址、checkpoint/fresh restore 和 parent 绑定均已覆盖；候选仍未 materialize、训练或准入。校准超上限时已正确 fail-closed，修正后的 epsilon=`0.0176304`；整体仍保持 `can_promote=false`。当前唯一下一步是 **M4.V2.R4：在 bare checkpoint/fresh restore 边界上 materialize 一个 gate=0 的 shadow candidate**。Skill/MCP、客户端热插拔、provider、视觉和 CUDA 均保留在统一计划的解冻顺序中。
 
 ## 权威文档
 

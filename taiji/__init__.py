@@ -10,6 +10,11 @@ from .adaptive_residual_bridge import (
     ADAPTIVE_RESIDUAL_BRIDGE_VERSION,
     AdaptiveResidualBridge,
 )
+from .adaptive_residual_candidate import (
+    ADAPTIVE_RESIDUAL_CANDIDATE_FORMAT,
+    ADAPTIVE_RESIDUAL_CANDIDATE_VERSION,
+    AdaptiveResidualGrowthCandidate,
+)
 from .adaptive_residual_growth import (
     ADAPTIVE_RESIDUAL_GROWTH_FORMAT,
     ADAPTIVE_RESIDUAL_GROWTH_VERSION,
@@ -736,6 +741,9 @@ __all__ = [
     "ADAPTIVE_RESIDUAL_BRIDGE_FORMAT",
     "ADAPTIVE_RESIDUAL_BRIDGE_VERSION",
     "AdaptiveResidualBridge",
+    "ADAPTIVE_RESIDUAL_CANDIDATE_FORMAT",
+    "ADAPTIVE_RESIDUAL_CANDIDATE_VERSION",
+    "AdaptiveResidualGrowthCandidate",
     "ADAPTIVE_RESIDUAL_GROWTH_FORMAT",
     "ADAPTIVE_RESIDUAL_GROWTH_VERSION",
     "AdaptiveResidualGrowthDecision",

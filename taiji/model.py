@@ -13,6 +13,11 @@ from .adaptive_residual_bridge import (
     ADAPTIVE_RESIDUAL_BRIDGE_VERSION,
     AdaptiveResidualBridge,
 )
+from .adaptive_residual_candidate import (
+    ADAPTIVE_RESIDUAL_CANDIDATE_FORMAT,
+    ADAPTIVE_RESIDUAL_CANDIDATE_VERSION,
+    AdaptiveResidualGrowthCandidate,
+)
 from .adaptive_residual_growth import (
     AdaptiveResidualGrowthDecision,
     AdaptiveResidualGrowthPolicy,
@@ -78,6 +83,7 @@ class Taiji:
     ADAPTIVE_RESIDUAL_BRIDGE_KEY = "adaptive_residual_bridge"
     ADAPTIVE_RESIDUAL_BRIDGE_SEED_OFFSET = 7183
     ADAPTIVE_RESIDUAL_GROWTH_KEY = "adaptive_residual_growth"
+    ADAPTIVE_RESIDUAL_CANDIDATE_KEY = "adaptive_residual_candidate"
     READOUT_REGISTRY_FORMAT = "taiji-predictive-readout-registry-v1"
     READOUT_REGISTRY_VERSION = 1
     DEVELOPMENTAL_F1_KEY = "developmental_f1"
@@ -126,6 +132,7 @@ class Taiji:
         self._gated_temporal_candidate: GatedMultiTimescaleTemporalResidual | None = None
         self._adaptive_residual_bridge: AdaptiveResidualBridge | None = None
         self._adaptive_residual_growth_trigger: AdaptiveResidualGrowthTrigger | None = None
+        self._adaptive_residual_growth_candidate: AdaptiveResidualGrowthCandidate | None = None
         # R1 migration state is an explicit, read-only F1 overlay.  It is
         # absent from ordinary v10 checkpoints, so the default path remains
         # byte-for-byte compatible with the pre-R1 architecture.
@@ -400,6 +407,12 @@ class Taiji:
             return None
         return self._adaptive_residual_growth_trigger.last_decision
 
+    @property
+    def adaptive_residual_growth_candidate(self) -> AdaptiveResidualGrowthCandidate | None:
+        """Return the pending zero-impact candidate artifact, if any."""
+
+        return self._adaptive_residual_growth_candidate
+
     @torch.no_grad()
     def enable_adaptive_residual_growth(
         self,
@@ -435,7 +448,86 @@ class Taiji:
 
         if self._state.pending_action is not None or self._state.pending_experience is not None:
             raise RuntimeError("adaptive residual growth removal requires a settled state")
+        if self._adaptive_residual_growth_candidate is not None:
+            raise RuntimeError("discard adaptive residual growth candidate before disabling pressure")
         self._adaptive_residual_growth_trigger = None
+
+    @torch.no_grad()
+    def propose_adaptive_residual_growth_candidate(self) -> dict[str, Any]:
+        """Materialize a pending R4 decision as a topology-only artifact.
+
+        The bridge is not grown here.  The returned artifact describes one
+        future unit birth and is stored in the model checkpoint so shadow
+        materialization can later require the exact parent and evidence.
+        """
+
+        bridge = self._adaptive_residual_bridge
+        trigger = self._adaptive_residual_growth_trigger
+        decision = self.adaptive_residual_growth_decision
+        if bridge is None or trigger is None:
+            raise RuntimeError("adaptive residual growth requires a live bridge and pressure trigger")
+        if self._adaptive_residual_growth_candidate is not None:
+            raise RuntimeError("adaptive residual growth candidate is already pending")
+        if decision is None:
+            raise RuntimeError("adaptive residual growth has not emitted a proposal decision")
+        if not decision.should_propose:
+            raise RuntimeError("adaptive residual growth decision does not authorize a candidate")
+        if decision.parent_checkpoint_digest != trigger.parent_checkpoint_digest:
+            raise RuntimeError("adaptive residual growth decision parent drifted")
+        if self._state.pending_action is not None or self._state.pending_experience is not None:
+            raise RuntimeError("adaptive residual candidate proposal requires a settled state")
+
+        source_checkpoint = self.checkpoint()
+        source_checkpoint_digest = content_digest(source_checkpoint)
+        unit_id = f"{bridge.region.region_id}.u{bridge.unit_count}"
+        proposal = bridge.region.propose_unit_add(
+            unit_id=unit_id,
+            evidence_ids=decision.evidence_ids,
+            source_region_id=bridge.region.input_source_id,
+            parent_checkpoint_id=f"r4-parent:{trigger.parent_checkpoint_digest}",
+            resource_cost=decision.resource_cost,
+        )
+        parent_edge_count = bridge.edge_count
+        incoming_edge_delta = bridge.region.incoming.row_fan_in
+        recurrent_edge_delta = (
+            0 if bridge.region.recurrent is None else bridge.region.recurrent.row_fan_in
+        )
+        edge_delta = incoming_edge_delta + recurrent_edge_delta
+        candidate = AdaptiveResidualGrowthCandidate.create(
+            bridge_id=bridge.region.region_id,
+            unit_id=unit_id,
+            parent_checkpoint_digest=trigger.parent_checkpoint_digest,
+            source_checkpoint_digest=source_checkpoint_digest,
+            decision_digest=decision.decision_digest,
+            evidence_ids=decision.evidence_ids,
+            parent_unit_count=bridge.unit_count,
+            proposed_unit_count=bridge.unit_count + 1,
+            parent_edge_count=parent_edge_count,
+            proposed_edge_count=parent_edge_count + edge_delta,
+            topology_diff=(
+                ("unit_count", 1),
+                ("incoming_edges", incoming_edge_delta),
+                ("recurrent_edges", recurrent_edge_delta),
+                ("edge_count", edge_delta),
+                ("parameter_scalars", edge_delta),
+            ),
+            resource_cost=decision.resource_cost,
+            structural_budget=decision.structural_budget,
+            proposal=proposal,
+        )
+        self._adaptive_residual_growth_candidate = candidate
+        return {
+            "format": ADAPTIVE_RESIDUAL_CANDIDATE_FORMAT,
+            "version": ADAPTIVE_RESIDUAL_CANDIDATE_VERSION,
+            "candidate_id": candidate.candidate_id,
+            "candidate_digest": candidate.candidate_digest,
+            "source_checkpoint_digest": source_checkpoint_digest,
+            "parent_checkpoint_digest": candidate.parent_checkpoint_digest,
+            "proposal_digest": content_digest(proposal.to_payload()),
+            "unit_id": candidate.unit_id,
+            "topology_diff": dict(candidate.topology_diff),
+            "bridge_unchanged": True,
+        }
 
     def _developmental_f1_fast_slow_conflict(self) -> float:
         bundle = self._developmental_f1_bundle
@@ -2356,6 +2448,10 @@ class Taiji:
             core[self.ADAPTIVE_RESIDUAL_GROWTH_KEY] = (
                 self._adaptive_residual_growth_trigger.checkpoint()
             )
+        if self._adaptive_residual_growth_candidate is not None:
+            core[self.ADAPTIVE_RESIDUAL_CANDIDATE_KEY] = (
+                self._adaptive_residual_growth_candidate.to_payload()
+            )
         if self._developmental_f1_bundle is not None:
             core[self.DEVELOPMENTAL_F1_KEY] = self._developmental_f1_bundle.to_payload()
         replay_payload = self._developmental_f1_replay_payload()
@@ -2476,6 +2572,27 @@ class Taiji:
             if trigger.bridge_id != "predictive_residual.bridge":
                 raise ValueError("adaptive residual growth bridge identity does not match")
             self._adaptive_residual_growth_trigger = trigger
+        candidate_payload = checkpoint.get(self.ADAPTIVE_RESIDUAL_CANDIDATE_KEY)
+        self._adaptive_residual_growth_candidate = None
+        if candidate_payload is not None:
+            if is_legacy_checkpoint:
+                raise ValueError("legacy checkpoint cannot contain adaptive residual candidate")
+            if self._adaptive_residual_bridge is None:
+                raise ValueError("adaptive residual candidate requires an adaptive residual bridge")
+            if self._adaptive_residual_growth_trigger is None:
+                raise ValueError("adaptive residual candidate requires adaptive residual growth")
+            if not isinstance(candidate_payload, Mapping):
+                raise ValueError("adaptive residual candidate checkpoint payload is invalid")
+            candidate = AdaptiveResidualGrowthCandidate.from_payload(candidate_payload)
+            if candidate.bridge_id != self._adaptive_residual_bridge.region.region_id:
+                raise ValueError("adaptive residual candidate bridge identity does not match")
+            if candidate.parent_checkpoint_digest != (
+                self._adaptive_residual_growth_trigger.parent_checkpoint_digest
+            ):
+                raise ValueError("adaptive residual candidate parent does not match pressure trigger")
+            if candidate.proposal.evidence_ids != candidate.evidence_ids:
+                raise ValueError("adaptive residual candidate evidence does not match proposal")
+            self._adaptive_residual_growth_candidate = candidate
         developmental_payload = checkpoint.get(self.DEVELOPMENTAL_F1_KEY)
         self._developmental_f1_bundle = None
         self._developmental_f1_learning_mode = "read_only"
@@ -2522,6 +2639,9 @@ class Taiji:
                         ),
                         include_adaptive_residual_growth=(
                             self.ADAPTIVE_RESIDUAL_GROWTH_KEY in checkpoint
+                        ),
+                        include_adaptive_residual_candidate=(
+                            self.ADAPTIVE_RESIDUAL_CANDIDATE_KEY in checkpoint
                         ),
                         include_developmental_f1=self.DEVELOPMENTAL_F1_KEY in checkpoint,
                         include_developmental_f1_replay=(
@@ -2642,6 +2762,7 @@ class Taiji:
         include_temporal_candidate: bool = False,
         include_adaptive_residual_bridge: bool = False,
         include_adaptive_residual_growth: bool = False,
+        include_adaptive_residual_candidate: bool = False,
         include_developmental_f1: bool = False,
         include_developmental_f1_replay: bool = False,
     ) -> tuple[str, ...]:
@@ -2669,6 +2790,8 @@ class Taiji:
             keys += (Taiji.ADAPTIVE_RESIDUAL_BRIDGE_KEY,)
         if include_adaptive_residual_growth:
             keys += (Taiji.ADAPTIVE_RESIDUAL_GROWTH_KEY,)
+        if include_adaptive_residual_candidate:
+            keys += (Taiji.ADAPTIVE_RESIDUAL_CANDIDATE_KEY,)
         if include_developmental_f1:
             keys += (Taiji.DEVELOPMENTAL_F1_KEY,)
         if include_developmental_f1_replay:

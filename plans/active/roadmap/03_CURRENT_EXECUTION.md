@@ -75,7 +75,7 @@ Taiji 是唯一认知主体，Seed 是产品/runtime、Workbench、设备、权�
 
 ## 4. 当前唯一下一步
 
-M4.V2.R0、M4.V2.R1、R2 与 R3 已完成当前阶段的量尺、迁移、快/慢学习和第一条主路径结构桥 Gate；R2 候选被接受，R3 canary 通过；R4 的 pressure 合同已经由 R3 bridge 的真实 predictive observation tick 驱动，并能产生可 checkpoint/fresh-restore 的 decision。整体仍保持 `can_promote=false`。当前唯一下一步是 **M4.V2.R4：把通过 pressure decision 的 proposal 固化为 zero-impact candidate artifact**，不改变 parent 函数、不增加实际可用参数，直到后续 shadow/准入 Gate 通过。
+M4.V2.R0、M4.V2.R1、R2 与 R3 已完成当前阶段的量尺、迁移、快/慢学习和第一条主路径结构桥 Gate；R2 候选被接受，R3 canary 通过；R4 pressure 已由 R3 bridge 的真实 predictive observation tick 驱动，并已把 `should_propose=true` 固化为 content-addressed zero-impact candidate artifact。整体仍保持 `can_promote=false`。当前唯一下一步是 **M4.V2.R4：在 bare checkpoint/fresh restore 边界上 materialize 一个 gate=0 的 shadow candidate**，不改变 parent 函数、不向真实主路径开放、不开始 shadow 训练，直到 materialization Gate 通过。
 
 R0 的实现与审计产物如下：
 
@@ -146,12 +146,13 @@ R4 要回答的不是“能否再创建一个区域”，而是“固定容量�
 实施顺序固定为：
 
 1. **压力合同与主路径观测（已完成）**：`taiji/adaptive_residual_growth.py` 已定义 residual error、fast/slow conflict、activity saturation、utility gap、resource state 的 versioned/content-addressed observation；`AdaptiveResidualGrowthTrigger` 提供 EMA、连续压力、预算、parent digest、重复 evidence 和 checkpointable decision。`Taiji.observe(readout="predictive")` 只在同一 native observation→prediction/credit tick 已产生 prior error 且 R3 bridge 作为当前 owner 时记录 pressure；没有 task ID，没有 synthetic evaluator 路由，也不自动改拓扑。decision digest、last pressure、trigger checkpoint 和 model fresh restore 已闭合。
-2. **候选提议（当前唯一下一步）**：将 `should_propose=true` 的 decision 固化成 content-addressed zero-impact candidate artifact，在 `gate=0` bridge 上按稳定身份描述一个或一组最小 unit，保存 parent digest、proposal evidence、topology diff、结构预算和创建前后的 checkpoint；artifact 创建本身不得改变 parent 函数、bridge unit 数量或 forward/credit 输出。
-3. **shadow 训练**：只给候选 residual credit，成熟 F1 trunk 与 parent readout 可冻结；候选在 S/G 短课程上训练，所有更新可回滚，训练前先做 bare checkpoint 保存、fresh-process restore、一次小更新后再次保存/恢复/续步检查。
+2. **候选提议（已完成）**：`should_propose=true` 的 decision 已固化成 content-addressed zero-impact candidate artifact，在 bridge 上按稳定身份描述一个最小 unit，保存 parent/source digest、proposal evidence、topology diff、结构预算和 pending topology proposal；artifact 创建没有改变 parent 函数、bridge unit 数量或 forward/credit substrate。
+3. **shadow materialization（当前唯一下一步）**：从 candidate artifact 复制 bare parent 到独立 shadow 实例，在独立 checkpoint 中应用 pending topology proposal；要求旧 unit 的 incoming/recurrent 支持、权重、runtime state 逐项保持，新增 unit 初始化可寻址，shadow 仍为 `gate=0`，fresh restore 后 candidate/parent digest 和 bridge identity 一致。materialization 失败必须保留原 parent 且不消耗正式结构预算。
+4. **shadow 训练**：只给候选 residual credit，成熟 F1 trunk 与 parent readout 可冻结；候选在 S/G 短课程上训练，所有更新可回滚，训练前先做 bare checkpoint 保存、fresh-process restore、一次小更新后再次保存/恢复/续步检查。
 4. **准入对照**：至少比较 frozen parent、R3 fixed-capacity bridge、pressure-driven growth、random growth、同等最终参数量的 fixed-large；没有 matched-capacity 与 random baseline，不得把收益归因于“生长”。
 5. **因果 Gate**：候选增益必须在未见 holdout 上出现；growth lesion 必须消除新增增益；旧能力满足 calibrated non-inferiority；fresh restore、rollback、参数/内存/延迟预算全通过。任何一项失败恢复 R3 parent，不进入 R5 router。
 
-R4 的最小交付仍是 `pressure/proposal → shadow train → validate → lesion/admit/rollback` 的一个可复现 CPU canary 和 versioned report；当前已完成 pressure 合同与真实主路径 decision，尚未完成 candidate artifact、shadow 训练、matched-capacity 对照或准入，不能把单次 proposal、参数变多或单次 BPB 下降写成成功。R4 通过后才解冻 R5 自主路由，Skill/MCP/provider/客户端继续按第 6 节冻结。
+R4 的最小交付仍是 `pressure/proposal → shadow materialize → shadow train → validate → lesion/admit/rollback` 的一个可复现 CPU canary 和 versioned report；当前已完成 pressure 合同、真实主路径 decision 与 candidate artifact，尚未完成 shadow materialization、shadow 训练、matched-capacity 对照或准入，不能把单次 proposal、候选存在或单次 BPB 下降写成成功。R4 通过后才解冻 R5 自主路由，Skill/MCP/provider/客户端继续按第 6 节冻结。
 
 R0 完成条件（已满足）：
 
@@ -162,7 +163,7 @@ R0 完成条件（已满足）：
 5. 定向 pytest、ruff、`git diff --check` 通过；
 6. 仍保持 `can_promote=false`。
 
-R1 通过后的唯一下一步是 R2 S/G canary；R2 formal 通过后的唯一下一步是 R3 主路径结构桥；R3 canary 通过后的 R4 先把 bridge pressure 接入真实 tick，再固化 zero-impact candidate，随后才进入 shadow 生长。R4 未通过则恢复 R3 parent，不得用 R5 路由、客户端外围或新语料掩盖容量/准入失败。
+R1 通过后的唯一下一步是 R2 S/G canary；R2 formal 通过后的唯一下一步是 R3 主路径结构桥；R3 canary 通过后的 R4 先把 bridge pressure 接入真实 tick，再固化 zero-impact candidate，随后必须经过独立 shadow materialization 才能训练。R4 未通过则恢复 R3 parent，不得用 R5 路由、客户端外围或新语料掩盖容量/准入失败。
 
 ## 5. v2 课程与 Gate
 

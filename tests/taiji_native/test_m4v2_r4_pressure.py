@@ -160,10 +160,31 @@ def test_r4_live_pressure_is_emitted_by_bridge_tick_and_restores_exactly() -> No
     assert decision is not None
     assert decision.should_propose is True
     assert AdaptiveResidualGrowthDecision.from_payload(decision.to_payload()) == decision
-    assert model.adaptive_residual_bridge.unit_count == unit_count
+    bridge = model.adaptive_residual_bridge
+    assert bridge is not None
+    bridge_before = content_digest(bridge.to_payload())
+    source_checkpoint_digest = content_digest(model.checkpoint())
+
+    result = model.propose_adaptive_residual_growth_candidate()
+    candidate = model.adaptive_residual_growth_candidate
+    assert candidate is not None
+    assert result["candidate_id"] == candidate.candidate_id
+    assert candidate.source_checkpoint_digest == source_checkpoint_digest
+    assert candidate.parent_checkpoint_digest == parent_digest
+    assert candidate.proposal.status == "pending"
+    assert candidate.proposal.evidence_ids == decision.evidence_ids
+    assert candidate.unit_id not in bridge.region.unit_ids
+    assert candidate.proposed_unit_count == candidate.parent_unit_count + 1
+    assert candidate.proposed_edge_count > candidate.parent_edge_count
+    assert content_digest(bridge.to_payload()) == bridge_before
+    assert bridge.unit_count == unit_count
+
+    with pytest.raises(RuntimeError, match="already pending"):
+        model.propose_adaptive_residual_growth_candidate()
 
     checkpoint = model.checkpoint()
     restored = Taiji.from_checkpoint(checkpoint)
     assert content_digest(restored.checkpoint()) == content_digest(checkpoint)
     assert restored.adaptive_residual_growth_decision == decision
     assert restored.adaptive_residual_growth_trigger.last_pressure == trigger.last_pressure
+    assert restored.adaptive_residual_growth_candidate == candidate
