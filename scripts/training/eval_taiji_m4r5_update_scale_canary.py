@@ -122,11 +122,12 @@ def _save_artifact(
     scale: float,
     model: Taiji,
     *,
+    seed: int,
     source_digest: str,
 ) -> Path:
     artifact_dir.mkdir(parents=True, exist_ok=True)
     scale_name = str(scale).replace(".", "p")
-    path = artifact_dir / f"scale_{scale_name}_seed{DEFAULT_SEED}.pt"
+    path = artifact_dir / f"scale_{scale_name}_seed{seed}.pt"
     atomic_save(
         {
             "format": FORMAT,
@@ -151,8 +152,6 @@ def run_canary(
     seed: int = DEFAULT_SEED,
     profile: str = "smoke",
 ) -> dict[str, Any]:
-    if seed != DEFAULT_SEED:
-        raise ValueError("M4.R5 smoke currently uses seed 11; cohort expansion follows the canary")
     source_payload, source_model = _load_checkpoint(checkpoint, expected_seed=seed)
     source_digest = content_digest(source_payload)
     chain = build_disjoint_phase_chain(
@@ -186,6 +185,7 @@ def run_canary(
             artifact_dir,
             scale,
             model,
+            seed=seed,
             source_digest=source_digest,
         )
     probe = chain.phase_c3.holdout[:eval_bytes]
@@ -252,7 +252,7 @@ def run_canary(
         "generated_at_epoch": time.time(),
         "status": "passed" if technical_gate else "failed",
         "can_promote": False,
-        "seed": seed,
+        "seed": int(seed),
         "source_checkpoint": str(checkpoint),
         "source_checkpoint_digest": source_digest,
         "corpus": str(corpus),

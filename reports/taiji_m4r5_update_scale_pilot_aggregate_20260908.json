@@ -1,0 +1,118 @@
+{
+  "format": "taiji-m4r5-update-scale-aggregate-v1",
+  "version": 1,
+  "generated_at_epoch": 1788870922.1609824,
+  "status": "passed",
+  "can_promote": false,
+  "seeds": [
+    11,
+    29,
+    47
+  ],
+  "source_reports": [
+    "E:\\Seed\\reports\\taiji_m4r5_update_scale_pilot_seed11_20260908.json",
+    "E:\\Seed\\reports\\taiji_m4r5_update_scale_pilot_seed29_20260908.json",
+    "E:\\Seed\\reports\\taiji_m4r5_update_scale_pilot_seed47_20260908.json"
+  ],
+  "variants": {
+    "scale_0p0": {
+      "c3_gain_mean_bpb": 0.0,
+      "c3_gain_min_bpb": 0.0,
+      "c3_gain_max_bpb": 0.0,
+      "c3_gain_positive_count": 0,
+      "c_cycle2_delta_mean_bpb": 0.0,
+      "c_cycle2_degradation_count": 0,
+      "c_cycle3_delta_mean_bpb": 0.0,
+      "c_cycle3_degradation_count": 0,
+      "retention_gate_passed_all": true,
+      "seed_metrics": {
+        "11": {
+          "c3_gain_bpb": 0.0,
+          "c_cycle2_delta_bpb": 0.0,
+          "c_cycle3_delta_bpb": 0.0
+        },
+        "29": {
+          "c3_gain_bpb": 0.0,
+          "c_cycle2_delta_bpb": 0.0,
+          "c_cycle3_delta_bpb": 0.0
+        },
+        "47": {
+          "c3_gain_bpb": 0.0,
+          "c_cycle2_delta_bpb": 0.0,
+          "c_cycle3_delta_bpb": 0.0
+        }
+      }
+    },
+    "scale_0p5": {
+      "c3_gain_mean_bpb": 0.11567456737627586,
+      "c3_gain_min_bpb": 0.08304010399167572,
+      "c3_gain_max_bpb": 0.1573976913656132,
+      "c3_gain_positive_count": 3,
+      "c_cycle2_delta_mean_bpb": -0.01636400629837838,
+      "c_cycle2_degradation_count": 1,
+      "c_cycle3_delta_mean_bpb": -0.03525568525922681,
+      "c_cycle3_degradation_count": 0,
+      "retention_gate_passed_all": false,
+      "seed_metrics": {
+        "11": {
+          "c3_gain_bpb": 0.08304010399167572,
+          "c_cycle2_delta_bpb": -0.04470167254373525,
+          "c_cycle3_delta_bpb": -0.031895647733509946
+        },
+        "29": {
+          "c3_gain_bpb": 0.10658590677153867,
+          "c_cycle2_delta_bpb": -0.008128332846034425,
+          "c_cycle3_delta_bpb": -0.021953341423447625
+        },
+        "47": {
+          "c3_gain_bpb": 0.1573976913656132,
+          "c_cycle2_delta_bpb": 0.0037379864946345265,
+          "c_cycle3_delta_bpb": -0.05191806662072285
+        }
+      }
+    },
+    "scale_1p0": {
+      "c3_gain_mean_bpb": 0.017104691661737448,
+      "c3_gain_min_bpb": -0.01643583620861211,
+      "c3_gain_max_bpb": 0.058981001613028106,
+      "c3_gain_positive_count": 2,
+      "c_cycle2_delta_mean_bpb": 0.003932476507818213,
+      "c_cycle2_degradation_count": 2,
+      "c_cycle3_delta_mean_bpb": -0.04970688767458794,
+      "c_cycle3_degradation_count": 0,
+      "retention_gate_passed_all": false,
+      "seed_metrics": {
+        "11": {
+          "c3_gain_bpb": -0.01643583620861211,
+          "c_cycle2_delta_bpb": -0.03735600600575317,
+          "c_cycle3_delta_bpb": -0.02693487240263437
+        },
+        "29": {
+          "c3_gain_bpb": 0.008768909580796347,
+          "c_cycle2_delta_bpb": 0.020846530286129372,
+          "c_cycle3_delta_bpb": -0.0520955823812832
+        },
+        "47": {
+          "c3_gain_bpb": 0.058981001613028106,
+          "c_cycle2_delta_bpb": 0.02830690524307844,
+          "c_cycle3_delta_bpb": -0.07009020823984624
+        }
+      }
+    }
+  },
+  "checks": {
+    "seed11_technical_gate": true,
+    "seed29_technical_gate": true,
+    "seed47_technical_gate": true,
+    "all_reports_not_promoted": true,
+    "same_variant_set": true,
+    "all_scale_zero_controls_frozen": true
+  },
+  "technical_gate_all_passed": true,
+  "diagnosis": {
+    "half_scale_supported": false,
+    "half_scale_improves_mean_gain": true,
+    "half_scale_reduces_c_cycle2_degradation": true,
+    "interpretation": "half-rate improves the cohort mean and reduces C cycle2 degradation, but it does not satisfy the strict all-seed retention Gate; do not promote"
+  }
+}
