@@ -1,6 +1,6 @@
 # Seed / Taiji 模型优先统一开发计划
 
-> 修订：2026-09-07。状态：R0 测量链完成；R1～R3 首轮能力报告因数据重叠被撤回，record-disjoint v2 数据链已修复；seed11/29/47 的 R1 formal aggregate 已完成但不晋级。R2.R0～R2.R1 时间表征候选已完成并否决 promotion；M2.R3.R0～R3.R4 的 structured semantic CPU canary、runtime owner/checkpoint、多实体/关系/约束多 seed 组合训练、多步持久 WorldState 转移及 runtime adapter 接线均已完成；M2.R4 联合课程与能力保持也已完成：事实、Goal、ContentPlan、未知/冲突/澄清、事件删除/顺序、持久性、owner lesion、旧 adapter 行为保持、新进程恢复、detach 清理、双 owner 组合和受保护能力保持全部通过。M3.R0 的 project-disjoint Workbench 只读边界、M3.R1 的 native Workbench observation 静态课程、M3.R2 的 native task-state sequence、M3.R3 的 native read-only ActionIntent planning、M3.R4 的 preview/approval dry-run、M3.R5 的隔离临时工作区批准执行 canary 均已完成。R0～R5 证明的是受限 verified Workbench 证据到结构化语义/状态/只读意图/副作用审计/隔离执行恢复的边界，不是 native raw-text learning、自然语言流畅或已获授权的真实客户端自治写入。下一步进入真实客户端批准流的接线决策点；在用户明确授权前不对真实工作区执行写入。连续流切块、资源遥测和中断恢复均已通过。本文是唯一执行顺序与“下一步”来源。
+> 修订：2026-09-08。状态：R0 测量链完成；R1～R3 首轮能力报告因数据重叠被撤回，record-disjoint v2 数据链已修复；seed11/29/47 的 R1 formal aggregate 已完成但不晋级。R2.R0～R2.R1 时间表征候选已完成并否决 promotion；M2.R3.R0～R3.R4 的 structured semantic CPU canary、runtime owner/checkpoint、多实体/关系/约束多 seed 组合训练、多步持久 WorldState 转移及 runtime adapter 接线均已完成；M2.R4 联合课程与能力保持也已完成：事实、Goal、ContentPlan、未知/冲突/澄清、事件删除/顺序、持久性、owner lesion、旧 adapter 行为保持、新进程恢复、detach 清理、双 owner 组合和受保护能力保持全部通过。M3.R0 的 project-disjoint Workbench 只读边界、M3.R1 的 native Workbench observation 静态课程、M3.R2 的 native task-state sequence、M3.R3 的 native read-only ActionIntent planning、M3.R4 的 preview/approval dry-run、M3.R5 的隔离临时工作区批准执行 canary 均已完成。M4.R0 已把固定容量 cascade 扩展为 record-disjoint C→C′→C″ 三周期：seed11 smoke/formal 与 seed29 formal 均通过技术、owner、checkpoint、fresh-process 和只读评分 Gate，但正式 seed11/29 的 C″ 新留出收益均为负，旧 C/C′ 仍出现后续周期退化，不能晋级；seed47 同条件复现待完成。R0～R5 证明的是受限 verified Workbench 证据到结构化语义/状态/只读意图/副作用审计/隔离执行恢复的边界，不是 native raw-text learning、自然语言流畅或已获授权的真实客户端自治写入。真实客户端批准流仍保持决策闸门；在用户明确授权前不对真实工作区执行写入。连续流切块、资源遥测和中断恢复均已通过。本文是唯一执行顺序与“下一步”来源。
 >
 > 本轮已完成数据契约代码、审计报告和回归测试；不会改写旧报告，下一步只从原始 child 重新生成独立证据。历史 M0/M1/M2-2a～2ae 的有效成果保留；旧“下一步”全部失效。重审依据见 [研究审视](../../reference/TAIJI_RESEARCH_REVIEW_2026_09_06.md)，原文见 [历史快照](../../archive/history/research_review_20260906/README.md)。
 >
@@ -43,6 +43,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | M2.R1 v2 seed47 formal replay | 同一 untouched parent、同一 1 MiB C 预算、C→replay 两周期、32 chunks；14/14 技术检查通过，训练约 2,479 秒、评分约 396 秒、约 846 B/s、峰值工作集约 369 MB | C holdout protected `4.3199` → replay `4.3083 BPB`，增益 `+0.01154`；但 A retention `4.3844`，相对 protected 退化约 `+0.06451 BPB` |
 | M2.R1 v2 seed47 formal cascade | 同一 untouched parent、1 MiB C→C′ 两周期、32 chunks；12/12 技术检查通过，训练约 2,461 秒、评分约 1,910 秒、约 852 B/s、峰值工作集约 370 MB | C′/C2 protected `4.3779` → active `4.3281 BPB`，新 holdout 增益 `+0.04975`；但 C 在 cycle1 `4.2447` → cycle2 `4.2489 BPB`，退化 `+0.00417`，第二周期保持仍未通过 |
 | M2.R1 v2 three-seed aggregate | 9 个正式臂全部 `status=passed`；active/replay 各 3×14/14，cascade 各 3×12/12；来源报告 SHA-256 已写入 aggregate | active-only 均值/最差 `+0.05102/+0.02444 BPB`（3/3 正）；replay `-0.04656/-0.09228`（1/3 正）；cascade C2 `+0.02720/+0.00592`（3/3 正），但 C cycle2 delta 均值 `+0.01110 BPB` 且 3/3 退化；测量链完成但不晋级 |
+| M4.R0 three-cycle continuation（当前） | record-disjoint C→C′→C″；seed11 smoke、seed11 formal、seed29 formal 均 `status=passed`，三周期 active owner 均保存并 fresh-process 恢复 | 正式 seed11 C″ gain `-0.02856 BPB`、C cycle2/cycle3 delta `+0.01827/+0.02135`；seed29 C″ gain `-0.03579 BPB`、delta `+0.01088/+0.03428`；两 seed 均未证明连续成长，`can_promote=false`；seed47 待同条件复现与 aggregate |
 | M2.R2.R0 seed11 smoke | 固定 seed11 parent，frozen/active_readout 两臂、4/16 KiB、4 点；20/20 技术检查通过；曾捕获默认绝对 corpus path 导致 lineage digest 不一致，已修正为 child 生成时的相对 canonical path | checkpoint preflight digest 一致；active owner 只写 active slot，但 holdout gain 为 `-0.06255/-0.14109 BPB`；smoke 仅作执行链证据，不晋级 |
 | M2.R2.R0 seed11 formal curve | 固定 seed11 parent，frozen/active_readout/predictive_context/joint_predictive 四臂、4/16/64 KiB、12 点；60/60 技术检查通过；preflight checkpoint `33,174,421` bytes，峰值工作集约 `535–569 MB` | protected holdout baseline `4.049390 BPB`；context gain 为 `+0.001515/+0.023738/-0.016105`，16 KiB 之外不稳定；active gain `-0.062549/-0.141091/-0.165254`，joint gain `-0.058237/-0.120990/-0.153693`；owner 写入集合与 read-only scoring 全部正确，当前不引入新架构 |
 | M2.R2.R0 context aggregate | seed11 formal + seed29/47 context 复现共 24 点、120/120 技术检查通过，来源报告 SHA-256 已写入 aggregate | 4 KiB gain 均值 `+0.007681`（3/3 正）；16 KiB `+0.018081`（2/3 正）；64 KiB `-0.010650`（1/3 正）；结论是短/中预算有信号但长预算不成立，先做消融与参照，不做时间架构晋级 |
@@ -79,8 +80,8 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | 3 | M2.R2 表征与时间学习 | **R2.R0～R2.R1 已完成；gated multi-timescale temporal candidate 技术闭环通过但 promotion 否决**，候选默认关闭并保留为可回滚实验资产，不继续调参 | 已通过旧输出保持、owner、保存恢复和移除/冻结反事实；未通过“同一 delay probe 上形成额外长程能力”，不替换默认结构 |
 | 4 | M2.R3 语义与表达训练 | **R3.R0～R3.R4 已完成**：结构化语义训练合同、可选 runtime owner/checkpoint、多实体/关系/约束多 seed canary、多步事件到持久 WorldState/Goal satisfaction、runtime adapter 接线已闭合 | runtime 输入只来自当前 `PerceptEvent`；事实/Goal/ContentPlan/WorldState 结果可审计；provider 表达收益与 native-only 分开统计 |
 | 5 | M2.R4 联合课程与保持 | **已完成**：frozen/static-only/transition-only/joint-native 对照、双 owner 组合、runtime 双组件 checkpoint 和 protected retention 已闭合；不把独立 owner 的串行课程称为共享权重联合优化 | 三 seed 正式报告；joint-native 新组合通过且两个受保护 owner 均保持 |
-| 6 | M3 最小真实任务验证 | **M3.R0/R1/R2/R3/R4/R5 已完成；下一步为真实客户端批准流的接线决策**：R0 闭合只读证据边界，R1 训练静态 observation，R2 训练跨 tick task-state transition，R3 形成 snapshot 绑定只读 `ActionIntent`，R4 闭合 preview/approval，R5 在隔离副本验证一次执行与 undo | R5 已证明 exact approval token、digest、执行一次、undo 和恢复拒绝；真实客户端 API/UI 接线会扩大外部副作用范围，必须先明确是否开放以及默认是否保持 preview-only |
-| 7 | M4 连续成长 | 多轮续训、巩固、必要时结构增长与压缩 | 优于固定容量和等预算对照，且保持/成本/回滚达标 |
+| 6 | M3 最小真实任务验证 | **M3.R0/R1/R2/R3/R4/R5 已完成；真实客户端批准流仍是决策闸门**：R0 闭合只读证据边界，R1 训练静态 observation，R2 训练跨 tick task-state transition，R3 形成 snapshot 绑定只读 `ActionIntent`，R4 闭合 preview/approval，R5 在隔离副本验证一次执行与 undo | R5 已证明 exact approval token、digest、执行一次、undo 和恢复拒绝；真实客户端 API/UI 接线会扩大外部副作用范围，未获明确授权不接线 |
+| 7 | M4 连续成长 | **M4.R0 三周期固定容量 continuation 进行中**：seed11/29 已完成技术验证但未证明收益；下一步完成 seed47 同条件 formal 与三 seed aggregate，再决定固定容量路线是否停止或进入一次有证据的巩固/容量候选 | 三 seed 的新留出收益、旧能力保持、checkpoint/回滚和资源成本必须同时达标；当前不得晋级 |
 | 8 | M5 知识与身体 | Skill/MCP 数据内化、真实调用与客户端插件 | 认知与执行收益可分别归因，权限/撤销闭合 |
 | 9 | M6 产品收口 | provider 稳定性、UI/桌面、遗留格式清理 | packaged client 与真实能力一致 |
 | 横向 | M7 工程质量 | 每轮相关检查，阶段末全矩阵，发布时集中核验 | 无新增 CI 退化；正式发布绑定代码/数据/模型/包 |
@@ -90,7 +91,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 
 ## 4. 当前唯一下一步
 
-**唯一下一步：决定是否开放真实客户端的“明确批准后执行”入口。** M3.R5 已在隔离临时副本证明 exact approval token 只允许一次精确 patch，执行后 digest 正确、undo 恢复成功，stale snapshot/file、篡改、重放、checkpoint 恢复和重复 undo 均拒绝；真实源 fixture 未变化。下一步若获授权，只接现有 preview/approval/executor contract 到客户端确认按钮，并默认保留 preview-only、显式显示 before/after digest、单次 token、失败即停和 undo；不把批准动作交给 native planner，不开放自动批准、terminal、MCP 或 editor.set_language。若不开放真实执行，则维持当前 R5 证据并转入 M4 的持续学习/能力保持。这个节点涉及真实用户工作区副作用，需用户明确选择后再改代码或运行。
+**唯一下一步：完成 M4.R0 的 seed47 同条件三周期 formal，并生成三 seed aggregate。** 使用与 seed11/29 完全相同的 `epochs=1`、`train=1 MiB`、`eval=128 KiB`、`chunk=64 KiB`、checkpoint interval=1、仅 `cascade` 臂，从 seed47 已验收 child 的 `last.pt` 继续；先验证 C→C′→C″ record-disjoint、三次 active owner 变化、shared/protected owner 不变、fresh-process checkpoint/生成 canary 和 read-only 评分，再汇总 C″ 新留出收益、C/C′ 保持、A retention、训练/保存/恢复成本。结果仍 `can_promote=false`：三 seed 若继续负收益/后续退化，停止把当前固定容量 readout cascade 当作成长路线并回到一次明确的巩固或容量瓶颈实验；不得在 seed47 前接入真实客户端写入，也不得把 M3 的隔离执行证据冒充模型自治。
 
 2026-09-06 实际审计已证明首轮报告不能作为能力证据：旧 evaluator 的 C/C′ 只是换 partition seed，不是新记录。当前已落地的修复为 `scripts/training/eval_taiji_m2r1_phase_c_canary.py` v2、`scripts/training/audit_taiji_m2r1_data_contract.py` 和 `reports/taiji_m2r1_data_contract_20260906.json`：
 
@@ -297,6 +298,16 @@ R5 已交付 `scripts/training/eval_taiji_m3r5_approved_execution.py`、`tests/t
 ### M3.R6：真实客户端批准入口（决策点）
 
 R6 不是默认继续开发的自动执行阶段。若用户明确开放真实批准入口，才审计并接线现有客户端 preview → user confirmation → exact approval token → executor → outcome/undo 展示链；首版必须 preview-only 默认、显式 before/after digest、当前 capability snapshot/boundary、一次性 token、失败即停、可撤销，并保留 native planner 不能自发批准的硬边界。接线前先做 API/UI contract test 和真实客户端根目录 deny-by-default 检查；不在此节点训练新的 write head，也不接 terminal/MCP/editor.set_language。
+
+### M4.R0：固定容量 C→C′→C″ 三周期 continuation（进行中，2026-09-08）
+
+这一轮把原 M2.R1 的两周期 cascade 扩展为三条 record-disjoint continuation course，仍只训练 isolated active predictive readout；shared fabric、predictive context、protected readout 和持久记忆保持冻结。它检验的是“在同一继承 checkpoint 上连续吸收新记录，是否出现可重复的新留出收益且旧课程不退化”，不是结构增长，也不是自主选择学习策略。
+
+- 数据契约已验证：新增 `phase_c3` 使用 `partition_seed=45`，排除全部六份 A/B lineage 以及 phase-C、phase-C′；`phase_c3` 与所有 lineage/C/C′ overlap 均为 `0`。数据审计与契约测试均通过。
+- seed11 smoke、seed11 formal、seed29 formal 报告均 `status=passed` 且所有技术/owner/checkpoint/fresh-process/read-only checks 为真；报告分别为 `reports/taiji_m4r0_cascade3_smoke_seed11_20260907.json`、`reports/taiji_m4r0_cascade3_seed11_20260907.json`、`reports/taiji_m4r0_cascade3_seed29_20260908.json`。
+- 正式结果：seed11 的 C″ gain=`-0.02856 BPB`，C cycle2/cycle3 delta=`+0.01827/+0.02135 BPB`；seed29 的 C″ gain=`-0.03579 BPB`，C cycle2/cycle3 delta=`+0.01088/+0.03428 BPB`。两 seed 的 C′ 后续也退化，且 `can_promote=false`；这足以否定当前两 seed 上的“固定容量连续 cascade 已形成成长收益”，但还不替代预注册的三 seed aggregate。
+- 资源事实：formal seed11/29 的三周期训练分别约 `3846.6/3639.5 s`，峰值工作集约 `353.7/355.2 MiB`，最终 checkpoint 约 `33.3 MB`；这些是当前 CPU 运行成本，不是硬件优势，也不代表可扩展大模型训练成本。
+- 完成 seed47 后，若三 seed aggregate 仍不支持收益，下一轮只能在“有证据的巩固/防遗忘机制”与“零初始残差容量候选”中按瓶颈选择一个；不能并列堆叠多个新 owner、router 或插件来掩盖固定容量路线未通过。
 
 ## 8. M4：在原有知识上成长的研究日程
 

@@ -52,6 +52,7 @@ from taiji.internalization import content_digest  # noqa: E402
 FORMAT = "taiji-r1-phase-c-arms-v2"
 C_PARTITION_SEED = 43
 C2_PARTITION_SEED = 44
+C3_PARTITION_SEED = 45
 PHASE_B_SEED_OFFSET = 10_000
 COHORT_SEEDS = (11, 29, 47)
 ALL_ARMS = ("no_update", "protected_only", "active_only", "replay", "cascade")
@@ -67,8 +68,9 @@ class M2R1PhaseChain:
 
     Each evaluated source has its own phase-A/phase-B lineage because the
     existing children were trained with seed-specific partition addresses.
-    Phase C and C' are shared across the cohort, but exclude the union of all
-    source lineages so no child can receive a record it already consumed.
+    Phase C, C' and C'' are shared across the cohort, but exclude the union
+    of all source lineages so no child can receive a record it already
+    consumed.
     """
 
     lineage_seeds: tuple[int, ...]
@@ -76,6 +78,7 @@ class M2R1PhaseChain:
     phase_b_by_seed: dict[int, FoundationTrainingDataset]
     phase_c: FoundationTrainingDataset
     phase_c2: FoundationTrainingDataset
+    phase_c3: FoundationTrainingDataset
     overlap_counts: dict[str, int]
 
 
@@ -106,12 +109,13 @@ def build_disjoint_phase_chain(
     cohort_seeds: Sequence[int] = COHORT_SEEDS,
     phase_c_seed: int = C_PARTITION_SEED,
     phase_c2_seed: int = C2_PARTITION_SEED,
+    phase_c3_seed: int = C3_PARTITION_SEED,
     profile: str = "foundation",
 ) -> M2R1PhaseChain:
-    """Build the A/B lineage and record-disjoint C/C' continuation chain.
+    """Build the A/B lineage and record-disjoint C/C'/C'' continuation chain.
 
     Different partition seeds alone are not a novelty guarantee.  A and B are
-    rebuilt with their real source lineage, then C/C' exclude the selected
+    rebuilt with their real source lineage, then C/C'/C'' exclude the selected
     record digests from every cohort lineage.  The function fails before any
     model training if the record-level boundary is not closed.
     """
@@ -119,7 +123,7 @@ def build_disjoint_phase_chain(
     normalized_seeds = tuple(dict.fromkeys(int(seed) for seed in cohort_seeds))
     if not normalized_seeds or any(seed <= 0 for seed in normalized_seeds):
         raise ValueError("cohort_seeds must contain positive values")
-    if int(phase_c_seed) <= 0 or int(phase_c2_seed) <= 0:
+    if int(phase_c_seed) <= 0 or int(phase_c2_seed) <= 0 or int(phase_c3_seed) <= 0:
         raise ValueError("phase C partition seeds must be positive")
     if not corpus_paths:
         raise ValueError("M2.R1 data contract needs at least one corpus path")
@@ -166,24 +170,41 @@ def build_disjoint_phase_chain(
         exclude_datasets=lineage_exclusions + (phase_c,),
         track_record_digests=True,
     )
+    phase_c3 = FoundationTrainingDataset.from_jsonl(
+        corpus_paths,
+        profile=profile,
+        partition_seed=phase_c3_seed,
+        exclude_datasets=lineage_exclusions + (phase_c, phase_c2),
+        track_record_digests=True,
+    )
 
     overlap_counts: dict[str, int] = {}
     record_sets = {
         name: _record_set(dataset)
-        for name, dataset in (*lineage_datasets, ("phase_c", phase_c), ("phase_c2", phase_c2))
+        for name, dataset in (
+            *lineage_datasets,
+            ("phase_c", phase_c),
+            ("phase_c2", phase_c2),
+            ("phase_c3", phase_c3),
+        )
     }
     for seed in normalized_seeds:
         key = f"phase_a_seed{seed}__vs__phase_b_seed{seed}"
         overlap_counts[key] = len(
             record_sets[f"phase_a_seed{seed}"] & record_sets[f"phase_b_seed{seed}"]
         )
-    for course_name in ("phase_c", "phase_c2"):
+    for course_name in ("phase_c", "phase_c2", "phase_c3"):
         for lineage_name, _dataset in lineage_datasets:
             key = f"{lineage_name}__vs__{course_name}"
             overlap_counts[key] = len(record_sets[lineage_name] & record_sets[course_name])
-    overlap_counts["phase_c__vs__phase_c2"] = len(
-        record_sets["phase_c"] & record_sets["phase_c2"]
-    )
+    for a_name, b_name in (
+        ("phase_c", "phase_c2"),
+        ("phase_c", "phase_c3"),
+        ("phase_c2", "phase_c3"),
+    ):
+        overlap_counts[f"{a_name}__vs__{b_name}"] = len(
+            record_sets[a_name] & record_sets[b_name]
+        )
     overlap_failures = {key: value for key, value in overlap_counts.items() if value}
     if overlap_failures:
         raise ValueError(f"M2.R1 record-disjoint Gate failed: {overlap_failures}")
@@ -194,6 +215,7 @@ def build_disjoint_phase_chain(
         phase_b_by_seed=phase_b_by_seed,
         phase_c=phase_c,
         phase_c2=phase_c2,
+        phase_c3=phase_c3,
         overlap_counts=overlap_counts,
     )
 
@@ -212,6 +234,7 @@ def _phase_chain_metadata(chain: M2R1PhaseChain) -> dict[str, Any]:
         },
         "phase_c": _dataset_metadata(chain.phase_c),
         "phase_c2": _dataset_metadata(chain.phase_c2),
+        "phase_c3": _dataset_metadata(chain.phase_c3),
         "overlap_counts": dict(chain.overlap_counts),
         "record_disjoint": not any(chain.overlap_counts.values()),
     }
@@ -960,8 +983,10 @@ def _run_cascade_arm(
     source_model: Taiji,
     c_train: bytes,
     c2_train: bytes,
+    c3_train: bytes,
     c_holdout: bytes,
     c2_holdout: bytes,
+    c3_holdout: bytes,
     a_retention: bytes,
     epochs: int,
     seed: int = 11,
@@ -970,11 +995,12 @@ def _run_cascade_arm(
     progress_dir: Path | None = PROGRESS_OUTPUT_DIR,
     resume: bool = False,
 ) -> dict[str, Any]:
-    """Two-cycle cascade: one active branch trains on phase-C then phase-C'.
+    """Three-cycle cascade: one active branch trains on phase-C, -C', -C''.
 
-    Measures the second-cycle gain on C' holdout, the retention of cycle-1 (C
-    holdout after cycle-2) and the long-run A retention, all on the same
-    isolated active owner with shared fabric/context/protected readout frozen.
+    Measures the third-cycle gain on C'' holdout, the retention of cycles 1-2
+    (C/C' holdouts after cycle-3) and the long-run A retention, all on the
+    same isolated active owner with shared fabric/context/protected readout
+    frozen.
     """
 
     boundary = WorkbenchTaskBoundary.issue(
@@ -1049,6 +1075,7 @@ def _run_cascade_arm(
             authorization=authorization,
         )[0]
     )
+    cycle1_scoring_seconds = time.perf_counter() - started_scoring
     model, cycle2_training = _train_stream_in_chunks(
         model,
         c2_train,
@@ -1072,11 +1099,59 @@ def _run_cascade_arm(
         },
     )
     training_runs.append(cycle2_training)
+    after_cycle2 = model.active_predictive_readout_metadata
+    if after_cycle2 is None:
+        raise RuntimeError("active readout disappeared after cycle 2")
+    c2_after_cycle2 = float(
+        _score_read_only(
+            model,
+            c2_holdout,
+            boundary=boundary,
+            authorization=authorization,
+        )[0]
+    )
+    c_after_cycle2 = float(
+        _score_read_only(
+            model,
+            c_holdout,
+            boundary=boundary,
+            authorization=authorization,
+        )[0]
+    )
+    model, cycle3_training = _train_stream_in_chunks(
+        model,
+        c3_train,
+        epochs=epochs,
+        chunk_bytes=chunk_bytes,
+        checkpoint_interval=checkpoint_interval,
+        progress_path=(
+            None
+            if progress_dir is None
+            else progress_dir / f"seed{seed}_cascade_cycle3_c{len(c3_train)}.pt"
+        ),
+        resume=resume,
+        run_key=f"seed{seed}:cascade:cycle3:{len(c3_train)}",
+        boundary=boundary,
+        authorization=authorization,
+        learn_kwargs={
+            "use_memory": False,
+            "learn_fabric": False,
+            "learn_predictive_context": False,
+            "learn_predictive_readout": True,
+        },
+    )
+    training_runs.append(cycle3_training)
     active_after = model.active_predictive_readout_metadata
     if active_after is None:
-        raise RuntimeError("active readout disappeared after cycle 2")
-
-    c2_bpb, c2_ro, _, _ = _score_read_only(
+        raise RuntimeError("active readout disappeared after cycle 3")
+    started_final_scoring = time.perf_counter()
+    c3_bpb, c3_ro, _, _ = _score_read_only(
+        model,
+        c3_holdout,
+        boundary=boundary,
+        authorization=authorization,
+    )
+    c2_final_bpb, c2_final_ro, _, _ = _score_read_only(
         model,
         c2_holdout,
         boundary=boundary,
@@ -1094,13 +1169,13 @@ def _run_cascade_arm(
         boundary=boundary,
         authorization=authorization,
     )
-    p_c2_bpb, p_c2_ro, _, _ = _score_read_only(
+    p_c3_bpb, p_c3_ro, _, _ = _score_read_only(
         model,
-        c2_holdout,
+        c3_holdout,
         boundary=protected_boundary,
         authorization=protected_authorization,
     )
-    scoring_seconds = time.perf_counter() - started_scoring
+    scoring_seconds = (time.perf_counter() - started_final_scoring) + cycle1_scoring_seconds
 
     active_checkpoint = model.checkpoint()
     active_checkpoint_digest = content_digest(active_checkpoint)
@@ -1144,12 +1219,14 @@ def _run_cascade_arm(
         "active_readout_changes": active_before["readout_digest"]
         != active_after["readout_digest"],
         "active_readout_changes_during_cycle2": after_cycle1["readout_digest"]
+        != after_cycle2["readout_digest"],
+        "active_readout_changes_during_cycle3": after_cycle2["readout_digest"]
         != active_after["readout_digest"],
         "shared_fabric_unchanged": content_digest(model.fabric.to_payload()) == shared_before,
         "protected_owners_unchanged": _protected_owner_digest(model) == protected_before,
         "protected_readout_unchanged": protected_readout_before
         == model.readout_registry_status()["protected"]["readout_digest"],
-        "scores_are_read_only": all((c2_ro, c_ro, a_ro, p_c2_ro)),
+        "scores_are_read_only": all((c3_ro, c2_final_ro, c_ro, a_ro, p_c3_ro)),
         "registry_round_trips_in_process": (
             restored_metadata == active_after and restored_digest == active_checkpoint_digest
         ),
@@ -1166,12 +1243,17 @@ def _run_cascade_arm(
         "arm": "cascade",
         "checks": checks,
         "capability": {
-            "protected_c2_holdout_bpb": p_c2_bpb,
-            "active_c2_holdout_bpb": c2_bpb,
-            "c2_holdout_gain_bpb": p_c2_bpb - c2_bpb,
-            "active_c_holdout_bpb_after_cycle2": c_final_bpb,
+            "protected_c3_holdout_bpb": p_c3_bpb,
+            "active_c3_holdout_bpb": c3_bpb,
+            "c3_holdout_gain_bpb": p_c3_bpb - c3_bpb,
+            "active_c2_holdout_bpb_after_cycle3": c2_final_bpb,
+            "c2_holdout_after_cycle2_bpb": c2_after_cycle2,
+            "c2_cycle3_delta_bpb": c2_final_bpb - c2_after_cycle2,
+            "active_c_holdout_bpb_after_cycle3": c_final_bpb,
             "c_holdout_after_cycle1_bpb": c_after_cycle1,
-            "c_cycle2_delta_bpb": c_final_bpb - c_after_cycle1,
+            "c_holdout_after_cycle2_bpb": c_after_cycle2,
+            "c_cycle2_delta_bpb": c_after_cycle2 - c_after_cycle1,
+            "c_cycle3_delta_bpb": c_final_bpb - c_after_cycle2,
             "active_a_retention_bpb": a_final_bpb,
         },
         "round_trip": {
@@ -1183,7 +1265,7 @@ def _run_cascade_arm(
             "fresh_process_restore_seconds": restore_seconds,
         },
         "training": {
-            "metrics": cycle2_training["metrics"],
+            "metrics": cycle3_training["metrics"],
             "resource": _merge_stream_resources(training_runs),
         },
         "resources": {
@@ -1449,15 +1531,22 @@ def run_arms(
         )
     if "cascade" in arms:
         c2_dataset = phase_chain.phase_c2
+        c3_dataset = phase_chain.phase_c3
         if train_bytes <= 0 or train_bytes > len(c2_dataset.train):
             raise ValueError("cascade train_bytes must be within the phase-C' partition")
+        if train_bytes <= 0 or train_bytes > len(c3_dataset.train):
+            raise ValueError("cascade train_bytes must be within the phase-C'' partition")
+        if eval_bytes <= 0 or eval_bytes > len(c3_dataset.holdout):
+            raise ValueError("cascade eval_bytes must fit the phase-C'' holdout")
         results.append(
             _run_cascade_arm(
                 source_model=source_model,
                 c_train=c_train,
                 c2_train=c2_dataset.train[:train_bytes],
+                c3_train=c3_dataset.train[:train_bytes],
                 c_holdout=c_holdout,
                 c2_holdout=c2_dataset.holdout[:eval_bytes],
+                c3_holdout=c3_dataset.holdout[:eval_bytes],
                 a_retention=a_retention,
                 epochs=epochs,
                 seed=seed,
@@ -1469,6 +1558,7 @@ def run_arms(
         )
     else:
         c2_dataset = None
+        c3_dataset = None
 
     all_passed = all(
         bool(result["checks"]) and all(bool(value) for value in result["checks"].values())
@@ -1496,6 +1586,9 @@ def run_arms(
             "phase_c": _dataset_metadata(c_dataset),
             "phase_c2": (
                 None if c2_dataset is None else _dataset_metadata(c2_dataset)
+            ),
+            "phase_c3": (
+                None if c3_dataset is None else _dataset_metadata(c3_dataset)
             ),
         },
         "data_contract": {
@@ -1596,6 +1689,7 @@ def main() -> int:
                     "c_holdout_gain_bpb",
                     arm["capability"].get("c2_holdout_gain_bpb"),
                 ),
+                "c3_holdout_gain_bpb": arm["capability"].get("c3_holdout_gain_bpb"),
             }
             for arm in result["arms"]
         ],

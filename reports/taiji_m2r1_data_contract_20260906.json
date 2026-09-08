@@ -181,6 +181,34 @@
       ],
       "selected_record_count": 1555
     },
+    "phase_c3": {
+      "digest": "33d3a0d9a755d4d315e875a42266a4f4ec74a6a7b54f9831bfa676bee4d2d1cd",
+      "partition_seed": 45,
+      "profile": "foundation",
+      "sample_counts": {
+        "train": 1048576,
+        "holdout": 131072,
+        "retention": 131072
+      },
+      "source_files": [
+        [
+          "data\\simple_zh\\dialogue_extended_clean.jsonl",
+          "c2cfd3c881b061054d68ef21ed36a62301cd0f35fa802b5293b05b61a0973c6b"
+        ]
+      ],
+      "excluded_dataset_digest": null,
+      "excluded_dataset_digests": [
+        "8f81f274c39f1ce93ac069afdb015058978358450b27d21932d94a33ee3ba038",
+        "99ab9846193ccc2897d74c96be8245784f213ac7bc5a9886c928e38bf906132e",
+        "b193f4e25dee8b88c3bab71d3fd51a79dbfa973b972af37681334cfa32d13408",
+        "a01a0206365ca30e132095350d59bc04cea39e09ee86b33681bab0f45663499d",
+        "8ff929545031de2b082589b4927be641863744947802146f9767b1d14dc26a57",
+        "070f0584743edce90e3b6685504cd097fe2423b10c218194231c6cf92d5f9eb6",
+        "ac97455f1583b90f7e2d62ca3c682c8e27f0c56bb7275ebee6abdb17fc6476bd",
+        "13dee7b2f7d38cd3688a5af76264c24cb6156ea371e9db88d812f5ea283598c1"
+      ],
+      "selected_record_count": 1559
+    },
     "overlap_counts": {
       "phase_a_seed11__vs__phase_b_seed11": 0,
       "phase_a_seed29__vs__phase_b_seed29": 0,
@@ -197,7 +225,15 @@
       "phase_b_seed29__vs__phase_c2": 0,
       "phase_a_seed47__vs__phase_c2": 0,
       "phase_b_seed47__vs__phase_c2": 0,
-      "phase_c__vs__phase_c2": 0
+      "phase_a_seed11__vs__phase_c3": 0,
+      "phase_b_seed11__vs__phase_c3": 0,
+      "phase_a_seed29__vs__phase_c3": 0,
+      "phase_b_seed29__vs__phase_c3": 0,
+      "phase_a_seed47__vs__phase_c3": 0,
+      "phase_b_seed47__vs__phase_c3": 0,
+      "phase_c__vs__phase_c2": 0,
+      "phase_c__vs__phase_c3": 0,
+      "phase_c2__vs__phase_c3": 0
     },
     "record_disjoint": true
   }
