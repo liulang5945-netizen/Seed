@@ -16,6 +16,8 @@
 >
 > M4.R7 bounded formal retention Gate 已完成：preflight、三 seed foundation 数据链、checkpoint 原子保存/fresh restore、owner/source/read-only Gate 全通过；scale `0.5` C″ gain 均值 `+0.152757 BPB`、正向 `3/3`、C cycle2 退化 `0/3`，但 C cycle3 退化 `2/3`。formal Gate 失败，半速候选撤回，不 promotion、不扩容，转 cycle3 failure attribution。
 >
+> M4.R8 cycle3 failure attribution 已完成：scale `0.5` 的 C cycle3 退化重复出现在 seed11/47，失败 seed 的 predictive-context/readout relative L2 都没有超过通过 seed 的 1.10 倍；不是 owner magnitude outlier，formal candidate 保持撤回，下一步只审计 foundation 课程边界与更新规则交互。
+>
 > **审计范围声明：** 本版不是只读 plans 得出的排程。它已对当前 `main` 的关键模型、数据、训练和 evaluator 代码、实际 JSON 报告与现存 checkpoint 做定向交叉核对，并对 active/protected 评分调用链和 B5 数据流做最小复现；但没有逐行审计仓库全部客户端、前端、CI 和历史模块。因此“当前证据”有代码或产物支撑，“后续候选/待验证”仍是计划假设，不能提前当作已实现能力。
 
 ## 1. 当前定位与本次调整
@@ -67,6 +69,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | M4.R5 update-scale pilot aggregate（三 seed 已完成，严格 retention 否决） | seed11/29/47 同一 pilot 预算、scale `0/0.5/1.0`、protected joint 三臂；技术/owner/source/read-only/checkpoint Gate 全通过；aggregate `reports/taiji_m4r5_update_scale_pilot_aggregate_20260908.json` | scale `0.5` C″ gain 均值 `+0.115675 BPB`、正向 `3/3`、C cycle3 退化 `0/3`、C cycle2 退化 `1/3`；legacy `1.0` gain 均值 `+0.017105 BPB`、正向 `2/3`、C cycle2 退化 `2/3`；半速不满足严格 all-seed retention，下一步做 cycle-level attribution |
 | M4.R6 cycle-level retention attribution（三 seed 已完成，保留 formal 候选） | 只读读取 R5 三 seed scale `0/0.5/1.0` pilot reports 与 R4 owner-update audit，生成 seed × scale × cycle 矩阵；技术、variant、三周期、fixed-capacity、R4 audit Gate 全通过；报告 `reports/taiji_m4r6_cycle_retention_attribution_20260908.json` | scale `0.5` 只有 seed47 的 C cycle2 单点退化，C cycle3 退化 `0/3`，且没有 seed47 owner update outlier；保留为预注册 formal candidate，仍 `can_promote=false` |
 | M4.R7 bounded formal retention Gate（三 seed 已完成，formal 否决） | `eval_taiji_m4r7_formal_preflight.py` 通过；foundation profile、65,536 train/16,384 eval、fixed-capacity、scale `0/0.5/1.0` 三 seed formal；三个 report 技术/owner/checkpoint/fresh-restore/source/read-only Gate 全通过；aggregate `reports/taiji_m4r7_formal_aggregate_20260908.json` | scale `0.5` C″ gain 均值 `+0.152757 BPB`、正向 `3/3`、C cycle2 退化 `0/3`，但 C cycle3 退化 `2/3`；formal Gate `false`，候选撤回，`can_promote=false`，总实际耗时约 3,627 秒 |
+| M4.R8 cycle3 failure attribution（已完成，formal 候选继续撤回） | 只读加载 R7 三 seed formal reports/artifacts，计算 predictive-context/readout 实际 relative L2、changed scalars，并连接 R6/R4 evidence；报告 `reports/taiji_m4r8_cycle3_failure_attribution_20260908.json`；R6/R4/source/artifact Gate 全通过 | scale `0.5` C cycle3 失败 seed=11/47、通过 seed=29；context relative L2 均值 `0.231521`、readout `0.235522`，失败 seed 没有 owner outlier；结论转 foundation 课程边界/更新规则交互审计，不训练 |
 | M2.R2.R0 seed11 smoke | 固定 seed11 parent，frozen/active_readout 两臂、4/16 KiB、4 点；20/20 技术检查通过；曾捕获默认绝对 corpus path 导致 lineage digest 不一致，已修正为 child 生成时的相对 canonical path | checkpoint preflight digest 一致；active owner 只写 active slot，但 holdout gain 为 `-0.06255/-0.14109 BPB`；smoke 仅作执行链证据，不晋级 |
 | M2.R2.R0 seed11 formal curve | 固定 seed11 parent，frozen/active_readout/predictive_context/joint_predictive 四臂、4/16/64 KiB、12 点；60/60 技术检查通过；preflight checkpoint `33,174,421` bytes，峰值工作集约 `535–569 MB` | protected holdout baseline `4.049390 BPB`；context gain 为 `+0.001515/+0.023738/-0.016105`，16 KiB 之外不稳定；active gain `-0.062549/-0.141091/-0.165254`，joint gain `-0.058237/-0.120990/-0.153693`；owner 写入集合与 read-only scoring 全部正确，当前不引入新架构 |
 | M2.R2.R0 context aggregate | seed11 formal + seed29/47 context 复现共 24 点、120/120 技术检查通过，来源报告 SHA-256 已写入 aggregate | 4 KiB gain 均值 `+0.007681`（3/3 正）；16 KiB `+0.018081`（2/3 正）；64 KiB `-0.010650`（1/3 正）；结论是短/中预算有信号但长预算不成立，先做消融与参照，不做时间架构晋级 |
@@ -104,7 +107,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | 4 | M2.R3 语义与表达训练 | **R3.R0～R3.R4 已完成**：结构化语义训练合同、可选 runtime owner/checkpoint、多实体/关系/约束多 seed canary、多步事件到持久 WorldState/Goal satisfaction、runtime adapter 接线已闭合 | runtime 输入只来自当前 `PerceptEvent`；事实/Goal/ContentPlan/WorldState 结果可审计；provider 表达收益与 native-only 分开统计 |
 | 5 | M2.R4 联合课程与保持 | **已完成**：frozen/static-only/transition-only/joint-native 对照、双 owner 组合、runtime 双组件 checkpoint 和 protected retention 已闭合；不把独立 owner 的串行课程称为共享权重联合优化 | 三 seed 正式报告；joint-native 新组合通过且两个受保护 owner 均保持 |
 | 6 | M3 最小真实任务验证 | **M3.R0/R1/R2/R3/R4/R5 已完成；真实客户端批准流仍是决策闸门**：R0 闭合只读证据边界，R1 训练静态 observation，R2 训练跨 tick task-state transition，R3 形成 snapshot 绑定只读 `ActionIntent`，R4 闭合 preview/approval，R5 在隔离副本验证一次执行与 undo | R5 已证明 exact approval token、digest、执行一次、undo 和恢复拒绝；真实客户端 API/UI 接线会扩大外部副作用范围，未获明确授权不接线 |
-| 7 | M4 连续成长 | **M4.R0 已完成且不晋级；M4.R1 formal 已完成但 retention Gate 否决；M4.R2 capacity diagnosis canary 已完成且不支持扩容；M4.R3 pilot attribution 未通过 retention；M4.R4 审计已完成；M4.R5 pilot 半速有效但严格 retention 否决；M4.R6 已完成；M4.R7 formal retention Gate 因 C cycle3 退化否决** | M4.R8 只读归因 R7 的 C cycle3 失败，读取 formal reports/artifacts 并测实际 owner update；不得继续试 scale、扩容或换数据，未完成归因不得恢复训练 |
+| 7 | M4 连续成长 | **M4.R0 已完成且不晋级；M4.R1 formal 已完成但 retention Gate 否决；M4.R2 capacity diagnosis canary 已完成且不支持扩容；M4.R3 pilot attribution 未通过 retention；M4.R4 审计已完成；M4.R5 pilot 半速有效但严格 retention 否决；M4.R6 已完成；M4.R7 formal retention Gate 因 C cycle3 退化否决；M4.R8 已确认不是 owner magnitude outlier** | M4.R9 只读审计 foundation C→C2→C3 课程边界、phase difficulty、JS/entropy、record lineage 与 R7 退化对齐；不得继续试 scale、扩容或换数据，未完成课程/规则归因不得恢复训练 |
 | 8 | M5 知识与身体 | Skill/MCP 数据内化、真实调用与客户端插件 | 认知与执行收益可分别归因，权限/撤销闭合 |
 | 9 | M6 产品收口 | provider 稳定性、UI/桌面、遗留格式清理 | packaged client 与真实能力一致 |
 | 横向 | M7 工程质量 | 每轮相关检查，阶段末全矩阵，发布时集中核验 | 无新增 CI 退化；正式发布绑定代码/数据/模型/包 |
@@ -114,7 +117,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 
 ## 4. 当前唯一下一步
 
-**唯一下一步：实现 M4.R8 的 cycle3 failure attribution。** R7 已完成三 seed 较大预算 formal，但 scale `0.5` 的 C cycle3 retention 在 seed11/47 退化，说明“半速改善新收益”不能解释为稳定成长；候选已撤回。R8 只读取 R7 formal reports/artifacts、R6 attribution 和 R4 owner audit，按 seed × scale × cycle 对照 C/C2/C3 变化，并从 source checkpoint 到 formal artifact 计算 predictive-context/readout 的实际 update magnitude，判断退化是更新幅度相关还是 C3 phase boundary 相关。不训练、不改 scale、不换数据、不扩容、不接 provider/MCP/客户端写入；归因完成前所有结果保持 `can_promote=false`。
+**唯一下一步：实现 M4.R9 的 foundation 课程边界审计。** R8 已证明 C cycle3 失败在 seed11/47 重复，但不伴随 owner update magnitude outlier；因此下一步只读取 R7 foundation data chain 和 formal reports，核对 C/C2/C3 的 train/holdout entropy、JS、unique-byte、record count/digest、frozen difficulty 与退化 seed 对齐，区分 phase boundary 问题和 update-rule 交互。不训练、不改 scale、不换数据源、不扩容、不接 provider/MCP/客户端写入；R9 完成前所有结果保持 `can_promote=false`。
 
 2026-09-06 实际审计已证明首轮报告不能作为能力证据：旧 evaluator 的 C/C′ 只是换 partition seed，不是新记录。当前已落地的修复为 `scripts/training/eval_taiji_m2r1_phase_c_canary.py` v2、`scripts/training/audit_taiji_m2r1_data_contract.py` 和 `reports/taiji_m2r1_data_contract_20260906.json`：
 
@@ -402,13 +405,22 @@ R6 只读归因没有消除严格 Gate 的历史记录，但把失败范围收�
 - **实际结果**：aggregate `reports/taiji_m4r7_formal_aggregate_20260908.json` 的 scale `0.5` C″ gain 均值 `+0.152757 BPB`、正向 `3/3`；C cycle2 退化 `0/3`，但 C cycle3 退化 `2/3`（seed11 `+0.002126`、seed47 `+0.009497` BPB），因此 `formal_gate_passed=false`。
 - **停止线结论**：formal candidate 撤回；不 promotion、不扩容、不引入 UltraData。下一步只做 R8 cycle3 failure attribution，归因前不再启动训练。
 
-### M4.R8：cycle3 failure attribution（下一步）
+### M4.R8：cycle3 failure attribution（已完成，2026-09-08）
 
 R7 已排除“技术链/保存恢复失败”，但没有证明 scale `0.5` 能在更长连续课程中保持旧能力。R8 必须先确定 C3 退化来自 update magnitude、C3 phase boundary，还是两者交互。
 
 - **输入**：R7 三 seed formal report 与 scale artifacts、R6 周期矩阵、R4 owner-update audit；只读加载 source checkpoint 和 formal artifact。
-- **输出**：每个 seed × scale 的 predictive-context/readout relative L2、changed scalars、C/C2/C3 delta、C2→C3 delta、owner update 与退化的对照表；不重新训练。
-- **停止线**：若退化与 owner update magnitude 相关，回到 consolidation/update-rule 设计；若只在 C3 phase boundary 出现，先做课程边界诊断；两种情况都不得直接恢复 scale formal 或扩容，全部保持 `can_promote=false`。
+- **输出**：报告 `reports/taiji_m4r8_cycle3_failure_attribution_20260908.json`；每个 seed × scale 的 predictive-context/readout relative L2、changed scalars、C/C2/C3 delta、C2→C3 delta、owner update 与退化的对照表。
+- **实际结果**：scale `0.5` C cycle3 失败 seed=11/47、通过 seed=29；context relative L2 mean=`0.231521`、readout mean=`0.235522`，失败组没有相对通过组超过 1.10 倍的 owner outlier；scale `1.0` 的 owner magnitude 更大，但不构成半速失败的特异解释。
+- **停止线结论**：formal candidate 继续撤回；下一步只做 R9 foundation 课程边界审计，不能直接恢复训练、scale formal 或扩容，全部保持 `can_promote=false`。
+
+### M4.R9：foundation 课程边界审计（下一步）
+
+R8 已将主要嫌疑从 owner 写入幅度移到 C3 phase boundary 或其与更新规则的交互。R9 只读重建 foundation profile 的 record-disjoint C→C2→C3 dataset metadata，不调用 `learn_bytes`。
+
+- **数据证据**：记录每一 phase 的 train/holdout bytes、unique-byte ratio、entropy、top-byte probability、train↔holdout JS、相邻 phase JS、selected record count、dataset digest 和 lineage overlap。
+- **能力对齐**：把 R7 每个 seed 的 C/C2/C3 holdout、C2→C3 delta、C cycle3 delta 与 phase difficulty 并排；检查 seed11/47 的退化是否共享同一课程特征。
+- **停止线**：若 C3 存在异常分布/边界，先修 data contract；若分布正常，再设计单一 update/consolidation 规则对照；两者都不得直接恢复 scale formal，保持 `can_promote=false`。
 
 ## 8. M4：在原有知识上成长的研究日程
 
