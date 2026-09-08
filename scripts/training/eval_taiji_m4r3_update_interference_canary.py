@@ -44,13 +44,13 @@ from taiji.internalization import content_digest  # noqa: E402
 
 FORMAT = "taiji-m4r3-update-interference-canary-v1"
 VERSION = 1
-EXPECTED_SEED = 11
+DEFAULT_SEED = 11
 EXPECTED_COHORT_SEEDS = (11, 29, 47)
 SCORE_NORMALIZER = math.log(2.0)
 ARM_NAMES = ("readout_only", "context_only", "joint")
 
 
-def _load_checkpoint(path: Path) -> tuple[dict[str, Any], Taiji]:
+def _load_checkpoint(path: Path, *, expected_seed: int) -> tuple[dict[str, Any], Taiji]:
     payload = torch.load(path, map_location="cpu", weights_only=False)
     if not isinstance(payload, Mapping):
         raise ValueError("source checkpoint must contain a mapping")
@@ -60,8 +60,8 @@ def _load_checkpoint(path: Path) -> tuple[dict[str, Any], Taiji]:
             raise ValueError("source checkpoint envelope is missing model payload")
         payload = model_payload
     model = Taiji.from_checkpoint(payload)
-    if int(model.config.seed) != EXPECTED_SEED:
-        raise ValueError(f"canary expects seed {EXPECTED_SEED}, got {model.config.seed}")
+    if int(model.config.seed) != int(expected_seed):
+        raise ValueError(f"canary expects seed {expected_seed}, got {model.config.seed}")
     return dict(payload), model
 
 
@@ -370,10 +370,11 @@ def _save_arm_artifact(
     arm: str,
     model: Taiji,
     *,
+    seed: int,
     source_digest: str,
 ) -> Path:
     artifact_dir.mkdir(parents=True, exist_ok=True)
-    path = artifact_dir / f"{arm}_seed{EXPECTED_SEED}.pt"
+    path = artifact_dir / f"{arm}_seed{seed}.pt"
     atomic_save(
         {
             "format": FORMAT,
@@ -407,15 +408,20 @@ def run_canary(
     train_bytes: int,
     eval_bytes: int,
     report_path: Path,
+    seed: int = DEFAULT_SEED,
+    profile: str = "smoke",
 ) -> dict[str, Any]:
     if train_bytes <= 0 or eval_bytes <= 0:
         raise ValueError("train_bytes and eval_bytes must be positive")
-    source_payload, source_model = _load_checkpoint(checkpoint_path)
+    source_payload, source_model = _load_checkpoint(
+        checkpoint_path,
+        expected_seed=seed,
+    )
     source_digest = content_digest(source_payload)
     chain = build_disjoint_phase_chain(
         [corpus_path],
         cohort_seeds=EXPECTED_COHORT_SEEDS,
-        profile="smoke",
+        profile=profile,
     )
     phases = (chain.phase_c, chain.phase_c2, chain.phase_c3)
     for phase in phases:
@@ -446,6 +452,7 @@ def run_canary(
             artifact_dir,
             arm,
             models[arm],
+            seed=seed,
             source_digest=source_digest,
         )
         for arm in ARM_NAMES
@@ -545,7 +552,7 @@ def run_canary(
         "generated_at_epoch": time.time(),
         "status": "passed" if technical_gate else "failed",
         "can_promote": False,
-        "seed": EXPECTED_SEED,
+        "seed": int(seed),
         "source_checkpoint": str(checkpoint_path),
         "source_checkpoint_digest": source_digest,
         "corpus": str(corpus_path),
@@ -553,7 +560,7 @@ def run_canary(
             "train_bytes": int(train_bytes),
             "eval_bytes": int(eval_bytes),
             "cohort_seeds": list(EXPECTED_COHORT_SEEDS),
-            "profile": "smoke",
+            "profile": profile,
             "arms": list(ARM_NAMES),
             "fixed_capacity": True,
             "gated_temporal_candidate": False,
@@ -612,33 +619,47 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checkpoint", type=Path, required=True)
     parser.add_argument("--corpus", type=Path, required=True)
+    parser.add_argument("--seed", type=int, default=DEFAULT_SEED)
+    parser.add_argument(
+        "--profile",
+        choices=("smoke", "pilot", "foundation"),
+        default="smoke",
+    )
     parser.add_argument(
         "--artifact-dir",
         type=Path,
-        default=PROJECT_ROOT / "output" / "taiji-m4r3-update-interference-canary",
+        default=None,
     )
     parser.add_argument("--train-bytes", type=int, default=4_096)
     parser.add_argument("--eval-bytes", type=int, default=1_024)
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT
-        / "reports"
-        / "taiji_m4r3_update_interference_canary_seed11_20260908.json",
+        default=None,
     )
     args = parser.parse_args(argv)
+    artifact_dir = args.artifact_dir or (
+        PROJECT_ROOT / "output" / f"taiji-m4r3-update-interference-canary-seed{args.seed}"
+    )
+    report_path = args.report or (
+        PROJECT_ROOT
+        / "reports"
+        / f"taiji_m4r3_update_interference_canary_seed{args.seed}_20260908.json"
+    )
     report = run_canary(
         checkpoint_path=args.checkpoint,
         corpus_path=args.corpus,
-        artifact_dir=args.artifact_dir,
+        artifact_dir=artifact_dir,
         train_bytes=args.train_bytes,
         eval_bytes=args.eval_bytes,
-        report_path=args.report,
+        report_path=report_path,
+        seed=args.seed,
+        profile=args.profile,
     )
     print(
         json.dumps(
             {
-                "report": str(args.report),
+                "report": str(report_path),
                 "status": report["status"],
                 "technical_gate_all_passed": report["technical_gate_all_passed"],
             },

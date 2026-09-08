@@ -1,0 +1,122 @@
+{
+  "format": "taiji-m4r3-update-interference-aggregate-v1",
+  "version": 1,
+  "generated_at_epoch": 1788868378.5832105,
+  "status": "passed",
+  "can_promote": false,
+  "seeds": [
+    11,
+    29,
+    47
+  ],
+  "source_reports": [
+    "reports\\taiji_m4r3_update_interference_pilot_seed11_20260908.json",
+    "reports\\taiji_m4r3_update_interference_pilot_seed29_20260908.json",
+    "reports\\taiji_m4r3_update_interference_pilot_seed47_20260908.json"
+  ],
+  "arms": {
+    "readout_only": {
+      "c3_gain_mean_bpb": 0.004278005371750974,
+      "c3_gain_min_bpb": -0.049280416224851464,
+      "c3_gain_max_bpb": 0.059922420947551736,
+      "c3_gain_positive_count": 2,
+      "c_cycle2_delta_mean_bpb": 0.0005242711372298222,
+      "c_cycle2_degradation_count": 2,
+      "c_cycle3_delta_mean_bpb": -0.04035382683960531,
+      "c_cycle3_degradation_count": 0,
+      "c2_cycle3_delta_mean_bpb": 0.06872431805309631,
+      "c2_cycle3_degradation_count": 3,
+      "retention_gate_passed_all": false,
+      "seed_metrics": {
+        "11": {
+          "c3_gain_bpb": -0.049280416224851464,
+          "c_cycle2_delta_bpb": -0.021366741039048343,
+          "c_cycle3_delta_bpb": -0.028399525160911487
+        },
+        "29": {
+          "c3_gain_bpb": 0.0021920113925526508,
+          "c_cycle2_delta_bpb": 0.010885357018604047,
+          "c_cycle3_delta_bpb": -0.03479933403585456
+        },
+        "47": {
+          "c3_gain_bpb": 0.059922420947551736,
+          "c_cycle2_delta_bpb": 0.012054197432133762,
+          "c_cycle3_delta_bpb": -0.05786262132204989
+        }
+      }
+    },
+    "context_only": {
+      "c3_gain_mean_bpb": 0.026450249224739153,
+      "c3_gain_min_bpb": -0.00500768331143675,
+      "c3_gain_max_bpb": 0.04497090423531258,
+      "c3_gain_positive_count": 2,
+      "c_cycle2_delta_mean_bpb": 0.004887296299871539,
+      "c_cycle2_degradation_count": 2,
+      "c_cycle3_delta_mean_bpb": -0.018277760558896183,
+      "c_cycle3_degradation_count": 0,
+      "c2_cycle3_delta_mean_bpb": -0.014148200402324859,
+      "c2_cycle3_degradation_count": 0,
+      "retention_gate_passed_all": false,
+      "seed_metrics": {
+        "11": {
+          "c3_gain_bpb": 0.03938752675034163,
+          "c_cycle2_delta_bpb": -0.02543637501033036,
+          "c_cycle3_delta_bpb": -0.01170543500774901
+        },
+        "29": {
+          "c3_gain_bpb": -0.00500768331143675,
+          "c_cycle2_delta_bpb": 0.03205253761491722,
+          "c_cycle3_delta_bpb": -0.010671908800800267
+        },
+        "47": {
+          "c3_gain_bpb": 0.04497090423531258,
+          "c_cycle2_delta_bpb": 0.008045726295027755,
+          "c_cycle3_delta_bpb": -0.03245593786813927
+        }
+      }
+    },
+    "joint": {
+      "c3_gain_mean_bpb": 0.017104691661737448,
+      "c3_gain_min_bpb": -0.01643583620861211,
+      "c3_gain_max_bpb": 0.058981001613028106,
+      "c3_gain_positive_count": 2,
+      "c_cycle2_delta_mean_bpb": 0.003932476507818213,
+      "c_cycle2_degradation_count": 2,
+      "c_cycle3_delta_mean_bpb": -0.04970688767458794,
+      "c_cycle3_degradation_count": 0,
+      "c2_cycle3_delta_mean_bpb": 0.061177451875823685,
+      "c2_cycle3_degradation_count": 3,
+      "retention_gate_passed_all": false,
+      "seed_metrics": {
+        "11": {
+          "c3_gain_bpb": -0.01643583620861211,
+          "c_cycle2_delta_bpb": -0.03735600600575317,
+          "c_cycle3_delta_bpb": -0.02693487240263437
+        },
+        "29": {
+          "c3_gain_bpb": 0.008768909580796347,
+          "c_cycle2_delta_bpb": 0.020846530286129372,
+          "c_cycle3_delta_bpb": -0.0520955823812832
+        },
+        "47": {
+          "c3_gain_bpb": 0.058981001613028106,
+          "c_cycle2_delta_bpb": 0.02830690524307844,
+          "c_cycle3_delta_bpb": -0.07009020823984624
+        }
+      }
+    }
+  },
+  "checks": {
+    "seed11_technical_gate": true,
+    "seed29_technical_gate": true,
+    "seed47_technical_gate": true,
+    "all_seed_reports_not_promoted": true,
+    "all_seed_chains_record_disjoint": true,
+    "same_arm_set": true
+  },
+  "technical_gate_all_passed": true,
+  "diagnosis": {
+    "joint_attribution_supported": false,
+    "interpretation": "three-seed smoke does not support joint attribution; return to data, course, or update-rule diagnosis before formalization"
+  }
+}
