@@ -73,7 +73,10 @@ def test_r4_trigger_requires_native_pressure_persistence_and_emits_no_task_route
 
     low_conflict = trigger.observe(_pressure(1, conflict=0.1), structural_budget=1)
     assert low_conflict.should_propose is False
-    assert low_conflict.reasons == ("pressure_below_threshold", "pressure_persistence_below_threshold")
+    assert low_conflict.reasons == (
+        "pressure_below_threshold",
+        "pressure_persistence_below_threshold",
+    )
     assert "task_id" not in low_conflict.to_payload()
 
     assert trigger.observe(_pressure(2), structural_budget=1).should_propose is False
@@ -226,12 +229,10 @@ def test_r4_live_pressure_is_emitted_by_bridge_tick_and_restores_exactly() -> No
         expected_squared_norm = sum(
             anchor_weight * float(synapses.edge_weight[anchor_index].pow(2).sum().item())
             for anchor_index, anchor_weight in zip(
-                anchor_indices, shadow.birth_anchor_weights
+                anchor_indices, shadow.birth_anchor_weights, strict=True
             )
         )
-        actual_squared_norm = float(
-            synapses.edge_weight[candidate_index].pow(2).sum().item()
-        )
+        actual_squared_norm = float(synapses.edge_weight[candidate_index].pow(2).sum().item())
         assert actual_squared_norm == pytest.approx(expected_squared_norm)
     candidate_projection = shadow.output_projection.pre_index == candidate_index
     assert bool(candidate_projection.any())
@@ -252,7 +253,9 @@ def test_r4_live_pressure_is_emitted_by_bridge_tick_and_restores_exactly() -> No
 
     bare_shadow_checkpoint = restored_shadow.to_payload()
     bare_shadow_digest = content_digest(bare_shadow_checkpoint)
-    parent_incoming = restored_shadow.region.incoming.edge_weight[: candidate.parent_unit_count].clone()
+    parent_incoming = restored_shadow.region.incoming.edge_weight[
+        : candidate.parent_unit_count
+    ].clone()
     parent_recurrent = (
         None
         if restored_shadow.region.recurrent is None
@@ -260,7 +263,9 @@ def test_r4_live_pressure_is_emitted_by_bridge_tick_and_restores_exactly() -> No
     )
     candidate_index = restored_shadow.region.unit_index(candidate.unit_id)
     parent_projection_mask = restored_shadow.output_projection.pre_index != candidate_index
-    parent_projection = restored_shadow.output_projection.edge_weight[parent_projection_mask].clone()
+    parent_projection = restored_shadow.output_projection.edge_weight[
+        parent_projection_mask
+    ].clone()
 
     selected_context = None
     selected_feedback = None

@@ -166,7 +166,9 @@ R4 要回答的不是“能否再创建一个区域”，而是“固定容量�
 
 R4 的最小交付 `pressure/proposal → shadow materialize → shadow train → validate → lesion/admit/rollback` 已形成可复现 CPU canary 和 versioned report；birth homeostasis 已把 G candidate lesion 从此前的负均值修复到正均值，但相对 fixed-large 的 G 仍未达 Gate，因此 R4 以“技术闭合、结构不晋级”收束。后续只允许做收束审计、默认路径保护和计划证据整理，不得继续用 gate 输入、出生缩放或新语料无边界试探来掩盖 fixed-large 反证；R5 自主路由、Skill/MCP/provider/客户端外围继续冻结，直到新的架构决策明确解除停止线。
 
-**当前唯一下一步**：完成 R4 收束审计，确认 homeostasis 仍只存在于 shadow 路径、默认 parent/checkpoint/forward 未被候选污染，并在提交前执行全量 CI；审计通过后保留 R4 证据并停在 R5 解冻决策点。
+R4 收束审计已完成其研究边界部分：R4 定向 6 项测试通过，homeostasis 只存在于独立 shadow，materialize 不改变默认 parent checkpoint/forward，版本一致性检查通过，本轮涉及文件的 ruff、B/SIM 和 black 约束通过。全量 native 回归得到 `627 passed, 17 failed, 15 errors, 1 skipped`；15 个 error 主要是本机历史 pytest 临时目录锁权限，切换到仓库可写 basetemp 后代表性测试可正常执行；剩余失败集中在既有 context/delayed memory、Workbench neutral baseline、interaction structural gate 和 synapse longevity 基线，不属于本轮 R4 代码路径。tracked source 的全仓 ruff/B/SIM 与 core mypy 也仍有历史门禁债务，因此不能把仓库 CI 写成已通过。
+
+**当前唯一下一步**：进入 M7 CI 基线收敛，先在不改变 R4 shadow/默认 parent 和研究结论的前提下，按 tracked source 修复可复现的 ruff、B/SIM、black 门禁，再单独处理 core mypy 与既有 native 回归；每批修复都必须有对应测试和提交，R5 learned router 及 Skill/MCP/provider/客户端外围继续冻结。
 
 R0 完成条件（已满足）：
 

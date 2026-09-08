@@ -276,15 +276,16 @@ def _shadow_parent_payload(shadow: AdaptiveResidualShadow) -> dict[str, Any]:
     parent_projection_mask = shadow.output_projection.pre_index != candidate_index
     recurrent = shadow.region.recurrent
     return {
-        "incoming_pre_index": shadow.region.incoming.pre_index[:parent_count].detach().cpu().clone(),
+        "incoming_pre_index": shadow.region.incoming.pre_index[:parent_count]
+        .detach()
+        .cpu()
+        .clone(),
         "incoming_edge_weight": shadow.region.incoming.edge_weight[:parent_count]
         .detach()
         .cpu()
         .clone(),
         "recurrent_pre_index": (
-            None
-            if recurrent is None
-            else recurrent.pre_index[:parent_count].detach().cpu().clone()
+            None if recurrent is None else recurrent.pre_index[:parent_count].detach().cpu().clone()
         ),
         "recurrent_edge_weight": (
             None
@@ -292,15 +293,11 @@ def _shadow_parent_payload(shadow: AdaptiveResidualShadow) -> dict[str, Any]:
             else recurrent.edge_weight[:parent_count].detach().cpu().clone()
         ),
         "threshold": shadow.region.threshold[:parent_count].detach().cpu().clone(),
-        "projection_pre_index": shadow.output_projection.pre_index[
-            parent_projection_mask
-        ]
+        "projection_pre_index": shadow.output_projection.pre_index[parent_projection_mask]
         .detach()
         .cpu()
         .clone(),
-        "projection_edge_weight": shadow.output_projection.edge_weight[
-            parent_projection_mask
-        ]
+        "projection_edge_weight": shadow.output_projection.edge_weight[parent_projection_mask]
         .detach()
         .cpu()
         .clone(),
@@ -403,20 +400,12 @@ def _growth_arm(
             course=course,
             trace=training_trace,
         )
-    active_trace = [
-        item for item in training_trace if item["candidate_activity"] > 1e-8
-    ]
-    residual_trace = [
-        item for item in training_trace if item["candidate_residual_norm"] > 1e-8
-    ]
-    credit_trace = [
-        item for item in training_trace if item["candidate_credit_norm"] > 1e-8
-    ]
+    active_trace = [item for item in training_trace if item["candidate_activity"] > 1e-8]
+    residual_trace = [item for item in training_trace if item["candidate_residual_norm"] > 1e-8]
+    credit_trace = [item for item in training_trace if item["candidate_credit_norm"] > 1e-8]
     utility_by_phase = {
         phase: [
-            float(item["candidate_utility"])
-            for item in training_trace
-            if item["phase"] == phase
+            float(item["candidate_utility"]) for item in training_trace if item["phase"] == phase
         ]
         for phase in ("S", "G")
     }
@@ -428,18 +417,12 @@ def _growth_arm(
         ]
         for phase in ("S", "G")
     }
-    utility_values = [
-        float(item["candidate_utility"]) for item in training_trace
-    ]
+    utility_values = [float(item["candidate_utility"]) for item in training_trace]
     counterfactual_utility_values = [
         float(item["candidate_counterfactual_utility"]) for item in training_trace
     ]
     gate_by_phase = {
-        phase: [
-            float(item["candidate_gate"])
-            for item in training_trace
-            if item["phase"] == phase
-        ]
+        phase: [float(item["candidate_gate"]) for item in training_trace if item["phase"] == phase]
         for phase in ("S", "G")
     }
     gate_values = [float(item["candidate_gate"]) for item in training_trace]
@@ -466,11 +449,7 @@ def _growth_arm(
         ),
     }
     holdout_gate_values = {
-        phase: [
-            float(item["candidate_gate"])
-            for item in holdout_trace
-            if item["phase"] == phase
-        ]
+        phase: [float(item["candidate_gate"]) for item in holdout_trace if item["phase"] == phase]
         for phase in ("S-holdout", "G-holdout")
     }
     trained_shadow = shadow.to_payload()
@@ -513,32 +492,24 @@ def _growth_arm(
                 (item["candidate_eligibility_norm"] for item in training_trace),
                 default=0.0,
             ),
-            "mean_candidate_gate": (
-                sum(gate_values) / len(gate_values) if gate_values else 0.0
-            ),
+            "mean_candidate_gate": (sum(gate_values) / len(gate_values) if gate_values else 0.0),
             "min_candidate_gate": min(gate_values, default=0.0),
             "max_candidate_gate": max(gate_values, default=0.0),
             "mean_candidate_gate_by_phase": {
-                phase: (
-                    sum(values) / len(values) if values else 0.0
-                )
+                phase: (sum(values) / len(values) if values else 0.0)
                 for phase, values in gate_by_phase.items()
             },
             "min_candidate_gate_by_phase": {
-                phase: min(values, default=0.0)
-                for phase, values in gate_by_phase.items()
+                phase: min(values, default=0.0) for phase, values in gate_by_phase.items()
             },
             "max_candidate_gate_by_phase": {
-                phase: max(values, default=0.0)
-                for phase, values in gate_by_phase.items()
+                phase: max(values, default=0.0) for phase, values in gate_by_phase.items()
             },
             "max_candidate_residual_norm": max(
                 (item["candidate_residual_norm"] for item in training_trace), default=0.0
             ),
             "mean_candidate_residual_ratio": (
-                sum(residual_ratios) / len(residual_ratios)
-                if residual_ratios
-                else 0.0
+                sum(residual_ratios) / len(residual_ratios) if residual_ratios else 0.0
             ),
             "max_candidate_residual_ratio": max(residual_ratios, default=0.0),
             "max_candidate_credit_norm": max(
@@ -554,9 +525,7 @@ def _growth_arm(
                 sum(utility_values) / len(utility_values) if utility_values else 0.0
             ),
             "mean_candidate_utility_by_phase": {
-                phase: (
-                    sum(values) / len(values) if values else 0.0
-                )
+                phase: (sum(values) / len(values) if values else 0.0)
                 for phase, values in utility_by_phase.items()
             },
             "counterfactual_utility_ticks": sum(
@@ -571,9 +540,7 @@ def _growth_arm(
                 else 0.0
             ),
             "mean_counterfactual_utility_by_phase": {
-                phase: (
-                    sum(values) / len(values) if values else 0.0
-                )
+                phase: (sum(values) / len(values) if values else 0.0)
                 for phase, values in counterfactual_utility_by_phase.items()
             },
             "positive_counterfactual_utility_ticks_by_phase": {
@@ -581,18 +548,14 @@ def _growth_arm(
                 for phase, values in counterfactual_utility_by_phase.items()
             },
             "holdout_mean_candidate_gate_by_phase": {
-                phase: (
-                    sum(values) / len(values) if values else 0.0
-                )
+                phase: (sum(values) / len(values) if values else 0.0)
                 for phase, values in holdout_gate_values.items()
             },
             "holdout_min_candidate_gate_by_phase": {
-                phase: min(values, default=0.0)
-                for phase, values in holdout_gate_values.items()
+                phase: min(values, default=0.0) for phase, values in holdout_gate_values.items()
             },
             "holdout_max_candidate_gate_by_phase": {
-                phase: max(values, default=0.0)
-                for phase, values in holdout_gate_values.items()
+                phase: max(values, default=0.0) for phase, values in holdout_gate_values.items()
             },
             "positive_utility_ticks_by_phase": {
                 phase: sum(1 for value in values if value > 1e-8)
@@ -687,7 +650,11 @@ def run_canary(
     )
 
     arms = {
-        "frozen-parent": {"arm": "frozen-parent", "scores": frozen_scores, "counts": _counts(frozen, None)},
+        "frozen-parent": {
+            "arm": "frozen-parent",
+            "scores": frozen_scores,
+            "counts": _counts(frozen, None),
+        },
         "r3-fixed-capacity": {
             "arm": "r3-fixed-capacity",
             "scores": fixed_capacity_scores,
@@ -710,15 +677,9 @@ def run_canary(
         "candidate_only_smoke_training_changed": candidate_only_smoke[
             "candidate_only_training_changed"
         ],
-        "candidate_only_smoke_parent_frozen": candidate_only_smoke[
-            "parent_substrate_unchanged"
-        ],
-        "candidate_only_smoke_fresh_restore": candidate_only_smoke[
-            "shadow_fresh_restore"
-        ],
-        "candidate_only_smoke_rollback": candidate_only_smoke[
-            "shadow_rollback_matches_bare"
-        ],
+        "candidate_only_smoke_parent_frozen": candidate_only_smoke["parent_substrate_unchanged"],
+        "candidate_only_smoke_fresh_restore": candidate_only_smoke["shadow_fresh_restore"],
+        "candidate_only_smoke_rollback": candidate_only_smoke["shadow_rollback_matches_bare"],
         "pressure_shadow_training_changed": pressure["shadow_training_changed"],
         "pressure_shadow_fresh_restore": pressure["shadow_fresh_restore"],
         "pressure_shadow_rollback": pressure["shadow_rollback_matches_bare"],
@@ -762,16 +723,10 @@ def run_canary(
             "birth_anchor_unit_ids": candidate_only_smoke["birth_anchor_unit_ids"],
             "birth_anchor_weights": candidate_only_smoke["birth_anchor_weights"],
             "candidate_lesion_delta": candidate_only_smoke["candidate_lesion_delta"],
-            "mature_f1_owners_unchanged": candidate_only_smoke[
-                "mature_f1_owners_unchanged"
-            ],
-            "parent_substrate_unchanged": candidate_only_smoke[
-                "parent_substrate_unchanged"
-            ],
+            "mature_f1_owners_unchanged": candidate_only_smoke["mature_f1_owners_unchanged"],
+            "parent_substrate_unchanged": candidate_only_smoke["parent_substrate_unchanged"],
             "shadow_fresh_restore": candidate_only_smoke["shadow_fresh_restore"],
-            "shadow_rollback_matches_bare": candidate_only_smoke[
-                "shadow_rollback_matches_bare"
-            ],
+            "shadow_rollback_matches_bare": candidate_only_smoke["shadow_rollback_matches_bare"],
             "shadow_training_changed": candidate_only_smoke["shadow_training_changed"],
             "trace_digest": candidate_only_smoke["training_diagnostics"]["trace_digest"],
         },
