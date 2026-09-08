@@ -8,6 +8,11 @@ from typing import Any
 
 import torch
 
+from .adaptive_residual_bridge import (
+    ADAPTIVE_RESIDUAL_BRIDGE_FORMAT,
+    ADAPTIVE_RESIDUAL_BRIDGE_VERSION,
+    AdaptiveResidualBridge,
+)
 from .config import TaijiConfig, validate_episodic_learning_target
 from .developmental_synapse import (
     DevelopmentalReplayBuffer,
@@ -64,6 +69,8 @@ class Taiji:
     IDENTITY_GROWTH_FORMAT = "taiji-native-identity-growth-v1"
     GATED_TEMPORAL_CANDIDATE_KEY = "gated_temporal_candidate"
     GATED_TEMPORAL_CANDIDATE_SEED_OFFSET = 5927
+    ADAPTIVE_RESIDUAL_BRIDGE_KEY = "adaptive_residual_bridge"
+    ADAPTIVE_RESIDUAL_BRIDGE_SEED_OFFSET = 7183
     READOUT_REGISTRY_FORMAT = "taiji-predictive-readout-registry-v1"
     READOUT_REGISTRY_VERSION = 1
     DEVELOPMENTAL_F1_KEY = "developmental_f1"
@@ -110,6 +117,7 @@ class Taiji:
         # checkpoints, so the default v10 path retains its original payload
         # and prediction behavior exactly.
         self._gated_temporal_candidate: GatedMultiTimescaleTemporalResidual | None = None
+        self._adaptive_residual_bridge: AdaptiveResidualBridge | None = None
         # R1 migration state is an explicit, read-only F1 overlay.  It is
         # absent from ordinary v10 checkpoints, so the default path remains
         # byte-for-byte compatible with the pre-R1 architecture.
@@ -275,6 +283,96 @@ class Taiji:
         self._gated_temporal_candidate.slow.edge_weight.zero_()
         after = content_digest(self._gated_temporal_candidate.to_payload())
         return before, after
+
+    @property
+    def adaptive_residual_bridge_enabled(self) -> bool:
+        """Whether the R3 adaptive residual population is attached."""
+
+        return self._adaptive_residual_bridge is not None
+
+    @property
+    def adaptive_residual_bridge(self) -> AdaptiveResidualBridge | None:
+        return self._adaptive_residual_bridge
+
+    def _new_adaptive_residual_bridge(
+        self,
+        *,
+        fan_in: int | None,
+        gate: float,
+        residual_gain: float,
+    ) -> AdaptiveResidualBridge:
+        generator = torch.Generator(device="cpu")
+        generator.manual_seed(int(self.config.seed) + int(self.ADAPTIVE_RESIDUAL_BRIDGE_SEED_OFFSET))
+        return AdaptiveResidualBridge(
+            self.config,
+            generator=generator,
+            fan_in=fan_in,
+            gate=gate,
+            residual_gain=residual_gain,
+            device=self.device,
+        )
+
+    @torch.no_grad()
+    def enable_adaptive_residual_bridge(
+        self,
+        *,
+        fan_in: int | None = None,
+        gate: float = 0.0,
+        residual_gain: float = 0.20,
+    ) -> dict[str, Any]:
+        """Attach one zero-gated adaptive population to the F1 main path."""
+
+        if self._adaptive_residual_bridge is not None:
+            raise RuntimeError("adaptive residual bridge is already enabled")
+        if self._state.pending_action is not None or self._state.pending_experience is not None:
+            raise RuntimeError("adaptive residual bridge attachment requires a settled state")
+        bridge = self._new_adaptive_residual_bridge(
+            fan_in=fan_in,
+            gate=gate,
+            residual_gain=residual_gain,
+        )
+        self._adaptive_residual_bridge = bridge
+        return {
+            "format": ADAPTIVE_RESIDUAL_BRIDGE_FORMAT,
+            "version": ADAPTIVE_RESIDUAL_BRIDGE_VERSION,
+            "gate": bridge.gate,
+            "unit_count": bridge.unit_count,
+            "edge_count": bridge.edge_count,
+            "bridge_digest": content_digest(bridge.to_payload()),
+        }
+
+    @torch.no_grad()
+    def set_adaptive_residual_bridge_gate(self, gate: float) -> float:
+        """Open or close the R3 residual gate explicitly."""
+
+        if self._adaptive_residual_bridge is None:
+            raise RuntimeError("adaptive residual bridge is not enabled")
+        if self._state.pending_action is not None or self._state.pending_experience is not None:
+            raise RuntimeError("adaptive residual bridge gate change requires a settled state")
+        self._adaptive_residual_bridge.set_gate(gate)
+        return self._adaptive_residual_bridge.gate
+
+    @torch.no_grad()
+    def lesion_adaptive_residual_bridge(self) -> None:
+        """Lesion the whole bridge while preserving its checkpoint identity."""
+
+        if self._adaptive_residual_bridge is None:
+            raise RuntimeError("adaptive residual bridge is not enabled")
+        self._adaptive_residual_bridge.lesion()
+
+    @torch.no_grad()
+    def unlesion_adaptive_residual_bridge(self) -> None:
+        if self._adaptive_residual_bridge is None:
+            raise RuntimeError("adaptive residual bridge is not enabled")
+        self._adaptive_residual_bridge.unlesion()
+
+    @torch.no_grad()
+    def disable_adaptive_residual_bridge(self) -> None:
+        """Remove the experimental bridge explicitly; ordinary v10 stays absent."""
+
+        if self._state.pending_action is not None or self._state.pending_experience is not None:
+            raise RuntimeError("adaptive residual bridge removal requires a settled state")
+        self._adaptive_residual_bridge = None
 
     @property
     def developmental_f1_enabled(self) -> bool:
@@ -529,6 +627,10 @@ class Taiji:
             payload[self.GATED_TEMPORAL_CANDIDATE_KEY] = (
                 self._gated_temporal_candidate.to_payload()
             )
+        if self._adaptive_residual_bridge is not None:
+            payload[self.ADAPTIVE_RESIDUAL_BRIDGE_KEY] = (
+                self._adaptive_residual_bridge.to_payload()
+            )
         if self._developmental_f1_bundle is not None:
             payload[self.DEVELOPMENTAL_F1_KEY] = self._developmental_f1_bundle.to_payload()
         replay_payload = self._developmental_f1_replay_payload()
@@ -771,6 +873,8 @@ class Taiji:
             raise RuntimeError("pending experience must observe its outcome before reset")
         self._development_ticks = max(self._development_ticks, int(self._state.tick))
         self.fabric.clear_cue_snapshot()
+        if self._adaptive_residual_bridge is not None:
+            self._adaptive_residual_bridge.reset_dynamics()
         self._state = self._initial_state(episode_id or self._state.episode_id)
 
     @property
@@ -824,6 +928,7 @@ class Taiji:
         learn_fabric: bool | None = None,
         learn_predictive_context: bool | None = None,
         learn_predictive_readout: bool | None = None,
+        learn_adaptive_residual_bridge: bool | None = None,
         readout: str = "action",
         use_memory: bool = True,
         use_identity: bool | None = None,
@@ -847,6 +952,10 @@ class Taiji:
         the two F1 owners independently for causal continual-learning
         diagnostics.  ``None`` follows ``learn``; an explicit ``False``
         freezes only that owner while preserving the same forward path.
+        ``learn_adaptive_residual_bridge`` independently controls credit to
+        the optional R3 structural candidate.  This allows a bridge to learn
+        from the same causal predictive error while the mature F1 trunk is
+        held fixed during structural admission experiments.
         ``readout="predictive"`` sends next-byte error to the dedicated F1
         decoder; it never writes the F4 action policy.  A single dynamics
         episode cannot silently switch readout ownership, because the prior
@@ -898,13 +1007,16 @@ class Taiji:
         for name, value in (
             ("learn_predictive_context", learn_predictive_context),
             ("learn_predictive_readout", learn_predictive_readout),
+            ("learn_adaptive_residual_bridge", learn_adaptive_residual_bridge),
         ):
             if value is not None and not isinstance(value, bool):
                 raise TypeError(f"{name} must be a bool or None")
             if not learn and value is True:
                 raise ValueError(f"{name} requires learn=True")
         if readout != "predictive" and (
-            learn_predictive_context is True or learn_predictive_readout is True
+            learn_predictive_context is True
+            or learn_predictive_readout is True
+            or learn_adaptive_residual_bridge is True
         ):
             raise ValueError("predictive owner learning requires readout='predictive'")
         predictive_readout = (
@@ -928,6 +1040,15 @@ class Taiji:
         )
         predictive_readout_learning = (
             learn if learn_predictive_readout is None else bool(learn_predictive_readout)
+        )
+        adaptive_residual_bridge_learning = (
+            self._adaptive_residual_bridge is not None
+            and predictive_readout is self.predictive_readout
+            and (
+                learn
+                if learn_adaptive_residual_bridge is None
+                else bool(learn_adaptive_residual_bridge)
+            )
         )
         developmental_f1_overlay = (
             self._developmental_f1_bundle is not None
@@ -983,7 +1104,9 @@ class Taiji:
             prior_probability = float(previous.motor_probabilities[symbol].item())
             surprise = -math.log(max(prior_probability, 1e-12))
             if readout == "predictive" and learn and (
-                predictive_readout_learning or predictive_context_learning
+                predictive_readout_learning
+                or predictive_context_learning
+                or adaptive_residual_bridge_learning
             ):
                 # Take the F1 feedback before changing decoder contacts: the
                 # private residual must learn from the causal surface that
@@ -1036,6 +1159,8 @@ class Taiji:
                             ),
                             weight_decay=self.config.synapse_decay,
                         )
+                    if adaptive_residual_bridge_learning:
+                        self._adaptive_residual_bridge.learn(predictive_feedback)
                     if developmental_f1_mode in {"fast", "fast_slow"}:
                         self._record_developmental_f1_replay(
                             observed_symbol=symbol,
@@ -1064,27 +1189,30 @@ class Taiji:
                             preservation_strength=preservation_strength,
                             learning_rate_scale=predictive_update_scale,
                         )
-                    if predictive_context_learning:
+                    if predictive_context_learning or adaptive_residual_bridge_learning:
                         predictive_feedback = predictive_readout.context_feedback(
                             predictive_error
                         )
-                        if self._gated_temporal_candidate is None:
-                            self.predictive_context.learn(
-                                previous.predictive_context_trace,
-                                predictive_feedback,
-                                learning_rate_scale=predictive_update_scale,
-                            )
-                        else:
-                            self._gated_temporal_candidate.learn(
-                                previous.motor_context,
-                                previous.predictive_context_slow_trace,
-                                predictive_feedback,
-                                learning_rate=(
-                                    self.config.predictive_context_learning_rate
-                                    * predictive_update_scale
-                                ),
-                                weight_decay=self.config.synapse_decay,
-                            )
+                        if predictive_context_learning:
+                            if self._gated_temporal_candidate is None:
+                                self.predictive_context.learn(
+                                    previous.predictive_context_trace,
+                                    predictive_feedback,
+                                    learning_rate_scale=predictive_update_scale,
+                                )
+                            else:
+                                self._gated_temporal_candidate.learn(
+                                    previous.motor_context,
+                                    previous.predictive_context_slow_trace,
+                                    predictive_feedback,
+                                    learning_rate=(
+                                        self.config.predictive_context_learning_rate
+                                        * predictive_update_scale
+                                    ),
+                                    weight_decay=self.config.synapse_decay,
+                                )
+                        if adaptive_residual_bridge_learning:
+                            self._adaptive_residual_bridge.learn(predictive_feedback)
             elif readout == "action" and motor_learning:
                 self.motor.learn(
                     previous.motor_context,
@@ -1154,6 +1282,8 @@ class Taiji:
                         ),
                     )
                 )
+            if self._adaptive_residual_bridge is not None:
+                context = self._adaptive_residual_bridge.forward(context)
         else:
             context = self.motor.encode_context(self.fabric.predictive_context(regions))
             predictive_context_trace = torch.zeros(
@@ -2014,6 +2144,8 @@ class Taiji:
         )
         if self._gated_temporal_candidate is not None:
             tensors += self._gated_temporal_candidate.parameter_tensors()
+        if self._adaptive_residual_bridge is not None:
+            tensors += self._adaptive_residual_bridge.parameter_tensors()
         if self._active_predictive_readout is not None:
             tensors += (
                 self._active_predictive_readout.synapses.edge_weight,
@@ -2035,6 +2167,8 @@ class Taiji:
         )
         if self._gated_temporal_candidate is not None:
             active += sum(tensor.numel() for tensor in self._gated_temporal_candidate.parameter_tensors())
+        if self._adaptive_residual_bridge is not None:
+            active += sum(tensor.numel() for tensor in self._adaptive_residual_bridge.parameter_tensors())
         if self._active_predictive_readout is not None:
             active += (
                 self._active_predictive_readout.synapses.edge_count
@@ -2063,6 +2197,10 @@ class Taiji:
                 self._gated_temporal_candidate.fast.dense_equivalent_count
                 + self._gated_temporal_candidate.slow.dense_equivalent_count
             )
+        if self._adaptive_residual_bridge is not None:
+            count += sum(
+                tensor.numel() for tensor in self._adaptive_residual_bridge.parameter_tensors()
+            )
         if self._active_predictive_readout is not None:
             count += (
                 self._active_predictive_readout.synapses.dense_equivalent_count
@@ -2090,6 +2228,8 @@ class Taiji:
             core[self.GATED_TEMPORAL_CANDIDATE_KEY] = (
                 self._gated_temporal_candidate.to_payload()
             )
+        if self._adaptive_residual_bridge is not None:
+            core[self.ADAPTIVE_RESIDUAL_BRIDGE_KEY] = self._adaptive_residual_bridge.to_payload()
         if self._developmental_f1_bundle is not None:
             core[self.DEVELOPMENTAL_F1_KEY] = self._developmental_f1_bundle.to_payload()
         replay_payload = self._developmental_f1_replay_payload()
@@ -2180,6 +2320,23 @@ class Taiji:
             )
             candidate.load_payload(candidate_payload)
             self._gated_temporal_candidate = candidate
+        bridge_payload = checkpoint.get(self.ADAPTIVE_RESIDUAL_BRIDGE_KEY)
+        self._adaptive_residual_bridge = None
+        if bridge_payload is not None:
+            if is_legacy_checkpoint:
+                raise ValueError("legacy checkpoint cannot contain an adaptive residual bridge")
+            if not isinstance(bridge_payload, Mapping):
+                raise ValueError("adaptive residual bridge checkpoint payload is invalid")
+            region_payload = bridge_payload.get("region")
+            if not isinstance(region_payload, Mapping):
+                raise ValueError("adaptive residual bridge region checkpoint payload is invalid")
+            bridge = self._new_adaptive_residual_bridge(
+                fan_in=int(region_payload["fan_in"]),
+                gate=float(bridge_payload["gate"]),
+                residual_gain=float(bridge_payload["residual_gain"]),
+            )
+            bridge.load_payload(bridge_payload)
+            self._adaptive_residual_bridge = bridge
         developmental_payload = checkpoint.get(self.DEVELOPMENTAL_F1_KEY)
         self._developmental_f1_bundle = None
         self._developmental_f1_learning_mode = "read_only"
@@ -2220,6 +2377,9 @@ class Taiji:
                         include_predictive_context="predictive_context" in checkpoint,
                         include_temporal_candidate=(
                             self.GATED_TEMPORAL_CANDIDATE_KEY in checkpoint
+                        ),
+                        include_adaptive_residual_bridge=(
+                            self.ADAPTIVE_RESIDUAL_BRIDGE_KEY in checkpoint
                         ),
                         include_developmental_f1=self.DEVELOPMENTAL_F1_KEY in checkpoint,
                         include_developmental_f1_replay=(
@@ -2338,6 +2498,7 @@ class Taiji:
         include_predictive: bool = True,
         include_predictive_context: bool | None = None,
         include_temporal_candidate: bool = False,
+        include_adaptive_residual_bridge: bool = False,
         include_developmental_f1: bool = False,
         include_developmental_f1_replay: bool = False,
     ) -> tuple[str, ...]:
@@ -2361,6 +2522,8 @@ class Taiji:
             keys += ("predictive_context",)
         if include_temporal_candidate:
             keys += (Taiji.GATED_TEMPORAL_CANDIDATE_KEY,)
+        if include_adaptive_residual_bridge:
+            keys += (Taiji.ADAPTIVE_RESIDUAL_BRIDGE_KEY,)
         if include_developmental_f1:
             keys += (Taiji.DEVELOPMENTAL_F1_KEY,)
         if include_developmental_f1_replay:

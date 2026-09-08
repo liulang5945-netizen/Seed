@@ -202,4 +202,8 @@ BPB 只能在同一数据域内比较。跨语料必须分别对各自 frozen-pa
 
 ## 9. 当前唯一设计出口
 
-M4.V2.R0 已完成量尺合同与语义审计；R1 已完成 checkpoint-compatible fast/slow 零变化迁移；R2 已完成 developmental state、真实 wake credit replay、slow-only/fast-only/fast+replay 三臂和 3 个 course seed/order 的 S/G formal Gate。校准曾因异质短 block 产生 `0.4629` 波动而被正确 fail-closed，改为等比例等长度 order-only block 后以 `0.0176304` epsilon 通过；replay 在每个 course 的 S/G 均不劣且严格改善，fresh restore、rollback、read-only 和旧 owner 隔离通过。整体仍保持 `can_promote=false`。当前唯一下一步是 R3 主路径 zero-gated adaptive residual bridge：不扩容、不接外围，先证明结构候选真实进入 observation→prediction/credit 且关闭时等价。
+M4.V2.R0 已完成量尺合同与语义审计；R1 已完成 checkpoint-compatible fast/slow 零变化迁移；R2 已完成 developmental state、真实 wake credit replay、slow-only/fast-only/fast+replay 三臂和 3 个 course seed/order 的 S/G formal Gate。校准曾因异质短 block 产生 `0.4629` 波动而被正确 fail-closed，改为等比例等长度 order-only block 后以 `0.0176304` epsilon 通过；replay 在每个 course 的 S/G 均不劣且严格改善，fresh restore、rollback、read-only 和旧 owner 隔离通过。
+
+R3 已完成第一条真正进入 native `observation→prediction/credit` 的 `AdaptiveResidualBridge`：默认 gate=0 不 step、不写 credit、输出与 parent 完全一致；显式开门后产生可测 residual，显式 bridge owner 能单独接收 causal credit，成熟 F1 context/readout 可保持不变；checkpoint preflight、fresh restore、lesion 和 rollback 全部通过。报告为 `reports/taiji_m4v2_r3_bridge_canary_20260909.json`，所有 12 项技术 Gate 通过，但这只证明“主路径接线闭合”，不证明结构生长、自主进化或 A8，整体仍保持 `can_promote=false`。
+
+当前唯一下一步是 **R4 shadow 生长与 matched-capacity 对照**：只沿这一条 bridge 入口建立 residual/conflict/utility pressure，按压力提议零影响候选，在 shadow 中训练并与 frozen、R3 fixed-capacity、random growth、同等最终参数量 fixed-large 对照；必须通过 growth lesion、旧能力非劣、资源预算、fresh restore 与 rollback，才允许进入 R5 learned router。Skill/MCP、provider、客户端和 CUDA 继续遵守执行计划的解冻顺序。

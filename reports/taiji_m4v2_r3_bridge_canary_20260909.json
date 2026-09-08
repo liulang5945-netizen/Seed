@@ -1,0 +1,55 @@
+{
+  "active_probe": {
+    "bridge_digest_after_credit": "a548064abab90f53904be449bde47d9d0be005445b6ffd124ba3049229c28a06",
+    "bridge_digest_before_credit": "3d9d88a5fd53273450a2de727c62745abd47a520d9b50e5ba2ec74d5808c962e",
+    "checkpoint_digest": "a7687e5a310691163f4f09c7725cc7e6e8c604bc428a17830e91b347aabae946",
+    "metadata": {
+      "bridge_digest": "2156327aa34d7d7e3cf296e47c4e46b9f6038f80c66c24f4bca0ce307a127de1",
+      "edge_count": 144,
+      "format": "taiji-adaptive-residual-bridge-v1",
+      "gate": 1.0,
+      "unit_count": 12,
+      "version": 1
+    },
+    "probability_max_delta": 0.005355373024940491,
+    "residual_activity_l1": 1.30631685256958
+  },
+  "can_promote": false,
+  "format": "taiji-m4v2-r3-bridge-canary-v1",
+  "gates": {
+    "active_local_credit": true,
+    "active_output_delta": true,
+    "active_residual_activity": true,
+    "bridge_payload_contract": true,
+    "checkpoint_preflight": true,
+    "fresh_restore_exact": true,
+    "gate_zero_no_state_mutation": true,
+    "gate_zero_output_equivalence": true,
+    "lesion_equivalence": true,
+    "mature_f1_owners_unchanged": true,
+    "parent_has_no_bridge": true,
+    "rollback_matches_parent": true
+  },
+  "parent": {
+    "bridge_key": "adaptive_residual_bridge",
+    "checkpoint_digest": "42506259eff603ba1b2a5d5a5802a4c4ae7e72ecb5e0662014cafdb7d5095ce0",
+    "owner_graph": "pre-adaptive-residual-bridge"
+  },
+  "promotion_reason": "R3 is a single CPU wiring canary; structural promotion remains prohibited",
+  "status": "passed",
+  "version": 1,
+  "zero_gate": {
+    "bridge_digest_after": "5ec975d3982bfb0af8e915237972c307239404710af68e7bdf822aeadbd0cf99",
+    "bridge_digest_before": "5ec975d3982bfb0af8e915237972c307239404710af68e7bdf822aeadbd0cf99",
+    "candidate_output_hex": "24e4d8d8d8d8d8d8",
+    "metadata": {
+      "bridge_digest": "5ec975d3982bfb0af8e915237972c307239404710af68e7bdf822aeadbd0cf99",
+      "edge_count": 144,
+      "format": "taiji-adaptive-residual-bridge-v1",
+      "gate": 0.0,
+      "unit_count": 12,
+      "version": 1
+    },
+    "parent_output_hex": "24e4d8d8d8d8d8d8"
+  }
+}

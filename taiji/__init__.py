@@ -5,6 +5,11 @@ runtime.  PyTorch is used only as a tensor execution engine.
 """
 
 from .adapter import TSKV8Adapter
+from .adaptive_residual_bridge import (
+    ADAPTIVE_RESIDUAL_BRIDGE_FORMAT,
+    ADAPTIVE_RESIDUAL_BRIDGE_VERSION,
+    AdaptiveResidualBridge,
+)
 from .affordance import (
     AFFORDANCE_FEATURE_CHECKPOINT_FORMAT,
     AffordanceFeatureTrainingExample,
@@ -720,6 +725,9 @@ __all__ = [
     "AdaptiveNeuronRegion",
     "ADAPTIVE_NEURON_NETWORK_CHECKPOINT_FORMAT",
     "AdaptiveNeuronNetwork",
+    "ADAPTIVE_RESIDUAL_BRIDGE_FORMAT",
+    "ADAPTIVE_RESIDUAL_BRIDGE_VERSION",
+    "AdaptiveResidualBridge",
     "AFFORDANCE_FEATURE_CHECKPOINT_FORMAT",
     "AffordanceFeatureTrainingExample",
     "ActionIntent",
