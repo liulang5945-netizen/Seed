@@ -97,9 +97,9 @@ def build_snapshot_corpus(
     test: list[StructuredSemanticExample] = []
     snapshots: dict[str, PerceptEvent] = {}
     tick = 100
-    for entity_index, entity in enumerate(ENTITIES):
-        for state_index, state in enumerate(STATES):
-            for resource_index, resource in enumerate(RESOURCES):
+    for _entity_index, entity in enumerate(ENTITIES):
+        for _state_index, state in enumerate(STATES):
+            for _resource_index, resource in enumerate(RESOURCES):
                 for confidence, prediction_error, boundary_score, duration in SNAPSHOT_VARIANTS:
                     sample_id = f"{entity}-{state}-{resource}-v{duration}"
                     world = _world(entity, state, resource, tick + duration)

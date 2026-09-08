@@ -85,7 +85,7 @@ def _derive_score(
         raise AssertionError("Workbench raw action trace is shorter than requested action set")
     if any(
         observed["capability_id"] != requested[0]
-        for requested, observed in zip(actions, selected_actions)
+        for requested, observed in zip(actions, selected_actions, strict=True)
     ):
         raise AssertionError("Workbench action trace order changed under score projection")
     successes = tuple(bool(item["success"]) for item in selected_actions)
@@ -336,14 +336,14 @@ def evaluate() -> dict[str, object]:
         "relation_beats_all_controls": all(
             relation > control
             for relation, weight, router, memory in zip(
-                relation_scores, weight_scores, router_scores, memory_scores
+                relation_scores, weight_scores, router_scores, memory_scores, strict=True
             )
             for control in (weight, router, memory)
         ),
         "relation_cumulative_gain_is_positive": sum(relation_scores) - sum(weight_scores) > 0.0,
         "transfer_lesion_drops_future_score": all(
             relation > weight
-            for relation, weight in zip(relation_scores, weight_scores)
+            for relation, weight in zip(relation_scores, weight_scores, strict=True)
         ),
         "future_holdout_never_updates_learner": all(
             bool(item["future_did_not_enter_train_learner"]) for item in runs

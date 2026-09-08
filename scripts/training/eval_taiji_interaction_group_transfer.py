@@ -239,7 +239,7 @@ def evaluate() -> dict[str, object]:
         for family in TARGET_FAMILIES
     )
     runs: list[dict[str, object]] = []
-    for family, target in zip(TARGET_FAMILIES, target_sets):
+    for family, target in zip(TARGET_FAMILIES, target_sets, strict=True):
         target_members = target[0]
         negative_members = tuple(sorted((MEMBER_IDS[NEGATIVE_FAMILY[1]], MEMBER_IDS[NEGATIVE_FAMILY[2]])))
         candidate_sets = (target_members, negative_members)

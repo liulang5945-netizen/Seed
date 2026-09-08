@@ -1236,10 +1236,11 @@ def main() -> int:
         if args.b5_child:
             b5_measurement = _evaluate_loaded_b5(checkpoint_paths, protected_datasets)
     elif args.b1_corpus:
-        if args.profile == "smoke":
-            budgets = (4_096, 1_024, 1_024)
-        else:
-            budgets = (1_048_576, 131_072, 131_072)
+        budgets = (
+            (4_096, 1_024, 1_024)
+            if args.profile == "smoke"
+            else (1_048_576, 131_072, 131_072)
+        )
         corpus = build_sequence_corpus(
             args.b1_corpus,
             train_bytes=budgets[0],

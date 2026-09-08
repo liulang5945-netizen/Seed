@@ -1493,7 +1493,7 @@ class StructuralEvidenceLedger:
             f"{snapshot.network_id}:{snapshot.region_id}": snapshot
             for snapshot in self._pressure_snapshots
         }
-        for stream, summaries in by_stream.items():
+        for stream, _summaries in by_stream.items():
             selected_for_stream = tuple(
                 item for item in selected if f"{item.network_id}:{item.region_id}" == stream
             )

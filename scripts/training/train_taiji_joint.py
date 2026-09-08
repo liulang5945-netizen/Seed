@@ -351,11 +351,7 @@ def main() -> int:
         )
     if args.identity_growth_to is not None:
         run.model.grow_identity_organ(args.identity_growth_to)
-    result: dict[str, Any]
-    if args.eval_only:
-        result = run.evaluate_only()
-    else:
-        result = run.run()
+    result: dict[str, Any] = run.evaluate_only() if args.eval_only else run.run()
     report_path = args.report or args.output_dir / (
         "eval_report.json" if args.eval_only else "training_report.json"
     )

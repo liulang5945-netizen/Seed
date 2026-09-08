@@ -357,7 +357,10 @@ class InteractionGroupTransferLearner:
         if not self._coefficients:
             return None
         features = self._pair_features(members)
-        prediction = sum(left * right for left, right in zip(self._coefficients, features))
+        prediction = sum(
+            left * right
+            for left, right in zip(self._coefficients, features, strict=True)
+        )
         support = sum(
             1
             for record in self._records
@@ -523,8 +526,14 @@ class InteractionGroupTransferLearner:
         targets = [float(record.interaction) for record in self._records]
         self._coefficients = tuple(self._ridge_fit(rows, targets, self.ridge))
         errors = [
-            float(target - sum(weight * feature for weight, feature in zip(self._coefficients, row)))
-            for row, target in zip(rows, targets)
+            float(
+                target
+                - sum(
+                    weight * feature
+                    for weight, feature in zip(self._coefficients, row, strict=True)
+                )
+            )
+            for row, target in zip(rows, targets, strict=True)
         ]
         self._residual_rmse = math.sqrt(sum(error * error for error in errors) / len(errors))
 
@@ -535,7 +544,7 @@ class InteractionGroupTransferLearner:
         width = len(rows[0])
         normal = [[0.0 for _ in range(width)] for _ in range(width)]
         right = [0.0 for _ in range(width)]
-        for row, target in zip(rows, targets):
+        for row, target in zip(rows, targets, strict=True):
             for left in range(width):
                 right[left] += row[left] * target
                 for column in range(width):
@@ -562,7 +571,9 @@ class InteractionGroupTransferLearner:
                     continue
                 normal[row_index] = [
                     value - factor * pivot_value
-                    for value, pivot_value in zip(normal[row_index], normal[pivot_index])
+                    for value, pivot_value in zip(
+                        normal[row_index], normal[pivot_index], strict=True
+                    )
                 ]
                 right[row_index] -= factor * right[pivot_index]
         return right

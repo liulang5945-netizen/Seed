@@ -74,7 +74,6 @@ def test_organ_first_beats_both_ablations() -> None:
     )
     organ = 0
     identity_off = 0
-    total = 0
     for query in corpus.holdout:
         probabilities, identity, _ = _read_cue(model, query)
         decided = int(probabilities.argmax().item())
@@ -94,7 +93,6 @@ def test_organ_first_beats_both_ablations() -> None:
                 use_identity=False,
             )
         identity_off += int(int(step.probabilities.argmax().item()) == query.expected_action)
-        total += 1
     # the organ-first path must not trail the identity-disabled arm
     assert organ >= identity_off
 

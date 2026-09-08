@@ -168,9 +168,9 @@ R4 的最小交付 `pressure/proposal → shadow materialize → shadow train �
 
 R4 收束审计已完成其研究边界部分：R4 定向 6 项测试通过，homeostasis 只存在于独立 shadow，materialize 不改变默认 parent checkpoint/forward，版本一致性检查通过，本轮涉及文件的 ruff、B/SIM 和 black 约束通过。全量 native 回归得到 `627 passed, 17 failed, 15 errors, 1 skipped`；15 个 error 主要是本机历史 pytest 临时目录锁权限，切换到仓库可写 basetemp 后代表性测试可正常执行；剩余失败集中在既有 context/delayed memory、Workbench neutral baseline、interaction structural gate 和 synapse longevity 基线，不属于本轮 R4 代码路径。tracked source 的全仓 ruff/B/SIM 与 core mypy 也仍有历史门禁债务，因此不能把仓库 CI 写成已通过。
 
-M7 CI 基线收敛第一批已完成：tracked source 的主 ruff 门禁从 9 项降为 0，安全自动修复涉及的 14 个脚本/平台/测试文件已通过 `py_compile`、ruff、black diff 和 `git diff --check`；R4 代码路径与默认 parent 未改变。B/SIM 从 51 项降为 42 项，剩余主要是 `zip(strict=...)` 的长度契约和少量控制流简化，不能无审计批量改写。
+M7 CI 基线收敛第一批已完成：tracked source 的主 ruff 门禁从 9 项降为 0，安全自动修复涉及的 14 个脚本/平台/测试文件已通过 `py_compile`、ruff、black diff 和 `git diff --check`；R4 代码路径与默认 parent 未改变。随后完成 B/SIM 显式契约审计，`51 → 42 → 0`，所有 `zip` 改动都基于已确认的等长输入，未使用 unsafe 批量改写；受影响模块回归 `23 passed`。
 
-**当前唯一下一步**：完成 B/SIM 的显式契约审计，逐组为确定等长的 `zip` 增加 `strict=True`，对有意截断的调用保留并写明边界，再跑受影响测试后提交；暂不处理 core mypy 和既有 native 回归，R5 learned router 及 Skill/MCP/provider/客户端外围继续冻结。
+**当前唯一下一步**：处理 core mypy 棘轮，先复现并按模块归因当前 `seed taiji` 类型错误，优先修复本轮 CI 收敛触及的类型路径和公共边界；保持 R4 shadow/默认 parent 不变，修复后再处理既有 native 回归，R5 learned router 及 Skill/MCP/provider/客户端外围继续冻结。
 
 R0 完成条件（已满足）：
 
