@@ -267,6 +267,13 @@ def test_r4_live_pressure_is_emitted_by_bridge_tick_and_restores_exactly() -> No
     )
     restored_shadow.set_gate(1.0)
     restored_shadow.forward(selected_context)
+    candidate_index = restored_shadow.region.unit_index(candidate.unit_id)
+    assert restored_shadow.candidate_activity > 1e-8
+    assert restored_shadow.candidate_eligibility_norm > 1e-8
+    # The candidate projection must keep learning from the causal eligibility
+    # trace even when the current tick is silent.
+    restored_shadow._last_activity[candidate_index] = 0.0
+    restored_shadow.region.activity[candidate_index] = 0.0
     candidate_projection_before = restored_shadow.output_projection.edge_weight[
         ~parent_projection_mask
     ].clone()

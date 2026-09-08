@@ -118,6 +118,7 @@ def _stream(
     shadow: AdaptiveResidualShadow | None = None,
     learn: bool,
     learn_bridge: bool = False,
+    trace: list[dict[str, Any]] | None = None,
 ) -> float:
     model.reset_dynamics(episode_id="r4-shadow-stream")
     if shadow is not None:
@@ -139,6 +140,8 @@ def _stream(
             _adaptive_residual_shadow=shadow,
             _learn_adaptive_residual_shadow=bool(learn and shadow is not None),
         )
+        if shadow is not None and trace is not None:
+            trace.append({"symbol": int(symbol), **shadow.diagnostics})
         if step.prior_probability is not None:
             total_surprise += -math.log(max(float(step.prior_probability), 1e-12))
             count += 1
@@ -150,8 +153,16 @@ def _course_train(
     *,
     shadow: AdaptiveResidualShadow | None = None,
     learn_bridge: bool = False,
+    trace: list[dict[str, Any]] | None = None,
 ) -> None:
-    _stream(model, S_TRAIN, shadow=shadow, learn=True, learn_bridge=learn_bridge)
+    _stream(
+        model,
+        S_TRAIN,
+        shadow=shadow,
+        learn=True,
+        learn_bridge=learn_bridge,
+        trace=trace,
+    )
     for old_count, new_count in G_SCHEDULE:
         _stream(
             model,
@@ -159,6 +170,7 @@ def _course_train(
             shadow=shadow,
             learn=True,
             learn_bridge=learn_bridge,
+            trace=trace,
         )
 
 
@@ -248,8 +260,23 @@ def _growth_arm(
     bare_shadow_digest = content_digest(bare_shadow)
     mature_context = content_digest(model.predictive_context.to_payload())
     mature_readout = content_digest(model.predictive_readout.to_payload())
+    training_trace: list[dict[str, Any]] = []
     if train_from_parent:
-        _course_train(model, shadow=shadow)
+        _course_train(model, shadow=shadow, trace=training_trace)
+    active_trace = [
+        item for item in training_trace if item["candidate_activity"] > 1e-8
+    ]
+    residual_trace = [
+        item for item in training_trace if item["candidate_residual_norm"] > 1e-8
+    ]
+    credit_trace = [
+        item for item in training_trace if item["candidate_credit_norm"] > 1e-8
+    ]
+    residual_ratios = [
+        item["candidate_residual_norm"] / item["parent_residual_norm"]
+        for item in training_trace
+        if item["parent_residual_norm"] > 1e-8
+    ]
     scores = {
         "S": _score(model, S_HOLDOUT, shadow=shadow),
         "G": _score(model, G_HOLDOUT, shadow=shadow),
@@ -275,6 +302,37 @@ def _growth_arm(
         "candidate_digest": candidate.candidate_digest,
         "candidate_unit_id": candidate.unit_id,
         "candidate_activity": float(shadow.candidate_activity),
+        "training_diagnostics": {
+            "trace_digest": content_digest(training_trace),
+            "ticks": len(training_trace),
+            "active_ticks": len(active_trace),
+            "residual_ticks": len(residual_trace),
+            "credit_ticks": len(credit_trace),
+            "max_activity": max(
+                (item["candidate_activity"] for item in training_trace), default=0.0
+            ),
+            "max_eligibility_norm": max(
+                (item["candidate_eligibility_norm"] for item in training_trace),
+                default=0.0,
+            ),
+            "max_candidate_residual_norm": max(
+                (item["candidate_residual_norm"] for item in training_trace), default=0.0
+            ),
+            "mean_candidate_residual_ratio": (
+                sum(residual_ratios) / len(residual_ratios)
+                if residual_ratios
+                else 0.0
+            ),
+            "max_candidate_residual_ratio": max(residual_ratios, default=0.0),
+            "max_candidate_credit_norm": max(
+                (item["candidate_credit_norm"] for item in training_trace), default=0.0
+            ),
+            "max_projection_update_norm": max(
+                (item["candidate_projection_update_norm"] for item in training_trace),
+                default=0.0,
+            ),
+            "trace": training_trace,
+        },
         "candidate_only_training_changed": content_digest(bare_shadow) != content_digest(trained_shadow),
         "shadow_fresh_restore": fresh_restore,
         "shadow_rollback_matches_bare": rollback_matches_bare,
@@ -400,7 +458,30 @@ def main() -> int:
     report = run_canary()
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    print(json.dumps(report, indent=2, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                "format": report["format"],
+                "status": report["status"],
+                "can_promote": report["can_promote"],
+                "technical_gates": report["technical_gates"],
+                "arms": {
+                    name: {
+                        "scores": arm["scores"],
+                        "candidate_lesion_delta": arm.get("candidate_lesion_delta"),
+                        "training_diagnostics": {
+                            key: value
+                            for key, value in arm.get("training_diagnostics", {}).items()
+                            if key != "trace"
+                        },
+                    }
+                    for name, arm in report["arms"].items()
+                },
+            },
+            indent=2,
+            sort_keys=True,
+        )
+    )
     return 0 if report["status"] == "passed" else 1
 
 
