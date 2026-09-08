@@ -41,6 +41,7 @@ class AdaptiveResidualShadow:
         output_projection: SparseSynapses,
         parent_bridge_digest: str,
         residual_gain: float,
+        gate_projection: SparseSynapses | None = None,
         birth_anchor_unit_id: str | None = None,
         birth_anchor_unit_ids: tuple[str, ...] | None = None,
         birth_anchor_weights: tuple[float, ...] | None = None,
@@ -51,6 +52,7 @@ class AdaptiveResidualShadow:
         self.candidate = candidate
         self.region = region
         self.output_projection = output_projection
+        self.gate_projection = gate_projection
         self.parent_bridge_digest = str(parent_bridge_digest).strip()
         self.residual_gain = float(residual_gain)
         self._validate_gain(self.residual_gain)
@@ -98,10 +100,16 @@ class AdaptiveResidualShadow:
             raise ValueError("adaptive residual shadow projection output dimension mismatch")
         if output_projection.in_features != self.unit_count:
             raise ValueError("adaptive residual shadow projection input dimension mismatch")
+        if gate_projection is not None:
+            if gate_projection.out_features != 1:
+                raise ValueError("adaptive residual shadow gate must have one output")
+            if gate_projection.in_features != int(candidate.parent_unit_count):
+                raise ValueError("adaptive residual shadow gate input dimension mismatch")
         self._gate = 0.0
         self._lesioned = False
         self._last_input = torch.zeros(self.output_dim, device=self.device)
         self._last_activity = torch.zeros(self.unit_count, device=self.device)
+        self._last_gate_input = torch.zeros(candidate.parent_unit_count, device=self.device)
         self._last_candidate_residual = torch.zeros(self.output_dim, device=self.device)
         self._last_candidate_activity = 0.0
         self._last_candidate_eligibility_norm = 0.0
@@ -110,6 +118,9 @@ class AdaptiveResidualShadow:
         self._last_candidate_credit_norm = 0.0
         self._last_candidate_projection_update_norm = 0.0
         self._last_candidate_utility = 0.0
+        self._candidate_gate_bias = torch.zeros((), device=self.device)
+        self._candidate_utility_baseline = 0.0
+        self._last_candidate_gate = 1.0 if gate_projection is None else 0.5
 
     @staticmethod
     def _validate_gain(value: float) -> None:
@@ -154,7 +165,9 @@ class AdaptiveResidualShadow:
 
     @property
     def edge_count(self) -> int:
-        return self.region.edge_count + self.output_projection.edge_count
+        return self.region.edge_count + self.output_projection.edge_count + (
+            0 if self.gate_projection is None else self.gate_projection.edge_count
+        )
 
     @property
     def candidate_activity(self) -> float:
@@ -185,6 +198,10 @@ class AdaptiveResidualShadow:
         return self._last_candidate_utility
 
     @property
+    def candidate_gate(self) -> float:
+        return self._last_candidate_gate
+
+    @property
     def diagnostics(self) -> dict[str, float]:
         return {
             "candidate_activity": self.candidate_activity,
@@ -194,6 +211,7 @@ class AdaptiveResidualShadow:
             "candidate_credit_norm": self.candidate_credit_norm,
             "candidate_projection_update_norm": self.candidate_projection_update_norm,
             "candidate_utility": self.candidate_utility,
+            "candidate_gate": self.candidate_gate,
         }
 
     @property
@@ -309,6 +327,7 @@ class AdaptiveResidualShadow:
         self.region.trace.zero_()
         self._last_input.zero_()
         self._last_activity.zero_()
+        self._last_gate_input.zero_()
         self._last_candidate_residual.zero_()
         self._last_candidate_activity = 0.0
         self._last_candidate_eligibility_norm = 0.0
@@ -317,6 +336,7 @@ class AdaptiveResidualShadow:
         self._last_candidate_credit_norm = 0.0
         self._last_candidate_projection_update_norm = 0.0
         self._last_candidate_utility = 0.0
+        self._last_candidate_gate = 1.0 if self.gate_projection is None else 0.5
 
     @torch.no_grad()
     def forward(self, context: torch.Tensor) -> torch.Tensor:
@@ -335,7 +355,16 @@ class AdaptiveResidualShadow:
             self.output_projection.edge_weight * candidate_edges.to(self.output_projection.edge_weight.dtype)
         ).sum(dim=1) * activity[candidate_index]
         residual = self.output_projection.forward(activity)
-        self._last_candidate_residual.copy_(candidate_residual)
+        candidate_gate = 1.0
+        if self.gate_projection is not None:
+            parent_trace = self.region.trace[: self.candidate.parent_unit_count]
+            self._last_gate_input.copy_(parent_trace)
+            gate_logit = self._candidate_gate_bias + self.gate_projection.forward(parent_trace)[0]
+            candidate_gate = float(torch.sigmoid(gate_logit).item())
+        self._last_candidate_gate = candidate_gate
+        gated_candidate_residual = candidate_residual * candidate_gate
+        residual = residual - candidate_residual + gated_candidate_residual
+        self._last_candidate_residual.copy_(gated_candidate_residual)
         self._last_candidate_activity = float(abs(activity[candidate_index]).item())
         self._last_candidate_eligibility_norm = float(abs(candidate_eligibility).item())
         self._last_candidate_residual_norm = float(candidate_residual.norm().item())
@@ -391,6 +420,27 @@ class AdaptiveResidualShadow:
                 postsynaptic_error.to(self.device),
             ).item()
         )
+        if self.gate_projection is not None:
+            utility_advantage = float(
+                self._last_candidate_utility - self._candidate_utility_baseline
+            )
+            self._candidate_utility_baseline = (
+                0.9 * self._candidate_utility_baseline
+                + 0.1 * self._last_candidate_utility
+            )
+            gate_error = torch.tensor(
+                [utility_advantage * float(self._gate) * float(self.residual_gain)],
+                device=self.device,
+            )
+            self.gate_projection.local_update(
+                gate_error,
+                self._last_gate_input,
+                learning_rate=float(self.config.predictive_context_learning_rate),
+                weight_decay=float(self.config.synapse_decay),
+            )
+            self._candidate_gate_bias.add_(
+                float(self.config.predictive_context_learning_rate) * utility_advantage
+            ).clamp_(-4.0, 4.0)
         candidate_projection_before = self.output_projection.edge_weight[
             ~parent_projection_mask
         ].detach().clone()
@@ -433,7 +483,10 @@ class AdaptiveResidualShadow:
         )
 
     def parameter_tensors(self) -> tuple[torch.Tensor, ...]:
-        return (*self.region.parameter_tensors(), self.output_projection.edge_weight)
+        tensors = [*self.region.parameter_tensors(), self.output_projection.edge_weight]
+        if self.gate_projection is not None:
+            tensors.extend((self.gate_projection.edge_weight, self._candidate_gate_bias))
+        return tuple(tensors)
 
     def to_payload(self) -> dict[str, Any]:
         payload = {
@@ -451,6 +504,11 @@ class AdaptiveResidualShadow:
             "last_activity": self._last_activity.detach().cpu().clone(),
             "diagnostics": dict(self.diagnostics),
         }
+        if self.gate_projection is not None:
+            payload["last_gate_input"] = self._last_gate_input.detach().cpu().clone()
+            payload["gate_projection"] = self.gate_projection.to_payload()
+            payload["candidate_gate_bias"] = self._candidate_gate_bias.detach().cpu().clone()
+            payload["candidate_utility_baseline"] = self._candidate_utility_baseline
         if self._birth_anchor_unit_ids:
             payload["birth_anchor_unit_id"] = self._birth_anchor_unit_ids[0]
             if len(self._birth_anchor_unit_ids) > 1:
@@ -544,6 +602,12 @@ class AdaptiveResidualShadow:
             generator=growth_generator,
             device=device,
         )
+        gate_projection = cls._new_gate_projection(
+            config,
+            parent_unit_count=candidate.parent_unit_count,
+            generator=growth_generator,
+            device=device,
+        )
         shadow = cls(
             config,
             candidate=candidate,
@@ -551,6 +615,7 @@ class AdaptiveResidualShadow:
             output_projection=projection,
             parent_bridge_digest=content_digest(parent_bridge_payload),
             residual_gain=float(parent_bridge_payload["residual_gain"]),
+            gate_projection=gate_projection,
             birth_anchor_unit_ids=birth_anchor_unit_ids,
             birth_anchor_weights=birth_anchor_weights,
             device=device,
@@ -564,6 +629,26 @@ class AdaptiveResidualShadow:
         shadow._last_input.copy_(last_input)
         shadow._last_activity[: candidate.parent_unit_count].copy_(last_activity)
         return shadow
+
+    @staticmethod
+    def _new_gate_projection(
+        config: TaijiConfig,
+        *,
+        parent_unit_count: int,
+        generator: torch.Generator,
+        device: torch.device | str,
+    ) -> SparseSynapses:
+        projection = SparseSynapses(
+            1,
+            parent_unit_count,
+            min(parent_unit_count, max(1, int(config.predictive_context_fan_in))),
+            generator=generator,
+            init_scale=float(config.weight_init_scale),
+            max_weight_norm=float(config.max_weight_norm),
+            device=device,
+        )
+        projection.edge_weight.zero_()
+        return projection
 
     @staticmethod
     def _new_identity_projection(
@@ -643,6 +728,21 @@ class AdaptiveResidualShadow:
             device=device,
         )
         projection.load_payload(projection_payload)
+        gate_projection_payload = payload.get("gate_projection")
+        gate_projection = None
+        if gate_projection_payload is not None:
+            if not isinstance(gate_projection_payload, Mapping):
+                raise ValueError("adaptive residual shadow gate payload is invalid")
+            gate_projection = SparseSynapses(
+                int(gate_projection_payload["out_features"]),
+                int(gate_projection_payload["in_features"]),
+                int(gate_projection_payload["fan_in"]),
+                generator=constructor_generator,
+                init_scale=float(config.weight_init_scale),
+                max_weight_norm=float(config.max_weight_norm),
+                device=device,
+            )
+            gate_projection.load_payload(gate_projection_payload)
         shadow = cls(
             config,
             candidate=candidate,
@@ -650,6 +750,7 @@ class AdaptiveResidualShadow:
             output_projection=projection,
             parent_bridge_digest=str(payload["parent_bridge_digest"]),
             residual_gain=float(payload["residual_gain"]),
+            gate_projection=gate_projection,
             birth_anchor_unit_id=payload.get("birth_anchor_unit_id"),
             birth_anchor_unit_ids=(
                 None
@@ -673,6 +774,24 @@ class AdaptiveResidualShadow:
             raise ValueError("adaptive residual shadow last_activity shape mismatch")
         shadow._last_input = last_input
         shadow._last_activity = last_activity
+        if gate_projection is not None:
+            gate_input = payload.get("last_gate_input")
+            if gate_input is None:
+                raise ValueError("adaptive residual shadow gate input state is missing")
+            shadow._last_gate_input = gate_input.detach().to(shadow.device).clone()
+            if shadow._last_gate_input.shape != (candidate.parent_unit_count,):
+                raise ValueError("adaptive residual shadow gate input shape mismatch")
+            gate_bias = payload.get("candidate_gate_bias", 0.0)
+            shadow._candidate_gate_bias = torch.as_tensor(
+                gate_bias,
+                device=shadow.device,
+                dtype=torch.float32,
+            ).clone()
+            if shadow._candidate_gate_bias.shape != ():
+                raise ValueError("adaptive residual shadow gate bias shape mismatch")
+            shadow._candidate_utility_baseline = float(
+                payload.get("candidate_utility_baseline", 0.0)
+            )
         diagnostics = payload.get("diagnostics", {})
         if not isinstance(diagnostics, Mapping):
             raise ValueError("adaptive residual shadow diagnostics payload is invalid")
@@ -684,10 +803,12 @@ class AdaptiveResidualShadow:
             "candidate_credit_norm",
             "candidate_projection_update_norm",
             "candidate_utility",
+            "candidate_gate",
         ):
-            value = float(diagnostics.get(name, 0.0))
+            default = 1.0 if name == "candidate_gate" else 0.0
+            value = float(diagnostics.get(name, default))
             if not math.isfinite(value) or (
-                name != "candidate_utility" and value < 0.0
+                name not in {"candidate_utility"} and value < 0.0
             ):
                 raise ValueError("adaptive residual shadow diagnostics must be finite")
             setattr(shadow, f"_last_{name}", value)
