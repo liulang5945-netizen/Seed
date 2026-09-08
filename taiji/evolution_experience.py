@@ -160,9 +160,12 @@ def _validate_redaction(value: Any, path: str) -> None:
     if isinstance(value, Mapping):
         for key, item in value.items():
             key_text = str(key).strip().lower()
-            if key_text in _SENSITIVE_KEYS and not isinstance(item, (Mapping, list, tuple)):
-                if item != REDACTION_PLACEHOLDER:
-                    raise ValueError(f"{path}.{key} contains unredacted sensitive data")
+            if (
+                key_text in _SENSITIVE_KEYS
+                and not isinstance(item, (Mapping, list, tuple))
+                and item != REDACTION_PLACEHOLDER
+            ):
+                raise ValueError(f"{path}.{key} contains unredacted sensitive data")
             _validate_redaction(item, f"{path}.{key}")
     elif isinstance(value, (list, tuple)):
         for index, item in enumerate(value):

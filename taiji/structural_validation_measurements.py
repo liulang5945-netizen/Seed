@@ -70,7 +70,9 @@ def _mean_absolute_error(
     if len(observed_values) != len(target_values):
         raise ValueError(f"{name} observed and target sequence lengths differ")
     errors: list[float] = []
-    for observed_tensor, target_tensor in zip(observed_values, target_values):
+    for observed_tensor, target_tensor in zip(
+        observed_values, target_values, strict=True
+    ):
         if observed_tensor.shape != target_tensor.shape:
             raise ValueError(f"{name} observed and target tensor shapes differ")
         errors.append(float(torch.mean(torch.abs(observed_tensor - target_tensor)).item()))

@@ -634,7 +634,8 @@ class StructuredSemanticTransitionLearner(nn.Module):
     ) -> StructuredSemanticTransitionResult:
         current = self._fact_vector(previous)
         current_scores = {
-            key: float(value) for key, value in zip(self.fact_keys, current)
+            key: float(value)
+            for key, value in zip(self.fact_keys, current, strict=True)
         }
         if event.confidence < self.confidence_floor:
             return StructuredSemanticTransitionResult(
@@ -671,10 +672,12 @@ class StructuredSemanticTransitionLearner(nn.Module):
         delta_values = self.transition_head(transition_input).reshape(-1)
         next_values = torch.clamp(current + delta_values, 0.0, 1.0)
         fact_scores = {
-            key: float(value) for key, value in zip(self.fact_keys, next_values)
+            key: float(value)
+            for key, value in zip(self.fact_keys, next_values, strict=True)
         }
         delta_scores = {
-            key: float(value) for key, value in zip(self.fact_keys, delta_values)
+            key: float(value)
+            for key, value in zip(self.fact_keys, delta_values, strict=True)
         }
         world = self._materialize_world(previous, event, fact_scores)
         active = {key for key, score in fact_scores.items() if score >= self.fact_threshold}
@@ -714,7 +717,8 @@ class StructuredSemanticTransitionLearner(nn.Module):
             )
         goal_probabilities = torch.softmax(self.goal_head(next_values.reshape(1, -1)), dim=-1).reshape(-1)
         goal_scores = {
-            goal_id: float(value) for goal_id, value in zip(self.goal_ids, goal_probabilities)
+            goal_id: float(value)
+            for goal_id, value in zip(self.goal_ids, goal_probabilities, strict=True)
         }
         order = torch.argsort(goal_probabilities, descending=True)
         goal_index = int(order[0])
@@ -739,7 +743,9 @@ class StructuredSemanticTransitionLearner(nn.Module):
         content_probabilities = torch.softmax(self.content_head(content_input), dim=-1).reshape(-1)
         content_scores = {
             content_id: float(value)
-            for content_id, value in zip(self.content_ids, content_probabilities)
+            for content_id, value in zip(
+                self.content_ids, content_probabilities, strict=True
+            )
         }
         content_index = int(torch.argmax(content_probabilities))
         content_confidence = float(content_probabilities[content_index])

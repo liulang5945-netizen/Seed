@@ -1579,13 +1579,16 @@ class WorkbenchEnvironment:
                 usage=usage,
             )
             decision = token.authorize(context)
-            if decision.accepted and capability_id is not None:
-                if str(capability_id) not in token.capability_ids:
-                    return WorkbenchBoundaryDecision(
-                        accepted=False,
-                        reason_code="capability_not_in_task_boundary",
-                        boundary_digest=token.token_digest,
-                    )
+            if (
+                decision.accepted
+                and capability_id is not None
+                and str(capability_id) not in token.capability_ids
+            ):
+                return WorkbenchBoundaryDecision(
+                    accepted=False,
+                    reason_code="capability_not_in_task_boundary",
+                    boundary_digest=token.token_digest,
+                )
             return decision
 
     def _remember_task_boundary(self, boundary: WorkbenchTaskBoundary) -> None:

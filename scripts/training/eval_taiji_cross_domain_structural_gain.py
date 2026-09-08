@@ -213,7 +213,7 @@ def _cross_domain_training_examples() -> tuple[tuple[WorkspaceRoutingExample, ..
         candidates = tuple(_candidate(action) for action in actions)
         relevant_ids = tuple(
             candidate.candidate_id
-            for candidate, observed in zip(candidates, record["actions"])
+            for candidate, observed in zip(candidates, record["actions"], strict=True)
             if bool(observed["success"])
         )
         if not record["all_success"] or len(relevant_ids) != len(actions):
@@ -252,7 +252,8 @@ def _task_candidates(
     actions = (*required_actions, distractor)
     candidates = tuple(_candidate(action) for action in actions)
     action_by_id = {
-        candidate.candidate_id: action for candidate, action in zip(candidates, actions)
+        candidate.candidate_id: action
+        for candidate, action in zip(candidates, actions, strict=True)
     }
     required_ids = tuple(_candidate(action).candidate_id for action in required_actions)
     return candidates, action_by_id, required_ids

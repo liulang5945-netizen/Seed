@@ -98,7 +98,7 @@ def _training_examples() -> tuple[tuple[WorkspaceRoutingExample, ...], dict[str,
             raw_actions = record["workbench_outcome"]["raw_actions"][1 : 1 + len(actions)]
             relevant_ids = tuple(
                 candidate.candidate_id
-                for candidate, observed in zip(candidates, raw_actions)
+                for candidate, observed in zip(candidates, raw_actions, strict=True)
                 if bool(observed["success"])
             )
             examples.append(
@@ -136,7 +136,7 @@ def _task_candidates(
     candidates = tuple(_candidate(actions[key]) for key in keys)
     action_by_id = {
         candidate.candidate_id: actions[key]
-        for key, candidate in zip(keys, candidates)
+        for key, candidate in zip(keys, candidates, strict=True)
     }
     required_ids = tuple(MEMBER_IDS[key] for key in required_keys)
     return candidates, action_by_id, required_ids

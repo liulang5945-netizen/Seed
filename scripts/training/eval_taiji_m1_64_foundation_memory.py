@@ -204,7 +204,7 @@ def _marginal_predictability(
     ):
         projected = [projection(key) for key in expected]
         groups: dict[Any, list[int]] = {}
-        for label, action in zip(projected, actions):
+        for label, action in zip(projected, actions, strict=True):
             groups.setdefault(label, []).append(action)
         observed = _majority_share(groups, total)
 
@@ -214,7 +214,7 @@ def _marginal_predictability(
             shuffled = actions[:]
             rng.shuffle(shuffled)
             null_groups: dict[Any, list[int]] = {}
-            for label, action in zip(projected, shuffled):
+            for label, action in zip(projected, shuffled, strict=True):
                 null_groups.setdefault(label, []).append(action)
             null_shares.append(_majority_share(null_groups, total))
 

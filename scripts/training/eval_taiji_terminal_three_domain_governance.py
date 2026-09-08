@@ -137,7 +137,7 @@ def _training_examples() -> tuple[tuple[WorkspaceRoutingExample, ...], dict[str,
         candidates = tuple(_candidate(action) for action in actions)
         relevant_ids = tuple(
             candidate.candidate_id
-            for candidate, observed in zip(candidates, record["actions"])
+            for candidate, observed in zip(candidates, record["actions"], strict=True)
             if bool(observed["success"])
         )
         if not record["all_success"] or len(relevant_ids) != len(actions):
@@ -166,7 +166,7 @@ def _training_examples() -> tuple[tuple[WorkspaceRoutingExample, ...], dict[str,
         candidates = tuple(_candidate(action) for action in actions)
         relevant_ids = tuple(
             candidate.candidate_id
-            for candidate, observed in zip(candidates, record["actions"])
+            for candidate, observed in zip(candidates, record["actions"], strict=True)
             if bool(observed["success"])
         )
         if not relevant_ids or bool(record["actions"][-1]["success"]):
@@ -208,7 +208,8 @@ def _task_candidates(
     actions = (*required_actions, distractor)
     candidates = tuple(_candidate(action) for action in actions)
     action_by_id = {
-        candidate.candidate_id: action for candidate, action in zip(candidates, actions)
+        candidate.candidate_id: action
+        for candidate, action in zip(candidates, actions, strict=True)
     }
     required_ids = tuple(_candidate(action).candidate_id for action in required_actions)
     return candidates, action_by_id, required_ids
@@ -563,6 +564,7 @@ def evaluate() -> dict[str, object]:
                         item["approval_granted"],
                         item["preview_validated"],
                         item["raw_action_results"],
+                        strict=True,
                     )
                 )
                 for item in run["structural_runs"]

@@ -118,7 +118,7 @@ def _flatten(value: Any, *, path: str = "") -> tuple[str, ...]:
         return tuple(tokens)
     if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
         tokens = []
-        for index, child in enumerate(value):
+        for _index, child in enumerate(value):
             tokens.extend(_flatten(child, path=f"{path}[]" if path else "[]"))
         return tuple(tokens)
     if isinstance(value, bytes):

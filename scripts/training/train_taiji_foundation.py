@@ -82,11 +82,7 @@ def main() -> int:
             chunk_bytes=args.chunk_bytes,
             checkpoint_interval=args.checkpoint_interval,
         )
-    result: dict[str, Any]
-    if args.eval_only:
-        result = run.evaluate_only()
-    else:
-        result = run.run()
+    result: dict[str, Any] = run.evaluate_only() if args.eval_only else run.run()
     report_path = args.report or args.output_dir / ("eval_report.json" if args.eval_only else "training_report.json")
     report_path.parent.mkdir(parents=True, exist_ok=True)
     result["report_path"] = str(report_path)

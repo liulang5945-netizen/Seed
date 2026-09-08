@@ -176,7 +176,7 @@ class StructuralValidationArtifactStore:
                     f"{unreferenced_measurements[0]}"
                 )
             records: list[dict[str, Any]] = []
-            for filename_digest, _, artifact in loaded_artifacts:
+            for _filename_digest, _, artifact in loaded_artifacts:
                 measurement_digest = artifact.measurement_digest
                 if _DIGEST_PATTERN.fullmatch(measurement_digest) is None:
                     raise ValueError(

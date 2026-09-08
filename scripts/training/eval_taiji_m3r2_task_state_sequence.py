@@ -240,7 +240,9 @@ def _static_only_sequence(observations: tuple[WorkbenchObservation, ...]) -> dic
     initial = _world(observations[0], tick=0)
     expected = [_world(item, tick=index).relations for index, item in enumerate(observations[1:], start=1)]
     actual = [initial.relations for _ in expected]
-    exact = sum(int(left == right) for left, right in zip(expected, actual)) / max(1, len(expected))
+    exact = sum(
+        int(left == right) for left, right in zip(expected, actual, strict=True)
+    ) / max(1, len(expected))
     return {"steps": len(expected), "fact_exact_accuracy": exact}
 
 

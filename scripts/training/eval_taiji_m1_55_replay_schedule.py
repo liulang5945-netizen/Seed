@@ -193,7 +193,7 @@ def _seed_record(course: Any, seed: int) -> dict[str, Any]:
             no_replay_record = record
     if no_replay_record is None:
         raise RuntimeError("replay schedule audit did not build no-replay baseline")
-    for schedule, record in records.items():
+    for _schedule, record in records.items():
         record["causal_gain_action"] = float(
             record["old_holdout"]["summary"]["all"]["action_accuracy"]
             - no_replay_record["old_holdout"]["summary"]["all"]["action_accuracy"]
