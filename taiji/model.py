@@ -24,6 +24,7 @@ from .adaptive_residual_growth import (
     AdaptiveResidualGrowthPressure,
     AdaptiveResidualGrowthTrigger,
 )
+from .adaptive_residual_shadow import AdaptiveResidualShadow
 from .config import TaijiConfig, validate_episodic_learning_target
 from .developmental_synapse import (
     DevelopmentalReplayBuffer,
@@ -528,6 +529,27 @@ class Taiji:
             "topology_diff": dict(candidate.topology_diff),
             "bridge_unchanged": True,
         }
+
+    @torch.no_grad()
+    def materialize_adaptive_residual_shadow(self) -> AdaptiveResidualShadow:
+        """Create an independent gate-closed shadow from the pending candidate."""
+
+        bridge = self._adaptive_residual_bridge
+        candidate = self._adaptive_residual_growth_candidate
+        if bridge is None or candidate is None:
+            raise RuntimeError("adaptive residual shadow requires a pending candidate")
+        if bridge.region.unit_count != candidate.parent_unit_count:
+            raise RuntimeError("adaptive residual shadow parent unit count drifted")
+        if bridge.edge_count != candidate.parent_edge_count:
+            raise RuntimeError("adaptive residual shadow parent edge count drifted")
+        if candidate.unit_id in bridge.region.unit_ids:
+            raise RuntimeError("adaptive residual shadow candidate unit already exists in parent")
+        return AdaptiveResidualShadow.from_parent_bridge(
+            self.config,
+            bridge.to_payload(),
+            candidate,
+            device=self.device,
+        )
 
     def _developmental_f1_fast_slow_conflict(self) -> float:
         bundle = self._developmental_f1_bundle
