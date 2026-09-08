@@ -1,0 +1,156 @@
+{
+  "format": "taiji-m4r1-consolidation-aggregate-v1",
+  "version": 1,
+  "generated_at": "2026-09-08T10:35:14.957653+00:00",
+  "status": "passed",
+  "can_promote": false,
+  "consolidation_strength": 0.5,
+  "seeds": [
+    {
+      "seed": 11,
+      "source_checkpoint": "output\\taiji-m2s-seed11-identity-generation-20260905\\last.pt",
+      "source_digest": "ccb07a3f3a48dcfdbdae52824a596c18e29f9739d34f9633ba88164422425beb",
+      "consolidation_strength": 0.5,
+      "checks_passed": 13,
+      "checks_total": 13,
+      "data_chain": {
+        "phase_c": "ac97455f1583b90f7e2d62ca3c682c8e27f0c56bb7275ebee6abdb17fc6476bd",
+        "phase_c2": "13dee7b2f7d38cd3688a5af76264c24cb6156ea371e9db88d812f5ea283598c1",
+        "phase_c3": "33d3a0d9a755d4d315e875a42266a4f4ec74a6a7b54f9831bfa676bee4d2d1cd",
+        "cohort_seeds": [
+          11,
+          29,
+          47
+        ]
+      },
+      "metrics": {
+        "c3_holdout_gain_bpb": 0.03482495633743099,
+        "c2_cycle3_delta_bpb": -0.006298337671766241,
+        "c_cycle2_delta_bpb": 0.018737582092968275,
+        "c_cycle3_delta_bpb": 0.0012340173908995666,
+        "active_a_retention_bpb": 4.213078601318851
+      },
+      "resources": {
+        "training_elapsed_seconds": 5175.682173100067,
+        "learn_seconds": 5085.081720800605,
+        "scoring_seconds": 1007.9977263001492,
+        "peak_working_set_bytes": 367722496,
+        "body_bytes_per_second": 618.618966757673
+      }
+    },
+    {
+      "seed": 29,
+      "source_checkpoint": "output\\taiji-m2u-seed29-identity-generation-20260905\\last.pt",
+      "source_digest": "9f49bbd4f241d5c27487315a3a3cd67d8d406ac3c67357e931f040cc9d3e50c6",
+      "consolidation_strength": 0.5,
+      "checks_passed": 13,
+      "checks_total": 13,
+      "data_chain": {
+        "phase_c": "ac97455f1583b90f7e2d62ca3c682c8e27f0c56bb7275ebee6abdb17fc6476bd",
+        "phase_c2": "13dee7b2f7d38cd3688a5af76264c24cb6156ea371e9db88d812f5ea283598c1",
+        "phase_c3": "33d3a0d9a755d4d315e875a42266a4f4ec74a6a7b54f9831bfa676bee4d2d1cd",
+        "cohort_seeds": [
+          11,
+          29,
+          47
+        ]
+      },
+      "metrics": {
+        "c3_holdout_gain_bpb": 0.048755648786269035,
+        "c2_cycle3_delta_bpb": 0.005706381738034949,
+        "c_cycle2_delta_bpb": 0.01142248217060704,
+        "c_cycle3_delta_bpb": 0.00041777164739720263,
+        "active_a_retention_bpb": 4.272191071538038
+      },
+      "resources": {
+        "training_elapsed_seconds": 4548.868223499972,
+        "learn_seconds": 4459.448327600025,
+        "scoring_seconds": 870.4991318000248,
+        "peak_working_set_bytes": 369954816,
+        "body_bytes_per_second": 705.4074335901007
+      }
+    },
+    {
+      "seed": 47,
+      "source_checkpoint": "output\\taiji-m2u-seed47-identity-generation-20260905\\last.pt",
+      "source_digest": "9e381dbdfe9ca837f05f55e7ccc28192536b30a703dffefda519b0b235a0d7d8",
+      "consolidation_strength": 0.5,
+      "checks_passed": 13,
+      "checks_total": 13,
+      "data_chain": {
+        "phase_c": "ac97455f1583b90f7e2d62ca3c682c8e27f0c56bb7275ebee6abdb17fc6476bd",
+        "phase_c2": "13dee7b2f7d38cd3688a5af76264c24cb6156ea371e9db88d812f5ea283598c1",
+        "phase_c3": "33d3a0d9a755d4d315e875a42266a4f4ec74a6a7b54f9831bfa676bee4d2d1cd",
+        "cohort_seeds": [
+          11,
+          29,
+          47
+        ]
+      },
+      "metrics": {
+        "c3_holdout_gain_bpb": 0.08606706686819532,
+        "c2_cycle3_delta_bpb": 0.012737311152386077,
+        "c_cycle2_delta_bpb": 0.009534771638048056,
+        "c_cycle3_delta_bpb": 0.013736817290510572,
+        "active_a_retention_bpb": 4.333902116647609
+      },
+      "resources": {
+        "training_elapsed_seconds": 4314.346361300093,
+        "learn_seconds": 4225.48429719964,
+        "scoring_seconds": 839.8771964999614,
+        "peak_working_set_bytes": 371011584,
+        "body_bytes_per_second": 744.4656703812085
+      }
+    }
+  ],
+  "data_chain": {
+    "phase_c": "ac97455f1583b90f7e2d62ca3c682c8e27f0c56bb7275ebee6abdb17fc6476bd",
+    "phase_c2": "13dee7b2f7d38cd3688a5af76264c24cb6156ea371e9db88d812f5ea283598c1",
+    "phase_c3": "33d3a0d9a755d4d315e875a42266a4f4ec74a6a7b54f9831bfa676bee4d2d1cd",
+    "cohort_seeds": [
+      11,
+      29,
+      47
+    ]
+  },
+  "configuration": {
+    "epochs": 1,
+    "c_train_bytes": 1048576,
+    "eval_bytes": 131072,
+    "chunk_bytes": 65536,
+    "checkpoint_interval": 1
+  },
+  "aggregate": {
+    "technical_gate_all_passed": true,
+    "retention_gate_passed": false,
+    "c3_holdout_gain_bpb": {
+      "mean": 0.05654922399729845,
+      "min": 0.03482495633743099,
+      "max": 0.08606706686819532,
+      "positive_seed_count": 3
+    },
+    "c2_cycle3_delta_bpb": {
+      "mean": 0.004048451739551595,
+      "degradation_seed_count": 2
+    },
+    "c_cycle2_delta_bpb": {
+      "mean": 0.01323161196720779,
+      "degradation_seed_count": 3
+    },
+    "c_cycle3_delta_bpb": {
+      "mean": 0.00512953544293578,
+      "degradation_seed_count": 3
+    },
+    "resources": {
+      "training_elapsed_seconds_mean": 4679.632252633378,
+      "scoring_seconds_mean": 906.1246848667118,
+      "peak_working_set_bytes_max": 371011584
+    },
+    "interpretation": "technical consolidation and checkpoint gates passed and all three C'' holdouts improved, but the candidate is not promoted: C retention degraded after cycle 2 and again after cycle 3 for all three seeds"
+  },
+  "source_reports": [
+    "reports\\taiji_m4r1_cascade_formal_seed11_20260908.json",
+    "reports\\taiji_m4r1_cascade_formal_seed29_20260908.json",
+    "reports\\taiji_m4r1_cascade_formal_seed47_20260908.json"
+  ]
+}
