@@ -425,12 +425,14 @@ R8 已将主要嫌疑从 owner 写入幅度移到 C3 phase boundary 或其与更
 - **能力对齐**：R7 的 frozen difficulty 与 scale `0.5` C/C2/C3 delta 已并排；seed11/47 的 C cycle3 退化没有共享一个异常 C3 byte 分布，C3/C2 最大 boundary JS 比约 1.19×。
 - **结论**：课程不是明显 outlier；下一步只做一个 update/consolidation rule audit，不能直接恢复 scale formal 或扩容，保持 `can_promote=false`。
 
-### M4.R10：单一 update/consolidation rule audit（下一步）
+### M4.R10：单一 update/consolidation rule audit（smoke 已完成，formal 运行中，2026-09-08）
 
 R8/R9 已把候选空间收敛为 stable course 上的连续更新与巩固交互。R10 必须复用 foundation C→C2→C3、fixed-capacity 和 scale `0.5`，只打开一个已有规则变量；禁止把多个规则组合后的结果冒充单一因果证据。
 
 - **对照**：scale `0.5`、无新增规则的 joint baseline；候选只增加一个已存在的 consolidation/update rule，保留 scale、课程、owner 和 scorer 不变。
-- **证据**：CPU smoke 先验证 owner 写集合、scale/规则参数、record-disjoint、checkpoint/fresh-restore、read-only score；再比较 C cycle2/cycle3 retention 与 C″ increment。
+- **实现**：`eval_taiji_m2r1_phase_c_canary.py` 的 `_run_cascade_arm` 增加向后兼容 `predictive_update_scale` 透传（默认 `1.0`，R5 合同等价旧路径）；新增 `scripts/training/eval_taiji_m4r10_rule_audit.py`（预注册三 phase digest 断言 + baseline/candidate 两臂 + 每臂 checkpoint 归档）与 `scripts/training/aggregate_taiji_m4r10.py`（R7 同语义 retention Gate：candidate C″ gain 3/3 正且 cycle2/cycle3 退化 0/3）。规则变量选定为已存在的 `consolidation_strength`（R1 在 legacy scale 1.0 下否决过；本次在 scale 0.5 基底单独重测）。
+- **CPU smoke（seed11，16 KiB/4 KiB）**：报告 `reports/taiji_m4r10_rule_audit_smoke_seed11_20260908.json`，两臂各 14/14 checks 全过（数据链 digest、owner 写集合、原子 checkpoint、fresh-restore、read-only scoring）；candidate − baseline 全部指标方向一致：C″ gain `+0.0188`、C cycle3 退化更小 `−0.0064`、A retention 更好 `−0.0105`、C2 cycle3 持平。
+- **formal**：三 seed（11/29/47，65536/16384，R7 同预算）串行运行中，完成后由 `aggregate_taiji_m4r10.py` 出预注册判定。
 - **停止线**：任一技术或 retention Gate 失败，撤回该规则并回到规则设计；不得扩容、换 UltraData、继续试 scale 或接外围系统，全部保持 `can_promote=false`。
 
 ### 架构/巩固候选闸门（决策记录 2026-09-08，不改变唯一下一步）
