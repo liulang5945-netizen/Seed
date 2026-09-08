@@ -202,7 +202,7 @@ class WorkbenchStructuralValidationArtifact:
         evidence_ids: tuple[str, ...],
         measurement_digest: str = "",
     ) -> WorkbenchStructuralValidationArtifact:
-        values = {
+        values: dict[str, Any] = {
             "candidate_id": str(candidate_id),
             "network_id": str(network_id),
             "region_id": str(region_id),

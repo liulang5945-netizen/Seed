@@ -123,7 +123,7 @@ class AdaptiveResidualGrowthPressure:
         evidence_id: str,
         parent_checkpoint_digest: str,
     ) -> AdaptiveResidualGrowthPressure:
-        identity = {
+        identity: dict[str, Any] = {
             "format": ADAPTIVE_RESIDUAL_GROWTH_FORMAT,
             "version": ADAPTIVE_RESIDUAL_GROWTH_VERSION,
             "kind": "pressure",
@@ -451,7 +451,7 @@ class AdaptiveResidualGrowthTrigger:
             reasons.append("structural_budget_insufficient")
         if should_propose:
             reasons.append("persistent_native_pressure")
-        identity = {
+        identity: dict[str, Any] = {
             "format": ADAPTIVE_RESIDUAL_GROWTH_FORMAT,
             "version": ADAPTIVE_RESIDUAL_GROWTH_VERSION,
             "kind": "decision",

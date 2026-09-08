@@ -202,8 +202,8 @@ def project_structural_growth_pressure(
 
     if minimum_train_task_slices <= 0 or minimum_train_windows <= 0:
         raise ValueError("structural pressure minimums must be positive")
-    items = tuple(summaries)
-    snapshots = tuple(historical_snapshots)
+    items: tuple[StructuralEvidenceWindowSummary, ...] = tuple(summaries)
+    snapshots: tuple[StructuralEvidencePressureSnapshot, ...] = tuple(historical_snapshots)
     if not items and not snapshots:
         raise ValueError("structural pressure requires sealed evidence windows")
     if any(not isinstance(item, StructuralEvidenceWindowSummary) for item in items):
@@ -260,20 +260,32 @@ def project_structural_growth_pressure(
         raise ValueError("structural pressure requires a separate holdout window")
     if require_retention and retention_window_count <= 0:
         raise ValueError("structural pressure requires a separate retention window")
-    if any(item.mean_prediction_error is None for item in train):
+    train_prediction_errors = tuple(
+        item.mean_prediction_error
+        for item in train
+        if item.mean_prediction_error is not None
+    )
+    if len(train_prediction_errors) != len(train):
         raise ValueError("train windows require prediction error evidence")
     train_error_sum = sum(item.train_prediction_error_sum for item in snapshots) + sum(
-        float(item.mean_prediction_error) for item in train
+        float(value) for value in train_prediction_errors
     )
     train_resource_state_sum = sum(item.train_resource_state_sum for item in snapshots) + sum(
         1.0 - float(item.mean_resource_pressure) for item in train
     )
+    holdout_transfer_values = tuple(
+        item.mean_holdout_transfer
+        for item in holdout
+        if item.mean_holdout_transfer is not None
+    )
+    if len(holdout_transfer_values) != len(holdout):
+        raise ValueError("holdout windows require transfer evidence")
     holdout_transfer = (
         None
         if holdout_window_count <= 0
         else (
             sum(item.holdout_transfer_sum for item in snapshots)
-            + sum(float(item.mean_holdout_transfer) for item in holdout)
+            + sum(float(value) for value in holdout_transfer_values)
         )
         / holdout_window_count
     )
@@ -285,8 +297,10 @@ def project_structural_growth_pressure(
         )
         | dict.fromkeys(evidence_id for item in items for evidence_id in item.evidence_ids)
     )
-    source_items = (*snapshots, *items)
-    payload = {
+    source_items: tuple[
+        StructuralEvidencePressureSnapshot | StructuralEvidenceWindowSummary, ...
+    ] = (*snapshots, *items)
+    payload: dict[str, Any] = {
         "format": STRUCTURAL_PRESSURE_PROJECTION_FORMAT,
         "network_id": source_items[0].network_id,
         "region_id": source_items[0].region_id,

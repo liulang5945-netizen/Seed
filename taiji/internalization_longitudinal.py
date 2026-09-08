@@ -702,18 +702,20 @@ class InternalizationLongitudinalGate:
         active_learner = self.learner if learner is None else learner
         if not external_description_available and active_learner is None:
             raise RuntimeError("internalized selection requires a learner")
+        if not external_description_available:
+            assert active_learner is not None
         correct = 0
         for task in tasks:
-            selected = (
-                task.external_choice_example_id
-                if external_description_available
-                else self._select(
+            if external_description_available:
+                selected = task.external_choice_example_id
+            else:
+                assert active_learner is not None
+                selected = self._select(
                     active_learner,
                     task,
                     internalized_enabled=internalized_enabled,
                     grounding_enabled=grounding_enabled,
                 )
-            )
             correct += int(selected == task.expected_choice_example_id)
         return correct / len(tasks)
 

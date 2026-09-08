@@ -6,7 +6,7 @@ import hashlib
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, replace
 from itertools import combinations
-from typing import Any, cast
+from typing import Any, TypedDict, cast
 
 import torch
 
@@ -183,6 +183,24 @@ from .task_interpretation import (
 )
 from .workspace import WorkspaceRouter
 from .world_learning import WorldDynamicsLearner, WorldSchema, WorldSchemaRegistry
+
+
+class _StructuralLineageRetentionBeforeState(TypedDict):
+    candidate_batches: dict[str, StructuralCandidateBatch]
+    candidate_rollbacks: list[StructuralCandidateRollback]
+    growth_schedule_results: list[StructuralGrowthScheduleResult]
+    workbench_batch_schedule_results: list[StructuralWorkbenchBatchScheduleResult]
+    proposal_candidates: dict[str, StructuralProposalCandidate]
+    candidate_proposals: dict[str, str]
+    maintenance_results: list[StructuralMaintenanceResult]
+    candidate_validations: list[StructuralCandidateValidation]
+    validation_artifacts: list[WorkbenchStructuralValidationArtifact]
+    validation_artifact_batches: dict[str, StructuralValidationArtifactBatch]
+    validation_gate_decisions: list[StructuralValidationGateDecision]
+    admission_results: list[StructuralAdmissionResult]
+    last_lineage_retention_result: StructuralLineageRetentionResult | None
+    last_lineage_retention_policy: StructuralLineageRetentionPolicy | None
+    last_lineage_retention_policy_migration: StructuralLineageRetentionPolicyMigration | None
 
 
 def _checkpoint_digest(payload: Mapping[str, Any]) -> str:
@@ -731,7 +749,7 @@ class TSKV8Adapter(Taiji):
             )
         }
 
-        before_state = {
+        before_state: _StructuralLineageRetentionBeforeState = {
             "candidate_batches": self._structural_candidate_batches,
             "candidate_rollbacks": self._structural_candidate_rollbacks,
             "growth_schedule_results": self._structural_growth_schedule_results,
@@ -900,7 +918,7 @@ class TSKV8Adapter(Taiji):
             raise
 
         retention_pressure = len(self._structural_candidate_batches) > limit
-        result_payload = {
+        result_payload: dict[str, Any] = {
             "format": STRUCTURAL_LINEAGE_RETENTION_RESULT_FORMAT,
             "status": "compacted" if removed_batch_ids else "nothing_to_compact",
             "max_batches": limit,
@@ -914,7 +932,7 @@ class TSKV8Adapter(Taiji):
             "removed_record_counts": dict(sorted(record_counts.items())),
             "retention_pressure": retention_pressure,
         }
-        constructor_payload = {
+        constructor_payload: dict[str, Any] = {
             **result_payload,
             "removed_record_counts": tuple(sorted(record_counts.items())),
         }
@@ -1734,7 +1752,7 @@ class TSKV8Adapter(Taiji):
         candidate_ids: list[str] = []
         source_window_digests: list[str] = []
         for request in normalized_requests:
-            result = self.schedule_structural_growth_from_evidence(
+            growth_result = self.schedule_structural_growth_from_evidence(
                 network_id=request["network_id"],
                 region_id=request["region_id"],
                 controller_region_id=request["controller_region_id"],
@@ -1747,10 +1765,10 @@ class TSKV8Adapter(Taiji):
                 require_holdout=request["require_holdout"],
                 require_retention=request["require_retention"],
             )
-            schedule_results.append(result)
-            source_window_digests.extend(result.new_window_digests)
-            if result.candidate_id is not None:
-                candidate_ids.append(result.candidate_id)
+            schedule_results.append(growth_result)
+            source_window_digests.extend(growth_result.new_window_digests)
+            if growth_result.candidate_id is not None:
+                candidate_ids.append(growth_result.candidate_id)
         unique_candidates = tuple(dict.fromkeys(candidate_ids))
         unique_windows = tuple(dict.fromkeys(source_window_digests))
         trigger_tick = max(
@@ -1782,7 +1800,7 @@ class TSKV8Adapter(Taiji):
             else:
                 status = "no_candidates"
                 reason = "growth_controller_did_not_request_growth"
-            result = StructuralWorkbenchBatchScheduleResult(
+            batch_result = StructuralWorkbenchBatchScheduleResult(
                 status=status,
                 trigger_tick=trigger_tick,
                 request_digest=request_digest,
@@ -1791,12 +1809,12 @@ class TSKV8Adapter(Taiji):
                 reason=reason,
                 scheduler_revision=scheduler_revision,
             )
-            self._record_structural_workbench_batch_schedule_result(result)
-            return result
+            self._record_structural_workbench_batch_schedule_result(batch_result)
+            return batch_result
         try:
             batch = self.arbitrate_structural_candidate_batch(unique_candidates)
         except (RuntimeError, TypeError, ValueError) as exc:
-            result = StructuralWorkbenchBatchScheduleResult(
+            batch_result = StructuralWorkbenchBatchScheduleResult(
                 status="failed_closed",
                 trigger_tick=trigger_tick,
                 request_digest=request_digest,
@@ -1806,9 +1824,9 @@ class TSKV8Adapter(Taiji):
                 reason=str(exc),
                 scheduler_revision=scheduler_revision,
             )
-            self._record_structural_workbench_batch_schedule_result(result)
-            return result
-        result = StructuralWorkbenchBatchScheduleResult(
+            self._record_structural_workbench_batch_schedule_result(batch_result)
+            return batch_result
+        batch_result = StructuralWorkbenchBatchScheduleResult(
             status="batch_created",
             trigger_tick=trigger_tick,
             request_digest=request_digest,
@@ -1818,8 +1836,8 @@ class TSKV8Adapter(Taiji):
             batch_id=batch.batch_id,
             scheduler_revision=scheduler_revision,
         )
-        self._record_structural_workbench_batch_schedule_result(result)
-        return result
+        self._record_structural_workbench_batch_schedule_result(batch_result)
+        return batch_result
 
     @property
     def structural_pressure_projection_digests(self) -> tuple[str, ...]:
@@ -1947,11 +1965,11 @@ class TSKV8Adapter(Taiji):
         parent_checkpoint_digest = _checkpoint_digest(parent_checkpoint)
         topology_before_digest = self._structural_topology_digest(parent_checkpoint)
         budget_before = int(self._cognitive_state.development.structural_budget)
-        evidence_ids = (
-            candidate.evidence_ids
-            if candidate is not None
-            else self._topology_proposals[proposal_id].evidence_ids
-        )
+        if candidate is not None:
+            evidence_ids = candidate.evidence_ids
+        else:
+            assert proposal_id is not None
+            evidence_ids = self._topology_proposals[proposal_id].evidence_ids
         if not holdout_inputs or not expected_activities:
             result = StructuralCandidateValidation(
                 candidate_id=key,
@@ -2031,6 +2049,7 @@ class TSKV8Adapter(Taiji):
                 else self._topology_proposals.get(current_proposal_id)
             )
             if current_proposal is not None and current_proposal.status == "pending":
+                assert current_proposal_id is not None
                 self._topology_proposals[current_proposal_id] = replace(
                     current_proposal,
                     status="rejected",
@@ -2104,6 +2123,7 @@ class TSKV8Adapter(Taiji):
         proposal_id = validation.proposal_id
         if proposal_id is None:
             raise ValueError("validated candidate is missing its pending proposal")
+        proposal_id = str(proposal_id)
         proposal = self._topology_proposals.get(proposal_id)
         if proposal is None or proposal.status != "pending":
             raise ValueError("candidate gate requires a pending topology proposal")
@@ -2594,6 +2614,7 @@ class TSKV8Adapter(Taiji):
         proposal_id = validation.proposal_id
         if proposal_id is None:
             raise ValueError("validated candidate is missing its pending proposal")
+        proposal_id = str(proposal_id)
         proposal = self._topology_proposals.get(proposal_id)
         if proposal is None or proposal.status != "pending":
             raise ValueError("admission requires a pending topology proposal")
@@ -2606,7 +2627,7 @@ class TSKV8Adapter(Taiji):
             child_checkpoint = self.native_checkpoint()
             topology_after_digest = self._structural_topology_digest(child_checkpoint)
             budget_after = int(self._cognitive_state.development.structural_budget)
-            current = self._topology_proposals[proposal_id]
+            current_proposal = self._topology_proposals[proposal_id]
             if not committed:
                 result = StructuralAdmissionResult(
                     candidate_id=validation.candidate_id,
@@ -2622,11 +2643,11 @@ class TSKV8Adapter(Taiji):
                     error="topology commit rejected the candidate",
                 )
             elif (
-                current.status != "accepted"
+                current_proposal.status != "accepted"
                 or topology_after_digest == topology_before_digest
                 or budget_after != budget_before - proposal.resource_cost
             ):
-                if current.status == "accepted":
+                if current_proposal.status == "accepted":
                     self.rollback_structural_candidate(validation.candidate_id)
                 rolled_back_checkpoint = self.native_checkpoint()
                 result = StructuralAdmissionResult(
@@ -2658,8 +2679,8 @@ class TSKV8Adapter(Taiji):
                     structural_budget_after=budget_after,
                 )
         except (IndexError, KeyError, RuntimeError, ValueError) as exc:
-            current = self._topology_proposals.get(proposal_id)
-            if current is not None and current.status == "accepted":
+            failed_proposal = self._topology_proposals.get(proposal_id)
+            if failed_proposal is not None and failed_proposal.status == "accepted":
                 self.rollback_structural_candidate(validation.candidate_id)
             failed_checkpoint = self.native_checkpoint()
             result = StructuralAdmissionResult(

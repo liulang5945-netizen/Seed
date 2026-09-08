@@ -19,7 +19,7 @@ this module.
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
@@ -151,7 +151,7 @@ class StructuredSemanticExample:
         }
 
 
-def _ordered_unique(values: Sequence[str], name: str) -> tuple[str, ...]:
+def _ordered_unique(values: Iterable[str], name: str) -> tuple[str, ...]:
     normalized = tuple(sorted({_required_text(value, name) for value in values}))
     if not normalized:
         raise ValueError(f"{name} cannot be empty")

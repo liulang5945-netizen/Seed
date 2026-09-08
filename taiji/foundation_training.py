@@ -219,6 +219,7 @@ class FoundationTrainingDataset:
         source_files = tuple((str(path), _file_digest(path)) for path in normalized_paths)
         if exclude_dataset is not None and exclude_datasets is not None:
             raise ValueError("use exclude_dataset or exclude_datasets, not both")
+        normalized_exclusions: tuple[FoundationTrainingDataset, ...]
         if exclude_datasets is None:
             normalized_exclusions = (
                 (exclude_dataset,) if exclude_dataset is not None else ()
@@ -1338,7 +1339,7 @@ class WorldActionTrainingRun:
         temporary.replace(target)
         return target
 
-    def _holdout_metrics(self) -> tuple[float, float, float, bool]:
+    def _holdout_metrics(self) -> tuple[float, float, str, bool]:
         persistent_before = _world_action_persistent_digest(self.model, self.world_learner)
         world_error = _world_action_error(self.world_learner, self.world_corpus.holdout)
         goal_success = _goal_action_accuracy(self.model, self.goal_corpus.holdout)
@@ -1549,8 +1550,8 @@ class WorldActionTrainingRun:
         parent_world = payload.get("parent_world_learner")
         if not isinstance(parent_model, Mapping) or not isinstance(parent_world, Mapping):
             raise ValueError("world action checkpoint is missing parent lineage")
-        run.parent_model_payload = deepcopy(parent_model)
-        run.parent_world_payload = deepcopy(parent_world)
+        run.parent_model_payload = deepcopy(dict(parent_model))
+        run.parent_world_payload = deepcopy(dict(parent_world))
         run.epoch = int(payload["epoch"])
         run.phase = str(payload.get("phase", "world"))
         run.world_cursor = int(payload.get("world_cursor", 0))
@@ -2628,7 +2629,7 @@ class JointTrainingRun:
             TaijiConfig.from_dict(model_config_payload),
             episode_id="joint-continuation",
         )
-        model_payload_for_restore = deepcopy(model_payload)
+        model_payload_for_restore: dict[str, Any] = deepcopy(dict(model_payload))
         model_payload_for_restore["config"] = model_config_payload
         model.restore(model_payload_for_restore)
         run = cls(
@@ -2876,8 +2877,8 @@ class JointTrainingRun:
         parent_world = payload.get("parent_world_learner")
         if not isinstance(parent_model, Mapping) or not isinstance(parent_world, Mapping):
             raise ValueError("joint training checkpoint is missing parent lineage")
-        run.parent_model_payload = deepcopy(parent_model)
-        run.parent_world_payload = deepcopy(parent_world)
+        run.parent_model_payload = deepcopy(dict(parent_model))
+        run.parent_world_payload = deepcopy(dict(parent_world))
         expected_fabric_parent = _sequence_fabric_digest(
             Taiji.from_checkpoint(run.parent_model_payload)
         )

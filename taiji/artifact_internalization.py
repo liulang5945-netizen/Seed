@@ -392,7 +392,7 @@ class ArtifactInternalizationTrainer:
         artifacts: tuple[EvolutionCorpusArtifact, ...],
         experiences: tuple[EvolutionExperience, ...],
     ) -> tuple[GroundedFeatureExample, ...]:
-        result = []
+        result: list[GroundedFeatureExample] = []
         for experience in experiences:
             matching = [
                 artifact
@@ -496,23 +496,23 @@ class ArtifactInternalizationTrainer:
         train_experiences_tuple = _experiences(train_experiences, partition="train")
         holdout_experiences_tuple = _experiences(holdout_experiences, partition="holdout")
         retention_experiences_tuple = _experiences(retention_experiences, partition="retention")
-        artifact_digests = set()
-        for items in (
+        artifact_digests: set[str] = set()
+        for artifact_items in (
             train_artifacts_tuple,
             holdout_artifacts_tuple,
             retention_artifacts_tuple,
         ):
-            current = {item.artifact_digest for item in items}
+            current = {item.artifact_digest for item in artifact_items}
             if artifact_digests.intersection(current):
                 raise ValueError("artifact partitions must be disjoint")
             artifact_digests.update(current)
-        experience_ids = set()
-        for items in (
+        experience_ids: set[str] = set()
+        for experience_items in (
             train_experiences_tuple,
             holdout_experiences_tuple,
             retention_experiences_tuple,
         ):
-            current = {item.experience_id for item in items}
+            current = {item.experience_id for item in experience_items}
             if experience_ids.intersection(current):
                 raise ValueError("experience partitions must be disjoint")
             experience_ids.update(current)

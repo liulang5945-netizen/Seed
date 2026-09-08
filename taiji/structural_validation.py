@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
@@ -128,7 +128,7 @@ class StructuralValidationGateDecision:
         return payload
 
     @classmethod
-    def from_payload(cls, payload: dict[str, Any]) -> StructuralValidationGateDecision:
+    def from_payload(cls, payload: Mapping[str, Any]) -> StructuralValidationGateDecision:
         if payload.get("format") != STRUCTURAL_VALIDATION_GATE_FORMAT:
             raise ValueError("unsupported structural validation gate format")
         return cls(
@@ -212,7 +212,7 @@ class StructuralAdmissionResult:
         }
 
     @classmethod
-    def from_payload(cls, payload: dict[str, Any]) -> StructuralAdmissionResult:
+    def from_payload(cls, payload: Mapping[str, Any]) -> StructuralAdmissionResult:
         if payload.get("format") != STRUCTURAL_ADMISSION_RESULT_FORMAT:
             raise ValueError("unsupported structural admission result format")
         return cls(

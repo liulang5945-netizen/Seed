@@ -146,7 +146,7 @@ class AdaptiveResidualGrowthCandidate:
         proposal: StructuralTopologyProposal,
     ) -> AdaptiveResidualGrowthCandidate:
         normalized_evidence = tuple(str(item).strip() for item in evidence_ids)
-        identity = {
+        identity: dict[str, Any] = {
             "format": ADAPTIVE_RESIDUAL_CANDIDATE_FORMAT,
             "version": ADAPTIVE_RESIDUAL_CANDIDATE_VERSION,
             "kind": "candidate",
@@ -166,7 +166,7 @@ class AdaptiveResidualGrowthCandidate:
             "proposal": proposal.to_payload(),
         }
         candidate_id = f"r4-candidate:{content_digest(identity)}"
-        without_digest = {**identity, "candidate_id": candidate_id}
+        without_digest: dict[str, Any] = {**identity, "candidate_id": candidate_id}
         return cls(
             bridge_id=without_digest["bridge_id"],
             candidate_id=candidate_id,

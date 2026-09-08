@@ -1302,6 +1302,7 @@ class Taiji:
             and previous.last_symbol is not None
             and previous.readout_kind == "predictive"
         ):
+            assert _adaptive_residual_shadow is not None
             counterfactual_parent_probabilities = (
                 _adaptive_residual_shadow.counterfactual_parent_probabilities
             )
@@ -1329,6 +1330,8 @@ class Taiji:
             raise RuntimeError(
                 "developmental F1 state is read-only until R2; select an R2 learning mode"
             )
+        if developmental_f1_overlay:
+            assert self._developmental_f1_bundle is not None
         if (
             developmental_f1_overlay
             and learn
@@ -1393,6 +1396,7 @@ class Taiji:
                         prior_probability=prior_probability,
                     )
                 if developmental_f1_overlay:
+                    assert self._developmental_f1_bundle is not None
                     readout_bank = self._developmental_f1_bundle.bank(
                         "predictive_readout.synapses"
                     )
@@ -1437,8 +1441,10 @@ class Taiji:
                             weight_decay=self.config.synapse_decay,
                         )
                     if adaptive_residual_bridge_learning:
+                        assert self._adaptive_residual_bridge is not None
                         self._adaptive_residual_bridge.learn(predictive_feedback)
                     if adaptive_residual_shadow_learning:
+                        assert _adaptive_residual_shadow is not None
                         _adaptive_residual_shadow.learn(
                             predictive_feedback,
                             freeze_parent=_adaptive_residual_shadow_freeze_parent,
@@ -1498,8 +1504,10 @@ class Taiji:
                                     weight_decay=self.config.synapse_decay,
                                 )
                         if adaptive_residual_bridge_learning:
+                            assert self._adaptive_residual_bridge is not None
                             self._adaptive_residual_bridge.learn(predictive_feedback)
                         if adaptive_residual_shadow_learning:
+                            assert _adaptive_residual_shadow is not None
                             _adaptive_residual_shadow.learn(
                                 predictive_feedback,
                                 freeze_parent=_adaptive_residual_shadow_freeze_parent,
@@ -1603,6 +1611,7 @@ class Taiji:
                 ),
             )
             if adaptive_residual_shadow_learning:
+                assert _adaptive_residual_shadow is not None
                 _adaptive_residual_shadow.record_counterfactual_parent_probabilities(
                     predictive_readout.probabilities(
                         _adaptive_residual_shadow.last_parent_context,
@@ -1624,6 +1633,7 @@ class Taiji:
             # action distribution the decision, not one input among equals;
             # the motor and memory evidence are still computed (they feed
             # prediction/surprise/consolidation) but do not dilute the verdict.
+            assert identity_recall is not None
             probabilities = identity_recall.action_probabilities
         elif (
             use_delayed_memory_verdict
@@ -2674,16 +2684,16 @@ class Taiji:
                 raise ValueError("adaptive residual candidate requires adaptive residual growth")
             if not isinstance(candidate_payload, Mapping):
                 raise ValueError("adaptive residual candidate checkpoint payload is invalid")
-            candidate = AdaptiveResidualGrowthCandidate.from_payload(candidate_payload)
-            if candidate.bridge_id != self._adaptive_residual_bridge.region.region_id:
+            adaptive_candidate = AdaptiveResidualGrowthCandidate.from_payload(candidate_payload)
+            if adaptive_candidate.bridge_id != self._adaptive_residual_bridge.region.region_id:
                 raise ValueError("adaptive residual candidate bridge identity does not match")
-            if candidate.parent_checkpoint_digest != (
+            if adaptive_candidate.parent_checkpoint_digest != (
                 self._adaptive_residual_growth_trigger.parent_checkpoint_digest
             ):
                 raise ValueError("adaptive residual candidate parent does not match pressure trigger")
-            if candidate.proposal.evidence_ids != candidate.evidence_ids:
+            if adaptive_candidate.proposal.evidence_ids != adaptive_candidate.evidence_ids:
                 raise ValueError("adaptive residual candidate evidence does not match proposal")
-            self._adaptive_residual_growth_candidate = candidate
+            self._adaptive_residual_growth_candidate = adaptive_candidate
         developmental_payload = checkpoint.get(self.DEVELOPMENTAL_F1_KEY)
         self._developmental_f1_bundle = None
         self._developmental_f1_learning_mode = "read_only"

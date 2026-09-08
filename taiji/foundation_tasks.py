@@ -1081,7 +1081,7 @@ class ContinualLearningTask:
         self.replay_epochs = int(replay_epochs)
 
     def evaluate(self, corpus: ContinualLearningCorpus) -> FoundationMeasurement:
-        seed_records: list[dict[str, float | int]] = []
+        seed_records: list[dict[str, Any]] = []
         for seed in self.seeds:
             model = Taiji(self._with_seed(seed), episode_id=f"m0-b5-seed-{seed}")
             model.learn_bytes(corpus.phase_a_train, epochs=self.epochs)

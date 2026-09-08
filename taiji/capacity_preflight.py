@@ -208,7 +208,7 @@ class CapacityGrowthTriggerDecision:
     def from_payload(cls, payload: Mapping[str, Any]) -> CapacityGrowthTriggerDecision:
         if payload.get("format") != CAPACITY_PREFLIGHT_FORMAT:
             raise ValueError("unsupported capacity trigger format")
-        identity = {
+        identity: dict[str, Any] = {
             key: value for key, value in payload.items() if key != "decision_digest"
         }
         expected = content_digest(identity)
@@ -301,7 +301,7 @@ class CapacityGrowthTrigger:
             reasons.append("retention_regression_above_threshold")
         if budget < int(self.policy.resource_cost):
             reasons.append("structural_budget_insufficient")
-        identity = {
+        identity: dict[str, Any] = {
             "format": CAPACITY_PREFLIGHT_FORMAT,
             "region_id": self.region_id,
             "should_propose": should_propose,

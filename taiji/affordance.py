@@ -153,7 +153,7 @@ class WorldAffordanceGroundingProducer:
             ]
         )
         current_events = tuple(event for event in state.events if event.tick == state.tick)
-        event_values = []
+        event_values: list[float] = []
         for event in current_events:
             lineage.add(f"world-event:{event.event_id}")
             for _, value in event.attributes:

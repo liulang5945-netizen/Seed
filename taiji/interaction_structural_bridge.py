@@ -279,7 +279,7 @@ class InteractionStructuralBridge:
         }
         if not online_evidence_ids.issubset(set(projection.evidence_ids)):
             raise ValueError("interaction structural projection lost online evidence binding")
-        payload = {
+        payload: dict[str, Any] = {
             "format": INTERACTION_STRUCTURAL_BRIDGE_FORMAT,
             "revision": INTERACTION_STRUCTURAL_BRIDGE_REVISION,
             "version": 1,
