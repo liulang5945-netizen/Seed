@@ -494,14 +494,18 @@ class AdaptiveResidualShadow:
             ).item()
         )
         if self.gate_projection is not None:
-            gate_utility = (
-                self._last_counterfactual_utility
-                if self._counterfactual_utility_ready
-                else self._last_candidate_utility
-            )
-            utility_advantage = float(
-                gate_utility - self._candidate_utility_baseline
-            )
+            if self._counterfactual_utility_ready:
+                # The exact counterfactual is already a loss advantage for
+                # this deterministic continuous gate.  Subtracting a global
+                # EMA baseline would erase the signed direction that should
+                # open or close the candidate in this context.
+                gate_utility = self._last_counterfactual_utility
+                utility_advantage = float(gate_utility)
+            else:
+                gate_utility = self._last_candidate_utility
+                utility_advantage = float(
+                    gate_utility - self._candidate_utility_baseline
+                )
             self._candidate_utility_baseline = (
                 0.9 * self._candidate_utility_baseline
                 + 0.1 * gate_utility

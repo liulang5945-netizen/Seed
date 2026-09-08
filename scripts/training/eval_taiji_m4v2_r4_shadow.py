@@ -250,8 +250,22 @@ def _course_train(
         )
 
 
-def _score(model: Taiji, data: bytes, *, shadow: AdaptiveResidualShadow | None = None) -> float:
-    return _stream(model, data, shadow=shadow, learn=False)
+def _score(
+    model: Taiji,
+    data: bytes,
+    *,
+    shadow: AdaptiveResidualShadow | None = None,
+    phase: str = "holdout",
+    trace: list[dict[str, Any]] | None = None,
+) -> float:
+    return _stream(
+        model,
+        data,
+        shadow=shadow,
+        learn=False,
+        phase=phase,
+        trace=trace,
+    )
 
 
 def _shadow_parent_payload(shadow: AdaptiveResidualShadow) -> dict[str, Any]:
@@ -434,9 +448,30 @@ def _growth_arm(
         for item in training_trace
         if item["parent_residual_norm"] > 1e-8
     ]
+    holdout_trace: list[dict[str, Any]] = []
     scores = {
-        "S": _score(model, course.s_holdout, shadow=shadow),
-        "G": _score(model, course.g_holdout, shadow=shadow),
+        "S": _score(
+            model,
+            course.s_holdout,
+            shadow=shadow,
+            phase="S-holdout",
+            trace=holdout_trace,
+        ),
+        "G": _score(
+            model,
+            course.g_holdout,
+            shadow=shadow,
+            phase="G-holdout",
+            trace=holdout_trace,
+        ),
+    }
+    holdout_gate_values = {
+        phase: [
+            float(item["candidate_gate"])
+            for item in holdout_trace
+            if item["phase"] == phase
+        ]
+        for phase in ("S-holdout", "G-holdout")
     }
     trained_shadow = shadow.to_payload()
     parent_substrate_unchanged = (
@@ -544,6 +579,20 @@ def _growth_arm(
             "positive_counterfactual_utility_ticks_by_phase": {
                 phase: sum(1 for value in values if value > 1e-8)
                 for phase, values in counterfactual_utility_by_phase.items()
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+                phase: (
+                    sum(values) / len(values) if values else 0.0
+                )
+                for phase, values in holdout_gate_values.items()
+            },
+            "holdout_min_candidate_gate_by_phase": {
+                phase: min(values, default=0.0)
+                for phase, values in holdout_gate_values.items()
+            },
+            "holdout_max_candidate_gate_by_phase": {
+                phase: max(values, default=0.0)
+                for phase, values in holdout_gate_values.items()
             },
             "positive_utility_ticks_by_phase": {
                 phase: sum(1 for value in values if value > 1e-8)
