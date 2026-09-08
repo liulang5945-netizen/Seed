@@ -357,6 +357,7 @@ def _growth_arm(
     train_from_parent: bool = True,
     freeze_parent: bool = True,
     course: R4Course = DEFAULT_COURSE,
+    birth_mode: str = "random",
     label: str,
 ) -> dict[str, Any]:
     model = Taiji.from_checkpoint(copy.deepcopy(parent_checkpoint))
@@ -368,6 +369,7 @@ def _growth_arm(
         model.config,
         model.adaptive_residual_bridge.to_payload(),
         candidate,
+        birth_mode=birth_mode,
         device=model.device,
     )
     bare_shadow = shadow.to_payload()
@@ -425,6 +427,7 @@ def _growth_arm(
         },
         "candidate_digest": candidate.candidate_digest,
         "candidate_unit_id": candidate.unit_id,
+        "birth_anchor_unit_id": shadow.birth_anchor_unit_id,
         "candidate_activity": float(shadow.candidate_activity),
         "training_diagnostics": {
             "trace_digest": content_digest(training_trace),
@@ -503,6 +506,7 @@ def run_canary(
         candidate=pressure_candidate,
         freeze_parent=True,
         course=course,
+        birth_mode="pressure_anchor",
         label="candidate-only-smoke",
     )
     pressure = _growth_arm(
@@ -510,6 +514,7 @@ def run_canary(
         candidate=pressure_candidate,
         freeze_parent=False,
         course=course,
+        birth_mode="pressure_anchor",
         label="pressure-driven-growth",
     )
 
@@ -613,6 +618,7 @@ def run_canary(
             "efficacy_parent_digest": content_digest(pressure_parent),
         },
         "candidate_only_smoke": {
+            "birth_anchor_unit_id": candidate_only_smoke["birth_anchor_unit_id"],
             "candidate_lesion_delta": candidate_only_smoke["candidate_lesion_delta"],
             "mature_f1_owners_unchanged": candidate_only_smoke[
                 "mature_f1_owners_unchanged"
