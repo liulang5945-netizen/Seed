@@ -1,0 +1,179 @@
+{
+  "format": "taiji-m4r9-foundation-course-audit-v1",
+  "version": 1,
+  "generated_at_epoch": 1788876357.0945194,
+  "status": "passed",
+  "can_promote": false,
+  "training_allowed": false,
+  "corpus": "E:\\Seed\\data\\simple_zh\\dialogue_extended_clean.jsonl",
+  "configuration": {
+    "profile": "foundation",
+    "train_bytes": 65536,
+    "eval_bytes": 16384,
+    "cohort_seeds": [
+      11,
+      29,
+      47
+    ]
+  },
+  "phases": [
+    {
+      "phase": "c",
+      "dataset_digest": "7d76ef6493654c1385ddd5fc37dd8528960eb2028426560210ef8170ae21d44d",
+      "partition_seed": 43,
+      "selected_record_count": 1567,
+      "train": {
+        "bytes": 1048576,
+        "unique_bytes": 176,
+        "unique_ratio": 0.6875,
+        "entropy_bits": 5.933933438803542,
+        "top_byte_probability": 0.08400630950927734
+      },
+      "holdout": {
+        "bytes": 131072,
+        "unique_bytes": 158,
+        "unique_ratio": 0.6171875,
+        "entropy_bits": 5.9328640313125405,
+        "top_byte_probability": 0.08092498779296875
+      },
+      "train_holdout_js_nats": 0.0007680194479337621
+    },
+    {
+      "phase": "c2",
+      "dataset_digest": "80fa519dce2e725a31424e82093d58e4043a5af2dfbca2ba29923c33ab0ae0f6",
+      "partition_seed": 44,
+      "selected_record_count": 1555,
+      "train": {
+        "bytes": 1048576,
+        "unique_bytes": 175,
+        "unique_ratio": 0.68359375,
+        "entropy_bits": 5.937212518930722,
+        "top_byte_probability": 0.08408641815185547
+      },
+      "holdout": {
+        "bytes": 131072,
+        "unique_bytes": 156,
+        "unique_ratio": 0.609375,
+        "entropy_bits": 5.931844729871937,
+        "top_byte_probability": 0.0858612060546875
+      },
+      "train_holdout_js_nats": 0.0010150627381346083,
+      "train_vs_previous_train_js_nats": 0.00021361854200099633,
+      "holdout_vs_previous_holdout_js_nats": 0.0010577143221888016
+    },
+    {
+      "phase": "c3",
+      "dataset_digest": "1f7c8c7cb4806d8de8442059efd6670ad5d48173409e6c8ebcaaf94cbdef9f38",
+      "partition_seed": 45,
+      "selected_record_count": 1559,
+      "train": {
+        "bytes": 1048576,
+        "unique_bytes": 173,
+        "unique_ratio": 0.67578125,
+        "entropy_bits": 5.942009867051986,
+        "top_byte_probability": 0.08321189880371094
+      },
+      "holdout": {
+        "bytes": 131072,
+        "unique_bytes": 160,
+        "unique_ratio": 0.625,
+        "entropy_bits": 5.9446963059640225,
+        "top_byte_probability": 0.081817626953125
+      },
+      "train_holdout_js_nats": 0.0009075073756299503,
+      "train_vs_previous_train_js_nats": 0.0003052155460414389,
+      "holdout_vs_previous_holdout_js_nats": 0.0012598197344100563
+    }
+  ],
+  "overlap_counts": {
+    "phase_a_seed11__vs__phase_b_seed11": 0,
+    "phase_a_seed29__vs__phase_b_seed29": 0,
+    "phase_a_seed47__vs__phase_b_seed47": 0,
+    "phase_a_seed11__vs__phase_c": 0,
+    "phase_b_seed11__vs__phase_c": 0,
+    "phase_a_seed29__vs__phase_c": 0,
+    "phase_b_seed29__vs__phase_c": 0,
+    "phase_a_seed47__vs__phase_c": 0,
+    "phase_b_seed47__vs__phase_c": 0,
+    "phase_a_seed11__vs__phase_c2": 0,
+    "phase_b_seed11__vs__phase_c2": 0,
+    "phase_a_seed29__vs__phase_c2": 0,
+    "phase_b_seed29__vs__phase_c2": 0,
+    "phase_a_seed47__vs__phase_c2": 0,
+    "phase_b_seed47__vs__phase_c2": 0,
+    "phase_a_seed11__vs__phase_c3": 0,
+    "phase_b_seed11__vs__phase_c3": 0,
+    "phase_a_seed29__vs__phase_c3": 0,
+    "phase_b_seed29__vs__phase_c3": 0,
+    "phase_a_seed47__vs__phase_c3": 0,
+    "phase_b_seed47__vs__phase_c3": 0,
+    "phase_c__vs__phase_c2": 0,
+    "phase_c__vs__phase_c3": 0,
+    "phase_c2__vs__phase_c3": 0
+  },
+  "formal_seed_alignment": [
+    {
+      "seed": 11,
+      "frozen_difficulty": {
+        "c_cycle1_bpb": 4.094312325862609,
+        "c2_cycle2_bpb": 4.210543424316742,
+        "c3_cycle3_bpb": 4.291529137600764
+      },
+      "c_cycle2_delta_bpb": -0.0060201162356561255,
+      "c_cycle3_delta_bpb": 0.0021258557176091486,
+      "c2_cycle3_delta_bpb": 0.001506442072295222,
+      "c_cycle3_degraded": true
+    },
+    {
+      "seed": 29,
+      "frozen_difficulty": {
+        "c_cycle1_bpb": 4.1451962427403375,
+        "c2_cycle2_bpb": 4.312944924568117,
+        "c3_cycle3_bpb": 4.400509992638882
+      },
+      "c_cycle2_delta_bpb": -0.018653338630855387,
+      "c_cycle3_delta_bpb": -0.026773012982310718,
+      "c2_cycle3_delta_bpb": -0.008502111031547521,
+      "c_cycle3_degraded": false
+    },
+    {
+      "seed": 47,
+      "frozen_difficulty": {
+        "c_cycle1_bpb": 4.294525307417757,
+        "c2_cycle2_bpb": 4.366983940382534,
+        "c3_cycle3_bpb": 4.406066010935056
+      },
+      "c_cycle2_delta_bpb": -0.022253988143789094,
+      "c_cycle3_delta_bpb": 0.009497186207913622,
+      "c2_cycle3_delta_bpb": 0.004474691814678522,
+      "c_cycle3_degraded": true
+    }
+  ],
+  "checks": {
+    "preflight_passed": true,
+    "formal_aggregate_technical": true,
+    "formal_aggregate_not_promoted": true,
+    "r8_technical": true,
+    "record_disjoint_chain": true,
+    "formal_budget_available": true,
+    "distinct_phase_digests": true
+  },
+  "technical_gate_all_passed": true,
+  "diagnosis": {
+    "c3_degraded_seed_count": 2,
+    "c3_degraded_seeds": [
+      11,
+      47
+    ],
+    "c2_boundary_max_js_nats": 0.0010577143221888016,
+    "c3_boundary_max_js_nats": 0.0012598197344100563,
+    "c3_to_c2_js_ratio": 1.1910775036146093,
+    "c3_boundary_js_outlier": false,
+    "interpretation": "C3 is not an obvious JS outlier; keep the course contract under review and design one update/consolidation rule audit"
+  },
+  "decision_boundary": {
+    "next_action": "audit one update/consolidation rule against the stable course",
+    "promotion_allowed": false,
+    "training_allowed": false
+  }
+}
