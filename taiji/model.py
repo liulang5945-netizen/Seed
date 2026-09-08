@@ -1165,6 +1165,8 @@ class Taiji:
         _preservation_readout: BytePredictiveReadout | None = None,
         _preservation_strength: float = 0.0,
         _predictive_update_scale: float = 1.0,
+        _adaptive_residual_shadow: AdaptiveResidualShadow | None = None,
+        _learn_adaptive_residual_shadow: bool = False,
     ) -> TaijiStep:
         """Advance one sensation tick.
 
@@ -1213,6 +1215,12 @@ class Taiji:
             _preservation_readout, BytePredictiveReadout
         ):
             raise TypeError("_preservation_readout must be a BytePredictiveReadout or None")
+        if _adaptive_residual_shadow is not None and not isinstance(
+            _adaptive_residual_shadow, AdaptiveResidualShadow
+        ):
+            raise TypeError("_adaptive_residual_shadow must be an AdaptiveResidualShadow or None")
+        if _adaptive_residual_shadow is not None and readout != "predictive":
+            raise ValueError("an adaptive residual shadow requires readout='predictive'")
         preservation_strength = float(_preservation_strength)
         if not math.isfinite(preservation_strength) or preservation_strength < 0.0:
             raise ValueError("preservation strength must be finite and non-negative")
@@ -1240,10 +1248,15 @@ class Taiji:
                 raise TypeError(f"{name} must be a bool or None")
             if not learn and value is True:
                 raise ValueError(f"{name} requires learn=True")
+        if not isinstance(_learn_adaptive_residual_shadow, bool):
+            raise TypeError("_learn_adaptive_residual_shadow must be a bool")
+        if not learn and _learn_adaptive_residual_shadow:
+            raise ValueError("_learn_adaptive_residual_shadow requires learn=True")
         if readout != "predictive" and (
             learn_predictive_context is True
             or learn_predictive_readout is True
             or learn_adaptive_residual_bridge is True
+            or _learn_adaptive_residual_shadow
         ):
             raise ValueError("predictive owner learning requires readout='predictive'")
         predictive_readout = (
@@ -1276,6 +1289,9 @@ class Taiji:
                 if learn_adaptive_residual_bridge is None
                 else bool(learn_adaptive_residual_bridge)
             )
+        )
+        adaptive_residual_shadow_learning = bool(
+            _adaptive_residual_shadow is not None and _learn_adaptive_residual_shadow
         )
         developmental_f1_overlay = (
             self._developmental_f1_bundle is not None
@@ -1334,6 +1350,7 @@ class Taiji:
                 predictive_readout_learning
                 or predictive_context_learning
                 or adaptive_residual_bridge_learning
+                or adaptive_residual_shadow_learning
             ):
                 # Take the F1 feedback before changing decoder contacts: the
                 # private residual must learn from the causal surface that
@@ -1345,6 +1362,7 @@ class Taiji:
                 if (
                     self._adaptive_residual_growth_trigger is not None
                     and predictive_readout is self.predictive_readout
+                    and _adaptive_residual_shadow is None
                 ):
                     self._record_adaptive_residual_growth_pressure(
                         symbol=symbol,
@@ -1397,6 +1415,8 @@ class Taiji:
                         )
                     if adaptive_residual_bridge_learning:
                         self._adaptive_residual_bridge.learn(predictive_feedback)
+                    if adaptive_residual_shadow_learning:
+                        _adaptive_residual_shadow.learn(predictive_feedback)
                     if developmental_f1_mode in {"fast", "fast_slow"}:
                         self._record_developmental_f1_replay(
                             observed_symbol=symbol,
@@ -1425,7 +1445,11 @@ class Taiji:
                             preservation_strength=preservation_strength,
                             learning_rate_scale=predictive_update_scale,
                         )
-                    if predictive_context_learning or adaptive_residual_bridge_learning:
+                    if (
+                        predictive_context_learning
+                        or adaptive_residual_bridge_learning
+                        or adaptive_residual_shadow_learning
+                    ):
                         predictive_feedback = predictive_readout.context_feedback(
                             predictive_error
                         )
@@ -1449,6 +1473,8 @@ class Taiji:
                                 )
                         if adaptive_residual_bridge_learning:
                             self._adaptive_residual_bridge.learn(predictive_feedback)
+                        if adaptive_residual_shadow_learning:
+                            _adaptive_residual_shadow.learn(predictive_feedback)
             elif readout == "action" and motor_learning:
                 self.motor.learn(
                     previous.motor_context,
@@ -1518,7 +1544,9 @@ class Taiji:
                         ),
                     )
                 )
-            if self._adaptive_residual_bridge is not None:
+            if _adaptive_residual_shadow is not None:
+                context = _adaptive_residual_shadow.forward(context)
+            elif self._adaptive_residual_bridge is not None:
                 context = self._adaptive_residual_bridge.forward(context)
         else:
             context = self.motor.encode_context(self.fabric.predictive_context(regions))
