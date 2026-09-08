@@ -120,9 +120,9 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 
 ## 4. 当前唯一下一步
 
-**唯一下一步：向 M4 主线汇报 R12 判定并归档（本项完成后需重新收敛下一步，见下）。** R12 数据源 canary 三 seed 已完成，aggregate `reports/taiji_m4r12_data_source_aggregate_20260909.json` 判定 `retention_gate_passed=false`：UltraData 臂 cycle3 退化 `3/3`（均值 `+0.2489 BPB`，simple_zh 参考臂 `−0.0050`）、A 跨语料遗忘 `3/3`（`+1.42/+1.88/+1.58`，均值 `+1.62 BPB`）、cycle2 退化 `1/3`；`c3_gain 均值 1.78` 是 protected 基线在异语料上塌缩（6.82 vs 4.37）造成的假信号。**结论：语料分布切换本身就是数量级最大的遗忘源（±0.25 与 ±1.6 BPB，比 R5～R10 全部更新规则效应 ±0.05 大 5～50 倍），R11 的“cycle3 遗忘是分布适应问题”判定被强化坐实；UltraData 作为替换源被否决，数据密度假设与文体分布差异混淆、无法在单变量设计下干净验证。** 已确认事实登记：(a) 转换语料与 preflight Gate 保留（`data/ultradata/derived/ultradata_sft_nothink_simplezh.jsonl`，7/7），(b) 与 simple_zh 混合以降低分布冲击是另一个未预注册假设，只登记不启动，(c) 固定容量方向（更新规则 + 数据源替换）双线关闭后，M4 的剩余日程只有 §8 的继承式增长/自主路由/压缩回收与 M5 外围，下一步需在汇报后与用户重新收敛。全部保持 `can_promote=false`。
+**唯一下一步：M4 收敛归档已完成，主线下一步待与用户重新收敛（决策点）。** M4.R0～R12 十三轮证据链已归档至 [M4 固定容量证据链复盘](../../reference/M4_FIXED_CAPACITY_EVIDENCE_REVIEW_2026_09_09.md)（C1 技术底座闭合 / C2 更新规则轴穷尽 / C3 分布主导 / C4 cycle3 结构属性四条因果结论 + 三条开放假设 + 资产清单），§4 的 R12 判定记录随之移入归档。固定容量的更新规则线与数据源替换线均已关闭；剩余可选主线为：(a) M4 继承式增长（需先有容量压力证据，当前归因指向分布适应，前提未满足）；(b) 混合语料课程（未预注册假设，需新实验设计）；(c) M5 外围——Skill/MCP 知识内化与真实任务验证（量尺不再是三周期 retention Gate）；(d) M6/M7 产品与工程收口。选择依据应以归档报告 §8 的全局图景为准，不按单点惯性延续。全部保持 `can_promote=false`。
 
-> **M4.R11 已完成（2026-09-09）**：归因报告 `reports/taiji_m4r11_cycle3_interaction_attribution_20260909.json`，机制与出口判定详见 §7；固定容量巩固方向（consolidation/scale 组合、门控保守项候选）自本日起冻结，闸门 2 关闭。**M4.R12 已完成（2026-09-09）**：前置适配 preflight 7/7 全绿；数据源 canary 判定如上——分布切换遗忘效应主导，替换源否决。
+> **M4.R11/R12 已完成（2026-09-09）**：R11 归因冻结巩固方向（闸门 2 关闭）；R12 数据源 canary 否决替换源——语料分布切换是数量级最大的遗忘源（语料内 cycle3 `+0.249` 3/3、A 跨语料遗忘 `+1.62` 3/3），分布适应判定坐实。详见 §7 两小节与 reference 归档报告。
 
 2026-09-06 实际审计已证明首轮报告不能作为能力证据：旧 evaluator 的 C/C′ 只是换 partition seed，不是新记录。当前已落地的修复为 `scripts/training/eval_taiji_m2r1_phase_c_canary.py` v2、`scripts/training/audit_taiji_m2r1_data_contract.py` 和 `reports/taiji_m2r1_data_contract_20260906.json`：
 
@@ -515,6 +515,7 @@ R11 冻结巩固方向后，按 §8 既定序列检验数据密度假设。前�
 ## 11. 维护与索引
 
 - [研究审视与证据](../../reference/TAIJI_RESEARCH_REVIEW_2026_09_06.md)：事实、复现、失效结论、技术参考，无独立执行顺序。
+- [M4 固定容量证据链复盘（R0～R12）](../../reference/M4_FIXED_CAPACITY_EVIDENCE_REVIEW_2026_09_09.md)：十三轮实验的因果结论（C1 技术底座闭合 / C2 更新规则轴穷尽 / C3 分布主导 / C4 cycle3 结构属性）、开放假设与资产清单。
 - [实现事实](../../reference/IMPLEMENTATION_STATUS_2026_08.md)：当前代码能力边界。
 - [本次归档](../../archive/history/research_review_20260906/README.md)：原计划全文与中止草案。
 - [2026-09-01 旧收敛记录](../../archive/history/roadmap_convergence_20260901/README.md)：更早设计和事件。
