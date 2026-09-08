@@ -6,17 +6,17 @@
       "G": {
         "better_count": 2,
         "count": 9,
-        "max": 0.0010909608498801404,
-        "mean": -0.0022608513273404776,
-        "min": -0.010099200500381933,
+        "max": 0.0009032818936312026,
+        "mean": -0.002059521655235979,
+        "min": -0.00951905031600564,
         "non_worse_count": 6
       },
       "S": {
         "better_count": 9,
         "count": 9,
-        "max": 0.15729453620964762,
-        "mean": 0.10416618576013104,
-        "min": 0.05091940086231794,
+        "max": 0.12719510409975676,
+        "mean": 0.08415293830072626,
+        "min": 0.04702018371913663,
         "non_worse_count": 9
       }
     },
@@ -24,17 +24,17 @@
       "G": {
         "better_count": 9,
         "count": 9,
-        "max": -0.0029846001939679567,
-        "mean": -0.01606566806284842,
-        "min": -0.03411233365752864,
+        "max": -0.003564690518776281,
+        "mean": -0.016250690190384373,
+        "min": -0.034503573225499906,
         "non_worse_count": 9
       },
       "S": {
         "better_count": 9,
         "count": 9,
-        "max": -0.052324470751758057,
-        "mean": -0.11055224230210145,
-        "min": -0.15313302419777752,
+        "max": -0.049196188712516076,
+        "mean": -0.09059171299669651,
+        "min": -0.12295559393168887,
         "non_worse_count": 9
       }
     },
@@ -42,18 +42,18 @@
       "G": {
         "better_count": 4,
         "count": 9,
-        "max": 0.018707117201502754,
-        "mean": 0.004273845973910401,
-        "min": -0.004518557347566343,
+        "max": 0.018021634587602975,
+        "mean": 0.004050958537101184,
+        "min": -0.00459109540770708,
         "non_worse_count": 4
       },
       "S": {
-        "better_count": 8,
+        "better_count": 4,
         "count": 9,
-        "max": 0.01801323880639849,
-        "mean": -0.03686630331274928,
-        "min": -0.1315736982410165,
-        "non_worse_count": 8
+        "max": 0.02079487778756839,
+        "mean": -0.02299502260260579,
+        "min": -0.11174013986827092,
+        "non_worse_count": 4
       }
     }
   },
@@ -67,8 +67,8 @@
           "birth_anchor_weights": [],
           "candidate_digest": "f0276cfe663a3634f7038f3af77fb22542dfe19adce94976c9e4c107675ce02e",
           "candidate_lesion_delta": {
-            "G": 0.010196540461343773,
-            "S": 0.0003314505726788042
+            "G": 0.01002749109097767,
+            "S": 0.0003271704761989014
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -81,8 +81,8 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.577328901726073,
-            "S": 5.561378853457307
+            "G": 5.577495720370257,
+            "S": 5.5613834481988516
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
@@ -90,36 +90,48 @@
             "active_ticks": 182,
             "counterfactual_utility_ticks": 176,
             "credit_ticks": 418,
+            "holdout_max_candidate_gate_by_phase": {
+              "G-holdout": 0.4927213191986084,
+              "S-holdout": 0.49300915002822876
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+              "G-holdout": 0.48764894157648087,
+              "S-holdout": 0.4926168441772461
+            },
+            "holdout_min_candidate_gate_by_phase": {
+              "G-holdout": 0.48420581221580505,
+              "S-holdout": 0.4919401705265045
+            },
             "max_activity": 0.5887391567230225,
-            "max_candidate_credit_norm": 0.2503770887851715,
-            "max_candidate_gate": 0.5000595450401306,
+            "max_candidate_credit_norm": 0.2503979802131653,
+            "max_candidate_gate": 0.5000183582305908,
             "max_candidate_gate_by_phase": {
-              "G": 0.5000595450401306,
+              "G": 0.5000183582305908,
               "S": 0.5
             },
-            "max_candidate_residual_norm": 0.22194989025592804,
-            "max_candidate_residual_ratio": 0.15192274183220533,
-            "max_eligibility_norm": 1.5173609256744385,
-            "max_projection_update_norm": 0.012912494130432606,
-            "mean_candidate_gate": 0.4994792167167619,
+            "max_candidate_residual_norm": 0.22196520864963531,
+            "max_candidate_residual_ratio": 0.15193135575326883,
+            "max_eligibility_norm": 1.5173614025115967,
+            "max_projection_update_norm": 0.012912529520690441,
+            "mean_candidate_gate": 0.49759348650585933,
             "mean_candidate_gate_by_phase": {
-              "G": 0.4994534353661065,
+              "G": 0.4974743521744662,
               "S": 0.5
             },
-            "mean_candidate_residual_ratio": 0.016826041947666123,
-            "mean_candidate_utility": 0.0026468329349683957,
+            "mean_candidate_residual_ratio": 0.016826651420981192,
+            "mean_candidate_utility": 0.0026158123528662418,
             "mean_candidate_utility_by_phase": {
-              "G": 0.002777864028614951,
+              "G": 0.0027453077741315026,
               "S": 4.843307976898359e-09
             },
-            "mean_counterfactual_utility": -0.0025786235156326416,
+            "mean_counterfactual_utility": -0.002548474403281961,
             "mean_counterfactual_utility_by_phase": {
-              "G": -0.002706278145119406,
+              "G": -0.0026746365024543353,
               "S": 0.0
             },
-            "min_candidate_gate": 0.49744299054145813,
+            "min_candidate_gate": 0.48682448267936707,
             "min_candidate_gate_by_phase": {
-              "G": 0.49744299054145813,
+              "G": 0.48682448267936707,
               "S": 0.5
             },
             "positive_counterfactual_utility_ticks": 47,
@@ -134,7 +146,7 @@
             },
             "residual_ticks": 181,
             "ticks": 424,
-            "trace_digest": "804b42e976d90b71a45aa29ae915747e108b5debf96f2d5190ac2412dcce7b0c",
+            "trace_digest": "d596a7363323367e4edb2a78530ea2ba245cea53e967acfe0306e57ae72aba4a",
             "utility_ticks": 177
           }
         },
@@ -174,8 +186,8 @@
           ],
           "candidate_digest": "9b192ca77312c7745d5302200206f8dea45ce00fdbf7bd173347913d86373df1",
           "candidate_lesion_delta": {
-            "G": -0.0026818694160342105,
-            "S": 0.13482654413676443
+            "G": -0.002118172866900636,
+            "S": 0.11497390949172637
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -188,8 +200,8 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.591128687842657,
-            "S": 5.4298051552162905
+            "G": 5.5905862488711,
+            "S": 5.449643308330581
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
@@ -197,37 +209,49 @@
             "active_ticks": 213,
             "counterfactual_utility_ticks": 208,
             "credit_ticks": 417,
-            "max_activity": 0.9167803525924683,
-            "max_candidate_credit_norm": 0.6044400334358215,
-            "max_candidate_gate": 0.5085280537605286,
+            "holdout_max_candidate_gate_by_phase": {
+              "G-holdout": 0.4545973241329193,
+              "S-holdout": 0.4545973241329193
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+              "G-holdout": 0.4218280240893364,
+              "S-holdout": 0.4235413392384847
+            },
+            "holdout_min_candidate_gate_by_phase": {
+              "G-holdout": 0.4015845060348511,
+              "S-holdout": 0.407466322183609
+            },
+            "max_activity": 0.9170767068862915,
+            "max_candidate_credit_norm": 0.6087852716445923,
+            "max_candidate_gate": 0.5,
             "max_candidate_gate_by_phase": {
-              "G": 0.5085280537605286,
+              "G": 0.4998721182346344,
               "S": 0.5
             },
-            "max_candidate_residual_norm": 1.3006598949432373,
-            "max_candidate_residual_ratio": 3.375923505818776,
-            "max_eligibility_norm": 3.5097405910491943,
-            "max_projection_update_norm": 0.04068351909518242,
-            "mean_candidate_gate": 0.49921811322839754,
+            "max_candidate_residual_norm": 1.3031200170516968,
+            "max_candidate_residual_ratio": 3.382140656628093,
+            "max_eligibility_norm": 3.510296106338501,
+            "max_projection_update_norm": 0.04073604568839073,
+            "mean_candidate_gate": 0.46212925002822336,
             "mean_candidate_gate_by_phase": {
-              "G": 0.4991847599054327,
-              "S": 0.4998918503522873
+              "G": 0.46026206606685527,
+              "S": 0.4998463660478592
             },
-            "mean_candidate_residual_ratio": 0.2948147363464045,
-            "mean_candidate_utility": 0.020379431653981435,
+            "mean_candidate_residual_ratio": 0.2953102134040461,
+            "mean_candidate_utility": 0.018909964875607362,
             "mean_candidate_utility_by_phase": {
-              "G": 0.02132025186738877,
-              "S": 0.0013748633431532654
+              "G": 0.01977804673688387,
+              "S": 0.0013747112778219161
             },
-            "mean_counterfactual_utility": -0.018517255820833724,
+            "mean_counterfactual_utility": -0.01712457134224912,
             "mean_counterfactual_utility_by_phase": {
-              "G": -0.01938359143906006,
-              "S": -0.0010172763326617318
+              "G": -0.017921970369361044,
+              "S": -0.0010171109945881884
             },
-            "min_candidate_gate": 0.4836486279964447,
+            "min_candidate_gate": 0.4018738269805908,
             "min_candidate_gate_by_phase": {
-              "G": 0.4836486279964447,
-              "S": 0.49968400597572327
+              "G": 0.4018738269805908,
+              "S": 0.49950945377349854
             },
             "positive_counterfactual_utility_ticks": 26,
             "positive_counterfactual_utility_ticks_by_phase": {
@@ -241,7 +265,7 @@
             },
             "residual_ticks": 212,
             "ticks": 424,
-            "trace_digest": "eba14a4ca52882dae23379c77d3a6b2a7d58417cde351ddd45697a488d9fb1d6",
+            "trace_digest": "3c7725e7ab31dba03760c86a3d8d57be50e626f0c0597206d8260f35703d9ea2",
             "utility_ticks": 208
           }
         },
@@ -275,8 +299,8 @@
           "birth_anchor_weights": [],
           "candidate_digest": "833be5dbe4b72f9f26c06a3239a0b9086850cdcc93e55e09ed495e542e606935",
           "candidate_lesion_delta": {
-            "G": -0.01331906872121369,
-            "S": 0.20108009317629083
+            "G": -0.010836190843637183,
+            "S": 0.16255587449467512
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -289,8 +313,8 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.61700019017496,
-            "S": 5.368859314978207
+            "G": 5.614714860115101,
+            "S": 5.407385114641307
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
@@ -298,37 +322,49 @@
             "active_ticks": 197,
             "counterfactual_utility_ticks": 195,
             "credit_ticks": 417,
-            "max_activity": 0.9588751792907715,
-            "max_candidate_credit_norm": 0.825534462928772,
-            "max_candidate_gate": 0.5255588889122009,
+            "holdout_max_candidate_gate_by_phase": {
+              "G-holdout": 0.4089554250240326,
+              "S-holdout": 0.4089554250240326
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+              "G-holdout": 0.40487925211588544,
+              "S-holdout": 0.39916841785113016
+            },
+            "holdout_min_candidate_gate_by_phase": {
+              "G-holdout": 0.4020305871963501,
+              "S-holdout": 0.3911013901233673
+            },
+            "max_activity": 0.9590780138969421,
+            "max_candidate_credit_norm": 0.8362419009208679,
+            "max_candidate_gate": 0.5,
             "max_candidate_gate_by_phase": {
-              "G": 0.5255588889122009,
+              "G": 0.49985232949256897,
               "S": 0.5
             },
-            "max_candidate_residual_norm": 1.7591265439987183,
-            "max_candidate_residual_ratio": 5.998130704649772,
-            "max_eligibility_norm": 3.8228118419647217,
-            "max_projection_update_norm": 0.04388951510190964,
-            "mean_candidate_gate": 0.5043853616236516,
+            "max_candidate_residual_norm": 1.7658476829528809,
+            "max_candidate_residual_ratio": 6.027486797500663,
+            "max_eligibility_norm": 3.8236100673675537,
+            "max_projection_update_norm": 0.04403439909219742,
+            "mean_candidate_gate": 0.4518320932281467,
             "mean_candidate_gate_by_phase": {
-              "G": 0.5046038597379581,
-              "S": 0.49997169971466066
+              "G": 0.4494493487890404,
+              "S": 0.4999635308980942
             },
-            "mean_candidate_residual_ratio": 0.6556488335625318,
-            "mean_candidate_utility": 0.03804929124231099,
+            "mean_candidate_residual_ratio": 0.6582711519520414,
+            "mean_candidate_utility": 0.03506909956569025,
             "mean_candidate_utility_by_phase": {
-              "G": 0.0398626540429024,
-              "S": 0.0014193626703644213
+              "G": 0.03673493054984782,
+              "S": 0.0014193136857073795
             },
-            "mean_counterfactual_utility": -0.03686429288708464,
+            "mean_counterfactual_utility": -0.033732615120869135,
             "mean_counterfactual_utility_by_phase": {
-              "G": -0.03863105960104485,
-              "S": -0.0011756052650884641
+              "G": -0.035344349091623754,
+              "S": -0.0011755889116257911
             },
-            "min_candidate_gate": 0.48411253094673157,
+            "min_candidate_gate": 0.3976224362850189,
             "min_candidate_gate_by_phase": {
-              "G": 0.48411253094673157,
-              "S": 0.49986907839775085
+              "G": 0.3976224362850189,
+              "S": 0.4998292326927185
             },
             "positive_counterfactual_utility_ticks": 33,
             "positive_counterfactual_utility_ticks_by_phase": {
@@ -342,7 +378,7 @@
             },
             "residual_ticks": 196,
             "ticks": 424,
-            "trace_digest": "d461645a5d9c2e8f3c09e337198c61013dd968e6b3a1739066fb8830659e8e5b",
+            "trace_digest": "50d043802087b9f3fe3d6ea95f8070c5bca7fc1e26b8e46371470a26ec90cab3",
             "utility_ticks": 195
           }
         }
@@ -358,15 +394,15 @@
           0.4331611096858978
         ],
         "candidate_lesion_delta": {
-          "G": -0.005234129598287396,
-          "S": 0.07749767890072246
+          "G": -0.004612300786902779,
+          "S": 0.06686566987838383
         },
         "mature_f1_owners_unchanged": true,
         "parent_substrate_unchanged": true,
         "shadow_fresh_restore": true,
         "shadow_rollback_matches_bare": true,
         "shadow_training_changed": true,
-        "trace_digest": "d485f0762c45a983fcd47e264f4aa39d2df99e37c9ee23a28a1754a9b44d3d7d"
+        "trace_digest": "3024f2410457d3f33806a0062a8f53b64ed20e84f7c371b1c1340535141870e0"
       },
       "course": {
         "G_holdout_digest": "1d6bbf7bd7c44a945ba09797a9b69dc5faa61e300b966a10cb08131d20b972b1",
@@ -398,7 +434,7 @@
       "course_label": "canonical-order",
       "course_seed": 101,
       "model_seed": 71,
-      "report_digest": "5384ef92ad8e1d467306de7ec831316c4c610fce2b9ba009bccec2e57adf6601",
+      "report_digest": "55ceb6f77dfbca43c4eef251b5e8218eb29854d9b89bcbc91c51c844c03760ed",
       "technical_gates": {
         "candidate_only_smoke_fresh_restore": true,
         "candidate_only_smoke_parent_frozen": true,
@@ -426,8 +462,8 @@
           "birth_anchor_weights": [],
           "candidate_digest": "f0276cfe663a3634f7038f3af77fb22542dfe19adce94976c9e4c107675ce02e",
           "candidate_lesion_delta": {
-            "G": 0.007195832201997376,
-            "S": 0.00036046951601775845
+            "G": 0.00708532275102236,
+            "S": 0.00035689279819361985
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -440,8 +476,8 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.700338822121036,
-            "S": 5.577862386632709
+            "G": 5.700444214410127,
+            "S": 5.577866065967477
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
@@ -449,36 +485,48 @@
             "active_ticks": 135,
             "counterfactual_utility_ticks": 130,
             "credit_ticks": 418,
-            "max_activity": 0.8568475842475891,
-            "max_candidate_credit_norm": 0.22802598774433136,
-            "max_candidate_gate": 0.5006998777389526,
+            "holdout_max_candidate_gate_by_phase": {
+              "G-holdout": 0.49431800842285156,
+              "S-holdout": 0.49431800842285156
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+              "G-holdout": 0.48657693962256116,
+              "S-holdout": 0.49347925186157227
+            },
+            "holdout_min_candidate_gate_by_phase": {
+              "G-holdout": 0.4826059341430664,
+              "S-holdout": 0.4923892915248871
+            },
+            "max_activity": 0.8568554520606995,
+            "max_candidate_credit_norm": 0.22804628312587738,
+            "max_candidate_gate": 0.500042200088501,
             "max_candidate_gate_by_phase": {
-              "G": 0.5006998777389526,
+              "G": 0.500042200088501,
               "S": 0.5
             },
-            "max_candidate_residual_norm": 0.3016475439071655,
-            "max_candidate_residual_ratio": 0.25567528953393676,
-            "max_eligibility_norm": 1.8228269815444946,
-            "max_projection_update_norm": 0.013952760025858879,
-            "mean_candidate_gate": 0.49964701356190555,
+            "max_candidate_residual_norm": 0.30166494846343994,
+            "max_candidate_residual_ratio": 0.2556838412557921,
+            "max_eligibility_norm": 1.8228578567504883,
+            "max_projection_update_norm": 0.01395348459482193,
+            "mean_candidate_gate": 0.49638247679708136,
             "mean_candidate_gate_by_phase": {
-              "G": 0.4996295389857623,
+              "G": 0.4962033914900062,
               "S": 0.5
             },
-            "mean_candidate_residual_ratio": 0.018769237961754014,
-            "mean_candidate_utility": 0.0022449462166907286,
+            "mean_candidate_residual_ratio": 0.01877005980729759,
+            "mean_candidate_utility": 0.0022129249671783077,
             "mean_candidate_utility_by_phase": {
-              "G": 0.0023560821680120515,
+              "G": 0.002322475708127729,
               "S": 0.0
             },
-            "mean_counterfactual_utility": -0.0020153273932831707,
+            "mean_counterfactual_utility": -0.0019864124747265895,
             "mean_counterfactual_utility_by_phase": {
-              "G": -0.0021150960761189713,
+              "G": -0.0020847497259506784,
               "S": 0.0
             },
-            "min_candidate_gate": 0.495902955532074,
+            "min_candidate_gate": 0.48362821340560913,
             "min_candidate_gate_by_phase": {
-              "G": 0.495902955532074,
+              "G": 0.48362821340560913,
               "S": 0.5
             },
             "positive_counterfactual_utility_ticks": 42,
@@ -493,7 +541,7 @@
             },
             "residual_ticks": 134,
             "ticks": 424,
-            "trace_digest": "e6be0a06b0c9f72afe5072b0aadc8d0038d5afebf4604dd1bd89c3e42097a05e",
+            "trace_digest": "8c686d75bdb136edf5e9d1701e323924c5679b918f801dcc8280421bf29e3d1c",
             "utility_ticks": 130
           }
         },
@@ -533,8 +581,8 @@
           ],
           "candidate_digest": "9b192ca77312c7745d5302200206f8dea45ce00fdbf7bd173347913d86373df1",
           "candidate_lesion_delta": {
-            "G": -0.010099200500381933,
-            "S": 0.05091940086231794
+            "G": -0.00951905031600564,
+            "S": 0.04778396240679417
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -547,8 +595,8 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.719045939322538,
-            "S": 5.528229732513403
+            "G": 5.71846584899773,
+            "S": 5.531358014552645
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
@@ -556,37 +604,49 @@
             "active_ticks": 264,
             "counterfactual_utility_ticks": 259,
             "credit_ticks": 417,
-            "max_activity": 0.7373466491699219,
-            "max_candidate_credit_norm": 0.4059990346431732,
-            "max_candidate_gate": 0.5001353025436401,
+            "holdout_max_candidate_gate_by_phase": {
+              "G-holdout": 0.4822319447994232,
+              "S-holdout": 0.4822319447994232
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+              "G-holdout": 0.47262806942065555,
+              "S-holdout": 0.4691940208276113
+            },
+            "holdout_min_candidate_gate_by_phase": {
+              "G-holdout": 0.46847012639045715,
+              "S-holdout": 0.46622297167778015
+            },
+            "max_activity": 0.7373623251914978,
+            "max_candidate_credit_norm": 0.4063579738140106,
+            "max_candidate_gate": 0.5,
             "max_candidate_gate_by_phase": {
-              "G": 0.5001353025436401,
+              "G": 0.4997986853122711,
               "S": 0.5
             },
-            "max_candidate_residual_norm": 0.3902709186077118,
-            "max_candidate_residual_ratio": 1.4974653769016046,
-            "max_eligibility_norm": 2.3184187412261963,
-            "max_projection_update_norm": 0.016229704022407532,
-            "mean_candidate_gate": 0.4985432653635178,
+            "max_candidate_residual_norm": 0.390455037355423,
+            "max_candidate_residual_ratio": 1.498456867685418,
+            "max_eligibility_norm": 2.318485736846924,
+            "max_projection_update_norm": 0.016231060028076172,
+            "mean_candidate_gate": 0.48895420457394617,
             "mean_candidate_gate_by_phase": {
-              "G": 0.4984777882547662,
-              "S": 0.4998659029603004
+              "G": 0.4884164792918923,
+              "S": 0.4998162552714348
             },
-            "mean_candidate_residual_ratio": 0.09080658411366214,
-            "mean_candidate_utility": 0.007805085414726293,
+            "mean_candidate_residual_ratio": 0.09082816119215427,
+            "mean_candidate_utility": 0.007498207731371832,
             "mean_candidate_utility_by_phase": {
-              "G": 0.008087107578370991,
-              "S": 0.002108237709103378
+              "G": 0.0077650530736528564,
+              "S": 0.002107931817295139
             },
-            "mean_counterfactual_utility": -0.006660558318079626,
+            "mean_counterfactual_utility": -0.006393585223408439,
             "mean_counterfactual_utility_by_phase": {
-              "G": -0.0069116118360882965,
-              "S": -0.0015892772543044664
+              "G": -0.006631433070729793,
+              "S": -0.001589058707517088
             },
-            "min_candidate_gate": 0.4942909777164459,
+            "min_candidate_gate": 0.46157121658325195,
             "min_candidate_gate_by_phase": {
-              "G": 0.4942909777164459,
-              "S": 0.4996655583381653
+              "G": 0.46157121658325195,
+              "S": 0.4994543790817261
             },
             "positive_counterfactual_utility_ticks": 41,
             "positive_counterfactual_utility_ticks_by_phase": {
@@ -600,7 +660,7 @@
             },
             "residual_ticks": 263,
             "ticks": 424,
-            "trace_digest": "e1e616f621034d9705f289cfc91fa3e6761ebcc6dca1ad7c7ff8b84dfe465b83",
+            "trace_digest": "e1c7e4d4c6e8f71767c28be29e61d17622a0d8e22683e8facf474eaddd913461",
             "utility_ticks": 260
           }
         },
@@ -634,8 +694,8 @@
           "birth_anchor_weights": [],
           "candidate_digest": "833be5dbe4b72f9f26c06a3239a0b9086850cdcc93e55e09ed495e542e606935",
           "candidate_lesion_delta": {
-            "G": -0.016467409270814137,
-            "S": 0.17044886139650295
+            "G": -0.013867719973069903,
+            "S": 0.1413641458775361
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -648,8 +708,8 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.7288349535548315,
-            "S": 5.413177937938087
+            "G": 5.7263258300204685,
+            "S": 5.442202995796547
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
@@ -657,37 +717,49 @@
             "active_ticks": 192,
             "counterfactual_utility_ticks": 190,
             "credit_ticks": 417,
+            "holdout_max_candidate_gate_by_phase": {
+              "G-holdout": 0.42390915751457214,
+              "S-holdout": 0.42390915751457214
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+              "G-holdout": 0.4210314427812894,
+              "S-holdout": 0.4106376628081004
+            },
+            "holdout_min_candidate_gate_by_phase": {
+              "G-holdout": 0.4176800847053528,
+              "S-holdout": 0.40457817912101746
+            },
             "max_activity": 0.9292261600494385,
-            "max_candidate_credit_norm": 0.7409507632255554,
-            "max_candidate_gate": 0.5147371292114258,
+            "max_candidate_credit_norm": 0.7480461001396179,
+            "max_candidate_gate": 0.5,
             "max_candidate_gate_by_phase": {
-              "G": 0.5147371292114258,
+              "G": 0.49982190132141113,
               "S": 0.5
             },
-            "max_candidate_residual_norm": 1.514259934425354,
-            "max_candidate_residual_ratio": 11.705196770387968,
-            "max_eligibility_norm": 3.863525629043579,
-            "max_projection_update_norm": 0.03104543499648571,
-            "mean_candidate_gate": 0.49815548977480745,
+            "max_candidate_residual_norm": 1.518642783164978,
+            "max_candidate_residual_ratio": 11.840858551731927,
+            "max_eligibility_norm": 3.864252805709839,
+            "max_projection_update_norm": 0.031010281294584274,
+            "mean_candidate_gate": 0.47999372284086245,
             "mean_candidate_gate_by_phase": {
-              "G": 0.498066436388705,
-              "S": 0.49995436817407607
+              "G": 0.479006438267113,
+              "S": 0.49993687123060226
             },
-            "mean_candidate_residual_ratio": 0.5083416584994378,
-            "mean_candidate_utility": 0.03399829943352741,
+            "mean_candidate_residual_ratio": 0.5099263619214122,
+            "mean_candidate_utility": 0.031450523015731924,
             "mean_candidate_utility_by_phase": {
-              "G": 0.03558468644978077,
-              "S": 0.0019532817052095195
+              "G": 0.03291078915982767,
+              "S": 0.0019531469049979934
             },
-            "mean_counterfactual_utility": -0.0307626391988752,
+            "mean_counterfactual_utility": -0.02825719530142456,
             "mean_counterfactual_utility_by_phase": {
-              "G": -0.03221590526424231,
-              "S": -0.0014066646784595348
+              "G": -0.029586433596567818,
+              "S": -0.0014065817395307433
             },
-            "min_candidate_gate": 0.48430198431015015,
+            "min_candidate_gate": 0.4073278605937958,
             "min_candidate_gate_by_phase": {
-              "G": 0.48430198431015015,
-              "S": 0.4997830092906952
+              "G": 0.4073278605937958,
+              "S": 0.499695360660553
             },
             "positive_counterfactual_utility_ticks": 20,
             "positive_counterfactual_utility_ticks_by_phase": {
@@ -701,7 +773,7 @@
             },
             "residual_ticks": 191,
             "ticks": 424,
-            "trace_digest": "714f74e04e8b0c8ef9db5b4b015298d984e60500b2f378f8124b4a0bcc4dd90f",
+            "trace_digest": "f9365b11c60b146d3ac1e8d1c9d73e9bf9ed08d4450371e4e4fedef5c7893f54",
             "utility_ticks": 190
           }
         }
@@ -717,15 +789,15 @@
           0.4331611096858978
         ],
         "candidate_lesion_delta": {
-          "G": -0.004014607679470927,
-          "S": 0.04069734458941987
+          "G": -0.003696544822134662,
+          "S": 0.03650200709719442
         },
         "mature_f1_owners_unchanged": true,
         "parent_substrate_unchanged": true,
         "shadow_fresh_restore": true,
         "shadow_rollback_matches_bare": true,
         "shadow_training_changed": true,
-        "trace_digest": "13e479f102ee6cb99d33a0596254b17c0a2c5fb2bcacd81b030dbeb971ee6377"
+        "trace_digest": "98f398eb8002a816dc9b8a51d223317f40b318feaecebe64a61b36dbc0ee6f32"
       },
       "course": {
         "G_holdout_digest": "1d6bbf7bd7c44a945ba09797a9b69dc5faa61e300b966a10cb08131d20b972b1",
@@ -757,7 +829,7 @@
       "course_label": "order-202",
       "course_seed": 202,
       "model_seed": 71,
-      "report_digest": "cd6eb8163a546599bbf493e14c631bcddf5acd7b0280367c55ecf10ca2c4ab1d",
+      "report_digest": "207948362a0f3c973dfe472e938172cc81ff02ebdd3c3aad5620b5624e2264ac",
       "technical_gates": {
         "candidate_only_smoke_fresh_restore": true,
         "candidate_only_smoke_parent_frozen": true,
@@ -785,8 +857,8 @@
           "birth_anchor_weights": [],
           "candidate_digest": "f0276cfe663a3634f7038f3af77fb22542dfe19adce94976c9e4c107675ce02e",
           "candidate_lesion_delta": {
-            "G": 0.002823623487234528,
-            "S": 0.00010353423905318238
+            "G": 0.002812275319078239,
+            "S": 0.00010320015601283927
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -799,8 +871,8 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.662704408609592,
-            "S": 5.5589722082134205
+            "G": 5.6627155923720425,
+            "S": 5.558972526998184
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
@@ -808,36 +880,48 @@
             "active_ticks": 101,
             "counterfactual_utility_ticks": 98,
             "credit_ticks": 418,
+            "holdout_max_candidate_gate_by_phase": {
+              "G-holdout": 0.4983265697956085,
+              "S-holdout": 0.4983265697956085
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+              "G-holdout": 0.4972493574023247,
+              "S-holdout": 0.498153156042099
+            },
+            "holdout_min_candidate_gate_by_phase": {
+              "G-holdout": 0.4968250095844269,
+              "S-holdout": 0.49800172448158264
+            },
             "max_activity": 0.46391576528549194,
-            "max_candidate_credit_norm": 0.10684879124164581,
-            "max_candidate_gate": 0.5000035166740417,
+            "max_candidate_credit_norm": 0.10684990137815475,
+            "max_candidate_gate": 0.5000037550926208,
             "max_candidate_gate_by_phase": {
-              "G": 0.5000035166740417,
+              "G": 0.5000037550926208,
               "S": 0.5
             },
-            "max_candidate_residual_norm": 0.06832341104745865,
-            "max_candidate_residual_ratio": 0.05292046556217454,
-            "max_eligibility_norm": 0.8218539357185364,
-            "max_projection_update_norm": 0.005767121445387602,
-            "mean_candidate_gate": 0.4998483396363708,
+            "max_candidate_residual_norm": 0.06832368671894073,
+            "max_candidate_residual_ratio": 0.05292050525370737,
+            "max_eligibility_norm": 0.8218539953231812,
+            "max_projection_update_norm": 0.0057671465910971165,
+            "mean_candidate_gate": 0.49918326208332797,
             "mean_candidate_gate_by_phase": {
-              "G": 0.4998408316975773,
+              "G": 0.4991428295131957,
               "S": 0.5
             },
-            "mean_candidate_residual_ratio": 0.0031443773502898764,
-            "mean_candidate_utility": 0.0005899795997211693,
+            "mean_candidate_residual_ratio": 0.0031443808086286844,
+            "mean_candidate_utility": 0.0005880526131661419,
             "mean_candidate_utility_by_phase": {
-              "G": 0.0006191863834533926,
+              "G": 0.0006171640015243539,
               "S": 2.568330259578033e-09
             },
-            "mean_counterfactual_utility": -0.0005971932847111132,
+            "mean_counterfactual_utility": -0.0005952290123509924,
             "mean_counterfactual_utility_by_phase": {
-              "G": -0.0006267573087067129,
+              "G": -0.0006246957951406455,
               "S": 0.0
             },
-            "min_candidate_gate": 0.4990566372871399,
+            "min_candidate_gate": 0.49610811471939087,
             "min_candidate_gate_by_phase": {
-              "G": 0.4990566372871399,
+              "G": 0.49610811471939087,
               "S": 0.5
             },
             "positive_counterfactual_utility_ticks": 34,
@@ -852,7 +936,7 @@
             },
             "residual_ticks": 100,
             "ticks": 424,
-            "trace_digest": "8bd934d44e0000cfcfa6054d4e2c942eee110b31c2e6e2528545f3364de00766",
+            "trace_digest": "7d10c2046cbb6fb2ab2177d1dd56355567f51ffea4bc31e1bf2b5c772d194966",
             "utility_ticks": 99
           }
         },
@@ -892,8 +976,8 @@
           ],
           "candidate_digest": "9b192ca77312c7745d5302200206f8dea45ce00fdbf7bd173347913d86373df1",
           "candidate_lesion_delta": {
-            "G": -0.009283503372666146,
-            "S": 0.11103704128989644
+            "G": -0.008285513515910559,
+            "S": 0.10021366875649296
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -906,8 +990,8 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.67390643948877,
-            "S": 5.449843573255636
+            "G": 5.672919256853012,
+            "S": 5.460656053334719
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
@@ -915,37 +999,49 @@
             "active_ticks": 228,
             "counterfactual_utility_ticks": 226,
             "credit_ticks": 417,
-            "max_activity": 0.8824135065078735,
-            "max_candidate_credit_norm": 0.6167274713516235,
-            "max_candidate_gate": 0.5121816992759705,
+            "holdout_max_candidate_gate_by_phase": {
+              "G-holdout": 0.46942317485809326,
+              "S-holdout": 0.46942317485809326
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+              "G-holdout": 0.45328475534915924,
+              "S-holdout": 0.44886388182640075
+            },
+            "holdout_min_candidate_gate_by_phase": {
+              "G-holdout": 0.4466949701309204,
+              "S-holdout": 0.44105127453804016
+            },
+            "max_activity": 0.8824613690376282,
+            "max_candidate_credit_norm": 0.6173075437545776,
+            "max_candidate_gate": 0.5000009536743164,
             "max_candidate_gate_by_phase": {
-              "G": 0.5121816992759705,
+              "G": 0.4998345971107483,
               "S": 0.5000009536743164
             },
-            "max_candidate_residual_norm": 0.9877824783325195,
-            "max_candidate_residual_ratio": 2.862335529985596,
-            "max_eligibility_norm": 3.078219413757324,
-            "max_projection_update_norm": 0.028193378821015358,
-            "mean_candidate_gate": 0.5000121318647321,
+            "max_candidate_residual_norm": 0.9889215230941772,
+            "max_candidate_residual_ratio": 2.869375932717052,
+            "max_eligibility_norm": 3.0789237022399902,
+            "max_projection_update_norm": 0.028202267363667488,
+            "mean_candidate_gate": 0.4817520800345349,
             "mean_candidate_gate_by_phase": {
-              "G": 0.5000177878554505,
-              "S": 0.4998978808522224
+              "G": 0.48085637007019305,
+              "S": 0.4998454213142395
             },
-            "mean_candidate_residual_ratio": 0.2077304678013184,
-            "mean_candidate_utility": 0.01331422715361012,
+            "mean_candidate_residual_ratio": 0.20791802216429786,
+            "mean_candidate_utility": 0.01257656069000799,
             "mean_candidate_utility_by_phase": {
-              "G": 0.013888884326463248,
-              "S": 0.0017061522619769675
+              "G": 0.013114713793665132,
+              "S": 0.0017058679961337476
             },
-            "mean_counterfactual_utility": -0.012256302228581612,
+            "mean_counterfactual_utility": -0.01155283529358552,
             "mean_counterfactual_utility_by_phase": {
-              "G": -0.012801429579464847,
-              "S": -0.001244729740740258
+              "G": -0.012063147235172836,
+              "S": -0.0012445340735217415
             },
-            "min_candidate_gate": 0.48998329043388367,
+            "min_candidate_gate": 0.4324663281440735,
             "min_candidate_gate_by_phase": {
-              "G": 0.48998329043388367,
-              "S": 0.4997246563434601
+              "G": 0.4324663281440735,
+              "S": 0.49955111742019653
             },
             "positive_counterfactual_utility_ticks": 35,
             "positive_counterfactual_utility_ticks_by_phase": {
@@ -959,7 +1055,7 @@
             },
             "residual_ticks": 227,
             "ticks": 424,
-            "trace_digest": "45ad3b4ef5605b8ad6e3becc005941a6e01917880f17a701d1e2f3524c7e1d0d",
+            "trace_digest": "d804e1ae85fbe146be87a3358263909cc9c4f35207ba25d653b9e51054a46487",
             "utility_ticks": 226
           }
         },
@@ -993,8 +1089,8 @@
           "birth_anchor_weights": [],
           "candidate_digest": "833be5dbe4b72f9f26c06a3239a0b9086850cdcc93e55e09ed495e542e606935",
           "candidate_lesion_delta": {
-            "G": -0.027331485541695066,
-            "S": 0.2332498258275777
+            "G": -0.021695877138689035,
+            "S": 0.17839570955010853
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -1007,8 +1103,8 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.704999948949311,
-            "S": 5.336753903561653
+            "G": 5.699634626535686,
+            "S": 5.391649824208699
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
@@ -1016,37 +1112,49 @@
             "active_ticks": 202,
             "counterfactual_utility_ticks": 201,
             "credit_ticks": 417,
-            "max_activity": 0.9203976988792419,
-            "max_candidate_credit_norm": 0.9825625419616699,
-            "max_candidate_gate": 0.5328634977340698,
+            "holdout_max_candidate_gate_by_phase": {
+              "G-holdout": 0.38932520151138306,
+              "S-holdout": 0.3883289694786072
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+              "G-holdout": 0.38659653067588806,
+              "S-holdout": 0.37393125096956886
+            },
+            "holdout_min_candidate_gate_by_phase": {
+              "G-holdout": 0.3839229643344879,
+              "S-holdout": 0.3644182085990906
+            },
+            "max_activity": 0.9211422801017761,
+            "max_candidate_credit_norm": 0.9980921149253845,
+            "max_candidate_gate": 0.5,
             "max_candidate_gate_by_phase": {
-              "G": 0.5328634977340698,
+              "G": 0.4997919499874115,
               "S": 0.5
             },
-            "max_candidate_residual_norm": 1.9228394031524658,
-            "max_candidate_residual_ratio": 21.28961622055087,
-            "max_eligibility_norm": 3.9233922958374023,
-            "max_projection_update_norm": 0.044190242886543274,
-            "mean_candidate_gate": 0.5003228356253426,
+            "max_candidate_residual_norm": 1.9339219331741333,
+            "max_candidate_residual_ratio": 21.807879622493672,
+            "max_eligibility_norm": 3.924403429031372,
+            "max_projection_update_norm": 0.04426443204283714,
+            "mean_candidate_gate": 0.4594383458343317,
             "mean_candidate_gate_by_phase": {
-              "G": 0.5003429843795182,
-              "S": 0.49991583079099655
+              "G": 0.45743625773356694,
+              "S": 0.49988052546977996
             },
-            "mean_candidate_residual_ratio": 0.8994213619709157,
-            "mean_candidate_utility": 0.04840618058455476,
+            "mean_candidate_residual_ratio": 0.9053993716321149,
+            "mean_candidate_utility": 0.04368012478781117,
             "mean_candidate_utility_by_phase": {
-              "G": 0.05069185917725035,
-              "S": 0.002235473012103739
+              "G": 0.04573185079659584,
+              "S": 0.002235259410360868
             },
-            "mean_counterfactual_utility": -0.045993742768616085,
+            "mean_counterfactual_utility": -0.041200751254281916,
             "mean_counterfactual_utility_by_phase": {
-              "G": -0.04819454485694293,
-              "S": -0.0015375405844137546
+              "G": -0.04316427953633579,
+              "S": -0.0015374799567936747
             },
-            "min_candidate_gate": 0.4784921705722809,
+            "min_candidate_gate": 0.3761962056159973,
             "min_candidate_gate_by_phase": {
-              "G": 0.4784921705722809,
-              "S": 0.499790757894516
+              "G": 0.3761962056159973,
+              "S": 0.4997447729110718
             },
             "positive_counterfactual_utility_ticks": 25,
             "positive_counterfactual_utility_ticks_by_phase": {
@@ -1060,7 +1168,7 @@
             },
             "residual_ticks": 201,
             "ticks": 424,
-            "trace_digest": "e4ea8691a8bf71ab0071ffe1152876e5443aba29fbd1de180cd7efb566fa4e39",
+            "trace_digest": "a9b945cfee296ba6e842d2bd8decc6a0669aa80c1ce9874d903e5a791eaf701f",
             "utility_ticks": 201
           }
         }
@@ -1076,15 +1184,15 @@
           0.4331611096858978
         ],
         "candidate_lesion_delta": {
-          "G": -0.006498344796992406,
-          "S": 0.0686377565686156
+          "G": -0.005805737291677104,
+          "S": 0.05976166967935992
         },
         "mature_f1_owners_unchanged": true,
         "parent_substrate_unchanged": true,
         "shadow_fresh_restore": true,
         "shadow_rollback_matches_bare": true,
         "shadow_training_changed": true,
-        "trace_digest": "836cb55f95e1ae8a89f29bb52f69920d0c7dce35c36be9ed609a2a398e5e8fe3"
+        "trace_digest": "b612fd25c1a62c0738d036a4c2b690d02531eb00346ce261794f63f2d1362a34"
       },
       "course": {
         "G_holdout_digest": "1d6bbf7bd7c44a945ba09797a9b69dc5faa61e300b966a10cb08131d20b972b1",
@@ -1116,7 +1224,7 @@
       "course_label": "order-303",
       "course_seed": 303,
       "model_seed": 71,
-      "report_digest": "4265b1a94fd1fab61f1104ae49d38ce5f3e0c2b61061470870cb9ca91d6c7a3c",
+      "report_digest": "13efb0fd8370f68613d74e39acbcf0f561a389d65e49280d6351e94afc2346d1",
       "technical_gates": {
         "candidate_only_smoke_fresh_restore": true,
         "candidate_only_smoke_parent_frozen": true,
@@ -1144,8 +1252,8 @@
           "birth_anchor_weights": [],
           "candidate_digest": "8682c0d37186e4982b3d424c071d9a14c77c12e87b596e46930022b9730585b2",
           "candidate_lesion_delta": {
-            "G": 0.00044496779345326587,
-            "S": 0.0204010404409134
+            "G": 0.0004311767151428114,
+            "S": 0.019494824837725133
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -1158,8 +1266,8 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.826580939850979,
-            "S": 5.747447767797515
+            "G": 5.826593243928522,
+            "S": 5.74834377241205
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
@@ -1167,37 +1275,49 @@
             "active_ticks": 177,
             "counterfactual_utility_ticks": 175,
             "credit_ticks": 415,
-            "max_activity": 0.6313672661781311,
-            "max_candidate_credit_norm": 0.2684522271156311,
-            "max_candidate_gate": 0.5052409768104553,
+            "holdout_max_candidate_gate_by_phase": {
+              "G-holdout": 0.49109259247779846,
+              "S-holdout": 0.49109259247779846
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+              "G-holdout": 0.48606621970733005,
+              "S-holdout": 0.478736013174057
+            },
+            "holdout_min_candidate_gate_by_phase": {
+              "G-holdout": 0.48001259565353394,
+              "S-holdout": 0.4708273112773895
+            },
+            "max_activity": 0.6313674449920654,
+            "max_candidate_credit_norm": 0.2685214877128601,
+            "max_candidate_gate": 0.5000000596046448,
             "max_candidate_gate_by_phase": {
-              "G": 0.5052409768104553,
+              "G": 0.4999951124191284,
               "S": 0.5000000596046448
             },
-            "max_candidate_residual_norm": 0.23180796205997467,
-            "max_candidate_residual_ratio": 0.3075820191467706,
-            "max_eligibility_norm": 1.5406526327133179,
-            "max_projection_update_norm": 0.011527852155268192,
-            "mean_candidate_gate": 0.500675664546917,
+            "max_candidate_residual_norm": 0.2318280041217804,
+            "max_candidate_residual_ratio": 0.30759721451635313,
+            "max_eligibility_norm": 1.5406813621520996,
+            "max_projection_update_norm": 0.011528602801263332,
+            "mean_candidate_gate": 0.49263609608389297,
             "mean_candidate_gate_by_phase": {
-              "G": 0.500709249020213,
-              "S": 0.49999725818634033
+              "G": 0.4922717293300251,
+              "S": 0.4999963045120239
             },
-            "mean_candidate_residual_ratio": 0.01798984035785738,
-            "mean_candidate_utility": 0.0034740279616960594,
+            "mean_candidate_residual_ratio": 0.01799087609688038,
+            "mean_candidate_utility": 0.0034066170983608588,
             "mean_candidate_utility_by_phase": {
-              "G": 0.003642877809690419,
-              "S": 6.326103220999357e-05
+              "G": 0.003572129781553098,
+              "S": 6.326089787762612e-05
             },
-            "mean_counterfactual_utility": -0.003429501603512739,
+            "mean_counterfactual_utility": -0.003361639443290016,
             "mean_counterfactual_utility_by_phase": {
-              "G": -0.0035973418437074377,
+              "G": -0.0035261201706024013,
               "S": -3.912875157983109e-05
             },
-            "min_candidate_gate": 0.4938856363296509,
+            "min_candidate_gate": 0.4723316431045532,
             "min_candidate_gate_by_phase": {
-              "G": 0.4938856363296509,
-              "S": 0.4999896287918091
+              "G": 0.4723316431045532,
+              "S": 0.4999864101409912
             },
             "positive_counterfactual_utility_ticks": 49,
             "positive_counterfactual_utility_ticks_by_phase": {
@@ -1211,7 +1331,7 @@
             },
             "residual_ticks": 176,
             "ticks": 424,
-            "trace_digest": "db8f3fa8326ada60aad22fc87869e755cdabd37f3c491dd9a8654b5ac13a79ca",
+            "trace_digest": "bfb1bbcbe7ba0e4475b988566a982e4a31f37c4d4485f4dc7cb880129b4d7af2",
             "utility_ticks": 175
           }
         },
@@ -1252,7 +1372,7 @@
           "candidate_digest": "5b79011cbbfd45781320aa598e96e7b50a2eefe71a3ed61e55d2a69d44a8637c",
           "candidate_lesion_delta": {
             "G": 0.0,
-            "S": 0.08189338296474968
+            "S": 0.0585327148436674
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -1265,8 +1385,8 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.822062382503413,
-            "S": 5.728425339681847
+            "G": 5.822002148520815,
+            "S": 5.751534697719554
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
@@ -1274,51 +1394,63 @@
             "active_ticks": 204,
             "counterfactual_utility_ticks": 202,
             "credit_ticks": 418,
+            "holdout_max_candidate_gate_by_phase": {
+              "G-holdout": 0.4508494734764099,
+              "S-holdout": 0.4508494734764099
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+              "G-holdout": 0.427120566368103,
+              "S-holdout": 0.3577562113602956
+            },
+            "holdout_min_candidate_gate_by_phase": {
+              "G-holdout": 0.40459153056144714,
+              "S-holdout": 0.3236686587333679
+            },
             "max_activity": 0.9647624492645264,
-            "max_candidate_credit_norm": 0.6258882284164429,
-            "max_candidate_gate": 0.5068145990371704,
+            "max_candidate_credit_norm": 0.6298459768295288,
+            "max_candidate_gate": 0.5000321269035339,
             "max_candidate_gate_by_phase": {
-              "G": 0.5068145990371704,
-              "S": 0.5000406503677368
+              "G": 0.49937909841537476,
+              "S": 0.5000321269035339
             },
-            "max_candidate_residual_norm": 0.7329666018486023,
-            "max_candidate_residual_ratio": 0.6903458550412473,
-            "max_eligibility_norm": 2.3372275829315186,
-            "max_projection_update_norm": 0.018387118354439735,
-            "mean_candidate_gate": 0.4963760069518719,
+            "max_candidate_residual_norm": 0.7349406480789185,
+            "max_candidate_residual_ratio": 0.6920405440840246,
+            "max_eligibility_norm": 2.3387417793273926,
+            "max_projection_update_norm": 0.018436269834637642,
+            "mean_candidate_gate": 0.44328043673117207,
             "mean_candidate_gate_by_phase": {
-              "G": 0.49621094239525276,
-              "S": 0.4997103109955788
+              "G": 0.44049229074527724,
+              "S": 0.4996009856462479
             },
-            "mean_candidate_residual_ratio": 0.09770531450499871,
-            "mean_candidate_utility": 0.020481622186124232,
+            "mean_candidate_residual_ratio": 0.09783852368433611,
+            "mean_candidate_utility": 0.017589862784212904,
             "mean_candidate_utility_by_phase": {
-              "G": 0.0212343580257793,
-              "S": 0.005276358225091826
+              "G": 0.01819953932434794,
+              "S": 0.005274396673485171
             },
-            "mean_counterfactual_utility": -0.020022732158046928,
+            "mean_counterfactual_utility": -0.0170951682000841,
             "mean_counterfactual_utility_by_phase": {
-              "G": -0.020835011704522042,
-              "S": -0.0036146853192496665
+              "G": -0.017762586777023977,
+              "S": -0.0036133129458985726
             },
-            "min_candidate_gate": 0.47522488236427307,
+            "min_candidate_gate": 0.33046215772628784,
             "min_candidate_gate_by_phase": {
-              "G": 0.47522488236427307,
-              "S": 0.49907392263412476
+              "G": 0.33046215772628784,
+              "S": 0.4985879063606262
             },
             "positive_counterfactual_utility_ticks": 25,
             "positive_counterfactual_utility_ticks_by_phase": {
               "G": 21,
               "S": 4
             },
-            "positive_utility_ticks": 178,
+            "positive_utility_ticks": 179,
             "positive_utility_ticks_by_phase": {
-              "G": 164,
+              "G": 165,
               "S": 14
             },
             "residual_ticks": 203,
             "ticks": 424,
-            "trace_digest": "b0b0c8402a9b0983d793859589fd988238d07c0e34f7fa04d072758a2cc44eff",
+            "trace_digest": "6ddeca3176a8d933ac419947d5c0e039d5b701b96a97f5e632603a92b9daef84",
             "utility_ticks": 202
           }
         },
@@ -1352,8 +1484,8 @@
           "birth_anchor_weights": [],
           "candidate_digest": "b66b3f32053bd0e7e2f4b97fae520048327a9956d72908093674bbe02ea54713",
           "candidate_lesion_delta": {
-            "G": 0.014359774795950742,
-            "S": 6.606669248121477e-05
+            "G": 0.013797437171678695,
+            "S": 6.496061436322975e-05
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -1366,8 +1498,8 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.812623361594169,
-            "S": 5.771563763166266
+            "G": 5.8131808183880835,
+            "S": 5.771567484630344
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
@@ -1375,36 +1507,48 @@
             "active_ticks": 204,
             "counterfactual_utility_ticks": 199,
             "credit_ticks": 418,
+            "holdout_max_candidate_gate_by_phase": {
+              "G-holdout": 0.49032318592071533,
+              "S-holdout": 0.4913989305496216
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+              "G-holdout": 0.4791073501110077,
+              "S-holdout": 0.4899500588575999
+            },
+            "holdout_min_candidate_gate_by_phase": {
+              "G-holdout": 0.47283416986465454,
+              "S-holdout": 0.48817217350006104
+            },
             "max_activity": 0.9922622442245483,
-            "max_candidate_credit_norm": 0.17177358269691467,
-            "max_candidate_gate": 0.5008209347724915,
+            "max_candidate_credit_norm": 0.17184141278266907,
+            "max_candidate_gate": 0.5000191330909729,
             "max_candidate_gate_by_phase": {
-              "G": 0.5008209347724915,
+              "G": 0.5000191330909729,
               "S": 0.5000015497207642
             },
-            "max_candidate_residual_norm": 0.47722285985946655,
-            "max_candidate_residual_ratio": 0.8955908105875906,
-            "max_eligibility_norm": 2.6818652153015137,
-            "max_projection_update_norm": 0.02259233593940735,
-            "mean_candidate_gate": 0.49924961716498967,
+            "max_candidate_residual_norm": 0.47737136483192444,
+            "max_candidate_residual_ratio": 0.8958132725571722,
+            "max_eligibility_norm": 2.681873083114624,
+            "max_projection_update_norm": 0.022592630237340927,
+            "mean_candidate_gate": 0.49523822492304836,
             "mean_candidate_gate_by_phase": {
-              "G": 0.499212446926844,
-              "S": 0.5000004559755326
+              "G": 0.4950024504030105,
+              "S": 0.5000008702278137
             },
-            "mean_candidate_residual_ratio": 0.061037338341138656,
-            "mean_candidate_utility": 0.003151103772486541,
+            "mean_candidate_residual_ratio": 0.06104736269537588,
+            "mean_candidate_utility": 0.0030858538802094873,
             "mean_candidate_utility_by_phase": {
-              "G": 0.0033074302380334125,
+              "G": 0.0032389501530693757,
               "S": -6.690831560263177e-06
             },
-            "mean_counterfactual_utility": -0.0031106990522083424,
+            "mean_counterfactual_utility": -0.003043788972796086,
             "mean_counterfactual_utility_by_phase": {
-              "G": -0.0032650254024824284,
+              "G": -0.003194802942901249,
               "S": 6.6932233282024354e-06
             },
-            "min_candidate_gate": 0.49586331844329834,
+            "min_candidate_gate": 0.4755118787288666,
             "min_candidate_gate_by_phase": {
-              "G": 0.49586331844329834,
+              "G": 0.4755118787288666,
               "S": 0.49999988079071045
             },
             "positive_counterfactual_utility_ticks": 39,
@@ -1419,7 +1563,7 @@
             },
             "residual_ticks": 203,
             "ticks": 424,
-            "trace_digest": "18df95e3f2456e29e9072aa76a7ebf8b6020c2633cacebcfec231a45311df2e2",
+            "trace_digest": "1af78911b397779de842563df2b52d2c020a6400e5a7b520114d90dcf725c519",
             "utility_ticks": 199
           }
         }
@@ -1436,14 +1580,14 @@
         ],
         "candidate_lesion_delta": {
           "G": 0.0,
-          "S": 0.12955363227787942
+          "S": 0.09173116130401926
         },
         "mature_f1_owners_unchanged": true,
         "parent_substrate_unchanged": true,
         "shadow_fresh_restore": true,
         "shadow_rollback_matches_bare": true,
         "shadow_training_changed": true,
-        "trace_digest": "86e855e317ba5151f5d56dcb8ea3242d3444d24b5ba5bc7c801aa2b04150ba2d"
+        "trace_digest": "f693187b26a9dd60a6a16c9c12e6e6ff4caded80634064c99e128afeda733e11"
       },
       "course": {
         "G_holdout_digest": "1d6bbf7bd7c44a945ba09797a9b69dc5faa61e300b966a10cb08131d20b972b1",
@@ -1475,7 +1619,7 @@
       "course_label": "canonical-order",
       "course_seed": 101,
       "model_seed": 83,
-      "report_digest": "fe8b13eed11c0434a7cb5a6d842ad9bdb2a2fad0026205198e041ac0b14f60da",
+      "report_digest": "648e8f82f11eee54790a72290f090d9447ddbdfd72f66b7c0a3dd231be4720d1",
       "technical_gates": {
         "candidate_only_smoke_fresh_restore": true,
         "candidate_only_smoke_parent_frozen": true,
@@ -1503,8 +1647,8 @@
           "birth_anchor_weights": [],
           "candidate_digest": "8682c0d37186e4982b3d424c071d9a14c77c12e87b596e46930022b9730585b2",
           "candidate_lesion_delta": {
-            "G": -0.0002643850071395448,
-            "S": 0.02794746523506575
+            "G": -0.0002531834608392458,
+            "S": 0.02573698201724195
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -1517,8 +1661,8 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.905827975358881,
-            "S": 5.8217939754794
+            "G": 5.905821819016893,
+            "S": 5.823983032056904
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
@@ -1526,37 +1670,49 @@
             "active_ticks": 222,
             "counterfactual_utility_ticks": 220,
             "credit_ticks": 412,
-            "max_activity": 0.5903804302215576,
-            "max_candidate_credit_norm": 0.35285240411758423,
-            "max_candidate_gate": 0.5010597705841064,
+            "holdout_max_candidate_gate_by_phase": {
+              "G-holdout": 0.48437243700027466,
+              "S-holdout": 0.48437243700027466
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+              "G-holdout": 0.4769221991300583,
+              "S-holdout": 0.4650223712126414
+            },
+            "holdout_min_candidate_gate_by_phase": {
+              "G-holdout": 0.46954914927482605,
+              "S-holdout": 0.4539019763469696
+            },
+            "max_activity": 0.5904332995414734,
+            "max_candidate_credit_norm": 0.3531038165092468,
+            "max_candidate_gate": 0.5,
             "max_candidate_gate_by_phase": {
-              "G": 0.5010597705841064,
+              "G": 0.4999985098838806,
               "S": 0.5
             },
-            "max_candidate_residual_norm": 0.3107301592826843,
-            "max_candidate_residual_ratio": 0.2612958782237481,
-            "max_eligibility_norm": 1.8568657636642456,
-            "max_projection_update_norm": 0.01316309254616499,
-            "mean_candidate_gate": 0.49907794812659045,
+            "max_candidate_residual_norm": 0.31085336208343506,
+            "max_candidate_residual_ratio": 0.2613561957788904,
+            "max_eligibility_norm": 1.8569573163986206,
+            "max_projection_update_norm": 0.01316782645881176,
+            "mean_candidate_gate": 0.492926603710314,
             "mean_candidate_gate_by_phase": {
-              "G": 0.49903235525482953,
-              "S": 0.4999989241361618
+              "G": 0.4925765195252872,
+              "S": 0.49999830424785613
             },
-            "mean_candidate_residual_ratio": 0.03224508272117427,
-            "mean_candidate_utility": 0.0060923403038984515,
+            "mean_candidate_residual_ratio": 0.0322488741709308,
+            "mean_candidate_utility": 0.005870361825999389,
             "mean_candidate_utility_by_phase": {
-              "G": 0.00639316528299832,
-              "S": 1.567572608109913e-05
+              "G": 0.006160197771774025,
+              "S": 1.5675721351726678e-05
             },
-            "mean_counterfactual_utility": -0.006123461514791876,
+            "mean_counterfactual_utility": -0.005899125404046782,
             "mean_counterfactual_utility_by_phase": {
-              "G": -0.006426024100478453,
+              "G": -0.006190582241676671,
               "S": -1.1697283923028934e-05
             },
-            "min_candidate_gate": 0.49162009358406067,
+            "min_candidate_gate": 0.45336273312568665,
             "min_candidate_gate_by_phase": {
-              "G": 0.49162009358406067,
-              "S": 0.49999570846557617
+              "G": 0.45336273312568665,
+              "S": 0.4999955892562866
             },
             "positive_counterfactual_utility_ticks": 47,
             "positive_counterfactual_utility_ticks_by_phase": {
@@ -1570,7 +1726,7 @@
             },
             "residual_ticks": 221,
             "ticks": 424,
-            "trace_digest": "698334e98f85bde3c1dc0667508bdea6af3e3b3c0641d6060aea1ea34dd69340",
+            "trace_digest": "6fef0ec9c582604bc93c0532e81d658f19e872a4c7bbe2df068c50ecd19189fa",
             "utility_ticks": 220
           }
         },
@@ -1611,7 +1767,7 @@
           "candidate_digest": "5b79011cbbfd45781320aa598e96e7b50a2eefe71a3ed61e55d2a69d44a8637c",
           "candidate_lesion_delta": {
             "G": 0.0,
-            "S": 0.07099943352673588
+            "S": 0.04702018371913663
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -1624,8 +1780,8 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.901923742588706,
-            "S": 5.820886011537077
+            "G": 5.901941186571815,
+            "S": 5.844777909844472
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
@@ -1633,37 +1789,49 @@
             "active_ticks": 208,
             "counterfactual_utility_ticks": 206,
             "credit_ticks": 418,
+            "holdout_max_candidate_gate_by_phase": {
+              "G-holdout": 0.44202712178230286,
+              "S-holdout": 0.44202712178230286
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+              "G-holdout": 0.42168739686409634,
+              "S-holdout": 0.33552693724632265
+            },
+            "holdout_min_candidate_gate_by_phase": {
+              "G-holdout": 0.4089133143424988,
+              "S-holdout": 0.28979572653770447
+            },
             "max_activity": 0.9585798382759094,
-            "max_candidate_credit_norm": 0.6633299589157104,
-            "max_candidate_gate": 0.5025794506072998,
+            "max_candidate_credit_norm": 0.6688238382339478,
+            "max_candidate_gate": 0.5000050663948059,
             "max_candidate_gate_by_phase": {
-              "G": 0.5025794506072998,
-              "S": 0.5000049471855164
+              "G": 0.49911370873451233,
+              "S": 0.5000050663948059
             },
-            "max_candidate_residual_norm": 0.7151824235916138,
-            "max_candidate_residual_ratio": 0.6904941858359742,
-            "max_eligibility_norm": 2.3740785121917725,
-            "max_projection_update_norm": 0.016764143481850624,
-            "mean_candidate_gate": 0.49230624397970596,
+            "max_candidate_residual_norm": 0.718421220779419,
+            "max_candidate_residual_ratio": 0.6933626449432628,
+            "max_eligibility_norm": 2.376742124557495,
+            "max_projection_update_norm": 0.01677677407860756,
+            "mean_candidate_gate": 0.44985981995485863,
             "mean_candidate_gate_by_phase": {
-              "G": 0.49194564367875016,
-              "S": 0.49959037005901336
+              "G": 0.4474050544276096,
+              "S": 0.49944608360528947
             },
-            "mean_candidate_residual_ratio": 0.12078328116010682,
-            "mean_candidate_utility": 0.023590955355528097,
+            "mean_candidate_residual_ratio": 0.12104590087652893,
+            "mean_candidate_utility": 0.01926630488122246,
             "mean_candidate_utility_by_phase": {
-              "G": 0.024455790841631537,
-              "S": 0.0061212785362386056
+              "G": 0.01991716193094029,
+              "S": 0.006118992476922358
             },
-            "mean_counterfactual_utility": -0.023710168151422444,
+            "mean_counterfactual_utility": -0.01929980450523549,
             "mean_counterfactual_utility_by_phase": {
-              "G": -0.02462754942149926,
-              "S": -0.005179066495870766
+              "G": -0.019998950744334047,
+              "S": -0.0051770504754446115
             },
-            "min_candidate_gate": 0.4679887294769287,
+            "min_candidate_gate": 0.3024534583091736,
             "min_candidate_gate_by_phase": {
-              "G": 0.4679887294769287,
-              "S": 0.4985496997833252
+              "G": 0.3024534583091736,
+              "S": 0.49811694025993347
             },
             "positive_counterfactual_utility_ticks": 25,
             "positive_counterfactual_utility_ticks_by_phase": {
@@ -1677,7 +1845,7 @@
             },
             "residual_ticks": 207,
             "ticks": 424,
-            "trace_digest": "f1a70d1a47ab27a97549d4d437742d2a8fc0e3edecc0a23913d8b706c7a7333a",
+            "trace_digest": "fdc20ed2869687244424c25adf03df54055f1a9656b67fc3fe8f6f5378a0baa3",
             "utility_ticks": 206
           }
         },
@@ -1711,8 +1879,8 @@
           "birth_anchor_weights": [],
           "candidate_digest": "b66b3f32053bd0e7e2f4b97fae520048327a9956d72908093674bbe02ea54713",
           "candidate_lesion_delta": {
-            "G": 0.01187320333227504,
-            "S": 8.40190117274986e-05
+            "G": 0.011481419269522064,
+            "S": 8.273659800916988e-05
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -1725,8 +1893,8 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.893798306839917,
-            "S": 5.84553005527863
+            "G": 5.894183668090931,
+            "S": 5.84553415949995
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
@@ -1734,36 +1902,48 @@
             "active_ticks": 141,
             "counterfactual_utility_ticks": 136,
             "credit_ticks": 418,
+            "holdout_max_candidate_gate_by_phase": {
+              "G-holdout": 0.4895893335342407,
+              "S-holdout": 0.4895893335342407
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+              "G-holdout": 0.4823376884063085,
+              "S-holdout": 0.487978595495224
+            },
+            "holdout_min_candidate_gate_by_phase": {
+              "G-holdout": 0.47572416067123413,
+              "S-holdout": 0.48744332790374756
+            },
             "max_activity": 0.997350811958313,
-            "max_candidate_credit_norm": 0.23050248622894287,
-            "max_candidate_gate": 0.5031150579452515,
+            "max_candidate_credit_norm": 0.23073869943618774,
+            "max_candidate_gate": 0.5001004934310913,
             "max_candidate_gate_by_phase": {
-              "G": 0.5031150579452515,
+              "G": 0.5001004934310913,
               "S": 0.5
             },
-            "max_candidate_residual_norm": 0.6170340776443481,
-            "max_candidate_residual_ratio": 1.8664433106281446,
-            "max_eligibility_norm": 3.0612430572509766,
-            "max_projection_update_norm": 0.022135330364108086,
-            "mean_candidate_gate": 0.5001805331206547,
+            "max_candidate_residual_norm": 0.6172284483909607,
+            "max_candidate_residual_ratio": 1.8664838398447177,
+            "max_eligibility_norm": 3.061246156692505,
+            "max_projection_update_norm": 0.022137783467769623,
+            "mean_candidate_gate": 0.4934431014336505,
             "mean_candidate_gate_by_phase": {
-              "G": 0.5001895167302377,
-              "S": 0.499999064207077
+              "G": 0.4931185647550196,
+              "S": 0.49999874234199526
             },
-            "mean_candidate_residual_ratio": 0.10873592660406772,
-            "mean_candidate_utility": 0.004357399353655225,
+            "mean_candidate_residual_ratio": 0.10874734341426556,
+            "mean_candidate_utility": 0.004269591723289712,
             "mean_candidate_utility_by_phase": {
-              "G": 0.004572185330172294,
+              "G": 0.004480030787412448,
               "S": 1.8722628010436892e-05
             },
-            "mean_counterfactual_utility": -0.0034584718640219363,
+            "mean_counterfactual_utility": -0.003384457281095358,
             "mean_counterfactual_utility_by_phase": {
-              "G": -0.0036288329112661687,
+              "G": -0.003551154240075898,
               "S": -1.7178709688447925e-05
             },
-            "min_candidate_gate": 0.4960939884185791,
+            "min_candidate_gate": 0.47193092107772827,
             "min_candidate_gate_by_phase": {
-              "G": 0.4960939884185791,
+              "G": 0.47193092107772827,
               "S": 0.4999966621398926
             },
             "positive_counterfactual_utility_ticks": 49,
@@ -1778,7 +1958,7 @@
             },
             "residual_ticks": 140,
             "ticks": 424,
-            "trace_digest": "c0af24204bc2071a9196427da2e12c99e7b127ccc2d8d5da6a75353b4d1e3ddf",
+            "trace_digest": "ef829b1234d6c7af3e53325407d68167f71b35f442b687cd923b4e34bf49ec81",
             "utility_ticks": 136
           }
         }
@@ -1795,14 +1975,14 @@
         ],
         "candidate_lesion_delta": {
           "G": 0.0,
-          "S": 0.149946971579082
+          "S": 0.09913960265731614
         },
         "mature_f1_owners_unchanged": true,
         "parent_substrate_unchanged": true,
         "shadow_fresh_restore": true,
         "shadow_rollback_matches_bare": true,
         "shadow_training_changed": true,
-        "trace_digest": "fe71a997e0472f09c45eee3c9fbfb9a0c4525ba3682939b69dec6492d0b384b3"
+        "trace_digest": "dfe883fec413bff269407628294d7a6e8a86c964132b3e31cea3b3ba6df318c7"
       },
       "course": {
         "G_holdout_digest": "1d6bbf7bd7c44a945ba09797a9b69dc5faa61e300b966a10cb08131d20b972b1",
@@ -1834,7 +2014,7 @@
       "course_label": "order-202",
       "course_seed": 202,
       "model_seed": 83,
-      "report_digest": "70f62fd01d9f3ccfb5cd7d5afbd5abab9d35e82290c924d0855824e227dd0322",
+      "report_digest": "34b5024b9eed2457e255f363cc94844d0b9ca4c87b861f0c381628e9d4e07d8c",
       "technical_gates": {
         "candidate_only_smoke_fresh_restore": true,
         "candidate_only_smoke_parent_frozen": true,
@@ -1863,7 +2043,7 @@
           "candidate_digest": "8682c0d37186e4982b3d424c071d9a14c77c12e87b596e46930022b9730585b2",
           "candidate_lesion_delta": {
             "G": 0.0,
-            "S": 0.028980942850438396
+            "S": 0.02663188913706005
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -1876,8 +2056,8 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.8549895268016225,
-            "S": 5.769291048195582
+            "G": 5.854989527925496,
+            "S": 5.771618970417158
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
@@ -1885,37 +2065,49 @@
             "active_ticks": 187,
             "counterfactual_utility_ticks": 186,
             "credit_ticks": 415,
-            "max_activity": 0.7038670778274536,
-            "max_candidate_credit_norm": 0.31031617522239685,
-            "max_candidate_gate": 0.5087022185325623,
+            "holdout_max_candidate_gate_by_phase": {
+              "G-holdout": 0.48373326659202576,
+              "S-holdout": 0.48373326659202576
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+              "G-holdout": 0.4804462691148122,
+              "S-holdout": 0.46259502569834393
+            },
+            "holdout_min_candidate_gate_by_phase": {
+              "G-holdout": 0.47488489747047424,
+              "S-holdout": 0.4520910978317261
+            },
+            "max_activity": 0.703882098197937,
+            "max_candidate_credit_norm": 0.3105548620223999,
+            "max_candidate_gate": 0.5000001192092896,
             "max_candidate_gate_by_phase": {
-              "G": 0.5087022185325623,
+              "G": 0.4999956488609314,
               "S": 0.5000001192092896
             },
-            "max_candidate_residual_norm": 0.3437553942203522,
-            "max_candidate_residual_ratio": 0.2532789747031011,
-            "max_eligibility_norm": 1.824733853340149,
-            "max_projection_update_norm": 0.011768105439841747,
-            "mean_candidate_gate": 0.5000722084967595,
+            "max_candidate_residual_norm": 0.3438599705696106,
+            "max_candidate_residual_ratio": 0.2533506636683319,
+            "max_eligibility_norm": 1.8248857259750366,
+            "max_projection_update_norm": 0.011771196499466896,
+            "mean_candidate_gate": 0.48980764081736783,
             "mean_candidate_gate_by_phase": {
-              "G": 0.5000759231867177,
-              "S": 0.4999971717596054
+              "G": 0.4893032726232368,
+              "S": 0.49999587833881376
             },
-            "mean_candidate_residual_ratio": 0.02507142029120058,
-            "mean_candidate_utility": 0.006405620096090143,
+            "mean_candidate_residual_ratio": 0.025074911380692403,
+            "mean_candidate_utility": 0.0061728692084677215,
             "mean_candidate_utility_by_phase": {
-              "G": 0.006720677097647321,
-              "S": 4.146866463514698e-05
+              "G": 0.006476403894393485,
+              "S": 4.146855276729866e-05
             },
-            "mean_counterfactual_utility": -0.006374816434541084,
+            "mean_counterfactual_utility": -0.006140566857882265,
             "mean_counterfactual_utility_by_phase": {
-              "G": -0.006688685157959297,
+              "G": -0.006442839067604498,
               "S": -3.4668221493161513e-05
             },
-            "min_candidate_gate": 0.49126654863357544,
+            "min_candidate_gate": 0.4495340883731842,
             "min_candidate_gate_by_phase": {
-              "G": 0.49126654863357544,
-              "S": 0.49999213218688965
+              "G": 0.4495340883731842,
+              "S": 0.4999876022338867
             },
             "positive_counterfactual_utility_ticks": 25,
             "positive_counterfactual_utility_ticks_by_phase": {
@@ -1929,7 +2121,7 @@
             },
             "residual_ticks": 186,
             "ticks": 424,
-            "trace_digest": "c1c3faa4eee9f8018a8d47d3bde0546a2490888edb1b3b8d80b33ed9fbc06263",
+            "trace_digest": "3e551484c76a2d22eb4897cc09741d768e5c5f767bf81830c8a29a9fe444379c",
             "utility_ticks": 186
           }
         },
@@ -1970,7 +2162,7 @@
           "candidate_digest": "5b79011cbbfd45781320aa598e96e7b50a2eefe71a3ed61e55d2a69d44a8637c",
           "candidate_lesion_delta": {
             "G": 0.0,
-            "S": 0.1044411477001086
+            "S": 0.06797612836524358
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -1983,8 +2175,8 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.852641628566596,
-            "S": 5.752653653968005
+            "G": 5.852660093066789,
+            "S": 5.788992457420633
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
@@ -1992,37 +2184,49 @@
             "active_ticks": 206,
             "counterfactual_utility_ticks": 204,
             "credit_ticks": 418,
+            "holdout_max_candidate_gate_by_phase": {
+              "G-holdout": 0.43998491764068604,
+              "S-holdout": 0.43998491764068604
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+              "G-holdout": 0.4243875915805499,
+              "S-holdout": 0.32529881993929544
+            },
+            "holdout_min_candidate_gate_by_phase": {
+              "G-holdout": 0.4090036153793335,
+              "S-holdout": 0.27945539355278015
+            },
             "max_activity": 0.9562259912490845,
-            "max_candidate_credit_norm": 0.7042331099510193,
-            "max_candidate_gate": 0.5063292980194092,
+            "max_candidate_credit_norm": 0.71197509765625,
+            "max_candidate_gate": 0.5000205039978027,
             "max_candidate_gate_by_phase": {
-              "G": 0.5063292980194092,
+              "G": 0.49940377473831177,
               "S": 0.5000205039978027
             },
-            "max_candidate_residual_norm": 0.881385326385498,
-            "max_candidate_residual_ratio": 0.8597362602708283,
-            "max_eligibility_norm": 2.590099811553955,
-            "max_projection_update_norm": 0.018023328855633736,
-            "mean_candidate_gate": 0.4916792223054283,
+            "max_candidate_residual_norm": 0.8861705660820007,
+            "max_candidate_residual_ratio": 0.8648415198154474,
+            "max_eligibility_norm": 2.593590259552002,
+            "max_projection_update_norm": 0.0180913507938385,
+            "mean_candidate_gate": 0.43596607966805406,
             "mean_candidate_gate_by_phase": {
-              "G": 0.4912849878615672,
-              "S": 0.49964275807142255
+              "G": 0.43282232905673507,
+              "S": 0.4994698420166969
             },
-            "mean_candidate_residual_ratio": 0.14235408310305298,
-            "mean_candidate_utility": 0.02865311824520314,
+            "mean_candidate_residual_ratio": 0.14267786473076272,
+            "mean_candidate_utility": 0.023183460724125464,
             "mean_candidate_utility_by_phase": {
-              "G": 0.029853167504505576,
-              "S": 0.004412123207293917
+              "G": 0.024112829718379174,
+              "S": 0.004410207040200476
             },
-            "mean_counterfactual_utility": -0.028350741505784677,
+            "mean_counterfactual_utility": -0.022756904396544347,
             "mean_counterfactual_utility_by_phase": {
-              "G": -0.029577229508186535,
-              "S": -0.0035756838572671866
+              "G": -0.023706528175320256,
+              "S": -0.0035745040652710447
             },
-            "min_candidate_gate": 0.46004775166511536,
+            "min_candidate_gate": 0.2956252098083496,
             "min_candidate_gate_by_phase": {
-              "G": 0.46004775166511536,
-              "S": 0.4991665780544281
+              "G": 0.2956252098083496,
+              "S": 0.4987017810344696
             },
             "positive_counterfactual_utility_ticks": 25,
             "positive_counterfactual_utility_ticks_by_phase": {
@@ -2036,7 +2240,7 @@
             },
             "residual_ticks": 205,
             "ticks": 424,
-            "trace_digest": "881590cf44dfe07517d3ba764b1097ef8c26cdc8e85a67b9612c7965c552cb62",
+            "trace_digest": "72428eecd6e67ce64fd212c90cc9012415f90297b01cdf612ab434b39a4307c8",
             "utility_ticks": 204
           }
         },
@@ -2070,8 +2274,8 @@
           "birth_anchor_weights": [],
           "candidate_digest": "b66b3f32053bd0e7e2f4b97fae520048327a9956d72908093674bbe02ea54713",
           "candidate_lesion_delta": {
-            "G": 0.008770645436227298,
-            "S": 0.0002818643224502537
+            "G": 0.008306444799940138,
+            "S": 0.00027604161445449193
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -2084,8 +2288,8 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.849815644843229,
-            "S": 5.79537928206427
+            "G": 5.850275007038743,
+            "S": 5.795387344159643
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
@@ -2093,36 +2297,48 @@
             "active_ticks": 175,
             "counterfactual_utility_ticks": 174,
             "credit_ticks": 418,
+            "holdout_max_candidate_gate_by_phase": {
+              "G-holdout": 0.4892787039279938,
+              "S-holdout": 0.4892787039279938
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+              "G-holdout": 0.4771711180607478,
+              "S-holdout": 0.4873126725355784
+            },
+            "holdout_min_candidate_gate_by_phase": {
+              "G-holdout": 0.46895653009414673,
+              "S-holdout": 0.4864039421081543
+            },
             "max_activity": 0.9823891520500183,
-            "max_candidate_credit_norm": 0.1632474809885025,
-            "max_candidate_gate": 0.5006967186927795,
+            "max_candidate_credit_norm": 0.16329634189605713,
+            "max_candidate_gate": 0.5000088810920715,
             "max_candidate_gate_by_phase": {
-              "G": 0.5006967186927795,
-              "S": 0.5000001788139343
+              "G": 0.5000088810920715,
+              "S": 0.5000001192092896
             },
-            "max_candidate_residual_norm": 0.41297924518585205,
-            "max_candidate_residual_ratio": 0.47047656258540943,
+            "max_candidate_residual_norm": 0.41308659315109253,
+            "max_candidate_residual_ratio": 0.4705583724636794,
             "max_eligibility_norm": 2.5208117961883545,
-            "max_projection_update_norm": 0.014351124875247478,
-            "mean_candidate_gate": 0.49964496683118476,
+            "max_projection_update_norm": 0.014352177269756794,
+            "mean_candidate_gate": 0.4930404411312544,
             "mean_candidate_gate_by_phase": {
-              "G": 0.4996274008166672,
-              "S": 0.49999980032444
+              "G": 0.49269591943167224,
+              "S": 0.4999997794628143
             },
-            "mean_candidate_residual_ratio": 0.04328889297197187,
-            "mean_candidate_utility": 0.0036662188083697264,
+            "mean_candidate_residual_ratio": 0.04329415258866711,
+            "mean_candidate_utility": 0.003576718156765773,
             "mean_candidate_utility_by_phase": {
-              "G": 0.0038470936063339928,
-              "S": 1.2547889491543174e-05
+              "G": 0.0037531622294751502,
+              "S": 1.2547888036351652e-05
             },
-            "mean_counterfactual_utility": -0.0036668369226051678,
+            "mean_counterfactual_utility": -0.0035758094018940464,
             "mean_counterfactual_utility_by_phase": {
-              "G": -0.0038480482601935323,
+              "G": -0.0037525144265759197,
               "S": -6.3679033202035384e-06
             },
-            "min_candidate_gate": 0.4978460967540741,
+            "min_candidate_gate": 0.4658137559890747,
             "min_candidate_gate_by_phase": {
-              "G": 0.4978460967540741,
+              "G": 0.4658137559890747,
               "S": 0.4999983310699463
             },
             "positive_counterfactual_utility_ticks": 29,
@@ -2137,7 +2353,7 @@
             },
             "residual_ticks": 174,
             "ticks": 424,
-            "trace_digest": "82a0864716682abbe3f310874dfdd5069ae1fac493415bd620208fc0f15da3ec",
+            "trace_digest": "c35bd11681c35b85e458d1115c7505641b2da7d6bf16813aa089f688a6c82b0d",
             "utility_ticks": 174
           }
         }
@@ -2154,14 +2370,14 @@
         ],
         "candidate_lesion_delta": {
           "G": 0.0,
-          "S": 0.1541498364843097
+          "S": 0.10351856482040578
         },
         "mature_f1_owners_unchanged": true,
         "parent_substrate_unchanged": true,
         "shadow_fresh_restore": true,
         "shadow_rollback_matches_bare": true,
         "shadow_training_changed": true,
-        "trace_digest": "96824dc616b4888fcec80a5deeab9934d96683854b8dfcb5cf4a295d946271b9"
+        "trace_digest": "d5b1bbb1e3e5151ba08c7db6addbf6863224f99caef89c6820a9009b592b073b"
       },
       "course": {
         "G_holdout_digest": "1d6bbf7bd7c44a945ba09797a9b69dc5faa61e300b966a10cb08131d20b972b1",
@@ -2193,7 +2409,7 @@
       "course_label": "order-303",
       "course_seed": 303,
       "model_seed": 83,
-      "report_digest": "9fba5aaee257571e55489883e3e1daef24912cf3ff8a59fe6d6bb75a8c04cc42",
+      "report_digest": "fc4e20a05f01388191822a8fb73e5f7bfb10f3c6979c05da949b4569453cbf34",
       "technical_gates": {
         "candidate_only_smoke_fresh_restore": true,
         "candidate_only_smoke_parent_frozen": true,
@@ -2221,8 +2437,8 @@
           "birth_anchor_weights": [],
           "candidate_digest": "a2df9efd8016341931d88658c65a0739fb317cb16cf0932b1ddaf683be383f26",
           "candidate_lesion_delta": {
-            "G": 6.375432022931449e-05,
-            "S": 0.09648127687330188
+            "G": 6.043146041800895e-05,
+            "S": 0.08564889922899699
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -2235,8 +2451,8 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.912128815002628,
-            "S": 5.585131489587284
+            "G": 5.912151981697332,
+            "S": 5.595923826144758
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
@@ -2244,37 +2460,49 @@
             "active_ticks": 201,
             "counterfactual_utility_ticks": 199,
             "credit_ticks": 417,
-            "max_activity": 0.8291776776313782,
-            "max_candidate_credit_norm": 0.5458579659461975,
-            "max_candidate_gate": 0.5008990168571472,
+            "holdout_max_candidate_gate_by_phase": {
+              "G-holdout": 0.4640043377876282,
+              "S-holdout": 0.4640043377876282
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+              "G-holdout": 0.44652346273263294,
+              "S-holdout": 0.4398682216803233
+            },
+            "holdout_min_candidate_gate_by_phase": {
+              "G-holdout": 0.4229622185230255,
+              "S-holdout": 0.4255044758319855
+            },
+            "max_activity": 0.8296914100646973,
+            "max_candidate_credit_norm": 0.5478134751319885,
+            "max_candidate_gate": 0.5000044703483582,
             "max_candidate_gate_by_phase": {
-              "G": 0.5008990168571472,
-              "S": 0.5000048875808716
+              "G": 0.49981850385665894,
+              "S": 0.5000044703483582
             },
-            "max_candidate_residual_norm": 0.9227922558784485,
-            "max_candidate_residual_ratio": 2.589618814795781,
-            "max_eligibility_norm": 3.3298020362854004,
-            "max_projection_update_norm": 0.03372655436396599,
-            "mean_candidate_gate": 0.4963788818216549,
+            "max_candidate_residual_norm": 0.9244735836982727,
+            "max_candidate_residual_ratio": 2.597820652258493,
+            "max_eligibility_norm": 3.331333637237549,
+            "max_projection_update_norm": 0.03378941863775253,
+            "mean_candidate_gate": 0.46720276576168135,
             "mean_candidate_gate_by_phase": {
-              "G": 0.4962053543860369,
-              "S": 0.49988413602113724
+              "G": 0.4655870050191879,
+              "S": 0.49984113276004793
             },
-            "mean_candidate_residual_ratio": 0.1564146370987669,
-            "mean_candidate_utility": 0.01559987836175561,
+            "mean_candidate_residual_ratio": 0.15664945465556065,
+            "mean_candidate_utility": 0.01466610303965731,
             "mean_candidate_utility_by_phase": {
-              "G": 0.016294625163594686,
-              "S": 0.0015659929646062664
+              "G": 0.015314634373707761,
+              "S": 0.0015657700918382035
             },
-            "mean_counterfactual_utility": -0.013370015545995493,
+            "mean_counterfactual_utility": -0.012520518866881604,
             "mean_counterfactual_utility_by_phase": {
-              "G": -0.013968243611940772,
-              "S": -0.0012858086139008406
+              "G": -0.013076702934903015,
+              "S": -0.0012856006928490872
             },
-            "min_candidate_gate": 0.4847677946090698,
+            "min_candidate_gate": 0.4074210226535797,
             "min_candidate_gate_by_phase": {
-              "G": 0.4847677946090698,
-              "S": 0.4996483325958252
+              "G": 0.4074210226535797,
+              "S": 0.49945884943008423
             },
             "positive_counterfactual_utility_ticks": 13,
             "positive_counterfactual_utility_ticks_by_phase": {
@@ -2288,7 +2516,7 @@
             },
             "residual_ticks": 200,
             "ticks": 424,
-            "trace_digest": "83908f8815abdc5f76f5693eb2a1ed9205ba20d9ec6f098d853a63cb14d48606",
+            "trace_digest": "53e8bfbcd2be79065cf92af919ecb2993d8b30c66d7e4285c84b30d0663f29c7",
             "utility_ticks": 199
           }
         },
@@ -2329,7 +2557,7 @@
           "candidate_digest": "da340e8d06abfabb851cde84f11b18f530f4ab894efac55963fb27f0c1338953",
           "candidate_lesion_delta": {
             "G": 0.0,
-            "S": 0.12554585799950946
+            "S": 0.107112646783313
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -2342,8 +2570,8 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.9146611775230635,
-            "S": 5.569405038505423
+            "G": 5.914718309889596,
+            "S": 5.58783263774256
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
@@ -2351,37 +2579,49 @@
             "active_ticks": 202,
             "counterfactual_utility_ticks": 199,
             "credit_ticks": 417,
+            "holdout_max_candidate_gate_by_phase": {
+              "G-holdout": 0.44378364086151123,
+              "S-holdout": 0.4450783133506775
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+              "G-holdout": 0.426099660495917,
+              "S-holdout": 0.4255536198616028
+            },
+            "holdout_min_candidate_gate_by_phase": {
+              "G-holdout": 0.39532148838043213,
+              "S-holdout": 0.41064220666885376
+            },
             "max_activity": 0.9227373600006104,
-            "max_candidate_credit_norm": 0.6370348930358887,
-            "max_candidate_gate": 0.5057070255279541,
+            "max_candidate_credit_norm": 0.6406958103179932,
+            "max_candidate_gate": 0.5000032186508179,
             "max_candidate_gate_by_phase": {
-              "G": 0.5057070255279541,
-              "S": 0.5000045299530029
+              "G": 0.4996825158596039,
+              "S": 0.5000032186508179
             },
-            "max_candidate_residual_norm": 1.2075105905532837,
-            "max_candidate_residual_ratio": 3.931652189638733,
-            "max_eligibility_norm": 3.61124849319458,
-            "max_projection_update_norm": 0.037031855434179306,
-            "mean_candidate_gate": 0.4965515615383409,
+            "max_candidate_residual_norm": 1.2109084129333496,
+            "max_candidate_residual_ratio": 3.9530444304233545,
+            "max_eligibility_norm": 3.613147020339966,
+            "max_projection_update_norm": 0.037138622254133224,
+            "mean_candidate_gate": 0.44816520107242297,
             "mean_candidate_gate_by_phase": {
-              "G": 0.4963903101068912,
-              "S": 0.4998088404536247
+              "G": 0.44561221236639686,
+              "S": 0.4997355729341507
             },
-            "mean_candidate_residual_ratio": 0.2793186966576667,
-            "mean_candidate_utility": 0.023089364421336522,
+            "mean_candidate_residual_ratio": 0.2800426221719081,
+            "mean_candidate_utility": 0.02102041238634589,
             "mean_candidate_utility_by_phase": {
-              "G": 0.024101055027140227,
-              "S": 0.002653214184101671
+              "G": 0.02192970966744625,
+              "S": 0.002652607308118604
             },
-            "mean_counterfactual_utility": -0.020513131706339068,
+            "mean_counterfactual_utility": -0.01855574601548523,
             "mean_counterfactual_utility_by_phase": {
-              "G": -0.02141996813135273,
-              "S": -0.0021950359210632263
+              "G": -0.019365705865936153,
+              "S": -0.0021945570363765656
             },
-            "min_candidate_gate": 0.48381271958351135,
+            "min_candidate_gate": 0.3693181276321411,
             "min_candidate_gate_by_phase": {
-              "G": 0.48381271958351135,
-              "S": 0.4994332790374756
+              "G": 0.3693181276321411,
+              "S": 0.49910634756088257
             },
             "positive_counterfactual_utility_ticks": 13,
             "positive_counterfactual_utility_ticks_by_phase": {
@@ -2395,7 +2635,7 @@
             },
             "residual_ticks": 201,
             "ticks": 424,
-            "trace_digest": "5993208f58d8f62776ace3f4e5933fb46878b5aa327caded755efcf0210e0546",
+            "trace_digest": "1af1221e19cdfeca3a5cac485f5c0225fcf60edcafad230c52f76b2ea2f3174b",
             "utility_ticks": 199
           }
         },
@@ -2429,7 +2669,7 @@
           "birth_anchor_weights": [],
           "candidate_digest": "65511d22cd9ac08afa810ce902886ac46d6501f263d945cdaf0c467713cf104d",
           "candidate_lesion_delta": {
-            "G": 0.041486304166575394,
+            "G": 0.030306424657354114,
             "S": 0.0
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
@@ -2443,8 +2683,8 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.881938777872417,
-            "S": 5.67010114425046
+            "G": 5.892943900410072,
+            "S": 5.670064243150253
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
@@ -2452,36 +2692,48 @@
             "active_ticks": 178,
             "counterfactual_utility_ticks": 173,
             "credit_ticks": 316,
+            "holdout_max_candidate_gate_by_phase": {
+              "G-holdout": 0.4303514361381531,
+              "S-holdout": 0.4303514361381531
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+              "G-holdout": 0.3840983062982559,
+              "S-holdout": 0.3918455680211385
+            },
+            "holdout_min_candidate_gate_by_phase": {
+              "G-holdout": 0.3532138168811798,
+              "S-holdout": 0.37408140301704407
+            },
             "max_activity": 0.9903420805931091,
-            "max_candidate_credit_norm": 0.6388370990753174,
-            "max_candidate_gate": 0.5010393857955933,
+            "max_candidate_credit_norm": 0.6462188959121704,
+            "max_candidate_gate": 0.5,
             "max_candidate_gate_by_phase": {
-              "G": 0.5010393857955933,
+              "G": 0.5,
               "S": 0.5
             },
-            "max_candidate_residual_norm": 1.3067480325698853,
-            "max_candidate_residual_ratio": 76.10936595546143,
-            "max_eligibility_norm": 3.8082327842712402,
-            "max_projection_update_norm": 0.06573982536792755,
-            "mean_candidate_gate": 0.49671405012596326,
+            "max_candidate_residual_norm": 1.3119922876358032,
+            "max_candidate_residual_ratio": 69.51748902310962,
+            "max_eligibility_norm": 3.8082547187805176,
+            "max_projection_update_norm": 0.06598728895187378,
+            "mean_candidate_gate": 0.4798632340048844,
             "mean_candidate_gate_by_phase": {
-              "G": 0.4965513793401199,
+              "G": 0.4788663644011658,
               "S": 0.5
             },
-            "mean_candidate_residual_ratio": 0.6869950609781481,
-            "mean_candidate_utility": 0.02558551610312655,
+            "mean_candidate_residual_ratio": 0.6726312316314861,
+            "mean_candidate_utility": 0.02318681207512816,
             "mean_candidate_utility_by_phase": {
-              "G": 0.026852125811202124,
+              "G": 0.024334674059045398,
               "S": 0.0
             },
-            "mean_counterfactual_utility": -0.02449398107078769,
+            "mean_counterfactual_utility": -0.02206090225963891,
             "mean_counterfactual_utility_by_phase": {
-              "G": -0.025706554391123713,
+              "G": -0.02315302613387846,
               "S": 0.0
             },
-            "min_candidate_gate": 0.4788740873336792,
+            "min_candidate_gate": 0.36152470111846924,
             "min_candidate_gate_by_phase": {
-              "G": 0.4788740873336792,
+              "G": 0.36152470111846924,
               "S": 0.5
             },
             "positive_counterfactual_utility_ticks": 19,
@@ -2496,7 +2748,7 @@
             },
             "residual_ticks": 177,
             "ticks": 424,
-            "trace_digest": "210ad9e7cb9984839bf5eebffa4731eb58e154fb1a1ec3018a14bc3c9ef72bfd",
+            "trace_digest": "73e16704ea6fda70bf84a0a20d5b1cbbbcc3eb516dbb52f1f624413e4edd8c26",
             "utility_ticks": 173
           }
         }
@@ -2513,14 +2765,14 @@
         ],
         "candidate_lesion_delta": {
           "G": 0.0,
-          "S": 0.08526337488732416
+          "S": 0.06870426081658554
         },
         "mature_f1_owners_unchanged": true,
         "parent_substrate_unchanged": true,
         "shadow_fresh_restore": true,
         "shadow_rollback_matches_bare": true,
         "shadow_training_changed": true,
-        "trace_digest": "b3714dcb7f5ae7836c3a98e5b61287565043d0fbb5767bacbcb5d658c9d8f1bf"
+        "trace_digest": "e60cbeaa8e0e066fa6422fa509474daf4b5428ded67215b4582d7ce0e29b4b34"
       },
       "course": {
         "G_holdout_digest": "1d6bbf7bd7c44a945ba09797a9b69dc5faa61e300b966a10cb08131d20b972b1",
@@ -2552,7 +2804,7 @@
       "course_label": "canonical-order",
       "course_seed": 101,
       "model_seed": 97,
-      "report_digest": "1c7616a8494ed12434e9a2f09e9b30cba86b4f0a101214eaeb3d7bac85cd3f44",
+      "report_digest": "137094c1d8802746745817e3e3ae3f18e653e50ed0412b0875b5dd683d84a6b6",
       "technical_gates": {
         "candidate_only_smoke_fresh_restore": true,
         "candidate_only_smoke_parent_frozen": true,
@@ -2581,7 +2833,7 @@
           "candidate_digest": "a2df9efd8016341931d88658c65a0739fb317cb16cf0932b1ddaf683be383f26",
           "candidate_lesion_delta": {
             "G": 0.0,
-            "S": 0.11753879750092544
+            "S": 0.09844160460946227
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -2594,8 +2846,8 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.985421409901698,
-            "S": 5.644043224036644
+            "G": 5.9854125600917225,
+            "S": 5.663089884830029
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
@@ -2603,37 +2855,49 @@
             "active_ticks": 209,
             "counterfactual_utility_ticks": 207,
             "credit_ticks": 416,
-            "max_activity": 0.8632032871246338,
-            "max_candidate_credit_norm": 0.7180456519126892,
-            "max_candidate_gate": 0.502230703830719,
+            "holdout_max_candidate_gate_by_phase": {
+              "G-holdout": 0.44767826795578003,
+              "S-holdout": 0.44767826795578003
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+              "G-holdout": 0.4440124109387398,
+              "S-holdout": 0.4178439140319824
+            },
+            "holdout_min_candidate_gate_by_phase": {
+              "G-holdout": 0.4338262379169464,
+              "S-holdout": 0.3923269510269165
+            },
+            "max_activity": 0.8639001250267029,
+            "max_candidate_credit_norm": 0.7222422361373901,
+            "max_candidate_gate": 0.5000119209289551,
             "max_candidate_gate_by_phase": {
-              "G": 0.502230703830719,
-              "S": 0.5000118017196655
+              "G": 0.4997820556163788,
+              "S": 0.5000119209289551
             },
-            "max_candidate_residual_norm": 1.2179404497146606,
-            "max_candidate_residual_ratio": 5.055037723885726,
-            "max_eligibility_norm": 3.461329221725464,
-            "max_projection_update_norm": 0.03959805518388748,
-            "mean_candidate_gate": 0.4975313787471573,
+            "max_candidate_residual_norm": 1.2218849658966064,
+            "max_candidate_residual_ratio": 5.040355257419718,
+            "max_eligibility_norm": 3.4629626274108887,
+            "max_projection_update_norm": 0.03974092751741409,
+            "mean_candidate_gate": 0.4786366243969719,
             "mean_candidate_gate_by_phase": {
-              "G": 0.49741563437008623,
-              "S": 0.49986941516399386
+              "G": 0.47758782374681813,
+              "S": 0.4998223975300789
             },
-            "mean_candidate_residual_ratio": 0.25170600966385165,
-            "mean_candidate_utility": 0.022995166531112568,
+            "mean_candidate_residual_ratio": 0.2521242527517485,
+            "mean_candidate_utility": 0.021002636007032602,
             "mean_candidate_utility_by_phase": {
-              "G": 0.024044323138002824,
-              "S": 0.001802203071929398
+              "G": 0.021953165408763874,
+              "S": 0.0018019420920609263
             },
-            "mean_counterfactual_utility": -0.020595829916859612,
+            "mean_counterfactual_utility": -0.018746623601955593,
             "mean_counterfactual_utility_by_phase": {
-              "G": -0.02154346170413611,
-              "S": -0.0014536678138743486
+              "G": -0.019602721561224473,
+              "S": -0.001453444824724226
             },
-            "min_candidate_gate": 0.4876650869846344,
+            "min_candidate_gate": 0.39468684792518616,
             "min_candidate_gate_by_phase": {
-              "G": 0.4876650869846344,
-              "S": 0.4995686113834381
+              "G": 0.39468684792518616,
+              "S": 0.4994029998779297
             },
             "positive_counterfactual_utility_ticks": 23,
             "positive_counterfactual_utility_ticks_by_phase": {
@@ -2647,7 +2911,7 @@
             },
             "residual_ticks": 208,
             "ticks": 424,
-            "trace_digest": "3f773e55ccc311a9132edd0008ffe25ba8f7adcd0030171fe1a8ab8ef8f93e54",
+            "trace_digest": "7ac50d9e4e870467fd5110e57d24de0da00af594986e81773f57fe1049951b76",
             "utility_ticks": 207
           }
         },
@@ -2687,8 +2951,8 @@
           ],
           "candidate_digest": "da340e8d06abfabb851cde84f11b18f530f4ab894efac55963fb27f0c1338953",
           "candidate_lesion_delta": {
-            "G": 0.0010909608498801404,
-            "S": 0.10053832715144928
+            "G": 0.0009032818936312026,
+            "S": 0.08656812624040544
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -2701,8 +2965,8 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.98503157615491,
-            "S": 5.662056462843043
+            "G": 5.985222762534309,
+            "S": 5.6759772220581155
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
@@ -2710,37 +2974,49 @@
             "active_ticks": 264,
             "counterfactual_utility_ticks": 262,
             "credit_ticks": 416,
+            "holdout_max_candidate_gate_by_phase": {
+              "G-holdout": 0.4513247609138489,
+              "S-holdout": 0.4513247609138489
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+              "G-holdout": 0.4458400358756383,
+              "S-holdout": 0.42719140847524006
+            },
+            "holdout_min_candidate_gate_by_phase": {
+              "G-holdout": 0.43999728560447693,
+              "S-holdout": 0.40733563899993896
+            },
             "max_activity": 0.9352938532829285,
-            "max_candidate_credit_norm": 0.5931375026702881,
-            "max_candidate_gate": 0.5019984245300293,
+            "max_candidate_credit_norm": 0.5959432721138,
+            "max_candidate_gate": 0.5000178813934326,
             "max_candidate_gate_by_phase": {
-              "G": 0.5019984245300293,
-              "S": 0.5000177025794983
+              "G": 0.49964192509651184,
+              "S": 0.5000178813934326
             },
-            "max_candidate_residual_norm": 1.1242291927337646,
-            "max_candidate_residual_ratio": 3.7013945450949826,
-            "max_eligibility_norm": 3.504927158355713,
-            "max_projection_update_norm": 0.04053250700235367,
-            "mean_candidate_gate": 0.49728004514889895,
+            "max_candidate_residual_norm": 1.1274831295013428,
+            "max_candidate_residual_ratio": 3.6965890782542097,
+            "max_eligibility_norm": 3.506873607635498,
+            "max_projection_update_norm": 0.04065980017185211,
+            "mean_candidate_gate": 0.4798761473371173,
             "mean_candidate_gate_by_phase": {
-              "G": 0.4971552695525755,
-              "S": 0.4998005121946335
+              "G": 0.4788933517319141,
+              "S": 0.4997286185622215
             },
-            "mean_candidate_residual_ratio": 0.2682285958108571,
-            "mean_candidate_utility": 0.01955596824674738,
+            "mean_candidate_residual_ratio": 0.268825227999051,
+            "mean_candidate_utility": 0.0180750482832768,
             "mean_candidate_utility_by_phase": {
-              "G": 0.020375692158394135,
-              "S": 0.0029975452314829456
+              "G": 0.01882149086967468,
+              "S": 0.0029969080380396916
             },
-            "mean_counterfactual_utility": -0.017710907320897903,
+            "mean_counterfactual_utility": -0.016319433008514413,
             "mean_counterfactual_utility_by_phase": {
-              "G": -0.018467639375570156,
-              "S": -0.0024249198165184004
+              "G": -0.01700730526837858,
+              "S": -0.0024244133592581816
             },
-            "min_candidate_gate": 0.48669782280921936,
+            "min_candidate_gate": 0.41403713822364807,
             "min_candidate_gate_by_phase": {
-              "G": 0.48669782280921936,
-              "S": 0.49936529994010925
+              "G": 0.41403713822364807,
+              "S": 0.4990592896938324
             },
             "positive_counterfactual_utility_ticks": 33,
             "positive_counterfactual_utility_ticks_by_phase": {
@@ -2754,7 +3030,7 @@
             },
             "residual_ticks": 263,
             "ticks": 424,
-            "trace_digest": "4def3a8213490f59439b610794902eb2b17d829e2da181ef927e3e41abaa9346",
+            "trace_digest": "0f4ddc1ac099e060e1fcc0d19b794f253b4f1a86b2e57bb68a9260e997c6f2db",
             "utility_ticks": 262
           }
         },
@@ -2788,7 +3064,7 @@
           "birth_anchor_weights": [],
           "candidate_digest": "65511d22cd9ac08afa810ce902886ac46d6501f263d945cdaf0c467713cf104d",
           "candidate_lesion_delta": {
-            "G": 0.02907514328779648,
+            "G": 0.026441131246523142,
             "S": 0.0
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
@@ -2802,8 +3078,8 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.9576166392648044,
-            "S": 5.753329733840622
+            "G": 5.960189302226581,
+            "S": 5.753326967811253
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
@@ -2811,36 +3087,48 @@
             "active_ticks": 162,
             "counterfactual_utility_ticks": 157,
             "credit_ticks": 372,
-            "max_activity": 0.9409124851226807,
-            "max_candidate_credit_norm": 0.5027094483375549,
-            "max_candidate_gate": 0.5099475383758545,
+            "holdout_max_candidate_gate_by_phase": {
+              "G-holdout": 0.46850717067718506,
+              "S-holdout": 0.46850717067718506
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+              "G-holdout": 0.45244454095760983,
+              "S-holdout": 0.4600088119506836
+            },
+            "holdout_min_candidate_gate_by_phase": {
+              "G-holdout": 0.4435763955116272,
+              "S-holdout": 0.456745445728302
+            },
+            "max_activity": 0.9409140944480896,
+            "max_candidate_credit_norm": 0.5048145055770874,
+            "max_candidate_gate": 0.5000134706497192,
             "max_candidate_gate_by_phase": {
-              "G": 0.5099475383758545,
+              "G": 0.5000134706497192,
               "S": 0.5
             },
-            "max_candidate_residual_norm": 0.9651864767074585,
-            "max_candidate_residual_ratio": 2.3683115386010747,
-            "max_eligibility_norm": 3.5425844192504883,
-            "max_projection_update_norm": 0.03670259192585945,
-            "mean_candidate_gate": 0.49997398615726885,
+            "max_candidate_residual_norm": 0.9662860035896301,
+            "max_candidate_residual_ratio": 2.3697293081840307,
+            "max_eligibility_norm": 3.5427651405334473,
+            "max_projection_update_norm": 0.03673270717263222,
+            "mean_candidate_gate": 0.48204034819917857,
             "mean_candidate_gate_by_phase": {
-              "G": 0.49997269834327224,
+              "G": 0.4811512565258706,
               "S": 0.5
             },
-            "mean_candidate_residual_ratio": 0.19760546312123967,
-            "mean_candidate_utility": 0.012119309351856948,
+            "mean_candidate_residual_ratio": 0.19772010943518517,
+            "mean_candidate_utility": 0.011642075762485445,
             "mean_candidate_utility_by_phase": {
-              "G": 0.012719275161354817,
+              "G": 0.012218416146766902,
               "S": 0.0
             },
-            "mean_counterfactual_utility": -0.010989731328196566,
+            "mean_counterfactual_utility": -0.010530515051611034,
             "mean_counterfactual_utility_by_phase": {
-              "G": -0.011533777433552833,
+              "G": -0.011051827677928412,
               "S": 0.0
             },
-            "min_candidate_gate": 0.48634612560272217,
+            "min_candidate_gate": 0.44339004158973694,
             "min_candidate_gate_by_phase": {
-              "G": 0.48634612560272217,
+              "G": 0.44339004158973694,
               "S": 0.5
             },
             "positive_counterfactual_utility_ticks": 24,
@@ -2855,7 +3143,7 @@
             },
             "residual_ticks": 161,
             "ticks": 424,
-            "trace_digest": "6a2000a184d21641b0dc03c1610b15b7835b7f9234232422e81c7144046a35ea",
+            "trace_digest": "0a622c9afbfd1ffacd28274742de47dc28d563cca82690a2cc4d4c69a42f3586",
             "utility_ticks": 157
           }
         }
@@ -2871,15 +3159,15 @@
           0.36586129665374756
         ],
         "candidate_lesion_delta": {
-          "G": 3.682737418753135e-05,
-          "S": 0.06822663272731777
+          "G": 2.9725352359122326e-05,
+          "S": 0.05657755063602821
         },
         "mature_f1_owners_unchanged": true,
         "parent_substrate_unchanged": true,
         "shadow_fresh_restore": true,
         "shadow_rollback_matches_bare": true,
         "shadow_training_changed": true,
-        "trace_digest": "8442ff317d9db8bf357a99b507805f7f2fa6a6891af5e3f1cee1e029993cc821"
+        "trace_digest": "d5ff7c086423313d1d5af95730bfe6ad9ebe642c99ddf349c4489f7618cdc64f"
       },
       "course": {
         "G_holdout_digest": "1d6bbf7bd7c44a945ba09797a9b69dc5faa61e300b966a10cb08131d20b972b1",
@@ -2911,7 +3199,7 @@
       "course_label": "order-202",
       "course_seed": 202,
       "model_seed": 97,
-      "report_digest": "960b05f519b9ab276dd7472532c70b57c60cbaf220bc7562a9515eb27671a972",
+      "report_digest": "4e9cd379b2ae2830536b976f5df3f0f6fd98076a68190ae6d8c111c5d94b2561",
       "technical_gates": {
         "candidate_only_smoke_fresh_restore": true,
         "candidate_only_smoke_parent_frozen": true,
@@ -2940,7 +3228,7 @@
           "candidate_digest": "a2df9efd8016341931d88658c65a0739fb317cb16cf0932b1ddaf683be383f26",
           "candidate_lesion_delta": {
             "G": 0.0,
-            "S": 0.14290532618335128
+            "S": 0.12332799689563245
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -2953,8 +3241,8 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.956354604715801,
-            "S": 5.549175986159767
+            "G": 5.956391532059379,
+            "S": 5.5687186498915695
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
@@ -2962,37 +3250,49 @@
             "active_ticks": 234,
             "counterfactual_utility_ticks": 232,
             "credit_ticks": 417,
-            "max_activity": 0.8431800603866577,
-            "max_candidate_credit_norm": 0.7479563355445862,
-            "max_candidate_gate": 0.5000033974647522,
+            "holdout_max_candidate_gate_by_phase": {
+              "G-holdout": 0.4420575499534607,
+              "S-holdout": 0.4420575499534607
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+              "G-holdout": 0.41991039365530014,
+              "S-holdout": 0.42664525508880613
+            },
+            "holdout_min_candidate_gate_by_phase": {
+              "G-holdout": 0.39865028858184814,
+              "S-holdout": 0.41577279567718506
+            },
+            "max_activity": 0.8440191745758057,
+            "max_candidate_credit_norm": 0.7537766695022583,
+            "max_candidate_gate": 0.5000030994415283,
             "max_candidate_gate_by_phase": {
-              "G": 0.4999678134918213,
-              "S": 0.5000033974647522
+              "G": 0.499796599149704,
+              "S": 0.5000030994415283
             },
-            "max_candidate_residual_norm": 1.296502709388733,
-            "max_candidate_residual_ratio": 12.037422934541961,
-            "max_eligibility_norm": 3.5512492656707764,
-            "max_projection_update_norm": 0.0415201410651207,
-            "mean_candidate_gate": 0.4969272380870468,
+            "max_candidate_residual_norm": 1.3029719591140747,
+            "max_candidate_residual_ratio": 12.276966362060213,
+            "max_eligibility_norm": 3.5531256198883057,
+            "max_projection_update_norm": 0.04157278686761856,
+            "mean_candidate_gate": 0.4686665002889228,
             "mean_candidate_gate_by_phase": {
-              "G": 0.49678150202968335,
-              "S": 0.49987110644578936
+              "G": 0.46712428810867934,
+              "S": 0.4998191863298416
             },
-            "mean_candidate_residual_ratio": 0.33582849187005703,
-            "mean_candidate_utility": 0.02359113098066031,
+            "mean_candidate_residual_ratio": 0.33761541345761514,
+            "mean_candidate_utility": 0.022078134914065815,
             "mean_candidate_utility_by_phase": {
-              "G": 0.024677873881325404,
-              "S": 0.0016389243872254155
+              "G": 0.023089987921909173,
+              "S": 0.0016387041556299663
             },
-            "mean_counterfactual_utility": -0.022117540506242813,
+            "mean_counterfactual_utility": -0.020665945489690314,
             "mean_counterfactual_utility_by_phase": {
-              "G": -0.023141384475319573,
-              "S": -0.00143589233089223
+              "G": -0.021617938779952325,
+              "S": -0.001435681026397706
             },
-            "min_candidate_gate": 0.48936107754707336,
+            "min_candidate_gate": 0.3871689438819885,
             "min_candidate_gate_by_phase": {
-              "G": 0.48936107754707336,
-              "S": 0.4996393024921417
+              "G": 0.3871689438819885,
+              "S": 0.49942249059677124
             },
             "positive_counterfactual_utility_ticks": 26,
             "positive_counterfactual_utility_ticks_by_phase": {
@@ -3006,7 +3306,7 @@
             },
             "residual_ticks": 233,
             "ticks": 424,
-            "trace_digest": "6a4db87dced7e2fb8b7865cd80bff8adfc5359abeecdcb1e101cb6a6f462297a",
+            "trace_digest": "e37089e18e2e00d5d0a4f34b5f952df357527903514c2c48793ff4593b037ebe",
             "utility_ticks": 232
           }
         },
@@ -3046,8 +3346,8 @@
           ],
           "candidate_digest": "da340e8d06abfabb851cde84f11b18f530f4ab894efac55963fb27f0c1338953",
           "candidate_lesion_delta": {
-            "G": 0.0006259504931378501,
-            "S": 0.15729453620964762
+            "G": 0.00048375990806182045,
+            "S": 0.12719510409975676
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
           "counts": {
@@ -3060,8 +3360,8 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.95973844386285,
-            "S": 5.541995242224161
+            "G": 5.959958963400515,
+            "S": 5.572172672490249
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
@@ -3069,41 +3369,53 @@
             "active_ticks": 274,
             "counterfactual_utility_ticks": 272,
             "credit_ticks": 417,
-            "max_activity": 0.8764251470565796,
-            "max_candidate_credit_norm": 0.7442944645881653,
-            "max_candidate_gate": 0.5049866437911987,
+            "holdout_max_candidate_gate_by_phase": {
+              "G-holdout": 0.4137018024921417,
+              "S-holdout": 0.4134610891342163
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+              "G-holdout": 0.3953787609934807,
+              "S-holdout": 0.3980479896068573
+            },
+            "holdout_min_candidate_gate_by_phase": {
+              "G-holdout": 0.37615153193473816,
+              "S-holdout": 0.3874105215072632
+            },
+            "max_activity": 0.8783361911773682,
+            "max_candidate_credit_norm": 0.7559055089950562,
+            "max_candidate_gate": 0.5,
             "max_candidate_gate_by_phase": {
-              "G": 0.5049866437911987,
+              "G": 0.49973544478416443,
               "S": 0.5
             },
-            "max_candidate_residual_norm": 1.4980536699295044,
-            "max_candidate_residual_ratio": 187.24199425702338,
-            "max_eligibility_norm": 3.6624526977539062,
-            "max_projection_update_norm": 0.06235383078455925,
-            "mean_candidate_gate": 0.4964160346338209,
+            "max_candidate_residual_norm": 1.5101993083953857,
+            "max_candidate_residual_ratio": 155.92956123299084,
+            "max_eligibility_norm": 3.6644628047943115,
+            "max_projection_update_norm": 0.06266450881958008,
+            "mean_candidate_gate": 0.45332553842157686,
             "mean_candidate_gate_by_phase": {
-              "G": 0.4962463116291726,
-              "S": 0.4998444393277168
+              "G": 0.45102585815262086,
+              "S": 0.4997790798544884
             },
-            "mean_candidate_residual_ratio": 0.9108321350317627,
-            "mean_candidate_utility": 0.02781147163949634,
+            "mean_candidate_residual_ratio": 0.8419055788136217,
+            "mean_candidate_utility": 0.024714136742813763,
             "mean_candidate_utility_by_phase": {
-              "G": 0.029087393717814523,
-              "S": 0.0020378456574690063
+              "G": 0.025836744450361496,
+              "S": 0.0020374610503495205
             },
-            "mean_counterfactual_utility": -0.027163816636546965,
+            "mean_counterfactual_utility": -0.02401067919278573,
             "mean_counterfactual_utility_by_phase": {
-              "G": -0.02842066564961302,
-              "S": -0.0017754665726126718
+              "G": -0.02511145073553726,
+              "S": -0.0017750940292047713
             },
-            "min_candidate_gate": 0.48192548751831055,
+            "min_candidate_gate": 0.3674505650997162,
             "min_candidate_gate_by_phase": {
-              "G": 0.48192548751831055,
-              "S": 0.4995337426662445
+              "G": 0.3674505650997162,
+              "S": 0.49925920367240906
             },
-            "positive_counterfactual_utility_ticks": 24,
+            "positive_counterfactual_utility_ticks": 23,
             "positive_counterfactual_utility_ticks_by_phase": {
-              "G": 23,
+              "G": 22,
               "S": 1
             },
             "positive_utility_ticks": 240,
@@ -3113,7 +3425,7 @@
             },
             "residual_ticks": 273,
             "ticks": 424,
-            "trace_digest": "977e5f209b8f894d63dbc9d1c18cbce3ef2a9ec5cb13e986f9c463aefc7c6873",
+            "trace_digest": "a282d18a80ec4fbe3e11933d3bd4553aec51342da77607365821b7bff33316fa",
             "utility_ticks": 272
           }
         },
@@ -3147,7 +3459,7 @@
           "birth_anchor_weights": [],
           "candidate_digest": "65511d22cd9ac08afa810ce902886ac46d6501f263d945cdaf0c467713cf104d",
           "candidate_lesion_delta": {
-            "G": 0.027445418042881364,
+            "G": 0.023727601497628648,
             "S": 0.0
           },
           "candidate_unit_id": "predictive_residual.bridge.u12",
@@ -3161,8 +3473,8 @@
           "parent_frozen": false,
           "parent_substrate_unchanged": false,
           "scores": {
-            "G": 5.93187801274041,
-            "S": 5.682390219447235
+            "G": 5.935578450817968,
+            "S": 5.682389408951176
           },
           "shadow_fresh_restore": true,
           "shadow_rollback_matches_bare": true,
@@ -3170,36 +3482,48 @@
             "active_ticks": 155,
             "counterfactual_utility_ticks": 150,
             "credit_ticks": 356,
-            "max_activity": 0.9250742197036743,
-            "max_candidate_credit_norm": 0.3795238137245178,
-            "max_candidate_gate": 0.5000340342521667,
+            "holdout_max_candidate_gate_by_phase": {
+              "G-holdout": 0.47250792384147644,
+              "S-holdout": 0.47250792384147644
+            },
+            "holdout_mean_candidate_gate_by_phase": {
+              "G-holdout": 0.44605093201001483,
+              "S-holdout": 0.45814568003018696
+            },
+            "holdout_min_candidate_gate_by_phase": {
+              "G-holdout": 0.424888014793396,
+              "S-holdout": 0.44745728373527527
+            },
+            "max_activity": 0.9250744581222534,
+            "max_candidate_credit_norm": 0.3805233836174011,
+            "max_candidate_gate": 0.5000042915344238,
             "max_candidate_gate_by_phase": {
-              "G": 0.5000340342521667,
+              "G": 0.5000042915344238,
               "S": 0.5
             },
-            "max_candidate_residual_norm": 0.7295302152633667,
-            "max_candidate_residual_ratio": 1.6668119912537553,
-            "max_eligibility_norm": 3.039738178253174,
-            "max_projection_update_norm": 0.023894691839814186,
-            "mean_candidate_gate": 0.49773087718014447,
+            "max_candidate_residual_norm": 0.7301672697067261,
+            "max_candidate_residual_ratio": 1.6699384449424808,
+            "max_eligibility_norm": 3.0397441387176514,
+            "max_projection_update_norm": 0.023895032703876495,
+            "mean_candidate_gate": 0.48613173648152713,
             "mean_candidate_gate_by_phase": {
-              "G": 0.4976185443672803,
+              "G": 0.4854451887825928,
               "S": 0.5
             },
-            "mean_candidate_residual_ratio": 0.10245654628410607,
-            "mean_candidate_utility": 0.00925554265640525,
+            "mean_candidate_residual_ratio": 0.1025099420913594,
+            "mean_candidate_utility": 0.008812074611667858,
             "mean_candidate_utility_by_phase": {
-              "G": 0.009713737837415411,
+              "G": 0.009248315929077159,
               "S": 0.0
             },
-            "mean_counterfactual_utility": -0.00893608291111261,
+            "mean_counterfactual_utility": -0.008483927632229767,
             "mean_counterfactual_utility_by_phase": {
-              "G": -0.0093784632532469,
+              "G": -0.008903924049666884,
               "S": 0.0
             },
-            "min_candidate_gate": 0.4846854507923126,
+            "min_candidate_gate": 0.44120603799819946,
             "min_candidate_gate_by_phase": {
-              "G": 0.4846854507923126,
+              "G": 0.44120603799819946,
               "S": 0.5
             },
             "positive_counterfactual_utility_ticks": 23,
@@ -3214,7 +3538,7 @@
             },
             "residual_ticks": 154,
             "ticks": 424,
-            "trace_digest": "80737a4c23a2fc715fed7ce93d99c91135df59510233ad097ecaead137a77e51",
+            "trace_digest": "8bb549cc5f6091c7ca4e0c2b711de53b105b903c45b879f6ba7e477f0e5ac365",
             "utility_ticks": 150
           }
         }
@@ -3230,15 +3554,15 @@
           0.36586129665374756
         ],
         "candidate_lesion_delta": {
-          "G": 0.0002402498737437142,
-          "S": 0.08106737006804998
+          "G": 0.00019339607603541253,
+          "S": 0.062238739301757384
         },
         "mature_f1_owners_unchanged": true,
         "parent_substrate_unchanged": true,
         "shadow_fresh_restore": true,
         "shadow_rollback_matches_bare": true,
         "shadow_training_changed": true,
-        "trace_digest": "1540259dc7749158836ef71e103134afaa3daab0375cca6f82c78219e2c5bfd7"
+        "trace_digest": "75438ebcc823da044a61e5a3afe398e69671084430fb84a0771d774954c075d3"
       },
       "course": {
         "G_holdout_digest": "1d6bbf7bd7c44a945ba09797a9b69dc5faa61e300b966a10cb08131d20b972b1",
@@ -3270,7 +3594,7 @@
       "course_label": "order-303",
       "course_seed": 303,
       "model_seed": 97,
-      "report_digest": "93229a1fd031afc245f0b7c1141664401cf865486fda656036a24fc234bccbbd",
+      "report_digest": "e0de6bb13bde4fc25507be83beb7cf66103c13a5278541040c289df333f1814e",
       "technical_gates": {
         "candidate_only_smoke_fresh_restore": true,
         "candidate_only_smoke_parent_frozen": true,
