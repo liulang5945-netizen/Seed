@@ -1,0 +1,122 @@
+{
+  "format": "taiji-m4r3-update-interference-aggregate-v1",
+  "version": 1,
+  "generated_at_epoch": 1788866816.649075,
+  "status": "passed",
+  "can_promote": false,
+  "seeds": [
+    11,
+    29,
+    47
+  ],
+  "source_reports": [
+    "E:\\Seed\\reports\\taiji_m4r3_update_interference_canary_seed11_20260908.json",
+    "E:\\Seed\\reports\\taiji_m4r3_update_interference_canary_seed29_20260908.json",
+    "E:\\Seed\\reports\\taiji_m4r3_update_interference_canary_seed47_20260908.json"
+  ],
+  "arms": {
+    "readout_only": {
+      "c3_gain_mean_bpb": 0.0496278488485992,
+      "c3_gain_min_bpb": -0.0027628963282753105,
+      "c3_gain_max_bpb": 0.09057894981974624,
+      "c3_gain_positive_count": 2,
+      "c_cycle2_delta_mean_bpb": -0.041433897016936484,
+      "c_cycle2_degradation_count": 0,
+      "c_cycle3_delta_mean_bpb": -0.06788525984593023,
+      "c_cycle3_degradation_count": 0,
+      "c2_cycle3_delta_mean_bpb": -0.09508435492743923,
+      "c2_cycle3_degradation_count": 0,
+      "retention_gate_passed_all": true,
+      "seed_metrics": {
+        "11": {
+          "c3_gain_bpb": -0.0027628963282753105,
+          "c_cycle2_delta_bpb": -0.03239036838968179,
+          "c_cycle3_delta_bpb": -0.05651748967026826
+        },
+        "29": {
+          "c3_gain_bpb": 0.06106749305432668,
+          "c_cycle2_delta_bpb": -0.04455938089958611,
+          "c_cycle3_delta_bpb": -0.08050917238106914
+        },
+        "47": {
+          "c3_gain_bpb": 0.09057894981974624,
+          "c_cycle2_delta_bpb": -0.04735194176154156,
+          "c_cycle3_delta_bpb": -0.06662911748645328
+        }
+      }
+    },
+    "context_only": {
+      "c3_gain_mean_bpb": 0.01722790902532238,
+      "c3_gain_min_bpb": 0.009666719495356801,
+      "c3_gain_max_bpb": 0.022028178961899236,
+      "c3_gain_positive_count": 3,
+      "c_cycle2_delta_mean_bpb": 0.0036487598988896863,
+      "c_cycle2_degradation_count": 2,
+      "c_cycle3_delta_mean_bpb": -0.005208800786460206,
+      "c_cycle3_degradation_count": 1,
+      "c2_cycle3_delta_mean_bpb": -0.007322428426839315,
+      "c2_cycle3_degradation_count": 0,
+      "retention_gate_passed_all": false,
+      "seed_metrics": {
+        "11": {
+          "c3_gain_bpb": 0.019988828618711096,
+          "c_cycle2_delta_bpb": 0.023897128476011886,
+          "c_cycle3_delta_bpb": 0.007820992972727758
+        },
+        "29": {
+          "c3_gain_bpb": 0.009666719495356801,
+          "c_cycle2_delta_bpb": 0.007450735314677992,
+          "c_cycle3_delta_bpb": -0.012163311427319634
+        },
+        "47": {
+          "c3_gain_bpb": 0.022028178961899236,
+          "c_cycle2_delta_bpb": -0.02040158409402082,
+          "c_cycle3_delta_bpb": -0.011284083904788744
+        }
+      }
+    },
+    "joint": {
+      "c3_gain_mean_bpb": 0.050850519117908576,
+      "c3_gain_min_bpb": 0.00743311066327923,
+      "c3_gain_max_bpb": 0.10098999361871908,
+      "c3_gain_positive_count": 3,
+      "c_cycle2_delta_mean_bpb": -0.04106735719558863,
+      "c_cycle2_degradation_count": 0,
+      "c_cycle3_delta_mean_bpb": -0.06801177779666807,
+      "c_cycle3_degradation_count": 0,
+      "c2_cycle3_delta_mean_bpb": -0.09910595675698541,
+      "c2_cycle3_degradation_count": 0,
+      "retention_gate_passed_all": true,
+      "seed_metrics": {
+        "11": {
+          "c3_gain_bpb": 0.00743311066327923,
+          "c_cycle2_delta_bpb": -0.020216053997024197,
+          "c_cycle3_delta_bpb": -0.05514778486755745
+        },
+        "29": {
+          "c3_gain_bpb": 0.044128453071727414,
+          "c_cycle2_delta_bpb": -0.03538691858073406,
+          "c_cycle3_delta_bpb": -0.07952529577588185
+        },
+        "47": {
+          "c3_gain_bpb": 0.10098999361871908,
+          "c_cycle2_delta_bpb": -0.06759909900900762,
+          "c_cycle3_delta_bpb": -0.06936225274656493
+        }
+      }
+    }
+  },
+  "checks": {
+    "seed11_technical_gate": true,
+    "seed29_technical_gate": true,
+    "seed47_technical_gate": true,
+    "all_seed_reports_not_promoted": true,
+    "all_seed_chains_record_disjoint": true,
+    "same_arm_set": true
+  },
+  "technical_gate_all_passed": true,
+  "diagnosis": {
+    "joint_attribution_supported": true,
+    "interpretation": "joint fixed-capacity updates reproduced positive C3 gain and no C cycle2/cycle3 degradation in all three smoke seeds; proceed to a larger-budget formal attribution comparison, without promotion"
+  }
+}
