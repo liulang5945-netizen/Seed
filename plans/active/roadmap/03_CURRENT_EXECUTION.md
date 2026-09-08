@@ -75,7 +75,7 @@ Taiji 是唯一认知主体，Seed 是产品/runtime、Workbench、设备、权�
 
 ## 4. 当前唯一下一步
 
-M4.V2.R0、M4.V2.R1、R2 与 R3 已完成当前阶段的量尺、迁移、快/慢学习和第一条主路径结构桥 Gate；R2 候选被接受，R3 canary 通过；R4 pressure 已由 R3 bridge 的真实 predictive observation tick 驱动，candidate artifact 已被固化，独立 shadow materialization、candidate-only causal training smoke 和首个短 S/G 五臂对照已通过技术 Gate，但 pressure-driven growth 没有稳定优于 R3 fixed-capacity，candidate lesion 在 S/G 方向不一致。整体仍保持 `can_promote=false`。当前唯一下一步是 **M4.V2.R4：修订 candidate credit/activation，使候选贡献可测且因果一致，再复跑同一五臂 Gate**，不向真实主路径开放，不解冻 R5。
+M4.V2.R0、M4.V2.R1、R2 与 R3 已完成当前阶段的量尺、迁移、快/慢学习和第一条主路径结构桥 Gate；R2 候选被接受，R3 canary 通过；R4 pressure 已由 R3 bridge 的真实 predictive observation tick 驱动，candidate artifact 已被固化，独立 shadow materialization、candidate-only causal training smoke 和首个短 S/G 五臂对照已通过技术 Gate，但 pressure-driven growth 没有稳定优于 R3 fixed-capacity，candidate lesion 在 S/G 方向不一致。随后补上的逐 tick activity、candidate residual、credit、projection update 和 trace digest 证明候选确实被激活并持续收到 causal credit；把候选 projection 的学习资格从瞬时 activity 扩展到已有的 candidate eligibility trace 后，候选残差可测增强，G lesion 增益变为正，但 S lesion 仍为负，仍不能宣称增长有效。审计同时发现首轮五臂没有严格共享同一 parent/owner/训练边界：growth 臂从 `pressure_parent` 进入并冻结 parent substrate，而 `r3-fixed-capacity` 从 `r3_parent` 进入并训练 parent bridge。整体仍保持 `can_promote=false`。当前唯一下一步是 **M4.V2.R4：先校正 matched-capacity 对照边界（同一 pressure parent、同一 parent-bridge 学习边界和同一课程预算），保留 candidate-only smoke 作为独立技术 Gate，再复跑同一五臂 S/G Gate**；在该对照修正前不继续调候选超参、不向真实主路径开放、不解冻 R5。
 
 R0 的实现与审计产物如下：
 
@@ -150,10 +150,11 @@ R4 要回答的不是“能否再创建一个区域”，而是“固定容量�
 3. **shadow materialization（已完成）**：从 candidate artifact 复制 bare parent 到独立 shadow 实例，在独立 checkpoint 中应用 pending topology proposal；旧 unit 的 incoming/recurrent 支持、权重、runtime state 逐项保持，新增 unit 初始化可寻址，shadow 的 identity-preserving sparse projection 对齐原输出，新增 unit projection edge 初始为零，shadow 为 `gate=0`；fresh restore 后 candidate/parent digest、bridge identity 和 shadow payload 一致。materialization 失败不会改变原 parent 且不消耗正式结构预算。
 4. **shadow 训练（最小 Gate 已完成）**：先保存 shadow bare checkpoint，在 fresh restore 后只打开 shadow gate，冻结成熟 F1 trunk 与 parent readout，只给 shadow residual/projection/候选 region credit 做一次最小更新；已经验证候选 projection 会在真实活动 tick 改变、旧 region 前缀不被写入、再次保存/fresh restore/续步有效，失败可回滚到 bare shadow。该 Gate 只证明训练边界，不证明能力收益。
 5. **短课程与准入对照（已完成首轮，但结果未通过晋级）**：已用同一 parent、同一 S/G 课程、同一训练预算比较 frozen parent、R3 fixed-capacity bridge、pressure-driven growth、random growth、同等最终参数量的 fixed-large；五臂都完成 checkpoint preflight、短训练/holdout、candidate lesion、fresh restore、rollback 和资源记录。报告中 pressure-driven growth 的 S/G 结果没有稳定优于 R3 fixed-capacity，candidate lesion 的方向不一致，因此只接受“对照管线闭合”，不接受“生长有效”。
-6. **candidate credit/activation 修订（当前唯一下一步）**：只允许修改 shadow candidate 的局部 credit、候选 activity/eligibility 记录或 projection 初始化边界；成熟 F1 trunk、parent bridge、pressure 合同、五臂课程和 Gate 必须保持不变。修订前先增加逐 tick candidate activity、projection credit、candidate-vs-parent residual 和 lesion trace，定位是候选未激活、credit 断路还是容量本身无收益；不得用调大总学习率或删除 fixed/random 对照掩盖失败。
-7. **因果 Gate**：候选增益必须在未见 holdout 上出现；growth lesion 必须消除新增增益；旧能力满足 calibrated non-inferiority；fresh restore、rollback、参数/内存/延迟预算全通过。任何一项失败恢复 R3 parent，不进入 R5 router。
+6. **candidate credit/activation 修订（已完成一轮，未晋级）**：已增加逐 tick candidate activity、projection credit、candidate-vs-parent residual、eligibility 和 lesion trace，并把候选 projection 的资格改为使用已有 candidate trace；成熟 F1 trunk、pressure contract、课程和对照数量未改变。新报告显示 pressure candidate 的平均 candidate/parent residual ratio 约 `0.00981`，G lesion delta `+0.00474`，S lesion delta `-0.00027`；候选 credit 通路有效，但跨 S/G 不一致，因此 R4 仍未通过。
+7. **matched-capacity 边界校正（当前唯一下一步）**：统一五臂进入同一个 `pressure_parent`，统一 parent bridge 是否可学习的 owner 边界和课程预算；growth efficacy 允许与 fixed-capacity 使用同一 parent-bridge 学习边界，candidate-only 版本保留为独立 shadow training smoke，不把两种边界混在一个收益 Gate 中。不得继续通过调大总学习率、改变 pressure 合同、删掉 fixed/random 对照或替换课程来掩盖边界差异。
+8. **因果 Gate**：候选增益必须在未见 holdout 上出现；growth lesion 必须消除新增增益；旧能力满足 calibrated non-inferiority；fresh restore、rollback、参数/内存/延迟预算全通过。任何一项失败恢复 R3/pressure parent，不进入 R5 router。
 
-R4 的最小交付仍是 `pressure/proposal → shadow materialize → shadow train → validate → lesion/admit/rollback` 的一个可复现 CPU canary 和 versioned report；首轮五臂短 S/G 报告已闭合技术管线但未通过 growth efficacy/non-inferiority，当前必须先修订 candidate credit/activation，再以同一报告 Gate 复测。不能把首轮 pressure proposal、候选存在、materialization、单次训练步或单次 BPB 下降写成成功；R4 通过后才解冻 R5 自主路由，Skill/MCP/provider/客户端继续按第 6 节冻结。
+R4 的最小交付仍是 `pressure/proposal → shadow materialize → shadow train → validate → lesion/admit/rollback` 的一个可复现 CPU canary 和 versioned report；首轮五臂短 S/G 报告已闭合技术管线但未通过 growth efficacy/non-inferiority，eligibility 修订只证明候选 credit 更充分且 G 有局部因果收益，不能覆盖 S 退化或对照边界不一致。下一轮必须先修正 matched-capacity parent/owner 边界，再复测同一报告 Gate。不能把 pressure proposal、候选存在、materialization、单次训练步或单次 BPB 下降写成成功；R4 通过后才解冻 R5 自主路由，Skill/MCP/provider/客户端继续按第 6 节冻结。
 
 R0 完成条件（已满足）：
 
