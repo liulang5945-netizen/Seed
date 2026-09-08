@@ -110,7 +110,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | 4 | M2.R3 语义与表达训练 | **R3.R0～R3.R4 已完成**：结构化语义训练合同、可选 runtime owner/checkpoint、多实体/关系/约束多 seed canary、多步事件到持久 WorldState/Goal satisfaction、runtime adapter 接线已闭合 | runtime 输入只来自当前 `PerceptEvent`；事实/Goal/ContentPlan/WorldState 结果可审计；provider 表达收益与 native-only 分开统计 |
 | 5 | M2.R4 联合课程与保持 | **已完成**：frozen/static-only/transition-only/joint-native 对照、双 owner 组合、runtime 双组件 checkpoint 和 protected retention 已闭合；不把独立 owner 的串行课程称为共享权重联合优化 | 三 seed 正式报告；joint-native 新组合通过且两个受保护 owner 均保持 |
 | 6 | M3 最小真实任务验证 | **M3.R0/R1/R2/R3/R4/R5 已完成；真实客户端批准流仍是决策闸门**：R0 闭合只读证据边界，R1 训练静态 observation，R2 训练跨 tick task-state transition，R3 形成 snapshot 绑定只读 `ActionIntent`，R4 闭合 preview/approval，R5 在隔离副本验证一次执行与 undo | R5 已证明 exact approval token、digest、执行一次、undo 和恢复拒绝；真实客户端 API/UI 接线会扩大外部副作用范围，未获明确授权不接线 |
-| 7 | M4 连续成长 | **M4.R0 已完成且不晋级；M4.R1 formal 已完成但 retention Gate 否决；M4.R2 capacity diagnosis canary 已完成且不支持扩容；M4.R3 pilot attribution 未通过 retention；M4.R4 审计已完成；M4.R5 pilot 半速有效但严格 retention 否决；M4.R6 已完成；M4.R7 formal retention Gate 因 C cycle3 退化否决；M4.R8 已确认不是 owner magnitude outlier；M4.R9 已确认 C3 不是明显课程 outlier** | M4.R10 只允许一个 update/consolidation rule audit，沿用 stable foundation course 和 scale `0.5`，不同时改数据、结构、容量或 provider；未通过前不得恢复 formal |
+| 7 | M4 连续成长 | **M4.R0～R9 均已完成：R0 不晋级、R1/R7 formal 被 retention Gate 否决、R2 不支持扩容、R5 半速改善但 cycle3 退化、R8/R9 排除 owner 幅度与课程 outlier；M4.R10 formal 已完成且否决——consolidation 改善远期保留但加重 cycle3 边界遗忘（2/3 退化），固定规则撤回，闸门 2 保持关闭** | M4.R11 只做 cycle3 交互归因（只读）：consolidation 保守项 × phase 边界的负交互机制 + active-only 与 joint 更新路径的 cycle3 并排对照；归因前不启动任何新训练 |
 | 8 | M5 知识与身体 | Skill/MCP 数据内化、真实调用与客户端插件 | 认知与执行收益可分别归因，权限/撤销闭合 |
 | 9 | M6 产品收口 | provider 稳定性、UI/桌面、遗留格式清理 | packaged client 与真实能力一致 |
 | 横向 | M7 工程质量 | 每轮相关检查，阶段末全矩阵，发布时集中核验 | 无新增 CI 退化；正式发布绑定代码/数据/模型/包 |
@@ -120,7 +120,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 
 ## 4. 当前唯一下一步
 
-**唯一下一步：设计并执行 M4.R10 的单一 update/consolidation rule audit。** R9 已排除明显 C3 数据断裂，R8 已排除 owner update magnitude outlier；最有信息量的下一步是在同一 stable foundation course、fixed-capacity、scale `0.5` 下，只增加一个已存在的巩固/更新规则变量，与无该规则的对照比较 C/C2/C3 retention。不得同时换数据、加容量、改拓扑、试多个 scale、接 provider/MCP 或写真实客户端；先做 CPU smoke，再由 retention Gate 决定是否继续，全部保持 `can_promote=false`。
+**唯一下一步：执行 M4.R11 的 cycle3 交互归因（只读，不训练）。** R10 formal 已给出方向性因果证据：consolidation 改善远期 A 保留与 C″ 增益，却加重 cycle3 边界遗忘（candidate 2/3 退化，seed11 由过转不过、seed47 恶化）；且 active-only 更新路径（R10 baseline）的 cycle3 退化仅 1/3，轻于 R7 的 joint 更新路径（2/3）。R11 复用 R6/R8 的只读归因工具，输入 R10 三 seed × 两臂 formal artifacts，输出两件事：(a) consolidation 保守项与 cycle3 退化的 per-seed 参数差分对照（active readout 相对 L2、changed scalars、退化幅度），(b) active-only 与 joint 更新在 cycle2→cycle3 的 owner 写入结构并排对照（R10 baseline vs R7 scale-0.5 臂，标注 harness 差异防止过度归因）。归因结论只允许两个出口：形成一个新的预注册单一规则候选（如按周期或惊讶度条件启用的保守项），或冻结固定容量巩固方向并转入课程结构属性论证；两个出口都必须先过同规格 CPU smoke 再谈 formal。归因前不启动任何新训练，不得同时换数据、扩容、改拓扑或接 provider/MCP，全部保持 `can_promote=false`。
 
 2026-09-06 实际审计已证明首轮报告不能作为能力证据：旧 evaluator 的 C/C′ 只是换 partition seed，不是新记录。当前已落地的修复为 `scripts/training/eval_taiji_m2r1_phase_c_canary.py` v2、`scripts/training/audit_taiji_m2r1_data_contract.py` 和 `reports/taiji_m2r1_data_contract_20260906.json`：
 
@@ -425,15 +425,17 @@ R8 已将主要嫌疑从 owner 写入幅度移到 C3 phase boundary 或其与更
 - **能力对齐**：R7 的 frozen difficulty 与 scale `0.5` C/C2/C3 delta 已并排；seed11/47 的 C cycle3 退化没有共享一个异常 C3 byte 分布，C3/C2 最大 boundary JS 比约 1.19×。
 - **结论**：课程不是明显 outlier；下一步只做一个 update/consolidation rule audit，不能直接恢复 scale formal 或扩容，保持 `can_promote=false`。
 
-### M4.R10：单一 update/consolidation rule audit（smoke 已完成，formal 运行中，2026-09-08）
+### M4.R10：单一 update/consolidation rule audit（formal 已完成，否决，2026-09-09）
 
 R8/R9 已把候选空间收敛为 stable course 上的连续更新与巩固交互。R10 必须复用 foundation C→C2→C3、fixed-capacity 和 scale `0.5`，只打开一个已有规则变量；禁止把多个规则组合后的结果冒充单一因果证据。
 
 - **对照**：scale `0.5`、无新增规则的 joint baseline；候选只增加一个已存在的 consolidation/update rule，保留 scale、课程、owner 和 scorer 不变。
-- **实现**：`eval_taiji_m2r1_phase_c_canary.py` 的 `_run_cascade_arm` 增加向后兼容 `predictive_update_scale` 透传（默认 `1.0`，R5 合同等价旧路径）；新增 `scripts/training/eval_taiji_m4r10_rule_audit.py`（预注册三 phase digest 断言 + baseline/candidate 两臂 + 每臂 checkpoint 归档）与 `scripts/training/aggregate_taiji_m4r10.py`（R7 同语义 retention Gate：candidate C″ gain 3/3 正且 cycle2/cycle3 退化 0/3）。规则变量选定为已存在的 `consolidation_strength`（R1 在 legacy scale 1.0 下否决过；本次在 scale 0.5 基底单独重测）。
-- **CPU smoke（seed11，16 KiB/4 KiB）**：报告 `reports/taiji_m4r10_rule_audit_smoke_seed11_20260908.json`，两臂各 14/14 checks 全过（数据链 digest、owner 写集合、原子 checkpoint、fresh-restore、read-only scoring）；candidate − baseline 全部指标方向一致：C″ gain `+0.0188`、C cycle3 退化更小 `−0.0064`、A retention 更好 `−0.0105`、C2 cycle3 持平。
-- **formal**：三 seed（11/29/47，65536/16384，R7 同预算）串行运行中，完成后由 `aggregate_taiji_m4r10.py` 出预注册判定。
-- **停止线**：任一技术或 retention Gate 失败，撤回该规则并回到规则设计；不得扩容、换 UltraData、继续试 scale 或接外围系统，全部保持 `can_promote=false`。
+- **实现**：`eval_taiji_m2r1_phase_c_canary.py` 的 `_run_cascade_arm` 增加向后兼容 `predictive_update_scale` 透传（默认 `1.0`，R5 合同等价旧路径）；新增 `scripts/training/eval_taiji_m4r10_rule_audit.py`（预注册三 phase digest 断言 + baseline/candidate 两臂 + 每臂 checkpoint 归档）与 `scripts/training/aggregate_taiji_m4r10.py`（R7 同语义 retention Gate）。
+- **CPU smoke（seed11，16 KiB/4 KiB）**：两臂各 14/14 checks 全过；candidate − baseline 全部指标方向一致为正（C″ gain `+0.0188`、cycle3 退化更小、A retention 更好），允许进入 formal。
+- **formal（三 seed，65536/16384，active execute owner）**：报告 `reports/taiji_m4r10_rule_audit_formal_seed11/29/47_20260908.json` 与 aggregate `reports/taiji_m4r10_rule_audit_formal_aggregate_20260908.json`；technical Gate 全过，`formal_gate_passed=false`：candidate C″ gain 3/3 正（均值 `+0.158059`），cycle2 退化 `0/3`，但 **cycle3 退化 `2/3`**（seed11 从 baseline 的 `−0.00208` 变 `+0.00467`，seed47 从 `+0.00812` 恶化到 `+0.01125`）。
+- **归因结论（cycle3 交互方向证据）**：consolidation 改善远期 A 保留（均值 `−0.0210`）与 C″ 增益，却**加重 cycle3 近期遗忘**——固定保守项在 phase 边界损害对新分布的适应；`consolidation_strength` 规则在 scale 0.5 基底上撤回。意外对照信号：baseline 臂（active-only 更新路径）cycle3 退化仅 `1/3`（seed47 `+0.00812`），轻于 R7 的 joint 更新路径（`2/3`），提示更新路径选择本身是 cycle3 的相关变量，但该对照不是本轮预注册目标，不得直接当候选。
+- **候选闸门联动**：候选闸门 2（惊讶度门控）的解锁条件「M4.R10 证明单一巩固规则仍有方向」未满足，保持关闭。
+- **停止线执行**：撤回 `consolidation_strength` 固定规则；不扩容、不换 UltraData、不试其他 scale、不接外围系统，全部保持 `can_promote=false`。
 
 ### 架构/巩固候选闸门（决策记录 2026-09-08，不改变唯一下一步）
 
