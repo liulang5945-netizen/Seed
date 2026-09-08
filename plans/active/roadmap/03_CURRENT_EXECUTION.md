@@ -75,7 +75,7 @@ Taiji 是唯一认知主体，Seed 是产品/runtime、Workbench、设备、权�
 
 ## 4. 当前唯一下一步
 
-M4.V2.R0、M4.V2.R1 与 R2 已完成当前阶段的量尺、迁移、快/慢学习和 S/G formal Gate；R2 候选被接受，但整体仍保持 `can_promote=false`。当前唯一下一步是 **M4.V2.R3：主路径 zero-gated adaptive residual bridge**，在同一 Taiji observation→prediction/credit 主路径中接入一个关闭时严格等价的结构候选。
+M4.V2.R0、M4.V2.R1、R2 与 R3 已完成当前阶段的量尺、迁移、快/慢学习和第一条主路径结构桥 Gate；R2 候选被接受，R3 canary 通过，但整体仍保持 `can_promote=false`。当前唯一下一步是 **M4.V2.R4：shadow 生长与 matched-capacity 对照**，只在 R3 已证明候选能进入真实 observation→prediction/credit 主路径之后，验证容量压力是否能产生可归因的新增结构收益。
 
 R0 的实现与审计产物如下：
 
@@ -125,30 +125,33 @@ R1 完成条件：
 
 只复用 R2 的实现，不改 owner、不扩容、不接 R3。已先以 parent 独立、等比例、等长度 block 的波动校准 epsilon，再运行 3 个 course seed/order 的 S/G 短课程；每个 arm 都保留 slow-only、fast-only、fast+real replay+consolidation 对照。正式报告为 `reports/taiji_m4v2_r2_formal_sg_20260909.json`：初版因把超过上限的 `0.4629` 波动截断为 `0.05` 而被 fail-closed；修正校准 block 后 `max_deviation=0.0176304`，epsilon=`0.0176304`，所有 Gate 通过。replay 相对每个 course 的最强 fixed-capacity arm 在 S/G 均不劣且严格更优，旧 F1 owner 未被写入，fresh restore/rollback/read-only 全通过。该结果接受 R2 候选，但不代表 R3 已通过，更不代表 A8 晋级。
 
-### 4.4 R3：主路径 zero-gated adaptive residual bridge（下一步）
+### 4.4 R3：主路径 zero-gated adaptive residual bridge（已完成）
 
-只实现一个最小结构桥，不创建多个专家、不引入任务 ID 路由、不接 Skill/MCP 或客户端外围。候选必须从当前 `observation → predictive context/readout → credit` 路径获得输入和误差：稳定 trunk 保持原 F1；新增 residual population 以输出 gate=0 出生；forward、credit、checkpoint、lesion 和 rollback 都必须消费同一 owner graph。先做 gate=0 的逐位/容差等价，再做显式开启后的 residual credit smoke；候选的 fast/slow 状态可复用 R2，但未通过 Gate 不得影响 protected 输出。若关闭态不等价、credit 没有真正进入主路径或 fresh restore/lesion 不闭合，恢复 R2 parent，不进入 R4 shadow 生长。
+R3 只实现一个最小结构桥，不创建多个专家、不引入任务 ID 路由、不接 Skill/MCP 或客户端外围。候选从当前 `observation → predictive context/readout → credit` 路径获得输入和误差；稳定 F1 trunk 保持原 owner；新增 residual population 以输出 `gate=0` 出生；forward、credit、checkpoint、lesion 和 rollback 消费同一 owner graph。
 
-本步骤不修改模型权重、不运行长训练、不引入新语料。建议实现位置：
+已完成的实现与 Gate：
 
-- `taiji/continual_evaluation.py`
-  - `MetricSpec`：名称、方向（higher/lower）、单位、父基线、关键域与灾难上限；
-  - `ContinualCourseManifest`：phase、source/dataset digest、训练预算、holdout、course seed/order；phase 标签只给 evaluator，不注入模型；
-  - `ContinualEvaluationSnapshot`：每个 checkpoint × 所有累计能力的绝对值、父代 delta、对照 delta、owner 和 read-only digest；
-  - `ContinualScorecard`：average/worst forgetting、forward/backward transfer、非劣判定和资源归一化。
-- `scripts/training/audit_taiji_m4v2_measurement_contract.py`
-  - 只读加载 R7/R10/R12；
-  - 明确标出 R10 A 指标是 absolute BPB、R12 `+1.62` 是 arm-vs-arm；
-  - 拒绝 R7/R10 owner 图被当作同一对照；
-  - 把 exact-zero 结果保留为历史 Gate，同时生成“缺少 epsilon/course-order，不能晋级也不能作全局否决”的新 verdict。
-- `tests/taiji_native/test_continual_evaluation.py`
-  - higher/lower 指标方向反例；
-  - absolute 值不能被当成 forgetting delta；
-  - 缺 parent baseline fail-closed；
-  - 跨域 raw BPB 拒绝直接合并；
-  - course phase 不泄漏给模型；
-  - scorecard round-trip/content digest；
-  - exact-zero 与 calibrated non-inferiority 同时报告。
+- `taiji/adaptive_residual_bridge.py`：以 `AdaptiveNeuronRegion` 为底层的稀疏 residual population，稳定 unit identity、显式 `predictive_context` 输入源、gate、lesion、局部 credit、runtime state 和 versioned payload；recurrent fan-in 对自连接约束做了小容量边界裁剪。
+- `taiji/model.py`：把 bridge 接入 native predictive forward；gate=0 时不 step、不写 credit、不改变原预测；显式 `learn_adaptive_residual_bridge` 允许在结构 admission 试验中冻结成熟 F1 context/readout，只把同一 causal error 送入新桥；checkpoint、identity lineage、参数清单、reset、fresh restore 和 rollback 均保留 bridge。
+- `taiji/__init__.py`：导出 bridge 的 format/version/类型，保持类型边界可寻址。
+- `scripts/training/eval_taiji_m4v2_r3_bridge.py`：先做 checkpoint preflight，再做 zero-gate 等价、active residual、local credit、mature F1 owner 不变、lesion、fresh restore 和 rollback canary；报告为 `reports/taiji_m4v2_r3_bridge_canary_20260909.json`。
+- `tests/taiji_native/test_m4v2_r3_bridge.py` 与 `test_m4v2_r3_bridge_canary.py`：覆盖默认无 bridge、gate=0 主路径等价、显式 bridge credit、owner freeze、lesion、fresh restore、rollback 与报告 Gate。
+
+R3 canary 结果：所有 12 项 Gate 通过；`gate=0` 输出与 parent 完全一致，active residual `L1=1.30631685`，概率最大变化 `0.00535537`，local credit 改变 bridge payload，mature F1 两个 owner 未变，fresh restore/lesion/rollback 通过。该结果只接受“结构候选已进入主路径”的技术事实，不接受结构成长或 A8 晋级，`can_promote=false` 保持不变。
+
+### 4.5 R4：shadow 生长与 matched-capacity 对照（当前唯一下一步）
+
+R4 要回答的不是“能否再创建一个区域”，而是“固定容量已出现可观测压力时，按真实压力出生的候选是否比随机增长和从一开始就等量预分配更有用”。只允许沿 R3 bridge 这一个结构入口做第一轮 shadow growth；不引入 learned router、不接 Skill/MCP、不接客户端外围。
+
+实施顺序固定为：
+
+1. **压力合同**：从同一主路径记录 residual error、fast/slow conflict、局部饱和、候选 utility 和资源上限；压力必须来自模型可见的输入/结果，禁止用 evaluator task ID 或人工“该任务创建专家”规则。
+2. **候选提议**：在 `gate=0` bridge 上按稳定身份追加一个或一组最小 unit，保存 parent digest、proposal evidence、topology diff 和预算；提议本身不改变 parent 函数。
+3. **shadow 训练**：只给候选 residual credit，成熟 F1 trunk 与 parent readout 可冻结；候选在 S/G 短课程上训练，所有更新可回滚，训练前先做 bare checkpoint 保存、fresh-process restore、一次小更新后再次保存/恢复/续步检查。
+4. **准入对照**：至少比较 frozen parent、R3 fixed-capacity bridge、pressure-driven growth、random growth、同等最终参数量的 fixed-large；没有 matched-capacity 与 random baseline，不得把收益归因于“生长”。
+5. **因果 Gate**：候选增益必须在未见 holdout 上出现；growth lesion 必须消除新增增益；旧能力满足 calibrated non-inferiority；fresh restore、rollback、参数/内存/延迟预算全通过。任何一项失败恢复 R3 parent，不进入 R5 router。
+
+R4 的最小交付是 `pressure/proposal → shadow train → validate → lesion/admit/rollback` 的一个可复现 CPU canary 和 versioned report；不能把 proposal 创建、参数变多或单次 BPB 下降写成成功。R4 通过后才解冻 R5 自主路由，Skill/MCP/provider/客户端继续按第 6 节冻结。
 
 R0 完成条件（已满足）：
 
@@ -159,7 +162,7 @@ R0 完成条件（已满足）：
 5. 定向 pytest、ruff、`git diff --check` 通过；
 6. 仍保持 `can_promote=false`。
 
-R1 通过后的唯一下一步是 R2 S/G canary；R2 formal 通过后的唯一下一步是 R3 主路径结构桥。R3 未通过则回到 R2 parent，不得用 R4 扩容、客户端外围或新语料掩盖结构桥失败。
+R1 通过后的唯一下一步是 R2 S/G canary；R2 formal 通过后的唯一下一步是 R3 主路径结构桥；R3 canary 通过后的唯一下一步是 R4 shadow 生长。R4 未通过则恢复 R3 parent，不得用 R5 路由、客户端外围或新语料掩盖容量/准入失败。
 
 ## 5. v2 课程与 Gate
 
