@@ -42,6 +42,8 @@ class AdaptiveResidualShadow:
         parent_bridge_digest: str,
         residual_gain: float,
         birth_anchor_unit_id: str | None = None,
+        birth_anchor_unit_ids: tuple[str, ...] | None = None,
+        birth_anchor_weights: tuple[float, ...] | None = None,
         device: torch.device | str = "cpu",
     ) -> None:
         self.config = config
@@ -61,11 +63,35 @@ class AdaptiveResidualShadow:
         normalized_anchor = (
             "" if birth_anchor_unit_id is None else str(birth_anchor_unit_id).strip()
         )
-        if normalized_anchor:
-            anchor_index = self.region.unit_index(normalized_anchor)
+        normalized_anchors = (
+            tuple(str(item).strip() for item in birth_anchor_unit_ids)
+            if birth_anchor_unit_ids is not None
+            else ((normalized_anchor,) if normalized_anchor else ())
+        )
+        if any(not item for item in normalized_anchors):
+            raise ValueError("adaptive residual shadow birth anchors must not be empty")
+        if len(set(normalized_anchors)) != len(normalized_anchors):
+            raise ValueError("adaptive residual shadow birth anchors must be unique")
+        if len(normalized_anchors) > 2:
+            raise ValueError("adaptive residual shadow supports at most two birth anchors")
+        for anchor in normalized_anchors:
+            anchor_index = self.region.unit_index(anchor)
             if anchor_index >= int(candidate.parent_unit_count):
                 raise ValueError("adaptive residual shadow birth anchor must be a parent unit")
-        self._birth_anchor_unit_id = normalized_anchor
+        normalized_weights = (
+            tuple(float(value) for value in birth_anchor_weights)
+            if birth_anchor_weights is not None
+            else ((1.0,) if normalized_anchors else ())
+        )
+        if len(normalized_weights) != len(normalized_anchors):
+            raise ValueError("adaptive residual shadow birth anchor weights do not match anchors")
+        if normalized_weights and (
+            any(not math.isfinite(value) or value <= 0.0 for value in normalized_weights)
+            or not math.isclose(sum(normalized_weights), 1.0, rel_tol=1e-5, abs_tol=1e-5)
+        ):
+            raise ValueError("adaptive residual shadow birth anchor weights must be normalized")
+        self._birth_anchor_unit_ids = normalized_anchors
+        self._birth_anchor_weights = normalized_weights
         if self.region.unit_count != candidate.proposed_unit_count:
             raise ValueError("adaptive residual shadow unit count does not match candidate")
         if output_projection.out_features != self.output_dim:
@@ -98,7 +124,15 @@ class AdaptiveResidualShadow:
 
     @property
     def birth_anchor_unit_id(self) -> str | None:
-        return self._birth_anchor_unit_id or None
+        return self._birth_anchor_unit_ids[0] if self._birth_anchor_unit_ids else None
+
+    @property
+    def birth_anchor_unit_ids(self) -> tuple[str, ...]:
+        return self._birth_anchor_unit_ids
+
+    @property
+    def birth_anchor_weights(self) -> tuple[float, ...]:
+        return self._birth_anchor_weights
 
     @property
     def output_dim(self) -> int:
@@ -206,6 +240,60 @@ class AdaptiveResidualShadow:
                 region.recurrent.edge_weight[source_index]
             )
         region.threshold[candidate_index] = region.threshold[source_index]
+
+    @staticmethod
+    @torch.no_grad()
+    def _mix_birth_anchors(
+        region: AdaptiveNeuronRegion,
+        *,
+        anchor_indices: tuple[int, ...],
+        anchor_weights: tuple[float, ...],
+        candidate_index: int,
+    ) -> None:
+        """Mix two parent rows into one bounded sparse candidate row."""
+
+        def mix_row(
+            pre_index: torch.Tensor,
+            edge_weight: torch.Tensor,
+            *,
+            input_dim: int,
+            exclude_index: int | None = None,
+        ) -> None:
+            dense = torch.zeros(input_dim, device=edge_weight.device, dtype=edge_weight.dtype)
+            for anchor_index, anchor_weight in zip(anchor_indices, anchor_weights):
+                dense.scatter_add_(
+                    0,
+                    pre_index[anchor_index].to(torch.long),
+                    edge_weight[anchor_index] * float(anchor_weight),
+                )
+            ranking = dense.abs()
+            if exclude_index is not None:
+                ranking[exclude_index] = -1.0
+            selected = torch.topk(
+                ranking,
+                k=edge_weight.shape[1],
+                largest=True,
+                sorted=True,
+            ).indices
+            pre_index[candidate_index].copy_(selected.to(pre_index.dtype))
+            edge_weight[candidate_index].copy_(dense[selected])
+
+        mix_row(
+            region.incoming.pre_index,
+            region.incoming.edge_weight,
+            input_dim=region.input_dim,
+        )
+        if region.recurrent is not None:
+            mix_row(
+                region.recurrent.pre_index,
+                region.recurrent.edge_weight,
+                input_dim=region.unit_count,
+                exclude_index=candidate_index,
+            )
+        threshold = torch.zeros((), device=region.device, dtype=region.threshold.dtype)
+        for anchor_index, anchor_weight in zip(anchor_indices, anchor_weights):
+            threshold = threshold + region.threshold[anchor_index] * float(anchor_weight)
+        region.threshold[candidate_index] = threshold
 
     @torch.no_grad()
     def reset_dynamics(self) -> None:
@@ -345,8 +433,11 @@ class AdaptiveResidualShadow:
             "last_activity": self._last_activity.detach().cpu().clone(),
             "diagnostics": dict(self.diagnostics),
         }
-        if self._birth_anchor_unit_id:
-            payload["birth_anchor_unit_id"] = self._birth_anchor_unit_id
+        if self._birth_anchor_unit_ids:
+            payload["birth_anchor_unit_id"] = self._birth_anchor_unit_ids[0]
+            if len(self._birth_anchor_unit_ids) > 1:
+                payload["birth_anchor_unit_ids"] = list(self._birth_anchor_unit_ids)
+                payload["birth_anchor_weights"] = list(self._birth_anchor_weights)
         return {**payload, "shadow_digest": content_digest(payload)}
 
     @classmethod
@@ -371,7 +462,7 @@ class AdaptiveResidualShadow:
         parent_unit_count = len(region_payload["unit_ids"])
         if parent_unit_count != candidate.parent_unit_count:
             raise ValueError("adaptive residual shadow parent unit count drifted")
-        if birth_mode not in {"random", "pressure_anchor"}:
+        if birth_mode not in {"random", "pressure_anchor", "pressure_mixture"}:
             raise ValueError("unsupported adaptive residual shadow birth mode")
         if int(parent_bridge_payload["region"].get("input_dim", -1)) != config.motor_context_dim:
             raise ValueError("adaptive residual shadow parent input dimension mismatch")
@@ -388,19 +479,46 @@ class AdaptiveResidualShadow:
         region.apply_topology_proposal(candidate.proposal, generator=growth_generator)
         if region.unit_ids[-1] != candidate.unit_id:
             raise ValueError("adaptive residual shadow candidate was not appended")
-        birth_anchor_unit_id = ""
-        if birth_mode == "pressure_anchor":
+        birth_anchor_unit_ids: tuple[str, ...] = ()
+        birth_anchor_weights: tuple[float, ...] = ()
+        if birth_mode in {"pressure_anchor", "pressure_mixture"}:
             parent_activity = region.activity[: candidate.parent_unit_count].abs()
             parent_eligibility = region.trace[: candidate.parent_unit_count].abs()
             anchor_score = parent_activity + parent_eligibility
-            anchor_index = int(anchor_score.argmax().item())
             candidate_index = region.unit_index(candidate.unit_id)
-            cls._copy_birth_anchor(
-                region,
-                source_index=anchor_index,
-                candidate_index=candidate_index,
+            anchor_count = 1 if birth_mode == "pressure_anchor" else min(2, candidate.parent_unit_count)
+            anchor_indices = tuple(
+                int(index)
+                for index in torch.topk(
+                    anchor_score,
+                    k=anchor_count,
+                    largest=True,
+                    sorted=True,
+                ).indices.tolist()
             )
-            birth_anchor_unit_id = region.unit_ids[anchor_index]
+            selected_scores = anchor_score[list(anchor_indices)]
+            if float(selected_scores.sum().item()) <= 1e-8:
+                anchor_weights = torch.full_like(
+                    selected_scores,
+                    1.0 / max(1, anchor_count),
+                )
+            else:
+                anchor_weights = selected_scores / selected_scores.sum()
+            birth_anchor_unit_ids = tuple(region.unit_ids[index] for index in anchor_indices)
+            birth_anchor_weights = tuple(float(value) for value in anchor_weights.tolist())
+            if birth_mode == "pressure_anchor":
+                cls._copy_birth_anchor(
+                    region,
+                    source_index=anchor_indices[0],
+                    candidate_index=candidate_index,
+                )
+            else:
+                cls._mix_birth_anchors(
+                    region,
+                    anchor_indices=anchor_indices,
+                    anchor_weights=birth_anchor_weights,
+                    candidate_index=candidate_index,
+                )
         projection = cls._new_identity_projection(
             config,
             unit_count=region.unit_count,
@@ -415,7 +533,8 @@ class AdaptiveResidualShadow:
             output_projection=projection,
             parent_bridge_digest=content_digest(parent_bridge_payload),
             residual_gain=float(parent_bridge_payload["residual_gain"]),
-            birth_anchor_unit_id=birth_anchor_unit_id,
+            birth_anchor_unit_ids=birth_anchor_unit_ids,
+            birth_anchor_weights=birth_anchor_weights,
             device=device,
         )
         last_input = parent_bridge_payload["last_input"].detach().to(shadow.device).clone()
@@ -514,6 +633,16 @@ class AdaptiveResidualShadow:
             parent_bridge_digest=str(payload["parent_bridge_digest"]),
             residual_gain=float(payload["residual_gain"]),
             birth_anchor_unit_id=payload.get("birth_anchor_unit_id"),
+            birth_anchor_unit_ids=(
+                None
+                if payload.get("birth_anchor_unit_ids") is None
+                else tuple(str(item) for item in payload["birth_anchor_unit_ids"])
+            ),
+            birth_anchor_weights=(
+                None
+                if payload.get("birth_anchor_weights") is None
+                else tuple(float(value) for value in payload["birth_anchor_weights"])
+            ),
             device=device,
         )
         shadow.set_gate(float(payload["gate"]))

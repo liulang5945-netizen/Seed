@@ -192,6 +192,8 @@ def test_r4_live_pressure_is_emitted_by_bridge_tick_and_restores_exactly() -> No
     assert shadow.unit_count == candidate.proposed_unit_count
     assert candidate.unit_id in shadow.region.unit_ids
     assert shadow.birth_anchor_unit_id in parent_region.unit_ids
+    assert len(shadow.birth_anchor_unit_ids) == 2
+    assert sum(shadow.birth_anchor_weights) == pytest.approx(1.0)
     assert shadow.region.unit_ids[: candidate.parent_unit_count] == parent_region.unit_ids
     assert torch.equal(
         shadow.region.incoming.pre_index[: candidate.parent_unit_count],
