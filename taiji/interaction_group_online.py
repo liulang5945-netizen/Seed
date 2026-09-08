@@ -316,9 +316,9 @@ class InteractionGroupOnlineLearner:
             raise TypeError("online learner requires an InteractionGroupTransferLearner")
         if not math.isfinite(float(minimum_interaction)):
             raise ValueError("online minimum_interaction must be finite")
-        if not 0.0 <= float(maximum_feedback_uncertainty):
+        if not float(maximum_feedback_uncertainty) >= 0.0:
             raise ValueError("online maximum_feedback_uncertainty cannot be negative")
-        if not 0.0 <= float(maximum_resource_cost):
+        if not float(maximum_resource_cost) >= 0.0:
             raise ValueError("online maximum_resource_cost cannot be negative")
         self._learner = learner
         self.minimum_interaction = float(minimum_interaction)

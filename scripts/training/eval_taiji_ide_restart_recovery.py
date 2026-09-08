@@ -51,7 +51,7 @@ def evaluate() -> dict[str, object]:
         runtime.checkpoint_path = checkpoint_path
         architecture = runtime.model.architecture
         architecture.ingest_input(_frame(), learn=False)
-        snapshot_id = runtime.workbench_environment.capability_snapshot.snapshot_id
+        _snapshot_id = runtime.workbench_environment.capability_snapshot.snapshot_id
         tick = architecture.tick
         intents = (
             ActionIntent(

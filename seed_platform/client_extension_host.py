@@ -986,7 +986,7 @@ class ClientExtensionHost:
     @staticmethod
     def _capability_ids(value: Any) -> set[str]:
         if hasattr(value, "capabilities"):
-            value = getattr(value, "capabilities")
+            value = value.capabilities
         if isinstance(value, Mapping):
             return {str(key) for key in value}
         if isinstance(value, (str, bytes)) or not isinstance(value, Sequence):

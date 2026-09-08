@@ -256,7 +256,7 @@ def evaluate() -> dict[str, object]:
         replays_by_candidate={round_two_second_id: round_two_second_replay},
     )
     round_two_success_checkpoint = round_two_success_model.native_checkpoint()
-    round_two_success_topology = _topology(round_two_success_model)
+    _round_two_success_topology = _topology(round_two_success_model)
     round_two_success_budget = _budget(round_two_success_model)
     round_two_after_first_topology = _topology(
         TSKV8Adapter.from_native_checkpoint(round_two_after_first_checkpoint)

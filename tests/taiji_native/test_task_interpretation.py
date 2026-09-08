@@ -116,6 +116,7 @@ def test_semantic_decomposition_is_tool_free_and_sequence_planning_is_non_execut
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     from pathlib import Path
+
     import seed_platform.workbench as workbench_module
 
     project_root = Path.cwd()
