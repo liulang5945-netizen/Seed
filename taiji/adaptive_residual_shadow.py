@@ -41,6 +41,7 @@ class AdaptiveResidualShadow:
         output_projection: SparseSynapses,
         parent_bridge_digest: str,
         residual_gain: float,
+        birth_anchor_unit_id: str | None = None,
         device: torch.device | str = "cpu",
     ) -> None:
         self.config = config
@@ -57,6 +58,14 @@ class AdaptiveResidualShadow:
             raise ValueError("adaptive residual shadow region does not match candidate")
         if candidate.unit_id not in self.region.unit_ids:
             raise ValueError("adaptive residual shadow is missing the candidate unit")
+        normalized_anchor = (
+            "" if birth_anchor_unit_id is None else str(birth_anchor_unit_id).strip()
+        )
+        if normalized_anchor:
+            anchor_index = self.region.unit_index(normalized_anchor)
+            if anchor_index >= int(candidate.parent_unit_count):
+                raise ValueError("adaptive residual shadow birth anchor must be a parent unit")
+        self._birth_anchor_unit_id = normalized_anchor
         if self.region.unit_count != candidate.proposed_unit_count:
             raise ValueError("adaptive residual shadow unit count does not match candidate")
         if output_projection.out_features != self.output_dim:
@@ -86,6 +95,10 @@ class AdaptiveResidualShadow:
     @property
     def candidate_id(self) -> str:
         return self.candidate.candidate_id
+
+    @property
+    def birth_anchor_unit_id(self) -> str | None:
+        return self._birth_anchor_unit_id or None
 
     @property
     def output_dim(self) -> int:
@@ -168,6 +181,31 @@ class AdaptiveResidualShadow:
 
         candidate_index = self.region.unit_index(self.candidate.unit_id)
         self.output_projection.edge_weight[self.output_projection.pre_index == candidate_index] = 0.0
+
+    @staticmethod
+    @torch.no_grad()
+    def _copy_birth_anchor(
+        region: AdaptiveNeuronRegion,
+        *,
+        source_index: int,
+        candidate_index: int,
+    ) -> None:
+        """Give a pressure-born unit a stable local substrate to specialize."""
+
+        region.incoming.pre_index[candidate_index].copy_(
+            region.incoming.pre_index[source_index]
+        )
+        region.incoming.edge_weight[candidate_index].copy_(
+            region.incoming.edge_weight[source_index]
+        )
+        if region.recurrent is not None:
+            region.recurrent.pre_index[candidate_index].copy_(
+                region.recurrent.pre_index[source_index]
+            )
+            region.recurrent.edge_weight[candidate_index].copy_(
+                region.recurrent.edge_weight[source_index]
+            )
+        region.threshold[candidate_index] = region.threshold[source_index]
 
     @torch.no_grad()
     def reset_dynamics(self) -> None:
@@ -307,6 +345,8 @@ class AdaptiveResidualShadow:
             "last_activity": self._last_activity.detach().cpu().clone(),
             "diagnostics": dict(self.diagnostics),
         }
+        if self._birth_anchor_unit_id:
+            payload["birth_anchor_unit_id"] = self._birth_anchor_unit_id
         return {**payload, "shadow_digest": content_digest(payload)}
 
     @classmethod
@@ -316,6 +356,7 @@ class AdaptiveResidualShadow:
         parent_bridge_payload: Mapping[str, Any],
         candidate: AdaptiveResidualGrowthCandidate,
         *,
+        birth_mode: str = "random",
         device: torch.device | str = "cpu",
     ) -> AdaptiveResidualShadow:
         if parent_bridge_payload.get("format") != ADAPTIVE_RESIDUAL_BRIDGE_FORMAT:
@@ -330,6 +371,8 @@ class AdaptiveResidualShadow:
         parent_unit_count = len(region_payload["unit_ids"])
         if parent_unit_count != candidate.parent_unit_count:
             raise ValueError("adaptive residual shadow parent unit count drifted")
+        if birth_mode not in {"random", "pressure_anchor"}:
+            raise ValueError("unsupported adaptive residual shadow birth mode")
         if int(parent_bridge_payload["region"].get("input_dim", -1)) != config.motor_context_dim:
             raise ValueError("adaptive residual shadow parent input dimension mismatch")
         if candidate.unit_id in {str(item) for item in region_payload["unit_ids"]}:
@@ -345,6 +388,19 @@ class AdaptiveResidualShadow:
         region.apply_topology_proposal(candidate.proposal, generator=growth_generator)
         if region.unit_ids[-1] != candidate.unit_id:
             raise ValueError("adaptive residual shadow candidate was not appended")
+        birth_anchor_unit_id = ""
+        if birth_mode == "pressure_anchor":
+            parent_activity = region.activity[: candidate.parent_unit_count].abs()
+            parent_eligibility = region.trace[: candidate.parent_unit_count].abs()
+            anchor_score = parent_activity + parent_eligibility
+            anchor_index = int(anchor_score.argmax().item())
+            candidate_index = region.unit_index(candidate.unit_id)
+            cls._copy_birth_anchor(
+                region,
+                source_index=anchor_index,
+                candidate_index=candidate_index,
+            )
+            birth_anchor_unit_id = region.unit_ids[anchor_index]
         projection = cls._new_identity_projection(
             config,
             unit_count=region.unit_count,
@@ -359,6 +415,7 @@ class AdaptiveResidualShadow:
             output_projection=projection,
             parent_bridge_digest=content_digest(parent_bridge_payload),
             residual_gain=float(parent_bridge_payload["residual_gain"]),
+            birth_anchor_unit_id=birth_anchor_unit_id,
             device=device,
         )
         last_input = parent_bridge_payload["last_input"].detach().to(shadow.device).clone()
@@ -456,6 +513,7 @@ class AdaptiveResidualShadow:
             output_projection=projection,
             parent_bridge_digest=str(payload["parent_bridge_digest"]),
             residual_gain=float(payload["residual_gain"]),
+            birth_anchor_unit_id=payload.get("birth_anchor_unit_id"),
             device=device,
         )
         shadow.set_gate(float(payload["gate"]))

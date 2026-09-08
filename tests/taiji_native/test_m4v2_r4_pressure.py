@@ -191,6 +191,7 @@ def test_r4_live_pressure_is_emitted_by_bridge_tick_and_restores_exactly() -> No
     assert shadow.gate == 0.0
     assert shadow.unit_count == candidate.proposed_unit_count
     assert candidate.unit_id in shadow.region.unit_ids
+    assert shadow.birth_anchor_unit_id in parent_region.unit_ids
     assert shadow.region.unit_ids[: candidate.parent_unit_count] == parent_region.unit_ids
     assert torch.equal(
         shadow.region.incoming.pre_index[: candidate.parent_unit_count],
@@ -225,6 +226,7 @@ def test_r4_live_pressure_is_emitted_by_bridge_tick_and_restores_exactly() -> No
     shadow_checkpoint = shadow.to_payload()
     restored_shadow = AdaptiveResidualShadow.from_checkpoint(model.config, shadow_checkpoint)
     assert content_digest(restored_shadow.to_payload()) == content_digest(shadow_checkpoint)
+    assert restored_shadow.birth_anchor_unit_id == shadow.birth_anchor_unit_id
     assert content_digest(parent_region_payload) == content_digest(parent_region.to_payload())
 
     bare_shadow_checkpoint = restored_shadow.to_payload()
