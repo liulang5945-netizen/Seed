@@ -186,6 +186,7 @@ def _stream(
     learn: bool,
     learn_bridge: bool = False,
     shadow_freeze_parent: bool = True,
+    phase: str = "unspecified",
     trace: list[dict[str, Any]] | None = None,
 ) -> float:
     model.reset_dynamics(episode_id="r4-shadow-stream")
@@ -210,7 +211,7 @@ def _stream(
             _adaptive_residual_shadow_freeze_parent=shadow_freeze_parent,
         )
         if shadow is not None and trace is not None:
-            trace.append({"symbol": int(symbol), **shadow.diagnostics})
+            trace.append({"phase": phase, "symbol": int(symbol), **shadow.diagnostics})
         if step.prior_probability is not None:
             total_surprise += -math.log(max(float(step.prior_probability), 1e-12))
             count += 1
@@ -233,6 +234,7 @@ def _course_train(
         learn=True,
         learn_bridge=learn_bridge,
         shadow_freeze_parent=shadow_freeze_parent,
+        phase="S",
         trace=trace,
     )
     for old_count, new_count in course.g_schedule:
@@ -243,6 +245,7 @@ def _course_train(
             learn=True,
             learn_bridge=learn_bridge,
             shadow_freeze_parent=shadow_freeze_parent,
+            phase="G",
             trace=trace,
         )
 
@@ -395,6 +398,17 @@ def _growth_arm(
     credit_trace = [
         item for item in training_trace if item["candidate_credit_norm"] > 1e-8
     ]
+    utility_by_phase = {
+        phase: [
+            float(item["candidate_utility"])
+            for item in training_trace
+            if item["phase"] == phase
+        ]
+        for phase in ("S", "G")
+    }
+    utility_values = [
+        float(item["candidate_utility"]) for item in training_trace
+    ]
     residual_ratios = [
         item["candidate_residual_norm"] / item["parent_residual_norm"]
         for item in training_trace
@@ -460,6 +474,21 @@ def _growth_arm(
                 (item["candidate_projection_update_norm"] for item in training_trace),
                 default=0.0,
             ),
+            "utility_ticks": sum(1 for value in utility_values if abs(value) > 1e-8),
+            "positive_utility_ticks": sum(1 for value in utility_values if value > 1e-8),
+            "mean_candidate_utility": (
+                sum(utility_values) / len(utility_values) if utility_values else 0.0
+            ),
+            "mean_candidate_utility_by_phase": {
+                phase: (
+                    sum(values) / len(values) if values else 0.0
+                )
+                for phase, values in utility_by_phase.items()
+            },
+            "positive_utility_ticks_by_phase": {
+                phase: sum(1 for value in values if value > 1e-8)
+                for phase, values in utility_by_phase.items()
+            },
             "trace": training_trace,
         },
         "candidate_only_training_changed": bool(
