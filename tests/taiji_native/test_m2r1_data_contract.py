@@ -47,6 +47,10 @@ def test_m2r1_phase_chain_excludes_all_source_lineage_records() -> None:
             *chain.phase_c.excluded_dataset_digests,
             chain.phase_c.digest,
         )
+        assert chain.phase_c3.excluded_dataset_digests == (
+            *chain.phase_c2.excluded_dataset_digests,
+            chain.phase_c2.digest,
+        )
         assert chain.overlap_counts
         assert all(value == 0 for value in chain.overlap_counts.values())
 
@@ -59,8 +63,12 @@ def test_m2r1_phase_chain_excludes_all_source_lineage_records() -> None:
         ]
         phase_c_records = set(chain.phase_c.selected_record_digests)
         phase_c2_records = set(chain.phase_c2.selected_record_digests)
+        phase_c3_records = set(chain.phase_c3.selected_record_digests)
         assert all(not records & phase_c_records for records in source_sets)
         assert all(not records & phase_c2_records for records in source_sets)
+        assert all(not records & phase_c3_records for records in source_sets)
         assert not phase_c_records & phase_c2_records
+        assert not phase_c_records & phase_c3_records
+        assert not phase_c2_records & phase_c3_records
     finally:
         corpus.unlink(missing_ok=True)

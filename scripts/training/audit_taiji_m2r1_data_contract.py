@@ -60,6 +60,7 @@ def main(argv: list[str] | None = None) -> int:
                 "cohort_seeds": phase_chain["cohort_seeds"],
                 "phase_c_digest": phase_chain["phase_c"]["digest"],
                 "phase_c2_digest": phase_chain["phase_c2"]["digest"],
+                "phase_c3_digest": phase_chain["phase_c3"]["digest"],
                 "nonzero_overlaps": {
                     key: value
                     for key, value in phase_chain["overlap_counts"].items()
