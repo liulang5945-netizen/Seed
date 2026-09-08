@@ -333,6 +333,8 @@ M4.R0 的正负边界已经足够明确：active readout 能在部分 seed 上�
 
 退出须展示连续多轮净收益与受控资源增长。不得以“主干永久冻结 + 手动任务 ID + 每任务新头”宣布开放式成长完成。
 
+**数据源升级候选（决策 2026-09-08，T0 已本地化，formal 未启动）：** 引入面壁智能/OpenBMB UltraData 高质量开源数据（L0-L4 分级治理，Apache-2.0）作为固定容量数据密度假设的验证数据源。本地仓库已建于 `data/ultradata/`（`data/` 整目录已被 .gitignore 忽略，不入库），T0 已完成下载并逐文件校验：`UltraData-SFT-Agent-2609` 全量 57 文件 50.5 GB（注意：HF datasets-server 报 11.3 GB 是 parquet 换算体积，仓库原始 JSONL 为其约 4.5 倍）+ `UltraData-RL-2609` 的 Knowledge/Math/Long_Context 子集 8 文件 3.4 GB（跳过 175 GB Code 域）+ `UltraData-SFT-2605` 的 Knowledge/IF/Chinese-general 三域 no_think 子集 150 文件 2.8 GB（gated=auto 已授权）。记录 schema 为标准 chat messages JSONL（`uid` + `messages[{role,content}]` + `source`/`domain`/`think_type`），与 simple_zh 对话数据同构，learn_bytes 适配成本低。研究依据：L3 合成形态（QA 对生成 + 多风格改写）对应“固定容量下最大化单位 token 信息密度”，与 M4.R0/R1 暴露的容量饱和与 retention 退化同构。验证顺序固定：M4.R1 formal 之后 → 格式抽样与 learn_bytes/digest 契约适配（forward-slash 相对路径）→ 同预算单变量数据源对比（C 分支，三 seed retention/increment 判定）→ 决定是否引入。本项不改变当前唯一下一步，不提前替代 M4.R1 巩固候选。
+
 ## 9. M5～M8 外围任务的具体安排
 
 | 工作 | 可提前做的最小范围 | 正式解冻时机与交付 |
