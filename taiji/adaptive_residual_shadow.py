@@ -106,6 +106,7 @@ class AdaptiveResidualShadow:
             if gate_projection.in_features not in {
                 int(candidate.parent_unit_count),
                 2 * int(candidate.parent_unit_count),
+                2 * int(candidate.parent_unit_count) + int(self.config.motor_context_dim),
             }:
                 raise ValueError("adaptive residual shadow gate input dimension mismatch")
         gate_input_dim = (
@@ -436,8 +437,13 @@ class AdaptiveResidualShadow:
             parent_trace = self.region.trace[:parent_count]
             if self.gate_projection.in_features == parent_count:
                 gate_input = parent_trace
-            else:
+            elif self.gate_projection.in_features == 2 * parent_count:
                 gate_input = torch.cat((activity[:parent_count], parent_trace), dim=0)
+            else:
+                gate_input = torch.cat(
+                    (input_context, activity[:parent_count], parent_trace),
+                    dim=0,
+                )
             self._last_gate_input.copy_(gate_input)
             gate_logit = self._candidate_gate_bias + self.gate_projection.forward(gate_input)[0]
             candidate_gate = float(torch.sigmoid(gate_logit).item())
@@ -707,7 +713,10 @@ class AdaptiveResidualShadow:
         )
         gate_projection = cls._new_gate_projection(
             config,
-            input_dim=2 * int(candidate.parent_unit_count),
+            input_dim=(
+                int(config.motor_context_dim)
+                + 2 * int(candidate.parent_unit_count)
+            ),
             generator=growth_generator,
             device=device,
         )
