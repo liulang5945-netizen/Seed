@@ -227,6 +227,86 @@ def test_r4_live_pressure_is_emitted_by_bridge_tick_and_restores_exactly() -> No
     assert content_digest(restored_shadow.to_payload()) == content_digest(shadow_checkpoint)
     assert content_digest(parent_region_payload) == content_digest(parent_region.to_payload())
 
+    bare_shadow_checkpoint = restored_shadow.to_payload()
+    bare_shadow_digest = content_digest(bare_shadow_checkpoint)
+    parent_incoming = restored_shadow.region.incoming.edge_weight[: candidate.parent_unit_count].clone()
+    parent_recurrent = (
+        None
+        if restored_shadow.region.recurrent is None
+        else restored_shadow.region.recurrent.edge_weight[: candidate.parent_unit_count].clone()
+    )
+    candidate_index = restored_shadow.region.unit_index(candidate.unit_id)
+    parent_projection_mask = restored_shadow.output_projection.pre_index != candidate_index
+    parent_projection = restored_shadow.output_projection.edge_weight[parent_projection_mask].clone()
+
+    selected_context = None
+    selected_feedback = None
+    for symbol in range(99, 163):
+        before = model.snapshot()
+        model.observe(symbol, learn=False, readout="predictive")
+        causal_error = model.predictive_readout.prediction_error(before.motor_probabilities, symbol)
+        causal_feedback = model.predictive_readout.context_feedback(causal_error)
+        current_context = bridge.last_input
+        probe_shadow = AdaptiveResidualShadow.from_checkpoint(
+            model.config,
+            bare_shadow_checkpoint,
+        )
+        probe_shadow.set_gate(1.0)
+        probe_shadow.forward(current_context)
+        if probe_shadow.candidate_activity > 1e-8:
+            selected_context = current_context
+            selected_feedback = causal_feedback
+            break
+    assert selected_context is not None
+    assert selected_feedback is not None
+    model_after_parent_tick = content_digest(model.checkpoint())
+    parent_bridge_after_tick = content_digest(bridge.to_payload())
+    restored_shadow = AdaptiveResidualShadow.from_checkpoint(
+        model.config,
+        bare_shadow_checkpoint,
+    )
+    restored_shadow.set_gate(1.0)
+    restored_shadow.forward(selected_context)
+    candidate_projection_before = restored_shadow.output_projection.edge_weight[
+        ~parent_projection_mask
+    ].clone()
+    restored_shadow.learn(selected_feedback)
+    candidate_projection_after = restored_shadow.output_projection.edge_weight[
+        ~parent_projection_mask
+    ]
+    assert not torch.equal(candidate_projection_after, candidate_projection_before)
+    assert torch.equal(
+        restored_shadow.region.incoming.edge_weight[: candidate.parent_unit_count],
+        parent_incoming,
+    )
+    if parent_recurrent is not None:
+        assert restored_shadow.region.recurrent is not None
+        assert torch.equal(
+            restored_shadow.region.recurrent.edge_weight[: candidate.parent_unit_count],
+            parent_recurrent,
+        )
+    assert torch.equal(
+        restored_shadow.output_projection.edge_weight[parent_projection_mask],
+        parent_projection,
+    )
+    trained_shadow_checkpoint = restored_shadow.to_payload()
+    trained_shadow = AdaptiveResidualShadow.from_checkpoint(
+        model.config,
+        trained_shadow_checkpoint,
+    )
+    assert content_digest(trained_shadow.to_payload()) == content_digest(trained_shadow_checkpoint)
+    continued = AdaptiveResidualShadow.from_checkpoint(model.config, trained_shadow_checkpoint)
+    continued.forward(selected_context)
+    continued.learn(selected_feedback)
+    assert content_digest(continued.to_payload()) != content_digest(trained_shadow_checkpoint)
+    rolled_back_shadow = AdaptiveResidualShadow.from_checkpoint(
+        model.config,
+        bare_shadow_checkpoint,
+    )
+    assert content_digest(rolled_back_shadow.to_payload()) == bare_shadow_digest
+    assert content_digest(model.checkpoint()) == model_after_parent_tick
+    assert content_digest(bridge.to_payload()) == parent_bridge_after_tick
+
     checkpoint = model.checkpoint()
     restored = Taiji.from_checkpoint(checkpoint)
     assert content_digest(restored.checkpoint()) == content_digest(checkpoint)

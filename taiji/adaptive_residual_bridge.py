@@ -112,6 +112,10 @@ class AdaptiveResidualBridge:
     def last_activity(self) -> torch.Tensor:
         return self._last_activity.detach().clone()
 
+    @property
+    def last_input(self) -> torch.Tensor:
+        return self._last_input.detach().clone()
+
     @torch.no_grad()
     def set_gate(self, gate: float) -> None:
         value = float(gate)
