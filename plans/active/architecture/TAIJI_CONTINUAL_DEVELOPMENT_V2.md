@@ -213,3 +213,6 @@ R4 已完成 pressure、candidate、shadow materialization、candidate-only caus
 完整 native 回归首个真实失败现已归因并修复：M3.R5 评估器使用 `tempfile.TemporaryDirectory` 创建 0700 隔离根，在本机 Windows ACL 下导致 workspace 复制前失败。实现改为在 `SEED_M3R5_TMPDIR` 或系统临时父目录下创建普通唯一目录并显式清理；测试将父目录绑定到可写 fixture，M3.R1～R5 共 `8 passed`。该修复只恢复评估器的可复现性，不改变 Workbench 审批、隔离执行、撤销或真实 workspace 边界。
 
 当前唯一出口：用仓库可写 fixture 重新跑完整 native 账本，继续处理首个真实失败；R4 shadow/默认 parent、R5 learned router、Skill/MCP/provider、客户端与 CUDA 仍冻结。
+完整 native 回归现已在仓库可写 fixture 下闭合：`659 passed, 1 skipped`，没有真实测试失败；FastAPI/Starlette 兼容提示仍为 warning。标准 pytest 的 0700 临时目录在本机受 ACL 限制，但这已与代码失败分离记录；M3.R5 评估器已改用可写普通目录创建隔离根。native 失败账本清零，R4 shadow/默认 parent 不变。
+
+当前唯一出口转为 CI 交付层审计：按仓库 workflow/配置执行 tracked Ruff、B/SIM、core mypy 与相关 pytest 门禁，修复真实失败并更新可复现命令；R5 learned router、Skill/MCP/provider、客户端与 CUDA 继续冻结。
