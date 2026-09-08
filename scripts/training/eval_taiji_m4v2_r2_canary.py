@@ -42,6 +42,7 @@ S_HOLDOUT = b"caba-bbaa-caba"
 G_OLD = b"abba-caba"
 G_NEW = b"xyz-zyx-uvw"
 G_HOLDOUT = b"zyx-uvw-xyz"
+CALIBRATION_REPEATS = 4
 
 
 def _tiny_config() -> TaijiConfig:
@@ -119,6 +120,8 @@ def _arm(
     parent: dict[str, Any],
     arm_name: str,
     parent_scores: dict[str, float],
+    *,
+    schedule: tuple[tuple[int, int], ...] = ((8, 2), (6, 4), (4, 6), (2, 8)),
 ) -> dict[str, Any]:
     model = Taiji.from_checkpoint(copy.deepcopy(parent))
     migration = model.migrate_f1_to_developmental_synapses()
@@ -131,7 +134,7 @@ def _arm(
     total_train_bytes = 0
     model.learn_bytes(S_TRAIN, epochs=1, learn_fabric=False)
     total_train_bytes += len(S_TRAIN)
-    for old_count, new_count in ((8, 2), (6, 4), (4, 6), (2, 8)):
+    for old_count, new_count in schedule:
         train = _blended_train(old_count, new_count)
         model.learn_bytes(train, epochs=1, learn_fabric=False)
         total_train_bytes += len(train)
@@ -153,6 +156,7 @@ def _arm(
     }
     checkpoint = model.checkpoint()
     checkpoint_digest = content_digest(checkpoint)
+    developmental_state_digest = content_digest(checkpoint[Taiji.DEVELOPMENTAL_F1_KEY])
     restored = Taiji.from_checkpoint(copy.deepcopy(checkpoint))
     fresh_restore_matches = content_digest(restored.checkpoint()) == checkpoint_digest
     old_owner_unchanged = (
@@ -187,8 +191,12 @@ def _arm(
             "fresh_restore_matches": fresh_restore_matches,
             "restored_learning_mode": restored.developmental_f1_learning_mode,
             "old_owner_unchanged": old_owner_unchanged,
+            "developmental_state_changed": (
+                developmental_state_digest != migration["bundle_digest"]
+            ),
             "rollback_matches_parent": rollback_matches_parent,
             "checkpoint_digest": checkpoint_digest,
+            "developmental_state_digest": developmental_state_digest,
             "owner_graph_digest": bundle.owner_graph_digest,
         },
         "replay": replay_result,
@@ -311,12 +319,281 @@ def run_canary(parent_checkpoint: dict[str, Any] | None = None) -> dict[str, Any
     }
 
 
+FORMAL_COURSES = (
+    {
+        "course_id": "r2-course-71-forward",
+        "course_seed": 71,
+        "schedule": ((8, 2), (6, 4), (4, 6), (2, 8)),
+    },
+    {
+        "course_id": "r2-course-73-middle-first",
+        "course_seed": 73,
+        "schedule": ((6, 4), (8, 2), (2, 8), (4, 6)),
+    },
+    {
+        "course_id": "r2-course-79-late-first",
+        "course_seed": 79,
+        "schedule": ((4, 6), (2, 8), (8, 2), (6, 4)),
+    },
+)
+
+
+def _formal_manifest(course: dict[str, Any]) -> ContinualCourseManifest:
+    phases = [
+        CoursePhase(
+            phase_id="S",
+            source_digest=content_digest({"source": "synthetic-old"}),
+            dataset_digest=content_digest({"train": S_TRAIN, "holdout": S_HOLDOUT}),
+            train_budget_bytes=len(S_TRAIN),
+            holdout_budget_bytes=len(S_HOLDOUT),
+            course_seed=int(course["course_seed"]),
+            order=1,
+        )
+    ]
+    for order, (old_count, new_count) in enumerate(course["schedule"], start=2):
+        train = _blended_train(old_count, new_count)
+        phases.append(
+            CoursePhase(
+                phase_id=f"G-{old_count:02d}-{new_count:02d}",
+                source_digest=content_digest(
+                    {"old": "synthetic-old", "new": "synthetic-new"}
+                ),
+                dataset_digest=content_digest({"train": train, "holdout": G_HOLDOUT}),
+                train_budget_bytes=len(train),
+                holdout_budget_bytes=len(G_HOLDOUT),
+                course_seed=int(course["course_seed"]),
+                order=order,
+            )
+        )
+    return ContinualCourseManifest(
+        course_id=str(course["course_id"]),
+        phases=tuple(phases),
+    )
+
+
+def _calibration_blocks(base: tuple[bytes, bytes, bytes]) -> tuple[bytes, ...]:
+    """Build equal-length/equal-mixture parent blocks with order-only variation."""
+
+    return tuple(
+        b"".join(base[(index + shift) % len(base)] for index in range(len(base)))
+        * CALIBRATION_REPEATS
+        for shift in range(len(base))
+    )
+
+
+def _calibrate_epsilon_from_scores(scores: dict[str, list[float]]) -> dict[str, Any]:
+    """Calibrate epsilon and fail closed when parent variance exceeds its cap."""
+
+    scores = {
+        domain: [float(value) for value in values]
+        for domain, values in scores.items()
+    }
+    means = {domain: sum(values) / len(values) for domain, values in scores.items()}
+    deviations = {
+        domain: max(abs(value - means[domain]) for value in values)
+        for domain, values in scores.items()
+    }
+    observed_max = max(deviations.values())
+    upper_bound = 0.05
+    calibration_valid = observed_max <= upper_bound
+    # Keep a bounded diagnostic epsilon so the rest of the report remains
+    # serializable, but never turn an over-budget parent variance into a pass.
+    epsilon = min(upper_bound, max(0.01, observed_max + 1e-6))
+    return {
+        "method": "parent-independent-holdout-block-max-deviation",
+        "upper_bound": upper_bound,
+        "block_scores": scores,
+        "means": means,
+        "max_deviation": observed_max,
+        "epsilon": epsilon,
+        "calibration_valid": calibration_valid,
+    }
+
+
+def _calibrate_epsilon(model: Taiji) -> dict[str, Any]:
+    """Calibrate a bounded non-inferiority epsilon before candidate training."""
+
+    blocks = {
+        "S": _calibration_blocks((b"caba-bbaa", b"abba-caba", b"bbaa-caba")),
+        "G": _calibration_blocks((b"xyz-uvw", b"uvw-zyx", b"zyx-uvw")),
+    }
+    scores = {
+        domain: [_score(model, block) for block in domain_blocks]
+        for domain, domain_blocks in blocks.items()
+    }
+    calibration = _calibrate_epsilon_from_scores(scores)
+    calibration["block_digests"] = {
+        domain: [content_digest({"domain": domain, "block": block}) for block in domain_blocks]
+        for domain, domain_blocks in blocks.items()
+    }
+    calibration["block_lengths"] = {
+        domain: [len(block) for block in domain_blocks]
+        for domain, domain_blocks in blocks.items()
+    }
+    return calibration
+
+
+def run_formal(parent_checkpoint: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Run three deterministic course orders against one inherited parent."""
+
+    parent = _load_parent(None) if parent_checkpoint is None else copy.deepcopy(parent_checkpoint)
+    if Taiji.DEVELOPMENTAL_F1_KEY in parent:
+        raise ValueError("R2 formal parent must be the pre-developmental F1 checkpoint")
+    parent_model = Taiji.from_checkpoint(copy.deepcopy(parent))
+    parent_digest = content_digest(parent)
+    parent_scores = {
+        "S": _score(parent_model, S_HOLDOUT),
+        "G": _score(parent_model, G_HOLDOUT),
+    }
+    calibration = _calibrate_epsilon(parent_model)
+    manifest_payloads = [_formal_manifest(course).to_payload() for course in FORMAL_COURSES]
+    arm_results: dict[str, dict[str, Any]] = {}
+    snapshots = []
+    read_only_digest = content_digest({"S": S_HOLDOUT, "G": G_HOLDOUT})
+    for course in FORMAL_COURSES:
+        course_id = str(course["course_id"])
+        arm_results[course_id] = {}
+        for arm_name in ("slow_only", "fast_only", "fast_replay"):
+            result = _arm(
+                parent,
+                arm_name,
+                parent_scores,
+                schedule=tuple(course["schedule"]),
+            )
+            result["course_id"] = course_id
+            result["course_seed"] = int(course["course_seed"])
+            arm_results[course_id][arm_name] = result
+            observations = tuple(
+                MetricObservation(
+                    metric_name="mean_surprise",
+                    domain_id=domain,
+                    checkpoint_digest=result["state"]["checkpoint_digest"],
+                    absolute_value=result["scores"][domain],
+                    owner_id=result["state"]["owner_graph_digest"],
+                    read_only_input_digest=read_only_digest,
+                    parent_delta=result["parent_delta"][domain],
+                    parent_checkpoint_digest=parent_digest,
+                )
+                for domain in ("S", "G")
+            )
+            snapshots.append(
+                ContinualEvaluationSnapshot(
+                    checkpoint_digest=result["state"]["checkpoint_digest"],
+                    phase_id=f"{course_id}:R2-final",
+                    owner_graph_digest=result["state"]["owner_graph_digest"],
+                    read_only_input_digest=read_only_digest,
+                    observations=observations,
+                    parent_checkpoint_digest=parent_digest,
+                    resource_cost=float(result["resources"]["train_bytes"]),
+                )
+            )
+    scorecard = ContinualScorecard(
+        metric_specs=(
+            MetricSpec(
+                name="mean_surprise",
+                direction="lower",
+                unit="nats_per_byte",
+                baseline_kind="parent",
+                domain_id="*",
+                critical=True,
+                catastrophic_forgetting_threshold=2.0,
+            ),
+        ),
+        snapshots=tuple(snapshots),
+        epsilon=float(calibration["epsilon"]),
+    )
+    retention = {
+        domain: scorecard.parent_retention("mean_surprise", domain)
+        for domain in ("S", "G")
+    }
+    comparison_rows = []
+    for course_id, results in arm_results.items():
+        for domain in ("S", "G"):
+            fixed = min(results["slow_only"]["scores"][domain], results["fast_only"]["scores"][domain])
+            replay = results["fast_replay"]["scores"][domain]
+            comparison_rows.append(
+                {
+                    "course_id": course_id,
+                    "domain": domain,
+                    "replay_minus_best_fixed": replay - fixed,
+                    "replay_not_worse_within_epsilon": (
+                        replay <= fixed + float(calibration["epsilon"])
+                    ),
+                    "replay_strictly_better": replay < fixed,
+                }
+            )
+    gates = {
+        "three_course_seed_orders": len(FORMAL_COURSES) >= 3,
+        "epsilon_calibrated_before_training": bool(calibration["calibration_valid"]),
+        "scorecard_non_inferiority_and_catastrophe": all(
+            result["non_inferiority"] and not result["catastrophic_forgetting"]
+            for result in retention.values()
+        ),
+        "replay_not_worse_than_strongest_fixed_arm": all(
+            row["replay_not_worse_within_epsilon"] for row in comparison_rows
+        ),
+        "replay_strictly_better_on_one_domain": any(
+            row["replay_strictly_better"] for row in comparison_rows
+        ),
+        "developmental_state_changes": all(
+            result["state"]["developmental_state_changed"]
+            for course in arm_results.values()
+            for result in course.values()
+        ),
+        "old_f1_owners_unchanged": all(
+            result["state"]["old_owner_unchanged"]
+            for course in arm_results.values()
+            for result in course.values()
+        ),
+        "fresh_restore_matches": all(
+            result["state"]["fresh_restore_matches"]
+            for course in arm_results.values()
+            for result in course.values()
+        ),
+        "fresh_restore_is_read_only": all(
+            result["state"]["restored_learning_mode"] == "read_only"
+            for course in arm_results.values()
+            for result in course.values()
+        ),
+        "rollback_matches_parent": all(
+            result["state"]["rollback_matches_parent"]
+            for course in arm_results.values()
+            for result in course.values()
+        ),
+        "real_replay_events_captured": all(
+            result["resources"]["replay_events_before_sleep"] > 0
+            for course in arm_results.values()
+            for arm_name, result in course.items()
+            if arm_name == "fast_replay"
+        ),
+    }
+    formal_passed = all(gates.values())
+    return {
+        "format": "taiji-m4v2-r2-formal-sg-v1",
+        "version": 1,
+        "status": "passed" if formal_passed else "failed",
+        "r2_candidate_accepted": formal_passed,
+        "can_promote": False,
+        "promotion_reason": "R2 formal does not establish R3 structure growth or the R6 A8 matrix",
+        "parent": {"checkpoint_digest": parent_digest, "scores": parent_scores},
+        "calibration": calibration,
+        "course_manifests": manifest_payloads,
+        "arms": arm_results,
+        "comparison": comparison_rows,
+        "scorecard": scorecard.to_payload(),
+        "scorecard_retention": retention,
+        "gates": gates,
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checkpoint", type=Path, default=None)
+    parser.add_argument("--formal", action="store_true")
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
     args = parser.parse_args(argv)
-    report = run_canary(_load_parent(args.checkpoint) if args.checkpoint else None)
+    parent = _load_parent(args.checkpoint) if args.checkpoint else None
+    report = run_formal(parent) if args.formal else run_canary(parent)
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(

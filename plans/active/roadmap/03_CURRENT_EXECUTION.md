@@ -75,7 +75,7 @@ Taiji 是唯一认知主体，Seed 是产品/runtime、Workbench、设备、权�
 
 ## 4. 当前唯一下一步
 
-M4.V2.R0、M4.V2.R1 与 R2 的第一阶段实现合同已完成；R2 单 CPU S/G smoke 通过但仍保持 `can_promote=false`。当前唯一下一步是 **M4.V2.R2.Formal：多 course-seed/order 的 S/G Gate**，在同一 parent/owner graph 上完成正式的稳定—可塑性证据后，才决定是否进入 R3 主路径结构桥。
+M4.V2.R0、M4.V2.R1 与 R2 已完成当前阶段的量尺、迁移、快/慢学习和 S/G formal Gate；R2 候选被接受，但整体仍保持 `can_promote=false`。当前唯一下一步是 **M4.V2.R3：主路径 zero-gated adaptive residual bridge**，在同一 Taiji observation→prediction/credit 主路径中接入一个关闭时严格等价的结构候选。
 
 R0 的实现与审计产物如下：
 
@@ -121,9 +121,13 @@ R1 完成条件：
 - `scripts/training/eval_taiji_m4v2_r2_canary.py`：固定同一 parent、同一 owner graph，对比 `slow_only`、`fast_only`、`fast_replay`；S 后接 `80/20 → 60/40 → 40/60 → 20/80` G 课程，生成 manifest、scorecard、parent delta、资源和恢复/回滚 Gate。
 - `reports/taiji_m4v2_r2_sg_canary_20260909.json`：单 CPU smoke 的三臂合同 Gate 全通过，S/G 的本次样本相对 parent 均为 lower-surprise 改善；这只证明实现边界和一次小课程闭合，不证明正式晋级。
 
-### 4.3 R2.Formal：多 course-seed/order S/G Gate（下一步）
+### 4.3 R2.Formal：多 course-seed/order S/G Gate（已完成）
 
-只复用 R2 的实现，不改 owner、不扩容、不接 R3。先以 parent 独立 block 的波动校准 `epsilon` 上限，再运行至少 3 个 course seed/order 的 S/G 短课程；每个 arm 都保留 frozen parent、slow-only、fast-only、fast+real replay+consolidation 四个对照。必须同时报告每个 S/G 域的绝对值、parent delta、comparison delta、worst-domain catastrophe、fast/slow/eligibility/importance/usage/age/plasticity 变化、资源和 fresh restore。若 replay 臂未稳定优于最强固定容量对照，或任何关键域越过灾难阈值，则恢复 R1 parent 并回到学习规则；不得用一次 smoke 的正 delta 进入 R3。
+只复用 R2 的实现，不改 owner、不扩容、不接 R3。已先以 parent 独立、等比例、等长度 block 的波动校准 epsilon，再运行 3 个 course seed/order 的 S/G 短课程；每个 arm 都保留 slow-only、fast-only、fast+real replay+consolidation 对照。正式报告为 `reports/taiji_m4v2_r2_formal_sg_20260909.json`：初版因把超过上限的 `0.4629` 波动截断为 `0.05` 而被 fail-closed；修正校准 block 后 `max_deviation=0.0176304`，epsilon=`0.0176304`，所有 Gate 通过。replay 相对每个 course 的最强 fixed-capacity arm 在 S/G 均不劣且严格更优，旧 F1 owner 未被写入，fresh restore/rollback/read-only 全通过。该结果接受 R2 候选，但不代表 R3 已通过，更不代表 A8 晋级。
+
+### 4.4 R3：主路径 zero-gated adaptive residual bridge（下一步）
+
+只实现一个最小结构桥，不创建多个专家、不引入任务 ID 路由、不接 Skill/MCP 或客户端外围。候选必须从当前 `observation → predictive context/readout → credit` 路径获得输入和误差：稳定 trunk 保持原 F1；新增 residual population 以输出 gate=0 出生；forward、credit、checkpoint、lesion 和 rollback 都必须消费同一 owner graph。先做 gate=0 的逐位/容差等价，再做显式开启后的 residual credit smoke；候选的 fast/slow 状态可复用 R2，但未通过 Gate 不得影响 protected 输出。若关闭态不等价、credit 没有真正进入主路径或 fresh restore/lesion 不闭合，恢复 R2 parent，不进入 R4 shadow 生长。
 
 本步骤不修改模型权重、不运行长训练、不引入新语料。建议实现位置：
 
@@ -155,7 +159,7 @@ R0 完成条件（已满足）：
 5. 定向 pytest、ruff、`git diff --check` 通过；
 6. 仍保持 `can_promote=false`。
 
-R1 通过后的唯一下一步是 R2 S/G canary；单 CPU smoke 通过后的唯一下一步是 R2.Formal 多 seed/order Gate。R2 未通过则回退学习/巩固规则，不得用结构扩容或客户端外围掩盖失败。
+R1 通过后的唯一下一步是 R2 S/G canary；R2 formal 通过后的唯一下一步是 R3 主路径结构桥。R3 未通过则回到 R2 parent，不得用 R4 扩容、客户端外围或新语料掩盖结构桥失败。
 
 ## 5. v2 课程与 Gate
 
