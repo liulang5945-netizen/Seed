@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 import sys
+from collections.abc import Mapping
 from contextlib import nullcontext
 from pathlib import Path
 from unittest.mock import patch
@@ -380,12 +381,17 @@ def _execute_workbench_action(
     capability_id: str,
     parameters: dict[str, object],
     first: bool,
+    boundary_token: Mapping[str, object],
 ) -> tuple[str, dict[str, object]]:
     """Select and execute one real Workbench action through native executive state."""
 
     _project_action_bindings(runtime, capability_id, parameters, first=first)
     snapshot_id = runtime.workbench_environment.capability_snapshot.snapshot_id
-    execution = runtime.execute_taiji_workbench_task(snapshot_id=snapshot_id, learn=False)
+    execution = runtime.execute_taiji_workbench_task(
+        snapshot_id=snapshot_id,
+        learn=False,
+        boundary_token=boundary_token,
+    )
     execution_payload = execution.get("execution")
     if not isinstance(execution_payload, dict):
         raise RuntimeError("native Workbench task did not produce an execution payload")
@@ -450,9 +456,27 @@ def _run_workbench_episode(
                 {"workspace.stat": {"path": "README.md"}}
             )
         )
+        capability_ids = tuple(
+            sorted(
+                {
+                    "workspace.read",
+                    "workspace.stat",
+                    *(capability_id for capability_id, _ in actions),
+                }
+            )
+        )
+        boundary_token = runtime.open_workbench_task_boundary(
+            project_id="project:interaction-group",
+            task_id=episode_id,
+            session_id=f"session:{episode_id}",
+            language_id="python",
+            capability_ids=capability_ids,
+            snapshot_id=runtime.workbench_environment.capability_snapshot.snapshot_id,
+        )["boundary"]
         neutral_execution = runtime.execute_taiji_workbench_task(
             snapshot_id=runtime.workbench_environment.capability_snapshot.snapshot_id,
             learn=False,
+            boundary_token=boundary_token,
         )
         neutral_payload = neutral_execution.get("execution")
         if not isinstance(neutral_payload, dict):
@@ -481,6 +505,7 @@ def _run_workbench_episode(
                 capability_id=capability_id,
                 parameters=parameters,
                 first=False,
+                boundary_token=boundary_token,
             )
             owner_id_by_event_id[event_id] = _workbench_owner(capability_id, parameters)
             execution_records.append(execution_record)
@@ -496,6 +521,7 @@ def _run_workbench_episode(
                 capability_id="workspace.read",
                 parameters={"path": "README.md"},
                 first=False,
+                boundary_token=boundary_token,
             )
             owner_id_by_event_id[event_id] = None
             recovery_effect = 1.0 if bool(recovery_record["success"]) else 0.0

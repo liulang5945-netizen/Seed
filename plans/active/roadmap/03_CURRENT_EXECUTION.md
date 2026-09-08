@@ -174,7 +174,9 @@ M7 CI 基线收敛第一批已完成：tracked source 的主 ruff 门禁从 9 �
 
 `test_synapse_longevity.py` 的失败也已完成归因：`SparseSynapses.local_update()` 已按接触资格门控 decay，decoder mass 没有发生蒸发；旧测试在 `learn_bytes()` 之后通过 `Seed.observe()` 默认进入 action readout，并继续学习共享 fabric，使 predictive decoder 的输入表征漂移，surprise 从 `2.481` 升到 `2.704`。测试现已沿 M2 合同显式使用 `readout="predictive"`、`use_memory=False`、`use_identity=False`；150 轮后 decoder mass 保持且 surprise 降至约 `1.356`，原阈值未放宽。
 
-**当前唯一下一步**：继续处理剩余 native 回归中的 `Workbench neutral baseline`，先在仓库可写 basetemp 下复现并区分默认基线契约与真实行为回归；保持 R4 shadow/默认 parent 不变，不通过放宽阈值消除失败，R5 learned router 及 Skill/MCP/provider/客户端外围继续冻结。
+`Workbench neutral baseline` 已完成归因：新的 Workbench task-boundary 合同要求 `execute_taiji_workbench_task()` 携带显式 token，运行时拒绝无 token 是安全行为，不是要放宽的基线；旧 longitudinal evaluator 没有打开 boundary。评估器现已为每个 episode 打开覆盖实际 capability 的 boundary，并让 neutral、正常动作和 recovery 共享同一 token，Workbench longitudinal、interaction-group Workbench 与 structural bridge 相关回归共 `24 passed`。
+
+**当前唯一下一步**：在仓库可写 basetemp 下重新运行完整 `tests/taiji_native`，刷新修复后的失败账本并按首个真实失败继续归因；保持 R4 shadow/默认 parent 不变，不通过放宽阈值消除失败，R5 learned router 及 Skill/MCP/provider/客户端外围继续冻结。
 
 R0 完成条件（已满足）：
 
