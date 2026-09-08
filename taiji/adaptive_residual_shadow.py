@@ -371,6 +371,23 @@ class AdaptiveResidualShadow:
             ).indices
             pre_index[candidate_index].copy_(selected.to(pre_index.dtype))
             edge_weight[candidate_index].copy_(dense[selected])
+            target_squared_norm = torch.zeros(
+                (),
+                device=edge_weight.device,
+                dtype=edge_weight.dtype,
+            )
+            for anchor_index, anchor_weight in zip(anchor_indices, anchor_weights):
+                target_squared_norm = target_squared_norm + float(anchor_weight) * (
+                    edge_weight[anchor_index].pow(2).sum()
+                )
+            candidate_squared_norm = edge_weight[candidate_index].pow(2).sum()
+            if float(target_squared_norm.item()) > 1e-12 and float(
+                candidate_squared_norm.item()
+            ) > 1e-12:
+                edge_weight[candidate_index].copy_(
+                    edge_weight[candidate_index]
+                    * torch.sqrt(target_squared_norm / candidate_squared_norm)
+                )
 
         mix_row(
             region.incoming.pre_index,
@@ -833,6 +850,19 @@ class AdaptiveResidualShadow:
                 projection.edge_weight[int(anchor_index), candidate_positions] = float(
                     anchor_weight
                 )
+        candidate_mask = projection.pre_index == candidate_index
+        candidate_weights = projection.edge_weight[candidate_mask]
+        if candidate_weights.numel() == 0:
+            return
+        target_squared_norm = torch.as_tensor(
+            sum(float(value) for value in anchor_weights),
+            device=projection.device,
+            dtype=projection.edge_weight.dtype,
+        )
+        candidate_squared_norm = candidate_weights.pow(2).sum()
+        if float(candidate_squared_norm.item()) > 1e-12:
+            scale = torch.sqrt(target_squared_norm / candidate_squared_norm)
+            projection.edge_weight[candidate_mask] = candidate_weights * scale
 
     @classmethod
     def from_checkpoint(

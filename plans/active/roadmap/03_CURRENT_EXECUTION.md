@@ -139,7 +139,7 @@ R3 只实现一个最小结构桥，不创建多个专家、不引入任务 ID �
 
 R3 canary 结果：所有 12 项 Gate 通过；`gate=0` 输出与 parent 完全一致，active residual `L1=1.30631685`，概率最大变化 `0.00535537`，local credit 改变 bridge payload，mature F1 两个 owner 未变，fresh restore/lesion/rollback 通过。该结果只接受“结构候选已进入主路径”的技术事实，不接受结构成长或 A8 晋级，`can_promote=false` 保持不变。
 
-### 4.5 R4：shadow 生长与 matched-capacity 对照（当前唯一下一步）
+### 4.5 R4：shadow 生长与 matched-capacity 对照（阶段收束，未晋级）
 
 R4 要回答的不是“能否再创建一个区域”，而是“固定容量已出现可观测压力时，按真实压力出生的候选是否比随机增长和从一开始就等量预分配更有用”。只允许沿 R3 bridge 这一个结构入口做第一轮 shadow growth；不引入 learned router、不接 Skill/MCP、不接客户端外围。
 
@@ -161,10 +161,12 @@ R4 要回答的不是“能否再创建一个区域”，而是“固定容量�
 14. **dual-state context gate（已完成一轮，未晋级）**：gate projection 的输入改为 parent instantaneous activity 与 parent eligibility 的拼接；所有 growth/fixed-large 臂使用相同新 topology，技术 Gate、checkpoint、restore、rollback 全通过。canonical holdout 的 S/G gate 约 `0.451/0.429`，formal G lesion 仍仅 `2/9` 正，说明局部双状态略有区分但不能支撑未见 G 泛化。
 15. **three-source context gate（已完成一轮，未晋级）**：gate 输入扩展为 parent bridge input context + instantaneous activity + eligibility；所有 growth/fixed-large arm 使用相同 topology，技术 Gate、checkpoint、restore、rollback 全通过，但 canonical holdout S/G gate 约 `0.419/0.422`，formal G lesion 仅 `2/9` 正，说明继续扩 gate 输入不能修复出生功能未对齐。
 16. **aligned pressure birth output（已完成一轮，部分通过）**：pressure anchor/mixture 在 materialization 时同步初始化 candidate→context output projection，使候选输出映射继承同一 anchor mixture；formal G lesion 均值约 `-0.000008`、`7/9` non-worse，S lesion `9/9` 正，但 pressure 相对 fixed-large 的 G 仍平均劣化 `0.00287`，只能接受“功能伤害基本消除”，不能晋级。
-17. **birth homeostasis（当前唯一下一步）**：对 aligned anchor mixture 的 incoming/recurrent/output candidate mapping 做 deterministic weighted-second-moment norm matching，避免新单元因稀疏截断和 mixture 权重而出现过强或过弱的有效范数；保持三源 gate、direct exact credit、parent、pressure、课程、预算、projection 和 fixed/random 对照不变，先 canonical，再 9-cell。
-18. **因果 Gate**：矩阵中候选增益必须在未见 holdout 上稳定出现；growth lesion 必须消除新增增益；旧能力满足 calibrated non-inferiority；fresh restore、rollback、参数/内存/延迟预算全通过。任何一项失败恢复 R3/pressure parent，不进入 R5 router。
+17. **birth homeostasis（已完成一轮，部分通过）**：对 aligned anchor mixture 的 incoming/recurrent/output candidate mapping 做 deterministic weighted-second-moment norm matching，避免新单元因稀疏截断和 mixture 权重而出现过强或过弱的有效范数；保持三源 gate、direct exact credit、parent、pressure、课程、预算、projection 和 fixed/random 对照不变，完成 canonical→9-cell。formal 中 G candidate lesion 均值 `+0.003081`（`6/9` 胜出、`9/9` 不劣），S 均值 `+0.080387`（`9/9` 胜出）；相对 fixed-capacity 的 G/S 均为 `9/9` 改善。它证明 homeostasis 修复了出生映射的量级失配并恢复候选的可观测因果贡献，但相对同等最终参数量的 fixed-large，G 均值仍为 `+0.001002`、仅 `4/9` 胜出，不能证明压力驱动生长优于从一开始预分配。
+18. **因果 Gate 与 R4 收束（已完成判定，未晋级）**：candidate lesion、fresh restore、rollback、owner 隔离、matched parent boundary 和 9-cell 技术 Gate 全通过；但 fixed-large 的 G 非劣/优效条件未通过，故只能接受“候选确实产生因果增益且 homeostasis 降低了新增伤害”，不能接受“压力驱动结构生长已优于等量预分配”。`can_promote=false` 保持不变，默认能力继续使用 R3/pressure parent，homeostasis 只保留在 shadow 实验路径，不进入 R5 learned router。
 
-R4 的最小交付仍是 `pressure/proposal → shadow materialize → shadow train → validate → lesion/admit/rollback` 的一个可复现 CPU canary 和 versioned report；aligned output birth 已基本消除 G holdout 的新增伤害，但尚未优于 fixed-large，下一轮只做 deterministic birth homeostasis，不改变 gate、credit、parent、pressure、课程、预算或对照边界；不能把 pressure proposal、候选存在、materialization、单次训练步或单次 BPB 下降写成成功；R4 通过后才解冻 R5 自主路由，Skill/MCP/provider/客户端继续按第 6 节冻结。
+R4 的最小交付 `pressure/proposal → shadow materialize → shadow train → validate → lesion/admit/rollback` 已形成可复现 CPU canary 和 versioned report；birth homeostasis 已把 G candidate lesion 从此前的负均值修复到正均值，但相对 fixed-large 的 G 仍未达 Gate，因此 R4 以“技术闭合、结构不晋级”收束。后续只允许做收束审计、默认路径保护和计划证据整理，不得继续用 gate 输入、出生缩放或新语料无边界试探来掩盖 fixed-large 反证；R5 自主路由、Skill/MCP/provider/客户端外围继续冻结，直到新的架构决策明确解除停止线。
+
+**当前唯一下一步**：完成 R4 收束审计，确认 homeostasis 仍只存在于 shadow 路径、默认 parent/checkpoint/forward 未被候选污染，并在提交前执行全量 CI；审计通过后保留 R4 证据并停在 R5 解冻决策点。
 
 R0 完成条件（已满足）：
 
