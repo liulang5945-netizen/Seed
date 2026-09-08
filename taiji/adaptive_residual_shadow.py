@@ -103,13 +103,22 @@ class AdaptiveResidualShadow:
         if gate_projection is not None:
             if gate_projection.out_features != 1:
                 raise ValueError("adaptive residual shadow gate must have one output")
-            if gate_projection.in_features != int(candidate.parent_unit_count):
+            if gate_projection.in_features not in {
+                int(candidate.parent_unit_count),
+                2 * int(candidate.parent_unit_count),
+            }:
                 raise ValueError("adaptive residual shadow gate input dimension mismatch")
+        gate_input_dim = (
+            int(candidate.parent_unit_count)
+            if gate_projection is None
+            else int(gate_projection.in_features)
+        )
+        self._gate_input_dim = gate_input_dim
         self._gate = 0.0
         self._lesioned = False
         self._last_input = torch.zeros(self.output_dim, device=self.device)
         self._last_activity = torch.zeros(self.unit_count, device=self.device)
-        self._last_gate_input = torch.zeros(candidate.parent_unit_count, device=self.device)
+        self._last_gate_input = torch.zeros(gate_input_dim, device=self.device)
         self._last_parent_context = torch.zeros(self.output_dim, device=self.device)
         self._last_counterfactual_parent_probabilities = torch.zeros(
             self.config.alphabet_size,
@@ -423,9 +432,14 @@ class AdaptiveResidualShadow:
         residual = self.output_projection.forward(activity)
         candidate_gate = 1.0
         if self.gate_projection is not None:
-            parent_trace = self.region.trace[: self.candidate.parent_unit_count]
-            self._last_gate_input.copy_(parent_trace)
-            gate_logit = self._candidate_gate_bias + self.gate_projection.forward(parent_trace)[0]
+            parent_count = int(self.candidate.parent_unit_count)
+            parent_trace = self.region.trace[:parent_count]
+            if self.gate_projection.in_features == parent_count:
+                gate_input = parent_trace
+            else:
+                gate_input = torch.cat((activity[:parent_count], parent_trace), dim=0)
+            self._last_gate_input.copy_(gate_input)
+            gate_logit = self._candidate_gate_bias + self.gate_projection.forward(gate_input)[0]
             candidate_gate = float(torch.sigmoid(gate_logit).item())
         self._last_candidate_gate = candidate_gate
         gated_candidate_residual = candidate_residual * candidate_gate
@@ -693,7 +707,7 @@ class AdaptiveResidualShadow:
         )
         gate_projection = cls._new_gate_projection(
             config,
-            parent_unit_count=candidate.parent_unit_count,
+            input_dim=2 * int(candidate.parent_unit_count),
             generator=growth_generator,
             device=device,
         )
@@ -723,14 +737,14 @@ class AdaptiveResidualShadow:
     def _new_gate_projection(
         config: TaijiConfig,
         *,
-        parent_unit_count: int,
+        input_dim: int,
         generator: torch.Generator,
         device: torch.device | str,
     ) -> SparseSynapses:
         projection = SparseSynapses(
             1,
-            parent_unit_count,
-            min(parent_unit_count, max(1, int(config.predictive_context_fan_in))),
+            int(input_dim),
+            min(int(input_dim), max(1, int(config.predictive_context_fan_in))),
             generator=generator,
             init_scale=float(config.weight_init_scale),
             max_weight_norm=float(config.max_weight_norm),
@@ -898,7 +912,7 @@ class AdaptiveResidualShadow:
             if gate_input is None:
                 raise ValueError("adaptive residual shadow gate input state is missing")
             shadow._last_gate_input = gate_input.detach().to(shadow.device).clone()
-            if shadow._last_gate_input.shape != (candidate.parent_unit_count,):
+            if shadow._last_gate_input.shape != (gate_projection.in_features,):
                 raise ValueError("adaptive residual shadow gate input shape mismatch")
             gate_bias = payload.get("candidate_gate_bias", 0.0)
             shadow._candidate_gate_bias = torch.as_tensor(

@@ -189,6 +189,8 @@ def test_r4_live_pressure_is_emitted_by_bridge_tick_and_restores_exactly() -> No
     parent_region_payload = parent_region.to_payload()
     shadow = model.materialize_adaptive_residual_shadow()
     assert shadow.gate == 0.0
+    assert shadow.gate_projection is not None
+    assert shadow.gate_projection.in_features == 2 * candidate.parent_unit_count
     assert shadow.unit_count == candidate.proposed_unit_count
     assert candidate.unit_id in shadow.region.unit_ids
     assert shadow.birth_anchor_unit_id in parent_region.unit_ids
