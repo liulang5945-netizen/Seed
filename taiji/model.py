@@ -9,6 +9,10 @@ from typing import Any
 import torch
 
 from .config import TaijiConfig, validate_episodic_learning_target
+from .developmental_synapse import (
+    DevelopmentalSynapseBundle,
+    DevelopmentalSynapseContractError,
+)
 from .fabric import TaijiFabric
 from .identity_organ import (
     IDENTITY_ORGAN_UNBOUND_PROVENANCE,
@@ -60,6 +64,7 @@ class Taiji:
     GATED_TEMPORAL_CANDIDATE_SEED_OFFSET = 5927
     READOUT_REGISTRY_FORMAT = "taiji-predictive-readout-registry-v1"
     READOUT_REGISTRY_VERSION = 1
+    DEVELOPMENTAL_F1_KEY = "developmental_f1"
 
     def __init__(
         self,
@@ -100,6 +105,10 @@ class Taiji:
         # checkpoints, so the default v10 path retains its original payload
         # and prediction behavior exactly.
         self._gated_temporal_candidate: GatedMultiTimescaleTemporalResidual | None = None
+        # R1 migration state is an explicit, read-only F1 overlay.  It is
+        # absent from ordinary v10 checkpoints, so the default path remains
+        # byte-for-byte compatible with the pre-R1 architecture.
+        self._developmental_f1_bundle: DevelopmentalSynapseBundle | None = None
         self._memory_rng = torch.Generator(device="cpu")
         self._memory_rng.set_state(self._rng.get_state().clone())
         self.memory = EpisodicField(self.config, generator=self._memory_rng, device=self.device)
@@ -259,6 +268,59 @@ class Taiji:
         after = content_digest(self._gated_temporal_candidate.to_payload())
         return before, after
 
+    @property
+    def developmental_f1_enabled(self) -> bool:
+        """Whether the R1 fast/slow F1 overlay is mounted on predictive reads."""
+
+        return self._developmental_f1_bundle is not None
+
+    @property
+    def developmental_f1_bundle(self) -> DevelopmentalSynapseBundle | None:
+        return self._developmental_f1_bundle
+
+    def _developmental_f1_bank(self, owner_id: str):
+        if self._developmental_f1_bundle is None:
+            return None
+        return self._developmental_f1_bundle.bank(owner_id)
+
+    @torch.no_grad()
+    def migrate_f1_to_developmental_synapses(self) -> dict[str, Any]:
+        """Mount an exact, read-only fast/slow view over the current F1 state.
+
+        This migration records the current checkpoint as the parent and copies
+        its two F1 sparse banks into slow weights.  No model tensor is
+        modified; the forward path only switches to the mathematically
+        equivalent ``slow + fast`` view, where ``fast`` is zero.
+        """
+
+        if self._developmental_f1_bundle is not None:
+            raise RuntimeError("developmental F1 state is already mounted")
+        if self._state.pending_action is not None or self._state.pending_experience is not None:
+            raise RuntimeError("developmental F1 migration requires a settled state")
+        source_checkpoint = self.checkpoint()
+        bundle = DevelopmentalSynapseBundle.from_taiji_checkpoint(source_checkpoint)
+        expected_config_digest = content_digest(self.config.to_dict())
+        if bundle.config_digest != expected_config_digest:
+            raise DevelopmentalSynapseContractError(
+                "developmental F1 bundle configuration does not match model"
+            )
+        self._developmental_f1_bundle = bundle
+        return {
+            "format": "taiji-developmental-f1-migration-v1",
+            "source_checkpoint_digest": bundle.source_checkpoint_digest,
+            "owner_graph_digest": bundle.owner_graph_digest,
+            "fast_is_zero": bundle.fast_is_zero,
+            "effective_parameter_count": bundle.effective_parameter_count,
+            "state_scalar_count": bundle.state_scalar_count,
+            "bundle_digest": content_digest(bundle.to_payload()),
+        }
+
+    @torch.no_grad()
+    def unmount_developmental_f1(self) -> None:
+        """Remove the read-only R1 overlay and return to the original F1 path."""
+
+        self._developmental_f1_bundle = None
+
     def _protected_readout_parent_digest(self) -> str:
         """Digest the stable owners an active readout is allowed to branch from.
 
@@ -281,6 +343,8 @@ class Taiji:
             payload[self.GATED_TEMPORAL_CANDIDATE_KEY] = (
                 self._gated_temporal_candidate.to_payload()
             )
+        if self._developmental_f1_bundle is not None:
+            payload[self.DEVELOPMENTAL_F1_KEY] = self._developmental_f1_bundle.to_payload()
         if self.identity_organ is not None:
             payload["identity_organ"] = self.identity_organ.to_payload(
                 parent_checkpoint_digest=content_digest(payload),
@@ -676,6 +740,14 @@ class Taiji:
         predictive_readout_learning = (
             learn if learn_predictive_readout is None else bool(learn_predictive_readout)
         )
+        developmental_f1_read_only = (
+            self._developmental_f1_bundle is not None
+            and predictive_readout is self.predictive_readout
+        )
+        if developmental_f1_read_only and readout == "predictive" and learn and (
+            predictive_readout_learning or predictive_context_learning
+        ):
+            raise RuntimeError("developmental F1 R1 state is read-only until R2")
         memory_write_strength = 0.0
         if previous.pending_experience is not None:
             pending_experience = previous.pending_experience
@@ -801,6 +873,11 @@ class Taiji:
             base_context, predictive_context_trace = self.predictive_context.encode(
                 self.fabric.predictive_context(regions),
                 prior_context=prior_predictive_context,
+                recurrent_override=(
+                    self._developmental_f1_bank("predictive_context.recurrent")
+                    if developmental_f1_read_only
+                    else None
+                ),
             )
             if self._gated_temporal_candidate is None:
                 context = base_context
@@ -836,6 +913,11 @@ class Taiji:
             probabilities = predictive_readout.probabilities(
                 context,
                 episodic_evidence=episodic_evidence,
+                synapses_override=(
+                    self._developmental_f1_bank("predictive_readout.synapses")
+                    if developmental_f1_read_only
+                    else None
+                ),
             )
         elif identity_addressing_used and use_delayed_memory_verdict:
             # M1-66: once the identity organ routes a cue, it owns the value
@@ -1742,6 +1824,8 @@ class Taiji:
             core[self.GATED_TEMPORAL_CANDIDATE_KEY] = (
                 self._gated_temporal_candidate.to_payload()
             )
+        if self._developmental_f1_bundle is not None:
+            core[self.DEVELOPMENTAL_F1_KEY] = self._developmental_f1_bundle.to_payload()
         return core
 
     def checkpoint(self) -> dict[str, Any]:
@@ -1827,6 +1911,17 @@ class Taiji:
             )
             candidate.load_payload(candidate_payload)
             self._gated_temporal_candidate = candidate
+        developmental_payload = checkpoint.get(self.DEVELOPMENTAL_F1_KEY)
+        self._developmental_f1_bundle = None
+        if developmental_payload is not None:
+            if is_legacy_checkpoint:
+                raise ValueError("legacy checkpoint cannot contain developmental F1 state")
+            if not isinstance(developmental_payload, Mapping):
+                raise ValueError("developmental F1 checkpoint payload is invalid")
+            bundle = DevelopmentalSynapseBundle.from_payload(developmental_payload)
+            if bundle.config_digest != content_digest(self.config.to_dict()):
+                raise ValueError("developmental F1 checkpoint configuration does not match")
+            self._developmental_f1_bundle = bundle
         self.memory.load_payload(checkpoint["memory"])
         identity_payload = checkpoint.get("identity_organ")
         if self.identity_organ is None:
@@ -1845,6 +1940,7 @@ class Taiji:
                         include_temporal_candidate=(
                             self.GATED_TEMPORAL_CANDIDATE_KEY in checkpoint
                         ),
+                        include_developmental_f1=self.DEVELOPMENTAL_F1_KEY in checkpoint,
                     )
                 }
             )
@@ -1958,6 +2054,7 @@ class Taiji:
         include_predictive: bool = True,
         include_predictive_context: bool | None = None,
         include_temporal_candidate: bool = False,
+        include_developmental_f1: bool = False,
     ) -> tuple[str, ...]:
         if include_predictive_context is None:
             # Existing callers reconstructing a v8 lineage pass only
@@ -1979,6 +2076,8 @@ class Taiji:
             keys += ("predictive_context",)
         if include_temporal_candidate:
             keys += (Taiji.GATED_TEMPORAL_CANDIDATE_KEY,)
+        if include_developmental_f1:
+            keys += (Taiji.DEVELOPMENTAL_F1_KEY,)
         return (*keys, "memory", "state", "rng_state")
 
     @classmethod
