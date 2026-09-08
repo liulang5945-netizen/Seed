@@ -4,6 +4,8 @@
 >
 > 本轮已完成数据契约代码、审计报告和回归测试；不会改写旧报告，下一步只从原始 child 重新生成独立证据。历史 M0/M1/M2-2a～2ae 的有效成果保留；旧“下一步”全部失效。重审依据见 [研究审视](../../reference/TAIJI_RESEARCH_REVIEW_2026_09_06.md)，原文见 [历史快照](../../archive/history/research_review_20260906/README.md)。
 >
+> 最新 M4.R3 状态：pilot 预算三 seed attribution 技术 Gate 全部通过，但 joint C″ gain 均值 `+0.017105 BPB`、正向 `2/3`、C cycle2 退化 `2/3`；三臂均未通过 retention，`joint_attribution_supported=false`。当前转入 M4.R4 课程/数据分布与更新尺度审计，不跑 foundation formal、不扩容。
+>
 > **审计范围声明：** 本版不是只读 plans 得出的排程。它已对当前 `main` 的关键模型、数据、训练和 evaluator 代码、实际 JSON 报告与现存 checkpoint 做定向交叉核对，并对 active/protected 评分调用链和 B5 数据流做最小复现；但没有逐行审计仓库全部客户端、前端、CI 和历史模块。因此“当前证据”有代码或产物支撑，“后续候选/待验证”仍是计划假设，不能提前当作已实现能力。
 
 ## 1. 当前定位与本次调整
@@ -49,6 +51,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | M4.R2 capacity diagnosis canary（已完成且不支持扩容） | 实验 artifact `eval_taiji_m4r2_capacity_diagnosis_canary.py`；A fixed-capacity active slot vs B frozen old slot + zero-initialized incremental slot；19/19 technical/owner/detach/rollback/fresh-restore checks；报告 `reports/taiji_m4r2_capacity_diagnosis_canary_seed11_20260908.json` | A/B 旧 C cycle2/cycle3 均未退化，但 C″ gain 为 `-0.002763/-0.019737 BPB`；B 增量槽 `50372 bytes`，容量压力 Gate 为 false，不进入 formal；下一步转 M4.R3 更新干扰/表征归因 |
 | M4.R3 update interference canary（seed11 smoke 已完成，未晋级） | artifact `eval_taiji_m4r3_update_interference_canary.py`；readout-only/context-only/joint 三臂共享 fixed-capacity、record-disjoint C→C′→C″ 课程；技术、owner、lesion、read-only、checkpoint/fresh-restore Gate 全通过；报告 `reports/taiji_m4r3_update_interference_canary_seed11_20260908.json` | C″ gain 分别为 `-0.002763/+0.019989/+0.007433 BPB`；context-only 的 C cycle2/cycle3 delta 为 `+0.023897/+0.007821`，joint 为 `-0.020216/-0.055148`；单 seed 只支持“joint 值得复测”，不做 formal/promote，下一步跑三 seed smoke |
 | M4.R3 update interference aggregate（三 seed smoke 已完成，未晋级） | seed11/29/47 同一 canary、4 KiB train/1 KiB eval、三臂技术/owner/lesion/read-only/checkpoint Gate 全通过；aggregate `reports/taiji_m4r3_update_interference_aggregate_20260908.json` | joint C″ gain 均值 `+0.050851 BPB`、正向 `3/3`、C cycle2/cycle3 退化 `0/3`；context-only gain 正向 `3/3` 但 cycle2 退化 `2/3`；readout-only retention `3/3` 通过但 gain `2/3` 正；进入更大预算 joint attribution comparison，仍不 promotion |
+| M4.R3 pilot attribution aggregate（三 seed 已完成，停止 formalization） | seed11/29/47 同一三臂 canary、pilot profile 的 16 KiB train/4 KiB eval；技术、owner、lesion、read-only、checkpoint Gate 全通过；aggregate `reports/taiji_m4r3_update_interference_pilot_aggregate_20260908.json` | joint C″ gain 均值 `+0.017105 BPB`、正向 `2/3`、C cycle2 退化 `2/3`；context-only gain 均值 `+0.026450 BPB`、正向 `2/3`、C cycle2 退化 `2/3`；readout-only gain 均值 `+0.004278 BPB`、正向 `2/3`；三臂 retention 均不通过，`joint_attribution_supported=false`，转课程/数据/更新尺度审计 |
 | M2.R2.R0 seed11 smoke | 固定 seed11 parent，frozen/active_readout 两臂、4/16 KiB、4 点；20/20 技术检查通过；曾捕获默认绝对 corpus path 导致 lineage digest 不一致，已修正为 child 生成时的相对 canonical path | checkpoint preflight digest 一致；active owner 只写 active slot，但 holdout gain 为 `-0.06255/-0.14109 BPB`；smoke 仅作执行链证据，不晋级 |
 | M2.R2.R0 seed11 formal curve | 固定 seed11 parent，frozen/active_readout/predictive_context/joint_predictive 四臂、4/16/64 KiB、12 点；60/60 技术检查通过；preflight checkpoint `33,174,421` bytes，峰值工作集约 `535–569 MB` | protected holdout baseline `4.049390 BPB`；context gain 为 `+0.001515/+0.023738/-0.016105`，16 KiB 之外不稳定；active gain `-0.062549/-0.141091/-0.165254`，joint gain `-0.058237/-0.120990/-0.153693`；owner 写入集合与 read-only scoring 全部正确，当前不引入新架构 |
 | M2.R2.R0 context aggregate | seed11 formal + seed29/47 context 复现共 24 点、120/120 技术检查通过，来源报告 SHA-256 已写入 aggregate | 4 KiB gain 均值 `+0.007681`（3/3 正）；16 KiB `+0.018081`（2/3 正）；64 KiB `-0.010650`（1/3 正）；结论是短/中预算有信号但长预算不成立，先做消融与参照，不做时间架构晋级 |
@@ -86,7 +89,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 | 4 | M2.R3 语义与表达训练 | **R3.R0～R3.R4 已完成**：结构化语义训练合同、可选 runtime owner/checkpoint、多实体/关系/约束多 seed canary、多步事件到持久 WorldState/Goal satisfaction、runtime adapter 接线已闭合 | runtime 输入只来自当前 `PerceptEvent`；事实/Goal/ContentPlan/WorldState 结果可审计；provider 表达收益与 native-only 分开统计 |
 | 5 | M2.R4 联合课程与保持 | **已完成**：frozen/static-only/transition-only/joint-native 对照、双 owner 组合、runtime 双组件 checkpoint 和 protected retention 已闭合；不把独立 owner 的串行课程称为共享权重联合优化 | 三 seed 正式报告；joint-native 新组合通过且两个受保护 owner 均保持 |
 | 6 | M3 最小真实任务验证 | **M3.R0/R1/R2/R3/R4/R5 已完成；真实客户端批准流仍是决策闸门**：R0 闭合只读证据边界，R1 训练静态 observation，R2 训练跨 tick task-state transition，R3 形成 snapshot 绑定只读 `ActionIntent`，R4 闭合 preview/approval，R5 在隔离副本验证一次执行与 undo | R5 已证明 exact approval token、digest、执行一次、undo 和恢复拒绝；真实客户端 API/UI 接线会扩大外部副作用范围，未获明确授权不接线 |
-| 7 | M4 连续成长 | **M4.R0 已完成且不晋级；M4.R1 formal 已完成但 retention Gate 否决；M4.R2 capacity diagnosis canary 已完成且不支持扩容；M4.R3 三 seed smoke aggregate 已完成，joint 进入更大预算归因比较** | 更大预算必须在同一 record-disjoint 三周期课程上复现 joint 的新收益与旧能力 retention，并与 readout/context 对照；在正式归因完成前不扩容、不把新分支当作成长成功 |
+| 7 | M4 连续成长 | **M4.R0 已完成且不晋级；M4.R1 formal 已完成但 retention Gate 否决；M4.R2 capacity diagnosis canary 已完成且不支持扩容；M4.R3 pilot attribution 已完成且未通过 retention，转 M4.R4 课程/数据/更新尺度审计** | M4.R4 必须在不改变模型结构的前提下，分离 C/C′/C″ 课程难度、分布差异、固定容量 owner 更新幅度和旧能力 retention；在审计完成前不 formal、不扩容、不把新分支当作成长成功 |
 | 8 | M5 知识与身体 | Skill/MCP 数据内化、真实调用与客户端插件 | 认知与执行收益可分别归因，权限/撤销闭合 |
 | 9 | M6 产品收口 | provider 稳定性、UI/桌面、遗留格式清理 | packaged client 与真实能力一致 |
 | 横向 | M7 工程质量 | 每轮相关检查，阶段末全矩阵，发布时集中核验 | 无新增 CI 退化；正式发布绑定代码/数据/模型/包 |
@@ -96,7 +99,7 @@ Taiji 要形成拥有持续状态、异质群体、可学习表征、记忆、�
 
 ## 4. 当前唯一下一步
 
-**唯一下一步：执行 M4.R3 更大预算的三臂 attribution comparison。** M4.R2 已验证增量容量没有新 C″ 收益，因此不能继续扩容；M4.R3 三 seed 4 KiB/1 KiB smoke 已显示 joint C″ gain `3/3` 正且 C cycle2/cycle3 retention `0/3` 退化。下一轮固定同一 source/record-disjoint C→C′→C″ 数据链，提升到 `pilot` 预算（每周期 16 KiB train、4 KiB eval），保留 readout-only/context-only/joint 三臂和同一 scorer，验证 smoke 信号是否随预算保持。只有更大预算仍同时满足 joint 新收益与旧能力保持，才允许提出 formal 规则更新；不启用 gated temporal candidate、接入 provider/MCP 或接线真实客户端写入。
+**唯一下一步：实现 M4.R4 的课程/数据分布与更新尺度审计 canary。** M4.R2 已验证增量容量没有新 C″ 收益，因此不能继续扩容；M4.R3 pilot 已证明三臂技术链闭合，但 joint 的新收益只在 `2/3` seed 为正且 C cycle2 retention `2/3` 退化，不能进入 formal；继续增加训练预算只会放大未解释的课程差异。M4.R4 保持同一 inherited source 和 record-disjoint C→C′→C″ 数据链，不改模型结构，先对每个 phase 做 frozen baseline、train/holdout byte 分布/熵/novelty、相邻 phase 难度和更新前后 owner digest/误差能量审计，并复用现有三臂结果做“数据分布 vs 更新干扰”归因。只有审计证明课程难度可比且更新尺度是主要变量，才提出单一学习率/更新规则 canary；否则先修数据合同。不启用 gated temporal candidate、增量容量、provider/MCP 或真实客户端写入。
 
 2026-09-06 实际审计已证明首轮报告不能作为能力证据：旧 evaluator 的 C/C′ 只是换 partition seed，不是新记录。当前已落地的修复为 `scripts/training/eval_taiji_m2r1_phase_c_canary.py` v2、`scripts/training/audit_taiji_m2r1_data_contract.py` 和 `reports/taiji_m2r1_data_contract_20260906.json`：
 
@@ -336,7 +339,7 @@ M4.R1 已把“只要给 active readout 加保持项就能自然巩固”的假�
 - **实际结果**：`reports/taiji_m4r2_capacity_diagnosis_canary_seed11_20260908.json` 通过 19/19 technical/owner/detach/rollback/checkpoint/fresh-restore checks；A/B 旧 C cycle2/cycle3 均未退化，但 C″ gain 分别为 `-0.002763/-0.019737 BPB`，B 的增量槽为 `50372 bytes`，`capacity_pressure_supported=false`。
 - **停止线结论**：B 没有在同等旧能力保持约束下产生新 C″ 收益，因此不跑 formal、不接入默认运行时、不再继续扩宽；下一步转 M4.R3，直接区分 readout 更新、predictive context 表征更新和联合更新的 credit/干扰。
 
-### M4.R3：固定容量更新干扰与表征 credit 归因（三 seed smoke 已完成，更大预算下一步）
+### M4.R3：固定容量更新干扰与表征 credit 归因（pilot 已完成，未通过 retention）
 
 M4.R2 排除了“只要增加一个零初始化 readout 槽就能解释当前瓶颈”。M4.R3 不改生产架构、不增加容量，而是在同一 inherited source 和同一 record-disjoint C→C′→C″ 课程上把可塑性分成三个 owner 路径，回答新能力与旧能力退化究竟来自 readout 更新、predictive context 表征更新，还是两者联合时的相互干扰。
 
@@ -346,7 +349,8 @@ M4.R2 排除了“只要增加一个零初始化 readout 槽就能解释当前�
 - **canary Gate**：CPU smoke 必须通过三臂 record-disjoint lineage、每臂写集合与 lesion、protected readout/fabric/memory 不变（除 B/C 明确声明的 context owner）、C/C′/C″ read-only score、旧 retention、checkpoint/fresh-process、source digest、训练/评分成本和失败回滚；任一 Gate 失败不跑 formal。
 - **seed11 结果**：报告 `reports/taiji_m4r3_update_interference_canary_seed11_20260908.json` 技术 Gate 全通过；readout-only C″ gain=`-0.002763 BPB` 且 C/C′ retention 未退化，context-only gain=`+0.019989 BPB` 但 C retention 退化，joint gain=`+0.007433 BPB` 且该 seed 的 C/C2 retention 未退化。结论是 joint 候选值得复测，但不能由单 seed smoke 晋级。
 - **三 seed smoke aggregate**：`reports/taiji_m4r3_update_interference_aggregate_20260908.json` 的技术 Gate 全部通过；joint C″ gain 均值=`+0.050851 BPB`、正向=`3/3`、C cycle2/cycle3 退化=`0/3`，context-only 的 C cycle2 退化=`2/3`，readout-only 的新收益只有=`2/3` 正。smoke 支持“joint 值得更大预算复测”，不代表正式能力晋级。
-- **当前停止线**：进入 `pilot` 预算（16 KiB train/4 KiB eval）的三臂对照；只有 joint 的新留出收益和旧能力保持继续成立，才进入 formal 规则更新。若更大预算不复现，回到数据密度、课程难度和学习率审计。所有结果先保持 `can_promote=false`。
+- **pilot aggregate**：`reports/taiji_m4r3_update_interference_pilot_aggregate_20260908.json` 技术 Gate 全部通过，但 joint C″ gain 均值=`+0.017105 BPB`、正向=`2/3`、C cycle2 退化=`2/3`；context-only 与 readout-only 也未同时通过新收益/retention。结论是 owner 归因链可信，但当前课程/更新尺度无法支持 formalization。
+- **停止线结论**：不跑 foundation formal，不继续调 joint/context 结构，不扩容；转 M4.R4 课程/数据分布与更新尺度审计。所有结果保持 `can_promote=false`。
 
 ## 8. M4：在原有知识上成长的研究日程
 
