@@ -1,0 +1,346 @@
+{
+  "format": "taiji-m4r8-cycle3-failure-attribution-v1",
+  "version": 1,
+  "generated_at_epoch": 1788876106.1896183,
+  "status": "passed",
+  "can_promote": false,
+  "formal_candidate": false,
+  "source_formal_reports": [
+    "E:\\Seed\\reports\\taiji_m4r7_formal_seed11_20260908.json",
+    "E:\\Seed\\reports\\taiji_m4r7_formal_seed29_20260908.json",
+    "E:\\Seed\\reports\\taiji_m4r7_formal_seed47_20260908.json"
+  ],
+  "source_r6_report": "E:\\Seed\\reports\\taiji_m4r6_cycle_retention_attribution_20260908.json",
+  "source_r4_report": "E:\\Seed\\reports\\taiji_m4r4_course_shift_audit_20260908.json",
+  "checks": {
+    "r6_technical_gate": true,
+    "r6_not_promoted": true,
+    "r4_technical_gate": true,
+    "formal_reports_not_promoted": true,
+    "formal_reports_technical": true,
+    "same_formal_variant_set": true,
+    "artifact_owner_delta_loaded": true,
+    "source_digests_match": true
+  },
+  "technical_gate_all_passed": true,
+  "matrix": [
+    {
+      "seed": 11,
+      "variant": "scale_0p5",
+      "scale": 0.5,
+      "artifact": "E:\\Seed\\output\\taiji-m4r7-formal-seed11\\scale_0p5_seed11.pt",
+      "c_cycle2_delta_bpb": -0.0060201162356561255,
+      "c_cycle3_delta_bpb": 0.0021258557176091486,
+      "c2_cycle3_delta_bpb": 0.001506442072295222,
+      "c3_gain_bpb": 0.1273572411802828,
+      "c_cycle3_degraded": true,
+      "owner_updates": {
+        "predictive_context": {
+          "l2_delta": 3.820627398472212,
+          "relative_l2_delta": 0.22607026567706157,
+          "max_abs_delta": 0.5645436644554138,
+          "changed_scalars": 576,
+          "total_scalars": 576
+        },
+        "predictive_readout": {
+          "l2_delta": 7.47453644185883,
+          "relative_l2_delta": 0.22896974252935548,
+          "max_abs_delta": 0.7814772129058838,
+          "changed_scalars": 12593,
+          "total_scalars": 12593
+        }
+      },
+      "r4_joint_owner_reference": {
+        "predictive_readout": {
+          "l2_delta": 7.419495259286351,
+          "relative_l2_delta": 0.22728364928462208,
+          "max_abs_delta": 0.5383131504058838,
+          "changed_scalars": 12593,
+          "total_scalars": 12593
+        },
+        "predictive_context": {
+          "l2_delta": 3.7852073957296613,
+          "relative_l2_delta": 0.22397442941899234,
+          "max_abs_delta": 0.5004391670227051,
+          "changed_scalars": 576,
+          "total_scalars": 576
+        }
+      }
+    },
+    {
+      "seed": 11,
+      "variant": "scale_1p0",
+      "scale": 1.0,
+      "artifact": "E:\\Seed\\output\\taiji-m4r7-formal-seed11\\scale_1p0_seed11.pt",
+      "c_cycle2_delta_bpb": 0.024714509165168153,
+      "c_cycle3_delta_bpb": -0.0032867517334311813,
+      "c2_cycle3_delta_bpb": -0.02321327694595432,
+      "c3_gain_bpb": 0.014224503485051443,
+      "c_cycle3_degraded": false,
+      "owner_updates": {
+        "predictive_context": {
+          "l2_delta": 6.478022467192377,
+          "relative_l2_delta": 0.3833109349542362,
+          "max_abs_delta": 0.9469469785690308,
+          "changed_scalars": 576,
+          "total_scalars": 576
+        },
+        "predictive_readout": {
+          "l2_delta": 9.684106983219412,
+          "relative_l2_delta": 0.29665618728631804,
+          "max_abs_delta": 0.955707311630249,
+          "changed_scalars": 12593,
+          "total_scalars": 12593
+        }
+      },
+      "r4_joint_owner_reference": {
+        "predictive_readout": {
+          "l2_delta": 7.419495259286351,
+          "relative_l2_delta": 0.22728364928462208,
+          "max_abs_delta": 0.5383131504058838,
+          "changed_scalars": 12593,
+          "total_scalars": 12593
+        },
+        "predictive_context": {
+          "l2_delta": 3.7852073957296613,
+          "relative_l2_delta": 0.22397442941899234,
+          "max_abs_delta": 0.5004391670227051,
+          "changed_scalars": 576,
+          "total_scalars": 576
+        }
+      }
+    },
+    {
+      "seed": 29,
+      "variant": "scale_0p5",
+      "scale": 0.5,
+      "artifact": "E:\\Seed\\output\\taiji-m4r7-formal-seed29\\scale_0p5_seed29.pt",
+      "c_cycle2_delta_bpb": -0.018653338630855387,
+      "c_cycle3_delta_bpb": -0.026773012982310718,
+      "c2_cycle3_delta_bpb": -0.008502111031547521,
+      "c3_gain_bpb": 0.16485696095366542,
+      "c_cycle3_degraded": false,
+      "owner_updates": {
+        "predictive_context": {
+          "l2_delta": 3.904864134042883,
+          "relative_l2_delta": 0.2322596268981583,
+          "max_abs_delta": 0.6701555848121643,
+          "changed_scalars": 576,
+          "total_scalars": 576
+        },
+        "predictive_readout": {
+          "l2_delta": 7.986362978699892,
+          "relative_l2_delta": 0.24034251061238918,
+          "max_abs_delta": 0.6382550001144409,
+          "changed_scalars": 12593,
+          "total_scalars": 12593
+        }
+      },
+      "r4_joint_owner_reference": {
+        "predictive_readout": {
+          "l2_delta": 7.7701374812832364,
+          "relative_l2_delta": 0.23383539604144693,
+          "max_abs_delta": 0.5686166286468506,
+          "changed_scalars": 12593,
+          "total_scalars": 12593
+        },
+        "predictive_context": {
+          "l2_delta": 3.8238965406268473,
+          "relative_l2_delta": 0.2274437095212379,
+          "max_abs_delta": 0.8671666383743286,
+          "changed_scalars": 576,
+          "total_scalars": 576
+        }
+      }
+    },
+    {
+      "seed": 29,
+      "variant": "scale_1p0",
+      "scale": 1.0,
+      "artifact": "E:\\Seed\\output\\taiji-m4r7-formal-seed29\\scale_1p0_seed29.pt",
+      "c_cycle2_delta_bpb": 0.007352729654000356,
+      "c_cycle3_delta_bpb": -0.017673339413808442,
+      "c2_cycle3_delta_bpb": -0.010191778284010411,
+      "c3_gain_bpb": 0.020219226753213526,
+      "c_cycle3_degraded": false,
+      "owner_updates": {
+        "predictive_context": {
+          "l2_delta": 7.149141871035117,
+          "relative_l2_delta": 0.4252278611008858,
+          "max_abs_delta": 1.5194082260131836,
+          "changed_scalars": 576,
+          "total_scalars": 576
+        },
+        "predictive_readout": {
+          "l2_delta": 10.375403292987047,
+          "relative_l2_delta": 0.31223855999323746,
+          "max_abs_delta": 0.7398958206176758,
+          "changed_scalars": 12593,
+          "total_scalars": 12593
+        }
+      },
+      "r4_joint_owner_reference": {
+        "predictive_readout": {
+          "l2_delta": 7.7701374812832364,
+          "relative_l2_delta": 0.23383539604144693,
+          "max_abs_delta": 0.5686166286468506,
+          "changed_scalars": 12593,
+          "total_scalars": 12593
+        },
+        "predictive_context": {
+          "l2_delta": 3.8238965406268473,
+          "relative_l2_delta": 0.2274437095212379,
+          "max_abs_delta": 0.8671666383743286,
+          "changed_scalars": 576,
+          "total_scalars": 576
+        }
+      }
+    },
+    {
+      "seed": 47,
+      "variant": "scale_0p5",
+      "scale": 0.5,
+      "artifact": "E:\\Seed\\output\\taiji-m4r7-formal-seed47\\scale_0p5_seed47.pt",
+      "c_cycle2_delta_bpb": -0.022253988143789094,
+      "c_cycle3_delta_bpb": 0.009497186207913622,
+      "c2_cycle3_delta_bpb": 0.004474691814678522,
+      "c3_gain_bpb": 0.16605571592699508,
+      "c_cycle3_degraded": true,
+      "owner_updates": {
+        "predictive_context": {
+          "l2_delta": 4.008884814439589,
+          "relative_l2_delta": 0.23623294989241733,
+          "max_abs_delta": 0.5911114811897278,
+          "changed_scalars": 576,
+          "total_scalars": 576
+        },
+        "predictive_readout": {
+          "l2_delta": 8.096195337588945,
+          "relative_l2_delta": 0.23725514957003752,
+          "max_abs_delta": 0.7606666088104248,
+          "changed_scalars": 12593,
+          "total_scalars": 12593
+        }
+      },
+      "r4_joint_owner_reference": {
+        "predictive_readout": {
+          "l2_delta": 7.924709106545827,
+          "relative_l2_delta": 0.2322298272181372,
+          "max_abs_delta": 0.5637015104293823,
+          "changed_scalars": 12593,
+          "total_scalars": 12593
+        },
+        "predictive_context": {
+          "l2_delta": 3.6819034067773124,
+          "relative_l2_delta": 0.2169648027474032,
+          "max_abs_delta": 0.6184777617454529,
+          "changed_scalars": 576,
+          "total_scalars": 576
+        }
+      }
+    },
+    {
+      "seed": 47,
+      "variant": "scale_1p0",
+      "scale": 1.0,
+      "artifact": "E:\\Seed\\output\\taiji-m4r7-formal-seed47\\scale_1p0_seed47.pt",
+      "c_cycle2_delta_bpb": 0.007170466786054597,
+      "c_cycle3_delta_bpb": 0.01923121315726295,
+      "c2_cycle3_delta_bpb": -0.0139638770960131,
+      "c3_gain_bpb": 0.04277983154128595,
+      "c_cycle3_degraded": true,
+      "owner_updates": {
+        "predictive_context": {
+          "l2_delta": 6.721162017081814,
+          "relative_l2_delta": 0.39606025203846207,
+          "max_abs_delta": 0.9276446104049683,
+          "changed_scalars": 576,
+          "total_scalars": 576
+        },
+        "predictive_readout": {
+          "l2_delta": 10.191758862876645,
+          "relative_l2_delta": 0.2986646409291862,
+          "max_abs_delta": 0.9188457727432251,
+          "changed_scalars": 12593,
+          "total_scalars": 12593
+        }
+      },
+      "r4_joint_owner_reference": {
+        "predictive_readout": {
+          "l2_delta": 7.924709106545827,
+          "relative_l2_delta": 0.2322298272181372,
+          "max_abs_delta": 0.5637015104293823,
+          "changed_scalars": 12593,
+          "total_scalars": 12593
+        },
+        "predictive_context": {
+          "l2_delta": 3.6819034067773124,
+          "relative_l2_delta": 0.2169648027474032,
+          "max_abs_delta": 0.6184777617454529,
+          "changed_scalars": 576,
+          "total_scalars": 576
+        }
+      }
+    }
+  ],
+  "owner_summaries": {
+    "scale_0p5": {
+      "predictive_context": {
+        "relative_l2_mean": 0.2315209474892124,
+        "relative_l2_min": 0.22607026567706157,
+        "relative_l2_max": 0.23623294989241733,
+        "failure_mean": 0.23115160778473945,
+        "pass_mean": 0.2322596268981583,
+        "failure_outlier_against_pass": false
+      },
+      "predictive_readout": {
+        "relative_l2_mean": 0.23552246757059406,
+        "relative_l2_min": 0.22896974252935548,
+        "relative_l2_max": 0.24034251061238918,
+        "failure_mean": 0.2331124460496965,
+        "pass_mean": 0.24034251061238918,
+        "failure_outlier_against_pass": false
+      }
+    },
+    "scale_1p0": {
+      "predictive_context": {
+        "relative_l2_mean": 0.4015330160311947,
+        "relative_l2_min": 0.3833109349542362,
+        "relative_l2_max": 0.4252278611008858,
+        "failure_mean": 0.39606025203846207,
+        "pass_mean": 0.404269398027561,
+        "failure_outlier_against_pass": false
+      },
+      "predictive_readout": {
+        "relative_l2_mean": 0.30251979606958057,
+        "relative_l2_min": 0.29665618728631804,
+        "relative_l2_max": 0.31223855999323746,
+        "failure_mean": 0.2986646409291862,
+        "pass_mean": 0.30444737363977775,
+        "failure_outlier_against_pass": false
+      }
+    }
+  },
+  "diagnosis": {
+    "half_scale_c_cycle3_failure_count": 2,
+    "half_scale_c_cycle3_failure_seeds": [
+      11,
+      47
+    ],
+    "half_scale_c_cycle3_pass_seeds": [
+      29
+    ],
+    "legacy_scale_c_cycle3_failure_count": 1,
+    "failure_isolated": false,
+    "owner_update_outlier_by_variant": {
+      "scale_0p5": false,
+      "scale_1p0": false
+    },
+    "interpretation": "half-rate C cycle3 failure repeats in at least two seeds without a corresponding owner-update outlier; withdraw scale as a formal candidate and diagnose the course boundary or update rule"
+  },
+  "decision_boundary": {
+    "training_allowed": false,
+    "promotion_allowed": false,
+    "next_action": "course/update-rule diagnosis before any new formal run"
+  }
+}
