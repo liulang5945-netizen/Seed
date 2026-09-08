@@ -996,13 +996,16 @@ def _run_cascade_arm(
     progress_dir: Path | None = PROGRESS_OUTPUT_DIR,
     resume: bool = False,
     consolidation_strength: float = 0.0,
+    predictive_update_scale: float = 1.0,
 ) -> dict[str, Any]:
     """Three-cycle cascade: one active branch trains on phase-C, -C', -C''.
 
     Measures the third-cycle gain on C'' holdout, the retention of cycles 1-2
     (C/C' holdouts after cycle-3) and the long-run A retention, all on the
     same isolated active owner with shared fabric/context/protected readout
-    frozen.
+    frozen.  ``predictive_update_scale`` scales the active readout local
+    update; the default ``1.0`` is byte-for-byte equivalent to the legacy
+    path (M4.R5 contract).
     """
 
     consolidation_strength = float(consolidation_strength)
@@ -1067,6 +1070,7 @@ def _run_cascade_arm(
             "learn_predictive_context": False,
             "learn_predictive_readout": True,
             "consolidation_strength": consolidation_strength,
+            "predictive_update_scale": predictive_update_scale,
         },
     )
     training_runs.append(cycle1_training)
@@ -1104,6 +1108,7 @@ def _run_cascade_arm(
             "learn_predictive_context": False,
             "learn_predictive_readout": True,
             "consolidation_strength": consolidation_strength,
+            "predictive_update_scale": predictive_update_scale,
         },
     )
     training_runs.append(cycle2_training)
@@ -1147,6 +1152,7 @@ def _run_cascade_arm(
             "learn_predictive_context": False,
             "learn_predictive_readout": True,
             "consolidation_strength": consolidation_strength,
+            "predictive_update_scale": predictive_update_scale,
         },
     )
     training_runs.append(cycle3_training)
