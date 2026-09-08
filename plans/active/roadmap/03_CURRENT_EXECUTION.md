@@ -261,3 +261,6 @@ S/G 的 BPB 只证明低层预测变化，K 是 A8 的主要能力证据。正�
 完整 native 回归在前 296 项均通过后，首个真实失败为 `test_m3r5_isolated_approved_execution_gate`：评估器内部 `tempfile.TemporaryDirectory` 在本机创建 0700 临时根，导致隔离 workspace 尚未复制就被 Windows ACL 拒绝；不是 Workbench 执行或审批 Gate 失败。M3.R5 现改为在 `SEED_M3R5_TMPDIR` 或系统临时父目录下用普通目录创建唯一隔离根并显式清理，测试把该父目录绑定到可写 fixture；隔离执行、审批、撤销和清理语义不变。M3.R1～R5 相邻回归为 `8 passed`，相关脚本 Ruff/编译检查通过。
 
 **当前唯一下一步**：在同一仓库可写 fixture 机制下从头重跑完整 `tests/taiji_native`，继续按首个真实失败刷新账本；不修改 R4 shadow、默认 parent 或任何执行安全边界。
+完整 native 回归已在仓库可写 fixture 下闭合：`659 passed, 1 skipped`，无真实失败；唯一 warning 为 FastAPI/Starlette 的既有兼容提示。标准 pytest 内置 `tmp_path` 在本机仍会因 0700 临时目录触发 `WinError 5`，这属于执行环境 ACL，不计入代码失败；M3.R5 评估器已不再依赖该创建方式。native 失败账本现清零，R4 shadow/默认 parent 仍未改变。
+
+**当前唯一下一步**：审计并执行仓库 CI 交付层的精确门禁（tracked Ruff、B/SIM、core mypy、相关 pytest 命令和 workflow 约束），只修实际失败项并把可复现命令写入计划；不借 native 绿灯解冻 R5 或外围系统。
