@@ -432,4 +432,6 @@ same-parent K adapter 已实现并完成 preflight：`reports/taiji_m4v2_r6_k_ad
 
 只读 admission audit 已完成：`reports/taiji_m4v2_r6_admission_audit_20260909.json`。审计 content-addressed 读取 R4/R5/K v2/R6 preflight；R4 technical evidence、R5 rejection、K evidence closed、R6 adapter preflight 和 R5 resource caps 已确认，但 R4 structural admission、R5 router/no-router 边界、same-parent retention baseline、完整 S→G→K、全 arm resource/old-capability Gate 与 CI/native ledger 确认仍缺失。结论 `blocked_shadow_only`，`can_start_r6_formal=false`、`can_promote=false`。
 
-**当前唯一下一步**：冻结 R6 fixed-capacity parent admission addendum，明确 R4/R5 不晋级、R6 的 no-router 边界、parent baseline/epsilon 校准和完整 Gate 顺序；addendum 通过前不训练、不接 default runtime、不引入 MCP/provider/client/CUDA。
+R6 fixed-capacity parent admission addendum 已冻结：[M4V2_R6_FIXED_CAPACITY_ADMISSION_ADDENDUM_20260909.md](../../reference/M4V2_R6_FIXED_CAPACITY_ADMISSION_ADDENDUM_20260909.md)。它明确选择 fixed-capacity parent continuation：R4 growth、R5 learned router 和 K standalone learner 都保持 shadow；R6 固定 no learned router；先做 `9 cells × 3 baseline repeats` 校准 epsilon，再做 adapter/all-arm checkpoint Gate，未通过不训练、不接 default runtime。CPU 是唯一执行设备，CUDA/provider/MCP/client/联网不进入变量。
+
+**当前唯一下一步**：实现 parent baseline repeat + all-arm checkpoint preflight——只测 frozen parent 的 9×3 稳定性、epsilon 合法性、source/owner/resource digest、fresh restore 和 rollback，不训练 candidate、不运行 R6 formal、不接 default runtime。
