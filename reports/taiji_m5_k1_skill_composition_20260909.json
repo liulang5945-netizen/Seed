@@ -1,0 +1,328 @@
+{
+  "format": "taiji-m5-k1-skill-composition-v1",
+  "version": 1,
+  "generated_at_epoch": 1788945368,
+  "status": "failed",
+  "can_promote": false,
+  "composition": "stage1 semantics (arms) -> stage2 transition interface -> read-only intent -> REAL isolated execution (S6B outcome policy)",
+  "unseen_triple": "inspect x typescript x file (toolchain availability flips between train and holdout environments)",
+  "cell": {
+    "task_seed": 0,
+    "learner_seed": 17,
+    "arms": {
+      "A-full-chain": {
+        "rows": [
+          {
+            "path": "typescript_05.ts",
+            "semantic_kind": "inspect-language",
+            "expected_capability": "workspace.read",
+            "semantic_status": "clarify",
+            "predicted_goal": "goal:clarify-toolchain",
+            "accepted": false,
+            "intent_kind": null,
+            "real_success": false,
+            "real_reward": 0.0,
+            "outcome_admitted": false
+          },
+          {
+            "path": "typescript_06.ts",
+            "semantic_kind": "inspect-language",
+            "expected_capability": "workspace.read",
+            "semantic_status": "clarify",
+            "predicted_goal": "goal:clarify-toolchain",
+            "accepted": false,
+            "intent_kind": null,
+            "real_success": false,
+            "real_reward": 0.0,
+            "outcome_admitted": false
+          },
+          {
+            "path": "typescript_07.ts",
+            "semantic_kind": "inspect-language",
+            "expected_capability": "workspace.read",
+            "semantic_status": "clarify",
+            "predicted_goal": "goal:clarify-toolchain",
+            "accepted": false,
+            "intent_kind": null,
+            "real_success": false,
+            "real_reward": 0.0,
+            "outcome_admitted": false
+          },
+          {
+            "path": "python_05.py",
+            "semantic_kind": "inspect-language",
+            "expected_capability": "workspace.read",
+            "semantic_status": "resolved",
+            "predicted_goal": "goal:inspect-language",
+            "accepted": true,
+            "intent_kind": "workspace.read",
+            "real_success": true,
+            "real_reward": 1.0,
+            "outcome_admitted": true
+          },
+          {
+            "path": "rust_05.rs",
+            "semantic_kind": "clarify-toolchain",
+            "expected_capability": "workspace.programming_language.resolve",
+            "semantic_status": "clarify",
+            "predicted_goal": "goal:clarify-toolchain",
+            "accepted": true,
+            "intent_kind": "workspace.programming_language.resolve",
+            "real_success": true,
+            "real_reward": 1.0,
+            "outcome_admitted": false,
+            "outcome_admission_error": "latest WorkBench evidence is stale; acquire fresh workspace evidence"
+          },
+          {
+            "path": "missing_03.txt",
+            "semantic_kind": "recover-target",
+            "expected_capability": null,
+            "semantic_status": "unknown",
+            "predicted_goal": null,
+            "accepted": false,
+            "intent_kind": null,
+            "real_success": false,
+            "real_reward": 0.0,
+            "outcome_admitted": false
+          }
+        ],
+        "unseen_triple_success": 0.0,
+        "unseen_triple_count": 3,
+        "all_real_success": 0.3333333333333333
+      },
+      "B-frozen-semantic": {
+        "rows": [
+          {
+            "path": "typescript_05.ts",
+            "semantic_kind": "inspect-language",
+            "expected_capability": "workspace.read",
+            "semantic_status": "conflict",
+            "predicted_goal": null,
+            "accepted": false,
+            "intent_kind": null,
+            "real_success": false,
+            "real_reward": 0.0,
+            "outcome_admitted": false
+          },
+          {
+            "path": "typescript_06.ts",
+            "semantic_kind": "inspect-language",
+            "expected_capability": "workspace.read",
+            "semantic_status": "conflict",
+            "predicted_goal": null,
+            "accepted": false,
+            "intent_kind": null,
+            "real_success": false,
+            "real_reward": 0.0,
+            "outcome_admitted": false
+          },
+          {
+            "path": "typescript_07.ts",
+            "semantic_kind": "inspect-language",
+            "expected_capability": "workspace.read",
+            "semantic_status": "conflict",
+            "predicted_goal": null,
+            "accepted": false,
+            "intent_kind": null,
+            "real_success": false,
+            "real_reward": 0.0,
+            "outcome_admitted": false
+          },
+          {
+            "path": "python_05.py",
+            "semantic_kind": "inspect-language",
+            "expected_capability": "workspace.read",
+            "semantic_status": "conflict",
+            "predicted_goal": null,
+            "accepted": false,
+            "intent_kind": null,
+            "real_success": false,
+            "real_reward": 0.0,
+            "outcome_admitted": false
+          },
+          {
+            "path": "rust_05.rs",
+            "semantic_kind": "clarify-toolchain",
+            "expected_capability": "workspace.programming_language.resolve",
+            "semantic_status": "conflict",
+            "predicted_goal": null,
+            "accepted": false,
+            "intent_kind": null,
+            "real_success": false,
+            "real_reward": 0.0,
+            "outcome_admitted": false
+          },
+          {
+            "path": "missing_03.txt",
+            "semantic_kind": "recover-target",
+            "expected_capability": null,
+            "semantic_status": "unknown",
+            "predicted_goal": null,
+            "accepted": false,
+            "intent_kind": null,
+            "real_success": false,
+            "real_reward": 0.0,
+            "outcome_admitted": false
+          }
+        ],
+        "unseen_triple_success": 0.0,
+        "unseen_triple_count": 3,
+        "all_real_success": 0.0
+      },
+      "C-semantic-lesion": {
+        "rows": [
+          {
+            "path": "typescript_05.ts",
+            "semantic_kind": "inspect-language",
+            "expected_capability": "workspace.read",
+            "semantic_status": "conflict",
+            "predicted_goal": null,
+            "accepted": false,
+            "intent_kind": null,
+            "real_success": false,
+            "real_reward": 0.0,
+            "outcome_admitted": false
+          },
+          {
+            "path": "typescript_06.ts",
+            "semantic_kind": "inspect-language",
+            "expected_capability": "workspace.read",
+            "semantic_status": "conflict",
+            "predicted_goal": null,
+            "accepted": false,
+            "intent_kind": null,
+            "real_success": false,
+            "real_reward": 0.0,
+            "outcome_admitted": false
+          },
+          {
+            "path": "typescript_07.ts",
+            "semantic_kind": "inspect-language",
+            "expected_capability": "workspace.read",
+            "semantic_status": "conflict",
+            "predicted_goal": null,
+            "accepted": false,
+            "intent_kind": null,
+            "real_success": false,
+            "real_reward": 0.0,
+            "outcome_admitted": false
+          },
+          {
+            "path": "python_05.py",
+            "semantic_kind": "inspect-language",
+            "expected_capability": "workspace.read",
+            "semantic_status": "conflict",
+            "predicted_goal": null,
+            "accepted": false,
+            "intent_kind": null,
+            "real_success": false,
+            "real_reward": 0.0,
+            "outcome_admitted": false
+          },
+          {
+            "path": "rust_05.rs",
+            "semantic_kind": "clarify-toolchain",
+            "expected_capability": "workspace.programming_language.resolve",
+            "semantic_status": "conflict",
+            "predicted_goal": null,
+            "accepted": false,
+            "intent_kind": null,
+            "real_success": false,
+            "real_reward": 0.0,
+            "outcome_admitted": false
+          },
+          {
+            "path": "missing_03.txt",
+            "semantic_kind": "recover-target",
+            "expected_capability": null,
+            "semantic_status": "unknown",
+            "predicted_goal": null,
+            "accepted": false,
+            "intent_kind": null,
+            "real_success": false,
+            "real_reward": 0.0,
+            "outcome_admitted": false
+          }
+        ],
+        "unseen_triple_success": 0.0,
+        "unseen_triple_count": 3,
+        "all_real_success": 0.0
+      }
+    },
+    "stage1_semantic_fit_losses": {
+      "fact_loss": 0.00196468,
+      "goal_loss": 3.42e-06,
+      "content_loss": 1.76e-06
+    },
+    "stage2_transition_fit_losses": {
+      "transition_loss": 0.0,
+      "goal_loss": 0.00016019,
+      "content_loss": 7.471e-05
+    },
+    "stage2_interface": {
+      "steps": [
+        {
+          "path": "typescript_05.ts",
+          "status": "clarify",
+          "world_wellformed": true,
+          "goal_contract_ok": true,
+          "content_contract_ok": true
+        },
+        {
+          "path": "typescript_06.ts",
+          "status": "clarify",
+          "world_wellformed": true,
+          "goal_contract_ok": true,
+          "content_contract_ok": true
+        },
+        {
+          "path": "typescript_07.ts",
+          "status": "clarify",
+          "world_wellformed": true,
+          "goal_contract_ok": true,
+          "content_contract_ok": true
+        },
+        {
+          "path": "python_05.py",
+          "status": "clarify",
+          "world_wellformed": true,
+          "goal_contract_ok": true,
+          "content_contract_ok": true
+        },
+        {
+          "path": "rust_05.rs",
+          "status": "clarify",
+          "world_wellformed": true,
+          "goal_contract_ok": true,
+          "content_contract_ok": true
+        },
+        {
+          "path": "missing_03.txt",
+          "status": "unknown",
+          "world_wellformed": true,
+          "goal_contract_ok": true,
+          "content_contract_ok": true
+        }
+      ],
+      "step_count": 6,
+      "all_worlds_wellformed": true,
+      "all_contracts_ok": true
+    },
+    "metrics": {
+      "a_unseen_success": 0.0,
+      "b_unseen_success": 0.0,
+      "c_unseen_success": 0.0,
+      "a_minus_b": 0.0,
+      "a_minus_c": 0.0
+    },
+    "checks": {
+      "a_unseen_success_at_least_0p8": false,
+      "a_minus_b_at_least_0p3": false,
+      "a_minus_c_at_least_0p3": false,
+      "all_arms_produced_rows": true
+    },
+    "technical_gate_all_passed": false,
+    "elapsed_seconds": 1.817535400041379
+  },
+  "boundary": "M5.K1 canary only; real read-only executions in a process-owned temporary workspace; no provider, network, or real client write"
+}

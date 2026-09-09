@@ -43,3 +43,45 @@ Gate（全部预注册）：
 - 不在本 canary 训练字节预测/fabric（K 的量尺是任务成功率，不是 BPB）；
 - 不做多 seed formal（canary 通过后另行预注册）；
 - 不把 provider 文本当语义特征。
+
+## 6. 执行记录（2026-09-09，canary 已运行，Gate 未通过）
+
+实现：`scripts/training/eval_taiji_m5_k1_skill_composition.py`；报告：`reports/taiji_m5_k1_skill_composition_20260909.json`（`status=failed`，`can_promote=false`）。
+
+### 6.1 相对原设计的实现修正（均为 harness/语料设计，非阈值调整）
+
+1. **holdout 全覆盖**：`_arm_outcomes` 初版以 holdout[0] 作锚点导致 `typescript_05` 不产生行；改为以最后一个训练世界作初始锚，全部 6 个 holdout 观察逐行预测→提议→真实执行。
+2. **拆分防泄漏重构**：转移语料的 before-fact keys 只编码块身份（missing/python/typescript/rust），不含文件标识；训练序列简单取反会在 ts/rs 块内与 train 发生 `input_digest` 碰撞，同一 tuple 传 dev/test 双重违规。dev/test 改为「(before 块, event 文件) 有序对与 train/dev 完全不相交」的未见文件序列。
+3. **合成内容去污染**：初版内容 `record {lang} {index}` 撞上 C# 的 `record` content pattern（强度 0.55 > 扩展名 0.14），ts/rs 被判为 csharp，工具链翻转不可观测。改为各语言惯用内容（`interface`/`fn`/`def`，与 M3.R1 fixture 同形）+ 根目录四份 manifest（extension+content 0.69 < resolved 阈值 0.72，需 manifest 证据补足）+ 按索引变长 pad（percept 特征只含 one-hot+标量，byte_length 是同语言文件唯一的区分来源）。
+4. **Stage 1/Stage 2 分离**：臂由**语义 learner**（§3 表）定义，故 planner 消费 Stage-1（`StructuredSemanticLearner`，percept→facts/Goal/ContentPlan，无 before 依赖）的事件接地世界；Stage-2 转移按 §2「K1 先最小化：单步验证接口贯通」降为接口贯通检查（`_stage2_interface`，报告型指标，不门控 planner）。否则 A−B≡A−C≡0，臂对比失效。Stage-1 语料中 missing 文件 percept 特征全同（失败读取无内容），只允许 missing_00 入语料；训练序列改为 `(m00, py00-03, m01, ts00-03, rs00-03)`，制造两个不同语言的 recover→file 转移以打破转移头的块级捷径。
+
+### 6.2 结果
+
+| 量 | 值 |
+|---|---|
+| A unseen（ts05-07 真实执行成功率） | **0.0**（Gate 需 ≥0.8） |
+| A 已见组合 | python inspect 成功且 S6B 准入 ✓；rust clarify 真实执行成功 ✓（resolve 成功的投影受「stale evidence」限制，见 6.4） |
+| B frozen / C lesion | 全部 `conflict` fail-closed，0.0 ✓（对照行为正确） |
+| Stage-2 接口贯通 | 6/6 步 world 良构、契约完好 ✓ |
+| Stage-1 拟合 | fact 0.00196 / goal 3.4e-06 / content 1.8e-06（收敛） |
+
+链路闭合验证：语义→意图→执行→S6B 准入全链在**已见**组合上真实跑通；planner 对目标/世界不一致 fail-closed；B/C lesion 臂崩塌符合预期。
+
+### 6.3 归因（A=0.0 < 0.5 停止线触发，按 §4 归因而非调阈值）
+
+失败精确定位在 **Stage-1 fact head 的属性组合**，下游全部正确：
+
+- 实测 holdout ts05（typescript × 工具链可用）：`language::typescript=0.830` ✓（语言属性从 event one-hot 正确组合）；**`toolchain::available=0.135` ✗**（其因果特征——percept 中的 toolchain scalar——值为 1.0）；`toolchain::missing=0.865`（错）。世界因此声明 toolchain missing → goal 读出 clarify-toolchain（goal/content 线性读出对该世界本身一致）→ planner 检测世界与观察不一致，拒绝（fail-closed 正确）。
+- 机制：训练 registry 中 (python ↔ available)、(ts/rs ↔ missing) **完全相关**。fact head 是线性欠定问题——存在完美组合的正确解（权重只放 toolchain scalar），但 delta-rule 动力学在完全相关数据下把状态属性绑到了身份特征上。goal head 的合取泛化同理继承边际相关。
+- **训练数据无法修复**：训练 registry 里 typescript 工具链必然不可用（这正是组合翻转的设计），(× ts-event@available) 交叉在训练中不可达；harness 层面无解。
+
+### 6.4 已知次要限制（不阻塞）
+
+- resolve 类成功 outcome 的 S6B 投影被「latest WorkBench evidence is stale」拒绝（投影链以 read evidence 为中心）；unseen Gate 只要求 read intent，不受影响。
+- missing_03（recover-target）无 planner 路由，正确失败。
+
+### 6.5 判定与唯一后续假设
+
+**K1 canary 判定：未通过（honest fail）**。组合链条的工程闭合已验证，失败源于线性语义 learner 在完全相关训练边际下无法组合 (身份 × 状态) 属性——这是「课程结构属性」问题的语义层版本（同 M4 结论族：分布相关性支配学习结果）。
+
+**唯一建议下一步（K1.1，需新预注册）**：类型化 fact–feature 绑定——每个语义 fact 声明其因果特征来源（从 `WorkbenchObservationSchema.feature_names` 与 fact key 的谓词名规范派生掩码），fact head 按 fact×feature 掩码读取；goal/content 读出掩码到**状态类 facts**（read/language_state/toolchain/target），身份 facts（language）只进世界与 content.semantic_slots（planner 一致性检查已消费后者）。在该设计下，未见三元组的状态投影与已见 inspect 状态向量**逐维相同**（组合发生在 fact 层），goal 读出在分布内 → A 臂可组合且 B/C 仍应崩塌。确认前不改 `taiji/semantic_training.py`、不重跑 K1。
