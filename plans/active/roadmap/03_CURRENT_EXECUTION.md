@@ -399,3 +399,7 @@ K2 canary 预注册已完成：[M5_K2_MULTISTEP_COMPOSITION_PREREGISTRATION_2026
 K2 canary 已完成：`reports/taiji_m5_k2_multistep_canary_20260909.json` 通过；A full-chain 未见三步 episode `4/4` 成功、B frozen/C transition-lesion 为 `0/4`，A 训练 `6/6`，S6B 成功 read 准入、K2.1 checkpoint/篡改防护、reward variance 全部通过。首轮暴露的 executor 恒定 reward 与 Windows 临时目录 ACL 已分别按既有 S6 graded-outcome 口径和 repo-writable temp 模式收敛，未改变模型判据；`can_promote=false` 不变。
 
 **当前唯一下一步**：先完成并冻结 K2 formal 预注册（`task_seed=0/1/2 × learner_seed=17/23/31`、逐 cell 技术门、A 绝对成功率与 A-B/A-C 分离阈值、read admission、reward variance、停止线），再实现 formal runner；预注册完成前不跑 formal、不引入 K3 的 outcome→world 或任务依赖变量。
+
+K2 formal 已完成：`reports/taiji_m5_k2_multistep_formal_20260909.json`，9/9 cells 通过，A holdout/A-B/A-C 的 min/mean/max 均为 `1.0`，训练、checkpoint/mask、S6B read admission、reward variance 全部 `9/9`；K2 转移头只作为 shadow 资产保留，`can_promote=false`。
+
+**当前唯一下一步**：将 M5.K1/K2 结果整理进 A8 K 轴 scorecard，明确「K2 结构是否有资格进入默认 Taiji 路径」的 aggregate 入口与否决条件；在 scorecard 冻结前不启动 K3、不引入 MCP/provider/client/CUDA，也不把 shadow 结构接入默认 runtime。

@@ -77,3 +77,16 @@ formal aggregate 只有在 `9/9` cells 通过时才记为 `robust=true`；同时
 - 执行后将逐 cell 结果、aggregate 与归因写回本文件 §6，并同步 `plans/active/roadmap/03_CURRENT_EXECUTION.md`。
 
 **formal 之前唯一允许的下一步**：实现上述 runner，零逻辑复制地 import canary `run_cell`，先运行静态检查再串行运行 9 cells。formal 期间不进入 K3、不引入 MCP/provider/client/CUDA 变量。
+
+## 6. Formal 执行记录（2026-09-09）
+
+runner `scripts/training/eval_taiji_m5_k2_multistep_formal.py` 已按固定顺序串行调用 canary `run_cell`，没有复制 cell 逻辑，也没有改动 K2 判据。报告：`reports/taiji_m5_k2_multistep_formal_20260909.json`。
+
+- 矩阵：task seeds `0/1/2` × learner seeds `17/23/31`，共 9 cells；9/9 技术门通过，9/9 read admission 通过，9/9 reward variance 通过。
+- 主指标：A holdout 三步 episode success min/mean/max = `1.0/1.0/1.0`；A-B 与 A-C 分离差 min/mean/max 均为 `1.0/1.0/1.0`；A train success min/mean/max = `1.0/1.0/1.0`。
+- outcome：每个 cell A 臂成功 `workspace.read` admission `8/8`；A reward variance 范围 `0.2675321743–0.2689798647`，没有用恒定 executor reward 冒充方差。
+- 判定：`status=passed`、`robust=true`、`cells_passed=9/9`，`can_promote=false` 固定。该结果闭合 K2 的跨 seed 证据线，但不把 K2 转移结构挂入默认 Taiji 路径，也不证明 K3 的任务依赖或 outcome→world 反馈。
+
+**Formal 结论**：K2 假设在预注册的 9-cell 矩阵上得到稳健支持——类型化、可 checkpoint 的转移头在当前合成 Workbench 课程中确实为未见三步组合提供了必要的 autoregressive world 流；B/C 对照均崩塌。证据范围止于本课程、只读隔离执行和现有 S6B outcome 链。
+
+**下一步边界**：先把 K2 作为冻结、可回滚的 shadow 资产纳入 A8 scorecard 讨论；若继续课程，只能另行预注册 K3（outcome→world/任务间依赖）或明确不做 K3 转向 M5 MCP/客户端能力继承。当前不自动解冻任何外围变量，`can_promote=false`。
