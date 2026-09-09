@@ -569,3 +569,8 @@ promotion。
 model31/course0 已通过并追加，累计 7/9 row 完成；candidate/fixed-large/lesion 与资源、
 rollback、side-effect contract 均保持通过。下一步只执行 model31/course1，仍不计算
 aggregate 或 promotion。
+
+## 35. Model31/course1 execution（2026-09-09）
+
+model31/course1 已通过并追加，累计 8/9 row 完成；仅 course2 未启动。下一步执行最后
+一个 row，完成后才进入预注册的 aggregate 计算，promotion 仍关闭。

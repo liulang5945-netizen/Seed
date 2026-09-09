@@ -126,3 +126,5 @@ model23/course2 已通过且追加，当前唯一下一步：**只执行 `model3
 沿用相同 resource/side-effect/failure contract，仍不计算 aggregate。
 model31/course0 已通过且追加，当前唯一下一步：**只执行 `model31/course1` row**，继续
 沿用 prior ledger 和相同资源/失败合同。
+model31/course1 已通过且追加，当前唯一下一步：**只执行最后的 `model31/course2` row**，
+完成 9-cell ledger 后再按冻结合同计算 aggregate。
