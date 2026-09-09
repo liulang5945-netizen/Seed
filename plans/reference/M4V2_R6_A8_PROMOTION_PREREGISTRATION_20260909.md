@@ -373,6 +373,19 @@ manifest preflight：
 下一步只实现消费该 manifest 的 formal runner per-cell ledger 和结构化失败归因；
 静态/输入 Gate 通过前不执行 9-cell course、不接 default runtime。
 
+## 18. Formal runner 入口层 preflight 执行记录（2026-09-09）
+
+已实现 `scripts/training/eval_taiji_m4v2_r6_formal.py`，并在不执行课程的模式下
+重新验证 manifest/input Gate。报告 `reports/taiji_m4v2_r6_formal_preflight_20260909.json`
+生成 `9×5=45` 个 `not_started` per-cell/per-arm ledger row，所有 row 预留 causal、
+resource、retention、side-effect、checkpoint 和 failure 字段；
+`status=input_ready`、`formal_input_ready=true`，但 `course_executed=false`、
+`can_start_r6_formal=false`、`can_promote=false`。
+
+该入口层只证明 formal runner 的输入闭合和 ledger 形状，不是 R6 formal 结果。下一步
+在一个固定 cell 上实现五 arm 的 S→G→K execution/measurement layer，首个失败按
+冻结的优先级记录后停止，不直接扩展到 9 cells。
+
 ## 19. 首个 single-cell execution 与 fixed-large 阻断（2026-09-09）
 
 已运行 `scripts/training/eval_taiji_m4v2_r6_formal_single_cell.py`，固定
@@ -393,15 +406,11 @@ manifest preflight：
 同输入/同资源口径的 K fixed-large control，再重跑该 single cell；未完成前不进入
 9-cell formal。
 
-## 18. Formal runner 入口层 preflight 执行记录（2026-09-09）
+## 20. fixed-large control 边界修订（2026-09-09）
 
-已实现 `scripts/training/eval_taiji_m4v2_r6_formal.py`，并在不执行课程的模式下
-重新验证 manifest/input Gate。报告 `reports/taiji_m4v2_r6_formal_preflight_20260909.json`
-生成 `9×5=45` 个 `not_started` per-cell/per-arm ledger row，所有 row 预留 causal、
-resource、retention、side-effect、checkpoint 和 failure 字段；
-`status=input_ready`、`formal_input_ready=true`，但 `course_executed=false`、
+`fixed-large` 已从“旧 R4 structural shadow”修订为 K-task-equivalent native control，
+合同见 [M4V2_R6_FIXED_LARGE_K_CONTROL_PREREGISTRATION_20260909.md](M4V2_R6_FIXED_LARGE_K_CONTROL_PREREGISTRATION_20260909.md)：两个独立 K1/K2 replica、固定 arithmetic ensemble、worker-training task seed `3/4`、formal holdout `0/1/2` 不重叠、同一 typed input/output 和真实 Workbench。该修订不改变 candidate 主阈值，也不引入 Transformer/provider/router。
+
+旧 structural shadow 只作历史证据，不得进入 R6 K aggregate。下一步只实现 native
+fixed-large artifact/checkpoint preflight 和 model17/course0 comparator；完成前
 `can_start_r6_formal=false`、`can_promote=false`。
-
-该入口层只证明 formal runner 的输入闭合和 ledger 形状，不是 R6 formal 结果。下一步
-在一个固定 cell 上实现五 arm 的 S→G→K execution/measurement layer，首个失败按
-冻结的优先级记录后停止，不直接扩展到 9 cells。

@@ -460,4 +460,6 @@ R6 formal runner 入口层已实现并通过静态/输入 Gate：`scripts/traini
 
 R6 首个 single-cell execution 已运行：`reports/taiji_m4v2_r6_formal_single_cell_20260909.json` 为 `status=blocked_controls`。candidate 的真实 Workbench read→K3 accepted→dependency→rollback 与 S/G retention 通过；同路径 K3 lesion 精确拒绝 feedback，adapter 在 projection 未 accepted 时 fail-closed。frozen-parent/matched 只保留 detached K 的 S/G/checkpoint control。唯一阻断是 `fixed-large` 仍只有旧 structural shadow preflight，没有 K-task-equivalent executor；该问题归为 `input_contract / fixed_large_k_control_required`，不是模型失败。
 
-**当前唯一下一步**：设计并实现与 candidate 同输入、同任务、同资源口径的 K-task-equivalent fixed-large control，先重跑 `model_seed=17 / course_seed=0` single cell；对照可比较前不扩大到 9 cells、不运行 full formal、不接 default runtime、不引入 MCP/provider/client/CUDA。
+fixed-large 设计已冻结：[M4V2_R6_FIXED_LARGE_K_CONTROL_PREREGISTRATION_20260909.md](../../reference/M4V2_R6_FIXED_LARGE_K_CONTROL_PREREGISTRATION_20260909.md)。它使用两个独立 native K1/K2 worker replica（worker-training task seed `3/4`）和固定 arithmetic ensemble；旧 R4 structural shadow 不再作为 R6 K control。
+
+**当前唯一下一步**：实现 native K fixed-large ensemble artifact builder、checkpoint preflight 和 `model_seed=17 / course_seed=0` single-cell comparator；完成前不扩大到 9 cells、不运行 full formal、不接 default runtime、不引入 MCP/provider/client/CUDA。
