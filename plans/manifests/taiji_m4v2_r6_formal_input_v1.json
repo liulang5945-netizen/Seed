@@ -92,8 +92,100 @@
     "require_cell_arm_step_digests": true,
     "stop_on_first_cell_failure": true
   },
+  "fixed_large_registry": [
+    {
+      "artifact_digest": "7fb0802ffcc3c33d92ffa2879e014ddf34c9def71c692aadaef73e1cfd14af37",
+      "artifact_path": "checkpoints/taiji_k_fixed_large/model_17/taiji_r6_k_fixed_large_ensemble.pt",
+      "candidate_namespace": "taiji:k:fixed-large:model-17",
+      "ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "ensemble_checkpoint_fresh_restore_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "ensemble_width": 2,
+      "formal_holdout_task_seeds": [
+        0,
+        1,
+        2
+      ],
+      "k3_checkpoint_digest": "2a23c818eed3de6d48cc314fe262bfc391dac88e088cf9409d6d4868e4637bc3",
+      "model_seed": 17,
+      "optimizer_state_present": false,
+      "owner_graph_digest": "2d7beb457c7043993afd8b2d405d16cbe6cddc657e5db6d14da71379722710de",
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "resource_device": "cpu",
+      "resource_manifest_digest": "3c8c8a375db46a79a66c60dcb1adf2c56fb63dc273545eb150123fb3ae3bfcc4",
+      "source_manifest_digest": "e8eb997246b1cdd9924680a9aa62e07f6bfbf49b8320f340c82cf022b977e162",
+      "source_observation_overlap": {
+        "paths": [],
+        "semantic_input_digests": [],
+        "transition_input_digests": []
+      },
+      "worker_training_task_seeds": [
+        3,
+        4
+      ]
+    },
+    {
+      "artifact_digest": "d602e7efc0063cdbb2cc9474e23c24c050046d931632768680060c98a6b1f7b9",
+      "artifact_path": "checkpoints/taiji_k_fixed_large/model_23/taiji_r6_k_fixed_large_ensemble.pt",
+      "candidate_namespace": "taiji:k:fixed-large:model-23",
+      "ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "ensemble_checkpoint_fresh_restore_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "ensemble_width": 2,
+      "formal_holdout_task_seeds": [
+        0,
+        1,
+        2
+      ],
+      "k3_checkpoint_digest": "24fa4e752a0f648f5987c1ff2d5b395b91e5b86a3e72bce5e2609843ba684166",
+      "model_seed": 23,
+      "optimizer_state_present": false,
+      "owner_graph_digest": "de1b4ec4fa5c6e2dd46f0cf0658c3a810cf56dc764efbcfbc3b16cae09fdaf11",
+      "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+      "resource_device": "cpu",
+      "resource_manifest_digest": "3c8c8a375db46a79a66c60dcb1adf2c56fb63dc273545eb150123fb3ae3bfcc4",
+      "source_manifest_digest": "057d07e6d69b829e175ce8bbc3df8f7cc29a446346a42eb4fc9dbeab2358638e",
+      "source_observation_overlap": {
+        "paths": [],
+        "semantic_input_digests": [],
+        "transition_input_digests": []
+      },
+      "worker_training_task_seeds": [
+        3,
+        4
+      ]
+    },
+    {
+      "artifact_digest": "b69030c265e5a966813c4d6469349805dc7619b466a331e30cd98381c5f2cc1c",
+      "artifact_path": "checkpoints/taiji_k_fixed_large/model_31/taiji_r6_k_fixed_large_ensemble.pt",
+      "candidate_namespace": "taiji:k:fixed-large:model-31",
+      "ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "ensemble_checkpoint_fresh_restore_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "ensemble_width": 2,
+      "formal_holdout_task_seeds": [
+        0,
+        1,
+        2
+      ],
+      "k3_checkpoint_digest": "e6e7a241a0d3a9b690e1368db548d14ddbd89537125748dde1ad2db1ff2589f2",
+      "model_seed": 31,
+      "optimizer_state_present": false,
+      "owner_graph_digest": "b37434163e3aa0fee53d9eed34f13ed3ed544aab9bc49a657e55423773fe716a",
+      "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+      "resource_device": "cpu",
+      "resource_manifest_digest": "3c8c8a375db46a79a66c60dcb1adf2c56fb63dc273545eb150123fb3ae3bfcc4",
+      "source_manifest_digest": "d7d99348fc35b9ae2803c5d36eb20a983e2d13a089e17f74443165436b41b3cf",
+      "source_observation_overlap": {
+        "paths": [],
+        "semantic_input_digests": [],
+        "transition_input_digests": []
+      },
+      "worker_training_task_seeds": [
+        3,
+        4
+      ]
+    }
+  ],
   "format": "taiji-m4v2-r6-formal-runner-input-v1",
-  "manifest_digest": "554c219ccc3f08c2a1483b9a9c1055235e6e0467b6d2dd5388d2c90637fa9dea",
+  "manifest_digest": "1e714a144be49202ee26876461cf10fb239839dbe9940b8386e8005a3dce6103",
   "model_seeds": [
     17,
     23,

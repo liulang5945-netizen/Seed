@@ -460,3 +460,24 @@ peak resource、checkpoint/parameter/inference 和 paired delta 的处理；规�
 
 当前 `model17/course0` 已验证字段闭合；由于 model23/31 尚无对应 fixed-large
 ensemble registry，`can_start_r6_formal=false` 继续固定，full formal 不得启动。
+
+## 14. Three-seed fixed-large registry closure（2026-09-09）
+
+已为 `model_seed=23/31` 生成与 model17 同合同的 native fixed-large ensemble，并将
+三份 artifact 纳入 `plans/manifests/taiji_m4v2_r6_formal_input_v1.json` 的
+`fixed_large_registry`。preflight 不读取 builder report 作为真相，而是从每个 artifact
+重建并核对：artifact/ensemble/source/resource/owner digest、parent digest、CPU 与无
+optimizer、width=2、worker task `3/4`、formal holdout `0/1/2`、K3 fresh restore 和
+source/holdout path/semantic/transition non-overlap。
+
+`reports/taiji_m4v2_r6_formal_input_manifest_preflight_20260909.json` 现为
+`status=passed`、`formal_input_ready=true`；formal runner 现为 `status=input_ready`，
+其 9×5 ledger 为 `not_started` 且每个 cell 已记录对应 fixed-large artifact、ensemble
+checkpoint digest。model17/course0 single-cell 通过，candidate/fixed-large paired
+resource measurement 仍闭合；`course_executed=false`、`can_start_r6_formal=false`、
+`can_promote=false` 继续固定。
+
+下一步转入 execution layer：先实现**单个预注册 cell 的可复用五臂 S→G→K execution
+contract**，让 model17/course0 在 frozen ledger 上逐臂写入 baseline、K capability、
+causal lesion、resource、side-effect、checkpoint/rollback 和 failure attribution；
+该 execution cell 通过前不扩大到其余 8 cells，也不接 default runtime/provider/MCP/client/CUDA。

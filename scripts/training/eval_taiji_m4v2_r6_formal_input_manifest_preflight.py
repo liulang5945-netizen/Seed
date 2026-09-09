@@ -37,7 +37,18 @@ from scripts.training.eval_taiji_m4v2_r6_parent_baseline_preflight import (  # n
     _parent,
     _r6_course,
 )
-from taiji import KWorkerManifest, KWorkerManifestBundle, Taiji, content_digest  # noqa: E402
+from taiji import (  # noqa: E402
+    KWorkerManifest,
+    KWorkerManifestBundle,
+    OutcomeDependencyProjector,
+    Taiji,
+    content_digest,
+)
+from taiji.k_fixed_large import (  # noqa: E402
+    FIXED_LARGE_CHECKPOINT_FORMAT,
+    FIXED_LARGE_CHECKPOINT_VERSION,
+    NativeKFixedLargeEnsemble,
+)
 
 REPORT_FORMAT = "taiji-m4v2-r6-formal-input-manifest-preflight-v1"
 MANIFEST_FORMAT = "taiji-m4v2-r6-formal-runner-input-v1"
@@ -53,6 +64,7 @@ ARM_IDS = (
 WORKER_IDS = ("k1.semantic", "k2.transition", "k3.outcome_projection")
 DEFAULT_PARENT_DIR = PROJECT_ROOT / "checkpoints" / "taiji_r6_parents"
 DEFAULT_WORKER_DIR = PROJECT_ROOT / "checkpoints" / "taiji_k_workers"
+DEFAULT_FIXED_LARGE_DIR = PROJECT_ROOT / "checkpoints" / "taiji_k_fixed_large"
 DEFAULT_MANIFEST = PROJECT_ROOT / "plans" / "manifests" / "taiji_m4v2_r6_formal_input_v1.json"
 DEFAULT_REPORT = (
     PROJECT_ROOT
@@ -178,6 +190,14 @@ def _worker_paths(worker_dir: Path, model_seed: int) -> dict[str, Path]:
     }
 
 
+def _fixed_large_path(fixed_large_dir: Path, model_seed: int) -> Path:
+    return (
+        fixed_large_dir
+        / f"model_{int(model_seed)}"
+        / "taiji_r6_k_fixed_large_ensemble.pt"
+    )
+
+
 def _worker_entry(model_seed: int, worker_dir: Path, parent_digest: str) -> dict[str, Any]:
     paths = _worker_paths(worker_dir, model_seed)
     artifacts = {worker_id: _load_mapping(path) for worker_id, path in paths.items()}
@@ -239,6 +259,115 @@ def _worker_entry(model_seed: int, worker_dir: Path, parent_digest: str) -> dict
     }
 
 
+def _fixed_large_entry_from_artifact(
+    model_seed: int,
+    fixed_large_dir: Path,
+    parent_digest: str,
+) -> dict[str, Any]:
+    path = _fixed_large_path(fixed_large_dir, model_seed)
+    payload = _load_mapping(path)
+    unsigned = {key: value for key, value in payload.items() if key != "ensemble_digest"}
+    artifact_digest = str(payload.get("ensemble_digest", ""))
+    if payload.get("format") != FIXED_LARGE_CHECKPOINT_FORMAT:
+        raise ValueError(f"fixed-large artifact format mismatch for model {model_seed}")
+    if int(payload.get("version", -1)) != FIXED_LARGE_CHECKPOINT_VERSION:
+        raise ValueError(f"fixed-large artifact version mismatch for model {model_seed}")
+    if artifact_digest != content_digest(unsigned):
+        raise ValueError(f"fixed-large artifact digest mismatch for model {model_seed}")
+    if str(payload.get("parent_checkpoint_digest", "")) != parent_digest:
+        raise ValueError(f"fixed-large artifact crosses parent for model {model_seed}")
+    if str(payload.get("candidate_namespace", "")) != (
+        f"taiji:k:fixed-large:model-{int(model_seed)}"
+    ):
+        raise ValueError(f"fixed-large namespace mismatch for model {model_seed}")
+    if int(payload.get("ensemble_width", -1)) != 2:
+        raise ValueError(f"fixed-large width mismatch for model {model_seed}")
+    if payload.get("worker_training_task_seeds") != [3, 4]:
+        raise ValueError(f"fixed-large worker task seed mismatch for model {model_seed}")
+
+    source_manifest = payload.get("source_manifest")
+    if not isinstance(source_manifest, Mapping):
+        raise ValueError(f"fixed-large source manifest missing for model {model_seed}")
+    source_manifest_digest = str(payload.get("source_manifest_digest", ""))
+    if source_manifest_digest != content_digest(source_manifest):
+        raise ValueError(f"fixed-large source manifest digest mismatch for model {model_seed}")
+    if str(source_manifest.get("parent_checkpoint_digest", "")) != parent_digest:
+        raise ValueError(f"fixed-large source manifest crosses parent for model {model_seed}")
+    if source_manifest.get("worker_training_task_seeds") != [3, 4]:
+        raise ValueError(f"fixed-large source worker seed mismatch for model {model_seed}")
+    if source_manifest.get("formal_holdout_task_seeds") != [0, 1, 2]:
+        raise ValueError(f"fixed-large source holdout seed mismatch for model {model_seed}")
+    if source_manifest.get("source_observation_overlap") != {
+        "semantic_input_digests": [],
+        "transition_input_digests": [],
+        "paths": [],
+    }:
+        raise ValueError(f"fixed-large source/holdout overlap for model {model_seed}")
+
+    resource_manifest = payload.get("resource_manifest")
+    if not isinstance(resource_manifest, Mapping):
+        raise ValueError(f"fixed-large resource manifest missing for model {model_seed}")
+    resource_manifest_digest = str(payload.get("resource_manifest_digest", ""))
+    if resource_manifest_digest != content_digest(resource_manifest):
+        raise ValueError(f"fixed-large resource manifest digest mismatch for model {model_seed}")
+    if (
+        resource_manifest.get("device") != "cpu"
+        or resource_manifest.get("cuda_required") is not False
+        or resource_manifest.get("optimizer_state_present") is not False
+        or resource_manifest.get("ensemble_width") != 2
+    ):
+        raise ValueError(f"fixed-large resource contract mismatch for model {model_seed}")
+    if bool(payload.get("optimizer_state_present", True)):
+        raise ValueError(f"fixed-large artifact carries optimizer state for model {model_seed}")
+
+    ensemble_payload = payload.get("ensemble_checkpoint")
+    if not isinstance(ensemble_payload, Mapping):
+        raise ValueError(f"fixed-large ensemble checkpoint missing for model {model_seed}")
+    ensemble_checkpoint_digest = str(payload.get("ensemble_checkpoint_digest", ""))
+    if ensemble_checkpoint_digest != content_digest(ensemble_payload):
+        raise ValueError(f"fixed-large ensemble checkpoint digest mismatch for model {model_seed}")
+    ensemble = NativeKFixedLargeEnsemble.from_checkpoint(ensemble_payload)
+    ensemble_fresh_restore_digest = content_digest(ensemble.checkpoint())
+    if ensemble_fresh_restore_digest != ensemble_checkpoint_digest:
+        raise ValueError(f"fixed-large ensemble fresh restore mismatch for model {model_seed}")
+
+    k3_payload = payload.get("k3_projection")
+    if not isinstance(k3_payload, Mapping):
+        raise ValueError(f"fixed-large K3 projection missing for model {model_seed}")
+    k3_checkpoint = k3_payload.get("checkpoint")
+    if not isinstance(k3_checkpoint, Mapping):
+        raise ValueError(f"fixed-large K3 checkpoint missing for model {model_seed}")
+    k3_checkpoint_digest = str(k3_payload.get("worker_checkpoint_digest", ""))
+    projector = OutcomeDependencyProjector.from_checkpoint(k3_checkpoint)
+    if content_digest(projector.checkpoint()) != k3_checkpoint_digest:
+        raise ValueError(f"fixed-large K3 fresh restore mismatch for model {model_seed}")
+    expected_owner_graph_digest = content_digest(
+        {"ensemble": ensemble.owner_digests, "k3": k3_checkpoint_digest}
+    )
+    if str(payload.get("owner_graph_digest", "")) != expected_owner_graph_digest:
+        raise ValueError(f"fixed-large owner graph mismatch for model {model_seed}")
+
+    return {
+        "model_seed": int(model_seed),
+        "artifact_path": _relative_path(path),
+        "artifact_digest": artifact_digest,
+        "parent_checkpoint_digest": parent_digest,
+        "candidate_namespace": str(payload["candidate_namespace"]),
+        "ensemble_width": 2,
+        "ensemble_checkpoint_digest": ensemble_checkpoint_digest,
+        "ensemble_checkpoint_fresh_restore_digest": ensemble_fresh_restore_digest,
+        "owner_graph_digest": str(payload["owner_graph_digest"]),
+        "source_manifest_digest": source_manifest_digest,
+        "resource_manifest_digest": resource_manifest_digest,
+        "resource_device": str(resource_manifest["device"]),
+        "optimizer_state_present": False,
+        "worker_training_task_seeds": [3, 4],
+        "formal_holdout_task_seeds": [0, 1, 2],
+        "k3_checkpoint_digest": k3_checkpoint_digest,
+        "source_observation_overlap": dict(source_manifest["source_observation_overlap"]),
+    }
+
+
 def _try_worker_registry(
     *,
     worker_dir: Path,
@@ -254,15 +383,35 @@ def _try_worker_registry(
         return []
 
 
+def _try_fixed_large_registry(
+    *,
+    fixed_large_dir: Path,
+    parent_registry: Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    parents = {int(entry["model_seed"]): str(entry["checkpoint_digest"]) for entry in parent_registry}
+    try:
+        return [
+            _fixed_large_entry_from_artifact(seed, fixed_large_dir, parents[seed])
+            for seed in MODEL_SEEDS
+        ]
+    except (FileNotFoundError, KeyError, TypeError, ValueError, RuntimeError):
+        return []
+
+
 def build_manifest(
     *,
     parent_dir: Path = DEFAULT_PARENT_DIR,
     worker_dir: Path = DEFAULT_WORKER_DIR,
+    fixed_large_dir: Path = DEFAULT_FIXED_LARGE_DIR,
 ) -> dict[str, Any]:
     parent_registry = [_parent_entry(seed, parent_dir) for seed in MODEL_SEEDS]
     course_registry = [_course_entry(seed) for seed in COURSE_SEEDS]
     worker_registry = _try_worker_registry(
         worker_dir=worker_dir,
+        parent_registry=parent_registry,
+    )
+    fixed_large_registry = _try_fixed_large_registry(
+        fixed_large_dir=fixed_large_dir,
         parent_registry=parent_registry,
     )
     payload: dict[str, Any] = {
@@ -277,6 +426,7 @@ def build_manifest(
         "arms": list(ARM_IDS),
         "parent_registry": parent_registry,
         "worker_registry": worker_registry,
+        "fixed_large_registry": fixed_large_registry,
         "course_registry": course_registry,
         "resource_contract": {
             "device": "cpu",
@@ -455,7 +605,34 @@ def _validate_worker_entry(
         return False, f"worker registry entry invalid: {exc}"
 
 
-def _validate_manifest(payload: Mapping[str, Any]) -> dict[str, Any]:
+def _validate_fixed_large_entry(
+    entry: Mapping[str, Any],
+    parent_registry: Mapping[int, Mapping[str, Any]],
+    fixed_large_dir: Path,
+) -> tuple[bool, str | None]:
+    try:
+        model_seed = int(entry["model_seed"])
+        if model_seed not in MODEL_SEEDS:
+            return False, f"unexpected fixed-large model_seed={model_seed}"
+        parent_digest = str(parent_registry[model_seed]["checkpoint_digest"])
+        expected = _fixed_large_entry_from_artifact(
+            model_seed,
+            fixed_large_dir,
+            parent_digest,
+        )
+        for key, expected_value in expected.items():
+            if entry.get(key) != expected_value:
+                return False, f"fixed-large registry {key} mismatch for model {model_seed}"
+        return True, None
+    except (FileNotFoundError, KeyError, TypeError, ValueError, RuntimeError) as exc:
+        return False, f"fixed-large registry entry invalid: {exc}"
+
+
+def _validate_manifest(
+    payload: Mapping[str, Any],
+    *,
+    fixed_large_dir: Path = DEFAULT_FIXED_LARGE_DIR,
+) -> dict[str, Any]:
     failures: list[dict[str, Any]] = []
     checks: dict[str, bool] = {}
     try:
@@ -627,8 +804,8 @@ def _validate_manifest(payload: Mapping[str, Any]) -> dict[str, Any]:
             and bool(worker_results)
             and all(worker_results)
         )
-        if not checks["worker_registry_valid"]:
-            failures.append(
+    if not checks["worker_registry_valid"]:
+        failures.append(
                 _failure(
                     failure_class="lineage",
                     message="worker_registry model seeds are not exactly 17, 23, and 31",
@@ -661,6 +838,74 @@ def _validate_manifest(payload: Mapping[str, Any]) -> dict[str, Any]:
                 message="resource contract is not CPU-only or requires CUDA",
             )
         )
+
+    fixed_large_registry = payload.get("fixed_large_registry")
+    fixed_large_entries = (
+        fixed_large_registry if isinstance(fixed_large_registry, list) else []
+    )
+    checks["fixed_large_registry_complete"] = (
+        isinstance(fixed_large_registry, list)
+        and len(fixed_large_registry) == len(MODEL_SEEDS)
+    )
+    checks["fixed_large_registry_valid"] = False
+    if not checks["fixed_large_registry_complete"]:
+        failures.append(
+            _failure(
+                failure_class="input_contract",
+                message=(
+                    "fixed_large_registry is incomplete; formal runner must not infer "
+                    "fixed-large controls from a directory"
+                ),
+                recoverability="fixed_large_registry_required",
+            )
+        )
+    else:
+        fixed_large_results: list[bool] = []
+        fixed_large_seeds: list[int] = []
+        for entry in fixed_large_entries:
+            if not isinstance(entry, Mapping):
+                fixed_large_results.append(False)
+                failures.append(
+                    _failure(
+                        failure_class="input_contract",
+                        message="fixed-large registry entry is not an object",
+                        recoverability="fixed_large_registry_required",
+                    )
+                )
+                continue
+            seed = int(entry.get("model_seed", -1))
+            fixed_large_seeds.append(seed)
+            valid, reason = _validate_fixed_large_entry(
+                entry,
+                parent_by_seed,
+                fixed_large_dir,
+            )
+            fixed_large_results.append(valid)
+            if not valid:
+                failures.append(
+                    _failure(
+                        failure_class=(
+                            "lineage"
+                            if "digest" in str(reason) or "parent" in str(reason)
+                            else "checkpoint_restore"
+                        ),
+                        message=str(reason),
+                        recoverability="fixed_large_registry_required",
+                    )
+                )
+        checks["fixed_large_registry_valid"] = (
+            fixed_large_seeds == list(MODEL_SEEDS)
+            and bool(fixed_large_results)
+            and all(fixed_large_results)
+        )
+        if not checks["fixed_large_registry_valid"]:
+            failures.append(
+                _failure(
+                    failure_class="lineage",
+                    message="fixed_large_registry model seeds are not exactly 17, 23, and 31",
+                    recoverability="fixed_large_registry_required",
+                )
+            )
     if not checks["side_effect_contract_closed"]:
         failures.append(
             _failure(
@@ -694,14 +939,20 @@ def run_preflight(
     materialize_parents: bool = False,
     parent_dir: Path = DEFAULT_PARENT_DIR,
     worker_dir: Path = DEFAULT_WORKER_DIR,
+    fixed_large_dir: Path = DEFAULT_FIXED_LARGE_DIR,
 ) -> dict[str, Any]:
     started = time.perf_counter()
     manifest_path = manifest_path.resolve()
     report_path = report_path.resolve()
     parent_dir = parent_dir.resolve()
     worker_dir = worker_dir.resolve()
+    fixed_large_dir = fixed_large_dir.resolve()
     if materialize_parents:
-        payload = build_manifest(parent_dir=parent_dir, worker_dir=worker_dir)
+        payload = build_manifest(
+            parent_dir=parent_dir,
+            worker_dir=worker_dir,
+            fixed_large_dir=fixed_large_dir,
+        )
         manifest_path.parent.mkdir(parents=True, exist_ok=True)
         manifest_path.write_text(
             json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
@@ -711,7 +962,7 @@ def run_preflight(
         raw = json.loads(manifest_path.read_text(encoding="utf-8"))
         if not isinstance(raw, Mapping):
             raise ValueError("formal input manifest must be a JSON object")
-        validation = _validate_manifest(raw)
+        validation = _validate_manifest(raw, fixed_large_dir=fixed_large_dir)
         manifest_digest = str(raw.get("manifest_digest", ""))
     except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
         validation = {
@@ -737,6 +988,7 @@ def run_preflight(
         "manifest_digest": manifest_digest,
         "parent_dir": _relative_path(parent_dir),
         "worker_dir": _relative_path(worker_dir),
+        "fixed_large_dir": _relative_path(fixed_large_dir),
         "checks": validation["checks"],
         "failures": validation["failures"],
         "formal_input_ready": validation["formal_input_ready"],
@@ -764,6 +1016,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
     parser.add_argument("--parent-dir", type=Path, default=DEFAULT_PARENT_DIR)
     parser.add_argument("--worker-dir", type=Path, default=DEFAULT_WORKER_DIR)
+    parser.add_argument("--fixed-large-dir", type=Path, default=DEFAULT_FIXED_LARGE_DIR)
     parser.add_argument(
         "--materialize-parents",
         action="store_true",
@@ -774,12 +1027,18 @@ def main(argv: list[str] | None = None) -> int:
     report_path = args.report if args.report.is_absolute() else PROJECT_ROOT / args.report
     parent_dir = args.parent_dir if args.parent_dir.is_absolute() else PROJECT_ROOT / args.parent_dir
     worker_dir = args.worker_dir if args.worker_dir.is_absolute() else PROJECT_ROOT / args.worker_dir
+    fixed_large_dir = (
+        args.fixed_large_dir
+        if args.fixed_large_dir.is_absolute()
+        else PROJECT_ROOT / args.fixed_large_dir
+    )
     report = run_preflight(
         manifest_path=manifest_path,
         report_path=report_path,
         materialize_parents=args.materialize_parents,
         parent_dir=parent_dir,
         worker_dir=worker_dir,
+        fixed_large_dir=fixed_large_dir,
     )
     print(
         json.dumps(
