@@ -750,3 +750,15 @@ parameters、1 条 inference trace，wall multiplier=1.1799×、peak multiplier=
 这仍不是完整 aggregate 或 promotion。下一步只执行固定顺序的 model31/course1，继续
 使用同一 revised manifest、prior ledger、input preflight 和 formal preflight；不接
 default runtime/provider/MCP/client/CUDA。
+
+## 34. Matched-control revision model31/course1 closure（2026-09-10）
+
+revised execution ledger 已追加 model31/course1，累计 8/9 row 均为 executed_passed，
+失败列表为空；该 cell 的 frozen-parent=0.0、matched no-feedback=0.0、candidate=1.0、
+lesion=0.0，两个 capability delta 均为 1.0。matched/candidate 均使用 4833 worker
+parameters、1 条 inference trace，wall multiplier=1.1603×、peak multiplier=1.0030×，
+并通过 fixed-large K-task-equivalent control。
+
+这仍不是完整 aggregate 或 promotion。下一步只执行固定顺序的 model31/course2，继续
+使用同一 revised manifest、prior ledger、input preflight 和 formal preflight；不接
+default runtime/provider/MCP/client/CUDA。

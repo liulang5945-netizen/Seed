@@ -682,3 +682,14 @@ same-capacity 参数/trace、no-feedback admission、parent namespace 和 side-e
 
 下一步只执行 revised ledger 的 model31/course1；不得跳过 predecessor、改变资源预算、
 提前运行 aggregate 或接入 default runtime/provider/MCP/client/CUDA。
+
+## 45. Matched-control revision model31/course1 closure（2026-09-10）
+
+model31/course1 已由 revised runner 单调追加并通过，独立 ledger 累计 8/9；该格
+frozen/matched/candidate/lesion=0/0/1/0，两个 capability delta 均为 1.0，
+same-capacity 参数/trace、no-feedback admission、parent namespace 和 side-effect Gate
+均通过，fixed-large K-task-equivalent control 也通过。旧 R6 aggregate 与旧 ledger
+仍保持不可变，can_start_r6_formal=false、can_promote=false。
+
+下一步只执行 revised ledger 的 model31/course2；不得跳过 predecessor、改变资源预算、
+提前运行 aggregate 或接入 default runtime/provider/MCP/client/CUDA。

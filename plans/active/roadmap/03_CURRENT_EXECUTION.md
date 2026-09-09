@@ -567,3 +567,10 @@ matched/candidate 参数与 inference trace 相同，wall=1.1799×、peak=1.0024
 fixed-large K-task-equivalent control 通过。**当前唯一下一步**：只执行 revised runner
 的 model31/course1；不运行 aggregate、不改变阈值、不接入 default runtime/provider/
 MCP/client/CUDA。
+
+model31/course1 已由 revised runner 追加并通过，独立 ledger 累计 8/9；该格仍为
+frozen=0、matched=0、candidate=1、lesion=0，两个 capability delta 均为 1.0，
+matched/candidate 参数与 inference trace 相同，wall=1.1603×、peak=1.0030×，
+fixed-large K-task-equivalent control 通过。**当前唯一下一步**：只执行 revised runner
+的 model31/course2；不运行 aggregate、不改变阈值、不接入 default runtime/provider/
+MCP/client/CUDA。
