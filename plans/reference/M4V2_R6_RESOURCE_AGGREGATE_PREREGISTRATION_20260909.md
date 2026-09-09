@@ -98,7 +98,28 @@ bound 等于 mean。任何 cell 缺失、无效或提前停止时 aggregate 状�
 - 任一 cell 资源超预算、checkpoint/parameter/inference 账本不一致：停止该 cell，
   保留失败 artifact，不放宽预算；
 - 任何 full formal 结果试图在 `can_promote=false` 下接 default runtime、provider、
-  MCP、client 或 CUDA：停止并归类 side-effect gate。
+MCP、client 或 CUDA：停止并归类 side-effect gate。
+
+## 6. Aggregate 实测结果与 matched 控制修订边界（2026-09-10）
+
+冻结 aggregate 已实际运行并输出
+reports/taiji_m4v2_r6_formal_aggregate_20260909.json。全部 9 个 cell/5 个 arm 的
+字段和 lineage 可复核，execution ledger 为 9/9 executed_passed；candidate 的
+task success、lesion causal 和 peak resource 结果分别通过 1.0、1.0 和
+1.1091× < 1.25×。但是 candidate/matched wall multiplier 的九个值全部超过
+1.5×，mean 为 6.5769×，所以 resource aggregate 不能通过。
+
+同时，当前 matched-fixed-capacity 并非真正的 same-capacity reference：它的 K worker
+没有 attach，worker_parameter_count=0、worker_parameter_bytes=0、
+inference_trace_count=0，与 frozen-parent 一样不能产生 task success。因而
+candidate - frozen-parent 和 candidate - matched-fixed-capacity 的能力 delta
+均为缺失，而不是 0；聚合器按合同生成 18 个 capability_gate blocker，不进行插值。
+
+后续控制修订必须保留本合同的 peak=1.25×、wall=1.5×、完整 9-cell 和无效 cell
+不可删除规则。唯一允许的修订方向是预注册真正的 matched K：加载相同 worker 参数和
+checkpoint、运行同一输入与 inference trace、保持 no-update/no-external-side-effect，
+仅屏蔽 K feedback/output admission，使它成为可计算能力差值的容量对照。修订完成前
+不计算新 promotion 结果，也不接入 default runtime/provider/MCP/client/CUDA。
 
 model17/23/31 的 fixed-large artifact、source/resource manifest、fresh restore 和
 non-overlap 已全部纳入 content-addressed formal input registry，preflight 已通过。
