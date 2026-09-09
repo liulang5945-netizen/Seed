@@ -690,3 +690,15 @@ side-effect 漂移。旧 R6 execution report 不被覆盖。
 当前仍不启动 aggregate 或 promotion。下一步只执行 revised runner 的
 model17/course2，要求 prior ledger、new manifest digest、五臂 resource/rollback/
 side-effect 和 no-feedback matched contract 全部通过。
+
+## 29. Matched-control revision model17 slice closure（2026-09-10）
+
+revised execution ledger 已完成 model17/course0、course1、course2 三格，3/9 row
+均为 executed_passed，报告仍为 single_cell_executed，失败列表为空。三格都满足
+frozen-parent=0.0、matched no-feedback=0.0、candidate=1.0、lesion=0.0，两个
+paired capability delta=1.0；matched/candidate worker parameter bytes 和 trace
+一致，wall/peak multiplier 均低于 1.5×/1.25×。
+
+model17 slice 已闭合，但这不是 9-cell aggregate 或 promotion Gate。下一步只开放
+固定顺序的 model23/course0，继续使用同一 revised manifest、prior ledger 和独立
+preflight；不接 default runtime/provider/MCP/client/CUDA。

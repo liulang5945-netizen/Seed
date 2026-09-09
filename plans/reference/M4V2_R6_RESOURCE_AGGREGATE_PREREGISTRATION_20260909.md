@@ -174,3 +174,12 @@ candidate-frozen 和 candidate-matched 能力差值均为 1.0。
 
 这仍不是 aggregate。下一步只执行 model17/course2，所有前序 row 必须保持
 executed_passed；失败 cell 必须保留，不能用其余 course 的均值替代。
+
+## 9. Revised model17 slice closure（2026-09-10）
+
+model17 的三个 revised course cell 已连续通过，3/9 row 为 executed_passed；每格
+candidate/matched wall multiplier 均低于 1.5×、peak 均低于 1.25×，参数字节和
+inference trace 相等，candidate-frozen 与 candidate-matched delta 均为 1.0。
+
+slice closure 不改变 aggregate 合同。下一步只执行 model23/course0，保留固定前序、
+全部 arm 字段和不可删除失败 cell 规则。
