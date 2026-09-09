@@ -178,6 +178,7 @@ K3 不证明开放域语言能力、通用规划、Skill/MCP 内化后的智能�
 第一步 projection contract 已落地，但尚未运行 K3 canary：
 
 - `taiji/outcome_dependency.py` 新增 `OutcomeDependencySpec`、`OutcomeDependencyProjection` 和 `OutcomeDependencyProjector`；owner 只接受 typed `WorldEvent`，生成 outcome signature、dependency digest、facts、lineage，并在同 tick enrich `WorldState`；
+- 复核后明确：动态 `dependency_digest` 只属于 projection/lineage，不进入可泛化 semantic facts；world facts 仅保留稳定的 outcome class、capability、dependency id/task，避免把事件 ID 学成知识；
 - checkpoint 带 content digest，projection payload 带 content digest；restore、stale tick、wrong outcome、event identity conflict、duplicate dependency、cross-scope 和 lesion 均 fail-closed；
 - `tests/taiji_native/test_m5_k3_outcome_dependency.py`：7/7 通过；K2 transition binding + executive 回归：13/13 通过；ruff、py_compile、mypy 通过；
 - `tests/test_workbench_contract.py` 的复核仍被本机 pytest 临时目录 ACL 阻断（5 个测试实际进入执行，43 个在 `tmp_path` setup 阶段失败），没有出现由本次 projection 断言引起的失败；
