@@ -91,6 +91,11 @@ def _course_train_variants(
             raise ValueError("non_sliding K course variants require exactly three examples")
         fixed = ((0, 2, 4), (1, 3, 5), (0, 3, 5))
         indexes = fixed[int(course_seed) % len(fixed)]
+    elif strategy == "target_aware":
+        if int(count) != 3:
+            raise ValueError("target_aware K course variants require exactly three examples")
+        fixed = ((0, 1, 2), (0, 3, 1), (0, 1, 4))
+        indexes = fixed[int(course_seed) % len(fixed)]
     else:
         raise ValueError(f"unknown K course train variant strategy: {strategy}")
     return indexes, tuple(variants[index] for index in indexes)
@@ -617,6 +622,20 @@ def run_diagnostic(
                 "train_course_digest": content_digest(
                     list(course.train_experience_digests)
                 ),
+                "train_target_digests": [
+                    experience.target_digest for experience in course.train
+                ],
+                "train_target_multiset_digest": content_digest(
+                    sorted(experience.target_digest for experience in course.train)
+                ),
+                "train_target_multiplicity": {
+                    digest: sum(
+                        item.target_digest == digest for item in course.train
+                    )
+                    for digest in sorted(
+                        {experience.target_digest for experience in course.train}
+                    )
+                },
                 "train_fit_input_digests": [
                     {
                         "experience_digest": experience.experience_digest,
