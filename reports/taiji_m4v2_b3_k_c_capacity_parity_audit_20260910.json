@@ -1,0 +1,521 @@
+{
+  "report_format": "taiji-m4v2-b3-k-c-capacity-parity-audit-v1",
+  "version": 1,
+  "run_kind": "c-entry-capacity-parity-audit",
+  "status": "blocked-current-comparison-confounded",
+  "formal_report_path": "E:\\Seed\\reports\\taiji_m4v2_b3_k_c_formal_20260910.json",
+  "fixed_large_report_path": "E:\\Seed\\reports\\taiji_m4v2_b3_k_c_fixed_large_build_20260910.json",
+  "formal_report_status": "passed",
+  "cell_count": 9,
+  "model_seeds": [
+    17,
+    23,
+    31
+  ],
+  "course_seeds": [
+    0,
+    1,
+    2
+  ],
+  "aggregate": {
+    "parameter_bytes_within_tolerance_all": false,
+    "training_update_steps_equal_all": false,
+    "checkpoint_write_count_equal_all": false,
+    "inference_trace_count_equal_all": true,
+    "same_training_episode_indexes_all": true,
+    "fixed_large_cross_report_consistent_all": true,
+    "candidate_parameter_bytes": [
+      19332
+    ],
+    "fixed_large_parameter_bytes": [
+      38664
+    ],
+    "candidate_training_update_steps": [
+      6
+    ],
+    "fixed_large_training_update_steps": [
+      14252
+    ],
+    "candidate_checkpoint_write_counts": [
+      2
+    ],
+    "fixed_large_checkpoint_write_counts": [
+      9
+    ]
+  },
+  "cells": [
+    {
+      "model_seed": 17,
+      "course_seed": 0,
+      "candidate": {
+        "parameter_bytes": 19332,
+        "training_update_steps": 6,
+        "checkpoint_write_bytes": 30538,
+        "checkpoint_write_count": 2,
+        "training_wall_clock_seconds": 0.0016471000853925943,
+        "inference_trace_count": 6
+      },
+      "fixed_large": {
+        "parameter_bytes": 38664,
+        "training_update_steps": 14252,
+        "checkpoint_write_bytes": 183491,
+        "checkpoint_write_count": 9,
+        "training_wall_clock_seconds": 0.06604279996827245,
+        "inference_trace_count": 6
+      },
+      "training_examples": {
+        "candidate_episode_indexes": [
+          0,
+          1,
+          2
+        ],
+        "fixed_large_episode_indexes": [
+          0,
+          1,
+          2
+        ],
+        "same_episode_indexes": true
+      },
+      "cross_report_consistency": {
+        "fixed_large_parameter_bytes_matches_build": true,
+        "fixed_large_update_steps_matches_build": true
+      },
+      "parity": {
+        "parameter_bytes_ratio": 0.5,
+        "parameter_bytes_within_tolerance": false,
+        "training_update_steps_ratio": 0.9995790064552343,
+        "training_update_steps_equal": false,
+        "checkpoint_write_count_equal": false,
+        "checkpoint_write_bytes_ratio": 0.8335722188009221,
+        "inference_trace_count_equal": true
+      }
+    },
+    {
+      "model_seed": 17,
+      "course_seed": 1,
+      "candidate": {
+        "parameter_bytes": 19332,
+        "training_update_steps": 6,
+        "checkpoint_write_bytes": 30538,
+        "checkpoint_write_count": 2,
+        "training_wall_clock_seconds": 0.0012432000366970897,
+        "inference_trace_count": 6
+      },
+      "fixed_large": {
+        "parameter_bytes": 38664,
+        "training_update_steps": 14252,
+        "checkpoint_write_bytes": 183491,
+        "checkpoint_write_count": 9,
+        "training_wall_clock_seconds": 0.07027739996556193,
+        "inference_trace_count": 6
+      },
+      "training_examples": {
+        "candidate_episode_indexes": [
+          0,
+          3,
+          1
+        ],
+        "fixed_large_episode_indexes": [
+          0,
+          3,
+          1
+        ],
+        "same_episode_indexes": true
+      },
+      "cross_report_consistency": {
+        "fixed_large_parameter_bytes_matches_build": true,
+        "fixed_large_update_steps_matches_build": true
+      },
+      "parity": {
+        "parameter_bytes_ratio": 0.5,
+        "parameter_bytes_within_tolerance": false,
+        "training_update_steps_ratio": 0.9995790064552343,
+        "training_update_steps_equal": false,
+        "checkpoint_write_count_equal": false,
+        "checkpoint_write_bytes_ratio": 0.8335722188009221,
+        "inference_trace_count_equal": true
+      }
+    },
+    {
+      "model_seed": 17,
+      "course_seed": 2,
+      "candidate": {
+        "parameter_bytes": 19332,
+        "training_update_steps": 6,
+        "checkpoint_write_bytes": 30538,
+        "checkpoint_write_count": 2,
+        "training_wall_clock_seconds": 0.0012987999944016337,
+        "inference_trace_count": 6
+      },
+      "fixed_large": {
+        "parameter_bytes": 38664,
+        "training_update_steps": 14252,
+        "checkpoint_write_bytes": 183491,
+        "checkpoint_write_count": 9,
+        "training_wall_clock_seconds": 0.06764689995907247,
+        "inference_trace_count": 6
+      },
+      "training_examples": {
+        "candidate_episode_indexes": [
+          0,
+          1,
+          4
+        ],
+        "fixed_large_episode_indexes": [
+          0,
+          1,
+          4
+        ],
+        "same_episode_indexes": true
+      },
+      "cross_report_consistency": {
+        "fixed_large_parameter_bytes_matches_build": true,
+        "fixed_large_update_steps_matches_build": true
+      },
+      "parity": {
+        "parameter_bytes_ratio": 0.5,
+        "parameter_bytes_within_tolerance": false,
+        "training_update_steps_ratio": 0.9995790064552343,
+        "training_update_steps_equal": false,
+        "checkpoint_write_count_equal": false,
+        "checkpoint_write_bytes_ratio": 0.8335722188009221,
+        "inference_trace_count_equal": true
+      }
+    },
+    {
+      "model_seed": 23,
+      "course_seed": 0,
+      "candidate": {
+        "parameter_bytes": 19332,
+        "training_update_steps": 6,
+        "checkpoint_write_bytes": 30538,
+        "checkpoint_write_count": 2,
+        "training_wall_clock_seconds": 0.0011722000781446695,
+        "inference_trace_count": 6
+      },
+      "fixed_large": {
+        "parameter_bytes": 38664,
+        "training_update_steps": 14252,
+        "checkpoint_write_bytes": 183491,
+        "checkpoint_write_count": 9,
+        "training_wall_clock_seconds": 0.07202009996399283,
+        "inference_trace_count": 6
+      },
+      "training_examples": {
+        "candidate_episode_indexes": [
+          0,
+          1,
+          2
+        ],
+        "fixed_large_episode_indexes": [
+          0,
+          1,
+          2
+        ],
+        "same_episode_indexes": true
+      },
+      "cross_report_consistency": {
+        "fixed_large_parameter_bytes_matches_build": true,
+        "fixed_large_update_steps_matches_build": true
+      },
+      "parity": {
+        "parameter_bytes_ratio": 0.5,
+        "parameter_bytes_within_tolerance": false,
+        "training_update_steps_ratio": 0.9995790064552343,
+        "training_update_steps_equal": false,
+        "checkpoint_write_count_equal": false,
+        "checkpoint_write_bytes_ratio": 0.8335722188009221,
+        "inference_trace_count_equal": true
+      }
+    },
+    {
+      "model_seed": 23,
+      "course_seed": 1,
+      "candidate": {
+        "parameter_bytes": 19332,
+        "training_update_steps": 6,
+        "checkpoint_write_bytes": 30538,
+        "checkpoint_write_count": 2,
+        "training_wall_clock_seconds": 0.0016846000216901302,
+        "inference_trace_count": 6
+      },
+      "fixed_large": {
+        "parameter_bytes": 38664,
+        "training_update_steps": 14252,
+        "checkpoint_write_bytes": 183491,
+        "checkpoint_write_count": 9,
+        "training_wall_clock_seconds": 0.067451799986884,
+        "inference_trace_count": 6
+      },
+      "training_examples": {
+        "candidate_episode_indexes": [
+          0,
+          3,
+          1
+        ],
+        "fixed_large_episode_indexes": [
+          0,
+          3,
+          1
+        ],
+        "same_episode_indexes": true
+      },
+      "cross_report_consistency": {
+        "fixed_large_parameter_bytes_matches_build": true,
+        "fixed_large_update_steps_matches_build": true
+      },
+      "parity": {
+        "parameter_bytes_ratio": 0.5,
+        "parameter_bytes_within_tolerance": false,
+        "training_update_steps_ratio": 0.9995790064552343,
+        "training_update_steps_equal": false,
+        "checkpoint_write_count_equal": false,
+        "checkpoint_write_bytes_ratio": 0.8335722188009221,
+        "inference_trace_count_equal": true
+      }
+    },
+    {
+      "model_seed": 23,
+      "course_seed": 2,
+      "candidate": {
+        "parameter_bytes": 19332,
+        "training_update_steps": 6,
+        "checkpoint_write_bytes": 30538,
+        "checkpoint_write_count": 2,
+        "training_wall_clock_seconds": 0.0013640000252053142,
+        "inference_trace_count": 6
+      },
+      "fixed_large": {
+        "parameter_bytes": 38664,
+        "training_update_steps": 14252,
+        "checkpoint_write_bytes": 183491,
+        "checkpoint_write_count": 9,
+        "training_wall_clock_seconds": 0.06647029996383935,
+        "inference_trace_count": 6
+      },
+      "training_examples": {
+        "candidate_episode_indexes": [
+          0,
+          1,
+          4
+        ],
+        "fixed_large_episode_indexes": [
+          0,
+          1,
+          4
+        ],
+        "same_episode_indexes": true
+      },
+      "cross_report_consistency": {
+        "fixed_large_parameter_bytes_matches_build": true,
+        "fixed_large_update_steps_matches_build": true
+      },
+      "parity": {
+        "parameter_bytes_ratio": 0.5,
+        "parameter_bytes_within_tolerance": false,
+        "training_update_steps_ratio": 0.9995790064552343,
+        "training_update_steps_equal": false,
+        "checkpoint_write_count_equal": false,
+        "checkpoint_write_bytes_ratio": 0.8335722188009221,
+        "inference_trace_count_equal": true
+      }
+    },
+    {
+      "model_seed": 31,
+      "course_seed": 0,
+      "candidate": {
+        "parameter_bytes": 19332,
+        "training_update_steps": 6,
+        "checkpoint_write_bytes": 30538,
+        "checkpoint_write_count": 2,
+        "training_wall_clock_seconds": 0.001159299979917705,
+        "inference_trace_count": 6
+      },
+      "fixed_large": {
+        "parameter_bytes": 38664,
+        "training_update_steps": 14252,
+        "checkpoint_write_bytes": 183491,
+        "checkpoint_write_count": 9,
+        "training_wall_clock_seconds": 0.07397970010060817,
+        "inference_trace_count": 6
+      },
+      "training_examples": {
+        "candidate_episode_indexes": [
+          0,
+          1,
+          2
+        ],
+        "fixed_large_episode_indexes": [
+          0,
+          1,
+          2
+        ],
+        "same_episode_indexes": true
+      },
+      "cross_report_consistency": {
+        "fixed_large_parameter_bytes_matches_build": true,
+        "fixed_large_update_steps_matches_build": true
+      },
+      "parity": {
+        "parameter_bytes_ratio": 0.5,
+        "parameter_bytes_within_tolerance": false,
+        "training_update_steps_ratio": 0.9995790064552343,
+        "training_update_steps_equal": false,
+        "checkpoint_write_count_equal": false,
+        "checkpoint_write_bytes_ratio": 0.8335722188009221,
+        "inference_trace_count_equal": true
+      }
+    },
+    {
+      "model_seed": 31,
+      "course_seed": 1,
+      "candidate": {
+        "parameter_bytes": 19332,
+        "training_update_steps": 6,
+        "checkpoint_write_bytes": 30538,
+        "checkpoint_write_count": 2,
+        "training_wall_clock_seconds": 0.0013546000700443983,
+        "inference_trace_count": 6
+      },
+      "fixed_large": {
+        "parameter_bytes": 38664,
+        "training_update_steps": 14252,
+        "checkpoint_write_bytes": 183491,
+        "checkpoint_write_count": 9,
+        "training_wall_clock_seconds": 0.06720440008211881,
+        "inference_trace_count": 6
+      },
+      "training_examples": {
+        "candidate_episode_indexes": [
+          0,
+          3,
+          1
+        ],
+        "fixed_large_episode_indexes": [
+          0,
+          3,
+          1
+        ],
+        "same_episode_indexes": true
+      },
+      "cross_report_consistency": {
+        "fixed_large_parameter_bytes_matches_build": true,
+        "fixed_large_update_steps_matches_build": true
+      },
+      "parity": {
+        "parameter_bytes_ratio": 0.5,
+        "parameter_bytes_within_tolerance": false,
+        "training_update_steps_ratio": 0.9995790064552343,
+        "training_update_steps_equal": false,
+        "checkpoint_write_count_equal": false,
+        "checkpoint_write_bytes_ratio": 0.8335722188009221,
+        "inference_trace_count_equal": true
+      }
+    },
+    {
+      "model_seed": 31,
+      "course_seed": 2,
+      "candidate": {
+        "parameter_bytes": 19332,
+        "training_update_steps": 6,
+        "checkpoint_write_bytes": 30538,
+        "checkpoint_write_count": 2,
+        "training_wall_clock_seconds": 0.001267799991182983,
+        "inference_trace_count": 6
+      },
+      "fixed_large": {
+        "parameter_bytes": 38664,
+        "training_update_steps": 14252,
+        "checkpoint_write_bytes": 183491,
+        "checkpoint_write_count": 9,
+        "training_wall_clock_seconds": 0.07110070006456226,
+        "inference_trace_count": 6
+      },
+      "training_examples": {
+        "candidate_episode_indexes": [
+          0,
+          1,
+          4
+        ],
+        "fixed_large_episode_indexes": [
+          0,
+          1,
+          4
+        ],
+        "same_episode_indexes": true
+      },
+      "cross_report_consistency": {
+        "fixed_large_parameter_bytes_matches_build": true,
+        "fixed_large_update_steps_matches_build": true
+      },
+      "parity": {
+        "parameter_bytes_ratio": 0.5,
+        "parameter_bytes_within_tolerance": false,
+        "training_update_steps_ratio": 0.9995790064552343,
+        "training_update_steps_equal": false,
+        "checkpoint_write_count_equal": false,
+        "checkpoint_write_bytes_ratio": 0.8335722188009221,
+        "inference_trace_count_equal": true
+      }
+    }
+  ],
+  "current_verdict": {
+    "candidate_learning_evidence_valid": true,
+    "comparison_valid_for_learning_rule_claim": false,
+    "strong_control_victory": false,
+    "can_promote": false,
+    "blocking_reason": "current candidate/fixed-large result is capacity- and update-budget-confounded",
+    "reason_codes": [
+      "parameter_bytes_mismatch",
+      "training_update_steps_mismatch"
+    ]
+  },
+  "preregistration": {
+    "format": "taiji-m4v2-b3-k-capacity-parity-preregistration-v1",
+    "status": "pre-registered-blocked-until-parity",
+    "comparison_unit": {
+      "cell_matrix": "same 3 model seeds x 3 course seeds = 9 cells",
+      "parent": "same frozen parent checkpoint digest per cell",
+      "course": "same C-entry course digest and target-aware target multiset",
+      "evaluation": "same validation and sealed inputs; sealed remains unread until formal scoring"
+    },
+    "hard_gates": {
+      "parameter_bytes": {
+        "rule": "candidate and fixed-large parameter_bytes ratio <= 1%",
+        "tolerance_ratio": 0.01
+      },
+      "training_examples": {
+        "rule": "same episode indexes and same train/holdout disjointness"
+      },
+      "training_update_steps": {
+        "rule": "exact equality per cell; count actual parameter-update events"
+      },
+      "checkpoint_policy": {
+        "rule": "same logical checkpoint emission count; report byte totals separately",
+        "byte_total": "measurement only; do not treat format-specific bytes as a learning-rule advantage"
+      },
+      "inference_trace": {
+        "rule": "same validation/sealed trace counts and input digests"
+      },
+      "restoration": {
+        "rule": "fresh restore and rollback gates remain mandatory for both routes"
+      }
+    },
+    "resource_interpretation": {
+      "training_wall_clock": "report, not a scientific parity gate; it is hardware-dependent",
+      "peak_working_set": "report as the existing RSS lower bound, not exact allocator usage",
+      "inference_wall_clock": "report only after identical trace contract is satisfied",
+      "promotion": "requires all technical/resource/quality gates, parity gates, and 9/9 sealed strong-control victory"
+    },
+    "current_formal_result": {
+      "strong_control_victory": false,
+      "comparison_valid_for_learning_rule_claim": false,
+      "promotion_precondition_passed": false,
+      "reason_codes": [
+        "parameter_bytes_mismatch",
+        "training_update_steps_mismatch"
+      ]
+    },
+    "stop_rule": "do not add training, tune learning rate, revive R5/structure growth, or attach default runtime before the parity contract is satisfied"
+  }
+}
