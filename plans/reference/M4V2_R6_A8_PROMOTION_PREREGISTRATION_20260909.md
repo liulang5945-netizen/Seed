@@ -452,3 +452,23 @@ fixed-large arm 与 candidate 使用同一 holdout 输入、语言 registry、re
 下一步只补齐 candidate/fixed-large 的 paired peak-resource、checkpoint-write、
 parameter/inference 和 side-effect measurement，使单 cell 的资源/因果 ledger 完整；
 完成并预注册前不扩大到 9 cells、不运行 full formal、不接 default runtime。
+
+## 23. Single-cell paired resource ledger（2026-09-09）
+
+已按同一 `process_rss_before_after_lower_bound` 方法补齐 candidate 与 fixed-large 的
+paired resource ledger，并重跑 `model_seed=17 / course_seed=0`：
+
+- 两个 K 单步都为 `1/1`，`measurement_complete=true`，inference trace 都为 `1`，
+  training update 都为 `0`，side-effect/rollback Gate 通过；
+- candidate K1/K2 为 `4833` parameters / `19332` bytes，checkpoint write 为
+  `35403` bytes；fixed-large 宽度 `2` 为 `9666` parameters / `38664` bytes，
+  checkpoint write 为 `125829` bytes；
+- peak RSS、wall-clock、参数字节、checkpoint 字节和 inference trace 已记录
+  `fixed-large - candidate` paired delta；该 delta 只用于资源对照，不事后改变任何
+  promotion 阈值；
+- `reports/taiji_m4v2_r6_formal_single_cell_20260909.json` 当前为 `status=passed`，
+  但 `course_executed=false`、`can_start_r6_formal=false`、`can_promote=false`。
+
+下一步冻结 9-cell formal 的资源 validity/aggregate 合同（包括同一 CPU 口径、无效
+cell、peak resource、checkpoint/parameter/inference 和 paired delta 的聚合规则），
+合同冻结前不执行 9-cell full formal。

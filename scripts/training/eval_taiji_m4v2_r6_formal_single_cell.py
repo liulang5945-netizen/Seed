@@ -179,17 +179,33 @@ def _fixed_large_control_arm(
     parent_digest: str,
 ) -> dict[str, Any]:
     del parent
+    before_rss = _rss_bytes()
+    started = time.perf_counter()
     canary = run_fixed_large_canary(
         artifact_path=artifact_path,
         model_seed=MODEL_SEED,
         course_seed=COURSE_SEED,
     )
+    elapsed = time.perf_counter() - started
+    after_rss = _rss_bytes()
+    peak_rss = None if before_rss is None or after_rss is None else max(before_rss, after_rss)
     passed = canary.get("status") == "passed"
     outcome_success = bool(canary.get("outcome_success", False))
     projection_accepted = bool(canary.get("projection_accepted", False))
     old_before = canary.get("old_capability_before", {})
     old_after = canary.get("old_capability_after", {})
-    resource = canary.get("resource", {})
+    resource = dict(canary.get("resource") or {})
+    resource["wall_clock_seconds"] = elapsed
+    resource["peak_working_set_bytes"] = peak_rss
+    resource["peak_working_set_method"] = "process_rss_before_after_lower_bound"
+    resource["worker_parameter_count"] = resource.get("parameter_count")
+    resource["worker_parameter_bytes"] = resource.get("candidate_parameter_bytes")
+    resource["measurement_complete"] = (
+        peak_rss is not None
+        and resource.get("worker_parameter_bytes") is not None
+        and resource.get("checkpoint_write_bytes") is not None
+        and resource.get("inference_trace_count") is not None
+    )
     return {
         "arm": "fixed-large",
         "status": "passed" if passed else "failed",
@@ -224,8 +240,6 @@ def _fixed_large_control_arm(
         },
         "resource": {
             **resource,
-            "peak_working_set_bytes": resource.get("peak_working_set_bytes"),
-            "measurement_complete": passed,
         },
         "side_effects": {
             "parent_namespace_unchanged": bool(
@@ -275,6 +289,15 @@ def _candidate_arm(
     after_rss = _rss_bytes()
     peak_rss = None if before_rss is None or after_rss is None else max(before_rss, after_rss)
     passed = canary.get("status") == "passed"
+    canary_resource = canary.get("resource") or {}
+    parameter_bytes = canary_resource.get("worker_parameter_bytes")
+    checkpoint_write_bytes = canary_resource.get("checkpoint_write_bytes")
+    measurement_complete = (
+        peak_rss is not None
+        and parameter_bytes is not None
+        and checkpoint_write_bytes is not None
+        and canary_resource.get("inference_trace_count") is not None
+    )
     outcome_success = bool(canary.get("outcome_success", False))
     projection_accepted = bool(canary.get("projection_accepted", False))
     if lesion_k3:
@@ -329,11 +352,13 @@ def _candidate_arm(
             "wall_clock_seconds": elapsed,
             "peak_working_set_bytes": peak_rss,
             "peak_working_set_method": "process_rss_before_after_lower_bound",
-            "training_update_steps": 0,
-            "candidate_parameter_bytes": 0,
-            "checkpoint_write_bytes": 0,
-            "inference_trace_count": 1,
-            "measurement_complete": False,
+            "worker_parameter_count": canary_resource.get("worker_parameter_count"),
+            "worker_parameter_bytes": parameter_bytes,
+            "candidate_parameter_bytes": parameter_bytes,
+            "checkpoint_write_bytes": checkpoint_write_bytes,
+            "inference_trace_count": canary_resource.get("inference_trace_count", 1),
+            "training_update_steps": canary_resource.get("training_update_steps", 0),
+            "measurement_complete": measurement_complete,
         },
         "side_effects": {
             "parent_namespace_unchanged": all(
@@ -365,6 +390,58 @@ def _candidate_arm(
             message=str(canary.get("blocking_reason") or "controlled K canary failed"),
             arm=arm,
             recoverability="candidate_canary_diagnosis_required",
+        ),
+    }
+
+
+def _paired_resource_comparison(arms: Mapping[str, Mapping[str, Any]]) -> dict[str, Any]:
+    candidate = arms["candidate-continuation"]
+    fixed_large = arms["fixed-large"]
+    candidate_resource = candidate.get("resource") or {}
+    fixed_resource = fixed_large.get("resource") or {}
+    fields = (
+        "wall_clock_seconds",
+        "peak_working_set_bytes",
+        "worker_parameter_bytes",
+        "checkpoint_write_bytes",
+        "inference_trace_count",
+    )
+
+    def _delta(field: str) -> float | None:
+        left = candidate_resource.get(field)
+        right = fixed_resource.get(field)
+        if not isinstance(left, (int, float)) or not isinstance(right, (int, float)):
+            return None
+        return float(right) - float(left)
+
+    measurement_complete = bool(
+        candidate_resource.get("measurement_complete", False)
+        and fixed_resource.get("measurement_complete", False)
+    )
+    return {
+        "status": "passed" if measurement_complete else "blocked",
+        "measurement_complete": measurement_complete,
+        "measurement_method": "process_rss_before_after_lower_bound",
+        "candidate_arm": {
+            "status": candidate.get("status"),
+            "task_success_rate": (candidate.get("new_capability") or {}).get(
+                "task_success_rate"
+            ),
+            "resource": candidate_resource,
+        },
+        "fixed_large_arm": {
+            "status": fixed_large.get("status"),
+            "task_success_rate": (fixed_large.get("new_capability") or {}).get(
+                "task_success_rate"
+            ),
+            "resource": fixed_resource,
+        },
+        "fixed_large_minus_candidate": {
+            field: _delta(field) for field in fields
+        },
+        "task_success_delta_fixed_large_minus_candidate": (
+            float((fixed_large.get("new_capability") or {}).get("task_success_rate", 0.0))
+            - float((candidate.get("new_capability") or {}).get("task_success_rate", 0.0))
         ),
     }
 
@@ -446,7 +523,22 @@ def run_single_cell(
             arm="lesion",
         ),
     }
+    paired_comparison = _paired_resource_comparison(arms)
+    resource_failure = (
+        None
+        if paired_comparison["measurement_complete"]
+        else _failure(
+            failure_class="resource",
+            message=(
+                "candidate/fixed-large paired resource measurement is incomplete; "
+                "peak RSS, checkpoint bytes, parameter bytes, and inference trace must be present"
+            ),
+            recoverability="paired_resource_measurement_required",
+        )
+    )
     failures = [arm["failure"] for arm in arms.values() if arm.get("failure") is not None]
+    if resource_failure is not None:
+        failures.append(resource_failure)
     report = {
         "report_format": REPORT_FORMAT,
         "version": VERSION,
@@ -457,6 +549,7 @@ def run_single_cell(
         "worker_bundle_digest": worker_entry["bundle_digest"],
         "input_preflight_status": input_gate["status"],
         "arms": arms,
+        "paired_comparison": paired_comparison,
         "failures": failures,
         "course_executed": False,
         "single_cell_executed": True,

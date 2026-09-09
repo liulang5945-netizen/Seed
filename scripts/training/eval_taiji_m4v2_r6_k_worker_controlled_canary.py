@@ -195,6 +195,20 @@ def run_canary(
         projector = OutcomeDependencyProjector.from_checkpoint(
             artifacts["k3.outcome_projection"]["checkpoint"]
         )
+        worker_parameter_count = semantic.parameter_count + transition.parameter_count
+        checkpoint_write_bytes = sum(
+            path.stat().st_size for path in paths.values() if path.is_file()
+        )
+        resource_summary = {
+            "worker_parameter_count": worker_parameter_count,
+            "worker_parameter_bytes": worker_parameter_count * 4,
+            "checkpoint_write_bytes": checkpoint_write_bytes,
+            "inference_trace_count": 1,
+            "training_update_steps": 0,
+            "measurement_complete": False,
+            "peak_working_set_bytes": None,
+            "peak_working_set_method": "process_rss_before_after_lower_bound",
+        }
         if lesion_k3:
             projector = OutcomeDependencyProjector(projector.scope_id, lesioned=True)
         source_manifest_digest = str(artifacts["k1.semantic"]["source_manifest_digest"])
@@ -429,6 +443,7 @@ def run_canary(
                     "old_capability_before": before,
                     "old_capability_after": after,
                     "old_capability_retention": retention,
+                    "resource": resource_summary,
                     "candidate_training_performed": False,
                     "candidate_promoted": False,
                     "can_start_r6_formal": False,
@@ -563,9 +578,10 @@ def run_canary(
                 "projection_digest": projection.projection_digest,
                 "exchange_digest": None if exchange is None else exchange.exchange_digest,
                 "old_capability_before": before,
-                "old_capability_after": after,
-                "old_capability_retention": retention,
-                "candidate_training_performed": False,
+                    "old_capability_after": after,
+                    "old_capability_retention": retention,
+                    "resource": resource_summary,
+                    "candidate_training_performed": False,
                 "candidate_promoted": False,
                 "can_start_r6_formal": False,
                 "can_promote": False,

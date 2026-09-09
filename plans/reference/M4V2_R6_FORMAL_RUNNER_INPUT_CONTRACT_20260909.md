@@ -440,3 +440,16 @@ formal/promotion：当前 candidate 的 resource `measurement_complete=false`，
 仍缺少与 candidate 同方法的 peak working-set 记录，paired resource/side-effect
 aggregate 尚未形成。因此 `course_executed=false`、`can_start_r6_formal=false`、
 `can_promote=false` 保持。
+
+## 12. Single-cell paired resource ledger closure（2026-09-09）
+
+随后已补齐并验证 candidate/fixed-large 的同方法 resource ledger。两臂均有
+`measurement_complete=true`、`process_rss_before_after_lower_bound`、参数字节、
+checkpoint write、inference trace 和 wall-clock；single-cell report 记录了
+`fixed-large - candidate` 的逐字段 delta，且两臂 K success 都为 `1/1`。这只证明
+资源字段闭合和本 cell 可比较，不能推断 9-cell aggregate；因此 formal runner 仍不
+执行 course，`can_start_r6_formal=false`、`can_promote=false` 不变。
+
+下一步是预注册 9-cell 的资源 validity/aggregate 规则，包括 CPU 口径、无效 cell、
+peak resource、checkpoint/parameter/inference 和 paired delta 的处理；规则冻结前
+不得运行 full formal。

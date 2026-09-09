@@ -22,10 +22,10 @@
     "worker_registry_valid": true
   },
   "client_attached": false,
-  "created_at_unix": 1788965985.7273898,
+  "created_at_unix": 1788966325.9626017,
   "cuda_used": false,
   "default_runtime_attached": false,
-  "elapsed_seconds": 0.13379810005426407,
+  "elapsed_seconds": 0.13371620001271367,
   "failures": [],
   "formal_input_ready": true,
   "manifest_digest": "554c219ccc3f08c2a1483b9a9c1055235e6e0467b6d2dd5388d2c90637fa9dea",
