@@ -608,3 +608,17 @@ parent/worker/fixed-large registry 和 prior ledger，任何失败停止在该 r
 
 下一步只执行最后的 `model31/course2`，完成 9-cell ledger 后再做预注册 aggregate
 calculation；在 aggregate 计算前不改变任何主 Gate 或 promotion 状态。
+
+## 25. Nine-cell execution ledger closure（2026-09-09）
+
+`model31/course2` 已成功追加，execution contract digest 为
+`d4e4ec76c07768bde6123556c37c7ec529a9af1d01f108bc650fa1ffb393a8f8`。9 个 cell 全部为
+`executed_passed`，每个 cell 的五臂 `resource_gate` 均为 true；每个 candidate/fixed-large
+K 单步均为 `1/1`，每个 lesion 均为 `0`。execution report 的 `course_executed=false`、
+`can_start_r6_formal=false`、`can_promote=false` 仍保持，因为现在只有逐 cell ledger，
+尚未按预注册规则计算 aggregate。
+
+下一步只执行冻结的 9-cell aggregate calculation：先验证 9×5 arm ledger、每 cell 的
+resource/lineage/side-effect/failure 字段和 manifest digest，再输出 mean/min/max 与
+一侧 95% Student-t lower bound；不删除或补齐任何 cell，不把 aggregate 结果直接接入
+default runtime 或 promotion。

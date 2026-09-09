@@ -500,6 +500,8 @@ candidate/fixed-large K 均为 `1/1`、lesion 均为 `0`，五臂 resource Gate 
 累计 6 个 row 为 `executed_passed`，其余 3 个仍为 `not_started`，五臂
 resource/side-effect/checkpoint/rollback ledger 完整。`model31/course0` 已执行并通过，
 累计 7 个 row 为 `executed_passed`，model31/course1/2 仍为 `not_started`。`model31/course1`
-已执行并通过，累计 8 个 row 为 `executed_passed`，仅 course2 为 `not_started`。**当前唯一下一步**：只执行
-`model31/course2`，完成 9-cell ledger 后再按冻结合同计算 aggregate，不运行 9-cell aggregate、
+已执行并通过，累计 8 个 row 为 `executed_passed`，仅 course2 为 `not_started`。`model31/course2`
+已执行并通过，9/9 cell 均为 `executed_passed`，五臂 resource Gate、candidate/fixed-large
+K success 和 lesion ledger 全部闭合。**当前唯一下一步**：只运行冻结的 9-cell aggregate
+calculation，完成后再按结果审计 promotion，不引入任何未预注册变量、
 不接 default runtime/provider/MCP/client/CUDA。

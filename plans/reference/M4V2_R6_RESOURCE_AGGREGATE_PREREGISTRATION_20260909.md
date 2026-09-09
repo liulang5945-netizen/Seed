@@ -128,3 +128,6 @@ model31/course0 已通过且追加，当前唯一下一步：**只执行 `model3
 沿用 prior ledger 和相同资源/失败合同。
 model31/course1 已通过且追加，当前唯一下一步：**只执行最后的 `model31/course2` row**，
 完成 9-cell ledger 后再按冻结合同计算 aggregate。
+model31/course2 已通过，9-cell ledger 已闭合；当前唯一下一步：**运行冻结的 aggregate
+calculation**，验证完整 3×3、五臂字段、资源 Gate 与 source/resource digest 后输出
+mean/min/max 和一侧 95% Student-t lower bound；不改变 promotion 状态。
