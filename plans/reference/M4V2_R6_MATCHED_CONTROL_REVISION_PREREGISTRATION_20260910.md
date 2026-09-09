@@ -115,3 +115,14 @@ namespace 和 side-effect Gate 均通过，fixed-large K-task-equivalent control
 
 下一步只执行 model23/course2；9/9 完成前不运行 revised aggregate、不覆盖旧
 aggregate，也不接入 default runtime/provider/MCP/client/CUDA。
+
+## 10. Revised model23 slice closure（2026-09-10）
+
+model23/course2 已由 revised runner 追加并通过，monotonic ledger 累计 6/9 且无
+failure；model23 三格均满足 frozen=0、matched no-feedback=0、candidate=1、lesion=0
+和两个 capability delta=1.0，same-capacity 参数/trace、no-feedback admission、
+parent namespace 和 side-effect Gate 均通过，fixed-large K-task-equivalent control
+也通过。
+
+下一步只执行 model31/course0；9/9 完成前不运行 revised aggregate、不覆盖旧
+aggregate，也不接入 default runtime/provider/MCP/client/CUDA。

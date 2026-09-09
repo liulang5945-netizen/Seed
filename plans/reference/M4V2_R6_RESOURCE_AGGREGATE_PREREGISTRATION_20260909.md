@@ -205,3 +205,14 @@ candidate-matched capability delta 均为 1.0。fixed-large K-task-equivalent co
 
 该结果只关闭一个 cell，不能外推为 aggregate。下一步只执行 model23/course2；保留
 固定 predecessor、失败 cell 不可删除、不得用均值填补的规则，9/9 前不运行 aggregate。
+
+## 12. Revised model23 slice closure（2026-09-10）
+
+model23/course2 已追加为第 6/9 个 executed_passed row；model23 三格的
+candidate/matched 均为 4833 parameters、19332 parameter bytes、1 条 inference trace，
+wall multiplier 均低于 1.5×、peak multiplier 均低于 1.25×，每格 candidate-frozen 与
+candidate-matched capability delta 均为 1.0。model23 slice 的 fixed-large
+K-task-equivalent control 和 side-effect Gate 均通过。
+
+slice closure 不改变 aggregate 合同。下一步只执行 model31/course0；保留固定
+predecessor、失败 cell 不可删除、不得用均值填补的规则，9/9 前不运行 aggregate。
