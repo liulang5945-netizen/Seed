@@ -417,3 +417,7 @@ K3 单 cell canary 已完成：`scripts/training/eval_taiji_m5_k3_outcome_depend
 K3 formal 合同已冻结：[M5_K3_FORMAL_PREREGISTRATION_20260909.md](../../reference/M5_K3_FORMAL_PREREGISTRATION_20260909.md)。矩阵固定为 task seed `0/1/2` × learner seed `17/23/31`，逐 cell 复用 canary `run_cell`，主判据为 A holdout `≥0.75`、A-B/A-C 各 `≥0.25`，并保留 probe admission、feedback lineage、checkpoint/lesion、reward variance 和 feedback fact consumption 技术门；单 cell 失败不由 aggregate mean 抵销，`can_promote=false` 不变。
 
 **当前唯一下一步**：实现 `scripts/training/eval_taiji_m5_k3_outcome_dependency_formal.py`，只 import canary 的 `run_cell`，先做 py_compile/ruff/mypy，再串行运行 9 个 cell；formal 前不改 canary、不接默认 runtime、不引入 MCP/provider/client/CUDA。
+
+K3 formal 已完成：`reports/taiji_m5_k3_outcome_dependency_formal_20260909.json`，9/9 cell 通过。A holdout、A-B、A-C、A train 的 min/mean/max 均为 `1.0`；technical、probe admission、feedback lineage admission 均 `9/9`；feedback reward variance 全部为正。首轮 `0/9` 是 runner 字段契约误判，已在不改 canary/判据的前提下修正并用同一矩阵重跑。K3 仍是 standalone shadow，`can_promote=false`，默认 runtime 未接入。
+
+**当前唯一下一步**：把 K3 formal 与已有 K1/K2 formal 一起纳入新的 content-addressed K 轴 scorecard 版本，显式记录 K3 的 outcome/dependency 能力、三臂因果分离和仍缺失的 same-parent/default-runtime promotion Gate；scorecard 更新前不解冻任何 shadow owner，不引入 MCP/provider/client/CUDA。

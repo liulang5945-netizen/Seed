@@ -93,3 +93,18 @@ projection 的 stale event、duplicate event、cross-scope event、wrong outcome
 - 计划同步：执行完成后把逐 cell 结果、aggregate、失败归因和 `can_promote=false` 写回本文件与 `plans/active/roadmap/03_CURRENT_EXECUTION.md`；
 - 当前唯一允许的下一步：实现上述 runner，先静态检查，再按固定顺序串行运行 9 个 cell；formal 运行前不修改 canary、不接默认 runtime、不引入外围变量。
 
+## 7. Formal 执行记录（2026-09-09）
+
+runner `scripts/training/eval_taiji_m5_k3_outcome_dependency_formal.py` 已按 task seed 外层、learner seed 内层串行复用 canary `run_cell`，报告为 `reports/taiji_m5_k3_outcome_dependency_formal_20260909.json`。
+
+首轮 9-cell 的模型指标全部为 `A=1.0`、`A-B=1.0`、`A-C=1.0`，但 runner 自身把 `0/9` 判为通过；逐行核对后确认是验证器字段契约错误：`semantic_status` 只由 probe row 产生，却被错误地要求出现在 follow-up/verification row。该错误没有改动 canary、模型、阈值或 formal 判据；修正为按 probe/dependent 两类 row 分别检查后，在同一固定矩阵重跑。
+
+正式结果：
+
+- `status=passed`、`robust=true`、`cells_passed=9/9`；
+- A holdout success min/mean/max = `1.0/1.0/1.0`；
+- A-B 与 A-C 分离差 min/mean/max 均为 `1.0/1.0/1.0`；
+- A train success min/mean/max = `1.0/1.0/1.0`；
+- technical gates `9/9`，probe admission `9/9`，feedback lineage admission `9/9`，feedback reward variance `min=0.03381306630873718`、`mean=0.03384450778395524`、`max=0.03390739073439137`；
+- 9 个 cell 的 workspace 分离、跨语言 sequence、失败 outcome admission、B/C projection lesion、prefit/postfit checkpoint 和 feedback fact consumption 全部通过；
+- `can_promote=false` 固定。K3 formal 只闭合 outcome→world/dependency shadow 证据线，不把 projection、transition 或 planner 接入默认 Taiji runtime。
