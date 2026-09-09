@@ -234,3 +234,6 @@ N10 稀疏迁移已闭合：三项 operator equivalence 与 dense reference 对�
 N11 active environment 已闭合：动作—环境—reward 因果、局部 motor 更新、pending 状态收束和确定性策略均通过；没有把 teacher action label 暴露给 Taiji。
 
 当前唯一出口：继续跑 M5 episodic field verify，保持 F1 predictive 与 F2 memory owner 分离。
+M5 episodic field 已闭合：lesion 只能在合法 restore 后作用于内存对象，不能伪造 checkpoint；同时通过 `use_identity=False` 隔离 F2 episodic field 与 identity organ。full action `0.875`、recurrent lesion `0.25`，因果差 `0.625`，其余记忆字段和 checkpoint Gate 通过。
+
+当前唯一出口：继续跑 M6 endogenous replay consolidation，保持 F1/F2/identity owner 分离。
