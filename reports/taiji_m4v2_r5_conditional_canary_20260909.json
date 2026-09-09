@@ -1,0 +1,100 @@
+{
+  "format": "taiji-m4v2-r5-conditional-canary-v1",
+  "version": 1,
+  "generated_at_epoch": 1788927877,
+  "status": "passed",
+  "can_promote": false,
+  "model_seed": 71,
+  "course": {
+    "label": "canonical",
+    "course_seed": 0,
+    "s_train_bytes": 19,
+    "g_schedule": [
+      [
+        8,
+        2
+      ],
+      [
+        6,
+        4
+      ],
+      [
+        4,
+        6
+      ],
+      [
+        2,
+        8
+      ]
+    ]
+  },
+  "route_inputs": {
+    "whitelist": [
+      "content_bucket",
+      "surprise_ema",
+      "parent_residual_norm",
+      "candidate_activity",
+      "resource_scalar_constant_1.0_in_canary"
+    ],
+    "forbidden": [
+      "evaluator task id",
+      "phase label",
+      "file name"
+    ]
+  },
+  "resource_records": {
+    "route_parameter_bytes": 36,
+    "training_ticks": 424,
+    "route_gate_mean": 0.9964312654768781,
+    "route_gate_std": 0.03851653262972832
+  },
+  "arms": {
+    "frozen_parent": {
+      "S": 5.619259795597492,
+      "G": 5.784081191121771
+    },
+    "fixed_capacity": {
+      "S": 5.56367810140241,
+      "G": 5.6252018590392465
+    }
+  },
+  "conditional_module": {
+    "scores": {
+      "S": 5.579988340812761,
+      "G": 5.766128759927866
+    },
+    "route_lesion_scores": {
+      "S": 5.58381706158097,
+      "G": 5.848580252775694
+    },
+    "route_lesion_delta": {
+      "S": 0.0038287207682090596,
+      "G": 0.08245149284782816
+    },
+    "candidate_lesion_scores": {
+      "S": 5.618030372939275,
+      "G": 5.7834087516128205
+    },
+    "candidate_lesion_delta": {
+      "S": 0.0380420321265138,
+      "G": 0.017279991684954865
+    }
+  },
+  "checks": {
+    "checkpoint_preflight": true,
+    "parent_substrate_unchanged": true,
+    "mature_owners_unchanged": true,
+    "shadow_round_trip": true,
+    "route_round_trip": true,
+    "route_gates_non_constant": true,
+    "route_gates_in_unit_range": true,
+    "route_lesion_observable_g": true,
+    "route_lesion_observable_s": true,
+    "candidate_lesion_observable": true,
+    "resource_records_complete": true
+  },
+  "technical_gate_all_passed": true,
+  "resources": {
+    "total_elapsed_seconds": 1.3197784000076354
+  }
+}
