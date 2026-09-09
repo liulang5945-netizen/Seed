@@ -458,8 +458,10 @@ R6 formal input manifest preflight 已实现并运行：`plans/manifests/taiji_m
 
 R6 formal runner 入口层已实现并通过静态/输入 Gate：`scripts/training/eval_taiji_m4v2_r6_formal.py` 重新验证 manifest/input preflight，生成 `9 cells × 5 arms = 45` 个 `not_started` ledger row；报告 `reports/taiji_m4v2_r6_formal_preflight_20260909.json` 明确 `status=input_ready`、`formal_input_ready=true`，但 `course_executed=false`、`can_start_r6_formal=false`、`can_promote=false`。没有执行 S→G→K，没有接 default runtime/provider/MCP/client/CUDA。
 
-R6 首个 single-cell execution 已运行：`reports/taiji_m4v2_r6_formal_single_cell_20260909.json` 为 `status=blocked_controls`。candidate 的真实 Workbench read→K3 accepted→dependency→rollback 与 S/G retention 通过；同路径 K3 lesion 精确拒绝 feedback，adapter 在 projection 未 accepted 时 fail-closed。frozen-parent/matched 只保留 detached K 的 S/G/checkpoint control。唯一阻断是 `fixed-large` 仍只有旧 structural shadow preflight，没有 K-task-equivalent executor；该问题归为 `input_contract / fixed_large_k_control_required`，不是模型失败。
+R6 首轮 single-cell 曾因 fixed-large 只有旧 structural shadow 而以 `input_contract / fixed_large_k_control_required` 阻断；该结果被保留为历史证据，不把 structural shadow 冒充 K 对照。candidate 的真实 Workbench read→K3 accepted→dependency→rollback 与 S/G retention、同路径 K3 lesion 的 fail-closed 边界均已通过。
 
 fixed-large 设计已冻结：[M4V2_R6_FIXED_LARGE_K_CONTROL_PREREGISTRATION_20260909.md](../../reference/M4V2_R6_FIXED_LARGE_K_CONTROL_PREREGISTRATION_20260909.md)。它使用两个独立 native K1/K2 worker replica（worker-training task seed `3/4`）和固定 arithmetic ensemble；旧 R4 structural shadow 不再作为 R6 K control。
 
-**当前唯一下一步**：实现 native K fixed-large ensemble artifact builder、checkpoint preflight 和 `model_seed=17 / course_seed=0` single-cell comparator；完成前不扩大到 9 cells、不运行 full formal、不接 default runtime、不引入 MCP/provider/client/CUDA。
+native fixed-large builder 已通过：宽度 `2`、参数量 `9666`、训练 task `3/4` 与 formal holdout `0/1/2` 的路径/semantic/transition digest 交集为空，ensemble/K3 fresh restore 通过。其 single-cell comparator 已接入正式五臂 runner；当前报告 `status=passed`，fixed-large 真实 read、K3 lineage、rollback 和 branch lesion 均通过，`can_start_r6_formal=false`、`can_promote=false` 仍保持。
+
+**当前唯一下一步**：补齐并固定 candidate/fixed-large 同方法的 paired peak-resource、checkpoint-write、parameter/inference 和 side-effect measurement，先重跑 `model_seed=17 / course_seed=0` 单 cell 的完整 resource/causal ledger；完成前不扩大到 9 cells、不运行 full formal、不接 default runtime、不引入 MCP/provider/client/CUDA。

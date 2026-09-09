@@ -424,3 +424,19 @@ K3 lesion 的同路径真实 Workbench read，并回放 parent/matched controls�
 cell；在该对照可比较前不扩大矩阵、不运行 9-cell formal。
 
 fixed-large 的具体定义已冻结到 [M4V2_R6_FIXED_LARGE_K_CONTROL_PREREGISTRATION_20260909.md](M4V2_R6_FIXED_LARGE_K_CONTROL_PREREGISTRATION_20260909.md)：使用两个独立 native K1/K2 worker replica、固定 arithmetic ensemble、formal holdout 外的 worker-training slices `3/4`，不使用 learned router 或外部模型。旧 R4 structural shadow 继续保留为历史 shadow，不再作为 R6 K control。
+
+## 11. Native fixed-large control 与 single-cell rerun（2026-09-09）
+
+旧 structural shadow 的 input-contract 阻断已经按独立预注册合同修正。新的
+`taiji-k-fixed-large-ensemble-v1` artifact 由两个 native K1/K2 replica 组成，宽度固定
+为 `2`，以 arithmetic score-map ensemble 产生普通 typed K1/K2 result；K3 仍是同一
+deterministic outcome projector。builder 的 checkpoint/source/holdout Gate 通过，且
+worker-training task `3/4` 与 formal holdout `0/1/2` 的路径及输入 digest 无交集。
+
+single-cell 重跑后，`fixed-large` 与 candidate 在同一真实 `typescript_05.ts`
+Workbench read 上均通过 K1/K2→planner→execution→K3；fixed-large 的 K1 branch lesion
+可观测，五臂报告变为 `status=passed`。这只关闭了 fixed-large 的可比性阻断，不关闭
+formal/promotion：当前 candidate 的 resource `measurement_complete=false`，fixed-large
+仍缺少与 candidate 同方法的 peak working-set 记录，paired resource/side-effect
+aggregate 尚未形成。因此 `course_executed=false`、`can_start_r6_formal=false`、
+`can_promote=false` 保持。

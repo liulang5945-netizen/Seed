@@ -414,3 +414,41 @@ resource、retention、side-effect、checkpoint 和 failure 字段；
 旧 structural shadow 只作历史证据，不得进入 R6 K aggregate。下一步只实现 native
 fixed-large artifact/checkpoint preflight 和 model17/course0 comparator；完成前
 `can_start_r6_formal=false`、`can_promote=false`。
+
+## 21. Native fixed-large artifact 与 checkpoint Gate（2026-09-09）
+
+已实现 `scripts/training/build_taiji_m4v2_r6_k_fixed_large_ensemble.py`，为
+`model_seed=17` 生成两个独立 native K1/K2 replica（worker-training task seed `3/4`），
+并写入 `checkpoints/taiji_k_fixed_large/model_17/taiji_r6_k_fixed_large_ensemble.pt`。
+报告为 `reports/taiji_m4v2_r6_k_fixed_large_ensemble_build_model_17_20260909.json`，
+其关键 Gate 全部通过：
+
+- `ensemble_width=2`、参数量 `9666`，固定 arithmetic ensemble 没有 learned router、
+  task-id 分支、Transformer、provider 或外部执行依赖；
+- 两个 replica 的训练前 checkpoint save/restore、训练后 fresh restore、ensemble
+  fresh restore 和 K3 fresh restore 均通过；
+- worker-training task `3/4` 与 formal holdout task `0/1/2` 的路径、semantic input
+  digest、transition input digest 交集均为空；
+- artifact、ensemble、owner/resource/source manifest 均 content-addressed，
+  `optimizer_state_present=false`，`can_start_r6_formal=false`、`can_promote=false`。
+
+## 22. Native fixed-large single-cell comparator（2026-09-09）
+
+已实现 `scripts/training/eval_taiji_m4v2_r6_k_fixed_large_canary.py` 并接入
+`eval_taiji_m4v2_r6_formal_single_cell.py`。`model_seed=17 / course_seed=0` 的
+fixed-large arm 与 candidate 使用同一 holdout 输入、语言 registry、read-only planner、
+隔离 Workbench 和 K3 outcome projection；报告
+`reports/taiji_m4v2_r6_k_fixed_large_controlled_canary_model_17_20260909.json` 与
+`reports/taiji_m4v2_r6_formal_single_cell_20260909.json` 均通过：
+
+- fixed-large `typescript_05.ts` 真实 read、K1/K2 typed result、K3 dependency、
+  exchange lineage、checkpoint、stage/rollback 和 parent retention 通过；
+- 切断一个 K1 replica 的 fact head 后，branch lesion 对 fact map 可观测，且没有
+  污染完整 ensemble 主路径；
+- 五臂 single-cell 当前为 `status=passed`，但 `course_executed=false`、
+  `can_start_r6_formal=false`、`can_promote=false` 继续固定；旧 structural shadow
+  仍不进入 R6 K aggregate。
+
+下一步只补齐 candidate/fixed-large 的 paired peak-resource、checkpoint-write、
+parameter/inference 和 side-effect measurement，使单 cell 的资源/因果 ledger 完整；
+完成并预注册前不扩大到 9 cells、不运行 full formal、不接 default runtime。

@@ -1,0 +1,101 @@
+{
+  "adapter_checkpoint": {
+    "exchange_checkpoint_digest": "37f88d16a91f606ebec31066ca964039b7663fec3d73166972159348bfdee465",
+    "rollback_checkpoint_digest": "37f88d16a91f606ebec31066ca964039b7663fec3d73166972159348bfdee465",
+    "rollback_record_digest": "2bf31f223bcfb2653c6543fe941999e214c784a5dedf4d255df146c7dc5d7769"
+  },
+  "artifact_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large\\model_17\\taiji_r6_k_fixed_large_ensemble.pt",
+  "blocking_reason": null,
+  "can_promote": false,
+  "can_start_r6_formal": false,
+  "candidate_namespace": "taiji:k:fixed-large:model-17",
+  "candidate_promoted": false,
+  "checks": {
+    "adapter_training_steps_zero": true,
+    "can_promote_false": true,
+    "candidate_stage_roundtrip": true,
+    "exchange_checkpoint_roundtrip": true,
+    "fixed_large_branch_lesion_observable": true,
+    "fixed_large_preflight_passed": true,
+    "k1_result_typed": true,
+    "k2_result_typed": true,
+    "k3_dependency_applied": true,
+    "k3_projection_accepted": true,
+    "no_default_runtime": true,
+    "no_external_integrations": true,
+    "old_G_retention": true,
+    "old_S_retention": true,
+    "read_only_intent_accepted": true,
+    "real_workbench_success": true,
+    "rollback_exchange_preserved": true,
+    "rollback_parent_namespace_restored": true,
+    "rollback_record_explicit": true,
+    "typed_exchange_worker_lineage": true
+  },
+  "client_attached": false,
+  "created_at_unix": 1788965860.665279,
+  "cuda_used": false,
+  "default_runtime_attached": false,
+  "elapsed_seconds": 0.6386941000819206,
+  "exchange_digest": "164200a14e2ec8eeb37258454088e1b6814e9798b5fa51a53faaa1ecc6530724",
+  "intent_kind": "workspace.read",
+  "mcp_attached": false,
+  "observation_path": "typescript_05.ts",
+  "old_capability_after": {
+    "G": 5.959810695900639,
+    "S": 5.995296377498504
+  },
+  "old_capability_before": {
+    "G": 5.959810695900639,
+    "S": 5.995296377498504
+  },
+  "old_capability_retention": {
+    "G": true,
+    "S": true
+  },
+  "outcome_reward": 1.0,
+  "outcome_success": true,
+  "owner_graph_digest": "37c121a17d002fcf0a73617d6ebda1a7e97877e8cd86b1aaaf6cc82682065a41",
+  "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+  "preflight": {
+    "bundle_digest": "ec4dd6aaed2424ce5f8886dbb0878a59066d55ab58435f5937df93f74f4a65bd",
+    "candidate_namespace": "taiji:k:fixed-large:model-17",
+    "checks": {
+      "artifact_digest": true,
+      "bundle_digest": true,
+      "cpu_only": true,
+      "ensemble_checkpoint_digest": true,
+      "ensemble_width_two": true,
+      "k3_checkpoint_digest": true,
+      "optimizer_state_absent": true,
+      "parent_digest": true
+    },
+    "ensemble_parameter_count": 9666,
+    "owner_graph_digest": "37c121a17d002fcf0a73617d6ebda1a7e97877e8cd86b1aaaf6cc82682065a41",
+    "resource_manifest_digest": "3c8c8a375db46a79a66c60dcb1adf2c56fb63dc273545eb150123fb3ae3bfcc4",
+    "source_manifest_digest": "e8eb997246b1cdd9924680a9aa62e07f6bfbf49b8320f340c82cf022b977e162",
+    "status": "passed"
+  },
+  "projection_accepted": true,
+  "projection_digest": "90eb93bd513d6f7ed18c65bd7684fd98ebb1995e17b1527c9f72dbec922d4314",
+  "projection_reason": "accepted",
+  "provider_attached": false,
+  "report_format": "taiji-m4v2-r6-k-fixed-large-controlled-canary-v1",
+  "resource": {
+    "candidate_parameter_bytes": 38664,
+    "checkpoint_write_bytes": 125829,
+    "inference_trace_count": 1,
+    "parameter_count": 9666,
+    "peak_working_set_method": "process_rss_before_after_lower_bound",
+    "training_update_steps": 0,
+    "wall_clock_seconds": 0.6343823000788689
+  },
+  "resource_manifest_digest": "3c8c8a375db46a79a66c60dcb1adf2c56fb63dc273545eb150123fb3ae3bfcc4",
+  "semantic_status": "resolved",
+  "source_manifest_digest": "e8eb997246b1cdd9924680a9aa62e07f6bfbf49b8320f340c82cf022b977e162",
+  "status": "passed",
+  "training_performed": false,
+  "transition_status": "resolved",
+  "version": 1,
+  "worker_bundle_digest": "ec4dd6aaed2424ce5f8886dbb0878a59066d55ab58435f5937df93f74f4a65bd"
+}
