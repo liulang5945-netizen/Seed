@@ -1,0 +1,76 @@
+{
+  "artifact_digests": {
+    "k1.semantic": "5422228f0f1ede6a9ea34905ad71f48e562449bfa012d6b6f20fb917f5ffbcf7",
+    "k2.transition": "ea1fff12750cc1074c03f38ec851f5804ac19daea7cc2c29bc2e658019a51c34",
+    "k3.outcome_projection": "83207f7f42bc7bdf16433095afa3b5e52fc726f6128b074ccc3e83798ec367a1"
+  },
+  "artifact_paths": {
+    "k1.semantic": "E:\\Seed\\checkpoints\\taiji_k_workers\\model_31\\taiji_r6_k1_semantic.pt",
+    "k2.transition": "E:\\Seed\\checkpoints\\taiji_k_workers\\model_31\\taiji_r6_k2_transition.pt",
+    "k3.outcome_projection": "E:\\Seed\\checkpoints\\taiji_k_workers\\model_31\\taiji_r6_k3_outcome_projection.pt"
+  },
+  "candidate_namespace": "taiji:k:candidate:model-31",
+  "client_attached": false,
+  "created_at_unix": 1788963037.275292,
+  "cuda_used": false,
+  "default_runtime_attached": false,
+  "elapsed_seconds": 3.1058015000307932,
+  "losses": {
+    "k1.semantic": {
+      "content_loss": 2.832164227584144e-06,
+      "fact_loss": 0.036545127630233765,
+      "goal_loss": 1.1518560313561466e-05
+    },
+    "k2.transition": {
+      "content_loss": 4.566370262182318e-05,
+      "goal_loss": 0.00011482585250632837,
+      "transition_loss": 0.005315158516168594
+    }
+  },
+  "mcp_attached": false,
+  "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+  "postfit_restore_gate": {
+    "k1.semantic": true,
+    "k2.transition": true,
+    "k3.outcome_projection": true
+  },
+  "prefit_checkpoint_gate": {
+    "k1.semantic": {
+      "loaded_digest": "391d9db908e2cc09f5a075c6532c717a04bc6751b3dc44652d6f5a3e573115fb",
+      "path": "E:\\Seed\\.tmp-m4v2-r6-k-worker-build\\course-7b2d08d840c1437ebb622925542b6a3f\\prefit-checkpoints\\k1-semantic.pt",
+      "restored_digest": "391d9db908e2cc09f5a075c6532c717a04bc6751b3dc44652d6f5a3e573115fb",
+      "roundtrip": true,
+      "saved_digest": "391d9db908e2cc09f5a075c6532c717a04bc6751b3dc44652d6f5a3e573115fb",
+      "temporary_path_removed_after_run": true
+    },
+    "k2.transition": {
+      "loaded_digest": "913a1f61aaa21a9450f8c999057218e247b3a26e01bd2bf23fadc0aef72766e5",
+      "path": "E:\\Seed\\.tmp-m4v2-r6-k-worker-build\\course-7b2d08d840c1437ebb622925542b6a3f\\prefit-checkpoints\\k2-transition.pt",
+      "restored_digest": "913a1f61aaa21a9450f8c999057218e247b3a26e01bd2bf23fadc0aef72766e5",
+      "roundtrip": true,
+      "saved_digest": "913a1f61aaa21a9450f8c999057218e247b3a26e01bd2bf23fadc0aef72766e5",
+      "temporary_path_removed_after_run": true
+    },
+    "k3.outcome_projection": {
+      "checkpoint_digest": "7d890ae19ccdc4c5511a37e8da6198aa5795332763954dd18030a87d2c2dd728",
+      "fresh_restore": true
+    }
+  },
+  "provider_attached": false,
+  "report_format": "taiji-m4v2-r6-k-worker-artifact-build-v1",
+  "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+  "source_manifest_digest": "e042afbfc8f48f5f61bb0cfb36125fb095cc056b283405da0e74fea0bb6f0e85",
+  "status": "passed",
+  "training_performed": true,
+  "version": 1,
+  "worker_checkpoint_digests": {
+    "k1.semantic": "4b5ed527a3a105614cea73c6cc45a2d0577c9ec06eb6e974b245c679b93e5e5d",
+    "k2.transition": "67c96c5c8517ca58bacb45b8de756e7ffd24ee108276160c731da364714e2bda",
+    "k3.outcome_projection": "7d890ae19ccdc4c5511a37e8da6198aa5795332763954dd18030a87d2c2dd728"
+  },
+  "worker_training_steps": {
+    "k1.semantic": 2080,
+    "k2.transition": 5040,
+    "k3.outcome_projection": 0
+  }
+}

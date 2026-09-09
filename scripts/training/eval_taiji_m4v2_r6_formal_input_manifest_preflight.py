@@ -25,6 +25,9 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+from scripts.training.eval_taiji_m4v2_r6_k_worker_attachment_preflight import (  # noqa: E402
+    _restore_worker,
+)
 from scripts.training.eval_taiji_m4v2_r6_parent_baseline_preflight import (  # noqa: E402
     COURSE_SEEDS,
     COURSE_VARIANT_SEEDS,
@@ -34,7 +37,7 @@ from scripts.training.eval_taiji_m4v2_r6_parent_baseline_preflight import (  # n
     _parent,
     _r6_course,
 )
-from taiji import Taiji, content_digest  # noqa: E402
+from taiji import KWorkerManifest, KWorkerManifestBundle, Taiji, content_digest  # noqa: E402
 
 REPORT_FORMAT = "taiji-m4v2-r6-formal-input-manifest-preflight-v1"
 MANIFEST_FORMAT = "taiji-m4v2-r6-formal-runner-input-v1"
@@ -49,6 +52,7 @@ ARM_IDS = (
 )
 WORKER_IDS = ("k1.semantic", "k2.transition", "k3.outcome_projection")
 DEFAULT_PARENT_DIR = PROJECT_ROOT / "checkpoints" / "taiji_r6_parents"
+DEFAULT_WORKER_DIR = PROJECT_ROOT / "checkpoints" / "taiji_k_workers"
 DEFAULT_MANIFEST = PROJECT_ROOT / "plans" / "manifests" / "taiji_m4v2_r6_formal_input_v1.json"
 DEFAULT_REPORT = (
     PROJECT_ROOT
@@ -162,9 +166,105 @@ def _manifest_digest(payload: Mapping[str, Any]) -> str:
     return content_digest(_unsigned_manifest(payload))
 
 
-def build_manifest(*, parent_dir: Path = DEFAULT_PARENT_DIR) -> dict[str, Any]:
+def _worker_paths(worker_dir: Path, model_seed: int) -> dict[str, Path]:
+    root = worker_dir / f"model_{int(model_seed)}"
+    return {
+        worker_id: root / filename
+        for worker_id, filename in {
+            "k1.semantic": "taiji_r6_k1_semantic.pt",
+            "k2.transition": "taiji_r6_k2_transition.pt",
+            "k3.outcome_projection": "taiji_r6_k3_outcome_projection.pt",
+        }.items()
+    }
+
+
+def _worker_entry(model_seed: int, worker_dir: Path, parent_digest: str) -> dict[str, Any]:
+    paths = _worker_paths(worker_dir, model_seed)
+    artifacts = {worker_id: _load_mapping(path) for worker_id, path in paths.items()}
+    manifests: list[KWorkerManifest] = []
+    artifact_digests: dict[str, str] = {}
+    worker_checkpoint_digests: dict[str, str] = {}
+    source_manifest_digest: str | None = None
+    resource_manifest_digest: str | None = None
+    candidate_namespace: str | None = None
+    for worker_id in WORKER_IDS:
+        artifact = artifacts[worker_id]
+        manifest, _details = _restore_worker(
+            worker_id,
+            artifact,
+            parent_digest=parent_digest,
+        )
+        manifests.append(manifest)
+        artifact_digests[worker_id] = str(artifact["artifact_digest"])
+        worker_checkpoint_digests[worker_id] = str(artifact["worker_checkpoint_digest"])
+        current_source = str(artifact["source_manifest_digest"])
+        current_resource = str(artifact["resource_manifest_digest"])
+        current_namespace = str(artifact["candidate_namespace"])
+        if source_manifest_digest is None:
+            source_manifest_digest = current_source
+            resource_manifest_digest = current_resource
+            candidate_namespace = current_namespace
+        elif (
+            source_manifest_digest != current_source
+            or resource_manifest_digest != current_resource
+            or candidate_namespace != current_namespace
+        ):
+            raise ValueError(f"worker bundle metadata is not shared for model {model_seed}")
+    assert source_manifest_digest is not None
+    assert resource_manifest_digest is not None
+    assert candidate_namespace is not None
+    bundle = KWorkerManifestBundle.create(
+        parent_checkpoint_digest=parent_digest,
+        source_manifest_digest=source_manifest_digest,
+        resource_manifest_digest=resource_manifest_digest,
+        candidate_namespace=candidate_namespace,
+        workers=manifests,
+    )
+    return {
+        "model_seed": int(model_seed),
+        "parent_checkpoint_digest": parent_digest,
+        "candidate_namespace": candidate_namespace,
+        "bundle_digest": bundle.bundle_digest,
+        "owner_graph_digest": bundle.owner_graph_digest,
+        "source_manifest_digest": source_manifest_digest,
+        "resource_manifest_digest": resource_manifest_digest,
+        "workers": {
+            worker_id: {
+                "path": _relative_path(paths[worker_id]),
+                "artifact_digest": artifact_digests[worker_id],
+                "worker_checkpoint_digest": worker_checkpoint_digests[worker_id],
+            }
+            for worker_id in WORKER_IDS
+        },
+    }
+
+
+def _try_worker_registry(
+    *,
+    worker_dir: Path,
+    parent_registry: Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    parents = {int(entry["model_seed"]): str(entry["checkpoint_digest"]) for entry in parent_registry}
+    try:
+        return [
+            _worker_entry(seed, worker_dir, parents[seed])
+            for seed in MODEL_SEEDS
+        ]
+    except (FileNotFoundError, KeyError, TypeError, ValueError, RuntimeError):
+        return []
+
+
+def build_manifest(
+    *,
+    parent_dir: Path = DEFAULT_PARENT_DIR,
+    worker_dir: Path = DEFAULT_WORKER_DIR,
+) -> dict[str, Any]:
     parent_registry = [_parent_entry(seed, parent_dir) for seed in MODEL_SEEDS]
     course_registry = [_course_entry(seed) for seed in COURSE_SEEDS]
+    worker_registry = _try_worker_registry(
+        worker_dir=worker_dir,
+        parent_registry=parent_registry,
+    )
     payload: dict[str, Any] = {
         "format": MANIFEST_FORMAT,
         "version": VERSION,
@@ -176,7 +276,7 @@ def build_manifest(*, parent_dir: Path = DEFAULT_PARENT_DIR) -> dict[str, Any]:
         "phase_order": list(PHASE_ORDER),
         "arms": list(ARM_IDS),
         "parent_registry": parent_registry,
-        "worker_registry": [],
+        "worker_registry": worker_registry,
         "course_registry": course_registry,
         "resource_contract": {
             "device": "cpu",
@@ -306,6 +406,55 @@ def _validate_course_entry(entry: Mapping[str, Any]) -> tuple[bool, str | None]:
         return False, f"course registry entry invalid: {exc}"
 
 
+def _validate_worker_entry(
+    entry: Mapping[str, Any],
+    parent_registry: Mapping[int, Mapping[str, Any]],
+) -> tuple[bool, str | None]:
+    try:
+        model_seed = int(entry["model_seed"])
+        if model_seed not in MODEL_SEEDS:
+            return False, f"unexpected worker model_seed={model_seed}"
+        parent_digest = str(parent_registry[model_seed]["checkpoint_digest"])
+        if str(entry["parent_checkpoint_digest"]) != parent_digest:
+            return False, f"worker bundle crosses parent for model {model_seed}"
+        expected_namespace = f"taiji:k:candidate:model-{model_seed}"
+        if str(entry["candidate_namespace"]) != expected_namespace:
+            return False, f"worker candidate namespace mismatch for model {model_seed}"
+        worker_payload = entry["workers"]
+        if not isinstance(worker_payload, Mapping) or tuple(sorted(worker_payload)) != tuple(sorted(WORKER_IDS)):
+            return False, f"worker registry must contain K1/K2/K3 for model {model_seed}"
+        paths: dict[str, Path] = {}
+        for worker_id in WORKER_IDS:
+            item = worker_payload[worker_id]
+            if not isinstance(item, Mapping):
+                return False, f"worker entry {worker_id} is not an object"
+            path = _resolve_repo_path(item["path"])
+            if not path.is_file():
+                return False, f"worker artifact is missing: {item['path']}"
+            artifact = _load_mapping(path)
+            if str(artifact.get("artifact_digest")) != str(item["artifact_digest"]):
+                return False, f"worker artifact digest mismatch for {worker_id}, model {model_seed}"
+            if str(artifact.get("worker_checkpoint_digest")) != str(item["worker_checkpoint_digest"]):
+                return False, f"worker checkpoint digest mismatch for {worker_id}, model {model_seed}"
+            paths[worker_id] = path
+        rebuilt = _worker_entry(model_seed, paths["k1.semantic"].parents[1], parent_digest)
+        for key in (
+            "candidate_namespace",
+            "bundle_digest",
+            "owner_graph_digest",
+            "source_manifest_digest",
+            "resource_manifest_digest",
+        ):
+            if str(entry[key]) != str(rebuilt[key]):
+                return False, f"worker bundle {key} mismatch for model {model_seed}"
+        for worker_id in WORKER_IDS:
+            if entry["workers"][worker_id]["path"] != rebuilt["workers"][worker_id]["path"]:
+                return False, f"worker path mismatch for {worker_id}, model {model_seed}"
+        return True, None
+    except (FileNotFoundError, KeyError, TypeError, ValueError, RuntimeError) as exc:
+        return False, f"worker registry entry invalid: {exc}"
+
+
 def _validate_manifest(payload: Mapping[str, Any]) -> dict[str, Any]:
     failures: list[dict[str, Any]] = []
     checks: dict[str, bool] = {}
@@ -432,6 +581,11 @@ def _validate_manifest(payload: Mapping[str, Any]) -> dict[str, Any]:
     checks["course_registry_valid"] = bool(course_results) and all(course_results)
 
     workers = payload.get("worker_registry")
+    parent_by_seed = {
+        int(entry["model_seed"]): entry
+        for entry in parent_registry
+        if isinstance(entry, Mapping) and str(entry.get("model_seed", "")).isdigit()
+    } if isinstance(parent_registry, list) else {}
     checks["worker_registry_complete"] = isinstance(workers, list) and len(workers) == len(MODEL_SEEDS)
     checks["worker_registry_valid"] = False
     if not checks["worker_registry_complete"]:
@@ -443,14 +597,35 @@ def _validate_manifest(payload: Mapping[str, Any]) -> dict[str, Any]:
             )
         )
     else:
-        # Full worker envelope/bundle validation remains the next gate.  This
-        # preflight still rejects an empty or duplicate registry immediately.
-        worker_seeds = [
-            int(entry.get("model_seed", -1))
-            for entry in workers
-            if isinstance(entry, Mapping)
-        ]
-        checks["worker_registry_valid"] = worker_seeds == list(MODEL_SEEDS)
+        worker_results: list[bool] = []
+        worker_seeds: list[int] = []
+        for entry in workers:
+            if not isinstance(entry, Mapping):
+                worker_results.append(False)
+                failures.append(
+                    _failure(
+                        failure_class="input_contract",
+                        message="worker registry entry is not an object",
+                    )
+                )
+                continue
+            seed = int(entry.get("model_seed", -1))
+            worker_seeds.append(seed)
+            valid, reason = _validate_worker_entry(entry, parent_by_seed)
+            worker_results.append(valid)
+            if not valid:
+                failures.append(
+                    _failure(
+                        failure_class="lineage" if "digest" in str(reason) or "parent" in str(reason) else "checkpoint_restore",
+                        message=str(reason),
+                        recoverability="worker_registry_required",
+                    )
+                )
+        checks["worker_registry_valid"] = (
+            worker_seeds == list(MODEL_SEEDS)
+            and bool(worker_results)
+            and all(worker_results)
+        )
         if not checks["worker_registry_valid"]:
             failures.append(
                 _failure(
@@ -517,13 +692,15 @@ def run_preflight(
     report_path: Path = DEFAULT_REPORT,
     materialize_parents: bool = False,
     parent_dir: Path = DEFAULT_PARENT_DIR,
+    worker_dir: Path = DEFAULT_WORKER_DIR,
 ) -> dict[str, Any]:
     started = time.perf_counter()
     manifest_path = manifest_path.resolve()
     report_path = report_path.resolve()
     parent_dir = parent_dir.resolve()
+    worker_dir = worker_dir.resolve()
     if materialize_parents:
-        payload = build_manifest(parent_dir=parent_dir)
+        payload = build_manifest(parent_dir=parent_dir, worker_dir=worker_dir)
         manifest_path.parent.mkdir(parents=True, exist_ok=True)
         manifest_path.write_text(
             json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
@@ -558,6 +735,7 @@ def run_preflight(
         "manifest_path": _relative_path(manifest_path),
         "manifest_digest": manifest_digest,
         "parent_dir": _relative_path(parent_dir),
+        "worker_dir": _relative_path(worker_dir),
         "checks": validation["checks"],
         "failures": validation["failures"],
         "formal_input_ready": validation["formal_input_ready"],
@@ -584,6 +762,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
     parser.add_argument("--parent-dir", type=Path, default=DEFAULT_PARENT_DIR)
+    parser.add_argument("--worker-dir", type=Path, default=DEFAULT_WORKER_DIR)
     parser.add_argument(
         "--materialize-parents",
         action="store_true",
@@ -593,11 +772,13 @@ def main(argv: list[str] | None = None) -> int:
     manifest_path = args.manifest if args.manifest.is_absolute() else PROJECT_ROOT / args.manifest
     report_path = args.report if args.report.is_absolute() else PROJECT_ROOT / args.report
     parent_dir = args.parent_dir if args.parent_dir.is_absolute() else PROJECT_ROOT / args.parent_dir
+    worker_dir = args.worker_dir if args.worker_dir.is_absolute() else PROJECT_ROOT / args.worker_dir
     report = run_preflight(
         manifest_path=manifest_path,
         report_path=report_path,
         materialize_parents=args.materialize_parents,
         parent_dir=parent_dir,
+        worker_dir=worker_dir,
     )
     print(
         json.dumps(

@@ -354,3 +354,21 @@ checkpoint：
 `can_start_r6_formal=false`、`can_promote=false` 不变。下一步只生成 model-17/23/31
 各自的 content-addressed K worker bundle、挂接到 manifest 并重新执行 preflight；不
 运行 full formal course、不接 default runtime。
+
+## 17. 三 seed worker registry 与 manifest Gate 执行记录（2026-09-09）
+
+已按 input contract 为 model 17/23/31 分别生成 K1/K2/K3 bundle，并重新执行
+manifest preflight：
+
+- 三个 model seed 各有独立 candidate namespace、parent checkpoint digest、worker
+  source/resource digest 和 bundle/owner graph digest；
+- K1 semantic、K2 transition 的训练前 save/restore 和训练后 restore 均通过，K3
+  deterministic projector fresh restore 通过；
+- `plans/manifests/taiji_m4v2_r6_formal_input_v1.json` 的 parent/worker/course
+  registry 完整，报告 `reports/taiji_m4v2_r6_formal_input_manifest_preflight_20260909.json`
+  为 `status=passed`、`formal_input_ready=true`；
+- 仍没有运行 S→G→K full formal，没有计算 causal/resource/retention/all-arm
+  side-effect Gate，`can_start_r6_formal=false`、`can_promote=false` 不变。
+
+下一步只实现消费该 manifest 的 formal runner per-cell ledger 和结构化失败归因；
+静态/输入 Gate 通过前不执行 9-cell course、不接 default runtime。

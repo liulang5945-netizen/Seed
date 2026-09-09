@@ -18,38 +18,24 @@
     "resource_contract_cpu_only": true,
     "side_effect_contract_closed": true,
     "version": true,
-    "worker_registry_complete": false,
-    "worker_registry_valid": false
+    "worker_registry_complete": true,
+    "worker_registry_valid": true
   },
   "client_attached": false,
-  "created_at_unix": 1788962766.2350364,
+  "created_at_unix": 1788963197.19541,
   "cuda_used": false,
   "default_runtime_attached": false,
-  "elapsed_seconds": 0.35581430001184344,
-  "failures": [
-    {
-      "arm": null,
-      "cell": null,
-      "class": "input_contract",
-      "evidence_digests": [],
-      "exception_type": null,
-      "is_environment_blocker": false,
-      "is_model_evidence": false,
-      "message": "worker_registry is incomplete; formal runner may not infer workers from a directory",
-      "phase": "input",
-      "recoverability": "worker_registry_required",
-      "step": null,
-      "stop_line": true
-    }
-  ],
-  "formal_input_ready": false,
-  "manifest_digest": "f2d8e4ec9fe58d981b7f9f7899e609d87cc9f84e843c200f851d4cce5547bef7",
+  "elapsed_seconds": 0.13456489995587617,
+  "failures": [],
+  "formal_input_ready": true,
+  "manifest_digest": "554c219ccc3f08c2a1483b9a9c1055235e6e0467b6d2dd5388d2c90637fa9dea",
   "manifest_path": "plans/manifests/taiji_m4v2_r6_formal_input_v1.json",
   "mcp_attached": false,
   "parent_dir": "checkpoints/taiji_r6_parents",
   "provider_attached": false,
   "report_format": "taiji-m4v2-r6-formal-input-manifest-preflight-v1",
-  "status": "blocked_input",
+  "status": "passed",
   "training_performed": false,
-  "version": 1
+  "version": 1,
+  "worker_dir": "checkpoints/taiji_k_workers"
 }
