@@ -70,3 +70,17 @@
 - `taiji/semantic_transition.py`：K2.1 行掩码 + checkpoint 携带（版本 bump）；
 - 新脚本 `scripts/training/eval_taiji_m5_k2_multistep_composition.py`：多步 episode harness（复用 K1 的 workspace/registry/schema/绑定派生与 planner/执行/准入链）；
 - 产物：`reports/taiji_m5_k2_multistep_canary_20260909.json` + 路线图执行记录 + 独立提交。
+
+## 7. K2 canary 执行记录（2026-09-09）
+
+实现保持本预注册的变量边界：Stage-1/K1.1 未改；新增的唯一结构变量是 K2.1 转移头行掩码，以及把 `after_world` 接入 planner 主路径。执行器全部运行在进程私有的 repo-writable 临时目录，`learn=False`，`can_promote=false`。
+
+- 实现：`taiji/semantic_transition.py` checkpoint v3；`scripts/training/eval_taiji_m5_k2_multistep_composition.py`；掩码在初始化、每次 fit 更新、checkpoint restore 三处强制重施。
+- 结果：`reports/taiji_m5_k2_multistep_canary_20260909.json`，A full-chain 的 holdout episode success `1.0`（4/4），B frozen `0.0`，C transition-lesion `0.0`；A-B/A-C 均为 `1.0`；训练 episode `6/6`，dev/test 均完成。
+- 因果与安全：所有 A 臂成功 `workspace.read` outcome 均通过 S6B 准入；resolve 步骤的已知 stale 限制不计入 read admission；checkpoint round-trip、篡改后禁用列归零、post-fit 无掩码越界全部通过；A reward variance `0.2675321743 > 0`。
+- outcome 口径澄清：首轮运行发现 Workbench executor 的成功 reward 恒为 `+1`，无法满足已预注册的 variance 可观测性。未改阈值或任务，沿用 S6/S6B 已验证的固定 `s6-graded-v1`，从本次真实 `workspace.read` 返回的 `byte_length` 与 `content-token` 密度派生 read reward；resolve 仍使用 executor reward。该调整只修复 outcome 观测缺口，真实执行和 S6B 边界不变。
+- 环境归因：首次运行的系统临时目录由受管 Windows 以 Python 0700 ACL 创建，写入失败；harness 改为显式 repo-writable 父目录并在退出清理。静态门 `py_compile`、ruff、mypy、`git diff --check` 通过；相关 M2.R3/M3.R1 回归通过，M3.R5 用独立脚本直接 Gate 通过。
+
+**Canary 结论**：K2 canary 通过，证明了在一个 task/course seed 上，转移头驱动的三步 autoregressive world 流能支撑未见序列的真实隔离执行，且 transition lesion 崩塌。该结论不晋级结构，也不代表跨 seed 稳健性。
+
+**下一步（另行预注册后执行）**：实现 K2 formal 9-cell matrix（task seeds `0/1/2` × learner seeds `17/23/31`），每 cell 原样复用 `run_cell`，先看结果不改判据；formal 仍保持 `can_promote=false`。

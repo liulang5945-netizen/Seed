@@ -1,0 +1,2517 @@
+{
+  "format": "taiji-m5-k2-multistep-composition-v1",
+  "version": 1,
+  "generated_at_epoch": 1788952624,
+  "status": "passed",
+  "can_promote": false,
+  "composition": "autoregressive transition world -> stage1 goal/content -> read-only intent -> REAL isolated execution (S6B)",
+  "holdout": "4 unseen three-step sequence x language x file combinations",
+  "cell": {
+    "task_seed": 0,
+    "learner_seed": 17,
+    "arms": {
+      "A-full-chain": {
+        "episodes": [
+          {
+            "rows": [
+              {
+                "tick": 1,
+                "path": "typescript_05.ts",
+                "transition_status": "resolved",
+                "transition_world_relations": [
+                  [
+                    "workbench",
+                    "diagnostics",
+                    "disconnected"
+                  ],
+                  [
+                    "workbench",
+                    "language",
+                    "typescript"
+                  ],
+                  [
+                    "workbench",
+                    "language_state",
+                    "resolved"
+                  ],
+                  [
+                    "workbench",
+                    "read",
+                    "success"
+                  ],
+                  [
+                    "workbench",
+                    "target",
+                    "file"
+                  ],
+                  [
+                    "workbench",
+                    "toolchain",
+                    "available"
+                  ]
+                ],
+                "semantic_status": "resolved",
+                "predicted_goal": "goal:inspect-language",
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "admission_required": true,
+                "real_success": true,
+                "real_reward": 0.03994084590135754,
+                "outcome_admitted": true,
+                "reward_source": "workbench.read.result:s6-graded-v1",
+                "freshness_after_execute": {
+                  "world_tick": 1,
+                  "latest_workbench_event_tick": 1
+                }
+              },
+              {
+                "tick": 2,
+                "path": "python_05.py",
+                "transition_status": "resolved",
+                "transition_world_relations": [
+                  [
+                    "workbench",
+                    "diagnostics",
+                    "disconnected"
+                  ],
+                  [
+                    "workbench",
+                    "language",
+                    "python"
+                  ],
+                  [
+                    "workbench",
+                    "language_state",
+                    "resolved"
+                  ],
+                  [
+                    "workbench",
+                    "read",
+                    "success"
+                  ],
+                  [
+                    "workbench",
+                    "target",
+                    "file"
+                  ],
+                  [
+                    "workbench",
+                    "toolchain",
+                    "available"
+                  ]
+                ],
+                "semantic_status": "resolved",
+                "predicted_goal": "goal:inspect-language",
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "admission_required": true,
+                "real_success": true,
+                "real_reward": -0.21064358758734505,
+                "outcome_admitted": true,
+                "reward_source": "workbench.read.result:s6-graded-v1",
+                "freshness_after_execute": {
+                  "world_tick": 2,
+                  "latest_workbench_event_tick": 2
+                }
+              },
+              {
+                "tick": 3,
+                "path": "rust_05.rs",
+                "transition_status": "clarify",
+                "transition_world_relations": [
+                  [
+                    "workbench",
+                    "diagnostics",
+                    "disconnected"
+                  ],
+                  [
+                    "workbench",
+                    "language",
+                    "rust"
+                  ],
+                  [
+                    "workbench",
+                    "language_state",
+                    "resolved"
+                  ],
+                  [
+                    "workbench",
+                    "read",
+                    "success"
+                  ],
+                  [
+                    "workbench",
+                    "target",
+                    "file"
+                  ],
+                  [
+                    "workbench",
+                    "toolchain",
+                    "missing"
+                  ]
+                ],
+                "semantic_status": "clarify",
+                "predicted_goal": "goal:clarify-toolchain",
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.programming_language.resolve",
+                "admission_required": false,
+                "real_success": true,
+                "real_reward": 1.0,
+                "outcome_admitted": false,
+                "reward_source": "executor",
+                "freshness_after_execute": {
+                  "world_tick": 3,
+                  "latest_workbench_event_tick": 2
+                }
+              }
+            ],
+            "step_count": 3,
+            "episode_success": true
+          },
+          {
+            "rows": [
+              {
+                "tick": 1,
+                "path": "rust_06.rs",
+                "transition_status": "clarify",
+                "transition_world_relations": [
+                  [
+                    "workbench",
+                    "diagnostics",
+                    "disconnected"
+                  ],
+                  [
+                    "workbench",
+                    "language",
+                    "rust"
+                  ],
+                  [
+                    "workbench",
+                    "language_state",
+                    "resolved"
+                  ],
+                  [
+                    "workbench",
+                    "read",
+                    "success"
+                  ],
+                  [
+                    "workbench",
+                    "target",
+                    "file"
+                  ],
+                  [
+                    "workbench",
+                    "toolchain",
+                    "missing"
+                  ]
+                ],
+                "semantic_status": "clarify",
+                "predicted_goal": "goal:clarify-toolchain",
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.programming_language.resolve",
+                "admission_required": false,
+                "real_success": true,
+                "real_reward": 1.0,
+                "outcome_admitted": false,
+                "reward_source": "executor",
+                "freshness_after_execute": {
+                  "world_tick": 4,
+                  "latest_workbench_event_tick": 2
+                }
+              },
+              {
+                "tick": 2,
+                "path": "typescript_06.ts",
+                "transition_status": "resolved",
+                "transition_world_relations": [
+                  [
+                    "workbench",
+                    "diagnostics",
+                    "disconnected"
+                  ],
+                  [
+                    "workbench",
+                    "language",
+                    "typescript"
+                  ],
+                  [
+                    "workbench",
+                    "language_state",
+                    "resolved"
+                  ],
+                  [
+                    "workbench",
+                    "read",
+                    "success"
+                  ],
+                  [
+                    "workbench",
+                    "target",
+                    "file"
+                  ],
+                  [
+                    "workbench",
+                    "toolchain",
+                    "available"
+                  ]
+                ],
+                "semantic_status": "resolved",
+                "predicted_goal": "goal:inspect-language",
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "admission_required": true,
+                "real_success": true,
+                "real_reward": 0.04988457986015985,
+                "outcome_admitted": true,
+                "reward_source": "workbench.read.result:s6-graded-v1",
+                "freshness_after_execute": {
+                  "world_tick": 5,
+                  "latest_workbench_event_tick": 5
+                }
+              },
+              {
+                "tick": 3,
+                "path": "python_06.py",
+                "transition_status": "resolved",
+                "transition_world_relations": [
+                  [
+                    "workbench",
+                    "diagnostics",
+                    "disconnected"
+                  ],
+                  [
+                    "workbench",
+                    "language",
+                    "python"
+                  ],
+                  [
+                    "workbench",
+                    "language_state",
+                    "resolved"
+                  ],
+                  [
+                    "workbench",
+                    "read",
+                    "success"
+                  ],
+                  [
+                    "workbench",
+                    "target",
+                    "file"
+                  ],
+                  [
+                    "workbench",
+                    "toolchain",
+                    "available"
+                  ]
+                ],
+                "semantic_status": "resolved",
+                "predicted_goal": "goal:inspect-language",
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "admission_required": true,
+                "real_success": true,
+                "real_reward": -0.20182532660179933,
+                "outcome_admitted": true,
+                "reward_source": "workbench.read.result:s6-graded-v1",
+                "freshness_after_execute": {
+                  "world_tick": 6,
+                  "latest_workbench_event_tick": 6
+                }
+              }
+            ],
+            "step_count": 3,
+            "episode_success": true
+          },
+          {
+            "rows": [
+              {
+                "tick": 1,
+                "path": "python_07.py",
+                "transition_status": "resolved",
+                "transition_world_relations": [
+                  [
+                    "workbench",
+                    "diagnostics",
+                    "disconnected"
+                  ],
+                  [
+                    "workbench",
+                    "language",
+                    "python"
+                  ],
+                  [
+                    "workbench",
+                    "language_state",
+                    "resolved"
+                  ],
+                  [
+                    "workbench",
+                    "read",
+                    "success"
+                  ],
+                  [
+                    "workbench",
+                    "target",
+                    "file"
+                  ],
+                  [
+                    "workbench",
+                    "toolchain",
+                    "available"
+                  ]
+                ],
+                "semantic_status": "resolved",
+                "predicted_goal": "goal:inspect-language",
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "admission_required": true,
+                "real_success": true,
+                "real_reward": -0.1929076425189806,
+                "outcome_admitted": true,
+                "reward_source": "workbench.read.result:s6-graded-v1",
+                "freshness_after_execute": {
+                  "world_tick": 7,
+                  "latest_workbench_event_tick": 7
+                }
+              },
+              {
+                "tick": 2,
+                "path": "rust_07.rs",
+                "transition_status": "clarify",
+                "transition_world_relations": [
+                  [
+                    "workbench",
+                    "diagnostics",
+                    "disconnected"
+                  ],
+                  [
+                    "workbench",
+                    "language",
+                    "rust"
+                  ],
+                  [
+                    "workbench",
+                    "language_state",
+                    "resolved"
+                  ],
+                  [
+                    "workbench",
+                    "read",
+                    "success"
+                  ],
+                  [
+                    "workbench",
+                    "target",
+                    "file"
+                  ],
+                  [
+                    "workbench",
+                    "toolchain",
+                    "missing"
+                  ]
+                ],
+                "semantic_status": "clarify",
+                "predicted_goal": "goal:clarify-toolchain",
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.programming_language.resolve",
+                "admission_required": false,
+                "real_success": true,
+                "real_reward": 1.0,
+                "outcome_admitted": false,
+                "reward_source": "executor",
+                "freshness_after_execute": {
+                  "world_tick": 8,
+                  "latest_workbench_event_tick": 7
+                }
+              },
+              {
+                "tick": 3,
+                "path": "typescript_07.ts",
+                "transition_status": "resolved",
+                "transition_world_relations": [
+                  [
+                    "workbench",
+                    "diagnostics",
+                    "disconnected"
+                  ],
+                  [
+                    "workbench",
+                    "language",
+                    "typescript"
+                  ],
+                  [
+                    "workbench",
+                    "language_state",
+                    "resolved"
+                  ],
+                  [
+                    "workbench",
+                    "read",
+                    "success"
+                  ],
+                  [
+                    "workbench",
+                    "target",
+                    "file"
+                  ],
+                  [
+                    "workbench",
+                    "toolchain",
+                    "available"
+                  ]
+                ],
+                "semantic_status": "resolved",
+                "predicted_goal": "goal:inspect-language",
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "admission_required": true,
+                "real_success": true,
+                "real_reward": 0.05980079677497349,
+                "outcome_admitted": true,
+                "reward_source": "workbench.read.result:s6-graded-v1",
+                "freshness_after_execute": {
+                  "world_tick": 9,
+                  "latest_workbench_event_tick": 9
+                }
+              }
+            ],
+            "step_count": 3,
+            "episode_success": true
+          },
+          {
+            "rows": [
+              {
+                "tick": 1,
+                "path": "typescript_05.ts",
+                "transition_status": "resolved",
+                "transition_world_relations": [
+                  [
+                    "workbench",
+                    "diagnostics",
+                    "disconnected"
+                  ],
+                  [
+                    "workbench",
+                    "language",
+                    "typescript"
+                  ],
+                  [
+                    "workbench",
+                    "language_state",
+                    "resolved"
+                  ],
+                  [
+                    "workbench",
+                    "read",
+                    "success"
+                  ],
+                  [
+                    "workbench",
+                    "target",
+                    "file"
+                  ],
+                  [
+                    "workbench",
+                    "toolchain",
+                    "available"
+                  ]
+                ],
+                "semantic_status": "resolved",
+                "predicted_goal": "goal:inspect-language",
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "admission_required": true,
+                "real_success": true,
+                "real_reward": 0.03994084590135754,
+                "outcome_admitted": true,
+                "reward_source": "workbench.read.result:s6-graded-v1",
+                "freshness_after_execute": {
+                  "world_tick": 10,
+                  "latest_workbench_event_tick": 10
+                }
+              },
+              {
+                "tick": 2,
+                "path": "rust_06.rs",
+                "transition_status": "clarify",
+                "transition_world_relations": [
+                  [
+                    "workbench",
+                    "diagnostics",
+                    "disconnected"
+                  ],
+                  [
+                    "workbench",
+                    "language",
+                    "rust"
+                  ],
+                  [
+                    "workbench",
+                    "language_state",
+                    "resolved"
+                  ],
+                  [
+                    "workbench",
+                    "read",
+                    "success"
+                  ],
+                  [
+                    "workbench",
+                    "target",
+                    "file"
+                  ],
+                  [
+                    "workbench",
+                    "toolchain",
+                    "missing"
+                  ]
+                ],
+                "semantic_status": "clarify",
+                "predicted_goal": "goal:clarify-toolchain",
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.programming_language.resolve",
+                "admission_required": false,
+                "real_success": true,
+                "real_reward": 1.0,
+                "outcome_admitted": false,
+                "reward_source": "executor",
+                "freshness_after_execute": {
+                  "world_tick": 11,
+                  "latest_workbench_event_tick": 10
+                }
+              },
+              {
+                "tick": 3,
+                "path": "python_07.py",
+                "transition_status": "resolved",
+                "transition_world_relations": [
+                  [
+                    "workbench",
+                    "diagnostics",
+                    "disconnected"
+                  ],
+                  [
+                    "workbench",
+                    "language",
+                    "python"
+                  ],
+                  [
+                    "workbench",
+                    "language_state",
+                    "resolved"
+                  ],
+                  [
+                    "workbench",
+                    "read",
+                    "success"
+                  ],
+                  [
+                    "workbench",
+                    "target",
+                    "file"
+                  ],
+                  [
+                    "workbench",
+                    "toolchain",
+                    "available"
+                  ]
+                ],
+                "semantic_status": "resolved",
+                "predicted_goal": "goal:inspect-language",
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "admission_required": true,
+                "real_success": true,
+                "real_reward": -0.1929076425189806,
+                "outcome_admitted": true,
+                "reward_source": "workbench.read.result:s6-graded-v1",
+                "freshness_after_execute": {
+                  "world_tick": 12,
+                  "latest_workbench_event_tick": 12
+                }
+              }
+            ],
+            "step_count": 3,
+            "episode_success": true
+          }
+        ],
+        "episode_success_rate": 1.0,
+        "all_successful_outcomes_admitted": true
+      },
+      "B-frozen": {
+        "episodes": [
+          {
+            "rows": [
+              {
+                "tick": 1,
+                "path": "typescript_05.ts",
+                "transition_status": "ambiguous",
+                "transition_world_relations": [
+                  [
+                    "workbench",
+                    "diagnostics",
+                    "disconnected"
+                  ],
+                  [
+                    "workbench",
+                    "language",
+                    "unknown"
+                  ],
+                  [
+                    "workbench",
+                    "language_state",
+                    "unknown"
+                  ],
+                  [
+                    "workbench",
+                    "read",
+                    "failure"
+                  ],
+                  [
+                    "workbench",
+                    "target",
+                    "missing"
+                  ],
+                  [
+                    "workbench",
+                    "toolchain",
+                    "missing"
+                  ]
+                ],
+                "semantic_status": "conflict",
+                "predicted_goal": null,
+                "accepted": false,
+                "decision_reason": null,
+                "intent_kind": null,
+                "admission_required": false,
+                "real_success": false,
+                "real_reward": 0.0,
+                "outcome_admitted": false
+              }
+            ],
+            "step_count": 1,
+            "episode_success": false
+          },
+          {
+            "rows": [
+              {
+                "tick": 1,
+                "path": "rust_06.rs",
+                "transition_status": "ambiguous",
+                "transition_world_relations": [
+                  [
+                    "workbench",
+                    "diagnostics",
+                    "disconnected"
+                  ],
+                  [
+                    "workbench",
+                    "language",
+                    "unknown"
+                  ],
+                  [
+                    "workbench",
+                    "language_state",
+                    "unknown"
+                  ],
+                  [
+                    "workbench",
+                    "read",
+                    "failure"
+                  ],
+                  [
+                    "workbench",
+                    "target",
+                    "missing"
+                  ],
+                  [
+                    "workbench",
+                    "toolchain",
+                    "missing"
+                  ]
+                ],
+                "semantic_status": "conflict",
+                "predicted_goal": null,
+                "accepted": false,
+                "decision_reason": null,
+                "intent_kind": null,
+                "admission_required": false,
+                "real_success": false,
+                "real_reward": 0.0,
+                "outcome_admitted": false
+              }
+            ],
+            "step_count": 1,
+            "episode_success": false
+          },
+          {
+            "rows": [
+              {
+                "tick": 1,
+                "path": "python_07.py",
+                "transition_status": "ambiguous",
+                "transition_world_relations": [
+                  [
+                    "workbench",
+                    "diagnostics",
+                    "disconnected"
+                  ],
+                  [
+                    "workbench",
+                    "language",
+                    "unknown"
+                  ],
+                  [
+                    "workbench",
+                    "language_state",
+                    "unknown"
+                  ],
+                  [
+                    "workbench",
+                    "read",
+                    "failure"
+                  ],
+                  [
+                    "workbench",
+                    "target",
+                    "missing"
+                  ],
+                  [
+                    "workbench",
+                    "toolchain",
+                    "missing"
+                  ]
+                ],
+                "semantic_status": "conflict",
+                "predicted_goal": null,
+                "accepted": false,
+                "decision_reason": null,
+                "intent_kind": null,
+                "admission_required": false,
+                "real_success": false,
+                "real_reward": 0.0,
+                "outcome_admitted": false
+              }
+            ],
+            "step_count": 1,
+            "episode_success": false
+          },
+          {
+            "rows": [
+              {
+                "tick": 1,
+                "path": "typescript_05.ts",
+                "transition_status": "ambiguous",
+                "transition_world_relations": [
+                  [
+                    "workbench",
+                    "diagnostics",
+                    "disconnected"
+                  ],
+                  [
+                    "workbench",
+                    "language",
+                    "unknown"
+                  ],
+                  [
+                    "workbench",
+                    "language_state",
+                    "unknown"
+                  ],
+                  [
+                    "workbench",
+                    "read",
+                    "failure"
+                  ],
+                  [
+                    "workbench",
+                    "target",
+                    "missing"
+                  ],
+                  [
+                    "workbench",
+                    "toolchain",
+                    "missing"
+                  ]
+                ],
+                "semantic_status": "conflict",
+                "predicted_goal": null,
+                "accepted": false,
+                "decision_reason": null,
+                "intent_kind": null,
+                "admission_required": false,
+                "real_success": false,
+                "real_reward": 0.0,
+                "outcome_admitted": false
+              }
+            ],
+            "step_count": 1,
+            "episode_success": false
+          }
+        ],
+        "episode_success_rate": 0.0,
+        "all_successful_outcomes_admitted": true
+      },
+      "C-transition-lesion": {
+        "episodes": [
+          {
+            "rows": [
+              {
+                "tick": 1,
+                "path": "typescript_05.ts",
+                "transition_status": "clarify",
+                "transition_world_relations": [
+                  [
+                    "workbench",
+                    "diagnostics",
+                    "disconnected"
+                  ],
+                  [
+                    "workbench",
+                    "language",
+                    "unknown"
+                  ],
+                  [
+                    "workbench",
+                    "language_state",
+                    "unknown"
+                  ],
+                  [
+                    "workbench",
+                    "read",
+                    "failure"
+                  ],
+                  [
+                    "workbench",
+                    "target",
+                    "missing"
+                  ],
+                  [
+                    "workbench",
+                    "toolchain",
+                    "missing"
+                  ]
+                ],
+                "semantic_status": "resolved",
+                "predicted_goal": "goal:inspect-language",
+                "accepted": false,
+                "decision_reason": "stale_world_observation",
+                "intent_kind": null,
+                "admission_required": false,
+                "real_success": false,
+                "real_reward": 0.0,
+                "outcome_admitted": false
+              }
+            ],
+            "step_count": 1,
+            "episode_success": false
+          },
+          {
+            "rows": [
+              {
+                "tick": 1,
+                "path": "rust_06.rs",
+                "transition_status": "clarify",
+                "transition_world_relations": [
+                  [
+                    "workbench",
+                    "diagnostics",
+                    "disconnected"
+                  ],
+                  [
+                    "workbench",
+                    "language",
+                    "unknown"
+                  ],
+                  [
+                    "workbench",
+                    "language_state",
+                    "unknown"
+                  ],
+                  [
+                    "workbench",
+                    "read",
+                    "failure"
+                  ],
+                  [
+                    "workbench",
+                    "target",
+                    "missing"
+                  ],
+                  [
+                    "workbench",
+                    "toolchain",
+                    "missing"
+                  ]
+                ],
+                "semantic_status": "clarify",
+                "predicted_goal": "goal:clarify-toolchain",
+                "accepted": false,
+                "decision_reason": "stale_world_observation",
+                "intent_kind": null,
+                "admission_required": false,
+                "real_success": false,
+                "real_reward": 0.0,
+                "outcome_admitted": false
+              }
+            ],
+            "step_count": 1,
+            "episode_success": false
+          },
+          {
+            "rows": [
+              {
+                "tick": 1,
+                "path": "python_07.py",
+                "transition_status": "clarify",
+                "transition_world_relations": [
+                  [
+                    "workbench",
+                    "diagnostics",
+                    "disconnected"
+                  ],
+                  [
+                    "workbench",
+                    "language",
+                    "unknown"
+                  ],
+                  [
+                    "workbench",
+                    "language_state",
+                    "unknown"
+                  ],
+                  [
+                    "workbench",
+                    "read",
+                    "failure"
+                  ],
+                  [
+                    "workbench",
+                    "target",
+                    "missing"
+                  ],
+                  [
+                    "workbench",
+                    "toolchain",
+                    "missing"
+                  ]
+                ],
+                "semantic_status": "resolved",
+                "predicted_goal": "goal:inspect-language",
+                "accepted": false,
+                "decision_reason": "stale_world_observation",
+                "intent_kind": null,
+                "admission_required": false,
+                "real_success": false,
+                "real_reward": 0.0,
+                "outcome_admitted": false
+              }
+            ],
+            "step_count": 1,
+            "episode_success": false
+          },
+          {
+            "rows": [
+              {
+                "tick": 1,
+                "path": "typescript_05.ts",
+                "transition_status": "clarify",
+                "transition_world_relations": [
+                  [
+                    "workbench",
+                    "diagnostics",
+                    "disconnected"
+                  ],
+                  [
+                    "workbench",
+                    "language",
+                    "unknown"
+                  ],
+                  [
+                    "workbench",
+                    "language_state",
+                    "unknown"
+                  ],
+                  [
+                    "workbench",
+                    "read",
+                    "failure"
+                  ],
+                  [
+                    "workbench",
+                    "target",
+                    "missing"
+                  ],
+                  [
+                    "workbench",
+                    "toolchain",
+                    "missing"
+                  ]
+                ],
+                "semantic_status": "resolved",
+                "predicted_goal": "goal:inspect-language",
+                "accepted": false,
+                "decision_reason": "stale_world_observation",
+                "intent_kind": null,
+                "admission_required": false,
+                "real_success": false,
+                "real_reward": 0.0,
+                "outcome_admitted": false
+              }
+            ],
+            "step_count": 1,
+            "episode_success": false
+          }
+        ],
+        "episode_success_rate": 0.0,
+        "all_successful_outcomes_admitted": true
+      }
+    },
+    "train_course": [
+      {
+        "rows": [
+          {
+            "tick": 1,
+            "path": "python_00.py",
+            "transition_status": "resolved",
+            "transition_world_relations": [
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ],
+              [
+                "workbench",
+                "language",
+                "python"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "available"
+              ]
+            ],
+            "semantic_status": "resolved",
+            "predicted_goal": "goal:inspect-language",
+            "accepted": true,
+            "decision_reason": "native_read_only_intent_ready",
+            "intent_kind": "workspace.read",
+            "admission_required": true,
+            "real_success": true,
+            "real_reward": -0.25723491538926707,
+            "outcome_admitted": true,
+            "reward_source": "workbench.read.result:s6-graded-v1",
+            "freshness_after_execute": {
+              "world_tick": 1,
+              "latest_workbench_event_tick": 1
+            }
+          },
+          {
+            "tick": 2,
+            "path": "rust_00.rs",
+            "transition_status": "clarify",
+            "transition_world_relations": [
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ],
+              [
+                "workbench",
+                "language",
+                "rust"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "missing"
+              ]
+            ],
+            "semantic_status": "clarify",
+            "predicted_goal": "goal:clarify-toolchain",
+            "accepted": true,
+            "decision_reason": "native_read_only_intent_ready",
+            "intent_kind": "workspace.programming_language.resolve",
+            "admission_required": false,
+            "real_success": true,
+            "real_reward": 1.0,
+            "outcome_admitted": false,
+            "reward_source": "executor",
+            "freshness_after_execute": {
+              "world_tick": 2,
+              "latest_workbench_event_tick": 1
+            }
+          },
+          {
+            "tick": 3,
+            "path": "python_01.py",
+            "transition_status": "resolved",
+            "transition_world_relations": [
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ],
+              [
+                "workbench",
+                "language",
+                "python"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "available"
+              ]
+            ],
+            "semantic_status": "resolved",
+            "predicted_goal": "goal:inspect-language",
+            "accepted": true,
+            "decision_reason": "native_read_only_intent_ready",
+            "intent_kind": "workspace.read",
+            "admission_required": true,
+            "real_success": true,
+            "real_reward": -0.2490149917663699,
+            "outcome_admitted": true,
+            "reward_source": "workbench.read.result:s6-graded-v1",
+            "freshness_after_execute": {
+              "world_tick": 3,
+              "latest_workbench_event_tick": 3
+            }
+          }
+        ],
+        "step_count": 3,
+        "episode_success": true
+      },
+      {
+        "rows": [
+          {
+            "tick": 1,
+            "path": "rust_01.rs",
+            "transition_status": "clarify",
+            "transition_world_relations": [
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ],
+              [
+                "workbench",
+                "language",
+                "rust"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "missing"
+              ]
+            ],
+            "semantic_status": "clarify",
+            "predicted_goal": "goal:clarify-toolchain",
+            "accepted": true,
+            "decision_reason": "native_read_only_intent_ready",
+            "intent_kind": "workspace.programming_language.resolve",
+            "admission_required": false,
+            "real_success": true,
+            "real_reward": 1.0,
+            "outcome_admitted": false,
+            "reward_source": "executor",
+            "freshness_after_execute": {
+              "world_tick": 4,
+              "latest_workbench_event_tick": 3
+            }
+          },
+          {
+            "tick": 2,
+            "path": "python_02.py",
+            "transition_status": "resolved",
+            "transition_world_relations": [
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ],
+              [
+                "workbench",
+                "language",
+                "python"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "available"
+              ]
+            ],
+            "semantic_status": "resolved",
+            "predicted_goal": "goal:inspect-language",
+            "accepted": true,
+            "decision_reason": "native_read_only_intent_ready",
+            "intent_kind": "workspace.read",
+            "admission_required": true,
+            "real_success": true,
+            "real_reward": -0.24068057096876752,
+            "outcome_admitted": true,
+            "reward_source": "workbench.read.result:s6-graded-v1",
+            "freshness_after_execute": {
+              "world_tick": 5,
+              "latest_workbench_event_tick": 5
+            }
+          },
+          {
+            "tick": 3,
+            "path": "typescript_00.ts",
+            "transition_status": "clarify",
+            "transition_world_relations": [
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ],
+              [
+                "workbench",
+                "language",
+                "typescript"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "missing"
+              ]
+            ],
+            "semantic_status": "clarify",
+            "predicted_goal": "goal:clarify-toolchain",
+            "accepted": true,
+            "decision_reason": "native_read_only_intent_ready",
+            "intent_kind": "workspace.programming_language.resolve",
+            "admission_required": false,
+            "real_success": true,
+            "real_reward": 1.0,
+            "outcome_admitted": false,
+            "reward_source": "executor",
+            "freshness_after_execute": {
+              "world_tick": 6,
+              "latest_workbench_event_tick": 5
+            }
+          }
+        ],
+        "step_count": 3,
+        "episode_success": true
+      },
+      {
+        "rows": [
+          {
+            "tick": 1,
+            "path": "typescript_01.ts",
+            "transition_status": "clarify",
+            "transition_world_relations": [
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ],
+              [
+                "workbench",
+                "language",
+                "typescript"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "missing"
+              ]
+            ],
+            "semantic_status": "clarify",
+            "predicted_goal": "goal:clarify-toolchain",
+            "accepted": true,
+            "decision_reason": "native_read_only_intent_ready",
+            "intent_kind": "workspace.programming_language.resolve",
+            "admission_required": false,
+            "real_success": true,
+            "real_reward": 1.0,
+            "outcome_admitted": false,
+            "reward_source": "executor",
+            "freshness_after_execute": {
+              "world_tick": 7,
+              "latest_workbench_event_tick": 5
+            }
+          },
+          {
+            "tick": 2,
+            "path": "rust_02.rs",
+            "transition_status": "clarify",
+            "transition_world_relations": [
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ],
+              [
+                "workbench",
+                "language",
+                "rust"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "missing"
+              ]
+            ],
+            "semantic_status": "clarify",
+            "predicted_goal": "goal:clarify-toolchain",
+            "accepted": true,
+            "decision_reason": "native_read_only_intent_ready",
+            "intent_kind": "workspace.programming_language.resolve",
+            "admission_required": false,
+            "real_success": true,
+            "real_reward": 1.0,
+            "outcome_admitted": false,
+            "reward_source": "executor",
+            "freshness_after_execute": {
+              "world_tick": 8,
+              "latest_workbench_event_tick": 5
+            }
+          },
+          {
+            "tick": 3,
+            "path": "python_03.py",
+            "transition_status": "resolved",
+            "transition_world_relations": [
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ],
+              [
+                "workbench",
+                "language",
+                "python"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "available"
+              ]
+            ],
+            "semantic_status": "resolved",
+            "predicted_goal": "goal:inspect-language",
+            "accepted": true,
+            "decision_reason": "native_read_only_intent_ready",
+            "intent_kind": "workspace.read",
+            "admission_required": true,
+            "real_success": true,
+            "real_reward": -0.23223396983750522,
+            "outcome_admitted": true,
+            "reward_source": "workbench.read.result:s6-graded-v1",
+            "freshness_after_execute": {
+              "world_tick": 9,
+              "latest_workbench_event_tick": 9
+            }
+          }
+        ],
+        "step_count": 3,
+        "episode_success": true
+      },
+      {
+        "rows": [
+          {
+            "tick": 1,
+            "path": "python_02.py",
+            "transition_status": "resolved",
+            "transition_world_relations": [
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ],
+              [
+                "workbench",
+                "language",
+                "python"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "available"
+              ]
+            ],
+            "semantic_status": "resolved",
+            "predicted_goal": "goal:inspect-language",
+            "accepted": true,
+            "decision_reason": "native_read_only_intent_ready",
+            "intent_kind": "workspace.read",
+            "admission_required": true,
+            "real_success": true,
+            "real_reward": -0.24068057096876752,
+            "outcome_admitted": true,
+            "reward_source": "workbench.read.result:s6-graded-v1",
+            "freshness_after_execute": {
+              "world_tick": 10,
+              "latest_workbench_event_tick": 10
+            }
+          },
+          {
+            "tick": 2,
+            "path": "typescript_02.ts",
+            "transition_status": "clarify",
+            "transition_world_relations": [
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ],
+              [
+                "workbench",
+                "language",
+                "typescript"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "missing"
+              ]
+            ],
+            "semantic_status": "clarify",
+            "predicted_goal": "goal:clarify-toolchain",
+            "accepted": true,
+            "decision_reason": "native_read_only_intent_ready",
+            "intent_kind": "workspace.programming_language.resolve",
+            "admission_required": false,
+            "real_success": true,
+            "real_reward": 1.0,
+            "outcome_admitted": false,
+            "reward_source": "executor",
+            "freshness_after_execute": {
+              "world_tick": 11,
+              "latest_workbench_event_tick": 10
+            }
+          },
+          {
+            "tick": 3,
+            "path": "rust_03.rs",
+            "transition_status": "clarify",
+            "transition_world_relations": [
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ],
+              [
+                "workbench",
+                "language",
+                "rust"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "missing"
+              ]
+            ],
+            "semantic_status": "clarify",
+            "predicted_goal": "goal:clarify-toolchain",
+            "accepted": true,
+            "decision_reason": "native_read_only_intent_ready",
+            "intent_kind": "workspace.programming_language.resolve",
+            "admission_required": false,
+            "real_success": true,
+            "real_reward": 1.0,
+            "outcome_admitted": false,
+            "reward_source": "executor",
+            "freshness_after_execute": {
+              "world_tick": 12,
+              "latest_workbench_event_tick": 10
+            }
+          }
+        ],
+        "step_count": 3,
+        "episode_success": true
+      },
+      {
+        "rows": [
+          {
+            "tick": 1,
+            "path": "rust_00.rs",
+            "transition_status": "clarify",
+            "transition_world_relations": [
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ],
+              [
+                "workbench",
+                "language",
+                "rust"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "missing"
+              ]
+            ],
+            "semantic_status": "clarify",
+            "predicted_goal": "goal:clarify-toolchain",
+            "accepted": true,
+            "decision_reason": "native_read_only_intent_ready",
+            "intent_kind": "workspace.programming_language.resolve",
+            "admission_required": false,
+            "real_success": true,
+            "real_reward": 1.0,
+            "outcome_admitted": false,
+            "reward_source": "executor",
+            "freshness_after_execute": {
+              "world_tick": 13,
+              "latest_workbench_event_tick": 10
+            }
+          },
+          {
+            "tick": 2,
+            "path": "typescript_03.ts",
+            "transition_status": "clarify",
+            "transition_world_relations": [
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ],
+              [
+                "workbench",
+                "language",
+                "typescript"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "missing"
+              ]
+            ],
+            "semantic_status": "clarify",
+            "predicted_goal": "goal:clarify-toolchain",
+            "accepted": true,
+            "decision_reason": "native_read_only_intent_ready",
+            "intent_kind": "workspace.programming_language.resolve",
+            "admission_required": false,
+            "real_success": true,
+            "real_reward": 1.0,
+            "outcome_admitted": false,
+            "reward_source": "executor",
+            "freshness_after_execute": {
+              "world_tick": 14,
+              "latest_workbench_event_tick": 10
+            }
+          },
+          {
+            "tick": 3,
+            "path": "python_00.py",
+            "transition_status": "resolved",
+            "transition_world_relations": [
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ],
+              [
+                "workbench",
+                "language",
+                "python"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "available"
+              ]
+            ],
+            "semantic_status": "resolved",
+            "predicted_goal": "goal:inspect-language",
+            "accepted": true,
+            "decision_reason": "native_read_only_intent_ready",
+            "intent_kind": "workspace.read",
+            "admission_required": true,
+            "real_success": true,
+            "real_reward": -0.25723491538926707,
+            "outcome_admitted": true,
+            "reward_source": "workbench.read.result:s6-graded-v1",
+            "freshness_after_execute": {
+              "world_tick": 15,
+              "latest_workbench_event_tick": 15
+            }
+          }
+        ],
+        "step_count": 3,
+        "episode_success": true
+      },
+      {
+        "rows": [
+          {
+            "tick": 1,
+            "path": "typescript_02.ts",
+            "transition_status": "clarify",
+            "transition_world_relations": [
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ],
+              [
+                "workbench",
+                "language",
+                "typescript"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "missing"
+              ]
+            ],
+            "semantic_status": "clarify",
+            "predicted_goal": "goal:clarify-toolchain",
+            "accepted": true,
+            "decision_reason": "native_read_only_intent_ready",
+            "intent_kind": "workspace.programming_language.resolve",
+            "admission_required": false,
+            "real_success": true,
+            "real_reward": 1.0,
+            "outcome_admitted": false,
+            "reward_source": "executor",
+            "freshness_after_execute": {
+              "world_tick": 16,
+              "latest_workbench_event_tick": 15
+            }
+          },
+          {
+            "tick": 2,
+            "path": "python_01.py",
+            "transition_status": "resolved",
+            "transition_world_relations": [
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ],
+              [
+                "workbench",
+                "language",
+                "python"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "available"
+              ]
+            ],
+            "semantic_status": "resolved",
+            "predicted_goal": "goal:inspect-language",
+            "accepted": true,
+            "decision_reason": "native_read_only_intent_ready",
+            "intent_kind": "workspace.read",
+            "admission_required": true,
+            "real_success": true,
+            "real_reward": -0.2490149917663699,
+            "outcome_admitted": true,
+            "reward_source": "workbench.read.result:s6-graded-v1",
+            "freshness_after_execute": {
+              "world_tick": 17,
+              "latest_workbench_event_tick": 17
+            }
+          },
+          {
+            "tick": 3,
+            "path": "rust_01.rs",
+            "transition_status": "clarify",
+            "transition_world_relations": [
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ],
+              [
+                "workbench",
+                "language",
+                "rust"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "missing"
+              ]
+            ],
+            "semantic_status": "clarify",
+            "predicted_goal": "goal:clarify-toolchain",
+            "accepted": true,
+            "decision_reason": "native_read_only_intent_ready",
+            "intent_kind": "workspace.programming_language.resolve",
+            "admission_required": false,
+            "real_success": true,
+            "real_reward": 1.0,
+            "outcome_admitted": false,
+            "reward_source": "executor",
+            "freshness_after_execute": {
+              "world_tick": 18,
+              "latest_workbench_event_tick": 17
+            }
+          }
+        ],
+        "step_count": 3,
+        "episode_success": true
+      }
+    ],
+    "dev_course": {
+      "rows": [
+        {
+          "tick": 1,
+          "path": "python_04.py",
+          "transition_status": "resolved",
+          "transition_world_relations": [
+            [
+              "workbench",
+              "diagnostics",
+              "disconnected"
+            ],
+            [
+              "workbench",
+              "language",
+              "python"
+            ],
+            [
+              "workbench",
+              "language_state",
+              "resolved"
+            ],
+            [
+              "workbench",
+              "read",
+              "success"
+            ],
+            [
+              "workbench",
+              "target",
+              "file"
+            ],
+            [
+              "workbench",
+              "toolchain",
+              "available"
+            ]
+          ],
+          "semantic_status": "resolved",
+          "predicted_goal": "goal:inspect-language",
+          "accepted": true,
+          "decision_reason": "native_read_only_intent_ready",
+          "intent_kind": "workspace.read",
+          "admission_required": true,
+          "real_success": true,
+          "real_reward": -0.22367769426231274,
+          "outcome_admitted": true,
+          "reward_source": "workbench.read.result:s6-graded-v1",
+          "freshness_after_execute": {
+            "world_tick": 19,
+            "latest_workbench_event_tick": 19
+          }
+        },
+        {
+          "tick": 2,
+          "path": "rust_04.rs",
+          "transition_status": "clarify",
+          "transition_world_relations": [
+            [
+              "workbench",
+              "diagnostics",
+              "disconnected"
+            ],
+            [
+              "workbench",
+              "language",
+              "rust"
+            ],
+            [
+              "workbench",
+              "language_state",
+              "resolved"
+            ],
+            [
+              "workbench",
+              "read",
+              "success"
+            ],
+            [
+              "workbench",
+              "target",
+              "file"
+            ],
+            [
+              "workbench",
+              "toolchain",
+              "missing"
+            ]
+          ],
+          "semantic_status": "clarify",
+          "predicted_goal": "goal:clarify-toolchain",
+          "accepted": true,
+          "decision_reason": "native_read_only_intent_ready",
+          "intent_kind": "workspace.programming_language.resolve",
+          "admission_required": false,
+          "real_success": true,
+          "real_reward": 1.0,
+          "outcome_admitted": false,
+          "reward_source": "executor",
+          "freshness_after_execute": {
+            "world_tick": 20,
+            "latest_workbench_event_tick": 19
+          }
+        },
+        {
+          "tick": 3,
+          "path": "typescript_04.ts",
+          "transition_status": "clarify",
+          "transition_world_relations": [
+            [
+              "workbench",
+              "diagnostics",
+              "disconnected"
+            ],
+            [
+              "workbench",
+              "language",
+              "typescript"
+            ],
+            [
+              "workbench",
+              "language_state",
+              "resolved"
+            ],
+            [
+              "workbench",
+              "read",
+              "success"
+            ],
+            [
+              "workbench",
+              "target",
+              "file"
+            ],
+            [
+              "workbench",
+              "toolchain",
+              "missing"
+            ]
+          ],
+          "semantic_status": "clarify",
+          "predicted_goal": "goal:clarify-toolchain",
+          "accepted": true,
+          "decision_reason": "native_read_only_intent_ready",
+          "intent_kind": "workspace.programming_language.resolve",
+          "admission_required": false,
+          "real_success": true,
+          "real_reward": 1.0,
+          "outcome_admitted": false,
+          "reward_source": "executor",
+          "freshness_after_execute": {
+            "world_tick": 21,
+            "latest_workbench_event_tick": 19
+          }
+        }
+      ],
+      "step_count": 3,
+      "episode_success": true
+    },
+    "test_course": {
+      "rows": [
+        {
+          "tick": 1,
+          "path": "rust_05.rs",
+          "transition_status": "clarify",
+          "transition_world_relations": [
+            [
+              "workbench",
+              "diagnostics",
+              "disconnected"
+            ],
+            [
+              "workbench",
+              "language",
+              "rust"
+            ],
+            [
+              "workbench",
+              "language_state",
+              "resolved"
+            ],
+            [
+              "workbench",
+              "read",
+              "success"
+            ],
+            [
+              "workbench",
+              "target",
+              "file"
+            ],
+            [
+              "workbench",
+              "toolchain",
+              "missing"
+            ]
+          ],
+          "semantic_status": "clarify",
+          "predicted_goal": "goal:clarify-toolchain",
+          "accepted": true,
+          "decision_reason": "native_read_only_intent_ready",
+          "intent_kind": "workspace.programming_language.resolve",
+          "admission_required": false,
+          "real_success": true,
+          "real_reward": 1.0,
+          "outcome_admitted": false,
+          "reward_source": "executor",
+          "freshness_after_execute": {
+            "world_tick": 22,
+            "latest_workbench_event_tick": 19
+          }
+        },
+        {
+          "tick": 2,
+          "path": "typescript_05.ts",
+          "transition_status": "clarify",
+          "transition_world_relations": [
+            [
+              "workbench",
+              "diagnostics",
+              "disconnected"
+            ],
+            [
+              "workbench",
+              "language",
+              "typescript"
+            ],
+            [
+              "workbench",
+              "language_state",
+              "resolved"
+            ],
+            [
+              "workbench",
+              "read",
+              "success"
+            ],
+            [
+              "workbench",
+              "target",
+              "file"
+            ],
+            [
+              "workbench",
+              "toolchain",
+              "missing"
+            ]
+          ],
+          "semantic_status": "clarify",
+          "predicted_goal": "goal:clarify-toolchain",
+          "accepted": true,
+          "decision_reason": "native_read_only_intent_ready",
+          "intent_kind": "workspace.programming_language.resolve",
+          "admission_required": false,
+          "real_success": true,
+          "real_reward": 1.0,
+          "outcome_admitted": false,
+          "reward_source": "executor",
+          "freshness_after_execute": {
+            "world_tick": 23,
+            "latest_workbench_event_tick": 19
+          }
+        },
+        {
+          "tick": 3,
+          "path": "python_05.py",
+          "transition_status": "resolved",
+          "transition_world_relations": [
+            [
+              "workbench",
+              "diagnostics",
+              "disconnected"
+            ],
+            [
+              "workbench",
+              "language",
+              "python"
+            ],
+            [
+              "workbench",
+              "language_state",
+              "resolved"
+            ],
+            [
+              "workbench",
+              "read",
+              "success"
+            ],
+            [
+              "workbench",
+              "target",
+              "file"
+            ],
+            [
+              "workbench",
+              "toolchain",
+              "available"
+            ]
+          ],
+          "semantic_status": "resolved",
+          "predicted_goal": "goal:inspect-language",
+          "accepted": true,
+          "decision_reason": "native_read_only_intent_ready",
+          "intent_kind": "workspace.read",
+          "admission_required": true,
+          "real_success": true,
+          "real_reward": -0.21064358758734505,
+          "outcome_admitted": true,
+          "reward_source": "workbench.read.result:s6-graded-v1",
+          "freshness_after_execute": {
+            "world_tick": 24,
+            "latest_workbench_event_tick": 24
+          }
+        }
+      ],
+      "step_count": 3,
+      "episode_success": true
+    },
+    "typed_binding": {
+      "transition_input_masks": {
+        "workbench::diagnostics::disconnected": [
+          0,
+          31,
+          54
+        ],
+        "workbench::language::python": [
+          1,
+          13,
+          59
+        ],
+        "workbench::language::rust": [
+          2,
+          14,
+          83
+        ],
+        "workbench::language::typescript": [
+          3,
+          15,
+          107
+        ],
+        "workbench::language::unknown": [
+          4,
+          16,
+          131
+        ],
+        "workbench::language_state::resolved": [
+          5,
+          18,
+          156
+        ],
+        "workbench::language_state::unknown": [
+          6,
+          19,
+          180
+        ],
+        "workbench::read::failure": [
+          7,
+          26,
+          210
+        ],
+        "workbench::read::success": [
+          8,
+          26,
+          233
+        ],
+        "workbench::target::file": [
+          9,
+          27,
+          257
+        ],
+        "workbench::target::missing": [
+          10,
+          27,
+          280
+        ],
+        "workbench::toolchain::available": [
+          11,
+          30,
+          306
+        ],
+        "workbench::toolchain::missing": [
+          12,
+          30,
+          329
+        ]
+      },
+      "semantic_fact_feature_masks": {
+        "workbench::diagnostics::disconnected": [
+          18
+        ],
+        "workbench::language::python": [
+          0
+        ],
+        "workbench::language::rust": [
+          1
+        ],
+        "workbench::language::typescript": [
+          2
+        ],
+        "workbench::language::unknown": [
+          3
+        ],
+        "workbench::language_state::resolved": [
+          5
+        ],
+        "workbench::language_state::unknown": [
+          6
+        ],
+        "workbench::read::failure": [
+          13
+        ],
+        "workbench::read::success": [
+          13
+        ],
+        "workbench::target::file": [
+          14
+        ],
+        "workbench::target::missing": [
+          14
+        ],
+        "workbench::toolchain::available": [
+          17
+        ],
+        "workbench::toolchain::missing": [
+          17
+        ]
+      },
+      "readout_excluded_facts": [
+        "workbench::language::python",
+        "workbench::language::rust",
+        "workbench::language::typescript",
+        "workbench::language::unknown"
+      ]
+    },
+    "stage1_semantic_fit_losses": {
+      "fact_loss": 0.03654513,
+      "goal_loss": 1.152e-05,
+      "content_loss": 2.83e-06
+    },
+    "stage2_transition_fit_losses": {
+      "transition_loss": 0.00531516,
+      "goal_loss": 0.00011483,
+      "content_loss": 4.566e-05
+    },
+    "checkpoint_gate": {
+      "format": "taiji-structured-semantic-transition-v3",
+      "version": 3,
+      "roundtrip_owner_digest_equal": true,
+      "roundtrip_masks_equal": true,
+      "tampered_forbidden_weights_zeroed": true,
+      "post_fit_mask_violations": [],
+      "passed": true
+    },
+    "metrics": {
+      "a_holdout_success": 1.0,
+      "b_holdout_success": 0.0,
+      "c_holdout_success": 0.0,
+      "a_minus_b": 1.0,
+      "a_minus_c": 1.0,
+      "a_train_success": 1.0,
+      "a_reward_variance": 0.2675321742691036
+    },
+    "checks": {
+      "a_holdout_success_at_least_0p75": true,
+      "a_minus_b_at_least_0p25": true,
+      "a_minus_c_at_least_0p25": true,
+      "a_train_success_is_1": true,
+      "train_episode_count_at_least_6": true,
+      "dev_episode_completed": true,
+      "test_episode_completed": true,
+      "a_successful_outcomes_admitted": true,
+      "reward_variance_positive": true,
+      "checkpoint_mask_gate": true
+    },
+    "technical_gate_all_passed": true,
+    "elapsed_seconds": 4.91877669992391
+  }
+}
