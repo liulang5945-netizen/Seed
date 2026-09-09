@@ -231,3 +231,6 @@ N9 长程自由运行已闭合：显式 predictive organ 后 128 步 exact cycle
 N10 稀疏迁移已闭合：三项 operator equivalence 与 dense reference 对齐，native v7/N7/N8/N9 复验通过，checkpoint/storage 边界通过；没有引入新结构成长。
 
 当前唯一出口：继续跑 N11 active environment verify，保持 R4 shadow/默认 parent 不变。
+N11 active environment 已闭合：动作—环境—reward 因果、局部 motor 更新、pending 状态收束和确定性策略均通过；没有把 teacher action label 暴露给 Taiji。
+
+当前唯一出口：继续跑 M5 episodic field verify，保持 F1 predictive 与 F2 memory owner 分离。
