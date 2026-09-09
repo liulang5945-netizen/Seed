@@ -238,3 +238,17 @@ candidate-matched capability delta 均为 1.0。fixed-large K-task-equivalent co
 
 该结果只关闭一个 cell，不能外推为 aggregate。下一步只执行 model31/course2；保留
 固定 predecessor、失败 cell 不可删除、不得用均值填补的规则，9/9 前不运行 aggregate。
+
+## 15. Revised 9-cell execution closure（2026-09-10）
+
+model31/course2 已追加为第 9/9 个 executed_passed row；九格全部具备完整五臂资源
+证据，candidate/matched 参数与 inference trace 均按同一 K bundle 对齐，所有
+candidate/matched wall multiplier 均低于 1.5×、peak multiplier 均低于 1.25×，每格
+candidate-frozen 与 candidate-matched capability delta 均为 1.0，且 fixed-large
+K-task-equivalent control 与 side-effect Gate 全部通过。最后一格 wall=1.2513×、
+peak=1.0027×。
+
+现在才允许进入 aggregate validator 阶段，但不能直接使用旧 detached-control
+aggregate。下一步只实现 revised manifest 专用 validator：检查 9/9 完整性、控制臂
+语义、worker 资源等价、因果/保留/rollback、阈值和内容寻址；失败则保持 blocked，
+不删除或填补任何 cell。

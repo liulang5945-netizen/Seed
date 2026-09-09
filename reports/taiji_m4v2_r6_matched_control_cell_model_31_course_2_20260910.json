@@ -1,0 +1,521 @@
+{
+  "arms": {
+    "candidate-continuation": {
+      "arm": "candidate-continuation",
+      "causal": {
+        "feedback_admitted": true,
+        "k3_projection_accepted": true,
+        "lesion_k3": false,
+        "real_workbench_success": true,
+        "status": "candidate_path_verified"
+      },
+      "checkpoint_ledger": {
+        "adapter_checkpoint": {
+          "exchange_checkpoint_digest": "4e8023695e25b692299055125ee863e6994ca26587df580f2f26c73edc2a4a8c",
+          "rollback_checkpoint_digest": "a4e990d3dd43408cd1950d9ec203ee5a5458aaabeb4e8f0d153af4b99214fd15",
+          "rollback_record_digest": "31a6ba33c1926b3338005ac4bc244fe534e6cf5aa3b9076226d397efada09e66"
+        },
+        "exchange_digest": "339d727ad02fc0378a50c371036f9afa1a51b2a46c6017a8bdc71255f7bf1446",
+        "rollback_record_explicit": true
+      },
+      "failure": null,
+      "new_capability": {
+        "sample_count": 1,
+        "status": "observed",
+        "task_success_rate": 1.0
+      },
+      "old_capability_retention": {
+        "G": true,
+        "S": true
+      },
+      "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+      "phase_rows": [
+        {
+          "after": 5.857133765627293,
+          "before": 5.857133765627293,
+          "phase": "S",
+          "status": "observed"
+        },
+        {
+          "after": 5.493859170249493,
+          "before": 5.493859170249493,
+          "phase": "G",
+          "status": "observed"
+        },
+        {
+          "observation_path": "typescript_05.ts",
+          "phase": "K",
+          "projection_accepted": true,
+          "projection_reason": "accepted",
+          "real_success": true,
+          "reward": 1.0,
+          "status": "executed"
+        }
+      ],
+      "resource": {
+        "candidate_parameter_bytes": 19332,
+        "checkpoint_write_bytes": 35403,
+        "checkpoint_write_paths": [
+          "checkpoints/taiji_k_workers/model_31/taiji_r6_k1_semantic.pt",
+          "checkpoints/taiji_k_workers/model_31/taiji_r6_k2_transition.pt",
+          "checkpoints/taiji_k_workers/model_31/taiji_r6_k3_outcome_projection.pt"
+        ],
+        "device": "cpu",
+        "inference_trace_count": 1,
+        "measurement_complete": true,
+        "peak_working_set_bytes": 259940352,
+        "peak_working_set_method": "process_rss_before_after_lower_bound",
+        "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+        "training_update_steps": 0,
+        "wall_clock_seconds": 1.0462753000902012,
+        "worker_parameter_bytes": 19332,
+        "worker_parameter_count": 4833
+      },
+      "side_effects": {
+        "candidate_namespace_written": true,
+        "default_runtime_attached": false,
+        "external_integrations_attached": false,
+        "parent_namespace_unchanged": true
+      },
+      "status": "passed",
+      "worker_bundle_digest": "ab60c27756f46907e3f649f42dba1e8fada356de2d345b0cc64574abff1dff5b"
+    },
+    "fixed-large": {
+      "arm": "fixed-large",
+      "causal": {
+        "branch_lesion_observable": true,
+        "k3_projection_accepted": true,
+        "k_task_equivalent": true,
+        "real_workbench_success": true,
+        "status": "fixed_large_control_verified"
+      },
+      "checkpoint_ledger": {
+        "adapter_checkpoint": {
+          "exchange_checkpoint_digest": "159c5aba8108d0036e6f85f006900031c35a8f4289897e5fd9d28fd3e3b44e1e",
+          "rollback_checkpoint_digest": "159c5aba8108d0036e6f85f006900031c35a8f4289897e5fd9d28fd3e3b44e1e",
+          "rollback_record_digest": "cb195a01f4a2667362b8db4db893e07c3d203253027fba89bac35eeb2ab92cf7"
+        },
+        "exchange_digest": "0b1ff71498264681467e99ad14d03588a80a2617dce72f13276723cc0e43f3f1",
+        "rollback_record_explicit": true
+      },
+      "failure": null,
+      "new_capability": {
+        "sample_count": 1,
+        "status": "observed",
+        "task_success_rate": 1.0
+      },
+      "old_capability_retention": {
+        "G": true,
+        "S": true
+      },
+      "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+      "phase_rows": [
+        {
+          "after": 5.857133765627293,
+          "before": 5.857133765627293,
+          "phase": "S",
+          "status": "observed"
+        },
+        {
+          "after": 5.493859170249493,
+          "before": 5.493859170249493,
+          "phase": "G",
+          "status": "observed"
+        },
+        {
+          "observation_path": "typescript_05.ts",
+          "phase": "K",
+          "projection_accepted": true,
+          "projection_reason": "accepted",
+          "real_success": true,
+          "reward": 1.0,
+          "status": "executed"
+        }
+      ],
+      "resource": {
+        "candidate_parameter_bytes": 38664,
+        "checkpoint_write_bytes": 125829,
+        "checkpoint_write_paths": [
+          "checkpoints/taiji_k_fixed_large/model_31/taiji_r6_k_fixed_large_ensemble.pt"
+        ],
+        "device": "cpu",
+        "inference_trace_count": 1,
+        "measurement_complete": true,
+        "parameter_count": 9666,
+        "peak_working_set_bytes": 260448256,
+        "peak_working_set_method": "process_rss_before_after_lower_bound",
+        "resource_manifest_digest": "3c8c8a375db46a79a66c60dcb1adf2c56fb63dc273545eb150123fb3ae3bfcc4",
+        "training_update_steps": 0,
+        "wall_clock_seconds": 0.7324915000936016,
+        "worker_parameter_bytes": 38664,
+        "worker_parameter_count": 9666
+      },
+      "side_effects": {
+        "candidate_namespace_written": true,
+        "default_runtime_attached": false,
+        "external_integrations_attached": false,
+        "parent_namespace_unchanged": true
+      },
+      "status": "passed"
+    },
+    "frozen-parent": {
+      "arm": "frozen-parent",
+      "causal": {
+        "k_feedback_consumed": false,
+        "k_task_admission": false,
+        "status": "frozen_parent_zero_baseline"
+      },
+      "checkpoint_ledger": {
+        "fresh_restore_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+        "rollback_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+        "rollback_matches_parent": true
+      },
+      "failure": null,
+      "new_capability": {
+        "sample_count": 1,
+        "status": "observed",
+        "task_success_rate": 0.0
+      },
+      "old_capability_retention": {
+        "G": true,
+        "S": true
+      },
+      "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+      "phase_rows": [
+        {
+          "after": 5.857133765627293,
+          "before": 5.857133765627293,
+          "phase": "S",
+          "status": "observed"
+        },
+        {
+          "after": 5.493859170249493,
+          "before": 5.493859170249493,
+          "phase": "G",
+          "status": "observed"
+        },
+        {
+          "new_capability": {
+            "sample_count": 1,
+            "status": "observed",
+            "task_success_rate": 0.0
+          },
+          "phase": "K",
+          "reason": "frozen parent K admission rejected because no K worker is attached",
+          "status": "rejected"
+        }
+      ],
+      "resource": {
+        "candidate_parameter_bytes": 0,
+        "checkpoint_write_bytes": 0,
+        "checkpoint_write_paths": [],
+        "device": "cpu",
+        "inference_trace_count": 1,
+        "measurement_complete": true,
+        "peak_working_set_bytes": 232222720,
+        "peak_working_set_method": "process_rss_before_after_lower_bound",
+        "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce",
+        "training_update_steps": 0,
+        "wall_clock_seconds": 0.14949019998311996,
+        "worker_parameter_bytes": 0,
+        "worker_parameter_count": 0
+      },
+      "side_effects": {
+        "candidate_namespace_written": false,
+        "default_runtime_attached": false,
+        "external_integrations_attached": false,
+        "parent_namespace_unchanged": true
+      },
+      "status": "control_passed"
+    },
+    "lesion": {
+      "arm": "lesion",
+      "causal": {
+        "feedback_admitted": false,
+        "k3_projection_accepted": false,
+        "lesion_k3": true,
+        "real_workbench_success": true,
+        "status": "lesion_verified"
+      },
+      "checkpoint_ledger": {
+        "adapter_checkpoint": {
+          "exchange_checkpoint_digest": "1b1c61c3151b69c10affe8ec16141c325b4615b29ae8c50627aab04c2ee23069",
+          "rollback_checkpoint_digest": "1b1c61c3151b69c10affe8ec16141c325b4615b29ae8c50627aab04c2ee23069",
+          "rollback_record_digest": null
+        },
+        "exchange_digest": null,
+        "rollback_record_explicit": false
+      },
+      "failure": null,
+      "new_capability": {
+        "sample_count": 1,
+        "status": "observed",
+        "task_success_rate": 0.0
+      },
+      "old_capability_retention": {
+        "G": true,
+        "S": true
+      },
+      "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+      "phase_rows": [
+        {
+          "after": 5.857133765627293,
+          "before": 5.857133765627293,
+          "phase": "S",
+          "status": "observed"
+        },
+        {
+          "after": 5.493859170249493,
+          "before": 5.493859170249493,
+          "phase": "G",
+          "status": "observed"
+        },
+        {
+          "observation_path": "typescript_05.ts",
+          "phase": "K",
+          "projection_accepted": false,
+          "projection_reason": "outcome_feedback_lesioned",
+          "real_success": true,
+          "reward": 1.0,
+          "status": "lesion_rejected"
+        }
+      ],
+      "resource": {
+        "candidate_parameter_bytes": 19332,
+        "checkpoint_write_bytes": 35403,
+        "checkpoint_write_paths": [
+          "checkpoints/taiji_k_workers/model_31/taiji_r6_k1_semantic.pt",
+          "checkpoints/taiji_k_workers/model_31/taiji_r6_k2_transition.pt",
+          "checkpoints/taiji_k_workers/model_31/taiji_r6_k3_outcome_projection.pt"
+        ],
+        "device": "cpu",
+        "inference_trace_count": 1,
+        "measurement_complete": true,
+        "peak_working_set_bytes": 260538368,
+        "peak_working_set_method": "process_rss_before_after_lower_bound",
+        "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+        "training_update_steps": 0,
+        "wall_clock_seconds": 1.0575959000270814,
+        "worker_parameter_bytes": 19332,
+        "worker_parameter_count": 4833
+      },
+      "side_effects": {
+        "candidate_namespace_written": false,
+        "default_runtime_attached": false,
+        "external_integrations_attached": false,
+        "parent_namespace_unchanged": true
+      },
+      "status": "passed",
+      "worker_bundle_digest": "ab60c27756f46907e3f649f42dba1e8fada356de2d345b0cc64574abff1dff5b"
+    },
+    "matched-fixed-capacity": {
+      "arm": "matched-fixed-capacity",
+      "causal": {
+        "feedback_admitted": false,
+        "k3_projection_accepted": true,
+        "lesion_k3": false,
+        "real_workbench_success": true,
+        "status": "matched_capacity_no_feedback"
+      },
+      "checkpoint_ledger": {
+        "adapter_checkpoint": {
+          "exchange_checkpoint_digest": "1b1c61c3151b69c10affe8ec16141c325b4615b29ae8c50627aab04c2ee23069",
+          "rollback_checkpoint_digest": "1b1c61c3151b69c10affe8ec16141c325b4615b29ae8c50627aab04c2ee23069",
+          "rollback_record_digest": null
+        },
+        "exchange_digest": null,
+        "rollback_record_explicit": false
+      },
+      "failure": null,
+      "new_capability": {
+        "sample_count": 1,
+        "status": "observed",
+        "task_success_rate": 0.0
+      },
+      "old_capability_retention": {
+        "G": true,
+        "S": true
+      },
+      "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+      "phase_rows": [
+        {
+          "after": 5.857133765627293,
+          "before": 5.857133765627293,
+          "phase": "S",
+          "status": "observed"
+        },
+        {
+          "after": 5.493859170249493,
+          "before": 5.493859170249493,
+          "phase": "G",
+          "status": "observed"
+        },
+        {
+          "observation_path": "typescript_05.ts",
+          "phase": "K",
+          "projection_accepted": true,
+          "projection_reason": "accepted",
+          "real_success": true,
+          "reward": 1.0,
+          "status": "executed_no_feedback"
+        }
+      ],
+      "resource": {
+        "candidate_parameter_bytes": 19332,
+        "checkpoint_write_bytes": 35403,
+        "checkpoint_write_paths": [
+          "checkpoints/taiji_k_workers/model_31/taiji_r6_k1_semantic.pt",
+          "checkpoints/taiji_k_workers/model_31/taiji_r6_k2_transition.pt",
+          "checkpoints/taiji_k_workers/model_31/taiji_r6_k3_outcome_projection.pt"
+        ],
+        "device": "cpu",
+        "inference_trace_count": 1,
+        "measurement_complete": true,
+        "peak_working_set_bytes": 259239936,
+        "peak_working_set_method": "process_rss_before_after_lower_bound",
+        "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+        "training_update_steps": 0,
+        "wall_clock_seconds": 0.836179899983108,
+        "worker_parameter_bytes": 19332,
+        "worker_parameter_count": 4833
+      },
+      "side_effects": {
+        "candidate_namespace_written": false,
+        "default_runtime_attached": false,
+        "external_integrations_attached": false,
+        "parent_namespace_unchanged": true
+      },
+      "status": "passed",
+      "worker_bundle_digest": "ab60c27756f46907e3f649f42dba1e8fada356de2d345b0cc64574abff1dff5b"
+    }
+  },
+  "can_promote": false,
+  "can_start_r6_formal": false,
+  "candidate_training_performed": false,
+  "cell": {
+    "course_seed": 2,
+    "model_seed": 31
+  },
+  "client_attached": false,
+  "control_revision": {
+    "format": "taiji-m4v2-r6-matched-control-v2",
+    "frozen_parent_arm": {
+      "explicit_k_admission_baseline": true,
+      "parameter_updates": false,
+      "task_success_rate": 0.0,
+      "worker_bundle_attached": false
+    },
+    "matched_arm": {
+      "feedback_admitted": false,
+      "parameter_updates": false,
+      "same_input_trace": true,
+      "same_parameter_budget": true,
+      "same_restore_path": true,
+      "worker_bundle_attached": true
+    },
+    "thresholds_unchanged": {
+      "candidate_holdout_floor": 0.75,
+      "paired_capability_delta_floor": 0.25,
+      "peak_working_set_multiplier_cap": 1.25,
+      "wall_clock_multiplier_cap": 1.5
+    }
+  },
+  "course_executed": false,
+  "created_at_unix": 1788972768.780731,
+  "cuda_used": false,
+  "decision": "single-cell K-task-equivalent fixed-large control passed; R6 formal and promotion remain closed until the full causal/resource/retention aggregate",
+  "default_runtime_attached": false,
+  "elapsed_seconds": 4.003190299961716,
+  "execution_contract_digest": "d16d164508687ed08ec8b2bfc9af04260efddd65f0c286c644fafce63abc3db2",
+  "failures": [],
+  "fixed_large_artifact_digest": "b69030c265e5a966813c4d6469349805dc7619b466a331e30cd98381c5f2cc1c",
+  "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+  "input_preflight_status": "passed",
+  "manifest_digest": "9221b0920413e7d470821dc66b7daa1a2769ba2502c6b6af1801eb5ad1555ae7",
+  "mcp_attached": false,
+  "paired_comparison": {
+    "candidate_arm": {
+      "resource": {
+        "candidate_parameter_bytes": 19332,
+        "checkpoint_write_bytes": 35403,
+        "checkpoint_write_paths": [
+          "checkpoints/taiji_k_workers/model_31/taiji_r6_k1_semantic.pt",
+          "checkpoints/taiji_k_workers/model_31/taiji_r6_k2_transition.pt",
+          "checkpoints/taiji_k_workers/model_31/taiji_r6_k3_outcome_projection.pt"
+        ],
+        "device": "cpu",
+        "inference_trace_count": 1,
+        "measurement_complete": true,
+        "peak_working_set_bytes": 259940352,
+        "peak_working_set_method": "process_rss_before_after_lower_bound",
+        "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+        "training_update_steps": 0,
+        "wall_clock_seconds": 1.0462753000902012,
+        "worker_parameter_bytes": 19332,
+        "worker_parameter_count": 4833
+      },
+      "status": "passed",
+      "task_success_rate": 1.0
+    },
+    "fixed_large_arm": {
+      "resource": {
+        "candidate_parameter_bytes": 38664,
+        "checkpoint_write_bytes": 125829,
+        "checkpoint_write_paths": [
+          "checkpoints/taiji_k_fixed_large/model_31/taiji_r6_k_fixed_large_ensemble.pt"
+        ],
+        "device": "cpu",
+        "inference_trace_count": 1,
+        "measurement_complete": true,
+        "parameter_count": 9666,
+        "peak_working_set_bytes": 260448256,
+        "peak_working_set_method": "process_rss_before_after_lower_bound",
+        "resource_manifest_digest": "3c8c8a375db46a79a66c60dcb1adf2c56fb63dc273545eb150123fb3ae3bfcc4",
+        "training_update_steps": 0,
+        "wall_clock_seconds": 0.7324915000936016,
+        "worker_parameter_bytes": 38664,
+        "worker_parameter_count": 9666
+      },
+      "status": "passed",
+      "task_success_rate": 1.0
+    },
+    "fixed_large_minus_candidate": {
+      "checkpoint_write_bytes": 90426.0,
+      "inference_trace_count": 0.0,
+      "peak_working_set_bytes": 507904.0,
+      "wall_clock_seconds": -0.31378379999659956,
+      "worker_parameter_bytes": 19332.0
+    },
+    "measurement_complete": true,
+    "measurement_method": "process_rss_before_after_lower_bound",
+    "status": "passed",
+    "task_success_delta_fixed_large_minus_candidate": 0.0
+  },
+  "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+  "provider_attached": false,
+  "report_format": "taiji-m4v2-r6-formal-single-cell-v1",
+  "resource_contract": {
+    "candidate_parameter_bytes_frozen_before_run": true,
+    "checkpoint_write_bytes_frozen_before_run": true,
+    "cuda_required": false,
+    "device": "cpu",
+    "frozen_parent_explicit_k_baseline": true,
+    "inference_trace_count_frozen_before_run": true,
+    "matched_capacity_worker_attached": true,
+    "peak_working_set_multiplier_cap": 1.25,
+    "training_update_steps_frozen_before_run": true,
+    "wall_clock_multiplier_cap": 1.5
+  },
+  "resource_gate": {
+    "candidate-continuation": true,
+    "fixed-large": true,
+    "frozen-parent": true,
+    "lesion": true,
+    "matched-fixed-capacity": true
+  },
+  "single_cell_executed": true,
+  "status": "passed",
+  "training_performed": false,
+  "version": 1,
+  "worker_bundle_digest": "ab60c27756f46907e3f649f42dba1e8fada356de2d345b0cc64574abff1dff5b"
+}
