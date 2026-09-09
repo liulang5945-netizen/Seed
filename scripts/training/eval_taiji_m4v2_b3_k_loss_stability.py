@@ -62,6 +62,11 @@ def run_stability(
     train_digests = [report.get("train_course_digest") for report in reports]
     train_variant_indexes = [report.get("train_episode_indexes") for report in reports]
     normalized_train_variant_indexes = _normalized_variant_keys(train_variant_indexes)
+    candidate_digests = [report.get("candidate_worker_bundle_digest") for report in reports]
+    candidate_updates_distinct = (
+        len(candidate_digests) == len(set(candidate_digests))
+        and None not in candidate_digests
+    )
     distinct_course_variants = (
         len(train_digests) == len(set(train_digests))
         and None not in train_digests
@@ -71,6 +76,7 @@ def run_stability(
     )
     all_improved = bool(delta_values) and all(value < 0.0 for value in delta_values)
     technical_gate_passed = technical_pass and same_parent and distinct_course_variants
+    performance_gate_passed = all_improved and candidate_updates_distinct
     report = {
         "report_format": REPORT_FORMAT,
         "version": VERSION,
@@ -85,6 +91,8 @@ def run_stability(
         "train_experience_digests": train_digests,
         "train_episode_indexes": train_variant_indexes,
         "distinct_course_variants": distinct_course_variants,
+        "candidate_update_digests": candidate_digests,
+        "candidate_updates_distinct": candidate_updates_distinct,
         "combined_loss_delta_by_course_seed": {
             str(item["course_seed"]): float(
                 item["report"].get("holdout_structured_loss_delta", {}).get(
@@ -114,8 +122,8 @@ def run_stability(
         "mean_combined_loss_delta": statistics.fmean(delta_values) if delta_values else None,
         "worst_combined_loss_delta": max(delta_values) if delta_values else None,
         "all_course_seeds_improved": all_improved,
-        "performance_gate_passed": all_improved,
-        "stability_gate_passed": technical_gate_passed and all_improved,
+        "performance_gate_passed": performance_gate_passed,
+        "stability_gate_passed": technical_gate_passed and performance_gate_passed,
         "technical_gate_passed": technical_gate_passed,
         "can_start_r6_formal": False,
         "can_promote": False,
@@ -128,8 +136,12 @@ def run_stability(
         ),
         "promotion_blocking_reason": (
             None
-            if all_improved
-            else "course variant updates are not uniformly non-degrading on the fixed holdout"
+            if performance_gate_passed
+            else (
+                "course variant updates are not uniformly non-degrading on the fixed holdout"
+                if not all_improved
+                else "course variants produced an identical candidate update; evidence is non-discriminating"
+            )
         ),
     }
     return report
