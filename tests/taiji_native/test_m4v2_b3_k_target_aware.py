@@ -6,7 +6,7 @@ from pathlib import Path
 REPORT = (
     Path(__file__).resolve().parents[2]
     / "reports"
-    / "taiji_m4v2_b3_k_target_aware_20260910.json"
+    / "taiji_m4v2_b3_k_target_aware_v2_20260910.json"
 )
 
 
@@ -14,6 +14,8 @@ def test_b3_k_target_aware_gate_uses_distinct_target_compositions() -> None:
     report = json.loads(REPORT.read_text(encoding="utf-8"))
 
     assert report["status"] == "passed"
+    assert report["report_format"] == "taiji-m4v2-b3-k-target-aware-v2"
+    assert report["version"] == 2
     assert report["run_kind"] == "target-aware-course-diversity-diagnostic"
     assert report["train_variant_strategy"] == "target_aware"
     assert report["train_episode_count"] == 3
@@ -33,7 +35,10 @@ def test_b3_k_target_aware_keeps_learning_boundaries_explicit() -> None:
     assert len(report["target_course_digests"]) == 3
     assert all(
         len(cell["report"]["train_target_digests"]) == 3
-        and len(cell["report"]["train_target_multiplicity"]) >= 2
+        and cell["report"]["target_digest_semantics"]
+        == "combined K1/K2 target tensor digests"
+        and len(cell["report"]["train_target_multiplicity"]) in {2, 3}
+        and sum(cell["report"]["train_target_multiplicity"].values()) == 3
         and cell["report"]["checks"]["train_holdout_disjoint"]
         and cell["report"]["checks"]["candidate_checkpoint_fresh_restore"]
         and cell["report"]["checks"]["adapter_rollback_restored"]
