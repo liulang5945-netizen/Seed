@@ -230,10 +230,38 @@ restore/rollback 机械检查通过，但 `can_start_r6_formal=false`、
 formal report 冒充 worker checkpoint，也没有接入 default runtime、provider、
 MCP、client 或 CUDA。
 
-## 10. 当前结论与唯一后续动作
+## 10. worker artifact 生成与 attachment 执行记录（2026-09-09）
 
-attachment contract 已实现，但真实 worker owner graph 仍未形成。下一步只能
-建立**可保存、可恢复、带同一 parent/source/resource manifest 的 K1/K2 worker
-artifact 生成管线**，并由本 §6 preflight 先验收后才允许任何 controlled K
-canary；K3 仍只从真实 projector checkpoint 恢复，不训练。生成 artifact 期间
-不得接 default runtime，不得用随机初始化或报告 digest 代替 checkpoint。
+已实现并运行 `scripts/training/build_taiji_m4v2_r6_k_worker_artifacts.py`，复用
+冻结的 M5.K2 课程构造，在 CPU 上生成一组带 lineage 的真实 worker artifact：
+
+- K1 semantic：`training_steps=2080`，checkpoint version 2；
+- K2 transition：`training_steps=5040`，checkpoint version 3；
+- K3 outcome projection：确定性 projector，`training_steps=0`，无 optimizer
+  state；
+- 三者共享 parent digest、source manifest digest、CPU resource manifest 和
+  candidate namespace；checkpoint 先在训练前落盘/回读，再训练，训练后再次
+  fresh restore；
+- 生成报告：`reports/taiji_m4v2_r6_k_worker_artifact_build_20260909.json`，
+  `prefit_checkpoint_gate`、`postfit_restore_gate` 全部通过，训练耗时约 3 秒。
+
+随后重新运行 attachment preflight，报告
+`reports/taiji_m4v2_r6_k_worker_attachment_preflight_20260909.json` 最终为
+`status=passed`：worker restore、owner graph、typed exchange、S/G retention、
+candidate stage、rollback 和 joint checkpoint 全部通过；
+`attachment_gate_passed=true`、`can_start_k_controlled_canary=true`，但
+`can_start_r6_formal=false`、`can_promote=false`。本轮仍未接 default runtime、
+provider、MCP、client 或 CUDA。
+
+首轮构建还发现并修正了 parent lineage 工厂不一致：preflight 曾使用不同的
+episode id，导致 parent digest 与 artifact 不同；现已统一复用 R6 baseline
+parent factory，并加入回归测试，防止同一 model seed 生成两个 parent 身份。
+
+## 11. 当前结论与唯一后续动作
+
+真实 K worker owner graph 已形成并安全挂接，但这只证明“可恢复、可回滚、可
+交换”，不证明 K 能力已进入 Taiji 默认认知路径。下一步唯一动作是运行一个
+**同一 parent 的 controlled K canary**：只消费已挂接的 K1/K2/K3 artifact，
+记录完整 S→G→K typed lineage 与真实 outcome，验证 candidate namespace 内的
+更新/失败回滚；不扩大 seed 矩阵、不启动 formal、不接 default runtime，也不
+重新训练一套无 lineage 的 worker。

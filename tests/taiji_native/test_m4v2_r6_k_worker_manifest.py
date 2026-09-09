@@ -5,7 +5,13 @@ import copy
 import pytest
 
 from scripts.training.eval_taiji_m4v2_r6_k_worker_attachment_preflight import (
+    _parent as attachment_parent,
+)
+from scripts.training.eval_taiji_m4v2_r6_k_worker_attachment_preflight import (
     run_preflight,
+)
+from scripts.training.eval_taiji_m4v2_r6_parent_baseline_preflight import (
+    _parent as baseline_parent,
 )
 from taiji import (
     K_WORKER_IDS,
@@ -125,3 +131,7 @@ def test_attachment_preflight_stops_when_real_worker_artifacts_are_missing() -> 
     assert report["training_performed"] is False
     assert report["can_start_r6_formal"] is False
     assert report["can_promote"] is False
+
+
+def test_attachment_and_baseline_share_one_parent_factory() -> None:
+    assert content_digest(attachment_parent(17)) == content_digest(baseline_parent(17))

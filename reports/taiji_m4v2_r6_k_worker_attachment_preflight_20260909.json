@@ -1,37 +1,132 @@
 {
-  "adapter_checkpoint": null,
+  "adapter_checkpoint": {
+    "checkpoint_digest": "88af9c8225eb78e12b84913bd0a4a4f89ec4fe87eb9f025edff07faeb2d49582",
+    "exchange_digest": "e4384cf903764dc640d1a9161ae58ab0ff288b5aa76dc854e7f55cd1f85c733a",
+    "owner_graph_digest": "b0bdb6a31bdb6052cf437a49e360713715ce80105478b46339962fa3a7c101e7",
+    "rollback_record_digest": "404f07a40bda284e989d10c93f43476731949bab9771c9c7a961138e12981de6",
+    "worker_bundle_digest": "a81dc200b773af87348a95885c79308a175961f8248a35e138c1b18534700db5"
+  },
   "adapter_training_steps": 0,
   "artifact_errors": {},
   "artifact_format": "taiji-k-worker-artifact-v1",
-  "artifact_missing": [
-    "k1.semantic",
-    "k2.transition",
-    "k3.outcome_projection"
-  ],
+  "artifact_missing": [],
   "artifact_paths": {
-    "k1.semantic": [],
-    "k2.transition": [],
-    "k3.outcome_projection": []
+    "k1.semantic": [
+      "E:\\Seed\\checkpoints\\taiji_k_workers\\taiji_r6_k1_semantic.pt"
+    ],
+    "k2.transition": [
+      "E:\\Seed\\checkpoints\\taiji_k_workers\\taiji_r6_k2_transition.pt"
+    ],
+    "k3.outcome_projection": [
+      "E:\\Seed\\checkpoints\\taiji_k_workers\\taiji_r6_k3_outcome_projection.pt"
+    ]
   },
-  "blocking_reason": "real K1/K2/K3 worker artifacts are required; no random initialization or standalone report can satisfy attachment",
+  "attachment_gate_passed": true,
+  "blocking_reason": "attachment passed; R6 formal remains closed until the controlled K canary and full S/G/K promotion Gate run",
   "can_promote": false,
+  "can_start_k_controlled_canary": true,
   "can_start_r6_formal": false,
   "candidate_training_performed": false,
-  "checks": {},
+  "checks": {
+    "adapter_training_steps_zero": true,
+    "candidate_stage_worker_bundle_roundtrip": true,
+    "no_cuda": true,
+    "no_default_runtime": true,
+    "no_provider_mcp_client": true,
+    "old_G_retention": true,
+    "old_S_retention": true,
+    "parent_fresh_restore": true,
+    "parent_rollback_restore": true,
+    "rollback_parent_namespace_restored": true,
+    "rollback_record_explicit": true,
+    "rollback_worker_bundle_roundtrip": true,
+    "typed_exchange_ledger_roundtrip": true,
+    "typed_exchange_parent_echo": true,
+    "typed_exchange_worker_bundle_roundtrip": true,
+    "worker_bundle_exactly_k1_k2_k3": true,
+    "worker_bundle_same_parent": true,
+    "worker_owner_graph_bound": true
+  },
   "client_attached": false,
-  "created_at_unix": 1788960140.2292752,
+  "created_at_unix": 1788961199.9400947,
   "cuda_used": false,
   "default_runtime_attached": false,
   "mcp_attached": false,
-  "parent_checkpoint_digest": "d778ae056364735d70ecad22b0227bc9e6ff6dbaf2d67c728951b4564e6086d6",
+  "old_capability_after": {
+    "G": 5.959810695900639,
+    "S": 5.995296377498504
+  },
+  "old_capability_before": {
+    "G": 5.959810695900639,
+    "S": 5.995296377498504
+  },
+  "old_capability_retention": {
+    "G": true,
+    "S": true
+  },
+  "owner_graph_digest": "b0bdb6a31bdb6052cf437a49e360713715ce80105478b46339962fa3a7c101e7",
+  "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
   "parent_restore": {
     "fresh_restore": true,
     "rollback_restore": true
   },
   "provider_attached": false,
   "report_format": "taiji-m4v2-r6-k-worker-attachment-preflight-v1",
-  "status": "artifact_missing",
+  "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+  "source_manifest_digest": "d0946c73d9844b4b0e44f2685a87465a568ee6ba7665f23c11a7b5fe0208b362",
+  "status": "passed",
   "training_performed": false,
   "version": 1,
-  "workers": {}
+  "worker_bundle_digest": "a81dc200b773af87348a95885c79308a175961f8248a35e138c1b18534700db5",
+  "workers": {
+    "k1.semantic": {
+      "candidate_namespace": "taiji:k:candidate",
+      "checkpoint_digest": "4b5ed527a3a105614cea73c6cc45a2d0577c9ec06eb6e974b245c679b93e5e5d",
+      "checkpoint_format": "taiji-structured-semantic-training-v1",
+      "checkpoint_version": 2,
+      "feature_dim": 19,
+      "owner_digests": {
+        "semantic_content": "fb8c70fc2d86bc013b95c10b1a3c5db7f0e2bd902966393fdfa0c10ca55866b4",
+        "semantic_fact": "d7fa651416a48426be0bb88ab9b262b77d7e605082f3571abc596ef6caf0a791",
+        "semantic_goal": "4b15e5454dcd70ed52abe841c24ce60f467e681f447a13ccea1740be8ca6ef93"
+      },
+      "probe_type": "StructuredSemanticResult",
+      "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+      "source_digest": "476b1141df2e572d37562d96da64448403b965bec5bbdb5cacdd4ed47970c440",
+      "source_manifest_digest": "d0946c73d9844b4b0e44f2685a87465a568ee6ba7665f23c11a7b5fe0208b362",
+      "training_steps": 2080
+    },
+    "k2.transition": {
+      "candidate_namespace": "taiji:k:candidate",
+      "checkpoint_digest": "67c96c5c8517ca58bacb45b8de756e7ffd24ee108276160c731da364714e2bda",
+      "checkpoint_format": "taiji-structured-semantic-transition-v3",
+      "checkpoint_version": 3,
+      "event_dim": 19,
+      "owner_digests": {
+        "semantic_transition": "588000b80a87bc165a32fe7e2ce57b2eb1a2b7f1b0487012c28a2068b804e158",
+        "semantic_transition_content": "cd19f441668e3251384d31f18eb786652bbb49231332623fdb98a4b8ad069402",
+        "semantic_transition_goal": "a14bbf1a34d1dd7cb968efb47800fdb9145adfd4f3ca55c65006fae749a3581b"
+      },
+      "probe_type": "StructuredSemanticTransitionResult",
+      "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+      "source_digest": "e8c51ba53d454f978cb71e35f860a62edc690ca8a2a08a8ef89ec8ba82c330d9",
+      "source_manifest_digest": "d0946c73d9844b4b0e44f2685a87465a568ee6ba7665f23c11a7b5fe0208b362",
+      "training_steps": 5040
+    },
+    "k3.outcome_projection": {
+      "candidate_namespace": "taiji:k:candidate",
+      "checkpoint_digest": "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1",
+      "checkpoint_format": "taiji-outcome-dependency-projection-v1",
+      "checkpoint_version": 1,
+      "lesioned": false,
+      "owner_digests": {
+        "outcome_dependency_projector": "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
+      },
+      "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+      "scope_id": "r6-k3-worker-0-17",
+      "source_digest": "e620198d1ca31d2db23352dad524050c976d9af4ec559451d593d6f088177ebf",
+      "source_manifest_digest": "d0946c73d9844b4b0e44f2685a87465a568ee6ba7665f23c11a7b5fe0208b362",
+      "training_steps": 0
+    }
+  }
 }
