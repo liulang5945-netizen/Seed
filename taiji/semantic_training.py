@@ -150,6 +150,22 @@ class StructuredSemanticExample:
             "content": self.content.to_payload(),
         }
 
+    @classmethod
+    def from_payload(
+        cls,
+        payload: Mapping[str, Any],
+        *,
+        device: torch.device | str = "cpu",
+    ) -> StructuredSemanticExample:
+        return cls(
+            example_id=str(payload["example_id"]),
+            family_id=str(payload["family_id"]),
+            percept=PerceptEvent.from_payload(payload["percept"], device=device),
+            world=WorldState.from_payload(payload["world"], device=device),
+            goal=Goal.from_payload(payload["goal"]),
+            content=ContentPlan.from_payload(payload["content"]),
+        )
+
 
 def _ordered_unique(values: Iterable[str], name: str) -> tuple[str, ...]:
     normalized = tuple(sorted({_required_text(value, name) for value in values}))
