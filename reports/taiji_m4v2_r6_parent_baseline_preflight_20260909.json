@@ -1,0 +1,1988 @@
+{
+  "format": "taiji-m4v2-r6-parent-baseline-preflight-v1",
+  "version": 1,
+  "status": "passed",
+  "baseline_complete": false,
+  "can_start_r6_formal": false,
+  "can_promote": false,
+  "matrix": {
+    "model_seeds": [
+      17,
+      23,
+      31
+    ],
+    "course_seeds": [
+      0,
+      1,
+      2
+    ],
+    "repeat_seeds": [
+      401,
+      503,
+      607
+    ],
+    "cell_count": 9,
+    "required_phase_order": [
+      "S",
+      "G",
+      "K"
+    ],
+    "measured_phases": [
+      "S",
+      "G"
+    ],
+    "device": "cpu"
+  },
+  "baseline_scope": {
+    "s_g_parent_repeat_complete": true,
+    "k_parent_retention_available": false,
+    "complete": false,
+    "blocked_reason": "K1/K2/K3 are still standalone shadow evidence; a same-parent K retention baseline requires the controlled adapter smoke and is not inferred from standalone reports."
+  },
+  "epsilon_contract": {
+    "formula": "min(0.05, max(0.01, q95(abs(parent_repeat_i-parent_repeat_j))))",
+    "minimum": 0.01,
+    "maximum": 0.05,
+    "candidate_training_seen": false
+  },
+  "checks": {
+    "matrix_is_9_cells": true,
+    "each_cell_has_3_repeats": true,
+    "parent_checkpoint_preflight_all": true,
+    "parent_stable_all_phases": true,
+    "no_training_updates": true,
+    "all_declared_arms_present": true,
+    "all_arm_checkpoint_roundtrip": true,
+    "candidate_adapter_did_not_train": true,
+    "same_parent_digest_within_cell": true
+  },
+  "cells": [
+    {
+      "model_seed": 17,
+      "course_seed": 0,
+      "course_variant_seed": 101,
+      "course_label": "r6-order-0",
+      "course_digest": "6fd1a078e7fe7f131e3e443bc10666b547b5e841313af5e0a1fa2ba62cfa4c3c",
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "manifests": {
+        "owner_graph_digest": "44aea51a8e491cdb0bb1bea6e72e1ebbe9dd7a6a254bb9a52b1bf04a6da190cb",
+        "source_manifest_digest": "bfdc4fd5b48f53432bbaaa2616a0547f346b50156a822cf0e6e05a4203e38b8d",
+        "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce"
+      },
+      "baseline_repeats": [
+        {
+          "repeat_seed": 401,
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "scores": {
+            "S": 5.995296377498504,
+            "G": 5.959810695900639
+          },
+          "score_digest": "deccef37f32bf584faa22bb370753eef90bdafb28bfe2bb847a1763f3a4de029",
+          "checkpoint_preflight": {
+            "checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "fresh_restore_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "fresh_restore": true,
+            "rollback_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "rollback_matches_parent": true
+          },
+          "training_performed": false,
+          "learn_updates": 0
+        },
+        {
+          "repeat_seed": 503,
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "scores": {
+            "S": 5.995296377498504,
+            "G": 5.959810695900639
+          },
+          "score_digest": "deccef37f32bf584faa22bb370753eef90bdafb28bfe2bb847a1763f3a4de029",
+          "checkpoint_preflight": {
+            "checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "fresh_restore_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "fresh_restore": true,
+            "rollback_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "rollback_matches_parent": true
+          },
+          "training_performed": false,
+          "learn_updates": 0
+        },
+        {
+          "repeat_seed": 607,
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "scores": {
+            "S": 5.995296377498504,
+            "G": 5.959810695900639
+          },
+          "score_digest": "deccef37f32bf584faa22bb370753eef90bdafb28bfe2bb847a1763f3a4de029",
+          "checkpoint_preflight": {
+            "checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "fresh_restore_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "fresh_restore": true,
+            "rollback_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "rollback_matches_parent": true
+          },
+          "training_performed": false,
+          "learn_updates": 0
+        }
+      ],
+      "epsilon": {
+        "S": {
+          "phase": "S",
+          "repeat_count": 3,
+          "scores": [
+            5.995296377498504,
+            5.995296377498504,
+            5.995296377498504
+          ],
+          "paired_absolute_deltas": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "epsilon_raw_q95": 0.0,
+          "epsilon": 0.01,
+          "parent_stable": true
+        },
+        "G": {
+          "phase": "G",
+          "repeat_count": 3,
+          "scores": [
+            5.959810695900639,
+            5.959810695900639,
+            5.959810695900639
+          ],
+          "paired_absolute_deltas": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "epsilon_raw_q95": 0.0,
+          "epsilon": 0.01,
+          "parent_stable": true
+        }
+      },
+      "arm_preflight": [
+        {
+          "arm": "frozen-parent",
+          "checks": {
+            "checkpoint_roundtrip": true,
+            "rollback_matches_parent": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "matched-fixed-capacity",
+          "checks": {
+            "checkpoint_roundtrip": true,
+            "rollback_matches_parent": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "candidate-continuation",
+          "checks": {
+            "parent_checkpoint_match": true,
+            "dependency_projection_accepted": true,
+            "dependency_projection_lineage_complete": true,
+            "prefit_checkpoint_roundtrip": true,
+            "candidate_checkpoint_roundtrip": true,
+            "rollback_record_is_explicit": true,
+            "rollback_checkpoint_roundtrip": true,
+            "rollback_restores_parent_namespace": true,
+            "dependency_projection_survives_rollback": true,
+            "training_steps_zero": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "candidate_checkpoint_digest": "410747b092e38e9b567e1f49ef921bb9aec33bfe4de4e6ad8ac0b9b55e7890f5",
+          "owner_graph_digest": "44aea51a8e491cdb0bb1bea6e72e1ebbe9dd7a6a254bb9a52b1bf04a6da190cb",
+          "source_manifest_digest": "bfdc4fd5b48f53432bbaaa2616a0547f346b50156a822cf0e6e05a4203e38b8d",
+          "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce",
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "random-growth",
+          "checks": {
+            "parent_checkpoint_roundtrip": true,
+            "shadow_checkpoint_roundtrip": true,
+            "lesion_checkpoint_roundtrip": true,
+            "rollback_matches_bare": true,
+            "parent_digest_preserved": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "candidate_digest": "0d03f39b08682aa7512d856bf98a634b96f53ca7bfc85322f770b15f109eb9be",
+          "shadow_checkpoint_digest": "4147ec6a236935afb657d7278b5908292e166154c9407553727f6b6ce1e7f9a0",
+          "rollback_digest": "4147ec6a236935afb657d7278b5908292e166154c9407553727f6b6ce1e7f9a0",
+          "resource_cost": 1,
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "fixed-large",
+          "checks": {
+            "parent_checkpoint_roundtrip": true,
+            "shadow_checkpoint_roundtrip": true,
+            "lesion_checkpoint_roundtrip": true,
+            "rollback_matches_bare": true,
+            "parent_digest_preserved": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "candidate_digest": "6985df3e68b20238895f6e8262753ba78b27a5c375d6130652b9bb00eda8fe39",
+          "shadow_checkpoint_digest": "e345e0acfb69ad27f27c8e9b02ce3125b9fa5dc0d47babce0cc038d6e109e978",
+          "rollback_digest": "e345e0acfb69ad27f27c8e9b02ce3125b9fa5dc0d47babce0cc038d6e109e978",
+          "resource_cost": 1,
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "lesion",
+          "checks": {
+            "parent_checkpoint_roundtrip": true,
+            "shadow_checkpoint_roundtrip": true,
+            "lesion_checkpoint_roundtrip": true,
+            "rollback_matches_bare": true,
+            "parent_digest_preserved": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "candidate_digest": "6985df3e68b20238895f6e8262753ba78b27a5c375d6130652b9bb00eda8fe39",
+          "shadow_checkpoint_digest": "e345e0acfb69ad27f27c8e9b02ce3125b9fa5dc0d47babce0cc038d6e109e978",
+          "rollback_digest": "e345e0acfb69ad27f27c8e9b02ce3125b9fa5dc0d47babce0cc038d6e109e978",
+          "resource_cost": 1,
+          "training_performed": false,
+          "candidate_promoted": false,
+          "lesion_of": "fixed-large"
+        }
+      ]
+    },
+    {
+      "model_seed": 17,
+      "course_seed": 1,
+      "course_variant_seed": 202,
+      "course_label": "r6-order-1",
+      "course_digest": "9bdad3726c30770234786a692d02f8fa0f28422813eacb73d2f1fe8042887db9",
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "manifests": {
+        "owner_graph_digest": "44aea51a8e491cdb0bb1bea6e72e1ebbe9dd7a6a254bb9a52b1bf04a6da190cb",
+        "source_manifest_digest": "354514b91f1c31f5c5e1bdd21b78a3cfa5fe28db86655cdffcc788a1c8e45be1",
+        "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce"
+      },
+      "baseline_repeats": [
+        {
+          "repeat_seed": 401,
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "scores": {
+            "S": 5.995296377498504,
+            "G": 5.959810695900639
+          },
+          "score_digest": "deccef37f32bf584faa22bb370753eef90bdafb28bfe2bb847a1763f3a4de029",
+          "checkpoint_preflight": {
+            "checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "fresh_restore_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "fresh_restore": true,
+            "rollback_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "rollback_matches_parent": true
+          },
+          "training_performed": false,
+          "learn_updates": 0
+        },
+        {
+          "repeat_seed": 503,
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "scores": {
+            "S": 5.995296377498504,
+            "G": 5.959810695900639
+          },
+          "score_digest": "deccef37f32bf584faa22bb370753eef90bdafb28bfe2bb847a1763f3a4de029",
+          "checkpoint_preflight": {
+            "checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "fresh_restore_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "fresh_restore": true,
+            "rollback_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "rollback_matches_parent": true
+          },
+          "training_performed": false,
+          "learn_updates": 0
+        },
+        {
+          "repeat_seed": 607,
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "scores": {
+            "S": 5.995296377498504,
+            "G": 5.959810695900639
+          },
+          "score_digest": "deccef37f32bf584faa22bb370753eef90bdafb28bfe2bb847a1763f3a4de029",
+          "checkpoint_preflight": {
+            "checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "fresh_restore_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "fresh_restore": true,
+            "rollback_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "rollback_matches_parent": true
+          },
+          "training_performed": false,
+          "learn_updates": 0
+        }
+      ],
+      "epsilon": {
+        "S": {
+          "phase": "S",
+          "repeat_count": 3,
+          "scores": [
+            5.995296377498504,
+            5.995296377498504,
+            5.995296377498504
+          ],
+          "paired_absolute_deltas": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "epsilon_raw_q95": 0.0,
+          "epsilon": 0.01,
+          "parent_stable": true
+        },
+        "G": {
+          "phase": "G",
+          "repeat_count": 3,
+          "scores": [
+            5.959810695900639,
+            5.959810695900639,
+            5.959810695900639
+          ],
+          "paired_absolute_deltas": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "epsilon_raw_q95": 0.0,
+          "epsilon": 0.01,
+          "parent_stable": true
+        }
+      },
+      "arm_preflight": [
+        {
+          "arm": "frozen-parent",
+          "checks": {
+            "checkpoint_roundtrip": true,
+            "rollback_matches_parent": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "matched-fixed-capacity",
+          "checks": {
+            "checkpoint_roundtrip": true,
+            "rollback_matches_parent": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "candidate-continuation",
+          "checks": {
+            "parent_checkpoint_match": true,
+            "dependency_projection_accepted": true,
+            "dependency_projection_lineage_complete": true,
+            "prefit_checkpoint_roundtrip": true,
+            "candidate_checkpoint_roundtrip": true,
+            "rollback_record_is_explicit": true,
+            "rollback_checkpoint_roundtrip": true,
+            "rollback_restores_parent_namespace": true,
+            "dependency_projection_survives_rollback": true,
+            "training_steps_zero": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "candidate_checkpoint_digest": "4fcd549cc5a32558446a778af255bb4d39fefcb11319ea13e9eeb698f81c6ddb",
+          "owner_graph_digest": "44aea51a8e491cdb0bb1bea6e72e1ebbe9dd7a6a254bb9a52b1bf04a6da190cb",
+          "source_manifest_digest": "354514b91f1c31f5c5e1bdd21b78a3cfa5fe28db86655cdffcc788a1c8e45be1",
+          "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce",
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "random-growth",
+          "checks": {
+            "parent_checkpoint_roundtrip": true,
+            "shadow_checkpoint_roundtrip": true,
+            "lesion_checkpoint_roundtrip": true,
+            "rollback_matches_bare": true,
+            "parent_digest_preserved": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "candidate_digest": "0d03f39b08682aa7512d856bf98a634b96f53ca7bfc85322f770b15f109eb9be",
+          "shadow_checkpoint_digest": "4147ec6a236935afb657d7278b5908292e166154c9407553727f6b6ce1e7f9a0",
+          "rollback_digest": "4147ec6a236935afb657d7278b5908292e166154c9407553727f6b6ce1e7f9a0",
+          "resource_cost": 1,
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "fixed-large",
+          "checks": {
+            "parent_checkpoint_roundtrip": true,
+            "shadow_checkpoint_roundtrip": true,
+            "lesion_checkpoint_roundtrip": true,
+            "rollback_matches_bare": true,
+            "parent_digest_preserved": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "candidate_digest": "6985df3e68b20238895f6e8262753ba78b27a5c375d6130652b9bb00eda8fe39",
+          "shadow_checkpoint_digest": "e345e0acfb69ad27f27c8e9b02ce3125b9fa5dc0d47babce0cc038d6e109e978",
+          "rollback_digest": "e345e0acfb69ad27f27c8e9b02ce3125b9fa5dc0d47babce0cc038d6e109e978",
+          "resource_cost": 1,
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "lesion",
+          "checks": {
+            "parent_checkpoint_roundtrip": true,
+            "shadow_checkpoint_roundtrip": true,
+            "lesion_checkpoint_roundtrip": true,
+            "rollback_matches_bare": true,
+            "parent_digest_preserved": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "candidate_digest": "6985df3e68b20238895f6e8262753ba78b27a5c375d6130652b9bb00eda8fe39",
+          "shadow_checkpoint_digest": "e345e0acfb69ad27f27c8e9b02ce3125b9fa5dc0d47babce0cc038d6e109e978",
+          "rollback_digest": "e345e0acfb69ad27f27c8e9b02ce3125b9fa5dc0d47babce0cc038d6e109e978",
+          "resource_cost": 1,
+          "training_performed": false,
+          "candidate_promoted": false,
+          "lesion_of": "fixed-large"
+        }
+      ]
+    },
+    {
+      "model_seed": 17,
+      "course_seed": 2,
+      "course_variant_seed": 303,
+      "course_label": "r6-order-2",
+      "course_digest": "1dc8dd7e42ea46d4389f1590150f07df58c3598cb8e6f253d47554a0ac839c6a",
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "manifests": {
+        "owner_graph_digest": "44aea51a8e491cdb0bb1bea6e72e1ebbe9dd7a6a254bb9a52b1bf04a6da190cb",
+        "source_manifest_digest": "c38801eb5534d36a69b0e9b2c8a4d1ae75a9e11c983c6d91bcc434bd8056d234",
+        "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce"
+      },
+      "baseline_repeats": [
+        {
+          "repeat_seed": 401,
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "scores": {
+            "S": 5.995296377498504,
+            "G": 5.959810695900639
+          },
+          "score_digest": "deccef37f32bf584faa22bb370753eef90bdafb28bfe2bb847a1763f3a4de029",
+          "checkpoint_preflight": {
+            "checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "fresh_restore_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "fresh_restore": true,
+            "rollback_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "rollback_matches_parent": true
+          },
+          "training_performed": false,
+          "learn_updates": 0
+        },
+        {
+          "repeat_seed": 503,
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "scores": {
+            "S": 5.995296377498504,
+            "G": 5.959810695900639
+          },
+          "score_digest": "deccef37f32bf584faa22bb370753eef90bdafb28bfe2bb847a1763f3a4de029",
+          "checkpoint_preflight": {
+            "checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "fresh_restore_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "fresh_restore": true,
+            "rollback_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "rollback_matches_parent": true
+          },
+          "training_performed": false,
+          "learn_updates": 0
+        },
+        {
+          "repeat_seed": 607,
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "scores": {
+            "S": 5.995296377498504,
+            "G": 5.959810695900639
+          },
+          "score_digest": "deccef37f32bf584faa22bb370753eef90bdafb28bfe2bb847a1763f3a4de029",
+          "checkpoint_preflight": {
+            "checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "fresh_restore_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "fresh_restore": true,
+            "rollback_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "rollback_matches_parent": true
+          },
+          "training_performed": false,
+          "learn_updates": 0
+        }
+      ],
+      "epsilon": {
+        "S": {
+          "phase": "S",
+          "repeat_count": 3,
+          "scores": [
+            5.995296377498504,
+            5.995296377498504,
+            5.995296377498504
+          ],
+          "paired_absolute_deltas": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "epsilon_raw_q95": 0.0,
+          "epsilon": 0.01,
+          "parent_stable": true
+        },
+        "G": {
+          "phase": "G",
+          "repeat_count": 3,
+          "scores": [
+            5.959810695900639,
+            5.959810695900639,
+            5.959810695900639
+          ],
+          "paired_absolute_deltas": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "epsilon_raw_q95": 0.0,
+          "epsilon": 0.01,
+          "parent_stable": true
+        }
+      },
+      "arm_preflight": [
+        {
+          "arm": "frozen-parent",
+          "checks": {
+            "checkpoint_roundtrip": true,
+            "rollback_matches_parent": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "matched-fixed-capacity",
+          "checks": {
+            "checkpoint_roundtrip": true,
+            "rollback_matches_parent": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "candidate-continuation",
+          "checks": {
+            "parent_checkpoint_match": true,
+            "dependency_projection_accepted": true,
+            "dependency_projection_lineage_complete": true,
+            "prefit_checkpoint_roundtrip": true,
+            "candidate_checkpoint_roundtrip": true,
+            "rollback_record_is_explicit": true,
+            "rollback_checkpoint_roundtrip": true,
+            "rollback_restores_parent_namespace": true,
+            "dependency_projection_survives_rollback": true,
+            "training_steps_zero": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "candidate_checkpoint_digest": "b928ade167e3e7f6011a1baa63441f386101f267f10e7ca56d85a35ff30e6a1f",
+          "owner_graph_digest": "44aea51a8e491cdb0bb1bea6e72e1ebbe9dd7a6a254bb9a52b1bf04a6da190cb",
+          "source_manifest_digest": "c38801eb5534d36a69b0e9b2c8a4d1ae75a9e11c983c6d91bcc434bd8056d234",
+          "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce",
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "random-growth",
+          "checks": {
+            "parent_checkpoint_roundtrip": true,
+            "shadow_checkpoint_roundtrip": true,
+            "lesion_checkpoint_roundtrip": true,
+            "rollback_matches_bare": true,
+            "parent_digest_preserved": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "candidate_digest": "0d03f39b08682aa7512d856bf98a634b96f53ca7bfc85322f770b15f109eb9be",
+          "shadow_checkpoint_digest": "4147ec6a236935afb657d7278b5908292e166154c9407553727f6b6ce1e7f9a0",
+          "rollback_digest": "4147ec6a236935afb657d7278b5908292e166154c9407553727f6b6ce1e7f9a0",
+          "resource_cost": 1,
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "fixed-large",
+          "checks": {
+            "parent_checkpoint_roundtrip": true,
+            "shadow_checkpoint_roundtrip": true,
+            "lesion_checkpoint_roundtrip": true,
+            "rollback_matches_bare": true,
+            "parent_digest_preserved": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "candidate_digest": "6985df3e68b20238895f6e8262753ba78b27a5c375d6130652b9bb00eda8fe39",
+          "shadow_checkpoint_digest": "e345e0acfb69ad27f27c8e9b02ce3125b9fa5dc0d47babce0cc038d6e109e978",
+          "rollback_digest": "e345e0acfb69ad27f27c8e9b02ce3125b9fa5dc0d47babce0cc038d6e109e978",
+          "resource_cost": 1,
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "lesion",
+          "checks": {
+            "parent_checkpoint_roundtrip": true,
+            "shadow_checkpoint_roundtrip": true,
+            "lesion_checkpoint_roundtrip": true,
+            "rollback_matches_bare": true,
+            "parent_digest_preserved": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "candidate_digest": "6985df3e68b20238895f6e8262753ba78b27a5c375d6130652b9bb00eda8fe39",
+          "shadow_checkpoint_digest": "e345e0acfb69ad27f27c8e9b02ce3125b9fa5dc0d47babce0cc038d6e109e978",
+          "rollback_digest": "e345e0acfb69ad27f27c8e9b02ce3125b9fa5dc0d47babce0cc038d6e109e978",
+          "resource_cost": 1,
+          "training_performed": false,
+          "candidate_promoted": false,
+          "lesion_of": "fixed-large"
+        }
+      ]
+    },
+    {
+      "model_seed": 23,
+      "course_seed": 0,
+      "course_variant_seed": 101,
+      "course_label": "r6-order-0",
+      "course_digest": "6fd1a078e7fe7f131e3e443bc10666b547b5e841313af5e0a1fa2ba62cfa4c3c",
+      "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+      "manifests": {
+        "owner_graph_digest": "72cfeb7f4a58e0966149f5b52170dacf932ba5e34a21f73ddaaed94b42714d6f",
+        "source_manifest_digest": "404989fed6441afcb4c57d03bd018740c89d71b6e2b2046a1b7858b4314f7d94",
+        "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce"
+      },
+      "baseline_repeats": [
+        {
+          "repeat_seed": 401,
+          "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+          "scores": {
+            "S": 6.06005203271513,
+            "G": 6.163727301623109
+          },
+          "score_digest": "337bdd553cf3137209d0b667adbb78c6a94bca38d21d02470ff0faee3e54bed6",
+          "checkpoint_preflight": {
+            "checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+            "fresh_restore_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+            "fresh_restore": true,
+            "rollback_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+            "rollback_matches_parent": true
+          },
+          "training_performed": false,
+          "learn_updates": 0
+        },
+        {
+          "repeat_seed": 503,
+          "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+          "scores": {
+            "S": 6.06005203271513,
+            "G": 6.163727301623109
+          },
+          "score_digest": "337bdd553cf3137209d0b667adbb78c6a94bca38d21d02470ff0faee3e54bed6",
+          "checkpoint_preflight": {
+            "checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+            "fresh_restore_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+            "fresh_restore": true,
+            "rollback_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+            "rollback_matches_parent": true
+          },
+          "training_performed": false,
+          "learn_updates": 0
+        },
+        {
+          "repeat_seed": 607,
+          "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+          "scores": {
+            "S": 6.06005203271513,
+            "G": 6.163727301623109
+          },
+          "score_digest": "337bdd553cf3137209d0b667adbb78c6a94bca38d21d02470ff0faee3e54bed6",
+          "checkpoint_preflight": {
+            "checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+            "fresh_restore_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+            "fresh_restore": true,
+            "rollback_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+            "rollback_matches_parent": true
+          },
+          "training_performed": false,
+          "learn_updates": 0
+        }
+      ],
+      "epsilon": {
+        "S": {
+          "phase": "S",
+          "repeat_count": 3,
+          "scores": [
+            6.06005203271513,
+            6.06005203271513,
+            6.06005203271513
+          ],
+          "paired_absolute_deltas": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "epsilon_raw_q95": 0.0,
+          "epsilon": 0.01,
+          "parent_stable": true
+        },
+        "G": {
+          "phase": "G",
+          "repeat_count": 3,
+          "scores": [
+            6.163727301623109,
+            6.163727301623109,
+            6.163727301623109
+          ],
+          "paired_absolute_deltas": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "epsilon_raw_q95": 0.0,
+          "epsilon": 0.01,
+          "parent_stable": true
+        }
+      },
+      "arm_preflight": [
+        {
+          "arm": "frozen-parent",
+          "checks": {
+            "checkpoint_roundtrip": true,
+            "rollback_matches_parent": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "matched-fixed-capacity",
+          "checks": {
+            "checkpoint_roundtrip": true,
+            "rollback_matches_parent": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "candidate-continuation",
+          "checks": {
+            "parent_checkpoint_match": true,
+            "dependency_projection_accepted": true,
+            "dependency_projection_lineage_complete": true,
+            "prefit_checkpoint_roundtrip": true,
+            "candidate_checkpoint_roundtrip": true,
+            "rollback_record_is_explicit": true,
+            "rollback_checkpoint_roundtrip": true,
+            "rollback_restores_parent_namespace": true,
+            "dependency_projection_survives_rollback": true,
+            "training_steps_zero": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+          "candidate_checkpoint_digest": "cf83cd193aaea24592fd256bf54ea29c900bce02fe212afff777e0891e24373f",
+          "owner_graph_digest": "72cfeb7f4a58e0966149f5b52170dacf932ba5e34a21f73ddaaed94b42714d6f",
+          "source_manifest_digest": "404989fed6441afcb4c57d03bd018740c89d71b6e2b2046a1b7858b4314f7d94",
+          "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce",
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "random-growth",
+          "checks": {
+            "parent_checkpoint_roundtrip": true,
+            "shadow_checkpoint_roundtrip": true,
+            "lesion_checkpoint_roundtrip": true,
+            "rollback_matches_bare": true,
+            "parent_digest_preserved": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+          "candidate_digest": "6305adb8c29b2dfb90ffa68dd8d6c2eb51c546afb6b25df5d3f954997c33f76b",
+          "shadow_checkpoint_digest": "7f94e933c5bcc3650d8a6ba725799e29b7b2b7177af9580557a58690353acd18",
+          "rollback_digest": "7f94e933c5bcc3650d8a6ba725799e29b7b2b7177af9580557a58690353acd18",
+          "resource_cost": 1,
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "fixed-large",
+          "checks": {
+            "parent_checkpoint_roundtrip": true,
+            "shadow_checkpoint_roundtrip": true,
+            "lesion_checkpoint_roundtrip": true,
+            "rollback_matches_bare": true,
+            "parent_digest_preserved": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+          "candidate_digest": "03c748ea669302c474ad523012f1169a1f5d22e2b58bad28073b13bbeb1782ee",
+          "shadow_checkpoint_digest": "8e343e0d0aeedd99d9e52a92c2eaffb5bc5057a47556404b2974a9e65a522c69",
+          "rollback_digest": "8e343e0d0aeedd99d9e52a92c2eaffb5bc5057a47556404b2974a9e65a522c69",
+          "resource_cost": 1,
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "lesion",
+          "checks": {
+            "parent_checkpoint_roundtrip": true,
+            "shadow_checkpoint_roundtrip": true,
+            "lesion_checkpoint_roundtrip": true,
+            "rollback_matches_bare": true,
+            "parent_digest_preserved": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+          "candidate_digest": "03c748ea669302c474ad523012f1169a1f5d22e2b58bad28073b13bbeb1782ee",
+          "shadow_checkpoint_digest": "8e343e0d0aeedd99d9e52a92c2eaffb5bc5057a47556404b2974a9e65a522c69",
+          "rollback_digest": "8e343e0d0aeedd99d9e52a92c2eaffb5bc5057a47556404b2974a9e65a522c69",
+          "resource_cost": 1,
+          "training_performed": false,
+          "candidate_promoted": false,
+          "lesion_of": "fixed-large"
+        }
+      ]
+    },
+    {
+      "model_seed": 23,
+      "course_seed": 1,
+      "course_variant_seed": 202,
+      "course_label": "r6-order-1",
+      "course_digest": "9bdad3726c30770234786a692d02f8fa0f28422813eacb73d2f1fe8042887db9",
+      "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+      "manifests": {
+        "owner_graph_digest": "72cfeb7f4a58e0966149f5b52170dacf932ba5e34a21f73ddaaed94b42714d6f",
+        "source_manifest_digest": "d45ed01db4b942660a1d0408ebca83d6baef123c57cac7879224542dd44034f5",
+        "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce"
+      },
+      "baseline_repeats": [
+        {
+          "repeat_seed": 401,
+          "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+          "scores": {
+            "S": 6.06005203271513,
+            "G": 6.163727301623109
+          },
+          "score_digest": "337bdd553cf3137209d0b667adbb78c6a94bca38d21d02470ff0faee3e54bed6",
+          "checkpoint_preflight": {
+            "checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+            "fresh_restore_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+            "fresh_restore": true,
+            "rollback_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+            "rollback_matches_parent": true
+          },
+          "training_performed": false,
+          "learn_updates": 0
+        },
+        {
+          "repeat_seed": 503,
+          "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+          "scores": {
+            "S": 6.06005203271513,
+            "G": 6.163727301623109
+          },
+          "score_digest": "337bdd553cf3137209d0b667adbb78c6a94bca38d21d02470ff0faee3e54bed6",
+          "checkpoint_preflight": {
+            "checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+            "fresh_restore_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+            "fresh_restore": true,
+            "rollback_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+            "rollback_matches_parent": true
+          },
+          "training_performed": false,
+          "learn_updates": 0
+        },
+        {
+          "repeat_seed": 607,
+          "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+          "scores": {
+            "S": 6.06005203271513,
+            "G": 6.163727301623109
+          },
+          "score_digest": "337bdd553cf3137209d0b667adbb78c6a94bca38d21d02470ff0faee3e54bed6",
+          "checkpoint_preflight": {
+            "checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+            "fresh_restore_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+            "fresh_restore": true,
+            "rollback_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+            "rollback_matches_parent": true
+          },
+          "training_performed": false,
+          "learn_updates": 0
+        }
+      ],
+      "epsilon": {
+        "S": {
+          "phase": "S",
+          "repeat_count": 3,
+          "scores": [
+            6.06005203271513,
+            6.06005203271513,
+            6.06005203271513
+          ],
+          "paired_absolute_deltas": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "epsilon_raw_q95": 0.0,
+          "epsilon": 0.01,
+          "parent_stable": true
+        },
+        "G": {
+          "phase": "G",
+          "repeat_count": 3,
+          "scores": [
+            6.163727301623109,
+            6.163727301623109,
+            6.163727301623109
+          ],
+          "paired_absolute_deltas": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "epsilon_raw_q95": 0.0,
+          "epsilon": 0.01,
+          "parent_stable": true
+        }
+      },
+      "arm_preflight": [
+        {
+          "arm": "frozen-parent",
+          "checks": {
+            "checkpoint_roundtrip": true,
+            "rollback_matches_parent": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "matched-fixed-capacity",
+          "checks": {
+            "checkpoint_roundtrip": true,
+            "rollback_matches_parent": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "candidate-continuation",
+          "checks": {
+            "parent_checkpoint_match": true,
+            "dependency_projection_accepted": true,
+            "dependency_projection_lineage_complete": true,
+            "prefit_checkpoint_roundtrip": true,
+            "candidate_checkpoint_roundtrip": true,
+            "rollback_record_is_explicit": true,
+            "rollback_checkpoint_roundtrip": true,
+            "rollback_restores_parent_namespace": true,
+            "dependency_projection_survives_rollback": true,
+            "training_steps_zero": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+          "candidate_checkpoint_digest": "b9bd6d7f76423fba8a745e807590bac89677e8aa02dbccb010a0fd17dd72dd9e",
+          "owner_graph_digest": "72cfeb7f4a58e0966149f5b52170dacf932ba5e34a21f73ddaaed94b42714d6f",
+          "source_manifest_digest": "d45ed01db4b942660a1d0408ebca83d6baef123c57cac7879224542dd44034f5",
+          "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce",
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "random-growth",
+          "checks": {
+            "parent_checkpoint_roundtrip": true,
+            "shadow_checkpoint_roundtrip": true,
+            "lesion_checkpoint_roundtrip": true,
+            "rollback_matches_bare": true,
+            "parent_digest_preserved": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+          "candidate_digest": "6305adb8c29b2dfb90ffa68dd8d6c2eb51c546afb6b25df5d3f954997c33f76b",
+          "shadow_checkpoint_digest": "7f94e933c5bcc3650d8a6ba725799e29b7b2b7177af9580557a58690353acd18",
+          "rollback_digest": "7f94e933c5bcc3650d8a6ba725799e29b7b2b7177af9580557a58690353acd18",
+          "resource_cost": 1,
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "fixed-large",
+          "checks": {
+            "parent_checkpoint_roundtrip": true,
+            "shadow_checkpoint_roundtrip": true,
+            "lesion_checkpoint_roundtrip": true,
+            "rollback_matches_bare": true,
+            "parent_digest_preserved": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+          "candidate_digest": "03c748ea669302c474ad523012f1169a1f5d22e2b58bad28073b13bbeb1782ee",
+          "shadow_checkpoint_digest": "8e343e0d0aeedd99d9e52a92c2eaffb5bc5057a47556404b2974a9e65a522c69",
+          "rollback_digest": "8e343e0d0aeedd99d9e52a92c2eaffb5bc5057a47556404b2974a9e65a522c69",
+          "resource_cost": 1,
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "lesion",
+          "checks": {
+            "parent_checkpoint_roundtrip": true,
+            "shadow_checkpoint_roundtrip": true,
+            "lesion_checkpoint_roundtrip": true,
+            "rollback_matches_bare": true,
+            "parent_digest_preserved": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+          "candidate_digest": "03c748ea669302c474ad523012f1169a1f5d22e2b58bad28073b13bbeb1782ee",
+          "shadow_checkpoint_digest": "8e343e0d0aeedd99d9e52a92c2eaffb5bc5057a47556404b2974a9e65a522c69",
+          "rollback_digest": "8e343e0d0aeedd99d9e52a92c2eaffb5bc5057a47556404b2974a9e65a522c69",
+          "resource_cost": 1,
+          "training_performed": false,
+          "candidate_promoted": false,
+          "lesion_of": "fixed-large"
+        }
+      ]
+    },
+    {
+      "model_seed": 23,
+      "course_seed": 2,
+      "course_variant_seed": 303,
+      "course_label": "r6-order-2",
+      "course_digest": "1dc8dd7e42ea46d4389f1590150f07df58c3598cb8e6f253d47554a0ac839c6a",
+      "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+      "manifests": {
+        "owner_graph_digest": "72cfeb7f4a58e0966149f5b52170dacf932ba5e34a21f73ddaaed94b42714d6f",
+        "source_manifest_digest": "00cd30e2a7986b0e0f79b86e674afb70a82584a2eb0def9332889e363c5db6ac",
+        "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce"
+      },
+      "baseline_repeats": [
+        {
+          "repeat_seed": 401,
+          "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+          "scores": {
+            "S": 6.06005203271513,
+            "G": 6.163727301623109
+          },
+          "score_digest": "337bdd553cf3137209d0b667adbb78c6a94bca38d21d02470ff0faee3e54bed6",
+          "checkpoint_preflight": {
+            "checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+            "fresh_restore_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+            "fresh_restore": true,
+            "rollback_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+            "rollback_matches_parent": true
+          },
+          "training_performed": false,
+          "learn_updates": 0
+        },
+        {
+          "repeat_seed": 503,
+          "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+          "scores": {
+            "S": 6.06005203271513,
+            "G": 6.163727301623109
+          },
+          "score_digest": "337bdd553cf3137209d0b667adbb78c6a94bca38d21d02470ff0faee3e54bed6",
+          "checkpoint_preflight": {
+            "checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+            "fresh_restore_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+            "fresh_restore": true,
+            "rollback_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+            "rollback_matches_parent": true
+          },
+          "training_performed": false,
+          "learn_updates": 0
+        },
+        {
+          "repeat_seed": 607,
+          "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+          "scores": {
+            "S": 6.06005203271513,
+            "G": 6.163727301623109
+          },
+          "score_digest": "337bdd553cf3137209d0b667adbb78c6a94bca38d21d02470ff0faee3e54bed6",
+          "checkpoint_preflight": {
+            "checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+            "fresh_restore_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+            "fresh_restore": true,
+            "rollback_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+            "rollback_matches_parent": true
+          },
+          "training_performed": false,
+          "learn_updates": 0
+        }
+      ],
+      "epsilon": {
+        "S": {
+          "phase": "S",
+          "repeat_count": 3,
+          "scores": [
+            6.06005203271513,
+            6.06005203271513,
+            6.06005203271513
+          ],
+          "paired_absolute_deltas": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "epsilon_raw_q95": 0.0,
+          "epsilon": 0.01,
+          "parent_stable": true
+        },
+        "G": {
+          "phase": "G",
+          "repeat_count": 3,
+          "scores": [
+            6.163727301623109,
+            6.163727301623109,
+            6.163727301623109
+          ],
+          "paired_absolute_deltas": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "epsilon_raw_q95": 0.0,
+          "epsilon": 0.01,
+          "parent_stable": true
+        }
+      },
+      "arm_preflight": [
+        {
+          "arm": "frozen-parent",
+          "checks": {
+            "checkpoint_roundtrip": true,
+            "rollback_matches_parent": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "matched-fixed-capacity",
+          "checks": {
+            "checkpoint_roundtrip": true,
+            "rollback_matches_parent": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "candidate-continuation",
+          "checks": {
+            "parent_checkpoint_match": true,
+            "dependency_projection_accepted": true,
+            "dependency_projection_lineage_complete": true,
+            "prefit_checkpoint_roundtrip": true,
+            "candidate_checkpoint_roundtrip": true,
+            "rollback_record_is_explicit": true,
+            "rollback_checkpoint_roundtrip": true,
+            "rollback_restores_parent_namespace": true,
+            "dependency_projection_survives_rollback": true,
+            "training_steps_zero": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+          "candidate_checkpoint_digest": "88b44ebc386a831ae8417c0650d307ef0e03e04a7a0c978e4aaed78234a21bff",
+          "owner_graph_digest": "72cfeb7f4a58e0966149f5b52170dacf932ba5e34a21f73ddaaed94b42714d6f",
+          "source_manifest_digest": "00cd30e2a7986b0e0f79b86e674afb70a82584a2eb0def9332889e363c5db6ac",
+          "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce",
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "random-growth",
+          "checks": {
+            "parent_checkpoint_roundtrip": true,
+            "shadow_checkpoint_roundtrip": true,
+            "lesion_checkpoint_roundtrip": true,
+            "rollback_matches_bare": true,
+            "parent_digest_preserved": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+          "candidate_digest": "6305adb8c29b2dfb90ffa68dd8d6c2eb51c546afb6b25df5d3f954997c33f76b",
+          "shadow_checkpoint_digest": "7f94e933c5bcc3650d8a6ba725799e29b7b2b7177af9580557a58690353acd18",
+          "rollback_digest": "7f94e933c5bcc3650d8a6ba725799e29b7b2b7177af9580557a58690353acd18",
+          "resource_cost": 1,
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "fixed-large",
+          "checks": {
+            "parent_checkpoint_roundtrip": true,
+            "shadow_checkpoint_roundtrip": true,
+            "lesion_checkpoint_roundtrip": true,
+            "rollback_matches_bare": true,
+            "parent_digest_preserved": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+          "candidate_digest": "03c748ea669302c474ad523012f1169a1f5d22e2b58bad28073b13bbeb1782ee",
+          "shadow_checkpoint_digest": "8e343e0d0aeedd99d9e52a92c2eaffb5bc5057a47556404b2974a9e65a522c69",
+          "rollback_digest": "8e343e0d0aeedd99d9e52a92c2eaffb5bc5057a47556404b2974a9e65a522c69",
+          "resource_cost": 1,
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "lesion",
+          "checks": {
+            "parent_checkpoint_roundtrip": true,
+            "shadow_checkpoint_roundtrip": true,
+            "lesion_checkpoint_roundtrip": true,
+            "rollback_matches_bare": true,
+            "parent_digest_preserved": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+          "candidate_digest": "03c748ea669302c474ad523012f1169a1f5d22e2b58bad28073b13bbeb1782ee",
+          "shadow_checkpoint_digest": "8e343e0d0aeedd99d9e52a92c2eaffb5bc5057a47556404b2974a9e65a522c69",
+          "rollback_digest": "8e343e0d0aeedd99d9e52a92c2eaffb5bc5057a47556404b2974a9e65a522c69",
+          "resource_cost": 1,
+          "training_performed": false,
+          "candidate_promoted": false,
+          "lesion_of": "fixed-large"
+        }
+      ]
+    },
+    {
+      "model_seed": 31,
+      "course_seed": 0,
+      "course_variant_seed": 101,
+      "course_label": "r6-order-0",
+      "course_digest": "6fd1a078e7fe7f131e3e443bc10666b547b5e841313af5e0a1fa2ba62cfa4c3c",
+      "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+      "manifests": {
+        "owner_graph_digest": "6f613256d74ee7a7517dca13094621d089f263a98ad0cc11bbd3023adefff1a6",
+        "source_manifest_digest": "39d063ecc33470da0b09c093daca652b1663dfe66ac1b8d1b0b6281d1df6c375",
+        "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce"
+      },
+      "baseline_repeats": [
+        {
+          "repeat_seed": 401,
+          "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+          "scores": {
+            "S": 5.857133765627293,
+            "G": 5.493859170249493
+          },
+          "score_digest": "30a87e77d065296016eeb08f738672fbf3c070fd6e647a6f0995235e063aa6c5",
+          "checkpoint_preflight": {
+            "checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "fresh_restore_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "fresh_restore": true,
+            "rollback_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "rollback_matches_parent": true
+          },
+          "training_performed": false,
+          "learn_updates": 0
+        },
+        {
+          "repeat_seed": 503,
+          "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+          "scores": {
+            "S": 5.857133765627293,
+            "G": 5.493859170249493
+          },
+          "score_digest": "30a87e77d065296016eeb08f738672fbf3c070fd6e647a6f0995235e063aa6c5",
+          "checkpoint_preflight": {
+            "checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "fresh_restore_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "fresh_restore": true,
+            "rollback_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "rollback_matches_parent": true
+          },
+          "training_performed": false,
+          "learn_updates": 0
+        },
+        {
+          "repeat_seed": 607,
+          "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+          "scores": {
+            "S": 5.857133765627293,
+            "G": 5.493859170249493
+          },
+          "score_digest": "30a87e77d065296016eeb08f738672fbf3c070fd6e647a6f0995235e063aa6c5",
+          "checkpoint_preflight": {
+            "checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "fresh_restore_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "fresh_restore": true,
+            "rollback_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "rollback_matches_parent": true
+          },
+          "training_performed": false,
+          "learn_updates": 0
+        }
+      ],
+      "epsilon": {
+        "S": {
+          "phase": "S",
+          "repeat_count": 3,
+          "scores": [
+            5.857133765627293,
+            5.857133765627293,
+            5.857133765627293
+          ],
+          "paired_absolute_deltas": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "epsilon_raw_q95": 0.0,
+          "epsilon": 0.01,
+          "parent_stable": true
+        },
+        "G": {
+          "phase": "G",
+          "repeat_count": 3,
+          "scores": [
+            5.493859170249493,
+            5.493859170249493,
+            5.493859170249493
+          ],
+          "paired_absolute_deltas": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "epsilon_raw_q95": 0.0,
+          "epsilon": 0.01,
+          "parent_stable": true
+        }
+      },
+      "arm_preflight": [
+        {
+          "arm": "frozen-parent",
+          "checks": {
+            "checkpoint_roundtrip": true,
+            "rollback_matches_parent": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "matched-fixed-capacity",
+          "checks": {
+            "checkpoint_roundtrip": true,
+            "rollback_matches_parent": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "candidate-continuation",
+          "checks": {
+            "parent_checkpoint_match": true,
+            "dependency_projection_accepted": true,
+            "dependency_projection_lineage_complete": true,
+            "prefit_checkpoint_roundtrip": true,
+            "candidate_checkpoint_roundtrip": true,
+            "rollback_record_is_explicit": true,
+            "rollback_checkpoint_roundtrip": true,
+            "rollback_restores_parent_namespace": true,
+            "dependency_projection_survives_rollback": true,
+            "training_steps_zero": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+          "candidate_checkpoint_digest": "9590fdfec843bbaeb2ee9232a06ff7fcec600132a1ac386c03692757d33b1f2e",
+          "owner_graph_digest": "6f613256d74ee7a7517dca13094621d089f263a98ad0cc11bbd3023adefff1a6",
+          "source_manifest_digest": "39d063ecc33470da0b09c093daca652b1663dfe66ac1b8d1b0b6281d1df6c375",
+          "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce",
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "random-growth",
+          "checks": {
+            "parent_checkpoint_roundtrip": true,
+            "shadow_checkpoint_roundtrip": true,
+            "lesion_checkpoint_roundtrip": true,
+            "rollback_matches_bare": true,
+            "parent_digest_preserved": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+          "candidate_digest": "e1fd5138e2b67eb4368be1ccbdefcea81bcfbf8638d74e02d75bafe570ba759c",
+          "shadow_checkpoint_digest": "6cf93cc6f8d451a4b2ac592f9f8d1553bb8cfb449f4c20930b25c0ecf2fb7bcb",
+          "rollback_digest": "6cf93cc6f8d451a4b2ac592f9f8d1553bb8cfb449f4c20930b25c0ecf2fb7bcb",
+          "resource_cost": 1,
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "fixed-large",
+          "checks": {
+            "parent_checkpoint_roundtrip": true,
+            "shadow_checkpoint_roundtrip": true,
+            "lesion_checkpoint_roundtrip": true,
+            "rollback_matches_bare": true,
+            "parent_digest_preserved": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+          "candidate_digest": "33922481fadbab6eb4821366e182ddeeb314051f85e8e914f2471b3cbb544d31",
+          "shadow_checkpoint_digest": "1a25de6068de81328bec05dfa0d91488fb4f3e36252b66132faf05618fbda123",
+          "rollback_digest": "1a25de6068de81328bec05dfa0d91488fb4f3e36252b66132faf05618fbda123",
+          "resource_cost": 1,
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "lesion",
+          "checks": {
+            "parent_checkpoint_roundtrip": true,
+            "shadow_checkpoint_roundtrip": true,
+            "lesion_checkpoint_roundtrip": true,
+            "rollback_matches_bare": true,
+            "parent_digest_preserved": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+          "candidate_digest": "33922481fadbab6eb4821366e182ddeeb314051f85e8e914f2471b3cbb544d31",
+          "shadow_checkpoint_digest": "1a25de6068de81328bec05dfa0d91488fb4f3e36252b66132faf05618fbda123",
+          "rollback_digest": "1a25de6068de81328bec05dfa0d91488fb4f3e36252b66132faf05618fbda123",
+          "resource_cost": 1,
+          "training_performed": false,
+          "candidate_promoted": false,
+          "lesion_of": "fixed-large"
+        }
+      ]
+    },
+    {
+      "model_seed": 31,
+      "course_seed": 1,
+      "course_variant_seed": 202,
+      "course_label": "r6-order-1",
+      "course_digest": "9bdad3726c30770234786a692d02f8fa0f28422813eacb73d2f1fe8042887db9",
+      "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+      "manifests": {
+        "owner_graph_digest": "6f613256d74ee7a7517dca13094621d089f263a98ad0cc11bbd3023adefff1a6",
+        "source_manifest_digest": "65188a1a8fff59675840115e851546b6ddbb24eb423c0f144e16d6229d8dbe09",
+        "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce"
+      },
+      "baseline_repeats": [
+        {
+          "repeat_seed": 401,
+          "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+          "scores": {
+            "S": 5.857133765627293,
+            "G": 5.493859170249493
+          },
+          "score_digest": "30a87e77d065296016eeb08f738672fbf3c070fd6e647a6f0995235e063aa6c5",
+          "checkpoint_preflight": {
+            "checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "fresh_restore_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "fresh_restore": true,
+            "rollback_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "rollback_matches_parent": true
+          },
+          "training_performed": false,
+          "learn_updates": 0
+        },
+        {
+          "repeat_seed": 503,
+          "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+          "scores": {
+            "S": 5.857133765627293,
+            "G": 5.493859170249493
+          },
+          "score_digest": "30a87e77d065296016eeb08f738672fbf3c070fd6e647a6f0995235e063aa6c5",
+          "checkpoint_preflight": {
+            "checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "fresh_restore_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "fresh_restore": true,
+            "rollback_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "rollback_matches_parent": true
+          },
+          "training_performed": false,
+          "learn_updates": 0
+        },
+        {
+          "repeat_seed": 607,
+          "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+          "scores": {
+            "S": 5.857133765627293,
+            "G": 5.493859170249493
+          },
+          "score_digest": "30a87e77d065296016eeb08f738672fbf3c070fd6e647a6f0995235e063aa6c5",
+          "checkpoint_preflight": {
+            "checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "fresh_restore_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "fresh_restore": true,
+            "rollback_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "rollback_matches_parent": true
+          },
+          "training_performed": false,
+          "learn_updates": 0
+        }
+      ],
+      "epsilon": {
+        "S": {
+          "phase": "S",
+          "repeat_count": 3,
+          "scores": [
+            5.857133765627293,
+            5.857133765627293,
+            5.857133765627293
+          ],
+          "paired_absolute_deltas": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "epsilon_raw_q95": 0.0,
+          "epsilon": 0.01,
+          "parent_stable": true
+        },
+        "G": {
+          "phase": "G",
+          "repeat_count": 3,
+          "scores": [
+            5.493859170249493,
+            5.493859170249493,
+            5.493859170249493
+          ],
+          "paired_absolute_deltas": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "epsilon_raw_q95": 0.0,
+          "epsilon": 0.01,
+          "parent_stable": true
+        }
+      },
+      "arm_preflight": [
+        {
+          "arm": "frozen-parent",
+          "checks": {
+            "checkpoint_roundtrip": true,
+            "rollback_matches_parent": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "matched-fixed-capacity",
+          "checks": {
+            "checkpoint_roundtrip": true,
+            "rollback_matches_parent": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "candidate-continuation",
+          "checks": {
+            "parent_checkpoint_match": true,
+            "dependency_projection_accepted": true,
+            "dependency_projection_lineage_complete": true,
+            "prefit_checkpoint_roundtrip": true,
+            "candidate_checkpoint_roundtrip": true,
+            "rollback_record_is_explicit": true,
+            "rollback_checkpoint_roundtrip": true,
+            "rollback_restores_parent_namespace": true,
+            "dependency_projection_survives_rollback": true,
+            "training_steps_zero": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+          "candidate_checkpoint_digest": "451809dcb1bb860713cedb2fe4f0a88c90aa457fbe68ee665dc5643a3ef57bce",
+          "owner_graph_digest": "6f613256d74ee7a7517dca13094621d089f263a98ad0cc11bbd3023adefff1a6",
+          "source_manifest_digest": "65188a1a8fff59675840115e851546b6ddbb24eb423c0f144e16d6229d8dbe09",
+          "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce",
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "random-growth",
+          "checks": {
+            "parent_checkpoint_roundtrip": true,
+            "shadow_checkpoint_roundtrip": true,
+            "lesion_checkpoint_roundtrip": true,
+            "rollback_matches_bare": true,
+            "parent_digest_preserved": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+          "candidate_digest": "e1fd5138e2b67eb4368be1ccbdefcea81bcfbf8638d74e02d75bafe570ba759c",
+          "shadow_checkpoint_digest": "6cf93cc6f8d451a4b2ac592f9f8d1553bb8cfb449f4c20930b25c0ecf2fb7bcb",
+          "rollback_digest": "6cf93cc6f8d451a4b2ac592f9f8d1553bb8cfb449f4c20930b25c0ecf2fb7bcb",
+          "resource_cost": 1,
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "fixed-large",
+          "checks": {
+            "parent_checkpoint_roundtrip": true,
+            "shadow_checkpoint_roundtrip": true,
+            "lesion_checkpoint_roundtrip": true,
+            "rollback_matches_bare": true,
+            "parent_digest_preserved": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+          "candidate_digest": "33922481fadbab6eb4821366e182ddeeb314051f85e8e914f2471b3cbb544d31",
+          "shadow_checkpoint_digest": "1a25de6068de81328bec05dfa0d91488fb4f3e36252b66132faf05618fbda123",
+          "rollback_digest": "1a25de6068de81328bec05dfa0d91488fb4f3e36252b66132faf05618fbda123",
+          "resource_cost": 1,
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "lesion",
+          "checks": {
+            "parent_checkpoint_roundtrip": true,
+            "shadow_checkpoint_roundtrip": true,
+            "lesion_checkpoint_roundtrip": true,
+            "rollback_matches_bare": true,
+            "parent_digest_preserved": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+          "candidate_digest": "33922481fadbab6eb4821366e182ddeeb314051f85e8e914f2471b3cbb544d31",
+          "shadow_checkpoint_digest": "1a25de6068de81328bec05dfa0d91488fb4f3e36252b66132faf05618fbda123",
+          "rollback_digest": "1a25de6068de81328bec05dfa0d91488fb4f3e36252b66132faf05618fbda123",
+          "resource_cost": 1,
+          "training_performed": false,
+          "candidate_promoted": false,
+          "lesion_of": "fixed-large"
+        }
+      ]
+    },
+    {
+      "model_seed": 31,
+      "course_seed": 2,
+      "course_variant_seed": 303,
+      "course_label": "r6-order-2",
+      "course_digest": "1dc8dd7e42ea46d4389f1590150f07df58c3598cb8e6f253d47554a0ac839c6a",
+      "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+      "manifests": {
+        "owner_graph_digest": "6f613256d74ee7a7517dca13094621d089f263a98ad0cc11bbd3023adefff1a6",
+        "source_manifest_digest": "825ed458746b743e0afeabe79bc3f9f5c696e2079d07d43c88322275b2d98df2",
+        "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce"
+      },
+      "baseline_repeats": [
+        {
+          "repeat_seed": 401,
+          "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+          "scores": {
+            "S": 5.857133765627293,
+            "G": 5.493859170249493
+          },
+          "score_digest": "30a87e77d065296016eeb08f738672fbf3c070fd6e647a6f0995235e063aa6c5",
+          "checkpoint_preflight": {
+            "checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "fresh_restore_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "fresh_restore": true,
+            "rollback_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "rollback_matches_parent": true
+          },
+          "training_performed": false,
+          "learn_updates": 0
+        },
+        {
+          "repeat_seed": 503,
+          "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+          "scores": {
+            "S": 5.857133765627293,
+            "G": 5.493859170249493
+          },
+          "score_digest": "30a87e77d065296016eeb08f738672fbf3c070fd6e647a6f0995235e063aa6c5",
+          "checkpoint_preflight": {
+            "checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "fresh_restore_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "fresh_restore": true,
+            "rollback_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "rollback_matches_parent": true
+          },
+          "training_performed": false,
+          "learn_updates": 0
+        },
+        {
+          "repeat_seed": 607,
+          "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+          "scores": {
+            "S": 5.857133765627293,
+            "G": 5.493859170249493
+          },
+          "score_digest": "30a87e77d065296016eeb08f738672fbf3c070fd6e647a6f0995235e063aa6c5",
+          "checkpoint_preflight": {
+            "checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "fresh_restore_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "fresh_restore": true,
+            "rollback_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "rollback_matches_parent": true
+          },
+          "training_performed": false,
+          "learn_updates": 0
+        }
+      ],
+      "epsilon": {
+        "S": {
+          "phase": "S",
+          "repeat_count": 3,
+          "scores": [
+            5.857133765627293,
+            5.857133765627293,
+            5.857133765627293
+          ],
+          "paired_absolute_deltas": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "epsilon_raw_q95": 0.0,
+          "epsilon": 0.01,
+          "parent_stable": true
+        },
+        "G": {
+          "phase": "G",
+          "repeat_count": 3,
+          "scores": [
+            5.493859170249493,
+            5.493859170249493,
+            5.493859170249493
+          ],
+          "paired_absolute_deltas": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "epsilon_raw_q95": 0.0,
+          "epsilon": 0.01,
+          "parent_stable": true
+        }
+      },
+      "arm_preflight": [
+        {
+          "arm": "frozen-parent",
+          "checks": {
+            "checkpoint_roundtrip": true,
+            "rollback_matches_parent": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "matched-fixed-capacity",
+          "checks": {
+            "checkpoint_roundtrip": true,
+            "rollback_matches_parent": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "candidate-continuation",
+          "checks": {
+            "parent_checkpoint_match": true,
+            "dependency_projection_accepted": true,
+            "dependency_projection_lineage_complete": true,
+            "prefit_checkpoint_roundtrip": true,
+            "candidate_checkpoint_roundtrip": true,
+            "rollback_record_is_explicit": true,
+            "rollback_checkpoint_roundtrip": true,
+            "rollback_restores_parent_namespace": true,
+            "dependency_projection_survives_rollback": true,
+            "training_steps_zero": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+          "candidate_checkpoint_digest": "d3624a7375314e1cdfaf20b678ea40bf1b0905f568f98e8a875bdf28f097703e",
+          "owner_graph_digest": "6f613256d74ee7a7517dca13094621d089f263a98ad0cc11bbd3023adefff1a6",
+          "source_manifest_digest": "825ed458746b743e0afeabe79bc3f9f5c696e2079d07d43c88322275b2d98df2",
+          "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce",
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "random-growth",
+          "checks": {
+            "parent_checkpoint_roundtrip": true,
+            "shadow_checkpoint_roundtrip": true,
+            "lesion_checkpoint_roundtrip": true,
+            "rollback_matches_bare": true,
+            "parent_digest_preserved": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+          "candidate_digest": "e1fd5138e2b67eb4368be1ccbdefcea81bcfbf8638d74e02d75bafe570ba759c",
+          "shadow_checkpoint_digest": "6cf93cc6f8d451a4b2ac592f9f8d1553bb8cfb449f4c20930b25c0ecf2fb7bcb",
+          "rollback_digest": "6cf93cc6f8d451a4b2ac592f9f8d1553bb8cfb449f4c20930b25c0ecf2fb7bcb",
+          "resource_cost": 1,
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "fixed-large",
+          "checks": {
+            "parent_checkpoint_roundtrip": true,
+            "shadow_checkpoint_roundtrip": true,
+            "lesion_checkpoint_roundtrip": true,
+            "rollback_matches_bare": true,
+            "parent_digest_preserved": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+          "candidate_digest": "33922481fadbab6eb4821366e182ddeeb314051f85e8e914f2471b3cbb544d31",
+          "shadow_checkpoint_digest": "1a25de6068de81328bec05dfa0d91488fb4f3e36252b66132faf05618fbda123",
+          "rollback_digest": "1a25de6068de81328bec05dfa0d91488fb4f3e36252b66132faf05618fbda123",
+          "resource_cost": 1,
+          "training_performed": false,
+          "candidate_promoted": false
+        },
+        {
+          "arm": "lesion",
+          "checks": {
+            "parent_checkpoint_roundtrip": true,
+            "shadow_checkpoint_roundtrip": true,
+            "lesion_checkpoint_roundtrip": true,
+            "rollback_matches_bare": true,
+            "parent_digest_preserved": true,
+            "training_performed": false
+          },
+          "status": "passed",
+          "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+          "candidate_digest": "33922481fadbab6eb4821366e182ddeeb314051f85e8e914f2471b3cbb544d31",
+          "shadow_checkpoint_digest": "1a25de6068de81328bec05dfa0d91488fb4f3e36252b66132faf05618fbda123",
+          "rollback_digest": "1a25de6068de81328bec05dfa0d91488fb4f3e36252b66132faf05618fbda123",
+          "resource_cost": 1,
+          "training_performed": false,
+          "candidate_promoted": false,
+          "lesion_of": "fixed-large"
+        }
+      ]
+    }
+  ],
+  "boundary": {
+    "training_performed": false,
+    "candidate_promoted": false,
+    "default_runtime_attached": false,
+    "cuda_required": false,
+    "provider_mcp_client_network_used": false
+  },
+  "next_gate": "The S/G mechanical baseline and all-arm checkpoint preflight passed, but the complete R6 baseline is still blocked on a same-parent K retention measurement.  The next permitted artifact is a controlled one-cell adapter smoke, still without default-runtime attachment or formal training.",
+  "generated_at_epoch": 1788958607,
+  "elapsed_seconds": 8.868117499980144
+}
