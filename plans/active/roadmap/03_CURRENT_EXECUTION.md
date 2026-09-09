@@ -495,5 +495,7 @@ course0 不会被覆盖；`model17/course2` 也已成功追加，model17 三个 
 `executed_passed`，其余 6 rows 仍为 `not_started`，逐臂 resource/side-effect/checkpoint/
 rollback/failure ledger 均已落盘。runner 现固定前序顺序
 `17/0 → 17/1 → 17/2 → 23/0 → 23/1 → 23/2 → 31/0 → 31/1 → 31/2`，禁止跳过未通过
-row。**当前唯一下一步**：只执行 `model23/course0`，不并发扩大、不运行 9-cell aggregate、
+row。`model23/course0` 已执行并通过，candidate/fixed-large K 均为 `1/1`、lesion 为 `0`，
+五臂 resource Gate 全部通过；当前累计 4 个 row 为 `executed_passed`，其余 5 个仍为
+`not_started`。**当前唯一下一步**：只执行 `model23/course1`，不并发扩大、不运行 9-cell aggregate、
 不接 default runtime/provider/MCP/client/CUDA。

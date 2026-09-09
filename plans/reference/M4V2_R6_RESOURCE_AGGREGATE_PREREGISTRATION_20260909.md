@@ -118,3 +118,5 @@ cell 的均值覆盖。course1 已闭合且 prior ledger 保持单调；当前�
 course2 已通过，model17 的三行均为 `executed_passed`；runner 已冻结完整的 9-cell
 前序顺序并拒绝 predecessor 未通过时的跳跃。当前唯一下一步：**只执行
 `model23/course0` row**，不计算 aggregate、不用其他 cell 抵销失败。
+model23/course0 已通过且追加，当前唯一下一步：**只执行 `model23/course1` row**，继续
+按同一 resource/side-effect/failure contract 记录，仍不计算 aggregate。

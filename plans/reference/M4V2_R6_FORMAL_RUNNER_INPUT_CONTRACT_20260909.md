@@ -556,3 +556,14 @@ runner 现在固定执行顺序
 `17/0 → 17/1 → 17/2 → 23/0 → 23/1 → 23/2 → 31/0 → 31/1 → 31/2`，并在消费目标 row
 前检查所有 predecessor 为 `executed_passed`；prior ledger 的 manifest digest 与 row
 status 均不满足时立即阻断。当前仍不运行 aggregate，下一步只开放 `model23/course0`。
+
+## 20. Model23/course0 execution（2026-09-09）
+
+`model23/course0` 已通过固定前序顺序并成功追加：candidate/fixed-large K success
+均为 `1/1`，lesion 为 `0` 且五臂 `resource_gate` 全部为 true；execution contract
+digest 为 `d9b35e04f4b1136e944a3fb3088412564bda2a384ef9145bacda2ebd6115e103`。累计 ledger
+现在有 4 个 `executed_passed` row，`model23/course1/2` 与全部 model31 row 仍为
+`not_started`，没有 aggregate 或 promotion 意味。
+
+下一步只执行 `model23/course1`；继续要求 prior manifest digest、前序 row、fixed-large
+registry 和五臂 resource/side-effect/checkpoint contract 全部通过。
