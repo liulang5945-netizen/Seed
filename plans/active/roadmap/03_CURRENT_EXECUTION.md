@@ -53,7 +53,9 @@
 
 **B3-K target-aware course diversity Gate 已通过。** 在 model 17 parent、固定 holdout、相同学习率和 worker owner 下，使用 `A+B+C / A+A+B / A+B+B` 三种真正不同的 target multiset；三组 candidate update digest 不同，combined-MSE delta 为 `−0.00025813/−0.00072424/−0.00034705`，均值 `−0.00044314`、最坏 `−0.00025813`，`technical_gate_passed=true`、`performance_gate_passed=true`、`stability_gate_passed=true`。报告为 [B3-K target-aware](../../../reports/taiji_m4v2_b3_k_target_aware_20260910.json)。这证明课程多样性 Gate 修正后窄任务学习链可稳定改善，但仍只有一个 model seed、三条 holdout，`can_promote=false`，不能等同 C formal。
 
-**当前唯一下一步：做 B3-K target-aware model-seed 稳定性复验。** 固定上述 target-aware 三种 train composition、holdout、scorer、学习率、K1/K2 owner 和全部保存/rollback Gate，分别使用真实 model seed `17/23/31` 的 worker artifacts；逐 model seed 记录 parent digest、artifact namespace、target multiset、candidate digest、三组 loss delta 和最坏退化。不得把同一 parent 的重复运行当独立模型 seed；本轮仍是 B 阶段稳定性证据，不直接 promotion 或启动九 cell formal。
+**B3-K target-aware model-seed 稳定性复验已完成。** 真实 model seed `17/23/31` 的 parent digest 分别为 `3e1b39…6675`、`8b46f3…822e4`、`c3e21d…7732`，三者独立；每个 seed 的 target-aware 三组 candidate namespace 与 worker attachment 正确，9 个 cell 的 technical/performance/stability Gate 全通过。所有 combined-MSE delta 均为负，整体均值 `−0.00044314`、最坏 `−0.00025813`；但三个 model seed 的数值轨迹完全同构，仍需 sealed-test 和强对照才能排除 fixture 饱和/同构行为。报告为 [B3-K target-aware model seeds](../../../reports/taiji_m4v2_b3_k_target_aware_model_seeds_20260910.json)，继续 `can_promote=false`、`can_start_r6_formal=false`。
+
+**当前唯一下一步：冻结 C 入口 evaluation manifest。** 把 target-aware train composition、validation holdout、sealed-test holdout、target multiplicity、loss scorer、最小有意义收益、最坏退化上限、fixed-capacity 强对照、model seed 列表和资源预算写成不可变 manifest；先在不看 sealed-test 的前提下锁定阈值和比较方法，再设计正式比较。当前 3 条 holdout 只能作 validation 证据，不能兼作 sealed-test；在 manifest/强对照未冻结前不启动 formal、不 promotion、不扩结构。
 
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 
