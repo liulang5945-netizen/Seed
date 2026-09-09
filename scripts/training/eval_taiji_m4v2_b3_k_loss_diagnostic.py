@@ -78,13 +78,21 @@ def _course_train_variant(course_seed: int) -> tuple[int, tuple[str, ...]]:
 
 
 def _course_train_variants(
-    course_seed: int, *, count: int
+    course_seed: int, *, count: int, strategy: str = "contiguous"
 ) -> tuple[tuple[int, ...], tuple[tuple[str, ...], ...]]:
     variants = _train_episode_paths()
     if not 1 <= int(count) <= len(variants):
         raise ValueError("bounded K course train count must fit the available variants")
-    start = int(course_seed) % len(variants)
-    indexes = tuple((start + offset) % len(variants) for offset in range(int(count)))
+    if strategy == "contiguous":
+        start = int(course_seed) % len(variants)
+        indexes = tuple((start + offset) % len(variants) for offset in range(int(count)))
+    elif strategy == "non_sliding":
+        if int(count) != 3:
+            raise ValueError("non_sliding K course variants require exactly three examples")
+        fixed = ((0, 2, 4), (1, 3, 5), (0, 3, 5))
+        indexes = fixed[int(course_seed) % len(fixed)]
+    else:
+        raise ValueError(f"unknown K course train variant strategy: {strategy}")
     return indexes, tuple(variants[index] for index in indexes)
 
 
@@ -210,6 +218,7 @@ def run_diagnostic(
     model_seed: int = 17,
     course_seed: int = 0,
     train_episode_count: int = 1,
+    train_variant_strategy: str = "contiguous",
     candidate_namespace: str | None = None,
 ) -> dict[str, Any]:
     started = time.perf_counter()
@@ -310,7 +319,7 @@ def run_diagnostic(
             )
         }
         train_episode_indexes, train_episode_variants = _course_train_variants(
-            course_seed, count=train_episode_count
+            course_seed, count=train_episode_count, strategy=train_variant_strategy
         )
         train_experiences = tuple(
             _build_experience(
@@ -547,6 +556,7 @@ def run_diagnostic(
                 "course_seed": int(course_seed),
                 "workspace_seed": workspace_seed,
                 "train_episode_count": len(train_episode_indexes),
+                "train_variant_strategy": train_variant_strategy,
                 "train_episode_indexes": list(train_episode_indexes),
                 "train_episode_paths": [
                     list(paths) for paths in train_episode_variants

@@ -39,6 +39,7 @@ def run_stability(
     model_seed: int = 17,
     course_seeds: tuple[int, ...] = COURSE_SEEDS,
     train_episode_count: int = 1,
+    train_variant_strategy: str = "contiguous",
 ) -> dict[str, Any]:
     cells = []
     for course_seed in course_seeds:
@@ -48,6 +49,7 @@ def run_stability(
             model_seed=model_seed,
             course_seed=course_seed,
             train_episode_count=train_episode_count,
+            train_variant_strategy=train_variant_strategy,
         )
         cells.append({"course_seed": course_seed, "report": cell})
 
@@ -85,6 +87,7 @@ def run_stability(
         "model_seed": model_seed,
         "course_seeds": list(course_seeds),
         "train_episode_count": int(train_episode_count),
+        "train_variant_strategy": train_variant_strategy,
         "cell_count": len(cells),
         "same_parent": same_parent,
         "parent_checkpoint_digests": sorted(parent_digests),
@@ -153,6 +156,7 @@ def main() -> int:
     parser.add_argument("--candidate-root", type=Path, default=DEFAULT_CANDIDATE_DIR.parent / "stability")
     parser.add_argument("--model-seed", type=int, default=17)
     parser.add_argument("--train-episode-count", type=int, default=1)
+    parser.add_argument("--train-variant-strategy", default="contiguous")
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
     args = parser.parse_args()
     artifact_dir = args.artifact_dir if args.artifact_dir.is_absolute() else PROJECT_ROOT / args.artifact_dir
@@ -163,6 +167,7 @@ def main() -> int:
         candidate_root=candidate_root,
         model_seed=args.model_seed,
         train_episode_count=args.train_episode_count,
+        train_variant_strategy=args.train_variant_strategy,
     )
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(

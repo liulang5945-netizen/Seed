@@ -45,7 +45,9 @@
 
 **B3-K bounded 三样本诊断已完成，但证据非判别。** 课程组合 `[0,1,2] / [1,2,3] / [2,3,4]` 的 train input/target digest 均不同，三组 raw combined-MSE delta 都是 `−0.00025813`；但三组 candidate worker bundle/参数 digest 完全相同，`candidate_updates_distinct=false`。因此技术链、保存恢复、K3 冻结、rollback 和 no-update 通过，但这不是 3 个独立学习结果，`performance_gate_passed=false`、`stability_gate_passed=false`、`can_promote=false`。报告为 [B3-K three batch](../../../reports/taiji_m4v2_b3_k_three_batch_20260910.json)。当前解释是 batch 局部更新在这组 synthetic 组合上出现梯度/表示聚合对称性，尚不能判断是数据对称还是 worker 更新规则过度压缩。
 
-**当前唯一下一步：做 B3-K 非滑动课程组合诊断。** 保持 batch=3、parent、holdout、学习率、worker owner 和全部 Gate 不变，只将组合替换为预先固定的非滑动集合（`[0,2,4] / [1,3,5] / [0,3,5]`），并强制记录 train input digest、candidate update digest 与参数 delta norm。目标是区分 synthetic 课程排列造成的梯度对称，还是 K1/K2 batch 更新本身把不同经验压成同一更新；若仍相同，优先修正学习更新的可辨识性/表示量尺，不进入 formal 或继续盲目扩 batch。
+**B3-K 非滑动课程组合诊断已完成，仍未形成稳定证据。** 预注册组合 `[0,2,4] / [1,3,5] / [0,3,5]` 的 train input/target digest 都不同，三组 holdout delta 为 `−0.00025813/−0.00025813/−0.00063627`；但前两组 candidate update digest 完全相同，只有第三组不同。raw performance 全部改善，却因 `candidate_updates_distinct=false` 不能通过稳定性 Gate。报告为 [B3-K non-sliding](../../../reports/taiji_m4v2_b3_k_non_sliding_20260910.json)，当前结论是部分课程组合在现有 K1/K2 局部更新中不可辨识，不能继续用组合数量替代机制定位。
+
+**当前唯一下一步：做 B3-K 逐 episode update-signature 审计。** 固定同一 model 17 parent、同一 holdout 和当前 detached local-delta 规则，对 6 条可用 train episode 各做一次隔离单步 candidate，记录 semantic/transition 输入 digest、candidate worker digest、参数 delta norm 和六分量 loss；再将 batch candidate digest 与单 episode 签名对照。该审计只读出当前规则的可辨识性，不改学习率、owner、结构或 Gate；根据具体碰撞位置再决定修正输入表征还是更新规则，禁止凭 batch 结果直接改架构。
 
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 
