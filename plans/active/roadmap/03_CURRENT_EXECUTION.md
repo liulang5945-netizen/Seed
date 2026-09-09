@@ -406,4 +406,6 @@ K2 formal 已完成：`reports/taiji_m5_k2_multistep_formal_20260909.json`，9/9
 
 A8 K 轴 scorecard 已完成：`reports/taiji_m5_k_axis_scorecard_20260909.json`。K1/K2 证据均闭合，content-addressed absolute snapshots 与 A-B/A-C comparison evidence 已分离；但 parent retention 缺失、learner 仍是 standalone shadow、默认 runtime 未接入，故 `promotion_gate=false`、`can_promote=false`。
 
-**当前唯一下一步**：在继续开发前冻结决策边界并预注册一个唯一出口：若要继续能力研究，进入 K3 的 outcome→world/任务依赖 canary；若要进入默认路径，改走同一 parent 的 A8/R6 S-G-K promotion course。当前建议先做 K3 预注册，K2 shadow 保持隔离，不引入 MCP/provider/client/CUDA。
+K3 预注册已完成：[M5_K3_OUTCOME_WORLD_DEPENDENCY_PREREGISTRATION_20260909.md](../../reference/M5_K3_OUTCOME_WORLD_DEPENDENCY_PREREGISTRATION_20260909.md)。实际缺口已冻结为：runtime 已记录 `WorkbenchTaijiEvidence → WorldEvent`，但 K2 只把真实 outcome 用于 S6B 准入，下一步仍消费预测 `after_world`；K3 必须验证 typed outcome/dependency projection 是否真正进入下一步 world、任务依赖和 lineage gate。三臂固定为 A full-feedback、B no-feedback、C outcome-lesion；真实 success/failure、checkpoint/restore、stale/duplicate/cross-episode fail-closed 都是技术门，`can_promote=false` 固定。
+
+**当前唯一下一步**：实现并单测 Taiji-owned typed outcome/dependency projection（先 checkpoint/restore/lesion，再 canary），复用 K2 与 S6B 的既有 owner，不引入 MCP/provider/client/CUDA，不改 K1/K2 判据，不接入默认 runtime。
