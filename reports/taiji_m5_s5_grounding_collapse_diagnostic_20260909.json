@@ -1,0 +1,40 @@
+{
+  "format": "taiji-m5-s5-grounding-collapse-diagnostic-v1",
+  "version": 1,
+  "generated_at_epoch": 1788935867,
+  "can_promote": false,
+  "hypothesis": "the grounding lesion collapses to ~0 whenever the target is constant, because score(grounding=False)=bias and a constant outcome is fully predicted by the bias; feature geometry and holdout heterogeneity are secondary",
+  "cases": {
+    "constant_target=True,normalized_features=True": {
+      "holdout_loss_after": 5.583784941975978e-09,
+      "grounding_lesion_loss": 1.3928058706369484e-10,
+      "grounding_lesion_margin": -5.444504354912283e-09,
+      "learned_bias": 1.0000118017196655,
+      "weight_norm": 0.0014353218721225858
+    },
+    "constant_target=True,normalized_features=False": {
+      "holdout_loss_after": 1.199837276644189e-09,
+      "grounding_lesion_loss": 3.412026217120001e-11,
+      "grounding_lesion_margin": -1.165717014472989e-09,
+      "learned_bias": 0.999994158744812,
+      "weight_norm": 3.314009154564701e-05
+    },
+    "constant_target=False,normalized_features=True": {
+      "holdout_loss_after": 6.577361077181559e-08,
+      "grounding_lesion_loss": 0.002589612834707146,
+      "grounding_lesion_margin": 0.0025895470610963743,
+      "learned_bias": 4.161756805842742e-05,
+      "weight_norm": 0.9985958337783813
+    },
+    "constant_target=False,normalized_features=False": {
+      "holdout_loss_after": 0.06311121702546262,
+      "grounding_lesion_loss": 0.5271689963518502,
+      "grounding_lesion_margin": 0.4640577793263876,
+      "learned_bias": 0.00024219545593950897,
+      "weight_norm": 0.701788604259491
+    }
+  },
+  "resources": {
+    "total_elapsed_seconds": 4.377851599943824
+  }
+}

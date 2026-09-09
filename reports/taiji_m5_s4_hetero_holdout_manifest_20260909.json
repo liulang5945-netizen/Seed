@@ -1,0 +1,19 @@
+{
+  "format": "taiji-m5-s4-hetero-holdout-manifest-v1",
+  "version": 1,
+  "generated_at_epoch": 1788935360,
+  "quotas": {
+    "Math": 2000,
+    "Code_Agent": 2000
+  },
+  "records_per_domain": {
+    "Math": 2000,
+    "Code_Agent": 2000
+  },
+  "total_records": 4000,
+  "max_record_bytes": 16384,
+  "conversion_style": "问：{query/request}\\n答：{answer/final-assistant}",
+  "output": "E:/Seed/data/ultradata/derived/ultradata_hetero_holdout_simplezh.jsonl",
+  "output_sha256": "79c58330fff9d27b4eb96fbc6443b2e931fc490ca2f915cd138516b353db9acc",
+  "elapsed_seconds": 1.9529210000764579
+}
