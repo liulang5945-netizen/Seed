@@ -10,7 +10,7 @@
 
 ## 2026-09-10 修订执行序列（唯一有效）
 
-详细证据与源码定位见 [M4 v1/v2 实际结果复审](../../reference/M4_V1_V2_RESULT_REVIEW_2026_09_10.md) 和 [B3-K C-entry formal closure](../../reference/M4V2_B3_K_C_ENTRY_CLOSURE_20260910.md)。当前判断：v2 有机制和窄任务进步；未证明总体超过 v1。R4 比小容量对照好但未稳定超过 fixed-large，R5 候选否决；C-entry formal 已完成，candidate quality/resource Gate 通过，但 fixed-large 在 `0/9` 格更强。保持 `can_promote=false`，不把候选接入默认路径。
+详细证据与源码定位见 [M4 v1/v2 实际结果复审](../../reference/M4_V1_V2_RESULT_REVIEW_2026_09_10.md)、[B3-K C-entry formal closure](../../reference/M4V2_B3_K_C_ENTRY_CLOSURE_20260910.md) 和 [B3-K capacity-parity audit](../../reference/M4V2_B3_K_C_CAPACITY_PARITY_AUDIT_20260910.md)。当前判断：v2 有机制和窄任务进步；未证明总体超过 v1。R4 比小容量对照好但未稳定超过 fixed-large，R5 候选否决；C-entry formal 已完成，candidate quality/resource Gate 通过，但 fixed-large 在 `0/9` 格更强。后续审计确认这次 strong-control 比较还混有容量和 update budget 差异，保持 `can_promote=false`，不把候选接入默认路径。
 
 ### A. 已完成：修正 R6 学习对照的评分语义
 
@@ -63,7 +63,9 @@
 
 **C-entry formal execution 已完成并收束。** 报告为 [C-entry formal report](../../../reports/taiji_m4v2_b3_k_c_formal_20260910.json)：9/9 cell 的 technical、resource、candidate-quality Gate 全部通过；candidate sealed combined-MSE 相对 frozen parent 的平均 delta 为 `−0.0004431358`，最差为 `−0.0002581254`。但 fixed-large 平均 delta 为 `−0.0011265067`，candidate 在 `0/9` 格胜过 fixed-large，因此 `formal_gate_passed=true` 只表示 candidate 自身学习合同闭合，不表示 promotion；`can_promote=false` 保持。完整边界见 [B3-K C-entry formal closure](../../reference/M4V2_B3_K_C_ENTRY_CLOSURE_20260910.md)。
 
-**当前唯一下一步：capacity-parity audit/pre-registration。** 先冻结 candidate 与 fixed-large 的参数量、实际 update steps、checkpoint 总量、训练/推理预算和“强对照是否要求胜出”的解释边界，区分容量差异、训练预算差异与学习规则差异；审计完成前不追加新训练、不调学习率、不复活 R5 learned router 或旧结构增长路线，不接 default runtime/provider/MCP/client/CUDA。
+**C-entry capacity-parity audit 已完成。** 机器报告为 [capacity-parity audit](../../../reports/taiji_m4v2_b3_k_c_capacity_parity_audit_20260910.json)，结论为 `blocked-current-comparison-confounded`：9 格课程与推理 trace 一致，但 candidate/fixed-large 分别为 `19,332/38,664` 参数字节、`6/14,252` 实际更新步数、`2/9` 逻辑 checkpoint 写入数。candidate 的自身学习 Gate 仍成立，strong-control 因果解释暂不成立。
+
+**当前唯一下一步：上调 candidate 容量的 parity preflight。** 先生成 paired artifact contract，目标是 candidate 与 fixed-large 参数字节在 1% 内、每格相同实际 update budget、相同逻辑 checkpoint 发射数；保留 38,664 字节 fixed-large，不缩小强对照。preflight 完成前不追加新训练、不调整学习率、不复活 R5 learned router 或旧结构增长路线，不接 default runtime/provider/MCP/client/CUDA。
 
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 

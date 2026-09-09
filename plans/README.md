@@ -4,7 +4,7 @@
 
 M4.R0～R12 已完成并归档，但 2026-09-09 的代码/报告复审发现：该系列主要测量 F1 byte-prediction 的固定容量 continuation，R2 的固定等权读出槽、R7/R10 不一致的 owner 图、未进入普通主路径的 adaptive network，以及 exact-zero Gate 都不足以代表 CR-4/A8 的继承式结构成长。历史报告保留，过度外推已撤销。
 
-最新实际状态：v2 R2 的 fast/slow 与真实 replay 有小规模 S/G 证据；R4 formal 在 S/G 上优于小容量对照，但未稳定超过 fixed-large；R5 条件路由候选被否决。C-entry formal 已完成：candidate 相对 frozen parent 的 9 格质量与 CPU 资源 Gate 通过，但 candidate 在 `0/9` 格胜过 fixed-large，因而不晋级。完整依据见 [M4 v1/v2 实际结果复审](reference/M4_V1_V2_RESULT_REVIEW_2026_09_10.md) 和 [B3-K C-entry formal closure](reference/M4V2_B3_K_C_ENTRY_CLOSURE_20260910.md)。
+最新实际状态：v2 R2 的 fast/slow 与真实 replay 有小规模 S/G 证据；R4 formal 在 S/G 上优于小容量对照，但未稳定超过 fixed-large；R5 条件路由候选被否决。C-entry formal 已完成：candidate 相对 frozen parent 的 9 格质量与 CPU 资源 Gate 通过，但 candidate 在 `0/9` 格胜过 fixed-large，因而不晋级。随后完成的 capacity-parity audit 确认 formal 对照存在 19,332 对 38,664 参数字节、6 对 14,252 更新步的容量/预算混淆，因此暂不能作学习规则因果结论。完整依据见 [M4 v1/v2 实际结果复审](reference/M4_V1_V2_RESULT_REVIEW_2026_09_10.md)、[B3-K C-entry formal closure](reference/M4V2_B3_K_C_ENTRY_CLOSURE_20260910.md) 和 [B3-K capacity-parity audit](reference/M4V2_B3_K_C_CAPACITY_PARITY_AUDIT_20260910.md)。
 
 K continuation-learning contract 已完成，但完整 B3-K 尚未完成：`taiji/k_continuation.py` 现在把真实 K episode、train/holdout 隔离、K1/K2 可更新边界、K3/parent 不可变边界以及 checkpoint/rollback receipt 固化为 content-addressed 合同；当前 detached local-delta worker 明确不带 optimizer state。B3-K 单步 pilot 已在同一 inherited model 17 parent 上真实更新 K1/K2 各 1 步，K3、parent、fresh-restore 和 rollback 均通过；但 holdout 结构化准确率已在更新前饱和为 1.0，更新后没有可测增益，不能晋级。
 
@@ -16,7 +16,9 @@ B3-K 的非饱和 structured-loss diagnostic 已通过：同一 model 17 parent�
 
 **C-entry formal execution 已完成并收束。** 报告为 [C-entry formal report](../reports/taiji_m4v2_b3_k_c_formal_20260910.json)：9/9 technical、resource、candidate-quality Gate 通过；candidate sealed mean/worst delta 为 `−0.0004431358/−0.0002581254`，fixed-large mean 为 `−0.0011265067`，candidate 胜出 `0/9`。因此 candidate 可学习但未胜强对照，`can_promote=false`，不接入默认路径。
 
-**当前唯一下一步：capacity-parity audit/pre-registration。** 冻结参数量、实际 update steps、checkpoint 总量、训练/推理预算以及 fixed-large 的比较解释；完成前不追加训练、不调学习率、不解冻 R5/结构增长或外围 provider/MCP/client/CUDA 路线。
+**C-entry capacity-parity audit 已完成。** 报告为 [capacity-parity audit](../reports/taiji_m4v2_b3_k_c_capacity_parity_audit_20260910.json)：9 格的训练 episode 与推理 trace 一致，但 candidate/fixed-large 的参数字节为 `19,332/38,664`、实际更新步数为 `6/14,252`、逻辑 checkpoint 写入数为 `2/9`。因此 candidate 的学习证据有效，当前 strong-control 比较却被标记为 `blocked-current-comparison-confounded`，不改变 `can_promote=false`。
+
+**当前唯一下一步：上调 candidate 容量的 parity preflight。** 目标是 candidate 与 fixed-large 参数字节在 1% 内、每格使用相同实际 update budget 和逻辑 checkpoint 发射数；保留 38,664 字节 fixed-large，不通过缩小强对照制造公平。preflight 完成前不追加训练、不调学习率、不解冻 R5/结构增长或外围 provider/MCP/client/CUDA 路线。
 
 ## 权威文档
 
@@ -32,6 +34,7 @@ B3-K 的非饱和 structured-loss diagnostic 已通过：同一 model 17 parent�
 | [M4_FIXED_CAPACITY_EVIDENCE_REVIEW_2026_09_09.md](reference/M4_FIXED_CAPACITY_EVIDENCE_REVIEW_2026_09_09.md) | R0～R12 原始数值、有效技术资产与复审后的解释边界 |
 | [M4_V1_V2_RESULT_REVIEW_2026_09_10.md](reference/M4_V1_V2_RESULT_REVIEW_2026_09_10.md) | v1/v2 实际对比、R6 评分混淆与本次修订依据，不另设执行路线 |
 | [M4V2_B3_K_C_ENTRY_CLOSURE_20260910.md](reference/M4V2_B3_K_C_ENTRY_CLOSURE_20260910.md) | C-entry formal 的真实结果、promotion 边界与下一阶段前置审计 |
+| [M4V2_B3_K_C_CAPACITY_PARITY_AUDIT_20260910.md](reference/M4V2_B3_K_C_CAPACITY_PARITY_AUDIT_20260910.md) | C-entry formal 的容量/训练预算混淆审计与 parity contract |
 | [IMPLEMENTATION_STATUS_2026_08.md](reference/IMPLEMENTATION_STATUS_2026_08.md) | 当前实现事实与能力声明边界 |
 
 ## 目录与维护
