@@ -228,3 +228,6 @@ N8 delayed trace verify 已闭合：统一 predictive organ 后 full/trace-only 
 N9 长程自由运行已闭合：显式 predictive organ 后 128 步 exact cycle、accuracy `1.0`，状态边界、有限性、动作集合和 public/instrumented 一致性全部通过；没有修改模型稳定性参数。
 
 当前唯一出口：继续跑 N10 sparse-kernel migration verify，保持 R4 shadow/默认 parent 不变。
+N10 稀疏迁移已闭合：三项 operator equivalence 与 dense reference 对齐，native v7/N7/N8/N9 复验通过，checkpoint/storage 边界通过；没有引入新结构成长。
+
+当前唯一出口：继续跑 N11 active environment verify，保持 R4 shadow/默认 parent 不变。
