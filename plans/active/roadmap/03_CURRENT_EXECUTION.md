@@ -591,3 +591,12 @@ blocking_failures 为空。**当前唯一下一步**：实现独立的 R6 formal
 只消费该 aggregate 与 revision manifest，验证放行前的完整 lineage/side-effect/
 checkpoint 约束；在该 gate 通过前不启动 formal/promotion，不接 default runtime/
 provider/MCP/client/CUDA。
+
+独立 formal-admission gate 已实现并通过，报告为
+reports/taiji_m4v2_r6_matched_control_admission_20260910.json；它只消费 revision
+manifest 与 matched-control aggregate，重新核验 registry/owner graph、checkpoint
+路径、9-cell aggregate lineage、资源 owner、side-effect 和阈值不变性。结果为
+`ready_to_start_formal`、`can_start_r6_formal=true`、`can_promote=false`，且没有
+训练、runtime/provider/MCP/client/CUDA 副作用。**当前唯一下一步**：把 admission
+报告接入 formal runner 的输入合同，要求后续 formal 执行必须携带同一 manifest digest
+和通过的 admission report；先做 admission-gated preflight，不直接 promotion。

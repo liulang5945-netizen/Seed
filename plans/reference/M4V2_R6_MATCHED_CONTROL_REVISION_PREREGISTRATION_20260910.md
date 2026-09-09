@@ -172,3 +172,16 @@ blocking_failures 为空。两组 paired delta 的 mean 与单侧 95% lower boun
 can_promote=false。下一步只实现 formal-admission gate，消费 revision aggregate 与
 manifest 做二次 lineage/threshold/owner/side-effect 审计；不覆盖旧 aggregate，也不
 接入 default runtime/provider/MCP/client/CUDA。
+
+## 15. Formal admission gate closure（2026-09-10）
+
+formal-admission gate 已通过，报告为
+reports/taiji_m4v2_r6_matched_control_admission_20260910.json；它只读取 revised
+manifest 与 aggregate，验证 registry/owner graph、checkpoint 路径、9-cell aggregate
+lineage、worker-owned matched resource、paired lower bound、side-effect 和 threshold
+immutability，blocking_failures 为空。
+
+结果为 `ready_to_start_formal`、`can_start_r6_formal=true`、`can_promote=false`，没有
+训练或任何 runtime attachment。下一步只将 admission report 接入 formal runner 的
+硬性输入并执行 gated preflight；不覆盖旧 aggregate、不直接 promotion，也不接入
+default runtime/provider/MCP/client/CUDA。

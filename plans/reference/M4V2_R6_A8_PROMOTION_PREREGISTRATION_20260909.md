@@ -718,3 +718,16 @@ budget、两组 paired capability delta availability/floor 均通过，blocking_
 实现独立 formal-admission gate，对 aggregate、manifest、checkpoint/rollback、owner
 graph 和 side-effect contract 做二次放行审计；不得在审计前启动 formal 或接入默认
 runtime/provider/MCP/client/CUDA。
+
+## 48. Matched-control formal admission gate（2026-09-10）
+
+独立 formal-admission gate 已通过，报告为
+reports/taiji_m4v2_r6_matched_control_admission_20260910.json；它只读取 revision
+manifest 与 matched-control aggregate，完成 registry/owner graph、checkpoint 路径、
+aggregate lineage、资源 owner、side-effect 和 threshold immutability 审计，
+blocking_failures 为空。
+
+结果为 `ready_to_start_formal`、`can_start_r6_formal=true`、`can_promote=false`。
+这只打开同一合同下的 formal runner，不改变默认 runtime owner。下一步只把 admission
+report 加入 formal runner 的硬性输入，先执行 admission-gated preflight；不得直接
+宣布 promotion 或接入 provider/MCP/client/CUDA。

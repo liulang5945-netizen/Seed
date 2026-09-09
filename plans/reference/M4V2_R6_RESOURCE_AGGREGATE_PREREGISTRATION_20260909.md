@@ -266,3 +266,15 @@ paired capability delta 均 n=9、mean=1.0，单侧 95% lower bound=1.0，blocki
 manifest/registry 的 lineage、checkpoint、owner graph、side-effect 和阈值不变性。
 审计通过前不启动 formal、不覆盖旧 aggregate、不接 default runtime/provider/MCP/
 client/CUDA。
+
+## 17. Formal admission gate closure（2026-09-10）
+
+formal-admission gate 已通过并生成
+reports/taiji_m4v2_r6_matched_control_admission_20260910.json。它重新验证 revised
+manifest digest、三类 registry/owner graph、parent/worker/fixed-large checkpoint
+路径存在、aggregate 9-cell lineage、worker-owned matched resources、paired lower
+bound、资源/副作用/阈值合同；blocking_failures 为空。
+
+该 Gate 只给出 `can_start_r6_formal=true`，仍保持 `can_promote=false`、
+training/runtime/provider/MCP/client/CUDA 全部关闭。下一步把 admission report 接入
+formal runner 的必需输入并运行 gated preflight；不直接 promotion。
