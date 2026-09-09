@@ -159,3 +159,16 @@ namespace、rollback 与 side-effect Gate 均通过，fixed-large K-task-equival
 九个 cell report，验证完整 causal/resource/retention 合同；在 validator 通过前不
 运行 formal promotion、不覆盖旧 aggregate，也不接入 default runtime/provider/MCP/
 client/CUDA。
+
+## 14. Revised aggregate validator closure（2026-09-10）
+
+revised aggregate validator 已通过并生成
+reports/taiji_m4v2_r6_matched_control_aggregate_20260910.json；9/9 cell 全部
+executed_passed，frozen-parent 与 matched-capacity paired delta 均可用且达到 floor，
+candidate floor、lesion、资源上限、控制语义、rollback 和 side-effect Gate 均通过，
+blocking_failures 为空。两组 paired delta 的 mean 与单侧 95% lower bound 均为 1.0。
+
+该结果仍不直接打开 formal/promotion，报告保留 can_start_r6_formal=false、
+can_promote=false。下一步只实现 formal-admission gate，消费 revision aggregate 与
+manifest 做二次 lineage/threshold/owner/side-effect 审计；不覆盖旧 aggregate，也不
+接入 default runtime/provider/MCP/client/CUDA。

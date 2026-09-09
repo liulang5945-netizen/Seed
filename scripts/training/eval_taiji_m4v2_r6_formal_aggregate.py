@@ -38,6 +38,8 @@ from scripts.training.eval_taiji_m4v2_r6_formal_single_cell import (  # noqa: E4
 from taiji import content_digest  # noqa: E402
 
 REPORT_FORMAT = "taiji-m4v2-r6-formal-aggregate-v1"
+MATCHED_CONTROL_REPORT_FORMAT = "taiji-m4v2-r6-matched-control-aggregate-v1"
+MATCHED_CONTROL_REVISION_FORMAT = "taiji-m4v2-r6-matched-control-v2"
 VERSION = 1
 DEFAULT_EXECUTION_REPORT = (
     PROJECT_ROOT / "reports" / "taiji_m4v2_r6_formal_execution_20260909.json"
@@ -98,6 +100,19 @@ def _finite_number(value: Any) -> bool:
         and not isinstance(value, bool)
         and math.isfinite(float(value))
     )
+
+
+def _finite_float(value: Any) -> float | None:
+    return float(value) if _finite_number(value) else None
+
+
+def _paired_delta_floor(control_revision: Any) -> float | None:
+    if not isinstance(control_revision, Mapping):
+        return None
+    thresholds = control_revision.get("thresholds_unchanged")
+    if not isinstance(thresholds, Mapping):
+        return None
+    return _finite_float(thresholds.get("paired_capability_delta_floor"))
 
 
 def _valid_resource(resource: Any) -> bool:
@@ -167,10 +182,15 @@ def _resource_digest_for_arm(
     parent: Mapping[str, Any],
     worker: Mapping[str, Any],
     fixed_large: Mapping[str, Any],
+    matched_control_revision: bool = False,
 ) -> str:
-    if arm in {"frozen-parent", "matched-fixed-capacity"}:
+    if arm == "frozen-parent" or (
+        arm == "matched-fixed-capacity" and not matched_control_revision
+    ):
         return str(parent["resource_manifest_digest"])
-    if arm in {"candidate-continuation", "lesion"}:
+    if arm in {"candidate-continuation", "lesion"} or (
+        arm == "matched-fixed-capacity" and matched_control_revision
+    ):
         return str(worker["resource_manifest_digest"])
     if arm == "fixed-large":
         return str(fixed_large["resource_manifest_digest"])
@@ -185,6 +205,7 @@ def _validate_arm(
     expected_worker_digest: str,
     expected_resource_digest: str,
     expected_device: str,
+    worker_bound: bool = False,
     failures: list[dict[str, Any]],
 ) -> dict[str, Any]:
     arm_id = str(arm.get("arm", ""))
@@ -274,9 +295,7 @@ def _validate_arm(
             arm=arm_id,
             metric="parent_checkpoint_digest",
         )
-    if arm_id in {"candidate-continuation", "lesion"} and arm.get(
-        "worker_bundle_digest"
-    ) != expected_worker_digest:
+    if worker_bound and arm.get("worker_bundle_digest") != expected_worker_digest:
         _record_failure(
             failures,
             category="lineage",
@@ -295,6 +314,124 @@ def _validate_arm(
     }
 
 
+def _phase_row(arm: Mapping[str, Any], phase: str) -> Mapping[str, Any] | None:
+    rows = arm.get("phase_rows")
+    if not isinstance(rows, list):
+        return None
+    for row in rows:
+        if isinstance(row, Mapping) and row.get("phase") == phase:
+            return row
+    return None
+
+
+def _validate_matched_control_semantics(
+    arms: Mapping[str, Any],
+    *,
+    cell: tuple[int, int],
+    expected_parent_digest: str,
+    failures: list[dict[str, Any]],
+) -> None:
+    """Validate the v2 controls instead of treating matched as a detached null arm."""
+
+    def failure(arm: str, metric: str, message: str) -> None:
+        _record_failure(
+            failures,
+            category="causal_gate",
+            message=message,
+            cell=cell,
+            arm=arm,
+            metric=metric,
+        )
+
+    frozen = arms["frozen-parent"]
+    frozen_causal = frozen.get("causal")
+    if frozen_causal != {
+        "k_feedback_consumed": False,
+        "k_task_admission": False,
+        "status": "frozen_parent_zero_baseline",
+    }:
+        failure("frozen-parent", "causal", "frozen parent is not the explicit K zero baseline")
+    frozen_resource = frozen.get("resource")
+    if not isinstance(frozen_resource, Mapping) or any(
+        frozen_resource.get(field) != 0
+        for field in (
+            "candidate_parameter_bytes",
+            "checkpoint_write_bytes",
+            "training_update_steps",
+            "worker_parameter_bytes",
+            "worker_parameter_count",
+        )
+    ):
+        failure("frozen-parent", "resource", "frozen parent has non-zero K worker/update resource")
+    frozen_k = _phase_row(frozen, "K")
+    if not isinstance(frozen_k, Mapping) or frozen_k.get("status") != "rejected":
+        failure("frozen-parent", "K", "frozen parent K phase was not explicitly rejected")
+    frozen_checkpoint = frozen.get("checkpoint_ledger")
+    if not isinstance(frozen_checkpoint, Mapping) or not (
+        frozen_checkpoint.get("fresh_restore_digest") == expected_parent_digest
+        and frozen_checkpoint.get("rollback_digest") == expected_parent_digest
+        and frozen_checkpoint.get("rollback_matches_parent") is True
+    ):
+        failure("frozen-parent", "checkpoint_restore", "frozen parent did not restore and roll back to parent")
+
+    matched = arms["matched-fixed-capacity"]
+    matched_causal = matched.get("causal")
+    if matched_causal != {
+        "feedback_admitted": False,
+        "k3_projection_accepted": True,
+        "lesion_k3": False,
+        "real_workbench_success": True,
+        "status": "matched_capacity_no_feedback",
+    }:
+        failure("matched-fixed-capacity", "causal", "matched arm is not the no-feedback capacity control")
+    matched_k = _phase_row(matched, "K")
+    if not isinstance(matched_k, Mapping) or matched_k.get("status") != "executed_no_feedback":
+        failure("matched-fixed-capacity", "K", "matched arm did not stop after K execution without feedback")
+    matched_checkpoint = matched.get("checkpoint_ledger")
+    if not isinstance(matched_checkpoint, Mapping) or not (
+        matched_checkpoint.get("exchange_digest") is None
+        and matched_checkpoint.get("rollback_record_explicit") is False
+        and isinstance(matched_checkpoint.get("adapter_checkpoint"), Mapping)
+        and matched_checkpoint["adapter_checkpoint"].get("exchange_checkpoint_digest")
+        == matched_checkpoint["adapter_checkpoint"].get("rollback_checkpoint_digest")
+    ):
+        failure("matched-fixed-capacity", "checkpoint_restore", "matched arm created an exchange or lacked no-feedback rollback semantics")
+
+    candidate = arms["candidate-continuation"]
+    candidate_causal = candidate.get("causal")
+    if not isinstance(candidate_causal, Mapping) or not (
+        candidate_causal.get("feedback_admitted") is True
+        and candidate_causal.get("k3_projection_accepted") is True
+        and candidate_causal.get("status") == "candidate_path_verified"
+    ):
+        failure("candidate-continuation", "causal", "candidate arm did not admit the K feedback path")
+    candidate_k = _phase_row(candidate, "K")
+    if not isinstance(candidate_k, Mapping) or candidate_k.get("status") != "executed":
+        failure("candidate-continuation", "K", "candidate K phase was not executed")
+
+    lesion = arms["lesion"]
+    lesion_causal = lesion.get("causal")
+    if not isinstance(lesion_causal, Mapping) or not (
+        lesion_causal.get("feedback_admitted") is False
+        and lesion_causal.get("lesion_k3") is True
+        and lesion_causal.get("k3_projection_accepted") is False
+        and lesion_causal.get("status") == "lesion_verified"
+    ):
+        failure("lesion", "causal", "lesion arm did not disable K3 outcome feedback")
+    lesion_k = _phase_row(lesion, "K")
+    if not isinstance(lesion_k, Mapping) or lesion_k.get("status") != "lesion_rejected":
+        failure("lesion", "K", "lesion K phase was not rejected")
+
+    fixed_large = arms["fixed-large"]
+    fixed_causal = fixed_large.get("causal")
+    if not isinstance(fixed_causal, Mapping) or not (
+        fixed_causal.get("k_task_equivalent") is True
+        and fixed_causal.get("branch_lesion_observable") is True
+        and fixed_causal.get("status") == "fixed_large_control_verified"
+    ):
+        failure("fixed-large", "causal", "fixed-large arm is not the K-task-equivalent control")
+
+
 def _validate_cell(
     cell_report: Mapping[str, Any],
     *,
@@ -307,6 +444,11 @@ def _validate_cell(
     if not isinstance(cell_payload, Mapping):
         raise ValueError("cell report has no cell identity")
     cell = (int(cell_payload["model_seed"]), int(cell_payload["course_seed"]))
+    control_revision = manifest.get("control_revision")
+    matched_control_revision = (
+        isinstance(control_revision, Mapping)
+        and control_revision.get("format") == MATCHED_CONTROL_REVISION_FORMAT
+    )
     parent = registries["parent"][cell[0]]
     worker = registries["worker"][cell[0]]
     fixed_large = registries["fixed_large"][cell[0]]
@@ -329,6 +471,23 @@ def _validate_cell(
             message="execution ledger row is not executed_passed",
             cell=cell,
         )
+    if matched_control_revision:
+        if cell_report.get("manifest_digest") != manifest.get("manifest_digest"):
+            _record_failure(
+                failures,
+                category="lineage",
+                message="revised cell manifest digest differs from the input manifest",
+                cell=cell,
+                metric="manifest_digest",
+            )
+        if cell_report.get("control_revision") != control_revision:
+            _record_failure(
+                failures,
+                category="input_contract",
+                message="revised cell control revision differs from the input manifest",
+                cell=cell,
+                metric="control_revision",
+            )
     for key, expected in (
         ("parent_checkpoint_digest", expected_parent_digest),
         ("worker_bundle_digest", expected_worker_digest),
@@ -419,20 +578,45 @@ def _validate_cell(
             expected_parent_digest=expected_parent_digest,
             expected_worker_digest=expected_worker_digest,
             expected_resource_digest=_resource_digest_for_arm(
-                arm_id, parent=parent, worker=worker, fixed_large=fixed_large
+                arm_id,
+                parent=parent,
+                worker=worker,
+                fixed_large=fixed_large,
+                matched_control_revision=matched_control_revision,
             ),
             expected_device=expected_device,
+            worker_bound=(
+                arm_id in {"candidate-continuation", "lesion"}
+                or (matched_control_revision and arm_id == "matched-fixed-capacity")
+            ),
             failures=failures,
         )
 
     candidate_rate = arm_summaries["candidate-continuation"]["task_success_rate"]
     fixed_large_rate = arm_summaries["fixed-large"]["task_success_rate"]
     lesion_rate = arm_summaries["lesion"]["task_success_rate"]
-    for arm_id, rate in (
+    frozen_rate = arm_summaries["frozen-parent"]["task_success_rate"]
+    matched_rate = arm_summaries["matched-fixed-capacity"]["task_success_rate"]
+    if matched_control_revision:
+        _validate_matched_control_semantics(
+            raw_arms,
+            cell=cell,
+            expected_parent_digest=expected_parent_digest,
+            failures=failures,
+        )
+    rate_pairs = [
         ("candidate-continuation", candidate_rate),
         ("fixed-large", fixed_large_rate),
         ("lesion", lesion_rate),
-    ):
+    ]
+    if matched_control_revision:
+        rate_pairs.extend(
+            [
+                ("frozen-parent", frozen_rate),
+                ("matched-fixed-capacity", matched_rate),
+            ]
+        )
+    for arm_id, rate in rate_pairs:
         if not _finite_number(rate):
             _record_failure(
                 failures,
@@ -465,6 +649,44 @@ def _validate_cell(
             cell=cell,
             metric="candidate_minus_lesion_task_success_rate",
         )
+    paired_frozen_delta = (
+        None
+        if not (_finite_number(candidate_rate) and _finite_number(frozen_rate))
+        else float(candidate_rate) - float(frozen_rate)
+    )
+    paired_matched_delta = (
+        None
+        if not (_finite_number(candidate_rate) and _finite_number(matched_rate))
+        else float(candidate_rate) - float(matched_rate)
+    )
+    if matched_control_revision:
+        delta_floor = _paired_delta_floor(control_revision)
+        if delta_floor is None:
+            _record_failure(
+                failures,
+                category="input_contract",
+                message="revised control has no finite paired capability delta floor",
+                cell=cell,
+                metric="paired_capability_delta_floor",
+            )
+        else:
+            for arm_id, delta in (
+                ("frozen-parent", paired_frozen_delta),
+                ("matched-fixed-capacity", paired_matched_delta),
+            ):
+                delta_value = _finite_float(delta)
+                if delta_value is None or delta_value < delta_floor:
+                    _record_failure(
+                        failures,
+                        category="capability_gate",
+                        message=(
+                            f"candidate/{arm_id} capability delta {delta!r} is below "
+                            f"floor {delta_floor:.6f}"
+                        ),
+                        cell=cell,
+                        arm="candidate-continuation",
+                        metric=f"candidate_minus_{arm_id}_task_success_rate",
+                    )
 
     candidate_resource = arm_summaries["candidate-continuation"]["resource"]
     matched_resource = arm_summaries["matched-fixed-capacity"]["resource"]
@@ -474,6 +696,27 @@ def _validate_cell(
         isinstance(item, Mapping)
         for item in (candidate_resource, matched_resource, fixed_resource)
     ):
+        if matched_control_revision:
+            for field in (
+                "candidate_parameter_bytes",
+                "worker_parameter_count",
+                "worker_parameter_bytes",
+                "inference_trace_count",
+                "training_update_steps",
+            ):
+                if candidate_resource.get(field) != matched_resource.get(field):
+                    _record_failure(
+                        failures,
+                        category="resource_gate",
+                        message=(
+                            f"candidate/matched {field} differs: "
+                            f"{candidate_resource.get(field)!r} != "
+                            f"{matched_resource.get(field)!r}"
+                        ),
+                        cell=cell,
+                        arm="matched-fixed-capacity",
+                        metric=field,
+                    )
         candidate_wall = float(candidate_resource["wall_clock_seconds"])
         matched_wall = float(matched_resource["wall_clock_seconds"])
         candidate_peak = float(candidate_resource["peak_working_set_bytes"])
@@ -560,8 +803,8 @@ def _validate_cell(
                 else float(candidate_rate) - float(lesion_rate)
             ),
             "lesion_breaks_gain": lesion_breaks_gain,
-            "candidate_minus_frozen_parent_task_success_rate": None,
-            "candidate_minus_matched_fixed_capacity_task_success_rate": None,
+            "candidate_minus_frozen_parent_task_success_rate": paired_frozen_delta,
+            "candidate_minus_matched_fixed_capacity_task_success_rate": paired_matched_delta,
         },
         "resources": resources,
     }
@@ -573,6 +816,11 @@ def _aggregate_reports(
     execution: Mapping[str, Any],
     failures: list[dict[str, Any]],
 ) -> dict[str, Any]:
+    control_revision = manifest.get("control_revision")
+    matched_control_revision = (
+        isinstance(control_revision, Mapping)
+        and control_revision.get("format") == MATCHED_CONTROL_REVISION_FORMAT
+    )
     registries = {
         "parent": _index_registry(manifest, "parent_registry", failures),
         "worker": _index_registry(manifest, "worker_registry", failures),
@@ -621,6 +869,8 @@ def _aggregate_reports(
     metric_values: dict[str, list[float]] = {
         "candidate_task_success_rate": [],
         "candidate_minus_lesion_task_success_rate": [],
+        "candidate_minus_frozen_parent_task_success_rate": [],
+        "candidate_minus_matched_fixed_capacity_task_success_rate": [],
         "candidate_over_matched_wall_clock_multiplier": [],
         "candidate_over_matched_peak_working_set_multiplier": [],
         "candidate_wall_clock_seconds": [],
@@ -677,6 +927,14 @@ def _aggregate_reports(
             (
                 "candidate_minus_lesion_task_success_rate",
                 "candidate_minus_lesion_task_success_rate",
+            ),
+            (
+                "candidate_minus_frozen_parent_task_success_rate",
+                "candidate_minus_frozen_parent_task_success_rate",
+            ),
+            (
+                "candidate_minus_matched_fixed_capacity_task_success_rate",
+                "candidate_minus_matched_fixed_capacity_task_success_rate",
             ),
         ):
             value = capability.get(value_key)
@@ -757,27 +1015,54 @@ def _aggregate_reports(
                 if _finite_number(value):
                     metric_values[metric].append(float(cast(float, value)))
 
-    for metric in (
-        "candidate_minus_frozen_parent_task_success_rate",
-        "candidate_minus_matched_fixed_capacity_task_success_rate",
-    ):
-        for key in EXPECTED_CELL_ORDER:
-            _record_failure(
-                failures,
-                category="capability_gate",
-                message=(
-                    "paired capability delta is unavailable because the current "
-                    "control is detached; no zero/imputed value is allowed"
-                ),
-                cell=key,
-                metric=metric,
-            )
-
+    aggregate_delta_floor = _paired_delta_floor(control_revision)
     metrics = {
         metric: _mean_summary(values)
         for metric, values in metric_values.items()
         if values
     }
+    if matched_control_revision:
+        if aggregate_delta_floor is not None:
+            for metric in (
+                "candidate_minus_frozen_parent_task_success_rate",
+                "candidate_minus_matched_fixed_capacity_task_success_rate",
+            ):
+                summary = metrics.get(metric)
+                lower_bound = (
+                    summary.get("one_sided_95_student_t_lower_bound")
+                    if isinstance(summary, Mapping)
+                    else None
+                )
+                lower_bound_value = _finite_float(lower_bound)
+                if (
+                    lower_bound_value is None
+                    or lower_bound_value < aggregate_delta_floor
+                ):
+                    _record_failure(
+                        failures,
+                        category="aggregate_gate",
+                        message=(
+                            f"{metric} one-sided 95% lower bound {lower_bound!r} is below "
+                            f"floor {aggregate_delta_floor:.6f}"
+                        ),
+                        metric=metric,
+                    )
+    else:
+        for metric in (
+            "candidate_minus_frozen_parent_task_success_rate",
+            "candidate_minus_matched_fixed_capacity_task_success_rate",
+        ):
+            for key in EXPECTED_CELL_ORDER:
+                _record_failure(
+                    failures,
+                    category="capability_gate",
+                    message=(
+                        "paired capability delta is unavailable because the current "
+                        "control is detached; no zero/imputed value is allowed"
+                    ),
+                    cell=key,
+                    metric=metric,
+                )
     return {
         "cells": cell_results,
         "metrics": metrics,
@@ -806,8 +1091,38 @@ def _aggregate_reports(
                 is True
                 for result in cell_results
             ),
-            "paired_frozen_parent_delta_available": False,
-            "paired_matched_fixed_capacity_delta_available": False,
+            "paired_frozen_parent_delta_available": (
+                matched_control_revision
+                and len(metric_values["candidate_minus_frozen_parent_task_success_rate"])
+                == len(EXPECTED_CELL_ORDER)
+            ),
+            "paired_matched_fixed_capacity_delta_available": (
+                matched_control_revision
+                and len(
+                    metric_values["candidate_minus_matched_fixed_capacity_task_success_rate"]
+                )
+                == len(EXPECTED_CELL_ORDER)
+            ),
+            "paired_frozen_parent_delta_floor": (
+                matched_control_revision
+                and aggregate_delta_floor is not None
+                and all(
+                    value >= aggregate_delta_floor
+                    for value in metric_values[
+                        "candidate_minus_frozen_parent_task_success_rate"
+                    ]
+                )
+            ),
+            "paired_matched_fixed_capacity_delta_floor": (
+                matched_control_revision
+                and aggregate_delta_floor is not None
+                and all(
+                    value >= aggregate_delta_floor
+                    for value in metric_values[
+                        "candidate_minus_matched_fixed_capacity_task_success_rate"
+                    ]
+                )
+            ),
             "default_runtime_attached": False,
             "provider_attached": False,
             "mcp_attached": False,
@@ -851,6 +1166,14 @@ def run_aggregate(
         manifest = _load_object(manifest_path)
         execution = _load_object(execution_report_path)
         report["manifest_digest"] = manifest.get("manifest_digest")
+        control_revision = manifest.get("control_revision")
+        matched_control_revision = (
+            isinstance(control_revision, Mapping)
+            and control_revision.get("format") == MATCHED_CONTROL_REVISION_FORMAT
+        )
+        if matched_control_revision:
+            report["report_format"] = MATCHED_CONTROL_REPORT_FORMAT
+            report["control_revision"] = control_revision
         if manifest.get("manifest_digest") != _manifest_digest(manifest):
             _record_failure(
                 failures,
@@ -862,6 +1185,12 @@ def run_aggregate(
                 failures,
                 category="lineage",
                 message="execution report manifest digest differs from input manifest",
+            )
+        if matched_control_revision and execution.get("control_revision") != control_revision:
+            _record_failure(
+                failures,
+                category="input_contract",
+                message="execution report control revision differs from input manifest",
             )
         input_report_value = execution.get("input_preflight_report")
         if not isinstance(input_report_value, str):
@@ -884,8 +1213,13 @@ def run_aggregate(
                     category="lineage",
                     message="input preflight manifest digest differs",
                 )
-            formal_preflight_path = execution_report_path.with_name(
-                "taiji_m4v2_r6_formal_preflight_20260909.json"
+            formal_preflight_value = execution.get("formal_preflight_report")
+            formal_preflight_path = (
+                _resolve_repo_path(formal_preflight_value)
+                if isinstance(formal_preflight_value, str)
+                else execution_report_path.with_name(
+                    "taiji_m4v2_r6_formal_preflight_20260909.json"
+                )
             )
             formal_preflight = _load_object(formal_preflight_path)
             if formal_preflight.get("status") != "input_ready":
