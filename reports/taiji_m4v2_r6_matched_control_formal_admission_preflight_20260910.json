@@ -1,0 +1,789 @@
+{
+  "can_promote": false,
+  "can_start_r6_formal": true,
+  "candidate_promoted": false,
+  "candidate_training_performed": false,
+  "cell_ledger": [
+    {
+      "arms": [
+        {
+          "arm": "frozen-parent",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "matched-fixed-capacity",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "candidate-continuation",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "fixed-large",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "lesion",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        }
+      ],
+      "cell": {
+        "course_seed": 0,
+        "model_seed": 17
+      },
+      "failure": null,
+      "fixed_large_artifact_digest": "7fb0802ffcc3c33d92ffa2879e014ddf34c9def71c692aadaef73e1cfd14af37",
+      "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_17/taiji_r6_k_fixed_large_ensemble.pt",
+      "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "phase_order": [
+        "S",
+        "G",
+        "K"
+      ],
+      "status": "not_started",
+      "worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83"
+    },
+    {
+      "arms": [
+        {
+          "arm": "frozen-parent",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "matched-fixed-capacity",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "candidate-continuation",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "fixed-large",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "lesion",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        }
+      ],
+      "cell": {
+        "course_seed": 1,
+        "model_seed": 17
+      },
+      "failure": null,
+      "fixed_large_artifact_digest": "7fb0802ffcc3c33d92ffa2879e014ddf34c9def71c692aadaef73e1cfd14af37",
+      "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_17/taiji_r6_k_fixed_large_ensemble.pt",
+      "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "phase_order": [
+        "S",
+        "G",
+        "K"
+      ],
+      "status": "not_started",
+      "worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83"
+    },
+    {
+      "arms": [
+        {
+          "arm": "frozen-parent",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "matched-fixed-capacity",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "candidate-continuation",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "fixed-large",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "lesion",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        }
+      ],
+      "cell": {
+        "course_seed": 2,
+        "model_seed": 17
+      },
+      "failure": null,
+      "fixed_large_artifact_digest": "7fb0802ffcc3c33d92ffa2879e014ddf34c9def71c692aadaef73e1cfd14af37",
+      "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_17/taiji_r6_k_fixed_large_ensemble.pt",
+      "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "phase_order": [
+        "S",
+        "G",
+        "K"
+      ],
+      "status": "not_started",
+      "worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83"
+    },
+    {
+      "arms": [
+        {
+          "arm": "frozen-parent",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "matched-fixed-capacity",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "candidate-continuation",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "fixed-large",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "lesion",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        }
+      ],
+      "cell": {
+        "course_seed": 0,
+        "model_seed": 23
+      },
+      "failure": null,
+      "fixed_large_artifact_digest": "d602e7efc0063cdbb2cc9474e23c24c050046d931632768680060c98a6b1f7b9",
+      "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_23/taiji_r6_k_fixed_large_ensemble.pt",
+      "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+      "phase_order": [
+        "S",
+        "G",
+        "K"
+      ],
+      "status": "not_started",
+      "worker_bundle_digest": "25e0ca1c0c88c84ea64c0c5db4e80a4a9903c7f3eef9c988970eb6bb6472213f"
+    },
+    {
+      "arms": [
+        {
+          "arm": "frozen-parent",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "matched-fixed-capacity",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "candidate-continuation",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "fixed-large",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "lesion",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        }
+      ],
+      "cell": {
+        "course_seed": 1,
+        "model_seed": 23
+      },
+      "failure": null,
+      "fixed_large_artifact_digest": "d602e7efc0063cdbb2cc9474e23c24c050046d931632768680060c98a6b1f7b9",
+      "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_23/taiji_r6_k_fixed_large_ensemble.pt",
+      "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+      "phase_order": [
+        "S",
+        "G",
+        "K"
+      ],
+      "status": "not_started",
+      "worker_bundle_digest": "25e0ca1c0c88c84ea64c0c5db4e80a4a9903c7f3eef9c988970eb6bb6472213f"
+    },
+    {
+      "arms": [
+        {
+          "arm": "frozen-parent",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "matched-fixed-capacity",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "candidate-continuation",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "fixed-large",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "lesion",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        }
+      ],
+      "cell": {
+        "course_seed": 2,
+        "model_seed": 23
+      },
+      "failure": null,
+      "fixed_large_artifact_digest": "d602e7efc0063cdbb2cc9474e23c24c050046d931632768680060c98a6b1f7b9",
+      "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_23/taiji_r6_k_fixed_large_ensemble.pt",
+      "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+      "phase_order": [
+        "S",
+        "G",
+        "K"
+      ],
+      "status": "not_started",
+      "worker_bundle_digest": "25e0ca1c0c88c84ea64c0c5db4e80a4a9903c7f3eef9c988970eb6bb6472213f"
+    },
+    {
+      "arms": [
+        {
+          "arm": "frozen-parent",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "matched-fixed-capacity",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "candidate-continuation",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "fixed-large",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "lesion",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        }
+      ],
+      "cell": {
+        "course_seed": 0,
+        "model_seed": 31
+      },
+      "failure": null,
+      "fixed_large_artifact_digest": "b69030c265e5a966813c4d6469349805dc7619b466a331e30cd98381c5f2cc1c",
+      "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_31/taiji_r6_k_fixed_large_ensemble.pt",
+      "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+      "phase_order": [
+        "S",
+        "G",
+        "K"
+      ],
+      "status": "not_started",
+      "worker_bundle_digest": "ab60c27756f46907e3f649f42dba1e8fada356de2d345b0cc64574abff1dff5b"
+    },
+    {
+      "arms": [
+        {
+          "arm": "frozen-parent",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "matched-fixed-capacity",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "candidate-continuation",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "fixed-large",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "lesion",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        }
+      ],
+      "cell": {
+        "course_seed": 1,
+        "model_seed": 31
+      },
+      "failure": null,
+      "fixed_large_artifact_digest": "b69030c265e5a966813c4d6469349805dc7619b466a331e30cd98381c5f2cc1c",
+      "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_31/taiji_r6_k_fixed_large_ensemble.pt",
+      "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+      "phase_order": [
+        "S",
+        "G",
+        "K"
+      ],
+      "status": "not_started",
+      "worker_bundle_digest": "ab60c27756f46907e3f649f42dba1e8fada356de2d345b0cc64574abff1dff5b"
+    },
+    {
+      "arms": [
+        {
+          "arm": "frozen-parent",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "matched-fixed-capacity",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "candidate-continuation",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "fixed-large",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "lesion",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        }
+      ],
+      "cell": {
+        "course_seed": 2,
+        "model_seed": 31
+      },
+      "failure": null,
+      "fixed_large_artifact_digest": "b69030c265e5a966813c4d6469349805dc7619b466a331e30cd98381c5f2cc1c",
+      "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_31/taiji_r6_k_fixed_large_ensemble.pt",
+      "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+      "phase_order": [
+        "S",
+        "G",
+        "K"
+      ],
+      "status": "not_started",
+      "worker_bundle_digest": "ab60c27756f46907e3f649f42dba1e8fada356de2d345b0cc64574abff1dff5b"
+    }
+  ],
+  "checks": {
+    "candidate_training_not_started": true,
+    "course_not_started": true,
+    "cuda_unused": true,
+    "default_runtime_detached": true,
+    "external_integrations_detached": true,
+    "formal_admission_passed": true,
+    "input_manifest_preflight_passed": true,
+    "manifest_format_stable": true,
+    "parent_worker_cell_ledger_materialized": true
+  },
+  "client_attached": false,
+  "course_executed": false,
+  "created_at_unix": 1788974330.3508801,
+  "cuda_used": false,
+  "default_runtime_attached": false,
+  "elapsed_seconds": 0.16978840006049722,
+  "failures": [],
+  "fixed_large_dir": "checkpoints/taiji_k_fixed_large",
+  "formal_admission_passed": true,
+  "formal_admission_report": "reports/taiji_m4v2_r6_matched_control_admission_20260910.json",
+  "formal_admission_report_digest": "bd8b6fcbf30437d62b3cb2cb5fb01f88c3e32cd9ae4af2a0a8d2a8fec32a11c1",
+  "formal_admission_required": true,
+  "formal_input_ready": true,
+  "input_preflight_report": "reports/taiji_m4v2_r6_matched_control_gated_input_preflight_20260910.json",
+  "input_preflight_report_digest": "804838af572c2072ee2445f0c740bb7686d355b82faf438cadaf0e5a6b1c3584",
+  "manifest_digest": "9221b0920413e7d470821dc66b7daa1a2769ba2502c6b6af1801eb5ad1555ae7",
+  "manifest_path": "plans/manifests/taiji_m4v2_r6_matched_control_v2_20260910.json",
+  "matrix": {
+    "arms": [
+      "frozen-parent",
+      "matched-fixed-capacity",
+      "candidate-continuation",
+      "fixed-large",
+      "lesion"
+    ],
+    "course_seeds": [
+      0,
+      1,
+      2
+    ],
+    "model_seeds": [
+      17,
+      23,
+      31
+    ],
+    "phase_order": [
+      "S",
+      "G",
+      "K"
+    ]
+  },
+  "mcp_attached": false,
+  "next_gate": "Run the preregistered S->G->K formal execution under the passed admission report; keep promotion and all external owners closed.",
+  "parent_dir": "checkpoints/taiji_r6_parents",
+  "provider_attached": false,
+  "report_format": "taiji-m4v2-r6-formal-runner-v1",
+  "status": "input_ready",
+  "training_performed": false,
+  "version": 1,
+  "worker_dir": "checkpoints/taiji_k_workers"
+}

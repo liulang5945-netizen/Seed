@@ -63,6 +63,7 @@ EXECUTION_ORDER = tuple(
     for model_seed in MODEL_SEEDS
     for course_seed in COURSE_SEEDS
 )
+MATCHED_CONTROL_REVISION_FORMAT = "taiji-m4v2-r6-matched-control-v2"
 
 
 def _failure_record(
@@ -97,6 +98,46 @@ def _load_manifest(path: Path) -> dict[str, Any]:
     if not isinstance(raw, Mapping):
         raise ValueError("formal runner input manifest must be a JSON object")
     return {str(key): value for key, value in raw.items()}
+
+
+def _requires_formal_admission(manifest: Mapping[str, Any]) -> bool:
+    revision = manifest.get("control_revision")
+    return (
+        isinstance(revision, Mapping)
+        and revision.get("format") == MATCHED_CONTROL_REVISION_FORMAT
+    )
+
+
+def _load_formal_admission(
+    path: Path,
+    *,
+    manifest: Mapping[str, Any],
+) -> tuple[dict[str, Any], str]:
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(raw, Mapping):
+        raise ValueError("formal admission report must be a JSON object")
+    report = {str(key): value for key, value in raw.items()}
+    if report.get("status") != "passed":
+        raise ValueError("formal admission report is not passed")
+    if report.get("can_start_r6_formal") is not True:
+        raise ValueError("formal admission report does not authorize formal start")
+    if report.get("can_promote") is not False:
+        raise ValueError("formal admission report must keep promotion closed")
+    if report.get("manifest_digest") != manifest.get("manifest_digest"):
+        raise ValueError("formal admission manifest digest differs from input manifest")
+    if report.get("control_revision") != manifest.get("control_revision"):
+        raise ValueError("formal admission control revision differs from input manifest")
+    for key in (
+        "default_runtime_attached",
+        "provider_attached",
+        "mcp_attached",
+        "client_attached",
+        "cuda_used",
+        "training_performed",
+    ):
+        if report.get(key) is not False:
+            raise ValueError(f"formal admission side-effect boundary is open: {key}")
+    return report, content_digest(report)
 
 
 def _cell_ledger(manifest: Mapping[str, Any]) -> list[dict[str, Any]]:
@@ -262,6 +303,7 @@ def run_preflight(
     manifest_path: Path = DEFAULT_MANIFEST,
     report_path: Path = DEFAULT_REPORT,
     input_report_path: Path = DEFAULT_INPUT_REPORT,
+    admission_report_path: Path | None = None,
     parent_dir: Path = DEFAULT_PARENT_DIR,
     worker_dir: Path = DEFAULT_WORKER_DIR,
     fixed_large_dir: Path = DEFAULT_FIXED_LARGE_DIR,
@@ -270,6 +312,9 @@ def run_preflight(
     manifest_path = manifest_path.resolve()
     report_path = report_path.resolve()
     input_report_path = input_report_path.resolve()
+    admission_report_path = (
+        None if admission_report_path is None else admission_report_path.resolve()
+    )
     parent_dir = parent_dir.resolve()
     worker_dir = worker_dir.resolve()
     fixed_large_dir = fixed_large_dir.resolve()
@@ -293,6 +338,33 @@ def run_preflight(
                     message=f"formal runner cannot reload the validated manifest: {exc}",
                 )
             )
+    formal_admission_required = manifest is not None and _requires_formal_admission(manifest)
+    formal_admission_passed = not formal_admission_required
+    formal_admission_digest = ""
+    if manifest is not None and formal_admission_required:
+        if admission_report_path is None:
+            failures.append(
+                _failure_record(
+                    failure_class="input_contract",
+                    message="matched-control revision requires a passed formal admission report",
+                    recoverability="formal_admission_report_required",
+                )
+            )
+        else:
+            try:
+                _, formal_admission_digest = _load_formal_admission(
+                    admission_report_path,
+                    manifest=manifest,
+                )
+                formal_admission_passed = True
+            except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
+                failures.append(
+                    _failure_record(
+                        failure_class="input_contract",
+                        message=f"formal admission report is not valid: {exc}",
+                        recoverability="formal_admission_report_required",
+                    )
+                )
     checks = {
         "input_manifest_preflight_passed": input_report.get("status") == "passed",
         "manifest_format_stable": bool(
@@ -301,6 +373,7 @@ def run_preflight(
         "parent_worker_cell_ledger_materialized": False,
         "course_not_started": True,
         "candidate_training_not_started": True,
+        "formal_admission_passed": formal_admission_passed,
         "default_runtime_detached": True,
         "external_integrations_detached": True,
         "cuda_unused": True,
@@ -331,6 +404,14 @@ def run_preflight(
         ),
         "input_preflight_report": _relative_path(input_report_path),
         "input_preflight_report_digest": content_digest(input_report),
+        "formal_admission_report": (
+            None
+            if admission_report_path is None
+            else _relative_path(admission_report_path)
+        ),
+        "formal_admission_report_digest": formal_admission_digest,
+        "formal_admission_required": formal_admission_required,
+        "formal_admission_passed": formal_admission_passed,
         "parent_dir": _relative_path(parent_dir),
         "worker_dir": _relative_path(worker_dir),
         "fixed_large_dir": _relative_path(fixed_large_dir),
@@ -353,13 +434,14 @@ def run_preflight(
         "mcp_attached": False,
         "client_attached": False,
         "cuda_used": False,
-        "can_start_r6_formal": False,
+        "can_start_r6_formal": formal_admission_required and formal_admission_passed,
         "can_promote": False,
         "elapsed_seconds": time.perf_counter() - started,
         "next_gate": (
-            "Implement the S->G->K execution layer over this frozen ledger; do not run a "
-            "cell until the per-arm baseline, causal, resource, retention, and rollback "
-            "measurements are recorded."
+            "Run the preregistered S->G->K formal execution under the passed admission "
+            "report; keep promotion and all external owners closed."
+            if formal_admission_required and formal_admission_passed
+            else "Provide a passed formal admission report before starting the revised formal runner."
         ),
     }
     report_path.parent.mkdir(parents=True, exist_ok=True)
@@ -379,6 +461,7 @@ def run_execution(
     prior_execution_report: Path | None = None,
     input_report_path: Path = DEFAULT_INPUT_REPORT,
     preflight_report_path: Path | None = None,
+    admission_report_path: Path | None = None,
     cell_report_path: Path = DEFAULT_CELL_REPORT,
     parent_dir: Path = DEFAULT_PARENT_DIR,
     worker_dir: Path = DEFAULT_WORKER_DIR,
@@ -398,6 +481,9 @@ def run_execution(
         if preflight_report_path is None
         else preflight_report_path.resolve()
     )
+    admission_report_path = (
+        None if admission_report_path is None else admission_report_path.resolve()
+    )
     cell_report_path = cell_report_path.resolve()
     parent_dir = parent_dir.resolve()
     worker_dir = worker_dir.resolve()
@@ -406,6 +492,7 @@ def run_execution(
         manifest_path=manifest_path,
         report_path=preflight_report_path,
         input_report_path=input_report_path,
+        admission_report_path=admission_report_path,
         parent_dir=parent_dir,
         worker_dir=worker_dir,
         fixed_large_dir=fixed_large_dir,
@@ -418,6 +505,11 @@ def run_execution(
         "manifest_path": _relative_path(manifest_path),
         "input_preflight_report": _relative_path(input_report_path),
         "formal_preflight_report": _relative_path(preflight_report_path),
+        "formal_admission_report": (
+            None
+            if admission_report_path is None
+            else _relative_path(admission_report_path)
+        ),
         "parent_dir": _relative_path(parent_dir),
         "worker_dir": _relative_path(worker_dir),
         "fixed_large_dir": _relative_path(fixed_large_dir),
@@ -448,6 +540,16 @@ def run_execution(
             encoding="utf-8",
         )
         return report
+    report["formal_admission_report_digest"] = preflight.get(
+        "formal_admission_report_digest", ""
+    )
+    report["formal_admission_required"] = preflight.get(
+        "formal_admission_required", False
+    )
+    report["formal_admission_passed"] = preflight.get(
+        "formal_admission_passed", False
+    )
+    report["can_start_r6_formal"] = preflight.get("can_start_r6_formal", False)
     if (model_seed, course_seed) not in EXECUTION_ORDER:
         report["failures"] = [
             _failure_record(
@@ -612,6 +714,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--execution-report", type=Path, default=DEFAULT_EXECUTION_REPORT)
     parser.add_argument("--cell-report", type=Path, default=DEFAULT_CELL_REPORT)
     parser.add_argument("--preflight-report", type=Path)
+    parser.add_argument("--admission-report", type=Path)
     parser.add_argument("--prior-execution-report", type=Path)
     args = parser.parse_args(argv)
     manifest_path = args.manifest if args.manifest.is_absolute() else PROJECT_ROOT / args.manifest
@@ -646,6 +749,15 @@ def main(argv: list[str] | None = None) -> int:
                 else PROJECT_ROOT / args.preflight_report
             )
         )
+        admission_report_path = (
+            None
+            if args.admission_report is None
+            else (
+                args.admission_report
+                if args.admission_report.is_absolute()
+                else PROJECT_ROOT / args.admission_report
+            )
+        )
         prior_execution_report_path = (
             None
             if args.prior_execution_report is None
@@ -663,16 +775,27 @@ def main(argv: list[str] | None = None) -> int:
             prior_execution_report=prior_execution_report_path,
             input_report_path=input_report_path,
             preflight_report_path=preflight_report_path,
+            admission_report_path=admission_report_path,
             cell_report_path=cell_report_path,
             parent_dir=parent_dir,
             worker_dir=worker_dir,
             fixed_large_dir=fixed_large_dir,
         )
     else:
+        admission_report_path = (
+            None
+            if args.admission_report is None
+            else (
+                args.admission_report
+                if args.admission_report.is_absolute()
+                else PROJECT_ROOT / args.admission_report
+            )
+        )
         report = run_preflight(
             manifest_path=manifest_path,
             report_path=report_path,
             input_report_path=input_report_path,
+            admission_report_path=admission_report_path,
             parent_dir=parent_dir,
             worker_dir=worker_dir,
             fixed_large_dir=fixed_large_dir,

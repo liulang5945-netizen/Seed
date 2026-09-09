@@ -278,3 +278,14 @@ bound、资源/副作用/阈值合同；blocking_failures 为空。
 该 Gate 只给出 `can_start_r6_formal=true`，仍保持 `can_promote=false`、
 training/runtime/provider/MCP/client/CUDA 全部关闭。下一步把 admission report 接入
 formal runner 的必需输入并运行 gated preflight；不直接 promotion。
+
+## 18. Admission-gated preflight closure（2026-09-10）
+
+formal runner 已强制消费 admission report；独立 gated preflight 通过，确认同一
+manifest digest、aggregate admission status、checkpoint/registry input、CPU resource
+contract 和所有 side-effect flags。报告为 `input_ready`，course/training/candidate
+promotion 均为 false，`can_start_r6_formal=true`、`can_promote=false`。
+
+下一步只启动 gated formal execution，并继续记录资源/rollback/retention 证据；formal
+结果完成前不进行 promotion、不覆盖旧 aggregate、不接 default runtime/provider/MCP/
+client/CUDA。
