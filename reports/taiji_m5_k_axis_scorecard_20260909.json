@@ -1,0 +1,165 @@
+{
+  "format": "taiji-m5-k-axis-scorecard-v1",
+  "version": 1,
+  "source_reports": {
+    "M5.K1": "21bd8268d6a619d4fdebf2abe33a7216dd96df4e7f18453d6d05cec19931c91b",
+    "M5.K2": "f0eb873985abd23e120e048fd8d825099968f9923916071da306039e9b6051f7"
+  },
+  "scorecard": {
+    "format": "taiji-continual-evaluation-v1",
+    "version": 1,
+    "type": "scorecard",
+    "epsilon": 0.0,
+    "metric_specs": [
+      {
+        "format": "taiji-continual-evaluation-v1",
+        "version": 1,
+        "type": "metric_spec",
+        "name": "k1_single_step_composition_success",
+        "direction": "higher",
+        "unit": "episode_ratio",
+        "baseline_kind": "absolute",
+        "domain_id": "M5.K1",
+        "critical": false,
+        "catastrophic_forgetting_threshold": null
+      },
+      {
+        "format": "taiji-continual-evaluation-v1",
+        "version": 1,
+        "type": "metric_spec",
+        "name": "k2_multistep_composition_success",
+        "direction": "higher",
+        "unit": "episode_ratio",
+        "baseline_kind": "absolute",
+        "domain_id": "M5.K2",
+        "critical": false,
+        "catastrophic_forgetting_threshold": null
+      }
+    ],
+    "snapshots": [
+      {
+        "format": "taiji-continual-evaluation-v1",
+        "version": 1,
+        "type": "evaluation_snapshot",
+        "checkpoint_digest": "26e48ff0194ae4023661e158e54cbbeb390241b1cd57d856d3c9437da1b8bf42",
+        "phase_id": "M5.K1",
+        "owner_graph_digest": "919a36f3df6dccf812a48bf0c1f8709fb9f011f325f0e531d57b01648819097e",
+        "read_only_input_digest": "87ccb5ff8874b4d5a32ab18ada5e62f3285ea865e29c4833908cdcd120562658",
+        "observations": [
+          {
+            "metric_name": "k1_single_step_composition_success",
+            "domain_id": "M5.K1",
+            "checkpoint_digest": "26e48ff0194ae4023661e158e54cbbeb390241b1cd57d856d3c9437da1b8bf42",
+            "absolute_value": 1.0,
+            "owner_id": "m5:M5.K1:standalone-shadow",
+            "read_only_input_digest": "87ccb5ff8874b4d5a32ab18ada5e62f3285ea865e29c4833908cdcd120562658",
+            "parent_delta": null,
+            "parent_checkpoint_digest": null,
+            "comparison_delta": null,
+            "comparison_id": null
+          }
+        ],
+        "parent_checkpoint_digest": null,
+        "resource_cost": 1.0,
+        "snapshot_digest": "b0108d73cba4348ec0d397747251a9a8fbaa0f18b98e77fd1c04c744f24d2c5d"
+      },
+      {
+        "format": "taiji-continual-evaluation-v1",
+        "version": 1,
+        "type": "evaluation_snapshot",
+        "checkpoint_digest": "49a57b2571fe7bbeaa61a27ab7f6c8d8618a867048955d56e52c373b76129386",
+        "phase_id": "M5.K2",
+        "owner_graph_digest": "2864cd389e14cf435ecf0d676b012b8315ff68db0b6a7d745ebb54d8bb0f5a0d",
+        "read_only_input_digest": "64cb033bb9bc4124b3c35a13593f1afe885e6d326ae82b4b7df26f2877c6a7a3",
+        "observations": [
+          {
+            "metric_name": "k2_multistep_composition_success",
+            "domain_id": "M5.K2",
+            "checkpoint_digest": "49a57b2571fe7bbeaa61a27ab7f6c8d8618a867048955d56e52c373b76129386",
+            "absolute_value": 1.0,
+            "owner_id": "m5:M5.K2:standalone-shadow",
+            "read_only_input_digest": "64cb033bb9bc4124b3c35a13593f1afe885e6d326ae82b4b7df26f2877c6a7a3",
+            "parent_delta": null,
+            "parent_checkpoint_digest": null,
+            "comparison_delta": null,
+            "comparison_id": null
+          }
+        ],
+        "parent_checkpoint_digest": null,
+        "resource_cost": 1.0,
+        "snapshot_digest": "4bf6797040314571112f8d941baa64cc6ff015b0ece3d303c25bbfa3c52771b2"
+      }
+    ],
+    "scorecard_digest": "3590fef507b3d43ba8935055c856d46865deafac74d6e903baad3bf5f91ee036"
+  },
+  "scorecard_digest": "3590fef507b3d43ba8935055c856d46865deafac74d6e903baad3bf5f91ee036",
+  "absolute_capabilities": {
+    "M5.K1": {
+      "min": 1.0,
+      "mean": 1.0,
+      "max": 1.0,
+      "cells_ge_floor": 9
+    },
+    "M5.K2": {
+      "min": 1.0,
+      "mean": 1.0,
+      "max": 1.0,
+      "cells_ge_floor": 9
+    }
+  },
+  "comparison_evidence": {
+    "M5.K1": {
+      "A_minus_B": {
+        "min": 1.0,
+        "mean": 1.0,
+        "max": 1.0,
+        "cells_ge_floor": 9
+      },
+      "A_minus_C": {
+        "min": 1.0,
+        "mean": 1.0,
+        "max": 1.0,
+        "cells_ge_floor": 9
+      }
+    },
+    "M5.K2": {
+      "A_minus_B": {
+        "min": 1.0,
+        "mean": 1.0,
+        "max": 1.0,
+        "cells_ge_floor": 9
+      },
+      "A_minus_C": {
+        "min": 1.0,
+        "mean": 1.0,
+        "max": 1.0,
+        "cells_ge_floor": 9
+      }
+    }
+  },
+  "evidence_gates": {
+    "k1_evidence_closed": true,
+    "k2_evidence_closed": true,
+    "k_axis_evidence_closed": true,
+    "parent_retention_missing": true,
+    "standalone_shadow": true
+  },
+  "promotion_gates": {
+    "k1_formal_robust": true,
+    "k2_formal_robust": true,
+    "scorecard_content_addressed": true,
+    "parent_retention_baseline_present": false,
+    "default_runtime_owner_attached": false,
+    "same_parent_continual_s_g_k_evidence": false,
+    "resource_rollback_old_capability_gate": false
+  },
+  "verdict": {
+    "k_evidence_closed": true,
+    "promotion_gate": false,
+    "can_promote": false,
+    "reason": "K1/K2 close the standalone composition evidence line, but both lack a same-parent retention baseline and default-runtime ownership."
+  },
+  "next_boundary": "pre-register either K3 outcome-to-world/task-dependency evidence or a same-parent A8/R6 S-G-K promotion course; keep K2 shadow detached.",
+  "generated_at_epoch": 1788953329,
+  "elapsed_seconds": 0.025561300106346607
+}

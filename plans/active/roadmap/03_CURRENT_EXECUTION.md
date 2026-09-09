@@ -403,3 +403,7 @@ K2 canary 已完成：`reports/taiji_m5_k2_multistep_canary_20260909.json` 通�
 K2 formal 已完成：`reports/taiji_m5_k2_multistep_formal_20260909.json`，9/9 cells 通过，A holdout/A-B/A-C 的 min/mean/max 均为 `1.0`，训练、checkpoint/mask、S6B read admission、reward variance 全部 `9/9`；K2 转移头只作为 shadow 资产保留，`can_promote=false`。
 
 **当前唯一下一步**：将 M5.K1/K2 结果整理进 A8 K 轴 scorecard，明确「K2 结构是否有资格进入默认 Taiji 路径」的 aggregate 入口与否决条件；在 scorecard 冻结前不启动 K3、不引入 MCP/provider/client/CUDA，也不把 shadow 结构接入默认 runtime。
+
+A8 K 轴 scorecard 已完成：`reports/taiji_m5_k_axis_scorecard_20260909.json`。K1/K2 证据均闭合，content-addressed absolute snapshots 与 A-B/A-C comparison evidence 已分离；但 parent retention 缺失、learner 仍是 standalone shadow、默认 runtime 未接入，故 `promotion_gate=false`、`can_promote=false`。
+
+**当前唯一下一步**：在继续开发前冻结决策边界并预注册一个唯一出口：若要继续能力研究，进入 K3 的 outcome→world/任务依赖 canary；若要进入默认路径，改走同一 parent 的 A8/R6 S-G-K promotion course。当前建议先做 K3 预注册，K2 shadow 保持隔离，不引入 MCP/provider/client/CUDA。
