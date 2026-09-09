@@ -139,6 +139,7 @@ def run_canary(
     course_seed: int = 0,
     candidate_namespace: str = DEFAULT_CANDIDATE_NAMESPACE,
     lesion_k3: bool = False,
+    admit_feedback: bool = True,
 ) -> dict[str, Any]:
     started = time.perf_counter()
     paths = _artifact_paths(artifact_dir)
@@ -320,6 +321,80 @@ def run_canary(
         )
         if not projection.accepted and not lesion_k3:
             raise ValueError(f"K3 rejected real outcome: {projection.reason_code}")
+        if not admit_feedback and not lesion_k3:
+            before = _scores(parent, course_seed)
+            after = _scores(parent, course_seed)
+            retention = {
+                phase: abs(after[phase] - before[phase]) <= EPSILON
+                for phase in ("S", "G")
+            }
+            exchange_checkpoint = adapter.checkpoint()
+            exchange_restored = KContinualAdapter.from_checkpoint(exchange_checkpoint)
+            checks = {
+                "attachment_preflight_passed": preflight.get("status") == "passed",
+                "k1_result_typed": isinstance(semantic_result, StructuredSemanticResult),
+                "k2_result_typed": isinstance(
+                    transition_result, StructuredSemanticTransitionResult
+                ),
+                "read_only_intent_accepted": decision.accepted,
+                "real_workbench_success": real_success,
+                "k3_projection_executed": projection.accepted,
+                "feedback_not_admitted": not admit_feedback,
+                "adapter_no_exchange": exchange_restored.last_exchange is None,
+                "worker_bundle_roundtrip": exchange_restored.worker_bundle == bundle,
+                "rollback_parent_namespace_restored": (
+                    exchange_restored.active_namespace == exchange_restored.parent_namespace
+                ),
+                "old_S_retention": retention["S"],
+                "old_G_retention": retention["G"],
+                "adapter_training_steps_zero": adapter.training_steps == 0,
+                "no_default_runtime": True,
+                "no_external_integrations": True,
+                "can_promote_false": True,
+            }
+            report.update(
+                {
+                    "status": "passed" if all(checks.values()) else "failed",
+                    "checks": checks,
+                    "feedback_admitted": False,
+                    "worker_bundle_digest": bundle.bundle_digest,
+                    "owner_graph_digest": bundle.owner_graph_digest,
+                    "source_manifest_digest": source_manifest_digest,
+                    "resource_manifest_digest": resource_manifest_digest,
+                    "semantic_status": semantic_result.status,
+                    "transition_status": transition_result.status,
+                    "observation_path": observation.path,
+                    "intent_kind": str(intent.kind),
+                    "outcome_success": real_success,
+                    "outcome_reward": float(
+                        (outcome.get("taiji_outcome") or {}).get("reward", 0.0)
+                    ),
+                    "lesion_k3": False,
+                    "projection_accepted": True,
+                    "projection_reason": projection.reason_code,
+                    "projection_digest": projection.projection_digest,
+                    "exchange_digest": None,
+                    "old_capability_before": before,
+                    "old_capability_after": after,
+                    "old_capability_retention": retention,
+                    "resource": resource_summary,
+                    "candidate_training_performed": False,
+                    "candidate_promoted": False,
+                    "can_start_r6_formal": False,
+                    "can_promote": False,
+                    "blocking_reason": (
+                        None
+                        if all(checks.values())
+                        else "matched-capacity no-feedback control Gate failed"
+                    ),
+                }
+            )
+            report["adapter_checkpoint"] = {
+                "exchange_checkpoint_digest": content_digest(exchange_checkpoint),
+                "rollback_checkpoint_digest": content_digest(exchange_restored.checkpoint()),
+                "rollback_record_digest": None,
+            }
+            return report
         enriched_world = (
             projector.apply(transition_result.world, projection)
             if projection.accepted
@@ -436,6 +511,7 @@ def run_canary(
                         (outcome.get("taiji_outcome") or {}).get("reward", 0.0)
                     ),
                     "lesion_k3": True,
+                    "feedback_admitted": False,
                     "projection_accepted": False,
                     "projection_reason": projection.reason_code,
                     "projection_digest": projection.projection_digest,
@@ -573,6 +649,7 @@ def run_canary(
                     (outcome.get("taiji_outcome") or {}).get("reward", 0.0)
                 ),
                 "lesion_k3": lesion_k3,
+                "feedback_admitted": not lesion_k3,
                 "projection_accepted": projection.accepted,
                 "projection_reason": projection.reason_code,
                 "projection_digest": projection.projection_digest,

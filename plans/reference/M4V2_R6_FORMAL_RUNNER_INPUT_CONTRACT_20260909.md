@@ -651,3 +651,26 @@ MCP、client 或 CUDA。下一步只重新预注册并实现真正的 same-capac
 加载同一 K worker bundle、执行同一输入/trace/restore 路径和相同参数字节预算，但关闭
 K feedback/output admission 且不更新参数，使能力差值可观测；不得修改 1.25×/1.5×
 阈值，不重跑无关的 worker artifact 构建。
+
+## 27. Matched-control revision first-cell closure（2026-09-10）
+
+matched-control revision 已按独立预注册生成新 manifest：
+plans/manifests/taiji_m4v2_r6_matched_control_v2_20260910.json，digest 为
+9221b0920413e7d470821dc66b7daa1a2769ba2502c6b6af1801eb5ad1555ae7。旧 manifest 和
+旧 9-cell aggregate 保持不可变。新 revision 的 model17/course0 报告为
+reports/taiji_m4v2_r6_matched_control_cell_model_17_course_0_20260910.json，状态
+passed：
+
+- frozen-parent 对同一 K holdout 执行显式 admission rejection，能力值为 0.0；
+- matched-fixed-capacity 加载同一 K bundle，feedback/output admission 关闭，能力值为
+  0.0；candidate 为 1.0，因此 candidate-frozen-parent 与
+  candidate-matched-fixed-capacity 两个 paired delta 都为 1.0；
+- matched 与 candidate 均为 4833 worker parameters、19332 bytes、1 条 trace，
+  resource digest 一致；candidate/matched wall multiplier 为 1.2724×、peak multiplier
+  为 1.0024×，均低于 1.5×/1.25×；
+- matched 没有 exchange、candidate stage 或参数更新，S/G retention、parent restore、
+  side-effect 和 can_promote=false 均通过。
+
+这只闭合 revised model17/course0，不代表 revised 9-cell aggregate，也不解冻默认
+runtime。下一步按新 revision 的固定顺序只执行 model17/course1；任一 failure 保留并
+停止，旧 ledger 不覆盖。

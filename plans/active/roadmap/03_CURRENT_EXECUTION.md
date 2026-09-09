@@ -517,3 +517,12 @@ matched/frozen 都是 detached K，无法计算两个预注册 capability delta�
 no-update/no-feedback 的 matched K；只重跑受影响的 paired resource/capability slice，
 不放宽阈值、不把 fixed-large 改成 promotion threshold、不接 default runtime/provider/
 MCP/client/CUDA。
+
+matched-control revision 已生成新 manifest
+plans/manifests/taiji_m4v2_r6_matched_control_v2_20260910.json（digest
+9221b0920413e7d470821dc66b7daa1a2769ba2502c6b6af1801eb5ad1555ae7），并完成
+model17/course0 revised cell：frozen-parent=0.0、matched no-feedback=0.0、
+candidate=1.0；matched/candidate 参数和 trace 相同，wall=1.2724×、peak=1.0024×，
+旧 runtime/provider/MCP/client/CUDA 仍未接入。**当前唯一下一步**：只执行 revised
+model17/course1；成功后按原固定顺序继续，任一失败停止并保留证据，不修改旧 aggregate
+或资源阈值。

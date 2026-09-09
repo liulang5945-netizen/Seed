@@ -602,3 +602,18 @@ can_start_r6_formal=false、can_promote=false。
 但禁止 feedback/output admission 与参数更新，得到可观测的 0 能力对照；随后只重跑
 matched/candidate/lesion 的资源与能力 paired slice。禁止事后放宽资源阈值、把 fixed-large
 改作 promotion threshold，或接入任何外围 runtime。
+
+## 38. Matched-control revision first-cell evidence（2026-09-10）
+
+新的 control revision manifest 已内容寻址生成，digest 为
+9221b0920413e7d470821dc66b7daa1a2769ba2502c6b6af1801eb5ad1555ae7，旧
+blocked_aggregate 证据不被覆盖。model17/course0 revised five-arm cell 已通过：
+frozen-parent admission baseline=0.0、matched no-feedback=0.0、candidate=1.0，
+两个原本缺失的 capability delta 都为 1.0；matched 与 candidate 参数/trace 相同，
+wall=1.2724×、peak=1.0024×，均在既有预算内。
+
+matched 只执行 K1/K2/K3 内部路径并在 output admission 前停止，不 bind dependency
+projection、不写 candidate stage、不创建 exchange、不更新参数；因此这是实际 same-
+capacity control，而不是将 detached null 改成 0。当前仍保持
+can_start_r6_formal=false、can_promote=false。下一步只执行新 revision 的
+model17/course1，成功后再按顺序扩展，不接默认 runtime、provider、MCP、client/CUDA。

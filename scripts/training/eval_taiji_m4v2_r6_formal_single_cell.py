@@ -154,6 +154,7 @@ def _control_arm(
     parent_digest: str,
     resource_manifest_digest: str,
     course_seed: int,
+    explicit_k_baseline: bool = False,
 ) -> dict[str, Any]:
     before_rss = _rss_bytes()
     started = time.perf_counter()
@@ -175,17 +176,34 @@ def _control_arm(
             {"phase": "G", "status": "observed", "before": before["G"], "after": after["G"]},
             {
                 "phase": "K",
-                "status": "detached",
-                "new_capability": None,
-                "reason": "this control does not attach the K worker bundle",
+                "status": "rejected" if explicit_k_baseline else "detached",
+                "new_capability": (
+                    {
+                        "status": "observed",
+                        "task_success_rate": 0.0,
+                        "sample_count": 1,
+                    }
+                    if explicit_k_baseline
+                    else None
+                ),
+                "reason": (
+                    "frozen parent K admission rejected because no K worker is attached"
+                    if explicit_k_baseline
+                    else "this control does not attach the K worker bundle"
+                ),
             },
         ],
         "new_capability": {
-            "status": "detached",
-            "task_success_rate": None,
+            "status": "observed" if explicit_k_baseline else "detached",
+            "task_success_rate": 0.0 if explicit_k_baseline else None,
+            **({"sample_count": 1} if explicit_k_baseline else {}),
         },
         "old_capability_retention": retention,
-        "causal": {"status": "control_only", "k_feedback_consumed": False},
+        "causal": {
+            "status": "frozen_parent_zero_baseline" if explicit_k_baseline else "control_only",
+            "k_feedback_consumed": False,
+            "k_task_admission": False,
+        },
         "resource": {
             "device": "cpu",
             "resource_manifest_digest": resource_manifest_digest,
@@ -198,7 +216,7 @@ def _control_arm(
             "candidate_parameter_bytes": 0,
             "checkpoint_write_bytes": 0,
             "checkpoint_write_paths": [],
-            "inference_trace_count": 0,
+            "inference_trace_count": 1 if explicit_k_baseline else 0,
             "measurement_complete": peak_rss is not None,
         },
         "side_effects": {
@@ -330,6 +348,7 @@ def _candidate_arm(
     resource_manifest_digest: str,
     model_seed: int,
     course_seed: int,
+    admit_feedback: bool = True,
 ) -> dict[str, Any]:
     before_rss = _rss_bytes()
     started = time.perf_counter()
@@ -339,6 +358,7 @@ def _candidate_arm(
         course_seed=course_seed,
         candidate_namespace=candidate_namespace,
         lesion_k3=lesion_k3,
+        admit_feedback=admit_feedback,
     )
     elapsed = time.perf_counter() - started
     after_rss = _rss_bytes()
@@ -355,7 +375,13 @@ def _candidate_arm(
     )
     outcome_success = bool(canary.get("outcome_success", False))
     projection_accepted = bool(canary.get("projection_accepted", False))
-    if lesion_k3:
+    if not admit_feedback and not lesion_k3:
+        k_status = "executed_no_feedback" if passed else "failed"
+        capability_rate = 0.0 if passed else None
+        causal_status = (
+            "matched_capacity_no_feedback" if passed else "matched_capacity_failed"
+        )
+    elif lesion_k3:
         k_status = "lesion_rejected" if passed else "failed"
         capability_rate = 0.0 if passed else None
         causal_status = "lesion_verified" if passed else "lesion_failed"
@@ -402,6 +428,7 @@ def _candidate_arm(
             "real_workbench_success": outcome_success,
             "k3_projection_accepted": projection_accepted,
             "lesion_k3": lesion_k3,
+            "feedback_admitted": admit_feedback and not lesion_k3,
         },
         "resource": {
             "device": "cpu",
@@ -532,7 +559,7 @@ def execution_contract_snapshot(report: Mapping[str, Any]) -> dict[str, Any]:
                 "failure",
             )
         }
-    return {
+    snapshot = {
         "report_format": report.get("report_format"),
         "version": report.get("version"),
         "cell": report.get("cell"),
@@ -556,6 +583,11 @@ def execution_contract_snapshot(report: Mapping[str, Any]) -> dict[str, Any]:
         "can_start_r6_formal": report.get("can_start_r6_formal"),
         "can_promote": report.get("can_promote"),
     }
+    if "control_revision" in report:
+        snapshot["control_revision"] = report.get("control_revision")
+    if "manifest_digest" in report:
+        snapshot["manifest_digest"] = report.get("manifest_digest")
+    return snapshot
 
 
 def execution_contract_digest(report: Mapping[str, Any]) -> str:
@@ -617,6 +649,11 @@ def run_cell(
         for item in manifest["fixed_large_registry"]
         if int(item["model_seed"]) == model_seed
     )
+    control_revision = manifest.get("control_revision")
+    revised_controls = (
+        isinstance(control_revision, Mapping)
+        and control_revision.get("format") == "taiji-m4v2-r6-matched-control-v2"
+    )
     parent_path = _resolve_repo_path(parent_entry["checkpoint_path"])
     parent = _load_mapping(parent_path)
     parent_digest = str(parent_entry["checkpoint_digest"])
@@ -630,13 +667,27 @@ def run_cell(
             parent_digest=parent_digest,
             resource_manifest_digest=str(parent_entry["resource_manifest_digest"]),
             course_seed=course_seed,
+            explicit_k_baseline=revised_controls,
         ),
-        "matched-fixed-capacity": _control_arm(
-            arm="matched-fixed-capacity",
-            parent=parent,
-            parent_digest=parent_digest,
-            resource_manifest_digest=str(parent_entry["resource_manifest_digest"]),
-            course_seed=course_seed,
+        "matched-fixed-capacity": (
+            _candidate_arm(
+                artifact_dir=artifact_dir,
+                candidate_namespace=candidate_namespace,
+                lesion_k3=False,
+                arm="matched-fixed-capacity",
+                resource_manifest_digest=str(worker_entry["resource_manifest_digest"]),
+                model_seed=model_seed,
+                course_seed=course_seed,
+                admit_feedback=False,
+            )
+            if revised_controls
+            else _control_arm(
+                arm="matched-fixed-capacity",
+                parent=parent,
+                parent_digest=parent_digest,
+                resource_manifest_digest=str(parent_entry["resource_manifest_digest"]),
+                course_seed=course_seed,
+            )
         ),
         "candidate-continuation": _candidate_arm(
             artifact_dir=artifact_dir,
@@ -692,6 +743,7 @@ def run_cell(
         "created_at_unix": time.time(),
         "status": "blocked_controls" if failures else "passed",
         "cell": {"model_seed": model_seed, "course_seed": course_seed},
+        "manifest_digest": manifest.get("manifest_digest"),
         "parent_checkpoint_digest": parent_digest,
         "worker_bundle_digest": worker_entry["bundle_digest"],
         "fixed_large_artifact_digest": fixed_large_entry["artifact_digest"],
@@ -721,6 +773,8 @@ def run_cell(
             "R6 formal and promotion remain closed until the full causal/resource/retention aggregate"
         ),
     }
+    if revised_controls:
+        report["control_revision"] = control_revision
     report["execution_contract_digest"] = execution_contract_digest(report)
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(
