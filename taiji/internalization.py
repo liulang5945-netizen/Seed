@@ -88,6 +88,16 @@ def content_digest(value: Any) -> str:
     return hashlib.sha256(encoded).hexdigest()
 
 
+# M5 extends internalization beyond world-grounded observations: documents
+# and Skill records can now become sourced experiences.  The provenance
+# string must match its lineage prefix family so provenance cannot be
+# forged by mixing families.
+SUPPORTED_GROUNDING_LINEAGE_PREFIXES = {
+    "world-state-grounding": ("world-state:",),
+    "document-grounding": ("document:",),
+}
+
+
 def _required_text(value: str, name: str) -> str:
     normalized = str(value).strip()
     if not normalized:
@@ -483,10 +493,16 @@ class InternalizationConverter:
         if not lower <= float(source.outcome.reward) <= upper:
             return self._reject(source, "outcome_reward_out_of_bounds")
         affordance = source.affordance
+        provenance = str(affordance.feature_provenance)
+        supported_prefixes = SUPPORTED_GROUNDING_LINEAGE_PREFIXES.get(provenance)
         if (
-            affordance.feature_provenance != "world-state-grounding"
+            supported_prefixes is None
             or not affordance.grounding_lineage
-            or not any(item.startswith("world-state:") for item in affordance.grounding_lineage)
+            or not any(
+                item.startswith(prefix)
+                for item in affordance.grounding_lineage
+                for prefix in supported_prefixes
+            )
             or not affordance.features.numel()
         ):
             return self._reject(source, "missing_grounding")
