@@ -464,4 +464,6 @@ fixed-large 设计已冻结：[M4V2_R6_FIXED_LARGE_K_CONTROL_PREREGISTRATION_202
 
 native fixed-large builder 已通过：宽度 `2`、参数量 `9666`、训练 task `3/4` 与 formal holdout `0/1/2` 的路径/semantic/transition digest 交集为空，ensemble/K3 fresh restore 通过。其 single-cell comparator 已接入正式五臂 runner；当前报告 `status=passed`，fixed-large 真实 read、K3 lineage、rollback 和 branch lesion 均通过，`can_start_r6_formal=false`、`can_promote=false` 仍保持。
 
-**当前唯一下一步**：补齐并固定 candidate/fixed-large 同方法的 paired peak-resource、checkpoint-write、parameter/inference 和 side-effect measurement，先重跑 `model_seed=17 / course_seed=0` 单 cell 的完整 resource/causal ledger；完成前不扩大到 9 cells、不运行 full formal、不接 default runtime、不引入 MCP/provider/client/CUDA。
+paired resource ledger 已闭合：candidate/fixed-large 均有同方法 peak-RSS、checkpoint-write、parameter/inference、wall-clock 和 measurement-complete，K 单步均为 `1/1`；本 cell 的 paired delta 已记录，仍未改变 promotion 阈值。
+
+**当前唯一下一步**：冻结 9-cell formal 的 resource validity/aggregate 合同（CPU 口径、无效 cell、peak resource、checkpoint/parameter/inference 与 paired delta 聚合规则），合同冻结前不运行 full formal、不接 default runtime、不引入 MCP/provider/client/CUDA。

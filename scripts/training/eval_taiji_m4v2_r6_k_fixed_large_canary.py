@@ -490,6 +490,8 @@ def run_canary(
                 "old_capability_retention": retention,
                 "resource": {
                     "parameter_count": ensemble.parameter_count,
+                    "worker_parameter_count": ensemble.parameter_count,
+                    "worker_parameter_bytes": ensemble.parameter_count * 4,
                     "candidate_parameter_bytes": ensemble.parameter_count * 4,
                     "checkpoint_write_bytes": artifact_path.stat().st_size,
                     "inference_trace_count": 1,
