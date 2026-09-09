@@ -515,3 +515,14 @@ rollback、side-effect 和 failure contract 没有因重放漂移；资源时间
 下一步是把 formal runner 的一个 `not_started` row 接到这个 executor，完成单 cell 的
 显式 ledger 写回与 failure attribution；不直接跳到 9-cell，也不解冻 default runtime、
 provider、MCP、client 或 CUDA。
+
+## 28. First formal ledger row execution（2026-09-09）
+
+`--execute-cell` 已消费且只消费 `model17/course0` 一个 `not_started` row；formal
+execution report 将五臂真实结果、资源 Gate、side-effect、checkpoint/rollback、
+execution digest 和 failure attribution 写回，结果 `executed_passed`，其余 8 rows
+仍未启动。该入口继续强制 `can_start_r6_formal=false`、`can_promote=false`，没有接入
+default runtime、provider、MCP、client 或 CUDA。
+
+下一步按预注册矩阵只执行 `model17/course1`，验证 course seed 变化不会造成 executor
+隐式使用 model17/course0 数据或 parent；不并发扩大、不跳过失败 row。

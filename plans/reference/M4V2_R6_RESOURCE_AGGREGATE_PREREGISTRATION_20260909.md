@@ -111,4 +111,6 @@ cells，不接 default runtime、provider、MCP、client 或 CUDA。
 可复用 executor 与 replay 已完成：两次 model17/course0 的结构化
 `execution_contract_digest` 一致，五臂 resource Gate 全部通过。当前唯一下一步：**让
 formal runner 消费一个 `not_started` ledger row 并写回 executor 结果与 failure
-attribution**；该单 row 闭合前不扩大到其余 8 cells。
+attribution**；该 row 已闭合。当前唯一下一步：**只执行下一个预注册
+`model17/course1` row**，继续验证同一资源/失败合同；任何失败都保留并停止，不用其余
+cell 的均值覆盖。
