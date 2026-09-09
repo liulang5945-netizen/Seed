@@ -1,0 +1,384 @@
+{
+  "format": "taiji-m4v2-r2-sg-canary-v1",
+  "version": 1,
+  "status": "passed",
+  "can_promote": false,
+  "promotion_reason": "R2 smoke is one CPU course; formal multi-seed promotion is prohibited",
+  "parent": {
+    "checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+    "scores": {
+      "S": 5.965217334521898,
+      "G": 6.011889720320479
+    },
+    "owner_graph": "pre-developmental-f1"
+  },
+  "course_manifest": {
+    "format": "taiji-continual-evaluation-v1",
+    "version": 1,
+    "type": "course_manifest",
+    "manifest_revision": 1,
+    "course_id": "m4v2-r2-sg-smoke",
+    "phases": [
+      {
+        "phase_id": "S",
+        "source_digest": "8024b01e2de9c668681aba71d413e4249bb720cac331eea1ea74c658a437e26a",
+        "dataset_digest": "2aff12812d16b202352d49c97965ab1327472a0ed69099f3fe9608ff1da75824",
+        "train_budget_bytes": 19,
+        "holdout_budget_bytes": 14,
+        "course_seed": 71,
+        "order": 1
+      },
+      {
+        "phase_id": "G-08-02",
+        "source_digest": "7339fe71dc1a378944faf55f7670767ed85bbab16930aeeb0d90ab249a5c72d3",
+        "dataset_digest": "7c441fccb5873b7cd4ad1d9c8c29cc762b3184ace5f9a31fca0624d2a35c5a6b",
+        "train_budget_bytes": 94,
+        "holdout_budget_bytes": 11,
+        "course_seed": 71,
+        "order": 2
+      },
+      {
+        "phase_id": "G-06-04",
+        "source_digest": "7339fe71dc1a378944faf55f7670767ed85bbab16930aeeb0d90ab249a5c72d3",
+        "dataset_digest": "9e0658c5189f9197f9218f9bb5171b5503eaca15f09158d10b8f0f0c6c87adc2",
+        "train_budget_bytes": 98,
+        "holdout_budget_bytes": 11,
+        "course_seed": 71,
+        "order": 3
+      },
+      {
+        "phase_id": "G-04-06",
+        "source_digest": "7339fe71dc1a378944faf55f7670767ed85bbab16930aeeb0d90ab249a5c72d3",
+        "dataset_digest": "c5d49abcaa8f2c12d20784713f9123fe1ad33ea8536bdee2a78134eb452974f9",
+        "train_budget_bytes": 102,
+        "holdout_budget_bytes": 11,
+        "course_seed": 71,
+        "order": 4
+      },
+      {
+        "phase_id": "G-02-08",
+        "source_digest": "7339fe71dc1a378944faf55f7670767ed85bbab16930aeeb0d90ab249a5c72d3",
+        "dataset_digest": "a48f1d8cf40933742031a3986079c0e45672a99cb6f48019b860eb6e8239b04e",
+        "train_budget_bytes": 106,
+        "holdout_budget_bytes": 11,
+        "course_seed": 71,
+        "order": 5
+      }
+    ],
+    "manifest_digest": "a5e1025f998817faeafa2ae04a48e8054d703098c7c59f47e17c8be472e1f8f1"
+  },
+  "arms": {
+    "slow_only": {
+      "arm": "slow_only",
+      "mode": "slow",
+      "migration": {
+        "format": "taiji-developmental-f1-migration-v1",
+        "source_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+        "owner_graph_digest": "0e19c69619b436b360746637938299e238e483afee0aed488aff3c9edc149412",
+        "fast_is_zero": true,
+        "effective_parameter_count": 3156,
+        "state_scalar_count": 22092,
+        "bundle_digest": "2a966ed751189f359b09184f5b24bf43c77eaa5770bf12898774f85e232d5fd3"
+      },
+      "scores": {
+        "S": 5.670499421426645,
+        "G": 5.931288836558836
+      },
+      "parent_delta": {
+        "S": -0.2947179130952531,
+        "G": -0.08060088376164298
+      },
+      "resources": {
+        "train_bytes": 419,
+        "parameter_count": 28552,
+        "developmental_state_scalars": 22092,
+        "replay_events_before_sleep": 0,
+        "replay_events_after_sleep": 0
+      },
+      "state": {
+        "fast_is_zero": true,
+        "fresh_restore_matches": true,
+        "restored_learning_mode": "read_only",
+        "old_owner_unchanged": true,
+        "developmental_state_changed": true,
+        "rollback_matches_parent": true,
+        "checkpoint_digest": "82cdc42eaf41ab85695a204893e824a920c706de6f309be5dc660638504fa273",
+        "developmental_state_digest": "93b3136d623c7ebf91b914331a5c763f1e5e6f71aa36dbd8a878a6608394a52a",
+        "owner_graph_digest": "0e19c69619b436b360746637938299e238e483afee0aed488aff3c9edc149412"
+      },
+      "replay": null
+    },
+    "fast_only": {
+      "arm": "fast_only",
+      "mode": "fast",
+      "migration": {
+        "format": "taiji-developmental-f1-migration-v1",
+        "source_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+        "owner_graph_digest": "0e19c69619b436b360746637938299e238e483afee0aed488aff3c9edc149412",
+        "fast_is_zero": true,
+        "effective_parameter_count": 3156,
+        "state_scalar_count": 22092,
+        "bundle_digest": "2a966ed751189f359b09184f5b24bf43c77eaa5770bf12898774f85e232d5fd3"
+      },
+      "scores": {
+        "S": 5.671785511554519,
+        "G": 5.933534158977511
+      },
+      "parent_delta": {
+        "S": -0.2934318229673796,
+        "G": -0.07835556134296784
+      },
+      "resources": {
+        "train_bytes": 419,
+        "parameter_count": 28552,
+        "developmental_state_scalars": 22092,
+        "replay_events_before_sleep": 424,
+        "replay_events_after_sleep": 424
+      },
+      "state": {
+        "fast_is_zero": false,
+        "fresh_restore_matches": true,
+        "restored_learning_mode": "read_only",
+        "old_owner_unchanged": true,
+        "developmental_state_changed": true,
+        "rollback_matches_parent": true,
+        "checkpoint_digest": "9bf46e8baeee19e486ef67d13b4b4719080c2d8772f29b753eb4908dc59547e3",
+        "developmental_state_digest": "edff4ffa748a09d5a083247bc39323903f03cc819d7371032896815b61d93594",
+        "owner_graph_digest": "0e19c69619b436b360746637938299e238e483afee0aed488aff3c9edc149412"
+      },
+      "replay": null
+    },
+    "fast_replay": {
+      "arm": "fast_replay",
+      "mode": "fast_slow",
+      "migration": {
+        "format": "taiji-developmental-f1-migration-v1",
+        "source_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+        "owner_graph_digest": "0e19c69619b436b360746637938299e238e483afee0aed488aff3c9edc149412",
+        "fast_is_zero": true,
+        "effective_parameter_count": 3156,
+        "state_scalar_count": 22092,
+        "bundle_digest": "2a966ed751189f359b09184f5b24bf43c77eaa5770bf12898774f85e232d5fd3"
+      },
+      "scores": {
+        "S": 5.664760935866266,
+        "G": 5.928663773657827
+      },
+      "parent_delta": {
+        "S": -0.30045639865563256,
+        "G": -0.08322594666265193
+      },
+      "resources": {
+        "train_bytes": 419,
+        "parameter_count": 28552,
+        "developmental_state_scalars": 22092,
+        "replay_events_before_sleep": 424,
+        "replay_events_after_sleep": 0
+      },
+      "state": {
+        "fast_is_zero": true,
+        "fresh_restore_matches": true,
+        "restored_learning_mode": "read_only",
+        "old_owner_unchanged": true,
+        "developmental_state_changed": true,
+        "rollback_matches_parent": true,
+        "checkpoint_digest": "1034ce5c1d7fb4bec00c8542cd3d1ba4d21745bf065bcc3b662008afd17a9759",
+        "developmental_state_digest": "1603ba89c76897315de2406dbd72a2396d4c3c6361189498cfc1b67afc82bf4d",
+        "owner_graph_digest": "0e19c69619b436b360746637938299e238e483afee0aed488aff3c9edc149412"
+      },
+      "replay": {
+        "events": 424,
+        "changed": true,
+        "consolidation": {
+          "rate": 1.0,
+          "clear_fast": true,
+          "changed": true,
+          "fast_is_zero": true,
+          "bundle_digest": "1603ba89c76897315de2406dbd72a2396d4c3c6361189498cfc1b67afc82bf4d"
+        },
+        "fast_is_zero": true,
+        "bundle_digest": "1603ba89c76897315de2406dbd72a2396d4c3c6361189498cfc1b67afc82bf4d"
+      }
+    }
+  },
+  "scorecard": {
+    "format": "taiji-continual-evaluation-v1",
+    "version": 1,
+    "type": "scorecard",
+    "epsilon": 0.05,
+    "metric_specs": [
+      {
+        "format": "taiji-continual-evaluation-v1",
+        "version": 1,
+        "type": "metric_spec",
+        "name": "mean_surprise",
+        "direction": "lower",
+        "unit": "nats_per_byte",
+        "baseline_kind": "parent",
+        "domain_id": "*",
+        "critical": true,
+        "catastrophic_forgetting_threshold": 2.0
+      }
+    ],
+    "snapshots": [
+      {
+        "format": "taiji-continual-evaluation-v1",
+        "version": 1,
+        "type": "evaluation_snapshot",
+        "checkpoint_digest": "82cdc42eaf41ab85695a204893e824a920c706de6f309be5dc660638504fa273",
+        "phase_id": "R2-final",
+        "owner_graph_digest": "0e19c69619b436b360746637938299e238e483afee0aed488aff3c9edc149412",
+        "read_only_input_digest": "3892f176d9908d00f07a1ba1ad293349ee6e9284bbe584f1956e4d1385f684f3",
+        "observations": [
+          {
+            "metric_name": "mean_surprise",
+            "domain_id": "S",
+            "checkpoint_digest": "82cdc42eaf41ab85695a204893e824a920c706de6f309be5dc660638504fa273",
+            "absolute_value": 5.670499421426645,
+            "owner_id": "0e19c69619b436b360746637938299e238e483afee0aed488aff3c9edc149412",
+            "read_only_input_digest": "3892f176d9908d00f07a1ba1ad293349ee6e9284bbe584f1956e4d1385f684f3",
+            "parent_delta": -0.2947179130952531,
+            "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "comparison_delta": null,
+            "comparison_id": null
+          },
+          {
+            "metric_name": "mean_surprise",
+            "domain_id": "G",
+            "checkpoint_digest": "82cdc42eaf41ab85695a204893e824a920c706de6f309be5dc660638504fa273",
+            "absolute_value": 5.931288836558836,
+            "owner_id": "0e19c69619b436b360746637938299e238e483afee0aed488aff3c9edc149412",
+            "read_only_input_digest": "3892f176d9908d00f07a1ba1ad293349ee6e9284bbe584f1956e4d1385f684f3",
+            "parent_delta": -0.08060088376164298,
+            "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "comparison_delta": null,
+            "comparison_id": null
+          }
+        ],
+        "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+        "resource_cost": 419.0,
+        "snapshot_digest": "de563452a6e26f884e8d716c13e9adaa856522fc15df85dad58913319c8f54e8"
+      },
+      {
+        "format": "taiji-continual-evaluation-v1",
+        "version": 1,
+        "type": "evaluation_snapshot",
+        "checkpoint_digest": "9bf46e8baeee19e486ef67d13b4b4719080c2d8772f29b753eb4908dc59547e3",
+        "phase_id": "R2-final",
+        "owner_graph_digest": "0e19c69619b436b360746637938299e238e483afee0aed488aff3c9edc149412",
+        "read_only_input_digest": "3892f176d9908d00f07a1ba1ad293349ee6e9284bbe584f1956e4d1385f684f3",
+        "observations": [
+          {
+            "metric_name": "mean_surprise",
+            "domain_id": "S",
+            "checkpoint_digest": "9bf46e8baeee19e486ef67d13b4b4719080c2d8772f29b753eb4908dc59547e3",
+            "absolute_value": 5.671785511554519,
+            "owner_id": "0e19c69619b436b360746637938299e238e483afee0aed488aff3c9edc149412",
+            "read_only_input_digest": "3892f176d9908d00f07a1ba1ad293349ee6e9284bbe584f1956e4d1385f684f3",
+            "parent_delta": -0.2934318229673796,
+            "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "comparison_delta": null,
+            "comparison_id": null
+          },
+          {
+            "metric_name": "mean_surprise",
+            "domain_id": "G",
+            "checkpoint_digest": "9bf46e8baeee19e486ef67d13b4b4719080c2d8772f29b753eb4908dc59547e3",
+            "absolute_value": 5.933534158977511,
+            "owner_id": "0e19c69619b436b360746637938299e238e483afee0aed488aff3c9edc149412",
+            "read_only_input_digest": "3892f176d9908d00f07a1ba1ad293349ee6e9284bbe584f1956e4d1385f684f3",
+            "parent_delta": -0.07835556134296784,
+            "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "comparison_delta": null,
+            "comparison_id": null
+          }
+        ],
+        "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+        "resource_cost": 419.0,
+        "snapshot_digest": "6c0d04978930bff5afc3be924515883603a0da9e933dcf86d01b8231cc88ade1"
+      },
+      {
+        "format": "taiji-continual-evaluation-v1",
+        "version": 1,
+        "type": "evaluation_snapshot",
+        "checkpoint_digest": "1034ce5c1d7fb4bec00c8542cd3d1ba4d21745bf065bcc3b662008afd17a9759",
+        "phase_id": "R2-final",
+        "owner_graph_digest": "0e19c69619b436b360746637938299e238e483afee0aed488aff3c9edc149412",
+        "read_only_input_digest": "3892f176d9908d00f07a1ba1ad293349ee6e9284bbe584f1956e4d1385f684f3",
+        "observations": [
+          {
+            "metric_name": "mean_surprise",
+            "domain_id": "S",
+            "checkpoint_digest": "1034ce5c1d7fb4bec00c8542cd3d1ba4d21745bf065bcc3b662008afd17a9759",
+            "absolute_value": 5.664760935866266,
+            "owner_id": "0e19c69619b436b360746637938299e238e483afee0aed488aff3c9edc149412",
+            "read_only_input_digest": "3892f176d9908d00f07a1ba1ad293349ee6e9284bbe584f1956e4d1385f684f3",
+            "parent_delta": -0.30045639865563256,
+            "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "comparison_delta": null,
+            "comparison_id": null
+          },
+          {
+            "metric_name": "mean_surprise",
+            "domain_id": "G",
+            "checkpoint_digest": "1034ce5c1d7fb4bec00c8542cd3d1ba4d21745bf065bcc3b662008afd17a9759",
+            "absolute_value": 5.928663773657827,
+            "owner_id": "0e19c69619b436b360746637938299e238e483afee0aed488aff3c9edc149412",
+            "read_only_input_digest": "3892f176d9908d00f07a1ba1ad293349ee6e9284bbe584f1956e4d1385f684f3",
+            "parent_delta": -0.08322594666265193,
+            "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "comparison_delta": null,
+            "comparison_id": null
+          }
+        ],
+        "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+        "resource_cost": 419.0,
+        "snapshot_digest": "26a4baf3c3094017af41a7f6713c39c5695cc5e36fabee2bc92977a43e4b1d7d"
+      }
+    ],
+    "scorecard_digest": "fcaf4854ee706867e2e84a9f3dc1e92d766fb880515404d7469af35fe1823fea"
+  },
+  "scorecard_retention": {
+    "S": {
+      "metric_name": "mean_surprise",
+      "domain_id": "S",
+      "sample_count": 3,
+      "valid_parent_delta_count": 3,
+      "missing_parent_baseline_count": 0,
+      "average_parent_gain": 0.2962020449060884,
+      "average_forgetting": 0.0,
+      "worst_forgetting": 0.0,
+      "exact_zero_non_degradation": true,
+      "non_inferiority": true,
+      "catastrophic_forgetting": false,
+      "epsilon": 0.05
+    },
+    "G": {
+      "metric_name": "mean_surprise",
+      "domain_id": "G",
+      "sample_count": 3,
+      "valid_parent_delta_count": 3,
+      "missing_parent_baseline_count": 0,
+      "average_parent_gain": 0.08072746392242092,
+      "average_forgetting": 0.0,
+      "worst_forgetting": 0.0,
+      "exact_zero_non_degradation": true,
+      "non_inferiority": true,
+      "catastrophic_forgetting": false,
+      "epsilon": 0.05
+    }
+  },
+  "gates": {
+    "course_manifest_round_trip": true,
+    "scorecard_round_trip": true,
+    "scorecard_non_inferiority_and_catastrophe": true,
+    "slow_only_fast_zero": true,
+    "fast_only_wrote_fast": true,
+    "replay_captured_real_events": true,
+    "replay_consolidated_and_cleared_fast": true,
+    "old_f1_owners_unchanged": true,
+    "fresh_restore_matches": true,
+    "fresh_restore_is_read_only": true,
+    "rollback_matches_parent": true
+  }
+}

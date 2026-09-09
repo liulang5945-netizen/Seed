@@ -27,7 +27,11 @@
 
 **B2 已完成：训练前 checkpoint 保存恢复预检通过。** `reports/taiji_m4v2_checkpoint_preflight_20260910.json` 使用 CPU 上的 model 17 parent 做了一个仅用于预检的小步 developmental update；它验证了 fast/slow、replay、owner lineage、内部 RNG、课程游标、无 optimizer 的局部更新状态、原子保存、fresh restore、断点续训一致性和 parent rollback。`can_start_training_pilot=true`，但 `research_course_executed=false`、`can_promote=false`。系统 TEMP/ACL 暴露的两个入口问题已修复，临时 checkpoint 已清理。
 
-**当前唯一下一步：执行 B3 一个模型 seed、一个课程的真实固定容量连续学习诊断 pilot。** 只使用已通过的保存合同；先完成 pilot 再决定正式三 seed，不直接启动 C。
+**B3-S/G slice 已完成，完整 B3 尚未完成。** 使用同一个不可变 model 17 parent（digest `3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675`）在 CPU 上执行了真实 fast/slow 学习与 replay；报告为 [B3 pilot probe](../../../reports/taiji_m4v2_b3_pilot_probe_20260910.json)。fast+replay 消费 424 个真实 wake replay event，replay 后 fast 清零；相对 parent 的 S/G delta 为 `−0.300456/−0.083226`，相对 slow-only 为 `−0.005738/−0.002625`，相对 fast-only 为 `−0.007025/−0.004870`（mean-surprise 越低越好）。fresh restore、read-only、old owner 未写入和 rollback 均通过，`can_promote=false`。
+
+这只证明当前 inherited fixed-capacity S/G 学习链在小型 synthetic course 上能产生真实更新和窄 holdout 改善；它没有 K phase、没有同权限 frozen K arm，也没有独立大规模 holdout，因此不能称完整 B3 或自然自进化。
+
+**当前唯一下一步：为 K runtime 建立真实 continuation-learning contract，并用同一 parent/课程完成 B3-K 单步 pilot。** 现有 R6 K worker 只能执行/投影，`training_update_steps=0`；先把 K 的输入、目标、局部 owner 更新、checkpoint/rollback 和独立 holdout 定义清楚，再接入 B3 三臂矩阵。不得把已有 K wiring-canary 重新命名为训练。
 
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 
