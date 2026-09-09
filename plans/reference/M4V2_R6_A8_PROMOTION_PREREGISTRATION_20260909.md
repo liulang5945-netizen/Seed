@@ -372,3 +372,16 @@ manifest preflight：
 
 下一步只实现消费该 manifest 的 formal runner per-cell ledger 和结构化失败归因；
 静态/输入 Gate 通过前不执行 9-cell course、不接 default runtime。
+
+## 18. Formal runner 入口层 preflight 执行记录（2026-09-09）
+
+已实现 `scripts/training/eval_taiji_m4v2_r6_formal.py`，并在不执行课程的模式下
+重新验证 manifest/input Gate。报告 `reports/taiji_m4v2_r6_formal_preflight_20260909.json`
+生成 `9×5=45` 个 `not_started` per-cell/per-arm ledger row，所有 row 预留 causal、
+resource、retention、side-effect、checkpoint 和 failure 字段；
+`status=input_ready`、`formal_input_ready=true`，但 `course_executed=false`、
+`can_start_r6_formal=false`、`can_promote=false`。
+
+该入口层只证明 formal runner 的输入闭合和 ledger 形状，不是 R6 formal 结果。下一步
+在一个固定 cell 上实现五 arm 的 S→G→K execution/measurement layer，首个失败按
+冻结的优先级记录后停止，不直接扩展到 9 cells。
