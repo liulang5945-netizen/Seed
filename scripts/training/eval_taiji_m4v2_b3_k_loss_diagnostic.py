@@ -211,6 +211,45 @@ def _parameter_delta_norm(before, after) -> float:
     return float(torch.sqrt(total).item())
 
 
+def _parameter_delta_digest(before, after) -> str:
+    payload = {}
+    for (before_name, before_parameter), (after_name, after_parameter) in zip(
+        before.named_parameters(), after.named_parameters(), strict=True
+    ):
+        if before_name != after_name:
+            raise ValueError("learner parameter names changed during K update")
+        payload[before_name] = after_parameter.detach() - before_parameter.detach()
+    return content_digest(payload)
+
+
+def _fit_tensor_digests(semantic, transition, experience) -> dict[str, str]:
+    semantic_inputs, semantic_facts, semantic_goals, semantic_content = (
+        semantic._training_batch((experience.semantic_example,))
+    )
+    transition_inputs, transition_delta, transition_next, transition_goals, transition_content = (
+        transition._training_batch((experience.transition_example,))
+    )
+    return {
+        "k1.semantic.input_tensor_digest": content_digest(semantic_inputs),
+        "k1.semantic.target_tensor_digest": content_digest(
+            {
+                "facts": semantic_facts,
+                "goals": semantic_goals,
+                "content": semantic_content,
+            }
+        ),
+        "k2.transition.input_tensor_digest": content_digest(transition_inputs),
+        "k2.transition.target_tensor_digest": content_digest(
+            {
+                "delta": transition_delta,
+                "next": transition_next,
+                "goals": transition_goals,
+                "content": transition_content,
+            }
+        ),
+    }
+
+
 def run_diagnostic(
     *,
     artifact_dir: Path = DEFAULT_ARTIFACT_DIR,
@@ -373,6 +412,13 @@ def run_diagnostic(
         train_loss_before = _loss_score(
             semantic_parent, transition_parent, course.train
         )
+        train_fit_tensor_digests = [
+            {
+                "experience_digest": experience.experience_digest,
+                **_fit_tensor_digests(semantic_parent, transition_parent, experience),
+            }
+            for experience in course.train
+        ]
         control_semantic = StructuredSemanticLearner.from_checkpoint(
             copy.deepcopy(semantic_parent_payload), device="cpu"
         )
@@ -608,6 +654,15 @@ def run_diagnostic(
                         transition_parent, transition_candidate
                     ),
                 },
+                "parameter_delta_digest": {
+                    "k1.semantic": _parameter_delta_digest(
+                        semantic_parent, semantic_candidate
+                    ),
+                    "k2.transition": _parameter_delta_digest(
+                        transition_parent, transition_candidate
+                    ),
+                },
+                "train_fit_tensor_digests": train_fit_tensor_digests,
                 "holdout_loss_improved": loss_after["combined_mse"] < loss_before["combined_mse"],
                 "candidate_checkpoint_paths": {
                     key: str(path) for key, path in candidate_paths.items()
