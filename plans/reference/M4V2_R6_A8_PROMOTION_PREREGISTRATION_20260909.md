@@ -268,3 +268,28 @@ standalone K formal report 当作 worker checkpoint。
 因此 R6 formal 入口仍然关闭。下一步唯一允许动作是建立可保存、可恢复且带同一
 parent/source/resource lineage 的 K1/K2 worker artifact 生成管线，再用本
 attachment preflight 验收；K3 只恢复真实 projector checkpoint，不训练。
+
+## 13. K worker artifact 与 attachment Gate 执行记录（2026-09-09）
+
+已完成上述动作。`scripts/training/build_taiji_m4v2_r6_k_worker_artifacts.py`
+复用冻结的 M5.K2 课程，在 CPU 上生成三类真实 artifact：K1 semantic
+`training_steps=2080`、K2 transition `training_steps=5040`、K3 deterministic
+projector `training_steps=0`。训练前保存/回读 Gate 与训练后 fresh restore Gate
+均通过，结果见 `reports/taiji_m4v2_r6_k_worker_artifact_build_20260909.json`。
+
+重新运行 `scripts/training/eval_taiji_m4v2_r6_k_worker_attachment_preflight.py`
+后，`reports/taiji_m4v2_r6_k_worker_attachment_preflight_20260909.json` 为
+`status=passed`：K1/K2/K3 同 parent bundle、owner graph、typed exchange、S/G
+retention、candidate stage、rollback 和 joint checkpoint 全通过；
+`attachment_gate_passed=true`、`can_start_k_controlled_canary=true`，但
+`can_start_r6_formal=false`、`can_promote=false`。artifact 仍是本机 ignored
+checkpoint，不作为 standalone formal evidence，也没有接 default runtime。
+
+执行中曾发现 preflight 与 builder 使用不同 parent episode id，导致 digest
+不一致；已统一复用 R6 baseline parent factory，并加入回归测试。该修复是
+lineage 身份修复，不是放宽 Gate 或重算指标。
+
+**当前唯一下一步**：在这组已挂接 artifact 上运行 single-cell controlled K
+canary，完整记录 S→G→K typed lineage、真实 outcome、candidate namespace 更新
+和失败 rollback；在 canary 通过前不扩大 formal 矩阵、不接 default runtime、不
+引入 MCP/provider/client/CUDA。

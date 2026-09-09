@@ -25,11 +25,9 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from scripts.training.eval_taiji_m4v2_r4_shadow import (  # noqa: E402
-    _score,
-    _tiny_config,
-)
+from scripts.training.eval_taiji_m4v2_r4_shadow import _score  # noqa: E402
 from scripts.training.eval_taiji_m4v2_r6_parent_baseline_preflight import (  # noqa: E402
+    _parent,
     _r6_course,
 )
 from taiji import (  # noqa: E402
@@ -73,15 +71,6 @@ WORKER_KEYWORDS = {
     "k3.outcome_projection": ("k3", "outcome", "projection"),
 }
 CHECKPOINT_SUFFIXES = {".pt", ".pth", ".ckpt", ".bin", ".safetensors"}
-
-
-def _parent(model_seed: int) -> dict[str, Any]:
-    model = Taiji(_tiny_config(model_seed), episode_id=f"r6-worker-parent-{model_seed}")
-    model.enable_adaptive_residual_bridge(gate=1.0, residual_gain=1.0)
-    payload = model.checkpoint()
-    if not isinstance(payload, Mapping):
-        raise TypeError("Taiji parent checkpoint must be a mapping")
-    return {str(key): value for key, value in payload.items()}
 
 
 def _load_torch_mapping(path: Path) -> dict[str, Any]:
@@ -385,6 +374,8 @@ def _base_report(
         "provider_attached": False,
         "mcp_attached": False,
         "client_attached": False,
+        "attachment_gate_passed": False,
+        "can_start_k_controlled_canary": False,
         "can_start_r6_formal": False,
         "can_promote": False,
     }
@@ -596,9 +587,14 @@ def run_preflight(
         report["old_capability_after"] = after
         report["old_capability_retention"] = retention
         report["candidate_training_performed"] = False
-        report["can_start_r6_formal"] = report["status"] == "passed"
+        report["attachment_gate_passed"] = report["status"] == "passed"
+        report["can_start_k_controlled_canary"] = report["attachment_gate_passed"]
+        report["can_start_r6_formal"] = False
         report["blocking_reason"] = (
-            None
+            (
+                "attachment passed; R6 formal remains closed until the controlled K "
+                "canary and full S/G/K promotion Gate run"
+            )
             if report["status"] == "passed"
             else "attachment checks failed; R6 formal remains closed"
         )
