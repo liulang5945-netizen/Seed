@@ -775,3 +775,17 @@ peak multiplier=1.0027×，两个 capability delta 均为 1.0。
 can_start_r6_formal=false、can_promote=false。下一步只实现并运行独立的 revised
 aggregate validator，验证全量 causal/resource/retention/manifest 合同；不覆盖旧
 execution/aggregate evidence，不接 default runtime/provider/MCP/client/CUDA。
+
+## 36. Matched-control revision aggregate validation（2026-09-10）
+
+revised aggregate validator 已消费新 manifest、新 execution ledger 和 9 个 cell
+report，生成 reports/taiji_m4v2_r6_matched_control_aggregate_20260910.json。报告为
+`passed`，blocking_failures 为空；all_cells、candidate floor、K3 lesion、资源预算、
+两组 paired delta availability/floor Gate 全部为 true，9 个 cell 均为
+executed_passed。candidate-frozen 与 candidate-matched delta 的 n=9、mean=1.0、
+one-sided 95% Student-t lower bound=1.0。
+
+validator 只证明 revised aggregate 合同，仍明确保持 can_start_r6_formal=false、
+can_promote=false。下一步只实现独立 formal-admission gate，重新验证 aggregate 的
+content-addressed lineage、checkpoint/rollback、side-effect 隔离和 revision threshold
+不变性；不覆盖旧 aggregate，不接 default runtime/provider/MCP/client/CUDA。

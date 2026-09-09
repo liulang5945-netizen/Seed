@@ -582,3 +582,12 @@ wall=1.2513×、peak=1.0027×，fixed-large K-task-equivalent control 通过。*
 下一步**：实现并运行 matched-control revision 专用 aggregate validator；先验证
 9-cell causal/resource/retention 合同，再决定是否允许 formal/promotion，期间不接入
 default runtime/provider/MCP/client/CUDA、不修改阈值。
+
+matched-control revision aggregate validator 已实现并通过，报告为
+reports/taiji_m4v2_r6_matched_control_aggregate_20260910.json；9/9 cell、candidate
+floor、K3 lesion、wall/peak budget、frozen-parent paired delta 和 matched-capacity
+paired delta 全部为 true，两组 paired delta 的均值及单侧 95% lower bound 均为 1.0，
+blocking_failures 为空。**当前唯一下一步**：实现独立的 R6 formal-admission gate，
+只消费该 aggregate 与 revision manifest，验证放行前的完整 lineage/side-effect/
+checkpoint 约束；在该 gate 通过前不启动 formal/promotion，不接 default runtime/
+provider/MCP/client/CUDA。

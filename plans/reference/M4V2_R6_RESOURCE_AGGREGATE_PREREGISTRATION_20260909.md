@@ -252,3 +252,17 @@ peak=1.0027×。
 aggregate。下一步只实现 revised manifest 专用 validator：检查 9/9 完整性、控制臂
 语义、worker 资源等价、因果/保留/rollback、阈值和内容寻址；失败则保持 blocked，
 不删除或填补任何 cell。
+
+## 16. Revised aggregate validator closure（2026-09-10）
+
+revised manifest 专用 aggregate validator 已通过，报告为
+reports/taiji_m4v2_r6_matched_control_aggregate_20260910.json。9/9 row 均为
+executed_passed，所有 cell 的控制臂语义、worker-owned matched resource、参数/trace
+等价、rollback/side-effect、candidate floor、K3 lesion、wall/peak cap 均通过；两组
+paired capability delta 均 n=9、mean=1.0，单侧 95% lower bound=1.0，blocking_failures
+为空。
+
+下一步不是 promotion，而是独立 formal-admission gate：只审计该 aggregate 与其
+manifest/registry 的 lineage、checkpoint、owner graph、side-effect 和阈值不变性。
+审计通过前不启动 formal、不覆盖旧 aggregate、不接 default runtime/provider/MCP/
+client/CUDA。

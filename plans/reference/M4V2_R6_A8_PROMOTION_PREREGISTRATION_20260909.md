@@ -705,3 +705,16 @@ namespace、rollback 和 side-effect Gate 均通过，fixed-large K-task-equival
 9/9 仍不等于 promotion。旧 R6 aggregate 与旧 ledger 保持不可变，
 can_start_r6_formal=false、can_promote=false。下一步只实现并运行 revised aggregate
 validator；不得改变阈值、外推单元结果或接入 default runtime/provider/MCP/client/CUDA。
+
+## 47. Matched-control revision aggregate validation（2026-09-10）
+
+revised aggregate validator 已通过，输出为
+reports/taiji_m4v2_r6_matched_control_aggregate_20260910.json；9/9 execution row 和
+cell report 全部通过，candidate floor、K3 lesion、candidate/matched wall 与 peak
+budget、两组 paired capability delta availability/floor 均通过，blocking_failures 为空。
+两组 paired delta 的 n=9、mean=1.0、单侧 95% lower bound=1.0。
+
+该报告不是 promotion token，can_start_r6_formal 与 can_promote 仍为 false。下一步只
+实现独立 formal-admission gate，对 aggregate、manifest、checkpoint/rollback、owner
+graph 和 side-effect contract 做二次放行审计；不得在审计前启动 formal 或接入默认
+runtime/provider/MCP/client/CUDA。
