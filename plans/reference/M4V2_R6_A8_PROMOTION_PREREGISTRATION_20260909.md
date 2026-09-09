@@ -491,3 +491,16 @@ runner 也已生成带 fixed-large artifact digest 的 9×5 not-started ledger�
 已执行 cell，`course_executed=false`、`can_start_r6_formal=false`、`can_promote=false`
 保持。下一步先实现单 cell execution contract 的正式 ledger 写入和失败归因，再以同一
 runner 扩展 8 个 cell；不接 default runtime、provider、MCP、client 或 CUDA。
+
+## 26. Five-arm resource ledger closure（2026-09-09）
+
+model17/course0 的 single-cell 已对五个 arm 统一执行 resource Gate：
+`frozen-parent`、`matched-fixed-capacity`、`candidate-continuation`、`fixed-large`、
+`lesion` 的 `resource_gate` 全部为 `true`，每个 arm 均列出 CPU、resource digest、
+peak-RSS 方法、参数/字节、checkpoint path/bytes、inference trace 和 training steps。
+candidate/fixed-large paired delta 与 K3 lesion 结果保持通过，且没有引入新的外部变量。
+
+该结果只闭合首个 cell 的资源/side-effect ledger，不把 single-cell 冒充 9-cell formal。
+下一步把已验证的五臂执行合同抽成 formal runner 的可复用 cell executor，先重放并做
+字段级一致性检查，再扩展 model17 的其余 course seed，最后才进入完整 3×3 aggregate；
+`can_start_r6_formal=false`、`can_promote=false` 不变。

@@ -481,3 +481,18 @@ resource measurement 仍闭合；`course_executed=false`、`can_start_r6_formal=
 contract**，让 model17/course0 在 frozen ledger 上逐臂写入 baseline、K capability、
 causal lesion、resource、side-effect、checkpoint/rollback 和 failure attribution；
 该 execution cell 通过前不扩大到其余 8 cells，也不接 default runtime/provider/MCP/client/CUDA。
+
+## 15. Model17/course0 five-arm resource contract closure（2026-09-09）
+
+single-cell runner 已将 frozen-parent、matched-fixed-capacity、candidate-continuation、
+fixed-large、lesion 五个 arm 统一写入 resource object：CPU/device、各自
+`resource_manifest_digest`、wall-clock、peak RSS 及固定测量方法、worker/candidate 参数
+计数与字节、checkpoint path/bytes、inference trace、training update steps 和
+`measurement_complete`。五个 arm 的 `resource_gate` 均为 `true`，缺失任一 arm 字段会
+直接生成 `resource_gate` failure，不再只检查 candidate/fixed-large paired subset。
+
+重跑结果仍为 `status=passed`，candidate/fixed-large K success 为 `1/1`，K3 lesion
+边界可观测，所有 side-effect/rollback 约束保持关闭；这闭合了首个 cell 的资源 ledger，
+但尚未运行完整 S→G→K course，也不代表 9-cell aggregate 或 promotion。下一步是把该
+五臂执行合同抽为 formal runner 可复用的单 cell executor，先以同一 model17/course0
+重放并逐字段比对，再开放其余 8 cells。

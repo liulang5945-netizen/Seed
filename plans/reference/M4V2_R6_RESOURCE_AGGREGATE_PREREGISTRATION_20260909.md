@@ -104,4 +104,6 @@ model17/23/31 的 fixed-large artifact、source/resource manifest、fresh restor
 non-overlap 已全部纳入 content-addressed formal input registry，preflight 已通过。
 当前唯一下一步：**实现 model17/course0 的单 cell execution contract**，在不扩大矩阵
 的前提下逐臂落盘 S→G→K、causal/resource/side-effect/checkpoint/rollback 与失败归因；
-该 cell 通过前不运行其余 8 cells，不接 default runtime、provider、MCP、client 或 CUDA。
+该 cell 的五臂 resource ledger 已闭合，下一步改为**将这份执行合同抽为可复用 cell
+executor，并用同一 model17/course0 重放做字段级一致性检查**；通过前不运行其余 8
+cells，不接 default runtime、provider、MCP、client 或 CUDA。

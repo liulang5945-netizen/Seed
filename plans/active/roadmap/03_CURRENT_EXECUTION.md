@@ -479,5 +479,10 @@ artifact/ensemble digest；model17/course0 single-cell 仍通过，paired resour
 
 **当前唯一下一步**：实现 model17/course0 的单 cell execution contract，把五臂
 S→G→K 的 baseline、K capability、causal lesion、resource、side-effect、
-checkpoint/rollback 和 failure attribution 写入冻结 ledger；单 cell 通过前不扩大到
-其余 8 cells、不运行 9-cell full formal、不接 default runtime/provider/MCP/client/CUDA。
+checkpoint/rollback 和 failure attribution 写入冻结 ledger。该 cell 现已真实重跑并通过：
+五臂 `resource_gate=true`，每个 arm 均有 CPU/resource digest、peak RSS、参数/字节、
+checkpoint path/bytes、inference trace、training steps；candidate/fixed-large K
+success 为 `1/1`，lesion 与 rollback/side-effect Gate 通过。**当前唯一下一步**：将
+这份五臂执行合同抽为 formal runner 可复用的 cell executor，以同一 model17/course0
+重放并做字段级一致性检查；通过前不扩大到其余 8 cells、不运行 9-cell aggregate、
+不接 default runtime/provider/MCP/client/CUDA。
