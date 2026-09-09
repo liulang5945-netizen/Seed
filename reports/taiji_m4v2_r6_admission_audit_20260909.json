@@ -1,0 +1,108 @@
+{
+  "format": "taiji-m4v2-r6-admission-audit-v1",
+  "version": 1,
+  "status": "passed",
+  "sources": {
+    "r4_formal": {
+      "path": "E:\\Seed\\reports\\taiji_m4v2_r4_shadow_formal_20260909.json",
+      "format": "taiji-m4v2-r4-shadow-formal-v1",
+      "status": "passed",
+      "content_digest": "3b6e3c42183d4e476af697abaa997127fcf4ca23687ec589152ddab23ef55fa3"
+    },
+    "r5_formal": {
+      "path": "E:\\Seed\\reports\\taiji_m4v2_r5_conditional_formal_20260909.json",
+      "format": "taiji-m4v2-r5-conditional-formal-v1",
+      "status": "rejected",
+      "content_digest": "33871b9ea5b3d94dc9ac63da0832b61bb5836531b158614ea322a263c5380212"
+    },
+    "k_scorecard_v2": {
+      "path": "E:\\Seed\\reports\\taiji_m5_k_axis_scorecard_v2_20260909.json",
+      "format": "taiji-m5-k-axis-scorecard-v2",
+      "status": null,
+      "content_digest": "3ebf33ca20eba92dc839341c8220fe160556adfabd57088b2d6aa194fcb44f38"
+    },
+    "r6_adapter_preflight": {
+      "path": "E:\\Seed\\reports\\taiji_m4v2_r6_k_adapter_preflight_20260909.json",
+      "format": "taiji-m4v2-r6-k-adapter-preflight-v1",
+      "status": "passed",
+      "content_digest": "5f92a57e8f136f60b4645f47f2f55b171a16ebffedc694b660050d1cd40384ae"
+    }
+  },
+  "observed_metrics": {
+    "r4_g_vs_fixed_large_non_worse": {
+      "better_count": 4,
+      "count": 9,
+      "max": 0.014802587035773307,
+      "mean": 0.0010015640274570162,
+      "min": -0.005768113503914485,
+      "non_worse_count": 4
+    },
+    "r5_retention_gate": {
+      "g_non_worse_cells": 4,
+      "g_required": 7,
+      "s_non_worse_cells": 6,
+      "route_lesion_g_positive_cells": 7,
+      "route_lesion_s_positive_cells": 7,
+      "valid_cells": 7
+    },
+    "r5_resource_caps": {
+      "wall_clock_multiplier": 1.5,
+      "working_set_multiplier": 1.25,
+      "violations": [],
+      "clean": true
+    },
+    "k_promotion_gates": {
+      "k1_formal_robust": true,
+      "k2_formal_robust": true,
+      "k3_formal_robust": true,
+      "scorecard_content_addressed": true,
+      "parent_retention_baseline_present": false,
+      "default_runtime_owner_attached": false,
+      "same_parent_continual_s_g_k_evidence": false,
+      "resource_rollback_old_capability_gate": false
+    },
+    "r6_preflight_check_count": 13
+  },
+  "gates": {
+    "r4_report_technical_evidence_closed": true,
+    "r4_structural_growth_admitted": false,
+    "r5_report_formal_admitted": true,
+    "r5_router_admitted": false,
+    "r6_parent_preflight_passed": true,
+    "r6_adapter_shadow_only": true,
+    "k_evidence_closed": true,
+    "k_parent_retention_baseline_present": false,
+    "k_default_runtime_owner_attached": false,
+    "same_parent_continual_course_ready": false,
+    "resource_rollback_old_capability_gate_ready": false,
+    "r5_resource_records_clean": true,
+    "r5_primary_threshold_met": false
+  },
+  "gate_reasons": {
+    "r4_structural_growth_admitted": "R4 G vs fixed-large non-worse=4/9; the fixed-large structural promotion gate was not met.",
+    "r5_router_admitted": "R5 formal rejected the conditional-modularity hypothesis; router remains a rollback-capable shadow and is not an R6 owner.",
+    "k_parent_retention_baseline_present": "K1/K2/K3 formal reports explicitly lack a same-parent retention baseline.",
+    "k_default_runtime_owner_attached": "K1/K2/K3 remain standalone shadow evidence; no default Taiji owner is attached.",
+    "same_parent_continual_course_ready": "No S→G→K same-parent formal course has run yet.",
+    "resource_rollback_old_capability_gate_ready": "The adapter preflight covers checkpoint/rollback mechanics only; the full resource and old-capability retention course is not available.",
+    "r5_primary_threshold_met": "R5 conditional module misses its preregistered G and S retention thresholds."
+  },
+  "formal_entry_requirements": {
+    "r4_structural_growth_admitted": false,
+    "r5_router_or_explicit_no_router_addendum": false,
+    "r6_parent_preflight_passed": true,
+    "k_native_adapter_entry": true,
+    "same_parent_baseline_epsilon": false,
+    "all_arm_checkpoint_resource_rollback_preflight": false,
+    "related_ci_native_ledger_clean": false
+  },
+  "verdict": {
+    "can_start_r6_formal": false,
+    "can_promote": false,
+    "admission": "blocked_shadow_only",
+    "reason": "R6 adapter mechanics are preflight-clean, but R4 structural admission, R5 router/no-router boundary, same-parent retention baseline, full S→G→K evidence, and full resource/old-capability Gate are not all ready."
+  },
+  "allowed_next_action": "Freeze an R6 fixed-capacity parent admission addendum and baseline protocol that explicitly treats R4/R5 as non-promoted shadows; do not train or attach the adapter until that contract is reviewed.",
+  "generated_at_epoch": 1788957932,
+  "elapsed_seconds": 0.0037510000402107835
+}

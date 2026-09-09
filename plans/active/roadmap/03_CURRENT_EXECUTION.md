@@ -428,4 +428,8 @@ K 轴 scorecard v2 已完成：`reports/taiji_m5_k_axis_scorecard_v2_20260909.js
 
 同一 parent 的 A8/R6 promotion formal 已冻结：[M4V2_R6_A8_PROMOTION_PREREGISTRATION_20260909.md](../../reference/M4V2_R6_A8_PROMOTION_PREREGISTRATION_20260909.md)。合同明确当前真实入口：R4 相对 fixed-large 的 structural growth 仍未晋级、R5 router 尚未解冻、K1/K2/K3 仍是 standalone shadow；所以 R6 不能直接运行。其 9-cell 合同先要求 parent checkpoint/owner/source/resource/rollback preflight，再要求 native K adapter 与 S→G→K 同一 parent 连续课程；`can_promote=false` 继续固定。
 
-**当前唯一下一步**：实现 same-parent K adapter 的 checkpoint preflight/smoke——只验证 parent/candidate namespace、owner/source lineage、fresh restore、rollback 和 K3 dependency boundary 的可保存性，不训练、不接 default runtime、不引入 MCP/provider/client/CUDA；若入口 Gate 未满足，保留为 shadow 并按合同回到 R4/R5 前置。
+same-parent K adapter 已实现并完成 preflight：`reports/taiji_m4v2_r6_k_adapter_preflight_20260909.json`，13/13 checks 通过；新增 `tests/taiji_native/test_m4v2_r6_k_adapter.py`，3 tests 通过。验证内容包括 parent/candidate namespace、owner/source/resource digest、K3 dependency projection、prefit/staged/rollback checkpoint fresh restore、同一 parent 绑定和 explicit rollback。全程 `training_performed=false`、`default_runtime_attached=false`、`candidate_promoted=false`，所以这只是 R6 入口技术 Gate，不是 formal/promotion；R4/R5/parent baseline/resource/old-capability retention 仍未解冻，`can_promote=false` 不变。
+
+只读 admission audit 已完成：`reports/taiji_m4v2_r6_admission_audit_20260909.json`。审计 content-addressed 读取 R4/R5/K v2/R6 preflight；R4 technical evidence、R5 rejection、K evidence closed、R6 adapter preflight 和 R5 resource caps 已确认，但 R4 structural admission、R5 router/no-router 边界、same-parent retention baseline、完整 S→G→K、全 arm resource/old-capability Gate 与 CI/native ledger 确认仍缺失。结论 `blocked_shadow_only`，`can_start_r6_formal=false`、`can_promote=false`。
+
+**当前唯一下一步**：冻结 R6 fixed-capacity parent admission addendum，明确 R4/R5 不晋级、R6 的 no-router 边界、parent baseline/epsilon 校准和完整 Gate 顺序；addendum 通过前不训练、不接 default runtime、不引入 MCP/provider/client/CUDA。

@@ -102,6 +102,12 @@ from .continual_evaluation import (
     MetricSpec,
     MissingParentBaselineError,
 )
+from .continual_k_adapter import (
+    TAIJI_K_CONTINUAL_ADAPTER_FORMAT,
+    TAIJI_K_CONTINUAL_ADAPTER_VERSION,
+    KAdapterRollbackRecord,
+    KContinualAdapter,
+)
 from .contracts import (
     CONTRACT_FORMAT,
     CONTRACT_VERSION,
@@ -860,6 +866,10 @@ __all__ = [
     "MetricObservation",
     "MetricSpec",
     "MissingParentBaselineError",
+    "KAdapterRollbackRecord",
+    "KContinualAdapter",
+    "TAIJI_K_CONTINUAL_ADAPTER_FORMAT",
+    "TAIJI_K_CONTINUAL_ADAPTER_VERSION",
     "DEVELOPMENTAL_REPLAY_BUFFER_FORMAT",
     "DEVELOPMENTAL_REPLAY_BUFFER_VERSION",
     "DEVELOPMENTAL_REPLAY_EVENT_FORMAT",
