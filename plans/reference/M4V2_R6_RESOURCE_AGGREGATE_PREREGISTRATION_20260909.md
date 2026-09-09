@@ -121,6 +121,18 @@ checkpoint、运行同一输入与 inference trace、保持 no-update/no-externa
 仅屏蔽 K feedback/output admission，使它成为可计算能力差值的容量对照。修订完成前
 不计算新 promotion 结果，也不接入 default runtime/provider/MCP/client/CUDA。
 
+## 7. Matched-control revision first-cell measurement（2026-09-10）
+
+revision manifest 将 matched 的 resource owner 从 parent 改为 worker，并显式声明
+frozen-parent admission baseline 与 matched worker attachment。model17/course0
+实测：candidate/matched wall multiplier=1.2724×，peak multiplier=1.0024×，均通过
+原有 1.5×/1.25× cap；candidate、matched worker 参数均为 4833/19332 bytes，
+inference trace 均为 1，training update steps 均为 0。
+
+该结果只说明修订后的一个 cell 满足资源/能力字段合同；不允许把单 cell 外推成
+9-cell aggregate。后续仍使用全部 3×3、不可删除失败 cell、一侧 95% Student-t
+lower bound 和原有阈值，按 model17/course1 开始的固定顺序继续执行。
+
 model17/23/31 的 fixed-large artifact、source/resource manifest、fresh restore 和
 non-overlap 已全部纳入 content-addressed formal input registry，preflight 已通过。
 当前唯一下一步：**实现 model17/course0 的单 cell execution contract**，在不扩大矩阵

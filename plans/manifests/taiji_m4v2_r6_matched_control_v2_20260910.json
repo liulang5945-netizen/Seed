@@ -1,0 +1,359 @@
+{
+  "arms": [
+    "frozen-parent",
+    "matched-fixed-capacity",
+    "candidate-continuation",
+    "fixed-large",
+    "lesion"
+  ],
+  "baseline_repeat_seeds": [
+    401,
+    503,
+    607
+  ],
+  "control_revision": {
+    "format": "taiji-m4v2-r6-matched-control-v2",
+    "frozen_parent_arm": {
+      "explicit_k_admission_baseline": true,
+      "parameter_updates": false,
+      "task_success_rate": 0.0,
+      "worker_bundle_attached": false
+    },
+    "matched_arm": {
+      "feedback_admitted": false,
+      "parameter_updates": false,
+      "same_input_trace": true,
+      "same_parameter_budget": true,
+      "same_restore_path": true,
+      "worker_bundle_attached": true
+    },
+    "thresholds_unchanged": {
+      "candidate_holdout_floor": 0.75,
+      "paired_capability_delta_floor": 0.25,
+      "peak_working_set_multiplier_cap": 1.25,
+      "wall_clock_multiplier_cap": 1.5
+    }
+  },
+  "course_registry": [
+    {
+      "course_label": "r6-order-0",
+      "course_seed": 0,
+      "course_variant_seed": 101,
+      "holdout_digest": "2c5666e03d4ff8fab701ad6b7b999cd7477d1920cb5b7b2727b7aa2a446150ce",
+      "phase_order": [
+        "S",
+        "G",
+        "K"
+      ],
+      "source_manifest_digest": "a847dd3247950431453a2950411c158c386e16ae84281b5e7971194ad74b71d2",
+      "workspace_contract": {
+        "read_only_routes_only": true,
+        "root_isolation": true,
+        "split_isolation": true
+      }
+    },
+    {
+      "course_label": "r6-order-1",
+      "course_seed": 1,
+      "course_variant_seed": 202,
+      "holdout_digest": "2c5666e03d4ff8fab701ad6b7b999cd7477d1920cb5b7b2727b7aa2a446150ce",
+      "phase_order": [
+        "S",
+        "G",
+        "K"
+      ],
+      "source_manifest_digest": "1b54bc50339bb75024dda5d0acb233e7186d03431d0debb3ff092ab71f96edc6",
+      "workspace_contract": {
+        "read_only_routes_only": true,
+        "root_isolation": true,
+        "split_isolation": true
+      }
+    },
+    {
+      "course_label": "r6-order-2",
+      "course_seed": 2,
+      "course_variant_seed": 303,
+      "holdout_digest": "2c5666e03d4ff8fab701ad6b7b999cd7477d1920cb5b7b2727b7aa2a446150ce",
+      "phase_order": [
+        "S",
+        "G",
+        "K"
+      ],
+      "source_manifest_digest": "f63e6278b801571a99bbbecc3a19f80b57fd20c1e605e51fe4514db0f29cbd91",
+      "workspace_contract": {
+        "read_only_routes_only": true,
+        "root_isolation": true,
+        "split_isolation": true
+      }
+    }
+  ],
+  "course_seeds": [
+    0,
+    1,
+    2
+  ],
+  "device": "cpu",
+  "experiment_id": "m4v2-r6-a8-promotion-formal-v1",
+  "failure_attribution_contract": {
+    "format": "taiji-r6-failure-record-v1",
+    "priority": [
+      "input_contract",
+      "lineage",
+      "checkpoint_restore",
+      "course_harness",
+      "environment_blocker",
+      "worker_resolution",
+      "workbench_outcome",
+      "projection_contract",
+      "causal_gate",
+      "retention_gate",
+      "resource_gate",
+      "side_effect_gate",
+      "aggregate_gate",
+      "unexpected"
+    ],
+    "require_cell_arm_step_digests": true,
+    "stop_on_first_cell_failure": true
+  },
+  "fixed_large_registry": [
+    {
+      "artifact_digest": "7fb0802ffcc3c33d92ffa2879e014ddf34c9def71c692aadaef73e1cfd14af37",
+      "artifact_path": "checkpoints/taiji_k_fixed_large/model_17/taiji_r6_k_fixed_large_ensemble.pt",
+      "candidate_namespace": "taiji:k:fixed-large:model-17",
+      "ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "ensemble_checkpoint_fresh_restore_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "ensemble_width": 2,
+      "formal_holdout_task_seeds": [
+        0,
+        1,
+        2
+      ],
+      "k3_checkpoint_digest": "2a23c818eed3de6d48cc314fe262bfc391dac88e088cf9409d6d4868e4637bc3",
+      "model_seed": 17,
+      "optimizer_state_present": false,
+      "owner_graph_digest": "2d7beb457c7043993afd8b2d405d16cbe6cddc657e5db6d14da71379722710de",
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "resource_device": "cpu",
+      "resource_manifest_digest": "3c8c8a375db46a79a66c60dcb1adf2c56fb63dc273545eb150123fb3ae3bfcc4",
+      "source_manifest_digest": "e8eb997246b1cdd9924680a9aa62e07f6bfbf49b8320f340c82cf022b977e162",
+      "source_observation_overlap": {
+        "paths": [],
+        "semantic_input_digests": [],
+        "transition_input_digests": []
+      },
+      "worker_training_task_seeds": [
+        3,
+        4
+      ]
+    },
+    {
+      "artifact_digest": "d602e7efc0063cdbb2cc9474e23c24c050046d931632768680060c98a6b1f7b9",
+      "artifact_path": "checkpoints/taiji_k_fixed_large/model_23/taiji_r6_k_fixed_large_ensemble.pt",
+      "candidate_namespace": "taiji:k:fixed-large:model-23",
+      "ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "ensemble_checkpoint_fresh_restore_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "ensemble_width": 2,
+      "formal_holdout_task_seeds": [
+        0,
+        1,
+        2
+      ],
+      "k3_checkpoint_digest": "24fa4e752a0f648f5987c1ff2d5b395b91e5b86a3e72bce5e2609843ba684166",
+      "model_seed": 23,
+      "optimizer_state_present": false,
+      "owner_graph_digest": "de1b4ec4fa5c6e2dd46f0cf0658c3a810cf56dc764efbcfbc3b16cae09fdaf11",
+      "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+      "resource_device": "cpu",
+      "resource_manifest_digest": "3c8c8a375db46a79a66c60dcb1adf2c56fb63dc273545eb150123fb3ae3bfcc4",
+      "source_manifest_digest": "057d07e6d69b829e175ce8bbc3df8f7cc29a446346a42eb4fc9dbeab2358638e",
+      "source_observation_overlap": {
+        "paths": [],
+        "semantic_input_digests": [],
+        "transition_input_digests": []
+      },
+      "worker_training_task_seeds": [
+        3,
+        4
+      ]
+    },
+    {
+      "artifact_digest": "b69030c265e5a966813c4d6469349805dc7619b466a331e30cd98381c5f2cc1c",
+      "artifact_path": "checkpoints/taiji_k_fixed_large/model_31/taiji_r6_k_fixed_large_ensemble.pt",
+      "candidate_namespace": "taiji:k:fixed-large:model-31",
+      "ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "ensemble_checkpoint_fresh_restore_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "ensemble_width": 2,
+      "formal_holdout_task_seeds": [
+        0,
+        1,
+        2
+      ],
+      "k3_checkpoint_digest": "e6e7a241a0d3a9b690e1368db548d14ddbd89537125748dde1ad2db1ff2589f2",
+      "model_seed": 31,
+      "optimizer_state_present": false,
+      "owner_graph_digest": "b37434163e3aa0fee53d9eed34f13ed3ed544aab9bc49a657e55423773fe716a",
+      "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+      "resource_device": "cpu",
+      "resource_manifest_digest": "3c8c8a375db46a79a66c60dcb1adf2c56fb63dc273545eb150123fb3ae3bfcc4",
+      "source_manifest_digest": "d7d99348fc35b9ae2803c5d36eb20a983e2d13a089e17f74443165436b41b3cf",
+      "source_observation_overlap": {
+        "paths": [],
+        "semantic_input_digests": [],
+        "transition_input_digests": []
+      },
+      "worker_training_task_seeds": [
+        3,
+        4
+      ]
+    }
+  ],
+  "format": "taiji-m4v2-r6-formal-runner-input-v1",
+  "manifest_digest": "9221b0920413e7d470821dc66b7daa1a2769ba2502c6b6af1801eb5ad1555ae7",
+  "model_seeds": [
+    17,
+    23,
+    31
+  ],
+  "parent_registry": [
+    {
+      "checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "checkpoint_path": "checkpoints/taiji_r6_parents/model_17.pt",
+      "fresh_restore_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "model_seed": 17,
+      "namespace": "taiji:parent:model-17",
+      "owner_graph_digest": "44aea51a8e491cdb0bb1bea6e72e1ebbe9dd7a6a254bb9a52b1bf04a6da190cb",
+      "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce",
+      "source_manifest_digest": "bfdc4fd5b48f53432bbaaa2616a0547f346b50156a822cf0e6e05a4203e38b8d"
+    },
+    {
+      "checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+      "checkpoint_path": "checkpoints/taiji_r6_parents/model_23.pt",
+      "fresh_restore_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+      "model_seed": 23,
+      "namespace": "taiji:parent:model-23",
+      "owner_graph_digest": "72cfeb7f4a58e0966149f5b52170dacf932ba5e34a21f73ddaaed94b42714d6f",
+      "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce",
+      "source_manifest_digest": "404989fed6441afcb4c57d03bd018740c89d71b6e2b2046a1b7858b4314f7d94"
+    },
+    {
+      "checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+      "checkpoint_path": "checkpoints/taiji_r6_parents/model_31.pt",
+      "fresh_restore_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+      "model_seed": 31,
+      "namespace": "taiji:parent:model-31",
+      "owner_graph_digest": "6f613256d74ee7a7517dca13094621d089f263a98ad0cc11bbd3023adefff1a6",
+      "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce",
+      "source_manifest_digest": "39d063ecc33470da0b09c093daca652b1663dfe66ac1b8d1b0b6281d1df6c375"
+    }
+  ],
+  "phase_order": [
+    "S",
+    "G",
+    "K"
+  ],
+  "resource_contract": {
+    "candidate_parameter_bytes_frozen_before_run": true,
+    "checkpoint_write_bytes_frozen_before_run": true,
+    "cuda_required": false,
+    "device": "cpu",
+    "frozen_parent_explicit_k_baseline": true,
+    "inference_trace_count_frozen_before_run": true,
+    "matched_capacity_worker_attached": true,
+    "peak_working_set_multiplier_cap": 1.25,
+    "training_update_steps_frozen_before_run": true,
+    "wall_clock_multiplier_cap": 1.5
+  },
+  "side_effect_contract": {
+    "candidate_namespace_isolated": true,
+    "client_attached": false,
+    "cuda_used": false,
+    "default_runtime_attached": false,
+    "mcp_attached": false,
+    "network_used": false,
+    "parent_namespace_read_only": true,
+    "provider_attached": false,
+    "read_only_workbench_routes": true,
+    "rollback_required": true
+  },
+  "version": 1,
+  "worker_registry": [
+    {
+      "bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83",
+      "candidate_namespace": "taiji:k:candidate:model-17",
+      "model_seed": 17,
+      "owner_graph_digest": "4f1cbc3ce105112a2320a9209f6c5bfdd7ade54436147b0e94c15764dfbf42b8",
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+      "source_manifest_digest": "d0946c73d9844b4b0e44f2685a87465a568ee6ba7665f23c11a7b5fe0208b362",
+      "workers": {
+        "k1.semantic": {
+          "artifact_digest": "76425eb5673fd9c974c54f6375a9ee30896dd1a40655b152e5757f3a56784aea",
+          "path": "checkpoints/taiji_k_workers/model_17/taiji_r6_k1_semantic.pt",
+          "worker_checkpoint_digest": "4b5ed527a3a105614cea73c6cc45a2d0577c9ec06eb6e974b245c679b93e5e5d"
+        },
+        "k2.transition": {
+          "artifact_digest": "01a04b8de044cf8c00c91c30492021ec61b09c124021807fb56eae1f05e99ecf",
+          "path": "checkpoints/taiji_k_workers/model_17/taiji_r6_k2_transition.pt",
+          "worker_checkpoint_digest": "67c96c5c8517ca58bacb45b8de756e7ffd24ee108276160c731da364714e2bda"
+        },
+        "k3.outcome_projection": {
+          "artifact_digest": "8daff1b6e1ccbbf10d592f498de78650ed54910bcbad58251c70f05edb58e3bd",
+          "path": "checkpoints/taiji_k_workers/model_17/taiji_r6_k3_outcome_projection.pt",
+          "worker_checkpoint_digest": "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
+        }
+      }
+    },
+    {
+      "bundle_digest": "25e0ca1c0c88c84ea64c0c5db4e80a4a9903c7f3eef9c988970eb6bb6472213f",
+      "candidate_namespace": "taiji:k:candidate:model-23",
+      "model_seed": 23,
+      "owner_graph_digest": "e834c4107fea26a8f54a316ee4bdc9c5b5d1b0498b988fc6060baf0c23cc1ed0",
+      "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+      "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+      "source_manifest_digest": "661ef11afa3936dfdb94800dd8680e038485882a53eaefb0ded68c4bd2e73e06",
+      "workers": {
+        "k1.semantic": {
+          "artifact_digest": "f626e77dd85c34e281c55d034dd4ca796725d3abed823807754c9ff19e90f170",
+          "path": "checkpoints/taiji_k_workers/model_23/taiji_r6_k1_semantic.pt",
+          "worker_checkpoint_digest": "4b5ed527a3a105614cea73c6cc45a2d0577c9ec06eb6e974b245c679b93e5e5d"
+        },
+        "k2.transition": {
+          "artifact_digest": "f8e1f73c951b6e650f20a9c7c975d3b1731484b65dbf1b5feb970a8f83d0bc53",
+          "path": "checkpoints/taiji_k_workers/model_23/taiji_r6_k2_transition.pt",
+          "worker_checkpoint_digest": "67c96c5c8517ca58bacb45b8de756e7ffd24ee108276160c731da364714e2bda"
+        },
+        "k3.outcome_projection": {
+          "artifact_digest": "1a4b2fe0143bab3d879b5d8b5fa8d7f8a4f57bc91e7748cba7dec00f51d01cc2",
+          "path": "checkpoints/taiji_k_workers/model_23/taiji_r6_k3_outcome_projection.pt",
+          "worker_checkpoint_digest": "817c1278b17c972881a380e53c48bc6b207758d9e6ac6e3f88329f88a7f6f1ed"
+        }
+      }
+    },
+    {
+      "bundle_digest": "ab60c27756f46907e3f649f42dba1e8fada356de2d345b0cc64574abff1dff5b",
+      "candidate_namespace": "taiji:k:candidate:model-31",
+      "model_seed": 31,
+      "owner_graph_digest": "2f8efcf257ae3195ae6dc56024cfd3ba77151757e699684f90da7745be091c22",
+      "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+      "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+      "source_manifest_digest": "e042afbfc8f48f5f61bb0cfb36125fb095cc056b283405da0e74fea0bb6f0e85",
+      "workers": {
+        "k1.semantic": {
+          "artifact_digest": "5422228f0f1ede6a9ea34905ad71f48e562449bfa012d6b6f20fb917f5ffbcf7",
+          "path": "checkpoints/taiji_k_workers/model_31/taiji_r6_k1_semantic.pt",
+          "worker_checkpoint_digest": "4b5ed527a3a105614cea73c6cc45a2d0577c9ec06eb6e974b245c679b93e5e5d"
+        },
+        "k2.transition": {
+          "artifact_digest": "ea1fff12750cc1074c03f38ec851f5804ac19daea7cc2c29bc2e658019a51c34",
+          "path": "checkpoints/taiji_k_workers/model_31/taiji_r6_k2_transition.pt",
+          "worker_checkpoint_digest": "67c96c5c8517ca58bacb45b8de756e7ffd24ee108276160c731da364714e2bda"
+        },
+        "k3.outcome_projection": {
+          "artifact_digest": "83207f7f42bc7bdf16433095afa3b5e52fc726f6128b074ccc3e83798ec367a1",
+          "path": "checkpoints/taiji_k_workers/model_31/taiji_r6_k3_outcome_projection.pt",
+          "worker_checkpoint_digest": "7d890ae19ccdc4c5511a37e8da6198aa5795332763954dd18030a87d2c2dd728"
+        }
+      }
+    }
+  ]
+}
