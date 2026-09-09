@@ -598,3 +598,13 @@ parent/worker/fixed-large registry 和 prior ledger，任何失败停止在该 r
 
 下一步只执行 `model31/course1`，继续使用 prior ledger 与 model31 content-addressed
 输入，不改变任何 Gate 或外部变量。
+
+## 24. Model31/course1 execution（2026-09-09）
+
+`model31/course1` 已成功追加，execution contract digest 为
+`8595f247af189b5a71f0d903b77fe40c654c5517e7e801a85942cbc0683fdfef`；candidate/fixed-large
+均为 `1/1`，lesion 为 `0`，五臂 `resource_gate` 全部为 true。累计 8 个 row 为
+`executed_passed`，仅 model31/course2 仍为 `not_started`，aggregate 尚未运行。
+
+下一步只执行最后的 `model31/course2`，完成 9-cell ledger 后再做预注册 aggregate
+calculation；在 aggregate 计算前不改变任何主 Gate 或 promotion 状态。

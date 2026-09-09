@@ -2724,69 +2724,369 @@
       "arms": [
         {
           "arm": "frozen-parent",
-          "causal": null,
-          "checkpoint_ledger": null,
+          "causal": {
+            "k_feedback_consumed": false,
+            "status": "control_only"
+          },
+          "checkpoint_ledger": {
+            "fresh_restore_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "rollback_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "rollback_matches_parent": true
+          },
           "failure": null,
-          "new_capability": null,
-          "old_capability_retention": null,
-          "phase_rows": [],
-          "resource": null,
-          "side_effects": null,
-          "status": "not_started"
+          "new_capability": {
+            "status": "detached",
+            "task_success_rate": null
+          },
+          "old_capability_retention": {
+            "G": true,
+            "S": true
+          },
+          "phase_rows": [
+            {
+              "after": 5.857133765627293,
+              "before": 5.857133765627293,
+              "phase": "S",
+              "status": "observed"
+            },
+            {
+              "after": 5.493859170249493,
+              "before": 5.493859170249493,
+              "phase": "G",
+              "status": "observed"
+            },
+            {
+              "new_capability": null,
+              "phase": "K",
+              "reason": "this control does not attach the K worker bundle",
+              "status": "detached"
+            }
+          ],
+          "resource": {
+            "candidate_parameter_bytes": 0,
+            "checkpoint_write_bytes": 0,
+            "checkpoint_write_paths": [],
+            "device": "cpu",
+            "inference_trace_count": 0,
+            "measurement_complete": true,
+            "peak_working_set_bytes": 232828928,
+            "peak_working_set_method": "process_rss_before_after_lower_bound",
+            "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce",
+            "training_update_steps": 0,
+            "wall_clock_seconds": 0.13725399994291365,
+            "worker_parameter_bytes": 0,
+            "worker_parameter_count": 0
+          },
+          "side_effects": {
+            "candidate_namespace_written": false,
+            "default_runtime_attached": false,
+            "external_integrations_attached": false,
+            "parent_namespace_unchanged": true
+          },
+          "status": "control_passed"
         },
         {
           "arm": "matched-fixed-capacity",
-          "causal": null,
-          "checkpoint_ledger": null,
+          "causal": {
+            "k_feedback_consumed": false,
+            "status": "control_only"
+          },
+          "checkpoint_ledger": {
+            "fresh_restore_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "rollback_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+            "rollback_matches_parent": true
+          },
           "failure": null,
-          "new_capability": null,
-          "old_capability_retention": null,
-          "phase_rows": [],
-          "resource": null,
-          "side_effects": null,
-          "status": "not_started"
+          "new_capability": {
+            "status": "detached",
+            "task_success_rate": null
+          },
+          "old_capability_retention": {
+            "G": true,
+            "S": true
+          },
+          "phase_rows": [
+            {
+              "after": 5.857133765627293,
+              "before": 5.857133765627293,
+              "phase": "S",
+              "status": "observed"
+            },
+            {
+              "after": 5.493859170249493,
+              "before": 5.493859170249493,
+              "phase": "G",
+              "status": "observed"
+            },
+            {
+              "new_capability": null,
+              "phase": "K",
+              "reason": "this control does not attach the K worker bundle",
+              "status": "detached"
+            }
+          ],
+          "resource": {
+            "candidate_parameter_bytes": 0,
+            "checkpoint_write_bytes": 0,
+            "checkpoint_write_paths": [],
+            "device": "cpu",
+            "inference_trace_count": 0,
+            "measurement_complete": true,
+            "peak_working_set_bytes": 233525248,
+            "peak_working_set_method": "process_rss_before_after_lower_bound",
+            "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce",
+            "training_update_steps": 0,
+            "wall_clock_seconds": 0.14649760001339018,
+            "worker_parameter_bytes": 0,
+            "worker_parameter_count": 0
+          },
+          "side_effects": {
+            "candidate_namespace_written": false,
+            "default_runtime_attached": false,
+            "external_integrations_attached": false,
+            "parent_namespace_unchanged": true
+          },
+          "status": "control_passed"
         },
         {
           "arm": "candidate-continuation",
-          "causal": null,
-          "checkpoint_ledger": null,
+          "causal": {
+            "k3_projection_accepted": true,
+            "lesion_k3": false,
+            "real_workbench_success": true,
+            "status": "candidate_path_verified"
+          },
+          "checkpoint_ledger": {
+            "adapter_checkpoint": {
+              "exchange_checkpoint_digest": "191f13810b085d27c86904ee4f52605ce54fb81d05599c4142d048eb5e3b8d41",
+              "rollback_checkpoint_digest": "9caa002de9f6bcfd3bb9b837c4952d8f8b8775aa13a1081fff706d9ef81c2c54",
+              "rollback_record_digest": "64f0b1ec30bd22ed7d5bfda8d4d1c06d8ba0a036cb5f5036f65a6347426eb9fa"
+            },
+            "exchange_digest": "d16dd30de8720f7c0b50173fc558c432183f48c7eae08f57b9fad69bd2e2d4c5",
+            "rollback_record_explicit": true
+          },
           "failure": null,
-          "new_capability": null,
-          "old_capability_retention": null,
-          "phase_rows": [],
-          "resource": null,
-          "side_effects": null,
-          "status": "not_started"
+          "new_capability": {
+            "sample_count": 1,
+            "status": "observed",
+            "task_success_rate": 1.0
+          },
+          "old_capability_retention": {
+            "G": true,
+            "S": true
+          },
+          "phase_rows": [
+            {
+              "after": 5.857133765627293,
+              "before": 5.857133765627293,
+              "phase": "S",
+              "status": "observed"
+            },
+            {
+              "after": 5.493859170249493,
+              "before": 5.493859170249493,
+              "phase": "G",
+              "status": "observed"
+            },
+            {
+              "observation_path": "typescript_05.ts",
+              "phase": "K",
+              "projection_accepted": true,
+              "projection_reason": "accepted",
+              "real_success": true,
+              "reward": 1.0,
+              "status": "executed"
+            }
+          ],
+          "resource": {
+            "candidate_parameter_bytes": 19332,
+            "checkpoint_write_bytes": 35403,
+            "checkpoint_write_paths": [
+              "checkpoints/taiji_k_workers/model_31/taiji_r6_k1_semantic.pt",
+              "checkpoints/taiji_k_workers/model_31/taiji_r6_k2_transition.pt",
+              "checkpoints/taiji_k_workers/model_31/taiji_r6_k3_outcome_projection.pt"
+            ],
+            "device": "cpu",
+            "inference_trace_count": 1,
+            "measurement_complete": true,
+            "peak_working_set_bytes": 258879488,
+            "peak_working_set_method": "process_rss_before_after_lower_bound",
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "training_update_steps": 0,
+            "wall_clock_seconds": 0.9374401000095531,
+            "worker_parameter_bytes": 19332,
+            "worker_parameter_count": 4833
+          },
+          "side_effects": {
+            "candidate_namespace_written": true,
+            "default_runtime_attached": false,
+            "external_integrations_attached": false,
+            "parent_namespace_unchanged": true
+          },
+          "status": "passed"
         },
         {
           "arm": "fixed-large",
-          "causal": null,
-          "checkpoint_ledger": null,
+          "causal": {
+            "branch_lesion_observable": true,
+            "k3_projection_accepted": true,
+            "k_task_equivalent": true,
+            "real_workbench_success": true,
+            "status": "fixed_large_control_verified"
+          },
+          "checkpoint_ledger": {
+            "adapter_checkpoint": {
+              "exchange_checkpoint_digest": "9092587a78b2336f187d091a6ce34ef3d0c94c7a77c27efd55fff89bc2e8fcd2",
+              "rollback_checkpoint_digest": "9092587a78b2336f187d091a6ce34ef3d0c94c7a77c27efd55fff89bc2e8fcd2",
+              "rollback_record_digest": "ca920301e93f2843cb27190de539ef1168f4cfd796020961c19c76a875f0015a"
+            },
+            "exchange_digest": "129c41b98fff8a4d460260d566a3cc7c9e77e4cfaa3426e80eef667a3b2ff388",
+            "rollback_record_explicit": true
+          },
           "failure": null,
-          "new_capability": null,
-          "old_capability_retention": null,
-          "phase_rows": [],
-          "resource": null,
-          "side_effects": null,
-          "status": "not_started"
+          "new_capability": {
+            "sample_count": 1,
+            "status": "observed",
+            "task_success_rate": 1.0
+          },
+          "old_capability_retention": {
+            "G": true,
+            "S": true
+          },
+          "phase_rows": [
+            {
+              "after": 5.857133765627293,
+              "before": 5.857133765627293,
+              "phase": "S",
+              "status": "observed"
+            },
+            {
+              "after": 5.493859170249493,
+              "before": 5.493859170249493,
+              "phase": "G",
+              "status": "observed"
+            },
+            {
+              "observation_path": "typescript_05.ts",
+              "phase": "K",
+              "projection_accepted": true,
+              "projection_reason": "accepted",
+              "real_success": true,
+              "reward": 1.0,
+              "status": "executed"
+            }
+          ],
+          "resource": {
+            "candidate_parameter_bytes": 38664,
+            "checkpoint_write_bytes": 125829,
+            "checkpoint_write_paths": [
+              "checkpoints/taiji_k_fixed_large/model_31/taiji_r6_k_fixed_large_ensemble.pt"
+            ],
+            "device": "cpu",
+            "inference_trace_count": 1,
+            "measurement_complete": true,
+            "parameter_count": 9666,
+            "peak_working_set_bytes": 260399104,
+            "peak_working_set_method": "process_rss_before_after_lower_bound",
+            "resource_manifest_digest": "3c8c8a375db46a79a66c60dcb1adf2c56fb63dc273545eb150123fb3ae3bfcc4",
+            "training_update_steps": 0,
+            "wall_clock_seconds": 0.7724525999510661,
+            "worker_parameter_bytes": 38664,
+            "worker_parameter_count": 9666
+          },
+          "side_effects": {
+            "candidate_namespace_written": true,
+            "default_runtime_attached": false,
+            "external_integrations_attached": false,
+            "parent_namespace_unchanged": true
+          },
+          "status": "passed"
         },
         {
           "arm": "lesion",
-          "causal": null,
-          "checkpoint_ledger": null,
+          "causal": {
+            "k3_projection_accepted": false,
+            "lesion_k3": true,
+            "real_workbench_success": true,
+            "status": "lesion_verified"
+          },
+          "checkpoint_ledger": {
+            "adapter_checkpoint": {
+              "exchange_checkpoint_digest": "1b1c61c3151b69c10affe8ec16141c325b4615b29ae8c50627aab04c2ee23069",
+              "rollback_checkpoint_digest": "1b1c61c3151b69c10affe8ec16141c325b4615b29ae8c50627aab04c2ee23069",
+              "rollback_record_digest": null
+            },
+            "exchange_digest": null,
+            "rollback_record_explicit": false
+          },
           "failure": null,
-          "new_capability": null,
-          "old_capability_retention": null,
-          "phase_rows": [],
-          "resource": null,
-          "side_effects": null,
-          "status": "not_started"
+          "new_capability": {
+            "sample_count": 1,
+            "status": "observed",
+            "task_success_rate": 0.0
+          },
+          "old_capability_retention": {
+            "G": true,
+            "S": true
+          },
+          "phase_rows": [
+            {
+              "after": 5.857133765627293,
+              "before": 5.857133765627293,
+              "phase": "S",
+              "status": "observed"
+            },
+            {
+              "after": 5.493859170249493,
+              "before": 5.493859170249493,
+              "phase": "G",
+              "status": "observed"
+            },
+            {
+              "observation_path": "typescript_05.ts",
+              "phase": "K",
+              "projection_accepted": false,
+              "projection_reason": "outcome_feedback_lesioned",
+              "real_success": true,
+              "reward": 1.0,
+              "status": "lesion_rejected"
+            }
+          ],
+          "resource": {
+            "candidate_parameter_bytes": 19332,
+            "checkpoint_write_bytes": 35403,
+            "checkpoint_write_paths": [
+              "checkpoints/taiji_k_workers/model_31/taiji_r6_k1_semantic.pt",
+              "checkpoints/taiji_k_workers/model_31/taiji_r6_k2_transition.pt",
+              "checkpoints/taiji_k_workers/model_31/taiji_r6_k3_outcome_projection.pt"
+            ],
+            "device": "cpu",
+            "inference_trace_count": 1,
+            "measurement_complete": true,
+            "peak_working_set_bytes": 260399104,
+            "peak_working_set_method": "process_rss_before_after_lower_bound",
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "training_update_steps": 0,
+            "wall_clock_seconds": 1.056923900032416,
+            "worker_parameter_bytes": 19332,
+            "worker_parameter_count": 4833
+          },
+          "side_effects": {
+            "candidate_namespace_written": false,
+            "default_runtime_attached": false,
+            "external_integrations_attached": false,
+            "parent_namespace_unchanged": true
+          },
+          "status": "passed"
         }
       ],
       "cell": {
         "course_seed": 1,
         "model_seed": 31
       },
+      "execution_contract_digest": "8595f247af189b5a71f0d903b77fe40c654c5517e7e801a85942cbc0683fdfef",
+      "execution_report_digest": "32de1fccb76055bc83499e5300b9608a0667e9fe45a15f33a732861b0945d626",
+      "execution_report_path": "reports/taiji_m4v2_r6_formal_cell_model_31_course_1_20260909.json",
       "failure": null,
       "fixed_large_artifact_digest": "b69030c265e5a966813c4d6469349805dc7619b466a331e30cd98381c5f2cc1c",
       "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_31/taiji_r6_k_fixed_large_ensemble.pt",
@@ -2797,7 +3097,15 @@
         "G",
         "K"
       ],
-      "status": "not_started",
+      "resource_gate": {
+        "candidate-continuation": true,
+        "fixed-large": true,
+        "frozen-parent": true,
+        "lesion": true,
+        "matched-fixed-capacity": true
+      },
+      "single_cell_executed": true,
+      "status": "executed_passed",
       "worker_bundle_digest": "ab60c27756f46907e3f649f42dba1e8fada356de2d345b0cc64574abff1dff5b"
     },
     {
@@ -2883,31 +3191,31 @@
   ],
   "client_attached": false,
   "course_executed": false,
-  "created_at_unix": 1788968836.354521,
+  "created_at_unix": 1788968958.4294834,
   "cuda_used": false,
   "default_runtime_attached": false,
-  "elapsed_seconds": 3.5197971999878064,
-  "execution_contract_digest": "26918f09462b84e8fa39e4ddb7d9c0ee1a96fecc0699cca62149341be58de791",
-  "execution_report_digest": "8775d1a1b0dc804c9ca0b7496eb135bab102a6939c9630d393badfa6404a8ce6",
-  "execution_report_path": "reports/taiji_m4v2_r6_formal_cell_model_31_course_0_20260909.json",
+  "elapsed_seconds": 3.4525672000600025,
+  "execution_contract_digest": "8595f247af189b5a71f0d903b77fe40c654c5517e7e801a85942cbc0683fdfef",
+  "execution_report_digest": "32de1fccb76055bc83499e5300b9608a0667e9fe45a15f33a732861b0945d626",
+  "execution_report_path": "reports/taiji_m4v2_r6_formal_cell_model_31_course_1_20260909.json",
   "failures": [],
   "fixed_large_dir": "checkpoints/taiji_k_fixed_large",
   "formal_input_ready": true,
   "input_preflight_report": "reports/taiji_m4v2_r6_formal_input_manifest_preflight_20260909.json",
-  "input_preflight_report_digest": "6394fbed333a4ca90fe5eff2d77cfa2e5ae8586dbf620b7523dd7941ac596c1e",
+  "input_preflight_report_digest": "7b633f666e3ad1dfdaed532b1e2f6e8cede8e3c8ba7be816308eac510a21c1d4",
   "manifest_digest": "1e714a144be49202ee26876461cf10fb239839dbe9940b8386e8005a3dce6103",
   "manifest_path": "plans/manifests/taiji_m4v2_r6_formal_input_v1.json",
   "mcp_attached": false,
   "next_gate": "Expand the same cell executor only after reviewing this written row; the remaining eight rows stay not_started and promotion remains closed.",
   "parent_dir": "checkpoints/taiji_r6_parents",
   "prior_execution_report": "reports/taiji_m4v2_r6_formal_execution_20260909.json",
-  "prior_execution_report_digest": "e7aa90b54e336694e8cb9be7a33fad1534e1973fac26a3d3cd0d857d5ad13a8b",
+  "prior_execution_report_digest": "7c1ce97e1c64cbed2f3cd954d5a1088f15cf4d9e305f16bb3a279a09cd29f208",
   "provider_attached": false,
   "report_format": "taiji-m4v2-r6-formal-execution-v1",
   "single_cell_executed": true,
   "status": "single_cell_executed",
   "target_cell": {
-    "course_seed": 0,
+    "course_seed": 1,
     "model_seed": 31
   },
   "training_performed": false,
