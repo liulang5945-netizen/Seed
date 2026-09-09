@@ -563,3 +563,9 @@ fixed-large/lesion 因果与五臂 resource/rollback/side-effect contract 均未
 model23/course2 已通过，model23 三个 course row 完成，累计 6/9 row 为
 `executed_passed`；当前进入 model31/course0，仍不开放 aggregate、default runtime 或
 promotion。
+
+## 34. Model31/course0 execution（2026-09-09）
+
+model31/course0 已通过并追加，累计 7/9 row 完成；candidate/fixed-large/lesion 与资源、
+rollback、side-effect contract 均保持通过。下一步只执行 model31/course1，仍不计算
+aggregate 或 promotion。

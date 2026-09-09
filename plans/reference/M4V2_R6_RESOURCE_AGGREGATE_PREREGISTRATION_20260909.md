@@ -124,3 +124,5 @@ model23/course1 已通过且追加，当前唯一下一步：**只执行 `model2
 model23 的 course slice 后再推进 model31。
 model23/course2 已通过且追加，当前唯一下一步：**只执行 `model31/course0` row**，继续
 沿用相同 resource/side-effect/failure contract，仍不计算 aggregate。
+model31/course0 已通过且追加，当前唯一下一步：**只执行 `model31/course1` row**，继续
+沿用 prior ledger 和相同资源/失败合同。

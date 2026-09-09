@@ -498,6 +498,7 @@ rollback/failure ledger 均已落盘。runner 现固定前序顺序
 row。`model23/course0`、`model23/course1` 与 `model23/course2` 均已执行并通过，
 candidate/fixed-large K 均为 `1/1`、lesion 均为 `0`，五臂 resource Gate 全部通过；当前
 累计 6 个 row 为 `executed_passed`，其余 3 个仍为 `not_started`，五臂
-resource/side-effect/checkpoint/rollback ledger 完整。**当前唯一下一步**：只执行
-`model31/course0`，完成 model31 slice 后再计算 aggregate；不运行 9-cell aggregate、
+resource/side-effect/checkpoint/rollback ledger 完整。`model31/course0` 已执行并通过，
+累计 7 个 row 为 `executed_passed`，model31/course1/2 仍为 `not_started`。**当前唯一下一步**：只执行
+`model31/course1`，不运行 9-cell aggregate、
 不接 default runtime/provider/MCP/client/CUDA。
