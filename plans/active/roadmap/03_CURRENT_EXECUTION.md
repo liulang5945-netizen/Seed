@@ -446,4 +446,8 @@ K worker manifest + joint checkpoint attachment preflight 已实现并运行：`
 
 重新运行 attachment preflight 后，`reports/taiji_m4v2_r6_k_worker_attachment_preflight_20260909.json` 为 `status=passed`：同 parent bundle、owner graph、typed exchange、S/G retention、candidate stage、rollback 与 joint checkpoint 全部通过；`attachment_gate_passed=true`、`can_start_k_controlled_canary=true`，但 `can_start_r6_formal=false`、`can_promote=false`。没有 default runtime/provider/MCP/client/CUDA，也没有把 worker artifact 当成 promotion evidence。
 
-**当前唯一下一步**：运行 single-cell controlled K canary，只消费这组已挂接 artifact，记录完整 S→G→K typed lineage、真实 outcome、candidate namespace 更新与失败 rollback；canary 通过前不扩大 formal 矩阵、不接 default runtime、不引入 MCP/provider/client/CUDA。
+single-cell controlled K canary 已实现并运行：`scripts/training/eval_taiji_m4v2_r6_k_worker_controlled_canary.py`，预注册合同为 `plans/reference/M4V2_R6_CONTROLLED_K_CANARY_PREREGISTRATION_20260909.md`，报告为 `reports/taiji_m4v2_r6_k_worker_controlled_canary_20260909.json`。首轮失败定位为隔离 Workbench root 未覆盖 `get_setting("workspace_path")`，导致默认 workspace 对真实路径返回 `not_found`；按已通过的 M5.K2 runner 模式修正 root selector 后，未改模型、artifact 或判据，重跑通过。
+
+最终结果 `status=passed`：K1/K2 typed result 均 `resolved`；`typescript_05.ts` 真实 `workspace.read` 成功、reward `1.0`；K3 接受并应用真实 outcome/dependency projection；exchange 保存三类 worker manifest lineage；joint checkpoint、candidate stage、explicit rollback、S/G retention 全通过。`training_performed=false`、`candidate_training_performed=false`、`candidate_promoted=false`，provider/MCP/client/CUDA/default runtime 均未接入；`can_start_r6_formal=false`、`can_promote=false` 保持。
+
+**当前唯一下一步**：审阅 single-cell 的 causal/资源/side-effect evidence，冻结 R6 formal runner 的输入合同与失败归因字段；冻结前不扩大矩阵、不接 default runtime、不引入 MCP/provider/client/CUDA。
