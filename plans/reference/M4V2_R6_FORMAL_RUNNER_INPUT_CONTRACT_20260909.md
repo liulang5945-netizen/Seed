@@ -514,3 +514,20 @@ causal/side-effect/failure 和 Gate，不覆盖 wall-clock/RSS 等允许波动�
 runner 以该 executor 消费一个 `not_started` ledger row，先完成 model17/course0 的
 显式 ledger 写回与 failure attribution，再扩大矩阵；不接 default runtime/provider/
 MCP/client/CUDA。
+
+## 17. First formal ledger row execution（2026-09-09）
+
+formal runner 已新增受控 `--execute-cell` 入口：它先重新通过 input/runner preflight，
+只允许消费预注册的 `model17/course0` `not_started` row，再调用同一个 `run_cell`，将五
+臂 `status/phase_rows/new_capability/retention/causal/resource/side_effects/checkpoint`
+和 failure attribution 写回该 row。结果见
+`reports/taiji_m4v2_r6_formal_execution_20260909.json` 与
+`reports/taiji_m4v2_r6_formal_cell_model_17_course_0_20260909.json`：该 row 为
+`executed_passed`，五臂均有 resource/side-effect/checkpoint ledger，execution digest
+为 `8d670a310c08a81e024b3c8f2256ba5afa4808491871e67637205d6156c5d22c`；其余 8 个 row
+保持 `not_started`。
+
+这仍不是完整 course 或 aggregate：`course_executed=false`、`can_start_r6_formal=false`、
+`can_promote=false`。下一步只开放下一个已预注册 row `model17/course1`，继续用同一
+executor 和同一 failure/resource contract；若该 cell 任何一臂失败，保留 row/报告并按
+优先级归因，不用其他 cell 抵销。

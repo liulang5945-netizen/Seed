@@ -16,7 +16,7 @@ import sys
 import time
 from collections.abc import Mapping
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
@@ -40,11 +40,24 @@ from scripts.training.eval_taiji_m4v2_r6_formal_input_manifest_preflight import 
 from scripts.training.eval_taiji_m4v2_r6_formal_input_manifest_preflight import (  # noqa: E402
     run_preflight as run_input_preflight,
 )
+from scripts.training.eval_taiji_m4v2_r6_formal_single_cell import (  # noqa: E402
+    run_cell,
+)
 from taiji import content_digest  # noqa: E402
 
 REPORT_FORMAT = "taiji-m4v2-r6-formal-runner-v1"
 VERSION = 1
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m4v2_r6_formal_preflight_20260909.json"
+DEFAULT_EXECUTION_REPORT = (
+    PROJECT_ROOT / "reports" / "taiji_m4v2_r6_formal_execution_20260909.json"
+)
+DEFAULT_CELL_REPORT = (
+    PROJECT_ROOT
+    / "reports"
+    / "taiji_m4v2_r6_formal_cell_model_17_course_0_20260909.json"
+)
+EXECUTION_MODEL_SEED = 17
+EXECUTION_COURSE_SEED = 0
 
 
 def _failure_record(
@@ -135,6 +148,108 @@ def _cell_ledger(manifest: Mapping[str, Any]) -> list[dict[str, Any]]:
                 }
             )
     return cells
+
+
+def _apply_cell_execution(
+    cell_ledger: list[dict[str, Any]],
+    execution_report: Mapping[str, Any],
+    *,
+    execution_report_path: Path,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """Write exactly one executor result into the matching not_started ledger row."""
+
+    target = execution_report.get("cell")
+    if not isinstance(target, Mapping):
+        return cell_ledger, [
+            _failure_record(
+                failure_class="input_contract",
+                message="cell executor report has no structured cell identity",
+            )
+        ]
+    target_key = (int(target.get("model_seed", -1)), int(target.get("course_seed", -1)))
+    matches = [
+        row
+        for row in cell_ledger
+        if (
+            int(row["cell"]["model_seed"]),
+            int(row["cell"]["course_seed"]),
+        )
+        == target_key
+    ]
+    if len(matches) != 1:
+        return cell_ledger, [
+            _failure_record(
+                failure_class="input_contract",
+                message=f"executor cell does not map to exactly one ledger row: {target_key}",
+                cell={"model_seed": target_key[0], "course_seed": target_key[1]},
+            )
+        ]
+    row = matches[0]
+    if row.get("status") != "not_started":
+        return cell_ledger, [
+            _failure_record(
+                failure_class="input_contract",
+                message="executor refused to overwrite a non-not_started ledger row",
+                cell={"model_seed": target_key[0], "course_seed": target_key[1]},
+                recoverability="ledger_row_must_be_not_started",
+            )
+        ]
+    execution_arms = execution_report.get("arms")
+    if not isinstance(execution_arms, Mapping):
+        return cell_ledger, [
+            _failure_record(
+                failure_class="input_contract",
+                message="cell executor report has no arm ledger",
+                cell={"model_seed": target_key[0], "course_seed": target_key[1]},
+            )
+        ]
+    failures: list[dict[str, Any]] = []
+    for arm_row in row["arms"]:
+        arm = str(arm_row["arm"])
+        execution_arm = execution_arms.get(arm)
+        if not isinstance(execution_arm, Mapping):
+            failures.append(
+                _failure_record(
+                    failure_class="input_contract",
+                    message=f"cell executor omitted arm: {arm}",
+                    cell={"model_seed": target_key[0], "course_seed": target_key[1]},
+                    arm=arm,
+                )
+            )
+            continue
+        for key in (
+            "status",
+            "phase_rows",
+            "new_capability",
+            "old_capability_retention",
+            "causal",
+            "resource",
+            "side_effects",
+            "checkpoint_ledger",
+            "failure",
+        ):
+            arm_row[key] = copy.deepcopy(cast(Any, execution_arm.get(key)))
+    row["status"] = (
+        "executed_passed"
+        if execution_report.get("status") == "passed" and not failures
+        else "executed_failed"
+    )
+    row["single_cell_executed"] = True
+    row["execution_report_path"] = _relative_path(execution_report_path)
+    row["execution_report_digest"] = content_digest(execution_report)
+    row["execution_contract_digest"] = execution_report.get("execution_contract_digest")
+    row["resource_gate"] = copy.deepcopy(execution_report.get("resource_gate"))
+    row["failure"] = (
+        copy.deepcopy(execution_report.get("failures", [])[0])
+        if execution_report.get("failures")
+        else (failures[0] if failures else None)
+    )
+    failures.extend(
+        copy.deepcopy(cast(Any, item))
+        for item in execution_report.get("failures", [])
+        if isinstance(item, Mapping)
+    )
+    return cell_ledger, failures
 
 
 def run_preflight(
@@ -250,6 +365,156 @@ def run_preflight(
     return report
 
 
+def run_execution(
+    *,
+    model_seed: int = EXECUTION_MODEL_SEED,
+    course_seed: int = EXECUTION_COURSE_SEED,
+    manifest_path: Path = DEFAULT_MANIFEST,
+    report_path: Path = DEFAULT_EXECUTION_REPORT,
+    input_report_path: Path = DEFAULT_INPUT_REPORT,
+    cell_report_path: Path = DEFAULT_CELL_REPORT,
+    parent_dir: Path = DEFAULT_PARENT_DIR,
+    worker_dir: Path = DEFAULT_WORKER_DIR,
+    fixed_large_dir: Path = DEFAULT_FIXED_LARGE_DIR,
+) -> dict[str, Any]:
+    """Execute exactly one pre-registered cell and write it into the ledger."""
+
+    started = time.perf_counter()
+    manifest_path = manifest_path.resolve()
+    report_path = report_path.resolve()
+    input_report_path = input_report_path.resolve()
+    cell_report_path = cell_report_path.resolve()
+    parent_dir = parent_dir.resolve()
+    worker_dir = worker_dir.resolve()
+    fixed_large_dir = fixed_large_dir.resolve()
+    preflight = run_preflight(
+        manifest_path=manifest_path,
+        report_path=report_path.with_name("taiji_m4v2_r6_formal_preflight_20260909.json"),
+        input_report_path=input_report_path,
+        parent_dir=parent_dir,
+        worker_dir=worker_dir,
+        fixed_large_dir=fixed_large_dir,
+    )
+    report: dict[str, Any] = {
+        "report_format": "taiji-m4v2-r6-formal-execution-v1",
+        "version": VERSION,
+        "created_at_unix": time.time(),
+        "status": "blocked_input",
+        "manifest_path": _relative_path(manifest_path),
+        "input_preflight_report": _relative_path(input_report_path),
+        "parent_dir": _relative_path(parent_dir),
+        "worker_dir": _relative_path(worker_dir),
+        "fixed_large_dir": _relative_path(fixed_large_dir),
+        "target_cell": {"model_seed": model_seed, "course_seed": course_seed},
+        "formal_input_ready": False,
+        "cell_ledger": [],
+        "failures": [],
+        "course_executed": False,
+        "single_cell_executed": False,
+        "training_performed": False,
+        "candidate_training_performed": False,
+        "candidate_promoted": False,
+        "default_runtime_attached": False,
+        "provider_attached": False,
+        "mcp_attached": False,
+        "client_attached": False,
+        "cuda_used": False,
+        "can_start_r6_formal": False,
+        "can_promote": False,
+    }
+    if preflight.get("status") != "input_ready":
+        report["failures"] = copy.deepcopy(preflight.get("failures", []))
+        report["elapsed_seconds"] = time.perf_counter() - started
+        report_path.parent.mkdir(parents=True, exist_ok=True)
+        report_path.write_text(
+            json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        return report
+    if (model_seed, course_seed) != (EXECUTION_MODEL_SEED, EXECUTION_COURSE_SEED):
+        report["failures"] = [
+            _failure_record(
+                failure_class="input_contract",
+                message="first execution slice is restricted to the preregistered model17/course0 cell",
+                cell={"model_seed": model_seed, "course_seed": course_seed},
+                recoverability="single_cell_execution_order",
+            )
+        ]
+        report["elapsed_seconds"] = time.perf_counter() - started
+        report_path.parent.mkdir(parents=True, exist_ok=True)
+        report_path.write_text(
+            json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        return report
+    manifest = _load_manifest(manifest_path)
+    ledger = _cell_ledger(manifest)
+    target_rows = [
+        row
+        for row in ledger
+        if row["cell"] == {"model_seed": model_seed, "course_seed": course_seed}
+    ]
+    if len(target_rows) != 1 or target_rows[0].get("status") != "not_started":
+        report["failures"] = [
+            _failure_record(
+                failure_class="input_contract",
+                message="target cell is missing or is no longer not_started",
+                cell={"model_seed": model_seed, "course_seed": course_seed},
+                recoverability="ledger_row_must_be_not_started",
+            )
+        ]
+        report["cell_ledger"] = ledger
+        report["elapsed_seconds"] = time.perf_counter() - started
+        report_path.parent.mkdir(parents=True, exist_ok=True)
+        report_path.write_text(
+            json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        return report
+    cell_report = run_cell(
+        model_seed=model_seed,
+        course_seed=course_seed,
+        manifest_path=manifest_path,
+        report_path=cell_report_path,
+        input_report_path=input_report_path,
+        parent_dir=parent_dir,
+        worker_dir=worker_dir,
+        fixed_large_dir=fixed_large_dir,
+    )
+    ledger, ledger_failures = _apply_cell_execution(
+        ledger,
+        cell_report,
+        execution_report_path=cell_report_path,
+    )
+    report.update(
+        {
+            "status": "single_cell_executed"
+            if cell_report.get("status") == "passed" and not ledger_failures
+            else "blocked_execution",
+            "manifest_digest": manifest.get("manifest_digest"),
+            "input_preflight_report_digest": content_digest(preflight),
+            "formal_input_ready": True,
+            "cell_ledger": ledger,
+            "failures": ledger_failures,
+            "single_cell_executed": True,
+            "execution_report_path": _relative_path(cell_report_path),
+            "execution_report_digest": content_digest(cell_report),
+            "execution_contract_digest": cell_report.get("execution_contract_digest"),
+            "next_gate": (
+                "Expand the same cell executor only after reviewing this written row; "
+                "the remaining eight rows stay not_started and promotion remains closed."
+            ),
+        }
+    )
+    report["elapsed_seconds"] = time.perf_counter() - started
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    return report
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
@@ -258,6 +523,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--parent-dir", type=Path, default=DEFAULT_PARENT_DIR)
     parser.add_argument("--worker-dir", type=Path, default=DEFAULT_WORKER_DIR)
     parser.add_argument("--fixed-large-dir", type=Path, default=DEFAULT_FIXED_LARGE_DIR)
+    parser.add_argument(
+        "--execute-cell",
+        action="store_true",
+        help="execute only the preregistered model17/course0 cell and write its ledger row",
+    )
+    parser.add_argument("--model-seed", type=int, default=EXECUTION_MODEL_SEED)
+    parser.add_argument("--course-seed", type=int, default=EXECUTION_COURSE_SEED)
+    parser.add_argument("--execution-report", type=Path, default=DEFAULT_EXECUTION_REPORT)
+    parser.add_argument("--cell-report", type=Path, default=DEFAULT_CELL_REPORT)
     args = parser.parse_args(argv)
     manifest_path = args.manifest if args.manifest.is_absolute() else PROJECT_ROOT / args.manifest
     report_path = args.report if args.report.is_absolute() else PROJECT_ROOT / args.report
@@ -271,27 +545,52 @@ def main(argv: list[str] | None = None) -> int:
         if args.fixed_large_dir.is_absolute()
         else PROJECT_ROOT / args.fixed_large_dir
     )
-    report = run_preflight(
-        manifest_path=manifest_path,
-        report_path=report_path,
-        input_report_path=input_report_path,
-        parent_dir=parent_dir,
-        worker_dir=worker_dir,
-        fixed_large_dir=fixed_large_dir,
-    )
+    if args.execute_cell:
+        execution_report_path = (
+            args.execution_report
+            if args.execution_report.is_absolute()
+            else PROJECT_ROOT / args.execution_report
+        )
+        cell_report_path = (
+            args.cell_report
+            if args.cell_report.is_absolute()
+            else PROJECT_ROOT / args.cell_report
+        )
+        report = run_execution(
+            model_seed=args.model_seed,
+            course_seed=args.course_seed,
+            manifest_path=manifest_path,
+            report_path=execution_report_path,
+            input_report_path=input_report_path,
+            cell_report_path=cell_report_path,
+            parent_dir=parent_dir,
+            worker_dir=worker_dir,
+            fixed_large_dir=fixed_large_dir,
+        )
+    else:
+        report = run_preflight(
+            manifest_path=manifest_path,
+            report_path=report_path,
+            input_report_path=input_report_path,
+            parent_dir=parent_dir,
+            worker_dir=worker_dir,
+            fixed_large_dir=fixed_large_dir,
+        )
+    display_report_path = execution_report_path if args.execute_cell else report_path
     print(
         json.dumps(
             {
-                "report": _relative_path(report_path),
+                "report": _relative_path(display_report_path),
                 "status": report["status"],
                 "formal_input_ready": report["formal_input_ready"],
                 "course_executed": report["course_executed"],
+                "single_cell_executed": report.get("single_cell_executed", False),
                 "can_start_r6_formal": report["can_start_r6_formal"],
             },
             ensure_ascii=False,
         )
     )
-    return 0 if report["status"] == "input_ready" else 1
+    return 0 if report["status"] in {"input_ready", "single_cell_executed"} else 1
 
 
 if __name__ == "__main__":
