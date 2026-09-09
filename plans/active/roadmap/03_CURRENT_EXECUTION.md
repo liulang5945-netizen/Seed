@@ -256,6 +256,8 @@ S/G 的 BPB 只证明低层预测变化，K 是 A8 的主要能力证据。正�
 - [Taiji Native Architecture v1](../TAIJI_NATIVE_ARCHITECTURE_V1.md)：完整认知架构与 A0～A9。
 - [Taiji 继承式成长架构 v2](../architecture/TAIJI_CONTINUAL_DEVELOPMENT_V2.md)：M4 v2 的状态、主路径、学习与结构准入设计。
 - [M4 fixed-capacity 证据复盘](../../reference/M4_FIXED_CAPACITY_EVIDENCE_REVIEW_2026_09_09.md)：R0～R12 数值、资产及复审后的解释边界。
+- [M4.V2.R4 收束决策](../../reference/M4V2_R4_CLOSURE_DECISION_20260909.md)：结构增长“技术闭合、不晋级”的精确否决与唯一后续假设。
+- [M4.V2.R5 预注册草案](../../reference/M4V2_R5_CONDITIONAL_MODULARITY_PREREGISTRATION_20260909.md)：资源归一化条件模块化的指标/对照/停止线，待三确认点拍板。
 - [研究审视](../../reference/TAIJI_RESEARCH_REVIEW_2026_09_06.md)：M0～M3 的事实、失效结论和复现。
 - [实现事实](../../reference/IMPLEMENTATION_STATUS_2026_08.md)：代码能力边界；更新晚于该文档的事实以本计划和版本化报告为准。
 完整 native 回归在前 296 项均通过后，首个真实失败为 `test_m3r5_isolated_approved_execution_gate`：评估器内部 `tempfile.TemporaryDirectory` 在本机创建 0700 临时根，导致隔离 workspace 尚未复制就被 Windows ACL 拒绝；不是 Workbench 执行或审批 Gate 失败。M3.R5 现改为在 `SEED_M3R5_TMPDIR` 或系统临时父目录下用普通目录创建唯一隔离根并显式清理，测试把该父目录绑定到可写 fixture；隔离执行、审批、撤销和清理语义不变。M3.R1～R5 相邻回归为 `8 passed`，相关脚本 Ruff/编译检查通过。
@@ -316,3 +318,7 @@ CI 交付层当前事实：后端完整测试/coverage、前端边界/测试/bui
 R4 收束决策记录已完成：[M4V2_R4_CLOSURE_DECISION_20260909.md](../../reference/M4V2_R4_CLOSURE_DECISION_20260909.md)。它确认 9-cell 技术 Gate 全过，candidate lesion G/S 均为正，但 pressure 相对 fixed-large 的 G 均值仍劣化 `+0.001002`、仅 `4/9` 不劣，因此 `can_promote=false` 和默认 parent 保护不变。唯一推荐的后续假设是“资源归一化的条件模块化”：检验增长是否通过内容/状态路由节省早期活跃容量并改善未见组合 transfer，而不是继续微调当前 residual gate；在指标、对照和停止线预注册前不写实现、不训练、不解冻 R5。
 
 **当前唯一下一步**：在该决策节点确认“条件模块化 + 资源归一化”假设的指标、对照和停止线；确认前保持代码、模型权重、R4 Gate 和外围系统冻结，避免路径漂移。
+
+R5 预注册草案已完成：[M4V2_R5_CONDITIONAL_MODULARITY_PREREGISTRATION_20260909.md](../../reference/M4V2_R5_CONDITIONAL_MODULARITY_PREREGISTRATION_20260909.md)。它把 R4 决策 §4 的假设落成可证伪设计：三臂（A fixed-capacity / B fixed-large 不可删除 / C conditional module）× 同一 3×3 matrix；路由输入白名单（内容/状态/不确定性/目标/资源，禁止 task ID 与 phase 标签）；资源归一化协议（累计更新预算、峰值内存 ≤1.25×、墙钟 ≤1.5×，超限 cell 判无效）；主指标为未见组合 transfer（C 相对 B `non-worse ≥ 7/9` 且 mean 更优）+ route lesion 因果证明 + resource-normalized utility + 旧能力非劣；停止线为 canary 先行、formal 二分出口（晋级讨论 vs 主线收束转 M5）、全程 `can_promote=false`、默认路径保护。
+
+**当前唯一下一步**：用户对草案 §7 的三个确认点拍板——(1) 资源上限初值（内存 1.25×、墙钟 1.5×）；(2) 主指标阈值（7/9 non-worse 且 mean 更优）；(3) 出口二分。确认后按 R4 同节奏进入实现（zero-gated shadow 外壳 → route learner 最小实现 → canary）；确认前不写任何实现代码。
