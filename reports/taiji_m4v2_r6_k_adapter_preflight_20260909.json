@@ -1,0 +1,39 @@
+{
+  "format": "taiji-m4v2-r6-k-adapter-preflight-v1",
+  "version": 1,
+  "status": "passed",
+  "checks": {
+    "parent_checkpoint_match": true,
+    "dependency_projection_accepted": true,
+    "dependency_projection_lineage_complete": true,
+    "training_steps_zero_before_trial": true,
+    "checkpoint_prefit_roundtrip": true,
+    "candidate_parent_is_same_parent": true,
+    "candidate_checkpoint_roundtrip": true,
+    "candidate_namespace_is_isolated": true,
+    "rollback_record_is_explicit": true,
+    "rollback_restores_parent_namespace": true,
+    "rollback_preserves_dependency_projection": true,
+    "rollback_checkpoint_roundtrip": true,
+    "training_steps_zero_after_trial": true
+  },
+  "artifacts": {
+    "parent_checkpoint_digest": "289eeceb78dd1a5b5a6d01223dfdbae60001cf63f9b264cbf4ea018b9d70f81e",
+    "dependency_projection_digest": "fe93819c9c2619513e72ab7d747e4cf50769481a672ad1d6269b55673adf2e0e",
+    "candidate_trial_id": "3f4bf48dcd37e27749f10115ebcff773806e46b82f6d9a3d79044052202d8fd4",
+    "rollback_record_digest": "e11be778e5858dfd71ea09fca19fcbf67e2299a57de74b1594c2b2bc435a7672",
+    "preflight_checkpoint_digest": "32c5b15632d6c57a24570d812df6c9ab8d6e3929b91cda5db58d284302bfc9d3",
+    "staged_checkpoint_digest": "315c23c7050015882683da9595d96f1c7cbc87376a016d62a5bec1daf48c064f",
+    "rollback_checkpoint_digest": "6fae7a4222fa797f6661df2c948facef0aced91461f05ec04051622475a0e28c"
+  },
+  "boundary": {
+    "training_performed": false,
+    "default_runtime_attached": false,
+    "candidate_promoted": false,
+    "cuda_required": false,
+    "purpose": "R6 same-parent checkpoint/lineage/rollback entry preflight"
+  },
+  "next_gate": "Do not train or attach the adapter until the preregistered R4/R5/K entry gates and resource/rollback/old-capability retention course are satisfied.",
+  "generated_at_epoch": 1788957732,
+  "elapsed_seconds": 0.0016305999597534537
+}

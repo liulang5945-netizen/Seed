@@ -147,3 +147,49 @@ Gate：新能力相对 parent 与 matched fixed-capacity 的预注册置信下�
 - report：`reports/taiji_m4v2_r6_a8_promotion_formal_20260909.json`；
 - 当前唯一允许的下一步：先实现 same-parent adapter 的 checkpoint preflight/smoke（不训练、不接 default runtime），并根据结果更新入口 Gate；未通过前保持所有 K shadow owner detached。
 
+## 8. adapter preflight 执行记录（2026-09-09）
+
+已实现 `taiji/continual_k_adapter.py` 和
+`scripts/training/eval_taiji_m4v2_r6_k_adapter_preflight.py`，报告为
+`reports/taiji_m4v2_r6_k_adapter_preflight_20260909.json`。本轮只验证入口
+合同，不产生模型训练权重，也不修改默认 runtime：
+
+- 13/13 checks 通过：parent digest、K3 dependency projection/lineage、prefit
+  checkpoint、candidate checkpoint、fresh restore、同一 parent 绑定、隔离
+  candidate namespace、explicit rollback、rollback 后 dependency 保留和
+  rollback checkpoint roundtrip；
+- `training_performed=false`、`default_runtime_attached=false`、
+  `candidate_promoted=false`、`cuda_required=false`；
+- rollback record 保存与 staged candidate 完全一致的 `trial_id`，失败候选
+  回滚后恢复 parent namespace，同时保留 K3 projection 证据；
+- `KContinualAdapter` 仍只是 Taiji-owned shadow/preflight boundary，不能把
+  本轮 13/13 当成 R6 formal 或 A8 promotion。R4 structural growth、R5
+  router、same-parent baseline epsilon、matched fixed-large 和完整资源/旧能力
+  retention Gate 仍未满足，因此 `can_promote=false` 不变。
+
+本轮同时新增 `tests/taiji_native/test_m4v2_r6_k_adapter.py`，3 个 adapter
+回归测试通过。下一步仍只能在本合同入口满足后进入 R6 course；当前不得训练、
+接默认 runtime 或引入 provider/MCP/client/CUDA 变量。
+
+## 9. admission audit 执行记录（2026-09-09）
+
+已完成只读入口审计：`scripts/training/audit_taiji_m4v2_r6_admission.py`，
+报告为 `reports/taiji_m4v2_r6_admission_audit_20260909.json`。审计只读取并
+content-address 了 R4 formal、R5 formal、K 轴 scorecard v2 和 R6 adapter
+preflight，没有重跑训练或篡改任何判据。
+
+审计结果为 `status=passed`（审计本身完整），但 admission 是
+`blocked_shadow_only`，`can_start_r6_formal=false`、`can_promote=false`：
+
+- 已确认：R4 technical evidence、R5 report 的拒绝结论、K1/K2/K3 evidence
+  closed、R6 adapter 13/13 preflight，以及 R5 resource caps 本身无超限；
+- 未满足：R4 structural growth admission（对 fixed-large 的 G non-worse
+  只有 4/9）、R5 router 或明确 no-router addendum、same-parent retention
+  baseline、完整 S→G→K course、全 arm 的 resource/rollback/old-capability
+  Gate 和相关 CI/native ledger 的可核验清洁状态；
+- 因此 R4/R5 失败资产继续作为可回滚 shadow，K evidence 不能直接成为默认
+  owner，R6 adapter 也不能接入 default runtime。
+
+当前只允许冻结一份 **R6 fixed-capacity parent admission addendum**：明确
+R4/R5 均不晋级、R6 不使用 router 的边界、parent baseline/epsilon 的校准
+协议，以及完整 Gate 的先后顺序。addendum 通过前不训练、不写新模型权重。
