@@ -1,0 +1,73 @@
+{
+  "format": "taiji-m5-s2-document-internalization-v1",
+  "version": 1,
+  "generated_at_epoch": 1788933681,
+  "status": "passed",
+  "can_promote": false,
+  "corpus": "E:/Seed/data/ultradata/derived/ultradata_sft_nothink_simplezh.jsonl",
+  "feature_set": {
+    "version": "m5s2-text-stats-v1",
+    "dim": 12,
+    "deterministic": true
+  },
+  "data": {
+    "train_domains": [
+      "Knowledge",
+      "IF"
+    ],
+    "train_records": 6000,
+    "holdout_domain": "Chinese-general",
+    "holdout_records": 2000,
+    "retention_records": 2000,
+    "domain_disjoint": true,
+    "rejected": 0
+  },
+  "metrics": {
+    "format": "taiji-internalization-learner-v1",
+    "parent_checkpoint_digest": "c955f1a00e39f10ea66a2635abb4ee6c3adcbf077a5e362cf822159d87f71f50",
+    "child_checkpoint_digest": "b1cb4c2e2aadac45efaf0dd41e424eb89932d8df989b3156a2fc796ecec89f54",
+    "replay_digest": "2e9ec5412197cf5bc97772674229c3e5b22d48fa19f5e17488a98f6bf7930987",
+    "train_examples": 6000,
+    "holdout_examples": 2000,
+    "train_loss_before": 1.0,
+    "train_loss_after": 2.1317075759910153e-06,
+    "holdout_loss_before": 1.0,
+    "holdout_loss_after": 0.00017906211705439112,
+    "holdout_internalized_lesion_loss": 1.0,
+    "holdout_grounding_lesion_loss": 0.6074274374062674,
+    "retention_loss_before": 1.0,
+    "retention_loss_after": 8.739809964950496e-07,
+    "holdout_gain": 0.9998209378829456,
+    "fit_updates": 48000,
+    "ranking_updates": 0,
+    "online_updates": 0,
+    "lineage_depth": 1,
+    "passed": true
+  },
+  "lifecycle": {
+    "example_id": "63d36f82ca5013177901d6135efa19222849585d072e3f01970d8e76fd14baf2",
+    "status": "internalized",
+    "events": [
+      "outcome_bound",
+      "grounding_verified",
+      "example_created",
+      "shadow_learned",
+      "holdout_checked",
+      "affordance_lesion_checked",
+      "internalization_admitted"
+    ]
+  },
+  "checks": {
+    "domain_disjoint_holdout": true,
+    "no_records_rejected": true,
+    "checkpoint_roundtrip": true,
+    "gate_passed": true,
+    "feature_set_versioned": true
+  },
+  "technical_gate_all_passed": true,
+  "gate_criterion": "native consolidation improves an unseen-source-domain holdout while feature, grounding, retention, and checkpoint controls remain causal; reward is a placeholder constant pending the MCP/execution loop",
+  "boundary": "M5.S2 document internalization canary only; no provider execution, structural growth, or AGI claim",
+  "resources": {
+    "total_elapsed_seconds": 5.991796699934639
+  }
+}
