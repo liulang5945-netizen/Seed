@@ -21,6 +21,7 @@ def test_c_entry_sealed_test_is_materialized_without_scores_or_targets() -> None
     assert artifact["record_disjoint_from_existing_fixture"] is True
     assert artifact["raw_source_content_embedded"] is False
     assert artifact["scores_or_targets_embedded"] is False
+    assert artifact["anchor_payload"]["path"] == "missing_00.txt"
     assert len(artifact["episodes"]) == 3
     assert len(artifact["observation_payloads"]) == 9
     assert len(artifact["artifact_digest"]) == 64

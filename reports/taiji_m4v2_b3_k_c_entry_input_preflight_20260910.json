@@ -1,21 +1,21 @@
 {
-  "blocking_reason": "sealed-test or fixed-large input contract is not ready",
+  "blocking_reason": null,
   "can_promote": false,
   "can_start_formal": false,
   "fixed_large_cells": [
     {
       "artifact_exists": true,
-      "artifact_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large\\model_17\\taiji_r6_k_fixed_large_ensemble.pt",
-      "blocking_reason": "existing fixed-large source course does not match the C-entry training/validation contract",
-      "course_contract_digest_matches": false,
+      "artifact_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_0\\taiji_c_entry_k_fixed_large_ensemble.pt",
+      "course_contract_digest_matches": true,
+      "course_seed_matches": true,
       "format_matches": true,
       "fresh_restore_digest_present": true,
       "missing_required_training_paths": [],
       "model_seed": 17,
       "optimizer_state_present": false,
       "parent_matches": true,
-      "ready": false,
-      "source_manifest_format_matches": false,
+      "ready": true,
+      "source_manifest_format_matches": true,
       "source_training_paths": [
         "python_00.py",
         "python_01.py",
@@ -24,10 +24,78 @@
         "rust_00.rs",
         "rust_01.rs",
         "rust_02.rs",
+        "typescript_00.ts",
+        "typescript_01.ts"
+      ],
+      "source_validation_paths": [
+        "python_05.py",
+        "python_06.py",
+        "python_07.py",
+        "rust_05.rs",
+        "rust_06.rs",
+        "rust_07.rs",
+        "typescript_05.ts",
+        "typescript_06.ts",
+        "typescript_07.ts"
+      ],
+      "validation_paths_match": true
+    },
+    {
+      "artifact_exists": true,
+      "artifact_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_1\\taiji_c_entry_k_fixed_large_ensemble.pt",
+      "course_contract_digest_matches": true,
+      "course_seed_matches": true,
+      "format_matches": true,
+      "fresh_restore_digest_present": true,
+      "missing_required_training_paths": [],
+      "model_seed": 17,
+      "optimizer_state_present": false,
+      "parent_matches": true,
+      "ready": true,
+      "source_manifest_format_matches": true,
+      "source_training_paths": [
+        "python_00.py",
+        "python_01.py",
+        "python_02.py",
+        "rust_00.rs",
+        "rust_01.rs",
         "rust_03.rs",
         "typescript_00.ts",
-        "typescript_01.ts",
-        "typescript_02.ts",
+        "typescript_02.ts"
+      ],
+      "source_validation_paths": [
+        "python_05.py",
+        "python_06.py",
+        "python_07.py",
+        "rust_05.rs",
+        "rust_06.rs",
+        "rust_07.rs",
+        "typescript_05.ts",
+        "typescript_06.ts",
+        "typescript_07.ts"
+      ],
+      "validation_paths_match": true
+    },
+    {
+      "artifact_exists": true,
+      "artifact_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_2\\taiji_c_entry_k_fixed_large_ensemble.pt",
+      "course_contract_digest_matches": true,
+      "course_seed_matches": true,
+      "format_matches": true,
+      "fresh_restore_digest_present": true,
+      "missing_required_training_paths": [],
+      "model_seed": 17,
+      "optimizer_state_present": false,
+      "parent_matches": true,
+      "ready": true,
+      "source_manifest_format_matches": true,
+      "source_training_paths": [
+        "python_00.py",
+        "python_01.py",
+        "python_02.py",
+        "rust_00.rs",
+        "rust_01.rs",
+        "typescript_00.ts",
         "typescript_03.ts"
       ],
       "source_validation_paths": [
@@ -45,17 +113,17 @@
     },
     {
       "artifact_exists": true,
-      "artifact_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large\\model_23\\taiji_r6_k_fixed_large_ensemble.pt",
-      "blocking_reason": "existing fixed-large source course does not match the C-entry training/validation contract",
-      "course_contract_digest_matches": false,
+      "artifact_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_0\\taiji_c_entry_k_fixed_large_ensemble.pt",
+      "course_contract_digest_matches": true,
+      "course_seed_matches": true,
       "format_matches": true,
       "fresh_restore_digest_present": true,
       "missing_required_training_paths": [],
       "model_seed": 23,
       "optimizer_state_present": false,
       "parent_matches": true,
-      "ready": false,
-      "source_manifest_format_matches": false,
+      "ready": true,
+      "source_manifest_format_matches": true,
       "source_training_paths": [
         "python_00.py",
         "python_01.py",
@@ -64,10 +132,78 @@
         "rust_00.rs",
         "rust_01.rs",
         "rust_02.rs",
+        "typescript_00.ts",
+        "typescript_01.ts"
+      ],
+      "source_validation_paths": [
+        "python_05.py",
+        "python_06.py",
+        "python_07.py",
+        "rust_05.rs",
+        "rust_06.rs",
+        "rust_07.rs",
+        "typescript_05.ts",
+        "typescript_06.ts",
+        "typescript_07.ts"
+      ],
+      "validation_paths_match": true
+    },
+    {
+      "artifact_exists": true,
+      "artifact_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_1\\taiji_c_entry_k_fixed_large_ensemble.pt",
+      "course_contract_digest_matches": true,
+      "course_seed_matches": true,
+      "format_matches": true,
+      "fresh_restore_digest_present": true,
+      "missing_required_training_paths": [],
+      "model_seed": 23,
+      "optimizer_state_present": false,
+      "parent_matches": true,
+      "ready": true,
+      "source_manifest_format_matches": true,
+      "source_training_paths": [
+        "python_00.py",
+        "python_01.py",
+        "python_02.py",
+        "rust_00.rs",
+        "rust_01.rs",
         "rust_03.rs",
         "typescript_00.ts",
-        "typescript_01.ts",
-        "typescript_02.ts",
+        "typescript_02.ts"
+      ],
+      "source_validation_paths": [
+        "python_05.py",
+        "python_06.py",
+        "python_07.py",
+        "rust_05.rs",
+        "rust_06.rs",
+        "rust_07.rs",
+        "typescript_05.ts",
+        "typescript_06.ts",
+        "typescript_07.ts"
+      ],
+      "validation_paths_match": true
+    },
+    {
+      "artifact_exists": true,
+      "artifact_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_2\\taiji_c_entry_k_fixed_large_ensemble.pt",
+      "course_contract_digest_matches": true,
+      "course_seed_matches": true,
+      "format_matches": true,
+      "fresh_restore_digest_present": true,
+      "missing_required_training_paths": [],
+      "model_seed": 23,
+      "optimizer_state_present": false,
+      "parent_matches": true,
+      "ready": true,
+      "source_manifest_format_matches": true,
+      "source_training_paths": [
+        "python_00.py",
+        "python_01.py",
+        "python_02.py",
+        "rust_00.rs",
+        "rust_01.rs",
+        "typescript_00.ts",
         "typescript_03.ts"
       ],
       "source_validation_paths": [
@@ -85,17 +221,17 @@
     },
     {
       "artifact_exists": true,
-      "artifact_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large\\model_31\\taiji_r6_k_fixed_large_ensemble.pt",
-      "blocking_reason": "existing fixed-large source course does not match the C-entry training/validation contract",
-      "course_contract_digest_matches": false,
+      "artifact_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_0\\taiji_c_entry_k_fixed_large_ensemble.pt",
+      "course_contract_digest_matches": true,
+      "course_seed_matches": true,
       "format_matches": true,
       "fresh_restore_digest_present": true,
       "missing_required_training_paths": [],
       "model_seed": 31,
       "optimizer_state_present": false,
       "parent_matches": true,
-      "ready": false,
-      "source_manifest_format_matches": false,
+      "ready": true,
+      "source_manifest_format_matches": true,
       "source_training_paths": [
         "python_00.py",
         "python_01.py",
@@ -104,10 +240,78 @@
         "rust_00.rs",
         "rust_01.rs",
         "rust_02.rs",
+        "typescript_00.ts",
+        "typescript_01.ts"
+      ],
+      "source_validation_paths": [
+        "python_05.py",
+        "python_06.py",
+        "python_07.py",
+        "rust_05.rs",
+        "rust_06.rs",
+        "rust_07.rs",
+        "typescript_05.ts",
+        "typescript_06.ts",
+        "typescript_07.ts"
+      ],
+      "validation_paths_match": true
+    },
+    {
+      "artifact_exists": true,
+      "artifact_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_1\\taiji_c_entry_k_fixed_large_ensemble.pt",
+      "course_contract_digest_matches": true,
+      "course_seed_matches": true,
+      "format_matches": true,
+      "fresh_restore_digest_present": true,
+      "missing_required_training_paths": [],
+      "model_seed": 31,
+      "optimizer_state_present": false,
+      "parent_matches": true,
+      "ready": true,
+      "source_manifest_format_matches": true,
+      "source_training_paths": [
+        "python_00.py",
+        "python_01.py",
+        "python_02.py",
+        "rust_00.rs",
+        "rust_01.rs",
         "rust_03.rs",
         "typescript_00.ts",
-        "typescript_01.ts",
-        "typescript_02.ts",
+        "typescript_02.ts"
+      ],
+      "source_validation_paths": [
+        "python_05.py",
+        "python_06.py",
+        "python_07.py",
+        "rust_05.rs",
+        "rust_06.rs",
+        "rust_07.rs",
+        "typescript_05.ts",
+        "typescript_06.ts",
+        "typescript_07.ts"
+      ],
+      "validation_paths_match": true
+    },
+    {
+      "artifact_exists": true,
+      "artifact_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_2\\taiji_c_entry_k_fixed_large_ensemble.pt",
+      "course_contract_digest_matches": true,
+      "course_seed_matches": true,
+      "format_matches": true,
+      "fresh_restore_digest_present": true,
+      "missing_required_training_paths": [],
+      "model_seed": 31,
+      "optimizer_state_present": false,
+      "parent_matches": true,
+      "ready": true,
+      "source_manifest_format_matches": true,
+      "source_training_paths": [
+        "python_00.py",
+        "python_01.py",
+        "python_02.py",
+        "rust_00.rs",
+        "rust_01.rs",
+        "typescript_00.ts",
         "typescript_03.ts"
       ],
       "source_validation_paths": [
@@ -124,10 +328,10 @@
       "validation_paths_match": true
     }
   ],
-  "fixed_large_ready": false,
-  "formal_input_ready": false,
+  "fixed_large_ready": true,
+  "formal_input_ready": true,
   "manifest_path": "E:\\Seed\\plans\\manifests\\taiji_m4v2_b3_k_c_entry_evaluation_v1.json",
-  "manifest_sha256": "17dba63f69c1b6b9dd0a1998ddfa60af5d2df2f4fae66f09b95cd7f7690dd6cb",
+  "manifest_sha256": "3c840e4e8fbda3d22ee605cf9551c538439027f5622278bcff44a1cc84a48c8f",
   "report_format": "taiji-m4v2-b3-k-c-entry-input-preflight-v1",
   "required_course_episode_indexes": [
     0,
@@ -150,6 +354,38 @@
     "typescript_02.ts",
     "typescript_03.ts"
   ],
+  "required_training_paths_by_course": {
+    "0": [
+      "python_00.py",
+      "python_01.py",
+      "python_02.py",
+      "python_03.py",
+      "rust_00.rs",
+      "rust_01.rs",
+      "rust_02.rs",
+      "typescript_00.ts",
+      "typescript_01.ts"
+    ],
+    "1": [
+      "python_00.py",
+      "python_01.py",
+      "python_02.py",
+      "rust_00.rs",
+      "rust_01.rs",
+      "rust_03.rs",
+      "typescript_00.ts",
+      "typescript_02.ts"
+    ],
+    "2": [
+      "python_00.py",
+      "python_01.py",
+      "python_02.py",
+      "rust_00.rs",
+      "rust_01.rs",
+      "typescript_00.ts",
+      "typescript_03.ts"
+    ]
+  },
   "required_validation_paths": [
     "python_05.py",
     "python_06.py",
@@ -171,6 +407,6 @@
     "sha256_matches": true,
     "status": "materialized-unread"
   },
-  "status": "blocked",
+  "status": "ready",
   "version": 1
 }

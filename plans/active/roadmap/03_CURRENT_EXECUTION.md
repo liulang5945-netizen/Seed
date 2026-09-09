@@ -1,6 +1,6 @@
 # Seed / Taiji 唯一执行计划
 
-> 最新修订：2026-09-10；依据代码基线 `672adc9a` 及实际实验报告。
+> 最新修订：2026-09-10；依据当前工作树基线 `a78eae17` 及实际实验报告。
 >
 > **执行优先级覆盖声明：仅下方「2026-09-10 修订执行序列」决定当前顺序。其后旧正文保留为设计/推进历史，其中所有“当前唯一下一步”、formal 开跑许可和完成状态必须结合本次复审解释，不再单独授权执行。**
 >
@@ -10,7 +10,7 @@
 
 ## 2026-09-10 修订执行序列（唯一有效）
 
-详细证据与源码定位见 [M4 v1/v2 实际结果复审](../../reference/M4_V1_V2_RESULT_REVIEW_2026_09_10.md)。当前判断：v2 有机制和窄任务进步；未证明总体超过 v1。R4 比小容量对照好但未稳定超过 fixed-large，R5 候选否决；最新 R6 九 cell 无训练，且反馈准入混入任务成功评分。保持 `can_promote=false`，暂停沿旧 admission 直接启动正式课程。
+详细证据与源码定位见 [M4 v1/v2 实际结果复审](../../reference/M4_V1_V2_RESULT_REVIEW_2026_09_10.md) 和 [B3-K C-entry formal closure](../../reference/M4V2_B3_K_C_ENTRY_CLOSURE_20260910.md)。当前判断：v2 有机制和窄任务进步；未证明总体超过 v1。R4 比小容量对照好但未稳定超过 fixed-large，R5 候选否决；C-entry formal 已完成，candidate quality/resource Gate 通过，但 fixed-large 在 `0/9` 格更强。保持 `can_promote=false`，不把候选接入默认路径。
 
 ### A. 已完成：修正 R6 学习对照的评分语义
 
@@ -57,9 +57,13 @@
 
 **B3-K target-aware model-seed v2 稳定性复验已完成。** 真实 model seed `17/23/31` 的 parent digest 分别为 `3e1b39…6675`、`8b46f3…822e4`、`c3e21d…7732`，三者独立；每个 seed 的 target-aware 三组 target-tensor composition、candidate namespace 与 worker attachment 正确，9 个 cell 的 technical/performance/stability Gate 全通过。所有 combined-MSE delta 均为负，整体均值 `−0.00044314`、最坏 `−0.00025813`；三个 seed 仍呈同构数值轨迹，因此还必须通过冻结后的 sealed-test 与 fixed-large 强对照，不能直接 promotion。报告为 [B3-K target-aware model seeds v2](../../../reports/taiji_m4v2_b3_k_target_aware_model_seeds_v2_20260910.json)，继续 `can_promote=false`、`can_start_r6_formal=false`。
 
-**C 入口 manifest 与 sealed-test 已冻结/材料化；旧 fixed-large 输入预检被正确阻断。** 合同已写入 [C-entry evaluation manifest v1](../../manifests/taiji_m4v2_b3_k_c_entry_evaluation_v1.json)，sealed artifact 为 3 个独立 episode、9 个 observation，报告为 [C-entry input preflight](../../../reports/taiji_m4v2_b3_k_c_entry_input_preflight_20260910.json)。预检确认旧 R6 fixed-large 的 parent、checkpoint、validation 路径和 restore 都可读，但 source manifest 仍是旧 `taiji-k-fixed-large-source-manifest-v1`，没有 C-entry target-aware course contract digest；仅靠路径集合不能证明同一训练经历，因此 `fixed_large_ready=false`、`formal_input_ready=false`。不修改旧 artifact，不把它冒充 C 对照。
+**C 入口 manifest、sealed-test 与 fixed-large 控制已冻结/材料化。** 合同已写入 [C-entry evaluation manifest v1](../../manifests/taiji_m4v2_b3_k_c_entry_evaluation_v1.json)，sealed artifact 为 3 个独立 episode、9 个 observation，旧 R6 fixed-large 未被冒充为本次控制。新建的 `build_taiji_m4v2_b3_k_c_fixed_large.py` 已按 3 个 model seed × 3 个 course seed 生成 C-entry 专用控制：每格绑定同一 parent、同一 `A+B+C / A+A+B / A+B+B` target-tensor multiset、同一 validation/sealed artifact 和 C-entry source manifest；prefit save/fresh-restore、disk restore、K1/K2 两个顺序不同的 replica 及 replica update distinct Gate 均通过。输入预检报告 [C-entry input preflight](../../../reports/taiji_m4v2_b3_k_c_entry_input_preflight_20260910.json) 现为 `status=ready`、`fixed_large_ready=true`、`formal_input_ready=true`，但仍 `can_start_formal=false`、`can_promote=false`。
 
-**当前唯一下一步：按 C-entry course contract 重建 fixed-large 控制。** 新控制必须逐 model seed × course seed 绑定相同 parent、相同 `A+B+C / A+A+B / A+B+B` target-tensor multiset、相同 validation/sealed scorer 和 CPU/checkpoint 预算，写入 `taiji-k-fixed-large-c-entry-source-v1` 与 manifest digest；完成 prefit save/fresh-restore 后才允许训练。重建前不启动 formal、不 promotion、不扩结构。
+**C-entry sealed scoring canary 已完成，但不是 formal。** 只读脚本 `eval_taiji_m4v2_b3_k_c_sealed_scoring.py` 消费冻结后的 parent、candidate 和 C-entry fixed-large artifact，使用同一六分量 structured-loss scorer 对 validation 与 sealed 各 9 格评分；报告为 [C-entry sealed scoring canary](../../../reports/taiji_m4v2_b3_k_c_sealed_scoring_20260910.json)。candidate 相对 frozen parent 的 sealed combined-MSE 平均 delta 为 `−0.0004431358`，最坏为 `−0.0002581254`，说明 continuation 仍有真实改善；但 fixed-large 平均 delta 为 `−0.0011265067`，candidate 在 `0/9` 格胜过 fixed-large。因此“候选有效”成立，“候选胜过强容量对照”不成立；没有改阈值，也没有把 sealed 结果改写成 promotion 依据。该 canary 明确 `training_performed=false`、`resource_measurement_complete=false`、`formal_gate_passed=false`、`can_start_formal=false`、`can_promote=false`。
+
+**C-entry formal execution 已完成并收束。** 报告为 [C-entry formal report](../../../reports/taiji_m4v2_b3_k_c_formal_20260910.json)：9/9 cell 的 technical、resource、candidate-quality Gate 全部通过；candidate sealed combined-MSE 相对 frozen parent 的平均 delta 为 `−0.0004431358`，最差为 `−0.0002581254`。但 fixed-large 平均 delta 为 `−0.0011265067`，candidate 在 `0/9` 格胜过 fixed-large，因此 `formal_gate_passed=true` 只表示 candidate 自身学习合同闭合，不表示 promotion；`can_promote=false` 保持。完整边界见 [B3-K C-entry formal closure](../../reference/M4V2_B3_K_C_ENTRY_CLOSURE_20260910.md)。
+
+**当前唯一下一步：capacity-parity audit/pre-registration。** 先冻结 candidate 与 fixed-large 的参数量、实际 update steps、checkpoint 总量、训练/推理预算和“强对照是否要求胜出”的解释边界，区分容量差异、训练预算差异与学习规则差异；审计完成前不追加新训练、不调学习率、不复活 R5 learned router 或旧结构增长路线，不接 default runtime/provider/MCP/client/CUDA。
 
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 
