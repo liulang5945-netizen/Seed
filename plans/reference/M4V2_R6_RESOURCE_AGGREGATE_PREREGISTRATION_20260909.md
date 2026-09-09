@@ -183,3 +183,14 @@ inference trace 相等，candidate-frozen 与 candidate-matched delta 均为 1.0
 
 slice closure 不改变 aggregate 合同。下一步只执行 model23/course0，保留固定前序、
 全部 arm 字段和不可删除失败 cell 规则。
+
+## 10. Revised model23/course0 resource closure（2026-09-10）
+
+model23/course0 已追加为第 4/9 个 executed_passed row；candidate/matched 均为
+4833 parameters、19332 parameter bytes、1 条 inference trace，candidate/matched 的
+wall 与 peak multiplier 均通过 1.5×/1.25× cap，candidate-frozen 与
+candidate-matched capability delta 均为 1.0。fixed-large K-task-equivalent control
+也通过，未发生 side-effect 漂移。
+
+该结果只关闭一个 cell，不能外推为 aggregate。下一步只执行 model23/course1；保留
+固定 predecessor、失败 cell 不可删除、不得用均值填补的规则，9/9 前不运行 aggregate。

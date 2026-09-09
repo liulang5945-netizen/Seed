@@ -539,3 +539,10 @@ revised model17 slice 已闭合：course0/course1/course2 连续通过，独立 
 wall/peak 和 same-capacity 参数/trace Gate 均通过。**当前唯一下一步**：只执行 revised
 runner 的 model23/course0；保持 prior-ledger 顺序，9/9 前不运行 aggregate、不接默认
 runtime/provider/MCP/client/CUDA。
+
+model23/course0 已由 revised runner 追加并通过，独立 ledger 累计 4/9；该格仍为
+frozen=0、matched=0、candidate=1、lesion=0，candidate-frozen 与
+candidate-matched delta 均为 1.0，matched/candidate 参数与 inference trace 相同，
+fixed-large K-task-equivalent control 通过。**当前唯一下一步**：只执行 revised runner
+的 model23/course1；不运行 aggregate、不改变阈值、不接入 default runtime/provider/
+MCP/client/CUDA。
