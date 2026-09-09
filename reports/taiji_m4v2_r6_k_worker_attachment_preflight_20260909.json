@@ -1,0 +1,37 @@
+{
+  "adapter_checkpoint": null,
+  "adapter_training_steps": 0,
+  "artifact_errors": {},
+  "artifact_format": "taiji-k-worker-artifact-v1",
+  "artifact_missing": [
+    "k1.semantic",
+    "k2.transition",
+    "k3.outcome_projection"
+  ],
+  "artifact_paths": {
+    "k1.semantic": [],
+    "k2.transition": [],
+    "k3.outcome_projection": []
+  },
+  "blocking_reason": "real K1/K2/K3 worker artifacts are required; no random initialization or standalone report can satisfy attachment",
+  "can_promote": false,
+  "can_start_r6_formal": false,
+  "candidate_training_performed": false,
+  "checks": {},
+  "client_attached": false,
+  "created_at_unix": 1788960140.2292752,
+  "cuda_used": false,
+  "default_runtime_attached": false,
+  "mcp_attached": false,
+  "parent_checkpoint_digest": "d778ae056364735d70ecad22b0227bc9e6ff6dbaf2d67c728951b4564e6086d6",
+  "parent_restore": {
+    "fresh_restore": true,
+    "rollback_restore": true
+  },
+  "provider_attached": false,
+  "report_format": "taiji-m4v2-r6-k-worker-attachment-preflight-v1",
+  "status": "artifact_missing",
+  "training_performed": false,
+  "version": 1,
+  "workers": {}
+}

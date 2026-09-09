@@ -199,13 +199,41 @@ addendum 的 new-capability/retention/resource/lesion Gate 判定。
 - 不因为 typed smoke 16/16 通过就宣布 K learner 已连接或 R6 formal 已解冻；
 - 不接 learned router、provider、MCP、客户端写入或 CUDA 隐变量。
 
-## 8. 当前结论与唯一后续动作
+## 8. 执行前结论（历史记录）
 
 当前真实结论：typed exchange boundary 已通过 controlled smoke，parent S/G
 retention 观测已存在；但真实 K1/K2 worker checkpoint 尚未绑定到 adapter，K
 parent retention 仍未闭合，`can_start_r6_formal=false`、`can_promote=false`。
 
-唯一下一步：实现 **K worker manifest + joint checkpoint attachment preflight**，
-只加载/恢复已有 worker checkpoint，不训练、不接 default runtime；若本机没有
-真实 worker checkpoint，报告必须明确 `artifact_missing` 并停止，不能用随机
-初始化或 standalone report 冒充。
+本节结论已由 §9 的 attachment preflight 更新。
+
+## 9. attachment preflight 执行记录（2026-09-09）
+
+已实现并运行：
+
+- `taiji/k_worker_manifest.py`：K1/K2/K3 manifest、合同 digest、同 parent
+  bundle 和 owner graph 的 content-addressed contract；
+- `taiji/continual_k_adapter.py`：`KWorkerManifestBundle` 原子挂接、joint
+  checkpoint/fresh restore、exchange ledger 与 rollback 后保留；
+- `scripts/training/eval_taiji_m4v2_r6_k_worker_attachment_preflight.py`：
+  真实 artifact restore、K1/K2 typed probe、K3 projector restore、source/
+  resource/parent/contract/owner digest 校验、typed exchange、S/G retention
+  与 stage/rollback Gate；
+- `tests/taiji_native/test_m4v2_r6_k_worker_manifest.py`：manifest/bundle
+  tamper、同 parent、adapter restore 及缺失 artifact 回归。
+
+报告：`reports/taiji_m4v2_r6_k_worker_attachment_preflight_20260909.json`。
+本机没有可恢复的真实 K1 semantic、K2 transition、K3 outcome projector
+artifact，因此结果必须且确实为 `status=artifact_missing`；parent fresh
+restore/rollback 机械检查通过，但 `can_start_r6_formal=false`、
+`can_promote=false`。本轮没有随机初始化、没有训练、没有把 standalone
+formal report 冒充 worker checkpoint，也没有接入 default runtime、provider、
+MCP、client 或 CUDA。
+
+## 10. 当前结论与唯一后续动作
+
+attachment contract 已实现，但真实 worker owner graph 仍未形成。下一步只能
+建立**可保存、可恢复、带同一 parent/source/resource manifest 的 K1/K2 worker
+artifact 生成管线**，并由本 §6 preflight 先验收后才允许任何 controlled K
+canary；K3 仍只从真实 projector checkpoint 恢复，不训练。生成 artifact 期间
+不得接 default runtime，不得用随机初始化或报告 digest 代替 checkpoint。

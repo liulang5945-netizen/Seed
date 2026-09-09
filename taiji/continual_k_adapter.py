@@ -15,6 +15,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from .internalization import content_digest
+from .k_worker_manifest import KWorkerManifestBundle
 from .outcome_dependency import OutcomeDependencyProjection
 
 TAIJI_K_CONTINUAL_ADAPTER_FORMAT = "taiji-k-continual-adapter-v1"
@@ -459,6 +460,7 @@ class KContinualAdapter:
         self._staged_trial_id = ""
         self._rollback_token = ""
         self._dependency_projection: OutcomeDependencyProjection | None = None
+        self._worker_bundle: KWorkerManifestBundle | None = None
         self._last_exchange: KAdapterExchange | None = None
         self._rollback_records: list[KAdapterRollbackRecord] = []
         self._revision = 0
@@ -470,6 +472,12 @@ class KContinualAdapter:
     @property
     def dependency_projection(self) -> OutcomeDependencyProjection | None:
         return self._dependency_projection
+
+    @property
+    def worker_bundle(self) -> KWorkerManifestBundle | None:
+        """The atomically attached K1/K2/K3 worker graph, if present."""
+
+        return self._worker_bundle
 
     @property
     def last_exchange(self) -> KAdapterExchange | None:
@@ -487,6 +495,28 @@ class KContinualAdapter:
 
     def parent_checkpoint_matches(self, parent_payload: Mapping[str, Any]) -> bool:
         return content_digest(dict(parent_payload)) == self.parent_checkpoint_digest
+
+    def bind_worker_bundle(self, bundle: KWorkerManifestBundle) -> None:
+        """Attach one restorable K worker graph to this exact parent boundary."""
+
+        if not isinstance(bundle, KWorkerManifestBundle):
+            raise TypeError("K adapter worker boundary requires a KWorkerManifestBundle")
+        if bundle.parent_checkpoint_digest != self.parent_checkpoint_digest:
+            raise ValueError("K adapter worker bundle crosses the parent checkpoint")
+        if bundle.owner_graph_digest != self.owner_graph_digest:
+            raise ValueError("K adapter worker bundle owner graph mismatch")
+        if bundle.source_manifest_digest != self.source_manifest_digest:
+            raise ValueError("K adapter worker bundle source manifest mismatch")
+        if bundle.resource_manifest_digest != self.resource_manifest_digest:
+            raise ValueError("K adapter worker bundle resource manifest mismatch")
+        if bundle.candidate_namespace != self.candidate_namespace:
+            raise ValueError("K adapter worker bundle candidate namespace mismatch")
+        if self._worker_bundle is not None:
+            if self._worker_bundle.bundle_digest == bundle.bundle_digest:
+                return
+            raise ValueError("K adapter worker boundary is already bound")
+        self._worker_bundle = bundle
+        self._revision += 1
 
     def bind_dependency_projection(
         self, projection: OutcomeDependencyProjection
@@ -637,6 +667,9 @@ class KContinualAdapter:
                 if self._dependency_projection is None
                 else self._dependency_projection.to_payload()
             ),
+            "worker_bundle": (
+                None if self._worker_bundle is None else self._worker_bundle.to_payload()
+            ),
             "last_exchange": (
                 None if self._last_exchange is None else self._last_exchange.to_payload()
             ),
@@ -687,6 +720,11 @@ class KContinualAdapter:
             adapter.bind_dependency_projection(
                 OutcomeDependencyProjection.from_payload(projection_payload)
             )
+        worker_bundle_payload = payload.get("worker_bundle")
+        if worker_bundle_payload is not None:
+            if not isinstance(worker_bundle_payload, Mapping):
+                raise ValueError("K continual adapter worker bundle is invalid")
+            adapter.bind_worker_bundle(KWorkerManifestBundle.from_payload(worker_bundle_payload))
         exchange_payload = payload.get("last_exchange")
         if exchange_payload is not None:
             if not isinstance(exchange_payload, Mapping):

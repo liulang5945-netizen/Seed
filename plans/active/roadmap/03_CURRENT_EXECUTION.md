@@ -440,4 +440,8 @@ parent baseline/preflight 已实现并运行：`reports/taiji_m4v2_r6_parent_bas
 
 K learner-owner attachment contract 已冻结：[M4V2_R6_K_LEARNER_OWNER_ATTACHMENT_CONTRACT_20260909.md](../../reference/M4V2_R6_K_LEARNER_OWNER_ATTACHMENT_CONTRACT_20260909.md)。它把 adapter 定义为唯一 candidate/rollback owner，K1 semantic、K2 transition 为 subordinate worker，K3 为 deterministic projection；明确了真实 checkpoint/owner manifest、joint digest、训练前 restore、原子 rollback 和禁止把 standalone report 冒充 worker checkpoint 的规则。
 
-**当前唯一下一步**：实现 K worker manifest + joint checkpoint attachment preflight——只加载/恢复真实 K1/K2 worker checkpoint 与 K3 projector checkpoint；若本机没有真实 worker artifact，明确报告 `artifact_missing` 并停止，不训练、不接 default runtime、不用随机初始化或 standalone report 冒充。
+K worker manifest + joint checkpoint attachment preflight 已实现并运行：`taiji/k_worker_manifest.py` 固化 K1/K2/K3 manifest、输入/输出合同 digest、同 parent/source/resource 的 worker bundle 与 owner graph；`KContinualAdapter` 已支持 bundle 原子挂接、joint checkpoint/fresh restore、typed exchange ledger 与 rollback 保留。runner 为 `scripts/training/eval_taiji_m4v2_r6_k_worker_attachment_preflight.py`，报告为 `reports/taiji_m4v2_r6_k_worker_attachment_preflight_20260909.json`。
+
+本机没有真实可恢复的 K1 semantic、K2 transition、K3 outcome projector artifact，因此结果诚实为 `status=artifact_missing`：parent fresh restore/rollback 机械检查通过，但 `can_start_r6_formal=false`、`can_promote=false`。相关 18 个定向回归通过；没有随机初始化、没有训练、没有 default runtime/provider/MCP/client/CUDA，也没有用 standalone report digest 冒充 worker checkpoint。
+
+**当前唯一下一步**：建立可保存、可恢复、带同一 parent/source/resource lineage 的 K1/K2 worker artifact 生成管线；生成前先验证 checkpoint 保存/恢复，生成后必须重新运行本 attachment preflight。K3 只恢复真实 projector checkpoint，不训练；在 preflight 通过前不启动 R6 formal、不接 default runtime。
