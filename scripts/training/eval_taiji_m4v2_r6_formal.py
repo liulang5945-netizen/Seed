@@ -58,7 +58,11 @@ DEFAULT_CELL_REPORT = (
 )
 EXECUTION_MODEL_SEED = 17
 EXECUTION_COURSE_SEED = 0
-EXECUTION_ALLOWED_CELLS = ((17, 0), (17, 1))
+EXECUTION_ORDER = tuple(
+    (int(model_seed), int(course_seed))
+    for model_seed in MODEL_SEEDS
+    for course_seed in COURSE_SEEDS
+)
 
 
 def _failure_record(
@@ -437,13 +441,15 @@ def run_execution(
             encoding="utf-8",
         )
         return report
-    if (model_seed, course_seed) not in EXECUTION_ALLOWED_CELLS:
+    if (model_seed, course_seed) not in EXECUTION_ORDER:
         report["failures"] = [
             _failure_record(
                 failure_class="input_contract",
                 message=(
-                    "execution frontier is restricted to the preregistered cells "
-                    "model17/course0 and model17/course1"
+                    "execution target is outside the fixed manifest cell order "
+                    "model17/course0 → model17/course1 → model17/course2 → "
+                    "model23/course0 → model23/course1 → model23/course2 → "
+                    "model31/course0 → model31/course1 → model31/course2"
                 ),
                 cell={"model_seed": model_seed, "course_seed": course_seed},
                 recoverability="single_cell_execution_order",
@@ -492,6 +498,33 @@ def run_execution(
         for row in ledger
         if row["cell"] == {"model_seed": model_seed, "course_seed": course_seed}
     ]
+    target_index = EXECUTION_ORDER.index((model_seed, course_seed))
+    row_by_key = {
+        (int(row["cell"]["model_seed"]), int(row["cell"]["course_seed"])): row
+        for row in ledger
+    }
+    missing_predecessors = [
+        key
+        for key in EXECUTION_ORDER[:target_index]
+        if row_by_key.get(key, {}).get("status") != "executed_passed"
+    ]
+    if missing_predecessors:
+        report["failures"] = [
+            _failure_record(
+                failure_class="input_contract",
+                message=f"execution predecessors are not passed: {missing_predecessors}",
+                cell={"model_seed": model_seed, "course_seed": course_seed},
+                recoverability="execution_order_predecessor_required",
+            )
+        ]
+        report["cell_ledger"] = ledger
+        report["elapsed_seconds"] = time.perf_counter() - started
+        report_path.parent.mkdir(parents=True, exist_ok=True)
+        report_path.write_text(
+            json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        return report
     if len(target_rows) != 1 or target_rows[0].get("status") != "not_started":
         report["failures"] = [
             _failure_record(

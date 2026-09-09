@@ -544,3 +544,15 @@ course1 五臂 resource Gate 全部通过，execution contract digest 为
 当前仍不是完整 3×3 formal：`course_executed=false`、`can_start_r6_formal=false`、
 `can_promote=false`。下一步只执行 `model17/course2`，验证第三个 course seed 后再决定
 是否开放 model23/31；任何失败都按 row 停止线处理。
+
+## 19. Model17 three-course slice closure and fixed order（2026-09-09）
+
+`model17/course2` 已追加成功，三个 model17 row 均为 `executed_passed`，course2 五臂
+resource Gate 全部通过，execution contract digest 为
+`ec45d6ee3caadb8bdfb0f3e7e6af2636ea5141e190355d585bba533865824a56`，execution report
+没有 failure，model23/31 六个 row 仍为 `not_started`。
+
+runner 现在固定执行顺序
+`17/0 → 17/1 → 17/2 → 23/0 → 23/1 → 23/2 → 31/0 → 31/1 → 31/2`，并在消费目标 row
+前检查所有 predecessor 为 `executed_passed`；prior ledger 的 manifest digest 与 row
+status 均不满足时立即阻断。当前仍不运行 aggregate，下一步只开放 `model23/course0`。

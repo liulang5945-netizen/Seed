@@ -24,10 +24,10 @@
     "worker_registry_valid": true
   },
   "client_attached": false,
-  "created_at_unix": 1788968195.5704696,
+  "created_at_unix": 1788968364.4436243,
   "cuda_used": false,
   "default_runtime_attached": false,
-  "elapsed_seconds": 0.19496270001400262,
+  "elapsed_seconds": 0.15928290004376322,
   "failures": [],
   "fixed_large_dir": "checkpoints/taiji_k_fixed_large",
   "formal_input_ready": true,
