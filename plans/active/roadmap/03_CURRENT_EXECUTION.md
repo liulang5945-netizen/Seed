@@ -454,4 +454,6 @@ R6 single-cell controlled K canary 的证据边界已经审阅并冻结：[M4V2_
 
 formal runner 现在被限制为只消费显式 content-addressed input manifest：固定 `model_seed=17/23/31`、`course_seed=0/1/2`、baseline repeats `401/503/607`、`S→G→K`、CPU、parent/worker/course registry；禁止隐式 parent factory、目录猜 artifact 或按结果重选 seed。失败必须按 input/lineage/checkpoint/course/environment/worker/outcome/projection/causal/retention/resource/side-effect/aggregate 的优先级写入 cell/arm/step/digest 归因。
 
-**当前唯一下一步**：实现可校验的 R6 formal input manifest preflight，并先补齐三份 content-addressed parent checkpoint registry；preflight 通过前不实现或运行 full formal course、不接 default runtime、不引入 MCP/provider/client/CUDA。
+R6 formal input manifest preflight 已实现并运行：`plans/manifests/taiji_m4v2_r6_formal_input_v1.json` 已生成，model 17/23/31 三份 parent checkpoint 均完成 save/fresh-restore/digest Gate；course/seed/arm/resource/side-effect/failure contracts 全部通过。报告 `reports/taiji_m4v2_r6_formal_input_manifest_preflight_20260909.json` 准确为 `status=blocked_input`，唯一阻断是三个 model seed 的 K1/K2/K3 worker registry 尚未建立。
+
+**当前唯一下一步**：按 manifest 为 model 17/23/31 分别生成并挂接 content-addressed K1/K2/K3 worker bundle，再重跑 input manifest preflight；通过前不实现或运行 full formal course、不接 default runtime、不引入 MCP/provider/client/CUDA。
