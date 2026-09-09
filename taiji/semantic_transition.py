@@ -27,8 +27,8 @@ from .local_learning import (
 )
 from .semantic_training import SEMANTIC_METADATA_DIM, semantic_fact_key
 
-SEMANTIC_TRANSITION_CHECKPOINT_FORMAT = "taiji-structured-semantic-transition-v2"
-SEMANTIC_TRANSITION_VERSION = 2
+SEMANTIC_TRANSITION_CHECKPOINT_FORMAT = "taiji-structured-semantic-transition-v3"
+SEMANTIC_TRANSITION_VERSION = 3
 
 
 def _required_text(value: str, name: str) -> str:
@@ -394,6 +394,36 @@ def _one_hot(indices: torch.Tensor, width: int) -> torch.Tensor:
     return result
 
 
+def _normalized_transition_input_masks(
+    fact_keys: tuple[str, ...],
+    input_dim: int,
+    masks: Mapping[str, Sequence[int]] | None,
+) -> tuple[tuple[int, ...], ...] | None:
+    """Validate the K2.1 typed row binding for the transition head.
+
+    A transition output row may be restricted to a small, explicit subset of
+    the ``[before, event, before x event]`` input basis.  The mask is kept as
+    a constructor/checkpoint contract rather than inferred from the corpus so
+    that a causal binding cannot silently change when the course changes.
+    """
+
+    if masks is None:
+        return None
+    if set(masks) != set(fact_keys):
+        raise ValueError("transition input masks must cover exactly the corpus fact keys")
+    normalized: list[tuple[int, ...]] = []
+    for key in fact_keys:
+        indices = tuple(int(value) for value in masks[key])
+        if not indices:
+            raise ValueError(f"transition input mask cannot be empty: {key}")
+        if len(set(indices)) != len(indices):
+            raise ValueError(f"transition input mask repeats an input: {key}")
+        if any(not 0 <= index < int(input_dim) for index in indices):
+            raise ValueError(f"transition input mask index out of range: {key}")
+        normalized.append(indices)
+    return tuple(normalized)
+
+
 class StructuredSemanticTransitionLearner(nn.Module):
     """Learn persistent fact deltas and read out the resulting semantic state."""
 
@@ -407,6 +437,7 @@ class StructuredSemanticTransitionLearner(nn.Module):
         fact_threshold: float = 0.55,
         confidence_floor: float = 0.55,
         ambiguity_ceiling: float = 0.12,
+        transition_input_masks: Mapping[str, Sequence[int]] | None = None,
         device: torch.device | str = "cpu",
     ) -> None:
         super().__init__()
@@ -431,6 +462,9 @@ class StructuredSemanticTransitionLearner(nn.Module):
             + self.transition_context_dim
             + len(self.fact_keys) * self.transition_context_dim
         )
+        self._transition_input_masks = _normalized_transition_input_masks(
+            self.fact_keys, self.transition_input_dim, transition_input_masks
+        )
         self.transition_head = nn.Linear(self.transition_input_dim, len(self.fact_keys), bias=True)
         self.goal_head = nn.Linear(len(self.fact_keys), len(self.goal_ids), bias=True)
         self.content_head = nn.Linear(
@@ -442,6 +476,7 @@ class StructuredSemanticTransitionLearner(nn.Module):
             for layer in (self.transition_head, self.goal_head, self.content_head):
                 layer.weight.zero_()
                 layer.bias.zero_()
+        self._apply_transition_input_masks()
         self.to(device)
         freeze_parameters(self)
         self.training_steps = 0
@@ -509,6 +544,27 @@ class StructuredSemanticTransitionLearner(nn.Module):
         )
         return torch.cat((current, event_context, interaction), dim=1)
 
+    @property
+    def transition_input_masks(self) -> dict[str, tuple[int, ...]] | None:
+        """Return the typed K2.1 row binding in corpus fact-key order."""
+
+        if self._transition_input_masks is None:
+            return None
+        return {
+            key: indices for key, indices in zip(self.fact_keys, self._transition_input_masks, strict=True)
+        }
+
+    @torch.no_grad()
+    def _apply_transition_input_masks(self) -> None:
+        """Reapply K2.1 after init, every update, and checkpoint restore."""
+
+        if self._transition_input_masks is None or not hasattr(self, "transition_head"):
+            return
+        mask = torch.zeros_like(self.transition_head.weight)
+        for row, indices in enumerate(self._transition_input_masks):
+            mask[row, list(indices)] = 1.0
+        self.transition_head.weight.mul_(mask)
+
     def _training_batch(
         self, examples: Sequence[StructuredSemanticTransitionExample]
     ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
@@ -560,6 +616,7 @@ class StructuredSemanticTransitionLearner(nn.Module):
                 mean_squared_error_delta(predicted_delta, delta),
                 float(learning_rate),
             )
+            self._apply_transition_input_masks()
             goal_logits = self.goal_head(next_state)
             apply_linear_delta(
                 self.goal_head,
@@ -820,6 +877,11 @@ class StructuredSemanticTransitionLearner(nn.Module):
             "fact_threshold": self.fact_threshold,
             "confidence_floor": self.confidence_floor,
             "ambiguity_ceiling": self.ambiguity_ceiling,
+            "transition_input_masks": (
+                None
+                if self._transition_input_masks is None
+                else [list(indices) for indices in self._transition_input_masks]
+            ),
             "training_steps": self.training_steps,
             "state_dict": {
                 name: value.detach().cpu().clone() for name, value in self.state_dict().items()
@@ -850,14 +912,25 @@ class StructuredSemanticTransitionLearner(nn.Module):
         ):
             if payload.get(key) != expected:
                 raise ValueError(f"structured semantic transition checkpoint {key} mismatch")
+        raw_masks = payload.get("transition_input_masks")
+        transition_input_masks = None
+        if raw_masks is not None:
+            if not isinstance(raw_masks, Sequence) or len(raw_masks) != len(corpus.fact_keys):
+                raise ValueError("structured semantic transition checkpoint masks mismatch")
+            transition_input_masks = {
+                key: tuple(int(value) for value in row)
+                for key, row in zip(corpus.fact_keys, raw_masks, strict=True)
+            }
         learner = cls(
             corpus,
             fact_threshold=float(payload.get("fact_threshold", 0.55)),
             confidence_floor=float(payload.get("confidence_floor", 0.55)),
             ambiguity_ceiling=float(payload.get("ambiguity_ceiling", 0.12)),
+            transition_input_masks=transition_input_masks,
             device=device,
         )
         learner.load_state_dict(payload["state_dict"])
+        learner._apply_transition_input_masks()
         learner.training_steps = int(payload.get("training_steps", 0))
         return learner
 
