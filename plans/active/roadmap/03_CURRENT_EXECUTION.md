@@ -312,3 +312,7 @@ coverage/junit 门禁已闭合：同一仓库可写 fixture 下 `1070 passed, 6 
 CI 交付层当前事实：后端完整测试/coverage、前端边界/测试/build、版本/Ruff/B-SIM/core mypy/编译/diff 均通过；本机仍无法验证 Black 全量（历史目录 ACL/worker），精确 npm ci 仍无法验证（Windows spawn/cache ACL）。这些是环境差异，不是模型或前端源码失败。
 
 **当前唯一下一步**：进入 M4.V2.R4 收束决策审计，把 fixed-large 对照下结构增长未晋级的反证、可保留的 causal contribution、默认 parent 保护和下一版容量假设写成一份版本化架构决策；在该决策前不运行 R5 learned router、不继续调 Gate 输入、不引入 Skill/MCP/provider/client/CUDA 新变量。
+
+R4 收束决策记录已完成：[M4V2_R4_CLOSURE_DECISION_20260909.md](../../reference/M4V2_R4_CLOSURE_DECISION_20260909.md)。它确认 9-cell 技术 Gate 全过，candidate lesion G/S 均为正，但 pressure 相对 fixed-large 的 G 均值仍劣化 `+0.001002`、仅 `4/9` 不劣，因此 `can_promote=false` 和默认 parent 保护不变。唯一推荐的后续假设是“资源归一化的条件模块化”：检验增长是否通过内容/状态路由节省早期活跃容量并改善未见组合 transfer，而不是继续微调当前 residual gate；在指标、对照和停止线预注册前不写实现、不训练、不解冻 R5。
+
+**当前唯一下一步**：在该决策节点确认“条件模块化 + 资源归一化”假设的指标、对照和停止线；确认前保持代码、模型权重、R4 Gate 和外围系统冻结，避免路径漂移。

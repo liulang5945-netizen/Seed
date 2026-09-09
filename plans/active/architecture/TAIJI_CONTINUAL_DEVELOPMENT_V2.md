@@ -258,3 +258,7 @@ coverage/junit 门禁已闭合：`1070 passed, 6 skipped, 1 warning`，总覆盖
 前端本地等价门禁已闭合到源码层：ESLint `0 errors / 13 warnings`、native boundary/API contract 通过、Vitest `47/267` 通过、production build 和 `dist/index.html` 通过。精确 `npm ci` 受本机 cache/`spawn EPERM` 阻塞，仓库 cache + `--ignore-scripts` 仅作为验证 workaround，lockfile 未变。后端 coverage/全量测试与静态 Python 门禁也已通过；Black 全量仍仅受本机历史目录 ACL/worker 阻塞。
 
 当前唯一出口：做 M4.V2.R4 收束决策审计，明确 fixed-large 反证和下一版容量假设；不解冻 R5 learned router 或任何外围变量。
+
+R4 收束决策已记录在 [M4V2_R4_CLOSURE_DECISION_20260909.md](../../reference/M4V2_R4_CLOSURE_DECISION_20260909.md)：candidate 因果贡献成立，但 fixed-large 的 G 非劣条件未成立，故不得进入 R5。唯一推荐的下一版是资源归一化的条件模块化实验；它必须先完成指标/对照/停止线预注册，不能把当前 R4 失败通过继续调 gate 或引入外围变量掩盖。
+
+当前唯一出口：确认该下一版研究假设的正式量尺和停止线；确认前继续冻结实现、训练和外围变量。
