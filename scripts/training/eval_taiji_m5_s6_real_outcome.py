@@ -58,21 +58,31 @@ RETENTION_TASKS = 120
 TARGET_BANDS = (1.0, 0.5, -0.5)
 
 
-def _build_fixture(root: Path) -> list[dict[str, Any]]:
-    """Create deterministic files whose real read results vary in size."""
+def _build_fixture(
+    root: Path,
+    *,
+    task_seed: int = 0,
+) -> list[dict[str, Any]]:
+    """Create deterministic files whose real read results vary in size.
+
+    ``task_seed`` rotates the band assignment and changes the content-token
+    rule so each cell has a genuinely different feature-reward coupling;
+    ``task_seed=0`` reproduces the original canary exactly.
+    """
+    shift = int(task_seed) % 3
+    mod = (3, 5, 7)[(int(task_seed) // 3) % 3]
     specs: list[dict[str, Any]] = []
     for index in range(N_TASKS):
         name = f"file_{index:04d}.txt"
-        body = (f"record {index} " + ("x" if index % 3 == 0 else "content-token ")) * (
-            1 + index % 7
-        )
+        token = "x" if (index + task_seed) % mod == 0 else "content-token "
+        body = (f"record {index} " + token) * (1 + (index + task_seed) % 7)
         path = root / name
         path.write_text(body, encoding="utf-8")
         specs.append(
             {
                 "path": name,
                 "body": body,
-                "target_band": TARGET_BANDS[index % len(TARGET_BANDS)],
+                "target_band": TARGET_BANDS[(index + shift) % len(TARGET_BANDS)],
             }
         )
     return specs
@@ -154,15 +164,12 @@ def _evidence(
     )
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--report", type=Path, required=True)
-    args = parser.parse_args()
-
+def run_cell(*, task_seed: int, learner_seed: int) -> dict[str, Any]:
+    """Run one real-execution internalization cell (a formal matrix unit)."""
     started = time.perf_counter()
     temp_root = Path(tempfile.mkdtemp(prefix="taiji_m5_s6_"))
     try:
-        specs = _build_fixture(temp_root)
+        specs = _build_fixture(temp_root, task_seed=task_seed)
         environment = WorkbenchEnvironment(
             root=temp_root,
             programming_language_registry=_course_registry(),
@@ -186,7 +193,7 @@ def main() -> int:
         holdout = examples[N_TASKS - HOLDOUT_TASKS : N_TASKS - HOLDOUT_TASKS + HOLDOUT_TASKS]
         retention = examples[:RETENTION_TASKS]
 
-        converter = InternalizationConverter(seed=17, replay_budget=8000)
+        converter = InternalizationConverter(seed=learner_seed, replay_budget=8000)
         ledger = InternalizationLedger(converter=converter)
 
         def _to_example(tag: str, reward: float, features: tuple[float, ...]) -> Any:
@@ -240,7 +247,17 @@ def main() -> int:
             checkpoint_recoverable=checkpoint_roundtrip,
             old_task_retention=report.retention_loss_after <= report.retention_loss_before + 0.05,
         )
-        lifecycle = ledger.advance_status(example_id, "internalized", causal_gate=gate)
+        # A failing causal gate must be recorded, not raised: the formal
+        # matrix needs every cell's outcome, including the ones that do not
+        # reach ``internalized``.  ``advance_status`` fail-closes on an
+        # incomplete gate, so only attempt the transition when it passes.
+        if gate.passed:
+            lifecycle = ledger.advance_status(
+                example_id, "internalized", causal_gate=gate
+            )
+            lifecycle_status = lifecycle.status
+        else:
+            lifecycle_status = "shadow"
 
         checks = {
             "real_reads_succeeded": all(
@@ -251,15 +268,9 @@ def main() -> int:
             "checkpoint_roundtrip": bool(checkpoint_roundtrip),
             "gate_passed": bool(gate.passed),
         }
-        technical_gate_all_passed = all(bool(v) for v in checks.values())
-
-        payload = {
-            "format": REPORT_FORMAT,
-            "version": 1,
-            "generated_at_epoch": int(time.time()),
-            "status": "passed" if technical_gate_all_passed else "failed",
-            "can_promote": False,
-            "outcome_source": "real WorkbenchEnvironment read executions (option A: graded reward over success=True reads, projection boundary unchanged)",
+        return {
+            "task_seed": int(task_seed),
+            "learner_seed": int(learner_seed),
             "data": {
                 "tasks": len(specs),
                 "train": len(train_examples),
@@ -271,40 +282,57 @@ def main() -> int:
             },
             "metrics": report.to_payload(),
             "grounding_lesion_margin": grounding_margin,
-            "grounding_margin_floor": GROUNDING_MARGIN_FLOOR,
-            "lifecycle": {
-                "example_id": example_id,
-                "status": lifecycle.status,
-                "events": list(lifecycle.events),
-            },
+            "holdout_loss_after": report.holdout_loss_after,
+            "holdout_loss_before": report.holdout_loss_before,
+            "lifecycle_status": lifecycle_status,
             "checks": checks,
-            "technical_gate_all_passed": technical_gate_all_passed,
-            "s5_link": (
-                "S5 predicted a varying target restores the grounding lesion "
-                "margin; this canary confirms it on real read-execution outcomes"
-            ),
-            "boundary": "M5.S6 option A canary only; failed evidence still not admitted; no provider, network, or real client write",
-            "resources": {"total_elapsed_seconds": time.perf_counter() - started},
+            "technical_gate_all_passed": all(bool(v) for v in checks.values()),
+            "elapsed_seconds": time.perf_counter() - started,
         }
-        args.report.parent.mkdir(parents=True, exist_ok=True)
-        args.report.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-        print(
-            json.dumps(
-                {
-                    "report": str(args.report),
-                    "technical_gate_all_passed": technical_gate_all_passed,
-                    "failed_checks": [k for k, v in checks.items() if not v],
-                    "reward_variance": round(reward_variance, 6),
-                    "grounding_lesion_margin": round(grounding_margin, 6),
-                    "holdout_loss_after": report.holdout_loss_after,
-                },
-                ensure_ascii=False,
-                indent=2,
-            )
-        )
-        return 0 if technical_gate_all_passed else 1
     finally:
         shutil.rmtree(temp_root, ignore_errors=True)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--task-seed", type=int, default=0)
+    parser.add_argument("--learner-seed", type=int, default=17)
+    parser.add_argument("--report", type=Path, required=True)
+    args = parser.parse_args()
+
+    cell = run_cell(task_seed=args.task_seed, learner_seed=args.learner_seed)
+    payload = {
+        "format": REPORT_FORMAT,
+        "version": 1,
+        "generated_at_epoch": int(time.time()),
+        "status": "passed" if cell["technical_gate_all_passed"] else "failed",
+        "can_promote": False,
+        "outcome_source": "real WorkbenchEnvironment read executions (option A: graded reward over success=True reads, projection boundary unchanged)",
+        "grounding_margin_floor": GROUNDING_MARGIN_FLOOR,
+        "cell": cell,
+        "s5_link": (
+            "S5 predicted a varying target restores the grounding lesion "
+            "margin; this canary confirms it on real read-execution outcomes"
+        ),
+        "boundary": "M5.S6 option A canary only; failed evidence still not admitted; no provider, network, or real client write",
+    }
+    args.report.parent.mkdir(parents=True, exist_ok=True)
+    args.report.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(
+        json.dumps(
+            {
+                "report": str(args.report),
+                "technical_gate_all_passed": cell["technical_gate_all_passed"],
+                "failed_checks": [k for k, v in cell["checks"].items() if not v],
+                "reward_variance": round(cell["data"]["reward_variance"], 6),
+                "grounding_lesion_margin": round(cell["grounding_lesion_margin"], 6),
+                "holdout_loss_after": cell["holdout_loss_after"],
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
+    return 0 if cell["technical_gate_all_passed"] else 1
 
 
 if __name__ == "__main__":
