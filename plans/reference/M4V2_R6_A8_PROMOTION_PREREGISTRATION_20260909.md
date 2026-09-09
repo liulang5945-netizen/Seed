@@ -574,3 +574,10 @@ aggregate 或 promotion。
 
 model31/course1 已通过并追加，累计 8/9 row 完成；仅 course2 未启动。下一步执行最后
 一个 row，完成后才进入预注册的 aggregate 计算，promotion 仍关闭。
+
+## 36. Nine-cell execution ledger closure（2026-09-09）
+
+model31/course2 已通过，9/9 cell row 均为 `executed_passed`；五臂 resource、causal
+lesion、rollback 和 side-effect ledger 全部闭合。下一步只做预注册 aggregate 计算和
+统计 Gate，aggregate 完成前不改变 `can_promote=false`，不接 default runtime/provider/
+MCP/client/CUDA。
