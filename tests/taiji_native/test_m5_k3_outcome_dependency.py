@@ -56,7 +56,7 @@ def test_projection_apply_and_checkpoint_roundtrip() -> None:
     assert len(projection.lineage) == 4
     enriched = projector.apply(world, projection)
     assert enriched.events == (_event(),)
-    assert ("dependency", "digest", projection.dependency_digest) in enriched.relations
+    assert ("dependency", "id", projection.spec.dependency_id) in enriched.relations
 
     restored_projection = type(projection).from_payload(projection.to_payload())
     assert restored_projection.projection_digest == projection.projection_digest

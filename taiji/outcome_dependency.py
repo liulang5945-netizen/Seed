@@ -357,7 +357,6 @@ class OutcomeDependencyProjector:
             ("outcome", "capability", spec.capability_id),
             ("dependency", "id", spec.dependency_id),
             ("dependency", "task", spec.next_task_id),
-            ("dependency", "digest", dependency_digest),
         )
         return OutcomeDependencyProjection(
             scope_id=self.scope_id,
@@ -389,7 +388,7 @@ class OutcomeDependencyProjector:
         if projection.event.event_id in existing:
             if existing[projection.event.event_id].to_payload() != projection.event.to_payload():
                 raise ValueError("outcome dependency event identity conflict")
-        if ("dependency", "digest", projection.dependency_digest) in world.relations:
+        if ("dependency", "id", projection.spec.dependency_id) in world.relations:
             raise ValueError("outcome dependency projection was already applied")
         events = world.events
         if projection.event.event_id not in existing:
