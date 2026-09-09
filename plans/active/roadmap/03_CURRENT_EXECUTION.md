@@ -322,3 +322,9 @@ R4 收束决策记录已完成：[M4V2_R4_CLOSURE_DECISION_20260909.md](../../re
 R5 预注册草案已完成：[M4V2_R5_CONDITIONAL_MODULARITY_PREREGISTRATION_20260909.md](../../reference/M4V2_R5_CONDITIONAL_MODULARITY_PREREGISTRATION_20260909.md)。它把 R4 决策 §4 的假设落成可证伪设计：三臂（A fixed-capacity / B fixed-large 不可删除 / C conditional module）× 同一 3×3 matrix；路由输入白名单（内容/状态/不确定性/目标/资源，禁止 task ID 与 phase 标签）；资源归一化协议（累计更新预算、峰值内存 ≤1.25×、墙钟 ≤1.5×，超限 cell 判无效）；主指标为未见组合 transfer（C 相对 B `non-worse ≥ 7/9` 且 mean 更优）+ route lesion 因果证明 + resource-normalized utility + 旧能力非劣；停止线为 canary 先行、formal 二分出口（晋级讨论 vs 主线收束转 M5）、全程 `can_promote=false`、默认路径保护。
 
 **当前唯一下一步**：用户对草案 §7 的三个确认点拍板——(1) 资源上限初值（内存 1.25×、墙钟 1.5×）；(2) 主指标阈值（7/9 non-worse 且 mean 更优）；(3) 出口二分。确认后按 R4 同节奏进入实现（zero-gated shadow 外壳 → route learner 最小实现 → canary）；确认前不写任何实现代码。
+
+三个确认点已获用户批准，R5 进入实现。已交付：`taiji/conditional_module.py` 的 `ConditionalRouteLearner`（白名单路由输入：content bucket / surprise EMA / parent residual norm / candidate activity / 常量 resource；局部可审计规则训练，无 autograd；checkpointable）；`scripts/training/eval_taiji_m4v2_r5_conditional_canary.py` 复用 R4 合成 parent 与 canonical 课程，把 shadow 的 `set_gate(1.0)` 替换为每 tick 路由动态 gate。实现教训：评分必须走路由流——R4 `_score` 每 tick 强制 `set_gate(1.0)` 会抹掉条件化，已改为全部评分经 `_r5_stream(learn=False)`；route lesion 与 candidate lesion 的探测顺序必须先 unlesion 路由再删候选，否则两个因果探针混淆。
+
+`reports/taiji_m4v2_r5_conditional_canary_20260909.json`：11/11 技术 Gate 全过。关键因果证据——route lesion 使 G holdout surprise 恶化 `+0.08245`、S 恶化 `+0.00383`（未见组合对条件路由的依赖显著大于同分布），candidate lesion 独立可观测（S `+0.03804`、G `+0.01728`）；route gate 非常量（std `0.0385`）且全程在 [0,1]；parent substrate 与 mature owner digest 不变；shadow/route checkpoint 往返一致；route+candidate 活跃参数字节已记录。R4/R3/adaptive region 相邻回归 `8 passed`。
+
+**当前唯一下一步**：按预注册草案把 canary 扩展为 3×3 formal——model seeds `71/83/97` × course seeds `101/202/303`，补 fixed-large 臂与资源归一化记录（累计更新预算、峰值内存 ≤1.25×、墙钟 ≤1.5×，超限 cell 判无效），按 §4 主指标（C 相对 B `non-worse ≥ 7/9` 且 mean 更优、route lesion、旧能力非劣）出二分判定。不调路由输入白名单、不改 Gate 阈值、不引入外围系统。
