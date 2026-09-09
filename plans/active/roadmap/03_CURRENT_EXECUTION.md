@@ -425,3 +425,7 @@ K3 formal 已完成：`reports/taiji_m5_k3_outcome_dependency_formal_20260909.js
 K 轴 scorecard v2 已完成：`reports/taiji_m5_k_axis_scorecard_v2_20260909.json`，K1/K2/K3 source digest、absolute snapshots、A-B/A-C comparison 和 K3 admission/lineage evidence 均已纳入。`k_evidence_closed=true`，但 `promotion_gate=false`、`can_promote=false`：same-parent retention、default runtime owner、resource/rollback/old-capability Gate 均明确未通过且未伪造。
 
 **当前唯一下一步**：为同一 parent 的 A8/R6 promotion course 冻结独立预注册合同，定义如何把 K1/K2/K3 shadow evidence 接到连续训练/运行时，同时验证 parent retention、资源等价、rollback 和旧能力非劣；合同冻结前不解冻任何 shadow owner，不引入 MCP/provider/client/CUDA。
+
+同一 parent 的 A8/R6 promotion formal 已冻结：[M4V2_R6_A8_PROMOTION_PREREGISTRATION_20260909.md](../../reference/M4V2_R6_A8_PROMOTION_PREREGISTRATION_20260909.md)。合同明确当前真实入口：R4 相对 fixed-large 的 structural growth 仍未晋级、R5 router 尚未解冻、K1/K2/K3 仍是 standalone shadow；所以 R6 不能直接运行。其 9-cell 合同先要求 parent checkpoint/owner/source/resource/rollback preflight，再要求 native K adapter 与 S→G→K 同一 parent 连续课程；`can_promote=false` 继续固定。
+
+**当前唯一下一步**：实现 same-parent K adapter 的 checkpoint preflight/smoke——只验证 parent/candidate namespace、owner/source lineage、fresh restore、rollback 和 K3 dependency boundary 的可保存性，不训练、不接 default runtime、不引入 MCP/provider/client/CUDA；若入口 Gate 未满足，保留为 shadow 并按合同回到 R4/R5 前置。
