@@ -293,3 +293,26 @@ lineage 身份修复，不是放宽 Gate 或重算指标。
 canary，完整记录 S→G→K typed lineage、真实 outcome、candidate namespace 更新
 和失败 rollback；在 canary 通过前不扩大 formal 矩阵、不接 default runtime、不
 引入 MCP/provider/client/CUDA。
+
+## 14. controlled K canary 执行记录（2026-09-09）
+
+已实现并运行 `scripts/training/eval_taiji_m4v2_r6_k_worker_controlled_canary.py`，
+报告为 `reports/taiji_m4v2_r6_k_worker_controlled_canary_20260909.json`。
+首轮失败被定位为隔离 Workbench root 未覆盖 `get_setting("workspace_path")`，
+导致执行器读取默认 workspace；按已通过的 M5.K2 runner 模式补齐 root selector
+后，未改模型、artifact 或判据，重跑通过。
+
+最终 single-cell 结果 `status=passed`：K1/K2 typed result 均 `resolved`；
+`typescript_05.ts` 真实 `workspace.read` 成功、reward `1.0`；K3 接受并应用
+真实 outcome/dependency projection；adapter exchange 包含 K1/K2/K3 manifest
+lineage；joint checkpoint、candidate stage、explicit rollback 和 S/G retention
+全部通过。全程 `training_performed=false`、`candidate_training_performed=false`、
+`candidate_promoted=false`，provider/MCP/client/CUDA/default runtime 未接入。
+
+这只证明已挂接 artifact 能完成 single-cell native K 闭环与原子回滚，不能替代
+跨 seed formal、长期自进化或 promotion evidence；`can_start_r6_formal=false`、
+`can_promote=false` 继续固定。
+
+**当前唯一下一步**：审阅这条 single-cell 的 causal/资源/side-effect evidence，
+冻结 R6 formal runner 的输入合同和失败归因字段；冻结前不扩大矩阵、不接默认
+runtime、不引入 MCP/provider/client/CUDA。

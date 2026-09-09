@@ -265,3 +265,22 @@ parent factory，并加入回归测试，防止同一 model seed 生成两个 pa
 记录完整 S→G→K typed lineage 与真实 outcome，验证 candidate namespace 内的
 更新/失败回滚；不扩大 seed 矩阵、不启动 formal、不接 default runtime，也不
 重新训练一套无 lineage 的 worker。
+
+## 12. controlled K canary 执行结果（2026-09-09）
+
+已按独立预注册合同运行 single-cell canary：
+`reports/taiji_m4v2_r6_k_worker_controlled_canary_20260909.json`。
+首轮 `workspace.read` 失败的根因是隔离 workspace selector 未覆盖
+`get_setting("workspace_path")`；修正 runner 的隔离边界后重跑通过，没有改变
+worker checkpoint、parent、训练权重或判据。
+
+最终 Gate 全部通过：K1/K2 typed result 为 `resolved`，真实
+`typescript_05.ts` 读取成功，K3 接受并应用真实 outcome/dependency projection，
+exchange 保存三类 worker manifest lineage，joint checkpoint/fresh restore、
+candidate stage、explicit rollback 和 S/G retention 均通过。adapter 本轮
+`training_steps=0`，没有 candidate training 或 promotion，外部 provider/MCP/
+client/CUDA/default runtime 均未接入。
+
+因此 owner attachment + single-cell native K loop 已闭合，但 formal 入口仍未
+开启；下一步是冻结 R6 formal runner 的输入合同和失败归因字段，而不是直接扩大
+矩阵或接入默认 runtime。
