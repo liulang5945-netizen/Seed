@@ -7,7 +7,6 @@ import json
 import math
 import sys
 from collections.abc import Mapping, Sequence
-from copy import deepcopy
 from pathlib import Path
 
 import _verify_emit
@@ -112,10 +111,11 @@ def _sleep(
 ) -> dict[str, object]:
     """Run one consolidation arm and audit what it was allowed to touch."""
 
-    payload = deepcopy(checkpoint)
+    model = Taiji.from_checkpoint(checkpoint)
     for name in lesion:
-        payload["memory"][name]["edge_weight"].zero_()
-    model = Taiji.from_checkpoint(payload)
+        if name not in {"action_readout", "outcome_readout", "association"}:
+            raise ValueError(f"unsupported M6 lesion: {name}")
+        getattr(model.memory, name).edge_weight.zero_()
     model.reset_dynamics(episode_id=f"m6-sleep-{tag}")
 
     fabric_count = len(model.fabric.parameter_tensors())
