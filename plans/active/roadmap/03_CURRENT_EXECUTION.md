@@ -282,3 +282,6 @@ N10 sparse migration verify 已通过：forward/backproject/local_update 对 den
 N11 active environment verify 已通过：learned policy 最终窗口准确率 `1.0`、总体 `0.965`、`200` 次局部 reward updates，较随机策略提升 `0.5`、较 action-learning lesion 提升 `0.375`；环境转移依赖动作、deterministic policy 解两 cue、pending action/experience 清零均通过。
 
 **当前唯一下一步**：继续执行 workflow 的 M5 episodic field verify。
+M5 episodic field verify 已通过。首个失败由两层评估错误组成：recurrent lesion 直接篡改 checkpoint payload，触发 v10 identity lineage 防篡改；改为 fresh restore 后在内存对象上 lesion。随后 identity organ 旁路使 lesion action 仍为 `1.0`，已在 M5 写入/查询统一 `use_identity=False`，保持 episodic field 独立。最终 full action `0.875`，trace-only/recurrent lesion `0.25`，recurrent causal gap `0.625`，outcome/provenance/time/episode/transaction checkpoint/fixed topology 全部通过。
+
+**当前唯一下一步**：继续执行 workflow 的 M6 endogenous replay consolidation verify。

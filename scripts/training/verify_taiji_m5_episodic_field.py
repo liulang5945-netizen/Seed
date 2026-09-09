@@ -6,7 +6,6 @@ import argparse
 import json
 import sys
 from collections.abc import Mapping
-from copy import deepcopy
 from pathlib import Path
 
 import _verify_emit
@@ -64,6 +63,7 @@ def _present_cue(
         learn=False,
         learn_motor=False,
         use_memory=use_memory,
+        use_identity=False,
     )
     for _ in range(prefix_length):
         model.observe(
@@ -71,12 +71,14 @@ def _present_cue(
             learn=False,
             learn_motor=False,
             use_memory=use_memory,
+            use_identity=False,
         )
     return model.observe(
         cue,
         learn=False,
         learn_motor=False,
         use_memory=use_memory,
+        use_identity=False,
     )
 
 
@@ -109,6 +111,7 @@ def _evaluate(
     episodes: Mapping[int, Mapping[str, object]],
     *,
     use_memory: bool,
+    recurrent_lesion: bool = False,
 ) -> dict[str, object]:
     rows = []
     action_correct = 0
@@ -118,6 +121,11 @@ def _evaluate(
     time_cosines = []
     for index, (cue, event) in enumerate(episodes.items()):
         model = Taiji.from_checkpoint(checkpoint)
+        if recurrent_lesion:
+            # Apply the lesion after a valid fresh restore.  Mutating the
+            # checkpoint payload would invalidate the identity-organ lineage
+            # digest by design and would test tamper rejection, not recall.
+            model.memory.association.edge_weight.zero_()
         model.reset_dynamics(episode_id=f"m5-query-{index}")
         step = _present_cue(
             model,
@@ -249,12 +257,11 @@ def run_benchmark(*, seed: int = 23) -> dict[str, object]:
     checkpoint = model.checkpoint()
     full = _evaluate(checkpoint, episodes, use_memory=True)
     trace_only = _evaluate(checkpoint, episodes, use_memory=False)
-    recurrent_lesion_checkpoint = deepcopy(checkpoint)
-    recurrent_lesion_checkpoint["memory"]["association"]["edge_weight"].zero_()
     recurrent_lesion = _evaluate(
-        recurrent_lesion_checkpoint,
+        checkpoint,
         episodes,
         use_memory=True,
+        recurrent_lesion=True,
     )
 
     state = model.snapshot().memory
