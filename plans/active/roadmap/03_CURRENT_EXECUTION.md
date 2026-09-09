@@ -294,3 +294,7 @@ S1 grounded internalization canary 已通过：native consolidation 对未见 gr
 标准 pytest 内置 `tmp_path` 在本机仍可能创建 Windows 0700 临时目录并触发 ACL 错误；可写 fixture 版本是本轮真实失败账本依据，不能把环境清理噪声写成代码失败或代码通过。
 
 **当前唯一下一步**：继续执行 workflow 的完整 `tests/` 回归，仍使用仓库可写 basetemp 区分真实失败与 Windows 临时目录 ACL 噪声；保持 R4 shadow/默认 parent 不变，R5 learned router、Skill/MCP/provider、客户端与 CUDA 继续冻结。
+
+完整 `tests/` 回归已在同一仓库可写 fixture 下闭合：`1070 passed, 6 skipped, 1 warning`，没有真实测试失败；warning 是既有 FastAPI/Starlette 与 httpx 兼容提示。该结果覆盖 `tests/seed`、`tests/taiji_native` 及其余仓库测试，但本次诊断命令尚未带 CI 的 coverage/junit 参数。
+
+**当前唯一下一步**：执行 workflow 完整回归对应的 coverage/junit 门禁，确认 `fail_under` 与报告生成在同一可写 fixture 下通过；若失败，只处理真实覆盖率/报告问题，不改变模型或 R4 shadow。
