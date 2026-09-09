@@ -353,6 +353,28 @@ Taiji-owned continuation 的证据闭环。
 6. formal 结果提交后再由独立 review 决定是否进入 runtime rollout；本合同不改变
    `can_promote=false`。
 
-当前唯一下一步是：**实现可校验的 R6 formal input manifest preflight，并先补齐
-三份 parent checkpoint registry；在该 preflight 通过前不实现或运行 full formal
-course。**
+
+## 8. 输入 manifest 执行记录（2026-09-09）
+
+已完成本合同的输入 Gate：
+
+- model 17/23/31 的 parent checkpoint 已实际落盘并 fresh restore，三份 digest、
+  owner/source/resource manifest 一致；
+- 复用现有 K worker builder，分别以 learner seed 17/23/31 生成独立的 K1 semantic、
+  K2 transition、K3 deterministic projection bundle；每个 bundle 都绑定对应
+  parent digest 和 `taiji:k:candidate:model-{seed}` namespace；
+- 三个 bundle 的 K1/K2 训练前 checkpoint save/restore、训练后 restore、K1/K2
+  typed probe、K3 restore 和 bundle digest 校验均通过；
+- `plans/manifests/taiji_m4v2_r6_formal_input_v1.json` 已包含完整 parent/worker/course
+  registry；`reports/taiji_m4v2_r6_formal_input_manifest_preflight_20260909.json`
+  为 `status=passed`、`formal_input_ready=true`；
+- 该过程没有执行 formal course、没有接 default runtime，也没有 provider/MCP/client/
+  CUDA side effect。
+
+输入 Gate 通过不等于 R6 formal admission：`can_start_r6_formal=false`、
+`can_promote=false` 继续固定。下一步是实现只消费该 manifest 的 formal runner
+per-cell ledger 和结构化 failure record；runner 必须先重新执行 manifest/fresh
+restore，再允许任何 S→G→K task，且首个 Gate 失败即停止。
+
+当前唯一下一步是：**实现并做静态/输入 Gate 验证的 R6 formal runner；验证通过前不
+运行 9-cell course、不接 default runtime、不引入 MCP/provider/client/CUDA。**

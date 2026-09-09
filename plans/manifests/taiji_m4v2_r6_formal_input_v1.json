@@ -93,7 +93,7 @@
     "stop_on_first_cell_failure": true
   },
   "format": "taiji-m4v2-r6-formal-runner-input-v1",
-  "manifest_digest": "f2d8e4ec9fe58d981b7f9f7899e609d87cc9f84e843c200f851d4cce5547bef7",
+  "manifest_digest": "554c219ccc3f08c2a1483b9a9c1055235e6e0467b6d2dd5388d2c90637fa9dea",
   "model_seeds": [
     17,
     23,
@@ -159,5 +159,84 @@
     "rollback_required": true
   },
   "version": 1,
-  "worker_registry": []
+  "worker_registry": [
+    {
+      "bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83",
+      "candidate_namespace": "taiji:k:candidate:model-17",
+      "model_seed": 17,
+      "owner_graph_digest": "4f1cbc3ce105112a2320a9209f6c5bfdd7ade54436147b0e94c15764dfbf42b8",
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+      "source_manifest_digest": "d0946c73d9844b4b0e44f2685a87465a568ee6ba7665f23c11a7b5fe0208b362",
+      "workers": {
+        "k1.semantic": {
+          "artifact_digest": "76425eb5673fd9c974c54f6375a9ee30896dd1a40655b152e5757f3a56784aea",
+          "path": "checkpoints/taiji_k_workers/model_17/taiji_r6_k1_semantic.pt",
+          "worker_checkpoint_digest": "4b5ed527a3a105614cea73c6cc45a2d0577c9ec06eb6e974b245c679b93e5e5d"
+        },
+        "k2.transition": {
+          "artifact_digest": "01a04b8de044cf8c00c91c30492021ec61b09c124021807fb56eae1f05e99ecf",
+          "path": "checkpoints/taiji_k_workers/model_17/taiji_r6_k2_transition.pt",
+          "worker_checkpoint_digest": "67c96c5c8517ca58bacb45b8de756e7ffd24ee108276160c731da364714e2bda"
+        },
+        "k3.outcome_projection": {
+          "artifact_digest": "8daff1b6e1ccbbf10d592f498de78650ed54910bcbad58251c70f05edb58e3bd",
+          "path": "checkpoints/taiji_k_workers/model_17/taiji_r6_k3_outcome_projection.pt",
+          "worker_checkpoint_digest": "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
+        }
+      }
+    },
+    {
+      "bundle_digest": "25e0ca1c0c88c84ea64c0c5db4e80a4a9903c7f3eef9c988970eb6bb6472213f",
+      "candidate_namespace": "taiji:k:candidate:model-23",
+      "model_seed": 23,
+      "owner_graph_digest": "e834c4107fea26a8f54a316ee4bdc9c5b5d1b0498b988fc6060baf0c23cc1ed0",
+      "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+      "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+      "source_manifest_digest": "661ef11afa3936dfdb94800dd8680e038485882a53eaefb0ded68c4bd2e73e06",
+      "workers": {
+        "k1.semantic": {
+          "artifact_digest": "f626e77dd85c34e281c55d034dd4ca796725d3abed823807754c9ff19e90f170",
+          "path": "checkpoints/taiji_k_workers/model_23/taiji_r6_k1_semantic.pt",
+          "worker_checkpoint_digest": "4b5ed527a3a105614cea73c6cc45a2d0577c9ec06eb6e974b245c679b93e5e5d"
+        },
+        "k2.transition": {
+          "artifact_digest": "f8e1f73c951b6e650f20a9c7c975d3b1731484b65dbf1b5feb970a8f83d0bc53",
+          "path": "checkpoints/taiji_k_workers/model_23/taiji_r6_k2_transition.pt",
+          "worker_checkpoint_digest": "67c96c5c8517ca58bacb45b8de756e7ffd24ee108276160c731da364714e2bda"
+        },
+        "k3.outcome_projection": {
+          "artifact_digest": "1a4b2fe0143bab3d879b5d8b5fa8d7f8a4f57bc91e7748cba7dec00f51d01cc2",
+          "path": "checkpoints/taiji_k_workers/model_23/taiji_r6_k3_outcome_projection.pt",
+          "worker_checkpoint_digest": "817c1278b17c972881a380e53c48bc6b207758d9e6ac6e3f88329f88a7f6f1ed"
+        }
+      }
+    },
+    {
+      "bundle_digest": "ab60c27756f46907e3f649f42dba1e8fada356de2d345b0cc64574abff1dff5b",
+      "candidate_namespace": "taiji:k:candidate:model-31",
+      "model_seed": 31,
+      "owner_graph_digest": "2f8efcf257ae3195ae6dc56024cfd3ba77151757e699684f90da7745be091c22",
+      "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+      "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+      "source_manifest_digest": "e042afbfc8f48f5f61bb0cfb36125fb095cc056b283405da0e74fea0bb6f0e85",
+      "workers": {
+        "k1.semantic": {
+          "artifact_digest": "5422228f0f1ede6a9ea34905ad71f48e562449bfa012d6b6f20fb917f5ffbcf7",
+          "path": "checkpoints/taiji_k_workers/model_31/taiji_r6_k1_semantic.pt",
+          "worker_checkpoint_digest": "4b5ed527a3a105614cea73c6cc45a2d0577c9ec06eb6e974b245c679b93e5e5d"
+        },
+        "k2.transition": {
+          "artifact_digest": "ea1fff12750cc1074c03f38ec851f5804ac19daea7cc2c29bc2e658019a51c34",
+          "path": "checkpoints/taiji_k_workers/model_31/taiji_r6_k2_transition.pt",
+          "worker_checkpoint_digest": "67c96c5c8517ca58bacb45b8de756e7ffd24ee108276160c731da364714e2bda"
+        },
+        "k3.outcome_projection": {
+          "artifact_digest": "83207f7f42bc7bdf16433095afa3b5e52fc726f6128b074ccc3e83798ec367a1",
+          "path": "checkpoints/taiji_k_workers/model_31/taiji_r6_k3_outcome_projection.pt",
+          "worker_checkpoint_digest": "7d890ae19ccdc4c5511a37e8da6198aa5795332763954dd18030a87d2c2dd728"
+        }
+      }
+    }
+  ]
 }
