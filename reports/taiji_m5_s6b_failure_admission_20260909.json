@@ -1,0 +1,56 @@
+{
+  "format": "taiji-m5-s6b-failure-admission-v1",
+  "version": 1,
+  "generated_at_epoch": 1788940589,
+  "status": "passed",
+  "can_promote": false,
+  "outcome_source": "real mixed success/failure WorkbenchEnvironment executions via the SeedRuntime internalization projection (S6B failure-admission policy)",
+  "grounding_margin_floor": 0.05,
+  "cell": {
+    "task_seed": 0,
+    "learner_seed": 17,
+    "data": {
+      "success_tasks": 240,
+      "failure_tasks": 120,
+      "holdout_tasks": 120,
+      "train_examples": 240,
+      "failure_admitted_count": 120,
+      "reward_variance": 0.493958443403244
+    },
+    "metrics": {
+      "format": "taiji-internalization-learner-v1",
+      "parent_checkpoint_digest": "d11c9898d2e4171612ed8d8e437b7753c8e800bbef4bd21025286aa6eb319d3a",
+      "child_checkpoint_digest": "0ac32921cfc808dd2dcc723d414ba46fb7280d37661d1b5f7a790af1a46acfd1",
+      "replay_digest": "decb0c98ba1763f51b486a015fe5d30be20ca6e8dff30bd500ab714588c383e7",
+      "train_examples": 240,
+      "holdout_examples": 120,
+      "train_loss_before": 0.11858484942070655,
+      "train_loss_after": 0.0422695183448619,
+      "holdout_loss_before": 0.346390182215151,
+      "holdout_loss_after": 0.043409587570328395,
+      "holdout_internalized_lesion_loss": 0.346390182215151,
+      "holdout_grounding_lesion_loss": 0.40638070127068676,
+      "retention_loss_before": 0.5625,
+      "retention_loss_after": 0.09379263031061243,
+      "holdout_gain": 0.30298059464482263,
+      "fit_updates": 1920,
+      "ranking_updates": 0,
+      "online_updates": 0,
+      "lineage_depth": 1,
+      "passed": true
+    },
+    "grounding_lesion_margin": 0.3629711137003584,
+    "holdout_loss_after": 0.043409587570328395,
+    "lifecycle_status": "internalized",
+    "checks": {
+      "failure_evidence_admitted": true,
+      "target_varies": true,
+      "grounding_margin_clears_floor": true,
+      "checkpoint_roundtrip": true,
+      "gate_passed": true
+    },
+    "technical_gate_all_passed": true,
+    "elapsed_seconds": 33.18347339995671
+  },
+  "boundary": "M5.S6B canary only; failures enter with non-positive reward only; no provider, network, or real client write"
+}

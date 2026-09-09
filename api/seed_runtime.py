@@ -2033,11 +2033,18 @@ class SeedRuntime:
         bounds and deciding whether the DTO becomes learnable material.
         """
 
+        import torch
+
         from seed_platform.workbench import (
             WORKBENCH_TAIJI_EVIDENCE_KIND,
             WorkbenchTaijiEvidence,
         )
-        from taiji import GroundedOutcomeEvidence, Outcome, content_digest
+        from taiji import (
+            GroundedOutcomeEvidence,
+            Outcome,
+            WorldAffordance,
+            content_digest,
+        )
 
         environment = self._sync_workbench_root()
         if str(snapshot_id) != environment.capability_snapshot.snapshot_id:
@@ -2054,24 +2061,52 @@ class SeedRuntime:
         evidence = WorkbenchTaijiEvidence.from_taiji_event(event)
         if evidence.snapshot_id != environment.capability_snapshot.snapshot_id:
             raise ValueError("Workbench evidence capability snapshot is stale")
-        if not evidence.success:
-            raise ValueError("failed Workbench evidence cannot enter internalization")
+        # M5.S6B failure-admission policy: a real failed execution is a
+        # first-class sourced experience and may enter internalization, but
+        # only with a non-positive reward - the evaluator cannot launder a
+        # failure into a success.  Snapshot binding and grounding checks are
+        # unchanged.
+        if not evidence.success and float(reward) > 0.0:
+            raise ValueError(
+                "failed Workbench evidence cannot carry a positive internalization reward"
+            )
 
-        requested_affordance_id = str(affordance_id).strip()
-        if not requested_affordance_id:
-            raise ValueError("Taiji internalization projection requires an affordance_id")
-        affordance = next(
-            (item for item in world.affordances if item.affordance_id == requested_affordance_id),
-            None,
-        )
-        if affordance is None:
-            raise ValueError("Taiji internalization affordance is not current")
-        grounded_affordance_ids = {
-            item.affordance_id
-            for item in evidence.to_taiji_affordances(environment.capability_snapshot)
-        }
-        if affordance.affordance_id not in grounded_affordance_ids:
-            raise ValueError("Taiji internalization affordance is not grounded by latest evidence")
+        if evidence.success:
+            requested_affordance_id = str(affordance_id).strip()
+            if not requested_affordance_id:
+                raise ValueError("Taiji internalization projection requires an affordance_id")
+            affordance = next(
+                (item for item in world.affordances if item.affordance_id == requested_affordance_id),
+                None,
+            )
+            if affordance is None:
+                raise ValueError("Taiji internalization affordance is not current")
+            grounded_affordance_ids = {
+                item.affordance_id
+                for item in evidence.to_taiji_affordances(environment.capability_snapshot)
+            }
+            if affordance.affordance_id not in grounded_affordance_ids:
+                raise ValueError("Taiji internalization affordance is not grounded by latest evidence")
+        else:
+            # M5.S6B: the failed attempt is self-grounding.  The affordance
+            # chain keeps its success-only next-step semantics, so the
+            # projection grounds the attempt itself through the same
+            # world-state producer and the same 17-dim contract as successes.
+            from taiji.affordance import WorldAffordanceGroundingProducer
+
+            attempt = WorldAffordance(
+                affordance_id=f"workbench-failed:{evidence.evidence_id}",
+                action_kind=evidence.capability_id,
+                actor_id="workbench",
+                target_id="workbench-attempt:" + evidence.after_state_digest[:16],
+                features=torch.empty(0),
+                feature_provenance="world-state-grounding",
+                grounding_lineage=(f"world-state:{evidence.evidence_id}",),
+                confidence=1.0,
+            )
+            affordance = WorldAffordanceGroundingProducer(grounding_dim=17).ground(
+                world, attempt
+            )
 
         snapshot = self.model.architecture.cognitive_snapshot()
         percept_payload = None if snapshot.percept is None else snapshot.percept.to_payload()
@@ -2098,6 +2133,7 @@ class SeedRuntime:
                 "after_state_digest": evidence.after_state_digest,
                 "source": "workbench-observed",
                 "workbench_evidence": evidence.evidence_id,
+                **({} if evidence.success else {"failure_admitted": True}),
             },
         )
 
