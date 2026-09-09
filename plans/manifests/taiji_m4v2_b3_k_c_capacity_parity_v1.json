@@ -1,0 +1,105 @@
+{
+  "format": "taiji-m4v2-b3-k-c-capacity-parity-manifest-v1",
+  "version": 1,
+  "status": "frozen-preflight",
+  "frozen_on": "2026-09-10",
+  "purpose": "Pre-register an upward-capacity, equal-update-budget C-entry comparison before any new training.",
+  "source_contract": {
+    "entry_manifest": "plans/manifests/taiji_m4v2_b3_k_c_entry_evaluation_v1.json",
+    "course_contract_digest": "01e6f2f45e375f66c558b3ca2a7592fd7201e079bde9f40262028e334b955c84",
+    "sealed_artifact_digest": "1c9e3853e9d87828fedecc8a47d11d7667c97d0aa35d475bdc2e27f7b21eb969",
+    "sealed_artifact_sha256": "89896556d1d3dc86fb21a8c9303d7fdf1b83ecc5a7f22777586c7fe22539d78f",
+    "formal_report": "reports/taiji_m4v2_b3_k_c_formal_20260910.json",
+    "capacity_audit": "reports/taiji_m4v2_b3_k_c_capacity_parity_audit_20260910.json"
+  },
+  "scope": {
+    "phase": "C-entry capacity parity",
+    "model_seeds": [17, 23, 31],
+    "course_seeds": [0, 1, 2],
+    "cell_count": 9,
+    "hardware": "CPU",
+    "cuda": false,
+    "provider": false,
+    "mcp": false,
+    "client": false,
+    "default_runtime_attachment": false
+  },
+  "parent_contract": {
+    "model_17": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+    "model_23": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+    "model_31": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732"
+  },
+  "course_contract": {
+    "strategy": "target_aware",
+    "train_episode_count": 3,
+    "variants": {
+      "0": {
+        "episode_indexes": [0, 1, 2],
+        "target_multiset": "A+B+C"
+      },
+      "1": {
+        "episode_indexes": [0, 3, 1],
+        "target_multiset": "A+A+B"
+      },
+      "2": {
+        "episode_indexes": [0, 1, 4],
+        "target_multiset": "A+B+B"
+      }
+    },
+    "holdout_count": 3,
+    "sealed_read_policy": "read-only scoring after all artifact and threshold contracts are frozen"
+  },
+  "capacity_contract": {
+    "policy": "candidate-upward",
+    "current_candidate_parameter_bytes": 19332,
+    "fixed_large_parameter_bytes": 38664,
+    "target_candidate_parameter_bytes": 38664,
+    "max_parameter_ratio_difference": 0.01,
+    "do_not_shrink_fixed_large": true
+  },
+  "training_budget_contract": {
+    "target_parameter_update_steps_per_cell": 14252,
+    "same_actual_update_steps_per_cell": true,
+    "same_training_episode_indexes_per_cell": true,
+    "optimizer_state": "none",
+    "checkpoint_policy": {
+      "logical_training_checkpoint_count_per_cell": 9,
+      "prefit_restore_rollback_artifacts_reported_separately": true,
+      "checkpoint_bytes_reported": true
+    },
+    "wall_clock_and_peak_rss": "measure and report; not used as a scientific parity substitute"
+  },
+  "artifact_contract": {
+    "candidate_root": "checkpoints/taiji_k_candidate_c_entry_parity",
+    "fixed_large_root": "checkpoints/taiji_k_fixed_large_c_entry",
+    "candidate_format": "taiji-k-c-entry-parity-candidate-v1",
+    "fixed_large_format": "taiji-k-fixed-large-c-entry-ensemble-v1",
+    "candidate_route_design": {
+      "current_candidate": "one native K1 learner plus one native K2 learner",
+      "fixed_large": "two same-shape K1 replicas plus two same-shape K2 replicas with arithmetic mean readout",
+      "distinct_route_required": true,
+      "naive_replica_duplication_forbidden": true,
+      "design_status": "pending"
+    },
+    "fresh_restore_required": true,
+    "rollback_required": true,
+    "parent_must_remain_unchanged": true,
+    "k3_must_remain_unchanged": true,
+    "candidate_updates_must_be_distinct": true,
+    "no_default_runtime_attachment": true
+  },
+  "promotion_contract": {
+    "candidate_quality_and_resource_gate_required": true,
+    "capacity_parity_gate_required": true,
+    "candidate_must_beat_fixed_large_in_all_9_sealed_cells": true,
+    "can_start_formal": false,
+    "can_promote": false
+  },
+  "stop_conditions": [
+    "candidate parameter bytes are outside the 1% ratio bound",
+    "actual update steps differ in any cell",
+    "logical checkpoint emission count differs in any cell",
+    "parent, course, target multiset, validation, or sealed digest changes",
+    "any provider, MCP, client, CUDA, or default-runtime side effect is attached"
+  ]
+}

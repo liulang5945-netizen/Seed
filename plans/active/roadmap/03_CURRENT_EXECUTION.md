@@ -65,7 +65,9 @@
 
 **C-entry capacity-parity audit 已完成。** 机器报告为 [capacity-parity audit](../../../reports/taiji_m4v2_b3_k_c_capacity_parity_audit_20260910.json)，结论为 `blocked-current-comparison-confounded`：9 格课程与推理 trace 一致，但 candidate/fixed-large 分别为 `19,332/38,664` 参数字节、`6/14,252` 实际更新步数、`2/9` 逻辑 checkpoint 写入数。candidate 的自身学习 Gate 仍成立，strong-control 因果解释暂不成立。
 
-**当前唯一下一步：上调 candidate 容量的 parity preflight。** 先生成 paired artifact contract，目标是 candidate 与 fixed-large 参数字节在 1% 内、每格相同实际 update budget、相同逻辑 checkpoint 发射数；保留 38,664 字节 fixed-large，不缩小强对照。preflight 完成前不追加新训练、不调整学习率、不复活 R5 learned router 或旧结构增长路线，不接 default runtime/provider/MCP/client/CUDA。
+**上调 candidate 容量的 parity input preflight 已完成。** 合同为 [capacity-parity manifest](../../manifests/taiji_m4v2_b3_k_c_capacity_parity_v1.json)，机器报告为 [capacity-parity input preflight](../../../reports/taiji_m4v2_b3_k_c_capacity_parity_input_preflight_20260910.json)：9/9 fixed-large cell 满足 38,664 参数字节、14,252 实际更新步、9 个逻辑 checkpoint、同 parent/course 和 fresh-restore；candidate artifact 尚未生成，且不能直接复制 fixed-large replica。
+
+**当前唯一下一步：冻结 widened-candidate 路线设计。** 设计必须达到 38,664 参数字节，同时保持与 fixed-large 不同的 owner/update/readout 路径；设计未冻结前不训练、不读取 sealed formal、不调整学习率、不复活 R5 learned router 或旧结构增长路线，不接 default runtime/provider/MCP/client/CUDA。
 
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 

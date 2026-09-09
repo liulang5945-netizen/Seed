@@ -18,7 +18,9 @@ B3-K 的非饱和 structured-loss diagnostic 已通过：同一 model 17 parent�
 
 **C-entry capacity-parity audit 已完成。** 报告为 [capacity-parity audit](../reports/taiji_m4v2_b3_k_c_capacity_parity_audit_20260910.json)：9 格的训练 episode 与推理 trace 一致，但 candidate/fixed-large 的参数字节为 `19,332/38,664`、实际更新步数为 `6/14,252`、逻辑 checkpoint 写入数为 `2/9`。因此 candidate 的学习证据有效，当前 strong-control 比较却被标记为 `blocked-current-comparison-confounded`，不改变 `can_promote=false`。
 
-**当前唯一下一步：上调 candidate 容量的 parity preflight。** 目标是 candidate 与 fixed-large 参数字节在 1% 内、每格使用相同实际 update budget 和逻辑 checkpoint 发射数；保留 38,664 字节 fixed-large，不通过缩小强对照制造公平。preflight 完成前不追加训练、不调学习率、不解冻 R5/结构增长或外围 provider/MCP/client/CUDA 路线。
+**上调 candidate 容量的 parity input preflight 已完成。** 合同为 [capacity-parity manifest](manifests/taiji_m4v2_b3_k_c_capacity_parity_v1.json)，输入报告为 [capacity-parity input preflight](../reports/taiji_m4v2_b3_k_c_capacity_parity_input_preflight_20260910.json)：9/9 fixed-large cell 均满足 38,664 参数字节、14,252 实际更新步、9 个逻辑 checkpoint、同 parent/course 和 fresh-restore；candidate parity artifact 尚未生成，且不能直接复制 fixed-large replica。
+
+**当前唯一下一步：冻结 widened-candidate 路线设计。** 设计必须达到 38,664 参数字节，同时保持与 fixed-large 不同的 owner/update/readout 路径；设计未冻结前不训练、不读取 sealed formal、不调学习率、不解冻 R5/结构增长或外围 provider/MCP/client/CUDA 路线。
 
 ## 权威文档
 
