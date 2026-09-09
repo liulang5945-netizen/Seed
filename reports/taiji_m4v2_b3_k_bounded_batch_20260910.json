@@ -1,6 +1,7 @@
 {
   "all_course_seeds_improved": false,
   "blocking_reason": null,
+  "bounded_batch_count": 2,
   "can_promote": false,
   "can_start_r6_formal": false,
   "candidate_promoted": false,
@@ -13,12 +14,12 @@
         "can_promote": false,
         "can_start_r6_formal": false,
         "candidate_checkpoint_paths": {
-          "k1.semantic": "E:\\Seed\\output\\taiji_m4v2_b3_k_loss_diagnostic_20260910\\stability\\course_seed_0\\model_17\\taiji_b3_k1_semantic_loss_step1.pt",
-          "k2.transition": "E:\\Seed\\output\\taiji_m4v2_b3_k_loss_diagnostic_20260910\\stability\\course_seed_0\\model_17\\taiji_b3_k2_transition_loss_step1.pt"
+          "k1.semantic": "E:\\Seed\\output\\taiji_m4v2_b3_k_bounded_batch_20260910\\course_seed_0\\model_17\\taiji_b3_k1_semantic_loss_step1.pt",
+          "k2.transition": "E:\\Seed\\output\\taiji_m4v2_b3_k_bounded_batch_20260910\\course_seed_0\\model_17\\taiji_b3_k2_transition_loss_step1.pt"
         },
         "candidate_namespace": "taiji:k:candidate:model-17",
         "candidate_promoted": false,
-        "candidate_worker_bundle_digest": "e8ab364794158dd1698a27c0181f840ecf9a2f549d083006dae1967f6a20a631",
+        "candidate_worker_bundle_digest": "aeb25dbb9948a72435feabcc61086093527feca5dc44117e24e0b5e775c6eac0",
         "checks": {
           "adapter_candidate_stage_roundtrip": true,
           "adapter_rollback_restored": true,
@@ -34,22 +35,22 @@
           "train_holdout_disjoint": true,
           "worker_attachment_preflight_passed": true
         },
-        "course_digest": "345e2ca98b44635c0bebaf021d1c6006d2f6bb2519367021fedc7591497f9145",
+        "course_digest": "3a476a8823502d7dd68ac75e0fc54d1a3afb324a213ab7a079cf3d259ecc980c",
         "course_seed": 0,
-        "elapsed_seconds": 4.815202199970372,
+        "elapsed_seconds": 4.877782700001262,
         "frozen_workers": [
           "k3.outcome_projection"
         ],
         "holdout_count": 3,
         "holdout_loss_improved": true,
         "holdout_structured_loss_after": {
-          "combined_mse": 0.015697415336186776,
-          "k1.content_mse": 5.414648421719903e-05,
-          "k1.fact_mse": 0.016651826910674572,
-          "k1.goal_mse": 0.0011002353276126087,
-          "k2.content_mse": 0.02988546285875297,
-          "k2.goal_mse": 0.04356220215656018,
-          "k2.transition_mse": 0.0029306182793031135
+          "combined_mse": 0.016239103473051526,
+          "k1.content_mse": 7.1156815768821e-05,
+          "k1.fact_mse": 0.016988571733236313,
+          "k1.goal_mse": 0.0014928756863810122,
+          "k2.content_mse": 0.03123764352252086,
+          "k2.goal_mse": 0.04472274082218064,
+          "k2.transition_mse": 0.002921632258221507
         },
         "holdout_structured_loss_before": {
           "combined_mse": 0.016777580521142633,
@@ -61,13 +62,13 @@
           "k2.transition_mse": 0.0032601331671079
         },
         "holdout_structured_loss_delta": {
-          "combined_mse": -0.0010801651849558572,
-          "k1.content_mse": -2.7244296385712616e-05,
-          "k1.fact_mse": -0.0006653933475414923,
-          "k1.goal_mse": -0.0006125845829956234,
-          "k2.content_mse": -0.0026215253043725788,
-          "k2.goal_mse": -0.0022247286906349473,
-          "k2.transition_mse": -0.00032951488780478665
+          "combined_mse": -0.0005384770480911065,
+          "k1.content_mse": -1.0233964834090642e-05,
+          "k1.fact_mse": -0.00032864852497975147,
+          "k1.goal_mse": -0.00021994422422721982,
+          "k2.content_mse": -0.0012693446406046895,
+          "k2.goal_mse": -0.00106419002501449,
+          "k2.transition_mse": -0.00033850090888639306
         },
         "no_update_control": {
           "holdout_structured_loss_after": {
@@ -102,28 +103,28 @@
         },
         "optimizer_state_present": false,
         "parameter_delta_norm": {
-          "k1.semantic": 0.10789559732994627,
-          "k2.transition": 0.01459495374185856
+          "k1.semantic": 0.05539702349076851,
+          "k2.transition": 0.009520733178057246
         },
         "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
         "receipt": {
           "candidate_namespace": "taiji:k:candidate:model-17",
-          "candidate_worker_bundle_digest": "e8ab364794158dd1698a27c0181f840ecf9a2f549d083006dae1967f6a20a631",
+          "candidate_worker_bundle_digest": "aeb25dbb9948a72435feabcc61086093527feca5dc44117e24e0b5e775c6eac0",
           "candidate_worker_checkpoint_digests": [
             [
               "k1.semantic",
-              "6cd9515330033fce16aeadf24c3604b6f3213f62f9bd451d05e77d36ef466994"
+              "679a9cdf6f0c050ce21cf0ae1fe7914ff1bdd7c4c9764c4565c2a4d73db23ece"
             ],
             [
               "k2.transition",
-              "8c8e4b4f82168e5b0f3f6575f93fe8a7ea21308ca772325767e2ac665c7ae8f0"
+              "53d506d288a001da47221536dca28ce3d5f6cd8afc6c9408109d36d702dce3b6"
             ],
             [
               "k3.outcome_projection",
               "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
             ]
           ],
-          "course_digest": "345e2ca98b44635c0bebaf021d1c6006d2f6bb2519367021fedc7591497f9145",
+          "course_digest": "3a476a8823502d7dd68ac75e0fc54d1a3afb324a213ab7a079cf3d259ecc980c",
           "format": "taiji-k-continuation-learning-v1",
           "fresh_restore_verified": true,
           "frozen_workers": [
@@ -154,12 +155,13 @@
               "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
             ]
           ],
-          "receipt_digest": "bffe43ee39de7f24f853b2d3b416adeece88484e57da1d5c2f0f42dcd4d36815",
+          "receipt_digest": "9699a45dbfb21fa0224e0aca731ff495b3ee001ee4c8faf05bccf2c8a0d523e7",
           "rollback_restored": true,
           "train_experience_digests": [
-            "3bbfabc666121b64061f626ae874555b0063e7ecc665052d02a1ecf3524fc2ab"
+            "3bbfabc666121b64061f626ae874555b0063e7ecc665052d02a1ecf3524fc2ab",
+            "7a05f46e716b194acedca8c1687e8b799531fd912ce6dc13aee4cd3753509428"
           ],
-          "training_steps": 2,
+          "training_steps": 4,
           "updated_workers": [
             "k1.semantic",
             "k2.transition"
@@ -170,59 +172,66 @@
         "research_course_executed": true,
         "run_kind": "learning-diagnostic",
         "semantic_losses": {
-          "content_loss": 3.114657602054649e-06,
-          "fact_loss": 0.019014867022633553,
-          "goal_loss": 1.7072770788217895e-05
+          "content_loss": 2.0310635591158643e-06,
+          "fact_loss": 0.016468394547700882,
+          "goal_loss": 1.1097363312728703e-05
         },
         "status": "passed",
-        "train_course_digest": "54c23c6f471897a7043c95cc85a5489c07643b75b8bfc507e21ebf84062e8c45",
-        "train_episode_count": 1,
+        "train_course_digest": "3b1c42dfffe4a0d8332a6c3b1ff2f258bad755d5aa364d2bbebb6c207000b69e",
+        "train_episode_count": 2,
         "train_episode_indexes": [
-          0
+          0,
+          1
         ],
         "train_episode_paths": [
           [
             "python_00.py",
             "rust_00.rs",
             "python_01.py"
+          ],
+          [
+            "rust_01.rs",
+            "python_02.py",
+            "typescript_00.ts"
           ]
         ],
         "train_experience_digests": [
-          "3bbfabc666121b64061f626ae874555b0063e7ecc665052d02a1ecf3524fc2ab"
+          "3bbfabc666121b64061f626ae874555b0063e7ecc665052d02a1ecf3524fc2ab",
+          "7a05f46e716b194acedca8c1687e8b799531fd912ce6dc13aee4cd3753509428"
         ],
         "train_structured_loss_after": {
-          "combined_mse": 0.0036443708559090737,
-          "k1.content_mse": 7.575396011816338e-05,
-          "k1.fact_mse": 0.017392771318554878,
-          "k1.goal_mse": 0.0015090075321495533,
-          "k2.content_mse": 0.00010231319174636155,
-          "k2.goal_mse": 0.00025754194939509034,
-          "k2.transition_mse": 0.0025288371834903955
+          "combined_mse": 0.003394658820297991,
+          "k1.content_mse": 5.573522821578081e-05,
+          "k1.fact_mse": 0.016059407964348793,
+          "k1.goal_mse": 0.0011751790007110685,
+          "k2.content_mse": 7.050717249512672e-05,
+          "k2.goal_mse": 0.00017853822282631882,
+          "k2.transition_mse": 0.0028285853331908584
         },
         "train_structured_loss_before": {
-          "combined_mse": 0.004144930832505149,
-          "k1.content_mse": 0.00011744694347726181,
-          "k1.fact_mse": 0.019014867022633553,
-          "k1.goal_mse": 0.0024634983856230974,
-          "k2.content_mse": 0.00011087550956290215,
-          "k2.goal_mse": 0.0002854994381777942,
-          "k2.transition_mse": 0.002877397695556283
+          "combined_mse": 0.0035507675845565245,
+          "k1.content_mse": 6.336269916573656e-05,
+          "k1.fact_mse": 0.01646839687600732,
+          "k1.goal_mse": 0.0013374806731007993,
+          "k2.content_mse": 7.282304068212397e-05,
+          "k2.goal_mse": 0.00018583793644211255,
+          "k2.transition_mse": 0.0031767042819410563
         },
         "train_structured_loss_delta": {
-          "combined_mse": -0.0005005599765960751,
-          "k1.content_mse": -4.1692983359098434e-05,
-          "k1.fact_mse": -0.0016220957040786743,
-          "k1.goal_mse": -0.0009544908534735441,
-          "k2.content_mse": -8.562317816540599e-06,
-          "k2.goal_mse": -2.7957488782703876e-05,
-          "k2.transition_mse": -0.00034856051206588745
+          "combined_mse": -0.00015610876425853348,
+          "k1.content_mse": -7.62747094995575e-06,
+          "k1.fact_mse": -0.00040898891165852547,
+          "k1.goal_mse": -0.0001623016723897308,
+          "k2.content_mse": -2.3158681869972497e-06,
+          "k2.goal_mse": -7.299713615793735e-06,
+          "k2.transition_mse": -0.0003481189487501979
         },
         "training_performed": true,
-        "training_update_steps": 2,
+        "training_update_steps": 4,
         "transition_losses": {
-          "content_loss": 6.90083033987321e-05,
-          "goal_loss": 0.00017293714336119592,
-          "transition_loss": 0.002877397695556283
+          "content_loss": 4.808092853636481e-05,
+          "goal_loss": 0.00011991146311629564,
+          "transition_loss": 0.0031767040491104126
         },
         "updated_workers": [
           "k1.semantic",
@@ -240,12 +249,12 @@
         "can_promote": false,
         "can_start_r6_formal": false,
         "candidate_checkpoint_paths": {
-          "k1.semantic": "E:\\Seed\\output\\taiji_m4v2_b3_k_loss_diagnostic_20260910\\stability\\course_seed_1\\model_17\\taiji_b3_k1_semantic_loss_step1.pt",
-          "k2.transition": "E:\\Seed\\output\\taiji_m4v2_b3_k_loss_diagnostic_20260910\\stability\\course_seed_1\\model_17\\taiji_b3_k2_transition_loss_step1.pt"
+          "k1.semantic": "E:\\Seed\\output\\taiji_m4v2_b3_k_bounded_batch_20260910\\course_seed_1\\model_17\\taiji_b3_k1_semantic_loss_step1.pt",
+          "k2.transition": "E:\\Seed\\output\\taiji_m4v2_b3_k_bounded_batch_20260910\\course_seed_1\\model_17\\taiji_b3_k2_transition_loss_step1.pt"
         },
         "candidate_namespace": "taiji:k:candidate:model-17",
         "candidate_promoted": false,
-        "candidate_worker_bundle_digest": "d4e23a945f27ef00d2ec56b47d520a556da1ed9f097f0f14b1fbb0522898cb43",
+        "candidate_worker_bundle_digest": "d194dd9c9617beb2f44724c0ccadf561773be142327a522dc80c648b7dd73eb9",
         "checks": {
           "adapter_candidate_stage_roundtrip": true,
           "adapter_rollback_restored": true,
@@ -261,22 +270,22 @@
           "train_holdout_disjoint": true,
           "worker_attachment_preflight_passed": true
         },
-        "course_digest": "8a5e5962cffdd29c39b3fb6192fa68b41e675b47fb3f73039c094545936969ff",
+        "course_digest": "93b1af4486bcbcd00d494499343b541f9bd359c112d9a313a661fe16d5782b10",
         "course_seed": 1,
-        "elapsed_seconds": 5.174510100041516,
+        "elapsed_seconds": 5.1881706999847665,
         "frozen_workers": [
           "k3.outcome_projection"
         ],
         "holdout_count": 3,
         "holdout_loss_improved": false,
         "holdout_structured_loss_after": {
-          "combined_mse": 0.016832132773793595,
+          "combined_mse": 0.016967795449040247,
           "k1.content_mse": 9.66421633468902e-05,
-          "k1.fact_mse": 0.0173751184095939,
+          "k1.fact_mse": 0.017365286126732826,
           "k1.goal_mse": 0.002062194781804768,
-          "k2.content_mse": 0.032640185384176824,
-          "k2.goal_mse": 0.045904478727607056,
-          "k2.transition_mse": 0.002914177176232139
+          "k2.content_mse": 0.03308839150607431,
+          "k2.goal_mse": 0.046287852128443774,
+          "k2.transition_mse": 0.002906405987838904
         },
         "holdout_structured_loss_before": {
           "combined_mse": 0.016777580521142633,
@@ -288,13 +297,13 @@
           "k2.transition_mse": 0.0032601331671079
         },
         "holdout_structured_loss_delta": {
-          "combined_mse": 5.455225265096203e-05,
+          "combined_mse": 0.00019021492789761396,
           "k1.content_mse": 1.5251382743978553e-05,
-          "k1.fact_mse": 5.789815137783455e-05,
+          "k1.fact_mse": 4.8065868516761895e-05,
           "k1.goal_mse": 0.00034937487119653587,
-          "k2.content_mse": 0.00013319722105127607,
-          "k2.goal_mse": 0.00011754788041192649,
-          "k2.transition_mse": -0.000345955990875761
+          "k2.content_mse": 0.0005814033429487608,
+          "k2.goal_mse": 0.0005009212812486438,
+          "k2.transition_mse": -0.0003537271792689962
         },
         "no_update_control": {
           "holdout_structured_loss_after": {
@@ -329,28 +338,28 @@
         },
         "optimizer_state_present": false,
         "parameter_delta_norm": {
-          "k1.semantic": 0.07937038848224212,
-          "k2.transition": 0.01188628763992947
+          "k1.semantic": 0.06123832496012522,
+          "k2.transition": 0.011956376897618515
         },
         "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
         "receipt": {
           "candidate_namespace": "taiji:k:candidate:model-17",
-          "candidate_worker_bundle_digest": "d4e23a945f27ef00d2ec56b47d520a556da1ed9f097f0f14b1fbb0522898cb43",
+          "candidate_worker_bundle_digest": "d194dd9c9617beb2f44724c0ccadf561773be142327a522dc80c648b7dd73eb9",
           "candidate_worker_checkpoint_digests": [
             [
               "k1.semantic",
-              "20ccf1bb47d0d7d062dca4db2ebbea3a775caf5f8ac62cba5a489cbb8df6f872"
+              "542e591a4aea6fa6a11ea18bb181bc0dfe608255e3a093bf45cb5fe332ad4f54"
             ],
             [
               "k2.transition",
-              "321c947d34bf870054634b23e00c283f08c6c8e5900dcc8867f9ccb20a38ca1e"
+              "d37517fd9573cee22719d151625fdfb848086388f224a28cbc46dc917a669053"
             ],
             [
               "k3.outcome_projection",
               "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
             ]
           ],
-          "course_digest": "8a5e5962cffdd29c39b3fb6192fa68b41e675b47fb3f73039c094545936969ff",
+          "course_digest": "93b1af4486bcbcd00d494499343b541f9bd359c112d9a313a661fe16d5782b10",
           "format": "taiji-k-continuation-learning-v1",
           "fresh_restore_verified": true,
           "frozen_workers": [
@@ -381,12 +390,13 @@
               "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
             ]
           ],
-          "receipt_digest": "da9d9314af5d43dd3526bbb54dfd158c6032252fc2656ae1809a96a1cf184556",
+          "receipt_digest": "dae26f30ddef03ddae9805ea7c8ba3bd799fd6bf38a711c6cf6c424a91b2f89e",
           "rollback_restored": true,
           "train_experience_digests": [
-            "7a05f46e716b194acedca8c1687e8b799531fd912ce6dc13aee4cd3753509428"
+            "7a05f46e716b194acedca8c1687e8b799531fd912ce6dc13aee4cd3753509428",
+            "1a8fc81fc96f992bcf691044163744add7fd0e2a3c29ce209c24445a3cfdc584"
           ],
-          "training_steps": 2,
+          "training_steps": 4,
           "updated_workers": [
             "k1.semantic",
             "k2.transition"
@@ -397,59 +407,66 @@
         "research_course_executed": true,
         "run_kind": "learning-diagnostic",
         "semantic_losses": {
-          "content_loss": 9.474690614297288e-07,
-          "fact_loss": 0.013921926729381084,
+          "content_loss": 9.474691182731476e-07,
+          "fact_loss": 0.013921924866735935,
           "goal_loss": 5.121957656228915e-06
         },
         "status": "passed",
-        "train_course_digest": "523e28b4a6420691af77eca66c40b3689f445036f5526b5f330f1cfe045520bc",
-        "train_episode_count": 1,
+        "train_course_digest": "abe868723ddab3abff9d21c90830d8e723c55b422bf6e311c67b4a7d0a74af02",
+        "train_episode_count": 2,
         "train_episode_indexes": [
-          1
+          1,
+          2
         ],
         "train_episode_paths": [
           [
             "rust_01.rs",
             "python_02.py",
             "typescript_00.ts"
+          ],
+          [
+            "typescript_01.ts",
+            "rust_02.rs",
+            "python_03.py"
           ]
         ],
         "train_experience_digests": [
-          "7a05f46e716b194acedca8c1687e8b799531fd912ce6dc13aee4cd3753509428"
+          "7a05f46e716b194acedca8c1687e8b799531fd912ce6dc13aee4cd3753509428",
+          "1a8fc81fc96f992bcf691044163744add7fd0e2a3c29ce209c24445a3cfdc584"
         ],
         "train_structured_loss_after": {
-          "combined_mse": 0.0027424475876311285,
+          "combined_mse": 0.0028467618196070057,
           "k1.content_mse": 8.246405741374474e-06,
-          "k1.fact_mse": 0.013099772855639458,
+          "k1.fact_mse": 0.013506339862942696,
           "k1.goal_mse": 0.0001748286740621552,
-          "k2.content_mse": 3.323813871247694e-05,
-          "k2.goal_mse": 8.121528662741184e-05,
-          "k2.transition_mse": 0.0030573841650038958
+          "k2.content_mse": 3.8570125980186276e-05,
+          "k2.goal_mse": 9.743696500663646e-05,
+          "k2.transition_mse": 0.003255148883908987
         },
         "train_structured_loss_before": {
-          "combined_mse": 0.0029566043366079007,
+          "combined_mse": 0.002991795319303492,
           "k1.content_mse": 9.278454854211304e-06,
           "k1.fact_mse": 0.013921926729381084,
           "k1.goal_mse": 0.00021146296057850122,
-          "k2.content_mse": 3.4770571801345795e-05,
-          "k2.goal_mse": 8.617643470643088e-05,
-          "k2.transition_mse": 0.0034760108683258295
+          "k2.content_mse": 4.02021141781006e-05,
+          "k2.goal_mse": 0.00010288003613823093,
+          "k2.transition_mse": 0.0036650216206908226
         },
         "train_structured_loss_delta": {
-          "combined_mse": -0.00021415674897677216,
+          "combined_mse": -0.00014503349969648615,
           "k1.content_mse": -1.0320491128368303e-06,
-          "k1.fact_mse": -0.0008221538737416267,
+          "k1.fact_mse": -0.0004155868664383888,
           "k1.goal_mse": -3.663428651634604e-05,
-          "k2.content_mse": -1.5324330888688564e-06,
-          "k2.goal_mse": -4.96114807901904e-06,
-          "k2.transition_mse": -0.00041862670332193375
+          "k2.content_mse": -1.6319881979143247e-06,
+          "k2.goal_mse": -5.443071131594479e-06,
+          "k2.transition_mse": -0.00040987273678183556
         },
         "training_performed": true,
-        "training_update_steps": 2,
+        "training_update_steps": 4,
         "transition_losses": {
-          "content_loss": 2.7154183044331148e-05,
-          "goal_loss": 6.688579742331058e-05,
-          "transition_loss": 0.0034760108683258295
+          "content_loss": 3.058274160139263e-05,
+          "goal_loss": 7.745234324829653e-05,
+          "transition_loss": 0.003665021387860179
         },
         "updated_workers": [
           "k1.semantic",
@@ -467,12 +484,12 @@
         "can_promote": false,
         "can_start_r6_formal": false,
         "candidate_checkpoint_paths": {
-          "k1.semantic": "E:\\Seed\\output\\taiji_m4v2_b3_k_loss_diagnostic_20260910\\stability\\course_seed_2\\model_17\\taiji_b3_k1_semantic_loss_step1.pt",
-          "k2.transition": "E:\\Seed\\output\\taiji_m4v2_b3_k_loss_diagnostic_20260910\\stability\\course_seed_2\\model_17\\taiji_b3_k2_transition_loss_step1.pt"
+          "k1.semantic": "E:\\Seed\\output\\taiji_m4v2_b3_k_bounded_batch_20260910\\course_seed_2\\model_17\\taiji_b3_k1_semantic_loss_step1.pt",
+          "k2.transition": "E:\\Seed\\output\\taiji_m4v2_b3_k_bounded_batch_20260910\\course_seed_2\\model_17\\taiji_b3_k2_transition_loss_step1.pt"
         },
         "candidate_namespace": "taiji:k:candidate:model-17",
         "candidate_promoted": false,
-        "candidate_worker_bundle_digest": "7843f0792a36bca0deeb099abf4d08a84c8df277d6c96db035f5d656af40715e",
+        "candidate_worker_bundle_digest": "cedfd33d44f7f248867718a6983fb1a5603fc909cc426f95b7c31f80379dd931",
         "checks": {
           "adapter_candidate_stage_roundtrip": true,
           "adapter_rollback_restored": true,
@@ -488,22 +505,22 @@
           "train_holdout_disjoint": true,
           "worker_attachment_preflight_passed": true
         },
-        "course_digest": "9f5818296563cf2a56853e0a3257664366378dc486f7b0eb880cec89a27d99d2",
+        "course_digest": "1f340a1687e8ba45a5c19d5bd950e2ebe4c9f6b373f1c9cf5ada5c11fb3092c6",
         "course_seed": 2,
-        "elapsed_seconds": 5.133534099906683,
+        "elapsed_seconds": 5.170915799913928,
         "frozen_workers": [
           "k3.outcome_projection"
         ],
         "holdout_count": 3,
-        "holdout_loss_improved": false,
+        "holdout_loss_improved": true,
         "holdout_structured_loss_after": {
-          "combined_mse": 0.017108374543416478,
-          "k1.content_mse": 9.66421633468902e-05,
-          "k1.fact_mse": 0.017375119030475616,
-          "k1.goal_mse": 0.002062194781804768,
-          "k2.content_mse": 0.03354254115159468,
-          "k2.goal_mse": 0.04667413185719246,
-          "k2.transition_mse": 0.0028996182760844627
+          "combined_mse": 0.016372586270992744,
+          "k1.content_mse": 7.1156815768821e-05,
+          "k1.fact_mse": 0.01698857204367717,
+          "k1.goal_mse": 0.0014928756863810122,
+          "k2.content_mse": 0.031669587112749774,
+          "k2.goal_mse": 0.04509915717305072,
+          "k2.transition_mse": 0.0029141687943289676
         },
         "holdout_structured_loss_before": {
           "combined_mse": 0.016777580521142633,
@@ -515,13 +532,13 @@
           "k2.transition_mse": 0.0032601331671079
         },
         "holdout_structured_loss_delta": {
-          "combined_mse": 0.0003307940222738448,
-          "k1.content_mse": 1.5251382743978553e-05,
-          "k1.fact_mse": 5.789877225955212e-05,
-          "k1.goal_mse": 0.00034937487119653587,
-          "k2.content_mse": 0.001035552988469135,
-          "k2.goal_mse": 0.0008872010099973265,
-          "k2.transition_mse": -0.00036051489102343747
+          "combined_mse": -0.0004049942501498892,
+          "k1.content_mse": -1.0233964834090642e-05,
+          "k1.fact_mse": -0.0003286482145388944,
+          "k1.goal_mse": -0.00021994422422721982,
+          "k2.content_mse": -0.0008374010503757745,
+          "k2.goal_mse": -0.0006877736741444096,
+          "k2.transition_mse": -0.00034596437277893254
         },
         "no_update_control": {
           "holdout_structured_loss_after": {
@@ -556,28 +573,28 @@
         },
         "optimizer_state_present": false,
         "parameter_delta_norm": {
-          "k1.semantic": 0.07937038848224212,
-          "k2.transition": 0.01291420563682572
+          "k1.semantic": 0.05539702349076851,
+          "k2.transition": 0.009631581211873772
         },
         "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
         "receipt": {
           "candidate_namespace": "taiji:k:candidate:model-17",
-          "candidate_worker_bundle_digest": "7843f0792a36bca0deeb099abf4d08a84c8df277d6c96db035f5d656af40715e",
+          "candidate_worker_bundle_digest": "cedfd33d44f7f248867718a6983fb1a5603fc909cc426f95b7c31f80379dd931",
           "candidate_worker_checkpoint_digests": [
             [
               "k1.semantic",
-              "8752f0eba97b5c0f4c71e651682c60c077d78e1dd18d439811850f115e546f40"
+              "cdc43686e450e0d814de88d7e3d155f0e5e5f54c47f473ff046e0be9218eb8d1"
             ],
             [
               "k2.transition",
-              "78dd89ac9702395ac455d0c8c43548c2da886c7d12f77dc7975feae6e5ee314b"
+              "4a48e83e2d14efb47517fe1572f8d2d1d9f1a7076dd64a2acc6272c8dc6d437b"
             ],
             [
               "k3.outcome_projection",
               "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
             ]
           ],
-          "course_digest": "9f5818296563cf2a56853e0a3257664366378dc486f7b0eb880cec89a27d99d2",
+          "course_digest": "1f340a1687e8ba45a5c19d5bd950e2ebe4c9f6b373f1c9cf5ada5c11fb3092c6",
           "format": "taiji-k-continuation-learning-v1",
           "fresh_restore_verified": true,
           "frozen_workers": [
@@ -608,12 +625,13 @@
               "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
             ]
           ],
-          "receipt_digest": "f1112e9a4e4629a38b9b93112769447c0786d1ccc975dd5e0683a6de4355d8de",
+          "receipt_digest": "055afc1ed1a30dc248b15d0705310f8cc001bfa32ac0ba36c8005bc9b7304aa5",
           "rollback_restored": true,
           "train_experience_digests": [
-            "1a8fc81fc96f992bcf691044163744add7fd0e2a3c29ce209c24445a3cfdc584"
+            "1a8fc81fc96f992bcf691044163744add7fd0e2a3c29ce209c24445a3cfdc584",
+            "31abe1be464067c6f59b0631773693e4bea598ade8cd2817308c911a34c43732"
           ],
-          "training_steps": 2,
+          "training_steps": 4,
           "updated_workers": [
             "k1.semantic",
             "k2.transition"
@@ -624,59 +642,66 @@
         "research_course_executed": true,
         "run_kind": "learning-diagnostic",
         "semantic_losses": {
-          "content_loss": 9.474690614297288e-07,
-          "fact_loss": 0.013921926729381084,
-          "goal_loss": 5.121957656228915e-06
+          "content_loss": 2.0310635591158643e-06,
+          "fact_loss": 0.016468394547700882,
+          "goal_loss": 1.1097363312728703e-05
         },
         "status": "passed",
-        "train_course_digest": "23fb16774012ef1f8c148d0990fa775c6749f3cc44c34ac99db5cb116af6d70e",
-        "train_episode_count": 1,
+        "train_course_digest": "c8cfcd922e4ad4f7bf93b2bf43a251a8416baebabae801127cfa78f125055681",
+        "train_episode_count": 2,
         "train_episode_indexes": [
-          2
+          2,
+          3
         ],
         "train_episode_paths": [
           [
             "typescript_01.ts",
             "rust_02.rs",
             "python_03.py"
+          ],
+          [
+            "python_02.py",
+            "typescript_02.ts",
+            "rust_03.rs"
           ]
         ],
         "train_experience_digests": [
-          "1a8fc81fc96f992bcf691044163744add7fd0e2a3c29ce209c24445a3cfdc584"
+          "1a8fc81fc96f992bcf691044163744add7fd0e2a3c29ce209c24445a3cfdc584",
+          "31abe1be464067c6f59b0631773693e4bea598ade8cd2817308c911a34c43732"
         ],
         "train_structured_loss_after": {
-          "combined_mse": 0.0028047190933951547,
-          "k1.content_mse": 8.246405741374474e-06,
-          "k1.fact_mse": 0.013099772855639458,
-          "k1.goal_mse": 0.0001748286740621552,
-          "k2.content_mse": 4.3338866817066446e-05,
-          "k2.goal_mse": 0.00011164443276356906,
-          "k2.transition_mse": 0.0033904833253473043
+          "combined_mse": 0.0034279803336024393,
+          "k1.content_mse": 5.573522821578081e-05,
+          "k1.fact_mse": 0.016059407498687506,
+          "k1.goal_mse": 0.0011751790007110685,
+          "k2.content_mse": 7.590038512717001e-05,
+          "k2.goal_mse": 0.00019516912652761675,
+          "k2.transition_mse": 0.003006490762345493
         },
         "train_structured_loss_before": {
-          "combined_mse": 0.003026986301999083,
-          "k1.content_mse": 9.278454854211304e-06,
-          "k1.fact_mse": 0.013921926729381084,
-          "k1.goal_mse": 0.00021146296057850122,
-          "k2.content_mse": 4.5633656554855406e-05,
-          "k2.goal_mse": 0.00011958363757003099,
-          "k2.transition_mse": 0.0038540323730558157
+          "combined_mse": 0.0035859585672521157,
+          "k1.content_mse": 6.336269916573656e-05,
+          "k1.fact_mse": 0.01646839687600732,
+          "k1.goal_mse": 0.0013374806731007993,
+          "k2.content_mse": 7.825458305887878e-05,
+          "k2.goal_mse": 0.0002025415378739126,
+          "k2.transition_mse": 0.0033657150343060493
         },
         "train_structured_loss_delta": {
-          "combined_mse": -0.00022226720860392835,
-          "k1.content_mse": -1.0320491128368303e-06,
-          "k1.fact_mse": -0.0008221538737416267,
-          "k1.goal_mse": -3.663428651634604e-05,
-          "k2.content_mse": -2.2947897377889603e-06,
-          "k2.goal_mse": -7.93920480646193e-06,
-          "k2.transition_mse": -0.00046354904770851135
+          "combined_mse": -0.00015797823364967645,
+          "k1.content_mse": -7.62747094995575e-06,
+          "k1.fact_mse": -0.0004089893773198128,
+          "k1.goal_mse": -0.0001623016723897308,
+          "k2.content_mse": -2.354197931708768e-06,
+          "k2.goal_mse": -7.3724113462958485e-06,
+          "k2.transition_mse": -0.0003592242719605565
         },
         "training_performed": true,
-        "training_update_steps": 2,
+        "training_update_steps": 4,
         "transition_losses": {
-          "content_loss": 3.401193316676654e-05,
-          "goal_loss": 8.801888907328248e-05,
-          "transition_loss": 0.0038540323730558157
+          "content_loss": 5.1510116463759914e-05,
+          "goal_loss": 0.0001304780162172392,
+          "transition_loss": 0.003365714568644762
         },
         "updated_workers": [
           "k1.semantic",
@@ -689,9 +714,9 @@
     }
   ],
   "combined_loss_delta_by_course_seed": {
-    "0": -0.0010801651849558572,
-    "1": 5.455225265096203e-05,
-    "2": 0.0003307940222738448
+    "0": -0.0005384770480911065,
+    "1": 0.00019021492789761396,
+    "2": -0.0004049942501498892
   },
   "course_seeds": [
     0,
@@ -699,21 +724,21 @@
     2
   ],
   "distinct_course_variants": true,
-  "mean_combined_loss_delta": -0.00023160630334368346,
+  "mean_combined_loss_delta": -0.00025108545678112726,
   "model_seed": 17,
   "no_update_control_passed": true,
   "parameter_delta_norm_by_course_seed": {
     "0": {
-      "k1.semantic": 0.10789559732994627,
-      "k2.transition": 0.01459495374185856
+      "k1.semantic": 0.05539702349076851,
+      "k2.transition": 0.009520733178057246
     },
     "1": {
-      "k1.semantic": 0.07937038848224212,
-      "k2.transition": 0.01188628763992947
+      "k1.semantic": 0.06123832496012522,
+      "k2.transition": 0.011956376897618515
     },
     "2": {
-      "k1.semantic": 0.07937038848224212,
-      "k2.transition": 0.01291420563682572
+      "k1.semantic": 0.05539702349076851,
+      "k2.transition": 0.009631581211873772
     }
   },
   "parent_checkpoint_digests": [
@@ -721,34 +746,37 @@
   ],
   "performance_gate_passed": false,
   "promotion_blocking_reason": "course variant updates are not uniformly non-degrading on the fixed holdout",
-  "report_format": "taiji-m4v2-b3-k-loss-stability-v1",
-  "run_kind": "learning-stability-diagnostic",
+  "report_format": "taiji-m4v2-b3-k-bounded-batch-v1",
+  "run_kind": "bounded-multi-example-diagnostic",
   "same_parent": true,
   "stability_gate_passed": false,
   "status": "passed",
   "technical_gate_passed": true,
   "train_combined_loss_delta_by_course_seed": {
-    "0": -0.0005005599765960751,
-    "1": -0.00021415674897677216,
-    "2": -0.00022226720860392835
+    "0": -0.00015610876425853348,
+    "1": -0.00014503349969648615,
+    "2": -0.00015797823364967645
   },
-  "train_episode_count": 1,
+  "train_episode_count": 2,
   "train_episode_indexes": [
     [
-      0
-    ],
-    [
+      0,
       1
     ],
     [
+      1,
       2
+    ],
+    [
+      2,
+      3
     ]
   ],
   "train_experience_digests": [
-    "54c23c6f471897a7043c95cc85a5489c07643b75b8bfc507e21ebf84062e8c45",
-    "523e28b4a6420691af77eca66c40b3689f445036f5526b5f330f1cfe045520bc",
-    "23fb16774012ef1f8c148d0990fa775c6749f3cc44c34ac99db5cb116af6d70e"
+    "3b1c42dfffe4a0d8332a6c3b1ff2f258bad755d5aa364d2bbebb6c207000b69e",
+    "abe868723ddab3abff9d21c90830d8e723c55b422bf6e311c67b4a7d0a74af02",
+    "c8cfcd922e4ad4f7bf93b2bf43a251a8416baebabae801127cfa78f125055681"
   ],
   "version": 1,
-  "worst_combined_loss_delta": 0.0003307940222738448
+  "worst_combined_loss_delta": 0.00019021492789761396
 }

@@ -25,12 +25,20 @@ COURSE_SEEDS = (0, 1, 2)
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m4v2_b3_k_loss_stability_20260910.json"
 
 
+def _normalized_variant_keys(values: list[Any]) -> tuple[tuple[int, ...], ...]:
+    return tuple(
+        () if indexes is None else tuple(int(value) for value in indexes)
+        for indexes in values
+    )
+
+
 def run_stability(
     *,
     artifact_dir: Path = DEFAULT_ARTIFACT_DIR,
     candidate_root: Path = DEFAULT_CANDIDATE_DIR.parent / "stability",
     model_seed: int = 17,
     course_seeds: tuple[int, ...] = COURSE_SEEDS,
+    train_episode_count: int = 1,
 ) -> dict[str, Any]:
     cells = []
     for course_seed in course_seeds:
@@ -39,6 +47,7 @@ def run_stability(
             candidate_dir=candidate_root / f"course_seed_{course_seed}" / f"model_{model_seed}",
             model_seed=model_seed,
             course_seed=course_seed,
+            train_episode_count=train_episode_count,
         )
         cells.append({"course_seed": course_seed, "report": cell})
 
@@ -50,12 +59,14 @@ def run_stability(
     ]
     technical_pass = all(report.get("status") == "passed" for report in reports)
     same_parent = len(parent_digests) == 1 and None not in parent_digests
-    train_digests = [report.get("train_experience_digest") for report in reports]
-    train_variant_indexes = [report.get("train_episode_index") for report in reports]
+    train_digests = [report.get("train_course_digest") for report in reports]
+    train_variant_indexes = [report.get("train_episode_indexes") for report in reports]
+    normalized_train_variant_indexes = _normalized_variant_keys(train_variant_indexes)
     distinct_course_variants = (
         len(train_digests) == len(set(train_digests))
         and None not in train_digests
-        and len(train_variant_indexes) == len(set(train_variant_indexes))
+        and len(normalized_train_variant_indexes)
+        == len(set(normalized_train_variant_indexes))
         and None not in train_variant_indexes
     )
     all_improved = bool(delta_values) and all(value < 0.0 for value in delta_values)
@@ -67,6 +78,7 @@ def run_stability(
         "run_kind": "learning-stability-diagnostic",
         "model_seed": model_seed,
         "course_seeds": list(course_seeds),
+        "train_episode_count": int(train_episode_count),
         "cell_count": len(cells),
         "same_parent": same_parent,
         "parent_checkpoint_digests": sorted(parent_digests),
@@ -128,6 +140,7 @@ def main() -> int:
     parser.add_argument("--artifact-dir", type=Path, default=DEFAULT_ARTIFACT_DIR)
     parser.add_argument("--candidate-root", type=Path, default=DEFAULT_CANDIDATE_DIR.parent / "stability")
     parser.add_argument("--model-seed", type=int, default=17)
+    parser.add_argument("--train-episode-count", type=int, default=1)
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
     args = parser.parse_args()
     artifact_dir = args.artifact_dir if args.artifact_dir.is_absolute() else PROJECT_ROOT / args.artifact_dir
@@ -137,6 +150,7 @@ def main() -> int:
         artifact_dir=artifact_dir,
         candidate_root=candidate_root,
         model_seed=args.model_seed,
+        train_episode_count=args.train_episode_count,
     )
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(

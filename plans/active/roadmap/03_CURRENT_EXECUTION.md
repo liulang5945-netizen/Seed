@@ -41,7 +41,9 @@
 
 **B3-K 课程敏感性单变量诊断已完成。** 在相同 model 17 parent、同一 workspace、同一 3 条 holdout 下，三条不同 train episode 的 train combined-MSE 都下降（`−0.00050056/−0.00021416/−0.00022227`），K1/K2 参数 delta norm 均非零；无更新对照的 holdout delta 全为零，排除了保存链或 scorer 漂移。结合稳定性结果，当前最合理解释是单条样本更新存在过拟合/跨 episode 干扰或梯度方向不一致；这仍是窄诊断，不宣称已区分全部原因。诊断字段已写入 [B3-K loss stability](../../../reports/taiji_m4v2_b3_k_loss_stability_20260910.json)，继续保持 `can_promote=false`。
 
-**当前唯一下一步：做 B3-K bounded multi-example 诊断。** 只改变 train course 从 1 条扩为固定 2 条真实、互不重复的 train experience；保持同一 parent、K1/K2 owner、学习率、总 scorer、3 条 holdout、保存/恢复/rollback 和 candidate 禁止晋级规则。为 seed `0/1/2` 分别构造可追溯的两条 train 组合，记录每条组合的 train/holdout 六分量、更新步数、参数 delta norm 和无更新对照；目标是验证受限 batch 是否降低单条样本敏感性，不以它直接替代正式比较，也不引入 replay、结构扩容或九 cell formal。
+**B3-K bounded multi-example 诊断已完成，但仍未过性能 Gate。** 只把每个 course 扩为 2 条真实、互不重复的 train experience，seed 组合为 `[0,1] / [1,2] / [2,3]`；parent、worker owner、学习率、holdout 和回滚边界保持不变。combined-MSE delta 为 `−0.00053848/+0.00019021/−0.00040499`，2/3 course 改善，最坏退化从单样本的 `+0.00033079` 降到 `+0.00019021`，均值为 `−0.00025109`，但仍不能用均值掩盖 seed 1 退化。报告为 [B3-K bounded batch](../../../reports/taiji_m4v2_b3_k_bounded_batch_20260910.json)，技术 Gate、no-update、保存恢复、K3 冻结和 rollback 通过，`performance_gate_passed=false`、`stability_gate_passed=false`、`can_promote=false`。
+
+**当前唯一下一步：做 B3-K bounded 三样本单变量诊断。** 在同一 parent、固定 holdout、同一学习率和同一合同下，仅把 train course 从 2 条扩为 3 条真实 experience，使用 seed `0/1/2` 的连续组合 `[0,1,2] / [1,2,3] / [2,3,4]`。记录与上一轮完全相同的 train/holdout 六分量、参数 delta norm、更新步数、no-update、fresh restore 和 rollback；目标是判断增加课程覆盖能否消除 seed 1 的退化，还是暴露更强的容量/表征问题。仍不引入 replay、结构扩容、阈值调整或九 cell formal。
 
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 
