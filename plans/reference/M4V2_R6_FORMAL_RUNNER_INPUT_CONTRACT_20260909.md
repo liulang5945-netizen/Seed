@@ -453,3 +453,10 @@ checkpoint write、inference trace 和 wall-clock；single-cell report 记录了
 下一步是预注册 9-cell 的资源 validity/aggregate 规则，包括 CPU 口径、无效 cell、
 peak resource、checkpoint/parameter/inference 和 paired delta 的处理；规则冻结前
 不得运行 full formal。
+
+## 13. 9-cell resource validity / aggregate contract（2026-09-09）
+
+资源合同已冻结到 [M4V2_R6_RESOURCE_AGGREGATE_PREREGISTRATION_20260909.md](M4V2_R6_RESOURCE_AGGREGATE_PREREGISTRATION_20260909.md)：每个 arm 必须真实记录统一 CPU/RSS 方法、参数/字节、checkpoint write、inference trace、训练步数和 resource digest；matched-fixed-capacity 提供 `1.25×` peak、`1.5×` wall-clock reference，缺失/超预算 cell 不可删除或均值填补，9-cell 输出 mean/min/max 与一侧 95% Student-t lower bound。
+
+当前 `model17/course0` 已验证字段闭合；由于 model23/31 尚无对应 fixed-large
+ensemble registry，`can_start_r6_formal=false` 继续固定，full formal 不得启动。

@@ -472,3 +472,9 @@ paired resource ledger，并重跑 `model_seed=17 / course_seed=0`：
 下一步冻结 9-cell formal 的资源 validity/aggregate 合同（包括同一 CPU 口径、无效
 cell、peak resource、checkpoint/parameter/inference 和 paired delta 的聚合规则），
 合同冻结前不执行 9-cell full formal。
+
+## 24. 9-cell resource validity / aggregate 合同冻结（2026-09-09）
+
+资源合同已独立冻结：[M4V2_R6_RESOURCE_AGGREGATE_PREREGISTRATION_20260909.md](M4V2_R6_RESOURCE_AGGREGATE_PREREGISTRATION_20260909.md)。它沿用输入 manifest 的 CPU、peak `1.25×`、wall-clock `1.5×` 上限，固定每 arm 的 RSS、参数、checkpoint、inference、训练步数、device/resource digest 字段，规定缺失/超预算 cell 不得被删除或用均值补齐，并冻结 9-cell 的 mean/min/max 与一侧 95% Student-t lower bound 聚合方式。
+
+该合同不改变 candidate 主 Gate，也不把 fixed-large 事后改造成晋级阈值；fixed-large 仍是 strongest-capacity paired control。当前 full formal 仍关闭，下一步只补齐 model23/31 的 fixed-large artifact、fresh restore 和 formal input registry。
