@@ -59,3 +59,5 @@ scorecard 通过只允许两个方向：
 - `promotion_gate=false`、`can_promote=false`：默认 runtime owner、同一 parent 的连续 S/G/K、资源/rollback/旧能力 Gate 均未被伪造为通过。
 
 **结论**：K1/K2 作为 A8 K 轴的组合能力证据已经收束，但还不是可进入默认 Taiji 路径的成长结构。下一步必须在新的预注册中选择 K3 证据或同一 parent 的 A8/R6 晋级课程；当前继续保持 shadow 隔离。
+
+**历史边界更新（2026-09-09）**：K3 formal 已完成，当前 K 轴统一入口改由 [M5_K_AXIS_SCORECARD_V2_CONTRACT_20260909.md](M5_K_AXIS_SCORECARD_V2_CONTRACT_20260909.md) 管理。本文与 v1 报告保持不可覆盖的 K1/K2-only 历史记录。

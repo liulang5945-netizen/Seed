@@ -1,0 +1,233 @@
+{
+  "format": "taiji-m5-k-axis-scorecard-v2",
+  "version": 2,
+  "source_reports": {
+    "M5.K1": "21bd8268d6a619d4fdebf2abe33a7216dd96df4e7f18453d6d05cec19931c91b",
+    "M5.K2": "f0eb873985abd23e120e048fd8d825099968f9923916071da306039e9b6051f7",
+    "M5.K3": "f27a70affeea21364ea41a0359747934048d7436b680e226769f2ed6bda22d41"
+  },
+  "scorecard": {
+    "format": "taiji-continual-evaluation-v1",
+    "version": 1,
+    "type": "scorecard",
+    "epsilon": 0.0,
+    "metric_specs": [
+      {
+        "format": "taiji-continual-evaluation-v1",
+        "version": 1,
+        "type": "metric_spec",
+        "name": "k1_single_step_composition_success",
+        "direction": "higher",
+        "unit": "episode_ratio",
+        "baseline_kind": "absolute",
+        "domain_id": "M5.K1",
+        "critical": false,
+        "catastrophic_forgetting_threshold": null
+      },
+      {
+        "format": "taiji-continual-evaluation-v1",
+        "version": 1,
+        "type": "metric_spec",
+        "name": "k2_multistep_composition_success",
+        "direction": "higher",
+        "unit": "episode_ratio",
+        "baseline_kind": "absolute",
+        "domain_id": "M5.K2",
+        "critical": false,
+        "catastrophic_forgetting_threshold": null
+      },
+      {
+        "format": "taiji-continual-evaluation-v1",
+        "version": 1,
+        "type": "metric_spec",
+        "name": "k3_outcome_dependency_success",
+        "direction": "higher",
+        "unit": "episode_ratio",
+        "baseline_kind": "absolute",
+        "domain_id": "M5.K3",
+        "critical": false,
+        "catastrophic_forgetting_threshold": null
+      }
+    ],
+    "snapshots": [
+      {
+        "format": "taiji-continual-evaluation-v1",
+        "version": 1,
+        "type": "evaluation_snapshot",
+        "checkpoint_digest": "26e48ff0194ae4023661e158e54cbbeb390241b1cd57d856d3c9437da1b8bf42",
+        "phase_id": "M5.K1",
+        "owner_graph_digest": "919a36f3df6dccf812a48bf0c1f8709fb9f011f325f0e531d57b01648819097e",
+        "read_only_input_digest": "87ccb5ff8874b4d5a32ab18ada5e62f3285ea865e29c4833908cdcd120562658",
+        "observations": [
+          {
+            "metric_name": "k1_single_step_composition_success",
+            "domain_id": "M5.K1",
+            "checkpoint_digest": "26e48ff0194ae4023661e158e54cbbeb390241b1cd57d856d3c9437da1b8bf42",
+            "absolute_value": 1.0,
+            "owner_id": "m5:M5.K1:standalone-shadow",
+            "read_only_input_digest": "87ccb5ff8874b4d5a32ab18ada5e62f3285ea865e29c4833908cdcd120562658",
+            "parent_delta": null,
+            "parent_checkpoint_digest": null,
+            "comparison_delta": null,
+            "comparison_id": null
+          }
+        ],
+        "parent_checkpoint_digest": null,
+        "resource_cost": 1.0,
+        "snapshot_digest": "b0108d73cba4348ec0d397747251a9a8fbaa0f18b98e77fd1c04c744f24d2c5d"
+      },
+      {
+        "format": "taiji-continual-evaluation-v1",
+        "version": 1,
+        "type": "evaluation_snapshot",
+        "checkpoint_digest": "49a57b2571fe7bbeaa61a27ab7f6c8d8618a867048955d56e52c373b76129386",
+        "phase_id": "M5.K2",
+        "owner_graph_digest": "2864cd389e14cf435ecf0d676b012b8315ff68db0b6a7d745ebb54d8bb0f5a0d",
+        "read_only_input_digest": "64cb033bb9bc4124b3c35a13593f1afe885e6d326ae82b4b7df26f2877c6a7a3",
+        "observations": [
+          {
+            "metric_name": "k2_multistep_composition_success",
+            "domain_id": "M5.K2",
+            "checkpoint_digest": "49a57b2571fe7bbeaa61a27ab7f6c8d8618a867048955d56e52c373b76129386",
+            "absolute_value": 1.0,
+            "owner_id": "m5:M5.K2:standalone-shadow",
+            "read_only_input_digest": "64cb033bb9bc4124b3c35a13593f1afe885e6d326ae82b4b7df26f2877c6a7a3",
+            "parent_delta": null,
+            "parent_checkpoint_digest": null,
+            "comparison_delta": null,
+            "comparison_id": null
+          }
+        ],
+        "parent_checkpoint_digest": null,
+        "resource_cost": 1.0,
+        "snapshot_digest": "4bf6797040314571112f8d941baa64cc6ff015b0ece3d303c25bbfa3c52771b2"
+      },
+      {
+        "format": "taiji-continual-evaluation-v1",
+        "version": 1,
+        "type": "evaluation_snapshot",
+        "checkpoint_digest": "17f25a5273260b9eae0f2826cbb4a2e521c78e1579344e3f8c9a8be5ebe12cdf",
+        "phase_id": "M5.K3",
+        "owner_graph_digest": "2ea03981f924fe66aefa5faa007bc05892c4953666438edb7f37fca4177589b4",
+        "read_only_input_digest": "c96fa464f62ee123df499261e78fe72077a7db6a6e99ba4dfcc5f07562bf1d19",
+        "observations": [
+          {
+            "metric_name": "k3_outcome_dependency_success",
+            "domain_id": "M5.K3",
+            "checkpoint_digest": "17f25a5273260b9eae0f2826cbb4a2e521c78e1579344e3f8c9a8be5ebe12cdf",
+            "absolute_value": 1.0,
+            "owner_id": "m5:M5.K3:standalone-shadow",
+            "read_only_input_digest": "c96fa464f62ee123df499261e78fe72077a7db6a6e99ba4dfcc5f07562bf1d19",
+            "parent_delta": null,
+            "parent_checkpoint_digest": null,
+            "comparison_delta": null,
+            "comparison_id": null
+          }
+        ],
+        "parent_checkpoint_digest": null,
+        "resource_cost": 1.0,
+        "snapshot_digest": "b1acf9246705b605fa3130cc8b823cb826de30d3a1b11190ac0595503aa0a848"
+      }
+    ],
+    "scorecard_digest": "550c84f77d13195013f28e0afa8579b3f587053b8f0bcdfb0754fcc6615f38e2"
+  },
+  "scorecard_digest": "550c84f77d13195013f28e0afa8579b3f587053b8f0bcdfb0754fcc6615f38e2",
+  "absolute_capabilities": {
+    "M5.K1": {
+      "min": 1.0,
+      "mean": 1.0,
+      "max": 1.0,
+      "cells_ge_floor": 9
+    },
+    "M5.K2": {
+      "min": 1.0,
+      "mean": 1.0,
+      "max": 1.0,
+      "cells_ge_floor": 9
+    },
+    "M5.K3": {
+      "min": 1.0,
+      "mean": 1.0,
+      "max": 1.0,
+      "cells_ge_floor": 9
+    }
+  },
+  "comparison_evidence": {
+    "M5.K1": {
+      "A_minus_B": {
+        "min": 1.0,
+        "mean": 1.0,
+        "max": 1.0,
+        "cells_ge_floor": 9
+      },
+      "A_minus_C": {
+        "min": 1.0,
+        "mean": 1.0,
+        "max": 1.0,
+        "cells_ge_floor": 9
+      }
+    },
+    "M5.K2": {
+      "A_minus_B": {
+        "min": 1.0,
+        "mean": 1.0,
+        "max": 1.0,
+        "cells_ge_floor": 9
+      },
+      "A_minus_C": {
+        "min": 1.0,
+        "mean": 1.0,
+        "max": 1.0,
+        "cells_ge_floor": 9
+      }
+    },
+    "M5.K3": {
+      "A_minus_B": {
+        "min": 1.0,
+        "mean": 1.0,
+        "max": 1.0,
+        "cells_ge_floor": 9
+      },
+      "A_minus_C": {
+        "min": 1.0,
+        "mean": 1.0,
+        "max": 1.0,
+        "cells_ge_floor": 9
+      },
+      "probe_admission_cells_1p0": "9/9",
+      "lineage_admission_cells_1p0": "9/9",
+      "feedback_reward_variance": {
+        "min": 0.03381306630873718,
+        "mean": 0.03384450778395524,
+        "max": 0.03390739073439137
+      }
+    }
+  },
+  "evidence_gates": {
+    "k1_evidence_closed": true,
+    "k2_evidence_closed": true,
+    "k3_evidence_closed": true,
+    "k_axis_evidence_closed": true,
+    "parent_retention_missing": true,
+    "standalone_shadow": true
+  },
+  "promotion_gates": {
+    "k1_formal_robust": true,
+    "k2_formal_robust": true,
+    "k3_formal_robust": true,
+    "scorecard_content_addressed": true,
+    "parent_retention_baseline_present": false,
+    "default_runtime_owner_attached": false,
+    "same_parent_continual_s_g_k_evidence": false,
+    "resource_rollback_old_capability_gate": false
+  },
+  "verdict": {
+    "k_evidence_closed": true,
+    "promotion_gate": false,
+    "can_promote": false,
+    "reason": "K1/K2/K3 close the standalone composition and outcome-dependency evidence line, but all three lack same-parent retention and default-runtime ownership."
+  },
+  "next_boundary": "pre-register a same-parent A8/R6 promotion course with resource, rollback, and old-capability retention gates; keep K1/K2/K3 shadow owners detached.",
+  "generated_at_epoch": 1788956934,
+  "elapsed_seconds": 0.038418599986471236
+}
