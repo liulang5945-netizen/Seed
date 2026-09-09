@@ -546,3 +546,10 @@ candidate-matched delta 均为 1.0，matched/candidate 参数与 inference trace
 fixed-large K-task-equivalent control 通过。**当前唯一下一步**：只执行 revised runner
 的 model23/course1；不运行 aggregate、不改变阈值、不接入 default runtime/provider/
 MCP/client/CUDA。
+
+model23/course1 已由 revised runner 追加并通过，独立 ledger 累计 5/9；该格仍为
+frozen=0、matched=0、candidate=1、lesion=0，两个 capability delta 均为 1.0，
+matched/candidate 参数与 inference trace 相同，wall=1.1905×、peak=1.0040×，
+fixed-large K-task-equivalent control 通过。**当前唯一下一步**：只执行 revised runner
+的 model23/course2；不运行 aggregate、不改变阈值、不接入 default runtime/provider/
+MCP/client/CUDA。
