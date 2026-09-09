@@ -23,9 +23,11 @@
 
 交付：评分实现、失败回归测试和计划状态已提交。旧报告尚未生成新版本解释报告；它们仍只能作历史证据，不能作学习 formal 证据。A 完成，进入 B；不单开新外围路线。
 
-### B. 真实固定容量连续学习 pilot（A 后，尚未开始）
+### B. 真实固定容量连续学习 pilot（当前阶段）
 
-**当前唯一下一步：先执行 B2 checkpoint 保存恢复预检。** 这是训练前硬门槛；预检不通过就修复保存链，不运行训练。
+**B2 已完成：训练前 checkpoint 保存恢复预检通过。** `reports/taiji_m4v2_checkpoint_preflight_20260910.json` 使用 CPU 上的 model 17 parent 做了一个仅用于预检的小步 developmental update；它验证了 fast/slow、replay、owner lineage、内部 RNG、课程游标、无 optimizer 的局部更新状态、原子保存、fresh restore、断点续训一致性和 parent rollback。`can_start_training_pilot=true`，但 `research_course_executed=false`、`can_promote=false`。系统 TEMP/ACL 暴露的两个入口问题已修复，临时 checkpoint 已清理。
+
+**当前唯一下一步：执行 B3 一个模型 seed、一个课程的真实固定容量连续学习诊断 pilot。** 只使用已通过的保存合同；先完成 pilot 再决定正式三 seed，不直接启动 C。
 
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 
