@@ -557,3 +557,9 @@ rollback、side-effect contract 全部通过，execution order Gate 没有跳过
 model23/course1 已通过并追加，累计五个 cell row 为 `executed_passed`；candidate/
 fixed-large/lesion 因果与五臂 resource/rollback/side-effect contract 均未出现漂移。
 下一步只执行 model23/course2，完成第二个 model slice 后再进入 model31，不计算 aggregate。
+
+## 33. Model23 three-course slice closure（2026-09-09）
+
+model23/course2 已通过，model23 三个 course row 完成，累计 6/9 row 为
+`executed_passed`；当前进入 model31/course0，仍不开放 aggregate、default runtime 或
+promotion。
