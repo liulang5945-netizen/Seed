@@ -302,3 +302,7 @@ S1 grounded internalization canary 已通过：native consolidation 对未见 gr
 coverage/junit 门禁已闭合：同一仓库可写 fixture 下 `1070 passed, 6 skipped, 1 warning`，`coverage.xml` 成功生成，总覆盖率 `57.73%`，超过 pyproject 的 `21.8% fail_under`，退出码为 `0`。warning 仍为 FastAPI/Starlette 与 httpx 的既有兼容提示，不是本轮代码失败。
 
 **当前唯一下一步**：对提交后的工作树执行最终静态 CI 门禁（版本一致性、主 Ruff、B/SIM、core mypy、变更脚本编译和 diff 检查）；Black 全量若再次受本机 Windows worker/ACL 阻塞，只记录为环境限制，不伪报通过，也不借机修改无关代码。
+
+提交后静态门禁复核结果：版本一致性、主 Ruff、B/SIM、core mypy（`0 errors / 95 files`）、`seed/judge.py` 编译和 `git diff --check` 均通过；Ruff 扫描历史不可读目录时只产生环境 warning。Black 全量明确失败于扫描历史 `.m0-checkpoint-a4x_ye4_` 目录的 `WinError 5`，定向 Black 又出现无输出 worker 阻塞并已终止；因此 Black 在本机记为“环境受阻、未验证”，不是代码通过或代码失败。
+
+**当前唯一下一步**：执行 CI 独立的前端 job（npm 依赖、ESLint、native boundary、API contract、Vitest、build 和 dist 存在性），继续只修真实失败；模型、R4 shadow/默认 parent 与 CUDA 不动。
