@@ -1,10 +1,12 @@
 # Seed / Taiji 计划与架构入口
 
-> 最新修订：2026-09-09。当前唯一执行计划是 [Seed / Taiji 唯一执行计划](active/roadmap/03_CURRENT_EXECUTION.md)。所有归档中的“下一步”均失效。
+> 最新修订：2026-09-10。当前唯一执行计划是 [Seed / Taiji 唯一执行计划](active/roadmap/03_CURRENT_EXECUTION.md) 顶部的「2026-09-10 修订执行序列」。旧正文及归档中的“下一步”均失效。
 
 M4.R0～R12 已完成并归档，但 2026-09-09 的代码/报告复审发现：该系列主要测量 F1 byte-prediction 的固定容量 continuation，R2 的固定等权读出槽、R7/R10 不一致的 owner 图、未进入普通主路径的 adaptive network，以及 exact-zero Gate 都不足以代表 CR-4/A8 的继承式结构成长。历史报告保留，过度外推已撤销。
 
-M4.V2.R0 已完成：连续成长量尺合同已版本化、内容寻址，R7/R10/R12 已生成只读语义审计；M4.V2.R1 已在真实 v10 joint-training checkpoint 上完成零变化迁移 smoke；R2 已完成 fast/slow 局部状态、真实 wake replay、三臂对照和 3 个 course seed/order 的 S/G formal Gate；R3 已把一个 zero-gated adaptive residual bridge 接入真实 observation→prediction/credit 主路径，gate=0、local credit、lesion、fresh restore 和 rollback smoke 全通过；R4 已完成 pressure/decision 主路径接线、zero-impact candidate artifact、独立 shadow materialization、candidate-only causal training smoke 及首个短 S/G 五臂对照。报告 `reports/taiji_m4v2_r4_shadow_canary_20260909.json` 的技术 Gate 全通过，但 pressure-driven growth 本轮没有稳定优于 R3 fixed-capacity，candidate lesion 在 S/G 方向不一致，因此没有晋级、没有解冻 R5。整体仍保持 `can_promote=false`。当前唯一下一步是 **M4.V2.R4：针对短 canary 暴露的候选活性/因果贡献不足，做一次可测量的 candidate credit/activation 修订，再在同一五臂 Gate 上复测**。Skill/MCP、客户端热插拔、provider、视觉和 CUDA 均保留在统一计划的解冻顺序中。
+最新实际状态：v2 R2 的 fast/slow 与真实 replay 有小规模 S/G 证据；R4 formal 在 S/G 上优于小容量对照，但未稳定超过 fixed-large；R5 条件路由候选被否决。R6 九 cell 接线运行通过，但全部无训练，且“不接纳反馈”被计为任务成功率 0，不能当作学习提升。整体保持 `can_promote=false`，暂停直接沿旧 admission 启动学习 formal。完整依据见 [M4 v1/v2 实际结果复审](reference/M4_V1_V2_RESULT_REVIEW_2026_09_10.md)。
+
+**当前唯一下一步：修正 R6 学习对照的评分语义与最小失败测试。** 随后依次进行保存恢复预检、真实固定容量连续学习 pilot、独立 holdout 正式比较及 v1 兼容对照，再按证据恢复结构成长。Skill/MCP、Workbench、插件、provider、CUDA 和视觉均已排入计划，不再并行抢占模型学习主线。
 
 ## 权威文档
 
@@ -18,6 +20,7 @@ M4.V2.R0 已完成：连续成长量尺合同已版本化、内容寻址，R7/R1
 | [03_CURRENT_EXECUTION.md](active/roadmap/03_CURRENT_EXECUTION.md) | **唯一执行顺序、详细任务、验收、日程和下一步** |
 | [TAIJI_RESEARCH_REVIEW_2026_09_06.md](reference/TAIJI_RESEARCH_REVIEW_2026_09_06.md) | 本次审视、最小复现、证据失效范围与技术参考，不另设执行路线 |
 | [M4_FIXED_CAPACITY_EVIDENCE_REVIEW_2026_09_09.md](reference/M4_FIXED_CAPACITY_EVIDENCE_REVIEW_2026_09_09.md) | R0～R12 原始数值、有效技术资产与复审后的解释边界 |
+| [M4_V1_V2_RESULT_REVIEW_2026_09_10.md](reference/M4_V1_V2_RESULT_REVIEW_2026_09_10.md) | v1/v2 实际对比、R6 评分混淆与本次修订依据，不另设执行路线 |
 | [IMPLEMENTATION_STATUS_2026_08.md](reference/IMPLEMENTATION_STATUS_2026_08.md) | 当前实现事实与能力声明边界 |
 
 ## 目录与维护
