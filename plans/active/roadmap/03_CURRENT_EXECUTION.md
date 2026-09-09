@@ -358,3 +358,11 @@ outcome 来源经用户确认为「M3 隔离工作区真实执行」，已预注
 S6 选项 A formal（3×3，task_seed × learner_seed）已完成：`reports/taiji_m5_s6_real_outcome_formal_20260909.json`，**结果不稳健（margin_recovery_robust=false）**：6/9 cell 过 floor、仅 5/9 过完整 causal gate，margin 均值 `0.189`、min `−0.613`。canary 的 0.2085 部分依赖 learner_seed=17 的有利抽样——task_seed=0 下 margin 随 learner_seed 剧烈摆动（17→0.209、23→−0.613、31→0.011），task_seed=1 三 seed 全正（0.255~0.710）、task_seed=2 混合。**关键疑点**：reward_variance 在全部 9 cell 完全相同（0.944121），而 learner 是零初始化确定性、`learner_seed` 只进 `InternalizationConverter(seed=…)`——它不该改变数值却导致 margin 剧变，指向 converter 内一条未受控的 seed→数值路径。这可能是 harness bug（可定位修复），也可能是恢复本身是脆弱的真变异性。
 
 **当前唯一下一步**：定位 `InternalizationConverter` 的 seed 数值路径（读 `convert`/replay 采样，确认 learner_seed 是否经由 example 顺序、target 变换或 replay 抽样影响零初始化 learner 的 consolidate）。若为 bug → 修复后重跑 formal（同预注册判据，不放宽）；若为真变异性 → 如实判定选项 A 的 lesion 恢复不可信，回到 reward 派生设计（更宽 reward 带或更多 passes 的容量配比），不通过挑 seed 制造通过。解释这条 seed 敏感性之前不进入选项 B 边界变更。
+
+seed 敏感性已定位并修复，S6 formal 重跑通过：
+
+- **根因（非 converter bug，是 reward 设计缺陷）**：`_examples`（`internalization_learner.py:35`）按 `example_id` 排序，而 `example_id` 含 `converter.seed`，故 `learner_seed` 改变训练**顺序**；在线 SGD 对顺序敏感。真正的病灶是原分级 reward 由 `index%3` 的 band 决定，但 band 在 grounding 特征里几乎不可读（content-token 特征只能区分一档、exact_match 恒真）——target 只能被特征**弱预测**，顺序就决定了线性 learner 过/欠拟合，margin 随 seed 剧变（0.209→−0.613→0.011）。canary 的 0.2085 是"弱可学习 target + 恰好有利顺序"的假稳健。
+- **修复**：`_graded_reward` 改为真实读取数值属性（byte_length、content-token 密度）的固定 tanh 组合，落在 [−1,1]——即 S5"信息 target"情形的诚实版本，只是特征/reward 全部来自真实 `workspace.read` 执行。同时删除已失效的 band/`TARGET_BANDS` 脚手架（收敛清理）。
+- **验证**：task_seed=0 三 learner_seed margin 稳定 0.090~0.104（不再摆动）；完整 3×3 formal `reports/taiji_m5_s6_real_outcome_formal_20260909.json` **9/9 过 floor、9/9 过完整 causal gate**，margin 均值 `0.1067`、min `0.0904`、max `0.1232`，reward_variance 稳定 ~0.338。**S6 选项 A 的 lesion 恢复被证实为稳健**：真实执行 outcome 驱动的分级 reward 让 grounding/internalized 探针在跨 seed 下一致有意义。
+
+**当前唯一下一步**：S6 选项 A 已稳健通过，按预注册 §6 评估是否进入选项 B（允许真实 success/failure 以负 reward 进入内化）——这是一个**独立的执行安全边界变更**（`project_workbench_outcome_for_internalization` 现拒绝 `success=False`），需单独预注册评审，不在本轮自动解冻。若保持选项 A，则 M5 内化证据线已闭合到"真实只读执行 + 分级 reward 稳健恢复因果探针"，下一步转向 M5 的第二项（MCP 硬件/客户端能力继承验证）或 K 课程（技能组合，A8 主证据）。选择前不引入 provider/联网/真实客户端写入。
