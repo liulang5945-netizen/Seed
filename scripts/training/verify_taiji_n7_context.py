@@ -62,7 +62,13 @@ def _evaluate(
             for region in model._state.regions:
                 region.trace.zero_()
             model._state.motor_context.zero_()
-        step = model.observe(symbol, learn=False)
+        step = model.observe(
+            symbol,
+            learn=False,
+            readout="predictive",
+            use_memory=False,
+            use_identity=False,
+        )
         if symbol != AMBIGUOUS:
             continue
         target = int(sequence[index + 1])

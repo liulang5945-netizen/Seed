@@ -219,3 +219,6 @@ R4 已完成 pressure、candidate、shadow materialization、candidate-only caus
 CI 交付层第一轮静态审计已完成：版本检查、主 Ruff、B/SIM、core mypy（`0/95`）、编译和 M3.R5 回归通过。`direct-*` 是 Git 跟踪的 Workbench 跨语言夹具，故在 Ruff/Black 中作为测试数据边界排除，而不是修改其故意错误的内容；本机 Black worker 仍有无输出/ACL 异常，未伪报通过。
 
 当前唯一出口：继续执行 workflow 的 native verify 脚本与 `tests/seed`，逐项关闭 CI 交付账本；R4 shadow/默认 parent、R5 learned router、Skill/MCP/provider、客户端与 CUDA 不变。
+CI 动态 verify 的 v7/N7 首批已闭合：两者均为旧评估器默认 action readout 与当前 F1 predictive 学习合同错位，已分别修复 active episode 续接和显式 predictive 评估。v7 全部 native/storage/checkpoint Gate 通过；N7 二阶 ambiguous accuracy `1.0`、相对两项 causal control 增益 `0.5`。没有放宽模型或阈值。
+
+当前唯一出口：继续跑 N8 delayed trace verify，保持 organ/readout owner 边界和 R4 shadow/默认 parent 不变。
