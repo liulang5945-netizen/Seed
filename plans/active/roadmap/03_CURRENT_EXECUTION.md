@@ -413,3 +413,7 @@ K3 projection contract 已实现并单测：`taiji/outcome_dependency.py` 提供
 K3 单 cell canary 已完成：`scripts/training/eval_taiji_m5_k3_outcome_dependency.py` 与 `reports/taiji_m5_k3_outcome_dependency_20260909.json`。首轮暴露并修正了三类 harness 问题：holdout 类型未进入 transition vocabulary、train/holdout 工作区内容未分离、runtime workspace root selector 未随隔离 root 切换；随后补齐跨语言训练组合并把固定 transition 训练预算从 320 提到 1280，未改变阈值或 A/B/C Gate。正式单 cell 结果为 A `1.0`（4/4）、B `0.0`、C `0.0`，A-B/A-C 均 `1.0`，训练 A `6/6`，probe admission、lineage、checkpoint、feedback fact consumption 全部通过；`can_promote=false` 仍固定，默认 runtime 未接入。
 
 **当前唯一下一步**：冻结并实现 K3 formal 预注册——先把单 cell 已验证的 workspace 分离、全语言 vocabulary、跨语言 sequence coverage、训练预算和三臂技术 Gate 写成 `3 task_seed × 3 learner_seed` 的 formal 合同；预注册完成前不跑 formal、不接默认 runtime、不引入 MCP/provider/client/CUDA。
+
+K3 formal 合同已冻结：[M5_K3_FORMAL_PREREGISTRATION_20260909.md](../../reference/M5_K3_FORMAL_PREREGISTRATION_20260909.md)。矩阵固定为 task seed `0/1/2` × learner seed `17/23/31`，逐 cell 复用 canary `run_cell`，主判据为 A holdout `≥0.75`、A-B/A-C 各 `≥0.25`，并保留 probe admission、feedback lineage、checkpoint/lesion、reward variance 和 feedback fact consumption 技术门；单 cell 失败不由 aggregate mean 抵销，`can_promote=false` 不变。
+
+**当前唯一下一步**：实现 `scripts/training/eval_taiji_m5_k3_outcome_dependency_formal.py`，只 import canary 的 `run_cell`，先做 py_compile/ruff/mypy，再串行运行 9 个 cell；formal 前不改 canary、不接默认 runtime、不引入 MCP/provider/client/CUDA。
