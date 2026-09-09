@@ -306,3 +306,9 @@ coverage/junit 门禁已闭合：同一仓库可写 fixture 下 `1070 passed, 6 
 提交后静态门禁复核结果：版本一致性、主 Ruff、B/SIM、core mypy（`0 errors / 95 files`）、`seed/judge.py` 编译和 `git diff --check` 均通过；Ruff 扫描历史不可读目录时只产生环境 warning。Black 全量明确失败于扫描历史 `.m0-checkpoint-a4x_ye4_` 目录的 `WinError 5`，定向 Black 又出现无输出 worker 阻塞并已终止；因此 Black 在本机记为“环境受阻、未验证”，不是代码通过或代码失败。
 
 **当前唯一下一步**：执行 CI 独立的前端 job（npm 依赖、ESLint、native boundary、API contract、Vitest、build 和 dist 存在性），继续只修真实失败；模型、R4 shadow/默认 parent 与 CUDA 不动。
+
+前端 job 已完成本地等价审计：native boundary PASS，API contract PASS，ESLint `0 errors / 13 warnings`，Vitest `47` 个文件、`267` 个测试通过，Vite production build 通过且 `dist/index.html` 存在。精确 `npm ci` 两次均被本机 Windows cache/子进程 `EPERM` 阻塞；改用仓库可写 npm cache 并加 `--ignore-scripts` 后成功安装 `548` 个包，lockfile 与源码无改动。该安装 workaround 只用于本机验证，不能改写 CI 的 `npm ci` 语义；npm audit 的 `11 vulnerabilities` 是安装报告，CI 当前没有把它作为独立 blocking gate。
+
+CI 交付层当前事实：后端完整测试/coverage、前端边界/测试/build、版本/Ruff/B-SIM/core mypy/编译/diff 均通过；本机仍无法验证 Black 全量（历史目录 ACL/worker），精确 npm ci 仍无法验证（Windows spawn/cache ACL）。这些是环境差异，不是模型或前端源码失败。
+
+**当前唯一下一步**：进入 M4.V2.R4 收束决策审计，把 fixed-large 对照下结构增长未晋级的反证、可保留的 causal contribution、默认 parent 保护和下一版容量假设写成一份版本化架构决策；在该决策前不运行 R5 learned router、不继续调 Gate 输入、不引入 Skill/MCP/provider/client/CUDA 新变量。
