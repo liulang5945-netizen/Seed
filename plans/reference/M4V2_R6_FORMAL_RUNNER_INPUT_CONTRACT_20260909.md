@@ -531,3 +531,16 @@ formal runner 已新增受控 `--execute-cell` 入口：它先重新通过 input
 `can_promote=false`。下一步只开放下一个已预注册 row `model17/course1`，继续用同一
 executor 和同一 failure/resource contract；若该 cell 任何一臂失败，保留 row/报告并按
 优先级归因，不用其他 cell 抵销。
+
+## 18. Monotonic execution ledger and course1 closure（2026-09-09）
+
+formal execution report 现在在执行前读取上一份同 manifest digest 的 ledger；只有目标
+row 仍为 `not_started` 才允许写入，已执行 row 不可覆盖。`model17/course1` 已用同一
+executor 完成并追加到 execution report：course0 与 course1 均为 `executed_passed`，
+course1 五臂 resource Gate 全部通过，execution contract digest 为
+`59a02e15451660abaf8ee62f8e7300ec3e011ac5b0c74d47e6bfa2bcb21c9dc7`，其余 7 个 row
+仍为 `not_started`。
+
+当前仍不是完整 3×3 formal：`course_executed=false`、`can_start_r6_formal=false`、
+`can_promote=false`。下一步只执行 `model17/course2`，验证第三个 course seed 后再决定
+是否开放 model23/31；任何失败都按 row 停止线处理。

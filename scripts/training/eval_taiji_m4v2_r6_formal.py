@@ -58,6 +58,7 @@ DEFAULT_CELL_REPORT = (
 )
 EXECUTION_MODEL_SEED = 17
 EXECUTION_COURSE_SEED = 0
+EXECUTION_ALLOWED_CELLS = ((17, 0), (17, 1))
 
 
 def _failure_record(
@@ -371,6 +372,7 @@ def run_execution(
     course_seed: int = EXECUTION_COURSE_SEED,
     manifest_path: Path = DEFAULT_MANIFEST,
     report_path: Path = DEFAULT_EXECUTION_REPORT,
+    prior_execution_report: Path | None = None,
     input_report_path: Path = DEFAULT_INPUT_REPORT,
     cell_report_path: Path = DEFAULT_CELL_REPORT,
     parent_dir: Path = DEFAULT_PARENT_DIR,
@@ -382,6 +384,9 @@ def run_execution(
     started = time.perf_counter()
     manifest_path = manifest_path.resolve()
     report_path = report_path.resolve()
+    prior_execution_report = (
+        report_path if prior_execution_report is None else prior_execution_report.resolve()
+    )
     input_report_path = input_report_path.resolve()
     cell_report_path = cell_report_path.resolve()
     parent_dir = parent_dir.resolve()
@@ -405,6 +410,7 @@ def run_execution(
         "parent_dir": _relative_path(parent_dir),
         "worker_dir": _relative_path(worker_dir),
         "fixed_large_dir": _relative_path(fixed_large_dir),
+        "prior_execution_report": _relative_path(prior_execution_report),
         "target_cell": {"model_seed": model_seed, "course_seed": course_seed},
         "formal_input_ready": False,
         "cell_ledger": [],
@@ -431,11 +437,14 @@ def run_execution(
             encoding="utf-8",
         )
         return report
-    if (model_seed, course_seed) != (EXECUTION_MODEL_SEED, EXECUTION_COURSE_SEED):
+    if (model_seed, course_seed) not in EXECUTION_ALLOWED_CELLS:
         report["failures"] = [
             _failure_record(
                 failure_class="input_contract",
-                message="first execution slice is restricted to the preregistered model17/course0 cell",
+                message=(
+                    "execution frontier is restricted to the preregistered cells "
+                    "model17/course0 and model17/course1"
+                ),
                 cell={"model_seed": model_seed, "course_seed": course_seed},
                 recoverability="single_cell_execution_order",
             )
@@ -449,6 +458,35 @@ def run_execution(
         return report
     manifest = _load_manifest(manifest_path)
     ledger = _cell_ledger(manifest)
+    if prior_execution_report.is_file():
+        try:
+            prior_raw = json.loads(prior_execution_report.read_text(encoding="utf-8"))
+            if not isinstance(prior_raw, Mapping):
+                raise ValueError("prior execution report must be an object")
+            if str(prior_raw.get("manifest_digest", "")) != str(
+                manifest.get("manifest_digest", "")
+            ):
+                raise ValueError("prior execution report manifest digest does not match")
+            prior_ledger = prior_raw.get("cell_ledger")
+            if not isinstance(prior_ledger, list) or len(prior_ledger) != len(ledger):
+                raise ValueError("prior execution report has an incomplete cell ledger")
+            ledger = copy.deepcopy(prior_ledger)
+            report["prior_execution_report_digest"] = content_digest(prior_raw)
+        except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
+            report["failures"] = [
+                _failure_record(
+                    failure_class="input_contract",
+                    message=f"cannot load prior execution ledger: {exc}",
+                    recoverability="prior_execution_ledger_required",
+                )
+            ]
+            report["elapsed_seconds"] = time.perf_counter() - started
+            report_path.parent.mkdir(parents=True, exist_ok=True)
+            report_path.write_text(
+                json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+            return report
     target_rows = [
         row
         for row in ledger
@@ -532,6 +570,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--course-seed", type=int, default=EXECUTION_COURSE_SEED)
     parser.add_argument("--execution-report", type=Path, default=DEFAULT_EXECUTION_REPORT)
     parser.add_argument("--cell-report", type=Path, default=DEFAULT_CELL_REPORT)
+    parser.add_argument("--prior-execution-report", type=Path)
     args = parser.parse_args(argv)
     manifest_path = args.manifest if args.manifest.is_absolute() else PROJECT_ROOT / args.manifest
     report_path = args.report if args.report.is_absolute() else PROJECT_ROOT / args.report
@@ -556,11 +595,21 @@ def main(argv: list[str] | None = None) -> int:
             if args.cell_report.is_absolute()
             else PROJECT_ROOT / args.cell_report
         )
+        prior_execution_report_path = (
+            None
+            if args.prior_execution_report is None
+            else (
+                args.prior_execution_report
+                if args.prior_execution_report.is_absolute()
+                else PROJECT_ROOT / args.prior_execution_report
+            )
+        )
         report = run_execution(
             model_seed=args.model_seed,
             course_seed=args.course_seed,
             manifest_path=manifest_path,
             report_path=execution_report_path,
+            prior_execution_report=prior_execution_report_path,
             input_report_path=input_report_path,
             cell_report_path=cell_report_path,
             parent_dir=parent_dir,
