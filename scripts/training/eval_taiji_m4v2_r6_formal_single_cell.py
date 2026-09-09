@@ -2,10 +2,9 @@
 
 The slice is intentionally limited to model seed 17 / course seed 0.  It runs
 the real K candidate and the same-path K3 feedback lesion, replays the frozen
-parent/matched-capacity controls, and records the existing fixed-large shadow
-preflight.  The fixed-large structural shadow is not silently treated as a
-K-task-equivalent control; its absence keeps this report blocked from formal
-promotion.
+parent/matched-capacity controls, and runs the native fixed-large K control.
+The control is comparable at the single-cell level, but this runner still does
+not authorize the 9-cell formal or promotion.
 """
 
 from __future__ import annotations
@@ -35,13 +34,18 @@ from scripts.training.eval_taiji_m4v2_r6_formal_input_manifest_preflight import 
 from scripts.training.eval_taiji_m4v2_r6_formal_input_manifest_preflight import (  # noqa: E402
     run_preflight as run_input_preflight,
 )
+from scripts.training.eval_taiji_m4v2_r6_k_fixed_large_canary import (  # noqa: E402
+    DEFAULT_ARTIFACT as DEFAULT_FIXED_LARGE_ARTIFACT,
+)
+from scripts.training.eval_taiji_m4v2_r6_k_fixed_large_canary import (  # noqa: E402
+    run_canary as run_fixed_large_canary,
+)
 from scripts.training.eval_taiji_m4v2_r6_k_worker_controlled_canary import (  # noqa: E402
     run_canary,
 )
 from scripts.training.eval_taiji_m4v2_r6_parent_baseline_preflight import (  # noqa: E402
     _r6_course,
     _score,
-    _shadow_preflight,
 )
 from taiji import Taiji, content_digest  # noqa: E402
 
@@ -168,53 +172,85 @@ def _control_arm(
     }
 
 
-def _shadow_control_arm(
+def _fixed_large_control_arm(
     *,
+    artifact_path: Path,
     parent: Mapping[str, Any],
     parent_digest: str,
 ) -> dict[str, Any]:
-    shadow = _shadow_preflight(parent, label="fixed-large")
+    del parent
+    canary = run_fixed_large_canary(
+        artifact_path=artifact_path,
+        model_seed=MODEL_SEED,
+        course_seed=COURSE_SEED,
+    )
+    passed = canary.get("status") == "passed"
+    outcome_success = bool(canary.get("outcome_success", False))
+    projection_accepted = bool(canary.get("projection_accepted", False))
+    old_before = canary.get("old_capability_before", {})
+    old_after = canary.get("old_capability_after", {})
+    resource = canary.get("resource", {})
     return {
         "arm": "fixed-large",
-        "status": "shadow_preflight_only",
+        "status": "passed" if passed else "failed",
         "parent_checkpoint_digest": parent_digest,
         "phase_rows": [
-            {"phase": "S", "status": "not_measured_by_shadow_preflight"},
-            {"phase": "G", "status": "not_measured_by_shadow_preflight"},
-            {"phase": "K", "status": "not_implemented"},
+            {"phase": "S", "status": "observed", "before": old_before.get("S"), "after": old_after.get("S")},
+            {"phase": "G", "status": "observed", "before": old_before.get("G"), "after": old_after.get("G")},
+            {
+                "phase": "K",
+                "status": "executed" if passed else "failed",
+                "observation_path": canary.get("observation_path"),
+                "real_success": outcome_success,
+                "projection_accepted": projection_accepted,
+                "projection_reason": canary.get("projection_reason"),
+                "reward": canary.get("outcome_reward"),
+            },
         ],
-        "new_capability": None,
-        "old_capability_retention": None,
-        "causal": {"status": "not_comparable", "k_task_equivalent": False},
+        "new_capability": {
+            "status": "observed" if passed else "failed",
+            "task_success_rate": 1.0 if passed and outcome_success and projection_accepted else 0.0,
+            "sample_count": 1,
+        },
+        "old_capability_retention": canary.get("old_capability_retention"),
+        "causal": {
+            "status": "fixed_large_control_verified" if passed else "fixed_large_control_failed",
+            "k_task_equivalent": True,
+            "real_workbench_success": outcome_success,
+            "k3_projection_accepted": projection_accepted,
+            "branch_lesion_observable": bool(
+                canary.get("checks", {}).get("fixed_large_branch_lesion_observable", False)
+            ),
+        },
         "resource": {
-            "wall_clock_seconds": None,
-            "peak_working_set_bytes": None,
-            "training_update_steps": 0,
-            "candidate_parameter_bytes": None,
-            "checkpoint_write_bytes": 0,
-            "inference_trace_count": 0,
-            "measurement_complete": False,
+            **resource,
+            "peak_working_set_bytes": resource.get("peak_working_set_bytes"),
+            "measurement_complete": passed,
         },
         "side_effects": {
-            "parent_namespace_unchanged": True,
-            "candidate_namespace_written": False,
+            "parent_namespace_unchanged": bool(
+                canary.get("checks", {}).get("rollback_parent_namespace_restored", False)
+            ),
+            "candidate_namespace_written": bool(
+                canary.get("checks", {}).get("candidate_stage_roundtrip", False)
+            ),
             "default_runtime_attached": False,
             "external_integrations_attached": False,
         },
         "checkpoint_ledger": {
-            "shadow_preflight_status": shadow["status"],
-            "parent_checkpoint_digest": shadow["parent_checkpoint_digest"],
-            "shadow_checkpoint_digest": shadow.get("shadow_checkpoint_digest"),
-            "rollback_digest": shadow.get("rollback_digest"),
-        },
-        "failure": _failure(
-            failure_class="input_contract",
-            message=(
-                "fixed-large has only the legacy structural shadow preflight; "
-                "no K-task-equivalent fixed-large control is registered"
+            "adapter_checkpoint": canary.get("adapter_checkpoint"),
+            "exchange_digest": canary.get("exchange_digest"),
+            "rollback_record_explicit": bool(
+                canary.get("checks", {}).get("rollback_record_explicit", False)
             ),
+        },
+        "failure": None
+        if passed
+        else _failure(
+            failure_class="causal" if canary.get("projection_accepted") else "input_contract",
+            message=str(canary.get("blocking_reason") or "fixed-large controlled canary failed"),
             arm="fixed-large",
-            recoverability="fixed_large_k_control_required",
+            recoverability="fixed_large_control_diagnosis_required",
         ),
     }
 
@@ -398,7 +434,11 @@ def run_single_cell(
             lesion_k3=False,
             arm="candidate-continuation",
         ),
-        "fixed-large": _shadow_control_arm(parent=parent, parent_digest=parent_digest),
+        "fixed-large": _fixed_large_control_arm(
+            artifact_path=DEFAULT_FIXED_LARGE_ARTIFACT,
+            parent=parent,
+            parent_digest=parent_digest,
+        ),
         "lesion": _candidate_arm(
             artifact_dir=artifact_dir,
             candidate_namespace=candidate_namespace,
@@ -431,8 +471,8 @@ def run_single_cell(
         "can_promote": False,
         "elapsed_seconds": time.perf_counter() - started,
         "decision": (
-            "blocked until a K-task-equivalent fixed-large control is registered; "
-            "the current structural shadow is not a causal K comparator"
+            "single-cell K-task-equivalent fixed-large control passed; "
+            "R6 formal and promotion remain closed until the full causal/resource/retention aggregate"
         ),
     }
     report_path.parent.mkdir(parents=True, exist_ok=True)
