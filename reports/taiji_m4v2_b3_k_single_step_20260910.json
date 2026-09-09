@@ -1,0 +1,151 @@
+{
+  "adapter_before_digest": "32d6936c9a7783727674e05c281ad0d905a8a2dc8cfec1d5fbb01deaf2523f87",
+  "adapter_rollback_digest": "45f467beddb061a294f9f6d42c32bef5feae047abad60b7d760152b497a07daa",
+  "blocking_reason": null,
+  "can_promote": false,
+  "can_start_r6_formal": false,
+  "candidate_checkpoint_digests": {
+    "k1.semantic": "6cd9515330033fce16aeadf24c3604b6f3213f62f9bd451d05e77d36ef466994",
+    "k2.transition": "8c8e4b4f82168e5b0f3f6575f93fe8a7ea21308ca772325767e2ac665c7ae8f0",
+    "k3.outcome_projection": "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
+  },
+  "candidate_checkpoint_paths": {
+    "k1.semantic": "E:\\Seed\\output\\taiji_m4v2_b3_k_single_step_20260910\\model_17\\taiji_b3_k1_semantic_step1.pt",
+    "k2.transition": "E:\\Seed\\output\\taiji_m4v2_b3_k_single_step_20260910\\model_17\\taiji_b3_k2_transition_step1.pt"
+  },
+  "candidate_namespace": "taiji:k:candidate:model-17",
+  "candidate_promoted": false,
+  "candidate_worker_bundle_digest": "e8ab364794158dd1698a27c0181f840ecf9a2f549d083006dae1967f6a20a631",
+  "checks": {
+    "adapter_candidate_stage_roundtrip": true,
+    "adapter_rollback_restored": true,
+    "candidate_bundle_changed": true,
+    "candidate_checkpoint_fresh_restore": true,
+    "course_roundtrip": true,
+    "k1_owner_changed": true,
+    "k2_owner_changed": true,
+    "k3_owner_unchanged": true,
+    "no_default_runtime": true,
+    "no_external_integrations": true,
+    "no_optimizer_state": true,
+    "parent_checkpoint_unchanged": true,
+    "train_holdout_disjoint": true,
+    "worker_attachment_preflight_passed": true
+  },
+  "course_digest": "91d289b8a32799920a3f59f20fcacef0545e3ebb9b05f7c70f8f7f2a82abac33",
+  "default_runtime_attached": false,
+  "elapsed_seconds": 4.055121500045061,
+  "frozen_workers": [
+    "k3.outcome_projection"
+  ],
+  "holdout_after": {
+    "combined_accuracy": 1.0,
+    "semantic_content_accuracy": 1.0,
+    "semantic_goal_accuracy": 1.0,
+    "transition_content_accuracy": 1.0,
+    "transition_goal_accuracy": 1.0
+  },
+  "holdout_before": {
+    "combined_accuracy": 1.0,
+    "semantic_content_accuracy": 1.0,
+    "semantic_goal_accuracy": 1.0,
+    "transition_content_accuracy": 1.0,
+    "transition_goal_accuracy": 1.0
+  },
+  "holdout_delta": {
+    "combined_accuracy": 0.0,
+    "semantic_content_accuracy": 0.0,
+    "semantic_goal_accuracy": 0.0,
+    "transition_content_accuracy": 0.0,
+    "transition_goal_accuracy": 0.0
+  },
+  "holdout_experience_digests": [
+    "a3ae922fb5898e50e65ef7a3c50767f3c6feeecb5b1cada0d3d84b11c8332264"
+  ],
+  "holdout_improved": false,
+  "optimizer_state_present": false,
+  "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+  "receipt": {
+    "candidate_namespace": "taiji:k:candidate:model-17",
+    "candidate_worker_bundle_digest": "e8ab364794158dd1698a27c0181f840ecf9a2f549d083006dae1967f6a20a631",
+    "candidate_worker_checkpoint_digests": [
+      [
+        "k1.semantic",
+        "6cd9515330033fce16aeadf24c3604b6f3213f62f9bd451d05e77d36ef466994"
+      ],
+      [
+        "k2.transition",
+        "8c8e4b4f82168e5b0f3f6575f93fe8a7ea21308ca772325767e2ac665c7ae8f0"
+      ],
+      [
+        "k3.outcome_projection",
+        "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
+      ]
+    ],
+    "course_digest": "91d289b8a32799920a3f59f20fcacef0545e3ebb9b05f7c70f8f7f2a82abac33",
+    "format": "taiji-k-continuation-learning-v1",
+    "fresh_restore_verified": true,
+    "frozen_workers": [
+      "k3.outcome_projection"
+    ],
+    "holdout_experience_digests": [
+      "a3ae922fb5898e50e65ef7a3c50767f3c6feeecb5b1cada0d3d84b11c8332264"
+    ],
+    "holdout_untrained": true,
+    "kind": "update_receipt",
+    "optimizer_state_present": false,
+    "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+    "parent_unchanged": true,
+    "parent_worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83",
+    "parent_worker_checkpoint_digests": [
+      [
+        "k1.semantic",
+        "4b5ed527a3a105614cea73c6cc45a2d0577c9ec06eb6e974b245c679b93e5e5d"
+      ],
+      [
+        "k2.transition",
+        "67c96c5c8517ca58bacb45b8de756e7ffd24ee108276160c731da364714e2bda"
+      ],
+      [
+        "k3.outcome_projection",
+        "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
+      ]
+    ],
+    "receipt_digest": "07b5df3caeeccde9c5f0042673978a8b1e7964ae34e433823adf452aacddfde4",
+    "rollback_restored": true,
+    "train_experience_digests": [
+      "1953d40c893a663ce947d1f00f6c7f007d33cb0ffd4a3fff06f0ff1ba346945a"
+    ],
+    "training_steps": 2,
+    "updated_workers": [
+      "k1.semantic",
+      "k2.transition"
+    ],
+    "version": 1
+  },
+  "report_format": "taiji-m4v2-b3-k-single-step-pilot-v1",
+  "research_course_executed": true,
+  "run_kind": "learning-pilot",
+  "semantic_losses": {
+    "content_loss": 3.114657602054649e-06,
+    "fact_loss": 0.019014867022633553,
+    "goal_loss": 1.7072770788217895e-05
+  },
+  "status": "passed",
+  "train_experience_digests": [
+    "1953d40c893a663ce947d1f00f6c7f007d33cb0ffd4a3fff06f0ff1ba346945a"
+  ],
+  "training_performed": true,
+  "training_update_steps": 2,
+  "transition_losses": {
+    "content_loss": 6.90083033987321e-05,
+    "goal_loss": 0.00017293714336119592,
+    "transition_loss": 0.002877397695556283
+  },
+  "updated_workers": [
+    "k1.semantic",
+    "k2.transition"
+  ],
+  "version": 1,
+  "worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83"
+}
