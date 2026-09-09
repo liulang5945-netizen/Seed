@@ -551,3 +551,9 @@ model23/31 row 仍未启动。formal runner 同时冻结了 9-cell 的前序执�
 model23/course0 已成功追加，candidate/fixed-large/lesion 的 K 因果边界和五臂资源、
 rollback、side-effect contract 全部通过，execution order Gate 没有跳过 model17 slice。
 当前只推进 model23/course1；完整矩阵和 promotion 仍关闭。
+
+## 32. Model23/course1 execution（2026-09-09）
+
+model23/course1 已通过并追加，累计五个 cell row 为 `executed_passed`；candidate/
+fixed-large/lesion 因果与五臂 resource/rollback/side-effect contract 均未出现漂移。
+下一步只执行 model23/course2，完成第二个 model slice 后再进入 model31，不计算 aggregate。

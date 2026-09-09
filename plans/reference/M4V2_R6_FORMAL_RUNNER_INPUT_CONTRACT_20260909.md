@@ -567,3 +567,14 @@ digest 为 `d9b35e04f4b1136e944a3fb3088412564bda2a384ef9145bacda2ebd6115e103`。
 
 下一步只执行 `model23/course1`；继续要求 prior manifest digest、前序 row、fixed-large
 registry 和五臂 resource/side-effect/checkpoint contract 全部通过。
+
+## 21. Model23/course1 execution（2026-09-09）
+
+`model23/course1` 已按固定 predecessor order 成功追加：candidate/fixed-large K
+success 均为 `1/1`，lesion 为 `0`，五臂 `resource_gate` 全部为 true，execution contract
+digest 为 `e0e03bb18b94a53bcf4cf9c91436819a21347b476df17adb771dcaf8b1c127c3`。累计 ledger
+有 5 个 `executed_passed` row，model23/course2 与 model31 三个 course 仍为
+`not_started`，不提前计算 aggregate。
+
+下一步只执行 `model23/course2`，继续沿用 prior ledger、固定 parent/fixed-large 和五臂
+resource/side-effect/checkpoint contract。
