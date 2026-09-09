@@ -1,0 +1,770 @@
+{
+  "artifact_digest": "ba992f50dcd1c1b557074cb82ffe890040aa002619ca1eb4406fee520d77ebb4",
+  "episode_count": 3,
+  "episodes": [
+    {
+      "episode_id": "sealed-0",
+      "file_digests": [
+        "75a58f733bb65a12eb89fba7d8bcfef5605e996635047b41faac531cfba4fcc2",
+        "047bb6da4b62cb089956022137b01d98c2bcfc8c762fab435e30e4f0527dbfd5",
+        "6fb7dd0cc8e289c436df5057b822b0e8a7f4b82ba8aa5bdef2716f07780de1bd"
+      ],
+      "observation_digests": [
+        "65ab769e74de8df7a59c148ba28043a6eb78096927d762f21e6a467cea8a42d7",
+        "ccddd468398bb3b09984efdd93c615eb26b95f28ee7d1a91875e36fe51767e84",
+        "140b37eccdda08f171f434ce16ec655cb8fced7da9d39c6c8e410b38e7bcc03e"
+      ],
+      "paths": [
+        "sealed_typescript_00.ts",
+        "sealed_python_00.py",
+        "sealed_rust_00.rs"
+      ],
+      "semantic_input_digests": [
+        "639e110ab37b15afe77151203ba40b4b2daf79ccf857cf2ced3938e765e84d1f",
+        "46caeadb92cab154d42fe07ba94122c7afc782adf98ac0a032fc47d2b6f949a9",
+        "b54cd221609a5ced5fa70210fa5124ae55977a031d472e28732dfea553562b8b"
+      ],
+      "transition_input_digests": [
+        "a2ffda095064d75012933816152699e026050446cb201ebdd3d916acda2b85e4",
+        "6e2cd769c672d732a4dd479e887c3d0d0a2c99051b2d5251f24a606fddb323a0",
+        "fbd1c785d07755cf61abefe0676acd5c98840ec7d67e8eff17921abc82ae1126"
+      ]
+    },
+    {
+      "episode_id": "sealed-1",
+      "file_digests": [
+        "11bfbe9c259e9be45ec9e94d99b9dc122b9ee3b3ee6a1ad5f0852285e5c0fece",
+        "9bae4532eda2836c739df82468ee9e65baa7480bda5bc43a7ebe5e146175aa78",
+        "739bb3226b4f1fa781e3c69c20d8348a8b6c9c24bf2b53bb3b548b5123caf7ce"
+      ],
+      "observation_digests": [
+        "94ffe494e0b686b9835888f5bc68c6787c2c5054ed50b1008f0cd765b36f5f8c",
+        "0cc537d3f6c90837d338dc8b2ffc1bf9ef970efe79ee8b918acf02adaa8dae51",
+        "166563ec1339c427d6a6751b69660c577de44913500e855623b37950d4114c2e"
+      ],
+      "paths": [
+        "sealed_rust_01.rs",
+        "sealed_typescript_01.ts",
+        "sealed_python_01.py"
+      ],
+      "semantic_input_digests": [
+        "1727d7f6fdf008cf2e093f29e89e6258bc4bf29a1c8f7bb9a5883c7ac56ace45",
+        "e76070e7a2c6f71da0ad955a0c707164278630c50d58c19b889bc1139a95c8c9",
+        "5a674e85c1308bac69cf5df34dbd3387ab1dd00a91a373a7ad38507d2bbbd4d7"
+      ],
+      "transition_input_digests": [
+        "d1337539065179bfa7ce7470990243caaa4f69e5b64872684935973563cb177e",
+        "54b199e4b78d11e0c50bce3d49130c19b4ecc3b15073d426742cebff531ecdb9",
+        "3f9999cec9fd74773d22d31b7788f128eff5b08cb225fa037c7ee59b52a953a1"
+      ]
+    },
+    {
+      "episode_id": "sealed-2",
+      "file_digests": [
+        "a6cd13c472b57125e21ad22477d3a65b599ad0f52bb30035ecb32d005088abbc",
+        "dc5b964427e190bef36a136626a882f219a14fdce14e7dada2ca4d585fc7285c",
+        "5964f855a613431836ae7b6ef861fda1abfa0332e3f2e75b98f840b794711e9e"
+      ],
+      "observation_digests": [
+        "7078f8d96181e0a27762facf3d3302a89a1cf15865848297446e12629e13695c",
+        "b4f32c82c8f10c7499a6903e169d716bf5104859da63e5953fb8010e9d5ed147",
+        "389e8f58b7fa488a7f85c341324bff64c4f1374ac2a5cb4c2ac126cd29986da3"
+      ],
+      "paths": [
+        "sealed_python_02.py",
+        "sealed_rust_02.rs",
+        "sealed_typescript_02.ts"
+      ],
+      "semantic_input_digests": [
+        "1612f32286cd4b815536b548a2706288b6d0fca7dc82195c7bdb6276206e31c9",
+        "cd257671b77b3cc6be3ae86030c66cccfea7cacd713dcf4156534a86c41c5e53",
+        "ff6dafaa3c9e7acc00025e133c941a57d462c8e9c0b75eeba7766a4b0fc6becc"
+      ],
+      "transition_input_digests": [
+        "1d9892c65ab5242387a2620d9aaa11363445d17edcfce263bd6dad6079224353",
+        "29a4149876c0dae41ef3f15234d0edb3bc86c8e7ff2581928f19454c6b06425c",
+        "507f3ed0a57fe5c1269371360f4260d7b481a1e4213df43440e6b64e6261d878"
+      ]
+    }
+  ],
+  "format": "taiji-m4v2-b3-k-c-sealed-test-v1",
+  "materializer_sha256": "bd3c96f89f101c03284ae82d1493a3ffcd706b5fd9ae58f8804fff3280d27ff9",
+  "observation_payloads": [
+    {
+      "byte_length": 172,
+      "capability_revision": 6,
+      "capability_snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+      "diagnostics_connected": false,
+      "file_digest": "75a58f733bb65a12eb89fba7d8bcfef5605e996635047b41faac531cfba4fcc2",
+      "file_is_file": true,
+      "format": "taiji-workbench-observation-v1",
+      "language_confidence": 0.99,
+      "language_id": "typescript",
+      "observation_digest": "65ab769e74de8df7a59c148ba28043a6eb78096927d762f21e6a467cea8a42d7",
+      "observation_id": "m5k1:c-entry-sealed:sealed_typescript_00.ts",
+      "path": "sealed_typescript_00.ts",
+      "project_id": "m5k1-project",
+      "read_success": true,
+      "schema": {
+        "extensions": [
+          ".h",
+          ".py",
+          ".rs",
+          ".ts",
+          "<none>"
+        ],
+        "feature_dim": 19,
+        "feature_names": [
+          "language:python",
+          "language:rust",
+          "language:typescript",
+          "language:unknown",
+          "selection:ambiguous",
+          "selection:resolved",
+          "selection:unknown",
+          "task:inspect-language",
+          "extension:.h",
+          "extension:.py",
+          "extension:.rs",
+          "extension:.ts",
+          "extension:<none>",
+          "read_success",
+          "file_is_file",
+          "byte_length_fraction",
+          "language_confidence",
+          "toolchain_available",
+          "diagnostics_connected"
+        ],
+        "format": "taiji-workbench-observation-v1",
+        "language_ids": [
+          "python",
+          "rust",
+          "typescript",
+          "unknown"
+        ],
+        "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3",
+        "selection_states": [
+          "ambiguous",
+          "resolved",
+          "unknown"
+        ],
+        "task_kinds": [
+          "inspect-language"
+        ],
+        "version": 1
+      },
+      "selection_state": "resolved",
+      "task_id": "m5k1:read-language:sealed_typescript_00.ts",
+      "task_kind": "inspect-language",
+      "toolchain_available": true,
+      "version": 1
+    },
+    {
+      "byte_length": 105,
+      "capability_revision": 6,
+      "capability_snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+      "diagnostics_connected": false,
+      "file_digest": "047bb6da4b62cb089956022137b01d98c2bcfc8c762fab435e30e4f0527dbfd5",
+      "file_is_file": true,
+      "format": "taiji-workbench-observation-v1",
+      "language_confidence": 0.99,
+      "language_id": "python",
+      "observation_digest": "ccddd468398bb3b09984efdd93c615eb26b95f28ee7d1a91875e36fe51767e84",
+      "observation_id": "m5k1:c-entry-sealed:sealed_python_00.py",
+      "path": "sealed_python_00.py",
+      "project_id": "m5k1-project",
+      "read_success": true,
+      "schema": {
+        "extensions": [
+          ".h",
+          ".py",
+          ".rs",
+          ".ts",
+          "<none>"
+        ],
+        "feature_dim": 19,
+        "feature_names": [
+          "language:python",
+          "language:rust",
+          "language:typescript",
+          "language:unknown",
+          "selection:ambiguous",
+          "selection:resolved",
+          "selection:unknown",
+          "task:inspect-language",
+          "extension:.h",
+          "extension:.py",
+          "extension:.rs",
+          "extension:.ts",
+          "extension:<none>",
+          "read_success",
+          "file_is_file",
+          "byte_length_fraction",
+          "language_confidence",
+          "toolchain_available",
+          "diagnostics_connected"
+        ],
+        "format": "taiji-workbench-observation-v1",
+        "language_ids": [
+          "python",
+          "rust",
+          "typescript",
+          "unknown"
+        ],
+        "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3",
+        "selection_states": [
+          "ambiguous",
+          "resolved",
+          "unknown"
+        ],
+        "task_kinds": [
+          "inspect-language"
+        ],
+        "version": 1
+      },
+      "selection_state": "resolved",
+      "task_id": "m5k1:read-language:sealed_python_00.py",
+      "task_kind": "inspect-language",
+      "toolchain_available": true,
+      "version": 1
+    },
+    {
+      "byte_length": 100,
+      "capability_revision": 6,
+      "capability_snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+      "diagnostics_connected": false,
+      "file_digest": "6fb7dd0cc8e289c436df5057b822b0e8a7f4b82ba8aa5bdef2716f07780de1bd",
+      "file_is_file": true,
+      "format": "taiji-workbench-observation-v1",
+      "language_confidence": 0.99,
+      "language_id": "rust",
+      "observation_digest": "140b37eccdda08f171f434ce16ec655cb8fced7da9d39c6c8e410b38e7bcc03e",
+      "observation_id": "m5k1:c-entry-sealed:sealed_rust_00.rs",
+      "path": "sealed_rust_00.rs",
+      "project_id": "m5k1-project",
+      "read_success": true,
+      "schema": {
+        "extensions": [
+          ".h",
+          ".py",
+          ".rs",
+          ".ts",
+          "<none>"
+        ],
+        "feature_dim": 19,
+        "feature_names": [
+          "language:python",
+          "language:rust",
+          "language:typescript",
+          "language:unknown",
+          "selection:ambiguous",
+          "selection:resolved",
+          "selection:unknown",
+          "task:inspect-language",
+          "extension:.h",
+          "extension:.py",
+          "extension:.rs",
+          "extension:.ts",
+          "extension:<none>",
+          "read_success",
+          "file_is_file",
+          "byte_length_fraction",
+          "language_confidence",
+          "toolchain_available",
+          "diagnostics_connected"
+        ],
+        "format": "taiji-workbench-observation-v1",
+        "language_ids": [
+          "python",
+          "rust",
+          "typescript",
+          "unknown"
+        ],
+        "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3",
+        "selection_states": [
+          "ambiguous",
+          "resolved",
+          "unknown"
+        ],
+        "task_kinds": [
+          "inspect-language"
+        ],
+        "version": 1
+      },
+      "selection_state": "resolved",
+      "task_id": "m5k1:read-language:sealed_rust_00.rs",
+      "task_kind": "inspect-language",
+      "toolchain_available": false,
+      "version": 1
+    },
+    {
+      "byte_length": 102,
+      "capability_revision": 6,
+      "capability_snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+      "diagnostics_connected": false,
+      "file_digest": "11bfbe9c259e9be45ec9e94d99b9dc122b9ee3b3ee6a1ad5f0852285e5c0fece",
+      "file_is_file": true,
+      "format": "taiji-workbench-observation-v1",
+      "language_confidence": 0.99,
+      "language_id": "rust",
+      "observation_digest": "94ffe494e0b686b9835888f5bc68c6787c2c5054ed50b1008f0cd765b36f5f8c",
+      "observation_id": "m5k1:c-entry-sealed:sealed_rust_01.rs",
+      "path": "sealed_rust_01.rs",
+      "project_id": "m5k1-project",
+      "read_success": true,
+      "schema": {
+        "extensions": [
+          ".h",
+          ".py",
+          ".rs",
+          ".ts",
+          "<none>"
+        ],
+        "feature_dim": 19,
+        "feature_names": [
+          "language:python",
+          "language:rust",
+          "language:typescript",
+          "language:unknown",
+          "selection:ambiguous",
+          "selection:resolved",
+          "selection:unknown",
+          "task:inspect-language",
+          "extension:.h",
+          "extension:.py",
+          "extension:.rs",
+          "extension:.ts",
+          "extension:<none>",
+          "read_success",
+          "file_is_file",
+          "byte_length_fraction",
+          "language_confidence",
+          "toolchain_available",
+          "diagnostics_connected"
+        ],
+        "format": "taiji-workbench-observation-v1",
+        "language_ids": [
+          "python",
+          "rust",
+          "typescript",
+          "unknown"
+        ],
+        "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3",
+        "selection_states": [
+          "ambiguous",
+          "resolved",
+          "unknown"
+        ],
+        "task_kinds": [
+          "inspect-language"
+        ],
+        "version": 1
+      },
+      "selection_state": "resolved",
+      "task_id": "m5k1:read-language:sealed_rust_01.rs",
+      "task_kind": "inspect-language",
+      "toolchain_available": false,
+      "version": 1
+    },
+    {
+      "byte_length": 174,
+      "capability_revision": 6,
+      "capability_snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+      "diagnostics_connected": false,
+      "file_digest": "9bae4532eda2836c739df82468ee9e65baa7480bda5bc43a7ebe5e146175aa78",
+      "file_is_file": true,
+      "format": "taiji-workbench-observation-v1",
+      "language_confidence": 0.99,
+      "language_id": "typescript",
+      "observation_digest": "0cc537d3f6c90837d338dc8b2ffc1bf9ef970efe79ee8b918acf02adaa8dae51",
+      "observation_id": "m5k1:c-entry-sealed:sealed_typescript_01.ts",
+      "path": "sealed_typescript_01.ts",
+      "project_id": "m5k1-project",
+      "read_success": true,
+      "schema": {
+        "extensions": [
+          ".h",
+          ".py",
+          ".rs",
+          ".ts",
+          "<none>"
+        ],
+        "feature_dim": 19,
+        "feature_names": [
+          "language:python",
+          "language:rust",
+          "language:typescript",
+          "language:unknown",
+          "selection:ambiguous",
+          "selection:resolved",
+          "selection:unknown",
+          "task:inspect-language",
+          "extension:.h",
+          "extension:.py",
+          "extension:.rs",
+          "extension:.ts",
+          "extension:<none>",
+          "read_success",
+          "file_is_file",
+          "byte_length_fraction",
+          "language_confidence",
+          "toolchain_available",
+          "diagnostics_connected"
+        ],
+        "format": "taiji-workbench-observation-v1",
+        "language_ids": [
+          "python",
+          "rust",
+          "typescript",
+          "unknown"
+        ],
+        "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3",
+        "selection_states": [
+          "ambiguous",
+          "resolved",
+          "unknown"
+        ],
+        "task_kinds": [
+          "inspect-language"
+        ],
+        "version": 1
+      },
+      "selection_state": "resolved",
+      "task_id": "m5k1:read-language:sealed_typescript_01.ts",
+      "task_kind": "inspect-language",
+      "toolchain_available": true,
+      "version": 1
+    },
+    {
+      "byte_length": 107,
+      "capability_revision": 6,
+      "capability_snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+      "diagnostics_connected": false,
+      "file_digest": "739bb3226b4f1fa781e3c69c20d8348a8b6c9c24bf2b53bb3b548b5123caf7ce",
+      "file_is_file": true,
+      "format": "taiji-workbench-observation-v1",
+      "language_confidence": 0.99,
+      "language_id": "python",
+      "observation_digest": "166563ec1339c427d6a6751b69660c577de44913500e855623b37950d4114c2e",
+      "observation_id": "m5k1:c-entry-sealed:sealed_python_01.py",
+      "path": "sealed_python_01.py",
+      "project_id": "m5k1-project",
+      "read_success": true,
+      "schema": {
+        "extensions": [
+          ".h",
+          ".py",
+          ".rs",
+          ".ts",
+          "<none>"
+        ],
+        "feature_dim": 19,
+        "feature_names": [
+          "language:python",
+          "language:rust",
+          "language:typescript",
+          "language:unknown",
+          "selection:ambiguous",
+          "selection:resolved",
+          "selection:unknown",
+          "task:inspect-language",
+          "extension:.h",
+          "extension:.py",
+          "extension:.rs",
+          "extension:.ts",
+          "extension:<none>",
+          "read_success",
+          "file_is_file",
+          "byte_length_fraction",
+          "language_confidence",
+          "toolchain_available",
+          "diagnostics_connected"
+        ],
+        "format": "taiji-workbench-observation-v1",
+        "language_ids": [
+          "python",
+          "rust",
+          "typescript",
+          "unknown"
+        ],
+        "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3",
+        "selection_states": [
+          "ambiguous",
+          "resolved",
+          "unknown"
+        ],
+        "task_kinds": [
+          "inspect-language"
+        ],
+        "version": 1
+      },
+      "selection_state": "resolved",
+      "task_id": "m5k1:read-language:sealed_python_01.py",
+      "task_kind": "inspect-language",
+      "toolchain_available": true,
+      "version": 1
+    },
+    {
+      "byte_length": 109,
+      "capability_revision": 6,
+      "capability_snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+      "diagnostics_connected": false,
+      "file_digest": "a6cd13c472b57125e21ad22477d3a65b599ad0f52bb30035ecb32d005088abbc",
+      "file_is_file": true,
+      "format": "taiji-workbench-observation-v1",
+      "language_confidence": 0.99,
+      "language_id": "python",
+      "observation_digest": "7078f8d96181e0a27762facf3d3302a89a1cf15865848297446e12629e13695c",
+      "observation_id": "m5k1:c-entry-sealed:sealed_python_02.py",
+      "path": "sealed_python_02.py",
+      "project_id": "m5k1-project",
+      "read_success": true,
+      "schema": {
+        "extensions": [
+          ".h",
+          ".py",
+          ".rs",
+          ".ts",
+          "<none>"
+        ],
+        "feature_dim": 19,
+        "feature_names": [
+          "language:python",
+          "language:rust",
+          "language:typescript",
+          "language:unknown",
+          "selection:ambiguous",
+          "selection:resolved",
+          "selection:unknown",
+          "task:inspect-language",
+          "extension:.h",
+          "extension:.py",
+          "extension:.rs",
+          "extension:.ts",
+          "extension:<none>",
+          "read_success",
+          "file_is_file",
+          "byte_length_fraction",
+          "language_confidence",
+          "toolchain_available",
+          "diagnostics_connected"
+        ],
+        "format": "taiji-workbench-observation-v1",
+        "language_ids": [
+          "python",
+          "rust",
+          "typescript",
+          "unknown"
+        ],
+        "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3",
+        "selection_states": [
+          "ambiguous",
+          "resolved",
+          "unknown"
+        ],
+        "task_kinds": [
+          "inspect-language"
+        ],
+        "version": 1
+      },
+      "selection_state": "resolved",
+      "task_id": "m5k1:read-language:sealed_python_02.py",
+      "task_kind": "inspect-language",
+      "toolchain_available": true,
+      "version": 1
+    },
+    {
+      "byte_length": 104,
+      "capability_revision": 6,
+      "capability_snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+      "diagnostics_connected": false,
+      "file_digest": "dc5b964427e190bef36a136626a882f219a14fdce14e7dada2ca4d585fc7285c",
+      "file_is_file": true,
+      "format": "taiji-workbench-observation-v1",
+      "language_confidence": 0.99,
+      "language_id": "rust",
+      "observation_digest": "b4f32c82c8f10c7499a6903e169d716bf5104859da63e5953fb8010e9d5ed147",
+      "observation_id": "m5k1:c-entry-sealed:sealed_rust_02.rs",
+      "path": "sealed_rust_02.rs",
+      "project_id": "m5k1-project",
+      "read_success": true,
+      "schema": {
+        "extensions": [
+          ".h",
+          ".py",
+          ".rs",
+          ".ts",
+          "<none>"
+        ],
+        "feature_dim": 19,
+        "feature_names": [
+          "language:python",
+          "language:rust",
+          "language:typescript",
+          "language:unknown",
+          "selection:ambiguous",
+          "selection:resolved",
+          "selection:unknown",
+          "task:inspect-language",
+          "extension:.h",
+          "extension:.py",
+          "extension:.rs",
+          "extension:.ts",
+          "extension:<none>",
+          "read_success",
+          "file_is_file",
+          "byte_length_fraction",
+          "language_confidence",
+          "toolchain_available",
+          "diagnostics_connected"
+        ],
+        "format": "taiji-workbench-observation-v1",
+        "language_ids": [
+          "python",
+          "rust",
+          "typescript",
+          "unknown"
+        ],
+        "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3",
+        "selection_states": [
+          "ambiguous",
+          "resolved",
+          "unknown"
+        ],
+        "task_kinds": [
+          "inspect-language"
+        ],
+        "version": 1
+      },
+      "selection_state": "resolved",
+      "task_id": "m5k1:read-language:sealed_rust_02.rs",
+      "task_kind": "inspect-language",
+      "toolchain_available": false,
+      "version": 1
+    },
+    {
+      "byte_length": 176,
+      "capability_revision": 6,
+      "capability_snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+      "diagnostics_connected": false,
+      "file_digest": "5964f855a613431836ae7b6ef861fda1abfa0332e3f2e75b98f840b794711e9e",
+      "file_is_file": true,
+      "format": "taiji-workbench-observation-v1",
+      "language_confidence": 0.99,
+      "language_id": "typescript",
+      "observation_digest": "389e8f58b7fa488a7f85c341324bff64c4f1374ac2a5cb4c2ac126cd29986da3",
+      "observation_id": "m5k1:c-entry-sealed:sealed_typescript_02.ts",
+      "path": "sealed_typescript_02.ts",
+      "project_id": "m5k1-project",
+      "read_success": true,
+      "schema": {
+        "extensions": [
+          ".h",
+          ".py",
+          ".rs",
+          ".ts",
+          "<none>"
+        ],
+        "feature_dim": 19,
+        "feature_names": [
+          "language:python",
+          "language:rust",
+          "language:typescript",
+          "language:unknown",
+          "selection:ambiguous",
+          "selection:resolved",
+          "selection:unknown",
+          "task:inspect-language",
+          "extension:.h",
+          "extension:.py",
+          "extension:.rs",
+          "extension:.ts",
+          "extension:<none>",
+          "read_success",
+          "file_is_file",
+          "byte_length_fraction",
+          "language_confidence",
+          "toolchain_available",
+          "diagnostics_connected"
+        ],
+        "format": "taiji-workbench-observation-v1",
+        "language_ids": [
+          "python",
+          "rust",
+          "typescript",
+          "unknown"
+        ],
+        "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3",
+        "selection_states": [
+          "ambiguous",
+          "resolved",
+          "unknown"
+        ],
+        "task_kinds": [
+          "inspect-language"
+        ],
+        "version": 1
+      },
+      "selection_state": "resolved",
+      "task_id": "m5k1:read-language:sealed_typescript_02.ts",
+      "task_kind": "inspect-language",
+      "toolchain_available": true,
+      "version": 1
+    }
+  ],
+  "raw_source_content_embedded": false,
+  "record_disjoint_from_existing_fixture": true,
+  "schema": {
+    "extensions": [
+      ".h",
+      ".py",
+      ".rs",
+      ".ts",
+      "<none>"
+    ],
+    "feature_dim": 19,
+    "feature_names": [
+      "language:python",
+      "language:rust",
+      "language:typescript",
+      "language:unknown",
+      "selection:ambiguous",
+      "selection:resolved",
+      "selection:unknown",
+      "task:inspect-language",
+      "extension:.h",
+      "extension:.py",
+      "extension:.rs",
+      "extension:.ts",
+      "extension:<none>",
+      "read_success",
+      "file_is_file",
+      "byte_length_fraction",
+      "language_confidence",
+      "toolchain_available",
+      "diagnostics_connected"
+    ],
+    "format": "taiji-workbench-observation-v1",
+    "language_ids": [
+      "python",
+      "rust",
+      "typescript",
+      "unknown"
+    ],
+    "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3",
+    "selection_states": [
+      "ambiguous",
+      "resolved",
+      "unknown"
+    ],
+    "task_kinds": [
+      "inspect-language"
+    ],
+    "version": 1
+  },
+  "scores_or_targets_embedded": false,
+  "status": "materialized-unread",
+  "step_count": 9,
+  "task_seed": 19,
+  "version": 1
+}

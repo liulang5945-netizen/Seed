@@ -31,10 +31,13 @@ def test_b3_k_c_entry_manifest_blocks_formal_until_sealed_and_control_ready() ->
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
 
     sealed = manifest["sealed_test_split"]
-    assert sealed["status"] == "must_materialize-before-formal"
-    assert sealed["artifact_path"] is None
-    assert sealed["artifact_digest"] is None
-    assert sealed["formal_start_blocked_until_materialized"] is True
+    assert sealed["status"] == "materialized-unread"
+    assert sealed["artifact_path"] == (
+        "plans/manifests/taiji_m4v2_b3_k_c_sealed_test_v1.json"
+    )
+    assert len(sealed["artifact_digest"]) == 64
+    assert len(sealed["artifact_sha256"]) == 64
+    assert sealed["formal_start_blocked_until_materialized"] is False
 
     promotion = manifest["promotion"]
     assert promotion["can_start_formal"] is False

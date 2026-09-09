@@ -57,7 +57,9 @@
 
 **B3-K target-aware model-seed v2 稳定性复验已完成。** 真实 model seed `17/23/31` 的 parent digest 分别为 `3e1b39…6675`、`8b46f3…822e4`、`c3e21d…7732`，三者独立；每个 seed 的 target-aware 三组 target-tensor composition、candidate namespace 与 worker attachment 正确，9 个 cell 的 technical/performance/stability Gate 全通过。所有 combined-MSE delta 均为负，整体均值 `−0.00044314`、最坏 `−0.00025813`；三个 seed 仍呈同构数值轨迹，因此还必须通过冻结后的 sealed-test 与 fixed-large 强对照，不能直接 promotion。报告为 [B3-K target-aware model seeds v2](../../../reports/taiji_m4v2_b3_k_target_aware_model_seeds_v2_20260910.json)，继续 `can_promote=false`、`can_start_r6_formal=false`。
 
-**C 入口 evaluation manifest 已冻结；当前唯一下一步：材料化 sealed-test 并完成 fixed-large 输入预检。** 合同已写入 [C-entry evaluation manifest v1](../../manifests/taiji_m4v2_b3_k_c_entry_evaluation_v1.json)：target-tensor train composition、validation/sealed-test 分离、三臂定义、评分器、`−0.0001` 平均最小收益、逐 cell 非退化、三模型 seed、checkpoint/资源边界均已锁定。sealed-test 仍未读取/材料化，fixed-large 也未完成本合同下的输入预检；在两项完成前不启动 formal、不 promotion、不扩结构。
+**C 入口 manifest 与 sealed-test 已冻结/材料化；旧 fixed-large 输入预检被正确阻断。** 合同已写入 [C-entry evaluation manifest v1](../../manifests/taiji_m4v2_b3_k_c_entry_evaluation_v1.json)，sealed artifact 为 3 个独立 episode、9 个 observation，报告为 [C-entry input preflight](../../../reports/taiji_m4v2_b3_k_c_entry_input_preflight_20260910.json)。预检确认旧 R6 fixed-large 的 parent、checkpoint、validation 路径和 restore 都可读，但 source manifest 仍是旧 `taiji-k-fixed-large-source-manifest-v1`，没有 C-entry target-aware course contract digest；仅靠路径集合不能证明同一训练经历，因此 `fixed_large_ready=false`、`formal_input_ready=false`。不修改旧 artifact，不把它冒充 C 对照。
+
+**当前唯一下一步：按 C-entry course contract 重建 fixed-large 控制。** 新控制必须逐 model seed × course seed 绑定相同 parent、相同 `A+B+C / A+A+B / A+B+B` target-tensor multiset、相同 validation/sealed scorer 和 CPU/checkpoint 预算，写入 `taiji-k-fixed-large-c-entry-source-v1` 与 manifest digest；完成 prefit save/fresh-restore 后才允许训练。重建前不启动 formal、不 promotion、不扩结构。
 
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 

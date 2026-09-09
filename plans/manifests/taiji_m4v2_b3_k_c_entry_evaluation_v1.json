@@ -73,6 +73,7 @@
       }
     ]
   },
+  "course_contract_digest": "01e6f2f45e375f66c558b3ca2a7592fd7201e079bde9f40262028e334b955c84",
   "validation_split": {
     "status": "materialized-and-used",
     "record_count": 3,
@@ -86,7 +87,7 @@
     "use_for_sealed_threshold_selection": false
   },
   "sealed_test_split": {
-    "status": "must_materialize-before-formal",
+    "status": "materialized-unread",
     "record_count": 3,
     "read_policy": "Do not read or score this split while changing the thresholds or arm definitions in this manifest.",
     "required_properties": [
@@ -96,10 +97,11 @@
       "at least two target classes and three independent records",
       "content-addressed artifact with source and schema digest"
     ],
-    "artifact_path": null,
-    "artifact_digest": null,
+    "artifact_path": "plans/manifests/taiji_m4v2_b3_k_c_sealed_test_v1.json",
+    "artifact_digest": "ba992f50dcd1c1b557074cb82ffe890040aa002619ca1eb4406fee520d77ebb4",
+    "artifact_sha256": "B5FAD06AAF81884706CE05E676A66524EE6E95FD9540340D9FB4D926D79B6AF3",
     "materialization_owner": "C-entry preflight",
-    "formal_start_blocked_until_materialized": true
+    "formal_start_blocked_until_materialized": false
   },
   "arms": [
     {
