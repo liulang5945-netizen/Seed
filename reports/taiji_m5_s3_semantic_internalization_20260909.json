@@ -1,0 +1,89 @@
+{
+  "format": "taiji-m5-s3-semantic-internalization-v1",
+  "version": 1,
+  "generated_at_epoch": 1788934356,
+  "status": "passed",
+  "can_promote": false,
+  "corpus": "E:/Seed/data/ultradata/derived/ultradata_sft_nothink_simplezh.jsonl",
+  "embedder": {
+    "format": "taiji-document-embedder-v1",
+    "version": 1,
+    "model_id": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "revision": "e8f8c211226b894fcb81acc59f3b34ba3efd5f42",
+    "config_digest": "584d721354a4443103960a80b1a3a61226765bc470bd4077d96e37beb85b433f",
+    "dimension": 384,
+    "max_length": 256,
+    "batch_size": 32,
+    "pooling": "mean",
+    "normalized": true
+  },
+  "data": {
+    "train_domains": [
+      "Knowledge",
+      "IF"
+    ],
+    "train_records": 6000,
+    "holdout_domain": "Chinese-general",
+    "holdout_records": 2000,
+    "retention_records": 2000,
+    "domain_disjoint": true,
+    "rejected": 0
+  },
+  "metrics": {
+    "format": "taiji-internalization-learner-v1",
+    "parent_checkpoint_digest": "bc83eaae574fd31af155283e47adcde64ec58878848a1d50d808b95c8b87985b",
+    "child_checkpoint_digest": "3a3ef36fb80b1cdf16c32096c87a5b391c3a45b1d5bc6bcc76960263fed4714e",
+    "replay_digest": "0b662554279563481b97ce5a023815e82227c3fb899a6382a65e4b48d24b5650",
+    "train_examples": 6000,
+    "holdout_examples": 2000,
+    "train_loss_before": 1.0,
+    "train_loss_after": 9.107568639817506e-08,
+    "holdout_loss_before": 1.0,
+    "holdout_loss_after": 1.3044766130398956e-07,
+    "holdout_internalized_lesion_loss": 1.0,
+    "holdout_grounding_lesion_loss": 4.35058224468321e-06,
+    "retention_loss_before": 1.0,
+    "retention_loss_after": 7.950932550215839e-08,
+    "holdout_gain": 0.9999998695523387,
+    "fit_updates": 48000,
+    "ranking_updates": 0,
+    "online_updates": 0,
+    "lineage_depth": 1,
+    "passed": true
+  },
+  "semantic_probe": {
+    "same_domain_mean_cosine_distance": 0.6513858606945724,
+    "cross_domain_mean_cosine_distance": 0.6778145967051387,
+    "pairs_same": 600,
+    "pairs_cross": 200
+  },
+  "lifecycle": {
+    "example_id": "39a53de51c19783d60bc8a43fdb4bb76e9f73c1c26c4df299661a07ce4d921f6",
+    "status": "internalized",
+    "events": [
+      "outcome_bound",
+      "grounding_verified",
+      "example_created",
+      "shadow_learned",
+      "holdout_checked",
+      "affordance_lesion_checked",
+      "internalization_admitted"
+    ]
+  },
+  "checks": {
+    "domain_disjoint_holdout": true,
+    "no_records_rejected": true,
+    "checkpoint_roundtrip": true,
+    "gate_passed": true,
+    "embedder_anchored": true,
+    "semantic_probe_reported": true
+  },
+  "technical_gate_all_passed": true,
+  "gate_criterion": "identical to M5.S2 (external sufficiency, internalization necessity, grounding necessity, checkpoint, retention) with 384-dim preregistered semantic embeddings; the semantic probe is report-only by preregistration",
+  "boundary": "M5.S3 document internalization canary only; no provider execution, structural growth, or AGI claim",
+  "resources": {
+    "total_elapsed_seconds": 191.1484559000237,
+    "embed_seconds": 180.369305399945,
+    "embedded_texts": 8000
+  }
+}
