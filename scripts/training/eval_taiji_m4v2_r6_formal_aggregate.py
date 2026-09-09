@@ -33,6 +33,7 @@ from scripts.training.eval_taiji_m4v2_r6_formal_input_manifest_preflight import 
     _resolve_repo_path,
 )
 from scripts.training.eval_taiji_m4v2_r6_formal_single_cell import (  # noqa: E402
+    MEASUREMENT_SEMANTICS_FORMAT,
     _resource_gate_valid,
 )
 from taiji import content_digest  # noqa: E402
@@ -113,6 +114,16 @@ def _paired_delta_floor(control_revision: Any) -> float | None:
     if not isinstance(thresholds, Mapping):
         return None
     return _finite_float(thresholds.get("paired_capability_delta_floor"))
+
+
+def _learning_formal_ready(report: Mapping[str, Any]) -> bool:
+    """Return whether a report is eligible for a learning, not wiring, gate."""
+
+    return bool(
+        report.get("run_kind") == "learning-formal"
+        and report.get("training_performed") is True
+        and report.get("candidate_training_performed") is True
+    )
 
 
 def _valid_resource(resource: Any) -> bool:
@@ -376,13 +387,16 @@ def _validate_matched_control_semantics(
 
     matched = arms["matched-fixed-capacity"]
     matched_causal = matched.get("causal")
-    if matched_causal != {
+    matched_expected = {
         "feedback_admitted": False,
         "k3_projection_accepted": True,
         "lesion_k3": False,
         "real_workbench_success": True,
         "status": "matched_capacity_no_feedback",
-    }:
+    }
+    if not isinstance(matched_causal, Mapping) or any(
+        matched_causal.get(key) != value for key, value in matched_expected.items()
+    ):
         failure("matched-fixed-capacity", "causal", "matched arm is not the no-feedback capacity control")
     matched_k = _phase_row(matched, "K")
     if not isinstance(matched_k, Mapping) or matched_k.get("status") != "executed_no_feedback":
@@ -472,6 +486,28 @@ def _validate_cell(
             cell=cell,
         )
     if matched_control_revision:
+        if cell_report.get("measurement_semantics") != MEASUREMENT_SEMANTICS_FORMAT:
+            _record_failure(
+                failures,
+                category="input_contract",
+                message=(
+                    "cell does not declare the task-success measurement semantics; "
+                    "legacy feedback-as-success reports are not admissible"
+                ),
+                cell=cell,
+                metric="measurement_semantics",
+            )
+        if not _learning_formal_ready(cell_report):
+            _record_failure(
+                failures,
+                category="learning_gate",
+                message=(
+                    "cell is a wiring canary or has no candidate parameter updates; "
+                    "it cannot satisfy a learning formal gate"
+                ),
+                cell=cell,
+                metric="training_performed",
+            )
         if cell_report.get("manifest_digest") != manifest.get("manifest_digest"):
             _record_failure(
                 failures,
@@ -610,12 +646,9 @@ def _validate_cell(
         ("lesion", lesion_rate),
     ]
     if matched_control_revision:
-        rate_pairs.extend(
-            [
-                ("frozen-parent", frozen_rate),
-                ("matched-fixed-capacity", matched_rate),
-            ]
-        )
+        # The frozen parent never attempts K.  Its missing value is coverage
+        # information, not a zero-success behavioral observation.
+        rate_pairs.append(("matched-fixed-capacity", matched_rate))
     for arm_id, rate in rate_pairs:
         if not _finite_number(rate):
             _record_failure(
@@ -626,34 +659,35 @@ def _validate_cell(
                 arm=arm_id,
                 metric="task_success_rate",
             )
-    candidate_floor_pass = _finite_number(candidate_rate) and float(candidate_rate) >= 0.75
-    if not candidate_floor_pass:
+    candidate_task_floor_pass = _finite_number(candidate_rate) and float(candidate_rate) >= 0.75
+    if not candidate_task_floor_pass:
         _record_failure(
             failures,
             category="capability_gate",
-            message="candidate K holdout success is below the preregistered 0.75 floor",
+            message="candidate K task success is below the preregistered 0.75 floor",
             cell=cell,
             arm="candidate-continuation",
             metric="task_success_rate",
         )
-    lesion_breaks_gain = (
-        _finite_number(candidate_rate)
-        and _finite_number(lesion_rate)
-        and float(candidate_rate) > float(lesion_rate)
+    candidate_causal = raw_arms["candidate-continuation"].get("causal")
+    lesion_causal = raw_arms["lesion"].get("causal")
+    feedback_path_lesion_pass = (
+        isinstance(candidate_causal, Mapping)
+        and isinstance(lesion_causal, Mapping)
+        and candidate_causal.get("feedback_admitted") is True
+        and candidate_causal.get("k3_projection_accepted") is True
+        and lesion_causal.get("feedback_admitted") is False
+        and lesion_causal.get("k3_projection_accepted") is False
     )
-    if not lesion_breaks_gain:
+    if not feedback_path_lesion_pass:
         _record_failure(
             failures,
             category="causal",
-            message="K3 lesion does not break the observed candidate gain",
+            message="K3 lesion does not isolate the feedback path",
             cell=cell,
-            metric="candidate_minus_lesion_task_success_rate",
+            metric="feedback_path_lesion_pass",
         )
-    paired_frozen_delta = (
-        None
-        if not (_finite_number(candidate_rate) and _finite_number(frozen_rate))
-        else float(candidate_rate) - float(frozen_rate)
-    )
+    paired_frozen_delta = None
     paired_matched_delta = (
         None
         if not (_finite_number(candidate_rate) and _finite_number(matched_rate))
@@ -670,10 +704,7 @@ def _validate_cell(
                 metric="paired_capability_delta_floor",
             )
         else:
-            for arm_id, delta in (
-                ("frozen-parent", paired_frozen_delta),
-                ("matched-fixed-capacity", paired_matched_delta),
-            ):
+            for arm_id, delta in (("matched-fixed-capacity", paired_matched_delta),):
                 delta_value = _finite_float(delta)
                 if delta_value is None or delta_value < delta_floor:
                     _record_failure(
@@ -796,15 +827,18 @@ def _validate_cell(
             "candidate_task_success_rate": candidate_rate,
             "fixed_large_task_success_rate": fixed_large_rate,
             "lesion_task_success_rate": lesion_rate,
-            "candidate_holdout_floor_pass": candidate_floor_pass,
+            "candidate_task_success_floor_pass": candidate_task_floor_pass,
+            "candidate_holdout_floor_pass": None,
             "candidate_minus_lesion_task_success_rate": (
                 None
                 if not (_finite_number(candidate_rate) and _finite_number(lesion_rate))
                 else float(candidate_rate) - float(lesion_rate)
             ),
-            "lesion_breaks_gain": lesion_breaks_gain,
+            "feedback_path_lesion_pass": feedback_path_lesion_pass,
+            "lesion_breaks_gain": None,
             "candidate_minus_frozen_parent_task_success_rate": paired_frozen_delta,
             "candidate_minus_matched_fixed_capacity_task_success_rate": paired_matched_delta,
+            "frozen_parent_task_not_attempted": frozen_rate is None,
         },
         "resources": resources,
     }
@@ -1023,10 +1057,7 @@ def _aggregate_reports(
     }
     if matched_control_revision:
         if aggregate_delta_floor is not None:
-            for metric in (
-                "candidate_minus_frozen_parent_task_success_rate",
-                "candidate_minus_matched_fixed_capacity_task_success_rate",
-            ):
+            for metric in ("candidate_minus_matched_fixed_capacity_task_success_rate",):
                 summary = metrics.get(metric)
                 lower_bound = (
                     summary.get("one_sided_95_student_t_lower_bound")
@@ -1069,14 +1100,16 @@ def _aggregate_reports(
         "gates": {
             "all_cells_executed_passed": len(cell_results) == len(EXPECTED_CELL_ORDER)
             and all(result["status"] == "executed_passed" for result in cell_results),
-            "candidate_holdout_floor": all(
-                result.get("capability", {}).get("candidate_holdout_floor_pass") is True
+            "candidate_task_success_floor": all(
+                result.get("capability", {}).get("candidate_task_success_floor_pass") is True
                 for result in cell_results
             ),
-            "k3_lesion_breaks_gain": all(
-                result.get("capability", {}).get("lesion_breaks_gain") is True
+            "candidate_holdout_floor": False,
+            "k3_lesion_isolates_feedback_path": all(
+                result.get("capability", {}).get("feedback_path_lesion_pass") is True
                 for result in cell_results
             ),
+            "k3_lesion_breaks_gain": False,
             "candidate_over_matched_wall_budget": all(
                 result.get("resources", {})
                 .get("candidate_over_matched", {})
@@ -1092,9 +1125,7 @@ def _aggregate_reports(
                 for result in cell_results
             ),
             "paired_frozen_parent_delta_available": (
-                matched_control_revision
-                and len(metric_values["candidate_minus_frozen_parent_task_success_rate"])
-                == len(EXPECTED_CELL_ORDER)
+                False
             ),
             "paired_matched_fixed_capacity_delta_available": (
                 matched_control_revision
@@ -1104,14 +1135,7 @@ def _aggregate_reports(
                 == len(EXPECTED_CELL_ORDER)
             ),
             "paired_frozen_parent_delta_floor": (
-                matched_control_revision
-                and aggregate_delta_floor is not None
-                and all(
-                    value >= aggregate_delta_floor
-                    for value in metric_values[
-                        "candidate_minus_frozen_parent_task_success_rate"
-                    ]
-                )
+                None
             ),
             "paired_matched_fixed_capacity_delta_floor": (
                 matched_control_revision

@@ -121,6 +121,7 @@ def _base_report(
         "checks": {},
         "training_performed": False,
         "candidate_training_performed": False,
+        "task_executed": False,
         "candidate_promoted": False,
         "default_runtime_attached": False,
         "provider_attached": False,
@@ -296,6 +297,7 @@ def run_canary(
         real_success = bool(outcome_payload.get("success"))
         if not real_success:
             raise RuntimeError("controlled canary Workbench execution failed")
+        report["task_executed"] = True
 
         event_attributes = (
             ("capability_id", str(intent.kind)),
