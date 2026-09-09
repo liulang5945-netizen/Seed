@@ -1,0 +1,81 @@
+{
+  "adapter_checkpoint": {
+    "exchange_checkpoint_digest": "463667cbf29d3f0d22799c8aa005db2a4b3a3b572e3f71b2ef80f5ef6e83f017",
+    "rollback_checkpoint_digest": "56f7b47aca187ad875c9c112ce38e2a76eb77deeb940884d37d9f3ee0cf01ccb",
+    "rollback_record_digest": "8e6b4d35646cfccca35ddf37925bd781c867c7dd8aba0d6f8e69c073585109ef"
+  },
+  "artifact_paths": {
+    "k1.semantic": "E:\\Seed\\checkpoints\\taiji_k_workers\\model_17\\taiji_r6_k1_semantic.pt",
+    "k2.transition": "E:\\Seed\\checkpoints\\taiji_k_workers\\model_17\\taiji_r6_k2_transition.pt",
+    "k3.outcome_projection": "E:\\Seed\\checkpoints\\taiji_k_workers\\model_17\\taiji_r6_k3_outcome_projection.pt"
+  },
+  "attachment_gate_passed": true,
+  "blocking_reason": null,
+  "can_promote": false,
+  "can_start_r6_formal": false,
+  "candidate_promoted": false,
+  "candidate_training_performed": false,
+  "checks": {
+    "adapter_training_steps_zero": true,
+    "attachment_preflight_passed": true,
+    "can_promote_false": true,
+    "candidate_stage_roundtrip": true,
+    "exchange_checkpoint_roundtrip": true,
+    "k1_result_typed": true,
+    "k2_result_typed": true,
+    "k3_dependency_applied": true,
+    "k3_lesion_rejected": true,
+    "k3_projection_accepted": true,
+    "no_default_runtime": true,
+    "no_external_integrations": true,
+    "old_G_retention": true,
+    "old_S_retention": true,
+    "read_only_intent_accepted": true,
+    "real_workbench_success": true,
+    "rollback_exchange_preserved": true,
+    "rollback_parent_namespace_restored": true,
+    "rollback_record_explicit": true,
+    "typed_exchange_parent_echo": true,
+    "typed_exchange_worker_lineage": true
+  },
+  "client_attached": false,
+  "created_at_unix": 1788963831.5571866,
+  "cuda_used": false,
+  "default_runtime_attached": false,
+  "elapsed_seconds": 0.867327900021337,
+  "exchange_digest": "54eacdc45a9a92f60e6dcebe82988ab299d51c487c20f7c2979359ca68d421cb",
+  "intent_kind": "workspace.read",
+  "lesion_k3": false,
+  "mcp_attached": false,
+  "observation_path": "typescript_05.ts",
+  "old_capability_after": {
+    "G": 5.959810695900639,
+    "S": 5.995296377498504
+  },
+  "old_capability_before": {
+    "G": 5.959810695900639,
+    "S": 5.995296377498504
+  },
+  "old_capability_retention": {
+    "G": true,
+    "S": true
+  },
+  "outcome_reward": 1.0,
+  "outcome_success": true,
+  "owner_graph_digest": "4f1cbc3ce105112a2320a9209f6c5bfdd7ade54436147b0e94c15764dfbf42b8",
+  "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+  "preflight_status": "passed",
+  "projection_accepted": true,
+  "projection_digest": "2a055aaa812b34fd47626bafe613f519a1a755da9fe66634cade4882aad5826e",
+  "projection_reason": "accepted",
+  "provider_attached": false,
+  "report_format": "taiji-m4v2-r6-k-worker-controlled-canary-v1",
+  "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+  "semantic_status": "resolved",
+  "source_manifest_digest": "d0946c73d9844b4b0e44f2685a87465a568ee6ba7665f23c11a7b5fe0208b362",
+  "status": "passed",
+  "training_performed": false,
+  "transition_status": "resolved",
+  "version": 1,
+  "worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83"
+}

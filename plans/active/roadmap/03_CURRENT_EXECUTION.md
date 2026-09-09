@@ -458,4 +458,6 @@ R6 formal input manifest preflight 已实现并运行：`plans/manifests/taiji_m
 
 R6 formal runner 入口层已实现并通过静态/输入 Gate：`scripts/training/eval_taiji_m4v2_r6_formal.py` 重新验证 manifest/input preflight，生成 `9 cells × 5 arms = 45` 个 `not_started` ledger row；报告 `reports/taiji_m4v2_r6_formal_preflight_20260909.json` 明确 `status=input_ready`、`formal_input_ready=true`，但 `course_executed=false`、`can_start_r6_formal=false`、`can_promote=false`。没有执行 S→G→K，没有接 default runtime/provider/MCP/client/CUDA。
 
-**当前唯一下一步**：在固定 `model_seed=17 / course_seed=0` 上实现五 arm 的 S→G→K execution/measurement layer（先不扩大矩阵），完整填充 phase、真实 outcome、causal/resource/retention/side-effect/checkpoint ledger；首个失败按合同归因并停止。
+R6 首个 single-cell execution 已运行：`reports/taiji_m4v2_r6_formal_single_cell_20260909.json` 为 `status=blocked_controls`。candidate 的真实 Workbench read→K3 accepted→dependency→rollback 与 S/G retention 通过；同路径 K3 lesion 精确拒绝 feedback，adapter 在 projection 未 accepted 时 fail-closed。frozen-parent/matched 只保留 detached K 的 S/G/checkpoint control。唯一阻断是 `fixed-large` 仍只有旧 structural shadow preflight，没有 K-task-equivalent executor；该问题归为 `input_contract / fixed_large_k_control_required`，不是模型失败。
+
+**当前唯一下一步**：设计并实现与 candidate 同输入、同任务、同资源口径的 K-task-equivalent fixed-large control，先重跑 `model_seed=17 / course_seed=0` single cell；对照可比较前不扩大到 9 cells、不运行 full formal、不接 default runtime、不引入 MCP/provider/client/CUDA。

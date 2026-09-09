@@ -138,6 +138,7 @@ def run_canary(
     model_seed: int = 17,
     course_seed: int = 0,
     candidate_namespace: str = DEFAULT_CANDIDATE_NAMESPACE,
+    lesion_k3: bool = False,
 ) -> dict[str, Any]:
     started = time.perf_counter()
     paths = _artifact_paths(artifact_dir)
@@ -194,6 +195,8 @@ def run_canary(
         projector = OutcomeDependencyProjector.from_checkpoint(
             artifacts["k3.outcome_projection"]["checkpoint"]
         )
+        if lesion_k3:
+            projector = OutcomeDependencyProjector(projector.scope_id, lesioned=True)
         source_manifest_digest = str(artifacts["k1.semantic"]["source_manifest_digest"])
         resource_manifest_digest = str(artifacts["k1.semantic"]["resource_manifest_digest"])
         bundle = KWorkerManifestBundle.create(
@@ -301,10 +304,15 @@ def run_canary(
         projection = projector.project(
             transition_result.world, outcome_event, dependency_spec
         )
-        if not projection.accepted:
+        if not projection.accepted and not lesion_k3:
             raise ValueError(f"K3 rejected real outcome: {projection.reason_code}")
-        enriched_world = projector.apply(transition_result.world, projection)
-        adapter.bind_dependency_projection(projection)
+        enriched_world = (
+            projector.apply(transition_result.world, projection)
+            if projection.accepted
+            else transition_result.world
+        )
+        if projection.accepted:
+            adapter.bind_dependency_projection(projection)
         input_item = KAdapterInput(
             episode_id=f"r6-controlled-k-{model_seed}-{course_seed}",
             parent_checkpoint_digest=parent_digest,
@@ -318,57 +326,162 @@ def run_canary(
         action_digest = content_digest(
             {"kind": str(intent.kind), "payload": intent.to_payload()}
         )
-        output_item = KAdapterOutput(
-            parent_checkpoint_digest=parent_digest,
-            input_digest=input_item.input_digest,
-            action_digest=action_digest,
-            outcome_signature=projection.outcome_signature,
-            dependency_digest=projection.dependency_digest,
-            dependency_projection_digest=projection.projection_digest,
-            success=real_success,
-            lineage=(
-                adapter.dependency_scope_id,
-                input_item.input_digest,
-                projection.projection_digest,
-                projection.dependency_digest,
-                manifests[0].manifest_digest,
-                manifests[1].manifest_digest,
-                manifests[2].manifest_digest,
-            ),
-        )
-        exchange = KAdapterExchange.create(
-            scope_id=adapter.dependency_scope_id,
-            input=input_item,
-            output=output_item,
-        )
-        adapter.record_exchange(exchange)
+        exchange: KAdapterExchange | None = None
+        if projection.accepted:
+            output_item = KAdapterOutput(
+                parent_checkpoint_digest=parent_digest,
+                input_digest=input_item.input_digest,
+                action_digest=action_digest,
+                outcome_signature=projection.outcome_signature,
+                dependency_digest=projection.dependency_digest,
+                dependency_projection_digest=projection.projection_digest,
+                success=real_success,
+                lineage=(
+                    adapter.dependency_scope_id,
+                    input_item.input_digest,
+                    projection.projection_digest,
+                    projection.dependency_digest,
+                    manifests[0].manifest_digest,
+                    manifests[1].manifest_digest,
+                    manifests[2].manifest_digest,
+                ),
+            )
+            exchange = KAdapterExchange.create(
+                scope_id=adapter.dependency_scope_id,
+                input=input_item,
+                output=output_item,
+            )
+            adapter.record_exchange(exchange)
         exchange_checkpoint = adapter.checkpoint()
         exchange_restored = KContinualAdapter.from_checkpoint(exchange_checkpoint)
+
+        if lesion_k3 and not projection.accepted:
+            before = _scores(parent, course_seed)
+            after = _scores(parent, course_seed)
+            retention = {
+                phase: abs(after[phase] - before[phase]) <= EPSILON
+                for phase in ("S", "G")
+            }
+            stage_blocked_without_projection = False
+            try:
+                adapter.stage_candidate(
+                    candidate_checkpoint_digest=content_digest(
+                        {
+                            "format": "r6-controlled-k-lesion-candidate-v1",
+                            "parent": parent_digest,
+                            "projection": projection.projection_digest,
+                        }
+                    ),
+                    candidate_owner_graph_digest=bundle.owner_graph_digest,
+                    candidate_source_manifest_digest=source_manifest_digest,
+                    candidate_parent_checkpoint_digest=parent_digest,
+                )
+            except ValueError as exc:
+                stage_blocked_without_projection = (
+                    "requires a bound dependency projection" in str(exc)
+                )
+            checks = {
+                "attachment_preflight_passed": preflight.get("status") == "passed",
+                "k1_result_typed": isinstance(semantic_result, StructuredSemanticResult),
+                "k2_result_typed": isinstance(
+                    transition_result, StructuredSemanticTransitionResult
+                ),
+                "read_only_intent_accepted": decision.accepted,
+                "real_workbench_success": real_success,
+                "k3_projection_rejected_under_lesion": not projection.accepted,
+                "k3_lesion_reason_exact": projection.reason_code == "outcome_feedback_lesioned",
+                "adapter_stage_blocked_without_projection": stage_blocked_without_projection,
+                "exchange_checkpoint_roundtrip": (
+                    exchange_restored.last_exchange is None
+                    and exchange_restored.worker_bundle == bundle
+                ),
+                "rollback_parent_namespace_restored": (
+                    exchange_restored.active_namespace == exchange_restored.parent_namespace
+                ),
+                "old_S_retention": retention["S"],
+                "old_G_retention": retention["G"],
+                "adapter_training_steps_zero": adapter.training_steps == 0,
+                "no_default_runtime": True,
+                "no_external_integrations": True,
+                "can_promote_false": True,
+            }
+            report.update(
+                {
+                    "status": "passed" if all(checks.values()) else "failed",
+                    "checks": checks,
+                    "worker_bundle_digest": bundle.bundle_digest,
+                    "owner_graph_digest": bundle.owner_graph_digest,
+                    "source_manifest_digest": source_manifest_digest,
+                    "resource_manifest_digest": resource_manifest_digest,
+                    "semantic_status": semantic_result.status,
+                    "transition_status": transition_result.status,
+                    "observation_path": observation.path,
+                    "intent_kind": str(intent.kind),
+                    "outcome_success": real_success,
+                    "outcome_reward": float(
+                        (outcome.get("taiji_outcome") or {}).get("reward", 0.0)
+                    ),
+                    "lesion_k3": True,
+                    "projection_accepted": False,
+                    "projection_reason": projection.reason_code,
+                    "projection_digest": projection.projection_digest,
+                    "exchange_digest": None,
+                    "old_capability_before": before,
+                    "old_capability_after": after,
+                    "old_capability_retention": retention,
+                    "candidate_training_performed": False,
+                    "candidate_promoted": False,
+                    "can_start_r6_formal": False,
+                    "can_promote": False,
+                    "blocking_reason": (
+                        None
+                        if all(checks.values())
+                        else "K3 lesion safety Gate failed"
+                    ),
+                }
+            )
+            report["adapter_checkpoint"] = {
+                "exchange_checkpoint_digest": content_digest(exchange_checkpoint),
+                "rollback_checkpoint_digest": content_digest(exchange_restored.checkpoint()),
+                "rollback_record_digest": None,
+            }
+            return report
 
         before = _scores(parent, course_seed)
         after = _scores(parent, course_seed)
         retention = {
             phase: abs(after[phase] - before[phase]) <= EPSILON for phase in ("S", "G")
         }
+        exchange_identity = (
+            exchange.exchange_digest
+            if exchange is not None
+            else content_digest(
+                {
+                    "format": "r6-controlled-k-lesion-no-exchange-v1",
+                    "parent": parent_digest,
+                    "projection": projection.projection_digest,
+                }
+            )
+        )
         token = adapter.stage_candidate(
             candidate_checkpoint_digest=content_digest(
                 {
                     "format": "r6-controlled-k-candidate-v1",
                     "parent": parent_digest,
-                    "exchange": exchange.exchange_digest,
+                    "exchange": exchange_identity,
                 }
             ),
             candidate_owner_graph_digest=content_digest(
                 {
                     "owner_graph": bundle.owner_graph_digest,
                     "worker_bundle": bundle.bundle_digest,
-                    "exchange": exchange.exchange_digest,
+                    "exchange": exchange_identity,
                 }
             ),
             candidate_source_manifest_digest=content_digest(
                 {
                     "source_manifest": source_manifest_digest,
-                    "exchange": exchange.exchange_digest,
+                    "exchange": exchange_identity,
                 }
             ),
             candidate_parent_checkpoint_digest=parent_digest,
@@ -384,17 +497,29 @@ def run_canary(
             ),
             "read_only_intent_accepted": decision.accepted,
             "real_workbench_success": real_success,
-            "k3_projection_accepted": projection.accepted,
+            "k3_projection_accepted": projection.accepted if not lesion_k3 else True,
+            "k3_lesion_rejected": (not projection.accepted) if lesion_k3 else True,
             "k3_dependency_applied": (
                 ("dependency", "id", dependency_spec.dependency_id)
                 in enriched_world.relations
+                if not lesion_k3
+                else ("dependency", "id", dependency_spec.dependency_id)
+                not in enriched_world.relations
             ),
             "typed_exchange_parent_echo": (
-                exchange.output.parent_checkpoint_digest == parent_digest
+                exchange is not None
+                and exchange.output.parent_checkpoint_digest == parent_digest
+                if not lesion_k3
+                else exchange is None
             ),
-            "typed_exchange_worker_lineage": all(
-                manifest.manifest_digest in exchange.output.lineage
-                for manifest in manifests
+            "typed_exchange_worker_lineage": (
+                all(
+                    exchange is not None
+                    and manifest.manifest_digest in exchange.output.lineage
+                    for manifest in manifests
+                )
+                if not lesion_k3
+                else True
             ),
             "exchange_checkpoint_roundtrip": (
                 exchange_restored.last_exchange == exchange
@@ -432,8 +557,11 @@ def run_canary(
                 "outcome_reward": float(
                     (outcome.get("taiji_outcome") or {}).get("reward", 0.0)
                 ),
+                "lesion_k3": lesion_k3,
+                "projection_accepted": projection.accepted,
+                "projection_reason": projection.reason_code,
                 "projection_digest": projection.projection_digest,
-                "exchange_digest": exchange.exchange_digest,
+                "exchange_digest": None if exchange is None else exchange.exchange_digest,
                 "old_capability_before": before,
                 "old_capability_after": after,
                 "old_capability_retention": retention,
@@ -471,6 +599,11 @@ def main() -> int:
     parser.add_argument("--model-seed", type=int, default=17)
     parser.add_argument("--course-seed", type=int, default=0)
     parser.add_argument("--candidate-namespace", default=DEFAULT_CANDIDATE_NAMESPACE)
+    parser.add_argument(
+        "--lesion-k3",
+        action="store_true",
+        help="run the same real read with K3 feedback lesioned; expected projection rejection",
+    )
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
     args = parser.parse_args()
     artifact_dir = args.artifact_dir
@@ -484,6 +617,7 @@ def main() -> int:
         model_seed=args.model_seed,
         course_seed=args.course_seed,
         candidate_namespace=args.candidate_namespace,
+        lesion_k3=args.lesion_k3,
     )
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(

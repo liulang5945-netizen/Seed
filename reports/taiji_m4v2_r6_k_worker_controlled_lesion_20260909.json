@@ -1,0 +1,75 @@
+{
+  "adapter_checkpoint": {
+    "exchange_checkpoint_digest": "4cff1f1afc22383eee52828291377084072db7c424ce70bc4d50c50c1fe68d00",
+    "rollback_checkpoint_digest": "4cff1f1afc22383eee52828291377084072db7c424ce70bc4d50c50c1fe68d00",
+    "rollback_record_digest": null
+  },
+  "artifact_paths": {
+    "k1.semantic": "E:\\Seed\\checkpoints\\taiji_k_workers\\model_17\\taiji_r6_k1_semantic.pt",
+    "k2.transition": "E:\\Seed\\checkpoints\\taiji_k_workers\\model_17\\taiji_r6_k2_transition.pt",
+    "k3.outcome_projection": "E:\\Seed\\checkpoints\\taiji_k_workers\\model_17\\taiji_r6_k3_outcome_projection.pt"
+  },
+  "attachment_gate_passed": true,
+  "blocking_reason": null,
+  "can_promote": false,
+  "can_start_r6_formal": false,
+  "candidate_promoted": false,
+  "candidate_training_performed": false,
+  "checks": {
+    "adapter_stage_blocked_without_projection": true,
+    "adapter_training_steps_zero": true,
+    "attachment_preflight_passed": true,
+    "can_promote_false": true,
+    "exchange_checkpoint_roundtrip": true,
+    "k1_result_typed": true,
+    "k2_result_typed": true,
+    "k3_lesion_reason_exact": true,
+    "k3_projection_rejected_under_lesion": true,
+    "no_default_runtime": true,
+    "no_external_integrations": true,
+    "old_G_retention": true,
+    "old_S_retention": true,
+    "read_only_intent_accepted": true,
+    "real_workbench_success": true,
+    "rollback_parent_namespace_restored": true
+  },
+  "client_attached": false,
+  "created_at_unix": 1788963820.0237005,
+  "cuda_used": false,
+  "default_runtime_attached": false,
+  "exchange_digest": null,
+  "intent_kind": "workspace.read",
+  "lesion_k3": true,
+  "mcp_attached": false,
+  "observation_path": "typescript_05.ts",
+  "old_capability_after": {
+    "G": 5.959810695900639,
+    "S": 5.995296377498504
+  },
+  "old_capability_before": {
+    "G": 5.959810695900639,
+    "S": 5.995296377498504
+  },
+  "old_capability_retention": {
+    "G": true,
+    "S": true
+  },
+  "outcome_reward": 1.0,
+  "outcome_success": true,
+  "owner_graph_digest": "4f1cbc3ce105112a2320a9209f6c5bfdd7ade54436147b0e94c15764dfbf42b8",
+  "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+  "preflight_status": "passed",
+  "projection_accepted": false,
+  "projection_digest": "29bf48c22ad30101e9ce48a3b465dadffae773b6370a6500ac27899d97b0e0b3",
+  "projection_reason": "outcome_feedback_lesioned",
+  "provider_attached": false,
+  "report_format": "taiji-m4v2-r6-k-worker-controlled-canary-v1",
+  "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+  "semantic_status": "resolved",
+  "source_manifest_digest": "d0946c73d9844b4b0e44f2685a87465a568ee6ba7665f23c11a7b5fe0208b362",
+  "status": "passed",
+  "training_performed": false,
+  "transition_status": "resolved",
+  "version": 1,
+  "worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83"
+}

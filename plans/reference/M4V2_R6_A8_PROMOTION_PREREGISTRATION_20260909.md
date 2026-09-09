@@ -373,6 +373,26 @@ manifest preflight：
 下一步只实现消费该 manifest 的 formal runner per-cell ledger 和结构化失败归因；
 静态/输入 Gate 通过前不执行 9-cell course、不接 default runtime。
 
+## 19. 首个 single-cell execution 与 fixed-large 阻断（2026-09-09）
+
+已运行 `scripts/training/eval_taiji_m4v2_r6_formal_single_cell.py`，固定
+`model_seed=17 / course_seed=0`，报告为
+`reports/taiji_m4v2_r6_formal_single_cell_20260909.json`：
+
+- candidate 真实 `workspace.read` 成功，K3 accepted dependency projection、
+  typed lineage、stage/rollback、S/G retention 通过；
+- 同一真实 outcome 的 K3 lesion 精确返回 `outcome_feedback_lesioned`，adapter
+  在 projection 未 accepted 时 fail-closed 拒绝 stage，lesion Gate 通过；
+- parent/matched 只完成 detached K 的 S/G/checkpoint control；没有把它们当成 K
+  能力结果；
+- fixed-large 只有 R6 旧 structural shadow preflight，没有 K-task-equivalent
+  executor，报告按 `input_contract / fixed_large_k_control_required` 阻断，整体
+  `status=blocked_controls`。
+
+该结果是正确的设计阻断，不是模型失败，也不是阈值失败。下一步先实现与 candidate
+同输入/同资源口径的 K fixed-large control，再重跑该 single cell；未完成前不进入
+9-cell formal。
+
 ## 18. Formal runner 入口层 preflight 执行记录（2026-09-09）
 
 已实现 `scripts/training/eval_taiji_m4v2_r6_formal.py`，并在不执行课程的模式下
