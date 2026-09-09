@@ -588,3 +588,13 @@ resource/side-effect/checkpoint contract。
 
 下一步只执行固定顺序中的 `model31/course0`，继续使用 model31 的 content-addressed
 parent/worker/fixed-large registry 和 prior ledger，任何失败停止在该 row。
+
+## 23. Model31/course0 execution（2026-09-09）
+
+`model31/course0` 已通过固定顺序并成功追加，execution contract digest 为
+`26918f09462b84e8fa39e4ddb7d9c0ee1a96fecc0699cca62149341be58de791`；candidate/fixed-large
+均为 `1/1`，lesion 为 `0`，五臂 `resource_gate` 全部为 true。累计 7 个 row 为
+`executed_passed`，model31/course1/2 仍为 `not_started`，aggregate 尚未运行。
+
+下一步只执行 `model31/course1`，继续使用 prior ledger 与 model31 content-addressed
+输入，不改变任何 Gate 或外部变量。
