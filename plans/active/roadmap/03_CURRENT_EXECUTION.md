@@ -410,4 +410,6 @@ K3 预注册已完成：[M5_K3_OUTCOME_WORLD_DEPENDENCY_PREREGISTRATION_20260909
 
 K3 projection contract 已实现并单测：`taiji/outcome_dependency.py` 提供 content-addressed outcome/dependency projection、同 tick world enrichment、checkpoint/restore 和 lesion/stale/duplicate/cross-scope fail-closed；定向 7/7、K2/执行回归 13/13、ruff/py_compile/mypy 通过。工作台全量回归的剩余阻断是本机 pytest temp ACL，不是 projection 断言失败。projection 仍是 shadow，尚未接入 runtime 或执行 canary。
 
-**当前唯一下一步**：实现 K3 单 cell canary——复用 K2 workspace/semantic/transition/planner 和 S6B outcome 链，接入 projection 的 A/B/C 三臂与 dependency lineage gate；先跑静态检查和单 cell，不写 formal、不接默认 runtime、不引入 MCP/provider/client/CUDA。
+K3 单 cell canary 已完成：`scripts/training/eval_taiji_m5_k3_outcome_dependency.py` 与 `reports/taiji_m5_k3_outcome_dependency_20260909.json`。首轮暴露并修正了三类 harness 问题：holdout 类型未进入 transition vocabulary、train/holdout 工作区内容未分离、runtime workspace root selector 未随隔离 root 切换；随后补齐跨语言训练组合并把固定 transition 训练预算从 320 提到 1280，未改变阈值或 A/B/C Gate。正式单 cell 结果为 A `1.0`（4/4）、B `0.0`、C `0.0`，A-B/A-C 均 `1.0`，训练 A `6/6`，probe admission、lineage、checkpoint、feedback fact consumption 全部通过；`can_promote=false` 仍固定，默认 runtime 未接入。
+
+**当前唯一下一步**：冻结并实现 K3 formal 预注册——先把单 cell 已验证的 workspace 分离、全语言 vocabulary、跨语言 sequence coverage、训练预算和三臂技术 Gate 写成 `3 task_seed × 3 learner_seed` 的 formal 合同；预注册完成前不跑 formal、不接默认 runtime、不引入 MCP/provider/client/CUDA。
