@@ -1,0 +1,366 @@
+{
+  "arms": {
+    "candidate-continuation": {
+      "arm": "candidate-continuation",
+      "causal": {
+        "k3_projection_accepted": true,
+        "lesion_k3": false,
+        "real_workbench_success": true,
+        "status": "candidate_path_verified"
+      },
+      "checkpoint_ledger": {
+        "adapter_checkpoint": {
+          "exchange_checkpoint_digest": "463667cbf29d3f0d22799c8aa005db2a4b3a3b572e3f71b2ef80f5ef6e83f017",
+          "rollback_checkpoint_digest": "56f7b47aca187ad875c9c112ce38e2a76eb77deeb940884d37d9f3ee0cf01ccb",
+          "rollback_record_digest": "8e6b4d35646cfccca35ddf37925bd781c867c7dd8aba0d6f8e69c073585109ef"
+        },
+        "exchange_digest": "54eacdc45a9a92f60e6dcebe82988ab299d51c487c20f7c2979359ca68d421cb",
+        "rollback_record_explicit": true
+      },
+      "failure": null,
+      "new_capability": {
+        "sample_count": 1,
+        "status": "observed",
+        "task_success_rate": 1.0
+      },
+      "old_capability_retention": {
+        "G": true,
+        "S": true
+      },
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "phase_rows": [
+        {
+          "after": 5.995296377498504,
+          "before": 5.995296377498504,
+          "phase": "S",
+          "status": "observed"
+        },
+        {
+          "after": 5.959810695900639,
+          "before": 5.959810695900639,
+          "phase": "G",
+          "status": "observed"
+        },
+        {
+          "observation_path": "typescript_05.ts",
+          "phase": "K",
+          "projection_accepted": true,
+          "projection_reason": "accepted",
+          "real_success": true,
+          "reward": 1.0,
+          "status": "executed"
+        }
+      ],
+      "resource": {
+        "candidate_parameter_bytes": 0,
+        "checkpoint_write_bytes": 0,
+        "inference_trace_count": 1,
+        "measurement_complete": false,
+        "peak_working_set_bytes": 258191360,
+        "peak_working_set_method": "process_rss_before_after_lower_bound",
+        "training_update_steps": 0,
+        "wall_clock_seconds": 0.8801397000206634
+      },
+      "side_effects": {
+        "candidate_namespace_written": true,
+        "default_runtime_attached": false,
+        "external_integrations_attached": false,
+        "parent_namespace_unchanged": true
+      },
+      "status": "passed",
+      "worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83"
+    },
+    "fixed-large": {
+      "arm": "fixed-large",
+      "causal": {
+        "k_task_equivalent": false,
+        "status": "not_comparable"
+      },
+      "checkpoint_ledger": {
+        "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+        "rollback_digest": "e345e0acfb69ad27f27c8e9b02ce3125b9fa5dc0d47babce0cc038d6e109e978",
+        "shadow_checkpoint_digest": "e345e0acfb69ad27f27c8e9b02ce3125b9fa5dc0d47babce0cc038d6e109e978",
+        "shadow_preflight_status": "passed"
+      },
+      "failure": {
+        "arm": "fixed-large",
+        "cell": {
+          "course_seed": 0,
+          "model_seed": 17
+        },
+        "class": "input_contract",
+        "evidence_digests": [],
+        "exception_type": null,
+        "is_environment_blocker": false,
+        "is_model_evidence": false,
+        "message": "fixed-large has only the legacy structural shadow preflight; no K-task-equivalent fixed-large control is registered",
+        "phase": "K",
+        "recoverability": "fixed_large_k_control_required",
+        "step": null,
+        "stop_line": true
+      },
+      "new_capability": null,
+      "old_capability_retention": null,
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "phase_rows": [
+        {
+          "phase": "S",
+          "status": "not_measured_by_shadow_preflight"
+        },
+        {
+          "phase": "G",
+          "status": "not_measured_by_shadow_preflight"
+        },
+        {
+          "phase": "K",
+          "status": "not_implemented"
+        }
+      ],
+      "resource": {
+        "candidate_parameter_bytes": null,
+        "checkpoint_write_bytes": 0,
+        "inference_trace_count": 0,
+        "measurement_complete": false,
+        "peak_working_set_bytes": null,
+        "training_update_steps": 0,
+        "wall_clock_seconds": null
+      },
+      "side_effects": {
+        "candidate_namespace_written": false,
+        "default_runtime_attached": false,
+        "external_integrations_attached": false,
+        "parent_namespace_unchanged": true
+      },
+      "status": "shadow_preflight_only"
+    },
+    "frozen-parent": {
+      "arm": "frozen-parent",
+      "causal": {
+        "k_feedback_consumed": false,
+        "status": "control_only"
+      },
+      "checkpoint_ledger": {
+        "fresh_restore_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+        "rollback_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+        "rollback_matches_parent": true
+      },
+      "failure": null,
+      "new_capability": {
+        "status": "detached",
+        "task_success_rate": null
+      },
+      "old_capability_retention": {
+        "G": true,
+        "S": true
+      },
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "phase_rows": [
+        {
+          "after": 5.995296377498504,
+          "before": 5.995296377498504,
+          "phase": "S",
+          "status": "observed"
+        },
+        {
+          "after": 5.959810695900639,
+          "before": 5.959810695900639,
+          "phase": "G",
+          "status": "observed"
+        },
+        {
+          "new_capability": null,
+          "phase": "K",
+          "reason": "this control does not attach the K worker bundle",
+          "status": "detached"
+        }
+      ],
+      "resource": {
+        "candidate_parameter_bytes": 0,
+        "checkpoint_write_bytes": 0,
+        "inference_trace_count": 0,
+        "measurement_complete": false,
+        "peak_working_set_bytes": null,
+        "training_update_steps": 0,
+        "wall_clock_seconds": 0.0
+      },
+      "side_effects": {
+        "candidate_namespace_written": false,
+        "default_runtime_attached": false,
+        "external_integrations_attached": false,
+        "parent_namespace_unchanged": true
+      },
+      "status": "control_passed"
+    },
+    "lesion": {
+      "arm": "lesion",
+      "causal": {
+        "k3_projection_accepted": false,
+        "lesion_k3": true,
+        "real_workbench_success": true,
+        "status": "lesion_verified"
+      },
+      "checkpoint_ledger": {
+        "adapter_checkpoint": {
+          "exchange_checkpoint_digest": "4cff1f1afc22383eee52828291377084072db7c424ce70bc4d50c50c1fe68d00",
+          "rollback_checkpoint_digest": "4cff1f1afc22383eee52828291377084072db7c424ce70bc4d50c50c1fe68d00",
+          "rollback_record_digest": null
+        },
+        "exchange_digest": null,
+        "rollback_record_explicit": false
+      },
+      "failure": null,
+      "new_capability": {
+        "sample_count": 1,
+        "status": "observed",
+        "task_success_rate": 0.0
+      },
+      "old_capability_retention": {
+        "G": true,
+        "S": true
+      },
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "phase_rows": [
+        {
+          "after": 5.995296377498504,
+          "before": 5.995296377498504,
+          "phase": "S",
+          "status": "observed"
+        },
+        {
+          "after": 5.959810695900639,
+          "before": 5.959810695900639,
+          "phase": "G",
+          "status": "observed"
+        },
+        {
+          "observation_path": "typescript_05.ts",
+          "phase": "K",
+          "projection_accepted": false,
+          "projection_reason": "outcome_feedback_lesioned",
+          "real_success": true,
+          "reward": 1.0,
+          "status": "lesion_rejected"
+        }
+      ],
+      "resource": {
+        "candidate_parameter_bytes": 0,
+        "checkpoint_write_bytes": 0,
+        "inference_trace_count": 1,
+        "measurement_complete": false,
+        "peak_working_set_bytes": 259551232,
+        "peak_working_set_method": "process_rss_before_after_lower_bound",
+        "training_update_steps": 0,
+        "wall_clock_seconds": 1.06332640000619
+      },
+      "side_effects": {
+        "candidate_namespace_written": false,
+        "default_runtime_attached": false,
+        "external_integrations_attached": false,
+        "parent_namespace_unchanged": true
+      },
+      "status": "passed",
+      "worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83"
+    },
+    "matched-fixed-capacity": {
+      "arm": "matched-fixed-capacity",
+      "causal": {
+        "k_feedback_consumed": false,
+        "status": "control_only"
+      },
+      "checkpoint_ledger": {
+        "fresh_restore_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+        "rollback_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+        "rollback_matches_parent": true
+      },
+      "failure": null,
+      "new_capability": {
+        "status": "detached",
+        "task_success_rate": null
+      },
+      "old_capability_retention": {
+        "G": true,
+        "S": true
+      },
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "phase_rows": [
+        {
+          "after": 5.995296377498504,
+          "before": 5.995296377498504,
+          "phase": "S",
+          "status": "observed"
+        },
+        {
+          "after": 5.959810695900639,
+          "before": 5.959810695900639,
+          "phase": "G",
+          "status": "observed"
+        },
+        {
+          "new_capability": null,
+          "phase": "K",
+          "reason": "this control does not attach the K worker bundle",
+          "status": "detached"
+        }
+      ],
+      "resource": {
+        "candidate_parameter_bytes": 0,
+        "checkpoint_write_bytes": 0,
+        "inference_trace_count": 0,
+        "measurement_complete": false,
+        "peak_working_set_bytes": null,
+        "training_update_steps": 0,
+        "wall_clock_seconds": 0.0
+      },
+      "side_effects": {
+        "candidate_namespace_written": false,
+        "default_runtime_attached": false,
+        "external_integrations_attached": false,
+        "parent_namespace_unchanged": true
+      },
+      "status": "control_passed"
+    }
+  },
+  "can_promote": false,
+  "can_start_r6_formal": false,
+  "candidate_training_performed": false,
+  "cell": {
+    "course_seed": 0,
+    "model_seed": 17
+  },
+  "client_attached": false,
+  "course_executed": false,
+  "created_at_unix": 1788964002.289603,
+  "cuda_used": false,
+  "decision": "blocked until a K-task-equivalent fixed-large control is registered; the current structural shadow is not a causal K comparator",
+  "default_runtime_attached": false,
+  "elapsed_seconds": 2.6619073000038043,
+  "failures": [
+    {
+      "arm": "fixed-large",
+      "cell": {
+        "course_seed": 0,
+        "model_seed": 17
+      },
+      "class": "input_contract",
+      "evidence_digests": [],
+      "exception_type": null,
+      "is_environment_blocker": false,
+      "is_model_evidence": false,
+      "message": "fixed-large has only the legacy structural shadow preflight; no K-task-equivalent fixed-large control is registered",
+      "phase": "K",
+      "recoverability": "fixed_large_k_control_required",
+      "step": null,
+      "stop_line": true
+    }
+  ],
+  "input_preflight_status": "passed",
+  "mcp_attached": false,
+  "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+  "provider_attached": false,
+  "report_format": "taiji-m4v2-r6-formal-single-cell-v1",
+  "single_cell_executed": true,
+  "status": "blocked_controls",
+  "training_performed": false,
+  "version": 1,
+  "worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83"
+}

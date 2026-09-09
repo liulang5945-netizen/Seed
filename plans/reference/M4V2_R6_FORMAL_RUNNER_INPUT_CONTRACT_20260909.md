@@ -396,3 +396,29 @@ restore，再允许任何 S→G→K task，且首个 Gate 失败即停止。
 入口层已经冻结，下一步进入真正的 execution layer：先在一个预注册 cell 上实现
 五 arm 的 S→G→K phase ledger、真实 Workbench outcome、resource/side-effect
 measurement 和首个失败归因；单 cell 未通过前不扩大到 9 cells。
+
+## 10. 首个 single-cell execution 结果（2026-09-09）
+
+已实现并运行 `scripts/training/eval_taiji_m4v2_r6_formal_single_cell.py`，固定
+`model_seed=17 / course_seed=0`。该 runner 复用冻结 manifest，执行 candidate 与
+K3 lesion 的同路径真实 Workbench read，并回放 parent/matched controls；没有运行
+完整 S→G→K course。
+
+结果见 `reports/taiji_m4v2_r6_formal_single_cell_20260909.json`：
+
+- `candidate-continuation`：K1/K2 typed result、`typescript_05.ts` 真实
+  `workspace.read`、K3 accepted projection、dependency 应用、stage/rollback 和
+  S/G retention 通过；单步 K task success 为 `1/1`；
+- `lesion`：使用同一输入和真实成功 outcome，K3 以精确 reason
+  `outcome_feedback_lesioned` 拒绝，adapter 因没有 accepted projection 而拒绝
+  stage，说明反馈边界确实 fail-closed；
+- `frozen-parent`、`matched-fixed-capacity`：只完成 parent/S/G 控制与 checkpoint
+  retention，K worker 按 arm 合同保持 detached，不能当作 K 新能力结果；
+- `fixed-large`：现有资产只有 R6 旧 structural shadow preflight，没有与 K
+  candidate 同任务、同输入、同资源口径的 fixed-large executor。runner 将该缺口
+  归为 `input_contract / fixed_large_k_control_required`，报告整体为
+  `status=blocked_controls`，没有用 structural shadow 冒充 K 因果对照。
+
+因此这一步闭合了 candidate/lesion 的单步边界，但没有关闭 R6 formal Gate。
+下一步必须先设计并实现 K-task-equivalent fixed-large control，再重跑同一 single
+cell；在该对照可比较前不扩大矩阵、不运行 9-cell formal。
