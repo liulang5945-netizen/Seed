@@ -466,4 +466,6 @@ native fixed-large builder 已通过：宽度 `2`、参数量 `9666`、训练 ta
 
 paired resource ledger 已闭合：candidate/fixed-large 均有同方法 peak-RSS、checkpoint-write、parameter/inference、wall-clock 和 measurement-complete，K 单步均为 `1/1`；本 cell 的 paired delta 已记录，仍未改变 promotion 阈值。
 
-**当前唯一下一步**：冻结 9-cell formal 的 resource validity/aggregate 合同（CPU 口径、无效 cell、peak resource、checkpoint/parameter/inference 与 paired delta 聚合规则），合同冻结前不运行 full formal、不接 default runtime、不引入 MCP/provider/client/CUDA。
+9-cell resource validity/aggregate 合同已冻结：[M4V2_R6_RESOURCE_AGGREGATE_PREREGISTRATION_20260909.md](../../reference/M4V2_R6_RESOURCE_AGGREGATE_PREREGISTRATION_20260909.md)。它沿用 CPU、peak `1.25×`、wall-clock `1.5×`、完整 arm 字段和不可删除无效 cell 规则，并冻结 mean/min/max 与一侧 95% Student-t lower bound；不改变 candidate 主阈值，也不把 fixed-large 事后变成晋级阈值。
+
+**当前唯一下一步**：为 model23/31 生成并 preflight native fixed-large ensemble，扩展 content-addressed formal input registry；三 seed fixed-large 输入、fresh restore、source/holdout non-overlap 和 resource manifest 全部闭合前不运行 9-cell full formal、不接 default runtime、不引入 MCP/provider/client/CUDA。
