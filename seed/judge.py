@@ -64,9 +64,26 @@ class SeedJudge:
         observations = 0
         try:
             substrate.reset_dynamics(episode_id="judge")
-            step = substrate.observe(substrate.config.boundary_symbol, learn=False)
+            # ``learn_bytes`` trains the protected F1 predictive readout.  The
+            # default action readout is a different owner and is not a valid
+            # language-quality control; using it here made learned text look
+            # indistinguishable from shuffled bytes.  Keep the judge aligned
+            # with ``score_bytes`` and exclude episodic/identity shortcuts.
+            step = substrate.observe(
+                substrate.config.boundary_symbol,
+                learn=False,
+                readout="predictive",
+                use_memory=False,
+                use_identity=False,
+            )
             for symbol in text:
-                step = substrate.observe(int(symbol), learn=False)
+                step = substrate.observe(
+                    int(symbol),
+                    learn=False,
+                    readout="predictive",
+                    use_memory=False,
+                    use_identity=False,
+                )
                 if step.prior_prediction is None:
                     continue
                 observations += 1
