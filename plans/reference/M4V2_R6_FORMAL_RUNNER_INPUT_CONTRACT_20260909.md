@@ -422,3 +422,5 @@ K3 lesion 的同路径真实 Workbench read，并回放 parent/matched controls�
 因此这一步闭合了 candidate/lesion 的单步边界，但没有关闭 R6 formal Gate。
 下一步必须先设计并实现 K-task-equivalent fixed-large control，再重跑同一 single
 cell；在该对照可比较前不扩大矩阵、不运行 9-cell formal。
+
+fixed-large 的具体定义已冻结到 [M4V2_R6_FIXED_LARGE_K_CONTROL_PREREGISTRATION_20260909.md](M4V2_R6_FIXED_LARGE_K_CONTROL_PREREGISTRATION_20260909.md)：使用两个独立 native K1/K2 worker replica、固定 arithmetic ensemble、formal holdout 外的 worker-training slices `3/4`，不使用 learned router 或外部模型。旧 R4 structural shadow 继续保留为历史 shadow，不再作为 R6 K control。
