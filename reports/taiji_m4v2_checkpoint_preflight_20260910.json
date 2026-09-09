@@ -1,0 +1,37 @@
+{
+  "can_promote": false,
+  "can_start_training_pilot": true,
+  "candidate_promoted": false,
+  "checks": {
+    "atomic_checkpoint_exists_before_cleanup": true,
+    "developmental_update_wrote_fast": true,
+    "fresh_restore_digest_matches": true,
+    "fresh_restore_is_read_only": true,
+    "migration_fast_zero": true,
+    "old_f1_owners_unchanged": true,
+    "owner_lineage_persisted": true,
+    "parent_fresh_restore": true,
+    "replay_persisted": true,
+    "rng_and_state_continuation_matches": true,
+    "rollback_matches_parent": true,
+    "temporary_checkpoint_cleaned": true
+  },
+  "device": "cpu",
+  "elapsed_seconds": 0.42375789990182966,
+  "migration": {
+    "effective_parameter_count": 3156,
+    "owner_graph_digest": "0e19c69619b436b360746637938299e238e483afee0aed488aff3c9edc149412",
+    "source_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+    "state_scalar_count": 22092
+  },
+  "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+  "parent_path": "E:\\Seed\\checkpoints\\taiji_r6_parents\\model_17.pt",
+  "preflight_only": true,
+  "preflight_only_training_step": true,
+  "report_format": "taiji-m4v2-checkpoint-preflight-v1",
+  "research_course_executed": false,
+  "status": "passed",
+  "temporary_checkpoint_removed": true,
+  "training_performed": true,
+  "version": 1
+}

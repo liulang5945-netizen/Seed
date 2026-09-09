@@ -6,7 +6,7 @@ M4.R0～R12 已完成并归档，但 2026-09-09 的代码/报告复审发现：�
 
 最新实际状态：v2 R2 的 fast/slow 与真实 replay 有小规模 S/G 证据；R4 formal 在 S/G 上优于小容量对照，但未稳定超过 fixed-large；R5 条件路由候选被否决。R6 九 cell 接线运行通过，但全部无训练，且旧评分把“不接纳反馈”计为任务成功率 0，不能当作学习提升。评分语义修正已完成：任务成功、反馈准入和参数更新现在分离，wiring-canary 不能进入 learning-formal Gate；旧报告仍保留为历史证据。整体保持 `can_promote=false`，暂停直接沿旧 admission 启动学习 formal。完整依据见 [M4 v1/v2 实际结果复审](reference/M4_V1_V2_RESULT_REVIEW_2026_09_10.md)。
 
-**当前唯一下一步：进行训练前 checkpoint 保存恢复预检。** 随后依次进行真实固定容量连续学习 pilot、独立 holdout 正式比较及 v1 兼容对照，再按证据恢复结构成长。Skill/MCP、Workbench、插件、provider、CUDA 和视觉均已排入计划，不再并行抢占模型学习主线。
+**当前唯一下一步：执行一个模型 seed、一个课程的真实固定容量连续学习诊断 pilot。** 训练前 checkpoint 保存恢复预检已通过：fast/slow、replay、owner lineage、RNG 续训、原子保存和 rollback 全部通过；该预检只做了小步更新，不是能力实验。随后依次进行独立 holdout 正式比较及 v1 兼容对照，再按证据恢复结构成长。Skill/MCP、Workbench、插件、provider、CUDA 和视觉均已排入计划，不再并行抢占模型学习主线。
 
 ## 权威文档
 
