@@ -246,3 +246,7 @@ grounded internalization S1 canary 已通过：native consolidation 改善未见
 完整 `tests/` 回归已闭合：在仓库可写 fixture 下 `1070 passed, 6 skipped, 1 warning`，无真实失败；仍需补跑 workflow 同构的 coverage/junit 门禁才能关闭 CI 交付账本。
 
 当前唯一出口：执行 coverage/junit 门禁并记录实际覆盖率；保持 R4 shadow/默认 parent 与 F1/F2 owner 边界不变。
+
+coverage/junit 门禁已闭合：`1070 passed, 6 skipped, 1 warning`，总覆盖率 `57.73%`，超过 `21.8% fail_under`，报告生成成功。当前只剩提交后的静态门禁复核；R4 shadow/默认 parent 与 F1/F2 owner 边界不变。
+
+当前唯一出口：执行最终版本、Ruff/B-SIM、core mypy、编译和 diff 门禁；Black 若仍被本机 Windows worker/ACL 阻塞则单独记录。
