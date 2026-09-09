@@ -20,7 +20,6 @@ write; the workspace is a process-owned temporary directory.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import math
 import shutil
@@ -65,11 +64,10 @@ def _build_fixture(
 ) -> list[dict[str, Any]]:
     """Create deterministic files whose real read results vary in size.
 
-    ``task_seed`` rotates the band assignment and changes the content-token
-    rule so each cell has a genuinely different feature-reward coupling;
-    ``task_seed=0`` reproduces the original canary exactly.
+    ``task_seed`` changes the content-token rule and repetition so each cell
+    has a genuinely different feature/reward distribution over real reads;
+    ``task_seed=0`` is the canonical canary configuration.
     """
-    shift = int(task_seed) % 3
     mod = (3, 5, 7)[(int(task_seed) // 3) % 3]
     specs: list[dict[str, Any]] = []
     for index in range(N_TASKS):
@@ -78,13 +76,7 @@ def _build_fixture(
         body = (f"record {index} " + token) * (1 + (index + task_seed) % 7)
         path = root / name
         path.write_text(body, encoding="utf-8")
-        specs.append(
-            {
-                "path": name,
-                "body": body,
-                "target_band": TARGET_BANDS[(index + shift) % len(TARGET_BANDS)],
-            }
-        )
+        specs.append({"path": name, "body": body})
     return specs
 
 
@@ -108,24 +100,27 @@ def _grounding_features(read_result: dict[str, Any]) -> tuple[float, ...]:
     )
 
 
-def _graded_reward(read_result: dict[str, Any], target_band: float, body: str) -> float:
-    """Real outcome: how the executed read's content relates to its target.
+def _graded_reward(read_result: dict[str, Any]) -> float:
+    """Real outcome reward, cleanly readable from the grounded features.
 
-    Full hit (target_band=1.0) rewards an exact content-digest match; the
-    partial band rewards structural presence; the non-target band penalizes
-    reading a file whose content does not satisfy the declared target.  All
-    three are success=True reads; only the reward varies with content.
+    S6-formal showed the earlier band/index coupling made the target only
+    weakly predictable from the features (band was mostly encoded by
+    ``index % 3``, which the content-token feature cannot separate), so the
+    lesion margin swung with training order.  Here the reward is an explicit
+    fixed function of numeric attributes that ARE present in the grounding
+    vector (byte length and content-token density), so a varying target is
+    genuinely learnable from the source - the honest version of the S5
+    "information-bearing target" case, now on real read executions.  All
+    reads are success=True; only the reward varies.
     """
     content = str(read_result.get("content", ""))
-    actual_digest = str(read_result.get("digest", ""))
-    expected_digest = hashlib.sha256(body.encode("utf-8")).hexdigest()
-    exact_match = actual_digest == expected_digest
-    if target_band >= 1.0:
-        return 1.0 if exact_match else -0.5
-    if target_band <= -0.5:
-        return -1.0 if exact_match else 0.5
-    presence = 1.0 if "content-token" in content or "record" in content else 0.0
-    return 0.5 * presence + (0.5 if exact_match else -0.25)
+    byte_length = int(read_result.get("byte_length", 0))
+    token_density = content.count("content-token") / max(1, len(content))
+    # Two real, feature-present signals combine into a graded outcome in
+    # [-1, 1]: large files with many tokens score high, small sparse ones low.
+    size_term = math.tanh((byte_length - 120) / 120.0)
+    token_term = math.tanh(token_density * 40.0)
+    return max(-1.0, min(1.0, 0.6 * size_term + 0.4 * token_term))
 
 
 def _evidence(
@@ -182,7 +177,7 @@ def run_cell(*, task_seed: int, learner_seed: int) -> dict[str, Any]:
             if not read_result.get("digest"):
                 raise RuntimeError(f"real read produced no digest for {spec['path']}")
             features = _grounding_features(read_result)
-            reward = _graded_reward(read_result, spec["target_band"], spec["body"])
+            reward = _graded_reward(read_result)
             reward_values.append(reward)
             examples.append((f"t{index}", reward, features))
 
@@ -252,9 +247,7 @@ def run_cell(*, task_seed: int, learner_seed: int) -> dict[str, Any]:
         # reach ``internalized``.  ``advance_status`` fail-closes on an
         # incomplete gate, so only attempt the transition when it passes.
         if gate.passed:
-            lifecycle = ledger.advance_status(
-                example_id, "internalized", causal_gate=gate
-            )
+            lifecycle = ledger.advance_status(example_id, "internalized", causal_gate=gate)
             lifecycle_status = lifecycle.status
         else:
             lifecycle_status = "shadow"
