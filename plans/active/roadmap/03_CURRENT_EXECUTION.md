@@ -486,3 +486,10 @@ success 为 `1/1`，lesion 与 rollback/side-effect Gate 通过。**当前唯一
 这份五臂执行合同抽为 formal runner 可复用的 cell executor，以同一 model17/course0
 重放并做字段级一致性检查；通过前不扩大到其余 8 cells、不运行 9-cell aggregate、
 不接 default runtime/provider/MCP/client/CUDA。
+executor 现已实现为 `run_cell(model_seed, course_seed, …)`，默认 17/0 入口保持兼容；
+同一 manifest 连续两次 replay 的 `execution_contract_digest` 均为
+`8d670a310c08a81e024b3c8f2256ba5afa4808491871e67637205d6156c5d22c`，五臂 resource
+Gate 全部通过。**当前唯一下一步**：让 formal runner 消费一个 `not_started` ledger row，
+把 executor 结果、逐臂 resource/side-effect/checkpoint/rollback 和 failure attribution
+显式写回该 row；单 row 闭合前不扩大到其余 8 cells、不运行 9-cell aggregate、不接
+default runtime/provider/MCP/client/CUDA。
