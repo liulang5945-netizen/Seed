@@ -545,3 +545,9 @@ model23/31 row 仍未启动。formal runner 同时冻结了 9-cell 的前序执�
 
 下一步只执行 `model23/course0`，继续复用同一 parent/worker/fixed-large/resource/rollback
 合同；在六个 model23/31 row 完成前不计算 9-cell aggregate、不接默认 runtime。
+
+## 31. Model23/course0 execution（2026-09-09）
+
+model23/course0 已成功追加，candidate/fixed-large/lesion 的 K 因果边界和五臂资源、
+rollback、side-effect contract 全部通过，execution order Gate 没有跳过 model17 slice。
+当前只推进 model23/course1；完整矩阵和 promotion 仍关闭。
