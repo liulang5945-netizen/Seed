@@ -436,4 +436,6 @@ R6 fixed-capacity parent admission addendum 已冻结：[M4V2_R6_FIXED_CAPACITY_
 
 parent baseline/preflight 已实现并运行：`reports/taiji_m4v2_r6_parent_baseline_preflight_20260909.json`。S/G 的 `9 cells × 3 repeats`、epsilon 校准和 6 类 arm 的 checkpoint/fresh restore/rollback 机械 Gate 全部通过，所有 arm `training_performed=false`。但按真实边界只测得 S/G，K parent retention 没有从 standalone K1/K2/K3 推断，报告明确 `baseline_complete=false`、`can_start_r6_formal=false`；因此仍不能训练或接 default runtime。
 
-**当前唯一下一步**：实现单 cell controlled adapter smoke——在同一个 fixed-capacity parent 上补齐 K 的 typed input/output、dependency lineage、old-capability retention 观测和 checkpoint/rollback；只做 shadow controlled smoke，不训练 formal、不接 default runtime、不引入 MCP/provider/client/CUDA。
+单 cell controlled adapter smoke 已完成：`reports/taiji_m4v2_r6_adapter_controlled_smoke_20260909.json`，16/16 checks 通过。`KAdapterInput/Output/Exchange` 已进入 native adapter，same-parent、K3 dependency/projection lineage、stage/fresh restore/rollback、S/G old-capability retention 全部通过；但这是 `fixture_outcome_only` 的 transport smoke，不是 K learner 能力结果，`k_learner_owner_attached=false`、`k_learner_training_performed=false`、`baseline_complete=false`、`can_start_r6_formal=false`。
+
+**当前唯一下一步**：冻结 K learner-owner attachment contract——adapter 做唯一 candidate/rollback owner，K1 semantic 与 K2 transition 作为受控 subordinate worker，K3 作为 deterministic outcome projection；先锁定 worker checkpoint、owner graph、输入输出映射和 rollback 边界，再允许任何 K learner training。

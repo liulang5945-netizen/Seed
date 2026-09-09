@@ -103,8 +103,13 @@ from .continual_evaluation import (
     MissingParentBaselineError,
 )
 from .continual_k_adapter import (
+    TAIJI_K_ADAPTER_EXCHANGE_FORMAT,
+    TAIJI_K_ADAPTER_EXCHANGE_VERSION,
     TAIJI_K_CONTINUAL_ADAPTER_FORMAT,
     TAIJI_K_CONTINUAL_ADAPTER_VERSION,
+    KAdapterExchange,
+    KAdapterInput,
+    KAdapterOutput,
     KAdapterRollbackRecord,
     KContinualAdapter,
 )
@@ -866,6 +871,11 @@ __all__ = [
     "MetricObservation",
     "MetricSpec",
     "MissingParentBaselineError",
+    "TAIJI_K_ADAPTER_EXCHANGE_FORMAT",
+    "TAIJI_K_ADAPTER_EXCHANGE_VERSION",
+    "KAdapterExchange",
+    "KAdapterInput",
+    "KAdapterOutput",
     "KAdapterRollbackRecord",
     "KContinualAdapter",
     "TAIJI_K_CONTINUAL_ADAPTER_FORMAT",

@@ -1,0 +1,84 @@
+{
+  "format": "taiji-m4v2-r6-adapter-controlled-smoke-v1",
+  "version": 1,
+  "status": "passed",
+  "can_start_r6_formal": false,
+  "can_promote": false,
+  "matrix": {
+    "model_seed": 17,
+    "course_seed": 0,
+    "course_label": "r6-order-0",
+    "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675"
+  },
+  "checks": {
+    "parent_checkpoint_matches": true,
+    "projection_accepted": true,
+    "projection_lineage_complete": true,
+    "typed_input_output_roundtrip": true,
+    "typed_exchange_digest_echo": true,
+    "typed_exchange_parent_echo": true,
+    "typed_exchange_dependency_echo": true,
+    "typed_exchange_scope_echo": true,
+    "candidate_stage_roundtrip": true,
+    "rollback_record_is_explicit": true,
+    "rollback_restores_parent_namespace": true,
+    "rollback_preserves_typed_exchange": true,
+    "rollback_checkpoint_roundtrip": true,
+    "old_capability_retention_observed": true,
+    "no_training_performed": true,
+    "default_runtime_detached": true
+  },
+  "typed_boundary": {
+    "input_digest": "033db034ef1c4dd9011d33e58120583447b1fe4ba71ebecb939904e3beb010d2",
+    "output_digest": "3868f52d884875be9d163fdba85303d66076b9a00d4c0372b61759c898953cd7",
+    "exchange_digest": "5ee6c0585bdbfc5d3c81b47e17fd23917216d99f55f63c8d4b4454c7fad51538",
+    "observation_digest": "0501d03b24979b02426f8c0ffccff4a38dcf4d2b1dc6397d60cdf872ca7e2bc8",
+    "world_digest": "e6623eeeec39075aeb10795ef1e4e1249933a443cfc6e84654870197641146cd",
+    "goal_digest": "8057e9425706445dcd1ba8d0a62a66b4fa13c27d3dc2dfd80d2f899ca20a6cc8",
+    "content_plan_digest": "517bbb13a81b996d6683efec4e9805d57f64b9276cae980c1ec63fbea76f3125",
+    "action_digest": "582d229e7ec6de8c16cdcf71df9c009bc1641ea6164cd73fbccb3073efaed324",
+    "outcome_signature": "ef17c131a0845ae02791a5882e64c4dfeac7e889efa7bec3dec79e61d4b511d1",
+    "dependency_digest": "80d90f0f001bb3aabbf8e9d35090946712e9635cd694e584282c4ac772f27ff6",
+    "dependency_projection_digest": "809cda348896163d14505397ba2ab1317444cc1d30d8f74cb031b2d622014ce8",
+    "lineage": [
+      "r6-controlled-scope-17-0",
+      "033db034ef1c4dd9011d33e58120583447b1fe4ba71ebecb939904e3beb010d2",
+      "809cda348896163d14505397ba2ab1317444cc1d30d8f74cb031b2d622014ce8",
+      "80d90f0f001bb3aabbf8e9d35090946712e9635cd694e584282c4ac772f27ff6"
+    ],
+    "fixture_outcome_only": true
+  },
+  "old_capability_retention": {
+    "before_scores": {
+      "S": 5.995296377498504,
+      "G": 5.959810695900639
+    },
+    "after_scores": {
+      "S": 5.995296377498504,
+      "G": 5.959810695900639
+    },
+    "deltas": {
+      "S": 0.0,
+      "G": 0.0
+    },
+    "epsilon": 0.01,
+    "measured_phases": [
+      "S",
+      "G"
+    ]
+  },
+  "boundary": {
+    "k_learner_training_performed": false,
+    "k_learner_owner_attached": false,
+    "execution_performed": false,
+    "default_runtime_attached": false,
+    "candidate_promoted": false,
+    "provider_mcp_client_network_used": false,
+    "cuda_required": false,
+    "baseline_complete": false,
+    "reason_baseline_incomplete": "This smoke proves typed transport and retention observation only; it does not train or attach a K learner, so it cannot close K capability retention."
+  },
+  "next_gate": "Freeze and implement the controlled K learner-owner attachment contract before any K training; preserve this typed exchange as the only input/output boundary and keep default runtime detached.",
+  "generated_at_epoch": 1788959026,
+  "elapsed_seconds": 0.1493274999083951
+}

@@ -5,7 +5,11 @@ import copy
 import pytest
 
 from taiji import (
+    KAdapterExchange,
+    KAdapterInput,
+    KAdapterOutput,
     KContinualAdapter,
+    OutcomeDependencyProjection,
     OutcomeDependencyProjector,
     OutcomeDependencySpec,
     WorldEvent,
@@ -52,6 +56,43 @@ def _adapter() -> tuple[KContinualAdapter, dict[str, object]]:
     return adapter, parent
 
 
+def _exchange(
+    adapter: KContinualAdapter,
+    projection: OutcomeDependencyProjection,
+    parent: dict[str, object],
+) -> KAdapterExchange:
+    input_item = KAdapterInput(
+        episode_id="r6-smoke-episode",
+        parent_checkpoint_digest=content_digest(parent),
+        observation_digest=content_digest({"path": "missing_00.txt"}),
+        world_digest=content_digest({"world": "r6"}),
+        goal_digest=content_digest({"goal": "read"}),
+        content_plan_digest=content_digest({"content": "inspect"}),
+        source_manifest_digest=adapter.source_manifest_digest,
+        tick=1,
+    )
+    output_item = KAdapterOutput(
+        parent_checkpoint_digest=content_digest(parent),
+        input_digest=input_item.input_digest,
+        action_digest=content_digest({"kind": "workspace.read"}),
+        outcome_signature=projection.outcome_signature,
+        dependency_digest=projection.dependency_digest,
+        dependency_projection_digest=projection.projection_digest,
+        success=True,
+        lineage=(
+            adapter.dependency_scope_id,
+            input_item.input_digest,
+            projection.projection_digest,
+            projection.dependency_digest,
+        ),
+    )
+    return KAdapterExchange.create(
+        scope_id=adapter.dependency_scope_id,
+        input=input_item,
+        output=output_item,
+    )
+
+
 def test_same_parent_adapter_roundtrip_and_rollback() -> None:
     adapter, parent = _adapter()
     projection = _projection()
@@ -84,6 +125,39 @@ def test_same_parent_adapter_roundtrip_and_rollback() -> None:
     assert rollback_restored.active_namespace == rollback_restored.parent_namespace
     assert rollback_restored.dependency_projection == projection
     assert rollback_restored.training_steps == 0
+
+
+def test_same_parent_adapter_records_typed_exchange_and_preserves_it_on_rollback() -> None:
+    adapter, parent = _adapter()
+    projection = _projection()
+    adapter.bind_dependency_projection(projection)
+    exchange = _exchange(adapter, projection, parent)
+
+    assert adapter.record_exchange(exchange) == exchange.exchange_digest
+    checkpoint = adapter.checkpoint()
+    restored = KContinualAdapter.from_checkpoint(checkpoint)
+    assert restored.last_exchange == exchange
+
+    token = adapter.stage_candidate(
+        candidate_checkpoint_digest="4" * 64,
+        candidate_owner_graph_digest="5" * 64,
+        candidate_source_manifest_digest="6" * 64,
+        candidate_parent_checkpoint_digest=content_digest(parent),
+    )
+    adapter.rollback(token)
+    assert adapter.last_exchange == exchange
+    assert KContinualAdapter.from_checkpoint(adapter.checkpoint()).last_exchange == exchange
+
+
+def test_same_parent_adapter_rejects_tampered_exchange() -> None:
+    adapter, parent = _adapter()
+    projection = _projection()
+    adapter.bind_dependency_projection(projection)
+    payload = copy.deepcopy(_exchange(adapter, projection, parent).to_payload())
+    payload["output"]["action_digest"] = "8" * 64
+
+    with pytest.raises(ValueError, match="output digest mismatch"):
+        KAdapterExchange.from_payload(payload)
 
 
 def test_same_parent_adapter_rejects_scope_crossing_and_parent_crossing() -> None:

@@ -215,3 +215,29 @@ R4/R5 均不晋级、R6 不使用 router 的边界、parent baseline/epsilon 的
 唯一允许的动作是单 cell controlled adapter smoke，用同一 parent 建立 K
 输入/输出和 retention 观测；仍不得接 default runtime、不得训练 formal、不得
 引入 provider/MCP/client/CUDA。
+
+## 11. controlled adapter smoke 执行记录（2026-09-09）
+
+已把 `KAdapterInput`、`KAdapterOutput`、`KAdapterExchange` 加入
+`taiji/continual_k_adapter.py`，并运行
+`scripts/training/eval_taiji_m4v2_r6_adapter_controlled_smoke.py`。报告为
+`reports/taiji_m4v2_r6_adapter_controlled_smoke_20260909.json`，单 cell
+`model_seed=17 / course_seed=0` 的 16/16 smoke checks 通过：
+
+- 输入已经类型化为 observation/world/goal/content/source manifest digest；
+- 输出已经类型化为 action/outcome/dependency/projection digest，并要求
+  same-parent echo、scope echo、input echo 和完整 lineage；
+- candidate stage、fresh restore、explicit rollback 后 typed exchange 保留
+  全部通过；
+- 同一个 parent fresh restore 前后 S/G old-capability 观测 delta 为 `0.0`，
+  在 epsilon `0.01` 内；
+- `fixture_outcome_only=true`，`k_learner_training_performed=false`、
+  `k_learner_owner_attached=false`、`execution_performed=false`、
+  `default_runtime_attached=false`，因此 `baseline_complete=false`、
+  `can_start_r6_formal=false` 仍保持。
+
+这一步解决的是 K 的 native input/output/lineage 边界，不是把 K1/K2/K3
+standalone learner 变成默认模型。下一步必须先冻结 **K learner-owner
+attachment contract**：adapter 作为唯一 candidate/rollback owner，K1 semantic
+和 K2 transition 作为受控 subordinate worker，K3 作为 deterministic outcome
+projection；确认 checkpoint/owner graph 后才允许任何 K learner training。

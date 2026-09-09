@@ -19,6 +19,8 @@ from .outcome_dependency import OutcomeDependencyProjection
 
 TAIJI_K_CONTINUAL_ADAPTER_FORMAT = "taiji-k-continual-adapter-v1"
 TAIJI_K_CONTINUAL_ADAPTER_VERSION = 1
+TAIJI_K_ADAPTER_EXCHANGE_FORMAT = "taiji-k-adapter-exchange-v1"
+TAIJI_K_ADAPTER_EXCHANGE_VERSION = 1
 
 
 def _text(value: Any, name: str) -> str:
@@ -35,6 +37,258 @@ def _digest(value: Any, name: str) -> str:
     ):
         raise ValueError(f"{name} must be a lowercase SHA-256 digest")
     return normalized
+
+
+def _tags(values: Any, name: str) -> tuple[str, ...]:
+    if isinstance(values, (str, bytes, bytearray)):
+        raise TypeError(f"{name} must be a sequence")
+    normalized = tuple(_text(value, f"{name} item") for value in values)
+    if not normalized or len(set(normalized)) != len(normalized):
+        raise ValueError(f"{name} must be unique and non-empty")
+    return normalized
+
+
+@dataclass(frozen=True)
+class KAdapterInput:
+    """Typed input crossing the native K adapter boundary."""
+
+    episode_id: str
+    parent_checkpoint_digest: str
+    observation_digest: str
+    world_digest: str
+    goal_digest: str
+    content_plan_digest: str
+    source_manifest_digest: str
+    tick: int
+    format: str = TAIJI_K_ADAPTER_EXCHANGE_FORMAT
+    version: int = TAIJI_K_ADAPTER_EXCHANGE_VERSION
+
+    def __post_init__(self) -> None:
+        if self.format != TAIJI_K_ADAPTER_EXCHANGE_FORMAT:
+            raise ValueError("unsupported K adapter input format")
+        if int(self.version) != TAIJI_K_ADAPTER_EXCHANGE_VERSION:
+            raise ValueError("unsupported K adapter input version")
+        object.__setattr__(self, "episode_id", _text(self.episode_id, "episode_id"))
+        for field_name in (
+            "parent_checkpoint_digest",
+            "observation_digest",
+            "world_digest",
+            "goal_digest",
+            "content_plan_digest",
+            "source_manifest_digest",
+        ):
+            object.__setattr__(
+                self,
+                field_name,
+                _digest(getattr(self, field_name), field_name),
+            )
+        if int(self.tick) < 0:
+            raise ValueError("K adapter input tick cannot be negative")
+
+    @property
+    def input_digest(self) -> str:
+        return content_digest(self.to_payload(include_digest=False))
+
+    def to_payload(self, *, include_digest: bool = True) -> dict[str, Any]:
+        payload: dict[str, Any] = {
+            "format": self.format,
+            "version": int(self.version),
+            "kind": "input",
+            "episode_id": self.episode_id,
+            "parent_checkpoint_digest": self.parent_checkpoint_digest,
+            "observation_digest": self.observation_digest,
+            "world_digest": self.world_digest,
+            "goal_digest": self.goal_digest,
+            "content_plan_digest": self.content_plan_digest,
+            "source_manifest_digest": self.source_manifest_digest,
+            "tick": int(self.tick),
+        }
+        if include_digest:
+            payload["input_digest"] = self.input_digest
+        return payload
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> KAdapterInput:
+        item = cls(
+            format=str(payload.get("format", "")),
+            version=int(payload.get("version", -1)),
+            episode_id=str(payload["episode_id"]),
+            parent_checkpoint_digest=str(payload["parent_checkpoint_digest"]),
+            observation_digest=str(payload["observation_digest"]),
+            world_digest=str(payload["world_digest"]),
+            goal_digest=str(payload["goal_digest"]),
+            content_plan_digest=str(payload["content_plan_digest"]),
+            source_manifest_digest=str(payload["source_manifest_digest"]),
+            tick=int(payload["tick"]),
+        )
+        if str(payload.get("input_digest", "")) != item.input_digest:
+            raise ValueError("K adapter input digest mismatch")
+        return item
+
+
+@dataclass(frozen=True)
+class KAdapterOutput:
+    """Typed output and outcome lineage emitted by the native K boundary."""
+
+    parent_checkpoint_digest: str
+    input_digest: str
+    action_digest: str
+    outcome_signature: str
+    dependency_digest: str
+    dependency_projection_digest: str
+    success: bool
+    lineage: tuple[str, ...]
+    format: str = TAIJI_K_ADAPTER_EXCHANGE_FORMAT
+    version: int = TAIJI_K_ADAPTER_EXCHANGE_VERSION
+
+    def __post_init__(self) -> None:
+        if self.format != TAIJI_K_ADAPTER_EXCHANGE_FORMAT:
+            raise ValueError("unsupported K adapter output format")
+        if int(self.version) != TAIJI_K_ADAPTER_EXCHANGE_VERSION:
+            raise ValueError("unsupported K adapter output version")
+        for field_name in (
+            "parent_checkpoint_digest",
+            "input_digest",
+            "action_digest",
+            "outcome_signature",
+            "dependency_digest",
+            "dependency_projection_digest",
+        ):
+            object.__setattr__(
+                self,
+                field_name,
+                _digest(getattr(self, field_name), field_name),
+            )
+        normalized_lineage = _tags(self.lineage, "K adapter output lineage")
+        if self.input_digest not in normalized_lineage:
+            raise ValueError("K adapter output lineage omits input digest")
+        if self.dependency_digest not in normalized_lineage:
+            raise ValueError("K adapter output lineage omits dependency digest")
+        object.__setattr__(self, "lineage", normalized_lineage)
+
+    @property
+    def output_digest(self) -> str:
+        return content_digest(self.to_payload(include_digest=False))
+
+    def to_payload(self, *, include_digest: bool = True) -> dict[str, Any]:
+        payload: dict[str, Any] = {
+            "format": self.format,
+            "version": int(self.version),
+            "kind": "output",
+            "parent_checkpoint_digest": self.parent_checkpoint_digest,
+            "input_digest": self.input_digest,
+            "action_digest": self.action_digest,
+            "outcome_signature": self.outcome_signature,
+            "dependency_digest": self.dependency_digest,
+            "dependency_projection_digest": self.dependency_projection_digest,
+            "success": bool(self.success),
+            "lineage": list(self.lineage),
+        }
+        if include_digest:
+            payload["output_digest"] = self.output_digest
+        return payload
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> KAdapterOutput:
+        item = cls(
+            format=str(payload.get("format", "")),
+            version=int(payload.get("version", -1)),
+            parent_checkpoint_digest=str(payload["parent_checkpoint_digest"]),
+            input_digest=str(payload["input_digest"]),
+            action_digest=str(payload["action_digest"]),
+            outcome_signature=str(payload["outcome_signature"]),
+            dependency_digest=str(payload["dependency_digest"]),
+            dependency_projection_digest=str(payload["dependency_projection_digest"]),
+            success=bool(payload["success"]),
+            lineage=tuple(str(value) for value in payload["lineage"]),
+        )
+        if str(payload.get("output_digest", "")) != item.output_digest:
+            raise ValueError("K adapter output digest mismatch")
+        return item
+
+
+@dataclass(frozen=True)
+class KAdapterExchange:
+    """Content-addressed input/output pair for one controlled K episode."""
+
+    scope_id: str
+    input: KAdapterInput
+    output: KAdapterOutput
+    exchange_digest: str
+    format: str = TAIJI_K_ADAPTER_EXCHANGE_FORMAT
+    version: int = TAIJI_K_ADAPTER_EXCHANGE_VERSION
+
+    def __post_init__(self) -> None:
+        if self.format != TAIJI_K_ADAPTER_EXCHANGE_FORMAT:
+            raise ValueError("unsupported K adapter exchange format")
+        if int(self.version) != TAIJI_K_ADAPTER_EXCHANGE_VERSION:
+            raise ValueError("unsupported K adapter exchange version")
+        object.__setattr__(self, "scope_id", _text(self.scope_id, "K adapter scope_id"))
+        if not isinstance(self.input, KAdapterInput):
+            raise TypeError("K adapter exchange input is invalid")
+        if not isinstance(self.output, KAdapterOutput):
+            raise TypeError("K adapter exchange output is invalid")
+        if self.output.parent_checkpoint_digest != self.input.parent_checkpoint_digest:
+            raise ValueError("K adapter exchange crosses parent checkpoints")
+        if self.output.input_digest != self.input.input_digest:
+            raise ValueError("K adapter exchange output does not echo input digest")
+        if self.scope_id not in self.output.lineage:
+            raise ValueError("K adapter exchange lineage omits scope")
+        if self.exchange_digest != content_digest(self._payload_without_digest()):
+            raise ValueError("K adapter exchange digest mismatch")
+
+    def _payload_without_digest(self) -> dict[str, Any]:
+        return {
+            "format": self.format,
+            "version": int(self.version),
+            "kind": "exchange",
+            "scope_id": self.scope_id,
+            "input": self.input.to_payload(),
+            "output": self.output.to_payload(),
+        }
+
+    def to_payload(self) -> dict[str, Any]:
+        return {**self._payload_without_digest(), "exchange_digest": self.exchange_digest}
+
+    @classmethod
+    def create(
+        cls,
+        *,
+        scope_id: str,
+        input: KAdapterInput,
+        output: KAdapterOutput,
+    ) -> KAdapterExchange:
+        unsigned = {
+            "format": TAIJI_K_ADAPTER_EXCHANGE_FORMAT,
+            "version": TAIJI_K_ADAPTER_EXCHANGE_VERSION,
+            "kind": "exchange",
+            "scope_id": str(scope_id),
+            "input": input.to_payload(),
+            "output": output.to_payload(),
+        }
+        return cls(
+            scope_id=str(scope_id),
+            input=input,
+            output=output,
+            exchange_digest=content_digest(unsigned),
+        )
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> KAdapterExchange:
+        if payload.get("format") != TAIJI_K_ADAPTER_EXCHANGE_FORMAT:
+            raise ValueError("unsupported K adapter exchange format")
+        input_payload = payload.get("input")
+        output_payload = payload.get("output")
+        if not isinstance(input_payload, Mapping) or not isinstance(output_payload, Mapping):
+            raise ValueError("K adapter exchange input/output is invalid")
+        return cls(
+            scope_id=str(payload["scope_id"]),
+            input=KAdapterInput.from_payload(input_payload),
+            output=KAdapterOutput.from_payload(output_payload),
+            exchange_digest=str(payload["exchange_digest"]),
+            format=str(payload["format"]),
+            version=int(payload.get("version", -1)),
+        )
 
 
 @dataclass(frozen=True)
@@ -205,6 +459,7 @@ class KContinualAdapter:
         self._staged_trial_id = ""
         self._rollback_token = ""
         self._dependency_projection: OutcomeDependencyProjection | None = None
+        self._last_exchange: KAdapterExchange | None = None
         self._rollback_records: list[KAdapterRollbackRecord] = []
         self._revision = 0
 
@@ -215,6 +470,10 @@ class KContinualAdapter:
     @property
     def dependency_projection(self) -> OutcomeDependencyProjection | None:
         return self._dependency_projection
+
+    @property
+    def last_exchange(self) -> KAdapterExchange | None:
+        return self._last_exchange
 
     @property
     def rollback_records(self) -> tuple[KAdapterRollbackRecord, ...]:
@@ -249,6 +508,37 @@ class KContinualAdapter:
             raise ValueError("K adapter dependency boundary is already bound")
         self._dependency_projection = projection
         self._revision += 1
+
+    def record_exchange(self, exchange: KAdapterExchange) -> str:
+        """Record one typed K exchange without updating a learner."""
+
+        if not isinstance(exchange, KAdapterExchange):
+            raise TypeError("K adapter exchange boundary requires a KAdapterExchange")
+        if self._dependency_projection is None:
+            raise ValueError("K adapter exchange requires a bound dependency projection")
+        if exchange.scope_id != self.dependency_scope_id:
+            raise ValueError("K adapter exchange scope mismatch")
+        if exchange.input.parent_checkpoint_digest != self.parent_checkpoint_digest:
+            raise ValueError("K adapter exchange input crosses the parent checkpoint")
+        if exchange.output.parent_checkpoint_digest != self.parent_checkpoint_digest:
+            raise ValueError("K adapter exchange output crosses the parent checkpoint")
+        if (
+            exchange.output.dependency_digest
+            != self._dependency_projection.dependency_digest
+        ):
+            raise ValueError("K adapter exchange dependency digest mismatch")
+        if (
+            exchange.output.dependency_projection_digest
+            != self._dependency_projection.projection_digest
+        ):
+            raise ValueError("K adapter exchange projection lineage mismatch")
+        if self._last_exchange is not None:
+            if self._last_exchange.exchange_digest == exchange.exchange_digest:
+                return exchange.exchange_digest
+            raise ValueError("K adapter exchange boundary already contains another exchange")
+        self._last_exchange = exchange
+        self._revision += 1
+        return exchange.exchange_digest
 
     def stage_candidate(
         self,
@@ -347,6 +637,9 @@ class KContinualAdapter:
                 if self._dependency_projection is None
                 else self._dependency_projection.to_payload()
             ),
+            "last_exchange": (
+                None if self._last_exchange is None else self._last_exchange.to_payload()
+            ),
             "rollback_records": [item.to_payload() for item in self._rollback_records],
             "revision": int(self._revision),
         }
@@ -394,6 +687,11 @@ class KContinualAdapter:
             adapter.bind_dependency_projection(
                 OutcomeDependencyProjection.from_payload(projection_payload)
             )
+        exchange_payload = payload.get("last_exchange")
+        if exchange_payload is not None:
+            if not isinstance(exchange_payload, Mapping):
+                raise ValueError("K continual adapter exchange is invalid")
+            adapter.record_exchange(KAdapterExchange.from_payload(exchange_payload))
         adapter._rollback_records = [
             KAdapterRollbackRecord.from_payload(item)
             for item in payload.get("rollback_records", ())
@@ -428,8 +726,13 @@ class KContinualAdapter:
 
 
 __all__ = [
+    "KAdapterExchange",
+    "KAdapterInput",
+    "KAdapterOutput",
     "KAdapterRollbackRecord",
     "KContinualAdapter",
+    "TAIJI_K_ADAPTER_EXCHANGE_FORMAT",
+    "TAIJI_K_ADAPTER_EXCHANGE_VERSION",
     "TAIJI_K_CONTINUAL_ADAPTER_FORMAT",
     "TAIJI_K_CONTINUAL_ADAPTER_VERSION",
 ]
