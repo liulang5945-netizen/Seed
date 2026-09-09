@@ -136,3 +136,13 @@ namespace 和 side-effect Gate 均通过，fixed-large K-task-equivalent control
 
 下一步只执行 model31/course1；9/9 完成前不运行 revised aggregate、不覆盖旧
 aggregate，也不接入 default runtime/provider/MCP/client/CUDA。
+
+## 12. Revised model31/course1 closure（2026-09-10）
+
+model31/course1 已由 revised runner 追加并通过，monotonic ledger 累计 8/9 且无
+failure；该格 frozen=0、matched no-feedback=0、candidate=1、lesion=0，两个
+capability delta=1.0，same-capacity 参数/trace、no-feedback admission、parent
+namespace 和 side-effect Gate 均通过，fixed-large K-task-equivalent control 也通过。
+
+下一步只执行 model31/course2；9/9 完成前不运行 revised aggregate、不覆盖旧
+aggregate，也不接入 default runtime/provider/MCP/client/CUDA。
