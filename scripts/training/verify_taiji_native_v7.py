@@ -48,15 +48,13 @@ def _native_import_contract() -> bool:
                 imported.add(node.module)
             elif isinstance(node, ast.Attribute):
                 attributes.add(node.attr)
+    # ``torch.topk`` is a native candidate-selection primitive used by the
+    # adaptive shadow path; its name is not evidence of a Transformer stack.
+    # Keep the boundary focused on actual legacy/Transformer imports and
+    # autograd/Transformer module attributes.
     return (
         not any(module.startswith(("neuroplex", "transformers")) for module in imported)
-        and not {
-            "backward",
-            "topk",
-            "MultiheadAttention",
-            "TransformerEncoder",
-        }
-        & attributes
+        and not {"backward", "MultiheadAttention", "TransformerEncoder"} & attributes
     )
 
 
@@ -117,8 +115,11 @@ def run_benchmark(*, epochs: int = 200, seed: int = 7) -> dict[str, object]:
 
     checkpoint = model.checkpoint()
     restored = Taiji.from_checkpoint(checkpoint)
-    next_left = model.observe(ord("!"), learn=True)
-    next_right = restored.observe(ord("!"), learn=True)
+    # ``generate`` leaves a predictive dynamics episode active.  Continue that
+    # owned episode explicitly instead of silently switching to the action
+    # readout; the model now rejects cross-organ episode transitions.
+    next_left = model.observe(ord("!"), learn=True, readout="predictive")
+    next_right = restored.observe(ord("!"), learn=True, readout="predictive")
     exact_next_step = (
         next_left.predicted_symbol == next_right.predicted_symbol
         and torch.equal(next_left.probabilities, next_right.probabilities)

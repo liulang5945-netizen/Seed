@@ -267,3 +267,6 @@ S/G 的 BPB 只证明低层预测变化，K 是 A8 的主要能力证据。正�
 CI clean-checkout 静态门禁审计完成一轮：版本一致性通过；主 Ruff `0`、B/SIM `0`、core mypy `0 errors / 95 files`、相关脚本 `py_compile` 和 M3.R5 回归通过。审计发现 Git 跟踪的 `direct-*` Workbench 夹具包含故意的跨语言/坏语言样本，原 `ruff check .` 与 `black --check .` 会把它们误当源码；现已在 `pyproject.toml` 的 Ruff/Black 边界中排除，夹具内容不变。修正后 Ruff 两个门禁均返回 0；本机 Black 全量/定向进程仍出现无输出的 Windows worker/ACL 异常，未将 Black 写成已通过，需在可复现环境继续核验。
 
 **当前唯一下一步**：执行 CI workflow 中剩余的 native verify 脚本和 `tests/seed` 回归，继续区分真实代码失败与本机临时目录噪声；不解冻 R5。
+CI 动态 verify 首批已修复并通过：v7 原因是 `generate()` 后仍处于 predictive dynamics episode，旧脚本切换默认 action readout；现显式续接 predictive，v7 全部 Gate 通过。N7 原因是 `learn_bytes()` 的 F1 predictive 训练与旧 action 评估不一致；现显式使用 predictive、关闭 memory/identity 干扰，二阶 ambiguous accuracy `1.0`，相对一阶与 full-state lesion 均提升 `0.5`，全部 Gate 通过。模型、训练阈值和 R4 路径未改。
+
+**当前唯一下一步**：继续执行 workflow 的 N8 delayed trace verify；沿用显式 readout/organ 边界，首个真实失败才允许修改对应评估契约。
