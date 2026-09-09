@@ -424,6 +424,19 @@ def run_diagnostic(
             }
             for experience in course.train
         ]
+        train_target_digests = [
+            content_digest(
+                {
+                    "k1.semantic": item["k1.semantic.target_tensor_digest"],
+                    "k2.transition": item["k2.transition.target_tensor_digest"],
+                }
+            )
+            for item in train_fit_tensor_digests
+        ]
+        train_target_multiplicity = {
+            digest: train_target_digests.count(digest)
+            for digest in sorted(set(train_target_digests))
+        }
         control_semantic = StructuredSemanticLearner.from_checkpoint(
             copy.deepcopy(semantic_parent_payload), device="cpu"
         )
@@ -622,20 +635,15 @@ def run_diagnostic(
                 "train_course_digest": content_digest(
                     list(course.train_experience_digests)
                 ),
-                "train_target_digests": [
+                "train_target_digests": train_target_digests,
+                "train_experience_target_digests": [
                     experience.target_digest for experience in course.train
                 ],
                 "train_target_multiset_digest": content_digest(
-                    sorted(experience.target_digest for experience in course.train)
+                    sorted(train_target_digests)
                 ),
-                "train_target_multiplicity": {
-                    digest: sum(
-                        item.target_digest == digest for item in course.train
-                    )
-                    for digest in sorted(
-                        {experience.target_digest for experience in course.train}
-                    )
-                },
+                "train_target_multiplicity": train_target_multiplicity,
+                "target_digest_semantics": "combined K1/K2 target tensor digests",
                 "train_fit_input_digests": [
                     {
                         "experience_digest": experience.experience_digest,

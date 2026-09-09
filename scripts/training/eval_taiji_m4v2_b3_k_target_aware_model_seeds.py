@@ -17,14 +17,18 @@ from scripts.training.eval_taiji_m4v2_b3_k_target_aware import (  # noqa: E402
     run_target_aware,
 )
 
-REPORT_FORMAT = "taiji-m4v2-b3-k-target-aware-model-seeds-v1"
-VERSION = 1
+REPORT_FORMAT = "taiji-m4v2-b3-k-target-aware-model-seeds-v2"
+VERSION = 2
 MODEL_SEEDS = (17, 23, 31)
 DEFAULT_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m4v2_b3_k_target_aware_model_seeds_20260910.json"
+    PROJECT_ROOT
+    / "reports"
+    / "taiji_m4v2_b3_k_target_aware_model_seeds_v2_20260910.json"
 )
 DEFAULT_CANDIDATE_ROOT = (
-    PROJECT_ROOT / "output" / "taiji_m4v2_b3_k_target_aware_model_seeds_20260910"
+    PROJECT_ROOT
+    / "output"
+    / "taiji_m4v2_b3_k_target_aware_model_seeds_v2_20260910"
 )
 
 

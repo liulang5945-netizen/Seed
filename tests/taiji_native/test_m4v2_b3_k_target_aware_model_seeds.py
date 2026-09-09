@@ -6,7 +6,7 @@ from pathlib import Path
 REPORT = (
     Path(__file__).resolve().parents[2]
     / "reports"
-    / "taiji_m4v2_b3_k_target_aware_model_seeds_20260910.json"
+    / "taiji_m4v2_b3_k_target_aware_model_seeds_v2_20260910.json"
 )
 
 
@@ -14,6 +14,8 @@ def test_b3_k_target_aware_model_seed_stability_uses_real_parents() -> None:
     report = json.loads(REPORT.read_text(encoding="utf-8"))
 
     assert report["status"] == "passed"
+    assert report["report_format"] == "taiji-m4v2-b3-k-target-aware-model-seeds-v2"
+    assert report["version"] == 2
     assert report["run_kind"] == "target-aware-model-seed-stability-diagnostic"
     assert report["model_seeds"] == [17, 23, 31]
     assert report["model_count"] == 3

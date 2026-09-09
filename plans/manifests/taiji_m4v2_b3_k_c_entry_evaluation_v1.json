@@ -1,0 +1,196 @@
+{
+  "format": "taiji-m4v2-b3-k-c-entry-evaluation-manifest-v1",
+  "version": 1,
+  "status": "frozen-pre-formal",
+  "frozen_on": "2026-09-10",
+  "purpose": "Pre-register the C-entry comparison contract after the corrected B3-K target-aware validation.",
+  "scope": {
+    "phase": "C",
+    "subject": "inherited fixed-capacity K continuation learning",
+    "structural_growth": "excluded",
+    "external_provider_learning": "excluded",
+    "cuda": "deferred"
+  },
+  "evidence_basis": [
+    {
+      "kind": "validation-single-model",
+      "path": "reports/taiji_m4v2_b3_k_target_aware_v2_20260910.json",
+      "sha256": "29610B96306713199D6A1FB297196D12C40099D0B487195481A41B3F5CA2AE59"
+    },
+    {
+      "kind": "validation-model-seeds",
+      "path": "reports/taiji_m4v2_b3_k_target_aware_model_seeds_v2_20260910.json",
+      "sha256": "04669A681D5D49181A0A1EAB60739C66BEEFA93402283F13960698AD743355B4"
+    }
+  ],
+  "parent_models": [
+    {
+      "model_seed": 17,
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675"
+    },
+    {
+      "model_seed": 23,
+      "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4"
+    },
+    {
+      "model_seed": 31,
+      "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732"
+    }
+  ],
+  "course_contract": {
+    "strategy": "target_aware",
+    "course_seeds": [0, 1, 2],
+    "train_episode_count": 3,
+    "episode_path_source": "scripts/training/eval_taiji_m5_k2_multistep_composition.py::_train_episode_paths",
+    "target_digest_semantics": "combined K1 semantic target tensor digest and K2 transition target tensor digest",
+    "id_bearing_experience_digest_is_valid_target_evidence": false,
+    "target_classes": {
+      "A": "33d41aa0906e7275836e3ef88bf11d6531372fa16f0c47b5097f74afe5a22600",
+      "B": "bada0237dd9676acad6d1df0f02f0453469ac9a4b0504ecfe66585b2d2d9d0f1",
+      "C": "a8ec98edba0415c92c4885fc81ae98aea97641d6227e65685bdd31a1c5d127f9"
+    },
+    "variants": [
+      {
+        "course_seed": 0,
+        "episode_indexes": [0, 1, 2],
+        "target_multiset": {"A": 1, "B": 1, "C": 1},
+        "target_multiset_digest": "a0f58fa01922dc8a98eb1e9bb95fd428be3a07d0c9f7f249a124c4349d32e8ea",
+        "train_course_digest": "30beb4fa8a66bff2127ba018de8f94ba34d110415c19530c3f800f4b511c7ed8"
+      },
+      {
+        "course_seed": 1,
+        "episode_indexes": [0, 3, 1],
+        "target_multiset": {"A": 2, "B": 1},
+        "target_multiset_digest": "fc14c01319e85d369a2d398677032ff4f15368c50c72a569d1293def51b0f948",
+        "train_course_digest": "cea045ecc3c4d1c6df965a62b989cad474e6a198c113b86892f386f28d55de9c"
+      },
+      {
+        "course_seed": 2,
+        "episode_indexes": [0, 1, 4],
+        "target_multiset": {"A": 1, "B": 2},
+        "target_multiset_digest": "db25bf73706540b02b2dcc9718d234a89c3d8b343fedc8ba16dc131515fb7d42",
+        "train_course_digest": "41082075889bbe8233a14058143a87c3b7d72d329279ea50deed7f3b7c587855"
+      }
+    ]
+  },
+  "validation_split": {
+    "status": "materialized-and-used",
+    "record_count": 3,
+    "source": "scripts/training/eval_taiji_m5_k2_multistep_composition.py::_holdout_episode_paths[:3]",
+    "episodes": [
+      ["typescript_05.ts", "python_05.py", "rust_05.rs"],
+      ["rust_06.rs", "typescript_06.ts", "python_06.py"],
+      ["python_07.py", "rust_07.rs", "typescript_07.ts"]
+    ],
+    "cross_combination_with_reused_observations_excluded": true,
+    "use_for_sealed_threshold_selection": false
+  },
+  "sealed_test_split": {
+    "status": "must_materialize-before-formal",
+    "record_count": 3,
+    "read_policy": "Do not read or score this split while changing the thresholds or arm definitions in this manifest.",
+    "required_properties": [
+      "new content digest not present in train or validation",
+      "record-disjoint from train and validation",
+      "same K1/K2 target tensor schema",
+      "at least two target classes and three independent records",
+      "content-addressed artifact with source and schema digest"
+    ],
+    "artifact_path": null,
+    "artifact_digest": null,
+    "materialization_owner": "C-entry preflight",
+    "formal_start_blocked_until_materialized": true
+  },
+  "arms": [
+    {
+      "id": "frozen-parent",
+      "updates_parameters": false,
+      "purpose": "Measure ordinary task and scorer drift without learning."
+    },
+    {
+      "id": "candidate-continuation",
+      "updates_workers": ["k1.semantic", "k2.transition"],
+      "frozen_workers": ["k3.outcome_projection"],
+      "parent_must_remain_unchanged": true,
+      "optimizer_state": "none",
+      "purpose": "Evaluate inherited target-aware continuation under the B3-K contract."
+    },
+    {
+      "id": "fixed-large-k-control",
+      "purpose": "Strong K-task-equivalent capacity control with the same parent, data, scorer, and resource accounting.",
+      "artifact_preflight_required": true
+    }
+  ],
+  "scorer": {
+    "primary_metric": "holdout_structured_loss.combined_mse",
+    "direction": "lower_is_better",
+    "required_components": [
+      "k1.fact_mse",
+      "k1.goal_mse",
+      "k1.content_mse",
+      "k2.transition_mse",
+      "k2.goal_mse",
+      "k2.content_mse"
+    ],
+    "no_update_control_delta": 0.0,
+    "report_absolute_and_parent_delta": true,
+    "sealed_test_scored_read_only": true
+  },
+  "gates": {
+    "technical": {
+      "all_parent_digests_match_declared_parents": true,
+      "train_validation_sealed_disjoint": true,
+      "candidate_checkpoint_fresh_restore": true,
+      "parent_rollback_verified": true,
+      "k3_and_parent_unchanged_for_candidate": true,
+      "candidate_updates_are_content_distinct": true,
+      "checkpoint_persistence_checked_before_training": true
+    },
+    "candidate_validation": {
+      "every_cell_combined_mse_delta_at_most": 0.0,
+      "mean_combined_mse_delta_at_most": -0.0001,
+      "target_course_variants_distinct": true,
+      "validation_is_not_promotion": true
+    },
+    "formal_candidate": {
+      "every_sealed_cell_non_degrading": true,
+      "mean_sealed_combined_mse_delta_at_most": -0.0001,
+      "no_old_domain_catastrophic_regression": true,
+      "candidate_must_beat_or_match_fixed_capacity": true,
+      "candidate_must_not_claim_growth": true,
+      "fixed_large_comparison_required": true
+    }
+  },
+  "resource_contract": {
+    "hardware": "CPU",
+    "cuda_required": false,
+    "model_seeds": [17, 23, 31],
+    "course_seeds": [0, 1, 2],
+    "arm_count": 3,
+    "planned_cell_count": 27,
+    "training_and_inference_timing_separate": true,
+    "peak_memory_required": true,
+    "checkpoint_bytes_required": true,
+    "no_parent_overwrite": true
+  },
+  "execution_order": [
+    "materialize and hash sealed-test without reading its scores",
+    "preflight frozen-parent and fixed-large artifacts",
+    "recheck candidate checkpoint save/restore on every model seed",
+    "run formal comparison with this manifest unchanged",
+    "publish all cells and only then evaluate the sealed-test gates"
+  ],
+  "stop_conditions": [
+    "any target diversity claim relies on an ID-bearing digest",
+    "any train/validation/sealed overlap is detected",
+    "checkpoint restore or rollback differs from the declared parent",
+    "any arm changes scorer, data, or budget after sealed-test materialization",
+    "any promotion claim is made before fixed-large and sealed-test comparison"
+  ],
+  "promotion": {
+    "candidate_promoted": false,
+    "can_start_formal": false,
+    "can_promote": false,
+    "reason": "Manifest is frozen, but sealed-test and fixed-large preflight are not yet complete."
+  }
+}

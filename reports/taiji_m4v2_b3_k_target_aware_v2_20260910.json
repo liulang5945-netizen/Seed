@@ -1,0 +1,1018 @@
+{
+  "all_course_seeds_improved": true,
+  "blocking_reason": null,
+  "can_promote": false,
+  "can_start_r6_formal": false,
+  "candidate_promoted": false,
+  "candidate_update_digests": [
+    "cd85eacbdad12b89e9cf6ffbb9aaa916a097870ab5b8bbdb87af31b721579e79",
+    "14b306ae4b3da70dbe650507858547c7809aa75ff96287b5abf930496381b1bc",
+    "607864f3cebdb6a19fd0b0e07303aa19a36292c76aada65ceeac27d86c77c6f2"
+  ],
+  "candidate_updates_distinct": true,
+  "cell_count": 3,
+  "cells": [
+    {
+      "course_seed": 0,
+      "report": {
+        "blocking_reason": null,
+        "can_promote": false,
+        "can_start_r6_formal": false,
+        "candidate_checkpoint_paths": {
+          "k1.semantic": "E:\\Seed\\output\\taiji_m4v2_b3_k_target_aware_v2_20260910\\course_seed_0\\model_17\\taiji_b3_k1_semantic_loss_step1.pt",
+          "k2.transition": "E:\\Seed\\output\\taiji_m4v2_b3_k_target_aware_v2_20260910\\course_seed_0\\model_17\\taiji_b3_k2_transition_loss_step1.pt"
+        },
+        "candidate_namespace": "taiji:k:candidate:model-17",
+        "candidate_promoted": false,
+        "candidate_worker_bundle_digest": "cd85eacbdad12b89e9cf6ffbb9aaa916a097870ab5b8bbdb87af31b721579e79",
+        "checks": {
+          "adapter_candidate_stage_roundtrip": true,
+          "adapter_rollback_restored": true,
+          "candidate_checkpoint_fresh_restore": true,
+          "course_roundtrip": true,
+          "k1_owner_changed": true,
+          "k2_owner_changed": true,
+          "k3_owner_unchanged": true,
+          "no_optimizer_state": true,
+          "no_update_control": true,
+          "parent_checkpoint_unchanged": true,
+          "three_disjoint_holdout_records": true,
+          "train_holdout_disjoint": true,
+          "worker_attachment_preflight_passed": true
+        },
+        "course_digest": "90b38cc7a8b30f39d4d53c8c14781baef1cdf320d25b93174512df417c00591e",
+        "course_seed": 0,
+        "elapsed_seconds": 4.167489100014791,
+        "frozen_workers": [
+          "k3.outcome_projection"
+        ],
+        "holdout_count": 3,
+        "holdout_loss_improved": true,
+        "holdout_structured_loss_after": {
+          "combined_mse": 0.01651945512655099,
+          "k1.content_mse": 7.850982456147904e-05,
+          "k1.fact_mse": 0.017107443573574226,
+          "k1.goal_mse": 0.001660058507695794,
+          "k2.content_mse": 0.031990427652393315,
+          "k2.goal_mse": 0.04536646746176606,
+          "k2.transition_mse": 0.0029138237393150726
+        },
+        "holdout_structured_loss_before": {
+          "combined_mse": 0.016777580521142633,
+          "k1.content_mse": 8.139078060291165e-05,
+          "k1.fact_mse": 0.017317220258216064,
+          "k1.goal_mse": 0.001712819910608232,
+          "k2.content_mse": 0.03250698816312555,
+          "k2.goal_mse": 0.04578693084719513,
+          "k2.transition_mse": 0.0032601331671079
+        },
+        "holdout_structured_loss_delta": {
+          "combined_mse": -0.000258125394591642,
+          "k1.content_mse": -2.880956041432611e-06,
+          "k1.fact_mse": -0.00020977668464183807,
+          "k1.goal_mse": -5.2761402912437916e-05,
+          "k2.content_mse": -0.0005165605107322335,
+          "k2.goal_mse": -0.00042046338542907347,
+          "k2.transition_mse": -0.0003463094277928276
+        },
+        "no_update_control": {
+          "holdout_structured_loss_after": {
+            "combined_mse": 0.016777580521142633,
+            "k1.content_mse": 8.139078060291165e-05,
+            "k1.fact_mse": 0.017317220258216064,
+            "k1.goal_mse": 0.001712819910608232,
+            "k2.content_mse": 0.03250698816312555,
+            "k2.goal_mse": 0.04578693084719513,
+            "k2.transition_mse": 0.0032601331671079
+          },
+          "holdout_structured_loss_before": {
+            "combined_mse": 0.016777580521142633,
+            "k1.content_mse": 8.139078060291165e-05,
+            "k1.fact_mse": 0.017317220258216064,
+            "k1.goal_mse": 0.001712819910608232,
+            "k2.content_mse": 0.03250698816312555,
+            "k2.goal_mse": 0.04578693084719513,
+            "k2.transition_mse": 0.0032601331671079
+          },
+          "holdout_structured_loss_delta": {
+            "combined_mse": 0.0,
+            "k1.content_mse": 0.0,
+            "k1.fact_mse": 0.0,
+            "k1.goal_mse": 0.0,
+            "k2.content_mse": 0.0,
+            "k2.goal_mse": 0.0,
+            "k2.transition_mse": 0.0
+          },
+          "passed": true,
+          "training_update_steps": 0
+        },
+        "optimizer_state_present": false,
+        "parameter_delta_digest": {
+          "k1.semantic": "29b35f3a231409899598ed90c236024c8d0b2ca3077fdab68e89add3b8defd51",
+          "k2.transition": "fecaac8b56b7ec77bbb77707e0d32f5b25daa88cb03024494a29d6ac91b48f65"
+        },
+        "parameter_delta_norm": {
+          "k1.semantic": 0.04124486808151953,
+          "k2.transition": 0.009335648926761224
+        },
+        "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+        "receipt": {
+          "candidate_namespace": "taiji:k:candidate:model-17",
+          "candidate_worker_bundle_digest": "cd85eacbdad12b89e9cf6ffbb9aaa916a097870ab5b8bbdb87af31b721579e79",
+          "candidate_worker_checkpoint_digests": [
+            [
+              "k1.semantic",
+              "3933c0f9868753a3b7565b70b1abecf1d23fe2a87a64c8700d56620f3fb40cb8"
+            ],
+            [
+              "k2.transition",
+              "d98458b19d9e76d8ec2165c83195bb3393e1ccbba711379993529739e8a5242a"
+            ],
+            [
+              "k3.outcome_projection",
+              "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
+            ]
+          ],
+          "course_digest": "90b38cc7a8b30f39d4d53c8c14781baef1cdf320d25b93174512df417c00591e",
+          "format": "taiji-k-continuation-learning-v1",
+          "fresh_restore_verified": true,
+          "frozen_workers": [
+            "k3.outcome_projection"
+          ],
+          "holdout_experience_digests": [
+            "5e1cd6bd0b07e3b5517b92ecf5d579a4e66cf2eedff104bb3a2eac73dcd04f5a",
+            "ed44ebde6681820c88135cdf849f963ebcd6a6c0044faa03656decade0fca9df",
+            "ce7a403a3d0631ad43f128fb7604ad4fc1a7a635d3e59f9bdfc3d7e05437aad7"
+          ],
+          "holdout_untrained": true,
+          "kind": "update_receipt",
+          "optimizer_state_present": false,
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "parent_unchanged": true,
+          "parent_worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83",
+          "parent_worker_checkpoint_digests": [
+            [
+              "k1.semantic",
+              "4b5ed527a3a105614cea73c6cc45a2d0577c9ec06eb6e974b245c679b93e5e5d"
+            ],
+            [
+              "k2.transition",
+              "67c96c5c8517ca58bacb45b8de756e7ffd24ee108276160c731da364714e2bda"
+            ],
+            [
+              "k3.outcome_projection",
+              "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
+            ]
+          ],
+          "receipt_digest": "521f38e96746e845901087e08f740a7cdf93b7ed8d90992e14b4cf2230761442",
+          "rollback_restored": true,
+          "train_experience_digests": [
+            "3bbfabc666121b64061f626ae874555b0063e7ecc665052d02a1ecf3524fc2ab",
+            "7a05f46e716b194acedca8c1687e8b799531fd912ce6dc13aee4cd3753509428",
+            "1a8fc81fc96f992bcf691044163744add7fd0e2a3c29ce209c24445a3cfdc584"
+          ],
+          "training_steps": 6,
+          "updated_workers": [
+            "k1.semantic",
+            "k2.transition"
+          ],
+          "version": 1
+        },
+        "report_format": "taiji-m4v2-b3-k-loss-diagnostic-v1",
+        "research_course_executed": true,
+        "run_kind": "learning-diagnostic",
+        "semantic_losses": {
+          "content_loss": 1.669865469011711e-06,
+          "fact_loss": 0.015619571320712566,
+          "goal_loss": 9.105560820898972e-06
+        },
+        "status": "passed",
+        "target_digest_semantics": "combined K1/K2 target tensor digests",
+        "train_course_digest": "30beb4fa8a66bff2127ba018de8f94ba34d110415c19530c3f800f4b511c7ed8",
+        "train_episode_count": 3,
+        "train_episode_indexes": [
+          0,
+          1,
+          2
+        ],
+        "train_episode_paths": [
+          [
+            "python_00.py",
+            "rust_00.rs",
+            "python_01.py"
+          ],
+          [
+            "rust_01.rs",
+            "python_02.py",
+            "typescript_00.ts"
+          ],
+          [
+            "typescript_01.ts",
+            "rust_02.rs",
+            "python_03.py"
+          ]
+        ],
+        "train_experience_digests": [
+          "3bbfabc666121b64061f626ae874555b0063e7ecc665052d02a1ecf3524fc2ab",
+          "7a05f46e716b194acedca8c1687e8b799531fd912ce6dc13aee4cd3753509428",
+          "1a8fc81fc96f992bcf691044163744add7fd0e2a3c29ce209c24445a3cfdc584"
+        ],
+        "train_experience_target_digests": [
+          "489b967c3f5d753b9cf145e1d37890e9d755e8c87b955113057ad35e2e9d068b",
+          "4fe0b5747ed5f6ee7f3354fd321de9c06b5af96c5e81d1716e6092452a7e28fd",
+          "72bc7943cc9c629710dc8df6b22f7f1a40f5c9986c5dcd8ca0faa2407ae34f18"
+        ],
+        "train_fit_input_digests": [
+          {
+            "experience_digest": "3bbfabc666121b64061f626ae874555b0063e7ecc665052d02a1ecf3524fc2ab",
+            "semantic_input_digest": "4e79e1cd151ef6fa382668455336b40838504de37ef2682bd1836ac4115750f9",
+            "target_digest": "489b967c3f5d753b9cf145e1d37890e9d755e8c87b955113057ad35e2e9d068b",
+            "transition_input_digest": "92fe390b0934aa0397c61013b3283dc8c71a66d8c16e41048cd9b4ef039a1a19"
+          },
+          {
+            "experience_digest": "7a05f46e716b194acedca8c1687e8b799531fd912ce6dc13aee4cd3753509428",
+            "semantic_input_digest": "3c3ffb121666d0355dea98c3cabf8a23506d0a46c515f19bc5703068b8babfcd",
+            "target_digest": "4fe0b5747ed5f6ee7f3354fd321de9c06b5af96c5e81d1716e6092452a7e28fd",
+            "transition_input_digest": "7cc261b0a767855e42a9d7e5926c95b54138bed4737ee9894ce1085e56f8a344"
+          },
+          {
+            "experience_digest": "1a8fc81fc96f992bcf691044163744add7fd0e2a3c29ce209c24445a3cfdc584",
+            "semantic_input_digest": "0c27746a29420a22c2ace8503a0f7ee452920ebd93fcbf6afd0e71d7e1aef829",
+            "target_digest": "72bc7943cc9c629710dc8df6b22f7f1a40f5c9986c5dcd8ca0faa2407ae34f18",
+            "transition_input_digest": "18f0fe336d6ebda9fc498ea75bb32e25ada135b57bdc1eaddf81c0d03580bcbf"
+          }
+        ],
+        "train_fit_tensor_digests": [
+          {
+            "experience_digest": "3bbfabc666121b64061f626ae874555b0063e7ecc665052d02a1ecf3524fc2ab",
+            "k1.semantic.input_tensor_digest": "13a62c44b2ed01af9bbbd9f22cd231d69f04baa002968a866058223c1340f3ac",
+            "k1.semantic.target_tensor_digest": "edccb5c8188ce04ff31f3724fa20133037a6fc108347980349a43eaf0f92895d",
+            "k2.transition.input_tensor_digest": "66375414a52fa66d7d092041f3ce5074e400666102cf1e8fabe96e8e64633302",
+            "k2.transition.target_tensor_digest": "1b5283ceac1f100080427145628f8b7d9580bb0a80c184999de291ff65a18611"
+          },
+          {
+            "experience_digest": "7a05f46e716b194acedca8c1687e8b799531fd912ce6dc13aee4cd3753509428",
+            "k1.semantic.input_tensor_digest": "008f8febbff57d17268d4ea280f7ea64698eb8177b5e24fb748977de45e3baf6",
+            "k1.semantic.target_tensor_digest": "ecb3c8fc3fd2cc593fbb7a231dcc2562da030f207c97920d0a6049c72f963d70",
+            "k2.transition.input_tensor_digest": "1ce6f45b94cd521d7708f05972773a9eed26851798a1c4db9d30ab4418d4414f",
+            "k2.transition.target_tensor_digest": "3b66ac52334d570296fe69c9f52e7ad267548375bef11b66a42fcdd1d89f77fa"
+          },
+          {
+            "experience_digest": "1a8fc81fc96f992bcf691044163744add7fd0e2a3c29ce209c24445a3cfdc584",
+            "k1.semantic.input_tensor_digest": "2f2a3daa88b9813ed647bf4c119b97e60834714fca58526829f5abecc8a98e4b",
+            "k1.semantic.target_tensor_digest": "701263df445f47f160c592293fa7ec83210504279a7335f8893672f7465c1c3e",
+            "k2.transition.input_tensor_digest": "6667d4b32ada177beade68008e67a7ca1ffb4169aa116bb045752001d700bec3",
+            "k2.transition.target_tensor_digest": "cf13ee01b545609c2c7eb82b3696f8cb00100d6379ff5269aca325928e8fa7b7"
+          }
+        ],
+        "train_structured_loss_after": {
+          "combined_mse": 0.0032801539696770813,
+          "k1.content_mse": 4.3774287405540235e-05,
+          "k1.fact_mse": 0.015440036853154501,
+          "k1.goal_mse": 0.0009325381834059954,
+          "k2.content_mse": 6.234742856274049e-05,
+          "k2.goal_mse": 0.00015940226633877805,
+          "k2.transition_mse": 0.003042824799194932
+        },
+        "train_structured_loss_before": {
+          "combined_mse": 0.003376173823704044,
+          "k1.content_mse": 4.5334617728561476e-05,
+          "k1.fact_mse": 0.015619573493798574,
+          "k1.goal_mse": 0.0009621414355933666,
+          "k2.content_mse": 6.375991263970111e-05,
+          "k2.goal_mse": 0.0001637531701514187,
+          "k2.transition_mse": 0.0034024803123126426
+        },
+        "train_structured_loss_delta": {
+          "combined_mse": -9.601985402696257e-05,
+          "k1.content_mse": -1.5603303230212403e-06,
+          "k1.fact_mse": -0.00017953664064407349,
+          "k1.goal_mse": -2.9603252187371254e-05,
+          "k2.content_mse": -1.4124840769606242e-06,
+          "k2.goal_mse": -4.350903812640639e-06,
+          "k2.transition_mse": -0.0003596555131177106
+        },
+        "train_target_digests": [
+          "33d41aa0906e7275836e3ef88bf11d6531372fa16f0c47b5097f74afe5a22600",
+          "bada0237dd9676acad6d1df0f02f0453469ac9a4b0504ecfe66585b2d2d9d0f1",
+          "a8ec98edba0415c92c4885fc81ae98aea97641d6227e65685bdd31a1c5d127f9"
+        ],
+        "train_target_multiplicity": {
+          "33d41aa0906e7275836e3ef88bf11d6531372fa16f0c47b5097f74afe5a22600": 1,
+          "a8ec98edba0415c92c4885fc81ae98aea97641d6227e65685bdd31a1c5d127f9": 1,
+          "bada0237dd9676acad6d1df0f02f0453469ac9a4b0504ecfe66585b2d2d9d0f1": 1
+        },
+        "train_target_multiset_digest": "a0f58fa01922dc8a98eb1e9bb95fd428be3a07d0c9f7f249a124c4349d32e8ea",
+        "train_variant_strategy": "target_aware",
+        "training_performed": true,
+        "training_update_steps": 6,
+        "transition_losses": {
+          "content_loss": 4.339126462582499e-05,
+          "goal_loss": 0.00010928060510195792,
+          "transition_loss": 0.0034024794586002827
+        },
+        "updated_workers": [
+          "k1.semantic",
+          "k2.transition"
+        ],
+        "version": 1,
+        "worker_attachment_preflight_course_seed": 0,
+        "worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83",
+        "workspace_seed": 0
+      }
+    },
+    {
+      "course_seed": 1,
+      "report": {
+        "blocking_reason": null,
+        "can_promote": false,
+        "can_start_r6_formal": false,
+        "candidate_checkpoint_paths": {
+          "k1.semantic": "E:\\Seed\\output\\taiji_m4v2_b3_k_target_aware_v2_20260910\\course_seed_1\\model_17\\taiji_b3_k1_semantic_loss_step1.pt",
+          "k2.transition": "E:\\Seed\\output\\taiji_m4v2_b3_k_target_aware_v2_20260910\\course_seed_1\\model_17\\taiji_b3_k2_transition_loss_step1.pt"
+        },
+        "candidate_namespace": "taiji:k:candidate:model-17",
+        "candidate_promoted": false,
+        "candidate_worker_bundle_digest": "14b306ae4b3da70dbe650507858547c7809aa75ff96287b5abf930496381b1bc",
+        "checks": {
+          "adapter_candidate_stage_roundtrip": true,
+          "adapter_rollback_restored": true,
+          "candidate_checkpoint_fresh_restore": true,
+          "course_roundtrip": true,
+          "k1_owner_changed": true,
+          "k2_owner_changed": true,
+          "k3_owner_unchanged": true,
+          "no_optimizer_state": true,
+          "no_update_control": true,
+          "parent_checkpoint_unchanged": true,
+          "three_disjoint_holdout_records": true,
+          "train_holdout_disjoint": true,
+          "worker_attachment_preflight_passed": true
+        },
+        "course_digest": "fe71e98864ad41e0b5ecc8dd5140a8d5dfb4165fda3def630b03148e6659a0d9",
+        "course_seed": 1,
+        "elapsed_seconds": 4.6389362999470904,
+        "frozen_workers": [
+          "k3.outcome_projection"
+        ],
+        "holdout_count": 3,
+        "holdout_loss_improved": true,
+        "holdout_structured_loss_after": {
+          "combined_mse": 0.01605334531409931,
+          "k1.content_mse": 6.472943641711026e-05,
+          "k1.fact_mse": 0.01687084324657917,
+          "k1.goal_mse": 0.0013451584187957148,
+          "k2.content_mse": 0.03078135915105425,
+          "k2.goal_mse": 0.04433352459454909,
+          "k2.transition_mse": 0.0029244570372005305
+        },
+        "holdout_structured_loss_before": {
+          "combined_mse": 0.016777580521142633,
+          "k1.content_mse": 8.139078060291165e-05,
+          "k1.fact_mse": 0.017317220258216064,
+          "k1.goal_mse": 0.001712819910608232,
+          "k2.content_mse": 0.03250698816312555,
+          "k2.goal_mse": 0.04578693084719513,
+          "k2.transition_mse": 0.0032601331671079
+        },
+        "holdout_structured_loss_delta": {
+          "combined_mse": -0.0007242352070433236,
+          "k1.content_mse": -1.6661344185801383e-05,
+          "k1.fact_mse": -0.0004463770116368941,
+          "k1.goal_mse": -0.0003676614918125172,
+          "k2.content_mse": -0.0017256290120712982,
+          "k2.goal_mse": -0.0014534062526460403,
+          "k2.transition_mse": -0.0003356761299073696
+        },
+        "no_update_control": {
+          "holdout_structured_loss_after": {
+            "combined_mse": 0.016777580521142633,
+            "k1.content_mse": 8.139078060291165e-05,
+            "k1.fact_mse": 0.017317220258216064,
+            "k1.goal_mse": 0.001712819910608232,
+            "k2.content_mse": 0.03250698816312555,
+            "k2.goal_mse": 0.04578693084719513,
+            "k2.transition_mse": 0.0032601331671079
+          },
+          "holdout_structured_loss_before": {
+            "combined_mse": 0.016777580521142633,
+            "k1.content_mse": 8.139078060291165e-05,
+            "k1.fact_mse": 0.017317220258216064,
+            "k1.goal_mse": 0.001712819910608232,
+            "k2.content_mse": 0.03250698816312555,
+            "k2.goal_mse": 0.04578693084719513,
+            "k2.transition_mse": 0.0032601331671079
+          },
+          "holdout_structured_loss_delta": {
+            "combined_mse": 0.0,
+            "k1.content_mse": 0.0,
+            "k1.fact_mse": 0.0,
+            "k1.goal_mse": 0.0,
+            "k2.content_mse": 0.0,
+            "k2.goal_mse": 0.0,
+            "k2.transition_mse": 0.0
+          },
+          "passed": true,
+          "training_update_steps": 0
+        },
+        "optimizer_state_present": false,
+        "parameter_delta_digest": {
+          "k1.semantic": "f3e700f2b07b7040266519dd3840376864eca926abec94231289f579fd856a82",
+          "k2.transition": "d5b16a3ea12951277d81020c3622713aeea8046e5801988caecb88148ffdd92b"
+        },
+        "parameter_delta_norm": {
+          "k1.semantic": 0.0679326469784541,
+          "k2.transition": 0.010593023004835517
+        },
+        "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+        "receipt": {
+          "candidate_namespace": "taiji:k:candidate:model-17",
+          "candidate_worker_bundle_digest": "14b306ae4b3da70dbe650507858547c7809aa75ff96287b5abf930496381b1bc",
+          "candidate_worker_checkpoint_digests": [
+            [
+              "k1.semantic",
+              "ecad68dd899f683df8f91a6fefc3fb9db33a68d9e0ad5e51a2aae5e587fa9b5c"
+            ],
+            [
+              "k2.transition",
+              "78b6500c378378292b6a1ae916dbe73fa307759e5d1bbc42c4df1b8950c6ef90"
+            ],
+            [
+              "k3.outcome_projection",
+              "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
+            ]
+          ],
+          "course_digest": "fe71e98864ad41e0b5ecc8dd5140a8d5dfb4165fda3def630b03148e6659a0d9",
+          "format": "taiji-k-continuation-learning-v1",
+          "fresh_restore_verified": true,
+          "frozen_workers": [
+            "k3.outcome_projection"
+          ],
+          "holdout_experience_digests": [
+            "5e1cd6bd0b07e3b5517b92ecf5d579a4e66cf2eedff104bb3a2eac73dcd04f5a",
+            "ed44ebde6681820c88135cdf849f963ebcd6a6c0044faa03656decade0fca9df",
+            "ce7a403a3d0631ad43f128fb7604ad4fc1a7a635d3e59f9bdfc3d7e05437aad7"
+          ],
+          "holdout_untrained": true,
+          "kind": "update_receipt",
+          "optimizer_state_present": false,
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "parent_unchanged": true,
+          "parent_worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83",
+          "parent_worker_checkpoint_digests": [
+            [
+              "k1.semantic",
+              "4b5ed527a3a105614cea73c6cc45a2d0577c9ec06eb6e974b245c679b93e5e5d"
+            ],
+            [
+              "k2.transition",
+              "67c96c5c8517ca58bacb45b8de756e7ffd24ee108276160c731da364714e2bda"
+            ],
+            [
+              "k3.outcome_projection",
+              "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
+            ]
+          ],
+          "receipt_digest": "abba5bab613286aac45324607915ed08a344973aba768c03765ab43a61ee62ec",
+          "rollback_restored": true,
+          "train_experience_digests": [
+            "3bbfabc666121b64061f626ae874555b0063e7ecc665052d02a1ecf3524fc2ab",
+            "31abe1be464067c6f59b0631773693e4bea598ade8cd2817308c911a34c43732",
+            "7a05f46e716b194acedca8c1687e8b799531fd912ce6dc13aee4cd3753509428"
+          ],
+          "training_steps": 6,
+          "updated_workers": [
+            "k1.semantic",
+            "k2.transition"
+          ],
+          "version": 1
+        },
+        "report_format": "taiji-m4v2-b3-k-loss-diagnostic-v1",
+        "research_course_executed": true,
+        "run_kind": "learning-diagnostic",
+        "semantic_losses": {
+          "content_loss": 2.3922614218463423e-06,
+          "fact_loss": 0.017317218706011772,
+          "goal_loss": 1.3089165804558434e-05
+        },
+        "status": "passed",
+        "target_digest_semantics": "combined K1/K2 target tensor digests",
+        "train_course_digest": "cea045ecc3c4d1c6df965a62b989cad474e6a198c113b86892f386f28d55de9c",
+        "train_episode_count": 3,
+        "train_episode_indexes": [
+          0,
+          3,
+          1
+        ],
+        "train_episode_paths": [
+          [
+            "python_00.py",
+            "rust_00.rs",
+            "python_01.py"
+          ],
+          [
+            "python_02.py",
+            "typescript_02.ts",
+            "rust_03.rs"
+          ],
+          [
+            "rust_01.rs",
+            "python_02.py",
+            "typescript_00.ts"
+          ]
+        ],
+        "train_experience_digests": [
+          "3bbfabc666121b64061f626ae874555b0063e7ecc665052d02a1ecf3524fc2ab",
+          "31abe1be464067c6f59b0631773693e4bea598ade8cd2817308c911a34c43732",
+          "7a05f46e716b194acedca8c1687e8b799531fd912ce6dc13aee4cd3753509428"
+        ],
+        "train_experience_target_digests": [
+          "489b967c3f5d753b9cf145e1d37890e9d755e8c87b955113057ad35e2e9d068b",
+          "40d8cb057e23df75de33322e389ff5fa2789e63118a8d9de80e1959bfe5bf6d2",
+          "4fe0b5747ed5f6ee7f3354fd321de9c06b5af96c5e81d1716e6092452a7e28fd"
+        ],
+        "train_fit_input_digests": [
+          {
+            "experience_digest": "3bbfabc666121b64061f626ae874555b0063e7ecc665052d02a1ecf3524fc2ab",
+            "semantic_input_digest": "4e79e1cd151ef6fa382668455336b40838504de37ef2682bd1836ac4115750f9",
+            "target_digest": "489b967c3f5d753b9cf145e1d37890e9d755e8c87b955113057ad35e2e9d068b",
+            "transition_input_digest": "92fe390b0934aa0397c61013b3283dc8c71a66d8c16e41048cd9b4ef039a1a19"
+          },
+          {
+            "experience_digest": "31abe1be464067c6f59b0631773693e4bea598ade8cd2817308c911a34c43732",
+            "semantic_input_digest": "39cc349a02e64cb768e037748ac0fba795b4508450bb6d26c046dc9d15bf3b57",
+            "target_digest": "40d8cb057e23df75de33322e389ff5fa2789e63118a8d9de80e1959bfe5bf6d2",
+            "transition_input_digest": "0cabb35d7d54ffa622de83fcc28491311ea64cb6fec1c221d8504f845e09c4c2"
+          },
+          {
+            "experience_digest": "7a05f46e716b194acedca8c1687e8b799531fd912ce6dc13aee4cd3753509428",
+            "semantic_input_digest": "3c3ffb121666d0355dea98c3cabf8a23506d0a46c515f19bc5703068b8babfcd",
+            "target_digest": "4fe0b5747ed5f6ee7f3354fd321de9c06b5af96c5e81d1716e6092452a7e28fd",
+            "transition_input_digest": "7cc261b0a767855e42a9d7e5926c95b54138bed4737ee9894ce1085e56f8a344"
+          }
+        ],
+        "train_fit_tensor_digests": [
+          {
+            "experience_digest": "3bbfabc666121b64061f626ae874555b0063e7ecc665052d02a1ecf3524fc2ab",
+            "k1.semantic.input_tensor_digest": "13a62c44b2ed01af9bbbd9f22cd231d69f04baa002968a866058223c1340f3ac",
+            "k1.semantic.target_tensor_digest": "edccb5c8188ce04ff31f3724fa20133037a6fc108347980349a43eaf0f92895d",
+            "k2.transition.input_tensor_digest": "66375414a52fa66d7d092041f3ce5074e400666102cf1e8fabe96e8e64633302",
+            "k2.transition.target_tensor_digest": "1b5283ceac1f100080427145628f8b7d9580bb0a80c184999de291ff65a18611"
+          },
+          {
+            "experience_digest": "31abe1be464067c6f59b0631773693e4bea598ade8cd2817308c911a34c43732",
+            "k1.semantic.input_tensor_digest": "3afbd7760a1aafe1d54fc97b09068aee19a659cc2c9deeb8ef03175828214330",
+            "k1.semantic.target_tensor_digest": "edccb5c8188ce04ff31f3724fa20133037a6fc108347980349a43eaf0f92895d",
+            "k2.transition.input_tensor_digest": "44c4bfacbe1ab7256514ee51265399aa1b22da66b96de2be9fe51dcfb6d01421",
+            "k2.transition.target_tensor_digest": "1b5283ceac1f100080427145628f8b7d9580bb0a80c184999de291ff65a18611"
+          },
+          {
+            "experience_digest": "7a05f46e716b194acedca8c1687e8b799531fd912ce6dc13aee4cd3753509428",
+            "k1.semantic.input_tensor_digest": "008f8febbff57d17268d4ea280f7ea64698eb8177b5e24fb748977de45e3baf6",
+            "k1.semantic.target_tensor_digest": "ecb3c8fc3fd2cc593fbb7a231dcc2562da030f207c97920d0a6049c72f963d70",
+            "k2.transition.input_tensor_digest": "1ce6f45b94cd521d7708f05972773a9eed26851798a1c4db9d30ab4418d4414f",
+            "k2.transition.target_tensor_digest": "3b66ac52334d570296fe69c9f52e7ad267548375bef11b66a42fcdd1d89f77fa"
+          }
+        ],
+        "train_structured_loss_after": {
+          "combined_mse": 0.0035195557633819086,
+          "k1.content_mse": 6.472943641711026e-05,
+          "k1.fact_mse": 0.016682302579283714,
+          "k1.goal_mse": 0.0013451584187957148,
+          "k2.content_mse": 8.170673512116385e-05,
+          "k2.goal_mse": 0.00020687190893416604,
+          "k2.transition_mse": 0.0027365655017395816
+        },
+        "train_structured_loss_before": {
+          "combined_mse": 0.0037488220005393994,
+          "k1.content_mse": 8.139078060291165e-05,
+          "k1.fact_mse": 0.017317220258216064,
+          "k1.goal_mse": 0.001712819910608232,
+          "k2.content_mse": 8.55071969757167e-05,
+          "k2.goal_mse": 0.0002190584370206731,
+          "k2.transition_mse": 0.0030769354198127985
+        },
+        "train_structured_loss_delta": {
+          "combined_mse": -0.0002292662371574908,
+          "k1.content_mse": -1.6661344185801383e-05,
+          "k1.fact_mse": -0.00063491767893235,
+          "k1.goal_mse": -0.0003676614918125172,
+          "k2.content_mse": -3.80046185455285e-06,
+          "k2.goal_mse": -1.2186528086507054e-05,
+          "k2.transition_mse": -0.00034036991807321693
+        },
+        "train_target_digests": [
+          "33d41aa0906e7275836e3ef88bf11d6531372fa16f0c47b5097f74afe5a22600",
+          "33d41aa0906e7275836e3ef88bf11d6531372fa16f0c47b5097f74afe5a22600",
+          "bada0237dd9676acad6d1df0f02f0453469ac9a4b0504ecfe66585b2d2d9d0f1"
+        ],
+        "train_target_multiplicity": {
+          "33d41aa0906e7275836e3ef88bf11d6531372fa16f0c47b5097f74afe5a22600": 2,
+          "bada0237dd9676acad6d1df0f02f0453469ac9a4b0504ecfe66585b2d2d9d0f1": 1
+        },
+        "train_target_multiset_digest": "fc14c01319e85d369a2d398677032ff4f15368c50c72a569d1293def51b0f948",
+        "train_variant_strategy": "target_aware",
+        "training_performed": true,
+        "training_update_steps": 6,
+        "transition_losses": {
+          "content_loss": 5.505672379513271e-05,
+          "goal_loss": 0.00013758668501395732,
+          "transition_loss": 0.003076934954151511
+        },
+        "updated_workers": [
+          "k1.semantic",
+          "k2.transition"
+        ],
+        "version": 1,
+        "worker_attachment_preflight_course_seed": 1,
+        "worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83",
+        "workspace_seed": 0
+      }
+    },
+    {
+      "course_seed": 2,
+      "report": {
+        "blocking_reason": null,
+        "can_promote": false,
+        "can_start_r6_formal": false,
+        "candidate_checkpoint_paths": {
+          "k1.semantic": "E:\\Seed\\output\\taiji_m4v2_b3_k_target_aware_v2_20260910\\course_seed_2\\model_17\\taiji_b3_k1_semantic_loss_step1.pt",
+          "k2.transition": "E:\\Seed\\output\\taiji_m4v2_b3_k_target_aware_v2_20260910\\course_seed_2\\model_17\\taiji_b3_k2_transition_loss_step1.pt"
+        },
+        "candidate_namespace": "taiji:k:candidate:model-17",
+        "candidate_promoted": false,
+        "candidate_worker_bundle_digest": "607864f3cebdb6a19fd0b0e07303aa19a36292c76aada65ceeac27d86c77c6f2",
+        "checks": {
+          "adapter_candidate_stage_roundtrip": true,
+          "adapter_rollback_restored": true,
+          "candidate_checkpoint_fresh_restore": true,
+          "course_roundtrip": true,
+          "k1_owner_changed": true,
+          "k2_owner_changed": true,
+          "k3_owner_unchanged": true,
+          "no_optimizer_state": true,
+          "no_update_control": true,
+          "parent_checkpoint_unchanged": true,
+          "three_disjoint_holdout_records": true,
+          "train_holdout_disjoint": true,
+          "worker_attachment_preflight_passed": true
+        },
+        "course_digest": "4d4cb54e1800f849c92dfb38161ff904080c39c9e6f2cd0bf2cf4efcc20a0f95",
+        "course_seed": 2,
+        "elapsed_seconds": 4.613402600050904,
+        "frozen_workers": [
+          "k3.outcome_projection"
+        ],
+        "holdout_count": 3,
+        "holdout_loss_improved": true,
+        "holdout_structured_loss_after": {
+          "combined_mse": 0.01643053373577964,
+          "k1.content_mse": 7.850982456147904e-05,
+          "k1.fact_mse": 0.01711183786392212,
+          "k1.goal_mse": 0.001660058507695794,
+          "k2.content_mse": 0.031699521096015815,
+          "k2.goal_mse": 0.04511429822014179,
+          "k2.transition_mse": 0.0029189769023408494
+        },
+        "holdout_structured_loss_before": {
+          "combined_mse": 0.016777580521142633,
+          "k1.content_mse": 8.139078060291165e-05,
+          "k1.fact_mse": 0.017317220258216064,
+          "k1.goal_mse": 0.001712819910608232,
+          "k2.content_mse": 0.03250698816312555,
+          "k2.goal_mse": 0.04578693084719513,
+          "k2.transition_mse": 0.0032601331671079
+        },
+        "holdout_structured_loss_delta": {
+          "combined_mse": -0.00034704678536299355,
+          "k1.content_mse": -2.880956041432611e-06,
+          "k1.fact_mse": -0.0002053823942939452,
+          "k1.goal_mse": -5.2761402912437916e-05,
+          "k2.content_mse": -0.0008074670671097336,
+          "k2.goal_mse": -0.0006726326270533392,
+          "k2.transition_mse": -0.00034115626476705074
+        },
+        "no_update_control": {
+          "holdout_structured_loss_after": {
+            "combined_mse": 0.016777580521142633,
+            "k1.content_mse": 8.139078060291165e-05,
+            "k1.fact_mse": 0.017317220258216064,
+            "k1.goal_mse": 0.001712819910608232,
+            "k2.content_mse": 0.03250698816312555,
+            "k2.goal_mse": 0.04578693084719513,
+            "k2.transition_mse": 0.0032601331671079
+          },
+          "holdout_structured_loss_before": {
+            "combined_mse": 0.016777580521142633,
+            "k1.content_mse": 8.139078060291165e-05,
+            "k1.fact_mse": 0.017317220258216064,
+            "k1.goal_mse": 0.001712819910608232,
+            "k2.content_mse": 0.03250698816312555,
+            "k2.goal_mse": 0.04578693084719513,
+            "k2.transition_mse": 0.0032601331671079
+          },
+          "holdout_structured_loss_delta": {
+            "combined_mse": 0.0,
+            "k1.content_mse": 0.0,
+            "k1.fact_mse": 0.0,
+            "k1.goal_mse": 0.0,
+            "k2.content_mse": 0.0,
+            "k2.goal_mse": 0.0,
+            "k2.transition_mse": 0.0
+          },
+          "passed": true,
+          "training_update_steps": 0
+        },
+        "optimizer_state_present": false,
+        "parameter_delta_digest": {
+          "k1.semantic": "b2a96137a8beae404b1be9586a788cb3fbbb502a57450c08110cd5a00af3182d",
+          "k2.transition": "6b3fef4b58ff47788d444a4f65a715ea8f65453c3c07585179a8f6c614729347"
+        },
+        "parameter_delta_norm": {
+          "k1.semantic": 0.053237748902725965,
+          "k2.transition": 0.009396868616651453
+        },
+        "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+        "receipt": {
+          "candidate_namespace": "taiji:k:candidate:model-17",
+          "candidate_worker_bundle_digest": "607864f3cebdb6a19fd0b0e07303aa19a36292c76aada65ceeac27d86c77c6f2",
+          "candidate_worker_checkpoint_digests": [
+            [
+              "k1.semantic",
+              "4a282b097bcf678c4f51f8e3cc7332b29e1f3dad4ed8b1883d375dee179b9323"
+            ],
+            [
+              "k2.transition",
+              "32deca056629816b895ce48264a3beddd64f97ecb3b9d4213e63f094b6012da3"
+            ],
+            [
+              "k3.outcome_projection",
+              "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
+            ]
+          ],
+          "course_digest": "4d4cb54e1800f849c92dfb38161ff904080c39c9e6f2cd0bf2cf4efcc20a0f95",
+          "format": "taiji-k-continuation-learning-v1",
+          "fresh_restore_verified": true,
+          "frozen_workers": [
+            "k3.outcome_projection"
+          ],
+          "holdout_experience_digests": [
+            "5e1cd6bd0b07e3b5517b92ecf5d579a4e66cf2eedff104bb3a2eac73dcd04f5a",
+            "ed44ebde6681820c88135cdf849f963ebcd6a6c0044faa03656decade0fca9df",
+            "ce7a403a3d0631ad43f128fb7604ad4fc1a7a635d3e59f9bdfc3d7e05437aad7"
+          ],
+          "holdout_untrained": true,
+          "kind": "update_receipt",
+          "optimizer_state_present": false,
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "parent_unchanged": true,
+          "parent_worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83",
+          "parent_worker_checkpoint_digests": [
+            [
+              "k1.semantic",
+              "4b5ed527a3a105614cea73c6cc45a2d0577c9ec06eb6e974b245c679b93e5e5d"
+            ],
+            [
+              "k2.transition",
+              "67c96c5c8517ca58bacb45b8de756e7ffd24ee108276160c731da364714e2bda"
+            ],
+            [
+              "k3.outcome_projection",
+              "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
+            ]
+          ],
+          "receipt_digest": "f4f68b0837c01b4d28c1a7854020a97bbac853f606763ffe84d88ae55bb2f05c",
+          "rollback_restored": true,
+          "train_experience_digests": [
+            "3bbfabc666121b64061f626ae874555b0063e7ecc665052d02a1ecf3524fc2ab",
+            "7a05f46e716b194acedca8c1687e8b799531fd912ce6dc13aee4cd3753509428",
+            "3682f353f9c5fce29098f80930f97add714db0bd82eccab911f17e746a80dcdc"
+          ],
+          "training_steps": 6,
+          "updated_workers": [
+            "k1.semantic",
+            "k2.transition"
+          ],
+          "version": 1
+        },
+        "report_format": "taiji-m4v2-b3-k-loss-diagnostic-v1",
+        "research_course_executed": true,
+        "run_kind": "learning-diagnostic",
+        "semantic_losses": {
+          "content_loss": 1.669865469011711e-06,
+          "fact_loss": 0.015619569458067417,
+          "goal_loss": 9.105560820898972e-06
+        },
+        "status": "passed",
+        "target_digest_semantics": "combined K1/K2 target tensor digests",
+        "train_course_digest": "41082075889bbe8233a14058143a87c3b7d72d329279ea50deed7f3b7c587855",
+        "train_episode_count": 3,
+        "train_episode_indexes": [
+          0,
+          1,
+          4
+        ],
+        "train_episode_paths": [
+          [
+            "python_00.py",
+            "rust_00.rs",
+            "python_01.py"
+          ],
+          [
+            "rust_01.rs",
+            "python_02.py",
+            "typescript_00.ts"
+          ],
+          [
+            "rust_00.rs",
+            "typescript_03.ts",
+            "python_00.py"
+          ]
+        ],
+        "train_experience_digests": [
+          "3bbfabc666121b64061f626ae874555b0063e7ecc665052d02a1ecf3524fc2ab",
+          "7a05f46e716b194acedca8c1687e8b799531fd912ce6dc13aee4cd3753509428",
+          "3682f353f9c5fce29098f80930f97add714db0bd82eccab911f17e746a80dcdc"
+        ],
+        "train_experience_target_digests": [
+          "489b967c3f5d753b9cf145e1d37890e9d755e8c87b955113057ad35e2e9d068b",
+          "4fe0b5747ed5f6ee7f3354fd321de9c06b5af96c5e81d1716e6092452a7e28fd",
+          "9d16878a94b3f6fa97f276aac42140a9265649c5b3e8ae68f0ebd4d689760620"
+        ],
+        "train_fit_input_digests": [
+          {
+            "experience_digest": "3bbfabc666121b64061f626ae874555b0063e7ecc665052d02a1ecf3524fc2ab",
+            "semantic_input_digest": "4e79e1cd151ef6fa382668455336b40838504de37ef2682bd1836ac4115750f9",
+            "target_digest": "489b967c3f5d753b9cf145e1d37890e9d755e8c87b955113057ad35e2e9d068b",
+            "transition_input_digest": "92fe390b0934aa0397c61013b3283dc8c71a66d8c16e41048cd9b4ef039a1a19"
+          },
+          {
+            "experience_digest": "7a05f46e716b194acedca8c1687e8b799531fd912ce6dc13aee4cd3753509428",
+            "semantic_input_digest": "3c3ffb121666d0355dea98c3cabf8a23506d0a46c515f19bc5703068b8babfcd",
+            "target_digest": "4fe0b5747ed5f6ee7f3354fd321de9c06b5af96c5e81d1716e6092452a7e28fd",
+            "transition_input_digest": "7cc261b0a767855e42a9d7e5926c95b54138bed4737ee9894ce1085e56f8a344"
+          },
+          {
+            "experience_digest": "3682f353f9c5fce29098f80930f97add714db0bd82eccab911f17e746a80dcdc",
+            "semantic_input_digest": "938fdd37a7e4b86c63029ae38afabbd252b6f72e485efece6a6b7ba0bf942e21",
+            "target_digest": "9d16878a94b3f6fa97f276aac42140a9265649c5b3e8ae68f0ebd4d689760620",
+            "transition_input_digest": "1105b77c4065822f673157cc6f339534daae64744c1aa2ac39c0f082d63c38dd"
+          }
+        ],
+        "train_fit_tensor_digests": [
+          {
+            "experience_digest": "3bbfabc666121b64061f626ae874555b0063e7ecc665052d02a1ecf3524fc2ab",
+            "k1.semantic.input_tensor_digest": "13a62c44b2ed01af9bbbd9f22cd231d69f04baa002968a866058223c1340f3ac",
+            "k1.semantic.target_tensor_digest": "edccb5c8188ce04ff31f3724fa20133037a6fc108347980349a43eaf0f92895d",
+            "k2.transition.input_tensor_digest": "66375414a52fa66d7d092041f3ce5074e400666102cf1e8fabe96e8e64633302",
+            "k2.transition.target_tensor_digest": "1b5283ceac1f100080427145628f8b7d9580bb0a80c184999de291ff65a18611"
+          },
+          {
+            "experience_digest": "7a05f46e716b194acedca8c1687e8b799531fd912ce6dc13aee4cd3753509428",
+            "k1.semantic.input_tensor_digest": "008f8febbff57d17268d4ea280f7ea64698eb8177b5e24fb748977de45e3baf6",
+            "k1.semantic.target_tensor_digest": "ecb3c8fc3fd2cc593fbb7a231dcc2562da030f207c97920d0a6049c72f963d70",
+            "k2.transition.input_tensor_digest": "1ce6f45b94cd521d7708f05972773a9eed26851798a1c4db9d30ab4418d4414f",
+            "k2.transition.target_tensor_digest": "3b66ac52334d570296fe69c9f52e7ad267548375bef11b66a42fcdd1d89f77fa"
+          },
+          {
+            "experience_digest": "3682f353f9c5fce29098f80930f97add714db0bd82eccab911f17e746a80dcdc",
+            "k1.semantic.input_tensor_digest": "f705a4347afefdb6a40d79706ab3a75fb6c41d4aa7d7f983f9a4c6c8ce33968b",
+            "k1.semantic.target_tensor_digest": "ecb3c8fc3fd2cc593fbb7a231dcc2562da030f207c97920d0a6049c72f963d70",
+            "k2.transition.input_tensor_digest": "647c938a2bd86389b46d817170c56984ca799496238fd7be9fdc87cde60d8eaf",
+            "k2.transition.target_tensor_digest": "3b66ac52334d570296fe69c9f52e7ad267548375bef11b66a42fcdd1d89f77fa"
+          }
+        ],
+        "train_structured_loss_after": {
+          "combined_mse": 0.0032252989802954188,
+          "k1.content_mse": 4.3774287405540235e-05,
+          "k1.fact_mse": 0.01525589016576608,
+          "k1.goal_mse": 0.0009325381834059954,
+          "k2.content_mse": 5.86999231018126e-05,
+          "k2.goal_mse": 0.00014817050153700015,
+          "k2.transition_mse": 0.002912720820556084
+        },
+        "train_structured_loss_before": {
+          "combined_mse": 0.00335271316857365,
+          "k1.content_mse": 4.5334617728561476e-05,
+          "k1.fact_mse": 0.015619573493798574,
+          "k1.goal_mse": 0.0009621414355933666,
+          "k2.content_mse": 6.0138884388531246e-05,
+          "k2.goal_mse": 0.000152617435863552,
+          "k2.transition_mse": 0.003276473144069314
+        },
+        "train_structured_loss_delta": {
+          "combined_mse": -0.00012741418827823129,
+          "k1.content_mse": -1.5603303230212403e-06,
+          "k1.fact_mse": -0.0003636833280324936,
+          "k1.goal_mse": -2.9603252187371254e-05,
+          "k2.content_mse": -1.4389612867186444e-06,
+          "k2.goal_mse": -4.446934326551855e-06,
+          "k2.transition_mse": -0.00036375232351322983
+        },
+        "train_target_digests": [
+          "33d41aa0906e7275836e3ef88bf11d6531372fa16f0c47b5097f74afe5a22600",
+          "bada0237dd9676acad6d1df0f02f0453469ac9a4b0504ecfe66585b2d2d9d0f1",
+          "bada0237dd9676acad6d1df0f02f0453469ac9a4b0504ecfe66585b2d2d9d0f1"
+        ],
+        "train_target_multiplicity": {
+          "33d41aa0906e7275836e3ef88bf11d6531372fa16f0c47b5097f74afe5a22600": 1,
+          "bada0237dd9676acad6d1df0f02f0453469ac9a4b0504ecfe66585b2d2d9d0f1": 2
+        },
+        "train_target_multiset_digest": "db25bf73706540b02b2dcc9718d234a89c3d8b343fedc8ba16dc131515fb7d42",
+        "train_variant_strategy": "target_aware",
+        "training_performed": true,
+        "training_update_steps": 6,
+        "transition_losses": {
+          "content_loss": 4.1105133277596906e-05,
+          "goal_loss": 0.00010223623394267634,
+          "transition_loss": 0.0032764726784080267
+        },
+        "updated_workers": [
+          "k1.semantic",
+          "k2.transition"
+        ],
+        "version": 1,
+        "worker_attachment_preflight_course_seed": 2,
+        "worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83",
+        "workspace_seed": 0
+      }
+    }
+  ],
+  "combined_loss_delta_by_course_seed": {
+    "0": -0.000258125394591642,
+    "1": -0.0007242352070433236,
+    "2": -0.00034704678536299355
+  },
+  "course_seeds": [
+    0,
+    1,
+    2
+  ],
+  "distinct_course_variants": true,
+  "mean_combined_loss_delta": -0.0004431357956659864,
+  "model_seed": 17,
+  "no_update_control_passed": true,
+  "parameter_delta_norm_by_course_seed": {
+    "0": {
+      "k1.semantic": 0.04124486808151953,
+      "k2.transition": 0.009335648926761224
+    },
+    "1": {
+      "k1.semantic": 0.0679326469784541,
+      "k2.transition": 0.010593023004835517
+    },
+    "2": {
+      "k1.semantic": 0.053237748902725965,
+      "k2.transition": 0.009396868616651453
+    }
+  },
+  "parent_checkpoint_digests": [
+    "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675"
+  ],
+  "performance_gate_passed": true,
+  "promotion_blocking_reason": null,
+  "report_format": "taiji-m4v2-b3-k-target-aware-v2",
+  "require_target_diversity": true,
+  "run_kind": "target-aware-course-diversity-diagnostic",
+  "same_parent": true,
+  "stability_gate_passed": true,
+  "status": "passed",
+  "target_course_digests": [
+    "a0f58fa01922dc8a98eb1e9bb95fd428be3a07d0c9f7f249a124c4349d32e8ea",
+    "fc14c01319e85d369a2d398677032ff4f15368c50c72a569d1293def51b0f948",
+    "db25bf73706540b02b2dcc9718d234a89c3d8b343fedc8ba16dc131515fb7d42"
+  ],
+  "target_course_variants_distinct": true,
+  "technical_gate_passed": true,
+  "train_combined_loss_delta_by_course_seed": {
+    "0": -9.601985402696257e-05,
+    "1": -0.0002292662371574908,
+    "2": -0.00012741418827823129
+  },
+  "train_episode_count": 3,
+  "train_episode_indexes": [
+    [
+      0,
+      1,
+      2
+    ],
+    [
+      0,
+      3,
+      1
+    ],
+    [
+      0,
+      1,
+      4
+    ]
+  ],
+  "train_experience_digests": [
+    "30beb4fa8a66bff2127ba018de8f94ba34d110415c19530c3f800f4b511c7ed8",
+    "cea045ecc3c4d1c6df965a62b989cad474e6a198c113b86892f386f28d55de9c",
+    "41082075889bbe8233a14058143a87c3b7d72d329279ea50deed7f3b7c587855"
+  ],
+  "train_variant_strategy": "target_aware",
+  "version": 2,
+  "worst_combined_loss_delta": -0.000258125394591642
+}

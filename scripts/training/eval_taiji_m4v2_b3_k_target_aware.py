@@ -18,12 +18,16 @@ from scripts.training.eval_taiji_m4v2_b3_k_loss_stability import (  # noqa: E402
     run_stability,
 )
 
-REPORT_FORMAT = "taiji-m4v2-b3-k-target-aware-v1"
-VERSION = 1
+REPORT_FORMAT = "taiji-m4v2-b3-k-target-aware-v2"
+VERSION = 2
 TRAIN_EPISODE_COUNT = 3
 TRAIN_VARIANT_STRATEGY = "target_aware"
-DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m4v2_b3_k_target_aware_20260910.json"
-DEFAULT_CANDIDATE_ROOT = PROJECT_ROOT / "output" / "taiji_m4v2_b3_k_target_aware_20260910"
+DEFAULT_REPORT = (
+    PROJECT_ROOT / "reports" / "taiji_m4v2_b3_k_target_aware_v2_20260910.json"
+)
+DEFAULT_CANDIDATE_ROOT = (
+    PROJECT_ROOT / "output" / "taiji_m4v2_b3_k_target_aware_v2_20260910"
+)
 
 
 def run_target_aware(
