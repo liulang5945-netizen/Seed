@@ -8,7 +8,9 @@ M4.R0～R12 已完成并归档，但 2026-09-09 的代码/报告复审发现：�
 
 K continuation-learning contract 已完成，但完整 B3-K 尚未完成：`taiji/k_continuation.py` 现在把真实 K episode、train/holdout 隔离、K1/K2 可更新边界、K3/parent 不可变边界以及 checkpoint/rollback receipt 固化为 content-addressed 合同；当前 detached local-delta worker 明确不带 optimizer state。B3-K 单步 pilot 已在同一 inherited model 17 parent 上真实更新 K1/K2 各 1 步，K3、parent、fresh-restore 和 rollback 均通过；但 holdout 结构化准确率已在更新前饱和为 1.0，更新后没有可测增益，不能晋级。
 
-**当前唯一下一步：做 B3-K 的非饱和 structured-loss diagnostic slice。** 继续使用同一 parent、合同和回滚边界，train 只用一条记录，holdout 使用四条独立记录，以连续目标损失/置信度误差检验单步更新是否真的改善未见组合；不增加结构、不进入九 cell formal。随后才决定是否进行独立 holdout 正式比较及 v1 兼容对照。Skill/MCP、Workbench、插件、provider、CUDA 和视觉均已排入计划，不并行抢占模型学习主线。
+B3-K 的非饱和 structured-loss diagnostic 已通过：同一 model 17 parent、1 条 train、3 条真正 record-disjoint holdout 上，K1/K2 六个连续 MSE 分量全部下降，combined MSE `0.01677758 → 0.01569742`；K3、parent、fresh-restore、rollback 全部通过，但仍不是晋级证据。
+
+**当前唯一下一步：做 B3-K 多 course-seed 稳定性复验。** 固定 parent、合同、单条 train 更新、三条 holdout 和连续 scorer，只改变实际 course seed，至少 3 个 seed 逐个保存结果；不调整门槛、不增加结构、不进入九 cell formal。随后才决定是否进行独立 holdout 正式比较及 v1 兼容对照。Skill/MCP、Workbench、插件、provider、CUDA 和视觉均已排入计划，不并行抢占模型学习主线。
 
 ## 权威文档
 
