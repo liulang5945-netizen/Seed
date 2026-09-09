@@ -40,6 +40,7 @@ def run_stability(
     course_seeds: tuple[int, ...] = COURSE_SEEDS,
     train_episode_count: int = 1,
     train_variant_strategy: str = "contiguous",
+    require_target_diversity: bool = False,
 ) -> dict[str, Any]:
     cells = []
     for course_seed in course_seeds:
@@ -64,6 +65,11 @@ def run_stability(
     train_digests = [report.get("train_course_digest") for report in reports]
     train_variant_indexes = [report.get("train_episode_indexes") for report in reports]
     normalized_train_variant_indexes = _normalized_variant_keys(train_variant_indexes)
+    target_course_digests = [report.get("train_target_multiset_digest") for report in reports]
+    target_course_variants_distinct = (
+        len(target_course_digests) == len(set(target_course_digests))
+        and None not in target_course_digests
+    )
     candidate_digests = [report.get("candidate_worker_bundle_digest") for report in reports]
     candidate_updates_distinct = (
         len(candidate_digests) == len(set(candidate_digests))
@@ -77,7 +83,12 @@ def run_stability(
         and None not in train_variant_indexes
     )
     all_improved = bool(delta_values) and all(value < 0.0 for value in delta_values)
-    technical_gate_passed = technical_pass and same_parent and distinct_course_variants
+    technical_gate_passed = (
+        technical_pass
+        and same_parent
+        and distinct_course_variants
+        and (not require_target_diversity or target_course_variants_distinct)
+    )
     performance_gate_passed = all_improved and candidate_updates_distinct
     report = {
         "report_format": REPORT_FORMAT,
@@ -88,12 +99,15 @@ def run_stability(
         "course_seeds": list(course_seeds),
         "train_episode_count": int(train_episode_count),
         "train_variant_strategy": train_variant_strategy,
+        "require_target_diversity": bool(require_target_diversity),
         "cell_count": len(cells),
         "same_parent": same_parent,
         "parent_checkpoint_digests": sorted(parent_digests),
         "train_experience_digests": train_digests,
         "train_episode_indexes": train_variant_indexes,
         "distinct_course_variants": distinct_course_variants,
+        "target_course_digests": target_course_digests,
+        "target_course_variants_distinct": target_course_variants_distinct,
         "candidate_update_digests": candidate_digests,
         "candidate_updates_distinct": candidate_updates_distinct,
         "combined_loss_delta_by_course_seed": {
@@ -135,7 +149,7 @@ def run_stability(
         "blocking_reason": (
             None
             if technical_gate_passed
-            else "K loss stability cells failed or did not consume distinct train variants"
+            else "K loss stability cells failed or did not consume required distinct train variants"
         ),
         "promotion_blocking_reason": (
             None
@@ -157,6 +171,7 @@ def main() -> int:
     parser.add_argument("--model-seed", type=int, default=17)
     parser.add_argument("--train-episode-count", type=int, default=1)
     parser.add_argument("--train-variant-strategy", default="contiguous")
+    parser.add_argument("--require-target-diversity", action="store_true")
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
     args = parser.parse_args()
     artifact_dir = args.artifact_dir if args.artifact_dir.is_absolute() else PROJECT_ROOT / args.artifact_dir
@@ -168,6 +183,7 @@ def main() -> int:
         model_seed=args.model_seed,
         train_episode_count=args.train_episode_count,
         train_variant_strategy=args.train_variant_strategy,
+        require_target_diversity=args.require_target_diversity,
     )
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(

@@ -51,7 +51,9 @@
 
 **B3-K K1/K2 feature-target collision audit 已完成，根因收敛到课程 target 多样性不足。** 6 条 episode 的实际 K1/K2 input tensor digest 全部不同，但 K1 fact/goal/content target tensor 与 K2 delta/goal/content target tensor 都按 `0=3、1=4、2=5` 成对重复；对应 K1/K2 parameter delta 也按同样分组碰撞。报告为 [B3-K feature-target audit](../../../reports/taiji_m4v2_b3_k_feature_target_audit_20260910.json)，technical Gate 通过但 `all_fit_tensor_signatures_distinct=false`、`can_promote=false`。因此先前 course-seed 结果测到的是 3 类 target 组合的排列/重复，不是 6 个独立学习目标；当前没有证据要求修改 local-delta 算子或 typed mask。
 
-**当前唯一下一步：建立 B3-K target-aware course diversity Gate 并重跑诊断。** 在同一 parent/holdout/学习率/worker owner 下，显式按 K1 target digest + K2 target digest 的多重集合区分 course；选择 3 个 target 组成真正不同的 train course（例如 `A+B+C / A+A+B / A+B+B`），禁止仅靠文件路径或 experience digest 计作独立 seed。Gate 必须记录 input/target digest、target multiplicity、candidate update digest、保存恢复和 rollback；若 target-aware 组合仍退化，再讨论表征/更新规则，未通过前不进入 formal。
+**B3-K target-aware course diversity Gate 已通过。** 在 model 17 parent、固定 holdout、相同学习率和 worker owner 下，使用 `A+B+C / A+A+B / A+B+B` 三种真正不同的 target multiset；三组 candidate update digest 不同，combined-MSE delta 为 `−0.00025813/−0.00072424/−0.00034705`，均值 `−0.00044314`、最坏 `−0.00025813`，`technical_gate_passed=true`、`performance_gate_passed=true`、`stability_gate_passed=true`。报告为 [B3-K target-aware](../../../reports/taiji_m4v2_b3_k_target_aware_20260910.json)。这证明课程多样性 Gate 修正后窄任务学习链可稳定改善，但仍只有一个 model seed、三条 holdout，`can_promote=false`，不能等同 C formal。
+
+**当前唯一下一步：做 B3-K target-aware model-seed 稳定性复验。** 固定上述 target-aware 三种 train composition、holdout、scorer、学习率、K1/K2 owner 和全部保存/rollback Gate，分别使用真实 model seed `17/23/31` 的 worker artifacts；逐 model seed 记录 parent digest、artifact namespace、target multiset、candidate digest、三组 loss delta 和最坏退化。不得把同一 parent 的重复运行当独立模型 seed；本轮仍是 B 阶段稳定性证据，不直接 promotion 或启动九 cell formal。
 
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 
