@@ -600,3 +600,11 @@ manifest 与 matched-control aggregate，重新核验 registry/owner graph、che
 训练、runtime/provider/MCP/client/CUDA 副作用。**当前唯一下一步**：把 admission
 报告接入 formal runner 的输入合同，要求后续 formal 执行必须携带同一 manifest digest
 和通过的 admission report；先做 admission-gated preflight，不直接 promotion。
+
+formal runner 已接入 admission report 硬性输入；独立 gated preflight
+reports/taiji_m4v2_r6_matched_control_formal_admission_preflight_20260910.json
+通过，manifest digest 一致、admission status 通过、formal_input_ready=true、
+can_start_r6_formal=true，且 course/training/promotion/runtime/provider/MCP/client/CUDA
+均未发生。旧 execution/aggregate evidence 未被改写。**当前唯一下一步**：在该
+gated preflight 基础上启动同一 manifest 的正式执行入口；保持 promotion=false，先
+记录 formal start/执行结果，不接入默认 runtime/provider/MCP/client/CUDA。

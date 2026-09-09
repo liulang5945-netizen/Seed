@@ -731,3 +731,14 @@ blocking_failures 为空。
 这只打开同一合同下的 formal runner，不改变默认 runtime owner。下一步只把 admission
 report 加入 formal runner 的硬性输入，先执行 admission-gated preflight；不得直接
 宣布 promotion 或接入 provider/MCP/client/CUDA。
+
+## 49. Admission-gated formal preflight（2026-09-10）
+
+formal runner 已把 `--admission-report` 纳入 matched-control revision 输入合同，并
+使用独立 gated input/preflight 报告完成验证。manifest digest、admission digest/status、
+formal input matrix、parent/worker ledger、side-effect boundary 均通过；结果为
+`input_ready`、`can_start_r6_formal=true`、`can_promote=false`，没有执行课程、训练、
+candidate promotion 或任何默认 owner attachment。
+
+下一步只在该 gated preflight 上启动正式执行入口；正式结果未完成前保持 promotion 关闭，
+不接入 default runtime/provider/MCP/client/CUDA，也不改写历史 execution/aggregate。

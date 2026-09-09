@@ -8,6 +8,11 @@ REPORT = (
     / "reports"
     / "taiji_m4v2_r6_matched_control_admission_20260910.json"
 )
+PREFLIGHT_REPORT = (
+    Path(__file__).resolve().parents[2]
+    / "reports"
+    / "taiji_m4v2_r6_matched_control_formal_admission_preflight_20260910.json"
+)
 
 
 def test_m4v2_r6_matched_control_admission_is_ready_but_not_promoted() -> None:
@@ -26,3 +31,18 @@ def test_m4v2_r6_matched_control_admission_is_ready_but_not_promoted() -> None:
     assert report["cuda_used"] is False
     assert report["training_performed"] is False
     assert all(value is True for value in report["checks"].values())
+
+
+def test_formal_runner_requires_and_accepts_the_admission_report() -> None:
+    report = json.loads(PREFLIGHT_REPORT.read_text(encoding="utf-8"))
+
+    assert report["status"] == "input_ready"
+    assert report["formal_admission_required"] is True
+    assert report["formal_admission_passed"] is True
+    assert report["formal_input_ready"] is True
+    assert report["can_start_r6_formal"] is True
+    assert report["can_promote"] is False
+    assert report["course_executed"] is False
+    assert report["training_performed"] is False
+    assert report["candidate_promoted"] is False
+    assert report["checks"]["formal_admission_passed"] is True

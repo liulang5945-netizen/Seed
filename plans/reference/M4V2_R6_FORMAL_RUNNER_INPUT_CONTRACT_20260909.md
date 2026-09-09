@@ -802,3 +802,17 @@ paired metrics、side-effect contract 与冻结阈值均通过；blocking_failur
 该报告不是 promotion token，也没有训练或 runtime attachment。下一步只把该 admission
 report 接入 formal runner 输入合同：后续 formal preflight/执行必须验证相同 manifest
 digest、admission status 和副作用边界；先做 gated preflight，不直接 promotion。
+
+## 38. Formal runner admission-gated preflight（2026-09-10）
+
+formal runner 已增加 `--admission-report` 输入。对 matched-control revision，缺少
+该报告、manifest digest 不一致、admission 未通过、`can_promote=true` 或任何
+runtime/provider/MCP/client/CUDA/training 标志打开，均 fail-closed；旧非 revision
+manifest 保持兼容但不凭空获得 start token。
+
+使用独立 input/preflight 输出运行后，
+reports/taiji_m4v2_r6_matched_control_formal_admission_preflight_20260910.json 为
+`input_ready`，formal admission、manifest、parent/worker ledger、side-effect checks
+全部通过；`can_start_r6_formal=true`、`can_promote=false`，course/training/candidate
+promotion 均未发生。下一步只在此 gated preflight 上启动正式执行入口，不改写旧
+execution/aggregate evidence，不接 default runtime/provider/MCP/client/CUDA。

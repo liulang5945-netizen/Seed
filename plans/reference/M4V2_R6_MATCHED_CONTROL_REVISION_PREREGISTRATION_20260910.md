@@ -185,3 +185,15 @@ immutability，blocking_failures 为空。
 训练或任何 runtime attachment。下一步只将 admission report 接入 formal runner 的
 硬性输入并执行 gated preflight；不覆盖旧 aggregate、不直接 promotion，也不接入
 default runtime/provider/MCP/client/CUDA。
+
+## 16. Admission-gated formal preflight closure（2026-09-10）
+
+formal runner 已接入 `--admission-report`；matched-control revision 缺少通过的
+admission report 时直接 blocked。使用独立 gated input/preflight 路径后，报告为
+`input_ready`，manifest/admission digest、formal matrix、parent/worker ledger、
+resource/side-effect checks 全部通过，`can_start_r6_formal=true`、`can_promote=false`，
+没有 course/training/promotion 或 runtime attachment。
+
+下一步只启动同一 manifest 的 gated formal execution；formal 结果完成前不覆盖旧
+execution/aggregate、不直接 promotion，也不接入 default runtime/provider/MCP/client/
+CUDA。
