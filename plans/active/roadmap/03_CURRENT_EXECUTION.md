@@ -287,4 +287,10 @@ M5 episodic field verify 已通过。首个失败由两层评估错误组成：r
 **当前唯一下一步**：继续执行 workflow 的 M6 endogenous replay consolidation verify。
 M6 endogenous replay verify 已通过。评估器原先对 action/outcome/association 做 checkpoint payload lesion，触发 identity lineage 防篡改；现统一 fresh restore 后在内存对象施加 lesion。full replay contingency accuracy `0.75`，no-replay `0.25`，content/recurrent lesion 均 `0.25`；sleep 只改变 cortex，memory field topology/write count 不变，settled-state/written-field guard 和无 episodic readback 全部通过。
 
-**当前唯一下一步**：继续执行 workflow 的 grounded internalization S1 canary。
+S1 grounded internalization canary 已通过：native consolidation 对未见 grounded holdout 的 loss gain 为约 `0.359993`，internalized lesion loss `0.36`、grounding lesion loss `0.040714`，旧任务 retention、checkpoint roundtrip 和生命周期 `internalized` 均通过；该结果仍只证明 synthetic native canary，不授予物理删除外部描述、provider 执行或结构增长权限。
+
+随后按 workflow 运行 `tests/seed`，首轮在仓库可写 fixture 下得到 `82 passed, 1 failed`；唯一真实失败为 `test_judge_ranks_learned_text_above_noise`。根因是 `Seed.learn_bytes()` 的 F1 `predictive` readout 与 `SeedJudge.score()` 默认 `action` readout owner 错位，judge 因而没有读取已训练语言器官。`seed/judge.py` 已将只读观测显式对齐 `readout="predictive"`，并关闭 memory/identity 旁路，保持 F1 语言质量评分不被 F2/identity shortcut 污染；没有放宽质量阈值或修改训练参数。修复后完整 `tests/seed` 在同一仓库可写 fixture 下为 `114 passed`，目标文件 ruff、py_compile 和 `git diff --check` 通过。
+
+标准 pytest 内置 `tmp_path` 在本机仍可能创建 Windows 0700 临时目录并触发 ACL 错误；可写 fixture 版本是本轮真实失败账本依据，不能把环境清理噪声写成代码失败或代码通过。
+
+**当前唯一下一步**：继续执行 workflow 的完整 `tests/` 回归，仍使用仓库可写 basetemp 区分真实失败与 Windows 临时目录 ACL 噪声；保持 R4 shadow/默认 parent 不变，R5 learned router、Skill/MCP/provider、客户端与 CUDA 继续冻结。
