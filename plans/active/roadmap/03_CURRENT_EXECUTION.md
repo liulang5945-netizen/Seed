@@ -518,6 +518,13 @@ no-update/no-feedback 的 matched K；只重跑受影响的 paired resource/capa
 不放宽阈值、不把 fixed-large 改成 promotion threshold、不接 default runtime/provider/
 MCP/client/CUDA。
 
+revised formal runner 已建立独立 monotonic ledger：
+reports/taiji_m4v2_r6_matched_control_execution_20260910.json。model17/course0 和
+course1 已连续通过，累计 2/9；两个 cell 都是 frozen=0、matched=0、candidate=1、
+lesion=0，两个 paired delta=1.0，旧 R6 ledger 未覆盖。**当前唯一下一步**：只执行
+revised runner 的 model17/course2，继续要求 predecessor、manifest、resource 和
+no-feedback matched contract 全部通过，不运行 aggregate、不改变阈值。
+
 matched-control revision 已生成新 manifest
 plans/manifests/taiji_m4v2_r6_matched_control_v2_20260910.json（digest
 9221b0920413e7d470821dc66b7daa1a2769ba2502c6b6af1801eb5ad1555ae7），并完成

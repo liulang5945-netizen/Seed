@@ -378,6 +378,7 @@ def run_execution(
     report_path: Path = DEFAULT_EXECUTION_REPORT,
     prior_execution_report: Path | None = None,
     input_report_path: Path = DEFAULT_INPUT_REPORT,
+    preflight_report_path: Path | None = None,
     cell_report_path: Path = DEFAULT_CELL_REPORT,
     parent_dir: Path = DEFAULT_PARENT_DIR,
     worker_dir: Path = DEFAULT_WORKER_DIR,
@@ -392,13 +393,18 @@ def run_execution(
         report_path if prior_execution_report is None else prior_execution_report.resolve()
     )
     input_report_path = input_report_path.resolve()
+    preflight_report_path = (
+        report_path.with_name("taiji_m4v2_r6_formal_preflight_20260909.json")
+        if preflight_report_path is None
+        else preflight_report_path.resolve()
+    )
     cell_report_path = cell_report_path.resolve()
     parent_dir = parent_dir.resolve()
     worker_dir = worker_dir.resolve()
     fixed_large_dir = fixed_large_dir.resolve()
     preflight = run_preflight(
         manifest_path=manifest_path,
-        report_path=report_path.with_name("taiji_m4v2_r6_formal_preflight_20260909.json"),
+        report_path=preflight_report_path,
         input_report_path=input_report_path,
         parent_dir=parent_dir,
         worker_dir=worker_dir,
@@ -411,6 +417,7 @@ def run_execution(
         "status": "blocked_input",
         "manifest_path": _relative_path(manifest_path),
         "input_preflight_report": _relative_path(input_report_path),
+        "formal_preflight_report": _relative_path(preflight_report_path),
         "parent_dir": _relative_path(parent_dir),
         "worker_dir": _relative_path(worker_dir),
         "fixed_large_dir": _relative_path(fixed_large_dir),
@@ -563,6 +570,7 @@ def run_execution(
             if cell_report.get("status") == "passed" and not ledger_failures
             else "blocked_execution",
             "manifest_digest": manifest.get("manifest_digest"),
+            "control_revision": manifest.get("control_revision"),
             "input_preflight_report_digest": content_digest(preflight),
             "formal_input_ready": True,
             "cell_ledger": ledger,
@@ -603,6 +611,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--course-seed", type=int, default=EXECUTION_COURSE_SEED)
     parser.add_argument("--execution-report", type=Path, default=DEFAULT_EXECUTION_REPORT)
     parser.add_argument("--cell-report", type=Path, default=DEFAULT_CELL_REPORT)
+    parser.add_argument("--preflight-report", type=Path)
     parser.add_argument("--prior-execution-report", type=Path)
     args = parser.parse_args(argv)
     manifest_path = args.manifest if args.manifest.is_absolute() else PROJECT_ROOT / args.manifest
@@ -628,6 +637,15 @@ def main(argv: list[str] | None = None) -> int:
             if args.cell_report.is_absolute()
             else PROJECT_ROOT / args.cell_report
         )
+        preflight_report_path = (
+            None
+            if args.preflight_report is None
+            else (
+                args.preflight_report
+                if args.preflight_report.is_absolute()
+                else PROJECT_ROOT / args.preflight_report
+            )
+        )
         prior_execution_report_path = (
             None
             if args.prior_execution_report is None
@@ -644,6 +662,7 @@ def main(argv: list[str] | None = None) -> int:
             report_path=execution_report_path,
             prior_execution_report=prior_execution_report_path,
             input_report_path=input_report_path,
+            preflight_report_path=preflight_report_path,
             cell_report_path=cell_report_path,
             parent_dir=parent_dir,
             worker_dir=worker_dir,

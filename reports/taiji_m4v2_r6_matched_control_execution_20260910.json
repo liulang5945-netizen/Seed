@@ -1,0 +1,1446 @@
+{
+  "can_promote": false,
+  "can_start_r6_formal": false,
+  "candidate_promoted": false,
+  "candidate_training_performed": false,
+  "cell_ledger": [
+    {
+      "arms": [
+        {
+          "arm": "frozen-parent",
+          "causal": {
+            "k_feedback_consumed": false,
+            "k_task_admission": false,
+            "status": "frozen_parent_zero_baseline"
+          },
+          "checkpoint_ledger": {
+            "fresh_restore_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "rollback_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "rollback_matches_parent": true
+          },
+          "failure": null,
+          "new_capability": {
+            "sample_count": 1,
+            "status": "observed",
+            "task_success_rate": 0.0
+          },
+          "old_capability_retention": {
+            "G": true,
+            "S": true
+          },
+          "phase_rows": [
+            {
+              "after": 5.995296377498504,
+              "before": 5.995296377498504,
+              "phase": "S",
+              "status": "observed"
+            },
+            {
+              "after": 5.959810695900639,
+              "before": 5.959810695900639,
+              "phase": "G",
+              "status": "observed"
+            },
+            {
+              "new_capability": {
+                "sample_count": 1,
+                "status": "observed",
+                "task_success_rate": 0.0
+              },
+              "phase": "K",
+              "reason": "frozen parent K admission rejected because no K worker is attached",
+              "status": "rejected"
+            }
+          ],
+          "resource": {
+            "candidate_parameter_bytes": 0,
+            "checkpoint_write_bytes": 0,
+            "checkpoint_write_paths": [],
+            "device": "cpu",
+            "inference_trace_count": 1,
+            "measurement_complete": true,
+            "peak_working_set_bytes": 233205760,
+            "peak_working_set_method": "process_rss_before_after_lower_bound",
+            "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce",
+            "training_update_steps": 0,
+            "wall_clock_seconds": 0.13748649996705353,
+            "worker_parameter_bytes": 0,
+            "worker_parameter_count": 0
+          },
+          "side_effects": {
+            "candidate_namespace_written": false,
+            "default_runtime_attached": false,
+            "external_integrations_attached": false,
+            "parent_namespace_unchanged": true
+          },
+          "status": "control_passed"
+        },
+        {
+          "arm": "matched-fixed-capacity",
+          "causal": {
+            "feedback_admitted": false,
+            "k3_projection_accepted": true,
+            "lesion_k3": false,
+            "real_workbench_success": true,
+            "status": "matched_capacity_no_feedback"
+          },
+          "checkpoint_ledger": {
+            "adapter_checkpoint": {
+              "exchange_checkpoint_digest": "4cff1f1afc22383eee52828291377084072db7c424ce70bc4d50c50c1fe68d00",
+              "rollback_checkpoint_digest": "4cff1f1afc22383eee52828291377084072db7c424ce70bc4d50c50c1fe68d00",
+              "rollback_record_digest": null
+            },
+            "exchange_digest": null,
+            "rollback_record_explicit": false
+          },
+          "failure": null,
+          "new_capability": {
+            "sample_count": 1,
+            "status": "observed",
+            "task_success_rate": 0.0
+          },
+          "old_capability_retention": {
+            "G": true,
+            "S": true
+          },
+          "phase_rows": [
+            {
+              "after": 5.995296377498504,
+              "before": 5.995296377498504,
+              "phase": "S",
+              "status": "observed"
+            },
+            {
+              "after": 5.959810695900639,
+              "before": 5.959810695900639,
+              "phase": "G",
+              "status": "observed"
+            },
+            {
+              "observation_path": "typescript_05.ts",
+              "phase": "K",
+              "projection_accepted": true,
+              "projection_reason": "accepted",
+              "real_success": true,
+              "reward": 1.0,
+              "status": "executed_no_feedback"
+            }
+          ],
+          "resource": {
+            "candidate_parameter_bytes": 19332,
+            "checkpoint_write_bytes": 35403,
+            "checkpoint_write_paths": [
+              "checkpoints/taiji_k_workers/model_17/taiji_r6_k1_semantic.pt",
+              "checkpoints/taiji_k_workers/model_17/taiji_r6_k2_transition.pt",
+              "checkpoints/taiji_k_workers/model_17/taiji_r6_k3_outcome_projection.pt"
+            ],
+            "device": "cpu",
+            "inference_trace_count": 1,
+            "measurement_complete": true,
+            "peak_working_set_bytes": 260296704,
+            "peak_working_set_method": "process_rss_before_after_lower_bound",
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "training_update_steps": 0,
+            "wall_clock_seconds": 0.827625900041312,
+            "worker_parameter_bytes": 19332,
+            "worker_parameter_count": 4833
+          },
+          "side_effects": {
+            "candidate_namespace_written": false,
+            "default_runtime_attached": false,
+            "external_integrations_attached": false,
+            "parent_namespace_unchanged": true
+          },
+          "status": "passed"
+        },
+        {
+          "arm": "candidate-continuation",
+          "causal": {
+            "feedback_admitted": true,
+            "k3_projection_accepted": true,
+            "lesion_k3": false,
+            "real_workbench_success": true,
+            "status": "candidate_path_verified"
+          },
+          "checkpoint_ledger": {
+            "adapter_checkpoint": {
+              "exchange_checkpoint_digest": "463667cbf29d3f0d22799c8aa005db2a4b3a3b572e3f71b2ef80f5ef6e83f017",
+              "rollback_checkpoint_digest": "56f7b47aca187ad875c9c112ce38e2a76eb77deeb940884d37d9f3ee0cf01ccb",
+              "rollback_record_digest": "8e6b4d35646cfccca35ddf37925bd781c867c7dd8aba0d6f8e69c073585109ef"
+            },
+            "exchange_digest": "54eacdc45a9a92f60e6dcebe82988ab299d51c487c20f7c2979359ca68d421cb",
+            "rollback_record_explicit": true
+          },
+          "failure": null,
+          "new_capability": {
+            "sample_count": 1,
+            "status": "observed",
+            "task_success_rate": 1.0
+          },
+          "old_capability_retention": {
+            "G": true,
+            "S": true
+          },
+          "phase_rows": [
+            {
+              "after": 5.995296377498504,
+              "before": 5.995296377498504,
+              "phase": "S",
+              "status": "observed"
+            },
+            {
+              "after": 5.959810695900639,
+              "before": 5.959810695900639,
+              "phase": "G",
+              "status": "observed"
+            },
+            {
+              "observation_path": "typescript_05.ts",
+              "phase": "K",
+              "projection_accepted": true,
+              "projection_reason": "accepted",
+              "real_success": true,
+              "reward": 1.0,
+              "status": "executed"
+            }
+          ],
+          "resource": {
+            "candidate_parameter_bytes": 19332,
+            "checkpoint_write_bytes": 35403,
+            "checkpoint_write_paths": [
+              "checkpoints/taiji_k_workers/model_17/taiji_r6_k1_semantic.pt",
+              "checkpoints/taiji_k_workers/model_17/taiji_r6_k2_transition.pt",
+              "checkpoints/taiji_k_workers/model_17/taiji_r6_k3_outcome_projection.pt"
+            ],
+            "device": "cpu",
+            "inference_trace_count": 1,
+            "measurement_complete": true,
+            "peak_working_set_bytes": 260296704,
+            "peak_working_set_method": "process_rss_before_after_lower_bound",
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "training_update_steps": 0,
+            "wall_clock_seconds": 1.0549916999880224,
+            "worker_parameter_bytes": 19332,
+            "worker_parameter_count": 4833
+          },
+          "side_effects": {
+            "candidate_namespace_written": true,
+            "default_runtime_attached": false,
+            "external_integrations_attached": false,
+            "parent_namespace_unchanged": true
+          },
+          "status": "passed"
+        },
+        {
+          "arm": "fixed-large",
+          "causal": {
+            "branch_lesion_observable": true,
+            "k3_projection_accepted": true,
+            "k_task_equivalent": true,
+            "real_workbench_success": true,
+            "status": "fixed_large_control_verified"
+          },
+          "checkpoint_ledger": {
+            "adapter_checkpoint": {
+              "exchange_checkpoint_digest": "37f88d16a91f606ebec31066ca964039b7663fec3d73166972159348bfdee465",
+              "rollback_checkpoint_digest": "37f88d16a91f606ebec31066ca964039b7663fec3d73166972159348bfdee465",
+              "rollback_record_digest": "2bf31f223bcfb2653c6543fe941999e214c784a5dedf4d255df146c7dc5d7769"
+            },
+            "exchange_digest": "164200a14e2ec8eeb37258454088e1b6814e9798b5fa51a53faaa1ecc6530724",
+            "rollback_record_explicit": true
+          },
+          "failure": null,
+          "new_capability": {
+            "sample_count": 1,
+            "status": "observed",
+            "task_success_rate": 1.0
+          },
+          "old_capability_retention": {
+            "G": true,
+            "S": true
+          },
+          "phase_rows": [
+            {
+              "after": 5.995296377498504,
+              "before": 5.995296377498504,
+              "phase": "S",
+              "status": "observed"
+            },
+            {
+              "after": 5.959810695900639,
+              "before": 5.959810695900639,
+              "phase": "G",
+              "status": "observed"
+            },
+            {
+              "observation_path": "typescript_05.ts",
+              "phase": "K",
+              "projection_accepted": true,
+              "projection_reason": "accepted",
+              "real_success": true,
+              "reward": 1.0,
+              "status": "executed"
+            }
+          ],
+          "resource": {
+            "candidate_parameter_bytes": 38664,
+            "checkpoint_write_bytes": 125829,
+            "checkpoint_write_paths": [
+              "checkpoints/taiji_k_fixed_large/model_17/taiji_r6_k_fixed_large_ensemble.pt"
+            ],
+            "device": "cpu",
+            "inference_trace_count": 1,
+            "measurement_complete": true,
+            "parameter_count": 9666,
+            "peak_working_set_bytes": 260796416,
+            "peak_working_set_method": "process_rss_before_after_lower_bound",
+            "resource_manifest_digest": "3c8c8a375db46a79a66c60dcb1adf2c56fb63dc273545eb150123fb3ae3bfcc4",
+            "training_update_steps": 0,
+            "wall_clock_seconds": 0.749926200020127,
+            "worker_parameter_bytes": 38664,
+            "worker_parameter_count": 9666
+          },
+          "side_effects": {
+            "candidate_namespace_written": true,
+            "default_runtime_attached": false,
+            "external_integrations_attached": false,
+            "parent_namespace_unchanged": true
+          },
+          "status": "passed"
+        },
+        {
+          "arm": "lesion",
+          "causal": {
+            "feedback_admitted": false,
+            "k3_projection_accepted": false,
+            "lesion_k3": true,
+            "real_workbench_success": true,
+            "status": "lesion_verified"
+          },
+          "checkpoint_ledger": {
+            "adapter_checkpoint": {
+              "exchange_checkpoint_digest": "4cff1f1afc22383eee52828291377084072db7c424ce70bc4d50c50c1fe68d00",
+              "rollback_checkpoint_digest": "4cff1f1afc22383eee52828291377084072db7c424ce70bc4d50c50c1fe68d00",
+              "rollback_record_digest": null
+            },
+            "exchange_digest": null,
+            "rollback_record_explicit": false
+          },
+          "failure": null,
+          "new_capability": {
+            "sample_count": 1,
+            "status": "observed",
+            "task_success_rate": 0.0
+          },
+          "old_capability_retention": {
+            "G": true,
+            "S": true
+          },
+          "phase_rows": [
+            {
+              "after": 5.995296377498504,
+              "before": 5.995296377498504,
+              "phase": "S",
+              "status": "observed"
+            },
+            {
+              "after": 5.959810695900639,
+              "before": 5.959810695900639,
+              "phase": "G",
+              "status": "observed"
+            },
+            {
+              "observation_path": "typescript_05.ts",
+              "phase": "K",
+              "projection_accepted": false,
+              "projection_reason": "outcome_feedback_lesioned",
+              "real_success": true,
+              "reward": 1.0,
+              "status": "lesion_rejected"
+            }
+          ],
+          "resource": {
+            "candidate_parameter_bytes": 19332,
+            "checkpoint_write_bytes": 35403,
+            "checkpoint_write_paths": [
+              "checkpoints/taiji_k_workers/model_17/taiji_r6_k1_semantic.pt",
+              "checkpoints/taiji_k_workers/model_17/taiji_r6_k2_transition.pt",
+              "checkpoints/taiji_k_workers/model_17/taiji_r6_k3_outcome_projection.pt"
+            ],
+            "device": "cpu",
+            "inference_trace_count": 1,
+            "measurement_complete": true,
+            "peak_working_set_bytes": 261566464,
+            "peak_working_set_method": "process_rss_before_after_lower_bound",
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "training_update_steps": 0,
+            "wall_clock_seconds": 1.093292300007306,
+            "worker_parameter_bytes": 19332,
+            "worker_parameter_count": 4833
+          },
+          "side_effects": {
+            "candidate_namespace_written": false,
+            "default_runtime_attached": false,
+            "external_integrations_attached": false,
+            "parent_namespace_unchanged": true
+          },
+          "status": "passed"
+        }
+      ],
+      "cell": {
+        "course_seed": 0,
+        "model_seed": 17
+      },
+      "execution_contract_digest": "89f6d0d1927e56aabbe702c31e2a56d3d7173fc67b638355fc0984e5d83fa683",
+      "execution_report_digest": "d8b33e9b9014856a9313ea4b81fd43b449f099b5d68def29869340e3527903ec",
+      "execution_report_path": "reports/taiji_m4v2_r6_matched_control_cell_model_17_course_0_20260910.json",
+      "failure": null,
+      "fixed_large_artifact_digest": "7fb0802ffcc3c33d92ffa2879e014ddf34c9def71c692aadaef73e1cfd14af37",
+      "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_17/taiji_r6_k_fixed_large_ensemble.pt",
+      "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "phase_order": [
+        "S",
+        "G",
+        "K"
+      ],
+      "resource_gate": {
+        "candidate-continuation": true,
+        "fixed-large": true,
+        "frozen-parent": true,
+        "lesion": true,
+        "matched-fixed-capacity": true
+      },
+      "single_cell_executed": true,
+      "status": "executed_passed",
+      "worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83"
+    },
+    {
+      "arms": [
+        {
+          "arm": "frozen-parent",
+          "causal": {
+            "k_feedback_consumed": false,
+            "k_task_admission": false,
+            "status": "frozen_parent_zero_baseline"
+          },
+          "checkpoint_ledger": {
+            "fresh_restore_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "rollback_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+            "rollback_matches_parent": true
+          },
+          "failure": null,
+          "new_capability": {
+            "sample_count": 1,
+            "status": "observed",
+            "task_success_rate": 0.0
+          },
+          "old_capability_retention": {
+            "G": true,
+            "S": true
+          },
+          "phase_rows": [
+            {
+              "after": 5.995296377498504,
+              "before": 5.995296377498504,
+              "phase": "S",
+              "status": "observed"
+            },
+            {
+              "after": 5.959810695900639,
+              "before": 5.959810695900639,
+              "phase": "G",
+              "status": "observed"
+            },
+            {
+              "new_capability": {
+                "sample_count": 1,
+                "status": "observed",
+                "task_success_rate": 0.0
+              },
+              "phase": "K",
+              "reason": "frozen parent K admission rejected because no K worker is attached",
+              "status": "rejected"
+            }
+          ],
+          "resource": {
+            "candidate_parameter_bytes": 0,
+            "checkpoint_write_bytes": 0,
+            "checkpoint_write_paths": [],
+            "device": "cpu",
+            "inference_trace_count": 1,
+            "measurement_complete": true,
+            "peak_working_set_bytes": 232263680,
+            "peak_working_set_method": "process_rss_before_after_lower_bound",
+            "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce",
+            "training_update_steps": 0,
+            "wall_clock_seconds": 0.14933829999063164,
+            "worker_parameter_bytes": 0,
+            "worker_parameter_count": 0
+          },
+          "side_effects": {
+            "candidate_namespace_written": false,
+            "default_runtime_attached": false,
+            "external_integrations_attached": false,
+            "parent_namespace_unchanged": true
+          },
+          "status": "control_passed"
+        },
+        {
+          "arm": "matched-fixed-capacity",
+          "causal": {
+            "feedback_admitted": false,
+            "k3_projection_accepted": true,
+            "lesion_k3": false,
+            "real_workbench_success": true,
+            "status": "matched_capacity_no_feedback"
+          },
+          "checkpoint_ledger": {
+            "adapter_checkpoint": {
+              "exchange_checkpoint_digest": "4cff1f1afc22383eee52828291377084072db7c424ce70bc4d50c50c1fe68d00",
+              "rollback_checkpoint_digest": "4cff1f1afc22383eee52828291377084072db7c424ce70bc4d50c50c1fe68d00",
+              "rollback_record_digest": null
+            },
+            "exchange_digest": null,
+            "rollback_record_explicit": false
+          },
+          "failure": null,
+          "new_capability": {
+            "sample_count": 1,
+            "status": "observed",
+            "task_success_rate": 0.0
+          },
+          "old_capability_retention": {
+            "G": true,
+            "S": true
+          },
+          "phase_rows": [
+            {
+              "after": 5.995296377498504,
+              "before": 5.995296377498504,
+              "phase": "S",
+              "status": "observed"
+            },
+            {
+              "after": 5.959810695900639,
+              "before": 5.959810695900639,
+              "phase": "G",
+              "status": "observed"
+            },
+            {
+              "observation_path": "typescript_05.ts",
+              "phase": "K",
+              "projection_accepted": true,
+              "projection_reason": "accepted",
+              "real_success": true,
+              "reward": 1.0,
+              "status": "executed_no_feedback"
+            }
+          ],
+          "resource": {
+            "candidate_parameter_bytes": 19332,
+            "checkpoint_write_bytes": 35403,
+            "checkpoint_write_paths": [
+              "checkpoints/taiji_k_workers/model_17/taiji_r6_k1_semantic.pt",
+              "checkpoints/taiji_k_workers/model_17/taiji_r6_k2_transition.pt",
+              "checkpoints/taiji_k_workers/model_17/taiji_r6_k3_outcome_projection.pt"
+            ],
+            "device": "cpu",
+            "inference_trace_count": 1,
+            "measurement_complete": true,
+            "peak_working_set_bytes": 259268608,
+            "peak_working_set_method": "process_rss_before_after_lower_bound",
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "training_update_steps": 0,
+            "wall_clock_seconds": 0.8146954999538139,
+            "worker_parameter_bytes": 19332,
+            "worker_parameter_count": 4833
+          },
+          "side_effects": {
+            "candidate_namespace_written": false,
+            "default_runtime_attached": false,
+            "external_integrations_attached": false,
+            "parent_namespace_unchanged": true
+          },
+          "status": "passed"
+        },
+        {
+          "arm": "candidate-continuation",
+          "causal": {
+            "feedback_admitted": true,
+            "k3_projection_accepted": true,
+            "lesion_k3": false,
+            "real_workbench_success": true,
+            "status": "candidate_path_verified"
+          },
+          "checkpoint_ledger": {
+            "adapter_checkpoint": {
+              "exchange_checkpoint_digest": "2a2fca0eb214e4bac9ad1926404e85aeb0c399985a96c24ccd120f0c316e59e9",
+              "rollback_checkpoint_digest": "8805f6e340260d2aa6095a2ceb00932afd9de578bdb1659f17c276d3207cc7a8",
+              "rollback_record_digest": "5b49f02c24d5b703e7df91c3cb6a2cc874fa91e0a72ae7db30af1d1f1d616de7"
+            },
+            "exchange_digest": "b65fdd976b1ad3922b2325ecb75f92d0bdfe52e865ead89422cf5084b577d06c",
+            "rollback_record_explicit": true
+          },
+          "failure": null,
+          "new_capability": {
+            "sample_count": 1,
+            "status": "observed",
+            "task_success_rate": 1.0
+          },
+          "old_capability_retention": {
+            "G": true,
+            "S": true
+          },
+          "phase_rows": [
+            {
+              "after": 5.995296377498504,
+              "before": 5.995296377498504,
+              "phase": "S",
+              "status": "observed"
+            },
+            {
+              "after": 5.959810695900639,
+              "before": 5.959810695900639,
+              "phase": "G",
+              "status": "observed"
+            },
+            {
+              "observation_path": "typescript_05.ts",
+              "phase": "K",
+              "projection_accepted": true,
+              "projection_reason": "accepted",
+              "real_success": true,
+              "reward": 1.0,
+              "status": "executed"
+            }
+          ],
+          "resource": {
+            "candidate_parameter_bytes": 19332,
+            "checkpoint_write_bytes": 35403,
+            "checkpoint_write_paths": [
+              "checkpoints/taiji_k_workers/model_17/taiji_r6_k1_semantic.pt",
+              "checkpoints/taiji_k_workers/model_17/taiji_r6_k2_transition.pt",
+              "checkpoints/taiji_k_workers/model_17/taiji_r6_k3_outcome_projection.pt"
+            ],
+            "device": "cpu",
+            "inference_trace_count": 1,
+            "measurement_complete": true,
+            "peak_working_set_bytes": 259387392,
+            "peak_working_set_method": "process_rss_before_after_lower_bound",
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "training_update_steps": 0,
+            "wall_clock_seconds": 1.0310345001053065,
+            "worker_parameter_bytes": 19332,
+            "worker_parameter_count": 4833
+          },
+          "side_effects": {
+            "candidate_namespace_written": true,
+            "default_runtime_attached": false,
+            "external_integrations_attached": false,
+            "parent_namespace_unchanged": true
+          },
+          "status": "passed"
+        },
+        {
+          "arm": "fixed-large",
+          "causal": {
+            "branch_lesion_observable": true,
+            "k3_projection_accepted": true,
+            "k_task_equivalent": true,
+            "real_workbench_success": true,
+            "status": "fixed_large_control_verified"
+          },
+          "checkpoint_ledger": {
+            "adapter_checkpoint": {
+              "exchange_checkpoint_digest": "9b4c466171bedc0136661e1726dd8a10f38828e16c5d5428e101be9906266a82",
+              "rollback_checkpoint_digest": "9b4c466171bedc0136661e1726dd8a10f38828e16c5d5428e101be9906266a82",
+              "rollback_record_digest": "2e24a0ee5b899a859f119591d9f9c86cbdc2e5d72f435855f916b5bd2921ab51"
+            },
+            "exchange_digest": "da1f98aed19a92f3200004a94f53eb531d34bdb6c8bcd242cb49063f1fc68d0b",
+            "rollback_record_explicit": true
+          },
+          "failure": null,
+          "new_capability": {
+            "sample_count": 1,
+            "status": "observed",
+            "task_success_rate": 1.0
+          },
+          "old_capability_retention": {
+            "G": true,
+            "S": true
+          },
+          "phase_rows": [
+            {
+              "after": 5.995296377498504,
+              "before": 5.995296377498504,
+              "phase": "S",
+              "status": "observed"
+            },
+            {
+              "after": 5.959810695900639,
+              "before": 5.959810695900639,
+              "phase": "G",
+              "status": "observed"
+            },
+            {
+              "observation_path": "typescript_05.ts",
+              "phase": "K",
+              "projection_accepted": true,
+              "projection_reason": "accepted",
+              "real_success": true,
+              "reward": 1.0,
+              "status": "executed"
+            }
+          ],
+          "resource": {
+            "candidate_parameter_bytes": 38664,
+            "checkpoint_write_bytes": 125829,
+            "checkpoint_write_paths": [
+              "checkpoints/taiji_k_fixed_large/model_17/taiji_r6_k_fixed_large_ensemble.pt"
+            ],
+            "device": "cpu",
+            "inference_trace_count": 1,
+            "measurement_complete": true,
+            "parameter_count": 9666,
+            "peak_working_set_bytes": 260272128,
+            "peak_working_set_method": "process_rss_before_after_lower_bound",
+            "resource_manifest_digest": "3c8c8a375db46a79a66c60dcb1adf2c56fb63dc273545eb150123fb3ae3bfcc4",
+            "training_update_steps": 0,
+            "wall_clock_seconds": 0.7587818999309093,
+            "worker_parameter_bytes": 38664,
+            "worker_parameter_count": 9666
+          },
+          "side_effects": {
+            "candidate_namespace_written": true,
+            "default_runtime_attached": false,
+            "external_integrations_attached": false,
+            "parent_namespace_unchanged": true
+          },
+          "status": "passed"
+        },
+        {
+          "arm": "lesion",
+          "causal": {
+            "feedback_admitted": false,
+            "k3_projection_accepted": false,
+            "lesion_k3": true,
+            "real_workbench_success": true,
+            "status": "lesion_verified"
+          },
+          "checkpoint_ledger": {
+            "adapter_checkpoint": {
+              "exchange_checkpoint_digest": "4cff1f1afc22383eee52828291377084072db7c424ce70bc4d50c50c1fe68d00",
+              "rollback_checkpoint_digest": "4cff1f1afc22383eee52828291377084072db7c424ce70bc4d50c50c1fe68d00",
+              "rollback_record_digest": null
+            },
+            "exchange_digest": null,
+            "rollback_record_explicit": false
+          },
+          "failure": null,
+          "new_capability": {
+            "sample_count": 1,
+            "status": "observed",
+            "task_success_rate": 0.0
+          },
+          "old_capability_retention": {
+            "G": true,
+            "S": true
+          },
+          "phase_rows": [
+            {
+              "after": 5.995296377498504,
+              "before": 5.995296377498504,
+              "phase": "S",
+              "status": "observed"
+            },
+            {
+              "after": 5.959810695900639,
+              "before": 5.959810695900639,
+              "phase": "G",
+              "status": "observed"
+            },
+            {
+              "observation_path": "typescript_05.ts",
+              "phase": "K",
+              "projection_accepted": false,
+              "projection_reason": "outcome_feedback_lesioned",
+              "real_success": true,
+              "reward": 1.0,
+              "status": "lesion_rejected"
+            }
+          ],
+          "resource": {
+            "candidate_parameter_bytes": 19332,
+            "checkpoint_write_bytes": 35403,
+            "checkpoint_write_paths": [
+              "checkpoints/taiji_k_workers/model_17/taiji_r6_k1_semantic.pt",
+              "checkpoints/taiji_k_workers/model_17/taiji_r6_k2_transition.pt",
+              "checkpoints/taiji_k_workers/model_17/taiji_r6_k3_outcome_projection.pt"
+            ],
+            "device": "cpu",
+            "inference_trace_count": 1,
+            "measurement_complete": true,
+            "peak_working_set_bytes": 261029888,
+            "peak_working_set_method": "process_rss_before_after_lower_bound",
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "training_update_steps": 0,
+            "wall_clock_seconds": 1.0608975000213832,
+            "worker_parameter_bytes": 19332,
+            "worker_parameter_count": 4833
+          },
+          "side_effects": {
+            "candidate_namespace_written": false,
+            "default_runtime_attached": false,
+            "external_integrations_attached": false,
+            "parent_namespace_unchanged": true
+          },
+          "status": "passed"
+        }
+      ],
+      "cell": {
+        "course_seed": 1,
+        "model_seed": 17
+      },
+      "execution_contract_digest": "69686a9e427fc69c55f518b5124a8882aa179fa3ed9ff671cd6fe555bdb97a41",
+      "execution_report_digest": "aaf908db8308822a553460f70218f1a7070952a3e508d9ac9298f23fa4f9ffc6",
+      "execution_report_path": "reports/taiji_m4v2_r6_matched_control_cell_model_17_course_1_20260910.json",
+      "failure": null,
+      "fixed_large_artifact_digest": "7fb0802ffcc3c33d92ffa2879e014ddf34c9def71c692aadaef73e1cfd14af37",
+      "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_17/taiji_r6_k_fixed_large_ensemble.pt",
+      "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "phase_order": [
+        "S",
+        "G",
+        "K"
+      ],
+      "resource_gate": {
+        "candidate-continuation": true,
+        "fixed-large": true,
+        "frozen-parent": true,
+        "lesion": true,
+        "matched-fixed-capacity": true
+      },
+      "single_cell_executed": true,
+      "status": "executed_passed",
+      "worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83"
+    },
+    {
+      "arms": [
+        {
+          "arm": "frozen-parent",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "matched-fixed-capacity",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "candidate-continuation",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "fixed-large",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "lesion",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        }
+      ],
+      "cell": {
+        "course_seed": 2,
+        "model_seed": 17
+      },
+      "failure": null,
+      "fixed_large_artifact_digest": "7fb0802ffcc3c33d92ffa2879e014ddf34c9def71c692aadaef73e1cfd14af37",
+      "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_17/taiji_r6_k_fixed_large_ensemble.pt",
+      "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "phase_order": [
+        "S",
+        "G",
+        "K"
+      ],
+      "status": "not_started",
+      "worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83"
+    },
+    {
+      "arms": [
+        {
+          "arm": "frozen-parent",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "matched-fixed-capacity",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "candidate-continuation",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "fixed-large",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "lesion",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        }
+      ],
+      "cell": {
+        "course_seed": 0,
+        "model_seed": 23
+      },
+      "failure": null,
+      "fixed_large_artifact_digest": "d602e7efc0063cdbb2cc9474e23c24c050046d931632768680060c98a6b1f7b9",
+      "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_23/taiji_r6_k_fixed_large_ensemble.pt",
+      "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+      "phase_order": [
+        "S",
+        "G",
+        "K"
+      ],
+      "status": "not_started",
+      "worker_bundle_digest": "25e0ca1c0c88c84ea64c0c5db4e80a4a9903c7f3eef9c988970eb6bb6472213f"
+    },
+    {
+      "arms": [
+        {
+          "arm": "frozen-parent",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "matched-fixed-capacity",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "candidate-continuation",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "fixed-large",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "lesion",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        }
+      ],
+      "cell": {
+        "course_seed": 1,
+        "model_seed": 23
+      },
+      "failure": null,
+      "fixed_large_artifact_digest": "d602e7efc0063cdbb2cc9474e23c24c050046d931632768680060c98a6b1f7b9",
+      "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_23/taiji_r6_k_fixed_large_ensemble.pt",
+      "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+      "phase_order": [
+        "S",
+        "G",
+        "K"
+      ],
+      "status": "not_started",
+      "worker_bundle_digest": "25e0ca1c0c88c84ea64c0c5db4e80a4a9903c7f3eef9c988970eb6bb6472213f"
+    },
+    {
+      "arms": [
+        {
+          "arm": "frozen-parent",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "matched-fixed-capacity",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "candidate-continuation",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "fixed-large",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "lesion",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        }
+      ],
+      "cell": {
+        "course_seed": 2,
+        "model_seed": 23
+      },
+      "failure": null,
+      "fixed_large_artifact_digest": "d602e7efc0063cdbb2cc9474e23c24c050046d931632768680060c98a6b1f7b9",
+      "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_23/taiji_r6_k_fixed_large_ensemble.pt",
+      "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+      "phase_order": [
+        "S",
+        "G",
+        "K"
+      ],
+      "status": "not_started",
+      "worker_bundle_digest": "25e0ca1c0c88c84ea64c0c5db4e80a4a9903c7f3eef9c988970eb6bb6472213f"
+    },
+    {
+      "arms": [
+        {
+          "arm": "frozen-parent",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "matched-fixed-capacity",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "candidate-continuation",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "fixed-large",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "lesion",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        }
+      ],
+      "cell": {
+        "course_seed": 0,
+        "model_seed": 31
+      },
+      "failure": null,
+      "fixed_large_artifact_digest": "b69030c265e5a966813c4d6469349805dc7619b466a331e30cd98381c5f2cc1c",
+      "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_31/taiji_r6_k_fixed_large_ensemble.pt",
+      "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+      "phase_order": [
+        "S",
+        "G",
+        "K"
+      ],
+      "status": "not_started",
+      "worker_bundle_digest": "ab60c27756f46907e3f649f42dba1e8fada356de2d345b0cc64574abff1dff5b"
+    },
+    {
+      "arms": [
+        {
+          "arm": "frozen-parent",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "matched-fixed-capacity",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "candidate-continuation",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "fixed-large",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "lesion",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        }
+      ],
+      "cell": {
+        "course_seed": 1,
+        "model_seed": 31
+      },
+      "failure": null,
+      "fixed_large_artifact_digest": "b69030c265e5a966813c4d6469349805dc7619b466a331e30cd98381c5f2cc1c",
+      "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_31/taiji_r6_k_fixed_large_ensemble.pt",
+      "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+      "phase_order": [
+        "S",
+        "G",
+        "K"
+      ],
+      "status": "not_started",
+      "worker_bundle_digest": "ab60c27756f46907e3f649f42dba1e8fada356de2d345b0cc64574abff1dff5b"
+    },
+    {
+      "arms": [
+        {
+          "arm": "frozen-parent",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "matched-fixed-capacity",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "candidate-continuation",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "fixed-large",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        },
+        {
+          "arm": "lesion",
+          "causal": null,
+          "checkpoint_ledger": null,
+          "failure": null,
+          "new_capability": null,
+          "old_capability_retention": null,
+          "phase_rows": [],
+          "resource": null,
+          "side_effects": null,
+          "status": "not_started"
+        }
+      ],
+      "cell": {
+        "course_seed": 2,
+        "model_seed": 31
+      },
+      "failure": null,
+      "fixed_large_artifact_digest": "b69030c265e5a966813c4d6469349805dc7619b466a331e30cd98381c5f2cc1c",
+      "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_31/taiji_r6_k_fixed_large_ensemble.pt",
+      "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+      "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+      "phase_order": [
+        "S",
+        "G",
+        "K"
+      ],
+      "status": "not_started",
+      "worker_bundle_digest": "ab60c27756f46907e3f649f42dba1e8fada356de2d345b0cc64574abff1dff5b"
+    }
+  ],
+  "client_attached": false,
+  "control_revision": {
+    "format": "taiji-m4v2-r6-matched-control-v2",
+    "frozen_parent_arm": {
+      "explicit_k_admission_baseline": true,
+      "parameter_updates": false,
+      "task_success_rate": 0.0,
+      "worker_bundle_attached": false
+    },
+    "matched_arm": {
+      "feedback_admitted": false,
+      "parameter_updates": false,
+      "same_input_trace": true,
+      "same_parameter_budget": true,
+      "same_restore_path": true,
+      "worker_bundle_attached": true
+    },
+    "thresholds_unchanged": {
+      "candidate_holdout_floor": 0.75,
+      "paired_capability_delta_floor": 0.25,
+      "peak_working_set_multiplier_cap": 1.25,
+      "wall_clock_multiplier_cap": 1.5
+    }
+  },
+  "course_executed": false,
+  "created_at_unix": 1788971514.2592185,
+  "cuda_used": false,
+  "default_runtime_attached": false,
+  "elapsed_seconds": 4.204992999904789,
+  "execution_contract_digest": "69686a9e427fc69c55f518b5124a8882aa179fa3ed9ff671cd6fe555bdb97a41",
+  "execution_report_digest": "aaf908db8308822a553460f70218f1a7070952a3e508d9ac9298f23fa4f9ffc6",
+  "execution_report_path": "reports/taiji_m4v2_r6_matched_control_cell_model_17_course_1_20260910.json",
+  "failures": [],
+  "fixed_large_dir": "checkpoints/taiji_k_fixed_large",
+  "formal_input_ready": true,
+  "formal_preflight_report": "reports/taiji_m4v2_r6_matched_control_formal_preflight_20260910.json",
+  "input_preflight_report": "reports/taiji_m4v2_r6_matched_control_input_preflight_20260910.json",
+  "input_preflight_report_digest": "504d5946250b3354d39779fe243256aeee31554646e6001adbd121bbc7eb8c22",
+  "manifest_digest": "9221b0920413e7d470821dc66b7daa1a2769ba2502c6b6af1801eb5ad1555ae7",
+  "manifest_path": "plans/manifests/taiji_m4v2_r6_matched_control_v2_20260910.json",
+  "mcp_attached": false,
+  "next_gate": "Expand the same cell executor only after reviewing this written row; the remaining eight rows stay not_started and promotion remains closed.",
+  "parent_dir": "checkpoints/taiji_r6_parents",
+  "prior_execution_report": "reports/taiji_m4v2_r6_matched_control_execution_20260910.json",
+  "prior_execution_report_digest": "09684cbaf955ebe6481e12081431a3f30bcd3837f0a802bd6b29ed0e1d21fd51",
+  "provider_attached": false,
+  "report_format": "taiji-m4v2-r6-formal-execution-v1",
+  "single_cell_executed": true,
+  "status": "single_cell_executed",
+  "target_cell": {
+    "course_seed": 1,
+    "model_seed": 17
+  },
+  "training_performed": false,
+  "version": 1,
+  "worker_dir": "checkpoints/taiji_k_workers"
+}

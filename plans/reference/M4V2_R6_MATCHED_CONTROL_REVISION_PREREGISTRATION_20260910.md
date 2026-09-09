@@ -76,3 +76,13 @@ matched 的 0 表示同一容量路径主动拒绝新反馈输出，不表示 wo
 失败报告、不用均值填补。新 revision 仍保持
 can_start_r6_formal=false、can_promote=false，不接 default runtime、provider、
 MCP、client 或 CUDA。
+
+## 6. Revised runner course1 closure（2026-09-10）
+
+独立 revised formal runner 已创建 monotonic execution ledger，使用新 manifest digest
+和独立 preflight 报告；model17/course0 与 course1 均已通过，当前累计 2/9。
+prior-ledger 校验有效，旧 R6 ledger 不被覆盖。两个 cell 均满足 frozen=0、matched=0、
+candidate=1、lesion=0 和两个 delta=1.0。
+
+下一步只执行 model17/course2；通过后再进入 model23，期间不运行 aggregate、不接入
+default runtime/provider/MCP/client/CUDA。
