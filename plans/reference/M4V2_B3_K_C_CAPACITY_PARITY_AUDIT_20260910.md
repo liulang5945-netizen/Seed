@@ -36,5 +36,8 @@
 
 ## 下一阶段边界
 
-当前唯一下一步是实现“上调 candidate 容量 + 同预算”的 parity preflight，先生成并审计 paired artifact contract，不立即训练。preflight 未通过前禁止追加训练、调学习率、复活 R5/旧结构增长路线，或接入 default runtime/provider/MCP/client/CUDA。
+capacity-parity manifest 和 fixed-large input preflight 已完成：9/9 fixed-large cell 满足 38,664 参数字节、14,252 实际更新步、9 个逻辑 checkpoint、同 parent/course 和 fresh-restore；candidate parity artifact 尚未生成，preflight 明确不启动训练。
 
+构造审查发现当前 candidate 是单个 K1/K2 learner，而 fixed-large 是两个同构 replica 的算术平均；简单复制两个 replica 会把 candidate 变成 fixed-large，失去学习规则对照意义。因此 preflight 将状态保持为 ready-for-candidate-design，而不是允许直接 build。
+
+当前唯一下一步是冻结一个“参数达到 38,664、但 owner/update/readout 路径不同于 fixed-large”的 widened-candidate 设计，再按 manifest 生成 artifact，并验证参数字节、更新步、checkpoint 发射、fresh-restore、rollback 和 parent/K3 不变。设计未冻结前禁止训练、sealed formal、promotion、调学习率、复活 R5/旧结构增长路线，或接入 default runtime/provider/MCP/client/CUDA。
