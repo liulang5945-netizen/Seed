@@ -536,3 +536,12 @@ side-effect contract 通过，未接入任何外围系统。
 
 下一步只推进 `model17/course2`，完成 model17 的 3-course slice；在该 slice 闭合前不
 扩大到 model23/31，不运行 aggregate 或 promotion。
+
+## 30. Model17 three-course slice closure（2026-09-09）
+
+model17/course2 已通过并追加，model17 的三个 course row 均为 `executed_passed`，其余
+model23/31 row 仍未启动。formal runner 同时冻结了 9-cell 的前序执行顺序，禁止跳过
+失败或未执行的 row；这只是 execution order/ledger Gate，不是 promotion Gate。
+
+下一步只执行 `model23/course0`，继续复用同一 parent/worker/fixed-large/resource/rollback
+合同；在六个 model23/31 row 完成前不计算 9-cell aggregate、不接默认 runtime。

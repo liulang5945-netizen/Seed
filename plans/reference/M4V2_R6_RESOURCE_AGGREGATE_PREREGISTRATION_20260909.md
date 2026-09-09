@@ -115,3 +115,6 @@ attribution**；该 row 已闭合。当前唯一下一步：**只执行下一个
 `model17/course1` row**，继续验证同一资源/失败合同；任何失败都保留并停止，不用其余
 cell 的均值覆盖。course1 已闭合且 prior ledger 保持单调；当前唯一下一步：**只执行
 `model17/course2` row**，完成 model17 的 course slice 后再评估是否开放 model23/31。
+course2 已通过，model17 的三行均为 `executed_passed`；runner 已冻结完整的 9-cell
+前序顺序并拒绝 predecessor 未通过时的跳跃。当前唯一下一步：**只执行
+`model23/course0` row**，不计算 aggregate、不用其他 cell 抵销失败。
