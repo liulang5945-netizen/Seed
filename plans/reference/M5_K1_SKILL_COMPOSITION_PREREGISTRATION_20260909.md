@@ -85,3 +85,28 @@ Gate（全部预注册）：
 **K1 canary 判定：未通过（honest fail）**。组合链条的工程闭合已验证，失败源于线性语义 learner 在完全相关训练边际下无法组合 (身份 × 状态) 属性——这是「课程结构属性」问题的语义层版本（同 M4 结论族：分布相关性支配学习结果）。
 
 **唯一建议下一步（K1.1，需新预注册）**：类型化 fact–feature 绑定——每个语义 fact 声明其因果特征来源（从 `WorkbenchObservationSchema.feature_names` 与 fact key 的谓词名规范派生掩码），fact head 按 fact×feature 掩码读取；goal/content 读出掩码到**状态类 facts**（read/language_state/toolchain/target），身份 facts（language）只进世界与 content.semantic_slots（planner 一致性检查已消费后者）。在该设计下，未见三元组的状态投影与已见 inspect 状态向量**逐维相同**（组合发生在 fact 层），goal 读出在分布内 → A 臂可组合且 B/C 仍应崩塌。确认前不改 `taiji/semantic_training.py`、不重跑 K1。
+
+## 7. K1.1 执行记录（2026-09-09，用户确认后实现，Gate 通过）
+
+用户确认 K1.1 方案后实现并重跑 K1。改动两处：
+
+1. **`taiji/semantic_training.py`（`SEMANTIC_TRAINING_VERSION 1→2`）**：`StructuredSemanticLearner` 新增可选 `fact_feature_masks`（fact key → 允许的特征索引；提供时必须**精确覆盖**全部 fact keys，fail-closed）与 `readout_excluded_facts`（goal/content 读出输入中被排除的 facts）。fact head 在初始化、每个训练 epoch 的 delta 更新后、checkpoint 恢复后都重新执行掩码（掩码区权重恒零，delta 更新对允许区的贡献不受影响）；goal/content 读出在 fit 与 predict 两侧一致地对输入乘掩码（被排除列零初始化且零更新，不引入额外自由度）。未提供掩码时行为与 v1 完全一致（向后兼容）；掩码与排除项进入 checkpoint 往返。M2.R3 回归 5 passed、M3.R1 回归 2 passed、目标文件 mypy 0。
+2. **K1 脚本（report version 2）**：新增 `_typed_fact_feature_masks` 从 schema 规范派生绑定——`language::*` 读 `language:{value}` one-hot、`language_state::*` 读 `selection:{value}`、`read/target/toolchain/diagnostics` 各读同名 scalar 指示器；`readout_excluded_facts` = 全部 `language::*` 身份 facts。绑定描述写入报告 `typed_binding` 字段。
+
+### 7.1 结果（同预注册判据，未放宽；单 seed canary）
+
+| 量 | 值 | Gate |
+|---|---|---|
+| A unseen（ts05-07 真实执行成功率） | **1.0**（3/3 全部 `resolved → workspace.read → success=1.0 → S6B 准入`） | ≥0.8 ✓ |
+| A−B / A−C | **1.0 / 1.0**（B/C 全部 `conflict` fail-closed） | ≥0.3 ✓ |
+| rows | 每臂 unseen 计数 3 | ✓ |
+| Stage-1 拟合 | fact 0.0365（掩码约束下的收敛值）/ goal 1.2e-05 / content 2.8e-06 | — |
+| Stage-2 接口 | 6/6 良构 | ✓ |
+
+A 臂 6 行完整行为：ts05/06/07（**未见三元组**）inspect 成功+准入、python_05（已见组合）成功+准入、rust_05（已见组合）clarify→resolve 真实执行成功（resolve 成功的 S6B 投影仍受「stale evidence」限制，为 §6.4 已知次要限制）、missing_03 无路由正确失败。报告：`reports/taiji_m5_k1_skill_composition_20260909.json`（`status=passed`，`can_promote=false` 固定）。
+
+### 7.2 结论与边界
+
+- **K1 canary 通过**：四阶段链（类型化语义 → 转移接口 → 只读意图 → 隔离执行）在未见任务组合上以真实执行成功闭合，组合能力依赖学习的语义表征（B frozen / C lesion 崩塌为 0）。这证明的是「组合链闭合 + 语义组合因果」，不是 A8 完成，也不是多 seed 稳健性。
+- 类型化绑定的边界如实声明：fact→feature 掩码由**课程 harness 依 schema 规范派生**，是先验的表征约束而非学出的绑定；learner 学到的是掩码内的校准（阈值/读出）。该约束的普适化（无 schema 先验时如何学出绑定）是后续课程问题，不在 K1 结论内。
+- 下一形式化步骤需另行预注册：多 seed/order formal（K 量尺=任务成功率），以及 K2（更深的组合维度）设计。formal 前不改判据、不引入新变量。

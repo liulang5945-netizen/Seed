@@ -4,7 +4,8 @@ Preregistration: ``plans/reference/M5_K1_SKILL_COMPOSITION_PREREGISTRATION
 _20260909.md``.  One coherent path on real Workbench workspaces:
 
   stage 1  structured semantics  (StructuredSemanticLearner: percept ->
-           facts / Goal / ContentPlan; the arms vary THIS learner)
+           facts / Goal / ContentPlan; the arms vary THIS learner; K1.1
+           typed fact->feature binding + state-only goal/content readout)
   stage 2  world transition      (StructuredSemanticTransitionLearner,
            minimized per preregistration to an interface check)
   stage 3  read-only intent      (NativeReadOnlyIntentPlanner)
@@ -68,7 +69,7 @@ from taiji import (  # noqa: E402
 )
 
 REPORT_FORMAT = "taiji-m5-k1-skill-composition-v1"
-VERSION = 1
+VERSION = 2
 GROUNDING_MARGIN_FLOOR = 0.05
 TRAIN_EPOCHS = 280
 TRAIN_LR = 0.2
@@ -259,6 +260,43 @@ def _expected_capability(observation: WorkbenchObservation) -> str | None:
     if kind in {"clarify-toolchain", "clarify-language"}:
         return "workspace.programming_language.resolve"
     return None
+
+
+def _typed_fact_feature_masks(
+    fact_keys: tuple[str, ...], schema
+) -> dict[str, tuple[int, ...]]:
+    """K1.1 typed fact->feature binding derived from the observation schema.
+
+    Each semantic fact may only read the feature that indicates its own
+    attribute value: identity (language) facts read their language one-hot,
+    state facts read their scalar or one-hot indicator.  Without this binding
+    the underdetermined linear fact head binds state attributes to correlated
+    identity features and compositional generalization fails (K1 §6.3).
+    """
+
+    names = list(schema.feature_names)
+    masks: dict[str, tuple[int, ...]] = {}
+    for key in fact_keys:
+        parts = key.split("::")
+        if len(parts) != 3 or parts[0] != "workbench":
+            raise ValueError(f"untyped semantic fact key: {key}")
+        predicate, value = parts[1], parts[2]
+        if predicate == "language":
+            feature_name = f"language:{value}"
+        elif predicate == "language_state":
+            feature_name = f"selection:{value}"
+        elif predicate == "read":
+            feature_name = "read_success"
+        elif predicate == "target":
+            feature_name = "file_is_file"
+        elif predicate == "toolchain":
+            feature_name = "toolchain_available"
+        elif predicate == "diagnostics":
+            feature_name = "diagnostics_connected"
+        else:
+            raise ValueError(f"untyped semantic fact predicate: {key}")
+        masks[key] = (names.index(feature_name),)
+    return masks
 
 
 def _build_workspace(root: Path, *, task_seed: int) -> None:
@@ -581,11 +619,29 @@ def run_cell(*, task_seed: int, learner_seed: int) -> dict[str, Any]:
             )
 
             planner = NativeReadOnlyIntentPlanner(ReadOnlyIntentPolicy(routes=READ_ONLY_ROUTES))
-            trained_semantic = StructuredSemanticLearner(semantic_corpus)
+            # K1.1 typed binding: every fact reads only its own attribute
+            # feature, and the goal/content readouts drop identity facts
+            # (language) whose training marginals are perfectly correlated
+            # with the toolchain state.  Composition then happens at the fact
+            # level, where the unseen triple's state projection matches the
+            # seen inspect state vector exactly.
+            fact_masks = _typed_fact_feature_masks(semantic_corpus.fact_keys, schema)
+            readout_excluded = tuple(
+                key for key in semantic_corpus.fact_keys if key.split("::")[1] == "language"
+            )
+            trained_semantic = StructuredSemanticLearner(
+                semantic_corpus,
+                fact_feature_masks=fact_masks,
+                readout_excluded_facts=readout_excluded,
+            )
             semantic_losses = trained_semantic.fit(
                 semantic_corpus.train, epochs=SEMANTIC_EPOCHS, learning_rate=SEMANTIC_LR
             )
-            frozen_semantic = StructuredSemanticLearner(semantic_corpus)
+            frozen_semantic = StructuredSemanticLearner(
+                semantic_corpus,
+                fact_feature_masks=fact_masks,
+                readout_excluded_facts=readout_excluded,
+            )
             lesion_payload = trained_semantic.checkpoint()
             lesioned_semantic = StructuredSemanticLearner.from_checkpoint(
                 lesion_payload, semantic_corpus
@@ -662,6 +718,12 @@ def run_cell(*, task_seed: int, learner_seed: int) -> dict[str, Any]:
                 "task_seed": int(task_seed),
                 "learner_seed": int(learner_seed),
                 "arms": arms,
+                "typed_binding": {
+                    "fact_feature_masks": {
+                        key: list(indices) for key, indices in fact_masks.items()
+                    },
+                    "readout_excluded_facts": list(readout_excluded),
+                },
                 "stage1_semantic_fit_losses": {
                     key: round(float(value), 8) for key, value in semantic_losses.items()
                 },
