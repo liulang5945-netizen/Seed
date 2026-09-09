@@ -23,9 +23,15 @@ EXPECTED = b"bcda" * 32
 
 def _instrumented_free_run(model: Taiji) -> dict[str, object]:
     model.reset_dynamics(episode_id="n9-instrumented")
-    step = model.observe(model.config.boundary_symbol, learn=False)
+    observe_kwargs = {
+        "learn": False,
+        "readout": "predictive",
+        "use_memory": False,
+        "use_identity": False,
+    }
+    step = model.observe(model.config.boundary_symbol, **observe_kwargs)
     for symbol in PROMPT:
-        step = model.observe(symbol, learn=False)
+        step = model.observe(symbol, **observe_kwargs)
 
     generated = bytearray()
     invalid_actions = 0
@@ -40,7 +46,7 @@ def _instrumented_free_run(model: Taiji) -> dict[str, object]:
             invalid_actions += 1
             symbol = 0
         generated.append(symbol)
-        step = model.observe(symbol, learn=False)
+        step = model.observe(symbol, **observe_kwargs)
         state = model.snapshot()
         for region in state.regions:
             max_membrane_norm = max(max_membrane_norm, float(region.membrane.norm().item()))
