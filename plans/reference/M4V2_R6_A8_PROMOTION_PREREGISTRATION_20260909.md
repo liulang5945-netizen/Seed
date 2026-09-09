@@ -693,3 +693,15 @@ same-capacity 参数/trace、no-feedback admission、parent namespace 和 side-e
 
 下一步只执行 revised ledger 的 model31/course2；不得跳过 predecessor、改变资源预算、
 提前运行 aggregate 或接入 default runtime/provider/MCP/client/CUDA。
+
+## 46. Matched-control revision 9-cell closure（2026-09-10）
+
+model31/course2 已由 revised runner 单调追加并通过，独立 ledger 达到 9/9，全部
+row 为 executed_passed 且无 failure；九格均满足 frozen/matched/candidate/lesion=0/0/1/0，
+两个 capability delta=1.0，same-capacity 参数/trace、no-feedback admission、parent
+namespace、rollback 和 side-effect Gate 均通过，fixed-large K-task-equivalent control
+也通过。最后一格 wall=1.2513×、peak=1.0027×，仍在预注册 cap 内。
+
+9/9 仍不等于 promotion。旧 R6 aggregate 与旧 ledger 保持不可变，
+can_start_r6_formal=false、can_promote=false。下一步只实现并运行 revised aggregate
+validator；不得改变阈值、外推单元结果或接入 default runtime/provider/MCP/client/CUDA。

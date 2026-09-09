@@ -762,3 +762,16 @@ parameters、1 条 inference trace，wall multiplier=1.1603×、peak multiplier=
 这仍不是完整 aggregate 或 promotion。下一步只执行固定顺序的 model31/course2，继续
 使用同一 revised manifest、prior ledger、input preflight 和 formal preflight；不接
 default runtime/provider/MCP/client/CUDA。
+
+## 35. Matched-control revision 9-cell execution closure（2026-09-10）
+
+revised execution ledger 已追加最后的 model31/course2，累计 9/9 row 全部为
+executed_passed，失败列表为空；九格均完成 frozen-parent、matched no-feedback、
+candidate、fixed-large、lesion 五臂，并通过 cell 级 rollback、side-effect、
+same-capacity resource 和 K-task-equivalent control。最后一格的 wall multiplier=1.2513×、
+peak multiplier=1.0027×，两个 capability delta 均为 1.0。
+
+9/9 只证明单元执行合同完整，不自动开启 R6 formal 或 promotion；当前
+can_start_r6_formal=false、can_promote=false。下一步只实现并运行独立的 revised
+aggregate validator，验证全量 causal/resource/retention/manifest 合同；不覆盖旧
+execution/aggregate evidence，不接 default runtime/provider/MCP/client/CUDA。
