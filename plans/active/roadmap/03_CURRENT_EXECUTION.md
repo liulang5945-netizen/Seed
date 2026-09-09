@@ -285,3 +285,6 @@ N11 active environment verify 已通过：learned policy 最终窗口准确率 `
 M5 episodic field verify 已通过。首个失败由两层评估错误组成：recurrent lesion 直接篡改 checkpoint payload，触发 v10 identity lineage 防篡改；改为 fresh restore 后在内存对象上 lesion。随后 identity organ 旁路使 lesion action 仍为 `1.0`，已在 M5 写入/查询统一 `use_identity=False`，保持 episodic field 独立。最终 full action `0.875`，trace-only/recurrent lesion `0.25`，recurrent causal gap `0.625`，outcome/provenance/time/episode/transaction checkpoint/fixed topology 全部通过。
 
 **当前唯一下一步**：继续执行 workflow 的 M6 endogenous replay consolidation verify。
+M6 endogenous replay verify 已通过。评估器原先对 action/outcome/association 做 checkpoint payload lesion，触发 identity lineage 防篡改；现统一 fresh restore 后在内存对象施加 lesion。full replay contingency accuracy `0.75`，no-replay `0.25`，content/recurrent lesion 均 `0.25`；sleep 只改变 cortex，memory field topology/write count 不变，settled-state/written-field guard 和无 episodic readback 全部通过。
+
+**当前唯一下一步**：继续执行 workflow 的 grounded internalization S1 canary。

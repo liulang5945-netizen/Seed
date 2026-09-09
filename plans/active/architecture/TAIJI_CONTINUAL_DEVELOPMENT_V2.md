@@ -237,3 +237,6 @@ N11 active environment 已闭合：动作—环境—reward 因果、局部 moto
 M5 episodic field 已闭合：lesion 只能在合法 restore 后作用于内存对象，不能伪造 checkpoint；同时通过 `use_identity=False` 隔离 F2 episodic field 与 identity organ。full action `0.875`、recurrent lesion `0.25`，因果差 `0.625`，其余记忆字段和 checkpoint Gate 通过。
 
 当前唯一出口：继续跑 M6 endogenous replay consolidation，保持 F1/F2/identity owner 分离。
+M6 endogenous replay 已闭合：fresh restore-safe lesion 后 replay 相对 control 有 `0.5` accuracy gain，engram content/recurrent completion 均具因果必要性；sleep 只写 cortex，不扩 memory topology，也不依赖外部 replay list/teacher target。
+
+当前唯一出口：继续跑 grounded internalization S1 canary，保持 R4 shadow/默认 parent 与 F1/F2 owner 边界不变。
