@@ -202,3 +202,5 @@ K3 不证明开放域语言能力、通用规划、Skill/MCP 内化后的智能�
 - A 的 probe outcome admission `1.0`，feedback lineage admission `1.0`（8/8），reward variance `0.03390739073439137 > 0`；prefit/postfit checkpoint gate、model feedback fact consumption 全部通过；
 - 定向回归 `20 passed`；K3 projection 的 mypy、ruff、py_compile 全过。工作台全量回归的 Windows pytest temp ACL 阻断仍是环境问题，未被本 canary 改变；
 - 这是 shadow canary 的通过，不是默认 runtime 晋级：projection、transition、planner 均未接入默认路径，`can_promote=false` 继续固定。
+
+formal 的跨 seed 合同已另行冻结：[M5_K3_FORMAL_PREREGISTRATION_20260909.md](M5_K3_FORMAL_PREREGISTRATION_20260909.md)。单 cell 结果不能直接外推为 formal 稳健性，formal runner 必须复用本 canary 的 `run_cell`。
