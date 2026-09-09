@@ -1,0 +1,1601 @@
+{
+  "batch_comparison": {
+    "three_non_sliding": {
+      "candidate_digest_matches_single": [
+        false,
+        false,
+        false
+      ],
+      "candidate_update_digests": [
+        "cd85eacbdad12b89e9cf6ffbb9aaa916a097870ab5b8bbdb87af31b721579e79",
+        "cd85eacbdad12b89e9cf6ffbb9aaa916a097870ab5b8bbdb87af31b721579e79",
+        "1953912f9be6ecfb7f8dfd4d0d5578b698bc9e53ab75102b234b180cdace94cf"
+      ],
+      "candidate_updates_distinct": false,
+      "report": "E:\\Seed\\reports\\taiji_m4v2_b3_k_non_sliding_20260910.json",
+      "train_episode_indexes": [
+        [
+          0,
+          2,
+          4
+        ],
+        [
+          1,
+          3,
+          5
+        ],
+        [
+          0,
+          3,
+          5
+        ]
+      ]
+    },
+    "three_sliding": {
+      "candidate_digest_matches_single": [
+        false,
+        false,
+        false
+      ],
+      "candidate_update_digests": [
+        "cd85eacbdad12b89e9cf6ffbb9aaa916a097870ab5b8bbdb87af31b721579e79",
+        "cd85eacbdad12b89e9cf6ffbb9aaa916a097870ab5b8bbdb87af31b721579e79",
+        "cd85eacbdad12b89e9cf6ffbb9aaa916a097870ab5b8bbdb87af31b721579e79"
+      ],
+      "candidate_updates_distinct": false,
+      "report": "E:\\Seed\\reports\\taiji_m4v2_b3_k_three_batch_20260910.json",
+      "train_episode_indexes": [
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          2,
+          3,
+          4
+        ]
+      ]
+    }
+  },
+  "blocking_reason": null,
+  "can_promote": false,
+  "can_start_r6_formal": false,
+  "candidate_promoted": false,
+  "candidate_update_collision_groups": {
+    "7843f0792a36bca0deeb099abf4d08a84c8df277d6c96db035f5d656af40715e": [
+      2,
+      5
+    ],
+    "d4e23a945f27ef00d2ec56b47d520a556da1ed9f097f0f14b1fbb0522898cb43": [
+      1,
+      4
+    ],
+    "e8ab364794158dd1698a27c0181f840ecf9a2f549d083006dae1967f6a20a631": [
+      0,
+      3
+    ]
+  },
+  "candidate_update_digests": [
+    "e8ab364794158dd1698a27c0181f840ecf9a2f549d083006dae1967f6a20a631",
+    "d4e23a945f27ef00d2ec56b47d520a556da1ed9f097f0f14b1fbb0522898cb43",
+    "7843f0792a36bca0deeb099abf4d08a84c8df277d6c96db035f5d656af40715e",
+    "e8ab364794158dd1698a27c0181f840ecf9a2f549d083006dae1967f6a20a631",
+    "d4e23a945f27ef00d2ec56b47d520a556da1ed9f097f0f14b1fbb0522898cb43",
+    "7843f0792a36bca0deeb099abf4d08a84c8df277d6c96db035f5d656af40715e"
+  ],
+  "candidate_updates_distinct": false,
+  "cell_count": 6,
+  "cells": [
+    {
+      "episode_seed": 0,
+      "report": {
+        "blocking_reason": null,
+        "can_promote": false,
+        "can_start_r6_formal": false,
+        "candidate_checkpoint_paths": {
+          "k1.semantic": "E:\\Seed\\output\\taiji_m4v2_b3_k_update_signature_audit_20260910\\episode_0\\model_17\\taiji_b3_k1_semantic_loss_step1.pt",
+          "k2.transition": "E:\\Seed\\output\\taiji_m4v2_b3_k_update_signature_audit_20260910\\episode_0\\model_17\\taiji_b3_k2_transition_loss_step1.pt"
+        },
+        "candidate_namespace": "taiji:k:candidate:model-17",
+        "candidate_promoted": false,
+        "candidate_worker_bundle_digest": "e8ab364794158dd1698a27c0181f840ecf9a2f549d083006dae1967f6a20a631",
+        "checks": {
+          "adapter_candidate_stage_roundtrip": true,
+          "adapter_rollback_restored": true,
+          "candidate_checkpoint_fresh_restore": true,
+          "course_roundtrip": true,
+          "k1_owner_changed": true,
+          "k2_owner_changed": true,
+          "k3_owner_unchanged": true,
+          "no_optimizer_state": true,
+          "no_update_control": true,
+          "parent_checkpoint_unchanged": true,
+          "three_disjoint_holdout_records": true,
+          "train_holdout_disjoint": true,
+          "worker_attachment_preflight_passed": true
+        },
+        "course_digest": "345e2ca98b44635c0bebaf021d1c6006d2f6bb2519367021fedc7591497f9145",
+        "course_seed": 0,
+        "elapsed_seconds": 4.039311699918471,
+        "frozen_workers": [
+          "k3.outcome_projection"
+        ],
+        "holdout_count": 3,
+        "holdout_loss_improved": true,
+        "holdout_structured_loss_after": {
+          "combined_mse": 0.015697415336186776,
+          "k1.content_mse": 5.414648421719903e-05,
+          "k1.fact_mse": 0.016651826910674572,
+          "k1.goal_mse": 0.0011002353276126087,
+          "k2.content_mse": 0.02988546285875297,
+          "k2.goal_mse": 0.04356220215656018,
+          "k2.transition_mse": 0.0029306182793031135
+        },
+        "holdout_structured_loss_before": {
+          "combined_mse": 0.016777580521142633,
+          "k1.content_mse": 8.139078060291165e-05,
+          "k1.fact_mse": 0.017317220258216064,
+          "k1.goal_mse": 0.001712819910608232,
+          "k2.content_mse": 0.03250698816312555,
+          "k2.goal_mse": 0.04578693084719513,
+          "k2.transition_mse": 0.0032601331671079
+        },
+        "holdout_structured_loss_delta": {
+          "combined_mse": -0.0010801651849558572,
+          "k1.content_mse": -2.7244296385712616e-05,
+          "k1.fact_mse": -0.0006653933475414923,
+          "k1.goal_mse": -0.0006125845829956234,
+          "k2.content_mse": -0.0026215253043725788,
+          "k2.goal_mse": -0.0022247286906349473,
+          "k2.transition_mse": -0.00032951488780478665
+        },
+        "no_update_control": {
+          "holdout_structured_loss_after": {
+            "combined_mse": 0.016777580521142633,
+            "k1.content_mse": 8.139078060291165e-05,
+            "k1.fact_mse": 0.017317220258216064,
+            "k1.goal_mse": 0.001712819910608232,
+            "k2.content_mse": 0.03250698816312555,
+            "k2.goal_mse": 0.04578693084719513,
+            "k2.transition_mse": 0.0032601331671079
+          },
+          "holdout_structured_loss_before": {
+            "combined_mse": 0.016777580521142633,
+            "k1.content_mse": 8.139078060291165e-05,
+            "k1.fact_mse": 0.017317220258216064,
+            "k1.goal_mse": 0.001712819910608232,
+            "k2.content_mse": 0.03250698816312555,
+            "k2.goal_mse": 0.04578693084719513,
+            "k2.transition_mse": 0.0032601331671079
+          },
+          "holdout_structured_loss_delta": {
+            "combined_mse": 0.0,
+            "k1.content_mse": 0.0,
+            "k1.fact_mse": 0.0,
+            "k1.goal_mse": 0.0,
+            "k2.content_mse": 0.0,
+            "k2.goal_mse": 0.0,
+            "k2.transition_mse": 0.0
+          },
+          "passed": true,
+          "training_update_steps": 0
+        },
+        "optimizer_state_present": false,
+        "parameter_delta_norm": {
+          "k1.semantic": 0.10789559732994627,
+          "k2.transition": 0.01459495374185856
+        },
+        "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+        "receipt": {
+          "candidate_namespace": "taiji:k:candidate:model-17",
+          "candidate_worker_bundle_digest": "e8ab364794158dd1698a27c0181f840ecf9a2f549d083006dae1967f6a20a631",
+          "candidate_worker_checkpoint_digests": [
+            [
+              "k1.semantic",
+              "6cd9515330033fce16aeadf24c3604b6f3213f62f9bd451d05e77d36ef466994"
+            ],
+            [
+              "k2.transition",
+              "8c8e4b4f82168e5b0f3f6575f93fe8a7ea21308ca772325767e2ac665c7ae8f0"
+            ],
+            [
+              "k3.outcome_projection",
+              "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
+            ]
+          ],
+          "course_digest": "345e2ca98b44635c0bebaf021d1c6006d2f6bb2519367021fedc7591497f9145",
+          "format": "taiji-k-continuation-learning-v1",
+          "fresh_restore_verified": true,
+          "frozen_workers": [
+            "k3.outcome_projection"
+          ],
+          "holdout_experience_digests": [
+            "5e1cd6bd0b07e3b5517b92ecf5d579a4e66cf2eedff104bb3a2eac73dcd04f5a",
+            "ed44ebde6681820c88135cdf849f963ebcd6a6c0044faa03656decade0fca9df",
+            "ce7a403a3d0631ad43f128fb7604ad4fc1a7a635d3e59f9bdfc3d7e05437aad7"
+          ],
+          "holdout_untrained": true,
+          "kind": "update_receipt",
+          "optimizer_state_present": false,
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "parent_unchanged": true,
+          "parent_worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83",
+          "parent_worker_checkpoint_digests": [
+            [
+              "k1.semantic",
+              "4b5ed527a3a105614cea73c6cc45a2d0577c9ec06eb6e974b245c679b93e5e5d"
+            ],
+            [
+              "k2.transition",
+              "67c96c5c8517ca58bacb45b8de756e7ffd24ee108276160c731da364714e2bda"
+            ],
+            [
+              "k3.outcome_projection",
+              "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
+            ]
+          ],
+          "receipt_digest": "bffe43ee39de7f24f853b2d3b416adeece88484e57da1d5c2f0f42dcd4d36815",
+          "rollback_restored": true,
+          "train_experience_digests": [
+            "3bbfabc666121b64061f626ae874555b0063e7ecc665052d02a1ecf3524fc2ab"
+          ],
+          "training_steps": 2,
+          "updated_workers": [
+            "k1.semantic",
+            "k2.transition"
+          ],
+          "version": 1
+        },
+        "report_format": "taiji-m4v2-b3-k-loss-diagnostic-v1",
+        "research_course_executed": true,
+        "run_kind": "learning-diagnostic",
+        "semantic_losses": {
+          "content_loss": 3.114657602054649e-06,
+          "fact_loss": 0.019014867022633553,
+          "goal_loss": 1.7072770788217895e-05
+        },
+        "status": "passed",
+        "train_course_digest": "54c23c6f471897a7043c95cc85a5489c07643b75b8bfc507e21ebf84062e8c45",
+        "train_episode_count": 1,
+        "train_episode_indexes": [
+          0
+        ],
+        "train_episode_paths": [
+          [
+            "python_00.py",
+            "rust_00.rs",
+            "python_01.py"
+          ]
+        ],
+        "train_experience_digests": [
+          "3bbfabc666121b64061f626ae874555b0063e7ecc665052d02a1ecf3524fc2ab"
+        ],
+        "train_fit_input_digests": [
+          {
+            "experience_digest": "3bbfabc666121b64061f626ae874555b0063e7ecc665052d02a1ecf3524fc2ab",
+            "semantic_input_digest": "4e79e1cd151ef6fa382668455336b40838504de37ef2682bd1836ac4115750f9",
+            "target_digest": "489b967c3f5d753b9cf145e1d37890e9d755e8c87b955113057ad35e2e9d068b",
+            "transition_input_digest": "92fe390b0934aa0397c61013b3283dc8c71a66d8c16e41048cd9b4ef039a1a19"
+          }
+        ],
+        "train_structured_loss_after": {
+          "combined_mse": 0.0036443708559090737,
+          "k1.content_mse": 7.575396011816338e-05,
+          "k1.fact_mse": 0.017392771318554878,
+          "k1.goal_mse": 0.0015090075321495533,
+          "k2.content_mse": 0.00010231319174636155,
+          "k2.goal_mse": 0.00025754194939509034,
+          "k2.transition_mse": 0.0025288371834903955
+        },
+        "train_structured_loss_before": {
+          "combined_mse": 0.004144930832505149,
+          "k1.content_mse": 0.00011744694347726181,
+          "k1.fact_mse": 0.019014867022633553,
+          "k1.goal_mse": 0.0024634983856230974,
+          "k2.content_mse": 0.00011087550956290215,
+          "k2.goal_mse": 0.0002854994381777942,
+          "k2.transition_mse": 0.002877397695556283
+        },
+        "train_structured_loss_delta": {
+          "combined_mse": -0.0005005599765960751,
+          "k1.content_mse": -4.1692983359098434e-05,
+          "k1.fact_mse": -0.0016220957040786743,
+          "k1.goal_mse": -0.0009544908534735441,
+          "k2.content_mse": -8.562317816540599e-06,
+          "k2.goal_mse": -2.7957488782703876e-05,
+          "k2.transition_mse": -0.00034856051206588745
+        },
+        "train_variant_strategy": "contiguous",
+        "training_performed": true,
+        "training_update_steps": 2,
+        "transition_losses": {
+          "content_loss": 6.90083033987321e-05,
+          "goal_loss": 0.00017293714336119592,
+          "transition_loss": 0.002877397695556283
+        },
+        "updated_workers": [
+          "k1.semantic",
+          "k2.transition"
+        ],
+        "version": 1,
+        "worker_attachment_preflight_course_seed": 0,
+        "worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83",
+        "workspace_seed": 0
+      }
+    },
+    {
+      "episode_seed": 1,
+      "report": {
+        "blocking_reason": null,
+        "can_promote": false,
+        "can_start_r6_formal": false,
+        "candidate_checkpoint_paths": {
+          "k1.semantic": "E:\\Seed\\output\\taiji_m4v2_b3_k_update_signature_audit_20260910\\episode_1\\model_17\\taiji_b3_k1_semantic_loss_step1.pt",
+          "k2.transition": "E:\\Seed\\output\\taiji_m4v2_b3_k_update_signature_audit_20260910\\episode_1\\model_17\\taiji_b3_k2_transition_loss_step1.pt"
+        },
+        "candidate_namespace": "taiji:k:candidate:model-17",
+        "candidate_promoted": false,
+        "candidate_worker_bundle_digest": "d4e23a945f27ef00d2ec56b47d520a556da1ed9f097f0f14b1fbb0522898cb43",
+        "checks": {
+          "adapter_candidate_stage_roundtrip": true,
+          "adapter_rollback_restored": true,
+          "candidate_checkpoint_fresh_restore": true,
+          "course_roundtrip": true,
+          "k1_owner_changed": true,
+          "k2_owner_changed": true,
+          "k3_owner_unchanged": true,
+          "no_optimizer_state": true,
+          "no_update_control": true,
+          "parent_checkpoint_unchanged": true,
+          "three_disjoint_holdout_records": true,
+          "train_holdout_disjoint": true,
+          "worker_attachment_preflight_passed": true
+        },
+        "course_digest": "8a5e5962cffdd29c39b3fb6192fa68b41e675b47fb3f73039c094545936969ff",
+        "course_seed": 1,
+        "elapsed_seconds": 4.470265600015409,
+        "frozen_workers": [
+          "k3.outcome_projection"
+        ],
+        "holdout_count": 3,
+        "holdout_loss_improved": false,
+        "holdout_structured_loss_after": {
+          "combined_mse": 0.016832132773793595,
+          "k1.content_mse": 9.66421633468902e-05,
+          "k1.fact_mse": 0.0173751184095939,
+          "k1.goal_mse": 0.002062194781804768,
+          "k2.content_mse": 0.032640185384176824,
+          "k2.goal_mse": 0.045904478727607056,
+          "k2.transition_mse": 0.002914177176232139
+        },
+        "holdout_structured_loss_before": {
+          "combined_mse": 0.016777580521142633,
+          "k1.content_mse": 8.139078060291165e-05,
+          "k1.fact_mse": 0.017317220258216064,
+          "k1.goal_mse": 0.001712819910608232,
+          "k2.content_mse": 0.03250698816312555,
+          "k2.goal_mse": 0.04578693084719513,
+          "k2.transition_mse": 0.0032601331671079
+        },
+        "holdout_structured_loss_delta": {
+          "combined_mse": 5.455225265096203e-05,
+          "k1.content_mse": 1.5251382743978553e-05,
+          "k1.fact_mse": 5.789815137783455e-05,
+          "k1.goal_mse": 0.00034937487119653587,
+          "k2.content_mse": 0.00013319722105127607,
+          "k2.goal_mse": 0.00011754788041192649,
+          "k2.transition_mse": -0.000345955990875761
+        },
+        "no_update_control": {
+          "holdout_structured_loss_after": {
+            "combined_mse": 0.016777580521142633,
+            "k1.content_mse": 8.139078060291165e-05,
+            "k1.fact_mse": 0.017317220258216064,
+            "k1.goal_mse": 0.001712819910608232,
+            "k2.content_mse": 0.03250698816312555,
+            "k2.goal_mse": 0.04578693084719513,
+            "k2.transition_mse": 0.0032601331671079
+          },
+          "holdout_structured_loss_before": {
+            "combined_mse": 0.016777580521142633,
+            "k1.content_mse": 8.139078060291165e-05,
+            "k1.fact_mse": 0.017317220258216064,
+            "k1.goal_mse": 0.001712819910608232,
+            "k2.content_mse": 0.03250698816312555,
+            "k2.goal_mse": 0.04578693084719513,
+            "k2.transition_mse": 0.0032601331671079
+          },
+          "holdout_structured_loss_delta": {
+            "combined_mse": 0.0,
+            "k1.content_mse": 0.0,
+            "k1.fact_mse": 0.0,
+            "k1.goal_mse": 0.0,
+            "k2.content_mse": 0.0,
+            "k2.goal_mse": 0.0,
+            "k2.transition_mse": 0.0
+          },
+          "passed": true,
+          "training_update_steps": 0
+        },
+        "optimizer_state_present": false,
+        "parameter_delta_norm": {
+          "k1.semantic": 0.07937038848224212,
+          "k2.transition": 0.01188628763992947
+        },
+        "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+        "receipt": {
+          "candidate_namespace": "taiji:k:candidate:model-17",
+          "candidate_worker_bundle_digest": "d4e23a945f27ef00d2ec56b47d520a556da1ed9f097f0f14b1fbb0522898cb43",
+          "candidate_worker_checkpoint_digests": [
+            [
+              "k1.semantic",
+              "20ccf1bb47d0d7d062dca4db2ebbea3a775caf5f8ac62cba5a489cbb8df6f872"
+            ],
+            [
+              "k2.transition",
+              "321c947d34bf870054634b23e00c283f08c6c8e5900dcc8867f9ccb20a38ca1e"
+            ],
+            [
+              "k3.outcome_projection",
+              "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
+            ]
+          ],
+          "course_digest": "8a5e5962cffdd29c39b3fb6192fa68b41e675b47fb3f73039c094545936969ff",
+          "format": "taiji-k-continuation-learning-v1",
+          "fresh_restore_verified": true,
+          "frozen_workers": [
+            "k3.outcome_projection"
+          ],
+          "holdout_experience_digests": [
+            "5e1cd6bd0b07e3b5517b92ecf5d579a4e66cf2eedff104bb3a2eac73dcd04f5a",
+            "ed44ebde6681820c88135cdf849f963ebcd6a6c0044faa03656decade0fca9df",
+            "ce7a403a3d0631ad43f128fb7604ad4fc1a7a635d3e59f9bdfc3d7e05437aad7"
+          ],
+          "holdout_untrained": true,
+          "kind": "update_receipt",
+          "optimizer_state_present": false,
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "parent_unchanged": true,
+          "parent_worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83",
+          "parent_worker_checkpoint_digests": [
+            [
+              "k1.semantic",
+              "4b5ed527a3a105614cea73c6cc45a2d0577c9ec06eb6e974b245c679b93e5e5d"
+            ],
+            [
+              "k2.transition",
+              "67c96c5c8517ca58bacb45b8de756e7ffd24ee108276160c731da364714e2bda"
+            ],
+            [
+              "k3.outcome_projection",
+              "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
+            ]
+          ],
+          "receipt_digest": "da9d9314af5d43dd3526bbb54dfd158c6032252fc2656ae1809a96a1cf184556",
+          "rollback_restored": true,
+          "train_experience_digests": [
+            "7a05f46e716b194acedca8c1687e8b799531fd912ce6dc13aee4cd3753509428"
+          ],
+          "training_steps": 2,
+          "updated_workers": [
+            "k1.semantic",
+            "k2.transition"
+          ],
+          "version": 1
+        },
+        "report_format": "taiji-m4v2-b3-k-loss-diagnostic-v1",
+        "research_course_executed": true,
+        "run_kind": "learning-diagnostic",
+        "semantic_losses": {
+          "content_loss": 9.474690614297288e-07,
+          "fact_loss": 0.013921926729381084,
+          "goal_loss": 5.121957656228915e-06
+        },
+        "status": "passed",
+        "train_course_digest": "523e28b4a6420691af77eca66c40b3689f445036f5526b5f330f1cfe045520bc",
+        "train_episode_count": 1,
+        "train_episode_indexes": [
+          1
+        ],
+        "train_episode_paths": [
+          [
+            "rust_01.rs",
+            "python_02.py",
+            "typescript_00.ts"
+          ]
+        ],
+        "train_experience_digests": [
+          "7a05f46e716b194acedca8c1687e8b799531fd912ce6dc13aee4cd3753509428"
+        ],
+        "train_fit_input_digests": [
+          {
+            "experience_digest": "7a05f46e716b194acedca8c1687e8b799531fd912ce6dc13aee4cd3753509428",
+            "semantic_input_digest": "3c3ffb121666d0355dea98c3cabf8a23506d0a46c515f19bc5703068b8babfcd",
+            "target_digest": "4fe0b5747ed5f6ee7f3354fd321de9c06b5af96c5e81d1716e6092452a7e28fd",
+            "transition_input_digest": "7cc261b0a767855e42a9d7e5926c95b54138bed4737ee9894ce1085e56f8a344"
+          }
+        ],
+        "train_structured_loss_after": {
+          "combined_mse": 0.0027424475876311285,
+          "k1.content_mse": 8.246405741374474e-06,
+          "k1.fact_mse": 0.013099772855639458,
+          "k1.goal_mse": 0.0001748286740621552,
+          "k2.content_mse": 3.323813871247694e-05,
+          "k2.goal_mse": 8.121528662741184e-05,
+          "k2.transition_mse": 0.0030573841650038958
+        },
+        "train_structured_loss_before": {
+          "combined_mse": 0.0029566043366079007,
+          "k1.content_mse": 9.278454854211304e-06,
+          "k1.fact_mse": 0.013921926729381084,
+          "k1.goal_mse": 0.00021146296057850122,
+          "k2.content_mse": 3.4770571801345795e-05,
+          "k2.goal_mse": 8.617643470643088e-05,
+          "k2.transition_mse": 0.0034760108683258295
+        },
+        "train_structured_loss_delta": {
+          "combined_mse": -0.00021415674897677216,
+          "k1.content_mse": -1.0320491128368303e-06,
+          "k1.fact_mse": -0.0008221538737416267,
+          "k1.goal_mse": -3.663428651634604e-05,
+          "k2.content_mse": -1.5324330888688564e-06,
+          "k2.goal_mse": -4.96114807901904e-06,
+          "k2.transition_mse": -0.00041862670332193375
+        },
+        "train_variant_strategy": "contiguous",
+        "training_performed": true,
+        "training_update_steps": 2,
+        "transition_losses": {
+          "content_loss": 2.7154183044331148e-05,
+          "goal_loss": 6.688579742331058e-05,
+          "transition_loss": 0.0034760108683258295
+        },
+        "updated_workers": [
+          "k1.semantic",
+          "k2.transition"
+        ],
+        "version": 1,
+        "worker_attachment_preflight_course_seed": 1,
+        "worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83",
+        "workspace_seed": 0
+      }
+    },
+    {
+      "episode_seed": 2,
+      "report": {
+        "blocking_reason": null,
+        "can_promote": false,
+        "can_start_r6_formal": false,
+        "candidate_checkpoint_paths": {
+          "k1.semantic": "E:\\Seed\\output\\taiji_m4v2_b3_k_update_signature_audit_20260910\\episode_2\\model_17\\taiji_b3_k1_semantic_loss_step1.pt",
+          "k2.transition": "E:\\Seed\\output\\taiji_m4v2_b3_k_update_signature_audit_20260910\\episode_2\\model_17\\taiji_b3_k2_transition_loss_step1.pt"
+        },
+        "candidate_namespace": "taiji:k:candidate:model-17",
+        "candidate_promoted": false,
+        "candidate_worker_bundle_digest": "7843f0792a36bca0deeb099abf4d08a84c8df277d6c96db035f5d656af40715e",
+        "checks": {
+          "adapter_candidate_stage_roundtrip": true,
+          "adapter_rollback_restored": true,
+          "candidate_checkpoint_fresh_restore": true,
+          "course_roundtrip": true,
+          "k1_owner_changed": true,
+          "k2_owner_changed": true,
+          "k3_owner_unchanged": true,
+          "no_optimizer_state": true,
+          "no_update_control": true,
+          "parent_checkpoint_unchanged": true,
+          "three_disjoint_holdout_records": true,
+          "train_holdout_disjoint": true,
+          "worker_attachment_preflight_passed": true
+        },
+        "course_digest": "9f5818296563cf2a56853e0a3257664366378dc486f7b0eb880cec89a27d99d2",
+        "course_seed": 2,
+        "elapsed_seconds": 4.484338299953379,
+        "frozen_workers": [
+          "k3.outcome_projection"
+        ],
+        "holdout_count": 3,
+        "holdout_loss_improved": false,
+        "holdout_structured_loss_after": {
+          "combined_mse": 0.017108374543416478,
+          "k1.content_mse": 9.66421633468902e-05,
+          "k1.fact_mse": 0.017375119030475616,
+          "k1.goal_mse": 0.002062194781804768,
+          "k2.content_mse": 0.03354254115159468,
+          "k2.goal_mse": 0.04667413185719246,
+          "k2.transition_mse": 0.0028996182760844627
+        },
+        "holdout_structured_loss_before": {
+          "combined_mse": 0.016777580521142633,
+          "k1.content_mse": 8.139078060291165e-05,
+          "k1.fact_mse": 0.017317220258216064,
+          "k1.goal_mse": 0.001712819910608232,
+          "k2.content_mse": 0.03250698816312555,
+          "k2.goal_mse": 0.04578693084719513,
+          "k2.transition_mse": 0.0032601331671079
+        },
+        "holdout_structured_loss_delta": {
+          "combined_mse": 0.0003307940222738448,
+          "k1.content_mse": 1.5251382743978553e-05,
+          "k1.fact_mse": 5.789877225955212e-05,
+          "k1.goal_mse": 0.00034937487119653587,
+          "k2.content_mse": 0.001035552988469135,
+          "k2.goal_mse": 0.0008872010099973265,
+          "k2.transition_mse": -0.00036051489102343747
+        },
+        "no_update_control": {
+          "holdout_structured_loss_after": {
+            "combined_mse": 0.016777580521142633,
+            "k1.content_mse": 8.139078060291165e-05,
+            "k1.fact_mse": 0.017317220258216064,
+            "k1.goal_mse": 0.001712819910608232,
+            "k2.content_mse": 0.03250698816312555,
+            "k2.goal_mse": 0.04578693084719513,
+            "k2.transition_mse": 0.0032601331671079
+          },
+          "holdout_structured_loss_before": {
+            "combined_mse": 0.016777580521142633,
+            "k1.content_mse": 8.139078060291165e-05,
+            "k1.fact_mse": 0.017317220258216064,
+            "k1.goal_mse": 0.001712819910608232,
+            "k2.content_mse": 0.03250698816312555,
+            "k2.goal_mse": 0.04578693084719513,
+            "k2.transition_mse": 0.0032601331671079
+          },
+          "holdout_structured_loss_delta": {
+            "combined_mse": 0.0,
+            "k1.content_mse": 0.0,
+            "k1.fact_mse": 0.0,
+            "k1.goal_mse": 0.0,
+            "k2.content_mse": 0.0,
+            "k2.goal_mse": 0.0,
+            "k2.transition_mse": 0.0
+          },
+          "passed": true,
+          "training_update_steps": 0
+        },
+        "optimizer_state_present": false,
+        "parameter_delta_norm": {
+          "k1.semantic": 0.07937038848224212,
+          "k2.transition": 0.01291420563682572
+        },
+        "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+        "receipt": {
+          "candidate_namespace": "taiji:k:candidate:model-17",
+          "candidate_worker_bundle_digest": "7843f0792a36bca0deeb099abf4d08a84c8df277d6c96db035f5d656af40715e",
+          "candidate_worker_checkpoint_digests": [
+            [
+              "k1.semantic",
+              "8752f0eba97b5c0f4c71e651682c60c077d78e1dd18d439811850f115e546f40"
+            ],
+            [
+              "k2.transition",
+              "78dd89ac9702395ac455d0c8c43548c2da886c7d12f77dc7975feae6e5ee314b"
+            ],
+            [
+              "k3.outcome_projection",
+              "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
+            ]
+          ],
+          "course_digest": "9f5818296563cf2a56853e0a3257664366378dc486f7b0eb880cec89a27d99d2",
+          "format": "taiji-k-continuation-learning-v1",
+          "fresh_restore_verified": true,
+          "frozen_workers": [
+            "k3.outcome_projection"
+          ],
+          "holdout_experience_digests": [
+            "5e1cd6bd0b07e3b5517b92ecf5d579a4e66cf2eedff104bb3a2eac73dcd04f5a",
+            "ed44ebde6681820c88135cdf849f963ebcd6a6c0044faa03656decade0fca9df",
+            "ce7a403a3d0631ad43f128fb7604ad4fc1a7a635d3e59f9bdfc3d7e05437aad7"
+          ],
+          "holdout_untrained": true,
+          "kind": "update_receipt",
+          "optimizer_state_present": false,
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "parent_unchanged": true,
+          "parent_worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83",
+          "parent_worker_checkpoint_digests": [
+            [
+              "k1.semantic",
+              "4b5ed527a3a105614cea73c6cc45a2d0577c9ec06eb6e974b245c679b93e5e5d"
+            ],
+            [
+              "k2.transition",
+              "67c96c5c8517ca58bacb45b8de756e7ffd24ee108276160c731da364714e2bda"
+            ],
+            [
+              "k3.outcome_projection",
+              "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
+            ]
+          ],
+          "receipt_digest": "f1112e9a4e4629a38b9b93112769447c0786d1ccc975dd5e0683a6de4355d8de",
+          "rollback_restored": true,
+          "train_experience_digests": [
+            "1a8fc81fc96f992bcf691044163744add7fd0e2a3c29ce209c24445a3cfdc584"
+          ],
+          "training_steps": 2,
+          "updated_workers": [
+            "k1.semantic",
+            "k2.transition"
+          ],
+          "version": 1
+        },
+        "report_format": "taiji-m4v2-b3-k-loss-diagnostic-v1",
+        "research_course_executed": true,
+        "run_kind": "learning-diagnostic",
+        "semantic_losses": {
+          "content_loss": 9.474690614297288e-07,
+          "fact_loss": 0.013921926729381084,
+          "goal_loss": 5.121957656228915e-06
+        },
+        "status": "passed",
+        "train_course_digest": "23fb16774012ef1f8c148d0990fa775c6749f3cc44c34ac99db5cb116af6d70e",
+        "train_episode_count": 1,
+        "train_episode_indexes": [
+          2
+        ],
+        "train_episode_paths": [
+          [
+            "typescript_01.ts",
+            "rust_02.rs",
+            "python_03.py"
+          ]
+        ],
+        "train_experience_digests": [
+          "1a8fc81fc96f992bcf691044163744add7fd0e2a3c29ce209c24445a3cfdc584"
+        ],
+        "train_fit_input_digests": [
+          {
+            "experience_digest": "1a8fc81fc96f992bcf691044163744add7fd0e2a3c29ce209c24445a3cfdc584",
+            "semantic_input_digest": "0c27746a29420a22c2ace8503a0f7ee452920ebd93fcbf6afd0e71d7e1aef829",
+            "target_digest": "72bc7943cc9c629710dc8df6b22f7f1a40f5c9986c5dcd8ca0faa2407ae34f18",
+            "transition_input_digest": "18f0fe336d6ebda9fc498ea75bb32e25ada135b57bdc1eaddf81c0d03580bcbf"
+          }
+        ],
+        "train_structured_loss_after": {
+          "combined_mse": 0.0028047190933951547,
+          "k1.content_mse": 8.246405741374474e-06,
+          "k1.fact_mse": 0.013099772855639458,
+          "k1.goal_mse": 0.0001748286740621552,
+          "k2.content_mse": 4.3338866817066446e-05,
+          "k2.goal_mse": 0.00011164443276356906,
+          "k2.transition_mse": 0.0033904833253473043
+        },
+        "train_structured_loss_before": {
+          "combined_mse": 0.003026986301999083,
+          "k1.content_mse": 9.278454854211304e-06,
+          "k1.fact_mse": 0.013921926729381084,
+          "k1.goal_mse": 0.00021146296057850122,
+          "k2.content_mse": 4.5633656554855406e-05,
+          "k2.goal_mse": 0.00011958363757003099,
+          "k2.transition_mse": 0.0038540323730558157
+        },
+        "train_structured_loss_delta": {
+          "combined_mse": -0.00022226720860392835,
+          "k1.content_mse": -1.0320491128368303e-06,
+          "k1.fact_mse": -0.0008221538737416267,
+          "k1.goal_mse": -3.663428651634604e-05,
+          "k2.content_mse": -2.2947897377889603e-06,
+          "k2.goal_mse": -7.93920480646193e-06,
+          "k2.transition_mse": -0.00046354904770851135
+        },
+        "train_variant_strategy": "contiguous",
+        "training_performed": true,
+        "training_update_steps": 2,
+        "transition_losses": {
+          "content_loss": 3.401193316676654e-05,
+          "goal_loss": 8.801888907328248e-05,
+          "transition_loss": 0.0038540323730558157
+        },
+        "updated_workers": [
+          "k1.semantic",
+          "k2.transition"
+        ],
+        "version": 1,
+        "worker_attachment_preflight_course_seed": 2,
+        "worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83",
+        "workspace_seed": 0
+      }
+    },
+    {
+      "episode_seed": 3,
+      "report": {
+        "blocking_reason": null,
+        "can_promote": false,
+        "can_start_r6_formal": false,
+        "candidate_checkpoint_paths": {
+          "k1.semantic": "E:\\Seed\\output\\taiji_m4v2_b3_k_update_signature_audit_20260910\\episode_3\\model_17\\taiji_b3_k1_semantic_loss_step1.pt",
+          "k2.transition": "E:\\Seed\\output\\taiji_m4v2_b3_k_update_signature_audit_20260910\\episode_3\\model_17\\taiji_b3_k2_transition_loss_step1.pt"
+        },
+        "candidate_namespace": "taiji:k:candidate:model-17",
+        "candidate_promoted": false,
+        "candidate_worker_bundle_digest": "e8ab364794158dd1698a27c0181f840ecf9a2f549d083006dae1967f6a20a631",
+        "checks": {
+          "adapter_candidate_stage_roundtrip": true,
+          "adapter_rollback_restored": true,
+          "candidate_checkpoint_fresh_restore": true,
+          "course_roundtrip": true,
+          "k1_owner_changed": true,
+          "k2_owner_changed": true,
+          "k3_owner_unchanged": true,
+          "no_optimizer_state": true,
+          "no_update_control": true,
+          "parent_checkpoint_unchanged": true,
+          "three_disjoint_holdout_records": true,
+          "train_holdout_disjoint": true,
+          "worker_attachment_preflight_passed": true
+        },
+        "course_digest": "8f4bc09e38cd4edadeb6ab24b71286f5313c43ed74607b313db02e229cfa338d",
+        "course_seed": 3,
+        "elapsed_seconds": 4.576039399951696,
+        "frozen_workers": [
+          "k3.outcome_projection"
+        ],
+        "holdout_count": 3,
+        "holdout_loss_improved": true,
+        "holdout_structured_loss_after": {
+          "combined_mse": 0.015697415336186776,
+          "k1.content_mse": 5.414648421719903e-05,
+          "k1.fact_mse": 0.016651826910674572,
+          "k1.goal_mse": 0.0011002353276126087,
+          "k2.content_mse": 0.02988546285875297,
+          "k2.goal_mse": 0.04356220215656018,
+          "k2.transition_mse": 0.0029306182793031135
+        },
+        "holdout_structured_loss_before": {
+          "combined_mse": 0.016777580521142633,
+          "k1.content_mse": 8.139078060291165e-05,
+          "k1.fact_mse": 0.017317220258216064,
+          "k1.goal_mse": 0.001712819910608232,
+          "k2.content_mse": 0.03250698816312555,
+          "k2.goal_mse": 0.04578693084719513,
+          "k2.transition_mse": 0.0032601331671079
+        },
+        "holdout_structured_loss_delta": {
+          "combined_mse": -0.0010801651849558572,
+          "k1.content_mse": -2.7244296385712616e-05,
+          "k1.fact_mse": -0.0006653933475414923,
+          "k1.goal_mse": -0.0006125845829956234,
+          "k2.content_mse": -0.0026215253043725788,
+          "k2.goal_mse": -0.0022247286906349473,
+          "k2.transition_mse": -0.00032951488780478665
+        },
+        "no_update_control": {
+          "holdout_structured_loss_after": {
+            "combined_mse": 0.016777580521142633,
+            "k1.content_mse": 8.139078060291165e-05,
+            "k1.fact_mse": 0.017317220258216064,
+            "k1.goal_mse": 0.001712819910608232,
+            "k2.content_mse": 0.03250698816312555,
+            "k2.goal_mse": 0.04578693084719513,
+            "k2.transition_mse": 0.0032601331671079
+          },
+          "holdout_structured_loss_before": {
+            "combined_mse": 0.016777580521142633,
+            "k1.content_mse": 8.139078060291165e-05,
+            "k1.fact_mse": 0.017317220258216064,
+            "k1.goal_mse": 0.001712819910608232,
+            "k2.content_mse": 0.03250698816312555,
+            "k2.goal_mse": 0.04578693084719513,
+            "k2.transition_mse": 0.0032601331671079
+          },
+          "holdout_structured_loss_delta": {
+            "combined_mse": 0.0,
+            "k1.content_mse": 0.0,
+            "k1.fact_mse": 0.0,
+            "k1.goal_mse": 0.0,
+            "k2.content_mse": 0.0,
+            "k2.goal_mse": 0.0,
+            "k2.transition_mse": 0.0
+          },
+          "passed": true,
+          "training_update_steps": 0
+        },
+        "optimizer_state_present": false,
+        "parameter_delta_norm": {
+          "k1.semantic": 0.10789559732994627,
+          "k2.transition": 0.01459495374185856
+        },
+        "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+        "receipt": {
+          "candidate_namespace": "taiji:k:candidate:model-17",
+          "candidate_worker_bundle_digest": "e8ab364794158dd1698a27c0181f840ecf9a2f549d083006dae1967f6a20a631",
+          "candidate_worker_checkpoint_digests": [
+            [
+              "k1.semantic",
+              "6cd9515330033fce16aeadf24c3604b6f3213f62f9bd451d05e77d36ef466994"
+            ],
+            [
+              "k2.transition",
+              "8c8e4b4f82168e5b0f3f6575f93fe8a7ea21308ca772325767e2ac665c7ae8f0"
+            ],
+            [
+              "k3.outcome_projection",
+              "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
+            ]
+          ],
+          "course_digest": "8f4bc09e38cd4edadeb6ab24b71286f5313c43ed74607b313db02e229cfa338d",
+          "format": "taiji-k-continuation-learning-v1",
+          "fresh_restore_verified": true,
+          "frozen_workers": [
+            "k3.outcome_projection"
+          ],
+          "holdout_experience_digests": [
+            "5e1cd6bd0b07e3b5517b92ecf5d579a4e66cf2eedff104bb3a2eac73dcd04f5a",
+            "ed44ebde6681820c88135cdf849f963ebcd6a6c0044faa03656decade0fca9df",
+            "ce7a403a3d0631ad43f128fb7604ad4fc1a7a635d3e59f9bdfc3d7e05437aad7"
+          ],
+          "holdout_untrained": true,
+          "kind": "update_receipt",
+          "optimizer_state_present": false,
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "parent_unchanged": true,
+          "parent_worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83",
+          "parent_worker_checkpoint_digests": [
+            [
+              "k1.semantic",
+              "4b5ed527a3a105614cea73c6cc45a2d0577c9ec06eb6e974b245c679b93e5e5d"
+            ],
+            [
+              "k2.transition",
+              "67c96c5c8517ca58bacb45b8de756e7ffd24ee108276160c731da364714e2bda"
+            ],
+            [
+              "k3.outcome_projection",
+              "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
+            ]
+          ],
+          "receipt_digest": "151b625de5202696dc78c2aea224ceb659bcb099f447dd1e21f4102beb0da9d1",
+          "rollback_restored": true,
+          "train_experience_digests": [
+            "31abe1be464067c6f59b0631773693e4bea598ade8cd2817308c911a34c43732"
+          ],
+          "training_steps": 2,
+          "updated_workers": [
+            "k1.semantic",
+            "k2.transition"
+          ],
+          "version": 1
+        },
+        "report_format": "taiji-m4v2-b3-k-loss-diagnostic-v1",
+        "research_course_executed": true,
+        "run_kind": "learning-diagnostic",
+        "semantic_losses": {
+          "content_loss": 3.114657602054649e-06,
+          "fact_loss": 0.019014867022633553,
+          "goal_loss": 1.7072770788217895e-05
+        },
+        "status": "passed",
+        "train_course_digest": "6e36fa9e00d007a0dea52146cbb16489b186f19b87376d9e059ce523d52015a7",
+        "train_episode_count": 1,
+        "train_episode_indexes": [
+          3
+        ],
+        "train_episode_paths": [
+          [
+            "python_02.py",
+            "typescript_02.ts",
+            "rust_03.rs"
+          ]
+        ],
+        "train_experience_digests": [
+          "31abe1be464067c6f59b0631773693e4bea598ade8cd2817308c911a34c43732"
+        ],
+        "train_fit_input_digests": [
+          {
+            "experience_digest": "31abe1be464067c6f59b0631773693e4bea598ade8cd2817308c911a34c43732",
+            "semantic_input_digest": "39cc349a02e64cb768e037748ac0fba795b4508450bb6d26c046dc9d15bf3b57",
+            "target_digest": "40d8cb057e23df75de33322e389ff5fa2789e63118a8d9de80e1959bfe5bf6d2",
+            "transition_input_digest": "0cabb35d7d54ffa622de83fcc28491311ea64cb6fec1c221d8504f845e09c4c2"
+          }
+        ],
+        "train_structured_loss_after": {
+          "combined_mse": 0.0036443708559090737,
+          "k1.content_mse": 7.575396011816338e-05,
+          "k1.fact_mse": 0.017392771318554878,
+          "k1.goal_mse": 0.0015090075321495533,
+          "k2.content_mse": 0.00010231319174636155,
+          "k2.goal_mse": 0.00025754194939509034,
+          "k2.transition_mse": 0.0025288371834903955
+        },
+        "train_structured_loss_before": {
+          "combined_mse": 0.004144930832505149,
+          "k1.content_mse": 0.00011744694347726181,
+          "k1.fact_mse": 0.019014867022633553,
+          "k1.goal_mse": 0.0024634983856230974,
+          "k2.content_mse": 0.00011087550956290215,
+          "k2.goal_mse": 0.0002854994381777942,
+          "k2.transition_mse": 0.002877397695556283
+        },
+        "train_structured_loss_delta": {
+          "combined_mse": -0.0005005599765960751,
+          "k1.content_mse": -4.1692983359098434e-05,
+          "k1.fact_mse": -0.0016220957040786743,
+          "k1.goal_mse": -0.0009544908534735441,
+          "k2.content_mse": -8.562317816540599e-06,
+          "k2.goal_mse": -2.7957488782703876e-05,
+          "k2.transition_mse": -0.00034856051206588745
+        },
+        "train_variant_strategy": "contiguous",
+        "training_performed": true,
+        "training_update_steps": 2,
+        "transition_losses": {
+          "content_loss": 6.90083033987321e-05,
+          "goal_loss": 0.00017293714336119592,
+          "transition_loss": 0.002877397695556283
+        },
+        "updated_workers": [
+          "k1.semantic",
+          "k2.transition"
+        ],
+        "version": 1,
+        "worker_attachment_preflight_course_seed": 0,
+        "worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83",
+        "workspace_seed": 0
+      }
+    },
+    {
+      "episode_seed": 4,
+      "report": {
+        "blocking_reason": null,
+        "can_promote": false,
+        "can_start_r6_formal": false,
+        "candidate_checkpoint_paths": {
+          "k1.semantic": "E:\\Seed\\output\\taiji_m4v2_b3_k_update_signature_audit_20260910\\episode_4\\model_17\\taiji_b3_k1_semantic_loss_step1.pt",
+          "k2.transition": "E:\\Seed\\output\\taiji_m4v2_b3_k_update_signature_audit_20260910\\episode_4\\model_17\\taiji_b3_k2_transition_loss_step1.pt"
+        },
+        "candidate_namespace": "taiji:k:candidate:model-17",
+        "candidate_promoted": false,
+        "candidate_worker_bundle_digest": "d4e23a945f27ef00d2ec56b47d520a556da1ed9f097f0f14b1fbb0522898cb43",
+        "checks": {
+          "adapter_candidate_stage_roundtrip": true,
+          "adapter_rollback_restored": true,
+          "candidate_checkpoint_fresh_restore": true,
+          "course_roundtrip": true,
+          "k1_owner_changed": true,
+          "k2_owner_changed": true,
+          "k3_owner_unchanged": true,
+          "no_optimizer_state": true,
+          "no_update_control": true,
+          "parent_checkpoint_unchanged": true,
+          "three_disjoint_holdout_records": true,
+          "train_holdout_disjoint": true,
+          "worker_attachment_preflight_passed": true
+        },
+        "course_digest": "d1f516b63432720c9dad77f66936bb03b3e19e85f618440bd038cefb754dbd40",
+        "course_seed": 4,
+        "elapsed_seconds": 4.482967299991287,
+        "frozen_workers": [
+          "k3.outcome_projection"
+        ],
+        "holdout_count": 3,
+        "holdout_loss_improved": false,
+        "holdout_structured_loss_after": {
+          "combined_mse": 0.016832132773793595,
+          "k1.content_mse": 9.66421633468902e-05,
+          "k1.fact_mse": 0.0173751184095939,
+          "k1.goal_mse": 0.002062194781804768,
+          "k2.content_mse": 0.032640185384176824,
+          "k2.goal_mse": 0.045904478727607056,
+          "k2.transition_mse": 0.002914177176232139
+        },
+        "holdout_structured_loss_before": {
+          "combined_mse": 0.016777580521142633,
+          "k1.content_mse": 8.139078060291165e-05,
+          "k1.fact_mse": 0.017317220258216064,
+          "k1.goal_mse": 0.001712819910608232,
+          "k2.content_mse": 0.03250698816312555,
+          "k2.goal_mse": 0.04578693084719513,
+          "k2.transition_mse": 0.0032601331671079
+        },
+        "holdout_structured_loss_delta": {
+          "combined_mse": 5.455225265096203e-05,
+          "k1.content_mse": 1.5251382743978553e-05,
+          "k1.fact_mse": 5.789815137783455e-05,
+          "k1.goal_mse": 0.00034937487119653587,
+          "k2.content_mse": 0.00013319722105127607,
+          "k2.goal_mse": 0.00011754788041192649,
+          "k2.transition_mse": -0.000345955990875761
+        },
+        "no_update_control": {
+          "holdout_structured_loss_after": {
+            "combined_mse": 0.016777580521142633,
+            "k1.content_mse": 8.139078060291165e-05,
+            "k1.fact_mse": 0.017317220258216064,
+            "k1.goal_mse": 0.001712819910608232,
+            "k2.content_mse": 0.03250698816312555,
+            "k2.goal_mse": 0.04578693084719513,
+            "k2.transition_mse": 0.0032601331671079
+          },
+          "holdout_structured_loss_before": {
+            "combined_mse": 0.016777580521142633,
+            "k1.content_mse": 8.139078060291165e-05,
+            "k1.fact_mse": 0.017317220258216064,
+            "k1.goal_mse": 0.001712819910608232,
+            "k2.content_mse": 0.03250698816312555,
+            "k2.goal_mse": 0.04578693084719513,
+            "k2.transition_mse": 0.0032601331671079
+          },
+          "holdout_structured_loss_delta": {
+            "combined_mse": 0.0,
+            "k1.content_mse": 0.0,
+            "k1.fact_mse": 0.0,
+            "k1.goal_mse": 0.0,
+            "k2.content_mse": 0.0,
+            "k2.goal_mse": 0.0,
+            "k2.transition_mse": 0.0
+          },
+          "passed": true,
+          "training_update_steps": 0
+        },
+        "optimizer_state_present": false,
+        "parameter_delta_norm": {
+          "k1.semantic": 0.07937038848224212,
+          "k2.transition": 0.01188628763992947
+        },
+        "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+        "receipt": {
+          "candidate_namespace": "taiji:k:candidate:model-17",
+          "candidate_worker_bundle_digest": "d4e23a945f27ef00d2ec56b47d520a556da1ed9f097f0f14b1fbb0522898cb43",
+          "candidate_worker_checkpoint_digests": [
+            [
+              "k1.semantic",
+              "20ccf1bb47d0d7d062dca4db2ebbea3a775caf5f8ac62cba5a489cbb8df6f872"
+            ],
+            [
+              "k2.transition",
+              "321c947d34bf870054634b23e00c283f08c6c8e5900dcc8867f9ccb20a38ca1e"
+            ],
+            [
+              "k3.outcome_projection",
+              "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
+            ]
+          ],
+          "course_digest": "d1f516b63432720c9dad77f66936bb03b3e19e85f618440bd038cefb754dbd40",
+          "format": "taiji-k-continuation-learning-v1",
+          "fresh_restore_verified": true,
+          "frozen_workers": [
+            "k3.outcome_projection"
+          ],
+          "holdout_experience_digests": [
+            "5e1cd6bd0b07e3b5517b92ecf5d579a4e66cf2eedff104bb3a2eac73dcd04f5a",
+            "ed44ebde6681820c88135cdf849f963ebcd6a6c0044faa03656decade0fca9df",
+            "ce7a403a3d0631ad43f128fb7604ad4fc1a7a635d3e59f9bdfc3d7e05437aad7"
+          ],
+          "holdout_untrained": true,
+          "kind": "update_receipt",
+          "optimizer_state_present": false,
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "parent_unchanged": true,
+          "parent_worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83",
+          "parent_worker_checkpoint_digests": [
+            [
+              "k1.semantic",
+              "4b5ed527a3a105614cea73c6cc45a2d0577c9ec06eb6e974b245c679b93e5e5d"
+            ],
+            [
+              "k2.transition",
+              "67c96c5c8517ca58bacb45b8de756e7ffd24ee108276160c731da364714e2bda"
+            ],
+            [
+              "k3.outcome_projection",
+              "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
+            ]
+          ],
+          "receipt_digest": "39bca0f709c3ab432c6e016a1257ec3f3ebe5bada14b0b19884ee8ef5668daf8",
+          "rollback_restored": true,
+          "train_experience_digests": [
+            "3682f353f9c5fce29098f80930f97add714db0bd82eccab911f17e746a80dcdc"
+          ],
+          "training_steps": 2,
+          "updated_workers": [
+            "k1.semantic",
+            "k2.transition"
+          ],
+          "version": 1
+        },
+        "report_format": "taiji-m4v2-b3-k-loss-diagnostic-v1",
+        "research_course_executed": true,
+        "run_kind": "learning-diagnostic",
+        "semantic_losses": {
+          "content_loss": 9.474690614297288e-07,
+          "fact_loss": 0.013921926729381084,
+          "goal_loss": 5.121957656228915e-06
+        },
+        "status": "passed",
+        "train_course_digest": "b456c4b65c943702591f4a1bae1ccfdfa9108328e0e382af65488c1c0793bcd2",
+        "train_episode_count": 1,
+        "train_episode_indexes": [
+          4
+        ],
+        "train_episode_paths": [
+          [
+            "rust_00.rs",
+            "typescript_03.ts",
+            "python_00.py"
+          ]
+        ],
+        "train_experience_digests": [
+          "3682f353f9c5fce29098f80930f97add714db0bd82eccab911f17e746a80dcdc"
+        ],
+        "train_fit_input_digests": [
+          {
+            "experience_digest": "3682f353f9c5fce29098f80930f97add714db0bd82eccab911f17e746a80dcdc",
+            "semantic_input_digest": "938fdd37a7e4b86c63029ae38afabbd252b6f72e485efece6a6b7ba0bf942e21",
+            "target_digest": "9d16878a94b3f6fa97f276aac42140a9265649c5b3e8ae68f0ebd4d689760620",
+            "transition_input_digest": "1105b77c4065822f673157cc6f339534daae64744c1aa2ac39c0f082d63c38dd"
+          }
+        ],
+        "train_structured_loss_after": {
+          "combined_mse": 0.0027424475876311285,
+          "k1.content_mse": 8.246405741374474e-06,
+          "k1.fact_mse": 0.013099772855639458,
+          "k1.goal_mse": 0.0001748286740621552,
+          "k2.content_mse": 3.323813871247694e-05,
+          "k2.goal_mse": 8.121528662741184e-05,
+          "k2.transition_mse": 0.0030573841650038958
+        },
+        "train_structured_loss_before": {
+          "combined_mse": 0.0029566043366079007,
+          "k1.content_mse": 9.278454854211304e-06,
+          "k1.fact_mse": 0.013921926729381084,
+          "k1.goal_mse": 0.00021146296057850122,
+          "k2.content_mse": 3.4770571801345795e-05,
+          "k2.goal_mse": 8.617643470643088e-05,
+          "k2.transition_mse": 0.0034760108683258295
+        },
+        "train_structured_loss_delta": {
+          "combined_mse": -0.00021415674897677216,
+          "k1.content_mse": -1.0320491128368303e-06,
+          "k1.fact_mse": -0.0008221538737416267,
+          "k1.goal_mse": -3.663428651634604e-05,
+          "k2.content_mse": -1.5324330888688564e-06,
+          "k2.goal_mse": -4.96114807901904e-06,
+          "k2.transition_mse": -0.00041862670332193375
+        },
+        "train_variant_strategy": "contiguous",
+        "training_performed": true,
+        "training_update_steps": 2,
+        "transition_losses": {
+          "content_loss": 2.7154183044331148e-05,
+          "goal_loss": 6.688579742331058e-05,
+          "transition_loss": 0.0034760108683258295
+        },
+        "updated_workers": [
+          "k1.semantic",
+          "k2.transition"
+        ],
+        "version": 1,
+        "worker_attachment_preflight_course_seed": 1,
+        "worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83",
+        "workspace_seed": 0
+      }
+    },
+    {
+      "episode_seed": 5,
+      "report": {
+        "blocking_reason": null,
+        "can_promote": false,
+        "can_start_r6_formal": false,
+        "candidate_checkpoint_paths": {
+          "k1.semantic": "E:\\Seed\\output\\taiji_m4v2_b3_k_update_signature_audit_20260910\\episode_5\\model_17\\taiji_b3_k1_semantic_loss_step1.pt",
+          "k2.transition": "E:\\Seed\\output\\taiji_m4v2_b3_k_update_signature_audit_20260910\\episode_5\\model_17\\taiji_b3_k2_transition_loss_step1.pt"
+        },
+        "candidate_namespace": "taiji:k:candidate:model-17",
+        "candidate_promoted": false,
+        "candidate_worker_bundle_digest": "7843f0792a36bca0deeb099abf4d08a84c8df277d6c96db035f5d656af40715e",
+        "checks": {
+          "adapter_candidate_stage_roundtrip": true,
+          "adapter_rollback_restored": true,
+          "candidate_checkpoint_fresh_restore": true,
+          "course_roundtrip": true,
+          "k1_owner_changed": true,
+          "k2_owner_changed": true,
+          "k3_owner_unchanged": true,
+          "no_optimizer_state": true,
+          "no_update_control": true,
+          "parent_checkpoint_unchanged": true,
+          "three_disjoint_holdout_records": true,
+          "train_holdout_disjoint": true,
+          "worker_attachment_preflight_passed": true
+        },
+        "course_digest": "1842d9dbe49d51b6d0c8ce5eff56dc15b43758478e19a7da893113ba06d60d57",
+        "course_seed": 5,
+        "elapsed_seconds": 4.43540600000415,
+        "frozen_workers": [
+          "k3.outcome_projection"
+        ],
+        "holdout_count": 3,
+        "holdout_loss_improved": false,
+        "holdout_structured_loss_after": {
+          "combined_mse": 0.017108374543416478,
+          "k1.content_mse": 9.66421633468902e-05,
+          "k1.fact_mse": 0.017375119030475616,
+          "k1.goal_mse": 0.002062194781804768,
+          "k2.content_mse": 0.03354254115159468,
+          "k2.goal_mse": 0.04667413185719246,
+          "k2.transition_mse": 0.0028996182760844627
+        },
+        "holdout_structured_loss_before": {
+          "combined_mse": 0.016777580521142633,
+          "k1.content_mse": 8.139078060291165e-05,
+          "k1.fact_mse": 0.017317220258216064,
+          "k1.goal_mse": 0.001712819910608232,
+          "k2.content_mse": 0.03250698816312555,
+          "k2.goal_mse": 0.04578693084719513,
+          "k2.transition_mse": 0.0032601331671079
+        },
+        "holdout_structured_loss_delta": {
+          "combined_mse": 0.0003307940222738448,
+          "k1.content_mse": 1.5251382743978553e-05,
+          "k1.fact_mse": 5.789877225955212e-05,
+          "k1.goal_mse": 0.00034937487119653587,
+          "k2.content_mse": 0.001035552988469135,
+          "k2.goal_mse": 0.0008872010099973265,
+          "k2.transition_mse": -0.00036051489102343747
+        },
+        "no_update_control": {
+          "holdout_structured_loss_after": {
+            "combined_mse": 0.016777580521142633,
+            "k1.content_mse": 8.139078060291165e-05,
+            "k1.fact_mse": 0.017317220258216064,
+            "k1.goal_mse": 0.001712819910608232,
+            "k2.content_mse": 0.03250698816312555,
+            "k2.goal_mse": 0.04578693084719513,
+            "k2.transition_mse": 0.0032601331671079
+          },
+          "holdout_structured_loss_before": {
+            "combined_mse": 0.016777580521142633,
+            "k1.content_mse": 8.139078060291165e-05,
+            "k1.fact_mse": 0.017317220258216064,
+            "k1.goal_mse": 0.001712819910608232,
+            "k2.content_mse": 0.03250698816312555,
+            "k2.goal_mse": 0.04578693084719513,
+            "k2.transition_mse": 0.0032601331671079
+          },
+          "holdout_structured_loss_delta": {
+            "combined_mse": 0.0,
+            "k1.content_mse": 0.0,
+            "k1.fact_mse": 0.0,
+            "k1.goal_mse": 0.0,
+            "k2.content_mse": 0.0,
+            "k2.goal_mse": 0.0,
+            "k2.transition_mse": 0.0
+          },
+          "passed": true,
+          "training_update_steps": 0
+        },
+        "optimizer_state_present": false,
+        "parameter_delta_norm": {
+          "k1.semantic": 0.07937038848224212,
+          "k2.transition": 0.01291420563682572
+        },
+        "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+        "receipt": {
+          "candidate_namespace": "taiji:k:candidate:model-17",
+          "candidate_worker_bundle_digest": "7843f0792a36bca0deeb099abf4d08a84c8df277d6c96db035f5d656af40715e",
+          "candidate_worker_checkpoint_digests": [
+            [
+              "k1.semantic",
+              "8752f0eba97b5c0f4c71e651682c60c077d78e1dd18d439811850f115e546f40"
+            ],
+            [
+              "k2.transition",
+              "78dd89ac9702395ac455d0c8c43548c2da886c7d12f77dc7975feae6e5ee314b"
+            ],
+            [
+              "k3.outcome_projection",
+              "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
+            ]
+          ],
+          "course_digest": "1842d9dbe49d51b6d0c8ce5eff56dc15b43758478e19a7da893113ba06d60d57",
+          "format": "taiji-k-continuation-learning-v1",
+          "fresh_restore_verified": true,
+          "frozen_workers": [
+            "k3.outcome_projection"
+          ],
+          "holdout_experience_digests": [
+            "5e1cd6bd0b07e3b5517b92ecf5d579a4e66cf2eedff104bb3a2eac73dcd04f5a",
+            "ed44ebde6681820c88135cdf849f963ebcd6a6c0044faa03656decade0fca9df",
+            "ce7a403a3d0631ad43f128fb7604ad4fc1a7a635d3e59f9bdfc3d7e05437aad7"
+          ],
+          "holdout_untrained": true,
+          "kind": "update_receipt",
+          "optimizer_state_present": false,
+          "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+          "parent_unchanged": true,
+          "parent_worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83",
+          "parent_worker_checkpoint_digests": [
+            [
+              "k1.semantic",
+              "4b5ed527a3a105614cea73c6cc45a2d0577c9ec06eb6e974b245c679b93e5e5d"
+            ],
+            [
+              "k2.transition",
+              "67c96c5c8517ca58bacb45b8de756e7ffd24ee108276160c731da364714e2bda"
+            ],
+            [
+              "k3.outcome_projection",
+              "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
+            ]
+          ],
+          "receipt_digest": "c8445e85727407ec1085d99adf0da462009e6c7c32bf86a3a3b723696c030cab",
+          "rollback_restored": true,
+          "train_experience_digests": [
+            "76d6d5fc10e563fcedb00bd83be7f616aeedb3d533bd57f52fd1d4f832e9dcc0"
+          ],
+          "training_steps": 2,
+          "updated_workers": [
+            "k1.semantic",
+            "k2.transition"
+          ],
+          "version": 1
+        },
+        "report_format": "taiji-m4v2-b3-k-loss-diagnostic-v1",
+        "research_course_executed": true,
+        "run_kind": "learning-diagnostic",
+        "semantic_losses": {
+          "content_loss": 9.474690614297288e-07,
+          "fact_loss": 0.013921926729381084,
+          "goal_loss": 5.121957656228915e-06
+        },
+        "status": "passed",
+        "train_course_digest": "8fa9298a5f9b201cbb32b37ca74d4e581732d4fb18028b2752f5cb40de4820d4",
+        "train_episode_count": 1,
+        "train_episode_indexes": [
+          5
+        ],
+        "train_episode_paths": [
+          [
+            "typescript_02.ts",
+            "python_01.py",
+            "rust_01.rs"
+          ]
+        ],
+        "train_experience_digests": [
+          "76d6d5fc10e563fcedb00bd83be7f616aeedb3d533bd57f52fd1d4f832e9dcc0"
+        ],
+        "train_fit_input_digests": [
+          {
+            "experience_digest": "76d6d5fc10e563fcedb00bd83be7f616aeedb3d533bd57f52fd1d4f832e9dcc0",
+            "semantic_input_digest": "38c6f5dfb2bc18923875d96203cda39e3e99d3cd267f26d31ae8e4dfce22323c",
+            "target_digest": "a92646248d3da85786207f28033aab9cdc34fa3b04745fde25ea460583968b66",
+            "transition_input_digest": "1e31a13afcb07465ad4149fef24f703cee132cc3720464188b1ce4557faa385c"
+          }
+        ],
+        "train_structured_loss_after": {
+          "combined_mse": 0.0028047190933951547,
+          "k1.content_mse": 8.246405741374474e-06,
+          "k1.fact_mse": 0.013099772855639458,
+          "k1.goal_mse": 0.0001748286740621552,
+          "k2.content_mse": 4.3338866817066446e-05,
+          "k2.goal_mse": 0.00011164443276356906,
+          "k2.transition_mse": 0.0033904833253473043
+        },
+        "train_structured_loss_before": {
+          "combined_mse": 0.003026986301999083,
+          "k1.content_mse": 9.278454854211304e-06,
+          "k1.fact_mse": 0.013921926729381084,
+          "k1.goal_mse": 0.00021146296057850122,
+          "k2.content_mse": 4.5633656554855406e-05,
+          "k2.goal_mse": 0.00011958363757003099,
+          "k2.transition_mse": 0.0038540323730558157
+        },
+        "train_structured_loss_delta": {
+          "combined_mse": -0.00022226720860392835,
+          "k1.content_mse": -1.0320491128368303e-06,
+          "k1.fact_mse": -0.0008221538737416267,
+          "k1.goal_mse": -3.663428651634604e-05,
+          "k2.content_mse": -2.2947897377889603e-06,
+          "k2.goal_mse": -7.93920480646193e-06,
+          "k2.transition_mse": -0.00046354904770851135
+        },
+        "train_variant_strategy": "contiguous",
+        "training_performed": true,
+        "training_update_steps": 2,
+        "transition_losses": {
+          "content_loss": 3.401193316676654e-05,
+          "goal_loss": 8.801888907328248e-05,
+          "transition_loss": 0.0038540323730558157
+        },
+        "updated_workers": [
+          "k1.semantic",
+          "k2.transition"
+        ],
+        "version": 1,
+        "worker_attachment_preflight_course_seed": 2,
+        "worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83",
+        "workspace_seed": 0
+      }
+    }
+  ],
+  "episode_seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "input_signatures_distinct": true,
+  "model_seed": 17,
+  "parent_checkpoint_digests": [
+    "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675"
+  ],
+  "report_format": "taiji-m4v2-b3-k-update-signature-audit-v1",
+  "run_kind": "per-episode-update-signature-audit",
+  "same_parent": true,
+  "semantic_input_digests": [
+    "4e79e1cd151ef6fa382668455336b40838504de37ef2682bd1836ac4115750f9",
+    "3c3ffb121666d0355dea98c3cabf8a23506d0a46c515f19bc5703068b8babfcd",
+    "0c27746a29420a22c2ace8503a0f7ee452920ebd93fcbf6afd0e71d7e1aef829",
+    "39cc349a02e64cb768e037748ac0fba795b4508450bb6d26c046dc9d15bf3b57",
+    "938fdd37a7e4b86c63029ae38afabbd252b6f72e485efece6a6b7ba0bf942e21",
+    "38c6f5dfb2bc18923875d96203cda39e3e99d3cd267f26d31ae8e4dfce22323c"
+  ],
+  "status": "passed",
+  "technical_gate_passed": true,
+  "transition_input_digests": [
+    "92fe390b0934aa0397c61013b3283dc8c71a66d8c16e41048cd9b4ef039a1a19",
+    "7cc261b0a767855e42a9d7e5926c95b54138bed4737ee9894ce1085e56f8a344",
+    "18f0fe336d6ebda9fc498ea75bb32e25ada135b57bdc1eaddf81c0d03580bcbf",
+    "0cabb35d7d54ffa622de83fcc28491311ea64cb6fec1c221d8504f845e09c4c2",
+    "1105b77c4065822f673157cc6f339534daae64744c1aa2ac39c0f082d63c38dd",
+    "1e31a13afcb07465ad4149fef24f703cee132cc3720464188b1ce4557faa385c"
+  ],
+  "version": 1,
+  "worker_candidate_update_collision_groups": {
+    "k1.semantic": {
+      "20ccf1bb47d0d7d062dca4db2ebbea3a775caf5f8ac62cba5a489cbb8df6f872": [
+        1,
+        4
+      ],
+      "6cd9515330033fce16aeadf24c3604b6f3213f62f9bd451d05e77d36ef466994": [
+        0,
+        3
+      ],
+      "8752f0eba97b5c0f4c71e651682c60c077d78e1dd18d439811850f115e546f40": [
+        2,
+        5
+      ]
+    },
+    "k2.transition": {
+      "321c947d34bf870054634b23e00c283f08c6c8e5900dcc8867f9ccb20a38ca1e": [
+        1,
+        4
+      ],
+      "78dd89ac9702395ac455d0c8c43548c2da886c7d12f77dc7975feae6e5ee314b": [
+        2,
+        5
+      ],
+      "8c8e4b4f82168e5b0f3f6575f93fe8a7ea21308ca772325767e2ac665c7ae8f0": [
+        0,
+        3
+      ]
+    }
+  },
+  "worker_candidate_update_digests": {
+    "k1.semantic": [
+      "6cd9515330033fce16aeadf24c3604b6f3213f62f9bd451d05e77d36ef466994",
+      "20ccf1bb47d0d7d062dca4db2ebbea3a775caf5f8ac62cba5a489cbb8df6f872",
+      "8752f0eba97b5c0f4c71e651682c60c077d78e1dd18d439811850f115e546f40",
+      "6cd9515330033fce16aeadf24c3604b6f3213f62f9bd451d05e77d36ef466994",
+      "20ccf1bb47d0d7d062dca4db2ebbea3a775caf5f8ac62cba5a489cbb8df6f872",
+      "8752f0eba97b5c0f4c71e651682c60c077d78e1dd18d439811850f115e546f40"
+    ],
+    "k2.transition": [
+      "8c8e4b4f82168e5b0f3f6575f93fe8a7ea21308ca772325767e2ac665c7ae8f0",
+      "321c947d34bf870054634b23e00c283f08c6c8e5900dcc8867f9ccb20a38ca1e",
+      "78dd89ac9702395ac455d0c8c43548c2da886c7d12f77dc7975feae6e5ee314b",
+      "8c8e4b4f82168e5b0f3f6575f93fe8a7ea21308ca772325767e2ac665c7ae8f0",
+      "321c947d34bf870054634b23e00c283f08c6c8e5900dcc8867f9ccb20a38ca1e",
+      "78dd89ac9702395ac455d0c8c43548c2da886c7d12f77dc7975feae6e5ee314b"
+    ]
+  }
+}
