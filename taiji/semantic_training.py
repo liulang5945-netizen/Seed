@@ -37,7 +37,7 @@ from .local_learning import (
 )
 
 SEMANTIC_TRAINING_CHECKPOINT_FORMAT = "taiji-structured-semantic-training-v1"
-SEMANTIC_TRAINING_VERSION = 1
+SEMANTIC_TRAINING_VERSION = 2
 SEMANTIC_METADATA_DIM = 4
 SEMANTIC_FACT_SEPARATOR = "::"
 
@@ -156,6 +156,50 @@ def _ordered_unique(values: Iterable[str], name: str) -> tuple[str, ...]:
     if not normalized:
         raise ValueError(f"{name} cannot be empty")
     return normalized
+
+
+def _normalized_fact_feature_masks(
+    fact_keys: tuple[str, ...],
+    feature_dim: int,
+    masks: Mapping[str, Sequence[int]] | None,
+) -> tuple[tuple[int, ...], ...] | None:
+    """Validate a typed fact->feature binding into per-fact index tuples.
+
+    The binding is the K1.1 composition contract: each semantic fact may only
+    read the features that indicate its own attribute value, so a linear fact
+    head cannot bind state attributes to correlated identity features.
+    """
+
+    if masks is None:
+        return None
+    if set(masks) != set(fact_keys):
+        raise ValueError("fact feature masks must cover exactly the corpus fact keys")
+    normalized: list[tuple[int, ...]] = []
+    for key in fact_keys:
+        indices = tuple(int(value) for value in masks[key])
+        if not indices:
+            raise ValueError(f"fact feature mask cannot be empty: {key}")
+        if len(set(indices)) != len(indices):
+            raise ValueError(f"fact feature mask repeats a feature: {key}")
+        if any(not 0 <= index < feature_dim for index in indices):
+            raise ValueError(f"fact feature mask index out of range: {key}")
+        normalized.append(indices)
+    return tuple(normalized)
+
+
+def _normalized_readout_exclusions(
+    fact_keys: tuple[str, ...],
+    excluded: Sequence[str] | None,
+) -> tuple[str, ...]:
+    if excluded is None:
+        return ()
+    keys = tuple(str(key) for key in excluded)
+    if len(set(keys)) != len(keys):
+        raise ValueError("readout fact exclusions repeat a fact")
+    unknown = [key for key in keys if key not in fact_keys]
+    if unknown:
+        raise ValueError(f"readout fact exclusions outside the corpus vocabulary: {unknown}")
+    return keys
 
 
 @dataclass(frozen=True)
@@ -430,6 +474,8 @@ class StructuredSemanticLearner(nn.Module):
         fact_threshold: float = 0.65,
         confidence_floor: float = 0.55,
         ambiguity_ceiling: float = 0.12,
+        fact_feature_masks: Mapping[str, Sequence[int]] | None = None,
+        readout_excluded_facts: Sequence[str] | None = None,
         device: torch.device | str = "cpu",
     ) -> None:
         super().__init__()
@@ -450,6 +496,12 @@ class StructuredSemanticLearner(nn.Module):
         if not 0.0 <= ambiguity_ceiling <= 1.0:
             raise ValueError("semantic ambiguity ceiling must be in [0, 1]")
         self.ambiguity_ceiling = ambiguity_ceiling
+        self._fact_feature_masks = _normalized_fact_feature_masks(
+            self.fact_keys, self.feature_dim, fact_feature_masks
+        )
+        self.readout_excluded_facts = _normalized_readout_exclusions(
+            self.fact_keys, readout_excluded_facts
+        )
         self.input_dim = self.feature_dim + SEMANTIC_METADATA_DIM
         self.fact_head = nn.Linear(self.input_dim, len(self.fact_keys), bias=True)
         self.goal_head = nn.Linear(len(self.fact_keys), len(self.goal_ids), bias=True)
@@ -463,8 +515,37 @@ class StructuredSemanticLearner(nn.Module):
                 layer.weight.zero_()
                 layer.bias.zero_()
         self.to(device)
+        self._readout_input_mask: torch.Tensor | None
+        if self.readout_excluded_facts:
+            mask = torch.ones(
+                len(self.fact_keys), device=self.fact_head.weight.device
+            )
+            for key in self.readout_excluded_facts:
+                mask[self.fact_keys.index(key)] = 0.0
+            self._readout_input_mask = mask
+        else:
+            self._readout_input_mask = None
+        self._apply_fact_feature_masks()
         freeze_parameters(self)
         self.training_steps = 0
+
+    def _masked_readout_input(self, fact_probabilities: torch.Tensor) -> torch.Tensor:
+        """Drop identity facts from the goal/content readout inputs."""
+
+        if self._readout_input_mask is None:
+            return fact_probabilities
+        return fact_probabilities * self._readout_input_mask
+
+    @torch.no_grad()
+    def _apply_fact_feature_masks(self) -> None:
+        """Re-enforce the typed fact->feature binding on the fact head."""
+
+        if self._fact_feature_masks is None:
+            return
+        allowed = torch.zeros_like(self.fact_head.weight)
+        for row, indices in enumerate(self._fact_feature_masks):
+            allowed[row, list(indices)] = 1.0
+        self.fact_head.weight.mul_(allowed)
 
     @property
     def parameter_count(self) -> int:
@@ -543,15 +624,17 @@ class StructuredSemanticLearner(nn.Module):
         examples = tuple(examples)
         inputs, facts, goals, content = self._training_batch(examples)
         one_hot_goals = _one_hot(goals, len(self.goal_ids))
+        readout_inputs = self._masked_readout_input(facts)
         final = {"fact_loss": 0.0, "goal_loss": 0.0, "content_loss": 0.0}
         for _ in range(int(epochs)):
             fact_logits = self.fact_head(inputs)
             fact_error = logistic_error_delta(fact_logits, facts)
             apply_linear_delta(self.fact_head, inputs, fact_error, float(learning_rate))
-            goal_logits = self.goal_head(facts)
+            self._apply_fact_feature_masks()
+            goal_logits = self.goal_head(readout_inputs)
             goal_error = softmax_error_delta(goal_logits, goals)
-            apply_linear_delta(self.goal_head, facts, goal_error, float(learning_rate))
-            content_inputs = torch.cat((facts, one_hot_goals), dim=1)
+            apply_linear_delta(self.goal_head, readout_inputs, goal_error, float(learning_rate))
+            content_inputs = torch.cat((readout_inputs, one_hot_goals), dim=1)
             content_logits = self.content_head(content_inputs)
             content_error = softmax_error_delta(content_logits, content)
             apply_linear_delta(
@@ -670,7 +753,7 @@ class StructuredSemanticLearner(nn.Module):
                 confidence=0.0,
                 ambiguity=1.0,
             )
-        goal_logits = self.goal_head(fact_probabilities.reshape(1, -1))
+        goal_logits = self.goal_head(self._masked_readout_input(fact_probabilities.reshape(1, -1)))
         goal_probabilities = torch.softmax(goal_logits, dim=-1).reshape(-1)
         goal_scores = {
             goal_id: float(goal_probabilities[index])
@@ -694,7 +777,9 @@ class StructuredSemanticLearner(nn.Module):
                 confidence=goal_confidence,
                 ambiguity=goal_ambiguity,
             )
-        content_input = torch.cat((fact_probabilities, goal_probabilities)).reshape(1, -1)
+        content_input = torch.cat(
+            (self._masked_readout_input(fact_probabilities), goal_probabilities)
+        ).reshape(1, -1)
         content_probabilities = torch.softmax(self.content_head(content_input), dim=-1).reshape(-1)
         content_scores = {
             content_id: float(content_probabilities[index])
@@ -769,6 +854,12 @@ class StructuredSemanticLearner(nn.Module):
             "fact_threshold": self.fact_threshold,
             "confidence_floor": self.confidence_floor,
             "ambiguity_ceiling": self.ambiguity_ceiling,
+            "fact_feature_masks": (
+                None
+                if self._fact_feature_masks is None
+                else [list(indices) for indices in self._fact_feature_masks]
+            ),
+            "readout_excluded_facts": list(self.readout_excluded_facts) or None,
             "training_steps": self.training_steps,
             "state_dict": {
                 name: value.detach().cpu().clone() for name, value in self.state_dict().items()
@@ -799,14 +890,27 @@ class StructuredSemanticLearner(nn.Module):
         ):
             if payload.get(key) != expected:
                 raise ValueError(f"structured semantic checkpoint {key} mismatch")
+        raw_masks = payload.get("fact_feature_masks")
+        fact_feature_masks = (
+            {
+                str(key): tuple(int(index) for index in indices)
+                for key, indices in zip(payload["fact_keys"], raw_masks)
+            }
+            if raw_masks is not None
+            else None
+        )
+        raw_excluded = payload.get("readout_excluded_facts")
         learner = cls(
             corpus,
             fact_threshold=float(payload.get("fact_threshold", 0.65)),
             confidence_floor=float(payload.get("confidence_floor", 0.55)),
             ambiguity_ceiling=float(payload.get("ambiguity_ceiling", 0.12)),
+            fact_feature_masks=fact_feature_masks,
+            readout_excluded_facts=None if raw_excluded is None else tuple(raw_excluded),
             device=device,
         )
         learner.load_state_dict(payload["state_dict"])
+        learner._apply_fact_feature_masks()
         learner.training_steps = int(payload.get("training_steps", 0))
         return learner
 
