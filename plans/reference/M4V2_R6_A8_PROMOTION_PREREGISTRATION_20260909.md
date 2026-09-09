@@ -241,3 +241,30 @@ standalone learner 变成默认模型。下一步必须先冻结 **K learner-own
 attachment contract**：adapter 作为唯一 candidate/rollback owner，K1 semantic
 和 K2 transition 作为受控 subordinate worker，K3 作为 deterministic outcome
 projection；确认 checkpoint/owner graph 后才允许任何 K learner training。
+
+## 12. K worker attachment preflight 执行记录（2026-09-09）
+
+已完成 owner attachment contract 的实现与单 cell preflight：
+
+- `taiji/k_worker_manifest.py` 固化 K1/K2/K3 worker manifest、输入/输出合同
+  digest、同一 parent/source/resource 的 bundle 和 owner graph digest；
+- `KContinualAdapter` 现在只能把完整 `KWorkerManifestBundle` 挂到匹配的
+  parent/owner/source/resource/candidate namespace，并把 bundle 写入 joint
+  checkpoint；fresh restore、typed exchange ledger 和 rollback 都保留该
+  bundle；
+- `scripts/training/eval_taiji_m4v2_r6_k_worker_attachment_preflight.py` 已
+  只读扫描/恢复真实 artifact，并在恢复后执行 K1/K2 typed probe、K3 projector
+  状态校验、same-parent echo、S/G epsilon retention 与 stage/rollback；
+- 相关回归为 **18 passed**，新增 manifest/bundle tamper、缺失 artifact 和
+  adapter restore 覆盖；目标模块 Ruff、py_compile、定向 mypy 通过。
+
+报告为：`reports/taiji_m4v2_r6_k_worker_attachment_preflight_20260909.json`。
+本机当前没有 K1 semantic、K2 transition 或 K3 outcome projector 的真实可恢复
+artifact，故报告为 `status=artifact_missing`；parent fresh restore/rollback
+通过，但 `can_start_r6_formal=false`、`can_promote=false`。本轮没有随机初始
+化、没有训练、没有 default runtime/provider/MCP/client/CUDA 变量，也没有把
+standalone K formal report 当作 worker checkpoint。
+
+因此 R6 formal 入口仍然关闭。下一步唯一允许动作是建立可保存、可恢复且带同一
+parent/source/resource lineage 的 K1/K2 worker artifact 生成管线，再用本
+attachment preflight 验收；K3 只恢复真实 projector checkpoint，不训练。
