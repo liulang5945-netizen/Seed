@@ -121,18 +121,6 @@ checkpoint、运行同一输入与 inference trace、保持 no-update/no-externa
 仅屏蔽 K feedback/output admission，使它成为可计算能力差值的容量对照。修订完成前
 不计算新 promotion 结果，也不接入 default runtime/provider/MCP/client/CUDA。
 
-## 7. Matched-control revision first-cell measurement（2026-09-10）
-
-revision manifest 将 matched 的 resource owner 从 parent 改为 worker，并显式声明
-frozen-parent admission baseline 与 matched worker attachment。model17/course0
-实测：candidate/matched wall multiplier=1.2724×，peak multiplier=1.0024×，均通过
-原有 1.5×/1.25× cap；candidate、matched worker 参数均为 4833/19332 bytes，
-inference trace 均为 1，training update steps 均为 0。
-
-该结果只说明修订后的一个 cell 满足资源/能力字段合同；不允许把单 cell 外推成
-9-cell aggregate。后续仍使用全部 3×3、不可删除失败 cell、一侧 95% Student-t
-lower bound 和原有阈值，按 model17/course1 开始的固定顺序继续执行。
-
 model17/23/31 的 fixed-large artifact、source/resource manifest、fresh restore 和
 non-overlap 已全部纳入 content-addressed formal input registry，preflight 已通过。
 当前唯一下一步：**实现 model17/course0 的单 cell execution contract**，在不扩大矩阵
@@ -164,3 +152,25 @@ model31/course1 已通过且追加，当前唯一下一步：**只执行最后�
 model31/course2 已通过，9-cell ledger 已闭合；当前唯一下一步：**运行冻结的 aggregate
 calculation**，验证完整 3×3、五臂字段、资源 Gate 与 source/resource digest 后输出
 mean/min/max 和一侧 95% Student-t lower bound；不改变 promotion 状态。
+
+## 7. Matched-control revision first-cell measurement（2026-09-10）
+
+revision manifest 将 matched 的 resource owner 从 parent 改为 worker，并显式声明
+frozen-parent admission baseline 与 matched worker attachment。model17/course0
+实测：candidate/matched wall multiplier=1.2724×，peak multiplier=1.0024×，均通过
+原有 1.5×/1.25× cap；candidate、matched worker 参数均为 4833/19332 bytes，
+inference trace 均为 1，training update steps 均为 0。
+
+该结果只说明修订后的一个 cell 满足资源/能力字段合同；不允许把单 cell 外推成
+9-cell aggregate。后续仍使用全部 3×3、不可删除失败 cell、一侧 95% Student-t
+lower bound 和原有阈值，按 model17/course1 开始的固定顺序继续执行。
+
+## 8. Revised ledger course1 closure（2026-09-10）
+
+修订版 runner 已按新的 content-addressed manifest 重放并单调追加 course0/course1，
+2/9 row 均为 executed_passed；两个 cell 的 candidate/matched 参数均为 4833/19332
+bytes、trace 均为 1，candidate/matched wall 与 peak 均通过 1.5×/1.25×预算，
+candidate-frozen 和 candidate-matched 能力差值均为 1.0。
+
+这仍不是 aggregate。下一步只执行 model17/course2，所有前序 row 必须保持
+executed_passed；失败 cell 必须保留，不能用其余 course 的均值替代。

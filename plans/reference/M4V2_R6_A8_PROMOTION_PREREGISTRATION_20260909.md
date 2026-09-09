@@ -617,3 +617,14 @@ projection、不写 candidate stage、不创建 exchange、不更新参数；因
 capacity control，而不是将 detached null 改成 0。当前仍保持
 can_start_r6_formal=false、can_promote=false。下一步只执行新 revision 的
 model17/course1，成功后再按顺序扩展，不接默认 runtime、provider、MCP、client/CUDA。
+
+## 39. Matched-control revision monotonic execution（2026-09-10）
+
+revised formal runner 已建立独立 execution ledger，model17/course0 与 course1
+连续通过，当前 2/9 row 为 executed_passed；每个 cell 的 frozen-parent admission
+baseline、matched no-feedback、candidate、lesion 结果均为 0/0/1/0，两个 paired
+delta 均为 1.0，matched/candidate 参数和 inference trace 相同，旧 aggregate 不被
+覆盖。继续保持 can_start_r6_formal=false、can_promote=false。
+
+下一步只执行新 ledger 的 model17/course2；不得跳过 predecessor、改变资源阈值或把
+revised single-cell 结果外推成 promotion。

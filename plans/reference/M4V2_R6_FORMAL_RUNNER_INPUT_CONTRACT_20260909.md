@@ -674,3 +674,19 @@ passed：
 这只闭合 revised model17/course0，不代表 revised 9-cell aggregate，也不解冻默认
 runtime。下一步按新 revision 的固定顺序只执行 model17/course1；任一 failure 保留并
 停止，旧 ledger 不覆盖。
+
+## 28. Matched-control revision monotonic runner（2026-09-10）
+
+formal runner 已支持独立的 revised manifest、input preflight 和 formal preflight 路径，
+报告为 reports/taiji_m4v2_r6_matched_control_execution_20260910.json。新 manifest
+digest 仍为 9221b0920413e7d470821dc66b7daa1a2769ba2502c6b6af1801eb5ad1555ae7，
+runner 的 prior-ledger 校验和固定顺序已生效：
+
+model17/course0 与 model17/course1 均为 executed_passed，累计 2/9；两个 cell
+都保持 frozen-parent=0.0、matched=0.0、candidate=1.0、lesion=0.0，两个 paired
+capability delta 均为 1.0，matched/candidate 的参数与 trace 预算一致，没有失败或
+side-effect 漂移。旧 R6 execution report 不被覆盖。
+
+当前仍不启动 aggregate 或 promotion。下一步只执行 revised runner 的
+model17/course2，要求 prior ledger、new manifest digest、五臂 resource/rollback/
+side-effect 和 no-feedback matched contract 全部通过。
