@@ -31,7 +31,9 @@
 
 这只证明当前 inherited fixed-capacity S/G 学习链在小型 synthetic course 上能产生真实更新和窄 holdout 改善；它没有 K phase、没有同权限 frozen K arm，也没有独立大规模 holdout，因此不能称完整 B3 或自然自进化。
 
-**当前唯一下一步：为 K runtime 建立真实 continuation-learning contract，并用同一 parent/课程完成 B3-K 单步 pilot。** 现有 R6 K worker 只能执行/投影，`training_update_steps=0`；先把 K 的输入、目标、局部 owner 更新、checkpoint/rollback 和独立 holdout 定义清楚，再接入 B3 三臂矩阵。不得把已有 K wiring-canary 重新命名为训练。
+**K continuation-learning contract 已完成，完整 B3-K 尚未完成。** 新增 `taiji/k_continuation.py`，把一条真实 K episode 固化为 content-addressed experience，并强制同一 parent、worker bundle、source manifest；train/holdout 按 experience、输入 digest 和 family 隔离。v1 只允许 `k1.semantic` 与 `k2.transition` 改变，`k3.outcome_projection` 与 Taiji parent 保持不变；当前 worker 的 detached local-delta 语义明确记录为无 optimizer state。新增 course roundtrip、family leakage、update receipt/K3 不可变测试，相关测试与 Ruff 通过。K1/K2 example 现已具备可恢复 payload 解析，供 continuation artifact 使用。
+
+**当前唯一下一步：用同一 inherited model 17 parent 和 sealed course 完成 B3-K 单步 pilot。** pilot 必须真实消费一条 train experience 更新 K1/K2，只读评估独立 holdout，保存 candidate worker checkpoints，fresh-restore 后再验证，显式执行 adapter rollback；同时保留 frozen/no-feedback 行为对照。已有 R6 wiring-canary 仍只能算执行/投影证据，不得重新命名为训练；pilot 失败时先定位目标、反馈、更新或泛化问题，不进入九 cell formal。
 
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 

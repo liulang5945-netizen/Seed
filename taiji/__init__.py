@@ -127,6 +127,16 @@ from .k_worker_manifest import (
     KWorkerManifest,
     KWorkerManifestBundle,
 )
+from .k_continuation import (
+    K_CONTINUATION_FROZEN_WORKERS,
+    K_CONTINUATION_LEARNABLE_WORKERS,
+    K_CONTINUATION_SPLITS,
+    TAIJI_K_CONTINUATION_CONTRACT_FORMAT,
+    TAIJI_K_CONTINUATION_CONTRACT_VERSION,
+    KContinuationCourse,
+    KContinuationExperience,
+    KContinuationUpdateReceipt,
+)
 from .contracts import (
     CONTRACT_FORMAT,
     CONTRACT_VERSION,
@@ -894,6 +904,14 @@ __all__ = [
     "KContinualAdapter",
     "TAIJI_K_CONTINUAL_ADAPTER_FORMAT",
     "TAIJI_K_CONTINUAL_ADAPTER_VERSION",
+    "K_CONTINUATION_FROZEN_WORKERS",
+    "K_CONTINUATION_LEARNABLE_WORKERS",
+    "K_CONTINUATION_SPLITS",
+    "KContinuationCourse",
+    "KContinuationExperience",
+    "KContinuationUpdateReceipt",
+    "TAIJI_K_CONTINUATION_CONTRACT_FORMAT",
+    "TAIJI_K_CONTINUATION_CONTRACT_VERSION",
     "K_WORKER_BUNDLE_FORMAT",
     "K_WORKER_BUNDLE_VERSION",
     "K_WORKER_CONTRACT_FORMAT",
