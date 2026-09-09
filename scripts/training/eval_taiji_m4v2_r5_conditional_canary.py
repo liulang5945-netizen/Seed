@@ -1,14 +1,14 @@
-"""M4.V2.R5 conditional-modularity canary.
+"""M4.V2.R5 conditional-modularity canary and per-cell runner.
 
-Single-model-seed technical gate for the pre-registered design in
+Single-model-seed technical gate and reusable cell runner for the
+pre-registered design in
 ``plans/reference/M4V2_R5_CONDITIONAL_MODULARITY_PREREGISTRATION_20260909.md``.
 A ``ConditionalRouteLearner`` maps whitelist-only route inputs (content
 bucket, surprise EMA, candidate activity, parent residual norm, constant
 resource) onto the shadow candidate gate, replacing the R4 always-open
-``set_gate(1.0)``.  Technical gates verified here: route gates are
-non-constant, route lesion is observable on holdouts, shadow checkpoint
-round-trips, parent substrate is unchanged, and resource records are
-complete.  No fixed-large arm and no promotion claim at canary stage.
+``set_gate(1.0)``.  Arms: fixed-capacity reference, fixed-large
+preregistered strongest control, conditional module with route/candidate
+lesion probes.  No promotion claim at canary stage.
 """
 
 from __future__ import annotations
@@ -28,10 +28,16 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+from scripts.training.eval_taiji_m2r1_phase_c_canary import (  # noqa: E402
+    _process_working_set_bytes,
+)
 from scripts.training.eval_taiji_m4v2_r4_shadow import (  # noqa: E402
     DEFAULT_COURSE,
+    R4Course,
     _course_train,
+    _growth_arm,
     _prepared_parents,
+    _random_candidate,
     _score,
     _shadow_parent_payload,
 )
@@ -127,7 +133,7 @@ def _r5_course_train(
     shadow: AdaptiveResidualShadow,
     route: ConditionalRouteLearner,
     course: Any = DEFAULT_COURSE,
-    freeze_parent: bool = True,
+    freeze_parent: bool = False,
     trace: list[dict[str, Any]] | None = None,
 ) -> None:
     _r5_stream(
@@ -154,36 +160,62 @@ def _r5_course_train(
         )
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--model-seed", type=int, default=71)
-    parser.add_argument("--report", type=Path, required=True)
-    args = parser.parse_args()
-
-    started = time.perf_counter()
-    course = DEFAULT_COURSE
-    r3_parent, pressure_parent, checkpoint_preflight = _prepared_parents(args.model_seed)
+def run_cell(
+    *,
+    model_seed: int,
+    course: R4Course = DEFAULT_COURSE,
+) -> dict[str, Any]:
+    """Run one (model_seed, course) cell: three arms plus lesion probes."""
+    cell_started = time.perf_counter()
+    r3_parent, pressure_parent, checkpoint_preflight = _prepared_parents(model_seed)
     if not checkpoint_preflight:
-        raise RuntimeError("R5 canary parent checkpoint preflight failed")
+        raise RuntimeError(f"cell {model_seed} parent checkpoint preflight failed")
 
     arms: dict[str, Any] = {}
 
-    # Reference 1: frozen pressure parent (no training).
-    frozen = Taiji.from_checkpoint(copy.deepcopy(pressure_parent))
-    arms["frozen_parent"] = {
-        "S": _score(frozen, course.s_holdout),
-        "G": _score(frozen, course.g_holdout),
-    }
-
-    # Reference 2: fixed-capacity unconditional bridge (always-open gate).
+    # A: fixed-capacity unconditional bridge (always-open gate, no candidate).
     fixed = Taiji.from_checkpoint(copy.deepcopy(r3_parent))
+    working_set_before = _process_working_set_bytes()
+    arm_started = time.perf_counter()
     _course_train(fixed, learn_bridge=True, course=course)
     arms["fixed_capacity"] = {
-        "S": _score(fixed, course.s_holdout),
-        "G": _score(fixed, course.g_holdout),
+        "scores": {
+            "S": _score(fixed, course.s_holdout),
+            "G": _score(fixed, course.g_holdout),
+        },
+        "resources": {
+            "train_seconds": time.perf_counter() - arm_started,
+            "working_set_bytes_after": _process_working_set_bytes(),
+            "working_set_bytes_before": working_set_before,
+        },
     }
 
-    # Candidate: conditional module with a dynamic route gate.
+    # B: fixed-large preregistered control (random birth, always-open gate,
+    # same final parameter count as the conditional candidate).
+    fixed_large_started = time.perf_counter()
+    fixed_large = _growth_arm(
+        pressure_parent,
+        candidate=_random_candidate(
+            Taiji.from_checkpoint(copy.deepcopy(pressure_parent)),
+            pressure_parent,
+            label="fixed-large",
+        ),
+        freeze_parent=False,
+        course=course,
+        label="fixed-large",
+    )
+    working_set_after_fixed_large = _process_working_set_bytes()
+    arms["fixed_large"] = {
+        "scores": fixed_large["scores"],
+        "candidate_lesion_delta": fixed_large["candidate_lesion_delta"],
+        "shadow_fresh_restore": fixed_large["shadow_fresh_restore"],
+        "resources": {
+            "train_seconds": time.perf_counter() - fixed_large_started,
+        },
+    }
+
+    # C: conditional module with the dynamic route gate.  freeze_parent=False
+    # aligns the learning boundary with the fixed-large arm.
     model = Taiji.from_checkpoint(copy.deepcopy(pressure_parent))
     candidate = model.adaptive_residual_growth_candidate
     if candidate is None:
@@ -201,13 +233,17 @@ def main() -> int:
 
     route = ConditionalRouteLearner(generator=torch.Generator().manual_seed(ROUTE_SEED))
     training_trace: list[dict[str, Any]] = []
+    working_set_before = _process_working_set_bytes()
+    arm_started = time.perf_counter()
     _r5_course_train(
         model,
         shadow=shadow,
         route=route,
         course=course,
+        freeze_parent=False,
         trace=training_trace,
     )
+    train_seconds = time.perf_counter() - arm_started
 
     route_gate_values = [float(item["route_gate"]) for item in training_trace]
     route_gate_std = (
@@ -232,9 +268,7 @@ def main() -> int:
     route_payload = route.to_payload()
     restored_route = ConditionalRouteLearner()
     restored_route.from_payload(copy.deepcopy(route_payload))
-    route_round_trip = content_digest(route_payload) == content_digest(
-        restored_route.to_payload()
-    )
+    route_round_trip = content_digest(route_payload) == content_digest(restored_route.to_payload())
 
     # All conditional-arm scoring goes through the route-gated stream: the
     # R4 ``_score`` helper would re-open the gate every tick and erase the
@@ -258,9 +292,8 @@ def main() -> int:
         ),
     }
 
-    # Route lesion: the pre-registered causal probe for this canary.  A
-    # lesioned route forces the gate to zero, so the candidate no longer
-    # injects anything on holdouts.
+    # Route lesion: the pre-registered causal probe.  A lesioned route
+    # forces the gate to zero, so the candidate no longer injects anything.
     route.lesion()
     route_lesion_scores = {
         "S": _r5_stream(
@@ -285,9 +318,7 @@ def main() -> int:
         for phase in conditional_scores
     }
 
-    # Candidate lesion: distinguish "route off" from "candidate removed".
-    # The route is restored first so this probe isolates the candidate unit
-    # itself under a live route.
+    # Candidate lesion isolates the candidate unit under a live route.
     route.unlesion()
     restored_for_candidate_lesion = AdaptiveResidualShadow.from_checkpoint(
         model.config, trained_shadow_payload
@@ -316,9 +347,13 @@ def main() -> int:
         for phase in conditional_scores
     }
 
+    working_set_after = _process_working_set_bytes()
     checks = {
         "checkpoint_preflight": bool(checkpoint_preflight),
-        "parent_substrate_unchanged": bool(parent_substrate_unchanged),
+        # freeze_parent=False means the parent bridge legitimately learns, so
+        # the substrate is expected to change (R4 formal semantics); the
+        # mature F1 owners are the protected surface and must not move.
+        "parent_substrate_learns_as_expected": parent_substrate_unchanged is False,
         "mature_owners_unchanged": bool(owner_unchanged),
         "shadow_round_trip": bool(shadow_round_trip),
         "route_round_trip": bool(route_round_trip),
@@ -333,20 +368,29 @@ def main() -> int:
             route.active_parameter_bytes() > 0 and len(training_trace) > 0
         ),
     }
-    technical_gate_all_passed = all(bool(v) for v in checks.values())
 
-    report = {
-        "format": CANARY_FORMAT,
-        "version": CANARY_VERSION,
-        "generated_at_epoch": int(time.time()),
-        "status": "passed" if technical_gate_all_passed else "failed",
-        "can_promote": False,
-        "model_seed": int(args.model_seed),
-        "course": {
-            "label": course.label,
-            "course_seed": course.course_seed,
-            "s_train_bytes": len(course.s_train),
-            "g_schedule": list(course.g_schedule),
+    return {
+        "arms": arms,
+        "conditional_module": {
+            "scores": conditional_scores,
+            "route_lesion_scores": route_lesion_scores,
+            "route_lesion_delta": route_lesion_delta,
+            "candidate_lesion_scores": candidate_lesion_scores,
+            "candidate_lesion_delta": candidate_lesion_delta,
+        },
+        "checks": checks,
+        "technical_gate_all_passed": all(bool(v) for v in checks.values()),
+        "resource_records": {
+            "route_parameter_bytes": route.active_parameter_bytes(),
+            "training_ticks": len(training_trace),
+            "route_gate_mean": sum(route_gate_values) / max(1, len(route_gate_values)),
+            "route_gate_std": route_gate_std,
+            "conditional_train_seconds": train_seconds,
+            "working_set_bytes_after_conditional": working_set_after,
+            "working_set_bytes_after_fixed_capacity": arms["fixed_capacity"]["resources"][
+                "working_set_bytes_after"
+            ],
+            "working_set_bytes_after_fixed_large": working_set_after_fixed_large,
         },
         "route_inputs": {
             "whitelist": [
@@ -358,21 +402,33 @@ def main() -> int:
             ],
             "forbidden": ["evaluator task id", "phase label", "file name"],
         },
-        "resource_records": {
-            "route_parameter_bytes": route.active_parameter_bytes(),
-            "training_ticks": len(training_trace),
-            "route_gate_mean": sum(route_gate_values) / max(1, len(route_gate_values)),
-            "route_gate_std": route_gate_std,
+        "cell_elapsed_seconds": time.perf_counter() - cell_started,
+    }
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--model-seed", type=int, default=71)
+    parser.add_argument("--report", type=Path, required=True)
+    args = parser.parse_args()
+
+    started = time.perf_counter()
+    cell = run_cell(model_seed=args.model_seed)
+    technical_gate_all_passed = cell["technical_gate_all_passed"]
+
+    report = {
+        "format": CANARY_FORMAT,
+        "version": CANARY_VERSION,
+        "generated_at_epoch": int(time.time()),
+        "status": "passed" if technical_gate_all_passed else "failed",
+        "can_promote": False,
+        "model_seed": int(args.model_seed),
+        "course": {
+            "label": DEFAULT_COURSE.label,
+            "course_seed": DEFAULT_COURSE.course_seed,
         },
-        "arms": arms,
-        "conditional_module": {
-            "scores": conditional_scores,
-            "route_lesion_scores": route_lesion_scores,
-            "route_lesion_delta": route_lesion_delta,
-            "candidate_lesion_scores": candidate_lesion_scores,
-            "candidate_lesion_delta": candidate_lesion_delta,
-        },
-        "checks": checks,
+        "cell": cell,
+        "checks": cell["checks"],
         "technical_gate_all_passed": technical_gate_all_passed,
         "resources": {"total_elapsed_seconds": time.perf_counter() - started},
     }
@@ -383,10 +439,9 @@ def main() -> int:
             {
                 "report": str(args.report),
                 "technical_gate_all_passed": technical_gate_all_passed,
-                "failed_checks": [k for k, v in checks.items() if not v],
-                "route_lesion_delta": route_lesion_delta,
-                "candidate_lesion_delta": candidate_lesion_delta,
-                "route_gate_std": route_gate_std,
+                "failed_checks": [k for k, v in cell["checks"].items() if not v],
+                "route_lesion_delta": cell["conditional_module"]["route_lesion_delta"],
+                "candidate_lesion_delta": cell["conditional_module"]["candidate_lesion_delta"],
             },
             indent=2,
         )

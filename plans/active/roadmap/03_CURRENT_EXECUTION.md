@@ -328,3 +328,7 @@ R5 预注册草案已完成：[M4V2_R5_CONDITIONAL_MODULARITY_PREREGISTRATION_20
 `reports/taiji_m4v2_r5_conditional_canary_20260909.json`：11/11 技术 Gate 全过。关键因果证据——route lesion 使 G holdout surprise 恶化 `+0.08245`、S 恶化 `+0.00383`（未见组合对条件路由的依赖显著大于同分布），candidate lesion 独立可观测（S `+0.03804`、G `+0.01728`）；route gate 非常量（std `0.0385`）且全程在 [0,1]；parent substrate 与 mature owner digest 不变；shadow/route checkpoint 往返一致；route+candidate 活跃参数字节已记录。R4/R3/adaptive region 相邻回归 `8 passed`。
 
 **当前唯一下一步**：按预注册草案把 canary 扩展为 3×3 formal——model seeds `71/83/97` × course seeds `101/202/303`，补 fixed-large 臂与资源归一化记录（累计更新预算、峰值内存 ≤1.25×、墙钟 ≤1.5×，超限 cell 判无效），按 §4 主指标（C 相对 B `non-worse ≥ 7/9` 且 mean 更优、route lesion、旧能力非劣）出二分判定。不调路由输入白名单、不改 Gate 阈值、不引入外围系统。
+
+R5 3×3 formal 已完成：`reports/taiji_m4v2_r5_conditional_formal_20260909.json`，**假设否决（hypothesis_supported=false）**。资源归一化干净（0 违例）；C 相对 fixed-large 的 G delta 均值 `+0.00104`（正=更差）、non-worse `4/9`（需 ≥7）；S 非劣 `6/9`（需 9/9）。7 个技术有效 cell 中 route lesion 在 G 上 `5/7` 正，但 model97 的 202/303 两 cell 路由断开反而更好（G `-0.042/-0.008`）——条件路由在未见组合上不能稳定胜过常开。判定与 R4 的 fixed-large 反证同构：**条件化没有解开“等量预分配”的死结，结构增长主线按预注册出口收束，剩余路线转 M5 外围**。全部 `can_promote=false`；R5 代码与报告保留为可回滚 shadow 资产，默认 parent 未被污染。
+
+**当前唯一下一步**：按 §6 解冻顺序启动 M5 外围第一项（Skill/MCP 成为有来源经历的知识内化 canary）；量尺从三周期 retention Gate 切换为 M5 的知识内化/真实任务 Gate，M4.V2 的 R4/R5 shadow 资产保持冻结且可回滚，不携带任何未晋级结构进入默认路径。

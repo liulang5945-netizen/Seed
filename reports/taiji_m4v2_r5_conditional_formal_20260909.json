@@ -1,0 +1,824 @@
+{
+  "format": "taiji-m4v2-r5-conditional-formal-v1",
+  "version": 1,
+  "generated_at_epoch": 1788928430,
+  "status": "rejected",
+  "can_promote": false,
+  "hypothesis_supported": false,
+  "verdict": "hypothesis rejected: structural-growth mainline closes and remaining routes move to the M5 periphery",
+  "resource_caps": {
+    "wall_clock_multiplier": 1.5,
+    "working_set_multiplier": 1.25,
+    "violations": [],
+    "clean": true
+  },
+  "retention_gate": {
+    "g_non_worse_cells": 4,
+    "g_required": 7,
+    "s_non_worse_cells": 6,
+    "route_lesion_g_positive_cells": 7,
+    "route_lesion_s_positive_cells": 7,
+    "valid_cells": 7
+  },
+  "aggregate": {
+    "g_delta_vs_fixed_large": {
+      "values": [
+        0.014665854462494465,
+        0.005732783088709503,
+        0.003188261256444669,
+        -0.005631053714950873,
+        -0.005230810992910229,
+        -0.003993610753434851,
+        -0.001482785165113576
+      ],
+      "mean": 0.0010355197401770155,
+      "non_worse_count": 4,
+      "required_non_worse": 7
+    },
+    "s_delta_vs_fixed_large": {
+      "values": [
+        -0.06652928300824446,
+        -0.04334173280222409,
+        -0.06781167843162095,
+        -0.005065466899083937,
+        0.004063128152411721,
+        -0.0014799767721331847,
+        -0.0038399440199929913
+      ],
+      "mean": -0.026286421968698268,
+      "non_worse_count": 6
+    },
+    "route_lesion_g_positive_cells": 7,
+    "route_lesion_s_positive_cells": 7
+  },
+  "cells": [
+    {
+      "label": "model71-course101",
+      "model_seed": 71,
+      "course_seed": 101,
+      "course_label": "canonical-order",
+      "technical_gate_all_passed": true,
+      "resource_records": {
+        "route_parameter_bytes": 36,
+        "training_ticks": 424,
+        "route_gate_mean": 0.9964301603177154,
+        "route_gate_std": 0.03851665183901787,
+        "conditional_train_seconds": 0.677854000008665,
+        "working_set_bytes_after_conditional": 231170048,
+        "working_set_bytes_after_fixed_capacity": 229933056,
+        "working_set_bytes_after_fixed_large": 230932480,
+        "fixed_large_train_seconds": 0.6711532000917941,
+        "wall_clock_cap": 1.0067298001376912,
+        "wall_clock_ok": true,
+        "working_set_cap": 288665600.0,
+        "working_set_ok": true
+      },
+      "resource_violations": [],
+      "arms": {
+        "fixed_capacity": {
+          "scores": {
+            "S": 5.56367810140241,
+            "G": 5.6252018590392465
+          },
+          "resources": {
+            "train_seconds": 0.359430699958466,
+            "working_set_bytes_after": 229933056,
+            "working_set_bytes_before": 230563840
+          }
+        },
+        "fixed_large": {
+          "scores": {
+            "S": 5.561382862392839,
+            "G": 5.577442039016674
+          },
+          "candidate_lesion_delta": {
+            "S": 0.00032751324757018807,
+            "G": 0.010082543907142139
+          },
+          "shadow_fresh_restore": true,
+          "resources": {
+            "train_seconds": 0.6711532000917941
+          }
+        }
+      },
+      "conditional_module": {
+        "scores": {
+          "S": 5.4948535793845945,
+          "G": 5.592107893479168
+        },
+        "route_lesion_scores": {
+          "S": 5.58381706158097,
+          "G": 5.848580252775694
+        },
+        "route_lesion_delta": {
+          "S": 0.08896348219637584,
+          "G": 0.25647235929652545
+        },
+        "candidate_lesion_scores": {
+          "S": 5.56492139844953,
+          "G": 5.598557157321138
+        },
+        "candidate_lesion_delta": {
+          "S": 0.07006781906493575,
+          "G": 0.0064492638419695325
+        }
+      },
+      "checks": {
+        "checkpoint_preflight": true,
+        "parent_substrate_learns_as_expected": true,
+        "mature_owners_unchanged": true,
+        "shadow_round_trip": true,
+        "route_round_trip": true,
+        "route_gates_non_constant": true,
+        "route_gates_in_unit_range": true,
+        "route_lesion_observable_g": true,
+        "route_lesion_observable_s": true,
+        "candidate_lesion_observable": true,
+        "resource_records_complete": true
+      }
+    },
+    {
+      "label": "model71-course202",
+      "model_seed": 71,
+      "course_seed": 202,
+      "course_label": "order-202",
+      "technical_gate_all_passed": true,
+      "resource_records": {
+        "route_parameter_bytes": 36,
+        "training_ticks": 424,
+        "route_gate_mean": 0.9963920874497062,
+        "route_gate_std": 0.03851074352860451,
+        "conditional_train_seconds": 0.7305014999583364,
+        "working_set_bytes_after_conditional": 231235584,
+        "working_set_bytes_after_fixed_capacity": 231059456,
+        "working_set_bytes_after_fixed_large": 231149568,
+        "fixed_large_train_seconds": 0.7946728999959305,
+        "wall_clock_cap": 1.1920093499938957,
+        "wall_clock_ok": true,
+        "working_set_cap": 288936960.0,
+        "working_set_ok": true
+      },
+      "resource_violations": [],
+      "arms": {
+        "fixed_capacity": {
+          "scores": {
+            "S": 5.580649822704472,
+            "G": 5.722023706280522
+          },
+          "resources": {
+            "train_seconds": 0.4258362000109628,
+            "working_set_bytes_after": 231059456,
+            "working_set_bytes_before": 231559168
+          }
+        },
+        "fixed_large": {
+          "scores": {
+            "S": 5.577865873640451,
+            "G": 5.700396166960787
+          },
+          "candidate_lesion_delta": {
+            "S": 0.00035706824123948877,
+            "G": 0.007137616286156501
+          },
+          "shadow_fresh_restore": true,
+          "resources": {
+            "train_seconds": 0.7946728999959305
+          }
+        }
+      },
+      "conditional_module": {
+        "scores": {
+          "S": 5.534524140838227,
+          "G": 5.7061289500494965
+        },
+        "route_lesion_scores": {
+          "S": 5.58381706158097,
+          "G": 5.848580252775694
+        },
+        "route_lesion_delta": {
+          "S": 0.04929292074274372,
+          "G": 0.14245130272619733
+        },
+        "candidate_lesion_scores": {
+          "S": 5.577514818441487,
+          "G": 5.71473844332852
+        },
+        "candidate_lesion_delta": {
+          "S": 0.04299067760326025,
+          "G": 0.008609493279023717
+        }
+      },
+      "checks": {
+        "checkpoint_preflight": true,
+        "parent_substrate_learns_as_expected": true,
+        "mature_owners_unchanged": true,
+        "shadow_round_trip": true,
+        "route_round_trip": true,
+        "route_gates_non_constant": true,
+        "route_gates_in_unit_range": true,
+        "route_lesion_observable_g": true,
+        "route_lesion_observable_s": true,
+        "candidate_lesion_observable": true,
+        "resource_records_complete": true
+      }
+    },
+    {
+      "label": "model71-course303",
+      "model_seed": 71,
+      "course_seed": 303,
+      "course_label": "order-303",
+      "technical_gate_all_passed": true,
+      "resource_records": {
+        "route_parameter_bytes": 36,
+        "training_ticks": 424,
+        "route_gate_mean": 0.9963255653221661,
+        "route_gate_std": 0.038617830723524094,
+        "conditional_train_seconds": 0.7096330999629572,
+        "working_set_bytes_after_conditional": 231432192,
+        "working_set_bytes_after_fixed_capacity": 231186432,
+        "working_set_bytes_after_fixed_large": 231243776,
+        "fixed_large_train_seconds": 0.7905672000488266,
+        "wall_clock_cap": 1.18585080007324,
+        "wall_clock_ok": true,
+        "working_set_cap": 289054720.0,
+        "working_set_ok": true
+      },
+      "resource_violations": [],
+      "arms": {
+        "fixed_capacity": {
+          "scores": {
+            "S": 5.562675468585,
+            "G": 5.685095671690666
+          },
+          "resources": {
+            "train_seconds": 0.4287224999861792,
+            "working_set_bytes_after": 231186432,
+            "working_set_bytes_before": 231690240
+          }
+        },
+        "fixed_large": {
+          "scores": {
+            "S": 5.558972540411959,
+            "G": 5.6627112972952025
+          },
+          "candidate_lesion_delta": {
+            "S": 0.00010321167585569668,
+            "G": 0.0028166801687543597
+          },
+          "shadow_fresh_restore": true,
+          "resources": {
+            "train_seconds": 0.7905672000488266
+          }
+        }
+      },
+      "conditional_module": {
+        "scores": {
+          "S": 5.4911608619803385,
+          "G": 5.665899558551647
+        },
+        "route_lesion_scores": {
+          "S": 5.58381706158097,
+          "G": 5.848580252775694
+        },
+        "route_lesion_delta": {
+          "S": 0.09265619960063187,
+          "G": 0.18268069422404665
+        },
+        "candidate_lesion_scores": {
+          "S": 5.560876782368905,
+          "G": 5.669601328370784
+        },
+        "candidate_lesion_delta": {
+          "S": 0.06971592038856667,
+          "G": 0.0037017698191368353
+        }
+      },
+      "checks": {
+        "checkpoint_preflight": true,
+        "parent_substrate_learns_as_expected": true,
+        "mature_owners_unchanged": true,
+        "shadow_round_trip": true,
+        "route_round_trip": true,
+        "route_gates_non_constant": true,
+        "route_gates_in_unit_range": true,
+        "route_lesion_observable_g": true,
+        "route_lesion_observable_s": true,
+        "candidate_lesion_observable": true,
+        "resource_records_complete": true
+      }
+    },
+    {
+      "label": "model83-course101",
+      "model_seed": 83,
+      "course_seed": 101,
+      "course_label": "canonical-order",
+      "technical_gate_all_passed": true,
+      "resource_records": {
+        "route_parameter_bytes": 36,
+        "training_ticks": 424,
+        "route_gate_mean": 0.996990634193466,
+        "route_gate_std": 0.03590676188468933,
+        "conditional_train_seconds": 0.7020195999648422,
+        "working_set_bytes_after_conditional": 231321600,
+        "working_set_bytes_after_fixed_capacity": 231153664,
+        "working_set_bytes_after_fixed_large": 231235584,
+        "fixed_large_train_seconds": 0.7893792999675497,
+        "wall_clock_cap": 1.1840689499513246,
+        "wall_clock_ok": true,
+        "working_set_cap": 289044480.0,
+        "working_set_ok": true
+      },
+      "resource_violations": [],
+      "arms": {
+        "fixed_capacity": {
+          "scores": {
+            "S": 5.858799615612739,
+            "G": 5.856566026507653
+          },
+          "resources": {
+            "train_seconds": 0.42922819999512285,
+            "working_set_bytes_after": 231153664,
+            "working_set_bytes_before": 231473152
+          }
+        },
+        "fixed_large": {
+          "scores": {
+            "S": 5.748074548755798,
+            "G": 5.826583622088228
+          },
+          "candidate_lesion_delta": {
+            "S": 0.019767187603868308,
+            "G": 0.00044138015710082357
+          },
+          "shadow_fresh_restore": true,
+          "resources": {
+            "train_seconds": 0.7893792999675497
+          }
+        }
+      },
+      "conditional_module": {
+        "scores": {
+          "S": 5.743009081856714,
+          "G": 5.8209525683732775
+        },
+        "route_lesion_scores": {
+          "S": 6.143465020820837,
+          "G": 5.957156101840045
+        },
+        "route_lesion_delta": {
+          "S": 0.40045593896412246,
+          "G": 0.13620353346676772
+        },
+        "candidate_lesion_scores": {
+          "S": 5.821049085814855,
+          "G": 5.8209525683732775
+        },
+        "candidate_lesion_delta": {
+          "S": 0.07804000395814104,
+          "G": 0.0
+        }
+      },
+      "checks": {
+        "checkpoint_preflight": true,
+        "parent_substrate_learns_as_expected": true,
+        "mature_owners_unchanged": true,
+        "shadow_round_trip": true,
+        "route_round_trip": true,
+        "route_gates_non_constant": true,
+        "route_gates_in_unit_range": true,
+        "route_lesion_observable_g": true,
+        "route_lesion_observable_s": true,
+        "candidate_lesion_observable": true,
+        "resource_records_complete": true
+      }
+    },
+    {
+      "label": "model83-course202",
+      "model_seed": 83,
+      "course_seed": 202,
+      "course_label": "order-202",
+      "technical_gate_all_passed": true,
+      "resource_records": {
+        "route_parameter_bytes": 36,
+        "training_ticks": 424,
+        "route_gate_mean": 0.9969735675619052,
+        "route_gate_std": 0.03607527166604996,
+        "conditional_train_seconds": 0.7069205000298098,
+        "working_set_bytes_after_conditional": 231530496,
+        "working_set_bytes_after_fixed_capacity": 231219200,
+        "working_set_bytes_after_fixed_large": 231264256,
+        "fixed_large_train_seconds": 0.7783261000877246,
+        "wall_clock_cap": 1.167489150131587,
+        "wall_clock_ok": true,
+        "working_set_cap": 289080320.0,
+        "working_set_ok": true
+      },
+      "resource_violations": [],
+      "arms": {
+        "fixed_capacity": {
+          "scores": {
+            "S": 5.911265265253929,
+            "G": 5.91317193258362
+          },
+          "resources": {
+            "train_seconds": 0.4263159999391064,
+            "working_set_bytes_after": 231219200,
+            "working_set_bytes_before": 231723008
+          }
+        },
+        "fixed_large": {
+          "scores": {
+            "S": 5.823430812750677,
+            "G": 5.905811175761204
+          },
+          "candidate_lesion_delta": {
+            "S": 0.026297053362183576,
+            "G": -0.00024423260090955523
+          },
+          "shadow_fresh_restore": true,
+          "resources": {
+            "train_seconds": 0.7783261000877246
+          }
+        }
+      },
+      "conditional_module": {
+        "scores": {
+          "S": 5.827493940903088,
+          "G": 5.9005803647682935
+        },
+        "route_lesion_scores": {
+          "S": 6.143465020820837,
+          "G": 5.957156101840045
+        },
+        "route_lesion_delta": {
+          "S": 0.3159710799177482,
+          "G": 0.056575737071751675
+        },
+        "candidate_lesion_scores": {
+          "S": 5.89838067540643,
+          "G": 5.9005803647682935
+        },
+        "candidate_lesion_delta": {
+          "S": 0.07088673450334149,
+          "G": 0.0
+        }
+      },
+      "checks": {
+        "checkpoint_preflight": true,
+        "parent_substrate_learns_as_expected": true,
+        "mature_owners_unchanged": true,
+        "shadow_round_trip": true,
+        "route_round_trip": true,
+        "route_gates_non_constant": true,
+        "route_gates_in_unit_range": true,
+        "route_lesion_observable_g": true,
+        "route_lesion_observable_s": true,
+        "candidate_lesion_observable": true,
+        "resource_records_complete": true
+      }
+    },
+    {
+      "label": "model83-course303",
+      "model_seed": 83,
+      "course_seed": 303,
+      "course_label": "order-303",
+      "technical_gate_all_passed": true,
+      "resource_records": {
+        "route_parameter_bytes": 36,
+        "training_ticks": 424,
+        "route_gate_mean": 0.9969430296451726,
+        "route_gate_std": 0.035909008234739304,
+        "conditional_train_seconds": 0.7173823999473825,
+        "working_set_bytes_after_conditional": 231510016,
+        "working_set_bytes_after_fixed_capacity": 231247872,
+        "working_set_bytes_after_fixed_large": 231313408,
+        "fixed_large_train_seconds": 0.7814124000724405,
+        "wall_clock_cap": 1.1721186001086608,
+        "wall_clock_ok": true,
+        "working_set_cap": 289141760.0,
+        "working_set_ok": true
+      },
+      "resource_violations": [],
+      "arms": {
+        "fixed_capacity": {
+          "scores": {
+            "S": 5.872955408454822,
+            "G": 5.866200598067564
+          },
+          "resources": {
+            "train_seconds": 0.4248391999863088,
+            "working_set_bytes_after": 231247872,
+            "working_set_bytes_before": 231673856
+          }
+        },
+        "fixed_large": {
+          "scores": {
+            "S": 5.771140148304693,
+            "G": 5.854989629601264
+          },
+          "candidate_lesion_delta": {
+            "S": 0.02711674259426733,
+            "G": 0.0
+          },
+          "shadow_fresh_restore": true,
+          "resources": {
+            "train_seconds": 0.7814124000724405
+          }
+        }
+      },
+      "conditional_module": {
+        "scores": {
+          "S": 5.76966017153256,
+          "G": 5.850996018847829
+        },
+        "route_lesion_scores": {
+          "S": 6.143465020820837,
+          "G": 5.957156101840045
+        },
+        "route_lesion_delta": {
+          "S": 0.37380484928827684,
+          "G": 0.1061600829922158
+        },
+        "candidate_lesion_scores": {
+          "S": 5.8536148006062785,
+          "G": 5.850996018847829
+        },
+        "candidate_lesion_delta": {
+          "S": 0.08395462907371876,
+          "G": 0.0
+        }
+      },
+      "checks": {
+        "checkpoint_preflight": true,
+        "parent_substrate_learns_as_expected": true,
+        "mature_owners_unchanged": true,
+        "shadow_round_trip": true,
+        "route_round_trip": true,
+        "route_gates_non_constant": true,
+        "route_gates_in_unit_range": true,
+        "route_lesion_observable_g": true,
+        "route_lesion_observable_s": true,
+        "candidate_lesion_observable": true,
+        "resource_records_complete": true
+      }
+    },
+    {
+      "label": "model97-course101",
+      "model_seed": 97,
+      "course_seed": 101,
+      "course_label": "canonical-order",
+      "technical_gate_all_passed": true,
+      "resource_records": {
+        "route_parameter_bytes": 36,
+        "training_ticks": 424,
+        "route_gate_mean": 0.9970272480504102,
+        "route_gate_std": 0.03575138747692108,
+        "conditional_train_seconds": 0.6967284999554977,
+        "working_set_bytes_after_conditional": 231571456,
+        "working_set_bytes_after_fixed_capacity": 231407616,
+        "working_set_bytes_after_fixed_large": 231464960,
+        "fixed_large_train_seconds": 0.783104500034824,
+        "wall_clock_cap": 1.174656750052236,
+        "wall_clock_ok": true,
+        "working_set_cap": 289331200.0,
+        "working_set_ok": true
+      },
+      "resource_violations": [],
+      "arms": {
+        "fixed_capacity": {
+          "scores": {
+            "S": 5.676675861355349,
+            "G": 5.925029676369118
+          },
+          "resources": {
+            "train_seconds": 0.4296474999282509,
+            "working_set_bytes_after": 231407616,
+            "working_set_bytes_before": 231907328
+          }
+        },
+        "fixed_large": {
+          "scores": {
+            "S": 5.598628712235202,
+            "G": 5.9121524534076295
+          },
+          "candidate_lesion_delta": {
+            "S": 0.08294223365326747,
+            "G": 6.141049108965291e-05
+          },
+          "shadow_fresh_restore": true,
+          "resources": {
+            "train_seconds": 0.783104500034824
+          }
+        }
+      },
+      "conditional_module": {
+        "scores": {
+          "S": 5.594788768215209,
+          "G": 5.910669668242516
+        },
+        "route_lesion_scores": {
+          "S": 5.759251696533225,
+          "G": 5.946424756642004
+        },
+        "route_lesion_delta": {
+          "S": 0.16446292831801568,
+          "G": 0.03575508839948771
+        },
+        "candidate_lesion_scores": {
+          "S": 5.691543792845158,
+          "G": 5.9109039376145684
+        },
+        "candidate_lesion_delta": {
+          "S": 0.09675502462994867,
+          "G": 0.00023426937205250908
+        }
+      },
+      "checks": {
+        "checkpoint_preflight": true,
+        "parent_substrate_learns_as_expected": true,
+        "mature_owners_unchanged": true,
+        "shadow_round_trip": true,
+        "route_round_trip": true,
+        "route_gates_non_constant": true,
+        "route_gates_in_unit_range": true,
+        "route_lesion_observable_g": true,
+        "route_lesion_observable_s": true,
+        "candidate_lesion_observable": true,
+        "resource_records_complete": true
+      }
+    },
+    {
+      "label": "model97-course202",
+      "model_seed": 97,
+      "course_seed": 202,
+      "course_label": "order-202",
+      "technical_gate_all_passed": false,
+      "resource_records": {
+        "route_parameter_bytes": 36,
+        "training_ticks": 424,
+        "route_gate_mean": 0.9967430669166485,
+        "route_gate_std": 0.03684636205434799,
+        "conditional_train_seconds": 0.6939886000473052,
+        "working_set_bytes_after_conditional": 231600128,
+        "working_set_bytes_after_fixed_capacity": 231473152,
+        "working_set_bytes_after_fixed_large": 231616512,
+        "fixed_large_train_seconds": 0.7753147999756038,
+        "wall_clock_cap": 1.1629721999634057,
+        "wall_clock_ok": true,
+        "working_set_cap": 289520640.0,
+        "working_set_ok": true
+      },
+      "resource_violations": [],
+      "arms": {
+        "fixed_capacity": {
+          "scores": {
+            "S": 5.759216149821674,
+            "G": 6.00699283635908
+          },
+          "resources": {
+            "train_seconds": 0.4243708000285551,
+            "working_set_bytes_after": 231473152,
+            "working_set_bytes_before": 231776256
+          }
+        },
+        "fixed_large": {
+          "scores": {
+            "S": 5.66956601420771,
+            "G": 5.985415198097098
+          },
+          "candidate_lesion_delta": {
+            "S": 0.09197204260449343,
+            "G": 0.0
+          },
+          "shadow_fresh_restore": true,
+          "resources": {
+            "train_seconds": 0.7753147999756038
+          }
+        }
+      },
+      "conditional_module": {
+        "scores": {
+          "S": 5.662822294938816,
+          "G": 5.988905383431082
+        },
+        "route_lesion_scores": {
+          "S": 5.759251696533225,
+          "G": 5.946424756642004
+        },
+        "route_lesion_delta": {
+          "S": 0.09642940159440894,
+          "G": -0.04248062678907871
+        },
+        "candidate_lesion_scores": {
+          "S": 5.76679718177128,
+          "G": 5.989117606745299
+        },
+        "candidate_lesion_delta": {
+          "S": 0.10397488683246436,
+          "G": 0.000212223314216331
+        }
+      },
+      "checks": {
+        "checkpoint_preflight": true,
+        "parent_substrate_learns_as_expected": true,
+        "mature_owners_unchanged": true,
+        "shadow_round_trip": true,
+        "route_round_trip": true,
+        "route_gates_non_constant": true,
+        "route_gates_in_unit_range": true,
+        "route_lesion_observable_g": false,
+        "route_lesion_observable_s": true,
+        "candidate_lesion_observable": true,
+        "resource_records_complete": true
+      }
+    },
+    {
+      "label": "model97-course303",
+      "model_seed": 97,
+      "course_seed": 303,
+      "course_label": "order-303",
+      "technical_gate_all_passed": false,
+      "resource_records": {
+        "route_parameter_bytes": 36,
+        "training_ticks": 424,
+        "route_gate_mean": 0.9968670594367941,
+        "route_gate_std": 0.035884302109479904,
+        "conditional_train_seconds": 0.6977683999575675,
+        "working_set_bytes_after_conditional": 231649280,
+        "working_set_bytes_after_fixed_capacity": 231473152,
+        "working_set_bytes_after_fixed_large": 231600128,
+        "fixed_large_train_seconds": 0.7749652999918908,
+        "wall_clock_cap": 1.1624479499878362,
+        "wall_clock_ok": true,
+        "working_set_cap": 289500160.0,
+        "working_set_ok": true
+      },
+      "resource_violations": [],
+      "arms": {
+        "fixed_capacity": {
+          "scores": {
+            "S": 5.697042513186419,
+            "G": 5.965465369821922
+          },
+          "resources": {
+            "train_seconds": 0.4223455999745056,
+            "working_set_bytes_after": 231473152,
+            "working_set_bytes_before": 231784448
+          }
+        },
+        "fixed_large": {
+          "scores": {
+            "S": 5.5774396117097345,
+            "G": 5.95640171058814
+          },
+          "candidate_lesion_delta": {
+            "S": 0.1146052699265061,
+            "G": 0.0
+          },
+          "shadow_fresh_restore": true,
+          "resources": {
+            "train_seconds": 0.7749652999918908
+          }
+        }
+      },
+      "conditional_module": {
+        "scores": {
+          "S": 5.5891272592043375,
+          "G": 5.954171350216122
+        },
+        "route_lesion_scores": {
+          "S": 5.759251696533225,
+          "G": 5.946424756642004
+        },
+        "route_lesion_delta": {
+          "S": 0.17012443732888727,
+          "G": -0.007746593574118776
+        },
+        "candidate_lesion_scores": {
+          "S": 5.6953311854106206,
+          "G": 5.962804387234416
+        },
+        "candidate_lesion_delta": {
+          "S": 0.10620392620628305,
+          "G": 0.008633037018293876
+        }
+      },
+      "checks": {
+        "checkpoint_preflight": true,
+        "parent_substrate_learns_as_expected": true,
+        "mature_owners_unchanged": true,
+        "shadow_round_trip": true,
+        "route_round_trip": true,
+        "route_gates_non_constant": true,
+        "route_gates_in_unit_range": true,
+        "route_lesion_observable_g": false,
+        "route_lesion_observable_s": true,
+        "candidate_lesion_observable": true,
+        "resource_records_complete": true
+      }
+    }
+  ],
+  "resources": {
+    "total_elapsed_seconds": 19.94651200005319
+  }
+}
