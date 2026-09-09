@@ -96,6 +96,7 @@ exclude = [
     ".git",
     "__pycache__",
     "scripts/archive",
+    "direct-*",
 ]
 
 [tool.ruff.lint]
@@ -125,7 +126,10 @@ ignore = ["E501", "E402", "E741", "B008"]
 [tool.black]
 line-length = 100
 target-version = ["py310"]
-extend-exclude = "/(_libs|build|dist|node_modules|scripts/archive)/"
+# Workbench direct-* trees are tracked fixtures, not Python source.  They
+# intentionally contain cross-language and malformed-language samples for the
+# IDE/language-boundary gates, so formatting must not rewrite or parse them.
+extend-exclude = "/(_libs|build|dist|node_modules|scripts/archive|direct-[^/]+)/"
 
 [tool.coverage.run]
 source = ["seed", "taiji", "seed_platform", "neuroplex", "api"]

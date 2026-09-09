@@ -80,9 +80,7 @@ def _outcome_payload(outcome: Any, environment: WorkbenchEnvironment) -> dict[st
 @contextmanager
 def _isolated_temp_root() -> Iterator[Path]:
     """Create a writable process-owned root without Windows 0700 ACLs."""
-    temp_parent = Path(
-        os.environ.get("SEED_M3R5_TMPDIR") or tempfile.gettempdir()
-    )
+    temp_parent = Path(os.environ.get("SEED_M3R5_TMPDIR") or tempfile.gettempdir())
     temp_parent.mkdir(parents=True, exist_ok=True)
     temp_root = temp_parent / f"seed-m3r5-{uuid4().hex}"
     temp_root.mkdir()
@@ -194,8 +192,7 @@ def run_gate(output_path: Path | None = None) -> dict[str, Any]:
 
     cleaned = temp_root_path is not None and not temp_root_path.exists()
     gates = {
-        "isolated_executor_root": temp_root_path_for_report
-        != str(PROJECT_ROOT)
+        "isolated_executor_root": temp_root_path_for_report != str(PROJECT_ROOT)
         and temp_root_path_for_report not in str(PROJECT_ROOT),
         "policy_requires_approval": policy_before.decision == "ask_user"
         and policy_before.reason_code == "capability_requires_approval",
@@ -278,9 +275,7 @@ def run_gate(output_path: Path | None = None) -> dict[str, Any]:
     }
     if output_path is not None:
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        output_path.write_text(
-            json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8"
-        )
+        output_path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     return report
 
 

@@ -216,3 +216,6 @@ R4 已完成 pressure、candidate、shadow materialization、candidate-only caus
 完整 native 回归现已在仓库可写 fixture 下闭合：`659 passed, 1 skipped`，没有真实测试失败；FastAPI/Starlette 兼容提示仍为 warning。标准 pytest 的 0700 临时目录在本机受 ACL 限制，但这已与代码失败分离记录；M3.R5 评估器已改用可写普通目录创建隔离根。native 失败账本清零，R4 shadow/默认 parent 不变。
 
 当前唯一出口转为 CI 交付层审计：按仓库 workflow/配置执行 tracked Ruff、B/SIM、core mypy 与相关 pytest 门禁，修复真实失败并更新可复现命令；R5 learned router、Skill/MCP/provider、客户端与 CUDA 继续冻结。
+CI 交付层第一轮静态审计已完成：版本检查、主 Ruff、B/SIM、core mypy（`0/95`）、编译和 M3.R5 回归通过。`direct-*` 是 Git 跟踪的 Workbench 跨语言夹具，故在 Ruff/Black 中作为测试数据边界排除，而不是修改其故意错误的内容；本机 Black worker 仍有无输出/ACL 异常，未伪报通过。
+
+当前唯一出口：继续执行 workflow 的 native verify 脚本与 `tests/seed`，逐项关闭 CI 交付账本；R4 shadow/默认 parent、R5 learned router、Skill/MCP/provider、客户端与 CUDA 不变。
