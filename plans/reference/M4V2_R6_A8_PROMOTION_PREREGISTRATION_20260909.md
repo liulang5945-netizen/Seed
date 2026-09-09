@@ -581,3 +581,24 @@ model31/course2 已通过，9/9 cell row 均为 `executed_passed`；五臂 resou
 lesion、rollback 和 side-effect ledger 全部闭合。下一步只做预注册 aggregate 计算和
 统计 Gate，aggregate 完成前不改变 `can_promote=false`，不接 default runtime/provider/
 MCP/client/CUDA。
+
+## 37. Nine-cell aggregate audit and control-design blocker（2026-09-10）
+
+aggregate runner 已按冻结合同完成 9×5 arm 的 content-addressed 重读和统计，报告为
+reports/taiji_m4v2_r6_formal_aggregate_20260909.json。9/9 execution row 均通过；
+candidate K 成功率为 1.0，lesion 为 0.0，candidate-lesion 差值为 1.0，
+candidate floor、K3 lesion、lineage、rollback 和 side-effect Gate 均通过。candidate
+相对 matched 的 peak mean 为 1.1091×，低于 1.25×，但 wall mean 为 6.5769×
+（范围 5.9264×–6.8290×），9 个 cell 全部超过预注册 1.5×。
+
+更关键的阻断不是模型表现，而是 matched-fixed-capacity 的实际实现：它没有 attach K
+worker，参数数和 inference trace 都为 0，故 frozen-parent/matched 的新增能力为
+null，与 candidate 的两个 0.25 paired-delta Gate 都不可计算。聚合器不把 detached
+当作 0 分，也不删除或替换 cell；当前 status=blocked_aggregate，
+can_start_r6_formal=false、can_promote=false。
+
+这确认了控制命名与实验语义发生偏移。下一步唯一工作是新增一份控制修订预注册并实现
+真正 same-capacity matched K：同一 K bundle、同一 restore/输入/trace 和参数/内存预算，
+但禁止 feedback/output admission 与参数更新，得到可观测的 0 能力对照；随后只重跑
+matched/candidate/lesion 的资源与能力 paired slice。禁止事后放宽资源阈值、把 fixed-large
+改作 promotion threshold，或接入任何外围 runtime。

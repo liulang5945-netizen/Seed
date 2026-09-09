@@ -622,3 +622,32 @@ K 单步均为 `1/1`，每个 lesion 均为 `0`。execution report 的 `course_e
 resource/lineage/side-effect/failure 字段和 manifest digest，再输出 mean/min/max 与
 一侧 95% Student-t lower bound；不删除或补齐任何 cell，不把 aggregate 结果直接接入
 default runtime 或 promotion。
+
+## 26. Nine-cell aggregate closure and blocked Gate（2026-09-10）
+
+冻结的 aggregate runner
+scripts/training/eval_taiji_m4v2_r6_formal_aggregate.py 已重新读取 9 个 cell 的
+独立报告、execution ledger、input preflight 和 formal preflight，并校验
+manifest/parent/worker/fixed-large digest、五臂 resource、rollback、side-effect 和
+causal 字段。结果写入
+reports/taiji_m4v2_r6_formal_aggregate_20260909.json：
+
+- cell_count=9，9/9 execution row 为 executed_passed；
+- candidate 每个 holdout 的 task_success_rate=1.0，K3 lesion 每个 cell 为 0.0，
+  candidate-lesion 差值均为 1.0，candidate floor 和 lesion causal Gate 通过；
+- candidate/matched 的 peak multiplier 均通过，9-cell mean 为 1.1091×，上限为
+  1.25×；
+- candidate/matched 的 wall multiplier 9/9 超限，范围为 5.9264×–6.8290×，
+  mean 为 6.5769×，预注册上限为 1.5×；
+- frozen-parent 与 matched-fixed-capacity 当前都以 detached K 形式执行
+  （worker_parameter_count=0、inference_trace_count=0、new capability 为
+  null），因此相对这两个对照的 task_success_delta 不能计算。聚合器将其记录为
+  18 个缺失 Gate，不以 0、均值或 candidate 结果填补。
+
+因此 aggregate 状态为 blocked_aggregate，但这不是九格执行失败，也不是 candidate
+能力失败；它暴露的是 matched-fixed-capacity 控制设计与其预注册语义不一致。保持
+can_start_r6_formal=false、can_promote=false，不接 default runtime、provider、
+MCP、client 或 CUDA。下一步只重新预注册并实现真正的 same-capacity matched K 控制：
+加载同一 K worker bundle、执行同一输入/trace/restore 路径和相同参数字节预算，但关闭
+K feedback/output admission 且不更新参数，使能力差值可观测；不得修改 1.25×/1.5×
+阈值，不重跑无关的 worker artifact 构建。

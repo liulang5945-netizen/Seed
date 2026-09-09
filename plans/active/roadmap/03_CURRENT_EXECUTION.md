@@ -486,6 +486,7 @@ success 为 `1/1`，lesion 与 rollback/side-effect Gate 通过。**当前唯一
 这份五臂执行合同抽为 formal runner 可复用的 cell executor，以同一 model17/course0
 重放并做字段级一致性检查；通过前不扩大到其余 8 cells、不运行 9-cell aggregate、
 不接 default runtime/provider/MCP/client/CUDA。
+
 executor 现已实现为 `run_cell(model_seed, course_seed, …)`，默认 17/0 入口保持兼容；
 同一 manifest 连续两次 replay 的 `execution_contract_digest` 均为
 `8d670a310c08a81e024b3c8f2256ba5afa4808491871e67637205d6156c5d22c`，五臂 resource
@@ -505,3 +506,14 @@ resource/side-effect/checkpoint/rollback ledger 完整。`model31/course0` 已�
 K success 和 lesion ledger 全部闭合。**当前唯一下一步**：只运行冻结的 9-cell aggregate
 calculation，完成后再按结果审计 promotion，不引入任何未预注册变量、
 不接 default runtime/provider/MCP/client/CUDA。
+
+aggregate 已完成并生成
+reports/taiji_m4v2_r6_formal_aggregate_20260909.json。结果为
+blocked_aggregate，不是执行账本失败：9/9 cell execution 通过，candidate 为
+1.0、lesion 为 0.0，K3 causal 与 peak resource 通过；但 candidate/matched
+wall multiplier 为 5.9264×–6.8290×（mean 6.5769×，上限 1.5×），且当前
+matched/frozen 都是 detached K，无法计算两个预注册 capability delta。**当前唯一下一步**：
+先新增并冻结 matched-control revision，再实现同一 K bundle/restore/输入/trace/参数预算、
+no-update/no-feedback 的 matched K；只重跑受影响的 paired resource/capability slice，
+不放宽阈值、不把 fixed-large 改成 promotion threshold、不接 default runtime/provider/
+MCP/client/CUDA。
