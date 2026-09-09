@@ -113,15 +113,52 @@ def _rss_bytes() -> int | None:
         return None
 
 
+def _repo_relative_path(path: Path) -> str:
+    return path.resolve().relative_to(PROJECT_ROOT.resolve()).as_posix()
+
+
+def _resource_gate_valid(resource: Mapping[str, Any]) -> bool:
+    required_numeric = (
+        "wall_clock_seconds",
+        "peak_working_set_bytes",
+        "training_update_steps",
+        "worker_parameter_count",
+        "worker_parameter_bytes",
+        "candidate_parameter_bytes",
+        "checkpoint_write_bytes",
+        "inference_trace_count",
+    )
+    if (
+        resource.get("device") != "cpu"
+        or not resource.get("resource_manifest_digest")
+        or resource.get("peak_working_set_method")
+        != "process_rss_before_after_lower_bound"
+        or resource.get("measurement_complete") is not True
+    ):
+        return False
+    return all(
+        isinstance(resource.get(key), (int, float))
+        and not isinstance(resource.get(key), bool)
+        and float(resource[key]) >= 0.0
+        for key in required_numeric
+    )
+
+
 def _control_arm(
     *,
     arm: str,
     parent: Mapping[str, Any],
     parent_digest: str,
+    resource_manifest_digest: str,
 ) -> dict[str, Any]:
+    before_rss = _rss_bytes()
+    started = time.perf_counter()
     before = _scores(parent)
     restored = Taiji.from_checkpoint(copy.deepcopy(dict(parent)))
     after = _scores(restored.checkpoint())
+    elapsed = time.perf_counter() - started
+    after_rss = _rss_bytes()
+    peak_rss = None if before_rss is None or after_rss is None else max(before_rss, after_rss)
     retention = {
         phase: abs(after[phase] - before[phase]) <= 0.01 for phase in ("S", "G")
     }
@@ -146,13 +183,19 @@ def _control_arm(
         "old_capability_retention": retention,
         "causal": {"status": "control_only", "k_feedback_consumed": False},
         "resource": {
-            "wall_clock_seconds": 0.0,
-            "peak_working_set_bytes": None,
+            "device": "cpu",
+            "resource_manifest_digest": resource_manifest_digest,
+            "wall_clock_seconds": elapsed,
+            "peak_working_set_bytes": peak_rss,
+            "peak_working_set_method": "process_rss_before_after_lower_bound",
             "training_update_steps": 0,
+            "worker_parameter_count": 0,
+            "worker_parameter_bytes": 0,
             "candidate_parameter_bytes": 0,
             "checkpoint_write_bytes": 0,
+            "checkpoint_write_paths": [],
             "inference_trace_count": 0,
-            "measurement_complete": False,
+            "measurement_complete": peak_rss is not None,
         },
         "side_effects": {
             "parent_namespace_unchanged": True,
@@ -174,6 +217,7 @@ def _fixed_large_control_arm(
     artifact_path: Path,
     parent: Mapping[str, Any],
     parent_digest: str,
+    resource_manifest_digest: str,
 ) -> dict[str, Any]:
     del parent
     before_rss = _rss_bytes()
@@ -193,10 +237,13 @@ def _fixed_large_control_arm(
     old_after = canary.get("old_capability_after", {})
     resource = dict(canary.get("resource") or {})
     resource["wall_clock_seconds"] = elapsed
+    resource["device"] = "cpu"
+    resource["resource_manifest_digest"] = resource_manifest_digest
     resource["peak_working_set_bytes"] = peak_rss
     resource["peak_working_set_method"] = "process_rss_before_after_lower_bound"
     resource["worker_parameter_count"] = resource.get("parameter_count")
     resource["worker_parameter_bytes"] = resource.get("candidate_parameter_bytes")
+    resource["checkpoint_write_paths"] = [_repo_relative_path(artifact_path)]
     resource["measurement_complete"] = (
         peak_rss is not None
         and resource.get("worker_parameter_bytes") is not None
@@ -272,6 +319,7 @@ def _candidate_arm(
     candidate_namespace: str,
     lesion_k3: bool,
     arm: str,
+    resource_manifest_digest: str,
 ) -> dict[str, Any]:
     before_rss = _rss_bytes()
     started = time.perf_counter()
@@ -346,6 +394,8 @@ def _candidate_arm(
             "lesion_k3": lesion_k3,
         },
         "resource": {
+            "device": "cpu",
+            "resource_manifest_digest": resource_manifest_digest,
             "wall_clock_seconds": elapsed,
             "peak_working_set_bytes": peak_rss,
             "peak_working_set_method": "process_rss_before_after_lower_bound",
@@ -353,6 +403,10 @@ def _candidate_arm(
             "worker_parameter_bytes": parameter_bytes,
             "candidate_parameter_bytes": parameter_bytes,
             "checkpoint_write_bytes": checkpoint_write_bytes,
+            "checkpoint_write_paths": [
+                _repo_relative_path(path)
+                for path in sorted(artifact_dir.glob("taiji_r6_*.pt"))
+            ],
             "inference_trace_count": canary_resource.get("inference_trace_count", 1),
             "training_update_steps": canary_resource.get("training_update_steps", 0),
             "measurement_complete": measurement_complete,
@@ -502,42 +556,54 @@ def run_single_cell(
 
     arms = {
         "frozen-parent": _control_arm(
-            arm="frozen-parent", parent=parent, parent_digest=parent_digest
+            arm="frozen-parent",
+            parent=parent,
+            parent_digest=parent_digest,
+            resource_manifest_digest=str(parent_entry["resource_manifest_digest"]),
         ),
         "matched-fixed-capacity": _control_arm(
-            arm="matched-fixed-capacity", parent=parent, parent_digest=parent_digest
+            arm="matched-fixed-capacity",
+            parent=parent,
+            parent_digest=parent_digest,
+            resource_manifest_digest=str(parent_entry["resource_manifest_digest"]),
         ),
         "candidate-continuation": _candidate_arm(
             artifact_dir=artifact_dir,
             candidate_namespace=candidate_namespace,
             lesion_k3=False,
             arm="candidate-continuation",
+            resource_manifest_digest=str(worker_entry["resource_manifest_digest"]),
         ),
         "fixed-large": _fixed_large_control_arm(
             artifact_path=_resolve_repo_path(fixed_large_entry["artifact_path"]),
             parent=parent,
             parent_digest=parent_digest,
+            resource_manifest_digest=str(fixed_large_entry["resource_manifest_digest"]),
         ),
         "lesion": _candidate_arm(
             artifact_dir=artifact_dir,
             candidate_namespace=candidate_namespace,
             lesion_k3=True,
             arm="lesion",
+            resource_manifest_digest=str(worker_entry["resource_manifest_digest"]),
         ),
     }
     paired_comparison = _paired_resource_comparison(arms)
-    resource_failure = (
-        None
-        if paired_comparison["measurement_complete"]
-        else _failure(
-            failure_class="resource",
+    resource_gate = {
+        arm: _resource_gate_valid(arms[arm].get("resource") or {})
+        for arm in ARM_IDS
+    }
+    resource_failure = None
+    if not all(resource_gate.values()):
+        resource_failure = _failure(
+            failure_class="resource_gate",
             message=(
-                "candidate/fixed-large paired resource measurement is incomplete; "
-                "peak RSS, checkpoint bytes, parameter bytes, and inference trace must be present"
+                "one or more arms have incomplete resource measurements; every arm must "
+                "record CPU/device digest, RSS, wall-clock, parameter bytes, checkpoint "
+                "paths/bytes, inference trace and training steps"
             ),
-            recoverability="paired_resource_measurement_required",
+            recoverability="all_arm_resource_measurement_required",
         )
-    )
     failures = [arm["failure"] for arm in arms.values() if arm.get("failure") is not None]
     if resource_failure is not None:
         failures.append(resource_failure)
@@ -556,6 +622,8 @@ def run_single_cell(
         "input_preflight_status": input_gate["status"],
         "arms": arms,
         "paired_comparison": paired_comparison,
+        "resource_gate": resource_gate,
+        "resource_contract": manifest["resource_contract"],
         "failures": failures,
         "course_executed": False,
         "single_cell_executed": True,
