@@ -298,3 +298,7 @@ S1 grounded internalization canary 已通过：native consolidation 对未见 gr
 完整 `tests/` 回归已在同一仓库可写 fixture 下闭合：`1070 passed, 6 skipped, 1 warning`，没有真实测试失败；warning 是既有 FastAPI/Starlette 与 httpx 兼容提示。该结果覆盖 `tests/seed`、`tests/taiji_native` 及其余仓库测试，但本次诊断命令尚未带 CI 的 coverage/junit 参数。
 
 **当前唯一下一步**：执行 workflow 完整回归对应的 coverage/junit 门禁，确认 `fail_under` 与报告生成在同一可写 fixture 下通过；若失败，只处理真实覆盖率/报告问题，不改变模型或 R4 shadow。
+
+coverage/junit 门禁已闭合：同一仓库可写 fixture 下 `1070 passed, 6 skipped, 1 warning`，`coverage.xml` 成功生成，总覆盖率 `57.73%`，超过 pyproject 的 `21.8% fail_under`，退出码为 `0`。warning 仍为 FastAPI/Starlette 与 httpx 的既有兼容提示，不是本轮代码失败。
+
+**当前唯一下一步**：对提交后的工作树执行最终静态 CI 门禁（版本一致性、主 Ruff、B/SIM、core mypy、变更脚本编译和 diff 检查）；Black 全量若再次受本机 Windows worker/ACL 阻塞，只记录为环境限制，不伪报通过，也不借机修改无关代码。
