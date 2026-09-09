@@ -264,3 +264,6 @@ S/G 的 BPB 只证明低层预测变化，K 是 A8 的主要能力证据。正�
 完整 native 回归已在仓库可写 fixture 下闭合：`659 passed, 1 skipped`，无真实失败；唯一 warning 为 FastAPI/Starlette 的既有兼容提示。标准 pytest 内置 `tmp_path` 在本机仍会因 0700 临时目录触发 `WinError 5`，这属于执行环境 ACL，不计入代码失败；M3.R5 评估器已不再依赖该创建方式。native 失败账本现清零，R4 shadow/默认 parent 仍未改变。
 
 **当前唯一下一步**：审计并执行仓库 CI 交付层的精确门禁（tracked Ruff、B/SIM、core mypy、相关 pytest 命令和 workflow 约束），只修实际失败项并把可复现命令写入计划；不借 native 绿灯解冻 R5 或外围系统。
+CI clean-checkout 静态门禁审计完成一轮：版本一致性通过；主 Ruff `0`、B/SIM `0`、core mypy `0 errors / 95 files`、相关脚本 `py_compile` 和 M3.R5 回归通过。审计发现 Git 跟踪的 `direct-*` Workbench 夹具包含故意的跨语言/坏语言样本，原 `ruff check .` 与 `black --check .` 会把它们误当源码；现已在 `pyproject.toml` 的 Ruff/Black 边界中排除，夹具内容不变。修正后 Ruff 两个门禁均返回 0；本机 Black 全量/定向进程仍出现无输出的 Windows worker/ACL 异常，未将 Black 写成已通过，需在可复现环境继续核验。
+
+**当前唯一下一步**：执行 CI workflow 中剩余的 native verify 脚本和 `tests/seed` 回归，继续区分真实代码失败与本机临时目录噪声；不解冻 R5。
