@@ -33,7 +33,9 @@ DEFAULT_MANIFEST = (
 DEFAULT_REPORT = (
     PROJECT_ROOT / "reports" / "taiji_m4v2_b3_k_c_entry_input_preflight_20260910.json"
 )
-DEFAULT_FIXED_LARGE_ROOT = PROJECT_ROOT / "checkpoints" / "taiji_k_fixed_large"
+DEFAULT_FIXED_LARGE_ROOT = (
+    PROJECT_ROOT / "checkpoints" / "taiji_k_fixed_large_c_entry"
+)
 
 
 def _sha256(path: Path) -> str:
@@ -55,13 +57,20 @@ def _fixed_large_cell(
     required_training_paths: set[str],
     required_validation_paths: set[str],
     expected_course_contract_digest: str,
+    course_seed: int,
 ) -> dict[str, Any]:
-    path = artifact_root / f"model_{model_seed}" / "taiji_r6_k_fixed_large_ensemble.pt"
+    path = (
+        artifact_root
+        / f"model_{model_seed}"
+        / f"course_{course_seed}"
+        / "taiji_c_entry_k_fixed_large_ensemble.pt"
+    )
     cell: dict[str, Any] = {
         "model_seed": int(model_seed),
         "artifact_path": str(path),
         "artifact_exists": path.is_file(),
         "parent_matches": False,
+        "course_seed_matches": False,
         "format_matches": False,
         "source_manifest_format_matches": False,
         "course_contract_digest_matches": False,
@@ -94,7 +103,7 @@ def _fixed_large_cell(
         cell.update(
             {
                 "format_matches": payload.get("format")
-                == "taiji-k-fixed-large-ensemble-v1",
+                == "taiji-k-fixed-large-c-entry-ensemble-v1",
                 "source_manifest_format_matches": source.get("format")
                 == "taiji-k-fixed-large-c-entry-source-v1",
                 "course_contract_digest_matches": source.get(
@@ -103,6 +112,7 @@ def _fixed_large_cell(
                 == expected_course_contract_digest,
                 "parent_matches": payload.get("parent_checkpoint_digest")
                 == parent_digest,
+                "course_seed_matches": payload.get("course_seed") == int(course_seed),
                 "source_training_paths": sorted(training_paths),
                 "source_validation_paths": sorted(validation_paths),
                 "missing_required_training_paths": missing,
@@ -122,6 +132,7 @@ def _fixed_large_cell(
                 cell["source_manifest_format_matches"],
                 cell["course_contract_digest_matches"],
                 cell["parent_matches"],
+                cell["course_seed_matches"],
                 not missing,
                 cell["validation_paths_match"],
                 cell["optimizer_state_present"] is False,
@@ -194,10 +205,20 @@ def run_preflight(
         }
     )
     all_train_variants = _train_episode_paths()
+    required_training_paths_by_course = {
+        int(variant["course_seed"]): sorted(
+            {
+                path
+                for index in variant["episode_indexes"]
+                for path in all_train_variants[int(index)]
+            }
+        )
+        for variant in manifest["course_contract"]["variants"]
+    }
     required_training_paths = {
         path
-        for index in required_indexes
-        for path in all_train_variants[index]
+        for paths in required_training_paths_by_course.values()
+        for path in paths
     }
     required_validation_paths = {
         path
@@ -207,15 +228,19 @@ def run_preflight(
     fixed_large_cells = [
         _fixed_large_cell(
             model_seed=int(parent["model_seed"]),
+            course_seed=int(variant["course_seed"]),
             parent_digest=str(parent["parent_checkpoint_digest"]),
             artifact_root=fixed_large_root,
-            required_training_paths=required_training_paths,
+            required_training_paths=set(
+                required_training_paths_by_course[int(variant["course_seed"])]
+            ),
             required_validation_paths=required_validation_paths,
             expected_course_contract_digest=str(
                 manifest["course_contract_digest"]
             ),
         )
         for parent in manifest["parent_models"]
+        for variant in manifest["course_contract"]["variants"]
     ]
     fixed_large_ready = all(cell["ready"] for cell in fixed_large_cells)
     formal_input_ready = bool(sealed_checks["ready"] and fixed_large_ready)
@@ -229,6 +254,7 @@ def run_preflight(
         "sealed_test": sealed_checks,
         "required_course_episode_indexes": required_indexes,
         "required_training_paths": sorted(required_training_paths),
+        "required_training_paths_by_course": required_training_paths_by_course,
         "required_validation_paths": sorted(required_validation_paths),
         "fixed_large_cells": fixed_large_cells,
         "fixed_large_ready": fixed_large_ready,

@@ -175,6 +175,7 @@ def _materialize(output: Path) -> dict[str, object]:
             "record_disjoint_from_existing_fixture": True,
             "raw_source_content_embedded": False,
             "scores_or_targets_embedded": False,
+            "anchor_payload": anchor.to_payload(),
             "episodes": episodes,
             "observation_payloads": [
                 sealed_observations[path].to_payload()

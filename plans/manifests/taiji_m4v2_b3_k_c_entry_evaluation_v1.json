@@ -74,6 +74,7 @@
     ]
   },
   "course_contract_digest": "01e6f2f45e375f66c558b3ca2a7592fd7201e079bde9f40262028e334b955c84",
+  "fixed_large_artifact_root": "checkpoints/taiji_k_fixed_large_c_entry",
   "validation_split": {
     "status": "materialized-and-used",
     "record_count": 3,
@@ -98,8 +99,8 @@
       "content-addressed artifact with source and schema digest"
     ],
     "artifact_path": "plans/manifests/taiji_m4v2_b3_k_c_sealed_test_v1.json",
-    "artifact_digest": "ba992f50dcd1c1b557074cb82ffe890040aa002619ca1eb4406fee520d77ebb4",
-    "artifact_sha256": "B5FAD06AAF81884706CE05E676A66524EE6E95FD9540340D9FB4D926D79B6AF3",
+    "artifact_digest": "1c9e3853e9d87828fedecc8a47d11d7667c97d0aa35d475bdc2e27f7b21eb969",
+    "artifact_sha256": "89896556d1d3dc86fb21a8c9303d7fdf1b83ecc5a7f22777586c7fe22539d78f",
     "materialization_owner": "C-entry preflight",
     "formal_start_blocked_until_materialized": false
   },

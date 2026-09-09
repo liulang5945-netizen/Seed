@@ -1,5 +1,74 @@
 {
-  "artifact_digest": "ba992f50dcd1c1b557074cb82ffe890040aa002619ca1eb4406fee520d77ebb4",
+  "anchor_payload": {
+    "byte_length": 0,
+    "capability_revision": 6,
+    "capability_snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+    "diagnostics_connected": false,
+    "file_digest": "",
+    "file_is_file": false,
+    "format": "taiji-workbench-observation-v1",
+    "language_confidence": 0.0,
+    "language_id": "unknown",
+    "observation_digest": "beaea099704ba9b10059c0409353107bc6ac534dbc3dfc2ec5d34cc613d5c346",
+    "observation_id": "m5k1:c-entry-sealed-anchor:missing_00.txt",
+    "path": "missing_00.txt",
+    "project_id": "m5k1-project",
+    "read_success": false,
+    "schema": {
+      "extensions": [
+        ".h",
+        ".py",
+        ".rs",
+        ".ts",
+        "<none>"
+      ],
+      "feature_dim": 19,
+      "feature_names": [
+        "language:python",
+        "language:rust",
+        "language:typescript",
+        "language:unknown",
+        "selection:ambiguous",
+        "selection:resolved",
+        "selection:unknown",
+        "task:inspect-language",
+        "extension:.h",
+        "extension:.py",
+        "extension:.rs",
+        "extension:.ts",
+        "extension:<none>",
+        "read_success",
+        "file_is_file",
+        "byte_length_fraction",
+        "language_confidence",
+        "toolchain_available",
+        "diagnostics_connected"
+      ],
+      "format": "taiji-workbench-observation-v1",
+      "language_ids": [
+        "python",
+        "rust",
+        "typescript",
+        "unknown"
+      ],
+      "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3",
+      "selection_states": [
+        "ambiguous",
+        "resolved",
+        "unknown"
+      ],
+      "task_kinds": [
+        "inspect-language"
+      ],
+      "version": 1
+    },
+    "selection_state": "unknown",
+    "task_id": "m5k1:read-language:missing_00.txt",
+    "task_kind": "inspect-language",
+    "toolchain_available": false,
+    "version": 1
+  },
+  "artifact_digest": "1c9e3853e9d87828fedecc8a47d11d7667c97d0aa35d475bdc2e27f7b21eb969",
   "episode_count": 3,
   "episodes": [
     {
@@ -88,7 +157,7 @@
     }
   ],
   "format": "taiji-m4v2-b3-k-c-sealed-test-v1",
-  "materializer_sha256": "bd3c96f89f101c03284ae82d1493a3ffcd706b5fd9ae58f8804fff3280d27ff9",
+  "materializer_sha256": "0e6f54d63fdab4f566e1667f737532d382eabb158b412a6981c4c6242a8ef24f",
   "observation_payloads": [
     {
       "byte_length": 172,

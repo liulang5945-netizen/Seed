@@ -1,0 +1,2374 @@
+{
+  "can_promote": false,
+  "can_start_formal": false,
+  "cell_count": 9,
+  "cells": [
+    {
+      "artifact_digest": "c8230fe2fbee95e10bf76a023ecd0efe124da64bfe3bd51665047d5b87220b56",
+      "artifact_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_0\\taiji_c_entry_k_fixed_large_ensemble.pt",
+      "can_promote": false,
+      "can_start_formal": false,
+      "course_contract_digest": "01e6f2f45e375f66c558b3ca2a7592fd7201e079bde9f40262028e334b955c84",
+      "course_seed": 0,
+      "cuda_used": false,
+      "default_runtime_attached": false,
+      "disk_ensemble_fresh_restore": true,
+      "elapsed_seconds": 4.0382958999834955,
+      "ensemble_checkpoint_digest": "a20034f3eb3d2ef1a1672dd3903c8cfb6de9942673bbffdc4b54351765705e7e",
+      "ensemble_fresh_restore": true,
+      "model_seed": 17,
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "replica_reports": [
+        {
+          "k1_checkpoint_digest": "d57859a2a1ddfa2fda459153d09417fcb3e7b4954a41eb6b752d510398ce06ce",
+          "k1_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_0\\replica_0\\k1_semantic.pt",
+          "k1_parameter_delta_digest": "66e50e9e7088381bcf17f6e316283bc9ffc4398d02b4d3f4f9512ee772364407",
+          "k1_parameter_delta_norm": 0.12400337161885537,
+          "k1_training_steps": 2083,
+          "k2_checkpoint_digest": "714d9a19d2e13d086fc9d5c32dbced0ba8af146d7bacbdb8f213ea78cf95cce2",
+          "k2_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_0\\replica_0\\k2_transition.pt",
+          "k2_parameter_delta_digest": "f2469dd956203dd29baa027c793e91a0d56ad316240a3972571aa34f778d3b5c",
+          "k2_parameter_delta_norm": 0.026725810005166384,
+          "k2_training_steps": 5043,
+          "losses": {
+            "k1.semantic": {
+              "content_loss": 9.56842541199876e-07,
+              "fact_loss": 0.014328128658235073,
+              "goal_loss": 5.380075890570879e-06
+            },
+            "k2.transition": {
+              "content_loss": 3.413276863284409e-05,
+              "goal_loss": 8.909839380066842e-05,
+              "transition_loss": 0.0032027559354901314
+            }
+          },
+          "postfit_restore_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "prefit_checkpoint_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "replica_index": 0,
+          "reverse_order": false
+        },
+        {
+          "k1_checkpoint_digest": "18ce7fd4a699c18aef6dcce04fbd53b68ff1bf2c5732b7748ae315210a8ab9b1",
+          "k1_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_0\\replica_1\\k1_semantic.pt",
+          "k1_parameter_delta_digest": "a17245be48dd87a04bf610e3f4dbe653a0d0b99e43f9599ae6dda70a128ee219",
+          "k1_parameter_delta_norm": 0.12424024920071985,
+          "k1_training_steps": 2083,
+          "k2_checkpoint_digest": "a6fc11fbbe1147f551099d55e0e1e8e45d4b61af84087a99dea44ef2e91a24d5",
+          "k2_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_0\\replica_1\\k2_transition.pt",
+          "k2_parameter_delta_digest": "6b1d4fd08c3ceb8ea6f22d2b497300b4915da1e1afcd77408eb0de5d2056c22c",
+          "k2_parameter_delta_norm": 0.02651727626886353,
+          "k2_training_steps": 5043,
+          "losses": {
+            "k1.semantic": {
+              "content_loss": 3.3826552225946216e-06,
+              "fact_loss": 0.02000807784497738,
+              "goal_loss": 2.0954290448571555e-05
+            },
+            "k2.transition": {
+              "content_loss": 7.207345333881676e-05,
+              "goal_loss": 0.00018521516176406294,
+              "transition_loss": 0.0023002708330750465
+            }
+          },
+          "postfit_restore_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "prefit_checkpoint_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "replica_index": 1,
+          "reverse_order": true
+        }
+      ],
+      "replica_updates_distinct": true,
+      "report_format": "taiji-m4v2-b3-k-c-fixed-large-build-v1",
+      "resource": {
+        "candidate_parameter_bytes": 38664,
+        "checkpoint_write_bytes": 183491,
+        "checkpoint_write_paths": [
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_0\\replica_0\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_0\\replica_0\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_0\\replica_0\\prefit\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_0\\replica_0\\prefit\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_0\\replica_1\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_0\\replica_1\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_0\\replica_1\\prefit\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_0\\replica_1\\prefit\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_0\\taiji_c_entry_k_fixed_large_ensemble.pt"
+        ],
+        "device": "cpu",
+        "inference_peak_working_set_bytes": null,
+        "inference_trace_count": null,
+        "inference_wall_clock_seconds": null,
+        "measurement_complete": true,
+        "parameter_bytes": 38664,
+        "peak_working_set_bytes": 233422848,
+        "peak_working_set_method": "process_rss_before_after_lower_bound",
+        "resource_manifest_digest": "6b9e87ebbd1c73db9e06886ab26850ad791333cda08484db9964d566c0cd9108",
+        "training_peak_working_set_bytes": 233422848,
+        "training_update_steps": 14252,
+        "training_wall_clock_seconds": 0.06604279996827245,
+        "worker_parameter_bytes": 38664,
+        "worker_parameter_count": 9666
+      },
+      "run_kind": "c-entry-fixed-large-build",
+      "sealed_test_scored": false,
+      "source_manifest_digest": "318b096a469d2f1a824783b5c7953d3d01cd60de5c8e37dda3e81e529ea98996",
+      "status": "passed",
+      "target_multiset_digest": "a0f58fa01922dc8a98eb1e9bb95fd428be3a07d0c9f7f249a124c4349d32e8ea",
+      "train_episode_indexes": [
+        0,
+        1,
+        2
+      ],
+      "training_performed": true,
+      "version": 1,
+      "worker_attachment_preflight": {
+        "adapter_checkpoint": {
+          "checkpoint_digest": "0644c040275df53ae722674b33d3203e15bebce884194ba4146e14487e01c79a",
+          "exchange_digest": "e4384cf903764dc640d1a9161ae58ab0ff288b5aa76dc854e7f55cd1f85c733a",
+          "owner_graph_digest": "4f1cbc3ce105112a2320a9209f6c5bfdd7ade54436147b0e94c15764dfbf42b8",
+          "rollback_record_digest": "f039f24eba0e7b2d98a328164bc64158c2d0574e0f507185dc281bee56eaec75",
+          "worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83"
+        },
+        "adapter_training_steps": 0,
+        "artifact_errors": {},
+        "artifact_format": "taiji-k-worker-artifact-v1",
+        "artifact_missing": [],
+        "artifact_paths": {
+          "k1.semantic": [
+            "E:\\Seed\\checkpoints\\taiji_k_workers\\model_17\\taiji_r6_k1_semantic.pt"
+          ],
+          "k2.transition": [
+            "E:\\Seed\\checkpoints\\taiji_k_workers\\model_17\\taiji_r6_k2_transition.pt"
+          ],
+          "k3.outcome_projection": [
+            "E:\\Seed\\checkpoints\\taiji_k_workers\\model_17\\taiji_r6_k3_outcome_projection.pt"
+          ]
+        },
+        "attachment_gate_passed": true,
+        "blocking_reason": "attachment passed; R6 formal remains closed until the controlled K canary and full S/G/K promotion Gate run",
+        "can_promote": false,
+        "can_start_k_controlled_canary": true,
+        "can_start_r6_formal": false,
+        "candidate_training_performed": false,
+        "checks": {
+          "adapter_training_steps_zero": true,
+          "candidate_stage_worker_bundle_roundtrip": true,
+          "no_cuda": true,
+          "no_default_runtime": true,
+          "no_provider_mcp_client": true,
+          "old_G_retention": true,
+          "old_S_retention": true,
+          "parent_fresh_restore": true,
+          "parent_rollback_restore": true,
+          "rollback_parent_namespace_restored": true,
+          "rollback_record_explicit": true,
+          "rollback_worker_bundle_roundtrip": true,
+          "typed_exchange_ledger_roundtrip": true,
+          "typed_exchange_parent_echo": true,
+          "typed_exchange_worker_bundle_roundtrip": true,
+          "worker_bundle_exactly_k1_k2_k3": true,
+          "worker_bundle_same_parent": true,
+          "worker_owner_graph_bound": true
+        },
+        "client_attached": false,
+        "created_at_unix": 1788987295.8980808,
+        "cuda_used": false,
+        "default_runtime_attached": false,
+        "mcp_attached": false,
+        "old_capability_after": {
+          "G": 5.959810695900639,
+          "S": 5.995296377498504
+        },
+        "old_capability_before": {
+          "G": 5.959810695900639,
+          "S": 5.995296377498504
+        },
+        "old_capability_retention": {
+          "G": true,
+          "S": true
+        },
+        "owner_graph_digest": "4f1cbc3ce105112a2320a9209f6c5bfdd7ade54436147b0e94c15764dfbf42b8",
+        "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+        "parent_restore": {
+          "fresh_restore": true,
+          "rollback_restore": true
+        },
+        "provider_attached": false,
+        "report_format": "taiji-m4v2-r6-k-worker-attachment-preflight-v1",
+        "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+        "source_manifest_digest": "d0946c73d9844b4b0e44f2685a87465a568ee6ba7665f23c11a7b5fe0208b362",
+        "status": "passed",
+        "training_performed": false,
+        "version": 1,
+        "worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83",
+        "workers": {
+          "k1.semantic": {
+            "candidate_namespace": "taiji:k:candidate:model-17",
+            "checkpoint_digest": "4b5ed527a3a105614cea73c6cc45a2d0577c9ec06eb6e974b245c679b93e5e5d",
+            "checkpoint_format": "taiji-structured-semantic-training-v1",
+            "checkpoint_version": 2,
+            "feature_dim": 19,
+            "owner_digests": {
+              "semantic_content": "fb8c70fc2d86bc013b95c10b1a3c5db7f0e2bd902966393fdfa0c10ca55866b4",
+              "semantic_fact": "d7fa651416a48426be0bb88ab9b262b77d7e605082f3571abc596ef6caf0a791",
+              "semantic_goal": "4b15e5454dcd70ed52abe841c24ce60f467e681f447a13ccea1740be8ca6ef93"
+            },
+            "probe_type": "StructuredSemanticResult",
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "source_digest": "476b1141df2e572d37562d96da64448403b965bec5bbdb5cacdd4ed47970c440",
+            "source_manifest_digest": "d0946c73d9844b4b0e44f2685a87465a568ee6ba7665f23c11a7b5fe0208b362",
+            "training_steps": 2080
+          },
+          "k2.transition": {
+            "candidate_namespace": "taiji:k:candidate:model-17",
+            "checkpoint_digest": "67c96c5c8517ca58bacb45b8de756e7ffd24ee108276160c731da364714e2bda",
+            "checkpoint_format": "taiji-structured-semantic-transition-v3",
+            "checkpoint_version": 3,
+            "event_dim": 19,
+            "owner_digests": {
+              "semantic_transition": "588000b80a87bc165a32fe7e2ce57b2eb1a2b7f1b0487012c28a2068b804e158",
+              "semantic_transition_content": "cd19f441668e3251384d31f18eb786652bbb49231332623fdb98a4b8ad069402",
+              "semantic_transition_goal": "a14bbf1a34d1dd7cb968efb47800fdb9145adfd4f3ca55c65006fae749a3581b"
+            },
+            "probe_type": "StructuredSemanticTransitionResult",
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "source_digest": "e8c51ba53d454f978cb71e35f860a62edc690ca8a2a08a8ef89ec8ba82c330d9",
+            "source_manifest_digest": "d0946c73d9844b4b0e44f2685a87465a568ee6ba7665f23c11a7b5fe0208b362",
+            "training_steps": 5040
+          },
+          "k3.outcome_projection": {
+            "candidate_namespace": "taiji:k:candidate:model-17",
+            "checkpoint_digest": "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1",
+            "checkpoint_format": "taiji-outcome-dependency-projection-v1",
+            "checkpoint_version": 1,
+            "lesioned": false,
+            "owner_digests": {
+              "outcome_dependency_projector": "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
+            },
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "scope_id": "r6-k3-worker-0-17",
+            "source_digest": "e620198d1ca31d2db23352dad524050c976d9af4ec559451d593d6f088177ebf",
+            "source_manifest_digest": "d0946c73d9844b4b0e44f2685a87465a568ee6ba7665f23c11a7b5fe0208b362",
+            "training_steps": 0
+          }
+        }
+      }
+    },
+    {
+      "artifact_digest": "f70c47d5e3b88a56da49d33bb69afa37bb8f1569a94807b9e5441850b3d11b1f",
+      "artifact_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_1\\taiji_c_entry_k_fixed_large_ensemble.pt",
+      "can_promote": false,
+      "can_start_formal": false,
+      "course_contract_digest": "01e6f2f45e375f66c558b3ca2a7592fd7201e079bde9f40262028e334b955c84",
+      "course_seed": 1,
+      "cuda_used": false,
+      "default_runtime_attached": false,
+      "disk_ensemble_fresh_restore": true,
+      "elapsed_seconds": 4.410926000098698,
+      "ensemble_checkpoint_digest": "ab549d1c2ce558e896337775f6b43cd955307c315d56823dacca950f7173ed17",
+      "ensemble_fresh_restore": true,
+      "model_seed": 17,
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "replica_reports": [
+        {
+          "k1_checkpoint_digest": "152299df67729b6cec50ba2fd010c8e4db68449d8159fdc28237e91c09f575e6",
+          "k1_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_1\\replica_0\\k1_semantic.pt",
+          "k1_parameter_delta_digest": "361063e6d2354644ffd5fee244ce8a5722fe0351c9eeec3ada3ba741df58d476",
+          "k1_parameter_delta_norm": 0.19645205985979614,
+          "k1_training_steps": 2083,
+          "k2_checkpoint_digest": "6a958e060e9115ae168fb9bbe0058356efb4f70c898a6c72755217df6b653019",
+          "k2_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_1\\replica_0\\k2_transition.pt",
+          "k2_parameter_delta_digest": "2be5e53cbdf4b64eb9215a480f9a1ee2389f283060849e45c15c923e8b2495e3",
+          "k2_parameter_delta_norm": 0.03029754439110665,
+          "k2_training_steps": 5043,
+          "losses": {
+            "k1.semantic": {
+              "content_loss": 1.0904631153607625e-06,
+              "fact_loss": 0.01474839635193348,
+              "goal_loss": 7.267472483363235e-06
+            },
+            "k2.transition": {
+              "content_loss": 2.8984242817386985e-05,
+              "goal_loss": 7.410153921227902e-05,
+              "transition_loss": 0.0028903644997626543
+            }
+          },
+          "postfit_restore_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "prefit_checkpoint_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "replica_index": 0,
+          "reverse_order": false
+        },
+        {
+          "k1_checkpoint_digest": "f226fb8e478058c4a4c41fab34b6bffca506f567d1e2b266d204b3eda421711b",
+          "k1_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_1\\replica_1\\k1_semantic.pt",
+          "k1_parameter_delta_digest": "a530847f46b871ce86fc2a0946e7704c6f8bd9466493206e7cc00f08c4d8a5d8",
+          "k1_parameter_delta_norm": 0.20142107428854789,
+          "k1_training_steps": 2083,
+          "k2_checkpoint_digest": "068aad446b12b9a8fe6118f9798d59aae7f47851d432bfb236bdf75669b18d5b",
+          "k2_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_1\\replica_1\\k2_transition.pt",
+          "k2_parameter_delta_digest": "8fc9c21a2efad35bddd75f00247bf4b15beabed9a0813d4bacd8159fda2a1678",
+          "k2_parameter_delta_norm": 0.030532927259957356,
+          "k2_training_steps": 5043,
+          "losses": {
+            "k1.semantic": {
+              "content_loss": 2.888500830522389e-06,
+              "fact_loss": 0.01781843975186348,
+              "goal_loss": 1.476909892517142e-05
+            },
+            "k2.transition": {
+              "content_loss": 6.679399666609243e-05,
+              "goal_loss": 0.00016589349252171814,
+              "transition_loss": 0.0022575671318918467
+            }
+          },
+          "postfit_restore_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "prefit_checkpoint_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "replica_index": 1,
+          "reverse_order": true
+        }
+      ],
+      "replica_updates_distinct": true,
+      "report_format": "taiji-m4v2-b3-k-c-fixed-large-build-v1",
+      "resource": {
+        "candidate_parameter_bytes": 38664,
+        "checkpoint_write_bytes": 183491,
+        "checkpoint_write_paths": [
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_1\\replica_0\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_1\\replica_0\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_1\\replica_0\\prefit\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_1\\replica_0\\prefit\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_1\\replica_1\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_1\\replica_1\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_1\\replica_1\\prefit\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_1\\replica_1\\prefit\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_1\\taiji_c_entry_k_fixed_large_ensemble.pt"
+        ],
+        "device": "cpu",
+        "inference_peak_working_set_bytes": null,
+        "inference_trace_count": null,
+        "inference_wall_clock_seconds": null,
+        "measurement_complete": true,
+        "parameter_bytes": 38664,
+        "peak_working_set_bytes": 234909696,
+        "peak_working_set_method": "process_rss_before_after_lower_bound",
+        "resource_manifest_digest": "6b9e87ebbd1c73db9e06886ab26850ad791333cda08484db9964d566c0cd9108",
+        "training_peak_working_set_bytes": 234909696,
+        "training_update_steps": 14252,
+        "training_wall_clock_seconds": 0.07027739996556193,
+        "worker_parameter_bytes": 38664,
+        "worker_parameter_count": 9666
+      },
+      "run_kind": "c-entry-fixed-large-build",
+      "sealed_test_scored": false,
+      "source_manifest_digest": "ea15ea3fb6a001aac4397253bf4a5a7667b3d90fd1e648f7205491ba239553a8",
+      "status": "passed",
+      "target_multiset_digest": "fc14c01319e85d369a2d398677032ff4f15368c50c72a569d1293def51b0f948",
+      "train_episode_indexes": [
+        0,
+        3,
+        1
+      ],
+      "training_performed": true,
+      "version": 1,
+      "worker_attachment_preflight": {
+        "adapter_checkpoint": {
+          "checkpoint_digest": "0644c040275df53ae722674b33d3203e15bebce884194ba4146e14487e01c79a",
+          "exchange_digest": "e4384cf903764dc640d1a9161ae58ab0ff288b5aa76dc854e7f55cd1f85c733a",
+          "owner_graph_digest": "4f1cbc3ce105112a2320a9209f6c5bfdd7ade54436147b0e94c15764dfbf42b8",
+          "rollback_record_digest": "f039f24eba0e7b2d98a328164bc64158c2d0574e0f507185dc281bee56eaec75",
+          "worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83"
+        },
+        "adapter_training_steps": 0,
+        "artifact_errors": {},
+        "artifact_format": "taiji-k-worker-artifact-v1",
+        "artifact_missing": [],
+        "artifact_paths": {
+          "k1.semantic": [
+            "E:\\Seed\\checkpoints\\taiji_k_workers\\model_17\\taiji_r6_k1_semantic.pt"
+          ],
+          "k2.transition": [
+            "E:\\Seed\\checkpoints\\taiji_k_workers\\model_17\\taiji_r6_k2_transition.pt"
+          ],
+          "k3.outcome_projection": [
+            "E:\\Seed\\checkpoints\\taiji_k_workers\\model_17\\taiji_r6_k3_outcome_projection.pt"
+          ]
+        },
+        "attachment_gate_passed": true,
+        "blocking_reason": "attachment passed; R6 formal remains closed until the controlled K canary and full S/G/K promotion Gate run",
+        "can_promote": false,
+        "can_start_k_controlled_canary": true,
+        "can_start_r6_formal": false,
+        "candidate_training_performed": false,
+        "checks": {
+          "adapter_training_steps_zero": true,
+          "candidate_stage_worker_bundle_roundtrip": true,
+          "no_cuda": true,
+          "no_default_runtime": true,
+          "no_provider_mcp_client": true,
+          "old_G_retention": true,
+          "old_S_retention": true,
+          "parent_fresh_restore": true,
+          "parent_rollback_restore": true,
+          "rollback_parent_namespace_restored": true,
+          "rollback_record_explicit": true,
+          "rollback_worker_bundle_roundtrip": true,
+          "typed_exchange_ledger_roundtrip": true,
+          "typed_exchange_parent_echo": true,
+          "typed_exchange_worker_bundle_roundtrip": true,
+          "worker_bundle_exactly_k1_k2_k3": true,
+          "worker_bundle_same_parent": true,
+          "worker_owner_graph_bound": true
+        },
+        "client_attached": false,
+        "created_at_unix": 1788987299.9757588,
+        "cuda_used": false,
+        "default_runtime_attached": false,
+        "mcp_attached": false,
+        "old_capability_after": {
+          "G": 5.959810695900639,
+          "S": 5.995296377498504
+        },
+        "old_capability_before": {
+          "G": 5.959810695900639,
+          "S": 5.995296377498504
+        },
+        "old_capability_retention": {
+          "G": true,
+          "S": true
+        },
+        "owner_graph_digest": "4f1cbc3ce105112a2320a9209f6c5bfdd7ade54436147b0e94c15764dfbf42b8",
+        "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+        "parent_restore": {
+          "fresh_restore": true,
+          "rollback_restore": true
+        },
+        "provider_attached": false,
+        "report_format": "taiji-m4v2-r6-k-worker-attachment-preflight-v1",
+        "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+        "source_manifest_digest": "d0946c73d9844b4b0e44f2685a87465a568ee6ba7665f23c11a7b5fe0208b362",
+        "status": "passed",
+        "training_performed": false,
+        "version": 1,
+        "worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83",
+        "workers": {
+          "k1.semantic": {
+            "candidate_namespace": "taiji:k:candidate:model-17",
+            "checkpoint_digest": "4b5ed527a3a105614cea73c6cc45a2d0577c9ec06eb6e974b245c679b93e5e5d",
+            "checkpoint_format": "taiji-structured-semantic-training-v1",
+            "checkpoint_version": 2,
+            "feature_dim": 19,
+            "owner_digests": {
+              "semantic_content": "fb8c70fc2d86bc013b95c10b1a3c5db7f0e2bd902966393fdfa0c10ca55866b4",
+              "semantic_fact": "d7fa651416a48426be0bb88ab9b262b77d7e605082f3571abc596ef6caf0a791",
+              "semantic_goal": "4b15e5454dcd70ed52abe841c24ce60f467e681f447a13ccea1740be8ca6ef93"
+            },
+            "probe_type": "StructuredSemanticResult",
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "source_digest": "476b1141df2e572d37562d96da64448403b965bec5bbdb5cacdd4ed47970c440",
+            "source_manifest_digest": "d0946c73d9844b4b0e44f2685a87465a568ee6ba7665f23c11a7b5fe0208b362",
+            "training_steps": 2080
+          },
+          "k2.transition": {
+            "candidate_namespace": "taiji:k:candidate:model-17",
+            "checkpoint_digest": "67c96c5c8517ca58bacb45b8de756e7ffd24ee108276160c731da364714e2bda",
+            "checkpoint_format": "taiji-structured-semantic-transition-v3",
+            "checkpoint_version": 3,
+            "event_dim": 19,
+            "owner_digests": {
+              "semantic_transition": "588000b80a87bc165a32fe7e2ce57b2eb1a2b7f1b0487012c28a2068b804e158",
+              "semantic_transition_content": "cd19f441668e3251384d31f18eb786652bbb49231332623fdb98a4b8ad069402",
+              "semantic_transition_goal": "a14bbf1a34d1dd7cb968efb47800fdb9145adfd4f3ca55c65006fae749a3581b"
+            },
+            "probe_type": "StructuredSemanticTransitionResult",
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "source_digest": "e8c51ba53d454f978cb71e35f860a62edc690ca8a2a08a8ef89ec8ba82c330d9",
+            "source_manifest_digest": "d0946c73d9844b4b0e44f2685a87465a568ee6ba7665f23c11a7b5fe0208b362",
+            "training_steps": 5040
+          },
+          "k3.outcome_projection": {
+            "candidate_namespace": "taiji:k:candidate:model-17",
+            "checkpoint_digest": "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1",
+            "checkpoint_format": "taiji-outcome-dependency-projection-v1",
+            "checkpoint_version": 1,
+            "lesioned": false,
+            "owner_digests": {
+              "outcome_dependency_projector": "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
+            },
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "scope_id": "r6-k3-worker-0-17",
+            "source_digest": "e620198d1ca31d2db23352dad524050c976d9af4ec559451d593d6f088177ebf",
+            "source_manifest_digest": "d0946c73d9844b4b0e44f2685a87465a568ee6ba7665f23c11a7b5fe0208b362",
+            "training_steps": 0
+          }
+        }
+      }
+    },
+    {
+      "artifact_digest": "3cdb5b6e55f04b475c508de45554c205f4dfe2f5b976cebe905c1a2f21d368bb",
+      "artifact_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_2\\taiji_c_entry_k_fixed_large_ensemble.pt",
+      "can_promote": false,
+      "can_start_formal": false,
+      "course_contract_digest": "01e6f2f45e375f66c558b3ca2a7592fd7201e079bde9f40262028e334b955c84",
+      "course_seed": 2,
+      "cuda_used": false,
+      "default_runtime_attached": false,
+      "disk_ensemble_fresh_restore": true,
+      "elapsed_seconds": 4.463412799988873,
+      "ensemble_checkpoint_digest": "742d414d9782aa0be6e60468be1e12fcb7b09d4e3519ecdea6a71754e354903b",
+      "ensemble_fresh_restore": true,
+      "model_seed": 17,
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "replica_reports": [
+        {
+          "k1_checkpoint_digest": "db6c5362a7d9649643b4047e3bb0b4d93c265ba5e8b7da97af73321a89b2fdd9",
+          "k1_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_2\\replica_0\\k1_semantic.pt",
+          "k1_parameter_delta_digest": "9c0e2a317cdb792da8297398b0bcccef1a327c756431fd8f825cea81a474081e",
+          "k1_parameter_delta_norm": 0.158370905589407,
+          "k1_training_steps": 2083,
+          "k2_checkpoint_digest": "826278f23a5bd8b28d5110414745b863b20ed242e0ef3c3468c6fdcb35a1274a",
+          "k2_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_2\\replica_0\\k2_transition.pt",
+          "k2_parameter_delta_digest": "bb839b541188905af1cfe04bd35d0337f821b365e5813abb5f23f54778605050",
+          "k2_parameter_delta_norm": 0.026875399621240963,
+          "k2_training_steps": 5043,
+          "losses": {
+            "k1.semantic": {
+              "content_loss": 9.56842541199876e-07,
+              "fact_loss": 0.013471133075654507,
+              "goal_loss": 5.380075890570879e-06
+            },
+            "k2.transition": {
+              "content_loss": 2.7135713025927544e-05,
+              "goal_loss": 6.725684215780348e-05,
+              "transition_loss": 0.0027833268977701664
+            }
+          },
+          "postfit_restore_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "prefit_checkpoint_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "replica_index": 0,
+          "reverse_order": false
+        },
+        {
+          "k1_checkpoint_digest": "dc888d577e42424b9a82cf0048f1b8e7b71cca100bff44025a0a4eaef9beecf8",
+          "k1_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_2\\replica_1\\k1_semantic.pt",
+          "k1_parameter_delta_digest": "8e4ae1b722d05519a2754ccd137aacd240d601ec60712063d96a2d0a707608c1",
+          "k1_parameter_delta_norm": 0.15724106958762643,
+          "k1_training_steps": 2083,
+          "k2_checkpoint_digest": "bcde51acf4722d9e7ab71ea8d8a5d9c6f361c26a63649d390951c8db2fd04327",
+          "k2_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_2\\replica_1\\k2_transition.pt",
+          "k2_parameter_delta_digest": "e22ce8bbbdc1f9ed6e0bf6193174d9fa8e075f0feeb50340973171f02ed240c4",
+          "k2_parameter_delta_norm": 0.026684423671019458,
+          "k2_training_steps": 5043,
+          "losses": {
+            "k1.semantic": {
+              "content_loss": 3.3826552225946216e-06,
+              "fact_loss": 0.020021051168441772,
+              "goal_loss": 2.0954290448571555e-05
+            },
+            "k2.transition": {
+              "content_loss": 7.189506141003221e-05,
+              "goal_loss": 0.00018433545483276248,
+              "transition_loss": 0.0023000191431492567
+            }
+          },
+          "postfit_restore_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "prefit_checkpoint_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "replica_index": 1,
+          "reverse_order": true
+        }
+      ],
+      "replica_updates_distinct": true,
+      "report_format": "taiji-m4v2-b3-k-c-fixed-large-build-v1",
+      "resource": {
+        "candidate_parameter_bytes": 38664,
+        "checkpoint_write_bytes": 183491,
+        "checkpoint_write_paths": [
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_2\\replica_0\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_2\\replica_0\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_2\\replica_0\\prefit\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_2\\replica_0\\prefit\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_2\\replica_1\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_2\\replica_1\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_2\\replica_1\\prefit\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_2\\replica_1\\prefit\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_17\\course_2\\taiji_c_entry_k_fixed_large_ensemble.pt"
+        ],
+        "device": "cpu",
+        "inference_peak_working_set_bytes": null,
+        "inference_trace_count": null,
+        "inference_wall_clock_seconds": null,
+        "measurement_complete": true,
+        "parameter_bytes": 38664,
+        "peak_working_set_bytes": 235745280,
+        "peak_working_set_method": "process_rss_before_after_lower_bound",
+        "resource_manifest_digest": "6b9e87ebbd1c73db9e06886ab26850ad791333cda08484db9964d566c0cd9108",
+        "training_peak_working_set_bytes": 235745280,
+        "training_update_steps": 14252,
+        "training_wall_clock_seconds": 0.06764689995907247,
+        "worker_parameter_bytes": 38664,
+        "worker_parameter_count": 9666
+      },
+      "run_kind": "c-entry-fixed-large-build",
+      "sealed_test_scored": false,
+      "source_manifest_digest": "c80ca3f63409f3c3d4b241eeb128d21c14d097f91639b34b57df2396fb7e54bf",
+      "status": "passed",
+      "target_multiset_digest": "db25bf73706540b02b2dcc9718d234a89c3d8b343fedc8ba16dc131515fb7d42",
+      "train_episode_indexes": [
+        0,
+        1,
+        4
+      ],
+      "training_performed": true,
+      "version": 1,
+      "worker_attachment_preflight": {
+        "adapter_checkpoint": {
+          "checkpoint_digest": "0644c040275df53ae722674b33d3203e15bebce884194ba4146e14487e01c79a",
+          "exchange_digest": "e4384cf903764dc640d1a9161ae58ab0ff288b5aa76dc854e7f55cd1f85c733a",
+          "owner_graph_digest": "4f1cbc3ce105112a2320a9209f6c5bfdd7ade54436147b0e94c15764dfbf42b8",
+          "rollback_record_digest": "f039f24eba0e7b2d98a328164bc64158c2d0574e0f507185dc281bee56eaec75",
+          "worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83"
+        },
+        "adapter_training_steps": 0,
+        "artifact_errors": {},
+        "artifact_format": "taiji-k-worker-artifact-v1",
+        "artifact_missing": [],
+        "artifact_paths": {
+          "k1.semantic": [
+            "E:\\Seed\\checkpoints\\taiji_k_workers\\model_17\\taiji_r6_k1_semantic.pt"
+          ],
+          "k2.transition": [
+            "E:\\Seed\\checkpoints\\taiji_k_workers\\model_17\\taiji_r6_k2_transition.pt"
+          ],
+          "k3.outcome_projection": [
+            "E:\\Seed\\checkpoints\\taiji_k_workers\\model_17\\taiji_r6_k3_outcome_projection.pt"
+          ]
+        },
+        "attachment_gate_passed": true,
+        "blocking_reason": "attachment passed; R6 formal remains closed until the controlled K canary and full S/G/K promotion Gate run",
+        "can_promote": false,
+        "can_start_k_controlled_canary": true,
+        "can_start_r6_formal": false,
+        "candidate_training_performed": false,
+        "checks": {
+          "adapter_training_steps_zero": true,
+          "candidate_stage_worker_bundle_roundtrip": true,
+          "no_cuda": true,
+          "no_default_runtime": true,
+          "no_provider_mcp_client": true,
+          "old_G_retention": true,
+          "old_S_retention": true,
+          "parent_fresh_restore": true,
+          "parent_rollback_restore": true,
+          "rollback_parent_namespace_restored": true,
+          "rollback_record_explicit": true,
+          "rollback_worker_bundle_roundtrip": true,
+          "typed_exchange_ledger_roundtrip": true,
+          "typed_exchange_parent_echo": true,
+          "typed_exchange_worker_bundle_roundtrip": true,
+          "worker_bundle_exactly_k1_k2_k3": true,
+          "worker_bundle_same_parent": true,
+          "worker_owner_graph_bound": true
+        },
+        "client_attached": false,
+        "created_at_unix": 1788987304.3913846,
+        "cuda_used": false,
+        "default_runtime_attached": false,
+        "mcp_attached": false,
+        "old_capability_after": {
+          "G": 5.959810695900639,
+          "S": 5.995296377498504
+        },
+        "old_capability_before": {
+          "G": 5.959810695900639,
+          "S": 5.995296377498504
+        },
+        "old_capability_retention": {
+          "G": true,
+          "S": true
+        },
+        "owner_graph_digest": "4f1cbc3ce105112a2320a9209f6c5bfdd7ade54436147b0e94c15764dfbf42b8",
+        "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+        "parent_restore": {
+          "fresh_restore": true,
+          "rollback_restore": true
+        },
+        "provider_attached": false,
+        "report_format": "taiji-m4v2-r6-k-worker-attachment-preflight-v1",
+        "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+        "source_manifest_digest": "d0946c73d9844b4b0e44f2685a87465a568ee6ba7665f23c11a7b5fe0208b362",
+        "status": "passed",
+        "training_performed": false,
+        "version": 1,
+        "worker_bundle_digest": "6a811ea4b26af0c67e5eb5b7aeaa2692852b55d6ecb27ab84d0b98eb60f8fd83",
+        "workers": {
+          "k1.semantic": {
+            "candidate_namespace": "taiji:k:candidate:model-17",
+            "checkpoint_digest": "4b5ed527a3a105614cea73c6cc45a2d0577c9ec06eb6e974b245c679b93e5e5d",
+            "checkpoint_format": "taiji-structured-semantic-training-v1",
+            "checkpoint_version": 2,
+            "feature_dim": 19,
+            "owner_digests": {
+              "semantic_content": "fb8c70fc2d86bc013b95c10b1a3c5db7f0e2bd902966393fdfa0c10ca55866b4",
+              "semantic_fact": "d7fa651416a48426be0bb88ab9b262b77d7e605082f3571abc596ef6caf0a791",
+              "semantic_goal": "4b15e5454dcd70ed52abe841c24ce60f467e681f447a13ccea1740be8ca6ef93"
+            },
+            "probe_type": "StructuredSemanticResult",
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "source_digest": "476b1141df2e572d37562d96da64448403b965bec5bbdb5cacdd4ed47970c440",
+            "source_manifest_digest": "d0946c73d9844b4b0e44f2685a87465a568ee6ba7665f23c11a7b5fe0208b362",
+            "training_steps": 2080
+          },
+          "k2.transition": {
+            "candidate_namespace": "taiji:k:candidate:model-17",
+            "checkpoint_digest": "67c96c5c8517ca58bacb45b8de756e7ffd24ee108276160c731da364714e2bda",
+            "checkpoint_format": "taiji-structured-semantic-transition-v3",
+            "checkpoint_version": 3,
+            "event_dim": 19,
+            "owner_digests": {
+              "semantic_transition": "588000b80a87bc165a32fe7e2ce57b2eb1a2b7f1b0487012c28a2068b804e158",
+              "semantic_transition_content": "cd19f441668e3251384d31f18eb786652bbb49231332623fdb98a4b8ad069402",
+              "semantic_transition_goal": "a14bbf1a34d1dd7cb968efb47800fdb9145adfd4f3ca55c65006fae749a3581b"
+            },
+            "probe_type": "StructuredSemanticTransitionResult",
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "source_digest": "e8c51ba53d454f978cb71e35f860a62edc690ca8a2a08a8ef89ec8ba82c330d9",
+            "source_manifest_digest": "d0946c73d9844b4b0e44f2685a87465a568ee6ba7665f23c11a7b5fe0208b362",
+            "training_steps": 5040
+          },
+          "k3.outcome_projection": {
+            "candidate_namespace": "taiji:k:candidate:model-17",
+            "checkpoint_digest": "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1",
+            "checkpoint_format": "taiji-outcome-dependency-projection-v1",
+            "checkpoint_version": 1,
+            "lesioned": false,
+            "owner_digests": {
+              "outcome_dependency_projector": "8334c7bc45a014ad2c3765f7803d2f7821ac182959eead725cd57d498b8febf1"
+            },
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "scope_id": "r6-k3-worker-0-17",
+            "source_digest": "e620198d1ca31d2db23352dad524050c976d9af4ec559451d593d6f088177ebf",
+            "source_manifest_digest": "d0946c73d9844b4b0e44f2685a87465a568ee6ba7665f23c11a7b5fe0208b362",
+            "training_steps": 0
+          }
+        }
+      }
+    },
+    {
+      "artifact_digest": "336a07c3c3f8b86be9eb694fd14886b6304ad8cd6c6c315c1551d233704bd374",
+      "artifact_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_0\\taiji_c_entry_k_fixed_large_ensemble.pt",
+      "can_promote": false,
+      "can_start_formal": false,
+      "course_contract_digest": "01e6f2f45e375f66c558b3ca2a7592fd7201e079bde9f40262028e334b955c84",
+      "course_seed": 0,
+      "cuda_used": false,
+      "default_runtime_attached": false,
+      "disk_ensemble_fresh_restore": true,
+      "elapsed_seconds": 4.412851699977182,
+      "ensemble_checkpoint_digest": "a20034f3eb3d2ef1a1672dd3903c8cfb6de9942673bbffdc4b54351765705e7e",
+      "ensemble_fresh_restore": true,
+      "model_seed": 23,
+      "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+      "replica_reports": [
+        {
+          "k1_checkpoint_digest": "d57859a2a1ddfa2fda459153d09417fcb3e7b4954a41eb6b752d510398ce06ce",
+          "k1_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_0\\replica_0\\k1_semantic.pt",
+          "k1_parameter_delta_digest": "66e50e9e7088381bcf17f6e316283bc9ffc4398d02b4d3f4f9512ee772364407",
+          "k1_parameter_delta_norm": 0.12400337161885537,
+          "k1_training_steps": 2083,
+          "k2_checkpoint_digest": "714d9a19d2e13d086fc9d5c32dbced0ba8af146d7bacbdb8f213ea78cf95cce2",
+          "k2_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_0\\replica_0\\k2_transition.pt",
+          "k2_parameter_delta_digest": "f2469dd956203dd29baa027c793e91a0d56ad316240a3972571aa34f778d3b5c",
+          "k2_parameter_delta_norm": 0.026725810005166384,
+          "k2_training_steps": 5043,
+          "losses": {
+            "k1.semantic": {
+              "content_loss": 9.56842541199876e-07,
+              "fact_loss": 0.014328128658235073,
+              "goal_loss": 5.380075890570879e-06
+            },
+            "k2.transition": {
+              "content_loss": 3.413276863284409e-05,
+              "goal_loss": 8.909839380066842e-05,
+              "transition_loss": 0.0032027559354901314
+            }
+          },
+          "postfit_restore_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "prefit_checkpoint_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "replica_index": 0,
+          "reverse_order": false
+        },
+        {
+          "k1_checkpoint_digest": "18ce7fd4a699c18aef6dcce04fbd53b68ff1bf2c5732b7748ae315210a8ab9b1",
+          "k1_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_0\\replica_1\\k1_semantic.pt",
+          "k1_parameter_delta_digest": "a17245be48dd87a04bf610e3f4dbe653a0d0b99e43f9599ae6dda70a128ee219",
+          "k1_parameter_delta_norm": 0.12424024920071985,
+          "k1_training_steps": 2083,
+          "k2_checkpoint_digest": "a6fc11fbbe1147f551099d55e0e1e8e45d4b61af84087a99dea44ef2e91a24d5",
+          "k2_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_0\\replica_1\\k2_transition.pt",
+          "k2_parameter_delta_digest": "6b1d4fd08c3ceb8ea6f22d2b497300b4915da1e1afcd77408eb0de5d2056c22c",
+          "k2_parameter_delta_norm": 0.02651727626886353,
+          "k2_training_steps": 5043,
+          "losses": {
+            "k1.semantic": {
+              "content_loss": 3.3826552225946216e-06,
+              "fact_loss": 0.02000807784497738,
+              "goal_loss": 2.0954290448571555e-05
+            },
+            "k2.transition": {
+              "content_loss": 7.207345333881676e-05,
+              "goal_loss": 0.00018521516176406294,
+              "transition_loss": 0.0023002708330750465
+            }
+          },
+          "postfit_restore_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "prefit_checkpoint_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "replica_index": 1,
+          "reverse_order": true
+        }
+      ],
+      "replica_updates_distinct": true,
+      "report_format": "taiji-m4v2-b3-k-c-fixed-large-build-v1",
+      "resource": {
+        "candidate_parameter_bytes": 38664,
+        "checkpoint_write_bytes": 183491,
+        "checkpoint_write_paths": [
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_0\\replica_0\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_0\\replica_0\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_0\\replica_0\\prefit\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_0\\replica_0\\prefit\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_0\\replica_1\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_0\\replica_1\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_0\\replica_1\\prefit\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_0\\replica_1\\prefit\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_0\\taiji_c_entry_k_fixed_large_ensemble.pt"
+        ],
+        "device": "cpu",
+        "inference_peak_working_set_bytes": null,
+        "inference_trace_count": null,
+        "inference_wall_clock_seconds": null,
+        "measurement_complete": true,
+        "parameter_bytes": 38664,
+        "peak_working_set_bytes": 236118016,
+        "peak_working_set_method": "process_rss_before_after_lower_bound",
+        "resource_manifest_digest": "6b9e87ebbd1c73db9e06886ab26850ad791333cda08484db9964d566c0cd9108",
+        "training_peak_working_set_bytes": 236118016,
+        "training_update_steps": 14252,
+        "training_wall_clock_seconds": 0.07202009996399283,
+        "worker_parameter_bytes": 38664,
+        "worker_parameter_count": 9666
+      },
+      "run_kind": "c-entry-fixed-large-build",
+      "sealed_test_scored": false,
+      "source_manifest_digest": "ba9ec0a8106f6924200bc301df778d0617210e66e73c326e81c6bb06dbd2a374",
+      "status": "passed",
+      "target_multiset_digest": "a0f58fa01922dc8a98eb1e9bb95fd428be3a07d0c9f7f249a124c4349d32e8ea",
+      "train_episode_indexes": [
+        0,
+        1,
+        2
+      ],
+      "training_performed": true,
+      "version": 1,
+      "worker_attachment_preflight": {
+        "adapter_checkpoint": {
+          "checkpoint_digest": "c4fe3184abd718f917891e68363e46276e3d4dcd319d2df38b1d17cb708466de",
+          "exchange_digest": "0905f85ceb9953fc0aa288b9020caa5f73d58296b46106ab6be3a70fdb8213a1",
+          "owner_graph_digest": "e834c4107fea26a8f54a316ee4bdc9c5b5d1b0498b988fc6060baf0c23cc1ed0",
+          "rollback_record_digest": "4172016fb48150174b23f1b4387f05cab139bb46286ccf79339285c81d6dd678",
+          "worker_bundle_digest": "25e0ca1c0c88c84ea64c0c5db4e80a4a9903c7f3eef9c988970eb6bb6472213f"
+        },
+        "adapter_training_steps": 0,
+        "artifact_errors": {},
+        "artifact_format": "taiji-k-worker-artifact-v1",
+        "artifact_missing": [],
+        "artifact_paths": {
+          "k1.semantic": [
+            "E:\\Seed\\checkpoints\\taiji_k_workers\\model_23\\taiji_r6_k1_semantic.pt"
+          ],
+          "k2.transition": [
+            "E:\\Seed\\checkpoints\\taiji_k_workers\\model_23\\taiji_r6_k2_transition.pt"
+          ],
+          "k3.outcome_projection": [
+            "E:\\Seed\\checkpoints\\taiji_k_workers\\model_23\\taiji_r6_k3_outcome_projection.pt"
+          ]
+        },
+        "attachment_gate_passed": true,
+        "blocking_reason": "attachment passed; R6 formal remains closed until the controlled K canary and full S/G/K promotion Gate run",
+        "can_promote": false,
+        "can_start_k_controlled_canary": true,
+        "can_start_r6_formal": false,
+        "candidate_training_performed": false,
+        "checks": {
+          "adapter_training_steps_zero": true,
+          "candidate_stage_worker_bundle_roundtrip": true,
+          "no_cuda": true,
+          "no_default_runtime": true,
+          "no_provider_mcp_client": true,
+          "old_G_retention": true,
+          "old_S_retention": true,
+          "parent_fresh_restore": true,
+          "parent_rollback_restore": true,
+          "rollback_parent_namespace_restored": true,
+          "rollback_record_explicit": true,
+          "rollback_worker_bundle_roundtrip": true,
+          "typed_exchange_ledger_roundtrip": true,
+          "typed_exchange_parent_echo": true,
+          "typed_exchange_worker_bundle_roundtrip": true,
+          "worker_bundle_exactly_k1_k2_k3": true,
+          "worker_bundle_same_parent": true,
+          "worker_owner_graph_bound": true
+        },
+        "client_attached": false,
+        "created_at_unix": 1788987308.8583727,
+        "cuda_used": false,
+        "default_runtime_attached": false,
+        "mcp_attached": false,
+        "old_capability_after": {
+          "G": 6.163727301623109,
+          "S": 6.06005203271513
+        },
+        "old_capability_before": {
+          "G": 6.163727301623109,
+          "S": 6.06005203271513
+        },
+        "old_capability_retention": {
+          "G": true,
+          "S": true
+        },
+        "owner_graph_digest": "e834c4107fea26a8f54a316ee4bdc9c5b5d1b0498b988fc6060baf0c23cc1ed0",
+        "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+        "parent_restore": {
+          "fresh_restore": true,
+          "rollback_restore": true
+        },
+        "provider_attached": false,
+        "report_format": "taiji-m4v2-r6-k-worker-attachment-preflight-v1",
+        "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+        "source_manifest_digest": "661ef11afa3936dfdb94800dd8680e038485882a53eaefb0ded68c4bd2e73e06",
+        "status": "passed",
+        "training_performed": false,
+        "version": 1,
+        "worker_bundle_digest": "25e0ca1c0c88c84ea64c0c5db4e80a4a9903c7f3eef9c988970eb6bb6472213f",
+        "workers": {
+          "k1.semantic": {
+            "candidate_namespace": "taiji:k:candidate:model-23",
+            "checkpoint_digest": "4b5ed527a3a105614cea73c6cc45a2d0577c9ec06eb6e974b245c679b93e5e5d",
+            "checkpoint_format": "taiji-structured-semantic-training-v1",
+            "checkpoint_version": 2,
+            "feature_dim": 19,
+            "owner_digests": {
+              "semantic_content": "fb8c70fc2d86bc013b95c10b1a3c5db7f0e2bd902966393fdfa0c10ca55866b4",
+              "semantic_fact": "d7fa651416a48426be0bb88ab9b262b77d7e605082f3571abc596ef6caf0a791",
+              "semantic_goal": "4b15e5454dcd70ed52abe841c24ce60f467e681f447a13ccea1740be8ca6ef93"
+            },
+            "probe_type": "StructuredSemanticResult",
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "source_digest": "476b1141df2e572d37562d96da64448403b965bec5bbdb5cacdd4ed47970c440",
+            "source_manifest_digest": "661ef11afa3936dfdb94800dd8680e038485882a53eaefb0ded68c4bd2e73e06",
+            "training_steps": 2080
+          },
+          "k2.transition": {
+            "candidate_namespace": "taiji:k:candidate:model-23",
+            "checkpoint_digest": "67c96c5c8517ca58bacb45b8de756e7ffd24ee108276160c731da364714e2bda",
+            "checkpoint_format": "taiji-structured-semantic-transition-v3",
+            "checkpoint_version": 3,
+            "event_dim": 19,
+            "owner_digests": {
+              "semantic_transition": "588000b80a87bc165a32fe7e2ce57b2eb1a2b7f1b0487012c28a2068b804e158",
+              "semantic_transition_content": "cd19f441668e3251384d31f18eb786652bbb49231332623fdb98a4b8ad069402",
+              "semantic_transition_goal": "a14bbf1a34d1dd7cb968efb47800fdb9145adfd4f3ca55c65006fae749a3581b"
+            },
+            "probe_type": "StructuredSemanticTransitionResult",
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "source_digest": "e8c51ba53d454f978cb71e35f860a62edc690ca8a2a08a8ef89ec8ba82c330d9",
+            "source_manifest_digest": "661ef11afa3936dfdb94800dd8680e038485882a53eaefb0ded68c4bd2e73e06",
+            "training_steps": 5040
+          },
+          "k3.outcome_projection": {
+            "candidate_namespace": "taiji:k:candidate:model-23",
+            "checkpoint_digest": "817c1278b17c972881a380e53c48bc6b207758d9e6ac6e3f88329f88a7f6f1ed",
+            "checkpoint_format": "taiji-outcome-dependency-projection-v1",
+            "checkpoint_version": 1,
+            "lesioned": false,
+            "owner_digests": {
+              "outcome_dependency_projector": "817c1278b17c972881a380e53c48bc6b207758d9e6ac6e3f88329f88a7f6f1ed"
+            },
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "scope_id": "r6-k3-worker-0-23",
+            "source_digest": "c475e6dfec23e055b7c2b300192b32ac64e8f10a78a907761e5f7b90307df290",
+            "source_manifest_digest": "661ef11afa3936dfdb94800dd8680e038485882a53eaefb0ded68c4bd2e73e06",
+            "training_steps": 0
+          }
+        }
+      }
+    },
+    {
+      "artifact_digest": "65fd77daab3cbb5eeb7899bd6433a2263fe4aab1908f33e431826377d8f358fa",
+      "artifact_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_1\\taiji_c_entry_k_fixed_large_ensemble.pt",
+      "can_promote": false,
+      "can_start_formal": false,
+      "course_contract_digest": "01e6f2f45e375f66c558b3ca2a7592fd7201e079bde9f40262028e334b955c84",
+      "course_seed": 1,
+      "cuda_used": false,
+      "default_runtime_attached": false,
+      "disk_ensemble_fresh_restore": true,
+      "elapsed_seconds": 4.409915699972771,
+      "ensemble_checkpoint_digest": "ab549d1c2ce558e896337775f6b43cd955307c315d56823dacca950f7173ed17",
+      "ensemble_fresh_restore": true,
+      "model_seed": 23,
+      "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+      "replica_reports": [
+        {
+          "k1_checkpoint_digest": "152299df67729b6cec50ba2fd010c8e4db68449d8159fdc28237e91c09f575e6",
+          "k1_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_1\\replica_0\\k1_semantic.pt",
+          "k1_parameter_delta_digest": "361063e6d2354644ffd5fee244ce8a5722fe0351c9eeec3ada3ba741df58d476",
+          "k1_parameter_delta_norm": 0.19645205985979614,
+          "k1_training_steps": 2083,
+          "k2_checkpoint_digest": "6a958e060e9115ae168fb9bbe0058356efb4f70c898a6c72755217df6b653019",
+          "k2_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_1\\replica_0\\k2_transition.pt",
+          "k2_parameter_delta_digest": "2be5e53cbdf4b64eb9215a480f9a1ee2389f283060849e45c15c923e8b2495e3",
+          "k2_parameter_delta_norm": 0.03029754439110665,
+          "k2_training_steps": 5043,
+          "losses": {
+            "k1.semantic": {
+              "content_loss": 1.0904631153607625e-06,
+              "fact_loss": 0.01474839635193348,
+              "goal_loss": 7.267472483363235e-06
+            },
+            "k2.transition": {
+              "content_loss": 2.8984242817386985e-05,
+              "goal_loss": 7.410153921227902e-05,
+              "transition_loss": 0.0028903644997626543
+            }
+          },
+          "postfit_restore_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "prefit_checkpoint_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "replica_index": 0,
+          "reverse_order": false
+        },
+        {
+          "k1_checkpoint_digest": "f226fb8e478058c4a4c41fab34b6bffca506f567d1e2b266d204b3eda421711b",
+          "k1_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_1\\replica_1\\k1_semantic.pt",
+          "k1_parameter_delta_digest": "a530847f46b871ce86fc2a0946e7704c6f8bd9466493206e7cc00f08c4d8a5d8",
+          "k1_parameter_delta_norm": 0.20142107428854789,
+          "k1_training_steps": 2083,
+          "k2_checkpoint_digest": "068aad446b12b9a8fe6118f9798d59aae7f47851d432bfb236bdf75669b18d5b",
+          "k2_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_1\\replica_1\\k2_transition.pt",
+          "k2_parameter_delta_digest": "8fc9c21a2efad35bddd75f00247bf4b15beabed9a0813d4bacd8159fda2a1678",
+          "k2_parameter_delta_norm": 0.030532927259957356,
+          "k2_training_steps": 5043,
+          "losses": {
+            "k1.semantic": {
+              "content_loss": 2.888500830522389e-06,
+              "fact_loss": 0.01781843975186348,
+              "goal_loss": 1.476909892517142e-05
+            },
+            "k2.transition": {
+              "content_loss": 6.679399666609243e-05,
+              "goal_loss": 0.00016589349252171814,
+              "transition_loss": 0.0022575671318918467
+            }
+          },
+          "postfit_restore_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "prefit_checkpoint_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "replica_index": 1,
+          "reverse_order": true
+        }
+      ],
+      "replica_updates_distinct": true,
+      "report_format": "taiji-m4v2-b3-k-c-fixed-large-build-v1",
+      "resource": {
+        "candidate_parameter_bytes": 38664,
+        "checkpoint_write_bytes": 183491,
+        "checkpoint_write_paths": [
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_1\\replica_0\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_1\\replica_0\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_1\\replica_0\\prefit\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_1\\replica_0\\prefit\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_1\\replica_1\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_1\\replica_1\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_1\\replica_1\\prefit\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_1\\replica_1\\prefit\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_1\\taiji_c_entry_k_fixed_large_ensemble.pt"
+        ],
+        "device": "cpu",
+        "inference_peak_working_set_bytes": null,
+        "inference_trace_count": null,
+        "inference_wall_clock_seconds": null,
+        "measurement_complete": true,
+        "parameter_bytes": 38664,
+        "peak_working_set_bytes": 235679744,
+        "peak_working_set_method": "process_rss_before_after_lower_bound",
+        "resource_manifest_digest": "6b9e87ebbd1c73db9e06886ab26850ad791333cda08484db9964d566c0cd9108",
+        "training_peak_working_set_bytes": 235679744,
+        "training_update_steps": 14252,
+        "training_wall_clock_seconds": 0.067451799986884,
+        "worker_parameter_bytes": 38664,
+        "worker_parameter_count": 9666
+      },
+      "run_kind": "c-entry-fixed-large-build",
+      "sealed_test_scored": false,
+      "source_manifest_digest": "a1a62dff61b0d18e6683dcd1fee8034294a08813b10de68f9e6b4b243a8789a5",
+      "status": "passed",
+      "target_multiset_digest": "fc14c01319e85d369a2d398677032ff4f15368c50c72a569d1293def51b0f948",
+      "train_episode_indexes": [
+        0,
+        3,
+        1
+      ],
+      "training_performed": true,
+      "version": 1,
+      "worker_attachment_preflight": {
+        "adapter_checkpoint": {
+          "checkpoint_digest": "c4fe3184abd718f917891e68363e46276e3d4dcd319d2df38b1d17cb708466de",
+          "exchange_digest": "0905f85ceb9953fc0aa288b9020caa5f73d58296b46106ab6be3a70fdb8213a1",
+          "owner_graph_digest": "e834c4107fea26a8f54a316ee4bdc9c5b5d1b0498b988fc6060baf0c23cc1ed0",
+          "rollback_record_digest": "4172016fb48150174b23f1b4387f05cab139bb46286ccf79339285c81d6dd678",
+          "worker_bundle_digest": "25e0ca1c0c88c84ea64c0c5db4e80a4a9903c7f3eef9c988970eb6bb6472213f"
+        },
+        "adapter_training_steps": 0,
+        "artifact_errors": {},
+        "artifact_format": "taiji-k-worker-artifact-v1",
+        "artifact_missing": [],
+        "artifact_paths": {
+          "k1.semantic": [
+            "E:\\Seed\\checkpoints\\taiji_k_workers\\model_23\\taiji_r6_k1_semantic.pt"
+          ],
+          "k2.transition": [
+            "E:\\Seed\\checkpoints\\taiji_k_workers\\model_23\\taiji_r6_k2_transition.pt"
+          ],
+          "k3.outcome_projection": [
+            "E:\\Seed\\checkpoints\\taiji_k_workers\\model_23\\taiji_r6_k3_outcome_projection.pt"
+          ]
+        },
+        "attachment_gate_passed": true,
+        "blocking_reason": "attachment passed; R6 formal remains closed until the controlled K canary and full S/G/K promotion Gate run",
+        "can_promote": false,
+        "can_start_k_controlled_canary": true,
+        "can_start_r6_formal": false,
+        "candidate_training_performed": false,
+        "checks": {
+          "adapter_training_steps_zero": true,
+          "candidate_stage_worker_bundle_roundtrip": true,
+          "no_cuda": true,
+          "no_default_runtime": true,
+          "no_provider_mcp_client": true,
+          "old_G_retention": true,
+          "old_S_retention": true,
+          "parent_fresh_restore": true,
+          "parent_rollback_restore": true,
+          "rollback_parent_namespace_restored": true,
+          "rollback_record_explicit": true,
+          "rollback_worker_bundle_roundtrip": true,
+          "typed_exchange_ledger_roundtrip": true,
+          "typed_exchange_parent_echo": true,
+          "typed_exchange_worker_bundle_roundtrip": true,
+          "worker_bundle_exactly_k1_k2_k3": true,
+          "worker_bundle_same_parent": true,
+          "worker_owner_graph_bound": true
+        },
+        "client_attached": false,
+        "created_at_unix": 1788987313.2737818,
+        "cuda_used": false,
+        "default_runtime_attached": false,
+        "mcp_attached": false,
+        "old_capability_after": {
+          "G": 6.163727301623109,
+          "S": 6.06005203271513
+        },
+        "old_capability_before": {
+          "G": 6.163727301623109,
+          "S": 6.06005203271513
+        },
+        "old_capability_retention": {
+          "G": true,
+          "S": true
+        },
+        "owner_graph_digest": "e834c4107fea26a8f54a316ee4bdc9c5b5d1b0498b988fc6060baf0c23cc1ed0",
+        "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+        "parent_restore": {
+          "fresh_restore": true,
+          "rollback_restore": true
+        },
+        "provider_attached": false,
+        "report_format": "taiji-m4v2-r6-k-worker-attachment-preflight-v1",
+        "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+        "source_manifest_digest": "661ef11afa3936dfdb94800dd8680e038485882a53eaefb0ded68c4bd2e73e06",
+        "status": "passed",
+        "training_performed": false,
+        "version": 1,
+        "worker_bundle_digest": "25e0ca1c0c88c84ea64c0c5db4e80a4a9903c7f3eef9c988970eb6bb6472213f",
+        "workers": {
+          "k1.semantic": {
+            "candidate_namespace": "taiji:k:candidate:model-23",
+            "checkpoint_digest": "4b5ed527a3a105614cea73c6cc45a2d0577c9ec06eb6e974b245c679b93e5e5d",
+            "checkpoint_format": "taiji-structured-semantic-training-v1",
+            "checkpoint_version": 2,
+            "feature_dim": 19,
+            "owner_digests": {
+              "semantic_content": "fb8c70fc2d86bc013b95c10b1a3c5db7f0e2bd902966393fdfa0c10ca55866b4",
+              "semantic_fact": "d7fa651416a48426be0bb88ab9b262b77d7e605082f3571abc596ef6caf0a791",
+              "semantic_goal": "4b15e5454dcd70ed52abe841c24ce60f467e681f447a13ccea1740be8ca6ef93"
+            },
+            "probe_type": "StructuredSemanticResult",
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "source_digest": "476b1141df2e572d37562d96da64448403b965bec5bbdb5cacdd4ed47970c440",
+            "source_manifest_digest": "661ef11afa3936dfdb94800dd8680e038485882a53eaefb0ded68c4bd2e73e06",
+            "training_steps": 2080
+          },
+          "k2.transition": {
+            "candidate_namespace": "taiji:k:candidate:model-23",
+            "checkpoint_digest": "67c96c5c8517ca58bacb45b8de756e7ffd24ee108276160c731da364714e2bda",
+            "checkpoint_format": "taiji-structured-semantic-transition-v3",
+            "checkpoint_version": 3,
+            "event_dim": 19,
+            "owner_digests": {
+              "semantic_transition": "588000b80a87bc165a32fe7e2ce57b2eb1a2b7f1b0487012c28a2068b804e158",
+              "semantic_transition_content": "cd19f441668e3251384d31f18eb786652bbb49231332623fdb98a4b8ad069402",
+              "semantic_transition_goal": "a14bbf1a34d1dd7cb968efb47800fdb9145adfd4f3ca55c65006fae749a3581b"
+            },
+            "probe_type": "StructuredSemanticTransitionResult",
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "source_digest": "e8c51ba53d454f978cb71e35f860a62edc690ca8a2a08a8ef89ec8ba82c330d9",
+            "source_manifest_digest": "661ef11afa3936dfdb94800dd8680e038485882a53eaefb0ded68c4bd2e73e06",
+            "training_steps": 5040
+          },
+          "k3.outcome_projection": {
+            "candidate_namespace": "taiji:k:candidate:model-23",
+            "checkpoint_digest": "817c1278b17c972881a380e53c48bc6b207758d9e6ac6e3f88329f88a7f6f1ed",
+            "checkpoint_format": "taiji-outcome-dependency-projection-v1",
+            "checkpoint_version": 1,
+            "lesioned": false,
+            "owner_digests": {
+              "outcome_dependency_projector": "817c1278b17c972881a380e53c48bc6b207758d9e6ac6e3f88329f88a7f6f1ed"
+            },
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "scope_id": "r6-k3-worker-0-23",
+            "source_digest": "c475e6dfec23e055b7c2b300192b32ac64e8f10a78a907761e5f7b90307df290",
+            "source_manifest_digest": "661ef11afa3936dfdb94800dd8680e038485882a53eaefb0ded68c4bd2e73e06",
+            "training_steps": 0
+          }
+        }
+      }
+    },
+    {
+      "artifact_digest": "0d9e5b3b85bef722807fbe9016a8e696e08a0d0fc6f40e0aee1a39c65b725cec",
+      "artifact_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_2\\taiji_c_entry_k_fixed_large_ensemble.pt",
+      "can_promote": false,
+      "can_start_formal": false,
+      "course_contract_digest": "01e6f2f45e375f66c558b3ca2a7592fd7201e079bde9f40262028e334b955c84",
+      "course_seed": 2,
+      "cuda_used": false,
+      "default_runtime_attached": false,
+      "disk_ensemble_fresh_restore": true,
+      "elapsed_seconds": 4.33609710005112,
+      "ensemble_checkpoint_digest": "742d414d9782aa0be6e60468be1e12fcb7b09d4e3519ecdea6a71754e354903b",
+      "ensemble_fresh_restore": true,
+      "model_seed": 23,
+      "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+      "replica_reports": [
+        {
+          "k1_checkpoint_digest": "db6c5362a7d9649643b4047e3bb0b4d93c265ba5e8b7da97af73321a89b2fdd9",
+          "k1_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_2\\replica_0\\k1_semantic.pt",
+          "k1_parameter_delta_digest": "9c0e2a317cdb792da8297398b0bcccef1a327c756431fd8f825cea81a474081e",
+          "k1_parameter_delta_norm": 0.158370905589407,
+          "k1_training_steps": 2083,
+          "k2_checkpoint_digest": "826278f23a5bd8b28d5110414745b863b20ed242e0ef3c3468c6fdcb35a1274a",
+          "k2_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_2\\replica_0\\k2_transition.pt",
+          "k2_parameter_delta_digest": "bb839b541188905af1cfe04bd35d0337f821b365e5813abb5f23f54778605050",
+          "k2_parameter_delta_norm": 0.026875399621240963,
+          "k2_training_steps": 5043,
+          "losses": {
+            "k1.semantic": {
+              "content_loss": 9.56842541199876e-07,
+              "fact_loss": 0.013471133075654507,
+              "goal_loss": 5.380075890570879e-06
+            },
+            "k2.transition": {
+              "content_loss": 2.7135713025927544e-05,
+              "goal_loss": 6.725684215780348e-05,
+              "transition_loss": 0.0027833268977701664
+            }
+          },
+          "postfit_restore_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "prefit_checkpoint_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "replica_index": 0,
+          "reverse_order": false
+        },
+        {
+          "k1_checkpoint_digest": "dc888d577e42424b9a82cf0048f1b8e7b71cca100bff44025a0a4eaef9beecf8",
+          "k1_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_2\\replica_1\\k1_semantic.pt",
+          "k1_parameter_delta_digest": "8e4ae1b722d05519a2754ccd137aacd240d601ec60712063d96a2d0a707608c1",
+          "k1_parameter_delta_norm": 0.15724106958762643,
+          "k1_training_steps": 2083,
+          "k2_checkpoint_digest": "bcde51acf4722d9e7ab71ea8d8a5d9c6f361c26a63649d390951c8db2fd04327",
+          "k2_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_2\\replica_1\\k2_transition.pt",
+          "k2_parameter_delta_digest": "e22ce8bbbdc1f9ed6e0bf6193174d9fa8e075f0feeb50340973171f02ed240c4",
+          "k2_parameter_delta_norm": 0.026684423671019458,
+          "k2_training_steps": 5043,
+          "losses": {
+            "k1.semantic": {
+              "content_loss": 3.3826552225946216e-06,
+              "fact_loss": 0.020021051168441772,
+              "goal_loss": 2.0954290448571555e-05
+            },
+            "k2.transition": {
+              "content_loss": 7.189506141003221e-05,
+              "goal_loss": 0.00018433545483276248,
+              "transition_loss": 0.0023000191431492567
+            }
+          },
+          "postfit_restore_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "prefit_checkpoint_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "replica_index": 1,
+          "reverse_order": true
+        }
+      ],
+      "replica_updates_distinct": true,
+      "report_format": "taiji-m4v2-b3-k-c-fixed-large-build-v1",
+      "resource": {
+        "candidate_parameter_bytes": 38664,
+        "checkpoint_write_bytes": 183491,
+        "checkpoint_write_paths": [
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_2\\replica_0\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_2\\replica_0\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_2\\replica_0\\prefit\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_2\\replica_0\\prefit\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_2\\replica_1\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_2\\replica_1\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_2\\replica_1\\prefit\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_2\\replica_1\\prefit\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_23\\course_2\\taiji_c_entry_k_fixed_large_ensemble.pt"
+        ],
+        "device": "cpu",
+        "inference_peak_working_set_bytes": null,
+        "inference_trace_count": null,
+        "inference_wall_clock_seconds": null,
+        "measurement_complete": true,
+        "parameter_bytes": 38664,
+        "peak_working_set_bytes": 235892736,
+        "peak_working_set_method": "process_rss_before_after_lower_bound",
+        "resource_manifest_digest": "6b9e87ebbd1c73db9e06886ab26850ad791333cda08484db9964d566c0cd9108",
+        "training_peak_working_set_bytes": 235892736,
+        "training_update_steps": 14252,
+        "training_wall_clock_seconds": 0.06647029996383935,
+        "worker_parameter_bytes": 38664,
+        "worker_parameter_count": 9666
+      },
+      "run_kind": "c-entry-fixed-large-build",
+      "sealed_test_scored": false,
+      "source_manifest_digest": "ac1db8aa0722a522ca56a6a2e316dcb34e061d86d8d3a1e784cb8c8c357aa916",
+      "status": "passed",
+      "target_multiset_digest": "db25bf73706540b02b2dcc9718d234a89c3d8b343fedc8ba16dc131515fb7d42",
+      "train_episode_indexes": [
+        0,
+        1,
+        4
+      ],
+      "training_performed": true,
+      "version": 1,
+      "worker_attachment_preflight": {
+        "adapter_checkpoint": {
+          "checkpoint_digest": "c4fe3184abd718f917891e68363e46276e3d4dcd319d2df38b1d17cb708466de",
+          "exchange_digest": "0905f85ceb9953fc0aa288b9020caa5f73d58296b46106ab6be3a70fdb8213a1",
+          "owner_graph_digest": "e834c4107fea26a8f54a316ee4bdc9c5b5d1b0498b988fc6060baf0c23cc1ed0",
+          "rollback_record_digest": "4172016fb48150174b23f1b4387f05cab139bb46286ccf79339285c81d6dd678",
+          "worker_bundle_digest": "25e0ca1c0c88c84ea64c0c5db4e80a4a9903c7f3eef9c988970eb6bb6472213f"
+        },
+        "adapter_training_steps": 0,
+        "artifact_errors": {},
+        "artifact_format": "taiji-k-worker-artifact-v1",
+        "artifact_missing": [],
+        "artifact_paths": {
+          "k1.semantic": [
+            "E:\\Seed\\checkpoints\\taiji_k_workers\\model_23\\taiji_r6_k1_semantic.pt"
+          ],
+          "k2.transition": [
+            "E:\\Seed\\checkpoints\\taiji_k_workers\\model_23\\taiji_r6_k2_transition.pt"
+          ],
+          "k3.outcome_projection": [
+            "E:\\Seed\\checkpoints\\taiji_k_workers\\model_23\\taiji_r6_k3_outcome_projection.pt"
+          ]
+        },
+        "attachment_gate_passed": true,
+        "blocking_reason": "attachment passed; R6 formal remains closed until the controlled K canary and full S/G/K promotion Gate run",
+        "can_promote": false,
+        "can_start_k_controlled_canary": true,
+        "can_start_r6_formal": false,
+        "candidate_training_performed": false,
+        "checks": {
+          "adapter_training_steps_zero": true,
+          "candidate_stage_worker_bundle_roundtrip": true,
+          "no_cuda": true,
+          "no_default_runtime": true,
+          "no_provider_mcp_client": true,
+          "old_G_retention": true,
+          "old_S_retention": true,
+          "parent_fresh_restore": true,
+          "parent_rollback_restore": true,
+          "rollback_parent_namespace_restored": true,
+          "rollback_record_explicit": true,
+          "rollback_worker_bundle_roundtrip": true,
+          "typed_exchange_ledger_roundtrip": true,
+          "typed_exchange_parent_echo": true,
+          "typed_exchange_worker_bundle_roundtrip": true,
+          "worker_bundle_exactly_k1_k2_k3": true,
+          "worker_bundle_same_parent": true,
+          "worker_owner_graph_bound": true
+        },
+        "client_attached": false,
+        "created_at_unix": 1788987317.688153,
+        "cuda_used": false,
+        "default_runtime_attached": false,
+        "mcp_attached": false,
+        "old_capability_after": {
+          "G": 6.163727301623109,
+          "S": 6.06005203271513
+        },
+        "old_capability_before": {
+          "G": 6.163727301623109,
+          "S": 6.06005203271513
+        },
+        "old_capability_retention": {
+          "G": true,
+          "S": true
+        },
+        "owner_graph_digest": "e834c4107fea26a8f54a316ee4bdc9c5b5d1b0498b988fc6060baf0c23cc1ed0",
+        "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+        "parent_restore": {
+          "fresh_restore": true,
+          "rollback_restore": true
+        },
+        "provider_attached": false,
+        "report_format": "taiji-m4v2-r6-k-worker-attachment-preflight-v1",
+        "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+        "source_manifest_digest": "661ef11afa3936dfdb94800dd8680e038485882a53eaefb0ded68c4bd2e73e06",
+        "status": "passed",
+        "training_performed": false,
+        "version": 1,
+        "worker_bundle_digest": "25e0ca1c0c88c84ea64c0c5db4e80a4a9903c7f3eef9c988970eb6bb6472213f",
+        "workers": {
+          "k1.semantic": {
+            "candidate_namespace": "taiji:k:candidate:model-23",
+            "checkpoint_digest": "4b5ed527a3a105614cea73c6cc45a2d0577c9ec06eb6e974b245c679b93e5e5d",
+            "checkpoint_format": "taiji-structured-semantic-training-v1",
+            "checkpoint_version": 2,
+            "feature_dim": 19,
+            "owner_digests": {
+              "semantic_content": "fb8c70fc2d86bc013b95c10b1a3c5db7f0e2bd902966393fdfa0c10ca55866b4",
+              "semantic_fact": "d7fa651416a48426be0bb88ab9b262b77d7e605082f3571abc596ef6caf0a791",
+              "semantic_goal": "4b15e5454dcd70ed52abe841c24ce60f467e681f447a13ccea1740be8ca6ef93"
+            },
+            "probe_type": "StructuredSemanticResult",
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "source_digest": "476b1141df2e572d37562d96da64448403b965bec5bbdb5cacdd4ed47970c440",
+            "source_manifest_digest": "661ef11afa3936dfdb94800dd8680e038485882a53eaefb0ded68c4bd2e73e06",
+            "training_steps": 2080
+          },
+          "k2.transition": {
+            "candidate_namespace": "taiji:k:candidate:model-23",
+            "checkpoint_digest": "67c96c5c8517ca58bacb45b8de756e7ffd24ee108276160c731da364714e2bda",
+            "checkpoint_format": "taiji-structured-semantic-transition-v3",
+            "checkpoint_version": 3,
+            "event_dim": 19,
+            "owner_digests": {
+              "semantic_transition": "588000b80a87bc165a32fe7e2ce57b2eb1a2b7f1b0487012c28a2068b804e158",
+              "semantic_transition_content": "cd19f441668e3251384d31f18eb786652bbb49231332623fdb98a4b8ad069402",
+              "semantic_transition_goal": "a14bbf1a34d1dd7cb968efb47800fdb9145adfd4f3ca55c65006fae749a3581b"
+            },
+            "probe_type": "StructuredSemanticTransitionResult",
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "source_digest": "e8c51ba53d454f978cb71e35f860a62edc690ca8a2a08a8ef89ec8ba82c330d9",
+            "source_manifest_digest": "661ef11afa3936dfdb94800dd8680e038485882a53eaefb0ded68c4bd2e73e06",
+            "training_steps": 5040
+          },
+          "k3.outcome_projection": {
+            "candidate_namespace": "taiji:k:candidate:model-23",
+            "checkpoint_digest": "817c1278b17c972881a380e53c48bc6b207758d9e6ac6e3f88329f88a7f6f1ed",
+            "checkpoint_format": "taiji-outcome-dependency-projection-v1",
+            "checkpoint_version": 1,
+            "lesioned": false,
+            "owner_digests": {
+              "outcome_dependency_projector": "817c1278b17c972881a380e53c48bc6b207758d9e6ac6e3f88329f88a7f6f1ed"
+            },
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "scope_id": "r6-k3-worker-0-23",
+            "source_digest": "c475e6dfec23e055b7c2b300192b32ac64e8f10a78a907761e5f7b90307df290",
+            "source_manifest_digest": "661ef11afa3936dfdb94800dd8680e038485882a53eaefb0ded68c4bd2e73e06",
+            "training_steps": 0
+          }
+        }
+      }
+    },
+    {
+      "artifact_digest": "f9b7d193bacc5b919bebffceffb883d302938c1a0d144bbb79653aa771bec5a3",
+      "artifact_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_0\\taiji_c_entry_k_fixed_large_ensemble.pt",
+      "can_promote": false,
+      "can_start_formal": false,
+      "course_contract_digest": "01e6f2f45e375f66c558b3ca2a7592fd7201e079bde9f40262028e334b955c84",
+      "course_seed": 0,
+      "cuda_used": false,
+      "default_runtime_attached": false,
+      "disk_ensemble_fresh_restore": true,
+      "elapsed_seconds": 4.412630500039086,
+      "ensemble_checkpoint_digest": "a20034f3eb3d2ef1a1672dd3903c8cfb6de9942673bbffdc4b54351765705e7e",
+      "ensemble_fresh_restore": true,
+      "model_seed": 31,
+      "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+      "replica_reports": [
+        {
+          "k1_checkpoint_digest": "d57859a2a1ddfa2fda459153d09417fcb3e7b4954a41eb6b752d510398ce06ce",
+          "k1_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_0\\replica_0\\k1_semantic.pt",
+          "k1_parameter_delta_digest": "66e50e9e7088381bcf17f6e316283bc9ffc4398d02b4d3f4f9512ee772364407",
+          "k1_parameter_delta_norm": 0.12400337161885537,
+          "k1_training_steps": 2083,
+          "k2_checkpoint_digest": "714d9a19d2e13d086fc9d5c32dbced0ba8af146d7bacbdb8f213ea78cf95cce2",
+          "k2_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_0\\replica_0\\k2_transition.pt",
+          "k2_parameter_delta_digest": "f2469dd956203dd29baa027c793e91a0d56ad316240a3972571aa34f778d3b5c",
+          "k2_parameter_delta_norm": 0.026725810005166384,
+          "k2_training_steps": 5043,
+          "losses": {
+            "k1.semantic": {
+              "content_loss": 9.56842541199876e-07,
+              "fact_loss": 0.014328128658235073,
+              "goal_loss": 5.380075890570879e-06
+            },
+            "k2.transition": {
+              "content_loss": 3.413276863284409e-05,
+              "goal_loss": 8.909839380066842e-05,
+              "transition_loss": 0.0032027559354901314
+            }
+          },
+          "postfit_restore_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "prefit_checkpoint_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "replica_index": 0,
+          "reverse_order": false
+        },
+        {
+          "k1_checkpoint_digest": "18ce7fd4a699c18aef6dcce04fbd53b68ff1bf2c5732b7748ae315210a8ab9b1",
+          "k1_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_0\\replica_1\\k1_semantic.pt",
+          "k1_parameter_delta_digest": "a17245be48dd87a04bf610e3f4dbe653a0d0b99e43f9599ae6dda70a128ee219",
+          "k1_parameter_delta_norm": 0.12424024920071985,
+          "k1_training_steps": 2083,
+          "k2_checkpoint_digest": "a6fc11fbbe1147f551099d55e0e1e8e45d4b61af84087a99dea44ef2e91a24d5",
+          "k2_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_0\\replica_1\\k2_transition.pt",
+          "k2_parameter_delta_digest": "6b1d4fd08c3ceb8ea6f22d2b497300b4915da1e1afcd77408eb0de5d2056c22c",
+          "k2_parameter_delta_norm": 0.02651727626886353,
+          "k2_training_steps": 5043,
+          "losses": {
+            "k1.semantic": {
+              "content_loss": 3.3826552225946216e-06,
+              "fact_loss": 0.02000807784497738,
+              "goal_loss": 2.0954290448571555e-05
+            },
+            "k2.transition": {
+              "content_loss": 7.207345333881676e-05,
+              "goal_loss": 0.00018521516176406294,
+              "transition_loss": 0.0023002708330750465
+            }
+          },
+          "postfit_restore_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "prefit_checkpoint_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "replica_index": 1,
+          "reverse_order": true
+        }
+      ],
+      "replica_updates_distinct": true,
+      "report_format": "taiji-m4v2-b3-k-c-fixed-large-build-v1",
+      "resource": {
+        "candidate_parameter_bytes": 38664,
+        "checkpoint_write_bytes": 183491,
+        "checkpoint_write_paths": [
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_0\\replica_0\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_0\\replica_0\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_0\\replica_0\\prefit\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_0\\replica_0\\prefit\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_0\\replica_1\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_0\\replica_1\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_0\\replica_1\\prefit\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_0\\replica_1\\prefit\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_0\\taiji_c_entry_k_fixed_large_ensemble.pt"
+        ],
+        "device": "cpu",
+        "inference_peak_working_set_bytes": null,
+        "inference_trace_count": null,
+        "inference_wall_clock_seconds": null,
+        "measurement_complete": true,
+        "parameter_bytes": 38664,
+        "peak_working_set_bytes": 236146688,
+        "peak_working_set_method": "process_rss_before_after_lower_bound",
+        "resource_manifest_digest": "6b9e87ebbd1c73db9e06886ab26850ad791333cda08484db9964d566c0cd9108",
+        "training_peak_working_set_bytes": 236146688,
+        "training_update_steps": 14252,
+        "training_wall_clock_seconds": 0.07397970010060817,
+        "worker_parameter_bytes": 38664,
+        "worker_parameter_count": 9666
+      },
+      "run_kind": "c-entry-fixed-large-build",
+      "sealed_test_scored": false,
+      "source_manifest_digest": "cda0aeeb17457dc1ce81000af667fbaeed61b9c77ca6962883ff053ea7cf23c6",
+      "status": "passed",
+      "target_multiset_digest": "a0f58fa01922dc8a98eb1e9bb95fd428be3a07d0c9f7f249a124c4349d32e8ea",
+      "train_episode_indexes": [
+        0,
+        1,
+        2
+      ],
+      "training_performed": true,
+      "version": 1,
+      "worker_attachment_preflight": {
+        "adapter_checkpoint": {
+          "checkpoint_digest": "880cdaca20f739d9d4efb14678b733ae99a77e42737c0dae8ae5f72fea6cedb7",
+          "exchange_digest": "caf3811311812d845e7ef6a9a5ca7c953542620276d9d3629ce132ceca50c8e0",
+          "owner_graph_digest": "2f8efcf257ae3195ae6dc56024cfd3ba77151757e699684f90da7745be091c22",
+          "rollback_record_digest": "38c681d9a791332bf625b0c5fd1bf20b2972d3bee0ed22cfcfeaa484f7af1a19",
+          "worker_bundle_digest": "ab60c27756f46907e3f649f42dba1e8fada356de2d345b0cc64574abff1dff5b"
+        },
+        "adapter_training_steps": 0,
+        "artifact_errors": {},
+        "artifact_format": "taiji-k-worker-artifact-v1",
+        "artifact_missing": [],
+        "artifact_paths": {
+          "k1.semantic": [
+            "E:\\Seed\\checkpoints\\taiji_k_workers\\model_31\\taiji_r6_k1_semantic.pt"
+          ],
+          "k2.transition": [
+            "E:\\Seed\\checkpoints\\taiji_k_workers\\model_31\\taiji_r6_k2_transition.pt"
+          ],
+          "k3.outcome_projection": [
+            "E:\\Seed\\checkpoints\\taiji_k_workers\\model_31\\taiji_r6_k3_outcome_projection.pt"
+          ]
+        },
+        "attachment_gate_passed": true,
+        "blocking_reason": "attachment passed; R6 formal remains closed until the controlled K canary and full S/G/K promotion Gate run",
+        "can_promote": false,
+        "can_start_k_controlled_canary": true,
+        "can_start_r6_formal": false,
+        "candidate_training_performed": false,
+        "checks": {
+          "adapter_training_steps_zero": true,
+          "candidate_stage_worker_bundle_roundtrip": true,
+          "no_cuda": true,
+          "no_default_runtime": true,
+          "no_provider_mcp_client": true,
+          "old_G_retention": true,
+          "old_S_retention": true,
+          "parent_fresh_restore": true,
+          "parent_rollback_restore": true,
+          "rollback_parent_namespace_restored": true,
+          "rollback_record_explicit": true,
+          "rollback_worker_bundle_roundtrip": true,
+          "typed_exchange_ledger_roundtrip": true,
+          "typed_exchange_parent_echo": true,
+          "typed_exchange_worker_bundle_roundtrip": true,
+          "worker_bundle_exactly_k1_k2_k3": true,
+          "worker_bundle_same_parent": true,
+          "worker_owner_graph_bound": true
+        },
+        "client_attached": false,
+        "created_at_unix": 1788987322.0311491,
+        "cuda_used": false,
+        "default_runtime_attached": false,
+        "mcp_attached": false,
+        "old_capability_after": {
+          "G": 5.493859170249493,
+          "S": 5.857133765627293
+        },
+        "old_capability_before": {
+          "G": 5.493859170249493,
+          "S": 5.857133765627293
+        },
+        "old_capability_retention": {
+          "G": true,
+          "S": true
+        },
+        "owner_graph_digest": "2f8efcf257ae3195ae6dc56024cfd3ba77151757e699684f90da7745be091c22",
+        "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+        "parent_restore": {
+          "fresh_restore": true,
+          "rollback_restore": true
+        },
+        "provider_attached": false,
+        "report_format": "taiji-m4v2-r6-k-worker-attachment-preflight-v1",
+        "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+        "source_manifest_digest": "e042afbfc8f48f5f61bb0cfb36125fb095cc056b283405da0e74fea0bb6f0e85",
+        "status": "passed",
+        "training_performed": false,
+        "version": 1,
+        "worker_bundle_digest": "ab60c27756f46907e3f649f42dba1e8fada356de2d345b0cc64574abff1dff5b",
+        "workers": {
+          "k1.semantic": {
+            "candidate_namespace": "taiji:k:candidate:model-31",
+            "checkpoint_digest": "4b5ed527a3a105614cea73c6cc45a2d0577c9ec06eb6e974b245c679b93e5e5d",
+            "checkpoint_format": "taiji-structured-semantic-training-v1",
+            "checkpoint_version": 2,
+            "feature_dim": 19,
+            "owner_digests": {
+              "semantic_content": "fb8c70fc2d86bc013b95c10b1a3c5db7f0e2bd902966393fdfa0c10ca55866b4",
+              "semantic_fact": "d7fa651416a48426be0bb88ab9b262b77d7e605082f3571abc596ef6caf0a791",
+              "semantic_goal": "4b15e5454dcd70ed52abe841c24ce60f467e681f447a13ccea1740be8ca6ef93"
+            },
+            "probe_type": "StructuredSemanticResult",
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "source_digest": "476b1141df2e572d37562d96da64448403b965bec5bbdb5cacdd4ed47970c440",
+            "source_manifest_digest": "e042afbfc8f48f5f61bb0cfb36125fb095cc056b283405da0e74fea0bb6f0e85",
+            "training_steps": 2080
+          },
+          "k2.transition": {
+            "candidate_namespace": "taiji:k:candidate:model-31",
+            "checkpoint_digest": "67c96c5c8517ca58bacb45b8de756e7ffd24ee108276160c731da364714e2bda",
+            "checkpoint_format": "taiji-structured-semantic-transition-v3",
+            "checkpoint_version": 3,
+            "event_dim": 19,
+            "owner_digests": {
+              "semantic_transition": "588000b80a87bc165a32fe7e2ce57b2eb1a2b7f1b0487012c28a2068b804e158",
+              "semantic_transition_content": "cd19f441668e3251384d31f18eb786652bbb49231332623fdb98a4b8ad069402",
+              "semantic_transition_goal": "a14bbf1a34d1dd7cb968efb47800fdb9145adfd4f3ca55c65006fae749a3581b"
+            },
+            "probe_type": "StructuredSemanticTransitionResult",
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "source_digest": "e8c51ba53d454f978cb71e35f860a62edc690ca8a2a08a8ef89ec8ba82c330d9",
+            "source_manifest_digest": "e042afbfc8f48f5f61bb0cfb36125fb095cc056b283405da0e74fea0bb6f0e85",
+            "training_steps": 5040
+          },
+          "k3.outcome_projection": {
+            "candidate_namespace": "taiji:k:candidate:model-31",
+            "checkpoint_digest": "7d890ae19ccdc4c5511a37e8da6198aa5795332763954dd18030a87d2c2dd728",
+            "checkpoint_format": "taiji-outcome-dependency-projection-v1",
+            "checkpoint_version": 1,
+            "lesioned": false,
+            "owner_digests": {
+              "outcome_dependency_projector": "7d890ae19ccdc4c5511a37e8da6198aa5795332763954dd18030a87d2c2dd728"
+            },
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "scope_id": "r6-k3-worker-0-31",
+            "source_digest": "c3c6de24d88249e6189a8c161f65bf764ac51a87996f1c0af74cb8793211820f",
+            "source_manifest_digest": "e042afbfc8f48f5f61bb0cfb36125fb095cc056b283405da0e74fea0bb6f0e85",
+            "training_steps": 0
+          }
+        }
+      }
+    },
+    {
+      "artifact_digest": "1eea1d0ce78a8bc32d09a6a0f79d020abcc6c4bfe9a7c8294146f4c54c83abcb",
+      "artifact_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_1\\taiji_c_entry_k_fixed_large_ensemble.pt",
+      "can_promote": false,
+      "can_start_formal": false,
+      "course_contract_digest": "01e6f2f45e375f66c558b3ca2a7592fd7201e079bde9f40262028e334b955c84",
+      "course_seed": 1,
+      "cuda_used": false,
+      "default_runtime_attached": false,
+      "disk_ensemble_fresh_restore": true,
+      "elapsed_seconds": 4.317985699977726,
+      "ensemble_checkpoint_digest": "ab549d1c2ce558e896337775f6b43cd955307c315d56823dacca950f7173ed17",
+      "ensemble_fresh_restore": true,
+      "model_seed": 31,
+      "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+      "replica_reports": [
+        {
+          "k1_checkpoint_digest": "152299df67729b6cec50ba2fd010c8e4db68449d8159fdc28237e91c09f575e6",
+          "k1_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_1\\replica_0\\k1_semantic.pt",
+          "k1_parameter_delta_digest": "361063e6d2354644ffd5fee244ce8a5722fe0351c9eeec3ada3ba741df58d476",
+          "k1_parameter_delta_norm": 0.19645205985979614,
+          "k1_training_steps": 2083,
+          "k2_checkpoint_digest": "6a958e060e9115ae168fb9bbe0058356efb4f70c898a6c72755217df6b653019",
+          "k2_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_1\\replica_0\\k2_transition.pt",
+          "k2_parameter_delta_digest": "2be5e53cbdf4b64eb9215a480f9a1ee2389f283060849e45c15c923e8b2495e3",
+          "k2_parameter_delta_norm": 0.03029754439110665,
+          "k2_training_steps": 5043,
+          "losses": {
+            "k1.semantic": {
+              "content_loss": 1.0904631153607625e-06,
+              "fact_loss": 0.01474839635193348,
+              "goal_loss": 7.267472483363235e-06
+            },
+            "k2.transition": {
+              "content_loss": 2.8984242817386985e-05,
+              "goal_loss": 7.410153921227902e-05,
+              "transition_loss": 0.0028903644997626543
+            }
+          },
+          "postfit_restore_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "prefit_checkpoint_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "replica_index": 0,
+          "reverse_order": false
+        },
+        {
+          "k1_checkpoint_digest": "f226fb8e478058c4a4c41fab34b6bffca506f567d1e2b266d204b3eda421711b",
+          "k1_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_1\\replica_1\\k1_semantic.pt",
+          "k1_parameter_delta_digest": "a530847f46b871ce86fc2a0946e7704c6f8bd9466493206e7cc00f08c4d8a5d8",
+          "k1_parameter_delta_norm": 0.20142107428854789,
+          "k1_training_steps": 2083,
+          "k2_checkpoint_digest": "068aad446b12b9a8fe6118f9798d59aae7f47851d432bfb236bdf75669b18d5b",
+          "k2_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_1\\replica_1\\k2_transition.pt",
+          "k2_parameter_delta_digest": "8fc9c21a2efad35bddd75f00247bf4b15beabed9a0813d4bacd8159fda2a1678",
+          "k2_parameter_delta_norm": 0.030532927259957356,
+          "k2_training_steps": 5043,
+          "losses": {
+            "k1.semantic": {
+              "content_loss": 2.888500830522389e-06,
+              "fact_loss": 0.01781843975186348,
+              "goal_loss": 1.476909892517142e-05
+            },
+            "k2.transition": {
+              "content_loss": 6.679399666609243e-05,
+              "goal_loss": 0.00016589349252171814,
+              "transition_loss": 0.0022575671318918467
+            }
+          },
+          "postfit_restore_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "prefit_checkpoint_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "replica_index": 1,
+          "reverse_order": true
+        }
+      ],
+      "replica_updates_distinct": true,
+      "report_format": "taiji-m4v2-b3-k-c-fixed-large-build-v1",
+      "resource": {
+        "candidate_parameter_bytes": 38664,
+        "checkpoint_write_bytes": 183491,
+        "checkpoint_write_paths": [
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_1\\replica_0\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_1\\replica_0\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_1\\replica_0\\prefit\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_1\\replica_0\\prefit\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_1\\replica_1\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_1\\replica_1\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_1\\replica_1\\prefit\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_1\\replica_1\\prefit\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_1\\taiji_c_entry_k_fixed_large_ensemble.pt"
+        ],
+        "device": "cpu",
+        "inference_peak_working_set_bytes": null,
+        "inference_trace_count": null,
+        "inference_wall_clock_seconds": null,
+        "measurement_complete": true,
+        "parameter_bytes": 38664,
+        "peak_working_set_bytes": 235782144,
+        "peak_working_set_method": "process_rss_before_after_lower_bound",
+        "resource_manifest_digest": "6b9e87ebbd1c73db9e06886ab26850ad791333cda08484db9964d566c0cd9108",
+        "training_peak_working_set_bytes": 235782144,
+        "training_update_steps": 14252,
+        "training_wall_clock_seconds": 0.06720440008211881,
+        "worker_parameter_bytes": 38664,
+        "worker_parameter_count": 9666
+      },
+      "run_kind": "c-entry-fixed-large-build",
+      "sealed_test_scored": false,
+      "source_manifest_digest": "ea16656dd659a6b6b7107265778914493aac50ce50d5b898db9ec118fb195732",
+      "status": "passed",
+      "target_multiset_digest": "fc14c01319e85d369a2d398677032ff4f15368c50c72a569d1293def51b0f948",
+      "train_episode_indexes": [
+        0,
+        3,
+        1
+      ],
+      "training_performed": true,
+      "version": 1,
+      "worker_attachment_preflight": {
+        "adapter_checkpoint": {
+          "checkpoint_digest": "880cdaca20f739d9d4efb14678b733ae99a77e42737c0dae8ae5f72fea6cedb7",
+          "exchange_digest": "caf3811311812d845e7ef6a9a5ca7c953542620276d9d3629ce132ceca50c8e0",
+          "owner_graph_digest": "2f8efcf257ae3195ae6dc56024cfd3ba77151757e699684f90da7745be091c22",
+          "rollback_record_digest": "38c681d9a791332bf625b0c5fd1bf20b2972d3bee0ed22cfcfeaa484f7af1a19",
+          "worker_bundle_digest": "ab60c27756f46907e3f649f42dba1e8fada356de2d345b0cc64574abff1dff5b"
+        },
+        "adapter_training_steps": 0,
+        "artifact_errors": {},
+        "artifact_format": "taiji-k-worker-artifact-v1",
+        "artifact_missing": [],
+        "artifact_paths": {
+          "k1.semantic": [
+            "E:\\Seed\\checkpoints\\taiji_k_workers\\model_31\\taiji_r6_k1_semantic.pt"
+          ],
+          "k2.transition": [
+            "E:\\Seed\\checkpoints\\taiji_k_workers\\model_31\\taiji_r6_k2_transition.pt"
+          ],
+          "k3.outcome_projection": [
+            "E:\\Seed\\checkpoints\\taiji_k_workers\\model_31\\taiji_r6_k3_outcome_projection.pt"
+          ]
+        },
+        "attachment_gate_passed": true,
+        "blocking_reason": "attachment passed; R6 formal remains closed until the controlled K canary and full S/G/K promotion Gate run",
+        "can_promote": false,
+        "can_start_k_controlled_canary": true,
+        "can_start_r6_formal": false,
+        "candidate_training_performed": false,
+        "checks": {
+          "adapter_training_steps_zero": true,
+          "candidate_stage_worker_bundle_roundtrip": true,
+          "no_cuda": true,
+          "no_default_runtime": true,
+          "no_provider_mcp_client": true,
+          "old_G_retention": true,
+          "old_S_retention": true,
+          "parent_fresh_restore": true,
+          "parent_rollback_restore": true,
+          "rollback_parent_namespace_restored": true,
+          "rollback_record_explicit": true,
+          "rollback_worker_bundle_roundtrip": true,
+          "typed_exchange_ledger_roundtrip": true,
+          "typed_exchange_parent_echo": true,
+          "typed_exchange_worker_bundle_roundtrip": true,
+          "worker_bundle_exactly_k1_k2_k3": true,
+          "worker_bundle_same_parent": true,
+          "worker_owner_graph_bound": true
+        },
+        "client_attached": false,
+        "created_at_unix": 1788987326.4451451,
+        "cuda_used": false,
+        "default_runtime_attached": false,
+        "mcp_attached": false,
+        "old_capability_after": {
+          "G": 5.493859170249493,
+          "S": 5.857133765627293
+        },
+        "old_capability_before": {
+          "G": 5.493859170249493,
+          "S": 5.857133765627293
+        },
+        "old_capability_retention": {
+          "G": true,
+          "S": true
+        },
+        "owner_graph_digest": "2f8efcf257ae3195ae6dc56024cfd3ba77151757e699684f90da7745be091c22",
+        "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+        "parent_restore": {
+          "fresh_restore": true,
+          "rollback_restore": true
+        },
+        "provider_attached": false,
+        "report_format": "taiji-m4v2-r6-k-worker-attachment-preflight-v1",
+        "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+        "source_manifest_digest": "e042afbfc8f48f5f61bb0cfb36125fb095cc056b283405da0e74fea0bb6f0e85",
+        "status": "passed",
+        "training_performed": false,
+        "version": 1,
+        "worker_bundle_digest": "ab60c27756f46907e3f649f42dba1e8fada356de2d345b0cc64574abff1dff5b",
+        "workers": {
+          "k1.semantic": {
+            "candidate_namespace": "taiji:k:candidate:model-31",
+            "checkpoint_digest": "4b5ed527a3a105614cea73c6cc45a2d0577c9ec06eb6e974b245c679b93e5e5d",
+            "checkpoint_format": "taiji-structured-semantic-training-v1",
+            "checkpoint_version": 2,
+            "feature_dim": 19,
+            "owner_digests": {
+              "semantic_content": "fb8c70fc2d86bc013b95c10b1a3c5db7f0e2bd902966393fdfa0c10ca55866b4",
+              "semantic_fact": "d7fa651416a48426be0bb88ab9b262b77d7e605082f3571abc596ef6caf0a791",
+              "semantic_goal": "4b15e5454dcd70ed52abe841c24ce60f467e681f447a13ccea1740be8ca6ef93"
+            },
+            "probe_type": "StructuredSemanticResult",
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "source_digest": "476b1141df2e572d37562d96da64448403b965bec5bbdb5cacdd4ed47970c440",
+            "source_manifest_digest": "e042afbfc8f48f5f61bb0cfb36125fb095cc056b283405da0e74fea0bb6f0e85",
+            "training_steps": 2080
+          },
+          "k2.transition": {
+            "candidate_namespace": "taiji:k:candidate:model-31",
+            "checkpoint_digest": "67c96c5c8517ca58bacb45b8de756e7ffd24ee108276160c731da364714e2bda",
+            "checkpoint_format": "taiji-structured-semantic-transition-v3",
+            "checkpoint_version": 3,
+            "event_dim": 19,
+            "owner_digests": {
+              "semantic_transition": "588000b80a87bc165a32fe7e2ce57b2eb1a2b7f1b0487012c28a2068b804e158",
+              "semantic_transition_content": "cd19f441668e3251384d31f18eb786652bbb49231332623fdb98a4b8ad069402",
+              "semantic_transition_goal": "a14bbf1a34d1dd7cb968efb47800fdb9145adfd4f3ca55c65006fae749a3581b"
+            },
+            "probe_type": "StructuredSemanticTransitionResult",
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "source_digest": "e8c51ba53d454f978cb71e35f860a62edc690ca8a2a08a8ef89ec8ba82c330d9",
+            "source_manifest_digest": "e042afbfc8f48f5f61bb0cfb36125fb095cc056b283405da0e74fea0bb6f0e85",
+            "training_steps": 5040
+          },
+          "k3.outcome_projection": {
+            "candidate_namespace": "taiji:k:candidate:model-31",
+            "checkpoint_digest": "7d890ae19ccdc4c5511a37e8da6198aa5795332763954dd18030a87d2c2dd728",
+            "checkpoint_format": "taiji-outcome-dependency-projection-v1",
+            "checkpoint_version": 1,
+            "lesioned": false,
+            "owner_digests": {
+              "outcome_dependency_projector": "7d890ae19ccdc4c5511a37e8da6198aa5795332763954dd18030a87d2c2dd728"
+            },
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "scope_id": "r6-k3-worker-0-31",
+            "source_digest": "c3c6de24d88249e6189a8c161f65bf764ac51a87996f1c0af74cb8793211820f",
+            "source_manifest_digest": "e042afbfc8f48f5f61bb0cfb36125fb095cc056b283405da0e74fea0bb6f0e85",
+            "training_steps": 0
+          }
+        }
+      }
+    },
+    {
+      "artifact_digest": "9fec527182e48d8f3c5d00701d8b4120d6fdf1bc4b1af19afc2eb8aae6c5a8d3",
+      "artifact_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_2\\taiji_c_entry_k_fixed_large_ensemble.pt",
+      "can_promote": false,
+      "can_start_formal": false,
+      "course_contract_digest": "01e6f2f45e375f66c558b3ca2a7592fd7201e079bde9f40262028e334b955c84",
+      "course_seed": 2,
+      "cuda_used": false,
+      "default_runtime_attached": false,
+      "disk_ensemble_fresh_restore": true,
+      "elapsed_seconds": 4.431258499971591,
+      "ensemble_checkpoint_digest": "742d414d9782aa0be6e60468be1e12fcb7b09d4e3519ecdea6a71754e354903b",
+      "ensemble_fresh_restore": true,
+      "model_seed": 31,
+      "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+      "replica_reports": [
+        {
+          "k1_checkpoint_digest": "db6c5362a7d9649643b4047e3bb0b4d93c265ba5e8b7da97af73321a89b2fdd9",
+          "k1_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_2\\replica_0\\k1_semantic.pt",
+          "k1_parameter_delta_digest": "9c0e2a317cdb792da8297398b0bcccef1a327c756431fd8f825cea81a474081e",
+          "k1_parameter_delta_norm": 0.158370905589407,
+          "k1_training_steps": 2083,
+          "k2_checkpoint_digest": "826278f23a5bd8b28d5110414745b863b20ed242e0ef3c3468c6fdcb35a1274a",
+          "k2_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_2\\replica_0\\k2_transition.pt",
+          "k2_parameter_delta_digest": "bb839b541188905af1cfe04bd35d0337f821b365e5813abb5f23f54778605050",
+          "k2_parameter_delta_norm": 0.026875399621240963,
+          "k2_training_steps": 5043,
+          "losses": {
+            "k1.semantic": {
+              "content_loss": 9.56842541199876e-07,
+              "fact_loss": 0.013471133075654507,
+              "goal_loss": 5.380075890570879e-06
+            },
+            "k2.transition": {
+              "content_loss": 2.7135713025927544e-05,
+              "goal_loss": 6.725684215780348e-05,
+              "transition_loss": 0.0027833268977701664
+            }
+          },
+          "postfit_restore_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "prefit_checkpoint_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "replica_index": 0,
+          "reverse_order": false
+        },
+        {
+          "k1_checkpoint_digest": "dc888d577e42424b9a82cf0048f1b8e7b71cca100bff44025a0a4eaef9beecf8",
+          "k1_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_2\\replica_1\\k1_semantic.pt",
+          "k1_parameter_delta_digest": "8e4ae1b722d05519a2754ccd137aacd240d601ec60712063d96a2d0a707608c1",
+          "k1_parameter_delta_norm": 0.15724106958762643,
+          "k1_training_steps": 2083,
+          "k2_checkpoint_digest": "bcde51acf4722d9e7ab71ea8d8a5d9c6f361c26a63649d390951c8db2fd04327",
+          "k2_checkpoint_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_2\\replica_1\\k2_transition.pt",
+          "k2_parameter_delta_digest": "e22ce8bbbdc1f9ed6e0bf6193174d9fa8e075f0feeb50340973171f02ed240c4",
+          "k2_parameter_delta_norm": 0.026684423671019458,
+          "k2_training_steps": 5043,
+          "losses": {
+            "k1.semantic": {
+              "content_loss": 3.3826552225946216e-06,
+              "fact_loss": 0.020021051168441772,
+              "goal_loss": 2.0954290448571555e-05
+            },
+            "k2.transition": {
+              "content_loss": 7.189506141003221e-05,
+              "goal_loss": 0.00018433545483276248,
+              "transition_loss": 0.0023000191431492567
+            }
+          },
+          "postfit_restore_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "prefit_checkpoint_gate": {
+            "k1.semantic": true,
+            "k2.transition": true
+          },
+          "replica_index": 1,
+          "reverse_order": true
+        }
+      ],
+      "replica_updates_distinct": true,
+      "report_format": "taiji-m4v2-b3-k-c-fixed-large-build-v1",
+      "resource": {
+        "candidate_parameter_bytes": 38664,
+        "checkpoint_write_bytes": 183491,
+        "checkpoint_write_paths": [
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_2\\replica_0\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_2\\replica_0\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_2\\replica_0\\prefit\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_2\\replica_0\\prefit\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_2\\replica_1\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_2\\replica_1\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_2\\replica_1\\prefit\\k1_semantic.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_2\\replica_1\\prefit\\k2_transition.pt",
+          "E:\\Seed\\checkpoints\\taiji_k_fixed_large_c_entry\\model_31\\course_2\\taiji_c_entry_k_fixed_large_ensemble.pt"
+        ],
+        "device": "cpu",
+        "inference_peak_working_set_bytes": null,
+        "inference_trace_count": null,
+        "inference_wall_clock_seconds": null,
+        "measurement_complete": true,
+        "parameter_bytes": 38664,
+        "peak_working_set_bytes": 236339200,
+        "peak_working_set_method": "process_rss_before_after_lower_bound",
+        "resource_manifest_digest": "6b9e87ebbd1c73db9e06886ab26850ad791333cda08484db9964d566c0cd9108",
+        "training_peak_working_set_bytes": 236339200,
+        "training_update_steps": 14252,
+        "training_wall_clock_seconds": 0.07110070006456226,
+        "worker_parameter_bytes": 38664,
+        "worker_parameter_count": 9666
+      },
+      "run_kind": "c-entry-fixed-large-build",
+      "sealed_test_scored": false,
+      "source_manifest_digest": "d85922c0b63ddbacbad6cc26e4f786bfb0b7addf84a279bb2963121fc1399a86",
+      "status": "passed",
+      "target_multiset_digest": "db25bf73706540b02b2dcc9718d234a89c3d8b343fedc8ba16dc131515fb7d42",
+      "train_episode_indexes": [
+        0,
+        1,
+        4
+      ],
+      "training_performed": true,
+      "version": 1,
+      "worker_attachment_preflight": {
+        "adapter_checkpoint": {
+          "checkpoint_digest": "880cdaca20f739d9d4efb14678b733ae99a77e42737c0dae8ae5f72fea6cedb7",
+          "exchange_digest": "caf3811311812d845e7ef6a9a5ca7c953542620276d9d3629ce132ceca50c8e0",
+          "owner_graph_digest": "2f8efcf257ae3195ae6dc56024cfd3ba77151757e699684f90da7745be091c22",
+          "rollback_record_digest": "38c681d9a791332bf625b0c5fd1bf20b2972d3bee0ed22cfcfeaa484f7af1a19",
+          "worker_bundle_digest": "ab60c27756f46907e3f649f42dba1e8fada356de2d345b0cc64574abff1dff5b"
+        },
+        "adapter_training_steps": 0,
+        "artifact_errors": {},
+        "artifact_format": "taiji-k-worker-artifact-v1",
+        "artifact_missing": [],
+        "artifact_paths": {
+          "k1.semantic": [
+            "E:\\Seed\\checkpoints\\taiji_k_workers\\model_31\\taiji_r6_k1_semantic.pt"
+          ],
+          "k2.transition": [
+            "E:\\Seed\\checkpoints\\taiji_k_workers\\model_31\\taiji_r6_k2_transition.pt"
+          ],
+          "k3.outcome_projection": [
+            "E:\\Seed\\checkpoints\\taiji_k_workers\\model_31\\taiji_r6_k3_outcome_projection.pt"
+          ]
+        },
+        "attachment_gate_passed": true,
+        "blocking_reason": "attachment passed; R6 formal remains closed until the controlled K canary and full S/G/K promotion Gate run",
+        "can_promote": false,
+        "can_start_k_controlled_canary": true,
+        "can_start_r6_formal": false,
+        "candidate_training_performed": false,
+        "checks": {
+          "adapter_training_steps_zero": true,
+          "candidate_stage_worker_bundle_roundtrip": true,
+          "no_cuda": true,
+          "no_default_runtime": true,
+          "no_provider_mcp_client": true,
+          "old_G_retention": true,
+          "old_S_retention": true,
+          "parent_fresh_restore": true,
+          "parent_rollback_restore": true,
+          "rollback_parent_namespace_restored": true,
+          "rollback_record_explicit": true,
+          "rollback_worker_bundle_roundtrip": true,
+          "typed_exchange_ledger_roundtrip": true,
+          "typed_exchange_parent_echo": true,
+          "typed_exchange_worker_bundle_roundtrip": true,
+          "worker_bundle_exactly_k1_k2_k3": true,
+          "worker_bundle_same_parent": true,
+          "worker_owner_graph_bound": true
+        },
+        "client_attached": false,
+        "created_at_unix": 1788987330.7667363,
+        "cuda_used": false,
+        "default_runtime_attached": false,
+        "mcp_attached": false,
+        "old_capability_after": {
+          "G": 5.493859170249493,
+          "S": 5.857133765627293
+        },
+        "old_capability_before": {
+          "G": 5.493859170249493,
+          "S": 5.857133765627293
+        },
+        "old_capability_retention": {
+          "G": true,
+          "S": true
+        },
+        "owner_graph_digest": "2f8efcf257ae3195ae6dc56024cfd3ba77151757e699684f90da7745be091c22",
+        "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+        "parent_restore": {
+          "fresh_restore": true,
+          "rollback_restore": true
+        },
+        "provider_attached": false,
+        "report_format": "taiji-m4v2-r6-k-worker-attachment-preflight-v1",
+        "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+        "source_manifest_digest": "e042afbfc8f48f5f61bb0cfb36125fb095cc056b283405da0e74fea0bb6f0e85",
+        "status": "passed",
+        "training_performed": false,
+        "version": 1,
+        "worker_bundle_digest": "ab60c27756f46907e3f649f42dba1e8fada356de2d345b0cc64574abff1dff5b",
+        "workers": {
+          "k1.semantic": {
+            "candidate_namespace": "taiji:k:candidate:model-31",
+            "checkpoint_digest": "4b5ed527a3a105614cea73c6cc45a2d0577c9ec06eb6e974b245c679b93e5e5d",
+            "checkpoint_format": "taiji-structured-semantic-training-v1",
+            "checkpoint_version": 2,
+            "feature_dim": 19,
+            "owner_digests": {
+              "semantic_content": "fb8c70fc2d86bc013b95c10b1a3c5db7f0e2bd902966393fdfa0c10ca55866b4",
+              "semantic_fact": "d7fa651416a48426be0bb88ab9b262b77d7e605082f3571abc596ef6caf0a791",
+              "semantic_goal": "4b15e5454dcd70ed52abe841c24ce60f467e681f447a13ccea1740be8ca6ef93"
+            },
+            "probe_type": "StructuredSemanticResult",
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "source_digest": "476b1141df2e572d37562d96da64448403b965bec5bbdb5cacdd4ed47970c440",
+            "source_manifest_digest": "e042afbfc8f48f5f61bb0cfb36125fb095cc056b283405da0e74fea0bb6f0e85",
+            "training_steps": 2080
+          },
+          "k2.transition": {
+            "candidate_namespace": "taiji:k:candidate:model-31",
+            "checkpoint_digest": "67c96c5c8517ca58bacb45b8de756e7ffd24ee108276160c731da364714e2bda",
+            "checkpoint_format": "taiji-structured-semantic-transition-v3",
+            "checkpoint_version": 3,
+            "event_dim": 19,
+            "owner_digests": {
+              "semantic_transition": "588000b80a87bc165a32fe7e2ce57b2eb1a2b7f1b0487012c28a2068b804e158",
+              "semantic_transition_content": "cd19f441668e3251384d31f18eb786652bbb49231332623fdb98a4b8ad069402",
+              "semantic_transition_goal": "a14bbf1a34d1dd7cb968efb47800fdb9145adfd4f3ca55c65006fae749a3581b"
+            },
+            "probe_type": "StructuredSemanticTransitionResult",
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "source_digest": "e8c51ba53d454f978cb71e35f860a62edc690ca8a2a08a8ef89ec8ba82c330d9",
+            "source_manifest_digest": "e042afbfc8f48f5f61bb0cfb36125fb095cc056b283405da0e74fea0bb6f0e85",
+            "training_steps": 5040
+          },
+          "k3.outcome_projection": {
+            "candidate_namespace": "taiji:k:candidate:model-31",
+            "checkpoint_digest": "7d890ae19ccdc4c5511a37e8da6198aa5795332763954dd18030a87d2c2dd728",
+            "checkpoint_format": "taiji-outcome-dependency-projection-v1",
+            "checkpoint_version": 1,
+            "lesioned": false,
+            "owner_digests": {
+              "outcome_dependency_projector": "7d890ae19ccdc4c5511a37e8da6198aa5795332763954dd18030a87d2c2dd728"
+            },
+            "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+            "scope_id": "r6-k3-worker-0-31",
+            "source_digest": "c3c6de24d88249e6189a8c161f65bf764ac51a87996f1c0af74cb8793211820f",
+            "source_manifest_digest": "e042afbfc8f48f5f61bb0cfb36125fb095cc056b283405da0e74fea0bb6f0e85",
+            "training_steps": 0
+          }
+        }
+      }
+    }
+  ],
+  "course_contract_digest": "01e6f2f45e375f66c558b3ca2a7592fd7201e079bde9f40262028e334b955c84",
+  "course_seeds": [
+    0,
+    1,
+    2
+  ],
+  "model_seeds": [
+    17,
+    23,
+    31
+  ],
+  "report_format": "taiji-m4v2-b3-k-c-fixed-large-build-v1",
+  "run_kind": "c-entry-fixed-large-build-matrix",
+  "sealed_test_artifact_digest": "1c9e3853e9d87828fedecc8a47d11d7667c97d0aa35d475bdc2e27f7b21eb969",
+  "sealed_test_scored": false,
+  "status": "passed",
+  "training_performed": true,
+  "version": 1
+}

@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import os
 import shutil
 import sys
 import time
@@ -67,6 +68,25 @@ DEFAULT_CANDIDATE_DIR = (
 )
 SEMANTIC_SINGLE_STEP_LR = 2.0
 TRANSITION_SINGLE_STEP_LR = 0.2
+
+
+def _rss_bytes() -> int | None:
+    try:
+        import psutil
+
+        return int(psutil.Process(os.getpid()).memory_info().rss)
+    except (ImportError, OSError):
+        return None
+
+
+def _parameter_stats(*learners: Any) -> tuple[int, int]:
+    parameter_count = 0
+    parameter_bytes = 0
+    for learner in learners:
+        for parameter in learner.parameters():
+            parameter_count += int(parameter.numel())
+            parameter_bytes += int(parameter.numel() * parameter.element_size())
+    return parameter_count, parameter_bytes
 
 
 def _course_train_variant(course_seed: int) -> tuple[int, tuple[str, ...]]:
@@ -264,12 +284,19 @@ def run_diagnostic(
     train_episode_count: int = 1,
     train_variant_strategy: str = "contiguous",
     candidate_namespace: str | None = None,
+    measure_resources: bool = False,
 ) -> dict[str, Any]:
     started = time.perf_counter()
     temp_parent = PROJECT_ROOT / ".tmp-m4v2-b3-k-loss-diagnostic"
     temp_parent.mkdir(parents=True, exist_ok=True)
     temp_root = temp_parent / f"course-{uuid4().hex}"
     temp_root.mkdir()
+    training_before_rss = None
+    training_after_rss = None
+    training_elapsed = None
+    inference_before_rss = None
+    inference_after_rss = None
+    inference_elapsed = None
     report: dict[str, Any] = {
         "report_format": REPORT_FORMAT,
         "version": VERSION,
@@ -454,6 +481,9 @@ def run_diagnostic(
         transition_candidate = StructuredSemanticTransitionLearner.from_checkpoint(
             copy.deepcopy(transition_parent_payload), device="cpu"
         )
+        if measure_resources:
+            training_before_rss = _rss_bytes()
+            training_started = time.perf_counter()
         semantic_losses = semantic_candidate.fit(
             tuple(item.semantic_example for item in course.train),
             epochs=1,
@@ -464,6 +494,9 @@ def run_diagnostic(
             epochs=1,
             learning_rate=TRANSITION_SINGLE_STEP_LR,
         )
+        if measure_resources:
+            training_elapsed = time.perf_counter() - training_started
+            training_after_rss = _rss_bytes()
         report["training_performed"] = True
         report["research_course_executed"] = True
         semantic_checkpoint = semantic_candidate.checkpoint()
@@ -478,10 +511,14 @@ def run_diagnostic(
         transition_fresh = StructuredSemanticTransitionLearner.from_checkpoint(
             saved_transition, device="cpu"
         )
+        if measure_resources:
+            inference_before_rss = _rss_bytes()
+            inference_started = time.perf_counter()
         loss_after = _loss_score(semantic_fresh, transition_fresh, course.holdout)
-        train_loss_after = _loss_score(
-            semantic_fresh, transition_fresh, course.train
-        )
+        train_loss_after = _loss_score(semantic_fresh, transition_fresh, course.train)
+        if measure_resources:
+            inference_elapsed = time.perf_counter() - inference_started
+            inference_after_rss = _rss_bytes()
         train_loss_delta = {
             key: train_loss_after[key] - train_loss_before[key]
             for key in train_loss_before
@@ -613,8 +650,7 @@ def run_diagnostic(
             ),
         }
         loss_delta = {key: loss_after[key] - loss_before[key] for key in loss_before}
-        report.update(
-            {
+        update_payload = {
                 "status": "passed" if all(checks.values()) and receipt.passed else "failed",
                 "checks": checks,
                 "parent_checkpoint_digest": parent_digest,
@@ -703,8 +739,60 @@ def run_diagnostic(
                     if all(checks.values()) and receipt.passed
                     else "B3-K continuous-loss diagnostic technical Gate failed"
                 ),
+        }
+        if measure_resources:
+            parameter_count, parameter_bytes = _parameter_stats(
+                semantic_fresh, transition_fresh
+            )
+            checkpoint_paths = tuple(candidate_paths.values())
+            checkpoint_write_bytes = sum(
+                int(path.stat().st_size) for path in checkpoint_paths if path.is_file()
+            )
+            rss_values = tuple(
+                value
+                for value in (
+                    training_before_rss,
+                    training_after_rss,
+                    inference_before_rss,
+                    inference_after_rss,
+                )
+                if value is not None
+            )
+            update_payload["resource"] = {
+                "device": "cpu",
+                "resource_manifest_digest": resource_manifest_digest,
+                "training_wall_clock_seconds": float(training_elapsed or 0.0),
+                "inference_wall_clock_seconds": float(inference_elapsed or 0.0),
+                "training_peak_working_set_bytes": (
+                    max(training_before_rss, training_after_rss)
+                    if training_before_rss is not None and training_after_rss is not None
+                    else None
+                ),
+                "inference_peak_working_set_bytes": (
+                    max(inference_before_rss, inference_after_rss)
+                    if inference_before_rss is not None and inference_after_rss is not None
+                    else None
+                ),
+                "peak_working_set_bytes": max(rss_values) if rss_values else None,
+                "peak_working_set_method": "process_rss_before_after_lower_bound",
+                "training_update_steps": int(receipt.training_steps),
+                "worker_parameter_count": parameter_count,
+                "worker_parameter_bytes": parameter_bytes,
+                "candidate_parameter_bytes": parameter_bytes,
+                "parameter_bytes": parameter_bytes,
+                "checkpoint_write_bytes": checkpoint_write_bytes,
+                "checkpoint_write_paths": [str(path) for path in checkpoint_paths],
+                "inference_trace_count": int(len(course.holdout) + len(course.train)),
+                "measurement_complete": bool(
+                    training_elapsed is not None
+                    and inference_elapsed is not None
+                    and training_before_rss is not None
+                    and training_after_rss is not None
+                    and inference_before_rss is not None
+                    and inference_after_rss is not None
+                ),
             }
-        )
+        report.update(update_payload)
     except (KeyError, OSError, TypeError, ValueError, RuntimeError) as exc:
         report["blocking_reason"] = str(exc)
     finally:
