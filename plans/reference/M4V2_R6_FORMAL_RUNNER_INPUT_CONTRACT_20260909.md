@@ -702,3 +702,15 @@ paired capability delta=1.0；matched/candidate worker parameter bytes 和 trace
 model17 slice 已闭合，但这不是 9-cell aggregate 或 promotion Gate。下一步只开放
 固定顺序的 model23/course0，继续使用同一 revised manifest、prior ledger 和独立
 preflight；不接 default runtime/provider/MCP/client/CUDA。
+
+## 30. Matched-control revision model23/course0 closure（2026-09-10）
+
+revised execution ledger 已追加 model23/course0，累计 4/9 row 均为 executed_passed，
+失败列表为空；该 cell 的 frozen-parent=0.0、matched no-feedback=0.0、candidate=1.0、
+lesion=0.0，两个 paired capability delta 均为 1.0。matched/candidate 均使用 4833
+worker parameters、1 条 inference trace，并通过 wall/peak 资源上限及 fixed-large
+K-task-equivalent control。
+
+这仍不是完整 aggregate 或 promotion。下一步只执行固定顺序的 model23/course1，继续
+使用同一 revised manifest、prior ledger、input preflight 和 formal preflight；不接
+default runtime/provider/MCP/client/CUDA。

@@ -638,3 +638,14 @@ can_start_r6_formal=false、can_promote=false。
 
 下一步只执行 revised ledger 的 model23/course0；不得跳过 predecessor、提前计算
 aggregate 或解冻任何默认 runtime owner。
+
+## 41. Matched-control revision model23/course0 closure（2026-09-10）
+
+model23/course0 已由 revised runner 单调追加并通过，独立 ledger 累计 4/9；该格
+frozen/matched/candidate/lesion=0/0/1/0，candidate-frozen 与 candidate-matched
+delta 均为 1.0，matched/candidate 参数和 inference trace 相同，fixed-large
+K-task-equivalent control 通过。旧 R6 aggregate 与旧 ledger 仍保持不可变，
+can_start_r6_formal=false、can_promote=false。
+
+下一步只执行 revised ledger 的 model23/course1；不得跳过 predecessor、改变资源预算、
+提前运行 aggregate 或接入默认 runtime/provider/MCP/client/CUDA。
