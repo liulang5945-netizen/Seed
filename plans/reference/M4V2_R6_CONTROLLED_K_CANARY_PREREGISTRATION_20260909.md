@@ -90,3 +90,20 @@ selector 覆盖后，未改变模型、artifact、阈值或判据，重新执行
 因此该结果只闭合 single-cell native K 闭环和原子回滚，不证明跨 seed 泛化、
 长期自进化或 R6 formal promotion；`can_start_r6_formal=false`、
 `can_promote=false` 继续保持。
+
+## 7. 证据审阅与 formal 输入边界（2026-09-09）
+
+审阅结论：
+
+- 因果证据为部分通过：真实 Workbench outcome 被 K3 projection 和 dependency
+  lineage 消费，但本 canary 没有 matched control、frozen parent 或 lesion，不能
+  证明新增能力的因果增益；
+- 资源证据仅为诊断：记录了 `elapsed_seconds` 和 adapter `training_steps=0`，没有
+  formal 所需的 peak working set、wall-clock 对照、写入字节或 inference trace；
+- 副作用证据在 single-cell 范围通过：default/provider/MCP/client/CUDA 均未接入，
+  candidate stage/explicit rollback 保留 typed exchange；但不能代替 all-arm
+  9-cell ledger。
+
+上述边界已冻结到 [M4V2_R6_FORMAL_RUNNER_INPUT_CONTRACT_20260909.md](M4V2_R6_FORMAL_RUNNER_INPUT_CONTRACT_20260909.md)。首轮 workspace root 错误按
+`course_harness` 归因，不归因为 worker 或模型失败；后续 formal 统一使用显式
+parent/worker/course registry 和结构化 failure record。formal 入口仍关闭。

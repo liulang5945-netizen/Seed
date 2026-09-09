@@ -313,6 +313,24 @@ lineage；joint checkpoint、candidate stage、explicit rollback 和 S/G retenti
 跨 seed formal、长期自进化或 promotion evidence；`can_start_r6_formal=false`、
 `can_promote=false` 继续固定。
 
-**当前唯一下一步**：审阅这条 single-cell 的 causal/资源/side-effect evidence，
-冻结 R6 formal runner 的输入合同和失败归因字段；冻结前不扩大矩阵、不接默认
-runtime、不引入 MCP/provider/client/CUDA。
+## 15. formal runner 输入合同与失败归因已冻结（2026-09-09）
+
+已新增 [M4V2_R6_FORMAL_RUNNER_INPUT_CONTRACT_20260909.md](M4V2_R6_FORMAL_RUNNER_INPUT_CONTRACT_20260909.md)，将本轮 single-cell 证据的边界落实为 formal runner 合同：
+
+- causal 轴明确区分“真实 outcome 被消费”与 A/B/C/lesion 因果证据；
+- resource 轴补齐 wall-clock、peak working set、更新步数、写入字节、参数字节和
+  inference trace，canary 的一次 `elapsed_seconds` 不再被当作 resource Gate；
+- side-effect 轴要求 parent/candidate namespace、checkpoint/rollback、typed
+  lineage、工作区写入和外部集成前后账本；
+- formal 输入必须是显式 content-addressed manifest，固定 model/course/repeat
+  seed、S→G→K、CPU 和每个 model seed 的 parent/worker/course registry；禁止隐式
+  `_parent()`、目录猜 artifact 或按结果重选 seed；
+- 失败按 `input_contract → lineage → checkpoint_restore → course_harness →
+  environment_blocker → worker_resolution → workbench_outcome → projection →
+  causal → retention → resource → side_effect → aggregate` 优先级归因，保留
+  cell/arm/step/digest，不能用笼统异常覆盖首因。
+
+当前合同状态仍是 `can_start_r6_formal=false`：本机只有 model-17 的 flat worker
+artifact，三份 parent checkpoint registry、model-23/31 worker bundle 和 manifest
+preflight 尚未完成。下一步只实现 manifest preflight 并补齐三份 parent registry，
+不运行 full formal course、不接 default runtime。
