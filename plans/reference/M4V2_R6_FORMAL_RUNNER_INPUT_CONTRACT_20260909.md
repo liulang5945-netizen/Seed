@@ -376,5 +376,23 @@ Taiji-owned continuation 的证据闭环。
 per-cell ledger 和结构化 failure record；runner 必须先重新执行 manifest/fresh
 restore，再允许任何 S→G→K task，且首个 Gate 失败即停止。
 
-当前唯一下一步是：**实现并做静态/输入 Gate 验证的 R6 formal runner；验证通过前不
-运行 9-cell course、不接 default runtime、不引入 MCP/provider/client/CUDA。**
+
+## 9. Formal runner 入口层执行记录（2026-09-09）
+
+已实现 `scripts/training/eval_taiji_m4v2_r6_formal.py` 并运行入口 preflight：
+
+- runner 重新读取并校验 manifest/input preflight，而不是调用隐式 `_parent()` 或
+  目录扫描；
+- 生成了 `9 cells × 5 arms = 45` 个 `not_started` ledger row，每行预留
+  `phase_rows`、新能力、旧能力 retention、causal、resource、side-effect、
+  checkpoint ledger 和结构化 failure 字段；
+- report `reports/taiji_m4v2_r6_formal_preflight_20260909.json` 为
+  `status=input_ready`、`formal_input_ready=true`，但明确
+  `course_executed=false`、`training_performed=false`、`can_start_r6_formal=false`、
+  `can_promote=false`；
+- 静态校验：`py_compile` 和目标脚本 Ruff 均通过；没有执行任何 S→G→K task，没
+  有 default runtime/provider/MCP/client/CUDA side effect。
+
+入口层已经冻结，下一步进入真正的 execution layer：先在一个预注册 cell 上实现
+五 arm 的 S→G→K phase ledger、真实 Workbench outcome、resource/side-effect
+measurement 和首个失败归因；单 cell 未通过前不扩大到 9 cells。

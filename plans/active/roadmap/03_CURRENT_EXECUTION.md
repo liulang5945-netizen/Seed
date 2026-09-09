@@ -456,4 +456,6 @@ formal runner 现在被限制为只消费显式 content-addressed input manifest
 
 R6 formal input manifest preflight 已实现并运行：`plans/manifests/taiji_m4v2_r6_formal_input_v1.json` 已生成，model 17/23/31 三份 parent checkpoint 和各自 K1/K2/K3 worker bundle 均完成 save/fresh-restore/digest Gate；course/seed/arm/resource/side-effect/failure contracts 全部通过。报告 `reports/taiji_m4v2_r6_formal_input_manifest_preflight_20260909.json` 为 `status=passed`、`formal_input_ready=true`。这仍只是输入 Gate，没有运行 S→G→K full formal，也没有把 `can_start_r6_formal` 改为 true。
 
-**当前唯一下一步**：实现只消费该 manifest 的 R6 formal runner per-cell ledger 和结构化 failure record，先做静态/输入 Gate 验证；验证通过前不运行 9-cell course、不接 default runtime、不引入 MCP/provider/client/CUDA。
+R6 formal runner 入口层已实现并通过静态/输入 Gate：`scripts/training/eval_taiji_m4v2_r6_formal.py` 重新验证 manifest/input preflight，生成 `9 cells × 5 arms = 45` 个 `not_started` ledger row；报告 `reports/taiji_m4v2_r6_formal_preflight_20260909.json` 明确 `status=input_ready`、`formal_input_ready=true`，但 `course_executed=false`、`can_start_r6_formal=false`、`can_promote=false`。没有执行 S→G→K，没有接 default runtime/provider/MCP/client/CUDA。
+
+**当前唯一下一步**：在固定 `model_seed=17 / course_seed=0` 上实现五 arm 的 S→G→K execution/measurement layer（先不扩大矩阵），完整填充 phase、真实 outcome、causal/resource/retention/side-effect/checkpoint ledger；首个失败按合同归因并停止。

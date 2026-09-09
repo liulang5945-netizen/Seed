@@ -17,7 +17,7 @@ import sys
 import time
 from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import torch
 
@@ -163,7 +163,7 @@ def _unsigned_manifest(payload: Mapping[str, Any]) -> dict[str, Any]:
 
 
 def _manifest_digest(payload: Mapping[str, Any]) -> str:
-    return content_digest(_unsigned_manifest(payload))
+    return cast(str, content_digest(_unsigned_manifest(payload)))
 
 
 def _worker_paths(worker_dir: Path, model_seed: int) -> dict[str, Path]:
@@ -581,6 +581,7 @@ def _validate_manifest(payload: Mapping[str, Any]) -> dict[str, Any]:
     checks["course_registry_valid"] = bool(course_results) and all(course_results)
 
     workers = payload.get("worker_registry")
+    worker_entries = workers if isinstance(workers, list) else []
     parent_by_seed = {
         int(entry["model_seed"]): entry
         for entry in parent_registry
@@ -599,7 +600,7 @@ def _validate_manifest(payload: Mapping[str, Any]) -> dict[str, Any]:
     else:
         worker_results: list[bool] = []
         worker_seeds: list[int] = []
-        for entry in workers:
+        for entry in worker_entries:
             if not isinstance(entry, Mapping):
                 worker_results.append(False)
                 failures.append(
