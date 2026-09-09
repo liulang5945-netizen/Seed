@@ -270,3 +270,6 @@ CI clean-checkout 静态门禁审计完成一轮：版本一致性通过；主 R
 CI 动态 verify 首批已修复并通过：v7 原因是 `generate()` 后仍处于 predictive dynamics episode，旧脚本切换默认 action readout；现显式续接 predictive，v7 全部 Gate 通过。N7 原因是 `learn_bytes()` 的 F1 predictive 训练与旧 action 评估不一致；现显式使用 predictive、关闭 memory/identity 干扰，二阶 ambiguous accuracy `1.0`，相对一阶与 full-state lesion 均提升 `0.5`，全部 Gate 通过。模型、训练阈值和 R4 路径未改。
 
 **当前唯一下一步**：继续执行 workflow 的 N8 delayed trace verify；沿用显式 readout/organ 边界，首个真实失败才允许修改对应评估契约。
+N8 delayed trace verify 已通过：旧脚本原先用 action readout 评估 F1 训练结果，现让完整流、no-trace、trace-only 与 all-state lesion 统一显式走 predictive 且关闭 memory/identity。full 与 trace-only accuracy 均为 `1.0`，no-trace/all-state 为 `0.5`，trace necessity/sufficiency gap 均为 `0.5`，未改模型或门槛。
+
+**当前唯一下一步**：继续执行 workflow 的 N9 long free-running stability verify。
