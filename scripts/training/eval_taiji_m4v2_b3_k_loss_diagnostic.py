@@ -1,4 +1,4 @@
-"""Measure a non-saturated K continuation update on four holdout records.
+"""Measure a non-saturated K continuation update on three holdout records.
 
 The preceding B3-K pilot proved that K1/K2 can be updated and rolled back, but
 its 0/1 holdout accuracy was already 1.0 before the update.  This diagnostic
@@ -67,6 +67,14 @@ DEFAULT_CANDIDATE_DIR = (
 )
 SEMANTIC_SINGLE_STEP_LR = 2.0
 TRANSITION_SINGLE_STEP_LR = 0.2
+
+
+def _course_train_variant(course_seed: int) -> tuple[int, tuple[str, ...]]:
+    """Select a real train episode; the seed must change the consumed input."""
+
+    variants = _train_episode_paths()
+    index = int(course_seed) % len(variants)
+    return index, variants[index]
 
 
 def _one_hot(index: int, width: int) -> torch.Tensor:
@@ -248,7 +256,11 @@ def run_diagnostic(
         )
         projector = OutcomeDependencyProjector.from_checkpoint(k3_parent_payload)
 
-        _build_workspace(temp_root, task_seed=course_seed)
+        # Keep the observed holdout fixed across course seeds.  Course
+        # stability is varied by the actual train episode below, not by a
+        # label-only seed or by changing the evaluation data.
+        workspace_seed = 0
+        _build_workspace(temp_root, task_seed=workspace_seed)
         schema = _schema()
         train_observations = {
             observation.path: observation
@@ -273,10 +285,11 @@ def run_diagnostic(
                 schema=schema,
             )
         }
+        train_episode_index, train_episode_paths = _course_train_variant(course_seed)
         train_sequence = _episode(
             train_observations["missing_00.txt"],
             train_observations,
-            _train_episode_paths()[0],
+            train_episode_paths,
         )
         train_experience = _build_experience(
             sequence=train_sequence,
@@ -477,6 +490,11 @@ def run_diagnostic(
                 "worker_bundle_digest": parent_bundle.bundle_digest,
                 "candidate_worker_bundle_digest": candidate_bundle.bundle_digest,
                 "course_digest": course.course_digest,
+                "course_seed": int(course_seed),
+                "workspace_seed": workspace_seed,
+                "train_episode_index": train_episode_index,
+                "train_episode_paths": list(train_episode_paths),
+                "train_experience_digest": train_experience.experience_digest,
                 "holdout_count": len(course.holdout),
                 "training_update_steps": receipt.training_steps,
                 "updated_workers": list(receipt.updated_workers),
