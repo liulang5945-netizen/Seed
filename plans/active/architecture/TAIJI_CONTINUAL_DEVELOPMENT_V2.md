@@ -242,3 +242,7 @@ M6 endogenous replay 已闭合：fresh restore-safe lesion 后 replay 相对 con
 grounded internalization S1 canary 已通过：native consolidation 改善未见 grounded holdout，internalized/grounding lesion、旧任务 retention、checkpoint roundtrip 和 `internalized` 生命周期均通过；它仍是 synthetic native evidence，不是删除外部描述、执行 capability 或结构成长的授权。随后 `tests/seed` 首轮唯一真实失败定位为 SeedJudge 仍使用 action readout，而 `learn_bytes()` 训练 predictive readout；现已将 judge 对齐 predictive 并关闭 memory/identity 旁路，完整 `tests/seed` 在仓库可写 fixture 下 `114 passed`。本机标准 pytest 的 Windows 0700 `tmp_path` ACL 噪声继续单独记录。
 
 当前唯一出口：继续执行 workflow 的完整 `tests/` 回归，按首个真实失败归因；保持 R4 shadow/默认 parent 与 F1/F2 owner 边界不变，不解冻 R5 learned router、Skill/MCP/provider、客户端或 CUDA。
+
+完整 `tests/` 回归已闭合：在仓库可写 fixture 下 `1070 passed, 6 skipped, 1 warning`，无真实失败；仍需补跑 workflow 同构的 coverage/junit 门禁才能关闭 CI 交付账本。
+
+当前唯一出口：执行 coverage/junit 门禁并记录实际覆盖率；保持 R4 shadow/默认 parent 与 F1/F2 owner 边界不变。
