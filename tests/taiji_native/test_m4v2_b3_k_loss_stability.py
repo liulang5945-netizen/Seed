@@ -3,6 +3,10 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from scripts.training.eval_taiji_m4v2_b3_k_loss_stability import (  # noqa: E402
+    _normalized_variant_keys,
+)
+
 REPORT = (
     Path(__file__).resolve().parents[2]
     / "reports"
@@ -19,10 +23,18 @@ def test_b3_k_loss_stability_uses_three_same_parent_cells() -> None:
     assert report["course_seeds"] == [0, 1, 2]
     assert report["same_parent"] is True
     assert report["distinct_course_variants"] is True
-    assert report["train_episode_indexes"] == [0, 1, 2]
+    assert report["train_episode_indexes"] == [[0], [1], [2]]
     assert report["technical_gate_passed"] is True
     assert report["can_promote"] is False
     assert report["no_update_control_passed"] is True
+
+
+def test_b3_k_stability_normalizes_multi_episode_variant_indexes() -> None:
+    assert _normalized_variant_keys([[0, 1], [1, 2], [2, 3]]) == (
+        (0, 1),
+        (1, 2),
+        (2, 3),
+    )
 
 
 def test_b3_k_loss_stability_exposes_course_sensitivity_without_formal_promotion() -> None:

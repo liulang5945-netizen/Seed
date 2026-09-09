@@ -77,6 +77,17 @@ def _course_train_variant(course_seed: int) -> tuple[int, tuple[str, ...]]:
     return index, variants[index]
 
 
+def _course_train_variants(
+    course_seed: int, *, count: int
+) -> tuple[tuple[int, ...], tuple[tuple[str, ...], ...]]:
+    variants = _train_episode_paths()
+    if not 1 <= int(count) <= len(variants):
+        raise ValueError("bounded K course train count must fit the available variants")
+    start = int(course_seed) % len(variants)
+    indexes = tuple((start + offset) % len(variants) for offset in range(int(count)))
+    return indexes, tuple(variants[index] for index in indexes)
+
+
 def _one_hot(index: int, width: int) -> torch.Tensor:
     values = torch.zeros((1, int(width)), dtype=torch.float32)
     values[0, int(index)] = 1.0
@@ -198,6 +209,7 @@ def run_diagnostic(
     candidate_dir: Path = DEFAULT_CANDIDATE_DIR,
     model_seed: int = 17,
     course_seed: int = 0,
+    train_episode_count: int = 1,
     candidate_namespace: str | None = None,
 ) -> dict[str, Any]:
     started = time.perf_counter()
@@ -297,20 +309,26 @@ def run_diagnostic(
                 schema=schema,
             )
         }
-        train_episode_index, train_episode_paths = _course_train_variant(course_seed)
-        train_sequence = _episode(
-            train_observations["missing_00.txt"],
-            train_observations,
-            train_episode_paths,
+        train_episode_indexes, train_episode_variants = _course_train_variants(
+            course_seed, count=train_episode_count
         )
-        train_experience = _build_experience(
-            sequence=train_sequence,
-            split="train",
-            name="loss-train",
-            parent_digest=parent_digest,
-            worker_bundle_digest=parent_bundle.bundle_digest,
-            source_manifest_digest=source_manifest_digest,
-            projector=projector,
+        train_experiences = tuple(
+            _build_experience(
+                sequence=_episode(
+                    train_observations["missing_00.txt"],
+                    train_observations,
+                    episode_paths,
+                ),
+                split="train",
+                name=f"loss-train-{index}",
+                parent_digest=parent_digest,
+                worker_bundle_digest=parent_bundle.bundle_digest,
+                source_manifest_digest=source_manifest_digest,
+                projector=projector,
+            )
+            for index, episode_paths in zip(
+                train_episode_indexes, train_episode_variants, strict=True
+            )
         )
         holdout_anchor = holdout_observations["missing_00.txt"]
         # The fourth M5.K2 cross-combination reuses the same raw observation
@@ -334,7 +352,7 @@ def run_diagnostic(
             parent_checkpoint_digest=parent_digest,
             worker_bundle_digest=parent_bundle.bundle_digest,
             source_manifest_digest=source_manifest_digest,
-            train=(train_experience,),
+            train=train_experiences,
             holdout=holdout_experiences,
         )
         loss_before = _loss_score(semantic_parent, transition_parent, course.holdout)
@@ -359,12 +377,12 @@ def run_diagnostic(
             copy.deepcopy(transition_parent_payload), device="cpu"
         )
         semantic_losses = semantic_candidate.fit(
-            (course.train[0].semantic_example,),
+            tuple(item.semantic_example for item in course.train),
             epochs=1,
             learning_rate=SEMANTIC_SINGLE_STEP_LR,
         )
         transition_losses = transition_candidate.fit(
-            (course.train[0].transition_example,),
+            tuple(item.transition_example for item in course.train),
             epochs=1,
             learning_rate=TRANSITION_SINGLE_STEP_LR,
         )
@@ -431,12 +449,12 @@ def run_diagnostic(
             owner_graph_digest=parent_bundle.owner_graph_digest,
             source_manifest_digest=source_manifest_digest,
             resource_manifest_digest=resource_manifest_digest,
-            dependency_scope_id=train_experience.projection.scope_id,
+            dependency_scope_id=course.train[0].projection.scope_id,
             candidate_namespace=candidate_namespace,
         )
         adapter.bind_worker_bundle(parent_bundle)
-        adapter.bind_dependency_projection(train_experience.projection)
-        adapter.record_exchange(train_experience.exchange)
+        adapter.bind_dependency_projection(course.train[0].projection)
+        adapter.record_exchange(course.train[0].exchange)
         rollback_token = adapter.stage_candidate(
             candidate_checkpoint_digest=candidate_bundle.bundle_digest,
             candidate_owner_graph_digest=candidate_bundle.owner_graph_digest,
@@ -482,14 +500,15 @@ def run_diagnostic(
                     course.holdout_experience_digests
                 )
                 and all(
-                    item.target_digest != course.train[0].target_digest
+                    item.target_digest
+                    not in {experience.target_digest for experience in course.train}
                     for item in course.holdout
                 )
             ),
             rollback_restored=(
                 rollback.active_namespace == rollback.parent_namespace
                 and rollback.worker_bundle == parent_bundle
-                and rollback.last_exchange == train_experience.exchange
+                and rollback.last_exchange == course.train[0].exchange
                 and rollback_record.status == "rolled_back"
             ),
         )
@@ -527,9 +546,15 @@ def run_diagnostic(
                 "course_digest": course.course_digest,
                 "course_seed": int(course_seed),
                 "workspace_seed": workspace_seed,
-                "train_episode_index": train_episode_index,
-                "train_episode_paths": list(train_episode_paths),
-                "train_experience_digest": train_experience.experience_digest,
+                "train_episode_count": len(train_episode_indexes),
+                "train_episode_indexes": list(train_episode_indexes),
+                "train_episode_paths": [
+                    list(paths) for paths in train_episode_variants
+                ],
+                "train_experience_digests": list(course.train_experience_digests),
+                "train_course_digest": content_digest(
+                    list(course.train_experience_digests)
+                ),
                 "holdout_count": len(course.holdout),
                 "training_update_steps": receipt.training_steps,
                 "updated_workers": list(receipt.updated_workers),
