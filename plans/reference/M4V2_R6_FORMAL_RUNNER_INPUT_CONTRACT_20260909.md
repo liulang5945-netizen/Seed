@@ -496,3 +496,21 @@ fixed-large、lesion 五个 arm 统一写入 resource object：CPU/device、各�
 但尚未运行完整 S→G→K course，也不代表 9-cell aggregate 或 promotion。下一步是把该
 五臂执行合同抽为 formal runner 可复用的单 cell executor，先以同一 model17/course0
 重放并逐字段比对，再开放其余 8 cells。
+
+## 16. Reusable cell executor replay closure（2026-09-09）
+
+single-cell 脚本已抽出公开的 `run_cell(model_seed, course_seed, ...)` executor，
+`run_single_cell()` 仅保留 model17/course0 的兼容默认入口；executor 从显式 manifest
+按 model/course seed 取 parent、candidate worker 和 fixed-large registry，不再把 seed
+写死在执行逻辑中。
+
+executor 另生成 replay-stable 的 `execution_contract_digest`，只覆盖五臂结构化结果、
+causal/side-effect/failure 和 Gate，不覆盖 wall-clock/RSS 等允许波动的资源字段。以
+同一 manifest 连续执行 model17/course0 两次，canonical 与 replay 均 `status=passed`，
+五臂 `resource_gate` 全为 true，两个 digest 均为
+`8d670a310c08a81e024b3c8f2256ba5afa4808491871e67637205d6156c5d22c`，字段级合同一致。
+
+这闭合了首个 cell executor 的重放一致性，但仍没有执行 9-cell course。下一步让 formal
+runner 以该 executor 消费一个 `not_started` ledger row，先完成 model17/course0 的
+显式 ledger 写回与 failure attribution，再扩大矩阵；不接 default runtime/provider/
+MCP/client/CUDA。

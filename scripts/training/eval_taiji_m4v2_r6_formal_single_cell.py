@@ -17,7 +17,7 @@ import sys
 import time
 from collections.abc import Mapping
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import torch
 
@@ -26,6 +26,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from scripts.training.eval_taiji_m4v2_r6_formal_input_manifest_preflight import (  # noqa: E402
+    DEFAULT_FIXED_LARGE_DIR,
     DEFAULT_MANIFEST,
     DEFAULT_PARENT_DIR,
     DEFAULT_WORKER_DIR,
@@ -76,13 +77,15 @@ def _failure(
     *,
     failure_class: str,
     message: str,
+    model_seed: int,
+    course_seed: int,
     arm: str | None = None,
     recoverability: str = "control_arm_required",
 ) -> dict[str, Any]:
     return {
         "class": failure_class,
         "phase": "K",
-        "cell": {"model_seed": MODEL_SEED, "course_seed": COURSE_SEED},
+        "cell": {"model_seed": model_seed, "course_seed": course_seed},
         "arm": arm,
         "step": None,
         "is_model_evidence": False,
@@ -95,9 +98,9 @@ def _failure(
     }
 
 
-def _scores(parent: Mapping[str, Any]) -> dict[str, float]:
+def _scores(parent: Mapping[str, Any], *, course_seed: int) -> dict[str, float]:
     model = Taiji.from_checkpoint(copy.deepcopy(dict(parent)))
-    course = _r6_course(COURSE_SEED)
+    course = _r6_course(course_seed)
     return {
         "S": float(_score(model, course.s_holdout, phase="R6-single-cell-S")),
         "G": float(_score(model, course.g_holdout, phase="R6-single-cell-G")),
@@ -150,12 +153,13 @@ def _control_arm(
     parent: Mapping[str, Any],
     parent_digest: str,
     resource_manifest_digest: str,
+    course_seed: int,
 ) -> dict[str, Any]:
     before_rss = _rss_bytes()
     started = time.perf_counter()
-    before = _scores(parent)
+    before = _scores(parent, course_seed=course_seed)
     restored = Taiji.from_checkpoint(copy.deepcopy(dict(parent)))
-    after = _scores(restored.checkpoint())
+    after = _scores(restored.checkpoint(), course_seed=course_seed)
     elapsed = time.perf_counter() - started
     after_rss = _rss_bytes()
     peak_rss = None if before_rss is None or after_rss is None else max(before_rss, after_rss)
@@ -218,14 +222,16 @@ def _fixed_large_control_arm(
     parent: Mapping[str, Any],
     parent_digest: str,
     resource_manifest_digest: str,
+    model_seed: int,
+    course_seed: int,
 ) -> dict[str, Any]:
     del parent
     before_rss = _rss_bytes()
     started = time.perf_counter()
     canary = run_fixed_large_canary(
         artifact_path=artifact_path,
-        model_seed=MODEL_SEED,
-        course_seed=COURSE_SEED,
+        model_seed=model_seed,
+        course_seed=course_seed,
     )
     elapsed = time.perf_counter() - started
     after_rss = _rss_bytes()
@@ -307,6 +313,8 @@ def _fixed_large_control_arm(
         else _failure(
             failure_class="causal" if canary.get("projection_accepted") else "input_contract",
             message=str(canary.get("blocking_reason") or "fixed-large controlled canary failed"),
+            model_seed=model_seed,
+            course_seed=course_seed,
             arm="fixed-large",
             recoverability="fixed_large_control_diagnosis_required",
         ),
@@ -320,13 +328,15 @@ def _candidate_arm(
     lesion_k3: bool,
     arm: str,
     resource_manifest_digest: str,
+    model_seed: int,
+    course_seed: int,
 ) -> dict[str, Any]:
     before_rss = _rss_bytes()
     started = time.perf_counter()
     canary = run_canary(
         artifact_dir=artifact_dir,
-        model_seed=MODEL_SEED,
-        course_seed=COURSE_SEED,
+        model_seed=model_seed,
+        course_seed=course_seed,
         candidate_namespace=candidate_namespace,
         lesion_k3=lesion_k3,
     )
@@ -439,6 +449,8 @@ def _candidate_arm(
         else _failure(
             failure_class="workbench_outcome" if outcome_success is False else "projection_contract",
             message=str(canary.get("blocking_reason") or "controlled K canary failed"),
+            model_seed=model_seed,
+            course_seed=course_seed,
             arm=arm,
             recoverability="candidate_canary_diagnosis_required",
         ),
@@ -497,13 +509,69 @@ def _paired_resource_comparison(arms: Mapping[str, Mapping[str, Any]]) -> dict[s
     }
 
 
-def run_single_cell(
+def execution_contract_snapshot(report: Mapping[str, Any]) -> dict[str, Any]:
+    """Return the replay-stable, non-resource part of one executed cell."""
+
+    stable_arms: dict[str, Any] = {}
+    for arm, payload in (report.get("arms") or {}).items():
+        if not isinstance(payload, Mapping):
+            stable_arms[str(arm)] = payload
+            continue
+        stable_arms[str(arm)] = {
+            key: payload.get(key)
+            for key in (
+                "arm",
+                "status",
+                "parent_checkpoint_digest",
+                "worker_bundle_digest",
+                "phase_rows",
+                "new_capability",
+                "old_capability_retention",
+                "causal",
+                "side_effects",
+                "failure",
+            )
+        }
+    return {
+        "report_format": report.get("report_format"),
+        "version": report.get("version"),
+        "cell": report.get("cell"),
+        "parent_checkpoint_digest": report.get("parent_checkpoint_digest"),
+        "worker_bundle_digest": report.get("worker_bundle_digest"),
+        "fixed_large_artifact_digest": report.get("fixed_large_artifact_digest"),
+        "fixed_large_ensemble_checkpoint_digest": report.get(
+            "fixed_large_ensemble_checkpoint_digest"
+        ),
+        "arms": stable_arms,
+        "resource_gate": report.get("resource_gate"),
+        "failures": report.get("failures"),
+        "course_executed": report.get("course_executed"),
+        "training_performed": report.get("training_performed"),
+        "candidate_training_performed": report.get("candidate_training_performed"),
+        "default_runtime_attached": report.get("default_runtime_attached"),
+        "provider_attached": report.get("provider_attached"),
+        "mcp_attached": report.get("mcp_attached"),
+        "client_attached": report.get("client_attached"),
+        "cuda_used": report.get("cuda_used"),
+        "can_start_r6_formal": report.get("can_start_r6_formal"),
+        "can_promote": report.get("can_promote"),
+    }
+
+
+def execution_contract_digest(report: Mapping[str, Any]) -> str:
+    return cast(str, content_digest(execution_contract_snapshot(report)))
+
+
+def run_cell(
     *,
+    model_seed: int,
+    course_seed: int,
     manifest_path: Path = DEFAULT_MANIFEST,
     report_path: Path = DEFAULT_REPORT,
     input_report_path: Path | None = None,
     parent_dir: Path = DEFAULT_PARENT_DIR,
     worker_dir: Path = DEFAULT_WORKER_DIR,
+    fixed_large_dir: Path = DEFAULT_FIXED_LARGE_DIR,
 ) -> dict[str, Any]:
     started = time.perf_counter()
     input_report_path = input_report_path or (
@@ -515,13 +583,14 @@ def run_single_cell(
         materialize_parents=False,
         parent_dir=parent_dir,
         worker_dir=worker_dir,
+        fixed_large_dir=fixed_large_dir,
     )
     if input_gate.get("status") != "passed":
         report = {
             "report_format": REPORT_FORMAT,
             "version": VERSION,
             "status": "blocked_input",
-            "cell": {"model_seed": MODEL_SEED, "course_seed": COURSE_SEED},
+            "cell": {"model_seed": model_seed, "course_seed": course_seed},
             "input_preflight_status": input_gate.get("status"),
             "failures": input_gate.get("failures", []),
             "course_executed": False,
@@ -538,20 +607,20 @@ def run_single_cell(
 
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     parent_entry = next(
-        item for item in manifest["parent_registry"] if int(item["model_seed"]) == MODEL_SEED
+        item for item in manifest["parent_registry"] if int(item["model_seed"]) == model_seed
     )
     worker_entry = next(
-        item for item in manifest["worker_registry"] if int(item["model_seed"]) == MODEL_SEED
+        item for item in manifest["worker_registry"] if int(item["model_seed"]) == model_seed
     )
     fixed_large_entry = next(
         item
         for item in manifest["fixed_large_registry"]
-        if int(item["model_seed"]) == MODEL_SEED
+        if int(item["model_seed"]) == model_seed
     )
     parent_path = _resolve_repo_path(parent_entry["checkpoint_path"])
     parent = _load_mapping(parent_path)
     parent_digest = str(parent_entry["checkpoint_digest"])
-    artifact_dir = worker_dir / f"model_{MODEL_SEED}"
+    artifact_dir = worker_dir / f"model_{model_seed}"
     candidate_namespace = str(worker_entry["candidate_namespace"])
 
     arms = {
@@ -560,12 +629,14 @@ def run_single_cell(
             parent=parent,
             parent_digest=parent_digest,
             resource_manifest_digest=str(parent_entry["resource_manifest_digest"]),
+            course_seed=course_seed,
         ),
         "matched-fixed-capacity": _control_arm(
             arm="matched-fixed-capacity",
             parent=parent,
             parent_digest=parent_digest,
             resource_manifest_digest=str(parent_entry["resource_manifest_digest"]),
+            course_seed=course_seed,
         ),
         "candidate-continuation": _candidate_arm(
             artifact_dir=artifact_dir,
@@ -573,12 +644,16 @@ def run_single_cell(
             lesion_k3=False,
             arm="candidate-continuation",
             resource_manifest_digest=str(worker_entry["resource_manifest_digest"]),
+            model_seed=model_seed,
+            course_seed=course_seed,
         ),
         "fixed-large": _fixed_large_control_arm(
             artifact_path=_resolve_repo_path(fixed_large_entry["artifact_path"]),
             parent=parent,
             parent_digest=parent_digest,
             resource_manifest_digest=str(fixed_large_entry["resource_manifest_digest"]),
+            model_seed=model_seed,
+            course_seed=course_seed,
         ),
         "lesion": _candidate_arm(
             artifact_dir=artifact_dir,
@@ -586,6 +661,8 @@ def run_single_cell(
             lesion_k3=True,
             arm="lesion",
             resource_manifest_digest=str(worker_entry["resource_manifest_digest"]),
+            model_seed=model_seed,
+            course_seed=course_seed,
         ),
     }
     paired_comparison = _paired_resource_comparison(arms)
@@ -602,6 +679,8 @@ def run_single_cell(
                 "record CPU/device digest, RSS, wall-clock, parameter bytes, checkpoint "
                 "paths/bytes, inference trace and training steps"
             ),
+            model_seed=model_seed,
+            course_seed=course_seed,
             recoverability="all_arm_resource_measurement_required",
         )
     failures = [arm["failure"] for arm in arms.values() if arm.get("failure") is not None]
@@ -612,7 +691,7 @@ def run_single_cell(
         "version": VERSION,
         "created_at_unix": time.time(),
         "status": "blocked_controls" if failures else "passed",
-        "cell": {"model_seed": MODEL_SEED, "course_seed": COURSE_SEED},
+        "cell": {"model_seed": model_seed, "course_seed": course_seed},
         "parent_checkpoint_digest": parent_digest,
         "worker_bundle_digest": worker_entry["bundle_digest"],
         "fixed_large_artifact_digest": fixed_large_entry["artifact_digest"],
@@ -642,6 +721,7 @@ def run_single_cell(
             "R6 formal and promotion remain closed until the full causal/resource/retention aggregate"
         ),
     }
+    report["execution_contract_digest"] = execution_contract_digest(report)
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(
         json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
@@ -650,13 +730,41 @@ def run_single_cell(
     return report
 
 
+def run_single_cell(
+    *,
+    model_seed: int = MODEL_SEED,
+    course_seed: int = COURSE_SEED,
+    manifest_path: Path = DEFAULT_MANIFEST,
+    report_path: Path = DEFAULT_REPORT,
+    input_report_path: Path | None = None,
+    parent_dir: Path = DEFAULT_PARENT_DIR,
+    worker_dir: Path = DEFAULT_WORKER_DIR,
+    fixed_large_dir: Path = DEFAULT_FIXED_LARGE_DIR,
+) -> dict[str, Any]:
+    """Backward-compatible default entry for the model17/course0 cell."""
+
+    return run_cell(
+        model_seed=model_seed,
+        course_seed=course_seed,
+        manifest_path=manifest_path,
+        report_path=report_path,
+        input_report_path=input_report_path,
+        parent_dir=parent_dir,
+        worker_dir=worker_dir,
+        fixed_large_dir=fixed_large_dir,
+    )
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--model-seed", type=int, default=MODEL_SEED)
+    parser.add_argument("--course-seed", type=int, default=COURSE_SEED)
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
     parser.add_argument("--input-report", type=Path)
     parser.add_argument("--parent-dir", type=Path, default=DEFAULT_PARENT_DIR)
     parser.add_argument("--worker-dir", type=Path, default=DEFAULT_WORKER_DIR)
+    parser.add_argument("--fixed-large-dir", type=Path, default=DEFAULT_FIXED_LARGE_DIR)
     args = parser.parse_args(argv)
     manifest_path = args.manifest if args.manifest.is_absolute() else PROJECT_ROOT / args.manifest
     report_path = args.report if args.report.is_absolute() else PROJECT_ROOT / args.report
@@ -669,12 +777,20 @@ def main(argv: list[str] | None = None) -> int:
     )
     parent_dir = args.parent_dir if args.parent_dir.is_absolute() else PROJECT_ROOT / args.parent_dir
     worker_dir = args.worker_dir if args.worker_dir.is_absolute() else PROJECT_ROOT / args.worker_dir
-    report = run_single_cell(
+    fixed_large_dir = (
+        args.fixed_large_dir
+        if args.fixed_large_dir.is_absolute()
+        else PROJECT_ROOT / args.fixed_large_dir
+    )
+    report = run_cell(
+        model_seed=args.model_seed,
+        course_seed=args.course_seed,
         manifest_path=manifest_path,
         report_path=report_path,
         input_report_path=input_report_path,
         parent_dir=parent_dir,
         worker_dir=worker_dir,
+        fixed_large_dir=fixed_large_dir,
     )
     print(
         json.dumps(

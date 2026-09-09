@@ -504,3 +504,14 @@ candidate/fixed-large paired delta 与 K3 lesion 结果保持通过，且没有�
 下一步把已验证的五臂执行合同抽成 formal runner 的可复用 cell executor，先重放并做
 字段级一致性检查，再扩展 model17 的其余 course seed，最后才进入完整 3×3 aggregate；
 `can_start_r6_formal=false`、`can_promote=false` 不变。
+
+## 27. Reusable executor replay（2026-09-09）
+
+`eval_taiji_m4v2_r6_formal_single_cell.py` 现提供 `run_cell(model_seed, course_seed, …)`，
+默认包装入口不变。两个连续的 model17/course0 执行在同一 input manifest 下产生相同
+`execution_contract_digest`，说明 parent/worker/fixed-large 选择、五臂结构、K3 lesion、
+rollback、side-effect 和 failure contract 没有因重放漂移；资源时间/RSS 仍按合同允许变化。
+
+下一步是把 formal runner 的一个 `not_started` row 接到这个 executor，完成单 cell 的
+显式 ledger 写回与 failure attribution；不直接跳到 9-cell，也不解冻 default runtime、
+provider、MCP、client 或 CUDA。
