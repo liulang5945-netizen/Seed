@@ -421,3 +421,7 @@ K3 formal 合同已冻结：[M5_K3_FORMAL_PREREGISTRATION_20260909.md](../../ref
 K3 formal 已完成：`reports/taiji_m5_k3_outcome_dependency_formal_20260909.json`，9/9 cell 通过。A holdout、A-B、A-C、A train 的 min/mean/max 均为 `1.0`；technical、probe admission、feedback lineage admission 均 `9/9`；feedback reward variance 全部为正。首轮 `0/9` 是 runner 字段契约误判，已在不改 canary/判据的前提下修正并用同一矩阵重跑。K3 仍是 standalone shadow，`can_promote=false`，默认 runtime 未接入。
 
 **当前唯一下一步**：把 K3 formal 与已有 K1/K2 formal 一起纳入新的 content-addressed K 轴 scorecard 版本，显式记录 K3 的 outcome/dependency 能力、三臂因果分离和仍缺失的 same-parent/default-runtime promotion Gate；scorecard 更新前不解冻任何 shadow owner，不引入 MCP/provider/client/CUDA。
+
+K 轴 scorecard v2 已完成：`reports/taiji_m5_k_axis_scorecard_v2_20260909.json`，K1/K2/K3 source digest、absolute snapshots、A-B/A-C comparison 和 K3 admission/lineage evidence 均已纳入。`k_evidence_closed=true`，但 `promotion_gate=false`、`can_promote=false`：same-parent retention、default runtime owner、resource/rollback/old-capability Gate 均明确未通过且未伪造。
+
+**当前唯一下一步**：为同一 parent 的 A8/R6 promotion course 冻结独立预注册合同，定义如何把 K1/K2/K3 shadow evidence 接到连续训练/运行时，同时验证 parent retention、资源等价、rollback 和旧能力非劣；合同冻结前不解冻任何 shadow owner，不引入 MCP/provider/client/CUDA。
