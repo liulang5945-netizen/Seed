@@ -1,0 +1,163 @@
+{
+  "arms": [
+    "frozen-parent",
+    "matched-fixed-capacity",
+    "candidate-continuation",
+    "fixed-large",
+    "lesion"
+  ],
+  "baseline_repeat_seeds": [
+    401,
+    503,
+    607
+  ],
+  "course_registry": [
+    {
+      "course_label": "r6-order-0",
+      "course_seed": 0,
+      "course_variant_seed": 101,
+      "holdout_digest": "2c5666e03d4ff8fab701ad6b7b999cd7477d1920cb5b7b2727b7aa2a446150ce",
+      "phase_order": [
+        "S",
+        "G",
+        "K"
+      ],
+      "source_manifest_digest": "a847dd3247950431453a2950411c158c386e16ae84281b5e7971194ad74b71d2",
+      "workspace_contract": {
+        "read_only_routes_only": true,
+        "root_isolation": true,
+        "split_isolation": true
+      }
+    },
+    {
+      "course_label": "r6-order-1",
+      "course_seed": 1,
+      "course_variant_seed": 202,
+      "holdout_digest": "2c5666e03d4ff8fab701ad6b7b999cd7477d1920cb5b7b2727b7aa2a446150ce",
+      "phase_order": [
+        "S",
+        "G",
+        "K"
+      ],
+      "source_manifest_digest": "1b54bc50339bb75024dda5d0acb233e7186d03431d0debb3ff092ab71f96edc6",
+      "workspace_contract": {
+        "read_only_routes_only": true,
+        "root_isolation": true,
+        "split_isolation": true
+      }
+    },
+    {
+      "course_label": "r6-order-2",
+      "course_seed": 2,
+      "course_variant_seed": 303,
+      "holdout_digest": "2c5666e03d4ff8fab701ad6b7b999cd7477d1920cb5b7b2727b7aa2a446150ce",
+      "phase_order": [
+        "S",
+        "G",
+        "K"
+      ],
+      "source_manifest_digest": "f63e6278b801571a99bbbecc3a19f80b57fd20c1e605e51fe4514db0f29cbd91",
+      "workspace_contract": {
+        "read_only_routes_only": true,
+        "root_isolation": true,
+        "split_isolation": true
+      }
+    }
+  ],
+  "course_seeds": [
+    0,
+    1,
+    2
+  ],
+  "device": "cpu",
+  "experiment_id": "m4v2-r6-a8-promotion-formal-v1",
+  "failure_attribution_contract": {
+    "format": "taiji-r6-failure-record-v1",
+    "priority": [
+      "input_contract",
+      "lineage",
+      "checkpoint_restore",
+      "course_harness",
+      "environment_blocker",
+      "worker_resolution",
+      "workbench_outcome",
+      "projection_contract",
+      "causal_gate",
+      "retention_gate",
+      "resource_gate",
+      "side_effect_gate",
+      "aggregate_gate",
+      "unexpected"
+    ],
+    "require_cell_arm_step_digests": true,
+    "stop_on_first_cell_failure": true
+  },
+  "format": "taiji-m4v2-r6-formal-runner-input-v1",
+  "manifest_digest": "f2d8e4ec9fe58d981b7f9f7899e609d87cc9f84e843c200f851d4cce5547bef7",
+  "model_seeds": [
+    17,
+    23,
+    31
+  ],
+  "parent_registry": [
+    {
+      "checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "checkpoint_path": "checkpoints/taiji_r6_parents/model_17.pt",
+      "fresh_restore_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "model_seed": 17,
+      "namespace": "taiji:parent:model-17",
+      "owner_graph_digest": "44aea51a8e491cdb0bb1bea6e72e1ebbe9dd7a6a254bb9a52b1bf04a6da190cb",
+      "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce",
+      "source_manifest_digest": "bfdc4fd5b48f53432bbaaa2616a0547f346b50156a822cf0e6e05a4203e38b8d"
+    },
+    {
+      "checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+      "checkpoint_path": "checkpoints/taiji_r6_parents/model_23.pt",
+      "fresh_restore_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
+      "model_seed": 23,
+      "namespace": "taiji:parent:model-23",
+      "owner_graph_digest": "72cfeb7f4a58e0966149f5b52170dacf932ba5e34a21f73ddaaed94b42714d6f",
+      "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce",
+      "source_manifest_digest": "404989fed6441afcb4c57d03bd018740c89d71b6e2b2046a1b7858b4314f7d94"
+    },
+    {
+      "checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+      "checkpoint_path": "checkpoints/taiji_r6_parents/model_31.pt",
+      "fresh_restore_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+      "model_seed": 31,
+      "namespace": "taiji:parent:model-31",
+      "owner_graph_digest": "6f613256d74ee7a7517dca13094621d089f263a98ad0cc11bbd3023adefff1a6",
+      "resource_manifest_digest": "f2121f0cb0ee711bcb784242704ec44f36dd8906f47f768a74447ac936e481ce",
+      "source_manifest_digest": "39d063ecc33470da0b09c093daca652b1663dfe66ac1b8d1b0b6281d1df6c375"
+    }
+  ],
+  "phase_order": [
+    "S",
+    "G",
+    "K"
+  ],
+  "resource_contract": {
+    "candidate_parameter_bytes_frozen_before_run": true,
+    "checkpoint_write_bytes_frozen_before_run": true,
+    "cuda_required": false,
+    "device": "cpu",
+    "inference_trace_count_frozen_before_run": true,
+    "peak_working_set_multiplier_cap": 1.25,
+    "training_update_steps_frozen_before_run": true,
+    "wall_clock_multiplier_cap": 1.5
+  },
+  "side_effect_contract": {
+    "candidate_namespace_isolated": true,
+    "client_attached": false,
+    "cuda_used": false,
+    "default_runtime_attached": false,
+    "mcp_attached": false,
+    "network_used": false,
+    "parent_namespace_read_only": true,
+    "provider_attached": false,
+    "read_only_workbench_routes": true,
+    "rollback_required": true
+  },
+  "version": 1,
+  "worker_registry": []
+}

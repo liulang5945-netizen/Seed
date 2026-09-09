@@ -334,3 +334,23 @@ lineage；joint checkpoint、candidate stage、explicit rollback 和 S/G retenti
 artifact，三份 parent checkpoint registry、model-23/31 worker bundle 和 manifest
 preflight 尚未完成。下一步只实现 manifest preflight 并补齐三份 parent registry，
 不运行 full formal course、不接 default runtime。
+
+## 16. formal input manifest preflight 执行记录（2026-09-09）
+
+已实现并运行 `scripts/training/eval_taiji_m4v2_r6_formal_input_manifest_preflight.py`，
+生成 `plans/manifests/taiji_m4v2_r6_formal_input_v1.json` 和三份本机 ignored parent
+checkpoint：
+
+- `model_17.pt`、`model_23.pt`、`model_31.pt` 均完成 atomic save、fresh restore，
+  checkpoint digest、owner/source/resource manifest digest 全部一致；
+- course registry `0/1/2`、baseline repeat `401/503/607`、`S→G→K`、五类 arm、
+  CPU-only resource contract、closed side-effect contract 和 failure contract 全部
+  通过；
+- report `reports/taiji_m4v2_r6_formal_input_manifest_preflight_20260909.json`
+  为 `status=blocked_input`，唯一阻断是 `worker_registry` 尚未包含三个 model
+  seed 的 K1/K2/K3 bundle；runner 没有从目录猜 artifact，也没有运行 formal task。
+
+因此 parent checkpoint 训练前/运行前保存 Gate 已经闭合，但 formal input 尚未 ready，
+`can_start_r6_formal=false`、`can_promote=false` 不变。下一步只生成 model-17/23/31
+各自的 content-addressed K worker bundle、挂接到 manifest 并重新执行 preflight；不
+运行 full formal course、不接 default runtime。
