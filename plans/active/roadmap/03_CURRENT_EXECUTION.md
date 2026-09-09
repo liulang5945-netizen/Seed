@@ -35,7 +35,9 @@
 
 **B3-K 单步 pilot 已完成技术 Gate，但没有能力晋级。** 报告为 [B3-K single-step pilot](../../../reports/taiji_m4v2_b3_k_single_step_20260910.json)：同一 model 17 parent 上真实消费 1 条 train experience，K1/K2 各更新 1 步（receipt 合计 2），K3 未变；candidate checkpoint 保存/fresh-restore、parent 不变、adapter stage/rollback、train/holdout 隔离均通过。独立 holdout 的结构化准确率已经是 `1.0`，更新前后仍为 `1.0`，所以这次只证明 continuation 写入链路可用，不能证明泛化收益，`can_promote=false`。
 
-**当前唯一下一步：做 B3-K 的非饱和 structured-loss diagnostic slice。** 仍使用同一 inherited model 17 parent、同一 K continuation contract 和 candidate/rollback 边界，但改用四条独立 holdout 的连续目标损失/置信度误差，而不是已饱和的 0/1 accuracy；train 只消费一条记录，holdout 仍只读。目标是区分“模型已经饱和、评分器不敏感”和“单步更新没有泛化”的原因；不增加结构、不进入九 cell formal、不重命名旧 wiring-canary。
+**B3-K 非饱和 structured-loss diagnostic 已完成，仍不能晋级。** 报告为 [B3-K loss diagnostic](../../../reports/taiji_m4v2_b3_k_loss_diagnostic_20260910.json)：严格排除 M5.K2 第四个重复 observation 后使用 3 条 holdout；K1 fact/goal/content 与 K2 transition/goal/content 六个连续 MSE 分量全部下降，combined MSE 从 `0.01677758` 降到 `0.01569742`，delta `−0.00108017`。K1/K2 更新、K3/parent 不变、candidate 保存/fresh-restore、holdout 未训练和 rollback 均通过，但这仍是单 model seed、单 course seed 的窄证据，`can_promote=false`。
+
+**当前唯一下一步：做 B3-K 多 course-seed 稳定性复验。** 固定 model 17 parent、K continuation contract、单条 train 更新、三条真实 holdout 和连续 structured-loss scorer，只改变实际 workspace/course seed，至少跑 3 个 course seed 并逐 seed 保存结果；不调整门槛、不进入九 cell formal、不增加结构。目标是确认这次 loss 改善不是单一文件排列或课程偶然性，并为 C 阶段锁定最小有意义收益与最坏退化界。
 
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 
