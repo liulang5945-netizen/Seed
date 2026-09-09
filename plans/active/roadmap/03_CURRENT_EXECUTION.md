@@ -438,4 +438,6 @@ parent baseline/preflight 已实现并运行：`reports/taiji_m4v2_r6_parent_bas
 
 单 cell controlled adapter smoke 已完成：`reports/taiji_m4v2_r6_adapter_controlled_smoke_20260909.json`，16/16 checks 通过。`KAdapterInput/Output/Exchange` 已进入 native adapter，same-parent、K3 dependency/projection lineage、stage/fresh restore/rollback、S/G old-capability retention 全部通过；但这是 `fixture_outcome_only` 的 transport smoke，不是 K learner 能力结果，`k_learner_owner_attached=false`、`k_learner_training_performed=false`、`baseline_complete=false`、`can_start_r6_formal=false`。
 
-**当前唯一下一步**：冻结 K learner-owner attachment contract——adapter 做唯一 candidate/rollback owner，K1 semantic 与 K2 transition 作为受控 subordinate worker，K3 作为 deterministic outcome projection；先锁定 worker checkpoint、owner graph、输入输出映射和 rollback 边界，再允许任何 K learner training。
+K learner-owner attachment contract 已冻结：[M4V2_R6_K_LEARNER_OWNER_ATTACHMENT_CONTRACT_20260909.md](../../reference/M4V2_R6_K_LEARNER_OWNER_ATTACHMENT_CONTRACT_20260909.md)。它把 adapter 定义为唯一 candidate/rollback owner，K1 semantic、K2 transition 为 subordinate worker，K3 为 deterministic projection；明确了真实 checkpoint/owner manifest、joint digest、训练前 restore、原子 rollback 和禁止把 standalone report 冒充 worker checkpoint 的规则。
+
+**当前唯一下一步**：实现 K worker manifest + joint checkpoint attachment preflight——只加载/恢复真实 K1/K2 worker checkpoint 与 K3 projector checkpoint；若本机没有真实 worker artifact，明确报告 `artifact_missing` 并停止，不训练、不接 default runtime、不用随机初始化或 standalone report 冒充。
