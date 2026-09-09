@@ -175,11 +175,30 @@ K3 不证明开放域语言能力、通用规划、Skill/MCP 内化后的智能�
 
 ## 9. 实施记录（2026-09-09）
 
-第一步 projection contract 已落地，但尚未运行 K3 canary：
+第一步 projection contract 已落地：
 
 - `taiji/outcome_dependency.py` 新增 `OutcomeDependencySpec`、`OutcomeDependencyProjection` 和 `OutcomeDependencyProjector`；owner 只接受 typed `WorldEvent`，生成 outcome signature、dependency digest、facts、lineage，并在同 tick enrich `WorldState`；
 - 复核后明确：动态 `dependency_digest` 只属于 projection/lineage，不进入可泛化 semantic facts；world facts 仅保留稳定的 outcome class、capability、dependency id/task，避免把事件 ID 学成知识；
 - checkpoint 带 content digest，projection payload 带 content digest；restore、stale tick、wrong outcome、event identity conflict、duplicate dependency、cross-scope 和 lesion 均 fail-closed；
 - `tests/taiji_native/test_m5_k3_outcome_dependency.py`：7/7 通过；K2 transition binding + executive 回归：13/13 通过；ruff、py_compile、mypy 通过；
 - `tests/test_workbench_contract.py` 的复核仍被本机 pytest 临时目录 ACL 阻断（5 个测试实际进入执行，43 个在 `tmp_path` setup 阶段失败），没有出现由本次 projection 断言引起的失败；
-- projection 尚未接入 `SeedRuntime`、planner 或默认 runtime，也尚未运行 K3 canary；`can_promote=false` 不变。
+- projection 尚未接入 `SeedRuntime`、planner 或默认 runtime；`can_promote=false` 不变。
+
+## 10. K3 单 cell canary 执行记录（2026-09-09）
+
+首轮运行没有被当作模型证据保留，按停止线定位为 canary fixture/训练编排错误：
+
+- 原 runner 将 TypeScript 放入 holdout，却没有让 transition corpus 产生对应的类型行；同时训练和 holdout 复用了同一工作区内容；
+- 修复后仍发现 runtime 的 workspace root selector 没有随 train/holdout root 切换，导致真实 read 被路由到空工作区；
+- 以上两项均不改变 Gate、阈值或 projection 语义，修复后才重新运行正式单 cell。
+
+正式单 cell 已通过：
+
+- runner：`scripts/training/eval_taiji_m5_k3_outcome_dependency.py`；报告：`reports/taiji_m5_k3_outcome_dependency_20260909.json`；
+- 训练/holdout 使用两个进程私有 repo-writable workspace，holdout 使用不同 task seed；训练 vocabulary 覆盖 Python、Rust、TypeScript，训练序列覆盖跨语言转移组合；
+- K3 仅使用 fixture 内的可用工具链模拟来隔离 outcome dependency，不把开放集语言识别混入本 canary；
+- transition 仍使用既有 typed mask 和本地学习规则，只把固定训练预算从 320 增至 1280，以补足新增 outcome rows 后稀疏语言行的收敛预算；未修改 materialization threshold、planner safety gate 或 A/B/C 判据；
+- `A-full-feedback` holdout chain `1.0`（4/4），`B-no-feedback` `0.0`，`C-outcome-lesion` `0.0`；`A-B=1.0`、`A-C=1.0`；A 训练 chain `1.0`（6/6）；
+- A 的 probe outcome admission `1.0`，feedback lineage admission `1.0`（8/8），reward variance `0.03390739073439137 > 0`；prefit/postfit checkpoint gate、model feedback fact consumption 全部通过；
+- 定向回归 `20 passed`；K3 projection 的 mypy、ruff、py_compile 全过。工作台全量回归的 Windows pytest temp ACL 阻断仍是环境问题，未被本 canary 改变；
+- 这是 shadow canary 的通过，不是默认 runtime 晋级：projection、transition、planner 均未接入默认路径，`can_promote=false` 继续固定。

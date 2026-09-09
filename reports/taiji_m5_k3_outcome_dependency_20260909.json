@@ -1,0 +1,1182 @@
+{
+  "format": "taiji-m5-k3-outcome-dependency-v1",
+  "version": 1,
+  "generated_at_epoch": 1788956097,
+  "status": "passed",
+  "can_promote": false,
+  "composition": "real Workbench outcome -> typed feedback projection -> transition-dependent read-only chain (S6B)",
+  "holdout": "4 unseen branch x file combinations",
+  "cell": {
+    "task_seed": 0,
+    "learner_seed": 17,
+    "arms": {
+      "A-full-feedback": {
+        "episodes": [
+          {
+            "rows": [
+              {
+                "step": "probe",
+                "path": "typescript_05.ts",
+                "branch": "success",
+                "transition_status": "resolved",
+                "semantic_status": "resolved",
+                "predicted_content_id": "content:inspect-language",
+                "dependency_gate": true,
+                "outcome_admitted": true,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "real_success": true,
+                "expected_probe_success": true,
+                "outcome_matches_expected": true,
+                "real_reward": 0.03994084590135754,
+                "event_id": "workbench-evidence:2840dba3c2239846353170c74c6e47db",
+                "step_success": true,
+                "projection_reason": "accepted",
+                "projection_accepted": true
+              },
+              {
+                "step": "followup",
+                "path": "python_05.py",
+                "branch": "success",
+                "transition_status": "resolved",
+                "feedback_input_present": true,
+                "predicted_content_id": "content:inspect-language",
+                "expected_content_id": "content:inspect-language",
+                "expected_intent_kind": "workspace.read",
+                "dependency_projection_accepted": true,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "dependency_gate": true,
+                "real_success": true,
+                "boundary_token_echo": "bdab555e6c78018bfc047133683674b629a23dbc7083090479889a30fb1562ba",
+                "lineage_matches": true,
+                "real_reward": 1.0,
+                "step_success": true
+              },
+              {
+                "step": "verification",
+                "path": "rust_05.rs",
+                "branch": "success",
+                "transition_status": "resolved",
+                "feedback_input_present": true,
+                "predicted_content_id": "content:inspect-language",
+                "expected_content_id": "content:inspect-language",
+                "expected_intent_kind": "workspace.read",
+                "dependency_projection_accepted": true,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "dependency_gate": true,
+                "real_success": true,
+                "boundary_token_echo": "bdab555e6c78018bfc047133683674b629a23dbc7083090479889a30fb1562ba",
+                "lineage_matches": true,
+                "real_reward": 1.0,
+                "step_success": true
+              }
+            ],
+            "episode_success": true
+          },
+          {
+            "rows": [
+              {
+                "step": "probe",
+                "path": "rust_06.rs",
+                "branch": "failure",
+                "transition_status": "resolved",
+                "semantic_status": "resolved",
+                "predicted_content_id": "content:inspect-language",
+                "dependency_gate": true,
+                "outcome_admitted": true,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "real_success": false,
+                "expected_probe_success": false,
+                "outcome_matches_expected": true,
+                "real_reward": -0.4569564935734589,
+                "event_id": "workbench-evidence:c1271d3ed816c8ceacd64c9b8086d512",
+                "step_success": true,
+                "projection_reason": "accepted",
+                "projection_accepted": true
+              },
+              {
+                "step": "followup",
+                "path": "typescript_06.ts",
+                "branch": "failure",
+                "transition_status": "clarify",
+                "feedback_input_present": true,
+                "predicted_content_id": "content:clarify-toolchain",
+                "expected_content_id": "content:clarify-toolchain",
+                "expected_intent_kind": "workspace.programming_language.resolve",
+                "dependency_projection_accepted": true,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.programming_language.resolve",
+                "dependency_gate": true,
+                "real_success": true,
+                "boundary_token_echo": "8d41c7b3c5a576fea5cf7abd900809901bb9d2b90e70245c505ecefa321418cd",
+                "lineage_matches": true,
+                "real_reward": 1.0,
+                "step_success": true
+              },
+              {
+                "step": "verification",
+                "path": "python_06.py",
+                "branch": "failure",
+                "transition_status": "clarify",
+                "feedback_input_present": true,
+                "predicted_content_id": "content:clarify-toolchain",
+                "expected_content_id": "content:clarify-toolchain",
+                "expected_intent_kind": "workspace.programming_language.resolve",
+                "dependency_projection_accepted": true,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.programming_language.resolve",
+                "dependency_gate": true,
+                "real_success": true,
+                "boundary_token_echo": "8d41c7b3c5a576fea5cf7abd900809901bb9d2b90e70245c505ecefa321418cd",
+                "lineage_matches": true,
+                "real_reward": 1.0,
+                "step_success": true
+              }
+            ],
+            "episode_success": true
+          },
+          {
+            "rows": [
+              {
+                "step": "probe",
+                "path": "python_07.py",
+                "branch": "success",
+                "transition_status": "resolved",
+                "semantic_status": "resolved",
+                "predicted_content_id": "content:inspect-language",
+                "dependency_gate": true,
+                "outcome_admitted": true,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "real_success": true,
+                "expected_probe_success": true,
+                "outcome_matches_expected": true,
+                "real_reward": -0.1929076425189806,
+                "event_id": "workbench-evidence:3b6a76a4d7bb208bf27158957fd4fdf3",
+                "step_success": true,
+                "projection_reason": "accepted",
+                "projection_accepted": true
+              },
+              {
+                "step": "followup",
+                "path": "rust_07.rs",
+                "branch": "success",
+                "transition_status": "resolved",
+                "feedback_input_present": true,
+                "predicted_content_id": "content:inspect-language",
+                "expected_content_id": "content:inspect-language",
+                "expected_intent_kind": "workspace.read",
+                "dependency_projection_accepted": true,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "dependency_gate": true,
+                "real_success": true,
+                "boundary_token_echo": "619980bda64217037b1c9218cd60eeff9a24e11920a9c34d45cd708453cb2afe",
+                "lineage_matches": true,
+                "real_reward": 1.0,
+                "step_success": true
+              },
+              {
+                "step": "verification",
+                "path": "typescript_07.ts",
+                "branch": "success",
+                "transition_status": "resolved",
+                "feedback_input_present": true,
+                "predicted_content_id": "content:inspect-language",
+                "expected_content_id": "content:inspect-language",
+                "expected_intent_kind": "workspace.read",
+                "dependency_projection_accepted": true,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "dependency_gate": true,
+                "real_success": true,
+                "boundary_token_echo": "619980bda64217037b1c9218cd60eeff9a24e11920a9c34d45cd708453cb2afe",
+                "lineage_matches": true,
+                "real_reward": 1.0,
+                "step_success": true
+              }
+            ],
+            "episode_success": true
+          },
+          {
+            "rows": [
+              {
+                "step": "probe",
+                "path": "typescript_05.ts",
+                "branch": "failure",
+                "transition_status": "resolved",
+                "semantic_status": "resolved",
+                "predicted_content_id": "content:inspect-language",
+                "dependency_gate": true,
+                "outcome_admitted": true,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "real_success": false,
+                "expected_probe_success": false,
+                "outcome_matches_expected": true,
+                "real_reward": -0.4569564935734589,
+                "event_id": "workbench-evidence:bc98527305af7e5de7bf2f0b8401c85b",
+                "step_success": true,
+                "projection_reason": "accepted",
+                "projection_accepted": true
+              },
+              {
+                "step": "followup",
+                "path": "rust_06.rs",
+                "branch": "failure",
+                "transition_status": "clarify",
+                "feedback_input_present": true,
+                "predicted_content_id": "content:clarify-toolchain",
+                "expected_content_id": "content:clarify-toolchain",
+                "expected_intent_kind": "workspace.programming_language.resolve",
+                "dependency_projection_accepted": true,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.programming_language.resolve",
+                "dependency_gate": true,
+                "real_success": true,
+                "boundary_token_echo": "243aa5ff8e1a2f6546dfab3cde3b914f25f0e96f496e827b417f28f6ffda94c9",
+                "lineage_matches": true,
+                "real_reward": 1.0,
+                "step_success": true
+              },
+              {
+                "step": "verification",
+                "path": "python_07.py",
+                "branch": "failure",
+                "transition_status": "clarify",
+                "feedback_input_present": true,
+                "predicted_content_id": "content:clarify-toolchain",
+                "expected_content_id": "content:clarify-toolchain",
+                "expected_intent_kind": "workspace.programming_language.resolve",
+                "dependency_projection_accepted": true,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.programming_language.resolve",
+                "dependency_gate": true,
+                "real_success": true,
+                "boundary_token_echo": "243aa5ff8e1a2f6546dfab3cde3b914f25f0e96f496e827b417f28f6ffda94c9",
+                "lineage_matches": true,
+                "real_reward": 1.0,
+                "step_success": true
+              }
+            ],
+            "episode_success": true
+          }
+        ],
+        "episode_success_rate": 1.0,
+        "probe_outcome_admission_rate": 1.0,
+        "all_probe_outcomes_admitted": true,
+        "feedback_lineage_admission_rate": 1.0,
+        "all_feedback_lineages_admitted": true,
+        "feedback_row_count": 8
+      },
+      "B-no-feedback": {
+        "episodes": [
+          {
+            "rows": [
+              {
+                "step": "probe",
+                "path": "typescript_05.ts",
+                "branch": "success",
+                "transition_status": "resolved",
+                "semantic_status": "resolved",
+                "predicted_content_id": "content:inspect-language",
+                "dependency_gate": true,
+                "outcome_admitted": true,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "real_success": true,
+                "expected_probe_success": true,
+                "outcome_matches_expected": true,
+                "real_reward": 0.03994084590135754,
+                "event_id": "workbench-evidence:2840dba3c2239846353170c74c6e47db",
+                "step_success": true,
+                "projection_reason": "no_feedback",
+                "projection_accepted": false
+              },
+              {
+                "step": "followup",
+                "path": "python_05.py",
+                "branch": "success",
+                "transition_status": "resolved",
+                "feedback_input_present": false,
+                "predicted_content_id": "content:inspect-language",
+                "expected_content_id": "content:inspect-language",
+                "expected_intent_kind": "workspace.read",
+                "dependency_projection_accepted": false,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "dependency_gate": false,
+                "step_success": false
+              }
+            ],
+            "episode_success": false
+          },
+          {
+            "rows": [
+              {
+                "step": "probe",
+                "path": "rust_06.rs",
+                "branch": "failure",
+                "transition_status": "resolved",
+                "semantic_status": "resolved",
+                "predicted_content_id": "content:inspect-language",
+                "dependency_gate": true,
+                "outcome_admitted": true,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "real_success": false,
+                "expected_probe_success": false,
+                "outcome_matches_expected": true,
+                "real_reward": -0.4569564935734589,
+                "event_id": "workbench-evidence:c1271d3ed816c8ceacd64c9b8086d512",
+                "step_success": true,
+                "projection_reason": "no_feedback",
+                "projection_accepted": false
+              },
+              {
+                "step": "followup",
+                "path": "typescript_06.ts",
+                "branch": "failure",
+                "transition_status": "resolved",
+                "feedback_input_present": false,
+                "predicted_content_id": "content:inspect-language",
+                "expected_content_id": "content:clarify-toolchain",
+                "expected_intent_kind": "workspace.programming_language.resolve",
+                "dependency_projection_accepted": false,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "dependency_gate": false,
+                "step_success": false
+              }
+            ],
+            "episode_success": false
+          },
+          {
+            "rows": [
+              {
+                "step": "probe",
+                "path": "python_07.py",
+                "branch": "success",
+                "transition_status": "resolved",
+                "semantic_status": "resolved",
+                "predicted_content_id": "content:inspect-language",
+                "dependency_gate": true,
+                "outcome_admitted": true,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "real_success": true,
+                "expected_probe_success": true,
+                "outcome_matches_expected": true,
+                "real_reward": -0.1929076425189806,
+                "event_id": "workbench-evidence:3b6a76a4d7bb208bf27158957fd4fdf3",
+                "step_success": true,
+                "projection_reason": "no_feedback",
+                "projection_accepted": false
+              },
+              {
+                "step": "followup",
+                "path": "rust_07.rs",
+                "branch": "success",
+                "transition_status": "resolved",
+                "feedback_input_present": false,
+                "predicted_content_id": "content:inspect-language",
+                "expected_content_id": "content:inspect-language",
+                "expected_intent_kind": "workspace.read",
+                "dependency_projection_accepted": false,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "dependency_gate": false,
+                "step_success": false
+              }
+            ],
+            "episode_success": false
+          },
+          {
+            "rows": [
+              {
+                "step": "probe",
+                "path": "typescript_05.ts",
+                "branch": "failure",
+                "transition_status": "resolved",
+                "semantic_status": "resolved",
+                "predicted_content_id": "content:inspect-language",
+                "dependency_gate": true,
+                "outcome_admitted": true,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "real_success": false,
+                "expected_probe_success": false,
+                "outcome_matches_expected": true,
+                "real_reward": -0.4569564935734589,
+                "event_id": "workbench-evidence:bc98527305af7e5de7bf2f0b8401c85b",
+                "step_success": true,
+                "projection_reason": "no_feedback",
+                "projection_accepted": false
+              },
+              {
+                "step": "followup",
+                "path": "rust_06.rs",
+                "branch": "failure",
+                "transition_status": "resolved",
+                "feedback_input_present": false,
+                "predicted_content_id": "content:inspect-language",
+                "expected_content_id": "content:clarify-toolchain",
+                "expected_intent_kind": "workspace.programming_language.resolve",
+                "dependency_projection_accepted": false,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "dependency_gate": false,
+                "step_success": false
+              }
+            ],
+            "episode_success": false
+          }
+        ],
+        "episode_success_rate": 0.0,
+        "probe_outcome_admission_rate": 1.0,
+        "all_probe_outcomes_admitted": true,
+        "feedback_lineage_admission_rate": 0.0,
+        "all_feedback_lineages_admitted": false,
+        "feedback_row_count": 0
+      },
+      "C-outcome-lesion": {
+        "episodes": [
+          {
+            "rows": [
+              {
+                "step": "probe",
+                "path": "typescript_05.ts",
+                "branch": "success",
+                "transition_status": "resolved",
+                "semantic_status": "resolved",
+                "predicted_content_id": "content:inspect-language",
+                "dependency_gate": true,
+                "outcome_admitted": true,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "real_success": true,
+                "expected_probe_success": true,
+                "outcome_matches_expected": true,
+                "real_reward": 0.03994084590135754,
+                "event_id": "workbench-evidence:2840dba3c2239846353170c74c6e47db",
+                "step_success": true,
+                "projection_reason": "outcome_feedback_lesioned",
+                "projection_accepted": false
+              },
+              {
+                "step": "followup",
+                "path": "python_05.py",
+                "branch": "success",
+                "transition_status": "resolved",
+                "feedback_input_present": false,
+                "predicted_content_id": "content:inspect-language",
+                "expected_content_id": "content:inspect-language",
+                "expected_intent_kind": "workspace.read",
+                "dependency_projection_accepted": false,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "dependency_gate": false,
+                "step_success": false
+              }
+            ],
+            "episode_success": false
+          },
+          {
+            "rows": [
+              {
+                "step": "probe",
+                "path": "rust_06.rs",
+                "branch": "failure",
+                "transition_status": "resolved",
+                "semantic_status": "resolved",
+                "predicted_content_id": "content:inspect-language",
+                "dependency_gate": true,
+                "outcome_admitted": true,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "real_success": false,
+                "expected_probe_success": false,
+                "outcome_matches_expected": true,
+                "real_reward": -0.4569564935734589,
+                "event_id": "workbench-evidence:c1271d3ed816c8ceacd64c9b8086d512",
+                "step_success": true,
+                "projection_reason": "outcome_feedback_lesioned",
+                "projection_accepted": false
+              },
+              {
+                "step": "followup",
+                "path": "typescript_06.ts",
+                "branch": "failure",
+                "transition_status": "resolved",
+                "feedback_input_present": false,
+                "predicted_content_id": "content:inspect-language",
+                "expected_content_id": "content:clarify-toolchain",
+                "expected_intent_kind": "workspace.programming_language.resolve",
+                "dependency_projection_accepted": false,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "dependency_gate": false,
+                "step_success": false
+              }
+            ],
+            "episode_success": false
+          },
+          {
+            "rows": [
+              {
+                "step": "probe",
+                "path": "python_07.py",
+                "branch": "success",
+                "transition_status": "resolved",
+                "semantic_status": "resolved",
+                "predicted_content_id": "content:inspect-language",
+                "dependency_gate": true,
+                "outcome_admitted": true,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "real_success": true,
+                "expected_probe_success": true,
+                "outcome_matches_expected": true,
+                "real_reward": -0.1929076425189806,
+                "event_id": "workbench-evidence:3b6a76a4d7bb208bf27158957fd4fdf3",
+                "step_success": true,
+                "projection_reason": "outcome_feedback_lesioned",
+                "projection_accepted": false
+              },
+              {
+                "step": "followup",
+                "path": "rust_07.rs",
+                "branch": "success",
+                "transition_status": "resolved",
+                "feedback_input_present": false,
+                "predicted_content_id": "content:inspect-language",
+                "expected_content_id": "content:inspect-language",
+                "expected_intent_kind": "workspace.read",
+                "dependency_projection_accepted": false,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "dependency_gate": false,
+                "step_success": false
+              }
+            ],
+            "episode_success": false
+          },
+          {
+            "rows": [
+              {
+                "step": "probe",
+                "path": "typescript_05.ts",
+                "branch": "failure",
+                "transition_status": "resolved",
+                "semantic_status": "resolved",
+                "predicted_content_id": "content:inspect-language",
+                "dependency_gate": true,
+                "outcome_admitted": true,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "real_success": false,
+                "expected_probe_success": false,
+                "outcome_matches_expected": true,
+                "real_reward": -0.4569564935734589,
+                "event_id": "workbench-evidence:bc98527305af7e5de7bf2f0b8401c85b",
+                "step_success": true,
+                "projection_reason": "outcome_feedback_lesioned",
+                "projection_accepted": false
+              },
+              {
+                "step": "followup",
+                "path": "rust_06.rs",
+                "branch": "failure",
+                "transition_status": "resolved",
+                "feedback_input_present": false,
+                "predicted_content_id": "content:inspect-language",
+                "expected_content_id": "content:clarify-toolchain",
+                "expected_intent_kind": "workspace.programming_language.resolve",
+                "dependency_projection_accepted": false,
+                "accepted": true,
+                "decision_reason": "native_read_only_intent_ready",
+                "intent_kind": "workspace.read",
+                "dependency_gate": false,
+                "step_success": false
+              }
+            ],
+            "episode_success": false
+          }
+        ],
+        "episode_success_rate": 0.0,
+        "probe_outcome_admission_rate": 1.0,
+        "all_probe_outcomes_admitted": true,
+        "feedback_lineage_admission_rate": 0.0,
+        "all_feedback_lineages_admitted": false,
+        "feedback_row_count": 0
+      }
+    },
+    "train_arm": {
+      "episodes": [
+        {
+          "rows": [
+            {
+              "step": "probe",
+              "path": "python_00.py",
+              "branch": "success",
+              "transition_status": "resolved",
+              "semantic_status": "resolved",
+              "predicted_content_id": "content:inspect-language",
+              "dependency_gate": true,
+              "outcome_admitted": true,
+              "accepted": true,
+              "decision_reason": "native_read_only_intent_ready",
+              "intent_kind": "workspace.read",
+              "real_success": true,
+              "expected_probe_success": true,
+              "outcome_matches_expected": true,
+              "real_reward": -0.25723491538926707,
+              "event_id": "workbench-evidence:86716dcd8909470604010ac453b2c14c",
+              "step_success": true,
+              "projection_reason": "accepted",
+              "projection_accepted": true
+            },
+            {
+              "step": "followup",
+              "path": "rust_00.rs",
+              "branch": "success",
+              "transition_status": "resolved",
+              "feedback_input_present": true,
+              "predicted_content_id": "content:inspect-language",
+              "expected_content_id": "content:inspect-language",
+              "expected_intent_kind": "workspace.read",
+              "dependency_projection_accepted": true,
+              "accepted": true,
+              "decision_reason": "native_read_only_intent_ready",
+              "intent_kind": "workspace.read",
+              "dependency_gate": true,
+              "real_success": true,
+              "boundary_token_echo": "59db59123775ea3c73027bcd5b2ebc4401089f05552c80ca3bbcc19418879965",
+              "lineage_matches": true,
+              "real_reward": 1.0,
+              "step_success": true
+            },
+            {
+              "step": "verification",
+              "path": "python_01.py",
+              "branch": "success",
+              "transition_status": "resolved",
+              "feedback_input_present": true,
+              "predicted_content_id": "content:inspect-language",
+              "expected_content_id": "content:inspect-language",
+              "expected_intent_kind": "workspace.read",
+              "dependency_projection_accepted": true,
+              "accepted": true,
+              "decision_reason": "native_read_only_intent_ready",
+              "intent_kind": "workspace.read",
+              "dependency_gate": true,
+              "real_success": true,
+              "boundary_token_echo": "59db59123775ea3c73027bcd5b2ebc4401089f05552c80ca3bbcc19418879965",
+              "lineage_matches": true,
+              "real_reward": 1.0,
+              "step_success": true
+            }
+          ],
+          "episode_success": true
+        },
+        {
+          "rows": [
+            {
+              "step": "probe",
+              "path": "rust_01.rs",
+              "branch": "failure",
+              "transition_status": "resolved",
+              "semantic_status": "resolved",
+              "predicted_content_id": "content:inspect-language",
+              "dependency_gate": true,
+              "outcome_admitted": true,
+              "accepted": true,
+              "decision_reason": "native_read_only_intent_ready",
+              "intent_kind": "workspace.read",
+              "real_success": false,
+              "expected_probe_success": false,
+              "outcome_matches_expected": true,
+              "real_reward": -0.4569564935734589,
+              "event_id": "workbench-evidence:518f571e2a6e0f8713493d6ba1a0ad58",
+              "step_success": true,
+              "projection_reason": "accepted",
+              "projection_accepted": true
+            },
+            {
+              "step": "followup",
+              "path": "python_02.py",
+              "branch": "failure",
+              "transition_status": "clarify",
+              "feedback_input_present": true,
+              "predicted_content_id": "content:clarify-toolchain",
+              "expected_content_id": "content:clarify-toolchain",
+              "expected_intent_kind": "workspace.programming_language.resolve",
+              "dependency_projection_accepted": true,
+              "accepted": true,
+              "decision_reason": "native_read_only_intent_ready",
+              "intent_kind": "workspace.programming_language.resolve",
+              "dependency_gate": true,
+              "real_success": true,
+              "boundary_token_echo": "d2061c30720616069ddd5df4877f33892004d8788a2f17dfda15af3f8d2822ef",
+              "lineage_matches": true,
+              "real_reward": 1.0,
+              "step_success": true
+            },
+            {
+              "step": "verification",
+              "path": "typescript_00.ts",
+              "branch": "failure",
+              "transition_status": "clarify",
+              "feedback_input_present": true,
+              "predicted_content_id": "content:clarify-toolchain",
+              "expected_content_id": "content:clarify-toolchain",
+              "expected_intent_kind": "workspace.programming_language.resolve",
+              "dependency_projection_accepted": true,
+              "accepted": true,
+              "decision_reason": "native_read_only_intent_ready",
+              "intent_kind": "workspace.programming_language.resolve",
+              "dependency_gate": true,
+              "real_success": true,
+              "boundary_token_echo": "d2061c30720616069ddd5df4877f33892004d8788a2f17dfda15af3f8d2822ef",
+              "lineage_matches": true,
+              "real_reward": 1.0,
+              "step_success": true
+            }
+          ],
+          "episode_success": true
+        },
+        {
+          "rows": [
+            {
+              "step": "probe",
+              "path": "typescript_01.ts",
+              "branch": "success",
+              "transition_status": "resolved",
+              "semantic_status": "resolved",
+              "predicted_content_id": "content:inspect-language",
+              "dependency_gate": true,
+              "outcome_admitted": true,
+              "accepted": true,
+              "decision_reason": "native_read_only_intent_ready",
+              "intent_kind": "workspace.read",
+              "real_success": true,
+              "expected_probe_success": true,
+              "outcome_matches_expected": true,
+              "real_reward": -0.0049998842624741895,
+              "event_id": "workbench-evidence:101aaf5e56356078b825718e90404dd2",
+              "step_success": true,
+              "projection_reason": "accepted",
+              "projection_accepted": true
+            },
+            {
+              "step": "followup",
+              "path": "rust_02.rs",
+              "branch": "success",
+              "transition_status": "resolved",
+              "feedback_input_present": true,
+              "predicted_content_id": "content:inspect-language",
+              "expected_content_id": "content:inspect-language",
+              "expected_intent_kind": "workspace.read",
+              "dependency_projection_accepted": true,
+              "accepted": true,
+              "decision_reason": "native_read_only_intent_ready",
+              "intent_kind": "workspace.read",
+              "dependency_gate": true,
+              "real_success": true,
+              "boundary_token_echo": "43a911f5718f51486e9170d2d4976dcfc7b8740a19b3864d8dc305a118fa12e7",
+              "lineage_matches": true,
+              "real_reward": 1.0,
+              "step_success": true
+            },
+            {
+              "step": "verification",
+              "path": "python_03.py",
+              "branch": "success",
+              "transition_status": "resolved",
+              "feedback_input_present": true,
+              "predicted_content_id": "content:inspect-language",
+              "expected_content_id": "content:inspect-language",
+              "expected_intent_kind": "workspace.read",
+              "dependency_projection_accepted": true,
+              "accepted": true,
+              "decision_reason": "native_read_only_intent_ready",
+              "intent_kind": "workspace.read",
+              "dependency_gate": true,
+              "real_success": true,
+              "boundary_token_echo": "43a911f5718f51486e9170d2d4976dcfc7b8740a19b3864d8dc305a118fa12e7",
+              "lineage_matches": true,
+              "real_reward": 1.0,
+              "step_success": true
+            }
+          ],
+          "episode_success": true
+        },
+        {
+          "rows": [
+            {
+              "step": "probe",
+              "path": "python_02.py",
+              "branch": "failure",
+              "transition_status": "resolved",
+              "semantic_status": "resolved",
+              "predicted_content_id": "content:inspect-language",
+              "dependency_gate": true,
+              "outcome_admitted": true,
+              "accepted": true,
+              "decision_reason": "native_read_only_intent_ready",
+              "intent_kind": "workspace.read",
+              "real_success": false,
+              "expected_probe_success": false,
+              "outcome_matches_expected": true,
+              "real_reward": -0.4569564935734589,
+              "event_id": "workbench-evidence:0e7647240af97de29bb57d027b5a1a6e",
+              "step_success": true,
+              "projection_reason": "accepted",
+              "projection_accepted": true
+            },
+            {
+              "step": "followup",
+              "path": "typescript_02.ts",
+              "branch": "failure",
+              "transition_status": "clarify",
+              "feedback_input_present": true,
+              "predicted_content_id": "content:clarify-toolchain",
+              "expected_content_id": "content:clarify-toolchain",
+              "expected_intent_kind": "workspace.programming_language.resolve",
+              "dependency_projection_accepted": true,
+              "accepted": true,
+              "decision_reason": "native_read_only_intent_ready",
+              "intent_kind": "workspace.programming_language.resolve",
+              "dependency_gate": true,
+              "real_success": true,
+              "boundary_token_echo": "ef829ad431618f46d8e27c991a050e13d77bef0bfe0718b0eaf9a6b156598342",
+              "lineage_matches": true,
+              "real_reward": 1.0,
+              "step_success": true
+            },
+            {
+              "step": "verification",
+              "path": "rust_03.rs",
+              "branch": "failure",
+              "transition_status": "clarify",
+              "feedback_input_present": true,
+              "predicted_content_id": "content:clarify-toolchain",
+              "expected_content_id": "content:clarify-toolchain",
+              "expected_intent_kind": "workspace.programming_language.resolve",
+              "dependency_projection_accepted": true,
+              "accepted": true,
+              "decision_reason": "native_read_only_intent_ready",
+              "intent_kind": "workspace.programming_language.resolve",
+              "dependency_gate": true,
+              "real_success": true,
+              "boundary_token_echo": "ef829ad431618f46d8e27c991a050e13d77bef0bfe0718b0eaf9a6b156598342",
+              "lineage_matches": true,
+              "real_reward": 1.0,
+              "step_success": true
+            }
+          ],
+          "episode_success": true
+        },
+        {
+          "rows": [
+            {
+              "step": "probe",
+              "path": "rust_00.rs",
+              "branch": "success",
+              "transition_status": "resolved",
+              "semantic_status": "resolved",
+              "predicted_content_id": "content:inspect-language",
+              "dependency_gate": true,
+              "outcome_admitted": true,
+              "accepted": true,
+              "decision_reason": "native_read_only_intent_ready",
+              "intent_kind": "workspace.read",
+              "real_success": true,
+              "expected_probe_success": true,
+              "outcome_matches_expected": true,
+              "real_reward": -0.30404387280297607,
+              "event_id": "workbench-evidence:2953a984efd74ca7227f89df1ed708fc",
+              "step_success": true,
+              "projection_reason": "accepted",
+              "projection_accepted": true
+            },
+            {
+              "step": "followup",
+              "path": "typescript_03.ts",
+              "branch": "success",
+              "transition_status": "resolved",
+              "feedback_input_present": true,
+              "predicted_content_id": "content:inspect-language",
+              "expected_content_id": "content:inspect-language",
+              "expected_intent_kind": "workspace.read",
+              "dependency_projection_accepted": true,
+              "accepted": true,
+              "decision_reason": "native_read_only_intent_ready",
+              "intent_kind": "workspace.read",
+              "dependency_gate": true,
+              "real_success": true,
+              "boundary_token_echo": "3f90250ed4bba4b437b41a54d55af25a575aeed30bc59cc4a0fe0c679ed1c4ad",
+              "lineage_matches": true,
+              "real_reward": 1.0,
+              "step_success": true
+            },
+            {
+              "step": "verification",
+              "path": "python_00.py",
+              "branch": "success",
+              "transition_status": "resolved",
+              "feedback_input_present": true,
+              "predicted_content_id": "content:inspect-language",
+              "expected_content_id": "content:inspect-language",
+              "expected_intent_kind": "workspace.read",
+              "dependency_projection_accepted": true,
+              "accepted": true,
+              "decision_reason": "native_read_only_intent_ready",
+              "intent_kind": "workspace.read",
+              "dependency_gate": true,
+              "real_success": true,
+              "boundary_token_echo": "3f90250ed4bba4b437b41a54d55af25a575aeed30bc59cc4a0fe0c679ed1c4ad",
+              "lineage_matches": true,
+              "real_reward": 1.0,
+              "step_success": true
+            }
+          ],
+          "episode_success": true
+        },
+        {
+          "rows": [
+            {
+              "step": "probe",
+              "path": "typescript_02.ts",
+              "branch": "failure",
+              "transition_status": "resolved",
+              "semantic_status": "resolved",
+              "predicted_content_id": "content:inspect-language",
+              "dependency_gate": true,
+              "outcome_admitted": true,
+              "accepted": true,
+              "decision_reason": "native_read_only_intent_ready",
+              "intent_kind": "workspace.read",
+              "real_success": false,
+              "expected_probe_success": false,
+              "outcome_matches_expected": true,
+              "real_reward": -0.4569564935734589,
+              "event_id": "workbench-evidence:11ad7ffe4991dea9ab7c543b3f30ee3c",
+              "step_success": true,
+              "projection_reason": "accepted",
+              "projection_accepted": true
+            },
+            {
+              "step": "followup",
+              "path": "python_01.py",
+              "branch": "failure",
+              "transition_status": "clarify",
+              "feedback_input_present": true,
+              "predicted_content_id": "content:clarify-toolchain",
+              "expected_content_id": "content:clarify-toolchain",
+              "expected_intent_kind": "workspace.programming_language.resolve",
+              "dependency_projection_accepted": true,
+              "accepted": true,
+              "decision_reason": "native_read_only_intent_ready",
+              "intent_kind": "workspace.programming_language.resolve",
+              "dependency_gate": true,
+              "real_success": true,
+              "boundary_token_echo": "9a7f550c5734e5f666fee3edf119a34365dafda74494d7ab8d1099fc21cc5d36",
+              "lineage_matches": true,
+              "real_reward": 1.0,
+              "step_success": true
+            },
+            {
+              "step": "verification",
+              "path": "rust_01.rs",
+              "branch": "failure",
+              "transition_status": "clarify",
+              "feedback_input_present": true,
+              "predicted_content_id": "content:clarify-toolchain",
+              "expected_content_id": "content:clarify-toolchain",
+              "expected_intent_kind": "workspace.programming_language.resolve",
+              "dependency_projection_accepted": true,
+              "accepted": true,
+              "decision_reason": "native_read_only_intent_ready",
+              "intent_kind": "workspace.programming_language.resolve",
+              "dependency_gate": true,
+              "real_success": true,
+              "boundary_token_echo": "9a7f550c5734e5f666fee3edf119a34365dafda74494d7ab8d1099fc21cc5d36",
+              "lineage_matches": true,
+              "real_reward": 1.0,
+              "step_success": true
+            }
+          ],
+          "episode_success": true
+        }
+      ],
+      "episode_success_rate": 1.0,
+      "probe_outcome_admission_rate": 1.0,
+      "all_probe_outcomes_admitted": true,
+      "feedback_lineage_admission_rate": 1.0,
+      "all_feedback_lineages_admitted": true,
+      "feedback_row_count": 12
+    },
+    "prefit_checkpoint": {
+      "semantic_prefit_roundtrip": true,
+      "transition_prefit_roundtrip": true
+    },
+    "checkpoint_gate": {
+      "semantic_owner_digest_equal": true,
+      "transition_owner_digest_equal": true,
+      "projector_checkpoint_equal": true,
+      "transition_masks_restored": true
+    },
+    "typed_binding": {
+      "transition_input_masks": {
+        "outcome::class::failure": [
+          0
+        ],
+        "outcome::class::success": [
+          1
+        ],
+        "workbench::diagnostics::disconnected": [
+          2,
+          33,
+          102
+        ],
+        "workbench::language::python": [
+          3,
+          15,
+          107
+        ],
+        "workbench::language::rust": [
+          4,
+          16,
+          131
+        ],
+        "workbench::language::typescript": [
+          5,
+          17,
+          155
+        ],
+        "workbench::language::unknown": [
+          6,
+          18,
+          179
+        ],
+        "workbench::language_state::resolved": [
+          7,
+          20,
+          204
+        ],
+        "workbench::language_state::unknown": [
+          8,
+          21,
+          228
+        ],
+        "workbench::read::failure": [
+          9,
+          28,
+          258
+        ],
+        "workbench::read::success": [
+          10,
+          28,
+          281
+        ],
+        "workbench::target::file": [
+          11,
+          29,
+          305
+        ],
+        "workbench::target::missing": [
+          12,
+          29,
+          328
+        ],
+        "workbench::toolchain::available": [
+          13,
+          32,
+          354
+        ],
+        "workbench::toolchain::missing": [
+          14,
+          32,
+          377
+        ]
+      },
+      "outcome_fact_keys": [
+        [
+          "outcome",
+          "class",
+          "failure"
+        ],
+        [
+          "outcome",
+          "class",
+          "success"
+        ]
+      ]
+    },
+    "stage1_semantic_fit_losses": {
+      "fact_loss": 0.03738343,
+      "goal_loss": 1.18e-06,
+      "content_loss": 6.9e-07
+    },
+    "stage2_transition_fit_losses": {
+      "transition_loss": 8.7e-07,
+      "goal_loss": 0.00010731,
+      "content_loss": 8.89e-06
+    },
+    "metrics": {
+      "a_holdout_success": 1.0,
+      "b_holdout_success": 0.0,
+      "c_holdout_success": 0.0,
+      "a_minus_b": 1.0,
+      "a_minus_c": 1.0,
+      "a_train_success": 1.0,
+      "feedback_reward_variance": 0.03390739073439137
+    },
+    "checks": {
+      "a_holdout_success_at_least_0p75": true,
+      "a_minus_b_at_least_0p25": true,
+      "a_minus_c_at_least_0p25": true,
+      "a_train_success_is_1": true,
+      "train_episode_count_at_least_6": true,
+      "a_probe_outcomes_admitted": true,
+      "a_feedback_lineages_admitted": true,
+      "feedback_reward_variance_positive": true,
+      "prefit_checkpoint_gate": true,
+      "postfit_checkpoint_gate": true,
+      "a_model_feedback_facts_consumed": true
+    },
+    "technical_gate_all_passed": true,
+    "elapsed_seconds": 6.482519099954516
+  }
+}
