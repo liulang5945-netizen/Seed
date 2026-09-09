@@ -317,8 +317,13 @@ def _build_workspace(root: Path, *, task_seed: int) -> None:
             # content pattern matches (generic fillers like "record x" collide
             # with other registries' patterns), plus an index-length pad so
             # every file has a distinct byte_length and therefore a distinct
-            # observation feature vector.
-            pad = "p" * index
+            # observation feature vector.  The pad spacing is 2 bytes per
+            # index: the "{index + variant}" number can gain a digit when
+            # task_seed shifts the variant, so a 1-byte spacing would let two
+            # files' byte lengths collide for some task seeds (observed as a
+            # dev/test input_digest leak at task_seed=2); 2-byte spacing keeps
+            # same-language lengths strictly distinct for every task seed.
+            pad = "p" * (2 * index)
             if lang == "python":
                 body = (
                     f"def answer_{index}(value: int) -> int:\n"

@@ -62,3 +62,27 @@
 
 - 单 CPU、9 cell 串行（每 cell 与 canary 同量级，总时长 < 10 分钟量级）；
 - 产物：`reports/taiji_m5_k1_skill_composition_formal_20260909.json`（versioned、逐 cell、aggregate、`can_promote=false`）+ 路线图执行记录更新 + 独立提交。
+
+## 8. 执行记录（2026-09-09，formal 已运行，全部判据通过）
+
+### 8.1 运行前 harness 修正（判据/learner/掩码零改动）
+
+首轮 formal 在 task_seed=2 的 **corpus 构造阶段**（`from_splits`）崩溃：`transition input leakage between dev/test`。归因：`_build_workspace` 的 `variant = (index + task_seed) % 8` 使 `"{index + variant}"` 的数字宽度随 task_seed 变化——task_seed=2 时 `py04`（10）与 `py05`（12）同为两位，两文件 byte_length 相同且属性事实相同 → percept 特征全同，而 dev 的 `(R, py04)` 与 test 的 `(R, py05)` before 块同为 rust → `input_digest` 跨 split 碰撞。task_seed=0/1 因数字宽度错开而未暴露。这是 harness 参数化缺陷（运行前崩溃），不是判据结果；按 §5 停止线归因后做确定性最小修复：`_build_workspace` 的 pad 间距从每 index 1 字节改为 2 字节（数字宽度最多差 1 字节，2 字节间距使同语言文件长度对任意 task_seed 严格互异）。修复后 canary（task_seed=0, learner_seed=17）重跑 gate 仍全过。
+
+### 8.2 Formal 结果（判据冻结后，9/9 通过）
+
+| 判据 | 结果 | Gate |
+|---|---|---|
+| A unseen 成功率 | min=mean=max=**1.0**，`9/9` cell ≥0.8，均值 1.0 ≥0.9 | ✓ |
+| A−B / A−C | 均 min=mean=max=**1.0**，`9/9` cell ≥0.3 | ✓ |
+| 成功 read outcome S6B 准入率 | 每 cell `4/4`，`9/9` cell =1.0 | ✓ |
+| A 臂 reward_variance > 0 | `9/9` cell | ✓ |
+| 技术门（canary 4 检查 + Stage-2 接口 + 全行产出） | `9/9` cell | ✓ |
+| parent_retention | `null`（显式缺省，如实声明无父代基线） | — |
+
+`status=passed`，`robust=true`（`cells_passed=9/9`），`can_promote=false` 固定。报告：`reports/taiji_m5_k1_skill_composition_formal_20260909.json`（format `taiji-m5-k1-skill-composition-formal-v1`，逐 cell 含三臂全行明细与 typed_binding）。
+
+### 8.3 结论与边界
+
+- **K1 证据线闭合**：四阶段组合链的真实执行成功率在 task_seed × learner_seed 矩阵下 9/9 稳健，对照分离（B frozen / C lesion）9/9 稳健。组合能力来自学习的语义表征这一 canary 结论升级为跨 seed 稳健事实。
+- 边界不变：掩码仍是 harness 依 schema 先验派生的表征约束；resolve 成功 outcome 的 S6B 投影 stale 为已知次要项（不计入判据，逐 cell 报告保留）；`can_promote=false`——formal 通过授权进入 **K2 设计**（更深组合维度）或 **A8 K 轴 formal** 讨论，均需各自的预注册；A8 晋级只由 aggregate scorecard 按路线图 §5.3 计算。
