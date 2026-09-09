@@ -526,3 +526,13 @@ default runtime、provider、MCP、client 或 CUDA。
 
 下一步按预注册矩阵只执行 `model17/course1`，验证 course seed 变化不会造成 executor
 隐式使用 model17/course0 数据或 parent；不并发扩大、不跳过失败 row。
+
+## 29. Monotonic ledger / course1 execution（2026-09-09）
+
+runner 已加入 prior execution ledger digest 校验与不可覆盖规则；`model17/course1`
+成功追加，course0 的 `executed_passed` 记录保持不变，当前 execution report 只保留
+两个已执行 row，另外 7 个仍为 `not_started`。course1 的五臂 K/resource/rollback/
+side-effect contract 通过，未接入任何外围系统。
+
+下一步只推进 `model17/course2`，完成 model17 的 3-course slice；在该 slice 闭合前不
+扩大到 model23/31，不运行 aggregate 或 promotion。

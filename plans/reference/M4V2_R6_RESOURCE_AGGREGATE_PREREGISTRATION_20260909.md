@@ -113,4 +113,5 @@ cells，不接 default runtime、provider、MCP、client 或 CUDA。
 formal runner 消费一个 `not_started` ledger row 并写回 executor 结果与 failure
 attribution**；该 row 已闭合。当前唯一下一步：**只执行下一个预注册
 `model17/course1` row**，继续验证同一资源/失败合同；任何失败都保留并停止，不用其余
-cell 的均值覆盖。
+cell 的均值覆盖。course1 已闭合且 prior ledger 保持单调；当前唯一下一步：**只执行
+`model17/course2` row**，完成 model17 的 course slice 后再评估是否开放 model23/31。

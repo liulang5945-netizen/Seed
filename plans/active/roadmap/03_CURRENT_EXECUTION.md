@@ -489,8 +489,9 @@ success 为 `1/1`，lesion 与 rollback/side-effect Gate 通过。**当前唯一
 executor 现已实现为 `run_cell(model_seed, course_seed, …)`，默认 17/0 入口保持兼容；
 同一 manifest 连续两次 replay 的 `execution_contract_digest` 均为
 `8d670a310c08a81e024b3c8f2256ba5afa4808491871e67637205d6156c5d22c`，五臂 resource
-Gate 全部通过。formal runner 现已消费并写回唯一的 `model17/course0` row，结果为
-`executed_passed`，其余 8 rows 仍为 `not_started`，逐臂 resource/side-effect/checkpoint/
+Gate 全部通过。formal runner 现已消费并写回 `model17/course0` 与
+`model17/course1` 两个 row，均为 `executed_passed`；prior ledger digest 校验保证
+course0 不会被覆盖，其余 7 rows 仍为 `not_started`，逐臂 resource/side-effect/checkpoint/
 rollback/failure ledger 均已落盘。**当前唯一下一步**：只执行下一个预注册
-`model17/course1` row，验证 course seed 变化下的同一 executor/parent/resource/failure
-contract；不并发扩大、不运行 9-cell aggregate、不接 default runtime/provider/MCP/client/CUDA。
+`model17/course2` row，完成 model17 的三 course slice；不并发扩大、不运行 9-cell
+aggregate、不接 default runtime/provider/MCP/client/CUDA。
