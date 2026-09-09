@@ -434,4 +434,6 @@ same-parent K adapter 已实现并完成 preflight：`reports/taiji_m4v2_r6_k_ad
 
 R6 fixed-capacity parent admission addendum 已冻结：[M4V2_R6_FIXED_CAPACITY_ADMISSION_ADDENDUM_20260909.md](../../reference/M4V2_R6_FIXED_CAPACITY_ADMISSION_ADDENDUM_20260909.md)。它明确选择 fixed-capacity parent continuation：R4 growth、R5 learned router 和 K standalone learner 都保持 shadow；R6 固定 no learned router；先做 `9 cells × 3 baseline repeats` 校准 epsilon，再做 adapter/all-arm checkpoint Gate，未通过不训练、不接 default runtime。CPU 是唯一执行设备，CUDA/provider/MCP/client/联网不进入变量。
 
-**当前唯一下一步**：实现 parent baseline repeat + all-arm checkpoint preflight——只测 frozen parent 的 9×3 稳定性、epsilon 合法性、source/owner/resource digest、fresh restore 和 rollback，不训练 candidate、不运行 R6 formal、不接 default runtime。
+parent baseline/preflight 已实现并运行：`reports/taiji_m4v2_r6_parent_baseline_preflight_20260909.json`。S/G 的 `9 cells × 3 repeats`、epsilon 校准和 6 类 arm 的 checkpoint/fresh restore/rollback 机械 Gate 全部通过，所有 arm `training_performed=false`。但按真实边界只测得 S/G，K parent retention 没有从 standalone K1/K2/K3 推断，报告明确 `baseline_complete=false`、`can_start_r6_formal=false`；因此仍不能训练或接 default runtime。
+
+**当前唯一下一步**：实现单 cell controlled adapter smoke——在同一个 fixed-capacity parent 上补齐 K 的 typed input/output、dependency lineage、old-capability retention 观测和 checkpoint/rollback；只做 shadow controlled smoke，不训练 formal、不接 default runtime、不引入 MCP/provider/client/CUDA。

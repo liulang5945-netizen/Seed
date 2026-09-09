@@ -193,3 +193,25 @@ preflight，没有重跑训练或篡改任何判据。
 当前只允许冻结一份 **R6 fixed-capacity parent admission addendum**：明确
 R4/R5 均不晋级、R6 不使用 router 的边界、parent baseline/epsilon 的校准
 协议，以及完整 Gate 的先后顺序。addendum 通过前不训练、不写新模型权重。
+
+## 10. baseline/preflight 执行记录（2026-09-09）
+
+已实现并运行 `scripts/training/eval_taiji_m4v2_r6_parent_baseline_preflight.py`，
+报告为 `reports/taiji_m4v2_r6_parent_baseline_preflight_20260909.json`。
+本轮结果需要分成两个层次理解：
+
+- **机械 Gate 通过**：固定 model seed `17/23/31` × course seed `0/1/2`，每
+  cell 3 个 repeat seed `401/503/607`；S/G parent repeat、checkpoint/fresh
+  restore、rollback、owner/source/resource manifest 和 6 个声明 arm 的
+  checkpoint roundtrip 全部通过（9/9 checks）；所有 arm 都明确
+  `training_performed=false`、`candidate_promoted=false`；
+- **完整 R6 baseline 尚未完成**：当前只测得 S/G，重复波动为 0，按冻结公式
+  取 epsilon floor `0.01`。K parent retention 没有被 standalone K1/K2/K3
+  报告伪造，报告明确 `k_parent_retention_available=false`、
+  `baseline_complete=false`，`can_start_r6_formal=false`。
+
+因此本轮不是 R6 formal admission，也不是训练许可；它只证明 CPU 上 parent 和
+各类 shadow/adapter artifact 可以安全保存、fresh restore 和 rollback。下一步
+唯一允许的动作是单 cell controlled adapter smoke，用同一 parent 建立 K
+输入/输出和 retention 观测；仍不得接 default runtime、不得训练 formal、不得
+引入 provider/MCP/client/CUDA。
