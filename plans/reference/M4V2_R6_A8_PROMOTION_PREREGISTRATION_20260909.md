@@ -478,3 +478,16 @@ cell、peak resource、checkpoint/parameter/inference 和 paired delta 的聚合
 资源合同已独立冻结：[M4V2_R6_RESOURCE_AGGREGATE_PREREGISTRATION_20260909.md](M4V2_R6_RESOURCE_AGGREGATE_PREREGISTRATION_20260909.md)。它沿用输入 manifest 的 CPU、peak `1.25×`、wall-clock `1.5×` 上限，固定每 arm 的 RSS、参数、checkpoint、inference、训练步数、device/resource digest 字段，规定缺失/超预算 cell 不得被删除或用均值补齐，并冻结 9-cell 的 mean/min/max 与一侧 95% Student-t lower bound 聚合方式。
 
 该合同不改变 candidate 主 Gate，也不把 fixed-large 事后改造成晋级阈值；fixed-large 仍是 strongest-capacity paired control。当前 full formal 仍关闭，下一步只补齐 model23/31 的 fixed-large artifact、fresh restore 和 formal input registry。
+
+## 25. Three-seed fixed-large registry closure（2026-09-09）
+
+model23/31 的 native fixed-large 已完成构建并通过与 model17 相同的 checkpoint、
+source/holdout non-overlap、CPU/resource manifest、ensemble/K3 fresh-restore Gate。
+`fixed_large_registry` 已由 preflight 从 artifact 自动重建并写入 formal input manifest；
+三 seed registry、parent/worker/course registry 和 manifest digest 全部通过，formal
+runner 也已生成带 fixed-large artifact digest 的 9×5 not-started ledger。
+
+这只表示输入闭合，不表示运行或晋级：model17/course0 的真实 single-cell 仍是唯一
+已执行 cell，`course_executed=false`、`can_start_r6_formal=false`、`can_promote=false`
+保持。下一步先实现单 cell execution contract 的正式 ledger 写入和失败归因，再以同一
+runner 扩展 8 个 cell；不接 default runtime、provider、MCP、client 或 CUDA。

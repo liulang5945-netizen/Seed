@@ -72,6 +72,9 @@
         "model_seed": 17
       },
       "failure": null,
+      "fixed_large_artifact_digest": "7fb0802ffcc3c33d92ffa2879e014ddf34c9def71c692aadaef73e1cfd14af37",
+      "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_17/taiji_r6_k_fixed_large_ensemble.pt",
+      "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
       "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
       "phase_order": [
         "S",
@@ -149,6 +152,9 @@
         "model_seed": 17
       },
       "failure": null,
+      "fixed_large_artifact_digest": "7fb0802ffcc3c33d92ffa2879e014ddf34c9def71c692aadaef73e1cfd14af37",
+      "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_17/taiji_r6_k_fixed_large_ensemble.pt",
+      "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
       "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
       "phase_order": [
         "S",
@@ -226,6 +232,9 @@
         "model_seed": 17
       },
       "failure": null,
+      "fixed_large_artifact_digest": "7fb0802ffcc3c33d92ffa2879e014ddf34c9def71c692aadaef73e1cfd14af37",
+      "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_17/taiji_r6_k_fixed_large_ensemble.pt",
+      "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
       "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
       "phase_order": [
         "S",
@@ -303,6 +312,9 @@
         "model_seed": 23
       },
       "failure": null,
+      "fixed_large_artifact_digest": "d602e7efc0063cdbb2cc9474e23c24c050046d931632768680060c98a6b1f7b9",
+      "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_23/taiji_r6_k_fixed_large_ensemble.pt",
+      "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
       "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
       "phase_order": [
         "S",
@@ -380,6 +392,9 @@
         "model_seed": 23
       },
       "failure": null,
+      "fixed_large_artifact_digest": "d602e7efc0063cdbb2cc9474e23c24c050046d931632768680060c98a6b1f7b9",
+      "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_23/taiji_r6_k_fixed_large_ensemble.pt",
+      "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
       "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
       "phase_order": [
         "S",
@@ -457,6 +472,9 @@
         "model_seed": 23
       },
       "failure": null,
+      "fixed_large_artifact_digest": "d602e7efc0063cdbb2cc9474e23c24c050046d931632768680060c98a6b1f7b9",
+      "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_23/taiji_r6_k_fixed_large_ensemble.pt",
+      "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
       "parent_checkpoint_digest": "8b46f313dd63a3e1f612961c06ec5dd9c35d1091bcf8e82d52bcc4b0d8c822e4",
       "phase_order": [
         "S",
@@ -534,6 +552,9 @@
         "model_seed": 31
       },
       "failure": null,
+      "fixed_large_artifact_digest": "b69030c265e5a966813c4d6469349805dc7619b466a331e30cd98381c5f2cc1c",
+      "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_31/taiji_r6_k_fixed_large_ensemble.pt",
+      "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
       "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
       "phase_order": [
         "S",
@@ -611,6 +632,9 @@
         "model_seed": 31
       },
       "failure": null,
+      "fixed_large_artifact_digest": "b69030c265e5a966813c4d6469349805dc7619b466a331e30cd98381c5f2cc1c",
+      "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_31/taiji_r6_k_fixed_large_ensemble.pt",
+      "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
       "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
       "phase_order": [
         "S",
@@ -688,6 +712,9 @@
         "model_seed": 31
       },
       "failure": null,
+      "fixed_large_artifact_digest": "b69030c265e5a966813c4d6469349805dc7619b466a331e30cd98381c5f2cc1c",
+      "fixed_large_artifact_path": "checkpoints/taiji_k_fixed_large/model_31/taiji_r6_k_fixed_large_ensemble.pt",
+      "fixed_large_ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
       "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
       "phase_order": [
         "S",
@@ -710,15 +737,16 @@
   },
   "client_attached": false,
   "course_executed": false,
-  "created_at_unix": 1788963476.6976814,
+  "created_at_unix": 1788967013.1336348,
   "cuda_used": false,
   "default_runtime_attached": false,
-  "elapsed_seconds": 0.13483220001216978,
+  "elapsed_seconds": 0.16527110000606626,
   "failures": [],
+  "fixed_large_dir": "checkpoints/taiji_k_fixed_large",
   "formal_input_ready": true,
   "input_preflight_report": "reports/taiji_m4v2_r6_formal_input_manifest_preflight_20260909.json",
-  "input_preflight_report_digest": "02af0d780f4aeffe538ce87a090cc62a18052df70da24e30d400203a07de64b3",
-  "manifest_digest": "554c219ccc3f08c2a1483b9a9c1055235e6e0467b6d2dd5388d2c90637fa9dea",
+  "input_preflight_report_digest": "877d302d3442ce356251884db505272565c8f1354897ebffd9898c4c869ae79e",
+  "manifest_digest": "1e714a144be49202ee26876461cf10fb239839dbe9940b8386e8005a3dce6103",
   "manifest_path": "plans/manifests/taiji_m4v2_r6_formal_input_v1.json",
   "matrix": {
     "arms": [

@@ -468,4 +468,16 @@ paired resource ledger 已闭合：candidate/fixed-large 均有同方法 peak-RS
 
 9-cell resource validity/aggregate 合同已冻结：[M4V2_R6_RESOURCE_AGGREGATE_PREREGISTRATION_20260909.md](../../reference/M4V2_R6_RESOURCE_AGGREGATE_PREREGISTRATION_20260909.md)。它沿用 CPU、peak `1.25×`、wall-clock `1.5×`、完整 arm 字段和不可删除无效 cell 规则，并冻结 mean/min/max 与一侧 95% Student-t lower bound；不改变 candidate 主阈值，也不把 fixed-large 事后变成晋级阈值。
 
-**当前唯一下一步**：为 model23/31 生成并 preflight native fixed-large ensemble，扩展 content-addressed formal input registry；三 seed fixed-large 输入、fresh restore、source/holdout non-overlap 和 resource manifest 全部闭合前不运行 9-cell full formal、不接 default runtime、不引入 MCP/provider/client/CUDA。
+model23/31 的 native fixed-large ensemble 已生成并通过与 model17 相同的 artifact、
+parent/source/resource、fresh-restore 和 source/holdout non-overlap Gate；三 seed
+`fixed_large_registry` 已由 preflight 从 artifact 自动重建并纳入 content-addressed
+formal input manifest。formal input report 为 `status=passed`、`formal_input_ready=true`，
+formal runner 为 `status=input_ready`，9×5 ledger 已携带每个 model 的 fixed-large
+artifact/ensemble digest；model17/course0 single-cell 仍通过，paired resource ledger
+仍闭合。所有 execution/promotion 状态保持 `course_executed=false`、
+`can_start_r6_formal=false`、`can_promote=false`。
+
+**当前唯一下一步**：实现 model17/course0 的单 cell execution contract，把五臂
+S→G→K 的 baseline、K capability、causal lesion、resource、side-effect、
+checkpoint/rollback 和 failure attribution 写入冻结 ledger；单 cell 通过前不扩大到
+其余 8 cells、不运行 9-cell full formal、不接 default runtime/provider/MCP/client/CUDA。

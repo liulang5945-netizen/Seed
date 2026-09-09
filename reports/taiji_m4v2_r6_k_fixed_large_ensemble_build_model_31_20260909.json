@@ -1,0 +1,346 @@
+{
+  "artifact_digest": "b69030c265e5a966813c4d6469349805dc7619b466a331e30cd98381c5f2cc1c",
+  "artifact_path": "E:\\Seed\\checkpoints\\taiji_k_fixed_large\\model_31\\taiji_r6_k_fixed_large_ensemble.pt",
+  "can_promote": false,
+  "can_start_r6_formal": false,
+  "candidate_namespace": "taiji:k:fixed-large:model-31",
+  "client_attached": false,
+  "created_at_unix": 1788966708.231605,
+  "cuda_used": false,
+  "default_runtime_attached": false,
+  "elapsed_seconds": 16.223941499949433,
+  "ensemble_checkpoint_digest": "789bdc07465ac221ad2b68e4977a7b54567eba8b2894eb2e4beee4bdba714841",
+  "ensemble_checkpoint_gate": {
+    "artifact_fresh_restore": true,
+    "fresh_restore": true,
+    "owner_graph_digest": "b37434163e3aa0fee53d9eed34f13ed3ed544aab9bc49a657e55423773fe716a",
+    "parameter_count": 9666
+  },
+  "ensemble_width": 2,
+  "formal_holdout_task_seeds": [
+    0,
+    1,
+    2
+  ],
+  "k3_checkpoint_gate": {
+    "fresh_restore": true,
+    "source_digest": "c863a41f55259663ce2be510d694d01495b8198833a74504666a8e4c1402b1e5"
+  },
+  "mcp_attached": false,
+  "model_seed": 31,
+  "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+  "postfit_restore_gate": {
+    "3": {
+      "k1.semantic": true,
+      "k2.transition": true,
+      "k3.outcome_projection": true
+    },
+    "4": {
+      "k1.semantic": true,
+      "k2.transition": true,
+      "k3.outcome_projection": true
+    }
+  },
+  "prefit_checkpoint_gate": {
+    "3": {
+      "k1.semantic": {
+        "loaded_digest": "6931772756eb35d6da8ea9dbead8934a2626f92593eda89b45db5f8717ab1938",
+        "path": "E:\\Seed\\.tmp-m4v2-r6-k-worker-build\\course-9d93f3d14154413baac027514d076256\\prefit-checkpoints\\k1-semantic.pt",
+        "restored_digest": "6931772756eb35d6da8ea9dbead8934a2626f92593eda89b45db5f8717ab1938",
+        "roundtrip": true,
+        "saved_digest": "6931772756eb35d6da8ea9dbead8934a2626f92593eda89b45db5f8717ab1938",
+        "temporary_path_removed_after_run": true
+      },
+      "k2.transition": {
+        "loaded_digest": "8cca4792b6468723635812d3231081a1367e0b1f3c906d4045294ea6f2ec7fc4",
+        "path": "E:\\Seed\\.tmp-m4v2-r6-k-worker-build\\course-9d93f3d14154413baac027514d076256\\prefit-checkpoints\\k2-transition.pt",
+        "restored_digest": "8cca4792b6468723635812d3231081a1367e0b1f3c906d4045294ea6f2ec7fc4",
+        "roundtrip": true,
+        "saved_digest": "8cca4792b6468723635812d3231081a1367e0b1f3c906d4045294ea6f2ec7fc4",
+        "temporary_path_removed_after_run": true
+      },
+      "k3.outcome_projection": {
+        "checkpoint_digest": "a02d7049c40f9ec9a76777ad78fd6200e2c9f4b81f839824193a4d8b017206af",
+        "fresh_restore": true
+      }
+    },
+    "4": {
+      "k1.semantic": {
+        "loaded_digest": "65505f6f4cb5cfcbee01bb61b27877e545a73bf4ac3339b03072f81f5b1aec70",
+        "path": "E:\\Seed\\.tmp-m4v2-r6-k-worker-build\\course-8366444a4bff4d579e08cf273bfd6806\\prefit-checkpoints\\k1-semantic.pt",
+        "restored_digest": "65505f6f4cb5cfcbee01bb61b27877e545a73bf4ac3339b03072f81f5b1aec70",
+        "roundtrip": true,
+        "saved_digest": "65505f6f4cb5cfcbee01bb61b27877e545a73bf4ac3339b03072f81f5b1aec70",
+        "temporary_path_removed_after_run": true
+      },
+      "k2.transition": {
+        "loaded_digest": "c1f7b932a8ea7f92964d6d8e5a37e57b2280af43101a9a196e067f05f5f38c80",
+        "path": "E:\\Seed\\.tmp-m4v2-r6-k-worker-build\\course-8366444a4bff4d579e08cf273bfd6806\\prefit-checkpoints\\k2-transition.pt",
+        "restored_digest": "c1f7b932a8ea7f92964d6d8e5a37e57b2280af43101a9a196e067f05f5f38c80",
+        "roundtrip": true,
+        "saved_digest": "c1f7b932a8ea7f92964d6d8e5a37e57b2280af43101a9a196e067f05f5f38c80",
+        "temporary_path_removed_after_run": true
+      },
+      "k3.outcome_projection": {
+        "checkpoint_digest": "e7514ccc6d7dc193d30a375ed3d35c380e38446269360cd386609f61d6d87200",
+        "fresh_restore": true
+      }
+    }
+  },
+  "provider_attached": false,
+  "replica_reports": [
+    {
+      "artifact_digests": {
+        "k1.semantic": "0d249bbf75bc694a63e8f65cbffc16ed087032dc4d25bfdf41d3e5b3be26bb2a",
+        "k2.transition": "4e150a12b6825e9cb2dd4bc5622356058e143fd1789171a18c45918f39cbe07c",
+        "k3.outcome_projection": "fe8c327754384962b48d59448c573aec2913026f952a095b01be8ba6d77be0ac"
+      },
+      "artifact_paths": {
+        "k1.semantic": "E:\\Seed\\checkpoints\\taiji_k_fixed_large\\model_31\\replicas\\task_3\\taiji_r6_k1_semantic.pt",
+        "k2.transition": "E:\\Seed\\checkpoints\\taiji_k_fixed_large\\model_31\\replicas\\task_3\\taiji_r6_k2_transition.pt",
+        "k3.outcome_projection": "E:\\Seed\\checkpoints\\taiji_k_fixed_large\\model_31\\replicas\\task_3\\taiji_r6_k3_outcome_projection.pt"
+      },
+      "candidate_namespace": "taiji:k:fixed-large:model-31:replica-3",
+      "client_attached": false,
+      "created_at_unix": 1788966704.821333,
+      "cuda_used": false,
+      "default_runtime_attached": false,
+      "elapsed_seconds": 3.3709013999905437,
+      "losses": {
+        "k1.semantic": {
+          "content_loss": 2.832164227584144e-06,
+          "fact_loss": 0.036545127630233765,
+          "goal_loss": 1.1518560313561466e-05
+        },
+        "k2.transition": {
+          "content_loss": 4.566370262182318e-05,
+          "goal_loss": 0.00011482585250632837,
+          "transition_loss": 0.005315158516168594
+        }
+      },
+      "mcp_attached": false,
+      "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+      "postfit_restore_gate": {
+        "k1.semantic": true,
+        "k2.transition": true,
+        "k3.outcome_projection": true
+      },
+      "prefit_checkpoint_gate": {
+        "k1.semantic": {
+          "loaded_digest": "6931772756eb35d6da8ea9dbead8934a2626f92593eda89b45db5f8717ab1938",
+          "path": "E:\\Seed\\.tmp-m4v2-r6-k-worker-build\\course-9d93f3d14154413baac027514d076256\\prefit-checkpoints\\k1-semantic.pt",
+          "restored_digest": "6931772756eb35d6da8ea9dbead8934a2626f92593eda89b45db5f8717ab1938",
+          "roundtrip": true,
+          "saved_digest": "6931772756eb35d6da8ea9dbead8934a2626f92593eda89b45db5f8717ab1938",
+          "temporary_path_removed_after_run": true
+        },
+        "k2.transition": {
+          "loaded_digest": "8cca4792b6468723635812d3231081a1367e0b1f3c906d4045294ea6f2ec7fc4",
+          "path": "E:\\Seed\\.tmp-m4v2-r6-k-worker-build\\course-9d93f3d14154413baac027514d076256\\prefit-checkpoints\\k2-transition.pt",
+          "restored_digest": "8cca4792b6468723635812d3231081a1367e0b1f3c906d4045294ea6f2ec7fc4",
+          "roundtrip": true,
+          "saved_digest": "8cca4792b6468723635812d3231081a1367e0b1f3c906d4045294ea6f2ec7fc4",
+          "temporary_path_removed_after_run": true
+        },
+        "k3.outcome_projection": {
+          "checkpoint_digest": "a02d7049c40f9ec9a76777ad78fd6200e2c9f4b81f839824193a4d8b017206af",
+          "fresh_restore": true
+        }
+      },
+      "provider_attached": false,
+      "report_format": "taiji-m4v2-r6-k-worker-artifact-build-v1",
+      "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+      "source_manifest_digest": "a3c00be267fbf4116b9b4e87049f550f373951d864253359fe40150501219e0f",
+      "status": "passed",
+      "training_performed": true,
+      "version": 1,
+      "worker_checkpoint_digests": {
+        "k1.semantic": "b2af3e13decf27ed500dd2e23fa6dcad192251a85bbbd930e123233fa105bb0b",
+        "k2.transition": "860bfe8d31ab18361a0ce0738cedd7318c53c943d367ecc44687855b45b10b38",
+        "k3.outcome_projection": "a02d7049c40f9ec9a76777ad78fd6200e2c9f4b81f839824193a4d8b017206af"
+      },
+      "worker_training_steps": {
+        "k1.semantic": 2080,
+        "k2.transition": 5040,
+        "k3.outcome_projection": 0
+      }
+    },
+    {
+      "artifact_digests": {
+        "k1.semantic": "1a39e0e2564eb971481a43524056f3a0fefdff067c588b22704dee3d3a17a459",
+        "k2.transition": "b35c49d75d7f6323c1c5bd422b2e065415b26829d2795f518b4585e373e73778",
+        "k3.outcome_projection": "cc72504fe8a02212007f9b0d9f0385468a84e05be2dbdf573298dfedd8cb36a9"
+      },
+      "artifact_paths": {
+        "k1.semantic": "E:\\Seed\\checkpoints\\taiji_k_fixed_large\\model_31\\replicas\\task_4\\taiji_r6_k1_semantic.pt",
+        "k2.transition": "E:\\Seed\\checkpoints\\taiji_k_fixed_large\\model_31\\replicas\\task_4\\taiji_r6_k2_transition.pt",
+        "k3.outcome_projection": "E:\\Seed\\checkpoints\\taiji_k_fixed_large\\model_31\\replicas\\task_4\\taiji_r6_k3_outcome_projection.pt"
+      },
+      "candidate_namespace": "taiji:k:fixed-large:model-31:replica-4",
+      "client_attached": false,
+      "created_at_unix": 1788966708.1857486,
+      "cuda_used": false,
+      "default_runtime_attached": false,
+      "elapsed_seconds": 3.3601118000224233,
+      "losses": {
+        "k1.semantic": {
+          "content_loss": 2.832164227584144e-06,
+          "fact_loss": 0.036545127630233765,
+          "goal_loss": 1.1518560313561466e-05
+        },
+        "k2.transition": {
+          "content_loss": 4.566370262182318e-05,
+          "goal_loss": 0.00011482585250632837,
+          "transition_loss": 0.005315158516168594
+        }
+      },
+      "mcp_attached": false,
+      "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+      "postfit_restore_gate": {
+        "k1.semantic": true,
+        "k2.transition": true,
+        "k3.outcome_projection": true
+      },
+      "prefit_checkpoint_gate": {
+        "k1.semantic": {
+          "loaded_digest": "65505f6f4cb5cfcbee01bb61b27877e545a73bf4ac3339b03072f81f5b1aec70",
+          "path": "E:\\Seed\\.tmp-m4v2-r6-k-worker-build\\course-8366444a4bff4d579e08cf273bfd6806\\prefit-checkpoints\\k1-semantic.pt",
+          "restored_digest": "65505f6f4cb5cfcbee01bb61b27877e545a73bf4ac3339b03072f81f5b1aec70",
+          "roundtrip": true,
+          "saved_digest": "65505f6f4cb5cfcbee01bb61b27877e545a73bf4ac3339b03072f81f5b1aec70",
+          "temporary_path_removed_after_run": true
+        },
+        "k2.transition": {
+          "loaded_digest": "c1f7b932a8ea7f92964d6d8e5a37e57b2280af43101a9a196e067f05f5f38c80",
+          "path": "E:\\Seed\\.tmp-m4v2-r6-k-worker-build\\course-8366444a4bff4d579e08cf273bfd6806\\prefit-checkpoints\\k2-transition.pt",
+          "restored_digest": "c1f7b932a8ea7f92964d6d8e5a37e57b2280af43101a9a196e067f05f5f38c80",
+          "roundtrip": true,
+          "saved_digest": "c1f7b932a8ea7f92964d6d8e5a37e57b2280af43101a9a196e067f05f5f38c80",
+          "temporary_path_removed_after_run": true
+        },
+        "k3.outcome_projection": {
+          "checkpoint_digest": "e7514ccc6d7dc193d30a375ed3d35c380e38446269360cd386609f61d6d87200",
+          "fresh_restore": true
+        }
+      },
+      "provider_attached": false,
+      "report_format": "taiji-m4v2-r6-k-worker-artifact-build-v1",
+      "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+      "source_manifest_digest": "d581351a633554beb94373499c03a3bf11d82aac0d34db2d2eb39eef48a1b8aa",
+      "status": "passed",
+      "training_performed": true,
+      "version": 1,
+      "worker_checkpoint_digests": {
+        "k1.semantic": "af60e816b2df588eb0f89558f52d1ad64164c87ab890153167917ebaf0c2c09b",
+        "k2.transition": "bba735fb5d086123750ecbbc2e6150749df7043c7336bf70b6aa16356cde6afb",
+        "k3.outcome_projection": "e7514ccc6d7dc193d30a375ed3d35c380e38446269360cd386609f61d6d87200"
+      },
+      "worker_training_steps": {
+        "k1.semantic": 2080,
+        "k2.transition": 5040,
+        "k3.outcome_projection": 0
+      }
+    }
+  ],
+  "replicas": [
+    {
+      "k1": {
+        "artifact_digest": "0d249bbf75bc694a63e8f65cbffc16ed087032dc4d25bfdf41d3e5b3be26bb2a",
+        "candidate_namespace": "taiji:k:fixed-large:model-31:replica-3",
+        "optimizer_state_present": false,
+        "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+        "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+        "source_digest": "3c0b357154fe6bc95c94a469f533e7c9147f289f124b6acb0b2a3e1c983eb66c",
+        "source_manifest_digest": "a3c00be267fbf4116b9b4e87049f550f373951d864253359fe40150501219e0f",
+        "training_steps": 2080,
+        "worker_checkpoint_digest": "b2af3e13decf27ed500dd2e23fa6dcad192251a85bbbd930e123233fa105bb0b",
+        "worker_id": "k1.semantic",
+        "worker_training_task_seed": 3
+      },
+      "k2": {
+        "artifact_digest": "4e150a12b6825e9cb2dd4bc5622356058e143fd1789171a18c45918f39cbe07c",
+        "candidate_namespace": "taiji:k:fixed-large:model-31:replica-3",
+        "optimizer_state_present": false,
+        "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+        "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+        "source_digest": "0f0bead69962276135d2202493dee5349099fcccbf7b1fc29a5042ea4e53ed63",
+        "source_manifest_digest": "a3c00be267fbf4116b9b4e87049f550f373951d864253359fe40150501219e0f",
+        "training_steps": 5040,
+        "worker_checkpoint_digest": "860bfe8d31ab18361a0ce0738cedd7318c53c943d367ecc44687855b45b10b38",
+        "worker_id": "k2.transition",
+        "worker_training_task_seed": 3
+      },
+      "k3": {
+        "artifact_digest": "fe8c327754384962b48d59448c573aec2913026f952a095b01be8ba6d77be0ac",
+        "candidate_namespace": "taiji:k:fixed-large:model-31:replica-3",
+        "optimizer_state_present": false,
+        "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+        "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+        "source_digest": "42c0b914fedb083606892841ef37fa3f709e591ae4fd2ce642c086961ee12c9f",
+        "source_manifest_digest": "a3c00be267fbf4116b9b4e87049f550f373951d864253359fe40150501219e0f",
+        "training_steps": 0,
+        "worker_checkpoint_digest": "a02d7049c40f9ec9a76777ad78fd6200e2c9f4b81f839824193a4d8b017206af",
+        "worker_id": "k3.outcome_projection",
+        "worker_training_task_seed": 3
+      },
+      "task_seed": 3
+    },
+    {
+      "k1": {
+        "artifact_digest": "1a39e0e2564eb971481a43524056f3a0fefdff067c588b22704dee3d3a17a459",
+        "candidate_namespace": "taiji:k:fixed-large:model-31:replica-4",
+        "optimizer_state_present": false,
+        "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+        "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+        "source_digest": "0ff84a808d986146434205ebb244b6b09944d6abd5008704026d83f90c61f62a",
+        "source_manifest_digest": "d581351a633554beb94373499c03a3bf11d82aac0d34db2d2eb39eef48a1b8aa",
+        "training_steps": 2080,
+        "worker_checkpoint_digest": "af60e816b2df588eb0f89558f52d1ad64164c87ab890153167917ebaf0c2c09b",
+        "worker_id": "k1.semantic",
+        "worker_training_task_seed": 4
+      },
+      "k2": {
+        "artifact_digest": "b35c49d75d7f6323c1c5bd422b2e065415b26829d2795f518b4585e373e73778",
+        "candidate_namespace": "taiji:k:fixed-large:model-31:replica-4",
+        "optimizer_state_present": false,
+        "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+        "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+        "source_digest": "31bfe7532fe248c0e017ea58a8d29df3bacfc3bb471ac55b1a15267f60b1100a",
+        "source_manifest_digest": "d581351a633554beb94373499c03a3bf11d82aac0d34db2d2eb39eef48a1b8aa",
+        "training_steps": 5040,
+        "worker_checkpoint_digest": "bba735fb5d086123750ecbbc2e6150749df7043c7336bf70b6aa16356cde6afb",
+        "worker_id": "k2.transition",
+        "worker_training_task_seed": 4
+      },
+      "k3": {
+        "artifact_digest": "cc72504fe8a02212007f9b0d9f0385468a84e05be2dbdf573298dfedd8cb36a9",
+        "candidate_namespace": "taiji:k:fixed-large:model-31:replica-4",
+        "optimizer_state_present": false,
+        "parent_checkpoint_digest": "c3e21dcab542e04153f07236af8ea2b614334d44af04df8f75768fdef4957732",
+        "resource_manifest_digest": "f192d459487edbfa9b0b2042b6add09d2389a9d44a48df9b4cdf6a061421a2a1",
+        "source_digest": "322ea602479ab82d4aff6b35a7ed15dc394dca12e696b9c34d6984bdff365fdc",
+        "source_manifest_digest": "d581351a633554beb94373499c03a3bf11d82aac0d34db2d2eb39eef48a1b8aa",
+        "training_steps": 0,
+        "worker_checkpoint_digest": "e7514ccc6d7dc193d30a375ed3d35c380e38446269360cd386609f61d6d87200",
+        "worker_id": "k3.outcome_projection",
+        "worker_training_task_seed": 4
+      },
+      "task_seed": 4
+    }
+  ],
+  "report_format": "taiji-m4v2-r6-k-fixed-large-ensemble-build-v1",
+  "resource_manifest_digest": "3c8c8a375db46a79a66c60dcb1adf2c56fb63dc273545eb150123fb3ae3bfcc4",
+  "source_manifest_digest": "d7d99348fc35b9ae2803c5d36eb20a983e2d13a089e17f74443165436b41b3cf",
+  "source_observation_overlap": {
+    "paths": [],
+    "semantic_input_digests": [],
+    "transition_input_digests": []
+  },
+  "status": "passed",
+  "training_performed": true,
+  "version": 1,
+  "worker_training_task_seeds": [
+    3,
+    4
+  ]
+}

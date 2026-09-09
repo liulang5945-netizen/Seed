@@ -100,6 +100,8 @@ bound 等于 mean。任何 cell 缺失、无效或提前停止时 aggregate 状�
 - 任何 full formal 结果试图在 `can_promote=false` 下接 default runtime、provider、
   MCP、client 或 CUDA：停止并归类 side-effect gate。
 
-当前唯一下一步：**为 model23/31 生成并 preflight native fixed-large ensemble，扩展
-content-addressed formal input registry；完成三 seed fixed-large 输入闭合前不运行
-9-cell full formal。**
+model17/23/31 的 fixed-large artifact、source/resource manifest、fresh restore 和
+non-overlap 已全部纳入 content-addressed formal input registry，preflight 已通过。
+当前唯一下一步：**实现 model17/course0 的单 cell execution contract**，在不扩大矩阵
+的前提下逐臂落盘 S→G→K、causal/resource/side-effect/checkpoint/rollback 与失败归因；
+该 cell 通过前不运行其余 8 cells，不接 default runtime、provider、MCP、client 或 CUDA。

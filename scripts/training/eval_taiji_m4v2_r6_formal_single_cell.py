@@ -35,9 +35,6 @@ from scripts.training.eval_taiji_m4v2_r6_formal_input_manifest_preflight import 
     run_preflight as run_input_preflight,
 )
 from scripts.training.eval_taiji_m4v2_r6_k_fixed_large_canary import (  # noqa: E402
-    DEFAULT_ARTIFACT as DEFAULT_FIXED_LARGE_ARTIFACT,
-)
-from scripts.training.eval_taiji_m4v2_r6_k_fixed_large_canary import (  # noqa: E402
     run_canary as run_fixed_large_canary,
 )
 from scripts.training.eval_taiji_m4v2_r6_k_worker_controlled_canary import (  # noqa: E402
@@ -492,6 +489,11 @@ def run_single_cell(
     worker_entry = next(
         item for item in manifest["worker_registry"] if int(item["model_seed"]) == MODEL_SEED
     )
+    fixed_large_entry = next(
+        item
+        for item in manifest["fixed_large_registry"]
+        if int(item["model_seed"]) == MODEL_SEED
+    )
     parent_path = _resolve_repo_path(parent_entry["checkpoint_path"])
     parent = _load_mapping(parent_path)
     parent_digest = str(parent_entry["checkpoint_digest"])
@@ -512,7 +514,7 @@ def run_single_cell(
             arm="candidate-continuation",
         ),
         "fixed-large": _fixed_large_control_arm(
-            artifact_path=DEFAULT_FIXED_LARGE_ARTIFACT,
+            artifact_path=_resolve_repo_path(fixed_large_entry["artifact_path"]),
             parent=parent,
             parent_digest=parent_digest,
         ),
@@ -547,6 +549,10 @@ def run_single_cell(
         "cell": {"model_seed": MODEL_SEED, "course_seed": COURSE_SEED},
         "parent_checkpoint_digest": parent_digest,
         "worker_bundle_digest": worker_entry["bundle_digest"],
+        "fixed_large_artifact_digest": fixed_large_entry["artifact_digest"],
+        "fixed_large_ensemble_checkpoint_digest": fixed_large_entry[
+            "ensemble_checkpoint_digest"
+        ],
         "input_preflight_status": input_gate["status"],
         "arms": arms,
         "paired_comparison": paired_comparison,

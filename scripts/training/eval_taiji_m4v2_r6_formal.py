@@ -25,6 +25,7 @@ if str(PROJECT_ROOT) not in sys.path:
 from scripts.training.eval_taiji_m4v2_r6_formal_input_manifest_preflight import (  # noqa: E402
     ARM_IDS,
     COURSE_SEEDS,
+    DEFAULT_FIXED_LARGE_DIR,
     DEFAULT_MANIFEST,
     DEFAULT_PARENT_DIR,
     DEFAULT_WORKER_DIR,
@@ -91,10 +92,16 @@ def _cell_ledger(manifest: Mapping[str, Any]) -> list[dict[str, Any]]:
         for entry in manifest["worker_registry"]
         if isinstance(entry, Mapping)
     }
+    fixed_large = {
+        int(entry["model_seed"]): entry
+        for entry in manifest["fixed_large_registry"]
+        if isinstance(entry, Mapping)
+    }
     cells: list[dict[str, Any]] = []
     for model_seed in MODEL_SEEDS:
         parent = parents[model_seed]
         worker = workers[model_seed]
+        fixed_large_entry = fixed_large[model_seed]
         for course_seed in COURSE_SEEDS:
             cell = {"model_seed": int(model_seed), "course_seed": int(course_seed)}
             cells.append(
@@ -103,6 +110,11 @@ def _cell_ledger(manifest: Mapping[str, Any]) -> list[dict[str, Any]]:
                     "status": "not_started",
                     "parent_checkpoint_digest": str(parent["checkpoint_digest"]),
                     "worker_bundle_digest": str(worker["bundle_digest"]),
+                    "fixed_large_artifact_path": str(fixed_large_entry["artifact_path"]),
+                    "fixed_large_artifact_digest": str(fixed_large_entry["artifact_digest"]),
+                    "fixed_large_ensemble_checkpoint_digest": str(
+                        fixed_large_entry["ensemble_checkpoint_digest"]
+                    ),
                     "phase_order": list(PHASE_ORDER),
                     "arms": [
                         {
@@ -132,6 +144,7 @@ def run_preflight(
     input_report_path: Path = DEFAULT_INPUT_REPORT,
     parent_dir: Path = DEFAULT_PARENT_DIR,
     worker_dir: Path = DEFAULT_WORKER_DIR,
+    fixed_large_dir: Path = DEFAULT_FIXED_LARGE_DIR,
 ) -> dict[str, Any]:
     started = time.perf_counter()
     manifest_path = manifest_path.resolve()
@@ -139,12 +152,14 @@ def run_preflight(
     input_report_path = input_report_path.resolve()
     parent_dir = parent_dir.resolve()
     worker_dir = worker_dir.resolve()
+    fixed_large_dir = fixed_large_dir.resolve()
     input_report = run_input_preflight(
         manifest_path=manifest_path,
         report_path=input_report_path,
         materialize_parents=False,
         parent_dir=parent_dir,
         worker_dir=worker_dir,
+        fixed_large_dir=fixed_large_dir,
     )
     failures = [copy.deepcopy(item) for item in input_report.get("failures", [])]
     manifest: dict[str, Any] | None = None
@@ -198,6 +213,7 @@ def run_preflight(
         "input_preflight_report_digest": content_digest(input_report),
         "parent_dir": _relative_path(parent_dir),
         "worker_dir": _relative_path(worker_dir),
+        "fixed_large_dir": _relative_path(fixed_large_dir),
         "matrix": {
             "model_seeds": list(MODEL_SEEDS),
             "course_seeds": list(COURSE_SEEDS),
@@ -241,6 +257,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--input-report", type=Path, default=DEFAULT_INPUT_REPORT)
     parser.add_argument("--parent-dir", type=Path, default=DEFAULT_PARENT_DIR)
     parser.add_argument("--worker-dir", type=Path, default=DEFAULT_WORKER_DIR)
+    parser.add_argument("--fixed-large-dir", type=Path, default=DEFAULT_FIXED_LARGE_DIR)
     args = parser.parse_args(argv)
     manifest_path = args.manifest if args.manifest.is_absolute() else PROJECT_ROOT / args.manifest
     report_path = args.report if args.report.is_absolute() else PROJECT_ROOT / args.report
@@ -249,12 +266,18 @@ def main(argv: list[str] | None = None) -> int:
     )
     parent_dir = args.parent_dir if args.parent_dir.is_absolute() else PROJECT_ROOT / args.parent_dir
     worker_dir = args.worker_dir if args.worker_dir.is_absolute() else PROJECT_ROOT / args.worker_dir
+    fixed_large_dir = (
+        args.fixed_large_dir
+        if args.fixed_large_dir.is_absolute()
+        else PROJECT_ROOT / args.fixed_large_dir
+    )
     report = run_preflight(
         manifest_path=manifest_path,
         report_path=report_path,
         input_report_path=input_report_path,
         parent_dir=parent_dir,
         worker_dir=worker_dir,
+        fixed_large_dir=fixed_large_dir,
     )
     print(
         json.dumps(
