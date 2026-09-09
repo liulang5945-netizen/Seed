@@ -78,7 +78,13 @@ def _evaluate(
 
     for index, symbol in enumerate(sequence[:-1]):
         if symbol != PROBE:
-            model.observe(symbol, learn=False)
+            model.observe(
+                symbol,
+                learn=False,
+                readout="predictive",
+                use_memory=False,
+                use_identity=False,
+            )
             continue
 
         target = int(sequence[index + 1])
@@ -94,7 +100,13 @@ def _evaluate(
         pre_trace[target].append(torch.cat([region.trace for region in state.regions]))
         if mode != "full":
             _intervene(model, mode, index)
-        step = model.observe(symbol, learn=False)
+        step = model.observe(
+            symbol,
+            learn=False,
+            readout="predictive",
+            use_memory=False,
+            use_identity=False,
+        )
         hit = int(step.predicted_symbol == target)
         hits.append(hit)
         rows.append(

@@ -222,3 +222,6 @@ CI 交付层第一轮静态审计已完成：版本检查、主 Ruff、B/SIM、c
 CI 动态 verify 的 v7/N7 首批已闭合：两者均为旧评估器默认 action readout 与当前 F1 predictive 学习合同错位，已分别修复 active episode 续接和显式 predictive 评估。v7 全部 native/storage/checkpoint Gate 通过；N7 二阶 ambiguous accuracy `1.0`、相对两项 causal control 增益 `0.5`。没有放宽模型或阈值。
 
 当前唯一出口：继续跑 N8 delayed trace verify，保持 organ/readout owner 边界和 R4 shadow/默认 parent 不变。
+N8 delayed trace verify 已闭合：统一 predictive organ 后 full/trace-only 均 `1.0`，no-trace/all-state 均 `0.5`，trace 因果必要性与充分性 gap 均 `0.5`。该修复只对齐评估 owner，不改变模型结构或 Gate 阈值。
+
+当前唯一出口：继续跑 N9 long free-running stability verify；保持 R4 shadow/默认 parent 不变。
