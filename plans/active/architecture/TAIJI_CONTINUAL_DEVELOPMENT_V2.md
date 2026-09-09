@@ -250,3 +250,7 @@ grounded internalization S1 canary 已通过：native consolidation 改善未见
 coverage/junit 门禁已闭合：`1070 passed, 6 skipped, 1 warning`，总覆盖率 `57.73%`，超过 `21.8% fail_under`，报告生成成功。当前只剩提交后的静态门禁复核；R4 shadow/默认 parent 与 F1/F2 owner 边界不变。
 
 当前唯一出口：执行最终版本、Ruff/B-SIM、core mypy、编译和 diff 门禁；Black 若仍被本机 Windows worker/ACL 阻塞则单独记录。
+
+最终静态复核已完成：版本、Ruff、B/SIM、core mypy `0/95`、编译和 diff 均通过；Black 仅因本机历史目录 ACL/worker 无输出而未能验证，不能视为源码格式已通过。CI 的前端 job 尚未在本机复现。
+
+当前唯一出口：执行前端 CI job 的完整本地等价门禁；保持 R4 shadow/默认 parent 与 F1/F2 owner 边界不变。
