@@ -408,4 +408,6 @@ A8 K 轴 scorecard 已完成：`reports/taiji_m5_k_axis_scorecard_20260909.json`
 
 K3 预注册已完成：[M5_K3_OUTCOME_WORLD_DEPENDENCY_PREREGISTRATION_20260909.md](../../reference/M5_K3_OUTCOME_WORLD_DEPENDENCY_PREREGISTRATION_20260909.md)。实际缺口已冻结为：runtime 已记录 `WorkbenchTaijiEvidence → WorldEvent`，但 K2 只把真实 outcome 用于 S6B 准入，下一步仍消费预测 `after_world`；K3 必须验证 typed outcome/dependency projection 是否真正进入下一步 world、任务依赖和 lineage gate。三臂固定为 A full-feedback、B no-feedback、C outcome-lesion；真实 success/failure、checkpoint/restore、stale/duplicate/cross-episode fail-closed 都是技术门，`can_promote=false` 固定。
 
-**当前唯一下一步**：实现并单测 Taiji-owned typed outcome/dependency projection（先 checkpoint/restore/lesion，再 canary），复用 K2 与 S6B 的既有 owner，不引入 MCP/provider/client/CUDA，不改 K1/K2 判据，不接入默认 runtime。
+K3 projection contract 已实现并单测：`taiji/outcome_dependency.py` 提供 content-addressed outcome/dependency projection、同 tick world enrichment、checkpoint/restore 和 lesion/stale/duplicate/cross-scope fail-closed；定向 7/7、K2/执行回归 13/13、ruff/py_compile/mypy 通过。工作台全量回归的剩余阻断是本机 pytest temp ACL，不是 projection 断言失败。projection 仍是 shadow，尚未接入 runtime 或执行 canary。
+
+**当前唯一下一步**：实现 K3 单 cell canary——复用 K2 workspace/semantic/transition/planner 和 S6B outcome 链，接入 projection 的 A/B/C 三臂与 dependency lineage gate；先跑静态检查和单 cell，不写 formal、不接默认 runtime、不引入 MCP/provider/client/CUDA。

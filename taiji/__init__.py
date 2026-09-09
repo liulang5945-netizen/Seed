@@ -366,6 +366,13 @@ from .internalization import (
     ReplayBuffer,
     content_digest,
 )
+from .outcome_dependency import (
+    OUTCOME_DEPENDENCY_PROJECTION_FORMAT,
+    OUTCOME_DEPENDENCY_PROJECTION_VERSION,
+    OutcomeDependencyProjector,
+    OutcomeDependencyProjection,
+    OutcomeDependencySpec,
+)
 from .internalization_learner import (
     INTERNALIZATION_LEARNER_CHECKPOINT_FORMAT,
     InternalizationLearningReport,
@@ -1009,6 +1016,11 @@ __all__ = [
     "InternalizationLifecycleRecord",
     "ReplayBuffer",
     "content_digest",
+    "OUTCOME_DEPENDENCY_PROJECTION_FORMAT",
+    "OUTCOME_DEPENDENCY_PROJECTION_VERSION",
+    "OutcomeDependencyProjector",
+    "OutcomeDependencyProjection",
+    "OutcomeDependencySpec",
     "INTERNALIZATION_LEARNER_CHECKPOINT_FORMAT",
     "InternalizationLearningReport",
     "InternalizedFeatureLearner",

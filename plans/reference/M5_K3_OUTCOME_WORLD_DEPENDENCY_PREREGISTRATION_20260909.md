@@ -173,3 +173,12 @@ K3 canary 的 `can_promote=false` 固定。只有 canary 通过后才允许另�
 
 K3 不证明开放域语言能力、通用规划、Skill/MCP 内化后的智能、自主写入客户端、CUDA 性能或“大模型规模增长”。它只验证一个更基础但不可省略的闭环：**真实行动结果能否以可验证的 typed world/dependency 形式被下一步 Taiji 认知消费，并在移除该反馈时出现可重复的因果退化。**
 
+## 9. 实施记录（2026-09-09）
+
+第一步 projection contract 已落地，但尚未运行 K3 canary：
+
+- `taiji/outcome_dependency.py` 新增 `OutcomeDependencySpec`、`OutcomeDependencyProjection` 和 `OutcomeDependencyProjector`；owner 只接受 typed `WorldEvent`，生成 outcome signature、dependency digest、facts、lineage，并在同 tick enrich `WorldState`；
+- checkpoint 带 content digest，projection payload 带 content digest；restore、stale tick、wrong outcome、event identity conflict、duplicate dependency、cross-scope 和 lesion 均 fail-closed；
+- `tests/taiji_native/test_m5_k3_outcome_dependency.py`：7/7 通过；K2 transition binding + executive 回归：13/13 通过；ruff、py_compile、mypy 通过；
+- `tests/test_workbench_contract.py` 的复核仍被本机 pytest 临时目录 ACL 阻断（5 个测试实际进入执行，43 个在 `tmp_path` setup 阶段失败），没有出现由本次 projection 断言引起的失败；
+- projection 尚未接入 `SeedRuntime`、planner 或默认 runtime，也尚未运行 K3 canary；`can_promote=false` 不变。
