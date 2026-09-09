@@ -225,3 +225,6 @@ CI 动态 verify 的 v7/N7 首批已闭合：两者均为旧评估器默认 acti
 N8 delayed trace verify 已闭合：统一 predictive organ 后 full/trace-only 均 `1.0`，no-trace/all-state 均 `0.5`，trace 因果必要性与充分性 gap 均 `0.5`。该修复只对齐评估 owner，不改变模型结构或 Gate 阈值。
 
 当前唯一出口：继续跑 N9 long free-running stability verify；保持 R4 shadow/默认 parent 不变。
+N9 长程自由运行已闭合：显式 predictive organ 后 128 步 exact cycle、accuracy `1.0`，状态边界、有限性、动作集合和 public/instrumented 一致性全部通过；没有修改模型稳定性参数。
+
+当前唯一出口：继续跑 N10 sparse-kernel migration verify，保持 R4 shadow/默认 parent 不变。

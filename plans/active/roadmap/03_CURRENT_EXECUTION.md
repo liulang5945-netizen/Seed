@@ -273,3 +273,6 @@ CI 动态 verify 首批已修复并通过：v7 原因是 `generate()` 后仍处�
 N8 delayed trace verify 已通过：旧脚本原先用 action readout 评估 F1 训练结果，现让完整流、no-trace、trace-only 与 all-state lesion 统一显式走 predictive 且关闭 memory/identity。full 与 trace-only accuracy 均为 `1.0`，no-trace/all-state 为 `0.5`，trace necessity/sufficiency gap 均为 `0.5`，未改模型或门槛。
 
 **当前唯一下一步**：继续执行 workflow 的 N9 long free-running stability verify。
+N9 long free-run verify 已通过：旧脚本的 instrumented loop 原先仍走 action readout，修正为 predictive 且关闭 memory/identity 后，128 步 exact cycle、accuracy `1.0`、无 invalid/boundary action，膜电位/trace/threshold 边界、finite-state 和 public generate 对齐全部通过。
+
+**当前唯一下一步**：继续执行 workflow 的 N10 sparse-kernel migration verify。
