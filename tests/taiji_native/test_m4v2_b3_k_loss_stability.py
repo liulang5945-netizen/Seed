@@ -22,6 +22,7 @@ def test_b3_k_loss_stability_uses_three_same_parent_cells() -> None:
     assert report["train_episode_indexes"] == [0, 1, 2]
     assert report["technical_gate_passed"] is True
     assert report["can_promote"] is False
+    assert report["no_update_control_passed"] is True
 
 
 def test_b3_k_loss_stability_exposes_course_sensitivity_without_formal_promotion() -> None:
@@ -35,6 +36,12 @@ def test_b3_k_loss_stability_exposes_course_sensitivity_without_formal_promotion
     assert report["combined_loss_delta_by_course_seed"]["0"] < 0.0
     assert report["combined_loss_delta_by_course_seed"]["1"] > 0.0
     assert report["combined_loss_delta_by_course_seed"]["2"] > 0.0
+    assert all(
+        cell["report"]["checks"]["no_update_control"]
+        and cell["report"]["parameter_delta_norm"]["k1.semantic"] > 0.0
+        and cell["report"]["parameter_delta_norm"]["k2.transition"] > 0.0
+        for cell in report["cells"]
+    )
     assert len(set(report["train_experience_digests"])) == 3
     assert all(
         cell["report"]["checks"]["candidate_checkpoint_fresh_restore"]

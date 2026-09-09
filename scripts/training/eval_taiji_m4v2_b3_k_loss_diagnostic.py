@@ -180,6 +180,18 @@ def _loss_score(
     return means
 
 
+def _parameter_delta_norm(before, after) -> float:
+    total = torch.zeros((), dtype=torch.float64)
+    for before_parameter, after_parameter in zip(
+        before.parameters(), after.parameters(), strict=True
+    ):
+        difference = after_parameter.detach().to(dtype=torch.float64) - before_parameter.detach().to(
+            dtype=torch.float64
+        )
+        total += torch.sum(difference * difference)
+    return float(torch.sqrt(total).item())
+
+
 def run_diagnostic(
     *,
     artifact_dir: Path = DEFAULT_ARTIFACT_DIR,
@@ -326,6 +338,19 @@ def run_diagnostic(
             holdout=holdout_experiences,
         )
         loss_before = _loss_score(semantic_parent, transition_parent, course.holdout)
+        train_loss_before = _loss_score(
+            semantic_parent, transition_parent, course.train
+        )
+        control_semantic = StructuredSemanticLearner.from_checkpoint(
+            copy.deepcopy(semantic_parent_payload), device="cpu"
+        )
+        control_transition = StructuredSemanticTransitionLearner.from_checkpoint(
+            copy.deepcopy(transition_parent_payload), device="cpu"
+        )
+        control_loss = _loss_score(control_semantic, control_transition, course.holdout)
+        no_update_control_delta = {
+            key: control_loss[key] - loss_before[key] for key in loss_before
+        }
 
         semantic_candidate = StructuredSemanticLearner.from_checkpoint(
             copy.deepcopy(semantic_parent_payload), device="cpu"
@@ -358,6 +383,13 @@ def run_diagnostic(
             saved_transition, device="cpu"
         )
         loss_after = _loss_score(semantic_fresh, transition_fresh, course.holdout)
+        train_loss_after = _loss_score(
+            semantic_fresh, transition_fresh, course.train
+        )
+        train_loss_delta = {
+            key: train_loss_after[key] - train_loss_before[key]
+            for key in train_loss_before
+        }
 
         candidate_manifests = [
             _candidate_manifest(
@@ -479,6 +511,9 @@ def run_diagnostic(
             == staged.candidate_namespace,
             "adapter_rollback_restored": receipt.rollback_restored,
             "no_optimizer_state": not receipt.optimizer_state_present,
+            "no_update_control": all(
+                abs(value) <= 1e-12 for value in no_update_control_delta.values()
+            ),
         }
         loss_delta = {key: loss_after[key] - loss_before[key] for key in loss_before}
         report.update(
@@ -502,9 +537,27 @@ def run_diagnostic(
                 "optimizer_state_present": receipt.optimizer_state_present,
                 "semantic_losses": semantic_losses,
                 "transition_losses": transition_losses,
+                "train_structured_loss_before": train_loss_before,
+                "train_structured_loss_after": train_loss_after,
+                "train_structured_loss_delta": train_loss_delta,
                 "holdout_structured_loss_before": loss_before,
                 "holdout_structured_loss_after": loss_after,
                 "holdout_structured_loss_delta": loss_delta,
+                "no_update_control": {
+                    "holdout_structured_loss_before": loss_before,
+                    "holdout_structured_loss_after": control_loss,
+                    "holdout_structured_loss_delta": no_update_control_delta,
+                    "training_update_steps": 0,
+                    "passed": checks["no_update_control"],
+                },
+                "parameter_delta_norm": {
+                    "k1.semantic": _parameter_delta_norm(
+                        semantic_parent, semantic_candidate
+                    ),
+                    "k2.transition": _parameter_delta_norm(
+                        transition_parent, transition_candidate
+                    ),
+                },
                 "holdout_loss_improved": loss_after["combined_mse"] < loss_before["combined_mse"],
                 "candidate_checkpoint_paths": {
                     key: str(path) for key, path in candidate_paths.items()

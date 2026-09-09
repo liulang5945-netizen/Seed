@@ -81,6 +81,24 @@ def run_stability(
             )
             for item in cells
         },
+        "train_combined_loss_delta_by_course_seed": {
+            str(item["course_seed"]): float(
+                item["report"].get("train_structured_loss_delta", {}).get(
+                    "combined_mse", 0.0
+                )
+            )
+            for item in cells
+        },
+        "parameter_delta_norm_by_course_seed": {
+            str(item["course_seed"]): item["report"].get(
+                "parameter_delta_norm", {}
+            )
+            for item in cells
+        },
+        "no_update_control_passed": all(
+            bool(report.get("no_update_control", {}).get("passed"))
+            for report in reports
+        ),
         "mean_combined_loss_delta": statistics.fmean(delta_values) if delta_values else None,
         "worst_combined_loss_delta": max(delta_values) if delta_values else None,
         "all_course_seeds_improved": all_improved,
