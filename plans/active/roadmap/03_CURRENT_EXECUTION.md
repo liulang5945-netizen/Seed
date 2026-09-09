@@ -279,3 +279,6 @@ N9 long free-run verify 已通过：旧脚本的 instrumented loop 原先仍走 
 N10 sparse migration verify 已通过：forward/backproject/local_update 对 dense reference 的最大误差分别为约 `2.98e-8/0/0`；当前 v7、N7、N8、N9 行为均通过，checkpoint format、sparse storage 和无 dense synapse Gate 全绿。未改 kernel 或模型参数。
 
 **当前唯一下一步**：继续执行 workflow 的 N11 active environment verify。
+N11 active environment verify 已通过：learned policy 最终窗口准确率 `1.0`、总体 `0.965`、`200` 次局部 reward updates，较随机策略提升 `0.5`、较 action-learning lesion 提升 `0.375`；环境转移依赖动作、deterministic policy 解两 cue、pending action/experience 清零均通过。
+
+**当前唯一下一步**：继续执行 workflow 的 M5 episodic field verify。
