@@ -555,6 +555,15 @@ def run_diagnostic(
                 "train_course_digest": content_digest(
                     list(course.train_experience_digests)
                 ),
+                "train_fit_input_digests": [
+                    {
+                        "experience_digest": experience.experience_digest,
+                        "semantic_input_digest": experience.semantic_example.input_digest,
+                        "transition_input_digest": experience.transition_example.input_digest,
+                        "target_digest": experience.target_digest,
+                    }
+                    for experience in course.train
+                ],
                 "holdout_count": len(course.holdout),
                 "training_update_steps": receipt.training_steps,
                 "updated_workers": list(receipt.updated_workers),

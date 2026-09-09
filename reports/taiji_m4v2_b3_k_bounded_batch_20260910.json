@@ -5,6 +5,12 @@
   "can_promote": false,
   "can_start_r6_formal": false,
   "candidate_promoted": false,
+  "candidate_update_digests": [
+    "aeb25dbb9948a72435feabcc61086093527feca5dc44117e24e0b5e775c6eac0",
+    "d194dd9c9617beb2f44724c0ccadf561773be142327a522dc80c648b7dd73eb9",
+    "cedfd33d44f7f248867718a6983fb1a5603fc909cc426f95b7c31f80379dd931"
+  ],
+  "candidate_updates_distinct": true,
   "cell_count": 3,
   "cells": [
     {
@@ -37,7 +43,7 @@
         },
         "course_digest": "3a476a8823502d7dd68ac75e0fc54d1a3afb324a213ab7a079cf3d259ecc980c",
         "course_seed": 0,
-        "elapsed_seconds": 4.877782700001262,
+        "elapsed_seconds": 5.339676300063729,
         "frozen_workers": [
           "k3.outcome_projection"
         ],
@@ -199,6 +205,20 @@
           "3bbfabc666121b64061f626ae874555b0063e7ecc665052d02a1ecf3524fc2ab",
           "7a05f46e716b194acedca8c1687e8b799531fd912ce6dc13aee4cd3753509428"
         ],
+        "train_fit_input_digests": [
+          {
+            "experience_digest": "3bbfabc666121b64061f626ae874555b0063e7ecc665052d02a1ecf3524fc2ab",
+            "semantic_input_digest": "4e79e1cd151ef6fa382668455336b40838504de37ef2682bd1836ac4115750f9",
+            "target_digest": "489b967c3f5d753b9cf145e1d37890e9d755e8c87b955113057ad35e2e9d068b",
+            "transition_input_digest": "92fe390b0934aa0397c61013b3283dc8c71a66d8c16e41048cd9b4ef039a1a19"
+          },
+          {
+            "experience_digest": "7a05f46e716b194acedca8c1687e8b799531fd912ce6dc13aee4cd3753509428",
+            "semantic_input_digest": "3c3ffb121666d0355dea98c3cabf8a23506d0a46c515f19bc5703068b8babfcd",
+            "target_digest": "4fe0b5747ed5f6ee7f3354fd321de9c06b5af96c5e81d1716e6092452a7e28fd",
+            "transition_input_digest": "7cc261b0a767855e42a9d7e5926c95b54138bed4737ee9894ce1085e56f8a344"
+          }
+        ],
         "train_structured_loss_after": {
           "combined_mse": 0.003394658820297991,
           "k1.content_mse": 5.573522821578081e-05,
@@ -272,7 +292,7 @@
         },
         "course_digest": "93b1af4486bcbcd00d494499343b541f9bd359c112d9a313a661fe16d5782b10",
         "course_seed": 1,
-        "elapsed_seconds": 5.1881706999847665,
+        "elapsed_seconds": 5.6522155000129715,
         "frozen_workers": [
           "k3.outcome_projection"
         ],
@@ -434,6 +454,20 @@
           "7a05f46e716b194acedca8c1687e8b799531fd912ce6dc13aee4cd3753509428",
           "1a8fc81fc96f992bcf691044163744add7fd0e2a3c29ce209c24445a3cfdc584"
         ],
+        "train_fit_input_digests": [
+          {
+            "experience_digest": "7a05f46e716b194acedca8c1687e8b799531fd912ce6dc13aee4cd3753509428",
+            "semantic_input_digest": "3c3ffb121666d0355dea98c3cabf8a23506d0a46c515f19bc5703068b8babfcd",
+            "target_digest": "4fe0b5747ed5f6ee7f3354fd321de9c06b5af96c5e81d1716e6092452a7e28fd",
+            "transition_input_digest": "7cc261b0a767855e42a9d7e5926c95b54138bed4737ee9894ce1085e56f8a344"
+          },
+          {
+            "experience_digest": "1a8fc81fc96f992bcf691044163744add7fd0e2a3c29ce209c24445a3cfdc584",
+            "semantic_input_digest": "0c27746a29420a22c2ace8503a0f7ee452920ebd93fcbf6afd0e71d7e1aef829",
+            "target_digest": "72bc7943cc9c629710dc8df6b22f7f1a40f5c9986c5dcd8ca0faa2407ae34f18",
+            "transition_input_digest": "18f0fe336d6ebda9fc498ea75bb32e25ada135b57bdc1eaddf81c0d03580bcbf"
+          }
+        ],
         "train_structured_loss_after": {
           "combined_mse": 0.0028467618196070057,
           "k1.content_mse": 8.246405741374474e-06,
@@ -507,7 +541,7 @@
         },
         "course_digest": "1f340a1687e8ba45a5c19d5bd950e2ebe4c9f6b373f1c9cf5ada5c11fb3092c6",
         "course_seed": 2,
-        "elapsed_seconds": 5.170915799913928,
+        "elapsed_seconds": 5.361287400010042,
         "frozen_workers": [
           "k3.outcome_projection"
         ],
@@ -668,6 +702,20 @@
         "train_experience_digests": [
           "1a8fc81fc96f992bcf691044163744add7fd0e2a3c29ce209c24445a3cfdc584",
           "31abe1be464067c6f59b0631773693e4bea598ade8cd2817308c911a34c43732"
+        ],
+        "train_fit_input_digests": [
+          {
+            "experience_digest": "1a8fc81fc96f992bcf691044163744add7fd0e2a3c29ce209c24445a3cfdc584",
+            "semantic_input_digest": "0c27746a29420a22c2ace8503a0f7ee452920ebd93fcbf6afd0e71d7e1aef829",
+            "target_digest": "72bc7943cc9c629710dc8df6b22f7f1a40f5c9986c5dcd8ca0faa2407ae34f18",
+            "transition_input_digest": "18f0fe336d6ebda9fc498ea75bb32e25ada135b57bdc1eaddf81c0d03580bcbf"
+          },
+          {
+            "experience_digest": "31abe1be464067c6f59b0631773693e4bea598ade8cd2817308c911a34c43732",
+            "semantic_input_digest": "39cc349a02e64cb768e037748ac0fba795b4508450bb6d26c046dc9d15bf3b57",
+            "target_digest": "40d8cb057e23df75de33322e389ff5fa2789e63118a8d9de80e1959bfe5bf6d2",
+            "transition_input_digest": "0cabb35d7d54ffa622de83fcc28491311ea64cb6fec1c221d8504f845e09c4c2"
+          }
         ],
         "train_structured_loss_after": {
           "combined_mse": 0.0034279803336024393,
