@@ -216,3 +216,14 @@ K-task-equivalent control 和 side-effect Gate 均通过。
 
 slice closure 不改变 aggregate 合同。下一步只执行 model31/course0；保留固定
 predecessor、失败 cell 不可删除、不得用均值填补的规则，9/9 前不运行 aggregate。
+
+## 13. Revised model31/course0 resource closure（2026-09-10）
+
+model31/course0 已追加为第 7/9 个 executed_passed row；candidate/matched 均为
+4833 parameters、19332 parameter bytes、1 条 inference trace，wall multiplier=1.1799×、
+peak multiplier=1.0024×，均通过 1.5×/1.25× cap，candidate-frozen 与
+candidate-matched capability delta 均为 1.0。fixed-large K-task-equivalent control
+也通过，未发生 side-effect 漂移。
+
+该结果只关闭一个 cell，不能外推为 aggregate。下一步只执行 model31/course1；保留
+固定 predecessor、失败 cell 不可删除、不得用均值填补的规则，9/9 前不运行 aggregate。
