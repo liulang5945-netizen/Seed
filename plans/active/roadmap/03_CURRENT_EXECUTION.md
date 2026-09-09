@@ -33,7 +33,9 @@
 
 **K continuation-learning contract 已完成，完整 B3-K 尚未完成。** 新增 `taiji/k_continuation.py`，把一条真实 K episode 固化为 content-addressed experience，并强制同一 parent、worker bundle、source manifest；train/holdout 按 experience、输入 digest 和 family 隔离。v1 只允许 `k1.semantic` 与 `k2.transition` 改变，`k3.outcome_projection` 与 Taiji parent 保持不变；当前 worker 的 detached local-delta 语义明确记录为无 optimizer state。新增 course roundtrip、family leakage、update receipt/K3 不可变测试，相关测试与 Ruff 通过。K1/K2 example 现已具备可恢复 payload 解析，供 continuation artifact 使用。
 
-**当前唯一下一步：用同一 inherited model 17 parent 和 sealed course 完成 B3-K 单步 pilot。** pilot 必须真实消费一条 train experience 更新 K1/K2，只读评估独立 holdout，保存 candidate worker checkpoints，fresh-restore 后再验证，显式执行 adapter rollback；同时保留 frozen/no-feedback 行为对照。已有 R6 wiring-canary 仍只能算执行/投影证据，不得重新命名为训练；pilot 失败时先定位目标、反馈、更新或泛化问题，不进入九 cell formal。
+**B3-K 单步 pilot 已完成技术 Gate，但没有能力晋级。** 报告为 [B3-K single-step pilot](../../../reports/taiji_m4v2_b3_k_single_step_20260910.json)：同一 model 17 parent 上真实消费 1 条 train experience，K1/K2 各更新 1 步（receipt 合计 2），K3 未变；candidate checkpoint 保存/fresh-restore、parent 不变、adapter stage/rollback、train/holdout 隔离均通过。独立 holdout 的结构化准确率已经是 `1.0`，更新前后仍为 `1.0`，所以这次只证明 continuation 写入链路可用，不能证明泛化收益，`can_promote=false`。
+
+**当前唯一下一步：做 B3-K 的非饱和 structured-loss diagnostic slice。** 仍使用同一 inherited model 17 parent、同一 K continuation contract 和 candidate/rollback 边界，但改用四条独立 holdout 的连续目标损失/置信度误差，而不是已饱和的 0/1 accuracy；train 只消费一条记录，holdout 仍只读。目标是区分“模型已经饱和、评分器不敏感”和“单步更新没有泛化”的原因；不增加结构、不进入九 cell formal、不重命名旧 wiring-canary。
 
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 

@@ -6,9 +6,9 @@ M4.R0～R12 已完成并归档，但 2026-09-09 的代码/报告复审发现：�
 
 最新实际状态：v2 R2 的 fast/slow 与真实 replay 有小规模 S/G 证据；R4 formal 在 S/G 上优于小容量对照，但未稳定超过 fixed-large；R5 条件路由候选被否决。R6 九 cell 接线运行通过，但全部无训练，且旧评分把“不接纳反馈”计为任务成功率 0，不能当作学习提升。评分语义修正已完成：任务成功、反馈准入和参数更新现在分离，wiring-canary 不能进入 learning-formal Gate；旧报告仍保留为历史证据。整体保持 `can_promote=false`，暂停直接沿旧 admission 启动学习 formal。完整依据见 [M4 v1/v2 实际结果复审](reference/M4_V1_V2_RESULT_REVIEW_2026_09_10.md)。
 
-K continuation-learning contract 已完成，但完整 B3-K 尚未完成：`taiji/k_continuation.py` 现在把真实 K episode、train/holdout 隔离、K1/K2 可更新边界、K3/parent 不可变边界以及 checkpoint/rollback receipt 固化为 content-addressed 合同；当前 detached local-delta worker 明确不带 optimizer state。B3 的 S/G slice 已在同一 inherited model 17 parent 上通过：fast+replay 使用 424 个真实 replay event，S/G 均改善，fresh restore/read-only/rollback 通过；但当前 R6 K 仍是 wiring-only（`training_update_steps=0`），所以完整 B3 尚未完成，也没有晋级。
+K continuation-learning contract 已完成，但完整 B3-K 尚未完成：`taiji/k_continuation.py` 现在把真实 K episode、train/holdout 隔离、K1/K2 可更新边界、K3/parent 不可变边界以及 checkpoint/rollback receipt 固化为 content-addressed 合同；当前 detached local-delta worker 明确不带 optimizer state。B3-K 单步 pilot 已在同一 inherited model 17 parent 上真实更新 K1/K2 各 1 步，K3、parent、fresh-restore 和 rollback 均通过；但 holdout 结构化准确率已在更新前饱和为 1.0，更新后没有可测增益，不能晋级。
 
-**当前唯一下一步：用同一 inherited model 17 parent 和 sealed course 完成 B3-K 单步 pilot。** 训练前 checkpoint 保存恢复预检已通过；pilot 将真实更新 K1/K2、独立 holdout 只读评分、fresh restore 并执行 rollback，再决定是否进入正式比较。随后依次进行独立 holdout 正式比较及 v1 兼容对照，再按证据恢复结构成长。Skill/MCP、Workbench、插件、provider、CUDA 和视觉均已排入计划，不再并行抢占模型学习主线。
+**当前唯一下一步：做 B3-K 的非饱和 structured-loss diagnostic slice。** 继续使用同一 parent、合同和回滚边界，train 只用一条记录，holdout 使用四条独立记录，以连续目标损失/置信度误差检验单步更新是否真的改善未见组合；不增加结构、不进入九 cell formal。随后才决定是否进行独立 holdout 正式比较及 v1 兼容对照。Skill/MCP、Workbench、插件、provider、CUDA 和视觉均已排入计划，不并行抢占模型学习主线。
 
 ## 权威文档
 
