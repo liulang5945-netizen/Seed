@@ -49,6 +49,7 @@ from taiji import Taiji, content_digest  # noqa: E402
 
 REPORT_FORMAT = "taiji-m4v2-r6-formal-single-cell-v1"
 VERSION = 1
+MEASUREMENT_SEMANTICS_FORMAT = "taiji-m4v2-r6-task-success-v2"
 MODEL_SEED = 17
 COURSE_SEED = 0
 DEFAULT_REPORT = (
@@ -95,6 +96,56 @@ def _failure(
         "exception_type": None,
         "message": message,
         "evidence_digests": [],
+    }
+
+
+def _summarize_k_measurement(
+    *,
+    runner_passed: bool,
+    task_executed: bool,
+    outcome_success: bool,
+    projection_accepted: bool,
+    feedback_admitted: bool,
+    lesion_k3: bool,
+    training_update_steps: int,
+    candidate_training_performed: bool,
+) -> dict[str, Any]:
+    """Separate task behavior from feedback admission and parameter learning.
+
+    A control that executes a task successfully remains behaviorally successful
+    even when its feedback is deliberately discarded.  A task that was never
+    attempted is represented as ``None`` rather than an imputed failure.  Stage
+    or exchange activity is not learning evidence; a positive update count and
+    an explicit training flag are required for learning eligibility.
+    """
+
+    executed = bool(task_executed)
+    task_success = bool(executed and runner_passed and outcome_success)
+    update_steps = int(training_update_steps)
+    if update_steps < 0:
+        raise ValueError("training_update_steps must be non-negative")
+    learning_update_applied = bool(candidate_training_performed and update_steps > 0)
+    return {
+        "format": MEASUREMENT_SEMANTICS_FORMAT,
+        "task_executed": executed,
+        "task_success": task_success,
+        "task_success_rate": (None if not executed else (1.0 if task_success else 0.0)),
+        "task_measurement_status": (
+            "not_attempted"
+            if not executed
+            else ("observed_success" if task_success else "observed_failure")
+        ),
+        "projection_accepted": bool(projection_accepted),
+        "feedback_admitted": bool(feedback_admitted),
+        "lesion_k3": bool(lesion_k3),
+        "training_update_steps": update_steps,
+        "learning_update_applied": learning_update_applied,
+        "learning_eligible": bool(
+            task_success
+            and learning_update_applied
+            and feedback_admitted
+            and not lesion_k3
+        ),
     }
 
 
@@ -167,6 +218,16 @@ def _control_arm(
     retention = {
         phase: abs(after[phase] - before[phase]) <= 0.01 for phase in ("S", "G")
     }
+    measurement = _summarize_k_measurement(
+        runner_passed=True,
+        task_executed=False,
+        outcome_success=False,
+        projection_accepted=False,
+        feedback_admitted=False,
+        lesion_k3=False,
+        training_update_steps=0,
+        candidate_training_performed=False,
+    )
     return {
         "arm": arm,
         "status": "control_passed",
@@ -177,15 +238,7 @@ def _control_arm(
             {
                 "phase": "K",
                 "status": "rejected" if explicit_k_baseline else "detached",
-                "new_capability": (
-                    {
-                        "status": "observed",
-                        "task_success_rate": 0.0,
-                        "sample_count": 1,
-                    }
-                    if explicit_k_baseline
-                    else None
-                ),
+                "new_capability": None,
                 "reason": (
                     "frozen parent K admission rejected because no K worker is attached"
                     if explicit_k_baseline
@@ -194,10 +247,11 @@ def _control_arm(
             },
         ],
         "new_capability": {
-            "status": "observed" if explicit_k_baseline else "detached",
-            "task_success_rate": 0.0 if explicit_k_baseline else None,
-            **({"sample_count": 1} if explicit_k_baseline else {}),
+            "status": "not_attempted",
+            "task_success_rate": measurement["task_success_rate"],
+            "sample_count": 0,
         },
+        "measurement": measurement,
         "old_capability_retention": retention,
         "causal": {
             "status": "frozen_parent_zero_baseline" if explicit_k_baseline else "control_only",
@@ -274,6 +328,16 @@ def _fixed_large_control_arm(
         and resource.get("checkpoint_write_bytes") is not None
         and resource.get("inference_trace_count") is not None
     )
+    measurement = _summarize_k_measurement(
+        runner_passed=passed,
+        task_executed=bool(canary.get("task_executed", passed)),
+        outcome_success=outcome_success,
+        projection_accepted=projection_accepted,
+        feedback_admitted=True,
+        lesion_k3=False,
+        training_update_steps=int(resource.get("training_update_steps", 0)),
+        candidate_training_performed=bool(canary.get("training_performed", False)),
+    )
     return {
         "arm": "fixed-large",
         "status": "passed" if passed else "failed",
@@ -293,15 +357,20 @@ def _fixed_large_control_arm(
         ],
         "new_capability": {
             "status": "observed" if passed else "failed",
-            "task_success_rate": 1.0 if passed and outcome_success and projection_accepted else 0.0,
+            "task_success_rate": measurement["task_success_rate"],
             "sample_count": 1,
         },
+        "measurement": measurement,
         "old_capability_retention": canary.get("old_capability_retention"),
         "causal": {
             "status": "fixed_large_control_verified" if passed else "fixed_large_control_failed",
             "k_task_equivalent": True,
             "real_workbench_success": outcome_success,
             "k3_projection_accepted": projection_accepted,
+            "task_executed": measurement["task_executed"],
+            "task_success": measurement["task_success"],
+            "learning_update_applied": measurement["learning_update_applied"],
+            "learning_eligible": measurement["learning_eligible"],
             "branch_lesion_observable": bool(
                 canary.get("checks", {}).get("fixed_large_branch_lesion_observable", False)
             ),
@@ -375,19 +444,26 @@ def _candidate_arm(
     )
     outcome_success = bool(canary.get("outcome_success", False))
     projection_accepted = bool(canary.get("projection_accepted", False))
+    measurement = _summarize_k_measurement(
+        runner_passed=passed,
+        task_executed=bool(canary.get("task_executed", passed)),
+        outcome_success=outcome_success,
+        projection_accepted=projection_accepted,
+        feedback_admitted=admit_feedback and not lesion_k3,
+        lesion_k3=lesion_k3,
+        training_update_steps=int(canary_resource.get("training_update_steps", 0)),
+        candidate_training_performed=bool(canary.get("candidate_training_performed", False)),
+    )
     if not admit_feedback and not lesion_k3:
         k_status = "executed_no_feedback" if passed else "failed"
-        capability_rate = 0.0 if passed else None
         causal_status = (
             "matched_capacity_no_feedback" if passed else "matched_capacity_failed"
         )
     elif lesion_k3:
         k_status = "lesion_rejected" if passed else "failed"
-        capability_rate = 0.0 if passed else None
         causal_status = "lesion_verified" if passed else "lesion_failed"
     else:
         k_status = "executed" if passed else "failed"
-        capability_rate = 1.0 if passed and outcome_success and projection_accepted else 0.0
         causal_status = "candidate_path_verified" if passed else "candidate_failed"
     return {
         "arm": arm,
@@ -418,15 +494,24 @@ def _candidate_arm(
             },
         ],
         "new_capability": {
-            "status": "observed" if passed else "failed",
-            "task_success_rate": capability_rate,
-            "sample_count": 1,
+            "status": (
+                "observed"
+                if measurement["task_measurement_status"] != "not_attempted"
+                else "not_attempted"
+            ),
+            "task_success_rate": measurement["task_success_rate"],
+            "sample_count": 1 if measurement["task_executed"] else 0,
         },
+        "measurement": measurement,
         "old_capability_retention": canary.get("old_capability_retention"),
         "causal": {
             "status": causal_status,
             "real_workbench_success": outcome_success,
             "k3_projection_accepted": projection_accepted,
+            "task_executed": measurement["task_executed"],
+            "task_success": measurement["task_success"],
+            "learning_update_applied": measurement["learning_update_applied"],
+            "learning_eligible": measurement["learning_eligible"],
             "lesion_k3": lesion_k3,
             "feedback_admitted": admit_feedback and not lesion_k3,
         },
@@ -555,6 +640,7 @@ def execution_contract_snapshot(report: Mapping[str, Any]) -> dict[str, Any]:
                 "new_capability",
                 "old_capability_retention",
                 "causal",
+                "measurement",
                 "side_effects",
                 "failure",
             )
@@ -573,6 +659,8 @@ def execution_contract_snapshot(report: Mapping[str, Any]) -> dict[str, Any]:
         "resource_gate": report.get("resource_gate"),
         "failures": report.get("failures"),
         "course_executed": report.get("course_executed"),
+        "run_kind": report.get("run_kind"),
+        "measurement_semantics": report.get("measurement_semantics"),
         "training_performed": report.get("training_performed"),
         "candidate_training_performed": report.get("candidate_training_performed"),
         "default_runtime_attached": report.get("default_runtime_attached"),
@@ -758,8 +846,10 @@ def run_cell(
         "failures": failures,
         "course_executed": False,
         "single_cell_executed": True,
+        "run_kind": "wiring-canary",
         "training_performed": False,
         "candidate_training_performed": False,
+        "measurement_semantics": MEASUREMENT_SEMANTICS_FORMAT,
         "default_runtime_attached": False,
         "provider_attached": False,
         "mcp_attached": False,

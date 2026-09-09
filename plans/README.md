@@ -4,9 +4,9 @@
 
 M4.R0～R12 已完成并归档，但 2026-09-09 的代码/报告复审发现：该系列主要测量 F1 byte-prediction 的固定容量 continuation，R2 的固定等权读出槽、R7/R10 不一致的 owner 图、未进入普通主路径的 adaptive network，以及 exact-zero Gate 都不足以代表 CR-4/A8 的继承式结构成长。历史报告保留，过度外推已撤销。
 
-最新实际状态：v2 R2 的 fast/slow 与真实 replay 有小规模 S/G 证据；R4 formal 在 S/G 上优于小容量对照，但未稳定超过 fixed-large；R5 条件路由候选被否决。R6 九 cell 接线运行通过，但全部无训练，且“不接纳反馈”被计为任务成功率 0，不能当作学习提升。整体保持 `can_promote=false`，暂停直接沿旧 admission 启动学习 formal。完整依据见 [M4 v1/v2 实际结果复审](reference/M4_V1_V2_RESULT_REVIEW_2026_09_10.md)。
+最新实际状态：v2 R2 的 fast/slow 与真实 replay 有小规模 S/G 证据；R4 formal 在 S/G 上优于小容量对照，但未稳定超过 fixed-large；R5 条件路由候选被否决。R6 九 cell 接线运行通过，但全部无训练，且旧评分把“不接纳反馈”计为任务成功率 0，不能当作学习提升。评分语义修正已完成：任务成功、反馈准入和参数更新现在分离，wiring-canary 不能进入 learning-formal Gate；旧报告仍保留为历史证据。整体保持 `can_promote=false`，暂停直接沿旧 admission 启动学习 formal。完整依据见 [M4 v1/v2 实际结果复审](reference/M4_V1_V2_RESULT_REVIEW_2026_09_10.md)。
 
-**当前唯一下一步：修正 R6 学习对照的评分语义与最小失败测试。** 随后依次进行保存恢复预检、真实固定容量连续学习 pilot、独立 holdout 正式比较及 v1 兼容对照，再按证据恢复结构成长。Skill/MCP、Workbench、插件、provider、CUDA 和视觉均已排入计划，不再并行抢占模型学习主线。
+**当前唯一下一步：进行训练前 checkpoint 保存恢复预检。** 随后依次进行真实固定容量连续学习 pilot、独立 holdout 正式比较及 v1 兼容对照，再按证据恢复结构成长。Skill/MCP、Workbench、插件、provider、CUDA 和视觉均已排入计划，不再并行抢占模型学习主线。
 
 ## 权威文档
 

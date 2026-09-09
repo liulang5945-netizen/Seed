@@ -261,6 +261,7 @@ def run_canary(
         "artifact_path": str(artifact_path),
         "parent_checkpoint_digest": parent_digest,
         "training_performed": False,
+        "task_executed": False,
         "default_runtime_attached": False,
         "provider_attached": False,
         "mcp_attached": False,
@@ -349,6 +350,7 @@ def run_canary(
         real_success = bool(outcome_payload.get("success"))
         if not real_success:
             raise RuntimeError("fixed-large Workbench execution failed")
+        report["task_executed"] = True
         outcome_event = WorldEvent(
             event_id="r6-fixed-large-real-outcome-1",
             kind="workbench.execution",

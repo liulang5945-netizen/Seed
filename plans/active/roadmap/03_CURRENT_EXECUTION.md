@@ -12,19 +12,20 @@
 
 详细证据与源码定位见 [M4 v1/v2 实际结果复审](../../reference/M4_V1_V2_RESULT_REVIEW_2026_09_10.md)。当前判断：v2 有机制和窄任务进步；未证明总体超过 v1。R4 比小容量对照好但未稳定超过 fixed-large，R5 候选否决；最新 R6 九 cell 无训练，且反馈准入混入任务成功评分。保持 `can_promote=false`，暂停沿旧 admission 直接启动正式课程。
 
-### A. 当前唯一下一步：修正 R6 学习对照的评分语义（尚未实施）
+### A. 已完成：修正 R6 学习对照的评分语义
 
-目标不是再增加一层审批，而是让同一组行为证据得到诚实评分，并让学习实验必须真的更新模型。
+本轮没有重新训练，也没有覆盖旧报告；目标是让同一组行为证据得到诚实评分，并让学习实验必须真的更新模型。
 
-1. 在 `eval_taiji_m4v2_r6_formal_single_cell.py` 拆开 `task_success`、`feedback_admitted`、`learning_update_applied` 与 `candidate_staged`。matched 已真实成功，即使不接纳反馈也必须算任务成功；拒绝执行另外报告，不人为记作模型不会。
-2. 先加最小失败测试：同一成功 outcome、不同 feedback flag，两臂行为分应相同；无权执行与执行失败分开；零更新 canary 不得满足 learning-formal Gate；样本数必须取真实去重任务数。
-3. 用旧九 cell 原始字段生成**新版本只读解释报告**，保留旧报告与 digest；明确这些记录不能恢复成训练前后效果。禁止覆盖旧 JSON 或改断言使旧能力结论继续通过。
-4. 把 runner 类型显式分为 wiring-canary / learning-pilot / learning-formal。learning 模式要求实际训练记录、学习 owner 的数值变化、train/holdout 消费证据及训练状态恢复；仅 stage/交换 checkpoint 不算训练。
-5. 补 admission 的最小行为测试：缺失/失效报告、manifest 改动、引用内容改动、任一前置失败均不能启动；不能只读静态成功 JSON。此处只修学习入口所需边界，不扩建通用 Gate 系统。
+1. `eval_taiji_m4v2_r6_formal_single_cell.py` 已拆开 `task_success`、`feedback_admitted`、`learning_update_applied` 与 `learning_eligible`。matched 的真实 Workbench 成功不再因为不接纳反馈而被记为 0；未执行的 frozen parent 记为 `None`，不伪造失败。
+2. 新增 `test_m4v2_r6_measurement_semantics.py`，覆盖反馈解耦、未执行不归零、零更新不算学习和 wiring-canary 不得进入 learning-formal Gate；本轮 7 条语义测试及相关 18 条测试通过。
+3. runner 已声明 `measurement_semantics` 与 `run_kind=wiring-canary`；aggregate 不再把 K3 lesion 的任务成功差当作学习增益，并会拒绝没有真实 candidate 参数更新的 formal 输入。旧九 cell 报告和 digest 未覆盖。
+4. Workbench controlled canary 与 fixed-large canary 已显式记录 `task_executed`；stage/exchange 仍不算参数学习。Ruff、`py_compile`、`git diff --check` 已通过；未宣称远端 CI 全绿。
 
-交付：评分实现及失败回归测试、新解释报告、唯一计划状态更新。通过相关 lint/类型/单测及 `git diff --check` 后提交；未取得实际 CI 结果不得写 CI 全绿。A 完成自动进入 B，不单开新外围路线。
+交付：评分实现、失败回归测试和计划状态已提交。旧报告尚未生成新版本解释报告；它们仍只能作历史证据，不能作学习 formal 证据。A 完成，进入 B；不单开新外围路线。
 
 ### B. 真实固定容量连续学习 pilot（A 后，尚未开始）
+
+**当前唯一下一步：先执行 B2 checkpoint 保存恢复预检。** 这是训练前硬门槛；预检不通过就修复保存链，不运行训练。
 
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 
