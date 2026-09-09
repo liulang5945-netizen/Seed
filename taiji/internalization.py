@@ -492,9 +492,18 @@ class InternalizationConverter:
             return self._reject(source, "missing_reward_terms")
         if not lower <= float(source.outcome.reward) <= upper:
             return self._reject(source, "outcome_reward_out_of_bounds")
+        # M5.S6B explicit failure-admission policy: a failed execution is a
+        # first-class sourced experience, but it must not carry a positive
+        # reward - that would let the evaluator launder a failure as a
+        # success.  Successful evidence keeps its evaluator-supplied reward.
+        failure_admitted = not bool(source.outcome.success)
+        if failure_admitted and float(source.outcome.reward) > 0.0:
+            return self._reject(source, "failure_with_positive_reward")
         affordance = source.affordance
-        provenance = str(affordance.feature_provenance)
-        supported_prefixes = SUPPORTED_GROUNDING_LINEAGE_PREFIXES.get(provenance)
+        feature_provenance = str(affordance.feature_provenance)
+        supported_prefixes = SUPPORTED_GROUNDING_LINEAGE_PREFIXES.get(
+            feature_provenance
+        )
         if (
             supported_prefixes is None
             or not affordance.grounding_lineage
@@ -559,7 +568,12 @@ class InternalizationConverter:
             example_id=example.example_id,
             evidence_id=source.evidence_id,
             status="external",
-            events=("outcome_bound", "grounding_verified", "example_created"),
+            events=(
+                "outcome_bound",
+                "grounding_verified",
+                *(("failure_admitted",) if failure_admitted else ()),
+                "example_created",
+            ),
             source_digest=source_digest,
         )
         return InternalizationConversionResult(example, lifecycle, True)

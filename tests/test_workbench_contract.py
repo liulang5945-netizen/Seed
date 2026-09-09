@@ -387,6 +387,107 @@ def test_runtime_projects_current_workbench_evidence_to_grounded_internalization
         )
 
 
+def test_internalization_admits_failed_evidence_only_with_non_positive_reward() -> None:
+    """M5.S6B policy: a real failed execution is a first-class sourced
+    experience, but a failure must not carry a positive reward."""
+    import torch
+
+    from taiji import InternalizationConverter, Outcome, WorldAffordance
+
+    def _failed_source(reward: float) -> GroundedOutcomeEvidence:
+        affordance = WorldAffordance(
+            affordance_id="affordance:missing",
+            action_kind="workspace.read",
+            actor_id="workbench",
+            target_id="target:missing",
+            features=torch.zeros(4),
+            feature_provenance="world-state-grounding",
+            grounding_lineage=("world-state:missing",),
+        )
+        return GroundedOutcomeEvidence(
+            evidence_id="evidence:failed-read",
+            outcome_id="outcome:failed-read",
+            outcome=Outcome(
+                intent_id="intent:failed-read",
+                reward=reward,
+                success=False,
+                tick=1,
+            ),
+            affordance=affordance,
+            capability_snapshot_digest="capability-sha256:s6b",
+            parent_checkpoint_id="checkpoint:s6b-parent",
+            owner_id="taiji:workbench-outcome",
+            reward_terms={"read_hit": reward},
+            world_digest="world-sha256:missing",
+        )
+
+    converter = InternalizationConverter(seed=17, replay_budget=8)
+    admitted = converter.convert(_failed_source(-0.75))
+    assert admitted.accepted is True
+    assert admitted.example is not None
+    assert admitted.example.target_reward == -0.75
+    assert "failure_admitted" in admitted.lifecycle.events
+
+    rejected = converter.convert(_failed_source(0.5))
+    assert rejected.accepted is False
+    assert rejected.example is None
+    assert rejected.reason == "failure_with_positive_reward"
+
+
+def test_runtime_projection_admits_failed_read_evidence_with_negative_reward(
+    tmp_path, monkeypatch
+) -> None:
+    """M5.S6B runtime alignment: a real failed read execution projects into
+    internalization with a negative reward, and is still rejected when the
+    evaluator supplies a positive reward for the failure."""
+    monkeypatch.setattr(
+        "seed_platform.workbench.get_setting",
+        lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
+    )
+    runtime = SeedRuntime(Seed(episode_id="workbench-failure-projection"))
+    runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
+    snapshot_id = runtime.workbench_environment.capability_snapshot.snapshot_id
+    runtime.project_workbench_affordances(
+        snapshot_id=snapshot_id,
+        parameter_bindings={"workspace.list": {"path": "."}},
+    )
+    runtime.execute_workbench_intent(
+        ActionIntent(
+            intent_id="intent-internalization-missing-read",
+            kind="workspace.read",
+            parameters={"path": "definitely_missing_file.txt"},
+            confidence=1.0,
+            tick=runtime.model.tick,
+        ),
+        snapshot_id=snapshot_id,
+        learn=False,
+    )
+    # Failed evidence keeps the success-only affordance chain, so there is
+    # no reprojected affordance; the projection self-grounds the attempt.
+    import torch  # noqa: F401  (feature-dim assertion below)
+    source = runtime.project_workbench_outcome_for_internalization(
+        snapshot_id=snapshot_id,
+        affordance_id="workbench-failed:auto",
+        reward=-0.75,
+        reward_terms={"read_hit": -0.75},
+        parent_checkpoint_id="checkpoint:workbench-parent",
+    )
+    assert source.outcome.success is False
+    assert source.outcome.reward == -0.75
+    assert source.metadata["failure_admitted"] is True
+    assert source.affordance.feature_provenance == "world-state-grounding"
+    assert source.affordance.features.numel() == 17
+
+    with pytest.raises(ValueError, match="cannot carry a positive"):
+        runtime.project_workbench_outcome_for_internalization(
+            snapshot_id=snapshot_id,
+            affordance_id="workbench-failed:auto",
+            reward=0.5,
+            reward_terms={"read_hit": 0.5},
+            parent_checkpoint_id="checkpoint:workbench-parent",
+        )
+
+
 def test_real_workbench_outcomes_pass_longitudinal_internalization_deletion_candidate_gate(
     tmp_path, monkeypatch
 ) -> None:
