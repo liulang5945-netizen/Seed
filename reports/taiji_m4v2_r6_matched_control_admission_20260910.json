@@ -1,0 +1,67 @@
+{
+  "admission": "ready_to_start_formal",
+  "aggregate_digest": "633c0e8c7e87b57d51a18404e6e5e199121153f1e75593feb76c6ab1e83af2ee",
+  "aggregate_path": "E:\\Seed\\reports\\taiji_m4v2_r6_matched_control_aggregate_20260910.json",
+  "allowed_next_action": "Run the preregistered R6 formal runner with the same manifest; do not attach default runtime/provider/MCP/client/CUDA and do not promote before formal results.",
+  "blocking_failures": [],
+  "can_promote": false,
+  "can_start_r6_formal": true,
+  "checks": {
+    "all_cells_executed_passed": true,
+    "candidate_holdout_floor": true,
+    "candidate_over_matched_peak_budget": true,
+    "candidate_over_matched_wall_budget": true,
+    "k3_lesion_breaks_gain": true,
+    "paired_frozen_parent_delta_available": true,
+    "paired_frozen_parent_delta_floor": true,
+    "paired_matched_fixed_capacity_delta_available": true,
+    "paired_matched_fixed_capacity_delta_floor": true
+  },
+  "client_attached": false,
+  "control_revision": {
+    "format": "taiji-m4v2-r6-matched-control-v2",
+    "frozen_parent_arm": {
+      "explicit_k_admission_baseline": true,
+      "parameter_updates": false,
+      "task_success_rate": 0.0,
+      "worker_bundle_attached": false
+    },
+    "matched_arm": {
+      "feedback_admitted": false,
+      "parameter_updates": false,
+      "same_input_trace": true,
+      "same_parameter_budget": true,
+      "same_restore_path": true,
+      "worker_bundle_attached": true
+    },
+    "thresholds_unchanged": {
+      "candidate_holdout_floor": 0.75,
+      "paired_capability_delta_floor": 0.25,
+      "peak_working_set_multiplier_cap": 1.25,
+      "wall_clock_multiplier_cap": 1.5
+    }
+  },
+  "created_at_unix": 1788973901.4266462,
+  "cuda_used": false,
+  "default_runtime_attached": false,
+  "elapsed_seconds": 0.00643159996252507,
+  "failure_counts": {},
+  "manifest_digest": "9221b0920413e7d470821dc66b7daa1a2769ba2502c6b6af1801eb5ad1555ae7",
+  "manifest_path": "E:\\Seed\\plans\\manifests\\taiji_m4v2_r6_matched_control_v2_20260910.json",
+  "mcp_attached": false,
+  "provider_attached": false,
+  "report_format": "taiji-m4v2-r6-matched-control-admission-v1",
+  "sources": {
+    "aggregate": {
+      "content_digest": "633c0e8c7e87b57d51a18404e6e5e199121153f1e75593feb76c6ab1e83af2ee",
+      "path": "E:\\Seed\\reports\\taiji_m4v2_r6_matched_control_aggregate_20260910.json"
+    },
+    "manifest": {
+      "content_digest": "6fa2bd877e9ac1df568752bc1edc0e9ea500055a21446e480d6990a4653a324c",
+      "path": "E:\\Seed\\plans\\manifests\\taiji_m4v2_r6_matched_control_v2_20260910.json"
+    }
+  },
+  "status": "passed",
+  "training_performed": false,
+  "version": 1
+}

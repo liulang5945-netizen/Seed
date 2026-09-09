@@ -789,3 +789,16 @@ validator 只证明 revised aggregate 合同，仍明确保持 can_start_r6_form
 can_promote=false。下一步只实现独立 formal-admission gate，重新验证 aggregate 的
 content-addressed lineage、checkpoint/rollback、side-effect 隔离和 revision threshold
 不变性；不覆盖旧 aggregate，不接 default runtime/provider/MCP/client/CUDA。
+
+## 37. Matched-control formal admission gate（2026-09-10）
+
+独立 admission gate 已消费 revision manifest 与
+reports/taiji_m4v2_r6_matched_control_aggregate_20260910.json，并生成
+reports/taiji_m4v2_r6_matched_control_admission_20260910.json。registry/owner graph、
+parent/worker/fixed-large checkpoint 路径、aggregate lineage、资源 owner、9-cell
+paired metrics、side-effect contract 与冻结阈值均通过；blocking_failures 为空。
+
+结果明确为 `ready_to_start_formal`、`can_start_r6_formal=true`、`can_promote=false`。
+该报告不是 promotion token，也没有训练或 runtime attachment。下一步只把该 admission
+report 接入 formal runner 输入合同：后续 formal preflight/执行必须验证相同 manifest
+digest、admission status 和副作用边界；先做 gated preflight，不直接 promotion。
