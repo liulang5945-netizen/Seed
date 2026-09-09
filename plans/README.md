@@ -8,9 +8,9 @@ M4.R0～R12 已完成并归档，但 2026-09-09 的代码/报告复审发现：�
 
 K continuation-learning contract 已完成，但完整 B3-K 尚未完成：`taiji/k_continuation.py` 现在把真实 K episode、train/holdout 隔离、K1/K2 可更新边界、K3/parent 不可变边界以及 checkpoint/rollback receipt 固化为 content-addressed 合同；当前 detached local-delta worker 明确不带 optimizer state。B3-K 单步 pilot 已在同一 inherited model 17 parent 上真实更新 K1/K2 各 1 步，K3、parent、fresh-restore 和 rollback 均通过；但 holdout 结构化准确率已在更新前饱和为 1.0，更新后没有可测增益，不能晋级。
 
-B3-K 的非饱和 structured-loss diagnostic 已通过：同一 model 17 parent、1 条 train、3 条真正 record-disjoint holdout 上，K1/K2 六个连续 MSE 分量全部下降，combined MSE `0.01677758 → 0.01569742`；K3、parent、fresh-restore、rollback 全部通过，但仍不是晋级证据。随后完成的多 course-seed 复验真正切换了 train episode（3 个 train digest 均不同）并固定 holdout：seed 0 delta `−0.00108017`，seed 1 `+0.00005455`，seed 2 `+0.00033079`。技术链通过，但最坏退化为正，`performance_gate_passed=false`、`stability_gate_passed=false`，所以不能把平均改善当作稳定学习，也不能进入 formal。
+B3-K 的非饱和 structured-loss diagnostic 已通过：同一 model 17 parent、1 条 train、3 条真正 record-disjoint holdout 上，K1/K2 六个连续 MSE 分量全部下降，combined MSE `0.01677758 → 0.01569742`；K3、parent、fresh-restore、rollback 全部通过，但仍不是晋级证据。随后完成的多 course-seed 复验真正切换了 train episode（3 个 train digest 均不同）并固定 holdout：seed 0 delta `−0.00108017`，seed 1 `+0.00005455`，seed 2 `+0.00033079`。技术链通过，但最坏退化为正，`performance_gate_passed=false`、`stability_gate_passed=false`，所以不能把平均改善当作稳定学习，也不能进入 formal。补充的课程敏感性量尺显示三条 train combined-MSE 都下降（`−0.00050056/−0.00021416/−0.00022227`），参数 delta norm 非零且 no-update scorer 对照为零；问题收敛到单条样本更新的过拟合/跨 episode 干扰候选，而非保存或评分器漂移。
 
-**当前唯一下一步：做 B3-K 课程敏感性单变量诊断。** 复用这 3 个真实 train episode 和固定 3 条 holdout，补齐每个 variant 的 train loss 前后、holdout 六分量、K1/K2 owner 参数 delta norm、训练步数和无更新对照；不改架构、owner、学习率、holdout、门槛或硬件路线。先区分单条样本过拟合/灾难性干扰、梯度方向不一致和输入表征不足，再决定最小 batch、受限 replay 或数据/表征修正；不以重跑九 cell 或放宽 Gate 替代定位。Skill/MCP、Workbench、插件、provider、CUDA 和视觉均已排入计划，不并行抢占模型学习主线。
+**当前唯一下一步：做 B3-K bounded multi-example 诊断。** 只改变 train course 从 1 条扩为固定 2 条真实、互不重复的 train experience；保持同一 parent、K1/K2 owner、学习率、scorer、3 条 holdout、保存/恢复/rollback 和禁止晋级规则。为 seed `0/1/2` 分别构造可追溯的两条 train 组合，记录 train/holdout 六分量、更新步数、参数 delta norm 和 no-update 对照；只验证受限 batch 是否降低单条样本敏感性，不直接替代 formal，也不引入 replay、结构扩容或九 cell formal。Skill/MCP、Workbench、插件、provider、CUDA 和视觉均已排入计划，不并行抢占模型学习主线。
 
 ## 权威文档
 

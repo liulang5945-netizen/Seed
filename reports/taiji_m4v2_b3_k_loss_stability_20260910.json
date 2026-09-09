@@ -28,6 +28,7 @@
           "k2_owner_changed": true,
           "k3_owner_unchanged": true,
           "no_optimizer_state": true,
+          "no_update_control": true,
           "parent_checkpoint_unchanged": true,
           "three_disjoint_holdout_records": true,
           "train_holdout_disjoint": true,
@@ -35,7 +36,7 @@
         },
         "course_digest": "5c17bf302b6bc1dbef936075bd57394efb6d00e257604d7613f83b88cfc0de22",
         "course_seed": 0,
-        "elapsed_seconds": 4.041917200083844,
+        "elapsed_seconds": 4.13418890000321,
         "frozen_workers": [
           "k3.outcome_projection"
         ],
@@ -68,7 +69,42 @@
           "k2.goal_mse": -0.0022247286906349473,
           "k2.transition_mse": -0.00032951488780478665
         },
+        "no_update_control": {
+          "holdout_structured_loss_after": {
+            "combined_mse": 0.016777580521142633,
+            "k1.content_mse": 8.139078060291165e-05,
+            "k1.fact_mse": 0.017317220258216064,
+            "k1.goal_mse": 0.001712819910608232,
+            "k2.content_mse": 0.03250698816312555,
+            "k2.goal_mse": 0.04578693084719513,
+            "k2.transition_mse": 0.0032601331671079
+          },
+          "holdout_structured_loss_before": {
+            "combined_mse": 0.016777580521142633,
+            "k1.content_mse": 8.139078060291165e-05,
+            "k1.fact_mse": 0.017317220258216064,
+            "k1.goal_mse": 0.001712819910608232,
+            "k2.content_mse": 0.03250698816312555,
+            "k2.goal_mse": 0.04578693084719513,
+            "k2.transition_mse": 0.0032601331671079
+          },
+          "holdout_structured_loss_delta": {
+            "combined_mse": 0.0,
+            "k1.content_mse": 0.0,
+            "k1.fact_mse": 0.0,
+            "k1.goal_mse": 0.0,
+            "k2.content_mse": 0.0,
+            "k2.goal_mse": 0.0,
+            "k2.transition_mse": 0.0
+          },
+          "passed": true,
+          "training_update_steps": 0
+        },
         "optimizer_state_present": false,
+        "parameter_delta_norm": {
+          "k1.semantic": 0.10789559732994627,
+          "k2.transition": 0.01459495374185856
+        },
         "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
         "receipt": {
           "candidate_namespace": "taiji:k:candidate:model-17",
@@ -146,6 +182,33 @@
           "python_01.py"
         ],
         "train_experience_digest": "b1f06f052478cb9e96fa94708c8d16517698536222add3dea1735578d0987360",
+        "train_structured_loss_after": {
+          "combined_mse": 0.0036443708559090737,
+          "k1.content_mse": 7.575396011816338e-05,
+          "k1.fact_mse": 0.017392771318554878,
+          "k1.goal_mse": 0.0015090075321495533,
+          "k2.content_mse": 0.00010231319174636155,
+          "k2.goal_mse": 0.00025754194939509034,
+          "k2.transition_mse": 0.0025288371834903955
+        },
+        "train_structured_loss_before": {
+          "combined_mse": 0.004144930832505149,
+          "k1.content_mse": 0.00011744694347726181,
+          "k1.fact_mse": 0.019014867022633553,
+          "k1.goal_mse": 0.0024634983856230974,
+          "k2.content_mse": 0.00011087550956290215,
+          "k2.goal_mse": 0.0002854994381777942,
+          "k2.transition_mse": 0.002877397695556283
+        },
+        "train_structured_loss_delta": {
+          "combined_mse": -0.0005005599765960751,
+          "k1.content_mse": -4.1692983359098434e-05,
+          "k1.fact_mse": -0.0016220957040786743,
+          "k1.goal_mse": -0.0009544908534735441,
+          "k2.content_mse": -8.562317816540599e-06,
+          "k2.goal_mse": -2.7957488782703876e-05,
+          "k2.transition_mse": -0.00034856051206588745
+        },
         "training_performed": true,
         "training_update_steps": 2,
         "transition_losses": {
@@ -184,6 +247,7 @@
           "k2_owner_changed": true,
           "k3_owner_unchanged": true,
           "no_optimizer_state": true,
+          "no_update_control": true,
           "parent_checkpoint_unchanged": true,
           "three_disjoint_holdout_records": true,
           "train_holdout_disjoint": true,
@@ -191,7 +255,7 @@
         },
         "course_digest": "d67c6ccc579841db4428e6ab34d0c34f0bb931c4f8fc8b453e75dc4bed62100d",
         "course_seed": 1,
-        "elapsed_seconds": 4.561148600070737,
+        "elapsed_seconds": 4.534966200008057,
         "frozen_workers": [
           "k3.outcome_projection"
         ],
@@ -224,7 +288,42 @@
           "k2.goal_mse": 0.00011754788041192649,
           "k2.transition_mse": -0.000345955990875761
         },
+        "no_update_control": {
+          "holdout_structured_loss_after": {
+            "combined_mse": 0.016777580521142633,
+            "k1.content_mse": 8.139078060291165e-05,
+            "k1.fact_mse": 0.017317220258216064,
+            "k1.goal_mse": 0.001712819910608232,
+            "k2.content_mse": 0.03250698816312555,
+            "k2.goal_mse": 0.04578693084719513,
+            "k2.transition_mse": 0.0032601331671079
+          },
+          "holdout_structured_loss_before": {
+            "combined_mse": 0.016777580521142633,
+            "k1.content_mse": 8.139078060291165e-05,
+            "k1.fact_mse": 0.017317220258216064,
+            "k1.goal_mse": 0.001712819910608232,
+            "k2.content_mse": 0.03250698816312555,
+            "k2.goal_mse": 0.04578693084719513,
+            "k2.transition_mse": 0.0032601331671079
+          },
+          "holdout_structured_loss_delta": {
+            "combined_mse": 0.0,
+            "k1.content_mse": 0.0,
+            "k1.fact_mse": 0.0,
+            "k1.goal_mse": 0.0,
+            "k2.content_mse": 0.0,
+            "k2.goal_mse": 0.0,
+            "k2.transition_mse": 0.0
+          },
+          "passed": true,
+          "training_update_steps": 0
+        },
         "optimizer_state_present": false,
+        "parameter_delta_norm": {
+          "k1.semantic": 0.07937038848224212,
+          "k2.transition": 0.01188628763992947
+        },
         "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
         "receipt": {
           "candidate_namespace": "taiji:k:candidate:model-17",
@@ -302,6 +401,33 @@
           "typescript_00.ts"
         ],
         "train_experience_digest": "3d40e8c740515a5dcefb2ba6c8c7b8bd0acd36b92e30d95b0812fe2b412787e5",
+        "train_structured_loss_after": {
+          "combined_mse": 0.0027424475876311285,
+          "k1.content_mse": 8.246405741374474e-06,
+          "k1.fact_mse": 0.013099772855639458,
+          "k1.goal_mse": 0.0001748286740621552,
+          "k2.content_mse": 3.323813871247694e-05,
+          "k2.goal_mse": 8.121528662741184e-05,
+          "k2.transition_mse": 0.0030573841650038958
+        },
+        "train_structured_loss_before": {
+          "combined_mse": 0.0029566043366079007,
+          "k1.content_mse": 9.278454854211304e-06,
+          "k1.fact_mse": 0.013921926729381084,
+          "k1.goal_mse": 0.00021146296057850122,
+          "k2.content_mse": 3.4770571801345795e-05,
+          "k2.goal_mse": 8.617643470643088e-05,
+          "k2.transition_mse": 0.0034760108683258295
+        },
+        "train_structured_loss_delta": {
+          "combined_mse": -0.00021415674897677216,
+          "k1.content_mse": -1.0320491128368303e-06,
+          "k1.fact_mse": -0.0008221538737416267,
+          "k1.goal_mse": -3.663428651634604e-05,
+          "k2.content_mse": -1.5324330888688564e-06,
+          "k2.goal_mse": -4.96114807901904e-06,
+          "k2.transition_mse": -0.00041862670332193375
+        },
         "training_performed": true,
         "training_update_steps": 2,
         "transition_losses": {
@@ -340,6 +466,7 @@
           "k2_owner_changed": true,
           "k3_owner_unchanged": true,
           "no_optimizer_state": true,
+          "no_update_control": true,
           "parent_checkpoint_unchanged": true,
           "three_disjoint_holdout_records": true,
           "train_holdout_disjoint": true,
@@ -347,7 +474,7 @@
         },
         "course_digest": "1908907d11cb089891635237d97fe6434bee05c782dd3b0975535fd9dc3a74a4",
         "course_seed": 2,
-        "elapsed_seconds": 4.546319099958055,
+        "elapsed_seconds": 4.513753899955191,
         "frozen_workers": [
           "k3.outcome_projection"
         ],
@@ -380,7 +507,42 @@
           "k2.goal_mse": 0.0008872010099973265,
           "k2.transition_mse": -0.00036051489102343747
         },
+        "no_update_control": {
+          "holdout_structured_loss_after": {
+            "combined_mse": 0.016777580521142633,
+            "k1.content_mse": 8.139078060291165e-05,
+            "k1.fact_mse": 0.017317220258216064,
+            "k1.goal_mse": 0.001712819910608232,
+            "k2.content_mse": 0.03250698816312555,
+            "k2.goal_mse": 0.04578693084719513,
+            "k2.transition_mse": 0.0032601331671079
+          },
+          "holdout_structured_loss_before": {
+            "combined_mse": 0.016777580521142633,
+            "k1.content_mse": 8.139078060291165e-05,
+            "k1.fact_mse": 0.017317220258216064,
+            "k1.goal_mse": 0.001712819910608232,
+            "k2.content_mse": 0.03250698816312555,
+            "k2.goal_mse": 0.04578693084719513,
+            "k2.transition_mse": 0.0032601331671079
+          },
+          "holdout_structured_loss_delta": {
+            "combined_mse": 0.0,
+            "k1.content_mse": 0.0,
+            "k1.fact_mse": 0.0,
+            "k1.goal_mse": 0.0,
+            "k2.content_mse": 0.0,
+            "k2.goal_mse": 0.0,
+            "k2.transition_mse": 0.0
+          },
+          "passed": true,
+          "training_update_steps": 0
+        },
         "optimizer_state_present": false,
+        "parameter_delta_norm": {
+          "k1.semantic": 0.07937038848224212,
+          "k2.transition": 0.01291420563682572
+        },
         "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
         "receipt": {
           "candidate_namespace": "taiji:k:candidate:model-17",
@@ -458,6 +620,33 @@
           "python_03.py"
         ],
         "train_experience_digest": "4591538f4dbc7fb411e7ac8c9c565a438b2c4e4018f97bdfd84977510dd9563e",
+        "train_structured_loss_after": {
+          "combined_mse": 0.0028047190933951547,
+          "k1.content_mse": 8.246405741374474e-06,
+          "k1.fact_mse": 0.013099772855639458,
+          "k1.goal_mse": 0.0001748286740621552,
+          "k2.content_mse": 4.3338866817066446e-05,
+          "k2.goal_mse": 0.00011164443276356906,
+          "k2.transition_mse": 0.0033904833253473043
+        },
+        "train_structured_loss_before": {
+          "combined_mse": 0.003026986301999083,
+          "k1.content_mse": 9.278454854211304e-06,
+          "k1.fact_mse": 0.013921926729381084,
+          "k1.goal_mse": 0.00021146296057850122,
+          "k2.content_mse": 4.5633656554855406e-05,
+          "k2.goal_mse": 0.00011958363757003099,
+          "k2.transition_mse": 0.0038540323730558157
+        },
+        "train_structured_loss_delta": {
+          "combined_mse": -0.00022226720860392835,
+          "k1.content_mse": -1.0320491128368303e-06,
+          "k1.fact_mse": -0.0008221538737416267,
+          "k1.goal_mse": -3.663428651634604e-05,
+          "k2.content_mse": -2.2947897377889603e-06,
+          "k2.goal_mse": -7.93920480646193e-06,
+          "k2.transition_mse": -0.00046354904770851135
+        },
         "training_performed": true,
         "training_update_steps": 2,
         "transition_losses": {
@@ -488,6 +677,21 @@
   "distinct_course_variants": true,
   "mean_combined_loss_delta": -0.00023160630334368346,
   "model_seed": 17,
+  "no_update_control_passed": true,
+  "parameter_delta_norm_by_course_seed": {
+    "0": {
+      "k1.semantic": 0.10789559732994627,
+      "k2.transition": 0.01459495374185856
+    },
+    "1": {
+      "k1.semantic": 0.07937038848224212,
+      "k2.transition": 0.01188628763992947
+    },
+    "2": {
+      "k1.semantic": 0.07937038848224212,
+      "k2.transition": 0.01291420563682572
+    }
+  },
   "parent_checkpoint_digests": [
     "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675"
   ],
@@ -499,6 +703,11 @@
   "stability_gate_passed": false,
   "status": "passed",
   "technical_gate_passed": true,
+  "train_combined_loss_delta_by_course_seed": {
+    "0": -0.0005005599765960751,
+    "1": -0.00021415674897677216,
+    "2": -0.00022226720860392835
+  },
   "train_episode_indexes": [
     0,
     1,
