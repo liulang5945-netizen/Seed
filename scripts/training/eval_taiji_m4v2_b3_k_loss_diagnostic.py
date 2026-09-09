@@ -253,12 +253,17 @@ def run_diagnostic(
                 "k3.outcome_projection": artifact_dir / "taiji_r6_k3_outcome_projection.pt",
             }.items()
         }
+        # The attachment preflight still exposes the legacy R6 three-course
+        # fixture.  K course seeds may select any of the six real train
+        # episodes, so map only the preflight canary seed while preserving
+        # the actual K train variant below.
+        preflight_course_seed = int(course_seed) % 3
         preflight = run_preflight(
             semantic_checkpoint=str(paths["k1.semantic"]),
             transition_checkpoint=str(paths["k2.transition"]),
             projection_checkpoint=str(paths["k3.outcome_projection"]),
             model_seed=model_seed,
-            course_seed=course_seed,
+            course_seed=preflight_course_seed,
             candidate_namespace=candidate_namespace,
         )
         if preflight.get("status") != "passed":
@@ -554,6 +559,7 @@ def run_diagnostic(
                 "candidate_worker_bundle_digest": candidate_bundle.bundle_digest,
                 "course_digest": course.course_digest,
                 "course_seed": int(course_seed),
+                "worker_attachment_preflight_course_seed": preflight_course_seed,
                 "workspace_seed": workspace_seed,
                 "train_episode_count": len(train_episode_indexes),
                 "train_variant_strategy": train_variant_strategy,

@@ -47,7 +47,9 @@
 
 **B3-K 非滑动课程组合诊断已完成，仍未形成稳定证据。** 预注册组合 `[0,2,4] / [1,3,5] / [0,3,5]` 的 train input/target digest 都不同，三组 holdout delta 为 `−0.00025813/−0.00025813/−0.00063627`；但前两组 candidate update digest 完全相同，只有第三组不同。raw performance 全部改善，却因 `candidate_updates_distinct=false` 不能通过稳定性 Gate。报告为 [B3-K non-sliding](../../../reports/taiji_m4v2_b3_k_non_sliding_20260910.json)，当前结论是部分课程组合在现有 K1/K2 局部更新中不可辨识，不能继续用组合数量替代机制定位。
 
-**当前唯一下一步：做 B3-K 逐 episode update-signature 审计。** 固定同一 model 17 parent、同一 holdout 和当前 detached local-delta 规则，对 6 条可用 train episode 各做一次隔离单步 candidate，记录 semantic/transition 输入 digest、candidate worker digest、参数 delta norm 和六分量 loss；再将 batch candidate digest 与单 episode 签名对照。该审计只读出当前规则的可辨识性，不改学习率、owner、结构或 Gate；根据具体碰撞位置再决定修正输入表征还是更新规则，禁止凭 batch 结果直接改架构。
+**B3-K 逐 episode update-signature 审计已完成，定位到 K1/K2 共同的更新碰撞。** 6 条 episode 的 semantic/transition 输入 digest 全部不同，但单步 candidate 成对碰撞：`0=3`、`1=4`、`2=5`；K1 与 K2 两个 worker 的 candidate checkpoint digest 都呈现同样的三组成对碰撞。三样本 batch candidate 均不等于任一单 episode candidate，说明 batch 还叠加了聚合效应。报告为 [B3-K update signature audit](../../../reports/taiji_m4v2_b3_k_update_signature_audit_20260910.json)，technical Gate 通过但 `can_promote=false`。
+
+**当前唯一下一步：做 B3-K K1/K2 feature-target collision audit。** 固定同一 parent 与 6 条 episode，直接记录每条 episode 进入 K1/K2 `fit` 的实际 feature tensor digest、目标 fact/delta tensor digest、per-worker parameter delta digest，并与已知的成对 candidate collision 对齐。该审计只回答碰撞来自输入表征/typed mask，还是来自 local-delta 更新规则的参数投影；不改学习率、owner、结构、数据组合或 Gate。定位前禁止再扩 batch、放宽准入或进入 formal。
 
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 
