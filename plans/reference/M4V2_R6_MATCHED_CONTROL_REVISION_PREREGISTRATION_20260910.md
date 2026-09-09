@@ -86,3 +86,12 @@ candidate=1、lesion=0 和两个 delta=1.0。
 
 下一步只执行 model17/course2；通过后再进入 model23，期间不运行 aggregate、不接入
 default runtime/provider/MCP/client/CUDA。
+
+## 7. Revised model17 slice closure（2026-09-10）
+
+revised runner 已完成 model17/course0、course1、course2，累计 3/9 且无 failure；
+三个 cell 都满足 frozen=0、matched=0、candidate=1、lesion=0 和两个 delta=1.0，
+same-capacity 参数/trace、no-feedback admission 和 parent/side-effect Gate 均通过。
+
+下一步只执行 model23/course0；在 9/9 完成前不运行 revised aggregate，不覆盖旧
+aggregate，也不接入 default runtime/provider/MCP/client/CUDA。

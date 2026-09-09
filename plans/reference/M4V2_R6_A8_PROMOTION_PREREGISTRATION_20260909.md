@@ -628,3 +628,13 @@ delta 均为 1.0，matched/candidate 参数和 inference trace 相同，旧 aggr
 
 下一步只执行新 ledger 的 model17/course2；不得跳过 predecessor、改变资源阈值或把
 revised single-cell 结果外推成 promotion。
+
+## 40. Matched-control revision model17 slice closure（2026-09-10）
+
+model17/course0、course1、course2 已由 revised runner 连续追加并通过，累计 3/9；
+每格 frozen/matched/candidate/lesion=0/0/1/0，两个 paired delta=1.0，资源等价
+和 no-feedback side-effect Gate 保持通过。旧 R6 aggregate 与旧 ledger 仍未改变，
+can_start_r6_formal=false、can_promote=false。
+
+下一步只执行 revised ledger 的 model23/course0；不得跳过 predecessor、提前计算
+aggregate 或解冻任何默认 runtime owner。

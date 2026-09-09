@@ -533,3 +533,9 @@ candidate=1.0；matched/candidate 参数和 trace 相同，wall=1.2724×、peak=
 旧 runtime/provider/MCP/client/CUDA 仍未接入。**当前唯一下一步**：只执行 revised
 model17/course1；成功后按原固定顺序继续，任一失败停止并保留证据，不修改旧 aggregate
 或资源阈值。
+
+revised model17 slice 已闭合：course0/course1/course2 连续通过，独立 ledger 累计
+3/9，三格均为 frozen=0、matched=0、candidate=1、lesion=0，两个 paired delta=1.0，
+wall/peak 和 same-capacity 参数/trace Gate 均通过。**当前唯一下一步**：只执行 revised
+runner 的 model23/course0；保持 prior-ledger 顺序，9/9 前不运行 aggregate、不接默认
+runtime/provider/MCP/client/CUDA。
