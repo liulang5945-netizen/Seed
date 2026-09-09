@@ -578,3 +578,13 @@ digest 为 `e0e03bb18b94a53bcf4cf9c91436819a21347b476df17adb771dcaf8b1c127c3`。
 
 下一步只执行 `model23/course2`，继续沿用 prior ledger、固定 parent/fixed-large 和五臂
 resource/side-effect/checkpoint contract。
+
+## 22. Model23 three-course slice closure（2026-09-09）
+
+`model23/course2` 已成功追加，execution contract digest 为
+`b09fe600293131f3690e942dd28e36f3b581149592dec46854900a49f746806d`；candidate/fixed-large
+均为 `1/1`，lesion 为 `0`，五臂 `resource_gate` 全部为 true。累计 6 个 row 为
+`executed_passed`，model31 的 `course0/1/2` 仍为 `not_started`，没有计算 aggregate。
+
+下一步只执行固定顺序中的 `model31/course0`，继续使用 model31 的 content-addressed
+parent/worker/fixed-large registry 和 prior ledger，任何失败停止在该 row。
