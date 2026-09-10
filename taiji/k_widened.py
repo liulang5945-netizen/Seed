@@ -61,7 +61,11 @@ def _digest(value: Any, name: str) -> str:
 
 
 def anchored_permutation(
-    *, count: int, anchor_digests: Sequence[str], course_digest: str
+    *,
+    count: int,
+    anchor_digests: Sequence[str],
+    course_digest: str,
+    class_keys: Sequence[str] | None = None,
 ) -> tuple[int, ...]:
     """Deterministic non-identity permutation anchored by K3 digests.
 
@@ -70,27 +74,62 @@ def anchored_permutation(
     expansion (Fisher-Yates over 64-bit draws).  It must never be the
     identity, so an anchored channel always consumes a genuinely different
     experience order than the forward channel.
+
+    ``class_keys`` closes the delta-equivalence-class blind spot: two
+    experiences with the same class key produce bit-identical local-delta
+    updates (their masked-visible learning signals match), so a permutation
+    that only reorders same-class members is equivalent to the identity even
+    when it is not the identity.  When class keys are provided, the
+    permutation is regenerated deterministically until it changes the class
+    pattern; a course with fewer than two classes cannot be repaired this
+    way and is rejected.
     """
 
     if count <= 0:
         raise ValueError("anchored permutation requires a positive count")
-    seed_material = content_digest(
-        {"anchor": [str(item) for item in anchor_digests], "course": course_digest}
-    )
 
-    def draw(index: int) -> int:
-        block = content_digest({"seed": seed_material, "counter": index})
-        return int(block[:16], 16)
-
-    order = list(range(count))
-    for position in range(count - 1, 0, -1):
-        order[position], order[draw(position) % (position + 1)] = (
-            order[draw(position) % (position + 1)],
-            order[position],
+    def derive(salt: int) -> tuple[int, ...]:
+        seed_material = content_digest(
+            {
+                "anchor": [str(item) for item in anchor_digests],
+                "course": course_digest,
+                "salt": salt,
+            }
         )
-    if tuple(order) == tuple(range(count)):
-        order[0], order[-1] = order[-1], order[0]
-    return tuple(order)
+
+        def draw(index: int) -> int:
+            block = content_digest({"seed": seed_material, "counter": index})
+            return int(block[:16], 16)
+
+        order = list(range(count))
+        for position in range(count - 1, 0, -1):
+            order[position], order[draw(position) % (position + 1)] = (
+                order[draw(position) % (position + 1)],
+                order[position],
+            )
+        return tuple(order)
+
+    if class_keys is None:
+        order = derive(0)
+        if order == tuple(range(count)):
+            order = list(order)
+            order[0], order[-1] = order[-1], order[0]
+        return tuple(order)
+
+    keys = tuple(str(key) for key in class_keys)
+    if len(keys) != count:
+        raise ValueError("class keys must cover every experience")
+    if len(set(keys)) < 2:
+        raise ValueError(
+            "anchored permutation requires at least two delta classes; "
+            "a single-class course cannot produce a pattern change"
+        )
+    forward_pattern = keys
+    for salt in range(count * 2):
+        order = derive(salt)
+        if tuple(keys[index] for index in order) != forward_pattern:
+            return order
+    raise ValueError("anchored permutation failed to change the class pattern")
 
 
 @dataclass(frozen=True)
@@ -261,6 +300,8 @@ class WidenedKBundle:
         transition_lr: float,
         projection_anchor_digests: Sequence[str],
         course_digest: str,
+        class_keys: Sequence[str] | None = None,
+        checkpoint_indices: Sequence[int] = (),
     ) -> tuple[WidenedChannelReceipt, WidenedChannelReceipt]:
         """Run both channels over the sealed course; return per-channel receipts.
 
@@ -268,7 +309,11 @@ class WidenedKBundle:
         channel 2 (``anchored``) consumes the K3-anchored permutation of the
         same stream.  Both channels run the identical per-head fit stream as
         one fixed-large replica, so the bundle performs exactly twice the
-        fixed-large per-replica update count.
+        fixed-large per-replica update count.  ``class_keys`` enables the
+        delta-equivalence-class pattern guard on the permutation, and
+        ``checkpoint_indices`` (1-based experience counts) records a logical
+        checkpoint ledger at fixed stream positions for checkpoint-parity
+        accounting.
         """
 
         experiences = tuple(experiences)
@@ -278,7 +323,9 @@ class WidenedKBundle:
             count=len(experiences),
             anchor_digests=projection_anchor_digests,
             course_digest=course_digest,
+            class_keys=class_keys,
         )
+        checkpoint_positions = {int(value) for value in checkpoint_indices}
         receipts: list[WidenedChannelReceipt] = []
         for channel, order in (
             ("forward", tuple(range(len(experiences)))),
@@ -288,7 +335,8 @@ class WidenedKBundle:
             k2 = self.channels[channel]["k2.transition"]
             k1_before = _copy_state(k1)
             k2_before = _copy_state(k2)
-            for index in order:
+            checkpoint_ledger: list[dict[str, Any]] = []
+            for consumed, index in enumerate(order, start=1):
                 experience = experiences[index]
                 k1.fit(
                     (experience.semantic_example,),
@@ -300,6 +348,14 @@ class WidenedKBundle:
                     epochs=transition_epochs,
                     learning_rate=transition_lr,
                 )
+                if consumed in checkpoint_positions:
+                    checkpoint_ledger.append(
+                        {
+                            "consumed": consumed,
+                            "k1_checkpoint_digest": content_digest(k1.checkpoint()),
+                            "k2_checkpoint_digest": content_digest(k2.checkpoint()),
+                        }
+                    )
             receipts.append(
                 WidenedChannelReceipt(
                     channel=channel,
@@ -313,6 +369,12 @@ class WidenedKBundle:
                     projection_anchor_digests=tuple(projection_anchor_digests),
                 )
             )
+            if channel == "forward":
+                self.forward_checkpoint_ledger = checkpoint_ledger
+                self.forward_order = order
+            else:
+                self.anchored_checkpoint_ledger = checkpoint_ledger
+                self.anchored_order = order
         return receipts[0], receipts[1]
 
     def channel_divergence(self) -> dict[str, float]:

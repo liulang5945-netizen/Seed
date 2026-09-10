@@ -1,0 +1,68 @@
+{
+  "format": "taiji-m4v2-b3-k-c-parity-v2-manifest-v1",
+  "version": 1,
+  "status": "frozen-design",
+  "frozen_on": "2026-09-10",
+  "purpose": "Root-cause-corrected C-entry parity repair: equal-new-budget course with class-pattern-guarded permutation, both arms rebuilt on the same stream.",
+  "source_contracts": {
+    "caliber_revision": "plans/reference/M4V2_B3_K_C_PARITY_CALIBER_REVISION_20260910.md",
+    "capacity_parity_manifest": "plans/manifests/taiji_m4v2_b3_k_c_capacity_parity_v1.json",
+    "widened_candidate_build": "reports/taiji_m4v2_b3_k_c_widened_candidate_build_20260910.json",
+    "attribution_correction": "plans/reference/M4V2_B3_K_C_PARITY_CALIBER_REVISION_20260910.md §6"
+  },
+  "root_cause_being_repaired": {
+    "mechanism": "delta-equivalence-class pattern collision",
+    "statement": "course1's A+A+B multiset yields only three class patterns; the anchored permutation [1,0,2] swaps two delta-equivalent A members, so it is equivalent to the identity even though it is not the identity. Parent convergence was refuted (delta norms 0.196/0.030 nonzero).",
+    "implies": "repair = make class-pattern collision negligible (n_new balanced over classes + pattern guard), not restore gradients"
+  },
+  "course_contract": {
+    "n_new_experiences_per_cell": 150,
+    "visible_delta_classes": {
+      "A": "python-first episode (inspect-language, toolchain available)",
+      "B": "rust-first episode (clarify-toolchain, toolchain missing)",
+      "C": "typescript-first episode (clarify-toolchain, toolchain missing)"
+    },
+    "class_balance": { "A": 50, "B": 50, "C": 50 },
+    "recover_class_excluded_because": "K2 worker goal vocabulary lacks goal:recover-target (2 goals only); feeding recover-target transition examples would fail the K2 fit contract",
+    "identity_minting": "per-experience first-file content variant appended as a comment line; byte-length-level changes are invisible to the typed fact masks, so the delta class is preserved while the observation digest is genuinely unique",
+    "permutation_guard": "anchored_permutation(class_keys=...) regenerates deterministically until the anchored class pattern differs from the forward pattern; single-class courses are rejected",
+    "statistics_unit": "course",
+    "model_dimension_note": "the three model seeds' parent K worker weights are bit-identical (state_dict diff 0.0); the model dimension is a permutation witness, not an independent sample"
+  },
+  "training_budget_contract": {
+    "caliber": "new_update_steps only (inherited parent training steps are reported separately and excluded from parity comparison)",
+    "new_update_steps_per_arm_per_cell": 600,
+    "composition": "150 experiences x 2 workers x 2 instances (widened channels / fixed-large replicas)",
+    "both_arms_same_stream": true,
+    "optimizer_state": "none",
+    "learning_rates_frozen": { "semantic": 2.0, "transition": 0.2 }
+  },
+  "checkpoint_policy": {
+    "logical_checkpoints_per_instance": 9,
+    "evenly_spaced_over_stream": true,
+    "instances_per_cell": { "widened_channels": 2, "fixed_large_replicas": 2 }
+  },
+  "artifact_contract": {
+    "widened_root": "checkpoints/taiji_k_candidate_c_entry_parity_v2",
+    "fixed_large_root": "checkpoints/taiji_k_fixed_large_c_entry_v2",
+    "widened_format": "taiji-k-continuation-widened-v2",
+    "fixed_large_format": "taiji-k-fixed-large-c-entry-parity-v2-ensemble-v1",
+    "do_not_overwrite_v1_evidence": true
+  },
+  "hard_gates": {
+    "parameter_bytes_ratio": "<= 1% against 38,664 for both arms",
+    "new_update_steps": "exact equality per cell at 600 per arm",
+    "checkpoint_emissions": "9 per instance on both arms",
+    "class_pattern_changed": "anchored pattern differs from forward pattern in every cell",
+    "divergence": "channel divergence strictly positive for both workers in every cell",
+    "fresh_restore": "both arms restore from disk with identical owner digests",
+    "parent_unchanged": true,
+    "k3_unchanged": true
+  },
+  "stop_conditions": [
+    "any hard gate fails -> stop, attribute per cell, no threshold relaxation",
+    "zero divergence under the new course -> stop, attribute experience generation diversity",
+    "sealed scoring remains locked until a separate formal preregistration is frozen",
+    "can_promote stays false regardless of outcome"
+  ]
+}
