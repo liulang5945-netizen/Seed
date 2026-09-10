@@ -22,9 +22,9 @@
 | k2.transition | transition_head / goal_head / content_head | 同上 | 同上 |
 
 - 两通道**形状与 supervised 通道完全相同**，因此 worker 参数精确 ×2：4,833 → **9,666 参数 = 38,664 字节（ratio 0.0%）**，无需凑数、无自由宽度参数。
-- **update 语义不同且真实**：supervised 通道在全部 train experience tick 上由 teacher-forced delta 更新；k3-feedback 通道在同一 tick 上只消费经 K3 admission 的真实 outcome/dependency projection delta（K3 为 deterministic projector，每个 train tick 产生一个 projection 事件）。两通道的训练数据视图不同 → 最终权重不同 → 这是由数据视图分工产生的专门化，不是同 error 复制。
-- **readout 语义不同**：fixed-large 的 readout 是「同构 replica 的算术平均」（同输入、同 error、纯方差缩减）；widened candidate 的 readout 是「异构信号通道之和」（监督信号 + 反馈投影信号的合成）。两者在 owner（feedback 通道的 owner 语义绑定 K3 admitted outcome，fixed-large 无此概念）、update（不同数据子集 vs 相同数据）、readout（通道和 vs replica 平均）三条路径上均不同。
-- **学习规则仍是无 optimizer 的局部 delta**：v1 合同的 `optimizer_state_present=false` 保持；新增的只是 update 触发视图。因此 **K continuation contract 升 v1→v2**（新增双通道 update 语义与 receipt 字段），遵循合同自身的版本演进条款，不静默修改 v1。
+- **update 语义不同且真实（§4 修订后的通道定义）**：实现核查发现 K3 projection 事实（`outcome::*`/`dependency::*`）不在 K worker 现有 13-fact 词汇内，扩展词汇会使 K2 交叉段形状膨胀（13→17 facts → 参数 ~15.9k ≫ 9,666），破坏精确 ×2。按 §4 修订条款（不参考 validation/sealed 表现）把通道 2 的定义从「K3-feedback 目标」修订为「**K3-anchored permuted-order 通道**」：通道 1 消费正序 experience 流（与 fixed-large replica_0 相同）；通道 2 消费由 **K3 projection digest 派生的确定性乱序** experience 流（每 tick 的 update 记录携带 projection digest 作为排序见证）。非退化依据：在线局部 delta 对经历顺序敏感（M5.S6 formal 已实证 seed 顺序导致 margin 剧变），两条顺序不同的流从同一 parent 出发必然产生不同的最终权重；distinct 证据门（差分范数）机器核验。K3 语义从「目标源」如实降级为「排序见证」。
+- **readout 语义不同**：fixed-large 的 readout 是「同构 replica 的概率算术平均」；widened candidate 的 readout 是「单 bundle 内双头 **logit 相加**后再归约（sigmoid/softmax）」——logit 域合成 vs 概率域平均，且两通道经历顺序不同。owner/update/readout 三条路径均不同。
+- **学习规则仍是无 optimizer 的局部 delta**：v1 合同的 `optimizer_state_present=false` 保持；新增的只是 update 视图。因此 **K continuation 合同以 widened 变体升 v2**（`taiji-k-continuation-widened-v2`，双通道 update 语义 + receipt 扩展），遵循合同自身的版本演进条款，不静默修改 v1。
 
 ## 3. 训练预算与 checkpoint 政策（与 fixed-large 精确对齐）
 

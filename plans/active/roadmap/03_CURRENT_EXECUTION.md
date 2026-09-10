@@ -71,6 +71,10 @@
 
 **当前唯一下一步**：实现 K continuation contract v2 与 widened-candidate artifact builder——(1) `taiji/k_continuation.py` v2 双通道语义 + receipt 扩展 + 定向测试；(2) 按 manifest `taiji-k-c-entry-parity-candidate-v1` 生成 artifact 并出参数核算表（核验 9,666 参数 / 38,664 字节）；(3) 三硬门机器核验（参数字节 / 14,252 更新步 / 9 checkpoint + distinct 证据 + fresh restore/rollback/parent/K3 不变）；核验通过前不训练、不读 sealed formal、不调学习率。
 
+widened-candidate 已实现并构建（`taiji/k_widened.py` 的 `WidenedKBundle` + `build_taiji_m4v2_b3_k_c_widened_candidate.py`；通道 2 按设计 §4 修订条款落地为 **K3-anchored permuted-order**——projection 事实不在现有 13-fact 词汇内，扩词汇破坏精确 ×2，K3 语义如实降级为排序见证）。构建结果 `reports/taiji_m4v2_b3_k_c_widened_candidate_build_20260910.json`：**8/9 cell 通过**（38,664 字节 ratio 0.0%、14,252 步精确、fresh restore/parent/K3 全过、通道差分非零），**model31/course1 的通道差分为精确 0.0 → distinct 门诚实失败**。归因：(1) 该 cell 的 parent 在课程语料上已收敛，顺序通道无信息；(2) 口径发现——14,252 中 14,240 是 parent 继承步数（fixed-large 同口径），真实新增更新每 cell 仅 12 步，parity 的「更新步数」门本身混淆了继承与新增。按停止线保留 8/9 证据，不放宽 distinct 门。
+
+**当前唯一下一步**：parity 口径修正决策——先冻结「实际新增参数更新步数」的独立计量（把继承步数从 parity 硬门中分离，fixed-large 与 candidate 同口径重述），再对 model31/course1 的零差分归因（parent 收敛 → 顺序通道无信息）选择：失败 episode 进入课程（S6B 失败准入遗产）或更强的新增预算课程；两者都需 manifest 修订预注册。决策前不进入 sealed 评分、不训练、不改 distinct 门。
+
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 
 **B2 保存先于训练。** 先在 CPU 检查父 checkpoint 可恢复；保存 fast/slow、replay、学习器状态（若使用 optimizer 则含其状态）、RNG、课程游标和 owner lineage。新进程恢复后预测等价；单步更新后保存/恢复/再更新，与不中断轨迹在预先声明容差内一致。检查磁盘空间、原子写和 rollback；任何失败禁止长跑，不覆盖父代。
