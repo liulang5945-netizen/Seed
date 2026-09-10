@@ -375,3 +375,20 @@ P3.5 的结论是“在冻结 K、排除零边际平局并保留安全动作边�
 | promotion | 未通过/未开放 | `can_promote=false` 保持；这是局部行为选择跨身份泛化，不是通用智能或结构成长证明 |
 
 P3.6 的结论是：P3.5 的 G-only 行为变化不只在原 artifact 上重放，在这组未见 project/path 上也能复现，同时安全 reobserve 和旧类保持没有退化。但样本规模仍是 4 条 holdout，不能直接解冻 promotion 或宣称开放泛化。P3 阶段收束，下一步唯一执行项改为 P4 容量压力与继承式结构成长 Gate：先用 validation-only 扫描证明固定容量存在可重复瓶颈，再比较继承式 dynamic-growth、强 fixed-large 与结构 lesion；若无真实压力则停止结构增长，不能为了“神经元扩张”而人为制造需求。
+
+## 25. P4.0 固定容量压力扫描结果（2026-09-11）
+
+按当前执行计划运行了 [P4.0 capacity-pressure scan](../../scripts/training/eval_taiji_m5_k_p4_0_capacity_pressure.py)，产出 [P4.0 manifest](../manifests/taiji_m5_k_p4_0_capacity_pressure_manifest_v1.json) 与 [P4.0 报告](../../reports/taiji_m5_k_p4_0_capacity_pressure_20260911.json)。本轮严格 validation-only：没有调用 `fit`，没有修改 K1/K2，没有新增 G 参数，没有读取 sealed payload；前一轮失败的临时 run 目录已清理，最终 run 目录按 `.gitignore` 保留为本地可复核产物。
+
+| Gate | 结果 | 关键实测 |
+|---|---:|---|
+| 新身份与候选合同 | 通过 | 5 个新案例、3 个新 project、20 个 candidate/behavior digest 唯一；宽度 `2/4/8/12` 各有 5 个案例 |
+| checkpoint / lineage | 通过 | K1/K2、zero-step G、trained-G 独立恢复；G 对 P3.2 manifest lineage 校验通过；K1/K2 digest 前后不变 |
+| 固定 G 宽度压力 | 观察到 | trained-G residual 分别为 width 2=`0.32`、4=`0`、8=`0.54`、12=`0.59`；target hit 为 `0.6/1.0/0.4/0.2` |
+| 长序列压力 | 未观察到 | sequence length `1/4/16` 的 utility 均为 `0.6375`，没有随重复长度下降 |
+| 特征碰撞 | 未观察到 | 四个宽度的 feature collision rate 均为 `0` |
+| 结构成长 / promotion | 未开放 | `growth_admitted=false`、`can_promote=false`；fixed-large 尚未具备公平的 G owner/readout 合同 |
+
+这个结果只能证明“固定 G 在候选集合变宽、跨案例 proposal 竞争时出现可重复的选择压力”。width 4 完整通过而 width 8/12 退化，且序列长度没有进一步退化，说明当前首先要排查候选集上下文/竞争特征、排序与归一化合同；它还不能单独证明增加神经元或扩大拓扑会解决问题。P4.0 的 `scan_passed=true` 只表示验证合同、隔离、恢复和诊断运行完成；`growth_admitted=false` 是有意保持的安全状态。
+
+因此下一步从“直接进入结构成长”修订为 **P4.1 压力归因与公平容量对照 Gate**：在相同 P4.0 candidate/behavior artifact 上建立同输入/读出合同的 fixed-large、结构 lesion 和候选集 context-aware 对照，validation-only 比较 width `2/4/8/12` 的 utility、target hit、旧类保持、安全投影、Workbench、参数/资源和独立恢复；至少两个 deterministic seed。只有 fixed-large/lesion 排除上下文缺陷并稳定证明 fixed-small 瓶颈后，才允许设计继承式结构成长；否则先修 G 的输入合同，不扩拓扑。
