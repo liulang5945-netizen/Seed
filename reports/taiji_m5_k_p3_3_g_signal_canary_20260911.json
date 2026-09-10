@@ -13,8 +13,8 @@
   "p2_7_manifest": "E:\\Seed\\plans\\manifests\\taiji_m5_k_p2_7_generalization_manifest_v1.json",
   "p3_2_report": "E:\\Seed\\reports\\taiji_m5_k_p3_2_owner_transfer_20260910.json",
   "p3_2_manifest": "E:\\Seed\\plans\\manifests\\taiji_m5_k_p3_2_owner_transfer_manifest_v1.json",
-  "run_dir": "E:\\Seed\\output\\taiji_m5_k_p3_3_g_signal_canary_a9672c82646f4215969afc43db4bcc8e",
-  "manifest_digest": "ee28722c8f30239b14834769e6476fd3488be118bacb96967ad346c1ed330382",
+  "run_dir": "E:\\Seed\\output\\taiji_m5_k_p3_3_g_signal_canary_3e2c756ae4044d4cb7a93b47b9ae53c7",
+  "manifest_digest": "217d6f7859415d41a8f127c3545b3b0f45dc3f1f2b714269754ccdd9b25e3a14",
   "checkpoint_preflight": {
     "k1_restore_digest_equal": true,
     "k2_restore_digest_equal": true,
@@ -22,11 +22,11 @@
     "independent_process_restore": true,
     "files": {
       "k1": {
-        "path": "E:\\Seed\\output\\taiji_m5_k_p3_3_g_signal_canary_a9672c82646f4215969afc43db4bcc8e\\preflight-parent\\birth_k1_semantic.pt",
+        "path": "E:\\Seed\\output\\taiji_m5_k_p3_3_g_signal_canary_3e2c756ae4044d4cb7a93b47b9ae53c7\\preflight-parent\\birth_k1_semantic.pt",
         "bytes": 7665
       },
       "k2": {
-        "path": "E:\\Seed\\output\\taiji_m5_k_p3_3_g_signal_canary_a9672c82646f4215969afc43db4bcc8e\\preflight-parent\\birth_k2_transition.pt",
+        "path": "E:\\Seed\\output\\taiji_m5_k_p3_3_g_signal_canary_3e2c756ae4044d4cb7a93b47b9ae53c7\\preflight-parent\\birth_k2_transition.pt",
         "bytes": 26505
       }
     }
@@ -51,6 +51,8 @@
     "project_split_disjoint": true,
     "path_split_disjoint": true,
     "runtime_target_excluded": true,
+    "experience_identity_unique": true,
+    "candidate_set_digest_unique": true,
     "sealed_holdout_untouched": true,
     "passed": true,
     "train_count": 40,
@@ -79,5 +81,5 @@
     "runtime_target_used": false
   },
   "interpretation": "passed: G-only learning may be designed next",
-  "elapsed_seconds": 102.601
+  "elapsed_seconds": 104.741
 }
