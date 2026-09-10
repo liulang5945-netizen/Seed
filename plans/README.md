@@ -1,17 +1,19 @@
 # Seed / Taiji 计划与架构入口
 
-> 2026-09-10 依据 main 072dee0d 的源码、checkpoint 与报告复审。唯一执行顺序：[当前计划](active/roadmap/03_CURRENT_EXECUTION.md)。
+> 2026-09-10 依据 main da60abc7 的源码、checkpoint 与报告复审。唯一执行顺序：[当前计划](active/roadmap/03_CURRENT_EXECUTION.md)。
 
 目前已有五类 K worker 和 fast/slow＋replay 实现。C-stage v2 在 D/R/A 小型评估上四门通过，FS 比 C 的平均 MSE 改善约 0.001868，弱类改善约 0.002495。该组合使用额外 replay；三组 v4 K worker 权重实测相同，全五类泛化与独立拆分收益仍待验证，can_promote=false。
 
-**P0 等 replay 配对诊断已完成；P1 数据合同审计已运行但未通过。唯一下一步：修复 P1 数据合同并重跑审计。** P0 已证明当前 FS 有效轨迹与直接 continuation＋相同 replay 在 `4.76837158203125e-7` 峰值差内等价，因此后续效果基线采用直接 continuation＋replay；FS 保留为可恢复状态实现候选。P1 发现五类的 mask-visible K1/K2 输入各只有 1 个有效签名，validation 缺 D/R，且没有 project 隔离；在修复并通过前不进入 P2。SGK v1 继续暂停。
+**P0 等 replay 配对诊断已完成；P1.1 数据合同已修复并通过。唯一下一步：P2 validation pilot。** P0 已证明当前 FS 有效轨迹与直接 continuation＋相同 replay 在 `4.76837158203125e-7` 峰值差内等价，因此后续效果基线采用直接 continuation＋replay；FS 保留为可恢复状态实现候选。P1 v2 已确认五类每类至少 2 个 K1/K2 mask-visible 输入、validation 五类覆盖且 project/template 隔离；在 P2 冻结 candidate/scorer/threshold/resource 并完成 checkpoint preflight 后才能训练。SGK v1 继续暂停。
 
-阶段已按 601413cd 收束为“研究审计完成、模型能力尚未验收”；本轮新增的是 validation-only 机制/数据审计，不是训练成绩。**当前只执行 P1.1→P1→P2：先修复并证明可复现、可归因、旧能力保持可测的数据合同，再做固定容量持续学习基线。** P3–P5 保留为后续路线，不并行开工；完整成果分类、停止条件及文档边界均在当前计划中。本轮不启动训练。
+阶段已按 601413cd 收束为“研究审计完成、模型能力尚未验收”；本轮仍未进行正式训练，新增的是 P1 validation-only 数据合同通过证据。**当前只执行 P2：在 P1 v2 合同上完成可复现、可归因、旧能力保持可测的固定容量持续学习 pilot。** P3–P5 保留为后续路线，不并行开工；完整成果分类、停止条件及文档边界均在当前计划中。
 
 - [本轮结果复审](reference/M4V2_POST_C_STAGE_RESULT_REVIEW_20260910.md)：实际收益、预算混淆、父 worker 重复、seed 循环、恢复缺口与修订依据。
 - [P0 等 replay 诊断报告](../reports/taiji_m5_k_p0_equal_replay_diagnostic_20260910.json)：同课程、同 replay、轨迹差异和 checkpoint preflight 结果。
 - [P1 数据契约审计报告](../reports/taiji_m5_k_p1_data_contract_audit_20260910.json)：typed mask、五类有效输入、split、course seed 与 model seed 独立性结果；当前 `can_start_p2=false`。
 - [P1 数据 manifest](manifests/taiji_m5_k_p1_data_manifest_v1.json)：450 条可重建 audit record 及版本化 mask contract。
+- [P1 v2 数据契约审计报告](../reports/taiji_m5_k_p1_data_contract_audit_v2_20260910.json)：修复后 Gate 为 `passed`，`can_start_p2=true`。
+- [P1 v2 数据 manifest](manifests/taiji_m5_k_p1_data_manifest_v2.json)：450 条 train + 10 条 validation 的可重建 contract。
 - [机器审计](../reports/taiji_m4v2_plan_result_review_20260910.json)：源码摘要、权重对比、资源计数和 retention 反例。
 - [历史执行流水](archive/history/20260910_result_review/EXECUTION_HISTORY.md)：保留此前全部记录，旧“下一步”不再授权执行。
 - [历史计划入口](archive/history/20260910_result_review/PLAN_INDEX_HISTORY.md)：此前入口及研究进展记录。

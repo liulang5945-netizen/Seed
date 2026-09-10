@@ -1,12 +1,12 @@
 # Seed / Taiji 唯一执行计划
 
-> 修订：2026-09-10；实际代码/报告基线 072dee0d。本文覆盖所有旧文档中的执行许可和“下一步”。
+> 修订：2026-09-10；实际代码/报告基线 da60abc7。本文覆盖所有旧文档中的执行许可和“下一步”。
 > 本轮任务是根据新增结果修订方案；训练与实现按下述验收顺序在后续开发中执行。
 > 研究依据：[本轮源码与结果复审](../../reference/M4V2_POST_C_STAGE_RESULT_REVIEW_20260910.md)；[历史执行记录](../../archive/history/20260910_result_review/EXECUTION_HISTORY.md)。
 
 ## 阶段收束：完成研究审计，不等于完成模型验收
 
-本轮从 601413cd 的收束基线继续完成了 P0 等 replay validation-only 诊断和 P1 数据契约审计；没有正式训练、没有读取新的 sealed payload，也没有新增能力成绩。代码/报告证据以 072dee0d、P0 报告、P1 报告及本结果复审为准。
+本轮从 601413cd 的收束基线继续完成了 P0 等 replay validation-only 诊断、P1 失败审计和 P1.1 数据契约修复；没有正式训练、没有读取新的 sealed payload，也没有新增能力成绩。代码/报告证据以 da60abc7、P0 报告、P1 v1/v2 报告及本结果复审为准。
 
 | 工作线 | 收束状态 | 后续处理 |
 |---|---|---|
@@ -22,11 +22,12 @@
 
 ### 下一阶段唯一交付目标
 
-**修复并重新通过 P1 数据契约，再进入固定容量持续学习验证。** P0 已完成；P1 审计已运行但未通过，因此 P2 被明确阻塞。P3–P5 是后续路线，不是当前并行待办。不以添加新器官、新 Gate、更大模型或训练次数代替数据契约验收。
+**在已通过的 P1 数据契约上完成 P2 validation pilot。** P0 已完成，P1.1 已修复并通过数据 Gate；P2 现在解冻，但仍不是正式 promotion。P3–P5 是后续路线，不是当前并行待办。不以添加新器官、新 Gate、更大模型或训练次数代替 P2 的因果、保持和资源验收。
 
 - P0 已确定当前实现的效果基线：在 model17/course0、150 条 wake＋50 条固定 replay 上，FS 与 C-replay、FS-no-replay 与 C 的有效状态峰值差均为 `4.76837158203125e-7`，低于预先冻结的 `1e-5`；checkpoint preflight 通过。当前数据覆盖的验证类为 A/B/C，D/R 留给 P1。
-- P1 审计已确认 typed mask 合法，但未确认有效学习信号：450 条 train 记录中每类表面 observation digest 为 90 个，实际 K1/K2 mask-visible input 却各只有 1 个；A/B/C 的 raw input 仅 30 个且被 mask 抹平，D/R 更只有 1 个。五类均只有 1 个 target digest。现有 validation 只有 A/B/C、只有一个 project；model17/23/31 的 worker state_dict 两两完全相同。报告见 [P1 数据契约审计](../../../reports/taiji_m5_k_p1_data_contract_audit_20260910.json)，清单见 [P1 manifest](../../manifests/taiji_m5_k_p1_data_manifest_v1.json)。
-- P1.1 修复课程生成与 split contract：让每类都有多个真实 mask-visible K1/K2 状态，course seed 能改变有效签名，validation 覆盖 A/B/C/D/R 且按 project/template 隔离；重新运行 P1 审计通过后，才允许 P2。
+- P1 v1 失败审计确认了根因：450 条 train 记录中每类表面 observation digest 为 90 个，但实际 K1/K2 mask-visible input 各只有 1 个；validation 缺 D/R、无 project 隔离。报告保留为失败证据，不覆盖。
+- P1.1 已通过：修复后的 450 条 train + 10 条 validation 中，A/B/C/D/R 每类均有 2 个 K1/K2 visible input；course seed 改变可见序列；validation 覆盖五类，并与 train 在 project/template 上隔离。报告见 [P1 v2 数据契约审计](../../../reports/taiji_m5_k_p1_data_contract_audit_v2_20260910.json)，清单见 [P1 v2 manifest](../../manifests/taiji_m5_k_p1_data_manifest_v2.json)。model17/23/31 state_dict 仍相同，但本阶段只做单父代继承学习，该旁证不再作为 P1 Gate。
+- P2 只允许使用 P1 v2 manifest、冻结的 candidate/scorer/threshold/resource contract；训练前必须重新通过 checkpoint 保存/独立恢复 preflight。
 - P2 在固定候选上测新增学习、逐类保持和资源；另用最小安全 Workbench 任务测真实预测链，不扩建整个 IDE。两类指标分开，不能用 MSE 替代行动成功。
 - 阶段完成必须同时给出训练基线、可重建数据清单、不可变候选、五类结果及失败分析。没有收益或保持失败也是可收束的研究结论，但不得因此解冻 P3 的能力整合或晋级。
 - 按验收事件排期，不承诺缺乏运行时间依据的日历日期；同一时间只推进一个研究问题。
@@ -43,7 +44,7 @@ P1 合同完成后可做 P2 validation pilot。最终测试前冻结主指标、
 
 出现下列情况应提交已有成果并停在决策点：有效信号不足需要改变任务定义；公平对照后仍无收益需要改变学习机制；资源约束迫使缩减目标；或准备改变认知所有权/默认发布模型。讨论时给出证据、保留方案与替代方案的收益和代价，再更新唯一计划；不自动扩展训练规模或购买算力。
 
-本轮已完成 P0/P1 validation-only 诊断与计划同步，不启动 P2 训练；数据契约未通过是研究 Gate，不是待用训练次数掩盖的工程问题。
+本轮已完成 P0/P1 validation-only 诊断、P1.1 修复与计划同步，不启动 P2 训练；下一步进入小预算 validation pilot，而不是直接读取 sealed 或扩展 formal 矩阵。
 
 ## 当前判断
 
@@ -51,34 +52,36 @@ K 信号空间已扩至五类；fast/slow＋真实 replay 已实现并通过基�
 
 widened 合成路线已收束。先前“14,252 本轮更新”“v4 worker 三 seed 独立”“新 seed 即新课程”不再作为设计依据。P0 已把效果基线收敛为直接 continuation＋replay；P1 则证明当前课程的表面变化没有进入 K 的有效输入。旧 SGK v1 预注册待修订，暂停其 lineage-first 执行顺序。
 
-## 唯一下一步：修复 P1 数据契约并重跑审计
+P1.1 已把数据入口修复为可见状态优先的合同：A/B/C 通过语言证据的 resolved/ambiguous 变化，D 通过 header 语言证据的 ambiguous/resolved 变化，R 通过显式 recovery-language hint/no-hint 变化。该结果证明数据能被 K1/K2 看到，不证明模型已经学会或泛化；P2 仍必须从同一父代、同一预算和冻结 validation 开始。
 
-目的：把“看起来有 450 条经历”修复为“模型确实看到了可区分、可泛化、可按项目隔离的学习状态”，随后才允许 P2 validation pilot。
+## 唯一下一步：P2 validation pilot
 
-1. 修改课程/模板生成器和 manifest builder，而不是修改 scorer 或放宽 Gate。每个 A/B/C/D/R 类至少产生多个真实 K1/K2 mask-visible 状态；变化必须落在当前 typed mask 允许的特征或合法时序组合上，不能只改文件字节、注释、文件名或被遮蔽元数据。
-2. 重新定义 course seed 的作用：它必须改变可见状态或组合，并在 manifest 中保存 seed→visible-signature 的可重建映射。若只改变课程顺序/metadata，不计为新样本。
-3. 生成项目/模板分组的 train、validation、test contract。validation 至少覆盖 A/B/C/D/R，每类保留未出现在 train 的 project 或 template family；不要把已消费 v1–v5 sealed 当作当前 validation，也不读取新的 sealed payload。
-4. 若保留跨 model seed 的独立性声明，实际初始化必须产生不同 state_dict；若当前实验只研究单父代持续学习，就删除“replica 独立”这一无关主张，不用复制完全相同的 worker 凑 n。
-5. 重新运行 [P1 审计脚本](../../../scripts/training/audit_taiji_m5_k_p1_data_contract.py)。最低通过条件：所有 mask 合法；五类 train/validation 覆盖完整；每类 K1/K2 visible input 至少有 2 个；至少一个 course seed 变化能改变有效签名；project/template split 真正隔离；manifest 可重建且不依赖重复 mask 字段。P1 不通过就继续停在数据设计，不启动 fit。
+目的：在已通过 P1 v2 数据合同上，测量一次可归因的新增学习、逐类保持和真实 checkpoint 成本；只用 validation pilot 先冻结阈值、资源和 scorer，不进入 sealed formal。
+
+1. 冻结 P1 v2 manifest、candidate parent（model17 inherited workers）、直接 continuation＋replay 的效果基线、validation scorer、`1e-5` 数值容差、五类逐类 retention 口径和 CPU 资源预算；保存一份 presealed contract，但不读取新的 sealed payload。
+2. 在独立输出目录执行 checkpoint 写入、独立进程恢复和回滚 preflight；只有保存内容、parent digest、worker bundle digest、replay digest、RNG/游标和计数可重建时才允许 fit。
+3. 运行最小同预算对照：直接 continuation＋replay 为主臂，zero-update/frozen parent 为漂移对照；若需要比较 FS，只记录它作为状态实现候选，不把等 replay 下的 FS 当独立学习机制。三臂共享 P1 v2 的同一 train 子集、顺序和 replay 身份。
+4. 训练后只读同一个候选 artifact 评分 P1 v2 validation：A/B/C/D/R 分别给 K1/K2 MSE、目标/内容命中率、最坏模板；另跑一个隔离 Workbench 的最小预测链，单独记录动作成功/失败恢复，不能用 MSE 替代真实行动。
+5. 结果出口固定：新增学习、逐类保持、checkpoint/CPU 资源均通过才进入 P3；数值等价保留成本更低的基线；保持失败回到 replay/数据原因；机械错误只修技术门后重跑。任何结果都不得临时放宽阈值或读取 sealed。
 
 ## 后续依赖顺序与验收
 
 | 顺序 | 工作重点 | 进入下一步的条件 |
 |---|---|---|
 | P0 | 相同 replay 的机制归因 | **已完成**：两组轨迹均在 `1e-5` 内等价，checkpoint preflight 通过 |
-| P1 | 真实学习信号与五类数据合同 | **未通过**：typed mask 合法，但有效输入无类内变化、validation 缺 D/R、无 project 隔离、model seed state 相同；先执行 P1.1 数据契约修复 |
-| P2 | 五类学习及保持的独立验证 | 预注册任务收益、逐类保持、资源上限通过 |
+| P1 | 真实学习信号与五类数据合同 | **已通过 P1.1**：五类各有至少 2 个 K1/K2 visible input，validation 五类覆盖且 project/template 隔离 |
+| P2 | 五类学习及保持的独立验证 | **当前唯一执行步**：冻结 candidate/scorer/threshold/resource 后完成 validation pilot |
 | P3 | 中断续训与 S/G/K 联合状态整合 | joint checkpoint、逐 phase retention、rollback 可复现 |
 | P4 | 结构成长必要性与收益验证 | 容量压力真实存在，增长收益优于强固定基线 |
 | P5 | 知识来源、IDE、客户端、硬件发布 | 各项按所需模型能力与接口成熟度解冻 |
 
-### P1：有效信号与评估数据（审计未通过，返回 P1.1）
+### P1：有效信号与评估数据（P1.1 已通过）
 
 - 审计现有五类课程；按 K1/K2 typed mask 可见输入、目标张量、时序组合生成签名。分别统计经历数、唯一文件数、有效类数、模板族数。注释/文件名变化允许作为同分布扰动，不能充当新能力或新独立样本。
 - train/validation/test 以项目或任务模板分组，完整覆盖 A/B/C/D/R；每类包含多个不同可见状态/组合，记录数量与重复率。测试设计应同时测同分布泛化和未见组合，不能每轮仅更换 seed。
 - 父 worker 沿用现有权重即可做机制诊断；若主张跨模型泛化，则以实际初始化/训练流变化构建父 worker，并核验 state_dict 差异。所有独立性结论由实测决定，不强制为了 n=9 重建模型。
 - 将 v1–v5 已读 sealed 登记为 consumed；后续开发用 validation。候选、scorer、阈值、资源预算和最终输入在读取下一份测试成绩前锁定。
-- 已交付版本化数据/统计合同和可重建数据清单；当前合同状态为 `needs_data_revision`，见 [P1 审计报告](../../../reports/taiji_m5_k_p1_data_contract_audit_20260910.json) 与 [P1 manifest](../../manifests/taiji_m5_k_p1_data_manifest_v1.json)。字段模板不通过，返回数据设计修复，不进入 P2。
+- v1 失败合同保留为 [P1 失败审计](../../../reports/taiji_m5_k_p1_data_contract_audit_20260910.json)；修复后的合同状态为 `passed`，见 [P1 v2 审计](../../../reports/taiji_m5_k_p1_data_contract_audit_v2_20260910.json) 与 [P1 v2 manifest](../../manifests/taiji_m5_k_p1_data_manifest_v2.json)。P2 只能使用 v2 入口，不能用 v1 的一类一签名课程训练。
 
 ### P2：验证学习与保持
 
@@ -121,4 +124,4 @@ P3 前先发布 SGK v2 替代 [暂停的 v1](../../reference/M4V2_SGK_PROMOTION_
 
 文档仅保留一个执行入口，不再新增平行总计划：本文记录阶段状态、下一步和验收；结果复审记录证据解释；核心需求与架构常驻 active；已有历史流水保留在 archive。旧预注册即使留在 reference 也不重新获得执行许可。当前收束不移动有引用的研究资产，不覆盖旧报告或删除 checkpoint。根目录存在部分无读取权限的临时路径，未证明其为空或无用；后续清理须逐项验证绝对路径、引用和可恢复性，不能把它们报作已清理。
 
-本轮 P1 审计、报告、manifest 与计划同步完成后提交本地 main。后续唯一入口是 P1.1 数据契约修复与重审；不跳到 P2/lineage 实现，也不按历史“下一步”自动开跑。
+本轮 P1.1 数据契约修复、通过报告、manifest 与计划同步完成后提交本地 main。后续唯一入口是 P2 validation pilot；不跳到 P3/lineage 实现，也不按历史“下一步”自动开跑。
