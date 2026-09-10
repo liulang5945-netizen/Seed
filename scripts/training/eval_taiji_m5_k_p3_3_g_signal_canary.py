@@ -163,6 +163,40 @@ def _top_ids(scores: Mapping[str, float], *, limit: int = 2) -> tuple[str, ...]:
     )
 
 
+def _candidate_identity(
+    *,
+    experience: Any,
+    metadata: Mapping[str, Any],
+) -> tuple[str, str]:
+    """Bind a G row to the reconstructed experience, not only its K input.
+
+    The P1 curriculum intentionally revisits some observations across course
+    seeds.  The semantic example id is therefore not a sufficient row id: two
+    distinct experiences can have identical K features.  The G artifact keeps
+    those experiences distinct while still allowing the feature vectors to be
+    equal.
+    """
+
+    identity = {
+        "format": "taiji-m5-k-p3-3-g-experience-identity-v1",
+        "split": str(metadata["split"]),
+        "course_seed": metadata.get("course_seed"),
+        "index": metadata.get("index"),
+        "class_key": metadata.get("class_key"),
+        "project_id": metadata.get("project_id"),
+        "variant_paths": list(metadata.get("variant_paths", ())),
+        "state_profile": metadata.get("state_profile"),
+        "template_family_id": metadata.get("template_family_id"),
+        "experience_id": metadata.get("experience_id"),
+        "experience_digest": metadata.get("experience_digest"),
+        "semantic_input_digest": str(experience.semantic_example.input_digest),
+        "transition_input_digest": str(experience.transition_example.input_digest),
+    }
+    example_id = f"g-example:{content_digest(identity)}"
+    family_id = f"g-family:{content_digest({key: identity[key] for key in ('format', 'split', 'class_key', 'project_id', 'template_family_id')})}"
+    return example_id, family_id
+
+
 def _candidate_sets(
     *,
     experience: Any,
@@ -298,9 +332,10 @@ def _candidate_sets(
             )
         target_id = matching[0]
         target_kind = "pair"
+    example_id, family_id = _candidate_identity(experience=experience, metadata=metadata)
     return GSelectionCandidateSet.create(
-        example_id=str(semantic_example.example_id),
-        family_id=str(semantic_example.family_id),
+        example_id=example_id,
+        family_id=family_id,
         split=str(metadata["split"]),
         project_id=str(metadata["project_id"]),
         path=str(metadata["variant_paths"][0]),
@@ -356,6 +391,8 @@ def _signal_gate(
         and "target_kind" not in item.to_inference_payload()
         for item in all_sets
     )
+    identity_unique = len({item.example_id for item in all_sets}) == len(all_sets)
+    digest_unique = len({item.candidate_set_digest for item in all_sets}) == len(all_sets)
     checks = {
         "train_nonempty": bool(train_sets),
         "validation_nonempty": bool(validation_sets),
@@ -367,6 +404,8 @@ def _signal_gate(
         "project_split_disjoint": train_projects.isdisjoint(validation_projects),
         "path_split_disjoint": train_paths.isdisjoint(validation_paths),
         "runtime_target_excluded": runtime_payloads_clean,
+        "experience_identity_unique": identity_unique,
+        "candidate_set_digest_unique": digest_unique,
         "sealed_holdout_untouched": True,
     }
     return {

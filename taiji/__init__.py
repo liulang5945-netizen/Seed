@@ -629,6 +629,14 @@ from .g_selection import (
     GSelectionCandidate,
     GSelectionCandidateSet,
 )
+from .g_selection_learning import (
+    G_SELECTION_CANDIDATE_ROLES,
+    G_SELECTION_LEARNER_FORMAT,
+    G_SELECTION_LEARNER_VERSION,
+    G_SELECTION_SELECTION_STATUSES,
+    GSelectionDecision,
+    GSelectionLearner,
+)
 from .sparse import SparseSynapses
 from .state import (
     MemoryRecall,
@@ -1251,6 +1259,12 @@ __all__ = [
     "TAIJI_G_SELECTION_VERSION",
     "GSelectionCandidate",
     "GSelectionCandidateSet",
+    "G_SELECTION_CANDIDATE_ROLES",
+    "G_SELECTION_LEARNER_FORMAT",
+    "G_SELECTION_LEARNER_VERSION",
+    "G_SELECTION_SELECTION_STATUSES",
+    "GSelectionDecision",
+    "GSelectionLearner",
     "OWNER_TRANSFER_CURSOR_STAGES",
     "OWNER_TRANSFER_EVENT_TYPES",
     "OWNER_TRANSFER_OWNER_IDS",

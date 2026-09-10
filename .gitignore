@@ -193,3 +193,4 @@ output/taiji_m5_k_p3_1_single_cell_*/
 # inspection; the content-addressed manifest and report are the versioned evidence.
 output/taiji_m5_k_p3_2_owner_transfer_*/
 output/taiji_m5_k_p3_3_g_signal_canary_*/
+output/taiji_m5_k_p3_3_g_learning_*/
