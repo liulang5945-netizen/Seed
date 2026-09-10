@@ -235,3 +235,19 @@ checkpoint preflight 在训练前和保存后的独立进程恢复均通过；P2
 P2.6 的 Gate 全部通过：旧类相对 P2.4 parent 不下降，novel K2 content 达到 2/2，Workbench 不下降，参数计数稳定。这个结果第一次给出“某个具体 K2 内容承接目标可以在保持约束下被学习”的证据，但它仍只有 2 条 validation，且训练/验证共享同一 tuple，不能宣称跨路径泛化，也不能解冻 P3；报告保持 `can_promote=false`。
 
 当前唯一下一步改为 P2.7：加载 P2.6 的交错学习 checkpoint，在至少 2 个全新 project、至少 4 条全新 path 上做 validation-only holdout；不调用 `fit`。P2.6 validation 只作 learned-arm sanity check，新 holdout 才计泛化 Gate。若 holdout 达到 K2 content 与 Workbench `4/4` 且已学验证 `2/2`，再讨论局部泛化和 P3；否则保持 `can_promote=false`，不靠追加同质 epoch 掩盖边界。
+
+## 16. P2.7 independent holdout generalization（2026-09-10）
+
+按 §15 的停止条件运行了 [P2.7 generalization probe](../../scripts/training/eval_taiji_m5_k_p2_7_generalization_probe.py)，产出 [P2.7 manifest](../../plans/manifests/taiji_m5_k_p2_7_generalization_manifest_v1.json) 和 [P2.7 报告](../../reports/taiji_m5_k_p2_7_generalization_20260910.json)。本轮加载 P2.6 `interleaved-rehearsal-novel` checkpoint，不调用 `fit`；先对源 checkpoint 做 content-addressed digest 与独立进程恢复，再构造 4 条全新 path、2 个全新 project 的 TypeScript holdout。holdout 与 P1/P2.5/P2.6 全部 disjoint，合同通过。
+
+| 指标 | frozen parent | P2.6 learned arm |
+|---|---:|---:|
+| P2.6 已学 sanity K2 content | 0/2 | 2/2 |
+| 全新 holdout K1 goal/content | 4/4；4/4 | 4/4；4/4 |
+| 全新 holdout K2 goal/content | 4/4；0/4 | 4/4；4/4 |
+| 全新 holdout Workbench 成功 | 4/4 | 4/4 |
+| P1 旧类安全 abstention | 6/6 | 6/6 |
+
+P2.7 的 generalization Gate 全部通过：learned arm 的已学 sanity `2/2`、holdout K2 content/Workbench `4/4`、P1 旧类相对 P2.4 parent 不下降、参数计数稳定、P2.6 源 checkpoint 独立恢复再次通过。父模型在同一 holdout 的 K2 content 为 `0/4`，因此这不是 parent 原有的泛化能力。这个结果支持“局部跨项目/路径泛化”，但仍不是通用语言能力或 promotion 证据；`can_promote=false` 保持不变。
+
+P2 阶段因此满足进入 P3.0 的证据条件。当前唯一下一步改为 P3.0 checkpoint/interrupt-resume contract：固定 P2.6 learned checkpoint 为 parent，建立 SGK v2 最小内容寻址状态合同，验证 wake/replay/consolidate 边界的独立进程中断恢复、错误 parent/篡改拒绝、phase cursor/RNG/experience digest 和 uninterrupted 轨迹一致性。在 P3.0 通过前，不新增 S/G worker、不增长参数、不把 lineage 元数据当作能力。
