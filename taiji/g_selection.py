@@ -280,7 +280,7 @@ class GSelectionCandidateSet:
         if target_candidate_id not in {item.candidate_id for item in candidates}:
             raise ValueError("G selection target candidate is not in the candidate set")
         target_kind = _text(self.target_kind, "G selection target_kind")
-        if target_kind not in {"pair", "abstain"}:
+        if target_kind not in {"pair", "abstain", "reobserve"}:
             raise ValueError("unsupported G selection target_kind")
         unsigned = self._payload_without_digests()
         if _digest(self.candidate_set_digest, "candidate_set_digest") != content_digest(unsigned):
