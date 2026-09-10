@@ -1,6 +1,6 @@
 # 2026-09-10 后续结果复审与路线修订
 
-初始复审依据：本地 main 提交 4629bc8c；比较 da8a16e1 之后的 51 个变更文件，重点读取实际 learner、runner、课程生成器、checkpoint 和 formal/scorecard。随后追加的 P0/P1/P1.1/P2 validation 结果落在本地 main 提交 5d62d932；没有读取新的 sealed payload，没有 promotion 成绩。
+初始复审依据：本地 main 提交 4629bc8c；比较 da8a16e1 之后的 51 个变更文件，重点读取实际 learner、runner、课程生成器、checkpoint 和 formal/scorecard。随后追加的 P0/P1/P1.1/P2/P2.1 validation 结果落在本地 main 提交 917c8bf9；没有读取新的 sealed payload，没有 promotion 成绩。
 
 机器复核：[结果审计](../../reports/taiji_m4v2_plan_result_review_20260910.json)。本次检查通过 systematic-debugging 的源码追踪与最小反例定位问题。当前唯一执行顺序见 [执行计划](../active/roadmap/03_CURRENT_EXECUTION.md)。
 
@@ -129,4 +129,19 @@ FS checkpoint 保存 slow/fast 和 replay digest，但不包含 replay 的可重
 | R 类离散命中 | 0.0 | 0.0 | 0.0 |
 | checkpoint 独立进程恢复 | — | 通过 | 通过 |
 
-结论分两层：连续回归输出的拟合明显改善，说明 P1 数据、fit、保存/恢复链路可运行；但离散 goal/content 输出没有改善，R 类没有命中，且 replay 在本 pilot 略差于 wake-only。`can_promote=false`，不能把这次 MSE 下降称为泛化、智能、真实 Workbench 成功或 replay 独立收益。当前唯一下一步是 P2.1：只读已有 artifact，诊断 confidence/ambiguity、argmax/None、K1→K2→planner→Workbench 四层行动链和 CPU/保存资源；在输出/行动命中与逐类保持未验收前不进入 P3。
+结论分两层：连续回归输出的拟合明显改善，说明 P1 数据、fit、保存/恢复链路可运行；但离散 goal/content 输出没有改善，R 类没有命中，且 replay 在本 pilot 略差于 wake-only。`can_promote=false`，不能把这次 MSE 下降称为泛化、智能、真实 Workbench 成功或 replay 独立收益。P2.1 诊断结果见 §9；在输出/行动命中与逐类保持未验收前不进入 P3。
+
+## 9. P2.1 输出与行动链诊断（2026-09-10）
+
+按计划运行了 [P2.1 诊断脚本](../../scripts/training/eval_taiji_m5_k_p2_output_action_diagnostic.py)，报告见 [P2.1 诊断报告](../../reports/taiji_m5_k_p2_output_action_diagnostic_20260910.json)。它只读 P2 已保存的 frozen/wake-only/wake-replay checkpoint 和 P1 v2 validation，`mismatch_count=0`，K2 使用 K1 预测 world 进行级联；没有调用 `fit`，没有读取 sealed payload，`can_promote=false`。
+
+| 检查 | frozen | wake-only | wake-replay |
+|---|---:|---:|---:|
+| 有效参数（K1+K2） | 5,648 | 5,648 | 5,648 |
+| checkpoint 独立恢复 | 通过 | 通过 | 通过 |
+| K1→K2→planner→Workbench 成功 | 3/10 | 4/10 | 4/10 |
+| K1/K2 输入低于 `0.55` floor | 6/10 | 6/10 | 6/10 |
+| planner 因 `stale_world_observation` 拒绝 | 1 | 0 | 0 |
+| failure recovery 触发 | 0 | 0 | 0 |
+
+P2.1 把问题进一步分层：6/10 行在 native readout 之前就因输入证据置信度低于 `0.55` 而安全返回 `unknown`，不是简单的 argmax 错误；frozen 另有一条 K2 预测 world 与 observation 不对齐而被 planner 正确拒绝。wake-only/replay 能在 4/10 行完成真实只读 Workbench 动作，但不构成能力晋级。既有 `READ_ONLY_ROUTES` 还没有 `content:recover-target` 路由，因此 R 类即使后续产生 recovery 内容，也没有安全的缺失目标恢复桥。当前唯一下一步改为 P2.2：实现 typed abstention/clarification、受限 `workspace.list` recovery contract 和级联 world-alignment canary；不降低全局 confidence floor，不新增 replay，不进入 P3。
