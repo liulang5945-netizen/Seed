@@ -103,6 +103,10 @@ parity 口径修正与修复路线已冻结：[M4V2_B3_K_C_PARITY_CALIBER_REVISI
 
 **当前唯一下一步**：执行扩展 §8 顺序——(1) 父代 worker 重建脚本（词汇随 experience 自然生长 + 参数核算表 + fresh restore Gate）；(2) 扩展空间双臂 build（5 类 × 150、课程独立性门、通道差分门）；(3) sealed v3 materialize + formal v4（G1–G3）；全部结果如实落盘，任一停止线触发即停。
 
+**扩展 §8 全链已执行**：(1) 父代重建通过（fact 14 / K1 goal 4 / K2 goal 4，参数 K1 472 / K2 5176，步 2400/6720，fresh restore Gate 过；K3 以全新 deterministic 实例重建——无学习状态、行为等价，偏差已记录）；(2) 双臂 build 9/9 通过（5 类平衡、600 新增步、45,184 字节、课程独立性门过；**通道差分 K1 0.21~0.41 / K2 0.046~0.106，比 3 类空间再升一个量级**）；(3) sealed v3（task_seed=73，覆盖 D/R/A，不交校验过）；(4) formal v4：首轮因 ensemble 评分走 predict 路径在低置信度 D 类除零而中止，修复为教师强制镜像评分（消除 v1/v3 的评分不对称，修复在 sealed 读取前）后重跑——**G1/G2 通过、G3 失败（1/3 课程胜出，均值差 4e-5）**。判定按 §6 冻结映射：**合成方式在该 harness 内不可分确证（4e-5 ≪ ±0.0002 带），widened/合成比较让位；fixed-large 概率平均保留为 C-entry strong arm**。同时确认信号空间扩展本身成功：sealed 改善从 −0.002 跃升 −0.129，学习效应高度可测。C-entry 证据线收束：容量/信号空间/合成方式三维度均已检验，continuation 未在任何维度胜过 fixed-large。
+
+**当前唯一下一步**：回到 B 阶段的学习机制问题——B3 pilot 预注册更新（fast/slow + 真实 replay vs 固定容量 continuation vs frozen，纳入扩展后的 5 类信号空间与 new_update_steps 口径）；预注册冻结前不训练、不读 sealed v3。
+
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 
 **B2 保存先于训练。** 先在 CPU 检查父 checkpoint 可恢复；保存 fast/slow、replay、学习器状态（若使用 optimizer 则含其状态）、RNG、课程游标和 owner lineage。新进程恢复后预测等价；单步更新后保存/恢复/再更新，与不中断轨迹在预先声明容差内一致。检查磁盘空间、原子写和 rollback；任何失败禁止长跑，不覆盖父代。

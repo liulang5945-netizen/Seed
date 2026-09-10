@@ -32,7 +32,9 @@ B3-K 的非饱和 structured-loss diagnostic 已通过：同一 model 17 parent�
 
 **K 信号空间扩展预注册已冻结**：[signal-space expansion](reference/M5_K_SIGNAL_SPACE_EXPANSION_PREREGISTRATION_20260910.md)——fact 词汇 13→14（+`language_state::ambiguous`）、K1 goal 3→4、K2 goal 2→4，可见类空间 **3→5 类**（+D=.h clarify-language、+R=recover）；父代 K workers 按 M5.K2 课程+D/R episodes 重建至 `taiji_k_workers_v4/`（K3/掩码机制/学习率不动）；重跑合同 = 150 experiences 5 类平衡、双臂同流 600 新增步、fresh sealed v3、G1/G2/G3 同构。可证伪点：扩展后合成差异是否超出二阶带。
 
-**当前唯一下一步**：执行扩展 §8——父代重建脚本（词汇自然生长+参数核算+fresh restore）→ 扩展空间双臂 build → sealed v3 + formal v4；任一停止线触发即停。
+**K 信号空间扩展 §8 全链已执行，G3 失败——合成方式不可分确证**：父代重建（14 facts/4 goals，参数 K1 472/K2 5176）→ 双臂 build 9/9（通道差分 K1 0.21~0.41，比 3 类空间再升一个量级）→ sealed v3 → formal v4（教师强制镜像评分修复评分不对称后）：G1/G2 通过，G3 失败（1/3 胜出，均值差 4e-5 ≪ ±0.0002 带）。**两个结论并存**：信号空间扩展本身成功（sealed 改善 −0.002 → −0.129，学习效应高度可测）；但合成方式在该 harness 内不可分——fixed-large 概率平均保留为 C-entry strong arm。C-entry 证据线收束（容量/信号空间/合成方式三维度均检验）。
+
+**当前唯一下一步**：回到 B 阶段学习机制问题——B3 pilot 预注册更新（fast/slow + 真实 replay vs 固定容量 continuation vs frozen，纳入 5 类信号空间与 new_update_steps 口径）；冻结前不训练、不读 sealed v3。
 
 ## 权威文档
 

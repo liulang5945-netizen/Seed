@@ -69,3 +69,25 @@
 - 不把 planner 的 `language_evidence_ambiguous` 拒绝边界放开（执行安全性边界不动）；
 - 不做 diagnostics-connected 变体（harness 无真实 LSP 来源，fabricated 信号禁止）；
 - 不做多信号空间 formal 之外的散点实验。
+
+## 10. 执行记录（2026-09-10，§8 全链已执行，G3 失败——合成方式不可分确证）
+
+### 10.1 执行事实
+
+1. **父代重建**（`build_taiji_m5_k_v4_workers.py` → `checkpoints/taiji_k_workers_v4/`）：词汇自然生长验证通过——fact 14（含 `language_state::ambiguous`）、K1 goal 4、K2 goal 4；参数 K1 472 / K2 5176（与 §5 核算一致）；训练步 2400/6720；fresh restore Gate 通过。执行偏差一处：K3 以全新 deterministic projector 实例重建（scope 加 v4 后缀）而非复制 v1 checkpoint——K3 无学习状态，行为等价，仅为 bundle digest 一致性所需。
+2. **双臂 build**（`build_taiji_m5_k_v4_parity.py` → 9/9 通过）：5 类平衡（各 30）、双臂同流 600 新增步、每实例 9 逻辑 checkpoint、参数 45,184 字节 ratio 0.0%、课程独立性门通过；**通道差分 K1 0.21~0.41 / K2 0.046~0.106**——比 3 类空间（0.03~0.26）再升约一个量级，信号空间扩展对分化强度的直接确认。
+3. **sealed v3**（task_seed=73，覆盖 D/R/A 首 file，与 train/validation/sealed v1/v2 不交校验通过）。
+4. **formal v4**（`eval_taiji_m5_k_v4_parity_formal.py`）：两阶段纪律执行。首轮曾因 ensemble 评分走 predict 路径在低置信度 D 类上除零而中止——修复为**教师强制镜像评分**（与 candidate/frozen 的 `_loss_score` 同路径，消除 v1/v3 中 ensemble 走 predict、candidate 走教师强制的评分不对称；修复发生在 sealed 读取前，纪律未破）。重跑结果：
+
+| 门 | 结果 |
+|---|---|
+| G1 质量门 | **通过** |
+| G2 灾难界 | **通过** |
+| G3 主判据 | **失败**——1/3 课程胜出（course1：candidate −0.12872 vs fixed-large −0.12868）；课程均值 −0.12864 vs −0.12868（差 4e-5） |
+
+### 10.2 判定
+
+- **信号空间扩展本身成功**：sealed 改善量级从 3 类空间的 −0.002 跃升至 **−0.129**——扩展后的类（D/R）上 frozen parent 误差大、双臂改善大，学习效应变得高度可测。
+- **可证伪点确证（负）**：两种合成的差异仅 4e-5，远在 ±0.0002 带内——「合成方式在该 harness 内不可分」成立。顺序分化 + 权重平均与同构 replica 概率平均在等预算等容量下等效。
+- 按 §6 冻结映射：**学习规则（合成）比较让位；fixed-large 概率平均保留为 C-entry strong arm**。widened v4 artifacts 与本报告保留为诚实证据；`can_promote=false`。
+- C-entry 证据线就此收束：容量（v2 parity）、信号空间（v4 扩展）、合成方式（v3/v4 formal）三个维度均已检验，continuation learner 未在任何维度上胜过 fixed-large 概率平均——回到 B 阶段的学习机制问题（fast/slow + 真实 replay vs 固定容量 continuation）。
