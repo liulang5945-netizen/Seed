@@ -420,3 +420,17 @@ P4.1 的实际价值是把 P4.0 模糊的“候选变宽”拆成两个可审计
 | 归因与结构成长 | 关闭 | `attribution=inconclusive`、`experiment_passed=false`、`growth_admitted=false`、`can_promote=false` |
 
 P4.2 的正确解释是：当前实验还不能区分“上下文表征没有收益”和“固定容量不足”，因为所有训练臂先在保持合同上失败；更直接暴露的工程/学习问题是增量更新造成旧行为遗忘。22 个存储参数并未自动带来能力，参数规模也不能替代公平输入、训练保持和稳定 seed。下一步从容量归因改为 **P4.3 保持约束下的增量学习 Gate**：在 13 参数 fixed-small 上比较 new-only 与旧行为 rehearsal，使用重新生成的 fresh retention holdout；保持恢复前不进入 dynamic growth。
+
+## 28. P4.3 保持约束下的增量学习结果（2026-09-11）
+
+按 §27 的修订条件运行了 [P4.3 retention incremental](../../scripts/training/eval_taiji_m5_k_p4_3_retention_incremental.py)，产出 [P4.3 manifest](../manifests/taiji_m5_k_p4_3_retention_incremental_manifest_v1.json) 与 [P4.3 报告](../../reports/taiji_m5_k_p4_3_retention_incremental_20260911.json)。本轮固定 13 参数 P3.5 trained-G parent，生成与 P4.0/P4.2/P3.6 全部 disjoint 的新 train/validation/holdout/fresh-retention；P3.6 的 4 条旧 holdout 只转换为显式 rehearsal source，未在训练后再作测试。两种 child training 使用相同的新 train、epoch/学习率/seed/CPU 预算。
+
+| Gate | 结果 | 证据含义 |
+|---|---:|---|
+| 数据与训练边界 | 通过 | 新四类 split 各 20 条、14 条新 train fit；project/path/candidate/behavior digest 隔离；validation、new holdout、fresh retention 均未 fit |
+| checkpoint / lineage | 通过 | 两臂零步/训练后 checkpoint 独立恢复；tamper、wrong parent、rollback 均拒绝/通过；13 参数与 K1/K2 未改变 |
+| 新任务与 fresh retention | 通过保持 | 两个 seed 的 new-only 与 rehearsal-mix 都为 new holdout utility `0.68`、target hit `0.6`；fresh retention 都为 utility `0.68`、target hit `0.6`，safe selection violation `0` |
+| rehearsal 机制归因 | 未通过 | new-only 与 rehearsal-mix 在 holdout、fresh retention、safe projection 上逐 seed 完全相同；`rehearsal_specific_gain=false` |
+| 结果出口 | 未晋级 | `outcome=signal_insufficient`、`experiment_passed=false`、`growth_admitted=false`、`can_promote=false` |
+
+P4.3 不能解释为“rehearsal 已修复 P4.2 的遗忘”：它只证明在本轮 fresh retention 分布上，训练后没有出现低于 parent 的保持退化；new-only 也获得了完全相同的结果，因此没有 rehearsal 的可分离贡献。P4.2 中基于旧 P3.6 retention 的 `3/4` 退化不能直接拿来与本轮 fresh retention 混合比较，因为旧集合已经作为 rehearsal 输入。下一步改为 **P4.4 保持身份/结构校准 Gate**：使用候选数量、角色组成和难度同构但 project/path 全新的 sibling retention，validation-only 评估 parent 与 P4.2/P4.3 child，判断退化能否跨身份复现；在此之前不扩容、不 promotion。
