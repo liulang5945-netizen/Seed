@@ -1,0 +1,296 @@
+{
+  "format": "taiji-m5-k-p2-5-novel-composition-probe-v1",
+  "version": 1,
+  "status": "completed",
+  "training_performed": false,
+  "sealed_payload_read": false,
+  "can_promote": false,
+  "p1_manifest": "E:\\Seed\\plans\\manifests\\taiji_m5_k_p1_data_manifest_v2.json",
+  "p2_report": "E:\\Seed\\reports\\taiji_m5_k_p2_validation_pilot_v2_20260910.json",
+  "p2_4_report": "E:\\Seed\\reports\\taiji_m5_k_p2_4_retention_canary_20260910.json",
+  "manifest": "E:\\Seed\\plans\\manifests\\taiji_m5_k_p2_5_novel_composition_manifest_v1.json",
+  "run_dir": "E:\\Seed\\output\\taiji_m5_k_p2_5_probe_571fdafbf148471caeff63e0e62a733c",
+  "manifest_digest": "a40ee15850afccb7c7c6243f71f8883c82139c72b6758957058205be8a45e151",
+  "contract": {
+    "record_count": 2,
+    "candidate_paths": [
+      "typescript_06.ts",
+      "typescript_07.ts"
+    ],
+    "candidate_paths_disjoint_from_p1": true,
+    "novel_tuple_count": 1,
+    "errors": [],
+    "passed": true
+  },
+  "novel_tuple": {
+    "language_id": "typescript",
+    "toolchain_available": true,
+    "selection_state": "resolved",
+    "content_id": "content:inspect-language",
+    "candidate_paths_must_be_disjoint_from_p1": true
+  },
+  "checkpoint_preflight": {
+    "parent_before_probe": {
+      "k1_restore_digest_equal": true,
+      "k2_restore_digest_equal": true,
+      "passed": true,
+      "independent_process_restore": true,
+      "files": {
+        "k1": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p2_5_probe_571fdafbf148471caeff63e0e62a733c\\preflight-parent\\birth_k1_semantic.pt",
+          "bytes": 7665
+        },
+        "k2": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p2_5_probe_571fdafbf148471caeff63e0e62a733c\\preflight-parent\\birth_k2_transition.pt",
+          "bytes": 26505
+        }
+      }
+    },
+    "parent_saved_after_probe": {
+      "files": {
+        "k1": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p2_5_probe_571fdafbf148471caeff63e0e62a733c\\arms\\parent-frozen\\birth_k1_semantic.pt",
+          "bytes": 7665
+        },
+        "k2": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p2_5_probe_571fdafbf148471caeff63e0e62a733c\\arms\\parent-frozen\\birth_k2_transition.pt",
+          "bytes": 26505
+        }
+      },
+      "checkpoint_digests": {
+        "k1": "6ebb25a14710f2a929cb2dfd0771a048dd72eac8e9fa160274110b60a8839b1d",
+        "k2": "1b077ffdea6744c544265b1f05172a312beacb942ad0f57960d24fb19ed25b71"
+      },
+      "restore": {
+        "returncode": 0,
+        "independent_process_restore": true,
+        "stdout": "{\"k1_restore_digest_equal\": true, \"k2_restore_digest_equal\": true, \"passed\": true}\n",
+        "stderr": "",
+        "k1_restore_digest_equal": true,
+        "k2_restore_digest_equal": true,
+        "passed": true
+      },
+      "passed": true
+    }
+  },
+  "arms": {
+    "parent-frozen": {
+      "scores": {
+        "row_count": 2,
+        "k1_goal_hit_count": 2,
+        "k1_content_hit_count": 2,
+        "k2_goal_hit_count": 2,
+        "k2_content_hit_count": 0,
+        "safe_abstention_count": 0,
+        "workbench_success_count": 2,
+        "by_class": {
+          "R-novel-composition": {
+            "rows": 2,
+            "k1_goal_hits": 2,
+            "k1_content_hits": 2,
+            "k2_goal_hits": 2,
+            "k2_content_hits": 0,
+            "safe_abstentions": 0,
+            "workbench_successes": 2
+          }
+        },
+        "rows": [
+          {
+            "index": 0,
+            "class_key": "R-novel-composition",
+            "label": "p2-5-novel-parent",
+            "input_confidence": 0.99,
+            "expected_goal_id": "goal:inspect-language",
+            "expected_content_id": "content:inspect-language",
+            "k1_status": "resolved",
+            "k1_goal_id": "goal:inspect-language",
+            "k1_content_id": "content:inspect-language",
+            "k1_goal_hit": true,
+            "k1_content_hit": true,
+            "k2_status": "ambiguous",
+            "k2_goal_id": "goal:inspect-language",
+            "k2_content_id": null,
+            "k2_goal_hit": true,
+            "k2_content_hit": false,
+            "safe_abstention": false,
+            "action": {
+              "label": "p2-5-novel-parent",
+              "oracle_control": false,
+              "planner_status": "accepted",
+              "reason_code": "native_read_only_intent_ready",
+              "accepted": true,
+              "snapshot_match": true,
+              "parameter_drift": {
+                "declared_overrides": {},
+                "actual": {
+                  "path": "typescript_06.ts"
+                },
+                "matches_contract": true
+              },
+              "intent_kind": "workspace.read",
+              "intent_parameters": {
+                "path": "typescript_06.ts"
+              },
+              "workbench_status": "success",
+              "workbench_success": true,
+              "workbench_error_code": "",
+              "failure_recovery_status": "not_triggered"
+            }
+          },
+          {
+            "index": 1,
+            "class_key": "R-novel-composition",
+            "label": "p2-5-novel-parent",
+            "input_confidence": 0.99,
+            "expected_goal_id": "goal:inspect-language",
+            "expected_content_id": "content:inspect-language",
+            "k1_status": "resolved",
+            "k1_goal_id": "goal:inspect-language",
+            "k1_content_id": "content:inspect-language",
+            "k1_goal_hit": true,
+            "k1_content_hit": true,
+            "k2_status": "ambiguous",
+            "k2_goal_id": "goal:inspect-language",
+            "k2_content_id": null,
+            "k2_goal_hit": true,
+            "k2_content_hit": false,
+            "safe_abstention": false,
+            "action": {
+              "label": "p2-5-novel-parent",
+              "oracle_control": false,
+              "planner_status": "accepted",
+              "reason_code": "native_read_only_intent_ready",
+              "accepted": true,
+              "snapshot_match": true,
+              "parameter_drift": {
+                "declared_overrides": {},
+                "actual": {
+                  "path": "typescript_07.ts"
+                },
+                "matches_contract": true
+              },
+              "intent_kind": "workspace.read",
+              "intent_parameters": {
+                "path": "typescript_07.ts"
+              },
+              "workbench_status": "success",
+              "workbench_success": true,
+              "workbench_error_code": "",
+              "failure_recovery_status": "not_triggered"
+            }
+          }
+        ]
+      }
+    },
+    "p2-wake-only-reference": {
+      "scores": {
+        "row_count": 2,
+        "k1_goal_hit_count": 2,
+        "k1_content_hit_count": 2,
+        "k2_goal_hit_count": 0,
+        "k2_content_hit_count": 0,
+        "safe_abstention_count": 0,
+        "workbench_success_count": 2,
+        "by_class": {
+          "R-novel-composition": {
+            "rows": 2,
+            "k1_goal_hits": 2,
+            "k1_content_hits": 2,
+            "k2_goal_hits": 0,
+            "k2_content_hits": 0,
+            "safe_abstentions": 0,
+            "workbench_successes": 2
+          }
+        },
+        "rows": [
+          {
+            "index": 0,
+            "class_key": "R-novel-composition",
+            "label": "p2-5-novel-p2-reference",
+            "input_confidence": 0.99,
+            "expected_goal_id": "goal:inspect-language",
+            "expected_content_id": "content:inspect-language",
+            "k1_status": "resolved",
+            "k1_goal_id": "goal:inspect-language",
+            "k1_content_id": "content:inspect-language",
+            "k1_goal_hit": true,
+            "k1_content_hit": true,
+            "k2_status": "clarify",
+            "k2_goal_id": "goal:clarify-toolchain",
+            "k2_content_id": "content:clarify-toolchain",
+            "k2_goal_hit": false,
+            "k2_content_hit": false,
+            "safe_abstention": false,
+            "action": {
+              "label": "p2-5-novel-p2-reference",
+              "oracle_control": false,
+              "planner_status": "accepted",
+              "reason_code": "native_read_only_intent_ready",
+              "accepted": true,
+              "snapshot_match": true,
+              "parameter_drift": {
+                "declared_overrides": {},
+                "actual": {
+                  "path": "typescript_06.ts"
+                },
+                "matches_contract": true
+              },
+              "intent_kind": "workspace.read",
+              "intent_parameters": {
+                "path": "typescript_06.ts"
+              },
+              "workbench_status": "success",
+              "workbench_success": true,
+              "workbench_error_code": "",
+              "failure_recovery_status": "not_triggered"
+            }
+          },
+          {
+            "index": 1,
+            "class_key": "R-novel-composition",
+            "label": "p2-5-novel-p2-reference",
+            "input_confidence": 0.99,
+            "expected_goal_id": "goal:inspect-language",
+            "expected_content_id": "content:inspect-language",
+            "k1_status": "resolved",
+            "k1_goal_id": "goal:inspect-language",
+            "k1_content_id": "content:inspect-language",
+            "k1_goal_hit": true,
+            "k1_content_hit": true,
+            "k2_status": "clarify",
+            "k2_goal_id": "goal:clarify-toolchain",
+            "k2_content_id": "content:clarify-toolchain",
+            "k2_goal_hit": false,
+            "k2_content_hit": false,
+            "safe_abstention": false,
+            "action": {
+              "label": "p2-5-novel-p2-reference",
+              "oracle_control": false,
+              "planner_status": "accepted",
+              "reason_code": "native_read_only_intent_ready",
+              "accepted": true,
+              "snapshot_match": true,
+              "parameter_drift": {
+                "declared_overrides": {},
+                "actual": {
+                  "path": "typescript_07.ts"
+                },
+                "matches_contract": true
+              },
+              "intent_kind": "workspace.read",
+              "intent_parameters": {
+                "path": "typescript_07.ts"
+              },
+              "workbench_status": "success",
+              "workbench_success": true,
+              "workbench_error_code": "",
+              "failure_recovery_status": "not_triggered"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "interpretation": "validation-only novel composition probe; no fit, no sealed payload, host recovery is not model credit",
+  "elapsed_seconds": 5.51075050001964
+}
