@@ -622,6 +622,13 @@ from .owner_transfer import (
     TaijiOwnerTransferEvent,
     TaijiOwnerTransferManifest,
 )
+from .g_selection import (
+    G_SELECTION_FEATURE_NAMES,
+    TAIJI_G_SELECTION_FORMAT,
+    TAIJI_G_SELECTION_VERSION,
+    GSelectionCandidate,
+    GSelectionCandidateSet,
+)
 from .sparse import SparseSynapses
 from .state import (
     MemoryRecall,
@@ -1239,6 +1246,11 @@ __all__ = [
     "TaijiSingleCellEvent",
     "TaijiSingleCellManifest",
     "GSelectionState",
+    "G_SELECTION_FEATURE_NAMES",
+    "TAIJI_G_SELECTION_FORMAT",
+    "TAIJI_G_SELECTION_VERSION",
+    "GSelectionCandidate",
+    "GSelectionCandidateSet",
     "OWNER_TRANSFER_CURSOR_STAGES",
     "OWNER_TRANSFER_EVENT_TYPES",
     "OWNER_TRANSFER_OWNER_IDS",
