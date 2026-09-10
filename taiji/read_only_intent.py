@@ -23,8 +23,14 @@ READ_ONLY_INTENT_POLICY_FORMAT = "taiji-read-only-intent-policy-v1"
 READ_ONLY_INTENT_POLICY_VERSION = 1
 READ_ONLY_INTENT_PLANNER_FORMAT = "taiji-native-read-only-intent-planner-v1"
 READ_ONLY_INTENT_PLANNER_VERSION = 1
+READ_ONLY_ABSTENTION_FORMAT = "taiji-read-only-abstention-v1"
+READ_ONLY_ABSTENTION_VERSION = 1
+READ_ONLY_ABSTENTION_NEXT_STEPS = frozenset(
+    {"none", "request_clarification", "workspace.list"}
+)
 READ_ONLY_INTENT_CAPABILITIES = frozenset(
     {
+        "workspace.list",
         "workspace.read",
         "workspace.programming_language.resolve",
     }
@@ -50,6 +56,7 @@ class ReadOnlyIntentPolicy:
     """Explicit content-to-capability policy supplied by the host boundary."""
 
     routes: tuple[tuple[str, str], ...]
+    route_parameters: tuple[tuple[str, tuple[tuple[str, str], ...]], ...] = ()
     format: str = READ_ONLY_INTENT_POLICY_FORMAT
     version: int = READ_ONLY_INTENT_POLICY_VERSION
 
@@ -72,26 +79,136 @@ class ReadOnlyIntentPolicy:
         if any(capability not in READ_ONLY_INTENT_CAPABILITIES for _, capability in normalized):
             raise ValueError("read-only intent policy contains a non-read-only capability")
         object.__setattr__(self, "routes", normalized)
+        route_keys = {key for key, _ in normalized}
+        normalized_parameters: list[tuple[str, tuple[tuple[str, str], ...]]] = []
+        for content_id, raw_parameters in self.route_parameters:
+            content_key = _text(content_id, "route parameter content id")
+            if content_key not in route_keys:
+                raise ValueError("route parameters must reference a declared content route")
+            if isinstance(raw_parameters, Mapping):
+                parameter_items = raw_parameters.items()
+            else:
+                parameter_items = raw_parameters
+            parameters = tuple(
+                sorted(
+                    (
+                        _text(name, "route parameter name"),
+                        _text(value, "route parameter value"),
+                    )
+                    for name, value in parameter_items
+                )
+            )
+            if len({name for name, _ in parameters}) != len(parameters):
+                raise ValueError("route parameter names must be unique")
+            normalized_parameters.append((content_key, parameters))
+        if len({key for key, _ in normalized_parameters}) != len(normalized_parameters):
+            raise ValueError("route parameter content ids must be unique")
+        object.__setattr__(self, "route_parameters", tuple(sorted(normalized_parameters)))
 
     def capability_for(self, content_id: str) -> str | None:
         return dict(self.routes).get(str(content_id))
 
+    def parameters_for(self, content_id: str) -> dict[str, str]:
+        return dict(dict(self.route_parameters).get(str(content_id), ()))
+
     def to_payload(self) -> dict[str, Any]:
-        return {
+        payload = {
             "format": self.format,
             "version": self.version,
             "routes": {content_id: capability for content_id, capability in self.routes},
         }
+        if self.route_parameters:
+            payload["route_parameters"] = {
+                content_id: dict(parameters)
+                for content_id, parameters in self.route_parameters
+            }
+        return payload
 
     @classmethod
     def from_payload(cls, payload: Mapping[str, Any]) -> ReadOnlyIntentPolicy:
         raw_routes = payload.get("routes", {})
         if not isinstance(raw_routes, Mapping):
             raise ValueError("read-only intent policy routes must be a mapping")
+        raw_parameters = payload.get("route_parameters", {})
+        if not isinstance(raw_parameters, Mapping):
+            raise ValueError("read-only intent policy route_parameters must be a mapping")
+        route_parameters: list[tuple[str, tuple[tuple[str, str], ...]]] = []
+        for content_id, parameters in raw_parameters.items():
+            if not isinstance(parameters, Mapping):
+                raise ValueError(
+                    "read-only intent policy route parameters must be mappings"
+                )
+            route_parameters.append(
+                (
+                    str(content_id),
+                    tuple((str(name), str(value)) for name, value in parameters.items()),
+                )
+            )
         return cls(
             routes=tuple((str(content_id), str(capability)) for content_id, capability in raw_routes.items()),
+            route_parameters=tuple(route_parameters),
             format=str(payload.get("format", "")),
             version=int(payload.get("version", -1)),
+        )
+
+
+@dataclass(frozen=True)
+class ReadOnlyAbstention:
+    """Typed, non-executable result for low-evidence read-only decisions."""
+
+    abstention_id: str
+    reason_code: str
+    next_step: str
+    snapshot_id: str
+    capability_revision: int
+    observation_digest: str
+    confidence: float
+    format: str = READ_ONLY_ABSTENTION_FORMAT
+    version: int = READ_ONLY_ABSTENTION_VERSION
+
+    def __post_init__(self) -> None:
+        if self.format != READ_ONLY_ABSTENTION_FORMAT:
+            raise ValueError("unsupported read-only abstention format")
+        if int(self.version) != READ_ONLY_ABSTENTION_VERSION:
+            raise ValueError("unsupported read-only abstention version")
+        _text(self.abstention_id, "abstention_id")
+        _text(self.reason_code, "abstention reason_code")
+        if self.next_step not in READ_ONLY_ABSTENTION_NEXT_STEPS:
+            raise ValueError("unsupported read-only abstention next_step")
+        _text(self.snapshot_id, "abstention snapshot_id")
+        _text(self.observation_digest, "abstention observation_digest")
+        if int(self.capability_revision) < 1:
+            raise ValueError("abstention capability_revision must be positive")
+        _unit(self.confidence, "abstention confidence")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": self.format,
+            "version": self.version,
+            "abstention_id": self.abstention_id,
+            "reason_code": self.reason_code,
+            "next_step": self.next_step,
+            "snapshot_id": self.snapshot_id,
+            "capability_revision": self.capability_revision,
+            "observation_digest": self.observation_digest,
+            "confidence": self.confidence,
+            "action_intent": None,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> ReadOnlyAbstention:
+        if payload.get("action_intent") is not None:
+            raise ValueError("read-only abstention cannot carry an ActionIntent")
+        return cls(
+            format=str(payload.get("format", "")),
+            version=int(payload.get("version", -1)),
+            abstention_id=str(payload["abstention_id"]),
+            reason_code=str(payload["reason_code"]),
+            next_step=str(payload["next_step"]),
+            snapshot_id=str(payload["snapshot_id"]),
+            capability_revision=int(payload["capability_revision"]),
+            observation_digest=str(payload["observation_digest"]),
+            confidence=float(payload.get("confidence", 0.0)),
         )
 
 
@@ -183,6 +300,40 @@ class NativeReadOnlyIntentPlanner:
         if int(payload.get("version", -1)) != cls.CHECKPOINT_VERSION:
             raise ValueError("unsupported native read-only intent planner version")
         return cls(ReadOnlyIntentPolicy.from_payload(payload["policy"]))
+
+    def abstain(
+        self,
+        *,
+        observation: WorkbenchObservation,
+        capability_snapshot: Any,
+        reason_code: str,
+        next_step: str,
+        confidence: float,
+    ) -> ReadOnlyAbstention:
+        if not isinstance(observation, WorkbenchObservation):
+            raise TypeError("read-only abstention observation must be WorkbenchObservation")
+        snapshot_id = _text(getattr(capability_snapshot, "snapshot_id", ""), "snapshot_id")
+        capability_revision = int(getattr(capability_snapshot, "revision", 0))
+        if capability_revision < 1:
+            raise ValueError("capability snapshot revision must be positive")
+        abstention_id = content_digest(
+            {
+                "observation_digest": observation.observation_digest,
+                "reason_code": str(reason_code),
+                "next_step": str(next_step),
+                "snapshot_id": snapshot_id,
+                "capability_revision": capability_revision,
+            }
+        )[:32]
+        return ReadOnlyAbstention(
+            abstention_id=abstention_id,
+            reason_code=_text(reason_code, "abstention reason_code"),
+            next_step=_text(next_step, "abstention next_step"),
+            snapshot_id=snapshot_id,
+            capability_revision=capability_revision,
+            observation_digest=observation.observation_digest,
+            confidence=float(confidence),
+        )
 
     @staticmethod
     def _world_matches_observation(
@@ -278,7 +429,7 @@ class NativeReadOnlyIntentPlanner:
             return reject("capability_not_connected")
         if descriptor.risk != "read_only" or capability_id not in READ_ONLY_INTENT_CAPABILITIES:
             return reject("read_only_policy_rejected")
-        if not observation.read_success:
+        if capability_id != "workspace.list" and not observation.read_success:
             return reject("workspace_target_unavailable")
         if capability_id == "workspace.programming_language.resolve" and (
             observation.selection_state != "resolved"
@@ -287,6 +438,9 @@ class NativeReadOnlyIntentPlanner:
         if capability_id == "workspace.read" and not observation.file_is_file:
             return reject("workspace_target_not_file")
         parameters = {"path": observation.path}
+        parameters.update(self.policy.parameters_for(content.content_id))
+        if capability_id == "workspace.list" and parameters.get("path") != ".":
+            return reject("recovery_scope_not_root")
         if set(parameters) - descriptor.parameter_names:
             return reject("capability_parameter_drift")
         confidence = min(
