@@ -30,6 +30,8 @@ G_SELECTION_FEATURE_NAMES = (
     "is_resolved",
     "is_clarify",
     "is_abstain",
+    "is_reobserve",
+    "is_proposal",
 )
 
 
@@ -80,6 +82,7 @@ class GSelectionCandidate:
 
     candidate_id: str
     source: str
+    candidate_role: str
     status: str
     goal: Goal | None
     content_plan: ContentPlan | None
@@ -98,6 +101,9 @@ class GSelectionCandidate:
             raise ValueError("unsupported G selection candidate version")
         candidate_id = _text(self.candidate_id, "candidate_id")
         source = _text(self.source, "candidate source")
+        candidate_role = _text(self.candidate_role, "candidate role")
+        if candidate_role not in {"proposal", "abstain", "reobserve"}:
+            raise ValueError("unsupported G selection candidate role")
         status = _text(self.status, "candidate status")
         if status not in {"resolved", "clarify", "ambiguous", "unknown", "conflict", "abstained"}:
             raise ValueError("unsupported G selection candidate status")
@@ -114,6 +120,7 @@ class GSelectionCandidate:
             "version": int(self.version),
             "candidate_id": candidate_id,
             "source": source,
+            "candidate_role": candidate_role,
             "status": status,
             "goal": None if goal is None else goal.to_payload(),
             "content_plan": None if content is None else content.to_payload(),
@@ -126,6 +133,7 @@ class GSelectionCandidate:
             raise ValueError("G selection candidate digest mismatch")
         object.__setattr__(self, "candidate_id", candidate_id)
         object.__setattr__(self, "source", source)
+        object.__setattr__(self, "candidate_role", candidate_role)
         object.__setattr__(self, "status", status)
         object.__setattr__(self, "goal", goal)
         object.__setattr__(self, "content_plan", content)
@@ -141,6 +149,7 @@ class GSelectionCandidate:
         *,
         candidate_id: str,
         source: str,
+        candidate_role: str,
         status: str,
         goal: Goal | None,
         content_plan: ContentPlan | None,
@@ -154,6 +163,7 @@ class GSelectionCandidate:
             "version": TAIJI_G_SELECTION_VERSION,
             "candidate_id": str(candidate_id),
             "source": str(source),
+            "candidate_role": str(candidate_role),
             "status": str(status),
             "goal": None if goal is None else goal.to_payload(),
             "content_plan": None if content_plan is None else content_plan.to_payload(),
@@ -182,7 +192,9 @@ class GSelectionCandidate:
             float(self.content_plan is not None),
             float(self.status == "resolved"),
             float(self.status == "clarify"),
-            float(self.status in {"abstained", "unknown", "ambiguous"}),
+            float(self.candidate_role == "abstain"),
+            float(self.candidate_role == "reobserve"),
+            float(self.candidate_role == "proposal"),
         )
 
     def _payload_without_digest(self) -> dict[str, Any]:
@@ -191,6 +203,7 @@ class GSelectionCandidate:
             "version": int(self.version),
             "candidate_id": self.candidate_id,
             "source": self.source,
+            "candidate_role": self.candidate_role,
             "status": self.status,
             "goal": None if self.goal is None else self.goal.to_payload(),
             "content_plan": None
@@ -212,6 +225,7 @@ class GSelectionCandidate:
             version=int(payload.get("version", -1)),
             candidate_id=str(payload["candidate_id"]),
             source=str(payload["source"]),
+            candidate_role=str(payload["candidate_role"]),
             status=str(payload["status"]),
             goal=_optional_goal(payload.get("goal"), "candidate goal"),
             content_plan=_optional_content(payload.get("content_plan"), "candidate content"),

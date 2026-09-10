@@ -15,6 +15,7 @@ def _candidate(*, candidate_id: str, goal: Goal | None, content: ContentPlan | N
     return GSelectionCandidate.create(
         candidate_id=candidate_id,
         source="k.test",
+        candidate_role="proposal" if goal is not None else "abstain",
         status="resolved" if goal is not None and content is not None else "abstained",
         goal=goal,
         content_plan=content,
@@ -71,7 +72,7 @@ def test_candidate_features_and_margin_are_deterministic() -> None:
     item = _set()
     selected = item.target_candidate()
 
-    assert len(selected.feature_vector) == 10
+    assert len(selected.feature_vector) == 12
     assert selected.feature_vector[2] == pytest.approx(0.8)
     assert item.score_margin == pytest.approx(0.8)
 
