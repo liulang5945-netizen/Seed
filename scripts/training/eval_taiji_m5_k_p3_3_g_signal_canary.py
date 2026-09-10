@@ -136,6 +136,7 @@ def _candidate(
     *,
     candidate_id: str,
     source: str,
+    candidate_role: str,
     status: str,
     goal: Goal | None,
     content: ContentPlan | None,
@@ -144,6 +145,7 @@ def _candidate(
     return GSelectionCandidate.create(
         candidate_id=candidate_id,
         source=source,
+        candidate_role=candidate_role,
         status=status,
         goal=goal,
         content_plan=content,
@@ -184,6 +186,7 @@ def _candidate_sets(
         *,
         candidate_id: str,
         source: str,
+        candidate_role: str,
         status: str,
         goal: Goal | None,
         content: ContentPlan | None,
@@ -198,6 +201,7 @@ def _candidate_sets(
             _candidate(
                 candidate_id=candidate_id,
                 source=source,
+                candidate_role=candidate_role,
                 status=status,
                 goal=goal,
                 content=content,
@@ -209,6 +213,7 @@ def _candidate_sets(
         add(
             candidate_id="k1:selected",
             source="k1.semantic",
+            candidate_role="proposal",
             status=semantic_result.status,
             goal=semantic_result.goal,
             content=semantic_result.content_plan,
@@ -218,6 +223,7 @@ def _candidate_sets(
         add(
             candidate_id="k2:selected",
             source="k2.transition",
+            candidate_role="proposal",
             status=transition_result.status,
             goal=transition_result.goal,
             content=transition_result.content_plan,
@@ -238,6 +244,7 @@ def _candidate_sets(
             add(
                 candidate_id=f"k1:grid:{goal_id}:{content_id}",
                 source="k1.score-grid",
+                candidate_role="proposal",
                 status=status,
                 goal=goal,
                 content=content,
@@ -247,6 +254,7 @@ def _candidate_sets(
     add(
         candidate_id="abstain",
         source="runtime.abstain",
+        candidate_role="abstain",
         status="abstained",
         goal=None,
         content=None,
@@ -256,6 +264,7 @@ def _candidate_sets(
         add(
             candidate_id="reobserve",
             source="runtime.reobserve",
+            candidate_role="reobserve",
             status="ambiguous",
             goal=None,
             content=None,

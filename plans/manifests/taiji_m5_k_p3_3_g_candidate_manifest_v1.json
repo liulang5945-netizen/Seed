@@ -30,6 +30,7 @@
           "version": 1,
           "candidate_id": "k1:selected",
           "source": "k1.semantic",
+          "candidate_role": "proposal",
           "status": "resolved",
           "goal": {
             "version": 1,
@@ -58,13 +59,14 @@
           "content_score": 0.9827467203140259,
           "confidence": 0.9827467203140259,
           "ambiguity": 0.01464976230636239,
-          "candidate_digest": "4c154e606769de783d77f6c2283650bb1cb0867d67445d7a1ac83d2210c81f33"
+          "candidate_digest": "56b608c8dc5820998eede640d3e6bccaa2900aa53d60cc854d146c48e45bde0a"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -72,13 +74,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         }
       ],
       "target_candidate_id": "k1:selected",
       "target_kind": "pair",
-      "candidate_set_digest": "96734bc82d3a814618bdd4e92ff807ea0f89d67063f6d4726287c6f1b862e586",
-      "inference_digest": "08addf271a2e0b0abcf9fcb32150212c7d8af6517029f7e9340c7cc0d8e69472"
+      "candidate_set_digest": "1193bfa3a399e566574e843e4a3cd6effb60bc498475af36f01886d701f77107",
+      "inference_digest": "0ef416d65686912307e54db778f369f9e476a11986d3d06269cf81f4c386a4a1"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -95,6 +97,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -102,13 +105,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -116,13 +120,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "331c17869ae6ae5ec03725a2d1d5264363fd38795ef572a00ebd1009bba9775b",
-      "inference_digest": "3d8f3691239126e0689f4ecde342d8fc0dbf72065d56f45163011edd3a3d32df"
+      "candidate_set_digest": "80ffecfc165bf14a169b25a376d394f7146c2af39cdf99cc4a4c5456342b7175",
+      "inference_digest": "26ba6eb20719442adb5c6dcb01ba9cb00bbc00d1b02fe2167795062aa604675f"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -139,6 +143,7 @@
           "version": 1,
           "candidate_id": "k1:selected",
           "source": "k1.semantic",
+          "candidate_role": "proposal",
           "status": "clarify",
           "goal": {
             "version": 1,
@@ -167,13 +172,14 @@
           "content_score": 0.9918501377105713,
           "confidence": 0.9909692406654358,
           "ambiguity": 0.008149862289428711,
-          "candidate_digest": "9cc9877f9a3a0ebb7540fad0d214b4500a29a3e737a42b183c08fea78bdafb0a"
+          "candidate_digest": "595531cd6f5f2faac202068c03a7c086f0168db7ca410c2af110d0d78a7a11a3"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -181,13 +187,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         }
       ],
       "target_candidate_id": "k1:selected",
       "target_kind": "pair",
-      "candidate_set_digest": "2abf5cc313777b45168e57485ede7d77a14d1de2ca875a1f3f46012240028f80",
-      "inference_digest": "00c9614aa2de7137eb971846154273cc8033a67e3c4e61287d1c0af4f342b8f8"
+      "candidate_set_digest": "d0b0f55a7f90bf2f7a90d60262563341913f07ffc6e83764e5db24052dd52e29",
+      "inference_digest": "e71a2bea3d812b6f11f06b59a4fed1d61a97057f6c1bf59ff08f3bd53cb7e793"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -204,6 +210,7 @@
           "version": 1,
           "candidate_id": "k1:selected",
           "source": "k1.semantic",
+          "candidate_role": "proposal",
           "status": "clarify",
           "goal": {
             "version": 1,
@@ -232,13 +239,14 @@
           "content_score": 0.9918501377105713,
           "confidence": 0.9909692406654358,
           "ambiguity": 0.008149862289428711,
-          "candidate_digest": "9cc9877f9a3a0ebb7540fad0d214b4500a29a3e737a42b183c08fea78bdafb0a"
+          "candidate_digest": "595531cd6f5f2faac202068c03a7c086f0168db7ca410c2af110d0d78a7a11a3"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -246,13 +254,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         }
       ],
       "target_candidate_id": "k1:selected",
       "target_kind": "pair",
-      "candidate_set_digest": "2b4df833bc9ec73f5823a38a077536894f7f2dc80dde24ff86083f9a2fdc7d18",
-      "inference_digest": "d22b5a97260a1eb05317ec22e71cd26a8d94405ebaf9640ae9536626186d1192"
+      "candidate_set_digest": "68ce8e1e3a068670740dc27bf3cad1629a0de5e63c65bb309e5079b01a61a525",
+      "inference_digest": "b6fc1692cecb31b5e21ea03ec29465492122e5a6faec42b6014bbefce7e50025"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -269,6 +277,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -276,13 +285,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -290,13 +300,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "82afbd0f15cda810e913eb2ac6029785ed748a84005449fc41792687d8928173",
-      "inference_digest": "c1979a279082af8aead859b57fa84fae8f5ff668d469bbdd1fa5eaf850717230"
+      "candidate_set_digest": "78e74c2b745872ec632a410a3a265a00dfbdc35e6f0ecde53ea95e26936df3f4",
+      "inference_digest": "560735ac14e2fcab8a2259f35336c5aa77e392757ebcb4575990a597c08e3ab6"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -313,6 +323,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -320,13 +331,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -334,13 +346,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "74702d08c3e4688b67de3c3994ac2a908a3ca8d82992f4ab9c6d07217af0230b",
-      "inference_digest": "17d828831b6e4f5e7dbcd54b65d10cf2fed8bd706c5efb6d1c3d342e16ff7e4d"
+      "candidate_set_digest": "ad7dbb23c7ff7392d5c19f641a89eed0fdf5cad86ca202d3b93e3197b0453b9d",
+      "inference_digest": "532f2e6573c14e3c4f4370d71f9c093ac1a61e59b428438dcb64b3a805a15147"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -357,6 +369,7 @@
           "version": 1,
           "candidate_id": "k1:selected",
           "source": "k1.semantic",
+          "candidate_role": "proposal",
           "status": "clarify",
           "goal": {
             "version": 1,
@@ -385,13 +398,14 @@
           "content_score": 0.9918501377105713,
           "confidence": 0.9909692406654358,
           "ambiguity": 0.008149862289428711,
-          "candidate_digest": "9cc9877f9a3a0ebb7540fad0d214b4500a29a3e737a42b183c08fea78bdafb0a"
+          "candidate_digest": "595531cd6f5f2faac202068c03a7c086f0168db7ca410c2af110d0d78a7a11a3"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -399,13 +413,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         }
       ],
       "target_candidate_id": "k1:selected",
       "target_kind": "pair",
-      "candidate_set_digest": "2c9e140c6c932a4bfea1c6e19561542847e58095e253bf53b0bf3db7286bc60f",
-      "inference_digest": "d5caf05d3efdc32b127e4244e95acb155fbba7821e554e1e6ff30ebafefd192b"
+      "candidate_set_digest": "6444465b441b8b4af5de4d060113f951ae5ce8855863e2321aa6dff3eb27a5c3",
+      "inference_digest": "2607ae45273d5d7736e8eb757182ff067fb38cef9538a000aefdbc231934fb60"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -422,6 +436,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -429,13 +444,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -443,13 +459,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "de378f4959fbe318d030b0b2a9eb3f38493585de3b056ba2e1dbb8a41be71d2d",
-      "inference_digest": "979419293a9e6bd70f5ac14392816c379b6ef106f362bf46de2b560f2c6b9d53"
+      "candidate_set_digest": "dd40f474517b42e43960b1fffe865544bc409d239f1c47d75daa4ab24a5fa4d0",
+      "inference_digest": "e1402d1de96f90f0b884f0a70351b3ecac4da1c5f16de5f7e443886d8a81e4b4"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -466,6 +482,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -473,13 +490,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -487,13 +505,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "d0e7444978074fab5f0854c2385a31029668394d4f2aa3ffe8f932e32c2719b2",
-      "inference_digest": "2be0ee4451b2c37602820f227fb3e09f921c74890e1eaccc2a4a61a093051050"
+      "candidate_set_digest": "668bb9587cd417415da30dcdc220de1b1d767a1c833e3dcaac2b6b3e8eeb04dd",
+      "inference_digest": "b1a76c34068e92968b824b4433e829729b82f46b97ae5bc36be61c1f1197c553"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -510,6 +528,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -517,13 +536,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -531,13 +551,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "b084f67c8ead44f9b1cd697379b10bf482141486a506b6dabdb593ff3bd89054",
-      "inference_digest": "e5ae6e632e7bc170950d25b6395b42c7703006cfc4f375ab79ac610313ddcd14"
+      "candidate_set_digest": "0b98d5062b1d66bdcad64784f0570d592a54a8aa2391c4d0826863e22f03f6e7",
+      "inference_digest": "d7589ad3073495ecd35e0fe952527b034cb37414f8b9b24aa46bdd5ae6786dbe"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -554,6 +574,7 @@
           "version": 1,
           "candidate_id": "k1:selected",
           "source": "k1.semantic",
+          "candidate_role": "proposal",
           "status": "resolved",
           "goal": {
             "version": 1,
@@ -582,13 +603,14 @@
           "content_score": 0.9827467203140259,
           "confidence": 0.9827467203140259,
           "ambiguity": 0.01464976230636239,
-          "candidate_digest": "4c154e606769de783d77f6c2283650bb1cb0867d67445d7a1ac83d2210c81f33"
+          "candidate_digest": "56b608c8dc5820998eede640d3e6bccaa2900aa53d60cc854d146c48e45bde0a"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -596,13 +618,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         }
       ],
       "target_candidate_id": "k1:selected",
       "target_kind": "pair",
-      "candidate_set_digest": "96734bc82d3a814618bdd4e92ff807ea0f89d67063f6d4726287c6f1b862e586",
-      "inference_digest": "08addf271a2e0b0abcf9fcb32150212c7d8af6517029f7e9340c7cc0d8e69472"
+      "candidate_set_digest": "1193bfa3a399e566574e843e4a3cd6effb60bc498475af36f01886d701f77107",
+      "inference_digest": "0ef416d65686912307e54db778f369f9e476a11986d3d06269cf81f4c386a4a1"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -619,6 +641,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -626,13 +649,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -640,13 +664,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "331c17869ae6ae5ec03725a2d1d5264363fd38795ef572a00ebd1009bba9775b",
-      "inference_digest": "3d8f3691239126e0689f4ecde342d8fc0dbf72065d56f45163011edd3a3d32df"
+      "candidate_set_digest": "80ffecfc165bf14a169b25a376d394f7146c2af39cdf99cc4a4c5456342b7175",
+      "inference_digest": "26ba6eb20719442adb5c6dcb01ba9cb00bbc00d1b02fe2167795062aa604675f"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -663,6 +687,7 @@
           "version": 1,
           "candidate_id": "k1:selected",
           "source": "k1.semantic",
+          "candidate_role": "proposal",
           "status": "clarify",
           "goal": {
             "version": 1,
@@ -691,13 +716,14 @@
           "content_score": 0.9918501377105713,
           "confidence": 0.9909692406654358,
           "ambiguity": 0.008149862289428711,
-          "candidate_digest": "9cc9877f9a3a0ebb7540fad0d214b4500a29a3e737a42b183c08fea78bdafb0a"
+          "candidate_digest": "595531cd6f5f2faac202068c03a7c086f0168db7ca410c2af110d0d78a7a11a3"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -705,13 +731,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         }
       ],
       "target_candidate_id": "k1:selected",
       "target_kind": "pair",
-      "candidate_set_digest": "2abf5cc313777b45168e57485ede7d77a14d1de2ca875a1f3f46012240028f80",
-      "inference_digest": "00c9614aa2de7137eb971846154273cc8033a67e3c4e61287d1c0af4f342b8f8"
+      "candidate_set_digest": "d0b0f55a7f90bf2f7a90d60262563341913f07ffc6e83764e5db24052dd52e29",
+      "inference_digest": "e71a2bea3d812b6f11f06b59a4fed1d61a97057f6c1bf59ff08f3bd53cb7e793"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -728,6 +754,7 @@
           "version": 1,
           "candidate_id": "k1:selected",
           "source": "k1.semantic",
+          "candidate_role": "proposal",
           "status": "clarify",
           "goal": {
             "version": 1,
@@ -756,13 +783,14 @@
           "content_score": 0.9918501377105713,
           "confidence": 0.9909692406654358,
           "ambiguity": 0.008149862289428711,
-          "candidate_digest": "9cc9877f9a3a0ebb7540fad0d214b4500a29a3e737a42b183c08fea78bdafb0a"
+          "candidate_digest": "595531cd6f5f2faac202068c03a7c086f0168db7ca410c2af110d0d78a7a11a3"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -770,13 +798,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         }
       ],
       "target_candidate_id": "k1:selected",
       "target_kind": "pair",
-      "candidate_set_digest": "2b4df833bc9ec73f5823a38a077536894f7f2dc80dde24ff86083f9a2fdc7d18",
-      "inference_digest": "d22b5a97260a1eb05317ec22e71cd26a8d94405ebaf9640ae9536626186d1192"
+      "candidate_set_digest": "68ce8e1e3a068670740dc27bf3cad1629a0de5e63c65bb309e5079b01a61a525",
+      "inference_digest": "b6fc1692cecb31b5e21ea03ec29465492122e5a6faec42b6014bbefce7e50025"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -793,6 +821,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -800,13 +829,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -814,13 +844,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "82afbd0f15cda810e913eb2ac6029785ed748a84005449fc41792687d8928173",
-      "inference_digest": "c1979a279082af8aead859b57fa84fae8f5ff668d469bbdd1fa5eaf850717230"
+      "candidate_set_digest": "78e74c2b745872ec632a410a3a265a00dfbdc35e6f0ecde53ea95e26936df3f4",
+      "inference_digest": "560735ac14e2fcab8a2259f35336c5aa77e392757ebcb4575990a597c08e3ab6"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -837,6 +867,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -844,13 +875,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -858,13 +890,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "74702d08c3e4688b67de3c3994ac2a908a3ca8d82992f4ab9c6d07217af0230b",
-      "inference_digest": "17d828831b6e4f5e7dbcd54b65d10cf2fed8bd706c5efb6d1c3d342e16ff7e4d"
+      "candidate_set_digest": "ad7dbb23c7ff7392d5c19f641a89eed0fdf5cad86ca202d3b93e3197b0453b9d",
+      "inference_digest": "532f2e6573c14e3c4f4370d71f9c093ac1a61e59b428438dcb64b3a805a15147"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -881,6 +913,7 @@
           "version": 1,
           "candidate_id": "k1:selected",
           "source": "k1.semantic",
+          "candidate_role": "proposal",
           "status": "clarify",
           "goal": {
             "version": 1,
@@ -909,13 +942,14 @@
           "content_score": 0.9918501377105713,
           "confidence": 0.9909692406654358,
           "ambiguity": 0.008149862289428711,
-          "candidate_digest": "9cc9877f9a3a0ebb7540fad0d214b4500a29a3e737a42b183c08fea78bdafb0a"
+          "candidate_digest": "595531cd6f5f2faac202068c03a7c086f0168db7ca410c2af110d0d78a7a11a3"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -923,13 +957,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         }
       ],
       "target_candidate_id": "k1:selected",
       "target_kind": "pair",
-      "candidate_set_digest": "2c9e140c6c932a4bfea1c6e19561542847e58095e253bf53b0bf3db7286bc60f",
-      "inference_digest": "d5caf05d3efdc32b127e4244e95acb155fbba7821e554e1e6ff30ebafefd192b"
+      "candidate_set_digest": "6444465b441b8b4af5de4d060113f951ae5ce8855863e2321aa6dff3eb27a5c3",
+      "inference_digest": "2607ae45273d5d7736e8eb757182ff067fb38cef9538a000aefdbc231934fb60"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -946,6 +980,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -953,13 +988,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -967,13 +1003,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "de378f4959fbe318d030b0b2a9eb3f38493585de3b056ba2e1dbb8a41be71d2d",
-      "inference_digest": "979419293a9e6bd70f5ac14392816c379b6ef106f362bf46de2b560f2c6b9d53"
+      "candidate_set_digest": "dd40f474517b42e43960b1fffe865544bc409d239f1c47d75daa4ab24a5fa4d0",
+      "inference_digest": "e1402d1de96f90f0b884f0a70351b3ecac4da1c5f16de5f7e443886d8a81e4b4"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -990,6 +1026,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -997,13 +1034,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -1011,13 +1049,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "d0e7444978074fab5f0854c2385a31029668394d4f2aa3ffe8f932e32c2719b2",
-      "inference_digest": "2be0ee4451b2c37602820f227fb3e09f921c74890e1eaccc2a4a61a093051050"
+      "candidate_set_digest": "668bb9587cd417415da30dcdc220de1b1d767a1c833e3dcaac2b6b3e8eeb04dd",
+      "inference_digest": "b1a76c34068e92968b824b4433e829729b82f46b97ae5bc36be61c1f1197c553"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -1034,6 +1072,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -1041,13 +1080,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -1055,13 +1095,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "b084f67c8ead44f9b1cd697379b10bf482141486a506b6dabdb593ff3bd89054",
-      "inference_digest": "e5ae6e632e7bc170950d25b6395b42c7703006cfc4f375ab79ac610313ddcd14"
+      "candidate_set_digest": "0b98d5062b1d66bdcad64784f0570d592a54a8aa2391c4d0826863e22f03f6e7",
+      "inference_digest": "d7589ad3073495ecd35e0fe952527b034cb37414f8b9b24aa46bdd5ae6786dbe"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -1078,6 +1118,7 @@
           "version": 1,
           "candidate_id": "k1:selected",
           "source": "k1.semantic",
+          "candidate_role": "proposal",
           "status": "resolved",
           "goal": {
             "version": 1,
@@ -1106,13 +1147,14 @@
           "content_score": 0.9827467203140259,
           "confidence": 0.9827467203140259,
           "ambiguity": 0.01464976230636239,
-          "candidate_digest": "4c154e606769de783d77f6c2283650bb1cb0867d67445d7a1ac83d2210c81f33"
+          "candidate_digest": "56b608c8dc5820998eede640d3e6bccaa2900aa53d60cc854d146c48e45bde0a"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -1120,13 +1162,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         }
       ],
       "target_candidate_id": "k1:selected",
       "target_kind": "pair",
-      "candidate_set_digest": "96734bc82d3a814618bdd4e92ff807ea0f89d67063f6d4726287c6f1b862e586",
-      "inference_digest": "08addf271a2e0b0abcf9fcb32150212c7d8af6517029f7e9340c7cc0d8e69472"
+      "candidate_set_digest": "1193bfa3a399e566574e843e4a3cd6effb60bc498475af36f01886d701f77107",
+      "inference_digest": "0ef416d65686912307e54db778f369f9e476a11986d3d06269cf81f4c386a4a1"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -1143,6 +1185,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -1150,13 +1193,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -1164,13 +1208,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "331c17869ae6ae5ec03725a2d1d5264363fd38795ef572a00ebd1009bba9775b",
-      "inference_digest": "3d8f3691239126e0689f4ecde342d8fc0dbf72065d56f45163011edd3a3d32df"
+      "candidate_set_digest": "80ffecfc165bf14a169b25a376d394f7146c2af39cdf99cc4a4c5456342b7175",
+      "inference_digest": "26ba6eb20719442adb5c6dcb01ba9cb00bbc00d1b02fe2167795062aa604675f"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -1187,6 +1231,7 @@
           "version": 1,
           "candidate_id": "k1:selected",
           "source": "k1.semantic",
+          "candidate_role": "proposal",
           "status": "clarify",
           "goal": {
             "version": 1,
@@ -1215,13 +1260,14 @@
           "content_score": 0.9918501377105713,
           "confidence": 0.9909692406654358,
           "ambiguity": 0.008149862289428711,
-          "candidate_digest": "9cc9877f9a3a0ebb7540fad0d214b4500a29a3e737a42b183c08fea78bdafb0a"
+          "candidate_digest": "595531cd6f5f2faac202068c03a7c086f0168db7ca410c2af110d0d78a7a11a3"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -1229,13 +1275,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         }
       ],
       "target_candidate_id": "k1:selected",
       "target_kind": "pair",
-      "candidate_set_digest": "2abf5cc313777b45168e57485ede7d77a14d1de2ca875a1f3f46012240028f80",
-      "inference_digest": "00c9614aa2de7137eb971846154273cc8033a67e3c4e61287d1c0af4f342b8f8"
+      "candidate_set_digest": "d0b0f55a7f90bf2f7a90d60262563341913f07ffc6e83764e5db24052dd52e29",
+      "inference_digest": "e71a2bea3d812b6f11f06b59a4fed1d61a97057f6c1bf59ff08f3bd53cb7e793"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -1252,6 +1298,7 @@
           "version": 1,
           "candidate_id": "k1:selected",
           "source": "k1.semantic",
+          "candidate_role": "proposal",
           "status": "clarify",
           "goal": {
             "version": 1,
@@ -1280,13 +1327,14 @@
           "content_score": 0.9918501377105713,
           "confidence": 0.9909692406654358,
           "ambiguity": 0.008149862289428711,
-          "candidate_digest": "9cc9877f9a3a0ebb7540fad0d214b4500a29a3e737a42b183c08fea78bdafb0a"
+          "candidate_digest": "595531cd6f5f2faac202068c03a7c086f0168db7ca410c2af110d0d78a7a11a3"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -1294,13 +1342,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         }
       ],
       "target_candidate_id": "k1:selected",
       "target_kind": "pair",
-      "candidate_set_digest": "2b4df833bc9ec73f5823a38a077536894f7f2dc80dde24ff86083f9a2fdc7d18",
-      "inference_digest": "d22b5a97260a1eb05317ec22e71cd26a8d94405ebaf9640ae9536626186d1192"
+      "candidate_set_digest": "68ce8e1e3a068670740dc27bf3cad1629a0de5e63c65bb309e5079b01a61a525",
+      "inference_digest": "b6fc1692cecb31b5e21ea03ec29465492122e5a6faec42b6014bbefce7e50025"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -1317,6 +1365,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -1324,13 +1373,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -1338,13 +1388,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "82afbd0f15cda810e913eb2ac6029785ed748a84005449fc41792687d8928173",
-      "inference_digest": "c1979a279082af8aead859b57fa84fae8f5ff668d469bbdd1fa5eaf850717230"
+      "candidate_set_digest": "78e74c2b745872ec632a410a3a265a00dfbdc35e6f0ecde53ea95e26936df3f4",
+      "inference_digest": "560735ac14e2fcab8a2259f35336c5aa77e392757ebcb4575990a597c08e3ab6"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -1361,6 +1411,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -1368,13 +1419,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -1382,13 +1434,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "74702d08c3e4688b67de3c3994ac2a908a3ca8d82992f4ab9c6d07217af0230b",
-      "inference_digest": "17d828831b6e4f5e7dbcd54b65d10cf2fed8bd706c5efb6d1c3d342e16ff7e4d"
+      "candidate_set_digest": "ad7dbb23c7ff7392d5c19f641a89eed0fdf5cad86ca202d3b93e3197b0453b9d",
+      "inference_digest": "532f2e6573c14e3c4f4370d71f9c093ac1a61e59b428438dcb64b3a805a15147"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -1405,6 +1457,7 @@
           "version": 1,
           "candidate_id": "k1:selected",
           "source": "k1.semantic",
+          "candidate_role": "proposal",
           "status": "clarify",
           "goal": {
             "version": 1,
@@ -1433,13 +1486,14 @@
           "content_score": 0.9918501377105713,
           "confidence": 0.9909692406654358,
           "ambiguity": 0.008149862289428711,
-          "candidate_digest": "9cc9877f9a3a0ebb7540fad0d214b4500a29a3e737a42b183c08fea78bdafb0a"
+          "candidate_digest": "595531cd6f5f2faac202068c03a7c086f0168db7ca410c2af110d0d78a7a11a3"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -1447,13 +1501,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         }
       ],
       "target_candidate_id": "k1:selected",
       "target_kind": "pair",
-      "candidate_set_digest": "2c9e140c6c932a4bfea1c6e19561542847e58095e253bf53b0bf3db7286bc60f",
-      "inference_digest": "d5caf05d3efdc32b127e4244e95acb155fbba7821e554e1e6ff30ebafefd192b"
+      "candidate_set_digest": "6444465b441b8b4af5de4d060113f951ae5ce8855863e2321aa6dff3eb27a5c3",
+      "inference_digest": "2607ae45273d5d7736e8eb757182ff067fb38cef9538a000aefdbc231934fb60"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -1470,6 +1524,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -1477,13 +1532,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -1491,13 +1547,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "de378f4959fbe318d030b0b2a9eb3f38493585de3b056ba2e1dbb8a41be71d2d",
-      "inference_digest": "979419293a9e6bd70f5ac14392816c379b6ef106f362bf46de2b560f2c6b9d53"
+      "candidate_set_digest": "dd40f474517b42e43960b1fffe865544bc409d239f1c47d75daa4ab24a5fa4d0",
+      "inference_digest": "e1402d1de96f90f0b884f0a70351b3ecac4da1c5f16de5f7e443886d8a81e4b4"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -1514,6 +1570,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -1521,13 +1578,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -1535,13 +1593,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "d0e7444978074fab5f0854c2385a31029668394d4f2aa3ffe8f932e32c2719b2",
-      "inference_digest": "2be0ee4451b2c37602820f227fb3e09f921c74890e1eaccc2a4a61a093051050"
+      "candidate_set_digest": "668bb9587cd417415da30dcdc220de1b1d767a1c833e3dcaac2b6b3e8eeb04dd",
+      "inference_digest": "b1a76c34068e92968b824b4433e829729b82f46b97ae5bc36be61c1f1197c553"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -1558,6 +1616,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -1565,13 +1624,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -1579,13 +1639,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "b084f67c8ead44f9b1cd697379b10bf482141486a506b6dabdb593ff3bd89054",
-      "inference_digest": "e5ae6e632e7bc170950d25b6395b42c7703006cfc4f375ab79ac610313ddcd14"
+      "candidate_set_digest": "0b98d5062b1d66bdcad64784f0570d592a54a8aa2391c4d0826863e22f03f6e7",
+      "inference_digest": "d7589ad3073495ecd35e0fe952527b034cb37414f8b9b24aa46bdd5ae6786dbe"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -1602,6 +1662,7 @@
           "version": 1,
           "candidate_id": "k1:selected",
           "source": "k1.semantic",
+          "candidate_role": "proposal",
           "status": "resolved",
           "goal": {
             "version": 1,
@@ -1630,13 +1691,14 @@
           "content_score": 0.9827467203140259,
           "confidence": 0.9827467203140259,
           "ambiguity": 0.01464976230636239,
-          "candidate_digest": "4c154e606769de783d77f6c2283650bb1cb0867d67445d7a1ac83d2210c81f33"
+          "candidate_digest": "56b608c8dc5820998eede640d3e6bccaa2900aa53d60cc854d146c48e45bde0a"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -1644,13 +1706,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         }
       ],
       "target_candidate_id": "k1:selected",
       "target_kind": "pair",
-      "candidate_set_digest": "96734bc82d3a814618bdd4e92ff807ea0f89d67063f6d4726287c6f1b862e586",
-      "inference_digest": "08addf271a2e0b0abcf9fcb32150212c7d8af6517029f7e9340c7cc0d8e69472"
+      "candidate_set_digest": "1193bfa3a399e566574e843e4a3cd6effb60bc498475af36f01886d701f77107",
+      "inference_digest": "0ef416d65686912307e54db778f369f9e476a11986d3d06269cf81f4c386a4a1"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -1667,6 +1729,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -1674,13 +1737,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -1688,13 +1752,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "331c17869ae6ae5ec03725a2d1d5264363fd38795ef572a00ebd1009bba9775b",
-      "inference_digest": "3d8f3691239126e0689f4ecde342d8fc0dbf72065d56f45163011edd3a3d32df"
+      "candidate_set_digest": "80ffecfc165bf14a169b25a376d394f7146c2af39cdf99cc4a4c5456342b7175",
+      "inference_digest": "26ba6eb20719442adb5c6dcb01ba9cb00bbc00d1b02fe2167795062aa604675f"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -1711,6 +1775,7 @@
           "version": 1,
           "candidate_id": "k1:selected",
           "source": "k1.semantic",
+          "candidate_role": "proposal",
           "status": "clarify",
           "goal": {
             "version": 1,
@@ -1739,13 +1804,14 @@
           "content_score": 0.9918501377105713,
           "confidence": 0.9909692406654358,
           "ambiguity": 0.008149862289428711,
-          "candidate_digest": "9cc9877f9a3a0ebb7540fad0d214b4500a29a3e737a42b183c08fea78bdafb0a"
+          "candidate_digest": "595531cd6f5f2faac202068c03a7c086f0168db7ca410c2af110d0d78a7a11a3"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -1753,13 +1819,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         }
       ],
       "target_candidate_id": "k1:selected",
       "target_kind": "pair",
-      "candidate_set_digest": "2abf5cc313777b45168e57485ede7d77a14d1de2ca875a1f3f46012240028f80",
-      "inference_digest": "00c9614aa2de7137eb971846154273cc8033a67e3c4e61287d1c0af4f342b8f8"
+      "candidate_set_digest": "d0b0f55a7f90bf2f7a90d60262563341913f07ffc6e83764e5db24052dd52e29",
+      "inference_digest": "e71a2bea3d812b6f11f06b59a4fed1d61a97057f6c1bf59ff08f3bd53cb7e793"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -1776,6 +1842,7 @@
           "version": 1,
           "candidate_id": "k1:selected",
           "source": "k1.semantic",
+          "candidate_role": "proposal",
           "status": "clarify",
           "goal": {
             "version": 1,
@@ -1804,13 +1871,14 @@
           "content_score": 0.9918501377105713,
           "confidence": 0.9909692406654358,
           "ambiguity": 0.008149862289428711,
-          "candidate_digest": "9cc9877f9a3a0ebb7540fad0d214b4500a29a3e737a42b183c08fea78bdafb0a"
+          "candidate_digest": "595531cd6f5f2faac202068c03a7c086f0168db7ca410c2af110d0d78a7a11a3"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -1818,13 +1886,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         }
       ],
       "target_candidate_id": "k1:selected",
       "target_kind": "pair",
-      "candidate_set_digest": "2b4df833bc9ec73f5823a38a077536894f7f2dc80dde24ff86083f9a2fdc7d18",
-      "inference_digest": "d22b5a97260a1eb05317ec22e71cd26a8d94405ebaf9640ae9536626186d1192"
+      "candidate_set_digest": "68ce8e1e3a068670740dc27bf3cad1629a0de5e63c65bb309e5079b01a61a525",
+      "inference_digest": "b6fc1692cecb31b5e21ea03ec29465492122e5a6faec42b6014bbefce7e50025"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -1841,6 +1909,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -1848,13 +1917,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -1862,13 +1932,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "82afbd0f15cda810e913eb2ac6029785ed748a84005449fc41792687d8928173",
-      "inference_digest": "c1979a279082af8aead859b57fa84fae8f5ff668d469bbdd1fa5eaf850717230"
+      "candidate_set_digest": "78e74c2b745872ec632a410a3a265a00dfbdc35e6f0ecde53ea95e26936df3f4",
+      "inference_digest": "560735ac14e2fcab8a2259f35336c5aa77e392757ebcb4575990a597c08e3ab6"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -1885,6 +1955,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -1892,13 +1963,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -1906,13 +1978,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "74702d08c3e4688b67de3c3994ac2a908a3ca8d82992f4ab9c6d07217af0230b",
-      "inference_digest": "17d828831b6e4f5e7dbcd54b65d10cf2fed8bd706c5efb6d1c3d342e16ff7e4d"
+      "candidate_set_digest": "ad7dbb23c7ff7392d5c19f641a89eed0fdf5cad86ca202d3b93e3197b0453b9d",
+      "inference_digest": "532f2e6573c14e3c4f4370d71f9c093ac1a61e59b428438dcb64b3a805a15147"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -1929,6 +2001,7 @@
           "version": 1,
           "candidate_id": "k1:selected",
           "source": "k1.semantic",
+          "candidate_role": "proposal",
           "status": "clarify",
           "goal": {
             "version": 1,
@@ -1957,13 +2030,14 @@
           "content_score": 0.9918501377105713,
           "confidence": 0.9909692406654358,
           "ambiguity": 0.008149862289428711,
-          "candidate_digest": "9cc9877f9a3a0ebb7540fad0d214b4500a29a3e737a42b183c08fea78bdafb0a"
+          "candidate_digest": "595531cd6f5f2faac202068c03a7c086f0168db7ca410c2af110d0d78a7a11a3"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -1971,13 +2045,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         }
       ],
       "target_candidate_id": "k1:selected",
       "target_kind": "pair",
-      "candidate_set_digest": "2c9e140c6c932a4bfea1c6e19561542847e58095e253bf53b0bf3db7286bc60f",
-      "inference_digest": "d5caf05d3efdc32b127e4244e95acb155fbba7821e554e1e6ff30ebafefd192b"
+      "candidate_set_digest": "6444465b441b8b4af5de4d060113f951ae5ce8855863e2321aa6dff3eb27a5c3",
+      "inference_digest": "2607ae45273d5d7736e8eb757182ff067fb38cef9538a000aefdbc231934fb60"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -1994,6 +2068,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -2001,13 +2076,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -2015,13 +2091,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "de378f4959fbe318d030b0b2a9eb3f38493585de3b056ba2e1dbb8a41be71d2d",
-      "inference_digest": "979419293a9e6bd70f5ac14392816c379b6ef106f362bf46de2b560f2c6b9d53"
+      "candidate_set_digest": "dd40f474517b42e43960b1fffe865544bc409d239f1c47d75daa4ab24a5fa4d0",
+      "inference_digest": "e1402d1de96f90f0b884f0a70351b3ecac4da1c5f16de5f7e443886d8a81e4b4"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -2038,6 +2114,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -2045,13 +2122,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -2059,13 +2137,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "d0e7444978074fab5f0854c2385a31029668394d4f2aa3ffe8f932e32c2719b2",
-      "inference_digest": "2be0ee4451b2c37602820f227fb3e09f921c74890e1eaccc2a4a61a093051050"
+      "candidate_set_digest": "668bb9587cd417415da30dcdc220de1b1d767a1c833e3dcaac2b6b3e8eeb04dd",
+      "inference_digest": "b1a76c34068e92968b824b4433e829729b82f46b97ae5bc36be61c1f1197c553"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -2082,6 +2160,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -2089,13 +2168,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -2103,13 +2183,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "b084f67c8ead44f9b1cd697379b10bf482141486a506b6dabdb593ff3bd89054",
-      "inference_digest": "e5ae6e632e7bc170950d25b6395b42c7703006cfc4f375ab79ac610313ddcd14"
+      "candidate_set_digest": "0b98d5062b1d66bdcad64784f0570d592a54a8aa2391c4d0826863e22f03f6e7",
+      "inference_digest": "d7589ad3073495ecd35e0fe952527b034cb37414f8b9b24aa46bdd5ae6786dbe"
     }
   ],
   "validation_records": [
@@ -2128,6 +2208,7 @@
           "version": 1,
           "candidate_id": "k1:selected",
           "source": "k1.semantic",
+          "candidate_role": "proposal",
           "status": "resolved",
           "goal": {
             "version": 1,
@@ -2156,13 +2237,14 @@
           "content_score": 0.9827467203140259,
           "confidence": 0.9827467203140259,
           "ambiguity": 0.01464976230636239,
-          "candidate_digest": "4c154e606769de783d77f6c2283650bb1cb0867d67445d7a1ac83d2210c81f33"
+          "candidate_digest": "56b608c8dc5820998eede640d3e6bccaa2900aa53d60cc854d146c48e45bde0a"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -2170,13 +2252,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         }
       ],
       "target_candidate_id": "k1:selected",
       "target_kind": "pair",
-      "candidate_set_digest": "f79a28b64d4b03de915f2d5aa56b3bf1eea5c0578286a261d00dcbb97af81d07",
-      "inference_digest": "ab47f8249774b6a4b7a41815c976c384f1151db00086a9ff6724a3c6f02eb801"
+      "candidate_set_digest": "553972b1216a36b43f8808250289c3e3af1d05b90f90c2cb2bbd07826c0583e1",
+      "inference_digest": "b53633a8ea714e150c04818196b16aa6faf21dc7d56ac4c0c785205ff37f70b9"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -2193,6 +2275,7 @@
           "version": 1,
           "candidate_id": "k1:selected",
           "source": "k1.semantic",
+          "candidate_role": "proposal",
           "status": "clarify",
           "goal": {
             "version": 1,
@@ -2221,13 +2304,14 @@
           "content_score": 0.9918501377105713,
           "confidence": 0.9909692406654358,
           "ambiguity": 0.008149862289428711,
-          "candidate_digest": "9cc9877f9a3a0ebb7540fad0d214b4500a29a3e737a42b183c08fea78bdafb0a"
+          "candidate_digest": "595531cd6f5f2faac202068c03a7c086f0168db7ca410c2af110d0d78a7a11a3"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -2235,13 +2319,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         }
       ],
       "target_candidate_id": "k1:selected",
       "target_kind": "pair",
-      "candidate_set_digest": "d84a639c63bc4b0e9083af31d5a71332a7bcc821d6a156e3f63bf19a5e75fe4b",
-      "inference_digest": "33ba373851e7559af03b96966e04e18fb9a934a488ffe777c22ac5b80abaee07"
+      "candidate_set_digest": "d7ed1ec6bc27d07d7841d0e9eda6283ade5db2ad2dfc4249d11d32fc480c1a80",
+      "inference_digest": "27d8ea6ad4be1ff4a7f7284887915ff688719038c4832d0509b5d92438cff146"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -2258,6 +2342,7 @@
           "version": 1,
           "candidate_id": "k1:selected",
           "source": "k1.semantic",
+          "candidate_role": "proposal",
           "status": "clarify",
           "goal": {
             "version": 1,
@@ -2286,13 +2371,14 @@
           "content_score": 0.9918501377105713,
           "confidence": 0.9909692406654358,
           "ambiguity": 0.008149862289428711,
-          "candidate_digest": "9cc9877f9a3a0ebb7540fad0d214b4500a29a3e737a42b183c08fea78bdafb0a"
+          "candidate_digest": "595531cd6f5f2faac202068c03a7c086f0168db7ca410c2af110d0d78a7a11a3"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -2300,13 +2386,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         }
       ],
       "target_candidate_id": "k1:selected",
       "target_kind": "pair",
-      "candidate_set_digest": "d362ca5ccf678772f441fcb111dafdb9e1dda02a5ac75e0d46e3725c26334b39",
-      "inference_digest": "1e2bd456e06983eb8ce31eff791c0a4750887f9fa5797b815dd8f89561dd3fa9"
+      "candidate_set_digest": "3da0930594bec6ef8b97fc58c4d7d4094426beb7a3446a8ae9cbe406fa3e0b34",
+      "inference_digest": "0b60101e5f7b70505def621e34660c3f21b3dd9a8b31263f19445c0a6bb59640"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -2323,6 +2409,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -2330,13 +2417,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -2344,13 +2432,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "274c0f6a9d6bda7d173e7e29d843faac1d4fa330f2bf5c7fd004b0aee3e55189",
-      "inference_digest": "6f8db13acbf6f0e3cfca7646a7dd8a50c1952b77e92ec20354a303d6cfcb5792"
+      "candidate_set_digest": "c21c9beb8d0906899273e0fb7e257c56fbb17cdee6c613e979c6aea5b9db7dba",
+      "inference_digest": "c309b96c53cf3a4f59b76af5b00814ed90dcc4a2d43c3e83fb17ed8cf2f32b8c"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -2367,6 +2455,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -2374,13 +2463,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -2388,13 +2478,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "acbdddab870dbb176fba6d8108dfec6aa4167cb6d696cd6c408e1e07b90e0b90",
-      "inference_digest": "8552c35c4d7e649ff42901de0e6c52ab2a5567d3c46220e4e7fc4bdea1e42cc1"
+      "candidate_set_digest": "46b681805c931bb10793ab889dde17ca540319eb248fbc704aff221a81e1a3cb",
+      "inference_digest": "067d9ea8bc1b6c956d0f078f3e7ffbc55e9d721f90641d52fb9f6cf70f7cf240"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -2411,6 +2501,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -2418,13 +2509,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -2432,13 +2524,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "4e5b4655a4aff956c88d244db9b2e07b88c964ed4caec6c0703c0e07743168c2",
-      "inference_digest": "2ec61f68f66dc47c88e571bf2cd754a74c7ba2c9ae5fb54d95073eb4bb61f0c0"
+      "candidate_set_digest": "eb6ee39ec515e156428c531218817d70cf068ba90d73057761d8e26b7493d82a",
+      "inference_digest": "2d4d1c696265dc349627490cd1bb0c367758badf048689a09c606f967c9dece7"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -2455,6 +2547,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -2462,13 +2555,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -2476,13 +2570,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "e2e9b40d93c68d3739b76502ed56acd4a9409e9446623b5e5cfafa3a5755edb5",
-      "inference_digest": "59826c2b022225f5a7011a48e9e3caf70787eb0e1b13820ddd9d49f4262c3f61"
+      "candidate_set_digest": "e5078bf2837684b0739e22b33ceb5eff0c6fb7ad3bd7d4ab053fbbbe72b9af21",
+      "inference_digest": "64862e8f0c8183533270cb48f58945ba22f65b8919b7f1d5fa949f1d13e41421"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -2499,6 +2593,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -2506,13 +2601,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -2520,13 +2616,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "1db3a961c5ae13911f837e16244c44f8f6fcfb5a43c3227d79fef75676c61a4f",
-      "inference_digest": "0167afc5755f82605a08a34e57dde644c4512156e4cb540ef08e81851cd8059c"
+      "candidate_set_digest": "6f9debb6811b4c455a5ca1e622fad5595239d88bcd8ed36dd374d7ee1e586bc5",
+      "inference_digest": "0c61a58e29a4a61dd7beff0315e6999af09c08fba7e7fd540639a5c012db1ac1"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -2543,6 +2639,7 @@
           "version": 1,
           "candidate_id": "k1:selected",
           "source": "k1.semantic",
+          "candidate_role": "proposal",
           "status": "clarify",
           "goal": {
             "version": 1,
@@ -2571,13 +2668,14 @@
           "content_score": 0.9918501377105713,
           "confidence": 0.9909692406654358,
           "ambiguity": 0.008149862289428711,
-          "candidate_digest": "9cc9877f9a3a0ebb7540fad0d214b4500a29a3e737a42b183c08fea78bdafb0a"
+          "candidate_digest": "595531cd6f5f2faac202068c03a7c086f0168db7ca410c2af110d0d78a7a11a3"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -2585,13 +2683,13 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         }
       ],
       "target_candidate_id": "k1:selected",
       "target_kind": "pair",
-      "candidate_set_digest": "11a3ab02673659bcfd7162e6e9416aaacb195e9fff531b5174bc3ce3313fccdd",
-      "inference_digest": "fdc5638bcc9d6c3a9ab6a7df58b931b2bc2f88ade5ca306da28348277bddc3ca"
+      "candidate_set_digest": "100b3471cb594cb1f431ba245fdced310888caf39d6e39ef64cd435bac742170",
+      "inference_digest": "1407c7dcbf2ecb0b361d40f2f460ee5bf9b818bc587c895c34472b5d6940f9ed"
     },
     {
       "format": "taiji-g-selection-candidate-set-v1",
@@ -2608,6 +2706,7 @@
           "version": 1,
           "candidate_id": "abstain",
           "source": "runtime.abstain",
+          "candidate_role": "abstain",
           "status": "abstained",
           "goal": null,
           "content_plan": null,
@@ -2615,13 +2714,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "6014e94bceb10eb648b22e35a68651853dc39e7a992e29289e8279423f3075e1"
+          "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
         },
         {
           "format": "taiji-g-selection-candidate-set-v1",
           "version": 1,
           "candidate_id": "reobserve",
           "source": "runtime.reobserve",
+          "candidate_role": "reobserve",
           "status": "ambiguous",
           "goal": null,
           "content_plan": null,
@@ -2629,14 +2729,14 @@
           "content_score": 0.0,
           "confidence": 0.0,
           "ambiguity": 1.0,
-          "candidate_digest": "aaf256a7d0ae8b514b6a734db383b66d4fbefec93a0b16520bc62c2b9579578d"
+          "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
         }
       ],
       "target_candidate_id": "abstain",
       "target_kind": "abstain",
-      "candidate_set_digest": "db71f18688f3df297b859f90f16a82441266c796b233c7680313f1a55defc944",
-      "inference_digest": "38dd29297f53c59bd027a28b064859ecd406a887927bcb64226785854928862f"
+      "candidate_set_digest": "bab032cea88e23ef233f21f30b17ca6c124acb4d8e081c4bde92ecc3493ccb6e",
+      "inference_digest": "ba44399c788bf3cf61d0257d9521562c8498b281077815f94ca5c54fe948231b"
     }
   ],
-  "manifest_digest": "6ee3b0b5405046a6adf46b4edfa052cd6ae7b9b3a0845ab77b2ffd012e1ed0a7"
+  "manifest_digest": "ee28722c8f30239b14834769e6476fd3488be118bacb96967ad346c1ed330382"
 }
