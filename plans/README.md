@@ -24,7 +24,9 @@ B3-K 的非饱和 structured-loss diagnostic 已通过：同一 model 17 parent�
 
 **parity 口径修正与修复路线已冻结**：[caliber revision](reference/M4V2_B3_K_C_PARITY_CALIBER_REVISION_20260910.md)——机器证据钉死两臂真实新增均为 12 步/cell（14,252 中 14,240 是 parent 继承步数）；新口径只用 `new_update_steps` 比较（inherited/new 分离，旧 JSON 保留）；修复路线 = 更强新增预算课程（每 cell 150 个未见过的新 experiences，双臂同流新增 600 步且自动相等），失败 episode 不引入。
 
-**当前唯一下一步**：实现口径重述审计 + 新增预算课程 manifest v2，双臂重跑 build 过三硬门 + distinct 门；通过前不读 sealed、不训练 parent、不改 distinct 门。
+**v2 修复按修正后根因执行，9/9 cell 通过**：类平衡课程（A/B/C 各 50）+ 类模式守卫（anchored 排列确定性重生成直到模式改变）+ 双臂同流 600 新增步（new_update_steps 口径）+ 每实例 9 逻辑 checkpoint。通道差分 9/9 严格正（K1 0.035~0.264，比 v1 高 1–2 个量级），原失败 cell 31x1 从精确 0.0 → 0.1575，机制修复直接确认。manifest v2 与设计 §7 已冻结；v1 证据不覆盖。parity confound 解除，sealed 仍锁定。
+
+**当前唯一下一步**：修复后的 C-entry parity formal 预注册——冻结 sealed 评分判据（逐 cell 胜出定义、9-cell 聚合、统计单元 course n=3、停止线）与 v2 artifact 评分输入；冻结前不读 sealed。
 
 ## 权威文档
 

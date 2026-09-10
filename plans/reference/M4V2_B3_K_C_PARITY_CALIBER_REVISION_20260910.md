@@ -70,3 +70,39 @@ n_new=150 的方向保留，但机制理由更换为：**新 experiences 的掩�
 2. parity formal 的统计单元改为 course（独立样本 n=3），model 维度降级为排列见证因子；或者补建互异的 per-model parent K workers（成本更高，另行决策）。
 
 `anchored_permutation` 的等价类盲区修复（排列约束：至少移动一个非等价成员）作为 harness 防线保留，但它治标；课程目标互异才治本。
+
+## 7. v2 修复设计（冻结并执行，2026-09-10）
+
+按 §6 修正后的根因重新设计并执行。§3 修复路线的两处修正先行声明：
+
+1. **「目标 multiset 无重复类型」不可实现**：experience 的 delta 类由 episode 首文件的可见 profile 决定，而 train registry 下可见类空间恰为 3 类（A=python-inspect、B=rust-clarify、C=typescript-clarify）；recover 类因 K2 worker 目标词汇缺 `goal:recover-target` 不可用（诚实约束，不扩词汇）。150 个 experience 必然重复类——该前提**由「类平衡 + 类模式守卫」替代**。
+2. **机制理由修正**：n_new=150 的作用是把类模式碰撞概率从 n=3 的 ~1/3（A+A+B 只有 3 种模式）压到 150!/(50!)³ 量级的可忽略值——随机排列几乎必然改变类模式，distinct 门诚实通过。
+
+### 7.1 冻结的 v2 设计（manifest：`plans/manifests/taiji_m4v2_b3_k_c_parity_v2.json`）
+
+- **课程**：每 cell 150 个 experience，A/B/C 各 50；experience 身份铸造 = 首 file 内容变体（追加注释行，byte-length 级差异对类型化掩码不可见 → 类不变而 observation digest 真实唯一）；K3-anchored 排列见证延续。
+- **排列守卫**：`anchored_permutation(class_keys=…)` 确定性重生成直到 anchored 类模式 ≠ forward 类模式；单类课程直接拒绝。
+- **双臂同流**：widened（forward + anchored 通道）与 fixed-large（forward + reversed replicas）消费同一 150-experience 流；new_update_steps = 150×2 workers×2 instances = **600 步/臂/cell，按构造相等**（旧口径 14,252 的继承部分单列，不进比较）。
+- **checkpoint**：每实例 9 个逻辑训练 checkpoint（流上等距），双臂对称。
+- **统计单元**：course（model 维度因 parent K workers 逐位相同而降级为排列见证）。
+
+### 7.2 执行结果（9/9 通过）
+
+报告：`reports/taiji_m4v2_b3_k_c_parity_v2_build_20260910.json`（脚本 `build_taiji_m4v2_b3_k_c_parity_v2.py`；artifact 根目录 `checkpoints/taiji_k_candidate_c_entry_parity_v2/`、`checkpoints/taiji_k_fixed_large_c_entry_v2/`，不覆盖 v1 证据）。
+
+| 门 | 结果 |
+|---|---|
+| 参数字节（±1%） | 双臂 38,664，ratio 0.0%，9/9 ✓ |
+| 新增更新步 | 双臂 600=600，9/9 ✓（继承 2080/5040 单列） |
+| checkpoint 发射 | 每实例 9，双臂对称，9/9 ✓ |
+| 类模式改变 | 9/9 ✓（anchored 模式全部异于 forward） |
+| 通道差分 | 9/9 严格正：K1 0.035~0.264、K2 0.001~0.040——普遍比 v1 的 4e-3~9e-3 高 1–2 个量级 ✓ |
+| fresh restore / parent / K3 unchanged | 9/9 ✓ |
+
+原失败 cell 31x1：差分从精确 0.0 → K1 `0.1575` / K2 `0.0173`，机制修复得到直接因果确认。
+
+### 7.3 边界
+
+- parity 的三硬门 + distinct 门在诚实口径下闭合，strong-control 比较的 confound 解除；但 **parity 通过 ≠ candidate 胜出**——sealed 评分仍锁定，须另行冻结 formal 预注册（判据看结果前定）后才能读 sealed；
+- `can_promote=false` 固定；promotion 仍要求 candidate 在 sealed cell 胜过 strong control 并通过既有 technical/resource/quality Gate；
+- 差分幅度仍是顺序效应（二阶量），本修复证明的是「非退化 + 可测分化」，不证明「通道分化带来能力收益」。

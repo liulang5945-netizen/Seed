@@ -81,6 +81,10 @@ parity 口径修正与修复路线已冻结：[M4V2_B3_K_C_PARITY_CALIBER_REVISI
 
 **当前唯一下一步**：实现口径重述审计 + 新增预算课程 manifest v2（n_new=150，目标 multiset 无重复类型，K3-anchored 排序见证延续，统计单元 course n=3），双臂重跑 build 过三硬门 + distinct 门；通过前不读 sealed、不训练 parent、不改 distinct 门。
 
+**v2 修复已按修正后根因重新设计并执行，9/9 cell 通过**（设计 §7、manifest `taiji_m4v2_b3_k_c_parity_v2.json`、脚本 `build_taiji_m4v2_b3_k_c_parity_v2.py`、报告 `reports/taiji_m4v2_b3_k_c_parity_v2_build_20260910.json`）。设计修正两处：可见 delta 类空间恰为 3 类（K2 worker 目标词汇缺 recover-target，诚实约束），「无重复类型」前提由**类平衡（A/B/C 各 50）+ 类模式守卫**（`anchored_permutation` 确定性重生成直到 anchored 模式 ≠ forward 模式，单类课程拒绝）替代；experience 身份铸造 = 首 file 内容变体（byte-length 级、掩码不可见，类不变而 digest 真实唯一）。执行：双臂同流（widened 2 通道 / fixed-large 2 replicas），new_update_steps 600=600 按构造相等（继承 2080/5040 单列），每实例 9 逻辑 checkpoint 对称，参数字节 38,664 ratio 0.0%，fresh restore/parent/K3 unchanged 9/9。**通道差分 9/9 严格正：K1 0.035~0.264、K2 0.001~0.040，普遍比 v1 高 1–2 个量级；原失败 cell 31x1 从精确 0.0 → K1 0.1575，机制修复得到直接因果确认。** parity confound 解除；v1 证据不覆盖。边界：parity 通过 ≠ candidate 胜出，sealed 仍锁定；差分仍是二阶顺序效应，证明「非退化+可测分化」，不证明能力收益。
+
+**当前唯一下一步**：修复后的 C-entry parity formal 预注册——冻结 sealed 评分判据（candidate vs strong fixed-large 的逐 cell 胜出定义、9-cell 聚合、统计单元 course n=3、非劣/灾难上限）、评分输入（v2 artifact 路径与 digest）与停止线；预注册冻结前不读 sealed、不声明胜出。
+
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 
 **B2 保存先于训练。** 先在 CPU 检查父 checkpoint 可恢复；保存 fast/slow、replay、学习器状态（若使用 optimizer 则含其状态）、RNG、课程游标和 owner lineage。新进程恢复后预测等价；单步更新后保存/恢复/再更新，与不中断轨迹在预先声明容差内一致。检查磁盘空间、原子写和 rollback；任何失败禁止长跑，不覆盖父代。
