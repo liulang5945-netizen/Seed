@@ -41,3 +41,32 @@
 2. 新增预算课程 manifest v2（n_new=150，双臂同流，K3-anchored 排序见证延续）；
 3. 双臂重跑 widened/fixed-large build → 三硬门 + distinct 门核验；
 4. 通过后才进入修复后的 C-entry parity formal 预注册（sealed 评分判据另行冻结）。
+
+## 6. 归因修正（2026-09-10，机器证据推翻 §3 的原归因）
+
+本节由用户质疑触发，经四步诊断实验证伪原归因并钉死真机制。**§3 中「对症」段的原归因（「parent 在课程语料上已收敛 → delta≈0 → 顺序通道无信息」）是错的**，修复路线 n_new=150 的机制理由需要如下修正（方向不变，理由更换）。
+
+### 6.1 证据链（全部可复现）
+
+1. **证伪「收敛」**：build 报告中 model31/course1 的通道内 delta norms 为 K1 `1.9645e-01`、K2 `3.0298e-02`——非零且与其他 cell 同量级；单步 fit 的 loss 亦非零（fact_loss `0.0190`）。parent 没有收敛，梯度一直存在。
+2. **delta 等价类**：course1（multiset A+A+B）的 exp0 与 exp1 从同一 parent 出发单步 fit 后的 state_dict digest **逐位相同**（`b1462293e7b6617c`），但二者 input_digest 不同（`4e79e1cd…` vs `39cc349a…`）——差异只在掩码不可见特征（byte_length 等）。K1.1 类型化绑定下，两个 A 型 episode 的**掩码可见学习信号完全等价**：fact head 只读因果特征列（掩外列权重恒零），goal/content head 读 teacher-forced 真值 facts——两者可见输入与目标相同。
+3. **决定性序列实验**（model31 parent，course1）：序列 `(exp0, exp1, exp2)` 与 anchored 排列 `(exp1, exp0, exp2)` 的**每一步中间 digest 完全相同**，最终权重逐位一致；控制组 `(exp0, exp2, exp1)` 则每步分化。即 exp0/exp1 对**任意当前权重**可逐位互换。
+4. **model31/course1 的 anchored 排列恰为 `[1,0,2]`**——只交换这对等价 experience。「非恒等排列」≠「非等效排列」：`anchored_permutation` 的防恒等兜底只检查字典序恒等，不检查 delta 等价类上的等效性。这是零差分的直接机制。
+
+### 6.2 修正后的根因陈述
+
+> model31/course1 的通道差分精确为 0，不是因为 parent 无梯度，而是因为课程 target multiset `A+A+B` 中两个 A 型 experience 构成 **delta 等价类**（类型化绑定使它们在掩码可见语义下是同一个学习信号），而该 cell 的 anchored 排列 `[1,0,2]` 恰好只交换等价类成员——排列在浮点上等效恒等。缺陷在**排列选择的等价类盲区**，不在课程预算，也不在 parent 状态。
+
+### 6.3 衍生事实（同样须上报）
+
+- **三个 model seed 的 parent K worker 权重完全相同**（state_dict diff norm = `0.0`；checkpoint digest 的差异全部来自 metadata）。因此 9-cell 矩阵的 model 维度对 K workers 没有独立性——真正的变化源只有 course_seed（课程与排列）。这触碰 C 阶段合同「重复同一已训练 worker 的运行不能充作独立模型训练样本」的红线：当前矩阵的 9 个 cell 不是 9 个独立模型样本。parity formal 的统计解释必须按此修正（独立样本数实际为 3 个 course）。
+- 8/9 的通道差分（`4e-3~9e-3`）是真实的顺序效应信号（控制组证实），但幅度仅为 delta norm 的 2.5%–7.5%——在线局部 delta 的顺序效应是二阶小量，该设计的分化能力天然有限，distinct 门只能证明「非退化」，不能证明「强分化」。
+
+### 6.4 对修复路线的修正
+
+n_new=150 的方向保留，但机制理由更换为：**新 experiences 的掩码可见学习信号必须互异（打破等价类），且排列空间 150! 下「等效恒等」概率可忽略**。同时新增两条硬前提：
+
+1. manifest v2 必须声明「新 experiences 的目标 multiset 不含重复类型」——否则 A+A+A… 会重新制造等价类（与 git 历史上 `make K target diversity tensor-aware` 的教训同源）；
+2. parity formal 的统计单元改为 course（独立样本 n=3），model 维度降级为排列见证因子；或者补建互异的 per-model parent K workers（成本更高，另行决策）。
+
+`anchored_permutation` 的等价类盲区修复（排列约束：至少移动一个非等价成员）作为 harness 防线保留，但它治标；课程目标互异才治本。
