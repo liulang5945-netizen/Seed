@@ -1,0 +1,77 @@
+{
+  "format": "taiji-sgk-single-cell-v1",
+  "version": 1,
+  "base_continuation_checkpoint_digest": "06bad1e5cd52b93db11f660ae459438716eccb35259533797ba751a14beae85b",
+  "source_cohort_digest": "5de83154054f0057bf007be872e3be75a50b01c6cb66dec38e1c75e467c3ca10",
+  "owner_contracts": [
+    {
+      "format": "taiji-sgk-single-cell-v1",
+      "version": 1,
+      "owner_id": "S",
+      "owner_kind": "runtime_evidence",
+      "availability": "active",
+      "schema": "observation+percept-v1",
+      "read_scopes": [
+        "external.observation"
+      ],
+      "write_scopes": [
+        "evidence.observation",
+        "evidence.percept"
+      ],
+      "learning_owner": "none",
+      "contract_digest": "ecf23936de0358917a4f62116f54cbf49cf90e0e7089546d2b55ab2dc3cc76c3"
+    },
+    {
+      "format": "taiji-sgk-single-cell-v1",
+      "version": 1,
+      "owner_id": "G",
+      "owner_kind": "runtime_selection",
+      "availability": "active",
+      "schema": "goal-selection-v1",
+      "read_scopes": [
+        "evidence.percept",
+        "external.goal_target"
+      ],
+      "write_scopes": [
+        "selection.content",
+        "selection.goal"
+      ],
+      "learning_owner": "none",
+      "contract_digest": "fffc4a93fa008a2a85a591df584699b4fff258b2d5860134682d2927d546abce"
+    },
+    {
+      "format": "taiji-sgk-single-cell-v1",
+      "version": 1,
+      "owner_id": "K",
+      "owner_kind": "learned_worker",
+      "availability": "active",
+      "schema": "k1.semantic+k2.transition-v1",
+      "read_scopes": [
+        "evidence.percept",
+        "evidence.world"
+      ],
+      "write_scopes": [
+        "readout.k1",
+        "readout.k2"
+      ],
+      "learning_owner": "k1.semantic+k2.transition",
+      "contract_digest": "f386fb02a82eee542a9d95a6827e9f497a1a06552191f27a548e87b7dfa04a8c"
+    }
+  ],
+  "event_types": [
+    "observation",
+    "s_update",
+    "g_select",
+    "k_readout",
+    "action"
+  ],
+  "rollback_parent_digest": "06bad1e5cd52b93db11f660ae459438716eccb35259533797ba751a14beae85b",
+  "manifest_digest": "ce3fed4d5a220a26cb62cecb546fb6cbe45975f1c3f6a4fb25ed2cddc73d0a20",
+  "owner_contribution": {
+    "S": "control-only-runtime-evidence",
+    "G": "control-only-external-goal-selection",
+    "K": "learned-k1-k2-readout"
+  },
+  "parameter_growth": false,
+  "fit_called": false
+}
