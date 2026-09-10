@@ -251,3 +251,18 @@ P2.6 的 Gate 全部通过：旧类相对 P2.4 parent 不下降，novel K2 conte
 P2.7 的 generalization Gate 全部通过：learned arm 的已学 sanity `2/2`、holdout K2 content/Workbench `4/4`、P1 旧类相对 P2.4 parent 不下降、参数计数稳定、P2.6 源 checkpoint 独立恢复再次通过。父模型在同一 holdout 的 K2 content 为 `0/4`，因此这不是 parent 原有的泛化能力。这个结果支持“局部跨项目/路径泛化”，但仍不是通用语言能力或 promotion 证据；`can_promote=false` 保持不变。
 
 P2 阶段因此满足进入 P3.0 的证据条件。当前唯一下一步改为 P3.0 checkpoint/interrupt-resume contract：固定 P2.6 learned checkpoint 为 parent，建立 SGK v2 最小内容寻址状态合同，验证 wake/replay/consolidate 边界的独立进程中断恢复、错误 parent/篡改拒绝、phase cursor/RNG/experience digest 和 uninterrupted 轨迹一致性。在 P3.0 通过前，不新增 S/G worker、不增长参数、不把 lineage 元数据当作能力。
+
+## 17. P3.0 checkpoint/interrupt-resume contract 结果（2026-09-10）
+
+按 §16 的入场条件运行了 [P3.0 checkpoint contract](../../scripts/training/eval_taiji_m5_k_p3_0_checkpoint_contract.py)，产出 [P3.0 manifest](../manifests/taiji_m5_k_p3_0_checkpoint_contract_manifest_v1.json) 和 [P3.0 报告](../../reports/taiji_m5_k_p3_0_checkpoint_contract_20260910.json)。本轮固定 P2.6 `interleaved-rehearsal-novel` learned checkpoint 为 parent，真实执行 K1/K2 continuation update；没有新增 S/G worker、没有增长参数，没有读取新的 sealed payload，`can_promote=false`。
+
+| Gate | 结果 | 证据含义 |
+|---|---:|---|
+| source parent digest / 独立 restore | 通过 | P2.6 parent 文件、manifest/parent digest 和 K1/K2 payload 可验证、可独立加载 |
+| uninterrupted 轨迹保存/恢复 | 通过 | 2 wake + 2 replay + 2 consolidate phase item 完整保存，最终 worker/budget/RNG/stream digest/cursor 可恢复 |
+| wake 中段中断恢复 | 通过 | 在 wake `1/2` 保存后独立进程恢复，继续轨迹与 uninterrupted 的 worker、budget、RNG、stream digest、final cursor 一致 |
+| replay 边界中断恢复 | 通过 | 在 replay `2/2` 边界保存后独立进程恢复，继续轨迹与 uninterrupted 一致 |
+| 篡改/错误 parent/缺 lineage 拒绝 | 通过 | tampered cursor、wrong parent、missing lineage 全部拒绝，不降级加载 |
+| rollback | 通过 | 回滚到 P3 parent 后 K1/K2 source digest 与原始 parent 一致，独立 restore 通过 |
+
+P3.0 的结论是“当前 K1/K2 continuation 状态可以被内容寻址、独立中断恢复、校验和回滚”，不是“Taiji 已经完成 S/G/K 联合学习、结构成长或自主进化”。下一步唯一执行项改为 P3.1：在 P3.0 parent 上建立真实 S/G/K 单 cell 的 schema/owner/mask/事件合同，先做接口回放和独立恢复；没有真实 S/G 持久状态时必须显式标记 `absent`，不得用空字段包装成联合能力。P3.1 仍不扩参、不进入结构成长、不接入 CUDA/客户端外围。
