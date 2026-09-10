@@ -127,6 +127,10 @@ parity 口径修正与修复路线已冻结：[M4V2_B3_K_C_PARITY_CALIBER_REVISI
 
 **当前唯一下一步**：K 轴 scorecard 更新——按 [scorecard v2 合同](../../reference/M5_K_AXIS_SCORECARD_V2_CONTRACT_20260909.md) 派生新版本合同，把 K1/K2/K3 证据线与「学习机制 = fast/slow+replay 候选」的 C 阶段结论收束入账并冻结晋级边界；合同冻结前不接默认路径、不改运行时、不训练。
 
+**K 轴 scorecard v3 已冻结并执行：[M5_K_AXIS_SCORECARD_V3_CONTRACT_20260910.md](../../reference/M5_K_AXIS_SCORECARD_V3_CONTRACT_20260910.md)。** 唯一变更 = 新增第四条证据线 `learning_mechanism_evidence`（来源 = C 阶段 formal v2，只读转录：status=passed、sealed v5 task_seed=151、G1–G4 全 true、FS 弱类 3/3 胜出、`fs_mechanism_status="default-learning-mechanism-candidate"` 按 §5 冻结映射转写）；K1/K2/K3 部分机械复用 v2 reducer 且三份 source digest 对 v2 报告逐位校验（零漂移），不重训、不重算。晋级边界冻结：v2 全部 veto 保留 + 新增 `learning_mechanism_candidate_selected=true`（唯一通过项）与 `learning_mechanism_attached_default_runtime=false`——`k_evidence_closed=true`、`learning_mechanism_closed=true`、`promotion_gate=false`、`can_promote=false`。报告 [scorecard v3](../../../reports/taiji_m5_k_axis_scorecard_v3_20260910.json)；v2 报告保留为历史。K 轴证据线（能力 × 机制）双双闭合，晋级路径收敛到同一 parent 的连续课程。
+
+**当前唯一下一步**：晋级课程预注册——同一 parent 的连续 S/G/K 课程，学习机制 = FS fast/slow+replay 候选，含资源等价、rollback、旧能力非劣三重门；预注册冻结前不解冻任何 K shadow owner、不接默认 runtime、不训练。
+
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 
 **B2 保存先于训练。** 先在 CPU 检查父 checkpoint 可恢复；保存 fast/slow、replay、学习器状态（若使用 optimizer 则含其状态）、RNG、课程游标和 owner lineage。新进程恢复后预测等价；单步更新后保存/恢复/再更新，与不中断轨迹在预先声明容差内一致。检查磁盘空间、原子写和 rollback；任何失败禁止长跑，不覆盖父代。
