@@ -343,6 +343,11 @@ from .g_selection_learning import (
     GSelectionDecision,
     GSelectionLearner,
 )
+from .g_selection_action import (
+    TAIJI_G_ACTION_PROJECTION_FORMAT,
+    TAIJI_G_ACTION_PROJECTION_VERSION,
+    project_g_decision,
+)
 from .generation import (
     GENERATION_CHECKPOINT_FORMAT,
     TEXT_EXPRESSION_CODEC_FORMAT,
@@ -1279,6 +1284,9 @@ __all__ = [
     "TAIJI_G_BEHAVIOR_VERSION",
     "GSelectionBehaviorOutcome",
     "GSelectionBehaviorSet",
+    "TAIJI_G_ACTION_PROJECTION_FORMAT",
+    "TAIJI_G_ACTION_PROJECTION_VERSION",
+    "project_g_decision",
     "OWNER_TRANSFER_CURSOR_STAGES",
     "OWNER_TRANSFER_EVENT_TYPES",
     "OWNER_TRANSFER_OWNER_IDS",
