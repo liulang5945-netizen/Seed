@@ -107,6 +107,10 @@ parity 口径修正与修复路线已冻结：[M4V2_B3_K_C_PARITY_CALIBER_REVISI
 
 **当前唯一下一步**：回到 B 阶段的学习机制问题——B3 pilot 预注册更新（fast/slow + 真实 replay vs 固定容量 continuation vs frozen，纳入扩展后的 5 类信号空间与 new_update_steps 口径）；预注册冻结前不训练、不读 sealed v3。
 
+**B3 pilot 预注册已冻结：[M4V2_B3_K_PILOT_PREREGISTRATION_20260910.md](../../reference/M4V2_B3_K_PILOT_PREREGISTRATION_20260910.md)。** 诊断问题：fast/slow+replay 学习机制 vs 直接 continuation 在相同流与预算下的泛化差异（C-entry 已排除合成方式变量）。三臂从同一 v4 父代派生：F frozen / C continuation（局部 delta 直接写权重，300 新增步）/ FS fast+slow+replay（wake 把同一局部 delta 写入 fast_delta，sleep 先对 b=50 确定性抽样的真实经历做 slow 更新、再 consolidate 清 fast；replay 100 步单列成本）。fast/slow 语义冻结（slow+fast、wake 只写 fast、sleep replay→consolidate→清零）；实现走新模块 `taiji/k_fast_slow.py`（不动 frozen 合同）。机制门 6 项（fast 出生为零/wake 只写 fast/replay 为真实经历 digest/consolidate 清零/fresh restore/parent 不变）为主交付；量尺 validation-only（sealed v3 保持未读，留给 C 阶段正式比较）；诊断读数含 FS replay 对 D/R 父代弱项的影响。
+
+**当前唯一下一步**：执行 pilot §7——(1) `taiji/k_fast_slow.py` + 定向测试；(2) 三臂 pilot 脚本（机制门 + 诊断读数）；(3) 报告落盘；机制门失败即停，C 阶段正式比较判据在 pilot 读数后另行冻结。
+
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 
 **B2 保存先于训练。** 先在 CPU 检查父 checkpoint 可恢复；保存 fast/slow、replay、学习器状态（若使用 optimizer 则含其状态）、RNG、课程游标和 owner lineage。新进程恢复后预测等价；单步更新后保存/恢复/再更新，与不中断轨迹在预先声明容差内一致。检查磁盘空间、原子写和 rollback；任何失败禁止长跑，不覆盖父代。

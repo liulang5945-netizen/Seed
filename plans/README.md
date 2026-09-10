@@ -34,7 +34,9 @@ B3-K 的非饱和 structured-loss diagnostic 已通过：同一 model 17 parent�
 
 **K 信号空间扩展 §8 全链已执行，G3 失败——合成方式不可分确证**：父代重建（14 facts/4 goals，参数 K1 472/K2 5176）→ 双臂 build 9/9（通道差分 K1 0.21~0.41，比 3 类空间再升一个量级）→ sealed v3 → formal v4（教师强制镜像评分修复评分不对称后）：G1/G2 通过，G3 失败（1/3 胜出，均值差 4e-5 ≪ ±0.0002 带）。**两个结论并存**：信号空间扩展本身成功（sealed 改善 −0.002 → −0.129，学习效应高度可测）；但合成方式在该 harness 内不可分——fixed-large 概率平均保留为 C-entry strong arm。C-entry 证据线收束（容量/信号空间/合成方式三维度均检验）。
 
-**当前唯一下一步**：回到 B 阶段学习机制问题——B3 pilot 预注册更新（fast/slow + 真实 replay vs 固定容量 continuation vs frozen，纳入 5 类信号空间与 new_update_steps 口径）；冻结前不训练、不读 sealed v3。
+**B3 pilot（K 相位）预注册已冻结**：[B3 K pilot preregistration](reference/M4V2_B3_K_PILOT_PREREGISTRATION_20260910.md)——三臂从同一 v4 父代派生：F frozen / C continuation（300 新增步）/ FS fast+slow+replay（wake 写 fast_delta、sleep 对 b=50 真实经历 replay 更新 slow 后 consolidate 清零，replay 100 步单列成本）；机制门 6 项为主交付；validation-only（sealed v3 留给 C 阶段）。
+
+**当前唯一下一步**：执行 pilot §7——`taiji/k_fast_slow.py` + 定向测试 → 三臂 pilot 脚本（机制门 + 诊断读数）→ 报告落盘；机制门失败即停。
 
 ## 权威文档
 
