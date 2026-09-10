@@ -406,3 +406,17 @@ P3.6 的结论是：P3.5 的 G-only 行为变化不只在原 artifact 上重放�
 | 归因 | 未定 | `inconclusive`；零 fit 参考臂不能从同一验证集合重放推断学习收益或容量上限 |
 
 P4.1 的实际价值是把 P4.0 模糊的“候选变宽”拆成两个可审计对象：G 当前的逐候选 12 维输入，以及候选数量/角色比例/score 分布/相对排名组成的 9 维候选集上下文。22 参数 reference 只是一个可恢复容量合同，不是已训练模型，也不能当作神经元成长。下一步因此改为 **P4.2 隔离训练与公平容量归因 Gate**：在与 P4.0/P4.1 全部 disjoint 的 train/validation/holdout 上，分别训练 fixed-small、context-aware-small 和 fixed-large；只有新的 holdout 与 fixed-large/lesion 对照共同支持固定容量瓶颈，才保留结构成长假设。
+
+## 27. P4.2 隔离训练与公平容量归因结果（2026-09-11）
+
+按 §26 的入场条件运行了 [P4.2 capacity attribution](../../scripts/training/eval_taiji_m5_k_p4_2_capacity_attribution.py)，产出 [P4.2 manifest](../manifests/taiji_m5_k_p4_2_capacity_attribution_manifest_v1.json) 与 [P4.2 报告](../../reports/taiji_m5_k_p4_2_capacity_attribution_20260911.json)。本轮第一次允许在新 child 上 fit，但仍冻结 P3.5/P4.0 parent、K1/K2 和结构成长；两个 deterministic seed 使用完全 disjoint 的 A/B/C/D/R train/validation/holdout，14 条新 train candidate set 进入 fit，三臂均做零步/训练后 checkpoint 保存和独立进程恢复。
+
+| Gate | 结果 | 证据含义 |
+|---|---:|---|
+| 数据、身份与训练边界 | 通过 | 五类 train/validation/holdout 均存在，project/path/candidate/behavior digest 与旧实验隔离；validation、holdout、P4.0/P4.1 和外部 target/utility 没有进入 fit |
+| checkpoint / lineage | 通过 | fixed-small、context-aware-small、fixed-large 的零步和训练后 checkpoint 全部 roundtrip/独立恢复；parent 未覆盖；K1/K2 digest 不变 |
+| 新 holdout 容量收益 | 未通过 | fixed-small 与 context-aware-small 平均 utility 均为 `0.68`，fixed-large 为 `0.65875`；没有稳定容量增益，seed 1 fixed-large 还有 6 次 safe-selection violation |
+| 旧行为保持 | 未通过 | parent retention 为 `4/4`、utility `4.0`；fixed-small/context-aware-small 训练后两个 seed 都降到 `3/4`、utility `0.8`；fixed-large 只在 seed 1 恢复到 `4/4`，跨 seed 不稳定 |
+| 归因与结构成长 | 关闭 | `attribution=inconclusive`、`experiment_passed=false`、`growth_admitted=false`、`can_promote=false` |
+
+P4.2 的正确解释是：当前实验还不能区分“上下文表征没有收益”和“固定容量不足”，因为所有训练臂先在保持合同上失败；更直接暴露的工程/学习问题是增量更新造成旧行为遗忘。22 个存储参数并未自动带来能力，参数规模也不能替代公平输入、训练保持和稳定 seed。下一步从容量归因改为 **P4.3 保持约束下的增量学习 Gate**：在 13 参数 fixed-small 上比较 new-only 与旧行为 rehearsal，使用重新生成的 fresh retention holdout；保持恢复前不进入 dynamic growth。
