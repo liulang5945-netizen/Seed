@@ -1,0 +1,2616 @@
+{
+  "format": "taiji-m5-k-p3-6-behavior-holdout-v1",
+  "version": 1,
+  "status": "completed",
+  "training_performed": false,
+  "fit_called": false,
+  "external_target_used": false,
+  "sealed_payload_read": false,
+  "can_promote": false,
+  "manifest": "E:\\Seed\\plans\\manifests\\taiji_m5_k_p3_6_behavior_holdout_manifest_v1.json",
+  "report": "E:\\Seed\\reports\\taiji_m5_k_p3_6_behavior_holdout_20260911.json",
+  "run_dir": "E:\\Seed\\output\\taiji_m5_k_p3_6_behavior_holdout_680297ebf421454bbf664eece5d1ae44",
+  "manifest_digest": "2b6948461b5d624319b692eaabd6c93d235c6859f82546d146195a83002dbc04",
+  "source_p3_5_manifest_digest": "542ba313643c11b8acb2b4f8b06c0203c2221168285ca6a269a8a66fb06e2d85",
+  "k_checkpoint_digests_before": {
+    "k1": "12851b4b3cc941817b9c27b93d7eaf35e0734b4d60ad0d64427b154db64277a6",
+    "k2": "411ef5348231f355eb1c512c195a9e34dea74c75fc5b5cdf5e86014940313691"
+  },
+  "k_checkpoint_digests_after": {
+    "k1": "12851b4b3cc941817b9c27b93d7eaf35e0734b4d60ad0d64427b154db64277a6",
+    "k2": "411ef5348231f355eb1c512c195a9e34dea74c75fc5b5cdf5e86014940313691"
+  },
+  "g_zero_step_checkpoint": {
+    "path": "E:\\Seed\\output\\taiji_m5_k_p3_5_g_learning_5e398efb75574681a0b277e3d8f40b6f\\g_zero_step.pt",
+    "bytes": 2909,
+    "digest": "1a3a2751e36224e64a4100fae65f10f102fa5eeffd9ea12768a2c2e74f11b27e",
+    "training_steps": 0,
+    "restore": {
+      "returncode": 0,
+      "independent_process_restore": true,
+      "stdout": "{\"restore_digest_equal\": true, \"parameter_count\": 13, \"training_steps\": 0, \"passed\": true}\n",
+      "stderr": "",
+      "restore_digest_equal": true,
+      "parameter_count": 13,
+      "training_steps": 0,
+      "passed": true
+    },
+    "passed": true
+  },
+  "g_trained_checkpoint": {
+    "path": "E:\\Seed\\output\\taiji_m5_k_p3_5_g_learning_5e398efb75574681a0b277e3d8f40b6f\\g_trained.pt",
+    "bytes": 2957,
+    "digest": "f4fdc61bf0e0174a9618e087fec8a25ce90d8a3257a7ca26bd1754db45da398d",
+    "training_steps": 256,
+    "restore": {
+      "returncode": 0,
+      "independent_process_restore": true,
+      "stdout": "{\"restore_digest_equal\": true, \"parameter_count\": 13, \"training_steps\": 256, \"passed\": true}\n",
+      "stderr": "",
+      "restore_digest_equal": true,
+      "parameter_count": 13,
+      "training_steps": 256,
+      "passed": true
+    },
+    "passed": true
+  },
+  "checkpoint_gate": {
+    "k_independent_restore": true,
+    "g_zero_independent_restore": true,
+    "g_trained_independent_restore": true,
+    "g_lineage_valid": true,
+    "g_rollback_digest_equal": true,
+    "k_digests_unchanged": true
+  },
+  "identity_gate": {
+    "record_count_four": true,
+    "projects_at_least_two": true,
+    "project_ids_disjoint": true,
+    "paths_disjoint": true,
+    "candidate_set_digest_unique": true,
+    "behavior_digest_unique": true,
+    "observation_digest_unique": true,
+    "utility_margin_records_content_addressed": true
+  },
+  "behavior_gain_gate": {
+    "contested_nonempty": true,
+    "trained_utility_strictly_above_zero_step": true,
+    "trained_target_hits_not_below_zero_step": true,
+    "trained_behavior_changed": true
+  },
+  "safety_gate": {
+    "target_reobserve_present": true,
+    "target_reobserve_projection_passed": true,
+    "selected_reobserve_projection_passed": true,
+    "legacy_all_five_classes": true,
+    "legacy_target_hits_not_below_zero_step": true,
+    "legacy_trained_safe_exit_violations_zero": true,
+    "p2_7_four_rows": true,
+    "p2_7_trained_workbench_success_4_of_4": true
+  },
+  "runtime_gate": {
+    "fit_not_called": true,
+    "training_not_performed": true,
+    "new_holdout_target_not_in_inference": true,
+    "new_behavior_margins_content_addressed": true
+  },
+  "selection_metrics": {
+    "k_only": {
+      "count": 4,
+      "fit_eligible_count": 0,
+      "behavior_target_hit_count": 1,
+      "behavior_target_hit_rate": 0.25,
+      "selected_utility_sum": 2.6500000000000004,
+      "selected_utility_mean": 0.6625000000000001,
+      "selected_roles": {
+        "abstain": 3,
+        "proposal": 1
+      },
+      "rows": [
+        {
+          "split": "validation",
+          "example_id": "g-example:f40ad825f6b9308e4efea56d7daa36828c2c750e2f92ec70d522938820c593ca",
+          "candidate_set_digest": "2e697508a133c61381e1dddc91704aed2904ace9470abd07305c45cff54f2eab",
+          "fit_eligible": false,
+          "utility_margin": 0.25,
+          "selected_candidate_id": "k1:selected",
+          "selected_candidate_role": "proposal",
+          "selected_utility": 1.0,
+          "behavior_target_candidate_id": "k1:selected",
+          "target_kind": "pair",
+          "behavior_target_hit": true,
+          "safe_projection_required": false,
+          "decision_digest": null
+        },
+        {
+          "split": "validation",
+          "example_id": "g-example:829eb62c73f347b0c9141aeef8959d80e13f14c24a1cb733e6d153c8a4d73778",
+          "candidate_set_digest": "8cf196bcb693e7863d45f6df25db1127f561eca0c796cabe46e02c692727000c",
+          "fit_eligible": false,
+          "utility_margin": 0.44999999999999996,
+          "selected_candidate_id": "abstain",
+          "selected_candidate_role": "abstain",
+          "selected_utility": 0.55,
+          "behavior_target_candidate_id": "reobserve",
+          "target_kind": "reobserve",
+          "behavior_target_hit": false,
+          "safe_projection_required": true,
+          "decision_digest": null
+        },
+        {
+          "split": "validation",
+          "example_id": "g-example:853bec153709c9490803395ce7ecf6efb37b0cfeaa44614220523fc59d04d559",
+          "candidate_set_digest": "7b492f27f68c4159bdbe06c886b35ccdc4a4d17d865ac54ddf1c49ed5525a10c",
+          "fit_eligible": false,
+          "utility_margin": 0.44999999999999996,
+          "selected_candidate_id": "abstain",
+          "selected_candidate_role": "abstain",
+          "selected_utility": 0.55,
+          "behavior_target_candidate_id": "reobserve",
+          "target_kind": "reobserve",
+          "behavior_target_hit": false,
+          "safe_projection_required": true,
+          "decision_digest": null
+        },
+        {
+          "split": "validation",
+          "example_id": "g-example:b1a0354d98bb4f2996fd29eb946426246e96dc0bd6470489d22b413629667666",
+          "candidate_set_digest": "764783e6cb129b43af813316e554df5f9a91aa0d919a2f63eb668e1959163a8a",
+          "fit_eligible": false,
+          "utility_margin": 0.44999999999999996,
+          "selected_candidate_id": "abstain",
+          "selected_candidate_role": "abstain",
+          "selected_utility": 0.55,
+          "behavior_target_candidate_id": "reobserve",
+          "target_kind": "reobserve",
+          "behavior_target_hit": false,
+          "safe_projection_required": true,
+          "decision_digest": null
+        }
+      ]
+    },
+    "g_zero_step": {
+      "count": 4,
+      "fit_eligible_count": 0,
+      "behavior_target_hit_count": 1,
+      "behavior_target_hit_rate": 0.25,
+      "selected_utility_sum": 2.6500000000000004,
+      "selected_utility_mean": 0.6625000000000001,
+      "selected_roles": {
+        "abstain": 3,
+        "proposal": 1
+      },
+      "rows": [
+        {
+          "split": "validation",
+          "example_id": "g-example:f40ad825f6b9308e4efea56d7daa36828c2c750e2f92ec70d522938820c593ca",
+          "candidate_set_digest": "2e697508a133c61381e1dddc91704aed2904ace9470abd07305c45cff54f2eab",
+          "fit_eligible": false,
+          "utility_margin": 0.25,
+          "selected_candidate_id": "k1:selected",
+          "selected_candidate_role": "proposal",
+          "selected_utility": 1.0,
+          "behavior_target_candidate_id": "k1:selected",
+          "target_kind": "pair",
+          "behavior_target_hit": true,
+          "safe_projection_required": false,
+          "decision_digest": "197e16e20068269cd1d8b570062211e15fef11e37a921c63c41228382762bd9b"
+        },
+        {
+          "split": "validation",
+          "example_id": "g-example:829eb62c73f347b0c9141aeef8959d80e13f14c24a1cb733e6d153c8a4d73778",
+          "candidate_set_digest": "8cf196bcb693e7863d45f6df25db1127f561eca0c796cabe46e02c692727000c",
+          "fit_eligible": false,
+          "utility_margin": 0.44999999999999996,
+          "selected_candidate_id": "abstain",
+          "selected_candidate_role": "abstain",
+          "selected_utility": 0.55,
+          "behavior_target_candidate_id": "reobserve",
+          "target_kind": "reobserve",
+          "behavior_target_hit": false,
+          "safe_projection_required": true,
+          "decision_digest": "5e38863ae3f328817f38daa39d944cac392f472e88213248506a68c423ec651f"
+        },
+        {
+          "split": "validation",
+          "example_id": "g-example:853bec153709c9490803395ce7ecf6efb37b0cfeaa44614220523fc59d04d559",
+          "candidate_set_digest": "7b492f27f68c4159bdbe06c886b35ccdc4a4d17d865ac54ddf1c49ed5525a10c",
+          "fit_eligible": false,
+          "utility_margin": 0.44999999999999996,
+          "selected_candidate_id": "abstain",
+          "selected_candidate_role": "abstain",
+          "selected_utility": 0.55,
+          "behavior_target_candidate_id": "reobserve",
+          "target_kind": "reobserve",
+          "behavior_target_hit": false,
+          "safe_projection_required": true,
+          "decision_digest": "15bf4c7b041c1894d2506c4d2ab41dab94f2b4cad63a0076fb72194cf0bdf4bf"
+        },
+        {
+          "split": "validation",
+          "example_id": "g-example:b1a0354d98bb4f2996fd29eb946426246e96dc0bd6470489d22b413629667666",
+          "candidate_set_digest": "764783e6cb129b43af813316e554df5f9a91aa0d919a2f63eb668e1959163a8a",
+          "fit_eligible": false,
+          "utility_margin": 0.44999999999999996,
+          "selected_candidate_id": "abstain",
+          "selected_candidate_role": "abstain",
+          "selected_utility": 0.55,
+          "behavior_target_candidate_id": "reobserve",
+          "target_kind": "reobserve",
+          "behavior_target_hit": false,
+          "safe_projection_required": true,
+          "decision_digest": "fed1985e6206b1c3f113a577dd136bb560a8b4166b74adb34603e6b45e668768"
+        }
+      ]
+    },
+    "g_trained": {
+      "count": 4,
+      "fit_eligible_count": 0,
+      "behavior_target_hit_count": 4,
+      "behavior_target_hit_rate": 1.0,
+      "selected_utility_sum": 4.0,
+      "selected_utility_mean": 1.0,
+      "selected_roles": {
+        "proposal": 1,
+        "reobserve": 3
+      },
+      "rows": [
+        {
+          "split": "validation",
+          "example_id": "g-example:f40ad825f6b9308e4efea56d7daa36828c2c750e2f92ec70d522938820c593ca",
+          "candidate_set_digest": "2e697508a133c61381e1dddc91704aed2904ace9470abd07305c45cff54f2eab",
+          "fit_eligible": false,
+          "utility_margin": 0.25,
+          "selected_candidate_id": "k1:selected",
+          "selected_candidate_role": "proposal",
+          "selected_utility": 1.0,
+          "behavior_target_candidate_id": "k1:selected",
+          "target_kind": "pair",
+          "behavior_target_hit": true,
+          "safe_projection_required": false,
+          "decision_digest": "7aa5f951138b0e87daac99e8b13474a5f75a7ce31f9140e8abca1159b5efe3a9"
+        },
+        {
+          "split": "validation",
+          "example_id": "g-example:829eb62c73f347b0c9141aeef8959d80e13f14c24a1cb733e6d153c8a4d73778",
+          "candidate_set_digest": "8cf196bcb693e7863d45f6df25db1127f561eca0c796cabe46e02c692727000c",
+          "fit_eligible": false,
+          "utility_margin": 0.44999999999999996,
+          "selected_candidate_id": "reobserve",
+          "selected_candidate_role": "reobserve",
+          "selected_utility": 1.0,
+          "behavior_target_candidate_id": "reobserve",
+          "target_kind": "reobserve",
+          "behavior_target_hit": true,
+          "safe_projection_required": true,
+          "decision_digest": "0a5befdd05f126320a80f3701c669185f6ff94b3f33ebe59f9932ca1a08e90b3"
+        },
+        {
+          "split": "validation",
+          "example_id": "g-example:853bec153709c9490803395ce7ecf6efb37b0cfeaa44614220523fc59d04d559",
+          "candidate_set_digest": "7b492f27f68c4159bdbe06c886b35ccdc4a4d17d865ac54ddf1c49ed5525a10c",
+          "fit_eligible": false,
+          "utility_margin": 0.44999999999999996,
+          "selected_candidate_id": "reobserve",
+          "selected_candidate_role": "reobserve",
+          "selected_utility": 1.0,
+          "behavior_target_candidate_id": "reobserve",
+          "target_kind": "reobserve",
+          "behavior_target_hit": true,
+          "safe_projection_required": true,
+          "decision_digest": "097abef6ccce75ae544ae5100226723fa50a3224fd6b244a5702a2a61d9a4bcb"
+        },
+        {
+          "split": "validation",
+          "example_id": "g-example:b1a0354d98bb4f2996fd29eb946426246e96dc0bd6470489d22b413629667666",
+          "candidate_set_digest": "764783e6cb129b43af813316e554df5f9a91aa0d919a2f63eb668e1959163a8a",
+          "fit_eligible": false,
+          "utility_margin": 0.44999999999999996,
+          "selected_candidate_id": "reobserve",
+          "selected_candidate_role": "reobserve",
+          "selected_utility": 1.0,
+          "behavior_target_candidate_id": "reobserve",
+          "target_kind": "reobserve",
+          "behavior_target_hit": true,
+          "safe_projection_required": true,
+          "decision_digest": "878f92cf06c1cc2ab73ef8e1d53819113db0d98106f8f903c97b0cab1541bdc1"
+        }
+      ]
+    }
+  },
+  "contested_metrics": {
+    "k_only": {
+      "count": 3,
+      "fit_eligible_count": 0,
+      "behavior_target_hit_count": 0,
+      "behavior_target_hit_rate": 0.0,
+      "selected_utility_sum": 1.6500000000000001,
+      "selected_utility_mean": 0.55,
+      "selected_roles": {
+        "abstain": 3
+      },
+      "rows": [
+        {
+          "split": "validation",
+          "example_id": "g-example:829eb62c73f347b0c9141aeef8959d80e13f14c24a1cb733e6d153c8a4d73778",
+          "candidate_set_digest": "8cf196bcb693e7863d45f6df25db1127f561eca0c796cabe46e02c692727000c",
+          "fit_eligible": false,
+          "utility_margin": 0.44999999999999996,
+          "selected_candidate_id": "abstain",
+          "selected_candidate_role": "abstain",
+          "selected_utility": 0.55,
+          "behavior_target_candidate_id": "reobserve",
+          "target_kind": "reobserve",
+          "behavior_target_hit": false,
+          "safe_projection_required": true,
+          "decision_digest": null
+        },
+        {
+          "split": "validation",
+          "example_id": "g-example:853bec153709c9490803395ce7ecf6efb37b0cfeaa44614220523fc59d04d559",
+          "candidate_set_digest": "7b492f27f68c4159bdbe06c886b35ccdc4a4d17d865ac54ddf1c49ed5525a10c",
+          "fit_eligible": false,
+          "utility_margin": 0.44999999999999996,
+          "selected_candidate_id": "abstain",
+          "selected_candidate_role": "abstain",
+          "selected_utility": 0.55,
+          "behavior_target_candidate_id": "reobserve",
+          "target_kind": "reobserve",
+          "behavior_target_hit": false,
+          "safe_projection_required": true,
+          "decision_digest": null
+        },
+        {
+          "split": "validation",
+          "example_id": "g-example:b1a0354d98bb4f2996fd29eb946426246e96dc0bd6470489d22b413629667666",
+          "candidate_set_digest": "764783e6cb129b43af813316e554df5f9a91aa0d919a2f63eb668e1959163a8a",
+          "fit_eligible": false,
+          "utility_margin": 0.44999999999999996,
+          "selected_candidate_id": "abstain",
+          "selected_candidate_role": "abstain",
+          "selected_utility": 0.55,
+          "behavior_target_candidate_id": "reobserve",
+          "target_kind": "reobserve",
+          "behavior_target_hit": false,
+          "safe_projection_required": true,
+          "decision_digest": null
+        }
+      ]
+    },
+    "g_zero_step": {
+      "count": 3,
+      "fit_eligible_count": 0,
+      "behavior_target_hit_count": 0,
+      "behavior_target_hit_rate": 0.0,
+      "selected_utility_sum": 1.6500000000000001,
+      "selected_utility_mean": 0.55,
+      "selected_roles": {
+        "abstain": 3
+      },
+      "rows": [
+        {
+          "split": "validation",
+          "example_id": "g-example:829eb62c73f347b0c9141aeef8959d80e13f14c24a1cb733e6d153c8a4d73778",
+          "candidate_set_digest": "8cf196bcb693e7863d45f6df25db1127f561eca0c796cabe46e02c692727000c",
+          "fit_eligible": false,
+          "utility_margin": 0.44999999999999996,
+          "selected_candidate_id": "abstain",
+          "selected_candidate_role": "abstain",
+          "selected_utility": 0.55,
+          "behavior_target_candidate_id": "reobserve",
+          "target_kind": "reobserve",
+          "behavior_target_hit": false,
+          "safe_projection_required": true,
+          "decision_digest": "5e38863ae3f328817f38daa39d944cac392f472e88213248506a68c423ec651f"
+        },
+        {
+          "split": "validation",
+          "example_id": "g-example:853bec153709c9490803395ce7ecf6efb37b0cfeaa44614220523fc59d04d559",
+          "candidate_set_digest": "7b492f27f68c4159bdbe06c886b35ccdc4a4d17d865ac54ddf1c49ed5525a10c",
+          "fit_eligible": false,
+          "utility_margin": 0.44999999999999996,
+          "selected_candidate_id": "abstain",
+          "selected_candidate_role": "abstain",
+          "selected_utility": 0.55,
+          "behavior_target_candidate_id": "reobserve",
+          "target_kind": "reobserve",
+          "behavior_target_hit": false,
+          "safe_projection_required": true,
+          "decision_digest": "15bf4c7b041c1894d2506c4d2ab41dab94f2b4cad63a0076fb72194cf0bdf4bf"
+        },
+        {
+          "split": "validation",
+          "example_id": "g-example:b1a0354d98bb4f2996fd29eb946426246e96dc0bd6470489d22b413629667666",
+          "candidate_set_digest": "764783e6cb129b43af813316e554df5f9a91aa0d919a2f63eb668e1959163a8a",
+          "fit_eligible": false,
+          "utility_margin": 0.44999999999999996,
+          "selected_candidate_id": "abstain",
+          "selected_candidate_role": "abstain",
+          "selected_utility": 0.55,
+          "behavior_target_candidate_id": "reobserve",
+          "target_kind": "reobserve",
+          "behavior_target_hit": false,
+          "safe_projection_required": true,
+          "decision_digest": "fed1985e6206b1c3f113a577dd136bb560a8b4166b74adb34603e6b45e668768"
+        }
+      ]
+    },
+    "g_trained": {
+      "count": 3,
+      "fit_eligible_count": 0,
+      "behavior_target_hit_count": 3,
+      "behavior_target_hit_rate": 1.0,
+      "selected_utility_sum": 3.0,
+      "selected_utility_mean": 1.0,
+      "selected_roles": {
+        "reobserve": 3
+      },
+      "rows": [
+        {
+          "split": "validation",
+          "example_id": "g-example:829eb62c73f347b0c9141aeef8959d80e13f14c24a1cb733e6d153c8a4d73778",
+          "candidate_set_digest": "8cf196bcb693e7863d45f6df25db1127f561eca0c796cabe46e02c692727000c",
+          "fit_eligible": false,
+          "utility_margin": 0.44999999999999996,
+          "selected_candidate_id": "reobserve",
+          "selected_candidate_role": "reobserve",
+          "selected_utility": 1.0,
+          "behavior_target_candidate_id": "reobserve",
+          "target_kind": "reobserve",
+          "behavior_target_hit": true,
+          "safe_projection_required": true,
+          "decision_digest": "0a5befdd05f126320a80f3701c669185f6ff94b3f33ebe59f9932ca1a08e90b3"
+        },
+        {
+          "split": "validation",
+          "example_id": "g-example:853bec153709c9490803395ce7ecf6efb37b0cfeaa44614220523fc59d04d559",
+          "candidate_set_digest": "7b492f27f68c4159bdbe06c886b35ccdc4a4d17d865ac54ddf1c49ed5525a10c",
+          "fit_eligible": false,
+          "utility_margin": 0.44999999999999996,
+          "selected_candidate_id": "reobserve",
+          "selected_candidate_role": "reobserve",
+          "selected_utility": 1.0,
+          "behavior_target_candidate_id": "reobserve",
+          "target_kind": "reobserve",
+          "behavior_target_hit": true,
+          "safe_projection_required": true,
+          "decision_digest": "097abef6ccce75ae544ae5100226723fa50a3224fd6b244a5702a2a61d9a4bcb"
+        },
+        {
+          "split": "validation",
+          "example_id": "g-example:b1a0354d98bb4f2996fd29eb946426246e96dc0bd6470489d22b413629667666",
+          "candidate_set_digest": "764783e6cb129b43af813316e554df5f9a91aa0d919a2f63eb668e1959163a8a",
+          "fit_eligible": false,
+          "utility_margin": 0.44999999999999996,
+          "selected_candidate_id": "reobserve",
+          "selected_candidate_role": "reobserve",
+          "selected_utility": 1.0,
+          "behavior_target_candidate_id": "reobserve",
+          "target_kind": "reobserve",
+          "behavior_target_hit": true,
+          "safe_projection_required": true,
+          "decision_digest": "878f92cf06c1cc2ab73ef8e1d53819113db0d98106f8f903c97b0cab1541bdc1"
+        }
+      ]
+    }
+  },
+  "reobserve_projection": {
+    "target_reobserve_count": 3,
+    "target_reobserve_projection_passed": true,
+    "selected_reobserve_count": 3,
+    "selected_reobserve_projection_passed": true,
+    "target_rows": [
+      {
+        "example_id": "g-example:829eb62c73f347b0c9141aeef8959d80e13f14c24a1cb733e6d153c8a4d73778",
+        "projected_type": "ReadOnlyAbstention",
+        "next_step": "workspace.list",
+        "action_intent_is_none": true,
+        "roundtrip": true,
+        "snapshot_match": true
+      },
+      {
+        "example_id": "g-example:853bec153709c9490803395ce7ecf6efb37b0cfeaa44614220523fc59d04d559",
+        "projected_type": "ReadOnlyAbstention",
+        "next_step": "workspace.list",
+        "action_intent_is_none": true,
+        "roundtrip": true,
+        "snapshot_match": true
+      },
+      {
+        "example_id": "g-example:b1a0354d98bb4f2996fd29eb946426246e96dc0bd6470489d22b413629667666",
+        "projected_type": "ReadOnlyAbstention",
+        "next_step": "workspace.list",
+        "action_intent_is_none": true,
+        "roundtrip": true,
+        "snapshot_match": true
+      }
+    ],
+    "selected_rows": [
+      {
+        "arm": "g_trained",
+        "example_id": "g-example:829eb62c73f347b0c9141aeef8959d80e13f14c24a1cb733e6d153c8a4d73778",
+        "projected_type": "ReadOnlyAbstention",
+        "next_step": "workspace.list",
+        "action_intent_is_none": true
+      },
+      {
+        "arm": "g_trained",
+        "example_id": "g-example:853bec153709c9490803395ce7ecf6efb37b0cfeaa44614220523fc59d04d559",
+        "projected_type": "ReadOnlyAbstention",
+        "next_step": "workspace.list",
+        "action_intent_is_none": true
+      },
+      {
+        "arm": "g_trained",
+        "example_id": "g-example:b1a0354d98bb4f2996fd29eb946426246e96dc0bd6470489d22b413629667666",
+        "projected_type": "ReadOnlyAbstention",
+        "next_step": "workspace.list",
+        "action_intent_is_none": true
+      }
+    ]
+  },
+  "legacy_retention": {
+    "class_metrics": {
+      "A": {
+        "g_zero_step": {
+          "count": 10,
+          "fit_eligible_count": 0,
+          "behavior_target_hit_count": 5,
+          "behavior_target_hit_rate": 0.5,
+          "selected_utility_sum": 7.75,
+          "selected_utility_mean": 0.775,
+          "selected_roles": {
+            "abstain": 5,
+            "proposal": 5
+          },
+          "rows": [
+            {
+              "split": "train",
+              "example_id": "g-example:27a2cbe95814a6f26b1387f5fcd3e215a738bfd26d02d0297bc133acdb113ff4",
+              "candidate_set_digest": "8073cbd3322cca545b8f62b28512c36794d15504e9fe4156ddc380e17c201644",
+              "fit_eligible": false,
+              "utility_margin": 0.25,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "k1:selected",
+              "target_kind": "pair",
+              "behavior_target_hit": true,
+              "safe_projection_required": false,
+              "decision_digest": "39094812e90e6e50b415492d36dea4fef641a58ff68df0927c89dd10fd3228f8"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:4c901e07b9a69219ce0a28710ee672bfca0344b200f2c7fcdf39f32dc0cd5f20",
+              "candidate_set_digest": "f80c28211b1ca983a5fd1bd19541496ff598f22145c546b340aa6270355ec9f4",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "e99bc5950dfd17a342a2bb1bc503e409e6214d7785483300e41d929f12081ac5"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:2f2fcc123951f1ae18ff6f1a307fe64d3e1c32ab9733e3e278e2a72dfa4de30f",
+              "candidate_set_digest": "8b026b4d2a734b60c732831f1c036511bdd80dbfa6b1943799ac927e845a8981",
+              "fit_eligible": false,
+              "utility_margin": 0.25,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "k1:selected",
+              "target_kind": "pair",
+              "behavior_target_hit": true,
+              "safe_projection_required": false,
+              "decision_digest": "e9b485e112de826bbcd852ac482c683cdf1df31cc2dbdb8636a9d61859fc9d02"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:b47d1e629e4b32adc53b26eecdfdb07c500b3fbc2b944eee3df4e3c778d15a6a",
+              "candidate_set_digest": "87511c51f6dd2ab0151aac3c07e04d545db2918491839a615d911e4fb7493a90",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "58e1eb01bb13e54072f255eaadd9a46eeaf0648e4fe0bf690f8ec632fbafa9ce"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:7247ec2e2113f6a06cae4b1802ceb9d8bf393a3a9f3e918a5492d4f59528fa1f",
+              "candidate_set_digest": "0466a32bb0bb0b148f20bb60bc2f0f96169ad7fad4bb879a8c03814e1f606426",
+              "fit_eligible": false,
+              "utility_margin": 0.25,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "k1:selected",
+              "target_kind": "pair",
+              "behavior_target_hit": true,
+              "safe_projection_required": false,
+              "decision_digest": "aaa1208ec07557a5708f503f94cbc3032338b8528f981ce0f3f2b6e3fcde6a79"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:a4c034dd75f5d7baaea7fb8a9fe817b534afc6141e28e97ed0d58f93b953b4fb",
+              "candidate_set_digest": "bc50bad86cd55fa5bb5d793c3354cd7dc76ee8ff41e5750acbe4794a0a3b44c5",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "0f364acbc54d4ed07116288d7c3dd26c75724fafefb3686cb68b856bf967588b"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:538136b3f9f36ca4cd45543171283f788740d7b02731f2ae51c8c3b3fc2be017",
+              "candidate_set_digest": "34f7246e82866d9089f9775986bf7ac5b2e99e4a45d013c1b248692fc8a838fd",
+              "fit_eligible": false,
+              "utility_margin": 0.25,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "k1:selected",
+              "target_kind": "pair",
+              "behavior_target_hit": true,
+              "safe_projection_required": false,
+              "decision_digest": "c3abddbd22bd45e1eed772d20ffb546bc9037b3453436260383b90e1c387a7c1"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:f4140bf7818fb0a92ab080b03dbdd340db46db8219e9e265523661e068e23b72",
+              "candidate_set_digest": "197d02722df15e8ab5748db352236b538b17cfff0f8ccf92c8bb84892b2d7e95",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "b70d11dcdbc8fad9369e88c965824e2ebd5612fb99cd59348465a062be54ce93"
+            },
+            {
+              "split": "validation",
+              "example_id": "g-example:c2a413fee5236b49dc3510f1b21e20cbeb147a74e4521f69144082b9030bf8a6",
+              "candidate_set_digest": "460b5db9d660d4135cc48efa66bf0894bfb3834cea5b1173fe137ca400a75c60",
+              "fit_eligible": false,
+              "utility_margin": 0.25,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "k1:selected",
+              "target_kind": "pair",
+              "behavior_target_hit": true,
+              "safe_projection_required": false,
+              "decision_digest": "c4e58fe5483f020072d0703f3e5f381371c2e0475d600841cce6a790c964fdb7"
+            },
+            {
+              "split": "validation",
+              "example_id": "g-example:19ffa3207bc221abf57ded077509b0dc16ada23c6e44f5451606b49dde18d11a",
+              "candidate_set_digest": "f6bb775eb3c9eb03803b6a55a703d30db5ea926c7006d727620c4e914f611292",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "60fc88f83a54f5e9e30148cb25dc662804c9f27a27d09380bac4ee7bbdf7fedd"
+            }
+          ]
+        },
+        "g_trained": {
+          "count": 10,
+          "fit_eligible_count": 0,
+          "behavior_target_hit_count": 10,
+          "behavior_target_hit_rate": 1.0,
+          "selected_utility_sum": 10.0,
+          "selected_utility_mean": 1.0,
+          "selected_roles": {
+            "proposal": 5,
+            "reobserve": 5
+          },
+          "rows": [
+            {
+              "split": "train",
+              "example_id": "g-example:27a2cbe95814a6f26b1387f5fcd3e215a738bfd26d02d0297bc133acdb113ff4",
+              "candidate_set_digest": "8073cbd3322cca545b8f62b28512c36794d15504e9fe4156ddc380e17c201644",
+              "fit_eligible": false,
+              "utility_margin": 0.25,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "k1:selected",
+              "target_kind": "pair",
+              "behavior_target_hit": true,
+              "safe_projection_required": false,
+              "decision_digest": "9f65e056ff2d8f4aee0492491b37b960fb4894a5cd846dbd7cd8c6e5ead0bb8d"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:4c901e07b9a69219ce0a28710ee672bfca0344b200f2c7fcdf39f32dc0cd5f20",
+              "candidate_set_digest": "f80c28211b1ca983a5fd1bd19541496ff598f22145c546b340aa6270355ec9f4",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "b0c0b8a508fd09b2da95a00c50f210d554b6d4abce141df774896ffae4412990"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:2f2fcc123951f1ae18ff6f1a307fe64d3e1c32ab9733e3e278e2a72dfa4de30f",
+              "candidate_set_digest": "8b026b4d2a734b60c732831f1c036511bdd80dbfa6b1943799ac927e845a8981",
+              "fit_eligible": false,
+              "utility_margin": 0.25,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "k1:selected",
+              "target_kind": "pair",
+              "behavior_target_hit": true,
+              "safe_projection_required": false,
+              "decision_digest": "b865280c9b950c96725ae9f31f8aa56dec6b40c62dc2cd56d42824f7cc6adc4c"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:b47d1e629e4b32adc53b26eecdfdb07c500b3fbc2b944eee3df4e3c778d15a6a",
+              "candidate_set_digest": "87511c51f6dd2ab0151aac3c07e04d545db2918491839a615d911e4fb7493a90",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "4cac09b27bc2e1283426eab58d1ab8da47d5a8e5e63c6b1f7cb0ffa76caa5cf9"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:7247ec2e2113f6a06cae4b1802ceb9d8bf393a3a9f3e918a5492d4f59528fa1f",
+              "candidate_set_digest": "0466a32bb0bb0b148f20bb60bc2f0f96169ad7fad4bb879a8c03814e1f606426",
+              "fit_eligible": false,
+              "utility_margin": 0.25,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "k1:selected",
+              "target_kind": "pair",
+              "behavior_target_hit": true,
+              "safe_projection_required": false,
+              "decision_digest": "dafac0636d6e51e6578578c9436fc13066b795f4baf654e9e1a53a91e630c740"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:a4c034dd75f5d7baaea7fb8a9fe817b534afc6141e28e97ed0d58f93b953b4fb",
+              "candidate_set_digest": "bc50bad86cd55fa5bb5d793c3354cd7dc76ee8ff41e5750acbe4794a0a3b44c5",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "497d3e992be48572f7c03b9b51b0713a55a4fd5b9e3d6cc4d01932f899f6af5e"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:538136b3f9f36ca4cd45543171283f788740d7b02731f2ae51c8c3b3fc2be017",
+              "candidate_set_digest": "34f7246e82866d9089f9775986bf7ac5b2e99e4a45d013c1b248692fc8a838fd",
+              "fit_eligible": false,
+              "utility_margin": 0.25,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "k1:selected",
+              "target_kind": "pair",
+              "behavior_target_hit": true,
+              "safe_projection_required": false,
+              "decision_digest": "1061580377af547b00f2eee24fc53d0b701efe65a2443a4657a0396e1b44404a"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:f4140bf7818fb0a92ab080b03dbdd340db46db8219e9e265523661e068e23b72",
+              "candidate_set_digest": "197d02722df15e8ab5748db352236b538b17cfff0f8ccf92c8bb84892b2d7e95",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "1fcdeb23a5178966a8deefc0b1987e6f7450a3390e666a6c2053de6ca38760e2"
+            },
+            {
+              "split": "validation",
+              "example_id": "g-example:c2a413fee5236b49dc3510f1b21e20cbeb147a74e4521f69144082b9030bf8a6",
+              "candidate_set_digest": "460b5db9d660d4135cc48efa66bf0894bfb3834cea5b1173fe137ca400a75c60",
+              "fit_eligible": false,
+              "utility_margin": 0.25,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "k1:selected",
+              "target_kind": "pair",
+              "behavior_target_hit": true,
+              "safe_projection_required": false,
+              "decision_digest": "49258dba7938a0b0062b98ac310d645f75db10a4df43ee9561901e5666865a4a"
+            },
+            {
+              "split": "validation",
+              "example_id": "g-example:19ffa3207bc221abf57ded077509b0dc16ada23c6e44f5451606b49dde18d11a",
+              "candidate_set_digest": "f6bb775eb3c9eb03803b6a55a703d30db5ea926c7006d727620c4e914f611292",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "002b054c09c821884ab0a95fd42d9d9e5b953f009ed37a02ee0ca9c8f04b26e9"
+            }
+          ]
+        }
+      },
+      "B": {
+        "g_zero_step": {
+          "count": 10,
+          "fit_eligible_count": 0,
+          "behavior_target_hit_count": 0,
+          "behavior_target_hit_rate": 0.0,
+          "selected_utility_sum": 6.5,
+          "selected_utility_mean": 0.65,
+          "selected_roles": {
+            "abstain": 5,
+            "proposal": 5
+          },
+          "rows": [
+            {
+              "split": "train",
+              "example_id": "g-example:f32418a19252ac0c50f762c45e7990f973e006af7cc82ae95e1fd22b63df9cb3",
+              "candidate_set_digest": "a1bdac44687278f97f59094f1b1f3a7a42bf6cbe7c28c50bfb059dd6ee589f35",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "b865b38f1ed9fcddce23ccf387d7f5fc23c7a6245ad1ba65eeecb7c77178752c"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:1704dcc48c9687cc79fce36f5cb4140ffaff1eb96077788e2a91a348f13d7d7f",
+              "candidate_set_digest": "d3bfdfa4cc799de73e70d186ea29478068c4decf276251b9a36422582134ca51",
+              "fit_eligible": false,
+              "utility_margin": 0.0,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 0.75,
+              "behavior_target_candidate_id": "k1:grid:goal:clarify-language:content:clarify-language",
+              "target_kind": "pair",
+              "behavior_target_hit": false,
+              "safe_projection_required": false,
+              "decision_digest": "529edce72b977b40506be54f69eb12d81c6676706d355377c54ea6c27ee2e738"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:f464baa7a98c164a703a18ab7ecd2e000bdd4504c806607bc25361b10a0bab6a",
+              "candidate_set_digest": "89ce031b746b33af5af457212cd49594186977ef6c1235eda26701a90db19801",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "acd16e03bdec4e0f92d86ca9bf7ba19ebd6bea8253f4d277dff6e60c3254d4a8"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:d09eb16c5e28c1a6c49e5893875707d6ce09119a06c20b2482b0b106277abb0e",
+              "candidate_set_digest": "ea345e387c200a03b5d54ed4a59fb4eef0bbeaf8d9ae290add31daf35d633738",
+              "fit_eligible": false,
+              "utility_margin": 0.0,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 0.75,
+              "behavior_target_candidate_id": "k1:grid:goal:clarify-language:content:clarify-language",
+              "target_kind": "pair",
+              "behavior_target_hit": false,
+              "safe_projection_required": false,
+              "decision_digest": "865797b5b0d28d59c88baeef804c44ea244e45713f02a4aa481777226c34e500"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:58da4e7857160b808a1f944d166c9412a2e8492f76b7859539982c9a5462d0fa",
+              "candidate_set_digest": "6c50cfed7a311534b47867c301f27e6c6c30fad6534004b4e46073dd1cdd7463",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "012f43f4dbe106f5acea53c9dac95a4567b23a7d85b39d79997708f211056f9a"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:2634f6a664f7baa4ee00edb884334632ff9b29d70291fed42361493e98178273",
+              "candidate_set_digest": "2fd71e16c267cfc806fdbf2acd82b1bf6b6c32028f5deff0570fe1287d28cd60",
+              "fit_eligible": false,
+              "utility_margin": 0.0,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 0.75,
+              "behavior_target_candidate_id": "k1:grid:goal:clarify-language:content:clarify-language",
+              "target_kind": "pair",
+              "behavior_target_hit": false,
+              "safe_projection_required": false,
+              "decision_digest": "98a168c77cc183a1312bdba5e33d48d27c3b77dca2b22a6f7c44e8b5a5012e11"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:26cf1d55598023b1232d077c49038d08a9c567cbf0c35344469ef09e7e8ec3a5",
+              "candidate_set_digest": "014088f09b522ce7d5b0b34e4e7026ede0db544ed35f0f82c45adc870e20e839",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "85b92ce5fe29add34ab386072fb01631d7bdaed6ec121780472591cf7e74eeba"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:f558071194e9414ab3f36c6340d2951b56048ef7d110c1fd32f9169e52577316",
+              "candidate_set_digest": "9f4ca1364d8150480e25eafee1ff81a9f2166bd637cb70cba2b1ee50374b2182",
+              "fit_eligible": false,
+              "utility_margin": 0.0,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 0.75,
+              "behavior_target_candidate_id": "k1:grid:goal:clarify-language:content:clarify-language",
+              "target_kind": "pair",
+              "behavior_target_hit": false,
+              "safe_projection_required": false,
+              "decision_digest": "84d6350931d66773cf635d1f7ef9934ea6754a674963e64997030b711afb51f9"
+            },
+            {
+              "split": "validation",
+              "example_id": "g-example:7e6a5c54d4740e733f3f07488cf6edfe640a1cc2dd49b7503137e6c56851536c",
+              "candidate_set_digest": "f9ccab44ea87c247da75dab32df77a35f1f045cd279aec21b23825b3b09044b5",
+              "fit_eligible": false,
+              "utility_margin": 0.0,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 0.75,
+              "behavior_target_candidate_id": "k1:grid:goal:clarify-language:content:clarify-language",
+              "target_kind": "pair",
+              "behavior_target_hit": false,
+              "safe_projection_required": false,
+              "decision_digest": "ec677027b1da1f7c38c51ae3bca2dbcb153dc327c919fe04129c1c8356f93f05"
+            },
+            {
+              "split": "validation",
+              "example_id": "g-example:eeef71ae0ec446e4626740ed731d71339851b2830e65eab287c656af3eef5658",
+              "candidate_set_digest": "1b5f95d42c9fe0d8ee92eb12c142d5509e5aa11d31fe103f5065aa2444a9f570",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "c8e3b5afe9b7953feaf9d3f67e8f4bc84dd43adae90e48b386008402c0f629af"
+            }
+          ]
+        },
+        "g_trained": {
+          "count": 10,
+          "fit_eligible_count": 0,
+          "behavior_target_hit_count": 5,
+          "behavior_target_hit_rate": 0.5,
+          "selected_utility_sum": 8.75,
+          "selected_utility_mean": 0.875,
+          "selected_roles": {
+            "proposal": 5,
+            "reobserve": 5
+          },
+          "rows": [
+            {
+              "split": "train",
+              "example_id": "g-example:f32418a19252ac0c50f762c45e7990f973e006af7cc82ae95e1fd22b63df9cb3",
+              "candidate_set_digest": "a1bdac44687278f97f59094f1b1f3a7a42bf6cbe7c28c50bfb059dd6ee589f35",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "da02d4fa8d66d594c517590e158bf983fd37a00775174ed189f271960e14c8b4"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:1704dcc48c9687cc79fce36f5cb4140ffaff1eb96077788e2a91a348f13d7d7f",
+              "candidate_set_digest": "d3bfdfa4cc799de73e70d186ea29478068c4decf276251b9a36422582134ca51",
+              "fit_eligible": false,
+              "utility_margin": 0.0,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 0.75,
+              "behavior_target_candidate_id": "k1:grid:goal:clarify-language:content:clarify-language",
+              "target_kind": "pair",
+              "behavior_target_hit": false,
+              "safe_projection_required": false,
+              "decision_digest": "30305f1de15fa726d30d620c7e133f08b47d7c3484b06200044f709a30b7c62e"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:f464baa7a98c164a703a18ab7ecd2e000bdd4504c806607bc25361b10a0bab6a",
+              "candidate_set_digest": "89ce031b746b33af5af457212cd49594186977ef6c1235eda26701a90db19801",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "e42e059eb5883c19613ddf82318d4a32b1339ea17df8d31cf44f5ab871eb9a1e"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:d09eb16c5e28c1a6c49e5893875707d6ce09119a06c20b2482b0b106277abb0e",
+              "candidate_set_digest": "ea345e387c200a03b5d54ed4a59fb4eef0bbeaf8d9ae290add31daf35d633738",
+              "fit_eligible": false,
+              "utility_margin": 0.0,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 0.75,
+              "behavior_target_candidate_id": "k1:grid:goal:clarify-language:content:clarify-language",
+              "target_kind": "pair",
+              "behavior_target_hit": false,
+              "safe_projection_required": false,
+              "decision_digest": "6a4821eb85c9ce76979031cea51298bebecc82a1a55ac445c45f6902288d3a44"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:58da4e7857160b808a1f944d166c9412a2e8492f76b7859539982c9a5462d0fa",
+              "candidate_set_digest": "6c50cfed7a311534b47867c301f27e6c6c30fad6534004b4e46073dd1cdd7463",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "9b189354abd5fbc1bf9bffb84d290e0b4847bf88e6df051a340c0b868a244ef1"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:2634f6a664f7baa4ee00edb884334632ff9b29d70291fed42361493e98178273",
+              "candidate_set_digest": "2fd71e16c267cfc806fdbf2acd82b1bf6b6c32028f5deff0570fe1287d28cd60",
+              "fit_eligible": false,
+              "utility_margin": 0.0,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 0.75,
+              "behavior_target_candidate_id": "k1:grid:goal:clarify-language:content:clarify-language",
+              "target_kind": "pair",
+              "behavior_target_hit": false,
+              "safe_projection_required": false,
+              "decision_digest": "1b7208155ef0bb74350fb25ba5c2f6f8f847c774fd41bde6a32219c2e455aa6c"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:26cf1d55598023b1232d077c49038d08a9c567cbf0c35344469ef09e7e8ec3a5",
+              "candidate_set_digest": "014088f09b522ce7d5b0b34e4e7026ede0db544ed35f0f82c45adc870e20e839",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "838642a129a3b81b9a9b856f85356e802a1c14b25657acb95e62dc4a51c0c269"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:f558071194e9414ab3f36c6340d2951b56048ef7d110c1fd32f9169e52577316",
+              "candidate_set_digest": "9f4ca1364d8150480e25eafee1ff81a9f2166bd637cb70cba2b1ee50374b2182",
+              "fit_eligible": false,
+              "utility_margin": 0.0,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 0.75,
+              "behavior_target_candidate_id": "k1:grid:goal:clarify-language:content:clarify-language",
+              "target_kind": "pair",
+              "behavior_target_hit": false,
+              "safe_projection_required": false,
+              "decision_digest": "eb12829b5a2f3b3143eaf3fa12582e3c203073cfdfb35b1509cf6bacec5fef8a"
+            },
+            {
+              "split": "validation",
+              "example_id": "g-example:7e6a5c54d4740e733f3f07488cf6edfe640a1cc2dd49b7503137e6c56851536c",
+              "candidate_set_digest": "f9ccab44ea87c247da75dab32df77a35f1f045cd279aec21b23825b3b09044b5",
+              "fit_eligible": false,
+              "utility_margin": 0.0,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 0.75,
+              "behavior_target_candidate_id": "k1:grid:goal:clarify-language:content:clarify-language",
+              "target_kind": "pair",
+              "behavior_target_hit": false,
+              "safe_projection_required": false,
+              "decision_digest": "aa560561f7923b4a41f65abcf29fb60dab174bcede2bdc16f6360b85c159bd98"
+            },
+            {
+              "split": "validation",
+              "example_id": "g-example:eeef71ae0ec446e4626740ed731d71339851b2830e65eab287c656af3eef5658",
+              "candidate_set_digest": "1b5f95d42c9fe0d8ee92eb12c142d5509e5aa11d31fe103f5065aa2444a9f570",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "e82bfc54351030afdd109d1fe7e07aaadd1cdc89eba68c6765fae2ace8dc177c"
+            }
+          ]
+        }
+      },
+      "C": {
+        "g_zero_step": {
+          "count": 10,
+          "fit_eligible_count": 0,
+          "behavior_target_hit_count": 5,
+          "behavior_target_hit_rate": 0.5,
+          "selected_utility_sum": 7.75,
+          "selected_utility_mean": 0.775,
+          "selected_roles": {
+            "abstain": 5,
+            "proposal": 5
+          },
+          "rows": [
+            {
+              "split": "train",
+              "example_id": "g-example:98a1219dca978ac0e1c98be87c9df34e6220e1c8fb2e3fb44384f98a31cea31f",
+              "candidate_set_digest": "c7dcf5e9589cd5071050157cea5ff334e0abd80be610e9ada400b5c9d8aad9d5",
+              "fit_eligible": false,
+              "utility_margin": 0.25,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "k1:selected",
+              "target_kind": "pair",
+              "behavior_target_hit": true,
+              "safe_projection_required": false,
+              "decision_digest": "f8a6fda49b12af32a3844b014ffefe5e736c3fb1b353df9ffc85432dc10d81be"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:8126728fb46f80b3da9ca03591f22542fd19884b00119fd1214c6d270c14c07e",
+              "candidate_set_digest": "72eec5847a5c8692ca6b6b540897ee584d14edfb553790049b70bed35a6c9644",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "e51df30c7d9159a4b0aed654a5cac2ec899f1b456d59be9a09777072f1451896"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:19cf0d0a77379684c31adb38d40aa358f645453989c91237ef3c1ca6624bf017",
+              "candidate_set_digest": "35bddc65acd541333384bcf8a2ea74a32c8d300245fb220b06931920ba96b266",
+              "fit_eligible": false,
+              "utility_margin": 0.25,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "k1:selected",
+              "target_kind": "pair",
+              "behavior_target_hit": true,
+              "safe_projection_required": false,
+              "decision_digest": "62b0c185c80c99d8ecb017240fe51b049719c78511841abd54c71d889f7ff152"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:75afc2bab5ae66be4f1d8665016458e1cbda49c9530a37437775ffdd05220279",
+              "candidate_set_digest": "949d6b5b62425a13807eb8809313c2ccf92434716446945cb19115c229338161",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "ab97a33d8bca6ebe16040292c6864dadcadd35fc4b73b88b5a0f59a54fabb4bd"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:dfaa7b2554f5ca006b91000f8f060bfb657403fa3360e0fa0a5abcc8f95fe84e",
+              "candidate_set_digest": "04e9cc3db8e89c4649ccdac09781314926013eb6e1884b077fe19b338ca430d7",
+              "fit_eligible": false,
+              "utility_margin": 0.25,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "k1:selected",
+              "target_kind": "pair",
+              "behavior_target_hit": true,
+              "safe_projection_required": false,
+              "decision_digest": "f1a8bcc45ff155f81798cadc8978c307716d3f48d0c7c4a72e52edae702d0600"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:ec748b20ebf5b6df68aae1ac85ef75ce35f512661dd21a800f61361db7562162",
+              "candidate_set_digest": "a1feb9c680f965597726aa5b93d841620a29cef7e1fee369e1e438998657f6e0",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "ced50f0a1a7501b09f95cc9513fc06f26ea6c04af389a7352ff93a812b994507"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:0799840983c526c74749c3e501394257e74dcf515dbbecf6d1bd1fe0cff41681",
+              "candidate_set_digest": "eddf05719c4376f7ef40256b7e46b74b3023ab60b7ea41cd71fadc06afa6ab20",
+              "fit_eligible": false,
+              "utility_margin": 0.25,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "k1:selected",
+              "target_kind": "pair",
+              "behavior_target_hit": true,
+              "safe_projection_required": false,
+              "decision_digest": "0cea7a896646df4eca733568370007afb75c58724fbccc84f5c71f398ec2e342"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:f2415b1702a87ef86adbd7d276fc076d6f0dff5315f5141cbb7137b0820ef0ff",
+              "candidate_set_digest": "0542f6ecf9bb634e360842d31ac2fe54417a5ccdf3536f96b4c972712456eb3b",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "187ecdf67d085266df887edcbdd378e370e316e1d106e51db55b0e951200485e"
+            },
+            {
+              "split": "validation",
+              "example_id": "g-example:548b7f711c76b12e378e4680479f2498ddec9b9aa6266b4c1118aae6743168ed",
+              "candidate_set_digest": "6f9c0eeb3f48a5386550ee0aa98ed761f48db9ff984f0e73516ab012c78ce79f",
+              "fit_eligible": false,
+              "utility_margin": 0.25,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "k1:selected",
+              "target_kind": "pair",
+              "behavior_target_hit": true,
+              "safe_projection_required": false,
+              "decision_digest": "e4f0cc092346899ae317234f79a7ccee281bf6552eda37f582a3dafe2bb4fb6e"
+            },
+            {
+              "split": "validation",
+              "example_id": "g-example:e73b6f1c36924d5342ef8b11bc3e93516e8b9838ba41bbc8fe407e8ee3b494a9",
+              "candidate_set_digest": "3bbafb80961d6bd6494928745961e94206c9b62fc7e3b746ca10292d4d00430d",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "9c0fbdd40b2b12be6fba26b5ad273a48a98592d94252651be0d90838173ecf7e"
+            }
+          ]
+        },
+        "g_trained": {
+          "count": 10,
+          "fit_eligible_count": 0,
+          "behavior_target_hit_count": 10,
+          "behavior_target_hit_rate": 1.0,
+          "selected_utility_sum": 10.0,
+          "selected_utility_mean": 1.0,
+          "selected_roles": {
+            "proposal": 5,
+            "reobserve": 5
+          },
+          "rows": [
+            {
+              "split": "train",
+              "example_id": "g-example:98a1219dca978ac0e1c98be87c9df34e6220e1c8fb2e3fb44384f98a31cea31f",
+              "candidate_set_digest": "c7dcf5e9589cd5071050157cea5ff334e0abd80be610e9ada400b5c9d8aad9d5",
+              "fit_eligible": false,
+              "utility_margin": 0.25,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "k1:selected",
+              "target_kind": "pair",
+              "behavior_target_hit": true,
+              "safe_projection_required": false,
+              "decision_digest": "ee138d7c4079db16509ee68f79c3107ef84c77348d17479a3702d1cd3d16ca76"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:8126728fb46f80b3da9ca03591f22542fd19884b00119fd1214c6d270c14c07e",
+              "candidate_set_digest": "72eec5847a5c8692ca6b6b540897ee584d14edfb553790049b70bed35a6c9644",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "9b366c04149fc8f8f0f24ff5a0dd5be55ba9032ee1698b67e34abef2596b86d1"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:19cf0d0a77379684c31adb38d40aa358f645453989c91237ef3c1ca6624bf017",
+              "candidate_set_digest": "35bddc65acd541333384bcf8a2ea74a32c8d300245fb220b06931920ba96b266",
+              "fit_eligible": false,
+              "utility_margin": 0.25,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "k1:selected",
+              "target_kind": "pair",
+              "behavior_target_hit": true,
+              "safe_projection_required": false,
+              "decision_digest": "ecf9d205d15ddc56d6764dfec31ce6b3d4c0d52f44025e3b6d16639a242c03ff"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:75afc2bab5ae66be4f1d8665016458e1cbda49c9530a37437775ffdd05220279",
+              "candidate_set_digest": "949d6b5b62425a13807eb8809313c2ccf92434716446945cb19115c229338161",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "759f746ea815a3ee7739045a012a9c9f587e825dc5da0af5f39f46b3819e8ad7"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:dfaa7b2554f5ca006b91000f8f060bfb657403fa3360e0fa0a5abcc8f95fe84e",
+              "candidate_set_digest": "04e9cc3db8e89c4649ccdac09781314926013eb6e1884b077fe19b338ca430d7",
+              "fit_eligible": false,
+              "utility_margin": 0.25,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "k1:selected",
+              "target_kind": "pair",
+              "behavior_target_hit": true,
+              "safe_projection_required": false,
+              "decision_digest": "f91fdc9679b4b634555dcd39b47e63a2e9b2b032ff2fde75cb8e53afa1f1bf4b"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:ec748b20ebf5b6df68aae1ac85ef75ce35f512661dd21a800f61361db7562162",
+              "candidate_set_digest": "a1feb9c680f965597726aa5b93d841620a29cef7e1fee369e1e438998657f6e0",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "5e5c4374ed019262c941d65f4dd413b8e4979720664336638920f2aa160f77af"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:0799840983c526c74749c3e501394257e74dcf515dbbecf6d1bd1fe0cff41681",
+              "candidate_set_digest": "eddf05719c4376f7ef40256b7e46b74b3023ab60b7ea41cd71fadc06afa6ab20",
+              "fit_eligible": false,
+              "utility_margin": 0.25,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "k1:selected",
+              "target_kind": "pair",
+              "behavior_target_hit": true,
+              "safe_projection_required": false,
+              "decision_digest": "88c89a6d36f86b7ac2041ade57cf312b34c7449924715893f52f5a98dafc98a7"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:f2415b1702a87ef86adbd7d276fc076d6f0dff5315f5141cbb7137b0820ef0ff",
+              "candidate_set_digest": "0542f6ecf9bb634e360842d31ac2fe54417a5ccdf3536f96b4c972712456eb3b",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "ba4db6e4d0c5d42f2a55aa99e3ccf81f31bebbf996dacbda543a23417d08e444"
+            },
+            {
+              "split": "validation",
+              "example_id": "g-example:548b7f711c76b12e378e4680479f2498ddec9b9aa6266b4c1118aae6743168ed",
+              "candidate_set_digest": "6f9c0eeb3f48a5386550ee0aa98ed761f48db9ff984f0e73516ab012c78ce79f",
+              "fit_eligible": false,
+              "utility_margin": 0.25,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "k1:selected",
+              "target_kind": "pair",
+              "behavior_target_hit": true,
+              "safe_projection_required": false,
+              "decision_digest": "39d36c0a09cbd6498c31421b6ad6429e2491fc2fa01f756b4b69ddfaaffdb024"
+            },
+            {
+              "split": "validation",
+              "example_id": "g-example:e73b6f1c36924d5342ef8b11bc3e93516e8b9838ba41bbc8fe407e8ee3b494a9",
+              "candidate_set_digest": "3bbafb80961d6bd6494928745961e94206c9b62fc7e3b746ca10292d4d00430d",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "e3b4e00937d6c2c3d712631ea8160040fcc9f68e460465fbc6a9475610e9a07a"
+            }
+          ]
+        }
+      },
+      "D": {
+        "g_zero_step": {
+          "count": 10,
+          "fit_eligible_count": 0,
+          "behavior_target_hit_count": 0,
+          "behavior_target_hit_rate": 0.0,
+          "selected_utility_sum": 6.5,
+          "selected_utility_mean": 0.65,
+          "selected_roles": {
+            "abstain": 5,
+            "proposal": 5
+          },
+          "rows": [
+            {
+              "split": "train",
+              "example_id": "g-example:26d770a9138966051a3d4107f4a168678a566a081b2152d88a673785eb5ba985",
+              "candidate_set_digest": "bec5bed2103130ba5481f3a349b7dda382f112d4350f4113b4ca674672b347ba",
+              "fit_eligible": false,
+              "utility_margin": 0.0,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 0.75,
+              "behavior_target_candidate_id": "k1:grid:goal:clarify-language:content:clarify-language",
+              "target_kind": "pair",
+              "behavior_target_hit": false,
+              "safe_projection_required": false,
+              "decision_digest": "6647d4232019c2ec20f92f55827823d00723008cff23d97400a62e0d002bdc4b"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:e6a40339694c2c7d161ac6bcbc70319cff1214aeeedf768b21b503a7521689fc",
+              "candidate_set_digest": "2896d498dce77d6c90ed254ccb46516e704ebf5cbd946d55c3c4398ff973b7f5",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "9a6f47fd1f5c67b039fc8a502328a3a13910b2828eeb1276d59ee53b3dd63107"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:9d890f187538d89edde5e56af66719c54948977292cd7d1cb0cb1f428456f654",
+              "candidate_set_digest": "e5dc755b40efc46bada54a6611d0dbea08a7159cdea0f706a0c88bf38ebf17c7",
+              "fit_eligible": false,
+              "utility_margin": 0.0,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 0.75,
+              "behavior_target_candidate_id": "k1:grid:goal:clarify-language:content:clarify-language",
+              "target_kind": "pair",
+              "behavior_target_hit": false,
+              "safe_projection_required": false,
+              "decision_digest": "1b7b87585a82238d036b472e08ef7f02984a6e6e64292838db99cd1cf2d4fc41"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:f0f736e7b864fea890745ae887201839d2653a54cf8d8514f2f873cb419f01d9",
+              "candidate_set_digest": "5bc04f32b3591c1216a5da6c9ac85ce690747750b842bf9742c94fd3c4babd2f",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "2335b1e3921c7d2404fe91cc50a662f4f99f6a31a88ebe21fc0297e31d8cfdf4"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:3401e28522c4f79a43476323c22265c9302e65849ce81ce2d3418924a6cf40f7",
+              "candidate_set_digest": "4297fe475f70538df269a033bfe545b8c1b63a962693f39c419f917a91102a2d",
+              "fit_eligible": false,
+              "utility_margin": 0.0,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 0.75,
+              "behavior_target_candidate_id": "k1:grid:goal:clarify-language:content:clarify-language",
+              "target_kind": "pair",
+              "behavior_target_hit": false,
+              "safe_projection_required": false,
+              "decision_digest": "a8d7a3d32d0144d45c74a244130614148a5aae785cda14740c1f97ba44a7aef1"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:cfeed19808dd7872fa38071289485e66f76cb9f934c3288c1d242f169d51af35",
+              "candidate_set_digest": "9a501ac3b8d065cb12bd29b53a3f1e5d8b00f6356defba1ba8dcbaa37b98a45c",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "dff4d5f4815a2150d07cfea2fc2784642d2d199f038b2cdba4294fa9ba505021"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:8d5a18904814e9abbaf1e882b5cbec6e08c92bb7e35458d51cda32d589943bc2",
+              "candidate_set_digest": "48c6054b76a4a09b365eab4220c0ef3055bf52aeae04846f4ebeec872244e2c5",
+              "fit_eligible": false,
+              "utility_margin": 0.0,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 0.75,
+              "behavior_target_candidate_id": "k1:grid:goal:clarify-language:content:clarify-language",
+              "target_kind": "pair",
+              "behavior_target_hit": false,
+              "safe_projection_required": false,
+              "decision_digest": "d8492c9b2ad2eeb5dc4c01121fcb1045707846343f652debbb40af7bc249f176"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:c7dc1272611311b058cd1f44619db5ccdfc0447a069e31b95e747c57124b63e1",
+              "candidate_set_digest": "823ee4123b5781d8b7237f46a4982dd99686cb85d7c8f6d0f06eba8bd1dfee24",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "8d4c34d37e03467712f40737d143ff993bdf0be275c069dccf01f8bc038265d1"
+            },
+            {
+              "split": "validation",
+              "example_id": "g-example:7f8d24a385d383c4d75846ad934a0d39c0ca509abba49f0040f394481393ef3a",
+              "candidate_set_digest": "8a2ff7124df9e9ef61276bccebbae1a7968ac0b67ec07918094e528fdc67b001",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "707f39a533fcc9c5761cfb4c0bca502120abeec011377f02f25f783da3d400be"
+            },
+            {
+              "split": "validation",
+              "example_id": "g-example:4fed32b4d728db190da6a2ecca1a74e501bd264c3f44c0aec176fd1131eed769",
+              "candidate_set_digest": "53ff0c88fedbb1aa06250ae322b069ec4e7c93154ece675b316883193296b289",
+              "fit_eligible": false,
+              "utility_margin": 0.0,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 0.75,
+              "behavior_target_candidate_id": "k1:grid:goal:clarify-language:content:clarify-language",
+              "target_kind": "pair",
+              "behavior_target_hit": false,
+              "safe_projection_required": false,
+              "decision_digest": "64b7178ad9d68a5f32735f2ec9f2bd384f203706ec8617e42b025bee6de87d31"
+            }
+          ]
+        },
+        "g_trained": {
+          "count": 10,
+          "fit_eligible_count": 0,
+          "behavior_target_hit_count": 5,
+          "behavior_target_hit_rate": 0.5,
+          "selected_utility_sum": 8.75,
+          "selected_utility_mean": 0.875,
+          "selected_roles": {
+            "proposal": 5,
+            "reobserve": 5
+          },
+          "rows": [
+            {
+              "split": "train",
+              "example_id": "g-example:26d770a9138966051a3d4107f4a168678a566a081b2152d88a673785eb5ba985",
+              "candidate_set_digest": "bec5bed2103130ba5481f3a349b7dda382f112d4350f4113b4ca674672b347ba",
+              "fit_eligible": false,
+              "utility_margin": 0.0,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 0.75,
+              "behavior_target_candidate_id": "k1:grid:goal:clarify-language:content:clarify-language",
+              "target_kind": "pair",
+              "behavior_target_hit": false,
+              "safe_projection_required": false,
+              "decision_digest": "0a8db5b621b3dddf6620230bf468d43a9f5cddc0602dfd042755b235e47d3386"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:e6a40339694c2c7d161ac6bcbc70319cff1214aeeedf768b21b503a7521689fc",
+              "candidate_set_digest": "2896d498dce77d6c90ed254ccb46516e704ebf5cbd946d55c3c4398ff973b7f5",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "c384a7b2641ed0a352d6cc38c740aa070f691b533e69866a3e0382a1cf45c295"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:9d890f187538d89edde5e56af66719c54948977292cd7d1cb0cb1f428456f654",
+              "candidate_set_digest": "e5dc755b40efc46bada54a6611d0dbea08a7159cdea0f706a0c88bf38ebf17c7",
+              "fit_eligible": false,
+              "utility_margin": 0.0,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 0.75,
+              "behavior_target_candidate_id": "k1:grid:goal:clarify-language:content:clarify-language",
+              "target_kind": "pair",
+              "behavior_target_hit": false,
+              "safe_projection_required": false,
+              "decision_digest": "967cc8086169344b11c7d0953b7eb81f0e3cd8d3e6606254d8441c60f9dc558f"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:f0f736e7b864fea890745ae887201839d2653a54cf8d8514f2f873cb419f01d9",
+              "candidate_set_digest": "5bc04f32b3591c1216a5da6c9ac85ce690747750b842bf9742c94fd3c4babd2f",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "749ddd2aeb11e70fc3a5f5afe87e07190c41fae9ae4e42584ab4588a8a4a0392"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:3401e28522c4f79a43476323c22265c9302e65849ce81ce2d3418924a6cf40f7",
+              "candidate_set_digest": "4297fe475f70538df269a033bfe545b8c1b63a962693f39c419f917a91102a2d",
+              "fit_eligible": false,
+              "utility_margin": 0.0,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 0.75,
+              "behavior_target_candidate_id": "k1:grid:goal:clarify-language:content:clarify-language",
+              "target_kind": "pair",
+              "behavior_target_hit": false,
+              "safe_projection_required": false,
+              "decision_digest": "46a4ff5945d06f6f56f54bc1559271d30500f7d031361072449ffdf40e43246a"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:cfeed19808dd7872fa38071289485e66f76cb9f934c3288c1d242f169d51af35",
+              "candidate_set_digest": "9a501ac3b8d065cb12bd29b53a3f1e5d8b00f6356defba1ba8dcbaa37b98a45c",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "d7f01711a5dd1138dd517f4d2dea8f7be6412b33486eec7c6d68636a06719bff"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:8d5a18904814e9abbaf1e882b5cbec6e08c92bb7e35458d51cda32d589943bc2",
+              "candidate_set_digest": "48c6054b76a4a09b365eab4220c0ef3055bf52aeae04846f4ebeec872244e2c5",
+              "fit_eligible": false,
+              "utility_margin": 0.0,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 0.75,
+              "behavior_target_candidate_id": "k1:grid:goal:clarify-language:content:clarify-language",
+              "target_kind": "pair",
+              "behavior_target_hit": false,
+              "safe_projection_required": false,
+              "decision_digest": "e8ca3ac2fe10d4019c7e38c2dd188f39d7a07bfbdac43bde4f2d66b5b56c323f"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:c7dc1272611311b058cd1f44619db5ccdfc0447a069e31b95e747c57124b63e1",
+              "candidate_set_digest": "823ee4123b5781d8b7237f46a4982dd99686cb85d7c8f6d0f06eba8bd1dfee24",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "869130a436e2492e3edeee5f1998b695a28c2e1c6e1d7379746ce9d8cf9f83ef"
+            },
+            {
+              "split": "validation",
+              "example_id": "g-example:7f8d24a385d383c4d75846ad934a0d39c0ca509abba49f0040f394481393ef3a",
+              "candidate_set_digest": "8a2ff7124df9e9ef61276bccebbae1a7968ac0b67ec07918094e528fdc67b001",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "7392ee6253a511badf62402453ebc7824b62deee74c95492c4812d7a28a21b6d"
+            },
+            {
+              "split": "validation",
+              "example_id": "g-example:4fed32b4d728db190da6a2ecca1a74e501bd264c3f44c0aec176fd1131eed769",
+              "candidate_set_digest": "53ff0c88fedbb1aa06250ae322b069ec4e7c93154ece675b316883193296b289",
+              "fit_eligible": false,
+              "utility_margin": 0.0,
+              "selected_candidate_id": "k1:selected",
+              "selected_candidate_role": "proposal",
+              "selected_utility": 0.75,
+              "behavior_target_candidate_id": "k1:grid:goal:clarify-language:content:clarify-language",
+              "target_kind": "pair",
+              "behavior_target_hit": false,
+              "safe_projection_required": false,
+              "decision_digest": "483e29e0cdbb7d598535dd9c0f6245b74551aedb9156aefdd61c5c87b7f8c8bb"
+            }
+          ]
+        }
+      },
+      "R": {
+        "g_zero_step": {
+          "count": 10,
+          "fit_eligible_count": 0,
+          "behavior_target_hit_count": 0,
+          "behavior_target_hit_rate": 0.0,
+          "selected_utility_sum": 5.5,
+          "selected_utility_mean": 0.55,
+          "selected_roles": {
+            "abstain": 10
+          },
+          "rows": [
+            {
+              "split": "train",
+              "example_id": "g-example:d3f3ecedd0e7c1a67469b64d70b378be3cc752586ef95cde7fdf117c8635cb02",
+              "candidate_set_digest": "cd8da20fbeb075e1619793608d4b505a5cc52245c6c46f9c9b59c25ac3f2f319",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "fa5661005490badf6b2685d87e6b4e2978a9e051dd7342167d125378d7d5ca28"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:5803247126c60e76e4cc822f7d88c09cee9da659b6a23f7df80cd9b19568913a",
+              "candidate_set_digest": "9c2fd39002b11b726dae92b61c6f15c699689b96318a91b25c4b8c90ea931269",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "06204c4f2638de47b1b2b8075e45e2475cdb4f7cd8771bee525b0958ff40b531"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:2355b65d82f9a1636472ff45e4862962e0dc8154e40d72f2d78b9e9b3de73b14",
+              "candidate_set_digest": "5e688f1bed634b6ff996b3bdc588b89cec7457b19c93ab601f9686acbdc46c83",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "1c53f15e277c6dcc525c38f836593ba7d8d0c467bd54b7bd0db955a34db81fb2"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:22cf46bd02ad42472e584fd88c320ff08e9b8ad7ad2a1259898b8d37b0455566",
+              "candidate_set_digest": "d0c67e0b3353cdc27b72bb8a8386bacafa94f39d544c747f2bf1017f33821e20",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "cb4fe27b5613333a1ec4716c0c292d0bae9a48a25154fc0522e1bee026a50b5e"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:136b692d473d1519c79c25d21031a8cec5ee0d193e0cb7354bf640759458a2dc",
+              "candidate_set_digest": "24ece7b6672e167ae13b5dc197229eb561a308f01191a70fdd8c90056b0d1986",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "c938220e00798d51ec03224f89b867ff84441eb86f01f6503be9650c7deab746"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:5a96e3f0710d1666af21ae7d93ea0de2de0f9116b19cb7910af5340c6b33b59e",
+              "candidate_set_digest": "028ea4b20368a8314c1c784a7cb08d2d75996de36daa7352f301bd00ec4fd9a4",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "e393dc3acafce9a1dc8115d1848c9b1523f8c7b0053c368346d317212477404b"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:01a5e0103f5ca79008055c03c6fbe566e7c1433994eeecce23a8804622cdc343",
+              "candidate_set_digest": "5107e968b25f09f5c10eef8d58afa43cae268b2898daf78096cbddb5534c3ae6",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "f30295d0a3dadd8e8ffe175bed0bb324ed286e933f3a53f903d2fdaa30a5165a"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:2f4dd11f4f8ae8457d7cc6fd532d0edf89d324fa08ef1d636cbe0560db6c4a56",
+              "candidate_set_digest": "007dcb2bbe4f99811db398c1c99bcdc17faa6ada8c5949387f04896444567e24",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "2fabb353f57194a425d60177bee73bfbc349cdb29962913653ddff1b35afdf13"
+            },
+            {
+              "split": "validation",
+              "example_id": "g-example:54a18ad0cecedc2c26feb2e4ddfb93e921c86c42bf91e89fbb78e10e1500406e",
+              "candidate_set_digest": "74a0827ef556c639c0e067163d88a91b8d99e87aaa774207082a7f87b515d042",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "936cf44bc4aebb744ec458536f607b95e2ca7738cbb4b7fddfa87c9e06f59a63"
+            },
+            {
+              "split": "validation",
+              "example_id": "g-example:5161d034a4974b02bebf6cec44daf1e2e7b7f61145b0069a6115b9b2bfc71766",
+              "candidate_set_digest": "e9e8052704e2557e11c80982598663367061bdc991661f8aef91b115e20d5b4d",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "abstain",
+              "selected_candidate_role": "abstain",
+              "selected_utility": 0.55,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": false,
+              "safe_projection_required": true,
+              "decision_digest": "8f8414b622b6827861e7c2602d95191b0adaa63d8b4d10d6f19cc0437a059cf7"
+            }
+          ]
+        },
+        "g_trained": {
+          "count": 10,
+          "fit_eligible_count": 0,
+          "behavior_target_hit_count": 10,
+          "behavior_target_hit_rate": 1.0,
+          "selected_utility_sum": 10.0,
+          "selected_utility_mean": 1.0,
+          "selected_roles": {
+            "reobserve": 10
+          },
+          "rows": [
+            {
+              "split": "train",
+              "example_id": "g-example:d3f3ecedd0e7c1a67469b64d70b378be3cc752586ef95cde7fdf117c8635cb02",
+              "candidate_set_digest": "cd8da20fbeb075e1619793608d4b505a5cc52245c6c46f9c9b59c25ac3f2f319",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "3e28de474c78e299690db7d885345198f3d73fe6ced7940ba0315fb717c4c525"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:5803247126c60e76e4cc822f7d88c09cee9da659b6a23f7df80cd9b19568913a",
+              "candidate_set_digest": "9c2fd39002b11b726dae92b61c6f15c699689b96318a91b25c4b8c90ea931269",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "f9dd8311d8d2181802c333a993eac886a0928e2a02b3d9cb405e8f8466c21e06"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:2355b65d82f9a1636472ff45e4862962e0dc8154e40d72f2d78b9e9b3de73b14",
+              "candidate_set_digest": "5e688f1bed634b6ff996b3bdc588b89cec7457b19c93ab601f9686acbdc46c83",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "c7d231940363cfbca21f3d022d8d976afcb3cc2ba518df3c5b63f7418ba87e69"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:22cf46bd02ad42472e584fd88c320ff08e9b8ad7ad2a1259898b8d37b0455566",
+              "candidate_set_digest": "d0c67e0b3353cdc27b72bb8a8386bacafa94f39d544c747f2bf1017f33821e20",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "516e60a9f908ec0fcac076e96f7b8d39306eb327fe09150ef2baae81bcd22cab"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:136b692d473d1519c79c25d21031a8cec5ee0d193e0cb7354bf640759458a2dc",
+              "candidate_set_digest": "24ece7b6672e167ae13b5dc197229eb561a308f01191a70fdd8c90056b0d1986",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "c78d534eaa3517814294049a63d2167341b5dea49ce2923378cf55d8f2d73d4a"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:5a96e3f0710d1666af21ae7d93ea0de2de0f9116b19cb7910af5340c6b33b59e",
+              "candidate_set_digest": "028ea4b20368a8314c1c784a7cb08d2d75996de36daa7352f301bd00ec4fd9a4",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "5209805615364ac7ab92b73669688af2e1c121568bd278914532a1cd9deecc78"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:01a5e0103f5ca79008055c03c6fbe566e7c1433994eeecce23a8804622cdc343",
+              "candidate_set_digest": "5107e968b25f09f5c10eef8d58afa43cae268b2898daf78096cbddb5534c3ae6",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "aee6bf8a2253057ebf9968fd897b1203b74e744f0d04fe1ad597c1d04a11182f"
+            },
+            {
+              "split": "train",
+              "example_id": "g-example:2f4dd11f4f8ae8457d7cc6fd532d0edf89d324fa08ef1d636cbe0560db6c4a56",
+              "candidate_set_digest": "007dcb2bbe4f99811db398c1c99bcdc17faa6ada8c5949387f04896444567e24",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "8a473a814dae2866e2066cec29f3ecf203dce890a06aa8ee401df2be1a72a2cf"
+            },
+            {
+              "split": "validation",
+              "example_id": "g-example:54a18ad0cecedc2c26feb2e4ddfb93e921c86c42bf91e89fbb78e10e1500406e",
+              "candidate_set_digest": "74a0827ef556c639c0e067163d88a91b8d99e87aaa774207082a7f87b515d042",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "6576c1987ae27ff4c21822f369c19d37adcd69535e018fc1ada54cfb34d2e47e"
+            },
+            {
+              "split": "validation",
+              "example_id": "g-example:5161d034a4974b02bebf6cec44daf1e2e7b7f61145b0069a6115b9b2bfc71766",
+              "candidate_set_digest": "e9e8052704e2557e11c80982598663367061bdc991661f8aef91b115e20d5b4d",
+              "fit_eligible": false,
+              "utility_margin": 0.44999999999999996,
+              "selected_candidate_id": "reobserve",
+              "selected_candidate_role": "reobserve",
+              "selected_utility": 1.0,
+              "behavior_target_candidate_id": "reobserve",
+              "target_kind": "reobserve",
+              "behavior_target_hit": true,
+              "safe_projection_required": true,
+              "decision_digest": "628f77cff906b31d9a73f8f87ec7cb4c924f69affaf216375128aae47d055d81"
+            }
+          ]
+        }
+      }
+    },
+    "all_five_classes_present": true,
+    "trained_target_hits_not_below_zero_step": true,
+    "safe_exit_violations": {
+      "g_zero_step": 0,
+      "g_trained": 0
+    },
+    "trained_safe_exit_violations_zero": true,
+    "record_count": 50
+  },
+  "holdout_actions": {
+    "k_only": {
+      "count": 4,
+      "target_hit_count": 4,
+      "workbench_success_count": 4,
+      "rows": [
+        {
+          "index": 0,
+          "project_id": "p2-7-holdout-project-a",
+          "path": "typescript_28.ts",
+          "selected_candidate_id": "k1:selected",
+          "target_candidate_id": "k1:selected",
+          "target_hit": true,
+          "action": {
+            "label": "p3-3-k_only",
+            "oracle_control": false,
+            "planner_status": "accepted",
+            "reason_code": "native_read_only_intent_ready",
+            "accepted": true,
+            "snapshot_match": true,
+            "parameter_drift": {
+              "declared_overrides": {},
+              "actual": {
+                "path": "typescript_28.ts"
+              },
+              "matches_contract": true
+            },
+            "intent_kind": "workspace.read",
+            "intent_parameters": {
+              "path": "typescript_28.ts"
+            },
+            "workbench_status": "success",
+            "workbench_success": true,
+            "workbench_error_code": "",
+            "failure_recovery_status": "not_triggered"
+          }
+        },
+        {
+          "index": 1,
+          "project_id": "p2-7-holdout-project-a",
+          "path": "typescript_29.ts",
+          "selected_candidate_id": "k1:selected",
+          "target_candidate_id": "k1:selected",
+          "target_hit": true,
+          "action": {
+            "label": "p3-3-k_only",
+            "oracle_control": false,
+            "planner_status": "accepted",
+            "reason_code": "native_read_only_intent_ready",
+            "accepted": true,
+            "snapshot_match": true,
+            "parameter_drift": {
+              "declared_overrides": {},
+              "actual": {
+                "path": "typescript_29.ts"
+              },
+              "matches_contract": true
+            },
+            "intent_kind": "workspace.read",
+            "intent_parameters": {
+              "path": "typescript_29.ts"
+            },
+            "workbench_status": "success",
+            "workbench_success": true,
+            "workbench_error_code": "",
+            "failure_recovery_status": "not_triggered"
+          }
+        },
+        {
+          "index": 2,
+          "project_id": "p2-7-holdout-project-b",
+          "path": "typescript_30.ts",
+          "selected_candidate_id": "k1:selected",
+          "target_candidate_id": "k1:selected",
+          "target_hit": true,
+          "action": {
+            "label": "p3-3-k_only",
+            "oracle_control": false,
+            "planner_status": "accepted",
+            "reason_code": "native_read_only_intent_ready",
+            "accepted": true,
+            "snapshot_match": true,
+            "parameter_drift": {
+              "declared_overrides": {},
+              "actual": {
+                "path": "typescript_30.ts"
+              },
+              "matches_contract": true
+            },
+            "intent_kind": "workspace.read",
+            "intent_parameters": {
+              "path": "typescript_30.ts"
+            },
+            "workbench_status": "success",
+            "workbench_success": true,
+            "workbench_error_code": "",
+            "failure_recovery_status": "not_triggered"
+          }
+        },
+        {
+          "index": 3,
+          "project_id": "p2-7-holdout-project-b",
+          "path": "typescript_31.ts",
+          "selected_candidate_id": "k1:selected",
+          "target_candidate_id": "k1:selected",
+          "target_hit": true,
+          "action": {
+            "label": "p3-3-k_only",
+            "oracle_control": false,
+            "planner_status": "accepted",
+            "reason_code": "native_read_only_intent_ready",
+            "accepted": true,
+            "snapshot_match": true,
+            "parameter_drift": {
+              "declared_overrides": {},
+              "actual": {
+                "path": "typescript_31.ts"
+              },
+              "matches_contract": true
+            },
+            "intent_kind": "workspace.read",
+            "intent_parameters": {
+              "path": "typescript_31.ts"
+            },
+            "workbench_status": "success",
+            "workbench_success": true,
+            "workbench_error_code": "",
+            "failure_recovery_status": "not_triggered"
+          }
+        }
+      ]
+    },
+    "g_zero_step": {
+      "count": 4,
+      "target_hit_count": 4,
+      "workbench_success_count": 4,
+      "rows": [
+        {
+          "index": 0,
+          "project_id": "p2-7-holdout-project-a",
+          "path": "typescript_28.ts",
+          "selected_candidate_id": "k1:selected",
+          "target_candidate_id": "k1:selected",
+          "target_hit": true,
+          "action": {
+            "label": "p3-3-g_zero_step",
+            "oracle_control": false,
+            "planner_status": "accepted",
+            "reason_code": "native_read_only_intent_ready",
+            "accepted": true,
+            "snapshot_match": true,
+            "parameter_drift": {
+              "declared_overrides": {},
+              "actual": {
+                "path": "typescript_28.ts"
+              },
+              "matches_contract": true
+            },
+            "intent_kind": "workspace.read",
+            "intent_parameters": {
+              "path": "typescript_28.ts"
+            },
+            "workbench_status": "success",
+            "workbench_success": true,
+            "workbench_error_code": "",
+            "failure_recovery_status": "not_triggered"
+          }
+        },
+        {
+          "index": 1,
+          "project_id": "p2-7-holdout-project-a",
+          "path": "typescript_29.ts",
+          "selected_candidate_id": "k1:selected",
+          "target_candidate_id": "k1:selected",
+          "target_hit": true,
+          "action": {
+            "label": "p3-3-g_zero_step",
+            "oracle_control": false,
+            "planner_status": "accepted",
+            "reason_code": "native_read_only_intent_ready",
+            "accepted": true,
+            "snapshot_match": true,
+            "parameter_drift": {
+              "declared_overrides": {},
+              "actual": {
+                "path": "typescript_29.ts"
+              },
+              "matches_contract": true
+            },
+            "intent_kind": "workspace.read",
+            "intent_parameters": {
+              "path": "typescript_29.ts"
+            },
+            "workbench_status": "success",
+            "workbench_success": true,
+            "workbench_error_code": "",
+            "failure_recovery_status": "not_triggered"
+          }
+        },
+        {
+          "index": 2,
+          "project_id": "p2-7-holdout-project-b",
+          "path": "typescript_30.ts",
+          "selected_candidate_id": "k1:selected",
+          "target_candidate_id": "k1:selected",
+          "target_hit": true,
+          "action": {
+            "label": "p3-3-g_zero_step",
+            "oracle_control": false,
+            "planner_status": "accepted",
+            "reason_code": "native_read_only_intent_ready",
+            "accepted": true,
+            "snapshot_match": true,
+            "parameter_drift": {
+              "declared_overrides": {},
+              "actual": {
+                "path": "typescript_30.ts"
+              },
+              "matches_contract": true
+            },
+            "intent_kind": "workspace.read",
+            "intent_parameters": {
+              "path": "typescript_30.ts"
+            },
+            "workbench_status": "success",
+            "workbench_success": true,
+            "workbench_error_code": "",
+            "failure_recovery_status": "not_triggered"
+          }
+        },
+        {
+          "index": 3,
+          "project_id": "p2-7-holdout-project-b",
+          "path": "typescript_31.ts",
+          "selected_candidate_id": "k1:selected",
+          "target_candidate_id": "k1:selected",
+          "target_hit": true,
+          "action": {
+            "label": "p3-3-g_zero_step",
+            "oracle_control": false,
+            "planner_status": "accepted",
+            "reason_code": "native_read_only_intent_ready",
+            "accepted": true,
+            "snapshot_match": true,
+            "parameter_drift": {
+              "declared_overrides": {},
+              "actual": {
+                "path": "typescript_31.ts"
+              },
+              "matches_contract": true
+            },
+            "intent_kind": "workspace.read",
+            "intent_parameters": {
+              "path": "typescript_31.ts"
+            },
+            "workbench_status": "success",
+            "workbench_success": true,
+            "workbench_error_code": "",
+            "failure_recovery_status": "not_triggered"
+          }
+        }
+      ]
+    },
+    "g_trained": {
+      "count": 4,
+      "target_hit_count": 4,
+      "workbench_success_count": 4,
+      "rows": [
+        {
+          "index": 0,
+          "project_id": "p2-7-holdout-project-a",
+          "path": "typescript_28.ts",
+          "selected_candidate_id": "k1:selected",
+          "target_candidate_id": "k1:selected",
+          "target_hit": true,
+          "action": {
+            "label": "p3-3-g_trained",
+            "oracle_control": false,
+            "planner_status": "accepted",
+            "reason_code": "native_read_only_intent_ready",
+            "accepted": true,
+            "snapshot_match": true,
+            "parameter_drift": {
+              "declared_overrides": {},
+              "actual": {
+                "path": "typescript_28.ts"
+              },
+              "matches_contract": true
+            },
+            "intent_kind": "workspace.read",
+            "intent_parameters": {
+              "path": "typescript_28.ts"
+            },
+            "workbench_status": "success",
+            "workbench_success": true,
+            "workbench_error_code": "",
+            "failure_recovery_status": "not_triggered"
+          }
+        },
+        {
+          "index": 1,
+          "project_id": "p2-7-holdout-project-a",
+          "path": "typescript_29.ts",
+          "selected_candidate_id": "k1:selected",
+          "target_candidate_id": "k1:selected",
+          "target_hit": true,
+          "action": {
+            "label": "p3-3-g_trained",
+            "oracle_control": false,
+            "planner_status": "accepted",
+            "reason_code": "native_read_only_intent_ready",
+            "accepted": true,
+            "snapshot_match": true,
+            "parameter_drift": {
+              "declared_overrides": {},
+              "actual": {
+                "path": "typescript_29.ts"
+              },
+              "matches_contract": true
+            },
+            "intent_kind": "workspace.read",
+            "intent_parameters": {
+              "path": "typescript_29.ts"
+            },
+            "workbench_status": "success",
+            "workbench_success": true,
+            "workbench_error_code": "",
+            "failure_recovery_status": "not_triggered"
+          }
+        },
+        {
+          "index": 2,
+          "project_id": "p2-7-holdout-project-b",
+          "path": "typescript_30.ts",
+          "selected_candidate_id": "k1:selected",
+          "target_candidate_id": "k1:selected",
+          "target_hit": true,
+          "action": {
+            "label": "p3-3-g_trained",
+            "oracle_control": false,
+            "planner_status": "accepted",
+            "reason_code": "native_read_only_intent_ready",
+            "accepted": true,
+            "snapshot_match": true,
+            "parameter_drift": {
+              "declared_overrides": {},
+              "actual": {
+                "path": "typescript_30.ts"
+              },
+              "matches_contract": true
+            },
+            "intent_kind": "workspace.read",
+            "intent_parameters": {
+              "path": "typescript_30.ts"
+            },
+            "workbench_status": "success",
+            "workbench_success": true,
+            "workbench_error_code": "",
+            "failure_recovery_status": "not_triggered"
+          }
+        },
+        {
+          "index": 3,
+          "project_id": "p2-7-holdout-project-b",
+          "path": "typescript_31.ts",
+          "selected_candidate_id": "k1:selected",
+          "target_candidate_id": "k1:selected",
+          "target_hit": true,
+          "action": {
+            "label": "p3-3-g_trained",
+            "oracle_control": false,
+            "planner_status": "accepted",
+            "reason_code": "native_read_only_intent_ready",
+            "accepted": true,
+            "snapshot_match": true,
+            "parameter_drift": {
+              "declared_overrides": {},
+              "actual": {
+                "path": "typescript_31.ts"
+              },
+              "matches_contract": true
+            },
+            "intent_kind": "workspace.read",
+            "intent_parameters": {
+              "path": "typescript_31.ts"
+            },
+            "workbench_status": "success",
+            "workbench_success": true,
+            "workbench_error_code": "",
+            "failure_recovery_status": "not_triggered"
+          }
+        }
+      ]
+    }
+  },
+  "parameter_count": {
+    "k1": 472,
+    "k2": 5176,
+    "g_zero_step": 13,
+    "g_trained": 13
+  },
+  "gate_passed": true,
+  "interpretation": "passed: trained-G behavior generalized to new project/path identities while old classes and safe exits held",
+  "elapsed_seconds": 11.103
+}
