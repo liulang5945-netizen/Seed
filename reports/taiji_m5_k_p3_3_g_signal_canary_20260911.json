@@ -1,0 +1,83 @@
+{
+  "format": "taiji-m5-k-p3-3-g-signal-canary-v1",
+  "version": 1,
+  "status": "completed",
+  "training_performed": false,
+  "fit_called": false,
+  "external_target_used": false,
+  "sealed_payload_read": false,
+  "can_promote": false,
+  "manifest": "E:\\Seed\\plans\\manifests\\taiji_m5_k_p3_3_g_candidate_manifest_v1.json",
+  "p2_6_report": "E:\\Seed\\reports\\taiji_m5_k_p2_6_novel_learning_20260910.json",
+  "p2_6_manifest": "E:\\Seed\\plans\\manifests\\taiji_m5_k_p2_6_novel_learning_manifest_v1.json",
+  "p2_7_manifest": "E:\\Seed\\plans\\manifests\\taiji_m5_k_p2_7_generalization_manifest_v1.json",
+  "p3_2_report": "E:\\Seed\\reports\\taiji_m5_k_p3_2_owner_transfer_20260910.json",
+  "p3_2_manifest": "E:\\Seed\\plans\\manifests\\taiji_m5_k_p3_2_owner_transfer_manifest_v1.json",
+  "run_dir": "E:\\Seed\\output\\taiji_m5_k_p3_3_g_signal_canary_7a079eb516674a6fa0515d130c36d6f5",
+  "manifest_digest": "6ee3b0b5405046a6adf46b4edfa052cd6ae7b9b3a0845ab77b2ffd012e1ed0a7",
+  "checkpoint_preflight": {
+    "k1_restore_digest_equal": true,
+    "k2_restore_digest_equal": true,
+    "passed": true,
+    "independent_process_restore": true,
+    "files": {
+      "k1": {
+        "path": "E:\\Seed\\output\\taiji_m5_k_p3_3_g_signal_canary_7a079eb516674a6fa0515d130c36d6f5\\preflight-parent\\birth_k1_semantic.pt",
+        "bytes": 7665
+      },
+      "k2": {
+        "path": "E:\\Seed\\output\\taiji_m5_k_p3_3_g_signal_canary_7a079eb516674a6fa0515d130c36d6f5\\preflight-parent\\birth_k2_transition.pt",
+        "bytes": 26505
+      }
+    }
+  },
+  "reconstruction": {
+    "manifest_format": "taiji-m5-k-p1-data-manifest-v2",
+    "manifest_digest": "4c6400dc82781b229370e774dcabbb852a81647c787ddbd4eae89819c876f558",
+    "expected_record_count": 460,
+    "rebuilt_record_count": 460,
+    "mismatch_count": 0,
+    "mismatches": [],
+    "passed": true
+  },
+  "signal_gate": {
+    "train_nonempty": true,
+    "validation_nonempty": true,
+    "minimum_two_candidates": true,
+    "target_coverage": true,
+    "target_kind_diversity": true,
+    "score_signal_present": true,
+    "competitive_distractor_present": true,
+    "project_split_disjoint": true,
+    "path_split_disjoint": true,
+    "runtime_target_excluded": true,
+    "sealed_holdout_untouched": true,
+    "passed": true,
+    "train_count": 40,
+    "validation_count": 10,
+    "target_kinds": [
+      "abstain",
+      "pair"
+    ],
+    "candidate_count_min": 2,
+    "candidate_count_max": 2,
+    "nonzero_score_margin_count": 20,
+    "competitive_distractor_count": 30,
+    "train_projects": [
+      "p1-train-project-0",
+      "p1-train-project-1"
+    ],
+    "validation_projects": [
+      "p1-validation-project"
+    ]
+  },
+  "candidate_contract": {
+    "format": "taiji-m5-k-p3-3-g-candidate-manifest-v1",
+    "train_records": 40,
+    "validation_records": 10,
+    "p2_7_holdout_used_for_fit": false,
+    "runtime_target_used": false
+  },
+  "interpretation": "passed: G-only learning may be designed next",
+  "elapsed_seconds": 105.235
+}
