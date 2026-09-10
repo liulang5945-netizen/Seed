@@ -1,0 +1,679 @@
+{
+  "format": "taiji-m5-k-p1-data-contract-audit-v2",
+  "version": 2,
+  "status": "passed",
+  "model_seed": 17,
+  "course_seeds": [
+    0,
+    1,
+    2
+  ],
+  "training_performed": false,
+  "sealed_payload_read": false,
+  "can_start_p2": true,
+  "can_promote": false,
+  "manifest": {
+    "path": "E:\\Seed\\plans\\manifests\\taiji_m5_k_p1_data_manifest_v2.json",
+    "format": "taiji-m5-k-p1-data-manifest-v2",
+    "digest": "4c6400dc82781b229370e774dcabbb852a81647c787ddbd4eae89819c876f558",
+    "record_count": 460
+  },
+  "parent": {
+    "checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+    "worker_bundle_digest": "2606b29a9b853272c2db89ee010b3cf764fe842166214aa9a28b102d409deaa2",
+    "effective_parameter_note": "P1 audits inherited model17; no cross-model generalization claim is required by this gate"
+  },
+  "course_summaries": [
+    {
+      "course_seed": 0,
+      "class_block": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "R"
+      ],
+      "class_counts": {
+        "A": 30,
+        "B": 30,
+        "C": 30,
+        "D": 30,
+        "R": 30
+      },
+      "record_count": 150,
+      "record_digest": "740fea23833c087ea064c0077dd02c5c439e8fba141c2a6ec7e98066d4d9e982",
+      "source_manifest_digest": "79923695aa0cd1a002e54a0792d1574bb354ada8d53d1229309228d5f2c9e583"
+    },
+    {
+      "course_seed": 1,
+      "class_block": [
+        "A",
+        "C",
+        "B",
+        "R",
+        "D"
+      ],
+      "class_counts": {
+        "A": 30,
+        "B": 30,
+        "C": 30,
+        "D": 30,
+        "R": 30
+      },
+      "record_count": 150,
+      "record_digest": "ea9155db861e18e8eb76baa54f00a18d4948d9a25e6a60590fcdb72c561bf249",
+      "source_manifest_digest": "705cb4a78504dcb656f54b1df4e938defbb52942f4ecda124a13f88f9c7a8bc7"
+    },
+    {
+      "course_seed": 2,
+      "class_block": [
+        "B",
+        "A",
+        "D",
+        "C",
+        "R"
+      ],
+      "class_counts": {
+        "A": 30,
+        "B": 30,
+        "C": 30,
+        "D": 30,
+        "R": 30
+      },
+      "record_count": 150,
+      "record_digest": "656c4172fc241e1b544fd2828406985254b4d84d5a9249d0858f71c1e205e197",
+      "source_manifest_digest": "086abe258d9b9236856e8ae0313ec2bd63c771925f9b71b7b6c36da35fbc8131"
+    }
+  ],
+  "class_summary": {
+    "A": {
+      "count": 90,
+      "unique_observation_digests": 90,
+      "unique_template_families": 4,
+      "unique_k1_visible_inputs": 2,
+      "unique_k2_visible_inputs": 2,
+      "unique_k1_raw_inputs": 3,
+      "unique_k2_raw_inputs": 3,
+      "unique_k1_targets": 2,
+      "unique_k2_targets": 2,
+      "repeated_k1_visible_input_count": 88,
+      "repeated_k2_visible_input_count": 88,
+      "template_family_counts": {
+        "89eff4bc448981eeed314b74a756ff924141b2e167db6a982e452f51ea49d937": 15,
+        "917ab1bdcf68958e031bf042e1d2d28f7a5bb3f834a259a8adef6511ecd029e3": 15,
+        "883f64b2e1b9408ccca0685119faf4dfd0a25e4bf8876ab4e04c9bd51135b554": 30,
+        "0c52df04124d4eb1ac0ae9b9781db79ae005b927e44f8e0ebd42d5446feaa4d7": 30
+      }
+    },
+    "B": {
+      "count": 90,
+      "unique_observation_digests": 90,
+      "unique_template_families": 4,
+      "unique_k1_visible_inputs": 2,
+      "unique_k2_visible_inputs": 2,
+      "unique_k1_raw_inputs": 3,
+      "unique_k2_raw_inputs": 3,
+      "unique_k1_targets": 2,
+      "unique_k2_targets": 2,
+      "repeated_k1_visible_input_count": 88,
+      "repeated_k2_visible_input_count": 88,
+      "template_family_counts": {
+        "7eb8c478eefb4d83b7320471ae1aa7319f76965348e851de705b80c32c642f5c": 30,
+        "0fc7039ab93bbca565f9c30350e5f90c7e3b90fda47d9870c97b43ad92d24605": 30,
+        "67ee4ccabe14e76fd0edd0c7febb513da96d76bb2d3e257761386c41e2cbe5a9": 15,
+        "354a8df6966433d17d97f59a9949d859cf681c30123702bdc24c82f2f1dabdd6": 15
+      }
+    },
+    "C": {
+      "count": 90,
+      "unique_observation_digests": 90,
+      "unique_template_families": 4,
+      "unique_k1_visible_inputs": 2,
+      "unique_k2_visible_inputs": 2,
+      "unique_k1_raw_inputs": 3,
+      "unique_k2_raw_inputs": 3,
+      "unique_k1_targets": 2,
+      "unique_k2_targets": 2,
+      "repeated_k1_visible_input_count": 88,
+      "repeated_k2_visible_input_count": 88,
+      "template_family_counts": {
+        "ca7467b09efbfa6dbaaad78e903c7c32d7f384541065b2cb5d1d925733548b45": 30,
+        "001c8d80714da5e441f097ca14776481383805ee9339bf1edba50ad12f3b717e": 30,
+        "482d2b1be57d20b93c6071ac7afe45ea8940a2a9745f13a37d79486f1cc67825": 15,
+        "0e7831ee2939f91158fd700dba1d4b160b1ee4817d837097daaac19406bdb9fe": 15
+      }
+    },
+    "D": {
+      "count": 90,
+      "unique_observation_digests": 90,
+      "unique_template_families": 4,
+      "unique_k1_visible_inputs": 2,
+      "unique_k2_visible_inputs": 2,
+      "unique_k1_raw_inputs": 3,
+      "unique_k2_raw_inputs": 3,
+      "unique_k1_targets": 2,
+      "unique_k2_targets": 2,
+      "repeated_k1_visible_input_count": 88,
+      "repeated_k2_visible_input_count": 88,
+      "template_family_counts": {
+        "3276644c49cd587c3603d7aeb4ef8cf5a5108476535c8243778fc63c999c722c": 30,
+        "6e22b05ca557adef3089c67500fee1ac97f77356ef66787cccb59505b71ff046": 30,
+        "4d5c719f884ba63924465639070e296b8b21fff16c3ef7f108434dbe27aee54b": 15,
+        "777c955bea60935151402962eff77b41381e54fd488b8a3e0f6ed7fd985bc368": 15
+      }
+    },
+    "R": {
+      "count": 90,
+      "unique_observation_digests": 60,
+      "unique_template_families": 2,
+      "unique_k1_visible_inputs": 2,
+      "unique_k2_visible_inputs": 2,
+      "unique_k1_raw_inputs": 2,
+      "unique_k2_raw_inputs": 2,
+      "unique_k1_targets": 2,
+      "unique_k2_targets": 2,
+      "repeated_k1_visible_input_count": 88,
+      "repeated_k2_visible_input_count": 88,
+      "template_family_counts": {
+        "e3aaacd3b43ffacb5691249b2a9cfb60c6915aadc015a9ecd9cf343e4dc10bd5": 45,
+        "8ac52e78602815d803ead82de40ee52e973543f16e11f2296e1019af589bc6a0": 45
+      }
+    }
+  },
+  "validation_class_summary": {
+    "A": {
+      "count": 2,
+      "unique_observation_digests": 2,
+      "unique_template_families": 2,
+      "unique_k1_visible_inputs": 2,
+      "unique_k2_visible_inputs": 2,
+      "unique_k1_raw_inputs": 2,
+      "unique_k2_raw_inputs": 2,
+      "unique_k1_targets": 2,
+      "unique_k2_targets": 2,
+      "repeated_k1_visible_input_count": 0,
+      "repeated_k2_visible_input_count": 0,
+      "template_family_counts": {
+        "6c6b848b0c41493f20fa6eb53dc6078eebe72c2bcaf3848d5cf129907e46f375": 1,
+        "99b686a17d28d2e1d6828904473f1a62674c8ad7c347d21337536ac00256b40e": 1
+      }
+    },
+    "B": {
+      "count": 2,
+      "unique_observation_digests": 2,
+      "unique_template_families": 2,
+      "unique_k1_visible_inputs": 2,
+      "unique_k2_visible_inputs": 2,
+      "unique_k1_raw_inputs": 2,
+      "unique_k2_raw_inputs": 2,
+      "unique_k1_targets": 2,
+      "unique_k2_targets": 2,
+      "repeated_k1_visible_input_count": 0,
+      "repeated_k2_visible_input_count": 0,
+      "template_family_counts": {
+        "12198a7eda3f361962d8d33601d0d7260ebbb71b24978badfc80f5df79cf232a": 1,
+        "5289c090132f6ef356e2f11fab2b082a07305d710e3a7a1e8d3b005c831990e6": 1
+      }
+    },
+    "C": {
+      "count": 2,
+      "unique_observation_digests": 2,
+      "unique_template_families": 2,
+      "unique_k1_visible_inputs": 2,
+      "unique_k2_visible_inputs": 2,
+      "unique_k1_raw_inputs": 2,
+      "unique_k2_raw_inputs": 2,
+      "unique_k1_targets": 2,
+      "unique_k2_targets": 2,
+      "repeated_k1_visible_input_count": 0,
+      "repeated_k2_visible_input_count": 0,
+      "template_family_counts": {
+        "365108e9e9b1809cc4e704fcac803e85e75c8987cabd3c0c3cffad613b2fa33c": 1,
+        "f6682140eb92d4d6ae4546711b36d09c2dbb314a2f50fe7979a9261d38c163c5": 1
+      }
+    },
+    "D": {
+      "count": 2,
+      "unique_observation_digests": 2,
+      "unique_template_families": 2,
+      "unique_k1_visible_inputs": 2,
+      "unique_k2_visible_inputs": 2,
+      "unique_k1_raw_inputs": 2,
+      "unique_k2_raw_inputs": 2,
+      "unique_k1_targets": 2,
+      "unique_k2_targets": 2,
+      "repeated_k1_visible_input_count": 0,
+      "repeated_k2_visible_input_count": 0,
+      "template_family_counts": {
+        "60c79945af718d62fb9ff7780d86f51aa75a81c43d074a3d5ae13c3911e19e20": 1,
+        "42f837433de8f7b700ad4d18e425ac8c5f97af2d0d51d5191a1023d586cdd5bc": 1
+      }
+    },
+    "R": {
+      "count": 2,
+      "unique_observation_digests": 2,
+      "unique_template_families": 2,
+      "unique_k1_visible_inputs": 2,
+      "unique_k2_visible_inputs": 2,
+      "unique_k1_raw_inputs": 2,
+      "unique_k2_raw_inputs": 2,
+      "unique_k1_targets": 2,
+      "unique_k2_targets": 2,
+      "repeated_k1_visible_input_count": 0,
+      "repeated_k2_visible_input_count": 0,
+      "template_family_counts": {
+        "7df8e373389351268dc0a2cbf6740ded9dedb6e2fd1321906f3cbff2336402de": 1,
+        "a5e799f7aa497a85329ea6daeac4d3012690358a15b1c08c3846e6d55620e961": 1
+      }
+    }
+  },
+  "template_summary": {
+    "unique_template_families": 28,
+    "template_family_paths": {
+      "001c8d80714da5e441f097ca14776481383805ee9339bf1edba50ad12f3b717e": [
+        [
+          "typescript_01.ts",
+          "python_01.py",
+          "rust_01.rs"
+        ]
+      ],
+      "0c52df04124d4eb1ac0ae9b9781db79ae005b927e44f8e0ebd42d5446feaa4d7": [
+        [
+          "python_01.py",
+          "rust_01.rs",
+          "python_02.py"
+        ]
+      ],
+      "0e7831ee2939f91158fd700dba1d4b160b1ee4817d837097daaac19406bdb9fe": [
+        [
+          "typescript_01.ts",
+          "python_01.py",
+          "rust_01.rs"
+        ]
+      ],
+      "0fc7039ab93bbca565f9c30350e5f90c7e3b90fda47d9870c97b43ad92d24605": [
+        [
+          "rust_01.rs",
+          "python_01.py",
+          "typescript_01.ts"
+        ]
+      ],
+      "12198a7eda3f361962d8d33601d0d7260ebbb71b24978badfc80f5df79cf232a": [
+        [
+          "rust_04.rs",
+          "python_04.py",
+          "typescript_04.ts"
+        ]
+      ],
+      "3276644c49cd587c3603d7aeb4ef8cf5a5108476535c8243778fc63c999c722c": [
+        [
+          "shared_header.h",
+          "python_00.py",
+          "rust_00.rs"
+        ]
+      ],
+      "354a8df6966433d17d97f59a9949d859cf681c30123702bdc24c82f2f1dabdd6": [
+        [
+          "rust_01.rs",
+          "python_01.py",
+          "typescript_01.ts"
+        ]
+      ],
+      "365108e9e9b1809cc4e704fcac803e85e75c8987cabd3c0c3cffad613b2fa33c": [
+        [
+          "typescript_04.ts",
+          "python_04.py",
+          "rust_04.rs"
+        ]
+      ],
+      "42f837433de8f7b700ad4d18e425ac8c5f97af2d0d51d5191a1023d586cdd5bc": [
+        [
+          "validation_header.h",
+          "python_04.py",
+          "rust_04.rs"
+        ]
+      ],
+      "482d2b1be57d20b93c6071ac7afe45ea8940a2a9745f13a37d79486f1cc67825": [
+        [
+          "typescript_00.ts",
+          "python_00.py",
+          "rust_00.rs"
+        ]
+      ],
+      "4d5c719f884ba63924465639070e296b8b21fff16c3ef7f108434dbe27aee54b": [
+        [
+          "shared_header.h",
+          "python_00.py",
+          "rust_00.rs"
+        ]
+      ],
+      "5289c090132f6ef356e2f11fab2b082a07305d710e3a7a1e8d3b005c831990e6": [
+        [
+          "rust_04.rs",
+          "python_04.py",
+          "typescript_04.ts"
+        ]
+      ],
+      "60c79945af718d62fb9ff7780d86f51aa75a81c43d074a3d5ae13c3911e19e20": [
+        [
+          "validation_header.h",
+          "python_04.py",
+          "rust_04.rs"
+        ]
+      ],
+      "67ee4ccabe14e76fd0edd0c7febb513da96d76bb2d3e257761386c41e2cbe5a9": [
+        [
+          "rust_00.rs",
+          "python_00.py",
+          "typescript_00.ts"
+        ]
+      ],
+      "6c6b848b0c41493f20fa6eb53dc6078eebe72c2bcaf3848d5cf129907e46f375": [
+        [
+          "python_04.py",
+          "rust_04.rs",
+          "python_05.py"
+        ]
+      ],
+      "6e22b05ca557adef3089c67500fee1ac97f77356ef66787cccb59505b71ff046": [
+        [
+          "shared_header_alt.h",
+          "python_01.py",
+          "rust_01.rs"
+        ]
+      ],
+      "777c955bea60935151402962eff77b41381e54fd488b8a3e0f6ed7fd985bc368": [
+        [
+          "shared_header_alt.h",
+          "python_01.py",
+          "rust_01.rs"
+        ]
+      ],
+      "7df8e373389351268dc0a2cbf6740ded9dedb6e2fd1321906f3cbff2336402de": [
+        [
+          "missing_validation.txt",
+          "python_04.py",
+          "rust_04.rs"
+        ]
+      ],
+      "7eb8c478eefb4d83b7320471ae1aa7319f76965348e851de705b80c32c642f5c": [
+        [
+          "rust_00.rs",
+          "python_00.py",
+          "typescript_00.ts"
+        ]
+      ],
+      "883f64b2e1b9408ccca0685119faf4dfd0a25e4bf8876ab4e04c9bd51135b554": [
+        [
+          "python_00.py",
+          "rust_00.rs",
+          "python_01.py"
+        ]
+      ],
+      "89eff4bc448981eeed314b74a756ff924141b2e167db6a982e452f51ea49d937": [
+        [
+          "python_00.py",
+          "rust_00.rs",
+          "python_01.py"
+        ]
+      ],
+      "8ac52e78602815d803ead82de40ee52e973543f16e11f2296e1019af589bc6a0": [
+        [
+          "missing_02.txt",
+          "python_01.py",
+          "rust_01.rs"
+        ]
+      ],
+      "917ab1bdcf68958e031bf042e1d2d28f7a5bb3f834a259a8adef6511ecd029e3": [
+        [
+          "python_01.py",
+          "rust_01.rs",
+          "python_02.py"
+        ]
+      ],
+      "99b686a17d28d2e1d6828904473f1a62674c8ad7c347d21337536ac00256b40e": [
+        [
+          "python_04.py",
+          "rust_04.rs",
+          "python_05.py"
+        ]
+      ],
+      "a5e799f7aa497a85329ea6daeac4d3012690358a15b1c08c3846e6d55620e961": [
+        [
+          "missing_validation.txt",
+          "python_04.py",
+          "rust_04.rs"
+        ]
+      ],
+      "ca7467b09efbfa6dbaaad78e903c7c32d7f384541065b2cb5d1d925733548b45": [
+        [
+          "typescript_00.ts",
+          "python_00.py",
+          "rust_00.rs"
+        ]
+      ],
+      "e3aaacd3b43ffacb5691249b2a9cfb60c6915aadc015a9ecd9cf343e4dc10bd5": [
+        [
+          "missing_01.txt",
+          "python_00.py",
+          "rust_00.rs"
+        ]
+      ],
+      "f6682140eb92d4d6ae4546711b36d09c2dbb314a2f50fe7979a9261d38c163c5": [
+        [
+          "typescript_04.ts",
+          "python_04.py",
+          "rust_04.rs"
+        ]
+      ]
+    },
+    "unique_files": [
+      "missing_00.txt",
+      "missing_01.txt",
+      "missing_02.txt",
+      "missing_validation.txt",
+      "python_00.py",
+      "python_01.py",
+      "python_02.py",
+      "python_04.py",
+      "python_05.py",
+      "rust_00.rs",
+      "rust_01.rs",
+      "rust_04.rs",
+      "shared_header.h",
+      "shared_header_alt.h",
+      "typescript_00.ts",
+      "typescript_01.ts",
+      "typescript_04.ts",
+      "validation_header.h"
+    ],
+    "comment_or_byte_variation_is_template_reuse": true
+  },
+  "typed_mask_contract": {
+    "all_masks_valid": true,
+    "k1_input_dim": 23,
+    "k2_input_dim": 359,
+    "k1_mask_rows": 14,
+    "k2_mask_rows": 14,
+    "mask_spec": {
+      "k1": {
+        "mask_present": true,
+        "mask_valid": true,
+        "rows": 14,
+        "input_width": 23,
+        "allowed_features_per_row": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "k2": {
+        "mask_present": true,
+        "mask_valid": true,
+        "rows": 14,
+        "input_width": 359,
+        "allowed_features_per_row": [
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3
+        ]
+      }
+    },
+    "signature_definition": "per-output-row masked tensor + teacher-forced target/input tensors + K2 before/event/after temporal signature"
+  },
+  "course_actual_input_differences": {
+    "not_metadata_only": {
+      "set_comparison": {
+        "k1": {
+          "0vs1": false,
+          "0vs2": false,
+          "1vs2": false
+        },
+        "k2": {
+          "0vs1": false,
+          "0vs2": false,
+          "1vs2": false
+        }
+      },
+      "sequence_comparison": {
+        "k1": {
+          "0vs1": true,
+          "0vs2": true,
+          "1vs2": true
+        },
+        "k2": {
+          "0vs1": true,
+          "0vs2": true,
+          "1vs2": true
+        }
+      }
+    },
+    "interpretation": "set variation measures state-space coverage; sequence variation measures course-order change. Neither is counted as an independent model replica."
+  },
+  "split_contract": {
+    "train": {
+      "split": "train",
+      "count": 450,
+      "class_coverage": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "R"
+      ],
+      "class_coverage_complete": true,
+      "project_ids": [
+        "p1-train-project-0",
+        "p1-train-project-1"
+      ],
+      "task_kind": "inspect-language",
+      "source": "build_taiji_m5_k_p1_data.build_train_course"
+    },
+    "validation": {
+      "split": "validation",
+      "count": 10,
+      "class_coverage": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "R"
+      ],
+      "class_coverage_complete": true,
+      "missing_classes": [],
+      "project_ids": [
+        "p1-validation-project"
+      ],
+      "project_disjoint_from_train": true,
+      "template_disjoint_from_train": true,
+      "source": "build_taiji_m5_k_p1_data.build_validation_course"
+    },
+    "test": {
+      "new_read": false,
+      "prior_sealed_history": [
+        {
+          "path": "plans/manifests/taiji_m4v2_b3_k_c_sealed_test_v1.json",
+          "state": "consumed-by-prior-evaluation"
+        },
+        {
+          "path": "plans/manifests/taiji_m4v2_b3_k_c_sealed_test_v2.json",
+          "state": "consumed-by-prior-evaluation"
+        },
+        {
+          "path": "plans/manifests/taiji_m5_k_v4_sealed_test_v3.json",
+          "state": "consumed-by-prior-evaluation"
+        },
+        {
+          "path": "plans/manifests/taiji_m4v2_c_stage_sealed_test_v4.json",
+          "state": "consumed-by-prior-evaluation"
+        },
+        {
+          "path": "plans/manifests/taiji_m4v2_c_stage_sealed_test_v5.json",
+          "state": "consumed-by-prior-evaluation"
+        }
+      ],
+      "policy": "do not read another sealed payload until candidate, scorer, thresholds, resource budget, and final input manifest are frozen"
+    }
+  },
+  "model_independence": {
+    "model_seeds": [
+      17,
+      23,
+      31
+    ],
+    "state_digests": {
+      "k1.semantic": {
+        "17": "5eed7b8cea02095f5ede55b652fd6112173e3ebde891f684e21b98a49b7104de",
+        "23": "5eed7b8cea02095f5ede55b652fd6112173e3ebde891f684e21b98a49b7104de",
+        "31": "5eed7b8cea02095f5ede55b652fd6112173e3ebde891f684e21b98a49b7104de"
+      },
+      "k2.transition": {
+        "17": "5b913c82b62c7df411b0143ee1a88333652a8e6bf64ec73355e5bc3a448b65ed",
+        "23": "5b913c82b62c7df411b0143ee1a88333652a8e6bf64ec73355e5bc3a448b65ed",
+        "31": "5b913c82b62c7df411b0143ee1a88333652a8e6bf64ec73355e5bc3a448b65ed"
+      }
+    },
+    "pairwise_max_abs": {
+      "k1.semantic": {
+        "17vs23": 0.0,
+        "17vs31": 0.0,
+        "23vs31": 0.0
+      },
+      "k2.transition": {
+        "17vs23": 0.0,
+        "17vs31": 0.0,
+        "23vs31": 0.0
+      }
+    },
+    "all_worker_states_pairwise_distinct": false,
+    "interpretation": "replicas share identical effective state_dict values; do not count model seed as independent sample",
+    "required_by_p1_gate": false
+  },
+  "gate": {
+    "passed": true,
+    "blocking_reasons": [],
+    "decision": "P2 validation pilot may start after candidate/scorer/threshold/resource freeze"
+  }
+}

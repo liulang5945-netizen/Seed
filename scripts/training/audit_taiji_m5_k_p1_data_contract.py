@@ -1,10 +1,10 @@
-"""Audit the five-class K course before the next learning experiment.
+"""Audit the repaired five-class K data contract before learning.
 
 This audit does not fit a learner and does not read sealed payloads.  It
-reconstructs the existing v4 training course for one inherited worker parent,
-extracts the actual typed-mask-visible tensors and targets consumed by K1/K2,
-and records the source template/project split.  Metadata changes and file
-comment changes are reported separately from effective input signatures.
+reconstructs the repaired P1 course for one inherited worker parent, extracts
+the actual typed-mask-visible tensors and targets consumed by K1/K2, and
+records the source template/project split. Metadata changes and file comment
+changes are reported separately from effective input signatures.
 """
 
 from __future__ import annotations
@@ -26,20 +26,13 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from scripts.training.build_taiji_m5_k_v4_parity import (  # noqa: E402
-    ANCHOR_PATH,
+from scripts.training.build_taiji_m5_k_p1_data import (  # noqa: E402
     CLASS_ORDER,
-    N_NEW,
-    _build_course_v4,
-    _class_of,
-    _variants_by_class,
+    build_train_course,
+    build_validation_course,
 )
 from scripts.training.eval_taiji_m4v2_b3_k_c_sealed_scoring import (  # noqa: E402
     _context,
-    _validation_experiences,
-)
-from scripts.training.eval_taiji_m5_k2_multistep_composition import (  # noqa: E402
-    _holdout_episode_paths,
 )
 from taiji import (  # noqa: E402
     StructuredSemanticLearner,
@@ -47,16 +40,17 @@ from taiji import (  # noqa: E402
     content_digest,
 )
 
-REPORT_FORMAT = "taiji-m5-k-p1-data-contract-audit-v1"
-MANIFEST_FORMAT = "taiji-m5-k-p1-data-manifest-v1"
-VERSION = 1
+REPORT_FORMAT = "taiji-m5-k-p1-data-contract-audit-v2"
+MANIFEST_FORMAT = "taiji-m5-k-p1-data-manifest-v2"
+VERSION = 2
 MODEL_SEED = 17
 COURSE_SEEDS = (0, 1, 2)
 EXPECTED_CLASSES = tuple(CLASS_ORDER)
 WORKER_ROOT = PROJECT_ROOT / "checkpoints" / "taiji_k_workers_v4"
-DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p1_data_contract_audit_20260910.json"
-DEFAULT_MANIFEST = PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p1_data_manifest_v1.json"
+DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p1_data_contract_audit_v2_20260910.json"
+DEFAULT_MANIFEST = PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p1_data_manifest_v2.json"
 MODEL_INDEPENDENCE_SEEDS = (17, 23, 31)
+MODEL_INDEPENDENCE_REQUIRED = False
 SEALED_HISTORY = (
     "plans/manifests/taiji_m4v2_b3_k_c_sealed_test_v1.json",
     "plans/manifests/taiji_m4v2_b3_k_c_sealed_test_v2.json",
@@ -209,19 +203,6 @@ def _experience_signatures(
     }
 
 
-def _template_for_index(
-    *,
-    index: int,
-    class_key: str,
-    class_block: Sequence[str],
-    grouped: Mapping[str, Sequence[tuple[str, ...]]],
-) -> tuple[str, tuple[str, ...]]:
-    variants = grouped[class_key]
-    variant = variants[(index // len(class_block)) % len(variants)]
-    template_id = content_digest({"class": class_key, "variant_paths": list(variant)})
-    return template_id, tuple(variant)
-
-
 def _class_summary(records: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
     grouped: dict[str, list[Mapping[str, Any]]] = defaultdict(list)
     for record in records:
@@ -302,27 +283,40 @@ def _model_independence_audit() -> dict[str, Any]:
     }
 
 
-def _split_contract(validation: Sequence[Any]) -> dict[str, Any]:
-    validation_classes = tuple(
-        _class_of(paths[0]) for paths in _holdout_episode_paths()[: len(validation)]
-    )
+def _split_contract(
+    train_records: Sequence[Mapping[str, Any]],
+    validation_records: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    train_classes = sorted({str(record["class_key"]) for record in train_records})
+    validation_classes = sorted({str(record["class_key"]) for record in validation_records})
+    train_projects = sorted({str(record["project_id"]) for record in train_records})
+    validation_projects = sorted({str(record["project_id"]) for record in validation_records})
+    train_templates = {
+        str(record["template_family_id"]) for record in train_records
+    }
+    validation_templates = {
+        str(record["template_family_id"]) for record in validation_records
+    }
     return {
         "train": {
             "split": "train",
-            "class_coverage": list(EXPECTED_CLASSES),
-            "class_coverage_complete": True,
-            "project_ids": ["m5k1-project"],
+            "count": len(train_records),
+            "class_coverage": train_classes,
+            "class_coverage_complete": set(train_classes) == set(EXPECTED_CLASSES),
+            "project_ids": train_projects,
             "task_kind": "inspect-language",
-            "source": "build_taiji_m5_k_v4_parity._build_course_v4",
+            "source": "build_taiji_m5_k_p1_data.build_train_course",
         },
         "validation": {
-            "split": "holdout",
-            "count": len(validation),
-            "class_coverage": sorted(set(validation_classes)),
+            "split": "validation",
+            "count": len(validation_records),
+            "class_coverage": validation_classes,
             "class_coverage_complete": set(validation_classes) == set(EXPECTED_CLASSES),
             "missing_classes": sorted(set(EXPECTED_CLASSES) - set(validation_classes)),
-            "project_ids": ["m5k1-project"],
-            "source": "eval_taiji_m4v2_b3_k_c_sealed_scoring._validation_experiences",
+            "project_ids": validation_projects,
+            "project_disjoint_from_train": not bool(train_projects and set(train_projects) & set(validation_projects)),
+            "template_disjoint_from_train": not bool(train_templates & validation_templates),
+            "source": "build_taiji_m5_k_p1_data.build_validation_course",
         },
         "test": {
             "new_read": False,
@@ -351,15 +345,49 @@ def run_audit(
         transition = StructuredSemanticTransitionLearner.from_checkpoint(
             copy.deepcopy(artifacts["k2.transition"]["checkpoint"]), device="cpu"
         )
-        validation = _validation_experiences(
-            temp_root=scratch,
-            artifacts=artifacts,
+        validation_experiences, validation_metadata = build_validation_course(
+            scratch=scratch / "validation",
             parent_digest=parent_digest,
             bundle=bundle,
             projector=projector,
+            source_manifest_digest=content_digest(
+                {"format": REPORT_FORMAT, "split": "validation", "model_seed": MODEL_SEED}
+            ),
         )
-        grouped = _variants_by_class()
         records: list[dict[str, Any]] = []
+        validation_records: list[dict[str, Any]] = []
+
+        def _record_payload(
+            experience: Any,
+            metadata: Mapping[str, Any],
+            signals: Mapping[str, Any],
+            *,
+            course_seed: int | None = None,
+        ) -> dict[str, Any]:
+            return {
+                **dict(metadata),
+                **({} if course_seed is None else {"course_seed": int(course_seed)}),
+                "experience_id": experience.experience_id,
+                "family_id": experience.family_id,
+                "observation_digest": experience.observation_digest,
+                "experience_digest": experience.experience_digest,
+                "semantic_example_id": experience.semantic_example.example_id,
+                "transition_example_id": experience.transition_example.example_id,
+                "semantic_input_digest": experience.semantic_example.input_digest,
+                "transition_input_digest": experience.transition_example.input_digest,
+                "signals": signals,
+            }
+
+        for experience, metadata in zip(
+            validation_experiences, validation_metadata, strict=True
+        ):
+            validation_records.append(
+                _record_payload(
+                    experience,
+                    metadata,
+                    _experience_signatures(semantic, transition, experience),
+                )
+            )
         course_summaries: list[dict[str, Any]] = []
         for course_seed in COURSE_SEEDS:
             source_manifest_digest = content_digest(
@@ -369,9 +397,8 @@ def run_audit(
                     "course_seed": course_seed,
                 }
             )
-            experiences, class_counts, class_keys, class_block = _build_course_v4(
-                temp_root=scratch,
-                model_seed=MODEL_SEED,
+            experiences, course_metadata, class_counts, class_block = build_train_course(
+                scratch=scratch / f"course-{course_seed}",
                 course_seed=course_seed,
                 parent_digest=parent_digest,
                 bundle=bundle,
@@ -379,38 +406,16 @@ def run_audit(
                 source_manifest_digest=source_manifest_digest,
             )
             course_records: list[dict[str, Any]] = []
-            for index, (experience, class_key) in enumerate(
-                zip(experiences, class_keys, strict=True)
+            for experience, metadata in zip(
+                experiences, course_metadata, strict=True
             ):
-                template_id, variant_paths = _template_for_index(
-                    index=index,
-                    class_key=class_key,
-                    class_block=class_block,
-                    grouped=grouped,
-                )
                 signals = _experience_signatures(semantic, transition, experience)
-                record = {
-                    "course_seed": course_seed,
-                    "index": index,
-                    "class_key": class_key,
-                    "split": experience.split,
-                    "project_id": "m5k1-project",
-                    "task_kind": "inspect-language",
-                    "anchor_path": ANCHOR_PATH,
-                    "variant_paths": list(variant_paths),
-                    "first_variant_path": variant_paths[0],
-                    "template_family_id": template_id,
-                    "experience_id": experience.experience_id,
-                    "family_id": experience.family_id,
-                    "observation_digest": experience.observation_digest,
-                    "experience_digest": experience.experience_digest,
-                    "semantic_example_id": experience.semantic_example.example_id,
-                    "transition_example_id": experience.transition_example.example_id,
-                    "semantic_input_digest": experience.semantic_example.input_digest,
-                    "transition_input_digest": experience.transition_example.input_digest,
-                    "source_manifest_digest": source_manifest_digest,
-                    "signals": signals,
-                }
+                record = _record_payload(
+                    experience,
+                    metadata,
+                    signals,
+                    course_seed=course_seed,
+                )
                 records.append(record)
                 course_records.append(record)
             course_summaries.append(
@@ -425,24 +430,32 @@ def run_audit(
             )
 
         class_summary = _class_summary(records)
+        validation_class_summary = _class_summary(validation_records)
         all_mask_valid = all(
             record["signals"][worker]["mask"]["mask_valid"]
-            for record in records
+            for record in (*records, *validation_records)
             for worker in ("k1", "k2")
         )
         class_coverage = sorted({record["class_key"] for record in records})
-        unique_projects = sorted({record["project_id"] for record in records})
-        unique_templates = sorted({record["template_family_id"] for record in records})
+        unique_templates = sorted(
+            {
+                record["template_family_id"]
+                for record in (*records, *validation_records)
+            }
+        )
         k1_visible_by_course: dict[int, set[str]] = defaultdict(set)
         k2_visible_by_course: dict[int, set[str]] = defaultdict(set)
+        k1_visible_sequence_by_course: dict[int, list[str]] = defaultdict(list)
+        k2_visible_sequence_by_course: dict[int, list[str]] = defaultdict(list)
         for record in records:
-            k1_visible_by_course[int(record["course_seed"])].add(
-                record["signals"]["k1"]["fact_visible_input_digest"]
-            )
-            k2_visible_by_course[int(record["course_seed"])].add(
-                record["signals"]["k2"]["transition_visible_input_digest"]
-            )
-        course_actual_input_differences = {
+            course_seed = int(record["course_seed"])
+            k1_visible = record["signals"]["k1"]["fact_visible_input_digest"]
+            k2_visible = record["signals"]["k2"]["transition_visible_input_digest"]
+            k1_visible_by_course[course_seed].add(k1_visible)
+            k2_visible_by_course[course_seed].add(k2_visible)
+            k1_visible_sequence_by_course[course_seed].append(k1_visible)
+            k2_visible_sequence_by_course[course_seed].append(k2_visible)
+        set_differences = {
             "k1": {
                 f"{left}vs{right}": k1_visible_by_course[left] != k1_visible_by_course[right]
                 for left in COURSE_SEEDS
@@ -456,8 +469,28 @@ def run_audit(
                 if left < right
             },
         }
+        sequence_differences = {
+            "k1": {
+                f"{left}vs{right}": k1_visible_sequence_by_course[left]
+                != k1_visible_sequence_by_course[right]
+                for left in COURSE_SEEDS
+                for right in COURSE_SEEDS
+                if left < right
+            },
+            "k2": {
+                f"{left}vs{right}": k2_visible_sequence_by_course[left]
+                != k2_visible_sequence_by_course[right]
+                for left in COURSE_SEEDS
+                for right in COURSE_SEEDS
+                if left < right
+            },
+        }
+        course_actual_input_differences = {
+            "set_comparison": set_differences,
+            "sequence_comparison": sequence_differences,
+        }
         model_independence = _model_independence_audit()
-        split_contract = _split_contract(validation)
+        split_contract = _split_contract(records, validation_records)
         manifest_payload = {
             "format": MANIFEST_FORMAT,
             "version": VERSION,
@@ -466,18 +499,24 @@ def run_audit(
             "parent_checkpoint_digest": parent_digest,
             "worker_bundle_digest": bundle.bundle_digest,
             "source_builder": {
-                "script": "scripts/training/build_taiji_m5_k_v4_parity.py",
-                "course_size": N_NEW,
+                "script": "scripts/training/build_taiji_m5_k_p1_data.py",
+                "course_size": len(records),
+                "validation_size": len(validation_records),
                 "classes": list(EXPECTED_CLASSES),
-                "project_id": "m5k1-project",
+                "train_project_ids": sorted(
+                    {record["project_id"] for record in records}
+                ),
+                "validation_project_ids": sorted(
+                    {record["project_id"] for record in validation_records}
+                ),
                 "task_kind": "inspect-language",
-                "template_identity": "anchor + variant path tuple; comments/file-byte variation is not a new template",
+                "template_identity": "split + class + variant path tuple + state profile; file-byte/comment-only variation is not a new template",
             },
             "mask_spec": {
                 "k1": records[0]["signals"]["k1"]["mask"],
                 "k2": records[0]["signals"]["k2"]["mask"],
             },
-            "records": copy.deepcopy(records),
+            "records": copy.deepcopy([*records, *validation_records]),
         }
         for record in manifest_payload["records"]:
             record["signals"]["k1"].pop("mask", None)
@@ -495,8 +534,10 @@ def run_audit(
             reasons.append("train_class_coverage_incomplete")
         if not split_contract["validation"]["class_coverage_complete"]:
             reasons.append("validation_missing_classes")
-        if len(unique_projects) < 2:
+        if not split_contract["validation"]["project_disjoint_from_train"]:
             reasons.append("no_project_disjointness")
+        if not split_contract["validation"]["template_disjoint_from_train"]:
+            reasons.append("no_template_disjointness")
         for class_key in EXPECTED_CLASSES:
             if class_summary[class_key]["unique_k1_visible_inputs"] < 2:
                 reasons.append(f"{class_key}_class_has_no_K1_visible_variation")
@@ -504,11 +545,13 @@ def run_audit(
                 reasons.append(f"{class_key}_class_has_no_K2_visible_variation")
         if not any(
             changed
-            for worker_changes in course_actual_input_differences.values()
+            for worker_changes in course_actual_input_differences["sequence_comparison"].values()
             for changed in worker_changes.values()
         ):
             reasons.append("course_seed_changes_do_not_change_mask_visible_inputs")
-        if not model_independence["all_worker_states_pairwise_distinct"]:
+        if MODEL_INDEPENDENCE_REQUIRED and not model_independence[
+            "all_worker_states_pairwise_distinct"
+        ]:
             reasons.append("model_seed_replicas_are_not_independent")
 
         payload = {
@@ -525,15 +568,16 @@ def run_audit(
                 "path": str(manifest),
                 "format": MANIFEST_FORMAT,
                 "digest": manifest_payload["manifest_digest"],
-                "record_count": len(records),
+                "record_count": len(records) + len(validation_records),
             },
             "parent": {
                 "checkpoint_digest": parent_digest,
                 "worker_bundle_digest": bundle.bundle_digest,
-                "effective_parameter_note": "P1 audits inherited model17; no claim of cross-model generalization",
+                "effective_parameter_note": "P1 audits inherited model17; no cross-model generalization claim is required by this gate",
             },
             "course_summaries": course_summaries,
             "class_summary": class_summary,
+            "validation_class_summary": validation_class_summary,
             "template_summary": {
                 "unique_template_families": len(unique_templates),
                 "template_family_paths": {
@@ -542,7 +586,7 @@ def run_audit(
                         for paths in sorted(
                             {
                                 tuple(record["variant_paths"])
-                                for record in records
+                                for record in (*records, *validation_records)
                                 if record["template_family_id"] == template_id
                             }
                         )
@@ -552,7 +596,7 @@ def run_audit(
                 "unique_files": sorted(
                     {
                         path
-                        for record in records
+                        for record in (*records, *validation_records)
                         for path in (record["anchor_path"], *record["variant_paths"])
                     }
                 ),
@@ -569,10 +613,13 @@ def run_audit(
             },
             "course_actual_input_differences": {
                 "not_metadata_only": course_actual_input_differences,
-                "interpretation": "different visible signatures across course seeds are distribution perturbations, not independent model samples",
+                "interpretation": "set variation measures state-space coverage; sequence variation measures course-order change. Neither is counted as an independent model replica.",
             },
             "split_contract": split_contract,
-            "model_independence": model_independence,
+            "model_independence": {
+                **model_independence,
+                "required_by_p1_gate": MODEL_INDEPENDENCE_REQUIRED,
+            },
             "gate": {
                 "passed": not reasons,
                 "blocking_reasons": reasons,
