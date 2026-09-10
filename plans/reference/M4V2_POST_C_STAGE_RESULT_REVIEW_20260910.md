@@ -175,3 +175,17 @@ P2.1 把问题进一步分层：6/10 行在 native readout 之前就因输入证
 | 隔离与寻址 | project/path/template disjoint；record/manifest digest 通过 | 可以进入训练前 checkpoint Gate |
 
 这一步修复的是数据入口，不是模型能力。下一步唯一执行项是 P2.3 targeted learning pilot：从同一 P2 parent 继承，先做 checkpoint 保存和独立进程恢复，再只用 train candidate examples 学习；原 P1 v2 五类 validation、P2.3 validation candidate、6 条低证据安全 abstention 和 Workbench 结果分账评分。host `workspace.list` 不计入 K1/K2 命中，也不降低全局 `0.55` floor。
+
+## 12. P2.3 targeted learning 结果（2026-09-10）
+
+随后运行了 [P2.3 targeted learning pilot](../../scripts/training/eval_taiji_m5_k_p2_3_targeted_learning.py)，报告见 [P2.3 targeted pilot report](../../reports/taiji_m5_k_p2_3_targeted_learning_pilot_20260910.json)。它从同一 P2 parent 构造 `parent-frozen`、`continuation-targeted` 和已保存的 `p2-wake-only-reference` 三臂；训练前 parent checkpoint 和三臂保存后的独立进程恢复均通过。只对 P2.3 的 6 条 train candidate 做 fit，2 条 continuation validation 和原 P1 v2 validation 均只读；没有读取 sealed payload。
+
+| 指标 | parent-frozen | continuation-targeted | p2-wake-only-reference |
+|---|---:|---:|---:|
+| P2.3 continuation K1/K2 goal 命中 | 2/2 | 2/2 | 2/2 |
+| P2.3 continuation Workbench 成功 | 2/2 | 2/2 | 2/2 |
+| 原 P1 v2 高/低证据 K1 goal 命中 | 4/10；安全 abstain 6/10 | 1/10；安全 abstain 6/10 | 4/10；安全 abstain 6/10 |
+| 原 P1 v2 K2 goal 命中 | 4/10 | 3/10 | 4/10 |
+| 原 P1 v2 Workbench 成功 | 3/10 | 3/10 | 4/10 |
+
+结论不是“训练成功”：parent 已经能完成新 candidate validation 的 2/2，candidate-only fit 没有增加可测能力，却使 B/C/D 等旧高证据读出发生干扰；安全 abstention 6/6 保持。故 `can_promote=false`，也不进入 P3。当前失败层已从数据合同推进到 online update 的 retention/objective：下一步唯一执行项是 P2.4，用 P2 合同中固定的 50 条均衡 rehearsal 与 6 条 continuation 做确定性交错 canary，先验证不遗忘，再判断是否存在真实新增能力。
