@@ -75,6 +75,10 @@ widened-candidate 已实现并构建（`taiji/k_widened.py` 的 `WidenedKBundle`
 
 **当前唯一下一步**：parity 口径修正决策——先冻结「实际新增参数更新步数」的独立计量（把继承步数从 parity 硬门中分离，fixed-large 与 candidate 同口径重述），再对 model31/course1 的零差分归因（parent 收敛 → 顺序通道无信息）选择：失败 episode 进入课程（S6B 失败准入遗产）或更强的新增预算课程；两者都需 manifest 修订预注册。决策前不进入 sealed 评分、不训练、不改 distinct 门。
 
+parity 口径修正与修复路线已冻结：[M4V2_B3_K_C_PARITY_CALIBER_REVISION_20260910.md](../../reference/M4V2_B3_K_C_PARITY_CALIBER_REVISION_20260910.md)。机器证据钉死口径：parent K1/K2 = 2080/5040 步，fixed-large replica 与 widened 每通道都只新增 3+3=6 步（3 train experiences × 1 epoch），**两臂真实新增均为 12 步/cell 且恰好相等**——旧口径的 14,252 中 14,240 是继承步数，掩盖了真实预算语义。新口径冻结：inherited/new 分离、双臂只用 `new_update_steps` 比较、旧 JSON 保留 + 只读重述审计、硬门替换。修复路线冻结：**更强新增预算课程**——每 cell 150 个 parent 未见过的新 experiences（新 task_seed 变体），双臂同流新增 600 步/cell 且任何 n 下自动相等；失败 episode 作为正交变量不引入。停止线：重述审计发现新增不等、新课程仍零差分、或触碰 holdout/sealed 词汇边界即停。
+
+**当前唯一下下一步**：实现口径重述审计 + 新增预算课程 manifest v2（n_new=150，K3-anchored 排序见证延续），然后双臂重跑 widened/fixed-large build 过三硬门 + distinct 门；通过前不读 sealed、不训练 parent、不改 distinct 门。
+
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 
 **B2 保存先于训练。** 先在 CPU 检查父 checkpoint 可恢复；保存 fast/slow、replay、学习器状态（若使用 optimizer 则含其状态）、RNG、课程游标和 owner lineage。新进程恢复后预测等价；单步更新后保存/恢复/再更新，与不中断轨迹在预先声明容差内一致。检查磁盘空间、原子写和 rollback；任何失败禁止长跑，不覆盖父代。
