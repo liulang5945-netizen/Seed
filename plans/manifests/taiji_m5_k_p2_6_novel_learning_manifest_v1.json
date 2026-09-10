@@ -1,0 +1,3788 @@
+{
+  "format": "taiji-m5-k-p2-6-novel-learning-manifest-v1",
+  "version": 1,
+  "source_p1_manifest_digest": "4c6400dc82781b229370e774dcabbb852a81647c787ddbd4eae89819c876f558",
+  "source_p2_5_manifest_digest": "a40ee15850afccb7c7c6243f71f8883c82139c72b6758957058205be8a45e151",
+  "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+  "novel_tuple_contract": {
+    "recovery_phase": "after_workspace_list",
+    "language_id": "typescript",
+    "toolchain_available": true,
+    "selection_state": "resolved",
+    "content_id": "content:inspect-language",
+    "candidate_paths_must_be_disjoint_from_prior": true
+  },
+  "train_records": [
+    {
+      "record_id": "p2-6-novel-train-0000",
+      "split": "train",
+      "index": 0,
+      "class_key": "R-novel-composition",
+      "project_id": "p2-6-train-project-0",
+      "template_family_id": "08fb57ca1dd2dd217c5d9dd7ea3aef6a87602aecb24f766a0f61fcfade906fba",
+      "source_p1_manifest_digest": "4c6400dc82781b229370e774dcabbb852a81647c787ddbd4eae89819c876f558",
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "novel_tuple": {
+        "recovery_phase": "after_workspace_list",
+        "language_id": "typescript",
+        "toolchain_available": true,
+        "selection_state": "resolved",
+        "content_id": "content:inspect-language"
+      },
+      "initial": {
+        "observation": {
+          "format": "taiji-workbench-observation-v1",
+          "version": 1,
+          "observation_id": "m5k1:p2-6:train:0:initial:missing_novel.txt",
+          "project_id": "p2-6-train-project-0",
+          "task_id": "p2-6-train-project-0:missing_novel.txt",
+          "capability_snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+          "capability_revision": 6,
+          "path": "missing_novel.txt",
+          "file_digest": "",
+          "read_success": false,
+          "file_is_file": false,
+          "byte_length": 0,
+          "language_id": "unknown",
+          "selection_state": "unknown",
+          "language_confidence": 0.0,
+          "toolchain_available": false,
+          "task_kind": "inspect-language",
+          "diagnostics_connected": false,
+          "schema": {
+            "format": "taiji-workbench-observation-v1",
+            "version": 1,
+            "language_ids": [
+              "python",
+              "rust",
+              "typescript",
+              "unknown"
+            ],
+            "selection_states": [
+              "ambiguous",
+              "resolved",
+              "unknown"
+            ],
+            "task_kinds": [
+              "inspect-language"
+            ],
+            "extensions": [
+              ".h",
+              ".py",
+              ".rs",
+              ".ts",
+              "<none>"
+            ],
+            "feature_names": [
+              "language:python",
+              "language:rust",
+              "language:typescript",
+              "language:unknown",
+              "selection:ambiguous",
+              "selection:resolved",
+              "selection:unknown",
+              "task:inspect-language",
+              "extension:.h",
+              "extension:.py",
+              "extension:.rs",
+              "extension:.ts",
+              "extension:<none>",
+              "read_success",
+              "file_is_file",
+              "byte_length_fraction",
+              "language_confidence",
+              "toolchain_available",
+              "diagnostics_connected"
+            ],
+            "feature_dim": 19,
+            "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3"
+          },
+          "observation_digest": "fa8e25b3b33d13cf97d7826c1201c140e980073982e9c114e4d126ce33875e87"
+        },
+        "percept": {
+          "version": 1,
+          "event_id": "workbench-observation:fa8e25b3b33d13cf97d7826c1201c140",
+          "observation_tick": 1,
+          "modality": "taiji-workbench-observation-v1",
+          "features": {
+            "__tensor__": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              1.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "assembly_id": "workbench-assembly:fa8e25b3b33d13cf97d7826c1201c140",
+          "duration": 1,
+          "boundary_score": 1.0,
+          "prediction_error": 1.0,
+          "boundary": true,
+          "confidence": 0.0
+        },
+        "next_step": "workspace.list",
+        "fit_eligible": false
+      },
+      "candidate": {
+        "observation": {
+          "format": "taiji-workbench-observation-v1",
+          "version": 1,
+          "observation_id": "m5k1:p2-6:train:0:candidate:typescript_20.ts",
+          "project_id": "p2-6-train-project-0",
+          "task_id": "p2-6-train-project-0:typescript_20.ts",
+          "capability_snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+          "capability_revision": 6,
+          "path": "typescript_20.ts",
+          "file_digest": "295853b7ba94a79c71c70fdaa929229191381ba484900e21e7f3655f904e0229",
+          "read_success": true,
+          "file_is_file": true,
+          "byte_length": 123,
+          "language_id": "typescript",
+          "selection_state": "resolved",
+          "language_confidence": 0.99,
+          "toolchain_available": true,
+          "task_kind": "inspect-language",
+          "diagnostics_connected": false,
+          "schema": {
+            "format": "taiji-workbench-observation-v1",
+            "version": 1,
+            "language_ids": [
+              "python",
+              "rust",
+              "typescript",
+              "unknown"
+            ],
+            "selection_states": [
+              "ambiguous",
+              "resolved",
+              "unknown"
+            ],
+            "task_kinds": [
+              "inspect-language"
+            ],
+            "extensions": [
+              ".h",
+              ".py",
+              ".rs",
+              ".ts",
+              "<none>"
+            ],
+            "feature_names": [
+              "language:python",
+              "language:rust",
+              "language:typescript",
+              "language:unknown",
+              "selection:ambiguous",
+              "selection:resolved",
+              "selection:unknown",
+              "task:inspect-language",
+              "extension:.h",
+              "extension:.py",
+              "extension:.rs",
+              "extension:.ts",
+              "extension:<none>",
+              "read_success",
+              "file_is_file",
+              "byte_length_fraction",
+              "language_confidence",
+              "toolchain_available",
+              "diagnostics_connected"
+            ],
+            "feature_dim": 19,
+            "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3"
+          },
+          "observation_digest": "bcc4721edb61d0bb098ded9a93b2fdfdf044f9d84763389792150039864f1024"
+        },
+        "semantic_example": {
+          "example_id": "m5k1:p2-6-train-0000:typescript_20.ts",
+          "family_id": "m5k1:p2-6-train-0000",
+          "percept": {
+            "version": 1,
+            "event_id": "workbench-observation:bcc4721edb61d0bb098ded9a93b2fdfd",
+            "observation_tick": 2,
+            "modality": "taiji-workbench-observation-v1",
+            "features": {
+              "__tensor__": [
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                1.0,
+                0.030029296875,
+                0.9900000095367432,
+                1.0,
+                0.0
+              ]
+            },
+            "assembly_id": "workbench-assembly:bcc4721edb61d0bb098ded9a93b2fdfd",
+            "duration": 32,
+            "boundary_score": 1.0,
+            "prediction_error": 0.0,
+            "boundary": true,
+            "confidence": 0.99
+          },
+          "world": {
+            "version": 1,
+            "tick": 2,
+            "latent": {
+              "__tensor__": []
+            },
+            "entities": [
+              "workbench"
+            ],
+            "relations": [
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "language",
+                "typescript"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "available"
+              ],
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ]
+            ],
+            "objects": [],
+            "events": [],
+            "affordances": [],
+            "uncertainty": 0.0,
+            "percept_event_id": "workbench-observation:bcc4721edb61d0bb098ded9a93b2fdfd",
+            "percept_assembly_id": "workbench-assembly:bcc4721edb61d0bb098ded9a93b2fdfd",
+            "percept_boundary_closed": false
+          },
+          "goal": {
+            "version": 1,
+            "goal_id": "goal:inspect-language",
+            "description": "Report verified language and toolchain facts.",
+            "priority": 0.9,
+            "progress": 0.0
+          },
+          "content": {
+            "content_id": "content:inspect-language",
+            "intent_id": "intent:inspect-language",
+            "intent_kind": "report",
+            "semantic_slots": {
+              "observed_language": "typescript",
+              "selection_state": "resolved",
+              "toolchain_available": true
+            },
+            "required_terms": [],
+            "source_goal_id": "goal:inspect-language",
+            "expected_outcome": "verified read-only report",
+            "confidence": 0.0,
+            "provenance": "planned",
+            "tick": 2
+          }
+        },
+        "transition_example": {
+          "example_id": "m5k1:p2-6-train-0000:step-2:typescript_20.ts",
+          "family_id": "m5k1:p2-6-train-0000:sequence",
+          "before": {
+            "version": 1,
+            "tick": 1,
+            "latent": {
+              "__tensor__": []
+            },
+            "entities": [
+              "workbench"
+            ],
+            "relations": [
+              [
+                "workbench",
+                "read",
+                "failure"
+              ],
+              [
+                "workbench",
+                "target",
+                "missing"
+              ],
+              [
+                "workbench",
+                "language",
+                "unknown"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "unknown"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "missing"
+              ],
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ]
+            ],
+            "objects": [],
+            "events": [],
+            "affordances": [],
+            "uncertainty": 0.0,
+            "percept_event_id": "workbench-observation:fa8e25b3b33d13cf97d7826c1201c140",
+            "percept_assembly_id": "workbench-assembly:fa8e25b3b33d13cf97d7826c1201c140",
+            "percept_boundary_closed": false
+          },
+          "event": {
+            "version": 1,
+            "event_id": "workbench-observation:bcc4721edb61d0bb098ded9a93b2fdfd",
+            "observation_tick": 2,
+            "modality": "taiji-workbench-observation-v1",
+            "features": {
+              "__tensor__": [
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                1.0,
+                0.030029296875,
+                0.9900000095367432,
+                1.0,
+                0.0
+              ]
+            },
+            "assembly_id": "workbench-assembly:bcc4721edb61d0bb098ded9a93b2fdfd",
+            "duration": 32,
+            "boundary_score": 1.0,
+            "prediction_error": 0.0,
+            "boundary": true,
+            "confidence": 0.99
+          },
+          "after": {
+            "version": 1,
+            "tick": 2,
+            "latent": {
+              "__tensor__": []
+            },
+            "entities": [
+              "workbench"
+            ],
+            "relations": [
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "language",
+                "typescript"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "available"
+              ],
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ]
+            ],
+            "objects": [],
+            "events": [],
+            "affordances": [],
+            "uncertainty": 0.0,
+            "percept_event_id": "workbench-observation:bcc4721edb61d0bb098ded9a93b2fdfd",
+            "percept_assembly_id": "workbench-assembly:bcc4721edb61d0bb098ded9a93b2fdfd",
+            "percept_boundary_closed": false
+          },
+          "goal": {
+            "version": 1,
+            "goal_id": "goal:inspect-language",
+            "description": "Report verified language and toolchain facts.",
+            "priority": 0.9,
+            "progress": 0.0
+          },
+          "content": {
+            "content_id": "content:inspect-language",
+            "intent_id": "intent:inspect-language",
+            "intent_kind": "report",
+            "semantic_slots": {
+              "observed_language": "typescript",
+              "selection_state": "resolved",
+              "toolchain_available": true
+            },
+            "required_terms": [],
+            "source_goal_id": "goal:inspect-language",
+            "expected_outcome": "verified read-only report",
+            "confidence": 0.0,
+            "provenance": "planned",
+            "tick": 2
+          }
+        },
+        "k1_input_digest": "c878a4c82a31727caf3aa2dae2d39b0833e58298097ff71d2e513a5f2ea98f1f",
+        "k2_input_digest": "85790b8cc965fe498e6621a92a65f9f83f1f9f88ee54c516d8cd670b0507bc6e",
+        "fit_eligible": true
+      },
+      "record_digest": "6a56c4747fbf7d45adac08043102c434cb38d00f5e4fc9f50234540b0e85537a"
+    },
+    {
+      "record_id": "p2-6-novel-train-0001",
+      "split": "train",
+      "index": 1,
+      "class_key": "R-novel-composition",
+      "project_id": "p2-6-train-project-1",
+      "template_family_id": "02543114cd7e427c50c3fbab8e10108815e35cbba2ef0cfe1fef4e880db5a39b",
+      "source_p1_manifest_digest": "4c6400dc82781b229370e774dcabbb852a81647c787ddbd4eae89819c876f558",
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "novel_tuple": {
+        "recovery_phase": "after_workspace_list",
+        "language_id": "typescript",
+        "toolchain_available": true,
+        "selection_state": "resolved",
+        "content_id": "content:inspect-language"
+      },
+      "initial": {
+        "observation": {
+          "format": "taiji-workbench-observation-v1",
+          "version": 1,
+          "observation_id": "m5k1:p2-6:train:1:initial:missing_novel.txt",
+          "project_id": "p2-6-train-project-1",
+          "task_id": "p2-6-train-project-1:missing_novel.txt",
+          "capability_snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+          "capability_revision": 6,
+          "path": "missing_novel.txt",
+          "file_digest": "",
+          "read_success": false,
+          "file_is_file": false,
+          "byte_length": 0,
+          "language_id": "unknown",
+          "selection_state": "unknown",
+          "language_confidence": 0.0,
+          "toolchain_available": false,
+          "task_kind": "inspect-language",
+          "diagnostics_connected": false,
+          "schema": {
+            "format": "taiji-workbench-observation-v1",
+            "version": 1,
+            "language_ids": [
+              "python",
+              "rust",
+              "typescript",
+              "unknown"
+            ],
+            "selection_states": [
+              "ambiguous",
+              "resolved",
+              "unknown"
+            ],
+            "task_kinds": [
+              "inspect-language"
+            ],
+            "extensions": [
+              ".h",
+              ".py",
+              ".rs",
+              ".ts",
+              "<none>"
+            ],
+            "feature_names": [
+              "language:python",
+              "language:rust",
+              "language:typescript",
+              "language:unknown",
+              "selection:ambiguous",
+              "selection:resolved",
+              "selection:unknown",
+              "task:inspect-language",
+              "extension:.h",
+              "extension:.py",
+              "extension:.rs",
+              "extension:.ts",
+              "extension:<none>",
+              "read_success",
+              "file_is_file",
+              "byte_length_fraction",
+              "language_confidence",
+              "toolchain_available",
+              "diagnostics_connected"
+            ],
+            "feature_dim": 19,
+            "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3"
+          },
+          "observation_digest": "dfc747269f7dba2d6dd777b4c9355575de20407cd0d013c6e02ff80df88f095c"
+        },
+        "percept": {
+          "version": 1,
+          "event_id": "workbench-observation:dfc747269f7dba2d6dd777b4c9355575",
+          "observation_tick": 1,
+          "modality": "taiji-workbench-observation-v1",
+          "features": {
+            "__tensor__": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              1.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "assembly_id": "workbench-assembly:dfc747269f7dba2d6dd777b4c9355575",
+          "duration": 1,
+          "boundary_score": 1.0,
+          "prediction_error": 1.0,
+          "boundary": true,
+          "confidence": 0.0
+        },
+        "next_step": "workspace.list",
+        "fit_eligible": false
+      },
+      "candidate": {
+        "observation": {
+          "format": "taiji-workbench-observation-v1",
+          "version": 1,
+          "observation_id": "m5k1:p2-6:train:1:candidate:typescript_21.ts",
+          "project_id": "p2-6-train-project-1",
+          "task_id": "p2-6-train-project-1:typescript_21.ts",
+          "capability_snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+          "capability_revision": 6,
+          "path": "typescript_21.ts",
+          "file_digest": "13a8be8e2bf441fef2ee9c6e0a120c5738bbfc8e7e27f113398d4f449db5b4e9",
+          "read_success": true,
+          "file_is_file": true,
+          "byte_length": 123,
+          "language_id": "typescript",
+          "selection_state": "resolved",
+          "language_confidence": 0.99,
+          "toolchain_available": true,
+          "task_kind": "inspect-language",
+          "diagnostics_connected": false,
+          "schema": {
+            "format": "taiji-workbench-observation-v1",
+            "version": 1,
+            "language_ids": [
+              "python",
+              "rust",
+              "typescript",
+              "unknown"
+            ],
+            "selection_states": [
+              "ambiguous",
+              "resolved",
+              "unknown"
+            ],
+            "task_kinds": [
+              "inspect-language"
+            ],
+            "extensions": [
+              ".h",
+              ".py",
+              ".rs",
+              ".ts",
+              "<none>"
+            ],
+            "feature_names": [
+              "language:python",
+              "language:rust",
+              "language:typescript",
+              "language:unknown",
+              "selection:ambiguous",
+              "selection:resolved",
+              "selection:unknown",
+              "task:inspect-language",
+              "extension:.h",
+              "extension:.py",
+              "extension:.rs",
+              "extension:.ts",
+              "extension:<none>",
+              "read_success",
+              "file_is_file",
+              "byte_length_fraction",
+              "language_confidence",
+              "toolchain_available",
+              "diagnostics_connected"
+            ],
+            "feature_dim": 19,
+            "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3"
+          },
+          "observation_digest": "e0c3ed6bfb102f95abac3acdfc2a280e43a6cd533abb3a3991e9e0ed0e331df7"
+        },
+        "semantic_example": {
+          "example_id": "m5k1:p2-6-train-0001:typescript_21.ts",
+          "family_id": "m5k1:p2-6-train-0001",
+          "percept": {
+            "version": 1,
+            "event_id": "workbench-observation:e0c3ed6bfb102f95abac3acdfc2a280e",
+            "observation_tick": 2,
+            "modality": "taiji-workbench-observation-v1",
+            "features": {
+              "__tensor__": [
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                1.0,
+                0.030029296875,
+                0.9900000095367432,
+                1.0,
+                0.0
+              ]
+            },
+            "assembly_id": "workbench-assembly:e0c3ed6bfb102f95abac3acdfc2a280e",
+            "duration": 32,
+            "boundary_score": 1.0,
+            "prediction_error": 0.0,
+            "boundary": true,
+            "confidence": 0.99
+          },
+          "world": {
+            "version": 1,
+            "tick": 2,
+            "latent": {
+              "__tensor__": []
+            },
+            "entities": [
+              "workbench"
+            ],
+            "relations": [
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "language",
+                "typescript"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "available"
+              ],
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ]
+            ],
+            "objects": [],
+            "events": [],
+            "affordances": [],
+            "uncertainty": 0.0,
+            "percept_event_id": "workbench-observation:e0c3ed6bfb102f95abac3acdfc2a280e",
+            "percept_assembly_id": "workbench-assembly:e0c3ed6bfb102f95abac3acdfc2a280e",
+            "percept_boundary_closed": false
+          },
+          "goal": {
+            "version": 1,
+            "goal_id": "goal:inspect-language",
+            "description": "Report verified language and toolchain facts.",
+            "priority": 0.9,
+            "progress": 0.0
+          },
+          "content": {
+            "content_id": "content:inspect-language",
+            "intent_id": "intent:inspect-language",
+            "intent_kind": "report",
+            "semantic_slots": {
+              "observed_language": "typescript",
+              "selection_state": "resolved",
+              "toolchain_available": true
+            },
+            "required_terms": [],
+            "source_goal_id": "goal:inspect-language",
+            "expected_outcome": "verified read-only report",
+            "confidence": 0.0,
+            "provenance": "planned",
+            "tick": 2
+          }
+        },
+        "transition_example": {
+          "example_id": "m5k1:p2-6-train-0001:step-2:typescript_21.ts",
+          "family_id": "m5k1:p2-6-train-0001:sequence",
+          "before": {
+            "version": 1,
+            "tick": 1,
+            "latent": {
+              "__tensor__": []
+            },
+            "entities": [
+              "workbench"
+            ],
+            "relations": [
+              [
+                "workbench",
+                "read",
+                "failure"
+              ],
+              [
+                "workbench",
+                "target",
+                "missing"
+              ],
+              [
+                "workbench",
+                "language",
+                "unknown"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "unknown"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "missing"
+              ],
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ]
+            ],
+            "objects": [],
+            "events": [],
+            "affordances": [],
+            "uncertainty": 0.0,
+            "percept_event_id": "workbench-observation:dfc747269f7dba2d6dd777b4c9355575",
+            "percept_assembly_id": "workbench-assembly:dfc747269f7dba2d6dd777b4c9355575",
+            "percept_boundary_closed": false
+          },
+          "event": {
+            "version": 1,
+            "event_id": "workbench-observation:e0c3ed6bfb102f95abac3acdfc2a280e",
+            "observation_tick": 2,
+            "modality": "taiji-workbench-observation-v1",
+            "features": {
+              "__tensor__": [
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                1.0,
+                0.030029296875,
+                0.9900000095367432,
+                1.0,
+                0.0
+              ]
+            },
+            "assembly_id": "workbench-assembly:e0c3ed6bfb102f95abac3acdfc2a280e",
+            "duration": 32,
+            "boundary_score": 1.0,
+            "prediction_error": 0.0,
+            "boundary": true,
+            "confidence": 0.99
+          },
+          "after": {
+            "version": 1,
+            "tick": 2,
+            "latent": {
+              "__tensor__": []
+            },
+            "entities": [
+              "workbench"
+            ],
+            "relations": [
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "language",
+                "typescript"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "available"
+              ],
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ]
+            ],
+            "objects": [],
+            "events": [],
+            "affordances": [],
+            "uncertainty": 0.0,
+            "percept_event_id": "workbench-observation:e0c3ed6bfb102f95abac3acdfc2a280e",
+            "percept_assembly_id": "workbench-assembly:e0c3ed6bfb102f95abac3acdfc2a280e",
+            "percept_boundary_closed": false
+          },
+          "goal": {
+            "version": 1,
+            "goal_id": "goal:inspect-language",
+            "description": "Report verified language and toolchain facts.",
+            "priority": 0.9,
+            "progress": 0.0
+          },
+          "content": {
+            "content_id": "content:inspect-language",
+            "intent_id": "intent:inspect-language",
+            "intent_kind": "report",
+            "semantic_slots": {
+              "observed_language": "typescript",
+              "selection_state": "resolved",
+              "toolchain_available": true
+            },
+            "required_terms": [],
+            "source_goal_id": "goal:inspect-language",
+            "expected_outcome": "verified read-only report",
+            "confidence": 0.0,
+            "provenance": "planned",
+            "tick": 2
+          }
+        },
+        "k1_input_digest": "c878a4c82a31727caf3aa2dae2d39b0833e58298097ff71d2e513a5f2ea98f1f",
+        "k2_input_digest": "85790b8cc965fe498e6621a92a65f9f83f1f9f88ee54c516d8cd670b0507bc6e",
+        "fit_eligible": true
+      },
+      "record_digest": "2b1950a3b0597b877830cc54a9b404a3956473614da1992985671cb27cfb6c71"
+    },
+    {
+      "record_id": "p2-6-novel-train-0002",
+      "split": "train",
+      "index": 2,
+      "class_key": "R-novel-composition",
+      "project_id": "p2-6-train-project-2",
+      "template_family_id": "4fc630d507b7087602efb9783f291445e24c43e699d82cd06602074eaedb7391",
+      "source_p1_manifest_digest": "4c6400dc82781b229370e774dcabbb852a81647c787ddbd4eae89819c876f558",
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "novel_tuple": {
+        "recovery_phase": "after_workspace_list",
+        "language_id": "typescript",
+        "toolchain_available": true,
+        "selection_state": "resolved",
+        "content_id": "content:inspect-language"
+      },
+      "initial": {
+        "observation": {
+          "format": "taiji-workbench-observation-v1",
+          "version": 1,
+          "observation_id": "m5k1:p2-6:train:2:initial:missing_novel.txt",
+          "project_id": "p2-6-train-project-2",
+          "task_id": "p2-6-train-project-2:missing_novel.txt",
+          "capability_snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+          "capability_revision": 6,
+          "path": "missing_novel.txt",
+          "file_digest": "",
+          "read_success": false,
+          "file_is_file": false,
+          "byte_length": 0,
+          "language_id": "unknown",
+          "selection_state": "unknown",
+          "language_confidence": 0.0,
+          "toolchain_available": false,
+          "task_kind": "inspect-language",
+          "diagnostics_connected": false,
+          "schema": {
+            "format": "taiji-workbench-observation-v1",
+            "version": 1,
+            "language_ids": [
+              "python",
+              "rust",
+              "typescript",
+              "unknown"
+            ],
+            "selection_states": [
+              "ambiguous",
+              "resolved",
+              "unknown"
+            ],
+            "task_kinds": [
+              "inspect-language"
+            ],
+            "extensions": [
+              ".h",
+              ".py",
+              ".rs",
+              ".ts",
+              "<none>"
+            ],
+            "feature_names": [
+              "language:python",
+              "language:rust",
+              "language:typescript",
+              "language:unknown",
+              "selection:ambiguous",
+              "selection:resolved",
+              "selection:unknown",
+              "task:inspect-language",
+              "extension:.h",
+              "extension:.py",
+              "extension:.rs",
+              "extension:.ts",
+              "extension:<none>",
+              "read_success",
+              "file_is_file",
+              "byte_length_fraction",
+              "language_confidence",
+              "toolchain_available",
+              "diagnostics_connected"
+            ],
+            "feature_dim": 19,
+            "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3"
+          },
+          "observation_digest": "a207491cc5a59a1ae8e07502fa837d05d32de3cd673ca1801c01efa5dbc103a2"
+        },
+        "percept": {
+          "version": 1,
+          "event_id": "workbench-observation:a207491cc5a59a1ae8e07502fa837d05",
+          "observation_tick": 1,
+          "modality": "taiji-workbench-observation-v1",
+          "features": {
+            "__tensor__": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              1.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "assembly_id": "workbench-assembly:a207491cc5a59a1ae8e07502fa837d05",
+          "duration": 1,
+          "boundary_score": 1.0,
+          "prediction_error": 1.0,
+          "boundary": true,
+          "confidence": 0.0
+        },
+        "next_step": "workspace.list",
+        "fit_eligible": false
+      },
+      "candidate": {
+        "observation": {
+          "format": "taiji-workbench-observation-v1",
+          "version": 1,
+          "observation_id": "m5k1:p2-6:train:2:candidate:typescript_22.ts",
+          "project_id": "p2-6-train-project-2",
+          "task_id": "p2-6-train-project-2:typescript_22.ts",
+          "capability_snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+          "capability_revision": 6,
+          "path": "typescript_22.ts",
+          "file_digest": "a8dc1ce33c43c022281e1eb4020124c7fa0d0bfe5e0692adfc5aeea5e6665bb9",
+          "read_success": true,
+          "file_is_file": true,
+          "byte_length": 123,
+          "language_id": "typescript",
+          "selection_state": "resolved",
+          "language_confidence": 0.99,
+          "toolchain_available": true,
+          "task_kind": "inspect-language",
+          "diagnostics_connected": false,
+          "schema": {
+            "format": "taiji-workbench-observation-v1",
+            "version": 1,
+            "language_ids": [
+              "python",
+              "rust",
+              "typescript",
+              "unknown"
+            ],
+            "selection_states": [
+              "ambiguous",
+              "resolved",
+              "unknown"
+            ],
+            "task_kinds": [
+              "inspect-language"
+            ],
+            "extensions": [
+              ".h",
+              ".py",
+              ".rs",
+              ".ts",
+              "<none>"
+            ],
+            "feature_names": [
+              "language:python",
+              "language:rust",
+              "language:typescript",
+              "language:unknown",
+              "selection:ambiguous",
+              "selection:resolved",
+              "selection:unknown",
+              "task:inspect-language",
+              "extension:.h",
+              "extension:.py",
+              "extension:.rs",
+              "extension:.ts",
+              "extension:<none>",
+              "read_success",
+              "file_is_file",
+              "byte_length_fraction",
+              "language_confidence",
+              "toolchain_available",
+              "diagnostics_connected"
+            ],
+            "feature_dim": 19,
+            "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3"
+          },
+          "observation_digest": "e9077e2fe9508d4a6b8b7be2320cf8953b352684f998252c2e3c37c4b0d83699"
+        },
+        "semantic_example": {
+          "example_id": "m5k1:p2-6-train-0002:typescript_22.ts",
+          "family_id": "m5k1:p2-6-train-0002",
+          "percept": {
+            "version": 1,
+            "event_id": "workbench-observation:e9077e2fe9508d4a6b8b7be2320cf895",
+            "observation_tick": 2,
+            "modality": "taiji-workbench-observation-v1",
+            "features": {
+              "__tensor__": [
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                1.0,
+                0.030029296875,
+                0.9900000095367432,
+                1.0,
+                0.0
+              ]
+            },
+            "assembly_id": "workbench-assembly:e9077e2fe9508d4a6b8b7be2320cf895",
+            "duration": 32,
+            "boundary_score": 1.0,
+            "prediction_error": 0.0,
+            "boundary": true,
+            "confidence": 0.99
+          },
+          "world": {
+            "version": 1,
+            "tick": 2,
+            "latent": {
+              "__tensor__": []
+            },
+            "entities": [
+              "workbench"
+            ],
+            "relations": [
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "language",
+                "typescript"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "available"
+              ],
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ]
+            ],
+            "objects": [],
+            "events": [],
+            "affordances": [],
+            "uncertainty": 0.0,
+            "percept_event_id": "workbench-observation:e9077e2fe9508d4a6b8b7be2320cf895",
+            "percept_assembly_id": "workbench-assembly:e9077e2fe9508d4a6b8b7be2320cf895",
+            "percept_boundary_closed": false
+          },
+          "goal": {
+            "version": 1,
+            "goal_id": "goal:inspect-language",
+            "description": "Report verified language and toolchain facts.",
+            "priority": 0.9,
+            "progress": 0.0
+          },
+          "content": {
+            "content_id": "content:inspect-language",
+            "intent_id": "intent:inspect-language",
+            "intent_kind": "report",
+            "semantic_slots": {
+              "observed_language": "typescript",
+              "selection_state": "resolved",
+              "toolchain_available": true
+            },
+            "required_terms": [],
+            "source_goal_id": "goal:inspect-language",
+            "expected_outcome": "verified read-only report",
+            "confidence": 0.0,
+            "provenance": "planned",
+            "tick": 2
+          }
+        },
+        "transition_example": {
+          "example_id": "m5k1:p2-6-train-0002:step-2:typescript_22.ts",
+          "family_id": "m5k1:p2-6-train-0002:sequence",
+          "before": {
+            "version": 1,
+            "tick": 1,
+            "latent": {
+              "__tensor__": []
+            },
+            "entities": [
+              "workbench"
+            ],
+            "relations": [
+              [
+                "workbench",
+                "read",
+                "failure"
+              ],
+              [
+                "workbench",
+                "target",
+                "missing"
+              ],
+              [
+                "workbench",
+                "language",
+                "unknown"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "unknown"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "missing"
+              ],
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ]
+            ],
+            "objects": [],
+            "events": [],
+            "affordances": [],
+            "uncertainty": 0.0,
+            "percept_event_id": "workbench-observation:a207491cc5a59a1ae8e07502fa837d05",
+            "percept_assembly_id": "workbench-assembly:a207491cc5a59a1ae8e07502fa837d05",
+            "percept_boundary_closed": false
+          },
+          "event": {
+            "version": 1,
+            "event_id": "workbench-observation:e9077e2fe9508d4a6b8b7be2320cf895",
+            "observation_tick": 2,
+            "modality": "taiji-workbench-observation-v1",
+            "features": {
+              "__tensor__": [
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                1.0,
+                0.030029296875,
+                0.9900000095367432,
+                1.0,
+                0.0
+              ]
+            },
+            "assembly_id": "workbench-assembly:e9077e2fe9508d4a6b8b7be2320cf895",
+            "duration": 32,
+            "boundary_score": 1.0,
+            "prediction_error": 0.0,
+            "boundary": true,
+            "confidence": 0.99
+          },
+          "after": {
+            "version": 1,
+            "tick": 2,
+            "latent": {
+              "__tensor__": []
+            },
+            "entities": [
+              "workbench"
+            ],
+            "relations": [
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "language",
+                "typescript"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "available"
+              ],
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ]
+            ],
+            "objects": [],
+            "events": [],
+            "affordances": [],
+            "uncertainty": 0.0,
+            "percept_event_id": "workbench-observation:e9077e2fe9508d4a6b8b7be2320cf895",
+            "percept_assembly_id": "workbench-assembly:e9077e2fe9508d4a6b8b7be2320cf895",
+            "percept_boundary_closed": false
+          },
+          "goal": {
+            "version": 1,
+            "goal_id": "goal:inspect-language",
+            "description": "Report verified language and toolchain facts.",
+            "priority": 0.9,
+            "progress": 0.0
+          },
+          "content": {
+            "content_id": "content:inspect-language",
+            "intent_id": "intent:inspect-language",
+            "intent_kind": "report",
+            "semantic_slots": {
+              "observed_language": "typescript",
+              "selection_state": "resolved",
+              "toolchain_available": true
+            },
+            "required_terms": [],
+            "source_goal_id": "goal:inspect-language",
+            "expected_outcome": "verified read-only report",
+            "confidence": 0.0,
+            "provenance": "planned",
+            "tick": 2
+          }
+        },
+        "k1_input_digest": "c878a4c82a31727caf3aa2dae2d39b0833e58298097ff71d2e513a5f2ea98f1f",
+        "k2_input_digest": "85790b8cc965fe498e6621a92a65f9f83f1f9f88ee54c516d8cd670b0507bc6e",
+        "fit_eligible": true
+      },
+      "record_digest": "9ec8be0999e7cd73653b17d364bf0fef5461bb9c9fba8af2b92225e54918ca1f"
+    },
+    {
+      "record_id": "p2-6-novel-train-0003",
+      "split": "train",
+      "index": 3,
+      "class_key": "R-novel-composition",
+      "project_id": "p2-6-train-project-3",
+      "template_family_id": "db96c514b391c3d3648f7554a4133420a7d4ec6438a1f51de83a33d6f66ab9a3",
+      "source_p1_manifest_digest": "4c6400dc82781b229370e774dcabbb852a81647c787ddbd4eae89819c876f558",
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "novel_tuple": {
+        "recovery_phase": "after_workspace_list",
+        "language_id": "typescript",
+        "toolchain_available": true,
+        "selection_state": "resolved",
+        "content_id": "content:inspect-language"
+      },
+      "initial": {
+        "observation": {
+          "format": "taiji-workbench-observation-v1",
+          "version": 1,
+          "observation_id": "m5k1:p2-6:train:3:initial:missing_novel.txt",
+          "project_id": "p2-6-train-project-3",
+          "task_id": "p2-6-train-project-3:missing_novel.txt",
+          "capability_snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+          "capability_revision": 6,
+          "path": "missing_novel.txt",
+          "file_digest": "",
+          "read_success": false,
+          "file_is_file": false,
+          "byte_length": 0,
+          "language_id": "unknown",
+          "selection_state": "unknown",
+          "language_confidence": 0.0,
+          "toolchain_available": false,
+          "task_kind": "inspect-language",
+          "diagnostics_connected": false,
+          "schema": {
+            "format": "taiji-workbench-observation-v1",
+            "version": 1,
+            "language_ids": [
+              "python",
+              "rust",
+              "typescript",
+              "unknown"
+            ],
+            "selection_states": [
+              "ambiguous",
+              "resolved",
+              "unknown"
+            ],
+            "task_kinds": [
+              "inspect-language"
+            ],
+            "extensions": [
+              ".h",
+              ".py",
+              ".rs",
+              ".ts",
+              "<none>"
+            ],
+            "feature_names": [
+              "language:python",
+              "language:rust",
+              "language:typescript",
+              "language:unknown",
+              "selection:ambiguous",
+              "selection:resolved",
+              "selection:unknown",
+              "task:inspect-language",
+              "extension:.h",
+              "extension:.py",
+              "extension:.rs",
+              "extension:.ts",
+              "extension:<none>",
+              "read_success",
+              "file_is_file",
+              "byte_length_fraction",
+              "language_confidence",
+              "toolchain_available",
+              "diagnostics_connected"
+            ],
+            "feature_dim": 19,
+            "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3"
+          },
+          "observation_digest": "3cb2057ffd322afc199e1c499ad4d24aebbb2483b1b90ea5ec0d2fe7de240638"
+        },
+        "percept": {
+          "version": 1,
+          "event_id": "workbench-observation:3cb2057ffd322afc199e1c499ad4d24a",
+          "observation_tick": 1,
+          "modality": "taiji-workbench-observation-v1",
+          "features": {
+            "__tensor__": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              1.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "assembly_id": "workbench-assembly:3cb2057ffd322afc199e1c499ad4d24a",
+          "duration": 1,
+          "boundary_score": 1.0,
+          "prediction_error": 1.0,
+          "boundary": true,
+          "confidence": 0.0
+        },
+        "next_step": "workspace.list",
+        "fit_eligible": false
+      },
+      "candidate": {
+        "observation": {
+          "format": "taiji-workbench-observation-v1",
+          "version": 1,
+          "observation_id": "m5k1:p2-6:train:3:candidate:typescript_23.ts",
+          "project_id": "p2-6-train-project-3",
+          "task_id": "p2-6-train-project-3:typescript_23.ts",
+          "capability_snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+          "capability_revision": 6,
+          "path": "typescript_23.ts",
+          "file_digest": "864fbd02d0e4365b197e9df70e8d54b6796734154bc31f22e59ca38b2131815e",
+          "read_success": true,
+          "file_is_file": true,
+          "byte_length": 123,
+          "language_id": "typescript",
+          "selection_state": "resolved",
+          "language_confidence": 0.99,
+          "toolchain_available": true,
+          "task_kind": "inspect-language",
+          "diagnostics_connected": false,
+          "schema": {
+            "format": "taiji-workbench-observation-v1",
+            "version": 1,
+            "language_ids": [
+              "python",
+              "rust",
+              "typescript",
+              "unknown"
+            ],
+            "selection_states": [
+              "ambiguous",
+              "resolved",
+              "unknown"
+            ],
+            "task_kinds": [
+              "inspect-language"
+            ],
+            "extensions": [
+              ".h",
+              ".py",
+              ".rs",
+              ".ts",
+              "<none>"
+            ],
+            "feature_names": [
+              "language:python",
+              "language:rust",
+              "language:typescript",
+              "language:unknown",
+              "selection:ambiguous",
+              "selection:resolved",
+              "selection:unknown",
+              "task:inspect-language",
+              "extension:.h",
+              "extension:.py",
+              "extension:.rs",
+              "extension:.ts",
+              "extension:<none>",
+              "read_success",
+              "file_is_file",
+              "byte_length_fraction",
+              "language_confidence",
+              "toolchain_available",
+              "diagnostics_connected"
+            ],
+            "feature_dim": 19,
+            "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3"
+          },
+          "observation_digest": "029d184e7bca0231f6eb0c4407881ec564d176a27c917e749cf9569e1bf95fcf"
+        },
+        "semantic_example": {
+          "example_id": "m5k1:p2-6-train-0003:typescript_23.ts",
+          "family_id": "m5k1:p2-6-train-0003",
+          "percept": {
+            "version": 1,
+            "event_id": "workbench-observation:029d184e7bca0231f6eb0c4407881ec5",
+            "observation_tick": 2,
+            "modality": "taiji-workbench-observation-v1",
+            "features": {
+              "__tensor__": [
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                1.0,
+                0.030029296875,
+                0.9900000095367432,
+                1.0,
+                0.0
+              ]
+            },
+            "assembly_id": "workbench-assembly:029d184e7bca0231f6eb0c4407881ec5",
+            "duration": 32,
+            "boundary_score": 1.0,
+            "prediction_error": 0.0,
+            "boundary": true,
+            "confidence": 0.99
+          },
+          "world": {
+            "version": 1,
+            "tick": 2,
+            "latent": {
+              "__tensor__": []
+            },
+            "entities": [
+              "workbench"
+            ],
+            "relations": [
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "language",
+                "typescript"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "available"
+              ],
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ]
+            ],
+            "objects": [],
+            "events": [],
+            "affordances": [],
+            "uncertainty": 0.0,
+            "percept_event_id": "workbench-observation:029d184e7bca0231f6eb0c4407881ec5",
+            "percept_assembly_id": "workbench-assembly:029d184e7bca0231f6eb0c4407881ec5",
+            "percept_boundary_closed": false
+          },
+          "goal": {
+            "version": 1,
+            "goal_id": "goal:inspect-language",
+            "description": "Report verified language and toolchain facts.",
+            "priority": 0.9,
+            "progress": 0.0
+          },
+          "content": {
+            "content_id": "content:inspect-language",
+            "intent_id": "intent:inspect-language",
+            "intent_kind": "report",
+            "semantic_slots": {
+              "observed_language": "typescript",
+              "selection_state": "resolved",
+              "toolchain_available": true
+            },
+            "required_terms": [],
+            "source_goal_id": "goal:inspect-language",
+            "expected_outcome": "verified read-only report",
+            "confidence": 0.0,
+            "provenance": "planned",
+            "tick": 2
+          }
+        },
+        "transition_example": {
+          "example_id": "m5k1:p2-6-train-0003:step-2:typescript_23.ts",
+          "family_id": "m5k1:p2-6-train-0003:sequence",
+          "before": {
+            "version": 1,
+            "tick": 1,
+            "latent": {
+              "__tensor__": []
+            },
+            "entities": [
+              "workbench"
+            ],
+            "relations": [
+              [
+                "workbench",
+                "read",
+                "failure"
+              ],
+              [
+                "workbench",
+                "target",
+                "missing"
+              ],
+              [
+                "workbench",
+                "language",
+                "unknown"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "unknown"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "missing"
+              ],
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ]
+            ],
+            "objects": [],
+            "events": [],
+            "affordances": [],
+            "uncertainty": 0.0,
+            "percept_event_id": "workbench-observation:3cb2057ffd322afc199e1c499ad4d24a",
+            "percept_assembly_id": "workbench-assembly:3cb2057ffd322afc199e1c499ad4d24a",
+            "percept_boundary_closed": false
+          },
+          "event": {
+            "version": 1,
+            "event_id": "workbench-observation:029d184e7bca0231f6eb0c4407881ec5",
+            "observation_tick": 2,
+            "modality": "taiji-workbench-observation-v1",
+            "features": {
+              "__tensor__": [
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                1.0,
+                0.030029296875,
+                0.9900000095367432,
+                1.0,
+                0.0
+              ]
+            },
+            "assembly_id": "workbench-assembly:029d184e7bca0231f6eb0c4407881ec5",
+            "duration": 32,
+            "boundary_score": 1.0,
+            "prediction_error": 0.0,
+            "boundary": true,
+            "confidence": 0.99
+          },
+          "after": {
+            "version": 1,
+            "tick": 2,
+            "latent": {
+              "__tensor__": []
+            },
+            "entities": [
+              "workbench"
+            ],
+            "relations": [
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "language",
+                "typescript"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "available"
+              ],
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ]
+            ],
+            "objects": [],
+            "events": [],
+            "affordances": [],
+            "uncertainty": 0.0,
+            "percept_event_id": "workbench-observation:029d184e7bca0231f6eb0c4407881ec5",
+            "percept_assembly_id": "workbench-assembly:029d184e7bca0231f6eb0c4407881ec5",
+            "percept_boundary_closed": false
+          },
+          "goal": {
+            "version": 1,
+            "goal_id": "goal:inspect-language",
+            "description": "Report verified language and toolchain facts.",
+            "priority": 0.9,
+            "progress": 0.0
+          },
+          "content": {
+            "content_id": "content:inspect-language",
+            "intent_id": "intent:inspect-language",
+            "intent_kind": "report",
+            "semantic_slots": {
+              "observed_language": "typescript",
+              "selection_state": "resolved",
+              "toolchain_available": true
+            },
+            "required_terms": [],
+            "source_goal_id": "goal:inspect-language",
+            "expected_outcome": "verified read-only report",
+            "confidence": 0.0,
+            "provenance": "planned",
+            "tick": 2
+          }
+        },
+        "k1_input_digest": "c878a4c82a31727caf3aa2dae2d39b0833e58298097ff71d2e513a5f2ea98f1f",
+        "k2_input_digest": "85790b8cc965fe498e6621a92a65f9f83f1f9f88ee54c516d8cd670b0507bc6e",
+        "fit_eligible": true
+      },
+      "record_digest": "48f12342fc4ec508f98d1a8e64204695f0e4d23a4b021dcc1615cedd21443884"
+    },
+    {
+      "record_id": "p2-6-novel-train-0004",
+      "split": "train",
+      "index": 4,
+      "class_key": "R-novel-composition",
+      "project_id": "p2-6-train-project-4",
+      "template_family_id": "fd6ac68da31e16a1598d84f39dba1728b5acb4a491d627bd9e3cb7ddaf733246",
+      "source_p1_manifest_digest": "4c6400dc82781b229370e774dcabbb852a81647c787ddbd4eae89819c876f558",
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "novel_tuple": {
+        "recovery_phase": "after_workspace_list",
+        "language_id": "typescript",
+        "toolchain_available": true,
+        "selection_state": "resolved",
+        "content_id": "content:inspect-language"
+      },
+      "initial": {
+        "observation": {
+          "format": "taiji-workbench-observation-v1",
+          "version": 1,
+          "observation_id": "m5k1:p2-6:train:4:initial:missing_novel.txt",
+          "project_id": "p2-6-train-project-4",
+          "task_id": "p2-6-train-project-4:missing_novel.txt",
+          "capability_snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+          "capability_revision": 6,
+          "path": "missing_novel.txt",
+          "file_digest": "",
+          "read_success": false,
+          "file_is_file": false,
+          "byte_length": 0,
+          "language_id": "unknown",
+          "selection_state": "unknown",
+          "language_confidence": 0.0,
+          "toolchain_available": false,
+          "task_kind": "inspect-language",
+          "diagnostics_connected": false,
+          "schema": {
+            "format": "taiji-workbench-observation-v1",
+            "version": 1,
+            "language_ids": [
+              "python",
+              "rust",
+              "typescript",
+              "unknown"
+            ],
+            "selection_states": [
+              "ambiguous",
+              "resolved",
+              "unknown"
+            ],
+            "task_kinds": [
+              "inspect-language"
+            ],
+            "extensions": [
+              ".h",
+              ".py",
+              ".rs",
+              ".ts",
+              "<none>"
+            ],
+            "feature_names": [
+              "language:python",
+              "language:rust",
+              "language:typescript",
+              "language:unknown",
+              "selection:ambiguous",
+              "selection:resolved",
+              "selection:unknown",
+              "task:inspect-language",
+              "extension:.h",
+              "extension:.py",
+              "extension:.rs",
+              "extension:.ts",
+              "extension:<none>",
+              "read_success",
+              "file_is_file",
+              "byte_length_fraction",
+              "language_confidence",
+              "toolchain_available",
+              "diagnostics_connected"
+            ],
+            "feature_dim": 19,
+            "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3"
+          },
+          "observation_digest": "ccaa0fd52b2c8b966b33e054eacb8c12bb871b30445b7f78bf388a8de32c52f5"
+        },
+        "percept": {
+          "version": 1,
+          "event_id": "workbench-observation:ccaa0fd52b2c8b966b33e054eacb8c12",
+          "observation_tick": 1,
+          "modality": "taiji-workbench-observation-v1",
+          "features": {
+            "__tensor__": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              1.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "assembly_id": "workbench-assembly:ccaa0fd52b2c8b966b33e054eacb8c12",
+          "duration": 1,
+          "boundary_score": 1.0,
+          "prediction_error": 1.0,
+          "boundary": true,
+          "confidence": 0.0
+        },
+        "next_step": "workspace.list",
+        "fit_eligible": false
+      },
+      "candidate": {
+        "observation": {
+          "format": "taiji-workbench-observation-v1",
+          "version": 1,
+          "observation_id": "m5k1:p2-6:train:4:candidate:typescript_24.ts",
+          "project_id": "p2-6-train-project-4",
+          "task_id": "p2-6-train-project-4:typescript_24.ts",
+          "capability_snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+          "capability_revision": 6,
+          "path": "typescript_24.ts",
+          "file_digest": "b5d9a02dd7a4aaa6acbc734800bcc1f4e6bf985d32ffe318f8bc27c871420333",
+          "read_success": true,
+          "file_is_file": true,
+          "byte_length": 123,
+          "language_id": "typescript",
+          "selection_state": "resolved",
+          "language_confidence": 0.99,
+          "toolchain_available": true,
+          "task_kind": "inspect-language",
+          "diagnostics_connected": false,
+          "schema": {
+            "format": "taiji-workbench-observation-v1",
+            "version": 1,
+            "language_ids": [
+              "python",
+              "rust",
+              "typescript",
+              "unknown"
+            ],
+            "selection_states": [
+              "ambiguous",
+              "resolved",
+              "unknown"
+            ],
+            "task_kinds": [
+              "inspect-language"
+            ],
+            "extensions": [
+              ".h",
+              ".py",
+              ".rs",
+              ".ts",
+              "<none>"
+            ],
+            "feature_names": [
+              "language:python",
+              "language:rust",
+              "language:typescript",
+              "language:unknown",
+              "selection:ambiguous",
+              "selection:resolved",
+              "selection:unknown",
+              "task:inspect-language",
+              "extension:.h",
+              "extension:.py",
+              "extension:.rs",
+              "extension:.ts",
+              "extension:<none>",
+              "read_success",
+              "file_is_file",
+              "byte_length_fraction",
+              "language_confidence",
+              "toolchain_available",
+              "diagnostics_connected"
+            ],
+            "feature_dim": 19,
+            "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3"
+          },
+          "observation_digest": "f84f71c19ad81aeab48d454a570570931923148f6d6d2171473409f007eadbdf"
+        },
+        "semantic_example": {
+          "example_id": "m5k1:p2-6-train-0004:typescript_24.ts",
+          "family_id": "m5k1:p2-6-train-0004",
+          "percept": {
+            "version": 1,
+            "event_id": "workbench-observation:f84f71c19ad81aeab48d454a57057093",
+            "observation_tick": 2,
+            "modality": "taiji-workbench-observation-v1",
+            "features": {
+              "__tensor__": [
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                1.0,
+                0.030029296875,
+                0.9900000095367432,
+                1.0,
+                0.0
+              ]
+            },
+            "assembly_id": "workbench-assembly:f84f71c19ad81aeab48d454a57057093",
+            "duration": 32,
+            "boundary_score": 1.0,
+            "prediction_error": 0.0,
+            "boundary": true,
+            "confidence": 0.99
+          },
+          "world": {
+            "version": 1,
+            "tick": 2,
+            "latent": {
+              "__tensor__": []
+            },
+            "entities": [
+              "workbench"
+            ],
+            "relations": [
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "language",
+                "typescript"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "available"
+              ],
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ]
+            ],
+            "objects": [],
+            "events": [],
+            "affordances": [],
+            "uncertainty": 0.0,
+            "percept_event_id": "workbench-observation:f84f71c19ad81aeab48d454a57057093",
+            "percept_assembly_id": "workbench-assembly:f84f71c19ad81aeab48d454a57057093",
+            "percept_boundary_closed": false
+          },
+          "goal": {
+            "version": 1,
+            "goal_id": "goal:inspect-language",
+            "description": "Report verified language and toolchain facts.",
+            "priority": 0.9,
+            "progress": 0.0
+          },
+          "content": {
+            "content_id": "content:inspect-language",
+            "intent_id": "intent:inspect-language",
+            "intent_kind": "report",
+            "semantic_slots": {
+              "observed_language": "typescript",
+              "selection_state": "resolved",
+              "toolchain_available": true
+            },
+            "required_terms": [],
+            "source_goal_id": "goal:inspect-language",
+            "expected_outcome": "verified read-only report",
+            "confidence": 0.0,
+            "provenance": "planned",
+            "tick": 2
+          }
+        },
+        "transition_example": {
+          "example_id": "m5k1:p2-6-train-0004:step-2:typescript_24.ts",
+          "family_id": "m5k1:p2-6-train-0004:sequence",
+          "before": {
+            "version": 1,
+            "tick": 1,
+            "latent": {
+              "__tensor__": []
+            },
+            "entities": [
+              "workbench"
+            ],
+            "relations": [
+              [
+                "workbench",
+                "read",
+                "failure"
+              ],
+              [
+                "workbench",
+                "target",
+                "missing"
+              ],
+              [
+                "workbench",
+                "language",
+                "unknown"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "unknown"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "missing"
+              ],
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ]
+            ],
+            "objects": [],
+            "events": [],
+            "affordances": [],
+            "uncertainty": 0.0,
+            "percept_event_id": "workbench-observation:ccaa0fd52b2c8b966b33e054eacb8c12",
+            "percept_assembly_id": "workbench-assembly:ccaa0fd52b2c8b966b33e054eacb8c12",
+            "percept_boundary_closed": false
+          },
+          "event": {
+            "version": 1,
+            "event_id": "workbench-observation:f84f71c19ad81aeab48d454a57057093",
+            "observation_tick": 2,
+            "modality": "taiji-workbench-observation-v1",
+            "features": {
+              "__tensor__": [
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                1.0,
+                0.030029296875,
+                0.9900000095367432,
+                1.0,
+                0.0
+              ]
+            },
+            "assembly_id": "workbench-assembly:f84f71c19ad81aeab48d454a57057093",
+            "duration": 32,
+            "boundary_score": 1.0,
+            "prediction_error": 0.0,
+            "boundary": true,
+            "confidence": 0.99
+          },
+          "after": {
+            "version": 1,
+            "tick": 2,
+            "latent": {
+              "__tensor__": []
+            },
+            "entities": [
+              "workbench"
+            ],
+            "relations": [
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "language",
+                "typescript"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "available"
+              ],
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ]
+            ],
+            "objects": [],
+            "events": [],
+            "affordances": [],
+            "uncertainty": 0.0,
+            "percept_event_id": "workbench-observation:f84f71c19ad81aeab48d454a57057093",
+            "percept_assembly_id": "workbench-assembly:f84f71c19ad81aeab48d454a57057093",
+            "percept_boundary_closed": false
+          },
+          "goal": {
+            "version": 1,
+            "goal_id": "goal:inspect-language",
+            "description": "Report verified language and toolchain facts.",
+            "priority": 0.9,
+            "progress": 0.0
+          },
+          "content": {
+            "content_id": "content:inspect-language",
+            "intent_id": "intent:inspect-language",
+            "intent_kind": "report",
+            "semantic_slots": {
+              "observed_language": "typescript",
+              "selection_state": "resolved",
+              "toolchain_available": true
+            },
+            "required_terms": [],
+            "source_goal_id": "goal:inspect-language",
+            "expected_outcome": "verified read-only report",
+            "confidence": 0.0,
+            "provenance": "planned",
+            "tick": 2
+          }
+        },
+        "k1_input_digest": "c878a4c82a31727caf3aa2dae2d39b0833e58298097ff71d2e513a5f2ea98f1f",
+        "k2_input_digest": "85790b8cc965fe498e6621a92a65f9f83f1f9f88ee54c516d8cd670b0507bc6e",
+        "fit_eligible": true
+      },
+      "record_digest": "784aa5ce0f2063db1b1841449fcb67742c0fdd7f677937f8e04505e6648e9acc"
+    },
+    {
+      "record_id": "p2-6-novel-train-0005",
+      "split": "train",
+      "index": 5,
+      "class_key": "R-novel-composition",
+      "project_id": "p2-6-train-project-5",
+      "template_family_id": "16bacd30fca641677c6b49729c9638b657dcc00a47e320499e36f8a3e117a3c1",
+      "source_p1_manifest_digest": "4c6400dc82781b229370e774dcabbb852a81647c787ddbd4eae89819c876f558",
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "novel_tuple": {
+        "recovery_phase": "after_workspace_list",
+        "language_id": "typescript",
+        "toolchain_available": true,
+        "selection_state": "resolved",
+        "content_id": "content:inspect-language"
+      },
+      "initial": {
+        "observation": {
+          "format": "taiji-workbench-observation-v1",
+          "version": 1,
+          "observation_id": "m5k1:p2-6:train:5:initial:missing_novel.txt",
+          "project_id": "p2-6-train-project-5",
+          "task_id": "p2-6-train-project-5:missing_novel.txt",
+          "capability_snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+          "capability_revision": 6,
+          "path": "missing_novel.txt",
+          "file_digest": "",
+          "read_success": false,
+          "file_is_file": false,
+          "byte_length": 0,
+          "language_id": "unknown",
+          "selection_state": "unknown",
+          "language_confidence": 0.0,
+          "toolchain_available": false,
+          "task_kind": "inspect-language",
+          "diagnostics_connected": false,
+          "schema": {
+            "format": "taiji-workbench-observation-v1",
+            "version": 1,
+            "language_ids": [
+              "python",
+              "rust",
+              "typescript",
+              "unknown"
+            ],
+            "selection_states": [
+              "ambiguous",
+              "resolved",
+              "unknown"
+            ],
+            "task_kinds": [
+              "inspect-language"
+            ],
+            "extensions": [
+              ".h",
+              ".py",
+              ".rs",
+              ".ts",
+              "<none>"
+            ],
+            "feature_names": [
+              "language:python",
+              "language:rust",
+              "language:typescript",
+              "language:unknown",
+              "selection:ambiguous",
+              "selection:resolved",
+              "selection:unknown",
+              "task:inspect-language",
+              "extension:.h",
+              "extension:.py",
+              "extension:.rs",
+              "extension:.ts",
+              "extension:<none>",
+              "read_success",
+              "file_is_file",
+              "byte_length_fraction",
+              "language_confidence",
+              "toolchain_available",
+              "diagnostics_connected"
+            ],
+            "feature_dim": 19,
+            "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3"
+          },
+          "observation_digest": "143564012fd7185f6c7180082183223f8a10e6873e2ebb142ef828d50794d2f2"
+        },
+        "percept": {
+          "version": 1,
+          "event_id": "workbench-observation:143564012fd7185f6c7180082183223f",
+          "observation_tick": 1,
+          "modality": "taiji-workbench-observation-v1",
+          "features": {
+            "__tensor__": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              1.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "assembly_id": "workbench-assembly:143564012fd7185f6c7180082183223f",
+          "duration": 1,
+          "boundary_score": 1.0,
+          "prediction_error": 1.0,
+          "boundary": true,
+          "confidence": 0.0
+        },
+        "next_step": "workspace.list",
+        "fit_eligible": false
+      },
+      "candidate": {
+        "observation": {
+          "format": "taiji-workbench-observation-v1",
+          "version": 1,
+          "observation_id": "m5k1:p2-6:train:5:candidate:typescript_25.ts",
+          "project_id": "p2-6-train-project-5",
+          "task_id": "p2-6-train-project-5:typescript_25.ts",
+          "capability_snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+          "capability_revision": 6,
+          "path": "typescript_25.ts",
+          "file_digest": "7e2756f9d4634a8d3f2b398bfeb6186d9b0f3e248a782c3c2ec41706860214e6",
+          "read_success": true,
+          "file_is_file": true,
+          "byte_length": 123,
+          "language_id": "typescript",
+          "selection_state": "resolved",
+          "language_confidence": 0.99,
+          "toolchain_available": true,
+          "task_kind": "inspect-language",
+          "diagnostics_connected": false,
+          "schema": {
+            "format": "taiji-workbench-observation-v1",
+            "version": 1,
+            "language_ids": [
+              "python",
+              "rust",
+              "typescript",
+              "unknown"
+            ],
+            "selection_states": [
+              "ambiguous",
+              "resolved",
+              "unknown"
+            ],
+            "task_kinds": [
+              "inspect-language"
+            ],
+            "extensions": [
+              ".h",
+              ".py",
+              ".rs",
+              ".ts",
+              "<none>"
+            ],
+            "feature_names": [
+              "language:python",
+              "language:rust",
+              "language:typescript",
+              "language:unknown",
+              "selection:ambiguous",
+              "selection:resolved",
+              "selection:unknown",
+              "task:inspect-language",
+              "extension:.h",
+              "extension:.py",
+              "extension:.rs",
+              "extension:.ts",
+              "extension:<none>",
+              "read_success",
+              "file_is_file",
+              "byte_length_fraction",
+              "language_confidence",
+              "toolchain_available",
+              "diagnostics_connected"
+            ],
+            "feature_dim": 19,
+            "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3"
+          },
+          "observation_digest": "b4109cd8271f077379d77c2292c1f07c32749c6530657f27b541262b90c92180"
+        },
+        "semantic_example": {
+          "example_id": "m5k1:p2-6-train-0005:typescript_25.ts",
+          "family_id": "m5k1:p2-6-train-0005",
+          "percept": {
+            "version": 1,
+            "event_id": "workbench-observation:b4109cd8271f077379d77c2292c1f07c",
+            "observation_tick": 2,
+            "modality": "taiji-workbench-observation-v1",
+            "features": {
+              "__tensor__": [
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                1.0,
+                0.030029296875,
+                0.9900000095367432,
+                1.0,
+                0.0
+              ]
+            },
+            "assembly_id": "workbench-assembly:b4109cd8271f077379d77c2292c1f07c",
+            "duration": 32,
+            "boundary_score": 1.0,
+            "prediction_error": 0.0,
+            "boundary": true,
+            "confidence": 0.99
+          },
+          "world": {
+            "version": 1,
+            "tick": 2,
+            "latent": {
+              "__tensor__": []
+            },
+            "entities": [
+              "workbench"
+            ],
+            "relations": [
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "language",
+                "typescript"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "available"
+              ],
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ]
+            ],
+            "objects": [],
+            "events": [],
+            "affordances": [],
+            "uncertainty": 0.0,
+            "percept_event_id": "workbench-observation:b4109cd8271f077379d77c2292c1f07c",
+            "percept_assembly_id": "workbench-assembly:b4109cd8271f077379d77c2292c1f07c",
+            "percept_boundary_closed": false
+          },
+          "goal": {
+            "version": 1,
+            "goal_id": "goal:inspect-language",
+            "description": "Report verified language and toolchain facts.",
+            "priority": 0.9,
+            "progress": 0.0
+          },
+          "content": {
+            "content_id": "content:inspect-language",
+            "intent_id": "intent:inspect-language",
+            "intent_kind": "report",
+            "semantic_slots": {
+              "observed_language": "typescript",
+              "selection_state": "resolved",
+              "toolchain_available": true
+            },
+            "required_terms": [],
+            "source_goal_id": "goal:inspect-language",
+            "expected_outcome": "verified read-only report",
+            "confidence": 0.0,
+            "provenance": "planned",
+            "tick": 2
+          }
+        },
+        "transition_example": {
+          "example_id": "m5k1:p2-6-train-0005:step-2:typescript_25.ts",
+          "family_id": "m5k1:p2-6-train-0005:sequence",
+          "before": {
+            "version": 1,
+            "tick": 1,
+            "latent": {
+              "__tensor__": []
+            },
+            "entities": [
+              "workbench"
+            ],
+            "relations": [
+              [
+                "workbench",
+                "read",
+                "failure"
+              ],
+              [
+                "workbench",
+                "target",
+                "missing"
+              ],
+              [
+                "workbench",
+                "language",
+                "unknown"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "unknown"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "missing"
+              ],
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ]
+            ],
+            "objects": [],
+            "events": [],
+            "affordances": [],
+            "uncertainty": 0.0,
+            "percept_event_id": "workbench-observation:143564012fd7185f6c7180082183223f",
+            "percept_assembly_id": "workbench-assembly:143564012fd7185f6c7180082183223f",
+            "percept_boundary_closed": false
+          },
+          "event": {
+            "version": 1,
+            "event_id": "workbench-observation:b4109cd8271f077379d77c2292c1f07c",
+            "observation_tick": 2,
+            "modality": "taiji-workbench-observation-v1",
+            "features": {
+              "__tensor__": [
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                1.0,
+                0.030029296875,
+                0.9900000095367432,
+                1.0,
+                0.0
+              ]
+            },
+            "assembly_id": "workbench-assembly:b4109cd8271f077379d77c2292c1f07c",
+            "duration": 32,
+            "boundary_score": 1.0,
+            "prediction_error": 0.0,
+            "boundary": true,
+            "confidence": 0.99
+          },
+          "after": {
+            "version": 1,
+            "tick": 2,
+            "latent": {
+              "__tensor__": []
+            },
+            "entities": [
+              "workbench"
+            ],
+            "relations": [
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "language",
+                "typescript"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "available"
+              ],
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ]
+            ],
+            "objects": [],
+            "events": [],
+            "affordances": [],
+            "uncertainty": 0.0,
+            "percept_event_id": "workbench-observation:b4109cd8271f077379d77c2292c1f07c",
+            "percept_assembly_id": "workbench-assembly:b4109cd8271f077379d77c2292c1f07c",
+            "percept_boundary_closed": false
+          },
+          "goal": {
+            "version": 1,
+            "goal_id": "goal:inspect-language",
+            "description": "Report verified language and toolchain facts.",
+            "priority": 0.9,
+            "progress": 0.0
+          },
+          "content": {
+            "content_id": "content:inspect-language",
+            "intent_id": "intent:inspect-language",
+            "intent_kind": "report",
+            "semantic_slots": {
+              "observed_language": "typescript",
+              "selection_state": "resolved",
+              "toolchain_available": true
+            },
+            "required_terms": [],
+            "source_goal_id": "goal:inspect-language",
+            "expected_outcome": "verified read-only report",
+            "confidence": 0.0,
+            "provenance": "planned",
+            "tick": 2
+          }
+        },
+        "k1_input_digest": "c878a4c82a31727caf3aa2dae2d39b0833e58298097ff71d2e513a5f2ea98f1f",
+        "k2_input_digest": "85790b8cc965fe498e6621a92a65f9f83f1f9f88ee54c516d8cd670b0507bc6e",
+        "fit_eligible": true
+      },
+      "record_digest": "6884291aed67606bff31935931d89c0521382868a4052cc56e7a9bef3e7d1d23"
+    }
+  ],
+  "validation_records": [
+    {
+      "record_id": "p2-6-novel-validation-0000",
+      "split": "validation",
+      "index": 0,
+      "class_key": "R-novel-composition",
+      "project_id": "p2-6-validation-project-0",
+      "template_family_id": "17388930156149a9f89a3babe9f7af7ba1b7ebc5dbd3c567d6c560ab206f2f0a",
+      "source_p1_manifest_digest": "4c6400dc82781b229370e774dcabbb852a81647c787ddbd4eae89819c876f558",
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "novel_tuple": {
+        "recovery_phase": "after_workspace_list",
+        "language_id": "typescript",
+        "toolchain_available": true,
+        "selection_state": "resolved",
+        "content_id": "content:inspect-language"
+      },
+      "initial": {
+        "observation": {
+          "format": "taiji-workbench-observation-v1",
+          "version": 1,
+          "observation_id": "m5k1:p2-6:validation:0:initial:missing_novel.txt",
+          "project_id": "p2-6-validation-project-0",
+          "task_id": "p2-6-validation-project-0:missing_novel.txt",
+          "capability_snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+          "capability_revision": 6,
+          "path": "missing_novel.txt",
+          "file_digest": "",
+          "read_success": false,
+          "file_is_file": false,
+          "byte_length": 0,
+          "language_id": "unknown",
+          "selection_state": "unknown",
+          "language_confidence": 0.0,
+          "toolchain_available": false,
+          "task_kind": "inspect-language",
+          "diagnostics_connected": false,
+          "schema": {
+            "format": "taiji-workbench-observation-v1",
+            "version": 1,
+            "language_ids": [
+              "python",
+              "rust",
+              "typescript",
+              "unknown"
+            ],
+            "selection_states": [
+              "ambiguous",
+              "resolved",
+              "unknown"
+            ],
+            "task_kinds": [
+              "inspect-language"
+            ],
+            "extensions": [
+              ".h",
+              ".py",
+              ".rs",
+              ".ts",
+              "<none>"
+            ],
+            "feature_names": [
+              "language:python",
+              "language:rust",
+              "language:typescript",
+              "language:unknown",
+              "selection:ambiguous",
+              "selection:resolved",
+              "selection:unknown",
+              "task:inspect-language",
+              "extension:.h",
+              "extension:.py",
+              "extension:.rs",
+              "extension:.ts",
+              "extension:<none>",
+              "read_success",
+              "file_is_file",
+              "byte_length_fraction",
+              "language_confidence",
+              "toolchain_available",
+              "diagnostics_connected"
+            ],
+            "feature_dim": 19,
+            "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3"
+          },
+          "observation_digest": "6111b87a1dcafc95f5ed8a2c7f9258ca2fcff4c8e476b1d090b620422669b5f0"
+        },
+        "percept": {
+          "version": 1,
+          "event_id": "workbench-observation:6111b87a1dcafc95f5ed8a2c7f9258ca",
+          "observation_tick": 1,
+          "modality": "taiji-workbench-observation-v1",
+          "features": {
+            "__tensor__": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              1.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "assembly_id": "workbench-assembly:6111b87a1dcafc95f5ed8a2c7f9258ca",
+          "duration": 1,
+          "boundary_score": 1.0,
+          "prediction_error": 1.0,
+          "boundary": true,
+          "confidence": 0.0
+        },
+        "next_step": "workspace.list",
+        "fit_eligible": false
+      },
+      "candidate": {
+        "observation": {
+          "format": "taiji-workbench-observation-v1",
+          "version": 1,
+          "observation_id": "m5k1:p2-6:validation:0:candidate:typescript_26.ts",
+          "project_id": "p2-6-validation-project-0",
+          "task_id": "p2-6-validation-project-0:typescript_26.ts",
+          "capability_snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+          "capability_revision": 6,
+          "path": "typescript_26.ts",
+          "file_digest": "6602c8bdfc43d5fe06a86bc68fd1a367551fd20961ce1fba55a29bcc37df6917",
+          "read_success": true,
+          "file_is_file": true,
+          "byte_length": 123,
+          "language_id": "typescript",
+          "selection_state": "resolved",
+          "language_confidence": 0.99,
+          "toolchain_available": true,
+          "task_kind": "inspect-language",
+          "diagnostics_connected": false,
+          "schema": {
+            "format": "taiji-workbench-observation-v1",
+            "version": 1,
+            "language_ids": [
+              "python",
+              "rust",
+              "typescript",
+              "unknown"
+            ],
+            "selection_states": [
+              "ambiguous",
+              "resolved",
+              "unknown"
+            ],
+            "task_kinds": [
+              "inspect-language"
+            ],
+            "extensions": [
+              ".h",
+              ".py",
+              ".rs",
+              ".ts",
+              "<none>"
+            ],
+            "feature_names": [
+              "language:python",
+              "language:rust",
+              "language:typescript",
+              "language:unknown",
+              "selection:ambiguous",
+              "selection:resolved",
+              "selection:unknown",
+              "task:inspect-language",
+              "extension:.h",
+              "extension:.py",
+              "extension:.rs",
+              "extension:.ts",
+              "extension:<none>",
+              "read_success",
+              "file_is_file",
+              "byte_length_fraction",
+              "language_confidence",
+              "toolchain_available",
+              "diagnostics_connected"
+            ],
+            "feature_dim": 19,
+            "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3"
+          },
+          "observation_digest": "7667e93e1c0d6a6b022bee7280e769efbca4c5efeefd31cc1215ba4649cecf42"
+        },
+        "semantic_example": {
+          "example_id": "m5k1:p2-6-validation-0000:typescript_26.ts",
+          "family_id": "m5k1:p2-6-validation-0000",
+          "percept": {
+            "version": 1,
+            "event_id": "workbench-observation:7667e93e1c0d6a6b022bee7280e769ef",
+            "observation_tick": 2,
+            "modality": "taiji-workbench-observation-v1",
+            "features": {
+              "__tensor__": [
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                1.0,
+                0.030029296875,
+                0.9900000095367432,
+                1.0,
+                0.0
+              ]
+            },
+            "assembly_id": "workbench-assembly:7667e93e1c0d6a6b022bee7280e769ef",
+            "duration": 32,
+            "boundary_score": 1.0,
+            "prediction_error": 0.0,
+            "boundary": true,
+            "confidence": 0.99
+          },
+          "world": {
+            "version": 1,
+            "tick": 2,
+            "latent": {
+              "__tensor__": []
+            },
+            "entities": [
+              "workbench"
+            ],
+            "relations": [
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "language",
+                "typescript"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "available"
+              ],
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ]
+            ],
+            "objects": [],
+            "events": [],
+            "affordances": [],
+            "uncertainty": 0.0,
+            "percept_event_id": "workbench-observation:7667e93e1c0d6a6b022bee7280e769ef",
+            "percept_assembly_id": "workbench-assembly:7667e93e1c0d6a6b022bee7280e769ef",
+            "percept_boundary_closed": false
+          },
+          "goal": {
+            "version": 1,
+            "goal_id": "goal:inspect-language",
+            "description": "Report verified language and toolchain facts.",
+            "priority": 0.9,
+            "progress": 0.0
+          },
+          "content": {
+            "content_id": "content:inspect-language",
+            "intent_id": "intent:inspect-language",
+            "intent_kind": "report",
+            "semantic_slots": {
+              "observed_language": "typescript",
+              "selection_state": "resolved",
+              "toolchain_available": true
+            },
+            "required_terms": [],
+            "source_goal_id": "goal:inspect-language",
+            "expected_outcome": "verified read-only report",
+            "confidence": 0.0,
+            "provenance": "planned",
+            "tick": 2
+          }
+        },
+        "transition_example": {
+          "example_id": "m5k1:p2-6-validation-0000:step-2:typescript_26.ts",
+          "family_id": "m5k1:p2-6-validation-0000:sequence",
+          "before": {
+            "version": 1,
+            "tick": 1,
+            "latent": {
+              "__tensor__": []
+            },
+            "entities": [
+              "workbench"
+            ],
+            "relations": [
+              [
+                "workbench",
+                "read",
+                "failure"
+              ],
+              [
+                "workbench",
+                "target",
+                "missing"
+              ],
+              [
+                "workbench",
+                "language",
+                "unknown"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "unknown"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "missing"
+              ],
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ]
+            ],
+            "objects": [],
+            "events": [],
+            "affordances": [],
+            "uncertainty": 0.0,
+            "percept_event_id": "workbench-observation:6111b87a1dcafc95f5ed8a2c7f9258ca",
+            "percept_assembly_id": "workbench-assembly:6111b87a1dcafc95f5ed8a2c7f9258ca",
+            "percept_boundary_closed": false
+          },
+          "event": {
+            "version": 1,
+            "event_id": "workbench-observation:7667e93e1c0d6a6b022bee7280e769ef",
+            "observation_tick": 2,
+            "modality": "taiji-workbench-observation-v1",
+            "features": {
+              "__tensor__": [
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                1.0,
+                0.030029296875,
+                0.9900000095367432,
+                1.0,
+                0.0
+              ]
+            },
+            "assembly_id": "workbench-assembly:7667e93e1c0d6a6b022bee7280e769ef",
+            "duration": 32,
+            "boundary_score": 1.0,
+            "prediction_error": 0.0,
+            "boundary": true,
+            "confidence": 0.99
+          },
+          "after": {
+            "version": 1,
+            "tick": 2,
+            "latent": {
+              "__tensor__": []
+            },
+            "entities": [
+              "workbench"
+            ],
+            "relations": [
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "language",
+                "typescript"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "available"
+              ],
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ]
+            ],
+            "objects": [],
+            "events": [],
+            "affordances": [],
+            "uncertainty": 0.0,
+            "percept_event_id": "workbench-observation:7667e93e1c0d6a6b022bee7280e769ef",
+            "percept_assembly_id": "workbench-assembly:7667e93e1c0d6a6b022bee7280e769ef",
+            "percept_boundary_closed": false
+          },
+          "goal": {
+            "version": 1,
+            "goal_id": "goal:inspect-language",
+            "description": "Report verified language and toolchain facts.",
+            "priority": 0.9,
+            "progress": 0.0
+          },
+          "content": {
+            "content_id": "content:inspect-language",
+            "intent_id": "intent:inspect-language",
+            "intent_kind": "report",
+            "semantic_slots": {
+              "observed_language": "typescript",
+              "selection_state": "resolved",
+              "toolchain_available": true
+            },
+            "required_terms": [],
+            "source_goal_id": "goal:inspect-language",
+            "expected_outcome": "verified read-only report",
+            "confidence": 0.0,
+            "provenance": "planned",
+            "tick": 2
+          }
+        },
+        "k1_input_digest": "c878a4c82a31727caf3aa2dae2d39b0833e58298097ff71d2e513a5f2ea98f1f",
+        "k2_input_digest": "85790b8cc965fe498e6621a92a65f9f83f1f9f88ee54c516d8cd670b0507bc6e",
+        "fit_eligible": false
+      },
+      "record_digest": "c461e487dde727e95344b5ec5603a9e6c95220969e73e12187166222e4eb774f"
+    },
+    {
+      "record_id": "p2-6-novel-validation-0001",
+      "split": "validation",
+      "index": 1,
+      "class_key": "R-novel-composition",
+      "project_id": "p2-6-validation-project-1",
+      "template_family_id": "fb3bfd2d63853125514a06ed060e54ae1fc33247e4998bf955f5acee994fbbe5",
+      "source_p1_manifest_digest": "4c6400dc82781b229370e774dcabbb852a81647c787ddbd4eae89819c876f558",
+      "parent_checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+      "novel_tuple": {
+        "recovery_phase": "after_workspace_list",
+        "language_id": "typescript",
+        "toolchain_available": true,
+        "selection_state": "resolved",
+        "content_id": "content:inspect-language"
+      },
+      "initial": {
+        "observation": {
+          "format": "taiji-workbench-observation-v1",
+          "version": 1,
+          "observation_id": "m5k1:p2-6:validation:1:initial:missing_novel.txt",
+          "project_id": "p2-6-validation-project-1",
+          "task_id": "p2-6-validation-project-1:missing_novel.txt",
+          "capability_snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+          "capability_revision": 6,
+          "path": "missing_novel.txt",
+          "file_digest": "",
+          "read_success": false,
+          "file_is_file": false,
+          "byte_length": 0,
+          "language_id": "unknown",
+          "selection_state": "unknown",
+          "language_confidence": 0.0,
+          "toolchain_available": false,
+          "task_kind": "inspect-language",
+          "diagnostics_connected": false,
+          "schema": {
+            "format": "taiji-workbench-observation-v1",
+            "version": 1,
+            "language_ids": [
+              "python",
+              "rust",
+              "typescript",
+              "unknown"
+            ],
+            "selection_states": [
+              "ambiguous",
+              "resolved",
+              "unknown"
+            ],
+            "task_kinds": [
+              "inspect-language"
+            ],
+            "extensions": [
+              ".h",
+              ".py",
+              ".rs",
+              ".ts",
+              "<none>"
+            ],
+            "feature_names": [
+              "language:python",
+              "language:rust",
+              "language:typescript",
+              "language:unknown",
+              "selection:ambiguous",
+              "selection:resolved",
+              "selection:unknown",
+              "task:inspect-language",
+              "extension:.h",
+              "extension:.py",
+              "extension:.rs",
+              "extension:.ts",
+              "extension:<none>",
+              "read_success",
+              "file_is_file",
+              "byte_length_fraction",
+              "language_confidence",
+              "toolchain_available",
+              "diagnostics_connected"
+            ],
+            "feature_dim": 19,
+            "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3"
+          },
+          "observation_digest": "d6d4fd5f029dc4ef7c9f375b5bee4899e04ec2242843557b429e37bd62987d7b"
+        },
+        "percept": {
+          "version": 1,
+          "event_id": "workbench-observation:d6d4fd5f029dc4ef7c9f375b5bee4899",
+          "observation_tick": 1,
+          "modality": "taiji-workbench-observation-v1",
+          "features": {
+            "__tensor__": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              1.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "assembly_id": "workbench-assembly:d6d4fd5f029dc4ef7c9f375b5bee4899",
+          "duration": 1,
+          "boundary_score": 1.0,
+          "prediction_error": 1.0,
+          "boundary": true,
+          "confidence": 0.0
+        },
+        "next_step": "workspace.list",
+        "fit_eligible": false
+      },
+      "candidate": {
+        "observation": {
+          "format": "taiji-workbench-observation-v1",
+          "version": 1,
+          "observation_id": "m5k1:p2-6:validation:1:candidate:typescript_27.ts",
+          "project_id": "p2-6-validation-project-1",
+          "task_id": "p2-6-validation-project-1:typescript_27.ts",
+          "capability_snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+          "capability_revision": 6,
+          "path": "typescript_27.ts",
+          "file_digest": "144e2db1c6853aca731b7f290aa3abf289be0c775bc74a4d78dd956b4929cc84",
+          "read_success": true,
+          "file_is_file": true,
+          "byte_length": 123,
+          "language_id": "typescript",
+          "selection_state": "resolved",
+          "language_confidence": 0.99,
+          "toolchain_available": true,
+          "task_kind": "inspect-language",
+          "diagnostics_connected": false,
+          "schema": {
+            "format": "taiji-workbench-observation-v1",
+            "version": 1,
+            "language_ids": [
+              "python",
+              "rust",
+              "typescript",
+              "unknown"
+            ],
+            "selection_states": [
+              "ambiguous",
+              "resolved",
+              "unknown"
+            ],
+            "task_kinds": [
+              "inspect-language"
+            ],
+            "extensions": [
+              ".h",
+              ".py",
+              ".rs",
+              ".ts",
+              "<none>"
+            ],
+            "feature_names": [
+              "language:python",
+              "language:rust",
+              "language:typescript",
+              "language:unknown",
+              "selection:ambiguous",
+              "selection:resolved",
+              "selection:unknown",
+              "task:inspect-language",
+              "extension:.h",
+              "extension:.py",
+              "extension:.rs",
+              "extension:.ts",
+              "extension:<none>",
+              "read_success",
+              "file_is_file",
+              "byte_length_fraction",
+              "language_confidence",
+              "toolchain_available",
+              "diagnostics_connected"
+            ],
+            "feature_dim": 19,
+            "schema_digest": "e502716e3d1ef98181b495a9c4387d30592effd5a708c5903ae729f79ffe22c3"
+          },
+          "observation_digest": "65cf1a5199ca666b0b2412a4e64732789bc94af9ecd2c0a0d9622dcecf59962c"
+        },
+        "semantic_example": {
+          "example_id": "m5k1:p2-6-validation-0001:typescript_27.ts",
+          "family_id": "m5k1:p2-6-validation-0001",
+          "percept": {
+            "version": 1,
+            "event_id": "workbench-observation:65cf1a5199ca666b0b2412a4e6473278",
+            "observation_tick": 2,
+            "modality": "taiji-workbench-observation-v1",
+            "features": {
+              "__tensor__": [
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                1.0,
+                0.030029296875,
+                0.9900000095367432,
+                1.0,
+                0.0
+              ]
+            },
+            "assembly_id": "workbench-assembly:65cf1a5199ca666b0b2412a4e6473278",
+            "duration": 32,
+            "boundary_score": 1.0,
+            "prediction_error": 0.0,
+            "boundary": true,
+            "confidence": 0.99
+          },
+          "world": {
+            "version": 1,
+            "tick": 2,
+            "latent": {
+              "__tensor__": []
+            },
+            "entities": [
+              "workbench"
+            ],
+            "relations": [
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "language",
+                "typescript"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "available"
+              ],
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ]
+            ],
+            "objects": [],
+            "events": [],
+            "affordances": [],
+            "uncertainty": 0.0,
+            "percept_event_id": "workbench-observation:65cf1a5199ca666b0b2412a4e6473278",
+            "percept_assembly_id": "workbench-assembly:65cf1a5199ca666b0b2412a4e6473278",
+            "percept_boundary_closed": false
+          },
+          "goal": {
+            "version": 1,
+            "goal_id": "goal:inspect-language",
+            "description": "Report verified language and toolchain facts.",
+            "priority": 0.9,
+            "progress": 0.0
+          },
+          "content": {
+            "content_id": "content:inspect-language",
+            "intent_id": "intent:inspect-language",
+            "intent_kind": "report",
+            "semantic_slots": {
+              "observed_language": "typescript",
+              "selection_state": "resolved",
+              "toolchain_available": true
+            },
+            "required_terms": [],
+            "source_goal_id": "goal:inspect-language",
+            "expected_outcome": "verified read-only report",
+            "confidence": 0.0,
+            "provenance": "planned",
+            "tick": 2
+          }
+        },
+        "transition_example": {
+          "example_id": "m5k1:p2-6-validation-0001:step-2:typescript_27.ts",
+          "family_id": "m5k1:p2-6-validation-0001:sequence",
+          "before": {
+            "version": 1,
+            "tick": 1,
+            "latent": {
+              "__tensor__": []
+            },
+            "entities": [
+              "workbench"
+            ],
+            "relations": [
+              [
+                "workbench",
+                "read",
+                "failure"
+              ],
+              [
+                "workbench",
+                "target",
+                "missing"
+              ],
+              [
+                "workbench",
+                "language",
+                "unknown"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "unknown"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "missing"
+              ],
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ]
+            ],
+            "objects": [],
+            "events": [],
+            "affordances": [],
+            "uncertainty": 0.0,
+            "percept_event_id": "workbench-observation:d6d4fd5f029dc4ef7c9f375b5bee4899",
+            "percept_assembly_id": "workbench-assembly:d6d4fd5f029dc4ef7c9f375b5bee4899",
+            "percept_boundary_closed": false
+          },
+          "event": {
+            "version": 1,
+            "event_id": "workbench-observation:65cf1a5199ca666b0b2412a4e6473278",
+            "observation_tick": 2,
+            "modality": "taiji-workbench-observation-v1",
+            "features": {
+              "__tensor__": [
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1.0,
+                1.0,
+                0.030029296875,
+                0.9900000095367432,
+                1.0,
+                0.0
+              ]
+            },
+            "assembly_id": "workbench-assembly:65cf1a5199ca666b0b2412a4e6473278",
+            "duration": 32,
+            "boundary_score": 1.0,
+            "prediction_error": 0.0,
+            "boundary": true,
+            "confidence": 0.99
+          },
+          "after": {
+            "version": 1,
+            "tick": 2,
+            "latent": {
+              "__tensor__": []
+            },
+            "entities": [
+              "workbench"
+            ],
+            "relations": [
+              [
+                "workbench",
+                "read",
+                "success"
+              ],
+              [
+                "workbench",
+                "target",
+                "file"
+              ],
+              [
+                "workbench",
+                "language",
+                "typescript"
+              ],
+              [
+                "workbench",
+                "language_state",
+                "resolved"
+              ],
+              [
+                "workbench",
+                "toolchain",
+                "available"
+              ],
+              [
+                "workbench",
+                "diagnostics",
+                "disconnected"
+              ]
+            ],
+            "objects": [],
+            "events": [],
+            "affordances": [],
+            "uncertainty": 0.0,
+            "percept_event_id": "workbench-observation:65cf1a5199ca666b0b2412a4e6473278",
+            "percept_assembly_id": "workbench-assembly:65cf1a5199ca666b0b2412a4e6473278",
+            "percept_boundary_closed": false
+          },
+          "goal": {
+            "version": 1,
+            "goal_id": "goal:inspect-language",
+            "description": "Report verified language and toolchain facts.",
+            "priority": 0.9,
+            "progress": 0.0
+          },
+          "content": {
+            "content_id": "content:inspect-language",
+            "intent_id": "intent:inspect-language",
+            "intent_kind": "report",
+            "semantic_slots": {
+              "observed_language": "typescript",
+              "selection_state": "resolved",
+              "toolchain_available": true
+            },
+            "required_terms": [],
+            "source_goal_id": "goal:inspect-language",
+            "expected_outcome": "verified read-only report",
+            "confidence": 0.0,
+            "provenance": "planned",
+            "tick": 2
+          }
+        },
+        "k1_input_digest": "c878a4c82a31727caf3aa2dae2d39b0833e58298097ff71d2e513a5f2ea98f1f",
+        "k2_input_digest": "85790b8cc965fe498e6621a92a65f9f83f1f9f88ee54c516d8cd670b0507bc6e",
+        "fit_eligible": false
+      },
+      "record_digest": "92c67809c2fab8d6ab4fc26d12878734ba13407d099cdb118027fcb83e6d389b"
+    }
+  ],
+  "manifest_digest": "585e8fceebb00497b64f658e8383b5d851c6156eb1c865a65873d565eaa31961"
+}
