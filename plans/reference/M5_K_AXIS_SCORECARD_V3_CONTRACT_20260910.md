@@ -1,5 +1,7 @@
 # M5 K 轴 scorecard v3：学习机制收束入账与晋级边界冻结
 
+> 2026-09-10 复审解释：保留原始报告判定；FS 候选只代表当前额外 replay 组合的窄任务收益，拆分的独立贡献和跨模型泛化尚未证实。后续先补同 replay 对照，暂停直接进入 SGK v1。依据见 [结果复审](M4V2_POST_C_STAGE_RESULT_REVIEW_20260910.md)；执行顺序以 [当前计划](../active/roadmap/03_CURRENT_EXECUTION.md) 为准。
+
 > 注册日期：2026-09-10。前置：[C 阶段 formal v2 预注册 §7](M4V2_C_STAGE_FORMAL_V2_PREREGISTRATION_20260910.md)（四门全过，FS 收束为 K 相位默认学习机制候选）。v2 scorecard 已闭合 K1/K2/K3 standalone 证据线；本 v3 在不重训、不重算任何 cell 的前提下，把 C 阶段学习机制结论作为第四条证据线收束入账，并冻结「FS 候选 → 晋级」的边界条件。
 
 ## 1. 目的与唯一变更

@@ -1,0 +1,128 @@
+{
+  "format": "taiji-plan-result-review-v1",
+  "base_commit": "4629bc8c",
+  "date": "2026-09-10",
+  "training_performed": false,
+  "source_sha256": {
+    "taiji/k_fast_slow.py": "f60548082b9639125c810193c9d1de0437c336817bdb350b8e484d3815e140b3",
+    "taiji/semantic_training.py": "f4f5c4fcea48eedc2b958d873ff7895dd7b3aa07266710f7903905393b47d82b",
+    "taiji/semantic_transition.py": "b27335eece809abef3b16c1d5d7be68be367124c240443fcf6899a0d8277cde3",
+    "scripts/training/build_taiji_m5_k_v4_parity.py": "609bbc50f2897268b9c26248fd1cdd722a69a190b00e67826d7ea9f9ea58f0fd",
+    "scripts/training/eval_taiji_m4v2_c_stage_formal_v2.py": "23423b5b7615e8ef401ee91616423ddd52fb9346b6a19949fa2829c7b1de2f81",
+    "reports/taiji_m4v2_c_stage_formal_v2_20260910.json": "d97a5d972605e197c187a257bcba5d5d69ae012666fd246ea3a2435859149e16",
+    "plans/reference/M4V2_SGK_PROMOTION_COURSE_PREREGISTRATION_20260910.md": "0b9a0c8075f516c2e5bab29e9d69f014660d7c9ba89037b0a65d9c8671e23593"
+  },
+  "formal_reported_gates": {
+    "G1_learning_floor": true,
+    "G2_catastrophe_bound": true,
+    "G3_weak_class_primary": true,
+    "G4_overall_non_inferiority": true
+  },
+  "fs_minus_c_sealed_mean": -0.0018684536722155254,
+  "fs_minus_c_weak_mean": -0.0024950897458337618,
+  "sealed_episode_classes": [
+    "D",
+    "R",
+    "A"
+  ],
+  "parent_worker_state_comparison": [
+    {
+      "model_seed": 23,
+      "worker": "k1",
+      "max_abs_state_difference": 0
+    },
+    {
+      "model_seed": 23,
+      "worker": "k2",
+      "max_abs_state_difference": 0
+    },
+    {
+      "model_seed": 31,
+      "worker": "k1",
+      "max_abs_state_difference": 0
+    },
+    {
+      "model_seed": 31,
+      "worker": "k2",
+      "max_abs_state_difference": 0
+    }
+  ],
+  "parent_worker_state_digests": {
+    "17": {
+      "k1": "5eed7b8cea02095f5ede55b652fd6112173e3ebde891f684e21b98a49b7104de",
+      "k2": "5b913c82b62c7df411b0143ee1a88333652a8e6bf64ec73355e5bc3a448b65ed"
+    },
+    "23": {
+      "k1": "5eed7b8cea02095f5ede55b652fd6112173e3ebde891f684e21b98a49b7104de",
+      "k2": "5b913c82b62c7df411b0143ee1a88333652a8e6bf64ec73355e5bc3a448b65ed"
+    },
+    "31": {
+      "k1": "5eed7b8cea02095f5ede55b652fd6112173e3ebde891f684e21b98a49b7104de",
+      "k2": "5b913c82b62c7df411b0143ee1a88333652a8e6bf64ec73355e5bc3a448b65ed"
+    }
+  },
+  "class_schedules": {
+    "0": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "R"
+    ],
+    "1": [
+      "A",
+      "C",
+      "B",
+      "R",
+      "D"
+    ],
+    "2": [
+      "B",
+      "A",
+      "D",
+      "C",
+      "R"
+    ],
+    "3": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "R"
+    ],
+    "4": [
+      "A",
+      "C",
+      "B",
+      "R",
+      "D"
+    ],
+    "5": [
+      "B",
+      "A",
+      "D",
+      "C",
+      "R"
+    ]
+  },
+  "resource": {
+    "effective_worker_parameter_count": 5648,
+    "effective_worker_bytes": 22592,
+    "fs_slow_plus_fast_bytes": 45184,
+    "fs_replay_payloads_in_checkpoint": "replay_digests only; payload resolver and cursor needed for resume"
+  },
+  "retention_sign_counterexample": {
+    "before_surprise": 1,
+    "after_surprise": 1.1,
+    "delta_after_minus_before": 0.1,
+    "epsilon": 0.01,
+    "old_g3_accepts": true,
+    "correct_g3_accepts": false
+  },
+  "interpretation": "C-stage narrow package benefit is supported; fast/slow-specific benefit, independent model seeds, full-class generalization, and S/G/K integration are not established.",
+  "next_step": "validation-only direct-continuation plus identical replay comparison before lineage integration",
+  "verification": {
+    "fast_slow_existing_tests": "5 passed in 2.36s",
+    "full_ci": "not run"
+  }
+}
