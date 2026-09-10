@@ -196,3 +196,4 @@ output/taiji_m5_k_p3_3_g_signal_canary_*/
 output/taiji_m5_k_p3_3_g_learning_*/
 output/taiji_m5_k_p3_4_behavior_signal_*/
 output/taiji_m5_k_p3_5_g_learning_*/
+output/taiji_m5_k_p3_6_behavior_holdout_*/

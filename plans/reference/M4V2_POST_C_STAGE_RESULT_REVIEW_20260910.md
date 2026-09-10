@@ -360,3 +360,18 @@ P3.4 的结论是“行为标签合同终于能产生可解释分歧”，不是
 | promotion | 未通过/未开放 | `can_promote=false` 保持；当前收益仍需独立 project/path holdout 验证，不能直接进入 P4 |
 
 P3.5 的结论是“在冻结 K、排除零边际平局并保留安全动作边界的条件下，G-only 学习确实改变了 contested 行为”，这已经超出 P3.3 的参数变化但行为不变；它仍不是通用智能、结构成长或开放泛化证据。下一步唯一执行项改为 P3.6 独立行为 holdout 与保持 Gate：至少 2 个新 project、4 条新 path，validation-only，重新计算 behavior utility 和 reobserve projection，并以 P2.7、P1 五类旧类和安全出口做非劣对照。若新身份上无收益或旧类退化，保持 `can_promote=false`，不追加同质 epoch、不进入 P4。
+
+## 24. P3.6 独立行为 holdout 与保持 Gate 结果（2026-09-11）
+
+按 §23 的入场条件运行了 [P3.6 behavior holdout](../../scripts/training/eval_taiji_m5_k_p3_6_behavior_holdout.py)，产出 [P3.6 manifest](../manifests/taiji_m5_k_p3_6_behavior_holdout_manifest_v1.json) 与 [P3.6 报告](../../reports/taiji_m5_k_p3_6_behavior_holdout_20260911.json)。本轮不调用 `fit`，只加载 P3.5 zero-step/trained-G，在两个新 project、四条全新 path 上重新生成候选并通过真实只读 Workbench 计算 behavior utility；P3.4/P3.5 train/validation、P2.7 holdout 均未作为新训练输入。
+
+| Gate | 结果 | 关键实测 |
+|---|---:|---|
+| 新身份与 artifact 隔离 | 通过 | 2 个新 project、4 条新 path；candidate-set、behavior、observation digest 唯一，utility-margin record 内容寻址 |
+| 三臂行为泛化 | 通过 | K-only/zero-step utility `2.65`、target hit `1/4`；trained-G utility `4.0`、target hit `4/4`；trained-G 改变 3 条 contested 行为 |
+| reobserve action boundary | 通过 | 3 条 target reobserve、3 条 selected reobserve 均为可往返 `ReadOnlyAbstention(next_step="workspace.list")`，无 `ActionIntent`，snapshot match 全部通过 |
+| 五类旧类与安全保持 | 通过 | P1 A/B/C/D/R 五类均出现；trained-G target hit 不低于 zero-step；低证据 proposal 违规 `0` |
+| P2.7 / checkpoint / lineage | 通过 | P2.7 trained-G Workbench `4/4`；K1/K2 digest 前后相同；K/G 独立恢复、lineage、rollback 均通过 |
+| promotion | 未通过/未开放 | `can_promote=false` 保持；这是局部行为选择跨身份泛化，不是通用智能或结构成长证明 |
+
+P3.6 的结论是：P3.5 的 G-only 行为变化不只在原 artifact 上重放，在这组未见 project/path 上也能复现，同时安全 reobserve 和旧类保持没有退化。但样本规模仍是 4 条 holdout，不能直接解冻 promotion 或宣称开放泛化。P3 阶段收束，下一步唯一执行项改为 P4 容量压力与继承式结构成长 Gate：先用 validation-only 扫描证明固定容量存在可重复瓶颈，再比较继承式 dynamic-growth、强 fixed-large 与结构 lesion；若无真实压力则停止结构增长，不能为了“神经元扩张”而人为制造需求。

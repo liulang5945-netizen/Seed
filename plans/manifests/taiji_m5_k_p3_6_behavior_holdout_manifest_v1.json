@@ -1,0 +1,925 @@
+{
+  "format": "taiji-m5-k-p3-6-behavior-holdout-manifest-v1",
+  "version": 1,
+  "source_p3_4_manifest_digest": "165bebe31c03eade544821e44bab12b869134236c9a87de4e39618e7bcf9b96a",
+  "source_p3_5_manifest_digest": "542ba313643c11b8acb2b4f8b06c0203c2221168285ca6a269a8a66fb06e2d85",
+  "source_p3_5_report_digest": "e0099e419382b2b8435d4649d4b3999af6e761d2275216d4e660390b379f7b7f",
+  "source_p3_2_manifest_digest": "b7ae3ef1b093d4dcc5d6ab009cb9f0c038111fece0ecbe7117047358073910a7",
+  "k_checkpoint_digests": {
+    "k1": "12851b4b3cc941817b9c27b93d7eaf35e0734b4d60ad0d64427b154db64277a6",
+    "k2": "411ef5348231f355eb1c512c195a9e34dea74c75fc5b5cdf5e86014940313691"
+  },
+  "g_zero_step_checkpoint_digest": "1a3a2751e36224e64a4100fae65f10f102fa5eeffd9ea12768a2c2e74f11b27e",
+  "g_trained_checkpoint_digest": "f4fdc61bf0e0174a9618e087fec8a25ce90d8a3257a7ca26bd1754db45da398d",
+  "fit_policy": {
+    "fit_called": false,
+    "training_performed": false,
+    "validation_only": true,
+    "p2_7_holdout_fit_count": 0
+  },
+  "holdout_records": [
+    {
+      "candidate_set": {
+        "format": "taiji-g-selection-candidate-set-v1",
+        "version": 1,
+        "example_id": "g-example:f40ad825f6b9308e4efea56d7daa36828c2c750e2f92ec70d522938820c593ca",
+        "family_id": "g-family:2d679b8d0aab723944ccf8af9a17d1261f6c038dc0a47a866848b5adaed8fd63",
+        "split": "validation",
+        "project_id": "p3-6-holdout-project-a",
+        "path": "p36_a_python.py",
+        "input_digest": "e3be0b4fea91a4b21bb056089663cb5e5693848d3d49f4cda8d58cefb77c3a3a",
+        "candidates": [
+          {
+            "format": "taiji-g-selection-candidate-set-v1",
+            "version": 1,
+            "candidate_id": "k1:selected",
+            "source": "k1.semantic",
+            "candidate_role": "proposal",
+            "status": "resolved",
+            "goal": {
+              "version": 1,
+              "goal_id": "goal:inspect-language",
+              "description": "Report verified language and toolchain facts.",
+              "priority": 0.9,
+              "progress": 0.0
+            },
+            "content_plan": {
+              "content_id": "content:inspect-language",
+              "intent_id": "intent:inspect-language",
+              "intent_kind": "report",
+              "semantic_slots": {
+                "observed_language": "python",
+                "selection_state": "resolved",
+                "toolchain_available": true
+              },
+              "required_terms": [],
+              "source_goal_id": "goal:inspect-language",
+              "expected_outcome": "verified read-only report",
+              "confidence": 0.0,
+              "provenance": "planned",
+              "tick": 12
+            },
+            "goal_score": 0.9902390241622925,
+            "content_score": 0.9827467203140259,
+            "confidence": 0.9827467203140259,
+            "ambiguity": 0.01464976230636239,
+            "candidate_digest": "56b608c8dc5820998eede640d3e6bccaa2900aa53d60cc854d146c48e45bde0a"
+          },
+          {
+            "format": "taiji-g-selection-candidate-set-v1",
+            "version": 1,
+            "candidate_id": "k1:grid:goal:clarify-language:content:clarify-language",
+            "source": "k1.score-grid",
+            "candidate_role": "proposal",
+            "status": "clarify",
+            "goal": {
+              "version": 1,
+              "goal_id": "goal:clarify-language",
+              "description": "Clarify an ambiguous programming language selection.",
+              "priority": 0.9,
+              "progress": 0.0
+            },
+            "content_plan": {
+              "content_id": "content:clarify-language",
+              "intent_id": "intent:clarify-language",
+              "intent_kind": "request_information",
+              "semantic_slots": {
+                "observed_language": "unknown",
+                "selection_state": "ambiguous",
+                "toolchain_available": false
+              },
+              "required_terms": [],
+              "source_goal_id": "goal:clarify-language",
+              "expected_outcome": "language clarification",
+              "confidence": 0.0,
+              "provenance": "planned",
+              "tick": 3
+            },
+            "goal_score": 0.00486857770010829,
+            "content_score": 0.010216298513114452,
+            "confidence": 0.9827467203140259,
+            "ambiguity": 0.01464976230636239,
+            "candidate_digest": "4471fb4309365ff313c8434769484691ee77cb1fe4a5c6f3f38f9a7178ef7a1a"
+          },
+          {
+            "format": "taiji-g-selection-candidate-set-v1",
+            "version": 1,
+            "candidate_id": "k1:grid:goal:clarify-toolchain:content:clarify-toolchain",
+            "source": "k1.score-grid",
+            "candidate_role": "proposal",
+            "status": "clarify",
+            "goal": {
+              "version": 1,
+              "goal_id": "goal:clarify-toolchain",
+              "description": "Clarify the unavailable toolchain before execution.",
+              "priority": 0.9,
+              "progress": 0.0
+            },
+            "content_plan": {
+              "content_id": "content:clarify-toolchain",
+              "intent_id": "intent:clarify-toolchain",
+              "intent_kind": "request_information",
+              "semantic_slots": {
+                "observed_language": "typescript",
+                "selection_state": "resolved",
+                "toolchain_available": false
+              },
+              "required_terms": [],
+              "source_goal_id": "goal:clarify-toolchain",
+              "expected_outcome": "toolchain clarification",
+              "confidence": 0.0,
+              "provenance": "planned",
+              "tick": 15
+            },
+            "goal_score": 0.004888786468654871,
+            "content_score": 0.004799742251634598,
+            "confidence": 0.9827467203140259,
+            "ambiguity": 0.01464976230636239,
+            "candidate_digest": "33dcbfeb1a7e867564c68dc45bfa3382e1f3f55720d23c278a88b3baf88772ec"
+          },
+          {
+            "format": "taiji-g-selection-candidate-set-v1",
+            "version": 1,
+            "candidate_id": "k1:grid:goal:recover-target:content:recover-target",
+            "source": "k1.score-grid",
+            "candidate_role": "proposal",
+            "status": "clarify",
+            "goal": {
+              "version": 1,
+              "goal_id": "goal:recover-target",
+              "description": "Recover a missing Workbench target before proceeding.",
+              "priority": 0.9,
+              "progress": 0.0
+            },
+            "content_plan": {
+              "content_id": "content:recover-target",
+              "intent_id": "intent:recover-target",
+              "intent_kind": "request_information",
+              "semantic_slots": {
+                "observed_language": "unknown",
+                "selection_state": "unknown",
+                "toolchain_available": false
+              },
+              "required_terms": [],
+              "source_goal_id": "goal:recover-target",
+              "expected_outcome": "valid target path",
+              "confidence": 0.0,
+              "provenance": "planned",
+              "tick": 2
+            },
+            "goal_score": 3.5310899875184987e-06,
+            "content_score": 0.002237307606264949,
+            "confidence": 0.9827467203140259,
+            "ambiguity": 0.01464976230636239,
+            "candidate_digest": "001d2cfa6f05d939e265b50d01f8089d207520f7af7673571e1871e9bb83213a"
+          },
+          {
+            "format": "taiji-g-selection-candidate-set-v1",
+            "version": 1,
+            "candidate_id": "abstain",
+            "source": "runtime.abstain",
+            "candidate_role": "abstain",
+            "status": "abstained",
+            "goal": null,
+            "content_plan": null,
+            "goal_score": 0.0,
+            "content_score": 0.0,
+            "confidence": 0.0,
+            "ambiguity": 1.0,
+            "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
+          },
+          {
+            "format": "taiji-g-selection-candidate-set-v1",
+            "version": 1,
+            "candidate_id": "reobserve",
+            "source": "runtime.reobserve",
+            "candidate_role": "reobserve",
+            "status": "ambiguous",
+            "goal": null,
+            "content_plan": null,
+            "goal_score": 0.0,
+            "content_score": 0.0,
+            "confidence": 0.0,
+            "ambiguity": 1.0,
+            "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
+          }
+        ],
+        "target_candidate_id": "k1:selected",
+        "target_kind": "pair",
+        "candidate_set_digest": "2e697508a133c61381e1dddc91704aed2904ace9470abd07305c45cff54f2eab",
+        "inference_digest": "6d403b79b5e3058d0b5ac5c84472e01f85f326026ddbb8883858be081064e1df"
+      },
+      "behavior_set": {
+        "format": "taiji-g-selection-behavior-v1",
+        "version": 1,
+        "candidate_set_digest": "2e697508a133c61381e1dddc91704aed2904ace9470abd07305c45cff54f2eab",
+        "inference_digest": "6d403b79b5e3058d0b5ac5c84472e01f85f326026ddbb8883858be081064e1df",
+        "split": "validation",
+        "project_id": "p3-6-holdout-project-a",
+        "path": "p36_a_python.py",
+        "outcomes": [
+          {
+            "format": "taiji-g-selection-behavior-v1",
+            "version": 1,
+            "candidate_id": "k1:selected",
+            "candidate_digest": "56b608c8dc5820998eede640d3e6bccaa2900aa53d60cc854d146c48e45bde0a",
+            "candidate_role": "proposal",
+            "snapshot_match": true,
+            "planner_accepted": true,
+            "route_valid": true,
+            "parameter_valid": true,
+            "world_consistent": true,
+            "execution_success": true,
+            "safe_exit_valid": false,
+            "safe_exit_progress": false,
+            "utility": 1.0,
+            "outcome_digest": "dd9e622fc0c193112ec76f00ea48b70c64f9ad79408fba3a85c62b07b9cf819e"
+          },
+          {
+            "format": "taiji-g-selection-behavior-v1",
+            "version": 1,
+            "candidate_id": "k1:grid:goal:clarify-language:content:clarify-language",
+            "candidate_digest": "4471fb4309365ff313c8434769484691ee77cb1fe4a5c6f3f38f9a7178ef7a1a",
+            "candidate_role": "proposal",
+            "snapshot_match": true,
+            "planner_accepted": true,
+            "route_valid": true,
+            "parameter_valid": true,
+            "world_consistent": false,
+            "execution_success": true,
+            "safe_exit_valid": false,
+            "safe_exit_progress": false,
+            "utility": 0.75,
+            "outcome_digest": "ece5cc822ffb0251b2f16688fae79b0c0665738799ada7be3f4db5773cfccee2"
+          },
+          {
+            "format": "taiji-g-selection-behavior-v1",
+            "version": 1,
+            "candidate_id": "k1:grid:goal:clarify-toolchain:content:clarify-toolchain",
+            "candidate_digest": "33dcbfeb1a7e867564c68dc45bfa3382e1f3f55720d23c278a88b3baf88772ec",
+            "candidate_role": "proposal",
+            "snapshot_match": true,
+            "planner_accepted": true,
+            "route_valid": true,
+            "parameter_valid": true,
+            "world_consistent": false,
+            "execution_success": true,
+            "safe_exit_valid": false,
+            "safe_exit_progress": false,
+            "utility": 0.75,
+            "outcome_digest": "52664e03c90532834ee9fdc307cac9870baf6d4a195dad207047d7773d05421b"
+          },
+          {
+            "format": "taiji-g-selection-behavior-v1",
+            "version": 1,
+            "candidate_id": "k1:grid:goal:recover-target:content:recover-target",
+            "candidate_digest": "001d2cfa6f05d939e265b50d01f8089d207520f7af7673571e1871e9bb83213a",
+            "candidate_role": "proposal",
+            "snapshot_match": true,
+            "planner_accepted": true,
+            "route_valid": true,
+            "parameter_valid": true,
+            "world_consistent": false,
+            "execution_success": true,
+            "safe_exit_valid": false,
+            "safe_exit_progress": false,
+            "utility": 0.75,
+            "outcome_digest": "4e9d67f8ba17a102bef67123238e52c562308107029953fa9cd543e5f3187aee"
+          },
+          {
+            "format": "taiji-g-selection-behavior-v1",
+            "version": 1,
+            "candidate_id": "abstain",
+            "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60",
+            "candidate_role": "abstain",
+            "snapshot_match": true,
+            "planner_accepted": false,
+            "route_valid": false,
+            "parameter_valid": false,
+            "world_consistent": false,
+            "execution_success": false,
+            "safe_exit_valid": false,
+            "safe_exit_progress": false,
+            "utility": 0.2,
+            "outcome_digest": "5ac0f9fad9f0e9be4cceeed3359c4253352f6b19436ce7ec128138b279cdbdff"
+          },
+          {
+            "format": "taiji-g-selection-behavior-v1",
+            "version": 1,
+            "candidate_id": "reobserve",
+            "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44",
+            "candidate_role": "reobserve",
+            "snapshot_match": true,
+            "planner_accepted": false,
+            "route_valid": false,
+            "parameter_valid": false,
+            "world_consistent": false,
+            "execution_success": false,
+            "safe_exit_valid": false,
+            "safe_exit_progress": false,
+            "utility": 0.2,
+            "outcome_digest": "6ef5ad670bf28e2c581d9272b4a0f6def174fd9d232a43c39a4cfd9107adc534"
+          }
+        ],
+        "behavior_target_candidate_id": "k1:selected",
+        "utility_margin": 0.25,
+        "behavior_digest": "a9cebb48e935f964605a28feadc0b7a0dd30e5d6af509cc388423431319c98d4"
+      },
+      "diagnostic": {
+        "example_id": "g-example:f40ad825f6b9308e4efea56d7daa36828c2c750e2f92ec70d522938820c593ca",
+        "class_key": "A",
+        "state_profile": "resolved-language",
+        "observation": {
+          "observation_digest": "0ed41024edcff41fcf8f82d4137039faa908fa7d425668f8af132bab46b8aa10",
+          "language_id": "python",
+          "selection_state": "resolved",
+          "toolchain_available": true,
+          "read_success": true,
+          "language_confidence": 0.99
+        },
+        "k_only_candidate_id": "k1:selected",
+        "behavior_target_candidate_id": "k1:selected",
+        "utility_margin": 0.25,
+        "behavior_disagreement": false,
+        "candidate_count": 6,
+        "diagnostics": [
+          {
+            "label": "p3-6-validation-0:k1:selected",
+            "candidate_id": "k1:selected",
+            "candidate_role": "proposal",
+            "world_consistent": true,
+            "action": {
+              "label": "p3-6-validation-0:k1:selected",
+              "oracle_control": false,
+              "planner_status": "accepted",
+              "reason_code": "native_read_only_intent_ready",
+              "accepted": true,
+              "snapshot_match": true,
+              "parameter_drift": {
+                "declared_overrides": {},
+                "actual": {
+                  "path": "p36_a_python.py"
+                },
+                "matches_contract": true
+              },
+              "intent_kind": "workspace.read",
+              "intent_parameters": {
+                "path": "p36_a_python.py"
+              },
+              "workbench_status": "success",
+              "workbench_success": true,
+              "workbench_error_code": "",
+              "failure_recovery_status": "not_triggered"
+            },
+            "planner_status": "accepted",
+            "workbench_success": true,
+            "safe_exit_valid": false,
+            "safe_exit_progress": false,
+            "utility": 1.0
+          },
+          {
+            "label": "p3-6-validation-0:k1:grid:goal:clarify-language:content:clarify-language",
+            "candidate_id": "k1:grid:goal:clarify-language:content:clarify-language",
+            "candidate_role": "proposal",
+            "world_consistent": false,
+            "action": {
+              "label": "p3-6-validation-0:k1:grid:goal:clarify-language:content:clarify-language",
+              "oracle_control": false,
+              "planner_status": "accepted",
+              "reason_code": "native_read_only_intent_ready",
+              "accepted": true,
+              "snapshot_match": true,
+              "parameter_drift": {
+                "declared_overrides": {},
+                "actual": {
+                  "path": "p36_a_python.py"
+                },
+                "matches_contract": true
+              },
+              "intent_kind": "workspace.programming_language.resolve",
+              "intent_parameters": {
+                "path": "p36_a_python.py"
+              },
+              "workbench_status": "success",
+              "workbench_success": true,
+              "workbench_error_code": "",
+              "failure_recovery_status": "not_triggered"
+            },
+            "planner_status": "accepted",
+            "workbench_success": true,
+            "safe_exit_valid": false,
+            "safe_exit_progress": false,
+            "utility": 0.75
+          },
+          {
+            "label": "p3-6-validation-0:k1:grid:goal:clarify-toolchain:content:clarify-toolchain",
+            "candidate_id": "k1:grid:goal:clarify-toolchain:content:clarify-toolchain",
+            "candidate_role": "proposal",
+            "world_consistent": false,
+            "action": {
+              "label": "p3-6-validation-0:k1:grid:goal:clarify-toolchain:content:clarify-toolchain",
+              "oracle_control": false,
+              "planner_status": "accepted",
+              "reason_code": "native_read_only_intent_ready",
+              "accepted": true,
+              "snapshot_match": true,
+              "parameter_drift": {
+                "declared_overrides": {},
+                "actual": {
+                  "path": "p36_a_python.py"
+                },
+                "matches_contract": true
+              },
+              "intent_kind": "workspace.programming_language.resolve",
+              "intent_parameters": {
+                "path": "p36_a_python.py"
+              },
+              "workbench_status": "success",
+              "workbench_success": true,
+              "workbench_error_code": "",
+              "failure_recovery_status": "not_triggered"
+            },
+            "planner_status": "accepted",
+            "workbench_success": true,
+            "safe_exit_valid": false,
+            "safe_exit_progress": false,
+            "utility": 0.75
+          },
+          {
+            "label": "p3-6-validation-0:k1:grid:goal:recover-target:content:recover-target",
+            "candidate_id": "k1:grid:goal:recover-target:content:recover-target",
+            "candidate_role": "proposal",
+            "world_consistent": false,
+            "action": {
+              "label": "p3-6-validation-0:k1:grid:goal:recover-target:content:recover-target",
+              "oracle_control": false,
+              "planner_status": "accepted",
+              "reason_code": "native_read_only_intent_ready",
+              "accepted": true,
+              "snapshot_match": true,
+              "parameter_drift": {
+                "declared_overrides": {
+                  "path": "."
+                },
+                "actual": {
+                  "path": "."
+                },
+                "matches_contract": true
+              },
+              "intent_kind": "workspace.list",
+              "intent_parameters": {
+                "path": "."
+              },
+              "workbench_status": "success",
+              "workbench_success": true,
+              "workbench_error_code": "",
+              "failure_recovery_status": "not_triggered"
+            },
+            "planner_status": "accepted",
+            "workbench_success": true,
+            "safe_exit_valid": false,
+            "safe_exit_progress": false,
+            "utility": 0.75
+          },
+          {
+            "label": "p3-6-validation-0:abstain",
+            "candidate_id": "abstain",
+            "candidate_role": "abstain",
+            "world_consistent": false,
+            "planner_status": "safe_exit",
+            "workbench_success": false,
+            "safe_exit_valid": false,
+            "safe_exit_progress": false,
+            "utility": 0.2
+          },
+          {
+            "label": "p3-6-validation-0:reobserve",
+            "candidate_id": "reobserve",
+            "candidate_role": "reobserve",
+            "world_consistent": false,
+            "planner_status": "safe_exit",
+            "workbench_success": false,
+            "safe_exit_valid": false,
+            "safe_exit_progress": false,
+            "utility": 0.2
+          }
+        ]
+      }
+    },
+    {
+      "candidate_set": {
+        "format": "taiji-g-selection-candidate-set-v1",
+        "version": 1,
+        "example_id": "g-example:829eb62c73f347b0c9141aeef8959d80e13f14c24a1cb733e6d153c8a4d73778",
+        "family_id": "g-family:b1c9f9b643c7e85d61acfa3bd1a7886c8b8db5e3aa5ac4bc655d03b9aa226b99",
+        "split": "validation",
+        "project_id": "p3-6-holdout-project-a",
+        "path": "p36_a_missing.txt",
+        "input_digest": "fc5fd6138adb847597bfdb9fa755bc1d78d5b733f8837172000606a93e818eb4",
+        "candidates": [
+          {
+            "format": "taiji-g-selection-candidate-set-v1",
+            "version": 1,
+            "candidate_id": "abstain",
+            "source": "runtime.abstain",
+            "candidate_role": "abstain",
+            "status": "abstained",
+            "goal": null,
+            "content_plan": null,
+            "goal_score": 0.0,
+            "content_score": 0.0,
+            "confidence": 0.0,
+            "ambiguity": 1.0,
+            "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
+          },
+          {
+            "format": "taiji-g-selection-candidate-set-v1",
+            "version": 1,
+            "candidate_id": "reobserve",
+            "source": "runtime.reobserve",
+            "candidate_role": "reobserve",
+            "status": "ambiguous",
+            "goal": null,
+            "content_plan": null,
+            "goal_score": 0.0,
+            "content_score": 0.0,
+            "confidence": 0.0,
+            "ambiguity": 1.0,
+            "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
+          }
+        ],
+        "target_candidate_id": "reobserve",
+        "target_kind": "reobserve",
+        "candidate_set_digest": "8cf196bcb693e7863d45f6df25db1127f561eca0c796cabe46e02c692727000c",
+        "inference_digest": "79d10668fb1f8fa9e690381b61a5589de71383a99ea4852b2753a47ce8b7b02e"
+      },
+      "behavior_set": {
+        "format": "taiji-g-selection-behavior-v1",
+        "version": 1,
+        "candidate_set_digest": "8cf196bcb693e7863d45f6df25db1127f561eca0c796cabe46e02c692727000c",
+        "inference_digest": "79d10668fb1f8fa9e690381b61a5589de71383a99ea4852b2753a47ce8b7b02e",
+        "split": "validation",
+        "project_id": "p3-6-holdout-project-a",
+        "path": "p36_a_missing.txt",
+        "outcomes": [
+          {
+            "format": "taiji-g-selection-behavior-v1",
+            "version": 1,
+            "candidate_id": "abstain",
+            "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60",
+            "candidate_role": "abstain",
+            "snapshot_match": true,
+            "planner_accepted": false,
+            "route_valid": false,
+            "parameter_valid": false,
+            "world_consistent": false,
+            "execution_success": false,
+            "safe_exit_valid": true,
+            "safe_exit_progress": false,
+            "utility": 0.55,
+            "outcome_digest": "f1c39740cf36641d90293f9e69b2535908c692111e1aed001ed82064113de252"
+          },
+          {
+            "format": "taiji-g-selection-behavior-v1",
+            "version": 1,
+            "candidate_id": "reobserve",
+            "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44",
+            "candidate_role": "reobserve",
+            "snapshot_match": true,
+            "planner_accepted": false,
+            "route_valid": false,
+            "parameter_valid": false,
+            "world_consistent": false,
+            "execution_success": false,
+            "safe_exit_valid": true,
+            "safe_exit_progress": true,
+            "utility": 1.0,
+            "outcome_digest": "70a85c26006b51ab896e8da26c37cff0a5c49e0ba6a530cf07ce52772efc319e"
+          }
+        ],
+        "behavior_target_candidate_id": "reobserve",
+        "utility_margin": 0.44999999999999996,
+        "behavior_digest": "d800ee07846af17341121242e71a27bcdedd49164485c982347f2e6582a2b282"
+      },
+      "diagnostic": {
+        "example_id": "g-example:829eb62c73f347b0c9141aeef8959d80e13f14c24a1cb733e6d153c8a4d73778",
+        "class_key": "R",
+        "state_profile": "recovery-no-selection",
+        "observation": {
+          "observation_digest": "147a794394e10c2cb3cb874a95e96cc213e52116d2f1d333e062639e17d2955c",
+          "language_id": "unknown",
+          "selection_state": "unknown",
+          "toolchain_available": false,
+          "read_success": false,
+          "language_confidence": 0.0
+        },
+        "k_only_candidate_id": "abstain",
+        "behavior_target_candidate_id": "reobserve",
+        "utility_margin": 0.44999999999999996,
+        "behavior_disagreement": true,
+        "candidate_count": 2,
+        "diagnostics": [
+          {
+            "label": "p3-6-validation-1:abstain",
+            "candidate_id": "abstain",
+            "candidate_role": "abstain",
+            "world_consistent": false,
+            "planner_status": "safe_exit",
+            "workbench_success": false,
+            "safe_exit_valid": true,
+            "safe_exit_progress": false,
+            "utility": 0.55
+          },
+          {
+            "label": "p3-6-validation-1:reobserve",
+            "candidate_id": "reobserve",
+            "candidate_role": "reobserve",
+            "world_consistent": false,
+            "planner_status": "safe_exit",
+            "workbench_success": false,
+            "safe_exit_valid": true,
+            "safe_exit_progress": true,
+            "utility": 1.0
+          }
+        ]
+      }
+    },
+    {
+      "candidate_set": {
+        "format": "taiji-g-selection-candidate-set-v1",
+        "version": 1,
+        "example_id": "g-example:853bec153709c9490803395ce7ecf6efb37b0cfeaa44614220523fc59d04d559",
+        "family_id": "g-family:2688763789b78f34b245a3b96007540f45b7fccf95d3b3ea86c354e218db3ade",
+        "split": "validation",
+        "project_id": "p3-6-holdout-project-b",
+        "path": "p36_b_typescript.ts",
+        "input_digest": "66da07d1365c844878b05f1d30608ec3a137412d01f7c2311d00539b4d81ca33",
+        "candidates": [
+          {
+            "format": "taiji-g-selection-candidate-set-v1",
+            "version": 1,
+            "candidate_id": "abstain",
+            "source": "runtime.abstain",
+            "candidate_role": "abstain",
+            "status": "abstained",
+            "goal": null,
+            "content_plan": null,
+            "goal_score": 0.0,
+            "content_score": 0.0,
+            "confidence": 0.0,
+            "ambiguity": 1.0,
+            "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
+          },
+          {
+            "format": "taiji-g-selection-candidate-set-v1",
+            "version": 1,
+            "candidate_id": "reobserve",
+            "source": "runtime.reobserve",
+            "candidate_role": "reobserve",
+            "status": "ambiguous",
+            "goal": null,
+            "content_plan": null,
+            "goal_score": 0.0,
+            "content_score": 0.0,
+            "confidence": 0.0,
+            "ambiguity": 1.0,
+            "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
+          }
+        ],
+        "target_candidate_id": "reobserve",
+        "target_kind": "reobserve",
+        "candidate_set_digest": "7b492f27f68c4159bdbe06c886b35ccdc4a4d17d865ac54ddf1c49ed5525a10c",
+        "inference_digest": "82ed3652e2a24c8ad10ef93c3c275047733768493e48e1859c9b03dd443bc0c0"
+      },
+      "behavior_set": {
+        "format": "taiji-g-selection-behavior-v1",
+        "version": 1,
+        "candidate_set_digest": "7b492f27f68c4159bdbe06c886b35ccdc4a4d17d865ac54ddf1c49ed5525a10c",
+        "inference_digest": "82ed3652e2a24c8ad10ef93c3c275047733768493e48e1859c9b03dd443bc0c0",
+        "split": "validation",
+        "project_id": "p3-6-holdout-project-b",
+        "path": "p36_b_typescript.ts",
+        "outcomes": [
+          {
+            "format": "taiji-g-selection-behavior-v1",
+            "version": 1,
+            "candidate_id": "abstain",
+            "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60",
+            "candidate_role": "abstain",
+            "snapshot_match": true,
+            "planner_accepted": false,
+            "route_valid": false,
+            "parameter_valid": false,
+            "world_consistent": false,
+            "execution_success": false,
+            "safe_exit_valid": true,
+            "safe_exit_progress": false,
+            "utility": 0.55,
+            "outcome_digest": "f1c39740cf36641d90293f9e69b2535908c692111e1aed001ed82064113de252"
+          },
+          {
+            "format": "taiji-g-selection-behavior-v1",
+            "version": 1,
+            "candidate_id": "reobserve",
+            "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44",
+            "candidate_role": "reobserve",
+            "snapshot_match": true,
+            "planner_accepted": false,
+            "route_valid": false,
+            "parameter_valid": false,
+            "world_consistent": false,
+            "execution_success": false,
+            "safe_exit_valid": true,
+            "safe_exit_progress": true,
+            "utility": 1.0,
+            "outcome_digest": "70a85c26006b51ab896e8da26c37cff0a5c49e0ba6a530cf07ce52772efc319e"
+          }
+        ],
+        "behavior_target_candidate_id": "reobserve",
+        "utility_margin": 0.44999999999999996,
+        "behavior_digest": "81067de371a44e3f5e392257b455f3b7689adc6232c61e29524e4eba5d9d573d"
+      },
+      "diagnostic": {
+        "example_id": "g-example:853bec153709c9490803395ce7ecf6efb37b0cfeaa44614220523fc59d04d559",
+        "class_key": "C",
+        "state_profile": "ambiguous-language",
+        "observation": {
+          "observation_digest": "48933ac1170ef0020ceaeaf229f4fb74dd41c97963cccc33a6b0dc90fa9d24a2",
+          "language_id": "typescript",
+          "selection_state": "ambiguous",
+          "toolchain_available": false,
+          "read_success": true,
+          "language_confidence": 0.409
+        },
+        "k_only_candidate_id": "abstain",
+        "behavior_target_candidate_id": "reobserve",
+        "utility_margin": 0.44999999999999996,
+        "behavior_disagreement": true,
+        "candidate_count": 2,
+        "diagnostics": [
+          {
+            "label": "p3-6-validation-2:abstain",
+            "candidate_id": "abstain",
+            "candidate_role": "abstain",
+            "world_consistent": false,
+            "planner_status": "safe_exit",
+            "workbench_success": false,
+            "safe_exit_valid": true,
+            "safe_exit_progress": false,
+            "utility": 0.55
+          },
+          {
+            "label": "p3-6-validation-2:reobserve",
+            "candidate_id": "reobserve",
+            "candidate_role": "reobserve",
+            "world_consistent": false,
+            "planner_status": "safe_exit",
+            "workbench_success": false,
+            "safe_exit_valid": true,
+            "safe_exit_progress": true,
+            "utility": 1.0
+          }
+        ]
+      }
+    },
+    {
+      "candidate_set": {
+        "format": "taiji-g-selection-candidate-set-v1",
+        "version": 1,
+        "example_id": "g-example:b1a0354d98bb4f2996fd29eb946426246e96dc0bd6470489d22b413629667666",
+        "family_id": "g-family:1f63ef2cdda34bf220cff8f2ca346cde8c8891efb3c83092f5644fed4330d9e8",
+        "split": "validation",
+        "project_id": "p3-6-holdout-project-b",
+        "path": "p36_b_header.h",
+        "input_digest": "57a637f1c3effcc4d2dff77eed7cf13d60526f74940f33177d0497c804936564",
+        "candidates": [
+          {
+            "format": "taiji-g-selection-candidate-set-v1",
+            "version": 1,
+            "candidate_id": "abstain",
+            "source": "runtime.abstain",
+            "candidate_role": "abstain",
+            "status": "abstained",
+            "goal": null,
+            "content_plan": null,
+            "goal_score": 0.0,
+            "content_score": 0.0,
+            "confidence": 0.0,
+            "ambiguity": 1.0,
+            "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
+          },
+          {
+            "format": "taiji-g-selection-candidate-set-v1",
+            "version": 1,
+            "candidate_id": "reobserve",
+            "source": "runtime.reobserve",
+            "candidate_role": "reobserve",
+            "status": "ambiguous",
+            "goal": null,
+            "content_plan": null,
+            "goal_score": 0.0,
+            "content_score": 0.0,
+            "confidence": 0.0,
+            "ambiguity": 1.0,
+            "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
+          }
+        ],
+        "target_candidate_id": "reobserve",
+        "target_kind": "reobserve",
+        "candidate_set_digest": "764783e6cb129b43af813316e554df5f9a91aa0d919a2f63eb668e1959163a8a",
+        "inference_digest": "6db9f9b8e6cf86628169d0947e11ee8338f5d2db3a40e0d6dac5658c92204142"
+      },
+      "behavior_set": {
+        "format": "taiji-g-selection-behavior-v1",
+        "version": 1,
+        "candidate_set_digest": "764783e6cb129b43af813316e554df5f9a91aa0d919a2f63eb668e1959163a8a",
+        "inference_digest": "6db9f9b8e6cf86628169d0947e11ee8338f5d2db3a40e0d6dac5658c92204142",
+        "split": "validation",
+        "project_id": "p3-6-holdout-project-b",
+        "path": "p36_b_header.h",
+        "outcomes": [
+          {
+            "format": "taiji-g-selection-behavior-v1",
+            "version": 1,
+            "candidate_id": "abstain",
+            "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60",
+            "candidate_role": "abstain",
+            "snapshot_match": true,
+            "planner_accepted": false,
+            "route_valid": false,
+            "parameter_valid": false,
+            "world_consistent": false,
+            "execution_success": false,
+            "safe_exit_valid": true,
+            "safe_exit_progress": false,
+            "utility": 0.55,
+            "outcome_digest": "f1c39740cf36641d90293f9e69b2535908c692111e1aed001ed82064113de252"
+          },
+          {
+            "format": "taiji-g-selection-behavior-v1",
+            "version": 1,
+            "candidate_id": "reobserve",
+            "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44",
+            "candidate_role": "reobserve",
+            "snapshot_match": true,
+            "planner_accepted": false,
+            "route_valid": false,
+            "parameter_valid": false,
+            "world_consistent": false,
+            "execution_success": false,
+            "safe_exit_valid": true,
+            "safe_exit_progress": true,
+            "utility": 1.0,
+            "outcome_digest": "70a85c26006b51ab896e8da26c37cff0a5c49e0ba6a530cf07ce52772efc319e"
+          }
+        ],
+        "behavior_target_candidate_id": "reobserve",
+        "utility_margin": 0.44999999999999996,
+        "behavior_digest": "aff51258c333c42fcf56cdcbca2cf3573017f897720243f7c4bcc521eaa57aa0"
+      },
+      "diagnostic": {
+        "example_id": "g-example:b1a0354d98bb4f2996fd29eb946426246e96dc0bd6470489d22b413629667666",
+        "class_key": "D",
+        "state_profile": "ambiguous-header",
+        "observation": {
+          "observation_digest": "f51196df13b6622c85733ff1499b7c339d7c556f45c8ae0603216a38787c4bcd",
+          "language_id": "unknown",
+          "selection_state": "ambiguous",
+          "toolchain_available": false,
+          "read_success": true,
+          "language_confidence": 0.36
+        },
+        "k_only_candidate_id": "abstain",
+        "behavior_target_candidate_id": "reobserve",
+        "utility_margin": 0.44999999999999996,
+        "behavior_disagreement": true,
+        "candidate_count": 2,
+        "diagnostics": [
+          {
+            "label": "p3-6-validation-3:abstain",
+            "candidate_id": "abstain",
+            "candidate_role": "abstain",
+            "world_consistent": false,
+            "planner_status": "safe_exit",
+            "workbench_success": false,
+            "safe_exit_valid": true,
+            "safe_exit_progress": false,
+            "utility": 0.55
+          },
+          {
+            "label": "p3-6-validation-3:reobserve",
+            "candidate_id": "reobserve",
+            "candidate_role": "reobserve",
+            "world_consistent": false,
+            "planner_status": "safe_exit",
+            "workbench_success": false,
+            "safe_exit_valid": true,
+            "safe_exit_progress": true,
+            "utility": 1.0
+          }
+        ]
+      }
+    }
+  ],
+  "manifest_digest": "2b6948461b5d624319b692eaabd6c93d235c6859f82546d146195a83002dbc04"
+}
