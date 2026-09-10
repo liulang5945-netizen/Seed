@@ -1,0 +1,53 @@
+{
+  "format": "taiji-m5-k-p2-3-recovery-continuation-contract-v1",
+  "version": 1,
+  "status": "completed",
+  "training_performed": false,
+  "sealed_payload_read": false,
+  "can_promote": false,
+  "manifest": "E:\\Seed\\plans\\manifests\\taiji_m5_k_p2_3_recovery_continuation_manifest_v1.json",
+  "source_p1_manifest": "E:\\Seed\\plans\\manifests\\taiji_m5_k_p1_data_manifest_v2.json",
+  "manifest_digest": "a9fe3d3361a2e695fab756e83988860b5f5669992243ad26087c274bad0031a7",
+  "train_audit": {
+    "expected_split": "train",
+    "record_count": 6,
+    "project_ids": [
+      "p2-3-recovery-train-project"
+    ],
+    "unique_candidate_input_digest_count": 4,
+    "unique_template_family_count": 2,
+    "unique_candidate_path_count": 2,
+    "errors": [],
+    "passed": true
+  },
+  "validation_audit": {
+    "expected_split": "validation",
+    "record_count": 2,
+    "project_ids": [
+      "p2-3-recovery-validation-project"
+    ],
+    "unique_candidate_input_digest_count": 4,
+    "unique_template_family_count": 2,
+    "unique_candidate_path_count": 2,
+    "errors": [],
+    "passed": true
+  },
+  "split_isolation": {
+    "project_disjoint": true,
+    "candidate_path_disjoint": true,
+    "template_disjoint": true
+  },
+  "checks": {
+    "manifest_format": true,
+    "source_p1_manifest": true,
+    "train_contract": true,
+    "validation_contract": true,
+    "project_isolation": true,
+    "candidate_path_isolation": true,
+    "template_isolation": true,
+    "no_fit": true,
+    "no_sealed_payload": true
+  },
+  "interpretation": "data-contract-only; initial recovery is host policy and excluded from fit; candidate K1/K2 examples are fit-eligible but were not trained in this run",
+  "elapsed_seconds": 3.709166600019671
+}
