@@ -189,3 +189,17 @@ P2.1 把问题进一步分层：6/10 行在 native readout 之前就因输入证
 | 原 P1 v2 Workbench 成功 | 3/10 | 3/10 | 4/10 |
 
 结论不是“训练成功”：parent 已经能完成新 candidate validation 的 2/2，candidate-only fit 没有增加可测能力，却使 B/C/D 等旧高证据读出发生干扰；安全 abstention 6/6 保持。故 `can_promote=false`，也不进入 P3。当前失败层已从数据合同推进到 online update 的 retention/objective：下一步唯一执行项是 P2.4，用 P2 合同中固定的 50 条均衡 rehearsal 与 6 条 continuation 做确定性交错 canary，先验证不遗忘，再判断是否存在真实新增能力。
+
+## 13. P2.4 retention-preserving objective canary（2026-09-10）
+
+按 §12 的失败归因运行了 [P2.4 retention canary](../../scripts/training/eval_taiji_m5_k_p2_4_retention_canary.py)，报告见 [P2.4 报告](../../reports/taiji_m5_k_p2_4_retention_canary_20260910.json)。它重新构建 P1 v2 的 460 条记录，校验 P2 合同的 50 条均衡 wake 的 experience digest、顺序和 A/B/C/D/R 各 10 条，然后比较 parent、rehearsal-only、50 条 rehearsal 与 6 条 continuation 的确定性交错 stream、已有 P2 wake-only reference；训练前后 checkpoint 独立恢复均通过。
+
+| 指标 | parent-frozen | rehearsal-only | interleaved rehearsal + continuation | P2 wake-only reference |
+|---|---:|---:|---:|---:|
+| 原 P1 v2 K1 goal 命中 | 4/10 | 4/10 | 4/10 | 4/10 |
+| 原 P1 v2 K2 goal 命中 | 4/10 | 4/10 | 4/10 | 4/10 |
+| 原 P1 v2 Workbench 成功 | 3/10 | 4/10 | 4/10 | 4/10 |
+| 原 P1 v2 安全 abstention | 6/6 | 6/6 | 6/6 | 6/6 |
+| P2.3 continuation Workbench 成功 | 2/2 | 2/2 | 2/2 | 2/2 |
+
+P2.4 的 retention Gate 通过，证明固定 rehearsal 能阻止 P2.3 candidate-only 的旧类干扰；但 continuation 仍与 parent 一样是 2/2，没有新增能力。因此这不是 promotion 或 P3 解冻证据。下一步改为 P2.5：保留 recovery→list→candidate 顺序，但换成训练未出现的语言/工具链组合（优先 TypeScript＋可用 toolchain 的 inspect 组合），先对 frozen parent 做 validation-only novelty probe；只有 parent 对该真实未见组合失败，才有必要制定下一轮学习。

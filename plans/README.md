@@ -1,12 +1,12 @@
 # Seed / Taiji 计划与架构入口
 
-> 2026-09-10 依据 main ca7a9c5b 的源码、checkpoint 与报告复审。唯一执行顺序：[当前计划](active/roadmap/03_CURRENT_EXECUTION.md)。
+> 2026-09-10 依据 main ef2d4f8a 的源码、checkpoint 与报告复审。唯一执行顺序：[当前计划](active/roadmap/03_CURRENT_EXECUTION.md)。
 
 目前已有五类 K worker 和 fast/slow＋replay 实现。C-stage v2 在 D/R/A 小型评估上四门通过，FS 比 C 的平均 MSE 改善约 0.001868，弱类改善约 0.002495。该组合使用额外 replay；三组 v4 K worker 权重实测相同，全五类泛化与独立拆分收益仍待验证，can_promote=false。
 
-**P0 等 replay 配对诊断已完成；P1.1 数据合同已修复并通过；P2 pilot 未晋级；P2.1 输出/行动链诊断、P2.2 安全 bridge、P2.3 continuation 数据合同和 targeted learning 已完成。唯一下一步：P2.4 retention-preserving objective canary。** P0 已证明当前 FS 有效轨迹与直接 continuation＋相同 replay 在 `4.76837158203125e-7` 峰值差内等价，因此后续效果基线采用直接 continuation＋replay；FS 保留为可恢复状态实现候选。P2 显示连续 MSE 下降但 goal/content 命中未提升；P2.1 确认 6/10 行低于原生 `0.55` confidence floor；P2.2 的 recovery/alignment 是 oracle control；P2.3 candidate validation 在 parent 上已 2/2，candidate-only fit 未增加能力且损害原五类高证据读出。SGK v1 继续暂停。
+**P0 等 replay 配对诊断已完成；P1.1 数据合同已修复并通过；P2 pilot 未晋级；P2.1 输出/行动链诊断、P2.2 安全 bridge、P2.3 continuation 数据合同/targeted learning 和 P2.4 retention 已完成。唯一下一步：P2.5 novel-composition probe。** P0 已证明当前 FS 有效轨迹与直接 continuation＋相同 replay 在 `4.76837158203125e-7` 峰值差内等价，因此后续效果基线采用直接 continuation＋replay；FS 保留为可恢复状态实现候选。P2 显示连续 MSE 下降但 goal/content 命中未提升；P2.1 确认 6/10 行低于原生 `0.55` confidence floor；P2.2 的 recovery/alignment 是 oracle control；P2.3 candidate-only fit 未增加能力且损害原五类高证据读出；P2.4 已修复保持，但 continuation target 在 parent 上本来就是 2/2。SGK v1 继续暂停。
 
-阶段已按 601413cd 收束为“研究审计完成、模型能力尚未验收”；本轮完成了 P2 小预算训练 pilot、P2.1 只读诊断、P2.2 安全 bridge、P2.3 continuation 数据合同和 targeted learning，但没有 promotion 成绩。**当前只执行 P2.4 retention-preserving objective canary：固定复现 50 条 rehearsal，与 6 条 continuation 做确定性交错，并在同一 checkpoint 上验收保持；不降低 confidence floor、不把 host/oracle 控制当模型能力、不进入 P3。** P3–P5 保留为后续路线，不并行开工；完整成果分类、停止条件及文档边界均在当前计划中。
+阶段已按 601413cd 收束为“研究审计完成、模型能力尚未验收”；本轮完成了 P2 小预算训练 pilot、P2.1 只读诊断、P2.2 安全 bridge、P2.3 continuation 数据合同/targeted learning 和 P2.4 retention，但没有 promotion 成绩。**当前只执行 P2.5 novel-composition probe：构造真正未见的 recovery 后语言/工具链组合，先做 frozen parent validation-only 评分；不降低 confidence floor、不把 host/oracle 控制当模型能力、不进入 P3。** P3–P5 保留为后续路线，不并行开工；完整成果分类、停止条件及文档边界均在当前计划中。
 
 - [本轮结果复审](reference/M4V2_POST_C_STAGE_RESULT_REVIEW_20260910.md)：实际收益、预算混淆、父 worker 重复、seed 循环、恢复缺口与修订依据。
 - [P0 等 replay 诊断报告](../reports/taiji_m5_k_p0_equal_replay_diagnostic_20260910.json)：同课程、同 replay、轨迹差异和 checkpoint preflight 结果。
@@ -20,6 +20,7 @@
 - [P2.3 continuation manifest](manifests/taiji_m5_k_p2_3_recovery_continuation_manifest_v1.json)：6 条 train + 2 条 validation，host recovery 与 fit-eligible candidate 分层，K1/K2 digest 和 project/path/template 隔离。
 - [P2.3 continuation contract](../reports/taiji_m5_k_p2_3_recovery_continuation_contract_20260910.json)：数据合同通过；只建 artifact、未训练、未读 sealed、`can_promote=false`。
 - [P2.3 targeted learning pilot](../reports/taiji_m5_k_p2_3_targeted_learning_pilot_20260910.json)：训练前后 checkpoint 独立恢复通过；continuation 2/2 无新增能力，candidate-only fit 造成旧类 K1/K2 退化，`can_promote=false`。
+- [P2.4 retention canary](../reports/taiji_m5_k_p2_4_retention_canary_20260910.json)：50 条 P2 rehearsal digest/平衡复现，交错 continuation 后旧类保持和安全 abstention 通过；continuation 仍无新增能力，`can_promote=false`。
 - [机器审计](../reports/taiji_m4v2_plan_result_review_20260910.json)：源码摘要、权重对比、资源计数和 retention 反例。
 - [历史执行流水](archive/history/20260910_result_review/EXECUTION_HISTORY.md)：保留此前全部记录，旧“下一步”不再授权执行。
 - [历史计划入口](archive/history/20260910_result_review/PLAN_INDEX_HISTORY.md)：此前入口及研究进展记录。
