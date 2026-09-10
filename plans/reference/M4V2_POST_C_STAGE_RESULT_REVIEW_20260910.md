@@ -280,3 +280,17 @@ P3.0 的结论是“当前 K1/K2 continuation 状态可以被内容寻址、独�
 | rollback / parameter growth | 通过 | rollback parent 指向 P3.0，K1/K2 digest 未变，参数未增长 |
 
 P3.1 的边界结论是“单 cell 状态合同和恢复链路成立”，不是“已经产生 S/G 学习能力”。实现审计还发现：当前 K1 的既有输出同时包含语义、goal 和 content，G 仍由外部 target 驱动；若直接训练新的 G 而不先处理所有权，会复制能力并让指标归属失真。因此下一步唯一执行项改为 P3.2：沿用 K1/K2 的有效权重，建立 S/K/G owner-transfer adapter 和 `GSelectionState`，先做 K-only 对照、无新增参数的迁移恢复和 fail-closed 负例；只有迁移不劣且 G 不再读取外部 target，才允许设计 P3.3 的 G 小步学习。P3.2 不进入结构成长、CUDA、IDE/provider 或客户端视觉路线。
+
+## 19. P3.2 K→G owner-transfer preflight 结果（2026-09-11）
+
+按 §18 的入场条件运行了 [P3.2 owner-transfer preflight](../../scripts/training/eval_taiji_m5_k_p3_2_owner_transfer.py)，产出 [P3.2 manifest](../manifests/taiji_m5_k_p3_2_owner_transfer_manifest_v1.json) 和 [P3.2 报告](../../reports/taiji_m5_k_p3_2_owner_transfer_20260910.json)。本轮固定 P3.0 continuation parent、P3.1 manifest 和 P2.7 的 4 条 holdout；K1 只产生 inherited goal/content candidate，`GSelectionState` 持有最终选择，外部 goal/content target 只作为标签审计，未进入运行时。没有调用 `fit`、没有新增参数、没有读取 sealed payload。
+
+| Gate | 结果 | 证据含义 |
+|---|---:|---|
+| K-only 与 owner-transfer 的选择/输出一致 | 通过 | 4/4 holdout 的 K1 selection、K2 output、safe abstention、Workbench 全部等价，owner-transfer 没有破坏已有能力 |
+| 运行时外部 target 隔离 | 通过 | G 只消费 K candidate/evidence；`external_target_used=false`，目标标签没有成为模型输入 |
+| checkpoint / 独立恢复 | 通过 | uninterrupted、事件边界、case 边界和两条 resumed 轨迹的 worker/budget/RNG/cursor/logical digest 一致 |
+| fail-closed / rollback | 通过 | tampered cursor、错误 P3.0 base、错误 P3.2 manifest、错误 owner mask 全部拒绝，rollback 可恢复 |
+| 训练与参数边界 | 通过 | `fit_called=false`、`training_performed=false`、K 参数未增长、`can_promote=false` |
+
+P3.2 的结论是“选择所有权已经可以从 K 迁移到 G，且不损害当前行为”，不是“G 已经学会选择”。因此下一步唯一执行项改为 P3.3：冻结 P3.2 的 K，只建立有正/干扰/拒绝候选的 G candidate-set contract，先做 data-signal canary，再决定是否允许 G-only 小步更新。P2.7 holdout 必须保持 untouched test；训练前后都必须通过 checkpoint 保存、独立恢复、lineage、rollback 和篡改拒绝。若候选标签只是复制 K1 原选择，必须停止并重设计目标，不以 identity fit 冒充能力提升。
