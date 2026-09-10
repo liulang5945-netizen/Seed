@@ -1,12 +1,12 @@
 # Seed / Taiji 计划与架构入口
 
-> 2026-09-10 依据 main 5d62d932 的源码、checkpoint 与报告复审。唯一执行顺序：[当前计划](active/roadmap/03_CURRENT_EXECUTION.md)。
+> 2026-09-10 依据 main 917c8bf9 的源码、checkpoint 与报告复审。唯一执行顺序：[当前计划](active/roadmap/03_CURRENT_EXECUTION.md)。
 
 目前已有五类 K worker 和 fast/slow＋replay 实现。C-stage v2 在 D/R/A 小型评估上四门通过，FS 比 C 的平均 MSE 改善约 0.001868，弱类改善约 0.002495。该组合使用额外 replay；三组 v4 K worker 权重实测相同，全五类泛化与独立拆分收益仍待验证，can_promote=false。
 
-**P0 等 replay 配对诊断已完成；P1.1 数据合同已修复并通过；P2 pilot 已完成但未晋级。唯一下一步：P2.1 输出/行动链诊断。** P0 已证明当前 FS 有效轨迹与直接 continuation＋相同 replay 在 `4.76837158203125e-7` 峰值差内等价，因此后续效果基线采用直接 continuation＋replay；FS 保留为可恢复状态实现候选。P2 显示连续 MSE 下降但 goal/content 命中未提升，R 类命中为 0，不能把拟合改善当作智能验收。SGK v1 继续暂停。
+**P0 等 replay 配对诊断已完成；P1.1 数据合同已修复并通过；P2 pilot 未晋级；P2.1 输出/行动链诊断已完成。唯一下一步：P2.2 安全 abstention 与 recovery bridge canary。** P0 已证明当前 FS 有效轨迹与直接 continuation＋相同 replay 在 `4.76837158203125e-7` 峰值差内等价，因此后续效果基线采用直接 continuation＋replay；FS 保留为可恢复状态实现候选。P2 显示连续 MSE 下降但 goal/content 命中未提升；P2.1 进一步确认 6/10 行低于原生 `0.55` confidence floor 而安全输出 `unknown`，wake-only/replay 的 K1→K2→planner→Workbench 成功率为 4/10，且 `content:recover-target` 尚无只读 route。SGK v1 继续暂停。
 
-阶段已按 601413cd 收束为“研究审计完成、模型能力尚未验收”；本轮完成了 P2 小预算训练 pilot，但没有 promotion 成绩。**当前只执行 P2.1：解释连续输出改善为何没有转化为离散输出和真实行动，再决定是否继续学习或进入 P3。** P3–P5 保留为后续路线，不并行开工；完整成果分类、停止条件及文档边界均在当前计划中。
+阶段已按 601413cd 收束为“研究审计完成、模型能力尚未验收”；本轮完成了 P2 小预算训练 pilot 与 P2.1 只读诊断，但没有 promotion 成绩。**当前只执行 P2.2：把低置信度输出、K2 世界对齐和缺失目标恢复收敛为安全、可测的 bridge contract，再决定是否继续学习或进入 P3。** P3–P5 保留为后续路线，不并行开工；完整成果分类、停止条件及文档边界均在当前计划中。
 
 - [本轮结果复审](reference/M4V2_POST_C_STAGE_RESULT_REVIEW_20260910.md)：实际收益、预算混淆、父 worker 重复、seed 循环、恢复缺口与修订依据。
 - [P0 等 replay 诊断报告](../reports/taiji_m5_k_p0_equal_replay_diagnostic_20260910.json)：同课程、同 replay、轨迹差异和 checkpoint preflight 结果。
@@ -15,6 +15,7 @@
 - [P1 v2 数据契约审计报告](../reports/taiji_m5_k_p1_data_contract_audit_v2_20260910.json)：修复后 Gate 为 `passed`，`can_start_p2=true`。
 - [P1 v2 数据 manifest](manifests/taiji_m5_k_p1_data_manifest_v2.json)：450 条 train + 10 条 validation 的可重建 contract。
 - [P2 v2 validation pilot](../reports/taiji_m5_k_p2_validation_pilot_v2_20260910.json)：50 条均衡 wake + 10 条 replay，独立 checkpoint preflight 通过；连续 MSE 改善但命中率未改善，`can_promote=false`。
+- [P2.1 输出/行动链诊断](../reports/taiji_m5_k_p2_output_action_diagnostic_20260910.json)：只读复建 10 条 validation，K1→K2 级联、planner、隔离 Workbench 与资源/恢复证据；未训练、未读 sealed、`can_promote=false`。
 - [机器审计](../reports/taiji_m4v2_plan_result_review_20260910.json)：源码摘要、权重对比、资源计数和 retention 反例。
 - [历史执行流水](archive/history/20260910_result_review/EXECUTION_HISTORY.md)：保留此前全部记录，旧“下一步”不再授权执行。
 - [历史计划入口](archive/history/20260910_result_review/PLAN_INDEX_HISTORY.md)：此前入口及研究进展记录。
