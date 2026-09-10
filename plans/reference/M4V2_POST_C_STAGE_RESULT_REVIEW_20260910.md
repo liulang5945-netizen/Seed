@@ -1,6 +1,6 @@
 # 2026-09-10 后续结果复审与路线修订
 
-初始复审依据：本地 main 提交 4629bc8c；比较 da8a16e1 之后的 51 个变更文件，重点读取实际 learner、runner、课程生成器、checkpoint 和 formal/scorecard。随后追加的 P0/P1/P1.1 validation-only 结果落在本地 main 提交 da60abc7；没有重跑正式训练，没有覆盖历史评分。
+初始复审依据：本地 main 提交 4629bc8c；比较 da8a16e1 之后的 51 个变更文件，重点读取实际 learner、runner、课程生成器、checkpoint 和 formal/scorecard。随后追加的 P0/P1/P1.1/P2 validation 结果落在本地 main 提交 5d62d932；没有读取新的 sealed payload，没有 promotion 成绩。
 
 机器复核：[结果审计](../../reports/taiji_m4v2_plan_result_review_20260910.json)。本次检查通过 systematic-debugging 的源码追踪与最小反例定位问题。当前唯一执行顺序见 [执行计划](../active/roadmap/03_CURRENT_EXECUTION.md)。
 
@@ -114,4 +114,19 @@ FS checkpoint 保存 slow/fast 和 replay digest，但不包含 replay 的可重
 | split | validation 五类覆盖；project 和 template 均与 train 隔离 | 可以做 validation pilot |
 | model17/23/31 | state_dict 仍两两相同 | 仅旁证；单父代 P1 Gate 不要求复制出独立模型 |
 
-报告状态为 `passed`，`can_start_p2=true`。这只证明数据入口和统计合同成立，不证明 K1/K2 已经学会或能泛化。当前唯一下一步是冻结 candidate/scorer/threshold/resource，并在独立 checkpoint preflight 后执行 P2 validation pilot；仍不读取新的 sealed 测试。
+报告状态为 `passed`，`can_start_p2=true`。这只证明数据入口和统计合同成立，不证明 K1/K2 已经学会或能泛化。P2 pilot 结果见 §8。
+
+## 8. P2 validation pilot 结果（2026-09-10）
+
+按当前计划运行了 [P2 pilot v2](../../scripts/training/eval_taiji_m5_k_p2_validation_pilot.py)，结果见 [P2 v2 报告](../../reports/taiji_m5_k_p2_validation_pilot_v2_20260910.json)。首次评分字段适配错误保留在 [失败报告](../../reports/taiji_m5_k_p2_validation_pilot_failed_20260910.json)；修复后没有覆盖失败证据。本轮从 P1 v2 manifest 重建 460 条记录，`mismatch_count=0`，使用 50 条均衡 wake（A/B/C/D/R 各 10）和 10 条固定 replay；没有读取新的 sealed payload。
+
+| 检查 | frozen | wake-only | wake-replay |
+|---|---:|---:|---:|
+| macro combined MSE | 0.156574 | 0.029237 | 0.030520 |
+| 相对 frozen 的 Δ | — | −0.127337 | −0.126053 |
+| worst-class MSE | 0.188369 | 0.102619 | 0.113938 |
+| macro goal/content 命中 | 0.4 | 0.4 | 0.4 |
+| R 类离散命中 | 0.0 | 0.0 | 0.0 |
+| checkpoint 独立进程恢复 | — | 通过 | 通过 |
+
+结论分两层：连续回归输出的拟合明显改善，说明 P1 数据、fit、保存/恢复链路可运行；但离散 goal/content 输出没有改善，R 类没有命中，且 replay 在本 pilot 略差于 wake-only。`can_promote=false`，不能把这次 MSE 下降称为泛化、智能、真实 Workbench 成功或 replay 独立收益。当前唯一下一步是 P2.1：只读已有 artifact，诊断 confidence/ambiguity、argmax/None、K1→K2→planner→Workbench 四层行动链和 CPU/保存资源；在输出/行动命中与逐类保持未验收前不进入 P3。
