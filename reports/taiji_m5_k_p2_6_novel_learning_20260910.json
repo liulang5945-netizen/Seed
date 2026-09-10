@@ -1,0 +1,1855 @@
+{
+  "format": "taiji-m5-k-p2-6-novel-learning-v1",
+  "version": 1,
+  "status": "completed",
+  "model_seed": 17,
+  "training_performed": true,
+  "sealed_payload_read": false,
+  "can_promote": false,
+  "p1_manifest": "E:\\Seed\\plans\\manifests\\taiji_m5_k_p1_data_manifest_v2.json",
+  "p2_report": "E:\\Seed\\reports\\taiji_m5_k_p2_validation_pilot_v2_20260910.json",
+  "p2_4_report": "E:\\Seed\\reports\\taiji_m5_k_p2_4_retention_canary_20260910.json",
+  "p2_5_report": "E:\\Seed\\reports\\taiji_m5_k_p2_5_novel_composition_probe_20260910.json",
+  "p2_5_manifest": "E:\\Seed\\plans\\manifests\\taiji_m5_k_p2_5_novel_composition_manifest_v1.json",
+  "manifest": "E:\\Seed\\plans\\manifests\\taiji_m5_k_p2_6_novel_learning_manifest_v1.json",
+  "run_dir": "E:\\Seed\\output\\taiji_m5_k_p2_6_novel_learning_a433fbcc064e418ea48d3ba6c0338415",
+  "manifest_digest": "585e8fceebb00497b64f658e8383b5d851c6156eb1c865a65873d565eaa31961",
+  "manifest_reconstruction": {
+    "manifest_format": "taiji-m5-k-p1-data-manifest-v2",
+    "manifest_digest": "4c6400dc82781b229370e774dcabbb852a81647c787ddbd4eae89819c876f558",
+    "expected_record_count": 460,
+    "rebuilt_record_count": 460,
+    "mismatch_count": 0,
+    "mismatches": [],
+    "passed": true
+  },
+  "p2_rehearsal": {
+    "count": 50,
+    "class_counts": {
+      "A": 10,
+      "B": 10,
+      "C": 10,
+      "D": 10,
+      "R": 10
+    },
+    "experience_digest_match": true,
+    "stream_digest": "da2cf724d538aa8969a45a8c6c497124e44942caa85bdea8154cebcbb9420d9e"
+  },
+  "contract": {
+    "train_count": 6,
+    "validation_count": 2,
+    "candidate_paths": [
+      "typescript_20.ts",
+      "typescript_21.ts",
+      "typescript_22.ts",
+      "typescript_23.ts",
+      "typescript_24.ts",
+      "typescript_25.ts",
+      "typescript_26.ts",
+      "typescript_27.ts"
+    ],
+    "candidate_paths_unique": true,
+    "candidate_paths_disjoint_from_prior": true,
+    "train_validation_paths_disjoint": true,
+    "novel_tuple_count": 1,
+    "errors": [],
+    "passed": true
+  },
+  "training_contract": {
+    "rehearsal_count": 50,
+    "novel_train_count": 6,
+    "novel_validation_count": 2,
+    "validation_used_for_fit": false,
+    "replay_added": false,
+    "parameter_growth": false,
+    "confidence_floor": 0.55,
+    "fit_record_ids": [
+      "p2-6-novel-train-0000",
+      "p2-6-novel-train-0001",
+      "p2-6-novel-train-0002",
+      "p2-6-novel-train-0003",
+      "p2-6-novel-train-0004",
+      "p2-6-novel-train-0005"
+    ],
+    "validation_record_ids": [
+      "p2-6-novel-validation-0000",
+      "p2-6-novel-validation-0001"
+    ]
+  },
+  "checkpoint_preflight": {
+    "parent_before_fit": {
+      "k1_restore_digest_equal": true,
+      "k2_restore_digest_equal": true,
+      "passed": true,
+      "independent_process_restore": true,
+      "files": {
+        "k1": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p2_6_novel_learning_a433fbcc064e418ea48d3ba6c0338415\\preflight-parent\\birth_k1_semantic.pt",
+          "bytes": 7665
+        },
+        "k2": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p2_6_novel_learning_a433fbcc064e418ea48d3ba6c0338415\\preflight-parent\\birth_k2_transition.pt",
+          "bytes": 26505
+        }
+      }
+    },
+    "all_saved_arms_after_fit": true
+  },
+  "arms": {
+    "parent-frozen": {
+      "checkpoint": {
+        "files": {
+          "k1": {
+            "path": "E:\\Seed\\output\\taiji_m5_k_p2_6_novel_learning_a433fbcc064e418ea48d3ba6c0338415\\arms\\parent-frozen\\birth_k1_semantic.pt",
+            "bytes": 7665
+          },
+          "k2": {
+            "path": "E:\\Seed\\output\\taiji_m5_k_p2_6_novel_learning_a433fbcc064e418ea48d3ba6c0338415\\arms\\parent-frozen\\birth_k2_transition.pt",
+            "bytes": 26505
+          }
+        },
+        "checkpoint_digests": {
+          "k1": "6ebb25a14710f2a929cb2dfd0771a048dd72eac8e9fa160274110b60a8839b1d",
+          "k2": "1b077ffdea6744c544265b1f05172a312beacb942ad0f57960d24fb19ed25b71"
+        },
+        "restore": {
+          "returncode": 0,
+          "independent_process_restore": true,
+          "stdout": "{\"k1_restore_digest_equal\": true, \"k2_restore_digest_equal\": true, \"passed\": true}\n",
+          "stderr": "",
+          "k1_restore_digest_equal": true,
+          "k2_restore_digest_equal": true,
+          "passed": true
+        },
+        "passed": true
+      },
+      "fit_counts": {
+        "rehearsal": 0,
+        "novel": 0
+      },
+      "training_steps_total": {
+        "k1": 2400,
+        "k2": 6720
+      },
+      "new_training_steps": {
+        "k1": 0,
+        "k2": 0
+      },
+      "scores": {
+        "parameter_count": {
+          "k1": 472,
+          "k2": 5176,
+          "total": 5648
+        },
+        "p1_validation": {
+          "row_count": 10,
+          "k1_goal_hit_count": 4,
+          "k1_content_hit_count": 4,
+          "k2_goal_hit_count": 4,
+          "k2_content_hit_count": 4,
+          "safe_abstention_count": 6,
+          "workbench_success_count": 3,
+          "by_class": {
+            "A": {
+              "rows": 2,
+              "k1_goal_hits": 1,
+              "k1_content_hits": 1,
+              "k2_goal_hits": 1,
+              "k2_content_hits": 1,
+              "safe_abstentions": 1,
+              "workbench_successes": 1
+            },
+            "B": {
+              "rows": 2,
+              "k1_goal_hits": 1,
+              "k1_content_hits": 1,
+              "k2_goal_hits": 1,
+              "k2_content_hits": 1,
+              "safe_abstentions": 1,
+              "workbench_successes": 1
+            },
+            "C": {
+              "rows": 2,
+              "k1_goal_hits": 1,
+              "k1_content_hits": 1,
+              "k2_goal_hits": 1,
+              "k2_content_hits": 1,
+              "safe_abstentions": 1,
+              "workbench_successes": 1
+            },
+            "D": {
+              "rows": 2,
+              "k1_goal_hits": 1,
+              "k1_content_hits": 1,
+              "k2_goal_hits": 1,
+              "k2_content_hits": 1,
+              "safe_abstentions": 1,
+              "workbench_successes": 0
+            },
+            "R": {
+              "rows": 2,
+              "k1_goal_hits": 0,
+              "k1_content_hits": 0,
+              "k2_goal_hits": 0,
+              "k2_content_hits": 0,
+              "safe_abstentions": 2,
+              "workbench_successes": 0
+            }
+          },
+          "rows": [
+            {
+              "index": 0,
+              "class_key": "A",
+              "label": "p1-validation",
+              "input_confidence": 0.99,
+              "expected_goal_id": "goal:inspect-language",
+              "expected_content_id": "content:inspect-language",
+              "k1_status": "resolved",
+              "k1_goal_id": "goal:inspect-language",
+              "k1_content_id": "content:inspect-language",
+              "k1_goal_hit": true,
+              "k1_content_hit": true,
+              "k2_status": "resolved",
+              "k2_goal_id": "goal:inspect-language",
+              "k2_content_id": "content:inspect-language",
+              "k2_goal_hit": true,
+              "k2_content_hit": true,
+              "safe_abstention": false,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "accepted",
+                "reason_code": "native_read_only_intent_ready",
+                "accepted": true,
+                "snapshot_match": true,
+                "parameter_drift": {
+                  "declared_overrides": {},
+                  "actual": {
+                    "path": "python_04.py"
+                  },
+                  "matches_contract": true
+                },
+                "intent_kind": "workspace.read",
+                "intent_parameters": {
+                  "path": "python_04.py"
+                },
+                "workbench_status": "success",
+                "workbench_success": true,
+                "workbench_error_code": "",
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 1,
+              "class_key": "B",
+              "label": "p1-validation",
+              "input_confidence": 0.99,
+              "expected_goal_id": "goal:clarify-toolchain",
+              "expected_content_id": "content:clarify-toolchain",
+              "k1_status": "clarify",
+              "k1_goal_id": "goal:clarify-toolchain",
+              "k1_content_id": "content:clarify-toolchain",
+              "k1_goal_hit": true,
+              "k1_content_hit": true,
+              "k2_status": "clarify",
+              "k2_goal_id": "goal:clarify-toolchain",
+              "k2_content_id": "content:clarify-toolchain",
+              "k2_goal_hit": true,
+              "k2_content_hit": true,
+              "safe_abstention": false,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "accepted",
+                "reason_code": "native_read_only_intent_ready",
+                "accepted": true,
+                "snapshot_match": true,
+                "parameter_drift": {
+                  "declared_overrides": {},
+                  "actual": {
+                    "path": "rust_04.rs"
+                  },
+                  "matches_contract": true
+                },
+                "intent_kind": "workspace.programming_language.resolve",
+                "intent_parameters": {
+                  "path": "rust_04.rs"
+                },
+                "workbench_status": "success",
+                "workbench_success": true,
+                "workbench_error_code": "",
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 2,
+              "class_key": "C",
+              "label": "p1-validation",
+              "input_confidence": 0.99,
+              "expected_goal_id": "goal:clarify-toolchain",
+              "expected_content_id": "content:clarify-toolchain",
+              "k1_status": "clarify",
+              "k1_goal_id": "goal:clarify-toolchain",
+              "k1_content_id": "content:clarify-toolchain",
+              "k1_goal_hit": true,
+              "k1_content_hit": true,
+              "k2_status": "clarify",
+              "k2_goal_id": "goal:clarify-toolchain",
+              "k2_content_id": "content:clarify-toolchain",
+              "k2_goal_hit": true,
+              "k2_content_hit": true,
+              "safe_abstention": false,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "accepted",
+                "reason_code": "native_read_only_intent_ready",
+                "accepted": true,
+                "snapshot_match": true,
+                "parameter_drift": {
+                  "declared_overrides": {},
+                  "actual": {
+                    "path": "typescript_04.ts"
+                  },
+                  "matches_contract": true
+                },
+                "intent_kind": "workspace.programming_language.resolve",
+                "intent_parameters": {
+                  "path": "typescript_04.ts"
+                },
+                "workbench_status": "success",
+                "workbench_success": true,
+                "workbench_error_code": "",
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 3,
+              "class_key": "D",
+              "label": "p1-validation",
+              "input_confidence": 0.36,
+              "expected_goal_id": "goal:clarify-language",
+              "expected_content_id": "content:clarify-language",
+              "k1_status": "unknown",
+              "k1_goal_id": null,
+              "k1_content_id": null,
+              "k1_goal_hit": false,
+              "k1_content_hit": false,
+              "k2_status": "unknown",
+              "k2_goal_id": null,
+              "k2_content_id": null,
+              "k2_goal_hit": false,
+              "k2_content_hit": false,
+              "safe_abstention": true,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "model_output_missing",
+                "reason_code": null,
+                "accepted": false,
+                "snapshot_match": false,
+                "parameter_drift": null,
+                "intent_kind": null,
+                "intent_parameters": null,
+                "workbench_status": "not_attempted",
+                "workbench_success": false,
+                "workbench_error_code": null,
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 4,
+              "class_key": "R",
+              "label": "p1-validation",
+              "input_confidence": 0.0,
+              "expected_goal_id": "goal:recover-target",
+              "expected_content_id": "content:recover-target",
+              "k1_status": "unknown",
+              "k1_goal_id": null,
+              "k1_content_id": null,
+              "k1_goal_hit": false,
+              "k1_content_hit": false,
+              "k2_status": "unknown",
+              "k2_goal_id": null,
+              "k2_content_id": null,
+              "k2_goal_hit": false,
+              "k2_content_hit": false,
+              "safe_abstention": true,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "model_output_missing",
+                "reason_code": null,
+                "accepted": false,
+                "snapshot_match": false,
+                "parameter_drift": null,
+                "intent_kind": null,
+                "intent_parameters": null,
+                "workbench_status": "not_attempted",
+                "workbench_success": false,
+                "workbench_error_code": null,
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 5,
+              "class_key": "A",
+              "label": "p1-validation",
+              "input_confidence": 0.409,
+              "expected_goal_id": "goal:clarify-language",
+              "expected_content_id": "content:clarify-language",
+              "k1_status": "unknown",
+              "k1_goal_id": null,
+              "k1_content_id": null,
+              "k1_goal_hit": false,
+              "k1_content_hit": false,
+              "k2_status": "unknown",
+              "k2_goal_id": null,
+              "k2_content_id": null,
+              "k2_goal_hit": false,
+              "k2_content_hit": false,
+              "safe_abstention": true,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "model_output_missing",
+                "reason_code": null,
+                "accepted": false,
+                "snapshot_match": false,
+                "parameter_drift": null,
+                "intent_kind": null,
+                "intent_parameters": null,
+                "workbench_status": "not_attempted",
+                "workbench_success": false,
+                "workbench_error_code": null,
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 6,
+              "class_key": "B",
+              "label": "p1-validation",
+              "input_confidence": 0.409,
+              "expected_goal_id": "goal:clarify-language",
+              "expected_content_id": "content:clarify-language",
+              "k1_status": "unknown",
+              "k1_goal_id": null,
+              "k1_content_id": null,
+              "k1_goal_hit": false,
+              "k1_content_hit": false,
+              "k2_status": "unknown",
+              "k2_goal_id": null,
+              "k2_content_id": null,
+              "k2_goal_hit": false,
+              "k2_content_hit": false,
+              "safe_abstention": true,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "model_output_missing",
+                "reason_code": null,
+                "accepted": false,
+                "snapshot_match": false,
+                "parameter_drift": null,
+                "intent_kind": null,
+                "intent_parameters": null,
+                "workbench_status": "not_attempted",
+                "workbench_success": false,
+                "workbench_error_code": null,
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 7,
+              "class_key": "C",
+              "label": "p1-validation",
+              "input_confidence": 0.409,
+              "expected_goal_id": "goal:clarify-language",
+              "expected_content_id": "content:clarify-language",
+              "k1_status": "unknown",
+              "k1_goal_id": null,
+              "k1_content_id": null,
+              "k1_goal_hit": false,
+              "k1_content_hit": false,
+              "k2_status": "unknown",
+              "k2_goal_id": null,
+              "k2_content_id": null,
+              "k2_goal_hit": false,
+              "k2_content_hit": false,
+              "safe_abstention": true,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "model_output_missing",
+                "reason_code": null,
+                "accepted": false,
+                "snapshot_match": false,
+                "parameter_drift": null,
+                "intent_kind": null,
+                "intent_parameters": null,
+                "workbench_status": "not_attempted",
+                "workbench_success": false,
+                "workbench_error_code": null,
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 8,
+              "class_key": "D",
+              "label": "p1-validation",
+              "input_confidence": 0.99,
+              "expected_goal_id": "goal:clarify-toolchain",
+              "expected_content_id": "content:clarify-toolchain",
+              "k1_status": "clarify",
+              "k1_goal_id": "goal:clarify-toolchain",
+              "k1_content_id": "content:clarify-toolchain",
+              "k1_goal_hit": true,
+              "k1_content_hit": true,
+              "k2_status": "clarify",
+              "k2_goal_id": "goal:clarify-toolchain",
+              "k2_content_id": "content:clarify-toolchain",
+              "k2_goal_hit": true,
+              "k2_content_hit": true,
+              "safe_abstention": false,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "rejected",
+                "reason_code": "stale_world_observation",
+                "accepted": false,
+                "snapshot_match": true,
+                "parameter_drift": null,
+                "intent_kind": null,
+                "intent_parameters": null,
+                "workbench_status": "not_attempted",
+                "workbench_success": false,
+                "workbench_error_code": null,
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 9,
+              "class_key": "R",
+              "label": "p1-validation",
+              "input_confidence": 0.0,
+              "expected_goal_id": "goal:recover-target",
+              "expected_content_id": "content:recover-target",
+              "k1_status": "unknown",
+              "k1_goal_id": null,
+              "k1_content_id": null,
+              "k1_goal_hit": false,
+              "k1_content_hit": false,
+              "k2_status": "unknown",
+              "k2_goal_id": null,
+              "k2_content_id": null,
+              "k2_goal_hit": false,
+              "k2_content_hit": false,
+              "safe_abstention": true,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "model_output_missing",
+                "reason_code": null,
+                "accepted": false,
+                "snapshot_match": false,
+                "parameter_drift": null,
+                "intent_kind": null,
+                "intent_parameters": null,
+                "workbench_status": "not_attempted",
+                "workbench_success": false,
+                "workbench_error_code": null,
+                "failure_recovery_status": "not_triggered"
+              }
+            }
+          ]
+        },
+        "p2_6_novel_validation": {
+          "row_count": 2,
+          "k1_goal_hit_count": 2,
+          "k1_content_hit_count": 2,
+          "k2_goal_hit_count": 2,
+          "k2_content_hit_count": 0,
+          "safe_abstention_count": 0,
+          "workbench_success_count": 2,
+          "by_class": {
+            "R-novel-composition": {
+              "rows": 2,
+              "k1_goal_hits": 2,
+              "k1_content_hits": 2,
+              "k2_goal_hits": 2,
+              "k2_content_hits": 0,
+              "safe_abstentions": 0,
+              "workbench_successes": 2
+            }
+          },
+          "rows": [
+            {
+              "index": 0,
+              "class_key": "R-novel-composition",
+              "label": "p2-6-novel-validation",
+              "input_confidence": 0.99,
+              "expected_goal_id": "goal:inspect-language",
+              "expected_content_id": "content:inspect-language",
+              "k1_status": "resolved",
+              "k1_goal_id": "goal:inspect-language",
+              "k1_content_id": "content:inspect-language",
+              "k1_goal_hit": true,
+              "k1_content_hit": true,
+              "k2_status": "ambiguous",
+              "k2_goal_id": "goal:inspect-language",
+              "k2_content_id": null,
+              "k2_goal_hit": true,
+              "k2_content_hit": false,
+              "safe_abstention": false,
+              "action": {
+                "label": "p2-6-novel-validation",
+                "oracle_control": false,
+                "planner_status": "accepted",
+                "reason_code": "native_read_only_intent_ready",
+                "accepted": true,
+                "snapshot_match": true,
+                "parameter_drift": {
+                  "declared_overrides": {},
+                  "actual": {
+                    "path": "typescript_26.ts"
+                  },
+                  "matches_contract": true
+                },
+                "intent_kind": "workspace.read",
+                "intent_parameters": {
+                  "path": "typescript_26.ts"
+                },
+                "workbench_status": "success",
+                "workbench_success": true,
+                "workbench_error_code": "",
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 1,
+              "class_key": "R-novel-composition",
+              "label": "p2-6-novel-validation",
+              "input_confidence": 0.99,
+              "expected_goal_id": "goal:inspect-language",
+              "expected_content_id": "content:inspect-language",
+              "k1_status": "resolved",
+              "k1_goal_id": "goal:inspect-language",
+              "k1_content_id": "content:inspect-language",
+              "k1_goal_hit": true,
+              "k1_content_hit": true,
+              "k2_status": "ambiguous",
+              "k2_goal_id": "goal:inspect-language",
+              "k2_content_id": null,
+              "k2_goal_hit": true,
+              "k2_content_hit": false,
+              "safe_abstention": false,
+              "action": {
+                "label": "p2-6-novel-validation",
+                "oracle_control": false,
+                "planner_status": "accepted",
+                "reason_code": "native_read_only_intent_ready",
+                "accepted": true,
+                "snapshot_match": true,
+                "parameter_drift": {
+                  "declared_overrides": {},
+                  "actual": {
+                    "path": "typescript_27.ts"
+                  },
+                  "matches_contract": true
+                },
+                "intent_kind": "workspace.read",
+                "intent_parameters": {
+                  "path": "typescript_27.ts"
+                },
+                "workbench_status": "success",
+                "workbench_success": true,
+                "workbench_error_code": "",
+                "failure_recovery_status": "not_triggered"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "rehearsal-only": {
+      "checkpoint": {
+        "files": {
+          "k1": {
+            "path": "E:\\Seed\\output\\taiji_m5_k_p2_6_novel_learning_a433fbcc064e418ea48d3ba6c0338415\\arms\\rehearsal-only\\birth_k1_semantic.pt",
+            "bytes": 7665
+          },
+          "k2": {
+            "path": "E:\\Seed\\output\\taiji_m5_k_p2_6_novel_learning_a433fbcc064e418ea48d3ba6c0338415\\arms\\rehearsal-only\\birth_k2_transition.pt",
+            "bytes": 26505
+          }
+        },
+        "checkpoint_digests": {
+          "k1": "09ce9eb992aa124479b2dc8e8a5dd2ef609dcadd615dbc24637697d5cba87c92",
+          "k2": "16aedfa20860c1910a742acba3ae66ef2befb0641b1482a5470c45b0f81e0a51"
+        },
+        "restore": {
+          "returncode": 0,
+          "independent_process_restore": true,
+          "stdout": "{\"k1_restore_digest_equal\": true, \"k2_restore_digest_equal\": true, \"passed\": true}\n",
+          "stderr": "",
+          "k1_restore_digest_equal": true,
+          "k2_restore_digest_equal": true,
+          "passed": true
+        },
+        "passed": true
+      },
+      "fit_counts": {
+        "rehearsal": 50,
+        "novel": 0
+      },
+      "training_steps_total": {
+        "k1": 2450,
+        "k2": 6770
+      },
+      "new_training_steps": {
+        "k1": 50,
+        "k2": 50
+      },
+      "scores": {
+        "parameter_count": {
+          "k1": 472,
+          "k2": 5176,
+          "total": 5648
+        },
+        "p1_validation": {
+          "row_count": 10,
+          "k1_goal_hit_count": 4,
+          "k1_content_hit_count": 4,
+          "k2_goal_hit_count": 4,
+          "k2_content_hit_count": 4,
+          "safe_abstention_count": 6,
+          "workbench_success_count": 4,
+          "by_class": {
+            "A": {
+              "rows": 2,
+              "k1_goal_hits": 1,
+              "k1_content_hits": 1,
+              "k2_goal_hits": 1,
+              "k2_content_hits": 1,
+              "safe_abstentions": 1,
+              "workbench_successes": 1
+            },
+            "B": {
+              "rows": 2,
+              "k1_goal_hits": 1,
+              "k1_content_hits": 1,
+              "k2_goal_hits": 1,
+              "k2_content_hits": 1,
+              "safe_abstentions": 1,
+              "workbench_successes": 1
+            },
+            "C": {
+              "rows": 2,
+              "k1_goal_hits": 1,
+              "k1_content_hits": 1,
+              "k2_goal_hits": 1,
+              "k2_content_hits": 1,
+              "safe_abstentions": 1,
+              "workbench_successes": 1
+            },
+            "D": {
+              "rows": 2,
+              "k1_goal_hits": 1,
+              "k1_content_hits": 1,
+              "k2_goal_hits": 1,
+              "k2_content_hits": 1,
+              "safe_abstentions": 1,
+              "workbench_successes": 1
+            },
+            "R": {
+              "rows": 2,
+              "k1_goal_hits": 0,
+              "k1_content_hits": 0,
+              "k2_goal_hits": 0,
+              "k2_content_hits": 0,
+              "safe_abstentions": 2,
+              "workbench_successes": 0
+            }
+          },
+          "rows": [
+            {
+              "index": 0,
+              "class_key": "A",
+              "label": "p1-validation",
+              "input_confidence": 0.99,
+              "expected_goal_id": "goal:inspect-language",
+              "expected_content_id": "content:inspect-language",
+              "k1_status": "resolved",
+              "k1_goal_id": "goal:inspect-language",
+              "k1_content_id": "content:inspect-language",
+              "k1_goal_hit": true,
+              "k1_content_hit": true,
+              "k2_status": "resolved",
+              "k2_goal_id": "goal:inspect-language",
+              "k2_content_id": "content:inspect-language",
+              "k2_goal_hit": true,
+              "k2_content_hit": true,
+              "safe_abstention": false,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "accepted",
+                "reason_code": "native_read_only_intent_ready",
+                "accepted": true,
+                "snapshot_match": true,
+                "parameter_drift": {
+                  "declared_overrides": {},
+                  "actual": {
+                    "path": "python_04.py"
+                  },
+                  "matches_contract": true
+                },
+                "intent_kind": "workspace.read",
+                "intent_parameters": {
+                  "path": "python_04.py"
+                },
+                "workbench_status": "success",
+                "workbench_success": true,
+                "workbench_error_code": "",
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 1,
+              "class_key": "B",
+              "label": "p1-validation",
+              "input_confidence": 0.99,
+              "expected_goal_id": "goal:clarify-toolchain",
+              "expected_content_id": "content:clarify-toolchain",
+              "k1_status": "clarify",
+              "k1_goal_id": "goal:clarify-toolchain",
+              "k1_content_id": "content:clarify-toolchain",
+              "k1_goal_hit": true,
+              "k1_content_hit": true,
+              "k2_status": "clarify",
+              "k2_goal_id": "goal:clarify-toolchain",
+              "k2_content_id": "content:clarify-toolchain",
+              "k2_goal_hit": true,
+              "k2_content_hit": true,
+              "safe_abstention": false,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "accepted",
+                "reason_code": "native_read_only_intent_ready",
+                "accepted": true,
+                "snapshot_match": true,
+                "parameter_drift": {
+                  "declared_overrides": {},
+                  "actual": {
+                    "path": "rust_04.rs"
+                  },
+                  "matches_contract": true
+                },
+                "intent_kind": "workspace.programming_language.resolve",
+                "intent_parameters": {
+                  "path": "rust_04.rs"
+                },
+                "workbench_status": "success",
+                "workbench_success": true,
+                "workbench_error_code": "",
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 2,
+              "class_key": "C",
+              "label": "p1-validation",
+              "input_confidence": 0.99,
+              "expected_goal_id": "goal:clarify-toolchain",
+              "expected_content_id": "content:clarify-toolchain",
+              "k1_status": "clarify",
+              "k1_goal_id": "goal:clarify-toolchain",
+              "k1_content_id": "content:clarify-toolchain",
+              "k1_goal_hit": true,
+              "k1_content_hit": true,
+              "k2_status": "clarify",
+              "k2_goal_id": "goal:clarify-toolchain",
+              "k2_content_id": "content:clarify-toolchain",
+              "k2_goal_hit": true,
+              "k2_content_hit": true,
+              "safe_abstention": false,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "accepted",
+                "reason_code": "native_read_only_intent_ready",
+                "accepted": true,
+                "snapshot_match": true,
+                "parameter_drift": {
+                  "declared_overrides": {},
+                  "actual": {
+                    "path": "typescript_04.ts"
+                  },
+                  "matches_contract": true
+                },
+                "intent_kind": "workspace.programming_language.resolve",
+                "intent_parameters": {
+                  "path": "typescript_04.ts"
+                },
+                "workbench_status": "success",
+                "workbench_success": true,
+                "workbench_error_code": "",
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 3,
+              "class_key": "D",
+              "label": "p1-validation",
+              "input_confidence": 0.36,
+              "expected_goal_id": "goal:clarify-language",
+              "expected_content_id": "content:clarify-language",
+              "k1_status": "unknown",
+              "k1_goal_id": null,
+              "k1_content_id": null,
+              "k1_goal_hit": false,
+              "k1_content_hit": false,
+              "k2_status": "unknown",
+              "k2_goal_id": null,
+              "k2_content_id": null,
+              "k2_goal_hit": false,
+              "k2_content_hit": false,
+              "safe_abstention": true,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "model_output_missing",
+                "reason_code": null,
+                "accepted": false,
+                "snapshot_match": false,
+                "parameter_drift": null,
+                "intent_kind": null,
+                "intent_parameters": null,
+                "workbench_status": "not_attempted",
+                "workbench_success": false,
+                "workbench_error_code": null,
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 4,
+              "class_key": "R",
+              "label": "p1-validation",
+              "input_confidence": 0.0,
+              "expected_goal_id": "goal:recover-target",
+              "expected_content_id": "content:recover-target",
+              "k1_status": "unknown",
+              "k1_goal_id": null,
+              "k1_content_id": null,
+              "k1_goal_hit": false,
+              "k1_content_hit": false,
+              "k2_status": "unknown",
+              "k2_goal_id": null,
+              "k2_content_id": null,
+              "k2_goal_hit": false,
+              "k2_content_hit": false,
+              "safe_abstention": true,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "model_output_missing",
+                "reason_code": null,
+                "accepted": false,
+                "snapshot_match": false,
+                "parameter_drift": null,
+                "intent_kind": null,
+                "intent_parameters": null,
+                "workbench_status": "not_attempted",
+                "workbench_success": false,
+                "workbench_error_code": null,
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 5,
+              "class_key": "A",
+              "label": "p1-validation",
+              "input_confidence": 0.409,
+              "expected_goal_id": "goal:clarify-language",
+              "expected_content_id": "content:clarify-language",
+              "k1_status": "unknown",
+              "k1_goal_id": null,
+              "k1_content_id": null,
+              "k1_goal_hit": false,
+              "k1_content_hit": false,
+              "k2_status": "unknown",
+              "k2_goal_id": null,
+              "k2_content_id": null,
+              "k2_goal_hit": false,
+              "k2_content_hit": false,
+              "safe_abstention": true,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "model_output_missing",
+                "reason_code": null,
+                "accepted": false,
+                "snapshot_match": false,
+                "parameter_drift": null,
+                "intent_kind": null,
+                "intent_parameters": null,
+                "workbench_status": "not_attempted",
+                "workbench_success": false,
+                "workbench_error_code": null,
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 6,
+              "class_key": "B",
+              "label": "p1-validation",
+              "input_confidence": 0.409,
+              "expected_goal_id": "goal:clarify-language",
+              "expected_content_id": "content:clarify-language",
+              "k1_status": "unknown",
+              "k1_goal_id": null,
+              "k1_content_id": null,
+              "k1_goal_hit": false,
+              "k1_content_hit": false,
+              "k2_status": "unknown",
+              "k2_goal_id": null,
+              "k2_content_id": null,
+              "k2_goal_hit": false,
+              "k2_content_hit": false,
+              "safe_abstention": true,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "model_output_missing",
+                "reason_code": null,
+                "accepted": false,
+                "snapshot_match": false,
+                "parameter_drift": null,
+                "intent_kind": null,
+                "intent_parameters": null,
+                "workbench_status": "not_attempted",
+                "workbench_success": false,
+                "workbench_error_code": null,
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 7,
+              "class_key": "C",
+              "label": "p1-validation",
+              "input_confidence": 0.409,
+              "expected_goal_id": "goal:clarify-language",
+              "expected_content_id": "content:clarify-language",
+              "k1_status": "unknown",
+              "k1_goal_id": null,
+              "k1_content_id": null,
+              "k1_goal_hit": false,
+              "k1_content_hit": false,
+              "k2_status": "unknown",
+              "k2_goal_id": null,
+              "k2_content_id": null,
+              "k2_goal_hit": false,
+              "k2_content_hit": false,
+              "safe_abstention": true,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "model_output_missing",
+                "reason_code": null,
+                "accepted": false,
+                "snapshot_match": false,
+                "parameter_drift": null,
+                "intent_kind": null,
+                "intent_parameters": null,
+                "workbench_status": "not_attempted",
+                "workbench_success": false,
+                "workbench_error_code": null,
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 8,
+              "class_key": "D",
+              "label": "p1-validation",
+              "input_confidence": 0.99,
+              "expected_goal_id": "goal:clarify-toolchain",
+              "expected_content_id": "content:clarify-toolchain",
+              "k1_status": "clarify",
+              "k1_goal_id": "goal:clarify-toolchain",
+              "k1_content_id": "content:clarify-toolchain",
+              "k1_goal_hit": true,
+              "k1_content_hit": true,
+              "k2_status": "clarify",
+              "k2_goal_id": "goal:clarify-toolchain",
+              "k2_content_id": "content:clarify-toolchain",
+              "k2_goal_hit": true,
+              "k2_content_hit": true,
+              "safe_abstention": false,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "accepted",
+                "reason_code": "native_read_only_intent_ready",
+                "accepted": true,
+                "snapshot_match": true,
+                "parameter_drift": {
+                  "declared_overrides": {},
+                  "actual": {
+                    "path": "validation_header.h"
+                  },
+                  "matches_contract": true
+                },
+                "intent_kind": "workspace.programming_language.resolve",
+                "intent_parameters": {
+                  "path": "validation_header.h"
+                },
+                "workbench_status": "success",
+                "workbench_success": true,
+                "workbench_error_code": "",
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 9,
+              "class_key": "R",
+              "label": "p1-validation",
+              "input_confidence": 0.0,
+              "expected_goal_id": "goal:recover-target",
+              "expected_content_id": "content:recover-target",
+              "k1_status": "unknown",
+              "k1_goal_id": null,
+              "k1_content_id": null,
+              "k1_goal_hit": false,
+              "k1_content_hit": false,
+              "k2_status": "unknown",
+              "k2_goal_id": null,
+              "k2_content_id": null,
+              "k2_goal_hit": false,
+              "k2_content_hit": false,
+              "safe_abstention": true,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "model_output_missing",
+                "reason_code": null,
+                "accepted": false,
+                "snapshot_match": false,
+                "parameter_drift": null,
+                "intent_kind": null,
+                "intent_parameters": null,
+                "workbench_status": "not_attempted",
+                "workbench_success": false,
+                "workbench_error_code": null,
+                "failure_recovery_status": "not_triggered"
+              }
+            }
+          ]
+        },
+        "p2_6_novel_validation": {
+          "row_count": 2,
+          "k1_goal_hit_count": 2,
+          "k1_content_hit_count": 2,
+          "k2_goal_hit_count": 0,
+          "k2_content_hit_count": 0,
+          "safe_abstention_count": 0,
+          "workbench_success_count": 2,
+          "by_class": {
+            "R-novel-composition": {
+              "rows": 2,
+              "k1_goal_hits": 2,
+              "k1_content_hits": 2,
+              "k2_goal_hits": 0,
+              "k2_content_hits": 0,
+              "safe_abstentions": 0,
+              "workbench_successes": 2
+            }
+          },
+          "rows": [
+            {
+              "index": 0,
+              "class_key": "R-novel-composition",
+              "label": "p2-6-novel-validation",
+              "input_confidence": 0.99,
+              "expected_goal_id": "goal:inspect-language",
+              "expected_content_id": "content:inspect-language",
+              "k1_status": "resolved",
+              "k1_goal_id": "goal:inspect-language",
+              "k1_content_id": "content:inspect-language",
+              "k1_goal_hit": true,
+              "k1_content_hit": true,
+              "k2_status": "clarify",
+              "k2_goal_id": "goal:clarify-toolchain",
+              "k2_content_id": "content:clarify-toolchain",
+              "k2_goal_hit": false,
+              "k2_content_hit": false,
+              "safe_abstention": false,
+              "action": {
+                "label": "p2-6-novel-validation",
+                "oracle_control": false,
+                "planner_status": "accepted",
+                "reason_code": "native_read_only_intent_ready",
+                "accepted": true,
+                "snapshot_match": true,
+                "parameter_drift": {
+                  "declared_overrides": {},
+                  "actual": {
+                    "path": "typescript_26.ts"
+                  },
+                  "matches_contract": true
+                },
+                "intent_kind": "workspace.read",
+                "intent_parameters": {
+                  "path": "typescript_26.ts"
+                },
+                "workbench_status": "success",
+                "workbench_success": true,
+                "workbench_error_code": "",
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 1,
+              "class_key": "R-novel-composition",
+              "label": "p2-6-novel-validation",
+              "input_confidence": 0.99,
+              "expected_goal_id": "goal:inspect-language",
+              "expected_content_id": "content:inspect-language",
+              "k1_status": "resolved",
+              "k1_goal_id": "goal:inspect-language",
+              "k1_content_id": "content:inspect-language",
+              "k1_goal_hit": true,
+              "k1_content_hit": true,
+              "k2_status": "clarify",
+              "k2_goal_id": "goal:clarify-toolchain",
+              "k2_content_id": "content:clarify-toolchain",
+              "k2_goal_hit": false,
+              "k2_content_hit": false,
+              "safe_abstention": false,
+              "action": {
+                "label": "p2-6-novel-validation",
+                "oracle_control": false,
+                "planner_status": "accepted",
+                "reason_code": "native_read_only_intent_ready",
+                "accepted": true,
+                "snapshot_match": true,
+                "parameter_drift": {
+                  "declared_overrides": {},
+                  "actual": {
+                    "path": "typescript_27.ts"
+                  },
+                  "matches_contract": true
+                },
+                "intent_kind": "workspace.read",
+                "intent_parameters": {
+                  "path": "typescript_27.ts"
+                },
+                "workbench_status": "success",
+                "workbench_success": true,
+                "workbench_error_code": "",
+                "failure_recovery_status": "not_triggered"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "interleaved-rehearsal-novel": {
+      "checkpoint": {
+        "files": {
+          "k1": {
+            "path": "E:\\Seed\\output\\taiji_m5_k_p2_6_novel_learning_a433fbcc064e418ea48d3ba6c0338415\\arms\\interleaved-rehearsal-novel\\birth_k1_semantic.pt",
+            "bytes": 7665
+          },
+          "k2": {
+            "path": "E:\\Seed\\output\\taiji_m5_k_p2_6_novel_learning_a433fbcc064e418ea48d3ba6c0338415\\arms\\interleaved-rehearsal-novel\\birth_k2_transition.pt",
+            "bytes": 26505
+          }
+        },
+        "checkpoint_digests": {
+          "k1": "388393ee4d836e4d9c2cc26d1db40ced3312c822173d7176d4b7385431ca4b63",
+          "k2": "207120c53a3d7d6ba2531b82e12b7f28a3ce0dbfed3a63d0be915d7e5446671b"
+        },
+        "restore": {
+          "returncode": 0,
+          "independent_process_restore": true,
+          "stdout": "{\"k1_restore_digest_equal\": true, \"k2_restore_digest_equal\": true, \"passed\": true}\n",
+          "stderr": "",
+          "k1_restore_digest_equal": true,
+          "k2_restore_digest_equal": true,
+          "passed": true
+        },
+        "passed": true
+      },
+      "fit_counts": {
+        "rehearsal": 50,
+        "novel": 6
+      },
+      "training_steps_total": {
+        "k1": 2456,
+        "k2": 6776
+      },
+      "new_training_steps": {
+        "k1": 56,
+        "k2": 56
+      },
+      "scores": {
+        "parameter_count": {
+          "k1": 472,
+          "k2": 5176,
+          "total": 5648
+        },
+        "p1_validation": {
+          "row_count": 10,
+          "k1_goal_hit_count": 4,
+          "k1_content_hit_count": 4,
+          "k2_goal_hit_count": 4,
+          "k2_content_hit_count": 4,
+          "safe_abstention_count": 6,
+          "workbench_success_count": 4,
+          "by_class": {
+            "A": {
+              "rows": 2,
+              "k1_goal_hits": 1,
+              "k1_content_hits": 1,
+              "k2_goal_hits": 1,
+              "k2_content_hits": 1,
+              "safe_abstentions": 1,
+              "workbench_successes": 1
+            },
+            "B": {
+              "rows": 2,
+              "k1_goal_hits": 1,
+              "k1_content_hits": 1,
+              "k2_goal_hits": 1,
+              "k2_content_hits": 1,
+              "safe_abstentions": 1,
+              "workbench_successes": 1
+            },
+            "C": {
+              "rows": 2,
+              "k1_goal_hits": 1,
+              "k1_content_hits": 1,
+              "k2_goal_hits": 1,
+              "k2_content_hits": 1,
+              "safe_abstentions": 1,
+              "workbench_successes": 1
+            },
+            "D": {
+              "rows": 2,
+              "k1_goal_hits": 1,
+              "k1_content_hits": 1,
+              "k2_goal_hits": 1,
+              "k2_content_hits": 1,
+              "safe_abstentions": 1,
+              "workbench_successes": 1
+            },
+            "R": {
+              "rows": 2,
+              "k1_goal_hits": 0,
+              "k1_content_hits": 0,
+              "k2_goal_hits": 0,
+              "k2_content_hits": 0,
+              "safe_abstentions": 2,
+              "workbench_successes": 0
+            }
+          },
+          "rows": [
+            {
+              "index": 0,
+              "class_key": "A",
+              "label": "p1-validation",
+              "input_confidence": 0.99,
+              "expected_goal_id": "goal:inspect-language",
+              "expected_content_id": "content:inspect-language",
+              "k1_status": "resolved",
+              "k1_goal_id": "goal:inspect-language",
+              "k1_content_id": "content:inspect-language",
+              "k1_goal_hit": true,
+              "k1_content_hit": true,
+              "k2_status": "resolved",
+              "k2_goal_id": "goal:inspect-language",
+              "k2_content_id": "content:inspect-language",
+              "k2_goal_hit": true,
+              "k2_content_hit": true,
+              "safe_abstention": false,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "accepted",
+                "reason_code": "native_read_only_intent_ready",
+                "accepted": true,
+                "snapshot_match": true,
+                "parameter_drift": {
+                  "declared_overrides": {},
+                  "actual": {
+                    "path": "python_04.py"
+                  },
+                  "matches_contract": true
+                },
+                "intent_kind": "workspace.read",
+                "intent_parameters": {
+                  "path": "python_04.py"
+                },
+                "workbench_status": "success",
+                "workbench_success": true,
+                "workbench_error_code": "",
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 1,
+              "class_key": "B",
+              "label": "p1-validation",
+              "input_confidence": 0.99,
+              "expected_goal_id": "goal:clarify-toolchain",
+              "expected_content_id": "content:clarify-toolchain",
+              "k1_status": "clarify",
+              "k1_goal_id": "goal:clarify-toolchain",
+              "k1_content_id": "content:clarify-toolchain",
+              "k1_goal_hit": true,
+              "k1_content_hit": true,
+              "k2_status": "clarify",
+              "k2_goal_id": "goal:clarify-toolchain",
+              "k2_content_id": "content:clarify-toolchain",
+              "k2_goal_hit": true,
+              "k2_content_hit": true,
+              "safe_abstention": false,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "accepted",
+                "reason_code": "native_read_only_intent_ready",
+                "accepted": true,
+                "snapshot_match": true,
+                "parameter_drift": {
+                  "declared_overrides": {},
+                  "actual": {
+                    "path": "rust_04.rs"
+                  },
+                  "matches_contract": true
+                },
+                "intent_kind": "workspace.programming_language.resolve",
+                "intent_parameters": {
+                  "path": "rust_04.rs"
+                },
+                "workbench_status": "success",
+                "workbench_success": true,
+                "workbench_error_code": "",
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 2,
+              "class_key": "C",
+              "label": "p1-validation",
+              "input_confidence": 0.99,
+              "expected_goal_id": "goal:clarify-toolchain",
+              "expected_content_id": "content:clarify-toolchain",
+              "k1_status": "clarify",
+              "k1_goal_id": "goal:clarify-toolchain",
+              "k1_content_id": "content:clarify-toolchain",
+              "k1_goal_hit": true,
+              "k1_content_hit": true,
+              "k2_status": "clarify",
+              "k2_goal_id": "goal:clarify-toolchain",
+              "k2_content_id": "content:clarify-toolchain",
+              "k2_goal_hit": true,
+              "k2_content_hit": true,
+              "safe_abstention": false,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "accepted",
+                "reason_code": "native_read_only_intent_ready",
+                "accepted": true,
+                "snapshot_match": true,
+                "parameter_drift": {
+                  "declared_overrides": {},
+                  "actual": {
+                    "path": "typescript_04.ts"
+                  },
+                  "matches_contract": true
+                },
+                "intent_kind": "workspace.programming_language.resolve",
+                "intent_parameters": {
+                  "path": "typescript_04.ts"
+                },
+                "workbench_status": "success",
+                "workbench_success": true,
+                "workbench_error_code": "",
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 3,
+              "class_key": "D",
+              "label": "p1-validation",
+              "input_confidence": 0.36,
+              "expected_goal_id": "goal:clarify-language",
+              "expected_content_id": "content:clarify-language",
+              "k1_status": "unknown",
+              "k1_goal_id": null,
+              "k1_content_id": null,
+              "k1_goal_hit": false,
+              "k1_content_hit": false,
+              "k2_status": "unknown",
+              "k2_goal_id": null,
+              "k2_content_id": null,
+              "k2_goal_hit": false,
+              "k2_content_hit": false,
+              "safe_abstention": true,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "model_output_missing",
+                "reason_code": null,
+                "accepted": false,
+                "snapshot_match": false,
+                "parameter_drift": null,
+                "intent_kind": null,
+                "intent_parameters": null,
+                "workbench_status": "not_attempted",
+                "workbench_success": false,
+                "workbench_error_code": null,
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 4,
+              "class_key": "R",
+              "label": "p1-validation",
+              "input_confidence": 0.0,
+              "expected_goal_id": "goal:recover-target",
+              "expected_content_id": "content:recover-target",
+              "k1_status": "unknown",
+              "k1_goal_id": null,
+              "k1_content_id": null,
+              "k1_goal_hit": false,
+              "k1_content_hit": false,
+              "k2_status": "unknown",
+              "k2_goal_id": null,
+              "k2_content_id": null,
+              "k2_goal_hit": false,
+              "k2_content_hit": false,
+              "safe_abstention": true,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "model_output_missing",
+                "reason_code": null,
+                "accepted": false,
+                "snapshot_match": false,
+                "parameter_drift": null,
+                "intent_kind": null,
+                "intent_parameters": null,
+                "workbench_status": "not_attempted",
+                "workbench_success": false,
+                "workbench_error_code": null,
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 5,
+              "class_key": "A",
+              "label": "p1-validation",
+              "input_confidence": 0.409,
+              "expected_goal_id": "goal:clarify-language",
+              "expected_content_id": "content:clarify-language",
+              "k1_status": "unknown",
+              "k1_goal_id": null,
+              "k1_content_id": null,
+              "k1_goal_hit": false,
+              "k1_content_hit": false,
+              "k2_status": "unknown",
+              "k2_goal_id": null,
+              "k2_content_id": null,
+              "k2_goal_hit": false,
+              "k2_content_hit": false,
+              "safe_abstention": true,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "model_output_missing",
+                "reason_code": null,
+                "accepted": false,
+                "snapshot_match": false,
+                "parameter_drift": null,
+                "intent_kind": null,
+                "intent_parameters": null,
+                "workbench_status": "not_attempted",
+                "workbench_success": false,
+                "workbench_error_code": null,
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 6,
+              "class_key": "B",
+              "label": "p1-validation",
+              "input_confidence": 0.409,
+              "expected_goal_id": "goal:clarify-language",
+              "expected_content_id": "content:clarify-language",
+              "k1_status": "unknown",
+              "k1_goal_id": null,
+              "k1_content_id": null,
+              "k1_goal_hit": false,
+              "k1_content_hit": false,
+              "k2_status": "unknown",
+              "k2_goal_id": null,
+              "k2_content_id": null,
+              "k2_goal_hit": false,
+              "k2_content_hit": false,
+              "safe_abstention": true,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "model_output_missing",
+                "reason_code": null,
+                "accepted": false,
+                "snapshot_match": false,
+                "parameter_drift": null,
+                "intent_kind": null,
+                "intent_parameters": null,
+                "workbench_status": "not_attempted",
+                "workbench_success": false,
+                "workbench_error_code": null,
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 7,
+              "class_key": "C",
+              "label": "p1-validation",
+              "input_confidence": 0.409,
+              "expected_goal_id": "goal:clarify-language",
+              "expected_content_id": "content:clarify-language",
+              "k1_status": "unknown",
+              "k1_goal_id": null,
+              "k1_content_id": null,
+              "k1_goal_hit": false,
+              "k1_content_hit": false,
+              "k2_status": "unknown",
+              "k2_goal_id": null,
+              "k2_content_id": null,
+              "k2_goal_hit": false,
+              "k2_content_hit": false,
+              "safe_abstention": true,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "model_output_missing",
+                "reason_code": null,
+                "accepted": false,
+                "snapshot_match": false,
+                "parameter_drift": null,
+                "intent_kind": null,
+                "intent_parameters": null,
+                "workbench_status": "not_attempted",
+                "workbench_success": false,
+                "workbench_error_code": null,
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 8,
+              "class_key": "D",
+              "label": "p1-validation",
+              "input_confidence": 0.99,
+              "expected_goal_id": "goal:clarify-toolchain",
+              "expected_content_id": "content:clarify-toolchain",
+              "k1_status": "clarify",
+              "k1_goal_id": "goal:clarify-toolchain",
+              "k1_content_id": "content:clarify-toolchain",
+              "k1_goal_hit": true,
+              "k1_content_hit": true,
+              "k2_status": "clarify",
+              "k2_goal_id": "goal:clarify-toolchain",
+              "k2_content_id": "content:clarify-toolchain",
+              "k2_goal_hit": true,
+              "k2_content_hit": true,
+              "safe_abstention": false,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "accepted",
+                "reason_code": "native_read_only_intent_ready",
+                "accepted": true,
+                "snapshot_match": true,
+                "parameter_drift": {
+                  "declared_overrides": {},
+                  "actual": {
+                    "path": "validation_header.h"
+                  },
+                  "matches_contract": true
+                },
+                "intent_kind": "workspace.programming_language.resolve",
+                "intent_parameters": {
+                  "path": "validation_header.h"
+                },
+                "workbench_status": "success",
+                "workbench_success": true,
+                "workbench_error_code": "",
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 9,
+              "class_key": "R",
+              "label": "p1-validation",
+              "input_confidence": 0.0,
+              "expected_goal_id": "goal:recover-target",
+              "expected_content_id": "content:recover-target",
+              "k1_status": "unknown",
+              "k1_goal_id": null,
+              "k1_content_id": null,
+              "k1_goal_hit": false,
+              "k1_content_hit": false,
+              "k2_status": "unknown",
+              "k2_goal_id": null,
+              "k2_content_id": null,
+              "k2_goal_hit": false,
+              "k2_content_hit": false,
+              "safe_abstention": true,
+              "action": {
+                "label": "p1-validation",
+                "oracle_control": false,
+                "planner_status": "model_output_missing",
+                "reason_code": null,
+                "accepted": false,
+                "snapshot_match": false,
+                "parameter_drift": null,
+                "intent_kind": null,
+                "intent_parameters": null,
+                "workbench_status": "not_attempted",
+                "workbench_success": false,
+                "workbench_error_code": null,
+                "failure_recovery_status": "not_triggered"
+              }
+            }
+          ]
+        },
+        "p2_6_novel_validation": {
+          "row_count": 2,
+          "k1_goal_hit_count": 2,
+          "k1_content_hit_count": 2,
+          "k2_goal_hit_count": 2,
+          "k2_content_hit_count": 2,
+          "safe_abstention_count": 0,
+          "workbench_success_count": 2,
+          "by_class": {
+            "R-novel-composition": {
+              "rows": 2,
+              "k1_goal_hits": 2,
+              "k1_content_hits": 2,
+              "k2_goal_hits": 2,
+              "k2_content_hits": 2,
+              "safe_abstentions": 0,
+              "workbench_successes": 2
+            }
+          },
+          "rows": [
+            {
+              "index": 0,
+              "class_key": "R-novel-composition",
+              "label": "p2-6-novel-validation",
+              "input_confidence": 0.99,
+              "expected_goal_id": "goal:inspect-language",
+              "expected_content_id": "content:inspect-language",
+              "k1_status": "resolved",
+              "k1_goal_id": "goal:inspect-language",
+              "k1_content_id": "content:inspect-language",
+              "k1_goal_hit": true,
+              "k1_content_hit": true,
+              "k2_status": "resolved",
+              "k2_goal_id": "goal:inspect-language",
+              "k2_content_id": "content:inspect-language",
+              "k2_goal_hit": true,
+              "k2_content_hit": true,
+              "safe_abstention": false,
+              "action": {
+                "label": "p2-6-novel-validation",
+                "oracle_control": false,
+                "planner_status": "accepted",
+                "reason_code": "native_read_only_intent_ready",
+                "accepted": true,
+                "snapshot_match": true,
+                "parameter_drift": {
+                  "declared_overrides": {},
+                  "actual": {
+                    "path": "typescript_26.ts"
+                  },
+                  "matches_contract": true
+                },
+                "intent_kind": "workspace.read",
+                "intent_parameters": {
+                  "path": "typescript_26.ts"
+                },
+                "workbench_status": "success",
+                "workbench_success": true,
+                "workbench_error_code": "",
+                "failure_recovery_status": "not_triggered"
+              }
+            },
+            {
+              "index": 1,
+              "class_key": "R-novel-composition",
+              "label": "p2-6-novel-validation",
+              "input_confidence": 0.99,
+              "expected_goal_id": "goal:inspect-language",
+              "expected_content_id": "content:inspect-language",
+              "k1_status": "resolved",
+              "k1_goal_id": "goal:inspect-language",
+              "k1_content_id": "content:inspect-language",
+              "k1_goal_hit": true,
+              "k1_content_hit": true,
+              "k2_status": "resolved",
+              "k2_goal_id": "goal:inspect-language",
+              "k2_content_id": "content:inspect-language",
+              "k2_goal_hit": true,
+              "k2_content_hit": true,
+              "safe_abstention": false,
+              "action": {
+                "label": "p2-6-novel-validation",
+                "oracle_control": false,
+                "planner_status": "accepted",
+                "reason_code": "native_read_only_intent_ready",
+                "accepted": true,
+                "snapshot_match": true,
+                "parameter_drift": {
+                  "declared_overrides": {},
+                  "actual": {
+                    "path": "typescript_27.ts"
+                  },
+                  "matches_contract": true
+                },
+                "intent_kind": "workspace.read",
+                "intent_parameters": {
+                  "path": "typescript_27.ts"
+                },
+                "workbench_status": "success",
+                "workbench_success": true,
+                "workbench_error_code": "",
+                "failure_recovery_status": "not_triggered"
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "retention_gate": {
+    "p2_4_parent_k1_goal_non_decreasing": true,
+    "p2_4_parent_k2_goal_non_decreasing": true,
+    "p2_4_parent_safe_abstention_non_decreasing": true,
+    "p2_4_parent_workbench_non_decreasing": true,
+    "novel_k1_goal_non_decreasing": true,
+    "novel_k1_content_non_decreasing": true,
+    "novel_k2_goal_non_decreasing": true,
+    "novel_k2_content_target_reached": true,
+    "novel_workbench_success_non_decreasing": true,
+    "parameter_count_stable": true
+  },
+  "interpretation": "retention-preserving novel-learning canary only; added target is K2 content; host recovery is not model credit; no promotion claim",
+  "elapsed_seconds": 114.82251570001245
+}
