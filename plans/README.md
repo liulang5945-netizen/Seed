@@ -1,12 +1,12 @@
 # Seed / Taiji 计划与架构入口
 
-> 2026-09-10 依据 main 7a9e9a01 的源码、checkpoint 与报告复审。唯一执行顺序：[当前计划](active/roadmap/03_CURRENT_EXECUTION.md)。
+> 2026-09-10 依据 main 62f83052 的源码、checkpoint 与报告复审。唯一执行顺序：[当前计划](active/roadmap/03_CURRENT_EXECUTION.md)。
 
 目前已有五类 K worker 和 fast/slow＋replay 实现。C-stage v2 在 D/R/A 小型评估上四门通过，FS 比 C 的平均 MSE 改善约 0.001868，弱类改善约 0.002495。该组合使用额外 replay；三组 v4 K worker 权重实测相同，全五类泛化与独立拆分收益仍待验证，can_promote=false。
 
-**P0 等 replay 配对诊断已完成；P1.1 数据合同已修复并通过；P2 pilot 未晋级；P2.1 输出/行动链诊断和 P2.2 安全 bridge canary 已完成。唯一下一步：P2.3 recovery continuation 数据合同与 targeted learning pilot。** P0 已证明当前 FS 有效轨迹与直接 continuation＋相同 replay 在 `4.76837158203125e-7` 峰值差内等价，因此后续效果基线采用直接 continuation＋replay；FS 保留为可恢复状态实现候选。P2 显示连续 MSE 下降但 goal/content 命中未提升；P2.1 确认 6/10 行低于原生 `0.55` confidence floor；P2.2 已验证 typed abstention、根目录 recovery 和世界对齐工程合同，但 recovery/alignment 都是 oracle control，不能计入模型能力。SGK v1 继续暂停。
+**P0 等 replay 配对诊断已完成；P1.1 数据合同已修复并通过；P2 pilot 未晋级；P2.1 输出/行动链诊断、P2.2 安全 bridge 和 P2.3 continuation 数据合同已完成。唯一下一步：P2.3 targeted learning pilot。** P0 已证明当前 FS 有效轨迹与直接 continuation＋相同 replay 在 `4.76837158203125e-7` 峰值差内等价，因此后续效果基线采用直接 continuation＋replay；FS 保留为可恢复状态实现候选。P2 显示连续 MSE 下降但 goal/content 命中未提升；P2.1 确认 6/10 行低于原生 `0.55` confidence floor；P2.2 的 recovery/alignment 是 oracle control，P2.3 已将缺失目标→列举→新证据读取拆成通过审计的可重建 continuation，尚未做模型训练。SGK v1 继续暂停。
 
-阶段已按 601413cd 收束为“研究审计完成、模型能力尚未验收”；本轮完成了 P2 小预算训练 pilot、P2.1 只读诊断和 P2.2 安全 bridge canary，但没有 promotion 成绩。**当前只执行 P2.3：建立缺失目标后的可学习 continuation 数据合同，再做 targeted learning；不降低 confidence floor、不把 oracle 控制当模型能力、不进入 P3。** P3–P5 保留为后续路线，不并行开工；完整成果分类、停止条件及文档边界均在当前计划中。
+阶段已按 601413cd 收束为“研究审计完成、模型能力尚未验收”；本轮完成了 P2 小预算训练 pilot、P2.1 只读诊断、P2.2 安全 bridge 和 P2.3 continuation 数据合同，但没有 promotion 成绩。**当前只执行 P2.3 targeted learning：训练前先做 checkpoint save/独立 restore Gate；不降低 confidence floor、不把 host/oracle 控制当模型能力、不进入 P3。** P3–P5 保留为后续路线，不并行开工；完整成果分类、停止条件及文档边界均在当前计划中。
 
 - [本轮结果复审](reference/M4V2_POST_C_STAGE_RESULT_REVIEW_20260910.md)：实际收益、预算混淆、父 worker 重复、seed 循环、恢复缺口与修订依据。
 - [P0 等 replay 诊断报告](../reports/taiji_m5_k_p0_equal_replay_diagnostic_20260910.json)：同课程、同 replay、轨迹差异和 checkpoint preflight 结果。
@@ -17,6 +17,8 @@
 - [P2 v2 validation pilot](../reports/taiji_m5_k_p2_validation_pilot_v2_20260910.json)：50 条均衡 wake + 10 条 replay，独立 checkpoint preflight 通过；连续 MSE 改善但命中率未改善，`can_promote=false`。
 - [P2.1 输出/行动链诊断](../reports/taiji_m5_k_p2_output_action_diagnostic_20260910.json)：只读复建 10 条 validation，K1→K2 级联、planner、隔离 Workbench 与资源/恢复证据；未训练、未读 sealed、`can_promote=false`。
 - [P2.2 安全 bridge canary](../reports/taiji_m5_k_p2_2_safety_bridge_canary_20260910.json)：typed abstention、根目录 `workspace.list` recovery、K2 世界对齐和隔离 Workbench 结果；工程控制通过，但 recovery/alignment 明确为 oracle，不代表模型能力。
+- [P2.3 continuation manifest](manifests/taiji_m5_k_p2_3_recovery_continuation_manifest_v1.json)：6 条 train + 2 条 validation，host recovery 与 fit-eligible candidate 分层，K1/K2 digest 和 project/path/template 隔离。
+- [P2.3 continuation contract](../reports/taiji_m5_k_p2_3_recovery_continuation_contract_20260910.json)：数据合同通过；只建 artifact、未训练、未读 sealed、`can_promote=false`。
 - [机器审计](../reports/taiji_m4v2_plan_result_review_20260910.json)：源码摘要、权重对比、资源计数和 retention 反例。
 - [历史执行流水](archive/history/20260910_result_review/EXECUTION_HISTORY.md)：保留此前全部记录，旧“下一步”不再授权执行。
 - [历史计划入口](archive/history/20260910_result_review/PLAN_INDEX_HISTORY.md)：此前入口及研究进展记录。

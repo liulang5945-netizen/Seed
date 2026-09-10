@@ -1,12 +1,12 @@
 # Seed / Taiji 唯一执行计划
 
-> 修订：2026-09-10；实际代码/报告基线 7a9e9a01。本文覆盖所有旧文档中的执行许可和“下一步”。
+> 修订：2026-09-10；实际代码/报告基线 62f83052。本文覆盖所有旧文档中的执行许可和“下一步”。
 > 本轮任务是根据新增结果修订方案；训练与实现按下述验收顺序在后续开发中执行。
 > 研究依据：[本轮源码与结果复审](../../reference/M4V2_POST_C_STAGE_RESULT_REVIEW_20260910.md)；[历史执行记录](../../archive/history/20260910_result_review/EXECUTION_HISTORY.md)。
 
 ## 阶段收束：完成研究审计，不等于完成模型验收
 
-本轮从 601413cd 的收束基线继续完成了 P0 等 replay validation-only 诊断、P1 失败审计、P1.1 数据契约修复、P2 小预算 validation pilot、P2.1 只读输出/行动链诊断和 P2.2 安全 bridge canary；没有读取新的 sealed payload，也没有 promotion 成绩。代码/报告证据以 7a9e9a01、P0 报告、P1 v1/v2 报告、P2 pilot/P2.1/P2.2 报告及本结果复审为准。
+本轮从 601413cd 的收束基线继续完成了 P0 等 replay validation-only 诊断、P1 失败审计、P1.1 数据契约修复、P2 小预算 validation pilot、P2.1 只读输出/行动链诊断、P2.2 安全 bridge canary 和 P2.3 recovery continuation 数据合同审计；没有读取新的 sealed payload，也没有 promotion 成绩。代码/报告证据以 62f83052、P0 报告、P1 v1/v2 报告、P2 pilot/P2.1/P2.2/P2.3 报告及本结果复审为准。
 
 | 工作线 | 收束状态 | 后续处理 |
 |---|---|---|
@@ -22,7 +22,7 @@
 
 ### 下一阶段唯一交付目标
 
-**P2.2 已完成，下一步只做 P2.3 recovery continuation 数据合同与 targeted learning pilot，不进入 P3。** P0 已完成，P1.1 已通过数据 Gate，P2 pilot 已真实训练但未通过能力晋级；P2.1 证明连续 MSE 下降没有转成更高离散命中；P2.2 证明 typed abstention、根目录 recovery route 和世界对齐控制的工程合同可执行，但 recovery/alignment 成绩是 oracle control，不能当作模型能力。P3–P5 是后续路线，不是当前并行待办。不以添加新器官、新 Gate、更大模型或训练次数代替输出、保持和可学习闭环验收。
+**P2.2 已完成，P2.3 数据合同已通过，下一步只做 P2.3 targeted learning pilot，不进入 P3。** P0 已完成，P1.1 已通过数据 Gate，P2 pilot 已真实训练但未通过能力晋级；P2.1 证明连续 MSE 下降没有转成更高离散命中；P2.2 证明 typed abstention、根目录 recovery route 和世界对齐控制的工程合同可执行，但 recovery/alignment 成绩是 oracle control；P2.3 已把“缺失目标→列举→新证据读取”拆成可重建的 train/validation continuation，初始 recovery 仍归 host policy，候选 K1/K2 才允许进入 fit。P3–P5 是后续路线，不是当前并行待办。不以添加新器官、新 Gate、更大模型或训练次数代替输出、保持和可学习闭环验收。
 
 - P0 已确定当前实现的效果基线：在 model17/course0、150 条 wake＋50 条固定 replay 上，FS 与 C-replay、FS-no-replay 与 C 的有效状态峰值差均为 `4.76837158203125e-7`，低于预先冻结的 `1e-5`；checkpoint preflight 通过。当前数据覆盖的验证类为 A/B/C，D/R 留给 P1。
 - P1 v1 失败审计确认了根因：450 条 train 记录中每类表面 observation digest 为 90 个，但实际 K1/K2 mask-visible input 各只有 1 个；validation 缺 D/R、无 project 隔离。报告保留为失败证据，不覆盖。
@@ -33,6 +33,7 @@
 - P2.1 还确认既有 `READ_ONLY_ROUTES` 没有 `content:recover-target`→只读能力的路由。这个缺口不能用降低 confidence floor 或给缺失文件直接执行来掩盖；下一步必须先做安全 recovery bridge canary。
 - P2.2 已完成：460 条清单重建 `mismatch_count=0`；三臂 6 条低证据行均生成可往返、不可执行的 typed abstention；`content:recover-target` 的 `workspace.list(path=".")` 在 2 条 R 控制行上全部通过且根目录约束成立；世界对齐控制 10/10 通过。恢复和对齐均标记为 `oracle_control`，不构成模型能力成绩。报告见 [P2.2 安全 bridge canary](../../../reports/taiji_m5_k_p2_2_safety_bridge_canary_20260910.json)。
 - P2.2 重新划分了下一阶段指标：高证据可执行 cohort 只有 4/10 行；低证据 6/10 行的正确结果是安全 abstention；R 的真实“列举后重新观察并读取”连续数据尚未进入训练/验证合同。下一步必须先补齐这条可学习 continuation，再运行 targeted learning；不得降低 `0.55` floor，也不得把 oracle route 计入模型命中。
+- P2.3 continuation 合同已通过：6 条 train、2 条 validation；初始 R 观察均为 `read_success=false`、Percept confidence `0.0`、下一步 `workspace.list(path=".")`；列举后的候选观察均为独立高证据 `confidence=0.99`、resolved 文件；K1/K2 示例往返、输入 digest、record digest、project/path/template 隔离均通过。manifest 和报告见 [P2.3 continuation manifest](../../manifests/taiji_m5_k_p2_3_recovery_continuation_manifest_v1.json) 与 [P2.3 contract report](../../../reports/taiji_m5_k_p2_3_recovery_continuation_contract_20260910.json)。
 - P2 只允许使用 P1 v2 manifest、冻结的 candidate/scorer/threshold/resource contract；训练前必须重新通过 checkpoint 保存/独立恢复 preflight。当前不进入 P3。
 - 阶段完成必须同时给出训练基线、可重建数据清单、不可变候选、五类结果及失败分析。没有收益或保持失败也是可收束的研究结论，但不得因此解冻 P3 的能力整合或晋级。
 - 按验收事件排期，不承诺缺乏运行时间依据的日历日期；同一时间只推进一个研究问题。
@@ -49,7 +50,7 @@ P1 合同完成后可做 P2 validation pilot。最终测试前冻结主指标、
 
 出现下列情况应提交已有成果并停在决策点：有效信号不足需要改变任务定义；公平对照后仍无收益需要改变学习机制；资源约束迫使缩减目标；或准备改变认知所有权/默认发布模型。讨论时给出证据、保留方案与替代方案的收益和代价，再更新唯一计划；不自动扩展训练规模或购买算力。
 
-本轮已完成 P0/P1 validation-only 诊断、P1.1 修复、P2 小预算 pilot、P2.1 输出/行动链诊断和 P2.2 安全 bridge canary；下一步只做 recovery continuation 数据合同和 targeted learning pilot，不读取 sealed、不扩展 formal 矩阵、不进入结构成长。
+本轮已完成 P0/P1 validation-only 诊断、P1.1 修复、P2 小预算 pilot、P2.1 输出/行动链诊断、P2.2 安全 bridge canary 和 P2.3 continuation 数据合同；下一步只做 targeted learning pilot，不读取 sealed、不扩展 formal 矩阵、不进入结构成长。
 
 ## 当前判断
 
@@ -59,15 +60,15 @@ widened 合成路线已收束。先前“14,252 本轮更新”“v4 worker 三 
 
 P1.1 已把数据入口修复为可见状态优先的合同：A/B/C 通过语言证据的 resolved/ambiguous 变化，D 通过 header 语言证据的 ambiguous/resolved 变化，R 通过显式 recovery-language hint/no-hint 变化。P2 pilot 证明同一父代上的 K1/K2 连续 MSE 可显著下降，但离散 readout 命中不随之提升；这把问题从“有没有训练信号”推进到“输出阈值/目标/行动桥是否正确”。
 
-## 唯一下一步：P2.3 recovery continuation 数据合同与 targeted learning pilot
+## 唯一下一步：P2.3 targeted learning pilot
 
-目的：在不降低全局 confidence floor、且不把 host/oracle 规则计作模型能力的前提下，把“缺失目标→根目录列举→新证据读取”变成可学习、可重建、可验收的连续任务，并对 K1/K2 做一次受控 targeted learning。
+目的：使用已通过的 recovery continuation 数据合同，在不降低全局 confidence floor、且不把 host/oracle 规则计作模型能力的前提下，对同一 P2 父 checkpoint 做一次受控 K1/K2 targeted learning，验证新证据是否能转成真实模型读出和 Workbench 动作。
 
-1. 固化 P2.2 安全出口：confidence `<0.55` 的 6 条低证据样本只能产生 typed abstention；其成功标准是 roundtrip、`action_intent is None`、快照一致和下一步类型正确，不把它们当作 goal/content miss。保留 `workspace.list(path=".")` 的根目录约束，不直接读取缺失路径。
-2. 新建 P2.3 recovery continuation 数据合同：第一步是缺失目标的安全 abstention；第二步只在真实/模拟根目录列举成功后生成候选目标观察，候选观察必须有独立 observation digest、project/template 隔离、可见 language evidence 和 `confidence >= 0.55`；第三步才允许学习 `workspace.read` 或语言解析动作。train/validation 仍按 project/template 分组，validation 不参与 fit。
-3. 先做数据合同审计和重建检查：验证 recovery continuation 的顺序、目标、K1/K2 mask-visible 输入、快照绑定、route 参数、候选路径没有泄漏；任何一项失败都停在数据修复，不训练、不读取 sealed。
-4. 合同通过后运行一次 CPU targeted learning pilot：从同一 P2 父 checkpoint 继承，不扩参数、不新增 replay；按高证据可执行 cohort、低证据 abstention cohort、recovery continuation cohort 分账。训练前必须做保存文件和独立进程 restore preflight，之后再 fit；同一 checkpoint 只读评分。
-5. 固定验收出口：报告模型读出、K1→K2 级联、planner admission、Workbench 成功、abstention 安全率、recovery continuation 命中、每类保持、checkpoint digest 和资源。oracle route 仅作工程对照；只有真实模型 recovery continuation 和旧类保持同时成立，才允许设计 P2.4/P3；否则按失败层修数据或学习目标。
+1. 固化 P2.2 安全出口：confidence `<0.55` 的 6 条低证据样本只能产生 typed abstention；其成功标准是 roundtrip、`action_intent is None`、快照一致和下一步类型正确，不把它们当作 goal/content miss。保留 `workspace.list(path=".")` 的根目录约束，不直接读取缺失路径。此项已通过。
+2. 使用已通过的 P2.3 manifest：第一步缺失目标只保留为 host-policy abstention，第二步固定根目录列举，第三步候选观察才进入 K1/K2 fit；候选 observation digest、Percept confidence、K1/K2 input digest、project/template/path 隔离已通过。此项已通过。
+3. 训练前做 checkpoint save/独立进程 restore preflight：从同一 P2 parent artifact 启动，先保存父 checkpoint 和 continuation candidate checkpoint，子进程恢复并比较 content digest；失败则停在机械 Gate，不调用 fit。
+4. Gate 通过后运行一次 CPU targeted learning pilot：不扩参数、不新增 replay；K1/K2 只用 manifest 的 train candidate examples 做有限 continuation fit；validation candidate、低证据 abstention 和原 P1 v2 五类 validation 只读评分，保持全局 `0.55` floor。
+5. 固定验收出口：报告模型读出、K1→K2 级联、planner admission、Workbench 成功、abstention 安全率、recovery continuation 命中、原五类逐类保持、checkpoint digest 和资源。host recovery route 只作工程前置，不计入模型命中；只有真实候选读出/执行和旧类保持同时成立，才允许设计 P2.4/P3；否则按失败层修数据或学习目标。
 
 ## 后续依赖顺序与验收
 
@@ -75,7 +76,7 @@ P1.1 已把数据入口修复为可见状态优先的合同：A/B/C 通过语言
 |---|---|---|
 | P0 | 相同 replay 的机制归因 | **已完成**：两组轨迹均在 `1e-5` 内等价，checkpoint preflight 通过 |
 | P1 | 真实学习信号与五类数据合同 | **已通过 P1.1**：五类各有至少 2 个 K1/K2 visible input，validation 五类覆盖且 project/template 隔离 |
-| P2 | 五类学习及保持的独立验证 | **P2.2 已通过工程 bridge、模型仍未晋级**：安全 abstention、根目录 recovery 和对齐控制通过，但 recovery/alignment 为 oracle；执行 P2.3 continuation 数据合同与 targeted learning |
+| P2 | 五类学习及保持的独立验证 | **P2.3 数据合同已通过、模型仍未晋级**：6 train + 2 validation continuation 通过，下一步运行 targeted learning 并同时回归原五类保持 |
 | P3 | 中断续训与 S/G/K 联合状态整合 | joint checkpoint、逐 phase retention、rollback 可复现 |
 | P4 | 结构成长必要性与收益验证 | 容量压力真实存在，增长收益优于强固定基线 |
 | P5 | 知识来源、IDE、客户端、硬件发布 | 各项按所需模型能力与接口成熟度解冻 |
@@ -96,7 +97,7 @@ P1.1 已把数据入口修复为可见状态优先的合同：A/B/C 通过语言
 - 使用 validation-only pilot 确定样本量、最低有意义改善、数值容差和逐域非劣界。浮点噪声容差与“允许遗忘多少”分别定义；不能用 candidate 退化方差自动放宽所有门槛。
 - 先保存候选和 presealed 合同，随后同一个 artifact 只读评分，不在第二阶段重训候选。记录代码版本、数据/参数/状态摘要和所有失败。
 - 结果出口：收益/保持/资源通过→P3；无收益→回对应反馈或数据根因；数值等价→保留成本更合理的基线；机械错误→修复后重做技术预检。不得看测试成绩改当前版本阈值。
-- P2 pilot 已执行上述最小预算和独立 checkpoint preflight；P2.1 完成了 K1→K2 级联与隔离 Workbench 诊断；P2.2 完成了 typed abstention、根目录 recovery 和世界对齐工程 canary。当前模型结论仍仅为连续 MSE 拟合改善；高证据可执行 cohort 为 4/10，6/10 行应安全 abstain，R 的真实“列举后重新观察并读取”尚未学习，因此按 P2.3 先补 continuation 数据合同和 targeted learning，不进入 P3。
+- P2 pilot 已执行上述最小预算和独立 checkpoint preflight；P2.1 完成了 K1→K2 级联与隔离 Workbench 诊断；P2.2 完成了 typed abstention、根目录 recovery 和世界对齐工程 canary；P2.3 continuation 数据合同已通过。当前模型结论仍仅为连续 MSE 拟合改善；高证据可执行 cohort 为 4/10，6/10 行应安全 abstain，R 的真实“列举后重新观察并读取”尚未学习，因此下一步只运行 P2.3 targeted learning，不进入 P3。
 
 ### P3：状态整合与同一父代连续课程
 
@@ -130,4 +131,4 @@ P3 前先发布 SGK v2 替代 [暂停的 v1](../../reference/M4V2_SGK_PROMOTION_
 
 文档仅保留一个执行入口，不再新增平行总计划：本文记录阶段状态、下一步和验收；结果复审记录证据解释；核心需求与架构常驻 active；已有历史流水保留在 archive。旧预注册即使留在 reference 也不重新获得执行许可。当前收束不移动有引用的研究资产，不覆盖旧报告或删除 checkpoint。根目录存在部分无读取权限的临时路径，未证明其为空或无用；后续清理须逐项验证绝对路径、引用和可恢复性，不能把它们报作已清理。
 
-本轮 P2 pilot、P2.1、P2.2 报告与计划同步已提交本地 main。后续唯一入口是 P2.3 recovery continuation 数据合同与 targeted learning pilot；不跳到 P3/lineage 实现，也不按历史“下一步”自动开跑。
+本轮 P2 pilot、P2.1、P2.2、P2.3 contract 报告与计划同步已提交本地 main。后续唯一入口是 P2.3 targeted learning pilot；不跳到 P3/lineage 实现，也不按历史“下一步”自动开跑。
