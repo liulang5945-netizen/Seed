@@ -113,6 +113,13 @@ from .continual_k_adapter import (
     KAdapterRollbackRecord,
     KContinualAdapter,
 )
+from .continual_checkpoint import (
+    CONTINUATION_PHASES,
+    TAIJI_CONTINUATION_CHECKPOINT_FORMAT,
+    TAIJI_CONTINUATION_CHECKPOINT_VERSION,
+    ContinuationPhaseCursor,
+    TaijiContinuationCheckpoint,
+)
 from .k_worker_manifest import (
     K_WORKER_BUNDLE_FORMAT,
     K_WORKER_BUNDLE_VERSION,

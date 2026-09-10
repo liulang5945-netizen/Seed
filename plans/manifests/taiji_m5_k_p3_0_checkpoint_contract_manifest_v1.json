@@ -1,0 +1,66 @@
+{
+  "format": "taiji-m5-k-p3-0-checkpoint-manifest-v1",
+  "version": 1,
+  "source_p2_6_manifest_digest": "585e8fceebb00497b64f658e8383b5d851c6156eb1c865a65873d565eaa31961",
+  "source_p2_6_worker_checkpoint_digests": {
+    "k1": "388393ee4d836e4d9c2cc26d1db40ced3312c822173d7176d4b7385431ca4b63",
+    "k2": "207120c53a3d7d6ba2531b82e12b7f28a3ce0dbfed3a63d0be915d7e5446671b"
+  },
+  "parent_checkpoint_digest": "8883a7ecc34c4574f55d945885a54ffee191232277be9ee347f5bcc79b2195b2",
+  "phase_order": [
+    "wake",
+    "replay",
+    "consolidate"
+  ],
+  "phase_rows": [
+    {
+      "phase": "wake",
+      "index": 0,
+      "experience_digest": "6a56c4747fbf7d45adac08043102c434cb38d00f5e4fc9f50234540b0e85537a"
+    },
+    {
+      "phase": "wake",
+      "index": 1,
+      "experience_digest": "2b1950a3b0597b877830cc54a9b404a3956473614da1992985671cb27cfb6c71"
+    },
+    {
+      "phase": "replay",
+      "index": 0,
+      "experience_digest": "5f4ab7862bf2433a110fd3909b85d813fa1ae1bfe8dfc5799fd989522dcce640"
+    },
+    {
+      "phase": "replay",
+      "index": 1,
+      "experience_digest": "8974b6aa48a17a7fe21c208d36d534ac98bd7a1a2310115289de28001473a5db"
+    },
+    {
+      "phase": "consolidate",
+      "index": 0,
+      "experience_digest": "91cd064df0c2df4b42e04edededec31b9478147fadc592f02ff95523e4221d7d"
+    },
+    {
+      "phase": "consolidate",
+      "index": 1,
+      "experience_digest": "be651ee10cde68ab8928609b65ee7f138d50a7bfe15f461a10d37feb2889e65c"
+    }
+  ],
+  "stream_digest": "c69b223d2ec5a4584e33a7916c626b8bfca1a5d9080294e759e564f43e19d6ff",
+  "experience_digests": [
+    "6a56c4747fbf7d45adac08043102c434cb38d00f5e4fc9f50234540b0e85537a",
+    "2b1950a3b0597b877830cc54a9b404a3956473614da1992985671cb27cfb6c71",
+    "5f4ab7862bf2433a110fd3909b85d813fa1ae1bfe8dfc5799fd989522dcce640",
+    "8974b6aa48a17a7fe21c208d36d534ac98bd7a1a2310115289de28001473a5db",
+    "91cd064df0c2df4b42e04edededec31b9478147fadc592f02ff95523e4221d7d",
+    "be651ee10cde68ab8928609b65ee7f138d50a7bfe15f461a10d37feb2889e65c"
+  ],
+  "contract": {
+    "phase_cursor": true,
+    "rng_state": true,
+    "budget_counts": true,
+    "origin_attached_lineage": true,
+    "worker_payload_digest": true,
+    "independent_restore": true,
+    "parameter_growth": false
+  },
+  "manifest_digest": "d046b2e4c51c7fc2fc5029c9e79d606786192a738d976efb25a25cfb80d48ae0"
+}

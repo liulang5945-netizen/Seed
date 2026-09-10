@@ -180,3 +180,7 @@ neuroplex/agent_ext/mcp_remote_cache.json
 
 # CI verify 产物：ci.yml 的 8 道 verify 门禁用 --output 写入此目录，属运行产物
 reports/ci_verify/
+
+# P3.0 continuation contract keeps local checkpoint/phase ledgers for resume
+# inspection; the content-addressed manifest and report are the versioned evidence.
+output/taiji_m5_k_p3_0_checkpoint_*/
