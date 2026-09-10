@@ -131,6 +131,10 @@ parity 口径修正与修复路线已冻结：[M4V2_B3_K_C_PARITY_CALIBER_REVISI
 
 **当前唯一下一步**：晋级课程预注册——同一 parent 的连续 S/G/K 课程，学习机制 = FS fast/slow+replay 候选，含资源等价、rollback、旧能力非劣三重门；预注册冻结前不解冻任何 K shadow owner、不接默认 runtime、不训练。
 
+用户确认执行。**S/G/K 连续课程晋级 formal 预注册已冻结：[M4V2_SGK_PROMOTION_COURSE_PREREGISTRATION_20260910.md](../../reference/M4V2_SGK_PROMOTION_COURSE_PREREGISTRATION_20260910.md)。** 可证伪假设：同一 parent 经连续 S→G→K（S/G fast/slow+replay 演化父代、K 相位 FS continuation 演化 worker），在预注册资源内 sealed v6 真实改善 + FS 弱类更优 + 双轴 retention + 逐 phase joint checkpoint/rollback。**冻结的两个关键设计决策**：(1) 诚实边界——K worker 与父代参数不相交，连续性耦合在 owner/lineage/checkpoint 层而非权重层，证据目标是整合证据不是迁移声明；(2) K 相位用全新 registry（course seeds 3/4/5 + fresh sealed v6）——复用 C-stage 课程会使 K 结果逐位相同、门空转，fresh registry 使 G1/G2 成为真预测。**Lineage re-binding 合同**（唯一新机械）：v4 bundle 显式记录 origin_parent=P0 + attached_parent=P2 + S/G chain，fail-closed 校验保留，拒绝在 P2 上重建 worker。四臂（frozen / FS candidate / C-control 机制单变量 / replay-lesion 收益源验证）；五门（G1 sealed 新能力 / G2 机制复制 / G3 父代 retention epsilon_SG / G4 worker 灾难界 epsilon_cat / G5 资源-rollback）；全分支结果映射；两阶段纪律（baseline repeat epsilon 先冻结）。不做 fixed-large/matched——容量与机制维度已闭合，不重开。
+
+**当前唯一下一步**：执行预注册 §9 顺序——(1) lineage re-binding 合同扩展 + 定向测试；(2) promotion course manifest v1 + 逐 phase joint checkpoint preflight；(3) 单 cell smoke（不读 sealed）；每步通过后才进下一步，任一停止线触发即停。
+
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 
 **B2 保存先于训练。** 先在 CPU 检查父 checkpoint 可恢复；保存 fast/slow、replay、学习器状态（若使用 optimizer 则含其状态）、RNG、课程游标和 owner lineage。新进程恢复后预测等价；单步更新后保存/恢复/再更新，与不中断轨迹在预先声明容差内一致。检查磁盘空间、原子写和 rollback；任何失败禁止长跑，不覆盖父代。
