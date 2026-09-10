@@ -56,3 +56,27 @@
 - Runner：`scripts/training/eval_taiji_m4v2_b3_k_c_parity_formal.py`（先 py_compile/ruff/mypy）；
 - 报告：`reports/taiji_m4v2_b3_k_c_parity_formal_20260910.json`（format `taiji-m4v2-b3-k-c-parity-formal-v1`，含 frozen-input 校验、validation epsilon 派生记录、sealed 逐 cell/逐课程结果、G1–G4 判定、`can_promote=false`）；
 - 路线图执行记录 + 独立提交。
+
+## 7. 执行记录（2026-09-10，formal 已运行，判据失败——honest fail）
+
+Runner 按冻结判据两阶段执行（pre-sealed epsilon 冻结产物 `reports/taiji_m4v2_b3_k_c_parity_formal_presealed_20260910.json` 落盘后才读 sealed；sealed_read_count=2 如实记录）。**结果：G1/G2/G3 全部失败**：
+
+| 门 | 结果 |
+|---|---|
+| G1 质量门 | 失败——candidate validation combined delta 在 3/3 课程 ≥ 0 |
+| G2 灾难界 | 失败——sealed candidate delta 每课程 ≈ **+0.107**（ε_cat=0.01） |
+| G3 主判据 | 失败——0/3 课程胜出（candidate +0.107 vs fixed-large −0.0019） |
+
+### 7.1 归因（validation-only 探针，sealed 未再读取）
+
+同 artifacts、同训练，仅把 readout 从**权重相加**改为**权重平均**：validation delta 从 +0.107 反转为 **−0.0017（9/9 为负）**。机制钉死：
+
+> logit 相加的 readout 把共享 parent 的权重**加倍**（两通道同源，`logit_ch1 + logit_ch2 = 2·W_parent·x + (Δ1+Δ2)·x + 2·b_parent…`），未见输入上 logits 过度延伸 → 概率过度自信 → MSE 爆炸。失败完全来自冻结的 readout 语义选择（widened 设计 §2），**不是**顺序分化训练本身——顺序训练的 delta 在校准保持的合成下与 fixed-large 相当（−0.0017 vs −0.0019）。
+
+fixed-large 的 replica 概率平均是校准保持的，这是它在 sealed 上占优的直接原因。
+
+### 7.2 判定与边界
+
+- **formal 判定：candidate 未胜过 strong control（honest fail）**。按 §4 结果映射：保留最强 fixed-capacity 基线（fixed-large 概率平均），回学习规则设计归因；不调阈值、不换课程重跑、同一 sealed artifact 不再读取。
+- readout 语义是**设计选择**而非判据实现 bug——改用权重平均属于设计修订（v3），且当前 sealed 已被读取，v3 formal 必须 materialize **全新的 sealed test v2**（fresh task seed、从未读取）才能保证评分无污染。
+- `can_promote=false` 不变；widened v2 artifacts 与本失败报告保留为诚实证据。

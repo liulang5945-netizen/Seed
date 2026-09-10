@@ -89,6 +89,10 @@ parity 口径修正与修复路线已冻结：[M4V2_B3_K_C_PARITY_CALIBER_REVISI
 
 **当前唯一下一步**：实现 formal runner（`eval_taiji_m4v2_b3_k_c_parity_formal.py`——输入 digest 校验 → validation epsilon 派生并冻结 → sealed 评分 → G1–G4 判定），运行产出 `reports/taiji_m4v2_b3_k_c_parity_formal_20260910.json`；任一门失败按预注册 §5 停止线处理。
 
+**parity formal 已执行，判据失败（honest fail）**：两阶段纪律执行（pre-sealed epsilon 产物先落盘，`sealed_read_count=2` 如实记录），**G1/G2/G3 全部失败**——sealed candidate delta 每课程 ≈ **+0.107**（灾难界 0.01）、0/3 课程胜出（fixed-large −0.0019）、validation delta 亦 ≥0。**validation-only 探针完成归因**：同 artifacts 仅把 readout 从权重相加改为权重平均，validation delta 反转为 **−0.0017（9/9 为负）**——机制钉死为「logit 相加把共享 parent 权重加倍 → 未见输入过度自信 → MSE 爆炸」，失败来自冻结的 readout 设计选择（widened 设计 §2），**不是**顺序分化训练本身（顺序训练 delta 在校准保持合成下与 fixed-large 相当）。fixed-large 的概率平均是校准保持的，这是其占优的直接原因。按预注册 §4：保留最强 fixed-capacity 基线，回设计归因，不调阈值；widened v2 artifacts 与失败报告保留为诚实证据。
+
+**当前唯一下一步（需用户拍板）**：二选一——(a) **v3 设计修订预注册**：readout 改为权重平均（校准保持，是概率平均的权重域对偶；探针已示 −0.0017）+ materialize 全新 sealed test v2（当前 sealed 已读取，不可复用）+ 重跑 formal；(b) **关闭 widened 路线**：接受 fixed-large 概率平均为 C-entry strong arm，B 阶段继续。建议 (a)：机制归因精确、修复有原则（权重平均是「两顺序运行合成」的校准保持形态），且 (b) 会把一个已被探针证明等价于 strong control 的路线误判为失败。
+
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 
 **B2 保存先于训练。** 先在 CPU 检查父 checkpoint 可恢复；保存 fast/slow、replay、学习器状态（若使用 optimizer 则含其状态）、RNG、课程游标和 owner lineage。新进程恢复后预测等价；单步更新后保存/恢复/再更新，与不中断轨迹在预先声明容差内一致。检查磁盘空间、原子写和 rollback；任何失败禁止长跑，不覆盖父代。
