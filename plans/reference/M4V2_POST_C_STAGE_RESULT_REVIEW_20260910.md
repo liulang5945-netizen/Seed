@@ -266,3 +266,17 @@ P2 阶段因此满足进入 P3.0 的证据条件。当前唯一下一步改为 P
 | rollback | 通过 | 回滚到 P3 parent 后 K1/K2 source digest 与原始 parent 一致，独立 restore 通过 |
 
 P3.0 的结论是“当前 K1/K2 continuation 状态可以被内容寻址、独立中断恢复、校验和回滚”，不是“Taiji 已经完成 S/G/K 联合学习、结构成长或自主进化”。下一步唯一执行项改为 P3.1：在 P3.0 parent 上建立真实 S/G/K 单 cell 的 schema/owner/mask/事件合同，先做接口回放和独立恢复；没有真实 S/G 持久状态时必须显式标记 `absent`，不得用空字段包装成联合能力。P3.1 仍不扩参、不进入结构成长、不接入 CUDA/客户端外围。
+
+## 18. P3.1 S→G→K single-cell state preflight 结果（2026-09-10）
+
+按 §17 的入场条件运行了 [P3.1 single-cell preflight](../../scripts/training/eval_taiji_m5_k_p3_1_single_cell.py)，产出 [P3.1 manifest](../../plans/manifests/taiji_m5_k_p3_1_single_cell_manifest_v1.json) 和 [P3.1 报告](../../reports/taiji_m5_k_p3_1_single_cell_20260910.json)。本轮固定 P3.0 continuation parent，复用 P2.7 的 4 条 holdout，形成每例 observation→S update→G selection→K readout→action 五阶段、共 20 个事件；没有调用 `fit`、没有新增参数、没有读取 sealed payload。
+
+| Gate | 结果 | 证据含义 |
+|---|---:|---|
+| schema / owner / event mask | 通过 | S=runtime evidence，G=control-only external selection，K=既有 K1/K2 learned readout；K readout 实际只读取 S，action 读取 G/K |
+| uninterrupted / event boundary / phase boundary | 通过 | 五条轨迹均能生成 content-addressed owner/event checkpoint |
+| 独立进程恢复 | 通过 | event/owner/worker/budget/RNG/cursor/logical digest 与 uninterrupted 全部一致 |
+| tamper / wrong base / wrong manifest | 通过 | 篡改 cursor、错 P3.0 base、错 P3.1 manifest 均 fail-closed |
+| rollback / parameter growth | 通过 | rollback parent 指向 P3.0，K1/K2 digest 未变，参数未增长 |
+
+P3.1 的边界结论是“单 cell 状态合同和恢复链路成立”，不是“已经产生 S/G 学习能力”。实现审计还发现：当前 K1 的既有输出同时包含语义、goal 和 content，G 仍由外部 target 驱动；若直接训练新的 G 而不先处理所有权，会复制能力并让指标归属失真。因此下一步唯一执行项改为 P3.2：沿用 K1/K2 的有效权重，建立 S/K/G owner-transfer adapter 和 `GSelectionState`，先做 K-only 对照、无新增参数的迁移恢复和 fail-closed 负例；只有迁移不劣且 G 不再读取外部 target，才允许设计 P3.3 的 G 小步学习。P3.2 不进入结构成长、CUDA、IDE/provider 或客户端视觉路线。
