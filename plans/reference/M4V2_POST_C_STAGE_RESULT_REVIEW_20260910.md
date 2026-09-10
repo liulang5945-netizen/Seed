@@ -203,3 +203,18 @@ P2.1 把问题进一步分层：6/10 行在 native readout 之前就因输入证
 | P2.3 continuation Workbench 成功 | 2/2 | 2/2 | 2/2 | 2/2 |
 
 P2.4 的 retention Gate 通过，证明固定 rehearsal 能阻止 P2.3 candidate-only 的旧类干扰；但 continuation 仍与 parent 一样是 2/2，没有新增能力。因此这不是 promotion 或 P3 解冻证据。下一步改为 P2.5：保留 recovery→list→candidate 顺序，但换成训练未出现的语言/工具链组合（优先 TypeScript＋可用 toolchain 的 inspect 组合），先对 frozen parent 做 validation-only novelty probe；只有 parent 对该真实未见组合失败，才有必要制定下一轮学习。
+
+## 14. P2.5 novel-composition probe（2026-09-10）
+
+按 §13 的停止条件运行了 [P2.5 novel-composition probe](../../scripts/training/eval_taiji_m5_k_p2_5_novel_composition_probe.py)，产出 [P2.5 manifest](../../plans/manifests/taiji_m5_k_p2_5_novel_composition_manifest_v1.json) 和 [P2.5 报告](../../reports/taiji_m5_k_p2_5_novel_composition_probe_20260910.json)。本轮只做 validation-only 评分，没有调用 `fit`，没有读取 sealed payload，`can_promote=false`。候选严格保留 recovery→list→candidate 顺序，使用 TypeScript、toolchain available、selection resolved、`content:inspect-language` 的组合；2 条候选路径与 P1/P2 路径 disjoint，合同和 checkpoint Gate 均通过。
+
+| 指标 | frozen parent | P2 wake-only reference |
+|---|---:|---:|
+| 新组合 K1 goal/content | 2/2；2/2 | 2/2；2/2 |
+| 新组合 K2 goal/content | 2/2；0/2 | 0/2；0/2 |
+| 新组合 Workbench 成功 | 2/2 | 2/2 |
+| 新组合 K2 状态 | `ambiguous`，content `None`（2/2） | `clarify`，goal/content 不命中（2/2） |
+
+checkpoint preflight 在训练前和保存后的独立进程恢复均通过；P2.5 只保存验证 arm，不产生训练权重或 promotion 资格。这个结果把缺口从“新组合是否完全不会”收窄为“模型已识别目标并能执行，但 K1→K2 的内容承接仍不能稳定输出 `content:inspect-language`”。因此不能把 Workbench 2/2 或 K2 goal 2/2 误写成完整能力，也不能继续在已经通过的 K1/执行目标上重复训练。
+
+当前唯一下一步改为 P2.6：固定 P2.5 的 novel tuple，构造 6 条 train candidate + 2 条 validation candidate，使用 P2.4 已通过的 50 条均衡 rehearsal 与 novel candidate 交错学习；只把新组合 K2 content 作为新增目标，同时把旧五类、低证据 abstention、K1/K2 goal、Workbench 和 checkpoint restore 设为非劣约束。若 K2 content 仍为 0/2，或旧类退化，保持 `can_promote=false` 并停止扩展；不进入 P3。
