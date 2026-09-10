@@ -188,3 +188,7 @@ output/taiji_m5_k_p3_0_checkpoint_*/
 # P3.1 single-cell contract keeps local owner/event ledgers for resume
 # inspection; the content-addressed manifest and report are the versioned evidence.
 output/taiji_m5_k_p3_1_single_cell_*/
+
+# P3.2 owner-transfer contract keeps local owner/event ledgers for resume
+# inspection; the content-addressed manifest and report are the versioned evidence.
+output/taiji_m5_k_p3_2_owner_transfer_*/

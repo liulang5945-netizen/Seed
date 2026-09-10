@@ -1,0 +1,31 @@
+{
+  "format": "taiji-skg-owner-transfer-v1",
+  "version": 1,
+  "base_single_cell_manifest_digest": "ce3fed4d5a220a26cb62cecb546fb6cbe45975f1c3f6a4fb25ed2cddc73d0a20",
+  "base_continuation_checkpoint_digest": "06bad1e5cd52b93db11f660ae459438716eccb35259533797ba751a14beae85b",
+  "worker_checkpoint_digests": {
+    "k1": "12851b4b3cc941817b9c27b93d7eaf35e0734b4d60ad0d64427b154db64277a6",
+    "k2": "411ef5348231f355eb1c512c195a9e34dea74c75fc5b5cdf5e86014940313691"
+  },
+  "owner_roles": {
+    "G": "selection_owner",
+    "K": "learned_candidate_provider",
+    "S": "runtime_evidence"
+  },
+  "event_types": [
+    "observation",
+    "k_candidate",
+    "g_selection",
+    "action"
+  ],
+  "external_target_used": false,
+  "manifest_digest": "b7ae3ef1b093d4dcc5d6ab009cb9f0c038111fece0ecbe7117047358073910a7",
+  "manifest_kind": "k-candidate-to-g-owner-transfer",
+  "owner_contribution": {
+    "S": "runtime-evidence",
+    "K": "existing-k1-k2-candidate-provider",
+    "G": "native-selection-state-no-fit"
+  },
+  "parameter_growth": false,
+  "fit_called": false
+}
