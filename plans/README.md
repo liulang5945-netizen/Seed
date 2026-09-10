@@ -30,7 +30,9 @@ B3-K 的非饱和 structured-loss diagnostic 已通过：同一 model 17 parent�
 
 **parity formal v3 已执行（readout 修订 + 全新 sealed v2），widened 路线按预注册关闭**：G1/G2 通过（权重平均 readout 消除了 v1 的 +0.107 灾难，sealed 三课程全部为负），G3 极小差距失败（1/3 课程胜出，均值 −0.00173 vs −0.00188）。**结论：等预算等容量下，顺序分化 + 权重平均不优于同构 replica 概率平均——两种合成在同一表现带（±0.0002）。** fixed-large 概率平均保留为 C-entry strong arm。学习问题收敛点：K 课程可见信号空间只有 3 类，任何课程/合成变化都是二阶差异。
 
-**当前唯一下一步**：K 课程可见信号空间扩展的设计预注册（新 fact 词汇/registry 维度使 recover/.h 类可进入，worker 词汇重建一并冻结）；扩展设计冻结前不训练、不读 sealed v2。
+**K 信号空间扩展预注册已冻结**：[signal-space expansion](reference/M5_K_SIGNAL_SPACE_EXPANSION_PREREGISTRATION_20260910.md)——fact 词汇 13→14（+`language_state::ambiguous`）、K1 goal 3→4、K2 goal 2→4，可见类空间 **3→5 类**（+D=.h clarify-language、+R=recover）；父代 K workers 按 M5.K2 课程+D/R episodes 重建至 `taiji_k_workers_v4/`（K3/掩码机制/学习率不动）；重跑合同 = 150 experiences 5 类平衡、双臂同流 600 新增步、fresh sealed v3、G1/G2/G3 同构。可证伪点：扩展后合成差异是否超出二阶带。
+
+**当前唯一下一步**：执行扩展 §8——父代重建脚本（词汇自然生长+参数核算+fresh restore）→ 扩展空间双臂 build → sealed v3 + formal v4；任一停止线触发即停。
 
 ## 权威文档
 

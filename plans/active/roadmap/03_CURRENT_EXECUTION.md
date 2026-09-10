@@ -99,6 +99,10 @@ parity 口径修正与修复路线已冻结：[M4V2_B3_K_C_PARITY_CALIBER_REVISI
 
 **当前唯一下一步**：K 课程可见信号空间扩展的设计预注册（扩展 fact 词汇或 registry/schema 维度使 recover/.h 类可进入课程，worker 词汇重建与 artifact 重build 一并冻结）；扩展设计冻结前不训练、不读 sealed v2、不在 3 类空间内继续调课程/合成。
 
+**信号空间扩展预注册已冻结：[M5_K_SIGNAL_SPACE_EXPANSION_PREREGISTRATION_20260910.md](../../reference/M5_K_SIGNAL_SPACE_EXPANSION_PREREGISTRATION_20260910.md)。** 核心变更：fact 词汇 13→14（+`language_state::ambiguous`，`.h` 文件在 c/cpp 扩展平票下解析为 ambiguous 已探针验证）、K1 goal 3→4（+clarify-language）、K2 goal 2→4（+clarify-language + recover-target）——可见类空间 **3 类 → 5 类**（A/B/C + D=.h clarify-language + R=recover）；类型化掩码对新事实自动覆盖（schema 已含 `selection:ambiguous`），K3/学习率/掩码机制不动。**父代重建合同**：K1/K2 workers 用冻结 M5.K2 课程 + D/R episodes 重建至 `taiji_k_workers_v4/`（不覆盖现父代），K3 复用；容量 parity 由双臂同形状构造保证（预计 11,296 参数 ≈ 45,184 字节）。**重跑合同**：150 experiences 5 类平衡（各 30）、课程独立性硬门延续、candidate=widened 权重平均 vs control=fixed-large 概率平均、fresh sealed v3、G1/G2/G3 同构、两阶段纪律。可证伪点：G3 过 = 信号空间扩展使合成差异可测；失败 = 「合成方式在该 harness 内不可分」确证，学习规则比较让位信号工程。诚实边界：D 类在 planner 侧被 `language_evidence_ambiguous` 拒绝（resolve 需 resolved），但 parity 量尺是 holdout MSE，D 类可训练可评分。
+
+**当前唯一下一步**：执行扩展 §8 顺序——(1) 父代 worker 重建脚本（词汇随 experience 自然生长 + 参数核算表 + fresh restore Gate）；(2) 扩展空间双臂 build（5 类 × 150、课程独立性门、通道差分门）；(3) sealed v3 materialize + formal v4（G1–G3）；全部结果如实落盘，任一停止线触发即停。
+
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 
 **B2 保存先于训练。** 先在 CPU 检查父 checkpoint 可恢复；保存 fast/slow、replay、学习器状态（若使用 optimizer 则含其状态）、RNG、课程游标和 owner lineage。新进程恢复后预测等价；单步更新后保存/恢复/再更新，与不中断轨迹在预先声明容差内一致。检查磁盘空间、原子写和 rollback；任何失败禁止长跑，不覆盖父代。
