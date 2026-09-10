@@ -392,3 +392,17 @@ P3.6 的结论是：P3.5 的 G-only 行为变化不只在原 artifact 上重放�
 这个结果只能证明“固定 G 在候选集合变宽、跨案例 proposal 竞争时出现可重复的选择压力”。width 4 完整通过而 width 8/12 退化，且序列长度没有进一步退化，说明当前首先要排查候选集上下文/竞争特征、排序与归一化合同；它还不能单独证明增加神经元或扩大拓扑会解决问题。P4.0 的 `scan_passed=true` 只表示验证合同、隔离、恢复和诊断运行完成；`growth_admitted=false` 是有意保持的安全状态。
 
 因此下一步从“直接进入结构成长”修订为 **P4.1 压力归因与公平容量对照 Gate**：在相同 P4.0 candidate/behavior artifact 上建立同输入/读出合同的 fixed-large、结构 lesion 和候选集 context-aware 对照，validation-only 比较 width `2/4/8/12` 的 utility、target hit、旧类保持、安全投影、Workbench、参数/资源和独立恢复；至少两个 deterministic seed。只有 fixed-large/lesion 排除上下文缺陷并稳定证明 fixed-small 瓶颈后，才允许设计继承式结构成长；否则先修 G 的输入合同，不扩拓扑。
+
+## 26. P4.1 候选集上下文与公平容量合同预检结果（2026-09-11）
+
+按 P4.0 结果修订后的计划运行了 [P4.1 context-contract preflight](../../scripts/training/eval_taiji_m5_k_p4_1_context_contract.py)，产出 [P4.1 manifest](../manifests/taiji_m5_k_p4_1_context_contract_manifest_v1.json) 与 [P4.1 报告](../../reports/taiji_m5_k_p4_1_context_contract_20260911.json)。这一步仍是 validation-only：没有调用 `fit`，没有改写 P3.5 G/K parent，参考 arm 只做零初始化合同和独立恢复。
+
+| Gate | 结果 | 关键实测 |
+|---|---:|---|
+| 来源与 lineage | 通过 | P4.0 manifest/report digest 一致；P3.2 G lineage、trained-G 独立恢复通过；`growth_admitted=false` 保持 |
+| 候选集上下文 | 通过 | 20 个集合，width `2/4/8/12` 各 5 个；9 个 context feature；每集合内部 context collision `0`；输入显式排除 target/utility |
+| fixed-large reference | 通过预检 | 22 个参数（当前 trained-G 为 13）；candidate 12 维 + context 9 维 + bias；独立进程 roundtrip 通过 |
+| context lesion | 通过预检 | 屏蔽 context 后 effective 参数为 13；独立恢复通过；20 个集合选择与当前 G 完全一致 |
+| 归因 | 未定 | `inconclusive`；零 fit 参考臂不能从同一验证集合重放推断学习收益或容量上限 |
+
+P4.1 的实际价值是把 P4.0 模糊的“候选变宽”拆成两个可审计对象：G 当前的逐候选 12 维输入，以及候选数量/角色比例/score 分布/相对排名组成的 9 维候选集上下文。22 参数 reference 只是一个可恢复容量合同，不是已训练模型，也不能当作神经元成长。下一步因此改为 **P4.2 隔离训练与公平容量归因 Gate**：在与 P4.0/P4.1 全部 disjoint 的 train/validation/holdout 上，分别训练 fixed-small、context-aware-small 和 fixed-large；只有新的 holdout 与 fixed-large/lesion 对照共同支持固定容量瓶颈，才保留结构成长假设。
