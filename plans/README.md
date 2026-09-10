@@ -22,7 +22,9 @@ B3-K 的非饱和 structured-loss diagnostic 已通过：同一 model 17 parent�
 
 **widened-candidate 路线设计已冻结**：[widened-candidate design](reference/M4V2_B3_K_C_WIDENED_CANDIDATE_DESIGN_20260910.md)——单实例双通道分解（supervised + k3-feedback），每个可学习头精确 ×2 = 9,666 参数（38,664 字节，ratio 0.0%），update 7,126 ticks × 2 通道 = 14,252 步精确对齐 fixed-large，readout 为异构通道和而非 replica 平均；K continuation contract 升 v2，含硬性 distinct 证据门（通道差分范数/反馈覆盖率）。设计未实现前不训练、不读 sealed formal。
 
-**当前唯一下一步**：实现 K continuation contract v2 与 widened-candidate artifact builder（参数核算表 + 三硬门机器核验）；核验通过前不训练、不读 sealed formal、不调学习率。
+**parity 口径修正与修复路线已冻结**：[caliber revision](reference/M4V2_B3_K_C_PARITY_CALIBER_REVISION_20260910.md)——机器证据钉死两臂真实新增均为 12 步/cell（14,252 中 14,240 是 parent 继承步数）；新口径只用 `new_update_steps` 比较（inherited/new 分离，旧 JSON 保留）；修复路线 = 更强新增预算课程（每 cell 150 个未见过的新 experiences，双臂同流新增 600 步且自动相等），失败 episode 不引入。
+
+**当前唯一下一步**：实现口径重述审计 + 新增预算课程 manifest v2，双臂重跑 build 过三硬门 + distinct 门；通过前不读 sealed、不训练 parent、不改 distinct 门。
 
 ## 权威文档
 
