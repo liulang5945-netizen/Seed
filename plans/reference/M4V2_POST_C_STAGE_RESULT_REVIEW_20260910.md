@@ -449,3 +449,18 @@ P4.3 不能解释为“rehearsal 已修复 P4.2 的遗忘”：它只证明在�
 | 结果出口 | 已分类但未晋级 | `outcome=retention_failure_reproduced`、`training_performed=false`、`fit_called=false`、`experiment_passed=false`、`growth_admitted=false`、`can_promote=false` |
 
 P4.4 的证据把 P4.3 的表面矛盾拆开了：P4.3 fresh retention 的 `0.68` 通过不能归因给 rehearsal，也不能代表保持问题不存在；当评估集合恢复为与 P3.6 相同的候选结构/难度而换成全新身份时，P4.2 历史退化和 P4.3 两臂退化都出现。当前最强结论是“训练后更新会破坏这一类保持合同，且现象可跨身份复现”，而不是“需要增加神经元”。下一步只允许进行 P4.5 保持约束与更新规则对照；dynamic growth、promotion 和 P5 外围继续冻结。
+
+## 30. P4.5 保持约束与更新规则对照结果（2026-09-11）
+
+按 §29 的唯一下一步运行了 [P4.5 update-rule Gate](../../scripts/training/eval_taiji_m5_k_p4_5_update_rule_gate.py)，产出 [P4.5 manifest](../manifests/taiji_m5_k_p4_5_update_rule_gate_manifest_v1.json) 与 [P4.5 报告](../../reports/taiji_m5_k_p4_5_update_rule_gate_20260911.json)。本轮固定 13 参数 G、K1/K2、候选输入和 selection threshold；P4.4 sibling 只提供结构合同，P4.5 重新生成与历史 project/path 全部 disjoint 的 20 条 train、20 条 validation、20 条 holdout、4 条 rehearsal 和 4 条 fresh retention。两个 deterministic seed 比较 `new-only`、`rehearsal-interleaved` 与 parent 范数 15% trust-region 的 `constrained-update`。
+
+| Gate | 结果 | 关键实测 |
+|---|---:|---|
+| 来源、身份与结构 | 通过 | 五类 train/validation/holdout 覆盖；retention 结构 digest 与 P4.4 相同；所有新 project/path/candidate/behavior digest 隔离；retention 与 P4.4 sibling 均未进入 fit |
+| checkpoint / lineage | 通过 | 三臂两个 seed 的零步/训练后 checkpoint 全部独立恢复；tamper 拒绝；parent 未覆盖；参数始终 13，K1/K2 digest 不变 |
+| new-only vs rehearsal | 无差异 | 两 seed 两臂 new holdout 都为 utility `0.68`、target hit `0.6`、safe violation `0`；fresh retention 都为 utility `0.8`、target `3/4`，没有 rehearsal-specific gain |
+| constrained seed-0 | 局部保持通过 | fresh retention utility `1.0`、target `4/4`、safe violation `0`；但 new holdout 只有 parent 的 utility `0.6375`、target `0.55`、safe violation `6` |
+| constrained seed-1 | 局部新任务通过 | new holdout utility `0.68`、target `0.6`、safe violation `0`；fresh retention utility `0.8`、target `3/4`，仍低于 parent |
+| 结果出口 | 未晋级 | `outcome=update_rule_unresolved`、`training_performed=true`、`experiment_passed=false`、`growth_admitted=false`、`can_promote=false` |
+
+P4.5 的证据说明，简单把旧样本交错进训练仍没有独立贡献；固定参数距离的 trust-region 可以在一个 seed 上回到 parent 的保持表现，但在该 seed 上失去新任务增益，另一个 seed 则在保持和新任务之间重新出现冲突。因此当前待解决的不是“有没有一个更小的固定半径”，而是如何在函数行为层面同时约束 parent 能力和学习新任务。下一步改为 **P4.6 功能性 parent-preserving objective 对照 Gate**：使用与 P4.5 全部 disjoint 的 constraint-cohort，以 parent 输出作功能性保持项，不把评估 target/utility 写入输入；若两个 seed 仍不能同时满足新任务与保持，停止继续调参并维持 dynamic growth/promotion/P5 冻结。
