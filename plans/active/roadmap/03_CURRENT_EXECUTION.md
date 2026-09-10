@@ -119,6 +119,10 @@ parity 口径修正与修复路线已冻结：[M4V2_B3_K_C_PARITY_CALIBER_REVISI
 
 **当前唯一下一步**：执行 C 阶段 formal §6——(1) materialize sealed v4；(2) FS 训练段函数化 + 四臂 runner（两阶段纪律：pre-sealed epsilon 先落盘）；(3) 运行产出 `reports/taiji_m4v2_c_stage_formal_20260910.json`；任一停止线触发即停。
 
+**C 阶段 formal 已执行，判定 failed 但出现冻结映射缺口**：sealed v4 materialize（task_seed=101，D/R/A 覆盖，不交校验过）→ 四臂 runner 两阶段执行（epsilon_cat=0.01、epsilon_ni=0.00385 先冻结）。结果：**G3 弱类主判据 3/3 全胜**（FS −0.1931~−0.1946 vs C −0.1913~−0.1914，每课程好 ~0.0022）、**G4 整体非劣通过且 FS 实际更优**（FS −0.1304~−0.1308 vs C −0.1288，好 ~0.0018；甚至优于 XL −0.1287）、G2 通过——但 **G1 失败**（FS validation delta 3/3 课程 ≥ 0，而 C 全负）。**validation/sealed 方向相反**：FS 的 replay 在 validation 小样本上高方差略负、在覆盖弱类的 sealed 上强负。按 §5 停止线不调门，formal 判定如实为 failed；§7.2 记录映射缺口（结果映射未定义「G1 败 + G3/G4 过」分支），§7.3 留拍板。
+
+**当前唯一下一步（需拍板）**：映射缺口的修复决策——(a) 新预注册修正 G1 操作化（学习门改 fresh validation split 或 sealed-based 证据）+ fresh sealed v5 重跑——主假设已 3/3 确证，只差操作化修正；(b) 接受 failed 判定收束，continuation 为 K 相位默认机制，FS 类选择性证据留档。拍板前不训练、不读 sealed v4 之外的任何 sealed。
+
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 
 **B2 保存先于训练。** 先在 CPU 检查父 checkpoint 可恢复；保存 fast/slow、replay、学习器状态（若使用 optimizer 则含其状态）、RNG、课程游标和 owner lineage。新进程恢复后预测等价；单步更新后保存/恢复/再更新，与不中断轨迹在预先声明容差内一致。检查磁盘空间、原子写和 rollback；任何失败禁止长跑，不覆盖父代。

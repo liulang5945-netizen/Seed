@@ -40,7 +40,9 @@ B3-K 的非饱和 structured-loss diagnostic 已通过：同一 model 17 parent�
 
 **C 阶段正式比较预注册已冻结**：[C-stage formal preregistration](reference/M4V2_C_STAGE_FORMAL_PREREGISTRATION_20260910.md)——四臂零重训（F / C 300 步 / **FS candidate** 300 wake+100 replay 单列 / XL fixed-large 2× 容量次要-bar），统计单元 course n=3；判据 G1 学习门 / G2 灾难界 / **G3 弱类主判据**（D/R sealed：FS < C 于 ≥2/3 课程）/ **G4 整体非劣**（epsilon 从 validation paired diff 派生）；sealed v4 全新 materialize（覆盖 D/R/A）。结果映射：全过 → FS 为 K 相位默认机制候选；G3 败 → continuation 收束为默认；G4 败 → replay 回炉。
 
-**当前唯一下一步**：执行 C 阶段 formal §6——materialize sealed v4 → 四臂 runner（两阶段纪律）→ 运行报告；任一停止线触发即停。
+**C 阶段 formal 已执行，G3/G4 通过、G1 失败——冻结映射出现缺口**：sealed v4（task_seed=101，D/R/A 覆盖）四臂两阶段执行。**G3 弱类主判据 3/3 全胜**（FS −0.1931~−0.1946 vs C −0.1913，每课程好 ~0.0022）、**G4 通过且 FS 实际更优**（整体 −0.1307 vs −0.1288，还优于 XL −0.1287）、G2 通过；但 G1 失败（FS validation delta 3/3 课程 ≥ 0——validation 小样本高方差与 sealed 强负方向相反）。判定按冻结门如实为 failed，映射缺口（未定义「G1 败 + G3/G4 过」）记录 §7.2。
+
+**当前唯一下一步（需拍板）**：(a) 新预注册修正 G1 操作化 + fresh sealed v5 重跑（主假设已 3/3 确证）；(b) 接受 failed 判定收束。拍板前不读新 sealed。
 
 ## 权威文档
 
