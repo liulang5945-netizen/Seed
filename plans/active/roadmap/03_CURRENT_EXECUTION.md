@@ -1,6 +1,6 @@
 # Seed / Taiji 唯一执行计划
 
-> 修订：2026-09-11；P3.6 独立行为 holdout/保持 Gate 与 P4.0 固定容量压力扫描已完成。本文覆盖所有旧文档中的执行许可和“下一步”。
+> 修订：2026-09-11；P3.6 独立行为 holdout/保持 Gate、P4.0 固定容量压力扫描与 P4.1 公平容量合同预检已完成。本文覆盖所有旧文档中的执行许可和“下一步”。
 > 本轮任务是根据新增结果修订方案；训练与实现按下述验收顺序在后续开发中执行。
 > 研究依据：[本轮源码与结果复审](../../reference/M4V2_POST_C_STAGE_RESULT_REVIEW_20260910.md)；[历史执行记录](../../archive/history/20260910_result_review/EXECUTION_HISTORY.md)。
 
@@ -14,7 +14,7 @@
 | fast/slow 与 replay | 等 replay 下与直接 continuation 等价；拆分独立贡献未证实 | replay 作为效果基线；FS 只保留为状态实现候选 |
 | widened / 旧 parity | 当前合成路线关闭；错误计数结论撤回 | 保留失败证据和 XL 对照，不继续补次数或凑容量 |
 | C-stage / scorecard | 报告入账完成；覆盖范围有限，can_promote=false | 不追加同质 formal；换成五类、同预算、同 artifact 验证 |
-| S/G/K 连续整合 | P3.1 事件合同、P3.2 owner-transfer、P3.3 candidate data-signal/G-only、P3.4 behavior signal、P3.5 reobserve-aware G-only 和 P3.6 独立行为 holdout/保持 Gate 均通过；P4.0 在 5 个新案例、4 个候选宽度上观察到固定 G 的选择压力，13 参数 G 与 K1/K2 继续冻结 | P4.0 已完成但不授予结构成长；先做 P4.1 matched fixed-large/lesion 与候选集上下文对照，禁止追加同质 epoch |
+| S/G/K 连续整合 | P3.1 事件合同、P3.2 owner-transfer、P3.3 candidate data-signal/G-only、P3.4 behavior signal、P3.5 reobserve-aware G-only 和 P3.6 独立行为 holdout/保持 Gate 均通过；P4.0 观察到固定 G 选择压力，P4.1 已把 12 维候选输入与 9 维候选集上下文合同内容寻址，13 参数 G 与 K1/K2 继续冻结 | P4.1 只完成合同/恢复预检，归因仍 inconclusive；下一步做 P4.2 disjoint train/holdout 的 fixed-small、context-aware 和 fixed-large 控制，禁止追加同质 epoch |
 | Seed / IDE / provider / 插件 | 已有工程资产保留；本轮未重新验收客户端全链路 | 仅修阻塞主线的故障；新能力按 P5 的依赖解冻 |
 | CI、临时目录与发布 | 不把历史局部测试当当前全仓通过 | 变更相关检查随步执行；发布另验收，不批量删除未知资产 |
 
@@ -22,7 +22,7 @@
 
 ### 下一阶段唯一交付目标
 
-**P2.2 已完成，P2.3 数据合同/targeted learning、P2.4 retention、P2.5 novelty probe、P2.6 novel learning、P2.7 holdout generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight、P3.3 candidate data-signal/G-only、P3.4 behavior signal、P3.5 reobserve-aware G-only learning、P3.6 独立行为 holdout/保持 Gate 和 P4.0 validation-only 固定容量压力扫描均已完成，但模型仍未 promotion，结构也未增长。** P3.6 在 2 个新 project、4 条新 path 上保持 trained-G utility `4.0>2.65`、target hit `4/4>1/4`；P4.0 在 5 个新案例、候选宽度 `2/4/8/12` 上得到 trained-G residual `0.32/0/0.54/0.59`，序列长度 `1/4/16` utility 均为 `0.6375`，未见 feature collision，K1/K2 digest 与 G lineage/独立恢复均通过。这个结果只说明“候选选择压力值得继续拆因”，还不能把宽度退化直接归因成神经拓扑容量或批准扩张；下一步只做 P4.1 的 matched fixed-large、结构 lesion 和候选集上下文/竞争特征对照。P5、CUDA、IDE/provider 和客户端视觉仍不并行解冻。
+**P2.2 已完成，P2.3 数据合同/targeted learning、P2.4 retention、P2.5 novelty probe、P2.6 novel learning、P2.7 holdout generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight、P3.3 candidate data-signal/G-only、P3.4 behavior signal、P3.5 reobserve-aware G-only learning、P3.6 独立行为 holdout/保持 Gate、P4.0 validation-only 固定容量压力扫描和 P4.1 公平容量合同预检均已完成，但模型仍未 promotion，结构也未增长。** P3.6 在 2 个新 project、4 条新 path 上保持 trained-G utility `4.0>2.65`、target hit `4/4>1/4`；P4.0 在 5 个新案例、候选宽度 `2/4/8/12` 上得到 trained-G residual `0.32/0/0.54/0.59`，序列长度 `1/4/16` utility 均为 `0.6375`；P4.1 为 20 个集合建立了 12 维候选输入 + 9 维候选集上下文、22 参数 fixed-large reference 和 context-lesion effective 13 参数 reference，所有参考 checkpoint 独立恢复且零 fit，但归因仍为 `inconclusive`。下一步只做 P4.2 的 disjoint train/holdout 控制训练，区分 representation_contract 与 fixed_capacity_candidate；P5、CUDA、IDE/provider 和客户端视觉仍不并行解冻。
 
 - P0 已确定当前实现的效果基线：在 model17/course0、150 条 wake＋50 条固定 replay 上，FS 与 C-replay、FS-no-replay 与 C 的有效状态峰值差均为 `4.76837158203125e-7`，低于预先冻结的 `1e-5`；checkpoint preflight 通过。当前数据覆盖的验证类为 A/B/C，D/R 留给 P1。
 - P1 v1 失败审计确认了根因：450 条 train 记录中每类表面 observation digest 为 90 个，但实际 K1/K2 mask-visible input 各只有 1 个；validation 缺 D/R、无 project 隔离。报告保留为失败证据，不覆盖。
@@ -60,7 +60,7 @@ P1 合同完成后可做 P2 validation pilot。最终测试前冻结主指标、
 
 出现下列情况应提交已有成果并停在决策点：有效信号不足需要改变任务定义；公平对照后仍无收益需要改变学习机制；资源约束迫使缩减目标；或准备改变认知所有权/默认发布模型。讨论时给出证据、保留方案与替代方案的收益和代价，再更新唯一计划；不自动扩展训练规模或购买算力。
 
-本轮已完成 P0/P1 validation-only 诊断、P1.1 修复、P2 小预算 pilot、P2.1 输出/行动链诊断、P2.2 安全 bridge canary、P2.3 continuation 数据合同/targeted learning、P2.4 retention canary、P2.5 novel-composition probe、P2.6 novel K2 learning、P2.7 independent holdout generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight、P3.3 candidate data-signal/G-only learning、P3.4 behavior signal、P3.5 reobserve-aware G-only learning 和 P3.6 独立行为 holdout/保持 Gate；下一步只做 P4 容量压力与继承式结构成长 Gate，不读取 sealed、不追加同质 epoch、不扩 K、不进入 promotion 或外围路线。
+本轮已完成 P0/P1 validation-only 诊断、P1.1 修复、P2 小预算 pilot、P2.1 输出/行动链诊断、P2.2 安全 bridge canary、P2.3 continuation 数据合同/targeted learning、P2.4 retention canary、P2.5 novel-composition probe、P2.6 novel K2 learning、P2.7 independent holdout generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight、P3.3 candidate data-signal/G-only learning、P3.4 behavior signal、P3.5 reobserve-aware G-only learning、P3.6 独立行为 holdout/保持 Gate、P4.0 固定容量压力扫描和 P4.1 上下文/fixed-large contract preflight；下一步只做 P4.2 隔离训练与公平容量归因 Gate，不读取 sealed、不追加同质 epoch、不扩 K、不进入 promotion 或外围路线。
 
 ## 当前判断
 
@@ -118,7 +118,7 @@ P3.2 已在 P3.0 parent、P3.1 manifest 和同一 P2.7 holdout 上完成 owner-t
 - 使用 validation-only pilot 确定样本量、最低有意义改善、数值容差和逐域非劣界。浮点噪声容差与“允许遗忘多少”分别定义；不能用 candidate 退化方差自动放宽所有门槛。
 - 先保存候选和 presealed 合同，随后同一个 artifact 只读评分，不在第二阶段重训候选。记录代码版本、数据/参数/状态摘要和所有失败。
 - 结果出口：收益/保持/资源通过→P3；无收益→回对应反馈或数据根因；数值等价→保留成本更合理的基线；机械错误→修复后重做技术预检。不得看测试成绩改当前版本阈值。
-- P2 pilot 已执行上述最小预算和独立 checkpoint preflight；P2.1 完成了 K1→K2 级联与隔离 Workbench 诊断；P2.2 完成了 typed abstention、根目录 recovery 和世界对齐工程 canary；P2.3 continuation 数据合同/targeted learning、P2.4 retention canary、P2.5 novel-composition probe、P2.6 novel K2 learning、P2.7 holdout generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight、P3.3 candidate data-signal/G-only learning、P3.4 behavior signal、P3.5 reobserve-aware G-only learning 和 P3.6 独立行为 holdout/保持 Gate 均已完成。当前模型结论从“只有连续 MSE 改善”推进为“一个具体 K2 content 目标在 rehearsal 保持约束下学习，并跨 2 个新 project/4 个新 path 泛化”；P3.0 已把 K1/K2 continuation 纳入可恢复状态边界，P3.1 已把 S/G/K 接线合同闭合，P3.2 已把选择所有权转给 G，P3.3 已证明 G 可以学习但没有改变三臂行为，P3.4 已证明候选 utility 有分歧，P3.5 已证明非零 margin G-only fit 能改变 contested 行为且安全投影/holdout 不退化，P3.6 已证明该行为选择跨新 project/path 泛化且五类/安全保持通过，下一步只做 P4 容量压力与继承式结构成长 Gate。
+- P2 pilot 已执行上述最小预算和独立 checkpoint preflight；P2.1 完成了 K1→K2 级联与隔离 Workbench 诊断；P2.2 完成了 typed abstention、根目录 recovery 和世界对齐工程 canary；P2.3 continuation 数据合同/targeted learning、P2.4 retention canary、P2.5 novel-composition probe、P2.6 novel K2 learning、P2.7 holdout generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight、P3.3 candidate data-signal/G-only learning、P3.4 behavior signal、P3.5 reobserve-aware G-only learning、P3.6 独立行为 holdout/保持 Gate、P4.0 固定容量压力扫描和 P4.1 上下文/fixed-large contract preflight 均已完成。当前模型结论从“只有连续 MSE 改善”推进为“一个具体 K2 content 目标在 rehearsal 保持约束下学习，并跨 2 个新 project/4 个新 path 泛化”；P3.0 已把 K1/K2 continuation 纳入可恢复状态边界，P3.1 已把 S/G/K 接线合同闭合，P3.2 已把选择所有权转给 G，P3.3 已证明 G 可以学习但没有改变三臂行为，P3.4 已证明候选 utility 有分歧，P3.5 已证明非零 margin G-only fit 能改变 contested 行为且安全投影/holdout 不退化，P3.6 已证明该行为选择跨新 project/path 泛化且五类/安全保持通过，P4.0/P4.1 已确认压力与上下文合同但尚未完成容量归因，下一步只做 P4.2 隔离训练与公平容量归因 Gate。
 
 ### P3：状态整合与同一父代连续课程（P3.6 已收束，P4 当前）
 
@@ -159,15 +159,29 @@ P4.0 严格 validation-only，冻结 P3.5 trained-G、P3.2 K1/K2 和所有 Workb
 
 报告见 [P4.0 capacity pressure](../../../reports/taiji_m5_k_p4_0_capacity_pressure_20260911.json)，清单见 [P4.0 manifest](../../manifests/taiji_m5_k_p4_0_capacity_pressure_manifest_v1.json)。P4.0 的结论是“固定 G 在候选规模变化下出现可复现的选择压力”，不是“已经证明应当增加神经元”。由于 width 4 完整通过而 width 8/12 退化，且压力课程引入了跨案例 proposal competition/alias，必须先完成归因对照，不能直接实现 dynamic growth。
 
-## 唯一下一步：P4.1 压力归因与公平容量对照 Gate
+## P4.1 已完成：候选集上下文与公平容量合同预检
 
-P4.1 只解决一个问题：P4.0 的退化究竟来自 G 的候选集上下文/竞争表示不足，还是来自可证实的固定参数容量上限。它必须在同一 P4.0 压力点上建立 matched fixed-large、结构 lesion 与 context-aware contract 对照；没有这个归因 Gate，不允许扩张拓扑、复制权重或追加同质训练。
+P4.1 在同一 P4.0 candidate/behavior artifact 上建立了内容寻址的候选集上下文合同：保留 G 当前 12 维逐候选输入，另定义 9 维上下文（候选数量、角色比例、joint-score 分布、候选相对排名/中心化分数）。它没有调用 `fit`，没有改变 P3.5 G/K parent；只生成 22 参数 fixed-large reference 和 context-lesion reference，并做独立进程恢复。
 
-1. 冻结 P4.0 的父代、20 个 candidate/behavior artifact、Workbench utility、confidence floor、K1/K2 digest 和 checkpoint/lineage 合同；先验证 P4.0 manifest/report digest 一致，所有新 arm 均独立保存、恢复、rollback 和篡改拒绝。
-2. 建立与当前 G 相同输入/读出合同的 fixed-large reference，明确新增参数实际进入哪些 feature/readout；同时建立 matched lesion（去除新增容量或屏蔽指定竞争上下文），禁止复用旧 K fixed-large 或只复制 metadata 作为对照。
-3. 在相同候选集合上增加显式 candidate-set context/competition 诊断（候选数量、角色组成、相对排名/归一化等必须是内容寻址输入）；先做 validation-only，不训练、不改变 parent。若 context-aware fixed-small 已恢复 width 8/12，根因归入表示合同；若 fixed-large 在无 context 修复时才恢复，才保留容量假设。
-4. 对每个 arm 重算 width `2/4/8/12` 的 target hit、utility、residual、safe abstention、reobserve projection、旧五类保持、Workbench、参数/ checkpoint 字节、CPU 时间和独立恢复；至少重复两个 deterministic seed，区分稳定效应与一次候选排序。
-5. P4.1 只允许输出一项归因结论：`representation_contract`、`fixed_capacity_candidate` 或 `inconclusive`。只有在 fixed-large/lesion 排除上下文缺陷、压力跨 seed 保持，并且最终才证明 fixed-small 瓶颈时，下一步才设计继承式结构成长；否则先修 G 输入合同，不增长拓扑。P5、CUDA、IDE/provider、客户端视觉和 promotion 继续冻结。
+| Gate | 结果 | 关键实测 |
+|---|---:|---|
+| P4.0 来源、G lineage、独立恢复 | 通过 | P4.0 digest 一致；P3.2 lineage 通过；trained-G 独立恢复通过 |
+| 上下文合同 | 通过 | 20 个集合、width `2/4/8/12` 各 5 个；9 个 context feature 名称唯一；每个集合内部 context collision `0`；target/utility 未进入输入 |
+| fixed-large reference | 通过预检 | 22 参数（当前 G 为 13）；reference 独立恢复，输入/读出和 checkpoint digest 可验证 |
+| context lesion | 通过预检 | effective 参数回到 13；独立恢复；零 fit 下 20 个集合的选择与当前 G 完全一致 |
+| 归因 | 未定 | `inconclusive`：零 fit reference 只能证明合同和边界，不能从同一验证集重放推断容量收益 |
+
+报告见 [P4.1 context contract](../../../reports/taiji_m5_k_p4_1_context_contract_20260911.json)，清单见 [P4.1 manifest](../../manifests/taiji_m5_k_p4_1_context_contract_manifest_v1.json)。因此 P4.1 不批准结构成长，也不把 22 个零初始化 context 参数写成能力增长。
+
+## 唯一下一步：P4.2 隔离训练与公平容量归因 Gate
+
+P4.2 只回答 P4.1 尚未回答的问题：在全新的 train/holdout 身份上，学习型 context-aware fixed-small 是否能修复 P4.0 的 width 8/12 退化，还是必须依赖真正更大的固定容量。训练允许发生在独立 child checkpoint，但绝不覆盖 P3.5/P4.0 parent；同一 holdout 不得参与 fit。
+
+1. 生成与 P4.0/P4.1 project、path、template、candidate digest 全部 disjoint 的 A/B/C/D/R train/validation/holdout；候选宽度固定为 `2/4/8/12`，同时保留低证据 safe exit、reobserve projection、旧类 retention 和真实 Workbench。
+2. 建立三臂：`fixed-small`（P3.5 13 参数 G 继承）、`context-aware-small`（只增加 P4.1 的 9 维上下文输入并从同一 G parent 初始化）和 `fixed-large`（22 参数、同一 context contract）。三臂均记录 parent/child lineage、参数实际数量、fit 数据 digest、checkpoint 保存/独立恢复、rollback 和 tamper rejection。
+3. 只用新的 train cohort fit；新的 validation/holdout 只做评估。至少两个 deterministic seed，固定 epoch/学习率/资源预算；不把 P4.0 压力结果当训练标签，不读取 sealed，不把外部 target、candidate ID 或 utility 直接作为输入。
+4. 每个 arm 必须同时报告 width 曲线、target hit、utility/residual、safe abstention、reobserve/action projection、五类旧类保持、Workbench、参数字节、CPU 时间和独立恢复；必须有 context-lesion 与 fixed-large 对照，防止“只加输入维度但未使用”或“复制权重”伪装成收益。
+5. 只允许输出 `representation_contract`、`fixed_capacity_candidate` 或 `inconclusive`。只有 context-aware-small 与 fixed-large 在新 holdout 上均优于 fixed-small、且 fixed-large 相对 context-aware-small 仍有稳定增益时，才保留容量瓶颈假设；否则先修 G 输入/选择合同。无论结果如何，`growth_admitted=false`、`can_promote=false`，P5、CUDA、IDE/provider 和客户端视觉继续冻结。
 
 ### P4：回归态极的长期目标——继承式结构成长
 
@@ -190,4 +204,4 @@ P4.1 只解决一个问题：P4.0 的退化究竟来自 G 的候选集上下文/
 
 文档仅保留一个执行入口，不再新增平行总计划：本文记录阶段状态、下一步和验收；结果复审记录证据解释；核心需求与架构常驻 active；已有历史流水保留在 archive。旧预注册即使留在 reference 也不重新获得执行许可。当前收束不移动有引用的研究资产，不覆盖旧报告或删除 checkpoint。根目录存在部分无读取权限的临时路径，未证明其为空或无用；后续清理须逐项验证绝对路径、引用和可恢复性，不能把它们报作已清理。
 
-本轮 P2 pilot、P2.1、P2.2、P2.3 contract/targeted、P2.4 retention、P2.5 novel-composition、P2.6 novel-learning、P2.7 generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight、P3.3 G candidate data-signal/G-only learning、P3.4 behavior signal、P3.5 reobserve-aware G-only learning、P3.6 independent behavior holdout 和 P4.0 fixed-capacity pressure scan 报告与计划同步已提交本地 main。后续唯一入口是 P4.1 压力归因与公平容量对照 Gate；不追加同质 epoch，不跳到 promotion 或外围路线，也不按历史“下一步”自动开跑。
+本轮 P2 pilot、P2.1、P2.2、P2.3 contract/targeted、P2.4 retention、P2.5 novel-composition、P2.6 novel-learning、P2.7 generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight、P3.3 G candidate data-signal/G-only learning、P3.4 behavior signal、P3.5 reobserve-aware G-only learning、P3.6 independent behavior holdout、P4.0 fixed-capacity pressure scan 和 P4.1 context/fixed-large contract preflight 报告与计划同步已提交本地 main。后续唯一入口是 P4.2 隔离训练与公平容量归因 Gate；不追加同质 epoch，不跳到 promotion 或外围路线，也不按历史“下一步”自动开跑。

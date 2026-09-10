@@ -1,0 +1,2360 @@
+{
+  "format": "taiji-m5-k-p4-1-context-contract-manifest-v1",
+  "version": 1,
+  "source_p4_0_manifest_digest": "f49b0595556cdd0174b6ea00b2284e62de9d0a41bbc609eba9029f7ac5e7997f",
+  "source_p4_0_report_digest": "df2f2a8ac31fbf97782127244f7f7ad9bce6a4099ad1231a29fa0909f3ad1a4f",
+  "source_p3_2_manifest_digest": "b7ae3ef1b093d4dcc5d6ab009cb9f0c038111fece0ecbe7117047358073910a7",
+  "g_trained_checkpoint_digest": "f4fdc61bf0e0174a9618e087fec8a25ce90d8a3257a7ca26bd1754db45da398d",
+  "context_feature_names": [
+    "candidate_count_norm",
+    "proposal_fraction",
+    "safe_fraction",
+    "reobserve_fraction",
+    "joint_score_mean",
+    "joint_score_std",
+    "joint_score_max",
+    "candidate_rank_norm",
+    "candidate_joint_minus_mean"
+  ],
+  "fixed_large_reference_digest": "3dc62ccd75ae946b47a6d5f89fc81a36539326b16ec3bcb521127bcad60656d3",
+  "context_lesion_reference_digest": "79a1138b2e2d5b091c538a62d8482f3c8bd3d4c60eb993edf3025b29cba82e38",
+  "fit_policy": {
+    "fit_called": false,
+    "training_performed": false,
+    "validation_only": true,
+    "growth_admitted": false
+  },
+  "records": [
+    {
+      "candidate_set_digest": "569d574680024d0ec61cb02e43a75db405beb9ae49877662f6a84a817e92c6c8",
+      "behavior_digest": "c9d9eda0b06030a4f255583831f0d0b36ff960ace7ac7e56776732a9c0c3cc77",
+      "context": {
+        "format": "taiji-g-selection-context-v1",
+        "version": 1,
+        "candidate_set_digest": "569d574680024d0ec61cb02e43a75db405beb9ae49877662f6a84a817e92c6c8",
+        "feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max",
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max"
+        ],
+        "candidate_feature_names": [
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_features": [
+          0.16666666666666666,
+          0.0,
+          1.0,
+          0.5,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "candidate_features": {
+          "abstain": [
+            0.16666666666666666,
+            0.0,
+            1.0,
+            0.5,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "reobserve": [
+            0.16666666666666666,
+            0.0,
+            1.0,
+            0.5,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "context_digest": "16f46caa335e847ca153f9d92cdd2b96634cdba88ddefbb6bae758a28e23638f"
+      }
+    },
+    {
+      "candidate_set_digest": "d231f4cc79e1324eec1e00136ffd30235fc6fdae4da45b87a25149f709848609",
+      "behavior_digest": "c3aede56f6ee2c8878f6b4ea535cbcd59a5109091aa5cef5b639ab19cad11ac3",
+      "context": {
+        "format": "taiji-g-selection-context-v1",
+        "version": 1,
+        "candidate_set_digest": "d231f4cc79e1324eec1e00136ffd30235fc6fdae4da45b87a25149f709848609",
+        "feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max",
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max"
+        ],
+        "candidate_feature_names": [
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_features": [
+          0.3333333333333333,
+          0.5,
+          0.5,
+          0.25,
+          0.24690382450353354,
+          0.4248437433689325,
+          0.9827467203140259
+        ],
+        "candidate_features": {
+          "abstain": [
+            0.3333333333333333,
+            0.5,
+            0.5,
+            0.25,
+            0.24690382450353354,
+            0.4248437433689325,
+            0.9827467203140259,
+            0.33333333333333337,
+            -0.24690382450353354
+          ],
+          "k1:grid:goal:clarify-language:content:clarify-language": [
+            0.3333333333333333,
+            0.5,
+            0.5,
+            0.25,
+            0.24690382450353354,
+            0.4248437433689325,
+            0.9827467203140259,
+            0.6666666666666667,
+            -0.24203524680342525
+          ],
+          "k1:selected": [
+            0.3333333333333333,
+            0.5,
+            0.5,
+            0.25,
+            0.24690382450353354,
+            0.4248437433689325,
+            0.9827467203140259,
+            1.0,
+            0.7358428958104923
+          ],
+          "reobserve": [
+            0.3333333333333333,
+            0.5,
+            0.5,
+            0.25,
+            0.24690382450353354,
+            0.4248437433689325,
+            0.9827467203140259,
+            0.0,
+            -0.24690382450353354
+          ]
+        },
+        "context_digest": "bb88e08ae18495b79fe042e98db547f57c51db98f2d1c29b6839fdd68daae3b7"
+      }
+    },
+    {
+      "candidate_set_digest": "4bc4de702c31593bc23236dc0e9e6d47b7e6db9af5259908ff71b58900a38fcb",
+      "behavior_digest": "a7279b6700452eb555a53246ba3c79492db72bc226e7f82378e7ea0d52437ea3",
+      "context": {
+        "format": "taiji-g-selection-context-v1",
+        "version": 1,
+        "candidate_set_digest": "4bc4de702c31593bc23236dc0e9e6d47b7e6db9af5259908ff71b58900a38fcb",
+        "feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max",
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max"
+        ],
+        "candidate_feature_names": [
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_features": [
+          0.6666666666666666,
+          0.75,
+          0.25,
+          0.125,
+          0.12425169186008134,
+          0.32448661657826766,
+          0.9827467203140259
+        ],
+        "candidate_features": {
+          "abstain": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.12425169186008134,
+            0.32448661657826766,
+            0.9827467203140259,
+            0.1428571428571429,
+            -0.12425169186008134
+          ],
+          "k1:grid:goal:clarify-language:content:clarify-language": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.12425169186008134,
+            0.32448661657826766,
+            0.9827467203140259,
+            0.8571428571428572,
+            -0.11938311415997305
+          ],
+          "k1:grid:goal:clarify-toolchain:content:clarify-toolchain": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.12425169186008134,
+            0.32448661657826766,
+            0.9827467203140259,
+            0.7142857142857143,
+            -0.11945194960844674
+          ],
+          "k1:grid:goal:recover-target:content:recover-target": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.12425169186008134,
+            0.32448661657826766,
+            0.9827467203140259,
+            0.2857142857142857,
+            -0.12424816077009382
+          ],
+          "k1:selected": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.12425169186008134,
+            0.32448661657826766,
+            0.9827467203140259,
+            1.0,
+            0.8584950284539445
+          ],
+          "p4-foreign:2:k1:grid:goal:inspect-language:content:inspect-language": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.12425169186008134,
+            0.32448661657826766,
+            0.9827467203140259,
+            0.5714285714285714,
+            -0.12266385613747843
+          ],
+          "p4-foreign:2:k1:grid:goal:recover-target:content:recover-target": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.12425169186008134,
+            0.32448661657826766,
+            0.9827467203140259,
+            0.4285714285714286,
+            -0.12424456405778983
+          ],
+          "reobserve": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.12425169186008134,
+            0.32448661657826766,
+            0.9827467203140259,
+            0.0,
+            -0.12425169186008134
+          ]
+        },
+        "context_digest": "4357728d07b59bdc3160a889ae4ba1141674a436e71cca616ae39694551cea8a"
+      }
+    },
+    {
+      "candidate_set_digest": "f2730236e5fc2128ebacbafc9a3776ca683107d9267f9a981a71bbfa3794b840",
+      "behavior_digest": "9de8c0362412c1c56ed664d32b694d91744cb099657be9dd54803735e4d926b8",
+      "context": {
+        "format": "taiji-g-selection-context-v1",
+        "version": 1,
+        "candidate_set_digest": "f2730236e5fc2128ebacbafc9a3776ca683107d9267f9a981a71bbfa3794b840",
+        "feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max",
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max"
+        ],
+        "candidate_feature_names": [
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_features": [
+          1.0,
+          0.8333333333333334,
+          0.16666666666666666,
+          0.08333333333333333,
+          0.24780388402662842,
+          0.4259103146585763,
+          0.9909692406654358
+        ],
+        "candidate_features": {
+          "abstain": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.24780388402662842,
+            0.4259103146585763,
+            0.9909692406654358,
+            0.09090909090909094,
+            -0.24780388402662842
+          ],
+          "k1:grid:goal:clarify-language:content:clarify-language": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.24780388402662842,
+            0.4259103146585763,
+            0.9909692406654358,
+            0.7272727272727273,
+            -0.24293530632652013
+          ],
+          "k1:grid:goal:clarify-toolchain:content:clarify-toolchain": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.24780388402662842,
+            0.4259103146585763,
+            0.9909692406654358,
+            0.5454545454545454,
+            -0.24300414177499383
+          ],
+          "k1:grid:goal:recover-target:content:recover-target": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.24780388402662842,
+            0.4259103146585763,
+            0.9909692406654358,
+            0.18181818181818177,
+            -0.2478003529366409
+          ],
+          "k1:selected": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.24780388402662842,
+            0.4259103146585763,
+            0.9909692406654358,
+            0.9090909090909091,
+            0.7349428362873974
+          ],
+          "p4-alias:0:8:k1:selected": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.24780388402662842,
+            0.4259103146585763,
+            0.9909692406654358,
+            0.8181818181818181,
+            0.7349428362873974
+          ],
+          "p4-alias:0:9:k1:grid:goal:clarify-language:content:clarify-language": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.24780388402662842,
+            0.4259103146585763,
+            0.9909692406654358,
+            0.6363636363636364,
+            -0.24293530632652013
+          ],
+          "p4-foreign:2:k1:grid:goal:clarify-language:content:clarify-language": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.24780388402662842,
+            0.4259103146585763,
+            0.9909692406654358,
+            0.36363636363636365,
+            -0.2467553492673081
+          ],
+          "p4-foreign:2:k1:grid:goal:inspect-language:content:inspect-language": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.24780388402662842,
+            0.4259103146585763,
+            0.9909692406654358,
+            0.4545454545454546,
+            -0.24621604830402552
+          ],
+          "p4-foreign:2:k1:grid:goal:recover-target:content:recover-target": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.24780388402662842,
+            0.4259103146585763,
+            0.9909692406654358,
+            0.2727272727272727,
+            -0.24779675622433692
+          ],
+          "p4-foreign:2:k1:selected": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.24780388402662842,
+            0.4259103146585763,
+            0.9909692406654358,
+            1.0,
+            0.7431653566388073
+          ],
+          "reobserve": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.24780388402662842,
+            0.4259103146585763,
+            0.9909692406654358,
+            0.0,
+            -0.24780388402662842
+          ]
+        },
+        "context_digest": "55437b363e81faecf79c834f908cc025b1b1f8a2a27b88dd1405c909d28eed10"
+      }
+    },
+    {
+      "candidate_set_digest": "fcc26a90ee3d6e2ef216a45bde8f2e3d7a1a79eb229d5dff684096987955c48f",
+      "behavior_digest": "0590030677a953ede9b3f7fdc97bcdd9ebfcc7095d7dd29d061c7134d6a84db9",
+      "context": {
+        "format": "taiji-g-selection-context-v1",
+        "version": 1,
+        "candidate_set_digest": "fcc26a90ee3d6e2ef216a45bde8f2e3d7a1a79eb229d5dff684096987955c48f",
+        "feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max",
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max"
+        ],
+        "candidate_feature_names": [
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_features": [
+          0.16666666666666666,
+          0.0,
+          1.0,
+          0.5,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "candidate_features": {
+          "abstain": [
+            0.16666666666666666,
+            0.0,
+            1.0,
+            0.5,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "reobserve": [
+            0.16666666666666666,
+            0.0,
+            1.0,
+            0.5,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "context_digest": "4f99ae6acde5c6326cdf3b80685724dce98d0cced88dd2d5346e2e3ecc399d5c"
+      }
+    },
+    {
+      "candidate_set_digest": "02bfb3cc3cc5b94f30514c72971b0bd24188b2f46bd6b0946f563edcc546fec3",
+      "behavior_digest": "6f2cc2ab249b6d5f374d97b120f6bfcfa6770dd28b39b0753d1d440327cc2c00",
+      "context": {
+        "format": "taiji-g-selection-context-v1",
+        "version": 1,
+        "candidate_set_digest": "02bfb3cc3cc5b94f30514c72971b0bd24188b2f46bd6b0946f563edcc546fec3",
+        "feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max",
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max"
+        ],
+        "candidate_feature_names": [
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_features": [
+          0.3333333333333333,
+          0.5,
+          0.5,
+          0.25,
+          0.0015968944935593754,
+          0.001959493548717323,
+          0.004799742251634598
+        ],
+        "candidate_features": {
+          "abstain": [
+            0.3333333333333333,
+            0.5,
+            0.5,
+            0.25,
+            0.0015968944935593754,
+            0.001959493548717323,
+            0.004799742251634598,
+            0.33333333333333337,
+            -0.0015968944935593754
+          ],
+          "p4-foreign:0:k1:grid:goal:clarify-toolchain:content:clarify-toolchain": [
+            0.3333333333333333,
+            0.5,
+            0.5,
+            0.25,
+            0.0015968944935593754,
+            0.001959493548717323,
+            0.004799742251634598,
+            1.0,
+            0.0032028477580752224
+          ],
+          "p4-foreign:2:k1:grid:goal:inspect-language:content:inspect-language": [
+            0.3333333333333333,
+            0.5,
+            0.5,
+            0.25,
+            0.0015968944935593754,
+            0.001959493548717323,
+            0.004799742251634598,
+            0.6666666666666667,
+            -9.058770956471562e-06
+          ],
+          "reobserve": [
+            0.3333333333333333,
+            0.5,
+            0.5,
+            0.25,
+            0.0015968944935593754,
+            0.001959493548717323,
+            0.004799742251634598,
+            0.0,
+            -0.0015968944935593754
+          ]
+        },
+        "context_digest": "1ff2cd38f81308b30381e73d0be18ba8e8cbdfd58e5d3245290039a1fcea6f80"
+      }
+    },
+    {
+      "candidate_set_digest": "10128f4bbe1cdd64cf2aff59e68fa738b6238ee572b953cf97283d25416935d5",
+      "behavior_digest": "ea1e3794520cdcafcb685c7baafe94bf75ccfa23c52e509506a57a2c2d658872",
+      "context": {
+        "format": "taiji-g-selection-context-v1",
+        "version": 1,
+        "candidate_set_digest": "10128f4bbe1cdd64cf2aff59e68fa738b6238ee572b953cf97283d25416935d5",
+        "feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max",
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max"
+        ],
+        "candidate_feature_names": [
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_features": [
+          0.6666666666666666,
+          0.75,
+          0.25,
+          0.125,
+          0.24751427473074727,
+          0.42686798039328566,
+          0.9909692406654358
+        ],
+        "candidate_features": {
+          "abstain": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24751427473074727,
+            0.42686798039328566,
+            0.9909692406654358,
+            0.1428571428571429,
+            -0.24751427473074727
+          ],
+          "p4-foreign:0:k1:grid:goal:clarify-toolchain:content:clarify-toolchain": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24751427473074727,
+            0.42686798039328566,
+            0.9909692406654358,
+            0.7142857142857143,
+            -0.24271453247911268
+          ],
+          "p4-foreign:0:k1:grid:goal:recover-target:content:recover-target": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24751427473074727,
+            0.42686798039328566,
+            0.9909692406654358,
+            0.2857142857142857,
+            -0.24751074364075976
+          ],
+          "p4-foreign:0:k1:selected": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24751427473074727,
+            0.42686798039328566,
+            0.9909692406654358,
+            0.8571428571428572,
+            0.7352324455832786
+          ],
+          "p4-foreign:2:k1:grid:goal:inspect-language:content:inspect-language": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24751427473074727,
+            0.42686798039328566,
+            0.9909692406654358,
+            0.5714285714285714,
+            -0.24592643900814437
+          ],
+          "p4-foreign:2:k1:grid:goal:recover-target:content:recover-target": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24751427473074727,
+            0.42686798039328566,
+            0.9909692406654358,
+            0.4285714285714286,
+            -0.24750714692845577
+          ],
+          "p4-foreign:2:k1:selected": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24751427473074727,
+            0.42686798039328566,
+            0.9909692406654358,
+            1.0,
+            0.7434549659346885
+          ],
+          "reobserve": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24751427473074727,
+            0.42686798039328566,
+            0.9909692406654358,
+            0.0,
+            -0.24751427473074727
+          ]
+        },
+        "context_digest": "51708a25d8813456a0880922e28d02c1fd3eaf1ba2f9985d75131f2ecc85b4ba"
+      }
+    },
+    {
+      "candidate_set_digest": "2d7bf2674466df1e22c3559e77f82d5f9bedde6b844339f3c992fb72bd46f831",
+      "behavior_digest": "581a7e736a7ebae0ba02956418cc957a0f8d369a2c9636812368aa55f40b06df",
+      "context": {
+        "format": "taiji-g-selection-context-v1",
+        "version": 1,
+        "candidate_set_digest": "2d7bf2674466df1e22c3559e77f82d5f9bedde6b844339f3c992fb72bd46f831",
+        "feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max",
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max"
+        ],
+        "candidate_feature_names": [
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_features": [
+          1.0,
+          0.8333333333333334,
+          0.16666666666666666,
+          0.08333333333333333,
+          0.16603490735663703,
+          0.36709172181883987,
+          0.9909692406654358
+        ],
+        "candidate_features": {
+          "abstain": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.09090909090909094,
+            -0.16603490735663703
+          ],
+          "p4-alias:1:8:p4-foreign:0:k1:grid:goal:clarify-toolchain:content:clarify-toolchain": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.7272727272727273,
+            -0.16123516510500244
+          ],
+          "p4-alias:1:9:p4-foreign:2:k1:grid:goal:inspect-language:content:inspect-language": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.5454545454545454,
+            -0.16444707163403413
+          ],
+          "p4-foreign:0:k1:grid:goal:clarify-language:content:clarify-language": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.8181818181818181,
+            -0.16116632965652875
+          ],
+          "p4-foreign:0:k1:grid:goal:clarify-toolchain:content:clarify-toolchain": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.6363636363636364,
+            -0.16123516510500244
+          ],
+          "p4-foreign:0:k1:grid:goal:recover-target:content:recover-target": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.18181818181818177,
+            -0.16603137626664952
+          ],
+          "p4-foreign:0:k1:selected": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.9090909090909091,
+            0.8167118129573888
+          ],
+          "p4-foreign:2:k1:grid:goal:clarify-language:content:clarify-language": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.36363636363636365,
+            -0.16498637259731672
+          ],
+          "p4-foreign:2:k1:grid:goal:inspect-language:content:inspect-language": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.4545454545454546,
+            -0.16444707163403413
+          ],
+          "p4-foreign:2:k1:grid:goal:recover-target:content:recover-target": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.2727272727272727,
+            -0.16602777955434553
+          ],
+          "p4-foreign:2:k1:selected": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            1.0,
+            0.8249343333087987
+          ],
+          "reobserve": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.0,
+            -0.16603490735663703
+          ]
+        },
+        "context_digest": "1922acd6a1811f92000f11d0b2cc40fe7f7a91a509808a5682c6f8fc9d04002f"
+      }
+    },
+    {
+      "candidate_set_digest": "762beff6f97d1e13c18447cd572d1d5b639b2de07478b9a312bbab76fe355e03",
+      "behavior_digest": "4f4d187c336a47a6cd8bd672b96be7761d2e59c4d34593bf5e2118bf2eb5d6c4",
+      "context": {
+        "format": "taiji-g-selection-context-v1",
+        "version": 1,
+        "candidate_set_digest": "762beff6f97d1e13c18447cd572d1d5b639b2de07478b9a312bbab76fe355e03",
+        "feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max",
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max"
+        ],
+        "candidate_feature_names": [
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_features": [
+          0.16666666666666666,
+          0.0,
+          1.0,
+          0.5,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "candidate_features": {
+          "abstain": [
+            0.16666666666666666,
+            0.0,
+            1.0,
+            0.5,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "reobserve": [
+            0.16666666666666666,
+            0.0,
+            1.0,
+            0.5,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "context_digest": "9f4704d851361325658c433f7713f13f1c53c8ab2eac264540659e251ed877e2"
+      }
+    },
+    {
+      "candidate_set_digest": "eb62d716c23431acd8aeda090295a4d909e4191b7e43c059442e0c97f4435fdc",
+      "behavior_digest": "54d323f9731f9f81386f62d8774ab036f10e6e8b0db4129c7773463da9f4daa8",
+      "context": {
+        "format": "taiji-g-selection-context-v1",
+        "version": 1,
+        "candidate_set_digest": "eb62d716c23431acd8aeda090295a4d909e4191b7e43c059442e0c97f4435fdc",
+        "feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max",
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max"
+        ],
+        "candidate_feature_names": [
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_features": [
+          0.3333333333333333,
+          0.5,
+          0.5,
+          0.25,
+          0.24800444385618903,
+          0.4289511390241613,
+          0.9909692406654358
+        ],
+        "candidate_features": {
+          "abstain": [
+            0.3333333333333333,
+            0.5,
+            0.5,
+            0.25,
+            0.24800444385618903,
+            0.4289511390241613,
+            0.9909692406654358,
+            0.33333333333333337,
+            -0.24800444385618903
+          ],
+          "k1:grid:goal:clarify-language:content:clarify-language": [
+            0.3333333333333333,
+            0.5,
+            0.5,
+            0.25,
+            0.24800444385618903,
+            0.4289511390241613,
+            0.9909692406654358,
+            0.6666666666666667,
+            -0.2469559090968687
+          ],
+          "k1:selected": [
+            0.3333333333333333,
+            0.5,
+            0.5,
+            0.25,
+            0.24800444385618903,
+            0.4289511390241613,
+            0.9909692406654358,
+            1.0,
+            0.7429647968092468
+          ],
+          "reobserve": [
+            0.3333333333333333,
+            0.5,
+            0.5,
+            0.25,
+            0.24800444385618903,
+            0.4289511390241613,
+            0.9909692406654358,
+            0.0,
+            -0.24800444385618903
+          ]
+        },
+        "context_digest": "ce3baeca2ef28127594c695ee34e80f421e510ce1292c29a9cbad2be8905f1e3"
+      }
+    },
+    {
+      "candidate_set_digest": "149482cd3b867b102c24e20974fc2f20e27e2f2db22e5492da8cf47bb7c408a2",
+      "behavior_digest": "a7a6806d21d627f403b84e7b49105cf56d3b140af41e1acdbd5462c1441e6973",
+      "context": {
+        "format": "taiji-g-selection-context-v1",
+        "version": 1,
+        "candidate_set_digest": "149482cd3b867b102c24e20974fc2f20e27e2f2db22e5492da8cf47bb7c408a2",
+        "feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max",
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max"
+        ],
+        "candidate_feature_names": [
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_features": [
+          0.6666666666666666,
+          0.75,
+          0.25,
+          0.125,
+          0.24764490018941387,
+          0.4267923730776942,
+          0.9909692406654358
+        ],
+        "candidate_features": {
+          "abstain": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24764490018941387,
+            0.4267923730776942,
+            0.9909692406654358,
+            0.1428571428571429,
+            -0.24764490018941387
+          ],
+          "k1:grid:goal:clarify-language:content:clarify-language": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24764490018941387,
+            0.4267923730776942,
+            0.9909692406654358,
+            0.4285714285714286,
+            -0.24659636543009356
+          ],
+          "k1:grid:goal:inspect-language:content:inspect-language": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24764490018941387,
+            0.4267923730776942,
+            0.9909692406654358,
+            0.5714285714285714,
+            -0.24605706446681097
+          ],
+          "k1:grid:goal:recover-target:content:recover-target": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24764490018941387,
+            0.4267923730776942,
+            0.9909692406654358,
+            0.2857142857142857,
+            -0.24763777238712237
+          ],
+          "k1:selected": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24764490018941387,
+            0.4267923730776942,
+            0.9909692406654358,
+            1.0,
+            0.7433243404760219
+          ],
+          "p4-foreign:0:k1:grid:goal:clarify-toolchain:content:clarify-toolchain": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24764490018941387,
+            0.4267923730776942,
+            0.9909692406654358,
+            0.7142857142857143,
+            -0.24284515793777928
+          ],
+          "p4-foreign:0:k1:selected": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24764490018941387,
+            0.4267923730776942,
+            0.9909692406654358,
+            0.8571428571428572,
+            0.735101820124612
+          ],
+          "reobserve": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24764490018941387,
+            0.4267923730776942,
+            0.9909692406654358,
+            0.0,
+            -0.24764490018941387
+          ]
+        },
+        "context_digest": "d6d07e3bb0335d5e3d665a6520cc864d499e12e06dac55c4f1943a81f9258e27"
+      }
+    },
+    {
+      "candidate_set_digest": "a99c2567ccd860172f28bcf4e2c4c95b081aee61b9f8036abe6da8ff8aa3c36e",
+      "behavior_digest": "396907984f49d4efecf1d6177e74df5a83aa23ae803eb9f8fec2f50a93581c05",
+      "context": {
+        "format": "taiji-g-selection-context-v1",
+        "version": 1,
+        "candidate_set_digest": "a99c2567ccd860172f28bcf4e2c4c95b081aee61b9f8036abe6da8ff8aa3c36e",
+        "feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max",
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max"
+        ],
+        "candidate_feature_names": [
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_features": [
+          1.0,
+          0.8333333333333334,
+          0.16666666666666666,
+          0.08333333333333333,
+          0.24817075714418024,
+          0.42727995823095793,
+          0.9909692406654358
+        ],
+        "candidate_features": {
+          "abstain": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.24817075714418024,
+            0.42727995823095793,
+            0.9909692406654358,
+            0.09090909090909094,
+            -0.24817075714418024
+          ],
+          "k1:grid:goal:clarify-language:content:clarify-language": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.24817075714418024,
+            0.42727995823095793,
+            0.9909692406654358,
+            0.4545454545454546,
+            -0.24712222238485992
+          ],
+          "k1:grid:goal:inspect-language:content:inspect-language": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.24817075714418024,
+            0.42727995823095793,
+            0.9909692406654358,
+            0.5454545454545454,
+            -0.24658292142157734
+          ],
+          "k1:grid:goal:recover-target:content:recover-target": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.24817075714418024,
+            0.42727995823095793,
+            0.9909692406654358,
+            0.2727272727272727,
+            -0.24816362934188874
+          ],
+          "k1:selected": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.24817075714418024,
+            0.42727995823095793,
+            0.9909692406654358,
+            1.0,
+            0.7427984835212555
+          ],
+          "p4-alias:2:8:k1:selected": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.24817075714418024,
+            0.42727995823095793,
+            0.9909692406654358,
+            0.9090909090909091,
+            0.7427984835212555
+          ],
+          "p4-alias:2:9:k1:grid:goal:clarify-language:content:clarify-language": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.24817075714418024,
+            0.42727995823095793,
+            0.9909692406654358,
+            0.36363636363636365,
+            -0.24712222238485992
+          ],
+          "p4-foreign:0:k1:grid:goal:clarify-language:content:clarify-language": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.24817075714418024,
+            0.42727995823095793,
+            0.9909692406654358,
+            0.7272727272727273,
+            -0.24330217944407195
+          ],
+          "p4-foreign:0:k1:grid:goal:clarify-toolchain:content:clarify-toolchain": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.24817075714418024,
+            0.42727995823095793,
+            0.9909692406654358,
+            0.6363636363636364,
+            -0.24337101489254565
+          ],
+          "p4-foreign:0:k1:grid:goal:recover-target:content:recover-target": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.24817075714418024,
+            0.42727995823095793,
+            0.9909692406654358,
+            0.18181818181818177,
+            -0.24816722605419272
+          ],
+          "p4-foreign:0:k1:selected": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.24817075714418024,
+            0.42727995823095793,
+            0.9909692406654358,
+            0.8181818181818181,
+            0.7345759631698456
+          ],
+          "reobserve": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.24817075714418024,
+            0.42727995823095793,
+            0.9909692406654358,
+            0.0,
+            -0.24817075714418024
+          ]
+        },
+        "context_digest": "42f3b96e510deedfd7357b4762c24b42a67014deb0d09d28c4ca1d293b32f524"
+      }
+    },
+    {
+      "candidate_set_digest": "3438acdf26bc5ef9cbb71b66bb93c6898c5befb4b6c3b370de564045a344dd1f",
+      "behavior_digest": "c354393355f8d6e5997f27ee300ffca0d4aebe11aac8a8348dff352b43328d9f",
+      "context": {
+        "format": "taiji-g-selection-context-v1",
+        "version": 1,
+        "candidate_set_digest": "3438acdf26bc5ef9cbb71b66bb93c6898c5befb4b6c3b370de564045a344dd1f",
+        "feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max",
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max"
+        ],
+        "candidate_feature_names": [
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_features": [
+          0.16666666666666666,
+          0.0,
+          1.0,
+          0.5,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "candidate_features": {
+          "abstain": [
+            0.16666666666666666,
+            0.0,
+            1.0,
+            0.5,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "reobserve": [
+            0.16666666666666666,
+            0.0,
+            1.0,
+            0.5,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "context_digest": "aaadaa9d2933b6ff976916c25a4cb0dd35e7df98ca55db3f9f110a50652cc95f"
+      }
+    },
+    {
+      "candidate_set_digest": "78447decdbe86b594c9c8ed637ad682cd7a4922c514c7601d75d4013be0d4659",
+      "behavior_digest": "bfc501bd1d8325298884a8700c4f067c945777300ddcd79bae0c12d95d46d859",
+      "context": {
+        "format": "taiji-g-selection-context-v1",
+        "version": 1,
+        "candidate_set_digest": "78447decdbe86b594c9c8ed637ad682cd7a4922c514c7601d75d4013be0d4659",
+        "feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max",
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max"
+        ],
+        "candidate_feature_names": [
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_features": [
+          0.3333333333333333,
+          0.5,
+          0.5,
+          0.25,
+          0.0015968944935593754,
+          0.001959493548717323,
+          0.004799742251634598
+        ],
+        "candidate_features": {
+          "abstain": [
+            0.3333333333333333,
+            0.5,
+            0.5,
+            0.25,
+            0.0015968944935593754,
+            0.001959493548717323,
+            0.004799742251634598,
+            0.33333333333333337,
+            -0.0015968944935593754
+          ],
+          "p4-foreign:0:k1:grid:goal:clarify-toolchain:content:clarify-toolchain": [
+            0.3333333333333333,
+            0.5,
+            0.5,
+            0.25,
+            0.0015968944935593754,
+            0.001959493548717323,
+            0.004799742251634598,
+            1.0,
+            0.0032028477580752224
+          ],
+          "p4-foreign:2:k1:grid:goal:inspect-language:content:inspect-language": [
+            0.3333333333333333,
+            0.5,
+            0.5,
+            0.25,
+            0.0015968944935593754,
+            0.001959493548717323,
+            0.004799742251634598,
+            0.6666666666666667,
+            -9.058770956471562e-06
+          ],
+          "reobserve": [
+            0.3333333333333333,
+            0.5,
+            0.5,
+            0.25,
+            0.0015968944935593754,
+            0.001959493548717323,
+            0.004799742251634598,
+            0.0,
+            -0.0015968944935593754
+          ]
+        },
+        "context_digest": "24bf8f551d088196da646f8c135a5a7da36471696c6c5778920f10602296479b"
+      }
+    },
+    {
+      "candidate_set_digest": "541d3e2d89810fd8823777e39be1ecaae01f2e2e22c344a525256b03e88025d9",
+      "behavior_digest": "b211fc9cd5850b1be724c842b35bdf91c5c87917b65d169d7c66a1a140cda5b1",
+      "context": {
+        "format": "taiji-g-selection-context-v1",
+        "version": 1,
+        "candidate_set_digest": "541d3e2d89810fd8823777e39be1ecaae01f2e2e22c344a525256b03e88025d9",
+        "feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max",
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max"
+        ],
+        "candidate_feature_names": [
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_features": [
+          0.6666666666666666,
+          0.75,
+          0.25,
+          0.125,
+          0.24751427473074727,
+          0.42686798039328566,
+          0.9909692406654358
+        ],
+        "candidate_features": {
+          "abstain": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24751427473074727,
+            0.42686798039328566,
+            0.9909692406654358,
+            0.1428571428571429,
+            -0.24751427473074727
+          ],
+          "p4-foreign:0:k1:grid:goal:clarify-toolchain:content:clarify-toolchain": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24751427473074727,
+            0.42686798039328566,
+            0.9909692406654358,
+            0.7142857142857143,
+            -0.24271453247911268
+          ],
+          "p4-foreign:0:k1:grid:goal:recover-target:content:recover-target": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24751427473074727,
+            0.42686798039328566,
+            0.9909692406654358,
+            0.2857142857142857,
+            -0.24751074364075976
+          ],
+          "p4-foreign:0:k1:selected": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24751427473074727,
+            0.42686798039328566,
+            0.9909692406654358,
+            0.8571428571428572,
+            0.7352324455832786
+          ],
+          "p4-foreign:2:k1:grid:goal:inspect-language:content:inspect-language": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24751427473074727,
+            0.42686798039328566,
+            0.9909692406654358,
+            0.5714285714285714,
+            -0.24592643900814437
+          ],
+          "p4-foreign:2:k1:grid:goal:recover-target:content:recover-target": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24751427473074727,
+            0.42686798039328566,
+            0.9909692406654358,
+            0.4285714285714286,
+            -0.24750714692845577
+          ],
+          "p4-foreign:2:k1:selected": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24751427473074727,
+            0.42686798039328566,
+            0.9909692406654358,
+            1.0,
+            0.7434549659346885
+          ],
+          "reobserve": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24751427473074727,
+            0.42686798039328566,
+            0.9909692406654358,
+            0.0,
+            -0.24751427473074727
+          ]
+        },
+        "context_digest": "a541339e905624b54a8326cce471bf6b7385f9ea95ff185cc4be04421a4d50af"
+      }
+    },
+    {
+      "candidate_set_digest": "f4be828a916d43587a57c6739f0affb25b4299225bc4802834bf65ee9145b304",
+      "behavior_digest": "d7ef2bc9a360a2049bff5069cc79fd7e9de8d500ae1712dcd599c4d595859c7d",
+      "context": {
+        "format": "taiji-g-selection-context-v1",
+        "version": 1,
+        "candidate_set_digest": "f4be828a916d43587a57c6739f0affb25b4299225bc4802834bf65ee9145b304",
+        "feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max",
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max"
+        ],
+        "candidate_feature_names": [
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_features": [
+          1.0,
+          0.8333333333333334,
+          0.16666666666666666,
+          0.08333333333333333,
+          0.16603490735663703,
+          0.36709172181883987,
+          0.9909692406654358
+        ],
+        "candidate_features": {
+          "abstain": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.09090909090909094,
+            -0.16603490735663703
+          ],
+          "p4-alias:3:8:p4-foreign:0:k1:grid:goal:clarify-toolchain:content:clarify-toolchain": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.7272727272727273,
+            -0.16123516510500244
+          ],
+          "p4-alias:3:9:p4-foreign:2:k1:grid:goal:inspect-language:content:inspect-language": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.5454545454545454,
+            -0.16444707163403413
+          ],
+          "p4-foreign:0:k1:grid:goal:clarify-language:content:clarify-language": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.8181818181818181,
+            -0.16116632965652875
+          ],
+          "p4-foreign:0:k1:grid:goal:clarify-toolchain:content:clarify-toolchain": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.6363636363636364,
+            -0.16123516510500244
+          ],
+          "p4-foreign:0:k1:grid:goal:recover-target:content:recover-target": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.18181818181818177,
+            -0.16603137626664952
+          ],
+          "p4-foreign:0:k1:selected": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.9090909090909091,
+            0.8167118129573888
+          ],
+          "p4-foreign:2:k1:grid:goal:clarify-language:content:clarify-language": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.36363636363636365,
+            -0.16498637259731672
+          ],
+          "p4-foreign:2:k1:grid:goal:inspect-language:content:inspect-language": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.4545454545454546,
+            -0.16444707163403413
+          ],
+          "p4-foreign:2:k1:grid:goal:recover-target:content:recover-target": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.2727272727272727,
+            -0.16602777955434553
+          ],
+          "p4-foreign:2:k1:selected": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            1.0,
+            0.8249343333087987
+          ],
+          "reobserve": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.0,
+            -0.16603490735663703
+          ]
+        },
+        "context_digest": "7425a4df5672e18eb07d106649912948bc1991ff373cb394fa849d65eebf5ca4"
+      }
+    },
+    {
+      "candidate_set_digest": "f1881b8f13a1696ccb9a86951d5b1f19b26b624f2781085760555720487e3a21",
+      "behavior_digest": "c98f69ceee86b9aea55b81ee65681227e6654efaf487808b1fd86b4bd9b051cd",
+      "context": {
+        "format": "taiji-g-selection-context-v1",
+        "version": 1,
+        "candidate_set_digest": "f1881b8f13a1696ccb9a86951d5b1f19b26b624f2781085760555720487e3a21",
+        "feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max",
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max"
+        ],
+        "candidate_feature_names": [
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_features": [
+          0.16666666666666666,
+          0.0,
+          1.0,
+          0.5,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "candidate_features": {
+          "abstain": [
+            0.16666666666666666,
+            0.0,
+            1.0,
+            0.5,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "reobserve": [
+            0.16666666666666666,
+            0.0,
+            1.0,
+            0.5,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "context_digest": "685e85da653705cf3449d14e48d293e164f83cdc0a6dbfa085344aa044817b05"
+      }
+    },
+    {
+      "candidate_set_digest": "c8ede147ef4ab69be61d36ae61209a9469d9a448a62d04e0a824c3e7ae59089a",
+      "behavior_digest": "370f1e8ffad90146914d0db02925df949d4bf2d9c3b788322d991147fa22adab",
+      "context": {
+        "format": "taiji-g-selection-context-v1",
+        "version": 1,
+        "candidate_set_digest": "c8ede147ef4ab69be61d36ae61209a9469d9a448a62d04e0a824c3e7ae59089a",
+        "feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max",
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max"
+        ],
+        "candidate_feature_names": [
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_features": [
+          0.3333333333333333,
+          0.5,
+          0.5,
+          0.25,
+          0.0015968944935593754,
+          0.001959493548717323,
+          0.004799742251634598
+        ],
+        "candidate_features": {
+          "abstain": [
+            0.3333333333333333,
+            0.5,
+            0.5,
+            0.25,
+            0.0015968944935593754,
+            0.001959493548717323,
+            0.004799742251634598,
+            0.33333333333333337,
+            -0.0015968944935593754
+          ],
+          "p4-foreign:0:k1:grid:goal:clarify-toolchain:content:clarify-toolchain": [
+            0.3333333333333333,
+            0.5,
+            0.5,
+            0.25,
+            0.0015968944935593754,
+            0.001959493548717323,
+            0.004799742251634598,
+            1.0,
+            0.0032028477580752224
+          ],
+          "p4-foreign:2:k1:grid:goal:inspect-language:content:inspect-language": [
+            0.3333333333333333,
+            0.5,
+            0.5,
+            0.25,
+            0.0015968944935593754,
+            0.001959493548717323,
+            0.004799742251634598,
+            0.6666666666666667,
+            -9.058770956471562e-06
+          ],
+          "reobserve": [
+            0.3333333333333333,
+            0.5,
+            0.5,
+            0.25,
+            0.0015968944935593754,
+            0.001959493548717323,
+            0.004799742251634598,
+            0.0,
+            -0.0015968944935593754
+          ]
+        },
+        "context_digest": "c229b965f0806bf04064a0d98786b81a43076bdf8adb3f85432248e370608386"
+      }
+    },
+    {
+      "candidate_set_digest": "443587b735f21791f1bd3abd3108d8a247fa8416387c66430fe759547bcbb28f",
+      "behavior_digest": "55f16e36361508fd47dd31877ccce276db1086736c7e7f6c5ad4480809c9acf5",
+      "context": {
+        "format": "taiji-g-selection-context-v1",
+        "version": 1,
+        "candidate_set_digest": "443587b735f21791f1bd3abd3108d8a247fa8416387c66430fe759547bcbb28f",
+        "feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max",
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max"
+        ],
+        "candidate_feature_names": [
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_features": [
+          0.6666666666666666,
+          0.75,
+          0.25,
+          0.125,
+          0.24751427473074727,
+          0.42686798039328566,
+          0.9909692406654358
+        ],
+        "candidate_features": {
+          "abstain": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24751427473074727,
+            0.42686798039328566,
+            0.9909692406654358,
+            0.1428571428571429,
+            -0.24751427473074727
+          ],
+          "p4-foreign:0:k1:grid:goal:clarify-toolchain:content:clarify-toolchain": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24751427473074727,
+            0.42686798039328566,
+            0.9909692406654358,
+            0.7142857142857143,
+            -0.24271453247911268
+          ],
+          "p4-foreign:0:k1:grid:goal:recover-target:content:recover-target": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24751427473074727,
+            0.42686798039328566,
+            0.9909692406654358,
+            0.2857142857142857,
+            -0.24751074364075976
+          ],
+          "p4-foreign:0:k1:selected": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24751427473074727,
+            0.42686798039328566,
+            0.9909692406654358,
+            0.8571428571428572,
+            0.7352324455832786
+          ],
+          "p4-foreign:2:k1:grid:goal:inspect-language:content:inspect-language": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24751427473074727,
+            0.42686798039328566,
+            0.9909692406654358,
+            0.5714285714285714,
+            -0.24592643900814437
+          ],
+          "p4-foreign:2:k1:grid:goal:recover-target:content:recover-target": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24751427473074727,
+            0.42686798039328566,
+            0.9909692406654358,
+            0.4285714285714286,
+            -0.24750714692845577
+          ],
+          "p4-foreign:2:k1:selected": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24751427473074727,
+            0.42686798039328566,
+            0.9909692406654358,
+            1.0,
+            0.7434549659346885
+          ],
+          "reobserve": [
+            0.6666666666666666,
+            0.75,
+            0.25,
+            0.125,
+            0.24751427473074727,
+            0.42686798039328566,
+            0.9909692406654358,
+            0.0,
+            -0.24751427473074727
+          ]
+        },
+        "context_digest": "ed9228e5451226badc01386142c0ad4b2b07297ed2e294294ed9047cfca7ed52"
+      }
+    },
+    {
+      "candidate_set_digest": "541880ad0cd9566cae05d6a3c857e1bc5137277a762d08efe148ce05fa36a9b9",
+      "behavior_digest": "45f799e11e9391f51e4fe33352d732a03f4589de122d3edb0225aca3d6e3a3fb",
+      "context": {
+        "format": "taiji-g-selection-context-v1",
+        "version": 1,
+        "candidate_set_digest": "541880ad0cd9566cae05d6a3c857e1bc5137277a762d08efe148ce05fa36a9b9",
+        "feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max",
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_feature_names": [
+          "candidate_count_norm",
+          "proposal_fraction",
+          "safe_fraction",
+          "reobserve_fraction",
+          "joint_score_mean",
+          "joint_score_std",
+          "joint_score_max"
+        ],
+        "candidate_feature_names": [
+          "candidate_rank_norm",
+          "candidate_joint_minus_mean"
+        ],
+        "set_features": [
+          1.0,
+          0.8333333333333334,
+          0.16666666666666666,
+          0.08333333333333333,
+          0.16603490735663703,
+          0.36709172181883987,
+          0.9909692406654358
+        ],
+        "candidate_features": {
+          "abstain": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.09090909090909094,
+            -0.16603490735663703
+          ],
+          "p4-alias:4:8:p4-foreign:0:k1:grid:goal:clarify-toolchain:content:clarify-toolchain": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.7272727272727273,
+            -0.16123516510500244
+          ],
+          "p4-alias:4:9:p4-foreign:2:k1:grid:goal:inspect-language:content:inspect-language": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.5454545454545454,
+            -0.16444707163403413
+          ],
+          "p4-foreign:0:k1:grid:goal:clarify-language:content:clarify-language": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.8181818181818181,
+            -0.16116632965652875
+          ],
+          "p4-foreign:0:k1:grid:goal:clarify-toolchain:content:clarify-toolchain": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.6363636363636364,
+            -0.16123516510500244
+          ],
+          "p4-foreign:0:k1:grid:goal:recover-target:content:recover-target": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.18181818181818177,
+            -0.16603137626664952
+          ],
+          "p4-foreign:0:k1:selected": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.9090909090909091,
+            0.8167118129573888
+          ],
+          "p4-foreign:2:k1:grid:goal:clarify-language:content:clarify-language": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.36363636363636365,
+            -0.16498637259731672
+          ],
+          "p4-foreign:2:k1:grid:goal:inspect-language:content:inspect-language": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.4545454545454546,
+            -0.16444707163403413
+          ],
+          "p4-foreign:2:k1:grid:goal:recover-target:content:recover-target": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.2727272727272727,
+            -0.16602777955434553
+          ],
+          "p4-foreign:2:k1:selected": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            1.0,
+            0.8249343333087987
+          ],
+          "reobserve": [
+            1.0,
+            0.8333333333333334,
+            0.16666666666666666,
+            0.08333333333333333,
+            0.16603490735663703,
+            0.36709172181883987,
+            0.9909692406654358,
+            0.0,
+            -0.16603490735663703
+          ]
+        },
+        "context_digest": "4d386501926f073c6f8cfd60fb31b4b732d71ef82d77dd878197a31c0fd5b1c3"
+      }
+    }
+  ],
+  "manifest_digest": "1387551f4de09682728892a29d603883870851448b99ab18d746fe1402624fbd"
+}
