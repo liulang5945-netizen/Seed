@@ -434,3 +434,18 @@ P4.2 的正确解释是：当前实验还不能区分“上下文表征没有收
 | 结果出口 | 未晋级 | `outcome=signal_insufficient`、`experiment_passed=false`、`growth_admitted=false`、`can_promote=false` |
 
 P4.3 不能解释为“rehearsal 已修复 P4.2 的遗忘”：它只证明在本轮 fresh retention 分布上，训练后没有出现低于 parent 的保持退化；new-only 也获得了完全相同的结果，因此没有 rehearsal 的可分离贡献。P4.2 中基于旧 P3.6 retention 的 `3/4` 退化不能直接拿来与本轮 fresh retention 混合比较，因为旧集合已经作为 rehearsal 输入。下一步改为 **P4.4 保持身份/结构校准 Gate**：使用候选数量、角色组成和难度同构但 project/path 全新的 sibling retention，validation-only 评估 parent 与 P4.2/P4.3 child，判断退化能否跨身份复现；在此之前不扩容、不 promotion。
+
+## 29. P4.4 保持身份与结构校准结果（2026-09-11）
+
+按 §28 的边界运行了 [P4.4 retention identity calibration](../../scripts/training/eval_taiji_m5_k_p4_4_retention_identity_calibration.py)，产出 [P4.4 manifest](../manifests/taiji_m5_k_p4_4_retention_identity_calibration_manifest_v1.json) 与 [P4.4 报告](../../reports/taiji_m5_k_p4_4_retention_identity_calibration_20260911.json)。本轮严格 validation-only：只从 P3.6 提取候选数量、角色组成、置信度分桶和安全投影类型，生成 2 个新 project、4 条新 path 的 sibling retention；没有复制 P3.6 的 path、target、utility 或 exact candidate digest，没有调用 `fit`，也没有覆盖历史 checkpoint。
+
+| Gate | 结果 | 关键实测 |
+|---|---:|---|
+| 来源、结构与身份 | 通过 | P3.6/P4.2/P4.3 source chain、manifest/report digest 通过；4 条 sibling 结构均为一条 6-candidate `proposal×4 + abstain + reobserve` 和三条 2-candidate `abstain + reobserve`；2 个 project、4 条 path 全部为新身份 |
+| checkpoint / lineage | 通过 | P3.5 parent、P4.2 三臂、P4.3 两臂的全部 seed checkpoint 均独立恢复且 lineage 有效；P4.2/P4.3 parent 未被覆盖 |
+| parent sibling 基线 | 通过 | parent utility `1.0`、target hit `4/4`、safe violation `0`、reobserve projection 通过、Workbench success `1` |
+| P4.2 退化复现 | 通过 | P4.2 历史退化的 5 个 arm/seed 在 sibling 上全部复现；对应多数 arm/seed utility `0.8`、target hit `3/4`，P4.2 seed-1 fixed-large 为非退化对照 |
+| P4.3 退化复现 | 通过 | new-only 与 rehearsal-mix 两个 seed 均为 utility `0.8`、target hit `3/4`；rehearsal 没有消除同构 sibling 上的保持退化 |
+| 结果出口 | 已分类但未晋级 | `outcome=retention_failure_reproduced`、`training_performed=false`、`fit_called=false`、`experiment_passed=false`、`growth_admitted=false`、`can_promote=false` |
+
+P4.4 的证据把 P4.3 的表面矛盾拆开了：P4.3 fresh retention 的 `0.68` 通过不能归因给 rehearsal，也不能代表保持问题不存在；当评估集合恢复为与 P3.6 相同的候选结构/难度而换成全新身份时，P4.2 历史退化和 P4.3 两臂退化都出现。当前最强结论是“训练后更新会破坏这一类保持合同，且现象可跨身份复现”，而不是“需要增加神经元”。下一步只允许进行 P4.5 保持约束与更新规则对照；dynamic growth、promotion 和 P5 外围继续冻结。

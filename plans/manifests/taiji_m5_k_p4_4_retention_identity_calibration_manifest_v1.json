@@ -1,0 +1,736 @@
+{
+  "format": "taiji-m5-k-p4-4-retention-identity-calibration-manifest-v1",
+  "version": 1,
+  "source_p4_1_manifest_digest": "1387551f4de09682728892a29d603883870851448b99ab18d746fe1402624fbd",
+  "source_p4_2_manifest_digest": "9151a871c0c5815e16ef67038d04269d6b3e96d79622cd3cc3b5268192a11f57",
+  "source_p4_3_manifest_digest": "4223641e0e8b24c64957f407d85106c2b558b5c1403da9186bb05c9a11a6bd99",
+  "source_p3_6_manifest_digest": "2b6948461b5d624319b692eaabd6c93d235c6859f82546d146195a83002dbc04",
+  "parent_g_checkpoint_digest": "f4fdc61bf0e0174a9618e087fec8a25ce90d8a3257a7ca26bd1754db45da398d",
+  "k_checkpoint_digests": {
+    "k1": "12851b4b3cc941817b9c27b93d7eaf35e0734b4d60ad0d64427b154db64277a6",
+    "k2": "411ef5348231f355eb1c512c195a9e34dea74c75fc5b5cdf5e86014940313691"
+  },
+  "fit_policy": {
+    "fit_called": false,
+    "training_performed": false,
+    "validation_only": true,
+    "growth_admitted": false,
+    "promotion_open": false
+  },
+  "structure_contract": {
+    "source": "p3.6-holdout-structure-only",
+    "row_count": 4,
+    "rows": [
+      {
+        "candidate_count": 6,
+        "role_counts": {
+          "abstain": 1,
+          "proposal": 4,
+          "reobserve": 1
+        },
+        "confidence_bucket": "high-and-safe",
+        "safe_projection_roles": []
+      },
+      {
+        "candidate_count": 2,
+        "role_counts": {
+          "abstain": 1,
+          "reobserve": 1
+        },
+        "confidence_bucket": "zero",
+        "safe_projection_roles": [
+          "abstain",
+          "reobserve"
+        ]
+      },
+      {
+        "candidate_count": 2,
+        "role_counts": {
+          "abstain": 1,
+          "reobserve": 1
+        },
+        "confidence_bucket": "zero",
+        "safe_projection_roles": [
+          "abstain",
+          "reobserve"
+        ]
+      },
+      {
+        "candidate_count": 2,
+        "role_counts": {
+          "abstain": 1,
+          "reobserve": 1
+        },
+        "confidence_bucket": "zero",
+        "safe_projection_roles": [
+          "abstain",
+          "reobserve"
+        ]
+      }
+    ],
+    "contract_digest": "feb7b88627d0ce072dd07a5c187e7be7de1c8c8ebb68a47545720002f270aef1"
+  },
+  "sibling_candidate_set_digests": [
+    "220703127e9d0640aa36b60682f6ebedf75c05a30da8f9e5cbb8342c0452a364",
+    "8b32805c96b91df865ee9d00d84d852af627c7bc579993af5dc335c07da13543",
+    "a4d37e7d47a27a9546ede0312999e3f09be44d007315de585591249868d66ade",
+    "0bfe9062e160fccda16ccaa87384652050494ef98ca0183c7b8f451641cc5e32"
+  ],
+  "sibling_behavior_digests": [
+    "f029062400a1f0892dfaae80068adc51d0b2583723815e1213e0da193bbb8b7c",
+    "e75bcd83cbfe4d547b334df8b0ca617f6d640838c85cd7fc96e78a4a40285e75",
+    "6e8d7b9b6ce77c192705e52cf850e49aee49ee6ff773efae4c91cd4240f4c71e",
+    "cb49834c9462d1a1a9ead73b49a012b4ec777301f627508a64f36506c72f35c4"
+  ],
+  "records": [
+    {
+      "candidate_set": {
+        "format": "taiji-g-selection-candidate-set-v1",
+        "version": 1,
+        "example_id": "p4-4:sibling:0:width-6:6fd6f2b8825ab5b3b4b21692daf8228bb346bc954bb567db7da50f8e79122457",
+        "family_id": "p4-4:sibling:family:0",
+        "split": "retention",
+        "project_id": "p4-4-sibling-project-a",
+        "path": "p40_p44_a_main_0.py",
+        "input_digest": "040ae60cf1d6996bcdbaf7c20dc15242ec2ef0fbdef110044450ae18c6163fa8",
+        "candidates": [
+          {
+            "format": "taiji-g-selection-candidate-set-v1",
+            "version": 1,
+            "candidate_id": "abstain",
+            "source": "runtime.abstain",
+            "candidate_role": "abstain",
+            "status": "abstained",
+            "goal": null,
+            "content_plan": null,
+            "goal_score": 0.0,
+            "content_score": 0.0,
+            "confidence": 0.0,
+            "ambiguity": 1.0,
+            "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
+          },
+          {
+            "format": "taiji-g-selection-candidate-set-v1",
+            "version": 1,
+            "candidate_id": "reobserve",
+            "source": "runtime.reobserve",
+            "candidate_role": "reobserve",
+            "status": "ambiguous",
+            "goal": null,
+            "content_plan": null,
+            "goal_score": 0.0,
+            "content_score": 0.0,
+            "confidence": 0.0,
+            "ambiguity": 1.0,
+            "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
+          },
+          {
+            "format": "taiji-g-selection-candidate-set-v1",
+            "version": 1,
+            "candidate_id": "k1:selected",
+            "source": "k1.semantic",
+            "candidate_role": "proposal",
+            "status": "resolved",
+            "goal": {
+              "version": 1,
+              "goal_id": "goal:inspect-language",
+              "description": "Report verified language and toolchain facts.",
+              "priority": 0.9,
+              "progress": 0.0
+            },
+            "content_plan": {
+              "content_id": "content:inspect-language",
+              "intent_id": "intent:inspect-language",
+              "intent_kind": "report",
+              "semantic_slots": {
+                "observed_language": "python",
+                "selection_state": "resolved",
+                "toolchain_available": true
+              },
+              "required_terms": [],
+              "source_goal_id": "goal:inspect-language",
+              "expected_outcome": "verified read-only report",
+              "confidence": 0.0,
+              "provenance": "planned",
+              "tick": 12
+            },
+            "goal_score": 0.9902390241622925,
+            "content_score": 0.9827467203140259,
+            "confidence": 0.9827467203140259,
+            "ambiguity": 0.01464976230636239,
+            "candidate_digest": "56b608c8dc5820998eede640d3e6bccaa2900aa53d60cc854d146c48e45bde0a"
+          },
+          {
+            "format": "taiji-g-selection-candidate-set-v1",
+            "version": 1,
+            "candidate_id": "k1:grid:goal:clarify-language:content:clarify-language",
+            "source": "k1.score-grid",
+            "candidate_role": "proposal",
+            "status": "clarify",
+            "goal": {
+              "version": 1,
+              "goal_id": "goal:clarify-language",
+              "description": "Clarify an ambiguous programming language selection.",
+              "priority": 0.9,
+              "progress": 0.0
+            },
+            "content_plan": {
+              "content_id": "content:clarify-language",
+              "intent_id": "intent:clarify-language",
+              "intent_kind": "request_information",
+              "semantic_slots": {
+                "observed_language": "unknown",
+                "selection_state": "ambiguous",
+                "toolchain_available": false
+              },
+              "required_terms": [],
+              "source_goal_id": "goal:clarify-language",
+              "expected_outcome": "language clarification",
+              "confidence": 0.0,
+              "provenance": "planned",
+              "tick": 3
+            },
+            "goal_score": 0.00486857770010829,
+            "content_score": 0.010216298513114452,
+            "confidence": 0.9827467203140259,
+            "ambiguity": 0.01464976230636239,
+            "candidate_digest": "4471fb4309365ff313c8434769484691ee77cb1fe4a5c6f3f38f9a7178ef7a1a"
+          },
+          {
+            "format": "taiji-g-selection-candidate-set-v1",
+            "version": 1,
+            "candidate_id": "k1:grid:goal:clarify-toolchain:content:clarify-toolchain",
+            "source": "k1.score-grid",
+            "candidate_role": "proposal",
+            "status": "clarify",
+            "goal": {
+              "version": 1,
+              "goal_id": "goal:clarify-toolchain",
+              "description": "Clarify the unavailable toolchain before execution.",
+              "priority": 0.9,
+              "progress": 0.0
+            },
+            "content_plan": {
+              "content_id": "content:clarify-toolchain",
+              "intent_id": "intent:clarify-toolchain",
+              "intent_kind": "request_information",
+              "semantic_slots": {
+                "observed_language": "typescript",
+                "selection_state": "resolved",
+                "toolchain_available": false
+              },
+              "required_terms": [],
+              "source_goal_id": "goal:clarify-toolchain",
+              "expected_outcome": "toolchain clarification",
+              "confidence": 0.0,
+              "provenance": "planned",
+              "tick": 15
+            },
+            "goal_score": 0.004888786468654871,
+            "content_score": 0.004799742251634598,
+            "confidence": 0.9827467203140259,
+            "ambiguity": 0.01464976230636239,
+            "candidate_digest": "33dcbfeb1a7e867564c68dc45bfa3382e1f3f55720d23c278a88b3baf88772ec"
+          },
+          {
+            "format": "taiji-g-selection-candidate-set-v1",
+            "version": 1,
+            "candidate_id": "k1:grid:goal:recover-target:content:recover-target",
+            "source": "k1.score-grid",
+            "candidate_role": "proposal",
+            "status": "clarify",
+            "goal": {
+              "version": 1,
+              "goal_id": "goal:recover-target",
+              "description": "Recover a missing Workbench target before proceeding.",
+              "priority": 0.9,
+              "progress": 0.0
+            },
+            "content_plan": {
+              "content_id": "content:recover-target",
+              "intent_id": "intent:recover-target",
+              "intent_kind": "request_information",
+              "semantic_slots": {
+                "observed_language": "unknown",
+                "selection_state": "unknown",
+                "toolchain_available": false
+              },
+              "required_terms": [],
+              "source_goal_id": "goal:recover-target",
+              "expected_outcome": "valid target path",
+              "confidence": 0.0,
+              "provenance": "planned",
+              "tick": 2
+            },
+            "goal_score": 3.5310899875184987e-06,
+            "content_score": 0.002237307606264949,
+            "confidence": 0.9827467203140259,
+            "ambiguity": 0.01464976230636239,
+            "candidate_digest": "001d2cfa6f05d939e265b50d01f8089d207520f7af7673571e1871e9bb83213a"
+          }
+        ],
+        "target_candidate_id": "k1:selected",
+        "target_kind": "pair",
+        "candidate_set_digest": "220703127e9d0640aa36b60682f6ebedf75c05a30da8f9e5cbb8342c0452a364",
+        "inference_digest": "fabe4c1fd94692f4537a8163a1d799edc6a60e864f0a20ed119ff45abebe4e6c"
+      },
+      "behavior_set": {
+        "format": "taiji-g-selection-behavior-v1",
+        "version": 1,
+        "candidate_set_digest": "220703127e9d0640aa36b60682f6ebedf75c05a30da8f9e5cbb8342c0452a364",
+        "inference_digest": "fabe4c1fd94692f4537a8163a1d799edc6a60e864f0a20ed119ff45abebe4e6c",
+        "split": "retention",
+        "project_id": "p4-4-sibling-project-a",
+        "path": "p40_p44_a_main_0.py",
+        "outcomes": [
+          {
+            "format": "taiji-g-selection-behavior-v1",
+            "version": 1,
+            "candidate_id": "abstain",
+            "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60",
+            "candidate_role": "abstain",
+            "snapshot_match": true,
+            "planner_accepted": false,
+            "route_valid": false,
+            "parameter_valid": false,
+            "world_consistent": false,
+            "execution_success": false,
+            "safe_exit_valid": false,
+            "safe_exit_progress": false,
+            "utility": 0.2,
+            "outcome_digest": "5ac0f9fad9f0e9be4cceeed3359c4253352f6b19436ce7ec128138b279cdbdff"
+          },
+          {
+            "format": "taiji-g-selection-behavior-v1",
+            "version": 1,
+            "candidate_id": "reobserve",
+            "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44",
+            "candidate_role": "reobserve",
+            "snapshot_match": true,
+            "planner_accepted": false,
+            "route_valid": false,
+            "parameter_valid": false,
+            "world_consistent": false,
+            "execution_success": false,
+            "safe_exit_valid": false,
+            "safe_exit_progress": false,
+            "utility": 0.2,
+            "outcome_digest": "6ef5ad670bf28e2c581d9272b4a0f6def174fd9d232a43c39a4cfd9107adc534"
+          },
+          {
+            "format": "taiji-g-selection-behavior-v1",
+            "version": 1,
+            "candidate_id": "k1:selected",
+            "candidate_digest": "56b608c8dc5820998eede640d3e6bccaa2900aa53d60cc854d146c48e45bde0a",
+            "candidate_role": "proposal",
+            "snapshot_match": true,
+            "planner_accepted": true,
+            "route_valid": true,
+            "parameter_valid": true,
+            "world_consistent": true,
+            "execution_success": true,
+            "safe_exit_valid": false,
+            "safe_exit_progress": false,
+            "utility": 1.0,
+            "outcome_digest": "dd9e622fc0c193112ec76f00ea48b70c64f9ad79408fba3a85c62b07b9cf819e"
+          },
+          {
+            "format": "taiji-g-selection-behavior-v1",
+            "version": 1,
+            "candidate_id": "k1:grid:goal:clarify-language:content:clarify-language",
+            "candidate_digest": "4471fb4309365ff313c8434769484691ee77cb1fe4a5c6f3f38f9a7178ef7a1a",
+            "candidate_role": "proposal",
+            "snapshot_match": true,
+            "planner_accepted": true,
+            "route_valid": true,
+            "parameter_valid": true,
+            "world_consistent": false,
+            "execution_success": true,
+            "safe_exit_valid": false,
+            "safe_exit_progress": false,
+            "utility": 0.75,
+            "outcome_digest": "ece5cc822ffb0251b2f16688fae79b0c0665738799ada7be3f4db5773cfccee2"
+          },
+          {
+            "format": "taiji-g-selection-behavior-v1",
+            "version": 1,
+            "candidate_id": "k1:grid:goal:clarify-toolchain:content:clarify-toolchain",
+            "candidate_digest": "33dcbfeb1a7e867564c68dc45bfa3382e1f3f55720d23c278a88b3baf88772ec",
+            "candidate_role": "proposal",
+            "snapshot_match": true,
+            "planner_accepted": true,
+            "route_valid": true,
+            "parameter_valid": true,
+            "world_consistent": false,
+            "execution_success": true,
+            "safe_exit_valid": false,
+            "safe_exit_progress": false,
+            "utility": 0.75,
+            "outcome_digest": "52664e03c90532834ee9fdc307cac9870baf6d4a195dad207047d7773d05421b"
+          },
+          {
+            "format": "taiji-g-selection-behavior-v1",
+            "version": 1,
+            "candidate_id": "k1:grid:goal:recover-target:content:recover-target",
+            "candidate_digest": "001d2cfa6f05d939e265b50d01f8089d207520f7af7673571e1871e9bb83213a",
+            "candidate_role": "proposal",
+            "snapshot_match": true,
+            "planner_accepted": true,
+            "route_valid": true,
+            "parameter_valid": true,
+            "world_consistent": false,
+            "execution_success": true,
+            "safe_exit_valid": false,
+            "safe_exit_progress": false,
+            "utility": 0.75,
+            "outcome_digest": "4e9d67f8ba17a102bef67123238e52c562308107029953fa9cd543e5f3187aee"
+          }
+        ],
+        "behavior_target_candidate_id": "k1:selected",
+        "utility_margin": 0.25,
+        "behavior_digest": "f029062400a1f0892dfaae80068adc51d0b2583723815e1213e0da193bbb8b7c"
+      },
+      "diagnostic": {
+        "class_key": "H0",
+        "state_profile": "resolved-language",
+        "source_index": 0,
+        "candidate_width": 6,
+        "aliased_candidate_count": 0,
+        "feature_collision_rate": 0.0,
+        "behavior_target_candidate_id": "k1:selected",
+        "utility_margin": 0.25,
+        "experiment": "p4.4",
+        "split": "retention",
+        "structure_source_row": 0
+      }
+    },
+    {
+      "candidate_set": {
+        "format": "taiji-g-selection-candidate-set-v1",
+        "version": 1,
+        "example_id": "p4-4:sibling:1:width-2:d0149c4d25e6ac92703ef98fd0a2a57e2e880c0880006684e937d0a10456e312",
+        "family_id": "p4-4:sibling:family:1",
+        "split": "retention",
+        "project_id": "p4-4-sibling-project-a",
+        "path": "p40_p44_a_missing_0_missing.txt",
+        "input_digest": "fc5fd6138adb847597bfdb9fa755bc1d78d5b733f8837172000606a93e818eb4",
+        "candidates": [
+          {
+            "format": "taiji-g-selection-candidate-set-v1",
+            "version": 1,
+            "candidate_id": "abstain",
+            "source": "runtime.abstain",
+            "candidate_role": "abstain",
+            "status": "abstained",
+            "goal": null,
+            "content_plan": null,
+            "goal_score": 0.0,
+            "content_score": 0.0,
+            "confidence": 0.0,
+            "ambiguity": 1.0,
+            "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
+          },
+          {
+            "format": "taiji-g-selection-candidate-set-v1",
+            "version": 1,
+            "candidate_id": "reobserve",
+            "source": "runtime.reobserve",
+            "candidate_role": "reobserve",
+            "status": "ambiguous",
+            "goal": null,
+            "content_plan": null,
+            "goal_score": 0.0,
+            "content_score": 0.0,
+            "confidence": 0.0,
+            "ambiguity": 1.0,
+            "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
+          }
+        ],
+        "target_candidate_id": "reobserve",
+        "target_kind": "reobserve",
+        "candidate_set_digest": "8b32805c96b91df865ee9d00d84d852af627c7bc579993af5dc335c07da13543",
+        "inference_digest": "3ffe073dbe6e61750ac8db3a342eeb398324364d371814436f8b148885dacb96"
+      },
+      "behavior_set": {
+        "format": "taiji-g-selection-behavior-v1",
+        "version": 1,
+        "candidate_set_digest": "8b32805c96b91df865ee9d00d84d852af627c7bc579993af5dc335c07da13543",
+        "inference_digest": "3ffe073dbe6e61750ac8db3a342eeb398324364d371814436f8b148885dacb96",
+        "split": "retention",
+        "project_id": "p4-4-sibling-project-a",
+        "path": "p40_p44_a_missing_0_missing.txt",
+        "outcomes": [
+          {
+            "format": "taiji-g-selection-behavior-v1",
+            "version": 1,
+            "candidate_id": "abstain",
+            "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60",
+            "candidate_role": "abstain",
+            "snapshot_match": true,
+            "planner_accepted": false,
+            "route_valid": false,
+            "parameter_valid": false,
+            "world_consistent": false,
+            "execution_success": false,
+            "safe_exit_valid": true,
+            "safe_exit_progress": false,
+            "utility": 0.55,
+            "outcome_digest": "f1c39740cf36641d90293f9e69b2535908c692111e1aed001ed82064113de252"
+          },
+          {
+            "format": "taiji-g-selection-behavior-v1",
+            "version": 1,
+            "candidate_id": "reobserve",
+            "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44",
+            "candidate_role": "reobserve",
+            "snapshot_match": true,
+            "planner_accepted": false,
+            "route_valid": false,
+            "parameter_valid": false,
+            "world_consistent": false,
+            "execution_success": false,
+            "safe_exit_valid": true,
+            "safe_exit_progress": true,
+            "utility": 1.0,
+            "outcome_digest": "70a85c26006b51ab896e8da26c37cff0a5c49e0ba6a530cf07ce52772efc319e"
+          }
+        ],
+        "behavior_target_candidate_id": "reobserve",
+        "utility_margin": 0.44999999999999996,
+        "behavior_digest": "e75bcd83cbfe4d547b334df8b0ca617f6d640838c85cd7fc96e78a4a40285e75"
+      },
+      "diagnostic": {
+        "class_key": "S0",
+        "state_profile": "recovery-no-selection",
+        "source_index": 1,
+        "candidate_width": 2,
+        "aliased_candidate_count": 0,
+        "feature_collision_rate": 0.0,
+        "behavior_target_candidate_id": "reobserve",
+        "utility_margin": 0.44999999999999996,
+        "experiment": "p4.4",
+        "split": "retention",
+        "structure_source_row": 1
+      }
+    },
+    {
+      "candidate_set": {
+        "format": "taiji-g-selection-candidate-set-v1",
+        "version": 1,
+        "example_id": "p4-4:sibling:2:width-2:dbcf25fcc0939bcf1d14908f8ddab9a89db0f4ee5fd7e831548c64807123ba15",
+        "family_id": "p4-4:sibling:family:2",
+        "split": "retention",
+        "project_id": "p4-4-sibling-project-b",
+        "path": "p40_p44_b_missing_1_missing.txt",
+        "input_digest": "fc5fd6138adb847597bfdb9fa755bc1d78d5b733f8837172000606a93e818eb4",
+        "candidates": [
+          {
+            "format": "taiji-g-selection-candidate-set-v1",
+            "version": 1,
+            "candidate_id": "abstain",
+            "source": "runtime.abstain",
+            "candidate_role": "abstain",
+            "status": "abstained",
+            "goal": null,
+            "content_plan": null,
+            "goal_score": 0.0,
+            "content_score": 0.0,
+            "confidence": 0.0,
+            "ambiguity": 1.0,
+            "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
+          },
+          {
+            "format": "taiji-g-selection-candidate-set-v1",
+            "version": 1,
+            "candidate_id": "reobserve",
+            "source": "runtime.reobserve",
+            "candidate_role": "reobserve",
+            "status": "ambiguous",
+            "goal": null,
+            "content_plan": null,
+            "goal_score": 0.0,
+            "content_score": 0.0,
+            "confidence": 0.0,
+            "ambiguity": 1.0,
+            "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
+          }
+        ],
+        "target_candidate_id": "reobserve",
+        "target_kind": "reobserve",
+        "candidate_set_digest": "a4d37e7d47a27a9546ede0312999e3f09be44d007315de585591249868d66ade",
+        "inference_digest": "db149ea90577954f440a3f9b2ade3f5e00b911f9db2e3de8fc78002f30800d87"
+      },
+      "behavior_set": {
+        "format": "taiji-g-selection-behavior-v1",
+        "version": 1,
+        "candidate_set_digest": "a4d37e7d47a27a9546ede0312999e3f09be44d007315de585591249868d66ade",
+        "inference_digest": "db149ea90577954f440a3f9b2ade3f5e00b911f9db2e3de8fc78002f30800d87",
+        "split": "retention",
+        "project_id": "p4-4-sibling-project-b",
+        "path": "p40_p44_b_missing_1_missing.txt",
+        "outcomes": [
+          {
+            "format": "taiji-g-selection-behavior-v1",
+            "version": 1,
+            "candidate_id": "abstain",
+            "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60",
+            "candidate_role": "abstain",
+            "snapshot_match": true,
+            "planner_accepted": false,
+            "route_valid": false,
+            "parameter_valid": false,
+            "world_consistent": false,
+            "execution_success": false,
+            "safe_exit_valid": true,
+            "safe_exit_progress": false,
+            "utility": 0.55,
+            "outcome_digest": "f1c39740cf36641d90293f9e69b2535908c692111e1aed001ed82064113de252"
+          },
+          {
+            "format": "taiji-g-selection-behavior-v1",
+            "version": 1,
+            "candidate_id": "reobserve",
+            "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44",
+            "candidate_role": "reobserve",
+            "snapshot_match": true,
+            "planner_accepted": false,
+            "route_valid": false,
+            "parameter_valid": false,
+            "world_consistent": false,
+            "execution_success": false,
+            "safe_exit_valid": true,
+            "safe_exit_progress": true,
+            "utility": 1.0,
+            "outcome_digest": "70a85c26006b51ab896e8da26c37cff0a5c49e0ba6a530cf07ce52772efc319e"
+          }
+        ],
+        "behavior_target_candidate_id": "reobserve",
+        "utility_margin": 0.44999999999999996,
+        "behavior_digest": "6e8d7b9b6ce77c192705e52cf850e49aee49ee6ff773efae4c91cd4240f4c71e"
+      },
+      "diagnostic": {
+        "class_key": "S1",
+        "state_profile": "recovery-no-selection",
+        "source_index": 2,
+        "candidate_width": 2,
+        "aliased_candidate_count": 0,
+        "feature_collision_rate": 0.0,
+        "behavior_target_candidate_id": "reobserve",
+        "utility_margin": 0.44999999999999996,
+        "experiment": "p4.4",
+        "split": "retention",
+        "structure_source_row": 2
+      }
+    },
+    {
+      "candidate_set": {
+        "format": "taiji-g-selection-candidate-set-v1",
+        "version": 1,
+        "example_id": "p4-4:sibling:3:width-2:bb706bdb90062aad94ad34f8b9e8f1907a46061d6dd69d8b91d4fbce8c5785ff",
+        "family_id": "p4-4:sibling:family:3",
+        "split": "retention",
+        "project_id": "p4-4-sibling-project-b",
+        "path": "p40_p44_b_missing_2_missing.txt",
+        "input_digest": "fc5fd6138adb847597bfdb9fa755bc1d78d5b733f8837172000606a93e818eb4",
+        "candidates": [
+          {
+            "format": "taiji-g-selection-candidate-set-v1",
+            "version": 1,
+            "candidate_id": "abstain",
+            "source": "runtime.abstain",
+            "candidate_role": "abstain",
+            "status": "abstained",
+            "goal": null,
+            "content_plan": null,
+            "goal_score": 0.0,
+            "content_score": 0.0,
+            "confidence": 0.0,
+            "ambiguity": 1.0,
+            "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60"
+          },
+          {
+            "format": "taiji-g-selection-candidate-set-v1",
+            "version": 1,
+            "candidate_id": "reobserve",
+            "source": "runtime.reobserve",
+            "candidate_role": "reobserve",
+            "status": "ambiguous",
+            "goal": null,
+            "content_plan": null,
+            "goal_score": 0.0,
+            "content_score": 0.0,
+            "confidence": 0.0,
+            "ambiguity": 1.0,
+            "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44"
+          }
+        ],
+        "target_candidate_id": "reobserve",
+        "target_kind": "reobserve",
+        "candidate_set_digest": "0bfe9062e160fccda16ccaa87384652050494ef98ca0183c7b8f451641cc5e32",
+        "inference_digest": "130e618abf6d9feb9683fc0028e4878d80ce15b0159fc319bbc55281e1d24b5a"
+      },
+      "behavior_set": {
+        "format": "taiji-g-selection-behavior-v1",
+        "version": 1,
+        "candidate_set_digest": "0bfe9062e160fccda16ccaa87384652050494ef98ca0183c7b8f451641cc5e32",
+        "inference_digest": "130e618abf6d9feb9683fc0028e4878d80ce15b0159fc319bbc55281e1d24b5a",
+        "split": "retention",
+        "project_id": "p4-4-sibling-project-b",
+        "path": "p40_p44_b_missing_2_missing.txt",
+        "outcomes": [
+          {
+            "format": "taiji-g-selection-behavior-v1",
+            "version": 1,
+            "candidate_id": "abstain",
+            "candidate_digest": "f4b0a075f33ab3226e9d9681c09f382887bbf9850c43ca0d41b8f8c662ca1b60",
+            "candidate_role": "abstain",
+            "snapshot_match": true,
+            "planner_accepted": false,
+            "route_valid": false,
+            "parameter_valid": false,
+            "world_consistent": false,
+            "execution_success": false,
+            "safe_exit_valid": true,
+            "safe_exit_progress": false,
+            "utility": 0.55,
+            "outcome_digest": "f1c39740cf36641d90293f9e69b2535908c692111e1aed001ed82064113de252"
+          },
+          {
+            "format": "taiji-g-selection-behavior-v1",
+            "version": 1,
+            "candidate_id": "reobserve",
+            "candidate_digest": "c01d51ecdbb692cd122e5e475d492aab3b9988adc73e7d755dcd11213e7e5b44",
+            "candidate_role": "reobserve",
+            "snapshot_match": true,
+            "planner_accepted": false,
+            "route_valid": false,
+            "parameter_valid": false,
+            "world_consistent": false,
+            "execution_success": false,
+            "safe_exit_valid": true,
+            "safe_exit_progress": true,
+            "utility": 1.0,
+            "outcome_digest": "70a85c26006b51ab896e8da26c37cff0a5c49e0ba6a530cf07ce52772efc319e"
+          }
+        ],
+        "behavior_target_candidate_id": "reobserve",
+        "utility_margin": 0.44999999999999996,
+        "behavior_digest": "cb49834c9462d1a1a9ead73b49a012b4ec777301f627508a64f36506c72f35c4"
+      },
+      "diagnostic": {
+        "class_key": "S2",
+        "state_profile": "recovery-no-selection",
+        "source_index": 3,
+        "candidate_width": 2,
+        "aliased_candidate_count": 0,
+        "feature_collision_rate": 0.0,
+        "behavior_target_candidate_id": "reobserve",
+        "utility_margin": 0.44999999999999996,
+        "experiment": "p4.4",
+        "split": "retention",
+        "structure_source_row": 3
+      }
+    }
+  ],
+  "manifest_digest": "8b02ccc2e53988967bdafbf66cebf68285fc315378eb6d85d8535c26d5a071ac"
+}

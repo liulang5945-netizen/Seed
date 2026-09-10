@@ -1,0 +1,690 @@
+{
+  "format": "taiji-m5-k-p4-4-retention-identity-calibration-v1",
+  "version": 1,
+  "status": "completed",
+  "training_performed": false,
+  "fit_called": false,
+  "external_target_used": false,
+  "sealed_payload_read": false,
+  "growth_admitted": false,
+  "can_promote": false,
+  "manifest": "E:\\Seed\\plans\\manifests\\taiji_m5_k_p4_4_retention_identity_calibration_manifest_v1.json",
+  "report": "E:\\Seed\\reports\\taiji_m5_k_p4_4_retention_identity_calibration_20260911.json",
+  "run_dir": "E:\\Seed\\output\\taiji_m5_k_p4_4_retention_identity_calibration_a24f6856ce414ddab56a9012a03d3a7c",
+  "manifest_digest": "8b02ccc2e53988967bdafbf66cebf68285fc315378eb6d85d8535c26d5a071ac",
+  "source_gate": {
+    "p4_2_completed": true,
+    "p4_3_completed": true,
+    "p4_2_manifest_report_match": true,
+    "p4_3_manifest_report_match": true,
+    "p4_2_manifest_digest_valid": true,
+    "p4_3_manifest_digest_valid": true,
+    "p4_2_growth_closed": true,
+    "p4_3_growth_closed": true,
+    "p3_6_validation_only": true,
+    "source_chain_p4_2_to_p4_1": true,
+    "source_chain_p4_3_to_p4_2": true,
+    "source_chain_p4_3_to_p3_6": true
+  },
+  "identity_gate": {
+    "at_least_two_new_projects": true,
+    "at_least_four_new_paths": true,
+    "projects_disjoint_from_historical": true,
+    "paths_disjoint_from_historical": true,
+    "candidate_digests_unique": true,
+    "behavior_digests_unique": true,
+    "no_fit_eligible_records": true
+  },
+  "structure_gate": {
+    "row_count": true,
+    "candidate_role_and_width_match": true,
+    "source_contract_digest": "feb7b88627d0ce072dd07a5c187e7be7de1c8c8ebb68a47545720002f270aef1",
+    "actual_structure_digest": "feb7b88627d0ce072dd07a5c187e7be7de1c8c8ebb68a47545720002f270aef1",
+    "rows": [
+      {
+        "candidate_count": 6,
+        "role_counts": {
+          "abstain": 1,
+          "proposal": 4,
+          "reobserve": 1
+        },
+        "confidence_bucket": "high-and-safe",
+        "safe_projection_roles": []
+      },
+      {
+        "candidate_count": 2,
+        "role_counts": {
+          "abstain": 1,
+          "reobserve": 1
+        },
+        "confidence_bucket": "zero",
+        "safe_projection_roles": [
+          "abstain",
+          "reobserve"
+        ]
+      },
+      {
+        "candidate_count": 2,
+        "role_counts": {
+          "abstain": 1,
+          "reobserve": 1
+        },
+        "confidence_bucket": "zero",
+        "safe_projection_roles": [
+          "abstain",
+          "reobserve"
+        ]
+      },
+      {
+        "candidate_count": 2,
+        "role_counts": {
+          "abstain": 1,
+          "reobserve": 1
+        },
+        "confidence_bucket": "zero",
+        "safe_projection_roles": [
+          "abstain",
+          "reobserve"
+        ]
+      }
+    ]
+  },
+  "checkpoint_gate": {
+    "parent_independent_restore": true,
+    "all_p4_2_child_checkpoints_independent_restore": true,
+    "all_p4_3_child_checkpoints_independent_restore": true,
+    "all_lineages_valid": true,
+    "historical_parent_not_overwritten": true
+  },
+  "evaluation_gate": {
+    "validation_only": true,
+    "fit_called": false,
+    "training_performed": false,
+    "external_target_unused": true,
+    "sealed_payload_not_read": true,
+    "structural_growth_closed": true,
+    "promotion_closed": true
+  },
+  "parent_metrics": {
+    "count": 4,
+    "behavior_target_hit_count": 4,
+    "behavior_target_hit_rate": 1.0,
+    "selected_utility_sum": 4.0,
+    "selected_utility_mean": 1.0,
+    "selected_residual_error": 0.0,
+    "selected_roles": {
+      "proposal": 1,
+      "reobserve": 3
+    },
+    "safe_selection_violations": 0,
+    "reobserve_selected_count": 3,
+    "reobserve_projection_passed": true,
+    "workbench_success_count": 1
+  },
+  "seed_results": [
+    {
+      "seed": 0,
+      "p4.2": {
+        "fixed-small": {
+          "checkpoint": {
+            "path": "E:\\Seed\\output\\taiji_m5_k_p4_2_capacity_attribution_7de9a73d86184f7d980d9d0b06d020c8\\seed-0\\fixed-small-trained.pt",
+            "digest": "7f88577b8ce845df19db8e39635dc8b2e61c1b26e763903b60d0282cb86f20d9",
+            "bytes": 3101,
+            "parameter_count": 13,
+            "restore": {
+              "returncode": 0,
+              "independent_process_restore": true,
+              "stdout": "{\"restore_digest_equal\": true, \"parameter_count\": 13, \"training_steps\": 368, \"passed\": true}\n",
+              "stderr": "",
+              "restore_digest_equal": true,
+              "parameter_count": 13,
+              "training_steps": 368,
+              "passed": true
+            },
+            "lineage_valid": true
+          },
+          "metrics": {
+            "count": 4,
+            "behavior_target_hit_count": 3,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 3.2,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 4
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 4,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 0,
+            "degraded_vs_parent": true
+          }
+        },
+        "context-aware-small": {
+          "checkpoint": {
+            "path": "E:\\Seed\\output\\taiji_m5_k_p4_2_capacity_attribution_7de9a73d86184f7d980d9d0b06d020c8\\seed-0\\context-aware-small-trained.pt",
+            "digest": "0e80fd122a97fcb3fb057ec5763275e38abc2c87c0597157621baa84a62f59e2",
+            "bytes": 3613,
+            "parameter_count": 22,
+            "trainable_parameter_count": 10,
+            "mode": "context-only",
+            "restore": {
+              "returncode": 0,
+              "independent_process_restore": true,
+              "stdout": "{\"restore_digest_equal\": true, \"parameter_count\": 22, \"passed\": true}",
+              "stderr": "",
+              "restore_digest_equal": true,
+              "parameter_count": 22,
+              "passed": true
+            },
+            "lineage_valid": true
+          },
+          "metrics": {
+            "count": 4,
+            "behavior_target_hit_count": 3,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 3.2,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 4
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 4,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 0,
+            "degraded_vs_parent": true
+          }
+        },
+        "fixed-large": {
+          "checkpoint": {
+            "path": "E:\\Seed\\output\\taiji_m5_k_p4_2_capacity_attribution_7de9a73d86184f7d980d9d0b06d020c8\\seed-0\\fixed-large-trained.pt",
+            "digest": "de62d589a7003724c4ffc5a58fa09974e4b85ca9ee74d0f72423a658b627179c",
+            "bytes": 3549,
+            "parameter_count": 22,
+            "trainable_parameter_count": 22,
+            "mode": "full",
+            "restore": {
+              "returncode": 0,
+              "independent_process_restore": true,
+              "stdout": "{\"restore_digest_equal\": true, \"parameter_count\": 22, \"passed\": true}",
+              "stderr": "",
+              "restore_digest_equal": true,
+              "parameter_count": 22,
+              "passed": true
+            },
+            "lineage_valid": true
+          },
+          "metrics": {
+            "count": 4,
+            "behavior_target_hit_count": 3,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 3.2,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 4
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 4,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 0,
+            "degraded_vs_parent": true
+          }
+        }
+      },
+      "p4.3": {
+        "new-only": {
+          "checkpoint": {
+            "path": "E:\\Seed\\output\\taiji_m5_k_p4_3_retention_incremental_1a568abf00804559a9cff8a9e6770583\\seed-0\\new-only-trained.pt",
+            "digest": "be8d6b2f16b2369349a8f815bc21a3bd2481604957a2c714745b18eda504a60a",
+            "bytes": 3013,
+            "parameter_count": 13,
+            "restore": {
+              "returncode": 0,
+              "independent_process_restore": true,
+              "stdout": "{\"restore_digest_equal\": true, \"parameter_count\": 13, \"training_steps\": 368, \"passed\": true}\n",
+              "stderr": "",
+              "restore_digest_equal": true,
+              "parameter_count": 13,
+              "training_steps": 368,
+              "passed": true
+            },
+            "lineage_valid": true
+          },
+          "metrics": {
+            "count": 4,
+            "behavior_target_hit_count": 3,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 3.2,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 4
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 4,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 0,
+            "degraded_vs_parent": true
+          }
+        },
+        "rehearsal-mix": {
+          "checkpoint": {
+            "path": "E:\\Seed\\output\\taiji_m5_k_p4_3_retention_incremental_1a568abf00804559a9cff8a9e6770583\\seed-0\\rehearsal-mix-trained.pt",
+            "digest": "62770b2eda84dafcb46b40f783d469a56efcbf06ba3a651862e17f7ec8e463ad",
+            "bytes": 3181,
+            "parameter_count": 13,
+            "restore": {
+              "returncode": 0,
+              "independent_process_restore": true,
+              "stdout": "{\"restore_digest_equal\": true, \"parameter_count\": 13, \"training_steps\": 400, \"passed\": true}\n",
+              "stderr": "",
+              "restore_digest_equal": true,
+              "parameter_count": 13,
+              "training_steps": 400,
+              "passed": true
+            },
+            "lineage_valid": true
+          },
+          "metrics": {
+            "count": 4,
+            "behavior_target_hit_count": 3,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 3.2,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 4
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 4,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 0,
+            "degraded_vs_parent": true
+          }
+        }
+      }
+    },
+    {
+      "seed": 1,
+      "p4.2": {
+        "fixed-small": {
+          "checkpoint": {
+            "path": "E:\\Seed\\output\\taiji_m5_k_p4_2_capacity_attribution_7de9a73d86184f7d980d9d0b06d020c8\\seed-1\\fixed-small-trained.pt",
+            "digest": "7f88577b8ce845df19db8e39635dc8b2e61c1b26e763903b60d0282cb86f20d9",
+            "bytes": 3101,
+            "parameter_count": 13,
+            "restore": {
+              "returncode": 0,
+              "independent_process_restore": true,
+              "stdout": "{\"restore_digest_equal\": true, \"parameter_count\": 13, \"training_steps\": 368, \"passed\": true}\n",
+              "stderr": "",
+              "restore_digest_equal": true,
+              "parameter_count": 13,
+              "training_steps": 368,
+              "passed": true
+            },
+            "lineage_valid": true
+          },
+          "metrics": {
+            "count": 4,
+            "behavior_target_hit_count": 3,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 3.2,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 4
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 4,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 0,
+            "degraded_vs_parent": true
+          }
+        },
+        "context-aware-small": {
+          "checkpoint": {
+            "path": "E:\\Seed\\output\\taiji_m5_k_p4_2_capacity_attribution_7de9a73d86184f7d980d9d0b06d020c8\\seed-1\\context-aware-small-trained.pt",
+            "digest": "fb6beeffefa92f87714a2306306017aab25c44df883a24b61032e82112cb0134",
+            "bytes": 3613,
+            "parameter_count": 22,
+            "trainable_parameter_count": 10,
+            "mode": "context-only",
+            "restore": {
+              "returncode": 0,
+              "independent_process_restore": true,
+              "stdout": "{\"restore_digest_equal\": true, \"parameter_count\": 22, \"passed\": true}",
+              "stderr": "",
+              "restore_digest_equal": true,
+              "parameter_count": 22,
+              "passed": true
+            },
+            "lineage_valid": true
+          },
+          "metrics": {
+            "count": 4,
+            "behavior_target_hit_count": 3,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 3.2,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 4
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 4,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 0,
+            "degraded_vs_parent": true
+          }
+        },
+        "fixed-large": {
+          "checkpoint": {
+            "path": "E:\\Seed\\output\\taiji_m5_k_p4_2_capacity_attribution_7de9a73d86184f7d980d9d0b06d020c8\\seed-1\\fixed-large-trained.pt",
+            "digest": "ade144ffd739a0ec92bb016ed58e10fd8404765740cc539cee43d9cfb94719f6",
+            "bytes": 3549,
+            "parameter_count": 22,
+            "trainable_parameter_count": 22,
+            "mode": "full",
+            "restore": {
+              "returncode": 0,
+              "independent_process_restore": true,
+              "stdout": "{\"restore_digest_equal\": true, \"parameter_count\": 22, \"passed\": true}",
+              "stderr": "",
+              "restore_digest_equal": true,
+              "parameter_count": 22,
+              "passed": true
+            },
+            "lineage_valid": true
+          },
+          "metrics": {
+            "count": 4,
+            "behavior_target_hit_count": 4,
+            "behavior_target_hit_rate": 1.0,
+            "selected_utility_sum": 4.0,
+            "selected_utility_mean": 1.0,
+            "selected_residual_error": 0.0,
+            "selected_roles": {
+              "proposal": 1,
+              "reobserve": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 3,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 1,
+            "degraded_vs_parent": false
+          }
+        }
+      },
+      "p4.3": {
+        "new-only": {
+          "checkpoint": {
+            "path": "E:\\Seed\\output\\taiji_m5_k_p4_3_retention_incremental_1a568abf00804559a9cff8a9e6770583\\seed-1\\new-only-trained.pt",
+            "digest": "b1986c1e31691679ca3ff224f1c65d8fe74e45d405b497343e93cb273f658924",
+            "bytes": 3013,
+            "parameter_count": 13,
+            "restore": {
+              "returncode": 0,
+              "independent_process_restore": true,
+              "stdout": "{\"restore_digest_equal\": true, \"parameter_count\": 13, \"training_steps\": 368, \"passed\": true}\n",
+              "stderr": "",
+              "restore_digest_equal": true,
+              "parameter_count": 13,
+              "training_steps": 368,
+              "passed": true
+            },
+            "lineage_valid": true
+          },
+          "metrics": {
+            "count": 4,
+            "behavior_target_hit_count": 3,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 3.2,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 4
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 4,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 0,
+            "degraded_vs_parent": true
+          }
+        },
+        "rehearsal-mix": {
+          "checkpoint": {
+            "path": "E:\\Seed\\output\\taiji_m5_k_p4_3_retention_incremental_1a568abf00804559a9cff8a9e6770583\\seed-1\\rehearsal-mix-trained.pt",
+            "digest": "7bb68e82cee524f141640ee82218d1fb1771e7ba1929cfa00db34c740c99d4ad",
+            "bytes": 3181,
+            "parameter_count": 13,
+            "restore": {
+              "returncode": 0,
+              "independent_process_restore": true,
+              "stdout": "{\"restore_digest_equal\": true, \"parameter_count\": 13, \"training_steps\": 400, \"passed\": true}\n",
+              "stderr": "",
+              "restore_digest_equal": true,
+              "parameter_count": 13,
+              "training_steps": 400,
+              "passed": true
+            },
+            "lineage_valid": true
+          },
+          "metrics": {
+            "count": 4,
+            "behavior_target_hit_count": 3,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 3.2,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 4
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 4,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 0,
+            "degraded_vs_parent": true
+          }
+        }
+      }
+    }
+  ],
+  "historical_reference": {
+    "p4_2_historical_retention": {
+      "p4.2/seed-0/fixed-small": {
+        "count": 4,
+        "behavior_target_hit_count": 3,
+        "behavior_target_hit_rate": 0.75,
+        "selected_utility_sum": 3.2,
+        "selected_utility_mean": 0.8,
+        "selected_residual_error": 0.19999999999999996,
+        "selected_roles": {
+          "reobserve": 4
+        },
+        "safe_selection_violations": 0,
+        "reobserve_selected_count": 4,
+        "reobserve_projection_passed": true,
+        "workbench_success_count": 0
+      },
+      "p4.2/seed-0/context-aware-small": {
+        "count": 4,
+        "behavior_target_hit_count": 3,
+        "behavior_target_hit_rate": 0.75,
+        "selected_utility_sum": 3.2,
+        "selected_utility_mean": 0.8,
+        "selected_residual_error": 0.19999999999999996,
+        "selected_roles": {
+          "reobserve": 4
+        },
+        "safe_selection_violations": 0,
+        "reobserve_selected_count": 4,
+        "reobserve_projection_passed": true,
+        "workbench_success_count": 0
+      },
+      "p4.2/seed-0/fixed-large": {
+        "count": 4,
+        "behavior_target_hit_count": 3,
+        "behavior_target_hit_rate": 0.75,
+        "selected_utility_sum": 3.2,
+        "selected_utility_mean": 0.8,
+        "selected_residual_error": 0.19999999999999996,
+        "selected_roles": {
+          "reobserve": 4
+        },
+        "safe_selection_violations": 0,
+        "reobserve_selected_count": 4,
+        "reobserve_projection_passed": true,
+        "workbench_success_count": 0
+      },
+      "p4.2/seed-1/fixed-small": {
+        "count": 4,
+        "behavior_target_hit_count": 3,
+        "behavior_target_hit_rate": 0.75,
+        "selected_utility_sum": 3.2,
+        "selected_utility_mean": 0.8,
+        "selected_residual_error": 0.19999999999999996,
+        "selected_roles": {
+          "reobserve": 4
+        },
+        "safe_selection_violations": 0,
+        "reobserve_selected_count": 4,
+        "reobserve_projection_passed": true,
+        "workbench_success_count": 0
+      },
+      "p4.2/seed-1/context-aware-small": {
+        "count": 4,
+        "behavior_target_hit_count": 3,
+        "behavior_target_hit_rate": 0.75,
+        "selected_utility_sum": 3.2,
+        "selected_utility_mean": 0.8,
+        "selected_residual_error": 0.19999999999999996,
+        "selected_roles": {
+          "reobserve": 4
+        },
+        "safe_selection_violations": 0,
+        "reobserve_selected_count": 4,
+        "reobserve_projection_passed": true,
+        "workbench_success_count": 0
+      },
+      "p4.2/seed-1/fixed-large": {
+        "count": 4,
+        "behavior_target_hit_count": 4,
+        "behavior_target_hit_rate": 1.0,
+        "selected_utility_sum": 4.0,
+        "selected_utility_mean": 1.0,
+        "selected_residual_error": 0.0,
+        "selected_roles": {
+          "proposal": 1,
+          "reobserve": 3
+        },
+        "safe_selection_violations": 0,
+        "reobserve_selected_count": 3,
+        "reobserve_projection_passed": true,
+        "workbench_success_count": 1
+      }
+    },
+    "p4_3_fresh_retention": {
+      "p4.3/seed-0/new-only": {
+        "count": 20,
+        "behavior_target_hit_count": 12,
+        "behavior_target_hit_rate": 0.6,
+        "selected_utility_sum": 13.600000000000001,
+        "selected_utility_mean": 0.68,
+        "selected_residual_error": 0.31999999999999995,
+        "selected_roles": {
+          "reobserve": 20
+        },
+        "safe_selection_violations": 0,
+        "reobserve_selected_count": 20,
+        "reobserve_projection_passed": true,
+        "workbench_success_count": 0,
+        "degraded_vs_parent": false
+      },
+      "p4.3/seed-0/rehearsal-mix": {
+        "count": 20,
+        "behavior_target_hit_count": 12,
+        "behavior_target_hit_rate": 0.6,
+        "selected_utility_sum": 13.600000000000001,
+        "selected_utility_mean": 0.68,
+        "selected_residual_error": 0.31999999999999995,
+        "selected_roles": {
+          "reobserve": 20
+        },
+        "safe_selection_violations": 0,
+        "reobserve_selected_count": 20,
+        "reobserve_projection_passed": true,
+        "workbench_success_count": 0,
+        "degraded_vs_parent": false
+      },
+      "p4.3/seed-1/new-only": {
+        "count": 20,
+        "behavior_target_hit_count": 12,
+        "behavior_target_hit_rate": 0.6,
+        "selected_utility_sum": 13.600000000000001,
+        "selected_utility_mean": 0.68,
+        "selected_residual_error": 0.31999999999999995,
+        "selected_roles": {
+          "reobserve": 20
+        },
+        "safe_selection_violations": 0,
+        "reobserve_selected_count": 20,
+        "reobserve_projection_passed": true,
+        "workbench_success_count": 0,
+        "degraded_vs_parent": false
+      },
+      "p4.3/seed-1/rehearsal-mix": {
+        "count": 20,
+        "behavior_target_hit_count": 12,
+        "behavior_target_hit_rate": 0.6,
+        "selected_utility_sum": 13.600000000000001,
+        "selected_utility_mean": 0.68,
+        "selected_residual_error": 0.31999999999999995,
+        "selected_roles": {
+          "reobserve": 20
+        },
+        "safe_selection_violations": 0,
+        "reobserve_selected_count": 20,
+        "reobserve_projection_passed": true,
+        "workbench_success_count": 0,
+        "degraded_vs_parent": false
+      }
+    },
+    "p4_2_historical_degraded_keys": [
+      "p4.2/seed-0/context-aware-small",
+      "p4.2/seed-0/fixed-large",
+      "p4.2/seed-0/fixed-small",
+      "p4.2/seed-1/context-aware-small",
+      "p4.2/seed-1/fixed-small"
+    ]
+  },
+  "sibling_degraded_keys": [
+    "p4.2/seed-0/context-aware-small",
+    "p4.2/seed-0/fixed-large",
+    "p4.2/seed-0/fixed-small",
+    "p4.2/seed-1/context-aware-small",
+    "p4.2/seed-1/fixed-small"
+  ],
+  "historical_degraded_keys_in_sibling": [
+    "p4.2/seed-0/context-aware-small",
+    "p4.2/seed-0/fixed-large",
+    "p4.2/seed-0/fixed-small",
+    "p4.2/seed-1/context-aware-small",
+    "p4.2/seed-1/fixed-small"
+  ],
+  "p4_3_sibling_degraded_keys": [
+    "p4.3/seed-0/new-only",
+    "p4.3/seed-0/rehearsal-mix",
+    "p4.3/seed-1/new-only",
+    "p4.3/seed-1/rehearsal-mix"
+  ],
+  "retention_failure_reproduced": true,
+  "retention_artifact_specific": false,
+  "retention_measurement_unresolved": false,
+  "outcome": "retention_failure_reproduced",
+  "experiment_passed": false,
+  "interpretation": "completed: outcome=retention_failure_reproduced; validation-only; no structural growth or promotion",
+  "elapsed_seconds": 21.443
+}
