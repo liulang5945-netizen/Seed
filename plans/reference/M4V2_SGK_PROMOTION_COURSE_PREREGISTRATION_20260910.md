@@ -1,5 +1,7 @@
 # M4.V2 S/G/K 连续课程晋级 formal 预注册（promotion course v1）
 
+> 状态修订（2026-09-10，基线 4629bc8c）：**暂停执行，待 v2 替代**。本轮实测 v4 K worker 三 seed 权重相同、course 3/4/5 类顺序重复 0/1/2；§5 G3 的 loss/surprise 保持方向应为 after−before≤epsilon，G5 须区分有效参数与 FS 额外状态。先完成同 replay 的直接学习对照，再安排 lineage。下文保留冻结历史，不再授权 §9 开跑。依据见 [结果复审](M4V2_POST_C_STAGE_RESULT_REVIEW_20260910.md)，唯一顺序见 [当前计划](../active/roadmap/03_CURRENT_EXECUTION.md)。
+
 > 冻结日期：2026-09-10。前置：[scorecard v3 合同 §6/§7](M5_K_AXIS_SCORECARD_V3_CONTRACT_20260910.md)（唯一后续动作 = 本文）、[C 阶段 formal v2 §7](M4V2_C_STAGE_FORMAL_V2_PREREGISTRATION_20260910.md)（FS 收束为 K 相位默认学习机制候选）、[B3 K-phase pilot](M4V2_B3_K_PILOT_PREREGISTRATION_20260910.md)（FS 机制门 12/12）、[A8 promotion 预注册 §3–§5](M4V2_R6_A8_PROMOTION_PREREGISTRATION_20260909.md)（晋级门结构：新能力置信下界 / 旧能力 retention / 资源-rollback-副作用）、[R6 资源聚合同](M4V2_R6_RESOURCE_AGGREGATE_PREREGISTRATION_20260909.md)（peak/wall 口径）。本文冻结同一 parent 连续 S/G/K 课程的假设、合同、臂、判据、epsilon、结果映射与停止线；冻结后按 §9 顺序执行，顺序以 [03_CURRENT_EXECUTION.md](../active/roadmap/03_CURRENT_EXECUTION.md) 为准。
 
 ## 1. 可证伪假设与诚实边界

@@ -1,5 +1,7 @@
 # 计划归档索引
 
+最新归档：[2026-09-10 结果复审前执行流水](history/20260910_result_review/EXECUTION_HISTORY.md) 与 [历史计划入口](history/20260910_result_review/PLAN_INDEX_HISTORY.md)。当前顺序见 [唯一执行计划](../active/roadmap/03_CURRENT_EXECUTION.md)。
+
 这里保存已完成、被新路线替代或仅用于历史追溯的计划。归档文档保留当时的实验上下文和决策证据，但不提供当前执行顺序。
 
 ## 归档分类

@@ -1,5 +1,7 @@
 # M4.V2 B3-K C-entry capacity-parity audit
 
+> 后续口径纠正（2026-09-10）：下文将 14,252 解释为实际新增更新不成立，其中 14,240 为父代累计计数；不得据此执行扩容/补训练。历史报告保留，widened 路线已收束。最新解释与执行边界见 [本轮复审](M4V2_POST_C_STAGE_RESULT_REVIEW_20260910.md) 和 [当前计划](../active/roadmap/03_CURRENT_EXECUTION.md)。
+
 状态：已完成只读审计；当前 formal 对照被标记为 capacity/update-budget confounded；未启动新训练，未改变默认 runtime。
 
 ## 审计输入
