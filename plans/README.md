@@ -38,7 +38,9 @@ B3-K 的非饱和 structured-loss diagnostic 已通过：同一 model 17 parent�
 
 **B3 K-phase pilot 已执行，机制门 12/12 全过**：`taiji/k_fast_slow.py`（slow+fast 拆分、wake 写 fast、真实经历 replay 写 slow、consolidate 清零且保持有效权重）+ 定向测试 5/5 + 三臂 pilot。诊断读数：整体 validation FS（−0.000335）略逊 C（−0.000455），但 **D/R 弱类探针 FS 优于 C**（−0.1928 vs −0.1914）——replay 收益是类选择性的。修订注记：wake 轨迹位等价断言在浮点下不可达，门改容差（实测 2.38e-7）。
 
-**当前唯一下一步（需拍板）**：(a) 启动 C 阶段正式比较预注册（类分解判据 + fresh sealed v4）；或 (b) 暂缓。拍板前不训练、不读 sealed v3。
+**C 阶段正式比较预注册已冻结**：[C-stage formal preregistration](reference/M4V2_C_STAGE_FORMAL_PREREGISTRATION_20260910.md)——四臂零重训（F / C 300 步 / **FS candidate** 300 wake+100 replay 单列 / XL fixed-large 2× 容量次要-bar），统计单元 course n=3；判据 G1 学习门 / G2 灾难界 / **G3 弱类主判据**（D/R sealed：FS < C 于 ≥2/3 课程）/ **G4 整体非劣**（epsilon 从 validation paired diff 派生）；sealed v4 全新 materialize（覆盖 D/R/A）。结果映射：全过 → FS 为 K 相位默认机制候选；G3 败 → continuation 收束为默认；G4 败 → replay 回炉。
+
+**当前唯一下一步**：执行 C 阶段 formal §6——materialize sealed v4 → 四臂 runner（两阶段纪律）→ 运行报告；任一停止线触发即停。
 
 ## 权威文档
 
