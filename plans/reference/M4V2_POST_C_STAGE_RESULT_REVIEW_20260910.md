@@ -308,3 +308,22 @@ P3.2 的结论是“选择所有权已经可以从 K 迁移到 G，且不损害�
 | checkpoint 入场 | 通过 | P3.2 K1/K2 保存、独立进程 restore 和 digest 校验通过；没有 K 参数变化 |
 
 本轮只证明“可以开始设计 G-only 学习”，不证明 G 已产生能力增益。候选集合目前主要是“K 提案 vs 安全 abstain/reobserve”的二选一，避免把简单的候选复制误报为新能力。下一步唯一执行项改为：冻结 P3.2 K，保存并独立恢复空白 G child，只训练 G 的候选选择器，再以 K-only、zero-step owner-transfer、trained-G 三臂做保持与动作验证；任何 checkpoint、旧类保持或安全出口退化都必须回滚。
+
+## 21. P3.3 G-only learning Gate 结果（2026-09-11）
+
+按 §20 的 data-signal 入场条件运行了 [P3.3 G-only learning Gate](../../scripts/training/eval_taiji_m5_k_p3_3_g_learning.py)，产出 [P3.3 G-only 报告](../../reports/taiji_m5_k_p3_3_g_learning_20260911.json)。本轮继续冻结 P3.2 的 K1/K2，只对 G 做 320 steps、13 参数的小步 fit；train/validation 使用 P3.3 candidate manifest，P2.7 的 4 条 holdout 只做最终验证，没有进入 fit，未读取新的 sealed payload。
+
+| Gate | 结果 | 证据含义 |
+|---|---:|---|
+| K parent 保存、独立恢复、训练前后 digest | 通过 | K1/K2 的 checkpoint 在 G 训练前后均可独立恢复，K1/K2 digest 完全不变 |
+| G zero-step / trained checkpoint | 通过 | 空白 G 与训练后 G 均可内容寻址、独立恢复；训练后 digest 与 zero-step 不同 |
+| G-only 训练边界 | 通过 | 仅 fit 40 条 train candidate set、320 steps、13 个 G 参数；validation/holdout 未 fit，外部 target 未进入 runtime |
+| lineage / 篡改 / 错误 parent 拒绝 | 通过 | tampered checkpoint、错误 K lineage 均 fail-closed |
+| P2.7 holdout 与 Workbench | 通过但无增益 | 4 条 holdout 的 fit count 为 0，四类 Workbench 行为保持通过 |
+| 行为增益 | 未通过 | train 40/40、validation 10/10、holdout 4/4 上，K-only、zero-step、trained-G 的选择与动作均完全一致 |
+
+本轮的正确结论是“G 的工程学习闭环成立，但当前候选信号没有让 G 改变行为”，不是“G 已经产生选择能力”，也不是“继续堆同样 epoch 就会自然获得能力”。当前候选主要仍是 K proposal 与 `abstain`/`reobserve` 的安全二选一；G 的更新虽然改变了参数，却没有改变三臂轨迹，因此 `can_promote=false`，不追加同质训练轮数。
+
+这次实验同时修复了候选身份的审计漏洞：candidate identity 已绑定 split/course/index/project/template/input digest，40 条 train 不再因重复观测折叠成少数候选集合；manifest 的 `experience_identity_unique` 与 `candidate_set_digest_unique` 均通过。该修复证明数据没有被错误去重，但仍没有证明候选之间存在足够的独立行为差异。
+
+因此下一步唯一执行项改为 P3.4 行为差异候选信号 Gate：冻结当前 K、zero-step G 和 trained-G，不追加同质 epoch；重新构造包含 K1/K2 proposal、合法 score-grid counterfactual、`abstain`/`reobserve` 及按场景启用的 recovery/clarify 候选集合，用隔离 Workbench/action contract 的 snapshot match、route/parameter validity、执行成功、世界状态一致性和安全出口生成 utility。先只做 train/validation data-signal canary，要求出现非零 utility margin 和 K/G 可解释分歧；信号不足则停在数据/目标重设计，不进入 fit。只有 P3.4 通过后，才允许再次运行 G-only fit，并用 K-only、zero-step、trained-G 三臂验证 contested cohort 的真实收益、旧类保持、安全出口和恢复链路。
