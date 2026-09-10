@@ -67,7 +67,9 @@
 
 **上调 candidate 容量的 parity input preflight 已完成。** 合同为 [capacity-parity manifest](../../manifests/taiji_m4v2_b3_k_c_capacity_parity_v1.json)，机器报告为 [capacity-parity input preflight](../../../reports/taiji_m4v2_b3_k_c_capacity_parity_input_preflight_20260910.json)：9/9 fixed-large cell 满足 38,664 参数字节、14,252 实际更新步、9 个逻辑 checkpoint、同 parent/course 和 fresh-restore；candidate artifact 尚未生成，且不能直接复制 fixed-large replica。
 
-**当前唯一下一步：冻结 widened-candidate 路线设计。** 设计必须达到 38,664 参数字节，同时保持与 fixed-large 不同的 owner/update/readout 路径；设计未冻结前不训练、不读取 sealed formal、不调整学习率、不复活 R5 learned router 或旧结构增长路线，不接 default runtime/provider/MCP/client/CUDA。
+**widened-candidate 路线设计已冻结：[M4V2_B3_K_C_WIDENED_CANDIDATE_DESIGN_20260910.md](../../reference/M4V2_B3_K_C_WIDENED_CANDIDATE_DESIGN_20260910.md)。** 路线为单实例双通道分解——每个可学习头（K1 三头 + K2 三头）从单 delta 通道扩展为「supervised（全量 train experience 监督 delta）+ k3-feedback（K3 admitted outcome projection delta）」双通道，readout 为异构信号通道之和；通道与 supervised 同形状，参数精确 ×2 = 9,666（38,664 字节，ratio 0.0%）。与 fixed-large 的路径差异：owner（feedback 通道绑定 K3 admitted outcome）、update（7,126 ticks × 2 通道 = 14,252 步精确相等）、readout（通道和 vs replica 平均）。K continuation contract 升 v2（update 触发视图扩展，仍无 optimizer state）。硬性 distinct 证据门：逐 cell 报告两通道参数差分范数与反馈子集覆盖率，退化（零差分或覆盖率 <50%）即停。
+
+**当前唯一下一步**：实现 K continuation contract v2 与 widened-candidate artifact builder——(1) `taiji/k_continuation.py` v2 双通道语义 + receipt 扩展 + 定向测试；(2) 按 manifest `taiji-k-c-entry-parity-candidate-v1` 生成 artifact 并出参数核算表（核验 9,666 参数 / 38,664 字节）；(3) 三硬门机器核验（参数字节 / 14,252 更新步 / 9 checkpoint + distinct 证据 + fresh restore/rollback/parent/K3 不变）；核验通过前不训练、不读 sealed formal、不调学习率。
 
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 

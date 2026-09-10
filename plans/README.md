@@ -20,7 +20,9 @@ B3-K 的非饱和 structured-loss diagnostic 已通过：同一 model 17 parent�
 
 **上调 candidate 容量的 parity input preflight 已完成。** 合同为 [capacity-parity manifest](manifests/taiji_m4v2_b3_k_c_capacity_parity_v1.json)，输入报告为 [capacity-parity input preflight](../reports/taiji_m4v2_b3_k_c_capacity_parity_input_preflight_20260910.json)：9/9 fixed-large cell 均满足 38,664 参数字节、14,252 实际更新步、9 个逻辑 checkpoint、同 parent/course 和 fresh-restore；candidate parity artifact 尚未生成，且不能直接复制 fixed-large replica。
 
-**当前唯一下一步：冻结 widened-candidate 路线设计。** 设计必须达到 38,664 参数字节，同时保持与 fixed-large 不同的 owner/update/readout 路径；设计未冻结前不训练、不读取 sealed formal、不调学习率、不解冻 R5/结构增长或外围 provider/MCP/client/CUDA 路线。
+**widened-candidate 路线设计已冻结**：[widened-candidate design](reference/M4V2_B3_K_C_WIDENED_CANDIDATE_DESIGN_20260910.md)——单实例双通道分解（supervised + k3-feedback），每个可学习头精确 ×2 = 9,666 参数（38,664 字节，ratio 0.0%），update 7,126 ticks × 2 通道 = 14,252 步精确对齐 fixed-large，readout 为异构通道和而非 replica 平均；K continuation contract 升 v2，含硬性 distinct 证据门（通道差分范数/反馈覆盖率）。设计未实现前不训练、不读 sealed formal。
+
+**当前唯一下一步**：实现 K continuation contract v2 与 widened-candidate artifact builder（参数核算表 + 三硬门机器核验）；核验通过前不训练、不读 sealed formal、不调学习率。
 
 ## 权威文档
 
