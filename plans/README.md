@@ -4,11 +4,12 @@
 
 目前已有五类 K worker 和 fast/slow＋replay 实现。C-stage v2 在 D/R/A 小型评估上四门通过，FS 比 C 的平均 MSE 改善约 0.001868，弱类改善约 0.002495。该组合使用额外 replay；三组 v4 K worker 权重实测相同，全五类泛化与独立拆分收益仍待验证，can_promote=false。
 
-**唯一下一步：同 replay、同预算的 FS / 直接 continuation 配对诊断。** 随后依次完成有效信号/五类数据合同、独立效果验证、S/G/K 联合状态整合与结构成长。SGK v1 暂停，待纠正保持判据方向、资源计量和课程独立性后发布 v2。
+**P0 等 replay 配对诊断已完成。唯一下一步：P1 有效信号与五类数据合同审计。** P0 已证明当前 FS 有效轨迹与直接 continuation＋相同 replay 在 `4.76837158203125e-7` 峰值差内等价，因此后续效果基线采用直接 continuation＋replay；FS 保留为可恢复状态实现候选。随后才进入 P2 独立学习/保持验证、P3 S/G/K 整合与 P4 结构成长。SGK v1 继续暂停。
 
 阶段已按 601413cd 收束为“研究审计完成、模型能力尚未验收”，没有新增实验成绩。**当前只执行 P0→P1→P2：建立可复现、收益可归因、旧能力保持可测的固定容量持续学习基线。** P3–P5 保留为后续路线，不并行开工；完整成果分类、停止条件及文档边界均在当前计划中。本次只修订计划，不启动训练。
 
 - [本轮结果复审](reference/M4V2_POST_C_STAGE_RESULT_REVIEW_20260910.md)：实际收益、预算混淆、父 worker 重复、seed 循环、恢复缺口与修订依据。
+- [P0 等 replay 诊断报告](../reports/taiji_m5_k_p0_equal_replay_diagnostic_20260910.json)：同课程、同 replay、轨迹差异和 checkpoint preflight 结果。
 - [机器审计](../reports/taiji_m4v2_plan_result_review_20260910.json)：源码摘要、权重对比、资源计数和 retention 反例。
 - [历史执行流水](archive/history/20260910_result_review/EXECUTION_HISTORY.md)：保留此前全部记录，旧“下一步”不再授权执行。
 - [历史计划入口](archive/history/20260910_result_review/PLAN_INDEX_HISTORY.md)：此前入口及研究进展记录。
