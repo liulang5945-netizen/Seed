@@ -464,3 +464,18 @@ P4.4 的证据把 P4.3 的表面矛盾拆开了：P4.3 fresh retention 的 `0.68
 | 结果出口 | 未晋级 | `outcome=update_rule_unresolved`、`training_performed=true`、`experiment_passed=false`、`growth_admitted=false`、`can_promote=false` |
 
 P4.5 的证据说明，简单把旧样本交错进训练仍没有独立贡献；固定参数距离的 trust-region 可以在一个 seed 上回到 parent 的保持表现，但在该 seed 上失去新任务增益，另一个 seed 则在保持和新任务之间重新出现冲突。因此当前待解决的不是“有没有一个更小的固定半径”，而是如何在函数行为层面同时约束 parent 能力和学习新任务。下一步改为 **P4.6 功能性 parent-preserving objective 对照 Gate**：使用与 P4.5 全部 disjoint 的 constraint-cohort，以 parent 输出作功能性保持项，不把评估 target/utility 写入输入；若两个 seed 仍不能同时满足新任务与保持，停止继续调参并维持 dynamic growth/promotion/P5 冻结。
+
+## 31. P4.6 功能性 parent-preserving objective 对照结果（2026-09-11）
+
+按 §30 的唯一下一步运行了 [P4.6 functional parent-preserving objective](../../scripts/training/eval_taiji_m5_k_p4_6_functional_parent_objective.py)，产出 [P4.6 manifest](../manifests/taiji_m5_k_p4_6_functional_parent_objective_manifest_v1.json) 与 [P4.6 报告](../../reports/taiji_m5_k_p4_6_functional_parent_objective_20260911.json)。本轮固定 13 参数 G、K1/K2、候选输入、selection threshold 和安全投影；新生成 train、validation、holdout、constraint-cohort、fresh retention，均与 P4.5 disjoint。constraint-cohort 只向 functional 臂提供候选 feature vectors 和 parent teacher score，训练代码不读取其 behavior target、utility 或 retention target；`new-only` 是同预算基线。两个 deterministic seed 均通过 checkpoint 保存、独立恢复、lineage、篡改拒绝和 parent rollback 检查。
+
+| Gate | 结果 | 关键实测 |
+|---|---:|---|
+| 来源、身份与结构 | 通过 | train/validation/holdout 各 20 条，constraint/fresh retention 各 4 条；五类覆盖，retention structure digest 与 P4.4 合同一致，所有 project/path/candidate/behavior digest 隔离 |
+| checkpoint / lineage | 通过 | 两臂两个 seed 的零步/训练后 checkpoint 全部独立恢复，tamper 拒绝，parent 未覆盖；参数始终 13，K1/K2 未变 |
+| new-only 基线 | 通过基线 | 两 seed new holdout utility `0.68`、target `12/20`、safe violation `0`；fresh retention utility `0.8`、target `3/4` |
+| functional seed-0 | 保持通过但新任务失败 | fresh retention utility `1.0`、target `4/4`；new holdout utility `0.585`、target `9/20`、safe violation `6` |
+| functional seed-1 | 新任务通过但保持失败 | new holdout utility `0.68`、target `12/20`、safe violation `0`；fresh retention utility `0.8`、target `3/4` |
+| 结果出口 | 未晋级/路线收束 | `outcome=functional_update_unresolved`、`experiment_passed=false`、`growth_admitted=false`、`can_promote=false` |
+
+P4.6 证明功能性 parent 保持项确实改变了更新轨迹，但仍在 seed 间形成互斥：保持恢复时新任务明显退化，新任务恢复时保持仍退化。因此 P4.0–P4.6 已完成固定 G 路线预定的容量、身份、rehearsal、参数约束和功能约束对照；这不是结构成长证据，也不是继续盲目调参的理由。当前唯一入口改为新的架构/目标决策：在明确新的能力目标、保持合同和模型/表示边界前，冻结 dynamic growth、promotion、P5、CUDA、IDE/provider 与客户端视觉，不再自动追加 epoch、loss weight、trust-region 或同质 seed。
