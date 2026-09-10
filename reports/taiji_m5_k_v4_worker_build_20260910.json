@@ -1,0 +1,173 @@
+{
+  "report_format": "taiji-m5-k-v4-worker-build-v1",
+  "version": 1,
+  "status": "passed",
+  "can_promote": false,
+  "preregistration": "plans/reference/M5_K_SIGNAL_SPACE_EXPANSION_PREREGISTRATION_20260910.md",
+  "worker_root": "E:\\Seed\\checkpoints\\taiji_k_workers_v4",
+  "reports": [
+    {
+      "learner_seed": 17,
+      "status": "passed",
+      "parameter_ledger": {
+        "k1.semantic": 472,
+        "k2.transition": 5176,
+        "k1_fact_keys": 14,
+        "k1_goal_ids": [
+          "goal:clarify-language",
+          "goal:clarify-toolchain",
+          "goal:inspect-language",
+          "goal:recover-target"
+        ],
+        "k2_goal_ids": [
+          "goal:clarify-language",
+          "goal:clarify-toolchain",
+          "goal:inspect-language",
+          "goal:recover-target"
+        ]
+      },
+      "worker_training_steps": {
+        "k1.semantic": 2400,
+        "k2.transition": 6720
+      },
+      "losses": {
+        "k1.semantic": {
+          "fact_loss": 0.043075598776340485,
+          "goal_loss": 3.416980689507909e-05,
+          "content_loss": 7.668133548577316e-06
+        },
+        "k2.transition": {
+          "transition_loss": 0.015057258307933807,
+          "goal_loss": 0.000759282847866416,
+          "content_loss": 0.000318126316415146
+        }
+      },
+      "fresh_restore_gate": {
+        "k1.semantic": true,
+        "k2.transition": true
+      },
+      "artifact_digests": {
+        "k1.semantic": "03aeb03fcde85a9afd1214f9d83b1c93aa79a167d26adfd77f248abfee180a2f",
+        "k2.transition": "6fcaab6c262de59584a5c10f3b0be8139f406a82674cef9a60fd998b6c1c17c0",
+        "k3.outcome_projection": "18f8b6603b1b9fb2d0099aa878b4fe7021db26f2e795326089fa9de8521daf6f"
+      },
+      "artifact_paths": {
+        "k1.semantic": "E:\\Seed\\checkpoints\\taiji_k_workers_v4\\model_17\\taiji_r6_k1_semantic.pt",
+        "k2.transition": "E:\\Seed\\checkpoints\\taiji_k_workers_v4\\model_17\\taiji_r6_k2_transition.pt",
+        "k3.outcome_projection": "E:\\Seed\\checkpoints\\taiji_k_workers_v4\\model_17\\taiji_r6_k3_outcome_projection.pt"
+      },
+      "training_performed": true,
+      "default_runtime_attached": false,
+      "elapsed_seconds": 1.3602566999616101
+    },
+    {
+      "learner_seed": 23,
+      "status": "passed",
+      "parameter_ledger": {
+        "k1.semantic": 472,
+        "k2.transition": 5176,
+        "k1_fact_keys": 14,
+        "k1_goal_ids": [
+          "goal:clarify-language",
+          "goal:clarify-toolchain",
+          "goal:inspect-language",
+          "goal:recover-target"
+        ],
+        "k2_goal_ids": [
+          "goal:clarify-language",
+          "goal:clarify-toolchain",
+          "goal:inspect-language",
+          "goal:recover-target"
+        ]
+      },
+      "worker_training_steps": {
+        "k1.semantic": 2400,
+        "k2.transition": 6720
+      },
+      "losses": {
+        "k1.semantic": {
+          "fact_loss": 0.043075598776340485,
+          "goal_loss": 3.416980689507909e-05,
+          "content_loss": 7.668133548577316e-06
+        },
+        "k2.transition": {
+          "transition_loss": 0.015057258307933807,
+          "goal_loss": 0.000759282847866416,
+          "content_loss": 0.000318126316415146
+        }
+      },
+      "fresh_restore_gate": {
+        "k1.semantic": true,
+        "k2.transition": true
+      },
+      "artifact_digests": {
+        "k1.semantic": "6ea702d8147139452ee46e9320db28135acfbc15f4b604cd41229dea4e20970e",
+        "k2.transition": "91831841e4ce76c36b16d07c11f013ebde42f2f8a681f1ccbcac0fd90fe218e7",
+        "k3.outcome_projection": "5a6ec510f394815b25963b467323ebf28f7e935d2ea1e38262185c1d186b849b"
+      },
+      "artifact_paths": {
+        "k1.semantic": "E:\\Seed\\checkpoints\\taiji_k_workers_v4\\model_23\\taiji_r6_k1_semantic.pt",
+        "k2.transition": "E:\\Seed\\checkpoints\\taiji_k_workers_v4\\model_23\\taiji_r6_k2_transition.pt",
+        "k3.outcome_projection": "E:\\Seed\\checkpoints\\taiji_k_workers_v4\\model_23\\taiji_r6_k3_outcome_projection.pt"
+      },
+      "training_performed": true,
+      "default_runtime_attached": false,
+      "elapsed_seconds": 1.8984597000526264
+    },
+    {
+      "learner_seed": 31,
+      "status": "passed",
+      "parameter_ledger": {
+        "k1.semantic": 472,
+        "k2.transition": 5176,
+        "k1_fact_keys": 14,
+        "k1_goal_ids": [
+          "goal:clarify-language",
+          "goal:clarify-toolchain",
+          "goal:inspect-language",
+          "goal:recover-target"
+        ],
+        "k2_goal_ids": [
+          "goal:clarify-language",
+          "goal:clarify-toolchain",
+          "goal:inspect-language",
+          "goal:recover-target"
+        ]
+      },
+      "worker_training_steps": {
+        "k1.semantic": 2400,
+        "k2.transition": 6720
+      },
+      "losses": {
+        "k1.semantic": {
+          "fact_loss": 0.043075598776340485,
+          "goal_loss": 3.416980689507909e-05,
+          "content_loss": 7.668133548577316e-06
+        },
+        "k2.transition": {
+          "transition_loss": 0.015057258307933807,
+          "goal_loss": 0.000759282847866416,
+          "content_loss": 0.000318126316415146
+        }
+      },
+      "fresh_restore_gate": {
+        "k1.semantic": true,
+        "k2.transition": true
+      },
+      "artifact_digests": {
+        "k1.semantic": "2b747ee98b06cca41237d56b9752b174bd981398bcb77b9a3a712108a7abbbd8",
+        "k2.transition": "4ac5c43d01141b4385795d9b6a29e852b908e57aed8112b43660d0a36173ffda",
+        "k3.outcome_projection": "c3939fb1ae8325d2df6833dfb8fbd62e7b24e8e6a37cfe762c45ede98311fba3"
+      },
+      "artifact_paths": {
+        "k1.semantic": "E:\\Seed\\checkpoints\\taiji_k_workers_v4\\model_31\\taiji_r6_k1_semantic.pt",
+        "k2.transition": "E:\\Seed\\checkpoints\\taiji_k_workers_v4\\model_31\\taiji_r6_k2_transition.pt",
+        "k3.outcome_projection": "E:\\Seed\\checkpoints\\taiji_k_workers_v4\\model_31\\taiji_r6_k3_outcome_projection.pt"
+      },
+      "training_performed": true,
+      "default_runtime_attached": false,
+      "elapsed_seconds": 1.8331930000567809
+    }
+  ],
+  "boundary": "v4 parent worker rebuild only; no sealed read, no parity build, no default runtime/provider/MCP/client/CUDA."
+}
