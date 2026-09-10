@@ -1,6 +1,6 @@
 # Seed / Taiji 唯一执行计划
 
-> 修订：2026-09-11；实际代码/报告基线 044b04b6。本文覆盖所有旧文档中的执行许可和“下一步”。
+> 修订：2026-09-11；实际代码/报告基线 f3771080。本文覆盖所有旧文档中的执行许可和“下一步”。
 > 本轮任务是根据新增结果修订方案；训练与实现按下述验收顺序在后续开发中执行。
 > 研究依据：[本轮源码与结果复审](../../reference/M4V2_POST_C_STAGE_RESULT_REVIEW_20260910.md)；[历史执行记录](../../archive/history/20260910_result_review/EXECUTION_HISTORY.md)。
 
@@ -14,7 +14,7 @@
 | fast/slow 与 replay | 等 replay 下与直接 continuation 等价；拆分独立贡献未证实 | replay 作为效果基线；FS 只保留为状态实现候选 |
 | widened / 旧 parity | 当前合成路线关闭；错误计数结论撤回 | 保留失败证据和 XL 对照，不继续补次数或凑容量 |
 | C-stage / scorecard | 报告入账完成；覆盖范围有限，can_promote=false | 不追加同质 formal；换成五类、同预算、同 artifact 验证 |
-| S/G/K 连续整合 | P3.1 事件合同、P3.2 owner-transfer、P3.3 candidate data-signal/G-only 和 P3.4 behavior signal Gate 均通过；K1/K2 继续冻结为 inherited candidate/evidence 来源，P3.4 尚未训练 | 进入 P3.5 reobserve-aware G-only learning Gate；只用非零 utility margin，`reobserve` 必须走 typed safe projection；禁止把静态候选平局或安全出口当执行成功 |
+| S/G/K 连续整合 | P3.1 事件合同、P3.2 owner-transfer、P3.3 candidate data-signal/G-only、P3.4 behavior signal 和 P3.5 reobserve-aware G-only Gate 均通过；13 参数 G 改变 contested 行为，K1/K2 继续冻结 | 进入 P3.6 独立行为 holdout 与保持 Gate；禁止追加同质 epoch，必须验证新 project/path 泛化、旧类保持和 typed safe projection |
 | Seed / IDE / provider / 插件 | 已有工程资产保留；本轮未重新验收客户端全链路 | 仅修阻塞主线的故障；新能力按 P5 的依赖解冻 |
 | CI、临时目录与发布 | 不把历史局部测试当当前全仓通过 | 变更相关检查随步执行；发布另验收，不批量删除未知资产 |
 
@@ -22,7 +22,7 @@
 
 ### 下一阶段唯一交付目标
 
-**P2.2 已完成，P2.3 数据合同/targeted learning、P2.4 retention、P2.5 novelty probe、P2.6 novel learning、P2.7 holdout generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight、P3.3 candidate data-signal/G-only 和 P3.4 behavior signal Gate 已完成但模型仍未 promotion，下一步只做 P3.5 reobserve-aware G-only learning Gate。** P3.4 在无 fit 条件下得到 40/50 条 K-only 行为分歧、30 条 reobserve 目标和 40 条非零 margin；10 条 B/D 零 margin 平局仅说明静态 catalog 与实时 Workbench observation 未对齐，必须排除出训练。下一步训练前仍要做 checkpoint 保存/独立恢复；训练后要证明 trained-G 在 contested cohort 上优于 zero-step，同时旧类保持、安全出口、reobserve projection、K digest 和 lineage 全部不退化。P3–P5 是后续路线，不是当前并行待办。不以添加新器官、新 Gate、更大模型或训练次数代替输出、保持和可学习闭环验收。
+**P2.2 已完成，P2.3 数据合同/targeted learning、P2.4 retention、P2.5 novelty probe、P2.6 novel learning、P2.7 holdout generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight、P3.3 candidate data-signal/G-only、P3.4 behavior signal 和 P3.5 reobserve-aware G-only learning Gate 已完成但模型仍未 promotion，下一步只做 P3.6 独立行为 holdout 与保持 Gate。** P3.5 在 32 条非零 margin train 上完成 256 steps/13 参数 G-only fit；contested utility `16.5→30`、behavior target hit `0→30`，K1/K2 digest、P2.7 Workbench `4/4`、checkpoint/lineage、zero-margin 排除和 30/30 reobserve projection 均通过。下一步不再训练，必须在新 project/path validation-only 上验证该行为选择能泛化且不损害五类旧类、安全出口和 holdout。P3–P5 是后续路线，不是当前并行待办。不以添加新器官、新 Gate、更大模型或训练次数代替输出、保持和可学习闭环验收。
 
 - P0 已确定当前实现的效果基线：在 model17/course0、150 条 wake＋50 条固定 replay 上，FS 与 C-replay、FS-no-replay 与 C 的有效状态峰值差均为 `4.76837158203125e-7`，低于预先冻结的 `1e-5`；checkpoint preflight 通过。当前数据覆盖的验证类为 A/B/C，D/R 留给 P1。
 - P1 v1 失败审计确认了根因：450 条 train 记录中每类表面 observation digest 为 90 个，但实际 K1/K2 mask-visible input 各只有 1 个；validation 缺 D/R、无 project 隔离。报告保留为失败证据，不覆盖。
@@ -60,7 +60,7 @@ P1 合同完成后可做 P2 validation pilot。最终测试前冻结主指标、
 
 出现下列情况应提交已有成果并停在决策点：有效信号不足需要改变任务定义；公平对照后仍无收益需要改变学习机制；资源约束迫使缩减目标；或准备改变认知所有权/默认发布模型。讨论时给出证据、保留方案与替代方案的收益和代价，再更新唯一计划；不自动扩展训练规模或购买算力。
 
-本轮已完成 P0/P1 validation-only 诊断、P1.1 修复、P2 小预算 pilot、P2.1 输出/行动链诊断、P2.2 安全 bridge canary、P2.3 continuation 数据合同/targeted learning、P2.4 retention canary、P2.5 novel-composition probe、P2.6 novel K2 learning、P2.7 independent holdout generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight、P3.3 candidate data-signal/G-only learning 和 P3.4 behavior signal Gate；下一步只做 P3.5 reobserve-aware G-only learning Gate，不读取 sealed、不扩 K、不进入结构成长或 promotion。
+本轮已完成 P0/P1 validation-only 诊断、P1.1 修复、P2 小预算 pilot、P2.1 输出/行动链诊断、P2.2 安全 bridge canary、P2.3 continuation 数据合同/targeted learning、P2.4 retention canary、P2.5 novel-composition probe、P2.6 novel K2 learning、P2.7 independent holdout generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight、P3.3 candidate data-signal/G-only learning、P3.4 behavior signal 和 P3.5 reobserve-aware G-only learning Gate；下一步只做 P3.6 独立行为 holdout 与保持 Gate，不读取 sealed、不调用 fit、不扩 K、不进入结构成长或 promotion。
 
 ## 当前判断
 
@@ -98,7 +98,7 @@ P3.2 已在 P3.0 parent、P3.1 manifest 和同一 P2.7 holdout 上完成 owner-t
 | P0 | 相同 replay 的机制归因 | **已完成**：两组轨迹均在 `1e-5` 内等价，checkpoint preflight 通过 |
 | P1 | 真实学习信号与五类数据合同 | **已通过 P1.1**：五类各有至少 2 个 K1/K2 visible input，validation 五类覆盖且 project/template 隔离 |
 | P2 | 五类学习及保持的独立验证 | **P2.7 局部跨项目/路径泛化通过**：holdout K2 content/Workbench `4/4`，旧类保持通过；已进入 P3.0 |
-| P3 | 中断续训与 S/G/K 联合状态整合 | **P3.4 behavior signal Gate 已通过但尚未训练**：40/50 条有 K-only 分歧、30 条 reobserve 目标、10 条零 margin 平局排除；当前唯一执行项是 P3.5 reobserve-aware G-only learning，S 仍非 learned |
+| P3 | 中断续训与 S/G/K 联合状态整合 | **P3.5 reobserve-aware G-only Gate 已通过但尚未 promotion**：32 条非零 margin train、256 steps/13 参数 G-only，contested utility `16.5→30`、target hit `0→30`、K digest 不变；当前唯一执行项是 P3.6 独立行为 holdout/保持，S 仍非 learned |
 | P4 | 结构成长必要性与收益验证 | 容量压力真实存在，增长收益优于强固定基线 |
 | P5 | 知识来源、IDE、客户端、硬件发布 | 各项按所需模型能力与接口成熟度解冻 |
 
@@ -118,27 +118,27 @@ P3.2 已在 P3.0 parent、P3.1 manifest 和同一 P2.7 holdout 上完成 owner-t
 - 使用 validation-only pilot 确定样本量、最低有意义改善、数值容差和逐域非劣界。浮点噪声容差与“允许遗忘多少”分别定义；不能用 candidate 退化方差自动放宽所有门槛。
 - 先保存候选和 presealed 合同，随后同一个 artifact 只读评分，不在第二阶段重训候选。记录代码版本、数据/参数/状态摘要和所有失败。
 - 结果出口：收益/保持/资源通过→P3；无收益→回对应反馈或数据根因；数值等价→保留成本更合理的基线；机械错误→修复后重做技术预检。不得看测试成绩改当前版本阈值。
-- P2 pilot 已执行上述最小预算和独立 checkpoint preflight；P2.1 完成了 K1→K2 级联与隔离 Workbench 诊断；P2.2 完成了 typed abstention、根目录 recovery 和世界对齐工程 canary；P2.3 continuation 数据合同/targeted learning、P2.4 retention canary、P2.5 novel-composition probe、P2.6 novel K2 learning、P2.7 holdout generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight、P3.3 candidate data-signal/G-only learning 和 P3.4 behavior signal Gate 均已完成。当前模型结论从“只有连续 MSE 改善”推进为“一个具体 K2 content 目标在 rehearsal 保持约束下学习，并跨 2 个新 project/4 条新 path 泛化”；P3.0 已把 K1/K2 continuation 纳入可恢复状态边界，P3.1 已把 S/G/K 接线合同闭合，P3.2 已把选择所有权转给 G，P3.3 已证明 G 可以学习但没有改变三臂行为，P3.4 已证明候选 utility 有分歧但 10 条零 margin 不可训练，下一步只做 P3.5 reobserve-aware G-only learning Gate。
+- P2 pilot 已执行上述最小预算和独立 checkpoint preflight；P2.1 完成了 K1→K2 级联与隔离 Workbench 诊断；P2.2 完成了 typed abstention、根目录 recovery 和世界对齐工程 canary；P2.3 continuation 数据合同/targeted learning、P2.4 retention canary、P2.5 novel-composition probe、P2.6 novel K2 learning、P2.7 holdout generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight、P3.3 candidate data-signal/G-only learning、P3.4 behavior signal 和 P3.5 reobserve-aware G-only learning Gate 均已完成。当前模型结论从“只有连续 MSE 改善”推进为“一个具体 K2 content 目标在 rehearsal 保持约束下学习，并跨 2 个新 project/4 条新 path 泛化”；P3.0 已把 K1/K2 continuation 纳入可恢复状态边界，P3.1 已把 S/G/K 接线合同闭合，P3.2 已把选择所有权转给 G，P3.3 已证明 G 可以学习但没有改变三臂行为，P3.4 已证明候选 utility 有分歧，P3.5 已证明非零 margin G-only fit 能改变 contested 行为且安全投影/holdout 不退化，下一步只做 P3.6 独立行为 holdout 与保持 Gate。
 
-### P3：状态整合与同一父代连续课程（P3.4 已收束，P3.5 当前）
+### P3：状态整合与同一父代连续课程（P3.5 已收束，P3.6 当前）
 
-P3.0 已用 [checkpoint/interrupt-resume contract](../../../reports/taiji_m5_k_p3_0_checkpoint_contract_20260910.json) 替代“先做 lineage 再补能力”的顺序：K1/K2 parent、worker、phase、replay stream、RNG、预算和 lineage 元数据已经可以内容寻址、独立恢复和回滚。P3.1 又把 S/G/K 的事件、owner mask、状态 digest 和恢复边界闭合，但没有把 control-only 的 S/G 说成 learned。P3.2 已证明 owner-transfer 不破坏已有行为；P3.3 已证明 13 参数 G 可以在冻结 K 上 fit、保存、独立恢复和拒绝篡改；P3.4 则证明行为 utility 信号确实能造成可解释候选分歧，但 10 条零 margin 静态平局不可训练。当前进入 P3.5，不能回到原始从零训练，也不能重新授权暂停的 [SGK v1](../../reference/M4V2_SGK_PROMOTION_COURSE_PREREGISTRATION_20260910.md)。
+P3.0 已用 [checkpoint/interrupt-resume contract](../../../reports/taiji_m5_k_p3_0_checkpoint_contract_20260910.json) 替代“先做 lineage 再补能力”的顺序：K1/K2 parent、worker、phase、replay stream、RNG、预算和 lineage 元数据已经可以内容寻址、独立恢复和回滚。P3.1 又把 S/G/K 的事件、owner mask、状态 digest 和恢复边界闭合，但没有把 control-only 的 S/G 说成 learned。P3.2 已证明 owner-transfer 不破坏已有行为；P3.3 已证明 13 参数 G 可以在冻结 K 上 fit、保存、独立恢复和拒绝篡改；P3.4 证明行为 utility 信号能造成可解释候选分歧；P3.5 证明非零 margin G-only fit 能改变 contested 行为且 reobserve projection、K digest 和 holdout 不退化。当前进入 P3.6，不能回到原始从零训练，也不能重新授权暂停的 [SGK v1](../../reference/M4V2_SGK_PROMOTION_COURSE_PREREGISTRATION_20260910.md)。
 
 1. 以 P3.0 parent、P3.1 manifest 和现有 K1/K2 worker 为唯一资产；S、K、G 的 schema、owner、输入输出 mask、attached lineage、checkpoint digest 和 rollback parent 必须独立可定位。
 2. 把 K1 的共享语义表征与 goal/content 输出拆开记账：K 负责 evidence/world readout，G 负责 candidate selection/accept/reject；在拆分完成前，goal/content head 只能标记 `pending-owner-transfer`，不能同时计为 K 与 G 的能力。
 3. 先实现无新增参数的 `GSelectionState` 和 owner-transfer adapter，外部 goal/content target 仅作 validation label；用同一 P2.7 holdout 运行 K-only 与 S/K/G 两臂，比较 K1/K2 goal/content、safe abstention、Workbench、延迟和 checkpoint 字节。
-4. 在 observation、G selection、K readout、action 四个边界做独立进程恢复；验证事件/owner/worker/budget/RNG/logical digest 一致，篡改 G state、错误 parent、错误 mask 必须拒绝。P3.2/P3.3 已满足 owner-transfer 与 G-only checkpoint/fit 条件，P3.4 已满足行为信号条件，下一步只执行 P3.5。
+4. 在 observation、G selection、K readout、action 四个边界做独立进程恢复；验证事件/owner/worker/budget/RNG/logical digest 一致，篡改 G state、错误 parent、错误 mask 必须拒绝。P3.2/P3.3 已满足 owner-transfer 与 G-only checkpoint/fit 条件，P3.4 已满足行为信号条件，P3.5 已满足行为增益与安全投影条件，下一步只执行 P3.6。
 
-## 唯一下一步：P3.5 reobserve-aware G-only learning Gate
+## 唯一下一步：P3.6 独立行为 holdout 与保持 Gate
 
-P3.4 已证明“候选行为可以被独立 utility 区分”，但还没有证明 G 学会了这种区分。P3.5 只把 40 条非零 utility-margin 样本作为 fit-eligible；10 条 B/D 零 margin 平局留在诊断集，不得通过确定性 tie-break 进入训练。`reobserve` 目标不是执行成功，而是模型选择的安全下一步，必须投影为 `ReadOnlyAbstention(next_step="workspace.list")` 并验证不可写、可恢复、可往返。
+P3.5 已证明 G 能在非零 utility-margin cohort 上学会改变选择，但这些样本来自同一 P3.4 artifact。P3.6 不再调用 `fit`，只加载 P3.5 trained-G，在新的 project/path 上重新构造行为 candidate/utility，检验收益是否跨身份泛化，并与 P2.7 高证据 holdout、五类旧类和安全出口做保持对照。
 
-1. 冻结 P3.2 K1/K2 parent、P3.3 zero-step G、P3.3 trained-G、P3.4 behavior manifest、confidence floor 和 Workbench policy；先验证 K/G checkpoint digest、独立 restore、rollback，确认 P2.7 holdout 和 10 条 zero-margin 诊断样本不会进入 fit。
-2. 在训练前把每条 fit-eligible candidate 的行为 label、utility margin、candidate identity 和 runtime payload 分离；runtime 只接收 observation/candidates/evidence，不接收 target、utility、未来 Workbench 结果或 split 标签。
-3. 为 `reobserve` 建立显式 action projection：选择它只能产生 typed safe abstention（`workspace.list`，根目录约束、无写权限、可往返），不能计为 proposal execution success，也不能把列举后的 observation 直接回填为当前样本 target。
-4. 只对非零 margin cohort 做 G-only 小步 fit；训练前验证 checkpoint 可保存和独立恢复，训练后验证 G lineage、tamper/wrong-parent 拒绝、K1/K2 digest 不变、参数边界不变，并记录 fit count/steps/预算/RNG。
-5. 以 K-only、zero-step G、trained-G 三臂比较：contested cohort 的 target-kind/selection、reobserve projection、旧五类保持、P2.7 untouched holdout、Workbench/action 成功、坏动作率、延迟、checkpoint 字节。trained-G 必须在 contested cohort 上有可复现的行为收益，且安全/保持不退化，否则 `can_promote=false`、回滚并停止同质 epoch。
-6. P3.5 期间继续冻结结构增长、S 学习、CUDA、IDE/provider、客户端视觉和 promotion；只有“reobserve projection 正确 + G 学习带来可归因收益 + 保持/恢复 Gate 通过”后，才进入 P4 容量压力与结构成长验证。
+1. 冻结 P3.5 trained-G、P3.5 fit manifest、P3.2 K1/K2 parent、confidence floor、behavior utility policy 和 Workbench policy；先做 G/K checkpoint digest、独立 restore、lineage 和 rollback preflight。P3.6 禁止调用 `fit`，禁止读取新 sealed payload。
+2. 构造至少 2 个新 project、至少 4 条新 path 的 behavior holdout，与 P3.4/P3.5 train/validation 全部 disjoint；候选 identity、observation digest、behavior digest 和 utility margin 必须内容寻址且唯一。
+3. 对新 holdout 同时评估 K-only、P3.5 zero-step G、P3.5 trained-G；报告 behavior target hit、utility、K/G 分歧、proposal Workbench 成功、reobserve typed projection 和坏动作率。P2.7 四条高证据 holdout继续 untouched，仅作旧行为保持对照。
+4. 保持 Gate 必须覆盖 P1 五类旧类、低证据 abstention/reobserve、安全 `workspace.list` projection、P2.7 Workbench `4/4`、K1/K2 digest 和 G checkpoint 独立恢复；不得用新 holdout 的 oracle target 改写 runtime 输入。
+5. P3.6 只有在新 project/path 上 trained-G utility 严格高于 zero-step、target hit 不下降、旧类/安全/Workbench 不退化时才通过；否则保持 `can_promote=false`，定位为局部行为学习，不进入 P4，也不追加同质 epoch。
+6. P3.6 期间继续冻结结构增长、S 学习、CUDA、IDE/provider、客户端视觉和 promotion；只有独立行为泛化、保持和恢复 Gate 同时通过，才进入 P4 容量压力与结构成长验证。
 
 ### P4：回归态极的长期目标——继承式结构成长
 
@@ -161,4 +161,4 @@ P3.4 已证明“候选行为可以被独立 utility 区分”，但还没有证
 
 文档仅保留一个执行入口，不再新增平行总计划：本文记录阶段状态、下一步和验收；结果复审记录证据解释；核心需求与架构常驻 active；已有历史流水保留在 archive。旧预注册即使留在 reference 也不重新获得执行许可。当前收束不移动有引用的研究资产，不覆盖旧报告或删除 checkpoint。根目录存在部分无读取权限的临时路径，未证明其为空或无用；后续清理须逐项验证绝对路径、引用和可恢复性，不能把它们报作已清理。
 
-本轮 P2 pilot、P2.1、P2.2、P2.3 contract/targeted、P2.4 retention、P2.5 novel-composition、P2.6 novel-learning、P2.7 generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight、P3.3 G candidate data-signal/G-only learning 和 P3.4 behavior signal 报告与计划同步已提交本地 main。后续唯一入口是 P3.5 reobserve-aware G-only learning Gate；不追加同质 epoch，不跳到结构成长、promotion 或外围路线，也不按历史“下一步”自动开跑。
+本轮 P2 pilot、P2.1、P2.2、P2.3 contract/targeted、P2.4 retention、P2.5 novel-composition、P2.6 novel-learning、P2.7 generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight、P3.3 G candidate data-signal/G-only learning、P3.4 behavior signal 和 P3.5 reobserve-aware G-only learning 报告与计划同步已提交本地 main。后续唯一入口是 P3.6 独立行为 holdout 与保持 Gate；不追加同质 epoch，不跳到结构成长、promotion 或外围路线，也不按历史“下一步”自动开跑。

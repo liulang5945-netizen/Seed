@@ -344,3 +344,19 @@ P3.2 的结论是“选择所有权已经可以从 K 迁移到 G，且不损害�
 审计发现：10 条 B/D 场景的候选静态 semantic slots 与实时 Workbench observation 不一致，导致候选 utility 同为 0、`utility_margin=0`；它们通过了 artifact 完整性，但只是确定性 tie-break，不能作为 G 的监督信号，也不能据此宣称行为学习。剩余非零 margin cohort 才是 P3.5 的 fit-eligible 集合。`reobserve` 目标必须在动作边界投影为不可写、可往返的 `ReadOnlyAbstention(next_step="workspace.list")`，不能把 list 结果直接当作当前样本的 oracle target。
 
 P3.4 的结论是“行为标签合同终于能产生可解释分歧”，不是“G 已经学会行为选择”。因此 `can_promote=false` 保持不变，不能追加同质 epoch。下一步唯一执行项改为 P3.5 reobserve-aware G-only learning Gate：仅用非零 margin cohort 训练 G，训练前验证 checkpoint 保存/独立恢复，训练后以 K-only、zero-step G、trained-G 三臂验证 contested cohort 的真实收益、旧类保持、安全 reobserve projection、P2.7 holdout、K digest 和 lineage；任一安全/保持/恢复条件退化则回滚并停止 promotion。
+
+## 23. P3.5 reobserve-aware G-only learning Gate 结果（2026-09-11）
+
+按 §22 的入场条件运行了 [P3.5 G-only learning](../../scripts/training/eval_taiji_m5_k_p3_5_g_learning.py)，产出 [P3.5 fit manifest](../manifests/taiji_m5_k_p3_5_g_learning_manifest_v1.json) 和 [P3.5 报告](../../reports/taiji_m5_k_p3_5_g_learning_20260911.json)。本轮加载 P3.4 behavior artifact，只选择 `utility_margin > 1e-9` 的 32 条 train candidate 做 G-only fit；8 条非零 margin validation、8 条 zero-margin train、2 条 zero-margin validation 和 P2.7 四条 holdout 均未进入 fit。
+
+| Gate | 结果 | 证据含义 |
+|---|---:|---|
+| G-only 训练边界 | 通过 | 13 参数 G、256 steps/8 epochs；K1/K2 不可训练，validation/holdout 不 fit，runtime 不读 target/utility |
+| checkpoint / lineage | 通过 | G zero-step/trained checkpoint 独立恢复；tamper/wrong-parent 拒绝；训练前后 K1/K2 digest 完全不变 |
+| zero-margin 排除 | 通过 | train 8 条、validation 2 条 tie 样本均排除；fit manifest 只含 32 条非零 margin train digest |
+| reobserve action boundary | 通过 | 30/30 behavior target、所有实际 reobserve selection 均成为可往返 `ReadOnlyAbstention(next_step="workspace.list")`，无 `ActionIntent` |
+| P2.7 holdout / Workbench | 通过 | holdout fit count 为 0；trained-G 的四条 Workbench 结果保持 `4/4` |
+| contested behavior gain | 通过 | contested utility 从 zero-step `16.5` 到 trained-G `30`；behavior target hit 从 `0` 到 `30` |
+| promotion | 未通过/未开放 | `can_promote=false` 保持；当前收益仍需独立 project/path holdout 验证，不能直接进入 P4 |
+
+P3.5 的结论是“在冻结 K、排除零边际平局并保留安全动作边界的条件下，G-only 学习确实改变了 contested 行为”，这已经超出 P3.3 的参数变化但行为不变；它仍不是通用智能、结构成长或开放泛化证据。下一步唯一执行项改为 P3.6 独立行为 holdout 与保持 Gate：至少 2 个新 project、4 条新 path，validation-only，重新计算 behavior utility 和 reobserve projection，并以 P2.7、P1 五类旧类和安全出口做非劣对照。若新身份上无收益或旧类退化，保持 `can_promote=false`，不追加同质 epoch、不进入 P4。
