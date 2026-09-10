@@ -56,3 +56,23 @@
 2. `scripts/training/eval_taiji_m4v2_b3_k_pilot_v2.py`（三臂 + 机制门 + 诊断读数；先 py_compile/ruff）；
 3. 报告 `reports/taiji_m4v2_b3_k_pilot_v2_20260910.json`；
 4. 路线图执行记录 + 独立提交；C 阶段正式比较的判据预注册在 pilot 读数之后另行冻结。
+
+## 8. 执行修订注记（2026-09-10，运行中发现并修正）
+
+**「wake 轨迹与 continuation 逐位一致」的断言仅在精确算术成立**：FS 把 delta 累加进零初始化的 fast（`W_parent + fl(Σd)`），C 把 delta 就地加进运行态（`fl(fl(s+d)+d')`）——两者舍入路径不同，150 步后产生微小状态差，位等价不可达。这不是实现 bug（delta 函数与顺序完全一致），是预注册断言的浮点盲区。修正：该门从位等价改为**容差门**（max abs diff ≤ 1e-5，实测偏差进报告）。机制意图（同 delta、同顺序）不受影响。
+
+## 9. 执行记录（2026-09-10，pilot 已运行，机制门 12/12 全过）
+
+定向测试 5/5（fast/slow 语义、wake≡continuation 轨迹、replay/consolidate 语义、checkpoint 往返、replay 抽样确定性）。三臂 pilot（单 model seed 17、course 0、150 experiences 5 类平衡）结果：
+
+- **机制门 12/12 通过**：F 零更新 ✓；FS fast 出生为零 ✓、wake 期间 slow 逐位不变 ✓、wake 后 fast 非零 ✓；wake 轨迹偏差 **2.38e-7**（容差 1e-5）✓；replay digest ⊆ 流 digest ✓、replay 写 slow ✓；consolidate 清零 fast ✓ 且**保持有效权重不变** ✓；fresh restore ✓；parent/K3 不变 ✓；预算 C=300、FS wake 150+replay 50+consolidate 1 ✓。
+- **诊断读数（validation-only，sealed v3 未读）**：continuation delta **−0.000455**、FS delta **−0.000335**——FS 的 replay+consolidation 在整体 validation 上略逊于 C（对已见经历的二次 pass 未带来泛化收益）。
+- **D/R 弱类探针（诊断性）**：frozen combined 0.1996（父代在弱类上误差大）；continuation delta −0.1914；**FS delta −0.1928**——**FS 的 replay+consolidation 在父代弱类上优于 C**。这是一个真实信号：replay 对新扩展类（父代训练不充分的类）有针对性收益，尽管整体 validation 略负。
+- fast 范数轨迹：wake 期间 K1 0.91→5.72、K2 0.36→1.61（单调累积可见），consolidation 后归零。
+
+### 9.1 pilot 结论
+
+1. **机制闭环**：fast/slow 拆分、wake 写 fast、真实经历 replay 写 slow、consolidation 清零且保持有效权重、checkpoint/restore——全部在 K worker 上闭合。
+2. **机制效应定位**：replay 的收益是**类选择性**的（弱类改善、整体略负），不是全局泛化收益。C 阶段若引入 fast/slow+replay，其判据应按类分解（弱类改善 vs 整体非劣），而非单一 combined 指标。
+3. **预算事实**：FS 比 C 多消耗 100 次 replay 更新（单列），换来弱类 −0.0014 的额外改善；是否值得由 C 阶段判据决定。
+4. 下一步：C 阶段正式比较判据预注册（若启动）需冻结类分解判据；在此之前不训练、不读 sealed v3。

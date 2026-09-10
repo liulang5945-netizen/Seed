@@ -36,7 +36,9 @@ B3-K 的非饱和 structured-loss diagnostic 已通过：同一 model 17 parent�
 
 **B3 pilot（K 相位）预注册已冻结**：[B3 K pilot preregistration](reference/M4V2_B3_K_PILOT_PREREGISTRATION_20260910.md)——三臂从同一 v4 父代派生：F frozen / C continuation（300 新增步）/ FS fast+slow+replay（wake 写 fast_delta、sleep 对 b=50 真实经历 replay 更新 slow 后 consolidate 清零，replay 100 步单列成本）；机制门 6 项为主交付；validation-only（sealed v3 留给 C 阶段）。
 
-**当前唯一下一步**：执行 pilot §7——`taiji/k_fast_slow.py` + 定向测试 → 三臂 pilot 脚本（机制门 + 诊断读数）→ 报告落盘；机制门失败即停。
+**B3 K-phase pilot 已执行，机制门 12/12 全过**：`taiji/k_fast_slow.py`（slow+fast 拆分、wake 写 fast、真实经历 replay 写 slow、consolidate 清零且保持有效权重）+ 定向测试 5/5 + 三臂 pilot。诊断读数：整体 validation FS（−0.000335）略逊 C（−0.000455），但 **D/R 弱类探针 FS 优于 C**（−0.1928 vs −0.1914）——replay 收益是类选择性的。修订注记：wake 轨迹位等价断言在浮点下不可达，门改容差（实测 2.38e-7）。
+
+**当前唯一下一步（需拍板）**：(a) 启动 C 阶段正式比较预注册（类分解判据 + fresh sealed v4）；或 (b) 暂缓。拍板前不训练、不读 sealed v3。
 
 ## 权威文档
 

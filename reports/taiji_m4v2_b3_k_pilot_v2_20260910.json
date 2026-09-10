@@ -1,0 +1,199 @@
+{
+  "format": "taiji-m4v2-b3-k-pilot-v2",
+  "version": 1,
+  "generated_at_epoch": 1789024558,
+  "status": "passed",
+  "can_promote": false,
+  "preregistration": "plans/reference/M4V2_B3_K_PILOT_PREREGISTRATION_20260910.md",
+  "base": {
+    "model_seed": 17,
+    "course_seed": 0,
+    "class_counts": {
+      "A": 30,
+      "B": 30,
+      "C": 30,
+      "D": 30,
+      "R": 30
+    },
+    "class_block": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "R"
+    ],
+    "stream_digest": "4f58044c2bafaec67c0a7a559b04f284f54aac416f6e5cc448c1d3041d0ab42e"
+  },
+  "arms": {
+    "frozen": {
+      "combined": 0.010060357238520131,
+      "components": {
+        "k1.fact_mse": 0.02298051491379738,
+        "k1.goal_mse": 0.003077751821062217,
+        "k1.content_mse": 0.00016741953125650375,
+        "k2.transition_mse": 0.008847801480442286,
+        "k2.goal_mse": 0.016471169151676197,
+        "k2.content_mse": 0.008817486532886202,
+        "combined_mse": 0.010060357238520131
+      }
+    },
+    "continuation": {
+      "combined": 0.009605467590290573,
+      "components": {
+        "k1.fact_mse": 0.012896847600738207,
+        "k1.goal_mse": 0.0003848393995819303,
+        "k1.content_mse": 2.1425221196598915e-05,
+        "k2.transition_mse": 0.0016776782382900517,
+        "k2.goal_mse": 0.025404431187780574,
+        "k2.content_mse": 0.017247583894156076,
+        "combined_mse": 0.009605467590290573
+      },
+      "new_update_steps": 300
+    },
+    "fast_slow_replay": {
+      "combined": 0.009725099732349918,
+      "components": {
+        "k1.fact_mse": 0.008841670118272305,
+        "k1.goal_mse": 0.00013591430130569884,
+        "k1.content_mse": 8.331537780274326e-06,
+        "k2.transition_mse": 0.0007272009582569202,
+        "k2.goal_mse": 0.027983920702051062,
+        "k2.content_mse": 0.02065356077643325,
+        "combined_mse": 0.009725099732349918
+      },
+      "wake_steps": 150,
+      "replay_steps": 50,
+      "replay_sample": [
+        70,
+        6,
+        90,
+        137,
+        105,
+        1,
+        72,
+        61,
+        56,
+        28,
+        67,
+        101,
+        26,
+        126,
+        123,
+        125,
+        29,
+        140,
+        32,
+        131,
+        130,
+        146,
+        18,
+        79,
+        86,
+        110,
+        65,
+        64,
+        83,
+        74,
+        58,
+        106,
+        66,
+        55,
+        109,
+        63,
+        52,
+        38,
+        24,
+        77,
+        30,
+        27,
+        25,
+        132,
+        81,
+        62,
+        108,
+        44,
+        15,
+        16
+      ],
+      "consolidations": 1
+    }
+  },
+  "diagnostic": {
+    "validation_combined_deltas": {
+      "continuation": -0.00045488964822955856,
+      "fast_slow_replay": -0.00033525750617021365
+    },
+    "dr_probe": {
+      "frozen_combined": 0.19957925255099931,
+      "continuation_delta": -0.19139829166670097,
+      "fast_slow_replay_delta": -0.1927595432404511
+    },
+    "fast_norm_trajectory": [
+      {
+        "consumed": 17,
+        "k1_fast_norm": 0.91050785677943,
+        "k2_fast_norm": 0.36474864900094817
+      },
+      {
+        "consumed": 33,
+        "k1_fast_norm": 1.6467349741577904,
+        "k2_fast_norm": 0.6009475201062975
+      },
+      {
+        "consumed": 50,
+        "k1_fast_norm": 2.488427842042532,
+        "k2_fast_norm": 0.8479415560636097
+      },
+      {
+        "consumed": 67,
+        "k1_fast_norm": 3.071696745615988,
+        "k2_fast_norm": 0.9968668340554806
+      },
+      {
+        "consumed": 83,
+        "k1_fast_norm": 3.614353065876949,
+        "k2_fast_norm": 1.1298563895601983
+      },
+      {
+        "consumed": 100,
+        "k1_fast_norm": 4.252099541713327,
+        "k2_fast_norm": 1.2884434904370514
+      },
+      {
+        "consumed": 117,
+        "k1_fast_norm": 4.73711806533056,
+        "k2_fast_norm": 1.3951099381144338
+      },
+      {
+        "consumed": 133,
+        "k1_fast_norm": 5.192105385767853,
+        "k2_fast_norm": 1.494421177124299
+      },
+      {
+        "consumed": 150,
+        "k1_fast_norm": 5.7231360823451185,
+        "k2_fast_norm": 1.6144105743202164
+      }
+    ]
+  },
+  "gates": {
+    "f_arm_zero_updates": true,
+    "fs_birth_fast_zero": true,
+    "fs_slow_unchanged_during_wake": true,
+    "fs_fast_nonzero_after_wake": true,
+    "wake_trajectory_matches_continuation": true,
+    "wake_trajectory_max_abs_diff": 2.384185791015625e-07,
+    "wake_trajectory_tolerance": 1e-05,
+    "replay_digests_from_stream": true,
+    "replay_applied_to_slow": true,
+    "consolidation_clears_fast": true,
+    "consolidation_preserves_effective": true,
+    "fresh_restore_gate": true,
+    "parent_unchanged": true,
+    "budget_gate": true
+  },
+  "machinery_passed": true,
+  "sealed_read": "none (sealed v3 stays unread for the C-stage formal)",
+  "elapsed_seconds": 26.085046399966814,
+  "boundary": "B3 K-phase diagnostic pilot; no promotion, no sealed read, no default runtime/provider/MCP/client/CUDA."
+}

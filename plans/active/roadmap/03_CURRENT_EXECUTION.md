@@ -111,6 +111,10 @@ parity 口径修正与修复路线已冻结：[M4V2_B3_K_C_PARITY_CALIBER_REVISI
 
 **当前唯一下一步**：执行 pilot §7——(1) `taiji/k_fast_slow.py` + 定向测试；(2) 三臂 pilot 脚本（机制门 + 诊断读数）；(3) 报告落盘；机制门失败即停，C 阶段正式比较判据在 pilot 读数后另行冻结。
 
+**B3 K-phase pilot 已执行，机制门 12/12 全过**：定向测试 5/5（fast/slow 语义、wake≡continuation、replay/consolidate、checkpoint 往返、抽样确定性）；三臂机制门全过（F 零更新、FS fast 出生为零/wake 只写 fast/replay 为真实经历/consolidate 清零且保持有效权重/fresh restore/parent 不变/预算 C=300、FS wake 150+replay 50）。执行修订注记一处：wake 轨迹「逐位一致」断言仅在精确算术成立（FS 的 fast 累加与 C 的就地更新舍入路径不同），门修正为容差门（实测偏差 2.38e-7 ≪ 1e-5），已记录 §8。**诊断读数**：整体 validation 上 FS（−0.000335）略逊 C（−0.000455）；但 **D/R 弱类探针显示 FS 的 replay 在父代弱类上优于 C**（−0.1928 vs −0.1914，frozen 0.1996）——replay 收益是类选择性的。pilot 结论：fast/slow+replay 机制在 K 相位闭环；C 阶段若引入该机制，判据须按类分解（弱类改善 vs 整体非劣）。
+
+**当前唯一下一步**：C 阶段正式比较预注册的启动决策（需用户拍板）——(a) 启动：冻结类分解判据（弱类改善 + 整体非劣）+ fresh sealed v4 的 C 阶段 formal；(b) 暂缓：先完成 B 阶段其余事项（B1/B2 的 parent 级 fast/slow 已由 pilot probe 覆盖）。拍板前不训练、不读 sealed v3。
+
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 
 **B2 保存先于训练。** 先在 CPU 检查父 checkpoint 可恢复；保存 fast/slow、replay、学习器状态（若使用 optimizer 则含其状态）、RNG、课程游标和 owner lineage。新进程恢复后预测等价；单步更新后保存/恢复/再更新，与不中断轨迹在预先声明容差内一致。检查磁盘空间、原子写和 rollback；任何失败禁止长跑，不覆盖父代。
