@@ -57,3 +57,26 @@
 2. FS 训练段从 pilot 函数化 + `scripts/training/eval_taiji_m4v2_c_stage_formal.py`（四臂、两阶段、G1–G4；先 py_compile/ruff）；
 3. pre-sealed 产物 + 正式报告 `reports/taiji_m4v2_c_stage_formal_20260910.json`；
 4. 路线图执行记录 + 独立提交。
+
+## 7. 执行记录（2026-09-10，formal 已运行，G3/G4 通过、G1 失败——冻结映射出现缺口）
+
+两阶段纪律执行（pre-sealed 产物 `reports/taiji_m4v2_c_stage_formal_presealed_20260910.json` 先落盘，epsilon_cat=0.01、epsilon_ni=0.00385 冻结后才读 sealed v4；sealed_read_count=1）。
+
+| 门 | 结果 |
+|---|---|
+| G1 学习门 | **失败**——C validation delta 3/3 课程 < 0 ✓，但 FS validation delta 3/3 课程 ≥ 0（+0.0005/+0.0007/+0.0004） |
+| G2 灾难界 | **通过**——两学习臂 sealed delta 全负且远离灾难 |
+| G3 弱类主判据 | **通过（3/3）**——weak-class sealed delta：FS −0.1931~−0.1946 vs C −0.1913~−0.1914，每课程 FS 优于 C 约 0.0022 |
+| G4 整体非劣 | **通过**——FS 整体 sealed delta −0.1304~−0.1308，**优于** C 的 −0.1288（好 ~0.0018），远在 epsilon_ni=0.00385 内 |
+
+### 7.1 关键观察：validation/sealed 分歧
+
+FS 的 validation delta（3 课程均值 +0.0005，逐 cell +0.0026~−0.0014 高方差）与 sealed delta（−0.1307，全课程强负）**方向相反**。sealed 改善量级（−0.131）远大于 validation 噪声带（±0.002）。两个可能解释（不调门、仅记录）：(a) FS 的 replay 巩固对 3-episode validation 小样本过拟合敏感，validation 已不是 FS 学习的良好代理；(b) sealed（覆盖 D/R/A 弱类）才是 replay 类选择性收益的真实显影处——G3 的 3/3 全胜支持 (b)。
+
+### 7.2 判定与映射缺口
+
+**冻结判据下 formal 判定 = failed**（G1 未过）。但 §4 的结果映射没有定义「G1 失败 + G3/G4 通过」的分支——主假设（G3 弱类优势）在 sealed 上 3/3 确证、非劣性（G4）通过，只有 validation-only 的学习门操作化对 FS 失准。按 §5 停止线：不调门、不重解读，判定如实为 failed；G3/G4 证据保留。
+
+### 7.3 遗留决策（映射缺口的修复属新预注册）
+
+两个可选项，均需全新 sealed v5（sealed v4 已读取）：(a) 以修正后 G1（学习门改为 fresh validation split 或 sealed-based 证据）重跑正式比较——主假设已 3/3 确证，只差操作化修正；(b) 接受 failed 判定，continuation 收束为 K 相位默认机制，FS 的类选择性证据留档。此决策超出本预注册授权，留给路线图拍板。
