@@ -76,7 +76,9 @@ def _semantic_example(name: str, features: tuple[float, ...]) -> StructuredSeman
     )
 
 
-def _transition_example(name: str, features: tuple[float, ...]) -> StructuredSemanticTransitionExample:
+def _transition_example(
+    name: str, features: tuple[float, ...]
+) -> StructuredSemanticTransitionExample:
     event = _percept(name, features)
     goal = Goal(goal_id="goal:g1", description="inspect", priority=0.9)
     content = ContentPlan(
@@ -152,9 +154,7 @@ def _fresh_instance(semantic, transition):
 def _continuation_arm(semantic, transition, semantic_corpus, transition_corpus, experiences):
     """Direct continuation over the same stream (the C-arm twin)."""
 
-    c_semantic = StructuredSemanticLearner.from_checkpoint(
-        semantic.checkpoint(), semantic_corpus
-    )
+    c_semantic = StructuredSemanticLearner.from_checkpoint(semantic.checkpoint(), semantic_corpus)
     c_transition = StructuredSemanticTransitionLearner.from_checkpoint(
         transition.checkpoint(), transition_corpus
     )
@@ -170,16 +170,18 @@ def test_birth_state_is_parent_with_zero_fast():
     for worker in ("k1.semantic", "k2.transition"):
         assert instance.is_fast_zero(worker)
         assert instance.effective_state_digest(worker) == content_digest(
-            dict(semantic.checkpoint()["state_dict"] if worker == "k1.semantic" else transition.checkpoint()["state_dict"])
+            dict(
+                semantic.checkpoint()["state_dict"]
+                if worker == "k1.semantic"
+                else transition.checkpoint()["state_dict"]
+            )
         )
 
 
 def test_wake_matches_continuation_and_leaves_slow_unchanged():
     semantic, transition, semantic_corpus, transition_corpus, experiences = _tiny_setup()
     instance = _fresh_instance(semantic, transition)
-    slow_before = {
-        worker: instance.slow_state_digest(worker) for worker in instance.slow
-    }
+    slow_before = {worker: instance.slow_state_digest(worker) for worker in instance.slow}
     for experience in experiences:
         instance.wake_experience(
             experience,
@@ -194,9 +196,7 @@ def test_wake_matches_continuation_and_leaves_slow_unchanged():
     c_semantic, c_transition = _continuation_arm(
         semantic, transition, semantic_corpus, transition_corpus, experiences
     )
-    assert instance.effective_state_digest("k1.semantic") == content_digest(
-        c_semantic.state_dict()
-    )
+    assert instance.effective_state_digest("k1.semantic") == content_digest(c_semantic.state_dict())
     assert instance.effective_state_digest("k2.transition") == content_digest(
         c_transition.state_dict()
     )
@@ -272,3 +272,40 @@ def test_replay_sample_indices_are_deterministic_and_without_replacement():
     assert all(0 <= index < 150 for index in first)
     other = replay_sample_indices(buffer_size=150, sample_count=50, digest=DIGEST_B)
     assert other != first
+
+
+def test_same_replay_stream_matches_direct_continuation_effective_state():
+    semantic, transition, semantic_corpus, transition_corpus, experiences = _tiny_setup()
+    fast_slow = _fresh_instance(semantic, transition)
+    direct_semantic = StructuredSemanticLearner.from_checkpoint(
+        semantic.checkpoint(), semantic_corpus
+    )
+    direct_transition = StructuredSemanticTransitionLearner.from_checkpoint(
+        transition.checkpoint(), transition_corpus
+    )
+    for experience in experiences:
+        fast_slow.wake_experience(
+            experience,
+            semantic_epochs=1,
+            semantic_lr=2.0,
+            transition_epochs=1,
+            transition_lr=0.2,
+        )
+        direct_semantic.fit((experience.semantic_example,), epochs=1, learning_rate=2.0)
+        direct_transition.fit((experience.transition_example,), epochs=1, learning_rate=0.2)
+    fast_slow.replay_experience(
+        experiences[0],
+        semantic_epochs=1,
+        semantic_lr=2.0,
+        transition_epochs=1,
+        transition_lr=0.2,
+    )
+    direct_semantic.fit((experiences[0].semantic_example,), epochs=1, learning_rate=2.0)
+    direct_transition.fit((experiences[0].transition_example,), epochs=1, learning_rate=0.2)
+    fast_slow.consolidate()
+    assert fast_slow.effective_state_digest("k1.semantic") == content_digest(
+        direct_semantic.state_dict()
+    )
+    assert fast_slow.effective_state_digest("k2.transition") == content_digest(
+        direct_transition.state_dict()
+    )
