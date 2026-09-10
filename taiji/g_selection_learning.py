@@ -346,13 +346,16 @@ class GSelectionLearner:
         selected, selected_score = scored[0]
         safe = self._safe_candidate(candidate_set.candidates)
         safe_score = self.score(safe)
-        if (
-            selected.candidate_role != "proposal"
-            or selected.goal is None
-            or selected.content_plan is None
-            or selected.confidence < self.confidence_floor
-            or selected_score <= safe_score + self.selection_margin
-        ):
+        if selected.candidate_role == "proposal":
+            proposal_unsafe = (
+                selected.goal is None
+                or selected.content_plan is None
+                or selected.confidence < self.confidence_floor
+                or selected_score <= safe_score + self.selection_margin
+            )
+            if proposal_unsafe:
+                selected = safe
+        elif selected_score <= safe_score + self.selection_margin:
             selected = safe
         if selected.candidate_role == "proposal":
             status = "selected"
@@ -387,6 +390,8 @@ class GSelectionLearner:
                 raise ValueError("pair G target must be a complete proposal")
             if item.target_kind == "abstain" and target.candidate_role != "abstain":
                 raise ValueError("abstain G target must be an abstain candidate")
+            if item.target_kind == "reobserve" and target.candidate_role != "reobserve":
+                raise ValueError("reobserve G target must be a reobserve candidate")
         return tuple(sorted(items, key=lambda item: item.candidate_set_digest))
 
     def fit(

@@ -320,6 +320,29 @@ from .foundation_training import (
     MemoryTrainingRun,
     WorldActionTrainingRun,
 )
+from .g_selection import (
+    G_SELECTION_FEATURE_NAMES,
+    TAIJI_G_SELECTION_FORMAT,
+    TAIJI_G_SELECTION_VERSION,
+    GSelectionCandidate,
+    GSelectionCandidateSet,
+)
+from .g_selection_behavior import (
+    PROPOSAL_UTILITY_WEIGHTS,
+    SAFE_UTILITY_WEIGHTS,
+    TAIJI_G_BEHAVIOR_FORMAT,
+    TAIJI_G_BEHAVIOR_VERSION,
+    GSelectionBehaviorOutcome,
+    GSelectionBehaviorSet,
+)
+from .g_selection_learning import (
+    G_SELECTION_CANDIDATE_ROLES,
+    G_SELECTION_LEARNER_FORMAT,
+    G_SELECTION_LEARNER_VERSION,
+    G_SELECTION_SELECTION_STATUSES,
+    GSelectionDecision,
+    GSelectionLearner,
+)
 from .generation import (
     GENERATION_CHECKPOINT_FORMAT,
     TEXT_EXPRESSION_CODEC_FORMAT,
@@ -621,21 +644,6 @@ from .owner_transfer import (
     TaijiOwnerTransferCheckpoint,
     TaijiOwnerTransferEvent,
     TaijiOwnerTransferManifest,
-)
-from .g_selection import (
-    G_SELECTION_FEATURE_NAMES,
-    TAIJI_G_SELECTION_FORMAT,
-    TAIJI_G_SELECTION_VERSION,
-    GSelectionCandidate,
-    GSelectionCandidateSet,
-)
-from .g_selection_learning import (
-    G_SELECTION_CANDIDATE_ROLES,
-    G_SELECTION_LEARNER_FORMAT,
-    G_SELECTION_LEARNER_VERSION,
-    G_SELECTION_SELECTION_STATUSES,
-    GSelectionDecision,
-    GSelectionLearner,
 )
 from .sparse import SparseSynapses
 from .state import (
@@ -1265,6 +1273,12 @@ __all__ = [
     "G_SELECTION_SELECTION_STATUSES",
     "GSelectionDecision",
     "GSelectionLearner",
+    "PROPOSAL_UTILITY_WEIGHTS",
+    "SAFE_UTILITY_WEIGHTS",
+    "TAIJI_G_BEHAVIOR_FORMAT",
+    "TAIJI_G_BEHAVIOR_VERSION",
+    "GSelectionBehaviorOutcome",
+    "GSelectionBehaviorSet",
     "OWNER_TRANSFER_CURSOR_STAGES",
     "OWNER_TRANSFER_EVENT_TYPES",
     "OWNER_TRANSFER_OWNER_IDS",
