@@ -1,6 +1,6 @@
 # 2026-09-10 后续结果复审与路线修订
 
-初始复审依据：本地 main 提交 4629bc8c；比较 da8a16e1 之后的 51 个变更文件，重点读取实际 learner、runner、课程生成器、checkpoint 和 formal/scorecard。随后追加的 P0/P1 validation-only 结果落在本地 main 提交 072dee0d；没有重跑正式训练，没有覆盖历史评分。
+初始复审依据：本地 main 提交 4629bc8c；比较 da8a16e1 之后的 51 个变更文件，重点读取实际 learner、runner、课程生成器、checkpoint 和 formal/scorecard。随后追加的 P0/P1/P1.1 validation-only 结果落在本地 main 提交 da60abc7；没有重跑正式训练，没有覆盖历史评分。
 
 机器复核：[结果审计](../../reports/taiji_m4v2_plan_result_review_20260910.json)。本次检查通过 systematic-debugging 的源码追踪与最小反例定位问题。当前唯一执行顺序见 [执行计划](../active/roadmap/03_CURRENT_EXECUTION.md)。
 
@@ -55,7 +55,7 @@ FS checkpoint 保存 slow/fast 和 replay digest，但不包含 replay 的可重
 
 保留 FS 实现和弱类收益，把其状态写为“有收益的候选训练流程；状态拆分贡献待隔离”。widened 继续关闭，XL 保留为容量参考。先完成等 replay 的最小机制实验与可见数据审计，再决定是否值得整合 lineage；项目上限来自可验证的持续学习、知识迁移和结构成长，参数字节凑倍数不是目标。
 
-旧 SGK v1 标记为待修订、禁止按原 §9 开跑；已有报告/权重不改写。本轮仅更新研究依据、计划和文档入口。P0 诊断完成后，唯一下一步曾转为 P1 的 validation-only 有效信号与五类数据合同审计；该审计结果见本文件 §6，当前入口已转为 P1 数据契约修复。
+旧 SGK v1 标记为待修订、禁止按原 §9 开跑；已有报告/权重不改写。本轮仅更新研究依据、计划和文档入口。P0 诊断完成后，唯一下一步曾转为 P1 的 validation-only 有效信号与五类数据合同审计；该审计结果见本文件 §6，P1.1 修复结果见 §7，当前入口已转为 P2 validation pilot。
 
 ## 4. 阶段收束补记
 
@@ -80,7 +80,7 @@ FS checkpoint 保存 slow/fast 和 replay digest，但不包含 replay 的可重
 
 该结果把当前效果归因收束为“直接 continuation＋replay”；在本地 delta 语义和相同经历下，fast/slow 状态拆分没有可分离的有效权重更新收益。FS 仍可作为可恢复状态实现候选，但它的资源成本、半程中断恢复和 replay payload 完整性必须在 P3 单独验证。C-stage v2 的小型改善不能再描述为 FS 独立优势，也不能推导五类泛化、真实 Workbench 成功率、结构成长或自主进化。
 
-因此当时的唯一下一步已从 P0 前进到 P1：审计五类实际 masked input/target、模板/项目隔离、统计单位和独立性；在该合同通过前不追加正式效果训练。该审计随后在 §6 执行，当前入口已转为数据契约修复。
+因此当时的唯一下一步已从 P0 前进到 P1：审计五类实际 masked input/target、模板/项目隔离、统计单位和独立性；在该合同通过前不追加正式效果训练。该审计随后在 §6 执行，P1.1 修复结果见 §7。
 
 ## 6. P1 数据契约审计结果（2026-09-10）
 
@@ -98,3 +98,20 @@ FS checkpoint 保存 slow/fast 和 replay digest，但不包含 replay 的可重
 | model17/23/31 state_dict | K1/K2 两两最大绝对差均为 0.0 | 不能把复制的同状态 worker 计为独立模型 |
 
 报告状态为 `needs_data_revision`，`can_start_p2=false`。因此 P2 训练/效果验证被数据 Gate 阻塞，不能用更多 fit、重复 seed 或放宽 scorer 来掩盖问题。下一步只修复课程生成与 split contract：把变化放入 typed mask 可见的合法状态/时序组合，令每类至少有多个 K1/K2 可见状态、validation 覆盖 A/B/C/D/R 并按 project/template 隔离；随后重跑同一审计。该 Gate 通过前不读取新的 sealed 测试，也不进入正式训练。
+
+## 7. P1.1 数据契约修复结果（2026-09-10）
+
+针对 §6 的失败 Gate，新增 [P1 数据构建器](../../scripts/training/build_taiji_m5_k_p1_data.py)，并用同一 [审计入口](../../scripts/training/audit_taiji_m5_k_p1_data_contract.py) 重跑；旧 v1 失败报告和 manifest 保留不覆盖。通过结果见 [P1 v2 审计报告](../../reports/taiji_m5_k_p1_data_contract_audit_v2_20260910.json)，合同见 [P1 v2 manifest](../manifests/taiji_m5_k_p1_data_manifest_v2.json)。本轮仍未调用 `fit`，未读取新的 sealed payload。
+
+| Gate | 修复后实测 | 结论 |
+|---|---:|---|
+| train/validation | 450 train + 10 validation；A/B/C/D/R 各有记录 | 五类覆盖完整 |
+| 类内 K1/K2 visible input | 每类均为 2 个；不是文件字节/注释的唯一变化 | typed mask 真正看到状态差异 |
+| A/B/C 状态 | resolved-language / ambiguous-language | 语言证据导致可解释的 selection/goal 差异 |
+| D 状态 | ambiguous-header / resolved-header | header 语言证据改变 selection 状态 |
+| R 状态 | recovery-no-selection / recovery-selection-hint | 缺失目标下的显式恢复语言上下文改变 selection 状态 |
+| course seed | 可见状态集合相同但有序可见序列三组两两不同 | 计为课程顺序差异，不计为独立模型 |
+| split | validation 五类覆盖；project 和 template 均与 train 隔离 | 可以做 validation pilot |
+| model17/23/31 | state_dict 仍两两相同 | 仅旁证；单父代 P1 Gate 不要求复制出独立模型 |
+
+报告状态为 `passed`，`can_start_p2=true`。这只证明数据入口和统计合同成立，不证明 K1/K2 已经学会或能泛化。当前唯一下一步是冻结 candidate/scorer/threshold/resource，并在独立 checkpoint preflight 后执行 P2 validation pilot；仍不读取新的 sealed 测试。
