@@ -294,3 +294,17 @@ P3.1 的边界结论是“单 cell 状态合同和恢复链路成立”，不是
 | 训练与参数边界 | 通过 | `fit_called=false`、`training_performed=false`、K 参数未增长、`can_promote=false` |
 
 P3.2 的结论是“选择所有权已经可以从 K 迁移到 G，且不损害当前行为”，不是“G 已经学会选择”。因此下一步唯一执行项改为 P3.3：冻结 P3.2 的 K，只建立有正/干扰/拒绝候选的 G candidate-set contract，先做 data-signal canary，再决定是否允许 G-only 小步更新。P2.7 holdout 必须保持 untouched test；训练前后都必须通过 checkpoint 保存、独立恢复、lineage、rollback 和篡改拒绝。若候选标签只是复制 K1 原选择，必须停止并重设计目标，不以 identity fit 冒充能力提升。
+
+## 20. P3.3 G candidate data-signal canary 结果（2026-09-11）
+
+按 §19 的入场条件运行了 [P3.3 G candidate data-signal canary](../../scripts/training/eval_taiji_m5_k_p3_3_g_signal_canary.py)，产出 [P3.3 manifest](../manifests/taiji_m5_k_p3_3_g_candidate_manifest_v1.json) 和 [P3.3 报告](../../reports/taiji_m5_k_p3_3_g_signal_canary_20260911.json)。本轮固定 P3.2 的 K worker，重建 P1 v2 的 460 条数据但只选 40 条 train、10 条 validation 进入 G 合同；P2.7 四条 holdout 没有进入 fit，未读取 sealed payload，也没有调用任何 fit。
+
+| Gate | 结果 | 证据含义 |
+|---|---:|---|
+| 数据重建 / split 隔离 | 通过 | P1 期望/重建均为 460 条、`mismatch_count=0`；G train/validation 为 40/10，project/path 分离 |
+| 候选完整性 | 通过 | 每条至少两个候选；低证据行使用 `abstain` 与 `reobserve`，高证据行保留 K 提案与 `abstain` |
+| 目标与信号 | 通过 | target coverage 全部通过，目标同时包含 `pair` 与 `abstain`，20 条有非零 K score margin，30 条有竞争干扰项 |
+| 运行时标签隔离 | 通过 | inference payload 不含 `target_candidate_id`/`target_kind`；`external_target_used=false` |
+| checkpoint 入场 | 通过 | P3.2 K1/K2 保存、独立进程 restore 和 digest 校验通过；没有 K 参数变化 |
+
+本轮只证明“可以开始设计 G-only 学习”，不证明 G 已产生能力增益。候选集合目前主要是“K 提案 vs 安全 abstain/reobserve”的二选一，避免把简单的候选复制误报为新能力。下一步唯一执行项改为：冻结 P3.2 K，保存并独立恢复空白 G child，只训练 G 的候选选择器，再以 K-only、zero-step owner-transfer、trained-G 三臂做保持与动作验证；任何 checkpoint、旧类保持或安全出口退化都必须回滚。
