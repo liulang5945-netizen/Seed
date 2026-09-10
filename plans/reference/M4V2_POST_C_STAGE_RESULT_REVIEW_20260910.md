@@ -1,6 +1,6 @@
 # 2026-09-10 后续结果复审与路线修订
 
-初始复审依据：本地 main 提交 4629bc8c；比较 da8a16e1 之后的 51 个变更文件，重点读取实际 learner、runner、课程生成器、checkpoint 和 formal/scorecard。随后追加的 P0/P1/P1.1/P2/P2.1 validation 结果落在本地 main 提交 917c8bf9；没有读取新的 sealed payload，没有 promotion 成绩。
+初始复审依据：本地 main 提交 4629bc8c；比较 da8a16e1 之后的 51 个变更文件，重点读取实际 learner、runner、课程生成器、checkpoint 和 formal/scorecard。随后追加的 P0/P1/P1.1/P2/P2.1 validation 结果落在本地 main 提交 917c8bf9；P2.2 安全 bridge 结果落在 7a9e9a01；没有读取新的 sealed payload，没有 promotion 成绩。
 
 机器复核：[结果审计](../../reports/taiji_m4v2_plan_result_review_20260910.json)。本次检查通过 systematic-debugging 的源码追踪与最小反例定位问题。当前唯一执行顺序见 [执行计划](../active/roadmap/03_CURRENT_EXECUTION.md)。
 
@@ -145,3 +145,18 @@ FS checkpoint 保存 slow/fast 和 replay digest，但不包含 replay 的可重
 | failure recovery 触发 | 0 | 0 | 0 |
 
 P2.1 把问题进一步分层：6/10 行在 native readout 之前就因输入证据置信度低于 `0.55` 而安全返回 `unknown`，不是简单的 argmax 错误；frozen 另有一条 K2 预测 world 与 observation 不对齐而被 planner 正确拒绝。wake-only/replay 能在 4/10 行完成真实只读 Workbench 动作，但不构成能力晋级。既有 `READ_ONLY_ROUTES` 还没有 `content:recover-target` 路由，因此 R 类即使后续产生 recovery 内容，也没有安全的缺失目标恢复桥。当前唯一下一步改为 P2.2：实现 typed abstention/clarification、受限 `workspace.list` recovery contract 和级联 world-alignment canary；不降低全局 confidence floor，不新增 replay，不进入 P3。
+
+## 10. P2.2 安全 abstention 与 recovery bridge canary（2026-09-10）
+
+随后按计划实现并运行了 [P2.2 canary](../../scripts/training/eval_taiji_m5_k_p2_2_safety_bridge_canary.py)，结果见 [P2.2 报告](../../reports/taiji_m5_k_p2_2_safety_bridge_canary_20260910.json)。本轮只读 P2.1 checkpoint 和 P1 v2 manifest，重建 460 条记录，`mismatch_count=0`；没有调用 `fit`，没有读取 sealed payload，`can_promote=false`。
+
+| 检查 | 三臂结果 | 解释 |
+|---|---:|---|
+| typed abstention 数量 | 6/10/臂 | 对应低于 `0.55` 的低证据输入，不强行制造可执行动作 |
+| abstention roundtrip | 6/6/臂 | `ReadOnlyAbstention` 序列化/反序列化一致 |
+| abstention 非执行 | 6/6/臂 | payload 明确携带 `action_intent: null` |
+| `workspace.list(path=".")` recovery 控制 | 2/2/臂成功 | 仅是 oracle-labeled route control，根目录参数和快照绑定均通过 |
+| world-alignment 控制 | 4/4/臂成功 | 使用 observation 对齐 world 的 oracle control，不是 K2 学习命中 |
+| 原始 learned route | frozen 3/10；wake-only 4/10；wake-replay 4/10 | 与 P2.1 一致，未产生模型能力晋级 |
+
+这次结果解决了 P2.1 的安全边界缺口，但没有解决模型如何在缺失目标后获得新证据的问题。P2.2 的 recovery 与 alignment 都明确标为 `oracle_control`，不能计入 K1/K2 能力、真实 recovery 命中或 P3 解冻条件。下一步改为 P2.3：建立“缺失目标安全 abstention→根目录列举→新候选观察→可执行只读动作”的可重建 continuation 数据合同，先通过数据审计，再做同一父 checkpoint 的 targeted learning；不降低 confidence floor、不把 host policy 内化成绩当作模型能力。
