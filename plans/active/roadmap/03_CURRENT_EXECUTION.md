@@ -1,6 +1,6 @@
 # Seed / Taiji 唯一执行计划
 
-> 修订：2026-09-11；P3.6 独立行为 holdout/保持 Gate 已完成。本文覆盖所有旧文档中的执行许可和“下一步”。
+> 修订：2026-09-11；P3.6 独立行为 holdout/保持 Gate 与 P4.0 固定容量压力扫描已完成。本文覆盖所有旧文档中的执行许可和“下一步”。
 > 本轮任务是根据新增结果修订方案；训练与实现按下述验收顺序在后续开发中执行。
 > 研究依据：[本轮源码与结果复审](../../reference/M4V2_POST_C_STAGE_RESULT_REVIEW_20260910.md)；[历史执行记录](../../archive/history/20260910_result_review/EXECUTION_HISTORY.md)。
 
@@ -14,7 +14,7 @@
 | fast/slow 与 replay | 等 replay 下与直接 continuation 等价；拆分独立贡献未证实 | replay 作为效果基线；FS 只保留为状态实现候选 |
 | widened / 旧 parity | 当前合成路线关闭；错误计数结论撤回 | 保留失败证据和 XL 对照，不继续补次数或凑容量 |
 | C-stage / scorecard | 报告入账完成；覆盖范围有限，can_promote=false | 不追加同质 formal；换成五类、同预算、同 artifact 验证 |
-| S/G/K 连续整合 | P3.1 事件合同、P3.2 owner-transfer、P3.3 candidate data-signal/G-only、P3.4 behavior signal、P3.5 reobserve-aware G-only 和 P3.6 独立行为 holdout/保持 Gate 均通过；13 参数 G 在新身份上泛化，K1/K2 继续冻结 | 进入 P4 容量压力与继承式结构成长 Gate；禁止追加同质 epoch，必须先证明固定容量瓶颈，再比较继承式增长与强固定基线 |
+| S/G/K 连续整合 | P3.1 事件合同、P3.2 owner-transfer、P3.3 candidate data-signal/G-only、P3.4 behavior signal、P3.5 reobserve-aware G-only 和 P3.6 独立行为 holdout/保持 Gate 均通过；P4.0 在 5 个新案例、4 个候选宽度上观察到固定 G 的选择压力，13 参数 G 与 K1/K2 继续冻结 | P4.0 已完成但不授予结构成长；先做 P4.1 matched fixed-large/lesion 与候选集上下文对照，禁止追加同质 epoch |
 | Seed / IDE / provider / 插件 | 已有工程资产保留；本轮未重新验收客户端全链路 | 仅修阻塞主线的故障；新能力按 P5 的依赖解冻 |
 | CI、临时目录与发布 | 不把历史局部测试当当前全仓通过 | 变更相关检查随步执行；发布另验收，不批量删除未知资产 |
 
@@ -22,7 +22,7 @@
 
 ### 下一阶段唯一交付目标
 
-**P2.2 已完成，P2.3 数据合同/targeted learning、P2.4 retention、P2.5 novelty probe、P2.6 novel learning、P2.7 holdout generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight、P3.3 candidate data-signal/G-only、P3.4 behavior signal、P3.5 reobserve-aware G-only learning 和 P3.6 独立行为 holdout/保持 Gate 已完成但模型仍未 promotion，下一步只做 P4 容量压力与继承式结构成长 Gate。** P3.6 不调用 fit，在 2 个新 project、4 条新 path 上 trained-G utility `4.0>2.65`、target hit `4/4>1/4`；3 条 reobserve projection、P1 五类旧类、安全出口、P2.7 Workbench `4/4`、K1/K2 digest 和独立恢复均通过。下一步必须先以 validation-only 容量压力确认固定容量确实成为瓶颈，再比较继承式结构增长、强 fixed-large 与结构 lesion；不以更大模型、添加新器官、训练次数或元数据增长替代真实能力闭环验收。P5、CUDA、IDE/provider 和客户端视觉仍不并行解冻。
+**P2.2 已完成，P2.3 数据合同/targeted learning、P2.4 retention、P2.5 novelty probe、P2.6 novel learning、P2.7 holdout generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight、P3.3 candidate data-signal/G-only、P3.4 behavior signal、P3.5 reobserve-aware G-only learning、P3.6 独立行为 holdout/保持 Gate 和 P4.0 validation-only 固定容量压力扫描均已完成，但模型仍未 promotion，结构也未增长。** P3.6 在 2 个新 project、4 条新 path 上保持 trained-G utility `4.0>2.65`、target hit `4/4>1/4`；P4.0 在 5 个新案例、候选宽度 `2/4/8/12` 上得到 trained-G residual `0.32/0/0.54/0.59`，序列长度 `1/4/16` utility 均为 `0.6375`，未见 feature collision，K1/K2 digest 与 G lineage/独立恢复均通过。这个结果只说明“候选选择压力值得继续拆因”，还不能把宽度退化直接归因成神经拓扑容量或批准扩张；下一步只做 P4.1 的 matched fixed-large、结构 lesion 和候选集上下文/竞争特征对照。P5、CUDA、IDE/provider 和客户端视觉仍不并行解冻。
 
 - P0 已确定当前实现的效果基线：在 model17/course0、150 条 wake＋50 条固定 replay 上，FS 与 C-replay、FS-no-replay 与 C 的有效状态峰值差均为 `4.76837158203125e-7`，低于预先冻结的 `1e-5`；checkpoint preflight 通过。当前数据覆盖的验证类为 A/B/C，D/R 留给 P1。
 - P1 v1 失败审计确认了根因：450 条 train 记录中每类表面 observation digest 为 90 个，但实际 K1/K2 mask-visible input 各只有 1 个；validation 缺 D/R、无 project 隔离。报告保留为失败证据，不覆盖。
@@ -144,16 +144,30 @@ P3.6 严格 validation-only，加载 P3.5 zero-step/trained-G，不调用 `fit`�
 
 报告见 [P3.6 behavior holdout](../../../reports/taiji_m5_k_p3_6_behavior_holdout_20260911.json)，清单见 [P3.6 manifest](../../manifests/taiji_m5_k_p3_6_behavior_holdout_manifest_v1.json)。P3 阶段到此收束：不能再追加同质 G epoch，也不能把局部行为泛化写成通用智能或结构成长。
 
-## 唯一下一步：P4 容量压力与继承式结构成长 Gate
+## P4.0 已完成：固定容量压力扫描（不授予结构成长）
 
-P3.6 已经证明“冻结 K、继承 P3.5 G、在新身份上选择并安全执行”具有局部泛化；下一步必须回答结构成长是否真的被需求逼出，而不是先凭直觉扩容。P4 的第一步不是扩大网络，而是 validation-only capacity-pressure scan：在同一父代和固定资源预算下，让任务干扰、候选竞争、序列长度和持续课程逐级增加，测量固定容量的能力下降、旧类保持、恢复成本和每参数收益。
+P4.0 严格 validation-only，冻结 P3.5 trained-G、P3.2 K1/K2 和所有 Workbench/checkpoint 合同，在 5 个新案例、3 个新 project、20 个候选集合上扫描候选宽度 `2/4/8/12` 与序列长度 `1/4/16`。它没有调用 `fit`，没有修改 K，没有新增 G 参数，也没有读取 sealed payload。
 
-1. 冻结 P3.6 trained-G、P3.2 K1/K2 parent、P3.6 manifest、行为 utility、confidence floor、Workbench policy 和 checkpoint contract；所有 P4 candidate 先完成保存、独立恢复、lineage、rollback 和篡改拒绝。CUDA、S 学习、IDE/provider、客户端视觉和 promotion 继续冻结。
-2. 构造新的容量压力课程，至少包含五类 A/B/C/D/R、旧类保持、未见 project/path、低证据安全出口、proposal/reobserve 竞争和多步 continuation；训练/验证按 project/template 隔离，不能把重复 seed 当增长压力，P2.7/P3.6 artifact 只作 untouched retention 对照。
-3. 先跑固定容量 baseline 与 fixed-large reference 的 validation-only 扫描，锁定最小压力点：必须同时出现可重复的离散行为/utility 下降或保持退化，并排除数据重复、阈值、Workbench 和 checkpoint 工程原因。若固定容量未形成真实瓶颈，P4 停止，不制造结构增长需求。
-4. 压力成立后才实现继承式增长 candidate：从同一父代继承有效 worker/G 状态，新增结构以零影响初始化接入；记录 parent/child lineage、节点类型/输入输出 mask、credit、激活/贡献、参数与运行资源，验证 child rollback 可回父状态。
-5. 对照必须至少包括最强 fixed-capacity、同最终有效容量的 fixed-large、继承式 dynamic-growth 和结构 lesion；比较新任务 utility/target hit、旧类保持、安全 projection、Workbench、checkpoint 字节、训练/推理时间和总参数，不能用复制权重、只增加 metadata 或只保存更多 checkpoint 冒充生长收益。
-6. P4 只有在增长相对 fixed-large 在相同最终有效容量/预算下带来可重复新能力或保持收益，且旧类、安全、恢复和资源边界不退化时才进入长期结构成长；否则保持 `can_promote=false`，回到容量/数据根因，不进入 P5 外围并行开发。
+| Gate | 结果 | 关键实测 |
+|---|---:|---|
+| 数据与身份隔离 | 通过 | 5 个新案例、3 个新 project、路径与 P3.4/P3.6 disjoint；20 个 candidate/behavior digest 唯一；每个宽度均为 5 个案例 |
+| checkpoint / lineage | 通过 | K1/K2、zero-step G、trained-G 独立恢复；G lineage 通过；K1/K2 digest 前后仍为 `12851b…77a6` / `411ef5…3691` |
+| 候选宽度压力 | 观察到压力 | trained-G residual：width 2=`0.32`、4=`0`、8=`0.54`、12=`0.59`；target hit 分别 `0.6/1.0/0.4/0.2` |
+| 序列退化 | 未观察到 | length `1/4/16` utility 均为 `0.6375`；当前压力更像候选竞争/上下文合同问题，而不是时序记忆退化 |
+| feature collision | 未观察到 | 四个宽度的 feature collision rate 均为 `0`；不能用“特征完全相同”解释退化 |
+| 结构成长 | 未开放 | `growth_admitted=false`、`can_promote=false`；fixed-large 尚未建立可公平比较的 G owner/readout 合同 |
+
+报告见 [P4.0 capacity pressure](../../../reports/taiji_m5_k_p4_0_capacity_pressure_20260911.json)，清单见 [P4.0 manifest](../../manifests/taiji_m5_k_p4_0_capacity_pressure_manifest_v1.json)。P4.0 的结论是“固定 G 在候选规模变化下出现可复现的选择压力”，不是“已经证明应当增加神经元”。由于 width 4 完整通过而 width 8/12 退化，且压力课程引入了跨案例 proposal competition/alias，必须先完成归因对照，不能直接实现 dynamic growth。
+
+## 唯一下一步：P4.1 压力归因与公平容量对照 Gate
+
+P4.1 只解决一个问题：P4.0 的退化究竟来自 G 的候选集上下文/竞争表示不足，还是来自可证实的固定参数容量上限。它必须在同一 P4.0 压力点上建立 matched fixed-large、结构 lesion 与 context-aware contract 对照；没有这个归因 Gate，不允许扩张拓扑、复制权重或追加同质训练。
+
+1. 冻结 P4.0 的父代、20 个 candidate/behavior artifact、Workbench utility、confidence floor、K1/K2 digest 和 checkpoint/lineage 合同；先验证 P4.0 manifest/report digest 一致，所有新 arm 均独立保存、恢复、rollback 和篡改拒绝。
+2. 建立与当前 G 相同输入/读出合同的 fixed-large reference，明确新增参数实际进入哪些 feature/readout；同时建立 matched lesion（去除新增容量或屏蔽指定竞争上下文），禁止复用旧 K fixed-large 或只复制 metadata 作为对照。
+3. 在相同候选集合上增加显式 candidate-set context/competition 诊断（候选数量、角色组成、相对排名/归一化等必须是内容寻址输入）；先做 validation-only，不训练、不改变 parent。若 context-aware fixed-small 已恢复 width 8/12，根因归入表示合同；若 fixed-large 在无 context 修复时才恢复，才保留容量假设。
+4. 对每个 arm 重算 width `2/4/8/12` 的 target hit、utility、residual、safe abstention、reobserve projection、旧五类保持、Workbench、参数/ checkpoint 字节、CPU 时间和独立恢复；至少重复两个 deterministic seed，区分稳定效应与一次候选排序。
+5. P4.1 只允许输出一项归因结论：`representation_contract`、`fixed_capacity_candidate` 或 `inconclusive`。只有在 fixed-large/lesion 排除上下文缺陷、压力跨 seed 保持，并且最终才证明 fixed-small 瓶颈时，下一步才设计继承式结构成长；否则先修 G 输入合同，不增长拓扑。P5、CUDA、IDE/provider、客户端视觉和 promotion 继续冻结。
 
 ### P4：回归态极的长期目标——继承式结构成长
 
@@ -176,4 +190,4 @@ P3.6 已经证明“冻结 K、继承 P3.5 G、在新身份上选择并安全执
 
 文档仅保留一个执行入口，不再新增平行总计划：本文记录阶段状态、下一步和验收；结果复审记录证据解释；核心需求与架构常驻 active；已有历史流水保留在 archive。旧预注册即使留在 reference 也不重新获得执行许可。当前收束不移动有引用的研究资产，不覆盖旧报告或删除 checkpoint。根目录存在部分无读取权限的临时路径，未证明其为空或无用；后续清理须逐项验证绝对路径、引用和可恢复性，不能把它们报作已清理。
 
-本轮 P2 pilot、P2.1、P2.2、P2.3 contract/targeted、P2.4 retention、P2.5 novel-composition、P2.6 novel-learning、P2.7 generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight、P3.3 G candidate data-signal/G-only learning、P3.4 behavior signal、P3.5 reobserve-aware G-only learning 和 P3.6 independent behavior holdout 报告与计划同步已提交本地 main。后续唯一入口是 P4 容量压力与继承式结构成长 Gate；不追加同质 epoch，不跳到 promotion 或外围路线，也不按历史“下一步”自动开跑。
+本轮 P2 pilot、P2.1、P2.2、P2.3 contract/targeted、P2.4 retention、P2.5 novel-composition、P2.6 novel-learning、P2.7 generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight、P3.3 G candidate data-signal/G-only learning、P3.4 behavior signal、P3.5 reobserve-aware G-only learning、P3.6 independent behavior holdout 和 P4.0 fixed-capacity pressure scan 报告与计划同步已提交本地 main。后续唯一入口是 P4.1 压力归因与公平容量对照 Gate；不追加同质 epoch，不跳到 promotion 或外围路线，也不按历史“下一步”自动开跑。
