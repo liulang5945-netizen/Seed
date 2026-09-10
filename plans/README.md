@@ -28,9 +28,9 @@ B3-K 的非饱和 structured-loss diagnostic 已通过：同一 model 17 parent�
 
 **C-entry parity formal 预注册已冻结**：[parity formal preregistration](reference/M4V2_B3_K_C_PARITY_FORMAL_PREREGISTRATION_20260910.md)——评分输入 digest 固定、6 分量 MSE 同口径、candidate readout = 权重相加（与 logit 和数学等价，诚实声明）、判据 G1 质量门 / G2 灾难界（validation 派生先行冻结）/ G3 主判据（sealed 上 ≥2/3 课程胜出且均值更优）、统计单元 course n=3、sealed 读取后禁止调参。
 
-**parity formal 已执行，判据失败（honest fail）**：G1/G2/G3 全部失败——sealed candidate delta ≈ +0.107/课程（权重相加 readout 使共享 parent 加倍 → 未见输入过度自信），0/3 课程胜出。**validation-only 探针归因**：同 artifacts 改权重平均 readout 后 delta 反转 −0.0017（9/9 为负）——失败来自 readout 设计选择，不是顺序分化训练。fixed-large 概率平均（校准保持）保留为 strong arm。
+**parity formal v3 已执行（readout 修订 + 全新 sealed v2），widened 路线按预注册关闭**：G1/G2 通过（权重平均 readout 消除了 v1 的 +0.107 灾难，sealed 三课程全部为负），G3 极小差距失败（1/3 课程胜出，均值 −0.00173 vs −0.00188）。**结论：等预算等容量下，顺序分化 + 权重平均不优于同构 replica 概率平均——两种合成在同一表现带（±0.0002）。** fixed-large 概率平均保留为 C-entry strong arm。学习问题收敛点：K 课程可见信号空间只有 3 类，任何课程/合成变化都是二阶差异。
 
-**当前唯一下一步（需拍板）**：(a) v3 设计修订（readout=权重平均 + 全新 sealed test v2 + 重跑 formal）；或 (b) 关闭 widened 路线。建议 (a)。
+**当前唯一下一步**：K 课程可见信号空间扩展的设计预注册（新 fact 词汇/registry 维度使 recover/.h 类可进入，worker 词汇重建一并冻结）；扩展设计冻结前不训练、不读 sealed v2。
 
 ## 权威文档
 

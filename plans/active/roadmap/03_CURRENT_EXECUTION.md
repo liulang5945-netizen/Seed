@@ -93,6 +93,12 @@ parity 口径修正与修复路线已冻结：[M4V2_B3_K_C_PARITY_CALIBER_REVISI
 
 **当前唯一下一步（需用户拍板）**：二选一——(a) **v3 设计修订预注册**：readout 改为权重平均（校准保持，是概率平均的权重域对偶；探针已示 −0.0017）+ materialize 全新 sealed test v2（当前 sealed 已读取，不可复用）+ 重跑 formal；(b) **关闭 widened 路线**：接受 fixed-large 概率平均为 C-entry strong arm，B 阶段继续。建议 (a)：机制归因精确、修复有原则（权重平均是「两顺序运行合成」的校准保持形态），且 (b) 会把一个已被探针证明等价于 strong control 的路线误判为失败。
 
+用户确认 (a)。v3 预注册（[M4V2_B3_K_C_PARITY_V3_PREREGISTRATION_20260910.md](../../reference/M4V2_B3_K_C_PARITY_V3_PREREGISTRATION_20260910.md)）→ sealed v2 materialize（task_seed=47、与 v1 sealed/train/validation 不交校验）→ formal v3 执行完毕。**结果：G1/G2 通过（readout 修复生效——sealed candidate delta 三课程全部为负 −0.00220/−0.00165/−0.00135，远离灾难），G3 以极小差距失败**（1/3 课程胜出，课程均值 −0.00173 vs fixed-large −0.00188）。按 §3 冻结的结果映射：**widened 路线关闭**，fixed-large（同构 replica 概率平均）保留为 C-entry strong arm。诚实收获：v1 的 +0.107 灾难被 readout 修订完全消除，证明失败在合成方式而非学习规则；两种合成落在同一表现带（±0.0002 二阶差异）。
+
+**学习问题定位（widened 关闭后的收敛点）**：证据链收敛到 K 课程 harness 的**可见信号空间只有 3 类**（.py/.rs/.ts 首 file；recover 受 K2 词汇限制、.h 歧义受 fact 词汇限制）——在此空间内任何课程/顺序/合成变化只能产生二阶差异。
+
+**当前唯一下一步**：K 课程可见信号空间扩展的设计预注册（扩展 fact 词汇或 registry/schema 维度使 recover/.h 类可进入课程，worker 词汇重建与 artifact 重build 一并冻结）；扩展设计冻结前不训练、不读 sealed v2、不在 3 类空间内继续调课程/合成。
+
 **B1 数据与量尺冻结。** 复用 R2 fast/slow + replay 和现有 K worker 训练路径，先梳理参数 owner、调用点、训练反馈到数值更新链。不接外部 provider 代替 Taiji 学习。建立 train/validation/sealed-test 三份分离集合；K 按项目/任务模板隔离，不能仅改文件名。逐 phase 记录实际消费内容 digest。课程 seed 必须改变实际经历顺序或组合，不能只改变标签。
 
 **B2 保存先于训练。** 先在 CPU 检查父 checkpoint 可恢复；保存 fast/slow、replay、学习器状态（若使用 optimizer 则含其状态）、RNG、课程游标和 owner lineage。新进程恢复后预测等价；单步更新后保存/恢复/再更新，与不中断轨迹在预先声明容差内一致。检查磁盘空间、原子写和 rollback；任何失败禁止长跑，不覆盖父代。
