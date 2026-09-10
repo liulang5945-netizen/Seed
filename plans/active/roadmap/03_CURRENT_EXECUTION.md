@@ -1,12 +1,12 @@
 # Seed / Taiji 唯一执行计划
 
-> 修订：2026-09-11；实际代码/报告基线 80e4119c。本文覆盖所有旧文档中的执行许可和“下一步”。
+> 修订：2026-09-11；实际代码/报告基线 37c1dfd8。本文覆盖所有旧文档中的执行许可和“下一步”。
 > 本轮任务是根据新增结果修订方案；训练与实现按下述验收顺序在后续开发中执行。
 > 研究依据：[本轮源码与结果复审](../../reference/M4V2_POST_C_STAGE_RESULT_REVIEW_20260910.md)；[历史执行记录](../../archive/history/20260910_result_review/EXECUTION_HISTORY.md)。
 
 ## 阶段收束：完成研究审计，不等于完成模型验收
 
-本轮从 601413cd 的收束基线继续完成了 P0 等 replay validation-only 诊断、P1 失败审计、P1.1 数据契约修复、P2 小预算 validation pilot、P2.1 只读输出/行动链诊断、P2.2 安全 bridge canary、P2.3 recovery continuation 数据合同审计、P2.3 targeted learning pilot、P2.4 retention canary、P2.5 novel-composition probe、P2.6 novel K2 learning、P2.7 independent holdout generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell state preflight 和 P3.2 K→G owner-transfer preflight；没有读取新的 sealed payload，也没有 promotion 成绩。代码/报告证据以 80e4119c、P0 报告、P1 v1/v2 报告、P2 pilot/P2.1/P2.2/P2.3/P2.4/P2.5/P2.6/P2.7/P3.0/P3.1/P3.2 报告及本结果复审为准。
+本轮从 601413cd 的收束基线继续完成了 P0 等 replay validation-only 诊断、P1 失败审计、P1.1 数据契约修复、P2 小预算 validation pilot、P2.1 只读输出/行动链诊断、P2.2 安全 bridge canary、P2.3 recovery continuation 数据合同审计、P2.3 targeted learning pilot、P2.4 retention canary、P2.5 novel-composition probe、P2.6 novel K2 learning、P2.7 independent holdout generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell state preflight、P3.2 K→G owner-transfer preflight 和 P3.3 G candidate data-signal canary；没有读取新的 sealed payload，也没有 promotion 成绩。代码/报告证据以 37c1dfd8、P0 报告、P1 v1/v2 报告、P2 pilot/P2.1/P2.2/P2.3/P2.4/P2.5/P2.6/P2.7/P3.0/P3.1/P3.2/P3.3 报告及本结果复审为准。
 
 | 工作线 | 收束状态 | 后续处理 |
 |---|---|---|
@@ -14,7 +14,7 @@
 | fast/slow 与 replay | 等 replay 下与直接 continuation 等价；拆分独立贡献未证实 | replay 作为效果基线；FS 只保留为状态实现候选 |
 | widened / 旧 parity | 当前合成路线关闭；错误计数结论撤回 | 保留失败证据和 XL 对照，不继续补次数或凑容量 |
 | C-stage / scorecard | 报告入账完成；覆盖范围有限，can_promote=false | 不追加同质 formal；换成五类、同预算、同 artifact 验证 |
-| S/G/K 连续整合 | P3.1 事件合同与 P3.2 K→G owner-transfer 均通过；G 已拥有选择状态但尚未学习，K1/K2 仍是 inherited candidate/evidence 来源 | 进入 P3.3 冻结 K 的 G 小步学习 Gate；禁止把 control-only、owner-transfer 或 lineage 元数据当作 learned 能力 |
+| S/G/K 连续整合 | P3.1 事件合同、P3.2 owner-transfer 和 P3.3 candidate data-signal 均通过；G 仍未 fit，K1/K2 继续冻结为 inherited candidate/evidence 来源 | 进入 P3.3 冻结 K 的 G-only 小步学习 Gate；禁止把 control-only、owner-transfer、candidate label 或 lineage 元数据当作 learned 能力 |
 | Seed / IDE / provider / 插件 | 已有工程资产保留；本轮未重新验收客户端全链路 | 仅修阻塞主线的故障；新能力按 P5 的依赖解冻 |
 | CI、临时目录与发布 | 不把历史局部测试当当前全仓通过 | 变更相关检查随步执行；发布另验收，不批量删除未知资产 |
 
@@ -22,7 +22,7 @@
 
 ### 下一阶段唯一交付目标
 
-**P2.2 已完成，P2.3 数据合同/targeted learning、P2.4 retention、P2.5 novelty probe、P2.6 novel learning、P2.7 holdout generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight 和 P3.2 owner-transfer preflight 已完成但模型仍未 promotion，下一步只做 P3.3 冻结 K 的 G 小步学习 Gate。** P0 已完成，P1.1 已通过数据 Gate，P2 pilot 已真实训练但未通过能力晋级；P2.1 证明连续 MSE 下降没有转成更高离散命中；P2.2 证明 typed abstention、根目录 recovery route 和世界对齐控制的工程合同可执行，但 recovery/alignment 成绩是 oracle control；P2.3 candidate-only fit 暴露了保持问题，P2.4 已用固定 rehearsal 保住旧类；P2.5 定位了新组合 K2 content 缺口，P2.6 学到该目标，P2.7 在 2 个全新 project、4 条全新 path 上达到 K2 content/Workbench `4/4`，局部泛化 Gate 通过；P3.0 证明 K1/K2 continuation 的 checkpoint 状态边界可恢复；P3.1 证明 S/G/K 事件合同可恢复；P3.2 证明 K 提供候选、G 持有选择且不读取外部运行时 target，但没有训练 G 或新增参数。P3–P5 是后续路线，不是当前并行待办。不以添加新器官、新 Gate、更大模型或训练次数代替输出、保持和可学习闭环验收。
+**P2.2 已完成，P2.3 数据合同/targeted learning、P2.4 retention、P2.5 novelty probe、P2.6 novel learning、P2.7 holdout generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight 和 P3.3 candidate data-signal canary 已完成但模型仍未 promotion，下一步只做 P3.3 冻结 K 的 G-only 小步学习 Gate。** P0 已完成，P1.1 已通过数据 Gate，P2 pilot 已真实训练但未通过能力晋级；P2.1 证明连续 MSE 下降没有转成更高离散命中；P2.2 证明 typed abstention、根目录 recovery route 和世界对齐控制的工程合同可执行，但 recovery/alignment 成绩是 oracle control；P2.3 candidate-only fit 暴露了保持问题，P2.4 已用固定 rehearsal 保住旧类；P2.5 定位了新组合 K2 content 缺口，P2.6 学到该目标，P2.7 在 2 个全新 project、4 条全新 path 上达到 K2 content/Workbench `4/4`，局部泛化 Gate 通过；P3.0 证明 K1/K2 continuation 的 checkpoint 状态边界可恢复；P3.1 证明 S/G/K 事件合同可恢复；P3.2 证明 K 提供候选、G 持有选择且不读取外部运行时 target，但没有训练 G 或新增参数；P3.3 data-signal canary 用 40 条 train/10 条 validation 证明了候选、pair/abstain label、竞争干扰和 runtime 去标签合同成立，但尚未训练 G。P3–P5 是后续路线，不是当前并行待办。不以添加新器官、新 Gate、更大模型或训练次数代替输出、保持和可学习闭环验收。
 
 - P0 已确定当前实现的效果基线：在 model17/course0、150 条 wake＋50 条固定 replay 上，FS 与 C-replay、FS-no-replay 与 C 的有效状态峰值差均为 `4.76837158203125e-7`，低于预先冻结的 `1e-5`；checkpoint preflight 通过。当前数据覆盖的验证类为 A/B/C，D/R 留给 P1。
 - P1 v1 失败审计确认了根因：450 条 train 记录中每类表面 observation digest 为 90 个，但实际 K1/K2 mask-visible input 各只有 1 个；validation 缺 D/R、无 project 隔离。报告保留为失败证据，不覆盖。
@@ -60,7 +60,7 @@ P1 合同完成后可做 P2 validation pilot。最终测试前冻结主指标、
 
 出现下列情况应提交已有成果并停在决策点：有效信号不足需要改变任务定义；公平对照后仍无收益需要改变学习机制；资源约束迫使缩减目标；或准备改变认知所有权/默认发布模型。讨论时给出证据、保留方案与替代方案的收益和代价，再更新唯一计划；不自动扩展训练规模或购买算力。
 
-本轮已完成 P0/P1 validation-only 诊断、P1.1 修复、P2 小预算 pilot、P2.1 输出/行动链诊断、P2.2 安全 bridge canary、P2.3 continuation 数据合同/targeted learning、P2.4 retention canary、P2.5 novel-composition probe、P2.6 novel K2 learning、P2.7 independent holdout generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight 和 P3.2 owner-transfer preflight；下一步只做 P3.3 冻结 K 的 G 小步学习 Gate，不读取 sealed、不扩 K、不进入结构成长或 promotion。
+本轮已完成 P0/P1 validation-only 诊断、P1.1 修复、P2 小预算 pilot、P2.1 输出/行动链诊断、P2.2 安全 bridge canary、P2.3 continuation 数据合同/targeted learning、P2.4 retention canary、P2.5 novel-composition probe、P2.6 novel K2 learning、P2.7 independent holdout generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight 和 P3.3 candidate data-signal canary；下一步只做 P3.3 冻结 K 的 G-only 小步学习 Gate，不读取 sealed、不扩 K、不进入结构成长或 promotion。
 
 ## 当前判断
 
@@ -89,7 +89,7 @@ P3.1 已在 P3.0 continuation parent 上完成 4 条 P2.7 holdout 的接口回�
 
 P3.2 已在 P3.0 parent、P3.1 manifest 和同一 P2.7 holdout 上完成 owner-transfer 对照。K1 只提供 inherited goal/content candidate，`GSelectionState` 持有最终选择；K-only 与 owner-transfer 的 K1 selection、K2 output、safe abstention、Workbench 在 4/4 holdout 上完全等价，外部 target 未进入运行时，参数未增长。事件、事件边界、case 边界独立恢复，trajectory digest 一致，篡改 cursor、错误 base/manifest/owner mask 全部 fail-closed。报告见 [P3.2 report](../../../reports/taiji_m5_k_p3_2_owner_transfer_20260910.json)，清单见 [P3.2 manifest](../../manifests/taiji_m5_k_p3_2_owner_transfer_manifest_v1.json)。
 
-边界结论是“选择所有权已可迁移且不破坏既有行为”，不是“G 已经学习”。P3.2 没有调用 fit、没有新增参数，也没有产生能力增益；因此下一步只解冻 P3.3 的冻结 K、G-only 小步学习 Gate。
+边界结论是“选择所有权已可迁移且不破坏既有行为”，不是“G 已经学习”。P3.2 没有调用 fit、没有新增参数，也没有产生能力增益；因此下一步先建立并验证 P3.3 candidate-set data signal，随后才解冻冻结 K 下的 G-only 小步学习。
 
 ## 后续依赖顺序与验收
 
@@ -98,7 +98,7 @@ P3.2 已在 P3.0 parent、P3.1 manifest 和同一 P2.7 holdout 上完成 owner-t
 | P0 | 相同 replay 的机制归因 | **已完成**：两组轨迹均在 `1e-5` 内等价，checkpoint preflight 通过 |
 | P1 | 真实学习信号与五类数据合同 | **已通过 P1.1**：五类各有至少 2 个 K1/K2 visible input，validation 五类覆盖且 project/template 隔离 |
 | P2 | 五类学习及保持的独立验证 | **P2.7 局部跨项目/路径泛化通过**：holdout K2 content/Workbench `4/4`，旧类保持通过；已进入 P3.0 |
-| P3 | 中断续训与 S/G/K 联合状态整合 | **P3.2 已通过合同 Gate**：owner-transfer、独立恢复和 fail-closed 负例可复现；当前执行 P3.3 冻结 K 的 G 小步学习，S 仍非 learned |
+| P3 | 中断续训与 S/G/K 联合状态整合 | **P3.3 data-signal 已通过合同 Gate**：候选、标签隔离、独立恢复和 fail-closed 边界可复现；当前执行冻结 K 的 G-only 小步学习，S 仍非 learned |
 | P4 | 结构成长必要性与收益验证 | 容量压力真实存在，增长收益优于强固定基线 |
 | P5 | 知识来源、IDE、客户端、硬件发布 | 各项按所需模型能力与接口成熟度解冻 |
 
@@ -118,9 +118,9 @@ P3.2 已在 P3.0 parent、P3.1 manifest 和同一 P2.7 holdout 上完成 owner-t
 - 使用 validation-only pilot 确定样本量、最低有意义改善、数值容差和逐域非劣界。浮点噪声容差与“允许遗忘多少”分别定义；不能用 candidate 退化方差自动放宽所有门槛。
 - 先保存候选和 presealed 合同，随后同一个 artifact 只读评分，不在第二阶段重训候选。记录代码版本、数据/参数/状态摘要和所有失败。
 - 结果出口：收益/保持/资源通过→P3；无收益→回对应反馈或数据根因；数值等价→保留成本更合理的基线；机械错误→修复后重做技术预检。不得看测试成绩改当前版本阈值。
-- P2 pilot 已执行上述最小预算和独立 checkpoint preflight；P2.1 完成了 K1→K2 级联与隔离 Workbench 诊断；P2.2 完成了 typed abstention、根目录 recovery 和世界对齐工程 canary；P2.3 continuation 数据合同/targeted learning、P2.4 retention canary、P2.5 novel-composition probe、P2.6 novel K2 learning、P2.7 holdout generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight 和 P3.2 owner-transfer preflight 均已完成。当前模型结论从“只有连续 MSE 改善”推进为“一个具体 K2 content 目标在 rehearsal 保持约束下学习，并跨 2 个新 project/4 条新 path 泛化”；P3.0 已把 K1/K2 continuation 纳入可恢复状态边界，P3.1 已把 S/G/K 接线合同闭合，P3.2 已把选择所有权转给 G 但尚无 learned G 增益，下一步只做 P3.3 冻结 K 的 G 小步学习 Gate。
+- P2 pilot 已执行上述最小预算和独立 checkpoint preflight；P2.1 完成了 K1→K2 级联与隔离 Workbench 诊断；P2.2 完成了 typed abstention、根目录 recovery 和世界对齐工程 canary；P2.3 continuation 数据合同/targeted learning、P2.4 retention canary、P2.5 novel-composition probe、P2.6 novel K2 learning、P2.7 holdout generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight 和 P3.3 candidate data-signal canary 均已完成。当前模型结论从“只有连续 MSE 改善”推进为“一个具体 K2 content 目标在 rehearsal 保持约束下学习，并跨 2 个新 project/4 条新 path 泛化”；P3.0 已把 K1/K2 continuation 纳入可恢复状态边界，P3.1 已把 S/G/K 接线合同闭合，P3.2 已把选择所有权转给 G，P3.3 已证明 pair/abstain candidate set 有可训练信号但尚无 learned G 增益，下一步只做冻结 K 的 G-only 小步学习 Gate。
 
-### P3：状态整合与同一父代连续课程（P3.2 owner-transfer Gate 已通过，P3.3 当前）
+### P3：状态整合与同一父代连续课程（P3.3 data-signal Gate 已通过，G-only 当前）
 
 P3.0 已用 [checkpoint/interrupt-resume contract](../../../reports/taiji_m5_k_p3_0_checkpoint_contract_20260910.json) 替代“先做 lineage 再补能力”的顺序：K1/K2 parent、worker、phase、replay stream、RNG、预算和 lineage 元数据已经可以内容寻址、独立恢复和回滚。P3.1 又把 S/G/K 的事件、owner mask、状态 digest 和恢复边界闭合，但没有把 control-only 的 S/G 说成 learned。P3.2 已证明 owner-transfer 不破坏已有行为：G 持有最终选择，K 提供候选，运行时不读取外部 target。当前 P3.3 必须冻结 P3.2 的 K，只为 G 建立真实学习信号和可恢复小步更新，不能回到原始从零训练，也不能重新授权暂停的 [SGK v1](../../reference/M4V2_SGK_PROMOTION_COURSE_PREREGISTRATION_20260910.md)。
 
@@ -129,13 +129,13 @@ P3.0 已用 [checkpoint/interrupt-resume contract](../../../reports/taiji_m5_k_p
 3. 先实现无新增参数的 `GSelectionState` 和 owner-transfer adapter，外部 goal/content target 仅作 validation label；用同一 P2.7 holdout 运行 K-only 与 S/K/G 两臂，比较 K1/K2 goal/content、safe abstention、Workbench、延迟和 checkpoint 字节。
 4. 在 observation、G selection、K readout、action 四个边界做独立进程恢复；验证事件/owner/worker/budget/RNG/logical digest 一致，篡改 G state、错误 parent、错误 mask 必须拒绝。P3.2 已满足该条件，下一步冻结 K 并进入 P3.3。
 
-## 唯一下一步：P3.3 冻结 K 的 G 小步学习 Gate
+## 唯一下一步：P3.3 冻结 K 的 G-only 小步学习 Gate
 
 P3.3 是本路线第一次让 G 产生真实 learned state，但不是把 K1 的已有 goal/content head 重新复制一份。目标是让 G 根据 K 提供的候选、证据和不确定性学习“选择/拒绝/安全 abstain”，而不是把外部目标直接喂给运行时。若候选集合没有可区分信号，必须停在数据/目标重设计，不用 identity fit 制造进步。
 
 1. 冻结 P3.2 的 K1/K2 parent、候选生成、confidence floor、Workbench policy 和 owner-transfer manifest；训练前先做 parent checkpoint 保存、独立进程 restore、digest/lineage/rollback 预检，训练后对 G child 重复同一组检查。K 的 state_dict、参数计数和 digest 在 G 训练期间必须保持不变。
 2. 建立独立的 G candidate-set contract：每条样本由 K 生成至少两个可审计候选（包括正候选、干扰候选或拒绝候选），记录 K evidence、candidate score、来源和最终 label；label 只在 fit/validation 评分时存在，绝不进入 inference input。P2.7 的 4 条 holdout 继续保持 untouched test，不得用于 G fit。
-3. 先运行 data-signal canary，验证 G train/validation 的候选之间确实存在非平凡的 selection/abstention 信号，并按 project/path/template 分组隔离。若标签恒等于 K1 原选择、或训练/验证候选无差异，Gate 失败并回到目标/候选设计，不进入 epoch 扩大。
+3. P3.3 data-signal canary 已通过：P1 重建出的 40 条 train + 10 条 validation 均有至少两个候选，目标覆盖完整，包含 `pair`/`abstain` 两类目标和竞争干扰项；project/path 隔离、runtime target 排除、P2.7 untouched test 和 P3.2 K checkpoint 独立恢复全部通过。候选集合当前主要是 K 提案与安全 abstain/reobserve 的二选一，不宣称已有性能增益；下一步才允许实现 G-only learner。
 4. 在信号成立后只更新 G 的最小参数集，保留 K-only、zero-step owner-transfer 和 trained-G 三臂；比较 goal/content selection、safe abstention、Workbench、延迟、checkpoint 字节、G 参数数、K digest 以及旧类保持。所有指标先冻结再读取结果，不能根据结果放宽阈值。
 5. Gate 必须同时满足：训练前后 checkpoint 可独立恢复；G 的验证选择/拒绝信号相对 zero-step 有可解释收益或至少不劣且归属确实转移；K 输出、旧类保持、安全出口、Workbench 不下降；错误 parent/manifest/owner mask/cursor 全部 fail-closed。任何一项失败都只修 G 边界或回滚，不扩训练轮数掩盖问题。
 6. P3.3 不解冻结构增长、S 学习、CUDA、IDE/provider、客户端视觉或 promotion；只有 G owner 的真实小步收益和保持 Gate 通过后，才进入 P4 的容量压力与结构成长验证。
@@ -161,4 +161,4 @@ P3.3 是本路线第一次让 G 产生真实 learned state，但不是把 K1 的
 
 文档仅保留一个执行入口，不再新增平行总计划：本文记录阶段状态、下一步和验收；结果复审记录证据解释；核心需求与架构常驻 active；已有历史流水保留在 archive。旧预注册即使留在 reference 也不重新获得执行许可。当前收束不移动有引用的研究资产，不覆盖旧报告或删除 checkpoint。根目录存在部分无读取权限的临时路径，未证明其为空或无用；后续清理须逐项验证绝对路径、引用和可恢复性，不能把它们报作已清理。
 
-本轮 P2 pilot、P2.1、P2.2、P2.3 contract/targeted、P2.4 retention、P2.5 novel-composition、P2.6 novel-learning、P2.7 generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight 和 P3.2 owner-transfer preflight 报告与计划同步已提交本地 main。后续唯一入口是 P3.3 冻结 K 的 G 小步学习 Gate；不跳到结构成长、promotion 或外围路线，也不按历史“下一步”自动开跑。
+本轮 P2 pilot、P2.1、P2.2、P2.3 contract/targeted、P2.4 retention、P2.5 novel-composition、P2.6 novel-learning、P2.7 generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight 和 P3.3 G candidate data-signal canary 报告与计划同步已提交本地 main。后续唯一入口是 P3.3 冻结 K 的 G-only 小步学习 Gate；不跳到结构成长、promotion 或外围路线，也不按历史“下一步”自动开跑。
