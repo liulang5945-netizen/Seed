@@ -327,3 +327,20 @@ P3.2 的结论是“选择所有权已经可以从 K 迁移到 G，且不损害�
 这次实验同时修复了候选身份的审计漏洞：candidate identity 已绑定 split/course/index/project/template/input digest，40 条 train 不再因重复观测折叠成少数候选集合；manifest 的 `experience_identity_unique` 与 `candidate_set_digest_unique` 均通过。该修复证明数据没有被错误去重，但仍没有证明候选之间存在足够的独立行为差异。
 
 因此下一步唯一执行项改为 P3.4 行为差异候选信号 Gate：冻结当前 K、zero-step G 和 trained-G，不追加同质 epoch；重新构造包含 K1/K2 proposal、合法 score-grid counterfactual、`abstain`/`reobserve` 及按场景启用的 recovery/clarify 候选集合，用隔离 Workbench/action contract 的 snapshot match、route/parameter validity、执行成功、世界状态一致性和安全出口生成 utility。先只做 train/validation data-signal canary，要求出现非零 utility margin 和 K/G 可解释分歧；信号不足则停在数据/目标重设计，不进入 fit。只有 P3.4 通过后，才允许再次运行 G-only fit，并用 K-only、zero-step、trained-G 三臂验证 contested cohort 的真实收益、旧类保持、安全出口和恢复链路。
+
+## 22. P3.4 behavior signal Gate 结果（2026-09-11）
+
+按 §21 的停止条件运行了 [P3.4 behavior signal canary](../../scripts/training/eval_taiji_m5_k_p3_4_behavior_signal_canary.py)，产出 [P3.4 manifest](../manifests/taiji_m5_k_p3_4_behavior_manifest_v1.json) 和 [P3.4 报告](../../reports/taiji_m5_k_p3_4_behavior_signal_20260911.json)。本轮固定 P3.2 K1/K2，未调用 `fit`，未读取 sealed payload，也没有把 P3.3 trained-G 覆盖为新的能力基线；候选行为由隔离 native Workbench/action contract 的快照、路由/参数、安全出口和实时 observation 一致性组成。
+
+| Gate | 结果 | 证据含义 |
+|---|---:|---|
+| 数据重建 / split | 通过 | P1 v2 重建合同通过；40 条 train、10 条 validation，project/path 隔离 |
+| 候选覆盖 | 通过 | 每条 2–6 个候选；角色为 `abstain`、`proposal`、`reobserve` |
+| 行为信号 | 通过 | 40/50 条有非零 utility margin；40/50 条与 K-only 行为分歧；行为 digest 唯一 |
+| reobserve 目标 | 通过 | 30 条 target 为 typed `reobserve`；它表示安全的重新观察步骤，不表示 proposal 已执行成功 |
+| checkpoint / 运行时隔离 | 通过 | K parent 独立恢复、K digest 不变、runtime 不带 target/utility、P2.7 holdout untouched |
+| 训练 / promotion | 未执行 | `training_performed=false`、`fit_called=false`、`can_promote=false`；`can_start_g_fit=true` 只表示满足进入下一 Gate 的条件 |
+
+审计发现：10 条 B/D 场景的候选静态 semantic slots 与实时 Workbench observation 不一致，导致候选 utility 同为 0、`utility_margin=0`；它们通过了 artifact 完整性，但只是确定性 tie-break，不能作为 G 的监督信号，也不能据此宣称行为学习。剩余非零 margin cohort 才是 P3.5 的 fit-eligible 集合。`reobserve` 目标必须在动作边界投影为不可写、可往返的 `ReadOnlyAbstention(next_step="workspace.list")`，不能把 list 结果直接当作当前样本的 oracle target。
+
+P3.4 的结论是“行为标签合同终于能产生可解释分歧”，不是“G 已经学会行为选择”。因此 `can_promote=false` 保持不变，不能追加同质 epoch。下一步唯一执行项改为 P3.5 reobserve-aware G-only learning Gate：仅用非零 margin cohort 训练 G，训练前验证 checkpoint 保存/独立恢复，训练后以 K-only、zero-step G、trained-G 三臂验证 contested cohort 的真实收益、旧类保持、安全 reobserve projection、P2.7 holdout、K digest 和 lineage；任一安全/保持/恢复条件退化则回滚并停止 promotion。
