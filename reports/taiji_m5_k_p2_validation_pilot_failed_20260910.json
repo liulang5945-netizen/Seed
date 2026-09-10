@@ -1,0 +1,12 @@
+{
+  "format": "taiji-m5-k-p2-validation-pilot-v1",
+  "version": 1,
+  "status": "failed",
+  "model_seed": 17,
+  "training_performed": false,
+  "sealed_payload_read": false,
+  "can_promote": false,
+  "error": "KeyError: 'semantic_mse'",
+  "run_dir": "E:\\Seed\\output\\taiji_m5_k_p2_validation_pilot_e3c525fae36942079641418d5425e1d5",
+  "elapsed_seconds": 102.30039059999399
+}
