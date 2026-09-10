@@ -218,3 +218,20 @@ P2.4 的 retention Gate 通过，证明固定 rehearsal 能阻止 P2.3 candidate
 checkpoint preflight 在训练前和保存后的独立进程恢复均通过；P2.5 只保存验证 arm，不产生训练权重或 promotion 资格。这个结果把缺口从“新组合是否完全不会”收窄为“模型已识别目标并能执行，但 K1→K2 的内容承接仍不能稳定输出 `content:inspect-language`”。因此不能把 Workbench 2/2 或 K2 goal 2/2 误写成完整能力，也不能继续在已经通过的 K1/执行目标上重复训练。
 
 当前唯一下一步改为 P2.6：固定 P2.5 的 novel tuple，构造 6 条 train candidate + 2 条 validation candidate，使用 P2.4 已通过的 50 条均衡 rehearsal 与 novel candidate 交错学习；只把新组合 K2 content 作为新增目标，同时把旧五类、低证据 abstention、K1/K2 goal、Workbench 和 checkpoint restore 设为非劣约束。若 K2 content 仍为 0/2，或旧类退化，保持 `can_promote=false` 并停止扩展；不进入 P3。
+
+## 15. P2.6 retention-preserving novel K2 learning（2026-09-10）
+
+按 §14 的边界运行了 [P2.6 novel learning](../../scripts/training/eval_taiji_m5_k_p2_6_novel_learning.py)，产出 [P2.6 manifest](../../plans/manifests/taiji_m5_k_p2_6_novel_learning_manifest_v1.json) 和 [P2.6 报告](../../reports/taiji_m5_k_p2_6_novel_learning_20260910.json)。实验从同一 parent checkpoint 开始，构造 6 条 TypeScript＋可用 toolchain＋resolved 的 novel train candidate 与 2 条全新 validation candidate；路径与 P1/P2.5 disjoint。固定 50 条 P2 rehearsal 按 A/B/C/D/R 各 10 条复现并与 novel candidate 交错。训练前 parent、三个 arm 保存后的 checkpoint 和独立进程恢复均通过，validation 未参与 fit，参数量未增长，未读取 sealed payload。
+
+| 指标 | parent-frozen | rehearsal-only | interleaved-rehearsal-novel |
+|---|---:|---:|---:|
+| 新组合 K2 goal/content | 2/2；0/2 | 0/2；0/2 | 2/2；2/2 |
+| 新组合 K1 goal/content | 2/2；2/2 | 2/2；2/2 | 2/2；2/2 |
+| 新组合 Workbench 成功 | 2/2 | 2/2 | 2/2 |
+| 原 P1 v2 K1/K2 content | 4/4；4/4 | 4/4；4/4 | 4/4；4/4 |
+| 原 P1 v2 安全 abstention | 6/6 | 6/6 | 6/6 |
+| 原 P1 v2 Workbench 成功 | 3/10 | 4/10 | 4/10 |
+
+P2.6 的 Gate 全部通过：旧类相对 P2.4 parent 不下降，novel K2 content 达到 2/2，Workbench 不下降，参数计数稳定。这个结果第一次给出“某个具体 K2 内容承接目标可以在保持约束下被学习”的证据，但它仍只有 2 条 validation，且训练/验证共享同一 tuple，不能宣称跨路径泛化，也不能解冻 P3；报告保持 `can_promote=false`。
+
+当前唯一下一步改为 P2.7：加载 P2.6 的交错学习 checkpoint，在至少 2 个全新 project、至少 4 条全新 path 上做 validation-only holdout；不调用 `fit`。P2.6 validation 只作 learned-arm sanity check，新 holdout 才计泛化 Gate。若 holdout 达到 K2 content 与 Workbench `4/4` 且已学验证 `2/2`，再讨论局部泛化和 P3；否则保持 `can_promote=false`，不靠追加同质 epoch 掩盖边界。
