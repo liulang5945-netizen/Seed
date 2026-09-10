@@ -132,6 +132,24 @@ def _vary_first_file(root: Path, path: str, index: int, course_seed: int) -> Non
         handle.write(f"{comment} parity-v2 variant {course_seed}-{index}\n")
 
 
+def _class_schedule(course_seed: int) -> tuple[str, str, str]:
+    """Per-course within-block permutation of the three classes.
+
+    The class schedule must depend on the course seed: byte-level content
+    variation is invisible to the typed masks, so without a course-dependent
+    class sequence every cell would train bit-identical weights and the
+    course dimension would not be an independent sample (the B1 rule:
+    a course seed must change the actual experience order or composition).
+    """
+
+    blocks = (
+        ("A", "B", "C"),
+        ("A", "C", "B"),
+        ("B", "A", "C"),
+    )
+    return blocks[int(course_seed) % len(blocks)]
+
+
 def _build_course_v2(
     *,
     temp_root: Path,
@@ -147,14 +165,15 @@ def _build_course_v2(
     schema = _schema()
     registry = _registry(typescript_available=False)
     grouped = _variants_by_class()
+    block = _class_schedule(course_seed)
     anchor_path = ANCHOR_PATH
 
     experiences: list[Any] = []
     class_keys: list[str] = []
     for index in range(N_NEW):
-        class_key = CLASS_ORDER[index % len(CLASS_ORDER)]
+        class_key = block[index % len(block)]
         variants = grouped[class_key]
-        variant = variants[(index // len(CLASS_ORDER)) % len(variants)]
+        variant = variants[(index // len(block)) % len(variants)]
         _vary_first_file(temp_root, variant[0], index, course_seed)
         observations = _observe_all(
             temp_root,
@@ -179,7 +198,7 @@ def _build_course_v2(
     counts = {key: class_keys.count(key) for key in CLASS_ORDER}
     if sum(counts.values()) != N_NEW:
         raise ValueError("class counts must cover every experience")
-    return experiences, counts, class_keys
+    return experiences, counts, class_keys, block
 
 
 def _train_fixed_large_replicas(
@@ -281,6 +300,13 @@ def _train_fixed_large_replicas(
     return {
         "instances": instances,
         "ensemble_checkpoint_digest": content_digest(ensemble),
+        "replica_state_digests": [
+            {
+                "k1": content_digest(learners[index][0].state_dict()),
+                "k2": content_digest(learners[index][1].state_dict()),
+            }
+            for index in range(len(learners))
+        ],
         "parameter_bytes": sum(
             int(parameter.numel() * parameter.element_size())
             for semantic, transition in learners
@@ -316,7 +342,7 @@ def run_cell(
                 "course_seed": course_seed,
             }
         )
-        experiences, class_counts, class_keys = _build_course_v2(
+        experiences, class_counts, class_keys, block = _build_course_v2(
             temp_root=temp_root,
             artifact_dir=worker_root / f"model_{model_seed}",
             model_seed=model_seed,
@@ -447,8 +473,23 @@ def run_cell(
             "course_seed": course_seed,
             "n_new_experiences": len(experiences),
             "class_counts": class_counts,
+            "class_block": list(block),
             "class_pattern_forward": "".join(forward_pattern),
             "class_pattern_anchored": "".join(anchored_pattern),
+            "weight_digests": {
+                "widened_forward_k1": content_digest(
+                    widened.channels["forward"]["k1.semantic"].state_dict()
+                ),
+                "widened_forward_k2": content_digest(
+                    widened.channels["forward"]["k2.transition"].state_dict()
+                ),
+                "fixed_large_replica0_k1": content_digest(
+                    fixed_large["replica_state_digests"][0]["k1"]
+                ),
+                "fixed_large_replica0_k2": content_digest(
+                    fixed_large["replica_state_digests"][0]["k2"]
+                ),
+            },
             "parameter_bytes": {
                 "widened": widened.parameter_bytes,
                 "fixed_large": fixed_large["parameter_bytes"],
@@ -517,6 +558,40 @@ def main() -> int:
             )
 
     cells_passed = sum(1 for cell in cells if cell["cell_passed"])
+
+    # Course-independence gate: within each model seed, the three courses
+    # must produce pairwise-distinct trained weights (state_dict digests,
+    # metadata excluded).  Identical weights would mean the course seed did
+    # not change the actual learning signal -- the B1 red line.
+    course_independence: dict[str, Any] = {}
+    for key in (
+        "widened_forward_k1",
+        "widened_forward_k2",
+        "fixed_large_replica0_k1",
+        "fixed_large_replica0_k2",
+    ):
+        per_model = {}
+        for model_seed in MODEL_SEEDS:
+            digests = [
+                cell["weight_digests"][key]
+                for cell in cells
+                if cell["model_seed"] == model_seed
+            ]
+            per_model[model_seed] = {
+                "digests": digests,
+                "pairwise_distinct": len(set(digests)) == len(digests),
+            }
+        course_independence[key] = {
+            **per_model,
+            "all_models_distinct": all(
+                item["pairwise_distinct"] for item in per_model.values()
+            ),
+        }
+    course_independence_gate = all(
+        item["all_models_distinct"] for item in course_independence.values()
+    )
+    cells_passed = cells_passed if course_independence_gate else 0
+
     payload = {
         "format": REPORT_FORMAT,
         "version": VERSION,
@@ -537,6 +612,10 @@ def main() -> int:
         },
         "cells": cells,
         "cells_passed": f"{cells_passed}/{len(cells)}",
+        "course_independence": {
+            **course_independence,
+            "gate_passed": course_independence_gate,
+        },
         "boundary": (
             "parity v2 rebuild: equal-new-budget course, both arms trained on "
             "the same stream, hard gates verified; no sealed scoring, no "
