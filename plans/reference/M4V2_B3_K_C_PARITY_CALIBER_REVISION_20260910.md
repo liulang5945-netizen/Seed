@@ -86,9 +86,11 @@ n_new=150 的方向保留，但机制理由更换为：**新 experiences 的掩�
 - **checkpoint**：每实例 9 个逻辑训练 checkpoint（流上等距），双臂对称。
 - **统计单元**：course（model 维度因 parent K workers 逐位相同而降级为排列见证）。
 
-### 7.2 执行结果（9/9 通过）
+### 7.2 执行结果（含课程独立性修正，9/9 通过）
 
 报告：`reports/taiji_m4v2_b3_k_c_parity_v2_build_20260910.json`（脚本 `build_taiji_m4v2_b3_k_c_parity_v2.py`；artifact 根目录 `checkpoints/taiji_k_candidate_c_entry_parity_v2/`、`checkpoints/taiji_k_fixed_large_c_entry_v2/`，不覆盖 v1 证据）。
+
+**执行中发现并修正第二个独立性问题**：首轮 v2 运行通过全部门，但 formal 预注册准备期的 digest 固定发现 9 个 cell 的 fixed-large ensemble payload digest 完全相同——v2 课程的类序列 `ABCABC…` 不随 course_seed 变化，而字节级内容差异对掩码不可见，因此**全部 cell 的训练权重逐位相同**（课程维度仍未独立）。修正：类块内排列随 course_seed 变化（course 0=ABC、1=ACB、2=BAC），并新增**课程独立性硬门**（同 model seed 内 3 个课程的训练权重 state_dict digest 两两互异，双臂同查；由 main 聚合层强制，违反则整体判失败）。重跑后 ensemble digest 恰好 3 份（每课程一份）——独立样本结构在机器上成立。
 
 | 门 | 结果 |
 |---|---|
@@ -96,10 +98,11 @@ n_new=150 的方向保留，但机制理由更换为：**新 experiences 的掩�
 | 新增更新步 | 双臂 600=600，9/9 ✓（继承 2080/5040 单列） |
 | checkpoint 发射 | 每实例 9，双臂对称，9/9 ✓ |
 | 类模式改变 | 9/9 ✓（anchored 模式全部异于 forward） |
-| 通道差分 | 9/9 严格正：K1 0.035~0.264、K2 0.001~0.040——普遍比 v1 的 4e-3~9e-3 高 1–2 个量级 ✓ |
+| **课程独立性** | **双臂 × 3 model，3 课程权重 digest 两两互异 9/9 ✓；ensemble digest 恰 3 份（每课程一份）** |
+| 通道差分 | 9/9 严格正：K1 0.035~0.264、K2 0.001~0.040 ✓ |
 | fresh restore / parent / K3 unchanged | 9/9 ✓ |
 
-原失败 cell 31x1：差分从精确 0.0 → K1 `0.1575` / K2 `0.0173`，机制修复得到直接因果确认。
+原失败 cell 31x1：差分从精确 0.0 → K1 `0.1457` / K2 `0.0199`，机制修复得到直接因果确认。
 
 ### 7.3 边界
 

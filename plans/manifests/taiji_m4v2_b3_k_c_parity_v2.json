@@ -23,11 +23,18 @@
       "C": "typescript-first episode (clarify-toolchain, toolchain missing)"
     },
     "class_balance": { "A": 50, "B": 50, "C": 50 },
+    "class_block_per_course": {
+      "0": ["A", "B", "C"],
+      "1": ["A", "C", "B"],
+      "2": ["B", "A", "C"]
+    },
+    "class_block_rationale": "byte-level content variation is masked-invisible, so the course seed must change the class sequence itself; without a course-dependent block every cell trains bit-identical weights and the course dimension collapses",
+    "course_independence_gate": "within each model seed, the three courses' trained-weight state_dict digests must be pairwise distinct (metadata excluded), for both arms",
     "recover_class_excluded_because": "K2 worker goal vocabulary lacks goal:recover-target (2 goals only); feeding recover-target transition examples would fail the K2 fit contract",
     "identity_minting": "per-experience first-file content variant appended as a comment line; byte-length-level changes are invisible to the typed fact masks, so the delta class is preserved while the observation digest is genuinely unique",
     "permutation_guard": "anchored_permutation(class_keys=...) regenerates deterministically until the anchored class pattern differs from the forward pattern; single-class courses are rejected",
     "statistics_unit": "course",
-    "model_dimension_note": "the three model seeds' parent K worker weights are bit-identical (state_dict diff 0.0); the model dimension is a permutation witness, not an independent sample"
+    "model_dimension_note": "the three model seeds' parent K worker weights are bit-identical (state_dict diff 0.0); the model dimension is a replicate (permutation witness), not an independent sample"
   },
   "training_budget_contract": {
     "caliber": "new_update_steps only (inherited parent training steps are reported separately and excluded from parity comparison)",

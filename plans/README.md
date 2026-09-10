@@ -24,9 +24,11 @@ B3-K 的非饱和 structured-loss diagnostic 已通过：同一 model 17 parent�
 
 **parity 口径修正与修复路线已冻结**：[caliber revision](reference/M4V2_B3_K_C_PARITY_CALIBER_REVISION_20260910.md)——机器证据钉死两臂真实新增均为 12 步/cell（14,252 中 14,240 是 parent 继承步数）；新口径只用 `new_update_steps` 比较（inherited/new 分离，旧 JSON 保留）；修复路线 = 更强新增预算课程（每 cell 150 个未见过的新 experiences，双臂同流新增 600 步且自动相等），失败 episode 不引入。
 
-**v2 修复按修正后根因执行，9/9 cell 通过**：类平衡课程（A/B/C 各 50）+ 类模式守卫（anchored 排列确定性重生成直到模式改变）+ 双臂同流 600 新增步（new_update_steps 口径）+ 每实例 9 逻辑 checkpoint。通道差分 9/9 严格正（K1 0.035~0.264，比 v1 高 1–2 个量级），原失败 cell 31x1 从精确 0.0 → 0.1575，机制修复直接确认。manifest v2 与设计 §7 已冻结；v1 证据不覆盖。parity confound 解除，sealed 仍锁定。
+**v2 修复按修正后根因执行，9/9 cell 通过**：类平衡课程（A/B/C 各 50）+ 类模式守卫（anchored 排列确定性重生成直到模式改变）+ 双臂同流 600 新增步（new_update_steps 口径）+ 每实例 9 逻辑 checkpoint。**预注册准备期 digest 固定又发现并修正一个独立性问题**（类序列不随课程变化 → 权重逐位相同）：类块内排列随课程变化（ABC/ACB/BAC）+ 课程独立性硬门（权重 state_dict digest 两两互异），重跑后 ensemble digest 恰 3 份（每课程一份）——独立样本结构机器成立。通道差分 9/9 严格正（K1 0.035~0.264），原失败 cell 31x1 从精确 0.0 → 0.1457，机制修复直接确认。v1 证据不覆盖，sealed 仍锁定。
 
-**当前唯一下一步**：修复后的 C-entry parity formal 预注册——冻结 sealed 评分判据（逐 cell 胜出定义、9-cell 聚合、统计单元 course n=3、停止线）与 v2 artifact 评分输入；冻结前不读 sealed。
+**C-entry parity formal 预注册已冻结**：[parity formal preregistration](reference/M4V2_B3_K_C_PARITY_FORMAL_PREREGISTRATION_20260910.md)——评分输入 digest 固定、6 分量 MSE 同口径、candidate readout = 权重相加（与 logit 和数学等价，诚实声明）、判据 G1 质量门 / G2 灾难界（validation 派生先行冻结）/ G3 主判据（sealed 上 ≥2/3 课程胜出且均值更优）、统计单元 course n=3、sealed 读取后禁止调参。
+
+**当前唯一下一步**：实现 formal runner（输入校验 → validation epsilon 派生冻结 → sealed 评分 → G1–G4 判定）并运行；任一门失败按预注册停止线处理。
 
 ## 权威文档
 
