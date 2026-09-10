@@ -160,3 +160,18 @@ P2.1 把问题进一步分层：6/10 行在 native readout 之前就因输入证
 | 原始 learned route | frozen 3/10；wake-only 4/10；wake-replay 4/10 | 与 P2.1 一致，未产生模型能力晋级 |
 
 这次结果解决了 P2.1 的安全边界缺口，但没有解决模型如何在缺失目标后获得新证据的问题。P2.2 的 recovery 与 alignment 都明确标为 `oracle_control`，不能计入 K1/K2 能力、真实 recovery 命中或 P3 解冻条件。下一步改为 P2.3：建立“缺失目标安全 abstention→根目录列举→新候选观察→可执行只读动作”的可重建 continuation 数据合同，先通过数据审计，再做同一父 checkpoint 的 targeted learning；不降低 confidence floor、不把 host policy 内化成绩当作模型能力。
+
+## 11. P2.3 recovery continuation 数据合同（2026-09-10）
+
+按 §10 的边界新增 [P2.3 continuation builder/auditor](../../scripts/training/build_taiji_m5_k_p2_3_recovery_continuation.py)，产出 [P2.3 manifest](../../plans/manifests/taiji_m5_k_p2_3_recovery_continuation_manifest_v1.json) 和 [P2.3 contract report](../../reports/taiji_m5_k_p2_3_recovery_continuation_contract_20260910.json)。本轮只构建并审计数据，没有调用 `fit`，没有读取 sealed payload，`can_promote=false`。
+
+| 检查 | 实测结果 | 结论 |
+|---|---:|---|
+| train continuation | 6 条 | 通过；初始 recovery 不进入 fit，候选观察标为 fit-eligible |
+| validation continuation | 2 条 | 通过；候选路径与 train 不重叠 |
+| 初始缺失事件 | `read_success=false`、Percept confidence `0.0` | 只能走 typed abstention→`workspace.list(path=".")` |
+| 列举后候选事件 | Percept confidence `0.99`、resolved 文件 | 可作为 K1/K2 读出学习目标 |
+| K1/K2 示例 | payload 往返、input digest 一致 | 通过；没有把字节变化当作输入变化 |
+| 隔离与寻址 | project/path/template disjoint；record/manifest digest 通过 | 可以进入训练前 checkpoint Gate |
+
+这一步修复的是数据入口，不是模型能力。下一步唯一执行项是 P2.3 targeted learning pilot：从同一 P2 parent 继承，先做 checkpoint 保存和独立进程恢复，再只用 train candidate examples 学习；原 P1 v2 五类 validation、P2.3 validation candidate、6 条低证据安全 abstention 和 Workbench 结果分账评分。host `workspace.list` 不计入 K1/K2 命中，也不降低全局 `0.55` floor。
