@@ -1,0 +1,436 @@
+{
+  "format": "taiji-m5-k-p1-data-contract-audit-v1",
+  "version": 1,
+  "status": "needs_data_revision",
+  "model_seed": 17,
+  "course_seeds": [
+    0,
+    1,
+    2
+  ],
+  "training_performed": false,
+  "sealed_payload_read": false,
+  "can_start_p2": false,
+  "can_promote": false,
+  "manifest": {
+    "path": "E:\\Seed\\plans\\manifests\\taiji_m5_k_p1_data_manifest_v1.json",
+    "format": "taiji-m5-k-p1-data-manifest-v1",
+    "digest": "41bc25453b98931a29b48f77c335acabd559f5da518f3a1042282332abeca6f6",
+    "record_count": 450
+  },
+  "parent": {
+    "checkpoint_digest": "3e1b39b68be25de672535939401f3c2cf0fb9229c99458237c888be9a50f6675",
+    "worker_bundle_digest": "2606b29a9b853272c2db89ee010b3cf764fe842166214aa9a28b102d409deaa2",
+    "effective_parameter_note": "P1 audits inherited model17; no claim of cross-model generalization"
+  },
+  "course_summaries": [
+    {
+      "course_seed": 0,
+      "class_block": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "R"
+      ],
+      "class_counts": {
+        "A": 30,
+        "B": 30,
+        "C": 30,
+        "D": 30,
+        "R": 30
+      },
+      "record_count": 150,
+      "record_digest": "3e0b78a399774bc9f877b29d9a82106cda055fa36b66a63efcf0f52cb78aaeba",
+      "source_manifest_digest": "662add7e69dc54b014f15f8c0bdd0af532e0a3c538ed4e1119c90ca406931949"
+    },
+    {
+      "course_seed": 1,
+      "class_block": [
+        "A",
+        "C",
+        "B",
+        "R",
+        "D"
+      ],
+      "class_counts": {
+        "A": 30,
+        "B": 30,
+        "C": 30,
+        "D": 30,
+        "R": 30
+      },
+      "record_count": 150,
+      "record_digest": "de92219fb9f20dac9358fceb16d9f205dfaef327a8541295767962b0b80c6cba",
+      "source_manifest_digest": "7ff689c56580f02f23bcf0c52d07de3a694e71cf305fbe3c8e315ccd558e6844"
+    },
+    {
+      "course_seed": 2,
+      "class_block": [
+        "B",
+        "A",
+        "D",
+        "C",
+        "R"
+      ],
+      "class_counts": {
+        "A": 30,
+        "B": 30,
+        "C": 30,
+        "D": 30,
+        "R": 30
+      },
+      "record_count": 150,
+      "record_digest": "7a90c6b2bfdc117a206a57164823e9d9c1cae97a12c290db89abedf8376e885a",
+      "source_manifest_digest": "c9ba5a3ac823443000269218430fec0aa06fd4defca0edc86ffdf347b1f06e23"
+    }
+  ],
+  "class_summary": {
+    "A": {
+      "count": 90,
+      "unique_observation_digests": 90,
+      "unique_template_families": 2,
+      "unique_k1_visible_inputs": 1,
+      "unique_k2_visible_inputs": 1,
+      "unique_k1_raw_inputs": 30,
+      "unique_k2_raw_inputs": 30,
+      "unique_k1_targets": 1,
+      "unique_k2_targets": 1,
+      "repeated_k1_visible_input_count": 89,
+      "repeated_k2_visible_input_count": 89,
+      "template_family_counts": {
+        "0abb5c3ed51278c9601394c217a8649a6c2366d22114b3a2deefd8c877b6911d": 45,
+        "6008e5ede7ab05cd2de5eb866a893702ac6ac8f9cb2b0bf0033bc97eabdc2dda": 45
+      }
+    },
+    "B": {
+      "count": 90,
+      "unique_observation_digests": 90,
+      "unique_template_families": 2,
+      "unique_k1_visible_inputs": 1,
+      "unique_k2_visible_inputs": 1,
+      "unique_k1_raw_inputs": 30,
+      "unique_k2_raw_inputs": 30,
+      "unique_k1_targets": 1,
+      "unique_k2_targets": 1,
+      "repeated_k1_visible_input_count": 89,
+      "repeated_k2_visible_input_count": 89,
+      "template_family_counts": {
+        "3d1499ff2dc3623fb1218ec3669a8030eed7a727c5914be60d7446a1a85b7b90": 45,
+        "d227d8286c9884258ac23606b7ad8f3a920b8f0b31e99accc25e6a6e00c06115": 45
+      }
+    },
+    "C": {
+      "count": 90,
+      "unique_observation_digests": 90,
+      "unique_template_families": 2,
+      "unique_k1_visible_inputs": 1,
+      "unique_k2_visible_inputs": 1,
+      "unique_k1_raw_inputs": 30,
+      "unique_k2_raw_inputs": 30,
+      "unique_k1_targets": 1,
+      "unique_k2_targets": 1,
+      "repeated_k1_visible_input_count": 89,
+      "repeated_k2_visible_input_count": 89,
+      "template_family_counts": {
+        "4d2095368de5fca6e68e6bf2c0faa64a746b95f2e23e1d89ddefae64d01f97d1": 45,
+        "4256aea7f868d34f025161d803691f12adb339a3f44649267a084d3d5de6993b": 45
+      }
+    },
+    "D": {
+      "count": 90,
+      "unique_observation_digests": 90,
+      "unique_template_families": 1,
+      "unique_k1_visible_inputs": 1,
+      "unique_k2_visible_inputs": 1,
+      "unique_k1_raw_inputs": 30,
+      "unique_k2_raw_inputs": 30,
+      "unique_k1_targets": 1,
+      "unique_k2_targets": 1,
+      "repeated_k1_visible_input_count": 89,
+      "repeated_k2_visible_input_count": 89,
+      "template_family_counts": {
+        "8db443382987925ac1b7d36b2f254a583b11ed244fe03a87b66a41e21056950c": 90
+      }
+    },
+    "R": {
+      "count": 90,
+      "unique_observation_digests": 90,
+      "unique_template_families": 1,
+      "unique_k1_visible_inputs": 1,
+      "unique_k2_visible_inputs": 1,
+      "unique_k1_raw_inputs": 1,
+      "unique_k2_raw_inputs": 1,
+      "unique_k1_targets": 1,
+      "unique_k2_targets": 1,
+      "repeated_k1_visible_input_count": 89,
+      "repeated_k2_visible_input_count": 89,
+      "template_family_counts": {
+        "91e3b1e7fcc048f68cf7738ac88e5a1b603512c7908c9970b5ab8ae9b4101808": 90
+      }
+    }
+  },
+  "template_summary": {
+    "unique_template_families": 8,
+    "template_family_paths": {
+      "0abb5c3ed51278c9601394c217a8649a6c2366d22114b3a2deefd8c877b6911d": [
+        [
+          "python_00.py",
+          "rust_00.rs",
+          "python_01.py"
+        ]
+      ],
+      "3d1499ff2dc3623fb1218ec3669a8030eed7a727c5914be60d7446a1a85b7b90": [
+        [
+          "rust_01.rs",
+          "python_02.py",
+          "typescript_00.ts"
+        ]
+      ],
+      "4256aea7f868d34f025161d803691f12adb339a3f44649267a084d3d5de6993b": [
+        [
+          "typescript_02.ts",
+          "python_01.py",
+          "rust_01.rs"
+        ]
+      ],
+      "4d2095368de5fca6e68e6bf2c0faa64a746b95f2e23e1d89ddefae64d01f97d1": [
+        [
+          "typescript_01.ts",
+          "rust_02.rs",
+          "python_03.py"
+        ]
+      ],
+      "6008e5ede7ab05cd2de5eb866a893702ac6ac8f9cb2b0bf0033bc97eabdc2dda": [
+        [
+          "python_02.py",
+          "typescript_02.ts",
+          "rust_03.rs"
+        ]
+      ],
+      "8db443382987925ac1b7d36b2f254a583b11ed244fe03a87b66a41e21056950c": [
+        [
+          "shared_header.h",
+          "python_00.py",
+          "rust_00.rs"
+        ]
+      ],
+      "91e3b1e7fcc048f68cf7738ac88e5a1b603512c7908c9970b5ab8ae9b4101808": [
+        [
+          "missing_01.txt",
+          "python_00.py",
+          "rust_00.rs"
+        ]
+      ],
+      "d227d8286c9884258ac23606b7ad8f3a920b8f0b31e99accc25e6a6e00c06115": [
+        [
+          "rust_00.rs",
+          "typescript_03.ts",
+          "python_00.py"
+        ]
+      ]
+    },
+    "unique_files": [
+      "missing_00.txt",
+      "missing_01.txt",
+      "python_00.py",
+      "python_01.py",
+      "python_02.py",
+      "python_03.py",
+      "rust_00.rs",
+      "rust_01.rs",
+      "rust_02.rs",
+      "rust_03.rs",
+      "shared_header.h",
+      "typescript_00.ts",
+      "typescript_01.ts",
+      "typescript_02.ts",
+      "typescript_03.ts"
+    ],
+    "comment_or_byte_variation_is_template_reuse": true
+  },
+  "typed_mask_contract": {
+    "all_masks_valid": true,
+    "k1_input_dim": 23,
+    "k2_input_dim": 359,
+    "k1_mask_rows": 14,
+    "k2_mask_rows": 14,
+    "mask_spec": {
+      "k1": {
+        "mask_present": true,
+        "mask_valid": true,
+        "rows": 14,
+        "input_width": 23,
+        "allowed_features_per_row": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "k2": {
+        "mask_present": true,
+        "mask_valid": true,
+        "rows": 14,
+        "input_width": 359,
+        "allowed_features_per_row": [
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3
+        ]
+      }
+    },
+    "signature_definition": "per-output-row masked tensor + teacher-forced target/input tensors + K2 before/event/after temporal signature"
+  },
+  "course_actual_input_differences": {
+    "not_metadata_only": {
+      "k1": {
+        "0vs1": false,
+        "0vs2": false,
+        "1vs2": false
+      },
+      "k2": {
+        "0vs1": false,
+        "0vs2": false,
+        "1vs2": false
+      }
+    },
+    "interpretation": "different visible signatures across course seeds are distribution perturbations, not independent model samples"
+  },
+  "split_contract": {
+    "train": {
+      "split": "train",
+      "class_coverage": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "R"
+      ],
+      "class_coverage_complete": true,
+      "project_ids": [
+        "m5k1-project"
+      ],
+      "task_kind": "inspect-language",
+      "source": "build_taiji_m5_k_v4_parity._build_course_v4"
+    },
+    "validation": {
+      "split": "holdout",
+      "count": 3,
+      "class_coverage": [
+        "A",
+        "B",
+        "C"
+      ],
+      "class_coverage_complete": false,
+      "missing_classes": [
+        "D",
+        "R"
+      ],
+      "project_ids": [
+        "m5k1-project"
+      ],
+      "source": "eval_taiji_m4v2_b3_k_c_sealed_scoring._validation_experiences"
+    },
+    "test": {
+      "new_read": false,
+      "prior_sealed_history": [
+        {
+          "path": "plans/manifests/taiji_m4v2_b3_k_c_sealed_test_v1.json",
+          "state": "consumed-by-prior-evaluation"
+        },
+        {
+          "path": "plans/manifests/taiji_m4v2_b3_k_c_sealed_test_v2.json",
+          "state": "consumed-by-prior-evaluation"
+        },
+        {
+          "path": "plans/manifests/taiji_m5_k_v4_sealed_test_v3.json",
+          "state": "consumed-by-prior-evaluation"
+        },
+        {
+          "path": "plans/manifests/taiji_m4v2_c_stage_sealed_test_v4.json",
+          "state": "consumed-by-prior-evaluation"
+        },
+        {
+          "path": "plans/manifests/taiji_m4v2_c_stage_sealed_test_v5.json",
+          "state": "consumed-by-prior-evaluation"
+        }
+      ],
+      "policy": "do not read another sealed payload until candidate, scorer, thresholds, resource budget, and final input manifest are frozen"
+    }
+  },
+  "model_independence": {
+    "model_seeds": [
+      17,
+      23,
+      31
+    ],
+    "state_digests": {
+      "k1.semantic": {
+        "17": "5eed7b8cea02095f5ede55b652fd6112173e3ebde891f684e21b98a49b7104de",
+        "23": "5eed7b8cea02095f5ede55b652fd6112173e3ebde891f684e21b98a49b7104de",
+        "31": "5eed7b8cea02095f5ede55b652fd6112173e3ebde891f684e21b98a49b7104de"
+      },
+      "k2.transition": {
+        "17": "5b913c82b62c7df411b0143ee1a88333652a8e6bf64ec73355e5bc3a448b65ed",
+        "23": "5b913c82b62c7df411b0143ee1a88333652a8e6bf64ec73355e5bc3a448b65ed",
+        "31": "5b913c82b62c7df411b0143ee1a88333652a8e6bf64ec73355e5bc3a448b65ed"
+      }
+    },
+    "pairwise_max_abs": {
+      "k1.semantic": {
+        "17vs23": 0.0,
+        "17vs31": 0.0,
+        "23vs31": 0.0
+      },
+      "k2.transition": {
+        "17vs23": 0.0,
+        "17vs31": 0.0,
+        "23vs31": 0.0
+      }
+    },
+    "all_worker_states_pairwise_distinct": false,
+    "interpretation": "replicas share identical effective state_dict values; do not count model seed as independent sample"
+  },
+  "gate": {
+    "passed": false,
+    "blocking_reasons": [
+      "validation_missing_classes",
+      "no_project_disjointness",
+      "A_class_has_no_K1_visible_variation",
+      "A_class_has_no_K2_visible_variation",
+      "B_class_has_no_K1_visible_variation",
+      "B_class_has_no_K2_visible_variation",
+      "C_class_has_no_K1_visible_variation",
+      "C_class_has_no_K2_visible_variation",
+      "D_class_has_no_K1_visible_variation",
+      "D_class_has_no_K2_visible_variation",
+      "R_class_has_no_K1_visible_variation",
+      "R_class_has_no_K2_visible_variation",
+      "course_seed_changes_do_not_change_mask_visible_inputs",
+      "model_seed_replicas_are_not_independent"
+    ],
+    "decision": "return to data design before P2"
+  }
+}
