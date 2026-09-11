@@ -479,3 +479,41 @@ P4.5 的证据说明，简单把旧样本交错进训练仍没有独立贡献；
 | 结果出口 | 未晋级/路线收束 | `outcome=functional_update_unresolved`、`experiment_passed=false`、`growth_admitted=false`、`can_promote=false` |
 
 P4.6 证明功能性 parent 保持项确实改变了更新轨迹，但仍在 seed 间形成互斥：保持恢复时新任务明显退化，新任务恢复时保持仍退化。因此 P4.0–P4.6 已完成固定 G 路线预定的容量、身份、rehearsal、参数约束和功能约束对照；这不是结构成长证据，也不是继续盲目调参的理由。当前唯一入口改为新的架构/目标决策：在明确新的能力目标、保持合同和模型/表示边界前，冻结 dynamic growth、promotion、P5、CUDA、IDE/provider 与客户端视觉，不再自动追加 epoch、loss weight、trust-region 或同质 seed。
+
+## 32. P4.0–P4.6 机制综合与架构决策分析（2026-09-11）
+
+本节收束固定 G 路线的全部证据，给出决策点分析。没有运行新训练；所有数字来自 P4.0–P4.6 已落盘报告。
+
+### 32.1 已钉死的结构性事实
+
+**事实一（13 参数互斥）**：在 P3.5 的 13 参数 G 上，「不破坏 parent 选择面（fresh/sibling retention 达 parent 的 1.0/4/4）」与「学习新任务选择面（new holdout 达 0.68/0.6）」构成 seed 间系统性互斥。三条修复路径全部失败：
+
+- 数据层（P4.3/P4.5 rehearsal）：两臂完全相同，rehearsal 无可分离收益——重放对这个局部 delta 更新规则无贡献；
+- 参数空间约束（P4.5 trust-region）：seed-0 保持恢复（1.0/4/4）但新任务退回 parent（0.6375）另带 6 次 safe violation，seed-1 新任务通过但保持退化（0.8/3/4）；
+- 函数空间约束（P4.6 functional teacher）：seed-0 保持恢复（1.0/4/4）但新任务被推到 parent 之下（0.585 < 0.6375）另带 6 次 safe violation，seed-1 新任务通过（0.68/12/20）但保持退化（0.8/3/4）。
+
+**事实二（退化可复现且非 artifact）（P4.4）**：保持退化在候选数量/角色/置信度/安全投影同构但 project/path 全新的 sibling 上 5/5 复现，排除「旧 artifact 失真」；同时暴露 P4.3 fresh retention 通过的分布原因——fresh retention 属新任务分布，sibling 才是 P3.6 保持分布。
+
+**事实三（容量压力真实存在）**（P4.0）：候选 width 8/12 时 trained-G residual 0.54/0.59、target hit 0.4/0.2，width 4 完美（residual 0）；feature collision 为 0，序列长度不退化——压力形态是候选竞争/选择分辨率，不是时序或特征混淆。
+
+### 32.2 关键证据缺口
+
+P4.2 的「fixed-large 无稳定容量收益」结论受协议污染：该轮连 fixed-small 都在训练后保持退化（4/4→3/4），因此 fixed-large（22 参数）从未在「保持合同可满足」的条件下被检验。P4.3–P4.6 把 13 参数互斥钉死之后，**「互斥是否随容量消失」成为唯一未被干净回答的问题**。而 P4.1 的 context-lesion 已证明：22 参数结构（12 维 candidate 权重复制 + 9 维 context 零初始化）在零 fit 下与当前 13 参数 G 选择完全一致——即存在一个**出生零影响的容量扩展算子**。这使容量假设可被单变量干净检验。
+
+### 32.3 决策分析
+
+| 方向 | 判定 | 理由 |
+|---|---|---|
+| 继续在 13 参数上调 loss weight/radius/seed | 否决 | P4.3–P4.6 已穷尽三类干预且 P4.6 seed-0 显示约束把新任务推到 parent 之下——张力是结构性的，不是调参问题 |
+| 直接进入 dynamic growth | 否决（先决条件未满足） | P4 验收要求「固定容量持续学习和保持成立」；当前 13 参数上不成立，加结构没有依据 |
+| 解冻 P5 外围 | 否决 | 保持问题未解决时解冻外围会掩盖模型问题（本路线图既有纪律） |
+| **容量假设的干净检验（P4.7）** | **唯一可行下一步** | 见 32.4 |
+
+### 32.4 P4.7 预注册方向：继承式容量扩展 + functional 保持协议
+
+- **臂**：`13-param functional`（P4.6 复现基线）vs `22-param inherited functional`（P4.1 合同：12 维 candidate 权重从 P3.5 parent 复制、9 维 context 零初始化——出生等价已由 P4.1 context-lesion 证明；functional teacher 项仍锚定 P3.5 parent 输出）。单变量 = 容量 13→22。
+- **保持验收吸收 P4.4 教训**：fresh retention 必须同时含 P3.6 结构 sibling（保持分布）与新任务分布两套；两 seed 同报。
+- **结果映射**：22 参数臂在两 seed 上同时通过保持（sibling ≥ parent 1.0/4/4）与新任务（≥ new-only 0.68）→ 容量瓶颈假设成立，进入继承式结构成长预注册（出生零影响 + 可测新增贡献），P4.1 的复制算子即为最小 growth 机制；任一 seed 仍互斥 → 容量假设关闭，「保持/新任务互斥」定性为更新规则/表示问题，固定容量路线整体收束，进入表示合同重设计。
+- **边界**：不读取 sealed；growth_admitted=false、can_promote=false 维持到判定；不追加第三个臂、不同时改更新规则。
+
+无论哪个出口，P4.7 都产生决策必需信息且不可被现有结果替代——这是 P4 固定容量路线的收尾实验，不是新路线开启。
