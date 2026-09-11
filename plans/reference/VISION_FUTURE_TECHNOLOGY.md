@@ -133,6 +133,22 @@
 
 ---
 
+## 8. 前端主流化（P5 队列项）（`deferred`）
+
+**设想/结论**：把 taiji 客户端前端的成品感提升到主流产品水平——用户判定目前"视觉/样式不精致" + "交互/性能卡顿"两层均未达标。
+
+**现状（2026-09-11 核实）**：
+- 渲染内核已是 Chromium（[desktop/main.py L1048](file:///e:/Seed/desktop/main.py#L1048) `QWebEngineView` = Qt 封装 Chromium；Vue 前端 + DOM 标题栏 + QWebChannel 桥）。**内核能力不是短板，不构成"换 Electron/CEF"理由。**
+- 短板定位为前端表现层：视觉/样式精致度、交互/性能表现。
+
+**为什么现在不做**：
+- 客户端视觉属 P5 外围（[03_CURRENT_EXECUTION.md L285-290](file:///e:/Seed/plans/active/roadmap/03_CURRENT_EXECUTION.md#L285-L290)），当前主线 P4.8 冻结 P5/CUDA/IDE/provider，不构成主线 Gap 拦截项，解冻前不投入。
+- "达不到主流水平"是直觉判断，需先转化为可验证差异清单，否则会演变成无对照的重做。
+
+**触发条件**：P5 解冻后第一步 = 视觉审查走查——截当前 UI 与主流参考（IDE/Notion 级）逐屏对照，产出差异清单（样式层级/间距/配色/交互反馈/性能 profile），再按清单决定改进范围，不凭空重做。
+
+---
+
 ## 与主线的关系声明
 
 - 本文任何条目**不等于** plans 中的"当前唯一下一步"，也不解冻任何冻结阶段。
