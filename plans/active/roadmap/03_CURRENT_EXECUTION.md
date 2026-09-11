@@ -296,6 +296,10 @@ P4.6 固定 13 参数 G、K1/K2、候选输入、selection threshold 和安全�
 
 **当前唯一下一步**：求解器机制下的晋级课程级验证预注册——更大 seed/课程矩阵 + 资源审计，gate 沿用已冻结阈值；预注册冻结前不训练、不读取 sealed、不解冻 P5/CUDA/IDE/provider。
 
+用户确认执行。**P4.12 晋级课程级验证预注册已冻结：[M5_K_P4_12_COURSE_LEVEL_VALIDATION_PREREGISTRATION_20260911.md](../../reference/M5_K_P4_12_COURSE_LEVEL_VALIDATION_PREREGISTRATION_20260911.md)。** 矩阵：**3 课程身份批 × 3 seeds = 9 cells**（统计单元 = 身份批，seed 为 replicate）；每 cell 双臂（baseline 无投影 / projected 逐位相同轨迹 + 一次末端联合投影）+ trajectory gate（投影前 digest 逐位相同）；求解器合同与 P4.11 逐参数相同、按 cell 实例化（决策同一性约束系统、anchor = 该 cell 基线臂终点、bias 不动、收敛判据冻结，任一 cell `projection_incomplete` 按机械失败记入）。门沿用 P4.7–P4.11 已冻结阈值（零变更）；**聚合门 = projected 臂 ≥ 8/9 cell 全门通过 ∧ 基线臂 ≥ 2/3 身份批张力复现**；资源审计逐 cell（fit/投影 wall-clock、24k solver 步、checkpoint 字节）+ 软门（projected 总 wall ≤ 3× baseline）。结果映射：≥ 8/9 ∧ 基线张力 → `course_level_validation_supported`（晋级课程入场资格成立，进求解器机制下的晋级课程预注册）；≤ 7/9 → `course_level_validation_failed`（按身份/seed/门分布归因）；基线全过 → `baseline_drift`。`growth_admitted=false`、`can_promote=false`；不加第三臂、不改求解器合同。
+
+**当前唯一下一步**：实现 9-cell runner（`eval_taiji_m5_k_p4_12_course_level_validation.py`，py_compile/ruff/mypy 先行）并执行落盘报告；任一停止线触发即停。
+
 ### P4：回归态极的长期目标——继承式结构成长
 
 在固定容量持续学习和保持成立后，使用多任务干扰、容量扫描与长序列退化确定扩容压力。增长从同一模型继承有效权重和学习状态，新增结构零影响出生，并有可测 credit/活动/贡献。
