@@ -1,0 +1,172 @@
+{
+  "format": "taiji-m5-k-p4-9-feature-space-probe-v1",
+  "version": 1,
+  "status": "completed",
+  "training_performed": false,
+  "fit_called": false,
+  "sealed_payload_read": false,
+  "growth_admitted": false,
+  "can_promote": false,
+  "report": "E:\\Seed\\reports\\taiji_m5_k_p4_9_feature_space_probe_20260911.json",
+  "run_dir": "E:\\Seed\\output\\taiji_m5_k_p4_9_feature_space_probe_7ddaafe22a5d4d06a195aafb4d1af114",
+  "probe_contract": {
+    "source_p4_8_manifest_digest": "5383248b7301b05ca0948be2a14eeb5c9adb30448f2f22e308ef8c46c1f65e21",
+    "parent_g_checkpoint_digest": "f4fdc61bf0e0174a9618e087fec8a25ce90d8a3257a7ca26bd1754db45da398d",
+    "train_candidate_set_digests": [
+      "3b2f720d07305cd1d4c07a416e0ada2987982a3cea1478403b30308dead00f14",
+      "3d431e7fb027d6317da2db6aec6cb298dad5e5e676496d2c9042fc892f91249b",
+      "1d3393a01f48eedaaa9e3155b803705a183eaad4f250c1ec20d12f415c5ea8bd",
+      "1b1befeee8094cd2f7438d44f448a666df7c851350baf5d4524d042449f84825",
+      "d7d36444b55c99842aee29c892d9ca0f0cc4761c884ac9aaae7b1793ba1d4080",
+      "90136dce9fb759a1b4e992f4bfb72245f712e0cef2b406889935a10f724a4391",
+      "4740c7e5ec2c8ec0402474b3fc76e6581787e895bb6d8c9f709aed650b1e22c6",
+      "dd1396e23a90610905897e30dd0cbadec4cd6fd2ecb319ebe1f89f2eb2f5e9ca",
+      "1606b988c832e45dbb0c5fdcf807fc3aeaf78537edb68574e77c825454fc3381",
+      "5beb38e04fc5fa354f7cb697d6ae5ba3951e7558c243d6bb5757c37a0d3b13e9",
+      "acf8b037bcc5fee3f3f6d9dc62a0e4cd703ce6d917f0845242119656f827508b",
+      "251b95763601672f5a02ba0282e3f95eb8e9cfa42013b404aa41e3fbd2eee5b6",
+      "044704e41b7805fb417c13559b39750e829805982a2b493984806637e7f6761d",
+      "9067dd64b6446c5ea404126685dc4358977c1e1a6153c45a702a649a25ba45d3",
+      "bfff0e659dcba84df31d9f287025812071d3d452d40a52ada38a9fc11e385b9f",
+      "192a0b4183decaf24fbece2d1cfdf52b1cc72aba10eeefb146d73b953ab9f228",
+      "ab0dcaebd099093598798b9762da75610ab831bfb8a13472548f3c556fac11d2",
+      "feeca8c49cf00f35a60d35e3381918b2d91f4683dc0b039c0bde978031c617b0",
+      "4b6a69cefdf1e9f4762e29465a8df0f9f16fe6dd5b3004d2fcec9e90d6cbc8fe",
+      "37212af698640ecd40656dda1fde5a9345c668954d9fe0ed4a77bd812a1d6733"
+    ],
+    "sibling_candidate_set_digests": [
+      "d361d6b8e49965ccb56e2756870adb9ad4e4f2bdb07ff3529f2dd6efc7f61a20",
+      "4c22d13d5c2bd98d0699f1ae143d8a6803afb0a510cd92ef3335ca505901165c",
+      "ff1eb61434da518743f63155ed16e02cffda2e77ebaf41514859424c457cf45d",
+      "815285f1f65232531a18676c9bc0dff12ae8fccfbd86216a8f33b9a9555439b2"
+    ],
+    "extended_feature_names": [
+      "parent_argmax_margin",
+      "parent_safe_margin",
+      "parent_rank_norm",
+      "is_parent_pick"
+    ],
+    "probe_solver": "convex violation minimisation (probe instrument, not a Taiji learner)"
+  },
+  "identity_gate": {
+    "train_records": true,
+    "sibling_records": true,
+    "train_fit_positive": true,
+    "projects_disjoint_from_historical": true,
+    "paths_disjoint_from_historical": true,
+    "all_candidate_digests_unique": true
+  },
+  "m1_target_rank_structure": {
+    "fit_eligible_sets": 14,
+    "target_rank_counts": {
+      "0": 8,
+      "2": 6
+    },
+    "target_is_parent_pick_count": 8,
+    "target_utility_gap_mean": 0.38571428571428573,
+    "target_utility_gap_min": 0.0,
+    "target_utility_gap_max": 0.9
+  },
+  "m2_conflict_geometry": {
+    "flip_needed_count": 14,
+    "preserve_count": 4,
+    "flip_mean": [
+      0.14151487605912344,
+      0.14104263271604264,
+      0.14097971149853297,
+      0.14097971149853297,
+      0.14122859824315778,
+      0.14285714285714285,
+      0.14285714285714285,
+      0.07142857142857142,
+      0.07142857142857142,
+      0.0,
+      0.8571428571428571,
+      0.14285714285714285
+    ],
+    "preserve_mean": [
+      0.24755975604057312,
+      0.24568668007850647,
+      0.24568668007850647,
+      0.24568668007850647,
+      0.2463375594234094,
+      0.25,
+      0.25,
+      0.25,
+      0.0,
+      0.0,
+      0.75,
+      0.25
+    ],
+    "mean_difference": [
+      -0.10604487998144968,
+      -0.10464404736246383,
+      -0.1047069685799735,
+      -0.1047069685799735,
+      -0.10510896118025162,
+      -0.10714285714285715,
+      -0.10714285714285715,
+      -0.17857142857142858,
+      0.07142857142857142,
+      0.0,
+      0.1071428571428571,
+      -0.10714285714285715
+    ],
+    "parent_weight": [
+      0.0048682913184165955,
+      0.0049493503756821156,
+      1.005115032196045,
+      -0.052166473120450974,
+      -0.052705101668834686,
+      -0.05500292032957077,
+      -0.05500292032957077,
+      -0.026289943605661392,
+      -0.028712961822748184,
+      -0.2834140658378601,
+      0.6196916103363037,
+      -0.05500292032957077
+    ],
+    "squared_cosine_difference_vs_parent_weight": 0.0003556424810972491
+  },
+  "m3_joint_feasibility": {
+    "base-12": {
+      "dim": 12,
+      "constraint_count": 80,
+      "min_total_violation": 0.04936249554157257,
+      "feasible": false,
+      "violation_per_constraint_family": {
+        "newtask-argmax": 0.041257405653595924,
+        "newtask-safe": 0.0,
+        "sibling-argmax": 0.008105093613266945,
+        "sibling-safe": 0.0
+      },
+      "solver": {
+        "steps": 20000,
+        "lr": 0.05,
+        "restarts": 4,
+        "tolerance": 1e-05
+      }
+    },
+    "extended-16": {
+      "dim": 16,
+      "constraint_count": 80,
+      "min_total_violation": 0.0,
+      "feasible": true,
+      "violation_per_constraint_family": {
+        "newtask-argmax": 0.0,
+        "newtask-safe": 0.0,
+        "sibling-argmax": 0.0,
+        "sibling-safe": 0.0
+      },
+      "solver": {
+        "steps": 20000,
+        "lr": 0.05,
+        "restarts": 4,
+        "tolerance": 1e-05
+      }
+    }
+  },
+  "feasibility_verdict": "parent_relative_features_are_the_factorization",
+  "interpretation": "completed: feasibility_verdict=parent_relative_features_are_the_factorization; design-time probe for the feature-space redesign preregistration",
+  "elapsed_seconds": 41.798
+}

@@ -278,6 +278,12 @@ P4.6 固定 13 参数 G、K1/K2、候选输入、selection threshold 和安全�
 
 **当前唯一下一步**：特征空间重设计决策点——设计能把「parent 边际敏感方向」与「新任务排序方向」因子化的新特征维度（候选方向：parent-margin 特征显式化——把 frozen parent 对每个候选的边际贡献作为附加输入维度，使保持约束只作用于这些维度的权重；或非线性感知层把 safe-margin 判定与 proposal 排序解耦），先做 frozen validation-only 特征探针验证因子化可行性，再冻结预注册；预注册冻结前不训练、不扩容、不读取 sealed、不解冻 P5/CUDA/IDE/provider。
 
+用户确认执行。**特征探针已先行完成**（[P4.9 probe](../../../scripts/training/eval_taiji_m5_k_p4_9_feature_space_probe.py)，报告 `reports/taiji_m5_k_p4_9_feature_space_probe_20260911.json`，frozen validation-only、无任何 Taiji fit）：M1 目标秩结构 = target 在 parent 排序下 {rank 0: 8, rank 2: 6}（新任务信号 = 提升 parent 的第 3 位候选，utility gap mean 0.386）；M2 flip 方向与 parent 权重平方余弦 0.00036（近正交）；**M3 联合可行性（决定性）：基 12 维不可行（最小联合违反 0.0494——P4.2–P4.8 全部失败的定量解释），扩展 16 维（+4 个 frozen-parent-relative margin 特征）精确可行（违反 0.0）——`parent_relative_features_are_the_factorization`**。两阶段纪律不受污染：正式门沿用已冻结阈值，探针只影响臂设计。
+
+**P4.9 特征空间重设计预注册已冻结：[M5_K_P4_9_FEATURE_SPACE_REDESIGN_PREREGISTRATION_20260911.md](../../reference/M5_K_P4_9_FEATURE_SPACE_REDESIGN_PREREGISTRATION_20260911.md)。** 两臂（相邻对单变量）：`invariant-base-13`（P4.8 复现基线）/ `invariant-ext-17`（唯一变更 = 特征空间扩至 16 维：12 基 + parent_argmax_margin/parent_safe_margin/parent_rank_norm/is_parent_pick；17 参数，base 权重+bias 从 parent 逐位继承、4 新维度零初始化——出生等价精确；特征由内部 frozen parent 副本计算，训练全程非漂移）。两臂共享 margin-preservation hinge（canonical 函数）与全部协议。门沿用 P4.7/P4.8 冻结值。结果映射：ext 过 + base 张力 → `feature_factorization_supported`（固定容量路线在新表示下重开）；ext 败 → `learnability_gap`（瓶颈转优化动力学，转约束求解器方向）；base 全过 → `baseline_drift`。正式实验身份 `p4-10`。`growth_admitted=false`、`can_promote=false`；不加第三臂（P4.8 等价定理）。
+
+**当前唯一下一步**：执行 P4.9 §7——(1) `taiji/g_selection_extended.py` + 定向测试；(2) 两臂 runner（py_compile/ruff/mypy 先行）；(3) 执行落盘报告；任一停止线触发即停。
+
 ### P4：回归态极的长期目标——继承式结构成长
 
 在固定容量持续学习和保持成立后，使用多任务干扰、容量扫描与长序列退化确定扩容压力。增长从同一模型继承有效权重和学习状态，新增结构零影响出生，并有可测 credit/活动/贡献。
