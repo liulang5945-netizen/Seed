@@ -54,4 +54,12 @@
 3. 执行产出 `plans/manifests/taiji_m5_k_p4_10_feature_factorization_manifest_v1.json` + `reports/taiji_m5_k_p4_10_feature_factorization_20260911.json`；
 4. 路线图/记录文档同步 + 独立提交。
 
-## 8. 执行记录（运行后补）
+## 8. 执行记录（2026-09-11，已运行，learnability gap 确证）
+
+1. 实现顺序：`taiji/g_selection_extended.py` + 定向测试 5/5（出生等价精确/特征非漂移/hinge 委托/往返 tamper 含**分层重签下 frozen feature-source 完整性**）+ mypy 干净后运行两臂 runner。执行中发现并修复一个 checkpoint 设计错误：feature source 最初从 head 的 base 维重建，训练后 base 维漂移导致恢复必然失配——改为 **feature source 独立存储字段**（`feature_source_weight/bias`）+ 独立 digest 校验（篡改存储张量即使重签外层也被拦截）；修复未动任何判据。
+2. 报告 `reports/taiji_m5_k_p4_10_feature_factorization_20260911.json`：`status=completed`、`experiment_passed=true`（机械门全过：两臂出生等价 0 mismatch / 0.0 偏差、出生 hinge 损失恒 0、feature source 训练前后 digest 不变、身份与 P4.1–P4.9 隔离、参数 13/17 精确）。
+3. 结果（两 seed，frozen 门）：
+   - `invariant-base-13`：与 P4.8 逐数值一致的互斥（seed-0 败新任务 `0.625/0.5`+6 sv；seed-1 败 sibling `0.8`）；
+   - `invariant-ext-17`：**权衡面移动但未闭合**——seed-0 新任务 `0.6375/0.55`（逼近门仍败 + 6 sv）、retention-newtask 仅剩 safe violation 一项失败；seed-1 sibling 保持修复（`1.0`）但新任务退至 `0.6375/0.55`+6 sv。hinge 仅在 12–13/112 步激活。
+4. **判定（按 §6 冻结映射）：`learnability_gap`**——探针已证扩展空间存在精确可行解（违反 0.0），但交错 SGD 训练从 parent 初始化不可达该解（两 seed 均无法同时满足双侧门）。瓶颈从「表示存在性」正式转为「优化动力学」：逐集 SGD 步不是指向可行区域的过程，逐点 hinge 也只在 cohort 点上生效。
+5. `growth_admitted=false`、`can_promote=false`。唯一下一步 = 约束求解器方向的预注册：以探针的联合违反最小化为直接约束求解器，把「task 学习后的权重投影到联合可行区域」（最小化到当前权重的距离 subject to 联合约束）替代/增强交错 SGD 步。

@@ -547,3 +547,19 @@ P4.2 的「fixed-large 无稳定容量收益」结论受协议污染：该轮连
 | 结果出口 | 路线关闭 | `outcome=invariant_constraint_insufficient`、`experiment_passed=true`、`growth_admitted=false`、`can_promote=false` |
 
 **判定（按 §6 冻结映射）：hinge 不足以解耦。** 两条机制记录：(a) **arm-3 等价定理**——frozen head + δ head 在均匀 SGD 下与共享权重继承初始化函数空间等价（总分函数演化动力学相同），架构变量在本次实现中携带零信息，逐数值相同是等价定理的经验确证；架构要成为真实变量需分头学习率/δ trust-region/特征门控等差异化处理。(b) **逐点约束 ≠ 分布性边际不变**——hinge 精确保持 cohort 4 个点的边际，但线性函数在结构同构、身份不同的 sibling 点上仍被侵蚀；seed-0 的 6 次 safe violation 同理。与 P4.7（容量）、P4.3–P4.5（rehearsal/trust-region/functional teacher）合并的最终结论：**冲突位于表示本身——12 维 candidate 特征没有把「影响 parent 边际的方向」与「实现新任务排序的方向」因子化，任何特征方向同时作用于两者；在该表示内，约束形式（标量/hinge）、容量（13/22）、架构（共享/残差）均已排除为根因。** 固定容量路线在现表示合同下正式关闭；唯一下一步 = 特征空间重设计决策点。
+
+## 35. P4.9 探针 + P4.10 特征因子化结果（2026-09-11）
+
+**P4.9 设计探针**（[probe 脚本](../scripts/training/eval_taiji_m5_k_p4_9_feature_space_probe.py)，frozen validation-only、无 Taiji fit）：对「新任务 target 全胜 + parent 决策完整保持」的联合约束系统做**凸违反最小化测量**（无 scipy，多重启全批 Adam 替代 LP，最小违反量 = 因子化间隙）。结果：基 12 维**不可行**（最小违反 `0.0494`：newtask-argmax 族 `0.0413` + sibling-argmax 族 `0.0081`——P4.2–P4.8 失败的定量解释）；扩展 16 维（+4 个 frozen-parent-relative margin 特征：argmax margin / safe margin / rank norm / is_parent_pick）**精确可行**（违反 `0.0`）。M1/M2 副产物：target 秩结构双峰（rank 0: 8 / rank 2: 6）、flip 方向与 parent 权重近正交（cos² 0.00036）。判定 `parent_relative_features_are_the_factorization`。
+
+**P4.10 两臂正式实验**（[预注册](M5_K_P4_9_FEATURE_SPACE_REDESIGN_PREREGISTRATION_20260911.md)、报告 `reports/taiji_m5_k_p4_10_feature_factorization_20260911.json`）：`invariant-base-13`（P4.8 复现基线）vs `invariant-ext-17`（唯一变更 = 特征空间；17 参数，base 权重逐位继承 + 4 因子化维度零初始化；特征由内部 frozen parent 副本计算、独立存储字段 + digest 校验保证非漂移）。
+
+| Gate | 结果 | 关键实测 |
+|---|---:|---|
+| 出生等价 | 通过 | 两臂 0 mismatch / 0.0 偏差；出生 hinge 损失恒 0；feature source 训练前后 digest 不变 |
+| checkpoint / lineage | 通过 | 独立进程恢复、tamper 拒绝（ext 含独立 feature-source 字段的分层拦截）、parent 未覆盖；参数 13/17 精确 |
+| invariant-base-13 | 张力复现 | 与 P4.8 逐数值一致 |
+| invariant-ext-17 | 未通过 | **权衡面移动但未闭合**：seed-0 新任务 `0.6375/0.55` 逼近门仍败 + 6 sv、retention-newtask 仅剩 safe violation；seed-1 sibling 修复（`1.0`）但新任务退至 `0.6375/0.55`+6 sv；hinge 仅 12–13/112 步激活 |
+| 结果出口 | 路线转向 | `outcome=learnability_gap`、`experiment_passed=true`、`growth_admitted=false`、`can_promote=false` |
+
+**判定（按 §6 冻结映射）：`learnability_gap`**——可行解存在（探针违反 0.0）但交错 SGD 从 parent 初始化不可达（两 seed 均无法同时过双侧门）。瓶颈从「表示存在性」转为「优化动力学」：逐集 SGD 步不是指向可行区域的过程。至此表示因子化已被证明且已实现，剩余问题是**如何到达可行解**。唯一下一步 = 约束求解器预注册：task 学习后把权重**投影到联合可行区域**（最小化到当前权重的距离 subject to 联合约束——探针的违反最小化机械即为求解器），替代/增强交错 SGD。
