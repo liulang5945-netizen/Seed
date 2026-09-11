@@ -312,6 +312,10 @@ P4.6 固定 13 参数 G、K1/K2、候选输入、selection threshold 和安全�
 
 **当前唯一下一步**：scorecard 更新与晋级评审——把 P4.2–P4.13 的 G 侧证据线收束入 K 轴 scorecard 新版本，冻结晋级边界与默认 runtime rollout review 的入口条件（K worker 联合课程为后续预注册）；评审前不训练、不读取 sealed、不解冻 P5/CUDA/IDE/provider。
 
+用户确认执行。**K 轴 scorecard v4 已冻结并执行：[M5_K_AXIS_SCORECARD_V4_CONTRACT_20260911.md](../../reference/M5_K_AXIS_SCORECARD_V4_CONTRACT_20260911.md)。** 唯一变更 = 新增第四条证据线 `solver_mechanism_evidence`（来源 = P4.12 课程级验证 + P4.13 两相晋级课程，只读转录 + digest 校验：9/9 + 9/9 全门、累积投影全格精确零违反、向后保持门零失败、rollback/资源预算全过、机制零方差结论）；K1/K2/K3 与 C 阶段部分机械复用 v3 reducer 且 source digests 对 v3 报告逐位校验（零漂移），不重训、不重算。**晋级边界冻结**：v3 全部 veto 保留 + `g_solver_mechanism_course_closed=true`（G 侧晋级课程闭合的机器结论）+ 两个未完成入场条件 `k_worker_joint_course_completed=false`、`default_runtime_rollout_review_completed=false`——`promotion_gate=false`、`can_promote=false`；**晋级评审入场条件 = K worker 联合课程完成 + 默认 runtime rollout review 执行，二者齐备后 A8 评审才有资格召开且仍须独立批准**。报告 [scorecard v4](../../../reports/taiji_m5_k_axis_scorecard_v4_20260911.json)；v3 报告保留为历史。**K 轴证据线现状：能力（K1/K2/K3）× 学习机制（FS 候选）× G 侧求解器机制（表示因子化 + 求解器更新 + 课程级验证 + 晋级课程）三条线闭合；剩余入口 = K worker 联合课程。**
+
+**当前唯一下一步**：K worker 联合课程预注册——P2.6/P2.7 continuation 机械与求解器机制在同一 parent 上的联合运行（K worker 连续学习 + G 头求解器更新同课程）；预注册冻结前不解冻任何 owner、不接默认 runtime、不训练。
+
 ### P4：回归态极的长期目标——继承式结构成长
 
 在固定容量持续学习和保持成立后，使用多任务干扰、容量扫描与长序列退化确定扩容压力。增长从同一模型继承有效权重和学习状态，新增结构零影响出生，并有可测 credit/活动/贡献。
