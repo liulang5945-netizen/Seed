@@ -1,6 +1,6 @@
 # Seed / Taiji 唯一执行计划
 
-> 修订：2026-09-11；P3.6 独立行为 holdout/保持 Gate、P4.0 固定容量压力扫描、P4.1 公平容量合同预检、P4.2 隔离训练/公平容量归因 Gate、P4.3 保持约束增量学习 Gate、P4.4 保持身份/结构校准 Gate、P4.5 保持约束/更新规则对照 Gate 与 P4.6 功能性 parent-preserving objective 对照 Gate 已完成。本文覆盖所有旧文档中的执行许可和“下一步”。
+> 修订：2026-09-11（决策收束版）；P4.0–P4.6 固定 G 路线全部完成，机制综合与决策分析见 [结果复审 §32](../../reference/M4V2_POST_C_STAGE_RESULT_REVIEW_20260910.md)。本文覆盖所有旧文档中的执行许可和“下一步”。
 > 本轮任务是根据新增结果修订方案；训练与实现按下述验收顺序在后续开发中执行。
 > 研究依据：[本轮源码与结果复审](../../reference/M4V2_POST_C_STAGE_RESULT_REVIEW_20260910.md)；[历史执行记录](../../archive/history/20260910_result_review/EXECUTION_HISTORY.md)。
 
@@ -14,7 +14,7 @@
 | fast/slow 与 replay | 等 replay 下与直接 continuation 等价；拆分独立贡献未证实 | replay 作为效果基线；FS 只保留为状态实现候选 |
 | widened / 旧 parity | 当前合成路线关闭；错误计数结论撤回 | 保留失败证据和 XL 对照，不继续补次数或凑容量 |
 | C-stage / scorecard | 报告入账完成；覆盖范围有限，can_promote=false | 不追加同质 formal；换成五类、同预算、同 artifact 验证 |
-| S/G/K 连续整合 | P3.1 事件合同、P3.2 owner-transfer、P3.3 candidate data-signal/G-only、P3.4 behavior signal、P3.5 reobserve-aware G-only、P3.6 独立行为 holdout/保持、P4.4 保持身份/结构校准、P4.5 更新规则对照和 P4.6 功能性保持对照均完成；P4.0 观察到固定 G 选择压力，P4.1 已把 12 维候选输入与 9 维候选集上下文合同内容寻址，P4.2–P4.6 的 child training、恢复和保持检查完成 | P4.6 仍在两个 seed 间出现“保持恢复/新任务能力”互斥，当前固定 G 更新路线收束到决策点；停止自动 fit、扩容、promotion 和外围解冻 |
+| S/G/K 连续整合 | P3.1 事件合同、P3.2 owner-transfer、P3.3 candidate data-signal/G-only、P3.4 behavior signal、P3.5 reobserve-aware G-only、P3.6 独立行为 holdout/保持、P4.4 保持身份/结构校准、P4.5 更新规则对照和 P4.6 功能性保持对照均完成；P4.0 观察到固定 G 选择压力，P4.1 已把 12 维候选输入与 9 维候选集上下文合同内容寻址，P4.2–P4.6 的 child training、恢复和保持检查完成 | **13 参数互斥已钉死**（保持/新任务在 seed 间系统性互斥，三类干预无效）；P4.2 的 fixed-large 无收益结论受坏协议污染，容量假设未被干净检验。决策已收束为 P4.7 容量假设干净检验（见「当前决策点」节）；停止调参、扩容、promotion 和外围解冻 |
 | Seed / IDE / provider / 插件 | 已有工程资产保留；本轮未重新验收客户端全链路 | 仅修阻塞主线的故障；新能力按 P5 的依赖解冻 |
 | CI、临时目录与发布 | 不把历史局部测试当当前全仓通过 | 变更相关检查随步执行；发布另验收，不批量删除未知资产 |
 
@@ -99,7 +99,7 @@ P3.2 已在 P3.0 parent、P3.1 manifest 和同一 P2.7 holdout 上完成 owner-t
 | P1 | 真实学习信号与五类数据合同 | **已通过 P1.1**：五类各有至少 2 个 K1/K2 visible input，validation 五类覆盖且 project/template 隔离 |
 | P2 | 五类学习及保持的独立验证 | **P2.7 局部跨项目/路径泛化通过**：holdout K2 content/Workbench `4/4`，旧类保持通过；已进入 P3.0 |
 | P3 | 中断续训与 S/G/K 联合状态整合 | **P3.6 独立行为 holdout/保持 Gate 已通过但尚未 promotion**：新 project/path trained-G utility `4.0>2.65`、target hit `4/4>1/4`，旧类、安全、Workbench 和 checkpoint 均保持；S 仍非 learned |
-| P4 | 结构成长必要性与收益验证 | 当前唯一执行项：先做 validation-only capacity-pressure scan，再在真实压力上比较继承式增长、强 fixed-large 与 lesion |
+| P4 | 结构成长必要性与收益验证 | P4.0–P4.6 已完成：容量压力确认、公平容量合同、容量归因（受坏协议污染）、rehearsal/身份/参数约束/功能约束对照全部收束到「13 参数保持/新任务互斥」；**当前唯一执行项 = P4.7 容量假设干净检验**（22 参数继承式初始化 + functional 保持协议，判定互斥是否随容量消失） |
 | P5 | 知识来源、IDE、客户端、硬件发布 | 各项按所需模型能力与接口成熟度解冻 |
 
 ### P1：有效信号与评估数据（P1.1 已通过）
@@ -259,11 +259,20 @@ P4.6 固定 13 参数 G、K1/K2、候选输入、selection threshold 和安全�
 
 报告见 [P4.6 functional parent-preserving objective](../../../reports/taiji_m5_k_p4_6_functional_parent_objective_20260911.json)，清单见 [P4.6 manifest](../../manifests/taiji_m5_k_p4_6_functional_parent_objective_manifest_v1.json)。P4.6 证明功能性 parent 保持项确实改变了更新轨迹，但仍在 seed 间形成互斥：保持恢复时新任务明显退化，新任务恢复时保持仍退化。P4.0–P4.6 的固定 G 路线已经完成预定的容量、身份、rehearsal、参数约束和功能约束对照，当前不能再自动追加 epoch、半径、loss weight 或同质 seed。
 
-## 当前决策点：停止自动模型实验
+## 当前决策点：P4.7 容量假设干净检验（唯一执行项）
 
-1. 保留 P4.0–P4.6 的源码、报告、manifest 和 checkpoint 作为当前 Taiji fixed-G 研究基线；不覆写失败结果，不删除有引用的证据。
-2. 在新的架构/目标决策前，冻结 dynamic growth、promotion、P5 知识来源/IDE/provider、CUDA 和客户端视觉开发，避免外围建设掩盖模型保持问题。
-3. 下一次继续开发前必须先明确新的能力目标、保持合同和允许的模型/表示边界；没有新决策时不再自动运行训练或调参。
+P4.0–P4.6 的机制综合（详见 [结果复审 §32](../../reference/M4V2_POST_C_STAGE_RESULT_REVIEW_20260910.md)）已钉死三个事实：(1) 13 参数 G 上「保持/新任务」在 seed 间系统性互斥，rehearsal（数据层）、trust-region（参数空间）、functional teacher（函数空间）三类干预均无法同时满足——P4.6 seed-0 显示功能约束甚至把新任务推到 parent 之下（0.585 < 0.6375），张力是结构性的；(2) 保持退化可跨同构身份复现（P4.4 5/5），非 artifact 失真；(3) 容量压力真实存在（P4.0 width 8/12 residual 0.54/0.59），且 P4.2 的「fixed-large 无收益」结论受坏协议污染——该轮连 fixed-small 都保持退化，22 参数从未在保持合同可满足的条件下被检验。
+
+**P4.1 的 context-lesion 已证明**：22 参数结构（12 维 candidate 权重复制 + 9 维 context 零初始化）零 fit 下与当前 13 参数 G 选择完全一致——存在**出生零影响的容量扩展算子**。这使容量假设可被单变量干净检验。
+
+**P4.7 预注册要点**：
+
+1. **臂**：`13-param functional`（P4.6 复现基线）vs `22-param inherited functional`（P4.1 合同：candidate 权重从 P3.5 parent 复制、context 零初始化；functional teacher 项仍锚定 P3.5 parent 输出）。单变量 = 容量 13→22，不改更新规则。
+2. **保持验收吸收 P4.4 教训**：retention 必须同时含 P3.6 结构 sibling（保持分布）与新任务分布两套；两 deterministic seed 同报；checkpoint/lineage/独立恢复/tamper/rollback 机械延续 P4.6。
+3. **结果映射**：22 参数臂两 seed 同时通过保持（sibling ≥ parent `1.0`/`4/4`）与新任务（≥ new-only `0.68`）→ 容量瓶颈假设成立，进入**继承式结构成长预注册**（出生零影响 + 可测新增贡献；P4.1 复制算子即最小 growth 机制）；任一 seed 仍互斥 → 容量假设关闭，「保持/新任务互斥」定性为更新规则/表示问题，固定容量路线整体收束，进入表示合同重设计。
+4. **边界**：不读取 sealed；`growth_admitted=false`、`can_promote=false` 维持到判定；不追加第三臂、不同时改更新规则、不自动扩到 9-cell。
+
+在 P4.7 判定前继续冻结：dynamic growth、promotion、P5 知识来源/IDE/provider、CUDA 和客户端视觉；不追加 epoch、loss weight、trust-region 半径或同质 seed。P4.7 无论出口如何都产生决策必需信息且不可被现有结果替代——它是 P4 固定容量路线的收尾实验。
 
 ### P4：回归态极的长期目标——继承式结构成长
 
@@ -286,4 +295,4 @@ P4.6 固定 13 参数 G、K1/K2、候选输入、selection threshold 和安全�
 
 文档仅保留一个执行入口，不再新增平行总计划：本文记录阶段状态、下一步和验收；结果复审记录证据解释；核心需求与架构常驻 active；已有历史流水保留在 archive。旧预注册即使留在 reference 也不重新获得执行许可。当前收束不移动有引用的研究资产，不覆盖旧报告或删除 checkpoint。根目录存在部分无读取权限的临时路径，未证明其为空或无用；后续清理须逐项验证绝对路径、引用和可恢复性，不能把它们报作已清理。
 
-本轮 P2 pilot、P2.1、P2.2、P2.3 contract/targeted、P2.4 retention、P2.5 novel-composition、P2.6 novel-learning、P2.7 generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight、P3.3 G candidate data-signal/G-only learning、P3.4 behavior signal、P3.5 reobserve-aware G-only learning、P3.6 independent behavior holdout、P4.0 fixed-capacity pressure scan、P4.1 context/fixed-large contract preflight、P4.2 capacity attribution、P4.3 retention incremental、P4.4 retention identity calibration、P4.5 update-rule Gate 和 P4.6 functional parent-preserving objective Gate 报告与计划同步已提交本地 main。当前唯一入口是“架构/目标决策点”：没有新的能力合同与模型边界决策，不再自动 fit、调参、扩容、promotion 或启动外围路线。
+本轮 P2 pilot、P2.1、P2.2、P2.3 contract/targeted、P2.4 retention、P2.5 novel-composition、P2.6 novel-learning、P2.7 generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight、P3.3 candidate data-signal/G-only learning、P3.4 behavior signal、P3.5 reobserve-aware G-only learning、P3.6 independent behavior holdout、P4.0 fixed-capacity pressure scan、P4.1 context/fixed-large contract preflight、P4.2 capacity attribution、P4.3 retention incremental、P4.4 retention identity calibration、P4.5 update-rule Gate 和 P4.6 functional parent-preserving objective Gate 报告与计划同步已提交本地 main。本轮收束把决策点收敛为**唯一执行项 P4.7 容量假设干净检验**（机制综合见 [结果复审 §32](../../reference/M4V2_POST_C_STAGE_RESULT_REVIEW_20260910.md)：13 参数互斥已钉死、P4.2 容量结论受坏协议污染、P4.1 context-lesion 提供出生零影响的容量扩展算子）；P4.7 判定前不自动 fit、不调参、不扩容、不 promotion、不解冻外围路线。
