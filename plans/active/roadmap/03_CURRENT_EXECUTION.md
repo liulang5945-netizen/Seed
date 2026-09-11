@@ -284,6 +284,10 @@ P4.6 固定 13 参数 G、K1/K2、候选输入、selection threshold 和安全�
 
 **当前唯一下一步**：执行 P4.9 §7——(1) `taiji/g_selection_extended.py` + 定向测试；(2) 两臂 runner（py_compile/ruff/mypy 先行）；(3) 执行落盘报告；任一停止线触发即停。
 
+用户确认执行。**P4.10 已执行完毕（[预注册 §8](../../reference/M5_K_P4_9_FEATURE_SPACE_REDESIGN_PREREGISTRATION_20260911.md)、报告 `reports/taiji_m5_k_p4_10_feature_factorization_20260911.json`）：`outcome=learnability_gap`。** 实现：`taiji/g_selection_extended.py`（16 特征 head：base 权重逐位继承 + 4 因子化维度零初始化；特征由内部 frozen parent 副本计算，**独立存储字段 + digest 校验**保证非漂移——执行中发现并修复了「从 head base 维重建 feature source」的恢复设计错误）+ 定向测试 5/5 + 两臂 runner。结果：机械门全过（两臂出生等价精确、出生 hinge 恒 0、feature source 非漂移）；`invariant-base-13` 与 P4.8 逐数值一致；`invariant-ext-17` **权衡面移动但未闭合**——seed-0 新任务 `0.6375/0.55` 逼近门仍败 + 6 sv、retention-newtask 仅剩 safe violation 一项；seed-1 sibling 修复（`1.0`）但新任务退至 `0.6375/0.55`+6 sv；hinge 仅 12–13/112 步激活。**判定：可行解存在（P4.9 探针违反 0.0）但交错 SGD 从 parent 初始化不可达——瓶颈正式从「表示存在性」转为「优化动力学」。** `growth_admitted=false`、`can_promote=false` 不变。
+
+**当前唯一下一步**：约束求解器方向预注册——把 P4.9 探针的联合违反最小化机械升级为**可行区域投影求解器**：task 学习后把权重投影到联合可行区域（最小化到当前权重的距离 subject to 联合约束），替代/增强交错 SGD 步；先冻结投影求解器的收敛判据与投影频率合同，再冻结正式预注册；冻结前不训练、不读取 sealed、不解冻 P5/CUDA/IDE/provider。
+
 ### P4：回归态极的长期目标——继承式结构成长
 
 在固定容量持续学习和保持成立后，使用多任务干扰、容量扫描与长序列退化确定扩容压力。增长从同一模型继承有效权重和学习状态，新增结构零影响出生，并有可测 credit/活动/贡献。
