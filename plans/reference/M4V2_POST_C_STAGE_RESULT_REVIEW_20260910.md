@@ -517,3 +517,18 @@ P4.2 的「fixed-large 无稳定容量收益」结论受协议污染：该轮连
 - **边界**：不读取 sealed；growth_admitted=false、can_promote=false 维持到判定；不追加第三个臂、不同时改更新规则。
 
 无论哪个出口，P4.7 都产生决策必需信息且不可被现有结果替代——这是 P4 固定容量路线的收尾实验，不是新路线开启。
+
+## 33. P4.7 容量假设干净检验结果（2026-09-11）
+
+按 §32.4 的方向冻结了 [P4.7 预注册](M5_K_P4_7_CAPACITY_CLEAN_TEST_PREREGISTRATION_20260911.md) 并实现 `taiji/g_selection_context.py`（22 参数 context G：12 维 candidate 权重 + bias 从 P3.5 parent 逐位继承、9 维 context 权重零初始化）与 `eval_taiji_m5_k_p4_7_capacity_clean_test.py`。两臂（`functional-13` 复现基线 / `functional-22-inherited`）跑完全相同的 P4.6 functional 协议（epochs=8、lr=0.15、functional_weight=1.0、同 train fit 集、同 constraint cohort、同交错序列），单变量 = 容量 13→22。数据与 P4.1–P4.6 全部 manifest 隔离；retention 按 P4.4 教训拆为 sibling（保持分布）与 newtask（新任务分布）双集。
+
+| Gate | 结果 | 关键实测 |
+|---|---:|---|
+| 出生等价 | 通过 | 64 个评估 record 上 22 参数零 fit 选择与 parent 完全一致（0 mismatch，最大 score 偏差 **0.0**）；constraint cohort 出生 teacher 偏差同为 0 |
+| 身份/结构 | 通过 | 6 个 split 全新身份；constraint 与 retention-sibling 逐行匹配 P4.4 结构合同 |
+| checkpoint / lineage | 通过 | 两臂两 seed 零步/训练后 checkpoint 独立进程恢复、tamper 拒绝、parent 未覆盖；参数 13/22 精确 |
+| 13 参数臂张力复现 | 通过 | seed-0：新任务失败（holdout util `0.585`、target `0.45`、safe violation `6`）+ 保持通过（sibling `1.0/1.0`）；seed-1：新任务通过（`0.68/0.6`）+ 保持失败（sibling `0.8/0.75` < parent `1.0/1.0`）——与 P4.6 逐数值一致 |
+| 22 参数臂 | 未通过 | seed-0：新任务仍失败（`0.625`/`0.45`、safe violation `6`，仅比 13 参数高 0.04）；seed-1：与 13 参数**逐数值相同**（新任务 `0.68/0.6` 过、保持 `0.8/0.75` 败） |
+| 结果出口 | 路线收束 | `outcome=capacity_hypothesis_closed`、`experiment_passed=true`（机械全过）、`growth_admitted=false`、`can_promote=false` |
+
+**判定（按 §6 冻结映射）：容量假设关闭。** 证据链三层：(1) 13 参数臂在全新身份上逐数值复现 P4.6 的 seed 间互斥——张力对身份变化鲁棒，不是数据敏感；(2) 出生零影响的 +9 context 参数在相同协议下没有改变互斥的定性形态（seed-1 两臂逐数值相同；seed-0 仅 0.585→0.625，仍低于 0.68 门且保持 6 次 safe violation）；(3) 两臂的失败模式完全同构（seed-0 败新任务+败 newtask 分布保持、seed-1 败 sibling 保持）。**「保持/新任务互斥」定性为更新规则/表示问题：functional teacher 约束在表示层面把「新任务学习方向」与「parent 行为保持」耦合进同一 12 维 candidate 特征空间，额外容量只是放大器不是解耦器。** P4 固定容量路线（P4.0–P4.7）整体收束；下一步唯一入口 = 表示合同重设计（解耦选择学习与行为保持的表示维度），在新的表示合同冻结前不训练、不扩容、不解冻外围。
