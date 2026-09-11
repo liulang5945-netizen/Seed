@@ -288,6 +288,10 @@ P4.6 固定 13 参数 G、K1/K2、候选输入、selection threshold 和安全�
 
 **当前唯一下一步**：约束求解器方向预注册——把 P4.9 探针的联合违反最小化机械升级为**可行区域投影求解器**：task 学习后把权重投影到联合可行区域（最小化到当前权重的距离 subject to 联合约束），替代/增强交错 SGD 步；先冻结投影求解器的收敛判据与投影频率合同，再冻结正式预注册；冻结前不训练、不读取 sealed、不解冻 P5/CUDA/IDE/provider。
 
+用户确认执行。**P4.11 投影求解器预注册已冻结：[M5_K_P4_11_PROJECTION_SOLVER_PREREGISTRATION_20260911.md](../../reference/M5_K_P4_11_PROJECTION_SOLVER_PREREGISTRATION_20260911.md)**（求解器收敛判据 + 投影频率合同 + 正式实验设计一并冻结）。**求解器合同**：惩罚延续法（ρ ∈ {1,10,100,1000}，每相 full-batch Adam 6000 步、lr 0.05 余弦衰减，warm 延续确定性，无随机重启）；目标 = ρ·联合违反 + ½·||w − anchor||²，anchor = 基线臂训练终点（全程固定）；约束系统 = 任务约束（fit-eligible train 集 target argmax + safe-margin）+ 保持约束（constraint cohort 上 frozen parent 决策边际保持）；全部约束为分数差 → **投影只作用于 16 权重维，bias 不动**；收敛判据冻结（逐约束 ≤ 1e-6、总量 ≤ 1e-5，否则 `projection_incomplete` 诚实停止）；投影频率 = 每次训练恰一次末端投影。**两臂（单变量 = 末端投影）**：`invariant-ext-17`（P4.10 复现基线，无投影）/ `projected-ext-17`（与基线臂**逐位相同轨迹** + 一次联合投影——直接回答「P4.10 失败端点能否被一次投影修复」）。门沿用已冻结值；身份空间 `p4-11`。结果映射：投影完成 + projected 过 + 基线张力 → `projection_solver_supported`（固定容量路线在求解器机制下重开）；投影完成 + 仍互斥 → `projection_generalization_gap`（cohort 可行 ≠ 评估泛化，进入任务/表示联合重设计）；未收敛 → 机械失败停止。
+
+**当前唯一下一步**：执行 P4.11 §7——(1) 投影求解器实现 + 定向测试（收敛判据/确定性/anchor 固定/bias 不动）；(2) 两臂 runner（py_compile/ruff/mypy 先行）；(3) 执行落盘报告；任一停止线触发即停。
+
 ### P4：回归态极的长期目标——继承式结构成长
 
 在固定容量持续学习和保持成立后，使用多任务干扰、容量扫描与长序列退化确定扩容压力。增长从同一模型继承有效权重和学习状态，新增结构零影响出生，并有可测 credit/活动/贡献。
