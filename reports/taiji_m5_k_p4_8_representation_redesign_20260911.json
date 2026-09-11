@@ -1,0 +1,1013 @@
+{
+  "format": "taiji-m5-k-p4-8-representation-redesign-v1",
+  "version": 1,
+  "status": "completed",
+  "training_performed": true,
+  "fit_called": true,
+  "external_target_used": false,
+  "sealed_payload_read": false,
+  "growth_admitted": false,
+  "can_promote": false,
+  "manifest": "E:\\Seed\\plans\\manifests\\taiji_m5_k_p4_8_representation_redesign_manifest_v1.json",
+  "report": "E:\\Seed\\reports\\taiji_m5_k_p4_8_representation_redesign_20260911.json",
+  "run_dir": "E:\\Seed\\output\\taiji_m5_k_p4_8_representation_redesign_88ae5e5f651d4e64b1521bac89338f45",
+  "manifest_digest": "5383248b7301b05ca0948be2a14eeb5c9adb30448f2f22e308ef8c46c1f65e21",
+  "source_gate": {
+    "p4_7_completed_and_closed": true,
+    "p4_7_growth_still_fail_closed": true,
+    "p4_7_source_chain_valid": true,
+    "parent_independent_restore": true,
+    "parent_lineage_valid": true,
+    "k_parent_digests_valid": true
+  },
+  "identity_gate": {
+    "train_records": true,
+    "validation_records": true,
+    "holdout_records": true,
+    "retention_newtask_records": true,
+    "constraint_records": true,
+    "retention_sibling_records": true,
+    "train_fit_positive": true,
+    "five_train_classes": true,
+    "five_validation_classes": true,
+    "five_holdout_classes": true,
+    "five_retention_newtask_classes": true,
+    "new_projects_disjoint_from_historical": true,
+    "new_paths_disjoint_from_historical": true,
+    "all_candidate_digests_unique": true,
+    "all_behavior_digests_unique": true,
+    "constraint_not_fit_eligible": true,
+    "retention_sibling_not_fit_eligible": true,
+    "retention_newtask_not_fit_eligible": true,
+    "retention_sibling_structure_matches_contract": true
+  },
+  "structure_gate": {
+    "retention_sibling_matches_p4_4_contract": true,
+    "constraint_matches_p4_4_contract": true,
+    "retention_sibling_structure_digest": "feb7b88627d0ce072dd07a5c187e7be7de1c8c8ebb68a47545720002f270aef1",
+    "p4_4_structure_contract_digest": "feb7b88627d0ce072dd07a5c187e7be7de1c8c8ebb68a47545720002f270aef1"
+  },
+  "checkpoint_gate": {
+    "all_zero_step_checkpoints": true,
+    "all_trained_checkpoints": true,
+    "all_tamper_checks": true,
+    "parent_not_overwritten": true
+  },
+  "training_gate": {
+    "three_arms_present": true,
+    "two_deterministic_seeds": true,
+    "validation_not_fit": true,
+    "holdout_not_fit": true,
+    "retention_newtask_not_fit": true,
+    "retention_sibling_not_fit": true,
+    "constraint_targets_are_parent_only": true,
+    "external_target_unused": true,
+    "k_parameters_unchanged": true,
+    "parameter_counts_frozen": true
+  },
+  "birth_equivalence": {
+    "arms": {
+      "functional-13": {
+        "selection_mismatches": 0,
+        "max_abs_score_deviation": 0.0
+      },
+      "invariant-13": {
+        "selection_mismatches": 0,
+        "max_abs_score_deviation": 0.0
+      },
+      "residual-26": {
+        "selection_mismatches": 0,
+        "max_abs_score_deviation": 0.0
+      }
+    },
+    "hinge": {
+      "invariant-13": {
+        "birth_hinge_losses": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "birth_hinge_loss_zero": true
+      },
+      "residual-26": {
+        "birth_hinge_losses": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "birth_hinge_loss_zero": true
+      }
+    },
+    "passed": true
+  },
+  "parent_metrics": {
+    "validation": {
+      "count": 20,
+      "behavior_target_hit_count": 11,
+      "behavior_target_hit_rate": 0.55,
+      "selected_utility_sum": 12.749999999999998,
+      "selected_utility_mean": 0.6375,
+      "selected_residual_error": 0.36250000000000004,
+      "selected_roles": {
+        "reobserve": 8,
+        "proposal": 12
+      },
+      "safe_selection_violations": 6,
+      "reobserve_selected_count": 8,
+      "reobserve_projection_passed": true,
+      "workbench_success_count": 6
+    },
+    "holdout": {
+      "count": 20,
+      "behavior_target_hit_count": 11,
+      "behavior_target_hit_rate": 0.55,
+      "selected_utility_sum": 12.749999999999998,
+      "selected_utility_mean": 0.6375,
+      "selected_residual_error": 0.36250000000000004,
+      "selected_roles": {
+        "reobserve": 8,
+        "proposal": 12
+      },
+      "safe_selection_violations": 6,
+      "reobserve_selected_count": 8,
+      "reobserve_projection_passed": true,
+      "workbench_success_count": 6
+    },
+    "retention-sibling": {
+      "count": 4,
+      "behavior_target_hit_count": 4,
+      "behavior_target_hit_rate": 1.0,
+      "selected_utility_sum": 4.0,
+      "selected_utility_mean": 1.0,
+      "selected_residual_error": 0.0,
+      "selected_roles": {
+        "proposal": 1,
+        "reobserve": 3
+      },
+      "safe_selection_violations": 0,
+      "reobserve_selected_count": 3,
+      "reobserve_projection_passed": true,
+      "workbench_success_count": 1
+    },
+    "retention-newtask": {
+      "count": 20,
+      "behavior_target_hit_count": 11,
+      "behavior_target_hit_rate": 0.55,
+      "selected_utility_sum": 12.749999999999998,
+      "selected_utility_mean": 0.6375,
+      "selected_residual_error": 0.36250000000000004,
+      "selected_roles": {
+        "reobserve": 8,
+        "proposal": 12
+      },
+      "safe_selection_violations": 6,
+      "reobserve_selected_count": 8,
+      "reobserve_projection_passed": true,
+      "workbench_success_count": 6
+    }
+  },
+  "seed_results": [
+    {
+      "seed": 0,
+      "fit": {
+        "functional-13": {
+          "dataset_digest": "a4b7ac7da1476c114bd13b7bf0207cc37f7ede6afe03b91b1c09af8389d08496",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 0,
+          "functional_weight": 1.0,
+          "training_steps": 480,
+          "revision": 2,
+          "task_loss_mean": 0.0998369897840478,
+          "constraint_loss_mean": 0.02172018678009278,
+          "constraint_steps": 112
+        },
+        "invariant-13": {
+          "dataset_digest": "5ea513c5550b5d4051238a33e88139d591ace0b3580bb6ca0fd39b0d4974ca21",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 0,
+          "constraint_form": "margin-preservation-hinge",
+          "training_steps": 480,
+          "revision": 2,
+          "task_loss_mean": 0.5314963500090276,
+          "hinge_loss_mean": 0.050045019813946316,
+          "hinge_active_steps": 13,
+          "constraint_steps": 112
+        },
+        "residual-26": {
+          "dataset_digest": "c1e2babf339440f82c1677f64efda3767bc8128be7209d89bbaa1e48d0843dfb",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 0,
+          "training_steps": 224,
+          "revision": 1,
+          "task_loss_mean": 0.5314963428162238,
+          "hinge_loss_mean": 0.050045033101923764,
+          "hinge_active_steps": 13,
+          "constraint_steps": 112
+        }
+      },
+      "zero_checkpoints": {
+        "functional-13": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_8_representation_redesign_88ae5e5f651d4e64b1521bac89338f45\\seed-0\\functional-13-zero.pt",
+          "digest": "54b7845578fcde66af92e7eb0799fd1952b33b19eda643aeea3e72595674a3ca",
+          "bytes": 3029,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"restore_digest_equal\": true, \"parameter_count\": 13, \"training_steps\": 256, \"passed\": true}\n",
+            "stderr": "",
+            "restore_digest_equal": true,
+            "parameter_count": 13,
+            "training_steps": 256,
+            "passed": true
+          },
+          "passed": true
+        },
+        "invariant-13": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_8_representation_redesign_88ae5e5f651d4e64b1521bac89338f45\\seed-0\\invariant-13-zero.pt",
+          "digest": "54b7845578fcde66af92e7eb0799fd1952b33b19eda643aeea3e72595674a3ca",
+          "bytes": 3021,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"restore_digest_equal\": true, \"parameter_count\": 13, \"training_steps\": 256, \"passed\": true}\n",
+            "stderr": "",
+            "restore_digest_equal": true,
+            "parameter_count": 13,
+            "training_steps": 256,
+            "passed": true
+          },
+          "passed": true
+        },
+        "residual-26": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_8_representation_redesign_88ae5e5f651d4e64b1521bac89338f45\\seed-0\\residual-26-zero.pt",
+          "digest": "57c09c3a78150cc590c4f1948318896cbc80c727a59665d665dbb5d57f43074a",
+          "bytes": 3669,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 26}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 26
+          },
+          "passed": true
+        }
+      },
+      "trained_checkpoints": {
+        "functional-13": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_8_representation_redesign_88ae5e5f651d4e64b1521bac89338f45\\seed-0\\functional-13-trained.pt",
+          "digest": "675d959547b66a920e4a7e463b3bf2798c0657f7db182c08e9f91f4347a80222",
+          "bytes": 3181,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"restore_digest_equal\": true, \"parameter_count\": 13, \"training_steps\": 480, \"passed\": true}\n",
+            "stderr": "",
+            "restore_digest_equal": true,
+            "parameter_count": 13,
+            "training_steps": 480,
+            "passed": true
+          },
+          "passed": true
+        },
+        "invariant-13": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_8_representation_redesign_88ae5e5f651d4e64b1521bac89338f45\\seed-0\\invariant-13-trained.pt",
+          "digest": "97d80477c2a4fa7f9c6820f3cf89e7346a33edc769cc1f0214f5592a1fabf2a8",
+          "bytes": 3109,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"restore_digest_equal\": true, \"parameter_count\": 13, \"training_steps\": 480, \"passed\": true}\n",
+            "stderr": "",
+            "restore_digest_equal": true,
+            "parameter_count": 13,
+            "training_steps": 480,
+            "passed": true
+          },
+          "passed": true
+        },
+        "residual-26": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_8_representation_redesign_88ae5e5f651d4e64b1521bac89338f45\\seed-0\\residual-26-trained.pt",
+          "digest": "390ee78a027d55e581e534ffd6328ce1df597b6b890cf086826cf589e2ce45a2",
+          "bytes": 3827,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 26}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 26
+          },
+          "passed": true
+        }
+      },
+      "tamper_gate": {
+        "functional-13": true,
+        "invariant-13": true,
+        "residual-26": true
+      },
+      "metrics": {
+        "functional-13": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 9,
+            "behavior_target_hit_rate": 0.45,
+            "selected_utility_sum": 11.7,
+            "selected_utility_mean": 0.585,
+            "selected_residual_error": 0.41500000000000004,
+            "selected_roles": {
+              "reobserve": 9,
+              "proposal": 11
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 9,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 5
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 9,
+            "behavior_target_hit_rate": 0.45,
+            "selected_utility_sum": 11.7,
+            "selected_utility_mean": 0.585,
+            "selected_residual_error": 0.41500000000000004,
+            "selected_roles": {
+              "reobserve": 9,
+              "proposal": 11
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 9,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 5
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 4,
+            "behavior_target_hit_rate": 1.0,
+            "selected_utility_sum": 4.0,
+            "selected_utility_mean": 1.0,
+            "selected_residual_error": 0.0,
+            "selected_roles": {
+              "proposal": 1,
+              "reobserve": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 3,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 1
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 9,
+            "behavior_target_hit_rate": 0.45,
+            "selected_utility_sum": 11.7,
+            "selected_utility_mean": 0.585,
+            "selected_residual_error": 0.41500000000000004,
+            "selected_roles": {
+              "reobserve": 9,
+              "proposal": 11
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 9,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 5
+          }
+        },
+        "invariant-13": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 10,
+            "behavior_target_hit_rate": 0.5,
+            "selected_utility_sum": 12.499999999999998,
+            "selected_utility_mean": 0.6249999999999999,
+            "selected_residual_error": 0.3750000000000001,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 10,
+            "behavior_target_hit_rate": 0.5,
+            "selected_utility_sum": 12.499999999999998,
+            "selected_utility_mean": 0.6249999999999999,
+            "selected_residual_error": 0.3750000000000001,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 4,
+            "behavior_target_hit_rate": 1.0,
+            "selected_utility_sum": 4.0,
+            "selected_utility_mean": 1.0,
+            "selected_residual_error": 0.0,
+            "selected_roles": {
+              "proposal": 1,
+              "reobserve": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 3,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 1
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 10,
+            "behavior_target_hit_rate": 0.5,
+            "selected_utility_sum": 12.499999999999998,
+            "selected_utility_mean": 0.6249999999999999,
+            "selected_residual_error": 0.3750000000000001,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          }
+        },
+        "residual-26": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 10,
+            "behavior_target_hit_rate": 0.5,
+            "selected_utility_sum": 12.499999999999998,
+            "selected_utility_mean": 0.6249999999999999,
+            "selected_residual_error": 0.3750000000000001,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 10,
+            "behavior_target_hit_rate": 0.5,
+            "selected_utility_sum": 12.499999999999998,
+            "selected_utility_mean": 0.6249999999999999,
+            "selected_residual_error": 0.3750000000000001,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 4,
+            "behavior_target_hit_rate": 1.0,
+            "selected_utility_sum": 4.0,
+            "selected_utility_mean": 1.0,
+            "selected_residual_error": 0.0,
+            "selected_roles": {
+              "proposal": 1,
+              "reobserve": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 3,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 1
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 10,
+            "behavior_target_hit_rate": 0.5,
+            "selected_utility_sum": 12.499999999999998,
+            "selected_utility_mean": 0.6249999999999999,
+            "selected_residual_error": 0.3750000000000001,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          }
+        }
+      },
+      "gates": {
+        "functional-13": {
+          "new_task": {
+            "utility_ge_frozen_new_only": false,
+            "target_hit_ge_frozen_new_only": false,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": false,
+            "target_hit_not_below_parent": false,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          }
+        },
+        "invariant-13": {
+          "new_task": {
+            "utility_ge_frozen_new_only": false,
+            "target_hit_ge_frozen_new_only": false,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": false,
+            "target_hit_not_below_parent": false,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          }
+        },
+        "residual-26": {
+          "new_task": {
+            "utility_ge_frozen_new_only": false,
+            "target_hit_ge_frozen_new_only": false,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": false,
+            "target_hit_not_below_parent": false,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          }
+        }
+      },
+      "parameter_count": {
+        "functional-13": 13,
+        "invariant-13": 13,
+        "residual-26": 26
+      }
+    },
+    {
+      "seed": 1,
+      "fit": {
+        "functional-13": {
+          "dataset_digest": "04eba3c912ec67d5c627fab92a4fcd89161aa9ba590d95176c8a46949685baf9",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 1,
+          "functional_weight": 1.0,
+          "training_steps": 480,
+          "revision": 2,
+          "task_loss_mean": 0.09032495668465604,
+          "constraint_loss_mean": 0.01802355506944358,
+          "constraint_steps": 112
+        },
+        "invariant-13": {
+          "dataset_digest": "4802464439ccd78d44b2fa8dfc3ffe58645c592d488001dc6237df438d25d33e",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 1,
+          "constraint_form": "margin-preservation-hinge",
+          "training_steps": 480,
+          "revision": 2,
+          "task_loss_mean": 0.43773641680932734,
+          "hinge_loss_mean": 0.04761706957859652,
+          "hinge_active_steps": 12,
+          "constraint_steps": 112
+        },
+        "residual-26": {
+          "dataset_digest": "9c75902e7fa8ba68d7931875047d595842dc782d461ec84db80bc3d8442ebcce",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 1,
+          "training_steps": 224,
+          "revision": 1,
+          "task_loss_mean": 0.43773641613578157,
+          "hinge_loss_mean": 0.04761707174059536,
+          "hinge_active_steps": 12,
+          "constraint_steps": 112
+        }
+      },
+      "zero_checkpoints": {
+        "functional-13": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_8_representation_redesign_88ae5e5f651d4e64b1521bac89338f45\\seed-1\\functional-13-zero.pt",
+          "digest": "54b7845578fcde66af92e7eb0799fd1952b33b19eda643aeea3e72595674a3ca",
+          "bytes": 3029,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"restore_digest_equal\": true, \"parameter_count\": 13, \"training_steps\": 256, \"passed\": true}\n",
+            "stderr": "",
+            "restore_digest_equal": true,
+            "parameter_count": 13,
+            "training_steps": 256,
+            "passed": true
+          },
+          "passed": true
+        },
+        "invariant-13": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_8_representation_redesign_88ae5e5f651d4e64b1521bac89338f45\\seed-1\\invariant-13-zero.pt",
+          "digest": "54b7845578fcde66af92e7eb0799fd1952b33b19eda643aeea3e72595674a3ca",
+          "bytes": 3021,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"restore_digest_equal\": true, \"parameter_count\": 13, \"training_steps\": 256, \"passed\": true}\n",
+            "stderr": "",
+            "restore_digest_equal": true,
+            "parameter_count": 13,
+            "training_steps": 256,
+            "passed": true
+          },
+          "passed": true
+        },
+        "residual-26": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_8_representation_redesign_88ae5e5f651d4e64b1521bac89338f45\\seed-1\\residual-26-zero.pt",
+          "digest": "57c09c3a78150cc590c4f1948318896cbc80c727a59665d665dbb5d57f43074a",
+          "bytes": 3669,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 26}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 26
+          },
+          "passed": true
+        }
+      },
+      "trained_checkpoints": {
+        "functional-13": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_8_representation_redesign_88ae5e5f651d4e64b1521bac89338f45\\seed-1\\functional-13-trained.pt",
+          "digest": "ef2a2dc536a3460f9ebb0ef2a9ceed84f719ebe1bb4076c653fea705af993532",
+          "bytes": 3181,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"restore_digest_equal\": true, \"parameter_count\": 13, \"training_steps\": 480, \"passed\": true}\n",
+            "stderr": "",
+            "restore_digest_equal": true,
+            "parameter_count": 13,
+            "training_steps": 480,
+            "passed": true
+          },
+          "passed": true
+        },
+        "invariant-13": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_8_representation_redesign_88ae5e5f651d4e64b1521bac89338f45\\seed-1\\invariant-13-trained.pt",
+          "digest": "6fa57de6718c1de6896d0f7a53e9308c503281e280438ae111f23b8d4b878537",
+          "bytes": 3109,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"restore_digest_equal\": true, \"parameter_count\": 13, \"training_steps\": 480, \"passed\": true}\n",
+            "stderr": "",
+            "restore_digest_equal": true,
+            "parameter_count": 13,
+            "training_steps": 480,
+            "passed": true
+          },
+          "passed": true
+        },
+        "residual-26": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_8_representation_redesign_88ae5e5f651d4e64b1521bac89338f45\\seed-1\\residual-26-trained.pt",
+          "digest": "ac5bc1b322862fcb2f3a4531a98f8db1228bc2d5436a24187432a530dd8362d1",
+          "bytes": 3827,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 26}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 26
+          },
+          "passed": true
+        }
+      },
+      "tamper_gate": {
+        "functional-13": true,
+        "invariant-13": true,
+        "residual-26": true
+      },
+      "metrics": {
+        "functional-13": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 12,
+            "behavior_target_hit_rate": 0.6,
+            "selected_utility_sum": 13.600000000000001,
+            "selected_utility_mean": 0.68,
+            "selected_residual_error": 0.31999999999999995,
+            "selected_roles": {
+              "reobserve": 20
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 20,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 0
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 12,
+            "behavior_target_hit_rate": 0.6,
+            "selected_utility_sum": 13.600000000000001,
+            "selected_utility_mean": 0.68,
+            "selected_residual_error": 0.31999999999999995,
+            "selected_roles": {
+              "reobserve": 20
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 20,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 0
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 3,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 3.2,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 4
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 4,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 0
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 12,
+            "behavior_target_hit_rate": 0.6,
+            "selected_utility_sum": 13.600000000000001,
+            "selected_utility_mean": 0.68,
+            "selected_residual_error": 0.31999999999999995,
+            "selected_roles": {
+              "reobserve": 20
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 20,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 0
+          }
+        },
+        "invariant-13": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 12,
+            "behavior_target_hit_rate": 0.6,
+            "selected_utility_sum": 13.600000000000001,
+            "selected_utility_mean": 0.68,
+            "selected_residual_error": 0.31999999999999995,
+            "selected_roles": {
+              "reobserve": 20
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 20,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 0
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 12,
+            "behavior_target_hit_rate": 0.6,
+            "selected_utility_sum": 13.600000000000001,
+            "selected_utility_mean": 0.68,
+            "selected_residual_error": 0.31999999999999995,
+            "selected_roles": {
+              "reobserve": 20
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 20,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 0
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 3,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 3.2,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 4
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 4,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 0
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 12,
+            "behavior_target_hit_rate": 0.6,
+            "selected_utility_sum": 13.600000000000001,
+            "selected_utility_mean": 0.68,
+            "selected_residual_error": 0.31999999999999995,
+            "selected_roles": {
+              "reobserve": 20
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 20,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 0
+          }
+        },
+        "residual-26": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 12,
+            "behavior_target_hit_rate": 0.6,
+            "selected_utility_sum": 13.600000000000001,
+            "selected_utility_mean": 0.68,
+            "selected_residual_error": 0.31999999999999995,
+            "selected_roles": {
+              "reobserve": 20
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 20,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 0
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 12,
+            "behavior_target_hit_rate": 0.6,
+            "selected_utility_sum": 13.600000000000001,
+            "selected_utility_mean": 0.68,
+            "selected_residual_error": 0.31999999999999995,
+            "selected_roles": {
+              "reobserve": 20
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 20,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 0
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 3,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 3.2,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 4
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 4,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 0
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 12,
+            "behavior_target_hit_rate": 0.6,
+            "selected_utility_sum": 13.600000000000001,
+            "selected_utility_mean": 0.68,
+            "selected_residual_error": 0.31999999999999995,
+            "selected_roles": {
+              "reobserve": 20
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 20,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 0
+          }
+        }
+      },
+      "gates": {
+        "functional-13": {
+          "new_task": {
+            "utility_ge_frozen_new_only": true,
+            "target_hit_ge_frozen_new_only": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": false,
+            "target_hit_not_below_parent": false,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          }
+        },
+        "invariant-13": {
+          "new_task": {
+            "utility_ge_frozen_new_only": true,
+            "target_hit_ge_frozen_new_only": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": false,
+            "target_hit_not_below_parent": false,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          }
+        },
+        "residual-26": {
+          "new_task": {
+            "utility_ge_frozen_new_only": true,
+            "target_hit_ge_frozen_new_only": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": false,
+            "target_hit_not_below_parent": false,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          }
+        }
+      },
+      "parameter_count": {
+        "functional-13": 13,
+        "invariant-13": 13,
+        "residual-26": 26
+      }
+    }
+  ],
+  "functional_13_passes_all": false,
+  "invariant_13_passes_all": false,
+  "residual_26_passes_all": false,
+  "active_ingredient": "none",
+  "outcome": "invariant_constraint_insufficient",
+  "experiment_passed": true,
+  "interpretation": "completed: outcome=invariant_constraint_insufficient; active_ingredient=none; representation contract redesign test; growth and promotion remain fail-closed",
+  "elapsed_seconds": 127.988
+}

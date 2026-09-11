@@ -532,3 +532,18 @@ P4.2 的「fixed-large 无稳定容量收益」结论受协议污染：该轮连
 | 结果出口 | 路线收束 | `outcome=capacity_hypothesis_closed`、`experiment_passed=true`（机械全过）、`growth_admitted=false`、`can_promote=false` |
 
 **判定（按 §6 冻结映射）：容量假设关闭。** 证据链三层：(1) 13 参数臂在全新身份上逐数值复现 P4.6 的 seed 间互斥——张力对身份变化鲁棒，不是数据敏感；(2) 出生零影响的 +9 context 参数在相同协议下没有改变互斥的定性形态（seed-1 两臂逐数值相同；seed-0 仅 0.585→0.625，仍低于 0.68 门且保持 6 次 safe violation）；(3) 两臂的失败模式完全同构（seed-0 败新任务+败 newtask 分布保持、seed-1 败 sibling 保持）。**「保持/新任务互斥」定性为更新规则/表示问题：functional teacher 约束在表示层面把「新任务学习方向」与「parent 行为保持」耦合进同一 12 维 candidate 特征空间，额外容量只是放大器不是解耦器。** P4 固定容量路线（P4.0–P4.7）整体收束；下一步唯一入口 = 表示合同重设计（解耦选择学习与行为保持的表示维度），在新的表示合同冻结前不训练、不扩容、不解冻外围。
+
+## 34. P4.8 表示合同重设计结果（2026-09-11）
+
+按 §33 的收束方向冻结了 [P4.8 预注册](M5_K_P4_8_REPRESENTATION_CONTRACT_REDESIGN_PREREGISTRATION_20260911.md)（含执行前 §3.1 修订：guard band 破坏出生零损失断言，改为**边际保持 hinge**——出生零损失由选择规则结构证明）并实现三臂 runner：`functional-13`（标量 MSE 基线，第 4 次复现）/ `invariant-13`（唯一变更 = 约束形式改为边际保持 hinge）/ `residual-26`（唯一变更 = frozen parent head + 零初始化 δ head，只训 δ）。
+
+| Gate | 结果 | 关键实测 |
+|---|---:|---|
+| 出生等价 | 通过 | 三臂 0 mismatch / 最大偏差 0.0；两个 invariant 臂出生 hinge 损失恒 0（§3.1 构造性质经验成立） |
+| checkpoint / lineage | 通过 | 三臂两 seed 独立进程恢复、tamper 拒绝（residual 含 frozen-head 内层 digest）、parent 未覆盖；参数 13/13/26 精确 |
+| functional-13 基线 | 张力复现 | 与 P4.6/P4.7 逐数值一致（seed-0 `0.585/0.45`+6 sv；seed-1 `0.68/0.6` + sibling `0.8/0.75`） |
+| invariant-13 | 未通过 | seed-0 新任务 `0.625/0.5` 仍败 + 6 sv；seed-1 与基线逐数值相同 |
+| residual-26 | 未通过 | 与 invariant-13 **逐数值相同**（两 seed） |
+| 结果出口 | 路线关闭 | `outcome=invariant_constraint_insufficient`、`experiment_passed=true`、`growth_admitted=false`、`can_promote=false` |
+
+**判定（按 §6 冻结映射）：hinge 不足以解耦。** 两条机制记录：(a) **arm-3 等价定理**——frozen head + δ head 在均匀 SGD 下与共享权重继承初始化函数空间等价（总分函数演化动力学相同），架构变量在本次实现中携带零信息，逐数值相同是等价定理的经验确证；架构要成为真实变量需分头学习率/δ trust-region/特征门控等差异化处理。(b) **逐点约束 ≠ 分布性边际不变**——hinge 精确保持 cohort 4 个点的边际，但线性函数在结构同构、身份不同的 sibling 点上仍被侵蚀；seed-0 的 6 次 safe violation 同理。与 P4.7（容量）、P4.3–P4.5（rehearsal/trust-region/functional teacher）合并的最终结论：**冲突位于表示本身——12 维 candidate 特征没有把「影响 parent 边际的方向」与「实现新任务排序的方向」因子化，任何特征方向同时作用于两者；在该表示内，约束形式（标量/hinge）、容量（13/22）、架构（共享/残差）均已排除为根因。** 固定容量路线在现表示合同下正式关闭；唯一下一步 = 特征空间重设计决策点。

@@ -106,6 +106,74 @@ def _apply_selection_rule(
     return selected, status
 
 
+def margin_preservation_hinge(
+    candidate_set: GSelectionCandidateSet,
+    *,
+    current_scores: Mapping[str, float],
+    reference_scores: Mapping[str, float],
+    reference_selected_id: str,
+    reference_status: str,
+    selection_margin: float,
+) -> tuple[float, dict[str, float]]:
+    """Margin-preservation hinge (P4.8 §3.1) over explicit score mappings.
+
+    The single canonical implementation of the frozen constraint: every
+    parent decision margin must stay at or above its frozen-reference
+    value.  Returns the hinge loss and the per-candidate error entries
+    ``dL/ds(c)`` ready for ``apply_linear_delta`` (push a score up with a
+    negative error).  Zero by construction whenever the current scores
+    equal the reference scores.
+    """
+    candidates = tuple(candidate_set.candidates)
+    error_by_id = {candidate.candidate_id: 0.0 for candidate in candidates}
+    loss = 0.0
+    if reference_status == "selected":
+        others = [
+            candidate.candidate_id
+            for candidate in candidates
+            if candidate.candidate_id != reference_selected_id
+        ]
+        parent_gap = reference_scores[reference_selected_id] - max(
+            reference_scores[candidate_id] for candidate_id in others
+        )
+        current_gap = current_scores[reference_selected_id] - max(
+            current_scores[candidate_id] for candidate_id in others
+        )
+        if current_gap < parent_gap:
+            loss += parent_gap - current_gap
+            error_by_id[reference_selected_id] -= 1.0
+            competitor = max(others, key=lambda candidate_id: current_scores[candidate_id])
+            error_by_id[competitor] += 1.0
+        safe = _safe_candidate(candidates)
+        parent_safe_gap = (
+            reference_scores[reference_selected_id] - reference_scores[safe.candidate_id]
+        )
+        current_safe_gap = (
+            current_scores[reference_selected_id] - current_scores[safe.candidate_id]
+        )
+        if current_safe_gap < parent_safe_gap:
+            loss += parent_safe_gap - current_safe_gap
+            error_by_id[reference_selected_id] -= 1.0
+            error_by_id[safe.candidate_id] += 1.0
+    else:
+        for candidate in candidates:
+            if candidate.candidate_role != "proposal":
+                continue
+            parent_encroachment = (
+                reference_scores[candidate.candidate_id]
+                - reference_scores[reference_selected_id]
+            )
+            current_encroachment = (
+                current_scores[candidate.candidate_id]
+                - current_scores[reference_selected_id]
+            )
+            if current_encroachment > parent_encroachment:
+                loss += current_encroachment - parent_encroachment
+                error_by_id[candidate.candidate_id] += 1.0
+                error_by_id[reference_selected_id] -= 1.0
+    return loss, error_by_id
+
+
 class ResidualGSelectionLearner:
     """Frozen parent head + trainable zero-initialised delta head."""
 
@@ -297,11 +365,13 @@ class ResidualGSelectionLearner:
     def invariant_hinge(
         self, candidate_set: GSelectionCandidateSet
     ) -> tuple[float, torch.Tensor]:
-        """Margin-preservation hinge (P4.8 §3.1): loss and per-candidate error.
+        """Margin-preservation hinge against this learner's frozen head.
 
-        Zero by construction at birth (delta == 0 implies every current
-        margin equals its frozen-parent value).  The error entries are
-        ``dL/ds(c_i)`` ready for ``apply_linear_delta`` on the delta head.
+        Delegates to the canonical ``margin_preservation_hinge`` with the
+        parent head as the frozen reference.  Zero by construction at
+        birth (delta == 0 implies every current margin equals its
+        frozen-parent value).  The returned tensor holds ``dL/ds(c_i)``
+        per candidate, ready for ``apply_linear_delta`` on the delta head.
         """
         if not isinstance(candidate_set, GSelectionCandidateSet):
             raise TypeError("Residual G hinge requires a GSelectionCandidateSet")
@@ -309,39 +379,27 @@ class ResidualGSelectionLearner:
         inputs = self._inputs(candidates)
         with torch.no_grad():
             parent_scores = self.parent_head(inputs).reshape(-1)
-            total = (parent_scores + self.delta_head(inputs).reshape(-1)).clone()
-        index_by_id = {candidate.candidate_id: index for index, candidate in enumerate(candidates)}
-        parent_selected_id, parent_status = self._parent_decision(candidate_set)
-        error = torch.zeros((len(candidates), 1), dtype=torch.float32, device=self.device)
-        loss = 0.0
-        if parent_status == "selected":
-            pi = index_by_id[parent_selected_id]
-            others = [index for index in range(len(candidates)) if index != pi]
-            parent_gap = float(parent_scores[pi]) - max(float(parent_scores[i]) for i in others)
-            current_gap = float(total[pi]) - max(float(total[i]) for i in others)
-            if current_gap < parent_gap:
-                loss += parent_gap - current_gap
-                error[pi, 0] -= 1.0
-                competitor = max(others, key=lambda index: float(total[index]))
-                error[competitor, 0] += 1.0
-            safe_index = index_by_id[_safe_candidate(candidates).candidate_id]
-            parent_safe_gap = float(parent_scores[pi]) - float(parent_scores[safe_index])
-            current_safe_gap = float(total[pi]) - float(total[safe_index])
-            if current_safe_gap < parent_safe_gap:
-                loss += parent_safe_gap - current_safe_gap
-                error[pi, 0] -= 1.0
-                error[safe_index, 0] += 1.0
-        else:
-            si = index_by_id[parent_selected_id]
-            for index, candidate in enumerate(candidates):
-                if candidate.candidate_role != "proposal":
-                    continue
-                parent_encroachment = float(parent_scores[index]) - float(parent_scores[si])
-                current_encroachment = float(total[index]) - float(total[si])
-                if current_encroachment > parent_encroachment:
-                    loss += current_encroachment - parent_encroachment
-                    error[index, 0] += 1.0
-                    error[si, 0] -= 1.0
+            total = parent_scores + self.delta_head(inputs).reshape(-1)
+        reference_selected_id, reference_status = self._parent_decision(candidate_set)
+        loss, error_by_id = margin_preservation_hinge(
+            candidate_set,
+            current_scores={
+                candidate.candidate_id: float(total[index])
+                for index, candidate in enumerate(candidates)
+            },
+            reference_scores={
+                candidate.candidate_id: float(parent_scores[index])
+                for index, candidate in enumerate(candidates)
+            },
+            reference_selected_id=reference_selected_id,
+            reference_status=reference_status,
+            selection_margin=self.selection_margin,
+        )
+        error = torch.tensor(
+            [[error_by_id[candidate.candidate_id]] for candidate in candidates],
+            dtype=torch.float32,
+            device=self.device,
+        )
         return loss, error
 
     def invariant_fit(
@@ -534,4 +592,5 @@ __all__ = [
     "RESIDUAL_G_LEARNER_FORMAT",
     "RESIDUAL_G_LEARNER_VERSION",
     "ResidualGSelectionLearner",
+    "margin_preservation_hinge",
 ]
