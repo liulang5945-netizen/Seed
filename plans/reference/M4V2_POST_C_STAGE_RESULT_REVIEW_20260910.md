@@ -563,3 +563,19 @@ P4.2 的「fixed-large 无稳定容量收益」结论受协议污染：该轮连
 | 结果出口 | 路线转向 | `outcome=learnability_gap`、`experiment_passed=true`、`growth_admitted=false`、`can_promote=false` |
 
 **判定（按 §6 冻结映射）：`learnability_gap`**——可行解存在（探针违反 0.0）但交错 SGD 从 parent 初始化不可达（两 seed 均无法同时过双侧门）。瓶颈从「表示存在性」转为「优化动力学」：逐集 SGD 步不是指向可行区域的过程。至此表示因子化已被证明且已实现，剩余问题是**如何到达可行解**。唯一下一步 = 约束求解器预注册：task 学习后把权重**投影到联合可行区域**（最小化到当前权重的距离 subject to 联合约束——探针的违反最小化机械即为求解器），替代/增强交错 SGD。
+
+## 36. P4.11 投影求解器结果（2026-09-11）
+
+按 §35 的方向冻结了 [P4.11 预注册](M5_K_P4_11_PROJECTION_SOLVER_PREREGISTRATION_20260911.md)（含执行前 §2.1 修订：保持约束改为**决策同一性形式**——P4.9 探针已证可行的系统；边际保持形式与任务约束的联合可行性从未被建立）并实现确定性惩罚延续投影求解器（ρ ∈ {1,10,100,1000}，每相 6000 步 Adam + 余弦 lr，warm 延续；收敛判据逐约束 ≤ 1e-6 / 总量 ≤ 1e-5）与两臂 runner：`invariant-ext-17`（P4.10 复现基线，无投影）vs `projected-ext-17`（**逐位相同轨迹** + 一次末端联合投影）。
+
+| Gate | 结果 | 关键实测 |
+|---|---:|---|
+| 出生等价 | 通过 | 两臂 0 mismatch / 0.0 偏差；出生 hinge 恒 0 |
+| trajectory gate | 通过 | 两臂投影前 head digest **逐位相同**（同轨迹确证——投影是唯一变量） |
+| 投影收敛 | 通过 | 80 条联合约束，max/total violation = **0.0**（两 seed）；距离 L2 `2.72/2.98` 如实审计 |
+| checkpoint / lineage | 通过 | 独立进程恢复、tamper 拒绝、feature source 非漂移、parent 未覆盖；参数 17/17 |
+| invariant-ext-17 基线 | 失败复现 | 两 seed holdout `0.6375/0.55`+6 sv（P4.10 同构）；sibling `1.0` 过 |
+| **projected-ext-17** | **两 seed 全门通过** | holdout utility `0.8`≥0.68、target `0.75`≥0.6、safe violations `0`；retention-sibling `1.0/1.0`；retention-newtask `0.8`≥parent `0.6375` |
+| 结果出口 | 机制成立 | `outcome=projection_solver_supported`、`experiment_passed=true`、`growth_admitted=false`、`can_promote=false` |
+
+**判定（按 §6 冻结映射）：`projection_solver_supported`——可行区域投影求解器成立。** 这是 P 系列首次有更新机制在两 seed 上同时通过新任务门与双分布保持门：「SGD 任务学习 + 末端联合投影」修复了 learnability gap，且泛化到全部评估身份（holdout/sibling/retention-newtask 均为全新身份——cohort 可行性成功泛化，P4.8 的逐点墙在求解器机制下被穿越）。固定容量路线在求解器更新机制下**重开**。P4.2–P4.11 的完整证据链给出机制结论：**保持/新任务的解耦 = 表示因子化（P4.9）+ 优化机制替换（P4.11 末端投影替代交错 SGD）两个必要成分的合取**——任一单独都不充分。唯一下一步 = 求解器机制下的晋级课程级验证预注册（更大 seed/课程矩阵 + 资源审计）。

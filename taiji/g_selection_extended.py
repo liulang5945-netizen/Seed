@@ -428,6 +428,27 @@ class ExtendedGSelectionLearner:
             "constraint_steps": constraint_steps,
         }
 
+    def apply_projected_weights(
+        self, weight: Sequence[float], *, projection_digest: str
+    ) -> None:
+        """Apply solver-projected weights to the head (P4.11 mechanism).
+
+        The projection acts on the 16 weight dimensions only; the bias is
+        untouched by construction (all constraints are score differences).
+        The feature source is never touched.
+        """
+        projected = tuple(_finite(value, "projected weight") for value in weight)
+        if len(projected) != len(_TOTAL_FEATURE_NAMES):
+            raise ValueError("projected weight length mismatch")
+        with torch.no_grad():
+            self.head.weight.copy_(
+                torch.tensor(projected, dtype=torch.float32, device=self.device).reshape(
+                    1, -1
+                )
+            )
+        self.revision += 1
+        self.last_train_digest = projection_digest
+
     def checkpoint(self) -> dict[str, Any]:
         payload: dict[str, Any] = {
             "format": EXTENDED_G_LEARNER_FORMAT,
