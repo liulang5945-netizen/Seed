@@ -7,10 +7,12 @@ no attention matrix, no context window, no teacher model at runtime); beyond the
 owns its own representations, persistent state, memory, goals, planning and action selection,
 while deliberately reusing mature algorithms (embeddings, SSMs, MoE-style routing, optimizers, retrieval) where they fit. A key capability the architecture is designed for is **self-evolution** — to revise, grow and reorganize its own structure as it learns (see [Structural growth and collaboration](#structural-growth-and-collaboration--the-self-evolution-capability)).
 
-For the non-hype picture: the executable today is the **Taiji Substrate Kernel v8 (TSK-v8)** —
-a byte-level predictive-coding research kernel. It is a working substrate, not yet a completed
-cognitive architecture: built-in capabilities are verified; language-level intelligence is still
-being trained (see [Status](#status)).
+For the non-hype picture: the repository contains both the **Seed product shell** and the
+**Taiji research runtime**. The lowest-level executable substrate is the **Taiji Substrate
+Kernel v8 (TSK-v8)**, while the current M5 work evaluates a content-addressed K-axis learning
+and selection track on top of Taiji state and workbench contracts. These are working research
+systems, not a completed cognitive architecture or a released general-purpose model (see
+[Status](#status)).
 
 ## Language / 语言
 
@@ -19,7 +21,7 @@ being trained (see [Status](#status)).
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
-[![tests](https://img.shields.io/badge/tests-900%2B-green.svg)](.github/workflows/ci.yml)
+[![tests](https://img.shields.io/badge/Python%20tests-1%2C194-green.svg)](.github/workflows/ci.yml)
 
 ## The architecture
 
@@ -154,10 +156,10 @@ by training scores (definitions in the [architecture contract](plans/active/TAIJ
 | A5 homeostatic regulation | drives exploration/learning/sleep, not UI numbers | prototypes gated; breadth open |
 | A6 goals & planning | imagined rollout improves real success | single-step planning gates closed |
 | A7 native generation | internal intent → readable language/tool actions | structured generation closed; fluency in training |
-| A8 continual evolution | old abilities survive; gated growth/prune | growth gates closed; B5 under training |
+| A8 continual evolution | old abilities survive; gated growth/prune | G-side course closed; K-worker course and runtime growth open |
 | A9 embodiment | organs share world state; cross-modal transfer | contracts exist; full gate open |
 
-### Unified ability evaluation (M0) and current training (M1)
+### Historical baselines: M0–M2
 
 M0 built the **measurement machine** and a trusted zero point (`status=failed` by design):
 
@@ -180,26 +182,51 @@ long-term episodic feedback leaking into raw-byte language scoring, not evidence
 overwritten F1 weights. Raw-byte learning, scoring, and native generation now isolate memory by
 default; the three existing child checkpoints, restored in fresh processes, score F1 holdout at
 `4.826/4.931/4.805 BPB`, all below the `5.942` unigram baseline, while B2/B3/B4 remain unchanged.
-The remaining current gate is a genuine F5 phase-A/phase-B continual-language course, not a
-replay workaround for that resolved readout bug. Reports are under `reports/` with a matching
-plan entry: [the single execution plan](plans/active/roadmap/03_CURRENT_EXECUTION.md).
+These M0–M2 results remain the historical foundation baseline. The active execution has since
+moved to the M5 K-axis track below; the full chronology and evidence links are maintained in
+[the single execution plan](plans/active/roadmap/03_CURRENT_EXECUTION.md).
+
+### Current research track: M5 K-axis and solver evidence
+
+The current line is a controlled continual-learning study over five typed workbench classes.
+Each result is backed by frozen manifests, disjoint identities, holdout/retention checks,
+independent-process checkpoint restoration, tamper rejection and fail-closed promotion gates.
+It is evidence about specific mechanisms, not a claim that the whole architecture is complete.
+
+| Stage | Result |
+|---|---|
+| P4.7 capacity clean test | `capacity_hypothesis_closed`: the 13-vs-22 parameter comparison did not remove the retention/new-task tension |
+| P4.8–P4.10 representation track | The original invariant constraint was insufficient; a parent-relative feature factorization was identified, while the base feature space retained a measured learnability gap |
+| P4.11 projection solver | `projection_solver_supported`: both seeds passed the new-task and dual-retention gates on fresh identities |
+| P4.12 course-level validation | `course_level_validation_supported`: 9/9 projected cells passed across 3 identity batches × 3 seeds |
+| P4.13 promotion course | `promotion_course_supported`: 9/9 two-phase A → B cells passed; cumulative A+B+retention projection converged with zero violations and backward retention held |
+| K-axis scorecard v4 | G-side solver evidence is closed; promotion remains fail-closed |
+
+The authoritative summary is the [M5 K-axis scorecard v4](plans/reference/M5_K_AXIS_SCORECARD_V4_CONTRACT_20260911.md),
+with machine-readable evidence in [the scorecard report](reports/taiji_m5_k_axis_scorecard_v4_20260911.json).
 
 ## Status
 
-- Completed and committed: substrate kernel + verification chain, structural growth gates, M0
-  measurement machine, M1 foundation training and B2 causal chain, plus M2-0 real joint training.
-- In progress: M2-2, a content-addressed phase-A/phase-B F5 continual-language gate; M2-1 has
-  already restored the correct F1 measurement boundary on the existing checkpoints.
-- Honest boundary: this is a learning-mechanism prototype under training, **not** a completed
-  cognitive architecture, not a language model, and not a claim about AGI. Garbled replies are
-  expected kernel behavior.
+- Completed and committed: the TSK-v8 substrate and regression chain, structural-growth
+  mechanism gates, the M0–M2 foundation evidence, M5 K1/K2/K3 scorecard evidence, and the
+  G-side solver mechanism through P4.13.
+- Current boundary: `g_solver_mechanism_course_closed=true`, but
+  `promotion_gate=false`, `can_promote=false`, and `growth_admitted=false`. The K-worker joint
+  course has not yet been preregistered or run, no owner has been attached to the default
+  runtime, and the default-runtime rollout review has not happened.
+- Next planned action: preregister the K-worker joint course that combines the P2.6/P2.7
+  continuation machinery with the solver mechanism on the same parent. This is the only active
+  next step in the [current execution plan](plans/active/roadmap/03_CURRENT_EXECUTION.md).
+- Honest boundary: this is a learning-mechanism research prototype, **not** a completed
+  cognitive architecture, not a general-purpose language model, and not a claim about AGI.
+  Garbled replies are expected kernel behavior.
 
 ## Quick start
 
 ```bash
 python -m pip install -e ".[dev]"
 python scripts/training/verify_taiji_native_v7.py        # substrate regression chain
-python -m pytest tests -q                                # 900+ committed tests
+python -m pytest tests -q                                # 1,194 Python tests currently collected
 ```
 
 Seed runtime compatibility API:
@@ -217,43 +244,47 @@ checkpoint = model.checkpoint()
 restored = Seed.from_checkpoint(checkpoint)
 ```
 
-Training entry points (CPU): `scripts/training/train_taiji_foundation.py`,
+Historical foundation training entry points (CPU): `scripts/training/train_taiji_foundation.py`,
 `train_taiji_memory.py`, `train_taiji_world_action.py`, `train_taiji_joint.py`.
+
+The current M5 evidence runners live in `scripts/training/`: `eval_taiji_m5_k_p4_7_capacity_clean_test.py`
+through `eval_taiji_m5_k_p4_13_promotion_course.py`. The read-only scorecard reducer is
+`audit_taiji_m5_k_axis_scorecard_v4.py`; it writes a report only when given an explicit
+`--report` path.
 
 ## Product shell
 
 Seed ships as a self-contained Windows desktop build (dual-entry `Seed.exe` +
 `SeedBackend.exe`): double-click launches the backend, activates the native runtime and serves
 the web UI on `http://127.0.0.1:8000` — chat, training dashboard, lifecycle dashboard, IDE
-workspace and agent configuration within a few seconds. Development mode:
+workspace and agent configuration within a few seconds. For the backend install
+`python -m pip install -e ".[dev,legacy]"`; to run the Qt desktop shell, add the `desktop`
+extra. Development mode:
 
 ```bash
 python -m uvicorn api.app:app --host 127.0.0.1 --port 8000   # backend + web UI
 python desktop/main.py                                       # desktop shell
-cd frontend && npm run dev                                   # frontend dev server
+cd frontend && npm ci && npm run dev                         # frontend dev server
 ```
 
 Environment knobs: `SEED_PORT` (default 8000), `SEED_HOST` (default 127.0.0.1),
-`SEED_RUNTIME=1` (activate the Seed native runtime on startup). Historical beta evidence in
-`reports/seed_public_beta_release_20260823.md`.
+`SEED_RUNTIME=1` (activate the Seed native runtime on startup). The frontend requires Node
+20.19+ or 22.12+. Docker users can run `docker compose up --build`. Historical beta evidence
+is in `reports/seed_public_beta_release_20260823.md`.
 
 ## Source layout
 
 ```text
-taiji/                  native cognitive architecture (imports no seed/neuroplex/transformers)
-├── fabric.py           predictive recurrent tick
-├── sparse.py           fixed fan-in synapses, local updates
-├── memory.py           distributed episodic encoding / completion / readback
-├── identity_organ.py   first-class trainable key/value memory organ
-├── organs.py           raw-byte sensor, sparse receptor bank, reward-aware motor
-├── foundation_tasks.py B1–B5 ability adapters (M0 contract)
-├── foundation_training.py  joint F1–F5 training, checkpoints, lineage
-└── model.py            observe / learn / score / generate / checkpoint
-
-scripts/training/       verify_* chain, train_taiji_* entries, eval_taiji_m1_*
-tests/taiji_native/     kernel regression + ownership contracts
-reports/                numbered, committed evidence per milestone
-plans/active/           core requirements · architecture v1 · single execution plan
+taiji/                  native architecture, organs, memory, K workers and G selection/solver
+seed/                   Seed compatibility API and runtime-facing model boundary
+seed_platform/          checkpoint, lineage, workbench and product runtime services
+api/                    FastAPI backend and training/workbench routes
+frontend/               Vue product shell, contract checks, unit tests and E2E smoke tests
+desktop/                Windows Qt shell and PyInstaller entrypoint
+scripts/training/       verification, foundation training and M5 evidence runners
+tests/                  Python regression, API, runtime and ownership-contract tests
+reports/                committed, machine-readable evidence per milestone
+plans/                  active plan, frozen manifests and preregistered research contracts
 ```
 
 ## License
