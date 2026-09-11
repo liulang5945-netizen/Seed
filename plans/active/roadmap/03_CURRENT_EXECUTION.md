@@ -304,6 +304,10 @@ P4.6 固定 13 参数 G、K1/K2、候选输入、selection threshold 和安全�
 
 **当前唯一下一步**：求解器机制下的晋级课程预注册——同一 parent 连续 S/G/K 课程，学习机制 = 「SGD 任务学习 + 末端联合投影」求解器机制，gate 沿用 A8 结构 + 资源 cap 以绝对预算定义；预注册冻结前不训练、不读取 sealed、不解冻 P5/CUDA/IDE/provider。
 
+用户确认执行。**P4.13 求解器机制下的晋级课程预注册已冻结：[M5_K_P4_13_PROMOTION_COURSE_PREREGISTRATION_20260911.md](../../reference/M5_K_P4_13_PROMOTION_COURSE_PREREGISTRATION_20260911.md)。** 关键设计：课程 = **两个相继的新任务阶段（A → B）**——检验晋级真正需要的**持续累积能力**而非单任务 + 保持。每 cell：Phase A（cohort A 任务 fit + 投影 #1 = A 约束 + 保持约束）→ Phase B（从 A 投影态出发的任务 fit + 投影 #2 = **累积系统** A 约束 + B 约束 + 保持约束）；**向后保持门（新增）= Phase B 后 A-holdout 仍过新任务门**；checkpoint/rollback 机械门沿用 P3.0 合同（A 投影态保存/恢复/回滚是 B 的安全网）；资源 cap 以**绝对预算**定义（每相 fit ≤ 60s、投影 ≤ 120s、cell 总 ≤ 600s——P4.12 比率式软门的修正）。矩阵 3 批 × 3 seeds = 9 cells；求解器合同与 P4.11/P4.12 逐参数相同；门阈值零变更。结果映射：聚合门过 → `promotion_course_supported`（G 侧晋级课程闭合，进 scorecard 更新与晋级评审）；Phase B 投影不收敛 → `cumulative_constraint_conflict`；B 破坏 A → `sequential_retention_failure`。诚实边界：G 选择头课程（K 联合运行为后续预注册）；A/B 同分布（检验累积 + 无遗忘，非跨任务类型泛化）。`growth_admitted=false`、`can_promote=false`。
+
+**当前唯一下一步**：实现两相课程 runner（`eval_taiji_m5_k_p4_13_promotion_course.py`，py_compile/ruff/mypy 先行）并执行落盘报告；任一停止线触发即停。
+
 ### P4：回归态极的长期目标——继承式结构成长
 
 在固定容量持续学习和保持成立后，使用多任务干扰、容量扫描与长序列退化确定扩容压力。增长从同一模型继承有效权重和学习状态，新增结构零影响出生，并有可测 credit/活动/贡献。
