@@ -300,6 +300,10 @@ P4.6 固定 13 参数 G、K1/K2、候选输入、selection threshold 和安全�
 
 **当前唯一下一步**：实现 9-cell runner（`eval_taiji_m5_k_p4_12_course_level_validation.py`，py_compile/ruff/mypy 先行）并执行落盘报告；任一停止线触发即停。
 
+用户确认执行。**P4.12 已执行完毕（[预注册 §8](../../reference/M5_K_P4_12_COURSE_LEVEL_VALIDATION_PREREGISTRATION_20260911.md)、报告 `reports/taiji_m5_k_p4_12_course_level_validation_20260911.json`）：`outcome=course_level_validation_supported`——求解器机制课程级验证成立。** 9/9 cell projected 臂全门通过且九格指标**逐数值相同**（holdout utility `0.8`、target `0.75`、0 sv；sibling `1.0/1.0`；retention-newtask `0.8` ≥ parent `0.6375`）；基线臂 3/3 批张力复现；投影 9/9 精确收敛（违反 0.0）。机械门全过（264 digest 唯一、身份隔离、structure/checkpoint/tamper/feature-source/trajectory 9/9）。**新增机制结论：投影求解器把「保持/新任务权衡」从 seed 敏感的优化路径问题变成了确定性的可行性求解问题（九格零方差）。** 资源审计诚实记录：3× wall 软门 9/9 超限为结构性的（fit-only 基线 0.08s vs fit+投影 3–6.5s，比率 40–80×——投影正是机制成本），按预注册为描述性边界不影响聚合门；绝对耗时极小，正式资源 cap 属晋级课程预注册且须以绝对预算定义。`growth_admitted=false`、`can_promote=false` 不变。
+
+**当前唯一下一步**：求解器机制下的晋级课程预注册——同一 parent 连续 S/G/K 课程，学习机制 = 「SGD 任务学习 + 末端联合投影」求解器机制，gate 沿用 A8 结构 + 资源 cap 以绝对预算定义；预注册冻结前不训练、不读取 sealed、不解冻 P5/CUDA/IDE/provider。
+
 ### P4：回归态极的长期目标——继承式结构成长
 
 在固定容量持续学习和保持成立后，使用多任务干扰、容量扫描与长序列退化确定扩容压力。增长从同一模型继承有效权重和学习状态，新增结构零影响出生，并有可测 credit/活动/贡献。

@@ -1,0 +1,3613 @@
+{
+  "format": "taiji-m5-k-p4-12-course-level-validation-v1",
+  "version": 1,
+  "status": "completed",
+  "training_performed": true,
+  "fit_called": true,
+  "external_target_used": false,
+  "sealed_payload_read": false,
+  "growth_admitted": false,
+  "can_promote": false,
+  "manifest": "E:\\Seed\\plans\\manifests\\taiji_m5_k_p4_12_course_level_validation_manifest_v1.json",
+  "report": "E:\\Seed\\reports\\taiji_m5_k_p4_12_course_level_validation_20260911.json",
+  "run_dir": "E:\\Seed\\output\\taiji_m5_k_p4_12_course_level_validation_d8c3d73e734c4cb68be0eb3fecf2c7a3",
+  "manifest_digest": "78836a567d902565f37bd98f317c9b0572946db01e64d3be31701bca6255defa",
+  "identity_gate": {
+    "all_candidate_digests_unique": true,
+    "all_behavior_digests_unique": true
+  },
+  "batch_identity_gates": {
+    "0": {
+      "train_records": true,
+      "validation_records": true,
+      "holdout_records": true,
+      "retention_newtask_records": true,
+      "constraint_records": true,
+      "retention_sibling_records": true,
+      "train_fit_positive": true,
+      "five_train_classes": true,
+      "five_validation_classes": true,
+      "five_holdout_classes": true,
+      "five_retention_newtask_classes": true,
+      "new_projects_disjoint_from_historical": true,
+      "new_paths_disjoint_from_historical": true
+    },
+    "1": {
+      "train_records": true,
+      "validation_records": true,
+      "holdout_records": true,
+      "retention_newtask_records": true,
+      "constraint_records": true,
+      "retention_sibling_records": true,
+      "train_fit_positive": true,
+      "five_train_classes": true,
+      "five_validation_classes": true,
+      "five_holdout_classes": true,
+      "five_retention_newtask_classes": true,
+      "new_projects_disjoint_from_historical": true,
+      "new_paths_disjoint_from_historical": true
+    },
+    "2": {
+      "train_records": true,
+      "validation_records": true,
+      "holdout_records": true,
+      "retention_newtask_records": true,
+      "constraint_records": true,
+      "retention_sibling_records": true,
+      "train_fit_positive": true,
+      "five_train_classes": true,
+      "five_validation_classes": true,
+      "five_holdout_classes": true,
+      "five_retention_newtask_classes": true,
+      "new_projects_disjoint_from_historical": true,
+      "new_paths_disjoint_from_historical": true
+    }
+  },
+  "structure_gate": {
+    "0": true,
+    "1": true,
+    "2": true
+  },
+  "checkpoint_gate": {
+    "all_trained_checkpoints": true,
+    "all_tamper_checks": true,
+    "feature_source_unchanged": true,
+    "parent_not_overwritten": true
+  },
+  "training_gate": {
+    "nine_cells_present": true,
+    "three_deterministic_seeds": true,
+    "validation_not_fit": true,
+    "holdout_not_fit": true,
+    "retention_newtask_not_fit": true,
+    "retention_sibling_not_fit": true,
+    "constraint_targets_are_parent_only": true,
+    "external_target_unused": true,
+    "k_parameters_unchanged": true,
+    "parameter_counts_frozen": true,
+    "trajectory_gates_all_pass": true
+  },
+  "aggregate_gate": {
+    "projected_pass_cells_ge_8": true,
+    "baseline_tension_batches_ge_2": true,
+    "incomplete_projections_le_1": true
+  },
+  "resource_audit": {
+    "resource_violations": 9,
+    "soft_cap_ratio": 3.0,
+    "per_cell": [
+      {
+        "batch": 0,
+        "seed": 0,
+        "fit_wall_seconds": 0.072,
+        "projected_total_wall_seconds": 6.535,
+        "soft_cap_ratio": 3.0,
+        "soft_gate_passed": false,
+        "solver_steps": 24000
+      },
+      {
+        "batch": 0,
+        "seed": 1,
+        "fit_wall_seconds": 0.084,
+        "projected_total_wall_seconds": 5.021,
+        "soft_cap_ratio": 3.0,
+        "soft_gate_passed": false,
+        "solver_steps": 24000
+      },
+      {
+        "batch": 0,
+        "seed": 2,
+        "fit_wall_seconds": 0.052,
+        "projected_total_wall_seconds": 3.128,
+        "soft_cap_ratio": 3.0,
+        "soft_gate_passed": false,
+        "solver_steps": 24000
+      },
+      {
+        "batch": 1,
+        "seed": 0,
+        "fit_wall_seconds": 0.087,
+        "projected_total_wall_seconds": 4.912,
+        "soft_cap_ratio": 3.0,
+        "soft_gate_passed": false,
+        "solver_steps": 24000
+      },
+      {
+        "batch": 1,
+        "seed": 1,
+        "fit_wall_seconds": 0.08,
+        "projected_total_wall_seconds": 4.91,
+        "soft_cap_ratio": 3.0,
+        "soft_gate_passed": false,
+        "solver_steps": 24000
+      },
+      {
+        "batch": 1,
+        "seed": 2,
+        "fit_wall_seconds": 0.081,
+        "projected_total_wall_seconds": 3.314,
+        "soft_cap_ratio": 3.0,
+        "soft_gate_passed": false,
+        "solver_steps": 24000
+      },
+      {
+        "batch": 2,
+        "seed": 0,
+        "fit_wall_seconds": 0.082,
+        "projected_total_wall_seconds": 5.16,
+        "soft_cap_ratio": 3.0,
+        "soft_gate_passed": false,
+        "solver_steps": 24000
+      },
+      {
+        "batch": 2,
+        "seed": 1,
+        "fit_wall_seconds": 0.06,
+        "projected_total_wall_seconds": 5.115,
+        "soft_cap_ratio": 3.0,
+        "soft_gate_passed": false,
+        "solver_steps": 24000
+      },
+      {
+        "batch": 2,
+        "seed": 2,
+        "fit_wall_seconds": 0.082,
+        "projected_total_wall_seconds": 3.505,
+        "soft_cap_ratio": 3.0,
+        "soft_gate_passed": false,
+        "solver_steps": 24000
+      }
+    ]
+  },
+  "projected_pass_cells": 9,
+  "baseline_tension_batches": 3,
+  "incomplete_projections": 0,
+  "batch_summaries": [
+    {
+      "batch": 0,
+      "identity_gate": {
+        "train_records": true,
+        "validation_records": true,
+        "holdout_records": true,
+        "retention_newtask_records": true,
+        "constraint_records": true,
+        "retention_sibling_records": true,
+        "train_fit_positive": true,
+        "five_train_classes": true,
+        "five_validation_classes": true,
+        "five_holdout_classes": true,
+        "five_retention_newtask_classes": true,
+        "new_projects_disjoint_from_historical": true,
+        "new_paths_disjoint_from_historical": true
+      },
+      "parent_metrics": {
+        "validation": {
+          "count": 20,
+          "behavior_target_hit_count": 11,
+          "behavior_target_hit_rate": 0.55,
+          "selected_utility_sum": 12.749999999999998,
+          "selected_utility_mean": 0.6375,
+          "selected_residual_error": 0.36250000000000004,
+          "selected_roles": {
+            "reobserve": 8,
+            "proposal": 12
+          },
+          "safe_selection_violations": 6,
+          "reobserve_selected_count": 8,
+          "reobserve_projection_passed": true,
+          "workbench_success_count": 6
+        },
+        "holdout": {
+          "count": 20,
+          "behavior_target_hit_count": 11,
+          "behavior_target_hit_rate": 0.55,
+          "selected_utility_sum": 12.749999999999998,
+          "selected_utility_mean": 0.6375,
+          "selected_residual_error": 0.36250000000000004,
+          "selected_roles": {
+            "reobserve": 8,
+            "proposal": 12
+          },
+          "safe_selection_violations": 6,
+          "reobserve_selected_count": 8,
+          "reobserve_projection_passed": true,
+          "workbench_success_count": 6
+        },
+        "retention-sibling": {
+          "count": 4,
+          "behavior_target_hit_count": 4,
+          "behavior_target_hit_rate": 1.0,
+          "selected_utility_sum": 4.0,
+          "selected_utility_mean": 1.0,
+          "selected_residual_error": 0.0,
+          "selected_roles": {
+            "proposal": 1,
+            "reobserve": 3
+          },
+          "safe_selection_violations": 0,
+          "reobserve_selected_count": 3,
+          "reobserve_projection_passed": true,
+          "workbench_success_count": 1
+        },
+        "retention-newtask": {
+          "count": 20,
+          "behavior_target_hit_count": 11,
+          "behavior_target_hit_rate": 0.55,
+          "selected_utility_sum": 12.749999999999998,
+          "selected_utility_mean": 0.6375,
+          "selected_residual_error": 0.36250000000000004,
+          "selected_roles": {
+            "reobserve": 8,
+            "proposal": 12
+          },
+          "safe_selection_violations": 6,
+          "reobserve_selected_count": 8,
+          "reobserve_projection_passed": true,
+          "workbench_success_count": 6
+        }
+      },
+      "seed_results": [
+        {
+          "seed": 0,
+          "passes_all": {
+            "invariant-ext-17": false,
+            "projected-ext-17": true
+          },
+          "gates": {
+            "invariant-ext-17": {
+              "new_task": {
+                "utility_ge_frozen_new_only": false,
+                "target_hit_ge_frozen_new_only": false,
+                "safe_selection_preserved": false,
+                "reobserve_projection_passed": true
+              },
+              "retention_sibling": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              },
+              "retention_newtask": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": false,
+                "reobserve_projection_passed": true
+              }
+            },
+            "projected-ext-17": {
+              "new_task": {
+                "utility_ge_frozen_new_only": true,
+                "target_hit_ge_frozen_new_only": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              },
+              "retention_sibling": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              },
+              "retention_newtask": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              }
+            }
+          }
+        },
+        {
+          "seed": 1,
+          "passes_all": {
+            "invariant-ext-17": false,
+            "projected-ext-17": true
+          },
+          "gates": {
+            "invariant-ext-17": {
+              "new_task": {
+                "utility_ge_frozen_new_only": false,
+                "target_hit_ge_frozen_new_only": false,
+                "safe_selection_preserved": false,
+                "reobserve_projection_passed": true
+              },
+              "retention_sibling": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              },
+              "retention_newtask": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": false,
+                "reobserve_projection_passed": true
+              }
+            },
+            "projected-ext-17": {
+              "new_task": {
+                "utility_ge_frozen_new_only": true,
+                "target_hit_ge_frozen_new_only": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              },
+              "retention_sibling": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              },
+              "retention_newtask": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              }
+            }
+          }
+        },
+        {
+          "seed": 2,
+          "passes_all": {
+            "invariant-ext-17": false,
+            "projected-ext-17": true
+          },
+          "gates": {
+            "invariant-ext-17": {
+              "new_task": {
+                "utility_ge_frozen_new_only": false,
+                "target_hit_ge_frozen_new_only": false,
+                "safe_selection_preserved": false,
+                "reobserve_projection_passed": true
+              },
+              "retention_sibling": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              },
+              "retention_newtask": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": false,
+                "reobserve_projection_passed": true
+              }
+            },
+            "projected-ext-17": {
+              "new_task": {
+                "utility_ge_frozen_new_only": true,
+                "target_hit_ge_frozen_new_only": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              },
+              "retention_sibling": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              },
+              "retention_newtask": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              }
+            }
+          }
+        }
+      ],
+      "structure_ok": true
+    },
+    {
+      "batch": 1,
+      "identity_gate": {
+        "train_records": true,
+        "validation_records": true,
+        "holdout_records": true,
+        "retention_newtask_records": true,
+        "constraint_records": true,
+        "retention_sibling_records": true,
+        "train_fit_positive": true,
+        "five_train_classes": true,
+        "five_validation_classes": true,
+        "five_holdout_classes": true,
+        "five_retention_newtask_classes": true,
+        "new_projects_disjoint_from_historical": true,
+        "new_paths_disjoint_from_historical": true
+      },
+      "parent_metrics": {
+        "validation": {
+          "count": 20,
+          "behavior_target_hit_count": 11,
+          "behavior_target_hit_rate": 0.55,
+          "selected_utility_sum": 12.749999999999998,
+          "selected_utility_mean": 0.6375,
+          "selected_residual_error": 0.36250000000000004,
+          "selected_roles": {
+            "reobserve": 8,
+            "proposal": 12
+          },
+          "safe_selection_violations": 6,
+          "reobserve_selected_count": 8,
+          "reobserve_projection_passed": true,
+          "workbench_success_count": 6
+        },
+        "holdout": {
+          "count": 20,
+          "behavior_target_hit_count": 11,
+          "behavior_target_hit_rate": 0.55,
+          "selected_utility_sum": 12.749999999999998,
+          "selected_utility_mean": 0.6375,
+          "selected_residual_error": 0.36250000000000004,
+          "selected_roles": {
+            "reobserve": 8,
+            "proposal": 12
+          },
+          "safe_selection_violations": 6,
+          "reobserve_selected_count": 8,
+          "reobserve_projection_passed": true,
+          "workbench_success_count": 6
+        },
+        "retention-sibling": {
+          "count": 4,
+          "behavior_target_hit_count": 4,
+          "behavior_target_hit_rate": 1.0,
+          "selected_utility_sum": 4.0,
+          "selected_utility_mean": 1.0,
+          "selected_residual_error": 0.0,
+          "selected_roles": {
+            "proposal": 1,
+            "reobserve": 3
+          },
+          "safe_selection_violations": 0,
+          "reobserve_selected_count": 3,
+          "reobserve_projection_passed": true,
+          "workbench_success_count": 1
+        },
+        "retention-newtask": {
+          "count": 20,
+          "behavior_target_hit_count": 11,
+          "behavior_target_hit_rate": 0.55,
+          "selected_utility_sum": 12.749999999999998,
+          "selected_utility_mean": 0.6375,
+          "selected_residual_error": 0.36250000000000004,
+          "selected_roles": {
+            "reobserve": 8,
+            "proposal": 12
+          },
+          "safe_selection_violations": 6,
+          "reobserve_selected_count": 8,
+          "reobserve_projection_passed": true,
+          "workbench_success_count": 6
+        }
+      },
+      "seed_results": [
+        {
+          "seed": 0,
+          "passes_all": {
+            "invariant-ext-17": false,
+            "projected-ext-17": true
+          },
+          "gates": {
+            "invariant-ext-17": {
+              "new_task": {
+                "utility_ge_frozen_new_only": false,
+                "target_hit_ge_frozen_new_only": false,
+                "safe_selection_preserved": false,
+                "reobserve_projection_passed": true
+              },
+              "retention_sibling": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              },
+              "retention_newtask": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": false,
+                "reobserve_projection_passed": true
+              }
+            },
+            "projected-ext-17": {
+              "new_task": {
+                "utility_ge_frozen_new_only": true,
+                "target_hit_ge_frozen_new_only": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              },
+              "retention_sibling": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              },
+              "retention_newtask": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              }
+            }
+          }
+        },
+        {
+          "seed": 1,
+          "passes_all": {
+            "invariant-ext-17": false,
+            "projected-ext-17": true
+          },
+          "gates": {
+            "invariant-ext-17": {
+              "new_task": {
+                "utility_ge_frozen_new_only": false,
+                "target_hit_ge_frozen_new_only": false,
+                "safe_selection_preserved": false,
+                "reobserve_projection_passed": true
+              },
+              "retention_sibling": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              },
+              "retention_newtask": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": false,
+                "reobserve_projection_passed": true
+              }
+            },
+            "projected-ext-17": {
+              "new_task": {
+                "utility_ge_frozen_new_only": true,
+                "target_hit_ge_frozen_new_only": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              },
+              "retention_sibling": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              },
+              "retention_newtask": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              }
+            }
+          }
+        },
+        {
+          "seed": 2,
+          "passes_all": {
+            "invariant-ext-17": false,
+            "projected-ext-17": true
+          },
+          "gates": {
+            "invariant-ext-17": {
+              "new_task": {
+                "utility_ge_frozen_new_only": false,
+                "target_hit_ge_frozen_new_only": false,
+                "safe_selection_preserved": false,
+                "reobserve_projection_passed": true
+              },
+              "retention_sibling": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              },
+              "retention_newtask": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": false,
+                "reobserve_projection_passed": true
+              }
+            },
+            "projected-ext-17": {
+              "new_task": {
+                "utility_ge_frozen_new_only": true,
+                "target_hit_ge_frozen_new_only": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              },
+              "retention_sibling": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              },
+              "retention_newtask": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              }
+            }
+          }
+        }
+      ],
+      "structure_ok": true
+    },
+    {
+      "batch": 2,
+      "identity_gate": {
+        "train_records": true,
+        "validation_records": true,
+        "holdout_records": true,
+        "retention_newtask_records": true,
+        "constraint_records": true,
+        "retention_sibling_records": true,
+        "train_fit_positive": true,
+        "five_train_classes": true,
+        "five_validation_classes": true,
+        "five_holdout_classes": true,
+        "five_retention_newtask_classes": true,
+        "new_projects_disjoint_from_historical": true,
+        "new_paths_disjoint_from_historical": true
+      },
+      "parent_metrics": {
+        "validation": {
+          "count": 20,
+          "behavior_target_hit_count": 11,
+          "behavior_target_hit_rate": 0.55,
+          "selected_utility_sum": 12.749999999999998,
+          "selected_utility_mean": 0.6375,
+          "selected_residual_error": 0.36250000000000004,
+          "selected_roles": {
+            "reobserve": 8,
+            "proposal": 12
+          },
+          "safe_selection_violations": 6,
+          "reobserve_selected_count": 8,
+          "reobserve_projection_passed": true,
+          "workbench_success_count": 6
+        },
+        "holdout": {
+          "count": 20,
+          "behavior_target_hit_count": 11,
+          "behavior_target_hit_rate": 0.55,
+          "selected_utility_sum": 12.749999999999998,
+          "selected_utility_mean": 0.6375,
+          "selected_residual_error": 0.36250000000000004,
+          "selected_roles": {
+            "reobserve": 8,
+            "proposal": 12
+          },
+          "safe_selection_violations": 6,
+          "reobserve_selected_count": 8,
+          "reobserve_projection_passed": true,
+          "workbench_success_count": 6
+        },
+        "retention-sibling": {
+          "count": 4,
+          "behavior_target_hit_count": 4,
+          "behavior_target_hit_rate": 1.0,
+          "selected_utility_sum": 4.0,
+          "selected_utility_mean": 1.0,
+          "selected_residual_error": 0.0,
+          "selected_roles": {
+            "proposal": 1,
+            "reobserve": 3
+          },
+          "safe_selection_violations": 0,
+          "reobserve_selected_count": 3,
+          "reobserve_projection_passed": true,
+          "workbench_success_count": 1
+        },
+        "retention-newtask": {
+          "count": 20,
+          "behavior_target_hit_count": 11,
+          "behavior_target_hit_rate": 0.55,
+          "selected_utility_sum": 12.749999999999998,
+          "selected_utility_mean": 0.6375,
+          "selected_residual_error": 0.36250000000000004,
+          "selected_roles": {
+            "reobserve": 8,
+            "proposal": 12
+          },
+          "safe_selection_violations": 6,
+          "reobserve_selected_count": 8,
+          "reobserve_projection_passed": true,
+          "workbench_success_count": 6
+        }
+      },
+      "seed_results": [
+        {
+          "seed": 0,
+          "passes_all": {
+            "invariant-ext-17": false,
+            "projected-ext-17": true
+          },
+          "gates": {
+            "invariant-ext-17": {
+              "new_task": {
+                "utility_ge_frozen_new_only": false,
+                "target_hit_ge_frozen_new_only": false,
+                "safe_selection_preserved": false,
+                "reobserve_projection_passed": true
+              },
+              "retention_sibling": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              },
+              "retention_newtask": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": false,
+                "reobserve_projection_passed": true
+              }
+            },
+            "projected-ext-17": {
+              "new_task": {
+                "utility_ge_frozen_new_only": true,
+                "target_hit_ge_frozen_new_only": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              },
+              "retention_sibling": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              },
+              "retention_newtask": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              }
+            }
+          }
+        },
+        {
+          "seed": 1,
+          "passes_all": {
+            "invariant-ext-17": false,
+            "projected-ext-17": true
+          },
+          "gates": {
+            "invariant-ext-17": {
+              "new_task": {
+                "utility_ge_frozen_new_only": false,
+                "target_hit_ge_frozen_new_only": false,
+                "safe_selection_preserved": false,
+                "reobserve_projection_passed": true
+              },
+              "retention_sibling": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              },
+              "retention_newtask": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": false,
+                "reobserve_projection_passed": true
+              }
+            },
+            "projected-ext-17": {
+              "new_task": {
+                "utility_ge_frozen_new_only": true,
+                "target_hit_ge_frozen_new_only": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              },
+              "retention_sibling": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              },
+              "retention_newtask": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              }
+            }
+          }
+        },
+        {
+          "seed": 2,
+          "passes_all": {
+            "invariant-ext-17": false,
+            "projected-ext-17": true
+          },
+          "gates": {
+            "invariant-ext-17": {
+              "new_task": {
+                "utility_ge_frozen_new_only": false,
+                "target_hit_ge_frozen_new_only": false,
+                "safe_selection_preserved": false,
+                "reobserve_projection_passed": true
+              },
+              "retention_sibling": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              },
+              "retention_newtask": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": false,
+                "reobserve_projection_passed": true
+              }
+            },
+            "projected-ext-17": {
+              "new_task": {
+                "utility_ge_frozen_new_only": true,
+                "target_hit_ge_frozen_new_only": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              },
+              "retention_sibling": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              },
+              "retention_newtask": {
+                "utility_not_below_parent": true,
+                "target_hit_not_below_parent": true,
+                "safe_selection_preserved": true,
+                "reobserve_projection_passed": true
+              }
+            }
+          }
+        }
+      ],
+      "structure_ok": true
+    }
+  ],
+  "cell_results": [
+    {
+      "batch": 0,
+      "seed": 0,
+      "fit": {
+        "invariant-ext-17": {
+          "dataset_digest": "38d8a26a95f34a076f34711eb864e2716242d71921bde891e76351a384318dcf",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 0,
+          "training_steps": 224,
+          "revision": 1,
+          "task_loss_mean": 0.28124825553978944,
+          "hinge_loss_mean": 0.032977847648518424,
+          "hinge_active_steps": 12,
+          "constraint_steps": 112
+        },
+        "projected-ext-17": {
+          "dataset_digest": "38d8a26a95f34a076f34711eb864e2716242d71921bde891e76351a384318dcf",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 0,
+          "training_steps": 224,
+          "revision": 1,
+          "task_loss_mean": 0.28124825553978944,
+          "hinge_loss_mean": 0.032977847648518424,
+          "hinge_active_steps": 12,
+          "constraint_steps": 112
+        }
+      },
+      "trajectory_gate": {
+        "pre_projection_digests_identical": true
+      },
+      "projection": {
+        "constraint_count": 80,
+        "converged": true,
+        "max_violation": 0.0,
+        "total_violation": 0.0,
+        "violation_per_constraint_family": {
+          "newtask-argmax": 0.0,
+          "newtask-safe": 0.0,
+          "cohort-argmax": 0.0,
+          "cohort-safe": 0.0
+        },
+        "distance": {
+          "l1": 6.022439956665039,
+          "l2": 2.7180540561676025,
+          "linf": 2.1913602352142334,
+          "per_dim": [
+            -0.16025876998901367,
+            -0.16179464757442474,
+            -0.161543071269989,
+            -0.1615462452173233,
+            -0.1613473743200302,
+            -0.1611473262310028,
+            -0.1611473262310028,
+            0.23811142146587372,
+            -0.366468220949173,
+            -0.000758737325668335,
+            0.21130162477493286,
+            -0.1611473262310028,
+            2.1913602352142334,
+            -0.014172375202178955,
+            1.4379613399505615,
+            0.27237409353256226
+          ]
+        },
+        "wall_seconds": 6.463,
+        "digest": "ad6b824b08b5007da11ca4471d2fb371f516af985802f6af48e528e5029c66b5"
+      },
+      "trained_checkpoints": {
+        "invariant-ext-17": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_12_course_level_validation_d8c3d73e734c4cb68be0eb3fecf2c7a3\\batch-0\\seed-0\\invariant-ext-17-trained.pt",
+          "digest": "0d74b4802b94b45a91c7fccaa98d82fddc16165fd18c84bee55a4ea83e0eae9c",
+          "bytes": 4069,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 17}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 17
+          },
+          "passed": true
+        },
+        "projected-ext-17": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_12_course_level_validation_d8c3d73e734c4cb68be0eb3fecf2c7a3\\batch-0\\seed-0\\projected-ext-17-trained.pt",
+          "digest": "af8124cf8b2865f99bf65ca4ada51c5d33c2b7e97ebbbeccd98599d1ccdec5d0",
+          "bytes": 4069,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 17}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 17
+          },
+          "passed": true
+        }
+      },
+      "tamper_gate": {
+        "invariant-ext-17": true,
+        "projected-ext-17": true
+      },
+      "feature_source_unchanged": true,
+      "resource": {
+        "fit_wall_seconds": 0.072,
+        "projected_total_wall_seconds": 6.535,
+        "soft_cap_ratio": 3.0,
+        "soft_gate_passed": false,
+        "solver_steps": 24000
+      },
+      "metrics": {
+        "invariant-ext-17": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 4,
+            "behavior_target_hit_rate": 1.0,
+            "selected_utility_sum": 4.0,
+            "selected_utility_mean": 1.0,
+            "selected_residual_error": 0.0,
+            "selected_roles": {
+              "proposal": 1,
+              "reobserve": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 3,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 1
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          }
+        },
+        "projected-ext-17": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 4,
+            "behavior_target_hit_rate": 1.0,
+            "selected_utility_sum": 4.0,
+            "selected_utility_mean": 1.0,
+            "selected_residual_error": 0.0,
+            "selected_roles": {
+              "proposal": 1,
+              "reobserve": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 3,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 1
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          }
+        }
+      },
+      "gates": {
+        "invariant-ext-17": {
+          "new_task": {
+            "utility_ge_frozen_new_only": false,
+            "target_hit_ge_frozen_new_only": false,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          }
+        },
+        "projected-ext-17": {
+          "new_task": {
+            "utility_ge_frozen_new_only": true,
+            "target_hit_ge_frozen_new_only": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          }
+        }
+      },
+      "passes_all": {
+        "invariant-ext-17": false,
+        "projected-ext-17": true
+      },
+      "parameter_count": {
+        "invariant-ext-17": 17,
+        "projected-ext-17": 17
+      }
+    },
+    {
+      "batch": 0,
+      "seed": 1,
+      "fit": {
+        "invariant-ext-17": {
+          "dataset_digest": "dc48a42955b70bd5fd5f80f9258fadab3dcfe408ff6902bc9e862c109a02dca8",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 1,
+          "training_steps": 224,
+          "revision": 1,
+          "task_loss_mean": 0.27416105340879376,
+          "hinge_loss_mean": 0.032090782187879086,
+          "hinge_active_steps": 12,
+          "constraint_steps": 112
+        },
+        "projected-ext-17": {
+          "dataset_digest": "dc48a42955b70bd5fd5f80f9258fadab3dcfe408ff6902bc9e862c109a02dca8",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 1,
+          "training_steps": 224,
+          "revision": 1,
+          "task_loss_mean": 0.27416105340879376,
+          "hinge_loss_mean": 0.032090782187879086,
+          "hinge_active_steps": 12,
+          "constraint_steps": 112
+        }
+      },
+      "trajectory_gate": {
+        "pre_projection_digests_identical": true
+      },
+      "projection": {
+        "constraint_count": 80,
+        "converged": true,
+        "max_violation": 0.0,
+        "total_violation": 0.0,
+        "violation_per_constraint_family": {
+          "newtask-argmax": 0.0,
+          "newtask-safe": 0.0,
+          "cohort-argmax": 0.0,
+          "cohort-safe": 0.0
+        },
+        "distance": {
+          "l1": 5.584930896759033,
+          "l2": 2.9794986248016357,
+          "linf": 2.5160512924194336,
+          "per_dim": [
+            -0.1124470978975296,
+            -0.11280728876590729,
+            -0.11271876096725464,
+            -0.11271380633115768,
+            -0.1127166822552681,
+            -0.11306460201740265,
+            -0.11306460201740265,
+            0.2300775945186615,
+            -0.14153076708316803,
+            0.0,
+            0.11937439441680908,
+            -0.11306460201740265,
+            2.5160512924194336,
+            -0.002893298864364624,
+            1.5287948846817017,
+            0.14361125230789185
+          ]
+        },
+        "wall_seconds": 4.937,
+        "digest": "0fc864077b9b75d6286abc977dca157683f96609b1b7a2333705b6284fe05c9c"
+      },
+      "trained_checkpoints": {
+        "invariant-ext-17": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_12_course_level_validation_d8c3d73e734c4cb68be0eb3fecf2c7a3\\batch-0\\seed-1\\invariant-ext-17-trained.pt",
+          "digest": "dd6faddad583938a73fdfe2dcce6ee7e9c115b0e9e2835431fc6e079b568aec4",
+          "bytes": 4069,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 17}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 17
+          },
+          "passed": true
+        },
+        "projected-ext-17": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_12_course_level_validation_d8c3d73e734c4cb68be0eb3fecf2c7a3\\batch-0\\seed-1\\projected-ext-17-trained.pt",
+          "digest": "d61017d7c331c73ecf1a341f282890da5a3cd7f8c48ca9a38f9483cf0b6484ec",
+          "bytes": 4069,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 17}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 17
+          },
+          "passed": true
+        }
+      },
+      "tamper_gate": {
+        "invariant-ext-17": true,
+        "projected-ext-17": true
+      },
+      "feature_source_unchanged": true,
+      "resource": {
+        "fit_wall_seconds": 0.084,
+        "projected_total_wall_seconds": 5.021,
+        "soft_cap_ratio": 3.0,
+        "soft_gate_passed": false,
+        "solver_steps": 24000
+      },
+      "metrics": {
+        "invariant-ext-17": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 4,
+            "behavior_target_hit_rate": 1.0,
+            "selected_utility_sum": 4.0,
+            "selected_utility_mean": 1.0,
+            "selected_residual_error": 0.0,
+            "selected_roles": {
+              "proposal": 1,
+              "reobserve": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 3,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 1
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          }
+        },
+        "projected-ext-17": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 4,
+            "behavior_target_hit_rate": 1.0,
+            "selected_utility_sum": 4.0,
+            "selected_utility_mean": 1.0,
+            "selected_residual_error": 0.0,
+            "selected_roles": {
+              "proposal": 1,
+              "reobserve": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 3,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 1
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          }
+        }
+      },
+      "gates": {
+        "invariant-ext-17": {
+          "new_task": {
+            "utility_ge_frozen_new_only": false,
+            "target_hit_ge_frozen_new_only": false,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          }
+        },
+        "projected-ext-17": {
+          "new_task": {
+            "utility_ge_frozen_new_only": true,
+            "target_hit_ge_frozen_new_only": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          }
+        }
+      },
+      "passes_all": {
+        "invariant-ext-17": false,
+        "projected-ext-17": true
+      },
+      "parameter_count": {
+        "invariant-ext-17": 17,
+        "projected-ext-17": 17
+      }
+    },
+    {
+      "batch": 0,
+      "seed": 2,
+      "fit": {
+        "invariant-ext-17": {
+          "dataset_digest": "85f31f090894c8812f373877170dfa662a7054b88d9663645684473d649433db",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 2,
+          "training_steps": 224,
+          "revision": 1,
+          "task_loss_mean": 0.28472560258939794,
+          "hinge_loss_mean": 0.028013486814286028,
+          "hinge_active_steps": 12,
+          "constraint_steps": 112
+        },
+        "projected-ext-17": {
+          "dataset_digest": "85f31f090894c8812f373877170dfa662a7054b88d9663645684473d649433db",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 2,
+          "training_steps": 224,
+          "revision": 1,
+          "task_loss_mean": 0.28472560258939794,
+          "hinge_loss_mean": 0.028013486814286028,
+          "hinge_active_steps": 12,
+          "constraint_steps": 112
+        }
+      },
+      "trajectory_gate": {
+        "pre_projection_digests_identical": true
+      },
+      "projection": {
+        "constraint_count": 80,
+        "converged": true,
+        "max_violation": 0.0,
+        "total_violation": 0.0,
+        "violation_per_constraint_family": {
+          "newtask-argmax": 0.0,
+          "newtask-safe": 0.0,
+          "cohort-argmax": 0.0,
+          "cohort-safe": 0.0
+        },
+        "distance": {
+          "l1": 6.017234802246094,
+          "l2": 3.4724462032318115,
+          "linf": 2.952080726623535,
+          "per_dim": [
+            -0.10815222561359406,
+            -0.10924610495567322,
+            -0.10908091068267822,
+            -0.10907810181379318,
+            -0.10892250388860703,
+            -0.10864061862230301,
+            -0.10864061862230301,
+            0.03492856025695801,
+            -0.24932092428207397,
+            2.9802322387695312e-08,
+            0.11922872066497803,
+            -0.10864061862230301,
+            2.952080726623535,
+            -0.00485074520111084,
+            1.7806593179702759,
+            -0.005764365196228027
+          ]
+        },
+        "wall_seconds": 3.076,
+        "digest": "61b23b5de6876e013f1e896b6dadd69c3cfe025c61679f6c9ead432ca53b5ff2"
+      },
+      "trained_checkpoints": {
+        "invariant-ext-17": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_12_course_level_validation_d8c3d73e734c4cb68be0eb3fecf2c7a3\\batch-0\\seed-2\\invariant-ext-17-trained.pt",
+          "digest": "50aa756aefb9a33525522c9459c4c067024c22881a59b38d41f24d55736d09b3",
+          "bytes": 4069,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 17}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 17
+          },
+          "passed": true
+        },
+        "projected-ext-17": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_12_course_level_validation_d8c3d73e734c4cb68be0eb3fecf2c7a3\\batch-0\\seed-2\\projected-ext-17-trained.pt",
+          "digest": "1843fbc2d8504a2b75af8fa5787c1614b2986543dbfcb4f1eeb1a69d551a0e3d",
+          "bytes": 4069,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 17}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 17
+          },
+          "passed": true
+        }
+      },
+      "tamper_gate": {
+        "invariant-ext-17": true,
+        "projected-ext-17": true
+      },
+      "feature_source_unchanged": true,
+      "resource": {
+        "fit_wall_seconds": 0.052,
+        "projected_total_wall_seconds": 3.128,
+        "soft_cap_ratio": 3.0,
+        "soft_gate_passed": false,
+        "solver_steps": 24000
+      },
+      "metrics": {
+        "invariant-ext-17": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 4,
+            "behavior_target_hit_rate": 1.0,
+            "selected_utility_sum": 4.0,
+            "selected_utility_mean": 1.0,
+            "selected_residual_error": 0.0,
+            "selected_roles": {
+              "proposal": 1,
+              "reobserve": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 3,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 1
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          }
+        },
+        "projected-ext-17": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 4,
+            "behavior_target_hit_rate": 1.0,
+            "selected_utility_sum": 4.0,
+            "selected_utility_mean": 1.0,
+            "selected_residual_error": 0.0,
+            "selected_roles": {
+              "proposal": 1,
+              "reobserve": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 3,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 1
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          }
+        }
+      },
+      "gates": {
+        "invariant-ext-17": {
+          "new_task": {
+            "utility_ge_frozen_new_only": false,
+            "target_hit_ge_frozen_new_only": false,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          }
+        },
+        "projected-ext-17": {
+          "new_task": {
+            "utility_ge_frozen_new_only": true,
+            "target_hit_ge_frozen_new_only": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          }
+        }
+      },
+      "passes_all": {
+        "invariant-ext-17": false,
+        "projected-ext-17": true
+      },
+      "parameter_count": {
+        "invariant-ext-17": 17,
+        "projected-ext-17": 17
+      }
+    },
+    {
+      "batch": 1,
+      "seed": 0,
+      "fit": {
+        "invariant-ext-17": {
+          "dataset_digest": "7ffbb03563dacecb3d9f9fd078eaced0bee1100a4f43211b4ff5c36916e02911",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 0,
+          "training_steps": 224,
+          "revision": 1,
+          "task_loss_mean": 0.28124825553978944,
+          "hinge_loss_mean": 0.032977847648518424,
+          "hinge_active_steps": 12,
+          "constraint_steps": 112
+        },
+        "projected-ext-17": {
+          "dataset_digest": "7ffbb03563dacecb3d9f9fd078eaced0bee1100a4f43211b4ff5c36916e02911",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 0,
+          "training_steps": 224,
+          "revision": 1,
+          "task_loss_mean": 0.28124825553978944,
+          "hinge_loss_mean": 0.032977847648518424,
+          "hinge_active_steps": 12,
+          "constraint_steps": 112
+        }
+      },
+      "trajectory_gate": {
+        "pre_projection_digests_identical": true
+      },
+      "projection": {
+        "constraint_count": 80,
+        "converged": true,
+        "max_violation": 0.0,
+        "total_violation": 0.0,
+        "violation_per_constraint_family": {
+          "newtask-argmax": 0.0,
+          "newtask-safe": 0.0,
+          "cohort-argmax": 0.0,
+          "cohort-safe": 0.0
+        },
+        "distance": {
+          "l1": 6.022439956665039,
+          "l2": 2.7180540561676025,
+          "linf": 2.1913602352142334,
+          "per_dim": [
+            -0.16025876998901367,
+            -0.16179464757442474,
+            -0.161543071269989,
+            -0.1615462452173233,
+            -0.1613473743200302,
+            -0.1611473262310028,
+            -0.1611473262310028,
+            0.23811142146587372,
+            -0.366468220949173,
+            -0.000758737325668335,
+            0.21130162477493286,
+            -0.1611473262310028,
+            2.1913602352142334,
+            -0.014172375202178955,
+            1.4379613399505615,
+            0.27237409353256226
+          ]
+        },
+        "wall_seconds": 4.826,
+        "digest": "e5191a2a1375b006916f1e9fe3e7c223c76af5362245ed09336087d273942cf2"
+      },
+      "trained_checkpoints": {
+        "invariant-ext-17": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_12_course_level_validation_d8c3d73e734c4cb68be0eb3fecf2c7a3\\batch-1\\seed-0\\invariant-ext-17-trained.pt",
+          "digest": "078bb18e2b2d15642830b6ea9e59d0e388a7f8004c9f74cd8cd81744246ffbf8",
+          "bytes": 4069,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 17}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 17
+          },
+          "passed": true
+        },
+        "projected-ext-17": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_12_course_level_validation_d8c3d73e734c4cb68be0eb3fecf2c7a3\\batch-1\\seed-0\\projected-ext-17-trained.pt",
+          "digest": "b36d2079e06c6694d3b0c59ce4e44b2e9ec6fbfdde698f5cab88afc72dee6646",
+          "bytes": 4069,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 17}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 17
+          },
+          "passed": true
+        }
+      },
+      "tamper_gate": {
+        "invariant-ext-17": true,
+        "projected-ext-17": true
+      },
+      "feature_source_unchanged": true,
+      "resource": {
+        "fit_wall_seconds": 0.087,
+        "projected_total_wall_seconds": 4.912,
+        "soft_cap_ratio": 3.0,
+        "soft_gate_passed": false,
+        "solver_steps": 24000
+      },
+      "metrics": {
+        "invariant-ext-17": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 4,
+            "behavior_target_hit_rate": 1.0,
+            "selected_utility_sum": 4.0,
+            "selected_utility_mean": 1.0,
+            "selected_residual_error": 0.0,
+            "selected_roles": {
+              "proposal": 1,
+              "reobserve": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 3,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 1
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          }
+        },
+        "projected-ext-17": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 4,
+            "behavior_target_hit_rate": 1.0,
+            "selected_utility_sum": 4.0,
+            "selected_utility_mean": 1.0,
+            "selected_residual_error": 0.0,
+            "selected_roles": {
+              "proposal": 1,
+              "reobserve": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 3,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 1
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          }
+        }
+      },
+      "gates": {
+        "invariant-ext-17": {
+          "new_task": {
+            "utility_ge_frozen_new_only": false,
+            "target_hit_ge_frozen_new_only": false,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          }
+        },
+        "projected-ext-17": {
+          "new_task": {
+            "utility_ge_frozen_new_only": true,
+            "target_hit_ge_frozen_new_only": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          }
+        }
+      },
+      "passes_all": {
+        "invariant-ext-17": false,
+        "projected-ext-17": true
+      },
+      "parameter_count": {
+        "invariant-ext-17": 17,
+        "projected-ext-17": 17
+      }
+    },
+    {
+      "batch": 1,
+      "seed": 1,
+      "fit": {
+        "invariant-ext-17": {
+          "dataset_digest": "948bfbac432eb1b71895201f0f84a1cba717f3c7e7d3e1f9ff8fe7615c1a2810",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 1,
+          "training_steps": 224,
+          "revision": 1,
+          "task_loss_mean": 0.27416105340879376,
+          "hinge_loss_mean": 0.032090782187879086,
+          "hinge_active_steps": 12,
+          "constraint_steps": 112
+        },
+        "projected-ext-17": {
+          "dataset_digest": "948bfbac432eb1b71895201f0f84a1cba717f3c7e7d3e1f9ff8fe7615c1a2810",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 1,
+          "training_steps": 224,
+          "revision": 1,
+          "task_loss_mean": 0.27416105340879376,
+          "hinge_loss_mean": 0.032090782187879086,
+          "hinge_active_steps": 12,
+          "constraint_steps": 112
+        }
+      },
+      "trajectory_gate": {
+        "pre_projection_digests_identical": true
+      },
+      "projection": {
+        "constraint_count": 80,
+        "converged": true,
+        "max_violation": 0.0,
+        "total_violation": 0.0,
+        "violation_per_constraint_family": {
+          "newtask-argmax": 0.0,
+          "newtask-safe": 0.0,
+          "cohort-argmax": 0.0,
+          "cohort-safe": 0.0
+        },
+        "distance": {
+          "l1": 5.584930896759033,
+          "l2": 2.9794986248016357,
+          "linf": 2.5160512924194336,
+          "per_dim": [
+            -0.1124470978975296,
+            -0.11280728876590729,
+            -0.11271876096725464,
+            -0.11271380633115768,
+            -0.1127166822552681,
+            -0.11306460201740265,
+            -0.11306460201740265,
+            0.2300775945186615,
+            -0.14153076708316803,
+            0.0,
+            0.11937439441680908,
+            -0.11306460201740265,
+            2.5160512924194336,
+            -0.002893298864364624,
+            1.5287948846817017,
+            0.14361125230789185
+          ]
+        },
+        "wall_seconds": 4.831,
+        "digest": "116bca7d5828986c0e6a5141b3d994008b0be8ff68535474bced3789b8cd9229"
+      },
+      "trained_checkpoints": {
+        "invariant-ext-17": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_12_course_level_validation_d8c3d73e734c4cb68be0eb3fecf2c7a3\\batch-1\\seed-1\\invariant-ext-17-trained.pt",
+          "digest": "ca499a4b6d7d4cd9e8b051b12a46a11d220af7a4ea9dc62842810e1b2a7ea5f2",
+          "bytes": 4069,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 17}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 17
+          },
+          "passed": true
+        },
+        "projected-ext-17": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_12_course_level_validation_d8c3d73e734c4cb68be0eb3fecf2c7a3\\batch-1\\seed-1\\projected-ext-17-trained.pt",
+          "digest": "f6ee89fb35aa4ed3f7f865c092a6c9cb404d2844fcbcb775a49faf4ff211f2ec",
+          "bytes": 4069,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 17}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 17
+          },
+          "passed": true
+        }
+      },
+      "tamper_gate": {
+        "invariant-ext-17": true,
+        "projected-ext-17": true
+      },
+      "feature_source_unchanged": true,
+      "resource": {
+        "fit_wall_seconds": 0.08,
+        "projected_total_wall_seconds": 4.91,
+        "soft_cap_ratio": 3.0,
+        "soft_gate_passed": false,
+        "solver_steps": 24000
+      },
+      "metrics": {
+        "invariant-ext-17": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 4,
+            "behavior_target_hit_rate": 1.0,
+            "selected_utility_sum": 4.0,
+            "selected_utility_mean": 1.0,
+            "selected_residual_error": 0.0,
+            "selected_roles": {
+              "proposal": 1,
+              "reobserve": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 3,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 1
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          }
+        },
+        "projected-ext-17": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 4,
+            "behavior_target_hit_rate": 1.0,
+            "selected_utility_sum": 4.0,
+            "selected_utility_mean": 1.0,
+            "selected_residual_error": 0.0,
+            "selected_roles": {
+              "proposal": 1,
+              "reobserve": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 3,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 1
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          }
+        }
+      },
+      "gates": {
+        "invariant-ext-17": {
+          "new_task": {
+            "utility_ge_frozen_new_only": false,
+            "target_hit_ge_frozen_new_only": false,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          }
+        },
+        "projected-ext-17": {
+          "new_task": {
+            "utility_ge_frozen_new_only": true,
+            "target_hit_ge_frozen_new_only": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          }
+        }
+      },
+      "passes_all": {
+        "invariant-ext-17": false,
+        "projected-ext-17": true
+      },
+      "parameter_count": {
+        "invariant-ext-17": 17,
+        "projected-ext-17": 17
+      }
+    },
+    {
+      "batch": 1,
+      "seed": 2,
+      "fit": {
+        "invariant-ext-17": {
+          "dataset_digest": "b3f04fd2291fb4071e78e72968c97a3e95c0ac6e6ef1094eaf323a260b781a8f",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 2,
+          "training_steps": 224,
+          "revision": 1,
+          "task_loss_mean": 0.28472560258939794,
+          "hinge_loss_mean": 0.028013486814286028,
+          "hinge_active_steps": 12,
+          "constraint_steps": 112
+        },
+        "projected-ext-17": {
+          "dataset_digest": "b3f04fd2291fb4071e78e72968c97a3e95c0ac6e6ef1094eaf323a260b781a8f",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 2,
+          "training_steps": 224,
+          "revision": 1,
+          "task_loss_mean": 0.28472560258939794,
+          "hinge_loss_mean": 0.028013486814286028,
+          "hinge_active_steps": 12,
+          "constraint_steps": 112
+        }
+      },
+      "trajectory_gate": {
+        "pre_projection_digests_identical": true
+      },
+      "projection": {
+        "constraint_count": 80,
+        "converged": true,
+        "max_violation": 0.0,
+        "total_violation": 0.0,
+        "violation_per_constraint_family": {
+          "newtask-argmax": 0.0,
+          "newtask-safe": 0.0,
+          "cohort-argmax": 0.0,
+          "cohort-safe": 0.0
+        },
+        "distance": {
+          "l1": 6.017234802246094,
+          "l2": 3.4724462032318115,
+          "linf": 2.952080726623535,
+          "per_dim": [
+            -0.10815222561359406,
+            -0.10924610495567322,
+            -0.10908091068267822,
+            -0.10907810181379318,
+            -0.10892250388860703,
+            -0.10864061862230301,
+            -0.10864061862230301,
+            0.03492856025695801,
+            -0.24932092428207397,
+            2.9802322387695312e-08,
+            0.11922872066497803,
+            -0.10864061862230301,
+            2.952080726623535,
+            -0.00485074520111084,
+            1.7806593179702759,
+            -0.005764365196228027
+          ]
+        },
+        "wall_seconds": 3.233,
+        "digest": "5fb02f422da4db445eabe727895510ad89f833b7000cd97d2720d0d7f188c832"
+      },
+      "trained_checkpoints": {
+        "invariant-ext-17": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_12_course_level_validation_d8c3d73e734c4cb68be0eb3fecf2c7a3\\batch-1\\seed-2\\invariant-ext-17-trained.pt",
+          "digest": "893e7e86c7c5414c8ee27c13331f16d5c8361064a3b0613f82171a3cd21d7ae4",
+          "bytes": 4069,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 17}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 17
+          },
+          "passed": true
+        },
+        "projected-ext-17": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_12_course_level_validation_d8c3d73e734c4cb68be0eb3fecf2c7a3\\batch-1\\seed-2\\projected-ext-17-trained.pt",
+          "digest": "d282d335057a9cf39aec9b72ad80a4f2411abb166138c2b977e8d4782aa39ce1",
+          "bytes": 4069,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 17}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 17
+          },
+          "passed": true
+        }
+      },
+      "tamper_gate": {
+        "invariant-ext-17": true,
+        "projected-ext-17": true
+      },
+      "feature_source_unchanged": true,
+      "resource": {
+        "fit_wall_seconds": 0.081,
+        "projected_total_wall_seconds": 3.314,
+        "soft_cap_ratio": 3.0,
+        "soft_gate_passed": false,
+        "solver_steps": 24000
+      },
+      "metrics": {
+        "invariant-ext-17": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 4,
+            "behavior_target_hit_rate": 1.0,
+            "selected_utility_sum": 4.0,
+            "selected_utility_mean": 1.0,
+            "selected_residual_error": 0.0,
+            "selected_roles": {
+              "proposal": 1,
+              "reobserve": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 3,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 1
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          }
+        },
+        "projected-ext-17": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 4,
+            "behavior_target_hit_rate": 1.0,
+            "selected_utility_sum": 4.0,
+            "selected_utility_mean": 1.0,
+            "selected_residual_error": 0.0,
+            "selected_roles": {
+              "proposal": 1,
+              "reobserve": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 3,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 1
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          }
+        }
+      },
+      "gates": {
+        "invariant-ext-17": {
+          "new_task": {
+            "utility_ge_frozen_new_only": false,
+            "target_hit_ge_frozen_new_only": false,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          }
+        },
+        "projected-ext-17": {
+          "new_task": {
+            "utility_ge_frozen_new_only": true,
+            "target_hit_ge_frozen_new_only": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          }
+        }
+      },
+      "passes_all": {
+        "invariant-ext-17": false,
+        "projected-ext-17": true
+      },
+      "parameter_count": {
+        "invariant-ext-17": 17,
+        "projected-ext-17": 17
+      }
+    },
+    {
+      "batch": 2,
+      "seed": 0,
+      "fit": {
+        "invariant-ext-17": {
+          "dataset_digest": "ba385d2dc0571515da26cb899ff1554a8694ecfaea3e12d5e2db447ec9eb9ad6",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 0,
+          "training_steps": 224,
+          "revision": 1,
+          "task_loss_mean": 0.28124825553978944,
+          "hinge_loss_mean": 0.032977847648518424,
+          "hinge_active_steps": 12,
+          "constraint_steps": 112
+        },
+        "projected-ext-17": {
+          "dataset_digest": "ba385d2dc0571515da26cb899ff1554a8694ecfaea3e12d5e2db447ec9eb9ad6",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 0,
+          "training_steps": 224,
+          "revision": 1,
+          "task_loss_mean": 0.28124825553978944,
+          "hinge_loss_mean": 0.032977847648518424,
+          "hinge_active_steps": 12,
+          "constraint_steps": 112
+        }
+      },
+      "trajectory_gate": {
+        "pre_projection_digests_identical": true
+      },
+      "projection": {
+        "constraint_count": 80,
+        "converged": true,
+        "max_violation": 0.0,
+        "total_violation": 0.0,
+        "violation_per_constraint_family": {
+          "newtask-argmax": 0.0,
+          "newtask-safe": 0.0,
+          "cohort-argmax": 0.0,
+          "cohort-safe": 0.0
+        },
+        "distance": {
+          "l1": 6.022439956665039,
+          "l2": 2.7180540561676025,
+          "linf": 2.1913602352142334,
+          "per_dim": [
+            -0.16025876998901367,
+            -0.16179464757442474,
+            -0.161543071269989,
+            -0.1615462452173233,
+            -0.1613473743200302,
+            -0.1611473262310028,
+            -0.1611473262310028,
+            0.23811142146587372,
+            -0.366468220949173,
+            -0.000758737325668335,
+            0.21130162477493286,
+            -0.1611473262310028,
+            2.1913602352142334,
+            -0.014172375202178955,
+            1.4379613399505615,
+            0.27237409353256226
+          ]
+        },
+        "wall_seconds": 5.078,
+        "digest": "7ea60d35db97eb2d649d58c58162d8afc43153c9e97c929ebe19bee6f87e2d24"
+      },
+      "trained_checkpoints": {
+        "invariant-ext-17": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_12_course_level_validation_d8c3d73e734c4cb68be0eb3fecf2c7a3\\batch-2\\seed-0\\invariant-ext-17-trained.pt",
+          "digest": "258699bb27ea205098c2779d63a17ef41f4e8bde09b14e0e9d9980b7d964beda",
+          "bytes": 4069,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 17}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 17
+          },
+          "passed": true
+        },
+        "projected-ext-17": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_12_course_level_validation_d8c3d73e734c4cb68be0eb3fecf2c7a3\\batch-2\\seed-0\\projected-ext-17-trained.pt",
+          "digest": "0b3240203df0bea3950a1e63696de42c684e5843aed553b2dfb5b31ed8ead788",
+          "bytes": 4069,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 17}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 17
+          },
+          "passed": true
+        }
+      },
+      "tamper_gate": {
+        "invariant-ext-17": true,
+        "projected-ext-17": true
+      },
+      "feature_source_unchanged": true,
+      "resource": {
+        "fit_wall_seconds": 0.082,
+        "projected_total_wall_seconds": 5.16,
+        "soft_cap_ratio": 3.0,
+        "soft_gate_passed": false,
+        "solver_steps": 24000
+      },
+      "metrics": {
+        "invariant-ext-17": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 4,
+            "behavior_target_hit_rate": 1.0,
+            "selected_utility_sum": 4.0,
+            "selected_utility_mean": 1.0,
+            "selected_residual_error": 0.0,
+            "selected_roles": {
+              "proposal": 1,
+              "reobserve": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 3,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 1
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          }
+        },
+        "projected-ext-17": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 4,
+            "behavior_target_hit_rate": 1.0,
+            "selected_utility_sum": 4.0,
+            "selected_utility_mean": 1.0,
+            "selected_residual_error": 0.0,
+            "selected_roles": {
+              "proposal": 1,
+              "reobserve": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 3,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 1
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          }
+        }
+      },
+      "gates": {
+        "invariant-ext-17": {
+          "new_task": {
+            "utility_ge_frozen_new_only": false,
+            "target_hit_ge_frozen_new_only": false,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          }
+        },
+        "projected-ext-17": {
+          "new_task": {
+            "utility_ge_frozen_new_only": true,
+            "target_hit_ge_frozen_new_only": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          }
+        }
+      },
+      "passes_all": {
+        "invariant-ext-17": false,
+        "projected-ext-17": true
+      },
+      "parameter_count": {
+        "invariant-ext-17": 17,
+        "projected-ext-17": 17
+      }
+    },
+    {
+      "batch": 2,
+      "seed": 1,
+      "fit": {
+        "invariant-ext-17": {
+          "dataset_digest": "56f798f0a1b5f3bcb9ab03da15963da7432b042582f5a8613471f613cfe102cd",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 1,
+          "training_steps": 224,
+          "revision": 1,
+          "task_loss_mean": 0.27416105340879376,
+          "hinge_loss_mean": 0.032090782187879086,
+          "hinge_active_steps": 12,
+          "constraint_steps": 112
+        },
+        "projected-ext-17": {
+          "dataset_digest": "56f798f0a1b5f3bcb9ab03da15963da7432b042582f5a8613471f613cfe102cd",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 1,
+          "training_steps": 224,
+          "revision": 1,
+          "task_loss_mean": 0.27416105340879376,
+          "hinge_loss_mean": 0.032090782187879086,
+          "hinge_active_steps": 12,
+          "constraint_steps": 112
+        }
+      },
+      "trajectory_gate": {
+        "pre_projection_digests_identical": true
+      },
+      "projection": {
+        "constraint_count": 80,
+        "converged": true,
+        "max_violation": 0.0,
+        "total_violation": 0.0,
+        "violation_per_constraint_family": {
+          "newtask-argmax": 0.0,
+          "newtask-safe": 0.0,
+          "cohort-argmax": 0.0,
+          "cohort-safe": 0.0
+        },
+        "distance": {
+          "l1": 5.584930896759033,
+          "l2": 2.9794986248016357,
+          "linf": 2.5160512924194336,
+          "per_dim": [
+            -0.1124470978975296,
+            -0.11280728876590729,
+            -0.11271876096725464,
+            -0.11271380633115768,
+            -0.1127166822552681,
+            -0.11306460201740265,
+            -0.11306460201740265,
+            0.2300775945186615,
+            -0.14153076708316803,
+            0.0,
+            0.11937439441680908,
+            -0.11306460201740265,
+            2.5160512924194336,
+            -0.002893298864364624,
+            1.5287948846817017,
+            0.14361125230789185
+          ]
+        },
+        "wall_seconds": 5.054,
+        "digest": "b43bfab918a72b933cd0881ba9142a23d9873e17da48cfe65d6601b75a536eb8"
+      },
+      "trained_checkpoints": {
+        "invariant-ext-17": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_12_course_level_validation_d8c3d73e734c4cb68be0eb3fecf2c7a3\\batch-2\\seed-1\\invariant-ext-17-trained.pt",
+          "digest": "00ace4ae950f57ecc6924eaad2a6f998c824b6d191b40e72b91d4393fbba2500",
+          "bytes": 4069,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 17}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 17
+          },
+          "passed": true
+        },
+        "projected-ext-17": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_12_course_level_validation_d8c3d73e734c4cb68be0eb3fecf2c7a3\\batch-2\\seed-1\\projected-ext-17-trained.pt",
+          "digest": "e70792789ecbeb6a997f5670bd825e3086c49d1382bec0af86ead601e6ba0304",
+          "bytes": 4069,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 17}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 17
+          },
+          "passed": true
+        }
+      },
+      "tamper_gate": {
+        "invariant-ext-17": true,
+        "projected-ext-17": true
+      },
+      "feature_source_unchanged": true,
+      "resource": {
+        "fit_wall_seconds": 0.06,
+        "projected_total_wall_seconds": 5.115,
+        "soft_cap_ratio": 3.0,
+        "soft_gate_passed": false,
+        "solver_steps": 24000
+      },
+      "metrics": {
+        "invariant-ext-17": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 4,
+            "behavior_target_hit_rate": 1.0,
+            "selected_utility_sum": 4.0,
+            "selected_utility_mean": 1.0,
+            "selected_residual_error": 0.0,
+            "selected_roles": {
+              "proposal": 1,
+              "reobserve": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 3,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 1
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          }
+        },
+        "projected-ext-17": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 4,
+            "behavior_target_hit_rate": 1.0,
+            "selected_utility_sum": 4.0,
+            "selected_utility_mean": 1.0,
+            "selected_residual_error": 0.0,
+            "selected_roles": {
+              "proposal": 1,
+              "reobserve": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 3,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 1
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          }
+        }
+      },
+      "gates": {
+        "invariant-ext-17": {
+          "new_task": {
+            "utility_ge_frozen_new_only": false,
+            "target_hit_ge_frozen_new_only": false,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          }
+        },
+        "projected-ext-17": {
+          "new_task": {
+            "utility_ge_frozen_new_only": true,
+            "target_hit_ge_frozen_new_only": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          }
+        }
+      },
+      "passes_all": {
+        "invariant-ext-17": false,
+        "projected-ext-17": true
+      },
+      "parameter_count": {
+        "invariant-ext-17": 17,
+        "projected-ext-17": 17
+      }
+    },
+    {
+      "batch": 2,
+      "seed": 2,
+      "fit": {
+        "invariant-ext-17": {
+          "dataset_digest": "e19a8611aa21024e8ec2dae8a2ad737fb3d05e1fc2989185438f63c519db6f0d",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 2,
+          "training_steps": 224,
+          "revision": 1,
+          "task_loss_mean": 0.28472560258939794,
+          "hinge_loss_mean": 0.028013486814286028,
+          "hinge_active_steps": 12,
+          "constraint_steps": 112
+        },
+        "projected-ext-17": {
+          "dataset_digest": "e19a8611aa21024e8ec2dae8a2ad737fb3d05e1fc2989185438f63c519db6f0d",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 2,
+          "training_steps": 224,
+          "revision": 1,
+          "task_loss_mean": 0.28472560258939794,
+          "hinge_loss_mean": 0.028013486814286028,
+          "hinge_active_steps": 12,
+          "constraint_steps": 112
+        }
+      },
+      "trajectory_gate": {
+        "pre_projection_digests_identical": true
+      },
+      "projection": {
+        "constraint_count": 80,
+        "converged": true,
+        "max_violation": 0.0,
+        "total_violation": 0.0,
+        "violation_per_constraint_family": {
+          "newtask-argmax": 0.0,
+          "newtask-safe": 0.0,
+          "cohort-argmax": 0.0,
+          "cohort-safe": 0.0
+        },
+        "distance": {
+          "l1": 6.017234802246094,
+          "l2": 3.4724462032318115,
+          "linf": 2.952080726623535,
+          "per_dim": [
+            -0.10815222561359406,
+            -0.10924610495567322,
+            -0.10908091068267822,
+            -0.10907810181379318,
+            -0.10892250388860703,
+            -0.10864061862230301,
+            -0.10864061862230301,
+            0.03492856025695801,
+            -0.24932092428207397,
+            2.9802322387695312e-08,
+            0.11922872066497803,
+            -0.10864061862230301,
+            2.952080726623535,
+            -0.00485074520111084,
+            1.7806593179702759,
+            -0.005764365196228027
+          ]
+        },
+        "wall_seconds": 3.423,
+        "digest": "6f6309bf9c0c9ab4b108550fa4d39b8f300e6ebafb751491d03016722ca04230"
+      },
+      "trained_checkpoints": {
+        "invariant-ext-17": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_12_course_level_validation_d8c3d73e734c4cb68be0eb3fecf2c7a3\\batch-2\\seed-2\\invariant-ext-17-trained.pt",
+          "digest": "9413dc5fcb25ca39a1bbe2141a797637f531759aa497da1cf42081d85cb8517c",
+          "bytes": 4069,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 17}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 17
+          },
+          "passed": true
+        },
+        "projected-ext-17": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_12_course_level_validation_d8c3d73e734c4cb68be0eb3fecf2c7a3\\batch-2\\seed-2\\projected-ext-17-trained.pt",
+          "digest": "b21715e841631031d7de4d799f53a3f68a4c70557d98cd5aeb7b61ce7dcc48d3",
+          "bytes": 4069,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 17}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 17
+          },
+          "passed": true
+        }
+      },
+      "tamper_gate": {
+        "invariant-ext-17": true,
+        "projected-ext-17": true
+      },
+      "feature_source_unchanged": true,
+      "resource": {
+        "fit_wall_seconds": 0.082,
+        "projected_total_wall_seconds": 3.505,
+        "soft_cap_ratio": 3.0,
+        "soft_gate_passed": false,
+        "solver_steps": 24000
+      },
+      "metrics": {
+        "invariant-ext-17": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 4,
+            "behavior_target_hit_rate": 1.0,
+            "selected_utility_sum": 4.0,
+            "selected_utility_mean": 1.0,
+            "selected_residual_error": 0.0,
+            "selected_roles": {
+              "proposal": 1,
+              "reobserve": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 3,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 1
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          }
+        },
+        "projected-ext-17": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 4,
+            "behavior_target_hit_rate": 1.0,
+            "selected_utility_sum": 4.0,
+            "selected_utility_mean": 1.0,
+            "selected_residual_error": 0.0,
+            "selected_roles": {
+              "proposal": 1,
+              "reobserve": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 3,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 1
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          }
+        }
+      },
+      "gates": {
+        "invariant-ext-17": {
+          "new_task": {
+            "utility_ge_frozen_new_only": false,
+            "target_hit_ge_frozen_new_only": false,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          }
+        },
+        "projected-ext-17": {
+          "new_task": {
+            "utility_ge_frozen_new_only": true,
+            "target_hit_ge_frozen_new_only": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          }
+        }
+      },
+      "passes_all": {
+        "invariant-ext-17": false,
+        "projected-ext-17": true
+      },
+      "parameter_count": {
+        "invariant-ext-17": 17,
+        "projected-ext-17": 17
+      }
+    }
+  ],
+  "outcome": "course_level_validation_supported",
+  "experiment_passed": true,
+  "interpretation": "completed: outcome=course_level_validation_supported; 9-cell course-level validation of the projection solver; growth and promotion remain fail-closed",
+  "elapsed_seconds": 362.438
+}
