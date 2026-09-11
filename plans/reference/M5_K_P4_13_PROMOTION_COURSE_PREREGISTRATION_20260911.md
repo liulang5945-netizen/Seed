@@ -63,4 +63,16 @@ P4.11/P4.12 证明：单任务 cohort 上「SGD 任务学习 + 末端联合投�
 2. 执行产出 `plans/manifests/taiji_m5_k_p4_13_promotion_course_manifest_v1.json` + `reports/taiji_m5_k_p4_13_promotion_course_20260911.json`；
 3. 路线图/记录文档同步 + 独立提交。
 
-## 9. 执行记录（运行后补）
+## 9. 执行记录（2026-09-11，已运行，晋级课程成立）
+
+1. 实现顺序：两相课程 runner（py_compile/ruff 修复两处机械错误——`batch_candidate_digests` 误初始化为 set、digest 唯一性期望式算术错误 3×168 → 3×148[每批 7 pressure × 20 + 2 structured × 4]；均未触碰任何判据）后运行。定向测试与 mypy 先行通过。
+2. 报告 `reports/taiji_m5_k_p4_13_promotion_course_20260911.json`：`status=completed`、`experiment_passed=true`（机械门全过：3 批身份门、结构门 3/3、444 candidate digest 跨批零碰撞、checkpoint/tamper/rollback/feature-source 9/9、参数 17/17）。
+3. 结果（9/9 cell，逐数值相同的确定性表现）：
+   - **Phase A 全门**：A-holdout utility `0.8`、0 sv；sibling `1.0`；retention-newtask 过；
+   - **Phase B 全门（含向后保持）**：B-holdout utility `0.8`、0 sv；**A-holdout 回检 `0.8/0.75`——B 学习后 A 零遗忘**；sibling `1.0`；retention-newtask 过；
+   - **累积投影精确收敛**：Phase B 系统 154 条约束（A + B + 保持），9/9 违反 = **0.0**——A+B+保持的联合可行性得到经验确证；
+   - **rollback 门 9/9**：A 投影态 checkpoint 独立恢复后行为逐位一致；
+   - 资源 cap 全过（cell wall 12–16s ≪ 600s）；
+   - 基线臂 3/3 批张力复现（Phase B holdout `0.6375`+6 sv 或 `0.76`/0 sv 但 A 遗忘）。
+4. **判定（按 §6 冻结映射）：`promotion_course_supported`——求解器机制支持持续累积，G 侧晋级课程闭合。** 累积约束系统（A+B+保持）在全部 9 cell 可行且精确收敛；向后保持门零失败——「相继学习 + 无遗忘」在求解器机制下成立。
+5. `growth_admitted=false`、`can_promote=false` 不变（promotion 评审与默认 runtime 解冻是独立后续）。唯一下一步 = scorecard 更新与晋级评审（A8 讨论：把 P4.2–P4.13 的 G 侧证据线收束入 K 轴 scorecard 新版本，冻结晋级边界与默认 runtime rollout review 的入口条件）。

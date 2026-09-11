@@ -595,3 +595,20 @@ P4.2 的「fixed-large 无稳定容量收益」结论受协议污染：该轮连
 | 结果出口 | 验证成立 | `outcome=course_level_validation_supported`、`experiment_passed=true`、`growth_admitted=false`、`can_promote=false` |
 
 **判定（按 §6 冻结映射）：`course_level_validation_supported`——求解器机制跨身份与 seed 鲁棒（9/9 全门、3/3 张力、全部精确收敛）。** 求解器机制下的固定容量路线取得晋级课程入场资格。机制结论维持 §36 的合取形式并新增：**该机制的表现是高度确定性的（九格逐数值相同）**——投影求解器把「保持/新任务权衡」从 seed 敏感的优化路径问题变成了确定性的可行性求解问题。唯一下一步 = 求解器机制下的晋级课程预注册（同一 parent 连续 S/G/K 课程，gate 沿用 A8 结构 + 资源 cap 以绝对预算定义）。
+
+## 38. P4.13 晋级课程结果（2026-09-11）
+
+按 §37 的方向冻结了 [P4.13 预注册](M5_K_P4_13_PROMOTION_COURSE_PREREGISTRATION_20260911.md)（两相继阶段 A → B、累积约束投影、向后保持门、绝对资源预算、P3.0 checkpoint/rollback 机械门）并实现 9-cell 两相课程 runner。
+
+| Gate | 结果 | 关键实测 |
+|---|---:|---|
+| 身份/结构（3 批 × 2 相） | 通过 | 444 candidate digest 跨批零碰撞；P4.4 结构合同逐行匹配 |
+| Phase A | 9/9 全门 | A-holdout utility `0.8`、0 sv；sibling `1.0`；retention-newtask 过；投影 #1（A + 保持）精确收敛 |
+| **Phase B（累积投影）** | **9/9 全门** | **累积系统 154 条约束（A + B + 保持）全部精确收敛（违反 0.0）**——A+B+保持联合可行性经验确证 |
+| **向后保持门** | **9/9 零失败** | **Phase B 后 A-holdout 回检 `0.8/0.75`——B 学习后 A 零遗忘** |
+| checkpoint / rollback | 通过 | A 投影态独立恢复后行为逐位一致（9/9）；tamper 拒绝；feature source 非漂移 |
+| 资源绝对预算 | 通过 | cell wall 12–16s ≪ 600s cap |
+| 基线臂张力 | 3/3 批复现 | Phase B holdout `0.6375`+6 sv（或 `0.76`/0 sv 但 A 遗忘） |
+| 结果出口 | 课程闭合 | `outcome=promotion_course_supported`、`experiment_passed=true`、`growth_admitted=false`、`can_promote=false` |
+
+**判定（按 §6 冻结映射）：`promotion_course_supported`——求解器机制支持持续累积，G 侧晋级课程闭合。** 两个关键经验确证：(1) **累积约束系统（A+B+保持，154 条）在全部 9 cell 可行且精确收敛**——「约束系统随课程增长」的可行性担忧在两相同分布课程下未成立；(2) **向后保持门零失败**——B 学习后 A 的 holdout 表现逐数值不变（`0.8/0.75`），「相继学习 + 无遗忘」成立。至此 G 侧晋级课程的完整证据链闭合：**表示因子化（P4.9）+ 求解器更新机制（P4.11）+ 单任务验证（P4.12）+ 持续累积课程（P4.13）**。唯一下一步 = scorecard 更新与晋级评审（A8 讨论：G 侧证据线收束入 K 轴 scorecard 新版本，冻结晋级边界与默认 runtime rollout review 入口条件；K worker 联合课程为后续预注册）。

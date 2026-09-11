@@ -308,6 +308,10 @@ P4.6 固定 13 参数 G、K1/K2、候选输入、selection threshold 和安全�
 
 **当前唯一下一步**：实现两相课程 runner（`eval_taiji_m5_k_p4_13_promotion_course.py`，py_compile/ruff/mypy 先行）并执行落盘报告；任一停止线触发即停。
 
+用户确认执行。**P4.13 已执行完毕（[预注册 §9](../../reference/M5_K_P4_13_PROMOTION_COURSE_PREREGISTRATION_20260911.md)、报告 `reports/taiji_m5_k_p4_13_promotion_course_20260911.json`）：`outcome=promotion_course_supported`——求解器机制支持持续累积，G 侧晋级课程闭合。** 9/9 cell：Phase A 全门（A-holdout `0.8`/0sv）→ Phase B 全门（B-holdout `0.8`/0sv）→ **向后保持门零失败（A-holdout 回检 `0.8/0.75`——B 学习后 A 零遗忘）**；**累积投影系统（A+B+保持，154 条约束）9/9 精确收敛（违反 0.0）**——「约束系统随课程增长」的可行性担忧经验未成立；rollback 门 9/9（A 投影态恢复行为逐位一致）；资源绝对预算全过（cell 12–16s ≪ 600s）；基线臂 3/3 批张力复现。runner 修复两处机械错误（digest 集合误初始化为 set、唯一性期望式算术 3×168→3×148），未触碰判据。`growth_admitted=false`、`can_promote=false` 不变。**G 侧晋级课程完整证据链闭合：表示因子化（P4.9）+ 求解器更新机制（P4.11）+ 单任务验证（P4.12）+ 持续累积课程（P4.13）。**
+
+**当前唯一下一步**：scorecard 更新与晋级评审——把 P4.2–P4.13 的 G 侧证据线收束入 K 轴 scorecard 新版本，冻结晋级边界与默认 runtime rollout review 的入口条件（K worker 联合课程为后续预注册）；评审前不训练、不读取 sealed、不解冻 P5/CUDA/IDE/provider。
+
 ### P4：回归态极的长期目标——继承式结构成长
 
 在固定容量持续学习和保持成立后，使用多任务干扰、容量扫描与长序列退化确定扩容压力。增长从同一模型继承有效权重和学习状态，新增结构零影响出生，并有可测 credit/活动/贡献。
