@@ -3,6 +3,7 @@
 > 修订：2026-09-11（决策收束版）；P4.0–P4.6 固定 G 路线全部完成，机制综合与决策分析见 [结果复审 §32](../../reference/M4V2_POST_C_STAGE_RESULT_REVIEW_20260910.md)。本文覆盖所有旧文档中的执行许可和“下一步”。
 > 本轮任务是根据新增结果修订方案；训练与实现按下述验收顺序在后续开发中执行。
 > 研究依据：[本轮源码与结果复审](../../reference/M4V2_POST_C_STAGE_RESULT_REVIEW_20260910.md)；[历史执行记录](../../archive/history/20260910_result_review/EXECUTION_HISTORY.md)。
+> 前瞻性技术设想（自主唤醒/注意力外挂/跨设备快照等，**不参与主线、不改变执行顺序**）见 [未来技术设想](../../reference/VISION_FUTURE_TECHNOLOGY.md)。
 
 ## 阶段收束：完成研究审计，不等于完成模型验收
 

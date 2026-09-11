@@ -95,7 +95,8 @@ def test_active_plans_have_one_execution_owner_and_resolvable_links() -> None:
         execution_headings.extend(
             (path, line)
             for line in text.splitlines()
-            if line.startswith("## ") and "当前唯一下一步" in line
+            if line.startswith("## ")
+            and ("当前唯一下一步" in line or "唯一执行项" in line)
         )
 
         for match in re.finditer(r"\[[^\]]+\]\(([^)]+)\)", text):
@@ -106,4 +107,4 @@ def test_active_plans_have_one_execution_owner_and_resolvable_links() -> None:
                 (path.parent / target).resolve().exists()
             ), f"active plan link is missing: {path.relative_to(REPO)} -> {target}"
 
-    assert execution_headings == [(current, "## 4. 当前唯一下一步")]
+    assert execution_headings == [(current, "## 当前决策点：P4.7 容量假设干净检验（唯一执行项）")]
