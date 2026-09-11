@@ -32,6 +32,18 @@ P4.6/P4.7 的保持约束是**标量 MSE teacher 匹配**：在 constraint cohor
 - 实现：`error_i = ∂L/∂s(c_i)`（激活项取 ±1），经 `apply_linear_delta` 写入可训练层（方向已对源码核实：`weight -= rate · errorᵀ @ inputs`，推高分数用负 error）。hinge 满足后 error 恒零——**有限支撑是与 MSE 的本质区别**。
 - 出生一致性：三臂在零 fit 时 constraint 损失恒为 0（parent 决策天然处于保持区域内）——作为机械门断言。
 
+### 3.1 修订（2026-09-11，执行前——未 materialize 任何数据、未 fit，两阶段纪律允许）
+
+实现期发现 §3 原规格内部矛盾：固定 guard band（Case A 要求边际 ≥ δ_m / m+δ_m，Case B 容忍至 m−δ_m）在 parent 自身边际薄于 band 时使 hinge **在出生即激活**，破坏 §5 的「出生 constraint 损失 == 0」断言。修订为**边际保持 hinge**——保持 parent 自身的决策边际（不多要求也不少要求）：
+
+- 记 parent head 分数为 s_p(·)（frozen，**出生态即 parent 态，参考边际随时可从 frozen head 计算**）、student 总分为 s(·)。
+- **parent 选了 proposal p\***（两个决策边际：argmax 边际与 safe-clear 边际）：
+  `L = max(0, gap_p − gap) + max(0, sgap_p − sgap)`，其中 `gap = s(p*) − max_{c≠p*} s(c)`、`sgap = s(p*) − s(safe)`、`gap_p/sgap_p` 为对应的 parent 边际；
+- **parent 选了 safe s\***（逐 proposal 侵入边际）：
+  `L = Σ_{proposal p} max(0, (s(p) − s(s*)) − (s_p(p) − s_p(s*)))`；
+- 梯度同前（激活项 ±1）。**出生零损失由选择规则结构证明而非经验**：δ=0 时 s ≡ s_p，所有当前边际等于 parent 边际，所有 hinge 项为 0；Case B 的 parent-selected-safe 蕴含所有 proposal 的 parent 侵入 ≤ m（否则 argmax proposal 会越界被选中），决策保持因此精确成立。预防性保持（边际侵蚀即激活，先于实际翻转）与有限支撑同时成立。
+- §5 的「出生 constraint 损失 == 0 断言」保留，现在按构造成立；其余门与映射零变更。
+
 ## 4. 数据与身份（P4.7 harness 复用，全新身份）
 
 - train / validation / holdout / retention-newtask：各 20 records（5 类 × 宽度 2/4/8/12）；constraint cohort 与 retention-sibling：各 4 records（P4.4 结构合同逐行同构）；
