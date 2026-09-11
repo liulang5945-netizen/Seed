@@ -82,4 +82,13 @@ P4.6/P4.7 的保持约束是**标量 MSE teacher 匹配**：在 constraint cohor
 3. 执行产出 `plans/manifests/taiji_m5_k_p4_8_representation_redesign_manifest_v1.json` + `reports/taiji_m5_k_p4_8_representation_redesign_20260911.json`；
 4. 路线图/记录文档同步 + 独立提交。
 
-## 9. 执行记录（运行后补）
+## 9. 执行记录（2026-09-11，已运行，hinge 不足以解耦）
+
+1. 实现顺序：`g_selection_residual.py` 补充**纯函数 `margin_preservation_hinge`**（canonical hinge 实现，`invariant-13` 与 `residual-26` 共享，防双实现漂移）+ 三臂 runner；首轮失败归因 = birth 检查缺 `hinge_loss` 键（机械修复，未动判据）后重跑。py_compile/ruff/mypy/定向测试 7/7 + 回归 10/10 先行通过。
+2. 报告 `reports/taiji_m5_k_p4_8_representation_redesign_20260911.json`：`status=completed`、`experiment_passed=true`（机械门全过：三臂出生等价 0 mismatch / 最大偏差 0.0、两个 invariant 臂出生 hinge 损失恒 0——§3.1 的构造性质经验成立、身份与 P4.1–P4.7 隔离、checkpoint 独立恢复 + tamper 拒绝、参数 13/13/26 精确）。
+3. 结果（两 seed，frozen 门）：
+   - `functional-13` 第 4 次逐数值复现张力（seed-0 败新任务 `0.585/0.45`+6 sv、过 sibling `1.0/1.0`；seed-1 过新任务 `0.68/0.6`、败 sibling `0.8/0.75`）；
+   - `invariant-13`：seed-0 新任务 `0.625/0.5`（略优于标量约束但仍败 + 6 sv）、sibling 过；seed-1 与 functional **逐数值相同**；
+   - `residual-26`：与 `invariant-13` **逐数值相同**（两 seed）。
+4. **判定（按 §6 冻结映射）：`invariant_constraint_insufficient`——边际保持 hinge 不足以解耦；12 维 candidate 特征空间本身无法同时表示 parent 排序与新任务排序。** 机制记录两条：(a) **arm-3 等价定理**——frozen head + δ head 在均匀 SGD 下与共享权重继承初始化函数空间等价（两者总分函数演化动力学相同：同样的任务误差、同样的 hinge 误差、同样的学习率），架构变量在本次实现中携带零信息，逐数值相同的结果是等价定理的经验确证而非巧合；架构要成为真实变量需对 head 差异化处理（分头学习率/δ trust-region/特征门控）。(b) **逐点约束 ≠ 分布性边际不变**——hinge 精确保持 constraint cohort 4 个点上的决策边际，但线性函数在结构同构、身份不同的 retention-sibling 点上的边际仍被新任务更新侵蚀（seed-1 sibling 0.8/0.75 照旧退化）；seed-0 的 6 次 safe violation 同理。这与 P4.7（容量）、P4.3–P4.5（rehearsal/trust-region/functional teacher）合并：**冲突位于表示本身——12 维特征没有把「影响 parent 边际的方向」与「实现新任务排序的方向」因子化，任何特征方向同时作用于两者。**
+5. `growth_admitted=false`、`can_promote=false`。固定容量路线在现表示合同下正式关闭；唯一下一步 = 特征空间重设计决策点。
