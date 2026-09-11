@@ -12,8 +12,12 @@ P4.10 证明：扩展空间存在精确可行解（联合违反 0.0），但交�
 
 - **约束系统**（与 P4.9 探针 M3 同构，按本轮数据实例化）：
   - 任务约束：每个 fit-eligible train set 上 target 严格 argmax（`w·(x_t − x_c) ≥ 1e-6`）；target 为 proposal 时另加 safe-margin（`w·(x_t − x_safe) ≥ 0.05 + 1e-9`）；
-  - 保持约束：每个 constraint-cohort set（P4.4 结构合同、全新身份）上 frozen parent 决策完整保持——parent 选 proposal 时 argmax + safe-margin 双边际不低于 parent 自身边际；parent 选 safe 时所有 proposal 侵入不超过 parent 自身侵入（边际保持形式，与 canonical `margin_preservation_hinge` 同语义）。
+  - 保持约束：每个 constraint-cohort set（P4.4 结构合同、全新身份）上 frozen parent 决策同一性——parent 选 proposal 时 argmax（`≥ 1e-6`）+ safe-margin（`≥ 0.05 + 1e-9`）；parent 选 safe 时所有 proposal 侵入 ≤ `0.05 − 1e-9`；
   - 全部约束为分数差（bias 消去）→ **投影只作用于 16 个权重维，bias 不受约束且保持训练终点值**。
+
+### 2.1 修订（2026-09-11，执行前——未实现求解器、未 materialize 数据）
+
+原 §2 把保持约束写为「边际保持形式」（b = parent 自身边际）。实现前核查发现：P4.9 探针 M3 建立可行性的保持约束是**决策同一性形式**（b = 固定阈值 ε/0.05）；边际保持形式与任务约束的联合可行性从未被测量（它严格更强——parent 边际可能薄于其决策阈值所需的富余），直接实现会冒无谓的 `projection_incomplete` 风险。修订为**决策同一性形式（探针已证可行）**；边际保持语义仅保留在基线臂的 SGD hinge 步中（P4.10 原样，不受影响）。假设、门、映射、臂数零变更——投影假设「从 P4.10 端点到达可行区域」以探针已证的那个可行区域为定义域才是良构的。
 - **特征空间**：扩展 16 维 φ（12 基 + 4 个 frozen-parent-relative 维度），特征由 feature source（frozen、digest 守护）计算——与 P4.10 完全一致。
 - **求解器**：惩罚延续法（无 scipy 环境的确定性替代）——
   - 目标：`F_ρ(w) = ρ · Σ_i max(0, b_i − a_i·w) + ½·||w − w_anchor||²`，anchor = 基线臂训练终点权重（投影目标，全程固定）；
@@ -61,4 +65,13 @@ P4.10 证明：扩展空间存在精确可行解（联合违反 0.0），但交�
 3. 执行产出 `plans/manifests/taiji_m5_k_p4_11_projection_solver_manifest_v1.json` + `reports/taiji_m5_k_p4_11_projection_solver_20260911.json`；
 4. 路线图/记录文档同步 + 独立提交。
 
-## 8. 执行记录（运行后补）
+## 8. 执行记录（2026-09-11，已运行，投影求解器成立）
+
+1. 实现顺序：`taiji/g_selection_projection.py`（纯函数投影器）+ `ExtendedGSelectionLearner.apply_projected_weights` + 定向测试 5/5（简单系统收敛到可行侧/确定性/anchor 已可行则不动/不可行系统诚实失败/extended learner 投影应用 + bias 与 feature source 不动 + 往返）+ mypy 干净后运行两臂 runner。执行前修订 §2.1（保持约束从边际保持形式改为**决策同一性形式**——探针已证可行的系统；边际保持语义仅保留在基线臂 SGD hinge 中）。
+2. 报告 `reports/taiji_m5_k_p4_11_projection_solver_20260911.json`：`status=completed`、`experiment_passed=true`（机械门全过：两臂出生等价 0 mismatch / 0.0 偏差、出生 hinge 恒 0、**trajectory gate = 两臂投影前 head digest 逐位相同**（同轨迹确证）、feature source 非漂移、身份与 P4.1–P4.10 隔离、参数 17/17 精确）。
+3. 结果（两 seed，frozen 门）：
+   - **投影精确收敛**：80 条联合约束，max violation = total violation = **0.0**（两 seed）；投影距离 L2 `2.72/2.98`、L∞ `2.19/2.52`（诚实记录，有限 ρ 的可行侧富余包含在内）；
+   - `invariant-ext-17` 基线：与 P4.10 同构失败（两 seed holdout `0.6375/0.55`+6 sv；sibling `1.0` 过）；
+   - **`projected-ext-17` 两 seed 全门通过**：holdout utility `0.8`（≥ 0.68）、target `0.75`（≥ 0.6）、safe violations `0`；retention-sibling `1.0/1.0`（非劣于 parent）；retention-newtask `0.8`（≥ parent `0.6375`）。
+4. **判定（按 §6 冻结映射）：`projection_solver_supported`——可行区域投影求解器成立。** 这是 P 系列首次有更新机制在两 seed 上同时通过新任务门与双分布保持门：「SGD 任务学习 + 末端联合投影」的更新机制修复了 P4.10 的 learnability gap，且泛化到评估身份（holdout/sibling/retention-newtask 均为全新身份）。固定容量路线在求解器更新机制下**重开**。`growth_admitted=false`、`can_promote=false` 不变。
+5. 唯一下一步 = 求解器机制下的晋级课程级验证预注册（更大的 seed/课程矩阵 + 资源审计，gate 沿用已冻结阈值）。

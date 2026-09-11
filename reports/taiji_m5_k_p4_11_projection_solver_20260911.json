@@ -1,0 +1,841 @@
+{
+  "format": "taiji-m5-k-p4-11-projection-solver-v1",
+  "version": 1,
+  "status": "completed",
+  "training_performed": true,
+  "fit_called": true,
+  "external_target_used": false,
+  "sealed_payload_read": false,
+  "growth_admitted": false,
+  "can_promote": false,
+  "manifest": "E:\\Seed\\plans\\manifests\\taiji_m5_k_p4_11_projection_solver_manifest_v1.json",
+  "report": "E:\\Seed\\reports\\taiji_m5_k_p4_11_projection_solver_20260911.json",
+  "run_dir": "E:\\Seed\\output\\taiji_m5_k_p4_11_projection_solver_ffcda5f414a046039bb622a030b84b9e",
+  "manifest_digest": "bb2d5a3424c0839775f2f1603e9b269bb7c130e32170c650a7f86db980b326c1",
+  "source_gate": {
+    "p4_10_completed_and_gap_confirmed": true,
+    "p4_10_source_chain_valid": true,
+    "p4_9_factorization_verdict_consumed": true,
+    "parent_independent_restore": true,
+    "parent_lineage_valid": true,
+    "k_parent_digests_valid": true
+  },
+  "identity_gate": {
+    "train_records": true,
+    "validation_records": true,
+    "holdout_records": true,
+    "retention_newtask_records": true,
+    "constraint_records": true,
+    "retention_sibling_records": true,
+    "train_fit_positive": true,
+    "five_train_classes": true,
+    "five_validation_classes": true,
+    "five_holdout_classes": true,
+    "five_retention_newtask_classes": true,
+    "new_projects_disjoint_from_historical": true,
+    "new_paths_disjoint_from_historical": true,
+    "all_candidate_digests_unique": true,
+    "all_behavior_digests_unique": true,
+    "constraint_not_fit_eligible": true,
+    "retention_sibling_not_fit_eligible": true,
+    "retention_newtask_not_fit_eligible": true,
+    "retention_sibling_structure_matches_contract": true
+  },
+  "structure_gate": {
+    "retention_sibling_matches_p4_4_contract": true,
+    "constraint_matches_p4_4_contract": true,
+    "retention_sibling_structure_digest": "feb7b88627d0ce072dd07a5c187e7be7de1c8c8ebb68a47545720002f270aef1",
+    "p4_4_structure_contract_digest": "feb7b88627d0ce072dd07a5c187e7be7de1c8c8ebb68a47545720002f270aef1"
+  },
+  "checkpoint_gate": {
+    "all_zero_step_checkpoints": true,
+    "all_trained_checkpoints": true,
+    "all_tamper_checks": true,
+    "feature_source_unchanged": true,
+    "parent_not_overwritten": true
+  },
+  "training_gate": {
+    "two_arms_present": true,
+    "two_deterministic_seeds": true,
+    "validation_not_fit": true,
+    "holdout_not_fit": true,
+    "retention_newtask_not_fit": true,
+    "retention_sibling_not_fit": true,
+    "constraint_targets_are_parent_only": true,
+    "external_target_unused": true,
+    "k_parameters_unchanged": true,
+    "parameter_counts_frozen": true
+  },
+  "birth_equivalence": {
+    "invariant-ext-17": {
+      "selection_mismatches": 0,
+      "max_abs_score_deviation": 0.0
+    },
+    "projected-ext-17": {
+      "selection_mismatches": 0,
+      "max_abs_score_deviation": 0.0
+    },
+    "birth_hinge_loss_zero": true,
+    "feature_source_digest": "28a9bffa23439ddc9c5eb229fe133f1ad183009e7a8a77ea2b2031a698003245"
+  },
+  "parent_metrics": {
+    "validation": {
+      "count": 20,
+      "behavior_target_hit_count": 11,
+      "behavior_target_hit_rate": 0.55,
+      "selected_utility_sum": 12.749999999999998,
+      "selected_utility_mean": 0.6375,
+      "selected_residual_error": 0.36250000000000004,
+      "selected_roles": {
+        "reobserve": 8,
+        "proposal": 12
+      },
+      "safe_selection_violations": 6,
+      "reobserve_selected_count": 8,
+      "reobserve_projection_passed": true,
+      "workbench_success_count": 6
+    },
+    "holdout": {
+      "count": 20,
+      "behavior_target_hit_count": 11,
+      "behavior_target_hit_rate": 0.55,
+      "selected_utility_sum": 12.749999999999998,
+      "selected_utility_mean": 0.6375,
+      "selected_residual_error": 0.36250000000000004,
+      "selected_roles": {
+        "reobserve": 8,
+        "proposal": 12
+      },
+      "safe_selection_violations": 6,
+      "reobserve_selected_count": 8,
+      "reobserve_projection_passed": true,
+      "workbench_success_count": 6
+    },
+    "retention-sibling": {
+      "count": 4,
+      "behavior_target_hit_count": 4,
+      "behavior_target_hit_rate": 1.0,
+      "selected_utility_sum": 4.0,
+      "selected_utility_mean": 1.0,
+      "selected_residual_error": 0.0,
+      "selected_roles": {
+        "proposal": 1,
+        "reobserve": 3
+      },
+      "safe_selection_violations": 0,
+      "reobserve_selected_count": 3,
+      "reobserve_projection_passed": true,
+      "workbench_success_count": 1
+    },
+    "retention-newtask": {
+      "count": 20,
+      "behavior_target_hit_count": 11,
+      "behavior_target_hit_rate": 0.55,
+      "selected_utility_sum": 12.749999999999998,
+      "selected_utility_mean": 0.6375,
+      "selected_residual_error": 0.36250000000000004,
+      "selected_roles": {
+        "reobserve": 8,
+        "proposal": 12
+      },
+      "safe_selection_violations": 6,
+      "reobserve_selected_count": 8,
+      "reobserve_projection_passed": true,
+      "workbench_success_count": 6
+    }
+  },
+  "seed_results": [
+    {
+      "seed": 0,
+      "fit": {
+        "invariant-ext-17": {
+          "dataset_digest": "dc12f95a703c5e61dd44fed3bdbf13d4b54724df73e2c72419ed017af0860bdb",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 0,
+          "training_steps": 224,
+          "revision": 1,
+          "task_loss_mean": 0.28124825553978944,
+          "hinge_loss_mean": 0.032977847648518424,
+          "hinge_active_steps": 12,
+          "constraint_steps": 112
+        },
+        "projected-ext-17": {
+          "dataset_digest": "dc12f95a703c5e61dd44fed3bdbf13d4b54724df73e2c72419ed017af0860bdb",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 0,
+          "training_steps": 224,
+          "revision": 1,
+          "task_loss_mean": 0.28124825553978944,
+          "hinge_loss_mean": 0.032977847648518424,
+          "hinge_active_steps": 12,
+          "constraint_steps": 112
+        }
+      },
+      "zero_checkpoints": {
+        "invariant-ext-17": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_11_projection_solver_ffcda5f414a046039bb622a030b84b9e\\seed-0\\invariant-ext-17-zero.pt",
+          "digest": "94ca63626eebe72b91b797398b32d4a05e227da85f90e208711e203d3e62a2fb",
+          "bytes": 3975,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 17}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 17
+          },
+          "passed": true
+        },
+        "projected-ext-17": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_11_projection_solver_ffcda5f414a046039bb622a030b84b9e\\seed-0\\projected-ext-17-zero.pt",
+          "digest": "94ca63626eebe72b91b797398b32d4a05e227da85f90e208711e203d3e62a2fb",
+          "bytes": 3975,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 17}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 17
+          },
+          "passed": true
+        }
+      },
+      "trained_checkpoints": {
+        "invariant-ext-17": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_11_projection_solver_ffcda5f414a046039bb622a030b84b9e\\seed-0\\invariant-ext-17-trained.pt",
+          "digest": "62ddceec3a4b268425e14fa82e3e0f9b8749bcccbd87d7b2110918bdb3d3ff7f",
+          "bytes": 4069,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 17}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 17
+          },
+          "passed": true
+        },
+        "projected-ext-17": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_11_projection_solver_ffcda5f414a046039bb622a030b84b9e\\seed-0\\projected-ext-17-trained.pt",
+          "digest": "4f352f549346b24772ec7c15aa56b4964f40a81117e6e182a071adae2ee4f35b",
+          "bytes": 4069,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 17}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 17
+          },
+          "passed": true
+        }
+      },
+      "tamper_gate": {
+        "invariant-ext-17": true,
+        "projected-ext-17": true
+      },
+      "trajectory_gate": {
+        "pre_projection_digests_identical": true
+      },
+      "projection": {
+        "constraint_count": 80,
+        "converged": true,
+        "max_violation": 0.0,
+        "total_violation": 0.0,
+        "violation_per_constraint_family": {
+          "newtask-argmax": 0.0,
+          "newtask-safe": 0.0,
+          "cohort-argmax": 0.0,
+          "cohort-safe": 0.0
+        },
+        "distance": {
+          "l1": 6.022439956665039,
+          "l2": 2.7180540561676025,
+          "linf": 2.1913602352142334,
+          "per_dim": [
+            -0.16025876998901367,
+            -0.16179464757442474,
+            -0.161543071269989,
+            -0.1615462452173233,
+            -0.1613473743200302,
+            -0.1611473262310028,
+            -0.1611473262310028,
+            0.23811142146587372,
+            -0.366468220949173,
+            -0.000758737325668335,
+            0.21130162477493286,
+            -0.1611473262310028,
+            2.1913602352142334,
+            -0.014172375202178955,
+            1.4379613399505615,
+            0.27237409353256226
+          ]
+        },
+        "phases": [
+          {
+            "rho": 1.0,
+            "total_violation": 0.03430120646953583,
+            "max_violation": 0.03430120646953583
+          },
+          {
+            "rho": 10.0,
+            "total_violation": 0.01604233868420124,
+            "max_violation": 0.01604233868420124
+          },
+          {
+            "rho": 100.0,
+            "total_violation": 0.0,
+            "max_violation": 0.0
+          },
+          {
+            "rho": 1000.0,
+            "total_violation": 0.0,
+            "max_violation": 0.0
+          }
+        ],
+        "digest": "0ace2d462d20426079b9d6bc294dd02aebe8a82a07ce4cdf116691884a6fd1d8"
+      },
+      "feature_source_unchanged": true,
+      "metrics": {
+        "invariant-ext-17": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 4,
+            "behavior_target_hit_rate": 1.0,
+            "selected_utility_sum": 4.0,
+            "selected_utility_mean": 1.0,
+            "selected_residual_error": 0.0,
+            "selected_roles": {
+              "proposal": 1,
+              "reobserve": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 3,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 1
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          }
+        },
+        "projected-ext-17": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 4,
+            "behavior_target_hit_rate": 1.0,
+            "selected_utility_sum": 4.0,
+            "selected_utility_mean": 1.0,
+            "selected_residual_error": 0.0,
+            "selected_roles": {
+              "proposal": 1,
+              "reobserve": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 3,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 1
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          }
+        }
+      },
+      "gates": {
+        "invariant-ext-17": {
+          "new_task": {
+            "utility_ge_frozen_new_only": false,
+            "target_hit_ge_frozen_new_only": false,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          }
+        },
+        "projected-ext-17": {
+          "new_task": {
+            "utility_ge_frozen_new_only": true,
+            "target_hit_ge_frozen_new_only": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          }
+        }
+      },
+      "parameter_count": {
+        "invariant-ext-17": 17,
+        "projected-ext-17": 17
+      }
+    },
+    {
+      "seed": 1,
+      "fit": {
+        "invariant-ext-17": {
+          "dataset_digest": "ef0f8843c5bf904a636eca0c33c56ee23cecdd47a3e6cef1772503612739a12e",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 1,
+          "training_steps": 224,
+          "revision": 1,
+          "task_loss_mean": 0.27416105340879376,
+          "hinge_loss_mean": 0.032090782187879086,
+          "hinge_active_steps": 12,
+          "constraint_steps": 112
+        },
+        "projected-ext-17": {
+          "dataset_digest": "ef0f8843c5bf904a636eca0c33c56ee23cecdd47a3e6cef1772503612739a12e",
+          "candidate_sets": 14,
+          "constraint_groups": 4,
+          "epochs": 8,
+          "learning_rate": 0.15,
+          "order_seed": 1,
+          "training_steps": 224,
+          "revision": 1,
+          "task_loss_mean": 0.27416105340879376,
+          "hinge_loss_mean": 0.032090782187879086,
+          "hinge_active_steps": 12,
+          "constraint_steps": 112
+        }
+      },
+      "zero_checkpoints": {
+        "invariant-ext-17": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_11_projection_solver_ffcda5f414a046039bb622a030b84b9e\\seed-1\\invariant-ext-17-zero.pt",
+          "digest": "94ca63626eebe72b91b797398b32d4a05e227da85f90e208711e203d3e62a2fb",
+          "bytes": 3975,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 17}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 17
+          },
+          "passed": true
+        },
+        "projected-ext-17": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_11_projection_solver_ffcda5f414a046039bb622a030b84b9e\\seed-1\\projected-ext-17-zero.pt",
+          "digest": "94ca63626eebe72b91b797398b32d4a05e227da85f90e208711e203d3e62a2fb",
+          "bytes": 3975,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 17}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 17
+          },
+          "passed": true
+        }
+      },
+      "trained_checkpoints": {
+        "invariant-ext-17": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_11_projection_solver_ffcda5f414a046039bb622a030b84b9e\\seed-1\\invariant-ext-17-trained.pt",
+          "digest": "bd12cc3550865d4f66a9e83090b983baf9903e1c36c13c6decd0cc559a829408",
+          "bytes": 4069,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 17}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 17
+          },
+          "passed": true
+        },
+        "projected-ext-17": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_11_projection_solver_ffcda5f414a046039bb622a030b84b9e\\seed-1\\projected-ext-17-trained.pt",
+          "digest": "a8902e8990f164105bd9856d6d7d84625fe4940f6ef00c608c88a04dfc4975b6",
+          "bytes": 4069,
+          "roundtrip": true,
+          "restore": {
+            "returncode": 0,
+            "independent_process_restore": true,
+            "stdout": "{\"passed\": true, \"parameter_count\": 17}\n",
+            "stderr": "",
+            "passed": true,
+            "parameter_count": 17
+          },
+          "passed": true
+        }
+      },
+      "tamper_gate": {
+        "invariant-ext-17": true,
+        "projected-ext-17": true
+      },
+      "trajectory_gate": {
+        "pre_projection_digests_identical": true
+      },
+      "projection": {
+        "constraint_count": 80,
+        "converged": true,
+        "max_violation": 0.0,
+        "total_violation": 0.0,
+        "violation_per_constraint_family": {
+          "newtask-argmax": 0.0,
+          "newtask-safe": 0.0,
+          "cohort-argmax": 0.0,
+          "cohort-safe": 0.0
+        },
+        "distance": {
+          "l1": 5.584930896759033,
+          "l2": 2.9794986248016357,
+          "linf": 2.5160512924194336,
+          "per_dim": [
+            -0.1124470978975296,
+            -0.11280728876590729,
+            -0.11271876096725464,
+            -0.11271380633115768,
+            -0.1127166822552681,
+            -0.11306460201740265,
+            -0.11306460201740265,
+            0.2300775945186615,
+            -0.14153076708316803,
+            0.0,
+            0.11937439441680908,
+            -0.11306460201740265,
+            2.5160512924194336,
+            -0.002893298864364624,
+            1.5287948846817017,
+            0.14361125230789185
+          ]
+        },
+        "phases": [
+          {
+            "rho": 1.0,
+            "total_violation": 0.008851246908307076,
+            "max_violation": 0.008851246908307076
+          },
+          {
+            "rho": 10.0,
+            "total_violation": 0.006991188041865826,
+            "max_violation": 0.0015356407966464758
+          },
+          {
+            "rho": 100.0,
+            "total_violation": 0.0,
+            "max_violation": 0.0
+          },
+          {
+            "rho": 1000.0,
+            "total_violation": 0.0,
+            "max_violation": 0.0
+          }
+        ],
+        "digest": "0112fe834c39de0d2306f4b3a21af76c72b94465cf3cbd15949f7517d12ae581"
+      },
+      "feature_source_unchanged": true,
+      "metrics": {
+        "invariant-ext-17": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 4,
+            "behavior_target_hit_rate": 1.0,
+            "selected_utility_sum": 4.0,
+            "selected_utility_mean": 1.0,
+            "selected_residual_error": 0.0,
+            "selected_roles": {
+              "proposal": 1,
+              "reobserve": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 3,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 1
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 11,
+            "behavior_target_hit_rate": 0.55,
+            "selected_utility_sum": 12.749999999999998,
+            "selected_utility_mean": 0.6375,
+            "selected_residual_error": 0.36250000000000004,
+            "selected_roles": {
+              "reobserve": 8,
+              "proposal": 12
+            },
+            "safe_selection_violations": 6,
+            "reobserve_selected_count": 8,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 6
+          }
+        },
+        "projected-ext-17": {
+          "validation": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          },
+          "holdout": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          },
+          "retention-sibling": {
+            "count": 4,
+            "behavior_target_hit_count": 4,
+            "behavior_target_hit_rate": 1.0,
+            "selected_utility_sum": 4.0,
+            "selected_utility_mean": 1.0,
+            "selected_residual_error": 0.0,
+            "selected_roles": {
+              "proposal": 1,
+              "reobserve": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 3,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 1
+          },
+          "retention-newtask": {
+            "count": 20,
+            "behavior_target_hit_count": 15,
+            "behavior_target_hit_rate": 0.75,
+            "selected_utility_sum": 16.0,
+            "selected_utility_mean": 0.8,
+            "selected_residual_error": 0.19999999999999996,
+            "selected_roles": {
+              "reobserve": 17,
+              "proposal": 3
+            },
+            "safe_selection_violations": 0,
+            "reobserve_selected_count": 17,
+            "reobserve_projection_passed": true,
+            "workbench_success_count": 3
+          }
+        }
+      },
+      "gates": {
+        "invariant-ext-17": {
+          "new_task": {
+            "utility_ge_frozen_new_only": false,
+            "target_hit_ge_frozen_new_only": false,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": false,
+            "reobserve_projection_passed": true
+          }
+        },
+        "projected-ext-17": {
+          "new_task": {
+            "utility_ge_frozen_new_only": true,
+            "target_hit_ge_frozen_new_only": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_sibling": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          },
+          "retention_newtask": {
+            "utility_not_below_parent": true,
+            "target_hit_not_below_parent": true,
+            "safe_selection_preserved": true,
+            "reobserve_projection_passed": true
+          }
+        }
+      },
+      "parameter_count": {
+        "invariant-ext-17": 17,
+        "projected-ext-17": 17
+      }
+    }
+  ],
+  "baseline_17_passes_all": false,
+  "projected_17_passes_all": true,
+  "outcome": "projection_solver_supported",
+  "experiment_passed": true,
+  "interpretation": "completed: outcome=projection_solver_supported; projection solver update mechanism; growth and promotion remain fail-closed",
+  "elapsed_seconds": 119.539
+}

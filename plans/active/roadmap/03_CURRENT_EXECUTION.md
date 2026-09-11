@@ -292,6 +292,10 @@ P4.6 固定 13 参数 G、K1/K2、候选输入、selection threshold 和安全�
 
 **当前唯一下一步**：执行 P4.11 §7——(1) 投影求解器实现 + 定向测试（收敛判据/确定性/anchor 固定/bias 不动）；(2) 两臂 runner（py_compile/ruff/mypy 先行）；(3) 执行落盘报告；任一停止线触发即停。
 
+用户确认执行。**P4.11 已执行完毕（[预注册 §8](../../reference/M5_K_P4_11_PROJECTION_SOLVER_PREREGISTRATION_20260911.md)、报告 `reports/taiji_m5_k_p4_11_projection_solver_20260911.json`）：`outcome=projection_solver_supported`——投影求解器成立，P 系列首次有更新机制两 seed 同时通过双侧门。** 实现：`taiji/g_selection_projection.py`（确定性惩罚延续投影器）+ `apply_projected_weights` + 定向测试 5/5 + 两臂 runner（执行前修订 §2.1：保持约束改为决策同一性形式——探针已证可行的系统）。结果：**trajectory gate = 两臂投影前 head digest 逐位相同**（投影是唯一变量）；投影精确收敛（80 条联合约束，违反 0.0，距离 L2 2.72/2.98 如实审计）；**`projected-ext-17` 两 seed 全门通过**——holdout utility `0.8`≥0.68、target `0.75`≥0.6、0 safe violations、sibling `1.0/1.0` 非劣、retention-newtask `0.8`≥parent `0.6375`；基线臂复现 P4.10 失败。**P4.2–P4.11 完整证据链的机制结论：保持/新任务解耦 = 表示因子化（P4.9）+ 优化机制替换（P4.11 末端投影）两个必要成分的合取，任一单独不充分；且 cohort 可行性成功泛化到全部评估身份。** 固定容量路线在求解器更新机制下**重开**。`growth_admitted=false`、`can_promote=false` 不变。
+
+**当前唯一下一步**：求解器机制下的晋级课程级验证预注册——更大 seed/课程矩阵 + 资源审计，gate 沿用已冻结阈值；预注册冻结前不训练、不读取 sealed、不解冻 P5/CUDA/IDE/provider。
+
 ### P4：回归态极的长期目标——继承式结构成长
 
 在固定容量持续学习和保持成立后，使用多任务干扰、容量扫描与长序列退化确定扩容压力。增长从同一模型继承有效权重和学习状态，新增结构零影响出生，并有可测 credit/活动/贡献。
