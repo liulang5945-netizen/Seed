@@ -1,9 +1,25 @@
 # Seed / Taiji 唯一执行计划
 
-> 修订：2026-09-11（P4.7 收束版）；P4.0–P4.7 固定容量路线全部完成，**容量假设已按冻结映射关闭**，机制综合与决策分析见 [结果复审 §32–§33](../../reference/M4V2_POST_C_STAGE_RESULT_REVIEW_20260910.md)。本文覆盖所有旧文档中的执行许可和“下一步”。
+> 修订：2026-09-11（M5 K 轴 scorecard v4 收束版）；P4.0–P4.13 已完成，固定容量/旧表示路线关闭，求解器机制下的 G 侧课程证据已闭合。晋级边界仍为 `promotion_gate=false`、`can_promote=false`、`growth_admitted=false`。本文覆盖所有旧文档中的执行许可和“下一步”。
 > 本轮任务是根据新增结果修订方案；训练与实现按下述验收顺序在后续开发中执行。
 > 研究依据：[本轮源码与结果复审](../../reference/M4V2_POST_C_STAGE_RESULT_REVIEW_20260910.md)；[历史执行记录](../../archive/history/20260910_result_review/EXECUTION_HISTORY.md)。
 > 前瞻性技术设想（自主唤醒/注意力外挂/跨设备快照等，**不参与主线、不改变执行顺序**）见 [未来技术设想](../../reference/VISION_FUTURE_TECHNOLOGY.md)。
+
+## 当前状态：M5 K 轴证据已收束，默认运行时仍保持 fail-closed
+
+2026-09-11 的 [M5 K 轴 scorecard v4](../../reference/M5_K_AXIS_SCORECARD_V4_CONTRACT_20260911.md)
+以只读方式汇总了 K1/K2/K3、C-stage 学习机制、P4.12 课程级验证和 P4.13 两阶段晋级课程。
+最新机器报告为 [scorecard v4 report](../../../reports/taiji_m5_k_axis_scorecard_v4_20260911.json)。
+
+| 证据线 | 当前结论 |
+|---|---|
+| P4.7–P4.10 | 容量假设关闭，旧表示/约束路线关闭，parent-relative 特征因子化与基础特征空间 learnability gap 已记录 |
+| P4.11 | `projection_solver_supported`：两个 seed 同时通过新任务与双保持门 |
+| P4.12 | `course_level_validation_supported`：3 个身份批次 × 3 个 seed，9/9 projected cell 通过 |
+| P4.13 | `promotion_course_supported`：9/9 A → B cell 通过，累积 A+B+保持约束零违反，向后保持零失败 |
+| 晋级边界 | `g_solver_mechanism_course_closed=true`，但 K worker 联合课程未预注册/运行，默认 runtime rollout review 未执行；因此 `promotion_gate=false` |
+
+**唯一下一步：预注册 K worker 联合课程**，把 P2.6/P2.7 continuation 机械与求解器机制接到同一父代。完成前不解冻任何 owner、不接默认 runtime、不追加无关训练，也不把 G 侧课程结果写成完整认知能力或结构成长。
 
 ## 阶段收束：完成研究审计，不等于完成模型验收
 
@@ -23,7 +39,7 @@
 
 ### 下一阶段唯一交付目标
 
-**P2.2 已完成，P2.3 数据合同/targeted learning、P2.4 retention、P2.5 novelty probe、P2.6 novel learning、P2.7 holdout generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight、P3.3 candidate data-signal/G-only、P3.4 behavior signal、P3.5 reobserve-aware G-only learning、P3.6 独立行为 holdout/保持 Gate、P4.0 validation-only 固定容量压力扫描、P4.1 公平容量合同预检、P4.2 隔离训练/公平容量归因 Gate、P4.3 保持约束增量学习 Gate、P4.4 保持身份/结构校准 Gate、P4.5 保持约束/更新规则对照 Gate 和 P4.6 功能性 parent-preserving objective 对照 Gate 均已完成，但模型仍未 promotion，结构也未增长。** P3.6 在 2 个新 project、4 条新 path 上保持 trained-G utility `4.0>2.65`、target hit `4/4>1/4`；P4.0 在 5 个新案例、候选宽度 `2/4/8/12` 上得到 trained-G residual `0.32/0/0.54/0.59`，序列长度 `1/4/16` utility 均为 `0.6375`；P4.1 为 20 个集合建立了 12 维候选输入 + 9 维候选集上下文、22 参数 fixed-large reference 和 context-lesion effective 13 参数 reference，所有参考 checkpoint 独立恢复且零 fit；P4.2 没有稳定容量收益且暴露旧行为保持问题；P4.3 两个训练臂均在 fresh retention 达到 `0.68`，但结果完全相同，rehearsal-specific gain 为 false，出口为 `signal_insufficient`；P4.4 在候选数量/角色/置信度/安全投影同构但 project/path 全新的 4 条 sibling retention 上，P4.2 历史退化的 5 个 arm/seed 全部复现，P4.3 两臂/两 seed 也退化，出口为 `retention_failure_reproduced`；P4.5 的 `rehearsal-interleaved` 与 `new-only` 仍完全相同，trust-region 只在 seed-0 以牺牲新任务收益换回保持，seed-1 仍存在保持退化，出口为 `update_rule_unresolved`；P4.6 的功能性 parent-preserving objective 在 seed-0 恢复保持却把新任务降至 utility `0.585`、target `9/20`，seed-1 保持仍为 utility `0.8`、target `3/4`，出口为 `functional_update_unresolved`。当前 P4 固定容量路线停止自动推进，进入架构/目标决策点；P5、CUDA、IDE/provider 和客户端视觉继续冻结。
+**P2.2–P4.13 的合同、训练/验证、checkpoint/rollback、holdout/retention 与失败归因均已按冻结映射完成，但模型仍未 promotion，结构也未增长。** P4.11 在两个 seed 上同时通过新任务与双保持门；P4.12 为 3 个身份批次 × 3 个 seed 的 9/9 projected cell；P4.13 为 9/9 两阶段 A → B cell，A+B+保持累积约束零违反、向后保持零失败，checkpoint/tamper/rollback/feature-source 与绝对资源预算全通过。scorecard v4 已把 G 侧求解器机制结论收束为 `g_solver_mechanism_course_closed=true`，但 `k_worker_joint_course_completed=false`、`default_runtime_rollout_review_completed=false`，所以 `promotion_gate=false`、`can_promote=false`、`growth_admitted=false`。**唯一交付目标是预注册 K worker 联合课程**；在其完成前不解冻 owner、不接默认 runtime、不扩大训练范围，也不把 G 侧机制证据写成完整认知能力。
 
 - P0 已确定当前实现的效果基线：在 model17/course0、150 条 wake＋50 条固定 replay 上，FS 与 C-replay、FS-no-replay 与 C 的有效状态峰值差均为 `4.76837158203125e-7`，低于预先冻结的 `1e-5`；checkpoint preflight 通过。当前数据覆盖的验证类为 A/B/C，D/R 留给 P1。
 - P1 v1 失败审计确认了根因：450 条 train 记录中每类表面 observation digest 为 90 个，但实际 K1/K2 mask-visible input 各只有 1 个；validation 缺 D/R、无 project 隔离。报告保留为失败证据，不覆盖。
@@ -61,13 +77,13 @@ P1 合同完成后可做 P2 validation pilot。最终测试前冻结主指标、
 
 出现下列情况应提交已有成果并停在决策点：有效信号不足需要改变任务定义；公平对照后仍无收益需要改变学习机制；资源约束迫使缩减目标；或准备改变认知所有权/默认发布模型。讨论时给出证据、保留方案与替代方案的收益和代价，再更新唯一计划；不自动扩展训练规模或购买算力。
 
-本轮已完成 P0/P1 validation-only 诊断、P1.1 修复、P2 小预算 pilot、P2.1 输出/行动链诊断、P2.2 安全 bridge canary、P2.3 continuation 数据合同/targeted learning、P2.4 retention canary、P2.5 novel-composition probe、P2.6 novel K2 learning、P2.7 independent holdout generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight、P3.3 candidate data-signal/G-only learning、P3.4 behavior signal、P3.5 reobserve-aware G-only learning、P3.6 独立行为 holdout/保持 Gate、P4.0 固定容量压力扫描、P4.1 上下文/fixed-large contract preflight、P4.2 隔离训练/公平容量归因 Gate、P4.3 保持约束增量学习 Gate、P4.4 保持身份/结构校准、P4.5 保持约束/更新规则对照和 P4.6 功能性 parent-preserving objective 对照；当前固定容量路线已完成证据边界，下一步不再自动 fit，而是进入架构/目标决策点，不读取 sealed、不扩 K、不进入 promotion 或外围路线。
+本轮已完成 P0/P1 validation-only 诊断、P1.1 修复、P2 小预算 pilot、P2.1–P2.7、P3.0–P3.6、P4.0–P4.6 固定容量与更新规则诊断、P4.7 容量干净检验、P4.8 表征合同重设计、P4.9 特征空间探针、P4.10 特征因子化、P4.11 投影求解器、P4.12 课程级验证、P4.13 两阶段晋级课程；当前 G 侧求解器机制证据已由 scorecard v4 收束，唯一下一步是预注册 K worker 联合课程，不读取 sealed、不解冻 owner、不接默认 runtime、不进入 promotion 或外围路线。
 
 ## 当前判断
 
-K 信号空间已扩至五类；fast/slow＋真实 replay 已实现并通过基础机制测试。C-stage v2 的 D/R/A 小型评估中，FS 相对 C 平均 MSE 改善 0.001868，D/R 改善 0.002495，原报告四门通过。该结果包含额外 replay 的收益；跨模型独立性、全五类保持、等预算机制优势和 S/G/K 整合仍未验证。can_promote=false。
+M5 K 轴的 K1/K2/K3 standalone 证据与 G 侧 solver 机制证据已经入账。P4.7 关闭了“增加固定容量即可解除张力”的假设；P4.8–P4.10 把问题定位到 parent-relative 表征因子化与可学习空间；P4.11–P4.13 证明“任务 fit + 联合可行域投影”在两 seed、9-cell 课程和两阶段累积学习上可以同时满足新任务、保持与向后保持。上述结论是 G 侧机制证据，不是默认 runtime 已采用该机制，也不是完整认知能力。
 
-widened 合成路线已收束。先前“14,252 本轮更新”“v4 worker 三 seed 独立”“新 seed 即新课程”不再作为设计依据。P0 已把效果基线收敛为直接 continuation＋replay；P1 则证明当前课程的表面变化没有进入 K 的有效输入。旧 SGK v1 预注册待修订，暂停其 lineage-first 执行顺序。
+scorecard v4 的机器边界为：`k_evidence_closed=true`、`learning_mechanism_closed=true`、`g_solver_mechanism_course_closed=true`，但 `k_worker_joint_course_completed=false`、`default_runtime_rollout_review_completed=false`，因此 `promotion_gate=false`、`can_promote=false`、`growth_admitted=false`。下一步只做 K worker 联合课程预注册与验收，不自动追加同质 epoch、扩 K、接 owner 或启动 CUDA/IDE/provider/客户端路线。
 
 P1.1 已把数据入口修复为可见状态优先的合同：A/B/C 通过语言证据的 resolved/ambiguous 变化，D 通过 header 语言证据的 ambiguous/resolved 变化，R 通过显式 recovery-language hint/no-hint 变化。P2 pilot 证明同一父代上的 K1/K2 连续 MSE 可显著下降，但离散 readout 命中不随之提升；这把问题从“有没有训练信号”推进到“输出阈值/目标/行动桥是否正确”。
 
@@ -100,7 +116,7 @@ P3.2 已在 P3.0 parent、P3.1 manifest 和同一 P2.7 holdout 上完成 owner-t
 | P1 | 真实学习信号与五类数据合同 | **已通过 P1.1**：五类各有至少 2 个 K1/K2 visible input，validation 五类覆盖且 project/template 隔离 |
 | P2 | 五类学习及保持的独立验证 | **P2.7 局部跨项目/路径泛化通过**：holdout K2 content/Workbench `4/4`，旧类保持通过；已进入 P3.0 |
 | P3 | 中断续训与 S/G/K 联合状态整合 | **P3.6 独立行为 holdout/保持 Gate 已通过但尚未 promotion**：新 project/path trained-G utility `4.0>2.65`、target hit `4/4>1/4`，旧类、安全、Workbench 和 checkpoint 均保持；S 仍非 learned |
-| P4 | 结构成长必要性与收益验证 | **P4.0–P4.7 已全部收束**：P4.7 容量假设干净检验（13 vs 22 参数继承式、同 functional 协议、出生零影响已证）结果为 `capacity_hypothesis_closed`——互斥不随容量消失，定性为更新规则/表示问题；固定容量路线关闭，进入表示合同重设计 |
+| P4 | 结构成长必要性与收益验证 | **P4.0–P4.13 已全部收束**：P4.7 关闭容量假设，P4.8–P4.10 完成表示/特征归因，P4.11–P4.13 证明投影求解器在 2-seed、9-cell、两阶段累积课程上支持新任务 + 保持 + 向后保持；G 侧课程闭合但不授予 promotion，下一步转入 K worker 联合课程 |
 | P5 | 知识来源、IDE、客户端、硬件发布 | 各项按所需模型能力与接口成熟度解冻 |
 
 ### P1：有效信号与评估数据（P1.1 已通过）
@@ -262,7 +278,7 @@ P4.6 固定 13 参数 G、K1/K2、候选输入、selection threshold 和安全�
 
 ## 当前决策点：P4.7 已收束——容量假设关闭，进入表示合同重设计
 
-**P4.7 已按预注册执行完毕**（[预注册 §8](../reference/M5_K_P4_7_CAPACITY_CLEAN_TEST_PREREGISTRATION_20260911.md)、报告 `reports/taiji_m5_k_p4_7_capacity_clean_test_20260911.json`）：两臂跑完全相同的 P4.6 functional 协议，单变量 = 容量 13→22（22 参数臂 candidate 权重 + bias 从 P3.5 parent 逐位继承、9 维 context 零初始化；出生等价 64 record 0 mismatch、最大 score 偏差 0.0——扩展算子干净性得证）。结果 **`capacity_hypothesis_closed`**：
+**P4.7 已按预注册执行完毕**（[预注册 §8](../../reference/M5_K_P4_7_CAPACITY_CLEAN_TEST_PREREGISTRATION_20260911.md)、报告 `reports/taiji_m5_k_p4_7_capacity_clean_test_20260911.json`）：两臂跑完全相同的 P4.6 functional 协议，单变量 = 容量 13→22（22 参数臂 candidate 权重 + bias 从 P3.5 parent 逐位继承、9 维 context 零初始化；出生等价 64 record 0 mismatch、最大 score 偏差 0.0——扩展算子干净性得证）。结果 **`capacity_hypothesis_closed`**：
 
 - 13 参数臂在全新身份上**逐数值复现** P4.6 的 seed 间互斥（seed-0 败新任务 `0.585/0.45`+6 violation、过保持 `1.0/1.0`；seed-1 过新任务 `0.68/0.6`、败保持 `0.8/0.75`）——张力对身份变化鲁棒；
 - 22 参数臂未改变定性形态（seed-0 `0.625/0.45` 仍败新任务、seed-1 与 13 参数**逐数值相同**）——出生零影响的 +9 context 参数是放大器不是解耦器；
@@ -337,4 +353,4 @@ P4.6 固定 13 参数 G、K1/K2、候选输入、selection threshold 和安全�
 
 文档仅保留一个执行入口，不再新增平行总计划：本文记录阶段状态、下一步和验收；结果复审记录证据解释；核心需求与架构常驻 active；已有历史流水保留在 archive。旧预注册即使留在 reference 也不重新获得执行许可。当前收束不移动有引用的研究资产，不覆盖旧报告或删除 checkpoint。根目录存在部分无读取权限的临时路径，未证明其为空或无用；后续清理须逐项验证绝对路径、引用和可恢复性，不能把它们报作已清理。
 
-本轮 P2 pilot、P2.1、P2.2、P2.3 contract/targeted、P2.4 retention、P2.5 novel-composition、P2.6 novel-learning、P2.7 generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight、P3.3 candidate data-signal/G-only learning、P3.4 behavior signal、P3.5 reobserve-aware G-only learning、P3.6 independent behavior holdout、P4.0 fixed-capacity pressure scan、P4.1 context/fixed-large contract preflight、P4.2 capacity attribution、P4.3 retention incremental、P4.4 retention identity calibration、P4.5 update-rule Gate、P4.6 functional parent-preserving objective Gate 与 P4.7 capacity clean test 报告与计划同步已提交本地 main。P4 固定容量路线已按冻结映射收束（容量假设关闭，见 [结果复审 §32–§33](../../reference/M4V2_POST_C_STAGE_RESULT_REVIEW_20260910.md)）；当前唯一下一步 = **表示合同重设计预注册**，冻结前不训练、不调参、不扩容、不 promotion、不解冻外围路线。
+本轮 P2 pilot、P2.1–P2.7、P3.0–P3.6、P4.0–P4.6 诊断、P4.7 capacity clean test、P4.8 representation contract、P4.9 feature-space probe、P4.10 feature factorization、P4.11 projection solver、P4.12 course-level validation、P4.13 promotion course 与 K 轴 scorecard v4 报告已与计划同步并提交本地 main。P4 固定容量/旧表示路线已关闭，G 侧求解器机制证据已收束；当前唯一下一步 = **K worker 联合课程预注册**，冻结前不训练、不调参、不扩容、不解冻任何 owner、不接默认 runtime、不进入 promotion 评审。

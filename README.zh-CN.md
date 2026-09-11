@@ -2,7 +2,10 @@
 
 Seed 是训练、评估、部署并托管 **Taiji** 的项目、产品与运行时。Taiji 是一个**原生认知架构**——从在线预测编码机制构建，而不是 Transformer 的包装。内核从**局部预测误差**中学习（无反向传播、无注意力矩阵、无上下文窗口、运行时无教师模型）；在内核之上，Taiji 拥有自己的表征、持续状态、记忆、目标、规划与行动选择，同时在合适处刻意复用成熟算法（embedding、SSM、MoE 式路由、优化器、检索）。Taiji 为之设计的一项关键能力，是**自我进化**——在学习中修订、生长并重组自己的结构（见[结构成长与协作](#结构成长与协作自我进化能力)）。
 
-不吹不黑：当前可执行代码是 **Taiji Substrate Kernel v8（TSK-v8）**——一个字节级预测编码研究内核。它是可用的基座，不是完整的认知架构：内置能力已被验证，语言级智能仍在训练中（见[现状](#现状)）。
+不吹不黑：仓库同时包含 **Seed 产品外壳**与 **Taiji 研究运行时**。最低层可执行基座是
+**Taiji Substrate Kernel v8（TSK-v8）**；当前 M5 工作则在 Taiji 状态与 Workbench 合同之上
+评估内容寻址的 K 轴学习与选择路线。这些都是正在工作的研究系统，不是已经发布的通用模型，
+也不是完整认知架构（见[现状](#现状)）。
 
 ## 语言 / Language
 
@@ -11,7 +14,7 @@ Seed 是训练、评估、部署并托管 **Taiji** 的项目、产品与运行�
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
-[![tests](https://img.shields.io/badge/tests-900%2B-green.svg)](.github/workflows/ci.yml)
+[![tests](https://img.shields.io/badge/Python%20tests-1%2C194-green.svg)](.github/workflows/ci.yml)
 
 ## 架构
 
@@ -112,10 +115,10 @@ h^{event}=\phi(Qs+\gamma_e(Aa+Oo+r\rho+Tt+Ee+Pp)), \qquad
 | A5 稳态调节 | 驱动探索/学习/睡眠，而非 UI 数字 | 原型已门禁；广度未闭合 |
 | A6 目标与规划 | 想象 rollout 改善真实成功率 | 单步规划 Gate 已闭合 |
 | A7 原生生成 | 内部意图 → 可读语言/工具动作 | 结构化生成已闭合；流畅性在训练中 |
-| A8 持续进化 | 旧能力存活；受治理的生长/剪枝 | 成长 Gate 已闭合；B5 在训练中 |
+| A8 持续进化 | 旧能力存活；受治理的生长/剪枝 | G 侧课程已闭合；K worker 课程与运行时成长仍开放 |
 | A9 具身 | 器官共享世界状态；跨模态迁移 | 合同在；完整 Gate 未闭合 |
 
-### 统一能力评估（M0）与当前训练（M1）
+### 历史基线：M0–M2
 
 M0 建造了**测量机器**和一个可信零点（`status=failed` 是设计使然）：
 
@@ -126,12 +129,35 @@ M0 建造了**测量机器**和一个可信零点（`status=failed` 是设计使
 
 M1 随后在 CPU 上训练这个闭环（课程 F1→F5、三个固定种子、内容寻址数据、原子 `parent/last/best` checkpoint、全新进程只读复核）。原生 association 基座被自己的数据合同判定为不适合 foundation 规模延迟召回，因此一级 **identity key/value 器官**被晋升；其寻址、裁决和折叠 key 的 value 路由分别经过反证并闭合，M1-66c 由此得到正式的 foundation B2 通过结果。
 
-M2-0 完成三 seed 的首轮真实 F1→F4：延迟记忆召回达到 `0.87/0.85/0.87`，世界误差降到约 `3.5e-08`，目标行动成功率达到 `1.0`。M2-1 随后纠正了一项关键测量误区：F2 后看似 F1 崩塌的主因是长期情景记忆反馈泄漏进原始 byte 语言评分，而不是 F2 覆盖了 F1 权重。现在 raw-byte 学习、评分和 native generation 默认隔离长期记忆；将既有三个 child checkpoint 放入全新进程恢复后，F1 holdout 分别为 `4.826/4.931/4.805 BPB`，均优于 `5.942` unigram 基线，B2/B3/B4 同时保持不变。当前剩余门禁是一个真实的 F5 phase-A/phase-B 连续语言课程，而不是用 replay 掩盖已经解决的读出错误。证据在 `reports/` 下与计划一一对应：[唯一执行计划](plans/active/roadmap/03_CURRENT_EXECUTION.md)。
+M2-0 完成三 seed 的首轮真实 F1→F4：延迟记忆召回达到 `0.87/0.85/0.87`，世界误差降到约 `3.5e-08`，目标行动成功率达到 `1.0`。M2-1 随后纠正了一项关键测量误区：F2 后看似 F1 崩塌的主因是长期情景记忆反馈泄漏进原始 byte 语言评分，而不是 F2 覆盖了 F1 权重。现在 raw-byte 学习、评分和 native generation 默认隔离长期记忆；将既有三个 child checkpoint 放入全新进程恢复后，F1 holdout 分别为 `4.826/4.931/4.805 BPB`，均优于 `5.942` unigram 基线，B2/B3/B4 同时保持不变。上述结果仍是历史基础基线；完整时间线与证据链接由[唯一执行计划](plans/active/roadmap/03_CURRENT_EXECUTION.md)维护。
+
+### 当前研究路线：M5 K 轴与求解器证据
+
+当前路线是在五类 typed Workbench 任务上进行受控的持续学习研究。每项结果都有冻结 manifest、
+隔离身份、holdout/retention 检查、全新进程 checkpoint 恢复、篡改拒绝与 fail-closed 晋级门。
+它证明的是具体机制，不等于整个架构已经完成。
+
+| 阶段 | 结果 |
+|---|---|
+| P4.7 容量干净检验 | `capacity_hypothesis_closed`：13 与 22 参数对照没有消除保持/新任务张力 |
+| P4.8–P4.10 表征路线 | 原 invariant 约束不足；识别出 parent-relative 特征因子化，而基础特征空间仍存在已测 learnability gap |
+| P4.11 投影求解器 | `projection_solver_supported`：两个 seed 在全新身份上同时通过新任务与双保持门 |
+| P4.12 课程级验证 | `course_level_validation_supported`：3 个身份批次 × 3 个 seed，共 9/9 projected cell 通过 |
+| P4.13 晋级课程 | `promotion_course_supported`：9/9 两阶段 A → B cell 通过；A+B+保持的累积投影零违反，向后保持通过 |
+| K 轴 scorecard v4 | G 侧求解器证据闭合；晋级仍保持 fail-closed |
+
+权威摘要见 [M5 K 轴 scorecard v4](plans/reference/M5_K_AXIS_SCORECARD_V4_CONTRACT_20260911.md)，
+机器可读证据见 [scorecard 报告](reports/taiji_m5_k_axis_scorecard_v4_20260911.json)。
 
 ## 现状
 
-- 已完成并提交：基座内核与验证链、结构成长 Gate、M0 测量机器、M1 foundation 训练与 B2 因果链，以及 M2-0 真实联合训练。
-- 进行中：M2-2——内容寻址的 phase-A/phase-B F5 连续语言 Gate；M2-1 已在既有 checkpoint 上恢复正确的 F1 测量边界。
+- 已完成并提交：TSK-v8 基座与回归链、结构成长机制 Gate、M0–M2 基础证据、M5 K1/K2/K3
+  scorecard 证据，以及到 P4.13 为止的 G 侧求解器机制。
+- 当前边界：`g_solver_mechanism_course_closed=true`，但 `promotion_gate=false`、
+  `can_promote=false`、`growth_admitted=false`。K worker 联合课程尚未预注册或运行；默认
+  runtime 尚未挂接 owner，默认 runtime rollout review 也尚未执行。
+- 下一步：预注册 K worker 联合课程，把 P2.6/P2.7 continuation 机械与求解器机制接到同一父代上。
+  这是[当前执行计划](plans/active/roadmap/03_CURRENT_EXECUTION.md)中唯一的下一步。
 - 诚实边界：这是一个训练中的学习机制原型，**不是**完整的认知架构，不是语言模型，也不构成任何 AGI 主张。乱码输出是预期的内核行为。
 
 ## 快速开始
@@ -139,7 +165,7 @@ M2-0 完成三 seed 的首轮真实 F1→F4：延迟记忆召回达到 `0.87/0.8
 ```bash
 python -m pip install -e ".[dev]"
 python scripts/training/verify_taiji_native_v7.py        # 基座回归链
-python -m pytest tests -q                                # 900+ 已提交测试
+python -m pytest tests -q                                # 当前收集到 1,194 个 Python 测试
 ```
 
 Seed 运行时兼容 API：
@@ -157,37 +183,39 @@ checkpoint = model.checkpoint()
 restored = Seed.from_checkpoint(checkpoint)
 ```
 
-训练入口（CPU）：`scripts/training/train_taiji_foundation.py`、`train_taiji_memory.py`、`train_taiji_world_action.py`、`train_taiji_joint.py`。
+历史 foundation 训练入口（CPU）：`scripts/training/train_taiji_foundation.py`、
+`train_taiji_memory.py`、`train_taiji_world_action.py`、`train_taiji_joint.py`。
+
+当前 M5 证据 runner 位于 `scripts/training/`：从
+`eval_taiji_m5_k_p4_7_capacity_clean_test.py` 到
+`eval_taiji_m5_k_p4_13_promotion_course.py`。只读 scorecard reducer 是
+`audit_taiji_m5_k_axis_scorecard_v4.py`；运行时必须显式传入 `--report` 输出路径。
 
 ## 产品外壳
 
-Seed 以自包含 Windows 桌面构建交付（双入口 `Seed.exe` + `SeedBackend.exe`）：双击即拉起后端、激活原生运行时，并在数秒内于 `http://127.0.0.1:8000` 提供 Web UI——聊天、训练面板、生命状态雷达图、IDE 工作区与 Agent 配置。开发模式：
+Seed 以自包含 Windows 桌面构建交付（双入口 `Seed.exe` + `SeedBackend.exe`）：双击即拉起后端、激活原生运行时，并在数秒内于 `http://127.0.0.1:8000` 提供 Web UI——聊天、训练面板、生命状态雷达图、IDE 工作区与 Agent 配置。运行后端前执行 `python -m pip install -e ".[dev,legacy]"`；运行 Qt 桌面壳时再加上 `desktop` extra。开发模式：
 
 ```bash
 python -m uvicorn api.app:app --host 127.0.0.1 --port 8000   # 后端 + Web UI
 python desktop/main.py                                       # 桌面壳
-cd frontend && npm run dev                                   # 前端开发服务器
+cd frontend && npm ci && npm run dev                         # 前端开发服务器
 ```
 
-环境开关：`SEED_PORT`（默认 8000）、`SEED_HOST`（默认 127.0.0.1）、`SEED_RUNTIME=1`（启动时激活 Seed 原生运行时）。历史 beta 证据见 `reports/seed_public_beta_release_20260823.md`。
+环境开关：`SEED_PORT`（默认 8000）、`SEED_HOST`（默认 127.0.0.1）、`SEED_RUNTIME=1`（启动时激活 Seed 原生运行时）。前端要求 Node 20.19+ 或 22.12+；Docker 用户可执行 `docker compose up --build`。历史 beta 证据见 `reports/seed_public_beta_release_20260823.md`。
 
 ## 源码结构
 
 ```text
-taiji/                  原生认知架构（不 import seed/neuroplex/transformers）
-├── fabric.py           预测性循环 tick
-├── sparse.py           固定扇入突触、局部更新
-├── memory.py           分布式情景编码 / 补全 / 回读
-├── identity_organ.py   一级可训练 key/value 记忆器官
-├── organs.py           原始字节感受器、稀疏感受器库、奖励感知运动器官
-├── foundation_tasks.py B1–B5 能力适配器（M0 契约）
-├── foundation_training.py  联合 F1–F5 训练、checkpoint、谱系
-└── model.py            observe / learn / score / generate / checkpoint
-
-scripts/training/       verify_* 链、train_taiji_* 入口、eval_taiji_m1_*
-tests/taiji_native/     内核回归 + 所有权契约
-reports/                每个里程碑的编号、已提交证据
-plans/active/           核心需求 · 架构 v1 · 唯一执行计划
+taiji/                  原生架构、器官、记忆、K worker 与 G 选择/求解器
+seed/                   Seed 兼容 API 与面向运行时的模型边界
+seed_platform/          checkpoint、谱系、Workbench 与产品运行时服务
+api/                    FastAPI 后端、训练与 Workbench 路由
+frontend/               Vue 产品外壳、合同检查、单元测试与 E2E 冒烟
+desktop/                Windows Qt 外壳与 PyInstaller 入口
+scripts/training/       验证、foundation 训练与 M5 证据 runner
+tests/                  Python 回归、API、运行时与所有权合同测试
+reports/                每个里程碑的机器可读、已提交证据
+plans/                  active 计划、冻结 manifest 与预注册研究合同
 ```
 
 ## 许可证
