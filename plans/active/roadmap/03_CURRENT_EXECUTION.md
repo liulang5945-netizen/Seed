@@ -272,6 +272,10 @@ P4.6 固定 13 参数 G、K1/K2、候选输入、selection threshold 和安全�
 
 **唯一下一步**：表示合同重设计预注册——解耦「选择学习」与「行为保持」的表示维度（方向：把保持约束从「拟合 parent 标量分」改为「保持 parent 的选择不变量」（如 safe-candidate 优先序、低证据拒绝边界），或把 candidate 特征空间拆分为 task-learning 与 parent-preservation 两个正交子空间）；预注册冻结前不训练、不扩容、不读取 sealed、不解冻 P5/CUDA/IDE/provider。
 
+用户确认执行。**P4.8 表示合同重设计预注册已冻结：[M5_K_P4_8_REPRESENTATION_CONTRACT_REDESIGN_PREREGISTRATION_20260911.md](../../reference/M5_K_P4_8_REPRESENTATION_CONTRACT_REDESIGN_PREREGISTRATION_20260911.md)。** 机制诊断：P4.6/P4.7 的标量 MSE teacher 约束无饱和点（梯度恒在），与 task delta 在同一权重上持续对抗——这是 seed 间互斥的机制根源。**三臂设计（相邻对单变量）**：`functional-13`（in-run 基线，第 3 次复现）/ `invariant-13`（唯一变更 = 约束形式改为**决策不变量 hinge**——保持 parent 的选择与安全回退边界而非标量分，hinge 满足后梯度恒零即有限支撑）/ `residual-26`（唯一变更 vs invariant-13 = 架构拆分：frozen parent head 13 逐位继承永不可训练 + δ head 13 零初始化，task/hinge 只写 δ；有效可训练容量三臂同为 13，容量不是变量）。决策不变量 hinge 冻结规格（guard band 0.01、selection margin 0.05、parent 决策由 frozen parent 在线计算、behavior target 永不进 fit、出生 constraint 损失恒 0 断言）。门与 P4.7 相同（新任务 0.68/0.6、双分布保持非劣、机械门全套 + residual 出生等价精确 + frozen head 不可变 digest）。全分支结果映射：新臂过 + 基线张力复现 → `representation_redesign_supported` 进晋级课程级验证；两新臂仍互斥 → `invariant_constraint_insufficient` 收敛到特征空间重设计；基线第 4 轮不复现 → `baseline_drift` 重审。`growth_admitted=false`、`can_promote=false`、无 router/任务 ID（R5 教训）。
+
+**当前唯一下一步**：执行 P4.8 §8 顺序——(1) `taiji/g_selection_residual.py` + 定向测试（出生等价精确/hinge 方向与有限支撑/frozen head 不可变/往返 tamper）；(2) 三臂 runner（py_compile/ruff/mypy 先行）；(3) 执行落盘报告；任一停止线触发即停。
+
 ### P4：回归态极的长期目标——继承式结构成长
 
 在固定容量持续学习和保持成立后，使用多任务干扰、容量扫描与长序列退化确定扩容压力。增长从同一模型继承有效权重和学习状态，新增结构零影响出生，并有可测 credit/活动/贡献。
