@@ -51,4 +51,13 @@ P4.11 证明：在单身份批上，「SGD 任务学习 + 末端联合投影」�
 2. 执行产出 `plans/manifests/taiji_m5_k_p4_12_course_level_validation_manifest_v1.json` + `reports/taiji_m5_k_p4_12_course_level_validation_20260911.json`；
 3. 路线图/记录文档同步 + 独立提交。
 
-## 8. 执行记录（运行后补）
+## 8. 执行记录（2026-09-11，已运行，课程级验证成立）
+
+1. 实现顺序：9-cell runner（py_compile/ruff 修复后运行；3 身份批 × 3 seeds）。`experiment_passed=true`：3 批身份门全过（264 candidate digest 唯一、与 P4.1–P4.11 隔离）、结构门 3/3（P4.4 合同逐行）、checkpoint/tamper/feature-source/trajectory 门 9/9、参数 17/17。
+2. 结果（9/9 cell，全部一致的确定性机制表现）：
+   - **projected 臂 9/9 全门通过**：holdout utility `0.8`、target `0.75`、safe violations `0`；sibling `1.0/1.0`；retention-newtask `0.8` ≥ parent `0.6375`——九格指标逐数值相同；
+   - **基线臂 3/3 身份批张力复现**（9/9 cell 新任务失败 `0.6375/0.55`+6 sv、sibling `1.0` 过）；
+   - **投影 9/9 精确收敛**（违反 0.0；约束 80/cell）。
+3. **判定（按 §6 冻结映射）：`course_level_validation_supported`**——聚合门全过（9/9 ≥ 8/9 ∧ 3/3 ≥ 2/3）。求解器机制跨身份与 seed 鲁棒。固定容量路线在求解器机制下取得晋级课程入场资格。
+4. **资源审计的诚实记录**：3× wall 软门 9/9 超限——该比率结构上不可满足（基线臂 wall = 仅 fit ≈ 0.08s，projected = fit + 投影 ≈ 3–6.5s，比率 40–80×；投影正是机制成本）。按预注册 §5 该软门为描述性边界、不影响聚合门；**绝对耗时才是有意义的审计读数**（fit ≈ 0.08s、投影 ≈ 3–6.5s/cell，均极小）。正式资源 cap 属晋级课程预注册，须以绝对预算或同基线比较定义，不得复用本节的错误比率。
+5. `growth_admitted=false`、`can_promote=false`。唯一下一步 = 求解器机制下的晋级课程预注册（同一 parent 连续 S/G/K 课程，gate 沿用 A8 结构 + 资源 cap 以绝对预算定义）。

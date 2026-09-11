@@ -579,3 +579,19 @@ P4.2 的「fixed-large 无稳定容量收益」结论受协议污染：该轮连
 | 结果出口 | 机制成立 | `outcome=projection_solver_supported`、`experiment_passed=true`、`growth_admitted=false`、`can_promote=false` |
 
 **判定（按 §6 冻结映射）：`projection_solver_supported`——可行区域投影求解器成立。** 这是 P 系列首次有更新机制在两 seed 上同时通过新任务门与双分布保持门：「SGD 任务学习 + 末端联合投影」修复了 learnability gap，且泛化到全部评估身份（holdout/sibling/retention-newtask 均为全新身份——cohort 可行性成功泛化，P4.8 的逐点墙在求解器机制下被穿越）。固定容量路线在求解器更新机制下**重开**。P4.2–P4.11 的完整证据链给出机制结论：**保持/新任务的解耦 = 表示因子化（P4.9）+ 优化机制替换（P4.11 末端投影替代交错 SGD）两个必要成分的合取**——任一单独都不充分。唯一下一步 = 求解器机制下的晋级课程级验证预注册（更大 seed/课程矩阵 + 资源审计）。
+
+## 37. P4.12 课程级验证结果（2026-09-11）
+
+按 §36 的方向冻结了 [P4.12 预注册](M5_K_P4_12_COURSE_LEVEL_VALIDATION_PREREGISTRATION_20260911.md)（3 身份批 × 3 seeds = 9 cells，聚合门 = projected ≥ 8/9 全门 ∧ 基线 ≥ 2/3 批张力；资源审计逐 cell + 3× wall 软门）并实现 9-cell runner。
+
+| Gate | 结果 | 关键实测 |
+|---|---:|---|
+| 身份/结构（3 批） | 通过 | 264 candidate digest 唯一、与 P4.1–P4.11 隔离；P4.4 结构合同逐行匹配 |
+| checkpoint / lineage / trajectory | 通过 | 9/9 cell：独立进程恢复、tamper 拒绝、feature source 非漂移、投影前两臂 digest 逐位相同；参数 17/17 |
+| **projected 臂聚合** | **9/9 全门通过** | 九格指标逐数值相同：holdout utility `0.8`、target `0.75`、0 sv；sibling `1.0/1.0`；retention-newtask `0.8` ≥ parent `0.6375` |
+| 基线臂张力 | 3/3 批复现 | 9/9 cell 新任务失败（`0.6375/0.55`+6 sv）、sibling `1.0` 过 |
+| 投影收敛 | 9/9 | 全部精确收敛（违反 0.0；80 约束/cell） |
+| 资源软门 | 9/9 超限（结构性） | 3× 比率对「fit-only 基线 vs fit+投影」不可满足（0.08s vs 3–6.5s，40–80×）；绝对耗时极小；正式 cap 属晋级课程预注册并须以绝对预算定义 |
+| 结果出口 | 验证成立 | `outcome=course_level_validation_supported`、`experiment_passed=true`、`growth_admitted=false`、`can_promote=false` |
+
+**判定（按 §6 冻结映射）：`course_level_validation_supported`——求解器机制跨身份与 seed 鲁棒（9/9 全门、3/3 张力、全部精确收敛）。** 求解器机制下的固定容量路线取得晋级课程入场资格。机制结论维持 §36 的合取形式并新增：**该机制的表现是高度确定性的（九格逐数值相同）**——投影求解器把「保持/新任务权衡」从 seed 敏感的优化路径问题变成了确定性的可行性求解问题。唯一下一步 = 求解器机制下的晋级课程预注册（同一 parent 连续 S/G/K 课程，gate 沿用 A8 结构 + 资源 cap 以绝对预算定义）。
