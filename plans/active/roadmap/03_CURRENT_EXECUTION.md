@@ -1,13 +1,15 @@
 # Seed / Taiji 当前推进方案
 
-> 更新：2026-09-13（B0 + M4 加固轮）；源码与结果基线：`f9825943`。本文件是唯一执行顺序来源。
+> 更新：2026-09-13（B0 + M4 加固轮 + **N1 结构空间轮**）；源码与结果基线：`f9825943`。本文件是唯一执行顺序来源。
 > 用户既定顺序「先 C 后 AB」：C、A 已完成；B0 审查已完成并**触发停止点**（目标不可达），故当前不进入 B1。
-> 机制修法 `m4_failure_handoff` 已经反事实测量、伪影审计与**加固轮（规模/种子/停止原因清单）**；
+> 机制修法 `m4_failure_handoff` 已经反事实测量、伪影审计、**加固轮（规模/种子/停止原因清单）**
+> 与 **N1 结构空间探针（收益不限于 create+override，但独立结构因素仍为 1）**；
 > **仍未实施**，进入 B1 训练前须先决策 D1–D5。
 > 本轮只做只读测量、文档与测试：未训练、未更改冻结判据、未批准产品采用。
 > [B0 设计包](../../reference/M5_B0_MEASUREMENT_AND_REACHABILITY_AUDIT_20260913.md) /
 > [路线 B 预注册草案（未冻结）](../../reference/M5_B0_ROUTE_B_PREREGISTRATION_DRAFT_20260913.md) /
 > [M4 加固轮结果](../../reference/M5_B0_M4_HARDENING_RESULT_20260913.md) /
+> [N1 结构空间结果](../../reference/M5_B0_STRUCTURE_SPACE_RESULT_20260913.md) /
 > [本轮证据复审](../../reference/M5_POST_ROUTE_A_REVIEW_20260913.md)。
 
 ## 1. 总目标与当前定位
@@ -38,6 +40,7 @@ Taiji 拥有持续状态、记忆、行动选择、异质协作与继承式成�
 | B0 反事实测量 | 先证候选面**可满足且顺序强制**；六个修法变体**五个失败一个成功**。**`m4_failure_handoff`：冻结面 0 回归 / 2 改善，候选面 `interleaved=4/4`、同参照增益 `+2.000 > 1.65`** | **H2 协作主张首次可达**；M4 **未实施**，落地需 D5 + 单独预注册；旧报告只对旧规则有效 |
 | B0 M4 伪影审计 | **四项全过**：特异性（正增益只在设计面）/ 干预真实性（无惰性 cell）/ 机制 lesion（增益随交接消失、四单体全败）/ **3 种子恒 +2.000 且冻结面无增益**；冻结面 2 个改善**逐步归因为真实交接** | M4 的**测量可信**（不等于能力已落地）；新停止原因 `all_members_blocked` 需门禁语义审查；候选面仅 4 context 需扩规模 |
 | B0 M4 加固轮 | 扩到 **12 context / 6 结构变体 / 5 种子**：六变体**各自** `+2.000`，冻结规则 **0/6 正、零交错**；三种参照 feasible（最严面需要 k=10，可用 12）；`.h`/cpp 合同预期**被脚本证据推翻并改判**，同时加 fail-closed 校验；`all_members_blocked` 消费面**清单化为 11 个文件**，并证明 `contract_intercepted` 两规则计数相同（非 M4 引入） | **界限收窄**：六变体结果指纹**只有 1 种**，它们共享同一组合结构（create+override）⇒ 本轮只证**表面稳健**，不证**结构稳健**（新登记 **N1**：T1/T2/T3）；`all_members_blocked` 门禁语义仍须预注册（**N2**）；风险 1/5 仍属 D5；两次重跑 JSON **字节相同** |
+| B0 N1 结构空间 | 放弃"手造 T1/T2/T3"（实测 **T1/T3 在冻结 binder 下不可表达**、**T2 缺成员间证据通道**），改为**枚举目标谓词可表达的全部结构**：3 内容路线 × 4 语言路线去平凡格 = **11 格 / 22 context / 11 因子单元 / 3 种子**，有效性**在合同之下**判定（11/11 可测，无丢弃）。结果：**正增益覆盖 `create` 行全部三条语言路由**（各 `+2.000`、`interleaved 0→2`），其余 8 格 `0.000`，`patch` 行两规则同 `−2.000`（未把不可达变可达）；**零回归**；预测↔观测 **11/11 一致**；正增益全部由 `member-a+member-c` 的真实交接解释，回退效应单列 `fallback_only`；两种重跑 JSON **字节相同**；30 项合同测试通过 | **N1 已答（收益不限于 create+override），但按"结构因素"计数仍只有 1 个**：三格**共享同一结果指纹** ⇒ 承重因素是**存在性前提**而非 override；可主张的独立度为 **1 因素 × 3 语言路线 × 2 冻结失败形态**（合同拦截型 vs 步数耗尽型）。自查出第一版**有效性门绕过 `policy_for`** 的缺陷并修好（该修正**改变了结果**：`create__mismatch` 0.000→+2.000，3 个假矛盾归零）。新增 **N1a**（跨内容结构须先改 binder，另立议题）/ **N1b**（每格 2 context，落地时应扩面）/ **N1c**（3 种子，5 种子证据仅覆盖 `create__override`）；**N2 仍开放且更必要** |
 | CI / Git | 本轮未查询远端（`gh` 未认证）；本地 `ruff check .` 原有 1 项 `I001` 已修复，现 All checks passed；**全量套件已跑：851 / 27 失败 / 0 错误 / 1 跳过（938s），类别 A 归零** | 27 项全为 `SystemExit: 1` 且为旧 28 项**严格子集、无新增失败**；Git 备份不清理、不 gc/prune |
 
 历史 P5.1b/f 失败和 c 系列负结果均保留。当前研究仍为 growth_admitted=false、can_promote=false；不撤销限定 K 晋级，也不继承其产品权限。
@@ -220,14 +223,15 @@ B0 逐条状态见[B0 设计包](../../reference/M5_B0_MEASUREMENT_AND_REACHABIL
 | # | 决策点 | 带数字/实测的选项 |
 |---|---|---|
 | D1 | 估计目标与参照 | `create_and_override` 下三种参照全 feasible；推荐主判据用可部署对照（0.5）、oracle 仅作诊断上界 |
-| D2 | 复合任务候选 | **`create_then_patch` 实测否决**（创建即达标，`member-c` 独做 1.0）；**`dual_requirement` 实测否决**（`member-d` 独做 1.0）；**`create_and_override` 通过任务层**（k=4/4）。清单收敛为一项，待确认 |
+| D2 | 复合任务候选 | **`create_then_patch` 实测否决**（创建即达标，`member-c` 独做 1.0）；**`dual_requirement` 实测否决**（`member-d` 独做 1.0）；**`create_and_override` 通过任务层**（k=4/4）。清单收敛为一项，待确认。**N1 补记**：枚举全部可表达结构后，联合必需族**只有** "`create` 内容路线 × 语言子句"（三条语言路由皆可）；**内容侧的第二种联合必需结构在冻结 binder 下不存在** ⇒ 要跨内容结构须先决定改 binder（N1a），不属 M4 范围 |
 | D3 | 旧 1.65 判据 | 保留为历史记录；新判据须声明参照与所需 k |
 | D4 | 旧载体定位 | 144/88 降级为开发回归；新测试面独立冻结 |
-| **D5（新增）** | **是否预注册并落地机制修法** | 已由[反事实测量](../../reference/M5_B0_M1_COUNTERFACTUAL_RESULT_20260913.md)给出**实测可行选项 `m4_failure_handoff`**（+21 行 / 2 处替换：失败即让位 + 每成员自身进度；冻结面 **0 回归 / 2 改善**；候选面 `interleaved=4/4`、增益 **+2.000 > 1.65**），经[M4 伪影审计](../../reference/M5_B0_M4_ARTIFACT_AUDIT_20260913.md) **四项全过**（特异性 / 干预真实性 / 机制 lesion / 3 种子稳健），并经[加固轮](../../reference/M5_B0_M4_HARDENING_RESULT_20260913.md)把**无需决策的三项残余风险闭合**：规模 12 context / 6 变体、种子 5 个（六变体各自 `+2.000`、冻结规则 0/6）、`all_members_blocked` 消费面 11 文件清单。备选 `m1a`（安全但完全无效）/ `m1b`（破坏基线）/ `m2`·`m2a`·`m3`（均回归且无效）。**不落地 ⇒ H2 协作主张在当前机制下不可达**。决策前须知两条界限：**N1** 六变体共享同一组合结构，结果指纹仅 1 种 ⇒ 目前只证**表面**稳健，结构稳健须由 T1/T2/T3 重跑；**N2** `all_members_blocked` 门禁语义**落地前必须先预注册**；另有风险 1（冻结优先级定义）与风险 5（成员族变化后重跑）随决策一并处理 |
+| **D5（新增）** | **是否预注册并落地机制修法** | 已由[反事实测量](../../reference/M5_B0_M1_COUNTERFACTUAL_RESULT_20260913.md)给出**实测可行选项 `m4_failure_handoff`**（+21 行 / 2 处替换：失败即让位 + 每成员自身进度；冻结面 **0 回归 / 2 改善**；候选面 `interleaved=4/4`、增益 **+2.000 > 1.65**），经[M4 伪影审计](../../reference/M5_B0_M4_ARTIFACT_AUDIT_20260913.md) **四项全过**（特异性 / 干预真实性 / 机制 lesion / 3 种子稳健），并经[加固轮](../../reference/M5_B0_M4_HARDENING_RESULT_20260913.md)把**无需决策的三项残余风险闭合**：规模 12 context / 6 变体、种子 5 个（六变体各自 `+2.000`、冻结规则 0/6）、`all_members_blocked` 消费面 11 文件清单。备选 `m1a`（安全但完全无效）/ `m1b`（破坏基线）/ `m2`·`m2a`·`m3`（均回归且无效）。**不落地 ⇒ H2 协作主张在当前机制下不可达**。决策前须知两条界限：**N1**（已闭合，带界限）——[结构空间探针](../../reference/M5_B0_STRUCTURE_SPACE_RESULT_20260913.md)枚举目标谓词可表达的全部 11 格：**收益不限于** `create + override`（`create` 行三条语言路由各 `+2.000`，并修复**两种**冻结失败形态），但三格共享同一结果指纹 ⇒ **独立结构因素仍为 1 个（存在性前提）**，且跨内容结构（T1/T3）在冻结 binder 下**不可表达**（N1a）；**N2** `all_members_blocked` 门禁语义**落地前必须先预注册**；另有风险 1（冻结优先级定义）与风险 5（成员族变化后重跑）随决策一并处理 |
 
 **D1–D5 明确前，B1 不启动训练。** 新任务候选在训练前必须跑
 [预检脚本](../../../scripts/training/audit_taiji_b0_task_reachability_precheck.py)、
 [交接探针](../../../scripts/training/probe_taiji_b0_handoff_feasibility.py)、
-[反事实测量](../../../scripts/training/probe_taiji_b0_m1_counterfactual.py) 与
-[M4 加固扫描](../../../scripts/training/audit_taiji_b0_m4_hardening.py) 并归档报告。
+[反事实测量](../../../scripts/training/probe_taiji_b0_m1_counterfactual.py)、
+[M4 加固扫描](../../../scripts/training/audit_taiji_b0_m4_hardening.py) 与
+[结构空间探针](../../../scripts/training/probe_taiji_b0_structure_space.py) 并归档报告。
 继续沿「先 C 后 AB」，但不直接加 per-block 列重跑旧 Gate；到改变任务定义、估计目标或冻结阈值的节点先审阅确认；本轮未代替用户批准任何新实验选择。
