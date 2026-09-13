@@ -251,8 +251,14 @@
 | 3 | `pytest`（B0 字典 + c′/c″/c‴ + intervention + architecture/naming 契约 + project identity，八个文件） | **95 passed** | 目标集与相邻回归均无退化 |
 | 4 | `python -m pytest tests/taiji_native/ -q --junitxml=...` 全量 | **未跑**（约 15 分钟且会 SIGTERM，须 `run_in_background`） | 归属见[技术债登记册](../active/roadmap/05_TECH_DEBT_REGISTER.md)；历史 28 项 `SystemExit` 未定性 |
 | 5 | 远端 workflow | **本轮未查询**（`gh` 未认证） | 下次提交后按 run 结果更新，不凭旧结论推断 |
+| 6 | `git push origin main` | **失败**：`fatal: could not read Username for 'https://github.com'`（本会话无可用凭据；`ls-remote` 可通，说明是认证而非网络） | 需用户提供凭据或在本机推送；`origin/main` 仍停在 `f9825943` |
 
 **不把局部通过当全仓绿**：上表 2/3 为局部（95 用例），4 未跑，5 未知。
+
+**推送状态（如实记录）**：本地 `main` 领先 `origin/main` **4 个未推送提交**——上一轮的 `4a94e9c6`（路线 A 后计划对齐）
+与本轮 `104de608`（B0 主体）、`b89ca217`（文档措辞修正）、`956c6e24`（推送状态记录）；`origin/main` 仍为 `f9825943`。
+失败原因为认证（`could not read Username for 'https://github.com'`），非网络（`ls-remote` 可通）。
+**因此 CI 不会被本次提交触发**，上表第 5 行的"下次提交后按 run 结果更新"须待推送成功后才成立。
 
 ## §11 待审阅决策点（B0 出口）
 
