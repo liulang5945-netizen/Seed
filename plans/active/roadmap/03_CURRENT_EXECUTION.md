@@ -10,6 +10,7 @@
 > [路线 B 预注册草案（未冻结）](../../reference/M5_B0_ROUTE_B_PREREGISTRATION_DRAFT_20260913.md) /
 > [M4 加固轮结果](../../reference/M5_B0_M4_HARDENING_RESULT_20260913.md) /
 > [N1 结构空间结果](../../reference/M5_B0_STRUCTURE_SPACE_RESULT_20260913.md) /
+> [B0 结果整理与推进计划修订（WP-1…WP-5）](../../reference/M5_B0_CLOSEOUT_AND_PLAN_REVISION_20260914.md) /
 > [本轮证据复审](../../reference/M5_POST_ROUTE_A_REVIEW_20260913.md)。
 
 ## 1. 总目标与当前定位
@@ -208,7 +209,7 @@ B0 逐条状态见[B0 设计包](../../reference/M5_B0_MEASUREMENT_AND_REACHABIL
 
 每阶段提交预注册、必要报告、checkpoint/manifest，更新台账与唯一下一步。历史负结果、审计、Git 修复备份保留，不 gc/prune、不批量删除未知目录。用户已有 .workbuddy 修改不纳入本次提交。
 
-## 当前唯一下一步：审阅 D1–D5 决策点（已数值化/实测化），据结论冻结路线 B 预注册
+## 当前执行顺序：WP-1 决策窗口（D1–D5 + N2 + N1a）阻塞，其余工作包按 §末表排列
 
 **B0 已完成并触发停止点**：目标可测但不可达（三种候选参照天花板 −0.5 / 0.5 / 0.0，要求 1.65 / 0.65 / 1.15）。
 [机制续篇](../../reference/M5_B0_MECHANISM_AND_TASK_PRECHECK_20260913.md)给出根因与闭式要求；
@@ -228,10 +229,25 @@ B0 逐条状态见[B0 设计包](../../reference/M5_B0_MEASUREMENT_AND_REACHABIL
 | D4 | 旧载体定位 | 144/88 降级为开发回归；新测试面独立冻结 |
 | **D5（新增）** | **是否预注册并落地机制修法** | 已由[反事实测量](../../reference/M5_B0_M1_COUNTERFACTUAL_RESULT_20260913.md)给出**实测可行选项 `m4_failure_handoff`**（+21 行 / 2 处替换：失败即让位 + 每成员自身进度；冻结面 **0 回归 / 2 改善**；候选面 `interleaved=4/4`、增益 **+2.000 > 1.65**），经[M4 伪影审计](../../reference/M5_B0_M4_ARTIFACT_AUDIT_20260913.md) **四项全过**（特异性 / 干预真实性 / 机制 lesion / 3 种子稳健），并经[加固轮](../../reference/M5_B0_M4_HARDENING_RESULT_20260913.md)把**无需决策的三项残余风险闭合**：规模 12 context / 6 变体、种子 5 个（六变体各自 `+2.000`、冻结规则 0/6）、`all_members_blocked` 消费面 11 文件清单。备选 `m1a`（安全但完全无效）/ `m1b`（破坏基线）/ `m2`·`m2a`·`m3`（均回归且无效）。**不落地 ⇒ H2 协作主张在当前机制下不可达**。决策前须知两条界限：**N1**（已闭合，带界限）——[结构空间探针](../../reference/M5_B0_STRUCTURE_SPACE_RESULT_20260913.md)枚举目标谓词可表达的全部 11 格：**收益不限于** `create + override`（`create` 行三条语言路由各 `+2.000`，并修复**两种**冻结失败形态），但三格共享同一结果指纹 ⇒ **独立结构因素仍为 1 个（存在性前提）**，且跨内容结构（T1/T3）在冻结 binder 下**不可表达**（N1a）；**N2** `all_members_blocked` 门禁语义**落地前必须先预注册**；另有风险 1（冻结优先级定义）与风险 5（成员族变化后重跑）随决策一并处理 |
 
+**修订后的执行顺序（工作包制，详见[推进计划修订](../../reference/M5_B0_CLOSEOUT_AND_PLAN_REVISION_20260914.md) §2）：**
+
+| 包 | 内容 | 前置 | 出口判据（可机检） | 机时 |
+|---|---|---|---|---|
+| **WP-1** | 决策窗口：D1–D5 + N2 + N1a 取值，据此写路线 B **冻结版**预注册 | 用户 | 冻结版落盘：参照、任务规格、新阈值推导、数据隔离、门禁分层、停止条件齐备 | — |
+| **WP-1.5** | （可选，**只读、无需决策**）N1b/N1c 扩面：每格 4–6 context、5 种子重跑 11 格 | 无 | `create` 三格每偏移为正；`unexplained`/`regress` 皆空；三次重跑字节相同 | ≈12–15 分钟（外推，先标定） |
+| **WP-2** | **N2**：`all_members_blocked` 门禁语义预注册（11 文件逐条处置 + 双向测试） | D5=落地 | 11 条处置各有断言；`contract_intercepted` 两规则计数仍相同 | 分钟级 |
+| **WP-3** | **M4 落地**：对 `_member_episode` 施加与反事实同一两处替换（+21 行），并给历史报告补"规则版本"标注 | WP-1 + WP-2 | ① 反事实探针在新 runner 上退化为恒等；② 11 格结果与反事实报告逐位相同；③ 旧面按新规则**另存**新报告（旧报告只加指针）；④ 全量失败集合对 27 项基线**无新增**；⑤ 一律 `--junitxml` 后台跑 | 938 s + 3.5 分钟（实测） |
+| **WP-4** | B1 入场：训练前必须过预检 / 交接探针 / 反事实 / 加固扫描 / 结构空间 **五件**，并过 §9.2 六门 | WP-1 出口 + WP-3 | 特征可区分、无泄漏、恢复通过；**区分度提升不得报告为协作证据** | **未知 ⇒ 先标定跑** |
+| **WP-5** | B2 离线选择→真实收益 → P5.2d 在线回写 → shadow → opt-in canary → 持久化 | 前包出口 | 见 §7、§8 | — |
+| 并行 | **T-债**：27 项 `SystemExit: 1` 先做可观测性再定位，不在主线轮内批量修；**T-CI**：远端未查询 ⇒ 禁止"CI 已绿"表述；**T-Git**：不 `gc`/`prune`、备份不删 | — | 每轮落账 | — |
+
 **D1–D5 明确前，B1 不启动训练。** 新任务候选在训练前必须跑
 [预检脚本](../../../scripts/training/audit_taiji_b0_task_reachability_precheck.py)、
 [交接探针](../../../scripts/training/probe_taiji_b0_handoff_feasibility.py)、
 [反事实测量](../../../scripts/training/probe_taiji_b0_m1_counterfactual.py)、
 [M4 加固扫描](../../../scripts/training/audit_taiji_b0_m4_hardening.py) 与
 [结构空间探针](../../../scripts/training/probe_taiji_b0_structure_space.py) 并归档报告。
-继续沿「先 C 后 AB」，但不直接加 per-block 列重跑旧 Gate；到改变任务定义、估计目标或冻结阈值的节点先审阅确认；本轮未代替用户批准任何新实验选择。
+
+**当前唯一无需决策即可推进的两个动作**：WP-1.5 扩面重跑（只读），或为 WP-2 起草"停止原因 11 文件消费表"骨架（只读）。
+两者都不改 runner、不注册任务、不启动训练。继续沿「先 C 后 AB」，但不直接加 per-block 列重跑旧 Gate；
+到改变任务定义、估计目标或冻结阈值的节点先审阅确认；本轮未代替用户批准任何新实验选择。
