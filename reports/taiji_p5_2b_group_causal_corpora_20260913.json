@@ -32,7 +32,7 @@
       "member-d"
     ],
     "member_kind": "family-specialist procedural readouts (real intervenable learner instances)",
-    "composition": "sequential fallback by opaque-id order",
+    "composition": "dual-predict-select: every active member predicts each tick; the lexicographically first member whose prediction binds executes",
     "contexts": 12,
     "repeats": 2,
     "cells": [
@@ -74,13 +74,13 @@
       "p52a-validation-100:member-a-member-b": 2,
       "p52a-validation-100:member-a-member-c": 2,
       "p52a-validation-100:member-a-member-d": 2,
-      "p52a-validation-100:member-b": 2,
-      "p52a-validation-100:member-b-member-c": 2,
+      "p52a-validation-100:member-b": 0,
+      "p52a-validation-100:member-b-member-c": 0,
       "p52a-validation-100:member-b-member-d": 2,
-      "p52a-validation-100:member-c": 2,
-      "p52a-validation-100:member-c-member-d": 2,
+      "p52a-validation-100:member-c": 0,
+      "p52a-validation-100:member-c-member-d": 0,
       "p52a-validation-100:member-d": 2,
-      "p52a-validation-100:none": 1,
+      "p52a-validation-100:none": 0,
       "p52a-validation-101:member-a": 0,
       "p52a-validation-101:member-a-member-b": 0,
       "p52a-validation-101:member-a-member-c": 0,
@@ -118,13 +118,13 @@
       "p52a-validation-104:member-a-member-b": 2,
       "p52a-validation-104:member-a-member-c": 2,
       "p52a-validation-104:member-a-member-d": 2,
-      "p52a-validation-104:member-b": 2,
-      "p52a-validation-104:member-b-member-c": 2,
+      "p52a-validation-104:member-b": 0,
+      "p52a-validation-104:member-b-member-c": 0,
       "p52a-validation-104:member-b-member-d": 2,
-      "p52a-validation-104:member-c": 2,
-      "p52a-validation-104:member-c-member-d": 2,
+      "p52a-validation-104:member-c": 0,
+      "p52a-validation-104:member-c-member-d": 0,
       "p52a-validation-104:member-d": 2,
-      "p52a-validation-104:none": 1,
+      "p52a-validation-104:none": 0,
       "p52a-validation-105:member-a": 0,
       "p52a-validation-105:member-a-member-b": 0,
       "p52a-validation-105:member-a-member-c": 0,
@@ -162,13 +162,13 @@
       "p52a-validation-108:member-a-member-b": 2,
       "p52a-validation-108:member-a-member-c": 2,
       "p52a-validation-108:member-a-member-d": 2,
-      "p52a-validation-108:member-b": 2,
-      "p52a-validation-108:member-b-member-c": 2,
+      "p52a-validation-108:member-b": 0,
+      "p52a-validation-108:member-b-member-c": 0,
       "p52a-validation-108:member-b-member-d": 2,
-      "p52a-validation-108:member-c": 2,
-      "p52a-validation-108:member-c-member-d": 2,
+      "p52a-validation-108:member-c": 0,
+      "p52a-validation-108:member-c-member-d": 0,
       "p52a-validation-108:member-d": 2,
-      "p52a-validation-108:none": 1,
+      "p52a-validation-108:none": 0,
       "p52a-validation-109:member-a": 0,
       "p52a-validation-109:member-a-member-b": 0,
       "p52a-validation-109:member-a-member-c": 0,
@@ -203,29 +203,27 @@
       "p52a-validation-111:member-d": 0,
       "p52a-validation-111:none": 0
     },
-    "matrix_constant": false
+    "matrix_constant": false,
+    "intervention_reality": {
+      "cells": 132,
+      "baseline_cells": 12,
+      "zero_step_episodes_total": 0,
+      "zero_step_intervention_cells": {},
+      "zero_step_intervention_episodes": 0,
+      "interventions_happened": true
+    },
+    "zero_step_by_cell": {}
   },
   "evaluator": {
-    "groups": 1,
-    "rejected": 5,
+    "groups": 0,
+    "rejected": 6,
     "rejected_reasons": [
       [
         "low_confidence",
-        5
+        6
       ]
     ],
-    "group_contributions": [
-      {
-        "group_id": "group:f61a4a45345e3e2f55a951e1",
-        "member_ids": [
-          "member-a",
-          "member-d"
-        ],
-        "contribution": -0.6666666666666666,
-        "interaction": 0.2222222222222222,
-        "holdout_interaction": 0.2222222222222222
-      }
-    ]
+    "group_contributions": []
   },
   "member_evidence": {
     "profiles": 4,
@@ -238,7 +236,7 @@
   },
   "deterministic_and_budget": {
     "replica_consistent": true,
-    "elapsed_seconds": 19.729,
+    "elapsed_seconds": 25.852,
     "total_seconds_cap": 900.0
   },
   "gates": {
@@ -252,6 +250,6 @@
     "nonempty_records": true,
     "deterministic_and_budget": true
   },
-  "interpretation": "completed: outcome=group_causal_corpora_supported; cells varying=True; groups=1 rejected=5",
-  "elapsed_seconds": 19.73
+  "interpretation": "completed: outcome=group_causal_corpora_supported; cells varying=True; groups=0 rejected=6",
+  "elapsed_seconds": 25.852
 }

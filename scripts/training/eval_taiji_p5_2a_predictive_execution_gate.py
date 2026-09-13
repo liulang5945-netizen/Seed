@@ -103,6 +103,11 @@ class Task:
     reference_steps: tuple[p52.ScriptedStep, ...]
     partition: str
     template: str
+    # When true, reaching the goal requires a recorded explicit language
+    # override rather than merely a resolvable language.  Needed because a
+    # goal language inferable from the file extension is already satisfied
+    # after ``programming_language.resolve`` on tick 0 (P5.2b defect).
+    requires_explicit_language_override: bool = False
 
 
 def _train_tasks() -> tuple[Task, ...]:
@@ -158,9 +163,26 @@ def _train_tasks() -> tuple[Task, ...]:
 def _validation_tasks() -> tuple[Task, ...]:
     """Train templates with persistent (non-trivial) goals; calibration-only.
 
-    Undo-style templates are excluded on purpose: their goal state equals the
-    initial state, which would make the task trivially satisfied before any
-    action.  Every validation task requires an actual state change.
+    Every validation task must require an actual state change.  The
+    ``lang_confirm`` template originally violated this: its goal state equalled
+    its initial state (``goal_files = initial_files``), and the Python language
+    selection re-established itself after ``restore_language_state(None)``
+    because it is resolvable from the path extension.  The task was therefore
+    already satisfied on tick 0: ``_member_episode`` found ``_goal_reached``
+    true immediately, ran ``steps=[]``, emitted an empty-event episode, and
+    still recorded ``success=True``.
+
+    That defect (found 2026-09-13 by the P5.2c entry audit) fabricated the
+    P5.2b member-a+member-d interaction of 0.2222 out of empty-event cells:
+    20 of 22 episodes per lang_confirm context were zero-step, 57 non-baseline
+    zero-step episodes across the matrix.  See
+    reports/M5_P5_2C_ENTRY_AUDIT_P5_2B_DEFECT_20260913.md.
+
+    The fix keeps the language-confirmation semantics but makes the goal
+    genuinely persistent: the explicit ``editor.set_language`` override is a
+    real state change that the goal now requires, so the baseline can no longer
+    finish before a member acts.  A guard below asserts the invariant for every
+    generated task.
     """
 
     tasks: list[Task] = []
@@ -170,6 +192,10 @@ def _validation_tasks() -> tuple[Task, ...]:
         if kind_index == 0:
             name = f"module_{index:03d}.py"
             content = f"def run_{index}():\n    return {index}\n"
+            # The goal requires an explicit python override, not the
+            # extension-inferred default.  initial and goal now differ both in
+            # language state and in the recorded override, so the task cannot be
+            # satisfied before an intervention executes.
             initial, goal_files = {name: content}, {name: content}
             goal_language, template = {name: "python"}, "lang_confirm"
             steps = (
@@ -177,7 +203,11 @@ def _validation_tasks() -> tuple[Task, ...]:
                 p52.ScriptedStep("workspace.programming_language.resolve", {"path": name}),
                 p52.ScriptedStep(
                     "editor.set_language",
-                    {"path": name, "programming_language_id": "python"},
+                    {
+                        "path": name,
+                        "programming_language_id": "python",
+                        "user_override": True,
+                    },
                 ),
             )
         elif kind_index == 1:
@@ -259,9 +289,37 @@ def _validation_tasks() -> tuple[Task, ...]:
                 reference_steps=steps,
                 partition="validation",
                 template=template,
+                requires_explicit_language_override=(template == "lang_confirm"),
             )
         )
+    _assert_nontrivial_goals(tasks, partition="validation")
     return tuple(tasks)
+
+
+def _assert_nontrivial_goals(tasks: list[Task], *, partition: str) -> None:
+    """Every generated task must require an actual state change.
+
+    This is the structural guard against the P5.2b defect: a task whose goal is
+    satisfiable before any action produces empty-event episodes that still
+    record success, which silently fabricates interaction effects downstream.
+    Raise loudly at generation time rather than discovering it in a later
+    stage's attribution.
+    """
+
+    for task in tasks:
+        files_already_satisfied = all(
+            task.initial_files.get(path) == content for path, content in task.goal_files.items()
+        )
+        language_change_required = any(
+            task.goal_language.get(path) not in (None, "") for path in task.goal_files
+        )
+        if files_already_satisfied and not language_change_required:
+            raise AssertionError(
+                f"{partition} task {task.task_id} ({task.template}) has a goal state "
+                "equal to its initial state with no required language change; such a "
+                "task is satisfied on tick 0 and would fabricate empty-event "
+                "episodes (see reports/M5_P5_2C_ENTRY_AUDIT_P5_2B_DEFECT_20260913.md)"
+            )
 
 
 def _final_tasks() -> tuple[Task, ...]:
@@ -499,11 +557,19 @@ def _bind(
         language = task.goal_language.get(main)
         if not language:
             return {}, {}, f"bind_failure: no goal language for {main}"
-        return (
-            {"path": main, "programming_language_id": language},
-            {"path": "goal_state", "programming_language_id": "goal_state"},
-            None,
-        )
+        params = {"path": main, "programming_language_id": language}
+        provenance = {"path": "goal_state", "programming_language_id": "goal_state"}
+        # A task whose goal is an explicit override (``lang_confirm``) must bind
+        # the override flag too.  Without it ``WorkbenchEnvironment`` records the
+        # selection with ``source="taiji_selection"`` and stores no
+        # ``user_override``, so ``_goal_reached`` could never be satisfied and the
+        # cell was inert in the opposite direction (guaranteed failure).  A task
+        # that only needs a resolvable language must NOT claim an override, or it
+        # would assert more than its goal requires.
+        if task.requires_explicit_language_override:
+            params["user_override"] = True
+            provenance["user_override"] = "goal_state"
+        return params, provenance, None
     if kind == "workspace.create":
         content = task.goal_files.get(main)
         if content is None:
@@ -564,6 +630,15 @@ def _goal_reached(environment: WorkbenchEnvironment, task: Task) -> bool:
                 {},
             )
             if str(entry.get("programming_language_id", "")) != language:
+                return False
+            # A goal language that is also inferable from the file extension is
+            # satisfied by ``programming_language.resolve`` alone, i.e. before
+            # any intervention runs.  Such a goal is not persistent and produces
+            # empty-event episodes that still record success (the P5.2b defect,
+            # reports/M5_P5_2C_ENTRY_AUDIT_P5_2B_DEFECT_20260913.md).  A task
+            # that expects an explicit ``editor.set_language`` must therefore
+            # require the recorded user override, not merely the resolved value.
+            if task.requires_explicit_language_override and not entry.get("user_override"):
                 return False
     return True
 

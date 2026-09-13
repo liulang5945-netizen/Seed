@@ -4,13 +4,13 @@
 
 ## 当前阶段
 
-**K 轴已限定范围晋级，P5.1 内容收益与 P5.2 合同/预测 Gate 已通过；当前重点转向预测实际驱动执行、群体因果语料与在线学习。**
+**K 轴已限定范围晋级；P5.2a–c″ 已全部执行完毕，未见组合迁移在两轮独立设计下均为负结果；当前唯一下一步为路线 A（profile 表征修复）。**
 
 三个边界必须同时保留：K/G 附着为 opt-in、进程内状态；P5.1g 的真实语料成绩来自未准入 trial learner；P5.2 执行仍为 scripted 路径，readout 独立测准确率，interaction-group 报告实际 groups=0。结构成长尚未触发。
 
-[本轮结果复审](reference/M5_POST_P5_2_REVIEW_20260913.md)解释这些结论与源码依据。[推进方案](active/roadmap/03_CURRENT_EXECUTION.md)给出 P5.2a–d、真实语料准入、runtime 采用及后续工程的依赖、验收和停止点。
+[本轮结果复审](reference/M5_POST_P5_2_REVIEW_20260913.md)解释这些结论与源码依据。[推进方案](active/roadmap/03_CURRENT_EXECUTION.md)给出路线 A 的依赖、验收和停止点，以及 P5.2d、真实语料准入、runtime 采用及后续工程。
 
-**唯一推荐下一步：P5.2a 预测驱动执行预注册**。先明确模型输出如何成为真实 ActionIntent、参数来源、outcome 反馈和对照；新的实验阈值与默认行为切换仍需对应设计/批准记录。
+**唯一推荐下一步：路线 A —— profile 表征修复，须新预注册。** 靶点已由两轮实验共同锁定：`contribution_uniform=true`（4 个成员 contribution 全为 `0.5`，learner 无法区分成员）。路线 B（pair 关系项形式）待 A 出结果后再定。
 
 ## 最新证据入口
 
@@ -26,12 +26,20 @@
 | [P5.1f 真实语料失败](reference/M5_P5_1F_REAL_CORPUS_SAME_BUDGET_PREREGISTRATION_20260912.md) | 配额口径、准入、指标饱和与超预算问题 |
 | [P5.1g 配额对照](reference/M5_P5_1G_REAL_CORPUS_QUOTA_BUDGET_PREREGISTRATION_20260912.md) / [报告](../reports/taiji_p5_1g_real_corpus_quota_budget_20260912.json) | trial 内容收益成立；两臂 admission 仍失败 |
 | [P5.2 Workbench 合同](reference/M5_P5_2_WORKBENCH_SIMULATION_CONTRACT_PREREGISTRATION_20260912.md) / [报告](../reports/taiji_p5_2_workbench_simulation_contract_20260912.json) | 真实合同执行与动作预测分别验证；尚未闭合预测执行与群体迁移 |
+| [P5.2a 预测驱动执行](reference/M5_P5_2A_PREDICTIVE_EXECUTION_PREREGISTRATION_20260913.md) / [报告](../reports/taiji_p5_2a_predictive_execution_20260913.json) | `predictive_execution_insufficient`；八门过、门 9 迁移失败；失败全为动作选择错误 |
+| [P5.2b 群体因果语料](reference/M5_P5_2B_GROUP_CAUSAL_CORPORA_PREREGISTRATION_20260913.md) / [报告](../reports/taiji_p5_2b_group_causal_corpora_20260913.json) | `group_causal_corpora_supported`（零步缺陷已修复重跑）；1 对 admitted group，5 对如实拒绝 |
+| [P5.2c′ 未见组合迁移结果](../reports/M5_P5_2C_PRIME_UNSEEN_COMBINATION_TRANSFER_RESULT_20260913.md) | `transfer_no_gain`；九门 8 过；唯一互补对已被观测，持有对为冗余对 |
+| [P5.2c″ 未见组合迁移结果](../reports/M5_P5_2C_DOUBLE_PRIME_UNSEEN_COMBINATION_TRANSFER_RESULT_20260913.md) | `transfer_signal_constant`；九门 8 过；两对互补组合均无增益 ⇒ 障碍在表征层（路线 A） |
 
 ## 文档职责
 
 | 文档 | 职责 |
 |---|---|
 | [当前推进方案](active/roadmap/03_CURRENT_EXECUTION.md) | 唯一下一步、依赖、交付、验收、讨论节点 |
+| [技术债登记册](active/roadmap/05_TECH_DEBT_REGISTER.md) | 既有测试失败/架构边界/Git 遗留的登记与量化；**只登记不修复**，主线收尾后处置 |
+| [P5.2c′ 下一步决策](active/roadmap/06_P5_2C_PRIME_NEXT_STEP_DECISION.md) | `transfer_no_gain` 后的归因路线选择（A 表征 / B 关系项 / C 设计）；**用户已决策「先 C 后 AB」**，路线 C 已完成，现指向路线 A |
+| [P5.2c″ 预注册](reference/M5_P5_2C_DOUBLE_PRIME_UNSEEN_COMBINATION_TRANSFER_PREREGISTRATION_20260913.md) | 路线 C 的冻结判据：两个已验证互补的未见组合、block-3 量化、**声明只修测量仪器不修表征** |
+| [P5.2c″ 结果报告](../reports/M5_P5_2C_DOUBLE_PRIME_UNSEEN_COMBINATION_TRANSFER_RESULT_20260913.md) | `transfer_signal_constant`；九门 8 过；三项目标全达成；含「先 C 后 A」排期验证 |
 | [本轮结果复审](reference/M5_POST_P5_2_REVIEW_20260913.md) | 证据核验、边界修正、方案选择依据 |
 | [核心需求](active/TAIJI_CORE_REQUIREMENTS.md) | 认知所有权、协作、行动、记忆、持续学习与成长的长期目标 |
 | [原生架构](active/TAIJI_NATIVE_ARCHITECTURE_V1.md) / [继承式成长](active/architecture/TAIJI_CONTINUAL_DEVELOPMENT_V2.md) | 状态、学习与成长机制约束 |

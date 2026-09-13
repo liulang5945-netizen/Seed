@@ -24,7 +24,22 @@ from .interaction_group_learning import InteractionGroupSelection
 from .interaction_groups import InteractionGroupRecord, InteractionTraceEpisode
 
 INTERACTION_GROUP_TRANSFER_CHECKPOINT_FORMAT = "taiji-interaction-group-transfer-v1"
-INTERACTION_GROUP_TRANSFER_MODEL_REVISION = 1
+INTERACTION_GROUP_TRANSFER_MODEL_REVISION = 2
+
+#: Number of task blocks the Workbench contract exposes.  ``block`` is derived as
+#: ``task_index % 4`` and maps exactly onto the P5.2a templates
+#: (``lang_confirm``/``patch_persist``/``create_persist``/``header_override``).
+#: The capability-surface columns are normalized by this value so they share the
+#: scale of ``contribution``; see the P5.2c''' preregistration for why the
+#: block-level prior is admissible here and why it must not be extrapolated to
+#: cohorts where that mapping does not hold.
+SURFACE_BLOCK_COUNT = 4
+
+#: Member profile versions this build can consume.  Version 1 profiles carry no
+#: capability surface; accepting them by defaulting the surface would silently
+#: reintroduce the rank-collapse defect this revision exists to fix, so they are
+#: rejected instead.
+MEMBER_EVIDENCE_VERSION = 2
 
 
 def _digest(payload: Mapping[str, Any]) -> str:
@@ -62,7 +77,17 @@ def _digest_text(value: str, name: str) -> str:
 
 @dataclass(frozen=True)
 class InteractionGroupMemberEvidence:
-    """A role-free, train-only profile for one opaque interaction member."""
+    """A role-free, train-only profile for one opaque interaction member.
+
+    ``surface`` is the capability surface: which task blocks this member
+    actually succeeds on.  It exists because the scalar statistics above are
+    pooled across every context, which averages the block structure away; with
+    all members sharing one ``contribution`` value the pair features collapse to
+    a single row (rank 1) and the learner cannot tell a complementary pair from
+    a redundant one.  An empty surface means "no strictly positive singleton
+    gain was observed on the available contexts" -- it is NOT a claim that the
+    member is useless; see the P5.2c''' preregistration section 2.3.
+    """
 
     member_id: str
     source_trace_digest: str
@@ -72,7 +97,8 @@ class InteractionGroupMemberEvidence:
     resource_cost: float
     observations: int
     context_count: int
-    version: int = 1
+    surface: tuple[int, ...] = ()
+    version: int = MEMBER_EVIDENCE_VERSION
 
     def __post_init__(self) -> None:
         _text(self.member_id, "interaction member_id")
@@ -86,8 +112,21 @@ class InteractionGroupMemberEvidence:
             raise ValueError("interaction member observations must be positive")
         if int(self.context_count) <= 0:
             raise ValueError("interaction member context_count must be positive")
-        if int(self.version) != 1:
-            raise ValueError(f"unsupported interaction member evidence version: {self.version}")
+        normalized = tuple(int(block) for block in self.surface)
+        if normalized != tuple(sorted(set(normalized))):
+            raise ValueError("interaction member surface must be sorted and unique")
+        if any(block < 0 or block >= SURFACE_BLOCK_COUNT for block in normalized):
+            raise ValueError("interaction member surface blocks are out of range")
+        if int(self.version) != MEMBER_EVIDENCE_VERSION:
+            raise ValueError(
+                f"unsupported interaction member evidence version: {self.version}; "
+                f"this build requires {MEMBER_EVIDENCE_VERSION} (capability surface). "
+                "Version 1 profiles have no surface and cannot be defaulted safely."
+            )
+
+    @property
+    def surface_set(self) -> frozenset[int]:
+        return frozenset(self.surface)
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -101,6 +140,7 @@ class InteractionGroupMemberEvidence:
             "resource_cost": self.resource_cost,
             "observations": self.observations,
             "context_count": self.context_count,
+            "surface": list(self.surface),
         }
 
     @classmethod
@@ -110,7 +150,7 @@ class InteractionGroupMemberEvidence:
         ):
             raise ValueError("unsupported interaction member evidence format")
         return cls(
-            version=int(payload.get("version", 1)),
+            version=int(payload.get("version", MEMBER_EVIDENCE_VERSION)),
             member_id=str(payload["member_id"]),
             source_trace_digest=str(payload["source_trace_digest"]),
             checkpoint_revision=int(payload["checkpoint_revision"]),
@@ -119,6 +159,7 @@ class InteractionGroupMemberEvidence:
             resource_cost=float(payload.get("resource_cost", 0.0)),
             observations=int(payload["observations"]),
             context_count=int(payload["context_count"]),
+            surface=tuple(int(block) for block in payload.get("surface", ())),
         )
 
 
@@ -173,6 +214,29 @@ class InteractionGroupTransferCandidate:
         }
 
 
+def _block_of(context_id: str) -> int | None:
+    """Recover the task block from a context id, or ``None`` when unavailable.
+
+    The Workbench contract names contexts as ``<prefix>-<index>``, and the block
+    is ``index % SURFACE_BLOCK_COUNT``.  This is the same convention the P5.2c
+    gates use to map blocks onto templates, so the surface columns and the
+    measured capability surfaces agree by construction rather than by luck.
+
+    Returns ``None`` for contexts that carry no numeric index (older
+    P5.2-era gates name them ``train-workbench-<family>`` by string).  The
+    caller then records no surface hit for that context, which is the honest
+    outcome: the block mapping is simply not available there.  Returning a
+    guessed block, or raising, would respectively fabricate structure or break
+    unrelated callers.
+    """
+
+    try:
+        index = int(str(context_id).rsplit("-", 1)[1])
+    except (IndexError, ValueError):
+        return None
+    return index % SURFACE_BLOCK_COUNT
+
+
 def build_member_evidence(
     episodes: Sequence[InteractionTraceEpisode],
     *,
@@ -185,6 +249,12 @@ def build_member_evidence(
     contains both an inactive baseline and a singleton episode.  This makes a
     genuinely unknown member fail closed instead of receiving an arbitrary
     default vector.  No owner name is interpreted as a semantic role.
+
+    ``surface`` is computed per block: a block enters the surface when the
+    member's singleton outcome is *strictly* greater than the inactive baseline
+    on at least one context of that block.  A block on which the member never
+    beats the baseline is left out, so the surface records demonstrated
+    capability rather than mere participation.
     """
 
     _digest_text(source_trace_digest, "interaction member source_trace_digest")
@@ -199,6 +269,7 @@ def build_member_evidence(
         contexts[episode.context_id][frozenset(episode.member_ids)].append(episode)
 
     observations: dict[str, list[tuple[float, float, float, str]]] = defaultdict(list)
+    surface_hits: dict[str, set[int]] = defaultdict(set)
     all_members = sorted(
         {
             member
@@ -220,14 +291,19 @@ def build_member_evidence(
                 event_cost = sum(
                     event.resource_cost for event in episode.events if event.owner_id == member
                 )
+                delta = float(episode.outcome - baseline_outcome)
                 observations[member].append(
                     (
-                        float(episode.outcome - baseline_outcome),
+                        delta,
                         float(episode.recovery_effect - baseline_recovery),
                         float(event_cost),
                         context_id,
                     )
                 )
+                if delta > 0.0:
+                    block = _block_of(context_id)
+                    if block is not None:
+                        surface_hits[member].add(block)
 
     profiles: list[InteractionGroupMemberEvidence] = []
     for member in all_members:
@@ -244,6 +320,7 @@ def build_member_evidence(
                 resource_cost=sum(item[2] for item in values) / len(values),
                 observations=len(values),
                 context_count=len({item[3] for item in values}),
+                surface=tuple(sorted(surface_hits.get(member, set()))),
             )
         )
     return tuple(profiles)
@@ -505,17 +582,75 @@ class InteractionGroupTransferLearner:
             raise ValueError("interaction transfer evidence crosses trace or checkpoint lineage")
 
     def _pair_features(self, members: Sequence[str]) -> tuple[float, ...]:
+        """Pair features: the original scalar block plus capability-surface terms.
+
+        The first three columns are the pre-existing relation.  On their own they
+        collapse to a single row whenever every member shares one ``contribution``
+        value -- four members all at 0.5 give every pair the row
+        ``(1.0, 0.5, 0.25)``, a rank-1 design for a 3-column model.  The surface
+        columns restore the information the pooled scalars destroyed: whether two
+        members cover the same blocks (redundant) or different ones
+        (complementary).
+
+        The three surface terms are algebraically dependent
+        (``|union| == |overlap| + |symmetric difference|``), so individual
+        coefficients must not be interpreted; only the prediction is meaningful.
+        That trade-off is disclosed in the preregistration.
+        """
+
         if len(members) != 2:
             raise ValueError("interaction transfer relation currently supports pairs only")
         first = self._profiles[members[0]]
         second = self._profiles[members[1]]
         first_value = float(first.contribution)
         second_value = float(second.contribution)
+        first_surface = first.surface_set
+        second_surface = second.surface_set
+        union = len(first_surface | second_surface)
+        overlap = len(first_surface & second_surface)
+        disjoint = len(first_surface ^ second_surface)
+        scale = float(SURFACE_BLOCK_COUNT)
         return (
             1.0,
             (first_value + second_value) / 2.0,
             first_value * second_value,
+            union / scale,
+            overlap / scale,
+            disjoint / scale,
         )
+
+    def feature_rank(self) -> int:
+        """Numeric rank of the design matrix, for the representation audit."""
+
+        if not self._records:
+            return 0
+        rows = [self._pair_features(record.member_ids) for record in self._records]
+        width = len(rows[0])
+        matrix = [list(row) for row in rows]
+        rank = 0
+        for column in range(width):
+            pivot = max(range(rank, len(matrix)), key=lambda r: abs(matrix[r][column]))
+            if abs(matrix[pivot][column]) < 1e-9:
+                continue
+            matrix[rank], matrix[pivot] = matrix[pivot], matrix[rank]
+            divisor = matrix[rank][column]
+            matrix[rank] = [value / divisor for value in matrix[rank]]
+            for row_index in range(len(matrix)):
+                if row_index == rank:
+                    continue
+                factor = matrix[row_index][column]
+                if factor == 0.0:
+                    continue
+                matrix[row_index] = [
+                    value - factor * pivot_value
+                    for value, pivot_value in zip(
+                        matrix[row_index], matrix[rank], strict=True
+                    )
+                ]
+            rank += 1
+            if rank == len(matrix):
+                break
+        return rank
 
     def _fit(self) -> None:
         if not self._records:
@@ -582,6 +717,8 @@ class InteractionGroupTransferLearner:
 __all__ = [
     "INTERACTION_GROUP_TRANSFER_CHECKPOINT_FORMAT",
     "INTERACTION_GROUP_TRANSFER_MODEL_REVISION",
+    "MEMBER_EVIDENCE_VERSION",
+    "SURFACE_BLOCK_COUNT",
     "InteractionGroupMemberEvidence",
     "InteractionGroupTransferCandidate",
     "InteractionGroupTransferLearner",

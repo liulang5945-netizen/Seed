@@ -1,0 +1,2286 @@
+{
+  "format": "taiji-p5-2c-prime-unseen-combination-transfer-report-v1",
+  "version": 1,
+  "status": "completed",
+  "growth_admitted": false,
+  "can_promote": false,
+  "preregistration": "plans/reference/M5_P5_2C_PRIME_UNSEEN_COMBINATION_TRANSFER_PREREGISTRATION_20260913.md",
+  "static_checks": {
+    "scope": [
+      "taiji/interaction_groups.py",
+      "taiji/interaction_group_transfer.py",
+      "taiji/interaction_group_learning.py",
+      "seed_platform/workbench.py",
+      "scripts/training/eval_taiji_p5_2a_predictive_execution_gate.py",
+      "scripts/training/eval_taiji_p5_2b_group_causal_corpora_gate.py",
+      "scripts/training/eval_taiji_p5_2c_prime_unseen_combination_transfer_gate.py",
+      "tests/taiji_native/test_intervention_reality_gate.py",
+      "tests/taiji_native/test_p5_2c_prime_unseen_combination_gate.py"
+    ],
+    "commands": [
+      "python -m py_compile <scope files>",
+      "python -m ruff check scripts/training tests/taiji_native (and full repo)",
+      "python -m mypy --follow-imports=silent seed taiji",
+      "python -m black --no-cache --check <scope files>",
+      "python -m pytest tests/taiji_native (frozen baseline; existing debts registered in plans/active/roadmap/05_TECH_DEBT_REGISTER.md, no new failures)"
+    ],
+    "executed_before_run": true
+  },
+  "outcome": "transfer_no_gain",
+  "experiment_passed": false,
+  "design": {
+    "members": [
+      "member-a",
+      "member-b",
+      "member-c",
+      "member-d"
+    ],
+    "member_kind": "family-specialist procedural readouts (same instances as P5.2b)",
+    "composition": "dual-predict-select (P5.2b frozen revision)",
+    "contexts": 12,
+    "train_contexts": 8,
+    "unseen_contexts": 4,
+    "repeats": 2,
+    "cells": [
+      "(F,F)",
+      "(T,F)",
+      "(F,T)",
+      "(T,T)"
+    ],
+    "margin": 0.15,
+    "margin_provenance": "P5.2a frozen FROZEN_MARGIN constant, same value, new metric object",
+    "held_out_pair": [
+      "member-a",
+      "member-d"
+    ],
+    "held_out_pair_opaque_index": [
+      0,
+      3
+    ],
+    "structural_change": "the designated pair's joint (T,T) cell is removed from every train context; all its other cells and all singleton evidence are retained, and holdout is untouched. See entry_audit.",
+    "candidate_pairs": [
+      [
+        "member-a",
+        "member-b"
+      ],
+      [
+        "member-a",
+        "member-c"
+      ],
+      [
+        "member-a",
+        "member-d"
+      ],
+      [
+        "member-b",
+        "member-c"
+      ],
+      [
+        "member-b",
+        "member-d"
+      ],
+      [
+        "member-c",
+        "member-d"
+      ]
+    ],
+    "observed_pairs": [
+      [
+        "member-a",
+        "member-b"
+      ],
+      [
+        "member-a",
+        "member-c"
+      ],
+      [
+        "member-b",
+        "member-c"
+      ],
+      [
+        "member-b",
+        "member-d"
+      ],
+      [
+        "member-c",
+        "member-d"
+      ]
+    ],
+    "learner_observes_train_only_records": true,
+    "recovery_effect_disclosure": "not measured this gate; recorded as 0 without fabrication",
+    "semantic_mapping_disclosure": "member id -> training family mapping stored in runner config only",
+    "sequence_generalization_claim": "none: gains are attributed to complementary family coverage only",
+    "known_cost_disclosure": "the unseen surface has cardinality 1, so control C4 coincides with the correct answer; the margin-bearing controls therefore exclude C4, and a pass claims only prediction-realization consistency plus superiority over no-learning/random/singleton/regression/lesion controls. It does NOT claim that the learner can choose among several unseen combinations."
+  },
+  "entry_audit": {
+    "conditions": [],
+    "passed": true,
+    "observed_pairs": [
+      [
+        "member-a",
+        "member-b"
+      ],
+      [
+        "member-a",
+        "member-c"
+      ],
+      [
+        "member-b",
+        "member-c"
+      ],
+      [
+        "member-b",
+        "member-d"
+      ],
+      [
+        "member-c",
+        "member-d"
+      ]
+    ],
+    "held_out_pair": [
+      "member-a",
+      "member-d"
+    ],
+    "held_out_pair_in_observed_records": false,
+    "held_out_pair_joint_cell_count_in_train": 0,
+    "held_out_pair_joint_cell_count_in_holdout": 8,
+    "held_out_pair_train_singleton_counts": {
+      "member-a": 16,
+      "member-d": 16
+    },
+    "missing_observed_pairs": [],
+    "removed_episodes": [
+      {
+        "episode_id": "p52b-episode:p52a-validation-100:r0:member-a-member-d",
+        "context_id": "p52a-validation-100",
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "outcome": 1.0
+      },
+      {
+        "episode_id": "p52b-episode:p52a-validation-101:r0:member-a-member-d",
+        "context_id": "p52a-validation-101",
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "outcome": -1.0
+      },
+      {
+        "episode_id": "p52b-episode:p52a-validation-102:r0:member-a-member-d",
+        "context_id": "p52a-validation-102",
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "outcome": -1.0
+      },
+      {
+        "episode_id": "p52b-episode:p52a-validation-103:r0:member-a-member-d",
+        "context_id": "p52a-validation-103",
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "outcome": -1.0
+      },
+      {
+        "episode_id": "p52b-episode:p52a-validation-104:r0:member-a-member-d",
+        "context_id": "p52a-validation-104",
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "outcome": 1.0
+      },
+      {
+        "episode_id": "p52b-episode:p52a-validation-105:r0:member-a-member-d",
+        "context_id": "p52a-validation-105",
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "outcome": -1.0
+      },
+      {
+        "episode_id": "p52b-episode:p52a-validation-106:r0:member-a-member-d",
+        "context_id": "p52a-validation-106",
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "outcome": -1.0
+      },
+      {
+        "episode_id": "p52b-episode:p52a-validation-107:r0:member-a-member-d",
+        "context_id": "p52a-validation-107",
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "outcome": -1.0
+      },
+      {
+        "episode_id": "p52b-episode:p52a-validation-100:r1:member-a-member-d",
+        "context_id": "p52a-validation-100",
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "outcome": 1.0
+      },
+      {
+        "episode_id": "p52b-episode:p52a-validation-101:r1:member-a-member-d",
+        "context_id": "p52a-validation-101",
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "outcome": -1.0
+      },
+      {
+        "episode_id": "p52b-episode:p52a-validation-102:r1:member-a-member-d",
+        "context_id": "p52a-validation-102",
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "outcome": -1.0
+      },
+      {
+        "episode_id": "p52b-episode:p52a-validation-103:r1:member-a-member-d",
+        "context_id": "p52a-validation-103",
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "outcome": -1.0
+      },
+      {
+        "episode_id": "p52b-episode:p52a-validation-104:r1:member-a-member-d",
+        "context_id": "p52a-validation-104",
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "outcome": 1.0
+      },
+      {
+        "episode_id": "p52b-episode:p52a-validation-105:r1:member-a-member-d",
+        "context_id": "p52a-validation-105",
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "outcome": -1.0
+      },
+      {
+        "episode_id": "p52b-episode:p52a-validation-106:r1:member-a-member-d",
+        "context_id": "p52a-validation-106",
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "outcome": -1.0
+      },
+      {
+        "episode_id": "p52b-episode:p52a-validation-107:r1:member-a-member-d",
+        "context_id": "p52a-validation-107",
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "outcome": -1.0
+      }
+    ],
+    "train_episodes": 160,
+    "holdout_episodes": 88
+  },
+  "prediction_binding": {
+    "bound_before_scoring": true,
+    "parent_checkpoint_digest": "2f0ebd6e6a95af322f4d0322aae177888efd08422504bef7d35250250e9ec22b",
+    "model_digest": "dec4ceb64a0bd2d05491d4d46f188bf28a5e2830aba428430c4086dc127167e0",
+    "source_trace_digest": "a0247cecf4f77da3f38c170b20c6116067274a6f6449aec44211a60385450052",
+    "checkpoint_revision": 1,
+    "selected_group_id": "transfer-group:cd7e41bd2c0fadce991ff528",
+    "selected_member_ids": [
+      "member-a",
+      "member-d"
+    ],
+    "selected_is_designated_unseen_pair": true,
+    "predicted_interaction": -0.15833333333333335,
+    "uncertainty": 0.5588958832141774,
+    "resource_cost": 6.0,
+    "support": 4,
+    "selection_utility": -0.15833333333333335,
+    "candidate_sets_considered": [
+      [
+        "member-c",
+        "member-d"
+      ],
+      [
+        "member-b",
+        "member-d"
+      ],
+      [
+        "member-b",
+        "member-c"
+      ],
+      [
+        "member-a",
+        "member-d"
+      ],
+      [
+        "member-a",
+        "member-c"
+      ],
+      [
+        "member-a",
+        "member-b"
+      ]
+    ],
+    "observed_pair_count": 5
+  },
+  "prediction_surface": [
+    {
+      "member_ids": [
+        "member-a",
+        "member-b"
+      ],
+      "seen_in_train_evidence": true,
+      "predicted": null
+    },
+    {
+      "member_ids": [
+        "member-a",
+        "member-c"
+      ],
+      "seen_in_train_evidence": true,
+      "predicted": null
+    },
+    {
+      "member_ids": [
+        "member-a",
+        "member-d"
+      ],
+      "seen_in_train_evidence": false,
+      "predicted": {
+        "group_id": "transfer-group:cd7e41bd2c0fadce991ff528",
+        "predicted_interaction": -0.15833333333333335,
+        "uncertainty": 0.5588958832141774,
+        "resource_cost": 6.0,
+        "support": 4
+      }
+    },
+    {
+      "member_ids": [
+        "member-b",
+        "member-c"
+      ],
+      "seen_in_train_evidence": true,
+      "predicted": null
+    },
+    {
+      "member_ids": [
+        "member-b",
+        "member-d"
+      ],
+      "seen_in_train_evidence": true,
+      "predicted": null
+    },
+    {
+      "member_ids": [
+        "member-c",
+        "member-d"
+      ],
+      "seen_in_train_evidence": true,
+      "predicted": null
+    }
+  ],
+  "object": {
+    "member_ids": [
+      "member-a",
+      "member-d"
+    ],
+    "score": {
+      "member_ids": [
+        "member-a",
+        "member-d"
+      ],
+      "per_context": [
+        {
+          "context_id": "p52a-validation-108",
+          "member_ids": [
+            "member-a",
+            "member-d"
+          ],
+          "baseline_outcome": -1.0,
+          "first_outcome": 1.0,
+          "second_outcome": 1.0,
+          "pair_outcome": 1.0,
+          "realized_interaction": -2.0,
+          "realized_pair_gain": 2.0,
+          "realized_pair_gain_vs_strongest_single": 0.0,
+          "strongest_singleton_member": "member-a",
+          "strongest_singleton_gain": 2.0
+        },
+        {
+          "context_id": "p52a-validation-109",
+          "member_ids": [
+            "member-a",
+            "member-d"
+          ],
+          "baseline_outcome": -1.0,
+          "first_outcome": -1.0,
+          "second_outcome": -1.0,
+          "pair_outcome": -1.0,
+          "realized_interaction": 0.0,
+          "realized_pair_gain": 0.0,
+          "realized_pair_gain_vs_strongest_single": 0.0,
+          "strongest_singleton_member": "member-a",
+          "strongest_singleton_gain": 0.0
+        },
+        {
+          "context_id": "p52a-validation-110",
+          "member_ids": [
+            "member-a",
+            "member-d"
+          ],
+          "baseline_outcome": -1.0,
+          "first_outcome": -1.0,
+          "second_outcome": -1.0,
+          "pair_outcome": -1.0,
+          "realized_interaction": 0.0,
+          "realized_pair_gain": 0.0,
+          "realized_pair_gain_vs_strongest_single": 0.0,
+          "strongest_singleton_member": "member-a",
+          "strongest_singleton_gain": 0.0
+        },
+        {
+          "context_id": "p52a-validation-111",
+          "member_ids": [
+            "member-a",
+            "member-d"
+          ],
+          "baseline_outcome": -1.0,
+          "first_outcome": -1.0,
+          "second_outcome": -1.0,
+          "pair_outcome": -1.0,
+          "realized_interaction": 0.0,
+          "realized_pair_gain": 0.0,
+          "realized_pair_gain_vs_strongest_single": 0.0,
+          "strongest_singleton_member": "member-a",
+          "strongest_singleton_gain": 0.0
+        }
+      ],
+      "mean_gain_vs_strongest_single": 0.0,
+      "mean_realized_interaction": -0.5,
+      "contexts_beating_strongest_single": 0,
+      "contexts_scored": 4
+    }
+  },
+  "controls": {
+    "no_learning": {
+      "member_ids": [
+        "member-c",
+        "member-d"
+      ],
+      "kind": "pair_selection",
+      "score": {
+        "member_ids": [
+          "member-c",
+          "member-d"
+        ],
+        "per_context": [
+          {
+            "context_id": "p52a-validation-108",
+            "member_ids": [
+              "member-c",
+              "member-d"
+            ],
+            "baseline_outcome": -1.0,
+            "first_outcome": -1.0,
+            "second_outcome": 1.0,
+            "pair_outcome": -1.0,
+            "realized_interaction": -2.0,
+            "realized_pair_gain": 0.0,
+            "realized_pair_gain_vs_strongest_single": -2.0,
+            "strongest_singleton_member": "member-d",
+            "strongest_singleton_gain": 2.0
+          },
+          {
+            "context_id": "p52a-validation-109",
+            "member_ids": [
+              "member-c",
+              "member-d"
+            ],
+            "baseline_outcome": -1.0,
+            "first_outcome": -1.0,
+            "second_outcome": -1.0,
+            "pair_outcome": -1.0,
+            "realized_interaction": 0.0,
+            "realized_pair_gain": 0.0,
+            "realized_pair_gain_vs_strongest_single": 0.0,
+            "strongest_singleton_member": "member-c",
+            "strongest_singleton_gain": 0.0
+          },
+          {
+            "context_id": "p52a-validation-110",
+            "member_ids": [
+              "member-c",
+              "member-d"
+            ],
+            "baseline_outcome": -1.0,
+            "first_outcome": 1.0,
+            "second_outcome": -1.0,
+            "pair_outcome": 1.0,
+            "realized_interaction": 0.0,
+            "realized_pair_gain": 2.0,
+            "realized_pair_gain_vs_strongest_single": 0.0,
+            "strongest_singleton_member": "member-c",
+            "strongest_singleton_gain": 2.0
+          },
+          {
+            "context_id": "p52a-validation-111",
+            "member_ids": [
+              "member-c",
+              "member-d"
+            ],
+            "baseline_outcome": -1.0,
+            "first_outcome": -1.0,
+            "second_outcome": -1.0,
+            "pair_outcome": -1.0,
+            "realized_interaction": 0.0,
+            "realized_pair_gain": 0.0,
+            "realized_pair_gain_vs_strongest_single": 0.0,
+            "strongest_singleton_member": "member-c",
+            "strongest_singleton_gain": 0.0
+          }
+        ],
+        "mean_gain_vs_strongest_single": -0.5,
+        "mean_realized_interaction": -0.5,
+        "contexts_beating_strongest_single": 0,
+        "contexts_scored": 4
+      }
+    },
+    "random_combination": {
+      "member_ids": [
+        "member-a",
+        "member-c"
+      ],
+      "kind": "pair_selection",
+      "score": {
+        "member_ids": [
+          "member-a",
+          "member-c"
+        ],
+        "per_context": [
+          {
+            "context_id": "p52a-validation-108",
+            "member_ids": [
+              "member-a",
+              "member-c"
+            ],
+            "baseline_outcome": -1.0,
+            "first_outcome": 1.0,
+            "second_outcome": -1.0,
+            "pair_outcome": 1.0,
+            "realized_interaction": 0.0,
+            "realized_pair_gain": 2.0,
+            "realized_pair_gain_vs_strongest_single": 0.0,
+            "strongest_singleton_member": "member-a",
+            "strongest_singleton_gain": 2.0
+          },
+          {
+            "context_id": "p52a-validation-109",
+            "member_ids": [
+              "member-a",
+              "member-c"
+            ],
+            "baseline_outcome": -1.0,
+            "first_outcome": -1.0,
+            "second_outcome": -1.0,
+            "pair_outcome": -1.0,
+            "realized_interaction": 0.0,
+            "realized_pair_gain": 0.0,
+            "realized_pair_gain_vs_strongest_single": 0.0,
+            "strongest_singleton_member": "member-a",
+            "strongest_singleton_gain": 0.0
+          },
+          {
+            "context_id": "p52a-validation-110",
+            "member_ids": [
+              "member-a",
+              "member-c"
+            ],
+            "baseline_outcome": -1.0,
+            "first_outcome": -1.0,
+            "second_outcome": 1.0,
+            "pair_outcome": -1.0,
+            "realized_interaction": -2.0,
+            "realized_pair_gain": 0.0,
+            "realized_pair_gain_vs_strongest_single": -2.0,
+            "strongest_singleton_member": "member-c",
+            "strongest_singleton_gain": 2.0
+          },
+          {
+            "context_id": "p52a-validation-111",
+            "member_ids": [
+              "member-a",
+              "member-c"
+            ],
+            "baseline_outcome": -1.0,
+            "first_outcome": -1.0,
+            "second_outcome": -1.0,
+            "pair_outcome": -1.0,
+            "realized_interaction": 0.0,
+            "realized_pair_gain": 0.0,
+            "realized_pair_gain_vs_strongest_single": 0.0,
+            "strongest_singleton_member": "member-a",
+            "strongest_singleton_gain": 0.0
+          }
+        ],
+        "mean_gain_vs_strongest_single": -0.5,
+        "mean_realized_interaction": -0.5,
+        "contexts_beating_strongest_single": 0,
+        "contexts_scored": 4
+      }
+    },
+    "fixed_combination": {
+      "member_ids": [
+        "member-a",
+        "member-d"
+      ],
+      "kind": "pair_selection",
+      "score": {
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "per_context": [
+          {
+            "context_id": "p52a-validation-108",
+            "member_ids": [
+              "member-a",
+              "member-d"
+            ],
+            "baseline_outcome": -1.0,
+            "first_outcome": 1.0,
+            "second_outcome": 1.0,
+            "pair_outcome": 1.0,
+            "realized_interaction": -2.0,
+            "realized_pair_gain": 2.0,
+            "realized_pair_gain_vs_strongest_single": 0.0,
+            "strongest_singleton_member": "member-a",
+            "strongest_singleton_gain": 2.0
+          },
+          {
+            "context_id": "p52a-validation-109",
+            "member_ids": [
+              "member-a",
+              "member-d"
+            ],
+            "baseline_outcome": -1.0,
+            "first_outcome": -1.0,
+            "second_outcome": -1.0,
+            "pair_outcome": -1.0,
+            "realized_interaction": 0.0,
+            "realized_pair_gain": 0.0,
+            "realized_pair_gain_vs_strongest_single": 0.0,
+            "strongest_singleton_member": "member-a",
+            "strongest_singleton_gain": 0.0
+          },
+          {
+            "context_id": "p52a-validation-110",
+            "member_ids": [
+              "member-a",
+              "member-d"
+            ],
+            "baseline_outcome": -1.0,
+            "first_outcome": -1.0,
+            "second_outcome": -1.0,
+            "pair_outcome": -1.0,
+            "realized_interaction": 0.0,
+            "realized_pair_gain": 0.0,
+            "realized_pair_gain_vs_strongest_single": 0.0,
+            "strongest_singleton_member": "member-a",
+            "strongest_singleton_gain": 0.0
+          },
+          {
+            "context_id": "p52a-validation-111",
+            "member_ids": [
+              "member-a",
+              "member-d"
+            ],
+            "baseline_outcome": -1.0,
+            "first_outcome": -1.0,
+            "second_outcome": -1.0,
+            "pair_outcome": -1.0,
+            "realized_interaction": 0.0,
+            "realized_pair_gain": 0.0,
+            "realized_pair_gain_vs_strongest_single": 0.0,
+            "strongest_singleton_member": "member-a",
+            "strongest_singleton_gain": 0.0
+          }
+        ],
+        "mean_gain_vs_strongest_single": 0.0,
+        "mean_realized_interaction": -0.5,
+        "contexts_beating_strongest_single": 0,
+        "contexts_scored": 4
+      }
+    },
+    "train_only_simple_regression": {
+      "member_ids": [
+        "member-b",
+        "member-c"
+      ],
+      "kind": "pair_selection",
+      "score": {
+        "member_ids": [
+          "member-b",
+          "member-c"
+        ],
+        "per_context": [
+          {
+            "context_id": "p52a-validation-108",
+            "member_ids": [
+              "member-b",
+              "member-c"
+            ],
+            "baseline_outcome": -1.0,
+            "first_outcome": -1.0,
+            "second_outcome": -1.0,
+            "pair_outcome": -1.0,
+            "realized_interaction": 0.0,
+            "realized_pair_gain": 0.0,
+            "realized_pair_gain_vs_strongest_single": 0.0,
+            "strongest_singleton_member": "member-b",
+            "strongest_singleton_gain": 0.0
+          },
+          {
+            "context_id": "p52a-validation-109",
+            "member_ids": [
+              "member-b",
+              "member-c"
+            ],
+            "baseline_outcome": -1.0,
+            "first_outcome": 1.0,
+            "second_outcome": -1.0,
+            "pair_outcome": 1.0,
+            "realized_interaction": 0.0,
+            "realized_pair_gain": 2.0,
+            "realized_pair_gain_vs_strongest_single": 0.0,
+            "strongest_singleton_member": "member-b",
+            "strongest_singleton_gain": 2.0
+          },
+          {
+            "context_id": "p52a-validation-110",
+            "member_ids": [
+              "member-b",
+              "member-c"
+            ],
+            "baseline_outcome": -1.0,
+            "first_outcome": -1.0,
+            "second_outcome": 1.0,
+            "pair_outcome": 1.0,
+            "realized_interaction": 0.0,
+            "realized_pair_gain": 2.0,
+            "realized_pair_gain_vs_strongest_single": 0.0,
+            "strongest_singleton_member": "member-c",
+            "strongest_singleton_gain": 2.0
+          },
+          {
+            "context_id": "p52a-validation-111",
+            "member_ids": [
+              "member-b",
+              "member-c"
+            ],
+            "baseline_outcome": -1.0,
+            "first_outcome": -1.0,
+            "second_outcome": -1.0,
+            "pair_outcome": -1.0,
+            "realized_interaction": 0.0,
+            "realized_pair_gain": 0.0,
+            "realized_pair_gain_vs_strongest_single": 0.0,
+            "strongest_singleton_member": "member-b",
+            "strongest_singleton_gain": 0.0
+          }
+        ],
+        "mean_gain_vs_strongest_single": 0.0,
+        "mean_realized_interaction": 0.0,
+        "contexts_beating_strongest_single": 0,
+        "contexts_scored": 4
+      }
+    },
+    "lesion_learner": {
+      "member_ids": [
+        "member-a",
+        "member-d"
+      ],
+      "kind": "pair_selection",
+      "score": {
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "per_context": [
+          {
+            "context_id": "p52a-validation-108",
+            "member_ids": [
+              "member-a",
+              "member-d"
+            ],
+            "baseline_outcome": -1.0,
+            "first_outcome": 1.0,
+            "second_outcome": 1.0,
+            "pair_outcome": 1.0,
+            "realized_interaction": -2.0,
+            "realized_pair_gain": 2.0,
+            "realized_pair_gain_vs_strongest_single": 0.0,
+            "strongest_singleton_member": "member-a",
+            "strongest_singleton_gain": 2.0
+          },
+          {
+            "context_id": "p52a-validation-109",
+            "member_ids": [
+              "member-a",
+              "member-d"
+            ],
+            "baseline_outcome": -1.0,
+            "first_outcome": -1.0,
+            "second_outcome": -1.0,
+            "pair_outcome": -1.0,
+            "realized_interaction": 0.0,
+            "realized_pair_gain": 0.0,
+            "realized_pair_gain_vs_strongest_single": 0.0,
+            "strongest_singleton_member": "member-a",
+            "strongest_singleton_gain": 0.0
+          },
+          {
+            "context_id": "p52a-validation-110",
+            "member_ids": [
+              "member-a",
+              "member-d"
+            ],
+            "baseline_outcome": -1.0,
+            "first_outcome": -1.0,
+            "second_outcome": -1.0,
+            "pair_outcome": -1.0,
+            "realized_interaction": 0.0,
+            "realized_pair_gain": 0.0,
+            "realized_pair_gain_vs_strongest_single": 0.0,
+            "strongest_singleton_member": "member-a",
+            "strongest_singleton_gain": 0.0
+          },
+          {
+            "context_id": "p52a-validation-111",
+            "member_ids": [
+              "member-a",
+              "member-d"
+            ],
+            "baseline_outcome": -1.0,
+            "first_outcome": -1.0,
+            "second_outcome": -1.0,
+            "pair_outcome": -1.0,
+            "realized_interaction": 0.0,
+            "realized_pair_gain": 0.0,
+            "realized_pair_gain_vs_strongest_single": 0.0,
+            "strongest_singleton_member": "member-a",
+            "strongest_singleton_gain": 0.0
+          }
+        ],
+        "mean_gain_vs_strongest_single": 0.0,
+        "mean_realized_interaction": -0.5,
+        "contexts_beating_strongest_single": 0,
+        "contexts_scored": 4
+      }
+    },
+    "strongest_singleton": {
+      "member_ids": [
+        "<per-context strongest singleton>"
+      ],
+      "kind": "per_context_singleton",
+      "score": {
+        "member_ids": [
+          "<per-context strongest singleton>"
+        ],
+        "per_context": [
+          {
+            "context_id": "p52a-validation-108",
+            "strongest_singleton_member": "member-a",
+            "strongest_singleton_gain": 2.0
+          },
+          {
+            "context_id": "p52a-validation-109",
+            "strongest_singleton_member": "member-b",
+            "strongest_singleton_gain": 2.0
+          },
+          {
+            "context_id": "p52a-validation-110",
+            "strongest_singleton_member": "member-c",
+            "strongest_singleton_gain": 2.0
+          },
+          {
+            "context_id": "p52a-validation-111",
+            "strongest_singleton_member": "member-a",
+            "strongest_singleton_gain": 0.0
+          }
+        ],
+        "mean_gain_vs_strongest_single": 1.5,
+        "mean_realized_interaction": null,
+        "mean_strongest_singleton_gain": 1.5,
+        "contexts_scored": 4
+      }
+    }
+  },
+  "control_summary": {
+    "strongest_control": "strongest_singleton",
+    "strongest_control_member_ids": [
+      "<per-context strongest singleton>"
+    ],
+    "strongest_control_gain": 1.5,
+    "object_gain": 0.0,
+    "margin": 0.15,
+    "required": 1.65,
+    "margin_cleared": false,
+    "collaboration_holds": false,
+    "fixed_combination_gain_excluded_from_margin": 0.0,
+    "c2_strongest_singleton_gain": 1.5,
+    "margin_bearing_controls": [
+      "lesion_learner",
+      "no_learning",
+      "random_combination",
+      "strongest_singleton",
+      "train_only_simple_regression"
+    ]
+  },
+  "calibration": {
+    "unseen_pair_count": 1,
+    "comparable_pair_count": 1,
+    "mean_absolute_error": 0.3416666666666667,
+    "median_absolute_error": 0.3416666666666667,
+    "sign_match_rate": 1.0,
+    "small_sample_caveat": "the unseen surface has cardinality 1 by construction; these pooled statistics rest on that single pair and are not an independent sample",
+    "thresholds": {
+      "minimum_sign_match_rate": 0.5,
+      "maximum_median_absolute_error": 0.35,
+      "fixed_at_freeze_time": true
+    },
+    "rows": [
+      {
+        "member_ids": [
+          "member-a",
+          "member-b"
+        ],
+        "seen_in_train_evidence": true,
+        "predicted_interaction": null,
+        "realized_interaction": -0.5,
+        "absolute_error": null,
+        "sign_matches": null
+      },
+      {
+        "member_ids": [
+          "member-a",
+          "member-c"
+        ],
+        "seen_in_train_evidence": true,
+        "predicted_interaction": null,
+        "realized_interaction": -0.5,
+        "absolute_error": null,
+        "sign_matches": null
+      },
+      {
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "seen_in_train_evidence": false,
+        "predicted_interaction": -0.15833333333333335,
+        "realized_interaction": -0.5,
+        "absolute_error": 0.3416666666666667,
+        "sign_matches": true
+      },
+      {
+        "member_ids": [
+          "member-b",
+          "member-c"
+        ],
+        "seen_in_train_evidence": true,
+        "predicted_interaction": null,
+        "realized_interaction": 0.0,
+        "absolute_error": null,
+        "sign_matches": null
+      },
+      {
+        "member_ids": [
+          "member-b",
+          "member-d"
+        ],
+        "seen_in_train_evidence": true,
+        "predicted_interaction": null,
+        "realized_interaction": 0.0,
+        "absolute_error": null,
+        "sign_matches": null
+      },
+      {
+        "member_ids": [
+          "member-c",
+          "member-d"
+        ],
+        "seen_in_train_evidence": true,
+        "predicted_interaction": null,
+        "realized_interaction": -0.5,
+        "absolute_error": null,
+        "sign_matches": null
+      }
+    ]
+  },
+  "family_coverage": {
+    "pair_context_rows": 72,
+    "positive_gain_rows": 24,
+    "nonpositive_gain_rows": 48,
+    "positive_by_block": {
+      "0": 12,
+      "1": 6,
+      "2": 6
+    },
+    "nonpositive_by_block": {
+      "0": 6,
+      "1": 12,
+      "2": 12,
+      "3": 18
+    },
+    "rows": [
+      {
+        "context_id": "p52a-validation-100",
+        "block": 0,
+        "member_ids": [
+          "member-a",
+          "member-b"
+        ],
+        "realized_pair_gain": 2.0
+      },
+      {
+        "context_id": "p52a-validation-100",
+        "block": 0,
+        "member_ids": [
+          "member-a",
+          "member-c"
+        ],
+        "realized_pair_gain": 2.0
+      },
+      {
+        "context_id": "p52a-validation-100",
+        "block": 0,
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "realized_pair_gain": 2.0
+      },
+      {
+        "context_id": "p52a-validation-100",
+        "block": 0,
+        "member_ids": [
+          "member-b",
+          "member-c"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-100",
+        "block": 0,
+        "member_ids": [
+          "member-b",
+          "member-d"
+        ],
+        "realized_pair_gain": 2.0
+      },
+      {
+        "context_id": "p52a-validation-100",
+        "block": 0,
+        "member_ids": [
+          "member-c",
+          "member-d"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-101",
+        "block": 1,
+        "member_ids": [
+          "member-a",
+          "member-b"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-101",
+        "block": 1,
+        "member_ids": [
+          "member-a",
+          "member-c"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-101",
+        "block": 1,
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-101",
+        "block": 1,
+        "member_ids": [
+          "member-b",
+          "member-c"
+        ],
+        "realized_pair_gain": 2.0
+      },
+      {
+        "context_id": "p52a-validation-101",
+        "block": 1,
+        "member_ids": [
+          "member-b",
+          "member-d"
+        ],
+        "realized_pair_gain": 2.0
+      },
+      {
+        "context_id": "p52a-validation-101",
+        "block": 1,
+        "member_ids": [
+          "member-c",
+          "member-d"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-102",
+        "block": 2,
+        "member_ids": [
+          "member-a",
+          "member-b"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-102",
+        "block": 2,
+        "member_ids": [
+          "member-a",
+          "member-c"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-102",
+        "block": 2,
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-102",
+        "block": 2,
+        "member_ids": [
+          "member-b",
+          "member-c"
+        ],
+        "realized_pair_gain": 2.0
+      },
+      {
+        "context_id": "p52a-validation-102",
+        "block": 2,
+        "member_ids": [
+          "member-b",
+          "member-d"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-102",
+        "block": 2,
+        "member_ids": [
+          "member-c",
+          "member-d"
+        ],
+        "realized_pair_gain": 2.0
+      },
+      {
+        "context_id": "p52a-validation-103",
+        "block": 3,
+        "member_ids": [
+          "member-a",
+          "member-b"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-103",
+        "block": 3,
+        "member_ids": [
+          "member-a",
+          "member-c"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-103",
+        "block": 3,
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-103",
+        "block": 3,
+        "member_ids": [
+          "member-b",
+          "member-c"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-103",
+        "block": 3,
+        "member_ids": [
+          "member-b",
+          "member-d"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-103",
+        "block": 3,
+        "member_ids": [
+          "member-c",
+          "member-d"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-104",
+        "block": 0,
+        "member_ids": [
+          "member-a",
+          "member-b"
+        ],
+        "realized_pair_gain": 2.0
+      },
+      {
+        "context_id": "p52a-validation-104",
+        "block": 0,
+        "member_ids": [
+          "member-a",
+          "member-c"
+        ],
+        "realized_pair_gain": 2.0
+      },
+      {
+        "context_id": "p52a-validation-104",
+        "block": 0,
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "realized_pair_gain": 2.0
+      },
+      {
+        "context_id": "p52a-validation-104",
+        "block": 0,
+        "member_ids": [
+          "member-b",
+          "member-c"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-104",
+        "block": 0,
+        "member_ids": [
+          "member-b",
+          "member-d"
+        ],
+        "realized_pair_gain": 2.0
+      },
+      {
+        "context_id": "p52a-validation-104",
+        "block": 0,
+        "member_ids": [
+          "member-c",
+          "member-d"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-105",
+        "block": 1,
+        "member_ids": [
+          "member-a",
+          "member-b"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-105",
+        "block": 1,
+        "member_ids": [
+          "member-a",
+          "member-c"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-105",
+        "block": 1,
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-105",
+        "block": 1,
+        "member_ids": [
+          "member-b",
+          "member-c"
+        ],
+        "realized_pair_gain": 2.0
+      },
+      {
+        "context_id": "p52a-validation-105",
+        "block": 1,
+        "member_ids": [
+          "member-b",
+          "member-d"
+        ],
+        "realized_pair_gain": 2.0
+      },
+      {
+        "context_id": "p52a-validation-105",
+        "block": 1,
+        "member_ids": [
+          "member-c",
+          "member-d"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-106",
+        "block": 2,
+        "member_ids": [
+          "member-a",
+          "member-b"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-106",
+        "block": 2,
+        "member_ids": [
+          "member-a",
+          "member-c"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-106",
+        "block": 2,
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-106",
+        "block": 2,
+        "member_ids": [
+          "member-b",
+          "member-c"
+        ],
+        "realized_pair_gain": 2.0
+      },
+      {
+        "context_id": "p52a-validation-106",
+        "block": 2,
+        "member_ids": [
+          "member-b",
+          "member-d"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-106",
+        "block": 2,
+        "member_ids": [
+          "member-c",
+          "member-d"
+        ],
+        "realized_pair_gain": 2.0
+      },
+      {
+        "context_id": "p52a-validation-107",
+        "block": 3,
+        "member_ids": [
+          "member-a",
+          "member-b"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-107",
+        "block": 3,
+        "member_ids": [
+          "member-a",
+          "member-c"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-107",
+        "block": 3,
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-107",
+        "block": 3,
+        "member_ids": [
+          "member-b",
+          "member-c"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-107",
+        "block": 3,
+        "member_ids": [
+          "member-b",
+          "member-d"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-107",
+        "block": 3,
+        "member_ids": [
+          "member-c",
+          "member-d"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-108",
+        "block": 0,
+        "member_ids": [
+          "member-a",
+          "member-b"
+        ],
+        "realized_pair_gain": 2.0
+      },
+      {
+        "context_id": "p52a-validation-108",
+        "block": 0,
+        "member_ids": [
+          "member-a",
+          "member-c"
+        ],
+        "realized_pair_gain": 2.0
+      },
+      {
+        "context_id": "p52a-validation-108",
+        "block": 0,
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "realized_pair_gain": 2.0
+      },
+      {
+        "context_id": "p52a-validation-108",
+        "block": 0,
+        "member_ids": [
+          "member-b",
+          "member-c"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-108",
+        "block": 0,
+        "member_ids": [
+          "member-b",
+          "member-d"
+        ],
+        "realized_pair_gain": 2.0
+      },
+      {
+        "context_id": "p52a-validation-108",
+        "block": 0,
+        "member_ids": [
+          "member-c",
+          "member-d"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-109",
+        "block": 1,
+        "member_ids": [
+          "member-a",
+          "member-b"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-109",
+        "block": 1,
+        "member_ids": [
+          "member-a",
+          "member-c"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-109",
+        "block": 1,
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-109",
+        "block": 1,
+        "member_ids": [
+          "member-b",
+          "member-c"
+        ],
+        "realized_pair_gain": 2.0
+      },
+      {
+        "context_id": "p52a-validation-109",
+        "block": 1,
+        "member_ids": [
+          "member-b",
+          "member-d"
+        ],
+        "realized_pair_gain": 2.0
+      },
+      {
+        "context_id": "p52a-validation-109",
+        "block": 1,
+        "member_ids": [
+          "member-c",
+          "member-d"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-110",
+        "block": 2,
+        "member_ids": [
+          "member-a",
+          "member-b"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-110",
+        "block": 2,
+        "member_ids": [
+          "member-a",
+          "member-c"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-110",
+        "block": 2,
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-110",
+        "block": 2,
+        "member_ids": [
+          "member-b",
+          "member-c"
+        ],
+        "realized_pair_gain": 2.0
+      },
+      {
+        "context_id": "p52a-validation-110",
+        "block": 2,
+        "member_ids": [
+          "member-b",
+          "member-d"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-110",
+        "block": 2,
+        "member_ids": [
+          "member-c",
+          "member-d"
+        ],
+        "realized_pair_gain": 2.0
+      },
+      {
+        "context_id": "p52a-validation-111",
+        "block": 3,
+        "member_ids": [
+          "member-a",
+          "member-b"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-111",
+        "block": 3,
+        "member_ids": [
+          "member-a",
+          "member-c"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-111",
+        "block": 3,
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-111",
+        "block": 3,
+        "member_ids": [
+          "member-b",
+          "member-c"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-111",
+        "block": 3,
+        "member_ids": [
+          "member-b",
+          "member-d"
+        ],
+        "realized_pair_gain": 0.0
+      },
+      {
+        "context_id": "p52a-validation-111",
+        "block": 3,
+        "member_ids": [
+          "member-c",
+          "member-d"
+        ],
+        "realized_pair_gain": 0.0
+      }
+    ]
+  },
+  "success_matrix": {
+    "blocks": {
+      "0": [
+        "p52a-validation-100",
+        "p52a-validation-104",
+        "p52a-validation-108"
+      ],
+      "1": [
+        "p52a-validation-101",
+        "p52a-validation-105",
+        "p52a-validation-109"
+      ],
+      "2": [
+        "p52a-validation-102",
+        "p52a-validation-106",
+        "p52a-validation-110"
+      ],
+      "3": [
+        "p52a-validation-103",
+        "p52a-validation-107",
+        "p52a-validation-111"
+      ]
+    },
+    "rows": [
+      {
+        "cell": "none",
+        "blocks": [
+          {
+            "block": 0,
+            "successes": 0,
+            "attempts": 6
+          },
+          {
+            "block": 1,
+            "successes": 0,
+            "attempts": 6
+          },
+          {
+            "block": 2,
+            "successes": 0,
+            "attempts": 6
+          },
+          {
+            "block": 3,
+            "successes": 0,
+            "attempts": 6
+          }
+        ],
+        "total_successes": 0,
+        "total_attempts": 24
+      },
+      {
+        "cell": "member-a",
+        "blocks": [
+          {
+            "block": 0,
+            "successes": 6,
+            "attempts": 6
+          },
+          {
+            "block": 1,
+            "successes": 0,
+            "attempts": 6
+          },
+          {
+            "block": 2,
+            "successes": 0,
+            "attempts": 6
+          },
+          {
+            "block": 3,
+            "successes": 0,
+            "attempts": 6
+          }
+        ],
+        "total_successes": 6,
+        "total_attempts": 24
+      },
+      {
+        "cell": "member-b",
+        "blocks": [
+          {
+            "block": 0,
+            "successes": 0,
+            "attempts": 6
+          },
+          {
+            "block": 1,
+            "successes": 6,
+            "attempts": 6
+          },
+          {
+            "block": 2,
+            "successes": 0,
+            "attempts": 6
+          },
+          {
+            "block": 3,
+            "successes": 0,
+            "attempts": 6
+          }
+        ],
+        "total_successes": 6,
+        "total_attempts": 24
+      },
+      {
+        "cell": "member-c",
+        "blocks": [
+          {
+            "block": 0,
+            "successes": 0,
+            "attempts": 6
+          },
+          {
+            "block": 1,
+            "successes": 0,
+            "attempts": 6
+          },
+          {
+            "block": 2,
+            "successes": 6,
+            "attempts": 6
+          },
+          {
+            "block": 3,
+            "successes": 0,
+            "attempts": 6
+          }
+        ],
+        "total_successes": 6,
+        "total_attempts": 24
+      },
+      {
+        "cell": "member-d",
+        "blocks": [
+          {
+            "block": 0,
+            "successes": 6,
+            "attempts": 6
+          },
+          {
+            "block": 1,
+            "successes": 0,
+            "attempts": 6
+          },
+          {
+            "block": 2,
+            "successes": 0,
+            "attempts": 6
+          },
+          {
+            "block": 3,
+            "successes": 0,
+            "attempts": 6
+          }
+        ],
+        "total_successes": 6,
+        "total_attempts": 24
+      },
+      {
+        "cell": "member-a-member-b",
+        "blocks": [
+          {
+            "block": 0,
+            "successes": 6,
+            "attempts": 6
+          },
+          {
+            "block": 1,
+            "successes": 0,
+            "attempts": 6
+          },
+          {
+            "block": 2,
+            "successes": 0,
+            "attempts": 6
+          },
+          {
+            "block": 3,
+            "successes": 0,
+            "attempts": 6
+          }
+        ],
+        "total_successes": 6,
+        "total_attempts": 24
+      },
+      {
+        "cell": "member-a-member-c",
+        "blocks": [
+          {
+            "block": 0,
+            "successes": 6,
+            "attempts": 6
+          },
+          {
+            "block": 1,
+            "successes": 0,
+            "attempts": 6
+          },
+          {
+            "block": 2,
+            "successes": 0,
+            "attempts": 6
+          },
+          {
+            "block": 3,
+            "successes": 0,
+            "attempts": 6
+          }
+        ],
+        "total_successes": 6,
+        "total_attempts": 24
+      },
+      {
+        "cell": "member-a-member-d",
+        "blocks": [
+          {
+            "block": 0,
+            "successes": 6,
+            "attempts": 6
+          },
+          {
+            "block": 1,
+            "successes": 0,
+            "attempts": 6
+          },
+          {
+            "block": 2,
+            "successes": 0,
+            "attempts": 6
+          },
+          {
+            "block": 3,
+            "successes": 0,
+            "attempts": 6
+          }
+        ],
+        "total_successes": 6,
+        "total_attempts": 24
+      },
+      {
+        "cell": "member-b-member-c",
+        "blocks": [
+          {
+            "block": 0,
+            "successes": 0,
+            "attempts": 6
+          },
+          {
+            "block": 1,
+            "successes": 6,
+            "attempts": 6
+          },
+          {
+            "block": 2,
+            "successes": 6,
+            "attempts": 6
+          },
+          {
+            "block": 3,
+            "successes": 0,
+            "attempts": 6
+          }
+        ],
+        "total_successes": 12,
+        "total_attempts": 24
+      },
+      {
+        "cell": "member-b-member-d",
+        "blocks": [
+          {
+            "block": 0,
+            "successes": 6,
+            "attempts": 6
+          },
+          {
+            "block": 1,
+            "successes": 6,
+            "attempts": 6
+          },
+          {
+            "block": 2,
+            "successes": 0,
+            "attempts": 6
+          },
+          {
+            "block": 3,
+            "successes": 0,
+            "attempts": 6
+          }
+        ],
+        "total_successes": 12,
+        "total_attempts": 24
+      },
+      {
+        "cell": "member-c-member-d",
+        "blocks": [
+          {
+            "block": 0,
+            "successes": 0,
+            "attempts": 6
+          },
+          {
+            "block": 1,
+            "successes": 0,
+            "attempts": 6
+          },
+          {
+            "block": 2,
+            "successes": 6,
+            "attempts": 6
+          },
+          {
+            "block": 3,
+            "successes": 0,
+            "attempts": 6
+          }
+        ],
+        "total_successes": 6,
+        "total_attempts": 24
+      }
+    ]
+  },
+  "matrix": {
+    "episodes": 264,
+    "train_episodes": 160,
+    "holdout_episodes": 88,
+    "cells_per_unseen_context": {
+      "p52a-validation-108": {
+        "member-a": 2,
+        "member-a-member-b": 2,
+        "member-a-member-c": 2,
+        "member-a-member-d": 2,
+        "member-b": 2,
+        "member-b-member-c": 2,
+        "member-b-member-d": 2,
+        "member-c": 2,
+        "member-c-member-d": 2,
+        "member-d": 2,
+        "none": 2
+      },
+      "p52a-validation-109": {
+        "member-a": 2,
+        "member-a-member-b": 2,
+        "member-a-member-c": 2,
+        "member-a-member-d": 2,
+        "member-b": 2,
+        "member-b-member-c": 2,
+        "member-b-member-d": 2,
+        "member-c": 2,
+        "member-c-member-d": 2,
+        "member-d": 2,
+        "none": 2
+      },
+      "p52a-validation-110": {
+        "member-a": 2,
+        "member-a-member-b": 2,
+        "member-a-member-c": 2,
+        "member-a-member-d": 2,
+        "member-b": 2,
+        "member-b-member-c": 2,
+        "member-b-member-d": 2,
+        "member-c": 2,
+        "member-c-member-d": 2,
+        "member-d": 2,
+        "none": 2
+      },
+      "p52a-validation-111": {
+        "member-a": 2,
+        "member-a-member-b": 2,
+        "member-a-member-c": 2,
+        "member-a-member-d": 2,
+        "member-b": 2,
+        "member-b-member-c": 2,
+        "member-b-member-d": 2,
+        "member-c": 2,
+        "member-c-member-d": 2,
+        "member-d": 2,
+        "none": 2
+      }
+    },
+    "all_cells_constant": false,
+    "stop_reason_classes": {
+      "all_members_exhausted": 102,
+      "contract_intercepted": 90,
+      "goal_reached": 72
+    }
+  },
+  "intervention_reality": {
+    "per_context": {
+      "p52a-validation-100": {
+        "episodes": 22,
+        "zero_step_episodes": 0,
+        "non_baseline_zero_step_episodes": 0,
+        "baseline_zero_step_episodes": 0,
+        "successes": 12
+      },
+      "p52a-validation-101": {
+        "episodes": 22,
+        "zero_step_episodes": 0,
+        "non_baseline_zero_step_episodes": 0,
+        "baseline_zero_step_episodes": 0,
+        "successes": 6
+      },
+      "p52a-validation-102": {
+        "episodes": 22,
+        "zero_step_episodes": 0,
+        "non_baseline_zero_step_episodes": 0,
+        "baseline_zero_step_episodes": 0,
+        "successes": 6
+      },
+      "p52a-validation-103": {
+        "episodes": 22,
+        "zero_step_episodes": 0,
+        "non_baseline_zero_step_episodes": 0,
+        "baseline_zero_step_episodes": 0,
+        "successes": 0
+      },
+      "p52a-validation-104": {
+        "episodes": 22,
+        "zero_step_episodes": 0,
+        "non_baseline_zero_step_episodes": 0,
+        "baseline_zero_step_episodes": 0,
+        "successes": 12
+      },
+      "p52a-validation-105": {
+        "episodes": 22,
+        "zero_step_episodes": 0,
+        "non_baseline_zero_step_episodes": 0,
+        "baseline_zero_step_episodes": 0,
+        "successes": 6
+      },
+      "p52a-validation-106": {
+        "episodes": 22,
+        "zero_step_episodes": 0,
+        "non_baseline_zero_step_episodes": 0,
+        "baseline_zero_step_episodes": 0,
+        "successes": 6
+      },
+      "p52a-validation-107": {
+        "episodes": 22,
+        "zero_step_episodes": 0,
+        "non_baseline_zero_step_episodes": 0,
+        "baseline_zero_step_episodes": 0,
+        "successes": 0
+      },
+      "p52a-validation-108": {
+        "episodes": 22,
+        "zero_step_episodes": 0,
+        "non_baseline_zero_step_episodes": 0,
+        "baseline_zero_step_episodes": 0,
+        "successes": 12
+      },
+      "p52a-validation-109": {
+        "episodes": 22,
+        "zero_step_episodes": 0,
+        "non_baseline_zero_step_episodes": 0,
+        "baseline_zero_step_episodes": 0,
+        "successes": 6
+      },
+      "p52a-validation-110": {
+        "episodes": 22,
+        "zero_step_episodes": 0,
+        "non_baseline_zero_step_episodes": 0,
+        "baseline_zero_step_episodes": 0,
+        "successes": 6
+      },
+      "p52a-validation-111": {
+        "episodes": 22,
+        "zero_step_episodes": 0,
+        "non_baseline_zero_step_episodes": 0,
+        "baseline_zero_step_episodes": 0,
+        "successes": 0
+      }
+    },
+    "non_baseline_zero_step_total": 0,
+    "offenders": [],
+    "interventions_happened": true
+  },
+  "evaluator": {
+    "train_only_records": 5,
+    "observed_pairs": [
+      [
+        "member-a",
+        "member-b"
+      ],
+      [
+        "member-a",
+        "member-c"
+      ],
+      [
+        "member-b",
+        "member-c"
+      ],
+      [
+        "member-b",
+        "member-d"
+      ],
+      [
+        "member-c",
+        "member-d"
+      ]
+    ],
+    "rejected_reasons": [
+      [
+        "insufficient_trace",
+        1
+      ],
+      [
+        "low_confidence",
+        5
+      ]
+    ]
+  },
+  "member_evidence": {
+    "profiles": 4,
+    "member_ids": [
+      "member-a",
+      "member-b",
+      "member-c",
+      "member-d"
+    ],
+    "contributions": {
+      "member-a": 0.5,
+      "member-b": 0.5,
+      "member-c": 0.5,
+      "member-d": 0.5
+    }
+  },
+  "recovery": {
+    "fresh_process": true,
+    "returncode": 0,
+    "restored_selection": {
+      "group_id": "transfer-group:cd7e41bd2c0fadce991ff528",
+      "member_ids": [
+        "member-a",
+        "member-d"
+      ],
+      "predicted_interaction": -0.15833333333333335
+    },
+    "in_process_selection": {
+      "group_id": "transfer-group:cd7e41bd2c0fadce991ff528",
+      "member_ids": [
+        "member-a",
+        "member-d"
+      ],
+      "predicted_interaction": -0.15833333333333335
+    },
+    "selection_reproduced": true
+  },
+  "rejections": {
+    "holdout_record_rejected": true,
+    "terminal_record_rejected": true,
+    "tampered_checkpoint_rejected": true,
+    "stale_lineage_rejected": true,
+    "unknown_member_fails_closed": true,
+    "observed_pairs_not_reselectable": true,
+    "designated_pair_predictable": true
+  },
+  "self_consistency": {
+    "reverse_order_selection_matches": true
+  },
+  "deterministic_and_budget": {
+    "replica_consistent": true,
+    "elapsed_seconds": 21.531,
+    "total_seconds_cap": 900.0
+  },
+  "gates": {
+    "static_checks": true,
+    "evidence_admissibility": true,
+    "unseen_combination_identity": true,
+    "unseen_context_holdout": true,
+    "label_opaqueness": true,
+    "real_execution": true,
+    "rejection_recovery": true,
+    "prediction_binding_and_calibration": true,
+    "transfer_and_budget": false
+  },
+  "interpretation": "completed: outcome=transfer_no_gain; object=member-a+member-d gain=0.0 vs strongest control strongest_singleton=1.5 (required 1.65); calibration sign_rate=1.0, median_abs_error=0.3416666666666667",
+  "elapsed_seconds": 21.558
+}
