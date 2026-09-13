@@ -71,22 +71,37 @@ python -m pytest tests/taiji_native/ -q --no-header --tb=no -p no:cacheprovider 
 # 全量约 15 分钟，建议 run_in_background
 ```
 
-| 指标 | 数值 |
-|---|---|
-| 用例总数 | 788 |
-| 失败 | **30** |
-| 错误（error） | 0 |
-| 跳过（skipped） | 1 |
-| 全量墙钟 | ~15 分钟 |
-| 采集日期 | 2026-09-13 |
-| 提交 | `aa124f52` |
+| 指标 | `aa124f52`（建册基线） | **`f9825943`+B0（2026-09-13 复采）** |
+|---|---|---|
+| 用例总数 | 788 | **851**（+63：C/A/B0 新增测试） |
+| 失败 | **30** | **27** |
+| 错误（error） | 0 | 0 |
+| 跳过（skipped） | 1 | 1 |
+| 全量墙钟 | ~15 分钟 | 938s（≈15.6 分钟） |
+| **类别 A（架构边界违反）** | **2** | **0 —— 已结项** |
+| 类别 B（`SystemExit: 1`） | 28 | **27** |
+
+**复采结论（2026-09-13，B0 本轮）**：
+
+1. **类别 A 已结项且可复现**：`test_architecture_contract` 与 `test_naming_boundary_contract`
+   在**全量上下文**下也转绿（此前只有目标集 64 passed 的局部证据）。
+2. **类别 B 是严格子集**：本轮 27 项全部落在旧 28 项之内，**无新增失败**；唯一消失的是
+   `test_natural_language_workbench::test_natural_language_workbench_gate_passes`。
+   这既符合"失败集合每次不同"的既有观测，也进一步支持"顺序/状态污染"而非逻辑缺陷的定性。
+3. 27 项仍全部是 `SystemExit: 1`，仍无可读栈 ⇒ 登记册 §4 的采集障碍**未解决**，
+   §8 处置入口条件第 2 条仍未满足。
+4. 采集命令与原始 XML 路径：`C:/Users/23747/AppData/Local/Temp/taiji_b0_full.xml`（临时文件，不入库）。
+   解析脚本模式见[B0 机制文档](../../reference/M5_B0_MECHANISM_AND_TASK_PRECHECK_20260913.md) §7。
 
 失败分为三类（**分类很重要**：类别决定了严重性和修法）：
 
 | 类别 | 数量 | 特征 | 严重性 |
 |---|---|---|---|
-| A. 架构边界违反 | 2 | 断言失败，非 `SystemExit` | **高**（真实契约违规，非环境问题） |
-| B. `SystemExit: 1` 级联 | 28 | 调用 gate `evaluate()` 前即退出 | 中（环境/状态污染，非逻辑错误） |
+| A. 架构边界违反 | **0**（建册时 2，已结项） | 断言失败，非 `SystemExit` | ~~高~~ 已闭环 |
+| B. `SystemExit: 1` 级联 | 27（建册时 28） | 调用 gate `evaluate()` 前即退出 | 中（环境/状态污染，非逻辑错误） |
+
+> 类别 A 的结项记录见 §3 两项的【已解决】标注与 [B0 机制文档](../../reference/M5_B0_MECHANISM_AND_TASK_PRECHECK_20260913.md) §7。
+> §6 的 28 项清单保留为 `aa124f52` 的历史记录，**当前计数为 27**（严格子集）。
 
 ## 3. 类别 A：架构边界违反（2 项，高）
 
@@ -192,6 +207,12 @@ def _reset_global_app_state() -> None:
 - 全量测试运行中出现沙箱批量删除守卫提示
   （`[safe-delete][SAFE_DELETE_BULK_CONFIRM_REQUIRED] {"count":85,...pytest-of-...garbage-...}`），
   为 pytest tmp 目录清理触发，**未观察到影响测试结果**，仅记录以备后续排查。
+- **新增（2026-09-13，B0 全量运行后观察）**：全量跑完后 `reports/` 下出现两个**未跟踪**的隐藏残留
+  `reports/.p2-12-edit-fixture.txt`（`Seed editor source\nexternal change\n`，37B）与
+  `reports/.p2-13-api-fixture.txt`（`Seed API source\n`，17B），mtime 落在本次运行期间。
+  **未定位到写入者**（已在 `tests/`、`seed_platform/`、`api/` 范围内检索文件名与内容，均无匹配）。
+  属测试把 fixture 写进仓库目录且未被 `.gitignore` 覆盖的卫生问题，**低严重性**。
+  **本轮未删除**（避免误删未知来源产物）；入库时未纳入提交。处置阶段需定位写入者并改为 `tmp_path`。
 
 ## 6. 类别 B 完整失败清单（28 项，基线 `aa124f52`）
 
