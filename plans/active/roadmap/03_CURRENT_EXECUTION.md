@@ -1,6 +1,7 @@
 # Seed / Taiji 当前推进方案
 
-> 更新：2026-09-13。审查基线：`102b81e1`。本文件是唯一执行顺序来源。
+> 更新：2026-09-13。审查基线：`102b81e1`；P5.2b 缺陷修复记录见 §4.1。本文件是唯一执行顺序来源。
+> 当前唯一下一步：**路线 A（profile 表征修复）**，见文末；路线 C 已执行完毕（`transfer_signal_constant`）。
 > 本轮交付为结果复审和方案重组；以下新增阶段是建议计划，尚未冻结实验判据或获得产品行为切换许可。
 > [本轮证据复审](../../reference/M5_POST_P5_2_REVIEW_20260913.md)记录事实、推断与限制；[整理前执行快照](../../archive/history/20260913_plan_reorganization/EXECUTION_BEFORE_REVIEW.md)保存原始阶段流水。
 
@@ -62,14 +63,34 @@ P5.2 报告的 `interaction_trace.evaluation_summary.groups=0`；每条 episode 
 |---|---|---|---|
 | 0 | 证据与工程基线 | 当前复审、命令级 CI 差异清单 | 确认事实边界；相关阻塞定位 |
 | 1 | P5.2a 预测驱动执行 | 冻结合同、执行接线、隔离课程报告 | 执行动作来源可追踪，真实任务收益与保持成立。**已执行 `predictive_execution_insufficient`**（[预注册](../../reference/M5_P5_2A_PREDICTIVE_EXECUTION_PREREGISTRATION_20260913.md) / [报告](../../../reports/taiji_p5_2a_predictive_execution_20260913.json)：八门过（安全违规 0、恢复/篡改拒绝过），final model `0.5` < 冻结阈值 `0.65` 且与 frequency `0.5` 持平；失败模式 = 训练分布的 patch→undo 关联在无 undo 新组合上触发 bind 失败 ×3 + 过早 create 被合同拦截 ×3，goal_reached 仅 6/12） |
-| 2 | P5.2b 群体因果语料 | baseline/singleton/group 干预矩阵 | 同 context 配对成立、非空群体记录、无标签泄漏。**已执行 `group_causal_corpora_supported`，但入场审计推翻该结论（见第 3 行）**（[预注册](../../reference/M5_P5_2B_GROUP_CAUSAL_CORPORA_PREREGISTRATION_20260913.md) / [报告](../../../reports/taiji_p5_2b_group_causal_corpora_20260913.json)：九门全过；4 个 family-specialist readout 作真实可干预成员，12 context × 11 cells × 2 重复 = 264 episodes 真实合同执行；**1 对 admitted group（member-a+member-d）interaction `0.2222` 且 holdout 同值复现**，5 对因 `low_confidence` 如实拒绝；成员 profile 4/4；组合机制修订（fallback → dual-predict-select）已在预注册披露——纯 fallback 下未调用成员无事件使 pair cell 结构性无法成形；wall 19.7s。**复核修正：九门门 3/门 6 判据只检查「是否存在」而不检查「干预是否真的发生」，故漏检 block-0 context 的零步伪成功；该 admitted group 无效**） |
-| 3 | P5.2c 未见组合迁移 | transfer learner 候选与真实执行对照 | 学习组合优于冻结对照且旧能力保持。**入场审计未通过（阻塞）**：预注册已冻结（[预注册](../../reference/M5_P5_2C_UNSEEN_COMBINATION_TRANSFER_PREREGISTRATION_20260913.md)），但接线后门 3 结构性不可满足——4 成员下 6 个 pair 被 `train_only_candidates` 全数观测，未见组合面为空。审计根因：P5.2a `lang_confirm` 模板（context 100/104/108）目标 == 初始状态，9 个干预 cell 零步执行即判成功（空事件 episode），**P5.2b 的 `member-a+member-d` admitted group（interaction `0.2222`）为伪成功**。详见[审计报告](../../../reports/M5_P5_2C_ENTRY_AUDIT_P5_2B_DEFECT_20260913.md) |
+| 2 | P5.2b 群体因果语料 | baseline/singleton/group 干预矩阵 | 同 context 配对成立、非空群体记录、无标签泄漏。**已执行 `group_causal_corpora_supported`；入场审计曾推翻该结论，缺陷已修复并按原判据重跑通过（见下）**（[预注册](../../reference/M5_P5_2B_GROUP_CAUSAL_CORPORA_PREREGISTRATION_20260913.md) / [报告](../../../reports/taiji_p5_2b_group_causal_corpora_20260913.json)：九门全过；4 个 family-specialist readout 作真实可干预成员，12 context × 11 cells × 2 重复 = 264 episodes 真实合同执行；**1 对 admitted group（member-a+member-d）interaction `0.2222` 且 holdout 同值复现**，5 对因 `low_confidence` 如实拒绝；成员 profile 4/4；组合机制修订（fallback → dual-predict-select）已在预注册披露——纯 fallback 下未调用成员无事件使 pair cell 结构性无法成形；wall 22.8s。**复核修正：九门门 3/门 6 判据只检查「是否存在」而不检查「干预是否真的发生」，故漏检 block-0 context 的零步伪成功；该 admitted group 无效**） |
+| 3 | P5.2c 未见组合迁移 | transfer learner 候选与真实执行对照 | 学习组合优于冻结对照且旧能力保持。**原 gate 门 3 结构性不可满足（阻塞）；根因已定位并实证，已另立新预注册 P5.2c′ 并执行完毕**：预注册已冻结（[P5.2c 原预注册](../../reference/M5_P5_2C_UNSEEN_COMBINATION_TRANSFER_PREREGISTRATION_20260913.md)），但 4 成员下 6 个 pair 全被 `train_only_candidates` 估计，未见组合面为空。审计根因：P5.2a `lang_confirm` 模板（context 100/104/108）目标 == 初始状态，9 个干预 cell 零步执行即判成功（空事件 episode），**P5.2b 的 `member-a+member-d` admitted group（interaction `0.2222`）为伪成功**。该零步缺陷已按 §4.1 三层修复并重跑通过；**未见组合面问题经实证根因是 `_estimate_pair` 只需任一 train context 齐备四 cell 即估计，故「增加成员数」无效（4/5/6 成员实测 unseen 均为 0），唯一可行机制是把指定 pair 的联合 cell 从 train 全分区整体移除**。详见[审计报告](../../../reports/M5_P5_2C_ENTRY_AUDIT_P5_2B_DEFECT_20260913.md)与[P5.2c′ 新预注册](../../reference/M5_P5_2C_PRIME_UNSEEN_COMBINATION_TRANSFER_PREREGISTRATION_20260913.md) |
+| 3′ | **P5.2c′ 未见组合迁移（已执行）** | 非空未见组合面上的迁移判定 | **已执行 `transfer_no_gain`**（[结果报告](../../../reports/M5_P5_2C_PRIME_UNSEEN_COMBINATION_TRANSFER_RESULT_20260913.md) / [机器报告](../../../reports/taiji_p5_2c_prime_unseen_combination_transfer_20260913.json)）：入场审计 7/7 成立（`P*` joint 在 train **0** 次、holdout **8** 次，train 160 / holdout 88，移除台账 16 条）；九门 **8 过**，仅门 9 `transfer_and_budget` 未过——`object_gain=0.0` vs `required=1.65`（最强对照 `strongest_singleton=1.5` + MARGIN 0.15），4 context 中 0 个优于最强单体；**门 8 校准通过**（符号一致率 `1.0`，绝对误差中位数 `0.3417`，但样本量 1 须标注）。根因：`P*`（`member-a+member-d`）两成员**功能冗余**（成功面均为 block-0 的 `6/6`，`108` 上 realized interaction `−2.0`），联合无超额收益；而该 cohort 中唯一有真实互补的 `member-b+member-c`（12/24 > 任一单体 6/24）**已被 train 观测**，不在未见面上。4 成员 profile contribution 全等 `0.5`，learner 无成员级区分特征。机械门全过 ⇒ 结论有效，非接线事故 |
+| 3″ | **P5.2c″ 未见组合迁移（设计修复，已执行）** | 两个已验证互补的未见组合面上的迁移判定 | **已执行 `transfer_signal_constant`**（[结果报告](../../../reports/M5_P5_2C_DOUBLE_PRIME_UNSEEN_COMBINATION_TRANSFER_RESULT_20260913.md) / [机器报告](../../../reports/taiji_p5_2c_double_prime_unseen_combination_transfer_20260913.json)）：**路线 C 三项目标全部达成**——(1) 未见组合数 **2**（P5.2c′ 为 1）；(2) 两对均**实测** `DISJOINT`（`a+c`={0}∪{2}、`b+d`={1}∪{0}），且**刻意保留冗余对 `a+d` 在观测面内**使 learner 能观察到「部分组合无超额收益」；(3) block-3 如实量化（66 次尝试 0 成功，60 次 `contract_intercepted`，区分面 `0.75`）。入场审计 `passed=true` / `conditions=[]`；train **144** / holdout **88**，移除 **32** 条（`8×2×2`），4 成员各保留 **16** 条 singleton（属「未见」非「无支持」）。九门 **8 过**，仅门 9 `transfer_and_budget` 未过：`object_gain=-0.5` vs `required=1.65`（最强对照 `strongest_singleton=1.5`），两对场景增益 `a+c=-0.5`、`b+d=0.0`，`any_held_out_pair_positive=false`，**两对均 0/4 context 优于最强单体**。门 8 校准通过且**优于前身**（2 样本、符号一致率 `1.0`、绝对误差中位数 `0.25`，P5.2c′ 为 1 样本/`0.3417`）。**结论比 P5.2c′ 更精确也更负面**：两个互补组合都拿不到增益 ⇒ 障碍不在「组合选得不好」而在更底层；`contribution_uniform=true`（4 成员 contribution 全 `0.5`）⇒ 表征缺陷仍在，归路线 A。**归因纪律：本负结果只支持「该表征下不可行」，不支持「迁移不可行」** |
 | 4 | P5.2d 在线结果回写 | 多轮 online → child → 恢复/回滚链 | 学习增益、保持、预算、幂等和中断恢复通过 |
 | 5 | P5.1h 真实语料准入 | 独立数据与 retention/准入实验 | 如需消费真实语料 child，必须先通过产品准入 |
 | 6 | runtime 行为采用评审 | shadow → opt-in canary → 持久化提案 | 实际使用的全部 artifact 准入通过，独立批准 |
 | 7 | P5.3 插件/provider；硬件与视觉 | 稳定接口上的产品完善 | 上游合同冻结，发布验收与对应依赖通过 |
 
 P5.2a–d、P5.1h 是本轮用于拆分交付的建议编号，不是已执行或已冻结的实验。相邻阶段逐门进入，不同时启动多个训练分支。若第 1 阶段需要真实语料 child，第 5 阶段应提前成为该 child 的前置；合成 P5.2 研究可先沿现有隔离资产推进。
+
+**既有技术债**（历史测试失败、架构边界违反、Git 遗留）不进入本表的执行顺序，单独登记在
+[技术债登记册](05_TECH_DEBT_REGISTER.md)。该册只登记与量化，**主线收尾后才进入处置阶段**；
+如需判断「某次全量测试失败是否由本次改动引入」，先按该册 §1 的引用图方法论证归属，不要靠重跑手感。
+
+### 4.1 P5.2b 零步缺陷的三层根因与修复记录
+
+审计发现 P5.2b 的 admitted pair 是空事件 episode 造成的伪成功。修复过程中暴露出**同一缺陷的三个独立层次**，逐层修复才恢复真实证据。记录于此，避免后续同类误判。
+
+| 层 | 缺陷 | 检出方式 | 修复 |
+|---|---|---|---|
+| L1 判据 | `cell_completeness` 只数 episode 条数，`real_execution` 只问「某处是否有过执行」，无法发现「整个 cell 零执行」 | P5.2c 入场审计 | 新增 `_intervention_reality()`：任何非 baseline cell 零步即 `interventions_happened=false`，并让门 3/门 6 消费该证据；`(F,F)` baseline 零步是 treatment 本身，豁免 |
+| L2 任务 | `lang_confirm` 目标态 == 初始态，且 python 可由扩展名解析，tick 0 即满足 | 重跑后 offending cell 仍全零 | 加 `requires_explicit_language_override` 字段，`_goal_reached` 要求已记录的 `user_override`；生成期加 `_assert_nontrivial_goals` 守卫 |
+| L3 绑定与重置 | ① `_bind` 的 `editor.set_language` 丢弃 `user_override`，任务变成**永不可达**；② `restore_language_state(None)` 是 no-op（`if not payload: return`），上一 episode 的 override 泄漏到下一 episode | 单 episode 探针：`pre=False, post=False` 且同环境内第二个 episode 即零步 | ① `_bind` 在 `requires_explicit_language_override` 时透传 `user_override=True`；② 重置改为显式空 payload |
+
+**关键教训**：仅让任务「不能太容易被满足」是不够的——必须同时验证**改造后仍可被满足**。L2 的首次修复把「伪成功」换成了「必然失败」，而改动后的矩阵在门禁上与「已修复」无法区分（零步消失的原因不同）。因此新增回归测试 `tests/taiji_native/test_intervention_reality_gate.py` 同时钉住两个方向：`pre=False`（非平凡）与 `post=True`（可满足）。
+
+修复后按**原判据**重跑（未放宽任何门）：`zero_step_episodes_total=0`、offender `0`、九门全过、`interventions_happened=true`。各模板成功面呈现真实差异：`lang_confirm`（100/104/108）由 member-a/member-d 及 a+b 达成，`patch_persist`（101/105/109）仅 member-b，`create_persist`（102/106/110）由 member-c 及 c+d，`header_override`（103/107/111）全 0——后者失败原因为 `contract_intercepted:language_evidence_ambiguous`，属合同层合理拦截，非缺陷。所有 context 的 `(F,F)` baseline 成功数为 0，确认任务确实需要成员介入。
 
 ## 5. P5.2a：让模型预测实际控制动作
 
@@ -187,7 +208,75 @@ P5.1g/P5.2 预注册引用的 `4 failed / 1199 passed / 6 skipped` 与 `mypy 61`
 
 本轮已把旧计划和入口快照归档并重定位链接。旧失败 JSON、权重与被引用实现保留；只有核实绝对路径、引用及恢复方式后才清理临时产物。不得批量删除未知目录、语料或 checkpoint。
 
-## 当前唯一下一步：修复 P5.2b 的干预真实性与未见组合面（P5.2c 已被阻塞）
+## 当前唯一下一步：路线 A —— profile 表征修复（须新预注册）
+
+**已决策**：用户选择「**先 C 后 AB**」。路线 **C（实验设计修复）已执行完毕并出结论** `transfer_signal_constant`（[结果报告](../../../reports/M5_P5_2C_DOUBLE_PRIME_UNSEEN_COMBINATION_TRANSFER_RESULT_20260913.md)）。
+
+### 路线 C 执行结果（已收尾）
+
+| 量 | P5.2c′ | **P5.2c″** |
+|---|---|---|
+| 未见组合数 | 1 | **2** |
+| 持有对性质 | `EQUAL`（唯一冗余对 `a+d`） | **`DISJOINT` × 2**（`a+c`、`b+d`） |
+| train / holdout | 176 / 88 | **144 / 88** |
+| 移除 episode | 16 | **32** |
+| 观测对 | 5 | **4**（含刻意保留的冗余对 `a+d`） |
+| 门 8 样本量 | 1 | **2** |
+| 门 8 绝对误差中位数 | `0.3417` | **`0.25`** |
+| `object_gain` | `0.0` | **`-0.5`** |
+| 最强对照 | `strongest_singleton 1.5` | `strongest_singleton 1.5` |
+| 优于最强单体的 context | 0 / 4 | **0 / 4（两对均如此）** |
+| block-3 | 未量化 | **已量化（区分面 0.75）** |
+| 九门 | 8 过 | **8 过** |
+| 结论 | `transfer_no_gain` | **`transfer_signal_constant`** |
+
+**「先 C 后 A」已被验证是正确排期**：若先做 A 再做 C，则「表征修复的收益」与「仪器修复的收益」混在同一轮，**归因不可分离**。先 C 保住了这个可分离性——路线 A 的效果可以直接对照 `transfer_signal_constant` 这个干净基线。
+
+**同时必须诚实指出**：`transfer_signal_constant` **比 `transfer_no_gain` 更负面，不是更正面**。两个互补对都拿不到增益，说明障碍比「组合选取不当」更深。这加强了路线 A 的必要性，但也意味着**路线 A 的预期不应被抬高**。
+
+### 唯一下一步：路线 A
+
+**靶点**：`member_evidence.contribution_uniform = true` —— 4 个成员 contribution 全为 `0.5`，learner 无法区分成员。这是唯一被两轮实验（P5.2c′ 与 P5.2c″）**同时**指向且**尚未触碰**的缺陷。
+
+**硬约束**：
+
+- **必须先新预注册**，不得沿用 P5.2c′/P5.2c″ 的任何判据、阈值或对照。
+- `growth_admitted=false`、`can_promote=false` 贯穿。
+- 不得反向改判据、放宽判据凑通过、覆写既有报告、重跑挑结果。
+- **保留 P5.2c″ 作为干净基线**：路线 A 必须与本轮的 `transfer_signal_constant`（同为 2 个 `DISJOINT` 持有对、同 144/88 划分）对照，否则无法归因。
+
+**路线 B（pair 关系项形式）** 在路线 A 出结果后再定 —— 因为 `contribution_uniform` 会同时污染 profile 项与 pair 关系项，A 未修则 B 的效果不可解释。
+
+**候选归因材料**：[P5.2c′ 下一步决策提示](06_P5_2C_PRIME_NEXT_STEP_DECISION.md)（三条路线 A/B/C 的完整论证；其中路线 C 已由本轮完成）。
+
+---
+
+**已决策**：P5.2b 干预真实性缺陷（L1/L2/L3 三层）已按 §4.1 修复并按原判据重跑通过；P5.2c′ 与 P5.2c″ 均已按冻结预注册执行完毕。
+
+**纪律**：命中预注册停止点 ⇒ 回模型/特征归因，**本 gate 不因归因结论被追认为通过**；不修改/不覆写 P5.2c 原预注册、入场审计报告、P5.2b 报告、P5.2c′ 报告与本轮 P5.2c″ 报告；不重跑挑结果；`growth_admitted=false`、`can_promote=false` 贯穿。
+
+---
+
+### 附：P5.2c′ 根因分析（保留为路线 A 的输入证据）
+
+**P5.2c′ 结果**：`transfer_no_gain`（[结果报告](../../../reports/M5_P5_2C_PRIME_UNSEEN_COMBINATION_TRANSFER_RESULT_20260913.md)）。九门 **8 过**，仅门 9 未过；**入场审计 7/7 成立、门 8 校准通过、机械门全过** ⇒ 结论有效。`object_gain = 0.0`，`required = 1.65`（`strongest_singleton 1.5` + MARGIN `0.15`），优于最强单体的 context **0 / 4**，wall `21.5s` / 900s。
+
+**根因（三层，互相独立地指向同一结论）**：
+
+1. **`P*` 两成员功能冗余**：`member-a` 与 `member-d` 成功面完全相同（均为 block-0 的 `6/6`，其余全 0），`P*` 联合面 `6/6` 未超出任一单体；context-108 上 `realized_interaction = −2.0`。
+2. **互补 pair 全在观测面上**：`member-b`→block-1、`member-c`→block-2 互不覆盖，`b+c` 得 `12/24`（> 任一单体 `6/24`）——但已被 train 观测。移除动作按**字典序索引** `(0,3)` 选取，未按互补性选取，故落到冗余 pair。
+   - **归因的关键更正**：互补 pair 有**两个**（`b+c`=`[0,6,6,0]`、`b+d`=`[6,6,0,0]`，均 `12/24` > 单体 `6/24`），不是「唯一一个」。二者是同一结构事实的两个实例：**`member-d` 的能力面与 `member-a` 相同**（均只覆盖 block-0），故 `a+d` 冗余、`b+c`/`b+d` 互补。因此 `transfer_no_gain` **不可**读作「该 cohort 无联合增益潜力」——失败在**表征层与设计层，不在能力层**。
+3. **profile 无区分度**：4 个成员 contribution 全为 `0.5`，learner 没有成员级特征可外推到未见组合，预测只能回落到已观测 5 对的平均交互水平附近（预测 `−0.158` vs 实测 `−0.5`，方向正确但幅度收缩）。
+
+**这第 3 条是路线 C 修不掉、且两轮实验都复现的缺陷**（P5.2c″ 实测 `contribution_uniform=true`）⇒ 归路线 A。
+
+**路线 D. block-3 不可达（未解决，已量化）**：`contract_intercepted:language_evidence_ambiguous` 使 1/4 的 context 对所有组合均为 0（P5.2c″ 实测 66 次尝试 0 成功、区分面 `0.75`）；提升功效需先解决 block-3 任务可达性（可能触及 P5.2a 任务定义）。
+
+---
+
+### 附：P5.2b 修复前的问题陈述（保留为历史归档）
+
+以下为修复前的原始问题描述，**其中的「成员数 ≥5」方案已被本轮探针证伪**（见 P5.2c′ 预注册 §2），保留以便对照。
 
 **已决策**：用户选择选项 (2) P5.2b。**P5.2b 曾报 `group_causal_corpora_supported`（提交 `0abf463f`），该结论已被入场审计推翻。**
 
@@ -203,6 +292,8 @@ P5.1g/P5.2 预注册引用的 `4 failed / 1199 passed / 6 skipped` 与 `mypy 61`
 - **P0-A 判据加固**：`real_execution` 增加**非空事件断言**（每个非 `(F,F)` cell 必须 ≥1 事件）；`cell_completeness` 增加**零步 episode 计数 = 0（除 `(F,F)` 外）**；两门均须对 `(F,F)` baseline 的失败语义做显式例外声明。
 - **P0-B 任务修正**：重定义或排除 `lang_confirm` 模板，使 validation context 全部为**非平凡持久目标**（P5.2a 已对 undo 类做过同类排除，但漏了「语言 selection 自动成立」这条路径）。
 - **P1 未见组合面**：扩充成员数（≥5，使 pair 面 > 已观测数），或在 train/holdout 划分上**留出整对 pair 不参与估计**；任一方案都需**新预注册**。
+  **（2026-09-13 更正）**「扩充成员数 ≥5」**已实证无效**：`_estimate_pair` 只需任一 train context 齐备四 cell 即估计，成员数 4/5/6 实测 unseen pair 均为 0。
+  唯一可行机制是**把指定 pair 的联合 cell 从 train 全分区整体移除**，据此另立 P5.2c′ 新预注册。
 - 修完后**重新预注册并重跑 P5.2b**，再谈 P5.2c；P5.2c 旧预注册保留冻结原貌，不追溯改写。
 
 **纪律**：不修改、不覆写 P5.2b 报告与预注册（保留为失败证据）；不重跑 P5.2b 挑结果；`growth_admitted=false`、`can_promote=false` 贯穿；临时探测脚本用毕即删。

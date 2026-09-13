@@ -9,7 +9,9 @@ For each of 12 contexts (persistent-goal scenes) and every candidate pair,
 all four factorial cells are executed through the same
 policy -> approval -> execute path used by P5.2/P5.2a: (F,F) inactive
 baseline (no cognitive member -> no actions), two singletons, and the pair
-with the frozen sequential-fallback composition.  Episodes are projected into
+under the dual-predict-select composition (every active member predicts each
+tick; the lexicographically first member whose prediction binds executes, the
+others are recorded as dissent).  Episodes are projected into
 InteractionTraceEpisode records (owner = executing member), consumed by
 InteractionGroupEvaluator, and profiled via build_member_evidence.  Member
 ids are opaque; the semantic mapping lives only in this runner's config
@@ -174,7 +176,22 @@ def _member_episode(
             stale.unlink()
         elif stale.is_dir():
             shutil.rmtree(stale)
-    environment.restore_language_state(None)
+    # ``restore_language_state(None)`` is a NO-OP, not a clear (see
+    # ``WorkbenchEnvironment.restore_language_state``: ``if not payload:
+    # return``).  Relying on it left the previous episode's language selection --
+    # including an explicit ``user_override`` -- in place.  A ``lang_confirm``
+    # task, whose goal is precisely that override, was then already satisfied on
+    # tick 0, so the episode recorded an empty-event success and the cell went
+    # inert.  Clear the selections through the supported path: restore an empty
+    # ``seed-workbench-language-state-v1`` payload.
+    environment.restore_language_state(
+        {
+            "format": "seed-workbench-language-state-v1",
+            "version": 1,
+            "registry_revision": environment.programming_language_registry.revision,
+            "selections": [],
+        }
+    )
     for name, content in task.initial_files.items():
         (environment.root / name).write_text(content, encoding="utf-8", newline="")
     state: dict[str, Any] = {"root": environment.root, "last_undo_token": None}
@@ -361,6 +378,43 @@ def _project(episodes: list[dict[str, Any]]) -> tuple[InteractionTraceEpisode, .
     return tuple(projected)
 
 
+def _intervention_reality(episodes: list[dict[str, Any]]) -> dict[str, Any]:
+    """Measure whether each non-baseline intervention cell actually executed.
+
+    A cell whose task was already satisfied before any member acted cannot
+    attribute its outcome to its members.  Such a cell is legitimate only for
+    the ``(F,F)`` baseline, where "no member was invoked" is the treatment
+    itself; every other cell must show at least one executed step.
+
+    ``interventions_happened`` is false as soon as a single non-baseline cell
+    is inert.  Failure semantics: an inert non-baseline cell FAILS
+    ``cell_completeness``.  It is not skipped, not reweighted, and not removed
+    from the denominator.
+    """
+
+    zero_step_by_cell: Counter[str] = Counter()
+    episodes_by_cell: Counter[str] = Counter()
+    for episode in episodes:
+        key = f"{episode['task_id']}:{'-'.join(episode['active_members']) or 'none'}"
+        episodes_by_cell[key] += 1
+        if not episode["steps"]:
+            zero_step_by_cell[key] += 1
+    baseline_cells = {key for key in episodes_by_cell if key.endswith(":none")}
+    zero_step_intervention_cells = {
+        key: count
+        for key, count in zero_step_by_cell.items()
+        if count and key not in baseline_cells
+    }
+    return {
+        "cells": len(episodes_by_cell),
+        "baseline_cells": len(baseline_cells),
+        "zero_step_episodes_total": sum(zero_step_by_cell.values()),
+        "zero_step_intervention_cells": dict(sorted(zero_step_intervention_cells.items())),
+        "zero_step_intervention_episodes": sum(zero_step_intervention_cells.values()),
+        "interventions_happened": not zero_step_intervention_cells,
+    }
+
+
 def run_gate() -> dict[str, Any]:
     started = time.perf_counter()
     payload: dict[str, Any] = {
@@ -461,6 +515,28 @@ def run_gate() -> dict[str, Any]:
             if step.get("safety_violation")
         )
 
+        # P0-A intervention reality (added 2026-09-13 after the P5.2c entry audit).
+        #
+        # Why this exists: the original cell_completeness and real_execution gates
+        # only checked existence -- episode counts on one side, "some action
+        # executed somewhere with valid provenance" on the other.  Neither asked
+        # whether the intervention actually happened in each cell, so a whole
+        # matrix of zero-execution episodes passed all nine gates.  That is
+        # exactly what happened in P5.2b: the lang_confirm template's goal state
+        # equals its initial state, so _member_episode satisfied the goal on tick
+        # 0, emitted an empty-event episode, and still recorded success.
+        #
+        # See _intervention_reality for the measurement and its failure
+        # semantics.  A zero-step non-baseline cell FAILS cell_completeness.
+        intervention_reality = _intervention_reality(matrix_episodes)
+        zero_step_by_cell = Counter(
+            {
+                key: count
+                for key, count in intervention_reality["zero_step_intervention_cells"].items()
+            }
+        )
+        zero_step_intervention_cells = intervention_reality["zero_step_intervention_cells"]
+
         total_wall = time.perf_counter() - started
         # groups/rejected live on the evaluation state object, not the
         # evaluation wrapper itself
@@ -479,10 +555,19 @@ def run_gate() -> dict[str, Any]:
             "cell_completeness": bool(
                 len(matrix_episodes) == CONTEXT_COUNT * REPEATS * len(CELL_MEMBER_SETS)
                 and evaluation is not None
+                # P0-A: a non-baseline cell must actually execute something.
+                and not zero_step_intervention_cells
             ),
             "pairing_identity": True,
             "label_opaqueness": True,
-            "real_execution": bool(executed_entries and provenance_ok and safety_violations == 0),
+            "real_execution": bool(
+                executed_entries
+                and provenance_ok
+                and safety_violations == 0
+                # P0-A: "some action somewhere" is not sufficient; every
+                # non-baseline cell must have shown real execution.
+                and intervention_reality["interventions_happened"]
+            ),
             "holdout_independence": bool(
                 {item.context_id for item in corpus.train}.isdisjoint(
                     {item.context_id for item in corpus.holdout}
@@ -510,7 +595,10 @@ def run_gate() -> dict[str, Any]:
                 "design": {
                     "members": list(MEMBER_IDS),
                     "member_kind": "family-specialist procedural readouts (real intervenable learner instances)",
-                    "composition": "sequential fallback by opaque-id order",
+                    "composition": (
+                        "dual-predict-select: every active member predicts each tick; "
+                        "the lexicographically first member whose prediction binds executes"
+                    ),
                     "contexts": CONTEXT_COUNT,
                     "repeats": REPEATS,
                     "cells": ["(F,F)", "(T,F)", "(F,T)", "(T,T)"],
@@ -523,6 +611,8 @@ def run_gate() -> dict[str, Any]:
                     "episodes": len(matrix_episodes),
                     "per_cell_success": dict(sorted(per_cell_success.items())),
                     "matrix_constant": matrix_constant,
+                    "intervention_reality": intervention_reality,
+                    "zero_step_by_cell": dict(sorted(zero_step_by_cell.items())),
                 },
                 "evaluator": {
                     "groups": len(groups),
@@ -590,6 +680,12 @@ def main() -> int:
                     key for key, value in (result.get("gates") or {}).items() if not value
                 ),
                 "matrix_constant": (result.get("matrix") or {}).get("matrix_constant"),
+                "interventions_happened": (
+                    (result.get("matrix") or {}).get("intervention_reality") or {}
+                ).get("interventions_happened"),
+                "zero_step_intervention_episodes": (
+                    (result.get("matrix") or {}).get("intervention_reality") or {}
+                ).get("zero_step_intervention_episodes"),
                 "groups": (result.get("evaluator") or {}).get("groups"),
                 "rejected": (result.get("evaluator") or {}).get("rejected"),
                 "elapsed_seconds": result.get("elapsed_seconds"),
