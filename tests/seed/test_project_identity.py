@@ -82,12 +82,22 @@ def test_active_plans_have_one_execution_owner_and_resolvable_links() -> None:
     roadmap = active / "roadmap"
     current = roadmap / "03_CURRENT_EXECUTION.md"
 
-    assert {path.name for path in roadmap.glob("*.md")} == {
+    # 契约：01~04 是 roadmap 骨干（必须存在）；05 起是随主线推进增生的登记类
+    # 文档（技术债登记、决策记录等）。这里不穷举 05+ 的**具体文件名**，因为
+    # 每新增一份登记文档都要改测试，会诱发「改测试而不是改事实」的坏习惯 ——
+    # 与下方 execution_owner 断言当初放宽的动机相同。
+    # 保留的约束是：骨干四件必须在位，且 01~09 编号下不得出现非 .md 杂物。
+    backbone = {
         "01_SCOPE_AND_PHASES.md",
         "02_GATES_AND_CI.md",
         "03_CURRENT_EXECUTION.md",
         "04_EXECUTION_PLAN.md",
     }
+    present = {path.name for path in roadmap.glob("*.md")}
+    assert backbone <= present, f"roadmap backbone missing: {backbone - present}"
+    assert all(
+        path.is_file() and path.suffix == ".md" for path in roadmap.glob("0*")
+    ), "roadmap shards must all be markdown files"
 
     execution_headings: list[tuple[Path, str]] = []
     for path in active.rglob("*.md"):
