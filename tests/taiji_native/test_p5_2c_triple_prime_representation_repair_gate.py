@@ -28,18 +28,12 @@ These tests pin the parts that would silently rot:
 
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 import sys
 from pathlib import Path
 
 import pytest
-
-from taiji.interaction_groups import (
-    InteractionTraceCorpus,
-    InteractionTraceEpisode,
-    InteractionTraceEvent,
-)
-import hashlib
 
 from taiji.interaction_group_transfer import (
     INTERACTION_GROUP_TRANSFER_MODEL_REVISION,
@@ -48,6 +42,11 @@ from taiji.interaction_group_transfer import (
     InteractionGroupMemberEvidence,
     InteractionGroupTransferLearner,
     build_member_evidence,
+)
+from taiji.interaction_groups import (
+    InteractionTraceCorpus,
+    InteractionTraceEpisode,
+    InteractionTraceEvent,
 )
 
 REPO = Path(__file__).resolve().parents[2]
