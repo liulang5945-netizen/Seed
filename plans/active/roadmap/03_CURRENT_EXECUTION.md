@@ -1,10 +1,13 @@
 # Seed / Taiji 当前推进方案
 
-> 更新：2026-09-13（B0 完成）；源码与结果基线：`f9825943`。本文件是唯一执行顺序来源。
+> 更新：2026-09-13（B0 + M4 加固轮）；源码与结果基线：`f9825943`。本文件是唯一执行顺序来源。
 > 用户既定顺序「先 C 后 AB」：C、A 已完成；B0 审查已完成并**触发停止点**（目标不可达），故当前不进入 B1。
-> 本轮只做审查与设计：未训练、未更改冻结判据、未批准产品采用。
+> 机制修法 `m4_failure_handoff` 已经反事实测量、伪影审计与**加固轮（规模/种子/停止原因清单）**；
+> **仍未实施**，进入 B1 训练前须先决策 D1–D5。
+> 本轮只做只读测量、文档与测试：未训练、未更改冻结判据、未批准产品采用。
 > [B0 设计包](../../reference/M5_B0_MEASUREMENT_AND_REACHABILITY_AUDIT_20260913.md) /
 > [路线 B 预注册草案（未冻结）](../../reference/M5_B0_ROUTE_B_PREREGISTRATION_DRAFT_20260913.md) /
+> [M4 加固轮结果](../../reference/M5_B0_M4_HARDENING_RESULT_20260913.md) /
 > [本轮证据复审](../../reference/M5_POST_ROUTE_A_REVIEW_20260913.md)。
 
 ## 1. 总目标与当前定位
@@ -34,6 +37,7 @@ Taiji 拥有持续状态、记忆、行动选择、异质协作与继承式成�
 | B0 交接探针 | 先复现冻结矩阵 **11/11**；**三层完全分离**：任务层找到达标形态 `create_and_override`（四单体全失败、`k=4/4`、三种参照全 feasible、上限 1.85），**机制层仍全部失败、`interleaved=0`** | 根因 = 交接触发是"绑定失败"而非"无进展"，首成员独占 episode；`create_then_patch` 与 `dual_requirement` 实测否决；提出 **M1（待 D5）** |
 | B0 反事实测量 | 先证候选面**可满足且顺序强制**；六个修法变体**五个失败一个成功**。**`m4_failure_handoff`：冻结面 0 回归 / 2 改善，候选面 `interleaved=4/4`、同参照增益 `+2.000 > 1.65`** | **H2 协作主张首次可达**；M4 **未实施**，落地需 D5 + 单独预注册；旧报告只对旧规则有效 |
 | B0 M4 伪影审计 | **四项全过**：特异性（正增益只在设计面）/ 干预真实性（无惰性 cell）/ 机制 lesion（增益随交接消失、四单体全败）/ **3 种子恒 +2.000 且冻结面无增益**；冻结面 2 个改善**逐步归因为真实交接** | M4 的**测量可信**（不等于能力已落地）；新停止原因 `all_members_blocked` 需门禁语义审查；候选面仅 4 context 需扩规模 |
+| B0 M4 加固轮 | 扩到 **12 context / 6 结构变体 / 5 种子**：六变体**各自** `+2.000`，冻结规则 **0/6 正、零交错**；三种参照 feasible（最严面需要 k=10，可用 12）；`.h`/cpp 合同预期**被脚本证据推翻并改判**，同时加 fail-closed 校验；`all_members_blocked` 消费面**清单化为 11 个文件**，并证明 `contract_intercepted` 两规则计数相同（非 M4 引入） | **界限收窄**：六变体结果指纹**只有 1 种**，它们共享同一组合结构（create+override）⇒ 本轮只证**表面稳健**，不证**结构稳健**（新登记 **N1**：T1/T2/T3）；`all_members_blocked` 门禁语义仍须预注册（**N2**）；风险 1/5 仍属 D5；两次重跑 JSON **字节相同** |
 | CI / Git | 本轮未查询远端（`gh` 未认证）；本地 `ruff check .` 原有 1 项 `I001` 已修复，现 All checks passed；**全量套件已跑：851 / 27 失败 / 0 错误 / 1 跳过（938s），类别 A 归零** | 27 项全为 `SystemExit: 1` 且为旧 28 项**严格子集、无新增失败**；Git 备份不清理、不 gc/prune |
 
 历史 P5.1b/f 失败和 c 系列负结果均保留。当前研究仍为 growth_admitted=false、can_promote=false；不撤销限定 K 晋级，也不继承其产品权限。
@@ -219,10 +223,11 @@ B0 逐条状态见[B0 设计包](../../reference/M5_B0_MEASUREMENT_AND_REACHABIL
 | D2 | 复合任务候选 | **`create_then_patch` 实测否决**（创建即达标，`member-c` 独做 1.0）；**`dual_requirement` 实测否决**（`member-d` 独做 1.0）；**`create_and_override` 通过任务层**（k=4/4）。清单收敛为一项，待确认 |
 | D3 | 旧 1.65 判据 | 保留为历史记录；新判据须声明参照与所需 k |
 | D4 | 旧载体定位 | 144/88 降级为开发回归；新测试面独立冻结 |
-| **D5（新增）** | **是否预注册并落地机制修法** | 已由[反事实测量](../../reference/M5_B0_M1_COUNTERFACTUAL_RESULT_20260913.md)给出**实测可行选项 `m4_failure_handoff`**（+21 行 / 2 处替换：失败即让位 + 每成员自身进度；冻结面 **0 回归 / 2 改善**；候选面 `interleaved=4/4`、增益 **+2.000 > 1.65**），并经[M4 伪影审计](../../reference/M5_B0_M4_ARTIFACT_AUDIT_20260913.md) **四项全过**（特异性 / 干预真实性 / 机制 lesion / 3 种子稳健）。备选 `m1a`（安全但完全无效）/ `m1b`（破坏基线）/ `m2`·`m2a`·`m3`（均回归且无效）。**不落地 ⇒ H2 协作主张在当前机制下不可达**；落地须处理审计 §6 的 5 项残余风险（优先级定义冻结、`all_members_blocked` 门禁语义、context 扩规模、种子扩到 ≥5、成员族变化重跑） |
+| **D5（新增）** | **是否预注册并落地机制修法** | 已由[反事实测量](../../reference/M5_B0_M1_COUNTERFACTUAL_RESULT_20260913.md)给出**实测可行选项 `m4_failure_handoff`**（+21 行 / 2 处替换：失败即让位 + 每成员自身进度；冻结面 **0 回归 / 2 改善**；候选面 `interleaved=4/4`、增益 **+2.000 > 1.65**），经[M4 伪影审计](../../reference/M5_B0_M4_ARTIFACT_AUDIT_20260913.md) **四项全过**（特异性 / 干预真实性 / 机制 lesion / 3 种子稳健），并经[加固轮](../../reference/M5_B0_M4_HARDENING_RESULT_20260913.md)把**无需决策的三项残余风险闭合**：规模 12 context / 6 变体、种子 5 个（六变体各自 `+2.000`、冻结规则 0/6）、`all_members_blocked` 消费面 11 文件清单。备选 `m1a`（安全但完全无效）/ `m1b`（破坏基线）/ `m2`·`m2a`·`m3`（均回归且无效）。**不落地 ⇒ H2 协作主张在当前机制下不可达**。决策前须知两条界限：**N1** 六变体共享同一组合结构，结果指纹仅 1 种 ⇒ 目前只证**表面**稳健，结构稳健须由 T1/T2/T3 重跑；**N2** `all_members_blocked` 门禁语义**落地前必须先预注册**；另有风险 1（冻结优先级定义）与风险 5（成员族变化后重跑）随决策一并处理 |
 
 **D1–D5 明确前，B1 不启动训练。** 新任务候选在训练前必须跑
 [预检脚本](../../../scripts/training/audit_taiji_b0_task_reachability_precheck.py)、
-[交接探针](../../../scripts/training/probe_taiji_b0_handoff_feasibility.py) 与
-[反事实测量](../../../scripts/training/probe_taiji_b0_m1_counterfactual.py) 并归档报告。
+[交接探针](../../../scripts/training/probe_taiji_b0_handoff_feasibility.py)、
+[反事实测量](../../../scripts/training/probe_taiji_b0_m1_counterfactual.py) 与
+[M4 加固扫描](../../../scripts/training/audit_taiji_b0_m4_hardening.py) 并归档报告。
 继续沿「先 C 后 AB」，但不直接加 per-block 列重跑旧 Gate；到改变任务定义、估计目标或冻结阈值的节点先审阅确认；本轮未代替用户批准任何新实验选择。

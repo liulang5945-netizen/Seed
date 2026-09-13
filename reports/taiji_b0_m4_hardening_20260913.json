@@ -1,0 +1,993 @@
+{
+  "format": "taiji-b0-m4-hardening-v1",
+  "version": 1,
+  "status": "draft_for_review",
+  "rule_under_audit": "m4_failure_handoff",
+  "rule_delta": {
+    "variant": "m4_failure_handoff",
+    "replacements": [
+      {
+        "anchor": "        chosen = bindable[0]",
+        "replacement_lines": [
+          "        last_success_index = max(",
+          "            (i for i, s in enumerate(steps) if s.get(\"executed\")), default=-1",
+          "        )",
+          "        blocked = {",
+          "            s.get(\"chosen\")",
+          "            for i, s in enumerate(steps)",
+          "            if s.get(\"chosen\") and not s.get(\"executed\") and i > last_success_index",
+          "        }",
+          "        chosen = next((c for c in bindable if c[\"member\"] not in blocked), None)",
+          "        if chosen is None:",
+          "            steps.append(",
+          "                {",
+          "                    \"tick\": tick,",
+          "                    \"called\": [c[\"member\"] for c in calls],",
+          "                    \"executed\": False,",
+          "                    \"stop\": \"all_members_blocked\",",
+          "                }",
+          "            )",
+          "            return finish(\"all_members_blocked\")"
+        ]
+      },
+      {
+        "anchor": "            cues = tuple([cue] * (len(steps) + 1))",
+        "replacement_lines": [
+          "            own_steps = sum(",
+          "                1 for s in steps if s.get(\"executed\") and s.get(\"chosen\") == member_id",
+          "            )",
+          "            cues = tuple([cue] * (own_steps + 1))"
+        ]
+      }
+    ],
+    "replacement_count": 2,
+    "injected_names": [],
+    "frozen_source_lines": 173,
+    "counterfactual_source_lines": 194,
+    "added_lines": 21,
+    "frozen_attribute_unchanged": true,
+    "rule_text": "chosen = bindable[0] + cues = tuple([cue] * (len(steps) + 1))"
+  },
+  "does_not_change": [
+    "M4 is NOT implemented; no gate, runner, rule or frozen artifact changes",
+    "the sweep is read-only and reuses the counterfactual builder",
+    "no result here authorises adoption"
+  ],
+  "frozen_attribute_intact": true,
+  "margin": 0.15,
+  "effective_sample_size": {
+    "contexts": 12,
+    "distinct_variants": 6,
+    "self_critique": "the earlier audited surface used four contexts differing only by an index suffix, i.e. one structural instance measured four times; this sweep replaces it with structurally distinct variants so the unit of variation is the variant, not the context",
+    "outcome_distinctness": {
+      "variants_compared": 6,
+      "distinct_outcome_fingerprints": 1,
+      "variants_indistinguishable_in_outcome": true,
+      "bounds": "surface sensitivity (extension, goal language, content shape)",
+      "does_not_bound": "all six variants share one composition structure (create + override), so this sweep cannot rule out that the gain is specific to that structure; structurally distinct demands (B0 continuation T1/T2/T3) remain open"
+    }
+  },
+  "satisfiability": [
+    {
+      "task_id": "b0harden-py_python_fn-400",
+      "variant": "py_python_fn",
+      "forward_reaches_goal": true,
+      "scripted_blocked_steps": []
+    },
+    {
+      "task_id": "b0harden-py_python_fn-401",
+      "variant": "py_python_fn",
+      "forward_reaches_goal": true,
+      "scripted_blocked_steps": []
+    },
+    {
+      "task_id": "b0harden-txt_python_plain-410",
+      "variant": "txt_python_plain",
+      "forward_reaches_goal": true,
+      "scripted_blocked_steps": []
+    },
+    {
+      "task_id": "b0harden-txt_python_plain-411",
+      "variant": "txt_python_plain",
+      "forward_reaches_goal": true,
+      "scripted_blocked_steps": []
+    },
+    {
+      "task_id": "b0harden-py_python_single_line-420",
+      "variant": "py_python_single_line",
+      "forward_reaches_goal": true,
+      "scripted_blocked_steps": []
+    },
+    {
+      "task_id": "b0harden-py_python_single_line-421",
+      "variant": "py_python_single_line",
+      "forward_reaches_goal": true,
+      "scripted_blocked_steps": []
+    },
+    {
+      "task_id": "b0harden-h_cpp_header-430",
+      "variant": "h_cpp_header",
+      "forward_reaches_goal": true,
+      "scripted_blocked_steps": []
+    },
+    {
+      "task_id": "b0harden-h_cpp_header-431",
+      "variant": "h_cpp_header",
+      "forward_reaches_goal": true,
+      "scripted_blocked_steps": []
+    },
+    {
+      "task_id": "b0harden-py_python_two_lines-440",
+      "variant": "py_python_two_lines",
+      "forward_reaches_goal": true,
+      "scripted_blocked_steps": []
+    },
+    {
+      "task_id": "b0harden-py_python_two_lines-441",
+      "variant": "py_python_two_lines",
+      "forward_reaches_goal": true,
+      "scripted_blocked_steps": []
+    },
+    {
+      "task_id": "b0harden-js_javascript_const-450",
+      "variant": "js_javascript_const",
+      "forward_reaches_goal": true,
+      "scripted_blocked_steps": []
+    },
+    {
+      "task_id": "b0harden-js_javascript_const-451",
+      "variant": "js_javascript_const",
+      "forward_reaches_goal": true,
+      "scripted_blocked_steps": []
+    }
+  ],
+  "contract_expectation_audit": {
+    "rows": [
+      {
+        "variant": "py_python_fn",
+        "expect_contract_ok": true,
+        "observed_scripted_admissible": true,
+        "matches": true
+      },
+      {
+        "variant": "txt_python_plain",
+        "expect_contract_ok": true,
+        "observed_scripted_admissible": true,
+        "matches": true
+      },
+      {
+        "variant": "py_python_single_line",
+        "expect_contract_ok": true,
+        "observed_scripted_admissible": true,
+        "matches": true
+      },
+      {
+        "variant": "h_cpp_header",
+        "expect_contract_ok": true,
+        "observed_scripted_admissible": true,
+        "matches": true
+      },
+      {
+        "variant": "py_python_two_lines",
+        "expect_contract_ok": true,
+        "observed_scripted_admissible": true,
+        "matches": true
+      },
+      {
+        "variant": "js_javascript_const",
+        "expect_contract_ok": true,
+        "observed_scripted_admissible": true,
+        "matches": true
+      }
+    ],
+    "all_match": true,
+    "contradicted": []
+  },
+  "variants": {
+    "py_python_fn": {
+      "extension": ".py",
+      "language": "python",
+      "expect_contract_ok": true
+    },
+    "txt_python_plain": {
+      "extension": ".txt",
+      "language": "python",
+      "expect_contract_ok": true
+    },
+    "py_python_single_line": {
+      "extension": ".py",
+      "language": "python",
+      "expect_contract_ok": true
+    },
+    "h_cpp_header": {
+      "extension": ".h",
+      "language": "cpp",
+      "expect_contract_ok": true
+    },
+    "py_python_two_lines": {
+      "extension": ".py",
+      "language": "python",
+      "expect_contract_ok": true
+    },
+    "js_javascript_const": {
+      "extension": ".js",
+      "language": "javascript",
+      "expect_contract_ok": true
+    }
+  },
+  "baseline_rule": {
+    "contexts": [
+      "b0harden-py_python_fn-400",
+      "b0harden-py_python_fn-401",
+      "b0harden-txt_python_plain-410",
+      "b0harden-txt_python_plain-411",
+      "b0harden-py_python_single_line-420",
+      "b0harden-py_python_single_line-421",
+      "b0harden-h_cpp_header-430",
+      "b0harden-h_cpp_header-431",
+      "b0harden-py_python_two_lines-440",
+      "b0harden-py_python_two_lines-441",
+      "b0harden-js_javascript_const-450",
+      "b0harden-js_javascript_const-451"
+    ],
+    "context_count": 12,
+    "distinct_variants": 6,
+    "episodes": 264,
+    "singleton_outcomes": {
+      "member-a": -1.0,
+      "member-b": -1.0,
+      "member-c": -1.0,
+      "member-d": -1.0
+    },
+    "pooled_best_pair": "member-a+member-b",
+    "pooled_best_pair_gain": 0.0,
+    "pooled_positive": false,
+    "interleaved_contexts": 0,
+    "reference_requirements": [
+      {
+        "reference": "all_singleton_oracle",
+        "reference_gain": 1.5,
+        "required": 1.65,
+        "required_combination_only_contexts": 10,
+        "available_combination_only_contexts": 12,
+        "context_count": 12,
+        "feasible": true,
+        "ceiling_gain": 2.0,
+        "max_clearable_reference": 1.85
+      },
+      {
+        "reference": "best_fixed_singleton",
+        "reference_gain": 0.5,
+        "required": 0.65,
+        "required_combination_only_contexts": 4,
+        "available_combination_only_contexts": 12,
+        "context_count": 12,
+        "feasible": true,
+        "ceiling_gain": 2.0,
+        "max_clearable_reference": 1.85
+      },
+      {
+        "reference": "best_observed_fixed_pair",
+        "reference_gain": 1.0,
+        "required": 1.15,
+        "required_combination_only_contexts": 7,
+        "available_combination_only_contexts": 12,
+        "context_count": 12,
+        "feasible": true,
+        "ceiling_gain": 2.0,
+        "max_clearable_reference": 1.85
+      }
+    ],
+    "intervention_reality": {
+      "cells": 132,
+      "baseline_cells": 12,
+      "zero_step_episodes_total": 0,
+      "zero_step_intervention_cells": {},
+      "zero_step_intervention_episodes": 0,
+      "interventions_happened": true
+    },
+    "stop_reasons": {
+      "all_members_exhausted": 96,
+      "step_cap": 96,
+      "contract_intercepted:preview_ValueError": 72
+    },
+    "per_variant": [
+      {
+        "variant": "py_python_fn",
+        "extension": ".py",
+        "language": "python",
+        "expect_contract_ok": true,
+        "stop_reasons": {
+          "all_members_exhausted": 16,
+          "contract_intercepted:preview_ValueError": 12,
+          "step_cap": 16
+        },
+        "observed_contract_interception": true,
+        "contexts": [
+          "b0harden-py_python_fn-400",
+          "b0harden-py_python_fn-401"
+        ],
+        "singleton_outcomes": {
+          "member-a": -1.0,
+          "member-b": -1.0,
+          "member-c": -1.0,
+          "member-d": -1.0
+        },
+        "singleton_success_rates_ctx0": {
+          "member-a": -1.0,
+          "member-b": -1.0,
+          "member-c": -1.0,
+          "member-d": -1.0
+        },
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive_same_reference_gain": false,
+        "combination_only_contexts": 2,
+        "interleaved_contexts": 0
+      },
+      {
+        "variant": "txt_python_plain",
+        "extension": ".txt",
+        "language": "python",
+        "expect_contract_ok": true,
+        "stop_reasons": {
+          "all_members_exhausted": 16,
+          "contract_intercepted:preview_ValueError": 12,
+          "step_cap": 16
+        },
+        "observed_contract_interception": true,
+        "contexts": [
+          "b0harden-txt_python_plain-410",
+          "b0harden-txt_python_plain-411"
+        ],
+        "singleton_outcomes": {
+          "member-a": -1.0,
+          "member-b": -1.0,
+          "member-c": -1.0,
+          "member-d": -1.0
+        },
+        "singleton_success_rates_ctx0": {
+          "member-a": -1.0,
+          "member-b": -1.0,
+          "member-c": -1.0,
+          "member-d": -1.0
+        },
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive_same_reference_gain": false,
+        "combination_only_contexts": 2,
+        "interleaved_contexts": 0
+      },
+      {
+        "variant": "py_python_single_line",
+        "extension": ".py",
+        "language": "python",
+        "expect_contract_ok": true,
+        "stop_reasons": {
+          "all_members_exhausted": 16,
+          "contract_intercepted:preview_ValueError": 12,
+          "step_cap": 16
+        },
+        "observed_contract_interception": true,
+        "contexts": [
+          "b0harden-py_python_single_line-420",
+          "b0harden-py_python_single_line-421"
+        ],
+        "singleton_outcomes": {
+          "member-a": -1.0,
+          "member-b": -1.0,
+          "member-c": -1.0,
+          "member-d": -1.0
+        },
+        "singleton_success_rates_ctx0": {
+          "member-a": -1.0,
+          "member-b": -1.0,
+          "member-c": -1.0,
+          "member-d": -1.0
+        },
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive_same_reference_gain": false,
+        "combination_only_contexts": 2,
+        "interleaved_contexts": 0
+      },
+      {
+        "variant": "h_cpp_header",
+        "extension": ".h",
+        "language": "cpp",
+        "expect_contract_ok": true,
+        "stop_reasons": {
+          "all_members_exhausted": 16,
+          "contract_intercepted:preview_ValueError": 12,
+          "step_cap": 16
+        },
+        "observed_contract_interception": true,
+        "contexts": [
+          "b0harden-h_cpp_header-430",
+          "b0harden-h_cpp_header-431"
+        ],
+        "singleton_outcomes": {
+          "member-a": -1.0,
+          "member-b": -1.0,
+          "member-c": -1.0,
+          "member-d": -1.0
+        },
+        "singleton_success_rates_ctx0": {
+          "member-a": -1.0,
+          "member-b": -1.0,
+          "member-c": -1.0,
+          "member-d": -1.0
+        },
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive_same_reference_gain": false,
+        "combination_only_contexts": 2,
+        "interleaved_contexts": 0
+      },
+      {
+        "variant": "py_python_two_lines",
+        "extension": ".py",
+        "language": "python",
+        "expect_contract_ok": true,
+        "stop_reasons": {
+          "all_members_exhausted": 16,
+          "contract_intercepted:preview_ValueError": 12,
+          "step_cap": 16
+        },
+        "observed_contract_interception": true,
+        "contexts": [
+          "b0harden-py_python_two_lines-440",
+          "b0harden-py_python_two_lines-441"
+        ],
+        "singleton_outcomes": {
+          "member-a": -1.0,
+          "member-b": -1.0,
+          "member-c": -1.0,
+          "member-d": -1.0
+        },
+        "singleton_success_rates_ctx0": {
+          "member-a": -1.0,
+          "member-b": -1.0,
+          "member-c": -1.0,
+          "member-d": -1.0
+        },
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive_same_reference_gain": false,
+        "combination_only_contexts": 2,
+        "interleaved_contexts": 0
+      },
+      {
+        "variant": "js_javascript_const",
+        "extension": ".js",
+        "language": "javascript",
+        "expect_contract_ok": true,
+        "stop_reasons": {
+          "all_members_exhausted": 16,
+          "contract_intercepted:preview_ValueError": 12,
+          "step_cap": 16
+        },
+        "observed_contract_interception": true,
+        "contexts": [
+          "b0harden-js_javascript_const-450",
+          "b0harden-js_javascript_const-451"
+        ],
+        "singleton_outcomes": {
+          "member-a": -1.0,
+          "member-b": -1.0,
+          "member-c": -1.0,
+          "member-d": -1.0
+        },
+        "singleton_success_rates_ctx0": {
+          "member-a": -1.0,
+          "member-b": -1.0,
+          "member-c": -1.0,
+          "member-d": -1.0
+        },
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive_same_reference_gain": false,
+        "combination_only_contexts": 2,
+        "interleaved_contexts": 0
+      }
+    ],
+    "positive_variants": [],
+    "positive_variant_count": 0
+  },
+  "audited_rule": {
+    "contexts": [
+      "b0harden-py_python_fn-400",
+      "b0harden-py_python_fn-401",
+      "b0harden-txt_python_plain-410",
+      "b0harden-txt_python_plain-411",
+      "b0harden-py_python_single_line-420",
+      "b0harden-py_python_single_line-421",
+      "b0harden-h_cpp_header-430",
+      "b0harden-h_cpp_header-431",
+      "b0harden-py_python_two_lines-440",
+      "b0harden-py_python_two_lines-441",
+      "b0harden-js_javascript_const-450",
+      "b0harden-js_javascript_const-451"
+    ],
+    "context_count": 12,
+    "distinct_variants": 6,
+    "episodes": 264,
+    "singleton_outcomes": {
+      "member-a": -1.0,
+      "member-b": -1.0,
+      "member-c": -1.0,
+      "member-d": -1.0
+    },
+    "pooled_best_pair": "member-a+member-c",
+    "pooled_best_pair_gain": 2.0,
+    "pooled_positive": true,
+    "interleaved_contexts": 12,
+    "reference_requirements": [
+      {
+        "reference": "all_singleton_oracle",
+        "reference_gain": 1.5,
+        "required": 1.65,
+        "required_combination_only_contexts": 10,
+        "available_combination_only_contexts": 12,
+        "context_count": 12,
+        "feasible": true,
+        "ceiling_gain": 2.0,
+        "max_clearable_reference": 1.85
+      },
+      {
+        "reference": "best_fixed_singleton",
+        "reference_gain": 0.5,
+        "required": 0.65,
+        "required_combination_only_contexts": 4,
+        "available_combination_only_contexts": 12,
+        "context_count": 12,
+        "feasible": true,
+        "ceiling_gain": 2.0,
+        "max_clearable_reference": 1.85
+      },
+      {
+        "reference": "best_observed_fixed_pair",
+        "reference_gain": 1.0,
+        "required": 1.15,
+        "required_combination_only_contexts": 7,
+        "available_combination_only_contexts": 12,
+        "context_count": 12,
+        "feasible": true,
+        "ceiling_gain": 2.0,
+        "max_clearable_reference": 1.85
+      }
+    ],
+    "intervention_reality": {
+      "cells": 132,
+      "baseline_cells": 12,
+      "zero_step_episodes_total": 0,
+      "zero_step_intervention_cells": {},
+      "zero_step_intervention_episodes": 0,
+      "interventions_happened": true
+    },
+    "stop_reasons": {
+      "all_members_exhausted": 24,
+      "all_members_blocked": 144,
+      "contract_intercepted:preview_ValueError": 72,
+      "goal_reached": 24
+    },
+    "per_variant": [
+      {
+        "variant": "py_python_fn",
+        "extension": ".py",
+        "language": "python",
+        "expect_contract_ok": true,
+        "stop_reasons": {
+          "all_members_blocked": 24,
+          "all_members_exhausted": 4,
+          "contract_intercepted:preview_ValueError": 12,
+          "goal_reached": 4
+        },
+        "observed_contract_interception": true,
+        "contexts": [
+          "b0harden-py_python_fn-400",
+          "b0harden-py_python_fn-401"
+        ],
+        "singleton_outcomes": {
+          "member-a": -1.0,
+          "member-b": -1.0,
+          "member-c": -1.0,
+          "member-d": -1.0
+        },
+        "singleton_success_rates_ctx0": {
+          "member-a": -1.0,
+          "member-b": -1.0,
+          "member-c": -1.0,
+          "member-d": -1.0
+        },
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 2.0,
+        "positive_same_reference_gain": true,
+        "combination_only_contexts": 2,
+        "interleaved_contexts": 2
+      },
+      {
+        "variant": "txt_python_plain",
+        "extension": ".txt",
+        "language": "python",
+        "expect_contract_ok": true,
+        "stop_reasons": {
+          "all_members_blocked": 24,
+          "all_members_exhausted": 4,
+          "contract_intercepted:preview_ValueError": 12,
+          "goal_reached": 4
+        },
+        "observed_contract_interception": true,
+        "contexts": [
+          "b0harden-txt_python_plain-410",
+          "b0harden-txt_python_plain-411"
+        ],
+        "singleton_outcomes": {
+          "member-a": -1.0,
+          "member-b": -1.0,
+          "member-c": -1.0,
+          "member-d": -1.0
+        },
+        "singleton_success_rates_ctx0": {
+          "member-a": -1.0,
+          "member-b": -1.0,
+          "member-c": -1.0,
+          "member-d": -1.0
+        },
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 2.0,
+        "positive_same_reference_gain": true,
+        "combination_only_contexts": 2,
+        "interleaved_contexts": 2
+      },
+      {
+        "variant": "py_python_single_line",
+        "extension": ".py",
+        "language": "python",
+        "expect_contract_ok": true,
+        "stop_reasons": {
+          "all_members_blocked": 24,
+          "all_members_exhausted": 4,
+          "contract_intercepted:preview_ValueError": 12,
+          "goal_reached": 4
+        },
+        "observed_contract_interception": true,
+        "contexts": [
+          "b0harden-py_python_single_line-420",
+          "b0harden-py_python_single_line-421"
+        ],
+        "singleton_outcomes": {
+          "member-a": -1.0,
+          "member-b": -1.0,
+          "member-c": -1.0,
+          "member-d": -1.0
+        },
+        "singleton_success_rates_ctx0": {
+          "member-a": -1.0,
+          "member-b": -1.0,
+          "member-c": -1.0,
+          "member-d": -1.0
+        },
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 2.0,
+        "positive_same_reference_gain": true,
+        "combination_only_contexts": 2,
+        "interleaved_contexts": 2
+      },
+      {
+        "variant": "h_cpp_header",
+        "extension": ".h",
+        "language": "cpp",
+        "expect_contract_ok": true,
+        "stop_reasons": {
+          "all_members_blocked": 24,
+          "all_members_exhausted": 4,
+          "contract_intercepted:preview_ValueError": 12,
+          "goal_reached": 4
+        },
+        "observed_contract_interception": true,
+        "contexts": [
+          "b0harden-h_cpp_header-430",
+          "b0harden-h_cpp_header-431"
+        ],
+        "singleton_outcomes": {
+          "member-a": -1.0,
+          "member-b": -1.0,
+          "member-c": -1.0,
+          "member-d": -1.0
+        },
+        "singleton_success_rates_ctx0": {
+          "member-a": -1.0,
+          "member-b": -1.0,
+          "member-c": -1.0,
+          "member-d": -1.0
+        },
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 2.0,
+        "positive_same_reference_gain": true,
+        "combination_only_contexts": 2,
+        "interleaved_contexts": 2
+      },
+      {
+        "variant": "py_python_two_lines",
+        "extension": ".py",
+        "language": "python",
+        "expect_contract_ok": true,
+        "stop_reasons": {
+          "all_members_blocked": 24,
+          "all_members_exhausted": 4,
+          "contract_intercepted:preview_ValueError": 12,
+          "goal_reached": 4
+        },
+        "observed_contract_interception": true,
+        "contexts": [
+          "b0harden-py_python_two_lines-440",
+          "b0harden-py_python_two_lines-441"
+        ],
+        "singleton_outcomes": {
+          "member-a": -1.0,
+          "member-b": -1.0,
+          "member-c": -1.0,
+          "member-d": -1.0
+        },
+        "singleton_success_rates_ctx0": {
+          "member-a": -1.0,
+          "member-b": -1.0,
+          "member-c": -1.0,
+          "member-d": -1.0
+        },
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 2.0,
+        "positive_same_reference_gain": true,
+        "combination_only_contexts": 2,
+        "interleaved_contexts": 2
+      },
+      {
+        "variant": "js_javascript_const",
+        "extension": ".js",
+        "language": "javascript",
+        "expect_contract_ok": true,
+        "stop_reasons": {
+          "all_members_blocked": 24,
+          "all_members_exhausted": 4,
+          "contract_intercepted:preview_ValueError": 12,
+          "goal_reached": 4
+        },
+        "observed_contract_interception": true,
+        "contexts": [
+          "b0harden-js_javascript_const-450",
+          "b0harden-js_javascript_const-451"
+        ],
+        "singleton_outcomes": {
+          "member-a": -1.0,
+          "member-b": -1.0,
+          "member-c": -1.0,
+          "member-d": -1.0
+        },
+        "singleton_success_rates_ctx0": {
+          "member-a": -1.0,
+          "member-b": -1.0,
+          "member-c": -1.0,
+          "member-d": -1.0
+        },
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 2.0,
+        "positive_same_reference_gain": true,
+        "combination_only_contexts": 2,
+        "interleaved_contexts": 2
+      }
+    ],
+    "positive_variants": [
+      "py_python_fn",
+      "txt_python_plain",
+      "py_python_single_line",
+      "h_cpp_header",
+      "py_python_two_lines",
+      "js_javascript_const"
+    ],
+    "positive_variant_count": 6
+  },
+  "seed_sweep": {
+    "offsets": [
+      0,
+      101,
+      202,
+      303,
+      404
+    ],
+    "rows": [
+      {
+        "seed_offset": 0,
+        "pooled_best_pair_gain": 2.0,
+        "pooled_positive": true,
+        "positive_variant_count": 6,
+        "distinct_variants": 6,
+        "intervention_reality_ok": true
+      },
+      {
+        "seed_offset": 101,
+        "pooled_best_pair_gain": 2.0,
+        "pooled_positive": true,
+        "positive_variant_count": 6,
+        "distinct_variants": 6,
+        "intervention_reality_ok": true
+      },
+      {
+        "seed_offset": 202,
+        "pooled_best_pair_gain": 2.0,
+        "pooled_positive": true,
+        "positive_variant_count": 6,
+        "distinct_variants": 6,
+        "intervention_reality_ok": true
+      },
+      {
+        "seed_offset": 303,
+        "pooled_best_pair_gain": 2.0,
+        "pooled_positive": true,
+        "positive_variant_count": 6,
+        "distinct_variants": 6,
+        "intervention_reality_ok": true
+      },
+      {
+        "seed_offset": 404,
+        "pooled_best_pair_gain": 2.0,
+        "pooled_positive": true,
+        "positive_variant_count": 6,
+        "distinct_variants": 6,
+        "intervention_reality_ok": true
+      }
+    ],
+    "all_seeds_pooled_positive": true,
+    "min_pooled_gain": 2.0,
+    "max_pooled_gain": 2.0,
+    "min_positive_variant_count": 6
+  },
+  "stop_reason_consumers": {
+    "files": [
+      {
+        "path": "scripts\\training\\audit_taiji_b0_m4_artifact.py",
+        "literals_on_stop_lines": [
+          "stop",
+          "stop_reason",
+          "stop_reasons"
+        ]
+      },
+      {
+        "path": "scripts\\training\\audit_taiji_b0_m4_hardening.py",
+        "literals_on_stop_lines": [
+          "all_members_blocked",
+          "file_count",
+          "literals_on_stop_lines",
+          "stop",
+          "stop_reason",
+          "stop_reason_consumers",
+          "stop_reasons"
+        ]
+      },
+      {
+        "path": "scripts\\training\\audit_taiji_b0_measurement_reachability.py",
+        "literals_on_stop_lines": [
+          "stop_reason_classes"
+        ]
+      },
+      {
+        "path": "scripts\\training\\eval_taiji_p5_2a_predictive_execution_gate.py",
+        "literals_on_stop_lines": [
+          "contract_intercepted",
+          "goal_reached",
+          "model",
+          "model_stop_reasons",
+          "oracle_complete",
+          "safety_stops",
+          "sensation_disclosure",
+          "step_cap",
+          "stop",
+          "stop_reason"
+        ]
+      },
+      {
+        "path": "scripts\\training\\eval_taiji_p5_2b_group_causal_corpora_gate.py",
+        "literals_on_stop_lines": [
+          "all_members_exhausted",
+          "episode_id",
+          "resource_cost",
+          "stop",
+          "stop_reason",
+          "success"
+        ]
+      },
+      {
+        "path": "scripts\\training\\eval_taiji_p5_2c_double_prime_unseen_combination_transfer_gate.py",
+        "literals_on_stop_lines": [
+          "episode_id",
+          "resource_cost",
+          "stop_reason",
+          "stop_reason_classes",
+          "success"
+        ]
+      },
+      {
+        "path": "scripts\\training\\eval_taiji_p5_2c_prime_unseen_combination_transfer_gate.py",
+        "literals_on_stop_lines": [
+          "episode_id",
+          "resource_cost",
+          "stop_reason",
+          "stop_reason_classes",
+          "success"
+        ]
+      },
+      {
+        "path": "scripts\\training\\eval_taiji_p5_2c_triple_prime_representation_repair_gate.py",
+        "literals_on_stop_lines": [
+          "episode_id",
+          "resource_cost",
+          "stop_reason",
+          "stop_reason_classes",
+          "success"
+        ]
+      },
+      {
+        "path": "scripts\\training\\eval_taiji_p5_2c_unseen_combination_transfer_gate.py",
+        "literals_on_stop_lines": [
+          "episode_id",
+          "resource_cost",
+          "stop_reason",
+          "stop_reason_classes",
+          "success"
+        ]
+      },
+      {
+        "path": "scripts\\training\\probe_taiji_b0_m1_counterfactual.py",
+        "literals_on_stop_lines": [
+          "all_members_blocked",
+          "no_progress",
+          "repertoire_exhausted",
+          "stop",
+          "stop_reason",
+          "stop_reasons"
+        ]
+      },
+      {
+        "path": "tests\\taiji_native\\test_b0_m4_artifact_audit_contract.py",
+        "literals_on_stop_lines": [
+          "all_members_exhausted",
+          "create_and_override",
+          "goal_reached",
+          "stop_reason",
+          "stop_reasons",
+          "surfaces"
+        ]
+      }
+    ],
+    "file_count": 11,
+    "reasons_seen": [
+      "all_members_blocked",
+      "all_members_exhausted",
+      "contract_intercepted",
+      "create_and_override",
+      "episode_id",
+      "file_count",
+      "goal_reached",
+      "literals_on_stop_lines",
+      "model",
+      "model_stop_reasons",
+      "no_progress",
+      "oracle_complete",
+      "repertoire_exhausted",
+      "resource_cost",
+      "safety_stops",
+      "sensation_disclosure",
+      "step_cap",
+      "stop",
+      "stop_reason",
+      "stop_reason_classes",
+      "stop_reason_consumers",
+      "stop_reasons",
+      "success",
+      "surfaces"
+    ],
+    "new_reason_under_review": "all_members_blocked",
+    "new_reason_already_referenced": true,
+    "note": "the scan lists literals appearing on lines that mention stop reasons; it bounds the review surface, it does not prove a gate ignores the new reason"
+  }
+}

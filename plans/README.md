@@ -1,6 +1,6 @@
 # Seed / Taiji 计划与架构入口
 
-> 更新：2026-09-13（B0 完成）；结果审查基线 `f9825943`。执行顺序仅由[当前推进方案](active/roadmap/03_CURRENT_EXECUTION.md)决定。
+> 更新：2026-09-13（B0 完成 + M4 加固轮）；结果审查基线 `f9825943`。执行顺序仅由[当前推进方案](active/roadmap/03_CURRENT_EXECUTION.md)决定。
 
 ## 当前阶段
 
@@ -18,7 +18,9 @@
 
 伪影审计（[M4 伪影审计](reference/M5_B0_M4_ARTIFACT_AUDIT_20260913.md)）：**四项全过** —— ① 特异性：正增益**只**出现在 `create_and_override`（冻结面 −0.5、`dual_requirement` −2.0、`create_then_patch` +0.000）；② 干预真实性：5 次面测量 `interventions_happened` 全 true；③ 机制 lesion：增益随交接消失且四单体全败；④ **3 个种子偏移下候选面增益恒 +2.000，且无种子在冻结面制造增益**。冻结面 2 个改善**逐步归因为真实交接**（基线里 `member-b`/`member-c` 一次机会都没有，M4 才放行）。**M4 仍未实施**；新增停止原因 `all_members_blocked` 需门禁语义审查。
 
-**唯一推荐下一步：审阅 D1–D5 决策点（已全部数值化/实测化/审计过），据结论冻结路线 B 预注册。** 其中 **D5 已有通过四项伪影审计的实测可行选项 `m4_failure_handoff`** —— 不落地，H2 协作主张在当前机制下不可达。在 D1–D5 明确前不启动 B1 训练；不直接加特征列重跑旧 Gate。
+加固轮（[M4 加固轮结果](reference/M5_B0_M4_HARDENING_RESULT_20260913.md)）闭合审计 §6 中**三项无需决策的残余风险**：规模扩到 **12 context / 6 结构变体**（六个变体**各自** `+2.000`，冻结规则 **0/6 为正、零交错**）、种子扩到 **5 个偏移**（恒 `+2.000`）、`all_members_blocked` 消费面**清单化为 11 个文件**，并证明 `contract_intercepted` 在两条规则下**计数相同**（非 M4 引入，增益对比未被污染）。`.h`/`cpp` 的"预期被合同拦截"被**与规则无关的脚本证据推翻并改判**，同时加上"预期与观测不符即拒出报告"的 fail-closed 校验。**界限说明（本轮最重要）**：六个变体只换表面（扩展名/语言/内容形状），**共享同一组合结构** `create + override`，结果指纹**只有 1 种** ⇒ 目前只证**表面稳健**，**结构稳健**须由 T1/T2/T3 重跑（登记 **N1**）；`all_members_blocked` 的门禁语义预注册为落地前置（登记 **N2**）。两次全量重跑 JSON **字节相同**。
+
+**唯一推荐下一步：审阅 D1–D5 决策点（已全部数值化/实测化/审计过，无需决策的三项残余风险已由加固轮闭合），据结论冻结路线 B 预注册。** 其中 **D5 已有通过四项伪影审计、并在 12 context / 6 变体 / 5 种子下复现的实测可行选项 `m4_failure_handoff`** —— 不落地，H2 协作主张在当前机制下不可达；落地前须先处理 **N2**（`all_members_blocked` 门禁语义预注册），并知悉 **N1**（结构稳健性仍待 T1/T2/T3）。在 D1–D5 明确前不启动 B1 训练；不直接加特征列重跑旧 Gate。
 
 ## 最新证据入口
 
@@ -44,6 +46,7 @@
 | [B0 交接可行性探针结果](reference/M5_B0_HANDOFF_PROBE_RESULT_20260913.md) / [探针报告](../reports/taiji_b0_handoff_feasibility_probe_20260913.json) | 先复现冻结矩阵 **11/11**；**三层完全分离**：任务层已找到达标形态（`k=4/4`、三种参照全 feasible），**机制层是唯一阻塞**；提出最小修法 **M1（待决策 D5）** |
 | [B0 机制修法反事实测量](reference/M5_B0_M1_COUNTERFACTUAL_RESULT_20260913.md) / [测量报告](../reports/taiji_b0_m1_counterfactual_20260913.json) | 六个变体**五个失败一个成功**；**`m4_failure_handoff` 不回归（0 回归 / 2 改善）且 `interleaved=4/4`、同参照增益 +2.000 > 1.65** ⇒ **H2 协作主张首次可达**（未实施，待 D5） |
 | [B0 M4 伪影审计](reference/M5_B0_M4_ARTIFACT_AUDIT_20260913.md) / [审计报告](../reports/taiji_b0_m4_artifact_audit_20260913.json) | **四项全过**：特异性（正增益只在该面）、干预真实性（无惰性 cell）、机制 lesion（增益随交接消失且四单体全败）、**3 种子下增益恒 +2.000**；冻结面 2 个改善**逐步归因为真实交接** |
+| [B0 M4 加固轮结果](reference/M5_B0_M4_HARDENING_RESULT_20260913.md) / [加固报告](../reports/taiji_b0_m4_hardening_20260913.json) | 规模 **12 context / 6 变体**、种子 **5 个**、`all_members_blocked` 消费面 **11 文件清单**；六变体各自 `+2.000` 而冻结规则 0/6；`.h` 合同预期被证据推翻并加 fail-closed 校验。**只证表面稳健，不证结构稳健**（N1）；两次重跑字节相同 |
 | [B0 复合任务候选与路线 B 预注册草案](reference/M5_B0_ROUTE_B_PREREGISTRATION_DRAFT_20260913.md) | **未冻结**；H1 路由 / H2 协作 / H3 排序分列判据；候选已由探针收敛 |
 
 ## 文档职责
@@ -52,7 +55,7 @@
 |---|---|
 | [当前推进方案](active/roadmap/03_CURRENT_EXECUTION.md) | 唯一下一步、依赖、交付、验收、讨论节点 |
 | [技术债登记册](active/roadmap/05_TECH_DEBT_REGISTER.md) | A1/A2 已结项，历史 SystemExit 待定位；新评分/CI 约束见最新状态补充 |
-| [P5.2c′ 决策历史](active/roadmap/06_P5_2C_PRIME_NEXT_STEP_DECISION.md) | 用户既定顺序先 C 后 AB；C/A/B0 已完成，D1–D4 决策点待定 |
+| [P5.2c′ 决策历史](active/roadmap/06_P5_2C_PRIME_NEXT_STEP_DECISION.md) | 用户既定顺序先 C 后 AB；C/A/B0 已完成，D1–D5 决策点待定 |
 | [B0 设计包](reference/M5_B0_MEASUREMENT_AND_REACHABILITY_AUDIT_20260913.md) | 统一公式、旧值复算、可达性上界、手算用例、复合任务候选、训练前硬门、CI 阻塞清单 |
 | [P5.2c″ 预注册](reference/M5_P5_2C_DOUBLE_PRIME_UNSEEN_COMBINATION_TRANSFER_PREREGISTRATION_20260913.md) | 路线 C 的冻结判据：两个已验证互补的未见组合、block-3 量化、**声明只修测量仪器不修表征** |
 | [P5.2c″ 结果报告](../reports/M5_P5_2C_DOUBLE_PRIME_UNSEEN_COMBINATION_TRANSFER_RESULT_20260913.md) | `transfer_signal_constant`；九门 8 过；三项目标全达成；含「先 C 后 A」排期验证 |
