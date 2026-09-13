@@ -1,0 +1,389 @@
+{
+  "format": "taiji-b0-task-reachability-precheck-v1",
+  "version": 1,
+  "status": "draft_for_review",
+  "composition_rule": {
+    "id": "p52b-priority-fallback-v1",
+    "text": "each tick every active member predicts; the first member in active_members order whose action binds executes (lexicographic priority fallback)",
+    "consequence": "the pair cell reproduces one member's trajectory unless a member fails to bind mid-episode; it is a priority fallback, not a free composition, so 'interleaved' contexts are the only escape from the arbitration ceiling"
+  },
+  "contexts": [
+    "p52a-validation-108",
+    "p52a-validation-109",
+    "p52a-validation-110",
+    "p52a-validation-111"
+  ],
+  "context_count": 4,
+  "margin": 0.15,
+  "arbitration": [
+    {
+      "pair": "member-a+member-b",
+      "arbitration_ceiling": -0.5,
+      "frozen_rule_headroom": 0.5
+    },
+    {
+      "pair": "member-a+member-c",
+      "arbitration_ceiling": -0.5,
+      "frozen_rule_headroom": 0.5
+    },
+    {
+      "pair": "member-a+member-d",
+      "arbitration_ceiling": -1.0,
+      "frozen_rule_headroom": 0.0
+    },
+    {
+      "pair": "member-b+member-c",
+      "arbitration_ceiling": -0.5,
+      "frozen_rule_headroom": 0.0
+    },
+    {
+      "pair": "member-b+member-d",
+      "arbitration_ceiling": -0.5,
+      "frozen_rule_headroom": 0.0
+    },
+    {
+      "pair": "member-c+member-d",
+      "arbitration_ceiling": -0.5,
+      "frozen_rule_headroom": 0.5
+    }
+  ],
+  "trajectories": [
+    {
+      "pair": "member-a+member-b",
+      "per_context": [
+        {
+          "context_id": "p52a-validation-108",
+          "pair_outcome": 1.0,
+          "first_outcome": 1.0,
+          "second_outcome": -1.0,
+          "pair_best": 1.0,
+          "reaches_arbitration_optimum": true,
+          "kind": "first_member_only"
+        },
+        {
+          "context_id": "p52a-validation-109",
+          "pair_outcome": -1.0,
+          "first_outcome": -1.0,
+          "second_outcome": 1.0,
+          "pair_best": 1.0,
+          "reaches_arbitration_optimum": false,
+          "kind": "first_member_only"
+        },
+        {
+          "context_id": "p52a-validation-110",
+          "pair_outcome": -1.0,
+          "first_outcome": -1.0,
+          "second_outcome": -1.0,
+          "pair_best": -1.0,
+          "reaches_arbitration_optimum": true,
+          "kind": "both_members"
+        },
+        {
+          "context_id": "p52a-validation-111",
+          "pair_outcome": -1.0,
+          "first_outcome": -1.0,
+          "second_outcome": -1.0,
+          "pair_best": -1.0,
+          "reaches_arbitration_optimum": true,
+          "kind": "both_members"
+        }
+      ],
+      "kind_counts": {
+        "first_member_only": 2,
+        "both_members": 2
+      },
+      "contexts_reaching_arbitration_optimum": 3,
+      "contexts_interleaved": 0,
+      "note": "interleaved > 0 is the only trajectory class that can exceed the all-singleton oracle; equals-one-member can never do so"
+    },
+    {
+      "pair": "member-a+member-c",
+      "per_context": [
+        {
+          "context_id": "p52a-validation-108",
+          "pair_outcome": 1.0,
+          "first_outcome": 1.0,
+          "second_outcome": -1.0,
+          "pair_best": 1.0,
+          "reaches_arbitration_optimum": true,
+          "kind": "first_member_only"
+        },
+        {
+          "context_id": "p52a-validation-109",
+          "pair_outcome": -1.0,
+          "first_outcome": -1.0,
+          "second_outcome": -1.0,
+          "pair_best": -1.0,
+          "reaches_arbitration_optimum": true,
+          "kind": "both_members"
+        },
+        {
+          "context_id": "p52a-validation-110",
+          "pair_outcome": -1.0,
+          "first_outcome": -1.0,
+          "second_outcome": 1.0,
+          "pair_best": 1.0,
+          "reaches_arbitration_optimum": false,
+          "kind": "first_member_only"
+        },
+        {
+          "context_id": "p52a-validation-111",
+          "pair_outcome": -1.0,
+          "first_outcome": -1.0,
+          "second_outcome": -1.0,
+          "pair_best": -1.0,
+          "reaches_arbitration_optimum": true,
+          "kind": "both_members"
+        }
+      ],
+      "kind_counts": {
+        "first_member_only": 2,
+        "both_members": 2
+      },
+      "contexts_reaching_arbitration_optimum": 3,
+      "contexts_interleaved": 0,
+      "note": "interleaved > 0 is the only trajectory class that can exceed the all-singleton oracle; equals-one-member can never do so"
+    },
+    {
+      "pair": "member-a+member-d",
+      "per_context": [
+        {
+          "context_id": "p52a-validation-108",
+          "pair_outcome": 1.0,
+          "first_outcome": 1.0,
+          "second_outcome": 1.0,
+          "pair_best": 1.0,
+          "reaches_arbitration_optimum": true,
+          "kind": "both_members"
+        },
+        {
+          "context_id": "p52a-validation-109",
+          "pair_outcome": -1.0,
+          "first_outcome": -1.0,
+          "second_outcome": -1.0,
+          "pair_best": -1.0,
+          "reaches_arbitration_optimum": true,
+          "kind": "both_members"
+        },
+        {
+          "context_id": "p52a-validation-110",
+          "pair_outcome": -1.0,
+          "first_outcome": -1.0,
+          "second_outcome": -1.0,
+          "pair_best": -1.0,
+          "reaches_arbitration_optimum": true,
+          "kind": "both_members"
+        },
+        {
+          "context_id": "p52a-validation-111",
+          "pair_outcome": -1.0,
+          "first_outcome": -1.0,
+          "second_outcome": -1.0,
+          "pair_best": -1.0,
+          "reaches_arbitration_optimum": true,
+          "kind": "both_members"
+        }
+      ],
+      "kind_counts": {
+        "both_members": 4
+      },
+      "contexts_reaching_arbitration_optimum": 4,
+      "contexts_interleaved": 0,
+      "note": "interleaved > 0 is the only trajectory class that can exceed the all-singleton oracle; equals-one-member can never do so"
+    },
+    {
+      "pair": "member-b+member-c",
+      "per_context": [
+        {
+          "context_id": "p52a-validation-108",
+          "pair_outcome": -1.0,
+          "first_outcome": -1.0,
+          "second_outcome": -1.0,
+          "pair_best": -1.0,
+          "reaches_arbitration_optimum": true,
+          "kind": "both_members"
+        },
+        {
+          "context_id": "p52a-validation-109",
+          "pair_outcome": 1.0,
+          "first_outcome": 1.0,
+          "second_outcome": -1.0,
+          "pair_best": 1.0,
+          "reaches_arbitration_optimum": true,
+          "kind": "first_member_only"
+        },
+        {
+          "context_id": "p52a-validation-110",
+          "pair_outcome": 1.0,
+          "first_outcome": -1.0,
+          "second_outcome": 1.0,
+          "pair_best": 1.0,
+          "reaches_arbitration_optimum": true,
+          "kind": "second_member_only"
+        },
+        {
+          "context_id": "p52a-validation-111",
+          "pair_outcome": -1.0,
+          "first_outcome": -1.0,
+          "second_outcome": -1.0,
+          "pair_best": -1.0,
+          "reaches_arbitration_optimum": true,
+          "kind": "both_members"
+        }
+      ],
+      "kind_counts": {
+        "both_members": 2,
+        "first_member_only": 1,
+        "second_member_only": 1
+      },
+      "contexts_reaching_arbitration_optimum": 4,
+      "contexts_interleaved": 0,
+      "note": "interleaved > 0 is the only trajectory class that can exceed the all-singleton oracle; equals-one-member can never do so"
+    },
+    {
+      "pair": "member-b+member-d",
+      "per_context": [
+        {
+          "context_id": "p52a-validation-108",
+          "pair_outcome": 1.0,
+          "first_outcome": -1.0,
+          "second_outcome": 1.0,
+          "pair_best": 1.0,
+          "reaches_arbitration_optimum": true,
+          "kind": "second_member_only"
+        },
+        {
+          "context_id": "p52a-validation-109",
+          "pair_outcome": 1.0,
+          "first_outcome": 1.0,
+          "second_outcome": -1.0,
+          "pair_best": 1.0,
+          "reaches_arbitration_optimum": true,
+          "kind": "first_member_only"
+        },
+        {
+          "context_id": "p52a-validation-110",
+          "pair_outcome": -1.0,
+          "first_outcome": -1.0,
+          "second_outcome": -1.0,
+          "pair_best": -1.0,
+          "reaches_arbitration_optimum": true,
+          "kind": "both_members"
+        },
+        {
+          "context_id": "p52a-validation-111",
+          "pair_outcome": -1.0,
+          "first_outcome": -1.0,
+          "second_outcome": -1.0,
+          "pair_best": -1.0,
+          "reaches_arbitration_optimum": true,
+          "kind": "both_members"
+        }
+      ],
+      "kind_counts": {
+        "second_member_only": 1,
+        "first_member_only": 1,
+        "both_members": 2
+      },
+      "contexts_reaching_arbitration_optimum": 4,
+      "contexts_interleaved": 0,
+      "note": "interleaved > 0 is the only trajectory class that can exceed the all-singleton oracle; equals-one-member can never do so"
+    },
+    {
+      "pair": "member-c+member-d",
+      "per_context": [
+        {
+          "context_id": "p52a-validation-108",
+          "pair_outcome": -1.0,
+          "first_outcome": -1.0,
+          "second_outcome": 1.0,
+          "pair_best": 1.0,
+          "reaches_arbitration_optimum": false,
+          "kind": "first_member_only"
+        },
+        {
+          "context_id": "p52a-validation-109",
+          "pair_outcome": -1.0,
+          "first_outcome": -1.0,
+          "second_outcome": -1.0,
+          "pair_best": -1.0,
+          "reaches_arbitration_optimum": true,
+          "kind": "both_members"
+        },
+        {
+          "context_id": "p52a-validation-110",
+          "pair_outcome": 1.0,
+          "first_outcome": 1.0,
+          "second_outcome": -1.0,
+          "pair_best": 1.0,
+          "reaches_arbitration_optimum": true,
+          "kind": "first_member_only"
+        },
+        {
+          "context_id": "p52a-validation-111",
+          "pair_outcome": -1.0,
+          "first_outcome": -1.0,
+          "second_outcome": -1.0,
+          "pair_best": -1.0,
+          "reaches_arbitration_optimum": true,
+          "kind": "both_members"
+        }
+      ],
+      "kind_counts": {
+        "first_member_only": 2,
+        "both_members": 2
+      },
+      "contexts_reaching_arbitration_optimum": 3,
+      "contexts_interleaved": 0,
+      "note": "interleaved > 0 is the only trajectory class that can exceed the all-singleton oracle; equals-one-member can never do so"
+    }
+  ],
+  "combination_only": {
+    "available_contexts": [
+      "p52a-validation-111"
+    ],
+    "gain_potential": 0.5
+  },
+  "reference_requirements": [
+    {
+      "reference": "all_singleton_oracle",
+      "reference_gain": 1.5,
+      "required": 1.65,
+      "required_combination_only_contexts": 4,
+      "available_combination_only_contexts": 1,
+      "context_count": 4,
+      "feasible": false,
+      "ceiling_gain": 0.5,
+      "max_clearable_reference": 0.35
+    },
+    {
+      "reference": "best_fixed_singleton",
+      "reference_gain": 0.5,
+      "required": 0.65,
+      "required_combination_only_contexts": 2,
+      "available_combination_only_contexts": 1,
+      "context_count": 4,
+      "feasible": false,
+      "ceiling_gain": 0.5,
+      "max_clearable_reference": 0.35
+    },
+    {
+      "reference": "best_observed_fixed_pair",
+      "reference_gain": 1.0,
+      "required": 1.15,
+      "required_combination_only_contexts": 3,
+      "available_combination_only_contexts": 1,
+      "context_count": 4,
+      "feasible": false,
+      "ceiling_gain": 0.5,
+      "max_clearable_reference": 0.35
+    }
+  ],
+  "verdict": {
+    "contexts_interleaved": 0,
+    "contexts_at_arbitration_optimum": 21,
+    "contexts_scored": 24,
+    "arbitration_is_the_bottleneck": true,
+    "reading": "no context produced an interleaved trajectory, so every pair outcome is some single member's outcome: the gate is blocked by the task and the mechanism, not by the representation"
+  }
+}

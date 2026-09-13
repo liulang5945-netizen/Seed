@@ -8,9 +8,11 @@
 
 边界：K/G 为 opt-in、进程内状态；P5.1g 为未准入 trial；P5.2a 已接真实预测执行但泛化门未过；修复后的 P5.2b 当前 groups=0、rejected=6。A 的预测两档不代表正确排序，跨任务覆盖不代表同任务协作。结构成长未触发。
 
-[B0 设计包](reference/M5_B0_MEASUREMENT_AND_REACHABILITY_AUDIT_20260913.md)给出统一测量字典、旧值复算、可达性上界与复合任务候选；[路线 B 预注册草案](reference/M5_B0_ROUTE_B_PREREGISTRATION_DRAFT_20260913.md)（**未冻结**）给出 H1/H2/H3 分层判据。本轮关键事实：六个 pair 在四个未见 context 上 **0 次**超过全体单体 oracle，`oracle_all_cell = oracle_singleton = 1.5`，三种候选参照**全部不可达**（缺口 2.15 / 0.15 / 1.15）。
+[B0 设计包](reference/M5_B0_MEASUREMENT_AND_REACHABILITY_AUDIT_20260913.md)给出统一测量字典、旧值复算、可达性上界与复合任务候选；[机制与预检续篇](reference/M5_B0_MECHANISM_AND_TASK_PRECHECK_20260913.md)给出根因与可落地规格；[路线 B 预注册草案](reference/M5_B0_ROUTE_B_PREREGISTRATION_DRAFT_20260913.md)（**未冻结**）给出 H1/H2/H3 分层判据。
 
-**唯一推荐下一步：审阅 B0 设计包 §11 的 D1–D4 决策点（估计目标与参照、复合任务候选、旧 1.65 判据处置、旧载体降级），再据结论冻结路线 B 预注册。** 在 D1–D4 明确前不启动 B1 训练；不直接加特征列重跑旧 Gate。
+本轮关键事实：六个 pair 在四个未见 context 上 **0 次**超过全体单体 oracle，`oracle_all_cell = oracle_singleton = 1.5`，三种候选参照**全部不可达**（缺口 2.15 / 0.15 / 1.15）。根因（续篇）：组合机制是**优先级回退链**（每 tick 只执行第一个绑定成功的成员），**仲裁类机制上界恒 ≤ 0**；24 个 pair×context 单元**零交错轨迹**；现行任务可支撑的参照上限仅 **0.35**，低于最佳可部署单体 0.5 ⇒ 换参照救不了，**任务必须改**。
+
+**唯一推荐下一步：审阅 B0 §11 / 续篇 §8 的 D1–D4 决策点（现已数值化），再据结论冻结路线 B 预注册。** 在 D1–D4 明确前不启动 B1 训练；不直接加特征列重跑旧 Gate。
 
 ## 最新证据入口
 
@@ -32,6 +34,7 @@
 | [P5.2c″ 未见组合迁移结果](../reports/M5_P5_2C_DOUBLE_PRIME_UNSEEN_COMBINATION_TRANSFER_RESULT_20260913.md) | 路线 C 完成，两对留出、旧表示常量；block-3 只量化未修可达性 |
 | [P5.2c‴ 表征修复结果](../reports/M5_P5_2C_TRIPLE_PRIME_REPRESENTATION_REPAIR_RESULT_20260913.md) / [本轮复审](reference/M5_POST_ROUTE_A_REVIEW_20260913.md) | 路线 A 完成，秩和区分度提升但收益未过；评分参照和任务上界需审查 |
 | [B0 设计包](reference/M5_B0_MEASUREMENT_AND_REACHABILITY_AUDIT_20260913.md) / [审计报告](../reports/taiji_b0_measurement_reachability_audit_20260913.json) | 统一测量字典 v1 草案、32/32 字段复算一致、三种参照全部不可达、五个手算用例；结论=先改任务 |
+| [B0 机制与预检续篇](reference/M5_B0_MECHANISM_AND_TASK_PRECHECK_20260913.md) / [预检报告](../reports/taiji_b0_task_reachability_precheck_20260913.json) | 组合机制是**优先级回退链**；仲裁上界恒 ≤0；24 单元**零交错**；逃生通道闭式要求；T1/T2/T3 具体规格 |
 | [B0 复合任务候选与路线 B 预注册草案](reference/M5_B0_ROUTE_B_PREREGISTRATION_DRAFT_20260913.md) | **未冻结**；H1 路由 / H2 协作 / H3 排序分列判据；T1/T2/T3 候选待选 |
 
 ## 文档职责
@@ -55,6 +58,6 @@
 
 active 只保留当前决策与核心约束；reference 保留预注册/结果解释；archive 保存历史；manifests 保存冻结数据合同。失败报告不覆盖，临时产物逐项核验后清理。
 
-当前 f9825943 的 CI 34753643532 上次查询时两条 Linux 已在 Ruff 失败；本轮未查询远端（`gh` 未认证）。按命令级基线：本地 `ruff check .` 原有 1 项 `I001`（即上述失败原因），B0 已修复，现为 **All checks passed**；B0 新增测试 14 passed、目标集八个文件 95 passed；全量套件未跑。局部通过不等于全仓 CI 通过，处理顺序见推进方案 §9 与[B0 设计包](reference/M5_B0_MEASUREMENT_AND_REACHABILITY_AUDIT_20260913.md) §10。
+当前 f9825943 的 CI 34753643532 上次查询时两条 Linux 已在 Ruff 失败；本轮未查询远端（`gh` 未认证）。按命令级基线：本地 `ruff check .` 原有 1 项 `I001`（即上述失败原因），B0 已修复，现为 **All checks passed**。**全量套件本轮已跑**：851 用例 / 27 失败 / 0 错误 / 1 跳过（938s），**类别 A 架构边界违反已归零（2→0，A1/A2 结项可复现）**，27 项全为 `SystemExit: 1` 且**是旧 28 项的严格子集、无新增失败**。细节见[技术债登记册](active/roadmap/05_TECH_DEBT_REGISTER.md) §2 与[机制续篇](reference/M5_B0_MECHANISM_AND_TASK_PRECHECK_20260913.md) §7。
 
 **推送受阻（如实记录）**：本会话 `git push` 报 `could not read Username for 'https://github.com'`（无可用凭据；`ls-remote` 可通，属认证问题而非网络）。`origin/main` 仍停在 `f9825943`，本地 `main` 领先若干未推送提交（含 `4a94e9c6`、`104de608`、`b89ca217` 及本轮文档提交）⇒ **CI 不会被本次提交触发**，需用户提供凭据或在本机推送。

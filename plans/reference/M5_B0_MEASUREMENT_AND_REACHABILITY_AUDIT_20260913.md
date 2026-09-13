@@ -160,6 +160,11 @@
 
 ## §6 复合任务候选（**供审阅，未选定，未实施**）
 
+> **续篇已给出可落地规格**：[组合机制根因、逃生通道与复合任务规格](M5_B0_MECHANISM_AND_TASK_PRECHECK_20260913.md)。
+> 该文证明「成员仲裁类机制的上界恒 ≤ 0」（§3），实测冻结矩阵 24 个单元**零交错轨迹**（§4），
+> 并给出逃生通道的闭式要求 `k > n·(参照+margin)/(成功−B)`（§5.1）与 T1/T2/T3 的具体构造（§5.2）。
+> 本节保留为设计要求；**具体构造与预检条件以续篇为准**。
+
 ### 6.1 任务必须满足的六条（先验可检验）
 
 1. **非平凡**：存在 context 使所有单体在 tick 0 后仍需多步才能满足（沿用 P5.2b 的 `_assert_nontrivial_goals` 方向）。
@@ -249,11 +254,11 @@
 | 1 | `python -m ruff check .`（Python312） | 修复前 **1 error**（`tests/taiji_native/test_p5_2c_triple_prime_representation_repair_gate.py` 的 `I001` 导入顺序，即两条 Linux CI 的失败原因）；修复后 **All checks passed** | **已修**（纯导入排序，无语义变更；受影响测试 37 passed） |
 | 2 | `python -m pytest tests/taiji_native/test_b0_measurement_dictionary.py -q` | **14 passed** | 新增守卫 |
 | 3 | `pytest`（B0 字典 + c′/c″/c‴ + intervention + architecture/naming 契约 + project identity，八个文件） | **95 passed** | 目标集与相邻回归均无退化 |
-| 4 | `python -m pytest tests/taiji_native/ -q --junitxml=...` 全量 | **未跑**（约 15 分钟且会 SIGTERM，须 `run_in_background`） | 归属见[技术债登记册](../active/roadmap/05_TECH_DEBT_REGISTER.md)；历史 28 项 `SystemExit` 未定性 |
+| 4 | `python -m pytest tests/taiji_native/ -q --junitxml=...` 全量 | **851 / 27 失败 / 0 错误 / 1 跳过**（938s）；**类别 A 由 2 归零**；27 项全为 `SystemExit: 1` 且为旧 28 项**严格子集** | 归因与计数见[机制续篇](M5_B0_MECHANISM_AND_TASK_PRECHECK_20260913.md) §7 与[技术债登记册](../active/roadmap/05_TECH_DEBT_REGISTER.md) §2 |
 | 5 | 远端 workflow | **本轮未查询**（`gh` 未认证） | 下次提交后按 run 结果更新，不凭旧结论推断 |
 | 6 | `git push origin main` | **失败**：`fatal: could not read Username for 'https://github.com'`（本会话无可用凭据；`ls-remote` 可通，说明是认证而非网络） | 需用户提供凭据或在本机推送；`origin/main` 仍停在 `f9825943` |
 
-**不把局部通过当全仓绿**：上表 2/3 为局部（95 用例），4 未跑，5 未知。
+**不把局部通过当全仓绿**：全量已跑（第 4 行），但 27 项 `SystemExit` 仍**未定性**（无可读栈），第 5 行未知。
 
 **推送状态（如实记录）**：本地 `main` 领先 `origin/main` 若干未推送提交——含上一轮的 `4a94e9c6`（路线 A 后计划对齐）
 与本轮 `104de608`（B0 主体）、`b89ca217`（文档措辞修正）及记录本状态的文档提交；`origin/main` 仍为 `f9825943`。
@@ -266,9 +271,9 @@
 
 | # | 决策点 | 选项 |
 |---|---|---|
-| D1 | 估计目标与参照 | (a) 同参照 = 全体单体 oracle；(b) 同参照 = 最佳可部署对照（推荐：主判据用可部署对照，oracle 仅作诊断上界） |
-| D2 | 复合任务候选 | T1 串联交接 / T2 纠错交接 / T3 共享状态约束（可多选，须先过 §6.3 上界预检） |
-| D3 | 旧 1.65 判据 | 保留为历史记录；新判据按 §2 字典重新推导并单独冻结（**不静默替换**） |
+| D1 | 估计目标与参照 | (a) 同参照 = 全体单体 oracle；(b) 同参照 = 最佳可部署对照（推荐：主判据用可部署对照，oracle 仅作诊断上界）。**续篇已数值化：参照 0.5 ⇒ 需 k≥2/4；1.0 ⇒ 3/4；1.5 ⇒ 4/4。现行任务可支撑参照上限仅 0.35，故必须先改任务。** |
+| D2 | 复合任务候选 | T1 串联交接 / T2 纠错交接 / T3 共享状态约束（**续篇 §5.2 给出具体构造与风险排序：T3 最低、T1 中、T2 最高**；可多选，须先过续篇 §5.3 六条预检） |
+| D3 | 旧 1.65 判据 | 保留为历史记录；新判据按 §2 字典重新推导并单独冻结（**不静默替换**），且必须声明参照与所需 k |
 | D4 | 旧载体定位 | 144/88 明确降级为开发回归（推荐），新测试面独立冻结 |
 
 **在 D1–D4 明确前，B1 不启动训练。**
