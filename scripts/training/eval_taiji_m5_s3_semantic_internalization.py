@@ -23,6 +23,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+from instruments.document_embedding import DocumentEmbedder  # noqa: E402
 from scripts.training.eval_taiji_m5_s2_document_internalization import (  # noqa: E402
     HOLDOUT_COUNT,
     HOLDOUT_DOMAIN,
@@ -41,7 +42,6 @@ from taiji import (  # noqa: E402
     WorldAffordance,
     content_digest,
 )
-from taiji.document_embedding import DocumentEmbedder  # noqa: E402
 
 REPORT_FORMAT = "taiji-m5-s3-semantic-internalization-v1"
 PROBE_PAIRS_PER_GROUP = 200

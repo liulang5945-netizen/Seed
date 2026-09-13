@@ -61,7 +61,7 @@ build = ["pyinstaller>=6.0.0"]
 seed-legacy-desktop = "desktop.main:main"
 
 [tool.setuptools.packages.find]
-include = ["seed*", "taiji*", "seed_platform*", "neuroplex*", "api*"]
+include = ["seed*", "taiji*", "seed_platform*", "neuroplex*", "api*", "instruments*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

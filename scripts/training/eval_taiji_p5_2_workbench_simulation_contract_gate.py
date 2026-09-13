@@ -34,13 +34,13 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT))
 sys.path.insert(0, str(PROJECT_ROOT / "scripts" / "training"))
 
+from instruments.document_embedding import DocumentEmbedder  # noqa: E402
 from seed_platform.workbench import (  # noqa: E402
     WorkbenchActionRequest,
     WorkbenchEnvironment,
 )
 from taiji import ArtifactInternalizationTrainer  # noqa: E402
 from taiji.contracts import ActionIntent, EpisodicMemoryRecord  # noqa: E402
-from taiji.document_embedding import DocumentEmbedder  # noqa: E402
 from taiji.interaction_groups import (  # noqa: E402
     InteractionGroupEvaluator,
     InteractionTraceCorpus,

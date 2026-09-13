@@ -19,7 +19,6 @@ import torch
 
 from .affordance import AffordanceFeatureTrainingExample, LearnedAffordanceFeatures
 from .contracts import ActionIntent, EpisodicMemoryRecord, Outcome
-from .document_embedding import DocumentEmbedder
 from .evolution_experience import EvolutionCorpusArtifact, EvolutionExperience
 from .internalization import GroundedFeatureExample, content_digest
 from .internalization_learner import InternalizationLearningReport, InternalizedFeatureLearner
@@ -212,15 +211,28 @@ class ArtifactKnowledgeEncoder:
 
 
 class SemanticArtifactKnowledgeEncoder:
-    """Embed redacted artifact text with the anchored document embedder."""
+    """Embed redacted artifact text with an injected, anchored embedder.
+
+    The embedder instrument (for example
+    ``instruments.document_embedding.DocumentEmbedder``) is injected, never
+    constructed here: the native substrate must not depend on HuggingFace
+    transformers, even transitively (DEBT-A1/A2, 2026-09-13).  The parameter
+    is duck-typed (``dimension``/``model_id``/``revision``/``config_digest``/
+    ``embed``) so taiji/ keeps zero references to the instruments package.
+    """
 
     FORMAT = "taiji-semantic-artifact-knowledge-v1"
     VERSION = 1
 
     _IDENTITY_CONTENT_KEYS = frozenset({"scope_id"})
 
-    def __init__(self, *, embedder: DocumentEmbedder | None = None) -> None:
-        self.embedder = embedder or DocumentEmbedder()
+    def __init__(self, *, embedder: Any) -> None:
+        if embedder is None:
+            raise ValueError(
+                "semantic artifact knowledge encoder requires an injected embedder "
+                "instrument; taiji no longer constructs one implicitly"
+            )
+        self.embedder = embedder
         self.feature_dim = int(self.embedder.dimension)
 
     def _text(self, artifact: EvolutionCorpusArtifact) -> str:
@@ -247,12 +259,16 @@ class SemanticArtifactKnowledgeEncoder:
         }
 
     @classmethod
-    def from_checkpoint(cls, payload: Mapping[str, Any]) -> SemanticArtifactKnowledgeEncoder:
+    def from_checkpoint(
+        cls, payload: Mapping[str, Any], *, embedder: Any
+    ) -> SemanticArtifactKnowledgeEncoder:
+        """Restore from a payload, verifying anchors against the injected embedder."""
+
         if payload.get("format") != cls.FORMAT:
             raise ValueError("unsupported semantic artifact encoder format")
         if int(payload.get("version", -1)) != cls.VERSION:
             raise ValueError("unsupported semantic artifact encoder version")
-        encoder = cls()
+        encoder = cls(embedder=embedder)
         anchored = (
             ("embedder_model_id", encoder.embedder.model_id),
             ("embedder_revision", encoder.embedder.revision),
@@ -806,7 +822,16 @@ class ArtifactInternalizationTrainer:
         return payload
 
     @classmethod
-    def from_checkpoint(cls, payload: Mapping[str, Any]) -> ArtifactInternalizationTrainer:
+    def from_checkpoint(
+        cls, payload: Mapping[str, Any], *, embedder: Any = None
+    ) -> ArtifactInternalizationTrainer:
+        """Restore from a payload.
+
+        A checkpoint written with the semantic encoder format restores only
+        when the embedder instrument that produced its anchors is injected;
+        the native encoder format needs no embedder.
+        """
+
         if payload.get("format") != ARTIFACT_INTERNALIZATION_FORMAT:
             raise ValueError("unsupported artifact internalization format")
         if int(payload.get("version", -1)) != ARTIFACT_INTERNALIZATION_VERSION:
@@ -821,7 +846,14 @@ class ArtifactInternalizationTrainer:
         if encoder_format == ARTIFACT_INTERNALIZATION_FORMAT:
             encoder: Any = ArtifactKnowledgeEncoder.from_checkpoint(encoder_payload)
         elif encoder_format == SemanticArtifactKnowledgeEncoder.FORMAT:
-            encoder = SemanticArtifactKnowledgeEncoder.from_checkpoint(encoder_payload)
+            if embedder is None:
+                raise ValueError(
+                    "restoring a semantic artifact encoder requires an injected "
+                    "embedder instrument; taiji no longer constructs one implicitly"
+                )
+            encoder = SemanticArtifactKnowledgeEncoder.from_checkpoint(
+                encoder_payload, embedder=embedder
+            )
         else:
             raise ValueError("unsupported artifact internalization encoder format")
         trainer = cls(

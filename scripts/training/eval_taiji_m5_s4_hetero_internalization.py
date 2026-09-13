@@ -29,6 +29,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+from instruments.document_embedding import DocumentEmbedder  # noqa: E402
 from scripts.training.eval_taiji_m5_s2_document_internalization import (  # noqa: E402
     RETENTION_COUNT,
     TRAIN_DOMAINS,
@@ -45,7 +46,6 @@ from taiji import (  # noqa: E402
     InternalizedFeatureLearner,
     content_digest,
 )
-from taiji.document_embedding import DocumentEmbedder  # noqa: E402
 
 REPORT_FORMAT = "taiji-m5-s4-hetero-internalization-v1"
 HETERO_MANIFEST = PROJECT_ROOT / "reports" / "taiji_m5_s4_hetero_holdout_manifest_20260909.json"

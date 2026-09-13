@@ -41,13 +41,13 @@ sys.path.insert(0, str(PROJECT_ROOT / "scripts" / "training"))
 
 import eval_taiji_p5_2_workbench_simulation_contract_gate as p52  # noqa: E402
 
+from instruments.document_embedding import DocumentEmbedder  # noqa: E402
 from seed_platform.workbench import (  # noqa: E402
     WorkbenchActionRequest,
     WorkbenchEnvironment,
 )
 from taiji import ArtifactInternalizationTrainer  # noqa: E402
 from taiji.contracts import ActionIntent  # noqa: E402
-from taiji.document_embedding import DocumentEmbedder  # noqa: E402
 from taiji.procedural_memory import ProceduralSequenceLearner  # noqa: E402
 
 REPORT_FORMAT = "taiji-p5-2a-predictive-execution-report-v1"

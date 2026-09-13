@@ -62,6 +62,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+from instruments.document_embedding import DocumentEmbedder  # noqa: E402
 from seed_platform.evolution_adapters import (  # noqa: E402
     ArtifactCorpusProjection,
     SkillArtifactAdapter,
@@ -73,7 +74,6 @@ from taiji.artifact_internalization import (  # noqa: E402
     SemanticArtifactKnowledgeEncoder,
 )
 from taiji.contracts import ActionIntent, EpisodicMemoryRecord  # noqa: E402
-from taiji.document_embedding import DocumentEmbedder  # noqa: E402
 from taiji.internalization import content_digest  # noqa: E402
 
 REPORT_FORMAT = "taiji-p5-1f-real-corpus-same-budget-content-benefit-report-v1"
@@ -615,7 +615,9 @@ def _arm_structure(
 
 def _checkpoint_roundtrip(trainer: ArtifactInternalizationTrainer, artifact: Any) -> dict[str, Any]:
     payload = trainer.checkpoint()
-    restored = ArtifactInternalizationTrainer.from_checkpoint(payload)
+    restored = ArtifactInternalizationTrainer.from_checkpoint(
+        payload, embedder=getattr(trainer.encoder, "embedder", None)
+    )
     feature = trainer.encoder.encode(artifact)
     return {
         "checkpoint_digest_preserved": bool(

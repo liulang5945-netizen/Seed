@@ -463,7 +463,9 @@ def _arm_structure(
 
 def _checkpoint_roundtrip(trainer: ArtifactInternalizationTrainer, artifact: Any) -> dict[str, Any]:
     payload = trainer.checkpoint()
-    restored = ArtifactInternalizationTrainer.from_checkpoint(payload)
+    restored = ArtifactInternalizationTrainer.from_checkpoint(
+        payload, embedder=getattr(trainer.encoder, "embedder", None)
+    )
     feature = trainer.encoder.encode(artifact)
     return {
         "checkpoint_digest_preserved": bool(

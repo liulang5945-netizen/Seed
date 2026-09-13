@@ -83,6 +83,10 @@ python -m pytest tests/taiji_native/ -q --no-header --tb=no -p no:cacheprovider 
 - 失败形态：`AssertionError: {'__future__','adapter','adaptive_residual_bridge','adaptive_residual_candidate','adaptive_residual_growth',...}`
 - 含义：原生核心的依赖集合里出现了不该出现的符号/模块，测试白名单未覆盖。
 - 待查：是**新增了真实违规依赖**，还是**白名单未随重构更新**。两者修法完全相反，必须先定性再动手。
+- **【已解决 2026-09-13】** 定性结论：**真违规，且与 DEBT-A2 同根因**。A1 的失败信息是整个
+  `imported` 集合的噪声转储，实际触发项是 `taiji/document_embedding.py` 贡献的 `transformers`
+  （命名边界测试递归证明 taiji/ 内仅此一个文件含违禁 top-level 导入）。修复见 DEBT-A2：
+  文件迁出 taiji/ 后本用例恢复通过。
 
 ### DEBT-A2 · `taiji/document_embedding.py` 引入 transformers
 
@@ -93,6 +97,24 @@ python -m pytest tests/taiji_native/ -q --no-header --tb=no -p no:cacheprovider 
   这是「原生基底自足性」的核心边界，不是可以随手放宽的白名单。
 - 待查：该依赖是历史遗留还是为 P5.1d 语义 encoder 注入所必需；若是后者，需在设计层决定
   「锚定 encoder 是否允许外部依赖」，而不是改测试。
+- **【已解决 2026-09-13】** 定性结论（回应原「待查」）：该依赖是 P5.1d 语义 encoder 的
+  **功能性必需**（锚定 embedder），不是历史遗留；因此按设计层决策处理——**taiji/ 不再持有
+  该依赖**，而不是改测试。修复内容（随本提交落地）：
+  1. `taiji/document_embedding.py` → 顶层新包 `instruments/document_embedding.py`；
+     checkpoint payload 格式 `taiji-document-embedder-v1` 不变，digest 锚与既有预注册兼容；
+     依赖方向 instruments → taiji 单向（仅 `content_digest`），taiji/ 对 instruments 零引用。
+  2. `taiji/artifact_internalization.py` 依赖倒置：删除 `from .document_embedding import ...`；
+     `SemanticArtifactKnowledgeEncoder(embedder=...)` 改必选注入（None 即 ValueError）；
+     `from_checkpoint(..., *, embedder)` 锚校验语义保留；
+     `ArtifactInternalizationTrainer.from_checkpoint(..., *, embedder=None)` 对语义 payload
+     无注入即 ValueError（fail closed）。
+  3. scripts/training 17 个导入行批量更新；8 处 `from_checkpoint` 语义调用点注入 embedder。
+  4. pyproject packages.find 增加 `instruments*`；新增 3 个回归测试钉住 fail-closed 与锚漂移。
+- 验证：两个契约测试转绿；目标集（architecture/naming/artifact_internalization/
+  intervention/P5.2c'''/project_identity）**64 passed**；21 文件 py_compile + ruff 0 错误；
+  冒烟确认 `import taiji` 后 `sys.modules` 无 instruments/transformers。
+- 残余：p5_1b/1d/1e/1f/1g 等 gate 的完整 `evaluate()`（15 分钟级）未重跑，由 §8(4)
+  处置阶段统一重采基线覆盖。
 
 ## 4. 类别 B：`SystemExit: 1` 级联（28 项，中）
 

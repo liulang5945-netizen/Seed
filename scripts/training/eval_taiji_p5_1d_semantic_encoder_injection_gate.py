@@ -27,6 +27,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+from instruments.document_embedding import DocumentEmbedder  # noqa: E402
 from scripts.training.eval_taiji_p5_1b_semantic_paraphrase_transfer import (  # noqa: E402
     _extract_content_words,
     _value_query_example,
@@ -45,7 +46,6 @@ from taiji.artifact_internalization import (  # noqa: E402
     ArtifactKnowledgeEncoder,
     SemanticArtifactKnowledgeEncoder,
 )
-from taiji.document_embedding import DocumentEmbedder  # noqa: E402
 from taiji.internalization import content_digest  # noqa: E402
 from taiji.internalization_learner import InternalizedFeatureLearner  # noqa: E402
 
@@ -363,7 +363,9 @@ def _format_dispatch_gate(
     )
     unknown_rejected = False
     try:
-        ArtifactInternalizationTrainer.from_checkpoint(payload)
+        ArtifactInternalizationTrainer.from_checkpoint(
+            payload, embedder=getattr(trainer.encoder, "embedder", None)
+        )
     except ValueError as exc:
         unknown_rejected = "unsupported artifact internalization encoder format" in str(exc)
     restored_native = ArtifactInternalizationTrainer.from_checkpoint(native_payload)

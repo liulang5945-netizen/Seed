@@ -28,6 +28,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+from instruments.document_embedding import DocumentEmbedder  # noqa: E402
 from scripts.training.eval_taiji_p5_1b_semantic_paraphrase_transfer import (  # noqa: E402
     _extract_content_words,
     _value_query_example,
@@ -41,7 +42,6 @@ from scripts.training.probe_taiji_p5_1c_contrastive_discrimination import (  # n
 )
 from taiji import ArtifactInternalizationTrainer  # noqa: E402
 from taiji.artifact_internalization import ArtifactKnowledgeEncoder  # noqa: E402
-from taiji.document_embedding import DocumentEmbedder  # noqa: E402
 from taiji.evolution_experience import EvolutionCorpusArtifact  # noqa: E402
 from taiji.internalization import content_digest  # noqa: E402
 from taiji.internalization_learner import InternalizedFeatureLearner  # noqa: E402

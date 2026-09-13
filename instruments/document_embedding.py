@@ -5,6 +5,12 @@ Wraps a locally cached sentence-transformer model (loaded through plain
 versioned, digest-anchored interface.  The model weights never enter a
 Taiji checkpoint; only the model id, revision, and config digest are
 recorded so an embedding is reproducible from the preregistration.
+
+Relocated 2026-09-13 from ``taiji/document_embedding.py`` (DEBT-A1/A2):
+the HuggingFace transformers dependency must stay outside the native
+substrate, so this instrument now lives in the top-level ``instruments``
+package and imports the digest helper from taiji one-way.  The checkpoint
+payload format is unchanged.
 """
 
 from __future__ import annotations
@@ -15,7 +21,7 @@ from typing import Any
 
 import torch
 
-from .internalization import content_digest
+from taiji.internalization import content_digest
 
 DOCUMENT_EMBEDDER_FORMAT = "taiji-document-embedder-v1"
 DOCUMENT_EMBEDDER_VERSION = 1
