@@ -1,0 +1,119 @@
+{
+  "format": "taiji-default-runtime-rollout-attachment-v1",
+  "version": 1,
+  "source_p4_14_report_digest": "6acdf44b31343862cde79c55a2695a91d2287fb37d8cf380300104e3b7b383ee",
+  "source_p4_14_manifest_digest": "4e62da010506265e358af7b40b17d72d761c528da4924b91a27475d9b2533d14",
+  "source_scorecard_v5_report_digest": "711f238746318125818882805f636134ceb0a2d2bb9465e81be8d044e596e414",
+  "source_p4_1_manifest_digest": "1387551f4de09682728892a29d603883870851448b99ab18d746fe1402624fbd",
+  "source_p4_13_manifest_digest": "c1e8a4e8152a8745716b6766c2ac8e4f072e0db799ea43a0e64ac9ea67bae4e5",
+  "runtime_baseline": {
+    "runtime_module": "E:\\Seed\\api\\seed_runtime.py",
+    "runtime_module_sha256": "a82c0f0d328190e503bfd45098d735bdb969f463b083be5dfec6c189ec9c5580",
+    "default_checkpoint": "E:\\Seed\\checkpoints\\seed_corpus.pt",
+    "default_checkpoint_sha256": "1a67cf0110c156a018c34e490ab1bf82583efc00227456d9ed4ee54a28d532bb",
+    "runtime_k_g_references": []
+  },
+  "consumption_contract": {
+    "load_order": [
+      "attachment_manifest_digest_self_check",
+      "p4_14_lineage_check",
+      "artifact_digest_check",
+      "embedded_invariant_check",
+      "independent_process_restore",
+      "tamper_and_cell_mixing_rejection"
+    ],
+    "forbidden": [
+      "fit",
+      "artifact_or_default_checkpoint_writes",
+      "embedded_invariant_override",
+      "checkpoint_rematerialization"
+    ],
+    "post_k_k_digests_shared": {
+      "k1": "9fe6f48187ad7c1aaafe80a8e753e1547d0e126c2299f991599c7f17fbcca534",
+      "k2": "81a1891c470b72e7d01ef965c27cf84e56cdfb968ed3ff2d53bac80fb5beb839"
+    },
+    "resource_caps_absolute": {
+      "cell_rollout_seconds": 120.0,
+      "review_total_seconds": 600.0
+    }
+  },
+  "cells": [
+    {
+      "batch": 0,
+      "seed": 0,
+      "report_cell_index": 0,
+      "artifacts": {
+        "k1": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_14_joint_course_258e5cdb37ec4446ada54adf9afdd66e\\batch-0\\seed-0\\phase-k\\birth_k1_semantic.pt",
+          "digest": "9fe6f48187ad7c1aaafe80a8e753e1547d0e126c2299f991599c7f17fbcca534"
+        },
+        "k2": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_14_joint_course_258e5cdb37ec4446ada54adf9afdd66e\\batch-0\\seed-0\\phase-k\\birth_k2_transition.pt",
+          "digest": "81a1891c470b72e7d01ef965c27cf84e56cdfb968ed3ff2d53bac80fb5beb839"
+        },
+        "g": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_14_joint_course_258e5cdb37ec4446ada54adf9afdd66e\\batch-0\\seed-0\\phase-g-extended.pt",
+          "digest": "733e84bdc1f4ad67e2febda6be829548300019e1e7232ce95a5b33536cb0e9d7"
+        }
+      }
+    },
+    {
+      "batch": 0,
+      "seed": 1,
+      "report_cell_index": 1,
+      "artifacts": {
+        "k1": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_14_joint_course_258e5cdb37ec4446ada54adf9afdd66e\\batch-0\\seed-1\\phase-k\\birth_k1_semantic.pt",
+          "digest": "9fe6f48187ad7c1aaafe80a8e753e1547d0e126c2299f991599c7f17fbcca534"
+        },
+        "k2": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_14_joint_course_258e5cdb37ec4446ada54adf9afdd66e\\batch-0\\seed-1\\phase-k\\birth_k2_transition.pt",
+          "digest": "81a1891c470b72e7d01ef965c27cf84e56cdfb968ed3ff2d53bac80fb5beb839"
+        },
+        "g": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_14_joint_course_258e5cdb37ec4446ada54adf9afdd66e\\batch-0\\seed-1\\phase-g-extended.pt",
+          "digest": "dfda73a8c8d88ae9f15dc1f25fe7043137d156ca3d579f534b9175bb6066758e"
+        }
+      }
+    },
+    {
+      "batch": 1,
+      "seed": 0,
+      "report_cell_index": 2,
+      "artifacts": {
+        "k1": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_14_joint_course_258e5cdb37ec4446ada54adf9afdd66e\\batch-1\\seed-0\\phase-k\\birth_k1_semantic.pt",
+          "digest": "9fe6f48187ad7c1aaafe80a8e753e1547d0e126c2299f991599c7f17fbcca534"
+        },
+        "k2": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_14_joint_course_258e5cdb37ec4446ada54adf9afdd66e\\batch-1\\seed-0\\phase-k\\birth_k2_transition.pt",
+          "digest": "81a1891c470b72e7d01ef965c27cf84e56cdfb968ed3ff2d53bac80fb5beb839"
+        },
+        "g": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_14_joint_course_258e5cdb37ec4446ada54adf9afdd66e\\batch-1\\seed-0\\phase-g-extended.pt",
+          "digest": "90471daf256e9a12aed86ae23a52d907e3e28d0b10c090bb7e4810261014fd3c"
+        }
+      }
+    },
+    {
+      "batch": 1,
+      "seed": 1,
+      "report_cell_index": 3,
+      "artifacts": {
+        "k1": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_14_joint_course_258e5cdb37ec4446ada54adf9afdd66e\\batch-1\\seed-1\\phase-k\\birth_k1_semantic.pt",
+          "digest": "9fe6f48187ad7c1aaafe80a8e753e1547d0e126c2299f991599c7f17fbcca534"
+        },
+        "k2": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_14_joint_course_258e5cdb37ec4446ada54adf9afdd66e\\batch-1\\seed-1\\phase-k\\birth_k2_transition.pt",
+          "digest": "81a1891c470b72e7d01ef965c27cf84e56cdfb968ed3ff2d53bac80fb5beb839"
+        },
+        "g": {
+          "path": "E:\\Seed\\output\\taiji_m5_k_p4_14_joint_course_258e5cdb37ec4446ada54adf9afdd66e\\batch-1\\seed-1\\phase-g-extended.pt",
+          "digest": "2623b07f11ab257651492411f15192009335612a2a7ffcf8f0752495909ac16f"
+        }
+      }
+    }
+  ],
+  "manifest_digest": "fe1191120df3341ac3bdb272561f57d3bbe1b63b08058fd1e1c1b000a8f7589f"
+}

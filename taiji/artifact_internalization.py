@@ -19,6 +19,7 @@ import torch
 
 from .affordance import AffordanceFeatureTrainingExample, LearnedAffordanceFeatures
 from .contracts import ActionIntent, EpisodicMemoryRecord, Outcome
+from .document_embedding import DocumentEmbedder
 from .evolution_experience import EvolutionCorpusArtifact, EvolutionExperience
 from .internalization import GroundedFeatureExample, content_digest
 from .internalization_learner import InternalizationLearningReport, InternalizedFeatureLearner
@@ -62,7 +63,9 @@ def _reward(experience: EvolutionExperience) -> float:
 
 def _reward_terms(experience: EvolutionExperience, reward: float) -> tuple[tuple[str, float], ...]:
     if experience.reward_components:
-        return tuple(sorted((str(name), float(value)) for name, value in experience.reward_components))
+        return tuple(
+            sorted((str(name), float(value)) for name, value in experience.reward_components)
+        )
     return (("outcome", reward),)
 
 
@@ -142,7 +145,9 @@ class ArtifactKnowledgeEncoder:
         "language",
     )
 
-    def __init__(self, feature_dim: int = 64, *, namespace: str = "taiji-artifact-knowledge-v1") -> None:
+    def __init__(
+        self, feature_dim: int = 64, *, namespace: str = "taiji-artifact-knowledge-v1"
+    ) -> None:
         self.feature_dim = int(feature_dim)
         if self.feature_dim <= 0:
             raise ValueError("artifact knowledge feature_dim must be positive")
@@ -204,6 +209,62 @@ class ArtifactKnowledgeEncoder:
         ):
             raise ValueError("artifact knowledge identity boundary drift")
         return cls(int(payload["feature_dim"]), namespace=str(payload["namespace"]))
+
+
+class SemanticArtifactKnowledgeEncoder:
+    """Embed redacted artifact text with the anchored document embedder."""
+
+    FORMAT = "taiji-semantic-artifact-knowledge-v1"
+    VERSION = 1
+
+    _IDENTITY_CONTENT_KEYS = frozenset({"scope_id"})
+
+    def __init__(self, *, embedder: DocumentEmbedder | None = None) -> None:
+        self.embedder = embedder or DocumentEmbedder()
+        self.feature_dim = int(self.embedder.dimension)
+
+    def _text(self, artifact: EvolutionCorpusArtifact) -> str:
+        """Render all redacted content except identity fields (scope ids)."""
+
+        parts = [str(artifact.unit_kind)]
+        for key in sorted(artifact.content):
+            if key in self._IDENTITY_CONTENT_KEYS:
+                continue
+            parts.append(f"{key}: {artifact.content[key]}")
+        return ". ".join(parts)
+
+    def encode(self, artifact: EvolutionCorpusArtifact) -> torch.Tensor:
+        return self.embedder.embed([self._text(artifact)])[0]
+
+    def checkpoint(self) -> dict[str, Any]:
+        return {
+            "format": self.FORMAT,
+            "version": self.VERSION,
+            "feature_dim": self.feature_dim,
+            "embedder_model_id": self.embedder.model_id,
+            "embedder_revision": self.embedder.revision,
+            "embedder_config_digest": self.embedder.config_digest,
+        }
+
+    @classmethod
+    def from_checkpoint(cls, payload: Mapping[str, Any]) -> SemanticArtifactKnowledgeEncoder:
+        if payload.get("format") != cls.FORMAT:
+            raise ValueError("unsupported semantic artifact encoder format")
+        if int(payload.get("version", -1)) != cls.VERSION:
+            raise ValueError("unsupported semantic artifact encoder version")
+        encoder = cls()
+        anchored = (
+            ("embedder_model_id", encoder.embedder.model_id),
+            ("embedder_revision", encoder.embedder.revision),
+            ("embedder_config_digest", encoder.embedder.config_digest),
+            ("feature_dim", encoder.feature_dim),
+        )
+        for key, value in anchored:
+            if key not in payload:
+                raise ValueError(f"semantic artifact encoder checkpoint missing {key}")
+            if str(payload[key]) != str(value):
+                raise ValueError(f"semantic artifact encoder {key} drift")
+        return encoder
 
 
 def _procedure_unit(
@@ -291,10 +352,12 @@ class ArtifactInternalizationTrainer:
         self,
         *,
         feature_dim: int = 64,
+        encoder: Any | None = None,
         procedural_hidden_dim: int = 16,
         affordance_feature_dim: int = 12,
         seed: int = 17,
         semantic_learning_rate: float = 0.5,
+        semantic_pairwise_margin: float = 0.0,
         semantic_passes: int = 12,
         procedural_epochs: int = 250,
         procedural_learning_rate: float = 0.05,
@@ -306,13 +369,29 @@ class ArtifactInternalizationTrainer:
             raise ValueError("artifact internalization learner dimensions must be positive")
         if min(int(semantic_passes), int(procedural_epochs), int(affordance_epochs)) <= 0:
             raise ValueError("artifact internalization epochs must be positive")
-        if min(
-            float(semantic_learning_rate),
-            float(procedural_learning_rate),
-            float(affordance_learning_rate),
-        ) <= 0.0:
+        if (
+            min(
+                float(semantic_learning_rate),
+                float(procedural_learning_rate),
+                float(affordance_learning_rate),
+            )
+            <= 0.0
+        ):
             raise ValueError("artifact internalization learning rates must be positive")
-        self.encoder = ArtifactKnowledgeEncoder(feature_dim)
+        if encoder is None:
+            self.encoder: Any = ArtifactKnowledgeEncoder(feature_dim)
+        else:
+            if (
+                not hasattr(encoder, "feature_dim")
+                or not callable(getattr(encoder, "encode", None))
+                or not callable(getattr(encoder, "checkpoint", None))
+            ):
+                raise TypeError(
+                    "artifact internalization encoder must expose " "feature_dim/encode/checkpoint"
+                )
+            if int(encoder.feature_dim) != int(feature_dim):
+                raise ValueError("artifact internalization encoder feature_dim drift")
+            self.encoder = encoder
         self.procedural_hidden_dim = int(procedural_hidden_dim)
         self.affordance_feature_dim = int(affordance_feature_dim)
         self.seed = int(seed)
@@ -329,6 +408,7 @@ class ArtifactInternalizationTrainer:
             feature_dim,
             learning_rate=self.semantic_learning_rate,
             bias_learning_rate=0.0,
+            pairwise_margin=float(semantic_pairwise_margin),
             manifest_revision=self.manifest_revision,
         )
         self.procedural = ProceduralSequenceLearner(
@@ -460,9 +540,7 @@ class ArtifactInternalizationTrainer:
         for episode in grouped.values():
             ordered = tuple(sorted(episode, key=lambda item: (item.tick, item.memory_id)))
             actual = tuple(
-                record.action_intent.kind
-                for record in ordered
-                if record.action_intent is not None
+                record.action_intent.kind for record in ordered if record.action_intent is not None
             )
             predicted = learner.predict_episode(tuple(record.cue for record in ordered))
             correct += sum(left == right for left, right in zip(predicted, actual, strict=True))
@@ -489,6 +567,7 @@ class ArtifactInternalizationTrainer:
         train_experiences: Iterable[EvolutionExperience],
         holdout_experiences: Iterable[EvolutionExperience],
         retention_experiences: Iterable[EvolutionExperience],
+        ranking_pairs: Iterable[tuple[GroundedFeatureExample, GroundedFeatureExample]] = (),
     ) -> ArtifactInternalizationReport:
         train_artifacts_tuple = _artifacts(train_artifacts, partition="train")
         holdout_artifacts_tuple = _artifacts(holdout_artifacts, partition="holdout")
@@ -526,8 +605,12 @@ class ArtifactInternalizationTrainer:
                 "holdout_artifacts": [item.artifact_digest for item in holdout_artifacts_tuple],
                 "retention_artifacts": [item.artifact_digest for item in retention_artifacts_tuple],
                 "train_experiences": [item.experience_digest for item in train_experiences_tuple],
-                "holdout_experiences": [item.experience_digest for item in holdout_experiences_tuple],
-                "retention_experiences": [item.experience_digest for item in retention_experiences_tuple],
+                "holdout_experiences": [
+                    item.experience_digest for item in holdout_experiences_tuple
+                ],
+                "retention_experiences": [
+                    item.experience_digest for item in retention_experiences_tuple
+                ],
                 "encoder": self.encoder.checkpoint(),
             }
         )
@@ -540,6 +623,7 @@ class ArtifactInternalizationTrainer:
             retention_examples=retention_examples,
             replay_digest=dataset_digest,
             passes=self.semantic_passes,
+            ranking_pairs=ranking_pairs,
         )
         procedural_train = self._procedural_records(train_artifacts_tuple, train_experiences_tuple)
         procedural_holdout = self._procedural_records(
@@ -556,7 +640,9 @@ class ArtifactInternalizationTrainer:
         )
         procedural_train_accuracy = self._sequence_accuracy(procedural_trial, procedural_train)
         procedural_holdout_accuracy = self._sequence_accuracy(procedural_trial, procedural_holdout)
-        procedural_retention_accuracy = self._sequence_accuracy(procedural_trial, procedural_retention)
+        procedural_retention_accuracy = self._sequence_accuracy(
+            procedural_trial, procedural_retention
+        )
         procedural_lesion = ProceduralSequenceLearner.from_checkpoint(procedural_trial.checkpoint())
         with torch.no_grad():
             for parameter in procedural_lesion.parameters():
@@ -730,7 +816,14 @@ class ArtifactInternalizationTrainer:
         )
         if str(payload.get("checkpoint_digest", "")) != expected:
             raise ValueError("artifact internalization checkpoint digest mismatch")
-        encoder = ArtifactKnowledgeEncoder.from_checkpoint(payload["encoder"])
+        encoder_payload = payload["encoder"]
+        encoder_format = str(encoder_payload.get("format", ""))
+        if encoder_format == ARTIFACT_INTERNALIZATION_FORMAT:
+            encoder: Any = ArtifactKnowledgeEncoder.from_checkpoint(encoder_payload)
+        elif encoder_format == SemanticArtifactKnowledgeEncoder.FORMAT:
+            encoder = SemanticArtifactKnowledgeEncoder.from_checkpoint(encoder_payload)
+        else:
+            raise ValueError("unsupported artifact internalization encoder format")
         trainer = cls(
             feature_dim=encoder.feature_dim,
             procedural_hidden_dim=int(payload["procedural_hidden_dim"]),
@@ -773,4 +866,5 @@ __all__ = [
     "ArtifactInternalizationReport",
     "ArtifactInternalizationTrainer",
     "ArtifactKnowledgeEncoder",
+    "SemanticArtifactKnowledgeEncoder",
 ]

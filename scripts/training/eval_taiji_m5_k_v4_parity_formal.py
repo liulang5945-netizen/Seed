@@ -1,4 +1,4 @@
-﻿"""Expanded-space (v4) parity formal runner.
+"""Expanded-space (v4) parity formal runner.
 
 Preregistration: ``plans/reference/M5_K_SIGNAL_SPACE_EXPANSION
 _PREREGISTRATION_20260910.md`` §6.  Same two-stage discipline and frozen

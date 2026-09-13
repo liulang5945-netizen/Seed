@@ -196,7 +196,9 @@ class SkillArtifactAdapter:
 
     source_kind = "skill"
 
-    def project(self, artifact: Mapping[str, Any], *, partition: str = "train") -> ArtifactCorpusProjection:
+    def project(
+        self, artifact: Mapping[str, Any], *, partition: str = "train"
+    ) -> ArtifactCorpusProjection:
         if not isinstance(artifact, Mapping):
             raise TypeError("Skill artifact must be a mapping")
         safe, flags = _safe_source(artifact)
@@ -283,7 +285,9 @@ class McpArtifactAdapter:
 
     source_kind = "mcp"
 
-    def project(self, artifact: Mapping[str, Any], *, partition: str = "train") -> ArtifactCorpusProjection:
+    def project(
+        self, artifact: Mapping[str, Any], *, partition: str = "train"
+    ) -> ArtifactCorpusProjection:
         if not isinstance(artifact, Mapping):
             raise TypeError("MCP artifact must be a mapping")
         safe, flags = _safe_source(artifact)
@@ -326,9 +330,11 @@ class McpArtifactAdapter:
                     content=tool_content,
                     partition=partition,
                     capability_semantics={"kind": "mcp_tool", "server_id": source_id},
-                    input_schema=tool.get("input_schema", tool.get("schema"))
-                    if isinstance(tool, Mapping)
-                    else None,
+                    input_schema=(
+                        tool.get("input_schema", tool.get("schema"))
+                        if isinstance(tool, Mapping)
+                        else None
+                    ),
                     output_schema=tool.get("output_schema") if isinstance(tool, Mapping) else None,
                     redaction_flags=flags,
                 )
@@ -403,7 +409,9 @@ class ClientPluginArtifactAdapter:
 
     source_kind = "client_plugin"
 
-    def project(self, artifact: Mapping[str, Any], *, partition: str = "train") -> ArtifactCorpusProjection:
+    def project(
+        self, artifact: Mapping[str, Any], *, partition: str = "train"
+    ) -> ArtifactCorpusProjection:
         if not isinstance(artifact, Mapping):
             raise TypeError("client plugin artifact must be a mapping")
         safe, flags = _safe_source(artifact)
@@ -567,7 +575,9 @@ def runtime_event_to_experience(
         error_code=_optional(safe, "error_code"),
         reward_components=reward_components,
         resource_usage=resource_usage,
-        user_correction_digest=content_digest(correction_value) if correction_value is not None else "",
+        user_correction_digest=(
+            content_digest(correction_value) if correction_value is not None else ""
+        ),
         client_snapshot_id=_optional(safe, "client_snapshot_id"),
         skill_digest=source_digest if source_kind == "skill" else "",
         mcp_server_digest=source_digest if source_kind == "mcp" else "",

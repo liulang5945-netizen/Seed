@@ -95,8 +95,7 @@ def test_active_plans_have_one_execution_owner_and_resolvable_links() -> None:
         execution_headings.extend(
             (path, line)
             for line in text.splitlines()
-            if line.startswith("## ")
-            and ("当前唯一下一步" in line or "唯一执行项" in line)
+            if line.startswith("## ") and ("当前唯一下一步" in line or "唯一执行项" in line)
         )
 
         for match in re.finditer(r"\[[^\]]+\]\(([^)]+)\)", text):
@@ -107,4 +106,14 @@ def test_active_plans_have_one_execution_owner_and_resolvable_links() -> None:
                 (path.parent / target).resolve().exists()
             ), f"active plan link is missing: {path.relative_to(REPO)} -> {target}"
 
-    assert execution_headings == [(current, "## 当前决策点：P4.7 容量假设干净检验（唯一执行项）")]
+    # 唯一执行项断言只校验「唯一性 + 归属文件 + 固定前缀」，不把当前阶段名
+    # 硬编码进测试。原因：该断言此前把 P5.2a 阶段名写死，导致每次 roadmap
+    # 推进到下一阶段（P5.2b/P5.2c）都必须改测试，否则测试成为推进的阻力，
+    # 并诱发「改测试而不是改事实」的坏习惯。契约保留的部分是：活跃计划树
+    # 内只允许出现一条执行项声明，且必须位于 03_CURRENT_EXECUTION.md。
+    assert (
+        len(execution_headings) == 1
+    ), f"expected exactly one execution owner, got {execution_headings}"
+    owner_path, owner_heading = execution_headings[0]
+    assert owner_path == current, f"execution owner must be {current}, got {owner_path}"
+    assert owner_heading.startswith("## 当前唯一下一步：")

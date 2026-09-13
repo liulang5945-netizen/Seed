@@ -242,7 +242,12 @@ class EvolutionCorpusArtifact:
         ):
             object.__setattr__(self, name, _required_text(value, name))
         object.__setattr__(self, "source_digest", _digest_text(self.source_digest, "source_digest"))
-        if self.source_kind not in {"skill_artifact", "mcp_artifact", "client_plugin_artifact", "verified_domain_material"}:
+        if self.source_kind not in {
+            "skill_artifact",
+            "mcp_artifact",
+            "client_plugin_artifact",
+            "verified_domain_material",
+        }:
             raise ValueError("unsupported evolution corpus source_kind")
         if self.unit_kind not in EVOLUTION_CORPUS_UNIT_KINDS:
             raise ValueError("unsupported evolution corpus unit_kind")
@@ -284,7 +289,9 @@ class EvolutionCorpusArtifact:
             "output_schema_digest",
             _digest_text(self.output_schema_digest, "output_schema_digest", optional=True),
         )
-        object.__setattr__(self, "constraint_digests", _digest_tuple(self.constraint_digests, "constraint_digests"))
+        object.__setattr__(
+            self, "constraint_digests", _digest_tuple(self.constraint_digests, "constraint_digests")
+        )
         supersedes_digest = _digest_text(self.supersedes_digest, "supersedes_digest", optional=True)
         object.__setattr__(self, "supersedes_digest", supersedes_digest)
         object.__setattr__(self, "taint_flags", _text_tuple(self.taint_flags, "taint_flags"))

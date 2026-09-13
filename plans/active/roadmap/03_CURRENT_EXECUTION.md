@@ -1,356 +1,216 @@
-# Seed / Taiji 唯一执行计划
+# Seed / Taiji 当前推进方案
 
-> 修订：2026-09-11（M5 K 轴 scorecard v4 收束版）；P4.0–P4.13 已完成，固定容量/旧表示路线关闭，求解器机制下的 G 侧课程证据已闭合。晋级边界仍为 `promotion_gate=false`、`can_promote=false`、`growth_admitted=false`。本文覆盖所有旧文档中的执行许可和“下一步”。
-> 本轮任务是根据新增结果修订方案；训练与实现按下述验收顺序在后续开发中执行。
-> 研究依据：[本轮源码与结果复审](../../reference/M4V2_POST_C_STAGE_RESULT_REVIEW_20260910.md)；[历史执行记录](../../archive/history/20260910_result_review/EXECUTION_HISTORY.md)。
-> 前瞻性技术设想（自主唤醒/注意力外挂/跨设备快照等，**不参与主线、不改变执行顺序**）见 [未来技术设想](../../reference/VISION_FUTURE_TECHNOLOGY.md)。
+> 更新：2026-09-13。审查基线：`102b81e1`。本文件是唯一执行顺序来源。
+> 本轮交付为结果复审和方案重组；以下新增阶段是建议计划，尚未冻结实验判据或获得产品行为切换许可。
+> [本轮证据复审](../../reference/M5_POST_P5_2_REVIEW_20260913.md)记录事实、推断与限制；[整理前执行快照](../../archive/history/20260913_plan_reorganization/EXECUTION_BEFORE_REVIEW.md)保存原始阶段流水。
 
-## 当前状态：M5 K 轴证据已收束，默认运行时仍保持 fail-closed
+## 1. 项目所处位置与本轮目标
 
-2026-09-11 的 [M5 K 轴 scorecard v4](../../reference/M5_K_AXIS_SCORECARD_V4_CONTRACT_20260911.md)
-以只读方式汇总了 K1/K2/K3、C-stage 学习机制、P4.12 课程级验证和 P4.13 两阶段晋级课程。
-最新机器报告为 [scorecard v4 report](../../../reports/taiji_m5_k_axis_scorecard_v4_20260911.json)。
+长期目标仍是 Taiji 拥有持续状态、记忆、行动选择、异质群体协作和继承式成长；Seed 提供产品、权限和环境执行。既有实验载体用于验证机制，不能成为能力上限。依据为[核心需求](../TAIJI_CORE_REQUIREMENTS.md)和[原生架构](../TAIJI_NATIVE_ARCHITECTURE_V1.md)。
 
-| 证据线 | 当前结论 |
-|---|---|
-| P4.7–P4.10 | 容量假设关闭，旧表示/约束路线关闭，parent-relative 特征因子化与基础特征空间 learnability gap 已记录 |
-| P4.11 | `projection_solver_supported`：两个 seed 同时通过新任务与双保持门 |
-| P4.12 | `course_level_validation_supported`：3 个身份批次 × 3 个 seed，9/9 projected cell 通过 |
-| P4.13 | `promotion_course_supported`：9/9 A → B cell 通过，累积 A+B+保持约束零违反，向后保持零失败 |
-| 晋级边界 | `g_solver_mechanism_course_closed=true`，但 K worker 联合课程未预注册/运行，默认 runtime rollout review 未执行；因此 `promotion_gate=false` |
+当前已经跨过三个阶段：K 轴限定范围晋级；知识来源的受控内容收益验证；Workbench 小型模拟的合同执行与程序动作预测验证。接下来的主要缺口是把预测、执行、真实结果、群体学习和已准入状态串成可恢复的闭环。
 
-**唯一下一步：预注册 K worker 联合课程**，把 P2.6/P2.7 continuation 机械与求解器机制接到同一父代。完成前不解冻任何 owner、不接默认 runtime、不追加无关训练，也不把 G 侧课程结果写成完整认知能力或结构成长。
+本轮整理目标是：把分散的成绩归入明确证据范围，保留失败教训，清除活动计划中的过时指令，并为下一阶段写出依赖、交付物、验收和停止条件。
 
-## 阶段收束：完成研究审计，不等于完成模型验收
+## 2. 已完成成果及其生效范围
 
-本轮从 601413cd 的收束基线继续完成了 P0 等 replay validation-only 诊断、P1 失败审计、P1.1 数据契约修复、P2 小预算 validation pilot、P2.1 只读输出/行动链诊断、P2.2 安全 bridge canary、P2.3 recovery continuation 数据合同审计、P2.3 targeted learning pilot、P2.4 retention canary、P2.5 novel-composition probe、P2.6 novel K2 learning、P2.7 independent holdout generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell state preflight、P3.2 K→G owner-transfer preflight、P3.3 G candidate data-signal/G-only learning、P3.4 behavior signal Gate、P3.5 reobserve-aware G-only learning、P3.6 独立行为 holdout/保持 Gate、P4.0 固定容量压力扫描、P4.1 公平容量合同预检、P4.2 隔离训练/公平容量归因、P4.3 保持约束增量学习、P4.4 保持身份/结构校准、P4.5 保持约束/更新规则对照和 P4.6 功能性 parent-preserving objective 对照；没有读取新的 sealed payload，也没有 promotion 成绩。代码/报告证据以 P0、P1 v1/v2、P2 pilot/P2.1/P2.2/P2.3/P2.4/P2.5/P2.6/P2.7、P3.0/P3.1/P3.2/P3.3/P3.4/P3.5/P3.6、P4.0/P4.1/P4.2/P4.3/P4.4/P4.5/P4.6 报告及本结果复审为准。
+| 工作线 | 已完成事实 | 当前可以使用的资产 | 尚未覆盖 |
+|---|---|---|---|
+| K 轴晋级 | P4.14 联合课程 4/4，rollout review、runtime 附着和独立批准完成；scorecard v8 的 promotion gate 为 true | K/G 联合状态、恢复/回滚合同、显式附着接口 | 默认行为采用、附着持久化、通用任务能力 |
+| G 侧持续学习 | P4.11 两 seed、P4.12 9/9、P4.13 两阶段 9/9 通过 | parent-relative 表征与联合可行域投影 | 开放任务及长程无界累积 |
+| P5.1–P5.1e | 内容迁移、对比辨别、语义 encoder 注入、构造同预算内容收益通过；P5.1b 语义改写试验失败 | governed corpus、锚定 encoder、程序学习和对照框架，以及辨别力不足的失败证据 | 各阶段指标不能跨不同实验直接排序 |
+| P5.1f | 真实语料试验按原判据失败，门 2/4/5/7/9 未过 | 预算、准入与饱和指标的失败证据 | 不可将其改写为已通过或仅删除失败项 |
+| P5.1g | 真实语料配额对照九门通过；trial a-gate 0.651376，超频率基线 0.284376 | calls 配额采样、trial 测量路径、语料内容收益证据 | 两臂仍未准入；不能声称真实语料知识已进入产品有效状态 |
+| P5.2 | 合同 Gate 九门通过；180 动作真实路径、30 场景文件撤销恢复；readout holdout/a-gate 1.0 | scripted 场景、真实 Workbench 执行器、readout、trace 投影 | 执行循环尚未消费 readout 预测；群体评估 groups=0 |
+| 工程与 CI | 有前端、桌面、provider、插件、语言识别、事务和恢复工程资产 | 复用现有接口与相关回归测试 | 历史局部检查不构成当前 HEAD 全仓 CI 通过 |
 
-| 工作线 | 收束状态 | 后续处理 |
-|---|---|---|
-| 五类 K1/K2 学习器 | 实现资产保留；共 5,648 有效参数，不代表通用语言或完整认知能力 | 用作同父代持续学习基线，先不扩参 |
-| fast/slow 与 replay | 等 replay 下与直接 continuation 等价；拆分独立贡献未证实 | replay 作为效果基线；FS 只保留为状态实现候选 |
-| widened / 旧 parity | 当前合成路线关闭；错误计数结论撤回 | 保留失败证据和 XL 对照，不继续补次数或凑容量 |
-| C-stage / scorecard | 报告入账完成；覆盖范围有限，can_promote=false | 不追加同质 formal；换成五类、同预算、同 artifact 验证 |
-| S/G/K 连续整合 | P3.1 事件合同、P3.2 owner-transfer、P3.3 candidate data-signal/G-only、P3.4 behavior signal、P3.5 reobserve-aware G-only、P3.6 独立行为 holdout/保持、P4.4 保持身份/结构校准、P4.5 更新规则对照和 P4.6 功能性保持对照均完成；P4.0 观察到固定 G 选择压力，P4.1 已把 12 维候选输入与 9 维候选集上下文合同内容寻址，P4.2–P4.6 的 child training、恢复和保持检查完成 | **13 参数互斥已钉死**（保持/新任务在 seed 间系统性互斥，三类干预无效）；P4.2 的 fixed-large 无收益结论受坏协议污染，容量假设未被干净检验。决策已收束为 P4.7 容量假设干净检验（见「当前决策点」节）；停止调参、扩容、promotion 和外围解冻 |
-| Seed / IDE / provider / 插件 | 已有工程资产保留；本轮未重新验收客户端全链路 | 仅修阻塞主线的故障；新能力按 P5 的依赖解冻 |
-| CI、临时目录与发布 | 不把历史局部测试当当前全仓通过 | 变更相关检查随步执行；发布另验收，不批量删除未知资产 |
+晋级以[宣布](../../reference/M5_K_PROMOTION_DECLARATION_20260912.md)和[scorecard v8 报告](../../../reports/taiji_m5_k_axis_scorecard_v8_20260912.json)为准：限定五类合成载体，附着 opt-in、进程内状态，默认 chat/workbench 路径保持原样，S 为 control-only evidence，结构成长未触发。
 
-长期核心目标不变：Taiji 拥有认知状态与行动选择，继承已有权重和学习状态持续成长，并可使用成熟技术。当前五类任务只是实验载体，不应被固化成架构能力上限。神经群体协作、开放式成长、跨域迁移和自主进化仍是待验目标，不能从模块存在或 checkpoint 数量推断完成。
+P5.1g/P5.2 报告中的 `can_promote=false` 是各自实验的权限边界，不撤销此前 K 轴晋级；K 轴的 `can_promote=true` 也不向新阶段传递许可。`growth_admitted=false` 仍适用于本轮已有成果。
 
-### 下一阶段唯一交付目标
+## 3. 本轮复审修正的三个关键判断
 
-**P2.2–P4.13 的合同、训练/验证、checkpoint/rollback、holdout/retention 与失败归因均已按冻结映射完成，但模型仍未 promotion，结构也未增长。** P4.11 在两个 seed 上同时通过新任务与双保持门；P4.12 为 3 个身份批次 × 3 个 seed 的 9/9 projected cell；P4.13 为 9/9 两阶段 A → B cell，A+B+保持累积约束零违反、向后保持零失败，checkpoint/tamper/rollback/feature-source 与绝对资源预算全通过。scorecard v4 已把 G 侧求解器机制结论收束为 `g_solver_mechanism_course_closed=true`，但 `k_worker_joint_course_completed=false`、`default_runtime_rollout_review_completed=false`，所以 `promotion_gate=false`、`can_promote=false`、`growth_admitted=false`。**唯一交付目标是预注册 K worker 联合课程**；在其完成前不解冻 owner、不接默认 runtime、不扩大训练范围，也不把 G 侧机制证据写成完整认知能力。
+### 3.1 真实语料收益与产品准入分开验收
 
-- P0 已确定当前实现的效果基线：在 model17/course0、150 条 wake＋50 条固定 replay 上，FS 与 C-replay、FS-no-replay 与 C 的有效状态峰值差均为 `4.76837158203125e-7`，低于预先冻结的 `1e-5`；checkpoint preflight 通过。当前数据覆盖的验证类为 A/B/C，D/R 留给 P1。
-- P1 v1 失败审计确认了根因：450 条 train 记录中每类表面 observation digest 为 90 个，但实际 K1/K2 mask-visible input 各只有 1 个；validation 缺 D/R、无 project 隔离。报告保留为失败证据，不覆盖。
-- P1.1 已通过：修复后的 450 条 train + 10 条 validation 中，A/B/C/D/R 每类均有 2 个 K1/K2 visible input；course seed 改变可见序列；validation 覆盖五类，并与 train 在 project/template 上隔离。报告见 [P1 v2 数据契约审计](../../../reports/taiji_m5_k_p1_data_contract_audit_v2_20260910.json)，清单见 [P1 v2 manifest](../../manifests/taiji_m5_k_p1_data_manifest_v2.json)。model17/23/31 state_dict 仍相同，但本阶段只做单父代继承学习，该旁证不再作为 P1 Gate。
-- P2 pilot 已完成：P1 v2 的 460 条记录重建为 0 mismatch；50 条均衡 wake（A/B/C/D/R 各 10）+ 10 条固定 replay；checkpoint 保存和独立进程恢复均通过。报告见 [P2 v2 pilot](../../../reports/taiji_m5_k_p2_validation_pilot_v2_20260910.json)，机械失败保留在 [P2 failure report](../../../reports/taiji_m5_k_p2_validation_pilot_failed_20260910.json)。
-- P2 结果：frozen macro MSE `0.156574`；wake-only `0.029237`（Δ `-0.127337`）；wake-replay `0.030520`（Δ `-0.126053`）。但三臂宏观 semantic/transition goal/content 命中均为 `0.4`，R 类命中为 `0.0`；replay 相比 wake-only 反而使宏观和最坏类 MSE略差。因此只能确认连续输出拟合和 checkpoint 链路有效，不能确认离散输出、行动成功、抗遗忘或 replay 独立收益。
-- P2.1 已完成只读诊断：10 条 validation 重新构建为 0 mismatch；三臂均为 5,648 有效参数，checkpoint 独立恢复通过。frozen/wake-only/wake-replay 的 K1→K2→planner→隔离 Workbench 成功率分别为 3/10、4/10、4/10；6/10 行因输入 confidence 低于 K1/K2 的 `0.55` floor 输出 `unknown`，不是 argmax 读出错；frozen 另有 1 条因 `stale_world_observation` 被 planner 拒绝。报告见 [P2.1 诊断](../../../reports/taiji_m5_k_p2_output_action_diagnostic_20260910.json)。
-- P2.1 还确认既有 `READ_ONLY_ROUTES` 没有 `content:recover-target`→只读能力的路由。这个缺口不能用降低 confidence floor 或给缺失文件直接执行来掩盖；下一步必须先做安全 recovery bridge canary。
-- P2.2 已完成：460 条清单重建 `mismatch_count=0`；三臂 6 条低证据行均生成可往返、不可执行的 typed abstention；`content:recover-target` 的 `workspace.list(path=".")` 在 2 条 R 控制行上全部通过且根目录约束成立；世界对齐控制 10/10 通过。恢复和对齐均标记为 `oracle_control`，不构成模型能力成绩。报告见 [P2.2 安全 bridge canary](../../../reports/taiji_m5_k_p2_2_safety_bridge_canary_20260910.json)。
-- P2.2 重新划分了下一阶段指标：高证据可执行 cohort 只有 4/10 行；低证据 6/10 行的正确结果是安全 abstention；R 的真实“列举后重新观察并读取”连续数据尚未进入训练/验证合同。下一步必须先补齐这条可学习 continuation，再运行 targeted learning；不得降低 `0.55` floor，也不得把 oracle route 计入模型命中。
-- P2.3 continuation 合同已通过：6 条 train、2 条 validation；初始 R 观察均为 `read_success=false`、Percept confidence `0.0`、下一步 `workspace.list(path=".")`；列举后的候选观察均为独立高证据 `confidence=0.99`、resolved 文件；K1/K2 示例往返、输入 digest、record digest、project/path/template 隔离均通过。manifest 和报告见 [P2.3 continuation manifest](../../manifests/taiji_m5_k_p2_3_recovery_continuation_manifest_v1.json) 与 [P2.3 contract report](../../../reports/taiji_m5_k_p2_3_recovery_continuation_contract_20260910.json)。
-- P2.3 targeted learning 已完成：训练前 parent checkpoint 保存/独立恢复和三臂保存/独立恢复均通过；6 条 continuation candidate train、2 条 validation candidate 全程未把 validation 用于 fit。parent/targeted/reference 的 continuation validation 均为 2/2，说明没有新增能力；targeted 原五类 K1/K2 goal 命中为 1/4、3/4，parent 为 4/4、4/4，安全 abstention 仍为 6/6，`can_promote=false`。报告见 [P2.3 targeted pilot](../../../reports/taiji_m5_k_p2_3_targeted_learning_pilot_20260910.json)。
-- P2.3 的失败归因固定为“candidate-only update interference”，不是数据合同失败：新 candidate 与 parent 的输出目标重复，训练没有可测增量，却改变了 B/C/D 的高证据语义读出。下一步必须用固定 50 条均衡 rehearsal 做 retention-preserving objective canary，不能继续单独增加 continuation fit 次数。
-- P2.4 retention canary 已完成：P2 的 50 条 rehearsal digest、类别平衡和顺序全部复现；交错 50 rehearsal + 6 continuation 后，原五类 K1/K2 goal 命中仍为 4/4、4/4，Workbench 4/10，低证据安全 abstention 6/6，保存/独立恢复通过。continuation validation 仍为 parent 已有的 2/2，没有新增能力，`can_promote=false`。报告见 [P2.4 retention canary](../../../reports/taiji_m5_k_p2_4_retention_canary_20260910.json)。
-- P2.4 的结论是保持目标已可用，但当前 recovery continuation 目标不是有效 novelty probe：它只重复了既有 `inspect-language` 输出。下一步禁止继续在这个目标上加 epoch；必须构造真正未见的 recovery 后语言/工具链组合，并先做 frozen parent validation-only 探针。
-- P2.5 novel-composition probe 已完成：2 条 validation 候选均使用与 P1/P2 路径不重叠的 TypeScript＋可用 toolchain＋resolved＋inspect-language tuple；合同 digest、candidate path 隔离、checkpoint 保存和独立进程恢复均通过。frozen parent 在新组合上 K1 goal/content `2/2`、K2 goal `2/2`、K2 content `0/2`、Workbench `2/2`；两条 K2 均为 `ambiguous` 且 content 为 `None`，因此缺口定位为 K2 内容承接，不是识别、路由或 host 执行失败。报告见 [P2.5 novel-composition probe](../../../reports/taiji_m5_k_p2_5_novel_composition_probe_20260910.json)。
-- P2.6 novel K2 learning 已完成：6 条 train candidate 与 2 条 disjoint validation candidate，固定 50 条 P2 rehearsal 按 P2.4 顺序交错；manifest 合同通过、validation 未 fit、参数未增长、训练前与三臂保存后独立恢复均通过。parent 新组合 K2 content `0/2`，rehearsal-only `0/2`，interleaved `2/2`；interleaved 的 P1 旧类 K1/K2 content `4/4`、安全 abstention `6/6`、Workbench `4/10`，不低于 P2.4 parent baseline。该结果证明“这个具体 K2 内容承接目标可学习且保持约束通过”，不证明开放泛化，`can_promote=false`。报告见 [P2.6 novel K2 learning](../../../reports/taiji_m5_k_p2_6_novel_learning_20260910.json)。
-- P2.7 independent holdout generalization 已完成：4 条 holdout candidate 使用与 P1/P2.5/P2.6 全部 disjoint 的新路径，分属 2 个新 project；P2.6 learned arm 的已学 sanity K2 content `2/2`，holdout K1/K2 goal/content 均 `4/4`、Workbench `4/4`；frozen parent 同一 holdout K2 content `0/4`。P1 旧类相对 P2.4 baseline 不下降，参数量稳定，P2.6 checkpoint 独立恢复再次通过。报告见 [P2.7 holdout generalization](../../../reports/taiji_m5_k_p2_7_generalization_20260910.json)。这满足 P3 的局部泛化入场 Gate，但不自动授予 promotion。
-- P3.0 checkpoint/interrupt-resume contract 已完成：固定 P2.6 `interleaved-rehearsal-novel` learned checkpoint 为 parent；uninterrupted、wake 中段中断恢复、replay 边界中断恢复的 worker/budget/RNG/stream digest/final cursor 全部一致；tampered cursor、wrong parent、missing lineage 全部拒绝，rollback 独立恢复通过。实际发生了 K1/K2 更新，但未新增 S/G worker、未增长参数，`can_promote=false`。报告见 [P3.0 checkpoint contract](../../../reports/taiji_m5_k_p3_0_checkpoint_contract_20260910.json)，清单见 [P3.0 manifest](../../manifests/taiji_m5_k_p3_0_checkpoint_contract_manifest_v1.json)。
-- P3.1 single-cell state preflight 已完成：以 P3.0 continuation parent 为锚点，4 条 P2.7 holdout 形成 20 个五阶段事件；S/G/K owner mask、content digest、event/state chain、事件中点/阶段边界中断、两条独立恢复、rollback 和 tamper/base/manifest 拒绝全部通过。K 只读取 S evidence，G 只提供 control-only selection，最终 action 读取 G/K；K1/K2 checkpoint 未改变，`fit_called=false`、参数未增长、`can_promote=false`。报告见 [P3.1 report](../../../reports/taiji_m5_k_p3_1_single_cell_20260910.json)，清单见 [P3.1 manifest](../../manifests/taiji_m5_k_p3_1_single_cell_manifest_v1.json)。
-- P3.2 owner-transfer preflight 已完成：在相同的 4 条 P2.7 holdout 上，K1 只提供 inherited goal/content candidate，GSelectionState 持有最终选择；K-only 与 owner-transfer 的 K1 selection、K2 output、safe abstention、Workbench 全部等价，外部 target 未进入运行时，参数未增长。事件/事件边界/case 边界独立恢复、trajectory digest 和 tamper/wrong-base/wrong-manifest/wrong-owner-mask 拒绝全部通过。报告见 [P3.2 report](../../../reports/taiji_m5_k_p3_2_owner_transfer_20260910.json)，清单见 [P3.2 manifest](../../manifests/taiji_m5_k_p3_2_owner_transfer_manifest_v1.json)。
-- P2/P3.2/P3.3/P3.5 只允许使用冻结的 manifest、candidate/scorer/threshold/resource contract；每次训练前必须重新通过 checkpoint 保存/独立恢复 preflight。P3.3 已冻结 P3.2 K、只训练 G，证明了 G 的 checkpoint/lineage/fit 边界；P3.4 已构造真实可区分的候选行为信号，但零 margin 平局不得训练。P3.5 不得追加同质 epoch，也不得把外部 goal target、K 已有输出、静态 tie-break 或 owner-transfer 元数据冒充 learned G owner。
-- 阶段完成必须同时给出训练基线、可重建数据清单、不可变候选、五类结果及失败分析。没有收益或保持失败也是可收束的研究结论，但不得因此解冻 P3 的能力整合或晋级。
-- 按验收事件排期，不承诺缺乏运行时间依据的日历日期；同一时间只推进一个研究问题。
+P5.1g 的 sourced/placebo 工具词表不相交，placebo a-gate 为结构性零；超 per-tick 频率基线的收益提供了额外证据，但仍属于所用词表、语料和测量路径。两臂 consolidate 的 `admitted=false`、`rolled_back=true` 仍须保留。
 
-### P0 已完成：等 replay 机制归因
+预注册披露已用校准探针观察 a-gate 并选择 hidden 64/250 epochs，后续正式泛化验收必须使用新的独立测试集。当前报告的“准入不可达”仅适用于已测配置与预算，不能作为所有模型结构上的不可能结论。
 
-P0 的可重建入口为 [等 replay 诊断脚本](../../../scripts/training/eval_taiji_m5_k_p0_equal_replay_diagnostic.py)，结果见 [诊断报告](../../../reports/taiji_m5_k_p0_equal_replay_diagnostic_20260910.json)。它从同一 model17 v4 worker 快照派生 C、C-replay、FS、FS-no-replay，消费同一 150 条五类经历和同一 50 个 replay 索引，并逐 wake/replay/consolidate 记录轨迹与 A/B/C 验证类 MSE。结果完成“直接 continuation＋replay 是效果基线”的归因；它没有证明五类泛化、独立模型泛化、完整闭环或晋级。
+### 3.2 P5.2 执行正确与模型控制执行尚有接线间隔
 
-因此不再以 FS 相对 C-replay 的效果差作为成长证据。FS 的剩余价值转为状态拆分、保存和恢复接口候选，P3 仍需独立进程中断续训验证。
+现有 runner 的 `_execute_scene` 遍历 `scene.steps`，使用脚本的动作类型和参数；`_train_readout` 与 `_accuracy` 独立测程序预测。报告证明了合同路径、动作预测以及轨迹格式可用，但没有证明模型的预测决定了那 180 个执行动作。
 
-### 自动推进与讨论边界
+后续需记录“预测 → intent → request → outcome”的直接关系，并在预测错误时保留失败，不回填脚本答案。模型负责什么、参数绑定器负责什么必须逐字段披露。
 
-P1 合同完成后可做 P2 validation pilot。最终测试前冻结主指标、最低有意义收益、各类允许遗忘界和资源预算，注明各值的依据，禁止根据测试成绩放宽。
+### 3.3 Trace 可消费与群体协作证据尚有数据间隔
 
-出现下列情况应提交已有成果并停在决策点：有效信号不足需要改变任务定义；公平对照后仍无收益需要改变学习机制；资源约束迫使缩减目标；或准备改变认知所有权/默认发布模型。讨论时给出证据、保留方案与替代方案的收益和代价，再更新唯一计划；不自动扩展训练规模或购买算力。
+P5.2 报告的 `interaction_trace.evaluation_summary.groups=0`；每条 episode 都是固定 generator/environment 双 owner。现有 `build_member_evidence` 需要同 context 的 inactive baseline 与 singleton；迁移 learner 还需要 train-only 的群体记录及未知组合。
 
-本轮已完成 P0/P1 validation-only 诊断、P1.1 修复、P2 小预算 pilot、P2.1–P2.7、P3.0–P3.6、P4.0–P4.6 固定容量与更新规则诊断、P4.7 容量干净检验、P4.8 表征合同重设计、P4.9 特征空间探针、P4.10 特征因子化、P4.11 投影求解器、P4.12 课程级验证、P4.13 两阶段晋级课程；当前 G 侧求解器机制证据已由 scorecard v4 收束，唯一下一步是预注册 K worker 联合课程，不读取 sealed、不解冻 owner、不接默认 runtime、不进入 promotion 或外围路线。
+因此现有 trace 是接口资产，不能直接当作已具备学习信号的群体语料。环境 owner 是审计/执行主体，不能仅通过改名计作第二个认知成员。
 
-## 当前判断
+## 4. 方向选择与依赖总览
 
-M5 K 轴的 K1/K2/K3 standalone 证据与 G 侧 solver 机制证据已经入账。P4.7 关闭了“增加固定容量即可解除张力”的假设；P4.8–P4.10 把问题定位到 parent-relative 表征因子化与可学习空间；P4.11–P4.13 证明“任务 fit + 联合可行域投影”在两 seed、9-cell 课程和两阶段累积学习上可以同时满足新任务、保持与向后保持。上述结论是 G 侧机制证据，不是默认 runtime 已采用该机制，也不是完整认知能力。
+| 方向 | 对当前缺口的作用 | 代价与前置 | 本轮安排 |
+|---|---|---|---|
+| 深化 P5.2：预测执行、协作归因、在线学习 | 直接推进认知主体、真实行动反馈与异质协作，复用最新资产 | 需要补执行接线、干预对照、未知组合与恢复链 | **主线推荐** |
+| 先做插件热插拔/provider watchdog | 改善集成、可用性、故障隔离 | 无法回答模型是否实际选择动作、是否学会协作 | 接口成熟后开展 |
+| 立即扩参或结构成长 | 潜在提升容量与专门化 | 当前缺口主要是因果接线/对照，尚无干净扩容必要性证据 | 在实测容量压力成立后重开 |
 
-scorecard v4 的机器边界为：`k_evidence_closed=true`、`learning_mechanism_closed=true`、`g_solver_mechanism_course_closed=true`，但 `k_worker_joint_course_completed=false`、`default_runtime_rollout_review_completed=false`，因此 `promotion_gate=false`、`can_promote=false`、`growth_admitted=false`。下一步只做 K worker 联合课程预注册与验收，不自动追加同质 epoch、扩 K、接 owner 或启动 CUDA/IDE/provider/客户端路线。
+选择按长期能力上限和依赖判断。主线选“深化 P5.2”；P5.1 的真实语料准入作为部署前硬依赖保留，不能因 trial 读数好而跳过。
 
-P1.1 已把数据入口修复为可见状态优先的合同：A/B/C 通过语言证据的 resolved/ambiguous 变化，D 通过 header 语言证据的 ambiguous/resolved 变化，R 通过显式 recovery-language hint/no-hint 变化。P2 pilot 证明同一父代上的 K1/K2 连续 MSE 可显著下降，但离散 readout 命中不随之提升；这把问题从“有没有训练信号”推进到“输出阈值/目标/行动桥是否正确”。
+| 顺序 | 阶段/工作包 | 交付 | 进入下一阶段条件 |
+|---|---|---|---|
+| 0 | 证据与工程基线 | 当前复审、命令级 CI 差异清单 | 确认事实边界；相关阻塞定位 |
+| 1 | P5.2a 预测驱动执行 | 冻结合同、执行接线、隔离课程报告 | 执行动作来源可追踪，真实任务收益与保持成立。**已执行 `predictive_execution_insufficient`**（[预注册](../../reference/M5_P5_2A_PREDICTIVE_EXECUTION_PREREGISTRATION_20260913.md) / [报告](../../../reports/taiji_p5_2a_predictive_execution_20260913.json)：八门过（安全违规 0、恢复/篡改拒绝过），final model `0.5` < 冻结阈值 `0.65` 且与 frequency `0.5` 持平；失败模式 = 训练分布的 patch→undo 关联在无 undo 新组合上触发 bind 失败 ×3 + 过早 create 被合同拦截 ×3，goal_reached 仅 6/12） |
+| 2 | P5.2b 群体因果语料 | baseline/singleton/group 干预矩阵 | 同 context 配对成立、非空群体记录、无标签泄漏。**已执行 `group_causal_corpora_supported`，但入场审计推翻该结论（见第 3 行）**（[预注册](../../reference/M5_P5_2B_GROUP_CAUSAL_CORPORA_PREREGISTRATION_20260913.md) / [报告](../../../reports/taiji_p5_2b_group_causal_corpora_20260913.json)：九门全过；4 个 family-specialist readout 作真实可干预成员，12 context × 11 cells × 2 重复 = 264 episodes 真实合同执行；**1 对 admitted group（member-a+member-d）interaction `0.2222` 且 holdout 同值复现**，5 对因 `low_confidence` 如实拒绝；成员 profile 4/4；组合机制修订（fallback → dual-predict-select）已在预注册披露——纯 fallback 下未调用成员无事件使 pair cell 结构性无法成形；wall 19.7s。**复核修正：九门门 3/门 6 判据只检查「是否存在」而不检查「干预是否真的发生」，故漏检 block-0 context 的零步伪成功；该 admitted group 无效**） |
+| 3 | P5.2c 未见组合迁移 | transfer learner 候选与真实执行对照 | 学习组合优于冻结对照且旧能力保持。**入场审计未通过（阻塞）**：预注册已冻结（[预注册](../../reference/M5_P5_2C_UNSEEN_COMBINATION_TRANSFER_PREREGISTRATION_20260913.md)），但接线后门 3 结构性不可满足——4 成员下 6 个 pair 被 `train_only_candidates` 全数观测，未见组合面为空。审计根因：P5.2a `lang_confirm` 模板（context 100/104/108）目标 == 初始状态，9 个干预 cell 零步执行即判成功（空事件 episode），**P5.2b 的 `member-a+member-d` admitted group（interaction `0.2222`）为伪成功**。详见[审计报告](../../../reports/M5_P5_2C_ENTRY_AUDIT_P5_2B_DEFECT_20260913.md) |
+| 4 | P5.2d 在线结果回写 | 多轮 online → child → 恢复/回滚链 | 学习增益、保持、预算、幂等和中断恢复通过 |
+| 5 | P5.1h 真实语料准入 | 独立数据与 retention/准入实验 | 如需消费真实语料 child，必须先通过产品准入 |
+| 6 | runtime 行为采用评审 | shadow → opt-in canary → 持久化提案 | 实际使用的全部 artifact 准入通过，独立批准 |
+| 7 | P5.3 插件/provider；硬件与视觉 | 稳定接口上的产品完善 | 上游合同冻结，发布验收与对应依赖通过 |
 
-## P3.0 已完成：checkpoint/interrupt-resume contract
+P5.2a–d、P5.1h 是本轮用于拆分交付的建议编号，不是已执行或已冻结的实验。相邻阶段逐门进入，不同时启动多个训练分支。若第 1 阶段需要真实语料 child，第 5 阶段应提前成为该 child 的前置；合成 P5.2 研究可先沿现有隔离资产推进。
 
-P3.0 固定 P2.6 learned checkpoint 为 parent，把 P2.7 已通过的局部泛化能力放入可恢复的持续学习状态边界。它只验证 K1/K2 continuation，不把 S/G/K 联合成长写成已实现。
+## 5. P5.2a：让模型预测实际控制动作
 
-1. 固化 P2.2/P2.4 安全出口：confidence `<0.55` 的低证据样本只能产生 typed abstention；根目录 `workspace.list(path=".")` 仍是 host policy，不计模型 credit。此项已通过。
-2. P3.0 已通过最小 continuation contract：parent、K1/K2 worker、wake/replay/consolidate phase cursor、experience/stream digest、RNG/采样状态、预算计数、origin/attached lineage 元数据均有内容地址；错误 parent、缺链和篡改 payload 均拒绝。
-3. 三条可重建轨迹已通过：uninterrupted；wake 中段中断后恢复；replay 边界中断后恢复。每条都经过独立进程恢复，后续 worker/budget/RNG/stream digest/final cursor 与 uninterrupted 一致。
-4. rollback 已通过：恢复到 P3 parent 后 K1/K2 source digest 保持一致。P3.0 没有新增 S/G worker、没有参数增长、没有把 lineage 元数据计作能力，`can_promote=false` 保持。
+**研究问题**：保持 Workbench 权限合同不变时，程序 readout 的预测能否驱动多步任务，并获得可归因的真实结果收益？
 
-## P3.1 已完成：S→G→K 单 cell 状态整合预检
+**输入与复用**：
 
-P3.1 已在 P3.0 continuation parent 上完成 4 条 P2.7 holdout 的接口回放，形成每例五阶段、共 20 个事件。schema、owner、读写 mask、事件 state chain、内容寻址、事件中点/阶段边界中断、独立恢复、rollback 和错误拒绝全部通过；报告见 [P3.1 report](../../../reports/taiji_m5_k_p3_1_single_cell_20260910.json)，清单见 [P3.1 manifest](../../manifests/taiji_m5_k_p3_1_single_cell_manifest_v1.json)。
+- 复用 `ProceduralSequenceLearner`、锚定 encoder、`WorkbenchEnvironment`、`WorkbenchActionRequest.from_action_intent`。
+- P5.2 的 40/12/8 场景留作历史/开发基线；新增最终测试按项目、模板、语言证据冲突和动作组合分组，先登记重复率与隔离规则。
+- 冻结父 checkpoint、动作词表、可见 observation、参数 schema、审批策略与资源预算。当前 readout 输出动作类型，不把它描述为已有任意参数生成能力。
 
-关键边界必须保留：S 是 runtime evidence，G 是外部 goal/content selection 的 `control-only`，K 复用已有 K1/K2 learned worker；K readout 实际只读取 S evidence，最终 action 才读取 G/K。P3.1 没有调用 fit、没有新增参数，也没有证明 S/G 已经学习或 single-cell 优于 K-only；它只证明“状态可以正确接线、保存、恢复和回滚”。
+**实施步骤**：
 
-## P3.2 已完成：S/K/G owner 边界迁移预检
+1. 先完成零训练接线审计：列出预测 API、recurrent state、停止/拒绝出口、参数来源以及禁止读取的标签字段。
+2. 写预注册，冻结候选、对照、评分与数据拆分。场景参考动作只用于监督/评分，在线执行路径不得读取 `scene.steps` 作答案。
+3. 预测 capability 后用当前世界状态绑定合法参数；记录哪些参数仍是受控模板提供。缺证据、schema 不符或越权时安全停止。
+4. 实际 outcome 更新下一步可见状态；处理文件变化、语言歧义、撤销 token 失效和失败后重观察。
+5. 完成保存/独立恢复预检后，按冻结课程执行，产出命令、摘要、trajectory 与失败分类。
 
-P3.2 已在 P3.0 parent、P3.1 manifest 和同一 P2.7 holdout 上完成 owner-transfer 对照。K1 只提供 inherited goal/content candidate，`GSelectionState` 持有最终选择；K-only 与 owner-transfer 的 K1 selection、K2 output、safe abstention、Workbench 在 4/4 holdout 上完全等价，外部 target 未进入运行时，参数未增长。事件、事件边界、case 边界独立恢复，trajectory digest 一致，篡改 cursor、错误 base/manifest/owner mask 全部 fail-closed。报告见 [P3.2 report](../../../reports/taiji_m5_k_p3_2_owner_transfer_20260910.json)，清单见 [P3.2 manifest](../../manifests/taiji_m5_k_p3_2_owner_transfer_manifest_v1.json)。
+**对照与验收**：
 
-边界结论已经继续收束：P3.2 证明“选择所有权可迁移且不破坏既有行为”；P3.3 证明“冻结 K 后 G 可以保存、恢复和更新”，但 trained-G 与 zero-step/K-only 完全一致；P3.4 证明行为 utility 能产生可审计候选分歧，同时识别出 10 条零 margin 静态平局。因此不再重复同质 G-only epoch，下一步改为只使用非零 margin、带 reobserve 安全投影的 P3.5。
+- 脚本 oracle 只作合同/任务可达性上界；冻结模型、lesion、train-only 的频率基线作能力对照。
+- 每个执行动作可追溯到本轮预测与该时刻 snapshot；运行时不能因预测不匹配而替换为标准答案。
+- 主指标为任务最终状态成功率与安全违规数；动作准确率、步数、延迟、恢复率为分账指标。
+- 在新模板上保留实质差异任务，避免仅靠目标模板识别和 tick 查表解题。
+- 旧场景、低证据拒绝和 undo 保持；checkpoint 恢复前后在相同观察下的选择与结果一致。
+- 新阈值从 validation 校准与任务意义确定，测试前冻结；P5.2 的 0.15 动作准确率门不自动迁移为任务成功率门。
 
-## 后续依赖顺序与验收
+**停止点**：无法隔离脚本答案；参数必须由外部 oracle 决定才能完成任务；预测收益只来自模板泄漏；安全边界或恢复失败。需要改变动作所有权或任务定义时先提交失败证据，再讨论。
 
-| 顺序 | 工作重点 | 进入下一步的条件 |
-|---|---|---|
-| P0 | 相同 replay 的机制归因 | **已完成**：两组轨迹均在 `1e-5` 内等价，checkpoint preflight 通过 |
-| P1 | 真实学习信号与五类数据合同 | **已通过 P1.1**：五类各有至少 2 个 K1/K2 visible input，validation 五类覆盖且 project/template 隔离 |
-| P2 | 五类学习及保持的独立验证 | **P2.7 局部跨项目/路径泛化通过**：holdout K2 content/Workbench `4/4`，旧类保持通过；已进入 P3.0 |
-| P3 | 中断续训与 S/G/K 联合状态整合 | **P3.6 独立行为 holdout/保持 Gate 已通过但尚未 promotion**：新 project/path trained-G utility `4.0>2.65`、target hit `4/4>1/4`，旧类、安全、Workbench 和 checkpoint 均保持；S 仍非 learned |
-| P4 | 结构成长必要性与收益验证 | **P4.0–P4.13 已全部收束**：P4.7 关闭容量假设，P4.8–P4.10 完成表示/特征归因，P4.11–P4.13 证明投影求解器在 2-seed、9-cell、两阶段累积课程上支持新任务 + 保持 + 向后保持；G 侧课程闭合但不授予 promotion，下一步转入 K worker 联合课程 |
-| P5 | 知识来源、IDE、客户端、硬件发布 | 各项按所需模型能力与接口成熟度解冻 |
+## 6. P5.2b：建立可识别的群体因果对照
 
-### P1：有效信号与评估数据（P1.1 已通过）
+**研究问题**：哪些实际认知成员在相同任务条件下存在超出单体的联合贡献？
 
-- 审计现有五类课程；按 K1/K2 typed mask 可见输入、目标张量、时序组合生成签名。分别统计经历数、唯一文件数、有效类数、模板族数。注释/文件名变化允许作为同分布扰动，不能充当新能力或新独立样本。
-- train/validation/test 以项目或任务模板分组，完整覆盖 A/B/C/D/R；每类包含多个不同可见状态/组合，记录数量与重复率。测试设计应同时测同分布泛化和未见组合，不能每轮仅更换 seed。
-- 父 worker 沿用现有权重即可做机制诊断；若主张跨模型泛化，则以实际初始化/训练流变化构建父 worker，并核验 state_dict 差异。所有独立性结论由实测决定，不强制为了 n=9 重建模型。
-- 将 v1–v5 已读 sealed 登记为 consumed；后续开发用 validation。候选、scorer、阈值、资源预算和最终输入在读取下一份测试成绩前锁定。
-- v1 失败合同保留为 [P1 失败审计](../../../reports/taiji_m5_k_p1_data_contract_audit_20260910.json)；修复后的合同状态为 `passed`，见 [P1 v2 审计](../../../reports/taiji_m5_k_p1_data_contract_audit_v2_20260910.json) 与 [P1 v2 manifest](../../manifests/taiji_m5_k_p1_data_manifest_v2.json)。P2 只能使用 v2 入口，不能用 v1 的一类一签名课程训练。
+1. 盘点可干预成员的真实状态、输入、输出与关闭方式；区分认知成员、宿主执行器、审计 owner。暂不规定多个成员已存在。
+2. 对每个 context 固定初始世界、父状态、任务、预算，建立 inactive baseline、每个 singleton、候选组合、必要的成员/连接 lesion。
+3. `context_id` 绑定配对条件；同组各臂必须相同。不同 context 允许任务差异；成员名称不得携带语义角色标签供 learner 偷看。
+4. 全部 outcome/resource/recovery 指标来自实际执行；缺失对照记“不可估计”，不赋零或伪造记录。
+5. train-only 构建 `InteractionGroupMemberEvidence` 与 `InteractionGroupRecord`；holdout 评分独立，不能进入 `observe_records`。
+6. 留出“成员已见、组合未见”的验证/测试集合；未知成员没有 singleton 支持时应拒绝，单列为边界。
 
-### P2：验证学习与保持
+**验收**：配对完整、profile/群体记录非空、revision/digest 一致、组间差异可测、资源成本真实；测试集不进入拟合。只有一种固定双 owner trace 的输入不能通过。
 
-- 主要因果臂为 P0 选定流程与同新增训练预算的直接学习对照；F 测零更新漂移。FS 若仅是等价状态实现，无须继续宣称胜过同 replay 的基线。XL 作为容量参考，动态增长阶段再做最终容量对齐。
-- 用五类宏平均和每类 MSE；D/R 弱类单列，A/B/C 旧强类非劣逐类检查，报告最坏模板结果。整体均值不能掩盖遗忘。
-- 增加真实预测链：K1 预测→K2 多步状态→隔离 Workbench 执行。真实任务成功率/失败恢复与局部 MSE 分账；低置信度和 D/R 路径必须有可解释出口。
-- 使用 validation-only pilot 确定样本量、最低有意义改善、数值容差和逐域非劣界。浮点噪声容差与“允许遗忘多少”分别定义；不能用 candidate 退化方差自动放宽所有门槛。
-- 先保存候选和 presealed 合同，随后同一个 artifact 只读评分，不在第二阶段重训候选。记录代码版本、数据/参数/状态摘要和所有失败。
-- 结果出口：收益/保持/资源通过→P3；无收益→回对应反馈或数据根因；数值等价→保留成本更合理的基线；机械错误→修复后重做技术预检。不得看测试成绩改当前版本阈值。
-- P2 pilot 已执行上述最小预算和独立 checkpoint preflight；P2.1 完成了 K1→K2 级联与隔离 Workbench 诊断；P2.2 完成了 typed abstention、根目录 recovery 和世界对齐工程 canary；P2.3 continuation 数据合同/targeted learning、P2.4 retention canary、P2.5 novel-composition probe、P2.6 novel K2 learning、P2.7 holdout generalization、P3.0 checkpoint/interrupt-resume contract、P3.1 single-cell preflight、P3.2 owner-transfer preflight、P3.3 candidate data-signal/G-only learning、P3.4 behavior signal、P3.5 reobserve-aware G-only learning、P3.6 独立行为 holdout/保持 Gate、P4.0 固定容量压力扫描、P4.1 上下文/fixed-large contract preflight、P4.2 隔离训练/公平容量归因 Gate、P4.3 保持约束增量学习 Gate、P4.4 保持身份/结构校准、P4.5 保持约束/更新规则对照和 P4.6 功能性 parent-preserving objective 对照均已完成。当前模型结论从“只有连续 MSE 改善”推进为“一个具体 K2 content 目标在 rehearsal 保持约束下学习，并跨 2 个新 project/4 个新 path 泛化”；P3.0 已把 K1/K2 continuation 纳入可恢复状态边界，P3.1 已把 S/G/K 接线合同闭合，P3.2 已把选择所有权转给 G，P3.3 已证明 G 可以学习但没有改变三臂行为，P3.4 已证明候选 utility 有分歧，P3.5 已证明非零 margin G-only fit 能改变 contested 行为且安全投影/holdout 不退化，P3.6 已证明该行为选择跨新 project/path 泛化且五类/安全保持通过；P4.0/P4.1/P4.2 暴露了候选宽度压力、上下文尚未归因和增量训练后的旧行为保持退化，P4.3 在 fresh retention 上没有区分 rehearsal 与 new-only，P4.4 在同构新身份上复现了保持退化，P4.5 则显示 rehearsal 无法带来额外收益，固定参数 trust-region 在两个 seed 间出现保持/新任务权衡，P4.6 的功能性约束仍无法在两个 seed 上同时满足保持和新任务。当前固定容量路线停止自动推进，不把保持失败改写成结构成长证据。
+**停止点**：实际认知成员不足、对照无法执行、所有结果恒定或不能留出新组合。此时先设计可干预任务/成员，不创建虚构群体也不靠扩大重复场景获得“样本量”。
 
-### P3：状态整合与同一父代连续课程（P3.6 已收束，P4 当前）
+## 7. P5.2c：从 trace 学习未见组合的候选价值
 
-P3.0 已用 [checkpoint/interrupt-resume contract](../../../reports/taiji_m5_k_p3_0_checkpoint_contract_20260910.json) 替代“先做 lineage 再补能力”的顺序：K1/K2 parent、worker、phase、replay stream、RNG、预算和 lineage 元数据已经可以内容寻址、独立恢复和回滚。P3.1 又把 S/G/K 的事件、owner mask、状态 digest 和恢复边界闭合，但没有把 control-only 的 S/G 说成 learned。P3.2 已证明 owner-transfer 不破坏已有行为；P3.3 已证明 13 参数 G 可以在冻结 K 上 fit、保存、独立恢复和拒绝篡改；P3.4 证明行为 utility 信号能造成可解释候选分歧；P3.5 证明非零 margin G-only fit 能改变 contested 行为且 reobserve projection、K digest 和 holdout 不退化；P3.6 又在全新 project/path 上复验了行为收益、五类保持、安全 projection 和 checkpoint/rollback。P3 的结论仍不是 promotion 或通用智能，不能回到原始从零训练，也不能重新授权暂停的 [SGK v1](../../reference/M4V2_SGK_PROMOTION_COURSE_PREREGISTRATION_20260910.md)。
+**复用路径**：`build_member_evidence → observe_members/observe_records → candidate/select → Workbench 实际执行`。迁移 learner 预测候选，不承担权限准入。
 
-1. 以 P3.0 parent、P3.1 manifest 和现有 K1/K2 worker 为唯一资产；S、K、G 的 schema、owner、输入输出 mask、attached lineage、checkpoint digest 和 rollback parent 必须独立可定位。
-2. 把 K1 的共享语义表征与 goal/content 输出拆开记账：K 负责 evidence/world readout，G 负责 candidate selection/accept/reject；在拆分完成前，goal/content head 只能标记 `pending-owner-transfer`，不能同时计为 K 与 G 的能力。
-3. 先实现无新增参数的 `GSelectionState` 和 owner-transfer adapter，外部 goal/content target 仅作 validation label；用同一 P2.7 holdout 运行 K-only 与 S/K/G 两臂，比较 K1/K2 goal/content、safe abstention、Workbench、延迟和 checkpoint 字节。
-4. 在 observation、G selection、K readout、action 四个边界做独立进程恢复；验证事件/owner/worker/budget/RNG/logical digest 一致，篡改 G state、错误 parent、错误 mask 必须拒绝。P3.2/P3.3 已满足 owner-transfer 与 G-only checkpoint/fit 条件，P3.4 已满足行为信号条件，P3.5 已满足行为增益与安全投影条件，P3.6 已满足独立行为泛化与保持条件；P3 阶段收束，下一步进入 P4。
+- 冻结无学习、最强单体、随机组合、固定组合，以及匹配资源的组合策略。必要时加入 train-only 简单回归基线，辨别复杂机制是否有额外价值。
+- 每条候选在执行前绑定 parent digest、成员集合、预测收益、不确定性和成本；执行后独立计算真实收益。
+- 主张“协作”需在预注册任务上超过最强单体；主张“泛化”需在未参与拟合的组合/context 上成立。
+- 报告预测校准、任务成功、每类保持、最坏组、失败率和预算；多个 seed 是重复测量，不能自动当作独立模型/任务。
+- checkpoint 保存后用全新进程恢复，重现候选和选择；污染 lineage、holdout 记录及未知成员必须拒绝。
 
-## P3.6 已完成：独立行为 holdout 与保持 Gate
+**出口**：机械失败回合同；无因果信号回 P5.2b；有信号但无迁移收益回模型/特征归因；收益、保持、成本均通过才进入在线回写。任何失败都保留原报告与预注册。
 
-P3.6 严格 validation-only，加载 P3.5 zero-step/trained-G，不调用 `fit`，在两个新 project 和四条新 path 上重新执行候选生成、真实 Workbench utility 与 G selection。trained-G 新 holdout utility 为 `4.0`，高于 zero-step/K-only 的 `2.65`；behavior target hit 为 `4/4`，高于 `1/4`。3 条 reobserve target 与实际 selection 全部投影为可往返、无 `ActionIntent` 的 `ReadOnlyAbstention(next_step="workspace.list")`。
+## 8. P5.2d：真实 outcome 驱动连续学习
 
-| Gate | 结果 | 证据 |
-|---|---:|---|
-| 新身份隔离 | 通过 | 2 个新 project、4 条新 path；candidate/behavior/observation digest 和 utility-margin record 均内容寻址且唯一 |
-| 行为泛化 | 通过 | trained-G utility `4.0 > 2.65`；target hit `4/4 > 1/4`；K-only 与 zero-step 相同，trained-G 发生可解释行为变化 |
-| 安全动作边界 | 通过 | target/selected reobserve 全部 typed projection、roundtrip、snapshot match、无 `ActionIntent` |
-| 五类旧类保持 | 通过 | A/B/C/D/R 全部出现，trained-G target hit 不低于 zero-step，低证据 proposal 违规为 `0` |
-| P2.7 与恢复 | 通过 | P2.7 Workbench `4/4`；K1/K2 digest 不变；K/G 独立 restore、lineage 和 rollback 通过 |
-| promotion | 未通过/未开放 | `can_promote=false` 继续保持；P3.6 只证明当前行为选择的局部跨身份泛化 |
+**目标**：把实际执行结果变成可归因的学习更新，并在后续新任务与旧任务上检验作用。
 
-报告见 [P3.6 behavior holdout](../../../reports/taiji_m5_k_p3_6_behavior_holdout_20260911.json)，清单见 [P3.6 manifest](../../manifests/taiji_m5_k_p3_6_behavior_holdout_manifest_v1.json)。P3 阶段到此收束：不能再追加同质 G epoch，也不能把局部行为泛化写成通用智能或结构成长。
+1. 复用 `InteractionGroupOutcomeFeedback` 与 online learner，核验实际 `Outcome`、来源 split、终态、置信度和父状态。
+2. 在线新经历更新候选 child，测试/holdout 仅评分；候选选择时间必须早于实际 outcome。
+3. 设计多轮 online 与固定学习预算对照，逐轮评估新能力、旧能力、预算和真实执行失败。
+4. 明确失败经历的审计保存与可训练准入区别；现有 online 模块对失败/低置信度等反馈拒绝训练，改变该规则需独立预注册。
+5. 在 observation、selection、execution、feedback、checkpoint 边界中断恢复；验证重复 outcome 不重复学习、重复 token 不重复执行、stale parent 拒绝。
+6. 同时验 learner rollback 和环境事务状态；恢复模型不能被误报为已撤销外部副作用。
 
-## P4.0 已完成：固定容量压力扫描（不授予结构成长）
+**验收**：更新后的收益优于冻结对照、旧类保持，状态/事件可恢复，成本可接受；未达准入的 child 留作实验候选。此阶段不自动开放结构成长。
 
-P4.0 严格 validation-only，冻结 P3.5 trained-G、P3.2 K1/K2 和所有 Workbench/checkpoint 合同，在 5 个新案例、3 个新 project、20 个候选集合上扫描候选宽度 `2/4/8/12` 与序列长度 `1/4/16`。它没有调用 `fit`，没有修改 K，没有新增 G 参数，也没有读取 sealed payload。
+## 9. P5.1h 与产品采用：保留未解决的准入任务
 
-| Gate | 结果 | 关键实测 |
-|---|---:|---|
-| 数据与身份隔离 | 通过 | 5 个新案例、3 个新 project、路径与 P3.4/P3.6 disjoint；20 个 candidate/behavior digest 唯一；每个宽度均为 5 个案例 |
-| checkpoint / lineage | 通过 | K1/K2、zero-step G、trained-G 独立恢复；G lineage 通过；K1/K2 digest 前后仍为 `12851b…77a6` / `411ef5…3691` |
-| 候选宽度压力 | 观察到压力 | trained-G residual：width 2=`0.32`、4=`0`、8=`0.54`、12=`0.59`；target hit 分别 `0.6/1.0/0.4/0.2` |
-| 序列退化 | 未观察到 | length `1/4/16` utility 均为 `0.6375`；当前压力更像候选竞争/上下文合同问题，而不是时序记忆退化 |
-| feature collision | 未观察到 | 四个宽度的 feature collision rate 均为 `0`；不能用“特征完全相同”解释退化 |
-| 结构成长 | 未开放 | `growth_admitted=false`、`can_promote=false`；fixed-large 尚未建立可公平比较的 G owner/readout 合同 |
+P5.1g 的真实语料 retention 和产品 admission 仍是部署缺口。下一次相关实验先区分：训练预算不足、表征容量不足、数据分布差异、目标/词表冲突以及保持协议问题；当前结果不足以选定其中一个为唯一根因。
 
-报告见 [P4.0 capacity pressure](../../../reports/taiji_m5_k_p4_0_capacity_pressure_20260911.json)，清单见 [P4.0 manifest](../../manifests/taiji_m5_k_p4_0_capacity_pressure_manifest_v1.json)。P4.0 的结论是“固定 G 在候选规模变化下出现可复现的选择压力”，不是“已经证明应当增加神经元”。由于 width 4 完整通过而 width 8/12 退化，且压力课程引入了跨案例 proposal competition/alias，必须先完成归因对照，不能直接实现 dynamic growth。
+- 使用独立开发/测试划分，新增词表可比较的内容对照，避免收益只由 sourced 覆盖目标词表解释。
+- 保留 calls 配额，同时审计总 example/update、有效参数、训练 wall、推理成本、checkpoint 字节；calls 相等不代表全部计算成本相等。
+- 可选更高容量/成熟序列机制或保持目标改进，但单轮要冻结主要变化，先做小规模 validation 归因。
+- 同时报告 trial 与 admitted 两套结果；通过 trial 性能门但 admission 失败时，不授予产品采用许可。
+- 不放宽历史 admission 线掩盖失败；如旧门与应用目标不符，单独写测量修订论证、新版本和批准记录。
 
-## P4.1 已完成：候选集上下文与公平容量合同预检
+产品采用遵循：依赖验收 → shadow 旁路测量 → opt-in canary → 持久化/恢复合同 → 默认行为评审。每步记录采用 artifact、数据范围、用户可见变化、回滚方案。此前 K 轴 opt-in 附着不覆盖这些新许可。
 
-P4.1 在同一 P4.0 candidate/behavior artifact 上建立了内容寻址的候选集上下文合同：保留 G 当前 12 维逐候选输入，另定义 9 维上下文（候选数量、角色比例、joint-score 分布、候选相对排名/中心化分数）。它没有调用 `fit`，没有改变 P3.5 G/K parent；只生成 22 参数 fixed-large reference 和 context-lesion reference，并做独立进程恢复。
+## 10. 后续工程与长期成长
 
-| Gate | 结果 | 关键实测 |
-|---|---:|---|
-| P4.0 来源、G lineage、独立恢复 | 通过 | P4.0 digest 一致；P3.2 lineage 通过；trained-G 独立恢复通过 |
-| 上下文合同 | 通过 | 20 个集合、width `2/4/8/12` 各 5 个；9 个 context feature 名称唯一；每个集合内部 context collision `0`；target/utility 未进入输入 |
-| fixed-large reference | 通过预检 | 22 参数（当前 G 为 13）；reference 独立恢复，输入/读出和 checkpoint digest 可验证 |
-| context lesion | 通过预检 | effective 参数回到 13；独立恢复；零 fit 下 20 个集合的选择与当前 G 完全一致 |
-| 归因 | 未定 | `inconclusive`：零 fit reference 只能证明合同和边界，不能从同一验证集重放推断容量收益 |
+**P5.3 插件/provider**：复用已有 registry、客户端扩展、授权目标绑定和 watchdog。先做接口兼容、生命周期、动态加载/卸载、故障隔离、降级/回滚，性能与权限分账；外部 provider 输出不得算作原生学习收益。具体工作项由前序稳定接口反推。
 
-报告见 [P4.1 context contract](../../../reports/taiji_m5_k_p4_1_context_contract_20260911.json)，清单见 [P4.1 manifest](../../manifests/taiji_m5_k_p4_1_context_contract_manifest_v1.json)。因此 P4.1 不批准结构成长，也不把 22 个零初始化 context 参数写成能力增长。
+**结构成长**：当同父代固定容量最强方案在真实多任务干扰/长序列上出现可复现瓶颈，再与同最终有效容量 fixed-large 做公平比较。新结构零影响出生、继承父状态、具有可测贡献，经过 lesion、保持、预算与恢复门。P4.7 关闭的是当时任务/对照下的容量假设，不取消长期 CR-4。
 
-## P4.2 已完成：隔离训练与公平容量归因 Gate
+**硬件与产品视觉**：硬件可用后做 CPU 数值一致性、保存恢复与吞吐基准，资源采购/设备切换单独决策。视觉、安装、托盘/任务栏与发布在运行接口稳定后集中验收。阻塞实际研究的客户端故障优先修复。
 
-P4.2 按预注册合同回答了 P4.1 的问题：在全新的 train/validation/holdout 身份上，学习型 context-aware fixed-small 是否能修复 P4.0 的 width 8/12 退化，还是必须依赖真正更大的固定容量。训练只发生在独立 child checkpoint，没有覆盖 P3.5/P4.0 parent，validation/holdout 没有参与 fit。
+## 11. CI、训练前检查与成果管理
 
-1. 生成与 P4.0/P4.1 project、path、template、candidate digest 全部 disjoint 的 A/B/C/D/R train/validation/holdout；候选宽度固定为 `2/4/8/12`，同时保留低证据 safe exit、reobserve projection、旧类 retention 和真实 Workbench。
-2. 建立三臂：`fixed-small`（P3.5 13 参数 G 继承）、`context-aware-small`（存储 22 参数但冻结原 12 维 candidate 权重，只训练 9 维 context 权重和 bias，共 10 个可训练参数）和 `fixed-large`（同一 22 参数 context contract，candidate+context 全部可训练）。这样能区分“上下文输入本身有用”和“所有参数都需要重适配”。三臂均记录 parent/child lineage、参数实际数量、fit 数据 digest、checkpoint 保存/独立恢复、rollback 和 tamper rejection。
-3. 只用新的 train cohort fit；新的 validation/holdout 只做评估。至少两个 deterministic seed，固定 epoch/学习率/资源预算；不把 P4.0 压力结果当训练标签，不读取 sealed，不把外部 target、candidate ID 或 utility 直接作为输入。
-4. 每个 arm 必须同时报告 width 曲线、target hit、utility/residual、safe abstention、reobserve/action projection、五类旧类保持、Workbench、参数字节、CPU 时间和独立恢复；必须有 context-lesion 与 fixed-large 对照，防止“只加输入维度但未使用”或“复制权重”伪装成收益。
-5. 只允许输出 `representation_contract`、`fixed_capacity_candidate` 或 `inconclusive`。只有 context-aware-small 与 fixed-large 在新 holdout 上均优于 fixed-small、且 fixed-large 相对 context-aware-small 仍有稳定增益时，才保留容量瓶颈假设；否则先修 G 输入/选择合同。无论结果如何，`growth_admitted=false`、`can_promote=false`，P5、CUDA、IDE/provider 和客户端视觉继续冻结。
+### 11.1 CI 实况与处理顺序
 
-| Gate | 结果 | 关键实测 |
-|---|---:|---|
-| 来源、身份与 checkpoint | 通过 | 5 类 train/validation/holdout、14 条 fit-eligible train；project/path/candidate/behavior 均与 P4.0/P4.1/旧保持集合隔离；三臂零步和训练后 checkpoint 均可独立进程恢复，parent 未覆盖 |
-| 训练边界 | 通过 | 两个 deterministic seed；只用新 train cohort fit；validation/holdout、P4.0/P4.1、外部 target/utility 均未进入 runtime fit；K1/K2 digest 未变 |
-| 新 holdout | 未通过晋级 | fixed-small 与 context-aware-small 平均 utility 均为 `0.68`；fixed-large 平均为 `0.65875`，没有稳定增益；seed 1 的 fixed-large 出现 6 次 safe-selection violation |
-| 旧行为保持 | 未通过 | parent retention 为 `4/4`、utility `4.0`；训练后 fixed-small/context-aware-small 在两个 seed 均降到 `3/4`、utility `0.8`；fixed-large 只有 seed 1 恢复到 `4/4`，跨 seed 仍不稳定 |
-| 归因与成长 | 未通过/关闭 | attribution=`inconclusive`，`experiment_passed=false`，`growth_admitted=false`，`can_promote=false`；不能据此增加神经元或进入 dynamic growth |
+2026-09-13 查询到最近远端运行 [34579613959](https://github.com/liulang5945-netizen/Seed/actions/runs/34579613959)，对应 `c7bbd389`，并非当前 `102b81e1`：两条 Linux test job 在 Ruff 失败；Windows cancelled；frontend、Docker、两种启动 smoke 成功。
 
-P4.2 的实际结论是：当前 13 参数 G 在新候选集合上没有出现可靠容量收益，22 参数 context arm 也没有形成可重复优势；训练本身先暴露了灾难性遗忘/保持合同问题。不能把这一失败解释成“需要更大拓扑”，因为固定容量臂尚未在保持约束下成为合格的增量学习基线。报告见 [P4.2 capacity attribution](../../../reports/taiji_m5_k_p4_2_capacity_attribution_20260911.json)，清单见 [P4.2 manifest](../../manifests/taiji_m5_k_p4_2_capacity_attribution_manifest_v1.json)。
+P5.1g/P5.2 预注册引用的 `4 failed / 1199 passed / 6 skipped` 与 `mypy 61` 是历史局部基线；当前 CI 配置的 core mypy 上限为 0。原 Gate 中“static_four_checks=true”不能替代远端 CI 成功，也不能自动抬高 CI 阈值。
 
-## P4.3 已完成：保持约束下的增量学习 Gate
+后续实现前按实际命令和版本重新建立失败清单：测试名称、错误位置、父提交表现、是否与工作包相关、修复归属。优先修复新增回归和阻塞主线的存量错误；相关必要检查不过则不启动对应正式训练。剩余债务可保留为显式未完成项，发布/默认采用前须满足正式 CI。
 
-P4.3 按预注册边界只修复 P4.2 暴露的前置问题，没有扩大拓扑或引入新的 context 参数。它在同一 13 参数 fixed-small 容量上比较了 new-only 与 rehearsal-mix，并用全新 retention holdout 做保持验收；P3.6 旧 holdout 只作为明确标记的 rehearsal source，没有在训练后继续充当测试集。
+本轮只跑文档链接、现有项目身份/单执行入口测试及 diff 检查；不把未执行的全仓测试写成通过。旧测试若硬编码过期阶段标题，应更新为现行标题并保留“只有一个执行入口”和链接可解析约束。
 
-1. 生成与 P4.0/P4.1/P4.2 全部 disjoint 的新 train、new-task validation、new-task holdout 和 fresh retention holdout。P3.6 的旧 holdout 只能作为明确标记的 rehearsal source，不能在 P4.3 结果中继续充当测试集；fresh retention 必须重新经过真实 Workbench/行为 utility 生成。
-2. 保留不可训练的 P3.5 trained-G parent 与 zero-step child；建立 `new-only` 和 `rehearsal-mix` 两个 fixed-small 训练臂。两臂使用完全相同的新任务 train、epoch/学习率/seed/CPU 预算，rehearsal 只改变训练样本组成，不改变模型结构、输入合同或安全选择阈值。
-3. 训练前后都执行 checkpoint 保存、内容摘要、独立进程恢复、错误 lineage/篡改拒绝和 parent rollback；记录新任务 fit digest、rehearsal digest、实际训练步数、参数字节和 K/G lineage。训练不得读取 new validation、new holdout 或 fresh retention 的 behavior target/utility。
-4. Gate 同时要求：new-task holdout utility/target hit 不低于 new-only；fresh retention utility/target hit 不低于 zero-step parent；低证据 safe exit、reobserve projection、Workbench 和 K digest 全部保持。任一 seed 发生保持退化，结果只能进入“更新规则需修复”，不能进入容量归因或结构成长。
-5. 结果出口只有 `retention_repaired`、`signal_insufficient` 或 `update_rule_unresolved`。本轮没有满足 rehearsal-specific gain，因此转入 P4.4 身份/结构校准；在保持问题完成更新规则对照前，P4 dynamic growth、P5、CUDA、IDE/provider 和客户端视觉继续冻结。
+### 11.2 每次训练的入场条件
 
-| Gate | 结果 | 关键实测 |
-|---|---:|---|
-| 来源、身份与训练边界 | 通过 | 新 train/validation/holdout/fresh retention 各 20 条；与 P4.0/P4.2/P3.6 的 project/path/candidate/behavior digest 均隔离；P3.6 仅作为 4 条 rehearsal fit |
-| checkpoint / lineage | 通过 | 两臂零步/训练后 checkpoint 均可独立恢复；篡改、错误 parent lineage、rollback 全部通过；13 参数、K1/K2 未变 |
-| 新任务与 fresh retention | 通过 | 两 seed 的 new-only 与 rehearsal-mix 均达到 new holdout utility `0.68`、target hit `0.6`；fresh retention 均为 utility `0.68`、target hit `0.6`，safe selection violation 为 `0` |
-| rehearsal-specific 归因 | 未通过 | 两臂在两个 seed 的 holdout、fresh retention、safe projection 上完全相同；`rehearsal_specific_gain=false`，不能把保持通过归因给 rehearsal |
-| 结果出口 | 未晋级 | `outcome=signal_insufficient`、`experiment_passed=false`、`growth_admitted=false`、`can_promote=false`；保持未退化，但 P4.2 旧 retention 退化尚未在同结构新身份上完成归因 |
+- 冻结父/child 路径，验证目标目录可写、剩余磁盘及原子保存可用；不得覆盖 parent。
+- 保存零步完整状态，再由独立进程恢复；核对参数、优化/学习状态、RNG、数据游标、预算和 lineage。
+- 验证中断恢复、错误 parent/digest/schema 拒绝与 rollback；没有全套状态时先补合同。
+- 固定 train/validation/retention/final-test 的来源、摘要、隔离规则；validation 调参必须留记录，final-test 未提前用于选择。
+- 阈值、样本规模与预算在正式结果前冻结。先执行 scoped lint/format/type/test，再启动 runner。
+- 记录代码提交、环境、命令、开始/结束状态与报告；终止/预算超限必须留下可审计失败出口。
 
-P4.3 的正确结论是：在其 fresh retention 分布上，当前增量更新没有复现 P4.2 的旧保持退化；同时 rehearsal 与 new-only 完全等价，因此不能宣称 rehearsal 已修复遗忘。P4.4 已把这两个结果放到同一批与 P3.6 结构同构、但 project/path 全新的 sibling retention 上，证明 P4.2 历史退化的 5 个 arm/seed 全部复现，P4.3 两个 arm/两个 seed 也复现；因此保持问题属于训练后更新/保持约束的可重复问题，而不是旧 artifact 单独失真。下一步改为 **P4.5 保持约束/更新规则对照 Gate**，仍不扩容。
+### 11.3 交付与清理规则
 
-## P4.4 已完成：保持身份与结构校准 Gate
+每阶段交付一份预注册、一份必要机器报告和必要 checkpoint/manifest；更新本文件的状态表与唯一下一步，然后提交。具体 debug 流水进 archive，不在首页累计长篇“用户确认/当前下一步”。
 
-P4.4 严格 validation-only：从 P3.6 只提取候选数量、角色组成、置信度分桶和安全投影类型，生成 2 个新 project、4 条新 path 的 sibling retention；没有复制旧 path、target、utility 或 exact candidate digest，也没有调用 `fit`。
+本轮已把旧计划和入口快照归档并重定位链接。旧失败 JSON、权重与被引用实现保留；只有核实绝对路径、引用及恢复方式后才清理临时产物。不得批量删除未知目录、语料或 checkpoint。
 
-| Gate | 结果 | 关键实测 |
-|---|---:|---|
-| 来源链与结构合同 | 通过 | P3.6/P4.2/P4.3 manifest/report digest、来源链和结构摘要均通过；4 条 sibling 的候选宽度/角色组成/置信度分桶/安全投影与 P3.6 相同 |
-| 新身份隔离 | 通过 | 2 个新 project、4 条新 path；与历史 P3.6/P4.2/P4.3 project/path、candidate/behavior digest 均隔离 |
-| checkpoint / lineage | 通过 | P3.5 parent、P4.2 三臂和 P4.3 两臂全部独立恢复，lineage 有效；没有覆盖历史 checkpoint |
-| parent sibling 基线 | 通过 | parent utility `1.0`、target hit `4/4`、safe violation `0`、reobserve projection 通过 |
-| P4.2 退化复现 | 通过 | 历史发生退化的 5 个 arm/seed 在 sibling 上全部退化；固定小容量/上下文小容量/固定大容量的 seed-0 均为 utility `0.8`、target `3/4`，seed-1 fixed-small/context-small 同样为 `0.8`、`3/4` |
-| P4.3 保持结果 | 退化复现 | new-only 与 rehearsal-mix 两个 seed 均为 utility `0.8`、target `3/4`；rehearsal 没有消除 sibling 上的保持退化 |
-| 结果出口 | 已分类但未晋级 | `outcome=retention_failure_reproduced`、validation-only、`experiment_passed=false`、`growth_admitted=false`、`can_promote=false` |
+## 当前唯一下一步：修复 P5.2b 的干预真实性与未见组合面（P5.2c 已被阻塞）
 
-报告见 [P4.4 retention identity calibration](../../../reports/taiji_m5_k_p4_4_retention_identity_calibration_20260911.json)，清单见 [P4.4 manifest](../../manifests/taiji_m5_k_p4_4_retention_identity_calibration_manifest_v1.json)。P4.4 只证明保持退化可跨同构身份复现，不证明应该增加神经元，也不证明任何更新规则已经修复；下一步只允许做保持约束/更新规则的受控对照。
+**已决策**：用户选择选项 (2) P5.2b。**P5.2b 曾报 `group_causal_corpora_supported`（提交 `0abf463f`），该结论已被入场审计推翻。**
 
-## P4.5 已完成：保持约束与更新规则对照 Gate
+**P5.2c 预注册已按建议冻结**：[预注册](../../reference/M5_P5_2C_UNSEEN_COMBINATION_TRANSFER_PREREGISTRATION_20260913.md)（九门、三态、对照、纪律、必报分账齐全）。**但执行在接线阶段即被入场审计阻塞**（[审计报告](../../../reports/M5_P5_2C_ENTRY_AUDIT_P5_2B_DEFECT_20260913.md)）：
 
-P4.5 固定 13 参数 G、K1/K2、输入特征和 selection threshold，使用与 P4.4 结构同构但全新身份的 train/validation/holdout/rehearsal/retention；P4.4 sibling、P3.6/P4.2/P4.3 retention 均未进入 fit。三臂为 `new-only`、`rehearsal-interleaved` 和预先登记 parent 范数 15% trust-region 的 `constrained-update`，两个 deterministic seed 均做 checkpoint/lineage/独立恢复/tamper/parent rollback 检查。
+1. **门 3 结构性不可满足**：4 个成员下 `C(4,2)=6` 个 pair 被 `train_only_candidates` **全数观测**，`select(..., unseen_only=True)` 返回 `None`——「未见组合」集合为空。`_pair_features` 仅支持 pair，三元组 raise，故无扩容余地。
+2. **根因（P0，污染 P5.2b 结论）**：P5.2a `_validation_tasks()` 的 `lang_confirm` 模板（`index % 4 == 0`，context `100/104/108`）**目标状态 == 初始状态**——`goal_files = initial` 且 `.py` 的语言 selection 自动成立。实测这些 context 各 22 episodes 中 **20 个零步执行**：tick 循环首行 `_goal_reached` 即真，`steps=[]` → `_project` 产出**空事件 episode**，仍记 `success=True`。context 100/104/108 的 11 个干预 cell 只有 `none`（1 步失败）与 `member-a`（2 步真实执行）有动作，其余 9 个 cell 全部零步判成功。
+3. **被推翻的具体结论**：`member-a+member-d` admitted group 的 `interaction = 0.2222` 完全由空事件 cell 生成——`member-d` 单体与 pair cell 都在 block-0 **未执行却记成功**，`(T,T)−(T,F)−(F,T)+(F,F)` 的差值来自「干预生效前任务已满足」，**不是超出单体的联合增益**，而是伪成功。其 `contribution = −0.6667` 同样不可用。
+4. **九门判据缺陷（需独立修正）**：`real_execution` 只断言「存在已执行动作 + provenance 合规 + 安全违规 0」，`cell_completeness` 只断言 episode 计数——**两者都只检查存在性，不检查干预是否真的发生**，故对「整 cell 零执行」零检出能力。
 
-| Gate | 结果 | 关键实测 |
-|---|---:|---|
-| 来源、身份与结构 | 通过 | train/validation/holdout 各 20 条；新 rehearsal 4 条、fresh retention 4 条；五类覆盖，retention 结构 digest 与 P4.4 合同一致，所有 project/path/candidate/behavior digest 隔离 |
-| checkpoint / lineage | 通过 | 三臂两个 seed 的零步/训练后 checkpoint 全部独立恢复，tamper 拒绝，parent 未覆盖；参数始终 13，K1/K2 未变 |
-| new-only 与 rehearsal | 无差异 | 两 seed 的两臂 new holdout 均 utility `0.68`、target `0.6`、safe violation `0`；fresh retention 均 utility `0.8`、target `3/4`，rehearsal 没有可分离收益 |
-| constrained-update seed-0 | 保持通过但无新任务增益 | fresh retention utility `1.0`、target `4/4`、safe violation `0`；new holdout 退回 parent 的 utility `0.6375`、target `0.55`、safe violation `6` |
-| constrained-update seed-1 | 新任务通过但保持失败 | new holdout utility `0.68`、target `0.6`、safe violation `0`；fresh retention utility `0.8`、target `3/4`，仍低于 parent |
-| 结果出口 | 未晋级 | `outcome=update_rule_unresolved`、`experiment_passed=false`、`growth_admitted=false`、`can_promote=false` |
+**建议交付（按优先级）**：
 
-报告见 [P4.5 update-rule Gate](../../../reports/taiji_m5_k_p4_5_update_rule_gate_20260911.json)，清单见 [P4.5 manifest](../../manifests/taiji_m5_k_p4_5_update_rule_gate_manifest_v1.json)。P4.5 的结论不是“trust-region 没有价值”，而是它暴露了固定参数预算下的稳定性权衡：seed-0 约束足够强时保持恢复却没有新任务收益，seed-1 新任务恢复时保持仍退化；rehearsal 也没有提供独立增益。下一步必须从参数距离约束转向功能性 parent-preserving objective，仍不扩容。
+- **P0-A 判据加固**：`real_execution` 增加**非空事件断言**（每个非 `(F,F)` cell 必须 ≥1 事件）；`cell_completeness` 增加**零步 episode 计数 = 0（除 `(F,F)` 外）**；两门均须对 `(F,F)` baseline 的失败语义做显式例外声明。
+- **P0-B 任务修正**：重定义或排除 `lang_confirm` 模板，使 validation context 全部为**非平凡持久目标**（P5.2a 已对 undo 类做过同类排除，但漏了「语言 selection 自动成立」这条路径）。
+- **P1 未见组合面**：扩充成员数（≥5，使 pair 面 > 已观测数），或在 train/holdout 划分上**留出整对 pair 不参与估计**；任一方案都需**新预注册**。
+- 修完后**重新预注册并重跑 P5.2b**，再谈 P5.2c；P5.2c 旧预注册保留冻结原貌，不追溯改写。
 
-## P4.6 已完成：功能性 parent-preserving objective 对照 Gate
+**纪律**：不修改、不覆写 P5.2b 报告与预注册（保留为失败证据）；不重跑 P5.2b 挑结果；`growth_admitted=false`、`can_promote=false` 贯穿；临时探测脚本用毕即删。
 
-P4.6 固定 13 参数 G、K1/K2、候选输入、selection threshold 和安全投影，使用与 P4.5 全部 disjoint 的新 train/validation/holdout/constraint-cohort/fresh retention。constraint-cohort 只向 functional 臂提供候选 feature vectors 和 parent 的 teacher score；训练代码不读取该 cohort 的 behavior target、utility 或 retention target。`new-only` 作为同预算基线，两个 deterministic seed 均做 checkpoint/lineage/独立恢复/tamper/parent rollback。
+P5.2a 已按冻结预注册执行并如实落 `predictive_execution_insufficient`（提交 `eff6e1d1`）：八门过、门 9 迁移失败。只读归因 recon（临时脚本已清理）已把失败定位到机制层，**逐场景证据推翻了初步假设**：
 
-| Gate | 结果 | 关键实测 |
-|---|---:|---|
-| 来源、身份与结构 | 通过 | train/validation/holdout 各 20 条，constraint/fresh retention 各 4 条；五类覆盖，retention structure digest 与 P4.4 合同一致，所有 project/path/candidate/behavior digest 隔离 |
-| checkpoint / lineage | 通过 | 两臂两个 seed 的零步/训练后 checkpoint 全部独立恢复，tamper 拒绝，parent 未覆盖；参数始终 13，K1/K2 未变 |
-| new-only 基线 | 通过基线 | 两 seed new holdout utility `0.68`、target `12/20`、safe violation `0`；fresh retention utility `0.8`、target `3/4` |
-| functional seed-0 | 保持通过但新任务失败 | fresh retention utility `1.0`、target `4/4`；new holdout utility `0.585`、target `9/20`、safe violation `6` |
-| functional seed-1 | 新任务通过但保持失败 | new holdout utility `0.68`、target `12/20`、safe violation `0`；fresh retention utility `0.8`、target `3/4` |
-| 结果出口 | 未晋级/路线收束 | `outcome=functional_update_unresolved`、`experiment_passed=false`、`growth_admitted=false`、`can_promote=false` |
+- **失败不是 patch→undo 强关联**（训练分布中 apply_patch 后仅 50% 跟 undo、50% 结束），而是 **cue→模板类型识别漂移**：模型在训练 4 模板上完美（train 1.0），但对六种新组合的目标文本落在模板决策边界外——F1（patch 类）被预测为 read→resolve→undo（T0 语言模式与 T1 undo 尾部的混合泄漏）×3、F3（create+语言复合）忽略了 create 直接走语言序列被合同拦截 ×2、F5/F6（已有文件任务）被错误泛化为 list→create 被 preview 冲突拦截 ×2。7 个失败 100% 是动作选择错误，参数绑定与合同路径零失误（provenance/安全审计全过）。
+- 频率基线 0.5 的成功是幸存者路径：位置表（read→resolve→set_language→apply_patch）恰好是 F1/F2 参考序列的「无害超集」，apply_patch 的参数绑定从目标状态派生，命中即达成。
+- **无停止 token 不是本次失败原因**（0/7 失败是 goal 达成后的多余动作）——停止机制候选（STOP token/完成分类头）针对性低；goal 状态注入 cue 会改变训练合同且不触及类型识别漂移。
 
-报告见 [P4.6 functional parent-preserving objective](../../../reports/taiji_m5_k_p4_6_functional_parent_objective_20260911.json)，清单见 [P4.6 manifest](../../manifests/taiji_m5_k_p4_6_functional_parent_objective_manifest_v1.json)。P4.6 证明功能性 parent 保持项确实改变了更新轨迹，但仍在 seed 间形成互斥：保持恢复时新任务明显退化，新任务恢复时保持仍退化。P4.0–P4.6 的固定 G 路线已经完成预定的容量、身份、rehearsal、参数约束和功能约束对照，当前不能再自动追加 epoch、半径、loss weight 或同质 seed。
-
-## 当前决策点：P4.7 已收束——容量假设关闭，进入表示合同重设计
-
-**P4.7 已按预注册执行完毕**（[预注册 §8](../../reference/M5_K_P4_7_CAPACITY_CLEAN_TEST_PREREGISTRATION_20260911.md)、报告 `reports/taiji_m5_k_p4_7_capacity_clean_test_20260911.json`）：两臂跑完全相同的 P4.6 functional 协议，单变量 = 容量 13→22（22 参数臂 candidate 权重 + bias 从 P3.5 parent 逐位继承、9 维 context 零初始化；出生等价 64 record 0 mismatch、最大 score 偏差 0.0——扩展算子干净性得证）。结果 **`capacity_hypothesis_closed`**：
-
-- 13 参数臂在全新身份上**逐数值复现** P4.6 的 seed 间互斥（seed-0 败新任务 `0.585/0.45`+6 violation、过保持 `1.0/1.0`；seed-1 过新任务 `0.68/0.6`、败保持 `0.8/0.75`）——张力对身份变化鲁棒；
-- 22 参数臂未改变定性形态（seed-0 `0.625/0.45` 仍败新任务、seed-1 与 13 参数**逐数值相同**）——出生零影响的 +9 context 参数是放大器不是解耦器；
-- 机械门全过（`experiment_passed=true`）；`growth_admitted=false`、`can_promote=false`。
-
-**收束判定**：固定容量路线（P4.0–P4.7）整体关闭。「保持/新任务互斥」定性为**表示问题**——functional teacher 约束把「新任务学习方向」与「parent 行为保持」耦合进同一 12 维 candidate 特征空间，任何在该空间内的容量/协议变化都只能移动数值不能消解张力。
-
-**唯一下一步**：表示合同重设计预注册——解耦「选择学习」与「行为保持」的表示维度（方向：把保持约束从「拟合 parent 标量分」改为「保持 parent 的选择不变量」（如 safe-candidate 优先序、低证据拒绝边界），或把 candidate 特征空间拆分为 task-learning 与 parent-preservation 两个正交子空间）；预注册冻结前不训练、不扩容、不读取 sealed、不解冻 P5/CUDA/IDE/provider。
-
-用户确认执行。**P4.8 表示合同重设计预注册已冻结：[M5_K_P4_8_REPRESENTATION_CONTRACT_REDESIGN_PREREGISTRATION_20260911.md](../../reference/M5_K_P4_8_REPRESENTATION_CONTRACT_REDESIGN_PREREGISTRATION_20260911.md)。** 机制诊断：P4.6/P4.7 的标量 MSE teacher 约束无饱和点（梯度恒在），与 task delta 在同一权重上持续对抗——这是 seed 间互斥的机制根源。**三臂设计（相邻对单变量）**：`functional-13`（in-run 基线，第 3 次复现）/ `invariant-13`（唯一变更 = 约束形式改为**决策不变量 hinge**——保持 parent 的选择与安全回退边界而非标量分，hinge 满足后梯度恒零即有限支撑）/ `residual-26`（唯一变更 vs invariant-13 = 架构拆分：frozen parent head 13 逐位继承永不可训练 + δ head 13 零初始化，task/hinge 只写 δ；有效可训练容量三臂同为 13，容量不是变量）。决策不变量 hinge 冻结规格（guard band 0.01、selection margin 0.05、parent 决策由 frozen parent 在线计算、behavior target 永不进 fit、出生 constraint 损失恒 0 断言）。全分支结果映射：新臂过 + 基线张力复现 → `representation_redesign_supported` 进晋级课程级验证；两新臂仍互斥 → `invariant_constraint_insufficient` 收敛到特征空间重设计；基线第 4 轮不复现 → `baseline_drift` 重审。`growth_admitted=false`、`can_promote=false`、无 router/任务 ID（R5 教训）。
-
-**P4.8 已执行完毕（[预注册 §9](../../reference/M5_K_P4_8_REPRESENTATION_CONTRACT_REDESIGN_PREREGISTRATION_20260911.md)、报告 `reports/taiji_m5_k_p4_8_representation_redesign_20260911.json`）：`outcome=invariant_constraint_insufficient`——hinge 不足以解耦。** 执行前修订 §3.1（guard band 破坏出生零损失断言，改为**边际保持 hinge**：保持 parent 自身决策边际，出生零损失按构造成立）。结果：三臂出生等价精确（0 mismatch / 0.0 偏差）；`functional-13` 第 4 次逐数值复现张力；`invariant-13` seed-0 新任务 `0.625/0.5` 仍败 + 6 sv、seed-1 与基线逐数值相同；`residual-26` 与 `invariant-13` **逐数值相同**。**两条机制记录**：(a) **arm-3 等价定理**——frozen head + δ head 在均匀 SGD 下与共享权重继承初始化函数空间等价，架构变量携带零信息（逐数值相同是定理的经验确证）；架构要成为真实变量需分头学习率/δ trust-region/特征门控。(b) **逐点约束 ≠ 分布性边际不变**——hinge 精确保持 cohort 点边际，但线性函数在结构同构、身份不同的 sibling 点上仍被侵蚀。与 P4.7、P4.3–P4.5 合并的最终结论：**冲突位于表示本身——12 维 candidate 特征没有把「影响 parent 边际的方向」与「实现新任务排序的方向」因子化；约束形式、容量、架构三个维度均已排除为根因。** `growth_admitted=false`、`can_promote=false` 不变。
-
-**当前唯一下一步**：特征空间重设计决策点——设计能把「parent 边际敏感方向」与「新任务排序方向」因子化的新特征维度（候选方向：parent-margin 特征显式化——把 frozen parent 对每个候选的边际贡献作为附加输入维度，使保持约束只作用于这些维度的权重；或非线性感知层把 safe-margin 判定与 proposal 排序解耦），先做 frozen validation-only 特征探针验证因子化可行性，再冻结预注册；预注册冻结前不训练、不扩容、不读取 sealed、不解冻 P5/CUDA/IDE/provider。
-
-用户确认执行。**特征探针已先行完成**（[P4.9 probe](../../../scripts/training/eval_taiji_m5_k_p4_9_feature_space_probe.py)，报告 `reports/taiji_m5_k_p4_9_feature_space_probe_20260911.json`，frozen validation-only、无任何 Taiji fit）：M1 目标秩结构 = target 在 parent 排序下 {rank 0: 8, rank 2: 6}（新任务信号 = 提升 parent 的第 3 位候选，utility gap mean 0.386）；M2 flip 方向与 parent 权重平方余弦 0.00036（近正交）；**M3 联合可行性（决定性）：基 12 维不可行（最小联合违反 0.0494——P4.2–P4.8 全部失败的定量解释），扩展 16 维（+4 个 frozen-parent-relative margin 特征）精确可行（违反 0.0）——`parent_relative_features_are_the_factorization`**。两阶段纪律不受污染：正式门沿用已冻结阈值，探针只影响臂设计。
-
-**P4.9 特征空间重设计预注册已冻结：[M5_K_P4_9_FEATURE_SPACE_REDESIGN_PREREGISTRATION_20260911.md](../../reference/M5_K_P4_9_FEATURE_SPACE_REDESIGN_PREREGISTRATION_20260911.md)。** 两臂（相邻对单变量）：`invariant-base-13`（P4.8 复现基线）/ `invariant-ext-17`（唯一变更 = 特征空间扩至 16 维：12 基 + parent_argmax_margin/parent_safe_margin/parent_rank_norm/is_parent_pick；17 参数，base 权重+bias 从 parent 逐位继承、4 新维度零初始化——出生等价精确；特征由内部 frozen parent 副本计算，训练全程非漂移）。两臂共享 margin-preservation hinge（canonical 函数）与全部协议。门沿用 P4.7/P4.8 冻结值。结果映射：ext 过 + base 张力 → `feature_factorization_supported`（固定容量路线在新表示下重开）；ext 败 → `learnability_gap`（瓶颈转优化动力学，转约束求解器方向）；base 全过 → `baseline_drift`。正式实验身份 `p4-10`。`growth_admitted=false`、`can_promote=false`；不加第三臂（P4.8 等价定理）。
-
-**当前唯一下一步**：执行 P4.9 §7——(1) `taiji/g_selection_extended.py` + 定向测试；(2) 两臂 runner（py_compile/ruff/mypy 先行）；(3) 执行落盘报告；任一停止线触发即停。
-
-用户确认执行。**P4.10 已执行完毕（[预注册 §8](../../reference/M5_K_P4_9_FEATURE_SPACE_REDESIGN_PREREGISTRATION_20260911.md)、报告 `reports/taiji_m5_k_p4_10_feature_factorization_20260911.json`）：`outcome=learnability_gap`。** 实现：`taiji/g_selection_extended.py`（16 特征 head：base 权重逐位继承 + 4 因子化维度零初始化；特征由内部 frozen parent 副本计算，**独立存储字段 + digest 校验**保证非漂移——执行中发现并修复了「从 head base 维重建 feature source」的恢复设计错误）+ 定向测试 5/5 + 两臂 runner。结果：机械门全过（两臂出生等价精确、出生 hinge 恒 0、feature source 非漂移）；`invariant-base-13` 与 P4.8 逐数值一致；`invariant-ext-17` **权衡面移动但未闭合**——seed-0 新任务 `0.6375/0.55` 逼近门仍败 + 6 sv、retention-newtask 仅剩 safe violation 一项；seed-1 sibling 修复（`1.0`）但新任务退至 `0.6375/0.55`+6 sv；hinge 仅 12–13/112 步激活。**判定：可行解存在（P4.9 探针违反 0.0）但交错 SGD 从 parent 初始化不可达——瓶颈正式从「表示存在性」转为「优化动力学」。** `growth_admitted=false`、`can_promote=false` 不变。
-
-**当前唯一下一步**：约束求解器方向预注册——把 P4.9 探针的联合违反最小化机械升级为**可行区域投影求解器**：task 学习后把权重投影到联合可行区域（最小化到当前权重的距离 subject to 联合约束），替代/增强交错 SGD 步；先冻结投影求解器的收敛判据与投影频率合同，再冻结正式预注册；冻结前不训练、不读取 sealed、不解冻 P5/CUDA/IDE/provider。
-
-用户确认执行。**P4.11 投影求解器预注册已冻结：[M5_K_P4_11_PROJECTION_SOLVER_PREREGISTRATION_20260911.md](../../reference/M5_K_P4_11_PROJECTION_SOLVER_PREREGISTRATION_20260911.md)**（求解器收敛判据 + 投影频率合同 + 正式实验设计一并冻结）。**求解器合同**：惩罚延续法（ρ ∈ {1,10,100,1000}，每相 full-batch Adam 6000 步、lr 0.05 余弦衰减，warm 延续确定性，无随机重启）；目标 = ρ·联合违反 + ½·||w − anchor||²，anchor = 基线臂训练终点（全程固定）；约束系统 = 任务约束（fit-eligible train 集 target argmax + safe-margin）+ 保持约束（constraint cohort 上 frozen parent 决策边际保持）；全部约束为分数差 → **投影只作用于 16 权重维，bias 不动**；收敛判据冻结（逐约束 ≤ 1e-6、总量 ≤ 1e-5，否则 `projection_incomplete` 诚实停止）；投影频率 = 每次训练恰一次末端投影。**两臂（单变量 = 末端投影）**：`invariant-ext-17`（P4.10 复现基线，无投影）/ `projected-ext-17`（与基线臂**逐位相同轨迹** + 一次联合投影——直接回答「P4.10 失败端点能否被一次投影修复」）。门沿用已冻结值；身份空间 `p4-11`。结果映射：投影完成 + projected 过 + 基线张力 → `projection_solver_supported`（固定容量路线在求解器机制下重开）；投影完成 + 仍互斥 → `projection_generalization_gap`（cohort 可行 ≠ 评估泛化，进入任务/表示联合重设计）；未收敛 → 机械失败停止。
-
-**当前唯一下一步**：执行 P4.11 §7——(1) 投影求解器实现 + 定向测试（收敛判据/确定性/anchor 固定/bias 不动）；(2) 两臂 runner（py_compile/ruff/mypy 先行）；(3) 执行落盘报告；任一停止线触发即停。
-
-用户确认执行。**P4.11 已执行完毕（[预注册 §8](../../reference/M5_K_P4_11_PROJECTION_SOLVER_PREREGISTRATION_20260911.md)、报告 `reports/taiji_m5_k_p4_11_projection_solver_20260911.json`）：`outcome=projection_solver_supported`——投影求解器成立，P 系列首次有更新机制两 seed 同时通过双侧门。** 实现：`taiji/g_selection_projection.py`（确定性惩罚延续投影器）+ `apply_projected_weights` + 定向测试 5/5 + 两臂 runner（执行前修订 §2.1：保持约束改为决策同一性形式——探针已证可行的系统）。结果：**trajectory gate = 两臂投影前 head digest 逐位相同**（投影是唯一变量）；投影精确收敛（80 条联合约束，违反 0.0，距离 L2 2.72/2.98 如实审计）；**`projected-ext-17` 两 seed 全门通过**——holdout utility `0.8`≥0.68、target `0.75`≥0.6、0 safe violations、sibling `1.0/1.0` 非劣、retention-newtask `0.8`≥parent `0.6375`；基线臂复现 P4.10 失败。**P4.2–P4.11 完整证据链的机制结论：保持/新任务解耦 = 表示因子化（P4.9）+ 优化机制替换（P4.11 末端投影）两个必要成分的合取，任一单独不充分；且 cohort 可行性成功泛化到全部评估身份。** 固定容量路线在求解器更新机制下**重开**。`growth_admitted=false`、`can_promote=false` 不变。
-
-**当前唯一下一步**：求解器机制下的晋级课程级验证预注册——更大 seed/课程矩阵 + 资源审计，gate 沿用已冻结阈值；预注册冻结前不训练、不读取 sealed、不解冻 P5/CUDA/IDE/provider。
-
-用户确认执行。**P4.12 晋级课程级验证预注册已冻结：[M5_K_P4_12_COURSE_LEVEL_VALIDATION_PREREGISTRATION_20260911.md](../../reference/M5_K_P4_12_COURSE_LEVEL_VALIDATION_PREREGISTRATION_20260911.md)。** 矩阵：**3 课程身份批 × 3 seeds = 9 cells**（统计单元 = 身份批，seed 为 replicate）；每 cell 双臂（baseline 无投影 / projected 逐位相同轨迹 + 一次末端联合投影）+ trajectory gate（投影前 digest 逐位相同）；求解器合同与 P4.11 逐参数相同、按 cell 实例化（决策同一性约束系统、anchor = 该 cell 基线臂终点、bias 不动、收敛判据冻结，任一 cell `projection_incomplete` 按机械失败记入）。门沿用 P4.7–P4.11 已冻结阈值（零变更）；**聚合门 = projected 臂 ≥ 8/9 cell 全门通过 ∧ 基线臂 ≥ 2/3 身份批张力复现**；资源审计逐 cell（fit/投影 wall-clock、24k solver 步、checkpoint 字节）+ 软门（projected 总 wall ≤ 3× baseline）。结果映射：≥ 8/9 ∧ 基线张力 → `course_level_validation_supported`（晋级课程入场资格成立，进求解器机制下的晋级课程预注册）；≤ 7/9 → `course_level_validation_failed`（按身份/seed/门分布归因）；基线全过 → `baseline_drift`。`growth_admitted=false`、`can_promote=false`；不加第三臂、不改求解器合同。
-
-**当前唯一下一步**：实现 9-cell runner（`eval_taiji_m5_k_p4_12_course_level_validation.py`，py_compile/ruff/mypy 先行）并执行落盘报告；任一停止线触发即停。
-
-用户确认执行。**P4.12 已执行完毕（[预注册 §8](../../reference/M5_K_P4_12_COURSE_LEVEL_VALIDATION_PREREGISTRATION_20260911.md)、报告 `reports/taiji_m5_k_p4_12_course_level_validation_20260911.json`）：`outcome=course_level_validation_supported`——求解器机制课程级验证成立。** 9/9 cell projected 臂全门通过且九格指标**逐数值相同**（holdout utility `0.8`、target `0.75`、0 sv；sibling `1.0/1.0`；retention-newtask `0.8` ≥ parent `0.6375`）；基线臂 3/3 批张力复现；投影 9/9 精确收敛（违反 0.0）。机械门全过（264 digest 唯一、身份隔离、structure/checkpoint/tamper/feature-source/trajectory 9/9）。**新增机制结论：投影求解器把「保持/新任务权衡」从 seed 敏感的优化路径问题变成了确定性的可行性求解问题（九格零方差）。** 资源审计诚实记录：3× wall 软门 9/9 超限为结构性的（fit-only 基线 0.08s vs fit+投影 3–6.5s，比率 40–80×——投影正是机制成本），按预注册为描述性边界不影响聚合门；绝对耗时极小，正式资源 cap 属晋级课程预注册且须以绝对预算定义。`growth_admitted=false`、`can_promote=false` 不变。
-
-**当前唯一下一步**：求解器机制下的晋级课程预注册——同一 parent 连续 S/G/K 课程，学习机制 = 「SGD 任务学习 + 末端联合投影」求解器机制，gate 沿用 A8 结构 + 资源 cap 以绝对预算定义；预注册冻结前不训练、不读取 sealed、不解冻 P5/CUDA/IDE/provider。
-
-用户确认执行。**P4.13 求解器机制下的晋级课程预注册已冻结：[M5_K_P4_13_PROMOTION_COURSE_PREREGISTRATION_20260911.md](../../reference/M5_K_P4_13_PROMOTION_COURSE_PREREGISTRATION_20260911.md)。** 关键设计：课程 = **两个相继的新任务阶段（A → B）**——检验晋级真正需要的**持续累积能力**而非单任务 + 保持。每 cell：Phase A（cohort A 任务 fit + 投影 #1 = A 约束 + 保持约束）→ Phase B（从 A 投影态出发的任务 fit + 投影 #2 = **累积系统** A 约束 + B 约束 + 保持约束）；**向后保持门（新增）= Phase B 后 A-holdout 仍过新任务门**；checkpoint/rollback 机械门沿用 P3.0 合同（A 投影态保存/恢复/回滚是 B 的安全网）；资源 cap 以**绝对预算**定义（每相 fit ≤ 60s、投影 ≤ 120s、cell 总 ≤ 600s——P4.12 比率式软门的修正）。矩阵 3 批 × 3 seeds = 9 cells；求解器合同与 P4.11/P4.12 逐参数相同；门阈值零变更。结果映射：聚合门过 → `promotion_course_supported`（G 侧晋级课程闭合，进 scorecard 更新与晋级评审）；Phase B 投影不收敛 → `cumulative_constraint_conflict`；B 破坏 A → `sequential_retention_failure`。诚实边界：G 选择头课程（K 联合运行为后续预注册）；A/B 同分布（检验累积 + 无遗忘，非跨任务类型泛化）。`growth_admitted=false`、`can_promote=false`。
-
-**当前唯一下一步**：实现两相课程 runner（`eval_taiji_m5_k_p4_13_promotion_course.py`，py_compile/ruff/mypy 先行）并执行落盘报告；任一停止线触发即停。
-
-用户确认执行。**P4.13 已执行完毕（[预注册 §9](../../reference/M5_K_P4_13_PROMOTION_COURSE_PREREGISTRATION_20260911.md)、报告 `reports/taiji_m5_k_p4_13_promotion_course_20260911.json`）：`outcome=promotion_course_supported`——求解器机制支持持续累积，G 侧晋级课程闭合。** 9/9 cell：Phase A 全门（A-holdout `0.8`/0sv）→ Phase B 全门（B-holdout `0.8`/0sv）→ **向后保持门零失败（A-holdout 回检 `0.8/0.75`——B 学习后 A 零遗忘）**；**累积投影系统（A+B+保持，154 条约束）9/9 精确收敛（违反 0.0）**——「约束系统随课程增长」的可行性担忧经验未成立；rollback 门 9/9（A 投影态恢复行为逐位一致）；资源绝对预算全过（cell 12–16s ≪ 600s）；基线臂 3/3 批张力复现。runner 修复两处机械错误（digest 集合误初始化为 set、唯一性期望式算术 3×168→3×148），未触碰判据。`growth_admitted=false`、`can_promote=false` 不变。**G 侧晋级课程完整证据链闭合：表示因子化（P4.9）+ 求解器更新机制（P4.11）+ 单任务验证（P4.12）+ 持续累积课程（P4.13）。**
-
-**当前唯一下一步**：scorecard 更新与晋级评审——把 P4.2–P4.13 的 G 侧证据线收束入 K 轴 scorecard 新版本，冻结晋级边界与默认 runtime rollout review 的入口条件（K worker 联合课程为后续预注册）；评审前不训练、不读取 sealed、不解冻 P5/CUDA/IDE/provider。
-
-用户确认执行。**K 轴 scorecard v4 已冻结并执行：[M5_K_AXIS_SCORECARD_V4_CONTRACT_20260911.md](../../reference/M5_K_AXIS_SCORECARD_V4_CONTRACT_20260911.md)。** 唯一变更 = 新增第四条证据线 `solver_mechanism_evidence`（来源 = P4.12 课程级验证 + P4.13 两相晋级课程，只读转录 + digest 校验：9/9 + 9/9 全门、累积投影全格精确零违反、向后保持门零失败、rollback/资源预算全过、机制零方差结论）；K1/K2/K3 与 C 阶段部分机械复用 v3 reducer 且 source digests 对 v3 报告逐位校验（零漂移），不重训、不重算。**晋级边界冻结**：v3 全部 veto 保留 + `g_solver_mechanism_course_closed=true`（G 侧晋级课程闭合的机器结论）+ 两个未完成入场条件 `k_worker_joint_course_completed=false`、`default_runtime_rollout_review_completed=false`——`promotion_gate=false`、`can_promote=false`；**晋级评审入场条件 = K worker 联合课程完成 + 默认 runtime rollout review 执行，二者齐备后 A8 评审才有资格召开且仍须独立批准**。报告 [scorecard v4](../../../reports/taiji_m5_k_axis_scorecard_v4_20260911.json)；v3 报告保留为历史。**K 轴证据线现状：能力（K1/K2/K3）× 学习机制（FS 候选）× G 侧求解器机制（表示因子化 + 求解器更新 + 课程级验证 + 晋级课程）三条线闭合；剩余入口 = K worker 联合课程。**
-
-**当前唯一下一步**：K worker 联合课程预注册——P2.6/P2.7 continuation 机械与求解器机制在同一 parent 上的联合运行（K worker 连续学习 + G 头求解器更新同课程）；预注册冻结前不解冻任何 owner、不接默认 runtime、不训练。
-
-### P4：回归态极的长期目标——继承式结构成长
-
-在固定容量持续学习和保持成立后，使用多任务干扰、容量扫描与长序列退化确定扩容压力。增长从同一模型继承有效权重和学习状态，新增结构零影响出生，并有可测 credit/活动/贡献。
-
-对照至少包含最强固定容量学习流程、同最终有效容量的 fixed-large、动态增长及结构 lesion；同时比较质量、旧域保持和累计资源。不以 replica 翻倍、元数据 lineage 或单纯保存更多权重替代神经结构成长。是否引入成熟网络/表征组件，以项目需求和对照证据决策，避免原始从零重造与为避 Transformer 而降低能力。
-
-### P5：外围开发顺序
-
-1. 模型知识来源：Skill/MCP 文本、文档、成功/失败轨迹形成有来源语料；与普通数据同预算比较内化和未见任务收益。工具知识与宿主执行权限分离。
-2. IDE/interaction-group/小型模拟：先支持模型产出类型化动作、识别文件语言、解释语言切换、preview/执行/undo；模拟和真实 Workbench 使用一致的动作合同。
-3. 客户端插件热插拔与 provider watchdog：接口稳定后实现能力发现、兼容性、设备适配继承、故障隔离和回滚。语言 provider 可作语言器官，成绩不混入原生学习收益。
-4. CUDA 待硬件具备后做 CPU 一致性与吞吐对照；产品视觉在接口稳定后统一 logo/托盘/任务栏、圆角、状态页和旧 HF 入口。严重客户端故障及本次变更引入的 CI 错误优先修复。
-
-## 工程与文档纪律
-
-每步完成后只更新本文当前状态和一份必要证据；归档调试流水，核心架构/需求持续留在 active。失败报告不覆写、不改绿。已否决 widened/旧 parity 不再获运行许可，产物保留可追溯性，确认无引用的临时产物才清理。
-
-上次结果复审运行的 5 项 FS 基础测试通过；本次收束不重报为新增测试成绩。未运行新的研究训练，未宣称全仓 CI 通过。实现阶段按实际 workflow 运行相关 pytest、Ruff、B/SIM、Black、core mypy；脚本改变必须核对 CLI/输出合同与负例。计划/链接变更仅做 JSON、引用和 diff 校验，不新增镜像文档内容的测试。
-
-文档仅保留一个执行入口，不再新增平行总计划：本文记录阶段状态、下一步和验收；结果复审记录证据解释；核心需求与架构常驻 active；已有历史流水保留在 archive。旧预注册即使留在 reference 也不重新获得执行许可。当前收束不移动有引用的研究资产，不覆盖旧报告或删除 checkpoint。根目录存在部分无读取权限的临时路径，未证明其为空或无用；后续清理须逐项验证绝对路径、引用和可恢复性，不能把它们报作已清理。
-
-本轮 P2 pilot、P2.1–P2.7、P3.0–P3.6、P4.0–P4.6 诊断、P4.7 capacity clean test、P4.8 representation contract、P4.9 feature-space probe、P4.10 feature factorization、P4.11 projection solver、P4.12 course-level validation、P4.13 promotion course 与 K 轴 scorecard v4 报告已与计划同步并提交本地 main。P4 固定容量/旧表示路线已关闭，G 侧求解器机制证据已收束；当前唯一下一步 = **K worker 联合课程预注册**，冻结前不训练、不调参、不扩容、不解冻任何 owner、不接默认 runtime、不进入 promotion 评审。
+**三选项决策进展：零训练探针已执行，选项 1 被否定。** 探针（临时脚本已清理，零训练）：把 12 个 final 场景的 goal 文本替换为携带训练模板类型签名词汇的显式措辞，现有 readout（确定性重训）在显式 cue 下成功率 **0/12**（current 措辞 4/12）——显式词汇使 cue 嵌入偏离训练 goal 分布，预测全面退化为 list/undo 泄漏。**结论：瓶颈不是 cue 措辞，而是 GRU+线性 readout 学到的是「具体 goal 文本 → 模板」的记忆映射，不具备语义级模板泛化结构**——与 P5.1f（retention 天花板）、P5.2a final（位置先验退化）构成同向证据链：固定容量序列机制在新分布上受限。选项 1（P5.2a-v2 cue 结构化）无证据支持，关闭。
