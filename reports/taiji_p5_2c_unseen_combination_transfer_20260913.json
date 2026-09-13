@@ -1,0 +1,652 @@
+{
+  "format": "taiji-p5-2c-unseen-combination-transfer-report-v1",
+  "version": 1,
+  "status": "blocked",
+  "growth_admitted": false,
+  "can_promote": false,
+  "preregistration": "plans/reference/M5_P5_2C_UNSEEN_COMBINATION_TRANSFER_PREREGISTRATION_20260913.md",
+  "static_checks": {
+    "scope": [
+      "seed_platform/workbench.py",
+      "taiji/interaction_groups.py",
+      "taiji/interaction_group_transfer.py",
+      "taiji/interaction_group_learning.py",
+      "scripts/training/eval_taiji_p5_2b_group_causal_corpora_gate.py",
+      "scripts/training/eval_taiji_p5_2c_unseen_combination_transfer_gate.py"
+    ],
+    "commands": [
+      "python -m py_compile <scope files>",
+      "python -m ruff check scripts/training (and full repo)",
+      "python -m mypy --follow-imports=silent seed taiji",
+      "python -m black --no-cache --check <scope files>",
+      "python -m pytest (baseline known debts, no new failures)"
+    ],
+    "executed_before_run": true
+  },
+  "outcome": "blocked_at_entry_audit",
+  "blocking_conditions": [
+    {
+      "gate": "unseen_combination_identity",
+      "condition": "unseen_combination_surface_empty",
+      "detail": "all 6 pairs over 4 members were estimated from train evidence, leaving no unseen combination to predict",
+      "observed_pairs": [
+        [
+          "member-a",
+          "member-b"
+        ],
+        [
+          "member-a",
+          "member-c"
+        ],
+        [
+          "member-a",
+          "member-d"
+        ],
+        [
+          "member-b",
+          "member-c"
+        ],
+        [
+          "member-b",
+          "member-d"
+        ],
+        [
+          "member-c",
+          "member-d"
+        ]
+      ],
+      "possible_pairs": 6
+    },
+    {
+      "gate": "evidence_admissibility",
+      "condition": "intervention_did_not_execute",
+      "detail": "57 non-baseline intervention episodes executed zero steps yet recorded an outcome",
+      "offenders": [
+        {
+          "context_id": "p52a-validation-100",
+          "member_ids": [
+            "member-b"
+          ],
+          "success": true,
+          "stop_reason": "goal_reached"
+        },
+        {
+          "context_id": "p52a-validation-100",
+          "member_ids": [
+            "member-c"
+          ],
+          "success": true,
+          "stop_reason": "goal_reached"
+        },
+        {
+          "context_id": "p52a-validation-100",
+          "member_ids": [
+            "member-d"
+          ],
+          "success": true,
+          "stop_reason": "goal_reached"
+        },
+        {
+          "context_id": "p52a-validation-100",
+          "member_ids": [
+            "member-a",
+            "member-b"
+          ],
+          "success": true,
+          "stop_reason": "goal_reached"
+        },
+        {
+          "context_id": "p52a-validation-100",
+          "member_ids": [
+            "member-a",
+            "member-c"
+          ],
+          "success": true,
+          "stop_reason": "goal_reached"
+        },
+        {
+          "context_id": "p52a-validation-100",
+          "member_ids": [
+            "member-a",
+            "member-d"
+          ],
+          "success": true,
+          "stop_reason": "goal_reached"
+        },
+        {
+          "context_id": "p52a-validation-100",
+          "member_ids": [
+            "member-b",
+            "member-c"
+          ],
+          "success": true,
+          "stop_reason": "goal_reached"
+        },
+        {
+          "context_id": "p52a-validation-100",
+          "member_ids": [
+            "member-b",
+            "member-d"
+          ],
+          "success": true,
+          "stop_reason": "goal_reached"
+        },
+        {
+          "context_id": "p52a-validation-100",
+          "member_ids": [
+            "member-c",
+            "member-d"
+          ],
+          "success": true,
+          "stop_reason": "goal_reached"
+        },
+        {
+          "context_id": "p52a-validation-100",
+          "member_ids": [
+            "member-a"
+          ],
+          "success": true,
+          "stop_reason": "goal_reached"
+        },
+        {
+          "context_id": "p52a-validation-100",
+          "member_ids": [
+            "member-b"
+          ],
+          "success": true,
+          "stop_reason": "goal_reached"
+        },
+        {
+          "context_id": "p52a-validation-100",
+          "member_ids": [
+            "member-c"
+          ],
+          "success": true,
+          "stop_reason": "goal_reached"
+        }
+      ]
+    }
+  ],
+  "intervention_reality": {
+    "per_context": {
+      "p52a-validation-100": {
+        "episodes": 22,
+        "zero_step_episodes": 20,
+        "non_baseline_zero_step_episodes": 19,
+        "baseline_zero_step_episodes": 1,
+        "successes": 21
+      },
+      "p52a-validation-101": {
+        "episodes": 22,
+        "zero_step_episodes": 0,
+        "non_baseline_zero_step_episodes": 0,
+        "baseline_zero_step_episodes": 0,
+        "successes": 6
+      },
+      "p52a-validation-102": {
+        "episodes": 22,
+        "zero_step_episodes": 0,
+        "non_baseline_zero_step_episodes": 0,
+        "baseline_zero_step_episodes": 0,
+        "successes": 6
+      },
+      "p52a-validation-103": {
+        "episodes": 22,
+        "zero_step_episodes": 0,
+        "non_baseline_zero_step_episodes": 0,
+        "baseline_zero_step_episodes": 0,
+        "successes": 0
+      },
+      "p52a-validation-104": {
+        "episodes": 22,
+        "zero_step_episodes": 20,
+        "non_baseline_zero_step_episodes": 19,
+        "baseline_zero_step_episodes": 1,
+        "successes": 21
+      },
+      "p52a-validation-105": {
+        "episodes": 22,
+        "zero_step_episodes": 0,
+        "non_baseline_zero_step_episodes": 0,
+        "baseline_zero_step_episodes": 0,
+        "successes": 6
+      },
+      "p52a-validation-106": {
+        "episodes": 22,
+        "zero_step_episodes": 0,
+        "non_baseline_zero_step_episodes": 0,
+        "baseline_zero_step_episodes": 0,
+        "successes": 6
+      },
+      "p52a-validation-107": {
+        "episodes": 22,
+        "zero_step_episodes": 0,
+        "non_baseline_zero_step_episodes": 0,
+        "baseline_zero_step_episodes": 0,
+        "successes": 0
+      },
+      "p52a-validation-108": {
+        "episodes": 22,
+        "zero_step_episodes": 20,
+        "non_baseline_zero_step_episodes": 19,
+        "baseline_zero_step_episodes": 1,
+        "successes": 21
+      },
+      "p52a-validation-109": {
+        "episodes": 22,
+        "zero_step_episodes": 0,
+        "non_baseline_zero_step_episodes": 0,
+        "baseline_zero_step_episodes": 0,
+        "successes": 6
+      },
+      "p52a-validation-110": {
+        "episodes": 22,
+        "zero_step_episodes": 0,
+        "non_baseline_zero_step_episodes": 0,
+        "baseline_zero_step_episodes": 0,
+        "successes": 6
+      },
+      "p52a-validation-111": {
+        "episodes": 22,
+        "zero_step_episodes": 0,
+        "non_baseline_zero_step_episodes": 0,
+        "baseline_zero_step_episodes": 0,
+        "successes": 0
+      }
+    },
+    "non_baseline_zero_step_total": 57,
+    "offenders": [
+      {
+        "context_id": "p52a-validation-100",
+        "member_ids": [
+          "member-b"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-100",
+        "member_ids": [
+          "member-c"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-100",
+        "member_ids": [
+          "member-d"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-100",
+        "member_ids": [
+          "member-a",
+          "member-b"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-100",
+        "member_ids": [
+          "member-a",
+          "member-c"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-100",
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-100",
+        "member_ids": [
+          "member-b",
+          "member-c"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-100",
+        "member_ids": [
+          "member-b",
+          "member-d"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-100",
+        "member_ids": [
+          "member-c",
+          "member-d"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-100",
+        "member_ids": [
+          "member-a"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-100",
+        "member_ids": [
+          "member-b"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-100",
+        "member_ids": [
+          "member-c"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-100",
+        "member_ids": [
+          "member-d"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-100",
+        "member_ids": [
+          "member-a",
+          "member-b"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-100",
+        "member_ids": [
+          "member-a",
+          "member-c"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-100",
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-100",
+        "member_ids": [
+          "member-b",
+          "member-c"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-100",
+        "member_ids": [
+          "member-b",
+          "member-d"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-100",
+        "member_ids": [
+          "member-c",
+          "member-d"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-104",
+        "member_ids": [
+          "member-b"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-104",
+        "member_ids": [
+          "member-c"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-104",
+        "member_ids": [
+          "member-d"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-104",
+        "member_ids": [
+          "member-a",
+          "member-b"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-104",
+        "member_ids": [
+          "member-a",
+          "member-c"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-104",
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-104",
+        "member_ids": [
+          "member-b",
+          "member-c"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-104",
+        "member_ids": [
+          "member-b",
+          "member-d"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-104",
+        "member_ids": [
+          "member-c",
+          "member-d"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-104",
+        "member_ids": [
+          "member-a"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-104",
+        "member_ids": [
+          "member-b"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-104",
+        "member_ids": [
+          "member-c"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-104",
+        "member_ids": [
+          "member-d"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-104",
+        "member_ids": [
+          "member-a",
+          "member-b"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-104",
+        "member_ids": [
+          "member-a",
+          "member-c"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-104",
+        "member_ids": [
+          "member-a",
+          "member-d"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-104",
+        "member_ids": [
+          "member-b",
+          "member-c"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-104",
+        "member_ids": [
+          "member-b",
+          "member-d"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-104",
+        "member_ids": [
+          "member-c",
+          "member-d"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-108",
+        "member_ids": [
+          "member-b"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      },
+      {
+        "context_id": "p52a-validation-108",
+        "member_ids": [
+          "member-c"
+        ],
+        "success": true,
+        "stop_reason": "goal_reached"
+      }
+    ],
+    "interventions_happened": false
+  },
+  "member_evidence": {
+    "profiles": 4,
+    "member_ids": [
+      "member-a",
+      "member-b",
+      "member-c",
+      "member-d"
+    ]
+  },
+  "evaluator": {
+    "train_only_records": 6,
+    "observed_pairs": [
+      [
+        "member-a",
+        "member-b"
+      ],
+      [
+        "member-a",
+        "member-c"
+      ],
+      [
+        "member-a",
+        "member-d"
+      ],
+      [
+        "member-b",
+        "member-c"
+      ],
+      [
+        "member-b",
+        "member-d"
+      ],
+      [
+        "member-c",
+        "member-d"
+      ]
+    ]
+  },
+  "matrix": {
+    "episodes": 264,
+    "train_context_count": 8,
+    "unseen_context_count": 4
+  },
+  "audit_report": "reports/M5_P5_2C_ENTRY_AUDIT_P5_2B_DEFECT_20260913.md",
+  "interpretation": "blocked: the frozen P5.2c preregistration cannot be executed against the current member set and trace projection; see blocking_conditions",
+  "elapsed_seconds": 16.187
+}

@@ -1,0 +1,72 @@
+{
+  "format": "taiji-p5-1-sourced-knowledge-transfer-v1",
+  "version": 1,
+  "status": "completed",
+  "sealed_payload_read": false,
+  "growth_admitted": false,
+  "can_promote": false,
+  "frozen_margin": 0.15,
+  "preregistration": "plans/reference/M5_P5_1_SOURCED_KNOWLEDGE_TRANSFER_PREREGISTRATION_20260912.md",
+  "vocabulary_gate": {
+    "holdout_vocabulary": [
+      "editor.inspect",
+      "editor.open",
+      "editor.read"
+    ],
+    "sourced_superset_of_holdout": true,
+    "placebo_disjoint_from_holdout": true
+  },
+  "budget_gate": {
+    "sourced_artifacts": 18,
+    "placebo_artifacts": 18,
+    "sourced_events": 9,
+    "placebo_events": 9,
+    "same_budget": true,
+    "sourced_unit_kinds": [
+      "affordance",
+      "constraint",
+      "knowledge",
+      "procedure"
+    ],
+    "placebo_unit_kinds": [
+      "affordance",
+      "constraint",
+      "knowledge",
+      "procedure"
+    ],
+    "unit_kinds_match": true,
+    "total_wall_seconds": 0.899,
+    "wall_within_cap": true
+  },
+  "sourced_arm": {
+    "holdout_accuracy": 0.5,
+    "lesion_holdout_accuracy": 0.3333333333333333,
+    "retention_accuracy": 0.3333333333333333,
+    "train_accuracy": 0.3333333333333333,
+    "semantic_internalized": true,
+    "checkpoint_roundtrip": true
+  },
+  "placebo_arm": {
+    "holdout_accuracy": 0.0,
+    "lesion_holdout_accuracy": 0.0,
+    "retention_accuracy": 0.0,
+    "train_accuracy": 0.3333333333333333,
+    "semantic_internalized": true,
+    "checkpoint_roundtrip": true
+  },
+  "content_delta": 0.5,
+  "gates": {
+    "same_budget_enforced": true,
+    "capability_vocabulary_disjoint": true,
+    "sourced_transfer_beats_lesion": true,
+    "content_transfer_margin": true,
+    "checkpoint_roundtrip_both_arms": true,
+    "quarantined_artifact_rejected": true,
+    "semantic_internalized_both_arms": true,
+    "resource_within_cap": true
+  },
+  "outcome": "sourced_knowledge_transfer_supported",
+  "experiment_passed": true,
+  "interpretation": "completed: outcome=sourced_knowledge_transfer_supported; same-budget content transfer through the E4 governance boundary; the mechanism carrier stays the five-class synthetic scope and no structural growth is admitted",
+  "elapsed_seconds": 0.899
+}

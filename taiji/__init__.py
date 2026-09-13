@@ -53,6 +53,7 @@ from .artifact_internalization import (
     ArtifactInternalizationReport,
     ArtifactInternalizationTrainer,
     ArtifactKnowledgeEncoder,
+    SemanticArtifactKnowledgeEncoder,
 )
 from .assembly_evaluation import (
     AssemblyRelationEvaluationConfig,
@@ -89,6 +90,13 @@ from .content_selection import (
     ContentSelector,
     ContentTrainingExample,
 )
+from .continual_checkpoint import (
+    CONTINUATION_PHASES,
+    TAIJI_CONTINUATION_CHECKPOINT_FORMAT,
+    TAIJI_CONTINUATION_CHECKPOINT_VERSION,
+    ContinuationPhaseCursor,
+    TaijiContinuationCheckpoint,
+)
 from .continual_evaluation import (
     CONTINUAL_EVALUATION_FORMAT,
     CONTINUAL_EVALUATION_VERSION,
@@ -112,37 +120,6 @@ from .continual_k_adapter import (
     KAdapterOutput,
     KAdapterRollbackRecord,
     KContinualAdapter,
-)
-from .continual_checkpoint import (
-    CONTINUATION_PHASES,
-    TAIJI_CONTINUATION_CHECKPOINT_FORMAT,
-    TAIJI_CONTINUATION_CHECKPOINT_VERSION,
-    ContinuationPhaseCursor,
-    TaijiContinuationCheckpoint,
-)
-from .k_worker_manifest import (
-    K_WORKER_BUNDLE_FORMAT,
-    K_WORKER_BUNDLE_VERSION,
-    K_WORKER_CONTRACT_FORMAT,
-    K_WORKER_CONTRACT_VERSION,
-    K_WORKER_IDS,
-    K_WORKER_INPUT_CONTRACT_DIGESTS,
-    K_WORKER_KINDS,
-    K_WORKER_MANIFEST_FORMAT,
-    K_WORKER_MANIFEST_VERSION,
-    K_WORKER_OUTPUT_CONTRACT_DIGESTS,
-    KWorkerManifest,
-    KWorkerManifestBundle,
-)
-from .k_continuation import (
-    K_CONTINUATION_FROZEN_WORKERS,
-    K_CONTINUATION_LEARNABLE_WORKERS,
-    K_CONTINUATION_SPLITS,
-    TAIJI_K_CONTINUATION_CONTRACT_FORMAT,
-    TAIJI_K_CONTINUATION_CONTRACT_VERSION,
-    KContinuationCourse,
-    KContinuationExperience,
-    KContinuationUpdateReceipt,
 )
 from .contracts import (
     CONTRACT_FORMAT,
@@ -327,6 +304,11 @@ from .g_selection import (
     GSelectionCandidate,
     GSelectionCandidateSet,
 )
+from .g_selection_action import (
+    TAIJI_G_ACTION_PROJECTION_FORMAT,
+    TAIJI_G_ACTION_PROJECTION_VERSION,
+    project_g_decision,
+)
 from .g_selection_behavior import (
     PROPOSAL_UTILITY_WEIGHTS,
     SAFE_UTILITY_WEIGHTS,
@@ -342,11 +324,6 @@ from .g_selection_learning import (
     G_SELECTION_SELECTION_STATUSES,
     GSelectionDecision,
     GSelectionLearner,
-)
-from .g_selection_action import (
-    TAIJI_G_ACTION_PROJECTION_FORMAT,
-    TAIJI_G_ACTION_PROJECTION_VERSION,
-    project_g_decision,
 )
 from .generation import (
     GENERATION_CHECKPOINT_FORMAT,
@@ -436,13 +413,6 @@ from .internalization import (
     ReplayBuffer,
     content_digest,
 )
-from .outcome_dependency import (
-    OUTCOME_DEPENDENCY_PROJECTION_FORMAT,
-    OUTCOME_DEPENDENCY_PROJECTION_VERSION,
-    OutcomeDependencyProjector,
-    OutcomeDependencyProjection,
-    OutcomeDependencySpec,
-)
 from .internalization_learner import (
     INTERNALIZATION_LEARNER_CHECKPOINT_FORMAT,
     InternalizationLearningReport,
@@ -460,6 +430,30 @@ from .internalization_longitudinal import (
     InternalizationStabilityGate,
     InternalizationStabilityReport,
     InternalizationStabilityTrial,
+)
+from .k_continuation import (
+    K_CONTINUATION_FROZEN_WORKERS,
+    K_CONTINUATION_LEARNABLE_WORKERS,
+    K_CONTINUATION_SPLITS,
+    TAIJI_K_CONTINUATION_CONTRACT_FORMAT,
+    TAIJI_K_CONTINUATION_CONTRACT_VERSION,
+    KContinuationCourse,
+    KContinuationExperience,
+    KContinuationUpdateReceipt,
+)
+from .k_worker_manifest import (
+    K_WORKER_BUNDLE_FORMAT,
+    K_WORKER_BUNDLE_VERSION,
+    K_WORKER_CONTRACT_FORMAT,
+    K_WORKER_CONTRACT_VERSION,
+    K_WORKER_IDS,
+    K_WORKER_INPUT_CONTRACT_DIGESTS,
+    K_WORKER_KINDS,
+    K_WORKER_MANIFEST_FORMAT,
+    K_WORKER_MANIFEST_VERSION,
+    K_WORKER_OUTPUT_CONTRACT_DIGESTS,
+    KWorkerManifest,
+    KWorkerManifestBundle,
 )
 from .language_organ import (
     LANGUAGE_BACKEND_REGISTRY_FORMAT,
@@ -530,6 +524,25 @@ from .neuron_region import (
     NeuronRegionDynamics,
 )
 from .organs import ByteMotor, BytePredictiveReadout, ByteSensor, SparseReceptorBank
+from .outcome_dependency import (
+    OUTCOME_DEPENDENCY_PROJECTION_FORMAT,
+    OUTCOME_DEPENDENCY_PROJECTION_VERSION,
+    OutcomeDependencyProjection,
+    OutcomeDependencyProjector,
+    OutcomeDependencySpec,
+)
+from .owner_transfer import (
+    OWNER_TRANSFER_CURSOR_STAGES,
+    OWNER_TRANSFER_EVENT_TYPES,
+    OWNER_TRANSFER_OWNER_IDS,
+    TAIJI_OWNER_TRANSFER_FORMAT,
+    TAIJI_OWNER_TRANSFER_VERSION,
+    GSelectionState,
+    OwnerTransferCursor,
+    TaijiOwnerTransferCheckpoint,
+    TaijiOwnerTransferEvent,
+    TaijiOwnerTransferManifest,
+)
 from .perception import LearnedPerception
 from .planning import (
     PLANNING_CHECKPOINT_FORMAT,
@@ -637,18 +650,6 @@ from .single_cell import (
     TaijiSingleCellCheckpoint,
     TaijiSingleCellEvent,
     TaijiSingleCellManifest,
-)
-from .owner_transfer import (
-    GSelectionState,
-    OWNER_TRANSFER_CURSOR_STAGES,
-    OWNER_TRANSFER_EVENT_TYPES,
-    OWNER_TRANSFER_OWNER_IDS,
-    TAIJI_OWNER_TRANSFER_FORMAT,
-    TAIJI_OWNER_TRANSFER_VERSION,
-    OwnerTransferCursor,
-    TaijiOwnerTransferCheckpoint,
-    TaijiOwnerTransferEvent,
-    TaijiOwnerTransferManifest,
 )
 from .sparse import SparseSynapses
 from .state import (
@@ -945,6 +946,7 @@ __all__ = [
     "ArtifactInternalizationReport",
     "ArtifactInternalizationTrainer",
     "ArtifactKnowledgeEncoder",
+    "SemanticArtifactKnowledgeEncoder",
     "CAPACITY_PREFLIGHT_FORMAT",
     "CAPACITY_PREFLIGHT_MANIFEST_REVISION",
     "CAPACITY_PREFLIGHT_VERSION",

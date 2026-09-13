@@ -1,0 +1,131 @@
+{
+  "format": "taiji-p5-2a-predictive-execution-report-v1",
+  "version": 1,
+  "phase": "final",
+  "status": "completed",
+  "growth_admitted": false,
+  "can_promote": false,
+  "preregistration": "plans/reference/M5_P5_2A_PREDICTIVE_EXECUTION_PREREGISTRATION_20260913.md",
+  "static_checks": {
+    "scope": [
+      "seed_platform/workbench.py",
+      "taiji/procedural_memory.py",
+      "scripts/training/eval_taiji_p5_2_workbench_simulation_contract_gate.py",
+      "scripts/training/eval_taiji_p5_2a_predictive_execution_gate.py"
+    ],
+    "commands": [
+      "python -m py_compile <scope files>",
+      "python -m ruff check scripts/training (and full repo)",
+      "python -m mypy --follow-imports=silent seed taiji",
+      "python -m black --no-cache --check <scope files>",
+      "python -m pytest (baseline 2 failed known debts, no new failures)"
+    ],
+    "executed_before_run": true
+  },
+  "threshold_frozen": {
+    "source_file": "reports\\taiji_p5_2a_validation_calibration_20260913.json",
+    "frozen_final_threshold": 0.65,
+    "strongest_control_arm": "frozen"
+  },
+  "scene_counts": {
+    "train": 40,
+    "validation": 12,
+    "final": 12,
+    "no_duplicate_scenes": true
+  },
+  "embedder_anchor": {
+    "model_id": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "revision": "e8f8c211226b894fcb81acc59f3b34ba3efd5f42",
+    "config_digest": "584d721354a4443103960a80b1a3a61226765bc470bd4077d96e37beb85b433f"
+  },
+  "design": {
+    "execution": "autonomous multi-step over the real workbench contract; observation updated by real outcomes",
+    "parameter_sources": [
+      "goal_state",
+      "world_state",
+      "transaction_token"
+    ],
+    "reference_isolation": "scene reference steps feed only training fit and the oracle arm",
+    "arms": [
+      "oracle",
+      "model",
+      "frozen",
+      "lesion",
+      "frequency"
+    ],
+    "frozen_arm_disclosure": "P5.2-wording-trained readout (same vocabulary, previous task wording)"
+  },
+  "calibration": {
+    "success_rates": {
+      "oracle": 1.0,
+      "model": 0.75,
+      "frozen": 0.5,
+      "lesion": 0.5,
+      "frequency": 0.5
+    },
+    "basis": "final gate = model_final >= max(strongest control validation success + 0.15, significance floor 0.5); margin is the cross-generation frozen constant, floor is the minimum task-meaningful success rate for an execution policy",
+    "strongest_control_arm": "frozen",
+    "frozen_final_threshold": 0.65
+  },
+  "final_results": {
+    "success_rates": {
+      "oracle": 1.0,
+      "model": 0.5,
+      "frozen": 0.333333,
+      "lesion": 0.333333,
+      "frequency": 0.5
+    },
+    "model_stop_reasons": {
+      "bind_failure: no transaction token available": 3,
+      "goal_reached": 6,
+      "contract_intercepted:preview_WorkbenchConflictError": 3
+    },
+    "model_step_counts": [
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      3,
+      3,
+      3,
+      4
+    ],
+    "strongest_final_control": "frequency",
+    "safety_violations": 0,
+    "safety_stops": 0
+  },
+  "readout": {
+    "train_accuracy": 1.0,
+    "holdout_accuracy": 1.0,
+    "lesion_holdout_accuracy": 0.151515
+  },
+  "recovery": {
+    "restored_choice_match": true,
+    "tamper_rejected": true
+  },
+  "deterministic_and_budget": {
+    "replica_consistent": true,
+    "sensation_disclosure": "sensation derives from a digest carrying the random single-use undo token; replica comparison uses the deterministic surface (success/stop/step count)",
+    "elapsed_seconds": 25.962,
+    "total_seconds_cap": 900.0
+  },
+  "gates": {
+    "static_checks": true,
+    "contract_path_identity": true,
+    "parameter_provenance": true,
+    "label_isolation": true,
+    "goal_evaluation": true,
+    "safety": true,
+    "readout_sanity": true,
+    "recovery": true,
+    "transfer_and_budget": false
+  },
+  "outcome": "predictive_execution_insufficient",
+  "experiment_passed": false,
+  "interpretation": "completed: outcome=predictive_execution_insufficient; frozen gates failed: ['transfer_and_budget']",
+  "elapsed_seconds": 25.962
+}

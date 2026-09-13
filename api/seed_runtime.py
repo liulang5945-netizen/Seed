@@ -16,6 +16,7 @@ import hashlib
 import logging
 import pickle
 import threading
+import time
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import replace
 from pathlib import Path
@@ -110,6 +111,11 @@ class SeedRuntime:
         self._workbench_environment = WorkbenchEnvironment()
         self._workbench_audit = WorkbenchAuditLog()
         self._workbench_loop_state: dict[str, Any] = {}
+        # The K/G attachment is explicitly opt-in, in-memory only, and loaded
+        # through the frozen taiji-default-runtime-rollout-attachment-v1
+        # contract; the default chat/workbench behaviour never reads it.
+        self._k_g_attachment: Any | None = None
+        self._k_g_attachment_refusals: list[dict[str, Any]] = []
         # Plans are intentionally session-scoped.  A checkpoint persists the
         # committed outcome, not an unapproved write plan or approval token.
         self._pending_workbench_plans: dict[str, dict[str, Any]] = {}
@@ -500,13 +506,11 @@ class SeedRuntime:
                 },
             }
         if not isinstance(proposal, SemanticEvidenceProposal):
-            raise TypeError(
-                "semantic provider must return a SemanticEvidenceProposal contract"
-            )
+            raise TypeError("semantic provider must return a SemanticEvidenceProposal contract")
         with self._lock:
             self._semantic_provider_error = ""
-            interpretation, decomposition = self.model.architecture.admit_semantic_provider_evidence(
-                frame, proposal
+            interpretation, decomposition = (
+                self.model.architecture.admit_semantic_provider_evidence(frame, proposal)
             )
         return {
             "format": "taiji-semantic-provider-admission-v1",
@@ -548,9 +552,7 @@ class SeedRuntime:
             "provider_evidence": proposal.to_payload(),
             "interpretation": interpretation.to_payload(),
             "goal": interpretation.to_goal().to_payload(),
-            "decomposition": (
-                None if decomposition is None else decomposition.to_payload()
-            ),
+            "decomposition": (None if decomposition is None else decomposition.to_payload()),
             "status": interpretation.status,
             "execution": {
                 "status": "not_planned",
@@ -668,15 +670,12 @@ class SeedRuntime:
                         "step_id": step.step_id,
                         "semantic_evidence_digest": step.evidence_digest,
                         "grounding": [
-                            self._taiji_workbench_affordance_payload(item)
-                            for item in affordances
+                            self._taiji_workbench_affordance_payload(item) for item in affordances
                         ],
                         "planner": {
                             "status": planned["status"],
                             "reason_code": planned["reason_code"],
-                            "decision": (
-                                None if decision is None else decision.to_payload()
-                            ),
+                            "decision": (None if decision is None else decision.to_payload()),
                         },
                     }
                 )
@@ -736,9 +735,7 @@ class SeedRuntime:
             environment = self._sync_workbench_root()
             if str(snapshot_id) != environment.capability_snapshot.snapshot_id:
                 raise ValueError("Taiji task planning capability snapshot drifted")
-            affordances = environment.capability_snapshot.to_taiji_affordances(
-                parameter_bindings
-            )
+            affordances = environment.capability_snapshot.to_taiji_affordances(parameter_bindings)
             architecture.set_world_affordances(affordances)
             planner_result = architecture.plan_task_from_current_state(
                 novelty=novelty,
@@ -749,21 +746,15 @@ class SeedRuntime:
             "format": "taiji-task-planning-v1",
             "interpretation": interpretation.to_payload(),
             "goal": interpretation.to_goal().to_payload(),
-            "affordances": [
-                self._taiji_workbench_affordance_payload(item) for item in affordances
-            ],
+            "affordances": [self._taiji_workbench_affordance_payload(item) for item in affordances],
             "planner": {
                 "status": planner_result["status"],
                 "reason_code": planner_result["reason_code"],
-                "decision": None
-                if decision is None
-                else decision.to_payload(),
+                "decision": None if decision is None else decision.to_payload(),
             },
             "execution": {
                 "status": "not_executed",
-                "action_intent": None
-                if decision is None
-                else decision.action_intent.to_payload(),
+                "action_intent": None if decision is None else decision.action_intent.to_payload(),
                 "tool_call": None,
                 "side_effects": False,
             },
@@ -911,9 +902,7 @@ class SeedRuntime:
                         grounding_error,
                         live_evidence,
                         live_evidence_key,
-                    ) = (
-                        self._ground_natural_language_workbench_step(environment, step)
-                    )
+                    ) = self._ground_natural_language_workbench_step(environment, step)
                     if grounding_error:
                         planning_steps.append(
                             {
@@ -944,23 +933,17 @@ class SeedRuntime:
                     bindings = grounded_bindings
                     grounding_source = "taiji-semantic-contract"
                     if live_evidence is not None and live_evidence_key == "language_evidence":
-                        grounding_source = (
-                            "taiji-semantic-contract+workbench-language-evidence"
-                        )
+                        grounding_source = "taiji-semantic-contract+workbench-language-evidence"
                     elif live_evidence is not None and live_evidence_key == "patch_evidence":
                         grounding_source = "taiji-semantic-contract+workbench-patch-evidence"
                 else:
                     if not isinstance(bindings, Mapping):
-                        raise TypeError(
-                            "each natural-language Workbench binding must be a mapping"
-                        )
+                        raise TypeError("each natural-language Workbench binding must be a mapping")
                     grounding_source = "legacy-workbench-evidence"
                 affordances = environment.capability_snapshot.to_taiji_affordances(
                     bindings,
                     allow_reversible_ui=True,
-                    allow_controlled_write=(
-                        "workspace.apply_patch" in bindings
-                    ),
+                    allow_controlled_write=("workspace.apply_patch" in bindings),
                 )
                 if not affordances:
                     raise ValueError("natural-language Workbench step has no live affordance")
@@ -977,15 +960,12 @@ class SeedRuntime:
                         "semantic_evidence_digest": step.evidence_digest,
                         "grounding_source": grounding_source,
                         "grounding": [
-                            self._taiji_workbench_affordance_payload(item)
-                            for item in affordances
+                            self._taiji_workbench_affordance_payload(item) for item in affordances
                         ],
                         "planner": {
                             "status": planned["status"],
                             "reason_code": planned["reason_code"],
-                            "decision": (
-                                None if decision is None else decision.to_payload()
-                            ),
+                            "decision": (None if decision is None else decision.to_payload()),
                         },
                         **(
                             {live_evidence_key: live_evidence}
@@ -1152,9 +1132,7 @@ class SeedRuntime:
                     {
                         "editor.set_language": {
                             "path": str(path),
-                            "programming_language_id": str(
-                                assessment["programming_language_id"]
-                            ),
+                            "programming_language_id": str(assessment["programming_language_id"]),
                             "user_override": False,
                         }
                     },
@@ -1173,9 +1151,7 @@ class SeedRuntime:
                     "status": planned["status"],
                     "reason_code": planned["reason_code"],
                     "decision": (
-                        None
-                        if planned["decision"] is None
-                        else planned["decision"].to_payload()
+                        None if planned["decision"] is None else planned["decision"].to_payload()
                     ),
                 }
             live_affordances = architecture.cognitive_snapshot().world.affordances
@@ -1310,7 +1286,63 @@ class SeedRuntime:
             "homeostasis": self.homeostasis_status(),
             "structural_maintenance": self.structural_maintenance_status(),
             "artifact_consumption": self.artifact_consumption_status(),
+            "k_g_attachment": self.k_g_attachment_status(),
         }
+
+    def attach_k_g_state(self, attachment_path: Path | str, cell_index: int = 0) -> dict[str, Any]:
+        """Opt-in, fail-closed attachment of the P4.14 joint-course state.
+
+        Loads the K1/K2 workers and the projected extended G head through the
+        runtime-owned consumption contract (``api.taiji_runtime_attachment``).
+        Any frozen-contract failure refuses the whole attachment atomically:
+        the runtime stays unattached and the refusal is recorded in the
+        attachment status.  This never trains, never writes artifacts, and
+        never changes the default chat/workbench behaviour.
+        """
+
+        from api.taiji_runtime_attachment import AttachmentRefused, attach_cell
+
+        with self._lock:
+            try:
+                state = attach_cell(Path(attachment_path), int(cell_index))
+            except AttachmentRefused as exc:
+                refusal = {
+                    "at_epoch": int(time.time()),
+                    "cell_index": int(cell_index),
+                    "attachment_path": str(attachment_path),
+                    "reason": str(exc),
+                }
+                self._k_g_attachment_refusals.append(refusal)
+                del self._k_g_attachment_refusals[:-10]
+                raise
+            self._k_g_attachment = state
+            return state.status()
+
+    def detach_k_g_state(self) -> dict[str, Any]:
+        """Detach the in-memory K/G state; artifacts on disk are untouched."""
+
+        with self._lock:
+            state = self._k_g_attachment
+            self._k_g_attachment = None
+            if state is None:
+                return {"attached": False, "detached": False}
+            return {
+                "attached": False,
+                "detached": True,
+                "detached_cell_index": int(state.cell_index),
+                "manifest_digest": str(state.manifest_digest),
+            }
+
+    def k_g_attachment_status(self) -> dict[str, Any]:
+        with self._lock:
+            state = self._k_g_attachment
+            if state is None:
+                return {
+                    "attached": False,
+                    "recent_refusals": list(self._k_g_attachment_refusals[-5:]),
+                }
+            status_payload: dict[str, Any] = state.status()
+            return status_payload
 
     def artifact_consumption_status(self) -> dict[str, Any]:
         """Return the latest read-only external artifact consumption audit."""
@@ -1489,9 +1521,7 @@ class SeedRuntime:
         language_registry_payload = payload.get("programming_language_registry")
         language_registry = self._workbench_environment.programming_language_registry
         if isinstance(language_registry_payload, Mapping):
-            language_registry = ProgrammingLanguageRegistry.from_payload(
-                language_registry_payload
-            )
+            language_registry = ProgrammingLanguageRegistry.from_payload(language_registry_payload)
         target_snapshot = self._workbench_environment.capability_snapshot
         if isinstance(snapshot_payload, Mapping):
             snapshot = CapabilitySnapshot.from_payload(snapshot_payload)
@@ -1511,12 +1541,15 @@ class SeedRuntime:
                 )
         if (
             isinstance(snapshot_payload, Mapping)
-            and target_snapshot.snapshot_id != self._workbench_environment.capability_snapshot.snapshot_id
+            and target_snapshot.snapshot_id
+            != self._workbench_environment.capability_snapshot.snapshot_id
         ):
             target_snapshot = self._workbench_environment.capability_snapshot
-        if isinstance(snapshot_payload, Mapping) or isinstance(
-            language_registry_payload, Mapping
-        ) or isinstance(registry_payload, Mapping):
+        if (
+            isinstance(snapshot_payload, Mapping)
+            or isinstance(language_registry_payload, Mapping)
+            or isinstance(registry_payload, Mapping)
+        ):
             self._workbench_environment = WorkbenchEnvironment(
                 self._workbench_environment.root,
                 snapshot=target_snapshot,
@@ -2076,7 +2109,11 @@ class SeedRuntime:
             if not requested_affordance_id:
                 raise ValueError("Taiji internalization projection requires an affordance_id")
             affordance = next(
-                (item for item in world.affordances if item.affordance_id == requested_affordance_id),
+                (
+                    item
+                    for item in world.affordances
+                    if item.affordance_id == requested_affordance_id
+                ),
                 None,
             )
             if affordance is None:
@@ -2086,7 +2123,9 @@ class SeedRuntime:
                 for item in evidence.to_taiji_affordances(environment.capability_snapshot)
             }
             if affordance.affordance_id not in grounded_affordance_ids:
-                raise ValueError("Taiji internalization affordance is not grounded by latest evidence")
+                raise ValueError(
+                    "Taiji internalization affordance is not grounded by latest evidence"
+                )
         else:
             # M5.S6B: the failed attempt is self-grounding.  The affordance
             # chain keeps its success-only next-step semantics, so the
@@ -2104,9 +2143,7 @@ class SeedRuntime:
                 grounding_lineage=(f"world-state:{evidence.evidence_id}",),
                 confidence=1.0,
             )
-            affordance = WorldAffordanceGroundingProducer(grounding_dim=17).ground(
-                world, attempt
-            )
+            affordance = WorldAffordanceGroundingProducer(grounding_dim=17).ground(world, attempt)
 
         snapshot = self.model.architecture.cognitive_snapshot()
         percept_payload = None if snapshot.percept is None else snapshot.percept.to_payload()
@@ -4001,9 +4038,7 @@ class SeedRuntime:
             usage=float(payload["usage"]),
             resource_pressure=float(payload["resource_pressure"]),
             prediction_error=(
-                None
-                if payload["prediction_error"] is None
-                else float(payload["prediction_error"])
+                None if payload["prediction_error"] is None else float(payload["prediction_error"])
             ),
             learning_gain=float(payload["learning_gain"]),
             holdout_transfer=float(payload["holdout_transfer"]),
@@ -4040,8 +4075,10 @@ class SeedRuntime:
     ) -> dict[str, Any]:
         """Create one deterministic structural batch from multiple evidence regions."""
 
-        result = self.model.architecture.schedule_structural_candidate_batch_from_workbench_evidence(
-            requests
+        result = (
+            self.model.architecture.schedule_structural_candidate_batch_from_workbench_evidence(
+                requests
+            )
         )
         return result.to_payload()
 
@@ -4109,10 +4146,12 @@ class SeedRuntime:
     ) -> dict[str, Any]:
         """Continue a batch using replay-bound artifacts without manual metrics."""
 
-        return self.model.architecture.continue_structural_candidate_batch_from_validation_artifacts(
-            batch_id,
-            artifacts_by_candidate=artifacts_by_candidate,
-            replays_by_candidate=replays_by_candidate,
+        return (
+            self.model.architecture.continue_structural_candidate_batch_from_validation_artifacts(
+                batch_id,
+                artifacts_by_candidate=artifacts_by_candidate,
+                replays_by_candidate=replays_by_candidate,
+            )
         )
 
     @_workbench_synchronized
@@ -4284,8 +4323,7 @@ class SeedRuntime:
 
         architecture = self.model.architecture
         runtime_artifact_digests = {
-            artifact.artifact_digest
-            for artifact in architecture.structural_validation_artifacts
+            artifact.artifact_digest for artifact in architecture.structural_validation_artifacts
         }
         batch_ids_by_digest: dict[str, set[str]] = {}
         for artifact_batch in architecture.structural_validation_artifact_batches:
@@ -4321,9 +4359,7 @@ class SeedRuntime:
             "entries": entries,
             "runtime_artifact_digests": sorted(runtime_artifact_digests),
             "runtime_batch_artifact_digests": sorted(runtime_batch_artifact_digests),
-            "missing_runtime_artifact_digests": sorted(
-                runtime_artifact_digests - external_digests
-            ),
+            "missing_runtime_artifact_digests": sorted(runtime_artifact_digests - external_digests),
             "missing_runtime_batch_artifact_digests": sorted(
                 runtime_batch_artifact_digests - external_digests
             ),
@@ -4371,11 +4407,7 @@ class SeedRuntime:
         # Project only the audit produced by this call.  A default candidate
         # maintenance call must not masquerade as a fresh retention action by
         # replaying an older audit already restored from checkpoint.
-        retention = (
-            current_retention
-            if current_retention is not previous_retention
-            else None
-        )
+        retention = current_retention if current_retention is not previous_retention else None
         policy = current_policy if current_policy is not previous_policy else None
         payload = {
             "format": STRUCTURAL_MAINTENANCE_AUDIT_FORMAT,
@@ -4412,8 +4444,10 @@ class SeedRuntime:
     ) -> dict[str, Any]:
         """Roll back one explicit committed retention-policy migration."""
 
-        rolled_back = self.model.architecture.rollback_structural_lineage_retention_policy_migration(
-            migration
+        rolled_back = (
+            self.model.architecture.rollback_structural_lineage_retention_policy_migration(
+                migration
+            )
         )
         return rolled_back.to_payload()
 

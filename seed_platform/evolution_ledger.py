@@ -94,7 +94,9 @@ class EvolutionExperienceLedger:
     def experiences(self) -> tuple[EvolutionExperience, ...]:
         return tuple(
             self._experiences[key]
-            for key in sorted(self._experiences, key=lambda item: self._experiences[item].event_sequence)
+            for key in sorted(
+                self._experiences, key=lambda item: self._experiences[item].event_sequence
+            )
         )
 
     def add_corpus(self, artifact: EvolutionCorpusArtifact) -> EvolutionCorpusArtifact:
@@ -111,7 +113,9 @@ class EvolutionExperienceLedger:
         self.revision += 1
         return artifact
 
-    def admit_corpus(self, artifact_digest: str, *, admission_revision: str) -> EvolutionCorpusArtifact:
+    def admit_corpus(
+        self, artifact_digest: str, *, admission_revision: str
+    ) -> EvolutionCorpusArtifact:
         digest = str(artifact_digest).strip()
         if digest not in self._corpus:
             raise KeyError(f"unknown corpus artifact: {artifact_digest}")
@@ -137,7 +141,9 @@ class EvolutionExperienceLedger:
         if existing is not None:
             if existing.experience_digest != experience.experience_digest:
                 raise ValueError("experience_id content conflict")
-            return EvolutionAppendResult(existing, accepted=False, duplicate=True, reason="idempotent")
+            return EvolutionAppendResult(
+                existing, accepted=False, duplicate=True, reason="idempotent"
+            )
         prior_id = self._experience_by_digest.get(experience.experience_digest)
         if prior_id is not None:
             prior = self._experiences[prior_id]
@@ -154,7 +160,10 @@ class EvolutionExperienceLedger:
             if experience.previous_event_digest != self._tail_event_digest:
                 raise ValueError("experience previous_event_digest does not match ledger tail")
             bound = experience
-        if bound.event_sequence != expected_sequence or bound.previous_event_digest != self._tail_event_digest:
+        if (
+            bound.event_sequence != expected_sequence
+            or bound.previous_event_digest != self._tail_event_digest
+        ):
             raise ValueError("experience chain binding failed")
         self._experiences[bound.experience_id] = bound
         self._experience_by_digest[bound.experience_digest] = bound.experience_id
@@ -171,7 +180,9 @@ class EvolutionExperienceLedger:
             if partition is None or item.partition == str(partition)
         )
 
-    def training_view(self) -> tuple[tuple[EvolutionCorpusArtifact, ...], tuple[EvolutionExperience, ...]]:
+    def training_view(
+        self,
+    ) -> tuple[tuple[EvolutionCorpusArtifact, ...], tuple[EvolutionExperience, ...]]:
         """Return only admitted train corpus and train experiences."""
 
         return (

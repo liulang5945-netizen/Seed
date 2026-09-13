@@ -1,0 +1,125 @@
+{
+  "format": "taiji-p5-1b-semantic-paraphrase-transfer-v1",
+  "version": 1,
+  "status": "completed",
+  "sealed_payload_read": false,
+  "growth_admitted": false,
+  "can_promote": false,
+  "frozen_margins": {
+    "transfer": 0.3,
+    "causality": 0.3
+  },
+  "preregistration": "plans/reference/M5_P5_1B_SEMANTIC_PARAPHRASE_TRANSFER_PREREGISTRATION_20260912.md",
+  "embedder_anchor": {
+    "model_id": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "revision": "e8f8c211226b894fcb81acc59f3b34ba3efd5f42",
+    "config_digest": "584d721354a4443103960a80b1a3a61226765bc470bd4077d96e37beb85b433f",
+    "deterministic_double_embed": true
+  },
+  "surface_gate": {
+    "triple_intersection_empty": true,
+    "w1_w2a_shared": [],
+    "w1_w2b_shared": [
+      "bounded",
+      "end",
+      "inspect",
+      "stored"
+    ],
+    "w2a_w2b_shared": [
+      "limited",
+      "operations"
+    ]
+  },
+  "budget_gate": {
+    "sourced_artifacts": 18,
+    "placebo_artifacts": 18,
+    "sourced_events": 9,
+    "placebo_events": 9,
+    "same_budget": true
+  },
+  "capability_vocabulary": {
+    "holdout": [
+      "editor.inspect",
+      "editor.open",
+      "editor.read"
+    ],
+    "sourced": [
+      "editor.inspect",
+      "editor.open",
+      "editor.read"
+    ],
+    "placebo": [
+      "cache.fetch",
+      "index.scan",
+      "network.search"
+    ]
+  },
+  "semantic_sourced": {
+    "a_para": {
+      "values": [
+        0.737339,
+        0.643587,
+        0.426978
+      ],
+      "mean": 0.602635
+    },
+    "b_para": {
+      "values": [
+        0.459197,
+        0.546469,
+        0.551276
+      ],
+      "mean": 0.518981
+    },
+    "w1_reference": 1.002917,
+    "rolled_back": false
+  },
+  "semantic_placebo_trained": {
+    "a_para": {
+      "values": [
+        0.52922,
+        0.63772,
+        0.590798
+      ],
+      "mean": 0.585913
+    },
+    "trial_passed": true,
+    "rolled_back_by_admission": true
+  },
+  "structural_sourced": {
+    "a_para": {
+      "values": [
+        0.860219,
+        0.877604,
+        0.882066
+      ],
+      "mean": 0.873296
+    },
+    "b_para": {
+      "values": [
+        0.757302,
+        0.768214,
+        0.843771
+      ],
+      "mean": 0.789762
+    },
+    "discrimination_a_minus_b": 0.083534
+  },
+  "content_causality_delta": 0.016722,
+  "gates": {
+    "paraphrase_surface_disjoint": true,
+    "embedder_anchored_deterministic": true,
+    "same_budget_enforced": true,
+    "semantic_paraphrase_transfer": true,
+    "semantic_content_causality": false,
+    "structural_skeleton_floor_recorded": true,
+    "checkpoint_roundtrip_both_semantic_arms": true,
+    "quarantined_artifact_rejected": true,
+    "semantic_internalized_both_arms": true,
+    "resource_within_cap": true
+  },
+  "outcome": "semantic_transfer_insufficient",
+  "experiment_passed": false,
+  "interpretation": "completed: outcome=semantic_transfer_insufficient; paraphrase transfer with zero surface overlap under identical budget and train-MSE-zero trials; the structural hash encoder is skeleton-driven (high values on unrelated content) and therefore not content-addressed",
+  "elapsed_seconds": 12.351
+}

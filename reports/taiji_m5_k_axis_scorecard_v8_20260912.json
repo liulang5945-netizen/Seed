@@ -1,0 +1,431 @@
+{
+  "format": "taiji-m5-k-axis-scorecard-v8",
+  "version": 8,
+  "source_reports": {
+    "M5.K1": "21bd8268d6a619d4fdebf2abe33a7216dd96df4e7f18453d6d05cec19931c91b",
+    "M5.K2": "f0eb873985abd23e120e048fd8d825099968f9923916071da306039e9b6051f7",
+    "M5.K3": "f27a70affeea21364ea41a0359747934048d7436b680e226769f2ed6bda22d41",
+    "C_STAGE_LEARNING_MECHANISM": "190202fe9c0653085d6e0bcac58f1c2ee69896f98b0e164a03620214dc0ccc80",
+    "P4_12_COURSE_LEVEL_VALIDATION": "0cca9d068728145a89355b2fba138135ffc0ac7ba7d69c7203446be8b8b0a624",
+    "P4_13_PROMOTION_COURSE": "8eb4169282d8761ab0f525c1d1c23f7858f1e4a2e464a4d5263fe41531dade7d",
+    "P4_14_JOINT_COURSE": "6acdf44b31343862cde79c55a2695a91d2287fb37d8cf380300104e3b7b383ee",
+    "DEFAULT_RUNTIME_ROLLOUT_REVIEW": "70b6534c126bd47c6a4700e1a7e4ebf33871273099433fa29780dab5f1b5f2e3",
+    "A8_PROMOTION_REVIEW": "01ae38c26f386cc083955cb4d46921e27e623e9547de759a9221b7cc5024932b",
+    "RUNTIME_ATTACHMENT": "2d7ad0f506c119577a6d5a94e0edac405d9e97396e6550ae51be6ca42996b5c9"
+  },
+  "scorecard": {
+    "format": "taiji-continual-evaluation-v1",
+    "version": 1,
+    "type": "scorecard",
+    "epsilon": 0.0,
+    "metric_specs": [
+      {
+        "format": "taiji-continual-evaluation-v1",
+        "version": 1,
+        "type": "metric_spec",
+        "name": "k1_single_step_composition_success",
+        "direction": "higher",
+        "unit": "episode_ratio",
+        "baseline_kind": "absolute",
+        "domain_id": "M5.K1",
+        "critical": false,
+        "catastrophic_forgetting_threshold": null
+      },
+      {
+        "format": "taiji-continual-evaluation-v1",
+        "version": 1,
+        "type": "metric_spec",
+        "name": "k2_multistep_composition_success",
+        "direction": "higher",
+        "unit": "episode_ratio",
+        "baseline_kind": "absolute",
+        "domain_id": "M5.K2",
+        "critical": false,
+        "catastrophic_forgetting_threshold": null
+      },
+      {
+        "format": "taiji-continual-evaluation-v1",
+        "version": 1,
+        "type": "metric_spec",
+        "name": "k3_outcome_dependency_success",
+        "direction": "higher",
+        "unit": "episode_ratio",
+        "baseline_kind": "absolute",
+        "domain_id": "M5.K3",
+        "critical": false,
+        "catastrophic_forgetting_threshold": null
+      }
+    ],
+    "snapshots": [
+      {
+        "format": "taiji-continual-evaluation-v1",
+        "version": 1,
+        "type": "evaluation_snapshot",
+        "checkpoint_digest": "26e48ff0194ae4023661e158e54cbbeb390241b1cd57d856d3c9437da1b8bf42",
+        "phase_id": "M5.K1",
+        "owner_graph_digest": "919a36f3df6dccf812a48bf0c1f8709fb9f011f325f0e531d57b01648819097e",
+        "read_only_input_digest": "87ccb5ff8874b4d5a32ab18ada5e62f3285ea865e29c4833908cdcd120562658",
+        "observations": [
+          {
+            "metric_name": "k1_single_step_composition_success",
+            "domain_id": "M5.K1",
+            "checkpoint_digest": "26e48ff0194ae4023661e158e54cbbeb390241b1cd57d856d3c9437da1b8bf42",
+            "absolute_value": 1.0,
+            "owner_id": "m5:M5.K1:standalone-shadow",
+            "read_only_input_digest": "87ccb5ff8874b4d5a32ab18ada5e62f3285ea865e29c4833908cdcd120562658",
+            "parent_delta": null,
+            "parent_checkpoint_digest": null,
+            "comparison_delta": null,
+            "comparison_id": null
+          }
+        ],
+        "parent_checkpoint_digest": null,
+        "resource_cost": 1.0,
+        "snapshot_digest": "b0108d73cba4348ec0d397747251a9a8fbaa0f18b98e77fd1c04c744f24d2c5d"
+      },
+      {
+        "format": "taiji-continual-evaluation-v1",
+        "version": 1,
+        "type": "evaluation_snapshot",
+        "checkpoint_digest": "49a57b2571fe7bbeaa61a27ab7f6c8d8618a867048955d56e52c373b76129386",
+        "phase_id": "M5.K2",
+        "owner_graph_digest": "2864cd389e14cf435ecf0d676b012b8315ff68db0b6a7d745ebb54d8bb0f5a0d",
+        "read_only_input_digest": "64cb033bb9bc4124b3c35a13593f1afe885e6d326ae82b4b7df26f2877c6a7a3",
+        "observations": [
+          {
+            "metric_name": "k2_multistep_composition_success",
+            "domain_id": "M5.K2",
+            "checkpoint_digest": "49a57b2571fe7bbeaa61a27ab7f6c8d8618a867048955d56e52c373b76129386",
+            "absolute_value": 1.0,
+            "owner_id": "m5:M5.K2:standalone-shadow",
+            "read_only_input_digest": "64cb033bb9bc4124b3c35a13593f1afe885e6d326ae82b4b7df26f2877c6a7a3",
+            "parent_delta": null,
+            "parent_checkpoint_digest": null,
+            "comparison_delta": null,
+            "comparison_id": null
+          }
+        ],
+        "parent_checkpoint_digest": null,
+        "resource_cost": 1.0,
+        "snapshot_digest": "4bf6797040314571112f8d941baa64cc6ff015b0ece3d303c25bbfa3c52771b2"
+      },
+      {
+        "format": "taiji-continual-evaluation-v1",
+        "version": 1,
+        "type": "evaluation_snapshot",
+        "checkpoint_digest": "17f25a5273260b9eae0f2826cbb4a2e521c78e1579344e3f8c9a8be5ebe12cdf",
+        "phase_id": "M5.K3",
+        "owner_graph_digest": "2ea03981f924fe66aefa5faa007bc05892c4953666438edb7f37fca4177589b4",
+        "read_only_input_digest": "c96fa464f62ee123df499261e78fe72077a7db6a6e99ba4dfcc5f07562bf1d19",
+        "observations": [
+          {
+            "metric_name": "k3_outcome_dependency_success",
+            "domain_id": "M5.K3",
+            "checkpoint_digest": "17f25a5273260b9eae0f2826cbb4a2e521c78e1579344e3f8c9a8be5ebe12cdf",
+            "absolute_value": 1.0,
+            "owner_id": "m5:M5.K3:standalone-shadow",
+            "read_only_input_digest": "c96fa464f62ee123df499261e78fe72077a7db6a6e99ba4dfcc5f07562bf1d19",
+            "parent_delta": null,
+            "parent_checkpoint_digest": null,
+            "comparison_delta": null,
+            "comparison_id": null
+          }
+        ],
+        "parent_checkpoint_digest": null,
+        "resource_cost": 1.0,
+        "snapshot_digest": "b1acf9246705b605fa3130cc8b823cb826de30d3a1b11190ac0595503aa0a848"
+      }
+    ],
+    "scorecard_digest": "550c84f77d13195013f28e0afa8579b3f587053b8f0bcdfb0754fcc6615f38e2"
+  },
+  "scorecard_digest": "550c84f77d13195013f28e0afa8579b3f587053b8f0bcdfb0754fcc6615f38e2",
+  "absolute_capabilities": {
+    "M5.K1": {
+      "min": 1.0,
+      "mean": 1.0,
+      "max": 1.0,
+      "cells_ge_floor": 9
+    },
+    "M5.K2": {
+      "min": 1.0,
+      "mean": 1.0,
+      "max": 1.0,
+      "cells_ge_floor": 9
+    },
+    "M5.K3": {
+      "min": 1.0,
+      "mean": 1.0,
+      "max": 1.0,
+      "cells_ge_floor": 9
+    }
+  },
+  "comparison_evidence": {
+    "M5.K1": {
+      "A_minus_B": {
+        "min": 1.0,
+        "mean": 1.0,
+        "max": 1.0,
+        "cells_ge_floor": 9
+      },
+      "A_minus_C": {
+        "min": 1.0,
+        "mean": 1.0,
+        "max": 1.0,
+        "cells_ge_floor": 9
+      }
+    },
+    "M5.K2": {
+      "A_minus_B": {
+        "min": 1.0,
+        "mean": 1.0,
+        "max": 1.0,
+        "cells_ge_floor": 9
+      },
+      "A_minus_C": {
+        "min": 1.0,
+        "mean": 1.0,
+        "max": 1.0,
+        "cells_ge_floor": 9
+      }
+    },
+    "M5.K3": {
+      "A_minus_B": {
+        "min": 1.0,
+        "mean": 1.0,
+        "max": 1.0,
+        "cells_ge_floor": 9
+      },
+      "A_minus_C": {
+        "min": 1.0,
+        "mean": 1.0,
+        "max": 1.0,
+        "cells_ge_floor": 9
+      },
+      "probe_admission_cells_1p0": "9/9",
+      "lineage_admission_cells_1p0": "9/9",
+      "feedback_reward_variance": {
+        "min": 0.03381306630873718,
+        "mean": 0.03384450778395524,
+        "max": 0.03390739073439137
+      }
+    }
+  },
+  "evidence_gates": {
+    "k1_evidence_closed": true,
+    "k2_evidence_closed": true,
+    "k3_evidence_closed": true,
+    "k_axis_evidence_closed": true,
+    "parent_retention_missing": true,
+    "standalone_shadow": true
+  },
+  "promotion_gates": {
+    "k1_formal_robust": true,
+    "k2_formal_robust": true,
+    "k3_formal_robust": true,
+    "scorecard_content_addressed": true,
+    "parent_retention_baseline_present": true,
+    "default_runtime_owner_attached": true,
+    "same_parent_continual_s_g_k_evidence": true,
+    "resource_rollback_old_capability_gate": true,
+    "learning_mechanism_candidate_selected": true,
+    "learning_mechanism_attached_default_runtime": true,
+    "g_solver_mechanism_course_closed": true,
+    "k_worker_joint_course_completed": true,
+    "default_runtime_rollout_review_completed": true
+  },
+  "verdict": {
+    "k_evidence_closed": true,
+    "learning_mechanism_closed": true,
+    "g_solver_mechanism_course_closed": true,
+    "k_worker_joint_course_completed": true,
+    "default_runtime_rollout_review_completed": true,
+    "promotion_review_recommended": true,
+    "runtime_owners_attached": true,
+    "promotion_gate": true,
+    "can_promote": true,
+    "reason": "The preregistered default-runtime attachment step passed all gates in 4/4 cells: the P4.14 joint-course state is attachable to the product runtime through the runtime-owned fail-closed contract with field-for-field behavioral reproduction, exact detach/re-attach rollback, and zero interference with the default behaviour. All promotion gates are now true, so promotion_gate and can_promote are true mechanically; the final promotion declaration still requires independent approval, and it must not be read as a claim of general cognitive capability or structural growth (growth_admitted remains false)."
+  },
+  "next_boundary": "independent approval of the final promotion declaration (the machine boundary is complete); any approval must keep the honest boundaries: five-class synthetic course carrier, no structural growth admitted, attachment is opt-in and the default behaviour path is unchanged until a separately approved decision",
+  "learning_mechanism_evidence": {
+    "source_report": "taiji_m4v2_c_stage_formal_v2_20260910.json",
+    "formal_status": "passed",
+    "sealed_task_seed": 151,
+    "sealed_sha256": "c7680ad5abe8ccced0fedd69dc8f7b382a25a602d8ebf1e105c053a583d34b5d",
+    "epsilon_cat": 0.01,
+    "epsilon_ni": 0.0038457027953012375,
+    "gates_passed": {
+      "G1_learning_floor": true,
+      "G2_catastrophe_bound": true,
+      "G3_weak_class_primary": true,
+      "G4_overall_non_inferiority": true
+    },
+    "fs_mechanism_status": "default-learning-mechanism-candidate",
+    "fs_mechanism_status_source": "C-stage formal v2 preregistration section 5 frozen outcome mapping",
+    "descriptive": {
+      "statistics_unit": "course (n=3; model dimension is a replicate)",
+      "sealed_course_means": {
+        "c": {
+          "0": -0.12878571450356605,
+          "1": -0.12874968284065996,
+          "2": -0.12876323066130782
+        },
+        "fs": {
+          "0": -0.13069546986672423,
+          "1": -0.13042732899713075,
+          "2": -0.13078119015832543
+        }
+      },
+      "weak_class_course_means": {
+        "c": {
+          "0": -0.19139829166670097,
+          "1": -0.1913398011274694,
+          "2": -0.1913343358895266
+        },
+        "fs": {
+          "0": -0.19391770240690676,
+          "1": -0.19352488785150654,
+          "2": -0.19411510766278503
+        }
+      },
+      "courses_won_by_fs_weak_class": [
+        0,
+        1,
+        2
+      ]
+    },
+    "fs_attached_default_runtime": false
+  },
+  "solver_mechanism_evidence": {
+    "course_level_validation": {
+      "source_report": "taiji_m5_k_p4_12_course_level_validation_20260911.json",
+      "outcome": "course_level_validation_supported",
+      "matrix": "3 identity batches x 3 seeds = 9 cells",
+      "projected_pass_cells": 9,
+      "projected_pass_cells_expected": 9,
+      "baseline_tension_batches": 3,
+      "baseline_tension_batches_expected": 3,
+      "incomplete_projections": 0,
+      "zero_variance_note": "nine cells value-identical (holdout utility 0.8, target 0.75, zero safe violations, sibling retention 1.0/1.0)",
+      "resource_note": "3x wall soft cap structurally unsatisfiable (projection IS the mechanism cost); absolute wall-clock tiny; formal caps belong to the promotion course preregistration"
+    },
+    "promotion_course": {
+      "source_report": "taiji_m5_k_p4_13_promotion_course_20260911.json",
+      "outcome": "promotion_course_supported",
+      "course_structure": "two sequential phases (A -> B) per cell",
+      "projected_pass_cells": 9,
+      "projected_pass_cells_expected": 9,
+      "baseline_tension_batches": 3,
+      "baseline_tension_batches_expected": 3,
+      "incomplete_projection_b_cells": 0,
+      "cumulative_projection": {
+        "constraint_count_per_cell": 154,
+        "all_cells_exact_zero_violation": true
+      },
+      "backward_retention_gate": {
+        "definition": "phase-A holdout re-checked after phase B",
+        "zero_failure_across_cells": true,
+        "recheck_values": "utility 0.8 / target 0.75 (value-identical)"
+      },
+      "rollback_gate_all_pass": true,
+      "resource_absolute_budget_all_pass": true
+    },
+    "mechanism_conclusion": "retention/new-task decoupling = representation factorization (P4.9) AND optimization mechanism replacement (P4.11 end projection); neither alone suffices; the mechanism is deterministic (zero variance across the 9-cell validation and the 9-cell promotion course)",
+    "solver_attached_default_runtime": false
+  },
+  "joint_course_evidence": {
+    "source_report": "taiji_m5_k_p4_14_joint_course_20260911.json",
+    "outcome": "joint_course_supported",
+    "course_structure": "per cell: Phase K (P2.6 mechanics verbatim: p4-14 novel K2-content cohort + 50-example P2 rehearsal interleave) -> re-materialize Phase G cohorts from the post-K workers -> Phase G (P4.11 contract verbatim: task fit + margin-preservation hinge + terminal joint projection)",
+    "matrix": "2 identity batches x 2 seeds = 4 cells",
+    "passing_cells": 4,
+    "phase_k_summary": {
+      "novel_k2_content_validation": "2/2",
+      "old_class_k1_k2_content": "4/4",
+      "safe_abstention": "6/6",
+      "parameter_count": 5648,
+      "k_checkpoint_independent_restore": true
+    },
+    "phase_g_summary": {
+      "holdout": "target 0.8 / utility 0.8675 / zero safe violations",
+      "retention_sibling": "target 1.0 / utility 1.0",
+      "retention_newtask": "target 0.8 / utility 0.8675",
+      "projection": "88 constraints, exact zero violation in every cell",
+      "birth_equivalence": "exact (zero mismatches, zero score deviation)"
+    },
+    "cross_phase_gates": {
+      "k_unchanged_after_g": true,
+      "g_preservation_vs_frozen_parent": true,
+      "birth_equivalence": true
+    },
+    "landscape_shift_note": "post-K K1/K2 digests moved from the pre-K workers (the interaction surface is real) and the G solver maintained its balance on the shifted landscape; post-K workers are bit-identical across batches because the K feature space does not encode path/project identity (honest structural note)",
+    "resource_absolute_budget_all_pass": true,
+    "k_worker_joint_course_completed": true
+  },
+  "rollout_review_evidence": {
+    "source_report": "taiji_m5_k_default_runtime_rollout_review_20260911.json",
+    "attachment_manifest": "taiji_m5_k_default_runtime_rollout_attachment_v1.json",
+    "attachment_manifest_digest": "fe1191120df3341ac3bdb272561f57d3bbe1b63b08058fd1e1c1b000a8f7589f",
+    "outcome": "default_runtime_rollout_review_supported",
+    "consumption_contract": "taiji-default-runtime-rollout-attachment-v1: content-addressed per-cell artifact digests pinned from the P4.14 report, P4.14 lineage, embedded safety invariants (confidence floors, selection margin, parameter counts), fail-closed load order, no fit / no artifact writes / no invariant overrides",
+    "runtime_baseline": {
+      "runtime_module": "api/seed_runtime.py",
+      "default_checkpoint": "checkpoints/seed_corpus.pt",
+      "default_checkpoint_sha256_unchanged": true,
+      "runtime_k_g_references": []
+    },
+    "matrix": "all 4 P4.14 cells (2 identity batches x 2 seeds), no subsampling",
+    "consumption_equivalence": "phase K (novel 2/2, old-class 4/4, safe abstention 6/6) and phase G (validation/holdout/retention-newtask 0.8/0.8675/0sv, retention-sibling 1.0/1.0) reproduce the P4.14 recorded values field-for-field in every cell through the disk-loading consumption path",
+    "mechanical_summary": {
+      "digest_and_invariants": true,
+      "tamper_rejected": true,
+      "wrong_cell_mixing_rejected": true,
+      "independent_process_restore": true,
+      "behavioral_rollback": true,
+      "k_unchanged_after_rollout": true,
+      "non_interference": true,
+      "cohort_rematerialization_digest_match": true,
+      "resource_caps_absolute_all_pass": true
+    },
+    "fit_called": false,
+    "training_performed": false,
+    "default_runtime_rollout_review_completed": true
+  },
+  "promotion_review_evidence": {
+    "source_contract": "M5_K_A8_PROMOTION_REVIEW_20260912.md",
+    "source_contract_sha256": "01ae38c26f386cc083955cb4d46921e27e623e9547de759a9221b7cc5024932b",
+    "superseded_sgk_contract": "M4V2_SGK_PROMOTION_COURSE_PREREGISTRATION_20260910.md",
+    "superseded_sgk_contract_sha256": "1e0714a120854fa9846cb31102ebd8c3602e0dcba269c1e76f5184adf151a171",
+    "decision_date": "2026-09-12",
+    "outcome": "promotion_review_recommended",
+    "dispositions": {
+      "parent_retention_baseline_present": "flipped by evidence adjudication: the P2.4 -> rollout-review retention chain on the same parent exceeds the v1 literal requirement (a parent_retention field in the K1/K2 formal contracts)",
+      "same_parent_continual_s_g_k_evidence": "flipped by evidence adjudication: P4.14 is a same-parent continuous S/G/K course; S remains the architecturally frozen control-only evidence organ (P3.1 contract) and that boundary is recorded verbatim; a learned-S exploration line is acknowledged as a non-blocking future high-ceiling item",
+      "resource_rollback_old_capability_gate": "flipped by successor-chain mapping: SGK v1 (resource equivalence + rollback + old-capability non-inferiority) is marked superseded by the P4.12/P4.13/P4.14 absolute budgets, the P3.0/P4.13/review rollback gates and the P4.13 zero backward forgetting + review field-for-field retention reproduction; its FS learning mechanism was proven a failure mechanism on this task by P4.10/P4.11",
+      "attachment_authorization": "approved: the default-runtime attachment engineering step enters preregistration; default_runtime_owner_attached and learning_mechanism_attached_default_runtime stay false until that step executes and passes its own acceptance gates"
+    },
+    "standing_decision_principle": "at future decision points prefer the higher-ceiling option, provided the repo's fail-closed discipline and frozen criteria are respected",
+    "promotion_review_recommended": true
+  },
+  "runtime_attachment_evidence": {
+    "source_report": "taiji_m5_k_runtime_attachment_20260912.json",
+    "source_preregistration": "M5_K_DEFAULT_RUNTIME_ATTACHMENT_PREREGISTRATION_20260912.md",
+    "source_preregistration_sha256": "920618526feb7e4be6b8e725a3e8497c0a95f4c01d7f0cba7b65cbc296e1b7f4",
+    "outcome": "runtime_attachment_supported",
+    "attachment_design": "api/taiji_runtime_attachment.py (runtime-owned fail-closed consumption contract, no research-script imports) + SeedRuntime.attach_k_g_state/detach_k_g_state (explicit opt-in, atomic refusal, status surface) + typed readout surface (k1_predict / k2_predict / g_select)",
+    "matrix": "all 4 P4.14 cells through the runtime-owned consumer",
+    "consumption_equivalence": "phase K (novel 2/2, old-class 4/4, safe abstention 6/6) and phase G (0.8/0.8675/0sv, sibling 1.0/1.0) reproduced field-for-field through the runtime-attached consumer in every cell; detach/re-attach behavioral equality exact",
+    "fail_closed_summary": {
+      "tampered_digest_refused": true,
+      "missing_artifact_refused": true,
+      "wrong_cell_mixing_refused": true,
+      "runtime_stays_unattached_on_refusal": true
+    },
+    "non_interference": "default checkpoint sha256 unchanged, model tick/parameter count unchanged, default chat/workbench behaviour untouched (opt-in attachment only)",
+    "resource_absolute_budget_all_pass": true,
+    "fit_called": false,
+    "training_performed": false,
+    "runtime_owners_attached": true
+  },
+  "generated_at_epoch": 1789148295,
+  "elapsed_seconds": 0.09996369999862509
+}

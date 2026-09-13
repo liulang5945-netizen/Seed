@@ -1,0 +1,87 @@
+{
+  "format": "taiji-p5-1c-contrastive-discrimination-v1",
+  "version": 1,
+  "status": "completed",
+  "growth_admitted": false,
+  "can_promote": false,
+  "frozen_margins": {
+    "discrimination": 0.3,
+    "transfer": 0.3,
+    "refusal_ceiling": 0.0
+  },
+  "preregistration": "plans/reference/M5_P5_1C_CONTRASTIVE_DISCRIMINATION_PREREGISTRATION_20260912.md",
+  "embedder_anchor": {
+    "model_id": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "revision": "e8f8c211226b894fcb81acc59f3b34ba3efd5f42",
+    "config_digest": "584d721354a4443103960a80b1a3a61226765bc470bd4077d96e37beb85b433f",
+    "deterministic_double_embed": true
+  },
+  "surface_gate": {
+    "w2a_w2b_shared": [],
+    "pairwise_disjoint": true
+  },
+  "budget_gate": {
+    "sourced_artifacts": 60,
+    "placebo_artifacts": 60,
+    "sourced_events": 30,
+    "placebo_events": 30,
+    "same_budget": true
+  },
+  "contrastive_trial": {
+    "a_para": {
+      "values": [
+        0.249113,
+        0.420113,
+        0.673654
+      ],
+      "mean": 0.447627
+    },
+    "b_para": {
+      "values": [
+        -0.540764,
+        -0.18994,
+        -0.120652
+      ],
+      "mean": -0.283785
+    },
+    "discrimination_a_minus_b": 0.731412,
+    "pairwise_margin": 0.5,
+    "ranking_updates": 10,
+    "train_loss_after": 0.000397,
+    "causal_gate_passed": true
+  },
+  "structural_arm": {
+    "a_para": {
+      "values": [
+        0.82277,
+        0.801595,
+        0.811168
+      ],
+      "mean": 0.811844
+    },
+    "b_para": {
+      "values": [
+        0.873057,
+        0.804474,
+        0.887652
+      ],
+      "mean": 0.855061
+    },
+    "discrimination_a_minus_b": -0.043217
+  },
+  "gates": {
+    "contrastive_discrimination": true,
+    "paraphrase_transfer_retained": true,
+    "b_para_refusal": true,
+    "structural_skeleton_floor_recorded": true,
+    "paraphrase_surface_disjoint": true,
+    "embedder_anchored_deterministic": true,
+    "same_budget_enforced": true,
+    "trial_causal_gate": true,
+    "resource_within_cap": true
+  },
+  "outcome": "contrastive_content_discrimination_supported",
+  "experiment_passed": true,
+  "interpretation": "completed: outcome=contrastive_content_discrimination_supported; contrastive training over a ten-text-per-family corpus makes the semantic value function content-addressed (A-para high, B-para refused) while the structural hash encoder reproduces the skeleton floor",
+  "elapsed_seconds": 27.775
+}

@@ -41,15 +41,15 @@ from scripts.training.build_taiji_m5_k_v4_parity import (  # noqa: E402
 from scripts.training.eval_taiji_m4v2_b3_k_c_parity_formal import (  # noqa: E402
     _load_mapping,
 )
-from scripts.training.eval_taiji_m5_k_v4_parity_formal import (  # noqa: E402
-    _v4_ensemble_loss_score,
-)
 from scripts.training.eval_taiji_m4v2_b3_k_c_sealed_scoring import (  # noqa: E402
     _context,
     _delta,
     _loss_score,
     _sealed_experiences,
     _validation_experiences,
+)
+from scripts.training.eval_taiji_m5_k_v4_parity_formal import (  # noqa: E402
+    _v4_ensemble_loss_score,
 )
 from taiji import (  # noqa: E402
     StructuredSemanticLearner,

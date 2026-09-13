@@ -1,5 +1,7 @@
 # M4.V2 S/G/K 连续课程晋级 formal 预注册（promotion course v1）
 
+> 状态修订（2026-09-12，A8 晋级评审独立批准）：**superseded——被 P4.11–P4.14 求解器机制链 + 默认 runtime rollout review 后继取代**。本文三项晋级课程要求（资源等价、rollback、旧能力非劣）已由 P4.12/P4.13/P4.14 绝对资源预算、P3.0/P4.13/review rollback 门与 P4.13 向后保持零失败 + review 保持指标逐字段复现以更强形式满足（取代映射见 [A8 评审合同 §3.3](M5_K_A8_PROMOTION_REVIEW_20260912.md) 与 scorecard v7）；其 FS 学习机制已被 P4.10/P4.11 证明为该任务上的失败机制。下文保留冻结历史，不删除、不改写、不重新授权执行。
+
 > 状态修订（2026-09-10，基线 4629bc8c）：**暂停执行，待 v2 替代**。本轮实测 v4 K worker 三 seed 权重相同、course 3/4/5 类顺序重复 0/1/2；§5 G3 的 loss/surprise 保持方向应为 after−before≤epsilon，G5 须区分有效参数与 FS 额外状态。先完成同 replay 的直接学习对照，再安排 lineage。下文保留冻结历史，不再授权 §9 开跑。依据见 [结果复审](M4V2_POST_C_STAGE_RESULT_REVIEW_20260910.md)，唯一顺序见 [当前计划](../active/roadmap/03_CURRENT_EXECUTION.md)。
 
 > 冻结日期：2026-09-10。前置：[scorecard v3 合同 §6/§7](M5_K_AXIS_SCORECARD_V3_CONTRACT_20260910.md)（唯一后续动作 = 本文）、[C 阶段 formal v2 §7](M4V2_C_STAGE_FORMAL_V2_PREREGISTRATION_20260910.md)（FS 收束为 K 相位默认学习机制候选）、[B3 K-phase pilot](M4V2_B3_K_PILOT_PREREGISTRATION_20260910.md)（FS 机制门 12/12）、[A8 promotion 预注册 §3–§5](M4V2_R6_A8_PROMOTION_PREREGISTRATION_20260909.md)（晋级门结构：新能力置信下界 / 旧能力 retention / 资源-rollback-副作用）、[R6 资源聚合同](M4V2_R6_RESOURCE_AGGREGATE_PREREGISTRATION_20260909.md)（peak/wall 口径）。本文冻结同一 parent 连续 S/G/K 课程的假设、合同、臂、判据、epsilon、结果映射与停止线；冻结后按 §9 顺序执行，顺序以 [03_CURRENT_EXECUTION.md](../active/roadmap/03_CURRENT_EXECUTION.md) 为准。

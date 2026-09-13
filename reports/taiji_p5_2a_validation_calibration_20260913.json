@@ -1,0 +1,49 @@
+{
+  "format": "taiji-p5-2a-predictive-execution-report-v1",
+  "version": 1,
+  "phase": "validation",
+  "status": "completed",
+  "growth_admitted": false,
+  "can_promote": false,
+  "preregistration": "plans/reference/M5_P5_2A_PREDICTIVE_EXECUTION_PREREGISTRATION_20260913.md",
+  "static_checks": {
+    "scope": [
+      "seed_platform/workbench.py",
+      "taiji/procedural_memory.py",
+      "scripts/training/eval_taiji_p5_2_workbench_simulation_contract_gate.py",
+      "scripts/training/eval_taiji_p5_2a_predictive_execution_gate.py"
+    ],
+    "commands": [
+      "python -m py_compile <scope files>",
+      "python -m ruff check scripts/training (and full repo)",
+      "python -m mypy --follow-imports=silent seed taiji",
+      "python -m black --no-cache --check <scope files>",
+      "python -m pytest (baseline 2 failed known debts, no new failures)"
+    ],
+    "executed_before_run": true
+  },
+  "calibration": {
+    "success_rates": {
+      "oracle": 1.0,
+      "model": 0.75,
+      "frozen": 0.5,
+      "lesion": 0.5,
+      "frequency": 0.5
+    },
+    "basis": "final gate = model_final >= max(strongest control validation success + 0.15, significance floor 0.5); margin is the cross-generation frozen constant, floor is the minimum task-meaningful success rate for an execution policy",
+    "strongest_control_arm": "frozen",
+    "frozen_final_threshold": 0.65
+  },
+  "scene_counts": {
+    "train": 40,
+    "validation": 12,
+    "final": 12,
+    "no_duplicate_scenes": true
+  },
+  "readout": {
+    "train_accuracy": 1.0,
+    "holdout_accuracy": 1.0,
+    "lesion_holdout_accuracy": 0.151515
+  },
+  "elapsed_seconds": 17.009
+}

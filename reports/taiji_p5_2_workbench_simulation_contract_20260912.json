@@ -1,0 +1,357 @@
+{
+  "format": "taiji-p5-2-workbench-simulation-contract-report-v1",
+  "version": 1,
+  "status": "completed",
+  "growth_admitted": false,
+  "can_promote": false,
+  "frozen_margins": {
+    "content_transfer": 0.15,
+    "train_accuracy_floor": 0.9,
+    "total_seconds_cap": 600.0
+  },
+  "preregistration": "plans/reference/M5_P5_2_WORKBENCH_SIMULATION_CONTRACT_PREREGISTRATION_20260912.md",
+  "static_four_checks": {
+    "scope": [
+      "seed_platform/workbench.py",
+      "seed_platform/programming_languages.py",
+      "taiji/procedural_memory.py",
+      "taiji/interaction_groups.py",
+      "scripts/training/eval_taiji_p5_2_workbench_simulation_contract_gate.py"
+    ],
+    "commands": [
+      "python -m py_compile <scope files>",
+      "python -m ruff check <scope files>",
+      "python -m mypy --follow-imports=silent seed taiji",
+      "python -m black --no-cache --check <scope files>"
+    ],
+    "executed_before_run": true
+  },
+  "design": {
+    "simulation": "restricted instance of the real workbench contract (same code path, no parallel executor)",
+    "action_generator": "procedural readout (hidden 64 / 250 epochs, P5.1g constants) over capability_id vocabulary",
+    "approval_subject": "deterministic simulated approver (same path, different subject; disclosed)",
+    "scene_partitions": {
+      "train": 40,
+      "holdout": 12,
+      "agate": 8
+    }
+  },
+  "embedder_anchor": {
+    "model_id": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "revision": "e8f8c211226b894fcb81acc59f3b34ba3efd5f42",
+    "config_digest": "584d721354a4443103960a80b1a3a61226765bc470bd4077d96e37beb85b433f"
+  },
+  "scenes": {
+    "counts": {
+      "train": 40,
+      "holdout": 12,
+      "agate": 8,
+      "guard": 1
+    },
+    "vocabulary_train": [
+      "editor.set_language",
+      "workspace.apply_patch",
+      "workspace.create",
+      "workspace.list",
+      "workspace.programming_language.resolve",
+      "workspace.read",
+      "workspace.undo"
+    ],
+    "vocabulary_agate": [
+      "editor.set_language",
+      "workspace.apply_patch",
+      "workspace.create",
+      "workspace.list",
+      "workspace.programming_language.resolve",
+      "workspace.read",
+      "workspace.undo"
+    ],
+    "agate_within_train": true,
+    "snapshot_capabilities": 16
+  },
+  "contract_path": {
+    "executed_actions": 195,
+    "policy_intercepted_actions": 0,
+    "guard_intercepted": true,
+    "guard_decision": "ask_user",
+    "guard_reason": "language_action_confidence_low",
+    "outcome_shape_ok": true,
+    "chain_complete": true,
+    "executed_capability_ids": [
+      "editor.set_language",
+      "workspace.apply_patch",
+      "workspace.create",
+      "workspace.list",
+      "workspace.programming_language.resolve",
+      "workspace.read",
+      "workspace.undo"
+    ]
+  },
+  "language_surface": {
+    "resolve_selection_states": {
+      "resolved": 15,
+      "ambiguous": 15
+    },
+    "registry_parity": true,
+    "switch_narratives": [
+      {
+        "path": "module_000.py",
+        "before": "python",
+        "after": "python",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "taiji_selection"
+      },
+      {
+        "path": "header_003.h",
+        "before": "python",
+        "after": "cpp",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "user_override"
+      },
+      {
+        "path": "module_004.py",
+        "before": "python",
+        "after": "python",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "taiji_selection"
+      },
+      {
+        "path": "header_007.h",
+        "before": "c",
+        "after": "cpp",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "user_override"
+      },
+      {
+        "path": "module_008.py",
+        "before": "python",
+        "after": "python",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "taiji_selection"
+      },
+      {
+        "path": "header_011.h",
+        "before": "c",
+        "after": "cpp",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "user_override"
+      },
+      {
+        "path": "module_012.py",
+        "before": "python",
+        "after": "python",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "taiji_selection"
+      },
+      {
+        "path": "header_015.h",
+        "before": "c",
+        "after": "cpp",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "user_override"
+      },
+      {
+        "path": "module_016.py",
+        "before": "python",
+        "after": "python",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "taiji_selection"
+      },
+      {
+        "path": "header_019.h",
+        "before": "c",
+        "after": "cpp",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "user_override"
+      },
+      {
+        "path": "module_020.py",
+        "before": "python",
+        "after": "python",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "taiji_selection"
+      },
+      {
+        "path": "header_023.h",
+        "before": "c",
+        "after": "cpp",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "user_override"
+      },
+      {
+        "path": "module_024.py",
+        "before": "python",
+        "after": "python",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "taiji_selection"
+      },
+      {
+        "path": "header_027.h",
+        "before": "c",
+        "after": "cpp",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "user_override"
+      },
+      {
+        "path": "module_028.py",
+        "before": "python",
+        "after": "python",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "taiji_selection"
+      },
+      {
+        "path": "header_031.h",
+        "before": "c",
+        "after": "cpp",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "user_override"
+      },
+      {
+        "path": "module_032.py",
+        "before": "python",
+        "after": "python",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "taiji_selection"
+      },
+      {
+        "path": "header_035.h",
+        "before": "c",
+        "after": "cpp",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "user_override"
+      },
+      {
+        "path": "module_036.py",
+        "before": "python",
+        "after": "python",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "taiji_selection"
+      },
+      {
+        "path": "header_039.h",
+        "before": "c",
+        "after": "cpp",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "user_override"
+      },
+      {
+        "path": "module_040.py",
+        "before": "python",
+        "after": "python",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "taiji_selection"
+      },
+      {
+        "path": "header_043.h",
+        "before": "c",
+        "after": "cpp",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "user_override"
+      },
+      {
+        "path": "module_044.py",
+        "before": "python",
+        "after": "python",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "taiji_selection"
+      },
+      {
+        "path": "header_047.h",
+        "before": "c",
+        "after": "cpp",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "user_override"
+      },
+      {
+        "path": "module_048.py",
+        "before": "python",
+        "after": "python",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "taiji_selection"
+      },
+      {
+        "path": "header_051.h",
+        "before": "c",
+        "after": "cpp",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "user_override"
+      },
+      {
+        "path": "module_052.py",
+        "before": "python",
+        "after": "python",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "taiji_selection"
+      },
+      {
+        "path": "header_055.h",
+        "before": "c",
+        "after": "cpp",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "user_override"
+      },
+      {
+        "path": "module_056.py",
+        "before": "python",
+        "after": "python",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "taiji_selection"
+      },
+      {
+        "path": "header_059.h",
+        "before": "c",
+        "after": "cpp",
+        "reason": "scripted scene goal with resolved workspace evidence",
+        "selection_state": "user_override"
+      }
+    ],
+    "narratives_complete": true
+  },
+  "undo_semantics": {
+    "undo_scenes": 30,
+    "all_restored": true
+  },
+  "readout": {
+    "train_accuracy": 1.0,
+    "holdout_accuracy": 1.0,
+    "lesion_holdout_accuracy": 0.153846,
+    "agate_accuracy": 1.0,
+    "per_tick_majority_baseline": 0.615385,
+    "frequency_margin": 0.384615,
+    "frozen_margin": 0.15
+  },
+  "interaction_trace": {
+    "train_episodes": 40,
+    "holdout_episodes": 12,
+    "owner_ids": [
+      "p52-workbench-environment",
+      "p52-action-generator"
+    ],
+    "projection_lossless": true,
+    "evaluator_consumed": true,
+    "evaluation_summary": {
+      "groups": 0,
+      "rejected": 0
+    }
+  },
+  "deterministic_and_budget": {
+    "replica_consistent": true,
+    "elapsed_seconds": 23.957,
+    "total_seconds_cap": 600.0
+  },
+  "gates": {
+    "static_four_checks": true,
+    "contract_path_identity": true,
+    "action_typing_validity": true,
+    "language_resolve_reuse": true,
+    "language_switch_explanation": true,
+    "undo_semantics": true,
+    "readout_sanity": true,
+    "interaction_trace_projection": true,
+    "transfer_and_budget": true
+  },
+  "outcome": "workbench_simulation_contract_supported",
+  "experiment_passed": true,
+  "interpretation": "completed: outcome=workbench_simulation_contract_supported; agate accuracy=1.0 baseline=0.615385 margin=0.384615 >= 0.15; train_accuracy=1.0 >= 0.9",
+  "elapsed_seconds": 23.957
+}

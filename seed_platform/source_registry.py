@@ -208,7 +208,9 @@ class DeclarativeSourceRegistry:
         return payload
 
     @classmethod
-    def from_checkpoint(cls, payload: Mapping[str, Any], *, adapter: Any) -> DeclarativeSourceRegistry:
+    def from_checkpoint(
+        cls, payload: Mapping[str, Any], *, adapter: Any
+    ) -> DeclarativeSourceRegistry:
         if payload.get("format") != SOURCE_REGISTRY_CHECKPOINT_FORMAT:
             raise ValueError("unsupported source registry checkpoint format")
         if int(payload.get("version", -1)) != SOURCE_REGISTRY_VERSION:
