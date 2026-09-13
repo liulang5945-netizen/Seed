@@ -1,0 +1,1426 @@
+{
+  "format": "taiji-b0-handoff-feasibility-probe-v1",
+  "version": 1,
+  "status": "draft_for_review",
+  "does_not_change": [
+    "no gate, preregistration, frozen report or threshold is modified",
+    "no candidate task is registered; the definitions live only in this probe",
+    "no model is trained for a candidate task -- the frozen members are reused",
+    "growth_admitted=false and can_promote=false remain in force"
+  ],
+  "frozen_artifacts_reused": {
+    "gate": "scripts\\training\\eval_taiji_p5_2b_group_causal_corpora_gate.py",
+    "composition_rule": "p5_2b._member_episode (priority fallback)",
+    "members": "p5_2b._train_members (four train template families only)",
+    "cells": "p5_2b.CELL_MEMBER_SETS",
+    "repeats": "p5_2b.REPEATS"
+  },
+  "margin": 0.15,
+  "candidates_for_review": {
+    "all_singleton_oracle": 1.5,
+    "best_fixed_singleton": 0.5,
+    "best_observed_fixed_pair": 1.0
+  },
+  "ground_truth": {
+    "contexts": [
+      "p52a-validation-100",
+      "p52a-validation-101",
+      "p52a-validation-102",
+      "p52a-validation-103",
+      "p52a-validation-104",
+      "p52a-validation-105",
+      "p52a-validation-106",
+      "p52a-validation-107",
+      "p52a-validation-108",
+      "p52a-validation-109",
+      "p52a-validation-110",
+      "p52a-validation-111"
+    ],
+    "episodes": 264,
+    "cells_compared": 11,
+    "reproduced": true,
+    "mismatches": [],
+    "note": "the probe must reproduce known history before it is allowed to say anything about a candidate surface"
+  },
+  "surfaces": [
+    {
+      "label": "dual_requirement",
+      "template": "dual_requirement",
+      "contexts": [
+        "b0probe-dual-200",
+        "b0probe-dual-201",
+        "b0probe-dual-202",
+        "b0probe-dual-203"
+      ],
+      "episodes": 88,
+      "cells": [
+        {
+          "cell": "none",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        },
+        {
+          "cell": "member-a",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        },
+        {
+          "cell": "member-b",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        },
+        {
+          "cell": "member-c",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        },
+        {
+          "cell": "member-d",
+          "mean_outcome": 1.0,
+          "success_rate": 1.0
+        },
+        {
+          "cell": "member-a+member-b",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        },
+        {
+          "cell": "member-a+member-c",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        },
+        {
+          "cell": "member-a+member-d",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        },
+        {
+          "cell": "member-b+member-c",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        },
+        {
+          "cell": "member-b+member-d",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        },
+        {
+          "cell": "member-c+member-d",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        }
+      ],
+      "singleton_success_rates": {
+        "member-a": 0.0,
+        "member-b": 0.0,
+        "member-c": 0.0,
+        "member-d": 1.0
+      },
+      "trajectories": [
+        {
+          "pair": "member-a+member-b",
+          "per_context": [
+            {
+              "context_id": "b0probe-dual-200",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-dual-201",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-dual-202",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-dual-203",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            }
+          ],
+          "kind_counts": {
+            "both_members": 4
+          },
+          "contexts_reaching_arbitration_optimum": 4,
+          "contexts_interleaved": 0,
+          "note": "interleaved > 0 is the only trajectory class that can exceed the all-singleton oracle; equals-one-member can never do so"
+        },
+        {
+          "pair": "member-a+member-c",
+          "per_context": [
+            {
+              "context_id": "b0probe-dual-200",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-dual-201",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-dual-202",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-dual-203",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            }
+          ],
+          "kind_counts": {
+            "both_members": 4
+          },
+          "contexts_reaching_arbitration_optimum": 4,
+          "contexts_interleaved": 0,
+          "note": "interleaved > 0 is the only trajectory class that can exceed the all-singleton oracle; equals-one-member can never do so"
+        },
+        {
+          "pair": "member-a+member-d",
+          "per_context": [
+            {
+              "context_id": "b0probe-dual-200",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": 1.0,
+              "pair_best": 1.0,
+              "reaches_arbitration_optimum": false,
+              "kind": "first_member_only"
+            },
+            {
+              "context_id": "b0probe-dual-201",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": 1.0,
+              "pair_best": 1.0,
+              "reaches_arbitration_optimum": false,
+              "kind": "first_member_only"
+            },
+            {
+              "context_id": "b0probe-dual-202",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": 1.0,
+              "pair_best": 1.0,
+              "reaches_arbitration_optimum": false,
+              "kind": "first_member_only"
+            },
+            {
+              "context_id": "b0probe-dual-203",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": 1.0,
+              "pair_best": 1.0,
+              "reaches_arbitration_optimum": false,
+              "kind": "first_member_only"
+            }
+          ],
+          "kind_counts": {
+            "first_member_only": 4
+          },
+          "contexts_reaching_arbitration_optimum": 0,
+          "contexts_interleaved": 0,
+          "note": "interleaved > 0 is the only trajectory class that can exceed the all-singleton oracle; equals-one-member can never do so"
+        },
+        {
+          "pair": "member-b+member-c",
+          "per_context": [
+            {
+              "context_id": "b0probe-dual-200",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-dual-201",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-dual-202",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-dual-203",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            }
+          ],
+          "kind_counts": {
+            "both_members": 4
+          },
+          "contexts_reaching_arbitration_optimum": 4,
+          "contexts_interleaved": 0,
+          "note": "interleaved > 0 is the only trajectory class that can exceed the all-singleton oracle; equals-one-member can never do so"
+        },
+        {
+          "pair": "member-b+member-d",
+          "per_context": [
+            {
+              "context_id": "b0probe-dual-200",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": 1.0,
+              "pair_best": 1.0,
+              "reaches_arbitration_optimum": false,
+              "kind": "first_member_only"
+            },
+            {
+              "context_id": "b0probe-dual-201",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": 1.0,
+              "pair_best": 1.0,
+              "reaches_arbitration_optimum": false,
+              "kind": "first_member_only"
+            },
+            {
+              "context_id": "b0probe-dual-202",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": 1.0,
+              "pair_best": 1.0,
+              "reaches_arbitration_optimum": false,
+              "kind": "first_member_only"
+            },
+            {
+              "context_id": "b0probe-dual-203",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": 1.0,
+              "pair_best": 1.0,
+              "reaches_arbitration_optimum": false,
+              "kind": "first_member_only"
+            }
+          ],
+          "kind_counts": {
+            "first_member_only": 4
+          },
+          "contexts_reaching_arbitration_optimum": 0,
+          "contexts_interleaved": 0,
+          "note": "interleaved > 0 is the only trajectory class that can exceed the all-singleton oracle; equals-one-member can never do so"
+        },
+        {
+          "pair": "member-c+member-d",
+          "per_context": [
+            {
+              "context_id": "b0probe-dual-200",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": 1.0,
+              "pair_best": 1.0,
+              "reaches_arbitration_optimum": false,
+              "kind": "first_member_only"
+            },
+            {
+              "context_id": "b0probe-dual-201",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": 1.0,
+              "pair_best": 1.0,
+              "reaches_arbitration_optimum": false,
+              "kind": "first_member_only"
+            },
+            {
+              "context_id": "b0probe-dual-202",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": 1.0,
+              "pair_best": 1.0,
+              "reaches_arbitration_optimum": false,
+              "kind": "first_member_only"
+            },
+            {
+              "context_id": "b0probe-dual-203",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": 1.0,
+              "pair_best": 1.0,
+              "reaches_arbitration_optimum": false,
+              "kind": "first_member_only"
+            }
+          ],
+          "kind_counts": {
+            "first_member_only": 4
+          },
+          "contexts_reaching_arbitration_optimum": 0,
+          "contexts_interleaved": 0,
+          "note": "interleaved > 0 is the only trajectory class that can exceed the all-singleton oracle; equals-one-member can never do so"
+        }
+      ],
+      "combination_only_contexts": [],
+      "combination_only_gain_potential": 0.0,
+      "reference_requirements": [
+        {
+          "reference": "all_singleton_oracle",
+          "reference_gain": 1.5,
+          "required": 1.65,
+          "required_combination_only_contexts": 4,
+          "available_combination_only_contexts": 0,
+          "context_count": 4,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        },
+        {
+          "reference": "best_fixed_singleton",
+          "reference_gain": 0.5,
+          "required": 0.65,
+          "required_combination_only_contexts": 2,
+          "available_combination_only_contexts": 0,
+          "context_count": 4,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        },
+        {
+          "reference": "best_observed_fixed_pair",
+          "reference_gain": 1.0,
+          "required": 1.15,
+          "required_combination_only_contexts": 3,
+          "available_combination_only_contexts": 0,
+          "context_count": 4,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        }
+      ],
+      "condition_2": {
+        "requirement": "the frozen mechanism must produce an interleaved trajectory",
+        "interleaved_contexts": 0,
+        "satisfied": false,
+        "reading": "no interleaved trajectory: under the frozen rule the pair still reproduces a single member's outcome, so this task shape needs a mechanism change, not a representation change"
+      },
+      "order_sensitivity": {
+        "pairs": [
+          {
+            "pair": "member-a+member-b",
+            "forward_outcome": -1.0,
+            "reversed_outcome": -1.0,
+            "best_order_outcome": -1.0,
+            "order_headroom": 0.0,
+            "order_sensitive": false
+          },
+          {
+            "pair": "member-a+member-c",
+            "forward_outcome": -1.0,
+            "reversed_outcome": -1.0,
+            "best_order_outcome": -1.0,
+            "order_headroom": 0.0,
+            "order_sensitive": false
+          },
+          {
+            "pair": "member-a+member-d",
+            "forward_outcome": -1.0,
+            "reversed_outcome": 1.0,
+            "best_order_outcome": 1.0,
+            "order_headroom": 2.0,
+            "order_sensitive": true
+          },
+          {
+            "pair": "member-b+member-c",
+            "forward_outcome": -1.0,
+            "reversed_outcome": -1.0,
+            "best_order_outcome": -1.0,
+            "order_headroom": 0.0,
+            "order_sensitive": false
+          },
+          {
+            "pair": "member-b+member-d",
+            "forward_outcome": -1.0,
+            "reversed_outcome": 1.0,
+            "best_order_outcome": 1.0,
+            "order_headroom": 2.0,
+            "order_sensitive": true
+          },
+          {
+            "pair": "member-c+member-d",
+            "forward_outcome": -1.0,
+            "reversed_outcome": 1.0,
+            "best_order_outcome": 1.0,
+            "order_headroom": 2.0,
+            "order_sensitive": true
+          }
+        ],
+        "any_order_sensitive": true,
+        "mean_order_headroom": 1.0,
+        "within_pair_oracle_gain": -1.0,
+        "reading": "reversing the priority changes an outcome, so the frozen order -- not the task or the representation -- is what blocks the handoff",
+        "arbitration_ceiling_note": "mean_order_headroom is recoverable by a better arbitration, but within_pair_oracle_gain is the ceiling of ANY member-arbitration mechanism and is <= 0 by construction -- so fixing the order alone still cannot produce a collaboration claim"
+      }
+    },
+    {
+      "label": "create_then_patch",
+      "template": "create_then_patch",
+      "contexts": [
+        "b0probe-ctp-200",
+        "b0probe-ctp-201",
+        "b0probe-ctp-202",
+        "b0probe-ctp-203"
+      ],
+      "episodes": 88,
+      "cells": [
+        {
+          "cell": "none",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        },
+        {
+          "cell": "member-a",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        },
+        {
+          "cell": "member-b",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        },
+        {
+          "cell": "member-c",
+          "mean_outcome": 1.0,
+          "success_rate": 1.0
+        },
+        {
+          "cell": "member-d",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        },
+        {
+          "cell": "member-a+member-b",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        },
+        {
+          "cell": "member-a+member-c",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        },
+        {
+          "cell": "member-a+member-d",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        },
+        {
+          "cell": "member-b+member-c",
+          "mean_outcome": 1.0,
+          "success_rate": 1.0
+        },
+        {
+          "cell": "member-b+member-d",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        },
+        {
+          "cell": "member-c+member-d",
+          "mean_outcome": 1.0,
+          "success_rate": 1.0
+        }
+      ],
+      "singleton_success_rates": {
+        "member-a": 0.0,
+        "member-b": 0.0,
+        "member-c": 1.0,
+        "member-d": 0.0
+      },
+      "trajectories": [
+        {
+          "pair": "member-a+member-b",
+          "per_context": [
+            {
+              "context_id": "b0probe-ctp-200",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-ctp-201",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-ctp-202",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-ctp-203",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            }
+          ],
+          "kind_counts": {
+            "both_members": 4
+          },
+          "contexts_reaching_arbitration_optimum": 4,
+          "contexts_interleaved": 0,
+          "note": "interleaved > 0 is the only trajectory class that can exceed the all-singleton oracle; equals-one-member can never do so"
+        },
+        {
+          "pair": "member-a+member-c",
+          "per_context": [
+            {
+              "context_id": "b0probe-ctp-200",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": 1.0,
+              "pair_best": 1.0,
+              "reaches_arbitration_optimum": false,
+              "kind": "first_member_only"
+            },
+            {
+              "context_id": "b0probe-ctp-201",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": 1.0,
+              "pair_best": 1.0,
+              "reaches_arbitration_optimum": false,
+              "kind": "first_member_only"
+            },
+            {
+              "context_id": "b0probe-ctp-202",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": 1.0,
+              "pair_best": 1.0,
+              "reaches_arbitration_optimum": false,
+              "kind": "first_member_only"
+            },
+            {
+              "context_id": "b0probe-ctp-203",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": 1.0,
+              "pair_best": 1.0,
+              "reaches_arbitration_optimum": false,
+              "kind": "first_member_only"
+            }
+          ],
+          "kind_counts": {
+            "first_member_only": 4
+          },
+          "contexts_reaching_arbitration_optimum": 0,
+          "contexts_interleaved": 0,
+          "note": "interleaved > 0 is the only trajectory class that can exceed the all-singleton oracle; equals-one-member can never do so"
+        },
+        {
+          "pair": "member-a+member-d",
+          "per_context": [
+            {
+              "context_id": "b0probe-ctp-200",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-ctp-201",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-ctp-202",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-ctp-203",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            }
+          ],
+          "kind_counts": {
+            "both_members": 4
+          },
+          "contexts_reaching_arbitration_optimum": 4,
+          "contexts_interleaved": 0,
+          "note": "interleaved > 0 is the only trajectory class that can exceed the all-singleton oracle; equals-one-member can never do so"
+        },
+        {
+          "pair": "member-b+member-c",
+          "per_context": [
+            {
+              "context_id": "b0probe-ctp-200",
+              "pair_outcome": 1.0,
+              "first_outcome": -1.0,
+              "second_outcome": 1.0,
+              "pair_best": 1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "second_member_only"
+            },
+            {
+              "context_id": "b0probe-ctp-201",
+              "pair_outcome": 1.0,
+              "first_outcome": -1.0,
+              "second_outcome": 1.0,
+              "pair_best": 1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "second_member_only"
+            },
+            {
+              "context_id": "b0probe-ctp-202",
+              "pair_outcome": 1.0,
+              "first_outcome": -1.0,
+              "second_outcome": 1.0,
+              "pair_best": 1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "second_member_only"
+            },
+            {
+              "context_id": "b0probe-ctp-203",
+              "pair_outcome": 1.0,
+              "first_outcome": -1.0,
+              "second_outcome": 1.0,
+              "pair_best": 1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "second_member_only"
+            }
+          ],
+          "kind_counts": {
+            "second_member_only": 4
+          },
+          "contexts_reaching_arbitration_optimum": 4,
+          "contexts_interleaved": 0,
+          "note": "interleaved > 0 is the only trajectory class that can exceed the all-singleton oracle; equals-one-member can never do so"
+        },
+        {
+          "pair": "member-b+member-d",
+          "per_context": [
+            {
+              "context_id": "b0probe-ctp-200",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-ctp-201",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-ctp-202",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-ctp-203",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            }
+          ],
+          "kind_counts": {
+            "both_members": 4
+          },
+          "contexts_reaching_arbitration_optimum": 4,
+          "contexts_interleaved": 0,
+          "note": "interleaved > 0 is the only trajectory class that can exceed the all-singleton oracle; equals-one-member can never do so"
+        },
+        {
+          "pair": "member-c+member-d",
+          "per_context": [
+            {
+              "context_id": "b0probe-ctp-200",
+              "pair_outcome": 1.0,
+              "first_outcome": 1.0,
+              "second_outcome": -1.0,
+              "pair_best": 1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "first_member_only"
+            },
+            {
+              "context_id": "b0probe-ctp-201",
+              "pair_outcome": 1.0,
+              "first_outcome": 1.0,
+              "second_outcome": -1.0,
+              "pair_best": 1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "first_member_only"
+            },
+            {
+              "context_id": "b0probe-ctp-202",
+              "pair_outcome": 1.0,
+              "first_outcome": 1.0,
+              "second_outcome": -1.0,
+              "pair_best": 1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "first_member_only"
+            },
+            {
+              "context_id": "b0probe-ctp-203",
+              "pair_outcome": 1.0,
+              "first_outcome": 1.0,
+              "second_outcome": -1.0,
+              "pair_best": 1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "first_member_only"
+            }
+          ],
+          "kind_counts": {
+            "first_member_only": 4
+          },
+          "contexts_reaching_arbitration_optimum": 4,
+          "contexts_interleaved": 0,
+          "note": "interleaved > 0 is the only trajectory class that can exceed the all-singleton oracle; equals-one-member can never do so"
+        }
+      ],
+      "combination_only_contexts": [],
+      "combination_only_gain_potential": 0.0,
+      "reference_requirements": [
+        {
+          "reference": "all_singleton_oracle",
+          "reference_gain": 1.5,
+          "required": 1.65,
+          "required_combination_only_contexts": 4,
+          "available_combination_only_contexts": 0,
+          "context_count": 4,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        },
+        {
+          "reference": "best_fixed_singleton",
+          "reference_gain": 0.5,
+          "required": 0.65,
+          "required_combination_only_contexts": 2,
+          "available_combination_only_contexts": 0,
+          "context_count": 4,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        },
+        {
+          "reference": "best_observed_fixed_pair",
+          "reference_gain": 1.0,
+          "required": 1.15,
+          "required_combination_only_contexts": 3,
+          "available_combination_only_contexts": 0,
+          "context_count": 4,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        }
+      ],
+      "condition_2": {
+        "requirement": "the frozen mechanism must produce an interleaved trajectory",
+        "interleaved_contexts": 0,
+        "satisfied": false,
+        "reading": "no interleaved trajectory: under the frozen rule the pair still reproduces a single member's outcome, so this task shape needs a mechanism change, not a representation change"
+      },
+      "order_sensitivity": {
+        "pairs": [
+          {
+            "pair": "member-a+member-b",
+            "forward_outcome": -1.0,
+            "reversed_outcome": -1.0,
+            "best_order_outcome": -1.0,
+            "order_headroom": 0.0,
+            "order_sensitive": false
+          },
+          {
+            "pair": "member-a+member-c",
+            "forward_outcome": -1.0,
+            "reversed_outcome": 1.0,
+            "best_order_outcome": 1.0,
+            "order_headroom": 2.0,
+            "order_sensitive": true
+          },
+          {
+            "pair": "member-a+member-d",
+            "forward_outcome": -1.0,
+            "reversed_outcome": -1.0,
+            "best_order_outcome": -1.0,
+            "order_headroom": 0.0,
+            "order_sensitive": false
+          },
+          {
+            "pair": "member-b+member-c",
+            "forward_outcome": 1.0,
+            "reversed_outcome": 1.0,
+            "best_order_outcome": 1.0,
+            "order_headroom": 0.0,
+            "order_sensitive": false
+          },
+          {
+            "pair": "member-b+member-d",
+            "forward_outcome": -1.0,
+            "reversed_outcome": -1.0,
+            "best_order_outcome": -1.0,
+            "order_headroom": 0.0,
+            "order_sensitive": false
+          },
+          {
+            "pair": "member-c+member-d",
+            "forward_outcome": 1.0,
+            "reversed_outcome": -1.0,
+            "best_order_outcome": 1.0,
+            "order_headroom": 0.0,
+            "order_sensitive": true
+          }
+        ],
+        "any_order_sensitive": true,
+        "mean_order_headroom": 0.3333333333333333,
+        "within_pair_oracle_gain": -1.0,
+        "reading": "reversing the priority changes an outcome, so the frozen order -- not the task or the representation -- is what blocks the handoff",
+        "arbitration_ceiling_note": "mean_order_headroom is recoverable by a better arbitration, but within_pair_oracle_gain is the ceiling of ANY member-arbitration mechanism and is <= 0 by construction -- so fixing the order alone still cannot produce a collaboration claim"
+      }
+    },
+    {
+      "label": "create_and_override",
+      "template": "create_and_override",
+      "contexts": [
+        "b0probe-crgover-200",
+        "b0probe-crgover-201",
+        "b0probe-crgover-202",
+        "b0probe-crgover-203"
+      ],
+      "episodes": 88,
+      "cells": [
+        {
+          "cell": "none",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        },
+        {
+          "cell": "member-a",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        },
+        {
+          "cell": "member-b",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        },
+        {
+          "cell": "member-c",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        },
+        {
+          "cell": "member-d",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        },
+        {
+          "cell": "member-a+member-b",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        },
+        {
+          "cell": "member-a+member-c",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        },
+        {
+          "cell": "member-a+member-d",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        },
+        {
+          "cell": "member-b+member-c",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        },
+        {
+          "cell": "member-b+member-d",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        },
+        {
+          "cell": "member-c+member-d",
+          "mean_outcome": -1.0,
+          "success_rate": 0.0
+        }
+      ],
+      "singleton_success_rates": {
+        "member-a": 0.0,
+        "member-b": 0.0,
+        "member-c": 0.0,
+        "member-d": 0.0
+      },
+      "trajectories": [
+        {
+          "pair": "member-a+member-b",
+          "per_context": [
+            {
+              "context_id": "b0probe-crgover-200",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-crgover-201",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-crgover-202",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-crgover-203",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            }
+          ],
+          "kind_counts": {
+            "both_members": 4
+          },
+          "contexts_reaching_arbitration_optimum": 4,
+          "contexts_interleaved": 0,
+          "note": "interleaved > 0 is the only trajectory class that can exceed the all-singleton oracle; equals-one-member can never do so"
+        },
+        {
+          "pair": "member-a+member-c",
+          "per_context": [
+            {
+              "context_id": "b0probe-crgover-200",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-crgover-201",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-crgover-202",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-crgover-203",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            }
+          ],
+          "kind_counts": {
+            "both_members": 4
+          },
+          "contexts_reaching_arbitration_optimum": 4,
+          "contexts_interleaved": 0,
+          "note": "interleaved > 0 is the only trajectory class that can exceed the all-singleton oracle; equals-one-member can never do so"
+        },
+        {
+          "pair": "member-a+member-d",
+          "per_context": [
+            {
+              "context_id": "b0probe-crgover-200",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-crgover-201",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-crgover-202",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-crgover-203",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            }
+          ],
+          "kind_counts": {
+            "both_members": 4
+          },
+          "contexts_reaching_arbitration_optimum": 4,
+          "contexts_interleaved": 0,
+          "note": "interleaved > 0 is the only trajectory class that can exceed the all-singleton oracle; equals-one-member can never do so"
+        },
+        {
+          "pair": "member-b+member-c",
+          "per_context": [
+            {
+              "context_id": "b0probe-crgover-200",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-crgover-201",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-crgover-202",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-crgover-203",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            }
+          ],
+          "kind_counts": {
+            "both_members": 4
+          },
+          "contexts_reaching_arbitration_optimum": 4,
+          "contexts_interleaved": 0,
+          "note": "interleaved > 0 is the only trajectory class that can exceed the all-singleton oracle; equals-one-member can never do so"
+        },
+        {
+          "pair": "member-b+member-d",
+          "per_context": [
+            {
+              "context_id": "b0probe-crgover-200",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-crgover-201",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-crgover-202",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-crgover-203",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            }
+          ],
+          "kind_counts": {
+            "both_members": 4
+          },
+          "contexts_reaching_arbitration_optimum": 4,
+          "contexts_interleaved": 0,
+          "note": "interleaved > 0 is the only trajectory class that can exceed the all-singleton oracle; equals-one-member can never do so"
+        },
+        {
+          "pair": "member-c+member-d",
+          "per_context": [
+            {
+              "context_id": "b0probe-crgover-200",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-crgover-201",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-crgover-202",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            },
+            {
+              "context_id": "b0probe-crgover-203",
+              "pair_outcome": -1.0,
+              "first_outcome": -1.0,
+              "second_outcome": -1.0,
+              "pair_best": -1.0,
+              "reaches_arbitration_optimum": true,
+              "kind": "both_members"
+            }
+          ],
+          "kind_counts": {
+            "both_members": 4
+          },
+          "contexts_reaching_arbitration_optimum": 4,
+          "contexts_interleaved": 0,
+          "note": "interleaved > 0 is the only trajectory class that can exceed the all-singleton oracle; equals-one-member can never do so"
+        }
+      ],
+      "combination_only_contexts": [
+        "b0probe-crgover-200",
+        "b0probe-crgover-201",
+        "b0probe-crgover-202",
+        "b0probe-crgover-203"
+      ],
+      "combination_only_gain_potential": 2.0,
+      "reference_requirements": [
+        {
+          "reference": "all_singleton_oracle",
+          "reference_gain": 1.5,
+          "required": 1.65,
+          "required_combination_only_contexts": 4,
+          "available_combination_only_contexts": 4,
+          "context_count": 4,
+          "feasible": true,
+          "ceiling_gain": 2.0,
+          "max_clearable_reference": 1.85
+        },
+        {
+          "reference": "best_fixed_singleton",
+          "reference_gain": 0.5,
+          "required": 0.65,
+          "required_combination_only_contexts": 2,
+          "available_combination_only_contexts": 4,
+          "context_count": 4,
+          "feasible": true,
+          "ceiling_gain": 2.0,
+          "max_clearable_reference": 1.85
+        },
+        {
+          "reference": "best_observed_fixed_pair",
+          "reference_gain": 1.0,
+          "required": 1.15,
+          "required_combination_only_contexts": 3,
+          "available_combination_only_contexts": 4,
+          "context_count": 4,
+          "feasible": true,
+          "ceiling_gain": 2.0,
+          "max_clearable_reference": 1.85
+        }
+      ],
+      "condition_2": {
+        "requirement": "the frozen mechanism must produce an interleaved trajectory",
+        "interleaved_contexts": 0,
+        "satisfied": false,
+        "reading": "no interleaved trajectory: under the frozen rule the pair still reproduces a single member's outcome, so this task shape needs a mechanism change, not a representation change"
+      },
+      "order_sensitivity": {
+        "pairs": [
+          {
+            "pair": "member-a+member-b",
+            "forward_outcome": -1.0,
+            "reversed_outcome": -1.0,
+            "best_order_outcome": -1.0,
+            "order_headroom": 0.0,
+            "order_sensitive": false
+          },
+          {
+            "pair": "member-a+member-c",
+            "forward_outcome": -1.0,
+            "reversed_outcome": -1.0,
+            "best_order_outcome": -1.0,
+            "order_headroom": 0.0,
+            "order_sensitive": false
+          },
+          {
+            "pair": "member-a+member-d",
+            "forward_outcome": -1.0,
+            "reversed_outcome": -1.0,
+            "best_order_outcome": -1.0,
+            "order_headroom": 0.0,
+            "order_sensitive": false
+          },
+          {
+            "pair": "member-b+member-c",
+            "forward_outcome": -1.0,
+            "reversed_outcome": -1.0,
+            "best_order_outcome": -1.0,
+            "order_headroom": 0.0,
+            "order_sensitive": false
+          },
+          {
+            "pair": "member-b+member-d",
+            "forward_outcome": -1.0,
+            "reversed_outcome": -1.0,
+            "best_order_outcome": -1.0,
+            "order_headroom": 0.0,
+            "order_sensitive": false
+          },
+          {
+            "pair": "member-c+member-d",
+            "forward_outcome": -1.0,
+            "reversed_outcome": -1.0,
+            "best_order_outcome": -1.0,
+            "order_headroom": 0.0,
+            "order_sensitive": false
+          }
+        ],
+        "any_order_sensitive": false,
+        "mean_order_headroom": 0.0,
+        "within_pair_oracle_gain": 0.0,
+        "reading": "priority order does not change any outcome on this surface",
+        "arbitration_ceiling_note": "mean_order_headroom is recoverable by a better arbitration, but within_pair_oracle_gain is the ceiling of ANY member-arbitration mechanism and is <= 0 by construction -- so fixing the order alone still cannot produce a collaboration claim"
+      }
+    }
+  ]
+}

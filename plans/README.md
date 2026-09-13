@@ -12,7 +12,9 @@
 
 本轮关键事实：六个 pair 在四个未见 context 上 **0 次**超过全体单体 oracle，`oracle_all_cell = oracle_singleton = 1.5`，三种候选参照**全部不可达**（缺口 2.15 / 0.15 / 1.15）。根因（续篇）：组合机制是**优先级回退链**（每 tick 只执行第一个绑定成功的成员），**仲裁类机制上界恒 ≤ 0**；24 个 pair×context 单元**零交错轨迹**；现行任务可支撑的参照上限仅 **0.35**，低于最佳可部署单体 0.5 ⇒ 换参照救不了，**任务必须改**。
 
-**唯一推荐下一步：审阅 B0 §11 / 续篇 §8 的 D1–D4 决策点（现已数值化），再据结论冻结路线 B 预注册。** 在 D1–D4 明确前不启动 B1 训练；不直接加特征列重跑旧 Gate。
+探针结果（[交接可行性探针](reference/M5_B0_HANDOFF_PROBE_RESULT_20260913.md)）：先复现冻结矩阵 **11/11**；**三层已完全分离** —— 任务层找到达标形态 `create_and_override`（四单体全失败、`k=4/4`、**三种参照全部 feasible**、可支撑参照上限 1.85），但同一候选上**六个 pair 仍全部失败、`interleaved=0`** ⇒ **机制层是唯一阻塞**；根因是交接触发条件是"绑定失败"而非"无进展"，第一个成员独占 episode。据此提出最小修法 **M1（待决策 D5，未实施）**。
+
+**唯一推荐下一步：审阅 D1–D5 决策点（已全部数值化/实测化），据结论冻结路线 B 预注册。** 其中 **D5（是否落地机制修法 M1）是关键路径** —— 不落地 M1，H2 协作主张在当前机制下不可达。在 D1–D5 明确前不启动 B1 训练；不直接加特征列重跑旧 Gate。
 
 ## 最新证据入口
 
@@ -35,7 +37,8 @@
 | [P5.2c‴ 表征修复结果](../reports/M5_P5_2C_TRIPLE_PRIME_REPRESENTATION_REPAIR_RESULT_20260913.md) / [本轮复审](reference/M5_POST_ROUTE_A_REVIEW_20260913.md) | 路线 A 完成，秩和区分度提升但收益未过；评分参照和任务上界需审查 |
 | [B0 设计包](reference/M5_B0_MEASUREMENT_AND_REACHABILITY_AUDIT_20260913.md) / [审计报告](../reports/taiji_b0_measurement_reachability_audit_20260913.json) | 统一测量字典 v1 草案、32/32 字段复算一致、三种参照全部不可达、五个手算用例；结论=先改任务 |
 | [B0 机制与预检续篇](reference/M5_B0_MECHANISM_AND_TASK_PRECHECK_20260913.md) / [预检报告](../reports/taiji_b0_task_reachability_precheck_20260913.json) | 组合机制是**优先级回退链**；仲裁上界恒 ≤0；24 单元**零交错**；逃生通道闭式要求；T1/T2/T3 具体规格 |
-| [B0 复合任务候选与路线 B 预注册草案](reference/M5_B0_ROUTE_B_PREREGISTRATION_DRAFT_20260913.md) | **未冻结**；H1 路由 / H2 协作 / H3 排序分列判据；T1/T2/T3 候选待选 |
+| [B0 交接可行性探针结果](reference/M5_B0_HANDOFF_PROBE_RESULT_20260913.md) / [探针报告](../reports/taiji_b0_handoff_feasibility_probe_20260913.json) | 先复现冻结矩阵 **11/11**；**三层完全分离**：任务层已找到达标形态（`k=4/4`、三种参照全 feasible），**机制层是唯一阻塞**；提出最小修法 **M1（待决策 D5）** |
+| [B0 复合任务候选与路线 B 预注册草案](reference/M5_B0_ROUTE_B_PREREGISTRATION_DRAFT_20260913.md) | **未冻结**；H1 路由 / H2 协作 / H3 排序分列判据；候选已由探针收敛 |
 
 ## 文档职责
 
