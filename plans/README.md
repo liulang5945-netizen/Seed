@@ -56,3 +56,5 @@
 active 只保留当前决策与核心约束；reference 保留预注册/结果解释；archive 保存历史；manifests 保存冻结数据合同。失败报告不覆盖，临时产物逐项核验后清理。
 
 当前 f9825943 的 CI 34753643532 上次查询时两条 Linux 已在 Ruff 失败；本轮未查询远端（`gh` 未认证）。按命令级基线：本地 `ruff check .` 原有 1 项 `I001`（即上述失败原因），B0 已修复，现为 **All checks passed**；B0 新增测试 14 passed、目标集八个文件 95 passed；全量套件未跑。局部通过不等于全仓 CI 通过，处理顺序见推进方案 §9 与[B0 设计包](reference/M5_B0_MEASUREMENT_AND_REACHABILITY_AUDIT_20260913.md) §10。
+
+**推送受阻（如实记录）**：本会话 `git push` 报 `could not read Username for 'https://github.com'`（无可用凭据；`ls-remote` 可通，属认证问题而非网络）。`origin/main` 仍停在 `f9825943`，本地 `main` 领先 4 个未推送提交（`4a94e9c6`、`104de608`、`b89ca217`、`956c6e24`）⇒ **CI 不会被本次提交触发**，需用户提供凭据或在本机推送。
