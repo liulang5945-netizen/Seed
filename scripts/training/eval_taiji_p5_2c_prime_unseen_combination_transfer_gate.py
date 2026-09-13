@@ -76,7 +76,7 @@ sys.path.insert(0, str(PROJECT_ROOT / "scripts" / "training"))
 import eval_taiji_p5_2a_predictive_execution_gate as p52a  # noqa: E402
 import eval_taiji_p5_2b_group_causal_corpora_gate as p52b  # noqa: E402
 
-from taiji.document_embedding import DocumentEmbedder  # noqa: E402
+from instruments.document_embedding import DocumentEmbedder  # noqa: E402
 from taiji.interaction_group_learning import InteractionGroupSelection  # noqa: E402
 from taiji.interaction_group_transfer import (  # noqa: E402
     InteractionGroupTransferCandidate,

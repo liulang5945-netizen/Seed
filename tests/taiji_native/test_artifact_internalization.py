@@ -3,9 +3,14 @@ from __future__ import annotations
 from copy import deepcopy
 
 import pytest
+import torch
 
 from scripts.training.verify_taiji_e4_artifact_internalization import build_fixture, run_gate
-from taiji import ArtifactInternalizationTrainer, ArtifactKnowledgeEncoder
+from taiji import (
+    ArtifactInternalizationTrainer,
+    ArtifactKnowledgeEncoder,
+    SemanticArtifactKnowledgeEncoder,
+)
 from taiji.internalization import content_digest
 
 
@@ -51,3 +56,58 @@ def test_artifact_internalization_checkpoint_is_tamper_evident_and_boundary_is_s
             holdout_experiences=(),
             retention_experiences=(),
         )
+
+
+class _FakeEmbedder:
+    """Duck-typed embedder instrument (keeps this test free of transformers)."""
+
+    model_id = "fake/anchor-model"
+    revision = "fake-rev-1"
+    config_digest = "fake-config-digest"
+    dimension = 8
+
+    def embed(self, texts: list[str]) -> torch.Tensor:
+        return torch.zeros((len(texts), self.dimension))
+
+
+def test_semantic_encoder_requires_injected_embedder() -> None:
+    """DEBT-A1/A2: taiji must not construct an HF-backed embedder implicitly."""
+
+    with pytest.raises(TypeError):
+        SemanticArtifactKnowledgeEncoder()
+    with pytest.raises(ValueError, match="injected embedder"):
+        SemanticArtifactKnowledgeEncoder(embedder=None)
+
+
+def test_semantic_encoder_checkpoint_roundtrip_is_anchor_verified() -> None:
+    embedder = _FakeEmbedder()
+    encoder = SemanticArtifactKnowledgeEncoder(embedder=embedder)
+    payload = encoder.checkpoint()
+
+    restored = SemanticArtifactKnowledgeEncoder.from_checkpoint(payload, embedder=embedder)
+    assert restored.embedder is embedder
+    assert restored.feature_dim == embedder.dimension
+
+    tampered = deepcopy(payload)
+    tampered["embedder_revision"] = f"{tampered['embedder_revision']}-tampered"
+    with pytest.raises(ValueError, match="embedder_revision drift"):
+        SemanticArtifactKnowledgeEncoder.from_checkpoint(tampered, embedder=embedder)
+
+
+def test_trainer_from_checkpoint_semantic_payload_requires_embedder() -> None:
+    trainer = ArtifactInternalizationTrainer(
+        feature_dim=_FakeEmbedder.dimension,
+        encoder=SemanticArtifactKnowledgeEncoder(embedder=_FakeEmbedder()),
+    )
+    payload = trainer.checkpoint()
+    assert payload["encoder"]["format"] == SemanticArtifactKnowledgeEncoder.FORMAT
+
+    with pytest.raises(ValueError, match="requires an injected embedder"):
+        ArtifactInternalizationTrainer.from_checkpoint(payload)
+    restored = ArtifactInternalizationTrainer.from_checkpoint(payload, embedder=_FakeEmbedder())
+    assert isinstance(restored.encoder, SemanticArtifactKnowledgeEncoder)
+
+    # Native-encoder checkpoints keep restoring with no embedder argument.
+    native_payload = ArtifactInternalizationTrainer().checkpoint()
+    native_restored = ArtifactInternalizationTrainer.from_checkpoint(native_payload)
+    assert isinstance(native_restored.encoder, ArtifactKnowledgeEncoder)

@@ -37,6 +37,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+from instruments.document_embedding import DocumentEmbedder  # noqa: E402
 from scripts.training.eval_taiji_p5_1_sourced_knowledge_transfer import (  # noqa: E402
     _capability_vocabulary,
     _quarantine_rejected,
@@ -52,7 +53,6 @@ from scripts.training.probe_taiji_p5_1b_semantic_paraphrase_transfer import (  #
 )
 from taiji import ArtifactInternalizationTrainer  # noqa: E402
 from taiji.artifact_internalization import ArtifactKnowledgeEncoder  # noqa: E402
-from taiji.document_embedding import DocumentEmbedder  # noqa: E402
 from taiji.evolution_experience import EvolutionCorpusArtifact  # noqa: E402
 from taiji.internalization import (  # noqa: E402
     GroundedFeatureExample,
@@ -213,7 +213,7 @@ def _semantic_arm(label: str, corpus, embedder: DocumentEmbedder, consolidate):
     )
     restored = ArtifactInternalizationTrainer.from_checkpoint(stub)
     restored.encoder = SemanticArtifactKnowledgeEncoder.from_checkpoint(
-        payload["encoder"]
+        payload["encoder"], embedder=embedder
     )  # type: ignore[assignment]
     roundtrip = content_digest(restored.checkpoint()) == content_digest(payload)
     return {

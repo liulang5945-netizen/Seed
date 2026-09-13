@@ -61,7 +61,7 @@ import eval_taiji_p5_2b_group_causal_corpora_gate as p52b  # noqa: E402
 import eval_taiji_p5_2c_double_prime_unseen_combination_transfer_gate as p52cpp  # noqa: E402
 import eval_taiji_p5_2c_prime_unseen_combination_transfer_gate as p52cp  # noqa: E402
 
-from taiji.document_embedding import DocumentEmbedder  # noqa: E402
+from instruments.document_embedding import DocumentEmbedder  # noqa: E402
 from taiji.interaction_group_transfer import (  # noqa: E402
     INTERACTION_GROUP_TRANSFER_MODEL_REVISION,
     MEMBER_EVIDENCE_VERSION,

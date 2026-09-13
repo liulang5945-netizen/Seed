@@ -41,12 +41,12 @@ sys.path.insert(0, str(PROJECT_ROOT / "scripts" / "training"))
 import eval_taiji_p5_2_workbench_simulation_contract_gate as p52  # noqa: E402
 import eval_taiji_p5_2a_predictive_execution_gate as p52a  # noqa: E402
 
+from instruments.document_embedding import DocumentEmbedder  # noqa: E402
 from seed_platform.workbench import (  # noqa: E402
     WorkbenchActionRequest,
     WorkbenchEnvironment,
 )
 from taiji.contracts import ActionIntent  # noqa: E402
-from taiji.document_embedding import DocumentEmbedder  # noqa: E402
 from taiji.interaction_group_transfer import build_member_evidence  # noqa: E402
 from taiji.interaction_groups import (  # noqa: E402
     InteractionGroupEvaluator,
