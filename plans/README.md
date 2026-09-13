@@ -14,9 +14,11 @@
 
 探针结果（[交接可行性探针](reference/M5_B0_HANDOFF_PROBE_RESULT_20260913.md)）：先复现冻结矩阵 **11/11**；**三层已完全分离** —— 任务层找到达标形态 `create_and_override`（四单体全失败、`k=4/4`、**三种参照全部 feasible**、可支撑参照上限 1.85），但同一候选上**六个 pair 仍全部失败、`interleaved=0`** ⇒ **机制层是唯一阻塞**；根因是交接触发条件是"绑定失败"而非"无进展"，第一个成员独占 episode。据此提出最小修法 **M1（待决策 D5，未实施）**。
 
-反事实测量（[机制修法反事实测量](reference/M5_B0_M1_COUNTERFACTUAL_RESULT_20260913.md)）：先验证候选面**可满足且顺序强制**（反序时 `set_language` 绑定成功但执行失败），再测**六个修法变体**——**五个失败、一个成功**。**`m4_failure_handoff`（+21 行、2 处替换）**：冻结面 **0 回归、2 改善**（`a+b`/`a+c` 各 0.25→0.50），候选面 **`interleaved=4/4`**、**同参照增益 `+2.000` > 1.65**（最严参照）⇒ **H2 协作主张首次可达**。**M4 未实施**，仍是反事实；落地需 D5 决策 + 单独预注册。
+反事实测量（[机制修法反事实测量](reference/M5_B0_M1_COUNTERFACTUAL_RESULT_20260913.md)）：先验证候选面**可满足且顺序强制**（反序时 `set_language` 绑定成功但执行失败），再测**六个修法变体**——**五个失败、一个成功**。**`m4_failure_handoff`（+21 行、2 处替换）**：冻结面 **0 回归、2 改善**（`a+b`/`a+c` 各 0.25→0.50），候选面 **`interleaved=4/4`**、**同参照增益 `+2.000` > 1.65**（最严参照）⇒ **H2 协作主张首次可达**。
 
-**唯一推荐下一步：审阅 D1–D5 决策点（已全部数值化/实测化），据结论冻结路线 B 预注册。** 其中 **D5（是否落地机制修法）已有实测可行选项 `m4_failure_handoff`** —— 不落地，H2 协作主张在当前机制下不可达。在 D1–D5 明确前不启动 B1 训练；不直接加特征列重跑旧 Gate。
+伪影审计（[M4 伪影审计](reference/M5_B0_M4_ARTIFACT_AUDIT_20260913.md)）：**四项全过** —— ① 特异性：正增益**只**出现在 `create_and_override`（冻结面 −0.5、`dual_requirement` −2.0、`create_then_patch` +0.000）；② 干预真实性：5 次面测量 `interventions_happened` 全 true；③ 机制 lesion：增益随交接消失且四单体全败；④ **3 个种子偏移下候选面增益恒 +2.000，且无种子在冻结面制造增益**。冻结面 2 个改善**逐步归因为真实交接**（基线里 `member-b`/`member-c` 一次机会都没有，M4 才放行）。**M4 仍未实施**；新增停止原因 `all_members_blocked` 需门禁语义审查。
+
+**唯一推荐下一步：审阅 D1–D5 决策点（已全部数值化/实测化/审计过），据结论冻结路线 B 预注册。** 其中 **D5 已有通过四项伪影审计的实测可行选项 `m4_failure_handoff`** —— 不落地，H2 协作主张在当前机制下不可达。在 D1–D5 明确前不启动 B1 训练；不直接加特征列重跑旧 Gate。
 
 ## 最新证据入口
 
@@ -41,6 +43,7 @@
 | [B0 机制与预检续篇](reference/M5_B0_MECHANISM_AND_TASK_PRECHECK_20260913.md) / [预检报告](../reports/taiji_b0_task_reachability_precheck_20260913.json) | 组合机制是**优先级回退链**；仲裁上界恒 ≤0；24 单元**零交错**；逃生通道闭式要求；T1/T2/T3 具体规格 |
 | [B0 交接可行性探针结果](reference/M5_B0_HANDOFF_PROBE_RESULT_20260913.md) / [探针报告](../reports/taiji_b0_handoff_feasibility_probe_20260913.json) | 先复现冻结矩阵 **11/11**；**三层完全分离**：任务层已找到达标形态（`k=4/4`、三种参照全 feasible），**机制层是唯一阻塞**；提出最小修法 **M1（待决策 D5）** |
 | [B0 机制修法反事实测量](reference/M5_B0_M1_COUNTERFACTUAL_RESULT_20260913.md) / [测量报告](../reports/taiji_b0_m1_counterfactual_20260913.json) | 六个变体**五个失败一个成功**；**`m4_failure_handoff` 不回归（0 回归 / 2 改善）且 `interleaved=4/4`、同参照增益 +2.000 > 1.65** ⇒ **H2 协作主张首次可达**（未实施，待 D5） |
+| [B0 M4 伪影审计](reference/M5_B0_M4_ARTIFACT_AUDIT_20260913.md) / [审计报告](../reports/taiji_b0_m4_artifact_audit_20260913.json) | **四项全过**：特异性（正增益只在该面）、干预真实性（无惰性 cell）、机制 lesion（增益随交接消失且四单体全败）、**3 种子下增益恒 +2.000**；冻结面 2 个改善**逐步归因为真实交接** |
 | [B0 复合任务候选与路线 B 预注册草案](reference/M5_B0_ROUTE_B_PREREGISTRATION_DRAFT_20260913.md) | **未冻结**；H1 路由 / H2 协作 / H3 排序分列判据；候选已由探针收敛 |
 
 ## 文档职责
