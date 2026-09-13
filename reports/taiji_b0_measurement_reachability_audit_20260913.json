@@ -1,0 +1,381 @@
+{
+  "format": "taiji-b0-measurement-reachability-audit-v1",
+  "version": 1,
+  "measurement_dictionary_version": "b0-measurement-dictionary-v1-draft",
+  "status": "draft_for_review",
+  "does_not_change": [
+    "no frozen report, preregistration or threshold is modified",
+    "no training, no checkpoint write, no product adoption",
+    "the historical numbers stay as reported; this audit adds fields"
+  ],
+  "inputs": {
+    "route_a_report": "reports\\taiji_p5_2c_triple_prime_representation_repair_20260913.json",
+    "route_c_report": "reports\\taiji_p5_2c_double_prime_unseen_combination_transfer_20260913.json",
+    "p52b_report": "reports\\taiji_p5_2b_group_causal_corpora_20260913.json"
+  },
+  "dictionary": {
+    "blank": "B(context): outcome of the (F,F) baseline cell",
+    "singleton": "S_i(context): outcome of member i alone",
+    "combination": "P_ij(context): outcome of the pair cell as executed",
+    "primary_task_performance": "mean outcome of a fixed policy over contexts",
+    "same_reference_gain": "U(policy) - U(common reference), one reference for all policies",
+    "pair_internal_reference": "max(S_i, S_j) -- frozen route-A object",
+    "all_singleton_reference": "max_i S_i -- frozen route-A control C2",
+    "causal_interaction": "P_ij - S_i - S_j + B, reported separately from utility",
+    "deployable_control": "a policy frozen from train evidence only, no oracle access",
+    "cost": "calls / steps / wall / recovery, folded with an a-priori frozen weight",
+    "code_assertion": "each formula is exercised by a hand-calculated case in tests/taiji_native/test_b0_measurement_dictionary.py"
+  },
+  "cross_check": {
+    "all_match": true,
+    "checked_fields": 32,
+    "mismatches": []
+  },
+  "route_a_recomputation": {
+    "rows": [
+      {
+        "pair": "member-a+member-c",
+        "reported_mean_gain_vs_strongest_single": -0.5,
+        "recomputed_pair_internal_gain": -0.5,
+        "reported_mean_realized_interaction": -0.5,
+        "recomputed_mean_interaction": -0.5,
+        "recomputed_gain_vs_all_singleton_oracle": -1.0,
+        "recomputed_gain_vs_baseline": 0.5,
+        "pair_internal_reference_kind": "max(S_i, S_j)"
+      },
+      {
+        "pair": "member-b+member-d",
+        "reported_mean_gain_vs_strongest_single": 0.0,
+        "recomputed_pair_internal_gain": 0.0,
+        "reported_mean_realized_interaction": 0.0,
+        "recomputed_mean_interaction": 0.0,
+        "recomputed_gain_vs_all_singleton_oracle": -0.5,
+        "recomputed_gain_vs_baseline": 1.0,
+        "pair_internal_reference_kind": "max(S_i, S_j)"
+      }
+    ],
+    "c2_reported": 1.5,
+    "c2_recomputed": 1.5,
+    "c2_reference_kind": "max_i S_i - B",
+    "mixed_reference_finding": "the object subtracts the pair-internal oracle while C2 subtracts the all-singleton oracle, yet both were carried in one field name and compared by a single margin test",
+    "required_reported": 1.65,
+    "required_recomputed": 1.65,
+    "object_reported": -0.5,
+    "object_recomputed_pair_internal": -0.5
+  },
+  "route_c_recomputation": {
+    "outcome": "transfer_signal_constant",
+    "rows": [
+      {
+        "pair": "member-a+member-c",
+        "reported_mean_gain_vs_strongest_single": -0.5,
+        "recomputed_gain_vs_all_singleton_oracle": -1.0,
+        "recomputed_gain_vs_baseline": 0.5
+      },
+      {
+        "pair": "member-b+member-d",
+        "reported_mean_gain_vs_strongest_single": 0.0,
+        "recomputed_gain_vs_all_singleton_oracle": -0.5,
+        "recomputed_gain_vs_baseline": 1.0
+      }
+    ],
+    "c2_reported": 1.5,
+    "c2_recomputed": 1.5
+  },
+  "unseen_contexts": [
+    "p52a-validation-108",
+    "p52a-validation-109",
+    "p52a-validation-110",
+    "p52a-validation-111"
+  ],
+  "cells": [
+    {
+      "cell": "member-a+member-b",
+      "is_held_out": false,
+      "mean_outcome": -0.5,
+      "gain_vs_baseline": 0.5,
+      "gain_vs_pair_internal_oracle": -0.5,
+      "gain_vs_all_singleton_oracle": -1.0,
+      "mean_interaction": -0.5,
+      "contexts_beating_all_singleton_oracle": 0
+    },
+    {
+      "cell": "member-a+member-c",
+      "is_held_out": true,
+      "mean_outcome": -0.5,
+      "gain_vs_baseline": 0.5,
+      "gain_vs_pair_internal_oracle": -0.5,
+      "gain_vs_all_singleton_oracle": -1.0,
+      "mean_interaction": -0.5,
+      "contexts_beating_all_singleton_oracle": 0
+    },
+    {
+      "cell": "member-a+member-d",
+      "is_held_out": false,
+      "mean_outcome": -0.5,
+      "gain_vs_baseline": 0.5,
+      "gain_vs_pair_internal_oracle": 0.0,
+      "gain_vs_all_singleton_oracle": -1.0,
+      "mean_interaction": -0.5,
+      "contexts_beating_all_singleton_oracle": 0
+    },
+    {
+      "cell": "member-b+member-c",
+      "is_held_out": false,
+      "mean_outcome": 0.0,
+      "gain_vs_baseline": 1.0,
+      "gain_vs_pair_internal_oracle": 0.0,
+      "gain_vs_all_singleton_oracle": -0.5,
+      "mean_interaction": 0.0,
+      "contexts_beating_all_singleton_oracle": 0
+    },
+    {
+      "cell": "member-b+member-d",
+      "is_held_out": true,
+      "mean_outcome": 0.0,
+      "gain_vs_baseline": 1.0,
+      "gain_vs_pair_internal_oracle": 0.0,
+      "gain_vs_all_singleton_oracle": -0.5,
+      "mean_interaction": 0.0,
+      "contexts_beating_all_singleton_oracle": 0
+    },
+    {
+      "cell": "member-c+member-d",
+      "is_held_out": false,
+      "mean_outcome": -0.5,
+      "gain_vs_baseline": 0.5,
+      "gain_vs_pair_internal_oracle": -0.5,
+      "gain_vs_all_singleton_oracle": -1.0,
+      "mean_interaction": -0.5,
+      "contexts_beating_all_singleton_oracle": 0
+    }
+  ],
+  "reachability": {
+    "margin": 0.15,
+    "rows": [
+      {
+        "reference": "all_singleton_oracle",
+        "reference_is_deployable": false,
+        "reference_value": 1.5,
+        "required": 1.65,
+        "achievable_ceiling": -0.5,
+        "reachable": false,
+        "shortfall": 2.15
+      },
+      {
+        "reference": "best_fixed_singleton",
+        "reference_is_deployable": true,
+        "reference_value": 0.5,
+        "required": 0.65,
+        "achievable_ceiling": 0.5,
+        "reachable": false,
+        "shortfall": 0.15
+      },
+      {
+        "reference": "best_observed_fixed_pair",
+        "reference_is_deployable": true,
+        "reference_value": 1.0,
+        "required": 1.15,
+        "achievable_ceiling": 0.0,
+        "reachable": false,
+        "shortfall": 1.15
+      }
+    ],
+    "deployable_controls": {
+      "best_fixed_singleton": {
+        "member_ids": [
+          "member-a"
+        ],
+        "gain_vs_baseline": 0.5
+      },
+      "best_observed_fixed_pair": {
+        "member_ids": [
+          "member-b",
+          "member-c"
+        ],
+        "gain_vs_baseline": 1.0
+      },
+      "held_out_pairs_gain_vs_baseline": {
+        "member-a+member-c": 0.5,
+        "member-b+member-d": 1.0
+      },
+      "best_held_out_pair_gain_vs_baseline": 1.0,
+      "held_out_selection_spread": 0.5
+    },
+    "structural_ceiling_current_matrix": -0.5,
+    "ceiling_if_block_becomes_solvable": 0.5,
+    "oracle_all_cell_gain_vs_baseline": 1.5
+  },
+  "task_structure_facts": {
+    "singleton_surfaces": {
+      "member-a": [
+        0
+      ],
+      "member-b": [
+        1
+      ],
+      "member-c": [
+        2
+      ],
+      "member-d": [
+        0
+      ]
+    },
+    "pair_kinds": {
+      "member-a+member-b": "DISJOINT",
+      "member-a+member-c": "DISJOINT",
+      "member-a+member-d": "EQUAL",
+      "member-b+member-c": "DISJOINT",
+      "member-b+member-d": "DISJOINT",
+      "member-c+member-d": "DISJOINT"
+    },
+    "block3_stop_reasons": {
+      "all_members_exhausted": 6,
+      "contract_intercepted": 60
+    },
+    "block3_uniformly_unreachable": true,
+    "discriminating_fraction": 0.75,
+    "contexts_where_every_singleton_fails": [
+      "p52a-validation-111"
+    ]
+  },
+  "prediction_binding_finding": {
+    "held_out_predictions": {
+      "member-a+member-c": -0.1168032786885246,
+      "member-b+member-d": -0.1168032786885246
+    },
+    "prediction_distinctness": 2,
+    "selected_object": [
+      "member-a",
+      "member-c"
+    ],
+    "finding": "the two held-out pairs receive the identical prediction, so the selected object was fixed by tie-breaking rather than by ranking; a positive result under this binding would not evidence selection skill"
+  },
+  "p52b_state": {
+    "groups": 0,
+    "rejected": 6,
+    "rejected_reasons": [
+      [
+        "low_confidence",
+        6
+      ]
+    ],
+    "growth_admitted": false,
+    "can_promote": false
+  },
+  "hand_calculated_cases": [
+    {
+      "case": "fully_redundant",
+      "formula": "S_i = S_j = P on every context",
+      "why": "two members share one capability surface; adding the second buys nothing",
+      "contexts": [
+        "c0",
+        "c1",
+        "c2",
+        "c3"
+      ],
+      "pair": [
+        "member-a",
+        "member-d"
+      ],
+      "pair_mean_outcome": -0.5,
+      "pair_gain_vs_baseline": 0.5,
+      "pair_gain_vs_pair_internal_oracle": 0.0,
+      "pair_gain_vs_all_singleton_oracle": 0.0,
+      "pair_mean_interaction": -0.5,
+      "contexts_beating_all_singleton_oracle": 0,
+      "utility_cost_weight_0.0": -0.5,
+      "utility_cost_weight_0.5": -1.5
+    },
+    {
+      "case": "coverage_complementary_no_synergy",
+      "formula": "each member wins a disjoint block, the combination routes to the winner",
+      "why": "the pair covers more than any fixed singleton but never beats the oracle",
+      "contexts": [
+        "c0",
+        "c1",
+        "c2",
+        "c3"
+      ],
+      "pair": [
+        "member-a",
+        "member-b"
+      ],
+      "pair_mean_outcome": 0.0,
+      "pair_gain_vs_baseline": 1.0,
+      "pair_gain_vs_pair_internal_oracle": 0.0,
+      "pair_gain_vs_all_singleton_oracle": 0.0,
+      "pair_mean_interaction": 0.0,
+      "contexts_beating_all_singleton_oracle": 0,
+      "utility_cost_weight_0.0": 0.0,
+      "utility_cost_weight_0.5": -1.0
+    },
+    {
+      "case": "jointly_required",
+      "formula": "S_i = S_j = B < P on every context",
+      "why": "the only regime that can support a same-reference collaboration claim",
+      "contexts": [
+        "c0",
+        "c1",
+        "c2",
+        "c3"
+      ],
+      "pair": [
+        "member-a",
+        "member-b"
+      ],
+      "pair_mean_outcome": 1.0,
+      "pair_gain_vs_baseline": 2.0,
+      "pair_gain_vs_pair_internal_oracle": 2.0,
+      "pair_gain_vs_all_singleton_oracle": 2.0,
+      "pair_mean_interaction": 2.0,
+      "contexts_beating_all_singleton_oracle": 4,
+      "utility_cost_weight_0.0": 1.0,
+      "utility_cost_weight_0.5": 0.0
+    },
+    {
+      "case": "all_fail",
+      "formula": "B = S_i = S_j = P = failure",
+      "why": "a task nobody solves is neither capability evidence nor a violation",
+      "contexts": [
+        "c0",
+        "c1",
+        "c2",
+        "c3"
+      ],
+      "pair": [
+        "member-a",
+        "member-b"
+      ],
+      "pair_mean_outcome": -1.0,
+      "pair_gain_vs_baseline": 0.0,
+      "pair_gain_vs_pair_internal_oracle": 0.0,
+      "pair_gain_vs_all_singleton_oracle": 0.0,
+      "pair_mean_interaction": 0.0,
+      "contexts_beating_all_singleton_oracle": 0,
+      "utility_cost_weight_0.0": -1.0,
+      "utility_cost_weight_0.5": -2.0
+    },
+    {
+      "case": "equal_outcome_different_cost",
+      "formula": "equal outcome, different call counts, frozen cost weight",
+      "why": "cost must be frozen in advance or it becomes a post-hoc knob",
+      "contexts": [
+        "c0",
+        "c1"
+      ],
+      "pair": [
+        "member-a",
+        "member-b"
+      ],
+      "pair_mean_outcome": 1.0,
+      "pair_gain_vs_baseline": 2.0,
+      "pair_gain_vs_pair_internal_oracle": 0.0,
+      "pair_gain_vs_all_singleton_oracle": 0.0,
+      "pair_mean_interaction": -2.0,
+      "contexts_beating_all_singleton_oracle": 0,
+      "utility_cost_weight_0.0": 1.0,
+      "utility_cost_weight_0.5": 0.0
+    }
+  ]
+}

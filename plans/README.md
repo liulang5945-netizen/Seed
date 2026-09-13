@@ -1,16 +1,16 @@
 # Seed / Taiji 计划与架构入口
 
-> 更新：2026-09-13；结果审查基线 `f9825943`。执行顺序仅由[当前推进方案](active/roadmap/03_CURRENT_EXECUTION.md)决定。
+> 更新：2026-09-13（B0 完成）；结果审查基线 `f9825943`。执行顺序仅由[当前推进方案](active/roadmap/03_CURRENT_EXECUTION.md)决定。
 
 ## 当前阶段
 
-**K 轴已限定晋级；路线 C、A 均已完成。A 表征机械生效，但迁移仍未通过；下一步进入路线 B 的评分与任务可达性审查。**
+**K 轴已限定晋级；路线 C、A 均已完成。B0 评分与可达性审查已完成，结论是目标当前不可达，故暂停正式训练，进入任务与估计目标的修改审阅。**
 
 边界：K/G 为 opt-in、进程内状态；P5.1g 为未准入 trial；P5.2a 已接真实预测执行但泛化门未过；修复后的 P5.2b 当前 groups=0、rejected=6。A 的预测两档不代表正确排序，跨任务覆盖不代表同任务协作。结构成长未触发。
 
-[本轮结果复审](reference/M5_POST_ROUTE_A_REVIEW_20260913.md)核对评分参照、预测方向及任务上界。[详细方案](active/roadmap/03_CURRENT_EXECUTION.md)给出 B0/B1/B2、在线学习、真实语料准入与产品采用的步骤、对照、验收和停止点。
+[B0 设计包](reference/M5_B0_MEASUREMENT_AND_REACHABILITY_AUDIT_20260913.md)给出统一测量字典、旧值复算、可达性上界与复合任务候选；[路线 B 预注册草案](reference/M5_B0_ROUTE_B_PREREGISTRATION_DRAFT_20260913.md)（**未冻结**）给出 H1/H2/H3 分层判据。本轮关键事实：六个 pair 在四个未见 context 上 **0 次**超过全体单体 oracle，`oracle_all_cell = oracle_singleton = 1.5`，三种候选参照**全部不可达**（缺口 2.15 / 0.15 / 1.15）。
 
-**唯一推荐下一步：路线 B0 —— 评分与任务可达性审查，形成路线 B 预注册草案。** 先统一收益参照并确认协作主张可测，再冻结条件化关系表示与新测试；不直接加列重跑旧 Gate。
+**唯一推荐下一步：审阅 B0 设计包 §11 的 D1–D4 决策点（估计目标与参照、复合任务候选、旧 1.65 判据处置、旧载体降级），再据结论冻结路线 B 预注册。** 在 D1–D4 明确前不启动 B1 训练；不直接加特征列重跑旧 Gate。
 
 ## 最新证据入口
 
@@ -31,6 +31,8 @@
 | [P5.2c′ 未见组合迁移结果](../reports/M5_P5_2C_PRIME_UNSEEN_COMBINATION_TRANSFER_RESULT_20260913.md) | transfer_no_gain；未见面只有一对且冗余，非一般选择能力结论 |
 | [P5.2c″ 未见组合迁移结果](../reports/M5_P5_2C_DOUBLE_PRIME_UNSEEN_COMBINATION_TRANSFER_RESULT_20260913.md) | 路线 C 完成，两对留出、旧表示常量；block-3 只量化未修可达性 |
 | [P5.2c‴ 表征修复结果](../reports/M5_P5_2C_TRIPLE_PRIME_REPRESENTATION_REPAIR_RESULT_20260913.md) / [本轮复审](reference/M5_POST_ROUTE_A_REVIEW_20260913.md) | 路线 A 完成，秩和区分度提升但收益未过；评分参照和任务上界需审查 |
+| [B0 设计包](reference/M5_B0_MEASUREMENT_AND_REACHABILITY_AUDIT_20260913.md) / [审计报告](../reports/taiji_b0_measurement_reachability_audit_20260913.json) | 统一测量字典 v1 草案、32/32 字段复算一致、三种参照全部不可达、五个手算用例；结论=先改任务 |
+| [B0 复合任务候选与路线 B 预注册草案](reference/M5_B0_ROUTE_B_PREREGISTRATION_DRAFT_20260913.md) | **未冻结**；H1 路由 / H2 协作 / H3 排序分列判据；T1/T2/T3 候选待选 |
 
 ## 文档职责
 
@@ -38,7 +40,8 @@
 |---|---|
 | [当前推进方案](active/roadmap/03_CURRENT_EXECUTION.md) | 唯一下一步、依赖、交付、验收、讨论节点 |
 | [技术债登记册](active/roadmap/05_TECH_DEBT_REGISTER.md) | A1/A2 已结项，历史 SystemExit 待定位；新评分/CI 约束见最新状态补充 |
-| [P5.2c′ 决策历史](active/roadmap/06_P5_2C_PRIME_NEXT_STEP_DECISION.md) | 用户既定顺序先 C 后 AB；C/A 已完成，原选项不是当前待选事项 |
+| [P5.2c′ 决策历史](active/roadmap/06_P5_2C_PRIME_NEXT_STEP_DECISION.md) | 用户既定顺序先 C 后 AB；C/A/B0 已完成，D1–D4 决策点待定 |
+| [B0 设计包](reference/M5_B0_MEASUREMENT_AND_REACHABILITY_AUDIT_20260913.md) | 统一公式、旧值复算、可达性上界、手算用例、复合任务候选、训练前硬门、CI 阻塞清单 |
 | [P5.2c″ 预注册](reference/M5_P5_2C_DOUBLE_PRIME_UNSEEN_COMBINATION_TRANSFER_PREREGISTRATION_20260913.md) | 路线 C 的冻结判据：两个已验证互补的未见组合、block-3 量化、**声明只修测量仪器不修表征** |
 | [P5.2c″ 结果报告](../reports/M5_P5_2C_DOUBLE_PRIME_UNSEEN_COMBINATION_TRANSFER_RESULT_20260913.md) | `transfer_signal_constant`；九门 8 过；三项目标全达成；含「先 C 后 A」排期验证 |
 | [本轮结果复审](reference/M5_POST_P5_2_REVIEW_20260913.md) | 证据核验、边界修正、方案选择依据 |
@@ -52,4 +55,4 @@
 
 active 只保留当前决策与核心约束；reference 保留预注册/结果解释；archive 保存历史；manifests 保存冻结数据合同。失败报告不覆盖，临时产物逐项核验后清理。
 
-当前 f9825943 的 CI 34753643532 在本轮查询时尚在运行，两条 Linux 已在 Ruff 失败；前端、Docker、启动 smoke 成功。架构迁移的局部测试通过不等于全仓 CI 通过，处理顺序见推进方案 §9。
+当前 f9825943 的 CI 34753643532 上次查询时两条 Linux 已在 Ruff 失败；本轮未查询远端（`gh` 未认证）。按命令级基线：本地 `ruff check .` 原有 1 项 `I001`（即上述失败原因），B0 已修复，现为 **All checks passed**；B0 新增测试 14 passed、目标集八个文件 95 passed；全量套件未跑。局部通过不等于全仓 CI 通过，处理顺序见推进方案 §9 与[B0 设计包](reference/M5_B0_MEASUREMENT_AND_REACHABILITY_AUDIT_20260913.md) §10。

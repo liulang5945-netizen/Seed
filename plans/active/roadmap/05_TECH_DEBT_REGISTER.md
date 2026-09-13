@@ -1,13 +1,17 @@
 # Seed / Taiji 技术债登记册
 
-## 最新状态补充（2026-09-13，f9825943）
+## 最新状态补充（2026-09-13，B0 完成后）
 
 - DEBT-A1/A2 已结项，见下方修复记录；原“只登记不修复”是建册时范围，不应把已完成修复写回未解决。
 - 30 失败/788 用例是 aa124f52 的历史基线；28 个 SystemExit 仍待定位，不是当前 HEAD 重测计数。
 - 下文引用图论证仅能缩小直接依赖范围，不能证明间接状态、动态导入、文件和环境污染不存在；失败归属须结合可复现顺序、父提交对照与栈证据。
 - DEBT-G1/G2/G3 的数量和路径是旧快照；后续 Git 修复见[路线 A 报告](../../../reports/M5_P5_2C_TRIPLE_PRIME_REPRESENTATION_REPAIR_RESULT_20260913.md)。本轮未做 fsck 或清理；继续禁止未经确认 gc/prune、删除备份。
-- 新研究阻塞：路线 B 的收益参照不一致、任务协作上界与门禁语义差异，见[新复审](../../reference/M5_POST_ROUTE_A_REVIEW_20260913.md)。这些直接影响主线，不适用“等在线学习完成后才处理”的历史排期。
-- 当前 f9825943 的 CI 34753643532 两条 Linux 已在 Ruff 失败（本轮查询时总体仍运行中）；实施前建立命令级失败清单，不把局部 64 passed 当全仓绿。
+- 新研究阻塞（已由 B0 审查并给出结论）：路线 B 的收益参照不一致、任务协作上界与门禁语义差异。B0 复算 32/32 一致、三种候选参照全部不可达 ⇒ 暂停正式训练，先改任务与估计目标。见[B0 设计包](../../reference/M5_B0_MEASUREMENT_AND_REACHABILITY_AUDIT_20260913.md)。
+- **CI 命令级基线（2026-09-13，B0 建立）**：本地 `ruff check .` 原有 1 项 `I001`
+  （`tests/taiji_native/test_p5_2c_triple_prime_representation_repair_gate.py` 的导入顺序），
+  即两条 Linux CI 的 Ruff 失败原因；B0 已修复，现为 **All checks passed**。
+  B0 新增测试 14 passed、目标集八个文件 95 passed。**全量套件本轮未跑**，28 项 SystemExit 未定性；
+  不把局部通过当全仓绿。远端 workflow 本轮未查询（`gh` 未认证）。
 
 以下保留建册时的观察、命令和修复记录；现行顺序由[当前推进方案](03_CURRENT_EXECUTION.md)决定。
 
