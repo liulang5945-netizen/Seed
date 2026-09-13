@@ -32,6 +32,7 @@ Taiji 拥有持续状态、记忆、行动选择、异质协作与继承式成�
 | B0 审查 | 统一测量字典 v1 草案、旧值复算 32/32 一致、三种候选参照全部不可达、五个手算用例落地、复合任务候选 T1–T3 与路线 B 草案 | **触发停止点**：公平 oracle 也过不了门槛 ⇒ 不进入 B1；D1–D4 待决策 |
 | B0 机制续篇 | 组合机制 = **优先级回退链**；**仲裁类机制上界恒 ≤0（可证）**；24 个 pair×context 单元**零交错轨迹**；逃生通道闭式 `k > n(参照+margin)/(成功−B)`；T1/T2/T3 具体规格 | 现行任务可支撑参照上限 **0.35 < 0.5** ⇒ 换参照救不了，**任务必须改**；预检脚本为 B1 入场强制 |
 | B0 交接探针 | 先复现冻结矩阵 **11/11**；**三层完全分离**：任务层找到达标形态 `create_and_override`（四单体全失败、`k=4/4`、三种参照全 feasible、上限 1.85），**机制层仍全部失败、`interleaved=0`** | 根因 = 交接触发是"绑定失败"而非"无进展"，首成员独占 episode；`create_then_patch` 与 `dual_requirement` 实测否决；提出 **M1（待 D5）** |
+| B0 反事实测量 | 先证候选面**可满足且顺序强制**；六个修法变体**五个失败一个成功**。**`m4_failure_handoff`：冻结面 0 回归 / 2 改善，候选面 `interleaved=4/4`、同参照增益 `+2.000 > 1.65`** | **H2 协作主张首次可达**；M4 **未实施**，落地需 D5 + 单独预注册；旧报告只对旧规则有效 |
 | CI / Git | 本轮未查询远端（`gh` 未认证）；本地 `ruff check .` 原有 1 项 `I001` 已修复，现 All checks passed；**全量套件已跑：851 / 27 失败 / 0 错误 / 1 跳过（938s），类别 A 归零** | 27 项全为 `SystemExit: 1` 且为旧 28 项**严格子集、无新增失败**；Git 备份不清理、不 gc/prune |
 
 历史 P5.1b/f 失败和 c 系列负结果均保留。当前研究仍为 growth_admitted=false、can_promote=false；不撤销限定 K 晋级，也不继承其产品权限。
@@ -217,9 +218,10 @@ B0 逐条状态见[B0 设计包](../../reference/M5_B0_MEASUREMENT_AND_REACHABIL
 | D2 | 复合任务候选 | **`create_then_patch` 实测否决**（创建即达标，`member-c` 独做 1.0）；**`dual_requirement` 实测否决**（`member-d` 独做 1.0）；**`create_and_override` 通过任务层**（k=4/4）。清单收敛为一项，待确认 |
 | D3 | 旧 1.65 判据 | 保留为历史记录；新判据须声明参照与所需 k |
 | D4 | 旧载体定位 | 144/88 降级为开发回归；新测试面独立冻结 |
-| **D5（新增）** | **是否预注册并落地机制修法 M1** | M1-a（无进展即让位，推荐）/ M1-b（固定轮转）/ M1-c（learner 排序）。**不落地 M1 ⇒ H2 协作主张在当前机制下不可达**；M1 须过探针 §5.3 五条验收，且既有报告只对旧规则有效 |
+| **D5（新增）** | **是否预注册并落地机制修法** | 已由[反事实测量](../../reference/M5_B0_M1_COUNTERFACTUAL_RESULT_20260913.md)给出**实测可行选项 `m4_failure_handoff`**（+21 行 / 2 处替换：失败即让位 + 每成员自身进度；冻结面 **0 回归 / 2 改善**；候选面 `interleaved=4/4`、增益 **+2.000 > 1.65**）。备选 `m1a`（安全但完全无效）/ `m1b`（破坏基线）/ `m2`·`m2a`·`m3`（均回归且无效）。**不落地 ⇒ H2 协作主张在当前机制下不可达**；落地须过反事实文档 §8 的残余风险（顺序定义冻结、新停止原因纳入门禁、规模扩大） |
 
 **D1–D5 明确前，B1 不启动训练。** 新任务候选在训练前必须跑
-[预检脚本](../../../scripts/training/audit_taiji_b0_task_reachability_precheck.py) 与
-[交接探针](../../../scripts/training/probe_taiji_b0_handoff_feasibility.py) 并归档报告。
+[预检脚本](../../../scripts/training/audit_taiji_b0_task_reachability_precheck.py)、
+[交接探针](../../../scripts/training/probe_taiji_b0_handoff_feasibility.py) 与
+[反事实测量](../../../scripts/training/probe_taiji_b0_m1_counterfactual.py) 并归档报告。
 继续沿「先 C 后 AB」，但不直接加 per-block 列重跑旧 Gate；到改变任务定义、估计目标或冻结阈值的节点先审阅确认；本轮未代替用户批准任何新实验选择。
