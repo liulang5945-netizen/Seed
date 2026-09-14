@@ -34,6 +34,34 @@ def _write_manifest(tmp_path: Path, manifest: dict) -> Path:
     return path
 
 
+def _artifact_paths(manifest: dict) -> tuple[Path, ...]:
+    paths: list[Path] = []
+    for cell in manifest.get("cells", ()):
+        for artifact in (cell.get("artifacts") or {}).values():
+            raw = artifact.get("path") if isinstance(artifact, dict) else None
+            if raw:
+                paths.append(Path(str(raw)))
+    return tuple(paths)
+
+
+def _require_local_artifacts(manifest: dict) -> None:
+    """Skip when the manifest's on-disk training artifacts are absent.
+
+    The manifest ships in-repo, but the P4.14 artifacts it points at are local
+    training products under ``output/`` that are deliberately not committed, so
+    CI has none.  Tests that must read real payloads skip rather than fail there
+    (same intent as ci.yml: "Legacy real-checkpoint tests skip when local
+    artifacts are absent").
+    """
+
+    missing = [path for path in _artifact_paths(manifest) if not path.exists()]
+    if missing:
+        pytest.skip(
+            f"{len(missing)} local P4.14 artifact(s) absent (e.g. {missing[0]}); "
+            "this test reads real on-disk artifacts that are not committed"
+        )
+
+
 def test_module_does_not_import_research_scripts() -> None:
     source = Path(attachment.__file__).read_text(encoding="utf-8")
     assert "from scripts" not in source
@@ -49,6 +77,7 @@ def test_manifest_self_digest_rejects_tampering(tmp_path: Path) -> None:
 
 def test_artifact_digest_mismatch_rejected(tmp_path: Path) -> None:
     manifest = _manifest()
+    _require_local_artifacts(manifest)
     manifest["cells"][0]["artifacts"]["g"]["digest"] = "0" * 64
     with pytest.raises(attachment.AttachmentRefused, match="digest mismatch"):
         attachment._load_cell_payloads(manifest, 0)
@@ -63,11 +92,13 @@ def test_missing_artifact_rejected(tmp_path: Path) -> None:
 
 def test_wrong_cell_mixing_rejected() -> None:
     manifest = _manifest()
+    _require_local_artifacts(manifest)
     assert attachment._mixing_probe_rejected(manifest) is True
 
 
 def test_tamper_probes_rejected() -> None:
     manifest = _manifest()
+    _require_local_artifacts(manifest)
     payloads = attachment._load_cell_payloads(manifest, 0)["payloads"]
     results = attachment._tamper_probes_rejected(payloads)
     assert all(results.values())
@@ -75,6 +106,7 @@ def test_tamper_probes_rejected() -> None:
 
 def test_invariants_pinned_from_checkpoints() -> None:
     manifest = _manifest()
+    _require_local_artifacts(manifest)
     payloads = attachment._load_cell_payloads(manifest, 0)["payloads"]
     checks = attachment._invariant_checks(payloads)
     assert all(checks.values())
@@ -102,6 +134,7 @@ def test_verify_attachment_cli_rejects_corrupt_manifest(tmp_path: Path) -> None:
 
 @pytest.mark.parametrize("cell_index", [0, 1, 2, 3])
 def test_full_preflight_passes_for_every_cell(cell_index: int) -> None:
+    _require_local_artifacts(_manifest())
     result = attachment.verify_attachment(MANIFEST_PATH, cell_index)
     assert result["passed"] is True
     assert all(result["invariant_checks"].values())
@@ -110,6 +143,7 @@ def test_full_preflight_passes_for_every_cell(cell_index: int) -> None:
 
 
 def test_seed_runtime_attach_detach_cycle() -> None:
+    _require_local_artifacts(_manifest())
     runtime = SeedRuntime.load()
     assert runtime.k_g_attachment_status()["attached"] is False
     status = runtime.attach_k_g_state(MANIFEST_PATH, 0)
