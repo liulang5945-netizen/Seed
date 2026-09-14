@@ -62,15 +62,9 @@ DEFAULT_TARGET_AWARE_REPORT = (
     PROJECT_ROOT / "reports" / "taiji_m4v2_b3_k_target_aware_model_seeds_v2_20260910.json"
 )
 DEFAULT_WORKER_ROOT = PROJECT_ROOT / "checkpoints" / "taiji_k_workers"
-DEFAULT_FIXED_LARGE_ROOT = (
-    PROJECT_ROOT / "checkpoints" / "taiji_k_fixed_large_c_entry"
-)
-DEFAULT_SEALED_TEST = (
-    PROJECT_ROOT / "plans" / "manifests" / "taiji_m4v2_b3_k_c_sealed_test_v1.json"
-)
-DEFAULT_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m4v2_b3_k_c_sealed_scoring_20260910.json"
-)
+DEFAULT_FIXED_LARGE_ROOT = PROJECT_ROOT / "checkpoints" / "taiji_k_fixed_large_c_entry"
+DEFAULT_SEALED_TEST = PROJECT_ROOT / "plans" / "manifests" / "taiji_m4v2_b3_k_c_sealed_test_v1.json"
+DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m4v2_b3_k_c_sealed_scoring_20260910.json"
 
 
 def _load_mapping(path: Path) -> dict[str, Any]:
@@ -85,9 +79,7 @@ def _mse(scores: Mapping[str, float], target: Mapping[str, float]) -> float:
         raise ValueError(
             f"fixed-large score keys drifted: scores={sorted(scores)} target={sorted(target)}"
         )
-    return sum((float(scores[key]) - float(target[key])) ** 2 for key in target) / len(
-        target
-    )
+    return sum((float(scores[key]) - float(target[key])) ** 2 for key in target) / len(target)
 
 
 def _fixed_large_loss_score(ensemble, experiences) -> dict[str, float]:
@@ -96,12 +88,10 @@ def _fixed_large_loss_score(ensemble, experiences) -> dict[str, float]:
         semantic_example = experience.semantic_example
         semantic_result = ensemble.predict_semantic(semantic_example.percept)
         semantic_fact_target = {
-            key: float(key in semantic_example.fact_keys)
-            for key in ensemble.semantic_fact_keys
+            key: float(key in semantic_example.fact_keys) for key in ensemble.semantic_fact_keys
         }
         semantic_goal_target = {
-            key: float(key == semantic_example.goal.goal_id)
-            for key in ensemble.semantic_goal_ids
+            key: float(key == semantic_example.goal.goal_id) for key in ensemble.semantic_goal_ids
         }
         semantic_content_target = {
             key: float(key == semantic_example.content.content_id)
@@ -134,29 +124,15 @@ def _fixed_large_loss_score(ensemble, experiences) -> dict[str, float]:
         }
         rows.append(
             {
-                "k1.fact_mse": _mse(
-                    semantic_result.fact_scores, semantic_fact_target
-                ),
-                "k1.goal_mse": _mse(
-                    semantic_result.goal_scores, semantic_goal_target
-                ),
-                "k1.content_mse": _mse(
-                    semantic_result.content_scores, semantic_content_target
-                ),
-                "k2.transition_mse": _mse(
-                    transition_result.delta_scores, transition_delta_target
-                ),
-                "k2.goal_mse": _mse(
-                    transition_result.goal_scores, transition_goal_target
-                ),
-                "k2.content_mse": _mse(
-                    transition_result.content_scores, transition_content_target
-                ),
+                "k1.fact_mse": _mse(semantic_result.fact_scores, semantic_fact_target),
+                "k1.goal_mse": _mse(semantic_result.goal_scores, semantic_goal_target),
+                "k1.content_mse": _mse(semantic_result.content_scores, semantic_content_target),
+                "k2.transition_mse": _mse(transition_result.delta_scores, transition_delta_target),
+                "k2.goal_mse": _mse(transition_result.goal_scores, transition_goal_target),
+                "k2.content_mse": _mse(transition_result.content_scores, transition_content_target),
             }
         )
-    means = {
-        key: sum(row[key] for row in rows) / len(rows) for key in rows[0]
-    }
+    means = {key: sum(row[key] for row in rows) / len(rows) for key in rows[0]}
     means["combined_mse"] = sum(means.values()) / len(means)
     return means
 
@@ -219,16 +195,12 @@ def _validation_experiences(
     }
     return tuple(
         _build_experience(
-            sequence=_episode(
-                observations["missing_00.txt"], observations, episode_paths
-            ),
+            sequence=_episode(observations["missing_00.txt"], observations, episode_paths),
             split="holdout",
             name=f"loss-holdout-{index}",
             parent_digest=parent_digest,
             worker_bundle_digest=bundle.bundle_digest,
-            source_manifest_digest=str(
-                artifacts["k1.semantic"]["source_manifest_digest"]
-            ),
+            source_manifest_digest=str(artifacts["k1.semantic"]["source_manifest_digest"]),
             projector=projector,
         )
         for index, episode_paths in enumerate(_holdout_episode_paths()[:3])
@@ -255,16 +227,16 @@ def _sealed_experiences(
             name=str(episode["episode_id"]),
             parent_digest=parent_digest,
             worker_bundle_digest=bundle.bundle_digest,
-            source_manifest_digest=str(
-                artifacts["k1.semantic"]["source_manifest_digest"]
-            ),
+            source_manifest_digest=str(artifacts["k1.semantic"]["source_manifest_digest"]),
             projector=projector,
         )
         for episode in sealed["episodes"]
     )
 
 
-def _candidate_paths(target_report: Mapping[str, Any], model_seed: int, course_seed: int) -> dict[str, Path]:
+def _candidate_paths(
+    target_report: Mapping[str, Any], model_seed: int, course_seed: int
+) -> dict[str, Path]:
     model_report = next(
         item["report"]
         for item in target_report["model_reports"]
@@ -275,10 +247,7 @@ def _candidate_paths(target_report: Mapping[str, Any], model_seed: int, course_s
         for item in model_report["cells"]
         if int(item["course_seed"]) == int(course_seed)
     )
-    return {
-        key: Path(value)
-        for key, value in cell["candidate_checkpoint_paths"].items()
-    }
+    return {key: Path(value) for key, value in cell["candidate_checkpoint_paths"].items()}
 
 
 def _arm_scores(
@@ -308,9 +277,7 @@ def _arm_scores(
     scores = {}
     for split, experiences in (("validation", validation), ("sealed", sealed)):
         frozen_loss = _loss_score(parent_semantic, parent_transition, experiences)
-        candidate_loss = _loss_score(
-            candidate_semantic, candidate_transition, experiences
-        )
+        candidate_loss = _loss_score(candidate_semantic, candidate_transition, experiences)
         fixed_large_loss = _fixed_large_loss_score(fixed_large, experiences)
         scores[split] = {
             "frozen_parent": frozen_loss,
@@ -318,9 +285,7 @@ def _arm_scores(
             "fixed_large": fixed_large_loss,
             "candidate_delta_vs_frozen": _delta(candidate_loss, frozen_loss),
             "fixed_large_delta_vs_frozen": _delta(fixed_large_loss, frozen_loss),
-            "candidate_delta_vs_fixed_large": _delta(
-                candidate_loss, fixed_large_loss
-            ),
+            "candidate_delta_vs_fixed_large": _delta(candidate_loss, fixed_large_loss),
         }
     return scores
 
@@ -366,9 +331,7 @@ def run_canary(
                     projector=projector,
                 )
                 for course_seed in COURSE_SEEDS:
-                    candidate_paths = _candidate_paths(
-                        target_report, model_seed, course_seed
-                    )
+                    candidate_paths = _candidate_paths(target_report, model_seed, course_seed)
                     fixed_large_path = (
                         fixed_large_root
                         / f"model_{model_seed}"
@@ -404,28 +367,21 @@ def run_canary(
             temp_parent.rmdir()
 
     sealed_candidate_deltas = [
-        float(cell["sealed"]["candidate_delta_vs_frozen"]["combined_mse"])
-        for cell in cells
+        float(cell["sealed"]["candidate_delta_vs_frozen"]["combined_mse"]) for cell in cells
     ]
     sealed_fixed_large_deltas = [
-        float(cell["sealed"]["fixed_large_delta_vs_frozen"]["combined_mse"])
-        for cell in cells
+        float(cell["sealed"]["fixed_large_delta_vs_frozen"]["combined_mse"]) for cell in cells
     ]
     candidate_beats_fixed_large = [
         candidate <= fixed
-        for candidate, fixed in zip(
-            sealed_candidate_deltas, sealed_fixed_large_deltas, strict=True
-        )
+        for candidate, fixed in zip(sealed_candidate_deltas, sealed_fixed_large_deltas, strict=True)
     ]
     validation_candidate_deltas = [
-        float(cell["validation"]["candidate_delta_vs_frozen"]["combined_mse"])
-        for cell in cells
+        float(cell["validation"]["candidate_delta_vs_frozen"]["combined_mse"]) for cell in cells
     ]
     resource_measurement_complete = False
     technical_gate_passed = all(
-        cell["candidate_artifacts_read_only"]
-        and cell["sealed_test_scored"]
-        for cell in cells
+        cell["candidate_artifacts_read_only"] and cell["sealed_test_scored"] for cell in cells
     )
     report = {
         "report_format": REPORT_FORMAT,

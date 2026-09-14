@@ -87,7 +87,9 @@ def test_authorization_is_explicit_bounded_and_checkpointable():
     assert authorization.to_payload()["connection_attempted"] is False
     assert "endpoint" not in authorization.to_payload()
     assert "credential_value" not in authorization.to_payload()
-    assert McpClientConnectionAuthorization.from_payload(authorization.to_payload()) == authorization
+    assert (
+        McpClientConnectionAuthorization.from_payload(authorization.to_payload()) == authorization
+    )
 
     store = McpClientConnectionAuthorizationStore(
         mcp_registry_snapshot_id=registry.snapshot_id,

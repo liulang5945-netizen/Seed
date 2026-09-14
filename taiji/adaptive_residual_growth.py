@@ -159,7 +159,11 @@ class AdaptiveResidualGrowthPressure:
         if payload.get("kind") != "pressure":
             raise ValueError("adaptive residual payload is not a pressure observation")
         expected = content_digest(
-            {key: value for key, value in payload.items() if key not in {"pressure", "pressure_digest"}}
+            {
+                key: value
+                for key, value in payload.items()
+                if key not in {"pressure", "pressure_digest"}
+            }
         )
         if str(payload.get("pressure_digest", "")) != expected:
             raise ValueError("adaptive residual pressure digest mismatch")
@@ -250,13 +254,16 @@ class AdaptiveResidualGrowthDecision:
             "resource_state_ema",
         ):
             _unit(getattr(self, name), f"adaptive residual decision {name}")
-        if min(
-            int(self.proposal_ordinal),
-            int(self.consecutive_pressure_steps),
-            int(self.required_pressure_steps),
-            int(self.structural_budget),
-            int(self.resource_cost),
-        ) < 0:
+        if (
+            min(
+                int(self.proposal_ordinal),
+                int(self.consecutive_pressure_steps),
+                int(self.required_pressure_steps),
+                int(self.structural_budget),
+                int(self.resource_cost),
+            )
+            < 0
+        ):
             raise ValueError("adaptive residual decision counters cannot be negative")
         if int(self.required_pressure_steps) <= 0 or int(self.resource_cost) <= 0:
             raise ValueError("adaptive residual decision thresholds must be positive")
@@ -402,7 +409,10 @@ class AdaptiveResidualGrowthTrigger:
             raise ValueError("adaptive residual structural_budget cannot be negative")
         if pressure.evidence_id in self._evidence_ids:
             raise ValueError("adaptive residual pressure evidence_id was already observed")
-        if self._parent_checkpoint_digest and pressure.parent_checkpoint_digest != self._parent_checkpoint_digest:
+        if (
+            self._parent_checkpoint_digest
+            and pressure.parent_checkpoint_digest != self._parent_checkpoint_digest
+        ):
             raise ValueError("adaptive residual pressure parent checkpoint changed")
         self._parent_checkpoint_digest = pressure.parent_checkpoint_digest
         self._last_pressure = pressure
@@ -410,15 +420,19 @@ class AdaptiveResidualGrowthTrigger:
         max_evidence = max(1, int(self.policy.required_pressure_steps))
         self._evidence_ids = self._evidence_ids[-max_evidence:]
         rate = float(self.policy.ema_rate)
-        self.residual_error_ema = (1.0 - rate) * self.residual_error_ema + rate * pressure.residual_error
+        self.residual_error_ema = (
+            1.0 - rate
+        ) * self.residual_error_ema + rate * pressure.residual_error
         self.fast_slow_conflict_ema = (
-            (1.0 - rate) * self.fast_slow_conflict_ema + rate * pressure.fast_slow_conflict
-        )
+            1.0 - rate
+        ) * self.fast_slow_conflict_ema + rate * pressure.fast_slow_conflict
         self.activity_saturation_ema = (
-            (1.0 - rate) * self.activity_saturation_ema + rate * pressure.activity_saturation
-        )
+            1.0 - rate
+        ) * self.activity_saturation_ema + rate * pressure.activity_saturation
         self.utility_gap_ema = (1.0 - rate) * self.utility_gap_ema + rate * pressure.utility_gap
-        self.resource_state_ema = (1.0 - rate) * self.resource_state_ema + rate * pressure.resource_state
+        self.resource_state_ema = (
+            1.0 - rate
+        ) * self.resource_state_ema + rate * pressure.resource_state
         self.observation_count += 1
         meets_pressure = bool(
             self.pressure_ema >= float(self.policy.minimum_pressure)
@@ -431,8 +445,8 @@ class AdaptiveResidualGrowthTrigger:
         self.consecutive_pressure_steps = (
             self.consecutive_pressure_steps + 1 if meets_pressure else 0
         )
-        pressure_persistence_satisfied = (
-            self.consecutive_pressure_steps >= int(self.policy.required_pressure_steps)
+        pressure_persistence_satisfied = self.consecutive_pressure_steps >= int(
+            self.policy.required_pressure_steps
         )
         should_propose = bool(
             meets_pressure
@@ -473,7 +487,11 @@ class AdaptiveResidualGrowthTrigger:
             "reasons": reasons,
         }
         decision = AdaptiveResidualGrowthDecision(
-            **{key: value for key, value in identity.items() if key not in {"format", "version", "kind"}},
+            **{
+                key: value
+                for key, value in identity.items()
+                if key not in {"format", "version", "kind"}
+            },
             decision_digest=content_digest(identity),
         )
         self._last_decision = decision
@@ -545,11 +563,14 @@ class AdaptiveResidualGrowthTrigger:
         trigger.consecutive_pressure_steps = int(payload["consecutive_pressure_steps"])
         trigger.proposal_count = int(payload["proposal_count"])
         trigger.observation_count = int(payload["observation_count"])
-        if min(
-            trigger.consecutive_pressure_steps,
-            trigger.proposal_count,
-            trigger.observation_count,
-        ) < 0:
+        if (
+            min(
+                trigger.consecutive_pressure_steps,
+                trigger.proposal_count,
+                trigger.observation_count,
+            )
+            < 0
+        ):
             raise ValueError("adaptive residual trigger counters cannot be negative")
         trigger._evidence_ids = [str(item) for item in payload.get("evidence_ids", ())]
         if len(set(trigger._evidence_ids)) != len(trigger._evidence_ids) or any(

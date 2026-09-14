@@ -27,9 +27,7 @@ def _authorization(
         capability_snapshot_id=boundary.capability_snapshot_id,
         authorized_capability_ids=authorized_capability_ids,
         active_boundary_digest=(
-            boundary.token_digest
-            if active_boundary_digest is None
-            else active_boundary_digest
+            boundary.token_digest if active_boundary_digest is None else active_boundary_digest
         ),
         current_tick=current_tick,
         usage=usage,

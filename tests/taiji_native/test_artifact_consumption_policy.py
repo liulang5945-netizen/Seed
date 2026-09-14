@@ -55,8 +55,7 @@ def test_new_runtime_defaults_verified_only_and_policy_checkpoint_is_reversible(
     restored_initial = TSKV8Adapter()
     restored_initial.restore_native(initial_checkpoint)
     assert (
-        restored_initial.artifact_consumption_policy.mode
-        == ARTIFACT_CONSUMPTION_MODE_VERIFIED_ONLY
+        restored_initial.artifact_consumption_policy.mode == ARTIFACT_CONSUMPTION_MODE_VERIFIED_ONLY
     )
 
 
@@ -82,8 +81,6 @@ def test_policy_and_legacy_boolean_cannot_be_combined() -> None:
             require_verified_measurements=True,
         )
 
-    legacy = model.resolve_artifact_consumption_policy(
-        require_verified_measurements=False
-    )
+    legacy = model.resolve_artifact_consumption_policy(require_verified_measurements=False)
     assert legacy.mode == ARTIFACT_CONSUMPTION_MODE_LEGACY_COMPATIBLE
     assert legacy.reason == "legacy-boolean-compatibility"

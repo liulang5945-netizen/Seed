@@ -136,7 +136,10 @@ class EvolutionExperienceEncoder:
             or experience.source_id
         )
         return (
-            ("route_identity", "|".join((experience.source_kind, experience.source_version, route_identity))),
+            (
+                "route_identity",
+                "|".join((experience.source_kind, experience.source_version, route_identity)),
+            ),
         )
 
     def encode(self, experience: EvolutionExperience) -> torch.Tensor:
@@ -195,7 +198,10 @@ class NativeEvolutionTrainer:
     ) -> None:
         if len(reward_bounds) != 2:
             raise ValueError("evolution reward_bounds must contain two values")
-        bounds = (_finite_bound(reward_bounds[0], "reward lower bound"), _finite_bound(reward_bounds[1], "reward upper bound"))
+        bounds = (
+            _finite_bound(reward_bounds[0], "reward lower bound"),
+            _finite_bound(reward_bounds[1], "reward upper bound"),
+        )
         if bounds[0] > bounds[1]:
             raise ValueError("evolution reward_bounds must be ordered")
         self.encoder = EvolutionExperienceEncoder(feature_dim, namespace=feature_namespace)
@@ -216,9 +222,13 @@ class NativeEvolutionTrainer:
         self.last_dataset_digest = ""
         self.revision = 0
 
-    def _reward(self, experience: EvolutionExperience) -> tuple[float, tuple[tuple[str, float], ...]]:
+    def _reward(
+        self, experience: EvolutionExperience
+    ) -> tuple[float, tuple[tuple[str, float], ...]]:
         if experience.reward_components:
-            terms = tuple(sorted((str(name), float(value)) for name, value in experience.reward_components))
+            terms = tuple(
+                sorted((str(name), float(value)) for name, value in experience.reward_components)
+            )
             raw = sum(value for _, value in terms)
         else:
             raw = self.success_reward if experience.success else self.failure_reward
@@ -262,7 +272,8 @@ class NativeEvolutionTrainer:
             affordance_id=experience.capability_id or experience.source_id,
             action_kind=experience.capability_id or experience.source_id,
             grounding=grounding,
-            capability_snapshot_digest=experience.capability_snapshot_id or experience.source_digest,
+            capability_snapshot_digest=experience.capability_snapshot_id
+            or experience.source_digest,
             parent_checkpoint_id=experience.parent_checkpoint_digest,
             feature_payload_digest=feature_payload_digest,
             reward_terms=reward_terms,
@@ -277,7 +288,9 @@ class NativeEvolutionTrainer:
         *,
         partition: str,
     ) -> tuple[GroundedFeatureExample, ...]:
-        return tuple(self.example(item) for item in _experience_tuple(experiences, partition=partition))
+        return tuple(
+            self.example(item) for item in _experience_tuple(experiences, partition=partition)
+        )
 
     def consolidate(
         self,
@@ -333,7 +346,9 @@ class NativeEvolutionTrainer:
         if admitted:
             self.learner = trial.learner
             self.consumed_experience_ids = tuple(
-                sorted((*self.consumed_experience_ids, *(item.experience_id for item in pending_items)))
+                sorted(
+                    (*self.consumed_experience_ids, *(item.experience_id for item in pending_items))
+                )
             )
             self.last_dataset_digest = dataset_digest
             self.revision += 1
@@ -354,9 +369,9 @@ class NativeEvolutionTrainer:
             native_retention_loss_after=internalization.retention_loss_after,
             admitted=admitted,
             rolled_back=not admitted,
-            consumed_experience_ids=tuple(item.experience_id for item in pending_items)
-            if admitted
-            else (),
+            consumed_experience_ids=(
+                tuple(item.experience_id for item in pending_items) if admitted else ()
+            ),
             internalization=internalization,
         )
 

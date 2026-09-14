@@ -67,9 +67,7 @@ def _seed_record(course: Any, seed: int) -> dict[str, Any]:
         (43, 45),
         None,
     )
-    phase_b_baseline_by_cue = {
-        row["cue"]: row for row in phase_b_baseline["rows"]
-    }
+    phase_b_baseline_by_cue = {row["cue"]: row for row in phase_b_baseline["rows"]}
     baseline_summary = phase_b_baseline["summary"]["all"]
 
     no_replay = Taiji.from_checkpoint(deepcopy(phase_b_checkpoint))
@@ -122,15 +120,11 @@ def _seed_record(course: Any, seed: int) -> dict[str, Any]:
                     current_summary["delta_action_outcome_margin_gap"]["mean"]
                 ),
                 "association_error_ratio": float(
-                    _association_summary(replay, course.phase_b_train)["error_ratio"][
-                        "mean"
-                    ]
+                    _association_summary(replay, course.phase_b_train)["error_ratio"]["mean"]
                 ),
                 "memory_digest": current_memory_digest,
                 "memory_digest_changed": current_memory_digest != previous_memory_digest,
-                "weight_delta_from_previous": _weight_deltas(
-                    previous_weights, current_weights
-                ),
+                "weight_delta_from_previous": _weight_deltas(previous_weights, current_weights),
                 "memory_write_count": int(replay.memory.write_count),
                 "trace_only_would_flag_both_train_deltas": bool(
                     action_delta < 0.0 and outcome_delta < 0.0
@@ -147,14 +141,10 @@ def _seed_record(course: Any, seed: int) -> dict[str, Any]:
     replay_checkpoint = _checkpoint_record(replay)
     final_summary = trace_rows[-1]
     conflict_steps = [
-        int(row["step"])
-        for row in trace_rows
-        if row["trace_only_would_flag_both_train_deltas"]
+        int(row["step"]) for row in trace_rows if row["trace_only_would_flag_both_train_deltas"]
     ]
     either_steps = [
-        int(row["step"])
-        for row in trace_rows
-        if row["trace_only_would_flag_either_train_delta"]
+        int(row["step"]) for row in trace_rows if row["trace_only_would_flag_either_train_delta"]
     ]
     return {
         "seed": seed,
@@ -187,12 +177,8 @@ def _seed_record(course: Any, seed: int) -> dict[str, Any]:
             ),
             "both_delta_conflict_steps": conflict_steps,
             "either_delta_conflict_steps": either_steps,
-            "first_both_delta_conflict_step": (
-                conflict_steps[0] if conflict_steps else None
-            ),
-            "last_both_delta_conflict_step": (
-                conflict_steps[-1] if conflict_steps else None
-            ),
+            "first_both_delta_conflict_step": (conflict_steps[0] if conflict_steps else None),
+            "last_both_delta_conflict_step": (conflict_steps[-1] if conflict_steps else None),
             "checkpoint": replay_checkpoint,
             "holdout_updates": 0,
             "topology_digest": _topology_digest(replay),
@@ -211,8 +197,7 @@ def run_audit() -> dict[str, Any]:
     course = _course("factorial", factorial=True)
     records = [_seed_record(course, seed) for seed in SEEDS]
     conflict_steps = [
-        record["all_replay_trace"]["first_both_delta_conflict_step"]
-        for record in records
+        record["all_replay_trace"]["first_both_delta_conflict_step"] for record in records
     ]
     return {
         "format": FORMAT,

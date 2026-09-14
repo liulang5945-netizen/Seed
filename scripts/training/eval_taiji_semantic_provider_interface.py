@@ -64,13 +64,10 @@ def evaluate() -> dict[str, object]:
     result = runtime.interpret_workbench_task(prompt, constraints=("只读",))
 
     metrics = {
-        "provider_implements_versioned_interface": isinstance(
-            provider, SemanticEvidenceProvider
-        ),
+        "provider_implements_versioned_interface": isinstance(provider, SemanticEvidenceProvider),
         "request_is_content_addressed_and_repeatable": (
             first_request.request_id == second_request.request_id
-            and first_request.input_digest
-            == first_request.to_payload()["input_digest"]
+            and first_request.input_digest == first_request.to_payload()["input_digest"]
         ),
         "request_has_no_execution_authority": not any(
             field in first_request.to_payload()
@@ -121,9 +118,13 @@ def main() -> None:
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     report = evaluate()
-    report_path = PROJECT_ROOT / "reports" / "taiji_w7_p6_1a_semantic_provider_interface_20260831.json"
+    report_path = (
+        PROJECT_ROOT / "reports" / "taiji_w7_p6_1a_semantic_provider_interface_20260831.json"
+    )
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_path.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(report, ensure_ascii=False, indent=2))
 
 

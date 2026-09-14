@@ -17,9 +17,9 @@ STRUCTURAL_WORKSPACE_MODEL_REVISION = 1
 
 def _digest(payload: Mapping[str, Any]) -> str:
     return hashlib.sha256(
-        json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False, default=repr).encode(
-            "utf-8"
-        )
+        json.dumps(
+            payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False, default=repr
+        ).encode("utf-8")
     ).hexdigest()
 
 
@@ -106,9 +106,7 @@ class StructuralWorkspaceRouter:
             mode=mode,
             random_seed=random_seed,
             capacity=self.capacity,
-            minimum_score=(
-                self.selection_threshold if mode == "learned" else None
-            ),
+            minimum_score=(self.selection_threshold if mode == "learned" else None),
         )
 
     def checkpoint(self) -> dict[str, Any]:
@@ -147,7 +145,10 @@ class StructuralWorkspaceRouter:
             raise ValueError("structural workspace checkpoint region mismatch")
         if tuple(str(item) for item in payload.get("region_unit_ids", ())) != region.unit_ids:
             raise ValueError("structural workspace checkpoint neuron identities drifted")
-        if tuple(str(item) for item in payload.get("region_lesioned_unit_ids", ())) != region.lesioned_unit_ids:
+        if (
+            tuple(str(item) for item in payload.get("region_lesioned_unit_ids", ()))
+            != region.lesioned_unit_ids
+        ):
             raise ValueError("structural workspace checkpoint neuron lesion state drifted")
         router_payload = payload.get("router")
         if not isinstance(router_payload, Mapping):

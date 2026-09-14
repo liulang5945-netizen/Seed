@@ -4,9 +4,7 @@ import json
 from pathlib import Path
 
 REPORT = (
-    Path(__file__).resolve().parents[2]
-    / "reports"
-    / "taiji_m4v2_b3_k_single_step_20260910.json"
+    Path(__file__).resolve().parents[2] / "reports" / "taiji_m4v2_b3_k_single_step_20260910.json"
 )
 
 

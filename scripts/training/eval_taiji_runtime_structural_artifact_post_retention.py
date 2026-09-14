@@ -91,10 +91,12 @@ def evaluate() -> dict[str, object]:
             raise AssertionError("round two first artifact was not bound to its measured parent")
         round_two_parent.save(paths["round2-first"])
         round_two_after_first = SeedRuntime.load(paths["round2-first"], workspace_root=PROJECT_ROOT)
-        first_result = round_two_after_first.continue_structural_candidate_batch_from_validation_artifacts(
-            round_two_batch_id,
-            artifacts_by_candidate={round_two_first_id: first_artifact},
-            replays_by_candidate={round_two_first_id: first_replay},
+        first_result = (
+            round_two_after_first.continue_structural_candidate_batch_from_validation_artifacts(
+                round_two_batch_id,
+                artifacts_by_candidate={round_two_first_id: first_artifact},
+                replays_by_candidate={round_two_first_id: first_replay},
+            )
         )
         if first_result["results"][round_two_first_id]["status"] != "admitted":
             raise AssertionError(f"round two first candidate was not admitted: {first_result}")
@@ -109,11 +111,15 @@ def evaluate() -> dict[str, object]:
         ):
             raise AssertionError("round two second artifact was not bound to its measured parent")
         round_two_after_first.save(paths["round2-second"])
-        round_two_before_rollback = SeedRuntime.load(paths["round2-second"], workspace_root=PROJECT_ROOT)
-        second_result = round_two_before_rollback.continue_structural_candidate_batch_from_validation_artifacts(
-            round_two_batch_id,
-            artifacts_by_candidate={round_two_second_id: second_artifact},
-            replays_by_candidate={round_two_second_id: second_replay},
+        round_two_before_rollback = SeedRuntime.load(
+            paths["round2-second"], workspace_root=PROJECT_ROOT
+        )
+        second_result = (
+            round_two_before_rollback.continue_structural_candidate_batch_from_validation_artifacts(
+                round_two_batch_id,
+                artifacts_by_candidate={round_two_second_id: second_artifact},
+                replays_by_candidate={round_two_second_id: second_replay},
+            )
         )
         if second_result["results"][round_two_second_id]["status"] != "admitted":
             raise AssertionError(f"round two second candidate was not admitted: {second_result}")
@@ -135,8 +141,10 @@ def evaluate() -> dict[str, object]:
             first_ordinal=13,
             round_id="round-3",
         )
-        round_three_schedule = round_two_done.schedule_structural_candidate_batch_from_workbench_evidence(
-            _schedule_requests()
+        round_three_schedule = (
+            round_two_done.schedule_structural_candidate_batch_from_workbench_evidence(
+                _schedule_requests()
+            )
         )
         if round_three_schedule.get("status") != "batch_created":
             raise AssertionError(f"round three batch was not created: {round_three_schedule}")
@@ -179,45 +187,57 @@ def evaluate() -> dict[str, object]:
 
         round_one_batch = _batch(post_retention, round_one_batch_id)
         retained_first_id, retained_second_id = round_one_batch.selected_candidate_ids
-        retained_first_artifact, retained_first_replay, retained_first_measurements = _build_artifact(
-            post_retention.model.architecture,
-            retained_first_id,
-            round_one_evidence,
+        retained_first_artifact, retained_first_replay, retained_first_measurements = (
+            _build_artifact(
+                post_retention.model.architecture,
+                retained_first_id,
+                round_one_evidence,
+            )
         )
-        retained_first_parent_bound = retained_first_artifact.parent_checkpoint_digest == _checkpoint_digest(
-            post_retention.model.architecture.native_checkpoint()
+        retained_first_parent_bound = (
+            retained_first_artifact.parent_checkpoint_digest
+            == _checkpoint_digest(post_retention.model.architecture.native_checkpoint())
         )
         post_retention.save(paths["post-first"])
         post_first = SeedRuntime.load(paths["post-first"], workspace_root=PROJECT_ROOT)
-        retained_first_checkpoint_bound = retained_first_artifact.parent_checkpoint_digest == _checkpoint_digest(
-            post_first.model.architecture.native_checkpoint()
+        retained_first_checkpoint_bound = (
+            retained_first_artifact.parent_checkpoint_digest
+            == _checkpoint_digest(post_first.model.architecture.native_checkpoint())
         )
         retained_first_budget_before = _budget(post_first)
-        retained_first_result = post_first.continue_structural_candidate_batch_from_validation_artifacts(
-            round_one_batch_id,
-            artifacts_by_candidate={retained_first_id: retained_first_artifact},
-            replays_by_candidate={retained_first_id: retained_first_replay},
+        retained_first_result = (
+            post_first.continue_structural_candidate_batch_from_validation_artifacts(
+                round_one_batch_id,
+                artifacts_by_candidate={retained_first_id: retained_first_artifact},
+                replays_by_candidate={retained_first_id: retained_first_replay},
+            )
         )
         retained_first_budget_after = _budget(post_first)
 
-        retained_second_artifact, retained_second_replay, retained_second_measurements = _build_artifact(
-            post_first.model.architecture,
-            retained_second_id,
-            round_one_evidence,
+        retained_second_artifact, retained_second_replay, retained_second_measurements = (
+            _build_artifact(
+                post_first.model.architecture,
+                retained_second_id,
+                round_one_evidence,
+            )
         )
-        retained_second_parent_bound = retained_second_artifact.parent_checkpoint_digest == _checkpoint_digest(
-            post_first.model.architecture.native_checkpoint()
+        retained_second_parent_bound = (
+            retained_second_artifact.parent_checkpoint_digest
+            == _checkpoint_digest(post_first.model.architecture.native_checkpoint())
         )
         post_first.save(paths["post-second"])
         post_second = SeedRuntime.load(paths["post-second"], workspace_root=PROJECT_ROOT)
-        retained_second_checkpoint_bound = retained_second_artifact.parent_checkpoint_digest == _checkpoint_digest(
-            post_second.model.architecture.native_checkpoint()
+        retained_second_checkpoint_bound = (
+            retained_second_artifact.parent_checkpoint_digest
+            == _checkpoint_digest(post_second.model.architecture.native_checkpoint())
         )
         retained_second_budget_before = _budget(post_second)
-        retained_second_result = post_second.continue_structural_candidate_batch_from_validation_artifacts(
-            round_one_batch_id,
-            artifacts_by_candidate={retained_second_id: retained_second_artifact},
-            replays_by_candidate={retained_second_id: retained_second_replay},
+        retained_second_result = (
+            post_second.continue_structural_candidate_batch_from_validation_artifacts(
+                round_one_batch_id,
+                artifacts_by_candidate={retained_second_id: retained_second_artifact},
+                replays_by_candidate={retained_second_id: retained_second_replay},
+            )
         )
         retained_second_budget_after = _budget(post_second)
         retained_second_rollback = post_second.rollback_structural_candidate_batch(
@@ -242,7 +262,9 @@ def evaluate() -> dict[str, object]:
         )
         post_second.save(paths["final"])
         final = SeedRuntime.load(paths["final"], workspace_root=PROJECT_ROOT)
-        final_batch_ids = {item.batch_id for item in final.model.architecture.structural_candidate_batches}
+        final_batch_ids = {
+            item.batch_id for item in final.model.architecture.structural_candidate_batches
+        }
         final_signature = _signature(final)
         round_two_artifact_digests = {
             first_artifact.artifact_digest,
@@ -281,7 +303,8 @@ def evaluate() -> dict[str, object]:
             ),
             "measured_metrics_remain_owner_derived": (
                 retained_first_artifact.holdout_gain == retained_first_measurements.holdout_gain
-                and retained_second_artifact.holdout_gain == retained_second_measurements.holdout_gain
+                and retained_second_artifact.holdout_gain
+                == retained_second_measurements.holdout_gain
                 and retained_first_artifact.resource_measurement_digest
                 == retained_first_measurements.resource_measurement_digest
                 and retained_second_artifact.resource_measurement_digest

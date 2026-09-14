@@ -91,9 +91,7 @@ def evaluate() -> dict[str, object]:
     baseline = Taiji.from_checkpoint(copy.deepcopy(source_checkpoint))
     zero_strength = Taiji.from_checkpoint(copy.deepcopy(source_checkpoint))
     for model in (baseline, zero_strength):
-        model.clone_protected_predictive_readout_as_active(
-            boundary_digest=active.token_digest
-        )
+        model.clone_protected_predictive_readout_as_active(boundary_digest=active.token_digest)
     baseline.learn_bytes(
         new_data,
         learn_fabric=False,
@@ -111,9 +109,7 @@ def evaluate() -> dict[str, object]:
     )
 
     positive = Taiji.from_checkpoint(copy.deepcopy(source_checkpoint))
-    positive.clone_protected_predictive_readout_as_active(
-        boundary_digest=active.token_digest
-    )
+    positive.clone_protected_predictive_readout_as_active(boundary_digest=active.token_digest)
     protected_before = positive.readout_registry_status()["protected"]["readout_digest"]
     active_before = positive.active_predictive_readout_metadata
     if active_before is None:
@@ -158,19 +154,16 @@ def evaluate() -> dict[str, object]:
     gate = {
         "zero_strength_checkpoint_compatible": content_digest(baseline.checkpoint())
         == content_digest(zero_strength.checkpoint()),
-        "active_owner_changes": active_before["readout_digest"]
-        != active_after["readout_digest"],
+        "active_owner_changes": active_before["readout_digest"] != active_after["readout_digest"],
         "protected_owner_unchanged": positive.readout_registry_status()["protected"][
             "readout_digest"
         ]
         == protected_before,
-        "shared_fabric_unchanged": content_digest(positive.fabric.to_payload())
-        == fabric_before,
+        "shared_fabric_unchanged": content_digest(positive.fabric.to_payload()) == fabric_before,
         "predictive_context_unchanged": content_digest(positive.predictive_context.to_payload())
         == context_before,
         "checkpoint_round_trip": restored_digest == checkpoint_digest,
-        "registry_metadata_round_trip": restored.active_predictive_readout_metadata
-        == active_after,
+        "registry_metadata_round_trip": restored.active_predictive_readout_metadata == active_after,
         "score_round_trip": live_score == restored_score,
         "source_checkpoint_unchanged": content_digest(source.checkpoint()) == source_digest,
         "positive_strength_is_finite": math.isfinite(0.5),
@@ -199,8 +192,20 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     payload = evaluate()
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(json.dumps({"report": str(args.report), "status": payload["status"], "can_promote": False, "gate": payload["gate"]}, ensure_ascii=False))
+    args.report.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+    print(
+        json.dumps(
+            {
+                "report": str(args.report),
+                "status": payload["status"],
+                "can_promote": False,
+                "gate": payload["gate"],
+            },
+            ensure_ascii=False,
+        )
+    )
     return 0 if payload["status"] == "passed" else 1
 
 

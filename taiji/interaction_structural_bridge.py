@@ -74,9 +74,10 @@ class InteractionStructuralBridgeConfig:
         if int(self.minimum_feedbacks) <= 0:
             raise ValueError("interaction structural minimum_feedbacks must be positive")
         _unit(self.minimum_holdout_transfer, "interaction structural holdout threshold")
-        if not math.isfinite(float(self.resource_normalizer)) or float(
-            self.resource_normalizer
-        ) <= 0.0:
+        if (
+            not math.isfinite(float(self.resource_normalizer))
+            or float(self.resource_normalizer) <= 0.0
+        ):
             raise ValueError("interaction structural resource_normalizer must be positive")
         if int(self.version) != 1:
             raise ValueError(f"unsupported interaction structural config version: {self.version}")
@@ -200,7 +201,9 @@ class InteractionStructuralBridge:
         if len(feedbacks) < int(self.config.minimum_feedbacks):
             raise ValueError("interaction structural bridge lacks repeated online feedback")
         if any(not isinstance(item, InteractionGroupOutcomeFeedback) for item in feedbacks):
-            raise TypeError("interaction structural bridge feedbacks must be online feedback values")
+            raise TypeError(
+                "interaction structural bridge feedbacks must be online feedback values"
+            )
         if any(not isinstance(item, InteractionGroupOnlineAdmission) for item in admissions):
             raise TypeError("interaction structural bridge admissions must be online admissions")
         feedback_ids = tuple(item.feedback_id for item in feedbacks)
@@ -209,17 +212,16 @@ class InteractionStructuralBridge:
         admission_by_feedback = {item.feedback_id: item for item in admissions}
         if any(item.feedback_id not in admission_by_feedback for item in feedbacks):
             raise ValueError("interaction structural bridge feedback admission is missing")
-        if any(
-            admission_by_feedback[item.feedback_id].status != "applied"
-            for item in feedbacks
-        ):
+        if any(admission_by_feedback[item.feedback_id].status != "applied" for item in feedbacks):
             raise ValueError("interaction structural bridge accepts applied feedback only")
         if len({item.member_ids for item in feedbacks}) < 2:
             raise ValueError("interaction structural bridge requires distinct interaction contexts")
         if any(item.source_split != "online" for item in feedbacks):
             raise ValueError("interaction structural bridge rejects non-online feedback")
         if any(not item.outcome.terminal or item.outcome.success is not True for item in feedbacks):
-            raise ValueError("interaction structural bridge accepts successful terminal Outcomes only")
+            raise ValueError(
+                "interaction structural bridge accepts successful terminal Outcomes only"
+            )
         independent = tuple(independent_observations)
         if not independent:
             raise ValueError("interaction structural bridge requires independent observations")
@@ -245,9 +247,7 @@ class InteractionStructuralBridge:
                 resource_pressure=min(
                     1.0, max(0.0, float(item.resource_cost) / self.config.resource_normalizer)
                 ),
-                prediction_error=min(
-                    1.0, max(0.0, 1.0 - float(item.realized_interaction))
-                ),
+                prediction_error=min(1.0, max(0.0, 1.0 - float(item.realized_interaction))),
                 learning_gain=min(1.0, max(0.0, float(item.realized_interaction))),
                 holdout_transfer=0.0,
                 evidence_id=f"online-feedback:{item.feedback_id}",
@@ -274,9 +274,7 @@ class InteractionStructuralBridge:
             projection.mean_holdout_transfer < self.config.minimum_holdout_transfer
         ):
             raise ValueError("interaction structural holdout transfer is below bridge threshold")
-        online_evidence_ids = {
-            f"online-feedback:{item.feedback_id}" for item in feedbacks
-        }
+        online_evidence_ids = {f"online-feedback:{item.feedback_id}" for item in feedbacks}
         if not online_evidence_ids.issubset(set(projection.evidence_ids)):
             raise ValueError("interaction structural projection lost online evidence binding")
         payload: dict[str, Any] = {

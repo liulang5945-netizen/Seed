@@ -166,7 +166,9 @@ def main() -> None:
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_w7_r5c_s19_structural_provenance_projection_20260830.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_w7_r5c_s19_structural_provenance_projection_20260830.json",
     )
     args = parser.parse_args()
     report = evaluate()

@@ -322,9 +322,7 @@ class WorkspaceRouter(nn.Module):
                 selected_indices = ranked[:effective_capacity]
             else:
                 selected_indices = [
-                    index
-                    for index in ranked
-                    if float(scores_tensor[index]) >= float(minimum_score)
+                    index for index in ranked if float(scores_tensor[index]) >= float(minimum_score)
                 ][:effective_capacity]
             scores = tuple(float(score) for score in scores_tensor)
         elif mode == "random" and candidates:

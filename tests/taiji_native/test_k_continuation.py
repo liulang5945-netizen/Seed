@@ -163,9 +163,7 @@ def test_k_continuation_course_roundtrip_seals_disjoint_records() -> None:
     assert restored.course_digest == course.course_digest
     assert restored.train[0].experience_digest == course.train[0].experience_digest
     assert restored.holdout[0].experience_digest == course.holdout[0].experience_digest
-    assert set(restored.train_experience_digests).isdisjoint(
-        restored.holdout_experience_digests
-    )
+    assert set(restored.train_experience_digests).isdisjoint(restored.holdout_experience_digests)
 
 
 def test_k_continuation_course_rejects_family_leakage() -> None:

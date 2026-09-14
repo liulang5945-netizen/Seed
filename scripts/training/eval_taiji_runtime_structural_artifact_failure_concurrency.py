@@ -143,10 +143,12 @@ def evaluate() -> dict[str, object]:
         )
 
         def submit(_: int) -> str:
-            result = concurrent_branch.continue_structural_candidate_batch_from_validation_artifacts(
-                batch.batch_id,
-                artifacts_by_candidate={candidate_id: artifact},
-                replays_by_candidate={candidate_id: replay},
+            result = (
+                concurrent_branch.continue_structural_candidate_batch_from_validation_artifacts(
+                    batch.batch_id,
+                    artifacts_by_candidate={candidate_id: artifact},
+                    replays_by_candidate={candidate_id: replay},
+                )
             )
             return result["results"][candidate_id]["status"]
 

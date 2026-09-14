@@ -114,13 +114,12 @@ def evaluate() -> dict[str, object]:
             and runtime.calls[0][0] == "preflight"
             and runtime.calls[1][0] == "execute"
             and runtime.calls[0][1][0].snapshot_id == "snapshot-execution"
-            and runtime.calls[0][1][0].capability_registry_snapshot_id
-            == "registry-execution"
+            and runtime.calls[0][1][0].capability_registry_snapshot_id == "registry-execution"
         ),
         "previous_protocol_and_grounding_gates_remain_green": all(
-            json.loads(
-                (PROJECT_ROOT / "reports" / report_name).read_text(encoding="utf-8")
-            )["gate"]["passed"]
+            json.loads((PROJECT_ROOT / "reports" / report_name).read_text(encoding="utf-8"))[
+                "gate"
+            ]["passed"]
             for report_name in (
                 "taiji_w7_p2_13_natural_language_workbench_api_20260831.json",
                 "taiji_w7_p5_1_natural_language_workbench_modularization_20260831.json",
@@ -157,7 +156,9 @@ def main() -> None:
         / "taiji_w7_p5_3_natural_language_workbench_execution_modularization_20260831.json"
     )
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_path.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(report, ensure_ascii=False, indent=2))
 
 

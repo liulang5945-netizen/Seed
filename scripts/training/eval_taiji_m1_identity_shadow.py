@@ -42,12 +42,8 @@ B1_TRAIN = (
     b"Taiji native prediction observes byte streams and learns local transitions. "
     b"Memory is queried through explicit action context. "
 ) * 12
-B1_HOLDOUT = (
-    b"Native byte prediction remains separate from episodic identity evidence. "
-) * 4
-B1_RETENTION = (
-    b"Read-only byte scoring must preserve the learned native checkpoint. "
-) * 4
+B1_HOLDOUT = (b"Native byte prediction remains separate from episodic identity evidence. ") * 4
+B1_RETENTION = (b"Read-only byte scoring must preserve the learned native checkpoint. ") * 4
 
 
 def _b1_score(model: Taiji, *, train: bool) -> dict[str, float]:
@@ -71,9 +67,7 @@ def _shadow_record(seed: int) -> dict[str, Any]:
     b2_actions = _actions(*b2.train)
     b5_actions = _actions(*b5.phase_a_train, *b5.phase_b_train)
 
-    identity = Taiji(
-        _review_config(seed, enabled=True), episode_id=f"m1-30-identity-{seed}"
-    )
+    identity = Taiji(_review_config(seed, enabled=True), episode_id=f"m1-30-identity-{seed}")
     control = Taiji(_config(seed, enabled=False), episode_id=f"m1-30-control-{seed}")
     _prepare_b2(identity, b2.train)
     _prepare_b2(control, b2.train)
@@ -125,14 +119,12 @@ def _shadow_record(seed: int) -> dict[str, Any]:
             "after_b2_retention_identity": identity_b1_retention,
             "after_b2_retention_shared_control": control_b1_retention,
             "after_b2_retention_mean_surprise_delta": (
-                identity_b1_retention["mean_surprise"]
-                - control_b1_retention["mean_surprise"]
+                identity_b1_retention["mean_surprise"] - control_b1_retention["mean_surprise"]
             ),
             "after_b5_identity": identity_b1_after_b5,
             "after_b5_shared_control": control_b1_after_b5,
             "after_b5_mean_surprise_delta": (
-                identity_b1_after_b5["mean_surprise"]
-                - control_b1_after_b5["mean_surprise"]
+                identity_b1_after_b5["mean_surprise"] - control_b1_after_b5["mean_surprise"]
             ),
             "after_b5_retention_identity": identity_b1_retention_after_b5,
             "after_b5_retention_shared_control": control_b1_retention_after_b5,
@@ -169,9 +161,7 @@ def _shadow_record(seed: int) -> dict[str, Any]:
         },
         "checkpoint": {
             "fresh_process_source": fresh["source"],
-            "fresh_process_persistent_digest_unchanged": fresh[
-                "persistent_digest_unchanged"
-            ],
+            "fresh_process_persistent_digest_unchanged": fresh["persistent_digest_unchanged"],
             "fresh_process_checkpoint_digest_matches": (
                 fresh["loaded_checkpoint_digest"] == content_digest(checkpoint)
             ),
@@ -238,7 +228,9 @@ def main() -> int:
         "report_path": str(args.report),
     }
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

@@ -28,10 +28,9 @@ def test_adapter_owns_structured_semantic_snapshot_and_checkpoint() -> None:
     assert content_digest(restored.last_structured_semantic_result.to_payload()) == content_digest(
         result.to_payload()
     )
-    assert (
-        content_digest(restored.infer_structured_semantics(corpus.test[0].percept).to_payload())
-        == content_digest(result.to_payload())
-    )
+    assert content_digest(
+        restored.infer_structured_semantics(corpus.test[0].percept).to_payload()
+    ) == content_digest(result.to_payload())
 
 
 def test_structured_semantic_owner_is_optional_and_detachable() -> None:

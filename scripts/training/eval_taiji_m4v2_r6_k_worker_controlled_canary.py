@@ -69,9 +69,7 @@ from taiji import (  # noqa: E402
 REPORT_FORMAT = "taiji-m4v2-r6-k-worker-controlled-canary-v1"
 VERSION = 1
 DEFAULT_ARTIFACT_DIR = PROJECT_ROOT / "checkpoints" / "taiji_k_workers"
-DEFAULT_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m4v2_r6_k_worker_controlled_canary_20260909.json"
-)
+DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m4v2_r6_k_worker_controlled_canary_20260909.json"
 DEFAULT_CANDIDATE_NAMESPACE = "taiji:k:candidate"
 EPSILON = 0.01
 
@@ -247,9 +245,7 @@ def run_canary(
                 schema=schema,
             )
         }
-        sequence = _episode(
-            observations["missing_00.txt"], observations, episode_paths
-        )
+        sequence = _episode(observations["missing_00.txt"], observations, episode_paths)
         runtime = SeedRuntime(
             Seed(
                 SeedConfig(taiji=TaijiConfig(seed=model_seed)),
@@ -260,9 +256,7 @@ def run_canary(
             root=temp_root,
             programming_language_registry=holdout_registry,
         )
-        planner = NativeReadOnlyIntentPlanner(
-            ReadOnlyIntentPolicy(routes=READ_ONLY_ROUTES)
-        )
+        planner = NativeReadOnlyIntentPlanner(ReadOnlyIntentPolicy(routes=READ_ONLY_ROUTES))
         observation = sequence[1]
         event = observation.to_percept_event(tick=1)
         initial_world = _world(sequence[0], tick=0)
@@ -318,17 +312,14 @@ def run_canary(
             capability_id=str(intent.kind),
             required_outcome="success",
         )
-        projection = projector.project(
-            transition_result.world, outcome_event, dependency_spec
-        )
+        projection = projector.project(transition_result.world, outcome_event, dependency_spec)
         if not projection.accepted and not lesion_k3:
             raise ValueError(f"K3 rejected real outcome: {projection.reason_code}")
         if not admit_feedback and not lesion_k3:
             before = _scores(parent, course_seed)
             after = _scores(parent, course_seed)
             retention = {
-                phase: abs(after[phase] - before[phase]) <= EPSILON
-                for phase in ("S", "G")
+                phase: abs(after[phase] - before[phase]) <= EPSILON for phase in ("S", "G")
             }
             exchange_checkpoint = adapter.checkpoint()
             exchange_restored = KContinualAdapter.from_checkpoint(exchange_checkpoint)
@@ -414,9 +405,7 @@ def run_canary(
             source_manifest_digest=source_manifest_digest,
             tick=1,
         )
-        action_digest = content_digest(
-            {"kind": str(intent.kind), "payload": intent.to_payload()}
-        )
+        action_digest = content_digest({"kind": str(intent.kind), "payload": intent.to_payload()})
         exchange: KAdapterExchange | None = None
         if projection.accepted:
             output_item = KAdapterOutput(
@@ -450,8 +439,7 @@ def run_canary(
             before = _scores(parent, course_seed)
             after = _scores(parent, course_seed)
             retention = {
-                phase: abs(after[phase] - before[phase]) <= EPSILON
-                for phase in ("S", "G")
+                phase: abs(after[phase] - before[phase]) <= EPSILON for phase in ("S", "G")
             }
             stage_blocked_without_projection = False
             try:
@@ -468,8 +456,8 @@ def run_canary(
                     candidate_parent_checkpoint_digest=parent_digest,
                 )
             except ValueError as exc:
-                stage_blocked_without_projection = (
-                    "requires a bound dependency projection" in str(exc)
+                stage_blocked_without_projection = "requires a bound dependency projection" in str(
+                    exc
                 )
             checks = {
                 "attachment_preflight_passed": preflight.get("status") == "passed",
@@ -527,9 +515,7 @@ def run_canary(
                     "can_start_r6_formal": False,
                     "can_promote": False,
                     "blocking_reason": (
-                        None
-                        if all(checks.values())
-                        else "K3 lesion safety Gate failed"
+                        None if all(checks.values()) else "K3 lesion safety Gate failed"
                     ),
                 }
             )
@@ -542,9 +528,7 @@ def run_canary(
 
         before = _scores(parent, course_seed)
         after = _scores(parent, course_seed)
-        retention = {
-            phase: abs(after[phase] - before[phase]) <= EPSILON for phase in ("S", "G")
-        }
+        retention = {phase: abs(after[phase] - before[phase]) <= EPSILON for phase in ("S", "G")}
         exchange_identity = (
             exchange.exchange_digest
             if exchange is not None
@@ -585,30 +569,25 @@ def run_canary(
         checks = {
             "attachment_preflight_passed": preflight.get("status") == "passed",
             "k1_result_typed": isinstance(semantic_result, StructuredSemanticResult),
-            "k2_result_typed": isinstance(
-                transition_result, StructuredSemanticTransitionResult
-            ),
+            "k2_result_typed": isinstance(transition_result, StructuredSemanticTransitionResult),
             "read_only_intent_accepted": decision.accepted,
             "real_workbench_success": real_success,
             "k3_projection_accepted": projection.accepted if not lesion_k3 else True,
             "k3_lesion_rejected": (not projection.accepted) if lesion_k3 else True,
             "k3_dependency_applied": (
-                ("dependency", "id", dependency_spec.dependency_id)
-                in enriched_world.relations
+                ("dependency", "id", dependency_spec.dependency_id) in enriched_world.relations
                 if not lesion_k3
                 else ("dependency", "id", dependency_spec.dependency_id)
                 not in enriched_world.relations
             ),
             "typed_exchange_parent_echo": (
-                exchange is not None
-                and exchange.output.parent_checkpoint_digest == parent_digest
+                exchange is not None and exchange.output.parent_checkpoint_digest == parent_digest
                 if not lesion_k3
                 else exchange is None
             ),
             "typed_exchange_worker_lineage": (
                 all(
-                    exchange is not None
-                    and manifest.manifest_digest in exchange.output.lineage
+                    exchange is not None and manifest.manifest_digest in exchange.output.lineage
                     for manifest in manifests
                 )
                 if not lesion_k3
@@ -647,9 +626,7 @@ def run_canary(
                 "observation_path": observation.path,
                 "intent_kind": str(intent.kind),
                 "outcome_success": real_success,
-                "outcome_reward": float(
-                    (outcome.get("taiji_outcome") or {}).get("reward", 0.0)
-                ),
+                "outcome_reward": float((outcome.get("taiji_outcome") or {}).get("reward", 0.0)),
                 "lesion_k3": lesion_k3,
                 "feedback_admitted": not lesion_k3,
                 "projection_accepted": projection.accepted,
@@ -657,10 +634,10 @@ def run_canary(
                 "projection_digest": projection.projection_digest,
                 "exchange_digest": None if exchange is None else exchange.exchange_digest,
                 "old_capability_before": before,
-                    "old_capability_after": after,
-                    "old_capability_retention": retention,
-                    "resource": resource_summary,
-                    "candidate_training_performed": False,
+                "old_capability_after": after,
+                "old_capability_retention": retention,
+                "resource": resource_summary,
+                "candidate_training_performed": False,
                 "candidate_promoted": False,
                 "can_start_r6_formal": False,
                 "can_promote": False,

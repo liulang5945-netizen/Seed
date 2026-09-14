@@ -52,11 +52,14 @@ def test_artifact_batch_rejects_unknown_keys_and_isolates_partial_failure() -> N
         else:
             raise AssertionError("unknown artifact/replay key unexpectedly accepted")
         assert _checkpoint_digest(runtime.model.architecture.native_checkpoint()) == before_unknown
-        assert next(
-            item.to_payload()
-            for item in runtime.model.architecture.structural_candidate_batches
-            if item.batch_id == batch.batch_id
-        ) == before_unknown_batch
+        assert (
+            next(
+                item.to_payload()
+                for item in runtime.model.architecture.structural_candidate_batches
+                if item.batch_id == batch.batch_id
+            )
+            == before_unknown_batch
+        )
 
     checkpoint_root = Path(__file__).resolve().parents[2] / "output" / "manual-r5-canary"
     checkpoint_root.mkdir(parents=True, exist_ok=True)
@@ -81,7 +84,9 @@ def test_artifact_batch_rejects_unknown_keys_and_isolates_partial_failure() -> N
         )
         assert failed["results"][first_candidate]["status"] == "failed_closed"
         failed_batch = next(
-            item for item in restored.structural_candidate_batches if item.batch_id == batch.batch_id
+            item
+            for item in restored.structural_candidate_batches
+            if item.batch_id == batch.batch_id
         )
         assert failed_batch.state_by_candidate[first_candidate] == "failed_closed"
         assert failed_batch.state_by_candidate[second_candidate] == "reserved"
@@ -118,9 +123,10 @@ def test_artifact_batch_rejects_unknown_keys_and_isolates_partial_failure() -> N
             replays_by_candidate={second_candidate: second_replay},
         )
         assert repeated["results"][second_candidate]["status"] == "already_applied"
-        assert tuple(
-            (region.region_id, region.unit_ids) for region in final.neuron_regions
-        ) == before_repeat_topology
+        assert (
+            tuple((region.region_id, region.unit_ids) for region in final.neuron_regions)
+            == before_repeat_topology
+        )
         assert final.cognitive_snapshot().development.structural_budget == before_repeat_budget
         repeated_batch = next(
             item for item in final.structural_candidate_batches if item.batch_id == batch.batch_id

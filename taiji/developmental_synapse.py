@@ -39,7 +39,11 @@ def _require_text(value: str, name: str) -> None:
 
 
 def _require_finite(value: float, name: str) -> None:
-    if not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(float(value)):
+    if (
+        not isinstance(value, (int, float))
+        or isinstance(value, bool)
+        or not math.isfinite(float(value))
+    ):
         raise DevelopmentalSynapseContractError(f"{name} must be finite")
 
 
@@ -474,7 +478,9 @@ class DevelopmentalReplayEvent:
 
     @classmethod
     def from_payload(cls, payload: Mapping[str, Any]) -> DevelopmentalReplayEvent:
-        _verify_envelope(payload, DEVELOPMENTAL_REPLAY_EVENT_FORMAT, DEVELOPMENTAL_REPLAY_EVENT_VERSION)
+        _verify_envelope(
+            payload, DEVELOPMENTAL_REPLAY_EVENT_FORMAT, DEVELOPMENTAL_REPLAY_EVENT_VERSION
+        )
         _verify_digest(payload, "event_digest")
         return cls(
             event_id=str(payload["event_id"]),
@@ -523,7 +529,9 @@ class DevelopmentalReplayBuffer:
 
     @classmethod
     def from_payload(cls, payload: Mapping[str, Any]) -> DevelopmentalReplayBuffer:
-        _verify_envelope(payload, DEVELOPMENTAL_REPLAY_BUFFER_FORMAT, DEVELOPMENTAL_REPLAY_BUFFER_VERSION)
+        _verify_envelope(
+            payload, DEVELOPMENTAL_REPLAY_BUFFER_FORMAT, DEVELOPMENTAL_REPLAY_BUFFER_VERSION
+        )
         _verify_digest(payload, "buffer_digest")
         events = payload.get("events")
         if not isinstance(events, list):

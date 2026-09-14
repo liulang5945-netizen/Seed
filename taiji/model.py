@@ -318,7 +318,9 @@ class Taiji:
         residual_gain: float,
     ) -> AdaptiveResidualBridge:
         generator = torch.Generator(device="cpu")
-        generator.manual_seed(int(self.config.seed) + int(self.ADAPTIVE_RESIDUAL_BRIDGE_SEED_OFFSET))
+        generator.manual_seed(
+            int(self.config.seed) + int(self.ADAPTIVE_RESIDUAL_BRIDGE_SEED_OFFSET)
+        )
         return AdaptiveResidualBridge(
             self.config,
             generator=generator,
@@ -450,7 +452,9 @@ class Taiji:
         if self._state.pending_action is not None or self._state.pending_experience is not None:
             raise RuntimeError("adaptive residual growth removal requires a settled state")
         if self._adaptive_residual_growth_candidate is not None:
-            raise RuntimeError("discard adaptive residual growth candidate before disabling pressure")
+            raise RuntimeError(
+                "discard adaptive residual growth candidate before disabling pressure"
+            )
         self._adaptive_residual_growth_trigger = None
 
     @torch.no_grad()
@@ -466,7 +470,9 @@ class Taiji:
         trigger = self._adaptive_residual_growth_trigger
         decision = self.adaptive_residual_growth_decision
         if bridge is None or trigger is None:
-            raise RuntimeError("adaptive residual growth requires a live bridge and pressure trigger")
+            raise RuntimeError(
+                "adaptive residual growth requires a live bridge and pressure trigger"
+            )
         if self._adaptive_residual_growth_candidate is not None:
             raise RuntimeError("adaptive residual growth candidate is already pending")
         if decision is None:
@@ -684,9 +690,13 @@ class Taiji:
         normalized = str(mode).strip().lower()
         if normalized not in self.DEVELOPMENTAL_F1_LEARNING_MODES:
             allowed = ", ".join(sorted(self.DEVELOPMENTAL_F1_LEARNING_MODES))
-            raise ValueError(f"unsupported developmental F1 learning mode; expected one of {allowed}")
+            raise ValueError(
+                f"unsupported developmental F1 learning mode; expected one of {allowed}"
+            )
         if self._developmental_f1_bundle is None:
-            raise RuntimeError("developmental F1 state must be mounted before selecting a write mode")
+            raise RuntimeError(
+                "developmental F1 state must be mounted before selecting a write mode"
+            )
         if self._state.pending_action is not None or self._state.pending_experience is not None:
             raise RuntimeError("developmental F1 learning mode requires a settled state")
         self._developmental_f1_learning_mode = normalized
@@ -801,9 +811,7 @@ class Taiji:
                 readout_bank.learn_fast(
                     event.readout_error,
                     event.readout_trace,
-                    learning_rate=(
-                        self.config.motor_learning_rate * float(learning_rate_scale)
-                    ),
+                    learning_rate=(self.config.motor_learning_rate * float(learning_rate_scale)),
                     weight_decay=self.config.synapse_decay,
                 )
             if bool(event.context_feedback.detach().abs().any()):
@@ -811,8 +819,7 @@ class Taiji:
                     event.context_feedback,
                     event.context_trace,
                     learning_rate=(
-                        self.config.predictive_context_learning_rate
-                        * float(learning_rate_scale)
+                        self.config.predictive_context_learning_rate * float(learning_rate_scale)
                     ),
                     weight_decay=self.config.synapse_decay,
                 )
@@ -852,13 +859,9 @@ class Taiji:
             "memory": self.memory.to_payload(),
         }
         if self._gated_temporal_candidate is not None:
-            payload[self.GATED_TEMPORAL_CANDIDATE_KEY] = (
-                self._gated_temporal_candidate.to_payload()
-            )
+            payload[self.GATED_TEMPORAL_CANDIDATE_KEY] = self._gated_temporal_candidate.to_payload()
         if self._adaptive_residual_bridge is not None:
-            payload[self.ADAPTIVE_RESIDUAL_BRIDGE_KEY] = (
-                self._adaptive_residual_bridge.to_payload()
-            )
+            payload[self.ADAPTIVE_RESIDUAL_BRIDGE_KEY] = self._adaptive_residual_bridge.to_payload()
         if self._developmental_f1_bundle is not None:
             payload[self.DEVELOPMENTAL_F1_KEY] = self._developmental_f1_bundle.to_payload()
         replay_payload = self._developmental_f1_replay_payload()
@@ -914,9 +917,11 @@ class Taiji:
         if self._active_predictive_readout is not None:
             raise RuntimeError("an active predictive readout is already registered")
         expected_parent = self._protected_readout_parent_digest()
-        parent = expected_parent if parent_checkpoint_digest is None else str(
-            parent_checkpoint_digest
-        ).strip()
+        parent = (
+            expected_parent
+            if parent_checkpoint_digest is None
+            else str(parent_checkpoint_digest).strip()
+        )
         if parent != expected_parent:
             raise ValueError("active readout parent does not match protected substrate")
         metadata = {
@@ -941,9 +946,7 @@ class Taiji:
 
         active_rng = torch.Generator(device="cpu")
         active_rng.manual_seed(
-            int(self.config.seed)
-            + int(self.config.predictive_readout_seed_offset)
-            + 1
+            int(self.config.seed) + int(self.config.predictive_readout_seed_offset) + 1
         )
         active = BytePredictiveReadout(
             self.config,
@@ -1038,7 +1041,9 @@ class Taiji:
             raise ValueError("unsupported predictive readout registry version")
         parent = str(payload.get("parent_checkpoint_digest", "")).strip()
         if parent != self._protected_readout_parent_digest():
-            raise ValueError("predictive readout registry parent does not match protected substrate")
+            raise ValueError(
+                "predictive readout registry parent does not match protected substrate"
+            )
         generations = payload.get("generations")
         if not isinstance(generations, list) or len(generations) != 1:
             raise ValueError("predictive readout registry must contain one active generation")
@@ -1073,9 +1078,7 @@ class Taiji:
             raise ValueError("predictive readout registry digest does not match readout")
         active_rng = torch.Generator(device="cpu")
         active_rng.manual_seed(
-            int(self.config.seed)
-            + int(self.config.predictive_readout_seed_offset)
-            + 1
+            int(self.config.seed) + int(self.config.predictive_readout_seed_offset) + 1
         )
         active = BytePredictiveReadout(
             self.config,
@@ -1307,12 +1310,8 @@ class Taiji:
                 _adaptive_residual_shadow.counterfactual_parent_probabilities
             )
             if counterfactual_parent_probabilities is not None:
-                candidate_probability = float(
-                    previous.motor_probabilities[symbol].item()
-                )
-                parent_probability = float(
-                    counterfactual_parent_probabilities[symbol].item()
-                )
+                candidate_probability = float(previous.motor_probabilities[symbol].item())
+                parent_probability = float(counterfactual_parent_probabilities[symbol].item())
                 _adaptive_residual_shadow.record_counterfactual_utility(
                     math.log(max(parent_probability, 1e-12))
                     - math.log(max(candidate_probability, 1e-12))
@@ -1324,19 +1323,19 @@ class Taiji:
         developmental_f1_mode = (
             self._developmental_f1_learning_mode if developmental_f1_overlay else "read_only"
         )
-        if developmental_f1_overlay and readout == "predictive" and learn and (
-            predictive_readout_learning or predictive_context_learning
-        ) and developmental_f1_mode == "read_only":
+        if (
+            developmental_f1_overlay
+            and readout == "predictive"
+            and learn
+            and (predictive_readout_learning or predictive_context_learning)
+            and developmental_f1_mode == "read_only"
+        ):
             raise RuntimeError(
                 "developmental F1 state is read-only until R2; select an R2 learning mode"
             )
         if developmental_f1_overlay:
             assert self._developmental_f1_bundle is not None
-        if (
-            developmental_f1_overlay
-            and learn
-            and preservation_strength > 0.0
-        ):
+        if developmental_f1_overlay and learn and preservation_strength > 0.0:
             raise ValueError(
                 "developmental F1 learning uses real replay, not static preservation logits"
             )
@@ -1372,11 +1371,15 @@ class Taiji:
             prior_prediction = int(previous.motor_probabilities.argmax().item())
             prior_probability = float(previous.motor_probabilities[symbol].item())
             surprise = -math.log(max(prior_probability, 1e-12))
-            if readout == "predictive" and learn and (
-                predictive_readout_learning
-                or predictive_context_learning
-                or adaptive_residual_bridge_learning
-                or adaptive_residual_shadow_learning
+            if (
+                readout == "predictive"
+                and learn
+                and (
+                    predictive_readout_learning
+                    or predictive_context_learning
+                    or adaptive_residual_bridge_learning
+                    or adaptive_residual_shadow_learning
+                )
             ):
                 # Take the F1 feedback before changing decoder contacts: the
                 # private residual must learn from the causal surface that
@@ -1397,9 +1400,7 @@ class Taiji:
                     )
                 if developmental_f1_overlay:
                     assert self._developmental_f1_bundle is not None
-                    readout_bank = self._developmental_f1_bundle.bank(
-                        "predictive_readout.synapses"
-                    )
+                    readout_bank = self._developmental_f1_bundle.bank("predictive_readout.synapses")
                     context_bank = self._developmental_f1_bundle.bank(
                         "predictive_context.recurrent"
                     )
@@ -1482,9 +1483,7 @@ class Taiji:
                         or adaptive_residual_bridge_learning
                         or adaptive_residual_shadow_learning
                     ):
-                        predictive_feedback = predictive_readout.context_feedback(
-                            predictive_error
-                        )
+                        predictive_feedback = predictive_readout.context_feedback(predictive_error)
                         if predictive_context_learning:
                             if self._gated_temporal_candidate is None:
                                 self.predictive_context.learn(
@@ -1570,16 +1569,14 @@ class Taiji:
                 context = base_context
                 predictive_context_slow_trace = None
             else:
-                context, predictive_context_slow_trace = (
-                    self._gated_temporal_candidate.encode(
-                        base_context,
-                        prior_context=prior_predictive_context,
-                        prior_slow_context=(
-                            previous.predictive_context_slow_trace
-                            if previous.readout_kind == "predictive"
-                            else None
-                        ),
-                    )
+                context, predictive_context_slow_trace = self._gated_temporal_candidate.encode(
+                    base_context,
+                    prior_context=prior_predictive_context,
+                    prior_slow_context=(
+                        previous.predictive_context_slow_trace
+                        if previous.readout_kind == "predictive"
+                        else None
+                    ),
                 )
             if _adaptive_residual_shadow is not None:
                 context = _adaptive_residual_shadow.forward(context)
@@ -2210,9 +2207,13 @@ class Taiji:
             )
             generation_scope = select_readout_generation(resolved_boundary, authorization)
             if generation_scope != "active":
-                raise RuntimeError("protected predictive readout is read-only under an explicit boundary")
+                raise RuntimeError(
+                    "protected predictive readout is read-only under an explicit boundary"
+                )
             if authorization.usage != "execute":
-                raise PermissionError("active predictive readout training requires execute authorization")
+                raise PermissionError(
+                    "active predictive readout training requires execute authorization"
+                )
             active_readout = self._predictive_readout_for_scope(
                 generation_scope,
                 boundary_digest=resolved_boundary.token_digest,
@@ -2481,9 +2482,13 @@ class Taiji:
             + self.memory.active_edge_count()
         )
         if self._gated_temporal_candidate is not None:
-            active += sum(tensor.numel() for tensor in self._gated_temporal_candidate.parameter_tensors())
+            active += sum(
+                tensor.numel() for tensor in self._gated_temporal_candidate.parameter_tensors()
+            )
         if self._adaptive_residual_bridge is not None:
-            active += sum(tensor.numel() for tensor in self._adaptive_residual_bridge.parameter_tensors())
+            active += sum(
+                tensor.numel() for tensor in self._adaptive_residual_bridge.parameter_tensors()
+            )
         if self._active_predictive_readout is not None:
             active += (
                 self._active_predictive_readout.synapses.edge_count
@@ -2540,9 +2545,7 @@ class Taiji:
             "rng_state": self._rng.get_state().clone(),
         }
         if self._gated_temporal_candidate is not None:
-            core[self.GATED_TEMPORAL_CANDIDATE_KEY] = (
-                self._gated_temporal_candidate.to_payload()
-            )
+            core[self.GATED_TEMPORAL_CANDIDATE_KEY] = self._gated_temporal_candidate.to_payload()
         if self._adaptive_residual_bridge is not None:
             core[self.ADAPTIVE_RESIDUAL_BRIDGE_KEY] = self._adaptive_residual_bridge.to_payload()
         if self._adaptive_residual_growth_trigger is not None:
@@ -2690,7 +2693,9 @@ class Taiji:
             if adaptive_candidate.parent_checkpoint_digest != (
                 self._adaptive_residual_growth_trigger.parent_checkpoint_digest
             ):
-                raise ValueError("adaptive residual candidate parent does not match pressure trigger")
+                raise ValueError(
+                    "adaptive residual candidate parent does not match pressure trigger"
+                )
             if adaptive_candidate.proposal.evidence_ids != adaptive_candidate.evidence_ids:
                 raise ValueError("adaptive residual candidate evidence does not match proposal")
             self._adaptive_residual_growth_candidate = adaptive_candidate
@@ -2808,9 +2813,7 @@ class Taiji:
                     self.config.motor_context_dim,
                     device=self.device,
                 )
-            elif state.predictive_context_slow_trace.shape != (
-                self.config.motor_context_dim,
-            ):
+            elif state.predictive_context_slow_trace.shape != (self.config.motor_context_dim,):
                 raise ValueError("checkpoint slow temporal trace does not match architecture")
         if state.motor_probabilities.shape != (self.config.alphabet_size,):
             raise ValueError("checkpoint motor probabilities do not match architecture")

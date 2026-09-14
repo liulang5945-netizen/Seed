@@ -39,7 +39,9 @@ def _runtime_with_terminal_lineage() -> SeedRuntime:
     if schedule.get("status") != "batch_created":
         raise AssertionError(f"S26 active batch was not created: {schedule}")
     model = runtime.model.architecture
-    active = next(item for item in model.structural_candidate_batches if item.batch_id == schedule["batch_id"])
+    active = next(
+        item for item in model.structural_candidate_batches if item.batch_id == schedule["batch_id"]
+    )
     _record_terminal_subgraph(model, active)
     return runtime
 
@@ -91,8 +93,7 @@ def evaluate() -> dict[str, object]:
             and status["retention_pressure"] is False
         ),
         "status_query_has_no_structural_side_effect": (
-            status_before_query == status_after_query
-            and tamper_is_not_consumed
+            status_before_query == status_after_query and tamper_is_not_consumed
         ),
         "status_survives_seed_checkpoint_restore": restored_status == status,
         "status_does_not_change_topology_or_budget": (
@@ -126,7 +127,9 @@ def main() -> None:
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_w7_r5c_s26_structural_lineage_status_20260831.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_w7_r5c_s26_structural_lineage_status_20260831.json",
     )
     args = parser.parse_args()
     report = evaluate()

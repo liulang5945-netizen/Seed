@@ -69,9 +69,7 @@ def test_seed_runtime_disk_checkpoint_preserves_migration_and_rollback() -> None
         restored = SeedRuntime.load(checkpoint)
 
         assert restored.structural_maintenance_status() == expected_status
-        assert (
-            restored.model.architecture.structural_lineage_retention_result == expected_result
-        )
+        assert restored.model.architecture.structural_lineage_retention_result == expected_result
         assert terminal_batch_id not in {
             item.batch_id for item in restored.model.architecture.structural_candidate_batches
         }

@@ -124,7 +124,9 @@ def _assert_no_forbidden_keys(value: Any) -> None:
     if isinstance(value, Mapping):
         for key, item in value.items():
             if str(key) in _FORBIDDEN_CANDIDATE_KEYS:
-                raise ValueError("MCP client candidate contains forbidden executable or secret fields")
+                raise ValueError(
+                    "MCP client candidate contains forbidden executable or secret fields"
+                )
             # Schema property names describe user input; they are not candidate
             # control fields and may legitimately include names such as path.
             if str(key) not in {"input_schema", "schema"}:
@@ -231,7 +233,10 @@ class McpCapabilityInheritanceCandidate:
     version: int = MCP_CLIENT_CANDIDATE_VERSION
 
     def __post_init__(self) -> None:
-        if self.format != MCP_CLIENT_CANDIDATE_FORMAT or self.version != MCP_CLIENT_CANDIDATE_VERSION:
+        if (
+            self.format != MCP_CLIENT_CANDIDATE_FORMAT
+            or self.version != MCP_CLIENT_CANDIDATE_VERSION
+        ):
             raise ValueError("unsupported MCP client capability candidate format")
         for name, value in (
             ("server_id", self.server_id),
@@ -242,19 +247,33 @@ class McpCapabilityInheritanceCandidate:
             ("rationale", self.rationale),
         ):
             object.__setattr__(self, name, _required_text(value, name))
-        if isinstance(self.tool_contracts, (str, bytes)) or not isinstance(self.tool_contracts, Sequence):
+        if isinstance(self.tool_contracts, (str, bytes)) or not isinstance(
+            self.tool_contracts, Sequence
+        ):
             raise TypeError("tool_contracts must be a sequence")
         contracts = tuple(self.tool_contracts)
         if not contracts or not all(isinstance(item, McpClientToolContract) for item in contracts):
             raise ValueError("MCP client candidate requires tool contracts")
         if len({item.tool_id for item in contracts}) != len(contracts):
             raise ValueError("MCP client tool ids must be unique")
-        object.__setattr__(self, "tool_contracts", tuple(sorted(contracts, key=lambda item: item.tool_id)))
-        object.__setattr__(self, "network_scopes", _reference_tuple(self.network_scopes, "network_scopes"))
-        object.__setattr__(self, "credential_refs", _reference_tuple(self.credential_refs, "credential_refs"))
-        object.__setattr__(self, "resource_budget", _resource_budget(self.resource_budget, "resource_budget"))
-        object.__setattr__(self, "evidence_digests", _text_tuple(self.evidence_digests, "evidence_digests"))
-        object.__setattr__(self, "evaluation_gates", _text_tuple(self.evaluation_gates, "evaluation_gates"))
+        object.__setattr__(
+            self, "tool_contracts", tuple(sorted(contracts, key=lambda item: item.tool_id))
+        )
+        object.__setattr__(
+            self, "network_scopes", _reference_tuple(self.network_scopes, "network_scopes")
+        )
+        object.__setattr__(
+            self, "credential_refs", _reference_tuple(self.credential_refs, "credential_refs")
+        )
+        object.__setattr__(
+            self, "resource_budget", _resource_budget(self.resource_budget, "resource_budget")
+        )
+        object.__setattr__(
+            self, "evidence_digests", _text_tuple(self.evidence_digests, "evidence_digests")
+        )
+        object.__setattr__(
+            self, "evaluation_gates", _text_tuple(self.evaluation_gates, "evaluation_gates")
+        )
         if not self.evidence_digests or not self.evaluation_gates:
             raise ValueError("MCP client candidate requires evidence digests and evaluation gates")
 
@@ -382,16 +401,32 @@ class McpCapabilityInheritancePolicy:
     def __post_init__(self) -> None:
         if self.format != MCP_CLIENT_POLICY_FORMAT or self.version != MCP_CLIENT_CANDIDATE_VERSION:
             raise ValueError("unsupported MCP client capability policy format")
-        object.__setattr__(self, "allowed_server_ids", _reference_tuple(self.allowed_server_ids, "allowed_server_ids"))
-        if isinstance(self.allowed_risks, (str, bytes)) or not isinstance(self.allowed_risks, Sequence):
+        object.__setattr__(
+            self,
+            "allowed_server_ids",
+            _reference_tuple(self.allowed_server_ids, "allowed_server_ids"),
+        )
+        if isinstance(self.allowed_risks, (str, bytes)) or not isinstance(
+            self.allowed_risks, Sequence
+        ):
             raise TypeError("allowed_risks must be a sequence")
         risks = _text_tuple(self.allowed_risks, "allowed_risks")
         if any(risk not in MCP_CLIENT_RISKS for risk in risks):
             raise ValueError("policy contains unsupported MCP risk")
         object.__setattr__(self, "allowed_risks", risks)
-        object.__setattr__(self, "allowed_permissions", _reference_tuple(self.allowed_permissions, "allowed_permissions"))
-        object.__setattr__(self, "allowed_network_scopes", _reference_tuple(self.allowed_network_scopes, "allowed_network_scopes"))
-        if not isinstance(self.allow_credentials, bool) or not isinstance(self.require_shadow, bool):
+        object.__setattr__(
+            self,
+            "allowed_permissions",
+            _reference_tuple(self.allowed_permissions, "allowed_permissions"),
+        )
+        object.__setattr__(
+            self,
+            "allowed_network_scopes",
+            _reference_tuple(self.allowed_network_scopes, "allowed_network_scopes"),
+        )
+        if not isinstance(self.allow_credentials, bool) or not isinstance(
+            self.require_shadow, bool
+        ):
             raise TypeError("MCP client policy flags must be boolean")
         if not isinstance(self.require_approval_for_side_effects, bool):
             raise TypeError("require_approval_for_side_effects must be boolean")
@@ -513,7 +548,9 @@ def preflight_inheritance_candidate(
         return deny("server_not_allowed")
     if len(candidate.tool_contracts) > policy.max_tools:
         return deny("tool_count_exceeded")
-    if candidate.network_scopes and not set(candidate.network_scopes).issubset(policy.allowed_network_scopes):
+    if candidate.network_scopes and not set(candidate.network_scopes).issubset(
+        policy.allowed_network_scopes
+    ):
         return deny("network_scope_not_allowed")
     if candidate.credential_refs and not policy.allow_credentials:
         return deny("credentials_not_allowed")
@@ -591,9 +628,19 @@ class McpCapabilityShadowObservation:
             ("candidate_after_state_digest", self.candidate_after_state_digest),
         ):
             object.__setattr__(self, name, _required_text(value, name))
-        object.__setattr__(self, "baseline_resources", _resource_budget(self.baseline_resources, "baseline_resources"))
-        object.__setattr__(self, "candidate_resources", _resource_budget(self.candidate_resources, "candidate_resources"))
-        if not isinstance(self.external_calls_performed, bool) or not isinstance(self.credential_accessed, bool):
+        object.__setattr__(
+            self,
+            "baseline_resources",
+            _resource_budget(self.baseline_resources, "baseline_resources"),
+        )
+        object.__setattr__(
+            self,
+            "candidate_resources",
+            _resource_budget(self.candidate_resources, "candidate_resources"),
+        )
+        if not isinstance(self.external_calls_performed, bool) or not isinstance(
+            self.credential_accessed, bool
+        ):
             raise TypeError("MCP shadow side-effect flags must be boolean")
 
     @classmethod

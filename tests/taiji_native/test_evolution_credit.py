@@ -45,9 +45,7 @@ def test_registered_capability_is_learned_instead_of_requesting_a_client_plugin(
     能力已注册意味着执行通路存在，收益只能来自学习既有通路；
     若此时仍产出 client_capability_candidate，等于用装插件掩盖学习不足。
     """
-    selector = BrainClientCreditSelector(
-        registered_capability_ids=("workbench.filesystem.read",)
-    )
+    selector = BrainClientCreditSelector(registered_capability_ids=("workbench.filesystem.read",))
 
     decision = selector.select(_experience())
 
@@ -95,13 +93,9 @@ def test_language_failure_does_not_trigger_structural_growth() -> None:
 
 def test_exhausted_resources_stop_instead_of_growing_without_bound() -> None:
     """Gate：资源不足时降级/停止而不是无限增长。"""
-    selector = BrainClientCreditSelector(
-        registered_capability_ids=("workbench.filesystem.read",)
-    )
+    selector = BrainClientCreditSelector(registered_capability_ids=("workbench.filesystem.read",))
 
-    decision = selector.select(
-        _experience(), growth_permitted=True, resources_exhausted=True
-    )
+    decision = selector.select(_experience(), growth_permitted=True, resources_exhausted=True)
 
     assert decision.candidate_kind == "clarify_or_stop"
     assert "resource_budget_exhausted" in decision.reasons
@@ -130,16 +124,12 @@ def test_every_candidate_kind_is_reachable_and_exactly_one_is_emitted() -> None:
     }
 
     assert observed == set(EVOLUTION_CREDIT_CANDIDATE_KINDS)
-    assert len(set(EVOLUTION_CREDIT_CANDIDATE_KINDS)) == len(
-        EVOLUTION_CREDIT_CANDIDATE_KINDS
-    )
+    assert len(set(EVOLUTION_CREDIT_CANDIDATE_KINDS)) == len(EVOLUTION_CREDIT_CANDIDATE_KINDS)
 
 
 def test_tampered_decision_payload_is_rejected() -> None:
     """决策必须内容寻址，否则事后无法证明收益归属没有被改写。"""
-    selector = BrainClientCreditSelector(
-        registered_capability_ids=("workbench.filesystem.read",)
-    )
+    selector = BrainClientCreditSelector(registered_capability_ids=("workbench.filesystem.read",))
     payload = selector.select(_experience()).to_payload()
 
     assert BrainClientCreditDecision.from_payload(payload).candidate_kind == (
@@ -166,14 +156,10 @@ def test_brain_only_arm_credits_learning_and_never_the_client_plugin() -> None:
     能力已注册这一臂根本没有产生插件申请，若归属结果里出现
     client_plugin_only 收益，就是把不存在的干预算进了账。
     """
-    registered = BrainClientCreditSelector(
-        registered_capability_ids=("workbench.filesystem.read",)
-    )
+    registered = BrainClientCreditSelector(registered_capability_ids=("workbench.filesystem.read",))
     experiences = _ablation_experiences()
 
-    attribution = attribute_brain_client_ablation(
-        registered.select(item) for item in experiences
-    )
+    attribution = attribute_brain_client_ablation(registered.select(item) for item in experiences)
 
     assert attribution.brain_only == ("episode-1", "episode-2")
     assert attribution.client_plugin_only == ()
@@ -189,9 +175,7 @@ def test_client_plugin_only_arm_credit_is_not_absorbed_into_self_evolution() -> 
     unregistered = BrainClientCreditSelector(registered_capability_ids=())
     experiences = _ablation_experiences()
 
-    attribution = attribute_brain_client_ablation(
-        unregistered.select(item) for item in experiences
-    )
+    attribution = attribute_brain_client_ablation(unregistered.select(item) for item in experiences)
 
     assert attribution.client_plugin_only == ("episode-1", "episode-2")
     assert attribution.brain_only == ()
@@ -206,14 +190,13 @@ def test_two_arms_explain_the_same_delta_on_the_same_experience_set() -> None:
     """
     experiences = _ablation_experiences()
     brain = attribute_brain_client_ablation(
-        BrainClientCreditSelector(
-            registered_capability_ids=("workbench.filesystem.read",)
-        ).select(item)
+        BrainClientCreditSelector(registered_capability_ids=("workbench.filesystem.read",)).select(
+            item
+        )
         for item in experiences
     )
     client = attribute_brain_client_ablation(
-        BrainClientCreditSelector(registered_capability_ids=()).select(item)
-        for item in experiences
+        BrainClientCreditSelector(registered_capability_ids=()).select(item) for item in experiences
     )
 
     assert brain.brain_only == client.client_plugin_only
@@ -251,9 +234,7 @@ def test_every_candidate_kind_maps_to_exactly_one_arm() -> None:
         unregistered.select(_experience(experience_id="k5")),
         unregistered.select(_experience(experience_id="k6", capability_id="")),
     )
-    assert {item.candidate_kind for item in decisions} == set(
-        EVOLUTION_CREDIT_CANDIDATE_KINDS
-    )
+    assert {item.candidate_kind for item in decisions} == set(EVOLUTION_CREDIT_CANDIDATE_KINDS)
 
     attribution = attribute_brain_client_ablation(decisions)
 
@@ -264,9 +245,7 @@ def test_every_candidate_kind_maps_to_exactly_one_arm() -> None:
 
 def test_the_same_episode_cannot_be_counted_twice() -> None:
     """同一 episode 重复入账会凭空放大收益，必须 fail-closed。"""
-    registered = BrainClientCreditSelector(
-        registered_capability_ids=("workbench.filesystem.read",)
-    )
+    registered = BrainClientCreditSelector(registered_capability_ids=("workbench.filesystem.read",))
     decision = registered.select(_experience())
 
     with pytest.raises(ValueError, match="duplicate"):
@@ -275,9 +254,7 @@ def test_the_same_episode_cannot_be_counted_twice() -> None:
 
 def test_tampered_attribution_payload_is_rejected() -> None:
     """归属结论同样内容寻址：事后把收益搬到另一臂必须被发现。"""
-    registered = BrainClientCreditSelector(
-        registered_capability_ids=("workbench.filesystem.read",)
-    )
+    registered = BrainClientCreditSelector(registered_capability_ids=("workbench.filesystem.read",))
     payload = attribute_brain_client_ablation(
         registered.select(item) for item in _ablation_experiences()
     ).to_payload()

@@ -86,9 +86,7 @@ def evaluate() -> dict[str, object]:
         tampered_taiji = dict(tampered_payload["taiji"])
         tampered_components = dict(tampered_taiji["components"])
         tampered_runtime = dict(tampered_components["structural_runtime"])
-        tampered_migration = dict(
-            tampered_runtime["lineage_retention_policy_migration"]
-        )
+        tampered_migration = dict(tampered_runtime["lineage_retention_policy_migration"])
         tampered_migration["migration_digest"] = "0" * 64
         tampered_runtime["lineage_retention_policy_migration"] = tampered_migration
         tampered_components["structural_runtime"] = tampered_runtime
@@ -118,7 +116,8 @@ def evaluate() -> dict[str, object]:
         resumed = SeedRuntime.load(rolled_back_path, workspace_root=PROJECT_ROOT)
         resumed_status = resumed.structural_maintenance_status()
         topology_after = tuple(
-            (region.region_id, region.unit_ids) for region in resumed.model.architecture.neuron_regions
+            (region.region_id, region.unit_ids)
+            for region in resumed.model.architecture.neuron_regions
         )
         budget_after = resumed.model.architecture.cognitive_snapshot().development.structural_budget
 
@@ -131,9 +130,15 @@ def evaluate() -> dict[str, object]:
             "deleted_lineage_does_not_reappear": (
                 terminal_removed_before_save
                 and terminal_batch_id
-                not in {item.batch_id for item in restored.model.architecture.structural_candidate_batches}
+                not in {
+                    item.batch_id
+                    for item in restored.model.architecture.structural_candidate_batches
+                }
                 and terminal_batch_id
-                not in {item.batch_id for item in resumed.model.architecture.structural_candidate_batches}
+                not in {
+                    item.batch_id
+                    for item in resumed.model.architecture.structural_candidate_batches
+                }
             ),
             "migration_and_status_survive_disk_restore": (
                 restored_status == expected_status
@@ -144,7 +149,8 @@ def evaluate() -> dict[str, object]:
                 rollback["status"] == "rolled_back"
                 and resumed_status["last_retention_policy"]["revision"] == 1
                 and resumed_status["last_retention_policy_migration"]["status"] == "rolled_back"
-                and resumed.model.architecture.structural_lineage_retention_result == expected_result
+                and resumed.model.architecture.structural_lineage_retention_result
+                == expected_result
             ),
             "lineage_and_budget_are_unchanged": (
                 topology_after == topology_before and budget_after == budget_before
@@ -200,7 +206,9 @@ def main() -> None:
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_w7_r5c_s29_structural_lineage_disk_checkpoint_20260831.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_w7_r5c_s29_structural_lineage_disk_checkpoint_20260831.json",
     )
     args = parser.parse_args()
     report = evaluate()

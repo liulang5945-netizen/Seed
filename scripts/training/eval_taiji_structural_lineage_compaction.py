@@ -170,7 +170,9 @@ def evaluate() -> dict[str, object]:
         raise AssertionError(f"S23 active batch was not created: {schedule}")
     model = runtime.model.architecture
     active_batch_id = str(schedule["batch_id"])
-    active = next(item for item in model.structural_candidate_batches if item.batch_id == active_batch_id)
+    active = next(
+        item for item in model.structural_candidate_batches if item.batch_id == active_batch_id
+    )
     _record_terminal_subgraph(model, active)
     terminal_artifact = next(
         item
@@ -231,10 +233,14 @@ def evaluate() -> dict[str, object]:
 
     pressure_model = TSKV8Adapter.from_native_checkpoint(checkpoint)
     pressure_active = next(
-        item for item in pressure_model.structural_candidate_batches if item.batch_id == active_batch_id
+        item
+        for item in pressure_model.structural_candidate_batches
+        if item.batch_id == active_batch_id
     )
     pressure_model._record_structural_candidate_batch(
-        replace(active_restored, batch_id="batch:protected-copy", revision=active_restored.revision + 1)
+        replace(
+            active_restored, batch_id="batch:protected-copy", revision=active_restored.revision + 1
+        )
     )
     pressure = pressure_model.compact_structural_lineage_history(max_batches=RETENTION_LIMIT)
 
@@ -247,7 +253,8 @@ def evaluate() -> dict[str, object]:
         "terminal_subgraph_is_removed_as_one_unit": (
             result.status == "compacted"
             and result.removed_batch_ids == (TERMINAL_BATCH_ID,)
-            and TERMINAL_BATCH_ID not in {item.batch_id for item in model.structural_candidate_batches}
+            and TERMINAL_BATCH_ID
+            not in {item.batch_id for item in model.structural_candidate_batches}
             and TERMINAL_BATCH_ID
             not in {item.batch_id for item in model.structural_validation_artifact_batches}
             and record_counts.get("candidate_rollbacks", 0) == 1
@@ -324,7 +331,9 @@ def main() -> None:
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_w7_r5c_s23_structural_lineage_compaction_20260831.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_w7_r5c_s23_structural_lineage_compaction_20260831.json",
     )
     args = parser.parse_args()
     report = evaluate()

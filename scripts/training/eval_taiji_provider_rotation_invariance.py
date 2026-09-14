@@ -210,7 +210,9 @@ def main() -> None:
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     report = evaluate()
-    report_path = PROJECT_ROOT / "reports" / "taiji_w7_p3_2_provider_rotation_invariance_20260831.json"
+    report_path = (
+        PROJECT_ROOT / "reports" / "taiji_w7_p3_2_provider_rotation_invariance_20260831.json"
+    )
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(
         json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"

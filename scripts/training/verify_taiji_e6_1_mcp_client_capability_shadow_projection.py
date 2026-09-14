@@ -111,9 +111,9 @@ def run_gate() -> dict[str, object]:
     registry_source = (
         PROJECT_ROOT / "seed_platform" / "mcp_client_capability_registry.py"
     ).read_text(encoding="utf-8")
-    api_source = (
-        PROJECT_ROOT / "api" / "routes_mcp_client_capabilities.py"
-    ).read_text(encoding="utf-8")
+    api_source = (PROJECT_ROOT / "api" / "routes_mcp_client_capabilities.py").read_text(
+        encoding="utf-8"
+    )
     checks = {
         "candidate_projects_to_shadow_pending": proposed.state == "shadow_pending",
         "equivalent_observation_projects_to_shadow_validated": validated.state
@@ -122,9 +122,8 @@ def run_gate() -> dict[str, object]:
         and api_status.json()["client_activation"] == "not_available_in_e6_1",
         "api_proposal_is_shadow_only": api_proposal.status_code == 200
         and api_proposal.json()["status"] == "shadow_pending",
-        "executor_and_source_are_not_exported": "executor_id" not in candidate.to_payload()[
-            "tool_contracts"
-        ][0]
+        "executor_and_source_are_not_exported": "executor_id"
+        not in candidate.to_payload()["tool_contracts"][0]
         and '"executor"' not in api_proposal.text,
         "mcp_registry_is_not_mutated": mcp_registry.snapshot_id == mcp_snapshot_before,
         "checkpoint_roundtrip_preserves_shadow": restored_shadow_snapshot_id
@@ -167,7 +166,9 @@ def main() -> int:
     args = parser.parse_args()
     result = run_gate()
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=True, indent=2))
     return 0 if result["status"] == "passed" else 1
 

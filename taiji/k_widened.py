@@ -202,9 +202,7 @@ class WidenedKBundle:
         self.parent_worker_bundle_digest = _digest(
             parent_worker_bundle_digest, "parent_worker_bundle_digest"
         )
-        self.source_manifest_digest = _digest(
-            source_manifest_digest, "source_manifest_digest"
-        )
+        self.source_manifest_digest = _digest(source_manifest_digest, "source_manifest_digest")
         self.channels: dict[str, dict[str, Any]] = {}
         for channel in WIDENED_CHANNELS:
             self.channels[channel] = {
@@ -218,7 +216,11 @@ class WidenedKBundle:
 
     @property
     def parameter_count(self) -> int:
-        return sum(int(parameter.numel()) for learner in self._learners() for parameter in learner.parameters())
+        return sum(
+            int(parameter.numel())
+            for learner in self._learners()
+            for parameter in learner.parameters()
+        )
 
     @property
     def parameter_bytes(self) -> int:
@@ -282,10 +284,10 @@ class WidenedKBundle:
             item.channels[channel]["k1.semantic"] = StructuredSemanticLearner.from_checkpoint(
                 channels[channel]["k1.semantic"], device="cpu"
             )
-            item.channels[channel][
-                "k2.transition"
-            ] = StructuredSemanticTransitionLearner.from_checkpoint(
-                channels[channel]["k2.transition"], device="cpu"
+            item.channels[channel]["k2.transition"] = (
+                StructuredSemanticTransitionLearner.from_checkpoint(
+                    channels[channel]["k2.transition"], device="cpu"
+                )
             )
         if item.worker_checkpoint_digests() != dict(payload["worker_checkpoint_digests"]):
             raise ValueError("widened bundle worker checkpoint digest mismatch")
@@ -410,9 +412,7 @@ class WidenedKBundle:
         )
 
 
-def widened_divergence_gate(
-    divergence: Mapping[str, float], *, floor: float = 1e-08
-) -> bool:
+def widened_divergence_gate(divergence: Mapping[str, float], *, floor: float = 1e-08) -> bool:
     """Distinct-evidence gate: both channels must diverge non-trivially."""
 
     return all(float(value) > floor for value in divergence.values())

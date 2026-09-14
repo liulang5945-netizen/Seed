@@ -63,9 +63,7 @@ class CueIdentityRoute:
         )
         self.action_count = int(action_count)
         self.route_learning_rate = float(route_learning_rate)
-        self.action_synapses = torch.zeros(
-            (int(capacity), self.action_count), dtype=torch.float32
-        )
+        self.action_synapses = torch.zeros((int(capacity), self.action_count), dtype=torch.float32)
         if self.action_count <= 1 or self.route_learning_rate <= 0.0:
             raise ValueError("identity route action_count and learning rate must be positive")
 
@@ -85,9 +83,7 @@ class CueIdentityRoute:
         probabilities = torch.softmax(self.action_synapses[slot], dim=0)
         target = torch.zeros(self.action_count)
         target[int(action)] = 1.0
-        self.action_synapses[slot].add_(
-            self.route_learning_rate * (target - probabilities)
-        )
+        self.action_synapses[slot].add_(self.route_learning_rate * (target - probabilities))
         return binding
 
     def query(self, pattern: torch.Tensor) -> CueBindingResult:
@@ -177,9 +173,7 @@ def _route_record(
         route_learning_rate=route_learning_rate,
     )
     actions = tuple(
-        dict.fromkeys(
-            episode.action for episode in (*corpus.phase_a_train, *corpus.phase_b_train)
-        )
+        dict.fromkeys(episode.action for episode in (*corpus.phase_a_train, *corpus.phase_b_train))
     )
     phase_a_slots = _route_training(route, model, corpus.phase_a_train)
     parent_score, _ = _route_score(route, model, corpus.phase_a_holdout, actions)
@@ -222,9 +216,7 @@ def _route_record(
     restored_score, _ = _route_score(
         restored_route, restored_model, corpus.phase_a_holdout, actions
     )
-    restored_new, _ = _route_score(
-        restored_route, restored_model, corpus.phase_b_holdout, actions
-    )
+    restored_new, _ = _route_score(restored_route, restored_model, corpus.phase_b_holdout, actions)
     restored_payload = {
         "model": restored_model.checkpoint(),
         "route": restored_route.to_payload(),
@@ -295,9 +287,7 @@ def _shared_record(seed: int, corpus: ContinualMemoryCorpus) -> dict[str, object
     )
     config = TaijiConfig.from_dict(config_values)
     actions = tuple(
-        dict.fromkeys(
-            episode.action for episode in (*corpus.phase_a_train, *corpus.phase_b_train)
-        )
+        dict.fromkeys(episode.action for episode in (*corpus.phase_a_train, *corpus.phase_b_train))
     )
     phase_a = Taiji(config, episode_id=f"m1-25-shared-phase-a-{seed}")
     for episode in corpus.phase_a_train:
@@ -445,7 +435,9 @@ def main() -> int:
     result["can_promote"] = bool(result["diagnostics"]["promotable_modes"])
     result["report_path"] = str(args.report)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

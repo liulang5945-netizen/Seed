@@ -202,7 +202,10 @@ def _verify_source_contracts(
         raise ValueError("P3.2 external target boundary is not clean")
     if len(p2_7_manifest.get("records", ())) != 4:
         raise ValueError("P3.3 G learning requires the fixed four-row P2.7 holdout")
-    if any(record.get("candidate", {}).get("fit_eligible") is not False for record in p2_7_manifest["records"]):
+    if any(
+        record.get("candidate", {}).get("fit_eligible") is not False
+        for record in p2_7_manifest["records"]
+    ):
         raise ValueError("P2.7 holdout contains a fit-eligible record")
 
 
@@ -218,10 +221,16 @@ def _k_only_candidate(candidate_set: GSelectionCandidateSet) -> GSelectionCandid
             and candidate.confidence >= CONFIDENCE_FLOOR
         ):
             return candidate
-    safe = [candidate for candidate in candidate_set.candidates if candidate.candidate_role == "abstain"]
+    safe = [
+        candidate for candidate in candidate_set.candidates if candidate.candidate_role == "abstain"
+    ]
     if safe:
         return sorted(safe, key=lambda candidate: candidate.candidate_id)[0]
-    reobserve = [candidate for candidate in candidate_set.candidates if candidate.candidate_role == "reobserve"]
+    reobserve = [
+        candidate
+        for candidate in candidate_set.candidates
+        if candidate.candidate_role == "reobserve"
+    ]
     if reobserve:
         return sorted(reobserve, key=lambda candidate: candidate.candidate_id)[0]
     raise ValueError("K-only baseline has no safe candidate")
@@ -242,8 +251,14 @@ def _evaluate_selections(
     for arm, selections in arms.items():
         rows: list[dict[str, Any]] = []
         for item, (candidate, decision) in zip(candidate_sets, selections, strict=True):
-            selected_id = candidate.candidate_id if candidate is not None else decision.selected_candidate_id
-            selected_role = candidate.candidate_role if candidate is not None else decision.selected_candidate_role
+            selected_id = (
+                candidate.candidate_id if candidate is not None else decision.selected_candidate_id
+            )
+            selected_role = (
+                candidate.candidate_role
+                if candidate is not None
+                else decision.selected_candidate_role
+            )
             target = item.target_candidate()
             rows.append(
                 {
@@ -254,7 +269,9 @@ def _evaluate_selections(
                     "target_candidate_id": target.candidate_id,
                     "target_kind": item.target_kind,
                     "target_hit": bool(selected_id == target.candidate_id),
-                    "pair_target_hit": bool(item.target_kind == "pair" and selected_id == target.candidate_id),
+                    "pair_target_hit": bool(
+                        item.target_kind == "pair" and selected_id == target.candidate_id
+                    ),
                     "safe_abstention": bool(selected_role == "abstain"),
                     "decision_digest": None if decision is None else decision.decision_digest,
                 }
@@ -267,7 +284,9 @@ def _evaluate_selections(
             ),
             "pair_target_hit_count": sum(int(row["pair_target_hit"]) for row in rows),
             "safe_abstention_count": sum(int(row["safe_abstention"]) for row in rows),
-            "selection_roles": dict(sorted(Counter(row["selected_candidate_role"] for row in rows).items())),
+            "selection_roles": dict(
+                sorted(Counter(row["selected_candidate_role"] for row in rows).items())
+            ),
             "rows": rows,
         }
     return result
@@ -362,7 +381,9 @@ def _holdout_actions(
             semantic_result = semantic.predict(semantic_example.percept)
             transition_result = None
             if semantic_result.world is not None:
-                transition_result = transition.predict(transition_example.before, transition_example.event)
+                transition_result = transition.predict(
+                    transition_example.before, transition_example.event
+                )
             action: dict[str, Any]
             if selected.goal is None or selected.content_plan is None or transition_result is None:
                 action = {
@@ -424,7 +445,9 @@ def run_learning(
     }
     try:
         signal_manifest = _load_json(manifest_path)
-        signal_report = _load_json(PROJECT_ROOT / "reports" / "taiji_m5_k_p3_3_g_signal_canary_20260911.json")
+        signal_report = _load_json(
+            PROJECT_ROOT / "reports" / "taiji_m5_k_p3_3_g_signal_canary_20260911.json"
+        )
         p3_2_report = _load_json(P3_2_REPORT)
         p3_2_manifest = _load_json(P3_2_MANIFEST)
         p2_7_manifest = _load_json(P2_7_MANIFEST)
@@ -494,7 +517,9 @@ def run_learning(
             semantic_payload=semantic_payload,
         )
         selection_metrics = {
-            "train": _evaluate_selections(candidate_sets=train_sets, zero_step=zero_step, trained=trained),
+            "train": _evaluate_selections(
+                candidate_sets=train_sets, zero_step=zero_step, trained=trained
+            ),
             "validation": _evaluate_selections(
                 candidate_sets=validation_sets,
                 zero_step=zero_step,
@@ -543,7 +568,8 @@ def run_learning(
             "p2_7_records_not_fit": len(holdout_sets) == 4,
             "g_training_steps_positive": trained.training_steps > 0,
             "g_parameter_count_stable": trained.parameter_count == zero_step.parameter_count,
-            "k_parameter_count_untouched": semantic.parameter_count + transition.parameter_count > 0,
+            "k_parameter_count_untouched": semantic.parameter_count + transition.parameter_count
+            > 0,
             "external_target_unused": True,
         }
         rejection_gate = {
@@ -553,7 +579,8 @@ def run_learning(
         holdout_gate = {
             "fixed_four_rows": len(holdout_sets) == 4,
             "fit_count": 0,
-            "all_holdout_paths_unique": len({item.path for item in holdout_sets}) == len(holdout_sets),
+            "all_holdout_paths_unique": len({item.path for item in holdout_sets})
+            == len(holdout_sets),
             "holdout_projects_at_least_two": len({item.project_id for item in holdout_sets}) >= 2,
         }
         payload.update(
@@ -591,7 +618,10 @@ def run_learning(
             }
         )
         required_gates = [checkpoint_gate, training_gate, rejection_gate, holdout_gate]
-        if not all(all(bool(value) for key, value in gate.items() if key != "fit_count") for gate in required_gates):
+        if not all(
+            all(bool(value) for key, value in gate.items() if key != "fit_count")
+            for gate in required_gates
+        ):
             payload["status"] = "failed"
             payload["error"] = "one or more P3.3 G learning gates failed"
     except Exception as exc:  # noqa: BLE001

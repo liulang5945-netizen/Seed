@@ -68,9 +68,7 @@ def frozen_table(dictionary):
 
     route_c = json.loads(ROUTE_C_REPORT.read_text(encoding="utf-8"))
     success_matrix = route_c["success_matrix"]
-    block_contexts = {
-        block: [contexts[-1]] for block, contexts in success_matrix["blocks"].items()
-    }
+    block_contexts = {block: [contexts[-1]] for block, contexts in success_matrix["blocks"].items()}
     return dictionary.table_from_success_matrix(success_matrix, block_contexts)
 
 
@@ -122,9 +120,7 @@ def test_arbitration_ceiling_is_never_positive_on_the_frozen_matrix(precheck, fr
     assert precheck.arbitration_ceiling(frozen_table, ("member-b", "member-c")) == -0.5
 
 
-def test_interleaving_alone_is_not_enough_when_a_singleton_covers_the_context(
-    precheck, dictionary
-):
+def test_interleaving_alone_is_not_enough_when_a_singleton_covers_the_context(precheck, dictionary):
     """Beating your own members is worthless if a third member already solves it."""
 
     table = _three_member_table(dictionary, interleaved=True)
@@ -194,17 +190,20 @@ def test_required_combination_only_contexts_matches_hand_computation(precheck):
 
     cases = [
         # reference, margin, n, expected k
-        (1.5, 0.15, 4, 4),   # 4 * 1.65 / 2 = 3.3  -> k = 4
-        (1.0, 0.15, 4, 3),   # 4 * 1.15 / 2 = 2.3  -> k = 3
-        (0.5, 0.15, 4, 2),   # 4 * 0.65 / 2 = 1.3  -> k = 2
-        (0.0, 0.15, 4, 1),   # 4 * 0.15 / 2 = 0.3  -> k = 1
+        (1.5, 0.15, 4, 4),  # 4 * 1.65 / 2 = 3.3  -> k = 4
+        (1.0, 0.15, 4, 3),  # 4 * 1.15 / 2 = 2.3  -> k = 3
+        (0.5, 0.15, 4, 2),  # 4 * 0.65 / 2 = 1.3  -> k = 2
+        (0.0, 0.15, 4, 1),  # 4 * 0.15 / 2 = 0.3  -> k = 1
         (0.85, 0.15, 4, 3),  # exactly at the boundary: not strictly greater
         (0.84, 0.15, 4, 2),
     ]
     for reference, margin, n, expected in cases:
-        assert precheck.required_combination_only_contexts(
-            reference_gain=reference, margin=margin, context_count=n
-        ) == expected, (reference, margin, n)
+        assert (
+            precheck.required_combination_only_contexts(
+                reference_gain=reference, margin=margin, context_count=n
+            )
+            == expected
+        ), (reference, margin, n)
 
 
 def test_required_combination_only_contexts_reports_infeasible_above_the_ceiling(precheck):
@@ -212,12 +211,18 @@ def test_required_combination_only_contexts_reports_infeasible_above_the_ceiling
 
     n = 4
     # (success - B) * n / n = 2.0 is the absolute ceiling of the mean gain.
-    assert precheck.required_combination_only_contexts(
-        reference_gain=1.85, margin=0.15, context_count=n
-    ) == n + 1
-    assert precheck.required_combination_only_contexts(
-        reference_gain=1.84, margin=0.15, context_count=n
-    ) == n
+    assert (
+        precheck.required_combination_only_contexts(
+            reference_gain=1.85, margin=0.15, context_count=n
+        )
+        == n + 1
+    )
+    assert (
+        precheck.required_combination_only_contexts(
+            reference_gain=1.84, margin=0.15, context_count=n
+        )
+        == n
+    )
 
 
 def test_max_clearable_reference_inverts_the_requirement(precheck):
@@ -229,21 +234,25 @@ def test_max_clearable_reference_inverts_the_requirement(precheck):
     assert supremum == 0.85
 
     # Just below it the task shape suffices ...
-    assert precheck.required_combination_only_contexts(
-        reference_gain=0.84, margin=0.15, context_count=4
-    ) == 2
+    assert (
+        precheck.required_combination_only_contexts(
+            reference_gain=0.84, margin=0.15, context_count=4
+        )
+        == 2
+    )
     # ... at the supremum it does not, because the comparison is strict.
-    assert precheck.required_combination_only_contexts(
-        reference_gain=supremum, margin=0.15, context_count=4
-    ) == 3
+    assert (
+        precheck.required_combination_only_contexts(
+            reference_gain=supremum, margin=0.15, context_count=4
+        )
+        == 3
+    )
 
 
 def test_combination_only_potential_uses_the_blank_reference(precheck, frozen_table):
     """The one context where every singleton fails is block 3, worth +2 of 4."""
 
-    assert precheck.combination_only_solvable_contexts(frozen_table) == [
-        "p52a-validation-111"
-    ]
+    assert precheck.combination_only_solvable_contexts(frozen_table) == ["p52a-validation-111"]
     assert precheck.combination_only_gain_potential(frozen_table) == 0.5
 
 
@@ -360,8 +369,11 @@ def test_required_combination_only_contexts_rejects_degenerate_inputs(precheck):
 
     with pytest.raises(ValueError):
         precheck.required_combination_only_contexts(
-            reference_gain=0.5, margin=0.15, context_count=4,
-            success_outcome=1.0, blank_outcome=1.0,
+            reference_gain=0.5,
+            margin=0.15,
+            context_count=4,
+            success_outcome=1.0,
+            blank_outcome=1.0,
         )
     with pytest.raises(ValueError):
         precheck.required_combination_only_contexts(

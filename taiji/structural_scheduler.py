@@ -37,7 +37,9 @@ class StructuralGrowthScheduleState:
         digests = tuple(str(item) for item in self.evaluated_window_digests)
         if any(not item for item in digests) or len(set(digests)) != len(digests):
             raise ValueError("structural scheduler window digests must be unique and non-empty")
-        stream_ticks = tuple((str(key), int(value)) for key, value in self.stream_last_evaluated_ticks)
+        stream_ticks = tuple(
+            (str(key), int(value)) for key, value in self.stream_last_evaluated_ticks
+        )
         if any(not key for key, _ in stream_ticks) or len({key for key, _ in stream_ticks}) != len(
             stream_ticks
         ):
@@ -117,9 +119,7 @@ class StructuralGrowthScheduleState:
             raise ValueError("structural scheduler window digests must be a sequence")
         raw_stream_ticks = payload.get("stream_last_evaluated_ticks", {})
         if isinstance(raw_stream_ticks, Mapping):
-            stream_ticks = tuple(
-                (str(key), int(value)) for key, value in raw_stream_ticks.items()
-            )
+            stream_ticks = tuple((str(key), int(value)) for key, value in raw_stream_ticks.items())
         elif isinstance(raw_stream_ticks, (tuple, list)):
             stream_ticks = tuple(
                 (str(item[0]), int(item[1]))
@@ -208,7 +208,9 @@ class StructuralGrowthScheduleResult:
                 if payload.get("projection_digest") is None
                 else str(payload["projection_digest"])
             ),
-            candidate_id=(None if payload.get("candidate_id") is None else str(payload["candidate_id"])),
+            candidate_id=(
+                None if payload.get("candidate_id") is None else str(payload["candidate_id"])
+            ),
             reason=str(payload.get("reason", "")),
             scheduler_revision=int(payload.get("scheduler_revision", 0)),
         )

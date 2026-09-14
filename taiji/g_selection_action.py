@@ -88,7 +88,11 @@ def project_g_decision(
 
     if decision.selection_status != "selected":
         raise ValueError("unsupported G action selection status")
-    if selected.candidate_role != "proposal" or selected.goal is None or selected.content_plan is None:
+    if (
+        selected.candidate_role != "proposal"
+        or selected.goal is None
+        or selected.content_plan is None
+    ):
         raise ValueError("selected G action must contain a complete proposal")
     if world is None:
         raise ValueError("proposal action projection requires a verified world")

@@ -40,9 +40,7 @@ def _digest(payload: Mapping[str, Any]) -> str:
 def artifact_consumption_policy_digest(payload: Mapping[str, Any]) -> str:
     """Return the canonical digest for a policy payload."""
 
-    return _digest(
-        {key: value for key, value in payload.items() if key != "policy_digest"}
-    )
+    return _digest({key: value for key, value in payload.items() if key != "policy_digest"})
 
 
 @dataclass(frozen=True)
@@ -141,9 +139,7 @@ class ArtifactConsumptionPolicy:
 def artifact_consumption_audit_digest(payload: Mapping[str, Any]) -> str:
     """Return the canonical digest for a consumption audit payload."""
 
-    return _digest(
-        {key: value for key, value in payload.items() if key != "audit_digest"}
-    )
+    return _digest({key: value for key, value in payload.items() if key != "audit_digest"})
 
 
 @dataclass(frozen=True)
@@ -163,7 +159,9 @@ class ArtifactConsumptionAudit:
         if not isinstance(self.policy, ArtifactConsumptionPolicy):
             raise TypeError("artifact consumption audit policy is invalid")
         statuses = tuple(
-            sorted((str(candidate_id), str(status)) for candidate_id, status in self.artifact_statuses)
+            sorted(
+                (str(candidate_id), str(status)) for candidate_id, status in self.artifact_statuses
+            )
         )
         if len({candidate_id for candidate_id, _ in statuses}) != len(statuses):
             raise ValueError("artifact consumption audit candidate ids must be unique")
@@ -217,9 +215,7 @@ class ArtifactConsumptionAudit:
             "format": ARTIFACT_CONSUMPTION_AUDIT_FORMAT,
             "batch_id": self.batch_id,
             "policy": self.policy.to_payload(),
-            "artifact_statuses": {
-                key: value for key, value in self.artifact_statuses
-            },
+            "artifact_statuses": {key: value for key, value in self.artifact_statuses},
             "result": self.result,
             "error_code": self.error_code,
         }
@@ -240,9 +236,7 @@ class ArtifactConsumptionAudit:
         return cls(
             batch_id=str(payload["batch_id"]),
             policy=ArtifactConsumptionPolicy.from_payload(raw_policy),
-            artifact_statuses=tuple(
-                (str(key), str(value)) for key, value in raw_statuses.items()
-            ),
+            artifact_statuses=tuple((str(key), str(value)) for key, value in raw_statuses.items()),
             result=str(payload["result"]),
             error_code=str(payload.get("error_code", "")),
             audit_digest=str(payload["audit_digest"]),

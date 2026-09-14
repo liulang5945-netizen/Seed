@@ -58,7 +58,11 @@ class StructuralCandidateBatch:
         groups = (selected, deferred, rejected)
         if any(len(set(group)) != len(group) for group in groups):
             raise ValueError("structural candidate batch decision ids must be unique")
-        if set(selected) & set(deferred) or set(selected) & set(rejected) or set(deferred) & set(rejected):
+        if (
+            set(selected) & set(deferred)
+            or set(selected) & set(rejected)
+            or set(deferred) & set(rejected)
+        ):
             raise ValueError("structural candidate batch decision groups must be disjoint")
         if set(selected) | set(deferred) | set(rejected) != set(all_ids):
             raise ValueError("structural candidate batch decisions must cover all candidates")

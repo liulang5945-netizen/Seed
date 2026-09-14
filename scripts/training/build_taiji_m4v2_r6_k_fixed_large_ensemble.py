@@ -90,9 +90,7 @@ def _atomic_save(path: Path, payload: Mapping[str, Any]) -> dict[str, Any]:
     return loaded
 
 
-def _artifact_ref(
-    artifact: Mapping[str, Any], *, task_seed: int, worker_id: str
-) -> dict[str, Any]:
+def _artifact_ref(artifact: Mapping[str, Any], *, task_seed: int, worker_id: str) -> dict[str, Any]:
     required = (
         "artifact_digest",
         "worker_checkpoint_digest",
@@ -264,11 +262,7 @@ def _build_source_manifest(
             }
         ),
         "formal_holdout": sorted(
-            {
-                str(path)
-                for item in holdout_inputs
-                for path in item["paths"]  # type: ignore[index]
-            }
+            {str(path) for item in holdout_inputs for path in item["paths"]}  # type: ignore[index]
         ),
     }
     path_overlap = sorted(set(path_sets["training"]) & set(path_sets["formal_holdout"]))
@@ -318,9 +312,7 @@ def run_build(
     replica_reports: list[dict[str, Any]] = []
     replica_payloads: list[dict[str, Any]] = []
     source_inputs = [_worker_fit_inputs(task_seed=seed) for seed in WORKER_TASK_SEEDS]
-    holdout_inputs = [
-        _holdout_input_digests(task_seed=seed) for seed in FORMAL_HOLDOUT_SEEDS
-    ]
+    holdout_inputs = [_holdout_input_digests(task_seed=seed) for seed in FORMAL_HOLDOUT_SEEDS]
     replica_root = artifact_dir / "replicas"
     for task_seed in WORKER_TASK_SEEDS:
         replica_dir = replica_root / f"task_{task_seed}"
@@ -328,9 +320,7 @@ def run_build(
             artifact_dir=replica_dir,
             task_seed=task_seed,
             learner_seed=model_seed,
-            candidate_namespace=(
-                f"{candidate_namespace}:replica-{task_seed}"
-            ),
+            candidate_namespace=(f"{candidate_namespace}:replica-{task_seed}"),
         )
         if report.get("status") != "passed":
             raise RuntimeError(f"fixed-large worker build failed for task seed {task_seed}")
@@ -349,7 +339,9 @@ def run_build(
             {
                 "task_seed": int(task_seed),
                 "k1": _artifact_ref(artifacts["k1"], task_seed=task_seed, worker_id="k1.semantic"),
-                "k2": _artifact_ref(artifacts["k2"], task_seed=task_seed, worker_id="k2.transition"),
+                "k2": _artifact_ref(
+                    artifacts["k2"], task_seed=task_seed, worker_id="k2.transition"
+                ),
                 "k3": _artifact_ref(
                     artifacts["k3"], task_seed=task_seed, worker_id="k3.outcome_projection"
                 ),
@@ -482,10 +474,12 @@ def run_build(
         ],
         "replica_reports": replica_reports,
         "prefit_checkpoint_gate": {
-            str(seed): report["prefit_checkpoint_gate"] for seed, report in zip(WORKER_TASK_SEEDS, replica_reports, strict=True)
+            str(seed): report["prefit_checkpoint_gate"]
+            for seed, report in zip(WORKER_TASK_SEEDS, replica_reports, strict=True)
         },
         "postfit_restore_gate": {
-            str(seed): report["postfit_restore_gate"] for seed, report in zip(WORKER_TASK_SEEDS, replica_reports, strict=True)
+            str(seed): report["postfit_restore_gate"]
+            for seed, report in zip(WORKER_TASK_SEEDS, replica_reports, strict=True)
         },
         "ensemble_checkpoint_gate": {
             "fresh_restore": content_digest(restored_ensemble.checkpoint())
@@ -520,7 +514,9 @@ def main() -> int:
     parser.add_argument("--candidate-namespace", default=DEFAULT_NAMESPACE)
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
     args = parser.parse_args()
-    artifact_dir = args.artifact_dir if args.artifact_dir.is_absolute() else PROJECT_ROOT / args.artifact_dir
+    artifact_dir = (
+        args.artifact_dir if args.artifact_dir.is_absolute() else PROJECT_ROOT / args.artifact_dir
+    )
     report_path = args.report if args.report.is_absolute() else PROJECT_ROOT / args.report
     report = run_build(
         artifact_dir=artifact_dir,

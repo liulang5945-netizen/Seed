@@ -29,7 +29,9 @@ def _text(value: Any, name: str) -> str:
 
 def _digest(value: Any, name: str) -> str:
     normalized = _text(value, name)
-    if len(normalized) != 64 or any(character not in "0123456789abcdef" for character in normalized):
+    if len(normalized) != 64 or any(
+        character not in "0123456789abcdef" for character in normalized
+    ):
         raise ValueError(f"{name} must be a lowercase SHA-256 digest")
     return normalized
 
@@ -206,11 +208,15 @@ class TaijiContinuationCheckpoint:
         provisional = {
             "format": TAIJI_CONTINUATION_CHECKPOINT_FORMAT,
             "version": TAIJI_CONTINUATION_CHECKPOINT_VERSION,
-            "parent_checkpoint_digest": _digest(parent_checkpoint_digest, "parent_checkpoint_digest"),
+            "parent_checkpoint_digest": _digest(
+                parent_checkpoint_digest, "parent_checkpoint_digest"
+            ),
             "worker_checkpoint_digests": dict(
                 _pairs(worker_checkpoint_digests, "worker_checkpoint_digests", digest_values=True)
             ),
-            "worker_checkpoint_refs": dict(_pairs(worker_checkpoint_refs, "worker_checkpoint_refs")),
+            "worker_checkpoint_refs": dict(
+                _pairs(worker_checkpoint_refs, "worker_checkpoint_refs")
+            ),
             "phase_cursor": phase_cursor.to_payload(),
             "experience_digests": list(_digest_sequence(experience_digests, "experience_digests")),
             "stream_digest": _digest(stream_digest, "stream_digest"),
@@ -233,7 +239,9 @@ class TaijiContinuationCheckpoint:
     def from_payload(cls, payload: Mapping[str, Any]) -> TaijiContinuationCheckpoint:
         if not isinstance(payload, Mapping):
             raise TypeError("continuation checkpoint payload must be a mapping")
-        without_digest = {key: value for key, value in payload.items() if key != "checkpoint_digest"}
+        without_digest = {
+            key: value for key, value in payload.items() if key != "checkpoint_digest"
+        }
         expected = content_digest(without_digest)
         if str(payload.get("checkpoint_digest", "")) != expected:
             raise ValueError("continuation checkpoint digest mismatch")

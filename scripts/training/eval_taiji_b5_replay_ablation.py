@@ -85,7 +85,9 @@ def main() -> int:
     }
     args.report.parent.mkdir(parents=True, exist_ok=True)
     result["report_path"] = str(args.report)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

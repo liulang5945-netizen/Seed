@@ -63,16 +63,12 @@ def test_identity_organ_write_is_reward_modulated_not_reward_blind() -> None:
     punished = Taiji(config, episode_id="m1-63-reward-sign")
 
     pattern = _cue_pattern(rewarded, 65)
-    baseline = float(
-        rewarded.identity_organ.recall(pattern).action_probabilities[48].item()
-    )
+    baseline = float(rewarded.identity_organ.recall(pattern).action_probabilities[48].item())
 
     rewarded.identity_organ.learn(pattern, 48, outcome_symbol=43, reward=1.0)
     punished.identity_organ.learn(pattern, 48, outcome_symbol=43, reward=-1.0)
 
-    after_reward = float(
-        rewarded.identity_organ.recall(pattern).action_probabilities[48].item()
-    )
+    after_reward = float(rewarded.identity_organ.recall(pattern).action_probabilities[48].item())
     after_punishment = float(
         punished.identity_organ.recall(pattern).action_probabilities[48].item()
     )
@@ -104,9 +100,7 @@ def test_identity_organ_default_reward_reproduces_unmodulated_write() -> None:
 
     assert content_digest(
         implicit.identity_organ.to_payload(parent_checkpoint_digest="x")
-    ) == content_digest(
-        explicit.identity_organ.to_payload(parent_checkpoint_digest="x")
-    )
+    ) == content_digest(explicit.identity_organ.to_payload(parent_checkpoint_digest="x"))
 
 
 def test_identity_organ_can_be_explicitly_disabled_for_ablation() -> None:
@@ -134,9 +128,7 @@ def test_default_config_carries_the_identity_organ_as_a_first_class_organ() -> N
 
 
 def test_identity_growth_preserves_slots_and_roundtrips() -> None:
-    model = Taiji(
-        _promotion_config(11, enabled=True, capacity=128), episode_id="identity-growth"
-    )
+    model = Taiji(_promotion_config(11, enabled=True, capacity=128), episode_id="identity-growth")
     pattern = _cue_pattern(model, 65)
     model.identity_organ.learn(pattern, 48, outcome_symbol=43)
     before = model.checkpoint()
@@ -158,7 +150,9 @@ def test_identity_growth_preserves_slots_and_roundtrips() -> None:
     assert torch.equal(model.identity_organ.bank.prototypes[:128], old_bank)
     assert torch.equal(model.identity_organ.action_synapses.pre_index[:, :128], old_action_index)
     assert torch.equal(model.identity_organ.action_synapses.edge_weight[:, :128], old_action_weight)
-    assert torch.equal(model.identity_organ.outcome_synapses.edge_weight[:, :128], old_outcome_weight)
+    assert torch.equal(
+        model.identity_organ.outcome_synapses.edge_weight[:, :128], old_outcome_weight
+    )
     assert torch.count_nonzero(model.identity_organ.action_synapses.edge_weight[:, 128:]) == 0
     assert model.parameter_count() == model.config.planned_active_parameter_count
     assert model.identity_growth_history == (event,)
@@ -179,9 +173,7 @@ def test_identity_organ_budget_is_planned_before_allocation() -> None:
     disabled = _disabled_config(config)
     model = Taiji(config)
 
-    planned_delta = (
-        config.planned_active_parameter_count - disabled.planned_active_parameter_count
-    )
+    planned_delta = config.planned_active_parameter_count - disabled.planned_active_parameter_count
 
     assert planned_delta == model.identity_organ.parameter_count
     assert model.parameter_count() == config.planned_active_parameter_count
@@ -262,16 +254,13 @@ def test_evaluator_write_path_threads_example_reward_to_the_organ() -> None:
     assert punished.identity_organ.write_count == written
     assert punished.identity_organ.skipped_write_count == 0
     assert (
-        punished.identity_organ.bank.occupied_count
-        == rewarded.identity_organ.bank.occupied_count
+        punished.identity_organ.bank.occupied_count == rewarded.identity_organ.bank.occupied_count
     )
 
     # And the two runs must actually differ, or reward is decorative.
     assert content_digest(
         punished.identity_organ.to_payload(parent_checkpoint_digest="x")
-    ) != content_digest(
-        rewarded.identity_organ.to_payload(parent_checkpoint_digest="x")
-    )
+    ) != content_digest(rewarded.identity_organ.to_payload(parent_checkpoint_digest="x"))
 
 
 def test_punished_course_is_derived_so_only_reward_can_explain_the_difference() -> None:

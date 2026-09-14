@@ -100,7 +100,9 @@ def _new_slot(model: Taiji, *, seed_offset: int, zero: bool) -> BytePredictiveRe
     return slot
 
 
-def _slot_from_payload(model: Taiji, payload: Mapping[str, Any], *, seed_offset: int) -> BytePredictiveReadout:
+def _slot_from_payload(
+    model: Taiji, payload: Mapping[str, Any], *, seed_offset: int
+) -> BytePredictiveReadout:
     slot = _new_slot(model, seed_offset=seed_offset, zero=False)
     slot.load_payload(payload)
     return slot
@@ -335,7 +337,9 @@ def _run_variant_a(
     train_metrics: list[dict[str, float]] = []
     phases = (chain.phase_c, chain.phase_c2, chain.phase_c3)
     for phase in phases:
-        train_metrics.append(_train_cycle(model, phase.train, boundary=boundary, authorization=authorization))
+        train_metrics.append(
+            _train_cycle(model, phase.train, boundary=boundary, authorization=authorization)
+        )
         active = _active_slot(model)
         c_score = _score_readout_only(model, active, chain.phase_c.holdout)
         c2_score = _score_readout_only(model, _active_slot(model), chain.phase_c2.holdout)
@@ -345,9 +349,7 @@ def _run_variant_a(
                 "c_bpb": c_score["bpb"],
                 "c2_bpb": c2_score["bpb"],
                 "c3_bpb": c3_score["bpb"],
-                "read_only": all(
-                    bool(item["read_only"]) for item in (c_score, c2_score, c3_score)
-                ),
+                "read_only": all(bool(item["read_only"]) for item in (c_score, c2_score, c3_score)),
             }
         )
     active_after = _slot_digest(_active_slot(model))
@@ -397,7 +399,9 @@ def _run_variant_b(
     train_metrics: list[dict[str, float]] = []
     phases = (chain.phase_c, chain.phase_c2, chain.phase_c3)
     for phase in phases:
-        train_metrics.append(_train_cycle(model, phase.train, boundary=boundary, authorization=authorization))
+        train_metrics.append(
+            _train_cycle(model, phase.train, boundary=boundary, authorization=authorization)
+        )
         new_slot = _active_slot(model)
         c_score = _score_composite(model, old_slot, new_slot, chain.phase_c.holdout)
         new_slot = _active_slot(model)
@@ -409,35 +413,37 @@ def _run_variant_b(
                 "c_bpb": c_score["bpb"],
                 "c2_bpb": c2_score["bpb"],
                 "c3_bpb": c3_score["bpb"],
-                "read_only": all(
-                    bool(item["read_only"]) for item in (c_score, c2_score, c3_score)
-                ),
+                "read_only": all(bool(item["read_only"]) for item in (c_score, c2_score, c3_score)),
             }
         )
     new_slot = _active_slot(model)
     after_owners = _owner_digests(model)
-    return model, old_slot, {
-        "kind": "incremental_old_plus_zero_initialized_slot",
-        "train_metrics": train_metrics,
-        "metrics": _cycle_metrics(
-            scores,
-            protected_c3_bpb=float(protected_scores["c3_bpb"]),
-            protected_c_bpb=float(protected_scores["c_bpb"]),
-        ),
-        "scores": scores,
-        "read_only_scoring": all(bool(item["read_only"]) for item in scores),
-        "protected_readout_digest": protected_digest,
-        "protected_readout_after_digest": after_owners["predictive_readout"],
-        "old_slot_before_digest": old_before,
-        "old_slot_after_digest": _slot_digest(old_slot),
-        "new_slot_before_digest": new_before,
-        "new_slot_after_digest": _slot_digest(new_slot),
-        "old_slot_bytes": _slot_bytes(old_slot),
-        "new_slot_bytes": _slot_bytes(new_slot),
-        "zero_init_uniform": zero_init_uniform,
-        "before_owners": before_owners,
-        "after_owners": after_owners,
-    }
+    return (
+        model,
+        old_slot,
+        {
+            "kind": "incremental_old_plus_zero_initialized_slot",
+            "train_metrics": train_metrics,
+            "metrics": _cycle_metrics(
+                scores,
+                protected_c3_bpb=float(protected_scores["c3_bpb"]),
+                protected_c_bpb=float(protected_scores["c_bpb"]),
+            ),
+            "scores": scores,
+            "read_only_scoring": all(bool(item["read_only"]) for item in scores),
+            "protected_readout_digest": protected_digest,
+            "protected_readout_after_digest": after_owners["predictive_readout"],
+            "old_slot_before_digest": old_before,
+            "old_slot_after_digest": _slot_digest(old_slot),
+            "new_slot_before_digest": new_before,
+            "new_slot_after_digest": _slot_digest(new_slot),
+            "old_slot_bytes": _slot_bytes(old_slot),
+            "new_slot_bytes": _slot_bytes(new_slot),
+            "zero_init_uniform": zero_init_uniform,
+            "before_owners": before_owners,
+            "after_owners": after_owners,
+        },
+    )
 
 
 def _save_artifacts(
@@ -538,8 +544,12 @@ def run_canary(
         if len(phase.train) < train_bytes or len(phase.holdout) < eval_bytes:
             raise ValueError("smoke dataset does not satisfy requested byte budgets")
     protected_scores = {
-        "c_bpb": _score_readout_only(source_model, source_model.predictive_readout, chain.phase_c.holdout[:eval_bytes])["bpb"],
-        "c3_bpb": _score_readout_only(source_model, source_model.predictive_readout, chain.phase_c3.holdout[:eval_bytes])["bpb"],
+        "c_bpb": _score_readout_only(
+            source_model, source_model.predictive_readout, chain.phase_c.holdout[:eval_bytes]
+        )["bpb"],
+        "c3_bpb": _score_readout_only(
+            source_model, source_model.predictive_readout, chain.phase_c3.holdout[:eval_bytes]
+        )["bpb"],
     }
     boundary_a, authorization_a = _boundary("m4r2-a")
     boundary_b, authorization_b = _boundary("m4r2-b")
@@ -647,8 +657,10 @@ def run_canary(
         "fresh_restore": {
             "a_probe_bpb": fresh_a["bpb"],
             "b_probe_bpb": fresh_b["bpb"],
-            "a_score_round_trip": abs(float(fresh_a["bpb"]) - float(a_metrics["c3_holdout_bpb"])) < 1e-9,
-            "b_score_round_trip": abs(float(fresh_b["bpb"]) - float(b_metrics["c3_holdout_bpb"])) < 1e-9,
+            "a_score_round_trip": abs(float(fresh_a["bpb"]) - float(a_metrics["c3_holdout_bpb"]))
+            < 1e-9,
+            "b_score_round_trip": abs(float(fresh_b["bpb"]) - float(b_metrics["c3_holdout_bpb"]))
+            < 1e-9,
         },
         "artifacts": {
             "variant_a": str(artifact_a),
@@ -677,7 +689,9 @@ def run_canary(
         },
     }
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_path.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     return report
 
 
@@ -685,10 +699,18 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checkpoint", type=Path, required=True)
     parser.add_argument("--corpus", type=Path, required=True)
-    parser.add_argument("--artifact-dir", type=Path, default=PROJECT_ROOT / "output" / "taiji-m4r2-capacity-canary")
+    parser.add_argument(
+        "--artifact-dir", type=Path, default=PROJECT_ROOT / "output" / "taiji-m4r2-capacity-canary"
+    )
     parser.add_argument("--train-bytes", type=int, default=4_096)
     parser.add_argument("--eval-bytes", type=int, default=1_024)
-    parser.add_argument("--report", type=Path, default=PROJECT_ROOT / "reports" / "taiji_m4r2_capacity_diagnosis_canary_seed11_20260908.json")
+    parser.add_argument(
+        "--report",
+        type=Path,
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_m4r2_capacity_diagnosis_canary_seed11_20260908.json",
+    )
     args = parser.parse_args(argv)
     report = run_canary(
         checkpoint_path=args.checkpoint,

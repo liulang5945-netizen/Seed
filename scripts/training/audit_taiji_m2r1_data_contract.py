@@ -22,9 +22,7 @@ from scripts.training.eval_taiji_m2r1_phase_c_canary import (  # noqa: E402
     build_disjoint_phase_chain,
 )
 
-DEFAULT_CORPUS = (
-    Path("data") / "simple_zh" / "dialogue_extended_clean.jsonl",
-)
+DEFAULT_CORPUS = (Path("data") / "simple_zh" / "dialogue_extended_clean.jsonl",)
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m2r1_data_contract_20260906.json"
 
 
@@ -62,9 +60,7 @@ def main(argv: list[str] | None = None) -> int:
                 "phase_c2_digest": phase_chain["phase_c2"]["digest"],
                 "phase_c3_digest": phase_chain["phase_c3"]["digest"],
                 "nonzero_overlaps": {
-                    key: value
-                    for key, value in phase_chain["overlap_counts"].items()
-                    if value
+                    key: value for key, value in phase_chain["overlap_counts"].items() if value
                 },
             },
             ensure_ascii=False,

@@ -144,9 +144,7 @@ def test_scoring_records_real_owner_calls_not_empty_round_trip() -> None:
         boundary_digest=active.token_digest,
     )
 
-    expected_symbols = len(
-        list(model.sensor.symbols(data, include_boundary=True))
-    )
+    expected_symbols = len(list(model.sensor.symbols(data, include_boundary=True)))
     # The first scored symbol carries no prior prediction, so the observations
     # gauge records one fewer real owner calls than the symbol count.
     expected_observations = expected_symbols - 1

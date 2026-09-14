@@ -213,14 +213,20 @@ def test_mcp_client_capability_api_records_and_revokes_connection_authorization(
 
 def test_mcp_client_capability_api_requires_current_snapshot_and_dry_run(client):
     candidate = _candidate()
-    assert client.post(
-        "/api/mcp-client-capabilities/proposals",
-        json={"candidate": candidate.to_payload(), "policy": {}},
-    ).status_code == 200
-    assert client.post(
-        f"/api/mcp-client-capabilities/{candidate.candidate_digest}/shadow",
-        json={"observation": _observation(candidate).to_payload()},
-    ).status_code == 200
+    assert (
+        client.post(
+            "/api/mcp-client-capabilities/proposals",
+            json={"candidate": candidate.to_payload(), "policy": {}},
+        ).status_code
+        == 200
+    )
+    assert (
+        client.post(
+            f"/api/mcp-client-capabilities/{candidate.candidate_digest}/shadow",
+            json={"observation": _observation(candidate).to_payload()},
+        ).status_code
+        == 200
+    )
     status = client.get("/api/mcp-client-capabilities").json()
     client_snapshot_id = status["client_capability_snapshot_id"]
     activation = client.post(
@@ -258,14 +264,20 @@ def test_mcp_client_capability_api_requires_current_snapshot_and_dry_run(client)
 
 def test_mcp_client_capability_api_rejects_target_drift_and_unsupported_transport(client):
     candidate = _candidate()
-    assert client.post(
-        "/api/mcp-client-capabilities/proposals",
-        json={"candidate": candidate.to_payload(), "policy": {}},
-    ).status_code == 200
-    assert client.post(
-        f"/api/mcp-client-capabilities/{candidate.candidate_digest}/shadow",
-        json={"observation": _observation(candidate).to_payload()},
-    ).status_code == 200
+    assert (
+        client.post(
+            "/api/mcp-client-capabilities/proposals",
+            json={"candidate": candidate.to_payload(), "policy": {}},
+        ).status_code
+        == 200
+    )
+    assert (
+        client.post(
+            f"/api/mcp-client-capabilities/{candidate.candidate_digest}/shadow",
+            json={"observation": _observation(candidate).to_payload()},
+        ).status_code
+        == 200
+    )
     status = client.get("/api/mcp-client-capabilities").json()
     client_snapshot_id = status["client_capability_snapshot_id"]
     activation = client.post(

@@ -131,14 +131,10 @@ def _variant_record(
         },
         "b5": {
             "default": {
-                key: value
-                for key, value in default_b5.items()
-                if not key.endswith("checkpoint")
+                key: value for key, value in default_b5.items() if not key.endswith("checkpoint")
             },
             "candidate": {
-                key: value
-                for key, value in candidate_b5.items()
-                if not key.endswith("checkpoint")
+                key: value for key, value in candidate_b5.items() if not key.endswith("checkpoint")
             },
             "lesion": lesion_b5,
         },
@@ -167,7 +163,10 @@ def _budget_record(default: Taiji, candidate: Taiji, lesion: Taiji) -> dict[str,
 
 
 def _schema_record(
-    *, default_checkpoint: dict[str, Any], candidate_checkpoint: dict[str, Any], lesion_checkpoint: dict[str, Any]
+    *,
+    default_checkpoint: dict[str, Any],
+    candidate_checkpoint: dict[str, Any],
+    lesion_checkpoint: dict[str, Any],
 ) -> dict[str, Any]:
     candidate_payload = candidate_checkpoint["identity_organ"]
     lesion_payload = lesion_checkpoint["identity_organ"]
@@ -183,8 +182,7 @@ def _schema_record(
             == candidate_payload["lineage"]["parent_checkpoint_digest"]
         ),
         "lesion_lineage_core_matches": (
-            _core_digest(lesion_checkpoint)
-            == lesion_payload["lineage"]["parent_checkpoint_digest"]
+            _core_digest(lesion_checkpoint) == lesion_payload["lineage"]["parent_checkpoint_digest"]
         ),
         "candidate_restore_exact": (
             content_digest(Taiji.from_checkpoint(deepcopy(candidate_checkpoint)).checkpoint())
@@ -232,9 +230,7 @@ def _record(seed: int) -> dict[str, Any]:
     b2 = build_delayed_memory_smoke_corpus(count=16)
     b5 = build_b5_corpus(train_count=16, holdout_count=8, retention_count=8)
     default = Taiji(_config(seed, enabled=False), episode_id=f"m1-31-default-{seed}")
-    candidate = Taiji(
-        _review_config(seed, enabled=True), episode_id=f"m1-31-candidate-{seed}"
-    )
+    candidate = Taiji(_review_config(seed, enabled=True), episode_id=f"m1-31-candidate-{seed}")
     baseline_default_checkpoint = deepcopy(default.checkpoint())
     candidate_start_checkpoint = deepcopy(candidate.checkpoint())
     # Rebuild metric variants from clean same-seed models so the candidate,
@@ -290,9 +286,7 @@ def _record(seed: int) -> dict[str, Any]:
             ),
             "candidate_organ_digest": candidate_organ_digest,
             "lesion_organ_digest": lesion_organ_digest,
-            "lesion_digest_differs_from_candidate": (
-                candidate_organ_digest != lesion_organ_digest
-            ),
+            "lesion_digest_differs_from_candidate": (candidate_organ_digest != lesion_organ_digest),
         },
     }
     record["passed"] = _record_passes(record)
@@ -357,7 +351,9 @@ def main() -> int:
     result = run_review(seeds=tuple(int(seed) for seed in args.seeds))
     result["report_path"] = str(args.report)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0 if result["gate"]["passed"] else 1
 

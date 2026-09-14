@@ -135,9 +135,7 @@ class CueIdentityOrgan:
             device=self.device,
             dtype=torch.long,
         )
-        self._value_counts = torch.zeros(
-            (self.capacity,), device=self.device, dtype=torch.long
-        )
+        self._value_counts = torch.zeros((self.capacity,), device=self.device, dtype=torch.long)
         # Writes after an explicit capacity expansion use only the appended
         # generation. Older slots remain readable as a fallback, so a new
         # course cannot replace or blend its keys with legacy bindings.
@@ -163,9 +161,7 @@ class CueIdentityOrgan:
         )
 
     @staticmethod
-    def _expand_slot_synapses(
-        source: SparseSynapses, new_capacity: int
-    ) -> SparseSynapses:
+    def _expand_slot_synapses(source: SparseSynapses, new_capacity: int) -> SparseSynapses:
         """Create a larger full-slot projection without rewriting old edges."""
 
         old_capacity = int(source.in_features)
@@ -450,12 +446,8 @@ class CueIdentityOrgan:
                 self._value_actions[slot].fill_(-1)
                 self._value_counts[slot] = 0
         trace = self._slot_trace(slot)
-        self._train_head(
-            self.action_synapses, trace, action, self.action_count, modulation
-        )
-        self._train_head(
-            self.outcome_synapses, trace, outcome, self.outcome_count, abs(modulation)
-        )
+        self._train_head(self.action_synapses, trace, action, self.action_count, modulation)
+        self._train_head(self.outcome_synapses, trace, outcome, self.outcome_count, abs(modulation))
         if self._value_router_enabled:
             if modulation > 0.0:
                 self._record_value(slot, cortical_context.detach().clone(), action)

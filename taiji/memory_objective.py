@@ -85,9 +85,7 @@ class EpisodicObjectiveContract:
         return cls(
             source_partitions=tuple(str(item) for item in payload["source_partitions"]),
             protected_partition=str(payload["protected_partition"]),
-            prohibited_partitions=tuple(
-                str(item) for item in payload["prohibited_partitions"]
-            ),
+            prohibited_partitions=tuple(str(item) for item in payload["prohibited_partitions"]),
             positive_binding=str(payload["positive_binding"]),
             negative_competition=str(payload["negative_competition"]),
             credit_axes=tuple(str(item) for item in payload["credit_axes"]),

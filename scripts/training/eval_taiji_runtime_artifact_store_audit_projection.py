@@ -95,9 +95,7 @@ def evaluate() -> dict[str, object]:
             replays_by_candidate={second_id: second_replay},
             artifact_consumption_policy=legacy_policy,
         )
-        second_rollback = runtime.rollback_structural_candidate_batch(
-            terminal_batch_id, second_id
-        )
+        second_rollback = runtime.rollback_structural_candidate_batch(terminal_batch_id, second_id)
         first_rollback = runtime.rollback_structural_candidate_batch(terminal_batch_id, first_id)
 
         before_projection_checkpoint = _checkpoint_digest(
@@ -110,9 +108,7 @@ def evaluate() -> dict[str, object]:
             for artifact in (first_artifact, second_artifact)
         }
         projection = runtime.project_structural_artifact_store_audit(artifact_store=store)
-        repeated_projection = runtime.project_structural_artifact_store_audit(
-            artifact_store=store
-        )
+        repeated_projection = runtime.project_structural_artifact_store_audit(artifact_store=store)
         before_projection_is_stable = (
             projection == repeated_projection
             and projection["audit_digest"]

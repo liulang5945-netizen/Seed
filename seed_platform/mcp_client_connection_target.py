@@ -167,17 +167,31 @@ class McpClientConnectionTarget:
             raise ValueError("unsupported MCP connection transport")
         if self.state not in MCP_CONNECTION_TARGET_STATES:
             raise ValueError("unsupported MCP connection target state")
-        object.__setattr__(self, "network_scopes", _reference_tuple(self.network_scopes, "network_scopes"))
-        object.__setattr__(self, "credential_refs", _reference_tuple(self.credential_refs, "credential_refs"))
-        object.__setattr__(self, "allowed_permissions", _reference_tuple(self.allowed_permissions, "allowed_permissions"))
+        object.__setattr__(
+            self, "network_scopes", _reference_tuple(self.network_scopes, "network_scopes")
+        )
+        object.__setattr__(
+            self, "credential_refs", _reference_tuple(self.credential_refs, "credential_refs")
+        )
+        object.__setattr__(
+            self,
+            "allowed_permissions",
+            _reference_tuple(self.allowed_permissions, "allowed_permissions"),
+        )
         issued = _epoch(self.authorization_issued_at_epoch, "authorization_issued_at_epoch")
         expires = _epoch(self.authorization_expires_at_epoch, "authorization_expires_at_epoch")
         if expires <= issued:
-            raise ValueError("authorization_expires_at_epoch must be after authorization_issued_at_epoch")
+            raise ValueError(
+                "authorization_expires_at_epoch must be after authorization_issued_at_epoch"
+            )
         object.__setattr__(self, "authorization_issued_at_epoch", issued)
         object.__setattr__(self, "authorization_expires_at_epoch", expires)
         if self.state == "revoked":
-            object.__setattr__(self, "revocation_reason", _required_text(self.revocation_reason, "revocation_reason"))
+            object.__setattr__(
+                self,
+                "revocation_reason",
+                _required_text(self.revocation_reason, "revocation_reason"),
+            )
         else:
             object.__setattr__(self, "revocation_reason", str(self.revocation_reason).strip())
 
@@ -390,7 +404,9 @@ class McpClientConnectionTargetStore:
         mcp_registry_snapshot_id: str,
         client_capability_snapshot_id: str,
     ) -> None:
-        self._mcp_registry_snapshot_id = _required_text(mcp_registry_snapshot_id, "mcp_registry_snapshot_id")
+        self._mcp_registry_snapshot_id = _required_text(
+            mcp_registry_snapshot_id, "mcp_registry_snapshot_id"
+        )
         self._client_capability_snapshot_id = _required_text(
             client_capability_snapshot_id,
             "client_capability_snapshot_id",
@@ -512,7 +528,9 @@ class McpClientConnectionTargetStore:
             raise ValueError("unsupported MCP target store format")
         if int(payload.get("version", 0)) != MCP_CONNECTION_TARGET_STORE_VERSION:
             raise ValueError("unsupported MCP target store version")
-        expected = _digest({key: value for key, value in payload.items() if key != "checkpoint_digest"})
+        expected = _digest(
+            {key: value for key, value in payload.items() if key != "checkpoint_digest"}
+        )
         if str(payload.get("checkpoint_digest", "")) != expected:
             raise ValueError("MCP target store checkpoint digest mismatch")
         store = cls(

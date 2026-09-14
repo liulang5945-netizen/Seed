@@ -56,7 +56,9 @@ def evaluate() -> dict[str, object]:
         raise AssertionError(f"S24 active batch was not created: {schedule}")
     model = runtime.model.architecture
     active_batch_id = str(schedule["batch_id"])
-    active = next(item for item in model.structural_candidate_batches if item.batch_id == active_batch_id)
+    active = next(
+        item for item in model.structural_candidate_batches if item.batch_id == active_batch_id
+    )
     _record_terminal_subgraph(model, active)
     terminal_batch_id = "batch:terminal-lineage"
     topology_before = _topology(model)
@@ -82,7 +84,9 @@ def evaluate() -> dict[str, object]:
 
     pressure_model = TSKV8Adapter.from_native_checkpoint(checkpoint)
     retained_active = next(
-        item for item in pressure_model.structural_candidate_batches if item.batch_id == active_batch_id
+        item
+        for item in pressure_model.structural_candidate_batches
+        if item.batch_id == active_batch_id
     )
     pressure_model._record_structural_candidate_batch(
         replace(
@@ -110,8 +114,7 @@ def evaluate() -> dict[str, object]:
             and first_audit is not None
             and first_audit.status == "compacted"
             and first_audit.removed_batch_ids == (terminal_batch_id,)
-            and {item.batch_id for item in model.structural_candidate_batches}
-            == {active_batch_id}
+            and {item.batch_id for item in model.structural_candidate_batches} == {active_batch_id}
         ),
         "maintenance_does_not_change_topology_or_budget": (
             _topology(model) == topology_before
@@ -165,7 +168,9 @@ def main() -> None:
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_w7_r5c_s24_structural_lineage_maintenance_20260831.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_w7_r5c_s24_structural_lineage_maintenance_20260831.json",
     )
     args = parser.parse_args()
     report = evaluate()

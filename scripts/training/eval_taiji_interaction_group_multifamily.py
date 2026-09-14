@@ -79,10 +79,13 @@ def _build_corpus():
                 )
                 episodes[split].append(episode)
                 records.append(record)
-    return InteractionTraceCorpus(
-        train=tuple(episodes["train"]),
-        holdout=tuple(episodes["holdout"]),
-    ), records
+    return (
+        InteractionTraceCorpus(
+            train=tuple(episodes["train"]),
+            holdout=tuple(episodes["holdout"]),
+        ),
+        records,
+    )
 
 
 def _evaluator() -> InteractionGroupEvaluator:
@@ -111,7 +114,9 @@ def _outcome(corpus, *, split: str, family: str, member_ids: tuple[str, ...]) ->
     return float(matches[0].outcome)
 
 
-def _family_gain(corpus, *, split: str, family: str, member_ids: tuple[str, ...]) -> dict[str, float]:
+def _family_gain(
+    corpus, *, split: str, family: str, member_ids: tuple[str, ...]
+) -> dict[str, float]:
     first = _outcome(corpus, split=split, family=family, member_ids=(member_ids[0],))
     second = _outcome(corpus, split=split, family=family, member_ids=(member_ids[1],))
     grouped = _outcome(corpus, split=split, family=family, member_ids=member_ids)
@@ -198,14 +203,16 @@ def evaluate() -> dict[str, object]:
                 }
             )
 
-    selected_member_sets = {
-        tuple(item["selected"].member_ids) for item in runs
-    }
+    selected_member_sets = {tuple(item["selected"].member_ids) for item in runs}
     positive_members = next(
-        tuple(group.member_ids) for group in full_attribution.state.groups if group.interaction > 0.0
+        tuple(group.member_ids)
+        for group in full_attribution.state.groups
+        if group.interaction > 0.0
     )
     conflict_members = next(
-        tuple(group.member_ids) for group in full_attribution.state.groups if group.interaction < 0.0
+        tuple(group.member_ids)
+        for group in full_attribution.state.groups
+        if group.interaction < 0.0
     )
     metrics = {
         "real_workbench_family_count": len(ALL_FAMILIES) == 4,
@@ -319,7 +326,9 @@ def main() -> int:
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_w7_p4_5_interaction_group_multifamily_20260831.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_w7_p4_5_interaction_group_multifamily_20260831.json",
     )
     args = parser.parse_args()
     report = evaluate()

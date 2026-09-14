@@ -83,12 +83,14 @@ def test_runtime_store_reconciliation_distinguishes_missing_and_orphan() -> None
         )
         assert first_result["results"][first_id]["status"] == "admitted"
         assert second_result["results"][second_id]["status"] == "admitted"
-        assert runtime.rollback_structural_candidate_batch(terminal_batch_id, second_id)[
-            "status"
-        ] == "rolled_back"
-        assert runtime.rollback_structural_candidate_batch(terminal_batch_id, first_id)[
-            "status"
-        ] == "rolled_back"
+        assert (
+            runtime.rollback_structural_candidate_batch(terminal_batch_id, second_id)["status"]
+            == "rolled_back"
+        )
+        assert (
+            runtime.rollback_structural_candidate_batch(terminal_batch_id, first_id)["status"]
+            == "rolled_back"
+        )
 
         projection = runtime.project_structural_artifact_store_audit(artifact_store=store)
         repeated = runtime.project_structural_artifact_store_audit(artifact_store=store)
@@ -100,21 +102,22 @@ def test_runtime_store_reconciliation_distinguishes_missing_and_orphan() -> None
         assert projection["runtime_batch_artifact_digests"] == sorted(
             (first_artifact.artifact_digest, second_artifact.artifact_digest)
         )
-        assert projection["missing_runtime_artifact_digests"] == [
-            second_artifact.artifact_digest
-        ]
+        assert projection["missing_runtime_artifact_digests"] == [second_artifact.artifact_digest]
         assert projection["missing_runtime_batch_artifact_digests"] == [
             second_artifact.artifact_digest
         ]
-        assert {
-            item["runtime_visibility"] for item in projection["entries"]
-        } == {"runtime_recorded"}
+        assert {item["runtime_visibility"] for item in projection["entries"]} == {
+            "runtime_recorded"
+        }
 
         runtime.save(before_retention_path)
         restored = SeedRuntime.load(before_retention_path)
-        assert restored.project_structural_artifact_store_audit(
-            artifact_store=StructuralValidationArtifactStore(store_root)
-        ) == projection
+        assert (
+            restored.project_structural_artifact_store_audit(
+                artifact_store=StructuralValidationArtifactStore(store_root)
+            )
+            == projection
+        )
 
         policy = StructuralLineageRetentionPolicy.create(1, revision=2)
         restored.run_structural_maintenance_cycle(
@@ -135,16 +138,19 @@ def test_runtime_store_reconciliation_distinguishes_missing_and_orphan() -> None
         assert orphan_projection["runtime_batch_artifact_digests"] == []
         assert orphan_projection["missing_runtime_artifact_digests"] == []
         assert orphan_projection["missing_runtime_batch_artifact_digests"] == []
-        assert {
-            item["runtime_visibility"] for item in orphan_projection["entries"]
-        } == {"external_orphan"}
+        assert {item["runtime_visibility"] for item in orphan_projection["entries"]} == {
+            "external_orphan"
+        }
         assert second_artifact.artifact_digest not in {
             item["artifact_digest"] for item in orphan_projection["entries"]
         }
         assert first_artifact.artifact_digest in {
             item["artifact_digest"] for item in orphan_projection["entries"]
         }
-        assert terminal_batch_id in after_retention.model.architecture.structural_lineage_retention_result.removed_batch_ids
+        assert (
+            terminal_batch_id
+            in after_retention.model.architecture.structural_lineage_retention_result.removed_batch_ids
+        )
         assert active_batch_id in {
             item.batch_id
             for item in after_retention.model.architecture.structural_candidate_batches

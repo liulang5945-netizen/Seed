@@ -243,7 +243,9 @@ class StructuredSemanticCorpus:
                 raise TypeError(f"semantic corpus {name} split contains an invalid example")
         if int(self.feature_dim) <= 0:
             raise ValueError("semantic corpus feature_dim must be positive")
-        if any(item.percept.features.numel() != int(self.feature_dim) for item in self.all_examples):
+        if any(
+            item.percept.features.numel() != int(self.feature_dim) for item in self.all_examples
+        ):
             raise ValueError("semantic corpus percept feature dimensions must match")
         if tuple(self.fact_keys) != tuple(sorted(self.fact_keys)):
             raise ValueError("semantic corpus fact_keys must be sorted")
@@ -298,13 +300,11 @@ class StructuredSemanticCorpus:
                     raise ValueError(
                         f"semantic family leakage between {left_name}/{right_name}: {sorted(overlap)}"
                     )
-                input_overlap = {
-                    item.input_digest for item in splits[left_name]
-                } & {item.input_digest for item in splits[right_name]}
+                input_overlap = {item.input_digest for item in splits[left_name]} & {
+                    item.input_digest for item in splits[right_name]
+                }
                 if input_overlap:
-                    raise ValueError(
-                        f"semantic input leakage between {left_name}/{right_name}"
-                    )
+                    raise ValueError(f"semantic input leakage between {left_name}/{right_name}")
         feature_dims = {int(item.percept.features.numel()) for item in all_examples}
         if len(feature_dims) != 1:
             raise ValueError("semantic corpus feature dimensions must be uniform")
@@ -328,12 +328,20 @@ class StructuredSemanticCorpus:
                 fact for item in split_values for fact in item.fact_keys if fact not in train_facts
             }
             if unknown_facts:
-                raise ValueError(f"{split_name} contains unseen semantic facts: {sorted(unknown_facts)}")
-            unknown_goals = {item.goal.goal_id for item in split_values if item.goal.goal_id not in train_goals}
+                raise ValueError(
+                    f"{split_name} contains unseen semantic facts: {sorted(unknown_facts)}"
+                )
+            unknown_goals = {
+                item.goal.goal_id for item in split_values if item.goal.goal_id not in train_goals
+            }
             if unknown_goals:
-                raise ValueError(f"{split_name} contains unseen semantic goals: {sorted(unknown_goals)}")
+                raise ValueError(
+                    f"{split_name} contains unseen semantic goals: {sorted(unknown_goals)}"
+                )
             unknown_content = {
-                item.content.content_id for item in split_values if item.content.content_id not in train_content
+                item.content.content_id
+                for item in split_values
+                if item.content.content_id not in train_content
             }
             if unknown_content:
                 raise ValueError(
@@ -425,9 +433,7 @@ class StructuredSemanticResult:
             "status": self.status,
             "world": None if self.world is None else self.world.to_payload(),
             "goal": None if self.goal is None else self.goal.to_payload(),
-            "content_plan": None
-            if self.content_plan is None
-            else self.content_plan.to_payload(),
+            "content_plan": None if self.content_plan is None else self.content_plan.to_payload(),
             "fact_scores": {str(key): float(value) for key, value in self.fact_scores.items()},
             "goal_scores": {str(key): float(value) for key, value in self.goal_scores.items()},
             "content_scores": {
@@ -456,15 +462,16 @@ class StructuredSemanticResult:
             ),
             goal=None if goal_payload is None else Goal.from_payload(goal_payload),
             content_plan=(
-                None
-                if content_payload is None
-                else ContentPlan.from_payload(content_payload)
+                None if content_payload is None else ContentPlan.from_payload(content_payload)
             ),
-            fact_scores={str(key): float(value) for key, value in payload.get("fact_scores", {}).items()},
-            goal_scores={str(key): float(value) for key, value in payload.get("goal_scores", {}).items()},
+            fact_scores={
+                str(key): float(value) for key, value in payload.get("fact_scores", {}).items()
+            },
+            goal_scores={
+                str(key): float(value) for key, value in payload.get("goal_scores", {}).items()
+            },
             content_scores={
-                str(key): float(value)
-                for key, value in payload.get("content_scores", {}).items()
+                str(key): float(value) for key, value in payload.get("content_scores", {}).items()
             },
             confidence=float(payload.get("confidence", 0.0)),
             ambiguity=float(payload.get("ambiguity", 1.0)),
@@ -503,9 +510,7 @@ class StructuredSemanticLearner(nn.Module):
         self.goal_ids = tuple(corpus.goal_ids)
         self.content_ids = tuple(corpus.content_ids)
         self._goals = {goal.goal_id: goal for goal in corpus.goals}
-        self._content_plans = {
-            plan.content_id: plan for plan in corpus.content_plans
-        }
+        self._content_plans = {plan.content_id: plan for plan in corpus.content_plans}
         self.fact_threshold = _unit(fact_threshold, "semantic fact threshold")
         self.confidence_floor = _unit(confidence_floor, "semantic confidence floor")
         ambiguity_ceiling = float(ambiguity_ceiling)
@@ -533,9 +538,7 @@ class StructuredSemanticLearner(nn.Module):
         self.to(device)
         self._readout_input_mask: torch.Tensor | None
         if self.readout_excluded_facts:
-            mask = torch.ones(
-                len(self.fact_keys), device=self.fact_head.weight.device
-            )
+            mask = torch.ones(len(self.fact_keys), device=self.fact_head.weight.device)
             for key in self.readout_excluded_facts:
                 mask[self.fact_keys.index(key)] = 0.0
             self._readout_input_mask = mask
@@ -684,9 +687,7 @@ class StructuredSemanticLearner(nn.Module):
         for key in fact_keys:
             subject, predicate, _ = _relation_from_fact_key(key)
             groups.setdefault((subject, predicate), []).append(key)
-        return tuple(
-            tuple(sorted(values)) for values in groups.values() if len(values) > 1
-        )
+        return tuple(tuple(sorted(values)) for values in groups.values() if len(values) > 1)
 
     def _materialize_world(
         self,
@@ -697,7 +698,9 @@ class StructuredSemanticLearner(nn.Module):
             sorted(key for key, score in fact_scores.items() if score >= self.fact_threshold)
         )
         relations = tuple(_relation_from_fact_key(key) for key in active)
-        entities = tuple(sorted({item for relation in relations for item in (relation[0], relation[2])}))
+        entities = tuple(
+            sorted({item for relation in relations for item in (relation[0], relation[2])})
+        )
         uncertainty = 1.0
         if fact_scores:
             uncertainty = float(
@@ -739,10 +742,7 @@ class StructuredSemanticLearner(nn.Module):
         active = {key for key, score in fact_scores.items() if score >= self.fact_threshold}
         conflicts = any(
             len(active.intersection(group)) > 1
-            or (
-                len(group) > 1
-                and all(0.45 <= fact_scores[key] <= 0.55 for key in group)
-            )
+            or (len(group) > 1 and all(0.45 <= fact_scores[key] <= 0.55 for key in group))
             for group in self._conflict_groups(self.fact_keys)
         )
         if conflicts:
@@ -772,8 +772,7 @@ class StructuredSemanticLearner(nn.Module):
         goal_logits = self.goal_head(self._masked_readout_input(fact_probabilities.reshape(1, -1)))
         goal_probabilities = torch.softmax(goal_logits, dim=-1).reshape(-1)
         goal_scores = {
-            goal_id: float(goal_probabilities[index])
-            for index, goal_id in enumerate(self.goal_ids)
+            goal_id: float(goal_probabilities[index]) for index, goal_id in enumerate(self.goal_ids)
         }
         goal_order = torch.argsort(goal_probabilities, descending=True)
         goal_index = int(goal_order[0])
@@ -781,7 +780,10 @@ class StructuredSemanticLearner(nn.Module):
         second_goal = float(goal_probabilities[goal_order[1]]) if len(goal_order) > 1 else 0.0
         goal_ambiguity = 1.0 - max(0.0, goal_confidence - second_goal)
         goal = self._goals[self.goal_ids[goal_index]]
-        if goal_confidence < self.confidence_floor or goal_confidence - second_goal < self.ambiguity_ceiling:
+        if (
+            goal_confidence < self.confidence_floor
+            or goal_confidence - second_goal < self.ambiguity_ceiling
+        ):
             return StructuredSemanticResult(
                 status="ambiguous",
                 world=world,
@@ -832,10 +834,16 @@ class StructuredSemanticLearner(nn.Module):
     def owner_digests(self) -> dict[str, str]:
         return {
             "semantic_fact": content_digest(
-                {name: value.detach().cpu().clone() for name, value in self.fact_head.state_dict().items()}
+                {
+                    name: value.detach().cpu().clone()
+                    for name, value in self.fact_head.state_dict().items()
+                }
             ),
             "semantic_goal": content_digest(
-                {name: value.detach().cpu().clone() for name, value in self.goal_head.state_dict().items()}
+                {
+                    name: value.detach().cpu().clone()
+                    for name, value in self.goal_head.state_dict().items()
+                }
             ),
             "semantic_content": content_digest(
                 {
@@ -864,9 +872,7 @@ class StructuredSemanticLearner(nn.Module):
             "goal_ids": list(self.goal_ids),
             "content_ids": list(self.content_ids),
             "goal_catalog": [goal.to_payload() for goal in self._goals.values()],
-            "content_catalog": [
-                plan.to_payload() for plan in self._content_plans.values()
-            ],
+            "content_catalog": [plan.to_payload() for plan in self._content_plans.values()],
             "fact_threshold": self.fact_threshold,
             "confidence_floor": self.confidence_floor,
             "ambiguity_ceiling": self.ambiguity_ceiling,

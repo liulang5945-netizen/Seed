@@ -170,17 +170,19 @@ def run_gate() -> dict[str, object]:
         )
         shadow = client.post(
             f"/api/mcp-client-capabilities/{api_candidate.candidate_digest}/shadow",
-            json={"observation": McpCapabilityShadowObservation.from_execution(
-                candidate_digest=api_candidate.candidate_digest,
-                registry_snapshot_id=api_candidate.registry_snapshot_id,
-                input_payload={"action": "list"},
-                baseline_output={"entries": ["README.md"]},
-                candidate_output={"entries": ["README.md"]},
-                baseline_after_state={"files": ["README.md"]},
-                candidate_after_state={"files": ["README.md"]},
-                baseline_resources={"cpu_ms": 1, "output_bytes": 20},
-                candidate_resources={"cpu_ms": 2, "output_bytes": 21},
-            ).to_payload()},
+            json={
+                "observation": McpCapabilityShadowObservation.from_execution(
+                    candidate_digest=api_candidate.candidate_digest,
+                    registry_snapshot_id=api_candidate.registry_snapshot_id,
+                    input_payload={"action": "list"},
+                    baseline_output={"entries": ["README.md"]},
+                    candidate_output={"entries": ["README.md"]},
+                    baseline_after_state={"files": ["README.md"]},
+                    candidate_after_state={"files": ["README.md"]},
+                    baseline_resources={"cpu_ms": 1, "output_bytes": 20},
+                    candidate_resources={"cpu_ms": 2, "output_bytes": 21},
+                ).to_payload()
+            },
         )
         status = client.get("/api/mcp-client-capabilities").json()
         activation = client.post(
@@ -229,12 +231,12 @@ def run_gate() -> dict[str, object]:
     routes_mcp_client_capabilities._authorization_store = None
     routes_mcp_client_capabilities._target_store = None
 
-    target_source = (
-        PROJECT_ROOT / "seed_platform" / "mcp_client_connection_target.py"
-    ).read_text(encoding="utf-8")
-    route_source = (
-        PROJECT_ROOT / "api" / "routes_mcp_client_capabilities.py"
-    ).read_text(encoding="utf-8")
+    target_source = (PROJECT_ROOT / "seed_platform" / "mcp_client_connection_target.py").read_text(
+        encoding="utf-8"
+    )
+    route_source = (PROJECT_ROOT / "api" / "routes_mcp_client_capabilities.py").read_text(
+        encoding="utf-8"
+    )
     forbidden_markers = (
         "import requests",
         "import socket",
@@ -268,7 +270,16 @@ def run_gate() -> dict[str, object]:
         and restored.get(target.binding_id).state == "revoked"
         and restored.get(target.binding_id).to_payload()["connection_attempted"] is False,
         "target_payload_has_no_endpoint_or_secret": set(payload).isdisjoint(
-            {"endpoint", "url", "token", "secret", "credential_value", "command", "executor", "source"}
+            {
+                "endpoint",
+                "url",
+                "token",
+                "secret",
+                "credential_value",
+                "command",
+                "executor",
+                "source",
+            }
         )
         and payload["connection_attempted"] is False,
         "fail_closed_on_identity_snapshot_and_expiry": wrong_identity.reason_code
@@ -313,14 +324,14 @@ def main() -> int:
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT
-        / "reports"
-        / "taiji_w7_e6_5_mcp_client_target_binding_20260901.json",
+        default=PROJECT_ROOT / "reports" / "taiji_w7_e6_5_mcp_client_target_binding_20260901.json",
     )
     args = parser.parse_args()
     result = run_gate()
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=True, indent=2))
     return 0 if result["status"] == "passed" else 1
 

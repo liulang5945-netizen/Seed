@@ -72,8 +72,7 @@ def _geometry(model: Taiji, corpus: Any) -> dict[str, float]:
             sum(float(item["cue_event_cosine"]) for item in patterns) / len(patterns)
         ),
         "association_completion_ratio_mean": float(
-            sum(float(item["association_completion_ratio"]) for item in patterns)
-            / len(patterns)
+            sum(float(item["association_completion_ratio"]) for item in patterns) / len(patterns)
         ),
         "association_error_ratio_mean": float(
             sum(float(item["association_error_ratio"]) for item in patterns) / len(patterns)
@@ -193,8 +192,7 @@ def run_diagnosis() -> dict[str, Any]:
         "conclusion": {
             "candidate_passed": candidate["condition_gate_passed"],
             "target_credit_mix_is_sufficient_explanation": (
-                candidate["condition_gate_passed"]
-                and not default["condition_gate_passed"]
+                candidate["condition_gate_passed"] and not default["condition_gate_passed"]
             ),
             "next_boundary": (
                 "target-credit candidate passed; hold for M1-50 stability review"
@@ -212,7 +210,9 @@ def main() -> int:
     result = run_diagnosis()
     result["report_path"] = str(args.report)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

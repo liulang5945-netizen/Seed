@@ -96,8 +96,12 @@ class StructuralEvidenceWindowSummary:
             not item for item in task_slice_ids
         ):
             raise ValueError("structural evidence task_slice_ids must be unique and non-empty")
-        partition_counts = tuple((str(partition), int(count)) for partition, count in self.partition_counts)
-        if any(partition not in STRUCTURAL_EVIDENCE_PARTITIONS for partition, _ in partition_counts):
+        partition_counts = tuple(
+            (str(partition), int(count)) for partition, count in self.partition_counts
+        )
+        if any(
+            partition not in STRUCTURAL_EVIDENCE_PARTITIONS for partition, _ in partition_counts
+        ):
             raise ValueError("structural evidence partition is not supported")
         if any(count <= 0 for _, count in partition_counts):
             raise ValueError("structural evidence partition counts must be positive")
@@ -140,9 +144,7 @@ class StructuralEvidenceWindowSummary:
             "network_id": self.network_id,
             "region_id": self.region_id,
             "task_slice_ids": list(self.task_slice_ids),
-            "partition_counts": {
-                partition: count for partition, count in self.partition_counts
-            },
+            "partition_counts": {partition: count for partition, count in self.partition_counts},
             "first_tick": self.first_tick,
             "last_tick": self.last_tick,
             "observation_count": self.observation_count,
@@ -241,23 +243,40 @@ class StructuralEvidenceCompactedWindow:
         if len(set(task_slice_ids)) != len(task_slice_ids) or any(
             not item for item in task_slice_ids
         ):
-            raise ValueError("compacted structural evidence task slices must be unique and non-empty")
-        partition_counts = tuple((str(partition), int(count)) for partition, count in self.partition_counts)
-        if any(partition not in STRUCTURAL_EVIDENCE_PARTITIONS for partition, _ in partition_counts):
+            raise ValueError(
+                "compacted structural evidence task slices must be unique and non-empty"
+            )
+        partition_counts = tuple(
+            (str(partition), int(count)) for partition, count in self.partition_counts
+        )
+        if any(
+            partition not in STRUCTURAL_EVIDENCE_PARTITIONS for partition, _ in partition_counts
+        ):
             raise ValueError("compacted structural evidence partition is not supported")
         if any(count <= 0 for _, count in partition_counts):
             raise ValueError("compacted structural evidence partition counts must be positive")
         if sum(count for _, count in partition_counts) != int(self.observation_count):
-            raise ValueError("compacted structural evidence partition counts must match observations")
+            raise ValueError(
+                "compacted structural evidence partition counts must match observations"
+            )
         if len({partition for partition, _ in partition_counts}) != len(partition_counts):
             raise ValueError("compacted structural evidence partitions must be unique")
         evidence_ids = tuple(str(item) for item in self.evidence_ids)
-        if len(evidence_ids) != int(self.observation_count) or len(set(evidence_ids)) != len(evidence_ids):
-            raise ValueError("compacted structural evidence ids must match unique observation count")
+        if len(evidence_ids) != int(self.observation_count) or len(set(evidence_ids)) != len(
+            evidence_ids
+        ):
+            raise ValueError(
+                "compacted structural evidence ids must match unique observation count"
+            )
         if any(not item for item in evidence_ids):
             raise ValueError("compacted structural evidence ids must not be empty")
-        evidence_digests = tuple((str(evidence_id), str(digest)) for evidence_id, digest in self.evidence_digests)
-        if len(evidence_digests) != len(evidence_ids) or tuple(item[0] for item in evidence_digests) != evidence_ids:
+        evidence_digests = tuple(
+            (str(evidence_id), str(digest)) for evidence_id, digest in self.evidence_digests
+        )
+        if (
+            len(evidence_digests) != len(evidence_ids)
+            or tuple(item[0] for item in evidence_digests) != evidence_ids
+        ):
             raise ValueError("compacted structural evidence digests must align with evidence ids")
         if any(not evidence_id or not digest for evidence_id, digest in evidence_digests):
             raise ValueError("compacted structural evidence digests must not be empty")
@@ -269,11 +288,15 @@ class StructuralEvidenceCompactedWindow:
         object.__setattr__(self, "first_tick", int(self.first_tick))
         object.__setattr__(self, "last_tick", int(self.last_tick))
         object.__setattr__(self, "observation_count", int(self.observation_count))
-        object.__setattr__(self, "prediction_observation_count", int(self.prediction_observation_count))
+        object.__setattr__(
+            self, "prediction_observation_count", int(self.prediction_observation_count)
+        )
         object.__setattr__(self, "evidence_ids", evidence_ids)
         object.__setattr__(self, "evidence_digests", evidence_digests)
         object.__setattr__(self, "window_digest", str(self.window_digest))
-        object.__setattr__(self, "consumed_scheduler_revision", int(self.consumed_scheduler_revision))
+        object.__setattr__(
+            self, "consumed_scheduler_revision", int(self.consumed_scheduler_revision)
+        )
         object.__setattr__(self, "provenance_digest", str(self.provenance_digest))
         if self.provenance_digest != _content_digest(self._payload_without_digest()):
             raise ValueError("compacted structural evidence provenance digest mismatch")
@@ -291,7 +314,9 @@ class StructuralEvidenceCompactedWindow:
             "observation_count": self.observation_count,
             "prediction_observation_count": self.prediction_observation_count,
             "evidence_ids": list(self.evidence_ids),
-            "evidence_digests": {evidence_id: digest for evidence_id, digest in self.evidence_digests},
+            "evidence_digests": {
+                evidence_id: digest for evidence_id, digest in self.evidence_digests
+            },
             "window_digest": self.window_digest,
             "consumed_scheduler_revision": self.consumed_scheduler_revision,
         }
@@ -414,11 +439,15 @@ class StructuralEvidencePressureSnapshot:
             "prediction_observation_count",
         ):
             if int(getattr(self, name)) < 0:
-                raise ValueError("structural evidence pressure snapshot counters cannot be negative")
-        if int(self.train_window_count + self.holdout_window_count + self.retention_window_count) != len(
-            window_digests
-        ):
-            raise ValueError("structural evidence pressure snapshot window counts do not match digests")
+                raise ValueError(
+                    "structural evidence pressure snapshot counters cannot be negative"
+                )
+        if int(
+            self.train_window_count + self.holdout_window_count + self.retention_window_count
+        ) != len(window_digests):
+            raise ValueError(
+                "structural evidence pressure snapshot window counts do not match digests"
+            )
         for name, count in (
             ("train_prediction_error_sum", self.train_window_count),
             ("train_resource_state_sum", self.train_window_count),
@@ -439,8 +468,10 @@ class StructuralEvidencePressureSnapshot:
                 raise ValueError(f"structural evidence pressure snapshot {name} is invalid")
             normalized_tasks[name] = values
         evidence_ids = tuple(str(item) for item in self.evidence_ids)
-        if not evidence_ids or len(set(evidence_ids)) != len(evidence_ids) or any(
-            not item for item in evidence_ids
+        if (
+            not evidence_ids
+            or len(set(evidence_ids)) != len(evidence_ids)
+            or any(not item for item in evidence_ids)
         ):
             raise ValueError("structural evidence pressure snapshot evidence ids are invalid")
         object.__setattr__(self, "network_id", str(self.network_id))
@@ -496,7 +527,9 @@ class StructuralEvidencePressureSnapshot:
     def _partition(summary: StructuralEvidenceWindowSummary) -> str:
         partitions = tuple(name for name, count in summary.partition_counts if int(count) > 0)
         if len(partitions) != 1:
-            raise ValueError("structural evidence pressure snapshot requires one partition per window")
+            raise ValueError(
+                "structural evidence pressure snapshot requires one partition per window"
+            )
         return partitions[0]
 
     @classmethod
@@ -511,18 +544,22 @@ class StructuralEvidencePressureSnapshot:
             raise TypeError("structural evidence pressure snapshot accepts window summaries")
         substrates = {(item.network_id, item.region_id) for item in items}
         if len(substrates) != 1:
-            raise ValueError("structural evidence pressure snapshot windows must share one substrate")
+            raise ValueError(
+                "structural evidence pressure snapshot windows must share one substrate"
+            )
         train = tuple(item for item in items if cls._partition(item) == "train")
         holdout = tuple(item for item in items if cls._partition(item) == "holdout")
         retention = tuple(item for item in items if cls._partition(item) == "retention")
         train_prediction_errors = tuple(
-            item.mean_prediction_error
-            for item in train
-            if item.mean_prediction_error is not None
+            item.mean_prediction_error for item in train if item.mean_prediction_error is not None
         )
         if len(train_prediction_errors) != len(train):
-            raise ValueError("structural evidence pressure snapshot train windows require prediction error")
-        evidence_ids = tuple(dict.fromkeys(item_id for item in items for item_id in item.evidence_ids))
+            raise ValueError(
+                "structural evidence pressure snapshot train windows require prediction error"
+            )
+        evidence_ids = tuple(
+            dict.fromkeys(item_id for item in items for item_id in item.evidence_ids)
+        )
         payload: dict[str, Any] = {
             "format": STRUCTURAL_EVIDENCE_PRESSURE_SNAPSHOT_FORMAT,
             "network_id": items[0].network_id,
@@ -542,7 +579,9 @@ class StructuralEvidencePressureSnapshot:
             "train_window_count": len(train),
             "holdout_window_count": len(holdout),
             "retention_window_count": len(retention),
-            "prediction_observation_count": sum(item.prediction_observation_count for item in train),
+            "prediction_observation_count": sum(
+                item.prediction_observation_count for item in train
+            ),
             "train_prediction_error_sum": float(
                 sum(float(value) for value in train_prediction_errors)
             ),
@@ -574,13 +613,17 @@ class StructuralEvidencePressureSnapshot:
             snapshot_digest=_content_digest(payload),
         )
 
-    def merge(self, other: StructuralEvidencePressureSnapshot) -> StructuralEvidencePressureSnapshot:
+    def merge(
+        self, other: StructuralEvidencePressureSnapshot
+    ) -> StructuralEvidencePressureSnapshot:
         if (self.network_id, self.region_id) != (other.network_id, other.region_id):
             raise ValueError("structural evidence pressure snapshots must share one substrate")
         if set(self.window_digests) & set(other.window_digests):
             raise ValueError("structural evidence pressure snapshots cannot reuse windows")
+
         def _merge_ids(first: tuple[str, ...], second: tuple[str, ...]) -> tuple[str, ...]:
             return tuple(dict.fromkeys((*first, *second)))
+
         payload: dict[str, Any] = {
             "format": STRUCTURAL_EVIDENCE_PRESSURE_SNAPSHOT_FORMAT,
             "network_id": self.network_id,
@@ -588,15 +631,24 @@ class StructuralEvidencePressureSnapshot:
             "window_digests": list(_merge_ids(self.window_digests, other.window_digests)),
             "first_tick": min(self.first_tick, other.first_tick),
             "last_tick": max(self.last_tick, other.last_tick),
-            "train_task_slice_ids": list(_merge_ids(self.train_task_slice_ids, other.train_task_slice_ids)),
-            "holdout_task_slice_ids": list(_merge_ids(self.holdout_task_slice_ids, other.holdout_task_slice_ids)),
-            "retention_task_slice_ids": list(_merge_ids(self.retention_task_slice_ids, other.retention_task_slice_ids)),
+            "train_task_slice_ids": list(
+                _merge_ids(self.train_task_slice_ids, other.train_task_slice_ids)
+            ),
+            "holdout_task_slice_ids": list(
+                _merge_ids(self.holdout_task_slice_ids, other.holdout_task_slice_ids)
+            ),
+            "retention_task_slice_ids": list(
+                _merge_ids(self.retention_task_slice_ids, other.retention_task_slice_ids)
+            ),
             "train_window_count": self.train_window_count + other.train_window_count,
             "holdout_window_count": self.holdout_window_count + other.holdout_window_count,
             "retention_window_count": self.retention_window_count + other.retention_window_count,
-            "prediction_observation_count": self.prediction_observation_count + other.prediction_observation_count,
-            "train_prediction_error_sum": self.train_prediction_error_sum + other.train_prediction_error_sum,
-            "train_resource_state_sum": self.train_resource_state_sum + other.train_resource_state_sum,
+            "prediction_observation_count": self.prediction_observation_count
+            + other.prediction_observation_count,
+            "train_prediction_error_sum": self.train_prediction_error_sum
+            + other.train_prediction_error_sum,
+            "train_resource_state_sum": self.train_resource_state_sum
+            + other.train_resource_state_sum,
             "holdout_transfer_sum": self.holdout_transfer_sum + other.holdout_transfer_sum,
             "evidence_ids": list(_merge_ids(self.evidence_ids, other.evidence_ids)),
         }
@@ -635,9 +687,15 @@ class StructuralEvidencePressureSnapshot:
             window_digests=tuple(str(item) for item in payload.get("window_digests", ())),
             first_tick=int(payload["first_tick"]),
             last_tick=int(payload["last_tick"]),
-            train_task_slice_ids=tuple(str(item) for item in payload.get("train_task_slice_ids", ())),
-            holdout_task_slice_ids=tuple(str(item) for item in payload.get("holdout_task_slice_ids", ())),
-            retention_task_slice_ids=tuple(str(item) for item in payload.get("retention_task_slice_ids", ())),
+            train_task_slice_ids=tuple(
+                str(item) for item in payload.get("train_task_slice_ids", ())
+            ),
+            holdout_task_slice_ids=tuple(
+                str(item) for item in payload.get("holdout_task_slice_ids", ())
+            ),
+            retention_task_slice_ids=tuple(
+                str(item) for item in payload.get("retention_task_slice_ids", ())
+            ),
             train_window_count=int(payload.get("train_window_count", 0)),
             holdout_window_count=int(payload.get("holdout_window_count", 0)),
             retention_window_count=int(payload.get("retention_window_count", 0)),
@@ -700,7 +758,9 @@ class StructuralEvidenceConsumptionAudit:
             if any(not item for item in (*consumed, *unconsumed)):
                 raise ValueError(f"structural evidence audit stream {stream} has an empty digest")
             if set(consumed) & set(unconsumed):
-                raise ValueError(f"structural evidence audit stream {stream} overlaps consumption state")
+                raise ValueError(
+                    f"structural evidence audit stream {stream} overlaps consumption state"
+                )
         object.__setattr__(self, "ledger_digest", str(self.ledger_digest))
         object.__setattr__(self, "scheduler_revision", int(self.scheduler_revision))
         for name, values in normalized.items():
@@ -760,14 +820,24 @@ class StructuralEvidenceConsumptionAudit:
         return cls(
             ledger_digest=str(payload["ledger_digest"]),
             scheduler_revision=int(payload.get("scheduler_revision", 0)),
-            evaluated_window_digests=tuple(str(item) for item in payload.get("evaluated_window_digests", ())),
-            consumed_window_digests=tuple(str(item) for item in payload.get("consumed_window_digests", ())),
-            unconsumed_window_digests=tuple(str(item) for item in payload.get("unconsumed_window_digests", ())),
+            evaluated_window_digests=tuple(
+                str(item) for item in payload.get("evaluated_window_digests", ())
+            ),
+            consumed_window_digests=tuple(
+                str(item) for item in payload.get("consumed_window_digests", ())
+            ),
+            unconsumed_window_digests=tuple(
+                str(item) for item in payload.get("unconsumed_window_digests", ())
+            ),
             orphaned_evaluated_window_digests=tuple(
                 str(item) for item in payload.get("orphaned_evaluated_window_digests", ())
             ),
-            retained_window_digests=tuple(str(item) for item in payload.get("retained_window_digests", ())),
-            compacted_window_digests=tuple(str(item) for item in payload.get("compacted_window_digests", ())),
+            retained_window_digests=tuple(
+                str(item) for item in payload.get("retained_window_digests", ())
+            ),
+            compacted_window_digests=tuple(
+                str(item) for item in payload.get("compacted_window_digests", ())
+            ),
             stream_status=tuple(stream_status),
             audit_digest=str(payload["audit_digest"]),
         )
@@ -838,8 +908,12 @@ class StructuralEvidenceCompactionResult:
             source_ledger_digest=str(payload["source_ledger_digest"]),
             target_ledger_digest=str(payload["target_ledger_digest"]),
             scheduler_revision=int(payload.get("scheduler_revision", 0)),
-            compacted_window_digests=tuple(str(item) for item in payload.get("compacted_window_digests", ())),
-            retained_window_digests=tuple(str(item) for item in payload.get("retained_window_digests", ())),
+            compacted_window_digests=tuple(
+                str(item) for item in payload.get("compacted_window_digests", ())
+            ),
+            retained_window_digests=tuple(
+                str(item) for item in payload.get("retained_window_digests", ())
+            ),
             compacted_evidence_count=int(payload.get("compacted_evidence_count", 0)),
             result_digest=str(payload["result_digest"]),
         )
@@ -967,9 +1041,7 @@ class StructuralEvidenceWindow:
             "network_id": self.network_id,
             "region_id": self.region_id,
             "task_slice_ids": list(task_slice_ids),
-            "partition_counts": {
-                partition: count for partition, count in partition_counts
-            },
+            "partition_counts": {partition: count for partition, count in partition_counts},
             "first_tick": observations[0].tick,
             "last_tick": observations[-1].tick,
             "observation_count": len(observations),
@@ -1340,7 +1412,9 @@ class StructuralEvidenceLedger:
         snapshot_windows: set[str] = set()
         for snapshot in self._pressure_snapshots:
             if snapshot.snapshot_digest in snapshot_digests:
-                raise ValueError("structural evidence pressure snapshot digest appears more than once")
+                raise ValueError(
+                    "structural evidence pressure snapshot digest appears more than once"
+                )
             snapshot_digests.add(snapshot.snapshot_digest)
             if snapshot.network_id == "" or snapshot.region_id == "":
                 raise ValueError("structural evidence pressure snapshot substrate is empty")
@@ -1348,7 +1422,9 @@ class StructuralEvidenceLedger:
                 raise ValueError("structural evidence pressure snapshot reuses a window")
             snapshot_windows.update(snapshot.window_digests)
         if snapshot_windows != {item.window_digest for item in self._compacted_windows}:
-            raise ValueError("structural evidence pressure snapshots do not match compacted windows")
+            raise ValueError(
+                "structural evidence pressure snapshots do not match compacted windows"
+            )
 
     def audit_consumption(
         self,
@@ -1443,7 +1519,9 @@ class StructuralEvidenceLedger:
         if int(scheduler_revision) < 0:
             raise ValueError("structural evidence compaction scheduler revision cannot be negative")
         if int(keep_latest_per_stream) < 0:
-            raise ValueError("structural evidence compaction keep_latest_per_stream cannot be negative")
+            raise ValueError(
+                "structural evidence compaction keep_latest_per_stream cannot be negative"
+            )
 
         by_stream: dict[str, list[StructuralEvidenceWindowSummary]] = {}
         for summary in self._sealed_windows:

@@ -80,9 +80,10 @@ class StructuralGrowthEvidenceProjection:
             raise ValueError("structural pressure prediction error must be in [0, 1]")
         if not 0.0 <= float(self.mean_resource_state) <= 1.0:
             raise ValueError("structural pressure resource state must be in [0, 1]")
-        if self.mean_holdout_transfer is not None and not 0.0 <= float(
-            self.mean_holdout_transfer
-        ) <= 1.0:
+        if (
+            self.mean_holdout_transfer is not None
+            and not 0.0 <= float(self.mean_holdout_transfer) <= 1.0
+        ):
             raise ValueError("structural pressure holdout transfer must be in [0, 1]")
         evidence_ids = tuple(str(item) for item in self.evidence_ids)
         if not evidence_ids or len(set(evidence_ids)) != len(evidence_ids):
@@ -223,9 +224,7 @@ def project_structural_growth_pressure(
         raise ValueError("structural pressure windows must share one substrate")
 
     def partition(summary: StructuralEvidenceWindowSummary) -> str:
-        partitions = tuple(
-            name for name, count in summary.partition_counts if int(count) > 0
-        )
+        partitions = tuple(name for name, count in summary.partition_counts if int(count) > 0)
         if len(partitions) != 1:
             raise ValueError("structural pressure requires one partition per window")
         return partitions[0]
@@ -246,12 +245,7 @@ def project_structural_growth_pressure(
                 for task_slice in snapshot.train_task_slice_ids
                 if task_slice
             ]
-            + [
-                task_slice
-                for item in train
-                for task_slice in item.task_slice_ids
-                if task_slice
-            ]
+            + [task_slice for item in train for task_slice in item.task_slice_ids if task_slice]
         )
     )
     if len(train_task_slices) < minimum_train_task_slices:
@@ -261,9 +255,7 @@ def project_structural_growth_pressure(
     if require_retention and retention_window_count <= 0:
         raise ValueError("structural pressure requires a separate retention window")
     train_prediction_errors = tuple(
-        item.mean_prediction_error
-        for item in train
-        if item.mean_prediction_error is not None
+        item.mean_prediction_error for item in train if item.mean_prediction_error is not None
     )
     if len(train_prediction_errors) != len(train):
         raise ValueError("train windows require prediction error evidence")
@@ -274,9 +266,7 @@ def project_structural_growth_pressure(
         1.0 - float(item.mean_resource_pressure) for item in train
     )
     holdout_transfer_values = tuple(
-        item.mean_holdout_transfer
-        for item in holdout
-        if item.mean_holdout_transfer is not None
+        item.mean_holdout_transfer for item in holdout if item.mean_holdout_transfer is not None
     )
     if len(holdout_transfer_values) != len(holdout):
         raise ValueError("holdout windows require transfer evidence")
@@ -291,9 +281,7 @@ def project_structural_growth_pressure(
     )
     evidence_ids = tuple(
         dict.fromkeys(
-            evidence_id
-            for snapshot in snapshots
-            for evidence_id in snapshot.evidence_ids
+            evidence_id for snapshot in snapshots for evidence_id in snapshot.evidence_ids
         )
         | dict.fromkeys(evidence_id for item in items for evidence_id in item.evidence_ids)
     )
@@ -306,11 +294,8 @@ def project_structural_growth_pressure(
         "region_id": source_items[0].region_id,
         "first_tick": min(item.first_tick for item in source_items),
         "last_tick": max(item.last_tick for item in source_items),
-        "window_digests": [
-            digest
-            for snapshot in snapshots
-            for digest in snapshot.window_digests
-        ] + [item.window_digest for item in items],
+        "window_digests": [digest for snapshot in snapshots for digest in snapshot.window_digests]
+        + [item.window_digest for item in items],
         "train_task_slice_ids": list(train_task_slices),
         "holdout_task_slice_ids": list(
             dict.fromkeys(
@@ -347,9 +332,8 @@ def project_structural_growth_pressure(
         "train_window_count": train_window_count,
         "holdout_window_count": holdout_window_count,
         "retention_window_count": retention_window_count,
-        "prediction_observation_count": sum(
-            item.prediction_observation_count for item in train
-        ) + sum(item.prediction_observation_count for item in snapshots),
+        "prediction_observation_count": sum(item.prediction_observation_count for item in train)
+        + sum(item.prediction_observation_count for item in snapshots),
         "mean_prediction_error": train_error_sum / train_window_count,
         "mean_resource_state": train_resource_state_sum / train_window_count,
         "mean_holdout_transfer": holdout_transfer,

@@ -42,7 +42,9 @@ def evaluate() -> dict[str, Any]:
         "explicit_attach_required": "structured_semantic" not in plain_checkpoint["components"],
         "inference_is_state_read_only": before_state_digest == after_state_digest,
         "result_is_structured": (
-            result.status == "resolved" and result.goal is not None and result.content_plan is not None
+            result.status == "resolved"
+            and result.goal is not None
+            and result.content_plan is not None
         ),
         "native_checkpoint_contains_owner": "structured_semantic" in checkpoint["components"],
         "checkpoint_round_trip": (
@@ -84,9 +86,7 @@ def evaluate() -> dict[str, Any]:
         "result": {
             "status": result.status,
             "goal_id": None if result.goal is None else result.goal.goal_id,
-            "content_id": None
-            if result.content_plan is None
-            else result.content_plan.content_id,
+            "content_id": None if result.content_plan is None else result.content_plan.content_id,
             "digest": content_digest(result.to_payload()),
         },
         "gate": {"passed": passed, "checks": checks},

@@ -44,7 +44,10 @@ def test_runtime_artifact_store_preflights_all_candidates_before_mutation() -> N
             restored.continue_structural_candidate_batch_from_artifact_store(
                 batch.batch_id,
                 artifact_store=store,
-                artifact_digests_by_candidate={first_id: artifact.artifact_digest, second_id: "0" * 64},
+                artifact_digests_by_candidate={
+                    first_id: artifact.artifact_digest,
+                    second_id: "0" * 64,
+                },
                 replays_by_candidate={first_id: replay},
                 artifact_consumption_policy=legacy_policy,
             )

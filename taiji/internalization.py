@@ -501,9 +501,7 @@ class InternalizationConverter:
             return self._reject(source, "failure_with_positive_reward")
         affordance = source.affordance
         feature_provenance = str(affordance.feature_provenance)
-        supported_prefixes = SUPPORTED_GROUNDING_LINEAGE_PREFIXES.get(
-            feature_provenance
-        )
+        supported_prefixes = SUPPORTED_GROUNDING_LINEAGE_PREFIXES.get(feature_provenance)
         if (
             supported_prefixes is None
             or not affordance.grounding_lineage

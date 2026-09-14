@@ -162,7 +162,9 @@ def _static_metrics(
             result.content_plan is not None
             and result.content_plan.content_id == example.content.content_id
         )
-        expected_status = "clarify" if example.content.intent_kind == "request_information" else "resolved"
+        expected_status = (
+            "clarify" if example.content.intent_kind == "request_information" else "resolved"
+        )
         status_hits += int(result.status == expected_status)
     precision = true_positive / max(1, true_positive + false_positive)
     recall = true_positive / max(1, true_positive + false_negative)
@@ -196,9 +198,7 @@ def _run_adapter_sequence(
 
 def _fact_keys(world: WorldState | None) -> set[str]:
     return (
-        set()
-        if world is None
-        else {semantic_fact_key(*relation) for relation in world.relations}
+        set() if world is None else {semantic_fact_key(*relation) for relation in world.relations}
     )
 
 
@@ -264,19 +264,21 @@ def _run_control(seed: int, mode: str) -> dict[str, Any]:
         "transition_record_disjoint": transition_corpus.manifest()["record_disjoint"],
         "static_owner_write_scope": static_changed == expected_static_changed,
         "transition_owner_write_scope": transition_changed == expected_transition_changed,
-        "static_test_learning": static_test["fact_f1"] >= 0.80
-        if mode in {"static-only", "joint-native"}
-        else static_test["fact_f1"] < 0.80,
-        "transition_test_learning": transition_test["fact_f1"] >= 0.80
-        if mode in {"transition-only", "joint-native"}
-        else transition_test["fact_f1"] < 0.80,
+        "static_test_learning": (
+            static_test["fact_f1"] >= 0.80
+            if mode in {"static-only", "joint-native"}
+            else static_test["fact_f1"] < 0.80
+        ),
+        "transition_test_learning": (
+            transition_test["fact_f1"] >= 0.80
+            if mode in {"transition-only", "joint-native"}
+            else transition_test["fact_f1"] < 0.80
+        ),
         "joint_composition_scope": composition == expected_composition,
         "joint_checkpoint_roundtrip": (
             len(direct_results) == len(restored_results)
             and content_digest(direct_results) == content_digest(restored_results)
-            and content_digest(
-                None if direct_final is None else direct_final.to_payload()
-            )
+            and content_digest(None if direct_final is None else direct_final.to_payload())
             == content_digest(None if restored_final is None else restored_final.to_payload())
         ),
         "joint_checkpoint_stable": stable_checkpoint,
@@ -367,9 +369,7 @@ def _run_seed(seed: int) -> dict[str, Any]:
 def evaluate(seeds: tuple[int, ...] = (11, 29, 47)) -> dict[str, Any]:
     runs = tuple(_run_seed(int(seed)) for seed in seeds)
     passed = all(run["status"] == "passed" for run in runs)
-    joint_metrics = [
-        run["controls"]["joint-native"]["metrics"] for run in runs
-    ]
+    joint_metrics = [run["controls"]["joint-native"]["metrics"] for run in runs]
     return {
         "format": REPORT_FORMAT,
         "version": REPORT_VERSION,
@@ -387,9 +387,7 @@ def evaluate(seeds: tuple[int, ...] = (11, 29, 47)) -> dict[str, Any]:
                 item["transition"]["test"]["fact_f1"] for item in joint_metrics
             )
             / len(joint_metrics),
-            "mean_joint_sequence_steps": sum(
-                item["composition"]["steps"] for item in joint_metrics
-            )
+            "mean_joint_sequence_steps": sum(item["composition"]["steps"] for item in joint_metrics)
             / len(joint_metrics),
         },
         "gate": {

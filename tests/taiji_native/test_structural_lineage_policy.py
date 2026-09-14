@@ -59,9 +59,7 @@ def test_retention_policy_is_canonical_and_content_addressed() -> None:
     assert restored == policy
     assert policy.protection_rules == tuple(sorted(STRUCTURAL_LINEAGE_RETENTION_PROTECTION_RULES))
     with pytest.raises(ValueError, match="revision"):
-        StructuralLineageRetentionPolicy.from_payload(
-            {**policy.to_payload(), "revision": 99}
-        )
+        StructuralLineageRetentionPolicy.from_payload({**policy.to_payload(), "revision": 99})
     with pytest.raises(ValueError, match="digest mismatch"):
         StructuralLineageRetentionPolicy.from_payload(
             {**policy.to_payload(), "policy_digest": "0" * 64}
@@ -78,9 +76,10 @@ def test_legacy_integer_and_policy_entry_use_the_same_retention_semantics() -> N
 
     assert legacy["lineage_retention"] is not None
     assert explicit["lineage_retention"] is not None
-    assert legacy["lineage_retention"]["removed_batch_ids"] == explicit["lineage_retention"][
-        "removed_batch_ids"
-    ]
+    assert (
+        legacy["lineage_retention"]["removed_batch_ids"]
+        == explicit["lineage_retention"]["removed_batch_ids"]
+    )
     assert explicit["retention_policy"] == policy.to_payload()
     assert legacy["retention_policy"] == policy.to_payload()
 

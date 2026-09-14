@@ -112,12 +112,8 @@ def run_cell(
         )
 
         widened = WidenedKBundle(
-            semantic_parent_checkpoint=dict(
-                artifacts["k1.semantic"]["checkpoint"]
-            ),
-            transition_parent_checkpoint=dict(
-                artifacts["k2.transition"]["checkpoint"]
-            ),
+            semantic_parent_checkpoint=dict(artifacts["k1.semantic"]["checkpoint"]),
+            transition_parent_checkpoint=dict(artifacts["k2.transition"]["checkpoint"]),
             parent_worker_bundle_digest=bundle.bundle_digest,
             source_manifest_digest=source_manifest_digest,
             parent_checkpoint_digest=parent_digest,
@@ -130,9 +126,7 @@ def run_cell(
         anchor_digests = tuple(
             experience.projection.projection_digest for experience in train_experiences
         )
-        course_digest = content_digest(
-            {"course_seed": course_seed, "model_seed": model_seed}
-        )
+        course_digest = content_digest({"course_seed": course_seed, "model_seed": model_seed})
         forward_receipt, anchored_receipt = widened.fit_channels(
             experiences=train_experiences,
             semantic_epochs=SEMANTIC_EPOCHS,
@@ -174,9 +168,7 @@ def run_cell(
             "divergence_gate": divergence_gate,
             "fresh_restore_gate": restore_gate,
             "parent_unchanged": content_digest(_parent(model_seed)) == parent_digest,
-            "k3_unchanged": bool(
-                artifacts["k3.outcome_projection"]["checkpoint"].get("version")
-            ),
+            "k3_unchanged": bool(artifacts["k3.outcome_projection"]["checkpoint"].get("version")),
             "checkpoint_emissions": TARGET_CHECKPOINT_COUNT
             == (
                 2  # prefit + final bundle snapshots per channel pair

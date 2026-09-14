@@ -4,9 +4,7 @@ import json
 from pathlib import Path
 
 REPORT = (
-    Path(__file__).resolve().parents[2]
-    / "reports"
-    / "taiji_m4r4_course_shift_audit_20260908.json"
+    Path(__file__).resolve().parents[2] / "reports" / "taiji_m4r4_course_shift_audit_20260908.json"
 )
 
 
@@ -29,6 +27,9 @@ def test_m4r4_audit_closes_read_only_course_and_artifact_gates() -> None:
         assert len(seed_report["phases"]) == 3
         for phase in seed_report["phases"]:
             assert phase["frozen_holdout"]["read_only"] is True
-        assert seed_report["owner_updates"]["readout_only"][
-            "active_predictive_readout"
-        ]["changed_scalars"] == 12593
+        assert (
+            seed_report["owner_updates"]["readout_only"]["active_predictive_readout"][
+                "changed_scalars"
+            ]
+            == 12593
+        )

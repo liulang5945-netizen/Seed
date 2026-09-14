@@ -99,12 +99,15 @@ class WorkbenchExecutionBoundary:
         learn: bool,
     ) -> dict[str, Any]:
         runtime = self.runtime
-        plan_id = "taiji-plan:" + hashlib.sha256(
-            (
-                f"{loop_id}|{runtime.model.tick}|{environment.capability_snapshot.snapshot_id}|"
-                + "|".join(request.request_id for request in requests)
-            ).encode("utf-8")
-        ).hexdigest()[:24]
+        plan_id = (
+            "taiji-plan:"
+            + hashlib.sha256(
+                (
+                    f"{loop_id}|{runtime.model.tick}|{environment.capability_snapshot.snapshot_id}|"
+                    + "|".join(request.request_id for request in requests)
+                ).encode("utf-8")
+            ).hexdigest()[:24]
+        )
         approval_requirements: list[dict[str, Any]] = []
         for index, request in enumerate(requests):
             policy = environment.policy_for(request)
@@ -186,9 +189,11 @@ class WorkbenchExecutionBoundary:
         side_effects = any(
             bool(step.get("success"))
             and (
-                (descriptor := environment.capability_snapshot.get(
-                    str(step.get("capability_id", ""))
-                ))
+                (
+                    descriptor := environment.capability_snapshot.get(
+                        str(step.get("capability_id", ""))
+                    )
+                )
                 is not None
                 and descriptor.risk != "read_only"
             )

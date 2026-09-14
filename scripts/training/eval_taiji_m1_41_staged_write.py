@@ -202,10 +202,7 @@ def run_diagnosis() -> dict[str, Any]:
             "targets": REPLAY_TARGETS,
         }
     )
-    conditions = [
-        _condition_record(schedule, corpus, event_set_digest)
-        for schedule in SCHEDULES
-    ]
+    conditions = [_condition_record(schedule, corpus, event_set_digest) for schedule in SCHEDULES]
     for condition in conditions:
         condition["condition_gate_passed"] = _condition_passed(condition)
     staged = conditions[1]
@@ -230,8 +227,7 @@ def run_diagnosis() -> dict[str, Any]:
         "conclusion": {
             "staged_condition_passed": staged["condition_gate_passed"],
             "staged_write_is_sufficient_explanation": (
-                staged["condition_gate_passed"]
-                and not conditions[0]["condition_gate_passed"]
+                staged["condition_gate_passed"] and not conditions[0]["condition_gate_passed"]
             ),
             "next_boundary": (
                 "staged write passed; design an atomic write API review"
@@ -249,7 +245,9 @@ def main() -> int:
     result = run_diagnosis()
     result["report_path"] = str(args.report)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

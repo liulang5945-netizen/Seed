@@ -544,12 +544,8 @@ class ProgrammingLanguageRegistry:
                 editor_language_id=str(item["editor_language_id"]),
                 extensions=tuple(str(value) for value in item.get("extensions", ())),
                 shebangs=tuple(str(value) for value in item.get("shebangs", ())),
-                content_patterns=tuple(
-                    str(value) for value in item.get("content_patterns", ())
-                ),
-                manifest_files=tuple(
-                    str(value) for value in item.get("manifest_files", ())
-                ),
+                content_patterns=tuple(str(value) for value in item.get("content_patterns", ())),
+                manifest_files=tuple(str(value) for value in item.get("manifest_files", ())),
                 toolchain_commands=tuple(
                     str(value) for value in item.get("toolchain_commands", ())
                 ),
@@ -655,9 +651,7 @@ class ProgrammingLanguageRegistry:
 
         candidate_ids = {item.language_id for item in evidence}
         manifest_candidates = {item.language_id for item in evidence if item.source == "manifest"}
-        extension_candidates = {
-            item.language_id for item in evidence if item.source == "extension"
-        }
+        extension_candidates = {item.language_id for item in evidence if item.source == "extension"}
         for definition in self._definitions:
             if (
                 definition.language_id in candidate_ids
@@ -670,10 +664,7 @@ class ProgrammingLanguageRegistry:
                 # This keeps ``.ts`` from becoming JavaScript merely because
                 # node is installed, while leaving genuinely ambiguous
                 # shared extensions (for example ``.h``) unresolved.
-                and (
-                    not extension_candidates
-                    or definition.language_id in extension_candidates
-                )
+                and (not extension_candidates or definition.language_id in extension_candidates)
             ):
                 add(definition, "toolchain", "declared toolchain is available")
 

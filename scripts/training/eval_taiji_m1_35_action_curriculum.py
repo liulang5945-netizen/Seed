@@ -101,9 +101,7 @@ def _overlap_corpus() -> ContinualMemoryCorpus:
 
 
 def _seed_metrics(measurement: Any) -> list[dict[str, Any]]:
-    raw = next(
-        item for item in measurement.evidence if item.startswith("seed_metrics=")
-    )
+    raw = next(item for item in measurement.evidence if item.startswith("seed_metrics="))
     value = json.loads(raw.split("=", 1)[1])
     if not isinstance(value, list):
         raise ValueError("B5 evidence seed_metrics must be a list")
@@ -175,8 +173,7 @@ def run_diagnosis() -> dict[str, Any]:
         "conclusion": {
             "overlap_condition_passed": overlap_record["condition_gate_passed"],
             "action_alphabet_is_sufficient_explanation": (
-                overlap_record["condition_gate_passed"]
-                and not records[0]["condition_gate_passed"]
+                overlap_record["condition_gate_passed"] and not records[0]["condition_gate_passed"]
             ),
             "next_boundary": (
                 "action overlap did not pass B5; freeze this curriculum and diagnose"
@@ -195,7 +192,9 @@ def main() -> int:
     result = run_diagnosis()
     result["report_path"] = str(args.report)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

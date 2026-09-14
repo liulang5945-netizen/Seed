@@ -89,39 +89,22 @@ REPORT_FORMAT = "taiji-m5-k-p4-13-promotion-course-v1"
 MANIFEST_FORMAT = "taiji-m5-k-p4-13-promotion-course-manifest-v1"
 VERSION = 1
 DEFAULT_MANIFEST = (
-    PROJECT_ROOT
-    / "plans"
-    / "manifests"
-    / "taiji_m5_k_p4_13_promotion_course_manifest_v1.json"
+    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_13_promotion_course_manifest_v1.json"
 )
-DEFAULT_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m5_k_p4_13_promotion_course_20260911.json"
-)
+DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p4_13_promotion_course_20260911.json"
 P4_12_MANIFEST = (
     PROJECT_ROOT
     / "plans"
     / "manifests"
     / "taiji_m5_k_p4_12_course_level_validation_manifest_v1.json"
 )
-P4_12_REPORT = (
-    PROJECT_ROOT
-    / "reports"
-    / "taiji_m5_k_p4_12_course_level_validation_20260911.json"
-)
+P4_12_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p4_12_course_level_validation_20260911.json"
 P4_11_MANIFEST = (
-    PROJECT_ROOT
-    / "plans"
-    / "manifests"
-    / "taiji_m5_k_p4_11_projection_solver_manifest_v1.json"
+    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_11_projection_solver_manifest_v1.json"
 )
-P4_9_PROBE_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m5_k_p4_9_feature_space_probe_20260911.json"
-)
+P4_9_PROBE_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p4_9_feature_space_probe_20260911.json"
 P4_10_MANIFEST = (
-    PROJECT_ROOT
-    / "plans"
-    / "manifests"
-    / "taiji_m5_k_p4_10_feature_factorization_manifest_v1.json"
+    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_10_feature_factorization_manifest_v1.json"
 )
 P4_8_MANIFEST = (
     PROJECT_ROOT
@@ -130,10 +113,7 @@ P4_8_MANIFEST = (
     / "taiji_m5_k_p4_8_representation_redesign_manifest_v1.json"
 )
 P4_7_MANIFEST = (
-    PROJECT_ROOT
-    / "plans"
-    / "manifests"
-    / "taiji_m5_k_p4_7_capacity_clean_test_manifest_v1.json"
+    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_7_capacity_clean_test_manifest_v1.json"
 )
 P4_6_MANIFEST = (
     PROJECT_ROOT
@@ -151,10 +131,7 @@ P4_4_MANIFEST = (
     / "taiji_m5_k_p4_4_retention_identity_calibration_manifest_v1.json"
 )
 P4_3_MANIFEST = (
-    PROJECT_ROOT
-    / "plans"
-    / "manifests"
-    / "taiji_m5_k_p4_3_retention_incremental_manifest_v1.json"
+    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_3_retention_incremental_manifest_v1.json"
 )
 P4_2_MANIFEST = (
     PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_2_capacity_attribution_manifest_v1.json"
@@ -175,7 +152,11 @@ SAFE_EPSILON = 1e-9
 SELECTION_MARGIN = 0.05
 EVAL_SPLITS_A = ("validation-a", "holdout-a", "retention-sibling", "retention-newtask")
 EVAL_SPLITS_B = ("validation-b", "holdout-b", "holdout-a", "retention-sibling", "retention-newtask")
-RESOURCE_CAPS = {"fit_seconds_per_phase": 60.0, "projection_seconds_per_phase": 120.0, "cell_total_seconds": 600.0}
+RESOURCE_CAPS = {
+    "fit_seconds_per_phase": 60.0,
+    "projection_seconds_per_phase": 120.0,
+    "cell_total_seconds": 600.0,
+}
 
 
 def _write_json_atomic(path: Path, payload: Mapping[str, Any]) -> None:
@@ -204,9 +185,7 @@ def _batch_offsets(batch: int) -> dict[str, int]:
     }
 
 
-def _p413_specs(
-    split: str, offset: int, batch: int, phase: str
-) -> tuple[dict[str, Any], ...]:
+def _p413_specs(split: str, offset: int, batch: int, phase: str) -> tuple[dict[str, Any], ...]:
     prefix = f"p40_p413_b{batch}_{phase}_{split}"
     rows = (
         (
@@ -520,7 +499,8 @@ def _task_constraints(
             if candidate.candidate_id == target_id:
                 continue
             difference = tuple(
-                t - o for t, o in zip(features[target_id], features[candidate.candidate_id], strict=True)
+                t - o
+                for t, o in zip(features[target_id], features[candidate.candidate_id], strict=True)
             )
             constraints.append(
                 (
@@ -563,7 +543,10 @@ def _preservation_constraints(
                 if candidate.candidate_id == picked_id:
                     continue
                 difference = tuple(
-                    t - o for t, o in zip(features[picked_id], features[candidate.candidate_id], strict=True)
+                    t - o
+                    for t, o in zip(
+                        features[picked_id], features[candidate.candidate_id], strict=True
+                    )
                 )
                 constraints.append(
                     (
@@ -588,7 +571,10 @@ def _preservation_constraints(
                 if candidate.candidate_role != "proposal":
                     continue
                 difference = tuple(
-                    t - o for t, o in zip(features[candidate.candidate_id], features[picked_id], strict=True)
+                    t - o
+                    for t, o in zip(
+                        features[candidate.candidate_id], features[picked_id], strict=True
+                    )
                 )
                 constraints.append(
                     (
@@ -600,9 +586,7 @@ def _preservation_constraints(
     return constraints
 
 
-def _save_extended_checkpoint(
-    path: Path, learner: ExtendedGSelectionLearner
-) -> dict[str, Any]:
+def _save_extended_checkpoint(path: Path, learner: ExtendedGSelectionLearner) -> dict[str, Any]:
     payload = learner.checkpoint()
     _save_torch_atomic(path, payload)
     restored = ExtendedGSelectionLearner.from_checkpoint(_load_mapping(path), device="cpu")
@@ -702,9 +686,7 @@ def _run(
             p4_12_report.get("status") != "completed"
             or p4_12_report.get("outcome") != "course_level_validation_supported"
         ):
-            raise ValueError(
-                "P4.13 requires the completed P4.12 course_level_validation_supported"
-            )
+            raise ValueError("P4.13 requires the completed P4.12 course_level_validation_supported")
         if p4_12_report.get("manifest_digest") != p4_12_manifest.get("manifest_digest"):
             raise ValueError("P4.12 manifest/report digest mismatch")
         if _digest_without(p4_12_manifest, "manifest_digest") != p4_12_manifest.get(
@@ -862,14 +844,11 @@ def _run(
             )
             train_fit_a = [record for record in train_a if record["fit_eligible"]]
             train_fit_b = [record for record in train_b if record["fit_eligible"]]
-            constraint_sets = tuple(
-                record["candidate_set"] for record in constraint_records
-            )
+            constraint_sets = tuple(record["candidate_set"] for record in constraint_records)
             constraint_digest = content_digest(
                 {
                     "constraint_set_digests": [
-                        candidate_set.candidate_set_digest
-                        for candidate_set in constraint_sets
+                        candidate_set.candidate_set_digest for candidate_set in constraint_sets
                     ],
                     "constraint_form": "margin-preservation-hinge",
                 }
@@ -886,8 +865,7 @@ def _run(
                 *holdout_b,
             ]
             batch_candidate_digests[batch] = {
-                record["candidate_set"].candidate_set_digest
-                for record in batch_records
+                record["candidate_set"].candidate_set_digest for record in batch_records
             }
             all_candidate_digests |= batch_candidate_digests[batch]
             split_records_a = {
@@ -922,8 +900,7 @@ def _run(
                 "validation_a_records": len(validation_a) == 20,
                 "holdout_a_records": len(holdout_a) == 20,
                 "retention_newtask_records": len(retention_newtask) == 20,
-                "constraint_records": len(constraint_records)
-                == int(contract["row_count"]),
+                "constraint_records": len(constraint_records) == int(contract["row_count"]),
                 "retention_sibling_records": len(retention_sibling_records)
                 == int(contract["row_count"]),
                 "train_b_records": len(train_b) == 20,
@@ -944,8 +921,7 @@ def _run(
                     )
                 ),
                 "new_projects_disjoint_from_historical": all(
-                    projects.isdisjoint(old_projects)
-                    for _paths, projects in identity_sets
+                    projects.isdisjoint(old_projects) for _paths, projects in identity_sets
                 ),
                 "new_paths_disjoint_from_historical": all(
                     paths.isdisjoint(old_paths) for paths, _projects in identity_sets
@@ -957,9 +933,7 @@ def _run(
                     f"{[k for k, v in batch_identity_gate.items() if not v]}"
                 )
             old_paths |= {record["candidate_set"].path for record in batch_records}
-            old_projects |= {
-                record["candidate_set"].project_id for record in batch_records
-            }
+            old_projects |= {record["candidate_set"].project_id for record in batch_records}
             sibling_structure = [
                 _structure_row(record["candidate_set"], record["behavior_set"])
                 for record in retention_sibling_records
@@ -968,10 +942,9 @@ def _run(
                 _structure_row(record["candidate_set"], record["behavior_set"])
                 for record in constraint_records
             ]
-            structure_ok = (
-                sibling_structure == list(contract["rows"])
-                and constraint_structure == list(contract["rows"])
-            )
+            structure_ok = sibling_structure == list(
+                contract["rows"]
+            ) and constraint_structure == list(contract["rows"])
             if not structure_ok:
                 raise ValueError(
                     f"P4.13 batch {batch} structure gate failed: P4.4 contract mismatch"
@@ -1032,12 +1005,15 @@ def _run(
                 birth_report["feature_source_digest"] = learners[
                     ARM_BASELINE
                 ].feature_source_state_digest
-                birth_passed = all(
-                    report["selection_mismatches"] == 0
-                    and report["max_abs_score_deviation"] == 0.0
-                    for arm, report in birth_report.items()
-                    if arm in learners
-                ) and birth_report["birth_hinge_loss_zero"]
+                birth_passed = (
+                    all(
+                        report["selection_mismatches"] == 0
+                        and report["max_abs_score_deviation"] == 0.0
+                        for arm, report in birth_report.items()
+                        if arm in learners
+                    )
+                    and birth_report["birth_hinge_loss_zero"]
+                )
                 if not birth_passed:
                     raise ValueError(
                         f"P4.13 cell b{batch}/s{seed} birth gate failed: {birth_report}"
@@ -1073,10 +1049,9 @@ def _run(
                     float(value)
                     for value in learners[ARM_PROJECTED].head.weight.detach().reshape(-1)
                 ]
-                constraints_a = (
-                    _task_constraints(train_fit_a, learners[ARM_PROJECTED], "phase-a")
-                    + _preservation_constraints(constraint_sets, parent, learners[ARM_PROJECTED])
-                )
+                constraints_a = _task_constraints(
+                    train_fit_a, learners[ARM_PROJECTED], "phase-a"
+                ) + _preservation_constraints(constraint_sets, parent, learners[ARM_PROJECTED])
                 projection_started = time.perf_counter()
                 projection_a = project_to_joint_feasible_region(constraints_a, anchor_a)
                 projection_a_wall = time.perf_counter() - projection_started
@@ -1101,9 +1076,7 @@ def _run(
                     cell_dir / f"{ARM_PROJECTED}-phase-a.pt", learners[ARM_PROJECTED]
                 )
                 if not checkpoint_a["passed"]:
-                    raise RuntimeError(
-                        f"P4.13 cell b{batch}/s{seed} phase-A checkpoint failed"
-                    )
+                    raise RuntimeError(f"P4.13 cell b{batch}/s{seed} phase-A checkpoint failed")
                 # Rollback gate: restore the phase-A checkpoint and verify
                 # bit-identical behaviour on the phase-A evaluation splits.
                 restored_a = ExtendedGSelectionLearner.from_checkpoint(
@@ -1118,8 +1091,7 @@ def _run(
                         if (
                             live_decision.selected_candidate_id
                             != restored_decision.selected_candidate_id
-                            or live_decision.selection_status
-                            != restored_decision.selection_status
+                            or live_decision.selection_status != restored_decision.selection_status
                         ):
                             rollback_mismatches += 1
                 rollback_gate = {
@@ -1127,9 +1099,7 @@ def _run(
                     "passed": rollback_mismatches == 0,
                 }
                 if not rollback_gate["passed"]:
-                    raise RuntimeError(
-                        f"P4.13 cell b{batch}/s{seed} rollback gate failed"
-                    )
+                    raise RuntimeError(f"P4.13 cell b{batch}/s{seed} rollback gate failed")
                 phase_a_metrics = {
                     arm: {
                         split: _metric_summary(_evaluate(records, learner))
@@ -1139,9 +1109,7 @@ def _run(
                 }
                 phase_a_gates = {
                     arm: {
-                        "new_task_a": _new_task_gate(
-                            phase_a_metrics[arm]["holdout-a"]
-                        ),
+                        "new_task_a": _new_task_gate(phase_a_metrics[arm]["holdout-a"]),
                         "retention_sibling": _retention_gate(
                             phase_a_metrics[arm]["retention-sibling"],
                             parent_metrics_a["retention-sibling"],
@@ -1205,9 +1173,7 @@ def _run(
                     cell_dir / f"{ARM_PROJECTED}-phase-b.pt", learners[ARM_PROJECTED]
                 )
                 if not checkpoint_b["passed"]:
-                    raise RuntimeError(
-                        f"P4.13 cell b{batch}/s{seed} phase-B checkpoint failed"
-                    )
+                    raise RuntimeError(f"P4.13 cell b{batch}/s{seed} phase-B checkpoint failed")
                 phase_b_metrics = {
                     arm: {
                         split: _metric_summary(_evaluate(records, learner))
@@ -1217,12 +1183,8 @@ def _run(
                 }
                 phase_b_gates = {
                     arm: {
-                        "new_task_b": _new_task_gate(
-                            phase_b_metrics[arm]["holdout-b"]
-                        ),
-                        "backward_retention_a": _new_task_gate(
-                            phase_b_metrics[arm]["holdout-a"]
-                        ),
+                        "new_task_b": _new_task_gate(phase_b_metrics[arm]["holdout-b"]),
+                        "backward_retention_a": _new_task_gate(phase_b_metrics[arm]["holdout-a"]),
                         "retention_sibling": _retention_gate(
                             phase_b_metrics[arm]["retention-sibling"],
                             parent_metrics_b["retention-sibling"],
@@ -1245,10 +1207,8 @@ def _run(
                     "caps_passed": (
                         fit_a_wall <= RESOURCE_CAPS["fit_seconds_per_phase"]
                         and fit_b_wall <= RESOURCE_CAPS["fit_seconds_per_phase"]
-                        and projection_a_wall
-                        <= RESOURCE_CAPS["projection_seconds_per_phase"]
-                        and projection_b_wall
-                        <= RESOURCE_CAPS["projection_seconds_per_phase"]
+                        and projection_a_wall <= RESOURCE_CAPS["projection_seconds_per_phase"]
+                        and projection_b_wall <= RESOURCE_CAPS["projection_seconds_per_phase"]
                         and cell_total_wall <= RESOURCE_CAPS["cell_total_seconds"]
                     ),
                 }
@@ -1263,12 +1223,9 @@ def _run(
                     ),
                 }
                 if not all(tamper_gate.values()):
-                    raise RuntimeError(
-                        f"P4.13 cell b{batch}/s{seed} tamper gate failed"
-                    )
+                    raise RuntimeError(f"P4.13 cell b{batch}/s{seed} tamper gate failed")
                 feature_source_unchanged = all(
-                    learner.feature_source_state_digest
-                    == birth_report["feature_source_digest"]
+                    learner.feature_source_state_digest == birth_report["feature_source_digest"]
                     for learner in learners.values()
                 )
                 passes_all = {
@@ -1314,9 +1271,9 @@ def _run(
                             "max_violation": projection_b["max_violation"],
                             "total_violation": projection_b["total_violation"],
                             "distance": projection_b["distance"],
-                            "digest": projection_b_digest
-                            if not phase_b_projection_incomplete
-                            else None,
+                            "digest": (
+                                projection_b_digest if not phase_b_projection_incomplete else None
+                            ),
                         },
                         "checkpoint_a": checkpoint_a,
                         "checkpoint_b": checkpoint_b,
@@ -1330,8 +1287,7 @@ def _run(
                         "phase_b_gates": phase_b_gates,
                         "passes_all": passes_all,
                         "parameter_count": {
-                            arm: learner.parameter_count
-                            for arm, learner in learners.items()
+                            arm: learner.parameter_count for arm, learner in learners.items()
                         },
                     }
                 )
@@ -1359,12 +1315,9 @@ def _run(
             all_candidate_digests_overall |= digests
         # Per batch: 7 pressure splits x 20 records + 2 structured x 4 = 148.
         digest_gate = {
-            "all_candidate_digests_unique": len(all_candidate_digests_overall)
-            == 3 * 148,
+            "all_candidate_digests_unique": len(all_candidate_digests_overall) == 3 * 148,
         }
-        projected_pass_count = sum(
-            1 for cell in cell_results if cell["passes_all"][ARM_PROJECTED]
-        )
+        projected_pass_count = sum(1 for cell in cell_results if cell["passes_all"][ARM_PROJECTED])
         baseline_tension_batches = sum(
             1
             for summary in batch_summaries
@@ -1388,12 +1341,9 @@ def _run(
                     cell["checkpoint_b"],
                 )
             ),
-            "all_rollback_gates": all(
-                cell["rollback_gate"]["passed"] for cell in cell_results
-            ),
+            "all_rollback_gates": all(cell["rollback_gate"]["passed"] for cell in cell_results),
             "all_tamper_checks": all(
-                all(bool(value) for value in cell["tamper_gate"].values())
-                for cell in cell_results
+                all(bool(value) for value in cell["tamper_gate"].values()) for cell in cell_results
             ),
             "feature_source_unchanged": all(
                 cell["feature_source_unchanged"] for cell in cell_results
@@ -1404,8 +1354,7 @@ def _run(
         training_gate = {
             "nine_cells_present": len(cell_results) == 9,
             "three_deterministic_seeds": all(
-                len(summary["seed_results"]) == len(SEEDS)
-                for summary in batch_summaries
+                len(summary["seed_results"]) == len(SEEDS) for summary in batch_summaries
             ),
             "phase_a_trajectory_gates_all_pass": all(
                 cell["phase_a_trajectory_gate"]["pre_projection_digests_identical"]
@@ -1475,8 +1424,7 @@ def _run(
                 "new_task_thresholds": {"utility_floor": 0.68, "target_hit_floor": 0.6},
             },
             "batch_candidate_set_digests": {
-                str(batch): sorted(batch_candidate_digests[batch])
-                for batch in BATCHES
+                str(batch): sorted(batch_candidate_digests[batch]) for batch in BATCHES
             },
         }
         manifest["manifest_digest"] = content_digest(manifest)
@@ -1490,12 +1438,10 @@ def _run(
                 "manifest_digest": manifest["manifest_digest"],
                 "identity_gate": digest_gate,
                 "batch_identity_gates": {
-                    str(summary["batch"]): summary["identity_gate"]
-                    for summary in batch_summaries
+                    str(summary["batch"]): summary["identity_gate"] for summary in batch_summaries
                 },
                 "structure_gate": {
-                    str(summary["batch"]): summary["structure_ok"]
-                    for summary in batch_summaries
+                    str(summary["batch"]): summary["structure_ok"] for summary in batch_summaries
                 },
                 "checkpoint_gate": checkpoint_gate,
                 "training_gate": training_gate,

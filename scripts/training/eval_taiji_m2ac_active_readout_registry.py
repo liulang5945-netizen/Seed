@@ -162,8 +162,7 @@ def run_canary(checkpoint: Path) -> dict[str, Any]:
         ),
         "active_branch_starts_from_protected_readout": active_before == protected_readout_before,
         "active_training_changes_only_active_readout": (
-            active_before != active_after["readout_digest"]
-            and protected_before == protected_after
+            active_before != active_after["readout_digest"] and protected_before == protected_after
         ),
         "active_registry_is_checkpointed": "predictive_readout_registry" in active_checkpoint,
         "active_registry_fresh_process_round_trip": (
@@ -221,9 +220,7 @@ def main() -> int:
                 "status": result["status"],
                 "checks_passed": sum(int(value) for value in result["checks"].values()),
                 "checks_total": len(result["checks"]),
-                "protected_owners_unchanged": result["owner_audit"][
-                    "protected_owners_unchanged"
-                ],
+                "protected_owners_unchanged": result["owner_audit"]["protected_owners_unchanged"],
             },
             ensure_ascii=False,
             indent=2,

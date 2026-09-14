@@ -86,9 +86,7 @@ def _geometry(model: Taiji, corpus: Any) -> dict[str, Any]:
             "event_active_support": _summary(
                 [float(item["event_active_support"]) for item in phase_a]
             ),
-            "cue_event_cosine": _summary(
-                [float(item["cue_event_cosine"]) for item in phase_a]
-            ),
+            "cue_event_cosine": _summary([float(item["cue_event_cosine"]) for item in phase_a]),
             "association_completion_ratio": _summary(
                 [float(item["association_completion_ratio"]) for item in phase_a]
             ),
@@ -209,8 +207,7 @@ def run_diagnosis() -> dict[str, Any]:
         "conclusion": {
             "cue_only_passed": cue_only["condition_gate_passed"],
             "event_gain_is_sufficient_explanation": (
-                cue_only["condition_gate_passed"]
-                and not default["condition_gate_passed"]
+                cue_only["condition_gate_passed"] and not default["condition_gate_passed"]
             ),
             "next_boundary": (
                 "cue-only passed; require event-information retention review before any change"
@@ -228,7 +225,9 @@ def main() -> int:
     result = run_diagnosis()
     result["report_path"] = str(args.report)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

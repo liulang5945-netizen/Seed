@@ -59,8 +59,7 @@ def _all_rows_well_formed(arm: dict[str, Any]) -> bool:
         "outcome_admitted",
     }
     return all(
-        len(episode.get("rows", [])) == 3
-        and all(required.issubset(row) for row in episode["rows"])
+        len(episode.get("rows", [])) == 3 and all(required.issubset(row) for row in episode["rows"])
         for episode in episodes
     )
 
@@ -140,29 +139,19 @@ def main() -> int:
     a_train = series("a_train_success")
     reward_variance = series("a_reward_variance")
     cells_passed = sum(1 for entry in cells if entry["checks"]["cell_passed"])
-    technical_cells = sum(
-        1 for entry in cells if all(entry["checks"]["technical"].values())
-    )
+    technical_cells = sum(1 for entry in cells if all(entry["checks"]["technical"].values()))
     admission_cells = sum(
-        1
-        for entry in cells
-        if entry["checks"]["primary"]["success_read_admission_rate_1p0"]
+        1 for entry in cells if entry["checks"]["primary"]["success_read_admission_rate_1p0"]
     )
     variance_cells = sum(
-        1
-        for entry in cells
-        if entry["checks"]["primary"]["reward_variance_positive"]
+        1 for entry in cells if entry["checks"]["primary"]["reward_variance_positive"]
     )
     robust = cells_passed == len(cells)
     aggregate_checks = {
         "technical_gates_all_cells": technical_cells == len(cells),
         "a_holdout_all_cells_ge_floor": all(value >= HOLDOUT_FLOOR for value in a_holdout),
-        "a_minus_b_all_cells_ge_floor": all(
-            value >= SEPARATION_FLOOR for value in a_minus_b
-        ),
-        "a_minus_c_all_cells_ge_floor": all(
-            value >= SEPARATION_FLOOR for value in a_minus_c
-        ),
+        "a_minus_b_all_cells_ge_floor": all(value >= SEPARATION_FLOOR for value in a_minus_b),
+        "a_minus_c_all_cells_ge_floor": all(value >= SEPARATION_FLOOR for value in a_minus_c),
         "success_read_admission_all_cells": admission_cells == len(cells),
         "reward_variance_all_cells": variance_cells == len(cells),
         "all_cells_passed": cells_passed == len(cells),
@@ -190,9 +179,18 @@ def main() -> int:
         },
         "cells": cells,
         "aggregate": {
-            "a_holdout": {**_stats(a_holdout), "cells_ge_floor": sum(value >= HOLDOUT_FLOOR for value in a_holdout)},
-            "a_minus_b": {**_stats(a_minus_b), "cells_ge_floor": sum(value >= SEPARATION_FLOOR for value in a_minus_b)},
-            "a_minus_c": {**_stats(a_minus_c), "cells_ge_floor": sum(value >= SEPARATION_FLOOR for value in a_minus_c)},
+            "a_holdout": {
+                **_stats(a_holdout),
+                "cells_ge_floor": sum(value >= HOLDOUT_FLOOR for value in a_holdout),
+            },
+            "a_minus_b": {
+                **_stats(a_minus_b),
+                "cells_ge_floor": sum(value >= SEPARATION_FLOOR for value in a_minus_b),
+            },
+            "a_minus_c": {
+                **_stats(a_minus_c),
+                "cells_ge_floor": sum(value >= SEPARATION_FLOOR for value in a_minus_c),
+            },
             "a_train": _stats(a_train),
             "a_reward_variance": _stats(reward_variance),
             "technical_cells_passed": f"{technical_cells}/{len(cells)}",
@@ -210,7 +208,9 @@ def main() -> int:
         ),
     }
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(
         json.dumps(
             {

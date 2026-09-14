@@ -95,12 +95,10 @@ def _protected_replay(
         )
         after_summary = after_probe["summary"]["all"]
         action_margin_delta = float(
-            after_summary["action_margin"]["mean"]
-            - before_summary["action_margin"]["mean"]
+            after_summary["action_margin"]["mean"] - before_summary["action_margin"]["mean"]
         )
         outcome_margin_delta = float(
-            after_summary["outcome_margin"]["mean"]
-            - before_summary["outcome_margin"]["mean"]
+            after_summary["outcome_margin"]["mean"] - before_summary["outcome_margin"]["mean"]
         )
         reject = action_margin_delta < 0.0 and outcome_margin_delta < 0.0
         after_memory_digest = content_digest(model.memory.to_payload())
@@ -147,15 +145,9 @@ def _seed_record(course: Any, seed: int) -> dict[str, Any]:
     phase_a_checkpoint = deepcopy(phase_a.checkpoint())
     phase_a_digest = content_digest(phase_a_checkpoint)
     phase_a_baseline = _probe(phase_a, course.phase_a_holdout, (48, 49), (43, 45), None)
-    phase_a_retention = _probe(
-        phase_a, course.phase_a_retention, (48, 49), (43, 45), None
-    )
-    phase_a_baseline_by_cue = {
-        row["cue"]: row for row in phase_a_baseline["rows"]
-    }
-    phase_a_retention_by_cue = {
-        row["cue"]: row for row in phase_a_retention["rows"]
-    }
+    phase_a_retention = _probe(phase_a, course.phase_a_retention, (48, 49), (43, 45), None)
+    phase_a_baseline_by_cue = {row["cue"]: row for row in phase_a_baseline["rows"]}
+    phase_a_retention_by_cue = {row["cue"]: row for row in phase_a_retention["rows"]}
 
     phase_b = Taiji.from_checkpoint(deepcopy(phase_a_checkpoint))
     for episode in course.phase_b_train:
@@ -163,9 +155,7 @@ def _seed_record(course: Any, seed: int) -> dict[str, Any]:
     phase_b_checkpoint = deepcopy(phase_b.checkpoint())
     phase_b_digest = content_digest(phase_b_checkpoint)
     phase_b_baseline = _probe(phase_b, course.phase_b_train, (48, 49), (43, 45), None)
-    phase_b_baseline_by_cue = {
-        row["cue"]: row for row in phase_b_baseline["rows"]
-    }
+    phase_b_baseline_by_cue = {row["cue"]: row for row in phase_b_baseline["rows"]}
 
     no_replay = Taiji.from_checkpoint(deepcopy(phase_b_checkpoint))
     no_replay_checkpoint = _checkpoint_record(no_replay)
@@ -327,10 +317,7 @@ def _seed_record(course: Any, seed: int) -> dict[str, Any]:
             "phase_b_holdout_read_during_decision": False,
             "phase_b_retention_read_during_decision": False,
             "order_digest": content_digest(
-                [
-                    (row["step"], row["replay_memory_id"], "replayed")
-                    for row in trace_rows
-                ]
+                [(row["step"], row["replay_memory_id"], "replayed") for row in trace_rows]
             ),
         },
         "topology_digest": _topology_digest(protected),
@@ -358,9 +345,7 @@ def run_audit() -> dict[str, Any]:
         "phase_b_retention_read_during_decision": False,
         "records": records,
         "candidate_gate_matrix": {
-            "protected": [
-                bool(record["protected"]["candidate_gate_passed"]) for record in records
-            ]
+            "protected": [bool(record["protected"]["candidate_gate_passed"]) for record in records]
         },
         "gates": {
             "fixed_replay_attempt_count": True,

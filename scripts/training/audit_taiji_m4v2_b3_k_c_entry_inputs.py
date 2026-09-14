@@ -30,12 +30,8 @@ VERSION = 1
 DEFAULT_MANIFEST = (
     PROJECT_ROOT / "plans" / "manifests" / "taiji_m4v2_b3_k_c_entry_evaluation_v1.json"
 )
-DEFAULT_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m4v2_b3_k_c_entry_input_preflight_20260910.json"
-)
-DEFAULT_FIXED_LARGE_ROOT = (
-    PROJECT_ROOT / "checkpoints" / "taiji_k_fixed_large_c_entry"
-)
+DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m4v2_b3_k_c_entry_input_preflight_20260910.json"
+DEFAULT_FIXED_LARGE_ROOT = PROJECT_ROOT / "checkpoints" / "taiji_k_fixed_large_c_entry"
 
 
 def _sha256(path: Path) -> str:
@@ -93,12 +89,8 @@ def _fixed_large_cell(
         path_sets = source.get("path_sets")
         if not isinstance(path_sets, dict):
             raise TypeError("source_manifest.path_sets is missing")
-        training_paths = {
-            str(item) for item in path_sets.get("training", [])
-        }
-        validation_paths = {
-            str(item) for item in path_sets.get("formal_holdout", [])
-        }
+        training_paths = {str(item) for item in path_sets.get("training", [])}
+        validation_paths = {str(item) for item in path_sets.get("formal_holdout", [])}
         missing = sorted(required_training_paths - training_paths)
         cell.update(
             {
@@ -106,24 +98,16 @@ def _fixed_large_cell(
                 == "taiji-k-fixed-large-c-entry-ensemble-v1",
                 "source_manifest_format_matches": source.get("format")
                 == "taiji-k-fixed-large-c-entry-source-v1",
-                "course_contract_digest_matches": source.get(
-                    "course_contract_digest"
-                )
+                "course_contract_digest_matches": source.get("course_contract_digest")
                 == expected_course_contract_digest,
-                "parent_matches": payload.get("parent_checkpoint_digest")
-                == parent_digest,
+                "parent_matches": payload.get("parent_checkpoint_digest") == parent_digest,
                 "course_seed_matches": payload.get("course_seed") == int(course_seed),
                 "source_training_paths": sorted(training_paths),
                 "source_validation_paths": sorted(validation_paths),
                 "missing_required_training_paths": missing,
-                "validation_paths_match": validation_paths
-                == required_validation_paths,
-                "optimizer_state_present": bool(
-                    payload.get("optimizer_state_present", True)
-                ),
-                "fresh_restore_digest_present": bool(
-                    payload.get("ensemble_checkpoint_digest")
-                ),
+                "validation_paths_match": validation_paths == required_validation_paths,
+                "optimizer_state_present": bool(payload.get("optimizer_state_present", True)),
+                "fresh_restore_digest_present": bool(payload.get("ensemble_checkpoint_digest")),
             }
         )
         cell["ready"] = all(
@@ -180,9 +164,7 @@ def run_preflight(
                 == sealed.get("artifact_digest"),
                 "sha256_matches": _sha256(sealed_path)
                 == str(sealed.get("artifact_sha256", "")).lower(),
-                "record_disjoint": artifact.get(
-                    "record_disjoint_from_existing_fixture", False
-                )
+                "record_disjoint": artifact.get("record_disjoint_from_existing_fixture", False)
                 and artifact.get("scores_or_targets_embedded") is False,
             }
         )
@@ -198,11 +180,7 @@ def run_preflight(
 
     variants = manifest["course_contract"]["variants"]
     required_indexes = sorted(
-        {
-            int(index)
-            for variant in variants
-            for index in variant["episode_indexes"]
-        }
+        {int(index) for variant in variants for index in variant["episode_indexes"]}
     )
     all_train_variants = _train_episode_paths()
     required_training_paths_by_course = {
@@ -216,14 +194,10 @@ def run_preflight(
         for variant in manifest["course_contract"]["variants"]
     }
     required_training_paths = {
-        path
-        for paths in required_training_paths_by_course.values()
-        for path in paths
+        path for paths in required_training_paths_by_course.values() for path in paths
     }
     required_validation_paths = {
-        path
-        for episode in manifest["validation_split"]["episodes"]
-        for path in episode
+        path for episode in manifest["validation_split"]["episodes"] for path in episode
     }
     fixed_large_cells = [
         _fixed_large_cell(
@@ -235,9 +209,7 @@ def run_preflight(
                 required_training_paths_by_course[int(variant["course_seed"])]
             ),
             required_validation_paths=required_validation_paths,
-            expected_course_contract_digest=str(
-                manifest["course_contract_digest"]
-            ),
+            expected_course_contract_digest=str(manifest["course_contract_digest"]),
         )
         for parent in manifest["parent_models"]
         for variant in manifest["course_contract"]["variants"]
@@ -262,9 +234,7 @@ def run_preflight(
         "can_start_formal": False,
         "can_promote": False,
         "blocking_reason": (
-            None
-            if formal_input_ready
-            else "sealed-test or fixed-large input contract is not ready"
+            None if formal_input_ready else "sealed-test or fixed-large input contract is not ready"
         ),
     }
     report_path.parent.mkdir(parents=True, exist_ok=True)

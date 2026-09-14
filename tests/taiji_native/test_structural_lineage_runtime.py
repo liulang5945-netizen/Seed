@@ -20,7 +20,9 @@ def _runtime_with_terminal_lineage() -> tuple[SeedRuntime, str]:
     assert schedule.get("status") == "batch_created"
     model = runtime.model.architecture
     active_batch_id = str(schedule["batch_id"])
-    active = next(item for item in model.structural_candidate_batches if item.batch_id == active_batch_id)
+    active = next(
+        item for item in model.structural_candidate_batches if item.batch_id == active_batch_id
+    )
     _record_terminal_subgraph(model, active)
     return runtime, active_batch_id
 

@@ -25,9 +25,7 @@ VERSION = 1
 R4_FORMAL = PROJECT_ROOT / "reports" / "taiji_m4v2_r4_shadow_formal_20260909.json"
 R5_FORMAL = PROJECT_ROOT / "reports" / "taiji_m4v2_r5_conditional_formal_20260909.json"
 K_SCORECARD = PROJECT_ROOT / "reports" / "taiji_m5_k_axis_scorecard_v2_20260909.json"
-R6_PREFLIGHT = (
-    PROJECT_ROOT / "reports" / "taiji_m4v2_r6_k_adapter_preflight_20260909.json"
-)
+R6_PREFLIGHT = PROJECT_ROOT / "reports" / "taiji_m4v2_r6_k_adapter_preflight_20260909.json"
 
 
 def _read(path: Path) -> dict[str, Any]:
@@ -38,8 +36,10 @@ def _read(path: Path) -> dict[str, Any]:
 
 
 def _all_true(values: Any) -> bool:
-    return isinstance(values, dict) and bool(values) and all(
-        value is True for value in values.values()
+    return (
+        isinstance(values, dict)
+        and bool(values)
+        and all(value is True for value in values.values())
     )
 
 
@@ -71,9 +71,7 @@ def audit(
             r4.get("format") == "taiji-m4v2-r4-shadow-formal-v1"
             and r4.get("status") == "passed"
             and _all_true(r4.get("technical_gates"))
-            and isinstance(
-                r4.get("aggregate", {}).get("pressure_candidate_lesion"), dict
-            )
+            and isinstance(r4.get("aggregate", {}).get("pressure_candidate_lesion"), dict)
         ),
         "r4_structural_growth_admitted": False,
         "r5_report_formal_admitted": (
@@ -95,15 +93,12 @@ def audit(
         ),
         "k_evidence_closed": (
             k_verdict.get("k_evidence_closed") is True
-            and k_scorecard.get("evidence_gates", {}).get("k_axis_evidence_closed")
-            is True
+            and k_scorecard.get("evidence_gates", {}).get("k_axis_evidence_closed") is True
         ),
         "k_parent_retention_baseline_present": (
             k_gates.get("parent_retention_baseline_present") is True
         ),
-        "k_default_runtime_owner_attached": (
-            k_gates.get("default_runtime_owner_attached") is True
-        ),
+        "k_default_runtime_owner_attached": (k_gates.get("default_runtime_owner_attached") is True),
         "same_parent_continual_course_ready": (
             k_gates.get("same_parent_continual_s_g_k_evidence") is True
         ),
@@ -115,8 +110,7 @@ def audit(
             and not r5.get("resource_caps", {}).get("violations")
         ),
         "r5_primary_threshold_met": (
-            int(r5_retention.get("g_non_worse_cells", -1))
-            >= int(r5_retention.get("g_required", 0))
+            int(r5_retention.get("g_non_worse_cells", -1)) >= int(r5_retention.get("g_required", 0))
             and int(r5_retention.get("s_non_worse_cells", -1))
             >= int(r5_retention.get("valid_cells", 0))
         ),
@@ -138,9 +132,7 @@ def audit(
         "k_default_runtime_owner_attached": (
             "K1/K2/K3 remain standalone shadow evidence; no default Taiji owner is attached."
         ),
-        "same_parent_continual_course_ready": (
-            "No S→G→K same-parent formal course has run yet."
-        ),
+        "same_parent_continual_course_ready": ("No S→G→K same-parent formal course has run yet."),
         "resource_rollback_old_capability_gate_ready": (
             "The adapter preflight covers checkpoint/rollback mechanics only; the full "
             "resource and old-capability retention course is not available."
@@ -237,7 +229,8 @@ def main() -> int:
                 "can_start_r6_formal": payload["verdict"]["can_start_r6_formal"],
                 "can_promote": payload["verdict"]["can_promote"],
                 "blocked_gates": [
-                    name for name, value in payload["formal_entry_requirements"].items()
+                    name
+                    for name, value in payload["formal_entry_requirements"].items()
                     if value is not True
                 ],
             },

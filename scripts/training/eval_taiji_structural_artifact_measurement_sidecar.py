@@ -64,20 +64,23 @@ def evaluate() -> dict[str, object]:
         verified = (
             len(inventory) == 1
             and inventory[0]["measurement_status"] == "verified"
-            and store.load_measurements(first_measurements.measurement_digest)
-            == first_measurements
+            and store.load_measurements(first_measurements.measurement_digest) == first_measurements
         )
 
         legacy_store.put(first_artifact)
         legacy_explicit = legacy_store.inventory()[0]["measurement_status"] == "legacy_unverified"
         before_binding_files = tuple(sorted(item.name for item in store_root.iterdir()))
         try:
-            store.put_measured_artifact(first_artifact, {**first_measurements.to_payload(), "measurement_digest": "0" * 64})
+            store.put_measured_artifact(
+                first_artifact, {**first_measurements.to_payload(), "measurement_digest": "0" * 64}
+            )
         except ValueError:
             binding_rejected = True
         else:
             binding_rejected = False
-        binding_is_non_mutating = tuple(sorted(item.name for item in store_root.iterdir())) == before_binding_files
+        binding_is_non_mutating = (
+            tuple(sorted(item.name for item in store_root.iterdir())) == before_binding_files
+        )
 
         measurement_path = store.measurement_path_for(first_measurements.measurement_digest)
         original_measurement_bytes = measurement_path.read_bytes()
@@ -93,9 +96,7 @@ def evaluate() -> dict[str, object]:
 
         runtime.save(checkpoint_path)
         restored = SeedRuntime.load(checkpoint_path, workspace_root=PROJECT_ROOT)
-        before_runtime = _checkpoint_digest(
-            restored.model.architecture.native_checkpoint()
-        )
+        before_runtime = _checkpoint_digest(restored.model.architecture.native_checkpoint())
         result = restored.continue_structural_candidate_batch_from_artifact_store(
             batch.batch_id,
             artifact_store=store,

@@ -31,7 +31,14 @@ def test_skill_adapter_emits_governed_units_without_executable_source() -> None:
     )
 
     kinds = [artifact.unit_kind for artifact in projection.corpus]
-    assert kinds == ["knowledge", "procedure", "affordance", "constraint", "example", "counterexample"]
+    assert kinds == [
+        "knowledge",
+        "procedure",
+        "affordance",
+        "constraint",
+        "example",
+        "counterexample",
+    ]
     assert projection.scope_id == "workspace"
     assert projection.redaction_flags == ("api_key",)
     for artifact in projection.corpus:

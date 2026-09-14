@@ -71,17 +71,23 @@ def test_zero_update_canary_is_not_learning_evidence() -> None:
 
 
 def test_wiring_canary_cannot_enter_learning_formal_gate() -> None:
-    assert _learning_formal_ready(
-        {
-            "run_kind": "wiring-canary",
-            "training_performed": False,
-            "candidate_training_performed": False,
-        }
-    ) is False
-    assert _learning_formal_ready(
-        {
-            "run_kind": "learning-formal",
-            "training_performed": True,
-            "candidate_training_performed": True,
-        }
-    ) is True
+    assert (
+        _learning_formal_ready(
+            {
+                "run_kind": "wiring-canary",
+                "training_performed": False,
+                "candidate_training_performed": False,
+            }
+        )
+        is False
+    )
+    assert (
+        _learning_formal_ready(
+            {
+                "run_kind": "learning-formal",
+                "training_performed": True,
+                "candidate_training_performed": True,
+            }
+        )
+        is True
+    )

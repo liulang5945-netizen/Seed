@@ -141,8 +141,7 @@ def test_manifest_rejects_duplicate_ability_ids() -> None:
 
 def test_evaluation_requires_all_tasks_and_fails_closed_on_holdout_mutation() -> None:
     measurements = {
-        ability_id: _measurement(ability_id)
-        for ability_id in FOUNDATION_REQUIRED_ABILITIES
+        ability_id: _measurement(ability_id) for ability_id in FOUNDATION_REQUIRED_ABILITIES
     }
     measurements[FOUNDATION_REQUIRED_ABILITIES[-1]] = _measurement(
         FOUNDATION_REQUIRED_ABILITIES[-1], holdout_updates=1
@@ -170,8 +169,7 @@ def test_evaluation_requires_all_tasks_and_fails_closed_on_holdout_mutation() ->
 
 def test_promotion_requires_checkpoint_gate_and_all_five_measurements() -> None:
     measurements = {
-        ability_id: _measurement(ability_id)
-        for ability_id in FOUNDATION_REQUIRED_ABILITIES
+        ability_id: _measurement(ability_id) for ability_id in FOUNDATION_REQUIRED_ABILITIES
     }
 
     blocked = FoundationEvaluation.evaluate(

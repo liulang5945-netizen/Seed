@@ -52,11 +52,7 @@ FIT_EPOCHS = 40
 
 
 def _terminal_action(marker: str, *, failing: bool = False) -> tuple[str, dict[str, object]]:
-    code = (
-        "raise SystemExit(9)"
-        if failing
-        else f"print({marker!r})"
-    )
+    code = "raise SystemExit(9)" if failing else f"print({marker!r})"
     return (
         "terminal.run",
         {
@@ -107,24 +103,24 @@ TERMINAL_NEGATIVE_TRAIN_ACTIONS = (
 )
 
 TARGET_TASKS = (
-        (
-            "three-domain-readme",
-            (
-                ("editor.open", {"path": "README.md"}),
-                ("mcp.list", {}),
-                _terminal_action("terminal-train-readme"),
-            ),
-            _terminal_action("terminal-distractor", failing=True),
-        ),
     (
-            "three-domain-pyproject",
-            (
-                ("editor.open", {"path": "pyproject.toml"}),
-                ("mcp.list", {}),
-                _terminal_action("terminal-train-pyproject"),
-            ),
-            _terminal_action("terminal-distractor", failing=True),
+        "three-domain-readme",
+        (
+            ("editor.open", {"path": "README.md"}),
+            ("mcp.list", {}),
+            _terminal_action("terminal-train-readme"),
         ),
+        _terminal_action("terminal-distractor", failing=True),
+    ),
+    (
+        "three-domain-pyproject",
+        (
+            ("editor.open", {"path": "pyproject.toml"}),
+            ("mcp.list", {}),
+            _terminal_action("terminal-train-pyproject"),
+        ),
+        _terminal_action("terminal-distractor", failing=True),
+    ),
 )
 
 
@@ -170,7 +166,9 @@ def _training_examples() -> tuple[tuple[WorkspaceRoutingExample, ...], dict[str,
             if bool(observed["success"])
         )
         if not relevant_ids or bool(record["actions"][-1]["success"]):
-            raise AssertionError(f"terminal negative training action did not record failure: {family}")
+            raise AssertionError(
+                f"terminal negative training action did not record failure: {family}"
+            )
         terminal_examples.append(
             WorkspaceRoutingExample(
                 candidates=candidates,
@@ -204,7 +202,9 @@ def _training_examples() -> tuple[tuple[WorkspaceRoutingExample, ...], dict[str,
 def _task_candidates(
     required_actions: tuple[tuple[str, dict[str, object]], ...],
     distractor: tuple[str, dict[str, object]],
-) -> tuple[tuple[WorkspaceCandidate, ...], dict[str, tuple[str, dict[str, object]]], tuple[str, ...]]:
+) -> tuple[
+    tuple[WorkspaceCandidate, ...], dict[str, tuple[str, dict[str, object]]], tuple[str, ...]
+]:
     actions = (*required_actions, distractor)
     candidates = tuple(_candidate(action) for action in actions)
     action_by_id = {
@@ -217,9 +217,7 @@ def _task_candidates(
 
 def _approved_request(runtime: SeedRuntime, intent: ActionIntent) -> WorkbenchActionRequest:
     environment = runtime.workbench_environment
-    mcp_snapshot_id = (
-        environment.mcp_registry.snapshot_id if intent.kind.startswith("mcp.") else ""
-    )
+    mcp_snapshot_id = environment.mcp_registry.snapshot_id if intent.kind.startswith("mcp.") else ""
     request = WorkbenchActionRequest.from_action_intent(
         intent,
         snapshot_id=environment.capability_snapshot.snapshot_id,
@@ -386,7 +384,9 @@ def evaluate() -> dict[str, object]:
             for task_label, required_actions, distractor in TARGET_TASKS
         ]
         controls: dict[str, StructuralWorkspaceRouter] = {}
-        for offset, method in enumerate(("interaction_weight_only", "router_only", "memory_only"), 1):
+        for offset, method in enumerate(
+            ("interaction_weight_only", "router_only", "memory_only"), 1
+        ):
             control_model = TSKV8Adapter.from_native_checkpoint(initial_checkpoint)
             control = StructuralWorkspaceRouter(
                 WorkspaceRouter(256, capacity=2, seed=seed + 1000 + offset),
@@ -434,9 +434,11 @@ def evaluate() -> dict[str, object]:
         specification = tuple(
             (
                 key,
-                len(lesion_model.neuron_regions[0].unit_ids)
-                if key == "existing_unit_count"
-                else value,
+                (
+                    len(lesion_model.neuron_regions[0].unit_ids)
+                    if key == "existing_unit_count"
+                    else value
+                ),
             )
             for key, value in proposal.specification
         )
@@ -487,16 +489,12 @@ def evaluate() -> dict[str, object]:
         )
 
     structural_scores = [
-        float(item["task_score"])
-        for run in runs
-        for item in run["structural_runs"]
+        float(item["task_score"]) for run in runs for item in run["structural_runs"]
     ]
     structural_mean = sum(structural_scores) / len(structural_scores)
     control_means = {
         method: sum(
-            float(item["task_score"])
-            for run in runs
-            for item in run["control_runs"][method]
+            float(item["task_score"]) for run in runs for item in run["control_runs"][method]
         )
         / (len(runs) * len(TARGET_TASKS))
         for method in ("interaction_weight_only", "router_only", "memory_only")
@@ -507,7 +505,8 @@ def evaluate() -> dict[str, object]:
             training_source["terminal_example_count"]
             == len(TERMINAL_TRAIN_ACTIONS) + len(TERMINAL_NEGATIVE_TRAIN_ACTIONS)
             and all(
-                set(record["capability_domains"]) in (
+                set(record["capability_domains"])
+                in (
                     {"editor", "terminal"},
                     {"mcp", "terminal"},
                 )
@@ -543,8 +542,7 @@ def evaluate() -> dict[str, object]:
             structural_mean > score for score in control_means.values()
         ),
         "old_editor_mcp_workspace_retention": all(
-            all(item["task_score"] == 1.0 for item in run["retention_runs"])
-            for run in runs
+            all(item["task_score"] == 1.0 for item in run["retention_runs"]) for run in runs
         ),
         "terminal_requires_approval_and_respects_resources": all(
             all(
@@ -577,17 +575,14 @@ def evaluate() -> dict[str, object]:
             and item["native_checkpoint_roundtrip"]
             for run in runs
             for item in run["structural_runs"]
-        ) and all(
-            item["native_world_event_count"] > 0
-            and item["native_checkpoint_replay"]
+        )
+        and all(
+            item["native_world_event_count"] > 0 and item["native_checkpoint_replay"]
             for run in runs
             for item in run["retention_runs"]
         ),
         "controls_remain_at_parent_capacity": all(
-            all(
-                item["capacity"] == 2
-                for item in run["control_runs"][method]
-            )
+            all(item["capacity"] == 2 for item in run["control_runs"][method])
             for run in runs
             for method in ("interaction_weight_only", "router_only", "memory_only")
         ),

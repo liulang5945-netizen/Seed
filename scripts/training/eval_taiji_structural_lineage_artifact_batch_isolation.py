@@ -93,7 +93,9 @@ def evaluate() -> dict[str, object]:
             replays_by_candidate={first_candidate: first_replay},
         )
         failed_batch = next(
-            item for item in restored.structural_candidate_batches if item.batch_id == batch.batch_id
+            item
+            for item in restored.structural_candidate_batches
+            if item.batch_id == batch.batch_id
         )
         first_failed_second_reserved = (
             failed["results"][first_candidate]["status"] == "failed_closed"

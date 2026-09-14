@@ -43,9 +43,7 @@ def evaluate() -> dict[str, object]:
     )
     architecture.admit_task_interpretation(interpretation)
     snapshot = runtime.workbench_environment.capability_snapshot
-    affordances = snapshot.to_taiji_affordances(
-        {"workspace.read": {"path": "README.md"}}
-    )
+    affordances = snapshot.to_taiji_affordances({"workspace.read": {"path": "README.md"}})
     architecture.set_world_affordances(affordances)
     planned = architecture.plan_task_from_current_state(resource_budget=0.8)
     decision = planned["decision"]

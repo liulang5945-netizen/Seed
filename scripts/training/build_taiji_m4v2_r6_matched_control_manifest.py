@@ -17,10 +17,7 @@ from taiji import content_digest
 
 DEFAULT_SOURCE = PROJECT_ROOT / "plans" / "manifests" / "taiji_m4v2_r6_formal_input_v1.json"
 DEFAULT_OUTPUT = (
-    PROJECT_ROOT
-    / "plans"
-    / "manifests"
-    / "taiji_m4v2_r6_matched_control_v2_20260910.json"
+    PROJECT_ROOT / "plans" / "manifests" / "taiji_m4v2_r6_matched_control_v2_20260910.json"
 )
 CONTROL_REVISION = {
     "format": "taiji-m4v2-r6-matched-control-v2",

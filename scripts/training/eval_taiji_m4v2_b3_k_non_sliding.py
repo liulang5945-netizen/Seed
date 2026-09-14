@@ -53,9 +53,7 @@ def main() -> int:
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
     args = parser.parse_args()
     artifact_dir = (
-        args.artifact_dir
-        if args.artifact_dir.is_absolute()
-        else PROJECT_ROOT / args.artifact_dir
+        args.artifact_dir if args.artifact_dir.is_absolute() else PROJECT_ROOT / args.artifact_dir
     )
     candidate_root = (
         args.candidate_root

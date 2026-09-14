@@ -159,9 +159,8 @@ def evaluate() -> dict[str, object]:
         ),
         "restart_restores_failed_loop_and_continues_with_fresh_request": (
             restored_loop_state["status"] == "failed"
-            and set(restored_loop_state["committed_request_ids"]) == {
-                request.request_id for request in requests
-            }
+            and set(restored_loop_state["committed_request_ids"])
+            == {request.request_id for request in requests}
             and recovery_preflight["accepted"] is True
             and recovery_run["status"] == "completed"
             and final_restored._workbench_loop_state["status"] == "completed"

@@ -213,8 +213,7 @@ def run_build(
         )
         fresh_restore_gate = {
             "k1.semantic": semantic.owner_digests() == semantic_restored.owner_digests(),
-            "k2.transition": transition.owner_digests()
-            == transition_restored.owner_digests(),
+            "k2.transition": transition.owner_digests() == transition_restored.owner_digests(),
         }
         if not all(fresh_restore_gate.values()):
             raise RuntimeError("v4 worker fresh restore gate failed")
@@ -292,9 +291,7 @@ def run_build(
             "k3.outcome_projection": _artifact(
                 worker_id="k3.outcome_projection",
                 checkpoint=projection_checkpoint,
-                owner_digests={
-                    "outcome_dependency_projector": projection_checkpoint_digest
-                },
+                owner_digests={"outcome_dependency_projector": projection_checkpoint_digest},
                 source_digest=k3_source_digest,
                 parent_digest=parent_digest,
                 source_manifest_digest=source_manifest_digest,
@@ -325,8 +322,7 @@ def run_build(
             },
             "fresh_restore_gate": fresh_restore_gate,
             "artifact_digests": {
-                worker_id: str(payload["artifact_digest"])
-                for worker_id, payload in saved.items()
+                worker_id: str(payload["artifact_digest"]) for worker_id, payload in saved.items()
             },
             "artifact_paths": {worker_id: str(path) for worker_id, path in paths.items()},
             "training_performed": True,
@@ -344,7 +340,9 @@ def main() -> int:
     args = parser.parse_args()
     reports = []
     for learner_seed in MODEL_SEEDS:
-        report = run_build(artifact_dir=args.root / f"model_{learner_seed}", learner_seed=learner_seed)
+        report = run_build(
+            artifact_dir=args.root / f"model_{learner_seed}", learner_seed=learner_seed
+        )
         reports.append(report)
         print(
             json.dumps(
@@ -374,9 +372,7 @@ def main() -> int:
         ),
     }
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
+    args.report.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps({"report": str(args.report), "status": payload["status"]}, indent=2))
     return 0 if all_passed else 1
 

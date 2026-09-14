@@ -67,12 +67,12 @@ def test_failed_train_experience_is_excluded_and_not_consumed() -> None:
     train = (
         _experience("train-good", partition="train", capability_id="editor.open"),
         _experience("train-mcp", partition="train", capability_id="mcp.list"),
-        _experience(
-            "train-failed", partition="train", capability_id="mcp.list", success=False
-        ),
+        _experience("train-failed", partition="train", capability_id="mcp.list", success=False),
     )
     holdout = (_experience("holdout-mcp", partition="holdout", capability_id="mcp.list"),)
-    retention = (_experience("retention-editor", partition="retention", capability_id="editor.open"),)
+    retention = (
+        _experience("retention-editor", partition="retention", capability_id="editor.open"),
+    )
     report = trainer.consolidate(
         train,
         holdout_experiences=holdout,

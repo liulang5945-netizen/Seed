@@ -69,16 +69,12 @@ from taiji import (  # noqa: E402
 )
 
 FORMAT = "taiji-native-m1-63-identity-organ-promotion-v1"
-DEFAULT_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m1_63_identity_organ_promotion_20260902.json"
-)
+DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m1_63_identity_organ_promotion_20260902.json"
 
 # Pinned from the committed M1-62 report.  M1-63 is only allowed to speak about
 # the organ if it is graded on exactly the same data.
 STABLE_KEY_DIGEST = "30d67ccda51decee0aabaab9a5413eb10f662733753586baca6e438c6e58ad31"
-CONFLICTING_KEY_DIGEST = (
-    "29cb6a01614cd8a454bc61b77b4273f2b6e0eff4347fe17c7a6dc85ffe76f4fe"
-)
+CONFLICTING_KEY_DIGEST = "29cb6a01614cd8a454bc61b77b4273f2b6e0eff4347fe17c7a6dc85ffe76f4fe"
 # Pinned parameter budget at the default organ capacity.
 #
 # M1-62 measured 147521 against the v1 single-head organ.  M1-63 promoted the
@@ -160,9 +156,7 @@ def _one_shot_curriculum(name: str) -> MemoryLearningCurriculum:
     )
 
 
-def _punished_curriculum(
-    source: MemoryLearningCurriculum, name: str
-) -> MemoryLearningCurriculum:
+def _punished_curriculum(source: MemoryLearningCurriculum, name: str) -> MemoryLearningCurriculum:
     """``source`` re-taught under punishment, derived rather than re-authored.
 
     The course is built by rewriting exactly one field of ``source``'s train
@@ -238,20 +232,14 @@ def _reward_contrast(
     query_pairs = [
         pair
         for partition in QUERY_PARTITIONS
-        for pair in zip(
-            getattr(rewarded, partition), getattr(punished, partition), strict=True
-        )
+        for pair in zip(getattr(rewarded, partition), getattr(punished, partition), strict=True)
     ]
     return {
         "graded_fields_compared": graded,
         "train_differing_fields": differing,
         "differs_only_by_reward": differing == ["reward"],
-        "rewarded_train_reward": _summary(
-            [float(example.reward) for example in rewarded.train]
-        ),
-        "punished_train_reward": _summary(
-            [float(example.reward) for example in punished.train]
-        ),
+        "rewarded_train_reward": _summary([float(example.reward) for example in rewarded.train]),
+        "punished_train_reward": _summary([float(example.reward) for example in punished.train]),
         "punished_train_all_negative": all(
             float(example.reward) < 0.0 for example in punished.train
         ),
@@ -298,9 +286,7 @@ def _decision_row(
         if action != example.action_value
     ]
     probability = float(probabilities[example.action_value].item())
-    predicted = max(
-        ACTION_SYMBOLS, key=lambda value: float(probabilities[value].item())
-    )
+    predicted = max(ACTION_SYMBOLS, key=lambda value: float(probabilities[value].item()))
     recall = step.identity_recall
     return {
         "query_id": example.example_id,
@@ -328,10 +314,7 @@ def _decision_probe(
     *,
     use_identity: bool,
 ) -> dict[str, Any]:
-    rows = [
-        _decision_row(model, example, use_identity=use_identity)
-        for example in examples
-    ]
+    rows = [_decision_row(model, example, use_identity=use_identity) for example in examples]
     margins = [float(row["action_margin"]) for row in rows]
     unbound = [row for row in rows if not row["identity_recall_used"]]
     bound = [row for row in rows if row["identity_recall_used"]]
@@ -339,23 +322,17 @@ def _decision_probe(
         "rows": rows,
         "summary": {
             "sample_count": len(rows),
-            "action_accuracy": float(
-                sum(int(row["action_correct"]) for row in rows) / len(rows)
-            ),
+            "action_accuracy": float(sum(int(row["action_correct"]) for row in rows) / len(rows)),
             "action_margin": _summary(margins),
             "row_action_margin_min": float(min(margins)),
             "identity_recall_used_ratio": float(len(bound) / len(rows)),
             "bound_row_count": len(bound),
             "unbound_row_count": len(unbound),
             "bound_row_action_margin_min": (
-                float(min(float(row["action_margin"]) for row in bound))
-                if bound
-                else None
+                float(min(float(row["action_margin"]) for row in bound)) if bound else None
             ),
             "unbound_row_action_margin_max": (
-                float(max(float(row["action_margin"]) for row in unbound))
-                if unbound
-                else None
+                float(max(float(row["action_margin"]) for row in unbound)) if unbound else None
             ),
             "unbound_rows_have_zero_margin": all(
                 abs(float(row["action_margin"])) <= 1e-9 for row in unbound
@@ -384,17 +361,13 @@ def _cross_cue(rows: list[dict[str, Any]]) -> dict[str, Any]:
                 discriminated += 1
     cues = {int(row["cue"]) for row in rows}
     slots = {
-        int(row["identity_slot_index"])
-        for row in rows
-        if row["identity_slot_index"] is not None
+        int(row["identity_slot_index"]) for row in rows if row["identity_slot_index"] is not None
     }
     return {
         "cue_count": len(cues),
         "contrasting_pairs": contrasting,
         "discriminated_pairs": discriminated,
-        "cross_cue_discrimination": (
-            float(discriminated / contrasting) if contrasting else 0.0
-        ),
+        "cross_cue_discrimination": (float(discriminated / contrasting) if contrasting else 0.0),
         "distinct_slot_count": len(slots),
         "distinct_slots_match_bound_cues": len(slots)
         == len({int(row["cue"]) for row in rows if row["identity_recall_used"]}),
@@ -425,9 +398,7 @@ def _organ_telemetry(model: Taiji) -> dict[str, Any]:
 
 def _parameter_record(model: Taiji, record: dict[str, Any]) -> dict[str, Any]:
     record["active_parameter_count"] = model.parameter_count()
-    record["planned_active_parameter_count"] = (
-        model.config.planned_active_parameter_count
-    )
+    record["planned_active_parameter_count"] = model.config.planned_active_parameter_count
     record["parameter_count_matches_plan"] = (
         model.parameter_count() == model.config.planned_active_parameter_count
     )
@@ -497,8 +468,7 @@ def _native_binding(record: dict[str, Any], partition: str) -> bool:
 def _decision_binding(record: dict[str, Any], channel: str, partition: str) -> bool:
     summary = record["decision_path"][channel][partition]
     return bool(
-        summary["action_accuracy"] > ACTION_CHANCE
-        and summary["row_action_margin_min"] > 0.0
+        summary["action_accuracy"] > ACTION_CHANCE and summary["row_action_margin_min"] > 0.0
     )
 
 
@@ -536,9 +506,7 @@ def _course_summary(
         for channel in ("organ_on", "organ_suppressed"):
             rows = [r["decision_path"][channel][partition] for r in organ_records]
             summary[f"decision_{channel}_{partition}"] = {
-                "action_accuracy": _summary(
-                    [float(r["action_accuracy"]) for r in rows]
-                ),
+                "action_accuracy": _summary([float(r["action_accuracy"]) for r in rows]),
                 "row_action_margin_min": float(
                     min(float(r["row_action_margin_min"]) for r in rows)
                 ),
@@ -549,19 +517,14 @@ def _course_summary(
                     [float(r["cross_cue"]["cross_cue_discrimination"]) for r in rows]
                 ),
                 "distinct_slots_match_bound_cues": all(
-                    bool(r["cross_cue"]["distinct_slots_match_bound_cues"])
-                    for r in rows
+                    bool(r["cross_cue"]["distinct_slots_match_bound_cues"]) for r in rows
                 ),
                 "unbound_rows_have_zero_margin": all(
                     bool(r["unbound_rows_have_zero_margin"]) for r in rows
                 ),
-                "bound_row_count_min": int(
-                    min(int(r["bound_row_count"]) for r in rows)
-                ),
+                "bound_row_count_min": int(min(int(r["bound_row_count"]) for r in rows)),
                 "bound_row_action_margin_min": (
-                    float(
-                        min(float(r["bound_row_action_margin_min"]) for r in rows)
-                    )
+                    float(min(float(r["bound_row_action_margin_min"]) for r in rows))
                     if all(r["bound_row_action_margin_min"] is not None for r in rows)
                     else None
                 ),
@@ -604,8 +567,7 @@ def _course_summary(
         for record in organ_records + baseline_records
     )
     summary["organ_writes_all_train_examples"] = all(
-        int(record["organ_telemetry"]["write_count"])
-        == int(record["train_examples_written"])
+        int(record["organ_telemetry"]["write_count"]) == int(record["train_examples_written"])
         for record in organ_records
     )
     # Reward telemetry is reported unconditionally, not only for the punished
@@ -613,12 +575,10 @@ def _course_summary(
     # a non-zero count the write path has a sign bug, and that is exactly as
     # gradeable a failure as the punished course binding anyway.
     summary["organ_punished_write_count_min"] = min(
-        int(record["organ_telemetry"]["punished_write_count"])
-        for record in organ_records
+        int(record["organ_telemetry"]["punished_write_count"]) for record in organ_records
     )
     summary["organ_punished_write_count_max"] = max(
-        int(record["organ_telemetry"]["punished_write_count"])
-        for record in organ_records
+        int(record["organ_telemetry"]["punished_write_count"]) for record in organ_records
     )
     summary["organ_punishes_all_train_examples"] = all(
         int(record["organ_telemetry"]["punished_write_count"])
@@ -626,8 +586,7 @@ def _course_summary(
         for record in organ_records
     )
     summary["organ_punishes_no_train_examples"] = all(
-        int(record["organ_telemetry"]["punished_write_count"]) == 0
-        for record in organ_records
+        int(record["organ_telemetry"]["punished_write_count"]) == 0 for record in organ_records
     )
     summary["organ_skipped_write_count_max"] = max(
         int(record["organ_telemetry"]["skipped_write_count"]) for record in organ_records
@@ -649,12 +608,10 @@ def _course(
     capacity: int | None = None,
 ) -> dict[str, Any]:
     organ_records = [
-        _arm(curriculum, seed, enabled=True, capacity=capacity, course=name)
-        for seed in seeds
+        _arm(curriculum, seed, enabled=True, capacity=capacity, course=name) for seed in seeds
     ]
     baseline_records = [
-        _arm(curriculum, seed, enabled=False, capacity=capacity, course=name)
-        for seed in seeds
+        _arm(curriculum, seed, enabled=False, capacity=capacity, course=name) for seed in seeds
     ]
     return {
         "curriculum_name": curriculum.name,
@@ -682,30 +639,22 @@ def _data_contract_verdict(courses: dict[str, dict[str, Any]]) -> dict[str, Any]
         "stable_well_formed": bool(stable["well_formed"]),
         "one_shot_well_formed": bool(one_shot["well_formed"]),
         "punished_well_formed": bool(punished["well_formed"]),
-        "stable_key_value_deterministic": bool(
-            stable["observed_key_value_deterministic"]
-        ),
-        "one_shot_key_value_deterministic": bool(
-            one_shot["observed_key_value_deterministic"]
-        ),
+        "stable_key_value_deterministic": bool(stable["observed_key_value_deterministic"]),
+        "one_shot_key_value_deterministic": bool(one_shot["observed_key_value_deterministic"]),
         # The punished course carries the *correct* key/value relation; only the
         # reward sign is inverted.  If determinism broke here the course would be
         # testing conflicting labels rather than punishment.
-        "punished_key_value_deterministic": bool(
-            punished["observed_key_value_deterministic"]
-        ),
+        "punished_key_value_deterministic": bool(punished["observed_key_value_deterministic"]),
         "negative_control_declares_conflict": (
             not negative["declared_key_value_deterministic"]
             and not negative["observed_key_value_deterministic"]
             and bool(negative["declaration_matches_observation"])
         ),
         "no_bypass_field_leak": not any(
-            course["audit"]["leakage"]["any_bypass_field_leak"]
-            for course in courses.values()
+            course["audit"]["leakage"]["any_bypass_field_leak"] for course in courses.values()
         ),
         "no_train_query_id_overlap": all(
-            course["audit"]["leakage"]["train_query_id_overlap"] == 0
-            for course in courses.values()
+            course["audit"]["leakage"]["train_query_id_overlap"] == 0 for course in courses.values()
         ),
         "all_partitions_factorial_complete": all(
             course["audit"]["partitions"][partition]["factorial_complete"]
@@ -713,16 +662,13 @@ def _data_contract_verdict(courses: dict[str, dict[str, Any]]) -> dict[str, Any]
             for partition in MEMORY_LEARNING_PARTITIONS
         ),
         "stable_train_keys_repeatedly_observed": (
-            stable["partitions"]["train"]["observations_per_key"]["min"]
-            >= float(TRAIN_REPEATS)
+            stable["partitions"]["train"]["observations_per_key"]["min"] >= float(TRAIN_REPEATS)
         ),
         "one_shot_train_keys_observed_once": (
             one_shot["partitions"]["train"]["observations_per_key"]["max"] == 1.0
         ),
         "role_labels_match_observations": all(
-            course["audit"]["partitions"][partition][
-                "role_labels_match_observation_counts"
-            ]
+            course["audit"]["partitions"][partition]["role_labels_match_observation_counts"]
             for course in courses.values()
             for partition in MEMORY_LEARNING_PARTITIONS
         ),
@@ -766,9 +712,7 @@ def run(report_path: Path, seeds: tuple[int, ...]) -> dict[str, Any]:
         "organ_off_parameter_count": sorted(
             {
                 int(record["checkpoint_after_train"]["active_parameter_count"])
-                for record in courses["stable_key"]["arms"]["organ_off_baseline"][
-                    "records"
-                ]
+                for record in courses["stable_key"]["arms"]["organ_off_baseline"]["records"]
             }
         ),
         "organ_on_parameter_count": sorted(
@@ -784,15 +728,10 @@ def run(report_path: Path, seeds: tuple[int, ...]) -> dict[str, Any]:
         "organ_increment": ORGAN_ON_PARAMETERS - ORGAN_OFF_PARAMETERS,
     }
     budget["pin_increment_explained_by_second_head"] = (
-        ORGAN_ON_PARAMETERS_M1_62 + ORGAN_SECOND_HEAD_PARAMETERS
-        == ORGAN_ON_PARAMETERS
+        ORGAN_ON_PARAMETERS_M1_62 + ORGAN_SECOND_HEAD_PARAMETERS == ORGAN_ON_PARAMETERS
     )
-    budget["organ_off_matches_pin"] = budget["organ_off_parameter_count"] == [
-        ORGAN_OFF_PARAMETERS
-    ]
-    budget["organ_on_matches_pin"] = budget["organ_on_parameter_count"] == [
-        ORGAN_ON_PARAMETERS
-    ]
+    budget["organ_off_matches_pin"] = budget["organ_off_parameter_count"] == [ORGAN_OFF_PARAMETERS]
+    budget["organ_on_matches_pin"] = budget["organ_on_parameter_count"] == [ORGAN_ON_PARAMETERS]
     budget["all_records_match_plan"] = all(
         bool(record[stage]["parameter_count_matches_plan"])
         for course in courses.values()
@@ -808,12 +747,10 @@ def run(report_path: Path, seeds: tuple[int, ...]) -> dict[str, Any]:
         ),
         "data_contract_pass": all(data_contract.values()),
         "checkpoint_preflight_pass": all(
-            course["summary"]["checkpoint_preflight_all_seeds"]
-            for course in courses.values()
+            course["summary"]["checkpoint_preflight_all_seeds"] for course in courses.values()
         ),
         "checkpoint_after_train_pass": all(
-            course["summary"]["checkpoint_after_train_all_seeds"]
-            for course in courses.values()
+            course["summary"]["checkpoint_after_train_all_seeds"] for course in courses.values()
         ),
         "parameter_budget_pass": bool(
             budget["organ_off_matches_pin"]
@@ -841,28 +778,18 @@ def run(report_path: Path, seeds: tuple[int, ...]) -> dict[str, Any]:
             and not stable_summary["suppressed_positive_binding_all_seeds"]
         ),
         "cross_cue_competition_pass": all(
-            stable_summary[f"decision_organ_on_{partition}"][
-                "cross_cue_discrimination"
-            ]["min"]
+            stable_summary[f"decision_organ_on_{partition}"]["cross_cue_discrimination"]["min"]
             >= 1.0
-            and stable_summary[f"decision_organ_on_{partition}"][
-                "distinct_slots_match_bound_cues"
-            ]
+            and stable_summary[f"decision_organ_on_{partition}"]["distinct_slots_match_bound_cues"]
             for partition in QUERY_PARTITIONS
         ),
-        "one_shot_positive_binding": bool(
-            one_shot_summary["decision_positive_binding_all_seeds"]
-        ),
+        "one_shot_positive_binding": bool(one_shot_summary["decision_positive_binding_all_seeds"]),
         "old_capability_preserved": all(
-            course["summary"]["native_recall_not_degraded_by_organ"]
-            for course in courses.values()
+            course["summary"]["native_recall_not_degraded_by_organ"] for course in courses.values()
         ),
         "overwrite_keeps_bound_rows_positive": all(
             (
-                overwrite_summary[f"decision_organ_on_{partition}"][
-                    "bound_row_count_min"
-                ]
-                > 0
+                overwrite_summary[f"decision_organ_on_{partition}"]["bound_row_count_min"] > 0
                 and overwrite_summary[f"decision_organ_on_{partition}"][
                     "bound_row_action_margin_min"
                 ]
@@ -880,32 +807,21 @@ def run(report_path: Path, seeds: tuple[int, ...]) -> dict[str, Any]:
         # something worse: eviction may cost the organ's gain but must not
         # actively corrupt a decision the model could already make.
         "overwrite_evicted_rows_not_below_baseline": all(
-            float(
-                overwrite_summary[f"decision_organ_on_{partition}"][
-                    "row_action_margin_min"
-                ]
-            )
+            float(overwrite_summary[f"decision_organ_on_{partition}"]["row_action_margin_min"])
             >= float(
-                overwrite_summary[f"decision_organ_suppressed_{partition}"][
-                    "row_action_margin_min"
-                ]
+                overwrite_summary[f"decision_organ_suppressed_{partition}"]["row_action_margin_min"]
             )
             - 1e-9
-            and float(
-                overwrite_summary[f"decision_organ_on_{partition}"]["action_accuracy"][
+            and float(overwrite_summary[f"decision_organ_on_{partition}"]["action_accuracy"]["min"])
+            >= float(
+                overwrite_summary[f"decision_organ_suppressed_{partition}"]["action_accuracy"][
                     "min"
                 ]
-            )
-            >= float(
-                overwrite_summary[f"decision_organ_suppressed_{partition}"][
-                    "action_accuracy"
-                ]["min"]
             )
             - 1e-9
             for partition in QUERY_PARTITIONS
         ),
-        "overwrite_actually_evicted": int(overwrite_summary["organ_replacement_count_max"])
-        > 0,
+        "overwrite_actually_evicted": int(overwrite_summary["organ_replacement_count_max"]) > 0,
         # --- reward sensitivity -------------------------------------------------
         # Four gates, because "the punished course did not bind" is only evidence
         # if the punishment actually arrived, nothing but the reward differed, and

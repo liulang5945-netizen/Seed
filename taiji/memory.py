@@ -543,10 +543,7 @@ class EpisodicField:
             1.0 + self._episode_write_index / self.config.readout_episode_saturation
         )
         association_rate = (
-            self.config.episodic_learning_rate
-            * strength
-            * identity_gate
-            * learning_scale
+            self.config.episodic_learning_rate * strength * identity_gate * learning_scale
         )
         if learning_targets in {"all", "association"}:
             association_components = tuple(
@@ -565,9 +562,7 @@ class EpisodicField:
                 association_drive = cue_drive + event_scale * torch.stack(
                     association_components
                 ).sum(dim=0)
-                association_event_pattern, _ = self._activate(
-                    association_drive, threshold
-                )
+                association_event_pattern, _ = self._activate(association_drive, threshold)
             association_target = (
                 association_event_pattern
                 if float(self.config.memory_association_event_target_mix) >= 1.0
@@ -693,15 +688,16 @@ class EpisodicField:
                 action_policy = torch.softmax(
                     (
                         self.replay_action_readout.forward(cue_pattern)
-                        if self.config.memory_action_decoder == "dual"
-                        and provenance == "replayed"
-                        else self.local_action_readout.forward(
-                            cue_pattern
-                            if self.config.memory_action_decoder == "cue_selective"
-                            else event_pattern
+                        if self.config.memory_action_decoder == "dual" and provenance == "replayed"
+                        else (
+                            self.local_action_readout.forward(
+                                cue_pattern
+                                if self.config.memory_action_decoder == "cue_selective"
+                                else event_pattern
+                            )
+                            if self.config.memory_action_decoder in {"local", "cue_selective"}
+                            else self.action_readout.forward(context)
                         )
-                        if self.config.memory_action_decoder in {"local", "cue_selective"}
-                        else self.action_readout.forward(context)
                     ),
                     dim=0,
                 )
@@ -716,9 +712,11 @@ class EpisodicField:
                 elif self.config.memory_action_decoder in {"local", "cue_selective"}:
                     self.local_action_readout.local_update(
                         action_error,
-                        cue_pattern
-                        if self.config.memory_action_decoder == "cue_selective"
-                        else event_pattern,
+                        (
+                            cue_pattern
+                            if self.config.memory_action_decoder == "cue_selective"
+                            else event_pattern
+                        ),
                         learning_rate=readout_rate,
                         weight_decay=self.config.synapse_decay,
                     )

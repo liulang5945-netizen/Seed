@@ -154,7 +154,9 @@ def _admit_one(
         resource_state=min(1.0, budget / 2.0),
         evidence_ids=(f"continuation:retention:{unit_id}", f"continuation:lesion:{unit_id}"),
     )
-    admission = None if not decision.passed else model.admit_structural_candidate(validation, decision)
+    admission = (
+        None if not decision.passed else model.admit_structural_candidate(validation, decision)
+    )
     return validation, decision, admission
 
 
@@ -175,8 +177,10 @@ def evaluate() -> dict[str, object]:
     third_validation, third_decision, third_admission = third
     metrics = {
         "first_step_admitted": first_admission is not None and first_admission.status == "admitted",
-        "checkpoint_continuation_preserves_first_growth": continued_units_before_second == ("u0", "u1", "u2"),
-        "second_step_admitted": second_admission is not None and second_admission.status == "admitted",
+        "checkpoint_continuation_preserves_first_growth": continued_units_before_second
+        == ("u0", "u1", "u2"),
+        "second_step_admitted": second_admission is not None
+        and second_admission.status == "admitted",
         "two_step_topology": continued.neuron_regions[0].unit_ids == ("u0", "u1", "u2", "u3"),
         "two_step_budget_exact": continued.cognitive_snapshot().development.structural_budget == 0,
         "first_second_lineage_persisted": (
@@ -186,9 +190,12 @@ def evaluate() -> dict[str, object]:
         ),
         "third_policy_rejected_at_budget_zero": third_decision.passed is False,
         "third_not_admitted": third_admission is None,
-        "third_rejection_is_resource_bound": "structural_budget_insufficient" in third_decision.reasons,
-        "exhausted_topology_unchanged": exhausted.neuron_regions[0].unit_ids == ("u0", "u1", "u2", "u3"),
-        "exhausted_budget_unchanged": exhausted.cognitive_snapshot().development.structural_budget == 0,
+        "third_rejection_is_resource_bound": "structural_budget_insufficient"
+        in third_decision.reasons,
+        "exhausted_topology_unchanged": exhausted.neuron_regions[0].unit_ids
+        == ("u0", "u1", "u2", "u3"),
+        "exhausted_budget_unchanged": exhausted.cognitive_snapshot().development.structural_budget
+        == 0,
         "third_rejected_not_pending_after_restore": (
             restored_exhausted.topology_proposals[-1].status == "rejected"
             and restored_exhausted.structural_proposal_candidates == ()

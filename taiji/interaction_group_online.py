@@ -336,9 +336,7 @@ class InteractionGroupOnlineLearner:
 
     @property
     def applied_feedback_ids(self) -> tuple[str, ...]:
-        return tuple(
-            item.feedback_id for item in self._admissions if item.status == "applied"
-        )
+        return tuple(item.feedback_id for item in self._admissions if item.status == "applied")
 
     @property
     def blocked_candidate_ids(self) -> tuple[str, ...]:
@@ -502,9 +500,7 @@ class InteractionGroupOnlineLearner:
         return payload
 
     @classmethod
-    def from_checkpoint(
-        cls, payload: Mapping[str, Any]
-    ) -> InteractionGroupOnlineLearner:
+    def from_checkpoint(cls, payload: Mapping[str, Any]) -> InteractionGroupOnlineLearner:
         if payload.get("format") != INTERACTION_GROUP_ONLINE_CHECKPOINT_FORMAT:
             raise ValueError("unsupported online learner checkpoint format")
         if int(payload.get("model_revision", -1)) != INTERACTION_GROUP_ONLINE_MODEL_REVISION:
@@ -542,9 +538,10 @@ class InteractionGroupOnlineLearner:
     ) -> str | None:
         if candidate is None:
             return "candidate_unknown_or_already_observed"
-        if feedback.candidate_id in self.blocked_candidate_ids or tuple(
-            feedback.member_ids
-        ) in self.blocked_member_sets:
+        if (
+            feedback.candidate_id in self.blocked_candidate_ids
+            or tuple(feedback.member_ids) in self.blocked_member_sets
+        ):
             return "candidate_blocked_after_prior_rejection_or_rollback"
         if not feedback.outcome.terminal:
             return "outcome_not_terminal"
@@ -561,7 +558,10 @@ class InteractionGroupOnlineLearner:
         return None
 
     def _candidate_is_blocked(self, candidate: InteractionGroupTransferCandidate) -> bool:
-        return candidate.group_id in self.blocked_candidate_ids or candidate.member_ids in self.blocked_member_sets
+        return (
+            candidate.group_id in self.blocked_candidate_ids
+            or candidate.member_ids in self.blocked_member_sets
+        )
 
     @staticmethod
     def _audit(

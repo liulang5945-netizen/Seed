@@ -3,11 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-REPORT = (
-    Path(__file__).resolve().parents[2]
-    / "reports"
-    / "taiji_m4v2_b3_k_c_formal_20260910.json"
-)
+REPORT = Path(__file__).resolve().parents[2] / "reports" / "taiji_m4v2_b3_k_c_formal_20260910.json"
 
 
 def test_c_entry_formal_closes_resource_and_candidate_quality_gates() -> None:

@@ -117,11 +117,14 @@ def _catalogs(
     semantic_payload: Mapping[str, Any],
 ) -> tuple[dict[str, Goal], dict[str, ContentPlan]]:
     goals = {
-        item.goal_id: item for item in (Goal.from_payload(payload) for payload in semantic_payload["goal_catalog"])
+        item.goal_id: item
+        for item in (Goal.from_payload(payload) for payload in semantic_payload["goal_catalog"])
     }
     content = {
         item.content_id: item
-        for item in (ContentPlan.from_payload(payload) for payload in semantic_payload["content_catalog"])
+        for item in (
+            ContentPlan.from_payload(payload) for payload in semantic_payload["content_catalog"]
+        )
     }
     return goals, content
 
@@ -150,7 +153,9 @@ def _candidate(
         goal=goal,
         content_plan=content,
         goal_score=_score(result, "goal_scores", None if goal is None else goal.goal_id),
-        content_score=_score(result, "content_scores", None if content is None else content.content_id),
+        content_score=_score(
+            result, "content_scores", None if content is None else content.content_id
+        ),
         confidence=0.0 if result is None else float(result.confidence),
         ambiguity=1.0 if result is None else float(result.ambiguity),
     )
@@ -159,7 +164,9 @@ def _candidate(
 def _top_ids(scores: Mapping[str, float], *, limit: int = 2) -> tuple[str, ...]:
     return tuple(
         key
-        for key, _value in sorted(scores.items(), key=lambda item: (-float(item[1]), str(item[0])))[:limit]
+        for key, _value in sorted(scores.items(), key=lambda item: (-float(item[1]), str(item[0])))[
+            :limit
+        ]
     )
 
 
@@ -226,7 +233,10 @@ def _candidate_sets(
         content: ContentPlan | None,
         result: Any,
     ) -> None:
-        pair = (None if goal is None else goal.goal_id, None if content is None else content.content_id)
+        pair = (
+            None if goal is None else goal.goal_id,
+            None if content is None else content.content_id,
+        )
         if pair in seen_pairs and source != "runtime.abstain":
             return
         if source != "runtime.abstain":
@@ -468,7 +478,12 @@ def run_canary(
             raise ValueError("P2.6 manifest digest mismatch")
         if p3_2_report.get("status") != "completed":
             raise ValueError("P3.3 requires a completed P3.2 report")
-        for gate_name in ("comparison_gate", "checkpoint_gate", "trajectory_gate", "rejection_gate"):
+        for gate_name in (
+            "comparison_gate",
+            "checkpoint_gate",
+            "trajectory_gate",
+            "rejection_gate",
+        ):
             if not all(bool(value) for value in p3_2_report.get(gate_name, {}).values()):
                 raise ValueError(f"P3.2 {gate_name} is not fully passed")
         if p3_2_report.get("manifest_digest") != p3_2_manifest.get("manifest_digest"):
@@ -542,7 +557,9 @@ def run_canary(
                 goals=goals,
                 content_plans=content_plans,
             )
-            for experience, metadata in zip(validation_experiences, validation_metadata, strict=True)
+            for experience, metadata in zip(
+                validation_experiences, validation_metadata, strict=True
+            )
         ]
         signal_gate = _signal_gate(train_sets, validation_sets)
         manifest = {

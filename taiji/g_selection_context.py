@@ -130,9 +130,7 @@ class ContextGSelectionLearner:
         selection_margin: float = 0.05,
         device: torch.device | str = "cpu",
     ) -> None:
-        self.parent_manifest_digest = _digest(
-            str(parent_manifest_digest), "parent_manifest_digest"
-        )
+        self.parent_manifest_digest = _digest(str(parent_manifest_digest), "parent_manifest_digest")
         digests = {
             str(key): _digest(str(value), f"k_checkpoint_digests[{key}]")
             for key, value in k_checkpoint_digests.items()
@@ -146,9 +144,7 @@ class ContextGSelectionLearner:
         if self.selection_margin < 0.0:
             raise ValueError("Context G selection_margin cannot be negative")
         self.device = torch.device(device)
-        self.model = nn.Linear(
-            len(TOTAL_FEATURE_NAMES), 1, bias=True, device=self.device
-        )
+        self.model = nn.Linear(len(TOTAL_FEATURE_NAMES), 1, bias=True, device=self.device)
         weights = tuple(_finite(value, "candidate weight") for value in candidate_weight)
         if len(weights) != len(G_SELECTION_FEATURE_NAMES):
             raise ValueError("candidate weight length mismatch")
@@ -179,8 +175,7 @@ class ContextGSelectionLearner:
             )
         with torch.no_grad():
             candidate_weight = [
-                float(value)
-                for value in parent.model.weight.detach().cpu().reshape(-1)
+                float(value) for value in parent.model.weight.detach().cpu().reshape(-1)
             ]
             candidate_bias = float(parent.model.bias.detach().cpu().reshape(()))
         return cls(
@@ -213,9 +208,7 @@ class ContextGSelectionLearner:
         parent_manifest_digest: str,
         k_checkpoint_digests: Mapping[str, str],
     ) -> None:
-        expected_parent = _digest(
-            str(parent_manifest_digest), "expected parent_manifest_digest"
-        )
+        expected_parent = _digest(str(parent_manifest_digest), "expected parent_manifest_digest")
         expected_k = {
             str(key): _digest(str(value), f"expected k_checkpoint_digests[{key}]")
             for key, value in k_checkpoint_digests.items()
@@ -238,13 +231,9 @@ class ContextGSelectionLearner:
             raise ValueError("Context G learner augmented features must be finite")
         return features
 
-    def score(
-        self, candidate: GSelectionCandidate, context_vector: Sequence[float]
-    ) -> float:
+    def score(self, candidate: GSelectionCandidate, context_vector: Sequence[float]) -> float:
         with torch.no_grad():
-            return float(
-                self.model(self._features(candidate, context_vector)).reshape(()).item()
-            )
+            return float(self.model(self._features(candidate, context_vector)).reshape(()).item())
 
     @staticmethod
     def _safe_candidate(candidates: Sequence[GSelectionCandidate]) -> GSelectionCandidate:
@@ -335,9 +324,7 @@ class ContextGSelectionLearner:
         if not items or any(item.split != "train" for item in items):
             raise ValueError("Context G functional fit requires non-empty train records")
         if not constraint_features:
-            raise ValueError(
-                "Context G functional fit requires an independent constraint cohort"
-            )
+            raise ValueError("Context G functional fit requires an independent constraint cohort")
         if functional_weight <= 0.0:
             raise ValueError("Context G functional weight must be positive")
         dataset_digest = content_digest(
@@ -377,21 +364,15 @@ class ContextGSelectionLearner:
                 )
                 task_targets[target_index, 0] = 1.0
                 task_predictions = self.model(task_inputs)
-                task_loss_sum += float(
-                    torch.mean((task_predictions - task_targets) ** 2).item()
-                )
+                task_loss_sum += float(torch.mean((task_predictions - task_targets) ** 2).item())
                 apply_linear_delta(
                     self.model,
                     task_inputs,
                     mean_squared_error_delta(task_predictions, task_targets),
                     float(learning_rate),
                 )
-                group = constraint_features[
-                    (epoch * len(order) + step) % len(constraint_features)
-                ]
-                constraint_inputs = torch.tensor(
-                    group, dtype=torch.float32, device=self.device
-                )
+                group = constraint_features[(epoch * len(order) + step) % len(constraint_features)]
+                constraint_inputs = torch.tensor(group, dtype=torch.float32, device=self.device)
                 candidate_only = constraint_inputs[:, : len(G_SELECTION_FEATURE_NAMES)]
                 with torch.no_grad():
                     teacher = parent_learner.model(candidate_only).detach()
@@ -458,9 +439,7 @@ class ContextGSelectionLearner:
         if int(payload.get("version", -1)) != CONTEXT_G_LEARNER_VERSION:
             raise ValueError("unsupported Context G learner checkpoint version")
         expected_digest = str(payload["checkpoint_digest"])
-        unsigned = {
-            key: value for key, value in payload.items() if key != "checkpoint_digest"
-        }
+        unsigned = {key: value for key, value in payload.items() if key != "checkpoint_digest"}
         if content_digest(unsigned) != expected_digest:
             raise ValueError("Context G learner checkpoint digest mismatch")
         if tuple(payload.get("candidate_feature_names", ())) != G_SELECTION_FEATURE_NAMES:
@@ -473,9 +452,7 @@ class ContextGSelectionLearner:
             raise TypeError("Context G learner checkpoint weights must be tensors")
         if tuple(weight.shape) != (1, len(TOTAL_FEATURE_NAMES)) or tuple(bias.shape) != (1,):
             raise ValueError("Context G learner checkpoint tensor shapes drifted")
-        if content_digest({"weight": weight, "bias": bias}) != str(
-            payload["model_state_digest"]
-        ):
+        if content_digest({"weight": weight, "bias": bias}) != str(payload["model_state_digest"]):
             raise ValueError("Context G learner model state digest mismatch")
         learner = cls(
             parent_manifest_digest=str(payload["parent_manifest_digest"]),
@@ -495,9 +472,7 @@ class ContextGSelectionLearner:
             learner.model.weight.copy_(
                 weight.detach().to(device=learner.device, dtype=torch.float32)
             )
-            learner.model.bias.copy_(
-                bias.detach().to(device=learner.device, dtype=torch.float32)
-            )
+            learner.model.bias.copy_(bias.detach().to(device=learner.device, dtype=torch.float32))
         learner.training_steps = int(payload.get("training_steps", 0))
         learner.revision = int(payload.get("revision", 0))
         learner.last_train_digest = str(payload.get("last_train_digest", ""))

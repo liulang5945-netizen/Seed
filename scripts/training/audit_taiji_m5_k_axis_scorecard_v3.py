@@ -38,9 +38,7 @@ from scripts.training.audit_taiji_m5_k_scorecard import (  # noqa: E402
 )
 from taiji.internalization import content_digest  # noqa: E402
 
-C_STAGE_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m4v2_c_stage_formal_v2_20260910.json"
-)
+C_STAGE_REPORT = PROJECT_ROOT / "reports" / "taiji_m4v2_c_stage_formal_v2_20260910.json"
 V2_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_axis_scorecard_v2_20260909.json"
 REPORT_FORMAT = "taiji-m5-k-axis-scorecard-v3"
 VERSION = 3
@@ -87,9 +85,7 @@ def _learning_mechanism_evidence(report: dict[str, Any]) -> dict[str, Any]:
                 "fs": aggregation["sealed_fs_course_means"],
             },
             "weak_class_course_means": aggregation["weak_class_course_means"],
-            "courses_won_by_fs_weak_class": aggregation[
-                "courses_won_by_fs_weak_class"
-            ],
+            "courses_won_by_fs_weak_class": aggregation["courses_won_by_fs_weak_class"],
         },
         "fs_attached_default_runtime": False,
     }
@@ -102,9 +98,7 @@ def build_v3(
     c_stage: dict[str, Any],
     v2_report: dict[str, Any],
 ) -> dict[str, Any]:
-    if v2_report.get("format") != V2_REPORT_FORMAT or v2_report.get(
-        "version"
-    ) != V2_VERSION:
+    if v2_report.get("format") != V2_REPORT_FORMAT or v2_report.get("version") != V2_VERSION:
         raise ValueError("v2 scorecard format/version mismatch")
     core = build_scorecard(k1, k2, k3)
     v2_sources = v2_report.get("source_reports", {})
@@ -173,9 +167,7 @@ def main() -> int:
             {
                 "report": str(args.report),
                 "k_evidence_closed": payload["verdict"]["k_evidence_closed"],
-                "learning_mechanism_closed": payload["verdict"][
-                    "learning_mechanism_closed"
-                ],
+                "learning_mechanism_closed": payload["verdict"]["learning_mechanism_closed"],
                 "promotion_gate": payload["verdict"]["promotion_gate"],
                 "can_promote": payload["verdict"]["can_promote"],
             },

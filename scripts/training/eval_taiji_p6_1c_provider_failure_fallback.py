@@ -48,7 +48,8 @@ def evaluate(prompt: str) -> dict[str, object]:
             result["semantic_provider"]["reason_code"] == "semantic_provider_failed"
         ),
         "goal_only_candidate_returned": result["interpretation"]["status"] == "candidate",
-        "fallback_mode_is_goal_only": fallback == {
+        "fallback_mode_is_goal_only": fallback
+        == {
             "mode": "goal_only",
             "reason_code": "semantic_provider_failed",
         },
@@ -82,9 +83,7 @@ def main() -> None:
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT
-        / "reports"
-        / "taiji_w7_p6_1c_provider_failure_fallback_20260831.json",
+        default=PROJECT_ROOT / "reports" / "taiji_w7_p6_1c_provider_failure_fallback_20260831.json",
     )
     args = parser.parse_args()
     report = evaluate(args.prompt)

@@ -23,7 +23,6 @@ def test_c_entry_sealed_scoring_canary_is_read_only_and_not_formal() -> None:
     assert report["can_start_formal"] is False
     assert report["can_promote"] is False
     assert all(
-        cell["candidate_artifacts_read_only"]
-        and cell["sealed_test_scored"]
+        cell["candidate_artifacts_read_only"] and cell["sealed_test_scored"]
         for cell in report["cells"]
     )

@@ -111,7 +111,10 @@ def test_restart_candidate_admission_and_rollback_continue_from_checkpoint() -> 
             assert "outside the selected batch" in str(exc)
         else:
             raise AssertionError("cross-batch candidate continuation unexpectedly succeeded")
-        assert _checkpoint_digest(restored.model.architecture.native_checkpoint()) == before_cross_batch
+        assert (
+            _checkpoint_digest(restored.model.architecture.native_checkpoint())
+            == before_cross_batch
+        )
 
         first = restored.continue_structural_candidate_batch(
             batch.batch_id,
@@ -139,16 +142,22 @@ def test_restart_candidate_admission_and_rollback_continue_from_checkpoint() -> 
             },
         )
         assert second["results"][second_candidate]["status"] == "admitted"
-        after_admission_budget = resumed.model.architecture.cognitive_snapshot().development.structural_budget
+        after_admission_budget = (
+            resumed.model.architecture.cognitive_snapshot().development.structural_budget
+        )
         rollback = resumed.model.architecture.rollback_structural_candidate_batch(
             batch.batch_id,
             second_candidate,
         )
         assert rollback["status"] == "rolled_back"
-        after_rollback_budget = resumed.model.architecture.cognitive_snapshot().development.structural_budget
+        after_rollback_budget = (
+            resumed.model.architecture.cognitive_snapshot().development.structural_budget
+        )
         assert after_rollback_budget == after_admission_budget + 1
         first_region = next(
-            item for item in resumed.model.architecture.neuron_regions if item.region_id == first_region_id
+            item
+            for item in resumed.model.architecture.neuron_regions
+            if item.region_id == first_region_id
         )
         assert first_unit_id in first_region.unit_ids
         resumed.save(after_rollback_path)
@@ -156,7 +165,10 @@ def test_restart_candidate_admission_and_rollback_continue_from_checkpoint() -> 
         final_status = final.structural_maintenance_status()
         assert final_status["last_retention_policy"]["revision"] == 2
         assert final_status["last_retention_policy_migration"]["status"] == "committed"
-        assert final.model.architecture.structural_candidate_rollbacks[-1].candidate_id == second_candidate
+        assert (
+            final.model.architecture.structural_candidate_rollbacks[-1].candidate_id
+            == second_candidate
+        )
         assert final.model.architecture.cognitive_snapshot().development.structural_budget == (
             after_rollback_budget
         )

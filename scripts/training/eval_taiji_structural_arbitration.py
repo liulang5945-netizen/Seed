@@ -116,9 +116,7 @@ def _candidate(
 
 def _holdout_payload(model: TSKV8Adapter, candidate_id: str) -> dict[str, object]:
     candidate = next(
-        item
-        for item in model.structural_proposal_candidates
-        if item.candidate_id == candidate_id
+        item for item in model.structural_proposal_candidates if item.candidate_id == candidate_id
     )
     proposal = model.materialize_structural_candidate(candidate_id)
     if proposal is None:
@@ -200,7 +198,9 @@ def evaluate() -> dict[str, object]:
     running_batch = model.structural_candidate_batches[0]
     checkpoint_after_first = model.native_checkpoint()
     restored = TSKV8Adapter.from_native_checkpoint(checkpoint_after_first)
-    restored_reservation_before_second = restored.structural_candidate_batches[0].reservation_remaining
+    restored_reservation_before_second = restored.structural_candidate_batches[
+        0
+    ].reservation_remaining
     second_payload = _holdout_payload(restored, "c3")
     second_continuation = restored.continue_structural_candidate_batch(
         batch.batch_id,
@@ -223,15 +223,11 @@ def evaluate() -> dict[str, object]:
         ),
         "same_batch_replay_idempotent": batch == repeated_batch,
         "arbitration_does_not_mutate_topology_or_budget": arbitration_no_mutation,
-        "first_admission_completed": (
-            first_continuation["results"]["c1"]["status"] == "admitted"
-        ),
+        "first_admission_completed": (first_continuation["results"]["c1"]["status"] == "admitted"),
         "reservation_kept_for_remaining_candidate": (
             running_batch.reservation_remaining == 1 and running_batch.status == "running"
         ),
-        "restore_keeps_batch_reservation": (
-            restored_reservation_before_second == 1
-        ),
+        "restore_keeps_batch_reservation": (restored_reservation_before_second == 1),
         "remaining_candidate_continued_after_restore": (
             second_continuation["results"]["c3"]["status"] == "admitted"
             and completed_batch.status == "completed"
@@ -242,8 +238,7 @@ def evaluate() -> dict[str, object]:
             and len(restored.structural_admission_results) == 2
         ),
         "deferred_candidates_remain_recoverable": (
-            {item.candidate_id for item in restored.structural_proposal_candidates}
-            == {"c2", "c4"}
+            {item.candidate_id for item in restored.structural_proposal_candidates} == {"c2", "c4"}
         ),
     }
     return {

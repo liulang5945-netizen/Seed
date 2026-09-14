@@ -110,8 +110,7 @@ def evaluate() -> dict[str, object]:
         sidecar_path.write_bytes(recovered_sidecar_bytes)
 
         runtime_unchanged = (
-            _checkpoint_digest(runtime.model.architecture.native_checkpoint())
-            == before_runtime
+            _checkpoint_digest(runtime.model.architecture.native_checkpoint()) == before_runtime
         )
         metrics = {
             "sidecar_only_fails_closed_without_deletion": (
@@ -119,9 +118,7 @@ def evaluate() -> dict[str, object]:
             ),
             "sidecar_only_recovers_by_explicit_retry": explicit_recovery,
             "artifact_only_legacy_upgrades_explicitly": artifact_only_recovered,
-            "conflicting_retry_does_not_overwrite": (
-                conflict_rejected and conflict_preserved
-            ),
+            "conflicting_retry_does_not_overwrite": (conflict_rejected and conflict_preserved),
             "recovery_is_runtime_read_only": runtime_unchanged,
         }
         return {

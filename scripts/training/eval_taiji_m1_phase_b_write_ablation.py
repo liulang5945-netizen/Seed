@@ -97,9 +97,7 @@ def _seed_record(
     )
     config = TaijiConfig.from_dict(config_values)
     actions = tuple(
-        dict.fromkeys(
-            episode.action for episode in (*corpus.phase_a_train, *corpus.phase_b_train)
-        )
+        dict.fromkeys(episode.action for episode in (*corpus.phase_a_train, *corpus.phase_b_train))
     )
     phase_a = Taiji(_memory_config(seed), episode_id=f"m1-22-phase-a-{seed}")
     for episode in corpus.phase_a_train:
@@ -130,8 +128,7 @@ def _seed_record(
         "no_write": no_write_scores,
         "child": child_scores,
         "restored": restored_scores,
-        "new_gain_vs_no_write": child_scores["new_holdout"]
-        - no_write_scores["new_holdout"],
+        "new_gain_vs_no_write": child_scores["new_holdout"] - no_write_scores["new_holdout"],
         "checkpoint": {
             "parent_digest": phase_a_digest,
             "child_digest": checkpoint_digest,
@@ -167,9 +164,7 @@ def run_phase_b_write_diagnostics(
 
     candidate_specs: list[tuple[str, str | None, float | None]] = [(NO_WRITE, None, None)]
     candidate_specs.extend(
-        (f"{target}@{scale:g}", target, float(scale))
-        for target in targets
-        for scale in scales
+        (f"{target}@{scale:g}", target, float(scale)) for target in targets for scale in scales
     )
     records: dict[str, list[dict[str, object]]] = {name: [] for name, _, _ in candidate_specs}
     no_write_by_seed: dict[int, dict[str, float]] = {}
@@ -244,7 +239,9 @@ def main() -> int:
     result["can_promote"] = bool(result["diagnostics"]["promotable_candidates"])
     result["report_path"] = str(args.report)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

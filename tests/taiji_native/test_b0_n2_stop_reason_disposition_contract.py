@@ -91,7 +91,9 @@ def test_live_drift_is_a_failing_audit(audit, monkeypatch, mutation):
     monkeypatch.setattr(audit, "live_consumers", lambda: expected)
     result = audit.disposition()
     assert result["review_checks_passed"] is False
-    assert result["drift"]["added"] or result["drift"]["removed"] or result["missing_judgement_sites"]
+    assert (
+        result["drift"]["added"] or result["drift"]["removed"] or result["missing_judgement_sites"]
+    )
 
 
 @pytest.mark.parametrize("passed, expected_code", [(True, 0), (False, 1)])

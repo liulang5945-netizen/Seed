@@ -130,7 +130,9 @@ def _training_examples() -> tuple[tuple[WorkspaceRoutingExample, ...], dict[str,
 
 def _task_candidates(
     required_keys: tuple[str, ...], distractor_key: str
-) -> tuple[tuple[WorkspaceCandidate, ...], dict[str, tuple[str, dict[str, object]]], tuple[str, ...]]:
+) -> tuple[
+    tuple[WorkspaceCandidate, ...], dict[str, tuple[str, dict[str, object]]], tuple[str, ...]
+]:
     keys = (*required_keys, distractor_key)
     actions = {key: MEMBER_ACTIONS[key] for key in keys}
     candidates = tuple(_candidate(actions[key]) for key in keys)
@@ -257,9 +259,7 @@ def _admit_growth(
         parent_workspace_checkpoint,
         region=restored_model.neuron_regions[0],
     )
-    batch = restored_model.arbitrate_structural_candidate_batch(
-        (candidate.candidate_id,)
-    )
+    batch = restored_model.arbitrate_structural_candidate_batch((candidate.candidate_id,))
     holdout_input, expected_activity = _expected_activity(
         restored_model,
         candidate.candidate_id,
@@ -371,7 +371,9 @@ def _admit_growth(
         "budget_after_rollback": restored_model.cognitive_snapshot().development.structural_budget,
         "rollback_status": "rolled_back" if rollback else "rollback_failed",
         "candidate_checkpoint_roundtrip": (
-            type(model).from_native_checkpoint(candidate_checkpoint).structural_proposal_candidates[0]
+            type(model)
+            .from_native_checkpoint(candidate_checkpoint)
+            .structural_proposal_candidates[0]
             == candidate
         ),
         "workspace_checkpoint_roundtrip": (
@@ -389,9 +391,7 @@ def evaluate() -> dict[str, object]:
         for seed in LEARNER_SEEDS
     ]
     structural_scores = [
-        float(item["task_score"])
-        for run in runs
-        for item in run["structural_runs"]
+        float(item["task_score"]) for run in runs for item in run["structural_runs"]
     ]
     control_means = {
         method: sum(float(item["task_score"]) for run in runs for item in items)
@@ -455,8 +455,12 @@ def evaluate() -> dict[str, object]:
             and run["rollback_capacity"] == 2
             for run in runs
         ),
-        "candidate_checkpoint_roundtrip": all(run["candidate_checkpoint_roundtrip"] for run in runs),
-        "workspace_checkpoint_roundtrip": all(run["workspace_checkpoint_roundtrip"] for run in runs),
+        "candidate_checkpoint_roundtrip": all(
+            run["candidate_checkpoint_roundtrip"] for run in runs
+        ),
+        "workspace_checkpoint_roundtrip": all(
+            run["workspace_checkpoint_roundtrip"] for run in runs
+        ),
         "admission_changes_topology_and_spends_budget": all(
             run["admission"]["status"] == "admitted"
             and run["topology_after_admission"] != run["topology_before"]
@@ -470,8 +474,7 @@ def evaluate() -> dict[str, object]:
             for run in runs
         ),
         "lesion_removes_structural_capacity": all(
-            run["grown_capacity"] == 3 and run["rollback_capacity"] == 2
-            for run in runs
+            run["grown_capacity"] == 3 and run["rollback_capacity"] == 2 for run in runs
         ),
         "training_uses_native_workbench_records": training_source["score_sources"]
         == ["native Workbench raw action success/status projection"],

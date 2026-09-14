@@ -61,7 +61,9 @@ def test_external_artifact_store_is_immutable_and_runtime_consumable() -> None:
         runtime.save(checkpoint_path)
         handed_off = StructuralValidationArtifactStore(store_root).load(artifact.artifact_digest)
         restored = SeedRuntime.load(checkpoint_path)
-        before_budget = restored.model.architecture.cognitive_snapshot().development.structural_budget
+        before_budget = (
+            restored.model.architecture.cognitive_snapshot().development.structural_budget
+        )
         result = restored.continue_structural_candidate_batch_from_validation_artifacts(
             batch.batch_id,
             artifacts_by_candidate={candidate_id: handed_off.to_payload()},

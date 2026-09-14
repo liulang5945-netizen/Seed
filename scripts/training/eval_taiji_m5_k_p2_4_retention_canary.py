@@ -61,9 +61,7 @@ P2_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p2_validation_pilot_v2_202609
 P2_3_REPORT = (
     PROJECT_ROOT / "reports" / "taiji_m5_k_p2_3_recovery_continuation_contract_20260910.json"
 )
-DEFAULT_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m5_k_p2_4_retention_canary_20260910.json"
-)
+DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p2_4_retention_canary_20260910.json"
 
 
 def _write_json_atomic(path: Path, payload: dict[str, Any]) -> None:
@@ -84,7 +82,9 @@ def _interleaved_stream(
         round(index * (len(wake) - 1) / max(1, len(candidate_semantic) - 1))
         for index in range(len(candidate_semantic))
     )
-    insertion_by_position = dict(zip(insertion_positions, range(len(candidate_semantic)), strict=True))
+    insertion_by_position = dict(
+        zip(insertion_positions, range(len(candidate_semantic)), strict=True)
+    )
     stream: list[tuple[str, Any, Any]] = []
     for index, experience in enumerate(wake):
         candidate_index = insertion_by_position.get(index)
@@ -319,9 +319,9 @@ def run_canary(
                 "workbench_success_count"
             ]
             >= parent_scores["p1_validation"]["workbench_success_count"],
-            "continuation_workbench_success": interleaved_scores[
-                "p2_3_continuation_validation"
-            ]["workbench_success_count"]
+            "continuation_workbench_success": interleaved_scores["p2_3_continuation_validation"][
+                "workbench_success_count"
+            ]
             >= parent_scores["p2_3_continuation_validation"]["workbench_success_count"],
         }
         payload.update(

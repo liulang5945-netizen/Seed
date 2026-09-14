@@ -61,9 +61,7 @@ class BrainClientCreditDecision:
         object.__setattr__(self, "experience_id", str(self.experience_id).strip())
         if not self.experience_id:
             raise ValueError("credit decision experience_id must not be empty")
-        object.__setattr__(
-            self, "experience_digest", str(self.experience_digest).strip()
-        )
+        object.__setattr__(self, "experience_digest", str(self.experience_digest).strip())
         if not self.experience_digest:
             raise ValueError("credit decision experience_digest must not be empty")
         if self.candidate_kind not in EVOLUTION_CREDIT_CANDIDATE_KINDS:
@@ -91,9 +89,7 @@ class BrainClientCreditDecision:
     def from_payload(cls, payload: Mapping[str, Any]) -> BrainClientCreditDecision:
         if payload.get("format") != EVOLUTION_CREDIT_FORMAT:
             raise ValueError("unsupported evolution credit decision format")
-        identity = {
-            key: value for key, value in payload.items() if key != "decision_digest"
-        }
+        identity = {key: value for key, value in payload.items() if key != "decision_digest"}
         expected = content_digest(identity)
         if str(payload.get("decision_digest", "")) != expected:
             raise ValueError("evolution credit decision digest mismatch")
@@ -179,9 +175,7 @@ class BrainClientCreditSelector:
             return "memory_consolidation", registered + (
                 "retention_partition_consolidates_existing_memory",
             )
-        return "weight_update", registered + (
-            "registered_capability_can_learn_from_this_outcome",
-        )
+        return "weight_update", registered + ("registered_capability_can_learn_from_this_outcome",)
 
 
 @dataclass(frozen=True)
@@ -216,22 +210,16 @@ class BrainClientAblationAttribution:
         return payload
 
     @classmethod
-    def from_payload(
-        cls, payload: Mapping[str, Any]
-    ) -> BrainClientAblationAttribution:
+    def from_payload(cls, payload: Mapping[str, Any]) -> BrainClientAblationAttribution:
         if payload.get("format") != EVOLUTION_CREDIT_ATTRIBUTION_FORMAT:
             raise ValueError("unsupported evolution credit attribution format")
-        identity = {
-            key: value for key, value in payload.items() if key != "attribution_digest"
-        }
+        identity = {key: value for key, value in payload.items() if key != "attribution_digest"}
         expected = content_digest(identity)
         if str(payload.get("attribution_digest", "")) != expected:
             raise ValueError("evolution credit attribution digest mismatch")
         return cls(
             brain_only=tuple(str(item) for item in payload.get("brain_only", ())),
-            client_plugin_only=tuple(
-                str(item) for item in payload.get("client_plugin_only", ())
-            ),
+            client_plugin_only=tuple(str(item) for item in payload.get("client_plugin_only", ())),
             unattributed=tuple(str(item) for item in payload.get("unattributed", ())),
             attribution_digest=expected,
         )
@@ -246,18 +234,14 @@ def attribute_brain_client_ablation(
     seen: set[str] = set()
     for decision in decisions:
         if not isinstance(decision, BrainClientCreditDecision):
-            raise TypeError(
-                "ablation attribution accepts BrainClientCreditDecision values"
-            )
+            raise TypeError("ablation attribution accepts BrainClientCreditDecision values")
         if decision.experience_id in seen:
             raise ValueError(
                 "ablation attribution rejects a duplicate experience_id: "
                 f"{decision.experience_id}"
             )
         seen.add(decision.experience_id)
-        arms[_ARM_BY_CANDIDATE_KIND[decision.candidate_kind]].append(
-            decision.experience_id
-        )
+        arms[_ARM_BY_CANDIDATE_KIND[decision.candidate_kind]].append(decision.experience_id)
 
     identity: dict[str, Any] = {
         "format": EVOLUTION_CREDIT_ATTRIBUTION_FORMAT,

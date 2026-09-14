@@ -86,11 +86,16 @@ def run_gate() -> dict[str, object]:
             )
         ),
         "frontend_slot_projection_is_declarative": all(
-            marker in composable for marker in ("slotManifests", "manifest.slots", "nativeApi.clientExtensions")
+            marker in composable
+            for marker in ("slotManifests", "manifest.slots", "nativeApi.clientExtensions")
         ),
         "app_injects_client_body_state": all(
             marker in app_source
-            for marker in ("useClientExtensions", "provide('clientExtensions'", "clientExtensions.refresh")
+            for marker in (
+                "useClientExtensions",
+                "provide('clientExtensions'",
+                "clientExtensions.refresh",
+            )
         ),
     }
     return {
@@ -111,12 +116,16 @@ def main() -> int:
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_w7_e5_1_client_snapshot_integration_20260901.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_w7_e5_1_client_snapshot_integration_20260901.json",
     )
     args = parser.parse_args()
     result = run_gate()
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0 if result["status"] == "passed" else 1
 

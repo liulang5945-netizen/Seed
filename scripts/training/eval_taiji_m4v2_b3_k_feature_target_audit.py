@@ -21,12 +21,8 @@ from scripts.training.eval_taiji_m4v2_b3_k_update_signature_audit import (  # no
 
 REPORT_FORMAT = "taiji-m4v2-b3-k-feature-target-audit-v1"
 VERSION = 1
-DEFAULT_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m4v2_b3_k_feature_target_audit_20260910.json"
-)
-DEFAULT_CANDIDATE_ROOT = (
-    PROJECT_ROOT / "output" / "taiji_m4v2_b3_k_feature_target_audit_20260910"
-)
+DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m4v2_b3_k_feature_target_audit_20260910.json"
+DEFAULT_CANDIDATE_ROOT = PROJECT_ROOT / "output" / "taiji_m4v2_b3_k_feature_target_audit_20260910"
 TENSOR_KEYS = (
     "k1.semantic.input_tensor_digest",
     "k1.semantic.target_tensor_digest",
@@ -76,8 +72,7 @@ def run_feature_target_audit(
     }
     report["worker_parameter_delta_digests"] = worker_delta_digests
     report["worker_parameter_delta_collision_groups"] = {
-        worker_id: _collision_groups(values)
-        for worker_id, values in worker_delta_digests.items()
+        worker_id: _collision_groups(values) for worker_id, values in worker_delta_digests.items()
     }
     report["all_fit_tensor_signatures_distinct"] = all(
         report["fit_tensor_signatures_distinct"].values()
@@ -96,9 +91,7 @@ def main() -> int:
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
     args = parser.parse_args()
     artifact_dir = (
-        args.artifact_dir
-        if args.artifact_dir.is_absolute()
-        else PROJECT_ROOT / args.artifact_dir
+        args.artifact_dir if args.artifact_dir.is_absolute() else PROJECT_ROOT / args.artifact_dir
     )
     candidate_root = (
         args.candidate_root

@@ -25,9 +25,7 @@ REPORT_FORMAT = "taiji-w7-p4-4-interaction-group-learning-v1"
 LEARNER_SEEDS = (11, 29, 47)
 
 
-def _record_reward(
-    corpus, *, split: str, context: str, member_ids: tuple[str, ...]
-) -> float:
+def _record_reward(corpus, *, split: str, context: str, member_ids: tuple[str, ...]) -> float:
     context_id = f"{split}-workbench-{context}"
     matches = [
         episode
@@ -44,8 +42,12 @@ def _record_reward(
 def _selected_family_gain(corpus, *, split: str, member_ids: tuple[str, ...]) -> dict[str, float]:
     if len(member_ids) != 2:
         raise AssertionError("P4-4 expects pair interaction groups")
-    first = _record_reward(corpus, split=split, context="complementary", member_ids=(member_ids[0],))
-    second = _record_reward(corpus, split=split, context="complementary", member_ids=(member_ids[1],))
+    first = _record_reward(
+        corpus, split=split, context="complementary", member_ids=(member_ids[0],)
+    )
+    second = _record_reward(
+        corpus, split=split, context="complementary", member_ids=(member_ids[1],)
+    )
     grouped = _record_reward(corpus, split=split, context="complementary", member_ids=member_ids)
     strongest_single = max(first, second)
     dense_average = (first + second) / 2.0
@@ -76,7 +78,9 @@ def evaluate() -> dict[str, object]:
     attribution = evaluator.evaluate(corpus)
     train_candidates = evaluator.train_only_candidates(corpus)
     if len(train_candidates) != 2:
-        raise AssertionError(f"expected complementary and conflicting train candidates: {train_candidates}")
+        raise AssertionError(
+            f"expected complementary and conflicting train candidates: {train_candidates}"
+        )
 
     selections = []
     for seed in LEARNER_SEEDS:
@@ -155,9 +159,8 @@ def evaluate() -> dict[str, object]:
             and holdout_gain["grouped_gain_vs_random_expectation"] >= 0.2
         ),
         "conflicting_group_not_selected": all(
-            item["selected"].member_ids != next(
-                group.member_ids for group in train_candidates if group.interaction < 0.0
-            )
+            item["selected"].member_ids
+            != next(group.member_ids for group in train_candidates if group.interaction < 0.0)
             for item in selections
         ),
         "holdout_outcome_cannot_change_selection": holdout_outcome_cannot_change_selection,
@@ -175,9 +178,7 @@ def evaluate() -> dict[str, object]:
         "workbench_executive_selection_preserved": executive_selection_preserved,
         "workbench_recovery_preserved": recovery_preserved,
         "workbench_checkpoint_replay_preserved": replay_preserved,
-        "interaction_lesion_effect_preserved": bool(
-            attribution.metrics["lesion_effects_observed"]
-        ),
+        "interaction_lesion_effect_preserved": bool(attribution.metrics["lesion_effects_observed"]),
         "selected_group_resource_bound": selected_group_resource_cost <= 10.0,
         "no_policy_tool_or_provider_mutation": True,
     }

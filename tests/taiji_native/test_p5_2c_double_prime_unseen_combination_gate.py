@@ -222,16 +222,12 @@ def test_build_corpus_removes_both_joint_cells_and_keeps_marginals(runner) -> No
     # the arithmetic can never silently drift apart.
     synthetic_per_cell = 1
     expected_removed = (
-        len(runner._train_context_ids())
-        * len(runner.HELD_OUT_PAIRS)
-        * synthetic_per_cell
+        len(runner._train_context_ids()) * len(runner.HELD_OUT_PAIRS) * synthetic_per_cell
     )
     assert expected_removed == 16
     assert len(removed) == expected_removed
 
-    real_expected_removed = (
-        runner.TRAIN_CONTEXT_COUNT * runner.REPEATS * len(runner.HELD_OUT_PAIRS)
-    )
+    real_expected_removed = runner.TRAIN_CONTEXT_COUNT * runner.REPEATS * len(runner.HELD_OUT_PAIRS)
     assert real_expected_removed == 32
 
     # every removed episode must belong to a held-out pair in a train context
@@ -286,9 +282,7 @@ def test_entry_audit_passes_on_correct_construction(runner) -> None:
         },
     )
     assert audit["passed"] is True, audit["conditions"]
-    assert set(audit["held_out_pairs"]) == {
-        "+".join(pair) for pair in runner.HELD_OUT_PAIRS
-    }
+    assert set(audit["held_out_pairs"]) == {"+".join(pair) for pair in runner.HELD_OUT_PAIRS}
     for entry in audit["held_out_pairs"].values():
         assert entry["joint_count_in_train"] == 0
         assert entry["joint_count_in_holdout"] > 0

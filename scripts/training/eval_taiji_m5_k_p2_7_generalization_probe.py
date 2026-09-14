@@ -312,7 +312,9 @@ def run_probe(
         if not learned_checkpoint.get("passed"):
             raise ValueError("P2.6 learned checkpoint did not pass its own save/restore Gate")
         learned_dir = Path(str(learned_checkpoint["files"]["k1"]["path"])).parent
-        if not all(Path(str(item["path"])).is_file() for item in learned_checkpoint["files"].values()):
+        if not all(
+            Path(str(item["path"])).is_file() for item in learned_checkpoint["files"].values()
+        ):
             raise FileNotFoundError("P2.6 learned checkpoint files are not available")
         learned_restore = _independent_restore(learned_dir)
         if not learned_restore.get("independent_process_restore"):

@@ -150,9 +150,11 @@ def run_gate(output_dir: Path) -> dict[str, object]:
         and loaded_trial.parent_checkpoint_digest == loaded_parent.checkpoint_digest,
         "admitted_written_and_lineage_bound": admitted_path.is_file()
         and loaded_admitted.parent_checkpoint_digest == loaded_trial.checkpoint_digest,
-        "native_model_roundtrip": content_digest(restored_model.checkpoint()) == parent.model_digest,
+        "native_model_roundtrip": content_digest(restored_model.checkpoint())
+        == parent.model_digest,
         "ledger_cursor_roundtrip": loaded_parent.ledger_cursor == parent.ledger_cursor,
-        "partition_manifest_roundtrip": loaded_parent.partition_manifest == parent.partition_manifest,
+        "partition_manifest_roundtrip": loaded_parent.partition_manifest
+        == parent.partition_manifest,
         "tamper_rejected": tamper_rejected,
         "dataset_drift_rejected_before_model_restore": drift_rejected
         and content_digest(restored_model.checkpoint()) == before_drift_restore,
@@ -183,7 +185,9 @@ def main() -> int:
     args = parser.parse_args()
     result = run_gate(args.output_dir)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0 if result["status"] == "passed" else 1
 

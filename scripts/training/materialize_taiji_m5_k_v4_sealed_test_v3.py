@@ -43,9 +43,7 @@ PRIOR_SEALED_ARTIFACTS = (
     PROJECT_ROOT / "plans" / "manifests" / "taiji_m4v2_b3_k_c_sealed_test_v1.json",
     PROJECT_ROOT / "plans" / "manifests" / "taiji_m4v2_b3_k_c_sealed_test_v2.json",
 )
-DEFAULT_OUTPUT = (
-    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_v4_sealed_test_v3.json"
-)
+DEFAULT_OUTPUT = PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_v4_sealed_test_v3.json"
 
 SEALED_EPISODE_PATHS = (
     ("sealed3_header_00.h", "sealed3_python_00.py", "sealed3_rust_00.rs"),
@@ -171,18 +169,12 @@ def _materialize(output: Path) -> dict[str, object]:
                     "observation_digests": [
                         sealed_observations[path].observation_digest for path in paths
                     ],
-                    "file_digests": [
-                        sealed_observations[path].file_digest for path in paths
-                    ],
+                    "file_digests": [sealed_observations[path].file_digest for path in paths],
                     "semantic_input_digests": [
-                        semantic_input_digest(
-                            observation.to_percept_event(tick=tick)
-                        )
+                        semantic_input_digest(observation.to_percept_event(tick=tick))
                         for tick, observation in enumerate(sequence[1:], start=1)
                     ],
-                    "transition_input_digests": [
-                        example.input_digest for example in transition
-                    ],
+                    "transition_input_digests": [example.input_digest for example in transition],
                 }
             )
 
@@ -201,8 +193,7 @@ def _materialize(output: Path) -> dict[str, object]:
             "anchor_payload": anchor.to_payload(),
             "episodes": episodes,
             "observation_payloads": [
-                sealed_observations[path].to_payload()
-                for path in all_sealed_paths
+                sealed_observations[path].to_payload() for path in all_sealed_paths
             ],
         }
         artifact = {

@@ -39,15 +39,11 @@ from taiji import (  # noqa: E402
 )
 
 FORMAT = "taiji-native-m1-62-learning-data-contract-v1"
-DEFAULT_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m1_62_learning_data_contract_20260902.json"
-)
+DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m1_62_learning_data_contract_20260902.json"
 SEEDS = (11, 29, 47)
 ACTION_SYMBOLS = (48, 49)
 OUTCOME_SYMBOLS = (43, 45)
-COMBINATIONS = tuple(
-    (action, outcome) for action in ACTION_SYMBOLS for outcome in OUTCOME_SYMBOLS
-)
+COMBINATIONS = tuple((action, outcome) for action in ACTION_SYMBOLS for outcome in OUTCOME_SYMBOLS)
 KEY_COUNT = 16
 TRAIN_REPEATS = 4
 CUE_START = 0
@@ -135,9 +131,7 @@ def _write_train(model: Taiji, curriculum: MemoryLearningCurriculum) -> int:
     written = 0
     for example in curriculum.train:
         if example.partition != "train":
-            raise RuntimeError(
-                f"m1-62 refuses to write a non-train partition: {example.partition}"
-            )
+            raise RuntimeError(f"m1-62 refuses to write a non-train partition: {example.partition}")
         DelayedMemoryTask._write_episode(
             model,
             _episode(example),
@@ -150,12 +144,8 @@ def _write_train(model: Taiji, curriculum: MemoryLearningCurriculum) -> int:
 
 def _decision_row(model: Taiji, example: MemoryLearningExample) -> dict[str, Any]:
     model.reset_dynamics(episode_id=f"m1-62-decision-{example.example_id}")
-    model.observe(
-        model.config.boundary_symbol, learn=False, learn_motor=False, use_memory=True
-    )
-    step = model.observe(
-        example.cue_key, learn=False, learn_motor=False, use_memory=True
-    )
+    model.observe(model.config.boundary_symbol, learn=False, learn_motor=False, use_memory=True)
+    step = model.observe(example.cue_key, learn=False, learn_motor=False, use_memory=True)
     probabilities = step.probabilities
     alternatives = [
         float(probabilities[action].item())
@@ -183,18 +173,14 @@ def _decision_row(model: Taiji, example: MemoryLearningExample) -> dict[str, Any
     }
 
 
-def _decision_probe(
-    model: Taiji, examples: tuple[MemoryLearningExample, ...]
-) -> dict[str, Any]:
+def _decision_probe(model: Taiji, examples: tuple[MemoryLearningExample, ...]) -> dict[str, Any]:
     rows = [_decision_row(model, example) for example in examples]
     margins = [float(row["action_margin"]) for row in rows]
     return {
         "rows": rows,
         "summary": {
             "sample_count": len(rows),
-            "action_accuracy": float(
-                sum(int(row["action_correct"]) for row in rows) / len(rows)
-            ),
+            "action_accuracy": float(sum(int(row["action_correct"]) for row in rows) / len(rows)),
             "action_margin": _summary(margins),
             "row_action_margin_min": float(min(margins)),
             "identity_recall_used_ratio": float(
@@ -220,17 +206,13 @@ def _query_probe(
     )
 
 
-def _arm_record(
-    curriculum: MemoryLearningCurriculum, seed: int, arm: str
-) -> dict[str, Any]:
+def _arm_record(curriculum: MemoryLearningCurriculum, seed: int, arm: str) -> dict[str, Any]:
     started = time.perf_counter()
     config = _arm_config(seed, arm)
     model = Taiji(config, episode_id=f"m1-62-{curriculum.name}-{arm}-{seed}")
     preflight = _checkpoint_record(model)
     preflight["active_parameter_count"] = model.parameter_count()
-    preflight["planned_active_parameter_count"] = (
-        model.config.planned_active_parameter_count
-    )
+    preflight["planned_active_parameter_count"] = model.config.planned_active_parameter_count
     preflight["parameter_count_matches_plan"] = (
         model.parameter_count() == model.config.planned_active_parameter_count
     )
@@ -246,9 +228,7 @@ def _arm_record(
     retention_decision = _decision_probe(model, curriculum.retention)
     trained = _checkpoint_record(model)
     trained["active_parameter_count"] = model.parameter_count()
-    trained["planned_active_parameter_count"] = (
-        model.config.planned_active_parameter_count
-    )
+    trained["planned_active_parameter_count"] = model.config.planned_active_parameter_count
     trained["parameter_count_matches_plan"] = (
         model.parameter_count() == model.config.planned_active_parameter_count
     )
@@ -284,15 +264,9 @@ def _arm_summary(records: list[dict[str, Any]]) -> dict[str, Any]:
         rows = [record[partition]["all"] for record in records]
         summary[partition] = {
             "action_accuracy": _summary([float(row["action_accuracy"]) for row in rows]),
-            "outcome_accuracy": _summary(
-                [float(row["outcome_accuracy"]) for row in rows]
-            ),
-            "action_margin": _summary(
-                [float(row["action_margin"]["mean"]) for row in rows]
-            ),
-            "outcome_margin": _summary(
-                [float(row["outcome_margin"]["mean"]) for row in rows]
-            ),
+            "outcome_accuracy": _summary([float(row["outcome_accuracy"]) for row in rows]),
+            "action_margin": _summary([float(row["action_margin"]["mean"]) for row in rows]),
+            "outcome_margin": _summary([float(row["outcome_margin"]["mean"]) for row in rows]),
             "action_outcome_margin_gap": _summary(
                 [float(row["action_outcome_margin_gap"]["mean"]) for row in rows]
             ),
@@ -300,12 +274,8 @@ def _arm_summary(records: list[dict[str, Any]]) -> dict[str, Any]:
     for partition in ("holdout", "retention"):
         decisions = [record[f"{partition}_decision"] for record in records]
         summary[f"{partition}_decision"] = {
-            "action_accuracy": _summary(
-                [float(row["action_accuracy"]) for row in decisions]
-            ),
-            "action_margin": _summary(
-                [float(row["action_margin"]["mean"]) for row in decisions]
-            ),
+            "action_accuracy": _summary([float(row["action_accuracy"]) for row in decisions]),
+            "action_margin": _summary([float(row["action_margin"]["mean"]) for row in decisions]),
             "row_action_margin_min": float(
                 min(float(row["row_action_margin_min"]) for row in decisions)
             ),
@@ -338,12 +308,10 @@ def _arm_summary(records: list[dict[str, Any]]) -> dict[str, Any]:
         for partition in ("holdout", "retention")
     )
     summary["any_positive_binding_all_seeds"] = bool(
-        summary["positive_binding_all_seeds"]
-        or summary["decision_positive_binding_all_seeds"]
+        summary["positive_binding_all_seeds"] or summary["decision_positive_binding_all_seeds"]
     )
     summary["checkpoint_preflight_all_seeds"] = all(
-        record["checkpoint_preflight"]["saveable_before_training"]
-        for record in records
+        record["checkpoint_preflight"]["saveable_before_training"] for record in records
     )
     summary["checkpoint_after_train_all_seeds"] = all(
         record["checkpoint_after_train"]["same_process_digest_matches"]
@@ -379,8 +347,7 @@ def _data_contract_verdict(courses: dict[str, dict[str, Any]]) -> dict[str, Any]
             for partition in MEMORY_LEARNING_PARTITIONS
         ),
         "train_keys_repeatedly_observed": (
-            stable["partitions"]["train"]["observations_per_key"]["min"]
-            >= float(TRAIN_REPEATS)
+            stable["partitions"]["train"]["observations_per_key"]["min"] >= float(TRAIN_REPEATS)
         ),
     }
 
@@ -407,9 +374,7 @@ def run(report_path: Path, seeds: tuple[int, ...]) -> dict[str, Any]:
     native = courses["stable_key"]["arms"]["native_association"]["summary"]
     reference = courses["stable_key"]["arms"]["identity_organ_reference"]["summary"]
     negative_native = courses["conflicting_key"]["arms"]["native_association"]["summary"]
-    negative_reference = courses["conflicting_key"]["arms"][
-        "identity_organ_reference"
-    ]["summary"]
+    negative_reference = courses["conflicting_key"]["arms"]["identity_organ_reference"]["summary"]
     gates = {
         "data_contract_pass": all(data_contract.values()),
         "checkpoint_preflight_pass": all(
@@ -422,9 +387,7 @@ def run(report_path: Path, seeds: tuple[int, ...]) -> dict[str, Any]:
             for course in courses.values()
             for arm in ARMS
         ),
-        "native_positive_binding_on_stable_keys": bool(
-            native["any_positive_binding_all_seeds"]
-        ),
+        "native_positive_binding_on_stable_keys": bool(native["any_positive_binding_all_seeds"]),
         "native_stable_beats_conflicting_control": bool(
             native["holdout"]["action_accuracy"]["mean"]
             > negative_native["holdout"]["action_accuracy"]["mean"]
@@ -497,12 +460,8 @@ def main() -> int:
                 "report_path": str(args.report),
                 "blocking_gates": result["blocking_gates"],
                 "gates": result["gates"],
-                "stable_key_digest": result["courses"]["stable_key"][
-                    "curriculum_digest"
-                ],
-                "conflicting_key_digest": result["courses"]["conflicting_key"][
-                    "curriculum_digest"
-                ],
+                "stable_key_digest": result["courses"]["stable_key"]["curriculum_digest"],
+                "conflicting_key_digest": result["courses"]["conflicting_key"]["curriculum_digest"],
             },
             ensure_ascii=False,
             indent=2,

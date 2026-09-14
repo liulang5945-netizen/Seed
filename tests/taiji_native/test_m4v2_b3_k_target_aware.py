@@ -35,8 +35,7 @@ def test_b3_k_target_aware_keeps_learning_boundaries_explicit() -> None:
     assert len(report["target_course_digests"]) == 3
     assert all(
         len(cell["report"]["train_target_digests"]) == 3
-        and cell["report"]["target_digest_semantics"]
-        == "combined K1/K2 target tensor digests"
+        and cell["report"]["target_digest_semantics"] == "combined K1/K2 target tensor digests"
         and len(cell["report"]["train_target_multiplicity"]) in {2, 3}
         and sum(cell["report"]["train_target_multiplicity"].values()) == 3
         and cell["report"]["checks"]["train_holdout_disjoint"]

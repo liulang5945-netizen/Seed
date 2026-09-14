@@ -56,8 +56,7 @@ def _pairs(values: Any, name: str) -> tuple[tuple[str, str], ...]:
     if isinstance(values, (str, bytes, bytearray)):
         raise TypeError(f"{name} must be a sequence of pairs")
     normalized = tuple(
-        (_text(item[0], f"{name} worker id"), _digest(item[1], f"{name} digest"))
-        for item in values
+        (_text(item[0], f"{name} worker id"), _digest(item[1], f"{name} digest")) for item in values
     )
     if tuple(worker_id for worker_id, _ in normalized) != K_WORKER_IDS:
         raise ValueError(f"{name} must contain exactly K1/K2/K3 in order")
@@ -223,9 +222,7 @@ class KContinuationExperience:
             source_manifest_digest=str(payload["source_manifest_digest"]),
             observation_digest=str(payload["observation_digest"]),
             semantic_example=StructuredSemanticExample.from_payload(semantic_payload),
-            transition_example=StructuredSemanticTransitionExample.from_payload(
-                transition_payload
-            ),
+            transition_example=StructuredSemanticTransitionExample.from_payload(transition_payload),
             projection=OutcomeDependencyProjection.from_payload(projection_payload),
             exchange=KAdapterExchange.from_payload(exchange_payload),
         )
@@ -375,9 +372,7 @@ class KContinuationCourse:
             worker_bundle_digest=str(payload["worker_bundle_digest"]),
             source_manifest_digest=str(payload["source_manifest_digest"]),
             train=tuple(KContinuationExperience.from_payload(value) for value in train_payload),
-            holdout=tuple(
-                KContinuationExperience.from_payload(value) for value in holdout_payload
-            ),
+            holdout=tuple(KContinuationExperience.from_payload(value) for value in holdout_payload),
             learnable_workers=tuple(str(value) for value in payload["learnable_workers"]),
             frozen_workers=tuple(str(value) for value in payload["frozen_workers"]),
         )
@@ -441,8 +436,7 @@ class KContinuationUpdateReceipt:
         )
         for field_name in ("train_experience_digests", "holdout_experience_digests"):
             values = tuple(
-                _digest(value, f"{field_name} item")
-                for value in getattr(self, field_name)
+                _digest(value, f"{field_name} item") for value in getattr(self, field_name)
             )
             if not values or len(set(values)) != len(values):
                 raise ValueError(f"{field_name} must be unique and non-empty")
@@ -455,7 +449,9 @@ class KContinuationUpdateReceipt:
             raise ValueError("K continuation receipt updated worker set is invalid")
         if self.frozen_workers != K_CONTINUATION_FROZEN_WORKERS:
             raise ValueError("K continuation receipt frozen worker set is invalid")
-        object.__setattr__(self, "candidate_namespace", _text(self.candidate_namespace, "candidate_namespace"))
+        object.__setattr__(
+            self, "candidate_namespace", _text(self.candidate_namespace, "candidate_namespace")
+        )
         if int(self.training_steps) <= 0:
             raise ValueError("K continuation receipt requires a positive training step count")
         if bool(self.optimizer_state_present):
@@ -466,7 +462,10 @@ class KContinuationUpdateReceipt:
         candidate = dict(self.candidate_worker_checkpoint_digests)
         if parent["k3.outcome_projection"] != candidate["k3.outcome_projection"]:
             raise ValueError("K continuation receipt changed deterministic K3")
-        if all(parent[worker_id] == candidate[worker_id] for worker_id in K_CONTINUATION_LEARNABLE_WORKERS):
+        if all(
+            parent[worker_id] == candidate[worker_id]
+            for worker_id in K_CONTINUATION_LEARNABLE_WORKERS
+        ):
             raise ValueError("K continuation receipt changed no learnable worker")
         for field_name in (
             "optimizer_state_present",

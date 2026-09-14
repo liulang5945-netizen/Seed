@@ -21,7 +21,9 @@ def _model_with_active_and_terminal_batch() -> tuple[TSKV8Adapter, str, str]:
     assert schedule.get("status") == "batch_created"
     model = runtime.model.architecture
     active_batch_id = str(schedule["batch_id"])
-    active = next(item for item in model.structural_candidate_batches if item.batch_id == active_batch_id)
+    active = next(
+        item for item in model.structural_candidate_batches if item.batch_id == active_batch_id
+    )
     _record_terminal_subgraph(model, active)
     return model, active_batch_id, "batch:terminal-lineage"
 
@@ -60,7 +62,9 @@ def test_lineage_compaction_is_only_triggered_by_explicit_maintenance() -> None:
 def test_maintenance_retention_audit_is_checkpointed_and_idempotent() -> None:
     model, active_batch_id, _ = _model_with_active_and_terminal_batch()
     _empty_maintenance(model, max_batches=1)
-    active = next(item for item in model.structural_candidate_batches if item.batch_id == active_batch_id)
+    active = next(
+        item for item in model.structural_candidate_batches if item.batch_id == active_batch_id
+    )
     model._record_structural_candidate_batch(
         replace(active, batch_id="batch:protected-copy", revision=active.revision + 1)
     )

@@ -107,11 +107,7 @@ def test_chat_workbench_natural_language_red_gate_requires_taiji_intent(seed_cli
 
     assert response.status_code == 422
     detail = response.json()["detail"]
-    assert any(
-        item.get("loc", ())[-1:] == ["intent"]
-        for item in detail
-        if isinstance(item, dict)
-    )
+    assert any(item.get("loc", ())[-1:] == ["intent"] for item in detail if isinstance(item, dict))
 
 
 def test_chat_workbench_interpret_emits_goal_evidence_without_execution(seed_client):

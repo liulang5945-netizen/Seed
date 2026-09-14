@@ -60,7 +60,9 @@ def _boundary_corpus(*, train_count: int, holdout_count: int) -> tuple[
             cue=episode.cue,
             expected_action=episode.action,
         )
-        for index, episode in enumerate(phase_a[index % len(phase_a)] for index in range(holdout_count))
+        for index, episode in enumerate(
+            phase_a[index % len(phase_a)] for index in range(holdout_count)
+        )
     )
     phase_b_queries = tuple(
         DelayedMemoryQuery(
@@ -68,7 +70,9 @@ def _boundary_corpus(*, train_count: int, holdout_count: int) -> tuple[
             cue=episode.cue,
             expected_action=episode.action,
         )
-        for index, episode in enumerate(phase_b[index % len(phase_b)] for index in range(holdout_count))
+        for index, episode in enumerate(
+            phase_b[index % len(phase_b)] for index in range(holdout_count)
+        )
     )
     unseen_queries = tuple(
         DelayedMemoryQuery(
@@ -163,8 +167,12 @@ def _seed_record(
         int(stress_route.learn(pattern, episode.action).slot_index)
         for pattern, episode in zip(stress_patterns, stress, strict=True)
     )
-    old_bound = sum(stress_route.query(pattern).slot_index is not None for pattern in stress_patterns[:capacity])
-    new_bound = sum(stress_route.query(pattern).slot_index is not None for pattern in stress_patterns[capacity:])
+    old_bound = sum(
+        stress_route.query(pattern).slot_index is not None for pattern in stress_patterns[:capacity]
+    )
+    new_bound = sum(
+        stress_route.query(pattern).slot_index is not None for pattern in stress_patterns[capacity:]
+    )
     stress_bundle = {"model": stress_model.checkpoint(), "route": stress_route.to_payload()}
     stress_bundle_digest = content_digest(stress_bundle)
     return {
@@ -295,7 +303,9 @@ def main() -> int:
         "report_path": str(args.report),
     }
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

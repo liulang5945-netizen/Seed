@@ -21,14 +21,10 @@ REPORT_FORMAT = "taiji-m4v2-b3-k-target-aware-model-seeds-v2"
 VERSION = 2
 MODEL_SEEDS = (17, 23, 31)
 DEFAULT_REPORT = (
-    PROJECT_ROOT
-    / "reports"
-    / "taiji_m4v2_b3_k_target_aware_model_seeds_v2_20260910.json"
+    PROJECT_ROOT / "reports" / "taiji_m4v2_b3_k_target_aware_model_seeds_v2_20260910.json"
 )
 DEFAULT_CANDIDATE_ROOT = (
-    PROJECT_ROOT
-    / "output"
-    / "taiji_m4v2_b3_k_target_aware_model_seeds_v2_20260910"
+    PROJECT_ROOT / "output" / "taiji_m4v2_b3_k_target_aware_model_seeds_v2_20260910"
 )
 
 
@@ -53,23 +49,17 @@ def run_model_seed_stability(
         str(item["model_seed"]): item["report"].get("parent_checkpoint_digests", [])
         for item in model_reports
     }
-    model_parent_values = [
-        tuple(value) for value in parent_by_model.values()
-    ]
-    independent_model_parents = (
-        len(model_parent_values) == len(set(model_parent_values))
-        and all(len(value) == 1 for value in model_parent_values)
+    model_parent_values = [tuple(value) for value in parent_by_model.values()]
+    independent_model_parents = len(model_parent_values) == len(set(model_parent_values)) and all(
+        len(value) == 1 for value in model_parent_values
     )
     all_cells = [cell for report in reports for cell in report.get("cells", [])]
     all_deltas = [
-        float(cell["report"]["holdout_structured_loss_delta"]["combined_mse"])
-        for cell in all_cells
+        float(cell["report"]["holdout_structured_loss_delta"]["combined_mse"]) for cell in all_cells
     ]
     model_technical = all(report.get("technical_gate_passed") for report in reports)
     model_performance = all(report.get("performance_gate_passed") for report in reports)
-    model_candidate_distinct = all(
-        report.get("candidate_updates_distinct") for report in reports
-    )
+    model_candidate_distinct = all(report.get("candidate_updates_distinct") for report in reports)
     technical_gate_passed = (
         len(model_seeds) == 3
         and len(set(model_seeds)) == 3
@@ -90,9 +80,7 @@ def run_model_seed_stability(
         "model_reports": model_reports,
         "cell_count": len(all_cells),
         "all_combined_loss_deltas": all_deltas,
-        "mean_combined_loss_delta": sum(all_deltas) / len(all_deltas)
-        if all_deltas
-        else None,
+        "mean_combined_loss_delta": sum(all_deltas) / len(all_deltas) if all_deltas else None,
         "worst_combined_loss_delta": max(all_deltas) if all_deltas else None,
         "model_technical_gates_passed": model_technical,
         "model_performance_gates_passed": model_performance,

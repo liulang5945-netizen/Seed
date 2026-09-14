@@ -98,9 +98,7 @@ def _dataset_metadata(dataset: FoundationTrainingDataset) -> dict[str, Any]:
 
 def _record_set(dataset: FoundationTrainingDataset) -> set[str]:
     if not dataset.selected_record_digests:
-        raise ValueError(
-            "M2.R1 data contract requires record provenance on every phase dataset"
-        )
+        raise ValueError("M2.R1 data contract requires record provenance on every phase dataset")
     return set(dataset.selected_record_digests)
 
 
@@ -203,9 +201,7 @@ def build_disjoint_phase_chain(
         ("phase_c", "phase_c3"),
         ("phase_c2", "phase_c3"),
     ):
-        overlap_counts[f"{a_name}__vs__{b_name}"] = len(
-            record_sets[a_name] & record_sets[b_name]
-        )
+        overlap_counts[f"{a_name}__vs__{b_name}"] = len(record_sets[a_name] & record_sets[b_name])
     overlap_failures = {key: value for key, value in overlap_counts.items() if value}
     if overlap_failures:
         raise ValueError(f"M2.R1 record-disjoint Gate failed: {overlap_failures}")
@@ -309,6 +305,7 @@ def _process_working_set_bytes() -> int | None:
     """
 
     if os.name == "nt":
+
         class _ProcessMemoryCounters(ctypes.Structure):
             _fields_ = [
                 ("cb", ctypes.c_ulong),
@@ -526,9 +523,7 @@ def _train_stream_in_chunks(
         float(progress.get("checkpoint_save_seconds", 0.0)) if progress is not None else 0.0
     )
     chunk_history = (
-        [dict(item) for item in progress.get("chunk_history", [])]
-        if progress is not None
-        else []
+        [dict(item) for item in progress.get("chunk_history", [])] if progress is not None else []
     )
     peak_working_set_bytes = (
         progress.get("peak_working_set_bytes") if progress is not None else None
@@ -618,10 +613,7 @@ def _train_stream_in_chunks(
                     "working_set_bytes": current_working_set,
                 }
             )
-            if (
-                global_step % int(checkpoint_interval) == 0
-                or cursor == len(data)
-            ):
+            if global_step % int(checkpoint_interval) == 0 or cursor == len(data):
                 save_progress(completed=False)
         epoch += 1
         cursor = 0
@@ -640,9 +632,7 @@ def _train_stream_in_chunks(
             "checkpoint_save_seconds": float(checkpoint_save_seconds),
             "trained_body_bytes": int(len(data) * int(epochs)),
             "stream_symbols": int((len(data) + 2) * int(epochs)),
-            "body_bytes_per_second": float(
-                len(data) * int(epochs) / max(learn_seconds, 1e-12)
-            ),
+            "body_bytes_per_second": float(len(data) * int(epochs) / max(learn_seconds, 1e-12)),
             "chunk_count": len(chunk_history),
             "peak_working_set_bytes": peak_working_set_bytes,
             "torch_num_threads": int(torch.get_num_threads()),
@@ -679,9 +669,7 @@ def _merge_stream_resources(runs: Sequence[Mapping[str, Any]]) -> dict[str, Any]
         "chunk_count": int(sum(int(item["chunk_count"]) for item in resources)),
         "peak_working_set_bytes": max(peak_values) if peak_values else None,
         "torch_num_threads": int(torch.get_num_threads()),
-        "resumed_from_checkpoint": any(
-            bool(item["resumed_from_checkpoint"]) for item in resources
-        ),
+        "resumed_from_checkpoint": any(bool(item["resumed_from_checkpoint"]) for item in resources),
     }
 
 
@@ -920,19 +908,15 @@ def _run_branch_arm(
     )
 
     checks = {
-        "active_readout_changes": active_before["readout_digest"]
-        != active_after["readout_digest"],
+        "active_readout_changes": active_before["readout_digest"] != active_after["readout_digest"],
         "active_readout_changes_during_replay": (
             arm != "replay" or active_after["readout_digest"] != active_before["readout_digest"]
         ),
         "shared_fabric_unchanged": content_digest(model.fabric.to_payload()) == shared_before,
-        "protected_owners_unchanged": _protected_owner_digest(model)
-        == protected_owners_before,
+        "protected_owners_unchanged": _protected_owner_digest(model) == protected_owners_before,
         "protected_readout_unchanged": protected_readout_before
         == model.readout_registry_status()["protected"]["readout_digest"],
-        "scores_are_read_only": all(
-            (protected_c_ro, active_c_ro, active_a_ro)
-        ),
+        "scores_are_read_only": all((protected_c_ro, active_c_ro, active_a_ro)),
         "active_score_uses_active_owner": a_owner == "predictive_readout.active"
         and a_scope == "active",
         "protected_score_uses_protected_owner": p_owner == "predictive_readout"
@@ -1231,8 +1215,7 @@ def _run_cascade_arm(
     )
 
     checks = {
-        "active_readout_changes": active_before["readout_digest"]
-        != active_after["readout_digest"],
+        "active_readout_changes": active_before["readout_digest"] != active_after["readout_digest"],
         "active_readout_changes_during_cycle2": after_cycle1["readout_digest"]
         != after_cycle2["readout_digest"],
         "active_readout_changes_during_cycle3": after_cycle2["readout_digest"]
@@ -1606,12 +1589,8 @@ def run_arms(
             "phase_a": _dataset_metadata(a_dataset),
             "phase_b": _dataset_metadata(b_dataset),
             "phase_c": _dataset_metadata(c_dataset),
-            "phase_c2": (
-                None if c2_dataset is None else _dataset_metadata(c2_dataset)
-            ),
-            "phase_c3": (
-                None if c3_dataset is None else _dataset_metadata(c3_dataset)
-            ),
+            "phase_c2": (None if c2_dataset is None else _dataset_metadata(c2_dataset)),
+            "phase_c3": (None if c3_dataset is None else _dataset_metadata(c3_dataset)),
         },
         "data_contract": {
             "format": "taiji-m2r1-record-disjoint-course-v1",

@@ -168,10 +168,7 @@ def _support_metrics(
         read_fan_in.append(int(read_active.sum().item()))
         write_fan_in.append(int(write_active.sum().item()))
         read_edge_sets.append(
-            {
-                (int(post), int(local))
-                for post, local in zip(*torch.where(read_active), strict=True)
-            }
+            {(int(post), int(local)) for post, local in zip(*torch.where(read_active), strict=True)}
         )
         write_edge_sets.append(
             {
@@ -201,7 +198,10 @@ def _support_metrics(
             [
                 {
                     (int(post), int(local))
-                    for post, local in zip(*torch.where(native_context[action_readout.pre_index].abs() > 1e-8), strict=True)
+                    for post, local in zip(
+                        *torch.where(native_context[action_readout.pre_index].abs() > 1e-8),
+                        strict=True,
+                    )
                 }
                 for native_context in [
                     model.memory.readout_receptors.forward(activity) for activity in activities
@@ -231,9 +231,7 @@ def _cross_metrics(
     left_union = set().union(*left_sets)
     right_union = set().union(*right_sets)
     pairwise_jaccard = [
-        len(left & right) / max(1, len(left | right))
-        for left in left_sets
-        for right in right_sets
+        len(left & right) / max(1, len(left | right)) for left in left_sets for right in right_sets
     ]
     cross = torch.nn.functional.cosine_similarity(
         phase_a["_activities"][:, None, :],
@@ -243,7 +241,9 @@ def _cross_metrics(
     return {
         "shared_edge_count": float(len(left_union & right_union)),
         "edge_union_count": float(len(left_union | right_union)),
-        "shared_edge_ratio": float(len(left_union & right_union) / max(1, len(left_union | right_union))),
+        "shared_edge_ratio": float(
+            len(left_union & right_union) / max(1, len(left_union | right_union))
+        ),
         "cross_cue_edge_jaccard_mean": float(sum(pairwise_jaccard) / len(pairwise_jaccard)),
         "cross_cue_edge_jaccard_max": float(max(pairwise_jaccard)),
         "cross_phase_cue_cosine_max": float(cross.max().item()),
@@ -310,9 +310,7 @@ def _seed_record(
     )
     config = TaijiConfig.from_dict(config_values)
     actions = tuple(
-        dict.fromkeys(
-            episode.action for episode in (*corpus.phase_a_train, *corpus.phase_b_train)
-        )
+        dict.fromkeys(episode.action for episode in (*corpus.phase_a_train, *corpus.phase_b_train))
     )
     phase_a_model = Taiji(config, episode_id=f"m1-24-phase-a-{mode}-{seed}")
     with _support_mode(phase_a_model, mode, mask_fraction):
@@ -375,8 +373,7 @@ def _seed_record(
         "child": child_scores,
         "restored": restored_scores,
         "restored_after_read": restored_after_read,
-        "new_gain_vs_no_write": child_scores["new_holdout"]
-        - no_write_scores["new_holdout"],
+        "new_gain_vs_no_write": child_scores["new_holdout"] - no_write_scores["new_holdout"],
         "support": {
             "phase_a": phase_a_support,
             "phase_b": phase_b_support,
@@ -388,7 +385,8 @@ def _seed_record(
             "restore_digest_matches": content_digest(restored.checkpoint()) == checkpoint_digest,
             "read_only_persistent_state": persistent_before == persistent_after,
         },
-        "phase_b_memory_writes": int(model.memory.write_count) - int(phase_a_model.memory.write_count),
+        "phase_b_memory_writes": int(model.memory.write_count)
+        - int(phase_a_model.memory.write_count),
         "holdout_updates": 0,
     }
 
@@ -411,12 +409,10 @@ def run_alignment_diagnostics(
     if unknown:
         raise ValueError(f"unsupported support alignment mode: {sorted(unknown)}")
     records = {
-        mode: [_seed_record(seed, corpus, mode, mask_fraction) for seed in seeds]
-        for mode in modes
+        mode: [_seed_record(seed, corpus, mode, mask_fraction) for seed in seeds] for mode in modes
     }
     promotable = {
-        mode: all(_promotable(record) for record in values)
-        for mode, values in records.items()
+        mode: all(_promotable(record) for record in values) for mode, values in records.items()
     }
     return {
         "corpus_digest": corpus.digest,
@@ -459,7 +455,9 @@ def main() -> int:
     result["can_promote"] = bool(result["diagnostics"]["promotable_modes"])
     result["report_path"] = str(args.report)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

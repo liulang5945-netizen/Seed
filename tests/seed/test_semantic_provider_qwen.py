@@ -108,8 +108,7 @@ def test_qwen_adapter_normalizes_only_bounded_language_operation_aliases(tmp_pat
 
 def test_qwen_adapter_rejects_execution_fields_before_taiji_admission(tmp_path) -> None:
     generator = _FakeGenerator(
-        '{"goal_description":"越权", "tool":"workspace.read", '
-        '"confidence":0.9, "ambiguity":0.1}'
+        '{"goal_description":"越权", "tool":"workspace.read", ' '"confidence":0.9, "ambiguity":0.1}'
     )
     provider = QwenSemanticEvidenceProvider(generator, _artifact(tmp_path))
 

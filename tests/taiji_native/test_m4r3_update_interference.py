@@ -19,12 +19,15 @@ def test_m4r3_seed11_smoke_contract() -> None:
     assert report["configuration"]["gated_temporal_candidate"] is False
     assert set(report["variants"]) == {"readout_only", "context_only", "joint"}
     assert all(report["checks"].values())
-    assert report["variants"]["readout_only"]["active_readout_before"] != report[
-        "variants"
-    ]["readout_only"]["active_readout_after"]
-    assert report["variants"]["context_only"]["owner_before"]["predictive_context"] != report[
-        "variants"
-    ]["context_only"]["owner_after"]["predictive_context"]
-    assert report["variants"]["joint"]["owner_before"]["predictive_readout"] != report[
-        "variants"
-    ]["joint"]["owner_after"]["predictive_readout"]
+    assert (
+        report["variants"]["readout_only"]["active_readout_before"]
+        != report["variants"]["readout_only"]["active_readout_after"]
+    )
+    assert (
+        report["variants"]["context_only"]["owner_before"]["predictive_context"]
+        != report["variants"]["context_only"]["owner_after"]["predictive_context"]
+    )
+    assert (
+        report["variants"]["joint"]["owner_before"]["predictive_readout"]
+        != report["variants"]["joint"]["owner_after"]["predictive_readout"]
+    )

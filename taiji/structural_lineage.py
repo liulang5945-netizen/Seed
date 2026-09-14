@@ -118,7 +118,9 @@ class StructuralLineageRetentionPolicy:
             raise ValueError("unsupported structural lineage retention policy format")
         raw_rules = payload.get("protection_rules", ())
         if not isinstance(raw_rules, (list, tuple)):
-            raise ValueError("structural lineage retention policy protection rules must be a sequence")
+            raise ValueError(
+                "structural lineage retention policy protection rules must be a sequence"
+            )
         return cls(
             revision=int(payload["revision"]),
             max_batches=int(payload["max_batches"]),
@@ -157,15 +159,21 @@ class StructuralLineageRetentionPolicyMigration:
         if not isinstance(self.target_policy, StructuralLineageRetentionPolicy):
             raise TypeError("structural lineage retention migration target is invalid")
         if self.target_policy.revision != self.source_policy.revision + 1:
-            raise ValueError("structural lineage retention policy migration revision is not adjacent")
+            raise ValueError(
+                "structural lineage retention policy migration revision is not adjacent"
+            )
         if (
             self.target_policy.max_batches != self.source_policy.max_batches
             or self.target_policy.protection_rules != self.source_policy.protection_rules
             or self.target_policy.mode != self.source_policy.mode
         ):
-            raise ValueError("structural lineage retention policy migration changes safety semantics")
+            raise ValueError(
+                "structural lineage retention policy migration changes safety semantics"
+            )
         if not str(self.migration_digest):
-            raise ValueError("structural lineage retention policy migration digest must not be empty")
+            raise ValueError(
+                "structural lineage retention policy migration digest must not be empty"
+            )
         object.__setattr__(self, "migration_digest", str(self.migration_digest))
         expected = _digest(self._payload_without_digest())
         if str(self.migration_digest) != expected:
@@ -258,7 +266,9 @@ class StructuralLineageRetentionResult:
         ):
             values = tuple(str(item) for item in getattr(self, name))
             if any(not item for item in values) or len(set(values)) != len(values):
-                raise ValueError(f"structural lineage retention {name} must be unique and non-empty")
+                raise ValueError(
+                    f"structural lineage retention {name} must be unique and non-empty"
+                )
             object.__setattr__(self, name, values)
         counts = tuple((str(key), int(value)) for key, value in self.removed_record_counts)
         if any(not key or value < 0 for key, value in counts):
@@ -287,9 +297,7 @@ class StructuralLineageRetentionResult:
             "removed_batch_ids": list(self.removed_batch_ids),
             "retained_candidate_ids": list(self.retained_candidate_ids),
             "removed_candidate_ids": list(self.removed_candidate_ids),
-            "removed_record_counts": {
-                key: value for key, value in self.removed_record_counts
-            },
+            "removed_record_counts": {key: value for key, value in self.removed_record_counts},
             "retention_pressure": self.retention_pressure,
         }
 
@@ -328,9 +336,7 @@ class StructuralLineageRetentionResult:
 def structural_lineage_retention_digest(payload: Mapping[str, Any]) -> str:
     """Return the canonical digest for a retention result payload."""
 
-    return _digest(
-        {key: value for key, value in payload.items() if key != "result_digest"}
-    )
+    return _digest({key: value for key, value in payload.items() if key != "result_digest"})
 
 
 @dataclass(frozen=True)
@@ -381,14 +387,10 @@ class StructuralMaintenanceAudit:
             "format": STRUCTURAL_MAINTENANCE_AUDIT_FORMAT,
             "maintenance_results": [item.to_payload() for item in self.maintenance_results],
             "lineage_retention": (
-                None
-                if self.lineage_retention is None
-                else self.lineage_retention.to_payload()
+                None if self.lineage_retention is None else self.lineage_retention.to_payload()
             ),
             "retention_policy": (
-                None
-                if self.retention_policy is None
-                else self.retention_policy.to_payload()
+                None if self.retention_policy is None else self.retention_policy.to_payload()
             ),
             "structural_runtime_tick": self.structural_runtime_tick,
         }
@@ -436,6 +438,4 @@ class StructuralMaintenanceAudit:
 def structural_maintenance_audit_digest(payload: Mapping[str, Any]) -> str:
     """Return the canonical digest for a maintenance audit payload."""
 
-    return _digest(
-        {key: value for key, value in payload.items() if key != "audit_digest"}
-    )
+    return _digest({key: value for key, value in payload.items() if key != "audit_digest"})

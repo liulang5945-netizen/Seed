@@ -148,7 +148,9 @@ class GSelectionState:
         object.__setattr__(self, "confidence", confidence)
         object.__setattr__(self, "ambiguity", ambiguity)
         object.__setattr__(self, "external_target_used", False)
-        object.__setattr__(self, "selection_digest", _digest(self.selection_digest, "selection_digest"))
+        object.__setattr__(
+            self, "selection_digest", _digest(self.selection_digest, "selection_digest")
+        )
 
     @classmethod
     def from_k1_result(cls, result: StructuredSemanticResult) -> GSelectionState:
@@ -205,7 +207,9 @@ class GSelectionState:
             "candidate_digest": self.candidate_digest,
             "goal_scores": dict(self.goal_scores),
             "content_scores": dict(self.content_scores),
-            "selected_goal": None if self.selected_goal is None else self.selected_goal.to_payload(),
+            "selected_goal": (
+                None if self.selected_goal is None else self.selected_goal.to_payload()
+            ),
             "selected_content": (
                 None if self.selected_content is None else self.selected_content.to_payload()
             ),
@@ -258,8 +262,12 @@ class TaijiOwnerTransferManifest:
             raise ValueError("unsupported owner-transfer manifest format")
         if int(self.version) != TAIJI_OWNER_TRANSFER_VERSION:
             raise ValueError("unsupported owner-transfer manifest version")
-        base_cell = _digest(self.base_single_cell_manifest_digest, "base_single_cell_manifest_digest")
-        base = _digest(self.base_continuation_checkpoint_digest, "base_continuation_checkpoint_digest")
+        base_cell = _digest(
+            self.base_single_cell_manifest_digest, "base_single_cell_manifest_digest"
+        )
+        base = _digest(
+            self.base_continuation_checkpoint_digest, "base_continuation_checkpoint_digest"
+        )
         workers = _digest_pairs(self.worker_checkpoint_digests, "worker_checkpoint_digests")
         if tuple(key for key, _ in workers) != ("k1", "k2"):
             raise ValueError("owner-transfer manifest requires k1 and k2 workers")
@@ -289,7 +297,9 @@ class TaijiOwnerTransferManifest:
         object.__setattr__(self, "owner_roles", roles)
         object.__setattr__(self, "event_types", event_types)
         object.__setattr__(self, "external_target_used", False)
-        object.__setattr__(self, "manifest_digest", _digest(self.manifest_digest, "manifest_digest"))
+        object.__setattr__(
+            self, "manifest_digest", _digest(self.manifest_digest, "manifest_digest")
+        )
 
     @classmethod
     def create(
@@ -463,7 +473,9 @@ class TaijiOwnerTransferEvent:
         object.__setattr__(self, "confidence", confidence)
         object.__setattr__(self, "status", status)
         object.__setattr__(self, "attributes", attributes)
-        object.__setattr__(self, "event_digest", _digest(self.event_digest, "owner-transfer event_digest"))
+        object.__setattr__(
+            self, "event_digest", _digest(self.event_digest, "owner-transfer event_digest")
+        )
 
     @classmethod
     def create(
@@ -569,8 +581,12 @@ class TaijiOwnerTransferCheckpoint:
             raise ValueError("unsupported owner-transfer checkpoint format")
         if int(self.version) != TAIJI_OWNER_TRANSFER_VERSION:
             raise ValueError("unsupported owner-transfer checkpoint version")
-        base = _digest(self.base_continuation_checkpoint_digest, "base_continuation_checkpoint_digest")
-        base_cell = _digest(self.base_single_cell_manifest_digest, "base_single_cell_manifest_digest")
+        base = _digest(
+            self.base_continuation_checkpoint_digest, "base_continuation_checkpoint_digest"
+        )
+        base_cell = _digest(
+            self.base_single_cell_manifest_digest, "base_single_cell_manifest_digest"
+        )
         manifest = _digest(self.manifest_digest, "manifest_digest")
         workers = _digest_pairs(self.worker_checkpoint_digests, "worker_checkpoint_digests")
         worker_refs = _text_pairs(self.worker_checkpoint_refs, "worker_checkpoint_refs")
@@ -588,7 +604,9 @@ class TaijiOwnerTransferCheckpoint:
         ref_map = dict(owner_refs)
         owner_digests = tuple((owner, digest_map[owner]) for owner in OWNER_TRANSFER_OWNER_IDS)
         owner_refs = tuple((owner, ref_map[owner]) for owner in OWNER_TRANSFER_OWNER_IDS)
-        event_digests = tuple(_digest(item, "owner-transfer event digest") for item in self.event_digests)
+        event_digests = tuple(
+            _digest(item, "owner-transfer event digest") for item in self.event_digests
+        )
         event_refs = tuple(_text(item, "owner-transfer event ref") for item in self.event_refs)
         if len(event_digests) != len(event_refs):
             raise ValueError("owner-transfer event digest/ref lengths differ")
@@ -657,11 +675,17 @@ class TaijiOwnerTransferCheckpoint:
         return content_digest(payload)
 
     def assert_base(self, expected_digest: str) -> None:
-        if _digest(expected_digest, "expected base digest") != self.base_continuation_checkpoint_digest:
+        if (
+            _digest(expected_digest, "expected base digest")
+            != self.base_continuation_checkpoint_digest
+        ):
             raise ValueError("owner-transfer checkpoint crosses the P3.0 continuation boundary")
 
     def assert_single_cell(self, expected_digest: str) -> None:
-        if _digest(expected_digest, "expected single-cell digest") != self.base_single_cell_manifest_digest:
+        if (
+            _digest(expected_digest, "expected single-cell digest")
+            != self.base_single_cell_manifest_digest
+        ):
             raise ValueError("owner-transfer checkpoint crosses the P3.1 single-cell boundary")
 
     def assert_manifest(self, expected_digest: str) -> None:
@@ -705,10 +729,14 @@ class TaijiOwnerTransferCheckpoint:
             "worker_checkpoint_digests": dict(
                 _digest_pairs(worker_checkpoint_digests, "worker_checkpoint_digests")
             ),
-            "worker_checkpoint_refs": dict(_text_pairs(worker_checkpoint_refs, "worker_checkpoint_refs")),
+            "worker_checkpoint_refs": dict(
+                _text_pairs(worker_checkpoint_refs, "worker_checkpoint_refs")
+            ),
             "owner_state_digests": dict(_digest_pairs(owner_state_digests, "owner_state_digests")),
             "owner_state_refs": dict(_text_pairs(owner_state_refs, "owner_state_refs")),
-            "event_digests": list(_digest(item, "owner-transfer event digest") for item in event_digests),
+            "event_digests": list(
+                _digest(item, "owner-transfer event digest") for item in event_digests
+            ),
             "event_refs": list(_text(item, "owner-transfer event ref") for item in event_refs),
             "cursor": cursor.to_payload(),
             "rng_state": rng_state,

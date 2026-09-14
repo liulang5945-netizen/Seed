@@ -63,9 +63,7 @@ def _run_success(seed: int) -> dict[str, object]:
     steps = (("read", "README.md"), ("stat", "README.md"))
     with patch(
         "seed_platform.workbench.get_setting",
-        lambda key, default=None: str(PROJECT_ROOT)
-        if key == "workspace_path"
-        else default,
+        lambda key, default=None: str(PROJECT_ROOT) if key == "workspace_path" else default,
     ):
         runtime = _runtime(seed, checkpoint_path)
         result = runtime.execute_natural_language_workbench_task(
@@ -114,9 +112,7 @@ def _run_failure_and_recovery() -> dict[str, object]:
     recovered_steps = (("read", "README.md"),)
     with patch(
         "seed_platform.workbench.get_setting",
-        lambda key, default=None: str(PROJECT_ROOT)
-        if key == "workspace_path"
-        else default,
+        lambda key, default=None: str(PROJECT_ROOT) if key == "workspace_path" else default,
     ):
         runtime = _runtime(101, checkpoint_path)
         failed = runtime.execute_natural_language_workbench_task(
@@ -160,7 +156,8 @@ def evaluate() -> dict[str, object]:
         "three_independent_seeds": len(runs) == len(LEARNER_SEEDS),
         "each_semantic_step_is_grounded_by_taiji": all(
             item["step_count"] == 2
-            and item["grounding_sources"] == [
+            and item["grounding_sources"]
+            == [
                 "taiji-semantic-contract",
                 "taiji-semantic-contract",
             ]

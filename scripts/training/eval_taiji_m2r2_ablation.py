@@ -88,9 +88,7 @@ def _ngram_bpb(
             counts[int(symbol)] += 1.0
         total = sum(counts)
         targets = (*holdout, boundary_symbol)
-        return sum(-math.log2(counts[int(symbol)] / total) for symbol in targets) / len(
-            targets
-        )
+        return sum(-math.log2(counts[int(symbol)] / total) for symbol in targets) / len(targets)
 
     contexts: dict[tuple[int, ...], Counter[int]] = defaultdict(Counter)
     sequence = (boundary_symbol,) * int(order) + tuple(train) + (boundary_symbol,)
@@ -98,9 +96,7 @@ def _ngram_bpb(
         context = tuple(int(value) for value in sequence[index - order : index])
         contexts[context][int(sequence[index])] += 1
 
-    holdout_sequence = (
-        (boundary_symbol,) * int(order) + tuple(holdout) + (boundary_symbol,)
-    )
+    holdout_sequence = (boundary_symbol,) * int(order) + tuple(holdout) + (boundary_symbol,)
     losses: list[float] = []
     for index in range(order, len(holdout_sequence)):
         context = tuple(int(value) for value in holdout_sequence[index - order : index])
@@ -108,9 +104,7 @@ def _ngram_bpb(
         counts = contexts.get(context)
         observed = 0 if counts is None else int(sum(counts.values()))
         count = 0 if counts is None else int(counts.get(target, 0))
-        probability = (count + alpha) / (
-            observed + alpha * float(alphabet_size)
-        )
+        probability = (count + alpha) / (observed + alpha * float(alphabet_size))
         losses.append(-math.log2(probability))
     return sum(losses) / max(1, len(losses))
 
@@ -267,8 +261,7 @@ def _run_point(
         "scores_are_read_only": all(score_checks),
         "checkpoint_round_trip": checkpoint_digest == restored_digest,
         "temporal_lesion_is_effective": lesion is None or bool(lesion["lesion_applied"]),
-        "temporal_lesion_score_is_read_only": lesion is None
-        or bool(lesion["score"]["read_only"]),
+        "temporal_lesion_score_is_read_only": lesion is None or bool(lesion["score"]["read_only"]),
     }
     current_working_set = _process_working_set_bytes()
     return {
@@ -330,7 +323,9 @@ def _owner_attribution_for_variant(
         for owner in sorted(set(before) | set(after))
     }
     expected = write_sets[arm]
-    unexpected = sorted(owner for owner, value in changed.items() if value and owner not in expected)
+    unexpected = sorted(
+        owner for owner, value in changed.items() if value and owner not in expected
+    )
     expected_changed = sorted(owner for owner in expected if changed.get(owner, False))
     return {
         "changed": changed,
@@ -418,9 +413,7 @@ def run_ablation(
                 )
             )
 
-    all_passed = all(
-        bool(value) for point in points for value in point["checks"].values()
-    )
+    all_passed = all(bool(value) for point in points for value in point["checks"].values())
     return {
         "format": FORMAT,
         "version": 1,
@@ -435,9 +428,18 @@ def run_ablation(
         "shuffle_seed": int(seed) + SHUFFLE_SEED_OFFSET,
         "preflight": preflight,
         "datasets": {
-            "phase_a": {"digest": phase_a.digest, "selected_record_count": len(phase_a.selected_record_digests)},
-            "phase_b": {"digest": phase_b.digest, "selected_record_count": len(phase_b.selected_record_digests)},
-            "phase_c": {"digest": chain.phase_c.digest, "selected_record_count": len(chain.phase_c.selected_record_digests)},
+            "phase_a": {
+                "digest": phase_a.digest,
+                "selected_record_count": len(phase_a.selected_record_digests),
+            },
+            "phase_b": {
+                "digest": phase_b.digest,
+                "selected_record_count": len(phase_b.selected_record_digests),
+            },
+            "phase_c": {
+                "digest": chain.phase_c.digest,
+                "selected_record_count": len(chain.phase_c.selected_record_digests),
+            },
             "overlap_counts": dict(chain.overlap_counts),
             "record_disjoint": not any(chain.overlap_counts.values()),
         },
@@ -454,13 +456,18 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--checkpoint",
         type=Path,
-        default=PROJECT_ROOT / "output" / "taiji-m2s-seed11-identity-generation-20260905" / "last.pt",
+        default=PROJECT_ROOT
+        / "output"
+        / "taiji-m2s-seed11-identity-generation-20260905"
+        / "last.pt",
     )
     parser.add_argument("--corpus", type=Path, nargs="+", default=[DEFAULT_CORPUS])
     parser.add_argument("--seed", type=int, default=11)
     parser.add_argument("--budgets", type=int, nargs="+", default=list(DEFAULT_BUDGETS))
     parser.add_argument("--eval-bytes", type=int, default=4096)
-    parser.add_argument("--variants", nargs="+", choices=sorted(ALL_VARIANTS), default=list(DEFAULT_VARIANTS))
+    parser.add_argument(
+        "--variants", nargs="+", choices=sorted(ALL_VARIANTS), default=list(DEFAULT_VARIANTS)
+    )
     parser.add_argument("--report", type=Path, required=True, help="JSON report path")
     return parser.parse_args()
 
@@ -487,9 +494,7 @@ def main() -> int:
                 "status": report["status"],
                 "points": len(report["points"]),
                 "technical_checks_passed": sum(
-                    bool(value)
-                    for point in report["points"]
-                    for value in point["checks"].values()
+                    bool(value) for point in report["points"] for value in point["checks"].values()
                 ),
             },
             ensure_ascii=False,

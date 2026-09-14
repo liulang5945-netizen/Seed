@@ -86,8 +86,7 @@ def _geometry(model: Taiji, corpus: Any) -> dict[str, float]:
             sum(float(item["cue_event_cosine"]) for item in patterns) / len(patterns)
         ),
         "association_completion_ratio_mean": float(
-            sum(float(item["association_completion_ratio"]) for item in patterns)
-            / len(patterns)
+            sum(float(item["association_completion_ratio"]) for item in patterns) / len(patterns)
         ),
         "association_error_ratio_mean": float(
             sum(float(item["association_error_ratio"]) for item in patterns) / len(patterns)
@@ -192,10 +191,7 @@ def _condition_passed(condition: dict[str, Any]) -> bool:
 
 def run_diagnosis() -> dict[str, Any]:
     corpus = _curriculum(phase_a_start=0, phase_b_start=192)
-    conditions = [
-        _condition_record(name, gains, corpus)
-        for name, gains in CONDITIONS.items()
-    ]
+    conditions = [_condition_record(name, gains, corpus) for name, gains in CONDITIONS.items()]
     for condition in conditions:
         condition["condition_gate_passed"] = _condition_passed(condition)
     default, candidate = conditions
@@ -220,8 +216,7 @@ def run_diagnosis() -> dict[str, Any]:
         "conclusion": {
             "candidate_passed": candidate["condition_gate_passed"],
             "association_episode_attenuation_is_sufficient_explanation": (
-                candidate["condition_gate_passed"]
-                and not default["condition_gate_passed"]
+                candidate["condition_gate_passed"] and not default["condition_gate_passed"]
             ),
             "next_boundary": (
                 "association episode attenuation passed; hold for M1-51 stability review"
@@ -239,7 +234,9 @@ def main() -> int:
     result = run_diagnosis()
     result["report_path"] = str(args.report)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

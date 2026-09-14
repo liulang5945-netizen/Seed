@@ -46,7 +46,9 @@ def test_verified_measurement_bridge_is_opt_in_and_all_or_nothing() -> None:
     legacy_checkpoint = root.parent / f"s51-legacy-{os.getpid()}.pt"
     try:
         verified_runtime, verified_batch_id, verified_evidence = _prepare_runtime()
-        verified_candidate_id = verified_runtime.model.architecture.structural_candidate_batches[-1].selected_candidate_ids[0]
+        verified_candidate_id = verified_runtime.model.architecture.structural_candidate_batches[
+            -1
+        ].selected_candidate_ids[0]
         verified_artifact, verified_replay, verified_measurements = _build_artifact(
             verified_runtime.model.architecture,
             verified_candidate_id,
@@ -68,7 +70,9 @@ def test_verified_measurement_bridge_is_opt_in_and_all_or_nothing() -> None:
         assert verified_result["results"][verified_candidate_id]["status"] == "admitted"
 
         legacy_runtime, legacy_batch_id, legacy_evidence = _prepare_runtime()
-        legacy_candidate_id = legacy_runtime.model.architecture.structural_candidate_batches[-1].selected_candidate_ids[0]
+        legacy_candidate_id = legacy_runtime.model.architecture.structural_candidate_batches[
+            -1
+        ].selected_candidate_ids[0]
         legacy_artifact, legacy_replay, _ = _build_artifact(
             legacy_runtime.model.architecture,
             legacy_candidate_id,
@@ -91,9 +95,10 @@ def test_verified_measurement_bridge_is_opt_in_and_all_or_nothing() -> None:
                 replays_by_candidate={legacy_candidate_id: legacy_replay},
                 require_verified_measurements=True,
             )
-        assert _checkpoint_digest(
-            strict_legacy.model.architecture.native_checkpoint()
-        ) == before_strict_legacy
+        assert (
+            _checkpoint_digest(strict_legacy.model.architecture.native_checkpoint())
+            == before_strict_legacy
+        )
         default_legacy = SeedRuntime.load(legacy_checkpoint)
         default_result = default_legacy.continue_structural_candidate_batch_from_artifact_store(
             legacy_batch_id,
@@ -107,7 +112,9 @@ def test_verified_measurement_bridge_is_opt_in_and_all_or_nothing() -> None:
         assert default_result["results"][legacy_candidate_id]["status"] == "admitted"
 
         partial_runtime, partial_batch_id, partial_evidence = _prepare_runtime()
-        first_id, second_id = partial_runtime.model.architecture.structural_candidate_batches[-1].selected_candidate_ids
+        first_id, second_id = partial_runtime.model.architecture.structural_candidate_batches[
+            -1
+        ].selected_candidate_ids
         first_artifact, first_replay, first_measurements = _build_artifact(
             partial_runtime.model.architecture,
             first_id,
@@ -121,10 +128,10 @@ def test_verified_measurement_bridge_is_opt_in_and_all_or_nothing() -> None:
         partial_store = StructuralValidationArtifactStore(root / "partial")
         partial_store.put_measured_artifact(first_artifact, first_measurements)
         partial_store.put(second_artifact)
-        before_partial = _checkpoint_digest(
-            partial_runtime.model.architecture.native_checkpoint()
+        before_partial = _checkpoint_digest(partial_runtime.model.architecture.native_checkpoint())
+        before_partial_budget = (
+            partial_runtime.model.architecture.cognitive_snapshot().development.structural_budget
         )
-        before_partial_budget = partial_runtime.model.architecture.cognitive_snapshot().development.structural_budget
         with pytest.raises(FileNotFoundError):
             partial_runtime.continue_structural_candidate_batch_from_artifact_store(
                 partial_batch_id,
@@ -139,10 +146,14 @@ def test_verified_measurement_bridge_is_opt_in_and_all_or_nothing() -> None:
                 },
                 require_verified_measurements=True,
             )
-        assert _checkpoint_digest(
-            partial_runtime.model.architecture.native_checkpoint()
-        ) == before_partial
-        assert partial_runtime.model.architecture.cognitive_snapshot().development.structural_budget == before_partial_budget
+        assert (
+            _checkpoint_digest(partial_runtime.model.architecture.native_checkpoint())
+            == before_partial
+        )
+        assert (
+            partial_runtime.model.architecture.cognitive_snapshot().development.structural_budget
+            == before_partial_budget
+        )
     finally:
         verified_checkpoint.unlink(missing_ok=True)
         legacy_checkpoint.unlink(missing_ok=True)

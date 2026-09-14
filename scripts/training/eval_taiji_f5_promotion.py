@@ -97,9 +97,7 @@ def _coverage(
     return records
 
 
-def _metric_comparison(
-    parent: dict[str, float], final: dict[str, float]
-) -> dict[str, bool]:
+def _metric_comparison(parent: dict[str, float], final: dict[str, float]) -> dict[str, bool]:
     return {
         "sequence_holdout_improved": final["sequence_holdout_bpb"] < parent["sequence_holdout_bpb"],
         "sequence_retention_improved": final["sequence_retention_bpb"]
@@ -111,7 +109,8 @@ def _metric_comparison(
         "world_retention_improved": final["world_retention_error"]
         < parent["world_retention_error"],
         "goal_holdout_improved": final["goal_holdout_success"] > parent["goal_holdout_success"],
-        "goal_retention_improved": final["goal_retention_success"] > parent["goal_retention_success"],
+        "goal_retention_improved": final["goal_retention_success"]
+        > parent["goal_retention_success"],
     }
 
 
@@ -233,7 +232,9 @@ def main() -> int:
     )
     args.report.parent.mkdir(parents=True, exist_ok=True)
     result["report_path"] = str(args.report)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

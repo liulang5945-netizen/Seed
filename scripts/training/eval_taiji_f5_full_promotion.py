@@ -216,8 +216,7 @@ def build_full_promotion_report(
             int(training.get("replay_epochs", 0)) >= 1
             and str(training.get("replay_dataset_digest")) == phase_a_dataset.digest
             and any(
-                item.get("train_kind") == "replay"
-                and int(item.get("replay_cursor", 0)) > 0
+                item.get("train_kind") == "replay" and int(item.get("replay_cursor", 0)) > 0
                 for item in training.get("history", [])
             )
         )
@@ -230,14 +229,10 @@ def build_full_promotion_report(
             "checkpoint_read_only": bool(independent.get("checkpoint_read_only")),
             "source_lineage_matches": source_lineage_match,
             "holdout_updates_zero": int(training.get("holdout_updates", -1)) == 0,
-            "world_transition_rejections_zero": int(
-                training.get("world_transition_rejections", -1)
-            )
+            "world_transition_rejections_zero": int(training.get("world_transition_rejections", -1))
             == 0,
             "replay_executed": replay_ok,
-            "phase_a_old_metrics_retained": bool(
-                transfer["all_old_metrics_retained_or_improved"]
-            ),
+            "phase_a_old_metrics_retained": bool(transfer["all_old_metrics_retained_or_improved"]),
         }
         seed_records.append(
             {
@@ -247,7 +242,9 @@ def build_full_promotion_report(
                 "training_final_metrics": training["final_metrics"],
                 "eval_metrics": independent["metrics"],
                 "checkpoint_digest": independent["checkpoint_digest"],
-                "source_checkpoint_digest": _load_payload(source_checkpoints[seed])["checkpoint_digest"],
+                "source_checkpoint_digest": _load_payload(source_checkpoints[seed])[
+                    "checkpoint_digest"
+                ],
                 "phase_a_backward_transfer": transfer,
                 "checks": checks,
             }
@@ -313,7 +310,9 @@ def main() -> int:
     parser.add_argument("--training-report", action="append", nargs=2, required=True)
     parser.add_argument("--eval-report", action="append", nargs=2, required=True)
     parser.add_argument("--source", action="append", nargs=2, required=True)
-    parser.add_argument("--final", dest="final_checkpoints", action="append", nargs=2, required=True)
+    parser.add_argument(
+        "--final", dest="final_checkpoints", action="append", nargs=2, required=True
+    )
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
     args = parser.parse_args()
 
@@ -346,7 +345,9 @@ def main() -> int:
     )
     args.report.parent.mkdir(parents=True, exist_ok=True)
     result["report_path"] = str(args.report)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0 if result["can_promote"] else 1
 

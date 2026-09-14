@@ -65,7 +65,9 @@ def evaluate() -> dict[str, object]:
     evicted_terminal = "batch:terminal" not in after_terminal
 
     candidate = next(
-        item for item in model.structural_proposal_candidates if item.candidate_id == active.candidate_ids[0]
+        item
+        for item in model.structural_proposal_candidates
+        if item.candidate_id == active.candidate_ids[0]
     )
     extra = replace(
         candidate,
@@ -80,7 +82,9 @@ def evaluate() -> dict[str, object]:
 
     admitted = replace(
         retained_active,
-        candidate_states=tuple((candidate_id, "admitted") for candidate_id in retained_active.candidate_ids),
+        candidate_states=tuple(
+            (candidate_id, "admitted") for candidate_id in retained_active.candidate_ids
+        ),
         selected_candidate_ids=retained_active.candidate_ids,
         reserved_resource_cost=0,
         reservation_remaining=0,
@@ -96,9 +100,7 @@ def evaluate() -> dict[str, object]:
 
     metrics = {
         "active_batch_survives_terminal_eviction": (
-            retained_active is not None
-            and retained_active.active_reservation
-            and evicted_terminal
+            retained_active is not None and retained_active.active_reservation and evicted_terminal
         ),
         "pending_candidates_survive_batch_retention": (
             pending_ids.issubset(retained_pending_ids)
@@ -123,7 +125,9 @@ def evaluate() -> dict[str, object]:
         "retention_limit": RETENTION_LIMIT,
         "schedule": schedule,
         "batch_ids": [item.batch_id for item in model.structural_candidate_batches],
-        "pending_candidate_ids": [item.candidate_id for item in model.structural_proposal_candidates],
+        "pending_candidate_ids": [
+            item.candidate_id for item in model.structural_proposal_candidates
+        ],
         "restored_batch_ids": [item.batch_id for item in restored.structural_candidate_batches],
         "metrics": metrics,
         "gate": {
@@ -148,7 +152,9 @@ def main() -> None:
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_w7_r5c_s22_structural_lineage_retention_20260831.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_w7_r5c_s22_structural_lineage_retention_20260831.json",
     )
     args = parser.parse_args()
     report = evaluate()

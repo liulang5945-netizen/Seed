@@ -55,9 +55,7 @@ def _partition_manifest(ledger: EvolutionExperienceLedger) -> dict[str, Any]:
             "corpus_count": len(corpus),
             "corpus_digest": content_digest([item.artifact_digest for item in corpus]),
             "experience_count": len(experiences),
-            "experience_digest": content_digest(
-                [item.experience_digest for item in experiences]
-            ),
+            "experience_digest": content_digest([item.experience_digest for item in experiences]),
         }
     return manifest
 
@@ -120,7 +118,9 @@ class NativeTrainingCheckpoint:
         if not isinstance(self.random_state, torch.Tensor):
             raise TypeError("random_state must be a tensor")
         object.__setattr__(self, "checkpoint_id", str(self.checkpoint_id).strip())
-        object.__setattr__(self, "parent_checkpoint_digest", str(self.parent_checkpoint_digest).strip())
+        object.__setattr__(
+            self, "parent_checkpoint_digest", str(self.parent_checkpoint_digest).strip()
+        )
         object.__setattr__(self, "model_digest", str(self.model_digest).strip())
         object.__setattr__(self, "dataset_digest", str(self.dataset_digest).strip())
         object.__setattr__(self, "checkpoint_digest", str(self.checkpoint_digest).strip())
@@ -129,14 +129,25 @@ class NativeTrainingCheckpoint:
         if expected_model_digest != self.model_digest:
             raise ValueError("training model checkpoint digest mismatch")
         expected_ledger_digest = str(self.ledger_checkpoint.get("checkpoint_digest", ""))
-        if content_digest(
-            {key: value for key, value in self.ledger_checkpoint.items() if key != "checkpoint_digest"}
-        ) != expected_ledger_digest:
+        if (
+            content_digest(
+                {
+                    key: value
+                    for key, value in self.ledger_checkpoint.items()
+                    if key != "checkpoint_digest"
+                }
+            )
+            != expected_ledger_digest
+        ):
             raise ValueError("training ledger checkpoint digest mismatch")
-        if self.checkpoint_digest and self.checkpoint_digest != content_digest(self._header_payload()):
+        if self.checkpoint_digest and self.checkpoint_digest != content_digest(
+            self._header_payload()
+        ):
             raise ValueError("training checkpoint digest mismatch")
         object.__setattr__(self, "random_state", self.random_state.detach().cpu().clone())
-        object.__setattr__(self, "resource_ledger", _numeric_mapping(self.resource_ledger, "resource_ledger"))
+        object.__setattr__(
+            self, "resource_ledger", _numeric_mapping(self.resource_ledger, "resource_ledger")
+        )
 
     @classmethod
     def create(
@@ -170,7 +181,9 @@ class NativeTrainingCheckpoint:
             random_state=torch.random.get_rng_state(),
             resource_ledger={} if resource_ledger is None else resource_ledger,
         )
-        return cls(**{**record.__dict__, "checkpoint_digest": content_digest(record._header_payload())})
+        return cls(
+            **{**record.__dict__, "checkpoint_digest": content_digest(record._header_payload())}
+        )
 
     def _header_payload(self) -> dict[str, Any]:
         return {
@@ -244,7 +257,9 @@ class NativeTrainingCheckpoint:
         if actual_config != model.config:
             raise ValueError("training checkpoint architecture drift")
         current_ledger = ledger.checkpoint()
-        if current_ledger.get("checkpoint_digest") != self.ledger_checkpoint.get("checkpoint_digest"):
+        if current_ledger.get("checkpoint_digest") != self.ledger_checkpoint.get(
+            "checkpoint_digest"
+        ):
             raise ValueError("training checkpoint ledger drift")
         if _dataset_digest(ledger) != self.dataset_digest:
             raise ValueError("training checkpoint dataset drift")

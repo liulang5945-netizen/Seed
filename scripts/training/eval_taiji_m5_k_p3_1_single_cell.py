@@ -68,8 +68,8 @@ REPORT_FORMAT = "taiji-m5-k-p3-1-single-cell-preflight-v1"
 MANIFEST_FORMAT = "taiji-m5-k-p3-1-single-cell-manifest-v1"
 VERSION = 1
 DEFAULT_OUTPUT_ROOT = PROJECT_ROOT / "output"
-DEFAULT_MANIFEST = PROJECT_ROOT / "plans" / "manifests" / (
-    "taiji_m5_k_p3_1_single_cell_manifest_v1.json"
+DEFAULT_MANIFEST = (
+    PROJECT_ROOT / "plans" / "manifests" / ("taiji_m5_k_p3_1_single_cell_manifest_v1.json")
 )
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p3_1_single_cell_20260910.json"
 
@@ -276,7 +276,12 @@ def _prepare_events(
             status=status,
             attributes=attributes,
         )
-        events.append({"event": event, "state_payloads": {key: dict(value) for key, value in state_payloads.items()}})
+        events.append(
+            {
+                "event": event,
+                "state_payloads": {key: dict(value) for key, value in state_payloads.items()},
+            }
+        )
         current = after
 
     for case in cases:
@@ -331,7 +336,9 @@ def _prepare_events(
             owner="S",
             confidence=float(semantic_example.percept.confidence),
             status="bound",
-            attributes=_event_attributes(case=case, record=record, row=row, source="native-percept"),
+            attributes=_event_attributes(
+                case=case, record=record, row=row, source="native-percept"
+            ),
         )
         goal_payload = {
             "owner": "G",
@@ -354,7 +361,9 @@ def _prepare_events(
             confidence=float(semantic_example.percept.confidence),
             status="control-only",
             attributes={
-                **_event_attributes(case=case, record=record, row=row, source="external-goal-target"),
+                **_event_attributes(
+                    case=case, record=record, row=row, source="external-goal-target"
+                ),
                 "learning_credit": "none",
             },
         )
@@ -380,7 +389,9 @@ def _prepare_events(
             owner="K",
             confidence=k_confidence,
             status=f"k1:{semantic_result.status}/k2:{None if transition_result is None else transition_result.status}",
-            attributes=_event_attributes(case=case, record=record, row=row, source="learned-k-readout"),
+            attributes=_event_attributes(
+                case=case, record=record, row=row, source="learned-k-readout"
+            ),
         )
         action = row.get("action") or {}
         action_payload = {
@@ -392,8 +403,10 @@ def _prepare_events(
             "action": action,
             "safe_abstention": bool(row.get("safe_abstention", False)),
         }
-        action_status = "abstained" if row.get("safe_abstention") else (
-            "executed" if action.get("workbench_success") else "not-executed"
+        action_status = (
+            "abstained"
+            if row.get("safe_abstention")
+            else ("executed" if action.get("workbench_success") else "not-executed")
         )
         append_event(
             event_type="action",
@@ -402,7 +415,9 @@ def _prepare_events(
             owner=None,
             confidence=k_confidence,
             status=action_status,
-            attributes=_event_attributes(case=case, record=record, row=row, source="read-only-workbench"),
+            attributes=_event_attributes(
+                case=case, record=record, row=row, source="read-only-workbench"
+            ),
         )
     return events, rows
 
@@ -951,7 +966,9 @@ def main() -> int:
     parser.add_argument("--verify-checkpoint", type=Path)
     args = parser.parse_args()
     if args.verify_checkpoint is not None:
-        result = _verify_checkpoint(checkpoint_path=args.verify_checkpoint, manifest_path=args.manifest)
+        result = _verify_checkpoint(
+            checkpoint_path=args.verify_checkpoint, manifest_path=args.manifest
+        )
         print(json.dumps(result, ensure_ascii=False))
         return 0
     result = run_preflight(

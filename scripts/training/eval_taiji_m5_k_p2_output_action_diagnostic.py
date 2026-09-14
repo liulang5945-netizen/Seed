@@ -71,9 +71,7 @@ from taiji import (  # noqa: E402
 
 REPORT_FORMAT = "taiji-m5-k-p2-output-action-diagnostic-v1"
 VERSION = 1
-DEFAULT_PILOT_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m5_k_p2_validation_pilot_v2_20260910.json"
-)
+DEFAULT_PILOT_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p2_validation_pilot_v2_20260910.json"
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p2_output_action_diagnostic_20260910.json"
 ROUTE_CONTENT_IDS = {content_id for content_id, _ in READ_ONLY_ROUTES}
 
@@ -139,12 +137,8 @@ def _output_payload(
             "goal": returned_goal_id is None,
             "content": returned_content_id is None,
         },
-        "world_relation_count": (
-            None if result.world is None else len(result.world.relations)
-        ),
-        "world_uncertainty": (
-            None if result.world is None else float(result.world.uncertainty)
-        ),
+        "world_relation_count": (None if result.world is None else len(result.world.relations)),
+        "world_uncertainty": (None if result.world is None else float(result.world.uncertainty)),
     }
 
 
@@ -219,12 +213,8 @@ def _aggregate_rows(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
         "transition_status_counts": dict(sorted(transition_status_counts.items())),
         "planner_status_counts": dict(sorted(action_counts.items())),
         "planner_reason_counts": dict(sorted(planner_reason_counts.items())),
-        "input_confidence_below_k1_floor_rate": _rate(
-            rows, "input_confidence_below_k1_floor"
-        ),
-        "input_confidence_below_k2_floor_rate": _rate(
-            rows, "input_confidence_below_k2_floor"
-        ),
+        "input_confidence_below_k1_floor_rate": _rate(rows, "input_confidence_below_k1_floor"),
+        "input_confidence_below_k2_floor_rate": _rate(rows, "input_confidence_below_k2_floor"),
         "semantic_argmax_goal_hit_rate": _rate(
             [row["semantic"] for row in rows], "argmax_goal_hit"
         ),
@@ -249,25 +239,13 @@ def _aggregate_rows(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
         "transition_returned_content_hit_rate": _rate(
             [row["transition"] for row in rows], "returned_content_hit"
         ),
-        "semantic_goal_none_rate": _rate(
-            [row["semantic"] for row in rows], "none_goal"
-        ),
-        "semantic_content_none_rate": _rate(
-            [row["semantic"] for row in rows], "none_content"
-        ),
-        "transition_goal_none_rate": _rate(
-            [row["transition"] for row in rows], "none_goal"
-        ),
-        "transition_content_none_rate": _rate(
-            [row["transition"] for row in rows], "none_content"
-        ),
+        "semantic_goal_none_rate": _rate([row["semantic"] for row in rows], "none_goal"),
+        "semantic_content_none_rate": _rate([row["semantic"] for row in rows], "none_content"),
+        "transition_goal_none_rate": _rate([row["transition"] for row in rows], "none_goal"),
+        "transition_content_none_rate": _rate([row["transition"] for row in rows], "none_content"),
         "model_output_correct_rate": _rate(rows, "model_output_correct"),
-        "planner_accept_rate": _rate(
-            [row["action_chain"] for row in rows], "planner_accepted"
-        ),
-        "workbench_success_rate": _rate(
-            [row["action_chain"] for row in rows], "workbench_success"
-        ),
+        "planner_accept_rate": _rate([row["action_chain"] for row in rows], "planner_accepted"),
+        "workbench_success_rate": _rate([row["action_chain"] for row in rows], "workbench_success"),
         "failure_recovery_status_counts": dict(
             sorted(
                 {
@@ -276,15 +254,11 @@ def _aggregate_rows(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
                         for row in rows
                         if row["action_chain"]["failure_recovery_status"] == status
                     )
-                    for status in {
-                        row["action_chain"]["failure_recovery_status"] for row in rows
-                    }
+                    for status in {row["action_chain"]["failure_recovery_status"] for row in rows}
                 }.items()
             )
         ),
-        "by_class": {
-            key: class_summary(by_class[key]) for key in sorted(by_class)
-        },
+        "by_class": {key: class_summary(by_class[key]) for key in sorted(by_class)},
     }
 
 
@@ -466,8 +440,7 @@ def _diagnose_arm(
     transition = StructuredSemanticTransitionLearner.from_checkpoint(k2_payload, device="cpu")
     restore = {
         "k1_digest_equal": content_digest(semantic.checkpoint()) == content_digest(k1_payload),
-        "k2_digest_equal": content_digest(transition.checkpoint())
-        == content_digest(k2_payload),
+        "k2_digest_equal": content_digest(transition.checkpoint()) == content_digest(k2_payload),
     }
     restore["passed"] = bool(restore["k1_digest_equal"] and restore["k2_digest_equal"])
     planner = NativeReadOnlyIntentPlanner(ReadOnlyIntentPolicy(routes=READ_ONLY_ROUTES))
@@ -532,9 +505,7 @@ def _diagnose_arm(
             "variant_paths": list(case["variant_paths"]),
             "combined_mse": float(score["combined_mse"]),
             "input_confidence": float(experience.semantic_example.percept.confidence),
-            "input_prediction_error": float(
-                experience.semantic_example.percept.prediction_error
-            ),
+            "input_prediction_error": float(experience.semantic_example.percept.prediction_error),
             "input_confidence_below_k1_floor": bool(
                 experience.semantic_example.percept.confidence < semantic.confidence_floor
             ),
@@ -542,16 +513,10 @@ def _diagnose_arm(
                 experience.transition_example.event.confidence < transition.confidence_floor
             ),
             "semantic_mse": float(
-                (score["k1.fact_mse"] + score["k1.goal_mse"] + score["k1.content_mse"])
-                / 3.0
+                (score["k1.fact_mse"] + score["k1.goal_mse"] + score["k1.content_mse"]) / 3.0
             ),
             "transition_mse": float(
-                (
-                    score["k2.transition_mse"]
-                    + score["k2.goal_mse"]
-                    + score["k2.content_mse"]
-                )
-                / 3.0
+                (score["k2.transition_mse"] + score["k2.goal_mse"] + score["k2.content_mse"]) / 3.0
             ),
             "semantic": semantic_payload,
             "transition": transition_payload,
@@ -567,9 +532,7 @@ def _diagnose_arm(
         row["semantic"]["none_goal"] = bool(row["semantic"]["none_fields"]["goal"])
         row["semantic"]["none_content"] = bool(row["semantic"]["none_fields"]["content"])
         row["transition"]["none_goal"] = bool(row["transition"]["none_fields"]["goal"])
-        row["transition"]["none_content"] = bool(
-            row["transition"]["none_fields"]["content"]
-        )
+        row["transition"]["none_content"] = bool(row["transition"]["none_fields"]["content"])
         rows.append(row)
     rss_after, _ = _resource_rss()
     elapsed = time.perf_counter() - started
@@ -618,9 +581,7 @@ def _diagnosis(arms: Mapping[str, Mapping[str, Any]]) -> dict[str, Any]:
             if target_content not in ROUTE_CONTENT_IDS:
                 route_gaps.add(target_content)
         summary = arm["output_diagnostics"]
-        low_input_count = sum(
-            1 for row in rows if row["input_confidence_below_k1_floor"]
-        )
+        low_input_count = sum(1 for row in rows if row["input_confidence_below_k1_floor"])
         if low_input_count:
             evidence.append(
                 f"{arm_name}: {low_input_count}/{len(rows)} rows are below the native K1 "
@@ -717,7 +678,9 @@ def run_diagnostic(
             validation_metadata=validation_metadata,
         )
         if case_mismatches:
-            raise RuntimeError(f"validation observation reconstruction mismatch: {case_mismatches[:3]}")
+            raise RuntimeError(
+                f"validation observation reconstruction mismatch: {case_mismatches[:3]}"
+            )
 
         arm_results: dict[str, Any] = {}
         for arm_name in ("frozen", "wake-only", "wake-replay"):

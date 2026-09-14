@@ -57,7 +57,9 @@ def evaluate() -> dict[str, object]:
     )
     suffix = os.getpid()
     store_root = PROJECT_ROOT / "output" / "manual-r5-canary" / f"s42-bridge-{suffix}"
-    checkpoint_path = PROJECT_ROOT / "output" / "manual-r5-canary" / f"s42-bridge-runtime-{suffix}.pt"
+    checkpoint_path = (
+        PROJECT_ROOT / "output" / "manual-r5-canary" / f"s42-bridge-runtime-{suffix}.pt"
+    )
     store = StructuralValidationArtifactStore(store_root)
     legacy_policy = ArtifactConsumptionPolicy.legacy_compatible(
         reason="historical-s42-bridge-canary"
@@ -80,7 +82,9 @@ def evaluate() -> dict[str, object]:
             unknown_rejected = "outside the selected batch" in str(exc)
         else:
             unknown_rejected = False
-        unknown_atomic = _checkpoint_digest(unknown.model.architecture.native_checkpoint()) == before_unknown
+        unknown_atomic = (
+            _checkpoint_digest(unknown.model.architecture.native_checkpoint()) == before_unknown
+        )
 
         missing = SeedRuntime.load(checkpoint_path, workspace_root=PROJECT_ROOT)
         before_missing = _checkpoint_digest(missing.model.architecture.native_checkpoint())
@@ -96,7 +100,9 @@ def evaluate() -> dict[str, object]:
             missing_rejected = True
         else:
             missing_rejected = False
-        missing_atomic = _checkpoint_digest(missing.model.architecture.native_checkpoint()) == before_missing
+        missing_atomic = (
+            _checkpoint_digest(missing.model.architecture.native_checkpoint()) == before_missing
+        )
 
         restored = SeedRuntime.load(checkpoint_path, workspace_root=PROJECT_ROOT)
         handoff = StructuralValidationArtifactStore(store_root)

@@ -81,8 +81,7 @@ def test_taiji_substrate_never_imports_legacy_or_transformers() -> None:
         forbidden = {
             module
             for module in _imported_modules(path)
-            if _top_level(module)
-            in {"seed", "seed_platform", "neuroplex", "transformers"}
+            if _top_level(module) in {"seed", "seed_platform", "neuroplex", "transformers"}
         }
         if forbidden:
             offenders[path.relative_to(REPO).as_posix()] = forbidden

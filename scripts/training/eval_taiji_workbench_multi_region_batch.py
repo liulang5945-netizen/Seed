@@ -104,7 +104,9 @@ def _execute_observation(
         partition=partition,
     )
     if sealed is None:
-        raise AssertionError(f"Workbench evidence window was not sealed for {region_id}/{task_slice_id}")
+        raise AssertionError(
+            f"Workbench evidence window was not sealed for {region_id}/{task_slice_id}"
+        )
     return {
         "outcome": outcome,
         "evidence": evidence,
@@ -221,9 +223,7 @@ def evaluate() -> dict[str, object]:
     budget_after = restored.cognitive_snapshot().development.structural_budget
     evidence_by_region = {
         region_id: [
-            item
-            for item in executions
-            if item["evidence"]["observation"]["region_id"] == region_id
+            item for item in executions if item["evidence"]["observation"]["region_id"] == region_id
         ]
         for region_id in ("workbench.code", "workbench.docs")
     }
@@ -233,13 +233,13 @@ def evaluate() -> dict[str, object]:
             item["outcome"]["status"] == "success" for item in executions
         ),
         "outcome_digest_bound_to_each_evidence": all(
-            bool(item["evidence"]["evidence"]["outcome_digest"])
-            for item in executions
+            bool(item["evidence"]["evidence"]["outcome_digest"]) for item in executions
         ),
         "each_region_has_two_train_and_one_holdout_window": all(
             len(items) == 3
             and sum(item["evidence"]["observation"]["partition"] == "train" for item in items) == 2
-            and sum(item["evidence"]["observation"]["partition"] == "holdout" for item in items) == 1
+            and sum(item["evidence"]["observation"]["partition"] == "holdout" for item in items)
+            == 1
             for items in evidence_by_region.values()
         ),
         "two_distinct_candidates_created_from_real_regions": (
@@ -294,7 +294,9 @@ def main() -> None:
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_w7_r5c_s10_workbench_multi_region_batch_20260830.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_w7_r5c_s10_workbench_multi_region_batch_20260830.json",
     )
     args = parser.parse_args()
     report = evaluate()

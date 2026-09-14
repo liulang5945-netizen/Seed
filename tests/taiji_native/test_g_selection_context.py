@@ -24,7 +24,9 @@ PARENT_MANIFEST = "a" * 64
 K_DIGESTS = {"k1": "b" * 64, "k2": "c" * 64}
 
 
-def _proposal(candidate_id: str, goal_id: str, content_id: str, *, score: float) -> GSelectionCandidate:
+def _proposal(
+    candidate_id: str, goal_id: str, content_id: str, *, score: float
+) -> GSelectionCandidate:
     goal = Goal(goal_id, f"goal {goal_id}", priority=0.8)
     content = ContentPlan(
         content_id=content_id,
@@ -97,9 +99,7 @@ def test_birth_equivalence_matches_parent_selections_exactly() -> None:
     assert child.k_checkpoint_digests == K_DIGESTS
     weight = child.model.weight.detach()
     assert torch.count_nonzero(weight[0, len(weight[0]) - 9 :]).item() == 0
-    assert torch.equal(
-        weight[0, :12].cpu(), parent.model.weight.detach()[0].cpu()
-    )
+    assert torch.equal(weight[0, :12].cpu(), parent.model.weight.detach()[0].cpu())
     assert float(child.model.bias.detach().reshape(())) == float(
         parent.model.bias.detach().reshape(())
     )
@@ -124,9 +124,7 @@ def test_context_weights_change_selection_when_scaled() -> None:
     context = context_features(candidate_set)
 
     # candidate_joint_minus_mean is the last (9th) context feature.
-    joint_minus_mean = {
-        candidate_id: values[-1] for candidate_id, values in context.items()
-    }
+    joint_minus_mean = {candidate_id: values[-1] for candidate_id, values in context.items()}
     assert max(joint_minus_mean.values()) == pytest.approx(joint_minus_mean["good"], abs=1e-9)
 
     # A large negative weight on joint-minus-mean (context index 8,
@@ -154,7 +152,9 @@ def test_manual_score_equals_explicit_linear_combination() -> None:
     expected = (
         sum(
             float(w) * float(f)
-            for w, f in zip(child.model.weight.detach()[0][:12], candidate.feature_vector, strict=True)
+            for w, f in zip(
+                child.model.weight.detach()[0][:12], candidate.feature_vector, strict=True
+            )
         )
         + 0.5 * context["good"][0]
         - 2.0 * context["good"][8]
@@ -180,9 +180,7 @@ def test_checkpoint_roundtrip_and_tamper_are_fail_closed() -> None:
         ContextGSelectionLearner.from_checkpoint(tampered)
 
     with pytest.raises(ValueError, match="lineage mismatch"):
-        restored.assert_lineage(
-            parent_manifest_digest="e" * 64, k_checkpoint_digests=K_DIGESTS
-        )
+        restored.assert_lineage(parent_manifest_digest="e" * 64, k_checkpoint_digests=K_DIGESTS)
 
 
 def test_functional_fit_updates_only_context_learner_state() -> None:

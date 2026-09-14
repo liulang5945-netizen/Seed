@@ -101,12 +101,8 @@ def _seed_record(course: Any, seed: int) -> dict[str, Any]:
         outcomes,
         None,
     )
-    phase_a_baseline_by_cue = {
-        row["cue"]: row for row in phase_a_baseline["rows"]
-    }
-    phase_a_retention_by_cue = {
-        row["cue"]: row for row in phase_a_retention_baseline["rows"]
-    }
+    phase_a_baseline_by_cue = {row["cue"]: row for row in phase_a_baseline["rows"]}
+    phase_a_retention_by_cue = {row["cue"]: row for row in phase_a_retention_baseline["rows"]}
     phase_a_checkpoint = deepcopy(phase_a.checkpoint())
     phase_a_digest = content_digest(phase_a_checkpoint)
     phase_a_weights = _memory_weights(phase_a)
@@ -273,8 +269,7 @@ def run_audit() -> dict[str, Any]:
         "records": records,
         "target_gate_matrix": {
             target: [
-                bool(record["conditions"][target]["candidate_gate_passed"])
-                for record in records
+                bool(record["conditions"][target]["candidate_gate_passed"]) for record in records
             ]
             for target in TARGETS
         },

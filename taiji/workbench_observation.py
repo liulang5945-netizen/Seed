@@ -132,9 +132,7 @@ class WorkbenchObservationSchema:
     def from_payload(cls, payload: Mapping[str, Any]) -> WorkbenchObservationSchema:
         schema = cls(
             language_ids=tuple(str(item) for item in payload.get("language_ids", ())),
-            selection_states=tuple(
-                str(item) for item in payload.get("selection_states", ())
-            ),
+            selection_states=tuple(str(item) for item in payload.get("selection_states", ())),
             task_kinds=tuple(str(item) for item in payload.get("task_kinds", ())),
             extensions=tuple(str(item) for item in payload.get("extensions", ())),
             format=str(payload.get("format", "")),

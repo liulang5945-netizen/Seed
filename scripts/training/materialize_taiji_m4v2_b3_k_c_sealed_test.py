@@ -35,9 +35,7 @@ from taiji import content_digest, semantic_input_digest  # noqa: E402
 REPORT_FORMAT = "taiji-m4v2-b3-k-c-sealed-test-v1"
 VERSION = 1
 SEALED_TASK_SEED = 19
-DEFAULT_OUTPUT = (
-    PROJECT_ROOT / "plans" / "manifests" / "taiji_m4v2_b3_k_c_sealed_test_v1.json"
-)
+DEFAULT_OUTPUT = PROJECT_ROOT / "plans" / "manifests" / "taiji_m4v2_b3_k_c_sealed_test_v1.json"
 
 SEALED_EPISODE_PATHS = (
     ("sealed_typescript_00.ts", "sealed_python_00.py", "sealed_rust_00.rs"),
@@ -113,9 +111,7 @@ def _materialize(output: Path) -> dict[str, object]:
             paths=_all_course_paths(),
             schema=schema,
         )
-        baseline_file_digests = {
-            observation.file_digest for observation in baseline_observations
-        }
+        baseline_file_digests = {observation.file_digest for observation in baseline_observations}
         sealed_file_digests = {
             observation.file_digest for observation in sealed_observations.values()
         }
@@ -149,18 +145,12 @@ def _materialize(output: Path) -> dict[str, object]:
                     "observation_digests": [
                         sealed_observations[path].observation_digest for path in paths
                     ],
-                    "file_digests": [
-                        sealed_observations[path].file_digest for path in paths
-                    ],
+                    "file_digests": [sealed_observations[path].file_digest for path in paths],
                     "semantic_input_digests": [
-                        semantic_input_digest(
-                            observation.to_percept_event(tick=tick)
-                        )
+                        semantic_input_digest(observation.to_percept_event(tick=tick))
                         for tick, observation in enumerate(sequence[1:], start=1)
                     ],
-                    "transition_input_digests": [
-                        example.input_digest for example in transition
-                    ],
+                    "transition_input_digests": [example.input_digest for example in transition],
                 }
             )
 
@@ -178,8 +168,7 @@ def _materialize(output: Path) -> dict[str, object]:
             "anchor_payload": anchor.to_payload(),
             "episodes": episodes,
             "observation_payloads": [
-                sealed_observations[path].to_payload()
-                for path in all_sealed_paths
+                sealed_observations[path].to_payload() for path in all_sealed_paths
             ],
         }
         artifact = {

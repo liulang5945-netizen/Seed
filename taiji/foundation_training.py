@@ -128,9 +128,7 @@ class FoundationTrainingDataset:
         if len(set(excluded_dataset_digests)) != len(excluded_dataset_digests):
             raise ValueError("excluded_dataset_digests cannot contain duplicates")
         if excluded_dataset_digest is not None and excluded_dataset_digests:
-            raise ValueError(
-                "use excluded_dataset_digest or excluded_dataset_digests, not both"
-            )
+            raise ValueError("use excluded_dataset_digest or excluded_dataset_digests, not both")
         selected_record_digests = tuple(
             str(value).strip() for value in self.selected_record_digests
         )
@@ -221,16 +219,13 @@ class FoundationTrainingDataset:
             raise ValueError("use exclude_dataset or exclude_datasets, not both")
         normalized_exclusions: tuple[FoundationTrainingDataset, ...]
         if exclude_datasets is None:
-            normalized_exclusions = (
-                (exclude_dataset,) if exclude_dataset is not None else ()
-            )
+            normalized_exclusions = (exclude_dataset,) if exclude_dataset is not None else ()
         else:
             normalized_exclusions = tuple(exclude_datasets)
             if not normalized_exclusions:
                 raise ValueError("exclude_datasets must contain at least one dataset")
         if any(
-            not isinstance(dataset, FoundationTrainingDataset)
-            for dataset in normalized_exclusions
+            not isinstance(dataset, FoundationTrainingDataset) for dataset in normalized_exclusions
         ):
             raise TypeError("exclude_datasets must contain FoundationTrainingDataset values")
         exclusion_selected: dict[str, int] | None = None
@@ -291,7 +286,10 @@ class FoundationTrainingDataset:
                         continue
                     seen_text_digests.add(text_digest)
                     encoded = text.encode("utf-8")
-                    if excluded_record_digests is not None and text_digest in excluded_record_digests:
+                    if (
+                        excluded_record_digests is not None
+                        and text_digest in excluded_record_digests
+                    ):
                         continue
                     if exclusion_selected is not None and exclusion_budgets is not None:
                         excluded_partition = cls._partition_for_text(
@@ -336,9 +334,7 @@ class FoundationTrainingDataset:
             partition_seed=int(partition_seed),
             profile=profile,
             excluded_dataset_digest=(
-                normalized_exclusions[0].digest
-                if len(normalized_exclusions) == 1
-                else None
+                normalized_exclusions[0].digest if len(normalized_exclusions) == 1 else None
             ),
             excluded_dataset_digests=(
                 tuple(dataset.digest for dataset in normalized_exclusions)

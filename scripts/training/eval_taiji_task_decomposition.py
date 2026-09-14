@@ -92,9 +92,7 @@ def evaluate() -> dict[str, object]:
 
     semantic_payload = admitted["decomposition"]
     semantic_step_keys = {
-        key
-        for step in semantic_payload["steps"]
-        for key in step.get("semantic_slots", {})
+        key for step in semantic_payload["steps"] for key in step.get("semantic_slots", {})
     }
     metrics = {
         "semantic_decomposition_is_bound_to_goal": (
@@ -105,7 +103,15 @@ def evaluate() -> dict[str, object]:
         ),
         "semantic_evidence_contains_no_execution_binding": (
             not semantic_step_keys.intersection(
-                {"action", "action_kind", "capability", "capability_id", "intent", "tool", "tool_id"}
+                {
+                    "action",
+                    "action_kind",
+                    "capability",
+                    "capability_id",
+                    "intent",
+                    "tool",
+                    "tool_id",
+                }
             )
             and all("action_intent" not in step for step in semantic_payload["steps"])
             and tamper_rejected

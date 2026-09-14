@@ -93,28 +93,18 @@ REPORT_FORMAT = "taiji-m5-k-p4-10-feature-factorization-v1"
 MANIFEST_FORMAT = "taiji-m5-k-p4-10-feature-factorization-manifest-v1"
 VERSION = 1
 DEFAULT_MANIFEST = (
-    PROJECT_ROOT
-    / "plans"
-    / "manifests"
-    / "taiji_m5_k_p4_10_feature_factorization_manifest_v1.json"
+    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_10_feature_factorization_manifest_v1.json"
 )
-DEFAULT_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m5_k_p4_10_feature_factorization_20260911.json"
-)
+DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p4_10_feature_factorization_20260911.json"
 P4_8_MANIFEST = (
     PROJECT_ROOT
     / "plans"
     / "manifests"
     / "taiji_m5_k_p4_8_representation_redesign_manifest_v1.json"
 )
-P4_9_PROBE_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m5_k_p4_9_feature_space_probe_20260911.json"
-)
+P4_9_PROBE_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p4_9_feature_space_probe_20260911.json"
 P4_7_MANIFEST = (
-    PROJECT_ROOT
-    / "plans"
-    / "manifests"
-    / "taiji_m5_k_p4_7_capacity_clean_test_manifest_v1.json"
+    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_7_capacity_clean_test_manifest_v1.json"
 )
 P4_6_MANIFEST = (
     PROJECT_ROOT
@@ -132,10 +122,7 @@ P4_4_MANIFEST = (
     / "taiji_m5_k_p4_4_retention_identity_calibration_manifest_v1.json"
 )
 P4_3_MANIFEST = (
-    PROJECT_ROOT
-    / "plans"
-    / "manifests"
-    / "taiji_m5_k_p4_3_retention_incremental_manifest_v1.json"
+    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_3_retention_incremental_manifest_v1.json"
 )
 P4_2_MANIFEST = (
     PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_2_capacity_attribution_manifest_v1.json"
@@ -449,9 +436,7 @@ def _probe_identity(payload: Mapping[str, Any]) -> set[str]:
     )
 
 
-def _save_extended_checkpoint(
-    path: Path, learner: ExtendedGSelectionLearner
-) -> dict[str, Any]:
+def _save_extended_checkpoint(path: Path, learner: ExtendedGSelectionLearner) -> dict[str, Any]:
     payload = learner.checkpoint()
     _save_torch_atomic(path, payload)
     restored = ExtendedGSelectionLearner.from_checkpoint(_load_mapping(path), device="cpu")
@@ -543,15 +528,19 @@ def _run(
         p4_8_manifest = _load_json(P4_8_MANIFEST)
         p4_9_probe = _load_json(P4_9_PROBE_REPORT)
         p3_5_report = _load_json(P3_5_REPORT)
-        if (
-            p4_8_manifest.get("format") != "taiji-m5-k-p4-8-representation-redesign-manifest-v1"
-            or _digest_without(p4_8_manifest, "manifest_digest")
-            != p4_8_manifest.get("manifest_digest")
+        if p4_8_manifest.get(
+            "format"
+        ) != "taiji-m5-k-p4-8-representation-redesign-manifest-v1" or _digest_without(
+            p4_8_manifest, "manifest_digest"
+        ) != p4_8_manifest.get(
+            "manifest_digest"
         ):
             raise ValueError("P4.10 requires an intact P4.8 manifest")
-        if p4_9_probe.get("status") != "completed" or p4_9_probe.get(
-            "feasibility_verdict"
-        ) != "parent_relative_features_are_the_factorization":
+        if (
+            p4_9_probe.get("status") != "completed"
+            or p4_9_probe.get("feasibility_verdict")
+            != "parent_relative_features_are_the_factorization"
+        ):
             raise ValueError(
                 "P4.10 requires the completed P4.9 probe verdict "
                 "parent_relative_features_are_the_factorization"
@@ -710,9 +699,7 @@ def _run(
                 retention_sibling_records,
             )
         ]
-        candidate_digests = {
-            record["candidate_set"].candidate_set_digest for record in all_records
-        }
+        candidate_digests = {record["candidate_set"].candidate_set_digest for record in all_records}
         sibling_structure = [
             _structure_row(record["candidate_set"], record["behavior_set"])
             for record in retention_sibling_records
@@ -722,10 +709,8 @@ def _run(
             for record in constraint_records
         ]
         structure_gate = {
-            "retention_sibling_matches_p4_4_contract": sibling_structure
-            == list(contract["rows"]),
-            "constraint_matches_p4_4_contract": constraint_structure
-            == list(contract["rows"]),
+            "retention_sibling_matches_p4_4_contract": sibling_structure == list(contract["rows"]),
+            "constraint_matches_p4_4_contract": constraint_structure == list(contract["rows"]),
             "retention_sibling_structure_digest": content_digest(sibling_structure),
             "p4_4_structure_contract_digest": contract["contract_digest"],
         }
@@ -811,8 +796,7 @@ def _run(
                         if (
                             parent_decision.selected_candidate_id
                             != child_decision.selected_candidate_id
-                            or parent_decision.selection_status
-                            != child_decision.selection_status
+                            or parent_decision.selection_status != child_decision.selection_status
                         ):
                             mismatches += 1
                         child_scores = (
@@ -836,9 +820,7 @@ def _run(
                     "max_abs_score_deviation": max_deviation,
                 }
             base_hinge_losses = [
-                _invariant_hinge_loss_for(
-                    learners[ARM_BASE], parent, candidate_set
-                )
+                _invariant_hinge_loss_for(learners[ARM_BASE], parent, candidate_set)
                 for candidate_set in constraint_sets
             ]
             ext_hinge_losses = [
@@ -849,29 +831,22 @@ def _run(
                 ARM_BASE: all(loss == 0.0 for loss in base_hinge_losses),
                 ARM_EXT: all(loss == 0.0 for loss in ext_hinge_losses),
             }
-            birth_report["feature_source_digest"] = learners[
-                ARM_EXT
-            ].feature_source_state_digest
+            birth_report["feature_source_digest"] = learners[ARM_EXT].feature_source_state_digest
             birth_passed = all(
-                report["selection_mismatches"] == 0
-                and report["max_abs_score_deviation"] == 0.0
+                report["selection_mismatches"] == 0 and report["max_abs_score_deviation"] == 0.0
                 for arm, report in birth_report.items()
                 if arm in learners
             ) and all(birth_report["birth_hinge_loss_zero"].values())
             if not birth_passed:
                 raise ValueError(f"P4.10 birth equivalence gate failed: {birth_report}")
             zero_checkpoints = {
-                ARM_BASE: _save_checkpoint(
-                    seed_dir / f"{ARM_BASE}-zero.pt", learners[ARM_BASE]
-                ),
+                ARM_BASE: _save_checkpoint(seed_dir / f"{ARM_BASE}-zero.pt", learners[ARM_BASE]),
                 ARM_EXT: _save_extended_checkpoint(
                     seed_dir / f"{ARM_EXT}-zero.pt", learners[ARM_EXT]
                 ),
             }
             if not all(item["passed"] for item in zero_checkpoints.values()):
-                raise RuntimeError(
-                    f"P4.10 zero-step checkpoint preflight failed for seed {seed}"
-                )
+                raise RuntimeError(f"P4.10 zero-step checkpoint preflight failed for seed {seed}")
             fit_base = _invariant_fit_sequence_13(
                 learners[ARM_BASE],
                 parent,
@@ -891,17 +866,13 @@ def _run(
                 constraint_digest=constraint_digest,
             )
             trained_checkpoints = {
-                ARM_BASE: _save_checkpoint(
-                    seed_dir / f"{ARM_BASE}-trained.pt", learners[ARM_BASE]
-                ),
+                ARM_BASE: _save_checkpoint(seed_dir / f"{ARM_BASE}-trained.pt", learners[ARM_BASE]),
                 ARM_EXT: _save_extended_checkpoint(
                     seed_dir / f"{ARM_EXT}-trained.pt", learners[ARM_EXT]
                 ),
             }
             if not all(item["passed"] for item in trained_checkpoints.values()):
-                raise RuntimeError(
-                    f"P4.10 trained checkpoint preflight failed for seed {seed}"
-                )
+                raise RuntimeError(f"P4.10 trained checkpoint preflight failed for seed {seed}")
             tamper_gate = {
                 ARM_BASE: _tamper_rejected(
                     _p4_6_load_mapping(Path(str(trained_checkpoints[ARM_BASE]["path"])))
@@ -972,9 +943,7 @@ def _run(
         source_gate = {
             "p4_8_manifest_intact": True,
             "p4_9_probe_verdict_consumed": True,
-            "parent_independent_restore": bool(
-                parent_restore.get("independent_process_restore")
-            ),
+            "parent_independent_restore": bool(parent_restore.get("independent_process_restore")),
             "parent_lineage_valid": True,
             "k_parent_digests_valid": True,
         }
@@ -1063,15 +1032,13 @@ def _run(
                 record["candidate_set"].candidate_set_digest for record in holdout_records
             ],
             "retention_newtask_candidate_set_digests": [
-                record["candidate_set"].candidate_set_digest
-                for record in retention_newtask_records
+                record["candidate_set"].candidate_set_digest for record in retention_newtask_records
             ],
             "constraint_candidate_set_digests": [
                 record["candidate_set"].candidate_set_digest for record in constraint_records
             ],
             "retention_sibling_candidate_set_digests": [
-                record["candidate_set"].candidate_set_digest
-                for record in retention_sibling_records
+                record["candidate_set"].candidate_set_digest for record in retention_sibling_records
             ],
             "records": {
                 split: [

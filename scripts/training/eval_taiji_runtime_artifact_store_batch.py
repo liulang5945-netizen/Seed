@@ -90,7 +90,9 @@ def evaluate() -> dict[str, object]:
             second_id,
             evidence,
         )
-        second_parent_digest = _checkpoint_digest(first_parent.model.architecture.native_checkpoint())
+        second_parent_digest = _checkpoint_digest(
+            first_parent.model.architecture.native_checkpoint()
+        )
         store.put(second_artifact)
         first_parent.save(paths[1])
         second_parent = SeedRuntime.load(paths[1], workspace_root=PROJECT_ROOT)
@@ -142,7 +144,8 @@ def evaluate() -> dict[str, object]:
                 and repeated["results"][second_id]["status"] == "already_applied"
             ),
             "provenance_survives_checkpoint_chain": (
-                provenance.get(first_artifact.artifact_digest) == first_measurements.measurement_digest
+                provenance.get(first_artifact.artifact_digest)
+                == first_measurements.measurement_digest
                 and provenance.get(second_artifact.artifact_digest)
                 == second_measurements.measurement_digest
             ),

@@ -296,9 +296,9 @@ class TSKV8Adapter(Taiji):
         self._semantic_memory: SemanticMemoryLearner | None = None
         self._structured_semantic_learner: StructuredSemanticLearner | None = None
         self._last_structured_semantic_result: StructuredSemanticResult | None = None
-        self._structured_semantic_transition_learner: (
-            StructuredSemanticTransitionLearner | None
-        ) = None
+        self._structured_semantic_transition_learner: StructuredSemanticTransitionLearner | None = (
+            None
+        )
         self._last_structured_semantic_transition_result: (
             StructuredSemanticTransitionResult | None
         ) = None
@@ -483,9 +483,7 @@ class TSKV8Adapter(Taiji):
 
         return self._last_structured_semantic_result
 
-    def attach_structured_semantic_learner(
-        self, learner: StructuredSemanticLearner | None
-    ) -> None:
+    def attach_structured_semantic_learner(self, learner: StructuredSemanticLearner | None) -> None:
         """Attach or detach the optional native semantic owner.
 
         Attachment does not run inference or mutate the cognitive state.  The
@@ -536,9 +534,7 @@ class TSKV8Adapter(Taiji):
         """Attach or detach the optional native persistent transition owner."""
 
         if learner is not None and not isinstance(learner, StructuredSemanticTransitionLearner):
-            raise TypeError(
-                "learner must be a StructuredSemanticTransitionLearner or None"
-            )
+            raise TypeError("learner must be a StructuredSemanticTransitionLearner or None")
         self._structured_semantic_transition_learner = learner
         self._last_structured_semantic_transition_result = None
 
@@ -12035,9 +12031,7 @@ class TSKV8Adapter(Taiji):
             raise ValueError("structured semantic transition checkpoint payload is invalid")
         learner_payload = payload.get("learner")
         if not isinstance(learner_payload, Mapping):
-            raise ValueError(
-                "structured semantic transition learner checkpoint payload is invalid"
-            )
+            raise ValueError("structured semantic transition learner checkpoint payload is invalid")
         self._structured_semantic_transition_learner = (
             StructuredSemanticTransitionLearner.from_checkpoint(
                 learner_payload,

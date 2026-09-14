@@ -22,7 +22,9 @@ PARENT_MANIFEST = "a" * 64
 K_DIGESTS = {"k1": "b" * 64, "k2": "c" * 64}
 
 
-def _proposal(candidate_id: str, goal_id: str, content_id: str, *, score: float, confidence: float = 0.9) -> GSelectionCandidate:
+def _proposal(
+    candidate_id: str, goal_id: str, content_id: str, *, score: float, confidence: float = 0.9
+) -> GSelectionCandidate:
     goal = Goal(goal_id, f"goal {goal_id}", priority=0.8)
     content = ContentPlan(
         content_id=content_id,
@@ -207,9 +209,7 @@ def test_checkpoint_roundtrip_and_tamper_are_fail_closed() -> None:
         ExtendedGSelectionLearner.from_checkpoint(bypass)
 
     with pytest.raises(ValueError, match="lineage mismatch"):
-        restored.assert_lineage(
-            parent_manifest_digest="e" * 64, k_checkpoint_digests=K_DIGESTS
-        )
+        restored.assert_lineage(parent_manifest_digest="e" * 64, k_checkpoint_digests=K_DIGESTS)
 
 
 def test_from_parent_learner_rejects_wrong_parent_capacity() -> None:

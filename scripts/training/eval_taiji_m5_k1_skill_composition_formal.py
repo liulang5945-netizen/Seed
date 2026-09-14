@@ -71,9 +71,7 @@ def _cell_checks(cell: dict[str, Any]) -> dict[str, Any]:
         "all_rows_produced": (
             len(rows) == 6
             and all(
-                "semantic_status" in row
-                and "real_success" in row
-                and "outcome_admitted" in row
+                "semantic_status" in row and "real_success" in row and "outcome_admitted" in row
                 for row in rows
             )
         ),
@@ -143,13 +141,9 @@ def main() -> int:
     a_minus_b = _series("a_minus_b")
     a_minus_c = _series("a_minus_c")
     cells_passed = sum(1 for entry in cells if entry["checks"]["cell_passed"])
-    technical_cells = sum(
-        1 for entry in cells if all(entry["checks"]["technical"].values())
-    )
+    technical_cells = sum(1 for entry in cells if all(entry["checks"]["technical"].values()))
     admission_cells = sum(
-        1
-        for entry in cells
-        if entry["checks"]["primary"]["success_read_admission_rate_1p0"]
+        1 for entry in cells if entry["checks"]["primary"]["success_read_admission_rate_1p0"]
     )
     variance_cells = sum(
         1 for entry in cells if entry["checks"]["primary"]["reward_variance_positive"]
@@ -157,9 +151,18 @@ def main() -> int:
     robust = cells_passed == len(cells)
 
     aggregate = {
-        "a_unseen": {**_stats(a_unseen), "cells_ge_floor": sum(1 for v in a_unseen if v >= UNSEEN_FLOOR)},
-        "a_minus_b": {**_stats(a_minus_b), "cells_ge_floor": sum(1 for v in a_minus_b if v >= SEPARATION_FLOOR)},
-        "a_minus_c": {**_stats(a_minus_c), "cells_ge_floor": sum(1 for v in a_minus_c if v >= SEPARATION_FLOOR)},
+        "a_unseen": {
+            **_stats(a_unseen),
+            "cells_ge_floor": sum(1 for v in a_unseen if v >= UNSEEN_FLOOR),
+        },
+        "a_minus_b": {
+            **_stats(a_minus_b),
+            "cells_ge_floor": sum(1 for v in a_minus_b if v >= SEPARATION_FLOOR),
+        },
+        "a_minus_c": {
+            **_stats(a_minus_c),
+            "cells_ge_floor": sum(1 for v in a_minus_c if v >= SEPARATION_FLOOR),
+        },
         "technical_cells_passed": f"{technical_cells}/{len(cells)}",
         "success_read_admission_rate_cells_1p0": f"{admission_cells}/{len(cells)}",
         "reward_variance_positive_cells": f"{variance_cells}/{len(cells)}",
@@ -182,9 +185,7 @@ def main() -> int:
         "generated_at_epoch": int(time.time()),
         "status": "passed" if robust else "failed",
         "can_promote": False,
-        "preregistration": (
-            "plans/reference/M5_K1_FORMAL_PREREGISTRATION_20260909.md"
-        ),
+        "preregistration": ("plans/reference/M5_K1_FORMAL_PREREGISTRATION_20260909.md"),
         "matrix": {
             "task_seeds": list(TASK_SEEDS),
             "learner_seeds": list(LEARNER_SEEDS),

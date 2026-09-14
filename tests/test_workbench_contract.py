@@ -465,6 +465,7 @@ def test_runtime_projection_admits_failed_read_evidence_with_negative_reward(
     # Failed evidence keeps the success-only affordance chain, so there is
     # no reprojected affordance; the projection self-grounds the attempt.
     import torch  # noqa: F401  (feature-dim assertion below)
+
     source = runtime.project_workbench_outcome_for_internalization(
         snapshot_id=snapshot_id,
         affordance_id="workbench-failed:auto",
@@ -1228,10 +1229,7 @@ def test_taiji_task_routes_expose_the_same_read_only_gate(tmp_path, monkeypatch)
     )
     assert closed.status_code == 200
     assert replay_attempt.status_code == 200
-    assert (
-        replay_attempt.json()["admission"]["reason_code"]
-        == "closed_boundary_not_executable"
-    )
+    assert replay_attempt.json()["admission"]["reason_code"] == "closed_boundary_not_executable"
 
 
 def test_taiji_successor_loop_route_runs_native_bounded_graph(tmp_path, monkeypatch) -> None:

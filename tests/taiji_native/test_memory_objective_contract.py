@@ -30,9 +30,7 @@ def test_contract_serializes_the_complete_objective_surface() -> None:
     assert tuple(payload["credit_axes"]) == MEMORY_OBJECTIVE_CREDIT_AXES
     assert payload["positive_binding"] == "cue_identity_to_event"
     assert payload["negative_competition"] == "cross_cue_event_exclusion"
-    assert set(payload["source_partitions"]).isdisjoint(
-        payload["prohibited_partitions"]
-    )
+    assert set(payload["source_partitions"]).isdisjoint(payload["prohibited_partitions"])
 
 
 def test_contract_rejects_invalid_partition_and_credit_configuration() -> None:

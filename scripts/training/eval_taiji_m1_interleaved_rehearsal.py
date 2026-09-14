@@ -129,9 +129,7 @@ def _seed_record(
     )
     config = TaijiConfig.from_dict(config_values)
     actions = tuple(
-        dict.fromkeys(
-            episode.action for episode in (*corpus.phase_a_train, *corpus.phase_b_train)
-        )
+        dict.fromkeys(episode.action for episode in (*corpus.phase_a_train, *corpus.phase_b_train))
     )
     phase_a = Taiji(
         _memory_config(seed),
@@ -162,8 +160,7 @@ def _seed_record(
         "parent": parent_scores,
         "child": child_scores,
         "restored": restored_scores,
-        "replay_causal_gain_vs_parent": child_scores["old_holdout"]
-        - parent_scores["old_holdout"],
+        "replay_causal_gain_vs_parent": child_scores["old_holdout"] - parent_scores["old_holdout"],
         "checkpoint": {
             "parent_digest": phase_a_digest,
             "child_digest": checkpoint_digest,
@@ -208,11 +205,7 @@ def run_interleaved_diagnostics(
     if unknown:
         raise ValueError(f"unsupported rehearsal schedule: {sorted(unknown)}")
     records = {
-        schedule: [
-            _seed_record(seed, corpus, schedule)
-            for seed in seeds
-        ]
-        for schedule in schedules
+        schedule: [_seed_record(seed, corpus, schedule) for seed in seeds] for schedule in schedules
     }
     no_replay_by_seed = {
         int(record["seed"]): float(record["child"]["new_holdout"])
@@ -264,7 +257,9 @@ def main() -> int:
     result["can_promote"] = bool(result["diagnostics"]["promotable_schedules"])
     result["report_path"] = str(args.report)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

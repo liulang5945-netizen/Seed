@@ -101,8 +101,14 @@ def _build_split_transitions(
     observations: tuple[WorkbenchObservation, ...],
     static_corpus: Any,
 ) -> tuple[StructuredSemanticTransitionExample, ...]:
-    static_examples = static_corpus.train if split == "train" else static_corpus.dev if split == "dev" else static_corpus.test
-    catalog = {item.example_id.rsplit(":", 1)[-1]: (item.goal, item.content) for item in static_examples}
+    static_examples = (
+        static_corpus.train
+        if split == "train"
+        else static_corpus.dev if split == "dev" else static_corpus.test
+    )
+    catalog = {
+        item.example_id.rsplit(":", 1)[-1]: (item.goal, item.content) for item in static_examples
+    }
     sequence = _sequence_for_split(observations)
     result = []
     for index in range(1, len(sequence)):
@@ -170,7 +176,9 @@ def _metrics(
             result.content_plan is not None
             and result.content_plan.content_id == example.content.content_id
         )
-        expected_status = "clarify" if example.content.intent_kind == "request_information" else "resolved"
+        expected_status = (
+            "clarify" if example.content.intent_kind == "request_information" else "resolved"
+        )
         status_hits += int(result.status == expected_status)
     precision = true_positive / max(1, true_positive + false_positive)
     recall = true_positive / max(1, true_positive + false_negative)
@@ -194,7 +202,9 @@ def _sequence_metrics(
     for tick, observation in enumerate(observations[1:], start=1):
         event = observation.to_percept_event(tick=tick)
         result = learner.predict(current, event)
-        expected = set(semantic_fact_key(*relation) for relation in _world(observation, tick=tick).relations)
+        expected = set(
+            semantic_fact_key(*relation) for relation in _world(observation, tick=tick).relations
+        )
         actual = (
             set()
             if result.world is None
@@ -208,7 +218,9 @@ def _sequence_metrics(
         content_hits += int(
             result.content_plan is not None and result.content_plan.content_id == expected_content
         )
-        status_hits += int(result.status == ("clarify" if kind != "inspect-language" else "resolved"))
+        status_hits += int(
+            result.status == ("clarify" if kind != "inspect-language" else "resolved")
+        )
         rows.append(
             {
                 "tick": tick,
@@ -238,11 +250,13 @@ def _static_only_sequence(observations: tuple[WorkbenchObservation, ...]) -> dic
     """A frozen-state control: it never applies an observation transition."""
 
     initial = _world(observations[0], tick=0)
-    expected = [_world(item, tick=index).relations for index, item in enumerate(observations[1:], start=1)]
+    expected = [
+        _world(item, tick=index).relations for index, item in enumerate(observations[1:], start=1)
+    ]
     actual = [initial.relations for _ in expected]
-    exact = sum(
-        int(left == right) for left, right in zip(expected, actual, strict=True)
-    ) / max(1, len(expected))
+    exact = sum(int(left == right) for left, right in zip(expected, actual, strict=True)) / max(
+        1, len(expected)
+    )
     return {"steps": len(expected), "fact_exact_accuracy": exact}
 
 
@@ -291,7 +305,8 @@ def _runtime_gate(
     restored_digest = content_digest(restored_results)
     return {
         "owner_attached": adapter.structured_semantic_transition_learner is learner,
-        "checkpoint_component_present": "structured_semantic_transition" in checkpoint["components"],
+        "checkpoint_component_present": "structured_semantic_transition"
+        in checkpoint["components"],
         "restored_owner_present": restored.structured_semantic_transition_learner is not None,
         "output_stable_after_runtime_restore": direct_digest == restored_digest,
         "cognitive_state_read_only": state_before
@@ -383,16 +398,13 @@ def run_gate(output_path: Path | None = None) -> dict[str, Any]:
         gates = {
             "project_disjoint": corpus.manifest()["record_disjoint"]
             and not (
-                {item.family_id for item in corpus.train}
-                & {item.family_id for item in corpus.dev}
+                {item.family_id for item in corpus.train} & {item.family_id for item in corpus.dev}
             )
             and not (
-                {item.family_id for item in corpus.train}
-                & {item.family_id for item in corpus.test}
+                {item.family_id for item in corpus.train} & {item.family_id for item in corpus.test}
             )
             and not (
-                {item.family_id for item in corpus.dev}
-                & {item.family_id for item in corpus.test}
+                {item.family_id for item in corpus.dev} & {item.family_id for item in corpus.test}
             )
             and not (
                 {item.input_digest for item in corpus.train}
@@ -408,14 +420,17 @@ def run_gate(output_path: Path | None = None) -> dict[str, Any]:
             "event_order_and_deletion": all(event_order_gate.values()),
             "checkpoint_save_restore": all(checkpoint_gate.values())
             and checkpoint_gate["training_steps"] > 0,
-            "runtime_owner_roundtrip": all(runtime[key] for key in (
-                "owner_attached",
-                "checkpoint_component_present",
-                "restored_owner_present",
-                "output_stable_after_runtime_restore",
-                "cognitive_state_read_only",
-                "runtime_checkpoint_stable",
-            )),
+            "runtime_owner_roundtrip": all(
+                runtime[key]
+                for key in (
+                    "owner_attached",
+                    "checkpoint_component_present",
+                    "restored_owner_present",
+                    "output_stable_after_runtime_restore",
+                    "cognitive_state_read_only",
+                    "runtime_checkpoint_stable",
+                )
+            ),
             "transition_lesion_changes_sequence": lesion_before != lesion_after
             and float(lesion_metrics["fact_exact_accuracy"])
             < float(sequence_metrics["fact_exact_accuracy"]),

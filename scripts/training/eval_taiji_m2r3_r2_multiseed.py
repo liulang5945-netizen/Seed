@@ -218,7 +218,9 @@ def _metrics(
             result.content_plan is not None
             and result.content_plan.content_id == example.content.content_id
         )
-        expected_status = "clarify" if example.content.intent_kind == "request_information" else "resolved"
+        expected_status = (
+            "clarify" if example.content.intent_kind == "request_information" else "resolved"
+        )
         status_hits += int(result.status == expected_status)
     precision = true_positive / max(1, true_positive + false_positive)
     recall = true_positive / max(1, true_positive + false_negative)
@@ -236,7 +238,9 @@ def _constraint_conflict(
     layout: dict[str, int],
 ) -> PerceptEvent:
     features = example.percept.features.detach().clone()
-    other = next(value for value in CONSTRAINTS if value not in example.content.semantic_slots["constraint"])
+    other = next(
+        value for value in CONSTRAINTS if value not in example.content.semantic_slots["constraint"]
+    )
     features[layout[f"constraint:{other}"]] = 1.0
     return replace(
         example.percept,
@@ -263,14 +267,10 @@ def _run_seed(seed: int) -> dict[str, Any]:
         confidence=0.2,
     )
     blocked = next(
-        example
-        for example in corpus.test
-        if example.content.semantic_slots["state"] == "blocked"
+        example for example in corpus.test if example.content.semantic_slots["state"] == "blocked"
     )
     pending = next(
-        example
-        for example in corpus.test
-        if example.content.semantic_slots["state"] == "pending"
+        example for example in corpus.test if example.content.semantic_slots["state"] == "pending"
     )
     known = corpus.test[0]
     unknown_result = learner.predict(unknown)
@@ -286,12 +286,12 @@ def _run_seed(seed: int) -> dict[str, Any]:
     )
     lesion_before, lesion_after = restored.zero_fact_head()
     lesion_metrics = _metrics(restored, corpus.test)
-    owner_changes = {
-        name: owners_before[name] != owners_after[name] for name in owners_before
-    }
+    owner_changes = {name: owners_before[name] != owners_after[name] for name in owners_before}
     checks = {
         "record_disjoint": corpus.manifest()["record_disjoint"],
-        "multi_entity_relations": all(metric["fact_f1"] >= 0.90 for metric in (dev_metrics, test_metrics)),
+        "multi_entity_relations": all(
+            metric["fact_f1"] >= 0.90 for metric in (dev_metrics, test_metrics)
+        ),
         "dev_goal_learning": dev_metrics["goal_accuracy"] >= 0.80,
         "test_goal_learning": test_metrics["goal_accuracy"] >= 0.80,
         "dev_content_learning": dev_metrics["content_accuracy"] >= 0.80,
@@ -357,16 +357,17 @@ def evaluate(seeds: tuple[int, ...] = (11, 29, 47)) -> dict[str, Any]:
         "aggregate": {
             "all_seeds_passed": passed,
             "mean_test_fact_f1": sum(run["metrics"]["test"]["fact_f1"] for run in runs) / len(runs),
-            "mean_test_goal_accuracy": sum(
-                run["metrics"]["test"]["goal_accuracy"] for run in runs
-            )
+            "mean_test_goal_accuracy": sum(run["metrics"]["test"]["goal_accuracy"] for run in runs)
             / len(runs),
             "mean_test_content_accuracy": sum(
                 run["metrics"]["test"]["content_accuracy"] for run in runs
             )
             / len(runs),
         },
-        "gate": {"passed": passed, "criterion": "every independent seed passes every declared check"},
+        "gate": {
+            "passed": passed,
+            "criterion": "every independent seed passes every declared check",
+        },
     }
 
 

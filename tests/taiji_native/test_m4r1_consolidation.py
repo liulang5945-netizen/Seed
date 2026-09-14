@@ -61,9 +61,7 @@ def test_m4r1_zero_strength_is_backward_compatible() -> None:
     baseline = Taiji.from_checkpoint(deepcopy(source_checkpoint))
     candidate = Taiji.from_checkpoint(deepcopy(source_checkpoint))
     for model in (baseline, candidate):
-        model.clone_protected_predictive_readout_as_active(
-            boundary_digest=active.token_digest
-        )
+        model.clone_protected_predictive_readout_as_active(boundary_digest=active.token_digest)
     baseline.learn_bytes(
         b"new-new-new",
         learn_fabric=False,
@@ -88,9 +86,7 @@ def test_m4r1_consolidation_isolated_and_checkpointable() -> None:
     model.learn_bytes(b"old-old-old", epochs=2, learn_fabric=False, learn_predictive_context=False)
     active = _boundary(task_id="task:m4r1-positive", generation_scope="active")
     authorization = _authorization(active)
-    model.clone_protected_predictive_readout_as_active(
-        boundary_digest=active.token_digest
-    )
+    model.clone_protected_predictive_readout_as_active(boundary_digest=active.token_digest)
     protected_before = model.readout_registry_status()["protected"]["readout_digest"]
     active_before = model.active_predictive_readout_metadata
     assert active_before is not None

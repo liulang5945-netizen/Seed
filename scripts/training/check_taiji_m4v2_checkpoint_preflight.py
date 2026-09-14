@@ -183,16 +183,15 @@ def run_preflight(
             checks["replay_persisted"] = (
                 restored.developmental_f1_replay_count == model.developmental_f1_replay_count > 0
             )
-            checks["fresh_restore_digest_matches"] = (
-                content_digest(restored.checkpoint()) == content_digest(mid_checkpoint)
-            )
+            checks["fresh_restore_digest_matches"] = content_digest(
+                restored.checkpoint()
+            ) == content_digest(mid_checkpoint)
             checks["fresh_restore_is_read_only"] = (
                 restored.developmental_f1_learning_mode == "read_only"
             )
             checks["owner_lineage_persisted"] = (
                 restored.developmental_f1_bundle is not None
-                and restored.developmental_f1_bundle.owner_graph_digest
-                == bundle.owner_graph_digest
+                and restored.developmental_f1_bundle.owner_graph_digest == bundle.owner_graph_digest
             )
             checks["old_f1_owners_unchanged"] = all(
                 content_digest(restored_checkpoint[key]) == content_digest(parent[key])
@@ -205,12 +204,14 @@ def run_preflight(
             resumed = Taiji.from_checkpoint(copy.deepcopy(restored_checkpoint))
             resumed.set_developmental_f1_learning_mode("fast_slow")
             resumed.learn_bytes(SUFFIX, epochs=1, learn_fabric=False)
-            checks["rng_and_state_continuation_matches"] = (
-                content_digest(resumed.checkpoint()) == content_digest(uninterrupted.checkpoint())
-            )
+            checks["rng_and_state_continuation_matches"] = content_digest(
+                resumed.checkpoint()
+            ) == content_digest(uninterrupted.checkpoint())
 
             rollback = Taiji.from_checkpoint(copy.deepcopy(parent))
-            checks["rollback_matches_parent"] = content_digest(rollback.checkpoint()) == parent_digest
+            checks["rollback_matches_parent"] = (
+                content_digest(rollback.checkpoint()) == parent_digest
+            )
             checks["atomic_checkpoint_exists_before_cleanup"] = temporary_checkpoint_path.is_file()
         finally:
             temporary_checkpoint_path.unlink(missing_ok=True)
@@ -260,7 +261,9 @@ def run_preflight(
             "elapsed_seconds": time.perf_counter() - started,
         }
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    report_path.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
     return report
 
 

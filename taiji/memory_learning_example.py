@@ -54,9 +54,7 @@ class MemoryLearningExample:
         if not self.example_id.strip():
             raise ValueError("memory learning example id must be non-empty")
         if self.partition not in MEMORY_LEARNING_PARTITIONS:
-            raise ValueError(
-                f"unsupported memory learning partition: {self.partition}"
-            )
+            raise ValueError(f"unsupported memory learning partition: {self.partition}")
         if self.role not in MEMORY_LEARNING_ROLES:
             raise ValueError(f"unsupported memory learning role: {self.role}")
         symbols = (self.cue_key, self.action_value, self.outcome_value)
@@ -199,9 +197,7 @@ class MemoryLearningCurriculum:
     def examples(self) -> tuple[MemoryLearningExample, ...]:
         return (*self.train, *self.holdout, *self.retention)
 
-    def _values_by_key(
-        self, examples: Sequence[MemoryLearningExample]
-    ) -> dict[int, set[str]]:
+    def _values_by_key(self, examples: Sequence[MemoryLearningExample]) -> dict[int, set[str]]:
         values: dict[int, set[str]] = defaultdict(set)
         for example in examples:
             values[example.cue_key].add(example.value_key)
@@ -211,9 +207,7 @@ class MemoryLearningCurriculum:
         values = self._values_by_key(self.train)
         return tuple(sorted(key for key, items in values.items() if len(items) > 1))
 
-    def _partition_audit(
-        self, examples: Sequence[MemoryLearningExample]
-    ) -> dict[str, Any]:
+    def _partition_audit(self, examples: Sequence[MemoryLearningExample]) -> dict[str, Any]:
         observations = Counter(example.cue_key for example in examples)
         values = self._values_by_key(examples)
         roles = Counter(example.role for example in examples)
@@ -236,9 +230,7 @@ class MemoryLearningCurriculum:
             "observations_per_key": _summary(tuple(observations.values())),
             "roles": {name: int(roles.get(name, 0)) for name in MEMORY_LEARNING_ROLES},
             "role_labels_match_observation_counts": role_consistent,
-            "values_per_key": _summary(
-                tuple(float(len(items)) for items in values.values())
-            ),
+            "values_per_key": _summary(tuple(float(len(items)) for items in values.values())),
             "conflicting_key_count": len(conflicting),
             "conflicting_keys": list(conflicting),
             "key_value_deterministic": not conflicting,
@@ -258,12 +250,9 @@ class MemoryLearningCurriculum:
         for partition in MEMORY_LEARNING_QUERY_PARTITIONS:
             examples = getattr(self, partition)
             answered_by_train = sum(
-                int(example.value_key in train_values[example.cue_key])
-                for example in examples
+                int(example.value_key in train_values[example.cue_key]) for example in examples
             )
-            ambiguous = sum(
-                int(len(train_values[example.cue_key]) > 1) for example in examples
-            )
+            ambiguous = sum(int(len(train_values[example.cue_key]) > 1) for example in examples)
             query_relations[partition] = {
                 "query_count": len(examples),
                 "keys_covered_by_train": True,
@@ -313,8 +302,7 @@ class MemoryLearningCurriculum:
             "declared_key_value_deterministic": self.declared_key_value_deterministic,
             "observed_key_value_deterministic": not self._conflicting_train_keys(),
             "declaration_matches_observation": (
-                self.declared_key_value_deterministic
-                == (not self._conflicting_train_keys())
+                self.declared_key_value_deterministic == (not self._conflicting_train_keys())
             ),
             "partitions": partitions,
             "query_relations": query_relations,
@@ -329,9 +317,7 @@ class MemoryLearningCurriculum:
             "name": self.name,
             "declared_key_value_deterministic": self.declared_key_value_deterministic,
             "partitions": {
-                partition: [
-                    example.to_dict() for example in getattr(self, partition)
-                ]
+                partition: [example.to_dict() for example in getattr(self, partition)]
                 for partition in MEMORY_LEARNING_PARTITIONS
             },
         }
@@ -349,17 +335,11 @@ class MemoryLearningCurriculum:
         partitions = payload.get("partitions", {})
         missing = set(MEMORY_LEARNING_PARTITIONS) - set(partitions)
         if missing:
-            raise ValueError(
-                f"memory learning curriculum is missing partitions: {sorted(missing)}"
-            )
+            raise ValueError(f"memory learning curriculum is missing partitions: {sorted(missing)}")
         return cls(
             name=str(payload["name"]),
-            train=tuple(
-                MemoryLearningExample.from_dict(item) for item in partitions["train"]
-            ),
-            holdout=tuple(
-                MemoryLearningExample.from_dict(item) for item in partitions["holdout"]
-            ),
+            train=tuple(MemoryLearningExample.from_dict(item) for item in partitions["train"]),
+            holdout=tuple(MemoryLearningExample.from_dict(item) for item in partitions["holdout"]),
             retention=tuple(
                 MemoryLearningExample.from_dict(item) for item in partitions["retention"]
             ),

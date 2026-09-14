@@ -121,7 +121,9 @@ def _manifest(
 
 def _fixed_large_preflight(
     payload: Mapping[str, Any], *, parent_digest: str
-) -> tuple[NativeKFixedLargeEnsemble, OutcomeDependencyProjector, KWorkerManifestBundle, dict[str, Any]]:
+) -> tuple[
+    NativeKFixedLargeEnsemble, OutcomeDependencyProjector, KWorkerManifestBundle, dict[str, Any]
+]:
     if payload.get("format") != FIXED_LARGE_CHECKPOINT_FORMAT:
         raise ValueError("unsupported fixed-large ensemble artifact format")
     if int(payload.get("version", -1)) != FIXED_LARGE_CHECKPOINT_VERSION:
@@ -161,14 +163,10 @@ def _fixed_large_preflight(
         }
     )
     k1_owners = {
-        key: value
-        for key, value in ensemble.owner_digests.items()
-        if key.startswith("k1.replica.")
+        key: value for key, value in ensemble.owner_digests.items() if key.startswith("k1.replica.")
     }
     k2_owners = {
-        key: value
-        for key, value in ensemble.owner_digests.items()
-        if key.startswith("k2.replica.")
+        key: value for key, value in ensemble.owner_digests.items() if key.startswith("k2.replica.")
     }
     manifests = (
         _manifest(
@@ -204,7 +202,9 @@ def _fixed_large_preflight(
             checkpoint_format=str(projector_checkpoint["format"]),
             checkpoint_version=int(projector_checkpoint["version"]),
             checkpoint_digest=str(k3_payload["worker_checkpoint_digest"]),
-            owner_digests={"outcome_dependency_projector": str(k3_payload["worker_checkpoint_digest"])},
+            owner_digests={
+                "outcome_dependency_projector": str(k3_payload["worker_checkpoint_digest"])
+            },
             parent_digest=parent_digest,
             namespace=namespace,
             source_digest=str(k3_payload["source_digest"]),
@@ -232,16 +232,21 @@ def _fixed_large_preflight(
     }
     if not all(checks.values()):
         raise ValueError(f"fixed-large preflight failed: {checks}")
-    return ensemble, projector, bundle, {
-        "status": "passed",
-        "checks": checks,
-        "bundle_digest": bundle.bundle_digest,
-        "owner_graph_digest": bundle.owner_graph_digest,
-        "source_manifest_digest": source_manifest_digest,
-        "resource_manifest_digest": resource_manifest_digest,
-        "candidate_namespace": namespace,
-        "ensemble_parameter_count": ensemble.parameter_count,
-    }
+    return (
+        ensemble,
+        projector,
+        bundle,
+        {
+            "status": "passed",
+            "checks": checks,
+            "bundle_digest": bundle.bundle_digest,
+            "owner_graph_digest": bundle.owner_graph_digest,
+            "source_manifest_digest": source_manifest_digest,
+            "resource_manifest_digest": resource_manifest_digest,
+            "candidate_namespace": namespace,
+            "ensemble_parameter_count": ensemble.parameter_count,
+        },
+    )
 
 
 def run_canary(
@@ -330,9 +335,7 @@ def run_canary(
         )
         lesioned_semantic.zero_fact_head()
         lesioned_result = lesioned_semantic.predict(event)
-        branch_lesion_observable = (
-            lesioned_result.fact_scores != semantic_result.fact_scores
-        )
+        branch_lesion_observable = lesioned_result.fact_scores != semantic_result.fact_scores
         decision = planner.propose(
             observation=observation,
             world=transition_result.world,
@@ -399,7 +402,9 @@ def run_canary(
             output=KAdapterOutput(
                 parent_checkpoint_digest=parent_digest,
                 input_digest=input_item.input_digest,
-                action_digest=content_digest({"kind": str(intent.kind), "payload": intent.to_payload()}),
+                action_digest=content_digest(
+                    {"kind": str(intent.kind), "payload": intent.to_payload()}
+                ),
                 outcome_signature=projection.outcome_signature,
                 dependency_digest=projection.dependency_digest,
                 dependency_projection_digest=projection.projection_digest,
@@ -417,13 +422,20 @@ def run_canary(
         exchange_restored = KContinualAdapter.from_checkpoint(adapter.checkpoint())
         token = adapter.stage_candidate(
             candidate_checkpoint_digest=content_digest(
-                {"format": REPORT_FORMAT, "parent": parent_digest, "exchange": exchange.exchange_digest}
+                {
+                    "format": REPORT_FORMAT,
+                    "parent": parent_digest,
+                    "exchange": exchange.exchange_digest,
+                }
             ),
             candidate_owner_graph_digest=content_digest(
                 {"owner_graph": bundle.owner_graph_digest, "exchange": exchange.exchange_digest}
             ),
             candidate_source_manifest_digest=content_digest(
-                {"source_manifest": bundle.source_manifest_digest, "exchange": exchange.exchange_digest}
+                {
+                    "source_manifest": bundle.source_manifest_digest,
+                    "exchange": exchange.exchange_digest,
+                }
             ),
             candidate_parent_checkpoint_digest=parent_digest,
         )
@@ -432,9 +444,7 @@ def run_canary(
         rollback = KContinualAdapter.from_checkpoint(adapter.checkpoint())
         before = _scores(parent, course_seed)
         after = _scores(parent, course_seed)
-        retention = {
-            phase: abs(after[phase] - before[phase]) <= EPSILON for phase in ("S", "G")
-        }
+        retention = {phase: abs(after[phase] - before[phase]) <= EPSILON for phase in ("S", "G")}
         checks = {
             "fixed_large_preflight_passed": preflight["status"] == "passed",
             "k1_result_typed": True,
@@ -458,7 +468,8 @@ def run_canary(
                 rollback_record.status == "rolled_back"
                 and rollback_record.reason == "explicit_parent_restore"
             ),
-            "rollback_parent_namespace_restored": rollback.active_namespace == rollback.parent_namespace,
+            "rollback_parent_namespace_restored": rollback.active_namespace
+            == rollback.parent_namespace,
             "rollback_exchange_preserved": rollback.last_exchange == exchange,
             "old_S_retention": retention["S"],
             "old_G_retention": retention["G"],
@@ -504,9 +515,9 @@ def run_canary(
                 "candidate_promoted": False,
                 "can_start_r6_formal": False,
                 "can_promote": False,
-                "blocking_reason": None
-                if all(checks.values())
-                else "fixed-large controlled canary Gate failed",
+                "blocking_reason": (
+                    None if all(checks.values()) else "fixed-large controlled canary Gate failed"
+                ),
             }
         )
         report["adapter_checkpoint"] = {

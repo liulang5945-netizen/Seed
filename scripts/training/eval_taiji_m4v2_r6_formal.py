@@ -48,13 +48,9 @@ from taiji import content_digest  # noqa: E402
 REPORT_FORMAT = "taiji-m4v2-r6-formal-runner-v1"
 VERSION = 1
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m4v2_r6_formal_preflight_20260909.json"
-DEFAULT_EXECUTION_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m4v2_r6_formal_execution_20260909.json"
-)
+DEFAULT_EXECUTION_REPORT = PROJECT_ROOT / "reports" / "taiji_m4v2_r6_formal_execution_20260909.json"
 DEFAULT_CELL_REPORT = (
-    PROJECT_ROOT
-    / "reports"
-    / "taiji_m4v2_r6_formal_cell_model_17_course_0_20260909.json"
+    PROJECT_ROOT / "reports" / "taiji_m4v2_r6_formal_cell_model_17_course_0_20260909.json"
 )
 EXECUTION_MODEL_SEED = 17
 EXECUTION_COURSE_SEED = 0
@@ -103,8 +99,7 @@ def _load_manifest(path: Path) -> dict[str, Any]:
 def _requires_formal_admission(manifest: Mapping[str, Any]) -> bool:
     revision = manifest.get("control_revision")
     return (
-        isinstance(revision, Mapping)
-        and revision.get("format") == MATCHED_CONTROL_REVISION_FORMAT
+        isinstance(revision, Mapping) and revision.get("format") == MATCHED_CONTROL_REVISION_FORMAT
     )
 
 
@@ -405,9 +400,7 @@ def run_preflight(
         "input_preflight_report": _relative_path(input_report_path),
         "input_preflight_report_digest": content_digest(input_report),
         "formal_admission_report": (
-            None
-            if admission_report_path is None
-            else _relative_path(admission_report_path)
+            None if admission_report_path is None else _relative_path(admission_report_path)
         ),
         "formal_admission_report_digest": formal_admission_digest,
         "formal_admission_required": formal_admission_required,
@@ -506,9 +499,7 @@ def run_execution(
         "input_preflight_report": _relative_path(input_report_path),
         "formal_preflight_report": _relative_path(preflight_report_path),
         "formal_admission_report": (
-            None
-            if admission_report_path is None
-            else _relative_path(admission_report_path)
+            None if admission_report_path is None else _relative_path(admission_report_path)
         ),
         "parent_dir": _relative_path(parent_dir),
         "worker_dir": _relative_path(worker_dir),
@@ -540,15 +531,9 @@ def run_execution(
             encoding="utf-8",
         )
         return report
-    report["formal_admission_report_digest"] = preflight.get(
-        "formal_admission_report_digest", ""
-    )
-    report["formal_admission_required"] = preflight.get(
-        "formal_admission_required", False
-    )
-    report["formal_admission_passed"] = preflight.get(
-        "formal_admission_passed", False
-    )
+    report["formal_admission_report_digest"] = preflight.get("formal_admission_report_digest", "")
+    report["formal_admission_required"] = preflight.get("formal_admission_required", False)
+    report["formal_admission_passed"] = preflight.get("formal_admission_passed", False)
     report["can_start_r6_formal"] = preflight.get("can_start_r6_formal", False)
     if (model_seed, course_seed) not in EXECUTION_ORDER:
         report["failures"] = [
@@ -609,8 +594,7 @@ def run_execution(
     ]
     target_index = EXECUTION_ORDER.index((model_seed, course_seed))
     row_by_key = {
-        (int(row["cell"]["model_seed"]), int(row["cell"]["course_seed"])): row
-        for row in ledger
+        (int(row["cell"]["model_seed"]), int(row["cell"]["course_seed"])): row for row in ledger
     }
     missing_predecessors = [
         key
@@ -668,9 +652,11 @@ def run_execution(
     )
     report.update(
         {
-            "status": "single_cell_executed"
-            if cell_report.get("status") == "passed" and not ledger_failures
-            else "blocked_execution",
+            "status": (
+                "single_cell_executed"
+                if cell_report.get("status") == "passed" and not ledger_failures
+                else "blocked_execution"
+            ),
             "manifest_digest": manifest.get("manifest_digest"),
             "control_revision": manifest.get("control_revision"),
             "input_preflight_report_digest": content_digest(preflight),
@@ -722,8 +708,12 @@ def main(argv: list[str] | None = None) -> int:
     input_report_path = (
         args.input_report if args.input_report.is_absolute() else PROJECT_ROOT / args.input_report
     )
-    parent_dir = args.parent_dir if args.parent_dir.is_absolute() else PROJECT_ROOT / args.parent_dir
-    worker_dir = args.worker_dir if args.worker_dir.is_absolute() else PROJECT_ROOT / args.worker_dir
+    parent_dir = (
+        args.parent_dir if args.parent_dir.is_absolute() else PROJECT_ROOT / args.parent_dir
+    )
+    worker_dir = (
+        args.worker_dir if args.worker_dir.is_absolute() else PROJECT_ROOT / args.worker_dir
+    )
     fixed_large_dir = (
         args.fixed_large_dir
         if args.fixed_large_dir.is_absolute()
@@ -736,9 +726,7 @@ def main(argv: list[str] | None = None) -> int:
             else PROJECT_ROOT / args.execution_report
         )
         cell_report_path = (
-            args.cell_report
-            if args.cell_report.is_absolute()
-            else PROJECT_ROOT / args.cell_report
+            args.cell_report if args.cell_report.is_absolute() else PROJECT_ROOT / args.cell_report
         )
         preflight_report_path = (
             None

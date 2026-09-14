@@ -152,9 +152,9 @@ class InteractionGroupUtilityLearner:
                 utility = float(record.interaction)
                 observations = 1
             else:
-                utility = (1.0 - self.learning_rate) * previous.utility + self.learning_rate * float(
-                    record.interaction
-                )
+                utility = (
+                    1.0 - self.learning_rate
+                ) * previous.utility + self.learning_rate * float(record.interaction)
                 observations = previous.observations + 1
             self._groups[record.group_id] = InteractionGroupSelection(
                 group_id=record.group_id,
@@ -216,8 +216,7 @@ class InteractionGroupUtilityLearner:
         learner._groups = {
             item.group_id: item
             for item in (
-                InteractionGroupSelection.from_payload(entry)
-                for entry in payload.get("groups", ())
+                InteractionGroupSelection.from_payload(entry) for entry in payload.get("groups", ())
             )
         }
         if len(learner._groups) != len(payload.get("groups", ())):
@@ -226,7 +225,9 @@ class InteractionGroupUtilityLearner:
         if learner.total_observations < 0:
             raise ValueError("interaction group learner total_observations cannot be negative")
         learner._source_trace_digest = (
-            None if payload.get("source_trace_digest") is None else str(payload["source_trace_digest"])
+            None
+            if payload.get("source_trace_digest") is None
+            else str(payload["source_trace_digest"])
         )
         learner._checkpoint_revision = (
             None

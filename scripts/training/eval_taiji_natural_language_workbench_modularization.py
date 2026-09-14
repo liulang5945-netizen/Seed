@@ -29,9 +29,9 @@ class _SpyRuntime:
 def evaluate() -> dict[str, object]:
     runtime_source = inspect.getsource(SeedRuntime)
     orchestrator_source = inspect.getsource(NaturalLanguageWorkbenchOrchestrator)
-    module_source = (
-        PROJECT_ROOT / "api" / "natural_language_workbench.py"
-    ).read_text(encoding="utf-8")
+    module_source = (PROJECT_ROOT / "api" / "natural_language_workbench.py").read_text(
+        encoding="utf-8"
+    )
 
     spy = _SpyRuntime()
     orchestrator = NaturalLanguageWorkbenchOrchestrator(spy)
@@ -71,9 +71,7 @@ def evaluate() -> dict[str, object]:
         "previous_protocol_gates_remain_green": (
             json.loads(
                 (
-                    PROJECT_ROOT
-                    / "reports"
-                    / "taiji_w7_p2_12_natural_language_write_20260831.json"
+                    PROJECT_ROOT / "reports" / "taiji_w7_p2_12_natural_language_write_20260831.json"
                 ).read_text(encoding="utf-8")
             )["gate"]["passed"]
             and json.loads(
@@ -114,7 +112,9 @@ def main() -> None:
         / "taiji_w7_p5_1_natural_language_workbench_modularization_20260831.json"
     )
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_path.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(report, ensure_ascii=False, indent=2))
 
 

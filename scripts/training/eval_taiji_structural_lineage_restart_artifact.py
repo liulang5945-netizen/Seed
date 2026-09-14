@@ -75,16 +75,12 @@ def evaluate() -> dict[str, object]:
             json.dumps(first_artifact.to_payload(), sort_keys=True),
             encoding="utf-8",
         )
-        first_artifact_payload = json.loads(
-            first_artifact_path.read_text(encoding="utf-8")
-        )
+        first_artifact_payload = json.loads(first_artifact_path.read_text(encoding="utf-8"))
 
         tamper_branch = _load_native_checkpoint(before_path)
         before_tamper = _checkpoint_digest(tamper_branch.native_checkpoint())
         before_budget = tamper_branch.cognitive_snapshot().development.structural_budget
-        before_topology = tuple(
-            region.unit_ids for region in tamper_branch.neuron_regions
-        )
+        before_topology = tuple(region.unit_ids for region in tamper_branch.neuron_regions)
         tampered_payload = dict(first_artifact_payload)
         tampered_payload["measurement_digest"] = "0" * 64
         tampered = tamper_branch.continue_structural_candidate_batch_from_validation_artifacts(
@@ -93,18 +89,16 @@ def evaluate() -> dict[str, object]:
             replays_by_candidate={first_candidate: first_replay},
         )
         tamper_after = _checkpoint_digest(tamper_branch.native_checkpoint())
-        tamper_topology = tuple(
-            region.unit_ids for region in tamper_branch.neuron_regions
-        )
-        tamper_failed_closed = (
-            tampered["results"][first_candidate]["status"] == "failed_closed"
-        )
+        tamper_topology = tuple(region.unit_ids for region in tamper_branch.neuron_regions)
+        tamper_failed_closed = tampered["results"][first_candidate]["status"] == "failed_closed"
 
         artifact_restored = _load_native_checkpoint(before_path)
-        first_result = artifact_restored.continue_structural_candidate_batch_from_validation_artifacts(
-            batch.batch_id,
-            artifacts_by_candidate={first_candidate: first_artifact_payload},
-            replays_by_candidate={first_candidate: first_replay},
+        first_result = (
+            artifact_restored.continue_structural_candidate_batch_from_validation_artifacts(
+                batch.batch_id,
+                artifacts_by_candidate={first_candidate: first_artifact_payload},
+                replays_by_candidate={first_candidate: first_replay},
+            )
         )
         _save_native_checkpoint(artifact_restored, after_first_path)
         first_resumed = _load_native_checkpoint(after_first_path)
@@ -123,9 +117,7 @@ def evaluate() -> dict[str, object]:
             json.dumps(second_artifact.to_payload(), sort_keys=True),
             encoding="utf-8",
         )
-        second_artifact_payload = json.loads(
-            second_artifact_path.read_text(encoding="utf-8")
-        )
+        second_artifact_payload = json.loads(second_artifact_path.read_text(encoding="utf-8"))
         second_result = first_resumed.continue_structural_candidate_batch_from_validation_artifacts(
             batch.batch_id,
             artifacts_by_candidate={second_candidate: second_artifact_payload},
@@ -154,8 +146,7 @@ def evaluate() -> dict[str, object]:
             ),
             "tampered_artifact_fails_closed": tamper_failed_closed,
             "tamper_preserves_budget_and_topology": (
-                tamper_branch.cognitive_snapshot().development.structural_budget
-                == before_budget
+                tamper_branch.cognitive_snapshot().development.structural_budget == before_budget
                 and tamper_topology == before_topology
                 and before_tamper != tamper_after
             ),

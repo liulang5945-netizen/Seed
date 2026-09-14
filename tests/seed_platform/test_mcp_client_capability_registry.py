@@ -118,7 +118,9 @@ def test_registry_binding_drift_is_fail_closed_without_mutating_record() -> None
     pending = registry.propose(candidate, _policy())
     before = registry.snapshot_id
 
-    registry.bind_mcp_snapshot("mcp-snapshot:new", expected_current_snapshot_id=mcp_registry.snapshot_id)
+    registry.bind_mcp_snapshot(
+        "mcp-snapshot:new", expected_current_snapshot_id=mcp_registry.snapshot_id
+    )
     with pytest.raises(ValueError, match="stale"):
         registry.record_shadow(candidate.candidate_digest, _observation(candidate))
 

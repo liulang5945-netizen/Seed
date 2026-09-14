@@ -93,7 +93,11 @@ def _create_isolated_temp_root() -> tuple[Path, Path, bool]:
     return root, parent, parent_created
 
 
-def _episode(anchor: WorkbenchObservation, observations: dict[str, WorkbenchObservation], paths: tuple[str, ...]) -> tuple[WorkbenchObservation, ...]:
+def _episode(
+    anchor: WorkbenchObservation,
+    observations: dict[str, WorkbenchObservation],
+    paths: tuple[str, ...],
+) -> tuple[WorkbenchObservation, ...]:
     if len(paths) != 3:
         raise ValueError("K2 episodes must contain exactly three steps")
     return (anchor, *(observations[path] for path in paths))
@@ -143,12 +147,7 @@ def _typed_transition_input_masks(
     for row, key in enumerate(fact_keys):
         feature_index = _typed_fact_feature_masks((key,), schema)[key][0]
         event_index = fact_count + feature_index
-        interaction_index = (
-            fact_count
-            + context_dim
-            + row * context_dim
-            + feature_index
-        )
+        interaction_index = fact_count + context_dim + row * context_dim + feature_index
         masks[key] = (row, event_index, interaction_index)
     return masks
 
@@ -272,11 +271,7 @@ def _run_episode(
 ) -> dict[str, Any]:
     def _runtime_freshness() -> dict[str, Any]:
         world = runtime.model.architecture.cognitive_snapshot().world
-        workbench_events = [
-            event
-            for event in world.events
-            if event.kind == "workbench.evidence"
-        ]
+        workbench_events = [event for event in world.events if event.kind == "workbench.evidence"]
         latest = workbench_events[-1] if workbench_events else None
         return {
             "world_tick": int(world.tick),
@@ -375,9 +370,7 @@ def _run_episode(
                 row["outcome_admission_error"] = str(exc)[:160]
                 row["freshness_on_admission_error"] = _runtime_freshness()
         rows.append(row)
-        if not row["real_success"] or (
-            row["admission_required"] and not row["outcome_admitted"]
-        ):
+        if not row["real_success"] or (row["admission_required"] and not row["outcome_admitted"]):
             break
         if transition.world is None:
             break
@@ -386,12 +379,8 @@ def _run_episode(
     return {
         "rows": rows,
         "step_count": len(rows),
-            "episode_success": bool(
-            len(rows) == 3
-            and all(
-                row["accepted"] and row["real_success"]
-                for row in rows
-            )
+        "episode_success": bool(
+            len(rows) == 3 and all(row["accepted"] and row["real_success"] for row in rows)
         ),
     }
 
@@ -434,8 +423,7 @@ def _run_arm(
     return {
         "episodes": episodes,
         "episode_success_rate": (
-            sum(1 for episode in episodes if episode["episode_success"])
-            / len(episodes)
+            sum(1 for episode in episodes if episode["episode_success"]) / len(episodes)
         ),
         "all_successful_outcomes_admitted": all(
             row["outcome_admitted"]
@@ -537,9 +525,7 @@ def run_cell(*, task_seed: int, learner_seed: int) -> dict[str, Any]:
             )
             transition_lesion.zero_transition_head()
 
-            holdout_paths = sorted(
-                {path for paths in _holdout_episode_paths() for path in paths}
-            )
+            holdout_paths = sorted({path for paths in _holdout_episode_paths() for path in paths})
             holdout_observations = {
                 observation.path: observation
                 for observation in _observe_all(
@@ -565,9 +551,7 @@ def run_cell(*, task_seed: int, learner_seed: int) -> dict[str, Any]:
                 for paths in _holdout_episode_paths()
             )
             holdout_anchor = holdout_episodes[0][0]
-            planner = NativeReadOnlyIntentPlanner(
-                ReadOnlyIntentPolicy(routes=READ_ONLY_ROUTES)
-            )
+            planner = NativeReadOnlyIntentPlanner(ReadOnlyIntentPolicy(routes=READ_ONLY_ROUTES))
 
             arms = {
                 "A-full-chain": _run_arm(
@@ -745,7 +729,9 @@ def main() -> int:
         "cell": cell,
     }
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
     print(json.dumps({"status": payload["status"], "report": str(args.report)}, ensure_ascii=False))
     return 0 if payload["status"] == "passed" else 1
 

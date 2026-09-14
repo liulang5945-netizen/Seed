@@ -151,14 +151,17 @@ def test_pressure_bridge_is_candidate_only_deduplicated_and_checkpointable() -> 
     assert model.neuron_regions[0].unit_ids == ("u0", "u1")
     assert model.cognitive_snapshot().development.structural_budget == 1
     assert candidate.parent_checkpoint_id is not None
-    assert model.propose_structural_candidate_from_pressure(
-        projection,
-        controller_region_id=region.region_id,
-        target_kind="neuron",
-        operation="add",
-        substrate_ids=(region.region_id,),
-        specification={"region_id": region.region_id, "unit_id": "u2"},
-    ) is None
+    assert (
+        model.propose_structural_candidate_from_pressure(
+            projection,
+            controller_region_id=region.region_id,
+            target_kind="neuron",
+            operation="add",
+            substrate_ids=(region.region_id,),
+            specification={"region_id": region.region_id, "unit_id": "u2"},
+        )
+        is None
+    )
 
     restored = TSKV8Adapter.from_native_checkpoint(model.native_checkpoint())
     assert restored.structural_pressure_projection_digests == (projection.projection_digest,)

@@ -64,9 +64,7 @@ def test_fixed_capacity_preflight_is_multiseed_and_fail_closed() -> None:
     assert len(report.seed_results) == 3
     assert all(item.admitted for item in report.seed_results)
     assert report.mean_native_holdout_error < report.mean_frozen_holdout_error
-    assert report.mean_replay_only_holdout_error == pytest.approx(
-        report.mean_frozen_holdout_error
-    )
+    assert report.mean_replay_only_holdout_error == pytest.approx(report.mean_frozen_holdout_error)
     assert report.maximum_retention_regression <= 0.05
     assert report.holdout_error_std <= 0.2
     assert report.capacity_pressure.pressure == pytest.approx(1.0)

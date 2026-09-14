@@ -98,7 +98,9 @@ def run_gate() -> dict[str, object]:
     dependency_manifest = _manifest(service_dependencies=(("workbench", "1.0"),))
     _mount(dependency_host, dependency_manifest, dependency_health={"workbench": True})
     affected = dependency_host.report_dependency("workbench", False)
-    dependency_quarantine = affected == ("seed.e5.preview",) and not dependency_host.active_manifests
+    dependency_quarantine = (
+        affected == ("seed.e5.preview",) and not dependency_host.active_manifests
+    )
     dependency_host.report_dependency("workbench", True)
     dependency_recovery_requires_remount = False
     try:
@@ -113,7 +115,8 @@ def run_gate() -> dict[str, object]:
         dependency_recovery_requires_remount = True
     _mount(dependency_host, dependency_manifest)
     dependency_recovery_requires_remount = (
-        dependency_recovery_requires_remount and dependency_host.active_manifests == (dependency_manifest,)
+        dependency_recovery_requires_remount
+        and dependency_host.active_manifests == (dependency_manifest,)
     )
 
     inflight_host = ClientExtensionHost()
@@ -156,9 +159,8 @@ def run_gate() -> dict[str, object]:
     try:
         failure_host.retire("seed.e5.preview")
     except ExtensionDisposalError:
-        disposal_failure_audited = (
-            not failure_host.active_manifests
-            and any(item.state == "failed" for item in failure_host.lifecycle_records)
+        disposal_failure_audited = not failure_host.active_manifests and any(
+            item.state == "failed" for item in failure_host.lifecycle_records
         )
 
     rollback_host = ClientExtensionHost(capability_snapshot_id="capability:e5")
@@ -243,7 +245,9 @@ def main() -> int:
     args = parser.parse_args()
     result = run_gate()
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0 if result["status"] == "passed" else 1
 

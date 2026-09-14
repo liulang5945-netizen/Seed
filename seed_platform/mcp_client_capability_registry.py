@@ -221,7 +221,9 @@ class McpClientCapabilityShadowRegistry:
         self._binding_events: list[Mapping[str, Any]] = []
 
     @classmethod
-    def from_mcp_registry(cls, registry: Any, *, parent_checkpoint_id: str) -> McpClientCapabilityShadowRegistry:
+    def from_mcp_registry(
+        cls, registry: Any, *, parent_checkpoint_id: str
+    ) -> McpClientCapabilityShadowRegistry:
         from .mcp_registry import McpToolRegistry
 
         if not isinstance(registry, McpToolRegistry):
@@ -245,9 +247,7 @@ class McpClientCapabilityShadowRegistry:
 
     @property
     def activation_proposals(self) -> tuple[McpClientCapabilityActivationProposal, ...]:
-        return tuple(
-            self._activation_proposals[key] for key in sorted(self._activation_proposals)
-        )
+        return tuple(self._activation_proposals[key] for key in sorted(self._activation_proposals))
 
     @property
     def snapshot_id(self) -> str:
@@ -364,7 +364,10 @@ class McpClientCapabilityShadowRegistry:
         if record.state in {"rejected", "rolled_back"}:
             raise PermissionError("MCP client capability candidate is terminal")
         if record.state == "shadow_validated":
-            if record.observation and record.observation.observation_digest == observation.observation_digest:
+            if (
+                record.observation
+                and record.observation.observation_digest == observation.observation_digest
+            ):
                 return record
             raise PermissionError("MCP client capability candidate is already shadow validated")
 
@@ -438,7 +441,9 @@ class McpClientCapabilityShadowRegistry:
         next_revision = self.revision + 1
         self._activation_proposals[proposal.proposal_id] = proposal
         self._binding_events.append(
-            self._proposal_event(proposal, event_kind="activation_proposal_created", revision=next_revision)
+            self._proposal_event(
+                proposal, event_kind="activation_proposal_created", revision=next_revision
+            )
         )
         self.revision = next_revision
         return proposal
@@ -560,7 +565,10 @@ class McpClientCapabilityShadowRegistry:
         return registry
 
     def _require_current_snapshot(self, expected_snapshot_id: str | None) -> None:
-        if expected_snapshot_id not in (None, "") and str(expected_snapshot_id) != self.current_mcp_registry_snapshot_id:
+        if (
+            expected_snapshot_id not in (None, "")
+            and str(expected_snapshot_id) != self.current_mcp_registry_snapshot_id
+        ):
             raise ValueError("MCP client shadow registry snapshot is stale")
 
     @staticmethod

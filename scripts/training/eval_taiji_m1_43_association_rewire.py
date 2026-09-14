@@ -110,7 +110,9 @@ def _train(
     rewire: bool,
 ) -> dict[str, Any]:
     events = [_write(model, episode, rewire=rewire) for episode in episodes]
-    captures_before = [float(event["capture_before"]) for event in events if event["capture_before"]]
+    captures_before = [
+        float(event["capture_before"]) for event in events if event["capture_before"]
+    ]
     captures_after = [float(event["capture_after"]) for event in events if event["capture_after"]]
     return {
         "event_count": len(events),
@@ -236,8 +238,7 @@ def run_diagnosis() -> dict[str, Any]:
         "conclusion": {
             "candidate_passed": candidate["condition_gate_passed"],
             "candidate_is_sufficient_explanation": (
-                candidate["condition_gate_passed"]
-                and not control["condition_gate_passed"]
+                candidate["condition_gate_passed"] and not control["condition_gate_passed"]
             ),
             "next_boundary": (
                 "association topology candidate passed; hold for M1-44 structural review"
@@ -255,7 +256,9 @@ def main() -> int:
     result = run_diagnosis()
     result["report_path"] = str(args.report)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

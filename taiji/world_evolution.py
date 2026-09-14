@@ -189,8 +189,7 @@ class NativeWorldPredictionTrainer:
         native_holdout = self._error(holdout, trial.learner)
         native_retention = self._error(retention, trial.learner)
         admitted = bool(
-            native_holdout < frozen_holdout
-            and native_retention <= frozen_retention + 0.05
+            native_holdout < frozen_holdout and native_retention <= frozen_retention + 0.05
         )
         dataset_digest = content_digest(
             {
@@ -204,7 +203,9 @@ class NativeWorldPredictionTrainer:
             self.learner = trial.learner
             self.schema = trial.schema
             self.consumed_transition_ids = tuple(
-                sorted((*self.consumed_transition_ids, *(item.action.action_id for item in pending)))
+                sorted(
+                    (*self.consumed_transition_ids, *(item.action.action_id for item in pending))
+                )
             )
             self.last_dataset_digest = dataset_digest
             self.revision += 1
@@ -226,9 +227,9 @@ class NativeWorldPredictionTrainer:
             native_training_loss=float(losses[-1]),
             admitted=admitted,
             rolled_back=not admitted,
-            consumed_transition_ids=tuple(item.action.action_id for item in pending)
-            if admitted
-            else (),
+            consumed_transition_ids=(
+                tuple(item.action.action_id for item in pending) if admitted else ()
+            ),
         )
 
     def checkpoint(self) -> dict[str, Any]:
@@ -295,8 +296,7 @@ class NativeWorldPredictionTrainer:
         trainer.learner.schema_evolution_count = int(counters.get("schema_evolution_count", 0))
         trainer.learner._schema_snapshots = {
             int(version): {
-                str(name): tensor.detach().cpu().clone()
-                for name, tensor in dict(snapshot).items()
+                str(name): tensor.detach().cpu().clone() for name, tensor in dict(snapshot).items()
             }
             for version, snapshot in dict(payload.get("schema_snapshots") or {}).items()
         }

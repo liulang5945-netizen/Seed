@@ -102,9 +102,7 @@ def inspect_checkpoint(path: Path) -> dict[str, Any]:
         "replay_dataset_digest": payload.get("replay_dataset_digest"),
         "replay_memory_digest": payload.get("replay_memory_digest"),
     }
-    entry["data_digests"] = {
-        key: value for key, value in data_digests.items() if value is not None
-    }
+    entry["data_digests"] = {key: value for key, value in data_digests.items() if value is not None}
 
     phases = payload.get("training_phases")
     phase_list = phases if isinstance(phases, list) else []
@@ -153,7 +151,8 @@ def inspect_checkpoint(path: Path) -> dict[str, Any]:
     # least once, or when its sequence owners were frozen on a private
     # substrate.  Phase labels alone must not exclude a memory/identity child.
     entry["sequence_derived_admission"] = bool(
-        phase_list and ("sequence" in phase_list or payload.get("sequence_fabric_learning") is False)
+        phase_list
+        and ("sequence" in phase_list or payload.get("sequence_fabric_learning") is False)
     )
     return entry
 

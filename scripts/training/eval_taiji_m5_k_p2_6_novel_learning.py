@@ -226,9 +226,7 @@ def _candidate_examples(
     for record in records:
         candidate = record["candidate"]
         semantics.append(
-            StructuredSemanticExample.from_payload(
-                _restore_tensors(candidate["semantic_example"])
-            )
+            StructuredSemanticExample.from_payload(_restore_tensors(candidate["semantic_example"]))
         )
         transitions.append(
             StructuredSemanticTransitionExample.from_payload(
@@ -299,9 +297,7 @@ def _audit_records(
         prior_project = project_ids.setdefault(project_id, split)
         if prior_project != split:
             errors.append({"record_id": record_id, "reason": "project_crosses_split"})
-    train_paths = {
-        str(record["candidate"]["observation"]["path"]) for record in train_records
-    }
+    train_paths = {str(record["candidate"]["observation"]["path"]) for record in train_records}
     validation_paths = {
         str(record["candidate"]["observation"]["path"]) for record in validation_records
     }
@@ -617,7 +613,8 @@ def run_pilot(
                 },
                 "new_training_steps": {
                     "k1": int(arm["semantic"].training_steps) - int(parent_semantic.training_steps),
-                    "k2": int(arm["transition"].training_steps) - int(parent_transition.training_steps),
+                    "k2": int(arm["transition"].training_steps)
+                    - int(parent_transition.training_steps),
                 },
                 "scores": scores,
             }
@@ -649,9 +646,7 @@ def run_pilot(
             "novel_k2_goal_non_decreasing": _non_decreasing(
                 novel_interleaved, novel_parent, "k2_goal_hit_count"
             ),
-            "novel_k2_content_target_reached": int(
-                novel_interleaved["k2_content_hit_count"]
-            )
+            "novel_k2_content_target_reached": int(novel_interleaved["k2_content_hit_count"])
             == len(validation_records),
             "novel_workbench_success_non_decreasing": _non_decreasing(
                 novel_interleaved, novel_parent, "workbench_success_count"

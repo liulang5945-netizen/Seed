@@ -59,10 +59,9 @@ def evaluate() -> dict[str, object]:
     checkpointed_policy_checkpoint = root.parent / f"s52-policy-{suffix}.pt"
     try:
         strict_runtime, strict_batch_id, strict_evidence = _prepare_runtime("s52-strict")
-        strict_candidate_id = (
-            strict_runtime.model.architecture.structural_candidate_batches[-1]
-            .selected_candidate_ids[0]
-        )
+        strict_candidate_id = strict_runtime.model.architecture.structural_candidate_batches[
+            -1
+        ].selected_candidate_ids[0]
         strict_artifact, strict_replay, strict_measurements = _build_artifact(
             strict_runtime.model.architecture,
             strict_candidate_id,
@@ -75,9 +74,7 @@ def evaluate() -> dict[str, object]:
         strict_result = strict_restored.continue_structural_candidate_batch_from_artifact_store(
             strict_batch_id,
             artifact_store=strict_store,
-            artifact_digests_by_candidate={
-                strict_candidate_id: strict_artifact.artifact_digest
-            },
+            artifact_digests_by_candidate={strict_candidate_id: strict_artifact.artifact_digest},
             replays_by_candidate={strict_candidate_id: strict_replay},
         )
         strict_audit = strict_result["artifact_consumption"]
@@ -88,10 +85,9 @@ def evaluate() -> dict[str, object]:
         )
 
         legacy_runtime, legacy_batch_id, legacy_evidence = _prepare_runtime("s52-legacy")
-        legacy_candidate_id = (
-            legacy_runtime.model.architecture.structural_candidate_batches[-1]
-            .selected_candidate_ids[0]
-        )
+        legacy_candidate_id = legacy_runtime.model.architecture.structural_candidate_batches[
+            -1
+        ].selected_candidate_ids[0]
         legacy_artifact, legacy_replay, _ = _build_artifact(
             legacy_runtime.model.architecture,
             legacy_candidate_id,
@@ -128,9 +124,7 @@ def evaluate() -> dict[str, object]:
         legacy_result = legacy_restored.continue_structural_candidate_batch_from_artifact_store(
             legacy_batch_id,
             artifact_store=legacy_store,
-            artifact_digests_by_candidate={
-                legacy_candidate_id: legacy_artifact.artifact_digest
-            },
+            artifact_digests_by_candidate={legacy_candidate_id: legacy_artifact.artifact_digest},
             replays_by_candidate={legacy_candidate_id: legacy_replay},
             artifact_consumption_policy=explicit_legacy_policy,
         )
@@ -138,16 +132,16 @@ def evaluate() -> dict[str, object]:
         explicit_legacy = (
             legacy_result["results"][legacy_candidate_id]["status"] == "admitted"
             and legacy_audit["policy"] == explicit_legacy_policy.to_payload()
-            and legacy_audit["artifact_statuses"][legacy_candidate_id]
-            == "legacy_unverified"
+            and legacy_audit["artifact_statuses"][legacy_candidate_id] == "legacy_unverified"
         )
 
         checkpointed_runtime, checkpointed_batch_id, checkpointed_evidence = _prepare_runtime(
             "s52-checkpointed-policy"
         )
         checkpointed_candidate_id = (
-            checkpointed_runtime.model.architecture.structural_candidate_batches[-1]
-            .selected_candidate_ids[0]
+            checkpointed_runtime.model.architecture.structural_candidate_batches[
+                -1
+            ].selected_candidate_ids[0]
         )
         checkpointed_artifact, checkpointed_replay, _ = _build_artifact(
             checkpointed_runtime.model.architecture,
@@ -156,18 +150,24 @@ def evaluate() -> dict[str, object]:
         )
         checkpointed_store = StructuralValidationArtifactStore(root / "checkpointed")
         checkpointed_store.put(checkpointed_artifact)
-        checkpointed_policy = checkpointed_runtime.model.architecture.set_artifact_consumption_policy(
-            explicit_legacy_policy
+        checkpointed_policy = (
+            checkpointed_runtime.model.architecture.set_artifact_consumption_policy(
+                explicit_legacy_policy
+            )
         )
         checkpointed_runtime.save(checkpointed_policy_checkpoint)
-        checkpointed_restored = SeedRuntime.load(checkpointed_policy_checkpoint, workspace_root=PROJECT_ROOT)
-        checkpointed_result = checkpointed_restored.continue_structural_candidate_batch_from_artifact_store(
-            checkpointed_batch_id,
-            artifact_store=checkpointed_store,
-            artifact_digests_by_candidate={
-                checkpointed_candidate_id: checkpointed_artifact.artifact_digest
-            },
-            replays_by_candidate={checkpointed_candidate_id: checkpointed_replay},
+        checkpointed_restored = SeedRuntime.load(
+            checkpointed_policy_checkpoint, workspace_root=PROJECT_ROOT
+        )
+        checkpointed_result = (
+            checkpointed_restored.continue_structural_candidate_batch_from_artifact_store(
+                checkpointed_batch_id,
+                artifact_store=checkpointed_store,
+                artifact_digests_by_candidate={
+                    checkpointed_candidate_id: checkpointed_artifact.artifact_digest
+                },
+                replays_by_candidate={checkpointed_candidate_id: checkpointed_replay},
+            )
         )
         checkpointed_audit = checkpointed_result["artifact_consumption"]
         checkpointed_policy_roundtrip = (
@@ -177,10 +177,9 @@ def evaluate() -> dict[str, object]:
         )
 
         tampered_runtime, tampered_batch_id, tampered_evidence = _prepare_runtime("s52-tampered")
-        tampered_candidate_id = (
-            tampered_runtime.model.architecture.structural_candidate_batches[-1]
-            .selected_candidate_ids[0]
-        )
+        tampered_candidate_id = tampered_runtime.model.architecture.structural_candidate_batches[
+            -1
+        ].selected_candidate_ids[0]
         tampered_artifact, tampered_replay, tampered_measurements = _build_artifact(
             tampered_runtime.model.architecture,
             tampered_candidate_id,
@@ -229,10 +228,9 @@ def evaluate() -> dict[str, object]:
         measurement_path.write_bytes(original_measurement_bytes)
 
         multi_runtime, multi_batch_id, multi_evidence = _prepare_runtime("s52-multi")
-        first_id, second_id = (
-            multi_runtime.model.architecture.structural_candidate_batches[-1]
-            .selected_candidate_ids
-        )
+        first_id, second_id = multi_runtime.model.architecture.structural_candidate_batches[
+            -1
+        ].selected_candidate_ids
         first_artifact, first_replay, first_measurements = _build_artifact(
             multi_runtime.model.architecture,
             first_id,
@@ -270,7 +268,8 @@ def evaluate() -> dict[str, object]:
         multi_batch = multi_runtime.model.architecture.structural_candidate_batches[-1]
         multi_is_atomic = (
             multi_rejected
-            and multi_audit["artifact_statuses"] == {
+            and multi_audit["artifact_statuses"]
+            == {
                 first_id: "verified",
                 second_id: "legacy_unverified",
             }

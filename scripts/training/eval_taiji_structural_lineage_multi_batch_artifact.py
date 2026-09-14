@@ -109,7 +109,9 @@ def evaluate() -> dict[str, object]:
             for item in runtime.model.architecture.structural_candidate_batches
             if item.batch_id == active_batch_id
         )
-        budget_before = runtime.model.architecture.cognitive_snapshot().development.structural_budget
+        budget_before = (
+            runtime.model.architecture.cognitive_snapshot().development.structural_budget
+        )
         checkpoint_root = PROJECT_ROOT / "output" / "manual-r5-canary"
         checkpoint_root.mkdir(parents=True, exist_ok=True)
         suffix = os.getpid()
@@ -169,8 +171,7 @@ def evaluate() -> dict[str, object]:
                 "active_batch_is_protected": (
                     active_batch_id in retention.protected_batch_ids
                     and active_after == active_before
-                    and restored.cognitive_snapshot().development.structural_budget
-                    == budget_before
+                    and restored.cognitive_snapshot().development.structural_budget == budget_before
                 ),
                 "terminal_artifacts_compact_as_one_subgraph": (
                     maintenance == ()
@@ -187,15 +188,13 @@ def evaluate() -> dict[str, object]:
                     replay_failed_closed and before_replay == after_replay
                 ),
                 "restart_preserves_isolation": (
-                    active_batch_id in {item.batch_id for item in final.structural_candidate_batches}
+                    active_batch_id
+                    in {item.batch_id for item in final.structural_candidate_batches}
                     and terminal_batch.batch_id
                     not in {item.batch_id for item in final.structural_candidate_batches}
                     and not (
                         terminal_artifact_digests
-                        & {
-                            item.artifact_digest
-                            for item in final.structural_validation_artifacts
-                        }
+                        & {item.artifact_digest for item in final.structural_validation_artifacts}
                     )
                 ),
             }

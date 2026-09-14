@@ -49,9 +49,7 @@ DEFAULT_OUTPUT = PROJECT_ROOT / "reports" / "taiji_b0_m1_counterfactual_20260913
 FROZEN_GATE = TRAINING_DIR / "eval_taiji_p5_2b_group_causal_corpora_gate.py"
 HANDOFF_PROBE = TRAINING_DIR / "probe_taiji_b0_handoff_feasibility.py"
 FROZEN_ROUTE_C_REPORT = (
-    PROJECT_ROOT
-    / "reports"
-    / "taiji_p5_2c_double_prime_unseen_combination_transfer_20260913.json"
+    PROJECT_ROOT / "reports" / "taiji_p5_2c_double_prime_unseen_combination_transfer_20260913.json"
 )
 
 COUNTERFACTUAL_FORMAT = "taiji-b0-m1-counterfactual-v1"
@@ -115,8 +113,8 @@ M3_SELECTION = (
     "            (\n"
     "                cand\n"
     "                for cand in bindable\n"
-    "                if done_by_member.get(cand[\"member\"], 0)\n"
-    "                < REPERTOIRE.get(cand[\"member\"], 0)\n"
+    '                if done_by_member.get(cand["member"], 0)\n'
+    '                < REPERTOIRE.get(cand["member"], 0)\n'
     "            ),\n"
     "            None,\n"
     "        )\n"
@@ -282,9 +280,7 @@ def build_counterfactual(
         "counterfactual_source_lines": len(transformed.splitlines()),
         "added_lines": len(transformed.splitlines()) - len(original.splitlines()),
         "frozen_attribute_unchanged": frozen._member_episode is not episode_fn,
-        "rule_text": " + ".join(
-            item["anchor"].strip() for item in replacements
-        ),
+        "rule_text": " + ".join(item["anchor"].strip() for item in replacements),
     }
     return episode_fn, delta
 
@@ -368,9 +364,7 @@ def regression_check(
                 "cell": name,
                 "counterfactual_success_rate": values["success_rate"],
                 "frozen_success_rate": reference,
-                "delta": (
-                    None if reference is None else values["success_rate"] - reference
-                ),
+                "delta": (None if reference is None else values["success_rate"] - reference),
             }
         )
 
@@ -438,9 +432,7 @@ def effect_check(
             "+".join(pair): dictionary.policy_mean_gain_vs_all_singleton_oracle(table, pair)
             for pair in table.pair_cells()
         }
-        best_pair = (
-            max(oracle_gain.items(), key=lambda item: item[1]) if oracle_gain else ("", 0.0)
-        )
+        best_pair = max(oracle_gain.items(), key=lambda item: item[1]) if oracle_gain else ("", 0.0)
         by_order[order] = {
             "contexts": context_ids,
             "episodes": len(episodes),
@@ -453,9 +445,7 @@ def effect_check(
                 if len(key) == 2
             },
             "trajectories": trajectories,
-            "interleaved_contexts": sum(
-                item["contexts_interleaved"] for item in trajectories
-            ),
+            "interleaved_contexts": sum(item["contexts_interleaved"] for item in trajectories),
             "gain_vs_all_singleton_oracle": oracle_gain,
             "best_pair": best_pair[0],
             "best_pair_gain": best_pair[1],
@@ -472,9 +462,7 @@ def effect_check(
         "surface": "create_and_override",
         "by_order": by_order,
         "positive_same_reference_gain": any_positive,
-        "best_order": next(
-            name for name, item in by_order.items() if item is best
-        ),
+        "best_order": next(name for name, item in by_order.items() if item is best),
         "best_pair": best["best_pair"],
         "best_pair_gain": best["best_pair_gain"],
         "reading": (
@@ -537,9 +525,7 @@ def satisfiability_check(frozen: Any, tasks: Sequence[Any]) -> dict[str, Any]:
     }
 
 
-def _run_scripted(
-    frozen: Any, task: Any, steps: Sequence[Any]
-) -> dict[str, Any]:
+def _run_scripted(frozen: Any, task: Any, steps: Sequence[Any]) -> dict[str, Any]:
     """Execute one scripted step sequence against a clean world and report the goal."""
 
     root = Path(tempfile.mkdtemp(prefix="b0m1-sat-"))
@@ -567,9 +553,7 @@ def _run_scripted(
             last = environment.last_result
             if "transaction" in last and last["transaction"].get("undo_token"):
                 state["last_undo_token"] = str(last["transaction"]["undo_token"])
-            executed.append(
-                {"kind": step.kind, "bound": True, "success": bool(outcome.success)}
-            )
+            executed.append({"kind": step.kind, "bound": True, "success": bool(outcome.success)})
         return {
             "steps": executed,
             "goal_reached": bool(frozen.p52a._goal_reached(environment, task)),

@@ -37,9 +37,7 @@ def _model_contract(path: Path) -> dict[str, bool]:
 
 def _b1_record(seed: int) -> dict[str, Any]:
     training_path = PROJECT_ROOT / f"reports/taiji_m1_32_foundation_pilot_seed{seed}.json"
-    eval_path = PROJECT_ROOT / (
-        f"reports/taiji_m1_32_foundation_pilot_seed{seed}_eval_only.json"
-    )
+    eval_path = PROJECT_ROOT / (f"reports/taiji_m1_32_foundation_pilot_seed{seed}_eval_only.json")
     training = _load(training_path)
     evaluated = _load(eval_path)
     checkpoint_paths = training["checkpoint_paths"]
@@ -47,7 +45,9 @@ def _b1_record(seed: int) -> dict[str, Any]:
         name: (PROJECT_ROOT / str(path).replace("\\", "/")).is_file()
         for name, path in checkpoint_paths.items()
     }
-    contract = _model_contract(PROJECT_ROOT / str(checkpoint_paths["best_holdout"]).replace("\\", "/"))
+    contract = _model_contract(
+        PROJECT_ROOT / str(checkpoint_paths["best_holdout"]).replace("\\", "/")
+    )
     return {
         "seed": seed,
         "dataset_digest": training["dataset_digest"],
@@ -78,7 +78,9 @@ def _b2_record(seed: int) -> dict[str, Any]:
         name: (PROJECT_ROOT / str(path).replace("\\", "/")).is_file()
         for name, path in checkpoint_paths.items()
     }
-    contract = _model_contract(PROJECT_ROOT / str(checkpoint_paths["best_holdout"]).replace("\\", "/"))
+    contract = _model_contract(
+        PROJECT_ROOT / str(checkpoint_paths["best_holdout"]).replace("\\", "/")
+    )
     return {
         "seed": seed,
         "corpus_digest": training["corpus_digest"],
@@ -104,7 +106,9 @@ def _b2_record(seed: int) -> dict[str, Any]:
 def _b5_summary() -> dict[str, Any]:
     report = _load(PROJECT_ROOT / "reports/taiji_m1_32_b5_pilot_20260902.json")
     evidence = report["measurement"]["evidence"]
-    seed_metrics = json.loads(next(item for item in evidence if item.startswith("seed_metrics=")).split("=", 1)[1])
+    seed_metrics = json.loads(
+        next(item for item in evidence if item.startswith("seed_metrics=")).split("=", 1)[1]
+    )
     return {
         "corpus_digest": report["corpus_digest"],
         "status": report["measurement"]["status"],
@@ -151,7 +155,11 @@ def run_reentry() -> dict[str, Any]:
     return {
         "format": "taiji-native-m1-32-reentry-v1",
         "version": 1,
-        "status": "blocked" if not (checkpoint_passed and b1_passed and b2_passed and b5_passed) else "passed",
+        "status": (
+            "blocked"
+            if not (checkpoint_passed and b1_passed and b2_passed and b5_passed)
+            else "passed"
+        ),
         "identity_organ_enabled": False,
         "preflight": preflight,
         "b1": {"records": b1, "passed": b1_passed},
@@ -179,7 +187,9 @@ def main() -> int:
     result = run_reentry()
     result["report_path"] = str(args.report)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0 if result["status"] == "passed" else 1
 

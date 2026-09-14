@@ -52,9 +52,7 @@ VERSION = 1
 MEASUREMENT_SEMANTICS_FORMAT = "taiji-m4v2-r6-task-success-v2"
 MODEL_SEED = 17
 COURSE_SEED = 0
-DEFAULT_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m4v2_r6_formal_single_cell_20260909.json"
-)
+DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m4v2_r6_formal_single_cell_20260909.json"
 ARM_IDS = (
     "frozen-parent",
     "matched-fixed-capacity",
@@ -141,10 +139,7 @@ def _summarize_k_measurement(
         "training_update_steps": update_steps,
         "learning_update_applied": learning_update_applied,
         "learning_eligible": bool(
-            task_success
-            and learning_update_applied
-            and feedback_admitted
-            and not lesion_k3
+            task_success and learning_update_applied and feedback_admitted and not lesion_k3
         ),
     }
 
@@ -185,8 +180,7 @@ def _resource_gate_valid(resource: Mapping[str, Any]) -> bool:
     if (
         resource.get("device") != "cpu"
         or not resource.get("resource_manifest_digest")
-        or resource.get("peak_working_set_method")
-        != "process_rss_before_after_lower_bound"
+        or resource.get("peak_working_set_method") != "process_rss_before_after_lower_bound"
         or resource.get("measurement_complete") is not True
     ):
         return False
@@ -215,9 +209,7 @@ def _control_arm(
     elapsed = time.perf_counter() - started
     after_rss = _rss_bytes()
     peak_rss = None if before_rss is None or after_rss is None else max(before_rss, after_rss)
-    retention = {
-        phase: abs(after[phase] - before[phase]) <= 0.01 for phase in ("S", "G")
-    }
+    retention = {phase: abs(after[phase] - before[phase]) <= 0.01 for phase in ("S", "G")}
     measurement = _summarize_k_measurement(
         runner_passed=True,
         task_executed=False,
@@ -343,8 +335,18 @@ def _fixed_large_control_arm(
         "status": "passed" if passed else "failed",
         "parent_checkpoint_digest": parent_digest,
         "phase_rows": [
-            {"phase": "S", "status": "observed", "before": old_before.get("S"), "after": old_after.get("S")},
-            {"phase": "G", "status": "observed", "before": old_before.get("G"), "after": old_after.get("G")},
+            {
+                "phase": "S",
+                "status": "observed",
+                "before": old_before.get("S"),
+                "after": old_after.get("S"),
+            },
+            {
+                "phase": "G",
+                "status": "observed",
+                "before": old_before.get("G"),
+                "after": old_after.get("G"),
+            },
             {
                 "phase": "K",
                 "status": "executed" if passed else "failed",
@@ -395,15 +397,19 @@ def _fixed_large_control_arm(
                 canary.get("checks", {}).get("rollback_record_explicit", False)
             ),
         },
-        "failure": None
-        if passed
-        else _failure(
-            failure_class="causal" if canary.get("projection_accepted") else "input_contract",
-            message=str(canary.get("blocking_reason") or "fixed-large controlled canary failed"),
-            model_seed=model_seed,
-            course_seed=course_seed,
-            arm="fixed-large",
-            recoverability="fixed_large_control_diagnosis_required",
+        "failure": (
+            None
+            if passed
+            else _failure(
+                failure_class="causal" if canary.get("projection_accepted") else "input_contract",
+                message=str(
+                    canary.get("blocking_reason") or "fixed-large controlled canary failed"
+                ),
+                model_seed=model_seed,
+                course_seed=course_seed,
+                arm="fixed-large",
+                recoverability="fixed_large_control_diagnosis_required",
+            )
         ),
     }
 
@@ -456,9 +462,7 @@ def _candidate_arm(
     )
     if not admit_feedback and not lesion_k3:
         k_status = "executed_no_feedback" if passed else "failed"
-        causal_status = (
-            "matched_capacity_no_feedback" if passed else "matched_capacity_failed"
-        )
+        causal_status = "matched_capacity_no_feedback" if passed else "matched_capacity_failed"
     elif lesion_k3:
         k_status = "lesion_rejected" if passed else "failed"
         causal_status = "lesion_verified" if passed else "lesion_failed"
@@ -526,8 +530,7 @@ def _candidate_arm(
             "candidate_parameter_bytes": parameter_bytes,
             "checkpoint_write_bytes": checkpoint_write_bytes,
             "checkpoint_write_paths": [
-                _repo_relative_path(path)
-                for path in sorted(artifact_dir.glob("taiji_r6_*.pt"))
+                _repo_relative_path(path) for path in sorted(artifact_dir.glob("taiji_r6_*.pt"))
             ],
             "inference_trace_count": canary_resource.get("inference_trace_count", 1),
             "training_update_steps": canary_resource.get("training_update_steps", 0),
@@ -556,15 +559,19 @@ def _candidate_arm(
                 canary.get("checks", {}).get("rollback_record_explicit", False)
             ),
         },
-        "failure": None
-        if passed
-        else _failure(
-            failure_class="workbench_outcome" if outcome_success is False else "projection_contract",
-            message=str(canary.get("blocking_reason") or "controlled K canary failed"),
-            model_seed=model_seed,
-            course_seed=course_seed,
-            arm=arm,
-            recoverability="candidate_canary_diagnosis_required",
+        "failure": (
+            None
+            if passed
+            else _failure(
+                failure_class=(
+                    "workbench_outcome" if outcome_success is False else "projection_contract"
+                ),
+                message=str(canary.get("blocking_reason") or "controlled K canary failed"),
+                model_seed=model_seed,
+                course_seed=course_seed,
+                arm=arm,
+                recoverability="candidate_canary_diagnosis_required",
+            )
         ),
     }
 
@@ -599,21 +606,15 @@ def _paired_resource_comparison(arms: Mapping[str, Mapping[str, Any]]) -> dict[s
         "measurement_method": "process_rss_before_after_lower_bound",
         "candidate_arm": {
             "status": candidate.get("status"),
-            "task_success_rate": (candidate.get("new_capability") or {}).get(
-                "task_success_rate"
-            ),
+            "task_success_rate": (candidate.get("new_capability") or {}).get("task_success_rate"),
             "resource": candidate_resource,
         },
         "fixed_large_arm": {
             "status": fixed_large.get("status"),
-            "task_success_rate": (fixed_large.get("new_capability") or {}).get(
-                "task_success_rate"
-            ),
+            "task_success_rate": (fixed_large.get("new_capability") or {}).get("task_success_rate"),
             "resource": fixed_resource,
         },
-        "fixed_large_minus_candidate": {
-            field: _delta(field) for field in fields
-        },
+        "fixed_large_minus_candidate": {field: _delta(field) for field in fields},
         "task_success_delta_fixed_large_minus_candidate": (
             float((fixed_large.get("new_capability") or {}).get("task_success_rate", 0.0))
             - float((candidate.get("new_capability") or {}).get("task_success_rate", 0.0))
@@ -733,9 +734,7 @@ def run_cell(
         item for item in manifest["worker_registry"] if int(item["model_seed"]) == model_seed
     )
     fixed_large_entry = next(
-        item
-        for item in manifest["fixed_large_registry"]
-        if int(item["model_seed"]) == model_seed
+        item for item in manifest["fixed_large_registry"] if int(item["model_seed"]) == model_seed
     )
     control_revision = manifest.get("control_revision")
     revised_controls = (
@@ -805,10 +804,7 @@ def run_cell(
         ),
     }
     paired_comparison = _paired_resource_comparison(arms)
-    resource_gate = {
-        arm: _resource_gate_valid(arms[arm].get("resource") or {})
-        for arm in ARM_IDS
-    }
+    resource_gate = {arm: _resource_gate_valid(arms[arm].get("resource") or {}) for arm in ARM_IDS}
     resource_failure = None
     if not all(resource_gate.values()):
         resource_failure = _failure(
@@ -835,9 +831,7 @@ def run_cell(
         "parent_checkpoint_digest": parent_digest,
         "worker_bundle_digest": worker_entry["bundle_digest"],
         "fixed_large_artifact_digest": fixed_large_entry["artifact_digest"],
-        "fixed_large_ensemble_checkpoint_digest": fixed_large_entry[
-            "ensemble_checkpoint_digest"
-        ],
+        "fixed_large_ensemble_checkpoint_digest": fixed_large_entry["ensemble_checkpoint_digest"],
         "input_preflight_status": input_gate["status"],
         "arms": arms,
         "paired_comparison": paired_comparison,
@@ -915,12 +909,18 @@ def main(argv: list[str] | None = None) -> int:
     input_report_path = (
         None
         if args.input_report is None
-        else args.input_report
-        if args.input_report.is_absolute()
-        else PROJECT_ROOT / args.input_report
+        else (
+            args.input_report
+            if args.input_report.is_absolute()
+            else PROJECT_ROOT / args.input_report
+        )
     )
-    parent_dir = args.parent_dir if args.parent_dir.is_absolute() else PROJECT_ROOT / args.parent_dir
-    worker_dir = args.worker_dir if args.worker_dir.is_absolute() else PROJECT_ROOT / args.worker_dir
+    parent_dir = (
+        args.parent_dir if args.parent_dir.is_absolute() else PROJECT_ROOT / args.parent_dir
+    )
+    worker_dir = (
+        args.worker_dir if args.worker_dir.is_absolute() else PROJECT_ROOT / args.worker_dir
+    )
     fixed_large_dir = (
         args.fixed_large_dir
         if args.fixed_large_dir.is_absolute()

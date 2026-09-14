@@ -30,7 +30,9 @@ def _text(value: Any, name: str) -> str:
 
 def _digest(value: Any, name: str) -> str:
     normalized = _text(value, name)
-    if len(normalized) != 64 or any(character not in "0123456789abcdef" for character in normalized):
+    if len(normalized) != 64 or any(
+        character not in "0123456789abcdef" for character in normalized
+    ):
         raise ValueError(f"{name} must be a lowercase SHA-256 digest")
     return normalized
 
@@ -265,9 +267,7 @@ class OutcomeDependencyProjector:
             event=event,
             spec=spec,
             outcome_signature=(
-                outcome_signature
-                if outcome_signature
-                else content_digest(event.to_payload())
+                outcome_signature if outcome_signature else content_digest(event.to_payload())
             ),
             dependency_digest=content_digest(
                 {
@@ -317,7 +317,10 @@ class OutcomeDependencyProjector:
                 outcome_class=outcome_class or "",
             )
         existing = {item.event_id: item for item in world.events}
-        if event.event_id in existing and existing[event.event_id].to_payload() != event.to_payload():
+        if (
+            event.event_id in existing
+            and existing[event.event_id].to_payload() != event.to_payload()
+        ):
             return self._rejected(
                 event=event,
                 spec=spec,

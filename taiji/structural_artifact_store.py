@@ -38,9 +38,7 @@ def _canonical_bytes(payload: Mapping[str, Any]) -> bytes:
 def structural_artifact_store_audit_digest(payload: Mapping[str, Any]) -> str:
     """Return the content digest for a read-only store audit projection."""
 
-    without_digest = {
-        key: value for key, value in payload.items() if key != "audit_digest"
-    }
+    without_digest = {key: value for key, value in payload.items() if key != "audit_digest"}
     return hashlib.sha256(_canonical_bytes(without_digest)).hexdigest()
 
 
@@ -141,8 +139,7 @@ class StructuralValidationArtifactStore:
             for target in targets:
                 if not target.is_file() or target.suffix != ".json":
                     raise ValueError(
-                        "structural artifact store contains an unexpected file: "
-                        f"{target.name}"
+                        "structural artifact store contains an unexpected file: " f"{target.name}"
                     )
                 if _DIGEST_PATTERN.fullmatch(target.stem) is not None:
                     artifact_targets.append((target.stem, target))
@@ -154,13 +151,11 @@ class StructuralValidationArtifactStore:
                     measurement_targets[measurement_digest] = target
                     continue
                 raise ValueError(
-                    "structural artifact store contains an unexpected file: "
-                    f"{target.name}"
+                    "structural artifact store contains an unexpected file: " f"{target.name}"
                 )
 
             loaded_artifacts = [
-                (digest, target, self.load(digest))
-                for digest, target in artifact_targets
+                (digest, target, self.load(digest)) for digest, target in artifact_targets
             ]
             referenced_measurement_digests = {
                 artifact.measurement_digest
@@ -293,7 +288,5 @@ class StructuralValidationArtifactStore:
             else measurements
         )
         if not isinstance(resolved, StructuralValidationMeasurements):
-            raise TypeError(
-                "structural artifact store accepts StructuralValidationMeasurements"
-            )
+            raise TypeError("structural artifact store accepts StructuralValidationMeasurements")
         return resolved

@@ -10,9 +10,7 @@ from typing import Any
 
 import torch
 
-STRUCTURAL_VALIDATION_MEASUREMENT_FORMAT = (
-    "taiji-workbench-structural-validation-measurement-v1"
-)
+STRUCTURAL_VALIDATION_MEASUREMENT_FORMAT = "taiji-workbench-structural-validation-measurement-v1"
 
 
 def _canonical_value(value: Any) -> Any:
@@ -25,10 +23,7 @@ def _canonical_value(value: Any) -> Any:
             "bytes": bytes(tensor.view(torch.uint8).reshape(-1).tolist()).hex(),
         }
     if isinstance(value, Mapping):
-        return {
-            str(key): _canonical_value(value[key])
-            for key in sorted(value, key=str)
-        }
+        return {str(key): _canonical_value(value[key]) for key in sorted(value, key=str)}
     if isinstance(value, (tuple, list)):
         return [_canonical_value(item) for item in value]
     if isinstance(value, (str, int, float, bool)) or value is None:
@@ -70,9 +65,7 @@ def _mean_absolute_error(
     if len(observed_values) != len(target_values):
         raise ValueError(f"{name} observed and target sequence lengths differ")
     errors: list[float] = []
-    for observed_tensor, target_tensor in zip(
-        observed_values, target_values, strict=True
-    ):
+    for observed_tensor, target_tensor in zip(observed_values, target_values, strict=True):
         if observed_tensor.shape != target_tensor.shape:
             raise ValueError(f"{name} observed and target tensor shapes differ")
         errors.append(float(torch.mean(torch.abs(observed_tensor - target_tensor)).item()))

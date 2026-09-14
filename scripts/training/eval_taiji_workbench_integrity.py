@@ -89,8 +89,7 @@ def evaluate() -> dict[str, object]:
     )
     metrics = {
         "measurement_roundtrip_recomputes_digest": (
-            StructuralValidationMeasurements.from_payload(measurement_payload)
-            == measurements
+            StructuralValidationMeasurements.from_payload(measurement_payload) == measurements
         ),
         "tampered_measurement_metric_fails_closed": _expect_rejection(
             lambda: StructuralValidationMeasurements.from_payload(tampered_measurement_metric)

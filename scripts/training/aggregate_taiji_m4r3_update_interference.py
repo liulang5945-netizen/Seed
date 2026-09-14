@@ -35,9 +35,7 @@ def _summary(reports: list[dict[str, Any]], arm: str) -> dict[str, Any]:
         "c_cycle3_degradation_count": sum(value > 0.0 for value in cycle3),
         "c2_cycle3_delta_mean_bpb": _mean(c2_cycle3),
         "c2_cycle3_degradation_count": sum(value > 0.0 for value in c2_cycle3),
-        "retention_gate_passed_all": all(
-            value <= 0.0 for value in (*cycle2, *cycle3)
-        ),
+        "retention_gate_passed_all": all(value <= 0.0 for value in (*cycle2, *cycle3)),
         "seed_metrics": {
             str(report["seed"]): {
                 "c3_gain_bpb": float(report["variants"][arm]["metrics"]["c3_holdout_gain_bpb"]),
@@ -57,9 +55,7 @@ def aggregate(reports: list[dict[str, Any]], output: Path) -> dict[str, Any]:
     if tuple(sorted(int(report["seed"]) for report in reports)) != EXPECTED_SEEDS:
         raise ValueError("aggregate requires exactly seed11, seed29, and seed47 reports")
     checks = {
-        f"seed{report['seed']}_technical_gate": bool(
-            report["technical_gate_all_passed"]
-        )
+        f"seed{report['seed']}_technical_gate": bool(report["technical_gate_all_passed"])
         for report in reports
     }
     checks["all_seed_reports_not_promoted"] = all(
@@ -120,9 +116,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--output",
         type=Path,
-        default=PROJECT_ROOT
-        / "reports"
-        / "taiji_m4r3_update_interference_aggregate_20260908.json",
+        default=PROJECT_ROOT / "reports" / "taiji_m4r3_update_interference_aggregate_20260908.json",
     )
     args = parser.parse_args(argv)
     reports: list[dict[str, Any]] = []
@@ -137,9 +131,7 @@ def main(argv: list[str] | None = None) -> int:
                 "report": str(args.output),
                 "status": report["status"],
                 "technical_gate_all_passed": report["technical_gate_all_passed"],
-                "joint_attribution_supported": report["diagnosis"][
-                    "joint_attribution_supported"
-                ],
+                "joint_attribution_supported": report["diagnosis"]["joint_attribution_supported"],
             },
             ensure_ascii=False,
         )

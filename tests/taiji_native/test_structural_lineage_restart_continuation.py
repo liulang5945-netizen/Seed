@@ -162,7 +162,10 @@ def test_restart_continuation_consumes_only_new_evidence() -> None:
             lineage_retention_policy=restored.model.architecture.structural_lineage_retention_policy.to_payload(),
         )
         assert continuation_audit["lineage_retention"] is not None
-        assert continuation_audit["structural_runtime_tick"] == restored.model.architecture.structural_runtime_tick
+        assert (
+            continuation_audit["structural_runtime_tick"]
+            == restored.model.architecture.structural_runtime_tick
+        )
         assert old_audit is not None
         assert continuation_audit["lineage_retention"]["result_digest"] != old_audit.result_digest
 

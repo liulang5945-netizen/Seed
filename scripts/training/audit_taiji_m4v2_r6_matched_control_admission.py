@@ -72,9 +72,7 @@ def _record_failure(
         {
             "category": category,
             "cell": (
-                None
-                if cell is None
-                else {"model_seed": int(cell[0]), "course_seed": int(cell[1])}
+                None if cell is None else {"model_seed": int(cell[0]), "course_seed": int(cell[1])}
             ),
             "metric": metric,
             "message": message,
@@ -399,7 +397,10 @@ def _check_aggregate(
             category="lineage",
             message="aggregate control revision differs from the revision manifest",
         )
-    if aggregate.get("can_start_r6_formal") is not False or aggregate.get("can_promote") is not False:
+    if (
+        aggregate.get("can_start_r6_formal") is not False
+        or aggregate.get("can_promote") is not False
+    ):
         _record_failure(
             failures,
             category="boundary",
@@ -430,13 +431,17 @@ def _check_aggregate(
                 message=f"aggregate gate {name} is not true",
                 metric=name,
             )
-    if not (
-        aggregate_gates.get("default_runtime_attached") is False
-        and aggregate_gates.get("provider_attached") is False
-        and aggregate_gates.get("mcp_attached") is False
-        and aggregate_gates.get("client_attached") is False
-        and aggregate_gates.get("cuda_used") is False
-    ) if isinstance(aggregate_gates, Mapping) else True:
+    if (
+        not (
+            aggregate_gates.get("default_runtime_attached") is False
+            and aggregate_gates.get("provider_attached") is False
+            and aggregate_gates.get("mcp_attached") is False
+            and aggregate_gates.get("client_attached") is False
+            and aggregate_gates.get("cuda_used") is False
+        )
+        if isinstance(aggregate_gates, Mapping)
+        else True
+    ):
         _record_failure(
             failures,
             category="side_effect",
@@ -449,7 +454,10 @@ def _check_aggregate(
         for course_seed in courses
     ]
     cells = aggregate.get("cells")
-    if not isinstance(cells, list) or [cell.get("cell") for cell in cells if isinstance(cell, Mapping)] != expected_order:
+    if (
+        not isinstance(cells, list)
+        or [cell.get("cell") for cell in cells if isinstance(cell, Mapping)] != expected_order
+    ):
         _record_failure(
             failures,
             category="aggregate",
@@ -510,7 +518,10 @@ def _check_aggregate(
             matched_delta = _finite_float(
                 capability.get("candidate_minus_matched_fixed_capacity_task_success_rate")
             )
-            if candidate_rate is None or candidate_rate < EXPECTED_THRESHOLDS["candidate_holdout_floor"]:
+            if (
+                candidate_rate is None
+                or candidate_rate < EXPECTED_THRESHOLDS["candidate_holdout_floor"]
+            ):
                 _record_failure(
                     failures,
                     category="capability",
@@ -548,14 +559,14 @@ def _check_aggregate(
                 cell=cell,
             )
             continue
-        expected_parent = registries["parent_registry"].get(cell[0], {}).get(
-            "resource_manifest_digest"
+        expected_parent = (
+            registries["parent_registry"].get(cell[0], {}).get("resource_manifest_digest")
         )
-        expected_worker = registries["worker_registry"].get(cell[0], {}).get(
-            "resource_manifest_digest"
+        expected_worker = (
+            registries["worker_registry"].get(cell[0], {}).get("resource_manifest_digest")
         )
-        expected_fixed = registries["fixed_large_registry"].get(cell[0], {}).get(
-            "resource_manifest_digest"
+        expected_fixed = (
+            registries["fixed_large_registry"].get(cell[0], {}).get("resource_manifest_digest")
         )
         for arm_id, expected_digest in (
             ("frozen-parent", expected_parent),
@@ -565,7 +576,10 @@ def _check_aggregate(
             ("fixed-large", expected_fixed),
         ):
             resource = arm_resources[arm_id]
-            if not isinstance(resource, Mapping) or resource.get("resource_manifest_digest") != expected_digest:
+            if (
+                not isinstance(resource, Mapping)
+                or resource.get("resource_manifest_digest") != expected_digest
+            ):
                 _record_failure(
                     failures,
                     category="lineage",

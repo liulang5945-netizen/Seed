@@ -490,9 +490,7 @@ class SparseSynapses:
         # Keep the numerical boundary idempotent while still correcting real
         # violations beyond a small dtype-relative reduction tolerance.
         tolerance = (
-            8.0
-            * torch.finfo(self.edge_weight.dtype).eps
-            * max(1.0, abs(self.max_weight_norm))
+            8.0 * torch.finfo(self.edge_weight.dtype).eps * max(1.0, abs(self.max_weight_norm))
         )
         needs_scaling = norms > (self.max_weight_norm + tolerance)
         scales = torch.where(

@@ -117,22 +117,16 @@ def _live_evidence_matches(
             "matches_observation": matches,
         }
     if capability_id == "workspace.programming_language.resolve":
-        evidence = environment.resolve_programming_language_evidence(
-            {"path": observation.path}
-        )
+        evidence = environment.resolve_programming_language_evidence({"path": observation.path})
         matches = (
             str(evidence.get("file_digest", "")) == observation.file_digest
-            and str(evidence.get("programming_language_id", ""))
-            == observation.language_id
-            and str(evidence.get("selection_state", ""))
-            == observation.selection_state
+            and str(evidence.get("programming_language_id", "")) == observation.language_id
+            and str(evidence.get("selection_state", "")) == observation.selection_state
         )
         return matches, {
             "operation": "workspace.programming_language.resolve.evidence",
             "file_digest": str(evidence.get("file_digest", "")),
-            "programming_language_id": str(
-                evidence.get("programming_language_id", "")
-            ),
+            "programming_language_id": str(evidence.get("programming_language_id", "")),
             "selection_state": str(evidence.get("selection_state", "")),
             "matches_observation": matches,
         }
@@ -281,8 +275,7 @@ def _run_arm(
         accepted += int(row["accepted"])
         route_correct += int(row["route_correct"])
         policy_allowed += int(
-            isinstance(row["policy"], dict)
-            and row["policy"].get("decision") == "allow"
+            isinstance(row["policy"], dict) and row["policy"].get("decision") == "allow"
         )
         evidence_matches += int(row.get("evidence_match", False))
         clarification_correct += int(row["clarification_correct"])
@@ -298,8 +291,7 @@ def _run_arm(
         "route_accuracy": route_correct / count,
         "policy_allow_accuracy": policy_allowed / max(1, accepted),
         "evidence_accuracy": evidence_matches / max(1, accepted),
-        "clarification_accuracy": clarification_correct
-        / max(1, count - expected_count),
+        "clarification_accuracy": clarification_correct / max(1, count - expected_count),
         "side_effect_free": side_effect_free,
         "rows": rows,
     }
@@ -379,9 +371,7 @@ def _lesion_arm(
     environment: WorkbenchEnvironment,
     planner: NativeReadOnlyIntentPlanner,
 ) -> tuple[dict[str, Any], str, str]:
-    lesion = StructuredSemanticTransitionLearner.from_checkpoint(
-        learner.checkpoint(), corpus
-    )
+    lesion = StructuredSemanticTransitionLearner.from_checkpoint(learner.checkpoint(), corpus)
     before, after = lesion.zero_transition_head()
     result = _run_arm(
         arm="native",
@@ -404,8 +394,7 @@ def run_gate(output_path: Path | None = None) -> dict[str, Any]:
     policy = ReadOnlyIntentPolicy(routes=READ_ONLY_ROUTES)
     planner = NativeReadOnlyIntentPlanner(policy)
     fixture_before = {
-        split: _fixture_digest(FIXTURE_ROOT / f"native_observation_{split}")
-        for split in SPLITS
+        split: _fixture_digest(FIXTURE_ROOT / f"native_observation_{split}") for split in SPLITS
     }
     base = output_path or PROJECT_ROOT / "reports" / "m3r3.json"
     preflight_path = base.with_suffix(".preflight.pt")
@@ -415,12 +404,15 @@ def run_gate(output_path: Path | None = None) -> dict[str, Any]:
     try:
         untrained = StructuredSemanticTransitionLearner(corpus)
         preflight_before = content_digest(
-            [item.to_payload() for item in (
-                untrained.predict(
-                    _world(test_sequence[0], tick=0),
-                    test_sequence[1].to_percept_event(tick=1),
-                ),
-            )]
+            [
+                item.to_payload()
+                for item in (
+                    untrained.predict(
+                        _world(test_sequence[0], tick=0),
+                        test_sequence[1].to_percept_event(tick=1),
+                    ),
+                )
+            ]
         )
         atomic_save(untrained.checkpoint(), preflight_path)
         preflight_restored = StructuredSemanticTransitionLearner.from_checkpoint(
@@ -501,28 +493,33 @@ def run_gate(output_path: Path | None = None) -> dict[str, Any]:
         )
         runtime = _runtime_gate(restored, test_sequence)
         fixture_after = {
-            split: _fixture_digest(FIXTURE_ROOT / f"native_observation_{split}")
-            for split in SPLITS
+            split: _fixture_digest(FIXTURE_ROOT / f"native_observation_{split}") for split in SPLITS
         }
         checkpoint = {
             "preflight_saved": preflight_path.exists(),
             "preflight_output_stable": preflight_before == preflight_after,
             "post_training_saved": final_path.exists(),
             "post_training_output_stable": content_digest(
-                [item.to_payload() for item in (
-                    native.predict(
-                        _world(test_sequence[0], tick=0),
-                        test_sequence[1].to_percept_event(tick=1),
-                    ),
-                )]
+                [
+                    item.to_payload()
+                    for item in (
+                        native.predict(
+                            _world(test_sequence[0], tick=0),
+                            test_sequence[1].to_percept_event(tick=1),
+                        ),
+                    )
+                ]
             )
             == content_digest(
-                [item.to_payload() for item in (
-                    restored.predict(
-                        _world(test_sequence[0], tick=0),
-                        test_sequence[1].to_percept_event(tick=1),
-                    ),
-                )]
+                [
+                    item.to_payload()
+                    for item in (
+                        restored.predict(
+                            _world(test_sequence[0], tick=0),
+                            test_sequence[1].to_percept_event(tick=1),
+                        ),
+                    )
+                ]
             ),
             "planner": planner_checkpoint,
             "training_steps": native.training_steps,
@@ -530,8 +527,7 @@ def run_gate(output_path: Path | None = None) -> dict[str, Any]:
         gates = {
             "project_disjoint": corpus.manifest()["record_disjoint"]
             and not (
-                {item.family_id for item in corpus.train}
-                & {item.family_id for item in corpus.test}
+                {item.family_id for item in corpus.train} & {item.family_id for item in corpus.test}
             )
             and not (
                 {item.input_digest for item in corpus.train}
@@ -541,10 +537,7 @@ def run_gate(output_path: Path | None = None) -> dict[str, Any]:
             "native_route_accuracy": native_metrics["route_accuracy"] == 1.0,
             "native_policy_allow": native_metrics["policy_allow_accuracy"] == 1.0,
             "native_evidence_accuracy": native_metrics["evidence_accuracy"] == 1.0,
-            "native_clarification_accuracy": native_metrics[
-                "clarification_accuracy"
-            ]
-            == 1.0,
+            "native_clarification_accuracy": native_metrics["clarification_accuracy"] == 1.0,
             "native_side_effect_free": native_metrics["side_effect_free"],
             "native_beats_static_only": native_metrics["accepted_intents"]
             > static_metrics["accepted_intents"],
