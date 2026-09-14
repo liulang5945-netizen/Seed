@@ -54,9 +54,7 @@ def _validate_data_contract(report: dict[str, Any], *, seed: int) -> dict[str, A
     if contract.get("current_seed") != int(seed):
         raise ValueError(f"seed {seed} data_contract current_seed mismatch")
     source_lineage = contract.get("source_lineage")
-    if not isinstance(source_lineage, dict) or not source_lineage.get(
-        "matches_source_checkpoint"
-    ):
+    if not isinstance(source_lineage, dict) or not source_lineage.get("matches_source_checkpoint"):
         raise ValueError(f"seed {seed} source lineage Gate is not passed")
     if source_lineage.get("phase_a_expected_digest") != source_lineage.get(
         "phase_a_actual_digest"
@@ -73,15 +71,15 @@ def _validate_data_contract(report: dict[str, Any], *, seed: int) -> dict[str, A
     if not isinstance(phase_chain, dict) or not phase_chain.get("record_disjoint"):
         raise ValueError(f"seed {seed} phase chain is not record-disjoint")
     overlap_counts = phase_chain.get("overlap_counts")
-    if not isinstance(overlap_counts, dict) or any(bool(value) for value in overlap_counts.values()):
+    if not isinstance(overlap_counts, dict) or any(
+        bool(value) for value in overlap_counts.values()
+    ):
         raise ValueError(f"seed {seed} phase chain contains record overlap")
     datasets = report.get("datasets")
     if not isinstance(datasets, dict) or not isinstance(datasets.get("phase_c"), dict):
         raise ValueError(f"seed {seed} report is missing phase-C dataset metadata")
     phase_c = phase_chain.get("phase_c")
-    if not isinstance(phase_c, dict) or datasets["phase_c"].get("digest") != phase_c.get(
-        "digest"
-    ):
+    if not isinstance(phase_c, dict) or datasets["phase_c"].get("digest") != phase_c.get("digest"):
         raise ValueError(f"seed {seed} report phase-C digest is not content-addressed")
     return {
         "phase_c_dataset_digest": str(phase_c["digest"]),
@@ -143,8 +141,7 @@ def judge_seed(
         "active_a_retention_bpb": f_ret,
         "a_retention_delta_bpb": f_ret - a_ret,
         "checks_passed": (
-            f"{sum(int(v) for v in active['checks'].values())}/"
-            f"{len(active['checks'])}"
+            f"{sum(int(v) for v in active['checks'].values())}/" f"{len(active['checks'])}"
         ),
         "verdicts": [verdict.to_payload() for verdict in verdicts.values()],
     }
@@ -189,13 +186,9 @@ def main(argv: list[str] | None = None) -> int:
         seed = int(report["source_checkpoint"].rsplit("seed", 1)[1].split("-", 1)[0])
         contract_entries.append(_validate_data_contract(report, seed=seed))
         baseline_report = (
-            None
-            if baseline_path is None
-            else json.loads(baseline_path.read_text(encoding="utf-8"))
+            None if baseline_path is None else json.loads(baseline_path.read_text(encoding="utf-8"))
         )
-        entries.append(
-            judge_seed(report, seed=seed, baseline_report=baseline_report, arm=args.arm)
-        )
+        entries.append(judge_seed(report, seed=seed, baseline_report=baseline_report, arm=args.arm))
 
     gains = [float(entry["c_holdout_gain_bpb"]) for entry in entries]
     mean_gain = sum(gains) / len(gains) if gains else 0.0
@@ -205,18 +198,14 @@ def main(argv: list[str] | None = None) -> int:
         entry["a_retention_delta_bpb"] <= RETENTION_TOLERANCE_BPB for entry in entries
     )
     overall_absolute = all(
-        any(
-            v["kind"] == "absolute" and v["judgement"] == "passed" for v in entry["verdicts"]
-        )
+        any(v["kind"] == "absolute" and v["judgement"] == "passed" for v in entry["verdicts"])
         for entry in entries
     )
     phase_c_digests = {entry["phase_c_dataset_digest"] for entry in contract_entries}
     phase_c2_digests = {entry["phase_c2_dataset_digest"] for entry in contract_entries}
     cohort_sets = {entry["cohort_seeds"] for entry in contract_entries}
     if len(phase_c_digests) != 1 or len(phase_c2_digests) != 1 or len(cohort_sets) != 1:
-        raise ValueError(
-            "seed reports must share one record-disjoint phase-C/C' chain and cohort"
-        )
+        raise ValueError("seed reports must share one record-disjoint phase-C/C' chain and cohort")
     cohort_seeds = next(iter(cohort_sets))
 
     payload = {

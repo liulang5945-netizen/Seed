@@ -155,9 +155,7 @@ def test_adapter_exposes_audit_and_persists_compaction_through_native_checkpoint
     )
     model = TSKV8Adapter(config, episode_id="evidence-compaction")
     for tick in range(1, 17):
-        model.record_structural_runtime_observation(
-            _observation(tick, f"evidence:{tick}")
-        )
+        model.record_structural_runtime_observation(_observation(tick, f"evidence:{tick}"))
     first, second = model.structural_evidence_summaries
     scheduler = model.structural_growth_scheduler_state.advance(
         last_evaluated_tick=first.last_tick,
@@ -175,8 +173,14 @@ def test_adapter_exposes_audit_and_persists_compaction_through_native_checkpoint
     checkpoint = model.native_checkpoint()
     restored = TSKV8Adapter.from_native_checkpoint(checkpoint)
     assert restored.structural_evidence_ledger.digest == model.structural_evidence_ledger.digest
-    assert restored.structural_evidence_consumption_audit == model.structural_evidence_consumption_audit
-    assert restored.structural_evidence_ledger.compacted_windows == model.structural_evidence_ledger.compacted_windows
+    assert (
+        restored.structural_evidence_consumption_audit
+        == model.structural_evidence_consumption_audit
+    )
+    assert (
+        restored.structural_evidence_ledger.compacted_windows
+        == model.structural_evidence_ledger.compacted_windows
+    )
 
 
 def test_pressure_projection_identity_survives_consumed_window_compaction() -> None:

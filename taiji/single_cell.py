@@ -80,8 +80,7 @@ def _digest_pairs(value: Any, name: str) -> tuple[tuple[str, str], ...]:
     else:
         raise TypeError(f"{name} must be a mapping or pair sequence")
     normalized = tuple(
-        (_text(item[0], f"{name} key"), _digest(item[1], f"{name} value"))
-        for item in items
+        (_text(item[0], f"{name} key"), _digest(item[1], f"{name} value")) for item in items
     )
     if len({key for key, _ in normalized}) != len(normalized):
         raise ValueError(f"{name} must contain unique keys")
@@ -96,8 +95,7 @@ def _text_pairs(value: Any, name: str) -> tuple[tuple[str, str], ...]:
     else:
         raise TypeError(f"{name} must be a mapping or pair sequence")
     normalized = tuple(
-        (_text(item[0], f"{name} key"), _text(item[1], f"{name} value"))
-        for item in items
+        (_text(item[0], f"{name} key"), _text(item[1], f"{name} value")) for item in items
     )
     if len({key for key, _ in normalized}) != len(normalized):
         raise ValueError(f"{name} must contain unique keys")
@@ -111,10 +109,7 @@ def _budget_pairs(value: Any, name: str) -> tuple[tuple[str, int], ...]:
         items = tuple(value)
     else:
         raise TypeError(f"{name} must be a mapping or pair sequence")
-    normalized = tuple(
-        (_text(item[0], f"{name} key"), int(item[1]))
-        for item in items
-    )
+    normalized = tuple((_text(item[0], f"{name} key"), int(item[1])) for item in items)
     if len({key for key, _ in normalized}) != len(normalized):
         raise ValueError(f"{name} must contain unique keys")
     if any(value < 0 for _, value in normalized):
@@ -175,7 +170,9 @@ class SingleCellOwnerContract:
         object.__setattr__(self, "read_scopes", read_scopes)
         object.__setattr__(self, "write_scopes", write_scopes)
         object.__setattr__(self, "learning_owner", learning_owner)
-        object.__setattr__(self, "contract_digest", _digest(self.contract_digest, "contract_digest"))
+        object.__setattr__(
+            self, "contract_digest", _digest(self.contract_digest, "contract_digest")
+        )
 
     def _payload_without_digest(self) -> dict[str, Any]:
         return {
@@ -282,7 +279,9 @@ class TaijiSingleCellManifest:
         object.__setattr__(self, "rollback_parent_digest", rollback)
         object.__setattr__(self, "owner_contracts", owners)
         object.__setattr__(self, "event_types", event_types)
-        object.__setattr__(self, "manifest_digest", _digest(self.manifest_digest, "manifest_digest"))
+        object.__setattr__(
+            self, "manifest_digest", _digest(self.manifest_digest, "manifest_digest")
+        )
 
     def _payload_without_digest(self) -> dict[str, Any]:
         return {
@@ -331,13 +330,10 @@ class TaijiSingleCellManifest:
         return cls(
             format=str(payload.get("format", "")),
             version=int(payload.get("version", -1)),
-            base_continuation_checkpoint_digest=str(
-                payload["base_continuation_checkpoint_digest"]
-            ),
+            base_continuation_checkpoint_digest=str(payload["base_continuation_checkpoint_digest"]),
             source_cohort_digest=str(payload["source_cohort_digest"]),
             owner_contracts=tuple(
-                SingleCellOwnerContract.from_payload(item)
-                for item in payload["owner_contracts"]
+                SingleCellOwnerContract.from_payload(item) for item in payload["owner_contracts"]
             ),
             event_types=tuple(str(value) for value in payload["event_types"]),
             rollback_parent_digest=str(payload["rollback_parent_digest"]),
@@ -664,7 +660,10 @@ class TaijiSingleCellCheckpoint:
         return content_digest(payload)
 
     def assert_base(self, expected_digest: str) -> None:
-        if _digest(expected_digest, "expected base digest") != self.base_continuation_checkpoint_digest:
+        if (
+            _digest(expected_digest, "expected base digest")
+            != self.base_continuation_checkpoint_digest
+        ):
             raise ValueError("single-cell checkpoint crosses the P3.0 continuation boundary")
 
     def assert_manifest(self, expected_digest: str) -> None:

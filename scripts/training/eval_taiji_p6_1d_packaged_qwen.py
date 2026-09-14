@@ -241,12 +241,9 @@ def evaluate(
     checks = {
         "packaged_backend_exists": package.is_file(),
         "both_cycles_reached_health": all(item["health"]["reachable"] for item in cycles),
-        "both_activations_succeeded": all(
-            item["activation"]["status"] == "ok" for item in cycles
-        ),
+        "both_activations_succeeded": all(item["activation"]["status"] == "ok" for item in cycles),
         "provider_attached_after_each_restart": all(
-            item["activation"]["semantic_provider"]["state"] == "attached"
-            for item in cycles
+            item["activation"]["semantic_provider"]["state"] == "attached" for item in cycles
         ),
         "same_provider_rebound": (
             cycles[0]["activation"]["semantic_provider"]["provider_id"]
@@ -320,7 +317,9 @@ def main() -> None:
         timeout_seconds=args.timeout_seconds,
     )
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(report, ensure_ascii=False, indent=2))
     raise SystemExit(0 if report["gate"]["passed"] else 1)
 

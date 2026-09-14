@@ -53,9 +53,7 @@ def _authorization(
         capability_snapshot_id=boundary.capability_snapshot_id,
         authorized_capability_ids=authorized_capability_ids,
         active_boundary_digest=(
-            boundary.token_digest
-            if active_boundary_digest is None
-            else active_boundary_digest
+            boundary.token_digest if active_boundary_digest is None else active_boundary_digest
         ),
         current_tick=current_tick,
         usage=usage,
@@ -114,9 +112,7 @@ def run_canary(checkpoint: Path) -> dict[str, Any]:
             == "protected"
         ),
         "closed_old_task_cannot_execute": _check(
-            not old_closed.authorize(
-                _authorization(old_closed, current_tick=12)
-            ).accepted
+            not old_closed.authorize(_authorization(old_closed, current_tick=12)).accepted
         ),
         "old_generation_is_stale_after_switch": _check(
             old.authorize(
@@ -129,14 +125,11 @@ def run_canary(checkpoint: Path) -> dict[str, Any]:
             == "stale_task_generation"
         ),
         "unauthorized_capability_fails_closed": _check(
-            unauthorized.authorize(
-                _authorization(unauthorized, current_tick=12)
-            ).reason_code
+            unauthorized.authorize(_authorization(unauthorized, current_tick=12)).reason_code
             == "unauthorized_capability"
         ),
         "expired_boundary_fails_closed": _check(
-            old.authorize(_authorization(old, current_tick=31)).reason_code
-            == "expired_boundary"
+            old.authorize(_authorization(old, current_tick=31)).reason_code == "expired_boundary"
         ),
         "cross_project_boundary_fails_closed": _check(
             old.authorize(
@@ -225,9 +218,7 @@ def main() -> int:
                 "report": str(args.report),
                 "status": result["status"],
                 "checkpoint_read_only": result["owner_audit"]["checkpoint_read_only"],
-                "checks_passed": sum(
-                    int(item["passed"]) for item in result["checks"].values()
-                ),
+                "checks_passed": sum(int(item["passed"]) for item in result["checks"].values()),
                 "checks_total": len(result["checks"]),
             },
             ensure_ascii=False,

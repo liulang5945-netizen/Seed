@@ -108,7 +108,8 @@ def evaluate() -> dict[str, object]:
         "topology_changed_only_after_admission": (
             model.neuron_regions[0].unit_ids == ("u0", "u1", "u2")
         ),
-        "budget_debited_once": model.cognitive_snapshot().development.structural_budget == budget_before - candidate.resource_cost,
+        "budget_debited_once": model.cognitive_snapshot().development.structural_budget
+        == budget_before - candidate.resource_cost,
         "admission_checkpointed": (
             len(restored.structural_admission_results) == 1
             and restored.structural_admission_results[0].status == "admitted"
@@ -153,7 +154,9 @@ def main() -> None:
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_w7_r5c_s7_workbench_growth_continuation_20260830.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_w7_r5c_s7_workbench_growth_continuation_20260830.json",
     )
     args = parser.parse_args()
     report = evaluate()

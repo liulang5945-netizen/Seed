@@ -61,14 +61,20 @@ def run_gate() -> dict[str, object]:
     checks = {
         "native_update_admitted": report.admitted,
         "holdout_improves_over_frozen": report.native_holdout_loss < report.frozen_holdout_loss,
-        "replay_only_matches_frozen": abs(report.replay_only_holdout_loss - report.frozen_holdout_loss) < 1e-12,
-        "retention_within_gate": report.native_retention_loss_after <= report.native_retention_loss_before + 0.05,
+        "replay_only_matches_frozen": abs(
+            report.replay_only_holdout_loss - report.frozen_holdout_loss
+        )
+        < 1e-12,
+        "retention_within_gate": report.native_retention_loss_after
+        <= report.native_retention_loss_before + 0.05,
         "holdout_not_consumed": "holdout-editor" not in trainer.consumed_experience_ids,
-        "train_cursor_consumed": trainer.consumed_experience_ids == ("train-editor-1", "train-editor-2"),
+        "train_cursor_consumed": trainer.consumed_experience_ids
+        == ("train-editor-1", "train-editor-2"),
         "checkpoint_roundtrip": content_digest(restored.checkpoint())
         == content_digest(trainer.checkpoint()),
         "restored_score_matches": abs(
-            restored.learner.score(holdout_example) - trainer.learner.score(trainer.example(holdout[0]))
+            restored.learner.score(holdout_example)
+            - trainer.learner.score(trainer.example(holdout[0]))
         )
         < 1e-12,
     }
@@ -91,7 +97,9 @@ def main() -> int:
     args = parser.parse_args()
     result = run_gate()
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0 if result["status"] == "passed" else 1
 

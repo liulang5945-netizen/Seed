@@ -11,7 +11,9 @@ from taiji import (
 )
 
 
-def _candidate(*, candidate_id: str, goal: Goal | None, content: ContentPlan | None) -> GSelectionCandidate:
+def _candidate(
+    *, candidate_id: str, goal: Goal | None, content: ContentPlan | None
+) -> GSelectionCandidate:
     return GSelectionCandidate.create(
         candidate_id=candidate_id,
         source="k.test",

@@ -71,9 +71,7 @@ DEFAULT_MANIFEST = (
 )
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p4_0_capacity_pressure_20260911.json"
 P3_4_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p3_4_behavior_signal_20260911.json"
-P3_5_MANIFEST = (
-    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p3_5_g_learning_manifest_v1.json"
-)
+P3_5_MANIFEST = PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p3_5_g_learning_manifest_v1.json"
 P3_5_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p3_5_g_learning_20260911.json"
 P3_6_MANIFEST = (
     PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p3_6_behavior_holdout_manifest_v1.json"
@@ -235,7 +233,9 @@ def _feature_collision_rate(
     utility_by_id = {item.candidate_id: float(item.utility) for item in outcomes}
     groups: dict[tuple[float, ...], list[GSelectionCandidate]] = {}
     for candidate in candidates:
-        groups.setdefault(tuple(round(value, 8) for value in candidate.feature_vector), []).append(candidate)
+        groups.setdefault(tuple(round(value, 8) for value in candidate.feature_vector), []).append(
+            candidate
+        )
     colliding = 0
     for group in groups.values():
         utilities = {utility_by_id[item.candidate_id] for item in group}
@@ -265,7 +265,10 @@ def _pressure_record(
                 foreign_proposals.append(
                     _rename_candidate(candidate, f"p4-foreign:{index}:{candidate.candidate_id}")
                 )
-    proposal_pool = [*current_proposals, *sorted(foreign_proposals, key=lambda item: item.candidate_digest)]
+    proposal_pool = [
+        *current_proposals,
+        *sorted(foreign_proposals, key=lambda item: item.candidate_digest),
+    ]
     proposal_count = max(0, int(width) - 2)
     if not proposal_pool and proposal_count:
         raise ValueError("P4.0 pressure pool has no proposal candidate")
@@ -302,7 +305,9 @@ def _pressure_record(
     ranked = sorted(outcomes, key=lambda item: (-item.utility, item.candidate_id))
     target = ranked[0]
     target_candidate = next(item for item in candidates if item.candidate_id == target.candidate_id)
-    target_kind = "pair" if target_candidate.candidate_role == "proposal" else target_candidate.candidate_role
+    target_kind = (
+        "pair" if target_candidate.candidate_role == "proposal" else target_candidate.candidate_role
+    )
     candidate_set = GSelectionCandidateSet.create(
         example_id=(
             f"p4-0-pressure:{source_index}:width-{len(candidates)}:"
@@ -416,7 +421,9 @@ def run_scan(
             p3_6_manifest=p3_6_manifest,
             p3_6_report=p3_6_report,
         )
-        if p3_4_report.get("status") != "completed" or not p3_4_report.get("signal_gate", {}).get("passed"):
+        if p3_4_report.get("status") != "completed" or not p3_4_report.get("signal_gate", {}).get(
+            "passed"
+        ):
             raise ValueError("P4.0 requires completed P3.4 behavior evidence")
         p3_2_report = _load_json(P3_2_REPORT)
         if p3_2_report.get("manifest_digest") != p3_2_manifest.get("manifest_digest"):
@@ -450,7 +457,11 @@ def run_scan(
         )
         zero_restore = _independent_g_restore(zero_path)
         trained_restore = _independent_g_restore(trained_path)
-        if not k_preflight.get("passed") or not zero_restore.get("independent_process_restore") or not trained_restore.get("independent_process_restore"):
+        if (
+            not k_preflight.get("passed")
+            or not zero_restore.get("independent_process_restore")
+            or not trained_restore.get("independent_process_restore")
+        ):
             raise RuntimeError("P4.0 source checkpoint restore preflight failed")
         scratch = run_dir / "pressure-cases"
         base_records: list[dict[str, Any]] = []
@@ -497,7 +508,9 @@ def run_scan(
                         transition=transition,
                     )
                 )
-        if len({record["candidate_set"].candidate_set_digest for record in pressure_records}) != len(pressure_records):
+        if len(
+            {record["candidate_set"].candidate_set_digest for record in pressure_records}
+        ) != len(pressure_records):
             raise ValueError("P4.0 pressure candidate-set digest collision")
         disallowed_projects = {
             str(raw["candidate_set"]["project_id"])
@@ -514,8 +527,7 @@ def run_scan(
             for raw in p3_4_manifest.get(key, ())
         }
         disallowed_paths.update(
-            str(raw["candidate_set"]["path"])
-            for raw in p3_6_manifest.get("holdout_records", ())
+            str(raw["candidate_set"]["path"]) for raw in p3_6_manifest.get("holdout_records", ())
         )
         pressure_projects = {record["candidate_set"].project_id for record in base_records}
         pressure_paths = {record["candidate_set"].path for record in base_records}
@@ -527,22 +539,37 @@ def run_scan(
             "width_levels_complete": {
                 int(width): sum(
                     record["candidate_set"].path == base_records[index]["candidate_set"].path
-                    and len(record["candidate_set"].candidates) == min(width, len(record["candidate_set"].candidates))
+                    and len(record["candidate_set"].candidates)
+                    == min(width, len(record["candidate_set"].candidates))
                     for index in range(len(base_records))
                     for record in pressure_records
-                    if record["diagnostic"]["source_index"] == index and width == record["diagnostic"]["candidate_width"]
+                    if record["diagnostic"]["source_index"] == index
+                    and width == record["diagnostic"]["candidate_width"]
                 )
                 for width in PRESSURE_WIDTHS
             },
-            "candidate_digests_unique": len({record["candidate_set"].candidate_set_digest for record in pressure_records}) == 20,
-            "behavior_digests_unique": len({record["behavior_set"].behavior_digest for record in pressure_records}) == 20,
+            "candidate_digests_unique": len(
+                {record["candidate_set"].candidate_set_digest for record in pressure_records}
+            )
+            == 20,
+            "behavior_digests_unique": len(
+                {record["behavior_set"].behavior_digest for record in pressure_records}
+            )
+            == 20,
         }
         pressure_summaries: list[dict[str, Any]] = []
         for width in PRESSURE_WIDTHS:
-            cohort = [record for record in pressure_records if int(record["diagnostic"]["candidate_width"]) == width]
+            cohort = [
+                record
+                for record in pressure_records
+                if int(record["diagnostic"]["candidate_width"]) == width
+            ]
             metrics = {
                 arm: _summarize(
-                    [_select_row(record, arm=arm, zero_step=zero_step, trained=trained) for record in cohort]
+                    [
+                        _select_row(record, arm=arm, zero_step=zero_step, trained=trained)
+                        for record in cohort
+                    ]
                 )
                 for arm in ("k_only", "g_zero_step", "g_trained")
             }
@@ -565,7 +592,10 @@ def run_scan(
         for length in SEQUENCE_LENGTHS:
             cohort = pressure_records * int(length)
             metrics = _summarize(
-                [_select_row(record, arm="g_trained", zero_step=zero_step, trained=trained) for record in cohort]
+                [
+                    _select_row(record, arm="g_trained", zero_step=zero_step, trained=trained)
+                    for record in cohort
+                ]
             )
             sequence_summaries.append(
                 {
@@ -576,12 +606,10 @@ def run_scan(
                     "trained_residual_error": 1.0 - metrics["selected_utility_mean"],
                 }
             )
-        persistent_failure = sum(
-            row["trained_residual_error"] > 0.25 for row in pressure_summaries
-        ) >= 3
-        collision_present = any(
-            row["feature_collision_rate"] > 0.0 for row in pressure_summaries
+        persistent_failure = (
+            sum(row["trained_residual_error"] > 0.25 for row in pressure_summaries) >= 3
         )
+        collision_present = any(row["feature_collision_rate"] > 0.0 for row in pressure_summaries)
         sequence_degradation = (
             sequence_summaries[-1]["trained_utility_mean"]
             < sequence_summaries[0]["trained_utility_mean"] - 1e-9
@@ -601,7 +629,9 @@ def run_scan(
         checkpoint_gate = {
             "k_independent_restore": bool(k_preflight.get("passed")),
             "g_zero_independent_restore": bool(zero_restore.get("independent_process_restore")),
-            "g_trained_independent_restore": bool(trained_restore.get("independent_process_restore")),
+            "g_trained_independent_restore": bool(
+                trained_restore.get("independent_process_restore")
+            ),
             "g_lineage_valid": True,
             "k_digests_unchanged": k_after == worker_digests,
             "growth_admitted": False,
@@ -643,17 +673,13 @@ def run_scan(
         manifest["manifest_digest"] = content_digest(manifest)
         _write_json_atomic(manifest_path, manifest)
         identity_passed = all(
-            bool(value)
-            for key, value in identity_gate.items()
-            if key != "width_levels_complete"
+            bool(value) for key, value in identity_gate.items() if key != "width_levels_complete"
         ) and all(
             int(count) == len(base_records)
             for count in identity_gate["width_levels_complete"].values()
         )
         checkpoint_passed = all(
-            bool(value)
-            for key, value in checkpoint_gate.items()
-            if key != "growth_admitted"
+            bool(value) for key, value in checkpoint_gate.items() if key != "growth_admitted"
         )
         scan_passed = (
             identity_passed

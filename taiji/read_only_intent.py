@@ -25,9 +25,7 @@ READ_ONLY_INTENT_PLANNER_FORMAT = "taiji-native-read-only-intent-planner-v1"
 READ_ONLY_INTENT_PLANNER_VERSION = 1
 READ_ONLY_ABSTENTION_FORMAT = "taiji-read-only-abstention-v1"
 READ_ONLY_ABSTENTION_VERSION = 1
-READ_ONLY_ABSTENTION_NEXT_STEPS = frozenset(
-    {"none", "request_clarification", "workspace.list"}
-)
+READ_ONLY_ABSTENTION_NEXT_STEPS = frozenset({"none", "request_clarification", "workspace.list"})
 READ_ONLY_INTENT_CAPABILITIES = frozenset(
     {
         "workspace.list",
@@ -119,8 +117,7 @@ class ReadOnlyIntentPolicy:
         }
         if self.route_parameters:
             payload["route_parameters"] = {
-                content_id: dict(parameters)
-                for content_id, parameters in self.route_parameters
+                content_id: dict(parameters) for content_id, parameters in self.route_parameters
             }
         return payload
 
@@ -135,9 +132,7 @@ class ReadOnlyIntentPolicy:
         route_parameters: list[tuple[str, tuple[tuple[str, str], ...]]] = []
         for content_id, parameters in raw_parameters.items():
             if not isinstance(parameters, Mapping):
-                raise ValueError(
-                    "read-only intent policy route parameters must be mappings"
-                )
+                raise ValueError("read-only intent policy route parameters must be mappings")
             route_parameters.append(
                 (
                     str(content_id),
@@ -145,7 +140,9 @@ class ReadOnlyIntentPolicy:
                 )
             )
         return cls(
-            routes=tuple((str(content_id), str(capability)) for content_id, capability in raw_routes.items()),
+            routes=tuple(
+                (str(content_id), str(capability)) for content_id, capability in raw_routes.items()
+            ),
             route_parameters=tuple(route_parameters),
             format=str(payload.get("format", "")),
             version=int(payload.get("version", -1)),
@@ -269,9 +266,7 @@ class ReadOnlyIntentDecision:
             snapshot_id=str(payload["snapshot_id"]),
             capability_revision=int(payload["capability_revision"]),
             observation_digest=str(payload["observation_digest"]),
-            action_intent=(
-                None if raw_intent is None else ActionIntent.from_payload(raw_intent)
-            ),
+            action_intent=(None if raw_intent is None else ActionIntent.from_payload(raw_intent)),
         )
 
 

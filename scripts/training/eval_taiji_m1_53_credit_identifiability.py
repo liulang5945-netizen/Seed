@@ -32,11 +32,7 @@ RETENTION_COUNT = 32
 REPLAY_SCALE = 1.0
 ACTION_SYMBOLS = (48, 49)
 OUTCOME_SYMBOLS = (43, 45)
-COMBINATIONS = tuple(
-    (action, outcome)
-    for action in ACTION_SYMBOLS
-    for outcome in OUTCOME_SYMBOLS
-)
+COMBINATIONS = tuple((action, outcome) for action in ACTION_SYMBOLS for outcome in OUTCOME_SYMBOLS)
 
 
 @dataclass(frozen=True)
@@ -233,9 +229,7 @@ def _recall(
     action_probabilities = recall.action_probabilities
     outcome_probabilities = recall.outcome_probabilities
     action_alternatives = [
-        float(action_probabilities[action].item())
-        for action in actions
-        if action != query.action
+        float(action_probabilities[action].item()) for action in actions if action != query.action
     ]
     outcome_alternatives = [
         float(outcome_probabilities[outcome].item())
@@ -273,8 +267,7 @@ def _recall(
             row["outcome_margin"] - baseline["outcome_margin"]
         )
         row["delta_action_outcome_margin_gap"] = float(
-            row["delta_action_margin_vs_phase_a"]
-            - row["delta_outcome_margin_vs_phase_a"]
+            row["delta_action_margin_vs_phase_a"] - row["delta_outcome_margin_vs_phase_a"]
         )
     return row
 
@@ -283,49 +276,30 @@ def _probe_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
     def metrics(items: list[dict[str, Any]]) -> dict[str, Any]:
         value: dict[str, Any] = {
             "sample_count": len(items),
-            "action_accuracy": float(
-                sum(int(row["action_correct"]) for row in items) / len(items)
-            ),
+            "action_accuracy": float(sum(int(row["action_correct"]) for row in items) / len(items)),
             "outcome_accuracy": float(
                 sum(int(row["outcome_correct"]) for row in items) / len(items)
             ),
             "action_margin": _summary([float(row["action_margin"]) for row in items]),
-            "outcome_margin": _summary(
-                [float(row["outcome_margin"]) for row in items]
-            ),
+            "outcome_margin": _summary([float(row["outcome_margin"]) for row in items]),
             "action_outcome_margin_gap": _summary(
-                [
-                    float(row["action_margin"] - row["outcome_margin"])
-                    for row in items
-                ]
+                [float(row["action_margin"] - row["outcome_margin"]) for row in items]
             ),
         }
         if "delta_action_margin_vs_phase_a" in items[0]:
             value.update(
                 {
                     "delta_action_margin_vs_phase_a": _summary(
-                        [
-                            float(row["delta_action_margin_vs_phase_a"])
-                            for row in items
-                        ]
+                        [float(row["delta_action_margin_vs_phase_a"]) for row in items]
                     ),
                     "delta_outcome_margin_vs_phase_a": _summary(
-                        [
-                            float(row["delta_outcome_margin_vs_phase_a"])
-                            for row in items
-                        ]
+                        [float(row["delta_outcome_margin_vs_phase_a"]) for row in items]
                     ),
                     "delta_action_outcome_margin_gap": _summary(
-                        [
-                            float(row["delta_action_outcome_margin_gap"])
-                            for row in items
-                        ]
+                        [float(row["delta_action_outcome_margin_gap"]) for row in items]
                     ),
                     "absolute_delta_action_outcome_margin_gap": _summary(
-                        [
-                            abs(float(row["delta_action_outcome_margin_gap"]))
-                            for row in items
-                        ]
+                        [abs(float(row["delta_action_outcome_margin_gap"])) for row in items]
                     ),
                 }
             )
@@ -337,8 +311,7 @@ def _probe_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
     return {
         "all": metrics(rows),
         "by_combination": {
-            combination: metrics(grouped[combination])
-            for combination in sorted(grouped)
+            combination: metrics(grouped[combination]) for combination in sorted(grouped)
         },
     }
 
@@ -390,9 +363,7 @@ def _seed_record(course: CreditCourse, seed: int) -> dict[str, Any]:
         outcomes,
         None,
     )
-    phase_a_baseline_by_cue = {
-        row["cue"]: row for row in phase_a_baseline["rows"]
-    }
+    phase_a_baseline_by_cue = {row["cue"]: row for row in phase_a_baseline["rows"]}
     phase_a_retention = _probe(
         phase_a,
         course.phase_a_retention,
@@ -432,9 +403,7 @@ def _seed_record(course: CreditCourse, seed: int) -> dict[str, Any]:
             course.phase_a_retention,
             actions,
             outcomes,
-            {
-                row["cue"]: row for row in phase_a_retention["rows"]
-            },
+            {row["cue"]: row for row in phase_a_retention["rows"]},
         )
         new = _probe(model, course.phase_b_holdout, actions, outcomes, None)
         conditions[condition] = {

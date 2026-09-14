@@ -199,13 +199,13 @@ def _run_native_actions(
                 restored._structural_topology_digest(restored.native_checkpoint())
                 == runtime.model.architecture._structural_topology_digest(checkpoint)
             ),
-            "all_success": all(
-                item["status"] == "success" and item["success"] for item in records
-            ),
+            "all_success": all(item["status"] == "success" and item["success"] for item in records),
         }
 
 
-def _cross_domain_training_examples() -> tuple[tuple[WorkspaceRoutingExample, ...], dict[str, object]]:
+def _cross_domain_training_examples() -> (
+    tuple[tuple[WorkspaceRoutingExample, ...], dict[str, object]]
+):
     examples: list[WorkspaceRoutingExample] = []
     records: list[dict[str, object]] = []
     for family, actions in EDITOR_MCP_TRAIN_ACTIONS:
@@ -248,7 +248,9 @@ def _cross_domain_training_examples() -> tuple[tuple[WorkspaceRoutingExample, ..
 def _task_candidates(
     required_actions: tuple[tuple[str, dict[str, object]], ...],
     distractor: tuple[str, dict[str, object]],
-) -> tuple[tuple[WorkspaceCandidate, ...], dict[str, tuple[str, dict[str, object]]], tuple[str, ...]]:
+) -> tuple[
+    tuple[WorkspaceCandidate, ...], dict[str, tuple[str, dict[str, object]]], tuple[str, ...]
+]:
     actions = (*required_actions, distractor)
     candidates = tuple(_candidate(action) for action in actions)
     action_by_id = {
@@ -402,9 +404,11 @@ def evaluate() -> dict[str, object]:
         lesion_specification = tuple(
             (
                 key,
-                len(lesion_model.neuron_regions[0].unit_ids)
-                if key == "existing_unit_count"
-                else value,
+                (
+                    len(lesion_model.neuron_regions[0].unit_ids)
+                    if key == "existing_unit_count"
+                    else value
+                ),
             )
             for key, value in proposal.specification
         )
@@ -458,16 +462,12 @@ def evaluate() -> dict[str, object]:
         )
 
     structural_scores = [
-        float(item["task_score"])
-        for run in runs
-        for item in run["structural_runs"]
+        float(item["task_score"]) for run in runs for item in run["structural_runs"]
     ]
     structural_mean = sum(structural_scores) / len(structural_scores)
     control_means = {
         method: sum(
-            float(item["task_score"])
-            for run in runs
-            for item in run["control_runs"][method]
+            float(item["task_score"]) for run in runs for item in run["control_runs"][method]
         )
         / (len(runs) * len(CROSS_DOMAIN_TASKS))
         for method in ("interaction_weight_only", "router_only", "memory_only")
@@ -489,8 +489,7 @@ def evaluate() -> dict[str, object]:
             structural_mean > score for score in control_means.values()
         ),
         "old_workspace_capability_retention": all(
-            all(item["task_score"] == 1.0 for item in run["retention_runs"])
-            for run in runs
+            all(item["task_score"] == 1.0 for item in run["retention_runs"]) for run in runs
         ),
         "native_status_and_checkpoint_evidence": all(
             item["score_source"].startswith("native Workbench")
@@ -508,10 +507,7 @@ def evaluate() -> dict[str, object]:
             for item in run["retention_runs"]
         ),
         "controls_remain_at_parent_capacity": all(
-            all(
-                item["capacity"] == 2
-                for item in run["control_runs"][method]
-            )
+            all(item["capacity"] == 2 for item in run["control_runs"][method])
             for run in runs
             for method in ("interaction_weight_only", "router_only", "memory_only")
         ),
@@ -522,9 +518,7 @@ def evaluate() -> dict[str, object]:
             and run["rollback_capacity"] == 2
             for run in runs
         ),
-        "growth_is_checkpointable": all(
-            run["workspace_checkpoint_roundtrip"] for run in runs
-        ),
+        "growth_is_checkpointable": all(run["workspace_checkpoint_roundtrip"] for run in runs),
         "lesion_removes_cross_domain_gain": all(
             run["lesion_run"]["task_score"] == 0.0 for run in runs
         ),

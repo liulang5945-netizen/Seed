@@ -99,9 +99,7 @@ def evaluate() -> dict[str, object]:
         persisted_artifacts = {
             item.artifact_digest for item in rollback_resumed.structural_validation_artifacts
         }
-        before_first_rollback = (
-            rollback_resumed.cognitive_snapshot().development.structural_budget
-        )
+        before_first_rollback = rollback_resumed.cognitive_snapshot().development.structural_budget
         first_rollback = rollback_resumed.rollback_structural_candidate_batch(
             batch.batch_id,
             first_candidate,
@@ -117,9 +115,7 @@ def evaluate() -> dict[str, object]:
         retention = rollback_resumed.structural_lineage_retention_result
         if retention is None:
             raise AssertionError("S33 retention audit was not recorded")
-        before_replay_after_compaction = _checkpoint_digest(
-            rollback_resumed.native_checkpoint()
-        )
+        before_replay_after_compaction = _checkpoint_digest(rollback_resumed.native_checkpoint())
         try:
             rollback_resumed.continue_structural_candidate_batch_from_validation_artifacts(
                 batch.batch_id,
@@ -133,14 +129,10 @@ def evaluate() -> dict[str, object]:
                 },
             )
         except ValueError as exc:
-            replay_after_compaction_failed_closed = (
-                "unknown structural candidate batch" in str(exc)
-            )
+            replay_after_compaction_failed_closed = "unknown structural candidate batch" in str(exc)
         else:
             replay_after_compaction_failed_closed = False
-        after_replay_after_compaction = _checkpoint_digest(
-            rollback_resumed.native_checkpoint()
-        )
+        after_replay_after_compaction = _checkpoint_digest(rollback_resumed.native_checkpoint())
         _save_native_checkpoint(rollback_resumed, after_compaction_path)
         final = _load_native_checkpoint(after_compaction_path)
         metrics = {

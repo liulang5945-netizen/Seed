@@ -168,21 +168,22 @@ def _member_set(family: tuple[str, str, str, tuple[float, float, float, float]])
     return tuple(sorted((MEMBER_IDS[family[1]], MEMBER_IDS[family[2]])))
 
 
-def _outcome(
-    corpus: InteractionTraceCorpus, *, family: str, member_ids: tuple[str, ...]
-) -> float:
+def _outcome(corpus: InteractionTraceCorpus, *, family: str, member_ids: tuple[str, ...]) -> float:
     matches = [
         episode
         for episode in corpus.holdout
-        if episode.context_id == f"holdout-workbench-{family}"
-        and episode.member_ids == member_ids
+        if episode.context_id == f"holdout-workbench-{family}" and episode.member_ids == member_ids
     ]
     if len(matches) != 1:
-        raise AssertionError(f"expected one holdout cell for {family}/{member_ids}, got {len(matches)}")
+        raise AssertionError(
+            f"expected one holdout cell for {family}/{member_ids}, got {len(matches)}"
+        )
     return float(matches[0].outcome)
 
 
-def _gain(corpus: InteractionTraceCorpus, family: str, member_ids: tuple[str, str]) -> dict[str, float]:
+def _gain(
+    corpus: InteractionTraceCorpus, family: str, member_ids: tuple[str, str]
+) -> dict[str, float]:
     first = _outcome(corpus, family=family, member_ids=(member_ids[0],))
     second = _outcome(corpus, family=family, member_ids=(member_ids[1],))
     grouped = _outcome(corpus, family=family, member_ids=member_ids)
@@ -241,7 +242,9 @@ def evaluate() -> dict[str, object]:
     runs: list[dict[str, object]] = []
     for family, target in zip(TARGET_FAMILIES, target_sets, strict=True):
         target_members = target[0]
-        negative_members = tuple(sorted((MEMBER_IDS[NEGATIVE_FAMILY[1]], MEMBER_IDS[NEGATIVE_FAMILY[2]])))
+        negative_members = tuple(
+            sorted((MEMBER_IDS[NEGATIVE_FAMILY[1]], MEMBER_IDS[NEGATIVE_FAMILY[2]]))
+        )
         candidate_sets = (target_members, negative_members)
         for seed in LEARNER_SEEDS:
             learner, selected, restored_selected = _learner_run(
@@ -289,14 +292,11 @@ def evaluate() -> dict[str, object]:
             for record in learner_records_for_report(corpus)
         ),
         "seed_and_candidate_order_invariant": len(
-            {
-                tuple(item["selected"]["member_ids"]) for item in runs
-            }
+            {tuple(item["selected"]["member_ids"]) for item in runs}
         )
         == 2,
         "positive_unseen_target_selected": all(
-            tuple(item["selected"]["member_ids"])
-            == tuple(_member_set(family))
+            tuple(item["selected"]["member_ids"]) == tuple(_member_set(family))
             for family in TARGET_FAMILIES
             for item in runs
             if item["target_family"] == family[0]
@@ -319,9 +319,7 @@ def evaluate() -> dict[str, object]:
                     _member_set(TARGET_FAMILIES[0]),
                     tuple(sorted((MEMBER_IDS[NEGATIVE_FAMILY[1]], MEMBER_IDS[NEGATIVE_FAMILY[2]]))),
                 ),
-            )[0].select(
-                (_member_set(TARGET_FAMILIES[0]),), resource_budget=0.1, unseen_only=True
-            )
+            )[0].select((_member_set(TARGET_FAMILIES[0]),), resource_budget=0.1, unseen_only=True)
             is None
         ),
         "workbench_world_evidence_preserved": all(
@@ -362,11 +360,7 @@ def evaluate() -> dict[str, object]:
         "learner_seeds": list(LEARNER_SEEDS),
         "runs": [
             {
-                key: (
-                    value.to_payload()
-                    if hasattr(value, "to_payload")
-                    else value
-                )
+                key: (value.to_payload() if hasattr(value, "to_payload") else value)
                 for key, value in item.items()
                 if key != "negative_control_candidate"
             }
@@ -379,11 +373,13 @@ def evaluate() -> dict[str, object]:
             "train_trace_digest": corpus.train_trace_digest,
             "holdout_trace_digest": corpus.holdout_trace_digest,
             "train_group_count": len(_evaluator().train_only_candidates(corpus)),
-            "train_member_profile_count": len(build_member_evidence(
-                corpus.train,
-                source_trace_digest=corpus.train_trace_digest,
-                checkpoint_revision=next(iter(corpus.train_checkpoint_revisions)),
-            )),
+            "train_member_profile_count": len(
+                build_member_evidence(
+                    corpus.train,
+                    source_trace_digest=corpus.train_trace_digest,
+                    checkpoint_revision=next(iter(corpus.train_checkpoint_revisions)),
+                )
+            ),
             "semantic_role_labels": 0,
         },
         "metrics": metrics,

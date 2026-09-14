@@ -54,9 +54,10 @@ def test_read_only_intent_policy_and_decision_roundtrip() -> None:
     assert decision.accepted is True
     assert decision.action_intent is not None
     assert restored.to_payload() == decision.to_payload()
-    assert NativeReadOnlyIntentPlanner.from_checkpoint(
-        planner.checkpoint()
-    ).checkpoint() == planner.checkpoint()
+    assert (
+        NativeReadOnlyIntentPlanner.from_checkpoint(planner.checkpoint()).checkpoint()
+        == planner.checkpoint()
+    )
 
 
 def test_read_only_abstention_and_missing_target_recovery_contract() -> None:
@@ -113,9 +114,7 @@ def test_read_only_abstention_and_missing_target_recovery_contract() -> None:
     assert decision.action_intent is not None
     assert decision.action_intent.kind == "workspace.list"
     assert decision.action_intent.parameters == {"path": "."}
-    restored_policy = NativeReadOnlyIntentPlanner.from_checkpoint(
-        planner.checkpoint()
-    )
+    restored_policy = NativeReadOnlyIntentPlanner.from_checkpoint(planner.checkpoint())
     assert restored_policy.checkpoint() == planner.checkpoint()
     with pytest.raises(ValueError, match="route parameters must be mappings"):
         ReadOnlyIntentPolicy.from_payload(

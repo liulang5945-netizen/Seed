@@ -60,9 +60,7 @@ def _candidate_probe(
     parent_checkpoint = model.native_checkpoint()
     trial = TSKV8Adapter.from_native_checkpoint(parent_checkpoint)
     trial_candidate = next(
-        item
-        for item in trial.structural_proposal_candidates
-        if item.candidate_id == candidate_id
+        item for item in trial.structural_proposal_candidates if item.candidate_id == candidate_id
     )
     proposal = trial.materialize_structural_candidate(candidate_id)
     if proposal is None:
@@ -169,9 +167,7 @@ def evaluate() -> dict[str, object]:
         runtime.model.architecture,
         candidate_id,
     )
-    workbench_region_id = (
-        "workbench.code" if region_id == "adaptive.cortex" else "workbench.docs"
-    )
+    workbench_region_id = "workbench.code" if region_id == "adaptive.cortex" else "workbench.docs"
     outcome_digests = tuple(
         item["evidence"]["evidence"]["outcome_digest"]
         for item in executions
@@ -200,16 +196,14 @@ def evaluate() -> dict[str, object]:
         evidence_ids=candidate.evidence_ids,
         measurement_digest=measurements.measurement_digest,
     )
-    measurement_roundtrip = StructuralValidationMeasurements.from_payload(
-        measurements.to_payload()
-    )
-    artifact_roundtrip = WorkbenchStructuralValidationArtifact.from_payload(
-        artifact.to_payload()
-    )
-    continuation = runtime.model.architecture.continue_structural_candidate_from_validation_artifact(
-        artifact,
-        holdout_inputs=replay["holdout_inputs"],
-        expected_activities=replay["holdout_outputs"],
+    measurement_roundtrip = StructuralValidationMeasurements.from_payload(measurements.to_payload())
+    artifact_roundtrip = WorkbenchStructuralValidationArtifact.from_payload(artifact.to_payload())
+    continuation = (
+        runtime.model.architecture.continue_structural_candidate_from_validation_artifact(
+            artifact,
+            holdout_inputs=replay["holdout_inputs"],
+            expected_activities=replay["holdout_outputs"],
+        )
     )
     metrics = {
         "measurement_owner_is_not_manual": (
@@ -243,8 +237,7 @@ def evaluate() -> dict[str, object]:
         "real_workbench_evidence_is_bound": len(outcome_digests) == 3,
         "measured_artifact_enters_existing_policy": continuation["status"] == "admitted",
         "policy_consumes_measured_holdout_gain": (
-            continuation["continuation"]["decision"]["holdout_gain"]
-            == measurements.holdout_gain
+            continuation["continuation"]["decision"]["holdout_gain"] == measurements.holdout_gain
         ),
         "resource_measurement_is_derived_before_checkpoint_binding": (
             measurements.resource_measurement_digest

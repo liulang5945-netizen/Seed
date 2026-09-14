@@ -270,13 +270,7 @@ def build_member_evidence(
 
     observations: dict[str, list[tuple[float, float, float, str]]] = defaultdict(list)
     surface_hits: dict[str, set[int]] = defaultdict(set)
-    all_members = sorted(
-        {
-            member
-            for episode in episodes
-            for member in episode.member_ids
-        }
-    )
+    all_members = sorted({member for episode in episodes for member in episode.member_ids})
     for context_id, cells in contexts.items():
         baseline = cells.get(frozenset())
         if not baseline:
@@ -379,7 +373,9 @@ class InteractionGroupTransferLearner:
             }
         )
 
-    def observe_members(self, profiles: Iterable[InteractionGroupMemberEvidence]) -> tuple[str, ...]:
+    def observe_members(
+        self, profiles: Iterable[InteractionGroupMemberEvidence]
+    ) -> tuple[str, ...]:
         """Register role-free member evidence from one train lineage."""
 
         observed: list[str] = []
@@ -400,7 +396,9 @@ class InteractionGroupTransferLearner:
         observed: list[str] = []
         for record in records:
             if not isinstance(record, InteractionGroupRecord):
-                raise TypeError("interaction transfer records must be InteractionGroupRecord values")
+                raise TypeError(
+                    "interaction transfer records must be InteractionGroupRecord values"
+                )
             if record.status not in {"candidate", "admitted"}:
                 raise ValueError("interaction transfer cannot consume terminal group records")
             if record.holdout_interaction is not None or record.holdout_recovery_effect is not None:
@@ -429,31 +427,31 @@ class InteractionGroupTransferLearner:
         if any(member not in self._profiles for member in members):
             return None
         pair = frozenset(members)
-        if not allow_observed and any(frozenset(record.member_ids) == pair for record in self._records):
+        if not allow_observed and any(
+            frozenset(record.member_ids) == pair for record in self._records
+        ):
             return None
         if not self._coefficients:
             return None
         features = self._pair_features(members)
         prediction = sum(
-            left * right
-            for left, right in zip(self._coefficients, features, strict=True)
+            left * right for left, right in zip(self._coefficients, features, strict=True)
         )
-        support = sum(
-            1
-            for record in self._records
-            if set(record.member_ids) & set(members)
-        )
+        support = sum(1 for record in self._records if set(record.member_ids) & set(members))
         profile_observations = min(self._profiles[member].observations for member in members)
         uncertainty = self._residual_rmse + 1.0 / math.sqrt(float(max(1, profile_observations)))
         resource_cost = sum(self._profiles[member].resource_cost for member in members)
-        group_id = "transfer-group:" + _digest(
-            {
-                "members": list(members),
-                "source_trace_digest": self._source_trace_digest,
-                "checkpoint_revision": self._checkpoint_revision,
-                "model_digest": self.model_digest,
-            }
-        )[:24]
+        group_id = (
+            "transfer-group:"
+            + _digest(
+                {
+                    "members": list(members),
+                    "source_trace_digest": self._source_trace_digest,
+                    "checkpoint_revision": self._checkpoint_revision,
+                    "model_digest": self.model_digest,
+                }
+            )[:24]
+        )
         return InteractionGroupTransferCandidate(
             group_id=group_id,
             member_ids=members,
@@ -482,10 +480,7 @@ class InteractionGroupTransferLearner:
             if (candidate := self.candidate(member_ids, allow_observed=not unseen_only)) is not None
             and candidate.predicted_interaction >= self.minimum_utility
             and candidate.uncertainty <= self.maximum_uncertainty
-            and (
-                resource_budget is None
-                or candidate.resource_cost <= float(resource_budget)
-            )
+            and (resource_budget is None or candidate.resource_cost <= float(resource_budget))
         ]
         if not candidates:
             return None
@@ -643,9 +638,7 @@ class InteractionGroupTransferLearner:
                     continue
                 matrix[row_index] = [
                     value - factor * pivot_value
-                    for value, pivot_value in zip(
-                        matrix[row_index], matrix[rank], strict=True
-                    )
+                    for value, pivot_value in zip(matrix[row_index], matrix[rank], strict=True)
                 ]
             rank += 1
             if rank == len(matrix):

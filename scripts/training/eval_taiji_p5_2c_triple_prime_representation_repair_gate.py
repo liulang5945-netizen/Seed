@@ -77,13 +77,10 @@ from taiji.interaction_groups import (  # noqa: E402
 REPORT_FORMAT = "taiji-p5-2c-triple-prime-representation-repair-report-v1"
 VERSION = 1
 PREREGISTRATION = (
-    "plans/reference/"
-    "M5_P5_2C_TRIPLE_PRIME_REPRESENTATION_REPAIR_PREREGISTRATION_20260913.md"
+    "plans/reference/" "M5_P5_2C_TRIPLE_PRIME_REPRESENTATION_REPAIR_PREREGISTRATION_20260913.md"
 )
 DEFAULT_REPORT = (
-    PROJECT_ROOT
-    / "reports"
-    / "taiji_p5_2c_triple_prime_representation_repair_20260913.json"
+    PROJECT_ROOT / "reports" / "taiji_p5_2c_triple_prime_representation_repair_20260913.json"
 )
 
 # --------------------------------------------------------------------------- #
@@ -551,9 +548,7 @@ def run_gate() -> dict[str, Any]:
         learner, profiles, _ = _fit_learner(corpus)
         representation = _representation_audit(learner, profiles, candidate_sets_ordered)
 
-        selected = learner.select(
-            candidate_sets_ordered, resource_budget=10.0, unseen_only=True
-        )
+        selected = learner.select(candidate_sets_ordered, resource_budget=10.0, unseen_only=True)
         if selected is None:
             payload.update(
                 {
@@ -592,14 +587,10 @@ def run_gate() -> dict[str, Any]:
         control_sets["strongest_leftover_pair"] = (strongest_singleton,)
         control_sets["fixed_combination"] = (tuple(sorted(HELD_OUT_PAIR)),)
         control_sets["no_learning"] = (
-            candidate_sets_ordered[
-                (RANDOM_CONTROL_SEED * 7) % len(candidate_sets_ordered)
-            ],
+            candidate_sets_ordered[(RANDOM_CONTROL_SEED * 7) % len(candidate_sets_ordered)],
         )
         control_sets["random_combination"] = (
-            candidate_sets_ordered[
-                (RANDOM_CONTROL_SEED * 13) % len(candidate_sets_ordered)
-            ],
+            candidate_sets_ordered[(RANDOM_CONTROL_SEED * 13) % len(candidate_sets_ordered)],
         )
 
         lesion = _lesion_surface_columns(learner)
@@ -615,9 +606,7 @@ def run_gate() -> dict[str, Any]:
             profiles, candidate_sets_ordered, resource_budget=10.0
         )
         if sum_heuristic is not None:
-            control_sets["train_only_simple_regression"] = (
-                tuple(sum_heuristic[1].member_ids),
-            )
+            control_sets["train_only_simple_regression"] = (tuple(sum_heuristic[1].member_ids),)
 
         pair_control_scores = {name: score(value[0]) for name, value in control_sets.items()}
 
@@ -633,8 +622,11 @@ def run_gate() -> dict[str, Any]:
                     best_value = value
                     best_member = member
             singleton_per_context.append(
-                {"context_id": task.task_id, "strongest_singleton_gain": best_value - baseline,
-                 "strongest_singleton_member": best_member}
+                {
+                    "context_id": task.task_id,
+                    "strongest_singleton_gain": best_value - baseline,
+                    "strongest_singleton_member": best_member,
+                }
             )
         singleton_gains = [item["strongest_singleton_gain"] for item in singleton_per_context]
         singleton_mean = float(sum(singleton_gains) / len(singleton_gains))
@@ -653,9 +645,7 @@ def run_gate() -> dict[str, Any]:
         # C4 coincides with the correct answer by construction, so it is excluded
         # from the margin-bearing set.
         margin_controls = {
-            name: value
-            for name, value in control_scores.items()
-            if name != "fixed_combination"
+            name: value for name, value in control_scores.items() if name != "fixed_combination"
         }
         strongest_control = max(
             margin_controls.items(), key=lambda item: item[1]["mean_gain_vs_strongest_single"]
@@ -725,9 +715,7 @@ def run_gate() -> dict[str, Any]:
         calibration = {
             "unseen_sample_count": len(unseen_rows),
             "comparable_pair_count": len(unseen_rows),
-            "mean_absolute_error": (
-                float(sum(errors) / len(errors)) if errors else None
-            ),
+            "mean_absolute_error": (float(sum(errors) / len(errors)) if errors else None),
             "median_absolute_error": median_absolute_error,
             "sign_match_rate": sign_match_rate,
             "small_sample_caveat": (
@@ -751,9 +739,7 @@ def run_gate() -> dict[str, Any]:
         total_wall = time.perf_counter() - started
 
         # ---- mechanical checks ---------------------------------------------
-        replica_episodes = p52cp._execute_matrix(
-            replica_root, contexts, members, cue_by_task
-        )
+        replica_episodes = p52cp._execute_matrix(replica_root, contexts, members, cue_by_task)
 
         # Inherited verbatim from P5.2c'': raw matrix episodes carry task_id but
         # no context_id, so episode_id is the identity that is available here.
@@ -800,9 +786,7 @@ def run_gate() -> dict[str, Any]:
             "resource_cost": float(candidate.resource_cost),
             "support": int(candidate.support),
             "selection_utility": float(candidate.utility),
-            "candidate_sets_considered": [
-                list(item) for item in reversed(candidate_sets_ordered)
-            ],
+            "candidate_sets_considered": [list(item) for item in reversed(candidate_sets_ordered)],
             "observed_pair_count": len(observed_pairs),
             "held_out_pairs": [list(pair) for pair in HELD_OUT_PAIRS],
         }
@@ -892,9 +876,7 @@ def run_gate() -> dict[str, Any]:
             {
                 "status": "completed",
                 "outcome": outcome,
-                "experiment_passed": bool(
-                    outcome == "unseen_combination_transfer_supported"
-                ),
+                "experiment_passed": bool(outcome == "unseen_combination_transfer_supported"),
                 "design": {
                     "members": list(MEMBER_IDS),
                     "member_kind": "family-specialist procedural readouts (same instances as P5.2b)",
@@ -982,10 +964,13 @@ def run_gate() -> dict[str, Any]:
                     "holdout_episodes": len(corpus.holdout),
                     "stop_reason_classes": dict(
                         sorted(
-                            (p52cpp.Counter(
-                                item["stop_reason"] for item in matrix_episodes
-                                if item.get("stop_reason")
-                            )).items()
+                            (
+                                p52cpp.Counter(
+                                    item["stop_reason"]
+                                    for item in matrix_episodes
+                                    if item.get("stop_reason")
+                                )
+                            ).items()
                         )
                     ),
                 },

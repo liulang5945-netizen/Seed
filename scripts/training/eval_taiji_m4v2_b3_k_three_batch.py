@@ -20,9 +20,7 @@ REPORT_FORMAT = "taiji-m4v2-b3-k-three-batch-v1"
 VERSION = 1
 TRAIN_EPISODE_COUNT = 3
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m4v2_b3_k_three_batch_20260910.json"
-DEFAULT_CANDIDATE_ROOT = (
-    PROJECT_ROOT / "output" / "taiji_m4v2_b3_k_three_batch_20260910"
-)
+DEFAULT_CANDIDATE_ROOT = PROJECT_ROOT / "output" / "taiji_m4v2_b3_k_three_batch_20260910"
 
 
 def run_three_batch(
@@ -52,9 +50,7 @@ def main() -> int:
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
     args = parser.parse_args()
     artifact_dir = (
-        args.artifact_dir
-        if args.artifact_dir.is_absolute()
-        else PROJECT_ROOT / args.artifact_dir
+        args.artifact_dir if args.artifact_dir.is_absolute() else PROJECT_ROOT / args.artifact_dir
     )
     candidate_root = (
         args.candidate_root

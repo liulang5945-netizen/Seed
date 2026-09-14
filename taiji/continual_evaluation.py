@@ -55,7 +55,11 @@ def _require_text(value: str, field_name: str) -> None:
 
 
 def _require_finite(value: float, field_name: str) -> None:
-    if not isinstance(value, (int, float)) or isinstance(value, bool) or not math.isfinite(float(value)):
+    if (
+        not isinstance(value, (int, float))
+        or isinstance(value, bool)
+        or not math.isfinite(float(value))
+    ):
         raise ContinualEvaluationContractError(f"{field_name} must be finite")
 
 
@@ -145,9 +149,7 @@ class MetricSpec:
             baseline_kind=str(payload.get("baseline_kind", "parent")),
             domain_id=str(payload.get("domain_id", "*")),
             critical=bool(payload.get("critical", False)),
-            catastrophic_forgetting_threshold=payload.get(
-                "catastrophic_forgetting_threshold"
-            ),
+            catastrophic_forgetting_threshold=payload.get("catastrophic_forgetting_threshold"),
         )
 
 
@@ -294,9 +296,7 @@ class MetricObservation:
         if self.comparison_delta is not None:
             _require_finite(self.comparison_delta, "comparison_delta")
             if not self.comparison_id:
-                raise ContinualEvaluationContractError(
-                    "comparison_delta requires comparison_id"
-                )
+                raise ContinualEvaluationContractError("comparison_delta requires comparison_id")
         if self.comparison_id is not None:
             _require_text(self.comparison_id, "comparison_id")
 
@@ -518,14 +518,10 @@ class ContinualScorecard:
         observations = self._observations(metric_name, domain_id)
         valid = tuple(item for item in observations if item.parent_delta is not None)
         missing_count = len(observations) - len(valid)
-        parent_deltas = tuple(
-            item.parent_delta for item in valid if item.parent_delta is not None
-        )
+        parent_deltas = tuple(item.parent_delta for item in valid if item.parent_delta is not None)
         gains = tuple(self._gain(spec, float(delta)) for delta in parent_deltas)
         forgetting = tuple(max(0.0, -gain) for gain in gains)
-        non_inferiority = (
-            missing_count == 0 and all(gain >= -self.epsilon for gain in gains)
-        )
+        non_inferiority = missing_count == 0 and all(gain >= -self.epsilon for gain in gains)
         catastrophic = False
         if spec.catastrophic_forgetting_threshold is not None:
             catastrophic = any(
@@ -648,8 +644,7 @@ class ContinualScorecard:
         return cls(
             metric_specs=tuple(MetricSpec.from_payload(item) for item in payload["metric_specs"]),
             snapshots=tuple(
-                ContinualEvaluationSnapshot.from_payload(item)
-                for item in payload["snapshots"]
+                ContinualEvaluationSnapshot.from_payload(item) for item in payload["snapshots"]
             ),
             epsilon=float(payload.get("epsilon", 0.0)),
         )

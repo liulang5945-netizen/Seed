@@ -72,10 +72,7 @@ def _schedule_events(corpus: Any, schedule: str) -> tuple[tuple[Any, str, float,
         raise ValueError(f"unsupported event-binding schedule: {schedule}")
     events: list[tuple[Any, str, float, str]] = []
     if schedule == "posthoc_experienced":
-        events.extend(
-            (episode, "experienced", 1.0, "all")
-            for episode in corpus.phase_b_train
-        )
+        events.extend((episode, "experienced", 1.0, "all") for episode in corpus.phase_b_train)
         events.extend(
             (episode, REPLAY_PROVENANCE, REPLAY_SCALE, REPLAY_TARGETS)
             for episode in corpus.replay_train
@@ -231,10 +228,7 @@ def _condition_passed(condition: dict[str, Any]) -> bool:
 def run_diagnosis() -> dict[str, Any]:
     corpus = _curriculum(phase_a_start=0, phase_b_start=192)
     event_set_digest = _event_set_digest(corpus)
-    conditions = [
-        _condition_record(schedule, corpus, event_set_digest)
-        for schedule in SCHEDULES
-    ]
+    conditions = [_condition_record(schedule, corpus, event_set_digest) for schedule in SCHEDULES]
     for condition in conditions:
         condition["condition_gate_passed"] = _condition_passed(condition)
     interleaved = conditions[1]
@@ -257,8 +251,7 @@ def run_diagnosis() -> dict[str, Any]:
         "conclusion": {
             "interleaved_condition_passed": interleaved["condition_gate_passed"],
             "event_order_is_sufficient_explanation": (
-                interleaved["condition_gate_passed"]
-                and not conditions[0]["condition_gate_passed"]
+                interleaved["condition_gate_passed"] and not conditions[0]["condition_gate_passed"]
             ),
             "next_boundary": (
                 "interleaved event order passed; hold for M1-39 explicit event-binding"
@@ -276,7 +269,9 @@ def main() -> int:
     result = run_diagnosis()
     result["report_path"] = str(args.report)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

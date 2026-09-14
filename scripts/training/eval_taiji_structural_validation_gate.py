@@ -41,12 +41,8 @@ def evaluate() -> dict[str, object]:
         structural_budget=1,
         evidence_ids=evidence_ids,
     )
-    accepted_roundtrip = StructuralValidationGateDecision.from_payload(
-        accepted.to_payload()
-    )
-    rejected_roundtrip = StructuralValidationGateDecision.from_payload(
-        rejected.to_payload()
-    )
+    accepted_roundtrip = StructuralValidationGateDecision.from_payload(accepted.to_payload())
+    rejected_roundtrip = StructuralValidationGateDecision.from_payload(rejected.to_payload())
     metrics = {
         "accepted_candidate_passes": accepted.passed,
         "accepted_reasons_empty": accepted.reasons == (),
@@ -54,9 +50,7 @@ def evaluate() -> dict[str, object]:
         "rejected_candidate_fails": rejected.passed is False,
         "rejected_lists_all_failed_dimensions": len(rejected.reasons) == 5,
         "rejected_roundtrip": rejected_roundtrip == rejected,
-        "policy_is_content_addressed": (
-            accepted.decision_digest != rejected.decision_digest
-        ),
+        "policy_is_content_addressed": (accepted.decision_digest != rejected.decision_digest),
         "policy_is_non_mutating": True,
     }
     return {
@@ -83,7 +77,9 @@ def main() -> None:
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_w7_r5c_s3b_structural_validation_gate_20260830.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_w7_r5c_s3b_structural_validation_gate_20260830.json",
     )
     args = parser.parse_args()
     report = evaluate()

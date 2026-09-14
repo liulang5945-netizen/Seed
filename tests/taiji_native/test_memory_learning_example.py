@@ -122,7 +122,12 @@ def test_example_rejects_invalid_partition_role_and_symbols() -> None:
 
 def test_example_rejects_wrong_format_or_fields() -> None:
     payload = _example(
-        "train", 0, partition="train", cue_key=0, combination=COMBINATIONS[0], role="repeated_observation"
+        "train",
+        0,
+        partition="train",
+        cue_key=0,
+        combination=COMBINATIONS[0],
+        role="repeated_observation",
     ).to_dict()
     broken = dict(payload)
     broken["format"] = "legacy"

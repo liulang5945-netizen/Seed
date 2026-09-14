@@ -37,14 +37,8 @@ from scripts.training.audit_taiji_m5_k_scorecard import (  # noqa: E402
 )
 from taiji.internalization import content_digest  # noqa: E402
 
-P4_12_REPORT = (
-    PROJECT_ROOT
-    / "reports"
-    / "taiji_m5_k_p4_12_course_level_validation_20260911.json"
-)
-P4_13_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m5_k_p4_13_promotion_course_20260911.json"
-)
+P4_12_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p4_12_course_level_validation_20260911.json"
+P4_13_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p4_13_promotion_course_20260911.json"
 V3_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_axis_scorecard_v3_20260910.json"
 REPORT_FORMAT = "taiji-m5-k-axis-scorecard-v4"
 VERSION = 4
@@ -93,9 +87,7 @@ def _promotion_course_evidence(report: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("P4.13 experiment_passed is not true")
     if report.get("can_promote") is not False:
         raise ValueError("P4.13 report must keep can_promote=false")
-    course_projection_cells = [
-        cell for cell in report.get("cell_results", [])
-    ]
+    course_projection_cells = [cell for cell in report.get("cell_results", [])]
     cumulative_converged = all(
         bool(cell.get("projection_b", {}).get("converged"))
         and float(cell.get("projection_b", {}).get("total_violation", 1.0)) == 0.0
@@ -130,8 +122,7 @@ def _promotion_course_evidence(report: dict[str, Any]) -> dict[str, Any]:
             "recheck_values": "utility 0.8 / target 0.75 (value-identical)",
         },
         "rollback_gate_all_pass": all(
-            bool(cell.get("rollback_gate", {}).get("passed"))
-            for cell in course_projection_cells
+            bool(cell.get("rollback_gate", {}).get("passed")) for cell in course_projection_cells
         ),
         "resource_absolute_budget_all_pass": all(
             bool(cell.get("resource_audit", {}).get("caps_passed"))
@@ -150,9 +141,7 @@ def build_v4(
     p4_12_report: dict[str, Any],
     p4_13_report: dict[str, Any],
 ) -> dict[str, Any]:
-    if v3_report.get("format") != V3_REPORT_FORMAT or v3_report.get(
-        "version"
-    ) != V3_VERSION:
+    if v3_report.get("format") != V3_REPORT_FORMAT or v3_report.get("version") != V3_VERSION:
         raise ValueError("v3 scorecard format/version mismatch")
     core = build_v3(k1, k2, k3, c_stage, v2_report)
     v3_sources = v3_report.get("source_reports", {})
@@ -169,9 +158,7 @@ def build_v4(
     }
     core["format"] = REPORT_FORMAT
     core["version"] = VERSION
-    core["source_reports"]["P4_12_COURSE_LEVEL_VALIDATION"] = content_digest(
-        p4_12_report
-    )
+    core["source_reports"]["P4_12_COURSE_LEVEL_VALIDATION"] = content_digest(p4_12_report)
     core["source_reports"]["P4_13_PROMOTION_COURSE"] = content_digest(p4_13_report)
     core["solver_mechanism_evidence"] = {
         "course_level_validation": course_level,
@@ -218,30 +205,14 @@ def main() -> int:
     started = time.perf_counter()
     payload = build_v4(
         _read_report(
-            Path(
-                PROJECT_ROOT
-                / "reports"
-                / "taiji_m5_k1_skill_composition_formal_20260909.json"
-            )
+            Path(PROJECT_ROOT / "reports" / "taiji_m5_k1_skill_composition_formal_20260909.json")
         ),
+        _read_report(Path(PROJECT_ROOT / "reports" / "taiji_m5_k2_multistep_formal_20260909.json")),
         _read_report(
-            Path(
-                PROJECT_ROOT
-                / "reports"
-                / "taiji_m5_k2_multistep_formal_20260909.json"
-            )
-        ),
-        _read_report(
-            Path(
-                PROJECT_ROOT
-                / "reports"
-                / "taiji_m5_k3_outcome_dependency_formal_20260909.json"
-            )
+            Path(PROJECT_ROOT / "reports" / "taiji_m5_k3_outcome_dependency_formal_20260909.json")
         ),
         _read_report(C_STAGE_REPORT),
-        _read_report(
-            PROJECT_ROOT / "reports" / "taiji_m5_k_axis_scorecard_v2_20260909.json"
-        ),
+        _read_report(PROJECT_ROOT / "reports" / "taiji_m5_k_axis_scorecard_v2_20260909.json"),
         _read_report(V3_REPORT),
         _read_report(P4_12_REPORT),
         _read_report(P4_13_REPORT),

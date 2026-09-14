@@ -2,20 +2,13 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-REPORT_PATH = (
-    ROOT
-    / "reports"
-    / "taiji_m4v2_b3_k_c_capacity_parity_input_preflight_20260910.json"
-)
+REPORT_PATH = ROOT / "reports" / "taiji_m4v2_b3_k_c_capacity_parity_input_preflight_20260910.json"
 
 
 def test_capacity_parity_input_preflight_is_ready_for_build_only() -> None:
     report = json.loads(REPORT_PATH.read_text(encoding="utf-8"))
 
-    assert (
-        report["report_format"]
-        == "taiji-m4v2-b3-k-c-capacity-parity-input-preflight-v1"
-    )
+    assert report["report_format"] == "taiji-m4v2-b3-k-c-capacity-parity-input-preflight-v1"
     assert report["status"] == "ready-for-candidate-design"
     assert report["cell_count"] == 9
     assert report["fixed_large_ready"] is True

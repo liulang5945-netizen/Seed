@@ -49,9 +49,7 @@ def _build_artifact(
         candidate_id,
         capacity_limit=capacity_limit,
     )
-    workbench_region_id = (
-        "workbench.code" if region_id == "adaptive.cortex" else "workbench.docs"
-    )
+    workbench_region_id = "workbench.code" if region_id == "adaptive.cortex" else "workbench.docs"
     outcome_digests = tuple(
         item["evidence"]["evidence"]["outcome_digest"]
         for item in executions
@@ -80,10 +78,14 @@ def _build_artifact(
         evidence_ids=candidate.evidence_ids,
         measurement_digest=measurements.measurement_digest,
     )
-    return artifact, {
-        "holdout_inputs": replay["holdout_inputs"],
-        "expected_activities": replay["holdout_outputs"],
-    }, measurements
+    return (
+        artifact,
+        {
+            "holdout_inputs": replay["holdout_inputs"],
+            "expected_activities": replay["holdout_outputs"],
+        },
+        measurements,
+    )
 
 
 def evaluate() -> dict[str, object]:

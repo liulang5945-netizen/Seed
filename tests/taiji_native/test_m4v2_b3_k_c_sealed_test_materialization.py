@@ -25,9 +25,7 @@ def test_c_entry_sealed_test_is_materialized_without_scores_or_targets() -> None
     assert len(artifact["episodes"]) == 3
     assert len(artifact["observation_payloads"]) == 9
     assert len(artifact["artifact_digest"]) == 64
-    assert len(
-        {item["observation_digest"] for item in artifact["observation_payloads"]}
-    ) == 9
+    assert len({item["observation_digest"] for item in artifact["observation_payloads"]}) == 9
 
 
 def test_c_entry_sealed_test_paths_are_not_validation_paths() -> None:
@@ -37,7 +35,5 @@ def test_c_entry_sealed_test_paths_are_not_validation_paths() -> None:
     assert len(paths) == len(set(paths))
     assert all(path.startswith("sealed_") for path in paths)
     assert all(
-        digest
-        for episode in artifact["episodes"]
-        for digest in episode["observation_digests"]
+        digest for episode in artifact["episodes"] for digest in episode["observation_digests"]
     )

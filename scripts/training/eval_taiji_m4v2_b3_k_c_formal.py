@@ -98,9 +98,7 @@ def _timed_score(
         "checkpoint_write_bytes": 0,
         "parameter_bytes": int(parameter_bytes),
         "inference_trace_count": int(trace_count),
-        "measurement_complete": bool(
-            before_rss is not None and after_rss is not None
-        ),
+        "measurement_complete": bool(before_rss is not None and after_rss is not None),
     }
 
 
@@ -124,9 +122,7 @@ def _combined_inference_resource(
         "checkpoint_write_bytes": 0,
         "parameter_bytes": int(max(row["parameter_bytes"] for row in values)),
         "inference_trace_count": sum(int(row["inference_trace_count"]) for row in values),
-        "measurement_complete": all(
-            bool(row["measurement_complete"]) for row in values
-        ),
+        "measurement_complete": all(bool(row["measurement_complete"]) for row in values),
         "by_split": {key: dict(value) for key, value in rows.items()},
     }
 
@@ -188,9 +184,7 @@ def _score_cell(
         fixed_large_payload["ensemble_checkpoint"]
     )
     parent_parameter_bytes = _parameter_bytes(parent_semantic, parent_transition)
-    candidate_parameter_bytes = _parameter_bytes(
-        candidate_semantic, candidate_transition
-    )
+    candidate_parameter_bytes = _parameter_bytes(candidate_semantic, candidate_transition)
     fixed_parameter_bytes = int(
         sum(
             _parameter_bytes(replica)
@@ -224,9 +218,7 @@ def _score_cell(
             "fixed_large": fixed_large_scores,
             "candidate_delta_vs_frozen": _delta(candidate, frozen),
             "fixed_large_delta_vs_frozen": _delta(fixed_large_scores, frozen),
-            "candidate_delta_vs_fixed_large": _delta(
-                candidate, fixed_large_scores
-            ),
+            "candidate_delta_vs_fixed_large": _delta(candidate, fixed_large_scores),
         }
         resources[split] = {
             "frozen_parent": frozen_resource,
@@ -248,9 +240,7 @@ def run_formal(
 ) -> dict[str, Any]:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     sealed = json.loads(sealed_test_path.read_text(encoding="utf-8"))
-    fixed_large_build = json.loads(
-        fixed_large_report_path.read_text(encoding="utf-8")
-    )
+    fixed_large_build = json.loads(fixed_large_report_path.read_text(encoding="utf-8"))
     if sealed["artifact_digest"] != manifest["sealed_test_split"]["artifact_digest"]:
         raise ValueError("sealed-test artifact does not match frozen C-entry manifest")
     if fixed_large_build.get("status") != "passed":
@@ -283,11 +273,7 @@ def run_formal(
                     projector=projector,
                 )
                 for course_seed in COURSE_SEEDS:
-                    candidate_dir = (
-                        output_root
-                        / f"model_{model_seed}"
-                        / f"course_{course_seed}"
-                    )
+                    candidate_dir = output_root / f"model_{model_seed}" / f"course_{course_seed}"
                     candidate = run_diagnostic(
                         artifact_dir=worker_root / f"model_{model_seed}",
                         candidate_dir=candidate_dir,
@@ -319,9 +305,7 @@ def run_formal(
                         validation=validation,
                         sealed=sealed_experiences,
                     )
-                    fixed_cell = _load_fixed_large_cell(
-                        fixed_large_build, model_seed, course_seed
-                    )
+                    fixed_cell = _load_fixed_large_cell(fixed_large_build, model_seed, course_seed)
                     candidate_training = dict(candidate["resource"])
                     fixed_training = dict(fixed_cell["resource"])
                     candidate_inference = _combined_inference_resource(
@@ -403,22 +387,17 @@ def run_formal(
             temp_parent.rmdir()
 
     sealed_candidate_deltas = [
-        float(cell["sealed"]["candidate_delta_vs_frozen"]["combined_mse"])
-        for cell in cells
+        float(cell["sealed"]["candidate_delta_vs_frozen"]["combined_mse"]) for cell in cells
     ]
     sealed_fixed_large_deltas = [
-        float(cell["sealed"]["fixed_large_delta_vs_frozen"]["combined_mse"])
-        for cell in cells
+        float(cell["sealed"]["fixed_large_delta_vs_frozen"]["combined_mse"]) for cell in cells
     ]
     validation_candidate_deltas = [
-        float(cell["validation"]["candidate_delta_vs_frozen"]["combined_mse"])
-        for cell in cells
+        float(cell["validation"]["candidate_delta_vs_frozen"]["combined_mse"]) for cell in cells
     ]
     candidate_beats_fixed_large = [
         candidate <= fixed
-        for candidate, fixed in zip(
-            sealed_candidate_deltas, sealed_fixed_large_deltas, strict=True
-        )
+        for candidate, fixed in zip(sealed_candidate_deltas, sealed_fixed_large_deltas, strict=True)
     ]
     technical_gate_passed = bool(cells) and all(
         all(cell["technical_checks"].values()) for cell in cells
@@ -433,12 +412,8 @@ def run_formal(
     )
     inference_complete = all(
         _resource_complete(cell["resource"]["candidate"]["inference"], training=False)
-        and _resource_complete(
-            cell["resource"]["fixed_large"]["inference"], training=False
-        )
-        and _resource_complete(
-            cell["resource"]["frozen_parent"]["inference"], training=False
-        )
+        and _resource_complete(cell["resource"]["fixed_large"]["inference"], training=False)
+        and _resource_complete(cell["resource"]["frozen_parent"]["inference"], training=False)
         for cell in cells
     )
     resource_gate_passed = (
@@ -518,9 +493,7 @@ def main() -> int:
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
     parser.add_argument("--worker-root", type=Path, default=DEFAULT_WORKER_ROOT)
     parser.add_argument("--fixed-large-root", type=Path, default=DEFAULT_FIXED_LARGE_ROOT)
-    parser.add_argument(
-        "--fixed-large-report", type=Path, default=DEFAULT_FIXED_LARGE_REPORT
-    )
+    parser.add_argument("--fixed-large-report", type=Path, default=DEFAULT_FIXED_LARGE_REPORT)
     parser.add_argument("--sealed-test", type=Path, default=DEFAULT_SEALED_TEST)
     parser.add_argument("--output-root", type=Path, default=DEFAULT_OUTPUT_ROOT)
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)

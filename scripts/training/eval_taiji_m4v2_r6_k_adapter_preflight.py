@@ -80,9 +80,7 @@ def run_preflight() -> dict[str, Any]:
     adapter.bind_dependency_projection(projection)
     preflight_checkpoint = adapter.checkpoint()
     restored_preflight = KContinualAdapter.from_checkpoint(preflight_checkpoint)
-    checks["checkpoint_prefit_roundtrip"] = (
-        restored_preflight.checkpoint() == preflight_checkpoint
-    )
+    checks["checkpoint_prefit_roundtrip"] = restored_preflight.checkpoint() == preflight_checkpoint
 
     rollback_token = adapter.stage_candidate(
         candidate_checkpoint_digest="4" * 64,
@@ -95,9 +93,7 @@ def run_preflight() -> dict[str, Any]:
     checks["candidate_parent_is_same_parent"] = (
         staged_restored.parent_checkpoint_digest == content_digest(parent)
     )
-    checks["candidate_checkpoint_roundtrip"] = (
-        staged_restored.checkpoint() == staged_checkpoint
-    )
+    checks["candidate_checkpoint_roundtrip"] = staged_restored.checkpoint() == staged_checkpoint
     checks["candidate_namespace_is_isolated"] = (
         staged_restored.active_namespace == staged_restored.candidate_namespace
         and staged_restored.candidate_namespace != staged_restored.parent_namespace
@@ -117,9 +113,7 @@ def run_preflight() -> dict[str, Any]:
     checks["rollback_preserves_dependency_projection"] = (
         restored_rollback.dependency_projection == projection
     )
-    checks["rollback_checkpoint_roundtrip"] = (
-        restored_rollback.checkpoint() == rollback_checkpoint
-    )
+    checks["rollback_checkpoint_roundtrip"] = restored_rollback.checkpoint() == rollback_checkpoint
     checks["training_steps_zero_after_trial"] = adapter.training_steps == 0
 
     return {

@@ -212,9 +212,8 @@ class CapabilityBundle:
         disposer_version = str(self.disposer_version).strip()
         if (disposer_id and not disposer_version) or (disposer_version and not disposer_id):
             raise ValueError("disposer_id and disposer_version must be provided together")
-        if (
-            (self.effect in _SIDE_EFFECTING or self.risk in _SIDE_EFFECTING)
-            and (not disposer_id or not disposer_version)
+        if (self.effect in _SIDE_EFFECTING or self.risk in _SIDE_EFFECTING) and (
+            not disposer_id or not disposer_version
         ):
             raise ValueError("side-effecting capability requires a disposer")
         object.__setattr__(self, "disposer_id", disposer_id)

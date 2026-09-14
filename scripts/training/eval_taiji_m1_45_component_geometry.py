@@ -70,9 +70,7 @@ def _patterns(model: Taiji, episode: Any) -> dict[str, Any]:
         "reward": memory.reward_code.detach().clone(),
         "time": memory._normalize_drive(memory.time_encoder.forward(memory._time_code(2))),
         "episode": memory._normalize_drive(
-            memory.episode_encoder.forward(
-                memory._episode_code(f"m0-b2-train-{episode.memory_id}")
-            )
+            memory.episode_encoder.forward(memory._episode_code(f"m0-b2-train-{episode.memory_id}"))
         ),
         "provenance": memory._normalize_drive(
             memory.provenance_encoder.forward(memory._provenance_code("experienced"))
@@ -85,9 +83,7 @@ def _patterns(model: Taiji, episode: Any) -> dict[str, Any]:
         device=model.device,
         dtype=component_stack.dtype,
     ).unsqueeze(1)
-    event_drive = cue + event_scale * (
-        component_stack * component_gains
-    ).sum(dim=0)
+    event_drive = cue + event_scale * (component_stack * component_gains).sum(dim=0)
     event_pattern, _ = memory._activate(event_drive, state.memory.threshold)
     completion = memory.association.forward(cue)
     event_norm = event_pattern.norm().clamp_min(1e-8)
@@ -100,29 +96,26 @@ def _patterns(model: Taiji, episode: Any) -> dict[str, Any]:
         "cue_event_cosine": _cosine(cue, event_pattern),
         "event_active_support": int((event_pattern.abs() > 1e-6).sum().item()),
         "component_active_support": {
-            name: int((components[name].abs() > 1e-6).sum().item())
-            for name in COMPONENTS
+            name: int((components[name].abs() > 1e-6).sum().item()) for name in COMPONENTS
         },
-        "component_cue_cosine": {
-            name: _cosine(cue, components[name]) for name in COMPONENTS
-        },
+        "component_cue_cosine": {name: _cosine(cue, components[name]) for name in COMPONENTS},
         "component_energy_share": {
-            name: float(component_energy[index].item())
-            for index, name in enumerate(COMPONENTS)
+            name: float(component_energy[index].item()) for index, name in enumerate(COMPONENTS)
         },
         "component_pair_cosine": [
             [_cosine(components[left], components[right]) for right in COMPONENTS]
             for left in COMPONENTS
         ],
-        "association_completion_ratio": float(
-            completion.norm().item() / event_norm.item()
-        ),
+        "association_completion_ratio": float(completion.norm().item() / event_norm.item()),
         "association_error_ratio": float(
             (event_pattern - completion).norm().item() / event_norm.item()
         ),
     }
 
-def _component_cross(phase_a: list[dict[str, Any]], phase_b: list[dict[str, Any]]) -> dict[str, Any]:
+
+def _component_cross(
+    phase_a: list[dict[str, Any]], phase_b: list[dict[str, Any]]
+) -> dict[str, Any]:
     records: dict[str, Any] = {}
     for name in COMPONENTS:
         left = torch.stack([item["components"][name] for item in phase_a])
@@ -187,10 +180,7 @@ def _seed_record(corpus: Any, seed: int) -> dict[str, Any]:
                 [float(item["cue_event_cosine"]) for item in (*phase_a, *phase_b)]
             ),
             "association_completion_ratio": _summary(
-                [
-                    float(item["association_completion_ratio"])
-                    for item in phase_a
-                ]
+                [float(item["association_completion_ratio"]) for item in phase_a]
             ),
             "association_error_ratio": _summary(
                 [float(item["association_error_ratio"]) for item in phase_a]
@@ -238,7 +228,9 @@ def main() -> int:
     result = run_audit()
     result["report_path"] = str(args.report)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

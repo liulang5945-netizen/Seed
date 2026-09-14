@@ -61,12 +61,7 @@ def evaluate() -> dict[str, object]:
     terminal_batch_id = str(terminal_schedule["batch_id"])
     first_id, second_id = _batch(runtime, terminal_batch_id).selected_candidate_ids
 
-    store_root = (
-        PROJECT_ROOT
-        / "output"
-        / "manual-r5-canary"
-        / f"s48-store-{os.getpid()}"
-    )
+    store_root = PROJECT_ROOT / "output" / "manual-r5-canary" / f"s48-store-{os.getpid()}"
     before_retention_path = store_root.parent / f"s48-before-retention-{os.getpid()}.pt"
     after_retention_path = store_root.parent / f"s48-after-retention-{os.getpid()}.pt"
     store = StructuralValidationArtifactStore(store_root)
@@ -97,9 +92,7 @@ def evaluate() -> dict[str, object]:
             artifacts_by_candidate={second_id: second_artifact.to_payload()},
             replays_by_candidate={second_id: second_replay},
         )
-        second_rollback = runtime.rollback_structural_candidate_batch(
-            terminal_batch_id, second_id
-        )
+        second_rollback = runtime.rollback_structural_candidate_batch(terminal_batch_id, second_id)
         first_rollback = runtime.rollback_structural_candidate_batch(terminal_batch_id, first_id)
 
         before_projection_checkpoint = _checkpoint_digest(
@@ -110,32 +103,23 @@ def evaluate() -> dict[str, object]:
         repeated = runtime.project_structural_artifact_store_audit(artifact_store=store)
         healthy_reconciliation = (
             projection == repeated
-            and projection["runtime_artifact_digests"] == sorted(
-                (first_artifact.artifact_digest, second_artifact.artifact_digest)
-            )
-            and projection["runtime_batch_artifact_digests"] == sorted(
-                (first_artifact.artifact_digest, second_artifact.artifact_digest)
-            )
-            and projection["missing_runtime_artifact_digests"] == [
-                second_artifact.artifact_digest
-            ]
-            and projection["missing_runtime_batch_artifact_digests"] == [
-                second_artifact.artifact_digest
-            ]
+            and projection["runtime_artifact_digests"]
+            == sorted((first_artifact.artifact_digest, second_artifact.artifact_digest))
+            and projection["runtime_batch_artifact_digests"]
+            == sorted((first_artifact.artifact_digest, second_artifact.artifact_digest))
+            and projection["missing_runtime_artifact_digests"] == [second_artifact.artifact_digest]
+            and projection["missing_runtime_batch_artifact_digests"]
+            == [second_artifact.artifact_digest]
         )
-        missing_is_not_orphan = (
-            {
-                item["runtime_visibility"] for item in projection["entries"]
-            }
-            == {"runtime_recorded"}
-            and second_artifact.artifact_digest
-            not in {item["artifact_digest"] for item in projection["entries"]}
-        )
+        missing_is_not_orphan = {item["runtime_visibility"] for item in projection["entries"]} == {
+            "runtime_recorded"
+        } and second_artifact.artifact_digest not in {
+            item["artifact_digest"] for item in projection["entries"]
+        }
         projection_is_read_only = (
             _checkpoint_digest(runtime.model.architecture.native_checkpoint())
             == before_projection_checkpoint
-            and store.path_for(first_artifact.artifact_digest).read_bytes()
-            == before_store_bytes
+            and store.path_for(first_artifact.artifact_digest).read_bytes() == before_store_bytes
         )
 
         runtime.save(before_retention_path)
@@ -162,9 +146,7 @@ def evaluate() -> dict[str, object]:
             and after_projection["runtime_batch_artifact_digests"] == []
             and after_projection["missing_runtime_artifact_digests"] == []
             and after_projection["missing_runtime_batch_artifact_digests"] == []
-            and {
-                item["runtime_visibility"] for item in after_projection["entries"]
-            }
+            and {item["runtime_visibility"] for item in after_projection["entries"]}
             == {"external_orphan"}
         )
 

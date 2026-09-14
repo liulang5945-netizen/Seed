@@ -43,7 +43,9 @@ def test_lineage_retention_preserves_active_batch_and_pending_candidates() -> No
     assert "batch:terminal" not in {item.batch_id for item in model.structural_candidate_batches}
 
     candidate = next(
-        item for item in model.structural_proposal_candidates if item.candidate_id == active.candidate_ids[0]
+        item
+        for item in model.structural_proposal_candidates
+        if item.candidate_id == active.candidate_ids[0]
     )
     extra = replace(
         candidate,

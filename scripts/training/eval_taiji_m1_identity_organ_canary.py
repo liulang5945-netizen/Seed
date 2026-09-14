@@ -93,9 +93,7 @@ def _organ_digest(model: Taiji) -> str:
 
 
 def _core_digest(checkpoint: dict[str, Any]) -> str:
-    return content_digest(
-        {key: checkpoint[key] for key in Taiji._checkpoint_core_keys()}
-    )
+    return content_digest({key: checkpoint[key] for key in Taiji._checkpoint_core_keys()})
 
 
 def _fresh_process_probe(checkpoint: dict[str, Any], cue: int) -> dict[str, Any]:
@@ -274,9 +272,7 @@ def _identity_record(seed: int) -> dict[str, Any]:
         },
         "provenance": {
             "bound_sources": sorted({step.identity_recall.source for step in bound_steps}),
-            "bound_provenance": sorted(
-                {step.identity_recall.provenance for step in bound_steps}
-            ),
+            "bound_provenance": sorted({step.identity_recall.provenance for step in bound_steps}),
             "unbound_source": unknown_step.identity_recall.source,
             "unbound_provenance": unknown_step.identity_recall.provenance,
             "action_intent_generated": False,
@@ -319,9 +315,7 @@ def _identity_record(seed: int) -> dict[str, Any]:
             "version": child_checkpoint["identity_organ"]["version"],
             "parent_core_digest_matches_lineage": (
                 parent_core_digest
-                == phase_a_checkpoint["identity_organ"]["lineage"][
-                    "parent_checkpoint_digest"
-                ]
+                == phase_a_checkpoint["identity_organ"]["lineage"]["parent_checkpoint_digest"]
             ),
             "child_core_digest_matches_lineage": (
                 _core_digest(child_checkpoint) == lineage["parent_checkpoint_digest"]
@@ -333,9 +327,7 @@ def _identity_record(seed: int) -> dict[str, Any]:
             "restored_new_holdout": restored_new,
             "fresh_process_source": fresh["source"],
             "fresh_process_provenance": fresh["provenance"],
-            "fresh_process_persistent_digest_unchanged": fresh[
-                "persistent_digest_unchanged"
-            ],
+            "fresh_process_persistent_digest_unchanged": fresh["persistent_digest_unchanged"],
             "fresh_process_checkpoint_digest_matches": (
                 fresh["loaded_checkpoint_digest"] == content_digest(child_checkpoint)
             ),
@@ -395,8 +387,7 @@ def run_canary(*, seeds: tuple[int, ...], modes: tuple[str, ...] = MODES) -> dic
         # The full identity record already constructs the shared controls; this
         # marker keeps the CLI contract explicit without duplicating training.
         records["shared_control"] = [
-            {"seed": seed, "provided_by": "identity_organ.b2/b5.shared_control"}
-            for seed in seeds
+            {"seed": seed, "provided_by": "identity_organ.b2/b5.shared_control"} for seed in seeds
         ]
     identity_records = records.get("identity_organ", [])
     return {
@@ -404,9 +395,8 @@ def run_canary(*, seeds: tuple[int, ...], modes: tuple[str, ...] = MODES) -> dic
         "modes": list(modes),
         "default_identity_organ_enabled": False,
         "architecture_default_unchanged": True,
-        "canary_passed": bool(identity_records) and all(
-            _record_passes(record) for record in identity_records
-        ),
+        "canary_passed": bool(identity_records)
+        and all(_record_passes(record) for record in identity_records),
         "records": records,
     }
 
@@ -438,7 +428,9 @@ def main() -> int:
         "report_path": str(args.report),
     }
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

@@ -92,11 +92,7 @@ class NaturalLanguageWorkbenchOrchestrator:
             if int(plan["tick"]) != int(runtime.model.tick):
                 raise ValueError("natural-language Workbench plan is stale")
             request = next(
-                (
-                    item
-                    for item in plan["requests"]
-                    if item.request_id == str(request_id)
-                ),
+                (item for item in plan["requests"] if item.request_id == str(request_id)),
                 None,
             )
             if request is None:
@@ -177,9 +173,11 @@ class NaturalLanguageWorkbenchOrchestrator:
             side_effects = any(
                 bool(step.get("success"))
                 and (
-                    (descriptor := environment.capability_snapshot.get(
-                        str(step.get("capability_id", ""))
-                    ))
+                    (
+                        descriptor := environment.capability_snapshot.get(
+                            str(step.get("capability_id", ""))
+                        )
+                    )
                     is not None
                     and descriptor.risk != "read_only"
                 )

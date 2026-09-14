@@ -210,8 +210,7 @@ def _run_seed(seed: int) -> dict[str, object]:
                 rollback_ok and restored.neuron_regions[0].unit_ids == before_units
             ),
             "rollback_restores_budget": (
-                rollback_ok
-                and restored.cognitive_snapshot().development.structural_budget == 1
+                rollback_ok and restored.cognitive_snapshot().development.structural_budget == 1
             ),
         },
     }
@@ -219,9 +218,7 @@ def _run_seed(seed: int) -> dict[str, object]:
 
 def evaluate() -> dict[str, object]:
     trials = [_run_seed(seed) for seed in (11, 29)]
-    checks = {
-        f"seed_{trial['seed']}": trial["checks"] for trial in trials
-    }
+    checks = {f"seed_{trial['seed']}": trial["checks"] for trial in trials}
     flattened = [value for trial in trials for value in trial["checks"].values()]
     return {
         "format": REPORT_FORMAT,

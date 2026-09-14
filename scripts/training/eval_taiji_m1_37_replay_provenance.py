@@ -58,9 +58,7 @@ def _probe(
             key=lambda action: float(probabilities[action].item()),
         )
         correct += int(prediction == query.expected_action)
-        provenance_values.append(
-            float(step.memory_recall.provenance_probabilities[2].item())
-        )
+        provenance_values.append(float(step.memory_recall.provenance_probabilities[2].item()))
     return correct / len(queries), sum(provenance_values) / len(provenance_values)
 
 
@@ -73,11 +71,14 @@ def _condition_record(provenance: str, corpus: Any) -> dict[str, Any]:
         phase_a = Taiji(config, episode_id=f"m1-37-phase-a-{provenance}-{seed}")
         for episode in corpus.phase_a_train:
             DelayedMemoryTask._write_episode(phase_a, episode)
-        old_before, old_retention_before = _probe(
-            phase_a,
-            corpus.phase_a_holdout,
-            actions,
-        )[0], _probe(phase_a, corpus.phase_a_retention, actions)[0]
+        old_before, old_retention_before = (
+            _probe(
+                phase_a,
+                corpus.phase_a_holdout,
+                actions,
+            )[0],
+            _probe(phase_a, corpus.phase_a_retention, actions)[0],
+        )
         phase_a_checkpoint = deepcopy(phase_a.checkpoint())
         phase_a_digest = content_digest(phase_a_checkpoint)
 
@@ -185,8 +186,7 @@ def run_diagnosis() -> dict[str, Any]:
         "conclusion": {
             "experienced_provenance_passed": experienced["condition_gate_passed"],
             "provenance_is_sufficient_explanation": (
-                experienced["condition_gate_passed"]
-                and not conditions[0]["condition_gate_passed"]
+                experienced["condition_gate_passed"] and not conditions[0]["condition_gate_passed"]
             ),
             "next_boundary": (
                 "preserving experienced provenance did not pass B5; freeze provenance"
@@ -205,7 +205,9 @@ def main() -> int:
     result = run_diagnosis()
     result["report_path"] = str(args.report)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

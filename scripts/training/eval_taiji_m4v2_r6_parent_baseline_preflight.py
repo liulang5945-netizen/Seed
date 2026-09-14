@@ -51,9 +51,7 @@ REPEAT_SEEDS = (401, 503, 607)
 EPSILON_MIN = 0.01
 EPSILON_MAX = 0.05
 PHASES = ("S", "G")
-DEFAULT_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m4v2_r6_parent_baseline_preflight_20260909.json"
-)
+DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m4v2_r6_parent_baseline_preflight_20260909.json"
 
 
 def _r6_course(course_seed: int) -> R4Course:
@@ -119,11 +117,10 @@ def _taiji_roundtrip(parent: Mapping[str, Any]) -> dict[str, Any]:
 
 
 def _checks_passed(checks: Mapping[str, bool]) -> bool:
-    return all(
-        value is True
-        for key, value in checks.items()
-        if key != "training_performed"
-    ) and checks.get("training_performed") is False
+    return (
+        all(value is True for key, value in checks.items() if key != "training_performed")
+        and checks.get("training_performed") is False
+    )
 
 
 def _dependency_projection(scope_id: str) -> Any:
@@ -185,7 +182,10 @@ def _adapter_preflight(
         {"owner_graph_digest": manifests["owner_graph_digest"], "candidate": candidate_digest}
     )
     candidate_source_digest = content_digest(
-        {"source_manifest_digest": manifests["source_manifest_digest"], "candidate": candidate_digest}
+        {
+            "source_manifest_digest": manifests["source_manifest_digest"],
+            "candidate": candidate_digest,
+        }
     )
     rollback_token = adapter.stage_candidate(
         candidate_checkpoint_digest=candidate_digest,
@@ -245,21 +245,15 @@ def _shadow_preflight(
     )
     bare_payload = shadow.to_payload()
     bare_digest = content_digest(bare_payload)
-    restored = AdaptiveResidualShadow.from_checkpoint(
-        model.config, copy.deepcopy(bare_payload)
-    )
+    restored = AdaptiveResidualShadow.from_checkpoint(model.config, copy.deepcopy(bare_payload))
     restored_digest = content_digest(restored.to_payload())
-    lesion = AdaptiveResidualShadow.from_checkpoint(
-        model.config, copy.deepcopy(bare_payload)
-    )
+    lesion = AdaptiveResidualShadow.from_checkpoint(model.config, copy.deepcopy(bare_payload))
     lesion.lesion_candidate()
     lesioned = AdaptiveResidualShadow.from_checkpoint(
         model.config, copy.deepcopy(lesion.to_payload())
     )
     lesioned_digest = content_digest(lesioned.to_payload())
-    rollback = AdaptiveResidualShadow.from_checkpoint(
-        model.config, copy.deepcopy(bare_payload)
-    )
+    rollback = AdaptiveResidualShadow.from_checkpoint(model.config, copy.deepcopy(bare_payload))
     rollback_digest = content_digest(rollback.to_payload())
     model_roundtrip = _taiji_roundtrip(parent)
     checks = {
@@ -411,17 +405,13 @@ def run_preflight(
                     "parent_checkpoint_digest": parent_digest,
                     "manifests": manifests,
                     "baseline_repeats": repeats,
-                    "epsilon": {
-                        phase: _epsilon(repeats, phase) for phase in PHASES
-                    },
+                    "epsilon": {phase: _epsilon(repeats, phase) for phase in PHASES},
                     "arm_preflight": arm_preflight,
                 }
             )
     baseline_checks = {
         "matrix_is_9_cells": len(cells) == 9,
-        "each_cell_has_3_repeats": all(
-            len(cell["baseline_repeats"]) == 3 for cell in cells
-        ),
+        "each_cell_has_3_repeats": all(len(cell["baseline_repeats"]) == 3 for cell in cells),
         "parent_checkpoint_preflight_all": all(
             repeat["checkpoint_preflight"]["fresh_restore"]
             and repeat["checkpoint_preflight"]["rollback_matches_parent"]
@@ -429,13 +419,10 @@ def run_preflight(
             for repeat in cell["baseline_repeats"]
         ),
         "parent_stable_all_phases": all(
-            cell["epsilon"][phase]["parent_stable"]
-            for cell in cells
-            for phase in PHASES
+            cell["epsilon"][phase]["parent_stable"] for cell in cells for phase in PHASES
         ),
         "no_training_updates": all(
-            repeat["training_performed"] is False
-            and repeat["learn_updates"] == 0
+            repeat["training_performed"] is False and repeat["learn_updates"] == 0
             for cell in cells
             for repeat in cell["baseline_repeats"]
         ),
@@ -463,18 +450,10 @@ def run_preflight(
             for item in cell["arm_preflight"]
         ),
         "candidate_adapter_did_not_train": all(
-            item["training_performed"] is False
-            for cell in cells
-            for item in cell["arm_preflight"]
+            item["training_performed"] is False for cell in cells for item in cell["arm_preflight"]
         ),
         "same_parent_digest_within_cell": all(
-            len(
-                {
-                    str(item["parent_checkpoint_digest"])
-                    for item in cell["arm_preflight"]
-                }
-            )
-            == 1
+            len({str(item["parent_checkpoint_digest"]) for item in cell["arm_preflight"]}) == 1
             for cell in cells
         ),
     }

@@ -94,7 +94,9 @@ def test_native_route_credit_never_uses_holdout_or_outcome_fields_as_features() 
     )
 
     assert torch.equal(trainer.encoder.encode(positive), trainer.encoder.encode(negative))
-    assert not torch.equal(trainer.encoder.encode(positive), trainer.encoder.encode(different_route))
+    assert not torch.equal(
+        trainer.encoder.encode(positive), trainer.encoder.encode(different_route)
+    )
 
 
 def test_native_route_credit_rejects_partition_overlap_and_tampered_checkpoint() -> None:
@@ -105,7 +107,9 @@ def test_native_route_credit_rejects_partition_overlap_and_tampered_checkpoint()
         trainer.consolidate(
             (train,),
             holdout_experiences=(holdout,),
-            retention_experiences=(_experience("retention", partition="retention", capability_id="mcp.list"),),
+            retention_experiences=(
+                _experience("retention", partition="retention", capability_id="mcp.list"),
+            ),
         )
 
     tampered = deepcopy(trainer.checkpoint())
@@ -160,9 +164,7 @@ def test_bounded_replay_keeps_correction_and_failure_evidence_under_capacity() -
     selected = set(selection.selected_experience_ids)
     assert {item.experience_id for item in pool if item.user_correction_digest} <= selected
     assert {
-        item.experience_id
-        for item in pool
-        if not item.success and not item.user_correction_digest
+        item.experience_id for item in pool if not item.success and not item.user_correction_digest
     } <= selected
     assert any(item.experience_id in selected for item in pool if item.success)
     assert selection.tier_counts["correction"] == 2

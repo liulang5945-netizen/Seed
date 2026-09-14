@@ -231,9 +231,7 @@ class FoundationManifest:
             raise ValueError("manifest.data_contract.forbidden_sources cannot be empty")
         _text(data_contract.get("partition_rule"), "manifest.data_contract.partition_rule")
         _text(data_contract.get("holdout_rule"), "manifest.data_contract.holdout_rule")
-        baseline_protocol = _mapping(
-            data.get("baseline_protocol"), "manifest.baseline_protocol"
-        )
+        baseline_protocol = _mapping(data.get("baseline_protocol"), "manifest.baseline_protocol")
         protocol_controls = _string_tuple(
             baseline_protocol.get("required_controls"),
             "manifest.baseline_protocol.required_controls",
@@ -365,9 +363,7 @@ class FoundationMeasurement:
             ability_id=_text(data.get("ability_id"), "measurement.ability_id"),
             status=_text(data.get("status"), "measurement.status"),
             primary_metric=_text(data.get("primary_metric"), "measurement.primary_metric"),
-            metric_direction=_text(
-                data.get("metric_direction"), "measurement.metric_direction"
-            ),
+            metric_direction=_text(data.get("metric_direction"), "measurement.metric_direction"),
             metric_value=_float(
                 data.get("metric_value"),
                 "measurement.metric_value",
@@ -466,8 +462,7 @@ class FoundationEvaluation:
         if any(reason.endswith(":not_evaluated") for reason in reasons):
             status = "not_evaluated"
         elif reasons and any(
-            reason != "checkpoint_gate_not_passed"
-            and not reason.endswith(":not_evaluated")
+            reason != "checkpoint_gate_not_passed" and not reason.endswith(":not_evaluated")
             for reason in reasons
         ):
             status = "failed"

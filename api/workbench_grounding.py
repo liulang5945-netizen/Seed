@@ -98,9 +98,7 @@ def ground_natural_language_workbench_step(
                 return {}, "semantic_grounding_unresolved", None, ""
             assessment = environment.resolve_programming_language_evidence({"path": path})
             selection_state = str(assessment.get("selection_state", "unknown"))
-            if selection_state == "user_override" and not bool(
-                binding.get("user_override", False)
-            ):
+            if selection_state == "user_override" and not bool(binding.get("user_override", False)):
                 return {}, "user_override_has_priority", assessment, "language_evidence"
             if selection_state in {"ambiguous", "unknown"}:
                 return {}, "language_evidence_ambiguous", assessment, "language_evidence"

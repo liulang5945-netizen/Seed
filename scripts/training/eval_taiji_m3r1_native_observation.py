@@ -63,13 +63,9 @@ def _course_registry() -> ProgrammingLanguageRegistry:
         if definition.language_id == "python":
             definitions.append(replace(definition, toolchain_commands=(python_command,)))
         elif definition.language_id == "typescript":
-            definitions.append(
-                replace(definition, toolchain_commands=("m3-r1-unavailable-tsc",))
-            )
+            definitions.append(replace(definition, toolchain_commands=("m3-r1-unavailable-tsc",)))
         elif definition.language_id == "rust":
-            definitions.append(
-                replace(definition, toolchain_commands=("m3-r1-unavailable-rustc",))
-            )
+            definitions.append(replace(definition, toolchain_commands=("m3-r1-unavailable-rustc",)))
         else:
             definitions.append(definition)
     return ProgrammingLanguageRegistry(definitions)
@@ -250,9 +246,7 @@ def _example(
 
 def build_course() -> tuple[StructuredSemanticCorpus, dict[str, tuple[WorkbenchObservation, ...]]]:
     schema = _schema()
-    observations = {
-        split: _build_split_observations(split, schema) for split in SPLITS
-    }
+    observations = {split: _build_split_observations(split, schema) for split in SPLITS}
     examples = {
         split: tuple(
             _example(observation, split=split, schema=schema, tick=index + 1)
@@ -302,7 +296,9 @@ def _metrics(
             result.content_plan is not None
             and result.content_plan.content_id == example.content.content_id
         )
-        expected_status = "clarify" if example.content.intent_kind == "request_information" else "resolved"
+        expected_status = (
+            "clarify" if example.content.intent_kind == "request_information" else "resolved"
+        )
         status_hits += int(result.status == expected_status)
     precision = true_positive / max(1, true_positive + false_positive)
     recall = true_positive / max(1, true_positive + false_negative)
@@ -370,7 +366,8 @@ def _observation_roundtrip(
         "event_digest_equal": content_digest(original_event.to_payload())
         == content_digest(restored_event.to_payload()),
         "feature_vector_equal": bool(torch.equal(original_event.features, restored_event.features)),
-        "capability_revision_preserved": restored.capability_revision == original.capability_revision,
+        "capability_revision_preserved": restored.capability_revision
+        == original.capability_revision,
     }
 
 
@@ -411,15 +408,12 @@ def _runtime_owner_gate(
 def run_gate(output_path: Path | None = None) -> dict[str, Any]:
     corpus, observations = build_course()
     fixture_before = {
-        split: _fixture_digest(FIXTURE_ROOT / f"native_observation_{split}")
-        for split in SPLITS
+        split: _fixture_digest(FIXTURE_ROOT / f"native_observation_{split}") for split in SPLITS
     }
     preflight_path = (output_path or PROJECT_ROOT / "reports" / "m3r1.json").with_suffix(
         ".preflight.pt"
     )
-    final_path = (output_path or PROJECT_ROOT / "reports" / "m3r1.json").with_suffix(
-        ".final.pt"
-    )
+    final_path = (output_path or PROJECT_ROOT / "reports" / "m3r1.json").with_suffix(".final.pt")
     preflight_path.parent.mkdir(parents=True, exist_ok=True)
     try:
         untrained = StructuredSemanticLearner(corpus)
@@ -449,14 +443,12 @@ def run_gate(output_path: Path | None = None) -> dict[str, Any]:
             "training_steps": native.training_steps,
         }
         fixture_after = {
-            split: _fixture_digest(FIXTURE_ROOT / f"native_observation_{split}")
-            for split in SPLITS
+            split: _fixture_digest(FIXTURE_ROOT / f"native_observation_{split}") for split in SPLITS
         }
         observation_gate = _observation_roundtrip(observations)
         gates = {
             "project_disjoint": corpus.manifest()["record_disjoint"]
-            and len({item.family_id for item in corpus.train})
-            == len(corpus.train)
+            and len({item.family_id for item in corpus.train}) == len(corpus.train)
             and not (
                 {item.input_digest for item in corpus.train}
                 & {item.input_digest for item in corpus.dev}
@@ -496,7 +488,9 @@ def run_gate(output_path: Path | None = None) -> dict[str, Any]:
             ),
             "course": {
                 "manifest": corpus.manifest(),
-                "project_ids": sorted({item.project_id for values in observations.values() for item in values}),
+                "project_ids": sorted(
+                    {item.project_id for values in observations.values() for item in values}
+                ),
                 "observation_schema": observations["train"][0].schema.to_payload(),
                 "parameter_count": native.parameter_count,
                 "owner_digests_changed": {

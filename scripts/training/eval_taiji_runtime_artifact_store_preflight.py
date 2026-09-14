@@ -53,7 +53,9 @@ def evaluate() -> dict[str, object]:
     artifact, replay, _ = _build_artifact(runtime.model.architecture, first_id, evidence)
     suffix = os.getpid()
     store_root = PROJECT_ROOT / "output" / "manual-r5-canary" / f"s43-preflight-{suffix}"
-    checkpoint_path = PROJECT_ROOT / "output" / "manual-r5-canary" / f"s43-preflight-runtime-{suffix}.pt"
+    checkpoint_path = (
+        PROJECT_ROOT / "output" / "manual-r5-canary" / f"s43-preflight-runtime-{suffix}.pt"
+    )
     store = StructuralValidationArtifactStore(store_root)
     legacy_policy = ArtifactConsumptionPolicy.legacy_compatible(
         reason="historical-s43-preflight-canary"
@@ -67,7 +69,10 @@ def evaluate() -> dict[str, object]:
             restored.continue_structural_candidate_batch_from_artifact_store(
                 batch.batch_id,
                 artifact_store=store,
-                artifact_digests_by_candidate={first_id: artifact.artifact_digest, second_id: "0" * 64},
+                artifact_digests_by_candidate={
+                    first_id: artifact.artifact_digest,
+                    second_id: "0" * 64,
+                },
                 replays_by_candidate={first_id: replay},
                 artifact_consumption_policy=legacy_policy,
             )

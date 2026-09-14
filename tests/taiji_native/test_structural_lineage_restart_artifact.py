@@ -82,18 +82,20 @@ def test_restart_replay_bound_artifact_continues_and_rejects_tampering() -> None
             tamper_branch.cognitive_snapshot().development.structural_budget
             == restored.cognitive_snapshot().development.structural_budget
         )
-        assert tuple(
-            region.unit_ids for region in tamper_branch.neuron_regions
-        ) == tuple(region.unit_ids for region in restored.neuron_regions)
+        assert tuple(region.unit_ids for region in tamper_branch.neuron_regions) == tuple(
+            region.unit_ids for region in restored.neuron_regions
+        )
 
         artifact_restored = _load_native_checkpoint(before_artifact_path)
         assert _checkpoint_digest(artifact_restored.native_checkpoint()) == (
             first_artifact.parent_checkpoint_digest
         )
-        first_result = artifact_restored.continue_structural_candidate_batch_from_validation_artifacts(
-            batch.batch_id,
-            artifacts_by_candidate={first_candidate: restored_artifact},
-            replays_by_candidate={first_candidate: first_replay},
+        first_result = (
+            artifact_restored.continue_structural_candidate_batch_from_validation_artifacts(
+                batch.batch_id,
+                artifacts_by_candidate={first_candidate: restored_artifact},
+                replays_by_candidate={first_candidate: first_replay},
+            )
         )
         assert first_result["results"][first_candidate]["status"] == "admitted"
         _save_native_checkpoint(artifact_restored, after_first_path)
@@ -114,9 +116,7 @@ def test_restart_replay_bound_artifact_continues_and_rejects_tampering() -> None
             json.dumps(second_artifact.to_payload(), sort_keys=True),
             encoding="utf-8",
         )
-        second_artifact_payload = json.loads(
-            second_artifact_path.read_text(encoding="utf-8")
-        )
+        second_artifact_payload = json.loads(second_artifact_path.read_text(encoding="utf-8"))
         second_result = first_resumed.continue_structural_candidate_batch_from_validation_artifacts(
             batch.batch_id,
             artifacts_by_candidate={second_candidate: second_artifact_payload},

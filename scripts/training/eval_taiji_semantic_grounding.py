@@ -69,9 +69,7 @@ def _run_success(seed: int) -> dict[str, object]:
     prompt = "请读取 README.md"
     with patch(
         "seed_platform.workbench.get_setting",
-        lambda key, default=None: str(PROJECT_ROOT)
-        if key == "workspace_path"
-        else default,
+        lambda key, default=None: str(PROJECT_ROOT) if key == "workspace_path" else default,
     ):
         runtime = _runtime(seed, checkpoint_path)
         proposal = _proposal(runtime, prompt)
@@ -127,9 +125,7 @@ def evaluate() -> dict[str, object]:
     unresolved_checkpoint.unlink(missing_ok=True)
     with patch(
         "seed_platform.workbench.get_setting",
-        lambda key, default=None: str(PROJECT_ROOT)
-        if key == "workspace_path"
-        else default,
+        lambda key, default=None: str(PROJECT_ROOT) if key == "workspace_path" else default,
     ):
         unresolved_runtime = _runtime(101, unresolved_checkpoint)
         unresolved_prompt = "请处理 README.md"
@@ -156,8 +152,7 @@ def evaluate() -> dict[str, object]:
     metrics = {
         "three_independent_seeds": len(runs) == len(LEARNER_SEEDS),
         "taiji_contract_grounding_used": all(
-            item["grounding_source"] == "taiji-semantic-contract"
-            and item["grounding_count"] == 1
+            item["grounding_source"] == "taiji-semantic-contract" and item["grounding_count"] == 1
             for item in runs
         ),
         "taiji_creates_intent_without_external_binding": all(

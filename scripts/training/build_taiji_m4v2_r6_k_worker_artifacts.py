@@ -65,9 +65,7 @@ VERSION = 1
 SOURCE_MANIFEST_FORMAT = "taiji-k-worker-source-manifest-v1"
 RESOURCE_MANIFEST_FORMAT = "taiji-r6-cpu-resource-manifest-v1"
 DEFAULT_ARTIFACT_DIR = PROJECT_ROOT / "checkpoints" / "taiji_k_workers"
-DEFAULT_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m4v2_r6_k_worker_artifact_build_20260909.json"
-)
+DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m4v2_r6_k_worker_artifact_build_20260909.json"
 DEFAULT_CANDIDATE_NAMESPACE = "taiji:k:candidate"
 
 
@@ -136,9 +134,7 @@ def _artifact(
         "output_contract_digest": K_WORKER_OUTPUT_CONTRACT_DIGESTS[worker_id],
         "checkpoint": checkpoint_payload,
         "worker_checkpoint_digest": content_digest(checkpoint_payload),
-        "owner_digests": [
-            [str(key), str(value)] for key, value in sorted(owner_digests.items())
-        ],
+        "owner_digests": [[str(key), str(value)] for key, value in sorted(owner_digests.items())],
         "training_steps": int(checkpoint_payload.get("training_steps", 0)),
         "optimizer_state_present": False,
     }
@@ -151,10 +147,7 @@ def _course_inputs(root: Path, *, task_seed: int) -> tuple[Any, Any, Any]:
     registry = _registry(typescript_available=False)
     all_paths = ["missing_00.txt"]
     for index in range(FILES_PER_LANG):
-        all_paths.extend(
-            f"{language}_{index:02d}{EXTENSIONS[language]}"
-            for language in LANGS
-        )
+        all_paths.extend(f"{language}_{index:02d}{EXTENSIONS[language]}" for language in LANGS)
     observations = {
         observation.path: observation
         for observation in _observe_all(
@@ -188,9 +181,7 @@ def run_build(
     temp_root.mkdir()
     try:
         torch.manual_seed(int(learner_seed))
-        semantic_corpus, transition_corpus, schema = _course_inputs(
-            temp_root, task_seed=task_seed
-        )
+        semantic_corpus, transition_corpus, schema = _course_inputs(temp_root, task_seed=task_seed)
         fact_masks = _typed_fact_feature_masks(semantic_corpus.fact_keys, schema)
         readout_excluded = tuple(
             key for key in semantic_corpus.fact_keys if key.split("::")[1] == "language"
@@ -250,13 +241,9 @@ def run_build(
             transition_checkpoint, transition_corpus
         )
 
-        projector = OutcomeDependencyProjector(
-            f"r6-k3-worker-{int(task_seed)}-{int(learner_seed)}"
-        )
+        projector = OutcomeDependencyProjector(f"r6-k3-worker-{int(task_seed)}-{int(learner_seed)}")
         projection_checkpoint = projector.checkpoint()
-        projection_restored = OutcomeDependencyProjector.from_checkpoint(
-            projection_checkpoint
-        )
+        projection_restored = OutcomeDependencyProjector.from_checkpoint(projection_checkpoint)
         projection_checkpoint_digest = content_digest(projection_checkpoint)
         k3_source_digest = content_digest(
             {
@@ -322,9 +309,7 @@ def run_build(
             "k3.outcome_projection": _artifact(
                 worker_id="k3.outcome_projection",
                 checkpoint=projection_checkpoint,
-                owner_digests={
-                    "outcome_dependency_projector": projection_checkpoint_digest
-                },
+                owner_digests={"outcome_dependency_projector": projection_checkpoint_digest},
                 source_digest=k3_source_digest,
                 parent_digest=parent_digest,
                 source_manifest_digest=source_manifest_digest,
@@ -352,8 +337,7 @@ def run_build(
             "candidate_namespace": candidate_namespace,
             "artifact_paths": {worker_id: str(path) for worker_id, path in paths.items()},
             "artifact_digests": {
-                worker_id: str(payload["artifact_digest"])
-                for worker_id, payload in saved.items()
+                worker_id: str(payload["artifact_digest"]) for worker_id, payload in saved.items()
             },
             "worker_checkpoint_digests": {
                 worker_id: str(payload["worker_checkpoint_digest"])
@@ -379,17 +363,13 @@ def run_build(
                 },
                 "k3.outcome_projection": {
                     "checkpoint_digest": projection_checkpoint_digest,
-                    "fresh_restore": projection_restored.checkpoint()
-                    == projection_checkpoint,
+                    "fresh_restore": projection_restored.checkpoint() == projection_checkpoint,
                 },
             },
             "postfit_restore_gate": {
-                "k1.semantic": semantic.owner_digests()
-                == semantic_restored.owner_digests(),
-                "k2.transition": transition.owner_digests()
-                == transition_restored.owner_digests(),
-                "k3.outcome_projection": projection_restored.checkpoint()
-                == projection_checkpoint,
+                "k1.semantic": semantic.owner_digests() == semantic_restored.owner_digests(),
+                "k2.transition": transition.owner_digests() == transition_restored.owner_digests(),
+                "k3.outcome_projection": projection_restored.checkpoint() == projection_checkpoint,
             },
             "training_performed": True,
             "default_runtime_attached": False,

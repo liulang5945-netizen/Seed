@@ -514,8 +514,7 @@ class CapabilitySnapshot:
             ):
                 continue
             if any(
-                str(slots.get(slot_name, "")).strip().casefold()
-                != expected.casefold()
+                str(slots.get(slot_name, "")).strip().casefold() != expected.casefold()
                 for slot_name, expected in descriptor.semantic_requirements
             ):
                 continue
@@ -952,9 +951,7 @@ class WorkbenchStructuralEvidence:
             partition=str(partition),
             usage=float(usage),
             resource_pressure=float(resource_pressure),
-            prediction_error=(
-                None if prediction_error is None else float(prediction_error)
-            ),
+            prediction_error=(None if prediction_error is None else float(prediction_error)),
             learning_gain=float(learning_gain),
             holdout_transfer=float(holdout_transfer),
         )
@@ -1459,11 +1456,7 @@ class WorkbenchEnvironment:
         normalized_capabilities = tuple(str(item).strip() for item in capability_ids)
         if not normalized_capabilities:
             raise ValueError("task boundary requires at least one capability")
-        enabled = {
-            item.capability_id
-            for item in self.snapshot.capabilities
-            if item.enabled
-        }
+        enabled = {item.capability_id for item in self.snapshot.capabilities if item.enabled}
         unknown = sorted(set(normalized_capabilities) - enabled)
         if unknown:
             raise ValueError(f"task boundary contains unavailable capabilities: {unknown}")
@@ -1552,9 +1545,7 @@ class WorkbenchEnvironment:
             )
         with self._lock:
             current = self._active_task_boundary
-            known = {
-                item.token_digest for item in self._task_boundary_history
-            }
+            known = {item.token_digest for item in self._task_boundary_history}
             if current is not None:
                 known.add(current.token_digest)
             if token.token_digest not in known:
@@ -1570,9 +1561,7 @@ class WorkbenchEnvironment:
                 session_id=token.session_id,
                 capability_snapshot_id=self.snapshot.snapshot_id,
                 authorized_capability_ids=tuple(
-                    item.capability_id
-                    for item in self.snapshot.capabilities
-                    if item.enabled
+                    item.capability_id for item in self.snapshot.capabilities if item.enabled
                 ),
                 active_boundary_digest=active_digest,
                 current_tick=int(current_tick),
@@ -1621,9 +1610,7 @@ class WorkbenchEnvironment:
             raise ValueError("unsupported task boundary state version")
         active_payload = payload.get("active")
         active = (
-            None
-            if active_payload is None
-            else WorkbenchTaskBoundary.from_payload(active_payload)
+            None if active_payload is None else WorkbenchTaskBoundary.from_payload(active_payload)
         )
         raw_history = payload.get("history", ())
         if isinstance(raw_history, (str, bytes)) or not isinstance(raw_history, Sequence):
@@ -1662,9 +1649,7 @@ class WorkbenchEnvironment:
             "capability_registry_snapshot_id": self.capability_registry.snapshot_id,
             "capability_registry_revision": self.capability_registry.snapshot.revision,
             "task_boundary": {
-                "active": (
-                    None if active_boundary is None else active_boundary.to_payload()
-                ),
+                "active": (None if active_boundary is None else active_boundary.to_payload()),
                 "history_count": len(self._task_boundary_history),
                 "state_format": WORKBENCH_TASK_BOUNDARY_STATE_FORMAT,
             },

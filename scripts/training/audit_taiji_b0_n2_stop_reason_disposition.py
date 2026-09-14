@@ -197,7 +197,7 @@ JUDGEMENT_SITES: tuple[dict[str, str], ...] = (
     {
         "id": "J5",
         "path": "scripts/training/audit_taiji_b0_m4_hardening.py",
-        "marker": 'CONTRACT_INTERCEPT_TOKEN in reason',
+        "marker": "CONTRACT_INTERCEPT_TOKEN in reason",
         "kind": "substring_predicate",
         "safe_because": (
             "tests substring membership, not startswith. The new reason does not "
@@ -311,7 +311,9 @@ def disposition() -> dict[str, Any]:
         "consumers": list(EXPECTED_CONSUMERS),
         "classification_counts": {
             "record_only_files": sum(row["class"] == "record_only" for row in EXPECTED_CONSUMERS),
-            "judgement_or_mixed_files": sum(row["class"] != "record_only" for row in EXPECTED_CONSUMERS),
+            "judgement_or_mixed_files": sum(
+                row["class"] != "record_only" for row in EXPECTED_CONSUMERS
+            ),
         },
         "scope_limit": (
             "text scan and source markers only; not an exhaustive data-flow proof. "
@@ -345,7 +347,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
 
-    print(f"new reason: {payload['new_reason']} (frozen counterpart: {payload['frozen_counterpart']})")
+    print(
+        f"new reason: {payload['new_reason']} (frozen counterpart: {payload['frozen_counterpart']})"
+    )
     print(
         f"consumers: report said {payload['consumer_count_in_hardening_report']}, "
         f"live scan finds {payload['consumer_count_now']} "

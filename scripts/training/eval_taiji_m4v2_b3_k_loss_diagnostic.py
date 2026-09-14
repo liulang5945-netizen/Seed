@@ -143,9 +143,7 @@ def _semantic_structured_loss(
         goal_index = learner.goal_ids.index(example.goal.goal_id)
         goal_probabilities = torch.softmax(learner.goal_head(readout), dim=-1)
         content_inputs = torch.cat((readout, goal_probabilities), dim=1)
-        content_probabilities = torch.softmax(
-            learner.content_head(content_inputs), dim=-1
-        )
+        content_probabilities = torch.softmax(learner.content_head(content_inputs), dim=-1)
         content_index = learner.content_ids.index(example.content.content_id)
         return {
             "fact_mse": float(torch.mean((fact_probabilities - targets) ** 2)),
@@ -154,8 +152,7 @@ def _semantic_structured_loss(
             ),
             "content_mse": float(
                 torch.mean(
-                    (content_probabilities - _one_hot(content_index, len(learner.content_ids)))
-                    ** 2
+                    (content_probabilities - _one_hot(content_index, len(learner.content_ids))) ** 2
                 )
             ),
         }
@@ -169,19 +166,17 @@ def _transition_structured_loss(
     with torch.no_grad():
         current = learner._fact_vector(example.before)
         event_context = learner._event_vector(example.event)
-        inputs = learner._transition_input(
-            current.reshape(1, -1), event_context.reshape(1, -1)
-        )
+        inputs = learner._transition_input(current.reshape(1, -1), event_context.reshape(1, -1))
         predicted_delta = learner.transition_head(inputs)
         target_next = learner._fact_vector(example.after)
         target_delta = target_next - current
         next_values = torch.clamp(current + predicted_delta.reshape(-1), 0.0, 1.0)
         goal_index = learner.goal_ids.index(example.goal.goal_id)
-        goal_probabilities = torch.softmax(
-            learner.goal_head(next_values.reshape(1, -1)), dim=-1
-        )
+        goal_probabilities = torch.softmax(learner.goal_head(next_values.reshape(1, -1)), dim=-1)
         content_probabilities = torch.softmax(
-            learner.content_head(torch.cat((next_values.reshape(1, -1), goal_probabilities), dim=1)),
+            learner.content_head(
+                torch.cat((next_values.reshape(1, -1), goal_probabilities), dim=1)
+            ),
             dim=-1,
         )
         content_index = learner.content_ids.index(example.content.content_id)
@@ -192,8 +187,7 @@ def _transition_structured_loss(
             ),
             "content_mse": float(
                 torch.mean(
-                    (content_probabilities - _one_hot(content_index, len(learner.content_ids)))
-                    ** 2
+                    (content_probabilities - _one_hot(content_index, len(learner.content_ids))) ** 2
                 )
             ),
         }
@@ -208,18 +202,17 @@ def _loss_score(
     for experience in experiences:
         semantic_loss = _semantic_structured_loss(semantic, experience)
         transition_loss = _transition_structured_loss(transition, experience)
-        rows.append({
-            "k1.fact_mse": semantic_loss["fact_mse"],
-            "k1.goal_mse": semantic_loss["goal_mse"],
-            "k1.content_mse": semantic_loss["content_mse"],
-            "k2.transition_mse": transition_loss["transition_mse"],
-            "k2.goal_mse": transition_loss["goal_mse"],
-            "k2.content_mse": transition_loss["content_mse"],
-        })
-    means = {
-        key: sum(row[key] for row in rows) / len(rows)
-        for key in rows[0]
-    }
+        rows.append(
+            {
+                "k1.fact_mse": semantic_loss["fact_mse"],
+                "k1.goal_mse": semantic_loss["goal_mse"],
+                "k1.content_mse": semantic_loss["content_mse"],
+                "k2.transition_mse": transition_loss["transition_mse"],
+                "k2.goal_mse": transition_loss["goal_mse"],
+                "k2.content_mse": transition_loss["content_mse"],
+            }
+        )
+    means = {key: sum(row[key] for row in rows) / len(rows) for key in rows[0]}
     means["combined_mse"] = sum(means.values()) / len(means)
     return means
 
@@ -229,9 +222,9 @@ def _parameter_delta_norm(before, after) -> float:
     for before_parameter, after_parameter in zip(
         before.parameters(), after.parameters(), strict=True
     ):
-        difference = after_parameter.detach().to(dtype=torch.float64) - before_parameter.detach().to(
+        difference = after_parameter.detach().to(
             dtype=torch.float64
-        )
+        ) - before_parameter.detach().to(dtype=torch.float64)
         total += torch.sum(difference * difference)
     return float(torch.sqrt(total).item())
 
@@ -248,8 +241,8 @@ def _parameter_delta_digest(before, after) -> str:
 
 
 def _fit_tensor_digests(semantic, transition, experience) -> dict[str, str]:
-    semantic_inputs, semantic_facts, semantic_goals, semantic_content = (
-        semantic._training_batch((experience.semantic_example,))
+    semantic_inputs, semantic_facts, semantic_goals, semantic_content = semantic._training_batch(
+        (experience.semantic_example,)
     )
     transition_inputs, transition_delta, transition_next, transition_goals, transition_content = (
         transition._training_batch((experience.transition_example,))
@@ -441,9 +434,7 @@ def run_diagnostic(
             holdout=holdout_experiences,
         )
         loss_before = _loss_score(semantic_parent, transition_parent, course.holdout)
-        train_loss_before = _loss_score(
-            semantic_parent, transition_parent, course.train
-        )
+        train_loss_before = _loss_score(semantic_parent, transition_parent, course.train)
         train_fit_tensor_digests = [
             {
                 "experience_digest": experience.experience_digest,
@@ -471,9 +462,7 @@ def run_diagnostic(
             copy.deepcopy(transition_parent_payload), device="cpu"
         )
         control_loss = _loss_score(control_semantic, control_transition, course.holdout)
-        no_update_control_delta = {
-            key: control_loss[key] - loss_before[key] for key in loss_before
-        }
+        no_update_control_delta = {key: control_loss[key] - loss_before[key] for key in loss_before}
 
         semantic_candidate = StructuredSemanticLearner.from_checkpoint(
             copy.deepcopy(semantic_parent_payload), device="cpu"
@@ -520,8 +509,7 @@ def run_diagnostic(
             inference_elapsed = time.perf_counter() - inference_started
             inference_after_rss = _rss_bytes()
         train_loss_delta = {
-            key: train_loss_after[key] - train_loss_before[key]
-            for key in train_loss_before
+            key: train_loss_after[key] - train_loss_before[key] for key in train_loss_before
         }
 
         candidate_manifests = [
@@ -592,8 +580,10 @@ def run_diagnostic(
             frozen_workers=("k3.outcome_projection",),
             candidate_namespace=candidate_namespace,
             training_steps=(
-                semantic_candidate.training_steps - semantic_parent.training_steps
-                + transition_candidate.training_steps - transition_parent.training_steps
+                semantic_candidate.training_steps
+                - semantic_parent.training_steps
+                + transition_candidate.training_steps
+                - transition_parent.training_steps
             ),
             optimizer_state_present=False,
             fresh_restore_verified=(
@@ -611,9 +601,7 @@ def run_diagnostic(
                 == str(artifacts["k3.outcome_projection"]["worker_checkpoint_digest"])
             ),
             holdout_untrained=(
-                set(course.train_experience_digests).isdisjoint(
-                    course.holdout_experience_digests
-                )
+                set(course.train_experience_digests).isdisjoint(course.holdout_experience_digests)
                 and all(
                     item.target_digest
                     not in {experience.target_digest for experience in course.train}
@@ -651,99 +639,81 @@ def run_diagnostic(
         }
         loss_delta = {key: loss_after[key] - loss_before[key] for key in loss_before}
         update_payload = {
-                "status": "passed" if all(checks.values()) and receipt.passed else "failed",
-                "checks": checks,
-                "parent_checkpoint_digest": parent_digest,
-                "candidate_namespace": candidate_namespace,
-                "worker_bundle_digest": parent_bundle.bundle_digest,
-                "candidate_worker_bundle_digest": candidate_bundle.bundle_digest,
-                "course_digest": course.course_digest,
-                "course_seed": int(course_seed),
-                "worker_attachment_preflight_course_seed": preflight_course_seed,
-                "workspace_seed": workspace_seed,
-                "train_episode_count": len(train_episode_indexes),
-                "train_variant_strategy": train_variant_strategy,
-                "train_episode_indexes": list(train_episode_indexes),
-                "train_episode_paths": [
-                    list(paths) for paths in train_episode_variants
-                ],
-                "train_experience_digests": list(course.train_experience_digests),
-                "train_course_digest": content_digest(
-                    list(course.train_experience_digests)
-                ),
-                "train_target_digests": train_target_digests,
-                "train_experience_target_digests": [
-                    experience.target_digest for experience in course.train
-                ],
-                "train_target_multiset_digest": content_digest(
-                    sorted(train_target_digests)
-                ),
-                "train_target_multiplicity": train_target_multiplicity,
-                "target_digest_semantics": "combined K1/K2 target tensor digests",
-                "train_fit_input_digests": [
-                    {
-                        "experience_digest": experience.experience_digest,
-                        "semantic_input_digest": experience.semantic_example.input_digest,
-                        "transition_input_digest": experience.transition_example.input_digest,
-                        "target_digest": experience.target_digest,
-                    }
-                    for experience in course.train
-                ],
-                "holdout_count": len(course.holdout),
-                "training_update_steps": receipt.training_steps,
-                "updated_workers": list(receipt.updated_workers),
-                "frozen_workers": list(receipt.frozen_workers),
-                "optimizer_state_present": receipt.optimizer_state_present,
-                "semantic_losses": semantic_losses,
-                "transition_losses": transition_losses,
-                "train_structured_loss_before": train_loss_before,
-                "train_structured_loss_after": train_loss_after,
-                "train_structured_loss_delta": train_loss_delta,
+            "status": "passed" if all(checks.values()) and receipt.passed else "failed",
+            "checks": checks,
+            "parent_checkpoint_digest": parent_digest,
+            "candidate_namespace": candidate_namespace,
+            "worker_bundle_digest": parent_bundle.bundle_digest,
+            "candidate_worker_bundle_digest": candidate_bundle.bundle_digest,
+            "course_digest": course.course_digest,
+            "course_seed": int(course_seed),
+            "worker_attachment_preflight_course_seed": preflight_course_seed,
+            "workspace_seed": workspace_seed,
+            "train_episode_count": len(train_episode_indexes),
+            "train_variant_strategy": train_variant_strategy,
+            "train_episode_indexes": list(train_episode_indexes),
+            "train_episode_paths": [list(paths) for paths in train_episode_variants],
+            "train_experience_digests": list(course.train_experience_digests),
+            "train_course_digest": content_digest(list(course.train_experience_digests)),
+            "train_target_digests": train_target_digests,
+            "train_experience_target_digests": [
+                experience.target_digest for experience in course.train
+            ],
+            "train_target_multiset_digest": content_digest(sorted(train_target_digests)),
+            "train_target_multiplicity": train_target_multiplicity,
+            "target_digest_semantics": "combined K1/K2 target tensor digests",
+            "train_fit_input_digests": [
+                {
+                    "experience_digest": experience.experience_digest,
+                    "semantic_input_digest": experience.semantic_example.input_digest,
+                    "transition_input_digest": experience.transition_example.input_digest,
+                    "target_digest": experience.target_digest,
+                }
+                for experience in course.train
+            ],
+            "holdout_count": len(course.holdout),
+            "training_update_steps": receipt.training_steps,
+            "updated_workers": list(receipt.updated_workers),
+            "frozen_workers": list(receipt.frozen_workers),
+            "optimizer_state_present": receipt.optimizer_state_present,
+            "semantic_losses": semantic_losses,
+            "transition_losses": transition_losses,
+            "train_structured_loss_before": train_loss_before,
+            "train_structured_loss_after": train_loss_after,
+            "train_structured_loss_delta": train_loss_delta,
+            "holdout_structured_loss_before": loss_before,
+            "holdout_structured_loss_after": loss_after,
+            "holdout_structured_loss_delta": loss_delta,
+            "no_update_control": {
                 "holdout_structured_loss_before": loss_before,
-                "holdout_structured_loss_after": loss_after,
-                "holdout_structured_loss_delta": loss_delta,
-                "no_update_control": {
-                    "holdout_structured_loss_before": loss_before,
-                    "holdout_structured_loss_after": control_loss,
-                    "holdout_structured_loss_delta": no_update_control_delta,
-                    "training_update_steps": 0,
-                    "passed": checks["no_update_control"],
-                },
-                "parameter_delta_norm": {
-                    "k1.semantic": _parameter_delta_norm(
-                        semantic_parent, semantic_candidate
-                    ),
-                    "k2.transition": _parameter_delta_norm(
-                        transition_parent, transition_candidate
-                    ),
-                },
-                "parameter_delta_digest": {
-                    "k1.semantic": _parameter_delta_digest(
-                        semantic_parent, semantic_candidate
-                    ),
-                    "k2.transition": _parameter_delta_digest(
-                        transition_parent, transition_candidate
-                    ),
-                },
-                "train_fit_tensor_digests": train_fit_tensor_digests,
-                "holdout_loss_improved": loss_after["combined_mse"] < loss_before["combined_mse"],
-                "candidate_checkpoint_paths": {
-                    key: str(path) for key, path in candidate_paths.items()
-                },
-                "receipt": receipt.to_payload(),
-                "candidate_promoted": False,
-                "can_start_r6_formal": False,
-                "can_promote": False,
-                "blocking_reason": (
-                    None
-                    if all(checks.values()) and receipt.passed
-                    else "B3-K continuous-loss diagnostic technical Gate failed"
-                ),
+                "holdout_structured_loss_after": control_loss,
+                "holdout_structured_loss_delta": no_update_control_delta,
+                "training_update_steps": 0,
+                "passed": checks["no_update_control"],
+            },
+            "parameter_delta_norm": {
+                "k1.semantic": _parameter_delta_norm(semantic_parent, semantic_candidate),
+                "k2.transition": _parameter_delta_norm(transition_parent, transition_candidate),
+            },
+            "parameter_delta_digest": {
+                "k1.semantic": _parameter_delta_digest(semantic_parent, semantic_candidate),
+                "k2.transition": _parameter_delta_digest(transition_parent, transition_candidate),
+            },
+            "train_fit_tensor_digests": train_fit_tensor_digests,
+            "holdout_loss_improved": loss_after["combined_mse"] < loss_before["combined_mse"],
+            "candidate_checkpoint_paths": {key: str(path) for key, path in candidate_paths.items()},
+            "receipt": receipt.to_payload(),
+            "candidate_promoted": False,
+            "can_start_r6_formal": False,
+            "can_promote": False,
+            "blocking_reason": (
+                None
+                if all(checks.values()) and receipt.passed
+                else "B3-K continuous-loss diagnostic technical Gate failed"
+            ),
         }
         if measure_resources:
-            parameter_count, parameter_bytes = _parameter_stats(
-                semantic_fresh, transition_fresh
-            )
+            parameter_count, parameter_bytes = _parameter_stats(semantic_fresh, transition_fresh)
             checkpoint_paths = tuple(candidate_paths.values())
             checkpoint_write_bytes = sum(
                 int(path.stat().st_size) for path in checkpoint_paths if path.is_file()
@@ -810,8 +780,14 @@ def main() -> int:
     parser.add_argument("--candidate-namespace", default=None)
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
     args = parser.parse_args()
-    artifact_dir = args.artifact_dir if args.artifact_dir.is_absolute() else PROJECT_ROOT / args.artifact_dir
-    candidate_dir = args.candidate_dir if args.candidate_dir.is_absolute() else PROJECT_ROOT / args.candidate_dir
+    artifact_dir = (
+        args.artifact_dir if args.artifact_dir.is_absolute() else PROJECT_ROOT / args.artifact_dir
+    )
+    candidate_dir = (
+        args.candidate_dir
+        if args.candidate_dir.is_absolute()
+        else PROJECT_ROOT / args.candidate_dir
+    )
     report_path = args.report if args.report.is_absolute() else PROJECT_ROOT / args.report
     report = run_diagnostic(
         artifact_dir=artifact_dir,

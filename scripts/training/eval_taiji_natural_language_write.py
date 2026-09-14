@@ -24,7 +24,9 @@ ORIGINAL_CONTENT = "Seed editor source\n"
 UPDATED_CONTENT = "Taiji editor source\n"
 
 
-def _runtime(seed: int, checkpoint_path: Path, *, workspace_root: Path = PROJECT_ROOT) -> SeedRuntime:
+def _runtime(
+    seed: int, checkpoint_path: Path, *, workspace_root: Path = PROJECT_ROOT
+) -> SeedRuntime:
     return SeedRuntime(
         Seed(episode_id=f"p2-12-natural-language-write-{seed}"),
         checkpoint_path=checkpoint_path,
@@ -95,9 +97,7 @@ def evaluate(*, work_dir: Path | None = None) -> dict[str, object]:
     try:
         with patch(
             "seed_platform.workbench.get_setting",
-            lambda key, default=None: str(workspace_root)
-            if key == "workspace_path"
-            else default,
+            lambda key, default=None: str(workspace_root) if key == "workspace_path" else default,
         ):
             runtime = _runtime(11, checkpoint_path, workspace_root=workspace_root)
             plan = _plan(runtime, prompt, "p2-12-write-loop")
@@ -140,10 +140,10 @@ def evaluate(*, work_dir: Path | None = None) -> dict[str, object]:
             restored_content = fixture_path.read_text(encoding="utf-8")
             undo_restored = restored_content == ORIGINAL_CONTENT
 
-            no_approval_checkpoint = (
-                workspace_root / "checkpoints" / ".p2-12-no-approval.pt"
+            no_approval_checkpoint = workspace_root / "checkpoints" / ".p2-12-no-approval.pt"
+            no_approval_runtime = _runtime(
+                29, no_approval_checkpoint, workspace_root=workspace_root
             )
-            no_approval_runtime = _runtime(29, no_approval_checkpoint, workspace_root=workspace_root)
             no_approval_plan = _plan(
                 no_approval_runtime,
                 prompt,
@@ -159,11 +159,9 @@ def evaluate(*, work_dir: Path | None = None) -> dict[str, object]:
             conflict_runtime = _runtime(47, conflict_checkpoint, workspace_root=workspace_root)
             conflict_plan = _plan(conflict_runtime, prompt, "p2-12-conflict-loop")
             conflict_request_id = conflict_plan["approval_requirements"][0]["request_id"]
-            conflict_approval = (
-                conflict_runtime.approve_planned_natural_language_workbench_task(
-                    conflict_plan["plan_id"],
-                    conflict_request_id,
-                )
+            conflict_approval = conflict_runtime.approve_planned_natural_language_workbench_task(
+                conflict_plan["plan_id"],
+                conflict_request_id,
             )
             fixture_path.write_text("Seed editor source\nexternal change\n", encoding="utf-8")
             conflict = conflict_runtime.execute_planned_natural_language_workbench_task(

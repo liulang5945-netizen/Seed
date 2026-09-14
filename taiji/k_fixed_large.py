@@ -41,14 +41,9 @@ def _mean_score_maps(
     for index, score_map in enumerate(maps):
         actual = {str(key) for key in score_map}
         if actual != expected:
-            raise ValueError(
-                f"fixed-large {name} replica {index} score-map keys do not match"
-            )
+            raise ValueError(f"fixed-large {name} replica {index} score-map keys do not match")
     width = float(len(maps))
-    return {
-        key: sum(float(score_map[key]) for score_map in maps) / width
-        for key in keys
-    }
+    return {key: sum(float(score_map[key]) for score_map in maps) / width for key in keys}
 
 
 def _top_two(scores: Mapping[str, float], ordered_keys: Sequence[str]) -> tuple[str, float, float]:
@@ -137,17 +132,21 @@ class NativeKFixedLargeEnsemble:
 
     @property
     def source_digest(self) -> str:
-        return str(content_digest(
-            {
-                "format": FIXED_LARGE_CHECKPOINT_FORMAT,
-                "version": FIXED_LARGE_CHECKPOINT_VERSION,
-                "ensemble_width": self.ensemble_width,
-                "semantic_sources": [replica.source_digest for replica in self.semantic_replicas],
-                "transition_sources": [
-                    replica.source_digest for replica in self.transition_replicas
-                ],
-            }
-        ))
+        return str(
+            content_digest(
+                {
+                    "format": FIXED_LARGE_CHECKPOINT_FORMAT,
+                    "version": FIXED_LARGE_CHECKPOINT_VERSION,
+                    "ensemble_width": self.ensemble_width,
+                    "semantic_sources": [
+                        replica.source_digest for replica in self.semantic_replicas
+                    ],
+                    "transition_sources": [
+                        replica.source_digest for replica in self.transition_replicas
+                    ],
+                }
+            )
+        )
 
     def predict_semantic(self, percept: PerceptEvent) -> StructuredSemanticResult:
         results = tuple(replica.predict(percept) for replica in self.semantic_replicas)
@@ -170,13 +169,12 @@ class NativeKFixedLargeEnsemble:
                 confidence=float(percept.confidence),
                 ambiguity=1.0,
             )
-        active = {key for key, score in fact_scores.items() if score >= representative.fact_threshold}
+        active = {
+            key for key, score in fact_scores.items() if score >= representative.fact_threshold
+        }
         conflicts = any(
             len(active.intersection(group)) > 1
-            or (
-                len(group) > 1
-                and all(0.45 <= fact_scores[key] <= 0.55 for key in group)
-            )
+            or (len(group) > 1 and all(0.45 <= fact_scores[key] <= 0.55 for key in group))
             for group in representative._conflict_groups(self.semantic_fact_keys)
         )
         if conflicts:
@@ -209,9 +207,7 @@ class NativeKFixedLargeEnsemble:
             expected_keys=self.semantic_goal_ids,
             name="semantic goal",
         )
-        goal_id, goal_confidence, second_goal = _top_two(
-            goal_scores, self.semantic_goal_ids
-        )
+        goal_id, goal_confidence, second_goal = _top_two(goal_scores, self.semantic_goal_ids)
         goal_ambiguity = 1.0 - max(0.0, goal_confidence - second_goal)
         goal = representative._goals[goal_id]
         if (
@@ -235,9 +231,7 @@ class NativeKFixedLargeEnsemble:
             expected_keys=self.semantic_content_ids,
             name="semantic content",
         )
-        content_id, content_confidence, _ = _top_two(
-            content_scores, self.semantic_content_ids
-        )
+        content_id, content_confidence, _ = _top_two(content_scores, self.semantic_content_ids)
         content = representative._content_plans[content_id]
         if content_confidence < representative.confidence_floor:
             return StructuredSemanticResult(
@@ -266,14 +260,11 @@ class NativeKFixedLargeEnsemble:
     def predict_transition(
         self, previous: WorldState, event: PerceptEvent
     ) -> StructuredSemanticTransitionResult:
-        results = tuple(
-            replica.predict(previous, event) for replica in self.transition_replicas
-        )
+        results = tuple(replica.predict(previous, event) for replica in self.transition_replicas)
         representative = self.transition_replicas[0]
         current = representative._fact_vector(previous)
         current_scores = {
-            key: float(value)
-            for key, value in zip(self.transition_fact_keys, current, strict=True)
+            key: float(value) for key, value in zip(self.transition_fact_keys, current, strict=True)
         }
         if event.confidence < representative.confidence_floor:
             return StructuredSemanticTransitionResult(
@@ -318,13 +309,12 @@ class NativeKFixedLargeEnsemble:
             for key in self.transition_fact_keys
         }
         world = representative._materialize_world(previous, event, next_values)
-        active = {key for key, score in next_values.items() if score >= representative.fact_threshold}
+        active = {
+            key for key, score in next_values.items() if score >= representative.fact_threshold
+        }
         conflicts = any(
             len(active.intersection(group)) > 1
-            or (
-                len(group) > 1
-                and all(0.45 <= next_values[key] <= 0.55 for key in group)
-            )
+            or (len(group) > 1 and all(0.45 <= next_values[key] <= 0.55 for key in group))
             for group in representative._conflict_groups(self.transition_fact_keys)
         )
         if conflicts:
@@ -359,9 +349,7 @@ class NativeKFixedLargeEnsemble:
             expected_keys=self.transition_goal_ids,
             name="transition goal",
         )
-        goal_id, goal_confidence, second_goal = _top_two(
-            goal_scores, self.transition_goal_ids
-        )
+        goal_id, goal_confidence, second_goal = _top_two(goal_scores, self.transition_goal_ids)
         goal_ambiguity = 1.0 - max(0.0, goal_confidence - second_goal)
         goal = representative._goals[goal_id]
         if (
@@ -386,9 +374,7 @@ class NativeKFixedLargeEnsemble:
             expected_keys=self.transition_content_ids,
             name="transition content",
         )
-        content_id, content_confidence, _ = _top_two(
-            content_scores, self.transition_content_ids
-        )
+        content_id, content_confidence, _ = _top_two(content_scores, self.transition_content_ids)
         content = representative._content_plans[content_id]
         if content_confidence < representative.confidence_floor:
             return StructuredSemanticTransitionResult(

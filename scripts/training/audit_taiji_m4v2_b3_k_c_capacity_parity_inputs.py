@@ -17,20 +17,13 @@ MANIFEST_FORMAT = "taiji-m4v2-b3-k-c-capacity-parity-manifest-v1"
 FIXED_LARGE_REPORT_FORMAT = "taiji-m4v2-b3-k-c-fixed-large-build-v1"
 DEFAULT_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_MANIFEST = (
-    DEFAULT_ROOT
-    / "plans"
-    / "manifests"
-    / "taiji_m4v2_b3_k_c_capacity_parity_v1.json"
+    DEFAULT_ROOT / "plans" / "manifests" / "taiji_m4v2_b3_k_c_capacity_parity_v1.json"
 )
 DEFAULT_FIXED_LARGE_REPORT = (
-    DEFAULT_ROOT
-    / "reports"
-    / "taiji_m4v2_b3_k_c_fixed_large_build_20260910.json"
+    DEFAULT_ROOT / "reports" / "taiji_m4v2_b3_k_c_fixed_large_build_20260910.json"
 )
 DEFAULT_OUTPUT = (
-    DEFAULT_ROOT
-    / "reports"
-    / "taiji_m4v2_b3_k_c_capacity_parity_input_preflight_20260910.json"
+    DEFAULT_ROOT / "reports" / "taiji_m4v2_b3_k_c_capacity_parity_input_preflight_20260910.json"
 )
 
 
@@ -48,9 +41,7 @@ def _int(value: Any, name: str) -> int:
     return value
 
 
-def _fixed_cell(
-    report: dict[str, Any], model_seed: int, course_seed: int
-) -> dict[str, Any]:
+def _fixed_cell(report: dict[str, Any], model_seed: int, course_seed: int) -> dict[str, Any]:
     for cell in report.get("cells", []):
         if (
             isinstance(cell, dict)
@@ -106,9 +97,7 @@ def build_preflight(
             fixed_cell = _fixed_cell(fixed_report, model_seed, course_seed)
             resource = fixed_cell["resource"]
             parameter_bytes = _int(resource["parameter_bytes"], "parameter_bytes")
-            update_steps = _int(
-                resource["training_update_steps"], "training_update_steps"
-            )
+            update_steps = _int(resource["training_update_steps"], "training_update_steps")
             checkpoint_count = _checkpoint_count(resource)
             parent_key = f"model_{model_seed}"
             parent_matches = (
@@ -149,22 +138,25 @@ def build_preflight(
     candidate_root = DEFAULT_ROOT / manifest["artifact_contract"]["candidate_root"]
     candidate_present = candidate_root.exists()
     candidate_design_ready = (
-        manifest["artifact_contract"]["candidate_route_design"]["design_status"]
-        == "frozen"
+        manifest["artifact_contract"]["candidate_route_design"]["design_status"] == "frozen"
     )
     status = (
         "ready-for-candidate-design"
         if fixed_ready and not candidate_present and not candidate_design_ready
-        else "ready-for-candidate-parity-build"
-        if fixed_ready and not candidate_present and candidate_design_ready
-        else "blocked"
+        else (
+            "ready-for-candidate-parity-build"
+            if fixed_ready and not candidate_present and candidate_design_ready
+            else "blocked"
+        )
     )
     blocking_reason = (
         "fixed-large input contract is ready; distinct candidate route design is not frozen"
         if fixed_ready and not candidate_present and not candidate_design_ready
-        else "candidate parity artifact is not built; this preflight is non-training"
-        if fixed_ready and not candidate_present
-        else "fixed-large input contract failed or candidate artifact already exists"
+        else (
+            "candidate parity artifact is not built; this preflight is non-training"
+            if fixed_ready and not candidate_present
+            else "fixed-large input contract failed or candidate artifact already exists"
+        )
     )
     return {
         "report_format": REPORT_FORMAT,
@@ -195,9 +187,7 @@ def build_preflight(
                 "max_parameter_ratio_difference"
             ],
             "candidate_upward_policy": manifest["capacity_contract"]["policy"],
-            "do_not_shrink_fixed_large": manifest["capacity_contract"][
-                "do_not_shrink_fixed_large"
-            ],
+            "do_not_shrink_fixed_large": manifest["capacity_contract"]["do_not_shrink_fixed_large"],
             "naive_replica_duplication_forbidden": manifest["artifact_contract"][
                 "candidate_route_design"
             ]["naive_replica_duplication_forbidden"],
@@ -208,9 +198,7 @@ def build_preflight(
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
-    parser.add_argument(
-        "--fixed-large-report", type=Path, default=DEFAULT_FIXED_LARGE_REPORT
-    )
+    parser.add_argument("--fixed-large-report", type=Path, default=DEFAULT_FIXED_LARGE_REPORT)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     args = parser.parse_args()
 

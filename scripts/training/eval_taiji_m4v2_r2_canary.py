@@ -94,9 +94,7 @@ def _course_manifest() -> ContinualCourseManifest:
         phases.append(
             CoursePhase(
                 phase_id=f"G-{old_count:02d}-{new_count:02d}",
-                source_digest=content_digest(
-                    {"old": "synthetic-old", "new": "synthetic-new"}
-                ),
+                source_digest=content_digest({"old": "synthetic-old", "new": "synthetic-new"}),
                 dataset_digest=content_digest({"train": train, "holdout": G_HOLDOUT}),
                 train_budget_bytes=len(train),
                 holdout_budget_bytes=len(G_HOLDOUT),
@@ -159,11 +157,10 @@ def _arm(
     developmental_state_digest = content_digest(checkpoint[Taiji.DEVELOPMENTAL_F1_KEY])
     restored = Taiji.from_checkpoint(copy.deepcopy(checkpoint))
     fresh_restore_matches = content_digest(restored.checkpoint()) == checkpoint_digest
-    old_owner_unchanged = (
-        content_digest(checkpoint["predictive_context"])
-        == content_digest(parent["predictive_context"])
-        and content_digest(checkpoint["predictive_readout"])
-        == content_digest(parent["predictive_readout"])
+    old_owner_unchanged = content_digest(checkpoint["predictive_context"]) == content_digest(
+        parent["predictive_context"]
+    ) and content_digest(checkpoint["predictive_readout"]) == content_digest(
+        parent["predictive_readout"]
     )
     rollback = Taiji.from_checkpoint(copy.deepcopy(parent))
     rollback_scores = {
@@ -262,8 +259,7 @@ def run_canary(parent_checkpoint: dict[str, Any] | None = None) -> dict[str, Any
         epsilon=0.05,
     )
     scorecard_retention = {
-        domain: scorecard.parent_retention("mean_surprise", domain)
-        for domain in ("S", "G")
+        domain: scorecard.parent_retention("mean_surprise", domain) for domain in ("S", "G")
     }
     gates = {
         "course_manifest_round_trip": (
@@ -284,9 +280,7 @@ def run_canary(parent_checkpoint: dict[str, Any] | None = None) -> dict[str, Any
             "replay_events_before_sleep"
         ]
         > 0,
-        "replay_consolidated_and_cleared_fast": arms["fast_replay"]["state"][
-            "fast_is_zero"
-        ],
+        "replay_consolidated_and_cleared_fast": arms["fast_replay"]["state"]["fast_is_zero"],
         "old_f1_owners_unchanged": all(
             arm["state"]["old_owner_unchanged"] for arm in arms.values()
         ),
@@ -355,9 +349,7 @@ def _formal_manifest(course: dict[str, Any]) -> ContinualCourseManifest:
         phases.append(
             CoursePhase(
                 phase_id=f"G-{old_count:02d}-{new_count:02d}",
-                source_digest=content_digest(
-                    {"old": "synthetic-old", "new": "synthetic-new"}
-                ),
+                source_digest=content_digest({"old": "synthetic-old", "new": "synthetic-new"}),
                 dataset_digest=content_digest({"train": train, "holdout": G_HOLDOUT}),
                 train_budget_bytes=len(train),
                 holdout_budget_bytes=len(G_HOLDOUT),
@@ -384,10 +376,7 @@ def _calibration_blocks(base: tuple[bytes, bytes, bytes]) -> tuple[bytes, ...]:
 def _calibrate_epsilon_from_scores(scores: dict[str, list[float]]) -> dict[str, Any]:
     """Calibrate epsilon and fail closed when parent variance exceeds its cap."""
 
-    scores = {
-        domain: [float(value) for value in values]
-        for domain, values in scores.items()
-    }
+    scores = {domain: [float(value) for value in values] for domain, values in scores.items()}
     means = {domain: sum(values) / len(values) for domain, values in scores.items()}
     deviations = {
         domain: max(abs(value - means[domain]) for value in values)
@@ -427,8 +416,7 @@ def _calibrate_epsilon(model: Taiji) -> dict[str, Any]:
         for domain, domain_blocks in blocks.items()
     }
     calibration["block_lengths"] = {
-        domain: [len(block) for block in domain_blocks]
-        for domain, domain_blocks in blocks.items()
+        domain: [len(block) for block in domain_blocks] for domain, domain_blocks in blocks.items()
     }
     return calibration
 
@@ -503,13 +491,14 @@ def run_formal(parent_checkpoint: dict[str, Any] | None = None) -> dict[str, Any
         epsilon=float(calibration["epsilon"]),
     )
     retention = {
-        domain: scorecard.parent_retention("mean_surprise", domain)
-        for domain in ("S", "G")
+        domain: scorecard.parent_retention("mean_surprise", domain) for domain in ("S", "G")
     }
     comparison_rows = []
     for course_id, results in arm_results.items():
         for domain in ("S", "G"):
-            fixed = min(results["slow_only"]["scores"][domain], results["fast_only"]["scores"][domain])
+            fixed = min(
+                results["slow_only"]["scores"][domain], results["fast_only"]["scores"][domain]
+            )
             replay = results["fast_replay"]["scores"][domain]
             comparison_rows.append(
                 {
@@ -595,13 +584,17 @@ def main(argv: list[str] | None = None) -> int:
     parent = _load_parent(args.checkpoint) if args.checkpoint else None
     report = run_formal(parent) if args.formal else run_canary(parent)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(
         json.dumps(
             {
-                "report": str(args.report.relative_to(PROJECT_ROOT))
-                if args.report.is_relative_to(PROJECT_ROOT)
-                else str(args.report),
+                "report": (
+                    str(args.report.relative_to(PROJECT_ROOT))
+                    if args.report.is_relative_to(PROJECT_ROOT)
+                    else str(args.report)
+                ),
                 "status": report["status"],
                 "can_promote": report["can_promote"],
                 "gates": report["gates"],

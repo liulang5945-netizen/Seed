@@ -50,9 +50,7 @@ def test_learning_target_contract_exposes_legacy_and_isolated_targets() -> None:
 def test_default_all_is_checkpoint_compatible_with_explicit_all() -> None:
     default_model, _ = _write(None)
     explicit_model, _ = _write("all")
-    assert content_digest(default_model.checkpoint()) == content_digest(
-        explicit_model.checkpoint()
-    )
+    assert content_digest(default_model.checkpoint()) == content_digest(explicit_model.checkpoint())
 
 
 def test_action_readout_target_only_updates_action_path() -> None:

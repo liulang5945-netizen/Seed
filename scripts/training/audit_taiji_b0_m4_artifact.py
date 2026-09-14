@@ -43,9 +43,7 @@ DEFAULT_OUTPUT = PROJECT_ROOT / "reports" / "taiji_b0_m4_artifact_audit_20260913
 COUNTERFACTUAL_MODULE = TRAINING_DIR / "probe_taiji_b0_m1_counterfactual.py"
 HANDOFF_PROBE = TRAINING_DIR / "probe_taiji_b0_handoff_feasibility.py"
 FROZEN_ROUTE_A_REPORT = (
-    PROJECT_ROOT
-    / "reports"
-    / "taiji_p5_2c_triple_prime_representation_repair_20260913.json"
+    PROJECT_ROOT / "reports" / "taiji_p5_2c_triple_prime_representation_repair_20260913.json"
 )
 
 AUDIT_FORMAT = "taiji-b0-m4-artifact-audit-v1"
@@ -157,8 +155,7 @@ def measure_surface(
     cells = None
     if reversed_order:
         cells = tuple(
-            tuple(reversed(cell)) if len(cell) == 2 else cell
-            for cell in frozen.CELL_MEMBER_SETS
+            tuple(reversed(cell)) if len(cell) == 2 else cell for cell in frozen.CELL_MEMBER_SETS
         )
     episodes = counterfactual.execute_surface(
         frozen, episode_fn, members, embedder, tasks, cell_member_sets=cells
@@ -167,9 +164,7 @@ def measure_surface(
     outcomes = probe.outcome_by_cell(episodes)
     context_ids = [task.task_id for task in tasks]
     table = probe.table_from_outcomes(outcomes, context_ids, frozen.MEMBER_IDS)
-    trajectories = [
-        precheck.classify_pair_trajectory(table, pair) for pair in table.pair_cells()
-    ]
+    trajectories = [precheck.classify_pair_trajectory(table, pair) for pair in table.pair_cells()]
     gains = {
         "+".join(pair): dictionary.policy_mean_gain_vs_all_singleton_oracle(table, pair)
         for pair in table.pair_cells()
@@ -351,29 +346,59 @@ def audit() -> dict[str, Any]:
 
     surfaces: dict[str, dict[str, Any]] = {}
     surfaces["frozen_validation"] = measure_surface(
-        frozen, counterfactual, audited_episode, primary_members, embedder,
-        validation_tasks, label="frozen_validation", margin=margin,
+        frozen,
+        counterfactual,
+        audited_episode,
+        primary_members,
+        embedder,
+        validation_tasks,
+        label="frozen_validation",
+        margin=margin,
     )
     for label, tasks in candidate_sets.items():
         surfaces[label] = measure_surface(
-            frozen, counterfactual, audited_episode, primary_members, embedder,
-            tasks, label=label, margin=margin,
+            frozen,
+            counterfactual,
+            audited_episode,
+            primary_members,
+            embedder,
+            tasks,
+            label=label,
+            margin=margin,
         )
     surfaces["create_and_override_reversed"] = measure_surface(
-        frozen, counterfactual, audited_episode, primary_members, embedder,
-        candidate_sets["create_and_override"], label="create_and_override",
-        margin=margin, reversed_order=True,
+        frozen,
+        counterfactual,
+        audited_episode,
+        primary_members,
+        embedder,
+        candidate_sets["create_and_override"],
+        label="create_and_override",
+        margin=margin,
+        reversed_order=True,
     )
 
     # Baseline rule on the frozen surface, for the improvement forensics.
     baseline_frozen = measure_surface(
-        frozen, counterfactual, frozen_episode, primary_members, embedder,
-        validation_tasks, label="frozen_validation", margin=margin,
+        frozen,
+        counterfactual,
+        frozen_episode,
+        primary_members,
+        embedder,
+        validation_tasks,
+        label="frozen_validation",
+        margin=margin,
     )
     # Mechanism lesion: the frozen rule on the surface M4 wins.
     baseline_candidate = measure_surface(
-        frozen, counterfactual, frozen_episode, primary_members, embedder,
-        candidate_sets["create_and_override"], label="create_and_override", margin=margin,
+        frozen,
+        counterfactual,
+        frozen_episode,
+        primary_members,
+        embedder,
+        candidate_sets["create_and_override"],
+        label="create_and_override",
+        margin=margin,
     )
 
     lesion = {
@@ -411,12 +436,23 @@ def audit() -> dict[str, Any]:
     for offset in SEED_OFFSETS:
         members = train_members_with_seed(frozen, embedder, offset)
         row_frozen = measure_surface(
-            frozen, counterfactual, audited_episode, members, embedder,
-            validation_tasks, label="frozen_validation", margin=margin,
+            frozen,
+            counterfactual,
+            audited_episode,
+            members,
+            embedder,
+            validation_tasks,
+            label="frozen_validation",
+            margin=margin,
         )
         row_candidate = measure_surface(
-            frozen, counterfactual, audited_episode, members, embedder,
-            candidate_sets["create_and_override"], label="create_and_override",
+            frozen,
+            counterfactual,
+            audited_episode,
+            members,
+            embedder,
+            candidate_sets["create_and_override"],
+            label="create_and_override",
             margin=margin,
         )
         seed_rows.append(
@@ -430,15 +466,12 @@ def audit() -> dict[str, Any]:
                     ],
                 },
                 "create_and_override": {
-                    "positive_same_reference_gain": row_candidate[
-                        "positive_same_reference_gain"
-                    ],
+                    "positive_same_reference_gain": row_candidate["positive_same_reference_gain"],
                     "best_pair_gain": row_candidate["best_pair_gain"],
                     "best_pair": row_candidate["best_pair"],
                     "interleaved_contexts": row_candidate["interleaved_contexts"],
                     "all_singletons_fail": all(
-                        rate == 0.0
-                        for rate in row_candidate["singleton_success_rates"].values()
+                        rate == 0.0 for rate in row_candidate["singleton_success_rates"].values()
                     ),
                 },
             }
@@ -458,8 +491,7 @@ def audit() -> dict[str, Any]:
             "the audited rule produces a positive gain on the handoff surface under "
             "every seed and never manufactures a gain on the frozen surface"
             if all(gain > 0.0 for gain in candidate_gains)
-            else "at least one seed fails to reproduce the gain, so the result is "
-            "seed-dependent"
+            else "at least one seed fails to reproduce the gain, so the result is " "seed-dependent"
         ),
     }
 

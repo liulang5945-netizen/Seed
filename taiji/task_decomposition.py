@@ -448,10 +448,7 @@ class TaskDecomposition:
             decomposition_id=str(payload["decomposition_id"]),
             interpretation_id=str(payload["interpretation_id"]),
             goal_id=str(payload["goal_id"]),
-            steps=tuple(
-                TaskStepEvidence.from_payload(dict(item))
-                for item in raw_steps
-            ),
+            steps=tuple(TaskStepEvidence.from_payload(dict(item)) for item in raw_steps),
             confidence=float(payload.get("confidence", 0.0)),
             ambiguity=float(payload.get("ambiguity", 1.0)),
             status=str(payload.get("status", "candidate")),

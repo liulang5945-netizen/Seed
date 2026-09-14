@@ -153,7 +153,9 @@ def _seed_record(seed: int, train_count: int, holdout_count: int) -> dict[str, o
         )
         expected_slot = phase_a_slots.get(query.cue, phase_b_slots.get(query.cue))
         query_slot_mismatches += int(routed.slot_index != expected_slot)
-    occupied_slots = set(slot for slot in (*phase_a_slots.values(), *phase_b_slots.values()) if slot is not None)
+    occupied_slots = set(
+        slot for slot in (*phase_a_slots.values(), *phase_b_slots.values()) if slot is not None
+    )
     cross_phase_collisions = len(set(phase_a_slots.values()) & set(phase_b_slots.values()))
     repeated_replay = [
         binding.route(pattern, learn=True)
@@ -161,9 +163,7 @@ def _seed_record(seed: int, train_count: int, holdout_count: int) -> dict[str, o
         for _ in range(2)
     ]
     repeated_expected = [
-        slot
-        for slot in (*phase_a_slots.values(), *phase_b_slots.values())
-        for _ in range(2)
+        slot for slot in (*phase_a_slots.values(), *phase_b_slots.values()) for _ in range(2)
     ]
     no_change_bank = CueBindingBank(
         config.memory_units,
@@ -203,11 +203,15 @@ def _seed_record(seed: int, train_count: int, holdout_count: int) -> dict[str, o
     released_slot = next(slot for slot in lifecycle_slots.values() if slot is not None)
     lifecycle_bank.release(released_slot)
     released_read = lifecycle_bank.route(
-        phase_a_patterns[next(cue for cue, slot in lifecycle_slots.items() if slot == released_slot)],
+        phase_a_patterns[
+            next(cue for cue, slot in lifecycle_slots.items() if slot == released_slot)
+        ],
         learn=False,
     )
     reallocated = lifecycle_bank.route(
-        phase_a_patterns[next(cue for cue, slot in lifecycle_slots.items() if slot == released_slot)],
+        phase_a_patterns[
+            next(cue for cue, slot in lifecycle_slots.items() if slot == released_slot)
+        ],
         learn=True,
     )
     binding_generator = torch.Generator(device="cpu")
@@ -222,7 +226,9 @@ def _seed_record(seed: int, train_count: int, holdout_count: int) -> dict[str, o
         device=model.device,
         allow_self=False,
     )
-    binding_top_k = max(1, min(config.memory_units, round(config.target_activity * config.memory_units)))
+    binding_top_k = max(
+        1, min(config.memory_units, round(config.target_activity * config.memory_units))
+    )
     phase_a_binding = [
         _competitive_binding(pattern, binding_projection, top_k=binding_top_k)
         for pattern in phase_a_patterns.values()
@@ -233,7 +239,9 @@ def _seed_record(seed: int, train_count: int, holdout_count: int) -> dict[str, o
     ]
     action_support = {}
     action_support = {}
-    for action in sorted({episode.action for episode in (*corpus.phase_a_train, *corpus.phase_b_train)}):
+    for action in sorted(
+        {episode.action for episode in (*corpus.phase_a_train, *corpus.phase_b_train)}
+    ):
         support = set(int(value) for value in model.memory.local_action_readout.pre_index[action])
         action_support[str(action)] = {
             "fan_in": len(support),
@@ -286,14 +294,10 @@ def _seed_record(seed: int, train_count: int, holdout_count: int) -> dict[str, o
             },
             "cross_phase_pairwise_cosine": {
                 "max": max(
-                    _cosine(left, right)
-                    for left in phase_a_binding
-                    for right in phase_b_binding
+                    _cosine(left, right) for left in phase_a_binding for right in phase_b_binding
                 ),
                 "mean": sum(
-                    _cosine(left, right)
-                    for left in phase_a_binding
-                    for right in phase_b_binding
+                    _cosine(left, right) for left in phase_a_binding for right in phase_b_binding
                 )
                 / (len(phase_a_binding) * len(phase_b_binding)),
             },
@@ -320,7 +324,9 @@ def _seed_record(seed: int, train_count: int, holdout_count: int) -> dict[str, o
             },
             "no_change": {
                 "query_count": len(no_change_routes),
-                "all_queries_routed": all(route.slot_index is not None for route in no_change_routes),
+                "all_queries_routed": all(
+                    route.slot_index is not None for route in no_change_routes
+                ),
                 "state_preserved": no_change_preserved,
             },
             "release_reallocate": {
@@ -341,9 +347,7 @@ def main() -> int:
     parser.add_argument("--seeds", nargs="+", type=int, default=[11, 29, 47])
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
     args = parser.parse_args()
-    records = [
-        _seed_record(int(seed), args.train_count, args.holdout_count) for seed in args.seeds
-    ]
+    records = [_seed_record(int(seed), args.train_count, args.holdout_count) for seed in args.seeds]
     result = {
         "format": FORMAT,
         "version": 1,
@@ -356,7 +360,9 @@ def main() -> int:
     }
     args.report.parent.mkdir(parents=True, exist_ok=True)
     result["report_path"] = str(args.report)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

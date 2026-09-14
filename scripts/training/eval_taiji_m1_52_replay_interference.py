@@ -80,7 +80,9 @@ def _summary(values: list[float]) -> dict[str, float]:
     }
 
 
-def _recall(model: Taiji, episode: Any, actions: tuple[int, ...], outcomes: tuple[int, ...]) -> dict[str, float | int]:
+def _recall(
+    model: Taiji, episode: Any, actions: tuple[int, ...], outcomes: tuple[int, ...]
+) -> dict[str, float | int]:
     model.reset_dynamics(episode_id=f"m1-52-recall-{episode.memory_id}")
     model.observe(
         model.config.boundary_symbol,
@@ -100,9 +102,7 @@ def _recall(model: Taiji, episode: Any, actions: tuple[int, ...], outcomes: tupl
     action_probabilities = recall.action_probabilities
     outcome_probabilities = recall.outcome_probabilities
     action_alternatives = [
-        float(action_probabilities[action].item())
-        for action in actions
-        if action != episode.action
+        float(action_probabilities[action].item()) for action in actions if action != episode.action
     ]
     outcome_alternatives = [
         float(outcome_probabilities[outcome].item())
@@ -251,21 +251,14 @@ def _row_summary(
         ),
         "action_margin": _summary([float(row["action_margin"]) for row in rows]),
         "outcome_margin": _summary([float(row["outcome_margin"]) for row in rows]),
-        "action_accuracy": float(
-            sum(int(row["action_correct"]) for row in rows) / len(rows)
-        ),
-        "outcome_accuracy": float(
-            sum(int(row["outcome_correct"]) for row in rows) / len(rows)
-        ),
+        "action_accuracy": float(sum(int(row["action_correct"]) for row in rows) / len(rows)),
+        "outcome_accuracy": float(sum(int(row["outcome_correct"]) for row in rows) / len(rows)),
     }
     if include_deltas:
         summary.update(
             {
                 "delta_association_error_ratio_vs_phase_a": _summary(
-                    [
-                        float(row["delta_association_error_ratio_vs_phase_a"])
-                        for row in rows
-                    ]
+                    [float(row["delta_association_error_ratio_vs_phase_a"]) for row in rows]
                 ),
                 "delta_action_margin_vs_phase_a": _summary(
                     [float(row["delta_action_margin_vs_phase_a"]) for row in rows]
@@ -277,12 +270,10 @@ def _row_summary(
                     [float(row["delta_action_outcome_margin_gap"]) for row in rows]
                 ),
                 "negative_action_margin_delta_count": sum(
-                    int(float(row["delta_action_margin_vs_phase_a"]) < 0.0)
-                    for row in rows
+                    int(float(row["delta_action_margin_vs_phase_a"]) < 0.0) for row in rows
                 ),
                 "negative_outcome_margin_delta_count": sum(
-                    int(float(row["delta_outcome_margin_vs_phase_a"]) < 0.0)
-                    for row in rows
+                    int(float(row["delta_outcome_margin_vs_phase_a"]) < 0.0) for row in rows
                 ),
             }
         )
@@ -338,9 +329,7 @@ def _attribution_summary(
             "evidence": "exact overlap is absent; geometric near-collision is reported but not promoted to overwrite",
         },
         "shared_readout_rewrite": {
-            "replay_weight_delta_from_phase_b": dict(
-                replay["weight_delta_from_phase_b"]
-            ),
+            "replay_weight_delta_from_phase_b": dict(replay["weight_delta_from_phase_b"]),
             "repeated_replay_weight_delta_from_phase_b": dict(
                 repeated["weight_delta_from_phase_b"]
             ),
@@ -362,9 +351,7 @@ def _attribution_summary(
             "no_replay_error_ratio_mean": float(
                 conditions["no_replay"]["summary"]["association_error_ratio"]["mean"]
             ),
-            "replay_error_ratio_mean": float(
-                replay["summary"]["association_error_ratio"]["mean"]
-            ),
+            "replay_error_ratio_mean": float(replay["summary"]["association_error_ratio"]["mean"]),
             "repeated_replay_error_ratio_mean": float(
                 repeated["summary"]["association_error_ratio"]["mean"]
             ),
@@ -478,9 +465,7 @@ def _seed_record(corpus: Any, seed: int) -> dict[str, Any]:
         "phase_a_checkpoint_digest": phase_a_digest,
         "phase_b_checkpoint_digest": phase_b_digest,
         "phase_a_topology_digest": phase_a_topology,
-        "phase_a_summary": _row_summary(
-            list(phase_a_rows.values()), include_deltas=False
-        ),
+        "phase_a_summary": _row_summary(list(phase_a_rows.values()), include_deltas=False),
         "conditions": conditions,
         "attribution": _attribution_summary(corpus, static_features, conditions),
         "phase_b_exact_cue_overlap_count": len(
@@ -505,9 +490,7 @@ def run_audit() -> dict[str, Any]:
     replay_margin_gaps = [
         abs(
             float(
-                record["conditions"]["replay"]["summary"][
-                    "delta_action_outcome_margin_gap"
-                ]["max"]
+                record["conditions"]["replay"]["summary"]["delta_action_outcome_margin_gap"]["max"]
             )
         )
         for record in records
@@ -537,8 +520,7 @@ def run_audit() -> dict[str, Any]:
                 value > 0.0 for value in (*replay_action_deltas, *replay_outcome_deltas)
             ),
             "max_replay_action_outcome_margin_gap": max(replay_margin_gaps),
-            "action_outcome_pairing_within_float_tolerance": max(replay_margin_gaps)
-            <= 2e-6,
+            "action_outcome_pairing_within_float_tolerance": max(replay_margin_gaps) <= 2e-6,
             "exact_cue_overlap_is_zero": all(
                 record["phase_b_exact_cue_overlap_count"] == 0 for record in records
             ),
@@ -595,8 +577,7 @@ def main() -> int:
                             "phase_b_exact_cue_overlap_count"
                         ],
                         "conditions": {
-                            name: record["conditions"][name]["summary"]
-                            for name in CONDITIONS
+                            name: record["conditions"][name]["summary"] for name in CONDITIONS
                         },
                     }
                     for record in result["records"]

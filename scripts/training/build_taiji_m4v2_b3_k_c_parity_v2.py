@@ -95,7 +95,9 @@ def _checkpoint_indices(count: int, emissions: int) -> tuple[int, ...]:
     if emissions == 1:
         return (count,)
     step = count / emissions
-    return tuple(sorted({min(count, max(1, round(step * (index + 1)))) for index in range(emissions)}))
+    return tuple(
+        sorted({min(count, max(1, round(step * (index + 1)))) for index in range(emissions)})
+    )
 
 
 def _class_of(episode_paths: tuple[str, ...]) -> str:
@@ -254,9 +256,7 @@ def _train_fixed_large_replicas(
         k1_payload = _atomic_save(k1_path, semantic.checkpoint())
         k2_payload = _atomic_save(k2_path, transition.checkpoint())
         restored_k1 = StructuredSemanticLearner.from_checkpoint(k1_payload, device="cpu")
-        restored_k2 = StructuredSemanticTransitionLearner.from_checkpoint(
-            k2_payload, device="cpu"
-        )
+        restored_k2 = StructuredSemanticTransitionLearner.from_checkpoint(k2_payload, device="cpu")
         instances.append(
             {
                 "replica_index": replica_index,
@@ -270,18 +270,10 @@ def _train_fixed_large_replicas(
                 - int(semantic_before.training_steps),
                 "k2_new_update_steps": int(transition.training_steps)
                 - int(transition_before.training_steps),
-                "k1_parameter_delta_norm": _parameter_delta_norm(
-                    semantic_before, semantic
-                ),
-                "k2_parameter_delta_norm": _parameter_delta_norm(
-                    transition_before, transition
-                ),
-                "k1_parameter_delta_digest": _parameter_delta_digest(
-                    semantic_before, semantic
-                ),
-                "k2_parameter_delta_digest": _parameter_delta_digest(
-                    transition_before, transition
-                ),
+                "k1_parameter_delta_norm": _parameter_delta_norm(semantic_before, semantic),
+                "k2_parameter_delta_norm": _parameter_delta_norm(transition_before, transition),
+                "k1_parameter_delta_digest": _parameter_delta_digest(semantic_before, semantic),
+                "k2_parameter_delta_digest": _parameter_delta_digest(transition_before, transition),
             }
         )
         learners.append((semantic, transition))
@@ -352,9 +344,7 @@ def run_cell(
             projector=projector,
             source_manifest_digest=source_manifest_digest,
         )
-        checkpoint_indices = _checkpoint_indices(
-            N_NEW, CHECKPOINT_EMISSIONS_PER_INSTANCE
-        )
+        checkpoint_indices = _checkpoint_indices(N_NEW, CHECKPOINT_EMISSIONS_PER_INSTANCE)
         anchor_digests = tuple(
             experience.projection.projection_digest for experience in experiences
         )
@@ -369,9 +359,7 @@ def run_cell(
 
         widened = WidenedKBundle(
             semantic_parent_checkpoint=dict(artifacts["k1.semantic"]["checkpoint"]),
-            transition_parent_checkpoint=dict(
-                artifacts["k2.transition"]["checkpoint"]
-            ),
+            transition_parent_checkpoint=dict(artifacts["k2.transition"]["checkpoint"]),
             parent_worker_bundle_digest=bundle.bundle_digest,
             source_manifest_digest=source_manifest_digest,
             parent_checkpoint_digest=parent_digest,
@@ -398,9 +386,7 @@ def run_cell(
 
         fixed_large = _train_fixed_large_replicas(
             semantic_parent_checkpoint=dict(artifacts["k1.semantic"]["checkpoint"]),
-            transition_parent_checkpoint=dict(
-                artifacts["k2.transition"]["checkpoint"]
-            ),
+            transition_parent_checkpoint=dict(artifacts["k2.transition"]["checkpoint"]),
             experiences=experiences,
             checkpoint_indices=checkpoint_indices,
             output_dir=fixed_large_root / f"model_{model_seed}" / f"course_{course_seed}",
@@ -422,14 +408,11 @@ def run_cell(
             for instance in fixed_large["instances"]
         )
         forward_pattern = tuple(class_keys[index] for index in widened.forward_order)
-        anchored_pattern = tuple(
-            class_keys[index] for index in widened.anchored_order
-        )
+        anchored_pattern = tuple(class_keys[index] for index in widened.anchored_order)
 
         checks = {
             "parameter_bytes_within_tolerance": (
-                abs(widened.parameter_bytes - TARGET_PARAMETER_BYTES)
-                / TARGET_PARAMETER_BYTES
+                abs(widened.parameter_bytes - TARGET_PARAMETER_BYTES) / TARGET_PARAMETER_BYTES
                 <= PARAMETER_TOLERANCE_RATIO
                 and abs(fixed_large["parameter_bytes"] - TARGET_PARAMETER_BYTES)
                 / TARGET_PARAMETER_BYTES
@@ -444,28 +427,22 @@ def run_cell(
                 == len(widened.anchored_checkpoint_ledger)
                 == CHECKPOINT_EMISSIONS_PER_INSTANCE
                 and all(
-                    len(instance["checkpoint_ledger"])
-                    == CHECKPOINT_EMISSIONS_PER_INSTANCE
+                    len(instance["checkpoint_ledger"]) == CHECKPOINT_EMISSIONS_PER_INSTANCE
                     for instance in fixed_large["instances"]
                 )
             ),
             "class_pattern_changed": (
-                forward_pattern != anchored_pattern
-                and len(set(class_keys)) >= 2
+                forward_pattern != anchored_pattern and len(set(class_keys)) >= 2
             ),
             "divergence_gate": all(value > 0.0 for value in divergence.values()),
             "widened_fresh_restore_gate": (
-                restored_widened.worker_checkpoint_digests()
-                == widened.worker_checkpoint_digests()
+                restored_widened.worker_checkpoint_digests() == widened.worker_checkpoint_digests()
             ),
             "fixed_large_fresh_restore_gate": all(
-                instance["fresh_restore_gate"]
-                for instance in fixed_large["instances"]
+                instance["fresh_restore_gate"] for instance in fixed_large["instances"]
             ),
             "parent_unchanged": content_digest(_parent(model_seed)) == parent_before,
-            "k3_unchanged": content_digest(
-                artifacts["k3.outcome_projection"]["checkpoint"]
-            )
+            "k3_unchanged": content_digest(artifacts["k3.outcome_projection"]["checkpoint"])
             == k3_digest,
         }
         return {
@@ -509,8 +486,7 @@ def run_cell(
                 "anchored": widened.anchored_checkpoint_ledger,
             },
             "fixed_large_checkpoint_counts": [
-                len(instance["checkpoint_ledger"])
-                for instance in fixed_large["instances"]
+                len(instance["checkpoint_ledger"]) for instance in fixed_large["instances"]
             ],
             "artifact_digests": {
                 "widened": content_digest(widened_payload),
@@ -573,9 +549,7 @@ def main() -> int:
         per_model = {}
         for model_seed in MODEL_SEEDS:
             digests = [
-                cell["weight_digests"][key]
-                for cell in cells
-                if cell["model_seed"] == model_seed
+                cell["weight_digests"][key] for cell in cells if cell["model_seed"] == model_seed
             ]
             per_model[model_seed] = {
                 "digests": digests,
@@ -583,9 +557,7 @@ def main() -> int:
             }
         course_independence[key] = {
             **per_model,
-            "all_models_distinct": all(
-                item["pairwise_distinct"] for item in per_model.values()
-            ),
+            "all_models_distinct": all(item["pairwise_distinct"] for item in per_model.values()),
         }
     course_independence_gate = all(
         item["all_models_distinct"] for item in course_independence.values()
@@ -599,9 +571,7 @@ def main() -> int:
         "status": "passed" if cells_passed == len(cells) else "failed",
         "can_promote": False,
         "sealed_test_scored": False,
-        "design": (
-            "plans/reference/M4V2_B3_K_C_PARITY_CALIBER_REVISION_20260910.md §7"
-        ),
+        "design": ("plans/reference/M4V2_B3_K_C_PARITY_CALIBER_REVISION_20260910.md §7"),
         "manifest": str(DEFAULT_MANIFEST),
         "course_contract": {
             "n_new_experiences": N_NEW,

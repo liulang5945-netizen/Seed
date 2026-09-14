@@ -56,9 +56,7 @@ def test_sequence_task_returns_a_real_measurement_and_no_holdout_mutation() -> N
         retention=(b"alpha-delta-" * 5),
     )
 
-    measurement = SequencePredictionTask(
-        _config(11), seeds=(11, 29, 47), epochs=1
-    ).evaluate(corpus)
+    measurement = SequencePredictionTask(_config(11), seeds=(11, 29, 47), epochs=1).evaluate(corpus)
 
     assert measurement.ability_id == "b1_sequence_prediction"
     assert measurement.status in {"passed", "failed"}
@@ -69,12 +67,15 @@ def test_sequence_task_returns_a_real_measurement_and_no_holdout_mutation() -> N
         "retention": len(corpus.retention),
     }
     assert measurement.holdout_updates == 0
-    assert all(kind in measurement.baseline_metrics for kind in (
-        "random",
-        "frozen_parent",
-        "simple_rule",
-        "hash_only",
-    ))
+    assert all(
+        kind in measurement.baseline_metrics
+        for kind in (
+            "random",
+            "frozen_parent",
+            "simple_rule",
+            "hash_only",
+        )
+    )
     assert any("seed_metrics" in item for item in measurement.evidence)
 
 
@@ -202,9 +203,7 @@ def test_persistent_digest_responds_to_identity_organ_mutation() -> None:
     model = Taiji(config)
     model.observe(config.boundary_symbol, learn=False, learn_motor=False)
     model.observe(ord("X"), learn=False, learn_motor=False)
-    context = model.fabric.cortical_context(
-        model.snapshot().regions
-    ).detach().clone()
+    context = model.fabric.cortical_context(model.snapshot().regions).detach().clone()
 
     before = _persistent_digest(model)
 
@@ -216,9 +215,7 @@ def test_persistent_digest_responds_to_identity_organ_mutation() -> None:
 
     after = _persistent_digest(model)
 
-    assert before != after, (
-        "identity organ write should change the persistent digest"
-    )
+    assert before != after, "identity organ write should change the persistent digest"
 
 
 def test_b2_cue_can_exceed_the_alphabet_via_multi_symbol_context() -> None:
@@ -240,9 +237,7 @@ def test_b2_cue_can_exceed_the_alphabet_via_multi_symbol_context() -> None:
     )
     keys = {episode.recall_key for episode in episodes}
 
-    assert len(keys) == 512, (
-        "multi-symbol context must make 512 cues mutually distinct"
-    )
+    assert len(keys) == 512, "multi-symbol context must make 512 cues mutually distinct"
 
 
 def test_b2_write_and_query_are_separated_by_interference_filler() -> None:
@@ -300,9 +295,11 @@ def test_b2_write_and_query_are_separated_by_interference_filler() -> None:
         interference_symbols=corpus.interference_symbols,
     )
 
-    assert observed[-3:] == [ord("z"), ord("y"), ord("x")], (
-        "recall must observe interference filler between cue and readout"
-    )
+    assert observed[-3:] == [
+        ord("z"),
+        ord("y"),
+        ord("x"),
+    ], "recall must observe interference filler between cue and readout"
 
 
 def test_b2_evaluate_threads_corpus_interference_into_every_read_channel() -> None:
@@ -354,9 +351,9 @@ def test_b2_evaluate_threads_corpus_interference_into_every_read_channel() -> No
     finally:
         DelayedMemoryTask._recall_accuracy = staticmethod(original)  # type: ignore[method-assign]
 
-    assert seen and all(channel == corpus.interference_symbols for channel in seen), (
-        f"every read channel must observe the declared delay, got {seen}"
-    )
+    assert seen and all(
+        channel == corpus.interference_symbols for channel in seen
+    ), f"every read channel must observe the declared delay, got {seen}"
 
 
 def test_continual_memory_contract_measures_replay_against_no_replay() -> None:

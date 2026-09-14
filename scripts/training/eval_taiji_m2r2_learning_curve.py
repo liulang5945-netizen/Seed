@@ -64,12 +64,10 @@ def _owner_digests(model: Taiji) -> dict[str, str]:
         "motor": content_digest(model.motor.to_payload()),
         "memory": content_digest(model.memory.to_payload()),
         "predictive_context": content_digest(model.predictive_context.to_payload()),
-        "protected_predictive_readout": str(
-            registry["protected"]["readout_digest"]
+        "protected_predictive_readout": str(registry["protected"]["readout_digest"]),
+        "active_predictive_readout": (
+            "" if not isinstance(active, Mapping) else str(active.get("readout_digest", ""))
         ),
-        "active_predictive_readout": ""
-        if not isinstance(active, Mapping)
-        else str(active.get("readout_digest", "")),
     }
 
 
@@ -102,7 +100,9 @@ def owner_attribution_check(
         for owner in sorted(set(before) | set(after))
     }
     expected = write_sets[arm]
-    unexpected = sorted(owner for owner, value in changed.items() if value and owner not in expected)
+    unexpected = sorted(
+        owner for owner, value in changed.items() if value and owner not in expected
+    )
     expected_changed = sorted(owner for owner in expected if changed.get(owner, False))
     return {
         "changed": changed,
@@ -296,8 +296,7 @@ def _run_point(
         "owner_contract": bool(attribution["contract_passed"]),
         "scores_are_read_only": all(score_checks),
         "checkpoint_round_trip": checkpoint_digest == restored_digest,
-        "active_route_is_active": arm != "active_readout"
-        or holdout_score["scope"] == "active",
+        "active_route_is_active": arm != "active_readout" or holdout_score["scope"] == "active",
         "protected_route_is_protected": arm == "active_readout"
         or holdout_score["scope"] == "protected",
     }
@@ -407,9 +406,7 @@ def run_learning_curve(
             temporary.unlink(missing_ok=True)
             points.append(point)
 
-    all_passed = all(
-        bool(value) for point in points for value in point["checks"].values()
-    )
+    all_passed = all(bool(value) for point in points for value in point["checks"].values())
     return {
         "format": FORMAT,
         "version": 1,
@@ -423,9 +420,18 @@ def run_learning_curve(
         "arms": list(normalized_arms),
         "preflight": preflight,
         "datasets": {
-            "phase_a": {"digest": phase_a.digest, "selected_record_count": len(phase_a.selected_record_digests)},
-            "phase_b": {"digest": phase_b.digest, "selected_record_count": len(phase_b.selected_record_digests)},
-            "phase_c": {"digest": chain.phase_c.digest, "selected_record_count": len(chain.phase_c.selected_record_digests)},
+            "phase_a": {
+                "digest": phase_a.digest,
+                "selected_record_count": len(phase_a.selected_record_digests),
+            },
+            "phase_b": {
+                "digest": phase_b.digest,
+                "selected_record_count": len(phase_b.selected_record_digests),
+            },
+            "phase_c": {
+                "digest": chain.phase_c.digest,
+                "selected_record_count": len(chain.phase_c.selected_record_digests),
+            },
             "overlap_counts": dict(chain.overlap_counts),
             "record_disjoint": not any(chain.overlap_counts.values()),
         },
@@ -442,7 +448,10 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--checkpoint",
         type=Path,
-        default=PROJECT_ROOT / "output" / "taiji-m2s-seed11-identity-generation-20260905" / "last.pt",
+        default=PROJECT_ROOT
+        / "output"
+        / "taiji-m2s-seed11-identity-generation-20260905"
+        / "last.pt",
     )
     parser.add_argument(
         "--corpus",
@@ -485,9 +494,7 @@ def main() -> int:
                 "status": report["status"],
                 "points": len(report["points"]),
                 "technical_checks_passed": sum(
-                    bool(value)
-                    for point in report["points"]
-                    for value in point["checks"].values()
+                    bool(value) for point in report["points"] for value in point["checks"].values()
                 ),
             },
             ensure_ascii=False,

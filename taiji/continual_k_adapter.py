@@ -391,9 +391,7 @@ class KAdapterRollbackRecord:
             parent_checkpoint_digest=unsigned["parent_checkpoint_digest"],
             candidate_checkpoint_digest=unsigned["candidate_checkpoint_digest"],
             candidate_owner_graph_digest=unsigned["candidate_owner_graph_digest"],
-            candidate_source_manifest_digest=unsigned[
-                "candidate_source_manifest_digest"
-            ],
+            candidate_source_manifest_digest=unsigned["candidate_source_manifest_digest"],
             candidate_namespace=unsigned["candidate_namespace"],
             status=unsigned["status"],
             reason=unsigned["reason"],
@@ -410,9 +408,7 @@ class KAdapterRollbackRecord:
             parent_checkpoint_digest=str(payload["parent_checkpoint_digest"]),
             candidate_checkpoint_digest=str(payload["candidate_checkpoint_digest"]),
             candidate_owner_graph_digest=str(payload["candidate_owner_graph_digest"]),
-            candidate_source_manifest_digest=str(
-                payload["candidate_source_manifest_digest"]
-            ),
+            candidate_source_manifest_digest=str(payload["candidate_source_manifest_digest"]),
             candidate_namespace=str(payload["candidate_namespace"]),
             status=str(payload["status"]),
             reason=str(payload["reason"]),
@@ -442,9 +438,7 @@ class KContinualAdapter:
             parent_checkpoint_digest, "parent_checkpoint_digest"
         )
         self.owner_graph_digest = _digest(owner_graph_digest, "owner_graph_digest")
-        self.source_manifest_digest = _digest(
-            source_manifest_digest, "source_manifest_digest"
-        )
+        self.source_manifest_digest = _digest(source_manifest_digest, "source_manifest_digest")
         self.resource_manifest_digest = _digest(
             resource_manifest_digest, "resource_manifest_digest"
         )
@@ -518,9 +512,7 @@ class KContinualAdapter:
         self._worker_bundle = bundle
         self._revision += 1
 
-    def bind_dependency_projection(
-        self, projection: OutcomeDependencyProjection
-    ) -> None:
+    def bind_dependency_projection(self, projection: OutcomeDependencyProjection) -> None:
         if not isinstance(projection, OutcomeDependencyProjection):
             raise TypeError("K adapter dependency boundary requires a projection")
         if not projection.accepted:
@@ -530,10 +522,7 @@ class KContinualAdapter:
         if len(projection.lineage) != 4:
             raise ValueError("K adapter dependency lineage is incomplete")
         if self._dependency_projection is not None:
-            if (
-                self._dependency_projection.projection_digest
-                == projection.projection_digest
-            ):
+            if self._dependency_projection.projection_digest == projection.projection_digest:
                 return
             raise ValueError("K adapter dependency boundary is already bound")
         self._dependency_projection = projection
@@ -552,10 +541,7 @@ class KContinualAdapter:
             raise ValueError("K adapter exchange input crosses the parent checkpoint")
         if exchange.output.parent_checkpoint_digest != self.parent_checkpoint_digest:
             raise ValueError("K adapter exchange output crosses the parent checkpoint")
-        if (
-            exchange.output.dependency_digest
-            != self._dependency_projection.dependency_digest
-        ):
+        if exchange.output.dependency_digest != self._dependency_projection.dependency_digest:
             raise ValueError("K adapter exchange dependency digest mismatch")
         if (
             exchange.output.dependency_projection_digest
@@ -684,9 +670,7 @@ class KContinualAdapter:
             raise ValueError("unsupported K continual adapter format")
         if int(payload.get("version", -1)) != cls.CHECKPOINT_VERSION:
             raise ValueError("unsupported K continual adapter version")
-        unsigned = {
-            key: value for key, value in payload.items() if key != "checkpoint_digest"
-        }
+        unsigned = {key: value for key, value in payload.items() if key != "checkpoint_digest"}
         if str(payload.get("checkpoint_digest", "")) != content_digest(unsigned):
             raise ValueError("K continual adapter checkpoint digest mismatch")
         adapter = cls(
@@ -705,9 +689,7 @@ class KContinualAdapter:
         }:
             raise ValueError("K continual adapter active namespace is invalid")
         adapter._staged_candidate_digest = str(payload.get("staged_candidate_digest", ""))
-        adapter._staged_owner_graph_digest = str(
-            payload.get("staged_owner_graph_digest", "")
-        )
+        adapter._staged_owner_graph_digest = str(payload.get("staged_owner_graph_digest", ""))
         adapter._staged_source_manifest_digest = str(
             payload.get("staged_source_manifest_digest", "")
         )

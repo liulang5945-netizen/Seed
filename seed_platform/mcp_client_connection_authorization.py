@@ -110,7 +110,9 @@ def _assert_safe(value: Any) -> None:
     if isinstance(value, Mapping):
         for key, item in value.items():
             if str(key) in _FORBIDDEN_KEYS:
-                raise ValueError("MCP authorization contains executable, endpoint, or secret fields")
+                raise ValueError(
+                    "MCP authorization contains executable, endpoint, or secret fields"
+                )
             _assert_safe(item)
     elif isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
         for item in value:
@@ -168,15 +170,27 @@ class McpClientConnectionAuthorization:
             object.__setattr__(self, name, _required_text(value, name))
         if self.state not in MCP_CONNECTION_AUTHORIZATION_STATES:
             raise ValueError("unsupported MCP connection authorization state")
-        object.__setattr__(self, "network_scopes", _reference_tuple(self.network_scopes, "network_scopes"))
-        object.__setattr__(self, "credential_refs", _reference_tuple(self.credential_refs, "credential_refs"))
-        object.__setattr__(self, "allowed_permissions", _reference_tuple(self.allowed_permissions, "allowed_permissions"))
+        object.__setattr__(
+            self, "network_scopes", _reference_tuple(self.network_scopes, "network_scopes")
+        )
+        object.__setattr__(
+            self, "credential_refs", _reference_tuple(self.credential_refs, "credential_refs")
+        )
+        object.__setattr__(
+            self,
+            "allowed_permissions",
+            _reference_tuple(self.allowed_permissions, "allowed_permissions"),
+        )
         issued = _epoch(self.issued_at_epoch, "issued_at_epoch")
         expires = _epoch(self.expires_at_epoch, "expires_at_epoch")
         if expires <= issued:
             raise ValueError("expires_at_epoch must be after issued_at_epoch")
         if self.state == "revoked":
-            object.__setattr__(self, "revocation_reason", _required_text(self.revocation_reason, "revocation_reason"))
+            object.__setattr__(
+                self,
+                "revocation_reason",
+                _required_text(self.revocation_reason, "revocation_reason"),
+            )
         else:
             object.__setattr__(self, "revocation_reason", str(self.revocation_reason).strip())
         object.__setattr__(self, "issued_at_epoch", issued)
@@ -446,7 +460,9 @@ class McpClientConnectionAuthorizationStore:
     def get(self, authorization_id: str) -> McpClientConnectionAuthorization | None:
         return self._records.get(str(authorization_id).strip())
 
-    def issue(self, authorization: McpClientConnectionAuthorization) -> McpClientConnectionAuthorization:
+    def issue(
+        self, authorization: McpClientConnectionAuthorization
+    ) -> McpClientConnectionAuthorization:
         if not isinstance(authorization, McpClientConnectionAuthorization):
             raise TypeError("authorization store accepts authorization records only")
         if authorization.state != "authorized":
@@ -518,7 +534,9 @@ class McpClientConnectionAuthorizationStore:
             raise ValueError("unsupported MCP authorization store format")
         if int(payload.get("version", 0)) != MCP_CONNECTION_AUTHORIZATION_STORE_VERSION:
             raise ValueError("unsupported MCP authorization store version")
-        expected = _digest({key: value for key, value in payload.items() if key != "checkpoint_digest"})
+        expected = _digest(
+            {key: value for key, value in payload.items() if key != "checkpoint_digest"}
+        )
         if str(payload.get("checkpoint_digest", "")) != expected:
             raise ValueError("MCP authorization store checkpoint digest mismatch")
         store = cls(

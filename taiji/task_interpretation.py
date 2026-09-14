@@ -240,8 +240,8 @@ class TaskInterpretation:
         input_digest = task_input_digest(bytes(frame.payload))
         normalized_constraints = _normalize_constraints(constraints)
         normalized_context_digest = _digest_text(context_digest, "context_digest", optional=True)
-        evidence_provenance = frame.provenance if provenance is None else _required_text(
-            provenance, "provenance"
+        evidence_provenance = (
+            frame.provenance if provenance is None else _required_text(provenance, "provenance")
         )
         identity = cls._identity_payload(
             input_id=frame.input_id,

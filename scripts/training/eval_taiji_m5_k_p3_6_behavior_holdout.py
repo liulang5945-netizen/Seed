@@ -85,9 +85,7 @@ DEFAULT_MANIFEST = (
     PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p3_6_behavior_holdout_manifest_v1.json"
 )
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p3_6_behavior_holdout_20260911.json"
-P3_5_MANIFEST = (
-    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p3_5_g_learning_manifest_v1.json"
-)
+P3_5_MANIFEST = PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p3_5_g_learning_manifest_v1.json"
 P3_5_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p3_5_g_learning_20260911.json"
 
 # These names are intentionally outside every earlier P1/P2/P3 artifact.  The
@@ -447,19 +445,27 @@ def _verify_sources(
         raise ValueError("P3.6 requires a completed, passed P3.5 Gate")
     if p3_5_report.get("can_promote"):
         raise ValueError("P3.6 cannot consume a promoted G artifact")
-    if p3_5_report.get("fit_called") is not True or p3_5_report.get("training_performed") is not True:
+    if (
+        p3_5_report.get("fit_called") is not True
+        or p3_5_report.get("training_performed") is not True
+    ):
         raise ValueError("P3.5 source does not record the expected G-only fit")
     if p3_5_report.get("manifest_digest") != p3_5_manifest.get("manifest_digest"):
         raise ValueError("P3.5 report and manifest digests differ")
     if p3_5_report.get("external_target_used") or p3_5_report.get("sealed_payload_read"):
         raise ValueError("P3.5 source crossed a runtime boundary")
-    if p3_4_report.get("status") != "completed" or not p3_4_report.get("signal_gate", {}).get("passed"):
+    if p3_4_report.get("status") != "completed" or not p3_4_report.get("signal_gate", {}).get(
+        "passed"
+    ):
         raise ValueError("P3.6 requires the passed P3.4 behavior source")
     if p3_4_report.get("manifest_digest") != p3_4_manifest.get("manifest_digest"):
         raise ValueError("P3.4 report and manifest digests differ")
     if len(p2_7_manifest.get("records", ())) != 4:
         raise ValueError("P3.6 requires the fixed four-row P2.7 holdout")
-    if any(record.get("candidate", {}).get("fit_eligible") is not False for record in p2_7_manifest["records"]):
+    if any(
+        record.get("candidate", {}).get("fit_eligible") is not False
+        for record in p2_7_manifest["records"]
+    ):
         raise ValueError("P2.7 holdout is not sealed as non-fit")
     if p3_5_manifest.get("k_checkpoint_digests") != p3_5_report.get("k_checkpoint_digests_before"):
         raise ValueError("P3.5 K digest lineage is incomplete")
@@ -549,8 +555,12 @@ def run_holdout(
         )
         zero_restore = _independent_g_restore(zero_path)
         trained_restore = _independent_g_restore(trained_path)
-        rollback = GSelectionLearner.from_checkpoint(copy.deepcopy(trained.checkpoint()), device="cpu")
-        rollback_digest_equal = content_digest(rollback.checkpoint()) == content_digest(trained.checkpoint())
+        rollback = GSelectionLearner.from_checkpoint(
+            copy.deepcopy(trained.checkpoint()), device="cpu"
+        )
+        rollback_digest_equal = content_digest(rollback.checkpoint()) == content_digest(
+            trained.checkpoint()
+        )
         records, cases = _new_behavior_records(
             scratch=run_dir / "new-holdout",
             parent_digest=parent_digest,
@@ -578,9 +588,18 @@ def run_holdout(
             "projects_at_least_two": len(new_projects) >= 2,
             "project_ids_disjoint": new_projects.isdisjoint(disallowed_old_projects),
             "paths_disjoint": new_paths.isdisjoint(disallowed_old_paths),
-            "candidate_set_digest_unique": len({record["candidate_set"].candidate_set_digest for record in records}) == 4,
-            "behavior_digest_unique": len({record["behavior_set"].behavior_digest for record in records}) == 4,
-            "observation_digest_unique": len({record["candidate_set"].input_digest for record in records}) == 4,
+            "candidate_set_digest_unique": len(
+                {record["candidate_set"].candidate_set_digest for record in records}
+            )
+            == 4,
+            "behavior_digest_unique": len(
+                {record["behavior_set"].behavior_digest for record in records}
+            )
+            == 4,
+            "observation_digest_unique": len(
+                {record["candidate_set"].input_digest for record in records}
+            )
+            == 4,
             "utility_margin_records_content_addressed": len(
                 {
                     content_digest(
@@ -596,7 +615,10 @@ def run_holdout(
         }
         selection_metrics = {
             arm: _summarize(
-                [_select_row(record, arm=arm, zero_step=zero_step, trained=trained) for record in records]
+                [
+                    _select_row(record, arm=arm, zero_step=zero_step, trained=trained)
+                    for record in records
+                ]
             )
             for arm in ("k_only", "g_zero_step", "g_trained")
         }
@@ -608,7 +630,10 @@ def run_holdout(
         ]
         contested_metrics = {
             arm: _summarize(
-                [_select_row(record, arm=arm, zero_step=zero_step, trained=trained) for record in contested]
+                [
+                    _select_row(record, arm=arm, zero_step=zero_step, trained=trained)
+                    for record in contested
+                ]
             )
             for arm in ("k_only", "g_zero_step", "g_trained")
         }
@@ -645,7 +670,9 @@ def run_holdout(
         checkpoint_gate = {
             "k_independent_restore": bool(checkpoint_preflight.get("passed")),
             "g_zero_independent_restore": bool(zero_restore.get("independent_process_restore")),
-            "g_trained_independent_restore": bool(trained_restore.get("independent_process_restore")),
+            "g_trained_independent_restore": bool(
+                trained_restore.get("independent_process_restore")
+            ),
             "g_lineage_valid": True,
             "g_rollback_digest_equal": rollback_digest_equal,
             "k_digests_unchanged": k_after == worker_digests,
@@ -673,12 +700,19 @@ def run_holdout(
         safety_gate = {
             "target_reobserve_present": projection["target_reobserve_count"] > 0,
             "target_reobserve_projection_passed": projection["target_reobserve_projection_passed"],
-            "selected_reobserve_projection_passed": projection["selected_reobserve_projection_passed"],
+            "selected_reobserve_projection_passed": projection[
+                "selected_reobserve_projection_passed"
+            ],
             "legacy_all_five_classes": legacy["all_five_classes_present"],
-            "legacy_target_hits_not_below_zero_step": legacy["trained_target_hits_not_below_zero_step"],
+            "legacy_target_hits_not_below_zero_step": legacy[
+                "trained_target_hits_not_below_zero_step"
+            ],
             "legacy_trained_safe_exit_violations_zero": legacy["trained_safe_exit_violations_zero"],
             "p2_7_four_rows": len(holdout_sets) == 4,
-            "p2_7_trained_workbench_success_4_of_4": holdout_actions["g_trained"]["workbench_success_count"] >= 4,
+            "p2_7_trained_workbench_success_4_of_4": holdout_actions["g_trained"][
+                "workbench_success_count"
+            ]
+            >= 4,
         }
         runtime_gate = {
             "fit_not_called": True,
@@ -693,10 +727,7 @@ def run_holdout(
             ),
         }
         all_gates = [identity_gate, checkpoint_gate, behavior_gain_gate, safety_gate, runtime_gate]
-        gate_passed = all(
-            all(bool(value) for value in gate.values())
-            for gate in all_gates
-        )
+        gate_passed = all(all(bool(value) for value in gate.values()) for gate in all_gates)
         manifest = {
             "format": MANIFEST_FORMAT,
             "version": VERSION,

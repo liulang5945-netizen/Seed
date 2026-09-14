@@ -84,9 +84,7 @@ def project_to_joint_feasible_region(
                 {
                     "rho": float(rho),
                     "total_violation": float(violations.sum().item()),
-                    "max_violation": float(violations.max().item())
-                    if violations.numel()
-                    else 0.0,
+                    "max_violation": float(violations.max().item()) if violations.numel() else 0.0,
                 }
             )
         variable.requires_grad_(False)
@@ -106,9 +104,7 @@ def project_to_joint_feasible_region(
             "linf": float(displacement.abs().max().item()),
             "per_dim": [float(value) for value in displacement],
         }
-    converged = (
-        max_violation <= per_constraint_tolerance and total_violation <= total_tolerance
-    )
+    converged = max_violation <= per_constraint_tolerance and total_violation <= total_tolerance
     return {
         "weights": [float(value) for value in variable],
         "converged": converged,

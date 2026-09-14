@@ -140,8 +140,7 @@ def evaluate() -> dict[str, object]:
             checkpoint_runtime["runtime_tick"] >= projection.last_tick
         ),
         "checkpoint_restores_projection_dedupe": (
-            restored.structural_pressure_projection_digests
-            == (projection.projection_digest,)
+            restored.structural_pressure_projection_digests == (projection.projection_digest,)
         ),
         "checkpoint_restores_candidate": (
             restored_candidate.to_payload() == candidate.to_payload()
@@ -151,9 +150,7 @@ def evaluate() -> dict[str, object]:
             proposal is not None
             and proposal.parent_checkpoint_id == restored_candidate.parent_checkpoint_id
         ),
-        "restore_keeps_topology_unchanged": (
-            restored.neuron_regions[0].unit_ids == before_units
-        ),
+        "restore_keeps_topology_unchanged": (restored.neuron_regions[0].unit_ids == before_units),
         "restore_keeps_budget_unchanged": (
             restored.cognitive_snapshot().development.structural_budget == before_budget
         ),

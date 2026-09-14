@@ -148,14 +148,14 @@ def _structure_row(
     confidence_bucket = (
         "zero"
         if maximum_confidence <= MARGIN_EPSILON
-        else "high-and-safe"
-        if maximum_confidence >= 0.8
-        else "mixed"
+        else "high-and-safe" if maximum_confidence >= 0.8 else "mixed"
     )
     safe_roles = sorted(
         {
             candidate.candidate_role
-            for candidate, outcome in zip(candidate_set.candidates, behavior_set.outcomes, strict=True)
+            for candidate, outcome in zip(
+                candidate_set.candidates, behavior_set.outcomes, strict=True
+            )
             if outcome.safe_exit_valid or outcome.safe_exit_progress
         }
     )
@@ -456,9 +456,11 @@ def _manifest_identity(payload: Mapping[str, Any]) -> tuple[set[str], set[str]]:
     collections = (
         [records]
         if isinstance(records, list)
-        else [value for value in records.values() if isinstance(value, list)]
-        if isinstance(records, Mapping)
-        else []
+        else (
+            [value for value in records.values() if isinstance(value, list)]
+            if isinstance(records, Mapping)
+            else []
+        )
     )
     for collection in collections:
         for raw in collection:

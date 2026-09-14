@@ -109,18 +109,11 @@ DEFAULT_MANIFEST = (
     / "manifests"
     / "taiji_m5_k_p4_8_representation_redesign_manifest_v1.json"
 )
-DEFAULT_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m5_k_p4_8_representation_redesign_20260911.json"
-)
+DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p4_8_representation_redesign_20260911.json"
 P4_7_MANIFEST = (
-    PROJECT_ROOT
-    / "plans"
-    / "manifests"
-    / "taiji_m5_k_p4_7_capacity_clean_test_manifest_v1.json"
+    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_7_capacity_clean_test_manifest_v1.json"
 )
-P4_7_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m5_k_p4_7_capacity_clean_test_20260911.json"
-)
+P4_7_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p4_7_capacity_clean_test_20260911.json"
 P4_1_MANIFEST = (
     PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_1_context_contract_manifest_v1.json"
 )
@@ -128,10 +121,7 @@ P4_2_MANIFEST = (
     PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_2_capacity_attribution_manifest_v1.json"
 )
 P4_3_MANIFEST = (
-    PROJECT_ROOT
-    / "plans"
-    / "manifests"
-    / "taiji_m5_k_p4_3_retention_incremental_manifest_v1.json"
+    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_3_retention_incremental_manifest_v1.json"
 )
 P4_4_MANIFEST = (
     PROJECT_ROOT
@@ -234,9 +224,7 @@ def _p48_structured_specs(
             high_index += 1
         else:
             project_id = (
-                f"p4-8-{namespace}-project-a"
-                if safe_index == 0
-                else f"p4-8-{namespace}-project-b"
+                f"p4-8-{namespace}-project-a" if safe_index == 0 else f"p4-8-{namespace}-project-b"
             )
             prefix = f"p40_p48_{namespace}_{'a' if safe_index == 0 else 'b'}"
             paths = (
@@ -745,9 +733,7 @@ def _run(
             raise ValueError("P4.7 manifest content digest mismatch")
         if p4_7_report.get("growth_admitted") or p4_7_report.get("can_promote"):
             raise ValueError("P4.8 cannot consume an admitted P4.7 artifact")
-        if p4_7_manifest.get("source_p4_6_manifest_digest") != p4_6_manifest.get(
-            "manifest_digest"
-        ):
+        if p4_7_manifest.get("source_p4_6_manifest_digest") != p4_6_manifest.get("manifest_digest"):
             raise ValueError("P4.7 source chain drifted")
         contract = p4_4_manifest["structure_contract"]
         if content_digest(contract["rows"]) != contract["contract_digest"]:
@@ -912,10 +898,8 @@ def _run(
             for record in constraint_records
         ]
         structure_gate = {
-            "retention_sibling_matches_p4_4_contract": sibling_structure
-            == list(contract["rows"]),
-            "constraint_matches_p4_4_contract": constraint_structure
-            == list(contract["rows"]),
+            "retention_sibling_matches_p4_4_contract": sibling_structure == list(contract["rows"]),
+            "constraint_matches_p4_4_contract": constraint_structure == list(contract["rows"]),
             "retention_sibling_structure_digest": content_digest(sibling_structure),
             "p4_4_structure_contract_digest": contract["contract_digest"],
         }
@@ -1152,9 +1136,7 @@ def _run(
             "p4_7_completed_and_closed": True,
             "p4_7_growth_still_fail_closed": True,
             "p4_7_source_chain_valid": True,
-            "parent_independent_restore": bool(
-                parent_restore.get("independent_process_restore")
-            ),
+            "parent_independent_restore": bool(parent_restore.get("independent_process_restore")),
             "parent_lineage_valid": True,
             "k_parent_digests_valid": True,
         }
@@ -1243,15 +1225,13 @@ def _run(
                 record["candidate_set"].candidate_set_digest for record in holdout_records
             ],
             "retention_newtask_candidate_set_digests": [
-                record["candidate_set"].candidate_set_digest
-                for record in retention_newtask_records
+                record["candidate_set"].candidate_set_digest for record in retention_newtask_records
             ],
             "constraint_candidate_set_digests": [
                 record["candidate_set"].candidate_set_digest for record in constraint_records
             ],
             "retention_sibling_candidate_set_digests": [
-                record["candidate_set"].candidate_set_digest
-                for record in retention_sibling_records
+                record["candidate_set"].candidate_set_digest for record in retention_sibling_records
             ],
             "records": {
                 split: [

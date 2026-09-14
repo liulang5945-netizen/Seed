@@ -72,9 +72,7 @@ def _event_patterns(model: Taiji, episode: Any) -> dict[str, torch.Tensor | floa
     provenance_code = memory._provenance_code("experienced")
     time_drive = memory._normalize_drive(memory.time_encoder.forward(time_code))
     episode_drive = memory._normalize_drive(memory.episode_encoder.forward(episode_code))
-    provenance_drive = memory._normalize_drive(
-        memory.provenance_encoder.forward(provenance_code)
-    )
+    provenance_drive = memory._normalize_drive(memory.provenance_encoder.forward(provenance_code))
     components = (
         action_drive,
         outcome_drive,
@@ -89,9 +87,7 @@ def _event_patterns(model: Taiji, episode: Any) -> dict[str, torch.Tensor | floa
         device=model.device,
         dtype=components[0].dtype,
     ).unsqueeze(1)
-    event_drive = cue_pattern + event_scale * (
-        torch.stack(components) * component_gains
-    ).sum(dim=0)
+    event_drive = cue_pattern + event_scale * (torch.stack(components) * component_gains).sum(dim=0)
     event_pattern, _ = memory._activate(event_drive, state.memory.threshold)
     completion = memory.association.forward(cue_pattern)
     context_for_readout = memory.readout_receptors.forward(event_pattern)
@@ -101,8 +97,7 @@ def _event_patterns(model: Taiji, episode: Any) -> dict[str, torch.Tensor | floa
     )
     readout_energy = context_for_readout.square().sum().clamp_min(1e-8)
     readout_row_capture = (
-        context_for_readout[memory.action_readout.pre_index].square().sum(dim=1)
-        / readout_energy
+        context_for_readout[memory.action_readout.pre_index].square().sum(dim=1) / readout_energy
     )
     component_energy = torch.tensor(
         [component.square().sum().item() for component in components],
@@ -243,7 +238,9 @@ def main() -> int:
     result = run_audit()
     result["report_path"] = str(args.report)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

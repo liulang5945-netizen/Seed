@@ -57,10 +57,10 @@ def evaluate() -> dict[str, object]:
     verified_checkpoint = root.parent / f"s51-verified-{suffix}.pt"
     legacy_checkpoint = root.parent / f"s51-legacy-{suffix}.pt"
     try:
-        verified_runtime, verified_batch_id, verified_evidence = _prepare_runtime(
-            "verified-bridge"
-        )
-        verified_candidate_id = verified_runtime.model.architecture.structural_candidate_batches[-1].selected_candidate_ids[0]
+        verified_runtime, verified_batch_id, verified_evidence = _prepare_runtime("verified-bridge")
+        verified_candidate_id = verified_runtime.model.architecture.structural_candidate_batches[
+            -1
+        ].selected_candidate_ids[0]
         verified_artifact, verified_replay, verified_measurements = _build_artifact(
             verified_runtime.model.architecture,
             verified_candidate_id,
@@ -79,12 +79,12 @@ def evaluate() -> dict[str, object]:
             replays_by_candidate={verified_candidate_id: verified_replay},
             require_verified_measurements=True,
         )
-        verified_accepts = (
-            verified_result["results"][verified_candidate_id]["status"] == "admitted"
-        )
+        verified_accepts = verified_result["results"][verified_candidate_id]["status"] == "admitted"
 
         legacy_runtime, legacy_batch_id, legacy_evidence = _prepare_runtime("legacy-bridge")
-        legacy_candidate_id = legacy_runtime.model.architecture.structural_candidate_batches[-1].selected_candidate_ids[0]
+        legacy_candidate_id = legacy_runtime.model.architecture.structural_candidate_batches[
+            -1
+        ].selected_candidate_ids[0]
         legacy_artifact, legacy_replay, _ = _build_artifact(
             legacy_runtime.model.architecture,
             legacy_candidate_id,
@@ -130,7 +130,9 @@ def evaluate() -> dict[str, object]:
         )
 
         partial_runtime, partial_batch_id, partial_evidence = _prepare_runtime("partial-bridge")
-        first_id, second_id = partial_runtime.model.architecture.structural_candidate_batches[-1].selected_candidate_ids
+        first_id, second_id = partial_runtime.model.architecture.structural_candidate_batches[
+            -1
+        ].selected_candidate_ids
         first_artifact, first_replay, first_measurements = _build_artifact(
             partial_runtime.model.architecture,
             first_id,
@@ -144,10 +146,10 @@ def evaluate() -> dict[str, object]:
         partial_store = StructuralValidationArtifactStore(root / "partial")
         partial_store.put_measured_artifact(first_artifact, first_measurements)
         partial_store.put(second_artifact)
-        before_partial = _checkpoint_digest(
-            partial_runtime.model.architecture.native_checkpoint()
+        before_partial = _checkpoint_digest(partial_runtime.model.architecture.native_checkpoint())
+        before_partial_budget = (
+            partial_runtime.model.architecture.cognitive_snapshot().development.structural_budget
         )
-        before_partial_budget = partial_runtime.model.architecture.cognitive_snapshot().development.structural_budget
         try:
             partial_runtime.continue_structural_candidate_batch_from_artifact_store(
                 partial_batch_id,

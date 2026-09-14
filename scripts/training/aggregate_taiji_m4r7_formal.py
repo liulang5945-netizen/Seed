@@ -39,14 +39,10 @@ def _summary(reports: list[dict[str, Any]], variant: str) -> dict[str, Any]:
         "c_cycle3_degradation_count": sum(value > 0.0 for value in cycle3),
         "c2_cycle3_delta_mean_bpb": _mean(c2_cycle3),
         "c2_cycle3_degradation_count": sum(value > 0.0 for value in c2_cycle3),
-        "retention_gate_passed_all": all(
-            value <= 0.0 for value in (*cycle2, *cycle3)
-        ),
+        "retention_gate_passed_all": all(value <= 0.0 for value in (*cycle2, *cycle3)),
         "seed_metrics": {
             str(report["seed"]): {
-                "c3_gain_bpb": float(
-                    report["variants"][variant]["metrics"]["c3_holdout_gain_bpb"]
-                ),
+                "c3_gain_bpb": float(report["variants"][variant]["metrics"]["c3_holdout_gain_bpb"]),
                 "c_cycle2_delta_bpb": float(
                     report["variants"][variant]["metrics"]["c_cycle2_delta_bpb"]
                 ),
@@ -70,14 +66,10 @@ def aggregate(
     if tuple(sorted(int(report["seed"]) for report in reports)) != EXPECTED_SEEDS:
         raise ValueError("M4.R7 aggregate requires seed11, seed29, and seed47")
     checks = {
-        f"seed{report['seed']}_technical_gate": bool(
-            report["technical_gate_all_passed"]
-        )
+        f"seed{report['seed']}_technical_gate": bool(report["technical_gate_all_passed"])
         for report in reports
     }
-    checks["all_reports_not_promoted"] = all(
-        report["can_promote"] is False for report in reports
-    )
+    checks["all_reports_not_promoted"] = all(report["can_promote"] is False for report in reports)
     checks["same_variant_set"] = all(
         set(report["variants"]) == set(EXPECTED_VARIANTS) for report in reports
     )
@@ -109,9 +101,7 @@ def aggregate(
         and preflight["formal_allowed"] is True
         and preflight["technical_gate_all_passed"] is True
     )
-    variants = {
-        variant: _summary(reports, variant) for variant in EXPECTED_VARIANTS
-    }
+    variants = {variant: _summary(reports, variant) for variant in EXPECTED_VARIANTS}
     half = variants["scale_0p5"]
     formal_gate_passed = bool(
         all(checks.values())
@@ -126,9 +116,7 @@ def aggregate(
         "can_promote": False,
         "formal_gate_passed": formal_gate_passed,
         "seeds": list(EXPECTED_SEEDS),
-        "source_reports": [
-            str(item.get("report_path", "")) for item in reports
-        ],
+        "source_reports": [str(item.get("report_path", "")) for item in reports],
         "preflight_report": str(preflight.get("report_path", "")),
         "configuration": {
             "profile": FORMAL_PROFILE,
@@ -143,8 +131,7 @@ def aggregate(
         "diagnosis": {
             "half_scale_formal_candidate": formal_gate_passed,
             "half_scale_improves_mean_gain": (
-                half["c3_gain_mean_bpb"]
-                > variants["scale_1p0"]["c3_gain_mean_bpb"]
+                half["c3_gain_mean_bpb"] > variants["scale_1p0"]["c3_gain_mean_bpb"]
             ),
             "half_scale_retention_gate_passed": half["retention_gate_passed_all"],
             "interpretation": (

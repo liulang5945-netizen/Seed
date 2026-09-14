@@ -59,7 +59,9 @@ WIDENED_ROOT = PROJECT_ROOT / "checkpoints" / "taiji_k_candidate_c_entry_parity_
 FIXED_LARGE_ROOT = PROJECT_ROOT / "checkpoints" / "taiji_k_fixed_large_c_entry_v2"
 WORKER_ROOT = PROJECT_ROOT / "checkpoints" / "taiji_k_workers"
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m4v2_b3_k_c_parity_formal_20260910.json"
-PRESEALED_REPORT = PROJECT_ROOT / "reports" / "taiji_m4v2_b3_k_c_parity_formal_presealed_20260910.json"
+PRESEALED_REPORT = (
+    PROJECT_ROOT / "reports" / "taiji_m4v2_b3_k_c_parity_formal_presealed_20260910.json"
+)
 LOSS_KEYS = (
     "k1.fact_mse",
     "k1.goal_mse",
@@ -77,7 +79,9 @@ def _load_mapping(path: Path) -> dict[str, Any]:
     return {str(key): value for key, value in raw.items()}
 
 
-def _sum_state_dicts(a: Mapping[str, torch.Tensor], b: Mapping[str, torch.Tensor]) -> dict[str, torch.Tensor]:
+def _sum_state_dicts(
+    a: Mapping[str, torch.Tensor], b: Mapping[str, torch.Tensor]
+) -> dict[str, torch.Tensor]:
     if set(a) != set(b):
         raise ValueError("widened channel state dict keys drifted")
     return {key: a[key] + b[key] for key in a}
@@ -216,9 +220,7 @@ def _verify_inputs() -> dict[str, Any]:
     if sealed_sha != SEALED_SHA256:
         raise ValueError(f"sealed artifact digest drifted: {sealed_sha}")
     sealed = json.loads(sealed_bytes.decode("utf-8"))
-    if not str(sealed.get("artifact_digest", "")).startswith(
-        SEALED_INTERNAL_DIGEST_PREFIX
-    ):
+    if not str(sealed.get("artifact_digest", "")).startswith(SEALED_INTERNAL_DIGEST_PREFIX):
         raise ValueError("sealed internal artifact_digest mismatch")
     build = json.loads(V2_BUILD_REPORT.read_text(encoding="utf-8"))
     if build.get("status") != "passed":
@@ -240,9 +242,7 @@ def _verify_inputs() -> dict[str, Any]:
             widened_digest = content_digest(_load_mapping(widened_path))
             if widened_digest != cell["artifact_digests"]["widened"]:
                 raise ValueError(f"widened artifact digest mismatch: {model_seed}x{course_seed}")
-    ensemble_digests = {
-        cell["artifact_digests"]["fixed_large_ensemble"] for cell in build["cells"]
-    }
+    ensemble_digests = {cell["artifact_digests"]["fixed_large_ensemble"] for cell in build["cells"]}
     if len(ensemble_digests) != len(COURSE_SEEDS):
         raise ValueError(
             "fixed-large ensemble digests must be exactly one per course; "
@@ -288,9 +288,7 @@ def main() -> int:
                     / f"course_{course_seed}"
                     / "taiji_c_entry_parity_v2_widened.pt"
                 )
-                candidate_k1, candidate_k2 = _widened_candidate_learners(
-                    widened_payload, artifacts
-                )
+                candidate_k1, candidate_k2 = _widened_candidate_learners(widened_payload, artifacts)
                 frozen_k1 = StructuredSemanticLearner.from_checkpoint(
                     copy.deepcopy(artifacts["k1.semantic"]["checkpoint"]), device="cpu"
                 )
@@ -341,9 +339,7 @@ def main() -> int:
 
     deltas = [row["candidate_delta"] for row in validation_rows]
     mean_delta = sum(deltas) / len(deltas)
-    population_std = (
-        sum((value - mean_delta) ** 2 for value in deltas) / len(deltas)
-    ) ** 0.5
+    population_std = (sum((value - mean_delta) ** 2 for value in deltas) / len(deltas)) ** 0.5
     epsilon_cat = max(0.01, 3.0 * population_std)
 
     pre_sealed = {
@@ -391,9 +387,7 @@ def main() -> int:
                     / f"course_{course_seed}"
                     / "taiji_c_entry_parity_v2_widened.pt"
                 )
-                candidate_k1, candidate_k2 = _widened_candidate_learners(
-                    widened_payload, artifacts
-                )
+                candidate_k1, candidate_k2 = _widened_candidate_learners(widened_payload, artifacts)
                 frozen_k1 = StructuredSemanticLearner.from_checkpoint(
                     copy.deepcopy(artifacts["k1.semantic"]["checkpoint"]), device="cpu"
                 )
@@ -448,9 +442,7 @@ def main() -> int:
     def course_means(rows: list[dict[str, Any]], key: str) -> dict[int, float]:
         result: dict[int, float] = {}
         for course_seed in COURSE_SEEDS:
-            values = [
-                float(row[key]) for row in rows if row["course_seed"] == course_seed
-            ]
+            values = [float(row[key]) for row in rows if row["course_seed"] == course_seed]
             result[course_seed] = sum(values) / len(values)
         return result
 
@@ -465,13 +457,9 @@ def main() -> int:
     candidate_course_mean = sum(sealed_candidate_course.values()) / len(COURSE_SEEDS)
     fixed_course_mean = sum(sealed_fixed_course.values()) / len(COURSE_SEEDS)
 
-    g1_courses = [
-        course for course in COURSE_SEEDS if val_candidate_course[course] < 0.0
-    ]
+    g1_courses = [course for course in COURSE_SEEDS if val_candidate_course[course] < 0.0]
     g2_courses = [
-        course
-        for course in COURSE_SEEDS
-        if sealed_candidate_course[course] <= epsilon_cat
+        course for course in COURSE_SEEDS if sealed_candidate_course[course] <= epsilon_cat
     ]
     gates = {
         "G1_quality_floor": {
@@ -540,9 +528,7 @@ def main() -> int:
         ),
     }
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
+    args.report.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     print(
         json.dumps(
             {

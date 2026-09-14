@@ -55,19 +55,26 @@ class AdaptiveResidualGrowthCandidate:
         _text(self.decision_digest, "adaptive residual candidate decision digest")
         _text(self.candidate_digest, "adaptive residual candidate digest")
         evidence_ids = tuple(str(item).strip() for item in self.evidence_ids)
-        if not evidence_ids or len(set(evidence_ids)) != len(evidence_ids) or any(
-            not item for item in evidence_ids
+        if (
+            not evidence_ids
+            or len(set(evidence_ids)) != len(evidence_ids)
+            or any(not item for item in evidence_ids)
         ):
-            raise ValueError("adaptive residual candidate evidence_ids must be unique and non-empty")
+            raise ValueError(
+                "adaptive residual candidate evidence_ids must be unique and non-empty"
+            )
         object.__setattr__(self, "evidence_ids", evidence_ids)
-        if min(
-            int(self.parent_unit_count),
-            int(self.proposed_unit_count),
-            int(self.parent_edge_count),
-            int(self.proposed_edge_count),
-            int(self.resource_cost),
-            int(self.structural_budget),
-        ) < 0:
+        if (
+            min(
+                int(self.parent_unit_count),
+                int(self.proposed_unit_count),
+                int(self.parent_edge_count),
+                int(self.proposed_edge_count),
+                int(self.resource_cost),
+                int(self.structural_budget),
+            )
+            < 0
+        ):
             raise ValueError("adaptive residual candidate counts cannot be negative")
         if int(self.proposed_unit_count) <= int(self.parent_unit_count):
             raise ValueError("adaptive residual candidate must increase unit capacity")

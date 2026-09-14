@@ -39,9 +39,7 @@ def _owner_digests(model: Taiji) -> dict[str, str]:
     }
     if model.identity_organ is not None:
         values["identity"] = content_digest(
-            model.identity_organ.to_payload(
-                parent_checkpoint_digest="b5-readout-generation"
-            )
+            model.identity_organ.to_payload(parent_checkpoint_digest="b5-readout-generation")
         )
     return values
 
@@ -206,9 +204,7 @@ def _online_novelty_score(
         if protected_step.prior_probability is None:
             route_active_next = False
         else:
-            observed_surprise = -torch.log(
-                torch.tensor(protected_step.prior_probability)
-            ).item()
+            observed_surprise = -torch.log(torch.tensor(protected_step.prior_probability)).item()
             route_active_next = observed_surprise > threshold
     protected_model.restore(protected_checkpoint)
     active_model.restore(active_checkpoint)
@@ -439,13 +435,11 @@ def main() -> int:
                     for label in ("old_after", "new_after", "retention_after")
                 },
                 "online_novelty": {
-                    "backward_transfer": result["online_novelty_metrics"][
-                        "backward_transfer"
-                    ],
+                    "backward_transfer": result["online_novelty_metrics"]["backward_transfer"],
                     "new_after_bpb": result["online_novelty_metrics"]["new_after"]["bpb"],
-                    "retention_after_bpb": result["online_novelty_metrics"][
-                        "retention_after"
-                    ]["bpb"],
+                    "retention_after_bpb": result["online_novelty_metrics"]["retention_after"][
+                        "bpb"
+                    ],
                     "active_route_ratios": {
                         label: result["online_novelty_metrics"][label]["active_route_ratio"]
                         for label in ("old_after", "new_after", "retention_after")

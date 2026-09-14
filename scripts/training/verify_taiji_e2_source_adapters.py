@@ -121,13 +121,13 @@ def run_gate() -> dict[str, object]:
         "skill_units_are_typed": {item.unit_kind for item in skill.corpus}
         >= {"knowledge", "procedure", "affordance", "constraint"},
         "mcp_schema_is_content_addressed": any(
-            item.input_schema_digest == content_digest(
-                {"type": "object", "properties": {"query": {"type": "string"}}}
-            )
+            item.input_schema_digest
+            == content_digest({"type": "object", "properties": {"query": {"type": "string"}}})
             for item in mcp.corpus
         ),
         "client_affordance_is_security_partitioned": any(
-            item.unit_kind == "affordance" and item.partition == "security" for item in plugin.corpus
+            item.unit_kind == "affordance" and item.partition == "security"
+            for item in plugin.corpus
         ),
         "unsafe_fields_not_admitted": "source_code" not in repr(all_payloads)
         and "entrypoint_path" not in repr(all_payloads)
@@ -140,7 +140,8 @@ def run_gate() -> dict[str, object]:
         "train_view_isolated": len(train_corpus) == 1
         and len(train_experiences) == 1
         and train_experiences[0].source_kind == "skill",
-        "checkpoint_roundtrip_preserves_chain": restored.tail_event_digest == ledger.tail_event_digest,
+        "checkpoint_roundtrip_preserves_chain": restored.tail_event_digest
+        == ledger.tail_event_digest,
         "no_execution_in_adapter": True,
     }
     return {
@@ -163,7 +164,9 @@ def main() -> int:
     args = parser.parse_args()
     result = run_gate()
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0 if result["status"] == "passed" else 1
 

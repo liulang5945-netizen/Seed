@@ -122,25 +122,25 @@ def _dr_probe_experiences(
         anchor = observations["missing_00.txt"]
         return (
             _build_experience(
-                sequence=_episode_sequence(anchor, observations, "probe_header.h", "python_05.py", "rust_05.rs"),
+                sequence=_episode_sequence(
+                    anchor, observations, "probe_header.h", "python_05.py", "rust_05.rs"
+                ),
                 split="holdout",
                 name="b3-dr-probe-d",
                 parent_digest=parent_digest,
                 worker_bundle_digest=bundle.bundle_digest,
-                source_manifest_digest=str(
-                    artifacts["k1.semantic"]["source_manifest_digest"]
-                ),
+                source_manifest_digest=str(artifacts["k1.semantic"]["source_manifest_digest"]),
                 projector=projector,
             ),
             _build_experience(
-                sequence=_episode_sequence(anchor, observations, "probe_missing_00.txt", "python_05.py", "rust_05.rs"),
+                sequence=_episode_sequence(
+                    anchor, observations, "probe_missing_00.txt", "python_05.py", "rust_05.rs"
+                ),
                 split="holdout",
                 name="b3-dr-probe-r",
                 parent_digest=parent_digest,
                 worker_bundle_digest=bundle.bundle_digest,
-                source_manifest_digest=str(
-                    artifacts["k1.semantic"]["source_manifest_digest"]
-                ),
+                source_manifest_digest=str(artifacts["k1.semantic"]["source_manifest_digest"]),
                 projector=projector,
             ),
         )
@@ -194,11 +194,10 @@ def main() -> int:
         frozen_k2 = StructuredSemanticTransitionLearner.from_checkpoint(
             copy.deepcopy(artifacts["k2.transition"]["checkpoint"]), device="cpu"
         )
-        f_gate = (
-            content_digest(frozen_k1.state_dict())
-            == content_digest(artifacts["k1.semantic"]["checkpoint"]["state_dict"])
-            and content_digest(frozen_k2.state_dict())
-            == content_digest(artifacts["k2.transition"]["checkpoint"]["state_dict"])
+        f_gate = content_digest(frozen_k1.state_dict()) == content_digest(
+            artifacts["k1.semantic"]["checkpoint"]["state_dict"]
+        ) and content_digest(frozen_k2.state_dict()) == content_digest(
+            artifacts["k2.transition"]["checkpoint"]["state_dict"]
         )
 
         # -- Arm C: continuation -----------------------------------------
@@ -229,23 +228,15 @@ def main() -> int:
         # -- Arm FS: fast/slow + replay ----------------------------------
         instance = FastSlowKInstance(
             semantic_parent_checkpoint=dict(artifacts["k1.semantic"]["checkpoint"]),
-            transition_parent_checkpoint=dict(
-                artifacts["k2.transition"]["checkpoint"]
-            ),
+            transition_parent_checkpoint=dict(artifacts["k2.transition"]["checkpoint"]),
             parent_worker_bundle_digest=bundle.bundle_digest,
             source_manifest_digest=source_manifest_digest,
             parent_checkpoint_digest=parent_digest,
         )
-        birth_fast_zero = all(
-            instance.is_fast_zero(worker) for worker in instance.slow
-        )
-        slow_before_wake = {
-            worker: instance.slow_state_digest(worker) for worker in instance.slow
-        }
+        birth_fast_zero = all(instance.is_fast_zero(worker) for worker in instance.slow)
+        slow_before_wake = {worker: instance.slow_state_digest(worker) for worker in instance.slow}
         fast_norm_trajectory = []
-        wake_checkpoint_positions = _wake_checkpoints(
-            N_NEW, WAKE_CHECKPOINT_EMISSIONS
-        )
+        wake_checkpoint_positions = _wake_checkpoints(N_NEW, WAKE_CHECKPOINT_EMISSIONS)
         for consumed, experience in enumerate(experiences, start=1):
             instance.wake_experience(
                 experience,
@@ -266,9 +257,8 @@ def main() -> int:
             instance.slow_state_digest(worker) == slow_before_wake[worker]
             for worker in instance.slow
         )
-        fast_nonzero_after_wake = all(
-            not instance.is_fast_zero(worker) for worker in instance.slow
-        )
+        fast_nonzero_after_wake = all(not instance.is_fast_zero(worker) for worker in instance.slow)
+
         # Wake-trajectory equivalence: FS effective after wake must equal the
         # continuation arm's weights.  Exact-arithmetic equivalence holds
         # (same deltas, same order); float rounding paths differ (FS adds
@@ -279,14 +269,14 @@ def main() -> int:
             state_a: Mapping[str, torch.Tensor], state_b: Mapping[str, torch.Tensor]
         ) -> float:
             return max(
-                float(torch.max(torch.abs(state_a[key].detach().cpu() - state_b[key].detach().cpu())))
+                float(
+                    torch.max(torch.abs(state_a[key].detach().cpu() - state_b[key].detach().cpu()))
+                )
                 for key in state_a
             )
 
         wake_trajectory_max_abs_diff = max(
-            _max_abs_state_diff(
-                instance._effective_state("k1.semantic"), c_semantic.state_dict()
-            ),
+            _max_abs_state_diff(instance._effective_state("k1.semantic"), c_semantic.state_dict()),
             _max_abs_state_diff(
                 instance._effective_state("k2.transition"), c_transition.state_dict()
             ),
@@ -318,20 +308,16 @@ def main() -> int:
             worker: instance.effective_state_digest(worker) for worker in instance.slow
         }
         instance.consolidate()
-        consolidation_clears_fast = all(
-            instance.is_fast_zero(worker) for worker in instance.slow
-        )
+        consolidation_clears_fast = all(instance.is_fast_zero(worker) for worker in instance.slow)
         consolidation_preserves_effective = all(
-            instance.effective_state_digest(worker)
-            == effective_before_consolidation[worker]
+            instance.effective_state_digest(worker) == effective_before_consolidation[worker]
             for worker in instance.slow
         )
         # Checkpoint roundtrip.
         fs_payload = instance.checkpoint()
         restored = FastSlowKInstance.from_checkpoint(fs_payload)
         fresh_restore_gate = all(
-            restored.effective_state_digest(worker)
-            == instance.effective_state_digest(worker)
+            restored.effective_state_digest(worker) == instance.effective_state_digest(worker)
             for worker in instance.slow
         )
 
@@ -379,9 +365,7 @@ def main() -> int:
             "fs_birth_fast_zero": bool(birth_fast_zero),
             "fs_slow_unchanged_during_wake": bool(slow_unchanged_during_wake),
             "fs_fast_nonzero_after_wake": bool(fast_nonzero_after_wake),
-            "wake_trajectory_matches_continuation": bool(
-                wake_trajectory_matches_continuation
-            ),
+            "wake_trajectory_matches_continuation": bool(wake_trajectory_matches_continuation),
             "wake_trajectory_max_abs_diff": wake_trajectory_max_abs_diff,
             "wake_trajectory_tolerance": wake_trajectory_tolerance,
             "replay_digests_from_stream": bool(replay_digest_subset),
@@ -403,9 +387,7 @@ def main() -> int:
             "generated_at_epoch": int(time.time()),
             "status": "passed" if machinery_passed else "failed",
             "can_promote": False,
-            "preregistration": (
-                "plans/reference/M4V2_B3_K_PILOT_PREREGISTRATION_20260910.md"
-            ),
+            "preregistration": ("plans/reference/M4V2_B3_K_PILOT_PREREGISTRATION_20260910.md"),
             "base": {
                 "model_seed": MODEL_SEED,
                 "course_seed": COURSE_SEED,
@@ -437,8 +419,7 @@ def main() -> int:
                 "dr_probe": {
                     "frozen_combined": combined(probe_frozen),
                     "continuation_delta": combined(probe_c) - combined(probe_frozen),
-                    "fast_slow_replay_delta": combined(probe_fs)
-                    - combined(probe_frozen),
+                    "fast_slow_replay_delta": combined(probe_fs) - combined(probe_frozen),
                 },
                 "fast_norm_trajectory": fast_norm_trajectory,
             },
@@ -452,9 +433,7 @@ def main() -> int:
             ),
         }
         args.report.parent.mkdir(parents=True, exist_ok=True)
-        args.report.write_text(
-            json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
-        )
+        args.report.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
         print(
             json.dumps(
                 {
@@ -462,9 +441,7 @@ def main() -> int:
                     "status": payload["status"],
                     "machinery_passed": machinery_passed,
                     "failed_gates": [key for key, value in gates.items() if not value],
-                    "validation_deltas": payload["diagnostic"][
-                        "validation_combined_deltas"
-                    ],
+                    "validation_deltas": payload["diagnostic"]["validation_combined_deltas"],
                 },
                 ensure_ascii=False,
                 indent=2,

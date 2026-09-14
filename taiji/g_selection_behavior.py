@@ -159,11 +159,7 @@ class GSelectionBehaviorOutcome:
             "safe_exit_valid": bool(safe_exit_valid),
             "safe_exit_progress": bool(safe_exit_progress),
         }
-        weights = (
-            PROPOSAL_UTILITY_WEIGHTS
-            if candidate_role == "proposal"
-            else SAFE_UTILITY_WEIGHTS
-        )
+        weights = PROPOSAL_UTILITY_WEIGHTS if candidate_role == "proposal" else SAFE_UTILITY_WEIGHTS
         utility = _weighted(values, weights)
         unsigned = {
             "format": TAIJI_G_BEHAVIOR_FORMAT,
@@ -277,7 +273,9 @@ class GSelectionBehaviorSet:
         object.__setattr__(self, "outcomes", outcomes)
         object.__setattr__(self, "behavior_target_candidate_id", target)
         object.__setattr__(self, "utility_margin", margin)
-        object.__setattr__(self, "behavior_digest", _digest(self.behavior_digest, "behavior_digest"))
+        object.__setattr__(
+            self, "behavior_digest", _digest(self.behavior_digest, "behavior_digest")
+        )
 
     @classmethod
     def create(
@@ -349,8 +347,7 @@ class GSelectionBehaviorSet:
             project_id=str(payload["project_id"]),
             path=str(payload["path"]),
             outcomes=tuple(
-                GSelectionBehaviorOutcome.from_payload(item)
-                for item in payload.get("outcomes", ())
+                GSelectionBehaviorOutcome.from_payload(item) for item in payload.get("outcomes", ())
             ),
             behavior_target_candidate_id=str(payload["behavior_target_candidate_id"]),
             utility_margin=float(payload["utility_margin"]),

@@ -31,9 +31,7 @@ def evaluate() -> dict[str, object]:
     payload = response.json()
     detail = payload.get("detail", ()) if isinstance(payload, dict) else ()
     missing_intent = any(
-        item.get("loc", ())[-1:] == ["intent"]
-        for item in detail
-        if isinstance(item, dict)
+        item.get("loc", ())[-1:] == ["intent"] for item in detail if isinstance(item, dict)
     )
     metrics = {
         "ordinary_prompt_is_not_silently_executed": response.status_code == 422,

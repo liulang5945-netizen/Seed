@@ -39,13 +39,14 @@ def run_gate() -> dict[str, object]:
         "slot_component_is_present": frontend_test.exists()
         and "<slot" in component
         and "slotManifests" in component,
-        "snapshot_entry_is_content_keyed": ":key=\"entryKey(manifest)\"" in component
+        "snapshot_entry_is_content_keyed": ':key="entryKey(manifest)"' in component
         and "plugin_digest" in component,
         "failure_state_is_visible": "data-extension-state" in component
         and "quarantined" in component
         and "failed" in component,
         "no_plugin_source_is_loaded": all(
-            marker not in component for marker in ("entrypoint", "import_path", "source_path", "executable-source")
+            marker not in component
+            for marker in ("entrypoint", "import_path", "source_path", "executable-source")
         ),
         "app_mounts_route_slot": "ClientExtensionSlot" in app_source
         and 'slot-name="route"' in app_source,
@@ -81,7 +82,9 @@ def main() -> int:
     args = parser.parse_args()
     result = run_gate()
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     # Windows PowerShell may expose a GBK stdout; keep the persisted report UTF-8
     # while making the terminal rendering encoding-agnostic.
     print(json.dumps(result, ensure_ascii=True, indent=2))

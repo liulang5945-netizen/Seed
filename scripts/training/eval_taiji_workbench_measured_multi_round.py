@@ -198,9 +198,7 @@ def evaluate() -> dict[str, object]:
     round_two_first_id, round_two_second_id = round_two_batch.selected_candidate_ids
 
     round_two_pre_admission_checkpoint = runtime.model.architecture.native_checkpoint()
-    round_two_first_model = TSKV8Adapter.from_native_checkpoint(
-        round_two_pre_admission_checkpoint
-    )
+    round_two_first_model = TSKV8Adapter.from_native_checkpoint(round_two_pre_admission_checkpoint)
     round_two_first_artifact, round_two_first_replay, round_two_first_measurements = (
         _build_artifact(
             round_two_first_model,
@@ -220,10 +218,12 @@ def evaluate() -> dict[str, object]:
         round_two_evidence,
         capacity_limit=8,
     )
-    round_two_first_result = round_two_first_model.continue_structural_candidate_batch_from_validation_artifacts(
-        round_two_batch_id,
-        artifacts_by_candidate={round_two_first_id: round_two_first_artifact},
-        replays_by_candidate={round_two_first_id: round_two_first_replay},
+    round_two_first_result = (
+        round_two_first_model.continue_structural_candidate_batch_from_validation_artifacts(
+            round_two_batch_id,
+            artifacts_by_candidate={round_two_first_id: round_two_first_artifact},
+            replays_by_candidate={round_two_first_id: round_two_first_replay},
+        )
     )
     round_two_after_first_checkpoint = round_two_first_model.native_checkpoint()
     stale_branch = TSKV8Adapter.from_native_checkpoint(round_two_after_first_checkpoint)
@@ -239,9 +239,7 @@ def evaluate() -> dict[str, object]:
 
     # Rebuild the second artifact against the new parent and complete round two
     # on the success branch.
-    round_two_success_model = TSKV8Adapter.from_native_checkpoint(
-        round_two_after_first_checkpoint
-    )
+    round_two_success_model = TSKV8Adapter.from_native_checkpoint(round_two_after_first_checkpoint)
     round_two_second_artifact, round_two_second_replay, round_two_second_measurements = (
         _build_artifact(
             round_two_success_model,
@@ -250,10 +248,12 @@ def evaluate() -> dict[str, object]:
             capacity_limit=8,
         )
     )
-    round_two_second_result = round_two_success_model.continue_structural_candidate_batch_from_validation_artifacts(
-        round_two_batch_id,
-        artifacts_by_candidate={round_two_second_id: round_two_second_artifact},
-        replays_by_candidate={round_two_second_id: round_two_second_replay},
+    round_two_second_result = (
+        round_two_success_model.continue_structural_candidate_batch_from_validation_artifacts(
+            round_two_batch_id,
+            artifacts_by_candidate={round_two_second_id: round_two_second_artifact},
+            replays_by_candidate={round_two_second_id: round_two_second_replay},
+        )
     )
     round_two_success_checkpoint = round_two_success_model.native_checkpoint()
     _round_two_success_topology = _topology(round_two_success_model)
@@ -305,15 +305,13 @@ def evaluate() -> dict[str, object]:
         "stale_artifact_fails_closed_after_parent_changes": (
             stale_result["results"][round_two_second_id]["status"] == "failed_closed"
             and stale_result["batch"]["candidate_states"][round_two_first_id] == "admitted"
-            and stale_result["batch"]["candidate_states"][round_two_second_id]
-            == "failed_closed"
+            and stale_result["batch"]["candidate_states"][round_two_second_id] == "failed_closed"
             and stale_topology_after == stale_topology_before
             and stale_budget_after == stale_budget_before
         ),
         "round_two_remeasured_artifact_completes": (
             round_two_first_result["results"][round_two_first_id]["status"] == "admitted"
-            and round_two_second_result["results"][round_two_second_id]["status"]
-            == "admitted"
+            and round_two_second_result["results"][round_two_second_id]["status"] == "admitted"
             and round_two_second_result["batch"]["status"] == "completed"
             and round_two_second_result["artifact_batch"]["complete"]
             and round_two_first_artifact.artifact_digest
@@ -321,8 +319,7 @@ def evaluate() -> dict[str, object]:
         ),
         "measurements_remain_owner_derived": (
             round_two_first_artifact.holdout_gain == round_two_first_measurements.holdout_gain
-            and round_two_second_artifact.holdout_gain
-            == round_two_second_measurements.holdout_gain
+            and round_two_second_artifact.holdout_gain == round_two_second_measurements.holdout_gain
             and round_two_first_artifact.resource_measurement_digest
             == round_two_first_measurements.resource_measurement_digest
             and round_two_second_artifact.resource_measurement_digest
@@ -330,7 +327,8 @@ def evaluate() -> dict[str, object]:
         ),
         "round_two_rollback_restores_only_latest_region_and_budget": (
             rollback["status"] == "rolled_back"
-            and rollback_budget == round_two_success_budget + round_two_second_artifact.resource_cost
+            and rollback_budget
+            == round_two_success_budget + round_two_second_artifact.resource_cost
             and rollback_topology == round_two_after_first_topology
         ),
         "rollback_checkpoint_is_idempotent": repeated_rollback == rollback,

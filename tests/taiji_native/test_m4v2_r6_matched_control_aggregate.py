@@ -28,11 +28,17 @@ def test_m4v2_r6_matched_control_aggregate_closes_causal_resource_gate() -> None
     assert gates["paired_matched_fixed_capacity_delta_available"] is True
     assert gates["paired_frozen_parent_delta_floor"] is True
     assert gates["paired_matched_fixed_capacity_delta_floor"] is True
-    assert report["metrics"][
-        "candidate_minus_frozen_parent_task_success_rate"
-    ]["one_sided_95_student_t_lower_bound"] >= 0.25
-    assert report["metrics"][
-        "candidate_minus_matched_fixed_capacity_task_success_rate"
-    ]["one_sided_95_student_t_lower_bound"] >= 0.25
+    assert (
+        report["metrics"]["candidate_minus_frozen_parent_task_success_rate"][
+            "one_sided_95_student_t_lower_bound"
+        ]
+        >= 0.25
+    )
+    assert (
+        report["metrics"]["candidate_minus_matched_fixed_capacity_task_success_rate"][
+            "one_sided_95_student_t_lower_bound"
+        ]
+        >= 0.25
+    )
     assert report["can_start_r6_formal"] is False
     assert report["can_promote"] is False

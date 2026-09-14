@@ -40,7 +40,9 @@ def _runtime_with_terminal_lineage() -> tuple[SeedRuntime, str]:
         raise AssertionError(f"S25 active batch was not created: {schedule}")
     model = runtime.model.architecture
     active_batch_id = str(schedule["batch_id"])
-    active = next(item for item in model.structural_candidate_batches if item.batch_id == active_batch_id)
+    active = next(
+        item for item in model.structural_candidate_batches if item.batch_id == active_batch_id
+    )
     _record_terminal_subgraph(model, active)
     return runtime, active_batch_id
 
@@ -106,7 +108,8 @@ def evaluate() -> dict[str, object]:
         "checkpoint_restore_keeps_taiji_audit_state": (
             retention is not None
             and restored_model.structural_lineage_retention_result == retention
-            and active_batch_id in {item.batch_id for item in restored_model.structural_candidate_batches}
+            and active_batch_id
+            in {item.batch_id for item in restored_model.structural_candidate_batches}
         ),
         "default_runtime_call_does_not_replay_old_audit": (
             restored_default.lineage_retention is None
@@ -150,7 +153,9 @@ def main() -> None:
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_w7_r5c_s25_structural_lineage_runtime_20260831.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_w7_r5c_s25_structural_lineage_runtime_20260831.json",
     )
     args = parser.parse_args()
     report = evaluate()

@@ -8,9 +8,7 @@ from scripts.training.eval_taiji_m4v2_b3_k_loss_stability import (  # noqa: E402
 )
 
 REPORT = (
-    Path(__file__).resolve().parents[2]
-    / "reports"
-    / "taiji_m4v2_b3_k_loss_stability_20260910.json"
+    Path(__file__).resolve().parents[2] / "reports" / "taiji_m4v2_b3_k_loss_stability_20260910.json"
 )
 
 

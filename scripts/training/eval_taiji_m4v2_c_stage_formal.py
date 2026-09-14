@@ -73,9 +73,7 @@ WIDENED_ROOT = PROJECT_ROOT / "checkpoints" / "taiji_k_candidate_c_entry_parity_
 FIXED_LARGE_ROOT = PROJECT_ROOT / "checkpoints" / "taiji_k_fixed_large_c_entry_v4"
 WORKER_ROOT = PROJECT_ROOT / "checkpoints" / "taiji_k_workers_v4"
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m4v2_c_stage_formal_20260910.json"
-PRESEALED_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m4v2_c_stage_formal_presealed_20260910.json"
-)
+PRESEALED_REPORT = PROJECT_ROOT / "reports" / "taiji_m4v2_c_stage_formal_presealed_20260910.json"
 EPISODE_CLASSES = ("D", "R", "A")
 WEAK_CLASSES = ("D", "R")
 
@@ -223,12 +221,8 @@ def main() -> int:
                     )
                 # FS fast/slow + replay arm.
                 instance = FastSlowKInstance(
-                    semantic_parent_checkpoint=dict(
-                        artifacts["k1.semantic"]["checkpoint"]
-                    ),
-                    transition_parent_checkpoint=dict(
-                        artifacts["k2.transition"]["checkpoint"]
-                    ),
+                    semantic_parent_checkpoint=dict(artifacts["k1.semantic"]["checkpoint"]),
+                    transition_parent_checkpoint=dict(artifacts["k2.transition"]["checkpoint"]),
                     parent_worker_bundle_digest=bundle.bundle_digest,
                     source_manifest_digest=content_digest(
                         {
@@ -292,20 +286,14 @@ def main() -> int:
                         "course_seed": course_seed,
                         "frozen_combined": float(frozen_loss["combined_mse"]),
                         "c_combined": float(c_loss["combined_mse"]),
-                        "c_delta": float(
-                            c_loss["combined_mse"] - frozen_loss["combined_mse"]
-                        ),
+                        "c_delta": float(c_loss["combined_mse"] - frozen_loss["combined_mse"]),
                         "fs_combined": float(fs_loss["combined_mse"]),
-                        "fs_delta": float(
-                            fs_loss["combined_mse"] - frozen_loss["combined_mse"]
-                        ),
+                        "fs_delta": float(fs_loss["combined_mse"] - frozen_loss["combined_mse"]),
                         "paired_fs_minus_c": float(
                             fs_loss["combined_mse"] - c_loss["combined_mse"]
                         ),
                         "xl_combined": float(xl_loss["combined_mse"]),
-                        "xl_delta": float(
-                            xl_loss["combined_mse"] - frozen_loss["combined_mse"]
-                        ),
+                        "xl_delta": float(xl_loss["combined_mse"] - frozen_loss["combined_mse"]),
                     }
                 )
     finally:
@@ -407,12 +395,8 @@ def main() -> int:
                         learning_rate=TRANSITION_LR,
                     )
                 instance = FastSlowKInstance(
-                    semantic_parent_checkpoint=dict(
-                        artifacts["k1.semantic"]["checkpoint"]
-                    ),
-                    transition_parent_checkpoint=dict(
-                        artifacts["k2.transition"]["checkpoint"]
-                    ),
+                    semantic_parent_checkpoint=dict(artifacts["k1.semantic"]["checkpoint"]),
+                    transition_parent_checkpoint=dict(artifacts["k2.transition"]["checkpoint"]),
                     parent_worker_bundle_digest=bundle.bundle_digest,
                     source_manifest_digest=content_digest(
                         {
@@ -485,23 +469,13 @@ def main() -> int:
                         "model_seed": model_seed,
                         "course_seed": course_seed,
                         "frozen_combined": float(frozen_loss["combined_mse"]),
-                        "c_delta": float(
-                            c_loss["combined_mse"] - frozen_loss["combined_mse"]
-                        ),
-                        "fs_delta": float(
-                            fs_loss["combined_mse"] - frozen_loss["combined_mse"]
-                        ),
-                        "xl_delta": float(
-                            xl_loss["combined_mse"] - frozen_loss["combined_mse"]
-                        ),
+                        "c_delta": float(c_loss["combined_mse"] - frozen_loss["combined_mse"]),
+                        "fs_delta": float(fs_loss["combined_mse"] - frozen_loss["combined_mse"]),
+                        "xl_delta": float(xl_loss["combined_mse"] - frozen_loss["combined_mse"]),
                         "weak_class_delta": {
-                            "c": sum(
-                                per_class[name]["c_delta"] for name in WEAK_CLASSES
-                            )
+                            "c": sum(per_class[name]["c_delta"] for name in WEAK_CLASSES)
                             / len(WEAK_CLASSES),
-                            "fs": sum(
-                                per_class[name]["fs_delta"] for name in WEAK_CLASSES
-                            )
+                            "fs": sum(per_class[name]["fs_delta"] for name in WEAK_CLASSES)
                             / len(WEAK_CLASSES),
                         },
                         "per_class": per_class,
@@ -518,9 +492,7 @@ def main() -> int:
     def course_means(rows: list[dict[str, Any]], key: str) -> dict[int, float]:
         result: dict[int, float] = {}
         for course_seed in COURSE_SEEDS:
-            values = [
-                float(row[key]) for row in rows if row["course_seed"] == course_seed
-            ]
+            values = [float(row[key]) for row in rows if row["course_seed"] == course_seed]
             result[course_seed] = sum(values) / len(values)
         return result
 
@@ -543,9 +515,7 @@ def main() -> int:
         / len(MODEL_SEEDS)
         for course in COURSE_SEEDS
     }
-    weak_wins = [
-        course for course in COURSE_SEEDS if weak_fs_means[course] < weak_c_means[course]
-    ]
+    weak_wins = [course for course in COURSE_SEEDS if weak_fs_means[course] < weak_c_means[course]]
     ni_courses = [
         course
         for course in COURSE_SEEDS
@@ -557,12 +527,8 @@ def main() -> int:
         for course in COURSE_SEEDS
         if val_c_course[course] < 0.0 and val_fs_course[course] < 0.0
     ]
-    g2_c_courses = [
-        course for course in COURSE_SEEDS if sealed_c_course[course] <= epsilon_cat
-    ]
-    g2_fs_courses = [
-        course for course in COURSE_SEEDS if sealed_fs_course[course] <= epsilon_cat
-    ]
+    g2_c_courses = [course for course in COURSE_SEEDS if sealed_c_course[course] <= epsilon_cat]
+    g2_fs_courses = [course for course in COURSE_SEEDS if sealed_fs_course[course] <= epsilon_cat]
     gates = {
         "G1_learning_floor": {
             "rule": "C and FS validation combined deltas < 0 in >= 2/3 courses",
@@ -602,9 +568,7 @@ def main() -> int:
         "generated_at_epoch": int(time.time()),
         "status": "passed" if formal_passed else "failed",
         "can_promote": False,
-        "preregistration": (
-            "plans/reference/M4V2_C_STAGE_FORMAL_PREREGISTRATION_20260910.md"
-        ),
+        "preregistration": ("plans/reference/M4V2_C_STAGE_FORMAL_PREREGISTRATION_20260910.md"),
         "input_verification": input_verification,
         "pre_sealed_artifact": str(args.presealed_report),
         "pre_sealed": {
@@ -642,9 +606,7 @@ def main() -> int:
         ),
     }
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
+    args.report.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     print(
         json.dumps(
             {

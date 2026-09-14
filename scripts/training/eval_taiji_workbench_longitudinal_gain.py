@@ -33,13 +33,13 @@ def _cell_rewards(
     }
     expected = {"none", "first", "second", "pair"}
     if set(selected) != expected:
-        raise AssertionError(
-            f"missing Workbench factorial cells for {split}/{context}: {selected}"
-        )
+        raise AssertionError(f"missing Workbench factorial cells for {split}/{context}: {selected}")
     return selected
 
 
-def _family_gain(records: list[dict[str, object]], *, split: str, context: str) -> dict[str, object]:
+def _family_gain(
+    records: list[dict[str, object]], *, split: str, context: str
+) -> dict[str, object]:
     rewards = _cell_rewards(records, split=split, context=context)
     strongest_single = max(rewards["first"], rewards["second"])
     dense_average = (rewards["first"] + rewards["second"]) / 2.0
@@ -87,7 +87,8 @@ def evaluate() -> dict[str, object]:
         >= MIN_GAIN,
         "holdout_group_gain_beats_strongest_single": holdout["grouped_gain_vs_strongest_single"]
         >= MIN_GAIN,
-        "holdout_group_gain_beats_dense_average": holdout["grouped_gain_vs_dense_average"] >= MIN_GAIN,
+        "holdout_group_gain_beats_dense_average": holdout["grouped_gain_vs_dense_average"]
+        >= MIN_GAIN,
         "holdout_direction_preserved": bool(workbench["metrics"]["holdout_direction_preserved"]),
         "conflicting_group_is_negative_control": conflict["grouped_pair_reward"]
         < conflict["strongest_single_reward"],
@@ -98,8 +99,7 @@ def evaluate() -> dict[str, object]:
         and bool(workbench["metrics"]["workbench_recovery_trace"]),
         "lesion_effect_preserved": bool(workbench["metrics"]["lesion_effects_observed"]),
         "resource_bound_preserved": all(
-            float(group["resource_cost"]) <= 10.0
-            for group in workbench["checkpoint"]["groups"]
+            float(group["resource_cost"]) <= 10.0 for group in workbench["checkpoint"]["groups"]
         ),
         "no_policy_tool_or_provider_mutation": all(
             not bool(workbench["boundary"][name])
@@ -149,7 +149,9 @@ def main() -> int:
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_w7_p4_3_workbench_longitudinal_gain_20260831.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_w7_p4_3_workbench_longitudinal_gain_20260831.json",
     )
     args = parser.parse_args()
     report = evaluate()

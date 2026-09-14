@@ -58,9 +58,7 @@ def test_runtime_projects_external_store_audit_without_mutation() -> None:
     before_retention_path = store_root.parent / f"s47-before-retention-{os.getpid()}.pt"
     after_retention_path = store_root.parent / f"s47-after-retention-{os.getpid()}.pt"
     store = StructuralValidationArtifactStore(store_root)
-    legacy_policy = ArtifactConsumptionPolicy.legacy_compatible(
-        reason="historical-s47-audit-test"
-    )
+    legacy_policy = ArtifactConsumptionPolicy.legacy_compatible(reason="historical-s47-audit-test")
     try:
         first_artifact, first_replay, _ = _build_artifact(
             runtime.model.architecture,
@@ -90,12 +88,14 @@ def test_runtime_projects_external_store_audit_without_mutation() -> None:
         )
         assert first_result["results"][first_id]["status"] == "admitted"
         assert second_result["results"][second_id]["status"] == "admitted"
-        assert runtime.rollback_structural_candidate_batch(terminal_batch_id, second_id)[
-            "status"
-        ] == "rolled_back"
-        assert runtime.rollback_structural_candidate_batch(terminal_batch_id, first_id)[
-            "status"
-        ] == "rolled_back"
+        assert (
+            runtime.rollback_structural_candidate_batch(terminal_batch_id, second_id)["status"]
+            == "rolled_back"
+        )
+        assert (
+            runtime.rollback_structural_candidate_batch(terminal_batch_id, first_id)["status"]
+            == "rolled_back"
+        )
 
         before_projection_checkpoint = _checkpoint_digest(
             runtime.model.architecture.native_checkpoint()
@@ -107,21 +107,25 @@ def test_runtime_projects_external_store_audit_without_mutation() -> None:
             for artifact in (first_artifact, second_artifact)
         }
         projection = runtime.project_structural_artifact_store_audit(artifact_store=store)
-        repeated_projection = runtime.project_structural_artifact_store_audit(
-            artifact_store=store
-        )
+        repeated_projection = runtime.project_structural_artifact_store_audit(artifact_store=store)
         assert projection == repeated_projection
         assert projection["format"] == STRUCTURAL_ARTIFACT_STORE_PROJECTION_FORMAT
         assert projection["audit_digest"]
-        assert {
-            item["runtime_visibility"] for item in projection["entries"]
-        } == {"runtime_recorded"}
+        assert {item["runtime_visibility"] for item in projection["entries"]} == {
+            "runtime_recorded"
+        }
         assert all(item["runtime_batch_ids"] for item in projection["entries"])
-        assert _checkpoint_digest(
-            runtime.model.architecture.native_checkpoint()
-        ) == before_projection_checkpoint
-        assert len(runtime.model.architecture.structural_validation_artifacts) == before_artifact_count
-        assert len(runtime.model.architecture.structural_validation_artifact_batches) == before_batch_count
+        assert (
+            _checkpoint_digest(runtime.model.architecture.native_checkpoint())
+            == before_projection_checkpoint
+        )
+        assert (
+            len(runtime.model.architecture.structural_validation_artifacts) == before_artifact_count
+        )
+        assert (
+            len(runtime.model.architecture.structural_validation_artifact_batches)
+            == before_batch_count
+        )
         assert {
             artifact.artifact_digest: store.path_for(artifact.artifact_digest).read_bytes()
             for artifact in (first_artifact, second_artifact)
@@ -149,11 +153,14 @@ def test_runtime_projects_external_store_audit_without_mutation() -> None:
         after_projection = after_retention.project_structural_artifact_store_audit(
             artifact_store=store
         )
-        assert {
-            item["runtime_visibility"] for item in after_projection["entries"]
-        } == {"external_orphan"}
+        assert {item["runtime_visibility"] for item in after_projection["entries"]} == {
+            "external_orphan"
+        }
         assert after_projection["audit_digest"] != projection["audit_digest"]
-        assert terminal_batch_id in after_retention.model.architecture.structural_lineage_retention_result.removed_batch_ids
+        assert (
+            terminal_batch_id
+            in after_retention.model.architecture.structural_lineage_retention_result.removed_batch_ids
+        )
         assert active_batch_id in {
             item.batch_id
             for item in after_retention.model.architecture.structural_candidate_batches
@@ -166,9 +173,10 @@ def test_runtime_projects_external_store_audit_without_mutation() -> None:
         with pytest.raises(ValueError):
             after_retention.project_structural_artifact_store_audit(artifact_store=store)
         first_path.write_bytes(original_bytes)
-        assert _checkpoint_digest(
-            after_retention.model.architecture.native_checkpoint()
-        ) == before_tampered_query
+        assert (
+            _checkpoint_digest(after_retention.model.architecture.native_checkpoint())
+            == before_tampered_query
+        )
         assert {
             artifact.artifact_digest: store.path_for(artifact.artifact_digest).read_bytes()
             for artifact in (first_artifact, second_artifact)

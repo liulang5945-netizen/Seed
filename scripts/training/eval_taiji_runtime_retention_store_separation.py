@@ -121,7 +121,9 @@ def evaluate() -> dict[str, object]:
         retention = before_retention.model.architecture.structural_lineage_retention_result
         if retention is None:
             raise AssertionError("S45 retention audit was not recorded")
-        before_terminal_replay = _checkpoint_digest(before_retention.model.architecture.native_checkpoint())
+        before_terminal_replay = _checkpoint_digest(
+            before_retention.model.architecture.native_checkpoint()
+        )
         before_retention.save(paths[3])
         after_retention = SeedRuntime.load(paths[3], workspace_root=PROJECT_ROOT)
         first_external = StructuralValidationArtifactStore(store_root).load(
@@ -140,9 +142,12 @@ def evaluate() -> dict[str, object]:
             terminal_replay_rejected = "unknown structural candidate batch" in str(exc)
         else:
             terminal_replay_rejected = False
-        after_terminal_replay = _checkpoint_digest(after_retention.model.architecture.native_checkpoint())
+        after_terminal_replay = _checkpoint_digest(
+            after_retention.model.architecture.native_checkpoint()
+        )
         final_batch_ids = {
-            item.batch_id for item in after_retention.model.architecture.structural_candidate_batches
+            item.batch_id
+            for item in after_retention.model.architecture.structural_candidate_batches
         }
         metrics = {
             "terminal_artifacts_are_still_physically_present": (
@@ -168,8 +173,7 @@ def evaluate() -> dict[str, object]:
                 and second_rollback["status"] == "rolled_back"
             ),
             "checkpoint_restore_preserves_store_and_audit_ownership": (
-                after_retention.model.architecture.structural_lineage_retention_policy
-                == policy
+                after_retention.model.architecture.structural_lineage_retention_policy == policy
                 and after_retention.model.architecture.structural_lineage_retention_result
                 == retention
                 and store.load(first_artifact.artifact_digest) == first_artifact
@@ -202,9 +206,7 @@ def evaluate() -> dict[str, object]:
 
 
 def _checkpoint(runtime: SeedRuntime, name: str, path: Path | None = None) -> SeedRuntime:
-    target = path or (
-        PROJECT_ROOT / "output" / "manual-r5-canary" / f"s45-{name}-{os.getpid()}.pt"
-    )
+    target = path or (PROJECT_ROOT / "output" / "manual-r5-canary" / f"s45-{name}-{os.getpid()}.pt")
     runtime.save(target)
     # Restoring must keep the workspace root this canary declared: the reads below
     # are resolved against it, and the loader would otherwise fall back to the

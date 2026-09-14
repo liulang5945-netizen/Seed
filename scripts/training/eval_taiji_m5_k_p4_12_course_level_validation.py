@@ -88,29 +88,15 @@ DEFAULT_MANIFEST = (
     / "manifests"
     / "taiji_m5_k_p4_12_course_level_validation_manifest_v1.json"
 )
-DEFAULT_REPORT = (
-    PROJECT_ROOT
-    / "reports"
-    / "taiji_m5_k_p4_12_course_level_validation_20260911.json"
-)
+DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p4_12_course_level_validation_20260911.json"
 P4_11_MANIFEST = (
-    PROJECT_ROOT
-    / "plans"
-    / "manifests"
-    / "taiji_m5_k_p4_11_projection_solver_manifest_v1.json"
+    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_11_projection_solver_manifest_v1.json"
 )
-P4_11_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m5_k_p4_11_projection_solver_20260911.json"
-)
+P4_11_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p4_11_projection_solver_20260911.json"
 P4_10_MANIFEST = (
-    PROJECT_ROOT
-    / "plans"
-    / "manifests"
-    / "taiji_m5_k_p4_10_feature_factorization_manifest_v1.json"
+    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_10_feature_factorization_manifest_v1.json"
 )
-P4_9_PROBE_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m5_k_p4_9_feature_space_probe_20260911.json"
-)
+P4_9_PROBE_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p4_9_feature_space_probe_20260911.json"
 P4_8_MANIFEST = (
     PROJECT_ROOT
     / "plans"
@@ -118,10 +104,7 @@ P4_8_MANIFEST = (
     / "taiji_m5_k_p4_8_representation_redesign_manifest_v1.json"
 )
 P4_7_MANIFEST = (
-    PROJECT_ROOT
-    / "plans"
-    / "manifests"
-    / "taiji_m5_k_p4_7_capacity_clean_test_manifest_v1.json"
+    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_7_capacity_clean_test_manifest_v1.json"
 )
 P4_6_MANIFEST = (
     PROJECT_ROOT
@@ -139,10 +122,7 @@ P4_4_MANIFEST = (
     / "taiji_m5_k_p4_4_retention_identity_calibration_manifest_v1.json"
 )
 P4_3_MANIFEST = (
-    PROJECT_ROOT
-    / "plans"
-    / "manifests"
-    / "taiji_m5_k_p4_3_retention_incremental_manifest_v1.json"
+    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_3_retention_incremental_manifest_v1.json"
 )
 P4_2_MANIFEST = (
     PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_2_capacity_attribution_manifest_v1.json"
@@ -157,9 +137,30 @@ LEARNING_RATE = 0.15
 SEEDS = (0, 1, 2)
 BATCHES = (0, 1, 2)
 BATCH_OFFSETS = {
-    0: {"constraint": 52100, "retention": 52000, "train": 52200, "validation": 52300, "holdout": 52400, "retention-newtask": 52500},
-    1: {"constraint": 53100, "retention": 53000, "train": 53200, "validation": 53300, "holdout": 53400, "retention-newtask": 53500},
-    2: {"constraint": 54100, "retention": 54000, "train": 54200, "validation": 54300, "holdout": 54400, "retention-newtask": 54500},
+    0: {
+        "constraint": 52100,
+        "retention": 52000,
+        "train": 52200,
+        "validation": 52300,
+        "holdout": 52400,
+        "retention-newtask": 52500,
+    },
+    1: {
+        "constraint": 53100,
+        "retention": 53000,
+        "train": 53200,
+        "validation": 53300,
+        "holdout": 53400,
+        "retention-newtask": 53500,
+    },
+    2: {
+        "constraint": 54100,
+        "retention": 54000,
+        "train": 54200,
+        "validation": 54300,
+        "holdout": 54400,
+        "retention-newtask": 54500,
+    },
 }
 ARM_BASELINE = "invariant-ext-17"
 ARM_PROJECTED = "projected-ext-17"
@@ -493,7 +494,8 @@ def _joint_constraints(
             if candidate.candidate_id == target_id:
                 continue
             difference = tuple(
-                t - o for t, o in zip(features[target_id], features[candidate.candidate_id], strict=True)
+                t - o
+                for t, o in zip(features[target_id], features[candidate.candidate_id], strict=True)
             )
             constraints.append(
                 (
@@ -527,7 +529,10 @@ def _joint_constraints(
                 if candidate.candidate_id == picked_id:
                     continue
                 difference = tuple(
-                    t - o for t, o in zip(features[picked_id], features[candidate.candidate_id], strict=True)
+                    t - o
+                    for t, o in zip(
+                        features[picked_id], features[candidate.candidate_id], strict=True
+                    )
                 )
                 constraints.append(
                     (
@@ -552,7 +557,10 @@ def _joint_constraints(
                 if candidate.candidate_role != "proposal":
                     continue
                 difference = tuple(
-                    t - o for t, o in zip(features[candidate.candidate_id], features[picked_id], strict=True)
+                    t - o
+                    for t, o in zip(
+                        features[candidate.candidate_id], features[picked_id], strict=True
+                    )
                 )
                 constraints.append(
                     (
@@ -564,9 +572,7 @@ def _joint_constraints(
     return constraints
 
 
-def _save_extended_checkpoint(
-    path: Path, learner: ExtendedGSelectionLearner
-) -> dict[str, Any]:
+def _save_extended_checkpoint(path: Path, learner: ExtendedGSelectionLearner) -> dict[str, Any]:
     payload = learner.checkpoint()
     _save_torch_atomic(path, payload)
     restored = ExtendedGSelectionLearner.from_checkpoint(_load_mapping(path), device="cpu")
@@ -665,9 +671,7 @@ def _run(
             p4_11_report.get("status") != "completed"
             or p4_11_report.get("outcome") != "projection_solver_supported"
         ):
-            raise ValueError(
-                "P4.12 requires the completed P4.11 projection_solver_supported"
-            )
+            raise ValueError("P4.12 requires the completed P4.11 projection_solver_supported")
         if p4_11_report.get("manifest_digest") != p4_11_manifest.get("manifest_digest"):
             raise ValueError("P4.11 manifest/report digest mismatch")
         if _digest_without(p4_11_manifest, "manifest_digest") != p4_11_manifest.get(
@@ -676,9 +680,9 @@ def _run(
             raise ValueError("P4.11 manifest content digest mismatch")
         if p4_11_report.get("growth_admitted") or p4_11_report.get("can_promote"):
             raise ValueError("P4.12 cannot consume an admitted P4.11 artifact")
-        if p4_11_manifest.get("source_p4_10_manifest_digest") != _load_json(
-            P4_10_MANIFEST
-        ).get("manifest_digest"):
+        if p4_11_manifest.get("source_p4_10_manifest_digest") != _load_json(P4_10_MANIFEST).get(
+            "manifest_digest"
+        ):
             raise ValueError("P4.11 source chain drifted")
         if p4_9_probe.get("feasibility_verdict") != (
             "parent_relative_features_are_the_factorization"
@@ -823,14 +827,11 @@ def _run(
                 semantic_payload=semantic_payload,
             )
             train_fit = [record for record in train_records if record["fit_eligible"]]
-            constraint_sets = tuple(
-                record["candidate_set"] for record in constraint_records
-            )
+            constraint_sets = tuple(record["candidate_set"] for record in constraint_records)
             constraint_digest = content_digest(
                 {
                     "constraint_set_digests": [
-                        candidate_set.candidate_set_digest
-                        for candidate_set in constraint_sets
+                        candidate_set.candidate_set_digest for candidate_set in constraint_sets
                     ],
                     "constraint_form": "margin-preservation-hinge",
                 }
@@ -874,8 +875,7 @@ def _run(
                 "validation_records": len(validation_records) == 20,
                 "holdout_records": len(holdout_records) == 20,
                 "retention_newtask_records": len(retention_newtask_records) == 20,
-                "constraint_records": len(constraint_records)
-                == int(contract["row_count"]),
+                "constraint_records": len(constraint_records) == int(contract["row_count"]),
                 "retention_sibling_records": len(retention_sibling_records)
                 == int(contract["row_count"]),
                 "train_fit_positive": len(train_fit) >= 8,
@@ -892,15 +892,11 @@ def _run(
                 )
                 == 5,
                 "five_retention_newtask_classes": len(
-                    {
-                        record["diagnostic"]["class_key"]
-                        for record in retention_newtask_records
-                    }
+                    {record["diagnostic"]["class_key"] for record in retention_newtask_records}
                 )
                 == 5,
                 "new_projects_disjoint_from_historical": all(
-                    projects.isdisjoint(old_projects)
-                    for _paths, projects in identity_sets
+                    projects.isdisjoint(old_projects) for _paths, projects in identity_sets
                 ),
                 "new_paths_disjoint_from_historical": all(
                     paths.isdisjoint(old_paths) for paths, _projects in identity_sets
@@ -912,9 +908,7 @@ def _run(
                     f"{[k for k, v in batch_identity_gate.items() if not v]}"
                 )
             old_paths |= {record["candidate_set"].path for record in all_records}
-            old_projects |= {
-                record["candidate_set"].project_id for record in all_records
-            }
+            old_projects |= {record["candidate_set"].project_id for record in all_records}
             sibling_structure = [
                 _structure_row(record["candidate_set"], record["behavior_set"])
                 for record in retention_sibling_records
@@ -923,10 +917,9 @@ def _run(
                 _structure_row(record["candidate_set"], record["behavior_set"])
                 for record in constraint_records
             ]
-            structure_ok = (
-                sibling_structure == list(contract["rows"])
-                and constraint_structure == list(contract["rows"])
-            )
+            structure_ok = sibling_structure == list(
+                contract["rows"]
+            ) and constraint_structure == list(contract["rows"])
             if not structure_ok:
                 raise ValueError(
                     f"P4.12 batch {batch} structure gate failed: P4.4 contract mismatch"
@@ -982,12 +975,15 @@ def _run(
                 birth_report["feature_source_digest"] = learners[
                     ARM_BASELINE
                 ].feature_source_state_digest
-                birth_passed = all(
-                    report["selection_mismatches"] == 0
-                    and report["max_abs_score_deviation"] == 0.0
-                    for arm, report in birth_report.items()
-                    if arm in learners
-                ) and birth_report["birth_hinge_loss_zero"]
+                birth_passed = (
+                    all(
+                        report["selection_mismatches"] == 0
+                        and report["max_abs_score_deviation"] == 0.0
+                        for arm, report in birth_report.items()
+                        if arm in learners
+                    )
+                    and birth_report["birth_hinge_loss_zero"]
+                )
                 if not birth_passed:
                     raise ValueError(
                         f"P4.12 cell b{batch}/s{seed} birth gate failed: {birth_report}"
@@ -1014,13 +1010,10 @@ def _run(
                     arm: learner.model_state_digest for arm, learner in learners.items()
                 }
                 trajectory_ok = (
-                    pre_projection_digests[ARM_BASELINE]
-                    == pre_projection_digests[ARM_PROJECTED]
+                    pre_projection_digests[ARM_BASELINE] == pre_projection_digests[ARM_PROJECTED]
                 )
                 if not trajectory_ok:
-                    raise RuntimeError(
-                        f"P4.12 cell b{batch}/s{seed} trajectory gate failed"
-                    )
+                    raise RuntimeError(f"P4.12 cell b{batch}/s{seed} trajectory gate failed")
                 anchor = [
                     float(value)
                     for value in learners[ARM_PROJECTED].head.weight.detach().reshape(-1)
@@ -1046,28 +1039,19 @@ def _run(
                     projection["weights"], projection_digest=projection_digest
                 )
                 trained_checkpoints = {
-                    arm: _save_extended_checkpoint(
-                        cell_dir / f"{arm}-trained.pt", learner
-                    )
+                    arm: _save_extended_checkpoint(cell_dir / f"{arm}-trained.pt", learner)
                     for arm, learner in learners.items()
                 }
                 if not all(item["passed"] for item in trained_checkpoints.values()):
-                    raise RuntimeError(
-                        f"P4.12 cell b{batch}/s{seed} checkpoint preflight failed"
-                    )
+                    raise RuntimeError(f"P4.12 cell b{batch}/s{seed} checkpoint preflight failed")
                 tamper_gate = {
-                    arm: _extended_tamper_rejected(
-                        _load_mapping(Path(str(item["path"])))
-                    )
+                    arm: _extended_tamper_rejected(_load_mapping(Path(str(item["path"]))))
                     for arm, item in trained_checkpoints.items()
                 }
                 if not all(tamper_gate.values()):
-                    raise RuntimeError(
-                        f"P4.12 cell b{batch}/s{seed} tamper gate failed"
-                    )
+                    raise RuntimeError(f"P4.12 cell b{batch}/s{seed} tamper gate failed")
                 feature_source_unchanged = all(
-                    learner.feature_source_state_digest
-                    == birth_report["feature_source_digest"]
+                    learner.feature_source_state_digest == birth_report["feature_source_digest"]
                     for learner in learners.values()
                 )
                 metrics = {
@@ -1093,9 +1077,7 @@ def _run(
                 }
                 baseline_wall = fit_wall
                 projected_wall = fit_wall + projection_wall
-                resource_soft_gate = (
-                    projected_wall <= RESOURCE_WALL_CAP_RATIO * baseline_wall
-                )
+                resource_soft_gate = projected_wall <= RESOURCE_WALL_CAP_RATIO * baseline_wall
                 if not resource_soft_gate:
                     resource_violations += 1
                 passes_all = {
@@ -1139,8 +1121,7 @@ def _run(
                         "gates": gates,
                         "passes_all": passes_all,
                         "parameter_count": {
-                            arm: learner.parameter_count
-                            for arm, learner in learners.items()
+                            arm: learner.parameter_count for arm, learner in learners.items()
                         },
                     }
                 )
@@ -1163,13 +1144,10 @@ def _run(
 
         # Identity aggregate over the three batches (88 records per batch).
         digest_gate = {
-            "all_candidate_digests_unique": len(all_candidate_digests)
-            == 3 * 88,
+            "all_candidate_digests_unique": len(all_candidate_digests) == 3 * 88,
             "all_behavior_digests_unique": len(all_behavior_digests) == 3 * 88,
         }
-        projected_pass_count = sum(
-            1 for cell in cell_results if cell["passes_all"][ARM_PROJECTED]
-        )
+        projected_pass_count = sum(1 for cell in cell_results if cell["passes_all"][ARM_PROJECTED])
         baseline_tension_batches = sum(
             1
             for summary in batch_summaries
@@ -1192,8 +1170,7 @@ def _run(
                 for item in cell["trained_checkpoints"].values()
             ),
             "all_tamper_checks": all(
-                all(bool(value) for value in cell["tamper_gate"].values())
-                for cell in cell_results
+                all(bool(value) for value in cell["tamper_gate"].values()) for cell in cell_results
             ),
             "feature_source_unchanged": all(
                 cell["feature_source_unchanged"] for cell in cell_results
@@ -1204,8 +1181,7 @@ def _run(
         training_gate = {
             "nine_cells_present": len(cell_results) == 9,
             "three_deterministic_seeds": all(
-                len(summary["seed_results"]) == len(SEEDS)
-                for summary in batch_summaries
+                len(summary["seed_results"]) == len(SEEDS) for summary in batch_summaries
             ),
             "validation_not_fit": True,
             "holdout_not_fit": True,
@@ -1220,8 +1196,7 @@ def _run(
                 for cell in cell_results
             ),
             "trajectory_gates_all_pass": all(
-                cell["trajectory_gate"]["pre_projection_digests_identical"]
-                for cell in cell_results
+                cell["trajectory_gate"]["pre_projection_digests_identical"] for cell in cell_results
             ),
         }
         all_gates = (
@@ -1249,9 +1224,7 @@ def _run(
             "source_p4_6_manifest_digest": p4_6_manifest["manifest_digest"],
             "source_p4_7_manifest_digest": p4_7_manifest["manifest_digest"],
             "source_p4_8_manifest_digest": p4_8_manifest["manifest_digest"],
-            "source_p4_10_manifest_digest": _load_json(P4_10_MANIFEST)[
-                "manifest_digest"
-            ],
+            "source_p4_10_manifest_digest": _load_json(P4_10_MANIFEST)["manifest_digest"],
             "source_p4_11_manifest_digest": p4_11_manifest["manifest_digest"],
             "source_p4_11_report_digest": content_digest(p4_11_report),
             "source_p4_9_probe_report_digest": content_digest(p4_9_probe),
@@ -1278,8 +1251,7 @@ def _run(
                 "new_task_thresholds": {"utility_floor": 0.68, "target_hit_floor": 0.6},
             },
             "batch_candidate_set_digests": {
-                str(batch): sorted(batch_candidate_digests[batch])
-                for batch in BATCHES
+                str(batch): sorted(batch_candidate_digests[batch]) for batch in BATCHES
             },
         }
         manifest["manifest_digest"] = content_digest(manifest)
@@ -1293,12 +1265,10 @@ def _run(
                 "manifest_digest": manifest["manifest_digest"],
                 "identity_gate": digest_gate,
                 "batch_identity_gates": {
-                    str(summary["batch"]): summary["identity_gate"]
-                    for summary in batch_summaries
+                    str(summary["batch"]): summary["identity_gate"] for summary in batch_summaries
                 },
                 "structure_gate": {
-                    str(summary["batch"]): summary["structure_ok"]
-                    for summary in batch_summaries
+                    str(summary["batch"]): summary["structure_ok"] for summary in batch_summaries
                 },
                 "checkpoint_gate": checkpoint_gate,
                 "training_gate": training_gate,

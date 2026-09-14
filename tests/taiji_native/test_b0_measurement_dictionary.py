@@ -41,9 +41,7 @@ import pytest
 
 REPO = Path(__file__).resolve().parents[2]
 AUDIT_SCRIPT = REPO / "scripts" / "training" / "audit_taiji_b0_measurement_reachability.py"
-ROUTE_A_REPORT = (
-    REPO / "reports" / "taiji_p5_2c_triple_prime_representation_repair_20260913.json"
-)
+ROUTE_A_REPORT = REPO / "reports" / "taiji_p5_2c_triple_prime_representation_repair_20260913.json"
 ROUTE_C_REPORT = (
     REPO / "reports" / "taiji_p5_2c_double_prime_unseen_combination_transfer_20260913.json"
 )
@@ -156,15 +154,13 @@ def test_equal_outcome_different_cost_only_separates_with_a_frozen_weight(dictio
     )
 
     # Default weight is 0.0 on purpose: nothing is folded in implicitly.
-    assert dictionary.policy_utility(table, pair) == dictionary.policy_utility(
-        table, singleton
-    )
+    assert dictionary.policy_utility(table, pair) == dictionary.policy_utility(table, singleton)
     # With an explicit weight the two-member policy pays for its extra call.
     assert dictionary.policy_utility(table, pair, cost_weight=0.5) == 0.0
     assert dictionary.policy_utility(table, singleton, cost_weight=0.5) == 0.5
-    assert dictionary.policy_utility(
-        table, pair, cost_weight=0.5
-    ) < dictionary.policy_utility(table, singleton, cost_weight=0.5)
+    assert dictionary.policy_utility(table, pair, cost_weight=0.5) < dictionary.policy_utility(
+        table, singleton, cost_weight=0.5
+    )
 
 
 # --------------------------------------------------------------------------- #
@@ -259,10 +255,9 @@ def test_frozen_matrix_contains_no_combination_that_beats_the_oracle(audit_paylo
     # The one context where every singleton fails is the only place a new task
     # could create a same-reference gain.
     assert reachability["ceiling_if_block_becomes_solvable"] == 0.5
-    assert (
-        audit_payload["task_structure_facts"]["contexts_where_every_singleton_fails"]
-        == ["p52a-validation-111"]
-    )
+    assert audit_payload["task_structure_facts"]["contexts_where_every_singleton_fails"] == [
+        "p52a-validation-111"
+    ]
 
 
 def test_every_candidate_reference_is_self_consistently_reported(audit_payload):
@@ -278,11 +273,11 @@ def test_every_candidate_reference_is_self_consistently_reported(audit_payload):
 
     # An oracle reference must be marked non-deployable, or a gate could compare a
     # policy against something that had access to the outcome it is scored on.
-    oracle_rows = [row for row in reachability["rows"] if row["reference"] == "all_singleton_oracle"]
-    assert oracle_rows and oracle_rows[0]["reference_is_deployable"] is False
-    deployable = [
-        row for row in reachability["rows"] if row["reference"] != "all_singleton_oracle"
+    oracle_rows = [
+        row for row in reachability["rows"] if row["reference"] == "all_singleton_oracle"
     ]
+    assert oracle_rows and oracle_rows[0]["reference_is_deployable"] is False
+    deployable = [row for row in reachability["rows"] if row["reference"] != "all_singleton_oracle"]
     assert deployable and all(row["reference_is_deployable"] for row in deployable)
 
 

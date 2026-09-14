@@ -159,9 +159,7 @@ def run_canary(
     protected_model = Taiji.from_checkpoint(source_model.checkpoint())
     active_model = Taiji.from_checkpoint(source_model.checkpoint())
     protected_before = _protected_owner_digest(active_model)
-    protected_readout_digest = active_model.readout_registry_status()["protected"][
-        "readout_digest"
-    ]
+    protected_readout_digest = active_model.readout_registry_status()["protected"]["readout_digest"]
     boundary = WorkbenchTaskBoundary.issue(
         project_id="project:seed",
         task_id="task:active-continuation",
@@ -262,8 +260,7 @@ def run_canary(
                 "readout_digest",
             )
         ),
-        "active_readout_changes": active_before["readout_digest"]
-        != active_after["readout_digest"],
+        "active_readout_changes": active_before["readout_digest"] != active_after["readout_digest"],
         "protected_owners_unchanged": protected_before == protected_after,
         "protected_readout_digest_unchanged": protected_readout_digest
         == active_model.readout_registry_status()["protected"]["readout_digest"],
@@ -279,8 +276,7 @@ def run_canary(
             restored_metadata == active_after
             and restored_checkpoint_digest == active_checkpoint_digest
         ),
-        "active_registry_round_trips_in_fresh_process": fresh_digest
-        == active_checkpoint_digest,
+        "active_registry_round_trips_in_fresh_process": fresh_digest == active_checkpoint_digest,
         "active_generation_uses_active_owner": (
             active_model.last_generation_route is not None
             and active_model.last_generation_route["generation_scope"] == "active"
@@ -395,9 +391,7 @@ def main() -> int:
                 "checks_passed": sum(int(value) for value in result["checks"].values()),
                 "checks_total": len(result["checks"]),
                 "phase_b_gain_bpb": result["capability"]["phase_b_gain_bpb"],
-                "protected_owners_unchanged": result["owner_audit"][
-                    "protected_owners_unchanged"
-                ],
+                "protected_owners_unchanged": result["owner_audit"]["protected_owners_unchanged"],
             },
             ensure_ascii=False,
             indent=2,

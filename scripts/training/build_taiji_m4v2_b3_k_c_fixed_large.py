@@ -73,9 +73,7 @@ DEFAULT_OUTPUT_ROOT = PROJECT_ROOT / "checkpoints" / "taiji_k_fixed_large_c_entr
 DEFAULT_MANIFEST = (
     PROJECT_ROOT / "plans" / "manifests" / "taiji_m4v2_b3_k_c_entry_evaluation_v1.json"
 )
-DEFAULT_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m4v2_b3_k_c_fixed_large_build_20260910.json"
-)
+DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m4v2_b3_k_c_fixed_large_build_20260910.json"
 
 
 def _rss_bytes() -> int | None:
@@ -118,9 +116,9 @@ def _parameter_delta_norm(before, after) -> float:
     for before_parameter, after_parameter in zip(
         before.parameters(), after.parameters(), strict=True
     ):
-        difference = after_parameter.detach().to(dtype=torch.float64) - before_parameter.detach().to(
+        difference = after_parameter.detach().to(
             dtype=torch.float64
-        )
+        ) - before_parameter.detach().to(dtype=torch.float64)
         total += torch.sum(difference * difference)
     return float(torch.sqrt(total).item())
 
@@ -159,9 +157,7 @@ def _build_course(
             schema=schema,
         )
     }
-    holdout_paths = sorted(
-        {path for episode in _holdout_episode_paths() for path in episode}
-    )
+    holdout_paths = sorted({path for episode in _holdout_episode_paths() for path in episode})
     holdout_observations = {
         observation.path: observation
         for observation in _observe_all(
@@ -244,12 +240,8 @@ def _fit_replica(
     )
     prefit_dir = output_dir / f"replica_{replica_index}" / "prefit"
     prefit_dir.mkdir(parents=True, exist_ok=True)
-    prefit_semantic = _atomic_save(
-        prefit_dir / "k1_semantic.pt", semantic.checkpoint()
-    )
-    prefit_transition = _atomic_save(
-        prefit_dir / "k2_transition.pt", transition.checkpoint()
-    )
+    prefit_semantic = _atomic_save(prefit_dir / "k1_semantic.pt", semantic.checkpoint())
+    prefit_transition = _atomic_save(prefit_dir / "k2_transition.pt", transition.checkpoint())
     semantic = StructuredSemanticLearner.from_checkpoint(prefit_semantic, device="cpu")
     transition = StructuredSemanticTransitionLearner.from_checkpoint(
         prefit_transition, device="cpu"
@@ -282,9 +274,7 @@ def _fit_replica(
         output_dir / f"replica_{replica_index}" / "k2_transition.pt",
         transition.checkpoint(),
     )
-    restored_semantic = StructuredSemanticLearner.from_checkpoint(
-        semantic_checkpoint, device="cpu"
-    )
+    restored_semantic = StructuredSemanticLearner.from_checkpoint(semantic_checkpoint, device="cpu")
     restored_transition = StructuredSemanticTransitionLearner.from_checkpoint(
         transition_checkpoint, device="cpu"
     )
@@ -298,27 +288,19 @@ def _fit_replica(
             == content_digest(transition_before.checkpoint()),
         },
         "postfit_restore_gate": {
-            "k1.semantic": restored_semantic.owner_digests()
-            == semantic.owner_digests(),
-            "k2.transition": restored_transition.owner_digests()
-            == transition.owner_digests(),
+            "k1.semantic": restored_semantic.owner_digests() == semantic.owner_digests(),
+            "k2.transition": restored_transition.owner_digests() == transition.owner_digests(),
         },
         "k1_checkpoint_path": str(output_dir / f"replica_{replica_index}" / "k1_semantic.pt"),
         "k2_checkpoint_path": str(output_dir / f"replica_{replica_index}" / "k2_transition.pt"),
         "k1_checkpoint_digest": content_digest(semantic_checkpoint),
         "k2_checkpoint_digest": content_digest(transition_checkpoint),
-        "k1_parameter_delta_digest": _parameter_delta_digest(
-            semantic_before, restored_semantic
-        ),
+        "k1_parameter_delta_digest": _parameter_delta_digest(semantic_before, restored_semantic),
         "k2_parameter_delta_digest": _parameter_delta_digest(
             transition_before, restored_transition
         ),
-        "k1_parameter_delta_norm": _parameter_delta_norm(
-            semantic_before, restored_semantic
-        ),
-        "k2_parameter_delta_norm": _parameter_delta_norm(
-            transition_before, restored_transition
-        ),
+        "k1_parameter_delta_norm": _parameter_delta_norm(semantic_before, restored_semantic),
+        "k2_parameter_delta_norm": _parameter_delta_norm(transition_before, restored_transition),
         "k1_training_steps": restored_semantic.training_steps,
         "k2_training_steps": restored_transition.training_steps,
         "losses": {"k1.semantic": semantic_losses, "k2.transition": transition_losses},
@@ -417,29 +399,15 @@ def run_cell(
             "course_seed": int(course_seed),
             "episode_indexes": list(indexes),
             "episode_paths": [list(paths) for paths in variants],
-            "train_experience_digests": [
-                experience.experience_digest for experience in train
-            ],
-            "holdout_experience_digests": [
-                experience.experience_digest for experience in holdout
-            ],
+            "train_experience_digests": [experience.experience_digest for experience in train],
+            "holdout_experience_digests": [experience.experience_digest for experience in holdout],
             "train_target_digests": target_digests,
             "train_target_multiset_digest": content_digest(sorted(target_digests)),
             "validation_paths": sorted(
-                {
-                    path
-                    for episode in manifest["validation_split"]["episodes"]
-                    for path in episode
-                }
+                {path for episode in manifest["validation_split"]["episodes"] for path in episode}
             ),
             "path_sets": {
-                "training": sorted(
-                    {
-                        path
-                        for episode_paths in variants
-                        for path in episode_paths
-                    }
-                ),
+                "training": sorted({path for episode_paths in variants for path in episode_paths}),
                 "formal_holdout": sorted(
                     {
                         path
@@ -448,9 +416,7 @@ def run_cell(
                     }
                 ),
             },
-            "sealed_test_artifact_digest": str(
-                manifest["sealed_test_split"]["artifact_digest"]
-            ),
+            "sealed_test_artifact_digest": str(manifest["sealed_test_split"]["artifact_digest"]),
             "replica_update_order": ["canonical", "reverse"],
             "training": {
                 "update_schedule": "single-example-sequential",
@@ -483,9 +449,7 @@ def run_cell(
         training_after_rss = _rss_bytes()
         ensemble = NativeKFixedLargeEnsemble(semantic_replicas, transition_replicas)
         ensemble_checkpoint = ensemble.checkpoint()
-        restored_ensemble = NativeKFixedLargeEnsemble.from_checkpoint(
-            ensemble_checkpoint
-        )
+        restored_ensemble = NativeKFixedLargeEnsemble.from_checkpoint(ensemble_checkpoint)
         resource_manifest = {
             "format": RESOURCE_MANIFEST_FORMAT,
             "version": 1,
@@ -498,11 +462,7 @@ def run_cell(
         }
         checkpoint_path = artifact_dir_out / "taiji_c_entry_k_fixed_large_ensemble.pt"
         checkpoint_paths = tuple(
-            sorted(
-                path
-                for path in artifact_dir_out.rglob("*.pt")
-                if path != checkpoint_path
-            )
+            sorted(path for path in artifact_dir_out.rglob("*.pt") if path != checkpoint_path)
         )
         checkpoint_write_bytes = sum(int(path.stat().st_size) for path in checkpoint_paths)
         training_steps = sum(
@@ -527,15 +487,9 @@ def run_cell(
             "peak_working_set_method": "process_rss_before_after_lower_bound",
             "training_update_steps": training_steps,
             "worker_parameter_count": int(restored_ensemble.parameter_count),
-            "worker_parameter_bytes": _parameter_bytes(
-                *semantic_replicas, *transition_replicas
-            ),
-            "candidate_parameter_bytes": _parameter_bytes(
-                *semantic_replicas, *transition_replicas
-            ),
-            "parameter_bytes": _parameter_bytes(
-                *semantic_replicas, *transition_replicas
-            ),
+            "worker_parameter_bytes": _parameter_bytes(*semantic_replicas, *transition_replicas),
+            "candidate_parameter_bytes": _parameter_bytes(*semantic_replicas, *transition_replicas),
+            "parameter_bytes": _parameter_bytes(*semantic_replicas, *transition_replicas),
             "checkpoint_write_bytes": checkpoint_write_bytes,
             "checkpoint_write_paths": [str(path) for path in checkpoint_paths],
             "inference_trace_count": None,
@@ -572,12 +526,15 @@ def run_cell(
         restored_ensemble_from_disk = NativeKFixedLargeEnsemble.from_checkpoint(
             restored_payload["ensemble_checkpoint"]
         )
-        replica_distinct = len(
-            {
-                (item["k1_checkpoint_digest"], item["k2_checkpoint_digest"])
-                for item in replica_reports
-            }
-        ) == ENSEMBLE_WIDTH
+        replica_distinct = (
+            len(
+                {
+                    (item["k1_checkpoint_digest"], item["k2_checkpoint_digest"])
+                    for item in replica_reports
+                }
+            )
+            == ENSEMBLE_WIDTH
+        )
         report_resource = dict(resource_measurement)
         report_resource["checkpoint_write_bytes"] = int(
             resource_measurement["checkpoint_write_bytes"]
@@ -606,9 +563,7 @@ def run_cell(
             "ensemble_checkpoint_digest": content_digest(ensemble_checkpoint),
             "ensemble_fresh_restore": content_digest(restored_ensemble.checkpoint())
             == content_digest(ensemble_checkpoint),
-            "disk_ensemble_fresh_restore": content_digest(
-                restored_ensemble_from_disk.checkpoint()
-            )
+            "disk_ensemble_fresh_restore": content_digest(restored_ensemble_from_disk.checkpoint())
             == content_digest(ensemble_checkpoint),
             "replica_updates_distinct": replica_distinct,
             "replica_reports": replica_reports,
@@ -662,9 +617,7 @@ def run_matrix(
         "cell_count": len(cells),
         "cells": cells,
         "course_contract_digest": str(manifest["course_contract_digest"]),
-        "sealed_test_artifact_digest": str(
-            manifest["sealed_test_split"]["artifact_digest"]
-        ),
+        "sealed_test_artifact_digest": str(manifest["sealed_test_split"]["artifact_digest"]),
         "training_performed": True,
         "sealed_test_scored": False,
         "can_start_formal": False,
@@ -685,8 +638,12 @@ def main() -> int:
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
     args = parser.parse_args()
-    worker_root = args.worker_root if args.worker_root.is_absolute() else PROJECT_ROOT / args.worker_root
-    output_root = args.output_root if args.output_root.is_absolute() else PROJECT_ROOT / args.output_root
+    worker_root = (
+        args.worker_root if args.worker_root.is_absolute() else PROJECT_ROOT / args.worker_root
+    )
+    output_root = (
+        args.output_root if args.output_root.is_absolute() else PROJECT_ROOT / args.output_root
+    )
     manifest = args.manifest if args.manifest.is_absolute() else PROJECT_ROOT / args.manifest
     report = args.report if args.report.is_absolute() else PROJECT_ROOT / args.report
     result = run_matrix(

@@ -73,8 +73,8 @@ P3_1_MANIFEST = (
 REPORT_FORMAT = "taiji-m5-k-p3-2-owner-transfer-preflight-v1"
 VERSION = 1
 DEFAULT_OUTPUT_ROOT = PROJECT_ROOT / "output"
-DEFAULT_MANIFEST = PROJECT_ROOT / "plans" / "manifests" / (
-    "taiji_m5_k_p3_2_owner_transfer_manifest_v1.json"
+DEFAULT_MANIFEST = (
+    PROJECT_ROOT / "plans" / "manifests" / ("taiji_m5_k_p3_2_owner_transfer_manifest_v1.json")
 )
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p3_2_owner_transfer_20260910.json"
 
@@ -160,9 +160,7 @@ def _prepare_transfer(
         events.append(
             {
                 "event": event,
-                "state_payloads": {
-                    key: dict(value) for key, value in state_payloads.items()
-                },
+                "state_payloads": {key: dict(value) for key, value in state_payloads.items()},
             }
         )
         current = after
@@ -196,9 +194,7 @@ def _prepare_transfer(
         selection = GSelectionState.from_k1_result(semantic_result)
         transfer_action = None
         if transition_result is not None:
-            planner = NativeReadOnlyIntentPlanner(
-                ReadOnlyIntentPolicy(routes=READ_ONLY_ROUTES)
-            )
+            planner = NativeReadOnlyIntentPlanner(ReadOnlyIntentPolicy(routes=READ_ONLY_ROUTES))
             transfer_action = _run_intent(
                 case=case,
                 planner=planner,
@@ -269,8 +265,7 @@ def _prepare_transfer(
                 transfer_row["k2_goal_id"] == k_only["k2_goal_id"]
                 and transfer_row["k2_content_id"] == k_only["k2_content_id"]
             ),
-            "safe_abstention_matches": transfer_row["safe_abstention"]
-            == k_only["safe_abstention"],
+            "safe_abstention_matches": transfer_row["safe_abstention"] == k_only["safe_abstention"],
             "workbench_matches": bool(transfer_action_payload.get("workbench_success", False))
             == bool(k_only_action.get("workbench_success", False)),
         }
@@ -405,8 +400,10 @@ def _save_boundary(
         owner_refs[owner] = str(path)
     if event_count != len(event_refs) or event_count != len(event_digests):
         raise ValueError("owner-transfer boundary event prefix is inconsistent")
-    stage = "complete" if event_count == len(prepared) else (
-        str(prepared[event_count - 1]["event"].event_type) if event_count else "observation"
+    stage = (
+        "complete"
+        if event_count == len(prepared)
+        else (str(prepared[event_count - 1]["event"].event_type) if event_count else "observation")
     )
     checkpoint = TaijiOwnerTransferCheckpoint.create(
         base_continuation_checkpoint_digest=base.checkpoint_digest,
@@ -771,10 +768,14 @@ def run_preflight(
                 Path(uninterrupted_artifact["checkpoint_path"]), manifest_path, p3_1_manifest_path
             ),
             "event_boundary": _independent_restore(
-                Path(interrupted_event_artifact["checkpoint_path"]), manifest_path, p3_1_manifest_path
+                Path(interrupted_event_artifact["checkpoint_path"]),
+                manifest_path,
+                p3_1_manifest_path,
             ),
             "case_boundary": _independent_restore(
-                Path(interrupted_case_artifact["checkpoint_path"]), manifest_path, p3_1_manifest_path
+                Path(interrupted_case_artifact["checkpoint_path"]),
+                manifest_path,
+                p3_1_manifest_path,
             ),
             "event_resumed": _independent_restore(
                 Path(resumed_event_artifact["checkpoint_path"]), manifest_path, p3_1_manifest_path
@@ -810,20 +811,16 @@ def run_preflight(
                 not bool(row["owner_transfer"]["external_target_used"]) for row in rows
             ),
             "selection_matches_k1": all(
-                bool(row["owner_transfer"]["equivalent"]["selection_matches_k1"])
-                for row in rows
+                bool(row["owner_transfer"]["equivalent"]["selection_matches_k1"]) for row in rows
             ),
             "k2_output_matches": all(
-                bool(row["owner_transfer"]["equivalent"]["k2_output_matches"])
-                for row in rows
+                bool(row["owner_transfer"]["equivalent"]["k2_output_matches"]) for row in rows
             ),
             "safe_abstention_matches": all(
-                bool(row["owner_transfer"]["equivalent"]["safe_abstention_matches"])
-                for row in rows
+                bool(row["owner_transfer"]["equivalent"]["safe_abstention_matches"]) for row in rows
             ),
             "workbench_matches": all(
-                bool(row["owner_transfer"]["equivalent"]["workbench_matches"])
-                for row in rows
+                bool(row["owner_transfer"]["equivalent"]["workbench_matches"]) for row in rows
             ),
             "parameter_count_stable": parameter_count["total"]
             == int(parameter_count["k1"] + parameter_count["k2"]),

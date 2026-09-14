@@ -114,9 +114,7 @@ def _capacity_records(seed: int) -> list[dict[str, Any]]:
                 "occupied_count": model.identity_organ.bank.occupied_count,
                 "allocation_count": model.identity_organ.bank.allocation_count,
                 "replacement_count": model.identity_organ.replacement_count,
-                "occupied_within_capacity": (
-                    model.identity_organ.bank.occupied_count <= capacity
-                ),
+                "occupied_within_capacity": (model.identity_organ.bank.occupied_count <= capacity),
                 "expected_replacements": 8,
                 "parameter_count_matches_plan": (
                     model.parameter_count() == model.config.planned_active_parameter_count
@@ -209,9 +207,7 @@ def _larger_record(seed: int) -> dict[str, Any]:
         "route": {
             "phase_a_unique_slots": len(set(phase_a_slots)),
             "phase_b_unique_slots": len(set(phase_b_slots)),
-            "cross_phase_slot_collisions": len(
-                set(phase_a_slots).intersection(phase_b_slots)
-            ),
+            "cross_phase_slot_collisions": len(set(phase_a_slots).intersection(phase_b_slots)),
             "unbound_slots": sum(slot is None for slot in (*phase_a_slots, *phase_b_slots)),
             "replacement_count": child.identity_organ.replacement_count,
         },
@@ -246,9 +242,7 @@ def _larger_record(seed: int) -> dict[str, Any]:
             "restored_old_holdout": restored_old,
             "restored_new_holdout": restored_new,
             "fresh_process_source": fresh["source"],
-            "fresh_process_persistent_digest_unchanged": fresh[
-                "persistent_digest_unchanged"
-            ],
+            "fresh_process_persistent_digest_unchanged": fresh["persistent_digest_unchanged"],
             "fresh_process_checkpoint_digest_matches": (
                 fresh["loaded_checkpoint_digest"] == content_digest(child_checkpoint)
             ),
@@ -267,8 +261,12 @@ def _gain_record(seed: int, gain: float) -> dict[str, float]:
     parent = _accuracy(model, corpus.phase_a_holdout, _actions(*corpus.phase_a_train))
     for episode in corpus.phase_b_train:
         DelayedMemoryTask._write_episode(model, episode)
-    old = _accuracy(model, corpus.phase_a_holdout, _actions(*corpus.phase_a_train, *corpus.phase_b_train))
-    new = _accuracy(model, corpus.phase_b_holdout, _actions(*corpus.phase_a_train, *corpus.phase_b_train))
+    old = _accuracy(
+        model, corpus.phase_a_holdout, _actions(*corpus.phase_a_train, *corpus.phase_b_train)
+    )
+    new = _accuracy(
+        model, corpus.phase_b_holdout, _actions(*corpus.phase_a_train, *corpus.phase_b_train)
+    )
     return {"gain": float(gain), "parent_old": parent, "child_old": old, "child_new": new}
 
 
@@ -376,7 +374,9 @@ def main() -> int:
         "report_path": str(args.report),
     }
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

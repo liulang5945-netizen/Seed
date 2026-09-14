@@ -157,7 +157,9 @@ class WorkbenchTaskBoundary:
             raise ValueError("unsupported Workbench task boundary lifecycle")
         if self.generation_scope not in WORKBENCH_READOUT_GENERATIONS:
             raise ValueError("unsupported Workbench readout generation")
-        object.__setattr__(self, "capability_ids", _text_tuple(self.capability_ids, "capability_ids"))
+        object.__setattr__(
+            self, "capability_ids", _text_tuple(self.capability_ids, "capability_ids")
+        )
         if int(self.issued_tick) < 0:
             raise ValueError("issued_tick cannot be negative")
         if int(self.expires_tick) < int(self.issued_tick):

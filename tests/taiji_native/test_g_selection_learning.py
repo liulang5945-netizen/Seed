@@ -18,7 +18,9 @@ PARENT_MANIFEST = "a" * 64
 K_DIGESTS = {"k1": "b" * 64, "k2": "c" * 64}
 
 
-def _proposal(candidate_id: str, goal_id: str, content_id: str, *, score: float) -> GSelectionCandidate:
+def _proposal(
+    candidate_id: str, goal_id: str, content_id: str, *, score: float
+) -> GSelectionCandidate:
     goal = Goal(goal_id, f"goal {goal_id}", priority=0.8)
     content = ContentPlan(
         content_id=content_id,

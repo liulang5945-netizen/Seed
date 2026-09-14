@@ -23,10 +23,7 @@ def _canonical_value(value: Any) -> Any:
             "bytes": bytes(tensor.view(torch.uint8).reshape(-1).tolist()).hex(),
         }
     if isinstance(value, Mapping):
-        return {
-            str(key): _canonical_value(value[key])
-            for key in sorted(value, key=str)
-        }
+        return {str(key): _canonical_value(value[key]) for key in sorted(value, key=str)}
     if isinstance(value, (tuple, list)):
         return [_canonical_value(item) for item in value]
     if isinstance(value, (str, int, float, bool)) or value is None:
@@ -239,10 +236,9 @@ class WorkbenchStructuralValidationArtifact:
     def matches_holdout_replay(self, holdout_inputs: Any, holdout_outputs: Any) -> bool:
         """Verify that the replay payload is the payload bound by this artifact."""
 
-        return (
-            self.holdout_input_digest == _digest_value(holdout_inputs)
-            and self.holdout_output_digest == _digest_value(holdout_outputs)
-        )
+        return self.holdout_input_digest == _digest_value(
+            holdout_inputs
+        ) and self.holdout_output_digest == _digest_value(holdout_outputs)
 
     def to_payload(self) -> dict[str, Any]:
         return {

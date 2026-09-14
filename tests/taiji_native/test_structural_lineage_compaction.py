@@ -159,7 +159,9 @@ def _prepare_model() -> tuple[TSKV8Adapter, str, str, object]:
     assert schedule.get("status") == "batch_created"
     model = runtime.model.architecture
     active_batch_id = str(schedule["batch_id"])
-    active = next(item for item in model.structural_candidate_batches if item.batch_id == active_batch_id)
+    active = next(
+        item for item in model.structural_candidate_batches if item.batch_id == active_batch_id
+    )
     terminal_batch_id = "batch:terminal-lineage"
     terminal_candidate_id = "candidate:terminal-lineage"
     model._record_structural_candidate_batch(
@@ -217,7 +219,9 @@ def test_compaction_is_checkpointable_and_old_lineage_fails_closed() -> None:
 
     assert _checkpoint_digest(restored.native_checkpoint()) == _checkpoint_digest(checkpoint)
     assert active_batch_id in {item.batch_id for item in restored.structural_candidate_batches}
-    assert terminal_batch_id not in {item.batch_id for item in restored.structural_candidate_batches}
+    assert terminal_batch_id not in {
+        item.batch_id for item in restored.structural_candidate_batches
+    }
     assert restored.materialize_structural_candidate(old_artifact.candidate_id) is None
     stale = restored.continue_structural_candidate_from_validation_artifact(
         old_artifact,
@@ -242,7 +246,9 @@ def test_compaction_is_checkpointable_and_old_lineage_fails_closed() -> None:
 
 def test_protected_lineage_reports_pressure_without_deletion() -> None:
     model, active_batch_id, _, _ = _prepare_model()
-    active = next(item for item in model.structural_candidate_batches if item.batch_id == active_batch_id)
+    active = next(
+        item for item in model.structural_candidate_batches if item.batch_id == active_batch_id
+    )
     model._record_structural_candidate_batch(
         replace(active, batch_id="batch:protected-copy", revision=active.revision + 1)
     )

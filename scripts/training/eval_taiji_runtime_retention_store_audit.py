@@ -63,9 +63,7 @@ def evaluate() -> dict[str, object]:
     first_id, second_id = terminal_batch.selected_candidate_ids
 
     store_root = PROJECT_ROOT / "output" / "manual-r5-canary" / f"s46-store-{os.getpid()}"
-    before_retention_path = (
-        store_root.parent / f"s46-before-retention-{os.getpid()}.pt"
-    )
+    before_retention_path = store_root.parent / f"s46-before-retention-{os.getpid()}.pt"
     after_retention_path = store_root.parent / f"s46-after-retention-{os.getpid()}.pt"
     store = StructuralValidationArtifactStore(store_root)
     legacy_policy = ArtifactConsumptionPolicy.legacy_compatible(
@@ -98,9 +96,7 @@ def evaluate() -> dict[str, object]:
             replays_by_candidate={second_id: second_replay},
             artifact_consumption_policy=legacy_policy,
         )
-        second_rollback = runtime.rollback_structural_candidate_batch(
-            terminal_batch_id, second_id
-        )
+        second_rollback = runtime.rollback_structural_candidate_batch(terminal_batch_id, second_id)
         first_rollback = runtime.rollback_structural_candidate_batch(terminal_batch_id, first_id)
         runtime.save(before_retention_path)
         restored = SeedRuntime.load(before_retention_path, workspace_root=PROJECT_ROOT)
@@ -119,9 +115,7 @@ def evaluate() -> dict[str, object]:
 
         healthy_inventory = store.inventory()
         audit_inventory = store.audit()
-        records_by_digest = {
-            item["artifact_digest"]: item for item in healthy_inventory
-        }
+        records_by_digest = {item["artifact_digest"]: item for item in healthy_inventory}
         healthy_facts_match = all(
             records_by_digest[artifact.artifact_digest]["measurement_digest"]
             == artifact.measurement_digest
@@ -133,9 +127,7 @@ def evaluate() -> dict[str, object]:
             after_retention.continue_structural_candidate_batch_from_artifact_store(
                 terminal_batch_id,
                 artifact_store=store,
-                artifact_digests_by_candidate={
-                    second_id: second_artifact.artifact_digest
-                },
+                artifact_digests_by_candidate={second_id: second_artifact.artifact_digest},
                 replays_by_candidate={second_id: second_replay},
                 artifact_consumption_policy=legacy_policy,
             )

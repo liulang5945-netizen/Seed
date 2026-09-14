@@ -82,7 +82,10 @@ def test_training_checkpoint_roundtrips_native_model_and_ledger() -> None:
     target = Taiji(_config(), episode_id="restore-target")
     restored_ledger = restored_record.restore_into(target, ledger)
     assert content_digest(target.checkpoint()) == record.model_digest
-    assert restored_ledger.checkpoint()["checkpoint_digest"] == record.ledger_checkpoint["checkpoint_digest"]
+    assert (
+        restored_ledger.checkpoint()["checkpoint_digest"]
+        == record.ledger_checkpoint["checkpoint_digest"]
+    )
     assert torch.equal(torch.random.get_rng_state(), record.random_state)
 
 

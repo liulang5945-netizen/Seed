@@ -169,10 +169,7 @@ def evaluate() -> dict[str, object]:
             and len(final_restored.structural_candidate_rollbacks) == 1
         ),
         "old_deferred_candidate_remains_auditable": (
-            any(
-                item.candidate_id == "c2"
-                for item in final_restored.structural_proposal_candidates
-            )
+            any(item.candidate_id == "c2" for item in final_restored.structural_proposal_candidates)
         ),
     }
     return {
@@ -211,7 +208,9 @@ def main() -> None:
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_w7_r5c_s9_structural_continuation_recovery_20260830.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_w7_r5c_s9_structural_continuation_recovery_20260830.json",
     )
     args = parser.parse_args()
     report = evaluate()

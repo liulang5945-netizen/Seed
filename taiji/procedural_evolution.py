@@ -169,9 +169,7 @@ class NativeProceduralMemoryTrainer:
                 raise ValueError("procedural experience partitions must be disjoint")
             seen.update(ids)
         successful = tuple(
-            item
-            for item in train_items
-            if item.success and item.status == "success"
+            item for item in train_items if item.success and item.status == "success"
         )
         excluded = tuple(item for item in train_items if item not in successful)
         pending = tuple(
@@ -186,7 +184,13 @@ class NativeProceduralMemoryTrainer:
             dict.fromkeys(
                 (
                     *self.learner.action_kinds,
-                    *sorted({record.action_intent.kind for record in train_records if record.action_intent}),
+                    *sorted(
+                        {
+                            record.action_intent.kind
+                            for record in train_records
+                            if record.action_intent
+                        }
+                    ),
                 )
             )
         )
@@ -215,10 +219,7 @@ class NativeProceduralMemoryTrainer:
         )
         native_holdout = self._accuracy(holdout_records, trial.learner)
         native_retention = self._accuracy(retention_records, trial.learner)
-        admitted = bool(
-            native_holdout > frozen_holdout
-            and native_retention >= frozen_retention
-        )
+        admitted = bool(native_holdout > frozen_holdout and native_retention >= frozen_retention)
         if admitted:
             self.learner = trial.learner
             self.consumed_experience_ids = tuple(
@@ -263,12 +264,12 @@ class NativeProceduralMemoryTrainer:
             native_consolidation_loss=consolidation_loss,
             admitted=admitted,
             rolled_back=not admitted,
-            consumed_experience_ids=tuple(item.experience_id for item in pending)
-            if admitted
-            else (),
-            excluded_experience_ids=tuple(item.experience_id for item in excluded)
-            if admitted
-            else (),
+            consumed_experience_ids=(
+                tuple(item.experience_id for item in pending) if admitted else ()
+            ),
+            excluded_experience_ids=(
+                tuple(item.experience_id for item in excluded) if admitted else ()
+            ),
         )
 
     def predict(self, experience: EvolutionExperience) -> str:

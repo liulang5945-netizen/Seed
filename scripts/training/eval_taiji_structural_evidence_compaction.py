@@ -169,7 +169,8 @@ def evaluate() -> dict[str, object]:
         "compaction_only_moves_consumed_history": (
             result.status == "compacted"
             and result.compacted_window_digests == (first.window_digest,)
-            and result.retained_window_digests == (
+            and result.retained_window_digests
+            == (
                 second.window_digest,
                 third.window_digest,
                 other.window_digest,
@@ -196,9 +197,7 @@ def evaluate() -> dict[str, object]:
             len(ledger.sealed_summaries) == 4
             and all(
                 digest not in after.consumed_window_digests
-                for digest in (
-                    ledger.sealed_summaries[-1].window_digest,
-                )
+                for digest in (ledger.sealed_summaries[-1].window_digest,)
             )
         ),
         "pressure_identity_survives_compaction": pressure_after == pressure_before,
@@ -243,7 +242,9 @@ def evaluate() -> dict[str, object]:
         "pressure_projection": {
             "before": pressure_before.to_payload(),
             "after": pressure_after.to_payload(),
-            "snapshot_digests": [item.snapshot_digest for item in pressure_ledger.pressure_snapshots],
+            "snapshot_digests": [
+                item.snapshot_digest for item in pressure_ledger.pressure_snapshots
+            ],
         },
         "ledger": {
             "active_observed_count": ledger.active_observed_count,
@@ -275,7 +276,9 @@ def main() -> None:
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_w7_r5c_s18_structural_evidence_compaction_20260830.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_w7_r5c_s18_structural_evidence_compaction_20260830.json",
     )
     args = parser.parse_args()
     report = evaluate()

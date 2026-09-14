@@ -99,12 +99,16 @@ def evaluate() -> dict[str, object]:
     batch = model.structural_candidate_batches[-1]
     first_candidate, second_candidate = batch.selected_candidate_ids
     first_spec = next(
-        item for item in model.structural_proposal_candidates if item.candidate_id == first_candidate
+        item
+        for item in model.structural_proposal_candidates
+        if item.candidate_id == first_candidate
     )
     first_region_id = str(dict(first_spec.specification)["region_id"])
     first_unit_id = str(dict(first_spec.specification)["unit_id"])
     second_spec = next(
-        item for item in model.structural_proposal_candidates if item.candidate_id == second_candidate
+        item
+        for item in model.structural_proposal_candidates
+        if item.candidate_id == second_candidate
     )
     second_region_id = str(dict(second_spec.specification)["region_id"])
     second_unit_id = str(dict(second_spec.specification)["unit_id"])
@@ -135,7 +139,8 @@ def evaluate() -> dict[str, object]:
         else:
             cross_batch_rejected = False
         cross_batch_atomic = (
-            _checkpoint_digest(restored.model.architecture.native_checkpoint()) == before_cross_batch
+            _checkpoint_digest(restored.model.architecture.native_checkpoint())
+            == before_cross_batch
         )
         first = restored.continue_structural_candidate_batch(
             batch.batch_id,
@@ -156,22 +161,31 @@ def evaluate() -> dict[str, object]:
             for item in resumed.model.architecture.neuron_regions
             if item.region_id == second_region_id
         )
-        admitted_budget = resumed.model.architecture.cognitive_snapshot().development.structural_budget
+        admitted_budget = (
+            resumed.model.architecture.cognitive_snapshot().development.structural_budget
+        )
         rollback = resumed.model.architecture.rollback_structural_candidate_batch(
             batch.batch_id,
             second_candidate,
         )
-        rollback_budget = resumed.model.architecture.cognitive_snapshot().development.structural_budget
+        rollback_budget = (
+            resumed.model.architecture.cognitive_snapshot().development.structural_budget
+        )
         resumed.save(after_rollback_path)
         final = SeedRuntime.load(after_rollback_path, workspace_root=PROJECT_ROOT)
         final_model = final.model.architecture
-        first_region = next(item for item in final_model.neuron_regions if item.region_id == first_region_id)
-        second_region = next(item for item in final_model.neuron_regions if item.region_id == second_region_id)
+        first_region = next(
+            item for item in final_model.neuron_regions if item.region_id == first_region_id
+        )
+        second_region = next(
+            item for item in final_model.neuron_regions if item.region_id == second_region_id
+        )
         final_status = final.structural_maintenance_status()
         metrics = {
             "first_candidate_admits_after_restart": (
                 first["results"][first_candidate]["status"] == "admitted"
-                and first_unit_id in next(
+                and first_unit_id
+                in next(
                     item
                     for item in restored.model.architecture.neuron_regions
                     if item.region_id == first_region_id
@@ -193,8 +207,14 @@ def evaluate() -> dict[str, object]:
                 and final_model.structural_candidate_rollbacks[-1].candidate_id == second_candidate
             ),
             "candidate_and_batch_records_remain_checkpointable": (
-                any(item.candidate_id == first_candidate for item in final_model.structural_admission_results)
-                and any(item.candidate_id == second_candidate for item in final_model.structural_candidate_rollbacks)
+                any(
+                    item.candidate_id == first_candidate
+                    for item in final_model.structural_admission_results
+                )
+                and any(
+                    item.candidate_id == second_candidate
+                    for item in final_model.structural_candidate_rollbacks
+                )
             ),
             "cross_batch_continuation_fails_closed": cross_batch_rejected and cross_batch_atomic,
         }
@@ -232,7 +252,9 @@ def main() -> None:
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_w7_r5c_s31_structural_lineage_restart_admission_20260831.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_w7_r5c_s31_structural_lineage_restart_admission_20260831.json",
     )
     args = parser.parse_args()
     report = evaluate()

@@ -137,54 +137,30 @@ REPORT_FORMAT = "taiji-m5-k-p4-14-joint-course-v1"
 MANIFEST_FORMAT = "taiji-m5-k-p4-14-joint-course-manifest-v1"
 VERSION = 1
 DEFAULT_MANIFEST = (
-    PROJECT_ROOT
-    / "plans"
-    / "manifests"
-    / "taiji_m5_k_p4_14_joint_course_manifest_v1.json"
+    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_14_joint_course_manifest_v1.json"
 )
-DEFAULT_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m5_k_p4_14_joint_course_20260911.json"
-)
+DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p4_14_joint_course_20260911.json"
 P1_MANIFEST_PATH = P1_MANIFEST
 P2_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p2_validation_pilot_v2_20260910.json"
-P2_4_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m5_k_p2_4_retention_canary_20260910.json"
-)
-P2_5_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m5_k_p2_5_novel_composition_probe_20260910.json"
-)
+P2_4_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p2_4_retention_canary_20260910.json"
+P2_5_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p2_5_novel_composition_probe_20260910.json"
 P2_5_MANIFEST = (
-    PROJECT_ROOT
-    / "plans"
-    / "manifests"
-    / "taiji_m5_k_p2_5_novel_composition_manifest_v1.json"
+    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p2_5_novel_composition_manifest_v1.json"
 )
 P2_6_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p2_6_novel_learning_20260910.json"
 P2_6_MANIFEST = (
-    PROJECT_ROOT
-    / "plans"
-    / "manifests"
-    / "taiji_m5_k_p2_6_novel_learning_manifest_v1.json"
+    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p2_6_novel_learning_manifest_v1.json"
 )
 P2_7_MANIFEST = (
-    PROJECT_ROOT
-    / "plans"
-    / "manifests"
-    / "taiji_m5_k_p2_7_generalization_manifest_v1.json"
+    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p2_7_generalization_manifest_v1.json"
 )
 P3_2_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p3_2_owner_transfer_20260910.json"
 P3_5_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p3_5_g_learning_20260911.json"
 P4_1_MANIFEST = (
-    PROJECT_ROOT
-    / "plans"
-    / "manifests"
-    / "taiji_m5_k_p4_1_context_contract_manifest_v1.json"
+    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_1_context_contract_manifest_v1.json"
 )
 P4_2_MANIFEST = (
-    PROJECT_ROOT
-    / "plans"
-    / "manifests"
-    / "taiji_m5_k_p4_2_capacity_attribution_manifest_v1.json"
+    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_2_capacity_attribution_manifest_v1.json"
 )
 P4_4_MANIFEST = (
     PROJECT_ROOT
@@ -193,16 +169,10 @@ P4_4_MANIFEST = (
     / "taiji_m5_k_p4_4_retention_identity_calibration_manifest_v1.json"
 )
 P4_10_MANIFEST = (
-    PROJECT_ROOT
-    / "plans"
-    / "manifests"
-    / "taiji_m5_k_p4_10_feature_factorization_manifest_v1.json"
+    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_10_feature_factorization_manifest_v1.json"
 )
 P4_11_MANIFEST = (
-    PROJECT_ROOT
-    / "plans"
-    / "manifests"
-    / "taiji_m5_k_p4_11_projection_solver_manifest_v1.json"
+    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_11_projection_solver_manifest_v1.json"
 )
 P4_12_MANIFEST = (
     PROJECT_ROOT
@@ -210,21 +180,12 @@ P4_12_MANIFEST = (
     / "manifests"
     / "taiji_m5_k_p4_12_course_level_validation_manifest_v1.json"
 )
-P4_12_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m5_k_p4_12_course_level_validation_20260911.json"
-)
+P4_12_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p4_12_course_level_validation_20260911.json"
 P4_13_MANIFEST = (
-    PROJECT_ROOT
-    / "plans"
-    / "manifests"
-    / "taiji_m5_k_p4_13_promotion_course_manifest_v1.json"
+    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_13_promotion_course_manifest_v1.json"
 )
-P4_13_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m5_k_p4_13_promotion_course_20260911.json"
-)
-SCORECARD_V4_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m5_k_axis_scorecard_v4_20260911.json"
-)
+P4_13_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p4_13_promotion_course_20260911.json"
+SCORECARD_V4_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_axis_scorecard_v4_20260911.json"
 
 TRAINING_EPOCHS = 8
 LEARNING_RATE = 0.15
@@ -256,16 +217,12 @@ P414_VALIDATION_SPECS = {
 def _write_json_atomic(path: Path, payload: Mapping[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix(path.suffix + ".tmp")
-    temporary.write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
+    temporary.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     temporary.replace(path)
 
 
 def _digest_without(payload: Mapping[str, Any], key: str) -> str:
-    return content_digest(
-        {name: value for name, value in payload.items() if name != key}
-    )
+    return content_digest({name: value for name, value in payload.items() if name != key})
 
 
 # ---------------------------------------------------------------------------
@@ -297,9 +254,7 @@ def _p414_build_record(
         encoding="utf-8",
     )
     registry = _registry(typescript_available=True)
-    environment = WorkbenchEnvironment(
-        root=root, programming_language_registry=registry
-    )
+    environment = WorkbenchEnvironment(root=root, programming_language_registry=registry)
     schema = _schema()
     anchor = _observation(
         environment,
@@ -420,9 +375,7 @@ def _p414_audit_records(
         split = str(record.get("split"))
         fit_eligible = bool(record.get("candidate", {}).get("fit_eligible"))
         if (split == "train") != fit_eligible:
-            errors.append(
-                {"record_id": record_id, "reason": "fit_eligibility_split_mismatch"}
-            )
+            errors.append({"record_id": record_id, "reason": "fit_eligibility_split_mismatch"})
         initial = record.get("initial", {})
         candidate = record.get("candidate", {})
         initial_observation = initial.get("observation", {})
@@ -431,49 +384,30 @@ def _p414_audit_records(
         if initial_observation.get("read_success") is not False:
             errors.append({"record_id": record_id, "reason": "initial_not_missing"})
         if float(initial.get("percept", {}).get("confidence", 1.0)) >= CONFIDENCE_FLOOR:
-            errors.append(
-                {"record_id": record_id, "reason": "initial_confidence_not_low"}
-            )
+            errors.append({"record_id": record_id, "reason": "initial_confidence_not_low"})
         if initial.get("next_step") != "workspace.list":
-            errors.append(
-                {"record_id": record_id, "reason": "initial_next_step_mismatch"}
-            )
+            errors.append({"record_id": record_id, "reason": "initial_next_step_mismatch"})
         if candidate_observation.get("read_success") is not True:
             errors.append({"record_id": record_id, "reason": "candidate_not_readable"})
         if candidate_observation.get("language_id") != "typescript":
-            errors.append(
-                {"record_id": record_id, "reason": "candidate_language_not_typescript"}
-            )
+            errors.append({"record_id": record_id, "reason": "candidate_language_not_typescript"})
         if candidate_observation.get("selection_state") != "resolved":
             errors.append({"record_id": record_id, "reason": "candidate_not_resolved"})
         if candidate_observation.get("toolchain_available") is not True:
-            errors.append(
-                {"record_id": record_id, "reason": "candidate_toolchain_not_available"}
-            )
+            errors.append({"record_id": record_id, "reason": "candidate_toolchain_not_available"})
         if float(candidate_percept.get("confidence", 0.0)) < CONFIDENCE_FLOOR:
-            errors.append(
-                {"record_id": record_id, "reason": "candidate_confidence_below_floor"}
-            )
-        if (
-            record.get("novel_tuple", {}).get("content_id")
-            != "content:inspect-language"
-        ):
-            errors.append(
-                {"record_id": record_id, "reason": "candidate_content_target_mismatch"}
-            )
+            errors.append({"record_id": record_id, "reason": "candidate_confidence_below_floor"})
+        if record.get("novel_tuple", {}).get("content_id") != "content:inspect-language":
+            errors.append({"record_id": record_id, "reason": "candidate_content_target_mismatch"})
         candidate_path = str(candidate_observation.get("path"))
         candidate_paths.append(candidate_path)
         if candidate_path in prior_paths:
-            errors.append(
-                {"record_id": record_id, "reason": "candidate_path_seen_in_prior_data"}
-            )
+            errors.append({"record_id": record_id, "reason": "candidate_path_seen_in_prior_data"})
         project_id = str(record.get("project_id"))
         prior_project = project_ids.setdefault(project_id, split)
         if prior_project != split:
             errors.append({"record_id": record_id, "reason": "project_crosses_split"})
-    train_paths = {
-        str(record["candidate"]["observation"]["path"]) for record in train_records
-    }
+    train_paths = {str(record["candidate"]["observation"]["path"]) for record in train_records}
     validation_paths = {
         str(record["candidate"]["observation"]["path"]) for record in validation_records
     }
@@ -483,12 +417,8 @@ def _p414_audit_records(
         "validation_count": len(validation_records),
         "candidate_paths": sorted(candidate_paths),
         "candidate_paths_unique": len(candidate_paths) == len(set(candidate_paths)),
-        "candidate_paths_disjoint_from_prior": not set(candidate_paths).intersection(
-            prior_paths
-        ),
-        "train_validation_paths_disjoint": not train_paths.intersection(
-            validation_paths
-        ),
+        "candidate_paths_disjoint_from_prior": not set(candidate_paths).intersection(prior_paths),
+        "train_validation_paths_disjoint": not train_paths.intersection(validation_paths),
         "novel_tuple_count": len(tuple_digests),
         "errors": errors,
         "passed": (
@@ -784,8 +714,7 @@ def _p414_pressure_split(
                     width=width,
                     fit_eligible=(
                         split == "train"
-                        and float(pressure["behavior_set"].utility_margin)
-                        > MARGIN_EPSILON
+                        and float(pressure["behavior_set"].utility_margin) > MARGIN_EPSILON
                     ),
                     batch=batch,
                 )
@@ -881,8 +810,7 @@ def _birth_equivalence(
             parent_decision = parent.select(candidate_set)
             child_decision = learner.select(candidate_set)
             if (
-                parent_decision.selected_candidate_id
-                != child_decision.selected_candidate_id
+                parent_decision.selected_candidate_id != child_decision.selected_candidate_id
                 or parent_decision.selection_status != child_decision.selection_status
             ):
                 mismatches += 1
@@ -890,10 +818,7 @@ def _birth_equivalence(
             for candidate in candidate_set.candidates:
                 max_deviation = max(
                     max_deviation,
-                    abs(
-                        child_scores[candidate.candidate_id]
-                        - float(parent.score(candidate))
-                    ),
+                    abs(child_scores[candidate.candidate_id] - float(parent.score(candidate))),
                 )
             records_checked += 1
     return {
@@ -957,21 +882,14 @@ def _run(
         if not gates_v4.get("g_solver_mechanism_course_closed"):
             raise ValueError("P4.14 requires g_solver_mechanism_course_closed=true")
         if gates_v4.get("k_worker_joint_course_completed"):
-            raise ValueError(
-                "P4.14 entry requires k_worker_joint_course_completed=false"
-            )
-        if (
-            scorecard_v4["verdict"]["promotion_gate"]
-            or scorecard_v4["verdict"]["can_promote"]
-        ):
+            raise ValueError("P4.14 entry requires k_worker_joint_course_completed=false")
+        if scorecard_v4["verdict"]["promotion_gate"] or scorecard_v4["verdict"]["can_promote"]:
             raise ValueError("P4.14 cannot start from an open promotion gate")
         if (
             p4_13_report.get("status") != "completed"
             or p4_13_report.get("outcome") != "promotion_course_supported"
         ):
-            raise ValueError(
-                "P4.14 requires the completed P4.13 promotion_course_supported"
-            )
+            raise ValueError("P4.14 requires the completed P4.13 promotion_course_supported")
         if p4_13_report.get("manifest_digest") != p4_13_manifest.get("manifest_digest"):
             raise ValueError("P4.13 manifest/report digest mismatch")
         if _digest_without(p4_13_manifest, "manifest_digest") != p4_13_manifest.get(
@@ -981,9 +899,7 @@ def _run(
         if p4_13_report.get("growth_admitted") or p4_13_report.get("can_promote"):
             raise ValueError("P4.14 cannot consume an admitted P4.13 artifact")
         if p4_12_report.get("outcome") != "course_level_validation_supported":
-            raise ValueError(
-                "P4.14 requires the P4.12 course_level_validation_supported"
-            )
+            raise ValueError("P4.14 requires the P4.12 course_level_validation_supported")
         if p4_12_report.get("manifest_digest") != p4_12_manifest.get("manifest_digest"):
             raise ValueError("P4.12 manifest/report digest mismatch")
         if p4_13_manifest.get("source_p4_12_manifest_digest") != p4_12_manifest.get(
@@ -1006,17 +922,13 @@ def _run(
         ):
             if report.get("status") != "completed" or report.get("sealed_payload_read"):
                 raise ValueError(f"P4.14 requires a completed, unsealed {name} report")
-        if not all(
-            bool(value) for value in p2_4_report.get("retention_gate", {}).values()
-        ):
+        if not all(bool(value) for value in p2_4_report.get("retention_gate", {}).values()):
             raise ValueError("P2.4 retention gate is not fully passed")
         if not p2_5_report.get("contract", {}).get("passed"):
             raise ValueError("P2.5 novel composition contract is not passed")
         if p2_5_manifest.get("manifest_digest") != p2_5_report.get("manifest_digest"):
             raise ValueError("P2.5 manifest digest mismatch")
-        if not all(
-            bool(value) for value in p2_6_report.get("retention_gate", {}).values()
-        ):
+        if not all(bool(value) for value in p2_6_report.get("retention_gate", {}).values()):
             raise ValueError("P2.6 retention gate is not fully passed")
 
         # ---- Joint parent: P3.2 base-continuation K workers + frozen P3.5 G.
@@ -1052,9 +964,7 @@ def _run(
             parent_manifest_digest=str(p4_1_manifest["source_p3_2_manifest_digest"]),
             k_checkpoint_digests=worker_digests,
         )
-        if str(p4_2_manifest["parent_g_checkpoint_digest"]) != str(
-            parent_metadata["digest"]
-        ):
+        if str(p4_2_manifest["parent_g_checkpoint_digest"]) != str(parent_metadata["digest"]):
             raise ValueError("P4.14 parent G lineage drifted")
         parent_restore = _independent_g_restore(parent_path)
         if not parent_restore.get("independent_process_restore"):
@@ -1189,28 +1099,21 @@ def _run(
                 projector=projector,
             )
             if not p1_verification["passed"]:
-                raise RuntimeError(
-                    "P1 manifest reconstruction failed before the P4.14 phase K"
-                )
+                raise RuntimeError("P1 manifest reconstruction failed before the P4.14 phase K")
             p1_cases, p1_case_mismatches = _build_validation_cases(
                 scratch=batch_dir / "p1-cases",
                 validation=p1_validation,
                 validation_metadata=p1_validation_metadata,
             )
             if p1_case_mismatches:
-                raise RuntimeError(
-                    f"P1 validation case mismatch: {p1_case_mismatches[:3]}"
-                )
-            wake, wake_metadata = _select_balanced_wake(
-                train_experiences, train_metadata
-            )
+                raise RuntimeError(f"P1 validation case mismatch: {p1_case_mismatches[:3]}")
+            wake, wake_metadata = _select_balanced_wake(train_experiences, train_metadata)
             expected_wake = p2_report["contract"]["wake_experience_digests"]
             actual_wake = [str(item.experience_digest) for item in wake]
             if actual_wake != [str(item) for item in expected_wake]:
                 raise RuntimeError("P2 rehearsal experience digest/order drifted")
             if any(
-                sum(item["class_key"] == class_key for item in wake_metadata)
-                != PILOT_PER_CLASS
+                sum(item["class_key"] == class_key for item in wake_metadata) != PILOT_PER_CLASS
                 for class_key in ("A", "B", "C", "D", "R")
             ):
                 raise RuntimeError("P2 rehearsal class balance drifted")
@@ -1239,9 +1142,7 @@ def _run(
                     interleaved_stream,
                 )
                 phase_k_fit_wall = time.perf_counter() - k_fit_started
-                checkpoint = _save_arm(
-                    cell_k_dir, interleaved_semantic, interleaved_transition
-                )
+                checkpoint = _save_arm(cell_k_dir, interleaved_semantic, interleaved_transition)
                 if not checkpoint["passed"]:
                     raise RuntimeError(
                         f"P4.14 cell b{batch}/s{seed} phase-K independent restore failed"
@@ -1275,9 +1176,7 @@ def _run(
                     ),
                 }
                 if not all(tamper_gate.values()):
-                    raise RuntimeError(
-                        f"P4.14 cell b{batch}/s{seed} phase-K tamper gate failed"
-                    )
+                    raise RuntimeError(f"P4.14 cell b{batch}/s{seed} phase-K tamper gate failed")
                 phase_k_by_seed[seed] = {
                     "checkpoint": checkpoint,
                     "fit_counts": fit_counts,
@@ -1302,13 +1201,7 @@ def _run(
                 seed: phase_k_by_seed[seed]["post_k_digests"] for seed in SEEDS
             }
             post_k_deterministic = (
-                len(
-                    {
-                        content_digest(digests)
-                        for digests in post_k_digests_by_seed.values()
-                    }
-                )
-                == 1
+                len({content_digest(digests) for digests in post_k_digests_by_seed.values()}) == 1
             )
 
             # ---- Re-materialize: instantiate the post-K workers and
@@ -1321,8 +1214,7 @@ def _run(
                 Path(str(post_k_checkpoint["files"]["k2"]["path"]))
             )
             if (
-                content_digest(post_k_semantic_payload)
-                != post_k_digests_by_seed[SEEDS[0]]["k1"]
+                content_digest(post_k_semantic_payload) != post_k_digests_by_seed[SEEDS[0]]["k1"]
                 or content_digest(post_k_transition_payload)
                 != post_k_digests_by_seed[SEEDS[0]]["k2"]
             ):
@@ -1395,14 +1287,11 @@ def _run(
                 **materialize_common,
             )
             train_fit_g = [record for record in train_g if record["fit_eligible"]]
-            constraint_sets = tuple(
-                record["candidate_set"] for record in constraint_records
-            )
+            constraint_sets = tuple(record["candidate_set"] for record in constraint_records)
             constraint_digest = content_digest(
                 {
                     "constraint_set_digests": [
-                        candidate_set.candidate_set_digest
-                        for candidate_set in constraint_sets
+                        candidate_set.candidate_set_digest for candidate_set in constraint_sets
                     ],
                     "constraint_form": "margin-preservation-hinge",
                     "landscape": "post-k",
@@ -1441,8 +1330,7 @@ def _run(
                 "validation_records": len(validation_g) == 20,
                 "holdout_records": len(holdout_g) == 20,
                 "retention_newtask_records": len(retention_newtask) == 20,
-                "constraint_records": len(constraint_records)
-                == int(contract["row_count"]),
+                "constraint_records": len(constraint_records) == int(contract["row_count"]),
                 "retention_sibling_records": len(retention_sibling_records)
                 == int(contract["row_count"]),
                 "train_fit_positive": len(train_fit_g) >= 8,
@@ -1451,12 +1339,10 @@ def _run(
                     for records in (train_g, validation_g, holdout_g, retention_newtask)
                 ),
                 "new_projects_disjoint_from_historical": all(
-                    projects.isdisjoint(historical_projects)
-                    for _paths, projects in identity_sets
+                    projects.isdisjoint(historical_projects) for _paths, projects in identity_sets
                 ),
                 "new_paths_disjoint_from_historical": all(
-                    paths.isdisjoint(historical_paths)
-                    for paths, _projects in identity_sets
+                    paths.isdisjoint(historical_paths) for paths, _projects in identity_sets
                 ),
                 "post_k_deterministic_across_seeds": post_k_deterministic,
                 "k_catalogs_unchanged": k_catalogs_unchanged,
@@ -1466,12 +1352,8 @@ def _run(
                     f"P4.14 batch {batch} identity gate failed: "
                     f"{[k for k, v in batch_identity_gate.items() if not v]}"
                 )
-            historical_paths |= {
-                record["candidate_set"].path for record in batch_records
-            }
-            historical_projects |= {
-                record["candidate_set"].project_id for record in batch_records
-            }
+            historical_paths |= {record["candidate_set"].path for record in batch_records}
+            historical_projects |= {record["candidate_set"].project_id for record in batch_records}
             prior_k_paths.update(
                 str(record["candidate"]["observation"]["path"])
                 for record in (*train_records, *validation_records)
@@ -1519,19 +1401,14 @@ def _run(
                     split_records=split_records,
                 )
                 if not birth["passed"]:
-                    raise RuntimeError(
-                        f"P4.14 cell b{batch}/s{seed} birth gate failed: {birth}"
-                    )
+                    raise RuntimeError(f"P4.14 cell b{batch}/s{seed} birth gate failed: {birth}")
                 birth_feature_source_digest = learner.feature_source_state_digest
                 base_hinge_losses = [
-                    learner.invariant_hinge(candidate_set)[0]
-                    for candidate_set in constraint_sets
+                    learner.invariant_hinge(candidate_set)[0] for candidate_set in constraint_sets
                 ]
                 birth_hinge_zero = all(loss == 0.0 for loss in base_hinge_losses)
                 if not birth_hinge_zero:
-                    raise RuntimeError(
-                        f"P4.14 cell b{batch}/s{seed} birth hinge is not zero"
-                    )
+                    raise RuntimeError(f"P4.14 cell b{batch}/s{seed} birth hinge is not zero")
                 fit_started = time.perf_counter()
                 fit = learner.invariant_fit(
                     train_fit_g,
@@ -1542,9 +1419,7 @@ def _run(
                     constraint_digest=constraint_digest,
                 )
                 phase_g_fit_wall = time.perf_counter() - fit_started
-                anchor = [
-                    float(value) for value in learner.head.weight.detach().reshape(-1)
-                ]
+                anchor = [float(value) for value in learner.head.weight.detach().reshape(-1)]
                 constraints = _task_constraints(
                     train_fit_g, learner, "phase-g"
                 ) + _preservation_constraints(constraint_sets, parent, learner)
@@ -1567,13 +1442,9 @@ def _run(
                     learner.apply_projected_weights(
                         projection["weights"], projection_digest=projection_digest
                     )
-                checkpoint_g = _save_extended_checkpoint(
-                    cell_dir / "phase-g-extended.pt", learner
-                )
+                checkpoint_g = _save_extended_checkpoint(cell_dir / "phase-g-extended.pt", learner)
                 if not checkpoint_g["passed"]:
-                    raise RuntimeError(
-                        f"P4.14 cell b{batch}/s{seed} phase-G checkpoint failed"
-                    )
+                    raise RuntimeError(f"P4.14 cell b{batch}/s{seed} phase-G checkpoint failed")
                 restored = ExtendedGSelectionLearner.from_checkpoint(
                     _load_mapping(Path(str(checkpoint_g["path"]))), device="cpu"
                 )
@@ -1586,8 +1457,7 @@ def _run(
                         if (
                             live_decision.selected_candidate_id
                             != restored_decision.selected_candidate_id
-                            or live_decision.selection_status
-                            != restored_decision.selection_status
+                            or live_decision.selection_status != restored_decision.selection_status
                         ):
                             rollback_mismatches += 1
                 rollback_gate = {
@@ -1595,16 +1465,12 @@ def _run(
                     "passed": rollback_mismatches == 0,
                 }
                 if not rollback_gate["passed"]:
-                    raise RuntimeError(
-                        f"P4.14 cell b{batch}/s{seed} rollback gate failed"
-                    )
+                    raise RuntimeError(f"P4.14 cell b{batch}/s{seed} rollback gate failed")
                 tamper_gate_g = _extended_tamper_rejected(
                     _load_mapping(Path(str(checkpoint_g["path"])))
                 )
                 if not tamper_gate_g:
-                    raise RuntimeError(
-                        f"P4.14 cell b{batch}/s{seed} phase-G tamper gate failed"
-                    )
+                    raise RuntimeError(f"P4.14 cell b{batch}/s{seed} phase-G tamper gate failed")
                 feature_source_unchanged = (
                     learner.feature_source_state_digest == birth_feature_source_digest
                 )
@@ -1629,23 +1495,11 @@ def _run(
                     content_digest(_load_mapping(path)) == digest
                     for path, digest in (
                         (
-                            Path(
-                                str(
-                                    phase_k_by_seed[seed]["checkpoint"]["files"]["k1"][
-                                        "path"
-                                    ]
-                                )
-                            ),
+                            Path(str(phase_k_by_seed[seed]["checkpoint"]["files"]["k1"]["path"])),
                             phase_k_by_seed[seed]["post_k_digests"]["k1"],
                         ),
                         (
-                            Path(
-                                str(
-                                    phase_k_by_seed[seed]["checkpoint"]["files"]["k2"][
-                                        "path"
-                                    ]
-                                )
-                            ),
+                            Path(str(phase_k_by_seed[seed]["checkpoint"]["files"]["k2"]["path"])),
                             phase_k_by_seed[seed]["post_k_digests"]["k2"],
                         ),
                     )
@@ -1660,24 +1514,18 @@ def _run(
                 }
                 phase_k_cell = phase_k_by_seed[seed]
                 cell_total_wall = (
-                    time.perf_counter()
-                    - cell_started
-                    + phase_k_cell["fit_wall_seconds"]
+                    time.perf_counter() - cell_started + phase_k_cell["fit_wall_seconds"]
                 )
                 resource_audit = {
                     "phase_k_fit_wall_seconds": phase_k_cell["fit_wall_seconds"],
                     "phase_g_fit_wall_seconds": round(phase_g_fit_wall, 3),
-                    "phase_g_projection_wall_seconds": round(
-                        phase_g_projection_wall, 3
-                    ),
+                    "phase_g_projection_wall_seconds": round(phase_g_projection_wall, 3),
                     "cell_total_wall_seconds": round(cell_total_wall, 3),
                     "caps": G_RESOURCE_CAPS,
                     "caps_passed": (
-                        phase_k_cell["fit_wall_seconds"]
-                        <= G_RESOURCE_CAPS["phase_k_fit_seconds"]
+                        phase_k_cell["fit_wall_seconds"] <= G_RESOURCE_CAPS["phase_k_fit_seconds"]
                         and phase_g_fit_wall <= G_RESOURCE_CAPS["phase_g_fit_seconds"]
-                        and phase_g_projection_wall
-                        <= G_RESOURCE_CAPS["phase_g_projection_seconds"]
+                        and phase_g_projection_wall <= G_RESOURCE_CAPS["phase_g_projection_seconds"]
                         and cell_total_wall <= G_RESOURCE_CAPS["cell_total_seconds"]
                     ),
                 }
@@ -1704,9 +1552,7 @@ def _run(
                                 phase_k_cell["parent_scores"]["p2_6_novel_validation"]
                             ),
                             "interleaved_novel_scores": _strip_rows(
-                                phase_k_cell["interleaved_scores"][
-                                    "p2_6_novel_validation"
-                                ]
+                                phase_k_cell["interleaved_scores"]["p2_6_novel_validation"]
                             ),
                             "p1_validation_parent_summary": _strip_rows(
                                 phase_k_cell["parent_scores"]["p1_validation"]
@@ -1728,9 +1574,7 @@ def _run(
                                 "max_violation": projection["max_violation"],
                                 "total_violation": projection["total_violation"],
                                 "distance": projection["distance"],
-                                "digest": (
-                                    None if projection_incomplete else projection_digest
-                                ),
+                                "digest": (None if projection_incomplete else projection_digest),
                             },
                             "checkpoint": checkpoint_g,
                             "rollback_gate": rollback_gate,
@@ -1742,15 +1586,11 @@ def _run(
                         "cross_phase_gates": cross_phase_gates,
                         "resource_audit": resource_audit,
                         "passes_all": (
-                            phase_k_passed
-                            and phase_g_passed
-                            and all(cross_phase_gates.values())
+                            phase_k_passed and phase_g_passed and all(cross_phase_gates.values())
                         ),
                         "parameter_count": {
                             "k_total": int(
-                                phase_k_cell["interleaved_scores"]["parameter_count"][
-                                    "total"
-                                ]
+                                phase_k_cell["interleaved_scores"]["parameter_count"]["total"]
                             ),
                             "g_extended": int(learner.parameter_count),
                         },
@@ -1773,17 +1613,11 @@ def _run(
         for digests in batch_candidate_digests.values():
             all_candidate_digests |= digests
         digest_gate = {
-            "all_candidate_digests_unique": len(all_candidate_digests)
-            == len(BATCHES) * 88,
-            "phase_k_record_digests_unique": len(all_novel_record_digests)
-            == len(BATCHES) * 8,
+            "all_candidate_digests_unique": len(all_candidate_digests) == len(BATCHES) * 88,
+            "phase_k_record_digests_unique": len(all_novel_record_digests) == len(BATCHES) * 8,
         }
-        phase_k_failed_cells = sum(
-            1 for cell in cell_results if not cell["phase_k"]["passed"]
-        )
-        phase_g_failed_cells = sum(
-            1 for cell in cell_results if not cell["phase_g"]["passed"]
-        )
+        phase_k_failed_cells = sum(1 for cell in cell_results if not cell["phase_k"]["passed"])
+        phase_g_failed_cells = sum(1 for cell in cell_results if not cell["phase_g"]["passed"])
         cross_phase_failed_cells = sum(
             1 for cell in cell_results if not all(cell["cross_phase_gates"].values())
         )
@@ -1809,8 +1643,7 @@ def _run(
                 cell["phase_g"]["rollback_gate"]["passed"] for cell in cell_results
             ),
             "all_tamper_checks": all(
-                all(cell["phase_k"]["tamper_gate"].values())
-                and cell["phase_g"]["tamper_gate"]
+                all(cell["phase_k"]["tamper_gate"].values()) and cell["phase_g"]["tamper_gate"]
                 for cell in cell_results
             ),
             "k_parent_not_overwritten": worker_digests
@@ -1959,9 +1792,7 @@ def _run(
     return payload
 
 
-def _evaluate_records(
-    records: Sequence[Mapping[str, Any]], learner: Any
-) -> dict[str, Any]:
+def _evaluate_records(records: Sequence[Mapping[str, Any]], learner: Any) -> dict[str, Any]:
     return _evaluate(records, learner)
 
 

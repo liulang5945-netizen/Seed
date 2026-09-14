@@ -98,8 +98,7 @@ def build_scorecard(
         "M5.K3": _robust(k3),
     }
     parent_retention_missing = all(
-        report.get("metric_contract", {}).get("parent_retention") is None
-        for report in (k1, k2, k3)
+        report.get("metric_contract", {}).get("parent_retention") is None for report in (k1, k2, k3)
     )
     standalone_shadow = all(
         "standalone" in report.get("metric_contract", {}).get("parent_retention_note", "")
@@ -142,15 +141,9 @@ def build_scorecard(
             "M5.K3": {
                 "A_minus_B": k3_aggregate["a_minus_b"],
                 "A_minus_C": k3_aggregate["a_minus_c"],
-                "probe_admission_cells_1p0": k3_aggregate[
-                    "probe_admission_cells_1p0"
-                ],
-                "lineage_admission_cells_1p0": k3_aggregate[
-                    "lineage_admission_cells_1p0"
-                ],
-                "feedback_reward_variance": k3_aggregate[
-                    "feedback_reward_variance"
-                ],
+                "probe_admission_cells_1p0": k3_aggregate["probe_admission_cells_1p0"],
+                "lineage_admission_cells_1p0": k3_aggregate["lineage_admission_cells_1p0"],
+                "feedback_reward_variance": k3_aggregate["feedback_reward_variance"],
             },
         },
         "evidence_gates": {
@@ -215,4 +208,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

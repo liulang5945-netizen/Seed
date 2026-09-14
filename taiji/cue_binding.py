@@ -105,10 +105,9 @@ class CueBindingBank:
             best_similarity = float(scores[best_index].item())
             if best_similarity >= self.match_threshold:
                 if learn:
-                    blended = (
-                        (1.0 - self.update_rate) * self.prototypes[best_index]
-                        + self.update_rate * normalized
-                    )
+                    blended = (1.0 - self.update_rate) * self.prototypes[
+                        best_index
+                    ] + self.update_rate * normalized
                     self.prototypes[best_index] = self._normalize(blended)
                     self.visits[best_index] += 1
                     self.match_count += 1

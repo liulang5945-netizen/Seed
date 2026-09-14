@@ -177,10 +177,7 @@ def _protected_delta(before: dict[str, Any], after: dict[str, Any]) -> dict[str,
         "action_readout_credit_cosine",
         "outcome_readout_credit_cosine",
     )
-    return {
-        key: float(after_summary[key]["mean"] - before_summary[key]["mean"])
-        for key in keys
-    }
+    return {key: float(after_summary[key]["mean"] - before_summary[key]["mean"]) for key in keys}
 
 
 def _seed_record(
@@ -256,9 +253,7 @@ def _seed_record(
         "protected_partition": contract.protected_partition,
         "protected_before_replay": phase_b_trace,
         "protected_after_replay": protected_after_replay,
-        "protected_delta_after_replay": _protected_delta(
-            phase_b_trace, protected_after_replay
-        ),
+        "protected_delta_after_replay": _protected_delta(phase_b_trace, protected_after_replay),
         "write_count": int(replay.memory.write_count),
         "active_parameter_count": replay.parameter_count(),
         "planned_active_parameter_count": replay.config.planned_active_parameter_count,

@@ -268,9 +268,7 @@ def _seed_record(
     )
     config = TaijiConfig.from_dict(config_values)
     actions = tuple(
-        dict.fromkeys(
-            episode.action for episode in (*corpus.phase_a_train, *corpus.phase_b_train)
-        )
+        dict.fromkeys(episode.action for episode in (*corpus.phase_a_train, *corpus.phase_b_train))
     )
     phase_a_model = Taiji(_memory_config(seed), episode_id=f"m1-23-phase-a-{mode}-{seed}")
     with _support_mode(phase_a_model, mode, mask_fraction):
@@ -327,8 +325,7 @@ def _seed_record(
         "child": child_scores,
         "restored": restored_scores,
         "restored_after_read": restored_after_read,
-        "new_gain_vs_no_write": child_scores["new_holdout"]
-        - no_write_scores["new_holdout"],
+        "new_gain_vs_no_write": child_scores["new_holdout"] - no_write_scores["new_holdout"],
         "support": {
             "phase_a": phase_a_support,
             "phase_b": phase_b_support,
@@ -340,7 +337,8 @@ def _seed_record(
             "restore_digest_matches": content_digest(restored.checkpoint()) == checkpoint_digest,
             "read_only_persistent_state": persistent_before == persistent_after,
         },
-        "phase_b_memory_writes": int(model.memory.write_count) - int(phase_a_model.memory.write_count),
+        "phase_b_memory_writes": int(model.memory.write_count)
+        - int(phase_a_model.memory.write_count),
         "holdout_updates": 0,
     }
 
@@ -365,12 +363,10 @@ def run_support_diagnostics(
     if not 0.0 < float(mask_fraction) <= 1.0:
         raise ValueError("mask_fraction must be in (0, 1]")
     records = {
-        mode: [_seed_record(seed, corpus, mode, mask_fraction) for seed in seeds]
-        for mode in modes
+        mode: [_seed_record(seed, corpus, mode, mask_fraction) for seed in seeds] for mode in modes
     }
     promotable = {
-        mode: all(_promotable(record) for record in values)
-        for mode, values in records.items()
+        mode: all(_promotable(record) for record in values) for mode, values in records.items()
     }
     return {
         "corpus_digest": corpus.digest,
@@ -413,7 +409,9 @@ def main() -> int:
     result["can_promote"] = bool(result["diagnostics"]["promotable_modes"])
     result["report_path"] = str(args.report)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

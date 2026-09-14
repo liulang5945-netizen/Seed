@@ -91,9 +91,7 @@ def _record_real_evidence(runtime: SeedRuntime) -> tuple[dict[str, object], ...]
 
 def _holdout_payload(model: TSKV8Adapter, candidate_id: str) -> dict[str, object]:
     candidate = next(
-        item
-        for item in model.structural_proposal_candidates
-        if item.candidate_id == candidate_id
+        item for item in model.structural_proposal_candidates if item.candidate_id == candidate_id
     )
     proposal = model.materialize_structural_candidate(candidate_id)
     if proposal is None:
@@ -136,7 +134,9 @@ def evaluate() -> dict[str, object]:
         if candidate.candidate_id in batch.selected_candidate_ids
     }
     second_region = candidate_regions[second_candidate_id]
-    budget_before_admission = runtime.model.architecture.cognitive_snapshot().development.structural_budget
+    budget_before_admission = (
+        runtime.model.architecture.cognitive_snapshot().development.structural_budget
+    )
     topology_before_admission = tuple(
         (region.region_id, region.unit_ids) for region in runtime.model.architecture.neuron_regions
     )
@@ -266,7 +266,9 @@ def main() -> None:
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_w7_r5c_s11_workbench_multi_region_lifecycle_20260830.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_w7_r5c_s11_workbench_multi_region_lifecycle_20260830.json",
     )
     args = parser.parse_args()
     report = evaluate()

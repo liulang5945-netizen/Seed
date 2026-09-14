@@ -42,12 +42,8 @@ def _snapshot(
     absolute_value: float,
 ) -> ContinualEvaluationSnapshot:
     report_digest = content_digest(report)
-    checkpoint_digest = content_digest(
-        {"source_report": report_digest, "phase_id": phase_id}
-    )
-    input_digest = content_digest(
-        {"source_report": report_digest, "metric": metric_name}
-    )
+    checkpoint_digest = content_digest({"source_report": report_digest, "phase_id": phase_id})
+    input_digest = content_digest({"source_report": report_digest, "metric": metric_name})
     observation = MetricObservation(
         metric_name=metric_name,
         domain_id=phase_id,
@@ -59,9 +55,7 @@ def _snapshot(
     return ContinualEvaluationSnapshot(
         checkpoint_digest=checkpoint_digest,
         phase_id=phase_id,
-        owner_graph_digest=content_digest(
-            {"phase_id": phase_id, "owner": "standalone-shadow"}
-        ),
+        owner_graph_digest=content_digest({"phase_id": phase_id, "owner": "standalone-shadow"}),
         read_only_input_digest=input_digest,
         observations=(observation,),
         parent_checkpoint_digest=None,
@@ -106,14 +100,13 @@ def build_scorecard(k1: dict[str, Any], k2: dict[str, Any]) -> dict[str, Any]:
     k1_robust = bool(k1.get("verdict", {}).get("robust")) and k1.get("status") == "passed"
     k2_robust = bool(k2.get("verdict", {}).get("robust")) and k2.get("status") == "passed"
     k_evidence_closed = k1_robust and k2_robust
-    parent_retention_missing = all(
-        k1.get("metric_contract", {}).get("parent_retention") is None
-        for _ in (0,)
-    ) and k2.get("metric_contract", {}).get("parent_retention") is None
-    standalone_shadow = (
-        "standalone" in k1.get("metric_contract", {}).get("parent_retention_note", "")
-        and "standalone" in k2.get("metric_contract", {}).get("parent_retention_note", "")
+    parent_retention_missing = (
+        all(k1.get("metric_contract", {}).get("parent_retention") is None for _ in (0,))
+        and k2.get("metric_contract", {}).get("parent_retention") is None
     )
+    standalone_shadow = "standalone" in k1.get("metric_contract", {}).get(
+        "parent_retention_note", ""
+    ) and "standalone" in k2.get("metric_contract", {}).get("parent_retention_note", "")
     promotion_gates = {
         "k1_formal_robust": k1_robust,
         "k2_formal_robust": k2_robust,
@@ -184,7 +177,9 @@ def main() -> int:
     payload["generated_at_epoch"] = int(time.time())
     payload["elapsed_seconds"] = time.perf_counter() - started
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(
         json.dumps(
             {

@@ -141,7 +141,9 @@ class GSelectionCandidate:
         object.__setattr__(self, "content_score", content_score)
         object.__setattr__(self, "confidence", confidence)
         object.__setattr__(self, "ambiguity", ambiguity)
-        object.__setattr__(self, "candidate_digest", _digest(self.candidate_digest, "candidate_digest"))
+        object.__setattr__(
+            self, "candidate_digest", _digest(self.candidate_digest, "candidate_digest")
+        )
 
     @classmethod
     def create(
@@ -206,9 +208,7 @@ class GSelectionCandidate:
             "candidate_role": self.candidate_role,
             "status": self.status,
             "goal": None if self.goal is None else self.goal.to_payload(),
-            "content_plan": None
-            if self.content_plan is None
-            else self.content_plan.to_payload(),
+            "content_plan": None if self.content_plan is None else self.content_plan.to_payload(),
             "goal_score": self.goal_score,
             "content_score": self.content_score,
             "confidence": self.confidence,
@@ -297,8 +297,12 @@ class GSelectionCandidateSet:
         object.__setattr__(self, "candidates", candidates)
         object.__setattr__(self, "target_candidate_id", target_candidate_id)
         object.__setattr__(self, "target_kind", target_kind)
-        object.__setattr__(self, "candidate_set_digest", _digest(self.candidate_set_digest, "candidate_set_digest"))
-        object.__setattr__(self, "inference_digest", _digest(self.inference_digest, "inference_digest"))
+        object.__setattr__(
+            self, "candidate_set_digest", _digest(self.candidate_set_digest, "candidate_set_digest")
+        )
+        object.__setattr__(
+            self, "inference_digest", _digest(self.inference_digest, "inference_digest")
+        )
 
     @classmethod
     def create(
@@ -399,8 +403,7 @@ class GSelectionCandidateSet:
             path=str(payload["path"]),
             input_digest=str(payload["input_digest"]),
             candidates=tuple(
-                GSelectionCandidate.from_payload(item)
-                for item in payload.get("candidates", ())
+                GSelectionCandidate.from_payload(item) for item in payload.get("candidates", ())
             ),
             target_candidate_id=str(payload["target_candidate_id"]),
             target_kind=str(payload["target_kind"]),
@@ -423,7 +426,9 @@ class GSelectionCandidateSet:
     def score_margin(self) -> float:
         target = self.target_candidate().joint_score
         distractors = [
-            item.joint_score for item in self.candidates if item.candidate_id != self.target_candidate_id
+            item.joint_score
+            for item in self.candidates
+            if item.candidate_id != self.target_candidate_id
         ]
         return target - max(distractors, default=0.0)
 

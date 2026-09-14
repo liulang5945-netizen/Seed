@@ -88,9 +88,7 @@ P2_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p2_validation_pilot_v2_202609
 P2_3_REPORT = (
     PROJECT_ROOT / "reports" / "taiji_m5_k_p2_3_recovery_continuation_contract_20260910.json"
 )
-DEFAULT_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m5_k_p2_3_targeted_learning_pilot_20260910.json"
-)
+DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p2_3_targeted_learning_pilot_20260910.json"
 
 
 def _write_json_atomic(path: Path, payload: Mapping[str, Any]) -> None:
@@ -164,7 +162,9 @@ def _save_arm(
     }
 
 
-def _load_arm(checkpoint: Mapping[str, Any]) -> tuple[StructuredSemanticLearner, StructuredSemanticTransitionLearner]:
+def _load_arm(
+    checkpoint: Mapping[str, Any],
+) -> tuple[StructuredSemanticLearner, StructuredSemanticTransitionLearner]:
     return _fresh_learners(
         _load_mapping(Path(str(checkpoint["k1"]["path"]))),
         _load_mapping(Path(str(checkpoint["k2"]["path"]))),
@@ -179,9 +179,7 @@ def _candidate_examples(
     for record in records:
         candidate = record["candidate"]
         semantics.append(
-            StructuredSemanticExample.from_payload(
-                _restore_tensors(candidate["semantic_example"])
-            )
+            StructuredSemanticExample.from_payload(_restore_tensors(candidate["semantic_example"]))
         )
         transitions.append(
             StructuredSemanticTransitionExample.from_payload(
@@ -256,8 +254,7 @@ def _chain_row(
             else semantic_result.content_plan.content_id
         ),
         "k1_goal_hit": bool(
-            semantic_result.goal is not None
-            and semantic_result.goal.goal_id == expected_goal_id
+            semantic_result.goal is not None and semantic_result.goal.goal_id == expected_goal_id
         ),
         "k1_content_hit": bool(
             semantic_result.content_plan is not None
@@ -265,7 +262,9 @@ def _chain_row(
         ),
         "k2_status": None if transition_result is None else transition_result.status,
         "k2_goal_id": (
-            None if transition_result is None or transition_result.goal is None else transition_result.goal.goal_id
+            None
+            if transition_result is None or transition_result.goal is None
+            else transition_result.goal.goal_id
         ),
         "k2_content_id": (
             None
@@ -422,9 +421,7 @@ def run_pilot(
         p1_manifest = json.loads(p1_manifest_path.read_text(encoding="utf-8"))
         if p2_report.get("status") != "completed" or p2_report.get("sealed_payload_read"):
             raise ValueError("P2.3 requires a completed, unsealed P2 report")
-        if p2_3_report.get("status") != "completed" or p2_3_report.get(
-            "training_performed"
-        ):
+        if p2_3_report.get("status") != "completed" or p2_3_report.get("training_performed"):
             raise ValueError("P2.3 targeted pilot requires the completed data-contract report")
         if not all(bool(value) for value in p2_3_report.get("checks", {}).values()):
             raise ValueError("P2.3 data-contract checks are not all passed")
@@ -497,7 +494,9 @@ def run_pilot(
                 learning_rate=TRANSITION_LR,
             ),
         }
-        reference_semantic, reference_transition = _load_arm(p2_report["arms"]["wake-only"]["checkpoint"])
+        reference_semantic, reference_transition = _load_arm(
+            p2_report["arms"]["wake-only"]["checkpoint"]
+        )
 
         arm_data: dict[str, Any] = {
             "parent-frozen": {
@@ -540,8 +539,7 @@ def run_pilot(
                 },
                 "new_training_steps": {
                     "k1": (
-                        int(arm["semantic"].training_steps)
-                        - int(parent_semantic.training_steps)
+                        int(arm["semantic"].training_steps) - int(parent_semantic.training_steps)
                         if arm["fit_calls"]["k1"]
                         else 0
                     ),

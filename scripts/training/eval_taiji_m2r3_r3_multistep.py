@@ -103,9 +103,7 @@ def _content(*, state: str, resource: str, tick: int, goal: Goal, sample_id: str
     return ContentPlan(
         content_id=f"content:{state}:{resource}",
         intent_id=f"intent:{state}",
-        intent_kind=(
-            "request_information" if state == "blocked" else "report_status"
-        ),
+        intent_kind=("request_information" if state == "blocked" else "report_status"),
         semantic_slots={"state": state, "resource": resource},
         required_terms=(state, resource),
         source_goal_id=goal.goal_id,
@@ -199,7 +197,9 @@ def _metrics(
             result.content_plan is not None
             and result.content_plan.content_id == example.content.content_id
         )
-        expected_status = "clarify" if example.content.intent_kind == "request_information" else "resolved"
+        expected_status = (
+            "clarify" if example.content.intent_kind == "request_information" else "resolved"
+        )
         status_hits += int(result.status == expected_status)
     precision = true_positive / max(1, true_positive + false_positive)
     recall = true_positive / max(1, true_positive + false_negative)
@@ -283,9 +283,7 @@ def _run_seed(seed: int) -> dict[str, Any]:
     conflict = learner.predict(conflict_world, _event(seed, "noop", 1))
     lesion_before, lesion_after = restored.zero_transition_head()
     lesion_result = restored.predict(initial, _event(seed, "release", 1))
-    final_fact_keys = {
-        semantic_fact_key(*relation) for relation in final_world.relations
-    }
+    final_fact_keys = {semantic_fact_key(*relation) for relation in final_world.relations}
     expected_final = {
         semantic_fact_key("agent", "tracks", "alpha"),
         semantic_fact_key("agent", "state", "blocked"),
@@ -311,7 +309,8 @@ def _run_seed(seed: int) -> dict[str, Any]:
         "test_content_learning": test_metrics["content_accuracy"] >= 0.80,
         "sequence_persistence": len(sequence) == 3 and final_fact_keys == expected_final,
         "event_deletion_changes_state": deletion_facts == expected_deletion,
-        "event_order_changes_state": reverse_facts == expected_reverse and reverse_facts != final_fact_keys,
+        "event_order_changes_state": reverse_facts == expected_reverse
+        and reverse_facts != final_fact_keys,
         "checkpoint_mid_sequence": (
             restored_second is not None
             and direct_second is not None
@@ -323,16 +322,16 @@ def _run_seed(seed: int) -> dict[str, Any]:
         "transition_lesion_effective": (
             lesion_before != lesion_after
             and lesion_result.world is not None
-            and {
-                semantic_fact_key(*relation) for relation in lesion_result.world.relations
-            }
+            and {semantic_fact_key(*relation) for relation in lesion_result.world.relations}
             != {
                 semantic_fact_key("agent", "tracks", "alpha"),
                 semantic_fact_key("agent", "state", "ready"),
                 semantic_fact_key("agent", "holds", "cache"),
             }
         ),
-        "all_transition_owners_changed": all(owners_before[name] != owners_after[name] for name in owners_before),
+        "all_transition_owners_changed": all(
+            owners_before[name] != owners_after[name] for name in owners_before
+        ),
         "provider_not_attached": corpus.manifest()["provider_attached"] is False,
     }
     passed = all(bool(value) for value in checks.values())
@@ -374,16 +373,17 @@ def evaluate(seeds: tuple[int, ...] = (11, 29, 47)) -> dict[str, Any]:
         "aggregate": {
             "all_seeds_passed": passed,
             "mean_test_fact_f1": sum(run["metrics"]["test"]["fact_f1"] for run in runs) / len(runs),
-            "mean_test_goal_accuracy": sum(
-                run["metrics"]["test"]["goal_accuracy"] for run in runs
-            )
+            "mean_test_goal_accuracy": sum(run["metrics"]["test"]["goal_accuracy"] for run in runs)
             / len(runs),
             "mean_test_content_accuracy": sum(
                 run["metrics"]["test"]["content_accuracy"] for run in runs
             )
             / len(runs),
         },
-        "gate": {"passed": passed, "criterion": "every independent seed passes every transition check"},
+        "gate": {
+            "passed": passed,
+            "criterion": "every independent seed passes every transition check",
+        },
     }
 
 

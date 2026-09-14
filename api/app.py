@@ -227,6 +227,7 @@ def _register_routers(app: FastAPI):
     from .routes_models import router as models_router
     from .routes_plugins import router as plugins_router
     from .routes_workbench import router as workbench_router
+
     rag_router = _load_optional_router("routes_rag")
     from .routes_runtime import router as runtime_router
     from .routes_settings import router as settings_router

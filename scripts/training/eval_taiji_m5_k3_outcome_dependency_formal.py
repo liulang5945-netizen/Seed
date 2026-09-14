@@ -37,10 +37,13 @@ ARM_NAMES = ("A-full-feedback", "B-no-feedback", "C-outcome-lesion")
 def _arm_rows_produced(arm: dict[str, Any]) -> bool:
     episodes = arm.get("episodes", [])
     required = {"step", "path", "step_success"}
-    return bool(episodes) and len(episodes) == 4 and all(
-        episode.get("rows")
-        and all(required.issubset(row) for row in episode["rows"])
-        for episode in episodes
+    return (
+        bool(episodes)
+        and len(episodes) == 4
+        and all(
+            episode.get("rows") and all(required.issubset(row) for row in episode["rows"])
+            for episode in episodes
+        )
     )
 
 
@@ -74,9 +77,7 @@ def _a_rows_well_formed(arm: dict[str, Any]) -> bool:
     return True
 
 
-def _projection_contract(
-    arm: dict[str, Any], expected_reason: str
-) -> bool:
+def _projection_contract(arm: dict[str, Any], expected_reason: str) -> bool:
     """Ensure the negative-control arm really disables the dependency path."""
 
     for episode in arm.get("episodes", []):
@@ -99,14 +100,10 @@ def _cell_checks(cell: dict[str, Any]) -> dict[str, Any]:
     canary_checks = cell.get("checks", {})
     technical = {
         "canary_checks_all_passed": bool(cell.get("technical_gate_all_passed")),
-        "all_arm_rows_produced": all(
-            _arm_rows_produced(arms[name]) for name in ARM_NAMES
-        ),
+        "all_arm_rows_produced": all(_arm_rows_produced(arms[name]) for name in ARM_NAMES),
         "a_rows_well_formed": _a_rows_well_formed(full),
         "b_projection_disabled": _projection_contract(no_feedback, "no_feedback"),
-        "c_projection_lesioned": _projection_contract(
-            lesion, "outcome_feedback_lesioned"
-        ),
+        "c_projection_lesioned": _projection_contract(lesion, "outcome_feedback_lesioned"),
         "prefit_checkpoint_gate": bool(canary_checks.get("prefit_checkpoint_gate")),
         "postfit_checkpoint_gate": bool(canary_checks.get("postfit_checkpoint_gate")),
     }
@@ -188,36 +185,22 @@ def main() -> int:
     a_train = series("a_train_success")
     feedback_variance = series("feedback_reward_variance")
     cells_passed = sum(1 for entry in cells if entry["checks"]["cell_passed"])
-    technical_cells = sum(
-        1 for entry in cells if all(entry["checks"]["technical"].values())
-    )
+    technical_cells = sum(1 for entry in cells if all(entry["checks"]["technical"].values()))
     admission_cells = sum(
-        1
-        for entry in cells
-        if entry["checks"]["primary"]["a_probe_admission_rate_1p0"]
+        1 for entry in cells if entry["checks"]["primary"]["a_probe_admission_rate_1p0"]
     )
     lineage_cells = sum(
-        1
-        for entry in cells
-        if entry["checks"]["primary"]["a_feedback_lineage_rate_1p0"]
+        1 for entry in cells if entry["checks"]["primary"]["a_feedback_lineage_rate_1p0"]
     )
     variance_cells = sum(
-        1
-        for entry in cells
-        if entry["checks"]["primary"]["feedback_reward_variance_positive"]
+        1 for entry in cells if entry["checks"]["primary"]["feedback_reward_variance_positive"]
     )
     robust = cells_passed == len(cells)
     aggregate_checks = {
         "technical_gates_all_cells": technical_cells == len(cells),
-        "a_holdout_all_cells_ge_floor": all(
-            value >= HOLDOUT_FLOOR for value in a_holdout
-        ),
-        "a_minus_b_all_cells_ge_floor": all(
-            value >= SEPARATION_FLOOR for value in a_minus_b
-        ),
-        "a_minus_c_all_cells_ge_floor": all(
-            value >= SEPARATION_FLOOR for value in a_minus_c
-        ),
+        "a_holdout_all_cells_ge_floor": all(value >= HOLDOUT_FLOOR for value in a_holdout),
+        "a_minus_b_all_cells_ge_floor": all(value >= SEPARATION_FLOOR for value in a_minus_b),
+        "a_minus_c_all_cells_ge_floor": all(value >= SEPARATION_FLOOR for value in a_minus_c),
         "probe_admission_all_cells": admission_cells == len(cells),
         "lineage_admission_all_cells": lineage_cells == len(cells),
         "feedback_variance_all_cells": variance_cells == len(cells),
@@ -256,15 +239,11 @@ def main() -> int:
             },
             "a_minus_b": {
                 **_stats(a_minus_b),
-                "cells_ge_floor": sum(
-                    value >= SEPARATION_FLOOR for value in a_minus_b
-                ),
+                "cells_ge_floor": sum(value >= SEPARATION_FLOOR for value in a_minus_b),
             },
             "a_minus_c": {
                 **_stats(a_minus_c),
-                "cells_ge_floor": sum(
-                    value >= SEPARATION_FLOOR for value in a_minus_c
-                ),
+                "cells_ge_floor": sum(value >= SEPARATION_FLOOR for value in a_minus_c),
             },
             "a_train": _stats(a_train),
             "feedback_reward_variance": _stats(feedback_variance),

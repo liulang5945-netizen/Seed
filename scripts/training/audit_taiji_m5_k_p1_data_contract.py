@@ -291,12 +291,8 @@ def _split_contract(
     validation_classes = sorted({str(record["class_key"]) for record in validation_records})
     train_projects = sorted({str(record["project_id"]) for record in train_records})
     validation_projects = sorted({str(record["project_id"]) for record in validation_records})
-    train_templates = {
-        str(record["template_family_id"]) for record in train_records
-    }
-    validation_templates = {
-        str(record["template_family_id"]) for record in validation_records
-    }
+    train_templates = {str(record["template_family_id"]) for record in train_records}
+    validation_templates = {str(record["template_family_id"]) for record in validation_records}
     return {
         "train": {
             "split": "train",
@@ -314,7 +310,9 @@ def _split_contract(
             "class_coverage_complete": set(validation_classes) == set(EXPECTED_CLASSES),
             "missing_classes": sorted(set(EXPECTED_CLASSES) - set(validation_classes)),
             "project_ids": validation_projects,
-            "project_disjoint_from_train": not bool(train_projects and set(train_projects) & set(validation_projects)),
+            "project_disjoint_from_train": not bool(
+                train_projects and set(train_projects) & set(validation_projects)
+            ),
             "template_disjoint_from_train": not bool(train_templates & validation_templates),
             "source": "build_taiji_m5_k_p1_data.build_validation_course",
         },
@@ -378,9 +376,7 @@ def run_audit(
                 "signals": signals,
             }
 
-        for experience, metadata in zip(
-            validation_experiences, validation_metadata, strict=True
-        ):
+        for experience, metadata in zip(validation_experiences, validation_metadata, strict=True):
             validation_records.append(
                 _record_payload(
                     experience,
@@ -406,9 +402,7 @@ def run_audit(
                 source_manifest_digest=source_manifest_digest,
             )
             course_records: list[dict[str, Any]] = []
-            for experience, metadata in zip(
-                experiences, course_metadata, strict=True
-            ):
+            for experience, metadata in zip(experiences, course_metadata, strict=True):
                 signals = _experience_signatures(semantic, transition, experience)
                 record = _record_payload(
                     experience,
@@ -438,10 +432,7 @@ def run_audit(
         )
         class_coverage = sorted({record["class_key"] for record in records})
         unique_templates = sorted(
-            {
-                record["template_family_id"]
-                for record in (*records, *validation_records)
-            }
+            {record["template_family_id"] for record in (*records, *validation_records)}
         )
         k1_visible_by_course: dict[int, set[str]] = defaultdict(set)
         k2_visible_by_course: dict[int, set[str]] = defaultdict(set)
@@ -503,9 +494,7 @@ def run_audit(
                 "course_size": len(records),
                 "validation_size": len(validation_records),
                 "classes": list(EXPECTED_CLASSES),
-                "train_project_ids": sorted(
-                    {record["project_id"] for record in records}
-                ),
+                "train_project_ids": sorted({record["project_id"] for record in records}),
                 "validation_project_ids": sorted(
                     {record["project_id"] for record in validation_records}
                 ),
@@ -549,9 +538,10 @@ def run_audit(
             for changed in worker_changes.values()
         ):
             reasons.append("course_seed_changes_do_not_change_mask_visible_inputs")
-        if MODEL_INDEPENDENCE_REQUIRED and not model_independence[
-            "all_worker_states_pairwise_distinct"
-        ]:
+        if (
+            MODEL_INDEPENDENCE_REQUIRED
+            and not model_independence["all_worker_states_pairwise_distinct"]
+        ):
             reasons.append("model_seed_replicas_are_not_independent")
 
         payload = {

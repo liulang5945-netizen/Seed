@@ -67,9 +67,7 @@ DEFAULT_WORKER_DIR = PROJECT_ROOT / "checkpoints" / "taiji_k_workers"
 DEFAULT_FIXED_LARGE_DIR = PROJECT_ROOT / "checkpoints" / "taiji_k_fixed_large"
 DEFAULT_MANIFEST = PROJECT_ROOT / "plans" / "manifests" / "taiji_m4v2_r6_formal_input_v1.json"
 DEFAULT_REPORT = (
-    PROJECT_ROOT
-    / "reports"
-    / "taiji_m4v2_r6_formal_input_manifest_preflight_20260909.json"
+    PROJECT_ROOT / "reports" / "taiji_m4v2_r6_formal_input_manifest_preflight_20260909.json"
 )
 
 
@@ -191,11 +189,7 @@ def _worker_paths(worker_dir: Path, model_seed: int) -> dict[str, Path]:
 
 
 def _fixed_large_path(fixed_large_dir: Path, model_seed: int) -> Path:
-    return (
-        fixed_large_dir
-        / f"model_{int(model_seed)}"
-        / "taiji_r6_k_fixed_large_ensemble.pt"
-    )
+    return fixed_large_dir / f"model_{int(model_seed)}" / "taiji_r6_k_fixed_large_ensemble.pt"
 
 
 def _worker_entry(model_seed: int, worker_dir: Path, parent_digest: str) -> dict[str, Any]:
@@ -373,12 +367,11 @@ def _try_worker_registry(
     worker_dir: Path,
     parent_registry: Sequence[Mapping[str, Any]],
 ) -> list[dict[str, Any]]:
-    parents = {int(entry["model_seed"]): str(entry["checkpoint_digest"]) for entry in parent_registry}
+    parents = {
+        int(entry["model_seed"]): str(entry["checkpoint_digest"]) for entry in parent_registry
+    }
     try:
-        return [
-            _worker_entry(seed, worker_dir, parents[seed])
-            for seed in MODEL_SEEDS
-        ]
+        return [_worker_entry(seed, worker_dir, parents[seed]) for seed in MODEL_SEEDS]
     except (FileNotFoundError, KeyError, TypeError, ValueError, RuntimeError):
         return []
 
@@ -388,7 +381,9 @@ def _try_fixed_large_registry(
     fixed_large_dir: Path,
     parent_registry: Sequence[Mapping[str, Any]],
 ) -> list[dict[str, Any]]:
-    parents = {int(entry["model_seed"]): str(entry["checkpoint_digest"]) for entry in parent_registry}
+    parents = {
+        int(entry["model_seed"]): str(entry["checkpoint_digest"]) for entry in parent_registry
+    }
     try:
         return [
             _fixed_large_entry_from_artifact(seed, fixed_large_dir, parents[seed])
@@ -571,7 +566,9 @@ def _validate_worker_entry(
         if str(entry["candidate_namespace"]) != expected_namespace:
             return False, f"worker candidate namespace mismatch for model {model_seed}"
         worker_payload = entry["workers"]
-        if not isinstance(worker_payload, Mapping) or tuple(sorted(worker_payload)) != tuple(sorted(WORKER_IDS)):
+        if not isinstance(worker_payload, Mapping) or tuple(sorted(worker_payload)) != tuple(
+            sorted(WORKER_IDS)
+        ):
             return False, f"worker registry must contain K1/K2/K3 for model {model_seed}"
         paths: dict[str, Path] = {}
         for worker_id in WORKER_IDS:
@@ -584,8 +581,13 @@ def _validate_worker_entry(
             artifact = _load_mapping(path)
             if str(artifact.get("artifact_digest")) != str(item["artifact_digest"]):
                 return False, f"worker artifact digest mismatch for {worker_id}, model {model_seed}"
-            if str(artifact.get("worker_checkpoint_digest")) != str(item["worker_checkpoint_digest"]):
-                return False, f"worker checkpoint digest mismatch for {worker_id}, model {model_seed}"
+            if str(artifact.get("worker_checkpoint_digest")) != str(
+                item["worker_checkpoint_digest"]
+            ):
+                return (
+                    False,
+                    f"worker checkpoint digest mismatch for {worker_id}, model {model_seed}",
+                )
             paths[worker_id] = path
         rebuilt = _worker_entry(model_seed, paths["k1.semantic"].parents[1], parent_digest)
         for key in (
@@ -641,7 +643,9 @@ def _validate_manifest(
         checks["device_cpu"] = payload.get("device") == "cpu"
         checks["model_seed_matrix"] = payload.get("model_seeds") == list(MODEL_SEEDS)
         checks["course_seed_matrix"] = payload.get("course_seeds") == list(COURSE_SEEDS)
-        checks["baseline_repeat_matrix"] = payload.get("baseline_repeat_seeds") == list(REPEAT_SEEDS)
+        checks["baseline_repeat_matrix"] = payload.get("baseline_repeat_seeds") == list(
+            REPEAT_SEEDS
+        )
         checks["phase_order"] = payload.get("phase_order") == list(PHASE_ORDER)
         checks["arm_set"] = payload.get("arms") == list(ARM_IDS)
         checks["manifest_digest"] = payload.get("manifest_digest") == _manifest_digest(payload)
@@ -704,7 +708,9 @@ def _validate_manifest(
             if not valid:
                 failures.append(
                     _failure(
-                        failure_class="lineage" if "digest" in str(reason) else "checkpoint_restore",
+                        failure_class=(
+                            "lineage" if "digest" in str(reason) else "checkpoint_restore"
+                        ),
                         message=str(reason),
                         evidence_digests=(str(entry.get("checkpoint_digest", "")),),
                     )
@@ -759,12 +765,18 @@ def _validate_manifest(
 
     workers = payload.get("worker_registry")
     worker_entries = workers if isinstance(workers, list) else []
-    parent_by_seed = {
-        int(entry["model_seed"]): entry
-        for entry in parent_registry
-        if isinstance(entry, Mapping) and str(entry.get("model_seed", "")).isdigit()
-    } if isinstance(parent_registry, list) else {}
-    checks["worker_registry_complete"] = isinstance(workers, list) and len(workers) == len(MODEL_SEEDS)
+    parent_by_seed = (
+        {
+            int(entry["model_seed"]): entry
+            for entry in parent_registry
+            if isinstance(entry, Mapping) and str(entry.get("model_seed", "")).isdigit()
+        }
+        if isinstance(parent_registry, list)
+        else {}
+    )
+    checks["worker_registry_complete"] = isinstance(workers, list) and len(workers) == len(
+        MODEL_SEEDS
+    )
     checks["worker_registry_valid"] = False
     if not checks["worker_registry_complete"]:
         failures.append(
@@ -794,24 +806,26 @@ def _validate_manifest(
             if not valid:
                 failures.append(
                     _failure(
-                        failure_class="lineage" if "digest" in str(reason) or "parent" in str(reason) else "checkpoint_restore",
+                        failure_class=(
+                            "lineage"
+                            if "digest" in str(reason) or "parent" in str(reason)
+                            else "checkpoint_restore"
+                        ),
                         message=str(reason),
                         recoverability="worker_registry_required",
                     )
                 )
         checks["worker_registry_valid"] = (
-            worker_seeds == list(MODEL_SEEDS)
-            and bool(worker_results)
-            and all(worker_results)
+            worker_seeds == list(MODEL_SEEDS) and bool(worker_results) and all(worker_results)
         )
     if not checks["worker_registry_valid"]:
         failures.append(
-                _failure(
-                    failure_class="lineage",
-                    message="worker_registry model seeds are not exactly 17, 23, and 31",
-                    recoverability="worker_registry_required",
-                )
+            _failure(
+                failure_class="lineage",
+                message="worker_registry model seeds are not exactly 17, 23, and 31",
+                recoverability="worker_registry_required",
             )
+        )
 
     checks["resource_contract_cpu_only"] = (
         payload.get("resource_contract", {}).get("device") == "cpu"
@@ -840,13 +854,10 @@ def _validate_manifest(
         )
 
     fixed_large_registry = payload.get("fixed_large_registry")
-    fixed_large_entries = (
-        fixed_large_registry if isinstance(fixed_large_registry, list) else []
-    )
-    checks["fixed_large_registry_complete"] = (
-        isinstance(fixed_large_registry, list)
-        and len(fixed_large_registry) == len(MODEL_SEEDS)
-    )
+    fixed_large_entries = fixed_large_registry if isinstance(fixed_large_registry, list) else []
+    checks["fixed_large_registry_complete"] = isinstance(fixed_large_registry, list) and len(
+        fixed_large_registry
+    ) == len(MODEL_SEEDS)
     checks["fixed_large_registry_valid"] = False
     if not checks["fixed_large_registry_complete"]:
         failures.append(
@@ -1025,8 +1036,12 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     manifest_path = args.manifest if args.manifest.is_absolute() else PROJECT_ROOT / args.manifest
     report_path = args.report if args.report.is_absolute() else PROJECT_ROOT / args.report
-    parent_dir = args.parent_dir if args.parent_dir.is_absolute() else PROJECT_ROOT / args.parent_dir
-    worker_dir = args.worker_dir if args.worker_dir.is_absolute() else PROJECT_ROOT / args.worker_dir
+    parent_dir = (
+        args.parent_dir if args.parent_dir.is_absolute() else PROJECT_ROOT / args.parent_dir
+    )
+    worker_dir = (
+        args.worker_dir if args.worker_dir.is_absolute() else PROJECT_ROOT / args.worker_dir
+    )
     fixed_large_dir = (
         args.fixed_large_dir
         if args.fixed_large_dir.is_absolute()

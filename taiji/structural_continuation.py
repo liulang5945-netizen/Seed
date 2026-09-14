@@ -42,13 +42,16 @@ class StructuralRegionCapacityPressure:
     def __post_init__(self) -> None:
         if not str(self.region_id):
             raise ValueError("structural capacity pressure region_id must not be empty")
-        if min(
-            int(self.unit_count),
-            int(self.capacity_limit),
-            int(self.pending_candidate_count),
-            int(self.reserved_resource_cost),
-            int(self.structural_budget),
-        ) < 0:
+        if (
+            min(
+                int(self.unit_count),
+                int(self.capacity_limit),
+                int(self.pending_candidate_count),
+                int(self.reserved_resource_cost),
+                int(self.structural_budget),
+            )
+            < 0
+        ):
             raise ValueError("structural capacity pressure counts cannot be negative")
         if int(self.capacity_limit) <= 0:
             raise ValueError("structural capacity pressure capacity_limit must be positive")
@@ -194,8 +197,12 @@ class StructuralCandidateRollback:
         object.__setattr__(self, "batch_id", str(self.batch_id))
         object.__setattr__(self, "candidate_id", str(self.candidate_id))
         object.__setattr__(self, "proposal_id", str(self.proposal_id))
-        object.__setattr__(self, "admission_parent_checkpoint_digest", str(self.admission_parent_checkpoint_digest))
-        object.__setattr__(self, "admission_child_checkpoint_digest", str(self.admission_child_checkpoint_digest))
+        object.__setattr__(
+            self, "admission_parent_checkpoint_digest", str(self.admission_parent_checkpoint_digest)
+        )
+        object.__setattr__(
+            self, "admission_child_checkpoint_digest", str(self.admission_child_checkpoint_digest)
+        )
         object.__setattr__(self, "rollback_checkpoint_digest", str(self.rollback_checkpoint_digest))
         object.__setattr__(self, "topology_before_digest", str(self.topology_before_digest))
         object.__setattr__(self, "topology_after_digest", str(self.topology_after_digest))

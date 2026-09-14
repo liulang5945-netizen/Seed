@@ -21,17 +21,11 @@ from scripts.training.eval_taiji_m4v2_b3_k_loss_diagnostic import (  # noqa: E40
 REPORT_FORMAT = "taiji-m4v2-b3-k-update-signature-audit-v1"
 VERSION = 1
 EPISODE_SEEDS = (0, 1, 2, 3, 4, 5)
-DEFAULT_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m4v2_b3_k_update_signature_audit_20260910.json"
-)
-DEFAULT_CANDIDATE_ROOT = (
-    PROJECT_ROOT / "output" / "taiji_m4v2_b3_k_update_signature_audit_20260910"
-)
+DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m4v2_b3_k_update_signature_audit_20260910.json"
+DEFAULT_CANDIDATE_ROOT = PROJECT_ROOT / "output" / "taiji_m4v2_b3_k_update_signature_audit_20260910"
 BATCH_REPORTS = {
     "three_sliding": PROJECT_ROOT / "reports" / "taiji_m4v2_b3_k_three_batch_20260910.json",
-    "three_non_sliding": PROJECT_ROOT
-    / "reports"
-    / "taiji_m4v2_b3_k_non_sliding_20260910.json",
+    "three_non_sliding": PROJECT_ROOT / "reports" / "taiji_m4v2_b3_k_non_sliding_20260910.json",
 }
 
 
@@ -157,9 +151,7 @@ def main() -> int:
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
     args = parser.parse_args()
     artifact_dir = (
-        args.artifact_dir
-        if args.artifact_dir.is_absolute()
-        else PROJECT_ROOT / args.artifact_dir
+        args.artifact_dir if args.artifact_dir.is_absolute() else PROJECT_ROOT / args.artifact_dir
     )
     candidate_root = (
         args.candidate_root

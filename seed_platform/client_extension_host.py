@@ -199,7 +199,9 @@ class ClientPluginManifest:
         object.__setattr__(self, "version", _text(self.version, "plugin version"))
         object.__setattr__(self, "scope", _text(self.scope, "plugin scope"))
         object.__setattr__(self, "slots", _text_tuple(self.slots, "slots"))
-        object.__setattr__(self, "capability_ids", _text_tuple(self.capability_ids, "capability_ids"))
+        object.__setattr__(
+            self, "capability_ids", _text_tuple(self.capability_ids, "capability_ids")
+        )
         object.__setattr__(self, "service_dependencies", _service_tuple(self.service_dependencies))
         object.__setattr__(
             self,
@@ -227,9 +229,7 @@ class ClientPluginManifest:
             "scope": self.scope,
             "slots": list(self.slots),
             "capability_ids": list(self.capability_ids),
-            "service_dependencies": {
-                name: version for name, version in self.service_dependencies
-            },
+            "service_dependencies": {name: version for name, version in self.service_dependencies},
             "state_schema_version": self.state_schema_version,
             "migration_id": self.migration_id,
             "migration_version": self.migration_version,
@@ -286,7 +286,11 @@ class ExtensionHostPolicy:
             raise ValueError("protected slots cannot also be allowed slots")
         object.__setattr__(self, "allowed_slots", allowed)
         object.__setattr__(self, "protected_slots", protected)
-        object.__setattr__(self, "max_active_extensions", _positive_int(self.max_active_extensions, "max active extensions"))
+        object.__setattr__(
+            self,
+            "max_active_extensions",
+            _positive_int(self.max_active_extensions, "max active extensions"),
+        )
         object.__setattr__(self, "revision", _positive_int(self.revision, "policy revision"))
 
     def to_payload(self) -> dict[str, Any]:
@@ -339,7 +343,9 @@ class ClientExtensionSnapshot:
         ids = tuple(item.plugin_id for item in self.manifests)
         if len(set(ids)) != len(ids):
             raise ValueError("client extension plugin ids must be unique")
-        state_digests = {str(key): _text(value, "state digest") for key, value in self.state_digests.items()}
+        state_digests = {
+            str(key): _text(value, "state digest") for key, value in self.state_digests.items()
+        }
         if set(state_digests) != set(ids):
             raise ValueError("client extension state digests must match manifests")
         object.__setattr__(self, "state_digests", state_digests)
@@ -398,7 +404,9 @@ class ClientExtensionSnapshot:
 
     @classmethod
     def from_payload(cls, payload: Mapping[str, Any]) -> ClientExtensionSnapshot:
-        manifests = tuple(ClientPluginManifest.from_payload(item) for item in payload.get("manifests", ()))
+        manifests = tuple(
+            ClientPluginManifest.from_payload(item) for item in payload.get("manifests", ())
+        )
         return cls(
             snapshot_id=str(payload.get("snapshot_id", "")),
             revision=int(payload.get("revision", 0)),
@@ -592,7 +600,9 @@ class ClientExtensionHost:
         self._known_manifests: dict[str, ClientPluginManifest] = {}
         self._inflight: dict[str, int] = {}
         self._disposers: dict[str, DisposerNode] = {}
-        self._migrators: dict[tuple[str, int, int, str], Callable[[Mapping[str, Any]], Mapping[str, Any]]] = {}
+        self._migrators: dict[
+            tuple[str, int, int, str], Callable[[Mapping[str, Any]], Mapping[str, Any]]
+        ] = {}
 
     @property
     def snapshot(self) -> ClientExtensionSnapshot:
@@ -688,7 +698,9 @@ class ClientExtensionHost:
         if dependency_health is not None:
             health.update({str(key): bool(value) for key, value in dependency_health.items()})
         for manifest in normalized:
-            unhealthy = [name for name, _ in manifest.service_dependencies if health.get(name) is not True]
+            unhealthy = [
+                name for name, _ in manifest.service_dependencies if health.get(name) is not True
+            ]
             if unhealthy:
                 raise ExtensionDependencyError(
                     f"plugin {manifest.plugin_id} dependencies are unavailable: "
@@ -702,7 +714,10 @@ class ClientExtensionHost:
         for manifest in normalized:
             previous = current.get(manifest.plugin_id)
             previous_state = supplied_states.get(manifest.plugin_id, {})
-            if previous is not None and previous.state_schema_version != manifest.state_schema_version:
+            if (
+                previous is not None
+                and previous.state_schema_version != manifest.state_schema_version
+            ):
                 if not manifest.migration_id:
                     raise ExtensionHostError(
                         f"plugin {manifest.plugin_id} requires an explicit state migration"
@@ -716,7 +731,9 @@ class ClientExtensionHost:
                     )
                 )
                 if migrator is None:
-                    raise ExtensionHostError("required client extension state migrator is not registered")
+                    raise ExtensionHostError(
+                        "required client extension state migrator is not registered"
+                    )
                 migrated = migrator(copy.deepcopy(previous_state))
                 next_states[manifest.plugin_id] = _state(migrated)
             else:
@@ -775,7 +792,9 @@ class ClientExtensionHost:
                 self._record(manifest, "retired", self._snapshot.snapshot_id, "version_replaced")
         self._known_manifests.update({item.plugin_id: item for item in old_snapshot.manifests})
         self._known_manifests.update({item.plugin_id: item for item in self.active_manifests})
-        self._record_all(self.active_manifests, "active", self._snapshot.snapshot_id, "two_phase_commit")
+        self._record_all(
+            self.active_manifests, "active", self._snapshot.snapshot_id, "two_phase_commit"
+        )
         return self._snapshot
 
     def mount(
@@ -799,7 +818,9 @@ class ClientExtensionHost:
 
     def retire(self, plugin_id: str, *, reason: str = "explicit_retire") -> ClientExtensionSnapshot:
         plugin_id = _text(plugin_id, "plugin id")
-        manifest = next((item for item in self.active_manifests if item.plugin_id == plugin_id), None)
+        manifest = next(
+            (item for item in self.active_manifests if item.plugin_id == plugin_id), None
+        )
         if manifest is None:
             raise ExtensionHostError("client extension is not active")
         prepared = self.prepare(
@@ -818,7 +839,9 @@ class ClientExtensionHost:
 
     def quarantine(self, plugin_id: str, *, reason: str) -> ClientExtensionSnapshot:
         plugin_id = _text(plugin_id, "plugin id")
-        manifest = next((item for item in self.active_manifests if item.plugin_id == plugin_id), None)
+        manifest = next(
+            (item for item in self.active_manifests if item.plugin_id == plugin_id), None
+        )
         if manifest is None:
             raise ExtensionHostError("client extension is not active")
         prepared = self.prepare(
@@ -903,7 +926,9 @@ class ClientExtensionHost:
             return self._snapshot
         entry = self._history.get(snapshot_id)
         if entry is None:
-            raise ExtensionHostError("requested client extension snapshot is not in rollback history")
+            raise ExtensionHostError(
+                "requested client extension snapshot is not in rollback history"
+            )
         target, states = entry
         current_ids = {item.plugin_id for item in self.active_manifests}
         target_ids = {item.plugin_id for item in target.manifests}
@@ -914,7 +939,9 @@ class ClientExtensionHost:
         self._history[old.snapshot_id] = (old, copy.deepcopy(self._states))
         self._snapshot = target
         self._states = copy.deepcopy(states)
-        self._record_all(self.active_manifests, "rolled_back", target.snapshot_id, "parent_snapshot_restore")
+        self._record_all(
+            self.active_manifests, "rolled_back", target.snapshot_id, "parent_snapshot_restore"
+        )
         return target
 
     def checkpoint(self) -> dict[str, Any]:
@@ -941,7 +968,9 @@ class ClientExtensionHost:
     def from_checkpoint(cls, payload: Mapping[str, Any]) -> ClientExtensionHost:
         if payload.get("format") != CLIENT_EXTENSION_CHECKPOINT_FORMAT:
             raise ValueError("unsupported client extension checkpoint format")
-        expected = _digest({key: value for key, value in payload.items() if key != "checkpoint_digest"})
+        expected = _digest(
+            {key: value for key, value in payload.items() if key != "checkpoint_digest"}
+        )
         if str(payload.get("checkpoint_digest", "")) != expected:
             raise ValueError("client extension checkpoint digest mismatch")
         policy_payload = dict(payload.get("policy") or {})
@@ -955,18 +984,24 @@ class ClientExtensionHost:
             parent_checkpoint_id=snapshot.parent_snapshot_id,
         )
         host._snapshot = snapshot
-        host._states = {str(key): _state(value) for key, value in (payload.get("states") or {}).items()}
+        host._states = {
+            str(key): _state(value) for key, value in (payload.get("states") or {}).items()
+        }
         if set(host._states) != {item.plugin_id for item in snapshot.manifests}:
             raise ValueError("client extension checkpoint state mismatch")
         host._verify_state_digests(snapshot, host._states)
-        host._health = {str(key): bool(value) for key, value in (payload.get("dependency_health") or {}).items()}
+        host._health = {
+            str(key): bool(value) for key, value in (payload.get("dependency_health") or {}).items()
+        }
         host._history = {}
         for item in payload.get("history", ()):
             history_snapshot = ClientExtensionSnapshot.from_payload(item.get("snapshot") or {})
             history_states = {
                 str(key): _state(value) for key, value in (item.get("states") or {}).items()
             }
-            if set(history_states) != {manifest.plugin_id for manifest in history_snapshot.manifests}:
+            if set(history_states) != {
+                manifest.plugin_id for manifest in history_snapshot.manifests
+            }:
                 raise ValueError("client extension history state mismatch")
             host._verify_state_digests(history_snapshot, history_states)
             host._history[history_snapshot.snapshot_id] = (history_snapshot, history_states)

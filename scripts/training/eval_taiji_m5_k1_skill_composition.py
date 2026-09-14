@@ -262,9 +262,7 @@ def _expected_capability(observation: WorkbenchObservation) -> str | None:
     return None
 
 
-def _typed_fact_feature_masks(
-    fact_keys: tuple[str, ...], schema
-) -> dict[str, tuple[int, ...]]:
+def _typed_fact_feature_masks(fact_keys: tuple[str, ...], schema) -> dict[str, tuple[int, ...]]:
     """K1.1 typed fact->feature binding derived from the observation schema.
 
     Each semantic fact may only read the feature that indicates its own
@@ -488,12 +486,9 @@ def _stage2_interface(
     steps: list[dict[str, Any]] = []
     current = initial_world
     for tick, observation in enumerate(holdout, start=1):
-        result = transition_learner.predict(
-            current, observation.to_percept_event(tick=tick)
-        )
-        world_wellformed = (
-            result.world is not None
-            and all(len(relation) == 3 for relation in result.world.relations)
+        result = transition_learner.predict(current, observation.to_percept_event(tick=tick))
+        world_wellformed = result.world is not None and all(
+            len(relation) == 3 for relation in result.world.relations
         )
         goal_contract_ok = result.goal is None or isinstance(result.goal, Goal)
         content_contract_ok = result.content_plan is None or isinstance(

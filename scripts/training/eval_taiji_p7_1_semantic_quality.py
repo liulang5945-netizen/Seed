@@ -129,7 +129,9 @@ def _request(case: dict[str, Any], index: int) -> SemanticProviderRequest:
     return SemanticProviderRequest.from_frame(frame, constraints=("只读",))
 
 
-def _evaluate_case(provider: QwenSemanticEvidenceProvider, case: dict[str, Any], index: int) -> dict[str, Any]:
+def _evaluate_case(
+    provider: QwenSemanticEvidenceProvider, case: dict[str, Any], index: int
+) -> dict[str, Any]:
     request = _request(case, index)
     started = time.perf_counter()
     try:
@@ -191,7 +193,12 @@ def _evaluate_case(provider: QwenSemanticEvidenceProvider, case: dict[str, Any],
             "semantic_steps": steps,
             "evidence_digest": proposal.evidence_digest,
         },
-        "extracted": {"operation": operation, "path": path, "query": first_slots.get("query", ""), "language": language_value},
+        "extracted": {
+            "operation": operation,
+            "path": path,
+            "query": first_slots.get("query", ""),
+            "language": language_value,
+        },
         "checks": checks,
         "passed": all(checks.values()),
         "error": "",
@@ -264,7 +271,9 @@ def main() -> None:
     args = parser.parse_args()
     report = evaluate(args.model, expected_model_digest=args.expected_model_digest)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(report, ensure_ascii=False, indent=2))
     raise SystemExit(0 if report["gate"]["passed"] else 1)
 

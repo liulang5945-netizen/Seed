@@ -186,9 +186,7 @@ def _pressure(
         feedbacks,
         controller.admissions,
         (
-            _independent_observation(
-                partition="holdout", episode=holdout_episode, tick=10 + cycle
-            ),
+            _independent_observation(partition="holdout", episode=holdout_episode, tick=10 + cycle),
             _independent_observation(
                 partition="retention", episode=retention_episode, tick=11 + cycle
             ),
@@ -223,9 +221,7 @@ def _admit(
     restored = type(model).from_native_checkpoint(candidate_checkpoint)
     restored_candidate = restored.structural_proposal_candidates[0]
     batch = restored.arbitrate_structural_candidate_batch((restored_candidate.candidate_id,))
-    holdout_input, expected_activity = _expected_activity(
-        restored, restored_candidate.candidate_id
-    )
+    holdout_input, expected_activity = _expected_activity(restored, restored_candidate.candidate_id)
     validation = restored.validate_structural_candidate_shadow(
         restored_candidate.candidate_id,
         holdout_inputs=(holdout_input,),
@@ -257,7 +253,9 @@ def _admit(
         "budget_after": budget_after,
         "unit_ids": list(restored.neuron_regions[0].unit_ids),
         "candidate_checkpoint_roundtrip": (
-            type(model).from_native_checkpoint(candidate_checkpoint).structural_proposal_candidates[0]
+            type(model)
+            .from_native_checkpoint(candidate_checkpoint)
+            .structural_proposal_candidates[0]
             == candidate
         ),
     }
@@ -388,7 +386,14 @@ def evaluate() -> dict[str, object]:
         )
         second_proposal = lesion_model.topology_proposals[-1]
         lesion_specification = tuple(
-            (key, len(lesion_model.neuron_regions[0].unit_ids) if key == "existing_unit_count" else value)
+            (
+                key,
+                (
+                    len(lesion_model.neuron_regions[0].unit_ids)
+                    if key == "existing_unit_count"
+                    else value
+                ),
+            )
             for key, value in second_proposal.specification
         )
         lesion_workspace.rebind(lesion_model.neuron_regions[0])
@@ -443,9 +448,9 @@ def evaluate() -> dict[str, object]:
             "second_workspace_checkpoint_roundtrip": (
                 StructuralWorkspaceRouter.from_checkpoint(
                     second_workspace_checkpoint,
-                    region=type(resumed_model).from_native_checkpoint(
-                        second_model_checkpoint
-                    ).neuron_regions[0],
+                    region=type(resumed_model)
+                    .from_native_checkpoint(second_model_checkpoint)
+                    .neuron_regions[0],
                 ).checkpoint()["checkpoint_digest"]
                 == second_workspace_checkpoint["checkpoint_digest"]
             ),
@@ -453,16 +458,12 @@ def evaluate() -> dict[str, object]:
         runs.append(run)
 
     structural_stage_two = [
-        float(item["task_score"])
-        for run in runs
-        for item in run["stage_two_after_second"]
+        float(item["task_score"]) for run in runs for item in run["stage_two_after_second"]
     ]
     structural_mean = sum(structural_stage_two) / len(structural_stage_two)
     control_means = {
         method: sum(
-            float(item["task_score"])
-            for run in runs
-            for item in run["control_runs"][method]
+            float(item["task_score"]) for run in runs for item in run["control_runs"][method]
         )
         / (len(runs) * len(STAGE_TWO_TASKS))
         for method in ("interaction_weight_only", "router_only", "memory_only")
@@ -528,15 +529,13 @@ def evaluate() -> dict[str, object]:
             for run in runs
         ),
         "lesion_removes_second_growth_gain": all(
-            run["lesion_run"]["capacity"] == 3
-            and run["lesion_run"]["task_score"] == 0.0
+            run["lesion_run"]["capacity"] == 3 and run["lesion_run"]["task_score"] == 0.0
             for run in runs
         ),
         "full_rollback_restores_topology_and_budget": all(
             run["second_rollback_status"] == "rolled_back"
             and run["first_rollback_status"] == "rolled_back"
-            and run["topology_after_full_rollback"]
-            == run["first_admission"]["topology_before"]
+            and run["topology_after_full_rollback"] == run["first_admission"]["topology_before"]
             and run["budget_after_full_rollback"] == 2
             for run in runs
         ),

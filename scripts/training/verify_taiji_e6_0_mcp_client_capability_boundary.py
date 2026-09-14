@@ -93,7 +93,8 @@ def run_gate() -> dict[str, object]:
         "executor_source_is_not_exported": "executor_id" not in payload["tool_contracts"][0]
         and "source" not in payload["tool_contracts"][0],
         "preflight_stops_at_shadow": pending.passed and pending.decision == "shadow_pending",
-        "registry_drift_fails_closed": not stale.passed and stale.reason_code == "stale_mcp_registry",
+        "registry_drift_fails_closed": not stale.passed
+        and stale.reason_code == "stale_mcp_registry",
         "equivalent_shadow_is_admissible": shadow.passed and shadow.decision == "shadow_equivalent",
         "shadow_external_call_is_rejected": not rejected_shadow.passed
         and rejected_shadow.reason_code == "shadow_external_call_detected",
@@ -101,7 +102,8 @@ def run_gate() -> dict[str, object]:
         "candidate_has_no_cognitive_owner": "from taiji" not in module_source
         and "CognitiveInternalizationArtifact" not in module_source,
         "candidate_has_no_external_executor": all(
-            marker not in module_source for marker in ("import requests", "import socket", "subprocess", "httpx")
+            marker not in module_source
+            for marker in ("import requests", "import socket", "subprocess", "httpx")
         ),
     }
     return {
@@ -124,12 +126,16 @@ def main() -> int:
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_w7_e6_0_mcp_client_capability_boundary_20260901.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_w7_e6_0_mcp_client_capability_boundary_20260901.json",
     )
     args = parser.parse_args()
     result = run_gate()
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=True, indent=2))
     return 0 if result["status"] == "passed" else 1
 

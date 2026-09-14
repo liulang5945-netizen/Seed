@@ -125,7 +125,10 @@ def evaluate() -> dict[str, object]:
                 terminal_batch_id,
                 first_id,
             )
-            if first_rollback["status"] != "rolled_back" or second_rollback["status"] != "rolled_back":
+            if (
+                first_rollback["status"] != "rolled_back"
+                or second_rollback["status"] != "rolled_back"
+            ):
                 raise AssertionError(f"round {round_index} rollback was not clean")
             terminal_artifacts.append((terminal_batch_id, second_artifact, second_replay))
 
@@ -175,13 +178,17 @@ def evaluate() -> dict[str, object]:
         final_signature_before_save = _signature(runtime)
         runtime = checkpoint("final", runtime)
         final_signature = _signature(runtime)
-        final_batch_ids = {item.batch_id for item in runtime.model.architecture.structural_candidate_batches}
+        final_batch_ids = {
+            item.batch_id for item in runtime.model.architecture.structural_candidate_batches
+        }
         final_artifact_count = len(runtime.model.architecture.structural_validation_artifacts)
         final_record_counts = {
             "candidate_batches": len(runtime.model.architecture.structural_candidate_batches),
             "candidate_rollbacks": len(runtime.model.architecture.structural_candidate_rollbacks),
             "validation_artifacts": final_artifact_count,
-            "artifact_batches": len(runtime.model.architecture.structural_validation_artifact_batches),
+            "artifact_batches": len(
+                runtime.model.architecture.structural_validation_artifact_batches
+            ),
             "workbench_schedule_results": len(
                 runtime.model.architecture.structural_workbench_batch_schedule_results
             ),
@@ -203,7 +210,8 @@ def evaluate() -> dict[str, object]:
                 active_batch_id in final_batch_ids
                 and active_batch_id not in removed_terminal_batch_ids
                 and all(
-                    active_batch_id in runtime.model.architecture.structural_lineage_retention_result.retained_batch_ids
+                    active_batch_id
+                    in runtime.model.architecture.structural_lineage_retention_result.retained_batch_ids
                     for _ in (0,)
                 )
             ),
@@ -220,8 +228,7 @@ def evaluate() -> dict[str, object]:
                 _budget(runtime) == base_budget
                 and _topology(runtime) == base_topology
                 and all(
-                    detail["first_measurement_digest"]
-                    and detail["second_measurement_digest"]
+                    detail["first_measurement_digest"] and detail["second_measurement_digest"]
                     for detail in cycle_details
                 )
             ),

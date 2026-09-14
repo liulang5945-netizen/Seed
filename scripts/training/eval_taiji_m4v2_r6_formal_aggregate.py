@@ -42,9 +42,7 @@ REPORT_FORMAT = "taiji-m4v2-r6-formal-aggregate-v1"
 MATCHED_CONTROL_REPORT_FORMAT = "taiji-m4v2-r6-matched-control-aggregate-v1"
 MATCHED_CONTROL_REVISION_FORMAT = "taiji-m4v2-r6-matched-control-v2"
 VERSION = 1
-DEFAULT_EXECUTION_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m4v2_r6_formal_execution_20260909.json"
-)
+DEFAULT_EXECUTION_REPORT = PROJECT_ROOT / "reports" / "taiji_m4v2_r6_formal_execution_20260909.json"
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m4v2_r6_formal_aggregate_20260909.json"
 STUDENT_T_CRITICAL_95_DF8 = 1.8595480375228424
 EXPECTED_CELL_ORDER = tuple(
@@ -84,9 +82,7 @@ def _record_failure(
         {
             "category": category,
             "cell": (
-                None
-                if cell is None
-                else {"model_seed": int(cell[0]), "course_seed": int(cell[1])}
+                None if cell is None else {"model_seed": int(cell[0]), "course_seed": int(cell[1])}
             ),
             "arm": arm,
             "metric": metric,
@@ -195,9 +191,7 @@ def _resource_digest_for_arm(
     fixed_large: Mapping[str, Any],
     matched_control_revision: bool = False,
 ) -> str:
-    if arm == "frozen-parent" or (
-        arm == "matched-fixed-capacity" and not matched_control_revision
-    ):
+    if arm == "frozen-parent" or (arm == "matched-fixed-capacity" and not matched_control_revision):
         return str(parent["resource_manifest_digest"])
     if arm in {"candidate-continuation", "lesion"} or (
         arm == "matched-fixed-capacity" and matched_control_revision
@@ -383,7 +377,11 @@ def _validate_matched_control_semantics(
         and frozen_checkpoint.get("rollback_digest") == expected_parent_digest
         and frozen_checkpoint.get("rollback_matches_parent") is True
     ):
-        failure("frozen-parent", "checkpoint_restore", "frozen parent did not restore and roll back to parent")
+        failure(
+            "frozen-parent",
+            "checkpoint_restore",
+            "frozen parent did not restore and roll back to parent",
+        )
 
     matched = arms["matched-fixed-capacity"]
     matched_causal = matched.get("causal")
@@ -397,10 +395,18 @@ def _validate_matched_control_semantics(
     if not isinstance(matched_causal, Mapping) or any(
         matched_causal.get(key) != value for key, value in matched_expected.items()
     ):
-        failure("matched-fixed-capacity", "causal", "matched arm is not the no-feedback capacity control")
+        failure(
+            "matched-fixed-capacity",
+            "causal",
+            "matched arm is not the no-feedback capacity control",
+        )
     matched_k = _phase_row(matched, "K")
     if not isinstance(matched_k, Mapping) or matched_k.get("status") != "executed_no_feedback":
-        failure("matched-fixed-capacity", "K", "matched arm did not stop after K execution without feedback")
+        failure(
+            "matched-fixed-capacity",
+            "K",
+            "matched arm did not stop after K execution without feedback",
+        )
     matched_checkpoint = matched.get("checkpoint_ledger")
     if not isinstance(matched_checkpoint, Mapping) or not (
         matched_checkpoint.get("exchange_digest") is None
@@ -409,7 +415,11 @@ def _validate_matched_control_semantics(
         and matched_checkpoint["adapter_checkpoint"].get("exchange_checkpoint_digest")
         == matched_checkpoint["adapter_checkpoint"].get("rollback_checkpoint_digest")
     ):
-        failure("matched-fixed-capacity", "checkpoint_restore", "matched arm created an exchange or lacked no-feedback rollback semantics")
+        failure(
+            "matched-fixed-capacity",
+            "checkpoint_restore",
+            "matched arm created an exchange or lacked no-feedback rollback semantics",
+        )
 
     candidate = arms["candidate-continuation"]
     candidate_causal = candidate.get("causal")
@@ -418,7 +428,9 @@ def _validate_matched_control_semantics(
         and candidate_causal.get("k3_projection_accepted") is True
         and candidate_causal.get("status") == "candidate_path_verified"
     ):
-        failure("candidate-continuation", "causal", "candidate arm did not admit the K feedback path")
+        failure(
+            "candidate-continuation", "causal", "candidate arm did not admit the K feedback path"
+        )
     candidate_k = _phase_row(candidate, "K")
     if not isinstance(candidate_k, Mapping) or candidate_k.get("status") != "executed":
         failure("candidate-continuation", "K", "candidate K phase was not executed")
@@ -578,9 +590,7 @@ def _validate_cell(
             arm_id = str(ledger_arm["arm"])
             arm_snapshot = raw_arms[arm_id]
             if not isinstance(arm_snapshot, Mapping) or any(
-                ledger_arm.get(key) != arm_snapshot.get(key)
-                for key in ledger_arm
-                if key != "arm"
+                ledger_arm.get(key) != arm_snapshot.get(key) for key in ledger_arm if key != "arm"
             ):
                 _record_failure(
                     failures,
@@ -724,8 +734,7 @@ def _validate_cell(
     fixed_resource = arm_summaries["fixed-large"]["resource"]
     resources: dict[str, Any] = {}
     if all(
-        isinstance(item, Mapping)
-        for item in (candidate_resource, matched_resource, fixed_resource)
+        isinstance(item, Mapping) for item in (candidate_resource, matched_resource, fixed_resource)
     ):
         if matched_control_revision:
             for field in (
@@ -801,9 +810,7 @@ def _validate_cell(
                     "inference_trace_count",
                 )
             },
-            "arm_resources": {
-                arm_id: arm_summaries[arm_id]["resource"] for arm_id in ARM_IDS
-            },
+            "arm_resources": {arm_id: arm_summaries[arm_id]["resource"] for arm_id in ARM_IDS},
         }
     else:
         _record_failure(
@@ -974,16 +981,10 @@ def _aggregate_reports(
             value = capability.get(value_key)
             if _finite_number(value):
                 metric_values[metric].append(float(value))
-        candidate_resource = resources.get("arm_resources", {}).get(
-            "candidate-continuation"
-        )
-        matched_resource = resources.get("arm_resources", {}).get(
-            "matched-fixed-capacity"
-        )
+        candidate_resource = resources.get("arm_resources", {}).get("candidate-continuation")
+        matched_resource = resources.get("arm_resources", {}).get("matched-fixed-capacity")
         fixed_delta = resources.get("fixed_large_minus_candidate", {})
-        if isinstance(candidate_resource, Mapping) and isinstance(
-            matched_resource, Mapping
-        ):
+        if isinstance(candidate_resource, Mapping) and isinstance(matched_resource, Mapping):
             for metric, resource, field in (
                 (
                     "candidate_wall_clock_seconds",
@@ -1050,11 +1051,7 @@ def _aggregate_reports(
                     metric_values[metric].append(float(cast(float, value)))
 
     aggregate_delta_floor = _paired_delta_floor(control_revision)
-    metrics = {
-        metric: _mean_summary(values)
-        for metric, values in metric_values.items()
-        if values
-    }
+    metrics = {metric: _mean_summary(values) for metric, values in metric_values.items() if values}
     if matched_control_revision:
         if aggregate_delta_floor is not None:
             for metric in ("candidate_minus_matched_fixed_capacity_task_success_rate",):
@@ -1065,10 +1062,7 @@ def _aggregate_reports(
                     else None
                 )
                 lower_bound_value = _finite_float(lower_bound)
-                if (
-                    lower_bound_value is None
-                    or lower_bound_value < aggregate_delta_floor
-                ):
+                if lower_bound_value is None or lower_bound_value < aggregate_delta_floor:
                     _record_failure(
                         failures,
                         category="aggregate_gate",
@@ -1111,9 +1105,7 @@ def _aggregate_reports(
             ),
             "k3_lesion_breaks_gain": False,
             "candidate_over_matched_wall_budget": all(
-                result.get("resources", {})
-                .get("candidate_over_matched", {})
-                .get("wall_clock_pass")
+                result.get("resources", {}).get("candidate_over_matched", {}).get("wall_clock_pass")
                 is True
                 for result in cell_results
             ),
@@ -1124,19 +1116,13 @@ def _aggregate_reports(
                 is True
                 for result in cell_results
             ),
-            "paired_frozen_parent_delta_available": (
-                False
-            ),
+            "paired_frozen_parent_delta_available": (False),
             "paired_matched_fixed_capacity_delta_available": (
                 matched_control_revision
-                and len(
-                    metric_values["candidate_minus_matched_fixed_capacity_task_success_rate"]
-                )
+                and len(metric_values["candidate_minus_matched_fixed_capacity_task_success_rate"])
                 == len(EXPECTED_CELL_ORDER)
             ),
-            "paired_frozen_parent_delta_floor": (
-                None
-            ),
+            "paired_frozen_parent_delta_floor": (None),
             "paired_matched_fixed_capacity_delta_floor": (
                 matched_control_revision
                 and aggregate_delta_floor is not None
@@ -1241,9 +1227,7 @@ def run_aggregate(
             formal_preflight_path = (
                 _resolve_repo_path(formal_preflight_value)
                 if isinstance(formal_preflight_value, str)
-                else execution_report_path.with_name(
-                    "taiji_m4v2_r6_formal_preflight_20260909.json"
-                )
+                else execution_report_path.with_name("taiji_m4v2_r6_formal_preflight_20260909.json")
             )
             formal_preflight = _load_object(formal_preflight_path)
             if formal_preflight.get("status") != "input_ready":
@@ -1258,9 +1242,7 @@ def run_aggregate(
                     category="lineage",
                     message="formal runner preflight manifest digest differs",
                 )
-            if content_digest(formal_preflight) != execution.get(
-                "input_preflight_report_digest"
-            ):
+            if content_digest(formal_preflight) != execution.get("input_preflight_report_digest"):
                 _record_failure(
                     failures,
                     category="lineage",

@@ -220,30 +220,27 @@ def run_diagnosis() -> dict[str, Any]:
             "targets": REPLAY_TARGETS,
         }
     )
-    conditions = [
-        _condition_record(decoder, corpus, event_set_digest)
-        for decoder in DECODERS
-    ]
+    conditions = [_condition_record(decoder, corpus, event_set_digest) for decoder in DECODERS]
     for condition in conditions:
         condition["condition_gate_passed"] = _condition_passed(condition)
     shared, local, cue_selective = conditions
     shared_budget = {
-        record["seed"]: record["active_parameter_count"]
-        for record in shared["records"]
+        record["seed"]: record["active_parameter_count"] for record in shared["records"]
     }
     local_budgets = {
         decoder: {
-            record["seed"]: record["active_parameter_count"]
-            for record in condition["records"]
+            record["seed"]: record["active_parameter_count"] for record in condition["records"]
         }
         for decoder, condition in (("local", local), ("cue_selective", cue_selective))
     }
     return {
         "format": FORMAT,
         "version": 1,
-        "status": "passed"
-        if local["condition_gate_passed"] or cue_selective["condition_gate_passed"]
-        else "failed",
+        "status": (
+            "passed"
+            if local["condition_gate_passed"] or cue_selective["condition_gate_passed"]
+            else "failed"
+        ),
         "variable_changed": "episodic action-readout presynaptic substrate only",
         "baseline_decoder": "shared",
         "candidate_decoders": ["local", "cue_selective"],
@@ -257,8 +254,7 @@ def run_diagnosis() -> dict[str, Any]:
         "corpus_digest": corpus.digest,
         "event_set_digest": event_set_digest,
         "parameter_budgets_equal": all(
-            shared_budget == candidate_budget
-            for candidate_budget in local_budgets.values()
+            shared_budget == candidate_budget for candidate_budget in local_budgets.values()
         ),
         "conditions": conditions,
         "conclusion": {
@@ -284,7 +280,9 @@ def main() -> int:
     result = run_diagnosis()
     result["report_path"] = str(args.report)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

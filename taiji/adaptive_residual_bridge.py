@@ -42,9 +42,7 @@ class AdaptiveResidualBridge:
         self.device = torch.device(device)
         self.output_dim = int(config.motor_context_dim)
         selected_units = self.output_dim if unit_count is None else int(unit_count)
-        selected_fan_in = (
-            int(config.predictive_context_fan_in) if fan_in is None else int(fan_in)
-        )
+        selected_fan_in = int(config.predictive_context_fan_in) if fan_in is None else int(fan_in)
         if selected_units != self.output_dim:
             raise ValueError("R3 bridge unit_count must equal motor_context_dim")
         if not 0 < selected_fan_in <= self.output_dim:
@@ -195,7 +193,9 @@ class AdaptiveResidualBridge:
         self.set_gate(float(payload["gate"]))
         self._lesioned = bool(payload.get("lesioned", False))
         last_input = payload["last_input"].detach().to(self.device, dtype=torch.float32).clone()
-        last_activity = payload["last_activity"].detach().to(self.device, dtype=torch.float32).clone()
+        last_activity = (
+            payload["last_activity"].detach().to(self.device, dtype=torch.float32).clone()
+        )
         if last_input.shape != (self.output_dim,):
             raise ValueError("adaptive residual bridge last_input shape does not match")
         if last_activity.shape != (self.unit_count,):

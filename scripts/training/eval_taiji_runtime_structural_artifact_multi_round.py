@@ -124,8 +124,7 @@ def _batch(runtime: SeedRuntime, batch_id: str) -> Any:
 
 def _topology(runtime: SeedRuntime) -> tuple[tuple[str, tuple[str, ...]], ...]:
     return tuple(
-        (region.region_id, region.unit_ids)
-        for region in runtime.model.architecture.neuron_regions
+        (region.region_id, region.unit_ids) for region in runtime.model.architecture.neuron_regions
     )
 
 
@@ -191,8 +190,10 @@ def evaluate() -> dict[str, object]:
             first_ordinal=7,
             round_id="round-2",
         )
-        round_two_schedule = round_one_restored.schedule_structural_candidate_batch_from_workbench_evidence(
-            _schedule_requests()
+        round_two_schedule = (
+            round_one_restored.schedule_structural_candidate_batch_from_workbench_evidence(
+                _schedule_requests()
+            )
         )
         if round_two_schedule.get("status") != "batch_created":
             raise AssertionError(f"round two batch was not created: {round_two_schedule}")
@@ -217,7 +218,9 @@ def evaluate() -> dict[str, object]:
             round_two_evidence,
         )
         round_two_parent.save(paths["round2-first"])
-        round_two_after_first_measurement = SeedRuntime.load(paths["round2-first"], workspace_root=PROJECT_ROOT)
+        round_two_after_first_measurement = SeedRuntime.load(
+            paths["round2-first"], workspace_root=PROJECT_ROOT
+        )
         first_result = round_two_after_first_measurement.continue_structural_candidate_batch_from_validation_artifacts(
             round_two_batch_id,
             artifacts_by_candidate={round_two_first_id: first_artifact},
@@ -245,7 +248,9 @@ def evaluate() -> dict[str, object]:
             round_two_evidence,
         )
         round_two_after_first_measurement.save(paths["round2-second"])
-        round_two_before_second_admission = SeedRuntime.load(paths["round2-second"], workspace_root=PROJECT_ROOT)
+        round_two_before_second_admission = SeedRuntime.load(
+            paths["round2-second"], workspace_root=PROJECT_ROOT
+        )
         second_result = round_two_before_second_admission.continue_structural_candidate_batch_from_validation_artifacts(
             round_two_batch_id,
             artifacts_by_candidate={round_two_second_id: second_artifact},
@@ -277,8 +282,10 @@ def evaluate() -> dict[str, object]:
             first_ordinal=13,
             round_id="round-3",
         )
-        round_three_schedule = round_two_restored.schedule_structural_candidate_batch_from_workbench_evidence(
-            _schedule_requests()
+        round_three_schedule = (
+            round_two_restored.schedule_structural_candidate_batch_from_workbench_evidence(
+                _schedule_requests()
+            )
         )
         if round_three_schedule.get("status") != "batch_created":
             raise AssertionError(f"round three batch was not created: {round_three_schedule}")
@@ -294,13 +301,17 @@ def evaluate() -> dict[str, object]:
             round_three_evidence,
         )
         round_three_parent.save(paths["round3-measured"])
-        round_three_measured = SeedRuntime.load(paths["round3-measured"], workspace_root=PROJECT_ROOT)
+        round_three_measured = SeedRuntime.load(
+            paths["round3-measured"], workspace_root=PROJECT_ROOT
+        )
         malformed = copy.deepcopy(round_three_artifact.to_payload())
         malformed["measurement_digest"] = "0" * 64
-        malformed_result = round_three_measured.continue_structural_candidate_batch_from_validation_artifacts(
-            round_three_batch_id,
-            artifacts_by_candidate={round_three_first_id: malformed},
-            replays_by_candidate={round_three_first_id: round_three_replay},
+        malformed_result = (
+            round_three_measured.continue_structural_candidate_batch_from_validation_artifacts(
+                round_three_batch_id,
+                artifacts_by_candidate={round_three_first_id: malformed},
+                replays_by_candidate={round_three_first_id: round_three_replay},
+            )
         )
         round_three_after_failure = _batch(round_three_measured, round_three_batch_id)
         round_three_live_after_failure = (
@@ -317,10 +328,14 @@ def evaluate() -> dict[str, object]:
             expected_activities_by_candidate={},
             lineage_retention_policy=policy.to_payload(),
         )
-        retention_result = round_three_measured.model.architecture.structural_lineage_retention_result
+        retention_result = (
+            round_three_measured.model.architecture.structural_lineage_retention_result
+        )
         if retention_result is None:
             raise AssertionError("S38 retention audit was not recorded")
-        before_replay = _checkpoint_digest(round_three_measured.model.architecture.native_checkpoint())
+        before_replay = _checkpoint_digest(
+            round_three_measured.model.architecture.native_checkpoint()
+        )
         try:
             round_three_measured.continue_structural_candidate_batch_from_validation_artifacts(
                 round_two_batch_id,
@@ -331,10 +346,14 @@ def evaluate() -> dict[str, object]:
             terminal_replay_rejected = "unknown structural candidate batch" in str(exc)
         else:
             terminal_replay_rejected = False
-        after_replay = _checkpoint_digest(round_three_measured.model.architecture.native_checkpoint())
+        after_replay = _checkpoint_digest(
+            round_three_measured.model.architecture.native_checkpoint()
+        )
         round_three_measured.save(paths["round3-final"])
         final = SeedRuntime.load(paths["round3-final"], workspace_root=PROJECT_ROOT)
-        final_batch_ids = {item.batch_id for item in final.model.architecture.structural_candidate_batches}
+        final_batch_ids = {
+            item.batch_id for item in final.model.architecture.structural_candidate_batches
+        }
         final_signature = _signature(final)
         metrics = {
             "three_rounds_use_fresh_evidence_and_batches": (

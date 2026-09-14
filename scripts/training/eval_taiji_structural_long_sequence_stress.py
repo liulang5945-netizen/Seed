@@ -137,7 +137,9 @@ def _admit_batch(
     measurements: dict[str, object] = {}
     results: dict[str, object] = {}
     for candidate_id in batch.selected_candidate_ids:
-        artifact, replay, measured = _build_artifact(model, candidate_id, evidence, capacity_limit=8)
+        artifact, replay, measured = _build_artifact(
+            model, candidate_id, evidence, capacity_limit=8
+        )
         artifacts[candidate_id] = artifact
         replays[candidate_id] = replay
         measurements[candidate_id] = measured
@@ -211,9 +213,7 @@ def evaluate() -> dict[str, object]:
         round_two_batch_id,
         round_two_rollback_candidate,
     )
-    round_two_after_rollback_budget = int(
-        model.cognitive_snapshot().development.structural_budget
-    )
+    round_two_after_rollback_budget = int(model.cognitive_snapshot().development.structural_budget)
     round_two_ledger_before_compaction = _ledger_snapshot(model)
     round_two_compaction = model.compact_structural_evidence_history(keep_latest_per_stream=1)
     round_two_ledger = _ledger_snapshot(model)
@@ -294,13 +294,16 @@ def evaluate() -> dict[str, object]:
             round_two_rollback["status"] == "rolled_back"
             and round_two_after_rollback_budget == round_two_success_budget + 1
             and round_three_rollback["status"] == "rolled_back"
-            and round_three_batch_after_rollback.state_by_candidate[round_three_batch.selected_candidate_ids[0]]
+            and round_three_batch_after_rollback.state_by_candidate[
+                round_three_batch.selected_candidate_ids[0]
+            ]
             == "admitted"
             and round_three_batch_after_rollback.state_by_candidate[round_three_rollback_candidate]
             == "rolled_back"
         ),
         "compaction_overflow_is_atomic": (
-            atomic_overflow and atomic_before["digest"] == atomic_after["digest"]
+            atomic_overflow
+            and atomic_before["digest"] == atomic_after["digest"]
             and atomic_before["active_window_digests"] == atomic_after["active_window_digests"]
             and atomic_before["compacted_window_digests"]
             == atomic_after["compacted_window_digests"]
@@ -323,7 +326,9 @@ def evaluate() -> dict[str, object]:
         ),
         "round_one_parent_checkpoint_remains_recoverable": (
             bool(round_one_checkpoint)
-            and TSKV8Adapter.from_native_checkpoint(round_one_checkpoint).structural_evidence_ledger.digest
+            and TSKV8Adapter.from_native_checkpoint(
+                round_one_checkpoint
+            ).structural_evidence_ledger.digest
             != final_ledger["digest"]
         ),
     }

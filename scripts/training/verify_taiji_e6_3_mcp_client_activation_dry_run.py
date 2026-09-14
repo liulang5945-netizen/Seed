@@ -108,19 +108,11 @@ def run_gate() -> dict[str, object]:
         after_shadow = client.get("/api/mcp-client-capabilities").json()
         client.post(
             f"/api/mcp-client-capabilities/{api_candidate.candidate_digest}/activation-proposals",
-            json={
-                "client_capability_snapshot_id": after_shadow[
-                    "client_capability_snapshot_id"
-                ]
-            },
+            json={"client_capability_snapshot_id": after_shadow["client_capability_snapshot_id"]},
         )
         api_dry_run = client.post(
             f"/api/mcp-client-capabilities/{api_candidate.candidate_digest}/activation-dry-run",
-            json={
-                "client_capability_snapshot_id": after_shadow[
-                    "client_capability_snapshot_id"
-                ]
-            },
+            json={"client_capability_snapshot_id": after_shadow["client_capability_snapshot_id"]},
         )
         stale_dry_run = client.post(
             f"/api/mcp-client-capabilities/{api_candidate.candidate_digest}/activation-dry-run",
@@ -131,9 +123,9 @@ def run_gate() -> dict[str, object]:
     dry_run_source = (
         PROJECT_ROOT / "seed_platform" / "mcp_client_activation_dry_run.py"
     ).read_text(encoding="utf-8")
-    api_source = (
-        PROJECT_ROOT / "api" / "routes_mcp_client_capabilities.py"
-    ).read_text(encoding="utf-8")
+    api_source = (PROJECT_ROOT / "api" / "routes_mcp_client_capabilities.py").read_text(
+        encoding="utf-8"
+    )
     checks = {
         "manifest_is_declarative": "executor_id" not in manifest.to_payload()
         and '"executor"' not in manifest.to_payload()["metadata"],
@@ -187,7 +179,9 @@ def main() -> int:
     args = parser.parse_args()
     result = run_gate()
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=True, indent=2))
     return 0 if result["status"] == "passed" else 1
 

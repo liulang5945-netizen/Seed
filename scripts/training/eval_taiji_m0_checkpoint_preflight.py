@@ -179,10 +179,14 @@ def run_gate(output_dir: Path, report_path: Path) -> dict[str, Any]:
             "stderr": process.stderr[-2000:],
         },
     }
-    report_path.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_path.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     checks["report_written"] = report_path.is_file()
     result["status"] = "passed" if all(checks.values()) else "failed"
-    report_path.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_path.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     return result
 
 

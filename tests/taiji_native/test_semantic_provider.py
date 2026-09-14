@@ -56,9 +56,9 @@ def test_provider_evidence_is_resolved_by_taiji_and_checkpointed() -> None:
     assert decomposition is not None
     assert model.architecture.last_semantic_provider_evidence == proposal
     assert model.architecture.cognitive_snapshot().action_intent is None
-    assert Seed.from_checkpoint(model.checkpoint()).architecture.last_semantic_provider_evidence == (
-        proposal
-    )
+    assert Seed.from_checkpoint(
+        model.checkpoint()
+    ).architecture.last_semantic_provider_evidence == (proposal)
 
 
 def test_provider_evidence_mismatch_fails_before_mutation() -> None:

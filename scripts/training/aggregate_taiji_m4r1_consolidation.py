@@ -150,18 +150,14 @@ def aggregate_reports(reports: Sequence[dict[str, Any]]) -> dict[str, Any]:
     if len(reports) != len(EXPECTED_SEEDS):
         raise ValueError(f"expected exactly {len(EXPECTED_SEEDS)} seed reports")
 
-    ordered_reports = sorted(
-        reports, key=lambda item: int(item["data_contract"]["current_seed"])
-    )
+    ordered_reports = sorted(reports, key=lambda item: int(item["data_contract"]["current_seed"]))
     entries = [
         _validate_report(report, expected_seed=seed)
         for report, seed in zip(ordered_reports, EXPECTED_SEEDS, strict=True)
     ]
     if [entry["seed"] for entry in entries] != list(EXPECTED_SEEDS):
         raise ValueError("seed panel must be exactly 11, 29, 47")
-    if {entry["consolidation_strength"] for entry in entries} != {
-        EXPECTED_CONSOLIDATION_STRENGTH
-    }:
+    if {entry["consolidation_strength"] for entry in entries} != {EXPECTED_CONSOLIDATION_STRENGTH}:
         raise ValueError("seed reports do not share one consolidation strength")
 
     chains = {json.dumps(entry["data_chain"], sort_keys=True) for entry in entries}
@@ -249,7 +245,9 @@ def main(argv: list[str] | None = None) -> int:
     payload = aggregate_reports(reports)
     payload["source_reports"] = [str(path) for path in args.seed_report]
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(
         json.dumps(
             {

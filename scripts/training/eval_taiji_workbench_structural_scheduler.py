@@ -173,8 +173,7 @@ def evaluate() -> dict[str, object]:
             and restored.structural_proposal_candidates[0].candidate_id == candidate_id
         ),
         "repeated_schedule_is_idempotent": (
-            repeated["status"] == "waiting"
-            and repeated["reason"] == "no_new_sealed_window"
+            repeated["status"] == "waiting" and repeated["reason"] == "no_new_sealed_window"
         ),
     }
     return {
@@ -207,7 +206,9 @@ def main() -> None:
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_w7_r5c_s6_workbench_structural_scheduler_20260830.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_w7_r5c_s6_workbench_structural_scheduler_20260830.json",
     )
     args = parser.parse_args()
     report = evaluate()

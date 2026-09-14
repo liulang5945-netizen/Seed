@@ -126,8 +126,7 @@ def preflight(
 
     artifact_dir.mkdir(parents=True, exist_ok=True)
     checkpoint_rows = [
-        _checkpoint_preflight(report, artifact_dir=artifact_dir)
-        for report in reports
+        _checkpoint_preflight(report, artifact_dir=artifact_dir) for report in reports
     ]
     chain = build_disjoint_phase_chain(
         [corpus],
@@ -146,18 +145,14 @@ def preflight(
         }
         for name, phase in zip(("c", "c2", "c3"), phases, strict=True)
     ]
-    pilot_seconds = sum(
-        float(report["resources"]["elapsed_seconds"]) for report in reports
-    )
+    pilot_seconds = sum(float(report["resources"]["elapsed_seconds"]) for report in reports)
     budget_scale = FORMAL_TRAIN_BYTES / 16_384
     projected_seconds = pilot_seconds * budget_scale
     checks = {
         "source_reports_technical": all(
             report["technical_gate_all_passed"] is True for report in reports
         ),
-        "source_reports_unpromoted": all(
-            report["can_promote"] is False for report in reports
-        ),
+        "source_reports_unpromoted": all(report["can_promote"] is False for report in reports),
         "same_corpus": len(corpora) == 1,
         "checkpoint_source_digest": all(
             row["source_digest_matches_report"] for row in checkpoint_rows
@@ -165,12 +160,9 @@ def preflight(
         "checkpoint_save_and_fresh_restore": all(
             row["checkpoint_round_trip"] for row in checkpoint_rows
         ),
-        "record_disjoint_chain": all(
-            value == 0 for value in chain.overlap_counts.values()
-        ),
+        "record_disjoint_chain": all(value == 0 for value in chain.overlap_counts.values()),
         "foundation_budget_available": all(
-            row["train_budget_satisfied"] and row["eval_budget_satisfied"]
-            for row in phase_rows
+            row["train_budget_satisfied"] and row["eval_budget_satisfied"] for row in phase_rows
         ),
         "fixed_capacity_matrix": EXPECTED_SCALES == (0.0, 0.5, 1.0),
         "projected_cpu_within_bound": projected_seconds <= MAX_PROJECTED_SECONDS,
@@ -273,9 +265,7 @@ def main(argv: list[str] | None = None) -> int:
                 "report": str(args.output),
                 "status": report["status"],
                 "formal_allowed": report["formal_allowed"],
-                "projected_formal_seconds": report["cost_estimate"][
-                    "projected_formal_seconds"
-                ],
+                "projected_formal_seconds": report["cost_estimate"]["projected_formal_seconds"],
             },
             ensure_ascii=False,
         )

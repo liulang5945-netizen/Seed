@@ -83,8 +83,7 @@ def _single_replay_effect(
             summary["delta_action_outcome_margin_gap"]["mean"]
         ),
         "memory_writes_since_phase_b": int(
-            model.memory.write_count
-            - int(phase_b_checkpoint["memory"]["write_count"])
+            model.memory.write_count - int(phase_b_checkpoint["memory"]["write_count"])
         ),
         "association": _association_summary(model, course.phase_b_train),
     }
@@ -112,9 +111,7 @@ def _seed_record(course: Any, seed: int) -> dict[str, Any]:
         (43, 45),
         None,
     )
-    phase_b_baseline_by_cue = {
-        row["cue"]: row for row in phase_b_baseline["rows"]
-    }
+    phase_b_baseline_by_cue = {row["cue"]: row for row in phase_b_baseline["rows"]}
 
     no_replay = Taiji.from_checkpoint(deepcopy(phase_b_checkpoint))
     no_replay_checkpoint = _checkpoint_record(no_replay)
@@ -174,9 +171,7 @@ def _seed_record(course: Any, seed: int) -> dict[str, Any]:
             "rows": admission_rows,
             "conflict_count": sum(int(row["conflict_evidence"]) for row in admission_rows),
             "conflict_memory_ids": [
-                row["replay_memory_id"]
-                for row in admission_rows
-                if row["conflict_evidence"]
+                row["replay_memory_id"] for row in admission_rows if row["conflict_evidence"]
             ],
             "phase_b_train_action_delta": _summary(
                 [float(row["phase_b_train_action_delta"]) for row in admission_rows]
@@ -185,10 +180,7 @@ def _seed_record(course: Any, seed: int) -> dict[str, Any]:
                 [float(row["phase_b_train_outcome_delta"]) for row in admission_rows]
             ),
             "phase_b_train_action_outcome_gap": _summary(
-                [
-                    float(row["phase_b_train_action_outcome_margin_gap"])
-                    for row in admission_rows
-                ]
+                [float(row["phase_b_train_action_outcome_margin_gap"]) for row in admission_rows]
             ),
         },
         "all_replay": {
@@ -224,9 +216,7 @@ def _seed_record(course: Any, seed: int) -> dict[str, Any]:
 def run_audit() -> dict[str, Any]:
     course = _course("factorial", factorial=True)
     records = [_seed_record(course, seed) for seed in SEEDS]
-    conflict_sets = [
-        set(record["admission_trace"]["conflict_memory_ids"]) for record in records
-    ]
+    conflict_sets = [set(record["admission_trace"]["conflict_memory_ids"]) for record in records]
     stable_conflict_ids = sorted(set.intersection(*conflict_sets))
     return {
         "format": FORMAT,

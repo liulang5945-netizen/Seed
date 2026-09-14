@@ -69,9 +69,7 @@ def _decision(
     if policy == "no_gate":
         return True, replay_scale
     if policy == "familiarity_gate":
-        return familiarity >= FAMILIARITY_THRESHOLD, replay_scale * max(
-            0.05, min(1.0, familiarity)
-        )
+        return familiarity >= FAMILIARITY_THRESHOLD, replay_scale * max(0.05, min(1.0, familiarity))
     if policy == "conflict_reject_gate":
         admitted = conflict < CONFLICT_THRESHOLD
         local_scale = replay_scale * max(0.05, 1.0 - conflict)
@@ -152,9 +150,7 @@ def _seed_record(
     )
     config = TaijiConfig.from_dict(config_values)
     actions = tuple(
-        dict.fromkeys(
-            episode.action for episode in (*corpus.phase_a_train, *corpus.phase_b_train)
-        )
+        dict.fromkeys(episode.action for episode in (*corpus.phase_a_train, *corpus.phase_b_train))
     )
     phase_a = Taiji(_memory_config(seed), episode_id=f"m1-21-phase-a-{seed}")
     for episode in corpus.phase_a_train:
@@ -199,10 +195,8 @@ def _seed_record(
             "phase_b_conflict_min": min(conflict),
             "phase_b_conflict_max": max(conflict),
         },
-        "replay_causal_gain_vs_parent": child_scores["old_holdout"]
-        - parent_scores["old_holdout"],
-        "new_gain_vs_no_replay": child_scores["new_holdout"]
-        - no_replay_scores["new_holdout"],
+        "replay_causal_gain_vs_parent": child_scores["old_holdout"] - parent_scores["old_holdout"],
+        "new_gain_vs_no_replay": child_scores["new_holdout"] - no_replay_scores["new_holdout"],
         "checkpoint": {
             "parent_digest": phase_a_digest,
             "child_digest": checkpoint_digest,
@@ -231,12 +225,10 @@ def run_replay_admission_diagnostics(
     if unknown:
         raise ValueError(f"unsupported replay admission policy: {sorted(unknown)}")
     records = {
-        policy: [_seed_record(seed, corpus, policy) for seed in seeds]
-        for policy in policies
+        policy: [_seed_record(seed, corpus, policy) for seed in seeds] for policy in policies
     }
     promotable = {
-        policy: all(_promotable(record) for record in values)
-        for policy, values in records.items()
+        policy: all(_promotable(record) for record in values) for policy, values in records.items()
     }
     return {
         "corpus_digest": corpus.digest,
@@ -280,7 +272,9 @@ def main() -> int:
     result["can_promote"] = bool(result["diagnostics"]["promotable_policies"])
     result["report_path"] = str(args.report)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

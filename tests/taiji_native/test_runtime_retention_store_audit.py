@@ -92,12 +92,14 @@ def test_store_audit_is_read_only_and_reports_runtime_orphans() -> None:
         )
         assert first_result["results"][first_id]["status"] == "admitted"
         assert second_result["results"][second_id]["status"] == "admitted"
-        assert runtime.rollback_structural_candidate_batch(terminal_batch_id, second_id)[
-            "status"
-        ] == "rolled_back"
-        assert runtime.rollback_structural_candidate_batch(terminal_batch_id, first_id)[
-            "status"
-        ] == "rolled_back"
+        assert (
+            runtime.rollback_structural_candidate_batch(terminal_batch_id, second_id)["status"]
+            == "rolled_back"
+        )
+        assert (
+            runtime.rollback_structural_candidate_batch(terminal_batch_id, first_id)["status"]
+            == "rolled_back"
+        )
 
         runtime.save(before_retention_path)
         restored = SeedRuntime.load(before_retention_path)
@@ -120,9 +122,7 @@ def test_store_audit_is_read_only_and_reports_runtime_orphans() -> None:
         assert tuple(item["artifact_digest"] for item in healthy_inventory) == tuple(
             sorted((first_artifact.artifact_digest, second_artifact.artifact_digest))
         )
-        records_by_digest = {
-            item["artifact_digest"]: item for item in healthy_inventory
-        }
+        records_by_digest = {item["artifact_digest"]: item for item in healthy_inventory}
         for artifact in (first_artifact, second_artifact):
             record = records_by_digest[artifact.artifact_digest]
             assert record["measurement_digest"] == artifact.measurement_digest
@@ -130,7 +130,10 @@ def test_store_audit_is_read_only_and_reports_runtime_orphans() -> None:
             assert record["resource_cost"] == artifact.resource_cost
             assert store.load(artifact.artifact_digest) == artifact
 
-        assert terminal_batch_id in after_retention.model.architecture.structural_lineage_retention_result.removed_batch_ids
+        assert (
+            terminal_batch_id
+            in after_retention.model.architecture.structural_lineage_retention_result.removed_batch_ids
+        )
         assert active_batch_id in {
             item.batch_id
             for item in after_retention.model.architecture.structural_candidate_batches
@@ -139,9 +142,7 @@ def test_store_audit_is_read_only_and_reports_runtime_orphans() -> None:
             after_retention.continue_structural_candidate_batch_from_artifact_store(
                 terminal_batch_id,
                 artifact_store=store,
-                artifact_digests_by_candidate={
-                    second_id: second_artifact.artifact_digest
-                },
+                artifact_digests_by_candidate={second_id: second_artifact.artifact_digest},
                 replays_by_candidate={second_id: second_replay},
                 artifact_consumption_policy=legacy_policy,
             )
@@ -149,9 +150,10 @@ def test_store_audit_is_read_only_and_reports_runtime_orphans() -> None:
             assert "unknown structural candidate batch" in str(exc)
         else:
             raise AssertionError("runtime orphan unexpectedly resurrected a deleted batch")
-        assert _checkpoint_digest(
-            after_retention.model.architecture.native_checkpoint()
-        ) == before_audit_digest
+        assert (
+            _checkpoint_digest(after_retention.model.architecture.native_checkpoint())
+            == before_audit_digest
+        )
 
         first_path = store.path_for(first_artifact.artifact_digest)
         original_bytes = first_path.read_bytes()
@@ -179,9 +181,10 @@ def test_store_audit_is_read_only_and_reports_runtime_orphans() -> None:
         invalid_path.unlink()
 
         assert store.inventory() == healthy_inventory
-        assert _checkpoint_digest(
-            after_retention.model.architecture.native_checkpoint()
-        ) == before_audit_digest
+        assert (
+            _checkpoint_digest(after_retention.model.architecture.native_checkpoint())
+            == before_audit_digest
+        )
     finally:
         checkpoint_path.unlink(missing_ok=True)
         before_retention_path.unlink(missing_ok=True)

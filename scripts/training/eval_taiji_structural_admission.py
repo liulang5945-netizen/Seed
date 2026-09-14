@@ -52,15 +52,13 @@ def evaluate() -> dict[str, object]:
             before_units == ("u0", "u1") and region.unit_ids == ("u0", "u1", "u2")
         ),
         "budget_decreased_once": (
-            before_budget == 1
-            and model.cognitive_snapshot().development.structural_budget == 0
+            before_budget == 1 and model.cognitive_snapshot().development.structural_budget == 0
         ),
         "topology_digest_changed": (
             admission.topology_before_digest != admission.topology_after_digest
         ),
         "budget_lineage_recorded": (
-            admission.structural_budget_after
-            == admission.structural_budget_before - 1
+            admission.structural_budget_after == admission.structural_budget_before - 1
         ),
         "admission_roundtrip": restored.structural_admission_results == (admission,),
         "restored_topology_is_admitted": restored.neuron_regions[0].unit_ids == region.unit_ids,

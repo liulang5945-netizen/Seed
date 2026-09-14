@@ -258,9 +258,7 @@ def _score_phase_triplet(
         "c_bpb": c_score["bpb"],
         "c2_bpb": c2_score["bpb"],
         "c3_bpb": c3_score["bpb"],
-        "read_only": bool(
-            c_score["read_only"] and c2_score["read_only"] and c3_score["read_only"]
-        ),
+        "read_only": bool(c_score["read_only"] and c2_score["read_only"] and c3_score["read_only"]),
         "scope": c_score["scope"],
         "owner": c_score["owner"],
     }
@@ -280,14 +278,10 @@ def _run_arm(
     authorization: WorkbenchBoundaryAuthorization | None = None
     if arm == "readout_only":
         boundary, authorization = _boundary("m4r3-readout")
-        model.clone_protected_predictive_readout_as_active(
-            boundary_digest=boundary.token_digest
-        )
+        model.clone_protected_predictive_readout_as_active(boundary_digest=boundary.token_digest)
     owner_before = _owner_digests(model)
     active_before = (
-        content_digest(_active_readout(model).to_payload())
-        if arm == "readout_only"
-        else None
+        content_digest(_active_readout(model).to_payload()) if arm == "readout_only" else None
     )
     scores: list[dict[str, Any]] = []
     training: list[dict[str, float]] = []
@@ -308,18 +302,12 @@ def _run_arm(
                 chain,
                 eval_bytes=eval_bytes,
                 boundary=boundary,
-                authorization=(
-                    None
-                    if boundary is None
-                    else _read_only_authorization(boundary)
-                ),
+                authorization=(None if boundary is None else _read_only_authorization(boundary)),
             )
         )
     owner_after = _owner_digests(model)
     active_after = (
-        content_digest(_active_readout(model).to_payload())
-        if arm == "readout_only"
-        else None
+        content_digest(_active_readout(model).to_payload()) if arm == "readout_only" else None
     )
     return model, {
         "arm": arm,
@@ -482,24 +470,14 @@ def run_canary(
     checks: dict[str, bool] = {
         "record_disjoint_chain": all(value == 0 for value in chain.overlap_counts.values()),
         "source_checkpoint_unchanged": content_digest(source_model.checkpoint()) == source_digest,
-        "same_train_budget": all(
-            len(phase.train) == train_bytes for phase in phases
-        ),
-        "same_eval_budget": all(
-            len(phase.holdout) >= eval_bytes for phase in phases
-        ),
+        "same_train_budget": all(len(phase.train) == train_bytes for phase in phases),
+        "same_eval_budget": all(len(phase.holdout) >= eval_bytes for phase in phases),
     }
     checks.update(
-        {
-            f"{arm}_read_only_scoring": variants[arm]["read_only_scoring"]
-            for arm in ARM_NAMES
-        }
+        {f"{arm}_read_only_scoring": variants[arm]["read_only_scoring"] for arm in ARM_NAMES}
     )
     checks.update(
-        {
-            f"{arm}_owner_lesion_changes": lesion_results[arm]["changed"]
-            for arm in ARM_NAMES
-        }
+        {f"{arm}_owner_lesion_changes": lesion_results[arm]["changed"] for arm in ARM_NAMES}
     )
     checks.update(
         {
@@ -535,12 +513,10 @@ def run_canary(
     )
     for arm in ARM_NAMES:
         checks[f"{arm}_fabric_unchanged"] = (
-            variants[arm]["owner_before"]["fabric"]
-            == variants[arm]["owner_after"]["fabric"]
+            variants[arm]["owner_before"]["fabric"] == variants[arm]["owner_after"]["fabric"]
         )
         checks[f"{arm}_memory_unchanged"] = (
-            variants[arm]["owner_before"]["memory"]
-            == variants[arm]["owner_after"]["memory"]
+            variants[arm]["owner_before"]["memory"] == variants[arm]["owner_after"]["memory"]
         )
         final_bpb = float(variants[arm]["metrics"]["c3_holdout_bpb"])
         fresh_bpb = float(fresh_scores[arm]["bpb"])
@@ -605,13 +581,13 @@ def run_canary(
         "resources": {
             "elapsed_seconds": time.perf_counter() - started,
             "train_bytes_per_arm": int(train_bytes * len(phases)),
-            "artifact_bytes": {
-                arm: int(path.stat().st_size) for arm, path in artifacts.items()
-            },
+            "artifact_bytes": {arm: int(path.stat().st_size) for arm, path in artifacts.items()},
         },
     }
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_path.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     return report
 
 

@@ -111,15 +111,15 @@ def run_gate() -> dict[str, object]:
         )
     routes_mcp_client_capabilities._registry = None
 
-    source = (
-        PROJECT_ROOT / "seed_platform" / "mcp_client_capability_activation.py"
-    ).read_text(encoding="utf-8")
+    source = (PROJECT_ROOT / "seed_platform" / "mcp_client_capability_activation.py").read_text(
+        encoding="utf-8"
+    )
     registry_source = (
         PROJECT_ROOT / "seed_platform" / "mcp_client_capability_registry.py"
     ).read_text(encoding="utf-8")
-    api_source = (
-        PROJECT_ROOT / "api" / "routes_mcp_client_capabilities.py"
-    ).read_text(encoding="utf-8")
+    api_source = (PROJECT_ROOT / "api" / "routes_mcp_client_capabilities.py").read_text(
+        encoding="utf-8"
+    )
     checks = {
         "activation_is_blocked_before_shadow": pending.state == "shadow_pending"
         and blocked_before_shadow,
@@ -174,7 +174,9 @@ def main() -> int:
     args = parser.parse_args()
     result = run_gate()
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=True, indent=2))
     return 0 if result["status"] == "passed" else 1
 

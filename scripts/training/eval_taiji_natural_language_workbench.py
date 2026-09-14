@@ -67,9 +67,7 @@ def _run_success(seed: int) -> dict[str, object]:
     prompt = "请读取 README.md"
     with patch(
         "seed_platform.workbench.get_setting",
-        lambda key, default=None: str(PROJECT_ROOT)
-        if key == "workspace_path"
-        else default,
+        lambda key, default=None: str(PROJECT_ROOT) if key == "workspace_path" else default,
     ):
         runtime = _runtime(seed, checkpoint_path)
         proposal = _proposal(runtime, prompt)
@@ -114,9 +112,7 @@ def evaluate() -> dict[str, object]:
     low_confidence_path.unlink(missing_ok=True)
     with patch(
         "seed_platform.workbench.get_setting",
-        lambda key, default=None: str(PROJECT_ROOT)
-        if key == "workspace_path"
-        else default,
+        lambda key, default=None: str(PROJECT_ROOT) if key == "workspace_path" else default,
     ):
         low_runtime = _runtime(101, low_confidence_path)
         low_prompt = "请读取 README.md"
@@ -158,8 +154,8 @@ def evaluate() -> dict[str, object]:
             for item in runs
         ),
         "checkpoint_saves_and_restores": all(
-            item["checkpoint_saved"] and item["restored_checkpoint_name"]
-            == f"seed:.p2-8-natural-language-{item['seed']}.pt"
+            item["checkpoint_saved"]
+            and item["restored_checkpoint_name"] == f"seed:.p2-8-natural-language-{item['seed']}.pt"
             for item in runs
         ),
         "low_confidence_stops_before_workbench": low_confidence_no_side_effect,

@@ -105,9 +105,7 @@ def _prepare_workspace(
     state_profile: str,
 ) -> None:
     _build_workspace(root, task_seed=task_seed)
-    (root / "shared_header.h").write_text(
-        "#pragma once\nint shared_value;\n", encoding="utf-8"
-    )
+    (root / "shared_header.h").write_text("#pragma once\nint shared_value;\n", encoding="utf-8")
     (root / "shared_header_alt.h").write_text(
         "#pragma once\nlong shared_value_alt;\n", encoding="utf-8"
     )
@@ -121,9 +119,7 @@ def _prepare_workspace(
     if state_profile == "ambiguous-language":
         for filename in ("pyproject.toml", "Cargo.toml", "tsconfig.json", "package.json"):
             (root / filename).unlink(missing_ok=True)
-        if not first_path.startswith("missing") and first_path.endswith(
-            (".py", ".rs", ".ts")
-        ):
+        if not first_path.startswith("missing") and first_path.endswith((".py", ".rs", ".ts")):
             (root / first_path).write_text("\n", encoding="utf-8")
 
 

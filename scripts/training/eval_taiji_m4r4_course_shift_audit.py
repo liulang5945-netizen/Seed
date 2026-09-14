@@ -304,7 +304,9 @@ def audit(
                         reference_owner="predictive_context",
                     ),
                 }
-        checks.update({f"seed{expected_seed}_{key}": value for key, value in artifact_checks.items()})
+        checks.update(
+            {f"seed{expected_seed}_{key}": value for key, value in artifact_checks.items()}
+        )
         checks[f"seed{expected_seed}_record_disjoint"] = all(
             value == 0 for value in chain.overlap_counts.values()
         )
@@ -401,7 +403,9 @@ def main(argv: list[str] | None = None) -> int:
             PROJECT_ROOT / "output/taiji-m4r3-update-interference-pilot-seed47",
         ],
     )
-    parser.add_argument("--corpus", type=Path, default=PROJECT_ROOT / "data/simple_zh/dialogue_extended_clean.jsonl")
+    parser.add_argument(
+        "--corpus", type=Path, default=PROJECT_ROOT / "data/simple_zh/dialogue_extended_clean.jsonl"
+    )
     parser.add_argument("--train-bytes", type=int, default=16_384)
     parser.add_argument("--eval-bytes", type=int, default=4_096)
     parser.add_argument(

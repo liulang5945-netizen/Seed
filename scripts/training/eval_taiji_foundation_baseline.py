@@ -151,8 +151,10 @@ def _load_joint_child(path: Path, *, expected_seed: int) -> tuple[dict[str, Any]
     if int(payload.get("version", -1)) < 4:
         raise ValueError("M2-2j child audit requires a v4 private-context checkpoint")
     phases = payload.get("training_phases")
-    if not isinstance(phases, list) or not phases or any(
-        not isinstance(phase, str) for phase in phases
+    if (
+        not isinstance(phases, list)
+        or not phases
+        or any(not isinstance(phase, str) for phase in phases)
     ):
         raise ValueError("M2-2j child audit requires a non-empty phase plan")
     canonical_phases = [phase for phase in JOINT_TRAINING_PHASES if phase in phases]
@@ -236,7 +238,9 @@ def _evaluate_loaded_b1(
     frozen_values = [float(record["frozen_parent"]) for record in seed_records]
     seeds = tuple(int(record["seed"]) for record in seed_records)
     config = model.config
-    first_corpus = corpus[next(iter(sorted(checkpoints)))] if isinstance(corpus, Mapping) else corpus
+    first_corpus = (
+        corpus[next(iter(sorted(checkpoints)))] if isinstance(corpus, Mapping) else corpus
+    )
     baseline_metrics = {
         "random": math.log2(float(config.alphabet_size)),
         "frozen_parent": min(frozen_values),
@@ -249,20 +253,20 @@ def _evaluate_loaded_b1(
             for seed in checkpoints
         ),
         "hash_only": min(
-            _hash_only_bpb(corpus.holdout, seed=seed, alphabet_size=config.alphabet_size)
-            if not isinstance(corpus, Mapping)
-            else _hash_only_bpb(corpus[seed].holdout, seed=seed, alphabet_size=config.alphabet_size)
+            (
+                _hash_only_bpb(corpus.holdout, seed=seed, alphabet_size=config.alphabet_size)
+                if not isinstance(corpus, Mapping)
+                else _hash_only_bpb(
+                    corpus[seed].holdout, seed=seed, alphabet_size=config.alphabet_size
+                )
+            )
             for seed in seeds
         ),
     }
     worst_native = max(native_values)
     return FoundationMeasurement(
         ability_id="b1_sequence_prediction",
-        status=(
-            "passed"
-            if max(native_values) < min(baseline_metrics.values())
-            else "failed"
-        ),
+        status=("passed" if max(native_values) < min(baseline_metrics.values()) else "failed"),
         primary_metric="bits_per_byte",
         metric_direction="lower_is_better",
         metric_value=worst_native,
@@ -410,13 +414,10 @@ def _evaluate_loaded_b2(
         "frozen_parent": min(float(record["frozen_parent"]) for record in seed_records),
         "simple_rule": _majority_accuracy(corpus.train, corpus.holdout),
         "hash_only": min(
-            _hash_memory_accuracy(corpus.holdout, actions, seed=seed)
-            for seed in checkpoints
+            _hash_memory_accuracy(corpus.holdout, actions, seed=seed) for seed in checkpoints
         ),
         "memory_lesion": min(float(record["memory_lesion"]) for record in seed_records),
-        "identity_lesion": min(
-            float(record["identity_lesion"]) for record in seed_records
-        ),
+        "identity_lesion": min(float(record["identity_lesion"]) for record in seed_records),
     }
     worst_native = min(native_values)
     beats_controls = worst_native > max(baseline_metrics.values())
@@ -424,8 +425,7 @@ def _evaluate_loaded_b2(
         float(record["taiji"]) > float(record["memory_lesion"]) for record in seed_records
     )
     causal_identity_gain = all(
-        float(record["taiji"]) > float(record["identity_lesion"])
-        for record in seed_records
+        float(record["taiji"]) > float(record["identity_lesion"]) for record in seed_records
     )
     retention_preserved = all(
         retention >= native - 0.05
@@ -458,8 +458,7 @@ def _evaluate_loaded_b2(
             "checkpoint_read_only="
             + str(
                 all(
-                    int(record["holdout_updates"]) == 0
-                    and int(record["retention_updates"]) == 0
+                    int(record["holdout_updates"]) == 0 and int(record["retention_updates"]) == 0
                     for record in seed_records
                 )
             ),
@@ -595,8 +594,7 @@ def _evaluate_loaded_b4(
     }
     worst_native = min(native_values)
     retention_preserved = all(
-        float(record["retention"]) >= float(record["taiji"]) - 0.05
-        for record in seed_records
+        float(record["retention"]) >= float(record["taiji"]) - 0.05 for record in seed_records
     )
     return FoundationMeasurement(
         ability_id="b4_goal_action",
@@ -687,9 +685,7 @@ def _evaluate_loaded_b5(
         )
 
     replay_values = [float(record["backward_transfer_replay"]) for record in seed_records]
-    no_replay_values = [
-        float(record["backward_transfer_no_replay"]) for record in seed_records
-    ]
+    no_replay_values = [float(record["backward_transfer_no_replay"]) for record in seed_records]
     baseline_metrics = {
         "random": 0.0,
         "frozen_parent": 0.0,
@@ -699,13 +695,11 @@ def _evaluate_loaded_b5(
     }
     worst_replay = min(replay_values)
     replay_beats_no_replay = all(
-        float(record["backward_transfer_replay"])
-        > float(record["backward_transfer_no_replay"])
+        float(record["backward_transfer_replay"]) > float(record["backward_transfer_no_replay"])
         for record in seed_records
     )
     new_capability_preserved = all(
-        float(record["new_after_replay"])
-        <= float(record["new_after_no_replay"]) + 0.5
+        float(record["new_after_replay"]) <= float(record["new_after_no_replay"]) + 0.5
         for record in seed_records
     )
     return FoundationMeasurement(
@@ -779,10 +773,9 @@ def _reuse_b1_measurement(
         for item in checkpoint_evaluation.get("checkpoints", [])
         if isinstance(item, Mapping) and "seed" in item and "path" in item
     }
-    if {
-        seed: str(path)
-        for seed, path in sorted(stored_checkpoints.items())
-    } != {seed: str(path) for seed, path in sorted(checkpoints.items())}:
+    if {seed: str(path) for seed, path in sorted(stored_checkpoints.items())} != {
+        seed: str(path) for seed, path in sorted(checkpoints.items())
+    }:
         raise ValueError("reused B1 report checkpoints do not match the requested child set")
     stored_digests = checkpoint_evaluation.get("b1_dataset_digests", {})
     stored_protected = checkpoint_evaluation.get("b1_protected_dataset_digests", {})
@@ -879,16 +872,15 @@ def build_sequence_corpus(
                 if text_digest in seen_text_digests:
                     continue
                 seen_text_digests.add(text_digest)
-                bucket = int.from_bytes(
-                    hashlib.sha256(f"{int(seed)}\0{text}".encode()).digest()[:4],
-                    "big",
-                ) % 10_000
+                bucket = (
+                    int.from_bytes(
+                        hashlib.sha256(f"{int(seed)}\0{text}".encode()).digest()[:4],
+                        "big",
+                    )
+                    % 10_000
+                )
                 partition = (
-                    "train"
-                    if bucket < 8_000
-                    else "holdout"
-                    if bucket < 9_000
-                    else "retention"
+                    "train" if bucket < 8_000 else "holdout" if bucket < 9_000 else "retention"
                 )
                 remaining = budgets[partition] - len(buffers[partition])
                 if remaining > 0:
@@ -990,8 +982,7 @@ def build_world_transition_smoke_corpus(*, count: int = 8) -> WorldTransitionCor
             case(f"m0-b3-holdout-{index}", 10.0 + index) for index in range(max(3, count // 2))
         ),
         retention=tuple(
-            case(f"m0-b3-retention-{index}", 20.0 + index)
-            for index in range(max(3, count // 2))
+            case(f"m0-b3-retention-{index}", 20.0 + index) for index in range(max(3, count // 2))
         ),
     )
 
@@ -1194,8 +1185,7 @@ def main() -> int:
             parser.error("--checkpoint requires --b1-partition-seed")
         if args.b1_protected_corpus is None or not protected_seeds:
             parser.error(
-                "--checkpoint requires --b1-protected-corpus and "
-                "--b1-protected-partition-seed"
+                "--checkpoint requires --b1-protected-corpus and " "--b1-protected-partition-seed"
             )
         for seed in manifest.seeds:
             protected_dataset = FoundationTrainingDataset.from_jsonl(
@@ -1237,9 +1227,7 @@ def main() -> int:
             b5_measurement = _evaluate_loaded_b5(checkpoint_paths, protected_datasets)
     elif args.b1_corpus:
         budgets = (
-            (4_096, 1_024, 1_024)
-            if args.profile == "smoke"
-            else (1_048_576, 131_072, 131_072)
+            (4_096, 1_024, 1_024) if args.profile == "smoke" else (1_048_576, 131_072, 131_072)
         )
         corpus = build_sequence_corpus(
             args.b1_corpus,
@@ -1313,14 +1301,15 @@ def main() -> int:
     result["capability_measurements"] = "; ".join(measured) if measured else "not_evaluated"
     result["profile"] = args.profile
     result["model_tier"] = (
-        "joint-child-v4" if checkpoint_paths else args.model_tier if b1_measurement is not None else None
+        "joint-child-v4"
+        if checkpoint_paths
+        else args.model_tier if b1_measurement is not None else None
     )
     result["code_revision"] = _code_revision()
     result["checkpoint_evaluation"] = {
         "mode": bool(checkpoint_paths),
         "checkpoints": [
-            {"seed": seed, "path": str(path)}
-            for seed, path in sorted(checkpoint_paths.items())
+            {"seed": seed, "path": str(path)} for seed, path in sorted(checkpoint_paths.items())
         ],
         "child_foundation": bool(args.child_foundation),
         "b5_child": bool(args.b5_child),
@@ -1334,9 +1323,13 @@ def main() -> int:
         },
     }
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     result["report_written"] = args.report.is_file()
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0 if result["report_written"] and result["contract_status"] == "validated" else 1
 

@@ -109,7 +109,9 @@ def test_multi_batch_artifact_retention_preserves_active_lineage() -> None:
             for item in runtime.model.architecture.structural_candidate_batches
             if item.batch_id == active_batch_id
         )
-        budget_before = runtime.model.architecture.cognitive_snapshot().development.structural_budget
+        budget_before = (
+            runtime.model.architecture.cognitive_snapshot().development.structural_budget
+        )
         _save_native_checkpoint(runtime.model.architecture, before_maintenance_path)
         restored = _load_native_checkpoint(before_maintenance_path)
         maintenance = restored.run_structural_maintenance_cycle(
@@ -124,11 +126,14 @@ def test_multi_batch_artifact_retention_preserves_active_lineage() -> None:
         assert retention.status == "compacted"
         assert terminal_batch.batch_id in retention.removed_batch_ids
         assert active_batch_id in retention.protected_batch_ids
-        assert next(
-            item.to_payload()
-            for item in restored.structural_candidate_batches
-            if item.batch_id == active_batch_id
-        ) == active_payload
+        assert (
+            next(
+                item.to_payload()
+                for item in restored.structural_candidate_batches
+                if item.batch_id == active_batch_id
+            )
+            == active_payload
+        )
         assert restored.cognitive_snapshot().development.structural_budget == budget_before
         assert not (
             {first_artifact.artifact_digest, second_artifact.artifact_digest}
@@ -156,8 +161,12 @@ def test_multi_batch_artifact_retention_preserves_active_lineage() -> None:
         _save_native_checkpoint(restored, after_maintenance_path)
         final = _load_native_checkpoint(after_maintenance_path)
         assert active_batch_id in {item.batch_id for item in final.structural_candidate_batches}
-        assert terminal_batch.batch_id not in {item.batch_id for item in final.structural_candidate_batches}
-        assert _checkpoint_digest(before_maintenance) != _checkpoint_digest(restored.native_checkpoint())
+        assert terminal_batch.batch_id not in {
+            item.batch_id for item in final.structural_candidate_batches
+        }
+        assert _checkpoint_digest(before_maintenance) != _checkpoint_digest(
+            restored.native_checkpoint()
+        )
     finally:
         before_maintenance_path.unlink(missing_ok=True)
         after_maintenance_path.unlink(missing_ok=True)

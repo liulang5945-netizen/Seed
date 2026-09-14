@@ -92,13 +92,13 @@ class IdentityRouteIntegrationAdapter:
 
 def _actions(corpus: ContinualMemoryCorpus) -> tuple[int, ...]:
     return tuple(
-        dict.fromkeys(
-            episode.action for episode in (*corpus.phase_a_train, *corpus.phase_b_train)
-        )
+        dict.fromkeys(episode.action for episode in (*corpus.phase_a_train, *corpus.phase_b_train))
     )
 
 
-def _response_payload(response: IdentityRouteResponse, actions: tuple[int, ...]) -> dict[str, object]:
+def _response_payload(
+    response: IdentityRouteResponse, actions: tuple[int, ...]
+) -> dict[str, object]:
     selected = max(actions, key=lambda action: float(response.action_probabilities[action].item()))
     return {
         "cue": response.cue,
@@ -130,12 +130,8 @@ def _seed_record(seed: int, corpus: ContinualMemoryCorpus, mode: str) -> dict[st
     learned_cues = tuple(episode.cue for episode in corpus.phase_a_train[:4])
     unseen_cues = tuple(210 + index for index in range(4))
     route_before = None if route is None else content_digest(route.to_payload())
-    learned = [
-        _response_payload(adapter.process(cue, actions), actions) for cue in learned_cues
-    ]
-    unseen = [
-        _response_payload(adapter.process(cue, actions), actions) for cue in unseen_cues
-    ]
+    learned = [_response_payload(adapter.process(cue, actions), actions) for cue in learned_cues]
+    unseen = [_response_payload(adapter.process(cue, actions), actions) for cue in unseen_cues]
     route_after = None if route is None else content_digest(route.to_payload())
     bundle = {
         "model": model.checkpoint(),
@@ -155,12 +151,10 @@ def _seed_record(seed: int, corpus: ContinualMemoryCorpus, mode: str) -> dict[st
         restored_route.load_payload(deepcopy(bundle["route"]))
     restored_adapter = IdentityRouteIntegrationAdapter(restored_model, restored_route)
     restored_learned = [
-        _response_payload(restored_adapter.process(cue, actions), actions)
-        for cue in learned_cues
+        _response_payload(restored_adapter.process(cue, actions), actions) for cue in learned_cues
     ]
     restored_unseen = [
-        _response_payload(restored_adapter.process(cue, actions), actions)
-        for cue in unseen_cues
+        _response_payload(restored_adapter.process(cue, actions), actions) for cue in unseen_cues
     ]
     restored_bundle = {
         "model": restored_model.checkpoint(),
@@ -176,9 +170,7 @@ def _seed_record(seed: int, corpus: ContinualMemoryCorpus, mode: str) -> dict[st
         "route_digest_unchanged_during_queries": route_before == route_after,
         "fallback_count": sum(item["source"] == "shared-fallback" for item in unseen),
         "identity_bound_count": sum(item["source"] == "identity-route" for item in learned),
-        "no_action_intent": all(
-            item["action_intent"] is None for item in (*learned, *unseen)
-        ),
+        "no_action_intent": all(item["action_intent"] is None for item in (*learned, *unseen)),
         "checkpoint": {
             "bundle_digest_matches": content_digest(restored_bundle) == bundle_digest,
             "restored_outputs_match": learned == restored_learned and unseen == restored_unseen,
@@ -203,10 +195,7 @@ def run_integration_diagnostics(
     unknown = set(modes) - set(MODES)
     if unknown:
         raise ValueError(f"unsupported integration mode: {sorted(unknown)}")
-    records = {
-        mode: [_seed_record(seed, corpus, mode) for seed in seeds]
-        for mode in modes
-    }
+    records = {mode: [_seed_record(seed, corpus, mode) for seed in seeds] for mode in modes}
     gate = all(
         all(record["no_action_intent"] for record in values)
         and all(record["route_digest_unchanged_during_queries"] for record in values)
@@ -216,8 +205,7 @@ def run_integration_diagnostics(
     )
     if "identity_route_fallback" in records:
         gate = gate and all(
-            record["identity_bound_count"] == min(4, train_count)
-            and record["fallback_count"] == 4
+            record["identity_bound_count"] == min(4, train_count) and record["fallback_count"] == 4
             for record in records["identity_route_fallback"]
         )
     return {
@@ -264,7 +252,9 @@ def main() -> int:
         "report_path": str(args.report),
     }
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

@@ -136,7 +136,9 @@ def _structure_row(
     safe_roles = sorted(
         {
             candidate.candidate_role
-            for candidate, outcome in zip(candidate_set.candidates, behavior_set.outcomes, strict=True)
+            for candidate, outcome in zip(
+                candidate_set.candidates, behavior_set.outcomes, strict=True
+            )
             if outcome.safe_exit_valid or outcome.safe_exit_progress
         }
     )
@@ -144,9 +146,7 @@ def _structure_row(
     confidence_bucket = (
         "zero"
         if maximum_confidence <= MARGIN_EPSILON
-        else "high-and-safe"
-        if maximum_confidence >= 0.8
-        else "mixed"
+        else "high-and-safe" if maximum_confidence >= 0.8 else "mixed"
     )
     return {
         "candidate_count": len(candidate_set.candidates),

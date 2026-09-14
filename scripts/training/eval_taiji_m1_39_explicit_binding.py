@@ -204,20 +204,15 @@ def run_diagnosis() -> dict[str, Any]:
             "targets": REPLAY_TARGETS,
         }
     )
-    conditions = [
-        _condition_record(decoder, corpus, event_set_digest)
-        for decoder in DECODERS
-    ]
+    conditions = [_condition_record(decoder, corpus, event_set_digest) for decoder in DECODERS]
     for condition in conditions:
         condition["condition_gate_passed"] = _condition_passed(condition)
     shared, explicit = conditions
     shared_budget = {
-        record["seed"]: record["active_parameter_count"]
-        for record in shared["records"]
+        record["seed"]: record["active_parameter_count"] for record in shared["records"]
     }
     explicit_budget = {
-        record["seed"]: record["active_parameter_count"]
-        for record in explicit["records"]
+        record["seed"]: record["active_parameter_count"] for record in explicit["records"]
     }
     return {
         "format": FORMAT,
@@ -240,8 +235,7 @@ def run_diagnosis() -> dict[str, Any]:
         "conclusion": {
             "explicit_binding_passed": explicit["condition_gate_passed"],
             "explicit_binding_is_sufficient_explanation": (
-                explicit["condition_gate_passed"]
-                and not shared["condition_gate_passed"]
+                explicit["condition_gate_passed"] and not shared["condition_gate_passed"]
             ),
             "next_boundary": (
                 "cue-selective binding passed; hold for M1-40 structure review"
@@ -259,7 +253,9 @@ def main() -> int:
     result = run_diagnosis()
     result["report_path"] = str(args.report)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

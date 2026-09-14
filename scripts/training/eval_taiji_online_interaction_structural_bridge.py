@@ -239,21 +239,13 @@ def evaluate() -> dict[str, object]:
             )
         )
         independent = (
-            _independent_observation(
-                partition="holdout", episode=holdout_episode, tick=10
-            ),
-            _independent_observation(
-                partition="retention", episode=retention_episode, tick=11
-            ),
+            _independent_observation(partition="holdout", episode=holdout_episode, tick=10),
+            _independent_observation(partition="retention", episode=retention_episode, tick=11),
         )
         pressure = bridge.project(feedbacks, controller.admissions, independent)
         if not pressure.projection.evidence_ids:
             raise AssertionError("structural bridge projection is missing evidence")
-        failed_feedback = next(
-            item
-            for item in controller.admissions
-            if item.status == "rejected"
-        )
+        failed_feedback = next(item for item in controller.admissions if item.status == "rejected")
         failed_excluded = failed_feedback.feedback_id not in pressure.feedback_ids
 
         model, region = _build_model(f"online-structural-{seed}")
@@ -302,9 +294,7 @@ def evaluate() -> dict[str, object]:
             restored_model.native_checkpoint()
         )
         units_after_admission = tuple(restored_model.neuron_regions[0].unit_ids)
-        budget_after_admission = (
-            restored_model.cognitive_snapshot().development.structural_budget
-        )
+        budget_after_admission = restored_model.cognitive_snapshot().development.structural_budget
         rollback = restored_model.rollback_structural_candidate(restored_candidate.candidate_id)
         topology_after_rollback = restored_model._structural_topology_digest(
             restored_model.native_checkpoint()
@@ -351,8 +341,10 @@ def evaluate() -> dict[str, object]:
         ),
         "failed_online_outcome_excluded": all(run["failed_feedback_excluded"] for run in runs),
         "pressure_contains_online_evidence": all(
-            all(f"online-feedback:{feedback_id}" in run["pressure"]["projection"]["evidence_ids"]
-                for feedback_id in run["feedback_ids"])
+            all(
+                f"online-feedback:{feedback_id}" in run["pressure"]["projection"]["evidence_ids"]
+                for feedback_id in run["feedback_ids"]
+            )
             for run in runs
         ),
         "independent_holdout_and_retention_required": all(

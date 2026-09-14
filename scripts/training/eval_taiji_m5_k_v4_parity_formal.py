@@ -123,50 +123,60 @@ def _v4_ensemble_loss_score(
         fact_index = {key: index for index, key in enumerate(semantic0.fact_keys)}
         for key in semantic_example.fact_keys:
             fact_target[fact_index[key]] = 1.0
-        target_delta = transition0._fact_vector(transition_example.after) - transition0._fact_vector(
-            transition_example.before
-        )
+        target_delta = transition0._fact_vector(
+            transition_example.after
+        ) - transition0._fact_vector(transition_example.before)
         rows.append(
             {
-                "k1.fact_mse": float(
-                    torch.mean((average(k1_fact) - fact_target) ** 2)
-                ),
+                "k1.fact_mse": float(torch.mean((average(k1_fact) - fact_target) ** 2)),
                 "k1.goal_mse": float(
                     torch.mean(
-                        (average(k1_goal) - _one_hot(
-                            semantic0.goal_ids.index(semantic_example.goal.goal_id),
-                            len(semantic0.goal_ids),
-                        ))
+                        (
+                            average(k1_goal)
+                            - _one_hot(
+                                semantic0.goal_ids.index(semantic_example.goal.goal_id),
+                                len(semantic0.goal_ids),
+                            )
+                        )
                         ** 2
                     )
                 ),
                 "k1.content_mse": float(
                     torch.mean(
-                        (average(k1_content) - _one_hot(
-                            semantic0.content_ids.index(semantic_example.content.content_id),
-                            len(semantic0.content_ids),
-                        ))
+                        (
+                            average(k1_content)
+                            - _one_hot(
+                                semantic0.content_ids.index(semantic_example.content.content_id),
+                                len(semantic0.content_ids),
+                            )
+                        )
                         ** 2
                     )
                 ),
-                "k2.transition_mse": float(
-                    torch.mean((average(k2_delta) - target_delta) ** 2)
-                ),
+                "k2.transition_mse": float(torch.mean((average(k2_delta) - target_delta) ** 2)),
                 "k2.goal_mse": float(
                     torch.mean(
-                        (average(k2_goal) - _one_hot(
-                            transition0.goal_ids.index(transition_example.goal.goal_id),
-                            len(transition0.goal_ids),
-                        ))
+                        (
+                            average(k2_goal)
+                            - _one_hot(
+                                transition0.goal_ids.index(transition_example.goal.goal_id),
+                                len(transition0.goal_ids),
+                            )
+                        )
                         ** 2
                     )
                 ),
                 "k2.content_mse": float(
                     torch.mean(
-                        (average(k2_content) - _one_hot(
-                            transition0.content_ids.index(transition_example.content.content_id),
-                            len(transition0.content_ids),
-                        ))
+                        (
+                            average(k2_content)
+                            - _one_hot(
+                                transition0.content_ids.index(
+                                    transition_example.content.content_id
+                                ),
+                                len(transition0.content_ids),
+                            )
+                        )
                         ** 2
                     )
                 ),
@@ -175,6 +185,7 @@ def _v4_ensemble_loss_score(
     means = {key: sum(row[key] for row in rows) / len(rows) for key in LOSS_KEYS}
     means["combined_mse"] = sum(means[key] for key in LOSS_KEYS) / len(LOSS_KEYS)
     return means
+
 
 REPORT_FORMAT = "taiji-m5-k-v4-parity-formal-v1"
 VERSION = 1
@@ -186,9 +197,7 @@ WIDENED_ROOT = PROJECT_ROOT / "checkpoints" / "taiji_k_candidate_c_entry_parity_
 FIXED_LARGE_ROOT = PROJECT_ROOT / "checkpoints" / "taiji_k_fixed_large_c_entry_v4"
 WORKER_ROOT = PROJECT_ROOT / "checkpoints" / "taiji_k_workers_v4"
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_v4_parity_formal_20260910.json"
-PRESEALED_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m5_k_v4_parity_formal_presealed_20260910.json"
-)
+PRESEALED_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_v4_parity_formal_presealed_20260910.json"
 
 
 def _average_state_dicts(
@@ -261,9 +270,7 @@ def _verify_inputs() -> dict[str, Any]:
             widened_digest = content_digest(_load_mapping(widened_path))
             if widened_digest != cell["artifact_digests"]["widened"]:
                 raise ValueError(f"widened artifact digest mismatch: {model_seed}x{course_seed}")
-    ensemble_digests = {
-        cell["artifact_digests"]["fixed_large_ensemble"] for cell in build["cells"]
-    }
+    ensemble_digests = {cell["artifact_digests"]["fixed_large_ensemble"] for cell in build["cells"]}
     if len(ensemble_digests) != len(COURSE_SEEDS):
         raise ValueError(
             "fixed-large ensemble digests must be exactly one per course; "
@@ -310,9 +317,7 @@ def main() -> int:
                     / f"course_{course_seed}"
                     / "taiji_c_entry_parity_v4_widened.pt"
                 )
-                candidate_k1, candidate_k2 = _widened_average_learners(
-                    widened_payload, artifacts
-                )
+                candidate_k1, candidate_k2 = _widened_average_learners(widened_payload, artifacts)
                 frozen_k1 = StructuredSemanticLearner.from_checkpoint(
                     copy.deepcopy(artifacts["k1.semantic"]["checkpoint"]), device="cpu"
                 )
@@ -363,9 +368,7 @@ def main() -> int:
 
     deltas = [row["candidate_delta"] for row in validation_rows]
     mean_delta = sum(deltas) / len(deltas)
-    population_std = (
-        sum((value - mean_delta) ** 2 for value in deltas) / len(deltas)
-    ) ** 0.5
+    population_std = (sum((value - mean_delta) ** 2 for value in deltas) / len(deltas)) ** 0.5
     epsilon_cat = max(0.01, 3.0 * population_std)
 
     pre_sealed = {
@@ -413,9 +416,7 @@ def main() -> int:
                     / f"course_{course_seed}"
                     / "taiji_c_entry_parity_v4_widened.pt"
                 )
-                candidate_k1, candidate_k2 = _widened_average_learners(
-                    widened_payload, artifacts
-                )
+                candidate_k1, candidate_k2 = _widened_average_learners(widened_payload, artifacts)
                 frozen_k1 = StructuredSemanticLearner.from_checkpoint(
                     copy.deepcopy(artifacts["k1.semantic"]["checkpoint"]), device="cpu"
                 )
@@ -470,9 +471,7 @@ def main() -> int:
     def course_means(rows: list[dict[str, Any]], key: str) -> dict[int, float]:
         result: dict[int, float] = {}
         for course_seed in COURSE_SEEDS:
-            values = [
-                float(row[key]) for row in rows if row["course_seed"] == course_seed
-            ]
+            values = [float(row[key]) for row in rows if row["course_seed"] == course_seed]
             result[course_seed] = sum(values) / len(values)
         return result
 
@@ -487,13 +486,9 @@ def main() -> int:
     candidate_course_mean = sum(sealed_candidate_course.values()) / len(COURSE_SEEDS)
     fixed_course_mean = sum(sealed_fixed_course.values()) / len(COURSE_SEEDS)
 
-    g1_courses = [
-        course for course in COURSE_SEEDS if val_candidate_course[course] < 0.0
-    ]
+    g1_courses = [course for course in COURSE_SEEDS if val_candidate_course[course] < 0.0]
     g2_courses = [
-        course
-        for course in COURSE_SEEDS
-        if sealed_candidate_course[course] <= epsilon_cat
+        course for course in COURSE_SEEDS if sealed_candidate_course[course] <= epsilon_cat
     ]
     gates = {
         "G1_quality_floor": {
@@ -562,9 +557,7 @@ def main() -> int:
         ),
     }
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
+    args.report.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     print(
         json.dumps(
             {

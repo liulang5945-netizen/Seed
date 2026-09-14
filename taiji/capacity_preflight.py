@@ -167,12 +167,15 @@ class CapacityGrowthTriggerDecision:
             _unit(getattr(self, name), f"capacity trigger {name}")
         for name in ("residual_error", "residual_error_ema", "maximum_holdout_error"):
             _finite_nonnegative(getattr(self, name), f"capacity trigger {name}")
-        if min(
-            int(self.consecutive_failure_steps),
-            int(self.required_failure_steps),
-            int(self.resource_cost),
-            int(self.structural_budget),
-        ) < 0:
+        if (
+            min(
+                int(self.consecutive_failure_steps),
+                int(self.required_failure_steps),
+                int(self.resource_cost),
+                int(self.structural_budget),
+            )
+            < 0
+        ):
             raise ValueError("capacity trigger counters and budgets cannot be negative")
         if int(self.required_failure_steps) == 0 or int(self.resource_cost) == 0:
             raise ValueError("capacity trigger required steps and resource cost must be positive")
@@ -273,17 +276,13 @@ class CapacityGrowthTrigger:
             raise ValueError("capacity trigger evidence_ids must be unique")
 
         rate = float(self.policy.ema_rate)
-        self.residual_error_ema = (
-            (1.0 - rate) * self.residual_error_ema + rate * residual
-        )
+        self.residual_error_ema = (1.0 - rate) * self.residual_error_ema + rate * residual
         self.observation_count += 1
         failure = bool(
             self.residual_error_ema > float(self.policy.maximum_holdout_error)
             and retention <= float(self.policy.maximum_retention_regression)
         )
-        self.consecutive_failure_steps = (
-            self.consecutive_failure_steps + 1 if failure else 0
-        )
+        self.consecutive_failure_steps = self.consecutive_failure_steps + 1 if failure else 0
         should_propose = bool(
             failure
             and self.consecutive_failure_steps >= int(self.policy.required_failure_steps)

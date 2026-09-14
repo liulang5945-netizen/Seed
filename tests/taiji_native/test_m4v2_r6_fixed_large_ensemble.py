@@ -39,9 +39,7 @@ def test_fixed_large_ensemble_roundtrips_and_preserves_typed_results() -> None:
         transition_input_masks=_transition_masks(transition_corpus),
     )
     transition.fit(transition_corpus.train, epochs=4, learning_rate=0.2)
-    transition_copy = StructuredSemanticTransitionLearner.from_checkpoint(
-        transition.checkpoint()
-    )
+    transition_copy = StructuredSemanticTransitionLearner.from_checkpoint(transition.checkpoint())
 
     ensemble = NativeKFixedLargeEnsemble(
         (semantic, semantic_copy),

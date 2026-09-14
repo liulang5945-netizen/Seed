@@ -18,7 +18,9 @@ import torch
 
 from taiji.internalization import content_digest
 
-_SCRIPT = Path(__file__).resolve().parents[2] / "scripts" / "training" / "inventory_taiji_checkpoints.py"
+_SCRIPT = (
+    Path(__file__).resolve().parents[2] / "scripts" / "training" / "inventory_taiji_checkpoints.py"
+)
 _ROOT = Path(__file__).resolve().parents[2]
 
 

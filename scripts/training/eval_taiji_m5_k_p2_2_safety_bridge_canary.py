@@ -249,9 +249,7 @@ def _arm_canary(
     transition = StructuredSemanticTransitionLearner.from_checkpoint(
         _load_mapping(Path(str(checkpoint["k2"]["path"]))), device="cpu"
     )
-    original_planner = NativeReadOnlyIntentPlanner(
-        ReadOnlyIntentPolicy(routes=READ_ONLY_ROUTES)
-    )
+    original_planner = NativeReadOnlyIntentPlanner(ReadOnlyIntentPolicy(routes=READ_ONLY_ROUTES))
     recovery_planner = NativeReadOnlyIntentPlanner(_recovery_policy())
     rows: list[dict[str, Any]] = []
     for case in cases:
@@ -349,9 +347,7 @@ def _arm_canary(
         },
         "typed_abstention": {
             "count": len(abstention_rows),
-            "all_roundtrip": all(
-                row["typed_abstention"]["roundtrip"] for row in abstention_rows
-            ),
+            "all_roundtrip": all(row["typed_abstention"]["roundtrip"] for row in abstention_rows),
             "all_non_executable": all(
                 row["typed_abstention"]["action_intent_is_none"] for row in abstention_rows
             ),
@@ -359,8 +355,7 @@ def _arm_canary(
                 sorted(
                     {
                         step: sum(
-                            row["typed_abstention"]["next_step"] == step
-                            for row in abstention_rows
+                            row["typed_abstention"]["next_step"] == step for row in abstention_rows
                         )
                         for step in {
                             row["typed_abstention"]["next_step"] for row in abstention_rows

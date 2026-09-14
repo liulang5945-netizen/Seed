@@ -127,9 +127,7 @@ def _validate_report(report: dict[str, Any], *, expected_seed: int) -> dict[str,
             "cohort_seeds": [int(value) for value in phase_chain["cohort_seeds"]],
         },
         "metrics": {metric: float(capability[metric]) for metric in REQUIRED_METRICS},
-        "resources": _require_mapping(arm.get("training"), "cascade training").get(
-            "resource", {}
-        ),
+        "resources": _require_mapping(arm.get("training"), "cascade training").get("resource", {}),
     }
 
 
@@ -139,7 +137,11 @@ def aggregate_reports(reports: Sequence[dict[str, Any]]) -> dict[str, Any]:
 
     entries = [
         _validate_report(report, expected_seed=seed)
-        for report, seed in zip(sorted(reports, key=lambda item: int(item["data_contract"]["current_seed"])), EXPECTED_SEEDS, strict=True)
+        for report, seed in zip(
+            sorted(reports, key=lambda item: int(item["data_contract"]["current_seed"])),
+            EXPECTED_SEEDS,
+            strict=True,
+        )
     ]
     if [entry["seed"] for entry in entries] != list(EXPECTED_SEEDS):
         raise ValueError("seed panel must be exactly 11, 29, 47")
@@ -214,8 +216,20 @@ def main(argv: list[str] | None = None) -> int:
     payload = aggregate_reports(reports)
     payload["source_reports"] = [str(path) for path in args.seed_report]
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(json.dumps({"report": str(args.report), "status": payload["status"], "can_promote": False, "aggregate": payload["aggregate"]}, ensure_ascii=False))
+    args.report.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+    print(
+        json.dumps(
+            {
+                "report": str(args.report),
+                "status": payload["status"],
+                "can_promote": False,
+                "aggregate": payload["aggregate"],
+            },
+            ensure_ascii=False,
+        )
+    )
     return 0
 
 

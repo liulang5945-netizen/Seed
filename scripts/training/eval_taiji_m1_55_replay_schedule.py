@@ -39,26 +39,19 @@ SCHEDULES = ("no_replay", "posthoc_replay", "interleaved_replay")
 def _schedule_order(course: Any, schedule: str) -> tuple[tuple[str, str, str], ...]:
     if schedule == "no_replay":
         return tuple(
-            ("phase_b", episode.memory_id, "experienced")
-            for episode in course.phase_b_train
+            ("phase_b", episode.memory_id, "experienced") for episode in course.phase_b_train
         )
     if schedule == "posthoc_replay":
         return (
             *tuple(
-                ("phase_b", episode.memory_id, "experienced")
-                for episode in course.phase_b_train
+                ("phase_b", episode.memory_id, "experienced") for episode in course.phase_b_train
             ),
-            *tuple(
-                ("replay", episode.memory_id, "replayed")
-                for episode in course.replay_train
-            ),
+            *tuple(("replay", episode.memory_id, "replayed") for episode in course.replay_train),
         )
     if schedule == "interleaved_replay":
         return tuple(
             item
-            for phase_b, replay in zip(
-                course.phase_b_train, course.replay_train, strict=True
-            )
+            for phase_b, replay in zip(course.phase_b_train, course.replay_train, strict=True)
             for item in (
                 ("phase_b", phase_b.memory_id, "experienced"),
                 ("replay", replay.memory_id, "replayed"),
@@ -79,9 +72,7 @@ def _apply_schedule(model: Taiji, course: Any, schedule: str) -> None:
             DelayedMemoryTask._write_episode(model, episode, provenance="replayed")
         return
     if schedule == "interleaved_replay":
-        for phase_b, replay in zip(
-            course.phase_b_train, course.replay_train, strict=True
-        ):
+        for phase_b, replay in zip(course.phase_b_train, course.replay_train, strict=True):
             DelayedMemoryTask._write_episode(model, phase_b)
             DelayedMemoryTask._write_episode(model, replay, provenance="replayed")
         return
@@ -124,15 +115,9 @@ def _seed_record(course: Any, seed: int) -> dict[str, Any]:
     for episode in course.phase_a_train:
         DelayedMemoryTask._write_episode(phase_a, episode)
     phase_a_baseline = _probe(phase_a, course.phase_a_holdout, actions, outcomes, None)
-    phase_a_retention = _probe(
-        phase_a, course.phase_a_retention, actions, outcomes, None
-    )
-    phase_a_baseline_by_cue = {
-        row["cue"]: row for row in phase_a_baseline["rows"]
-    }
-    phase_a_retention_by_cue = {
-        row["cue"]: row for row in phase_a_retention["rows"]
-    }
+    phase_a_retention = _probe(phase_a, course.phase_a_retention, actions, outcomes, None)
+    phase_a_baseline_by_cue = {row["cue"]: row for row in phase_a_baseline["rows"]}
+    phase_a_retention_by_cue = {row["cue"]: row for row in phase_a_retention["rows"]}
     phase_a_checkpoint = deepcopy(phase_a.checkpoint())
     phase_a_digest = content_digest(phase_a_checkpoint)
     phase_a_weights = _memory_weights(phase_a)
@@ -164,9 +149,7 @@ def _seed_record(course: Any, seed: int) -> dict[str, Any]:
             "order_digest": content_digest(order),
             "order_count": len(order),
             "phase_b_write_count": len(course.phase_b_train),
-            "replay_write_count": (
-                0 if schedule == "no_replay" else len(course.replay_train)
-            ),
+            "replay_write_count": (0 if schedule == "no_replay" else len(course.replay_train)),
             "old_holdout": old_holdout,
             "old_retention": old_retention,
             "new_holdout": new_holdout,
@@ -249,8 +232,7 @@ def run_audit() -> dict[str, Any]:
         "records": records,
         "schedule_gate_matrix": {
             schedule: [
-                bool(record["schedules"][schedule]["candidate_gate_passed"])
-                for record in records
+                bool(record["schedules"][schedule]["candidate_gate_passed"]) for record in records
             ]
             for schedule in SCHEDULES
         },

@@ -90,7 +90,9 @@ def _load_domain_records(corpus: Path) -> dict[str, list[tuple[str, str]]]:
     M4.R12 conversion manifest, so the split is anchored to the manifest
     rather than trusting file order.
     """
-    manifest_path = PROJECT_ROOT / "reports" / "taiji_m4r12_ultradata_conversion_manifest_20260909.json"
+    manifest_path = (
+        PROJECT_ROOT / "reports" / "taiji_m4r12_ultradata_conversion_manifest_20260909.json"
+    )
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     expected_digest = str(manifest["output_sha256"])
     lines = corpus.read_text(encoding="utf-8").splitlines()

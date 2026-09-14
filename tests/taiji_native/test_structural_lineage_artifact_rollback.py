@@ -117,16 +117,15 @@ def test_artifact_provenance_survives_rollback_and_terminal_compaction() -> None
         assert retention.status == "compacted"
         assert batch.batch_id in retention.removed_batch_ids
         assert all(
-            item.artifact_digest not in {
+            item.artifact_digest
+            not in {
                 first_artifact.artifact_digest,
                 second_artifact.artifact_digest,
             }
             for item in rollback_resumed.structural_validation_artifacts
         )
 
-        before_replay_after_compaction = _checkpoint_digest(
-            rollback_resumed.native_checkpoint()
-        )
+        before_replay_after_compaction = _checkpoint_digest(rollback_resumed.native_checkpoint())
         try:
             rollback_resumed.continue_structural_candidate_batch_from_validation_artifacts(
                 batch.batch_id,
@@ -149,7 +148,9 @@ def test_artifact_provenance_survives_rollback_and_terminal_compaction() -> None
         _save_native_checkpoint(rollback_resumed, after_compaction_path)
         final = _load_native_checkpoint(after_compaction_path)
         assert batch.batch_id not in {item.batch_id for item in final.structural_candidate_batches}
-        assert batch.batch_id not in {item.batch_id for item in final.structural_candidate_rollbacks}
+        assert batch.batch_id not in {
+            item.batch_id for item in final.structural_candidate_rollbacks
+        }
     finally:
         before_path.unlink(missing_ok=True)
         after_first_path.unlink(missing_ok=True)

@@ -79,9 +79,7 @@ DEFAULT_MANIFEST = (
     PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p3_5_g_learning_manifest_v1.json"
 )
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p3_5_g_learning_20260911.json"
-P3_4_MANIFEST = (
-    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p3_4_behavior_manifest_v1.json"
-)
+P3_4_MANIFEST = PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p3_4_behavior_manifest_v1.json"
 P3_4_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p3_4_behavior_signal_20260911.json"
 
 
@@ -236,7 +234,10 @@ def _verify_sources(
         raise ValueError("P3.2 external target boundary is not clean")
     if len(p2_7_manifest.get("records", ())) != 4:
         raise ValueError("P3.5 requires the fixed four-row P2.7 holdout")
-    if any(record.get("candidate", {}).get("fit_eligible") is not False for record in p2_7_manifest["records"]):
+    if any(
+        record.get("candidate", {}).get("fit_eligible") is not False
+        for record in p2_7_manifest["records"]
+    ):
         raise ValueError("P2.7 holdout contains a fit-eligible record")
 
 
@@ -252,10 +253,16 @@ def _k_only_candidate(candidate_set: GSelectionCandidateSet) -> GSelectionCandid
             and candidate.confidence >= CONFIDENCE_FLOOR
         ):
             return candidate
-    safe = [candidate for candidate in candidate_set.candidates if candidate.candidate_role == "abstain"]
+    safe = [
+        candidate for candidate in candidate_set.candidates if candidate.candidate_role == "abstain"
+    ]
     if safe:
         return sorted(safe, key=lambda candidate: candidate.candidate_id)[0]
-    reobserve = [candidate for candidate in candidate_set.candidates if candidate.candidate_role == "reobserve"]
+    reobserve = [
+        candidate
+        for candidate in candidate_set.candidates
+        if candidate.candidate_role == "reobserve"
+    ]
     if reobserve:
         return sorted(reobserve, key=lambda candidate: candidate.candidate_id)[0]
     raise ValueError("P3.5 K-only baseline has no safe candidate")
@@ -281,7 +288,9 @@ def _select_row(
             for candidate in candidate_set.candidates
             if candidate.candidate_id == decision.selected_candidate_id
         )
-    outcome = next(item for item in behavior_set.outcomes if item.candidate_id == selected.candidate_id)
+    outcome = next(
+        item for item in behavior_set.outcomes if item.candidate_id == selected.candidate_id
+    )
     return {
         "split": candidate_set.split,
         "example_id": candidate_set.example_id,
@@ -312,13 +321,11 @@ def _summarize(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
         ),
         "selected_utility_sum": utility_sum,
         "selected_utility_mean": utility_sum / len(rows) if rows else 0.0,
-        "selected_roles": dict(sorted(Counter(str(row["selected_candidate_role"]) for row in rows).items())),
+        "selected_roles": dict(
+            sorted(Counter(str(row["selected_candidate_role"]) for row in rows).items())
+        ),
         "rows": [
-            {
-                key: value
-                for key, value in row.items()
-                if key not in {"decision", "candidate_set"}
-            }
+            {key: value for key, value in row.items() if key not in {"decision", "candidate_set"}}
             for row in rows
         ],
     }
@@ -332,7 +339,9 @@ def _selection_metrics(
 ) -> dict[str, Any]:
     result: dict[str, Any] = {}
     for arm in ("k_only", "g_zero_step", "g_trained"):
-        rows = [_select_row(record, arm=arm, zero_step=zero_step, trained=trained) for record in records]
+        rows = [
+            _select_row(record, arm=arm, zero_step=zero_step, trained=trained) for record in records
+        ]
         result[arm] = _summarize(rows)
     return result
 
@@ -341,7 +350,9 @@ def _case_key(candidate_set: GSelectionCandidateSet) -> str:
     return candidate_set.example_id
 
 
-def _reconstruct_cases(*, scratch: Path, p1_manifest: Mapping[str, Any]) -> dict[str, dict[str, Any]]:
+def _reconstruct_cases(
+    *, scratch: Path, p1_manifest: Mapping[str, Any]
+) -> dict[str, dict[str, Any]]:
     _artifacts, parent_digest, bundle, projector = _context(
         worker_root=WORKER_ROOT,
         model_seed=MODEL_SEED,
@@ -349,14 +360,18 @@ def _reconstruct_cases(*, scratch: Path, p1_manifest: Mapping[str, Any]) -> dict
     p2_6_manifest = _load_json(P2_6_MANIFEST)
     if p2_6_manifest.get("parent_checkpoint_digest") != parent_digest:
         raise ValueError("P2.6 parent digest drifted during P3.5 reconstruction")
-    train_experiences, train_metadata, validation_experiences, validation_metadata, reconstruction = (
-        _rebuild_and_verify_manifest(
-            scratch=scratch,
-            manifest=p1_manifest,
-            parent_digest=parent_digest,
-            bundle=bundle,
-            projector=projector,
-        )
+    (
+        train_experiences,
+        train_metadata,
+        validation_experiences,
+        validation_metadata,
+        reconstruction,
+    ) = _rebuild_and_verify_manifest(
+        scratch=scratch,
+        manifest=p1_manifest,
+        parent_digest=parent_digest,
+        bundle=bundle,
+        projector=projector,
     )
     if not reconstruction.get("passed"):
         raise RuntimeError("P1 reconstruction failed before P3.5")
@@ -457,7 +472,8 @@ def _projection_preflight(
                 "next_step": projected.next_step,
                 "action_intent_is_none": projected.to_payload().get("action_intent") is None,
                 "roundtrip": restored == projected,
-                "snapshot_match": projected.snapshot_id == case["observation"].capability_snapshot_id,
+                "snapshot_match": projected.snapshot_id
+                == case["observation"].capability_snapshot_id,
             }
         )
     for arm, learner in (("g_zero_step", zero_step), ("g_trained", trained)):
@@ -587,14 +603,25 @@ def run_learning(
         )
         records = _load_records(p3_4_manifest)
         train_records = [record for record in records if record["candidate_set"].split == "train"]
-        validation_records = [record for record in records if record["candidate_set"].split == "validation"]
+        validation_records = [
+            record for record in records if record["candidate_set"].split == "validation"
+        ]
         fit_train = [record for record in train_records if record["fit_eligible"]]
         fit_validation = [record for record in validation_records if record["fit_eligible"]]
         excluded_train = [record for record in train_records if not record["fit_eligible"]]
-        excluded_validation = [record for record in validation_records if not record["fit_eligible"]]
-        if (len(train_records), len(validation_records), len(fit_train), len(fit_validation)) != (40, 10, 32, 8):
+        excluded_validation = [
+            record for record in validation_records if not record["fit_eligible"]
+        ]
+        if (len(train_records), len(validation_records), len(fit_train), len(fit_validation)) != (
+            40,
+            10,
+            32,
+            8,
+        ):
             raise ValueError("P3.5 fit-eligible split drifted from P3.4")
-        if any(record["candidate_set"].target_kind not in {"pair", "reobserve"} for record in fit_train):
+        if any(
+            record["candidate_set"].target_kind not in {"pair", "reobserve"} for record in fit_train
+        ):
             raise ValueError("P3.5 fit set contains an unsupported target kind")
         worker_restore = p3_2_report["base_continuation"]["worker_restore"]
         k1_path = Path(str(worker_restore["k1"]["path"]))
@@ -618,12 +645,15 @@ def run_learning(
         )
         if not checkpoint_before.get("passed"):
             raise RuntimeError("P3.5 K checkpoint preflight before fit failed")
-        _write_json_atomic(manifest_path, _build_fit_manifest(
-            records=records,
-            p3_4_manifest=p3_4_manifest,
-            p3_4_report=p3_4_report,
-            worker_digests=worker_digests,
-        ))
+        _write_json_atomic(
+            manifest_path,
+            _build_fit_manifest(
+                records=records,
+                p3_4_manifest=p3_4_manifest,
+                p3_4_report=p3_4_report,
+                worker_digests=worker_digests,
+            ),
+        )
         fit_manifest = _load_json(manifest_path)
         cases = _reconstruct_cases(scratch=run_dir / "reconstruction", p1_manifest=p1_manifest)
         zero_step = GSelectionLearner(
@@ -659,7 +689,9 @@ def run_learning(
             raise RuntimeError("P3.5 G fit changed frozen K checkpoint state")
         selection_metrics = {
             "train": _selection_metrics(train_records, zero_step=zero_step, trained=trained),
-            "validation": _selection_metrics(validation_records, zero_step=zero_step, trained=trained),
+            "validation": _selection_metrics(
+                validation_records, zero_step=zero_step, trained=trained
+            ),
             "fit_eligible": _selection_metrics(
                 [*fit_train, *fit_validation], zero_step=zero_step, trained=trained
             ),
@@ -675,7 +707,10 @@ def run_learning(
         ]
         contested_metrics = {
             arm: _summarize(
-                [_select_row(record, arm=arm, zero_step=zero_step, trained=trained) for record in contested]
+                [
+                    _select_row(record, arm=arm, zero_step=zero_step, trained=trained)
+                    for record in contested
+                ]
             )
             for arm in ("k_only", "g_zero_step", "g_trained")
         }
@@ -741,7 +776,9 @@ def run_learning(
         projection_gate = {
             "target_reobserve_count": projection["target_reobserve_count"] == 30,
             "target_reobserve_projection_passed": projection["target_reobserve_projection_passed"],
-            "selected_reobserve_projection_passed": projection["selected_reobserve_projection_passed"],
+            "selected_reobserve_projection_passed": projection[
+                "selected_reobserve_projection_passed"
+            ],
         }
         rejection_gate = {
             "tampered_checkpoint_rejected": tampered_rejected,
@@ -750,9 +787,11 @@ def run_learning(
         holdout_gate = {
             "fixed_four_rows": len(holdout_sets) == 4,
             "fit_count": 0,
-            "all_holdout_paths_unique": len({item.path for item in holdout_sets}) == len(holdout_sets),
+            "all_holdout_paths_unique": len({item.path for item in holdout_sets})
+            == len(holdout_sets),
             "holdout_projects_at_least_two": len({item.project_id for item in holdout_sets}) >= 2,
-            "g_trained_workbench_success": holdout_actions["g_trained"]["workbench_success_count"] >= 4,
+            "g_trained_workbench_success": holdout_actions["g_trained"]["workbench_success_count"]
+            >= 4,
         }
         zero_contested = contested_metrics["g_zero_step"]
         trained_contested = contested_metrics["g_trained"]
@@ -767,17 +806,29 @@ def run_learning(
                 >= zero_contested["behavior_target_hit_count"]
             ),
             "trained_behavior_changed": any(
-                row["g_zero_step"]["selected_candidate_id"] != row["g_trained"]["selected_candidate_id"]
+                row["g_zero_step"]["selected_candidate_id"]
+                != row["g_trained"]["selected_candidate_id"]
                 for row in (
                     {
-                        "g_zero_step": _select_row(record, arm="g_zero_step", zero_step=zero_step, trained=trained),
-                        "g_trained": _select_row(record, arm="g_trained", zero_step=zero_step, trained=trained),
+                        "g_zero_step": _select_row(
+                            record, arm="g_zero_step", zero_step=zero_step, trained=trained
+                        ),
+                        "g_trained": _select_row(
+                            record, arm="g_trained", zero_step=zero_step, trained=trained
+                        ),
                     }
                     for record in contested
                 )
             ),
         }
-        all_gates = [checkpoint_gate, training_gate, projection_gate, rejection_gate, holdout_gate, behavior_gain_gate]
+        all_gates = [
+            checkpoint_gate,
+            training_gate,
+            projection_gate,
+            rejection_gate,
+            holdout_gate,
+            behavior_gain_gate,
+        ]
         gate_passed = all(
             all(bool(value) for key, value in gate.items() if key != "fit_count")
             for gate in all_gates

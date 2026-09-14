@@ -74,9 +74,7 @@ FROZEN_GATE = TRAINING_DIR / "eval_taiji_p5_2b_group_causal_corpora_gate.py"
 DICTIONARY_MODULE = TRAINING_DIR / "audit_taiji_b0_measurement_reachability.py"
 PRECHECK_MODULE = TRAINING_DIR / "audit_taiji_b0_task_reachability_precheck.py"
 FROZEN_ROUTE_C_REPORT = (
-    PROJECT_ROOT
-    / "reports"
-    / "taiji_p5_2c_double_prime_unseen_combination_transfer_20260913.json"
+    PROJECT_ROOT / "reports" / "taiji_p5_2c_double_prime_unseen_combination_transfer_20260913.json"
 )
 
 PROBE_FORMAT = "taiji-b0-handoff-feasibility-probe-v1"
@@ -311,8 +309,7 @@ def execute_surface(
                 cue = cue_by_task[task.task_id]
                 for active in cells:
                     episode_id = (
-                        f"b0probe-episode:{task.task_id}:r{repeat}:"
-                        f"{'-'.join(active) or 'none'}"
+                        f"b0probe-episode:{task.task_id}:r{repeat}:" f"{'-'.join(active) or 'none'}"
                     )
                     episodes.append(
                         frozen._member_episode(
@@ -324,7 +321,9 @@ def execute_surface(
     return episodes
 
 
-def outcome_by_cell(episodes: Sequence[Mapping[str, Any]]) -> dict[tuple[str, ...], dict[str, float]]:
+def outcome_by_cell(
+    episodes: Sequence[Mapping[str, Any]],
+) -> dict[tuple[str, ...], dict[str, float]]:
     """Mean outcome per cell and context, plus the pooled mean."""
 
     per_cell: dict[tuple[str, ...], dict[str, list[float]]] = {}
@@ -339,8 +338,10 @@ def outcome_by_cell(episodes: Sequence[Mapping[str, Any]]) -> dict[tuple[str, ..
         result[key] = {
             "mean_outcome": sum(pooled) / len(pooled),
             "success_rate": sum(1 for value in pooled if value > 0) / len(pooled),
-            **{f"ctx:{context_id}": sum(values) / len(values) for context_id, values in
-               sorted(by_context.items())},
+            **{
+                f"ctx:{context_id}": sum(values) / len(values)
+                for context_id, values in sorted(by_context.items())
+            },
         }
     return result
 
@@ -386,9 +387,7 @@ def ground_truth(frozen: Any, members: Mapping[str, Any], embedder: Any) -> dict
     contexts = frozen.p52a._validation_tasks()[: frozen.CONTEXT_COUNT]
     root = Path(tempfile.mkdtemp(prefix="b0probe-truth-"))
     try:
-        cue_by_task = {
-            task.task_id: embedder.embed([task.goal_text])[0] for task in contexts
-        }
+        cue_by_task = {task.task_id: embedder.embed([task.goal_text])[0] for task in contexts}
         episodes = frozen._execute_matrix(root, contexts, dict(members), cue_by_task)
     finally:
         shutil.rmtree(root, ignore_errors=True)
@@ -453,9 +452,7 @@ def probe_surface(
     context_ids = [task.task_id for task in tasks]
     table = table_from_outcomes(outcomes, context_ids, frozen.MEMBER_IDS)
 
-    trajectories = [
-        precheck.classify_pair_trajectory(table, pair) for pair in table.pair_cells()
-    ]
+    trajectories = [precheck.classify_pair_trajectory(table, pair) for pair in table.pair_cells()]
     interleaved_total = sum(item["contexts_interleaved"] for item in trajectories)
     combination_only = precheck.combination_only_solvable_contexts(table)
 

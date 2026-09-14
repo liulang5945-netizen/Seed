@@ -35,9 +35,17 @@ REEVAL_VERSION = 1
 # Fixed, versioned absolute thresholds (pre-registered in the R0 contract).
 ABSOLUTE_SPECS = {
     "sequence_holdout_bpb": {"direction": "lower_is_better", "threshold": 6.5, "metric": "bpb"},
-    "memory_holdout_recall": {"direction": "higher_is_better", "threshold": 0.5, "metric": "recall"},
+    "memory_holdout_recall": {
+        "direction": "higher_is_better",
+        "threshold": 0.5,
+        "metric": "recall",
+    },
     "world_holdout_error": {"direction": "lower_is_better", "threshold": 0.1, "metric": "error"},
-    "goal_holdout_success": {"direction": "higher_is_better", "threshold": 0.5, "metric": "success_rate"},
+    "goal_holdout_success": {
+        "direction": "higher_is_better",
+        "threshold": 0.5,
+        "metric": "success_rate",
+    },
 }
 # Retention slack in metric units, and the incremental rule (no gain demanded
 # from an already-saturated course, but a frozen course must be labelled).

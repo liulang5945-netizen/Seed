@@ -41,9 +41,7 @@ from taiji import (  # noqa: E402
 
 REPORT_FORMAT = "taiji-m4v2-r6-adapter-controlled-smoke-v1"
 VERSION = 1
-DEFAULT_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m4v2_r6_adapter_controlled_smoke_20260909.json"
-)
+DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m4v2_r6_adapter_controlled_smoke_20260909.json"
 EPSILON = 0.01
 
 
@@ -89,9 +87,7 @@ def _exchange(
     output_item = KAdapterOutput(
         parent_checkpoint_digest=parent_digest,
         input_digest=input_item.input_digest,
-        action_digest=content_digest(
-            {"kind": "workspace.read", "path": "missing_00.txt"}
-        ),
+        action_digest=content_digest({"kind": "workspace.read", "path": "missing_00.txt"}),
         outcome_signature=projection.outcome_signature,
         dependency_digest=projection.dependency_digest,
         dependency_projection_digest=projection.projection_digest,
@@ -145,20 +141,14 @@ def run_smoke(*, model_seed: int = 17, course_seed: int = 0) -> dict[str, Any]:
     exchange_digest = adapter.record_exchange(exchange)
     exchange_checkpoint = adapter.checkpoint()
     exchange_restored = KContinualAdapter.from_checkpoint(exchange_checkpoint)
-    checks["typed_input_output_roundtrip"] = (
-        exchange_restored.last_exchange == exchange
-    )
+    checks["typed_input_output_roundtrip"] = exchange_restored.last_exchange == exchange
     checks["typed_exchange_digest_echo"] = exchange_digest == exchange.exchange_digest
-    checks["typed_exchange_parent_echo"] = (
-        exchange.output.parent_checkpoint_digest == parent_digest
-    )
+    checks["typed_exchange_parent_echo"] = exchange.output.parent_checkpoint_digest == parent_digest
     checks["typed_exchange_dependency_echo"] = (
         exchange.output.dependency_digest == projection.dependency_digest
         and exchange.output.dependency_projection_digest == projection.projection_digest
     )
-    checks["typed_exchange_scope_echo"] = (
-        adapter.dependency_scope_id in exchange.output.lineage
-    )
+    checks["typed_exchange_scope_echo"] = adapter.dependency_scope_id in exchange.output.lineage
 
     rollback_token = adapter.stage_candidate(
         candidate_checkpoint_digest=content_digest(
@@ -185,12 +175,8 @@ def run_smoke(*, model_seed: int = 17, course_seed: int = 0) -> dict[str, Any]:
     checks["rollback_restores_parent_namespace"] = (
         rollback_restored.active_namespace == rollback_restored.parent_namespace
     )
-    checks["rollback_preserves_typed_exchange"] = (
-        rollback_restored.last_exchange == exchange
-    )
-    checks["rollback_checkpoint_roundtrip"] = (
-        rollback_restored.checkpoint() == rollback_checkpoint
-    )
+    checks["rollback_preserves_typed_exchange"] = rollback_restored.last_exchange == exchange
+    checks["rollback_checkpoint_roundtrip"] = rollback_restored.checkpoint() == rollback_checkpoint
 
     after_scores = _scores(parent, _r6_course(course_seed))
     retention_deltas = {
@@ -282,9 +268,7 @@ def main() -> int:
                 "checks_passed": sum(report["checks"].values()),
                 "checks_total": len(report["checks"]),
                 "baseline_complete": report["boundary"]["baseline_complete"],
-                "k_learner_training_performed": report["boundary"][
-                    "k_learner_training_performed"
-                ],
+                "k_learner_training_performed": report["boundary"]["k_learner_training_performed"],
             },
             ensure_ascii=False,
         )

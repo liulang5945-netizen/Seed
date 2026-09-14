@@ -51,9 +51,12 @@ def test_measured_artifact_sidecar_is_verified_and_legacy_is_explicit() -> None:
     try:
         stored = store.put_measured_artifact(first_artifact, first_measurements)
         assert stored == first_artifact
-        assert store.put_measured_artifact(
-            first_artifact.to_payload(), first_measurements.to_payload()
-        ) == first_artifact
+        assert (
+            store.put_measured_artifact(
+                first_artifact.to_payload(), first_measurements.to_payload()
+            )
+            == first_artifact
+        )
         assert store.contains(first_artifact.artifact_digest)
         assert store.contains_measurement(first_measurements.measurement_digest)
         assert store.load(first_artifact.artifact_digest) == first_artifact
@@ -87,9 +90,7 @@ def test_measured_artifact_sidecar_is_verified_and_legacy_is_explicit() -> None:
 
         runtime.save(checkpoint_path)
         restored = SeedRuntime.load(checkpoint_path)
-        before_checkpoint = _checkpoint_digest(
-            restored.model.architecture.native_checkpoint()
-        )
+        before_checkpoint = _checkpoint_digest(restored.model.architecture.native_checkpoint())
         result = restored.continue_structural_candidate_batch_from_artifact_store(
             batch.batch_id,
             artifact_store=store,
@@ -97,9 +98,9 @@ def test_measured_artifact_sidecar_is_verified_and_legacy_is_explicit() -> None:
             replays_by_candidate={first_id: first_replay},
         )
         assert result["results"][first_id]["status"] == "admitted"
-        assert _checkpoint_digest(
-            restored.model.architecture.native_checkpoint()
-        ) != before_checkpoint
+        assert (
+            _checkpoint_digest(restored.model.architecture.native_checkpoint()) != before_checkpoint
+        )
     finally:
         checkpoint_path.unlink(missing_ok=True)
         _remove_directory(store_root)

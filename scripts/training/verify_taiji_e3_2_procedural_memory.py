@@ -47,7 +47,9 @@ def run_gate() -> dict[str, object]:
         _experience("train-failed", partition="train", capability_id="terminal.run", success=False),
     )
     holdout = (_experience("holdout-mcp", partition="holdout", capability_id="mcp.list"),)
-    retention = (_experience("retention-editor", partition="retention", capability_id="editor.open"),)
+    retention = (
+        _experience("retention-editor", partition="retention", capability_id="editor.open"),
+    )
     report = trainer.consolidate(
         train,
         holdout_experiences=holdout,
@@ -56,12 +58,15 @@ def run_gate() -> dict[str, object]:
     restored = NativeProceduralMemoryTrainer.from_checkpoint(trainer.checkpoint())
     checks = {
         "native_update_admitted": report.admitted,
-        "holdout_improves_over_frozen": report.native_holdout_accuracy > report.frozen_holdout_accuracy,
-        "replay_only_matches_frozen": report.replay_only_holdout_accuracy == report.frozen_holdout_accuracy,
+        "holdout_improves_over_frozen": report.native_holdout_accuracy
+        > report.frozen_holdout_accuracy,
+        "replay_only_matches_frozen": report.replay_only_holdout_accuracy
+        == report.frozen_holdout_accuracy,
         "retention_preserved": report.native_retention_accuracy >= report.frozen_retention_accuracy,
         "failed_train_excluded": report.excluded_experience_ids == ("train-failed",),
         "failed_train_not_consumed": "train-failed" not in trainer.consumed_experience_ids,
-        "checkpoint_roundtrip": content_digest(restored.checkpoint()) == content_digest(trainer.checkpoint()),
+        "checkpoint_roundtrip": content_digest(restored.checkpoint())
+        == content_digest(trainer.checkpoint()),
         "dynamic_action_discovery": trainer.learner.action_kinds == ("editor.open", "mcp.list"),
     }
     return {
@@ -83,7 +88,9 @@ def main() -> int:
     args = parser.parse_args()
     result = run_gate()
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0 if result["status"] == "passed" else 1
 

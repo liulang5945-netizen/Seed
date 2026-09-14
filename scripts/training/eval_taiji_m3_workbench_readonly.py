@@ -110,12 +110,14 @@ def _missing_toolchain_registry() -> ProgrammingLanguageRegistry:
 
     default = ProgrammingLanguageRegistry.default()
     definitions = tuple(
-        replace(
-            definition,
-            toolchain_commands=("m3-toolchain-that-is-not-installed",),
+        (
+            replace(
+                definition,
+                toolchain_commands=("m3-toolchain-that-is-not-installed",),
+            )
+            if definition.language_id == "rust"
+            else definition
         )
-        if definition.language_id == "rust"
-        else definition
         for definition in default.definitions
     )
     return ProgrammingLanguageRegistry(definitions)
@@ -164,9 +166,7 @@ def _run_positive_case(
         restored_selection = next(
             (
                 item
-                for item in restored.workbench_environment.language_state_checkpoint()[
-                    "selections"
-                ]
+                for item in restored.workbench_environment.language_state_checkpoint()["selections"]
                 if item.get("path") == path
             ),
             {},
@@ -199,13 +199,9 @@ def _run_positive_case(
         "language_result_state": language_result["selection_state"],
         "language_evidence_digest": language_evidence["file_digest"],
         "language_result_digest": language_result["file_digest"],
-        "available_for_language": language_result["execution_snapshot"][
-            "available_for_language"
-        ],
+        "available_for_language": language_result["execution_snapshot"]["available_for_language"],
         "planning_sources": [item["grounding_source"] for item in planning_steps],
-        "execution_capabilities": [
-            item["capability_id"] for item in execution_steps
-        ],
+        "execution_capabilities": [item["capability_id"] for item in execution_steps],
         "execution_status": result["execution"]["status"],
         "step_successes": [item["success"] for item in execution_steps],
         "side_effects": result["execution"]["side_effects"],
@@ -300,13 +296,10 @@ def _run_boundary_controls() -> dict[str, Any]:
         "diagnostics_status": diagnostics["outcome"]["status"],
         "diagnostics_reason": diagnostics["policy"]["reason_code"],
         "diagnostics_has_execution_phase": (
-            diagnostics["outcome"]["status"] == "success"
-            or "executing" in phases
+            diagnostics["outcome"]["status"] == "success" or "executing" in phases
         ),
         "diagnostics_descriptor_disabled": not bool(
-            runtime.workbench_environment.capability_snapshot.get(
-                "editor.diagnostics.read"
-            ).enabled
+            runtime.workbench_environment.capability_snapshot.get("editor.diagnostics.read").enabled
         ),
     }
 
@@ -347,9 +340,7 @@ def evaluate() -> dict[str, Any]:
     )
     controls = _run_boundary_controls()
     metrics = {
-        "project_disjoint_fixture_families": len(
-            {item["project_root"] for item in projects}
-        )
+        "project_disjoint_fixture_families": len({item["project_root"] for item in projects})
         == len(projects),
         "readonly_projects_complete": all(
             item["status"] == "completed"
@@ -413,9 +404,7 @@ def evaluate() -> dict[str, Any]:
             and controls["diagnostics_reason"] == "capability_not_connected"
             and not controls["diagnostics_has_execution_phase"]
         ),
-        "fixture_workspaces_are_unchanged": all(
-            item["workspace_unchanged"] for item in projects
-        ),
+        "fixture_workspaces_are_unchanged": all(item["workspace_unchanged"] for item in projects),
     }
     return {
         "format": REPORT_FORMAT,

@@ -289,23 +289,16 @@ def _score_arm(
                 "state_profile": str(metadata["state_profile"]),
                 "combined_mse": combined,
                 "semantic_mse": float(
-                    (score["k1.fact_mse"] + score["k1.goal_mse"] + score["k1.content_mse"])
-                    / 3.0
+                    (score["k1.fact_mse"] + score["k1.goal_mse"] + score["k1.content_mse"]) / 3.0
                 ),
                 "transition_mse": float(
-                    (
-                        score["k2.transition_mse"]
-                        + score["k2.goal_mse"]
-                        + score["k2.content_mse"]
-                    )
+                    (score["k2.transition_mse"] + score["k2.goal_mse"] + score["k2.content_mse"])
                     / 3.0
                 ),
                 "hits": hits,
             }
         )
-    per_class = {
-        key: sum(values) / len(values) for key, values in sorted(grouped.items())
-    }
+    per_class = {key: sum(values) / len(values) for key, values in sorted(grouped.items())}
     return {
         "validation_count": len(rows),
         "per_class_combined_mse": per_class,
@@ -313,8 +306,7 @@ def _score_arm(
         "worst_class_combined_mse": max(per_class.values()),
         "per_class_hit_rates": {
             class_key: {
-                metric: sum(values) / len(values)
-                for metric, values in sorted(metrics.items())
+                metric: sum(values) / len(values) for metric, values in sorted(metrics.items())
             }
             for class_key, metrics in sorted(hit_grouped.items())
         },
@@ -442,7 +434,10 @@ def run_pilot(
             buffer_size=len(wake),
             sample_count=REPLAY_SAMPLE,
             digest=content_digest(
-                {"manifest": manifest["manifest_digest"], "wake": [e.experience_digest for e in wake]}
+                {
+                    "manifest": manifest["manifest_digest"],
+                    "wake": [e.experience_digest for e in wake],
+                }
             ),
         )
         contract = {
@@ -452,8 +447,7 @@ def run_pilot(
             "worker_bundle_digest": bundle.bundle_digest,
             "wake_count": len(wake),
             "wake_class_counts": {
-                key: sum(item["class_key"] == key for item in wake_metadata)
-                for key in CLASS_ORDER
+                key: sum(item["class_key"] == key for item in wake_metadata) for key in CLASS_ORDER
             },
             "wake_experience_digests": [item.experience_digest for item in wake],
             "replay_indices": list(replay_indices),
@@ -478,9 +472,7 @@ def run_pilot(
         if not preflight["passed"]:
             raise RuntimeError("P2 checkpoint save/independent-restore preflight failed")
 
-        parent_semantic, parent_transition = _fresh_learners(
-            semantic_parent, transition_parent
-        )
+        parent_semantic, parent_transition = _fresh_learners(semantic_parent, transition_parent)
         arms: dict[str, tuple[StructuredSemanticLearner, StructuredSemanticTransitionLearner]] = {
             "frozen": (parent_semantic, parent_transition),
             "wake-only": _fresh_learners(semantic_parent, transition_parent),
@@ -511,8 +503,16 @@ def run_pilot(
                     "k2": int(transition.training_steps) - int(parent_transition.training_steps),
                 },
                 "fit_calls": {
-                    "k1": 0 if arm_name == "frozen" else len(wake) + (len(replay_indices) if arm_name == "wake-replay" else 0),
-                    "k2": 0 if arm_name == "frozen" else len(wake) + (len(replay_indices) if arm_name == "wake-replay" else 0),
+                    "k1": (
+                        0
+                        if arm_name == "frozen"
+                        else len(wake) + (len(replay_indices) if arm_name == "wake-replay" else 0)
+                    ),
+                    "k2": (
+                        0
+                        if arm_name == "frozen"
+                        else len(wake) + (len(replay_indices) if arm_name == "wake-replay" else 0)
+                    ),
                 },
                 "validation": score,
             }
@@ -520,8 +520,7 @@ def run_pilot(
         frozen_macro = float(arm_payload["frozen"]["validation"]["macro_combined_mse"])
         for arm_name in ("wake-only", "wake-replay"):
             arm_payload[arm_name]["delta_vs_frozen_macro_combined_mse"] = (
-                float(arm_payload[arm_name]["validation"]["macro_combined_mse"])
-                - frozen_macro
+                float(arm_payload[arm_name]["validation"]["macro_combined_mse"]) - frozen_macro
             )
         payload.update(
             {

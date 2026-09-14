@@ -228,16 +228,12 @@ class StructuredSemanticTransitionCorpus:
                     item.family_id for item in right
                 }
                 if family_overlap:
-                    raise ValueError(
-                        f"transition family leakage between {left_name}/{right_name}"
-                    )
+                    raise ValueError(f"transition family leakage between {left_name}/{right_name}")
                 input_overlap = {item.input_digest for item in left} & {
                     item.input_digest for item in right
                 }
                 if input_overlap:
-                    raise ValueError(
-                        f"transition input leakage between {left_name}/{right_name}"
-                    )
+                    raise ValueError(f"transition input leakage between {left_name}/{right_name}")
         event_dims = {int(item.event.features.numel()) for item in all_examples}
         if len(event_dims) != 1:
             raise ValueError("transition event dimensions must be uniform")
@@ -267,7 +263,9 @@ class StructuredSemanticTransitionCorpus:
             if unknown_facts:
                 raise ValueError(f"{split_name} contains unseen transition facts")
             unknown_goals = {
-                item.goal.goal_id for item in splits[split_name] if item.goal.goal_id not in goal_ids
+                item.goal.goal_id
+                for item in splits[split_name]
+                if item.goal.goal_id not in goal_ids
             }
             if unknown_goals:
                 raise ValueError(f"{split_name} contains unseen transition goals")
@@ -303,9 +301,7 @@ class StructuredSemanticTransitionCorpus:
         )
 
     @classmethod
-    def from_catalog_payload(
-        cls, payload: Mapping[str, Any]
-    ) -> StructuredSemanticTransitionCorpus:
+    def from_catalog_payload(cls, payload: Mapping[str, Any]) -> StructuredSemanticTransitionCorpus:
         corpus = cls(
             train=(),
             dev=(),
@@ -361,9 +357,7 @@ class StructuredSemanticTransitionResult:
             "status": self.status,
             "world": None if self.world is None else self.world.to_payload(),
             "goal": None if self.goal is None else self.goal.to_payload(),
-            "content_plan": (
-                None if self.content_plan is None else self.content_plan.to_payload()
-            ),
+            "content_plan": (None if self.content_plan is None else self.content_plan.to_payload()),
             "fact_scores": {str(key): float(value) for key, value in self.fact_scores.items()},
             "delta_scores": {str(key): float(value) for key, value in self.delta_scores.items()},
             "goal_scores": {str(key): float(value) for key, value in self.goal_scores.items()},
@@ -386,19 +380,26 @@ class StructuredSemanticTransitionResult:
         content_payload = payload.get("content_plan")
         return cls(
             status=str(payload["status"]),
-            world=None
-            if world_payload is None
-            else WorldState.from_payload(world_payload, device=device),
+            world=(
+                None
+                if world_payload is None
+                else WorldState.from_payload(world_payload, device=device)
+            ),
             goal=None if goal_payload is None else Goal.from_payload(goal_payload),
-            content_plan=None
-            if content_payload is None
-            else ContentPlan.from_payload(content_payload),
-            fact_scores={str(key): float(value) for key, value in payload.get("fact_scores", {}).items()},
-            delta_scores={str(key): float(value) for key, value in payload.get("delta_scores", {}).items()},
-            goal_scores={str(key): float(value) for key, value in payload.get("goal_scores", {}).items()},
+            content_plan=(
+                None if content_payload is None else ContentPlan.from_payload(content_payload)
+            ),
+            fact_scores={
+                str(key): float(value) for key, value in payload.get("fact_scores", {}).items()
+            },
+            delta_scores={
+                str(key): float(value) for key, value in payload.get("delta_scores", {}).items()
+            },
+            goal_scores={
+                str(key): float(value) for key, value in payload.get("goal_scores", {}).items()
+            },
             content_scores={
-                str(key): float(value)
-                for key, value in payload.get("content_scores", {}).items()
+                str(key): float(value) for key, value in payload.get("content_scores", {}).items()
             },
             confidence=float(payload.get("confidence", 0.0)),
             ambiguity=float(payload.get("ambiguity", 1.0)),
@@ -537,9 +538,7 @@ class StructuredSemanticTransitionLearner(nn.Module):
             device=self.transition_head.weight.device,
         )
 
-    def _transition_input(
-        self, current: torch.Tensor, event_context: torch.Tensor
-    ) -> torch.Tensor:
+    def _transition_input(self, current: torch.Tensor, event_context: torch.Tensor) -> torch.Tensor:
         """Build additive and pairwise state/event features for local learning.
 
         The pairwise block is a generic interaction basis, not a semantic lookup
@@ -568,7 +567,8 @@ class StructuredSemanticTransitionLearner(nn.Module):
         if self._transition_input_masks is None:
             return None
         return {
-            key: indices for key, indices in zip(self.fact_keys, self._transition_input_masks, strict=True)
+            key: indices
+            for key, indices in zip(self.fact_keys, self._transition_input_masks, strict=True)
         }
 
     @torch.no_grad()
@@ -686,10 +686,12 @@ class StructuredSemanticTransitionLearner(nn.Module):
             sorted(key for key, score in fact_scores.items() if score >= self.fact_threshold)
         )
         relations = tuple(_relation_from_fact_key(key) for key in active)
-        entities = tuple(sorted({item for relation in relations for item in (relation[0], relation[2])}))
-        uncertainty = sum(
-            1.0 - max(score, 1.0 - score) for score in fact_scores.values()
-        ) / max(1, len(fact_scores))
+        entities = tuple(
+            sorted({item for relation in relations for item in (relation[0], relation[2])})
+        )
+        uncertainty = sum(1.0 - max(score, 1.0 - score) for score in fact_scores.values()) / max(
+            1, len(fact_scores)
+        )
         return WorldState(
             tick=int(event.observation_tick),
             latent=previous.latent.detach().clone(),
@@ -708,8 +710,7 @@ class StructuredSemanticTransitionLearner(nn.Module):
     ) -> StructuredSemanticTransitionResult:
         current = self._fact_vector(previous)
         current_scores = {
-            key: float(value)
-            for key, value in zip(self.fact_keys, current, strict=True)
+            key: float(value) for key, value in zip(self.fact_keys, current, strict=True)
         }
         if event.confidence < self.confidence_floor:
             return StructuredSemanticTransitionResult(
@@ -727,7 +728,10 @@ class StructuredSemanticTransitionLearner(nn.Module):
         current_active = {
             key for key, score in current_scores.items() if score >= self.fact_threshold
         }
-        if any(len(current_active.intersection(group)) > 1 for group in self._conflict_groups(self.fact_keys)):
+        if any(
+            len(current_active.intersection(group)) > 1
+            for group in self._conflict_groups(self.fact_keys)
+        ):
             return StructuredSemanticTransitionResult(
                 status="conflict",
                 world=previous,
@@ -746,21 +750,16 @@ class StructuredSemanticTransitionLearner(nn.Module):
         delta_values = self.transition_head(transition_input).reshape(-1)
         next_values = torch.clamp(current + delta_values, 0.0, 1.0)
         fact_scores = {
-            key: float(value)
-            for key, value in zip(self.fact_keys, next_values, strict=True)
+            key: float(value) for key, value in zip(self.fact_keys, next_values, strict=True)
         }
         delta_scores = {
-            key: float(value)
-            for key, value in zip(self.fact_keys, delta_values, strict=True)
+            key: float(value) for key, value in zip(self.fact_keys, delta_values, strict=True)
         }
         world = self._materialize_world(previous, event, fact_scores)
         active = {key for key, score in fact_scores.items() if score >= self.fact_threshold}
         conflicts = any(
             len(active.intersection(group)) > 1
-            or (
-                len(group) > 1
-                and all(0.45 <= fact_scores[key] <= 0.55 for key in group)
-            )
+            or (len(group) > 1 and all(0.45 <= fact_scores[key] <= 0.55 for key in group))
             for group in self._conflict_groups(self.fact_keys)
         )
         if conflicts:
@@ -789,7 +788,9 @@ class StructuredSemanticTransitionLearner(nn.Module):
                 confidence=0.0,
                 ambiguity=1.0,
             )
-        goal_probabilities = torch.softmax(self.goal_head(next_values.reshape(1, -1)), dim=-1).reshape(-1)
+        goal_probabilities = torch.softmax(
+            self.goal_head(next_values.reshape(1, -1)), dim=-1
+        ).reshape(-1)
         goal_scores = {
             goal_id: float(value)
             for goal_id, value in zip(self.goal_ids, goal_probabilities, strict=True)
@@ -800,7 +801,10 @@ class StructuredSemanticTransitionLearner(nn.Module):
         second_goal = float(goal_probabilities[order[1]]) if len(order) > 1 else 0.0
         goal_ambiguity = 1.0 - max(0.0, goal_confidence - second_goal)
         goal = self._goals[self.goal_ids[goal_index]]
-        if goal_confidence < self.confidence_floor or goal_confidence - second_goal < self.ambiguity_ceiling:
+        if (
+            goal_confidence < self.confidence_floor
+            or goal_confidence - second_goal < self.ambiguity_ceiling
+        ):
             return StructuredSemanticTransitionResult(
                 status="ambiguous",
                 world=world,
@@ -817,9 +821,7 @@ class StructuredSemanticTransitionLearner(nn.Module):
         content_probabilities = torch.softmax(self.content_head(content_input), dim=-1).reshape(-1)
         content_scores = {
             content_id: float(value)
-            for content_id, value in zip(
-                self.content_ids, content_probabilities, strict=True
-            )
+            for content_id, value in zip(self.content_ids, content_probabilities, strict=True)
         }
         content_index = int(torch.argmax(content_probabilities))
         content_confidence = float(content_probabilities[content_index])

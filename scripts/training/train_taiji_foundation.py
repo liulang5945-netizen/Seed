@@ -53,7 +53,9 @@ def main() -> int:
     parser.add_argument("--epochs", type=int, default=1)
     parser.add_argument("--chunk-bytes", type=int, default=1_024)
     parser.add_argument("--checkpoint-interval", type=int, default=1)
-    parser.add_argument("--output-dir", type=Path, default=PROJECT_ROOT / "outputs" / "taiji-foundation-pilot")
+    parser.add_argument(
+        "--output-dir", type=Path, default=PROJECT_ROOT / "outputs" / "taiji-foundation-pilot"
+    )
     parser.add_argument("--resume", type=Path)
     parser.add_argument("--eval-only", action="store_true")
     parser.add_argument("--report", type=Path)
@@ -83,10 +85,14 @@ def main() -> int:
             checkpoint_interval=args.checkpoint_interval,
         )
     result: dict[str, Any] = run.evaluate_only() if args.eval_only else run.run()
-    report_path = args.report or args.output_dir / ("eval_report.json" if args.eval_only else "training_report.json")
+    report_path = args.report or args.output_dir / (
+        "eval_report.json" if args.eval_only else "training_report.json"
+    )
     report_path.parent.mkdir(parents=True, exist_ok=True)
     result["report_path"] = str(report_path)
-    report_path.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_path.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

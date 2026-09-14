@@ -25,7 +25,9 @@ ORIGINAL_CONTENT = "Seed API source\n"
 UPDATED_CONTENT = "Taiji API source\n"
 
 
-def _runtime(seed: int, checkpoint_path: Path, *, workspace_root: Path = PROJECT_ROOT) -> SeedRuntime:
+def _runtime(
+    seed: int, checkpoint_path: Path, *, workspace_root: Path = PROJECT_ROOT
+) -> SeedRuntime:
     return SeedRuntime(
         Seed(episode_id=f"p2-13-natural-language-api-{seed}"),
         checkpoint_path=checkpoint_path,

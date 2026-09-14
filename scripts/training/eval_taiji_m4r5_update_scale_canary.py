@@ -93,9 +93,7 @@ def _run_scale(
                 "c2_bpb": c2_score["bpb"],
                 "c3_bpb": c3_score["bpb"],
                 "read_only": bool(
-                    c_score["read_only"]
-                    and c2_score["read_only"]
-                    and c3_score["read_only"]
+                    c_score["read_only"] and c2_score["read_only"] and c3_score["read_only"]
                 ),
                 "owner": c_score["owner"],
                 "scope": c_score["scope"],
@@ -292,13 +290,13 @@ def run_canary(
         },
         "resources": {
             "elapsed_seconds": time.perf_counter() - started,
-            "artifact_bytes": {
-                name: path.stat().st_size for name, path in artifacts.items()
-            },
+            "artifact_bytes": {name: path.stat().st_size for name, path in artifacts.items()},
         },
     }
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_path.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     return report
 
 

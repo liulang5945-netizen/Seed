@@ -66,9 +66,7 @@ def _recall_credit(
     action_probabilities = step.memory_recall.action_probabilities
     outcome_probabilities = step.memory_recall.outcome_probabilities
     action_alternatives = [
-        float(action_probabilities[action].item())
-        for action in actions
-        if action != episode.action
+        float(action_probabilities[action].item()) for action in actions if action != episode.action
     ]
     outcome_alternatives = [
         float(outcome_probabilities[outcome].item())
@@ -78,8 +76,7 @@ def _recall_credit(
     return {
         "action_probability": float(action_probabilities[episode.action].item()),
         "action_margin": float(
-            action_probabilities[episode.action].item()
-            - max(action_alternatives)
+            action_probabilities[episode.action].item() - max(action_alternatives)
         ),
         "action_correct": int(
             max(actions, key=lambda action: float(action_probabilities[action].item()))
@@ -87,8 +84,7 @@ def _recall_credit(
         ),
         "outcome_probability": float(outcome_probabilities[episode.outcome].item()),
         "outcome_margin": float(
-            outcome_probabilities[episode.outcome].item()
-            - max(outcome_alternatives)
+            outcome_probabilities[episode.outcome].item() - max(outcome_alternatives)
         ),
         "outcome_correct": int(
             max(outcomes, key=lambda outcome: float(outcome_probabilities[outcome].item()))
@@ -114,19 +110,11 @@ def _seed_record(corpus: Any, seed: int) -> dict[str, Any]:
             "memory_id": episode.memory_id,
             "action": int(episode.action),
             "outcome": int(episode.outcome),
-            "association_completion_ratio": float(
-                pattern["association_completion_ratio"]
-            ),
+            "association_completion_ratio": float(pattern["association_completion_ratio"]),
             "association_error_ratio": float(pattern["association_error_ratio"]),
-            "association_error_action_cosine": _cosine(
-                residual, pattern["components"]["action"]
-            ),
-            "association_error_outcome_cosine": _cosine(
-                residual, pattern["components"]["outcome"]
-            ),
-            "association_error_episode_cosine": _cosine(
-                residual, pattern["components"]["episode"]
-            ),
+            "association_error_action_cosine": _cosine(residual, pattern["components"]["action"]),
+            "association_error_outcome_cosine": _cosine(residual, pattern["components"]["outcome"]),
+            "association_error_episode_cosine": _cosine(residual, pattern["components"]["episode"]),
             **recall,
         }
         rows.append(row)
@@ -156,19 +144,13 @@ def _seed_record(corpus: Any, seed: int) -> dict[str, Any]:
                 "error_episode_cosine": _summary(
                     [float(row["association_error_episode_cosine"]) for row in group_rows]
                 ),
-                "action_margin": _summary(
-                    [float(row["action_margin"]) for row in group_rows]
-                ),
-                "outcome_margin": _summary(
-                    [float(row["outcome_margin"]) for row in group_rows]
-                ),
+                "action_margin": _summary([float(row["action_margin"]) for row in group_rows]),
+                "outcome_margin": _summary([float(row["outcome_margin"]) for row in group_rows]),
                 "action_accuracy": float(
-                    sum(int(row["action_correct"]) for row in group_rows)
-                    / len(group_rows)
+                    sum(int(row["action_correct"]) for row in group_rows) / len(group_rows)
                 ),
                 "outcome_accuracy": float(
-                    sum(int(row["outcome_correct"]) for row in group_rows)
-                    / len(group_rows)
+                    sum(int(row["outcome_correct"]) for row in group_rows) / len(group_rows)
                 ),
             }
             for group, group_rows in grouped.items()
@@ -208,9 +190,7 @@ def run_audit() -> dict[str, Any]:
         "cue_curriculum": "maximally separated byte cues",
         "action_curriculum": "phase-A/phase-B overlap on 48/49",
         "memory_event_gain": _config(SEEDS[0]).memory_event_gain,
-        "memory_event_component_gains": list(
-            _config(SEEDS[0]).memory_event_component_gains
-        ),
+        "memory_event_component_gains": list(_config(SEEDS[0]).memory_event_component_gains),
         "memory_association_component_gains": list(
             _config(SEEDS[0]).memory_association_component_gains
         ),
@@ -239,7 +219,9 @@ def main() -> int:
     result = run_audit()
     result["report_path"] = str(args.report)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

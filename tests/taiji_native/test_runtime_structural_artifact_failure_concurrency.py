@@ -51,7 +51,10 @@ def test_runtime_artifact_failures_are_isolated_and_concurrent_submit_is_idempot
             assert "outside the selected batch" in str(exc)
         else:
             raise AssertionError("runtime accepted a cross-batch artifact key")
-        assert _checkpoint_digest(unknown_branch.model.architecture.native_checkpoint()) == before_unknown
+        assert (
+            _checkpoint_digest(unknown_branch.model.architecture.native_checkpoint())
+            == before_unknown
+        )
 
         stale_branch = SeedRuntime.load(checkpoint_path, workspace_root=PROJECT_ROOT)
         _execute_observation(
@@ -65,9 +68,12 @@ def test_runtime_artifact_failures_are_isolated_and_concurrent_submit_is_idempot
             holdout_transfer=0.0,
         )
         stale_before_topology = tuple(
-            (region.region_id, region.unit_ids) for region in stale_branch.model.architecture.neuron_regions
+            (region.region_id, region.unit_ids)
+            for region in stale_branch.model.architecture.neuron_regions
         )
-        stale_before_budget = stale_branch.model.architecture.cognitive_snapshot().development.structural_budget
+        stale_before_budget = (
+            stale_branch.model.architecture.cognitive_snapshot().development.structural_budget
+        )
         stale = stale_branch.continue_structural_candidate_from_validation_artifact(
             artifact,
             holdout_inputs=replay["holdout_inputs"],
@@ -75,10 +81,17 @@ def test_runtime_artifact_failures_are_isolated_and_concurrent_submit_is_idempot
         )
         assert stale["status"] == "failed_closed"
         assert "parent checkpoint" in stale["reason"]
-        assert tuple(
-            (region.region_id, region.unit_ids) for region in stale_branch.model.architecture.neuron_regions
-        ) == stale_before_topology
-        assert stale_branch.model.architecture.cognitive_snapshot().development.structural_budget == stale_before_budget
+        assert (
+            tuple(
+                (region.region_id, region.unit_ids)
+                for region in stale_branch.model.architecture.neuron_regions
+            )
+            == stale_before_topology
+        )
+        assert (
+            stale_branch.model.architecture.cognitive_snapshot().development.structural_budget
+            == stale_before_budget
+        )
 
         tamper_branch = SeedRuntime.load(checkpoint_path, workspace_root=PROJECT_ROOT)
         malformed = copy.deepcopy(artifact.to_payload())
@@ -90,7 +103,8 @@ def test_runtime_artifact_failures_are_isolated_and_concurrent_submit_is_idempot
         )
         assert tampered["results"][candidate_id]["status"] == "failed_closed"
         tamper_batch = next(
-            item for item in tamper_branch.model.architecture.structural_candidate_batches
+            item
+            for item in tamper_branch.model.architecture.structural_candidate_batches
             if item.batch_id == batch.batch_id
         )
         assert tamper_batch.state_by_candidate[candidate_id] == "failed_closed"
@@ -105,20 +119,25 @@ def test_runtime_artifact_failures_are_isolated_and_concurrent_submit_is_idempot
         )
 
         def submit(_: int) -> str:
-            result = concurrent_branch.continue_structural_candidate_batch_from_validation_artifacts(
-                batch.batch_id,
-                artifacts_by_candidate={candidate_id: artifact},
-                replays_by_candidate={candidate_id: replay},
+            result = (
+                concurrent_branch.continue_structural_candidate_batch_from_validation_artifacts(
+                    batch.batch_id,
+                    artifacts_by_candidate={candidate_id: artifact},
+                    replays_by_candidate={candidate_id: replay},
+                )
             )
             return result["results"][candidate_id]["status"]
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
             statuses = tuple(executor.map(submit, (1, 2)))
         assert sorted(statuses) == ["admitted", "already_applied"]
-        assert tuple(
-            (region.region_id, region.unit_ids)
-            for region in concurrent_branch.model.architecture.neuron_regions
-        ) != before_concurrent_topology
+        assert (
+            tuple(
+                (region.region_id, region.unit_ids)
+                for region in concurrent_branch.model.architecture.neuron_regions
+            )
+            != before_concurrent_topology
+        )
         assert (
             concurrent_branch.model.architecture.cognitive_snapshot().development.structural_budget
             == before_concurrent_budget - artifact.resource_cost

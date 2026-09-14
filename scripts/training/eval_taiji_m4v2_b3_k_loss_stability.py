@@ -27,8 +27,7 @@ DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m4v2_b3_k_loss_stability_2026
 
 def _normalized_variant_keys(values: list[Any]) -> tuple[tuple[int, ...], ...]:
     return tuple(
-        () if indexes is None else tuple(int(value) for value in indexes)
-        for indexes in values
+        () if indexes is None else tuple(int(value) for value in indexes) for indexes in values
     )
 
 
@@ -72,14 +71,12 @@ def run_stability(
     )
     candidate_digests = [report.get("candidate_worker_bundle_digest") for report in reports]
     candidate_updates_distinct = (
-        len(candidate_digests) == len(set(candidate_digests))
-        and None not in candidate_digests
+        len(candidate_digests) == len(set(candidate_digests)) and None not in candidate_digests
     )
     distinct_course_variants = (
         len(train_digests) == len(set(train_digests))
         and None not in train_digests
-        and len(normalized_train_variant_indexes)
-        == len(set(normalized_train_variant_indexes))
+        and len(normalized_train_variant_indexes) == len(set(normalized_train_variant_indexes))
         and None not in train_variant_indexes
     )
     all_improved = bool(delta_values) and all(value < 0.0 for value in delta_values)
@@ -112,29 +109,22 @@ def run_stability(
         "candidate_updates_distinct": candidate_updates_distinct,
         "combined_loss_delta_by_course_seed": {
             str(item["course_seed"]): float(
-                item["report"].get("holdout_structured_loss_delta", {}).get(
-                    "combined_mse", 0.0
-                )
+                item["report"].get("holdout_structured_loss_delta", {}).get("combined_mse", 0.0)
             )
             for item in cells
         },
         "train_combined_loss_delta_by_course_seed": {
             str(item["course_seed"]): float(
-                item["report"].get("train_structured_loss_delta", {}).get(
-                    "combined_mse", 0.0
-                )
+                item["report"].get("train_structured_loss_delta", {}).get("combined_mse", 0.0)
             )
             for item in cells
         },
         "parameter_delta_norm_by_course_seed": {
-            str(item["course_seed"]): item["report"].get(
-                "parameter_delta_norm", {}
-            )
+            str(item["course_seed"]): item["report"].get("parameter_delta_norm", {})
             for item in cells
         },
         "no_update_control_passed": all(
-            bool(report.get("no_update_control", {}).get("passed"))
-            for report in reports
+            bool(report.get("no_update_control", {}).get("passed")) for report in reports
         ),
         "mean_combined_loss_delta": statistics.fmean(delta_values) if delta_values else None,
         "worst_combined_loss_delta": max(delta_values) if delta_values else None,
@@ -167,15 +157,23 @@ def run_stability(
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--artifact-dir", type=Path, default=DEFAULT_ARTIFACT_DIR)
-    parser.add_argument("--candidate-root", type=Path, default=DEFAULT_CANDIDATE_DIR.parent / "stability")
+    parser.add_argument(
+        "--candidate-root", type=Path, default=DEFAULT_CANDIDATE_DIR.parent / "stability"
+    )
     parser.add_argument("--model-seed", type=int, default=17)
     parser.add_argument("--train-episode-count", type=int, default=1)
     parser.add_argument("--train-variant-strategy", default="contiguous")
     parser.add_argument("--require-target-diversity", action="store_true")
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
     args = parser.parse_args()
-    artifact_dir = args.artifact_dir if args.artifact_dir.is_absolute() else PROJECT_ROOT / args.artifact_dir
-    candidate_root = args.candidate_root if args.candidate_root.is_absolute() else PROJECT_ROOT / args.candidate_root
+    artifact_dir = (
+        args.artifact_dir if args.artifact_dir.is_absolute() else PROJECT_ROOT / args.artifact_dir
+    )
+    candidate_root = (
+        args.candidate_root
+        if args.candidate_root.is_absolute()
+        else PROJECT_ROOT / args.candidate_root
+    )
     report_path = args.report if args.report.is_absolute() else PROJECT_ROOT / args.report
     report = run_stability(
         artifact_dir=artifact_dir,

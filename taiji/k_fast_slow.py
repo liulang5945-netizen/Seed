@@ -54,9 +54,7 @@ def _digest(value: Any, name: str) -> str:
     return normalized
 
 
-def replay_sample_indices(
-    *, buffer_size: int, sample_count: int, digest: str
-) -> tuple[int, ...]:
+def replay_sample_indices(*, buffer_size: int, sample_count: int, digest: str) -> tuple[int, ...]:
     """Deterministic without-replacement sample of replay positions."""
 
     if buffer_size <= 0:
@@ -97,9 +95,7 @@ class FastSlowKInstance:
         self.parent_worker_bundle_digest = _digest(
             parent_worker_bundle_digest, "parent_worker_bundle_digest"
         )
-        self.source_manifest_digest = _digest(
-            source_manifest_digest, "source_manifest_digest"
-        )
+        self.source_manifest_digest = _digest(source_manifest_digest, "source_manifest_digest")
         self._parent_checkpoints = {
             "k1.semantic": dict(semantic_parent_checkpoint),
             "k2.transition": dict(transition_parent_checkpoint),
@@ -111,9 +107,7 @@ class FastSlowKInstance:
             self.slow[worker_id] = {
                 key: value.detach().cpu().clone() for key, value in state.items()
             }
-            self.fast[worker_id] = {
-                key: torch.zeros_like(value) for key, value in state.items()
-            }
+            self.fast[worker_id] = {key: torch.zeros_like(value) for key, value in state.items()}
         self.replay_digests: list[str] = []
         self.wake_steps = 0
         self.replay_steps = 0
@@ -154,14 +148,11 @@ class FastSlowKInstance:
         return float(total**0.5)
 
     def is_fast_zero(self, worker_id: str) -> bool:
-        return all(
-            not torch.any(value != 0) for value in self.fast[worker_id].values()
-        )
+        return all(not torch.any(value != 0) for value in self.fast[worker_id].values())
 
     def parameter_count(self) -> int:
-        return (
-            sum(int(value.numel()) for value in self.slow["k1.semantic"].values())
-            + sum(int(value.numel()) for value in self.slow["k2.transition"].values())
+        return sum(int(value.numel()) for value in self.slow["k1.semantic"].values()) + sum(
+            int(value.numel()) for value in self.slow["k2.transition"].values()
         )
 
     def parameter_bytes(self) -> int:
@@ -203,8 +194,7 @@ class FastSlowKInstance:
             scratch = self._scratch[worker_id]
             self._sync_scratch(worker_id)
             before = {
-                key: value.detach().cpu().clone()
-                for key, value in scratch.state_dict().items()
+                key: value.detach().cpu().clone() for key, value in scratch.state_dict().items()
             }
             scratch.fit((example,), epochs=epochs, learning_rate=lr)
             after = scratch.state_dict()
@@ -212,9 +202,7 @@ class FastSlowKInstance:
                 self.fast[worker_id][key] += after[key].detach().cpu() - before[key]
             # scratch post-fit already equals the new effective state.
         self.wake_steps += 1
-        self.replay_digests.append(
-            _digest(experience.experience_digest, "experience_digest")
-        )
+        self.replay_digests.append(_digest(experience.experience_digest, "experience_digest"))
 
     def replay_experience(
         self,
@@ -244,8 +232,7 @@ class FastSlowKInstance:
             scratch = self._scratch[worker_id]
             self._sync_scratch(worker_id)
             before = {
-                key: value.detach().cpu().clone()
-                for key, value in scratch.state_dict().items()
+                key: value.detach().cpu().clone() for key, value in scratch.state_dict().items()
             }
             scratch.fit((example,), epochs=epochs, learning_rate=lr)
             after = scratch.state_dict()
@@ -304,9 +291,7 @@ class FastSlowKInstance:
             raise ValueError("unsupported fast/slow instance version")
         item = cls(
             semantic_parent_checkpoint=dict(payload["parent_checkpoints"]["k1.semantic"]),
-            transition_parent_checkpoint=dict(
-                payload["parent_checkpoints"]["k2.transition"]
-            ),
+            transition_parent_checkpoint=dict(payload["parent_checkpoints"]["k2.transition"]),
             parent_worker_bundle_digest=str(payload["parent_worker_bundle_digest"]),
             source_manifest_digest=str(payload["source_manifest_digest"]),
             parent_checkpoint_digest=str(payload["parent_checkpoint_digest"]),

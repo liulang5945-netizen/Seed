@@ -92,9 +92,9 @@ def test_declares_opaque_indexed_pair(runner) -> None:
     assert runner.HELD_OUT_PAIR_INDEX == (0, 3)
     assert len(runner.HELD_OUT_PAIR) == 2
     members = runner.MEMBER_IDS
-    assert tuple(
-        sorted((members[0], members[3]))
-    ) == runner.HELD_OUT_PAIR, "the opaque index must resolve through MEMBER_IDS, not be hardcoded"
+    assert (
+        tuple(sorted((members[0], members[3]))) == runner.HELD_OUT_PAIR
+    ), "the opaque index must resolve through MEMBER_IDS, not be hardcoded"
     # and the remaining observable pairs must be exactly the complement
     assert len(runner.OBSERVED_PAIR_MEMBER_SETS) == len(runner.PAIR_MEMBER_SETS) - 1
 

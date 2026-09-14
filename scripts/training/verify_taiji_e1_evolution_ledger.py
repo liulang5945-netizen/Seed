@@ -94,7 +94,8 @@ def run_gate() -> dict[str, object]:
         "corpus_admitted": admitted.status == "admitted",
         "workbench_result_digest_only": "fixture output" not in appended.to_payload().__repr__(),
         "source_and_result_digests": bool(appended.source_digest and appended.result_digest),
-        "redaction_required": redacted == {"api_key": "<redacted>"} and redaction_flags == ("api_key",),
+        "redaction_required": redacted == {"api_key": "<redacted>"}
+        and redaction_flags == ("api_key",),
         "checkpoint_restored": restored_tail_digest == checkpoint["tail_event_digest"],
         "checkpoint_continued": continued.event_sequence == 2
         and continued.previous_event_digest == appended.event_digest,
@@ -124,7 +125,9 @@ def main() -> int:
     args = parser.parse_args()
     result = run_gate()
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0 if result["status"] == "passed" else 1
 

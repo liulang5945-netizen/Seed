@@ -109,7 +109,9 @@ def _error(exc: Exception) -> None:
     if isinstance(exc, ValueError):
         status = 409 if "stale" in message or "already" in message else 400
         raise HTTPException(status_code=status, detail=message) from exc
-    raise HTTPException(status_code=500, detail="MCP client capability shadow operation failed") from exc
+    raise HTTPException(
+        status_code=500, detail="MCP client capability shadow operation failed"
+    ) from exc
 
 
 @router.get("")
@@ -128,9 +130,7 @@ def mcp_client_capability_status() -> dict[str, Any]:
         "shadow_validated": [item.to_payload() for item in registry.shadow_validated],
         "activation_proposals": [item.to_payload() for item in registry.activation_proposals],
         "client_capability_snapshot_id": client_capability_snapshot_id,
-        "connection_authorizations": [
-            item.to_payload() for item in authorization_store.records
-        ],
+        "connection_authorizations": [item.to_payload() for item in authorization_store.records],
         "connection_targets": [item.to_payload() for item in target_store.records],
         "connection_target_store_snapshot_id": target_store.snapshot_id,
         "client_activation": "target_binding_only_in_e6_5",
@@ -142,9 +142,7 @@ def mcp_client_capability_status() -> dict[str, Any]:
 def propose_mcp_client_capability(request: dict[str, Any]) -> dict[str, Any]:
     registry, current_snapshot_id = _shadow_registry()
     try:
-        candidate = McpCapabilityInheritanceCandidate.from_payload(
-            request.get("candidate") or {}
-        )
+        candidate = McpCapabilityInheritanceCandidate.from_payload(request.get("candidate") or {})
         policy = McpCapabilityInheritancePolicy.from_payload(request.get("policy") or {})
         record = registry.propose(
             candidate,
@@ -163,9 +161,7 @@ def record_mcp_client_capability_shadow(
 ) -> dict[str, Any]:
     registry, current_snapshot_id = _shadow_registry()
     try:
-        observation = McpCapabilityShadowObservation.from_payload(
-            request.get("observation") or {}
-        )
+        observation = McpCapabilityShadowObservation.from_payload(request.get("observation") or {})
         record = registry.record_shadow(
             candidate_digest,
             observation,
@@ -236,9 +232,7 @@ def dry_run_mcp_client_capability_activation(
             record.candidate,
             proposals[-1],
             client_capability_snapshot_id=client_snapshot_id,
-            available_capabilities=tuple(
-                item.tool_id for item in record.candidate.tool_contracts
-            ),
+            available_capabilities=tuple(item.tool_id for item in record.candidate.tool_contracts),
         )
     except Exception as exc:
         _error(exc)
@@ -272,8 +266,7 @@ def authorize_mcp_client_capability_connection(
         (
             item
             for item in registry.activation_proposals
-            if item.proposal_id == proposal_id
-            and item.candidate_digest == record.candidate_digest
+            if item.proposal_id == proposal_id and item.candidate_digest == record.candidate_digest
         ),
         None,
     )
@@ -291,9 +284,7 @@ def authorize_mcp_client_capability_connection(
             record.candidate,
             proposal,
             client_capability_snapshot_id=client_snapshot_id,
-            available_capabilities=tuple(
-                item.tool_id for item in record.candidate.tool_contracts
-            ),
+            available_capabilities=tuple(item.tool_id for item in record.candidate.tool_contracts),
         )
         if dry_run.dry_run_digest != dry_run_digest:
             raise ValueError("activation dry-run digest mismatch")

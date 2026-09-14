@@ -86,9 +86,7 @@ def _run_success(seed: int) -> dict[str, object]:
     prompt = "请读取 api/app.py，识别语言并同步编辑器语言"
     with patch(
         "seed_platform.workbench.get_setting",
-        lambda key, default=None: str(PROJECT_ROOT)
-        if key == "workspace_path"
-        else default,
+        lambda key, default=None: str(PROJECT_ROOT) if key == "workspace_path" else default,
     ):
         runtime = _runtime(seed, checkpoint_path)
         result = runtime.execute_natural_language_workbench_task(
@@ -105,9 +103,7 @@ def _run_success(seed: int) -> dict[str, object]:
         restored_language = next(
             (
                 item
-                for item in restored.workbench_environment.language_state_checkpoint()[
-                    "selections"
-                ]
+                for item in restored.workbench_environment.language_state_checkpoint()["selections"]
                 if item.get("path") == TARGET_PATH
             ),
             {},
@@ -145,9 +141,7 @@ def _run_success(seed: int) -> dict[str, object]:
         "provider_set_step_has_no_final_language_id": (
             "programming_language_id" not in provider_steps[2]["semantic_slots"]
         ),
-        "taiji_derived_language_id": language_intent_parameters.get(
-            "programming_language_id"
-        ),
+        "taiji_derived_language_id": language_intent_parameters.get("programming_language_id"),
         "language_evidence_digest": language_step["language_evidence"]["file_digest"],
         "language_result_digest": language_result["file_digest"],
         "language_result_state": language_result["selection_state"],
@@ -166,9 +160,7 @@ def _run_user_override_and_ambiguity() -> dict[str, object]:
     prompt = "请识别并同步 api/app.py 的编辑器语言"
     with patch(
         "seed_platform.workbench.get_setting",
-        lambda key, default=None: str(PROJECT_ROOT)
-        if key == "workspace_path"
-        else default,
+        lambda key, default=None: str(PROJECT_ROOT) if key == "workspace_path" else default,
     ):
         runtime = _runtime(101, checkpoint_path)
         snapshot_id = runtime.workbench_environment.capability_snapshot.snapshot_id
@@ -202,9 +194,7 @@ def _run_user_override_and_ambiguity() -> dict[str, object]:
     ambiguous_checkpoint.unlink(missing_ok=True)
     with patch(
         "seed_platform.workbench.get_setting",
-        lambda key, default=None: str(PROJECT_ROOT)
-        if key == "workspace_path"
-        else default,
+        lambda key, default=None: str(PROJECT_ROOT) if key == "workspace_path" else default,
     ):
         ambiguous_runtime = _runtime(103, ambiguous_checkpoint)
         ambiguous_prompt = "请识别并同步 shared.h 的编辑器语言"
@@ -218,9 +208,7 @@ def _run_user_override_and_ambiguity() -> dict[str, object]:
         )
     ambiguous_checkpoint.unlink(missing_ok=True)
 
-    selected_override = next(
-        item for item in override_state if item.get("path") == TARGET_PATH
-    )
+    selected_override = next(item for item in override_state if item.get("path") == TARGET_PATH)
     return {
         "override_setup_status": override["outcome"]["status"],
         "override_setup_state": selected_override["selection_state"],

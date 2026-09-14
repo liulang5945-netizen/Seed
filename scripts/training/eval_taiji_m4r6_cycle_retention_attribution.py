@@ -108,13 +108,9 @@ def attribute(
     checks: dict[str, bool] = {}
     for report in reports:
         seed = int(report["seed"])
-        checks[f"seed{seed}_technical_gate"] = bool(
-            report["technical_gate_all_passed"]
-        )
+        checks[f"seed{seed}_technical_gate"] = bool(report["technical_gate_all_passed"])
         checks[f"seed{seed}_not_promoted"] = report["can_promote"] is False
-        checks[f"seed{seed}_variant_set"] = (
-            set(report["variants"]) == set(EXPECTED_VARIANTS)
-        )
+        checks[f"seed{seed}_variant_set"] = set(report["variants"]) == set(EXPECTED_VARIANTS)
         checks[f"seed{seed}_scale_zero_frozen"] = (
             report["variants"]["scale_0p0"]["metrics"]["c_cycle2_delta_bpb"] == 0.0
             and report["variants"]["scale_0p0"]["metrics"]["c_cycle3_delta_bpb"] == 0.0
@@ -139,20 +135,12 @@ def attribute(
 
     half_rows = [row for row in rows if row["variant"] == "scale_0p5"]
     legacy_rows = [row for row in rows if row["variant"] == "scale_1p0"]
-    half_c2_failures = [
-        row for row in half_rows if row["c_cycle2_degraded"]
-    ]
-    half_c3_failures = [
-        row for row in half_rows if row["c_cycle3_degraded"]
-    ]
-    legacy_c2_failures = [
-        row for row in legacy_rows if row["c_cycle2_degraded"]
-    ]
+    half_c2_failures = [row for row in half_rows if row["c_cycle2_degraded"]]
+    half_c3_failures = [row for row in half_rows if row["c_cycle3_degraded"]]
+    legacy_c2_failures = [row for row in legacy_rows if row["c_cycle2_degraded"]]
     half_owner_l2 = {
         str(row["seed"]): _float(
-            row["owner_update_reference"]["predictive_context"][
-                "relative_l2_delta"
-            ]
+            row["owner_update_reference"]["predictive_context"]["relative_l2_delta"]
         )
         for row in half_rows
     }
@@ -160,9 +148,7 @@ def attribute(
     seed47_owner_ratio = half_owner_l2["47"] / max(half_owner_median, 1e-12)
     diagnosis = {
         "half_scale_c_cycle2_failure_count": len(half_c2_failures),
-        "half_scale_c_cycle2_failure_seeds": [
-            int(row["seed"]) for row in half_c2_failures
-        ],
+        "half_scale_c_cycle2_failure_seeds": [int(row["seed"]) for row in half_c2_failures],
         "half_scale_c3_failure_count": len(half_c3_failures),
         "legacy_scale_c_cycle2_failure_count": len(legacy_c2_failures),
         "half_scale_c_cycle2_failure_isolated": (
@@ -198,9 +184,7 @@ def attribute(
         "status": "passed" if all(checks.values()) else "failed",
         "can_promote": False,
         "seeds": list(EXPECTED_SEEDS),
-        "source_reports": [
-            str(item.get("report_path", "")) for item in reports
-        ],
+        "source_reports": [str(item.get("report_path", "")) for item in reports],
         "source_audit": str(audit.get("report_path", "")),
         "matrix": rows,
         "checks": checks,

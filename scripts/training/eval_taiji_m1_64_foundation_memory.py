@@ -286,10 +286,7 @@ def _read_rows(
             peak = max(logits)
             expanded = tuple(math.exp(value - peak) for value in logits)
             total = sum(expanded)
-            scores = {
-                action: expanded[index] / total
-                for index, action in enumerate(actions)
-            }
+            scores = {action: expanded[index] / total for index, action in enumerate(actions)}
         else:
             scores = {action: float(probabilities[action].item()) for action in actions}
         prediction = max(actions, key=lambda action: scores[action])

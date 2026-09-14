@@ -48,9 +48,7 @@ DEFAULT_ROUTE_A_REPORT = (
     PROJECT_ROOT / "reports" / "taiji_p5_2c_triple_prime_representation_repair_20260913.json"
 )
 DEFAULT_ROUTE_C_REPORT = (
-    PROJECT_ROOT
-    / "reports"
-    / "taiji_p5_2c_double_prime_unseen_combination_transfer_20260913.json"
+    PROJECT_ROOT / "reports" / "taiji_p5_2c_double_prime_unseen_combination_transfer_20260913.json"
 )
 DEFAULT_P52B_REPORT = PROJECT_ROOT / "reports" / "taiji_p5_2b_group_causal_corpora_20260913.json"
 DEFAULT_OUTPUT = PROJECT_ROOT / "reports" / "taiji_b0_measurement_reachability_audit_20260913.json"
@@ -179,9 +177,7 @@ def policy_mean_gain_vs_baseline(table: ContextTable, members: Sequence[str]) ->
     )
 
 
-def policy_mean_gain_vs_pair_internal_oracle(
-    table: ContextTable, pair: Sequence[str]
-) -> float:
+def policy_mean_gain_vs_pair_internal_oracle(table: ContextTable, pair: Sequence[str]) -> float:
     """``mean(P_ij - max(S_i, S_j))`` -- the frozen A object estimand."""
 
     first, second = tuple(sorted(pair))
@@ -195,9 +191,7 @@ def policy_mean_gain_vs_pair_internal_oracle(
     )
 
 
-def policy_mean_gain_vs_all_singleton_oracle(
-    table: ContextTable, members: Sequence[str]
-) -> float:
+def policy_mean_gain_vs_all_singleton_oracle(table: ContextTable, members: Sequence[str]) -> float:
     """``mean(P - max_all S)`` -- the frozen A control-C2 estimand.
 
     Applying the *same* reference to the object is the whole point of the
@@ -246,9 +240,7 @@ def policy_utility(
     return policy_mean_outcome(table, members) - cost_weight * realized_calls
 
 
-def contexts_beating_all_singleton_oracle(
-    table: ContextTable, members: Sequence[str]
-) -> int:
+def contexts_beating_all_singleton_oracle(table: ContextTable, members: Sequence[str]) -> int:
     """Count of contexts where the policy strictly beats the all-singleton oracle."""
 
     return sum(
@@ -270,9 +262,7 @@ def oracle_all_singleton_gain(table: ContextTable) -> float:
     """``mean(max_i S_i - B)``: the frozen control C2 value, recomputed."""
 
     return mean(
-        all_singleton_oracle(
-            singletons=[table.singleton(context_id, m) for m in table.singletons]
-        )
+        all_singleton_oracle(singletons=[table.singleton(context_id, m) for m in table.singletons])
         - table.blank(context_id)
         for context_id in table.contexts
     )
@@ -301,10 +291,7 @@ def best_deployable_singleton(table: ContextTable) -> tuple[str, float]:
     """Best *fixed* singleton by mean gain vs baseline -- deployable control."""
 
     ranked = sorted(
-        (
-            (policy_mean_gain_vs_baseline(table, (member,)), member)
-            for member in table.singletons
-        ),
+        ((policy_mean_gain_vs_baseline(table, (member,)), member) for member in table.singletons),
         key=lambda item: (-item[0], item[1]),
     )
     return ranked[0][1], ranked[0][0]
@@ -331,14 +318,10 @@ def combination_slack_upper_bound(table: ContextTable) -> float:
     average -- which is strictly stronger than "the gate was not cleared".
     """
 
-    return max(
-        policy_mean_gain_vs_all_singleton_oracle(table, pair) for pair in table.pair_cells()
-    )
+    return max(policy_mean_gain_vs_all_singleton_oracle(table, pair) for pair in table.pair_cells())
 
 
-def hypothetical_block_upper_bound(
-    table: ContextTable, solvable_contexts: Sequence[str]
-) -> float:
+def hypothetical_block_upper_bound(table: ContextTable, solvable_contexts: Sequence[str]) -> float:
     """Ceiling if a combination could solve contexts where *every* singleton fails.
 
     On such a context the oracle is ``B`` (all singletons fail), so a winning
@@ -376,8 +359,7 @@ def reachability_table(
     best_singleton_member, best_singleton_gain = best_deployable_singleton(table)
     best_pair, best_pair_gain = best_deployable_pair(table, observed_pairs)
     held_out_gains = {
-        "+".join(sorted(pair)): policy_mean_gain_vs_baseline(table, pair)
-        for pair in held_out_pairs
+        "+".join(sorted(pair)): policy_mean_gain_vs_baseline(table, pair) for pair in held_out_pairs
     }
     best_held_out = max(held_out_gains.values()) if held_out_gains else 0.0
 
@@ -488,14 +470,26 @@ def case_fully_redundant() -> ContextTable:
         contexts=contexts,
         baseline=dict.fromkeys(contexts, FAILURE_OUTCOME),
         singletons={
-            "member-a": {"c0": SUCCESS_OUTCOME, "c1": FAILURE_OUTCOME,
-                         "c2": FAILURE_OUTCOME, "c3": FAILURE_OUTCOME},
-            "member-d": {"c0": SUCCESS_OUTCOME, "c1": FAILURE_OUTCOME,
-                         "c2": FAILURE_OUTCOME, "c3": FAILURE_OUTCOME},
+            "member-a": {
+                "c0": SUCCESS_OUTCOME,
+                "c1": FAILURE_OUTCOME,
+                "c2": FAILURE_OUTCOME,
+                "c3": FAILURE_OUTCOME,
+            },
+            "member-d": {
+                "c0": SUCCESS_OUTCOME,
+                "c1": FAILURE_OUTCOME,
+                "c2": FAILURE_OUTCOME,
+                "c3": FAILURE_OUTCOME,
+            },
         },
         combinations={
-            ("member-a", "member-d"): {"c0": SUCCESS_OUTCOME, "c1": FAILURE_OUTCOME,
-                                       "c2": FAILURE_OUTCOME, "c3": FAILURE_OUTCOME},
+            ("member-a", "member-d"): {
+                "c0": SUCCESS_OUTCOME,
+                "c1": FAILURE_OUTCOME,
+                "c2": FAILURE_OUTCOME,
+                "c3": FAILURE_OUTCOME,
+            },
         },
     )
 
@@ -508,14 +502,26 @@ def case_coverage_complementary_no_synergy() -> ContextTable:
         contexts=contexts,
         baseline=dict.fromkeys(contexts, FAILURE_OUTCOME),
         singletons={
-            "member-a": {"c0": SUCCESS_OUTCOME, "c1": FAILURE_OUTCOME,
-                         "c2": FAILURE_OUTCOME, "c3": FAILURE_OUTCOME},
-            "member-b": {"c0": FAILURE_OUTCOME, "c1": SUCCESS_OUTCOME,
-                         "c2": FAILURE_OUTCOME, "c3": FAILURE_OUTCOME},
+            "member-a": {
+                "c0": SUCCESS_OUTCOME,
+                "c1": FAILURE_OUTCOME,
+                "c2": FAILURE_OUTCOME,
+                "c3": FAILURE_OUTCOME,
+            },
+            "member-b": {
+                "c0": FAILURE_OUTCOME,
+                "c1": SUCCESS_OUTCOME,
+                "c2": FAILURE_OUTCOME,
+                "c3": FAILURE_OUTCOME,
+            },
         },
         combinations={
-            ("member-a", "member-b"): {"c0": SUCCESS_OUTCOME, "c1": SUCCESS_OUTCOME,
-                                       "c2": FAILURE_OUTCOME, "c3": FAILURE_OUTCOME},
+            ("member-a", "member-b"): {
+                "c0": SUCCESS_OUTCOME,
+                "c1": SUCCESS_OUTCOME,
+                "c2": FAILURE_OUTCOME,
+                "c3": FAILURE_OUTCOME,
+            },
         },
     )
 
@@ -594,16 +600,10 @@ def evaluate_hand_case(name: str) -> dict[str, Any]:
         "pair": list(pair),
         "pair_mean_outcome": policy_mean_outcome(table, pair),
         "pair_gain_vs_baseline": policy_mean_gain_vs_baseline(table, pair),
-        "pair_gain_vs_pair_internal_oracle": policy_mean_gain_vs_pair_internal_oracle(
-            table, pair
-        ),
-        "pair_gain_vs_all_singleton_oracle": policy_mean_gain_vs_all_singleton_oracle(
-            table, pair
-        ),
+        "pair_gain_vs_pair_internal_oracle": policy_mean_gain_vs_pair_internal_oracle(table, pair),
+        "pair_gain_vs_all_singleton_oracle": policy_mean_gain_vs_all_singleton_oracle(table, pair),
         "pair_mean_interaction": policy_mean_interaction(table, pair),
-        "contexts_beating_all_singleton_oracle": contexts_beating_all_singleton_oracle(
-            table, pair
-        ),
+        "contexts_beating_all_singleton_oracle": contexts_beating_all_singleton_oracle(table, pair),
         "utility_cost_weight_0.0": policy_utility(table, pair, cost_weight=0.0),
         "utility_cost_weight_0.5": policy_utility(table, pair, cost_weight=0.5),
     }
@@ -683,9 +683,7 @@ def unseen_contexts_from_success_matrix(
     return tuple(ordered)
 
 
-def cross_check_route_a_rows(
-    table: ContextTable, route_a: Mapping[str, Any]
-) -> dict[str, Any]:
+def cross_check_route_a_rows(table: ContextTable, route_a: Mapping[str, Any]) -> dict[str, Any]:
     """Verify the block-mean reconstruction against route A's per-context rows.
 
     If this check fails, every derived bound below is built on a mapping that the
@@ -757,9 +755,7 @@ def recompute_route_a(route_a: Mapping[str, Any], table: ContextTable) -> dict[s
                     value["mean_gain_vs_strongest_single"]
                 ),
                 "recomputed_pair_internal_gain": mean(gains_pair_internal),
-                "reported_mean_realized_interaction": float(
-                    value["mean_realized_interaction"]
-                ),
+                "reported_mean_realized_interaction": float(value["mean_realized_interaction"]),
                 "recomputed_mean_interaction": mean(interactions),
                 "recomputed_gain_vs_all_singleton_oracle": (
                     policy_mean_gain_vs_all_singleton_oracle(table, pair)
@@ -821,7 +817,9 @@ def recompute_route_c(route_c: Mapping[str, Any], table: ContextTable) -> dict[s
     }
 
 
-def cell_table(table: ContextTable, held_out_pairs: Sequence[Sequence[str]]) -> list[dict[str, Any]]:
+def cell_table(
+    table: ContextTable, held_out_pairs: Sequence[Sequence[str]]
+) -> list[dict[str, Any]]:
     """One row per executed cell: every candidate reference side by side."""
 
     held_out = {tuple(sorted(pair)) for pair in held_out_pairs}
@@ -937,8 +935,7 @@ def audit(
         "task_structure_facts": {
             "singleton_surfaces": route_a["capability_surfaces"]["surfaces"],
             "pair_kinds": {
-                key: value["kind"]
-                for key, value in route_a["capability_surfaces"]["pairs"].items()
+                key: value["kind"] for key, value in route_a["capability_surfaces"]["pairs"].items()
             },
             "block3_stop_reasons": route_a["block3_audit"]["stop_reason_classes"],
             "block3_uniformly_unreachable": route_a["block3_audit"]["uniformly_unreachable"],
@@ -992,8 +989,10 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     reachability = payload["reachability"]
     print(f"dictionary: {payload['measurement_dictionary_version']}")
-    print(f"cross-check: {payload['cross_check']['all_match']} "
-          f"({payload['cross_check']['checked_fields']} fields)")
+    print(
+        f"cross-check: {payload['cross_check']['all_match']} "
+        f"({payload['cross_check']['checked_fields']} fields)"
+    )
     for row in reachability["rows"]:
         print(
             f"  reference={row['reference']:<26} required={row['required']:.3f} "

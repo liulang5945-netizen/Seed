@@ -59,11 +59,15 @@ def _build_trial_replay(
         "lesion_baseline": {"candidate_active": False, "region_id": trial_region_id},
         "lesion_candidate": {"candidate_active": True, "region_id": trial_region_id},
     }
-    return replay, trial_checkpoint_digest, {
-        "parent_checkpoint_digest": _checkpoint_digest(parent_checkpoint),
-        "trial_checkpoint_digest": trial_checkpoint_digest,
-        "candidate_region_id": trial_region_id,
-    }
+    return (
+        replay,
+        trial_checkpoint_digest,
+        {
+            "parent_checkpoint_digest": _checkpoint_digest(parent_checkpoint),
+            "trial_checkpoint_digest": trial_checkpoint_digest,
+            "candidate_region_id": trial_region_id,
+        },
+    )
 
 
 def evaluate() -> dict[str, object]:
@@ -123,24 +127,24 @@ def evaluate() -> dict[str, object]:
         resource_cost=candidate.resource_cost,
         evidence_ids=candidate.evidence_ids,
     )
-    mismatch_model = TSKV8Adapter.from_native_checkpoint(runtime.model.architecture.native_checkpoint())
-    mismatch_admission_count = len(mismatch_model.structural_admission_results)
-    mismatch_topology_before = tuple(
-        region.unit_ids for region in mismatch_model.neuron_regions
+    mismatch_model = TSKV8Adapter.from_native_checkpoint(
+        runtime.model.architecture.native_checkpoint()
     )
+    mismatch_admission_count = len(mismatch_model.structural_admission_results)
+    mismatch_topology_before = tuple(region.unit_ids for region in mismatch_model.neuron_regions)
     mismatch_output = torch.zeros_like(replay["holdout_outputs"][0])
     mismatch = mismatch_model.continue_structural_candidate_from_validation_artifact(
         artifact,
         holdout_inputs=replay["holdout_inputs"],
         expected_activities=(mismatch_output,),
     )
-    mismatch_topology_after = tuple(
-        region.unit_ids for region in mismatch_model.neuron_regions
-    )
-    continuation = runtime.model.architecture.continue_structural_candidate_from_validation_artifact(
-        artifact,
-        holdout_inputs=replay["holdout_inputs"],
-        expected_activities=replay["holdout_outputs"],
+    mismatch_topology_after = tuple(region.unit_ids for region in mismatch_model.neuron_regions)
+    continuation = (
+        runtime.model.architecture.continue_structural_candidate_from_validation_artifact(
+            artifact,
+            holdout_inputs=replay["holdout_inputs"],
+            expected_activities=replay["holdout_outputs"],
+        )
     )
     checkpoint_after = runtime.model.architecture.native_checkpoint()
     restored = TSKV8Adapter.from_native_checkpoint(checkpoint_after)
@@ -221,7 +225,9 @@ def main() -> None:
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_w7_r5c_s12_workbench_validation_artifact_20260830.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_w7_r5c_s12_workbench_validation_artifact_20260830.json",
     )
     args = parser.parse_args()
     report = evaluate()

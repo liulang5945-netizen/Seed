@@ -316,8 +316,7 @@ def evaluate() -> dict[str, object]:
             all(
                 round_item["admission_status"] == "rejected"
                 and round_item["admission_reason"] == "outcome_unsuccessful"
-                and round_item["observation_count_after"]
-                == round_item["observation_count_before"]
+                and round_item["observation_count_after"] == round_item["observation_count_before"]
                 for round_item in item["rounds"]
                 if round_item.get("kind") == "failure"
             )
@@ -327,8 +326,7 @@ def evaluate() -> dict[str, object]:
             any(
                 bool(round_item.get("model_changed_on_apply"))
                 for round_item in item["rounds"]
-                if isinstance(round_item.get("round"), int)
-                and round_item.get("kind") == "success"
+                if isinstance(round_item.get("round"), int) and round_item.get("kind") == "success"
             )
             for item in runs
         ),
@@ -409,7 +407,9 @@ def main() -> int:
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_w7_p4_8_online_interaction_writeback_20260831.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_w7_p4_8_online_interaction_writeback_20260831.json",
     )
     args = parser.parse_args()
     report = evaluate()

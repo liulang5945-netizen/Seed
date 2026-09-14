@@ -38,7 +38,9 @@ RESOURCE_FEATURES = {"cache": 4, "queue": 5}
 CONTEXT_FEATURE_INDEX = 6
 
 
-def _percept(sample_id: str, vector: tuple[float, ...], tick: int, *, confidence: float = 1.0) -> PerceptEvent:
+def _percept(
+    sample_id: str, vector: tuple[float, ...], tick: int, *, confidence: float = 1.0
+) -> PerceptEvent:
     return PerceptEvent(
         event_id=f"{sample_id}:percept",
         observation_tick=int(tick),
@@ -85,7 +87,11 @@ def _example(
     tick: int,
     context: int = 0,
 ) -> StructuredSemanticExample:
-    if object_id not in OBJECT_FEATURES or state not in STATE_FEATURES or resource not in RESOURCE_FEATURES:
+    if (
+        object_id not in OBJECT_FEATURES
+        or state not in STATE_FEATURES
+        or resource not in RESOURCE_FEATURES
+    ):
         raise ValueError("unknown M2.R3 canary factor")
     vector = [0.0] * FEATURE_DIM
     vector[OBJECT_FEATURES[object_id]] = 1.0
@@ -233,7 +239,9 @@ def _fact_metrics(
             result.content_plan is not None
             and result.content_plan.content_id == example.content.content_id
         )
-        expected_status = "clarify" if example.content.intent_kind == "request_information" else "resolved"
+        expected_status = (
+            "clarify" if example.content.intent_kind == "request_information" else "resolved"
+        )
         status_hit = result.status == expected_status
         goal_correct += int(goal_hit)
         content_correct += int(content_hit)
@@ -243,14 +251,14 @@ def _fact_metrics(
                 "example_id": example.example_id,
                 "status": result.status,
                 "goal": None if result.goal is None else result.goal.goal_id,
-                "content": None
-                if result.content_plan is None
-                else result.content_plan.content_id,
+                "content": None if result.content_plan is None else result.content_plan.content_id,
                 "goal_expected": example.goal.goal_id,
                 "content_expected": example.content.content_id,
-                "fact_recall": 1.0
-                if not expected_facts
-                else len(expected_facts & actual_facts) / len(expected_facts),
+                "fact_recall": (
+                    1.0
+                    if not expected_facts
+                    else len(expected_facts & actual_facts) / len(expected_facts)
+                ),
             }
         )
     precision = true_positive / max(1, true_positive + false_positive)
@@ -294,9 +302,7 @@ def evaluate(*, epochs: int = 240, learning_rate: float = 2.0) -> dict[str, Any]
     )
     lesion_before, lesion_after = restored.zero_fact_head()
     lesion_metrics = _fact_metrics(restored, corpus.test)
-    owner_changes = {
-        name: before_owners[name] != after_owners[name] for name in before_owners
-    }
+    owner_changes = {name: before_owners[name] != after_owners[name] for name in before_owners}
     gate_checks = {
         "record_disjoint": corpus.manifest()["record_disjoint"],
         "train_fact_learning": train_metrics["fact_f1"] >= 0.95,
@@ -307,7 +313,8 @@ def evaluate(*, epochs: int = 240, learning_rate: float = 2.0) -> dict[str, Any]
         "dev_content_learning": dev_metrics["content_accuracy"] >= 0.80,
         "test_content_learning": test_metrics["content_accuracy"] >= 0.80,
         "unknown_fail_closed": unknown_result.status == "unknown" and unknown_result.goal is None,
-        "conflict_fail_closed": conflict_result.status == "conflict" and conflict_result.goal is None,
+        "conflict_fail_closed": conflict_result.status == "conflict"
+        and conflict_result.goal is None,
         "clarification_plan": (
             clarification.status == "clarify"
             and clarification.content_plan is not None

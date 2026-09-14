@@ -50,11 +50,9 @@ from pathlib import Path
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_OUTPUT = (
-    PROJECT_ROOT / "reports" / "taiji_b0_task_reachability_precheck_20260913.json"
-)
-DICTIONARY_MODULE = PROJECT_ROOT / "scripts" / "training" / (
-    "audit_taiji_b0_measurement_reachability.py"
+DEFAULT_OUTPUT = PROJECT_ROOT / "reports" / "taiji_b0_task_reachability_precheck_20260913.json"
+DICTIONARY_MODULE = (
+    PROJECT_ROOT / "scripts" / "training" / ("audit_taiji_b0_measurement_reachability.py")
 )
 
 #: Identifier of the composition rule the P5.2b/P5.2c gates froze.  A different
@@ -86,12 +84,8 @@ def arbitration_ceiling(table: Any, pair: Sequence[str]) -> float:
     first, second = tuple(sorted(pair))
     slacks = []
     for context_id in table.contexts:
-        pair_best = max(
-            table.singleton(context_id, first), table.singleton(context_id, second)
-        )
-        all_best = max(
-            table.singleton(context_id, member) for member in table.singletons
-        )
+        pair_best = max(table.singleton(context_id, first), table.singleton(context_id, second))
+        all_best = max(table.singleton(context_id, member) for member in table.singletons)
         slacks.append(pair_best - all_best)
     return sum(slacks) / len(slacks) if slacks else 0.0
 
@@ -106,9 +100,7 @@ def arbitration_headroom(table: Any, pair: Sequence[str]) -> float:
     first, second = tuple(sorted(pair))
     losses = []
     for context_id in table.contexts:
-        pair_best = max(
-            table.singleton(context_id, first), table.singleton(context_id, second)
-        )
+        pair_best = max(table.singleton(context_id, first), table.singleton(context_id, second))
         losses.append(pair_best - table.combination(context_id, pair))
     return sum(losses) / len(losses) if losses else 0.0
 
@@ -237,8 +229,12 @@ def required_combination_only_contexts(
 
 
 def max_clearable_reference(
-    *, combination_only_contexts: int, context_count: int, margin: float,
-    success_outcome: float = SUCCESS_OUTCOME, blank_outcome: float = FAILURE_OUTCOME,
+    *,
+    combination_only_contexts: int,
+    context_count: int,
+    margin: float,
+    success_outcome: float = SUCCESS_OUTCOME,
+    blank_outcome: float = FAILURE_OUTCOME,
 ) -> float:
     """Inverse view: the largest ``reference_gain`` a task of this shape can beat."""
 
@@ -293,9 +289,7 @@ def reference_requirements(
 # --------------------------------------------------------------------------- #
 
 
-def precheck(
-    table: Any, *, margin: float, candidates: Mapping[str, float]
-) -> dict[str, Any]:
+def precheck(table: Any, *, margin: float, candidates: Mapping[str, float]) -> dict[str, Any]:
     """Assemble the pre-check verdict for one candidate task surface."""
 
     pairs = [tuple(pair) for pair in table.pair_cells()]
@@ -387,20 +381,22 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     dictionary = _load_dictionary()
     route_a = json.loads(
-        (PROJECT_ROOT / "reports"
-         / "taiji_p5_2c_triple_prime_representation_repair_20260913.json"
-         ).read_text(encoding="utf-8")
+        (
+            PROJECT_ROOT
+            / "reports"
+            / "taiji_p5_2c_triple_prime_representation_repair_20260913.json"
+        ).read_text(encoding="utf-8")
     )
     route_c = json.loads(
-        (PROJECT_ROOT / "reports"
-         / "taiji_p5_2c_double_prime_unseen_combination_transfer_20260913.json"
-         ).read_text(encoding="utf-8")
+        (
+            PROJECT_ROOT
+            / "reports"
+            / "taiji_p5_2c_double_prime_unseen_combination_transfer_20260913.json"
+        ).read_text(encoding="utf-8")
     )
     margin = float(route_a["control_summary"]["margin"])
     success_matrix = route_c["success_matrix"]
-    block_contexts = {
-        block: [contexts[-1]] for block, contexts in success_matrix["blocks"].items()
-    }
+    block_contexts = {block: [contexts[-1]] for block, contexts in success_matrix["blocks"].items()}
     table = dictionary.table_from_success_matrix(success_matrix, block_contexts)
 
     candidates = {

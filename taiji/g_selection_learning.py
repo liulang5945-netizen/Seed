@@ -63,7 +63,9 @@ def _unit(value: float, name: str) -> float:
 
 
 def _candidate_scores(value: Sequence[tuple[str, float]]) -> tuple[tuple[str, float], ...]:
-    result = tuple((str(candidate_id), _finite(score, "candidate score")) for candidate_id, score in value)
+    result = tuple(
+        (str(candidate_id), _finite(score, "candidate score")) for candidate_id, score in value
+    )
     if not result:
         raise ValueError("candidate scores cannot be empty")
     if len({candidate_id for candidate_id, _score in result}) != len(result):
@@ -113,15 +115,23 @@ class GSelectionDecision:
         scores = _candidate_scores(self.candidate_scores)
         if selected_id not in {candidate_id for candidate_id, _score in scores}:
             raise ValueError("selected candidate is missing from candidate scores")
-        if status == "selected" and (role != "proposal" or not self.selected_goal_id or not self.selected_content_id):
+        if status == "selected" and (
+            role != "proposal" or not self.selected_goal_id or not self.selected_content_id
+        ):
             raise ValueError("selected G decision must contain a proposal goal and content")
         if status == "abstained" and role != "abstain":
             raise ValueError("abstained G decision must select an abstain candidate")
         if status == "reobserve" and role != "reobserve":
             raise ValueError("reobserve G decision must select a reobserve candidate")
-        goal_id = None if self.selected_goal_id is None else _text(self.selected_goal_id, "selected_goal_id")
+        goal_id = (
+            None
+            if self.selected_goal_id is None
+            else _text(self.selected_goal_id, "selected_goal_id")
+        )
         content_id = (
-            None if self.selected_content_id is None else _text(self.selected_content_id, "selected_content_id")
+            None
+            if self.selected_content_id is None
+            else _text(self.selected_content_id, "selected_content_id")
         )
         if status != "selected" and (goal_id is not None or content_id is not None):
             raise ValueError("safe G decisions cannot emit a goal or content")
@@ -159,7 +169,9 @@ class GSelectionDecision:
         object.__setattr__(self, "confidence", confidence)
         object.__setattr__(self, "ambiguity", ambiguity)
         object.__setattr__(self, "external_target_used", False)
-        object.__setattr__(self, "decision_digest", _digest(self.decision_digest, "decision_digest"))
+        object.__setattr__(
+            self, "decision_digest", _digest(self.decision_digest, "decision_digest")
+        )
 
     @classmethod
     def create(
@@ -175,7 +187,9 @@ class GSelectionDecision:
         if not isinstance(selected, GSelectionCandidate):
             raise TypeError("G decision requires a GSelectionCandidate")
         selected_goal_id = None if selected.goal is None else selected.goal.goal_id
-        selected_content_id = None if selected.content_plan is None else selected.content_plan.content_id
+        selected_content_id = (
+            None if selected.content_plan is None else selected.content_plan.content_id
+        )
         if selection_status != "selected":
             selected_goal_id = None
             selected_content_id = None
@@ -196,7 +210,9 @@ class GSelectionDecision:
             "selection_status": str(selection_status),
             "selected_goal_id": selected_goal_id,
             "selected_content_id": selected_content_id,
-            "candidate_scores": [[candidate_id, score] for candidate_id, score in normalized_scores],
+            "candidate_scores": [
+                [candidate_id, score] for candidate_id, score in normalized_scores
+            ],
             "confidence": selected.confidence,
             "ambiguity": selected.ambiguity,
             "external_target_used": False,
@@ -215,7 +231,9 @@ class GSelectionDecision:
             "selection_status": self.selection_status,
             "selected_goal_id": self.selected_goal_id,
             "selected_content_id": self.selected_content_id,
-            "candidate_scores": [[candidate_id, score] for candidate_id, score in self.candidate_scores],
+            "candidate_scores": [
+                [candidate_id, score] for candidate_id, score in self.candidate_scores
+            ],
             "confidence": self.confidence,
             "ambiguity": self.ambiguity,
             "external_target_used": self.external_target_used,
@@ -234,10 +252,14 @@ class GSelectionDecision:
             selected_candidate_role=str(payload["selected_candidate_role"]),
             selection_status=str(payload["selection_status"]),
             selected_goal_id=(
-                None if payload.get("selected_goal_id") is None else str(payload["selected_goal_id"])
+                None
+                if payload.get("selected_goal_id") is None
+                else str(payload["selected_goal_id"])
             ),
             selected_content_id=(
-                None if payload.get("selected_content_id") is None else str(payload["selected_content_id"])
+                None
+                if payload.get("selected_content_id") is None
+                else str(payload["selected_content_id"])
             ),
             candidate_scores=tuple(
                 (str(item[0]), float(item[1])) for item in payload.get("candidate_scores", ())
@@ -263,7 +285,10 @@ class GSelectionLearner:
         device: torch.device | str = "cpu",
     ) -> None:
         self.parent_manifest_digest = _digest(parent_manifest_digest, "parent_manifest_digest")
-        digests = {str(key): _digest(str(value), f"k_checkpoint_digests[{key}]") for key, value in k_checkpoint_digests.items()}
+        digests = {
+            str(key): _digest(str(value), f"k_checkpoint_digests[{key}]")
+            for key, value in k_checkpoint_digests.items()
+        }
         if tuple(sorted(digests)) != ("k1", "k2"):
             raise ValueError("G learner requires exactly k1 and k2 checkpoint digests")
         self.k_checkpoint_digests = digests
@@ -303,7 +328,10 @@ class GSelectionLearner:
         k_checkpoint_digests: Mapping[str, str],
     ) -> None:
         expected_parent = _digest(parent_manifest_digest, "expected parent_manifest_digest")
-        expected_k = {str(key): _digest(str(value), f"expected k_checkpoint_digests[{key}]") for key, value in k_checkpoint_digests.items()}
+        expected_k = {
+            str(key): _digest(str(value), f"expected k_checkpoint_digests[{key}]")
+            for key, value in k_checkpoint_digests.items()
+        }
         if self.parent_manifest_digest != expected_parent:
             raise ValueError("G learner parent manifest lineage mismatch")
         if self.k_checkpoint_digests != expected_k:
@@ -312,7 +340,9 @@ class GSelectionLearner:
     def _features(self, candidate: GSelectionCandidate) -> torch.Tensor:
         if not isinstance(candidate, GSelectionCandidate):
             raise TypeError("G learner features require a GSelectionCandidate")
-        features = torch.tensor(candidate.feature_vector, dtype=torch.float32, device=self.device).reshape(1, -1)
+        features = torch.tensor(
+            candidate.feature_vector, dtype=torch.float32, device=self.device
+        ).reshape(1, -1)
         if features.shape[1] != len(G_SELECTION_FEATURE_NAMES):
             raise ValueError("G learner feature manifest length drifted")
         if not bool(torch.isfinite(features).all()):
@@ -325,7 +355,11 @@ class GSelectionLearner:
 
     @staticmethod
     def _safe_candidate(candidates: Sequence[GSelectionCandidate]) -> GSelectionCandidate:
-        safe = [candidate for candidate in candidates if candidate.candidate_role in {"abstain", "reobserve"}]
+        safe = [
+            candidate
+            for candidate in candidates
+            if candidate.candidate_role in {"abstain", "reobserve"}
+        ]
         if not safe:
             raise ValueError("G candidate set has no safe abstain or reobserve candidate")
         return max(
@@ -342,7 +376,13 @@ class GSelectionLearner:
             raise TypeError("G learner select requires a GSelectionCandidateSet")
         scored = [(candidate, self.score(candidate)) for candidate in candidate_set.candidates]
         role_priority = {"abstain": 2, "reobserve": 1, "proposal": 0}
-        scored.sort(key=lambda item: (-item[1], -role_priority[item[0].candidate_role], item[0].candidate_id))
+        scored.sort(
+            key=lambda item: (
+                -item[1],
+                -role_priority[item[0].candidate_role],
+                item[0].candidate_id,
+            )
+        )
         selected, selected_score = scored[0]
         safe = self._safe_candidate(candidate_set.candidates)
         safe_score = self.score(safe)
@@ -363,7 +403,12 @@ class GSelectionLearner:
             status = "reobserve"
         else:
             status = "abstained"
-        scores = tuple(sorted(((candidate.candidate_id, score) for candidate, score in scored), key=lambda item: item[0]))
+        scores = tuple(
+            sorted(
+                ((candidate.candidate_id, score) for candidate, score in scored),
+                key=lambda item: item[0],
+            )
+        )
         return GSelectionDecision.create(
             candidate_set=candidate_set,
             selected=selected,
@@ -372,7 +417,9 @@ class GSelectionLearner:
         )
 
     @staticmethod
-    def _training_items(candidate_sets: Iterable[GSelectionCandidateSet]) -> tuple[GSelectionCandidateSet, ...]:
+    def _training_items(
+        candidate_sets: Iterable[GSelectionCandidateSet],
+    ) -> tuple[GSelectionCandidateSet, ...]:
         items = tuple(candidate_sets)
         if not items:
             raise ValueError("G training requires at least one candidate set")
@@ -385,7 +432,9 @@ class GSelectionLearner:
         for item in items:
             target = item.target_candidate()
             if item.target_kind == "pair" and (
-                target.candidate_role != "proposal" or target.goal is None or target.content_plan is None
+                target.candidate_role != "proposal"
+                or target.goal is None
+                or target.content_plan is None
             ):
                 raise ValueError("pair G target must be a complete proposal")
             if item.target_kind == "abstain" and target.candidate_role != "abstain":
@@ -405,7 +454,11 @@ class GSelectionLearner:
         epochs = int(epochs)
         if epochs <= 0:
             raise ValueError("G training epochs must be positive")
-        rate = self.learning_rate if learning_rate is None else _positive(learning_rate, "G fit learning_rate")
+        rate = (
+            self.learning_rate
+            if learning_rate is None
+            else _positive(learning_rate, "G fit learning_rate")
+        )
         dataset_digest = content_digest(
             {
                 "candidate_set_digests": [item.candidate_set_digest for item in items],
@@ -420,7 +473,9 @@ class GSelectionLearner:
                     dtype=torch.float32,
                     device=self.device,
                 )
-                targets = torch.zeros((len(item.candidates), 1), dtype=torch.float32, device=self.device)
+                targets = torch.zeros(
+                    (len(item.candidates), 1), dtype=torch.float32, device=self.device
+                )
                 target_index = next(
                     index
                     for index, candidate in enumerate(item.candidates)
@@ -494,12 +549,16 @@ class GSelectionLearner:
         bias = payload["bias"]
         if not isinstance(weight, torch.Tensor) or not isinstance(bias, torch.Tensor):
             raise TypeError("G learner checkpoint weights must be tensors")
-        if tuple(weight.shape) != tuple(learner.model.weight.shape) or tuple(bias.shape) != tuple(learner.model.bias.shape):
+        if tuple(weight.shape) != tuple(learner.model.weight.shape) or tuple(bias.shape) != tuple(
+            learner.model.bias.shape
+        ):
             raise ValueError("G learner checkpoint tensor shapes drifted")
         if content_digest({"weight": weight, "bias": bias}) != str(payload["model_state_digest"]):
             raise ValueError("G learner model state digest mismatch")
         with torch.no_grad():
-            learner.model.weight.copy_(weight.detach().to(device=learner.device, dtype=torch.float32))
+            learner.model.weight.copy_(
+                weight.detach().to(device=learner.device, dtype=torch.float32)
+            )
             learner.model.bias.copy_(bias.detach().to(device=learner.device, dtype=torch.float32))
         learner.training_steps = int(payload.get("training_steps", 0))
         learner.revision = int(payload.get("revision", 0))

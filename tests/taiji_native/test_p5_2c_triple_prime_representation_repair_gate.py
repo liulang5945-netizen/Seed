@@ -51,10 +51,7 @@ from taiji.interaction_groups import (
 
 REPO = Path(__file__).resolve().parents[2]
 RUNNER = (
-    REPO
-    / "scripts"
-    / "training"
-    / "eval_taiji_p5_2c_triple_prime_representation_repair_gate.py"
+    REPO / "scripts" / "training" / "eval_taiji_p5_2c_triple_prime_representation_repair_gate.py"
 )
 DOUBLE_PRIME_RUNNER = (
     REPO
@@ -229,14 +226,11 @@ def test_surface_uses_strict_positive_delta() -> None:
         with_outcome(_episode("ctx-100", ("member-a",)), 0.8),
         with_outcome(_episode("ctx-101", ("member-a",)), 0.5),
     )
-    profiles = build_member_evidence(
-        train, source_trace_digest=DIGEST, checkpoint_revision=1
-    )
+    profiles = build_member_evidence(train, source_trace_digest=DIGEST, checkpoint_revision=1)
     by_member = {profile.member_id: profile for profile in profiles}
     assert "member-a" in by_member
     assert by_member["member-a"].surface == (0,), (
-        "a zero delta must not register a surface hit: "
-        f"got {by_member['member-a'].surface}"
+        "a zero delta must not register a surface hit: " f"got {by_member['member-a'].surface}"
     )
 
 
@@ -259,9 +253,7 @@ def test_surface_records_every_block_with_strictly_positive_delta() -> None:
         with_outcome(_episode("ctx-100", ("member-a",)), 1.0),
         with_outcome(_episode("ctx-102", ("member-a",)), 1.0),
     )
-    profiles = build_member_evidence(
-        train, source_trace_digest=DIGEST, checkpoint_revision=1
-    )
+    profiles = build_member_evidence(train, source_trace_digest=DIGEST, checkpoint_revision=1)
     by_member = {profile.member_id: profile for profile in profiles}
     assert by_member["member-a"].surface == (0, 2)
 
@@ -273,9 +265,7 @@ def test_build_member_evidence_skips_unmapped_contexts() -> None:
         _episode("train-workbench-ab", ()),
         _episode("train-workbench-ab", ("member-a",)),
     )
-    profiles = build_member_evidence(
-        train, source_trace_digest=DIGEST, checkpoint_revision=1
-    )
+    profiles = build_member_evidence(train, source_trace_digest=DIGEST, checkpoint_revision=1)
     by_member = {profile.member_id: profile for profile in profiles}
     if "member-a" in by_member:
         assert by_member["member-a"].surface == ()
@@ -400,12 +390,12 @@ def test_feature_rank_exceeds_one_under_uniform_contribution() -> None:
         )
     )
     learner.observe_records(records)
-    assert {profile.contribution for profile in profiles} == {0.5}, (
-        "this test is only meaningful while contributions stay uniform"
-    )
-    assert learner.feature_rank() > 1, (
-        "uniform contributions must no longer collapse the design to rank 1"
-    )
+    assert {profile.contribution for profile in profiles} == {
+        0.5
+    }, "this test is only meaningful while contributions stay uniform"
+    assert (
+        learner.feature_rank() > 1
+    ), "uniform contributions must no longer collapse the design to rank 1"
 
 
 # --------------------------------------------------------------------------- #
@@ -498,6 +488,7 @@ def test_gate_discloses_the_residual_limitation(runner) -> None:
     # are observed; the six-column claim is covered by the _pair_features test.
     assert "surface_columns" in audit
     assert "surface_block_count" in audit
+
 
 def test_report_path_does_not_overwrite_any_predecessor(runner) -> None:
     assert runner.DEFAULT_REPORT.name == (
@@ -596,9 +587,7 @@ def test_entry_audit_requires_multi_block_pair_gain(runner) -> None:
         family_coverage=flat_coverage,
     )
     assert flat["passed"] is False
-    assert "corpus_carries_multi_block_pair_gain" in {
-        c["condition"] for c in flat["conditions"]
-    }
+    assert "corpus_carries_multi_block_pair_gain" in {c["condition"] for c in flat["conditions"]}
 
     # A coverage table that spans two blocks must pass.
     spread_coverage = {

@@ -80,9 +80,7 @@ class ExtendedGSelectionLearner:
         selection_margin: float = 0.05,
         device: torch.device | str = "cpu",
     ) -> None:
-        self.parent_manifest_digest = _digest(
-            str(parent_manifest_digest), "parent_manifest_digest"
-        )
+        self.parent_manifest_digest = _digest(str(parent_manifest_digest), "parent_manifest_digest")
         digests = {
             str(key): _digest(str(value), f"k_checkpoint_digests[{key}]")
             for key, value in k_checkpoint_digests.items()
@@ -135,9 +133,7 @@ class ExtendedGSelectionLearner:
                 "Extended G inheritance requires the 13-parameter GSelectionLearner parent"
             )
         with torch.no_grad():
-            base_weight = [
-                float(value) for value in parent.model.weight.detach().cpu().reshape(-1)
-            ]
+            base_weight = [float(value) for value in parent.model.weight.detach().cpu().reshape(-1)]
             base_bias = float(parent.model.bias.detach().cpu().reshape(()))
         return cls(
             parent_manifest_digest=parent.parent_manifest_digest,
@@ -178,9 +174,7 @@ class ExtendedGSelectionLearner:
         parent_manifest_digest: str,
         k_checkpoint_digests: Mapping[str, str],
     ) -> None:
-        expected_parent = _digest(
-            str(parent_manifest_digest), "expected parent_manifest_digest"
-        )
+        expected_parent = _digest(str(parent_manifest_digest), "expected parent_manifest_digest")
         expected_k = {
             str(key): _digest(str(value), f"expected k_checkpoint_digests[{key}]")
             for key, value in k_checkpoint_digests.items()
@@ -239,9 +233,7 @@ class ExtendedGSelectionLearner:
             )
         return features
 
-    def total_scores(
-        self, candidate_set: GSelectionCandidateSet
-    ) -> dict[str, float]:
+    def total_scores(self, candidate_set: GSelectionCandidateSet) -> dict[str, float]:
         if not isinstance(candidate_set, GSelectionCandidateSet):
             raise TypeError("Extended G scoring requires a GSelectionCandidateSet")
         features = self.relative_features(candidate_set)
@@ -265,17 +257,14 @@ class ExtendedGSelectionLearner:
             raise TypeError("Extended G learner select requires a GSelectionCandidateSet")
         scores = self.total_scores(candidate_set)
         scored = [
-            (candidate, scores[candidate.candidate_id])
-            for candidate in candidate_set.candidates
+            (candidate, scores[candidate.candidate_id]) for candidate in candidate_set.candidates
         ]
         selected, status = _apply_selection_rule(
             scored,
             confidence_floor=self.confidence_floor,
             selection_margin=self.selection_margin,
         )
-        ordered_scores = tuple(
-            sorted(scored, key=lambda item: item[0].candidate_id)
-        )
+        ordered_scores = tuple(sorted(scored, key=lambda item: item[0].candidate_id))
         return GSelectionDecision.create(
             candidate_set=candidate_set,
             selected=selected,
@@ -285,16 +274,12 @@ class ExtendedGSelectionLearner:
             ),
         )
 
-    def _reference_decision(
-        self, candidate_set: GSelectionCandidateSet
-    ) -> tuple[str, str]:
+    def _reference_decision(self, candidate_set: GSelectionCandidateSet) -> tuple[str, str]:
         """The frozen feature source's decision under the same rule."""
         candidates = tuple(candidate_set.candidates)
         with torch.no_grad():
             scores = self.feature_source(self._base_inputs(candidates)).reshape(-1)
-        scored = [
-            (candidate, float(scores[index])) for index, candidate in enumerate(candidates)
-        ]
+        scored = [(candidate, float(scores[index])) for index, candidate in enumerate(candidates)]
         selected, status = _apply_selection_rule(
             scored,
             confidence_floor=self.confidence_floor,
@@ -370,9 +355,7 @@ class ExtendedGSelectionLearner:
                 )
                 if not bool(torch.isfinite(inputs).all()):
                     raise ValueError("Extended G fit features must be finite")
-                targets = torch.zeros(
-                    (len(candidates), 1), dtype=torch.float32, device=self.device
-                )
+                targets = torch.zeros((len(candidates), 1), dtype=torch.float32, device=self.device)
                 target_index = next(
                     position
                     for position, candidate in enumerate(candidates)
@@ -404,9 +387,7 @@ class ExtendedGSelectionLearner:
                     dtype=torch.float32,
                     device=self.device,
                 )
-                apply_linear_delta(
-                    self.head, group_inputs, hinge_error, float(learning_rate)
-                )
+                apply_linear_delta(self.head, group_inputs, hinge_error, float(learning_rate))
                 constraint_steps += 1
                 self.training_steps += 1
         self.revision += 1
@@ -421,16 +402,12 @@ class ExtendedGSelectionLearner:
             "training_steps": self.training_steps,
             "revision": self.revision,
             "task_loss_mean": task_loss_sum / (len(items) * int(epochs)),
-            "hinge_loss_mean": (
-                hinge_loss_sum / constraint_steps if constraint_steps else 0.0
-            ),
+            "hinge_loss_mean": (hinge_loss_sum / constraint_steps if constraint_steps else 0.0),
             "hinge_active_steps": hinge_active_steps,
             "constraint_steps": constraint_steps,
         }
 
-    def apply_projected_weights(
-        self, weight: Sequence[float], *, projection_digest: str
-    ) -> None:
+    def apply_projected_weights(self, weight: Sequence[float], *, projection_digest: str) -> None:
         """Apply solver-projected weights to the head (P4.11 mechanism).
 
         The projection acts on the 16 weight dimensions only; the bias is
@@ -442,9 +419,7 @@ class ExtendedGSelectionLearner:
             raise ValueError("projected weight length mismatch")
         with torch.no_grad():
             self.head.weight.copy_(
-                torch.tensor(projected, dtype=torch.float32, device=self.device).reshape(
-                    1, -1
-                )
+                torch.tensor(projected, dtype=torch.float32, device=self.device).reshape(1, -1)
             )
         self.revision += 1
         self.last_train_digest = projection_digest
@@ -486,9 +461,7 @@ class ExtendedGSelectionLearner:
         if int(payload.get("version", -1)) != EXTENDED_G_LEARNER_VERSION:
             raise ValueError("unsupported Extended G learner checkpoint version")
         expected_digest = str(payload["checkpoint_digest"])
-        unsigned = {
-            key: value for key, value in payload.items() if key != "checkpoint_digest"
-        }
+        unsigned = {key: value for key, value in payload.items() if key != "checkpoint_digest"}
         if content_digest(unsigned) != expected_digest:
             raise ValueError("Extended G learner checkpoint digest mismatch")
         if tuple(payload.get("base_feature_names", ())) != G_SELECTION_FEATURE_NAMES:
@@ -511,9 +484,7 @@ class ExtendedGSelectionLearner:
             feature_source_bias.shape
         ) != (1,):
             raise ValueError("Extended G learner feature source shapes drifted")
-        if content_digest({"weight": weight, "bias": bias}) != str(
-            payload["model_state_digest"]
-        ):
+        if content_digest({"weight": weight, "bias": bias}) != str(payload["model_state_digest"]):
             raise ValueError("Extended G learner model state digest mismatch")
         if content_digest(
             {
@@ -525,9 +496,7 @@ class ExtendedGSelectionLearner:
         learner = cls(
             parent_manifest_digest=str(payload["parent_manifest_digest"]),
             k_checkpoint_digests=dict(payload["k_checkpoint_digests"]),
-            base_weight=[
-                float(value) for value in feature_source_weight.reshape(-1)
-            ],
+            base_weight=[float(value) for value in feature_source_weight.reshape(-1)],
             base_bias=float(feature_source_bias.reshape(())),
             learning_rate=float(payload["learning_rate"]),
             confidence_floor=float(payload["confidence_floor"]),
@@ -544,9 +513,7 @@ class ExtendedGSelectionLearner:
             learner.head.weight.copy_(
                 weight.detach().to(device=learner.device, dtype=torch.float32)
             )
-            learner.head.bias.copy_(
-                bias.detach().to(device=learner.device, dtype=torch.float32)
-            )
+            learner.head.bias.copy_(bias.detach().to(device=learner.device, dtype=torch.float32))
         learner.training_steps = int(payload.get("training_steps", 0))
         learner.revision = int(payload.get("revision", 0))
         learner.last_train_digest = str(payload.get("last_train_digest", ""))

@@ -16,4 +16,3 @@ def test_m1_identity_admission_review_reports_the_live_organ_default() -> None:
     assert result["default_candidate_ready"] is TaijiConfig().identity_organ_enabled
     assert result["records"][0]["route"]["cross_phase_slot_collisions"] == 0
     assert result["records"][0]["boundary"]["below_threshold_split"] is True
-

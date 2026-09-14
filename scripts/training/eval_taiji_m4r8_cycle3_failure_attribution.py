@@ -91,9 +91,7 @@ def _owner_summary(
     rows: list[dict[str, Any]],
     owner: str,
 ) -> dict[str, Any]:
-    values = [
-        float(row["owner_updates"][owner]["relative_l2_delta"]) for row in rows
-    ]
+    values = [float(row["owner_updates"][owner]["relative_l2_delta"]) for row in rows]
     failures = [
         float(row["owner_updates"][owner]["relative_l2_delta"])
         for row in rows
@@ -112,8 +110,7 @@ def _owner_summary(
         "failure_mean": sum(failures) / max(1, len(failures)),
         "pass_mean": sum(passes) / max(1, len(passes)),
         "failure_outlier_against_pass": bool(
-            pass_median is not None
-            and any(value > pass_median * 1.10 for value in failures)
+            pass_median is not None and any(value > pass_median * 1.10 for value in failures)
         ),
     }
 
@@ -146,8 +143,7 @@ def attribute(
             report["technical_gate_all_passed"] for report in formal_reports
         ),
         "same_formal_variant_set": all(
-            set(report["variants"]) >= set(EXPECTED_VARIANTS)
-            for report in formal_reports
+            set(report["variants"]) >= set(EXPECTED_VARIANTS) for report in formal_reports
         ),
     }
     rows: list[dict[str, Any]] = []
@@ -211,13 +207,9 @@ def attribute(
     }
     diagnosis = {
         "half_scale_c_cycle3_failure_count": len(half_failures),
-        "half_scale_c_cycle3_failure_seeds": [
-            int(row["seed"]) for row in half_failures
-        ],
+        "half_scale_c_cycle3_failure_seeds": [int(row["seed"]) for row in half_failures],
         "half_scale_c_cycle3_pass_seeds": [int(row["seed"]) for row in half_passes],
-        "legacy_scale_c_cycle3_failure_count": sum(
-            row["c_cycle3_degraded"] for row in legacy_rows
-        ),
+        "legacy_scale_c_cycle3_failure_count": sum(row["c_cycle3_degraded"] for row in legacy_rows),
         "failure_isolated": len(half_failures) == 1,
         "owner_update_outlier_by_variant": {
             variant: any(
@@ -246,9 +238,7 @@ def attribute(
         "status": "passed" if all(checks.values()) else "failed",
         "can_promote": False,
         "formal_candidate": False,
-        "source_formal_reports": [
-            str(item.get("report_path", "")) for item in formal_reports
-        ],
+        "source_formal_reports": [str(item.get("report_path", "")) for item in formal_reports],
         "source_r6_report": str(r6_report.get("report_path", "")),
         "source_r4_report": str(r4_report.get("report_path", "")),
         "checks": checks,

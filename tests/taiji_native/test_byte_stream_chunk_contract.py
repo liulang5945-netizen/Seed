@@ -66,10 +66,14 @@ def test_split_byte_stream_preserves_single_stream_learning_semantics() -> None:
     assert direct_metrics["observations"] == (
         first_metrics["observations"] + second_metrics["observations"]
     )
-    assert direct_metrics["online_accuracy"] == (
-        first_metrics["online_accuracy"] * first_metrics["observations"]
-        + second_metrics["online_accuracy"] * second_metrics["observations"]
-    ) / direct_metrics["observations"]
+    assert (
+        direct_metrics["online_accuracy"]
+        == (
+            first_metrics["online_accuracy"] * first_metrics["observations"]
+            + second_metrics["online_accuracy"] * second_metrics["observations"]
+        )
+        / direct_metrics["observations"]
+    )
 
 
 def test_stream_progress_checkpoint_can_restore_completed_chunk_run() -> None:

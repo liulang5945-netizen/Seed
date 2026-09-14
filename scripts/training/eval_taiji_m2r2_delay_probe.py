@@ -141,7 +141,9 @@ def _owner_contract(
         owner: str(before.get(owner, "")) != str(after.get(owner, ""))
         for owner in sorted(set(before) | set(after))
     }
-    unexpected = sorted(owner for owner, value in changed.items() if value and owner not in expected)
+    unexpected = sorted(
+        owner for owner, value in changed.items() if value and owner not in expected
+    )
     expected_changed = sorted(owner for owner in expected if changed.get(owner, False))
     return {
         "changed": changed,
@@ -268,9 +270,7 @@ def _target_unigram_bpb(
         counts[int(record[_delay_target_index(record, distance)])] += 1.0
     total = sum(counts)
     losses = [
-        -math.log2(
-            counts[int(record[_delay_target_index(record, distance)])] / total
-        )
+        -math.log2(counts[int(record[_delay_target_index(record, distance)])] / total)
         for record in test_records
     ]
     return sum(losses) / max(1, len(losses))
@@ -288,13 +288,9 @@ def _lesion_score(
     if candidate:
         if not lesioned.gated_temporal_candidate_enabled:
             raise RuntimeError("candidate lesion requires an enabled candidate")
-        owner_before = content_digest(
-            lesioned.checkpoint()["gated_temporal_candidate"]
-        )
+        owner_before = content_digest(lesioned.checkpoint()["gated_temporal_candidate"])
         lesioned.zero_gated_temporal_candidate()
-        owner_after = content_digest(
-            lesioned.checkpoint()["gated_temporal_candidate"]
-        )
+        owner_after = content_digest(lesioned.checkpoint()["gated_temporal_candidate"])
         owner = "gated_temporal_candidate"
     else:
         owner_before = content_digest(lesioned.predictive_context.recurrent.to_payload())
@@ -386,9 +382,7 @@ def _run_point(
     checks = {
         "owner_contract": bool(attribution["contract_passed"]),
         "evaluation_read_only": bool(
-            train_score["read_only"]
-            and dev_score["read_only"]
-            and test_score["read_only"]
+            train_score["read_only"] and dev_score["read_only"] and test_score["read_only"]
         ),
         "checkpoint_round_trip": checkpoint_digest == restored_digest,
         "lesion_effective": lesion is None or bool(lesion["lesion_applied"]),
@@ -506,9 +500,7 @@ def run_probe(
                 )
             )
 
-    all_passed = all(
-        bool(value) for point in points for value in point["checks"].values()
-    )
+    all_passed = all(bool(value) for point in points for value in point["checks"].values())
     return {
         "format": FORMAT,
         "version": 1,
@@ -542,7 +534,10 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--checkpoint",
         type=Path,
-        default=PROJECT_ROOT / "output" / "taiji-m2s-seed11-identity-generation-20260905" / "last.pt",
+        default=PROJECT_ROOT
+        / "output"
+        / "taiji-m2s-seed11-identity-generation-20260905"
+        / "last.pt",
     )
     parser.add_argument("--corpus", type=Path, nargs="+", default=[DEFAULT_CORPUS])
     parser.add_argument("--seed", type=int, default=11)
@@ -581,9 +576,7 @@ def main() -> int:
                 "status": report["status"],
                 "points": len(report["points"]),
                 "technical_checks_passed": sum(
-                    bool(value)
-                    for point in report["points"]
-                    for value in point["checks"].values()
+                    bool(value) for point in report["points"] for value in point["checks"].values()
                 ),
             },
             ensure_ascii=False,

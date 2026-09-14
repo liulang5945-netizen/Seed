@@ -36,9 +36,7 @@ def test_runtime_artifact_store_bridge_validates_before_native_mutation() -> Non
     )
     checkpoint_path = store_root.parent / f"s42-bridge-runtime-{os.getpid()}.pt"
     store = StructuralValidationArtifactStore(store_root)
-    legacy_policy = ArtifactConsumptionPolicy.legacy_compatible(
-        reason="historical-s42-bridge-test"
-    )
+    legacy_policy = ArtifactConsumptionPolicy.legacy_compatible(reason="historical-s42-bridge-test")
     try:
         store.put(artifact)
         runtime.save(checkpoint_path)
@@ -73,7 +71,10 @@ def test_runtime_artifact_store_bridge_validates_before_native_mutation() -> Non
             pass
         else:
             raise AssertionError("bridge accepted a missing artifact digest")
-        assert _checkpoint_digest(invalid_digest.model.architecture.native_checkpoint()) == before_invalid
+        assert (
+            _checkpoint_digest(invalid_digest.model.architecture.native_checkpoint())
+            == before_invalid
+        )
 
         restored = SeedRuntime.load(checkpoint_path)
         result = restored.continue_structural_candidate_batch_from_artifact_store(

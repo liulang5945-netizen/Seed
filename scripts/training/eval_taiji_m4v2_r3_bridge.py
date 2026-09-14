@@ -119,10 +119,9 @@ def run_canary(parent_checkpoint: dict[str, Any] | None = None) -> dict[str, Any
     rollback = Taiji.from_checkpoint(copy.deepcopy(parent))
     rollback_output = rollback.generate(b"ab", 8)
 
-    old_owner_unchanged = (
-        context_before == content_digest(parent["predictive_context"])
-        and readout_before == content_digest(parent["predictive_readout"])
-    )
+    old_owner_unchanged = context_before == content_digest(
+        parent["predictive_context"]
+    ) and readout_before == content_digest(parent["predictive_readout"])
     gates = {
         "checkpoint_preflight": checkpoint_preflight,
         "parent_has_no_bridge": Taiji.ADAPTIVE_RESIDUAL_BRIDGE_KEY not in parent,

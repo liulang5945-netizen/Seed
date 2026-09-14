@@ -119,7 +119,8 @@ def _run_seed(seed: int) -> dict[str, Any]:
         "transition_lesion_effective": (
             lesion_before != lesion_after
             and lesion_result.world is not None
-            and _fact_keys(lesion_result.world) != {
+            and _fact_keys(lesion_result.world)
+            != {
                 semantic_fact_key("agent", "tracks", "alpha"),
                 semantic_fact_key("agent", "state", "ready"),
                 semantic_fact_key("agent", "holds", "cache"),

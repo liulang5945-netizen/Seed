@@ -398,9 +398,7 @@ def run_contract(
             expected_split="validation",
             expected_projects={"p2-3-recovery-validation-project"},
         )
-        train_paths = {
-            str(record["candidate"]["observation"]["path"]) for record in train_records
-        }
+        train_paths = {str(record["candidate"]["observation"]["path"]) for record in train_records}
         validation_paths = {
             str(record["candidate"]["observation"]["path"]) for record in validation_records
         }
@@ -411,9 +409,7 @@ def run_contract(
             "candidate_path_disjoint": train_paths.isdisjoint(validation_paths),
             "template_disjoint": set(
                 str(record["template_family_id"]) for record in train_records
-            ).isdisjoint(
-                str(record["template_family_id"]) for record in validation_records
-            ),
+            ).isdisjoint(str(record["template_family_id"]) for record in validation_records),
         }
         manifest = {
             "format": MANIFEST_FORMAT,

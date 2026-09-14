@@ -37,9 +37,7 @@ def _owner_digests(model: Taiji) -> dict[str, str]:
     }
     if model.identity_organ is not None:
         values["identity"] = content_digest(
-            model.identity_organ.to_payload(
-                parent_checkpoint_digest="b5-owner-diagnosis"
-            )
+            model.identity_organ.to_payload(parent_checkpoint_digest="b5-owner-diagnosis")
         )
     return values
 
@@ -93,9 +91,7 @@ def _run_variant(
         "owner_digests_before": owner_before,
         "owner_digests_after_phase_b": owner_after_phase_b,
         "owner_digests_after": owner_after,
-        "owner_changes": {
-            key: owner_before[key] != owner_after[key] for key in owner_before
-        },
+        "owner_changes": {key: owner_before[key] != owner_after[key] for key in owner_before},
         "shared_owners_preserved": all(
             owner_before[key] == owner_after[key]
             for key in ("fabric", "motor", "memory", "identity")
@@ -219,9 +215,13 @@ def main() -> int:
         phase_b_seed=args.phase_b_seed,
     )
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     result["report_written"] = args.report.is_file()
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(
         json.dumps(
             {

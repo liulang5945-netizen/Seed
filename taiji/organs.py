@@ -387,9 +387,7 @@ class BytePredictiveContext:
         self.recurrent.local_update(
             feedback,
             trace,
-            learning_rate=(
-                self.config.predictive_context_learning_rate * learning_rate_scale
-            ),
+            learning_rate=(self.config.predictive_context_learning_rate * learning_rate_scale),
             weight_decay=self.config.synapse_decay,
         )
 
@@ -496,9 +494,7 @@ class GatedMultiTimescaleTemporalResidual:
             prior_slow_context = torch.zeros_like(prior_context)
         elif prior_slow_context.shape != (self.config.motor_context_dim,):
             raise ValueError("candidate slow context dimension mismatch")
-        return self.slow_decay * prior_slow_context + (
-            1.0 - self.slow_decay
-        ) * prior_context
+        return self.slow_decay * prior_slow_context + (1.0 - self.slow_decay) * prior_context
 
     def encode(
         self,
@@ -518,18 +514,18 @@ class GatedMultiTimescaleTemporalResidual:
         slow_trace = self._slow_trace(prior_context, prior_slow_context)
         fast_norm = prior_context.norm()
         slow_norm = slow_trace.norm()
-        slow_gate = torch.sigmoid(
-            (slow_norm - fast_norm) / float(self.gate_temperature)
-        )
+        slow_gate = torch.sigmoid((slow_norm - fast_norm) / float(self.gate_temperature))
         fast_gate = 1.0 - slow_gate
         residual = float(self.residual_gain) * (
-            fast_gate * self.fast.forward(prior_context)
-            + slow_gate * self.slow.forward(slow_trace)
+            fast_gate * self.fast.forward(prior_context) + slow_gate * self.slow.forward(slow_trace)
         )
-        return bound_norm(
-            base_context + residual,
-            self.config.motor_context_norm,
-        ), slow_trace
+        return (
+            bound_norm(
+                base_context + residual,
+                self.config.motor_context_norm,
+            ),
+            slow_trace,
+        )
 
     @torch.no_grad()
     def learn(

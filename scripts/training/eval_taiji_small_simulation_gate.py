@@ -46,7 +46,8 @@ def evaluate() -> dict[str, object]:
         ),
         "outcome_credit_changes_content_selection": bool(
             content_credit["gate"]["passed"]
-            and content_credit["metrics"]["first_content"] != content_credit["metrics"]["second_content"]
+            and content_credit["metrics"]["first_content"]
+            != content_credit["metrics"]["second_content"]
             and content_credit["metrics"]["checkpoint_feedback_applied"]
         ),
         "neuron_growth_rollback_restores_parent_state": bool(
@@ -83,9 +84,8 @@ def evaluate() -> dict[str, object]:
         "metrics": metrics,
         "component_gates": component_gates,
         "gate": {
-            "passed": all(metrics.values()) and all(
-                bool(gate["passed"]) for gate in component_gates.values()
-            ),
+            "passed": all(metrics.values())
+            and all(bool(gate["passed"]) for gate in component_gates.values()),
             "criterion": (
                 "bounded native simulations must expose an evidence-driven state transition, "
                 "credit updates that change selection, explicit resource/budget rejection, "

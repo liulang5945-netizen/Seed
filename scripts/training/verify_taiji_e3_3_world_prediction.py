@@ -46,10 +46,15 @@ def run_gate() -> dict[str, object]:
     checks = {
         "native_update_admitted": report.admitted,
         "holdout_improves_over_frozen": report.native_holdout_error < report.frozen_holdout_error,
-        "replay_only_matches_frozen": abs(report.replay_only_holdout_error - report.frozen_holdout_error) < 1e-12,
-        "retention_preserved": report.native_retention_error <= report.frozen_retention_error + 0.05,
+        "replay_only_matches_frozen": abs(
+            report.replay_only_holdout_error - report.frozen_holdout_error
+        )
+        < 1e-12,
+        "retention_preserved": report.native_retention_error
+        <= report.frozen_retention_error + 0.05,
         "transition_cursor_consumed": len(trainer.consumed_transition_ids) == len(train),
-        "checkpoint_roundtrip": content_digest(restored.checkpoint()) == content_digest(trainer.checkpoint()),
+        "checkpoint_roundtrip": content_digest(restored.checkpoint())
+        == content_digest(trainer.checkpoint()),
         "schema_is_data_derived": trainer.schema.input_dim > trainer.schema.state_dim,
         "no_digest_only_training_path": True,
     }
@@ -72,7 +77,9 @@ def main() -> int:
     args = parser.parse_args()
     result = run_gate()
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0 if result["status"] == "passed" else 1
 

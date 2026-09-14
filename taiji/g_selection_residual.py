@@ -148,9 +148,7 @@ def margin_preservation_hinge(
         parent_safe_gap = (
             reference_scores[reference_selected_id] - reference_scores[safe.candidate_id]
         )
-        current_safe_gap = (
-            current_scores[reference_selected_id] - current_scores[safe.candidate_id]
-        )
+        current_safe_gap = current_scores[reference_selected_id] - current_scores[safe.candidate_id]
         if current_safe_gap < parent_safe_gap:
             loss += parent_safe_gap - current_safe_gap
             error_by_id[reference_selected_id] -= 1.0
@@ -160,12 +158,10 @@ def margin_preservation_hinge(
             if candidate.candidate_role != "proposal":
                 continue
             parent_encroachment = (
-                reference_scores[candidate.candidate_id]
-                - reference_scores[reference_selected_id]
+                reference_scores[candidate.candidate_id] - reference_scores[reference_selected_id]
             )
             current_encroachment = (
-                current_scores[candidate.candidate_id]
-                - current_scores[reference_selected_id]
+                current_scores[candidate.candidate_id] - current_scores[reference_selected_id]
             )
             if current_encroachment > parent_encroachment:
                 loss += current_encroachment - parent_encroachment
@@ -189,9 +185,7 @@ class ResidualGSelectionLearner:
         selection_margin: float = 0.05,
         device: torch.device | str = "cpu",
     ) -> None:
-        self.parent_manifest_digest = _digest(
-            str(parent_manifest_digest), "parent_manifest_digest"
-        )
+        self.parent_manifest_digest = _digest(str(parent_manifest_digest), "parent_manifest_digest")
         digests = {
             str(key): _digest(str(value), f"k_checkpoint_digests[{key}]")
             for key, value in k_checkpoint_digests.items()
@@ -258,7 +252,11 @@ class ResidualGSelectionLearner:
 
     @property
     def parameter_count(self) -> int:
-        return sum(int(parameter.numel()) for head in (self.parent_head, self.delta_head) for parameter in head.parameters())
+        return sum(
+            int(parameter.numel())
+            for head in (self.parent_head, self.delta_head)
+            for parameter in head.parameters()
+        )
 
     @property
     def trainable_parameter_count(self) -> int:
@@ -294,9 +292,7 @@ class ResidualGSelectionLearner:
         parent_manifest_digest: str,
         k_checkpoint_digests: Mapping[str, str],
     ) -> None:
-        expected_parent = _digest(
-            str(parent_manifest_digest), "expected parent_manifest_digest"
-        )
+        expected_parent = _digest(str(parent_manifest_digest), "expected parent_manifest_digest")
         expected_k = {
             str(key): _digest(str(value), f"expected k_checkpoint_digests[{key}]")
             for key, value in k_checkpoint_digests.items()
@@ -330,7 +326,10 @@ class ResidualGSelectionLearner:
             raise TypeError("Residual G learner select requires a GSelectionCandidateSet")
         candidates = tuple(candidate_set.candidates)
         with torch.no_grad():
-            scores = (self.parent_head(self._inputs(candidates)) + self.delta_head(self._inputs(candidates))).reshape(-1)
+            scores = (
+                self.parent_head(self._inputs(candidates))
+                + self.delta_head(self._inputs(candidates))
+            ).reshape(-1)
         scored = [(candidate, float(scores[index])) for index, candidate in enumerate(candidates)]
         selected, status = _apply_selection_rule(
             scored,
@@ -338,7 +337,10 @@ class ResidualGSelectionLearner:
             selection_margin=self.selection_margin,
         )
         ordered_scores = tuple(
-            sorted(((candidate, score) for candidate, score in scored), key=lambda item: item[0].candidate_id)
+            sorted(
+                ((candidate, score) for candidate, score in scored),
+                key=lambda item: item[0].candidate_id,
+            )
         )
         return GSelectionDecision.create(
             candidate_set=candidate_set,
@@ -362,9 +364,7 @@ class ResidualGSelectionLearner:
         )
         return selected.candidate_id, status
 
-    def invariant_hinge(
-        self, candidate_set: GSelectionCandidateSet
-    ) -> tuple[float, torch.Tensor]:
+    def invariant_hinge(self, candidate_set: GSelectionCandidateSet) -> tuple[float, torch.Tensor]:
         """Margin-preservation hinge against this learner's frozen head.
 
         Delegates to the canonical ``margin_preservation_hinge`` with the
@@ -487,9 +487,7 @@ class ResidualGSelectionLearner:
             "training_steps": self.training_steps,
             "revision": self.revision,
             "task_loss_mean": task_loss_sum / (len(items) * int(epochs)),
-            "hinge_loss_mean": (
-                hinge_loss_sum / constraint_steps if constraint_steps else 0.0
-            ),
+            "hinge_loss_mean": (hinge_loss_sum / constraint_steps if constraint_steps else 0.0),
             "hinge_active_steps": hinge_active_steps,
             "constraint_steps": constraint_steps,
         }
@@ -532,9 +530,7 @@ class ResidualGSelectionLearner:
         if int(payload.get("version", -1)) != RESIDUAL_G_LEARNER_VERSION:
             raise ValueError("unsupported Residual G learner checkpoint version")
         expected_digest = str(payload["checkpoint_digest"])
-        unsigned = {
-            key: value for key, value in payload.items() if key != "checkpoint_digest"
-        }
+        unsigned = {key: value for key, value in payload.items() if key != "checkpoint_digest"}
         if content_digest(unsigned) != expected_digest:
             raise ValueError("Residual G learner checkpoint digest mismatch")
         if tuple(payload.get("feature_names", ())) != G_SELECTION_FEATURE_NAMES:
@@ -557,9 +553,9 @@ class ResidualGSelectionLearner:
             }
         ) != str(payload["model_state_digest"]):
             raise ValueError("Residual G learner model state digest mismatch")
-        if content_digest(
-            {"weight": parent_weight, "bias": payload["parent_bias"]}
-        ) != str(payload["parent_head_state_digest"]):
+        if content_digest({"weight": parent_weight, "bias": payload["parent_bias"]}) != str(
+            payload["parent_head_state_digest"]
+        ):
             raise ValueError("Residual G learner frozen parent head digest mismatch")
         learner = cls(
             parent_manifest_digest=str(payload["parent_manifest_digest"]),

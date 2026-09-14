@@ -158,7 +158,10 @@ def _expanded_candidates(
         content: Any,
         result: Any,
     ) -> None:
-        pair = (None if goal is None else goal.goal_id, None if content is None else content.content_id)
+        pair = (
+            None if goal is None else goal.goal_id,
+            None if content is None else content.content_id,
+        )
         if pair in seen_pairs and candidate_role == "proposal":
             return
         if candidate_role == "proposal":
@@ -286,7 +289,9 @@ def _candidate_outcome(
             candidate_id=candidate.candidate_id,
             candidate_digest=candidate.candidate_digest,
             candidate_role=candidate.candidate_role,
-            snapshot_match=bool(observation.capability_snapshot_id and observation.capability_revision > 0),
+            snapshot_match=bool(
+                observation.capability_snapshot_id and observation.capability_revision > 0
+            ),
             planner_accepted=False,
             route_valid=False,
             parameter_valid=False,
@@ -307,7 +312,10 @@ def _candidate_outcome(
 
     from scripts.training.eval_taiji_m5_k1_skill_composition import READ_ONLY_ROUTES
 
-    if candidate.content_plan is not None and candidate.content_plan.content_id == "content:recover-target":
+    if (
+        candidate.content_plan is not None
+        and candidate.content_plan.content_id == "content:recover-target"
+    ):
         from taiji import NativeReadOnlyIntentPlanner
 
         planner = NativeReadOnlyIntentPlanner(policy=_recovery_policy())
@@ -390,7 +398,9 @@ def _behavior_record(
     ranked = sorted(outcomes, key=lambda item: (-item.utility, item.candidate_id))
     target = ranked[0]
     target_candidate = next(item for item in candidates if item.candidate_id == target.candidate_id)
-    target_kind = "pair" if target_candidate.candidate_role == "proposal" else target_candidate.candidate_role
+    target_kind = (
+        "pair" if target_candidate.candidate_role == "proposal" else target_candidate.candidate_role
+    )
     candidate_set = GSelectionCandidateSet.create(
         example_id=example_id,
         family_id=family_id,
@@ -412,26 +422,30 @@ def _behavior_record(
     )
     if behavior_set.behavior_target_candidate_id != candidate_set.target_candidate_id:
         raise AssertionError("behavior and candidate-set target drifted")
-    return candidate_set, behavior_set, {
-        "example_id": example_id,
-        "class_key": str(metadata["class_key"]),
-        "state_profile": str(metadata["state_profile"]),
-        "observation": {
-            "observation_digest": str(case["observation"].observation_digest),
-            "language_id": str(case["observation"].language_id),
-            "selection_state": str(case["observation"].selection_state),
-            "toolchain_available": bool(case["observation"].toolchain_available),
-            "read_success": bool(case["observation"].read_success),
-            "language_confidence": float(case["observation"].language_confidence),
+    return (
+        candidate_set,
+        behavior_set,
+        {
+            "example_id": example_id,
+            "class_key": str(metadata["class_key"]),
+            "state_profile": str(metadata["state_profile"]),
+            "observation": {
+                "observation_digest": str(case["observation"].observation_digest),
+                "language_id": str(case["observation"].language_id),
+                "selection_state": str(case["observation"].selection_state),
+                "toolchain_available": bool(case["observation"].toolchain_available),
+                "read_success": bool(case["observation"].read_success),
+                "language_confidence": float(case["observation"].language_confidence),
+            },
+            "k_only_candidate_id": _k_only_candidate(candidate_set).candidate_id,
+            "behavior_target_candidate_id": behavior_set.behavior_target_candidate_id,
+            "utility_margin": behavior_set.utility_margin,
+            "behavior_disagreement": _k_only_candidate(candidate_set).candidate_id
+            != behavior_set.behavior_target_candidate_id,
+            "candidate_count": len(candidates),
+            "diagnostics": diagnostics,
         },
-        "k_only_candidate_id": _k_only_candidate(candidate_set).candidate_id,
-        "behavior_target_candidate_id": behavior_set.behavior_target_candidate_id,
-        "utility_margin": behavior_set.utility_margin,
-        "behavior_disagreement": _k_only_candidate(candidate_set).candidate_id
-        != behavior_set.behavior_target_candidate_id,
-        "candidate_count": len(candidates),
-        "diagnostics": diagnostics,
-    }
+    )
 
 
 def _k_only_candidate(candidate_set: GSelectionCandidateSet) -> GSelectionCandidate:
@@ -446,10 +460,16 @@ def _k_only_candidate(candidate_set: GSelectionCandidateSet) -> GSelectionCandid
             and candidate.confidence >= CONFIDENCE_FLOOR
         ):
             return candidate
-    safe = [candidate for candidate in candidate_set.candidates if candidate.candidate_role == "abstain"]
+    safe = [
+        candidate for candidate in candidate_set.candidates if candidate.candidate_role == "abstain"
+    ]
     if safe:
         return sorted(safe, key=lambda candidate: candidate.candidate_id)[0]
-    reobserve = [candidate for candidate in candidate_set.candidates if candidate.candidate_role == "reobserve"]
+    reobserve = [
+        candidate
+        for candidate in candidate_set.candidates
+        if candidate.candidate_role == "reobserve"
+    ]
     if reobserve:
         return sorted(reobserve, key=lambda candidate: candidate.candidate_id)[0]
     raise ValueError("P3.4 K-only baseline has no safe candidate")
@@ -528,7 +548,10 @@ def _verify_sources(
         raise ValueError("P3.4 requires P1 v2 data")
     if p3_3_report.get("status") != "completed":
         raise ValueError("P3.4 requires completed P3.3 G learning")
-    if p3_3_report.get("fit_called") is not True or p3_3_report.get("training_performed") is not True:
+    if (
+        p3_3_report.get("fit_called") is not True
+        or p3_3_report.get("training_performed") is not True
+    ):
         raise ValueError("P3.4 requires the recorded P3.3 G-only fit boundary")
     if p3_3_report.get("can_promote"):
         raise ValueError("P3.4 cannot replace a promoted G artifact")
@@ -536,11 +559,16 @@ def _verify_sources(
         raise ValueError("P3.3 learning report and signal manifest differ")
     if p3_3_report.get("external_target_used") or p3_3_report.get("p2_7_holdout_fit_count") != 0:
         raise ValueError("P3.3 source crossed the runtime/holdout boundary")
-    if p3_2_report.get("status") != "completed" or p3_2_report.get("manifest_digest") != p3_2_manifest.get("manifest_digest"):
+    if p3_2_report.get("status") != "completed" or p3_2_report.get(
+        "manifest_digest"
+    ) != p3_2_manifest.get("manifest_digest"):
         raise ValueError("P3.4 requires a completed P3.2 owner-transfer source")
     if len(p2_7_manifest.get("records", ())) != 4:
         raise ValueError("P3.4 requires the fixed P2.7 holdout contract")
-    if any(record.get("candidate", {}).get("fit_eligible") is not False for record in p2_7_manifest["records"]):
+    if any(
+        record.get("candidate", {}).get("fit_eligible") is not False
+        for record in p2_7_manifest["records"]
+    ):
         raise ValueError("P2.7 holdout is not sealed as non-fit")
 
 
@@ -552,7 +580,10 @@ def run_canary(
     p3_2_report_path: Path = P3_2_REPORT,
     p3_2_manifest_path: Path = P3_2_MANIFEST,
     p3_3_report_path: Path = PROJECT_ROOT / "reports" / "taiji_m5_k_p3_3_g_learning_20260911.json",
-    p3_3_manifest_path: Path = PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p3_3_g_candidate_manifest_v1.json",
+    p3_3_manifest_path: Path = PROJECT_ROOT
+    / "plans"
+    / "manifests"
+    / "taiji_m5_k_p3_3_g_candidate_manifest_v1.json",
     manifest_path: Path = DEFAULT_MANIFEST,
     report_path: Path = DEFAULT_REPORT,
 ) -> dict[str, Any]:
@@ -597,7 +628,10 @@ def run_canary(
             "k1": str(p3_2_report["worker_checkpoint_digests"]["k1"]),
             "k2": str(p3_2_report["worker_checkpoint_digests"]["k2"]),
         }
-        if content_digest(semantic_payload) != worker_digests["k1"] or content_digest(transition_payload) != worker_digests["k2"]:
+        if (
+            content_digest(semantic_payload) != worker_digests["k1"]
+            or content_digest(transition_payload) != worker_digests["k2"]
+        ):
             raise ValueError("P3.2 K checkpoint digest drifted before P3.4")
         semantic, transition = _fresh_learners(semantic_payload, transition_payload)
         run_dir.mkdir(parents=True, exist_ok=False)
@@ -615,7 +649,13 @@ def run_canary(
         )
         if p2_6_manifest.get("parent_checkpoint_digest") != parent_digest:
             raise ValueError("P2.6 parent digest drifted")
-        train_experiences, train_metadata, validation_experiences, validation_metadata, reconstruction = _rebuild_and_verify_manifest(
+        (
+            train_experiences,
+            train_metadata,
+            validation_experiences,
+            validation_metadata,
+            reconstruction,
+        ) = _rebuild_and_verify_manifest(
             scratch=scratch / "p1",
             manifest=p1_manifest,
             parent_digest=parent_digest,

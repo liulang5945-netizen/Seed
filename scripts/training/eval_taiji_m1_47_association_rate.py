@@ -72,8 +72,7 @@ def _geometry(model: Taiji, corpus: Any) -> dict[str, float]:
             sum(float(item["cue_event_cosine"]) for item in patterns) / len(patterns)
         ),
         "association_completion_ratio_mean": float(
-            sum(float(item["association_completion_ratio"]) for item in patterns)
-            / len(patterns)
+            sum(float(item["association_completion_ratio"]) for item in patterns) / len(patterns)
         ),
         "association_error_ratio_mean": float(
             sum(float(item["association_error_ratio"]) for item in patterns) / len(patterns)
@@ -198,8 +197,7 @@ def run_diagnosis(*, seeds: tuple[int, ...] = SEEDS) -> dict[str, Any]:
         "conclusion": {
             "candidate_passed": candidate["condition_gate_passed"],
             "association_rate_is_sufficient_explanation": (
-                candidate["condition_gate_passed"]
-                and not default["condition_gate_passed"]
+                candidate["condition_gate_passed"] and not default["condition_gate_passed"]
             ),
             "next_boundary": (
                 "association rate candidate passed; hold for M1-48 stability review"
@@ -218,7 +216,9 @@ def main() -> int:
     result = run_diagnosis(seeds=tuple(int(seed) for seed in args.seeds))
     result["report_path"] = str(args.report)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

@@ -55,11 +55,9 @@ def test_m2r1_phase_chain_excludes_all_source_lineage_records() -> None:
         assert all(value == 0 for value in chain.overlap_counts.values())
 
         source_sets = [
-            set(chain.phase_a_by_seed[seed].selected_record_digests)
-            for seed in chain.lineage_seeds
+            set(chain.phase_a_by_seed[seed].selected_record_digests) for seed in chain.lineage_seeds
         ] + [
-            set(chain.phase_b_by_seed[seed].selected_record_digests)
-            for seed in chain.lineage_seeds
+            set(chain.phase_b_by_seed[seed].selected_record_digests) for seed in chain.lineage_seeds
         ]
         phase_c_records = set(chain.phase_c.selected_record_digests)
         phase_c2_records = set(chain.phase_c2.selected_record_digests)

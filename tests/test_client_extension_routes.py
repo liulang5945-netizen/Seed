@@ -93,10 +93,13 @@ def test_client_extension_api_dependency_quarantine_and_explicit_recovery(client
         },
     )
     assert prepared.status_code == 200
-    assert client.post(
-        "/api/client-extensions/commit",
-        json={"prepared_id": prepared.json()["prepared_id"]},
-    ).status_code == 200
+    assert (
+        client.post(
+            "/api/client-extensions/commit",
+            json={"prepared_id": prepared.json()["prepared_id"]},
+        ).status_code
+        == 200
+    )
 
     lost = client.post(
         "/api/client-extensions/dependency",

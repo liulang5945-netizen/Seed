@@ -75,9 +75,7 @@ from taiji import (  # noqa: E402
 
 REPORT_FORMAT = "taiji-m5-k-p4-9-feature-space-probe-v1"
 VERSION = 1
-DEFAULT_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_m5_k_p4_9_feature_space_probe_20260911.json"
-)
+DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_m5_k_p4_9_feature_space_probe_20260911.json"
 P4_8_MANIFEST = (
     PROJECT_ROOT
     / "plans"
@@ -85,10 +83,7 @@ P4_8_MANIFEST = (
     / "taiji_m5_k_p4_8_representation_redesign_manifest_v1.json"
 )
 P4_7_MANIFEST = (
-    PROJECT_ROOT
-    / "plans"
-    / "manifests"
-    / "taiji_m5_k_p4_7_capacity_clean_test_manifest_v1.json"
+    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_7_capacity_clean_test_manifest_v1.json"
 )
 P4_6_MANIFEST = (
     PROJECT_ROOT
@@ -106,10 +101,7 @@ P4_4_MANIFEST = (
     / "taiji_m5_k_p4_4_retention_identity_calibration_manifest_v1.json"
 )
 P4_3_MANIFEST = (
-    PROJECT_ROOT
-    / "plans"
-    / "manifests"
-    / "taiji_m5_k_p4_3_retention_incremental_manifest_v1.json"
+    PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_3_retention_incremental_manifest_v1.json"
 )
 P4_2_MANIFEST = (
     PROJECT_ROOT / "plans" / "manifests" / "taiji_m5_k_p4_2_capacity_attribution_manifest_v1.json"
@@ -221,9 +213,7 @@ def _p49_structured_specs(
             high_index += 1
         else:
             project_id = (
-                f"p4-9-{namespace}-project-a"
-                if safe_index == 0
-                else f"p4-9-{namespace}-project-b"
+                f"p4-9-{namespace}-project-a" if safe_index == 0 else f"p4-9-{namespace}-project-b"
             )
             prefix = f"p40_p49_{namespace}_{'a' if safe_index == 0 else 'b'}"
             paths = (
@@ -435,7 +425,9 @@ def _p49_structured_records(
     return records
 
 
-def _parent_rank(candidate_id: str, candidate_set: GSelectionCandidateSet, parent: GSelectionLearner) -> int:
+def _parent_rank(
+    candidate_id: str, candidate_set: GSelectionCandidateSet, parent: GSelectionLearner
+) -> int:
     scored = sorted(
         candidate_set.candidates,
         key=lambda item: (
@@ -462,9 +454,7 @@ def _extended_features(
             item.candidate_id,
         ),
     )
-    rank_by_id = {
-        candidate.candidate_id: index for index, candidate in enumerate(scored)
-    }
+    rank_by_id = {candidate.candidate_id: index for index, candidate in enumerate(scored)}
     pick_id = scored[0].candidate_id
     features: dict[str, tuple[float, ...]] = {}
     for candidate in candidates:
@@ -503,17 +493,26 @@ def _joint_constraints(
             if candidate.candidate_id == target_id:
                 continue
             difference = tuple(
-                t - o for t, o in zip(features[target_id], features[candidate.candidate_id], strict=True)
+                t - o
+                for t, o in zip(features[target_id], features[candidate.candidate_id], strict=True)
             )
             constraints.append(
-                (difference, ARGMAX_EPSILON, f"newtask-argmax:{candidate_set.candidate_set_digest[:16]}:{candidate.candidate_id}")
+                (
+                    difference,
+                    ARGMAX_EPSILON,
+                    f"newtask-argmax:{candidate_set.candidate_set_digest[:16]}:{candidate.candidate_id}",
+                )
             )
         if target.candidate_role == "proposal":
             difference = tuple(
                 t - o for t, o in zip(features[target_id], features[safe.candidate_id], strict=True)
             )
             constraints.append(
-                (difference, SELECTION_MARGIN + SAFE_EPSILON, f"newtask-safe:{candidate_set.candidate_set_digest[:16]}")
+                (
+                    difference,
+                    SELECTION_MARGIN + SAFE_EPSILON,
+                    f"newtask-safe:{candidate_set.candidate_set_digest[:16]}",
+                )
             )
     for record in sibling_records:
         candidate_set = record["candidate_set"]
@@ -526,16 +525,27 @@ def _joint_constraints(
                 if candidate.candidate_id == picked_id:
                     continue
                 difference = tuple(
-                    t - o for t, o in zip(features[picked_id], features[candidate.candidate_id], strict=True)
+                    t - o
+                    for t, o in zip(
+                        features[picked_id], features[candidate.candidate_id], strict=True
+                    )
                 )
                 constraints.append(
-                    (difference, ARGMAX_EPSILON, f"sibling-argmax:{candidate_set.candidate_set_digest[:16]}:{candidate.candidate_id}")
+                    (
+                        difference,
+                        ARGMAX_EPSILON,
+                        f"sibling-argmax:{candidate_set.candidate_set_digest[:16]}:{candidate.candidate_id}",
+                    )
                 )
             difference = tuple(
                 t - o for t, o in zip(features[picked_id], features[safe.candidate_id], strict=True)
             )
             constraints.append(
-                (difference, SELECTION_MARGIN + SAFE_EPSILON, f"sibling-safe:{candidate_set.candidate_set_digest[:16]}")
+                (
+                    difference,
+                    SELECTION_MARGIN + SAFE_EPSILON,
+                    f"sibling-safe:{candidate_set.candidate_set_digest[:16]}",
+                )
             )
         else:
             picked_id = decision.selected_candidate_id
@@ -543,10 +553,17 @@ def _joint_constraints(
                 if candidate.candidate_role != "proposal":
                     continue
                 difference = tuple(
-                    t - o for t, o in zip(features[candidate.candidate_id], features[picked_id], strict=True)
+                    t - o
+                    for t, o in zip(
+                        features[candidate.candidate_id], features[picked_id], strict=True
+                    )
                 )
                 constraints.append(
-                    (difference, -(SELECTION_MARGIN - SAFE_EPSILON), f"sibling-boundary:{candidate_set.candidate_set_digest[:16]}:{candidate.candidate_id}")
+                    (
+                        difference,
+                        -(SELECTION_MARGIN - SAFE_EPSILON),
+                        f"sibling-boundary:{candidate_set.candidate_set_digest[:16]}:{candidate.candidate_id}",
+                    )
                 )
     return constraints
 
@@ -707,14 +724,11 @@ def _run(*, report_path: Path = DEFAULT_REPORT) -> dict[str, Any]:
         for record in train_fit:
             candidate_set = record["candidate_set"]
             behavior_set = record["behavior_set"]
-            rank = _parent_rank(
-                behavior_set.behavior_target_candidate_id, candidate_set, parent
-            )
+            rank = _parent_rank(behavior_set.behavior_target_candidate_id, candidate_set, parent)
             target_ranks.append(rank)
             picked = parent.select(candidate_set).selected_candidate_id
             outcome_by_id = {
-                outcome.candidate_id: outcome.utility
-                for outcome in behavior_set.outcomes
+                outcome.candidate_id: outcome.utility for outcome in behavior_set.outcomes
             }
             target_utility_gaps.append(
                 float(outcome_by_id[behavior_set.behavior_target_candidate_id])
@@ -753,9 +767,7 @@ def _run(*, report_path: Path = DEFAULT_REPORT) -> dict[str, Any]:
         parent_weight = parent.model.weight.detach().reshape(-1)
         norm_product = (
             sum(a * b for a, b in zip(difference, parent_weight.tolist(), strict=True)) ** 2
-        ) / (
-            sum(a * a for a in difference) * sum(a * a for a in parent_weight.tolist()) + 1e-12
-        )
+        ) / (sum(a * a for a in difference) * sum(a * a for a in parent_weight.tolist()) + 1e-12)
         m2 = {
             "flip_needed_count": len(flip_rows),
             "preserve_count": len(preserve_rows),
@@ -769,24 +781,27 @@ def _run(*, report_path: Path = DEFAULT_REPORT) -> dict[str, Any]:
         # M3: joint feasibility over base vs extended feature spaces.
         m3: dict[str, Any] = {}
         for space, feature_fn in (
-            ("base-12", lambda candidate_set: {
-                candidate.candidate_id: tuple(candidate.feature_vector)
-                for candidate in candidate_set.candidates
-            }),
+            (
+                "base-12",
+                lambda candidate_set: {
+                    candidate.candidate_id: tuple(candidate.feature_vector)
+                    for candidate in candidate_set.candidates
+                },
+            ),
             ("extended-16", lambda candidate_set: _extended_features(candidate_set, parent)),
         ):
-            dim = len(
-                next(iter(feature_fn(sibling_records[0]["candidate_set"]).values()))
-            )
+            dim = len(next(iter(feature_fn(sibling_records[0]["candidate_set"]).values())))
             constraints = _joint_constraints(train_fit, sibling_records, parent, feature_fn)
             result = _min_violation(constraints, dim=dim)
             m3[space] = {"dim": dim, "constraint_count": len(constraints), **result}
         feasibility_verdict = (
             "both_feasible_optimization_problem"
             if m3["base-12"]["feasible"] and m3["extended-16"]["feasible"]
-            else "parent_relative_features_are_the_factorization"
-            if m3["extended-16"]["feasible"]
-            else "linear_scoring_insufficient_nonlinear_layer_required"
+            else (
+                "parent_relative_features_are_the_factorization"
+                if m3["extended-16"]["feasible"]
+                else "linear_scoring_insufficient_nonlinear_layer_required"
+            )
         )
         payload.update(
             {
@@ -796,12 +811,10 @@ def _run(*, report_path: Path = DEFAULT_REPORT) -> dict[str, Any]:
                     "source_p4_8_manifest_digest": p4_8_manifest["manifest_digest"],
                     "parent_g_checkpoint_digest": str(parent_metadata["digest"]),
                     "train_candidate_set_digests": [
-                        record["candidate_set"].candidate_set_digest
-                        for record in train_records
+                        record["candidate_set"].candidate_set_digest for record in train_records
                     ],
                     "sibling_candidate_set_digests": [
-                        record["candidate_set"].candidate_set_digest
-                        for record in sibling_records
+                        record["candidate_set"].candidate_set_digest for record in sibling_records
                     ],
                     "extended_feature_names": list(EXTENDED_FEATURE_NAMES),
                     "probe_solver": "convex violation minimisation (probe instrument, not a Taiji learner)",

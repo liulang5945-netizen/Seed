@@ -58,7 +58,15 @@ def _record_continuation_evidence(runtime: SeedRuntime) -> tuple[dict[str, objec
         (8, "workbench.code", "code-continuation-config", "train", "pyproject.toml", 0.8, 0.0),
         (9, "workbench.code", "code-continuation-holdout", "holdout", "plans/README.md", 0.1, 0.9),
         (10, "workbench.docs", "docs-continuation-roadmap", "train", "plans/README.md", 0.8, 0.0),
-        (11, "workbench.docs", "docs-continuation-frontend", "train", "frontend/package.json", 0.8, 0.0),
+        (
+            11,
+            "workbench.docs",
+            "docs-continuation-frontend",
+            "train",
+            "frontend/package.json",
+            0.8,
+            0.0,
+        ),
         (12, "workbench.docs", "docs-continuation-holdout", "holdout", "README.md", 0.1, 0.9),
     )
     return tuple(
@@ -113,7 +121,9 @@ def evaluate() -> dict[str, object]:
         runtime.save(migrated_path)
         restored = SeedRuntime.load(migrated_path, workspace_root=PROJECT_ROOT)
         old_tick = restored.model.architecture.structural_runtime_tick
-        old_scheduler_revision = restored.model.architecture.structural_growth_scheduler_state.revision
+        old_scheduler_revision = (
+            restored.model.architecture.structural_growth_scheduler_state.revision
+        )
         old_status = restored.structural_maintenance_status()
         evidence = _record_continuation_evidence(restored)
         schedule = restored.schedule_structural_candidate_batch_from_workbench_evidence(
@@ -144,7 +154,8 @@ def evaluate() -> dict[str, object]:
             "only_new_windows_create_the_next_batch": (
                 schedule["status"] == "batch_created"
                 and schedule["source_window_digests"]
-                and len(restored.model.architecture.structural_workbench_batch_schedule_results) >= 2
+                and len(restored.model.architecture.structural_workbench_batch_schedule_results)
+                >= 2
             ),
             "continuation_creates_a_new_explicit_audit": (
                 continuation["lineage_retention"] is not None
@@ -155,9 +166,15 @@ def evaluate() -> dict[str, object]:
             ),
             "old_audit_and_deleted_lineage_are_not_replayed": (
                 terminal_batch_id
-                not in {item.batch_id for item in restored.model.architecture.structural_candidate_batches}
+                not in {
+                    item.batch_id
+                    for item in restored.model.architecture.structural_candidate_batches
+                }
                 and terminal_batch_id
-                not in {item.batch_id for item in resumed.model.architecture.structural_candidate_batches}
+                not in {
+                    item.batch_id
+                    for item in resumed.model.architecture.structural_candidate_batches
+                }
                 and default_replay["maintenance_results"] == []
                 and default_replay["lineage_retention"] is None
             ),
@@ -197,7 +214,9 @@ def main() -> None:
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_w7_r5c_s30_structural_lineage_restart_continuation_20260831.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_w7_r5c_s30_structural_lineage_restart_continuation_20260831.json",
     )
     args = parser.parse_args()
     report = evaluate()

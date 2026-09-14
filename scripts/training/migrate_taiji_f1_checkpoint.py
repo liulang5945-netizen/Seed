@@ -91,7 +91,9 @@ def migrate_checkpoint(source: Path, output: Path) -> dict[str, Any]:
     restored_digest = content_digest(restored.checkpoint())
     fresh_restore_matches = restored_digest == content_digest(migrated_model_payload)
     source_unchanged = source_after_digest == source_digest
-    fast_is_zero = bool(restored.developmental_f1_bundle) and restored.developmental_f1_bundle.fast_is_zero
+    fast_is_zero = (
+        bool(restored.developmental_f1_bundle) and restored.developmental_f1_bundle.fast_is_zero
+    )
     status = bool(
         fresh_restore_matches
         and source_unchanged
@@ -130,7 +132,9 @@ def main(argv: list[str] | None = None) -> int:
 
     report = migrate_checkpoint(args.source, args.output)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(report, ensure_ascii=False))
     return 0 if report["status"] == "passed" else 1
 

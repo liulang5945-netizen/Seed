@@ -69,8 +69,7 @@ def _joint_course_evidence(report: dict[str, Any]) -> dict[str, Any]:
             raise ValueError(f"P4.14 {key} is not {value}")
     cells = report.get("cell_results", [])
     cross_phase_all_pass = all(
-        all(bool(value) for value in cell.get("cross_phase_gates", {}).values())
-        for cell in cells
+        all(bool(value) for value in cell.get("cross_phase_gates", {}).values()) for cell in cells
     )
     if not cross_phase_all_pass:
         raise ValueError("P4.14 cross-phase gates are not fully passed")
@@ -85,9 +84,9 @@ def _joint_course_evidence(report: dict[str, Any]) -> dict[str, Any]:
         "k1": "12851b4b3cc94181",
         "k2": "411ef5348231f355",
     }
-    landscape_shifted = not post_k_digests["k1"].startswith(
-        pre_k["k1"]
-    ) and not post_k_digests["k2"].startswith(pre_k["k2"])
+    landscape_shifted = not post_k_digests["k1"].startswith(pre_k["k1"]) and not post_k_digests[
+        "k2"
+    ].startswith(pre_k["k2"])
     if not landscape_shifted:
         raise ValueError("P4.14 post-K landscape did not shift from the pre-K workers")
     return {
@@ -145,14 +144,9 @@ def build_v5(
     p4_14_report: dict[str, Any],
     v4_report: dict[str, Any],
 ) -> dict[str, Any]:
-    if (
-        v4_report.get("format") != V4_REPORT_FORMAT
-        or v4_report.get("version") != V4_VERSION
-    ):
+    if v4_report.get("format") != V4_REPORT_FORMAT or v4_report.get("version") != V4_VERSION:
         raise ValueError("v4 scorecard format/version mismatch")
-    core = build_v4(
-        k1, k2, k3, c_stage, v2_report, v3_report, p4_12_report, p4_13_report
-    )
+    core = build_v4(k1, k2, k3, c_stage, v2_report, v3_report, p4_12_report, p4_13_report)
     v4_sources = v4_report.get("source_reports", {})
     for phase, digest in core["source_reports"].items():
         if v4_sources.get(phase) != digest:
@@ -199,28 +193,14 @@ def main() -> int:
     started = time.perf_counter()
     payload = build_v5(
         _read_report(
-            Path(
-                PROJECT_ROOT
-                / "reports"
-                / "taiji_m5_k1_skill_composition_formal_20260909.json"
-            )
+            Path(PROJECT_ROOT / "reports" / "taiji_m5_k1_skill_composition_formal_20260909.json")
         ),
+        _read_report(Path(PROJECT_ROOT / "reports" / "taiji_m5_k2_multistep_formal_20260909.json")),
         _read_report(
-            Path(
-                PROJECT_ROOT / "reports" / "taiji_m5_k2_multistep_formal_20260909.json"
-            )
-        ),
-        _read_report(
-            Path(
-                PROJECT_ROOT
-                / "reports"
-                / "taiji_m5_k3_outcome_dependency_formal_20260909.json"
-            )
+            Path(PROJECT_ROOT / "reports" / "taiji_m5_k3_outcome_dependency_formal_20260909.json")
         ),
         _read_report(C_STAGE_REPORT),
-        _read_report(
-            PROJECT_ROOT / "reports" / "taiji_m5_k_axis_scorecard_v2_20260909.json"
-        ),
+        _read_report(PROJECT_ROOT / "reports" / "taiji_m5_k_axis_scorecard_v2_20260909.json"),
         _read_report(V3_REPORT),
         _read_report(P4_12_REPORT),
         _read_report(P4_13_REPORT),

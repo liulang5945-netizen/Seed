@@ -175,12 +175,10 @@ def main(argv: list[str] | None = None) -> int:
                 "report": _relative(args.report),
                 "audit_status": audit["audit_status"],
                 "can_promote": audit["can_promote"],
-                "r7_strict_gate_passed": audit["historical_gate"][
-                    "r7_strict_all_seed_gate_passed"
+                "r7_strict_gate_passed": audit["historical_gate"]["r7_strict_all_seed_gate_passed"],
+                "r12_shift_kind": audit["technical_facts"]["r12_a_retention_shift_vs_reference"][
+                    "kind"
                 ],
-                "r12_shift_kind": audit["technical_facts"][
-                    "r12_a_retention_shift_vs_reference"
-                ]["kind"],
             },
             ensure_ascii=False,
         )

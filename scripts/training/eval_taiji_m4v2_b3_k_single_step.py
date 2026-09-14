@@ -179,7 +179,9 @@ def _build_experience(
     )
 
 
-def _prediction_score(semantic: Any, transition: Any, experience: KContinuationExperience) -> dict[str, float]:
+def _prediction_score(
+    semantic: Any, transition: Any, experience: KContinuationExperience
+) -> dict[str, float]:
     semantic_result = semantic.predict(experience.semantic_example.percept)
     transition_result = transition.predict(
         experience.transition_example.before,
@@ -191,7 +193,8 @@ def _prediction_score(semantic: Any, transition: Any, experience: KContinuationE
     )
     semantic_content = float(
         semantic_result.content_plan is not None
-        and semantic_result.content_plan.content_id == experience.semantic_example.content.content_id
+        and semantic_result.content_plan.content_id
+        == experience.semantic_example.content.content_id
     )
     transition_goal = float(
         transition_result.goal is not None
@@ -207,7 +210,9 @@ def _prediction_score(semantic: Any, transition: Any, experience: KContinuationE
         "semantic_content_accuracy": semantic_content,
         "transition_goal_accuracy": transition_goal,
         "transition_content_accuracy": transition_content,
-        "combined_accuracy": (semantic_goal + semantic_content + transition_goal + transition_content)
+        "combined_accuracy": (
+            semantic_goal + semantic_content + transition_goal + transition_content
+        )
         / 4.0,
     }
 
@@ -218,10 +223,7 @@ def _score_course(
     experiences: tuple[KContinuationExperience, ...],
 ) -> dict[str, float]:
     rows = [_prediction_score(semantic, transition, item) for item in experiences]
-    return {
-        key: sum(row[key] for row in rows) / len(rows)
-        for key in rows[0]
-    }
+    return {key: sum(row[key] for row in rows) / len(rows) for key in rows[0]}
 
 
 def _save_checkpoint(path: Path, checkpoint: Mapping[str, Any]) -> dict[str, Any]:
@@ -534,9 +536,7 @@ def run_pilot(
                 == str(artifacts["k3.outcome_projection"]["worker_checkpoint_digest"])
             ),
             holdout_untrained=(
-                set(course.train_experience_digests).isdisjoint(
-                    course.holdout_experience_digests
-                )
+                set(course.train_experience_digests).isdisjoint(course.holdout_experience_digests)
                 and course.holdout[0].target_digest != course.train[0].target_digest
             ),
             rollback_restored=(
@@ -555,11 +555,10 @@ def run_pilot(
             != dict(candidate_worker_checkpoint_digests)["k1.semantic"],
             "k2_owner_changed": dict(parent_worker_checkpoint_digests)["k2.transition"]
             != dict(candidate_worker_checkpoint_digests)["k2.transition"],
-            "k3_owner_unchanged": dict(parent_worker_checkpoint_digests)[
-                "k3.outcome_projection"
-            ]
+            "k3_owner_unchanged": dict(parent_worker_checkpoint_digests)["k3.outcome_projection"]
             == dict(candidate_worker_checkpoint_digests)["k3.outcome_projection"],
-            "candidate_bundle_changed": candidate_bundle.bundle_digest != parent_bundle.bundle_digest,
+            "candidate_bundle_changed": candidate_bundle.bundle_digest
+            != parent_bundle.bundle_digest,
             "candidate_checkpoint_fresh_restore": receipt.fresh_restore_verified,
             "parent_checkpoint_unchanged": receipt.parent_unchanged,
             "adapter_candidate_stage_roundtrip": (
@@ -629,8 +628,14 @@ def main() -> int:
     parser.add_argument("--candidate-namespace", default=None)
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
     args = parser.parse_args()
-    artifact_dir = args.artifact_dir if args.artifact_dir.is_absolute() else PROJECT_ROOT / args.artifact_dir
-    candidate_dir = args.candidate_dir if args.candidate_dir.is_absolute() else PROJECT_ROOT / args.candidate_dir
+    artifact_dir = (
+        args.artifact_dir if args.artifact_dir.is_absolute() else PROJECT_ROOT / args.artifact_dir
+    )
+    candidate_dir = (
+        args.candidate_dir
+        if args.candidate_dir.is_absolute()
+        else PROJECT_ROOT / args.candidate_dir
+    )
     report_path = args.report if args.report.is_absolute() else PROJECT_ROOT / args.report
     report = run_pilot(
         artifact_dir=artifact_dir,

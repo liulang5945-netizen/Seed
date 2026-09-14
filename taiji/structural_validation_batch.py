@@ -25,9 +25,7 @@ def _batch_digest(
         "expected_candidate_ids": list(expected_candidate_ids),
         "artifact_digests_by_candidate": {
             str(candidate_id): str(artifact_digest)
-            for candidate_id, artifact_digest in sorted(
-                artifact_digests_by_candidate.items()
-            )
+            for candidate_id, artifact_digest in sorted(artifact_digests_by_candidate.items())
         },
     }
     encoded = json.dumps(
@@ -58,25 +56,19 @@ class StructuralValidationArtifactBatch:
         if not batch_id:
             raise ValueError("structural validation artifact batch_id must not be empty")
         if not expected or any(not item for item in expected):
-            raise ValueError(
-                "structural validation artifact expected candidates must not be empty"
-            )
+            raise ValueError("structural validation artifact expected candidates must not be empty")
         if len(set(expected)) != len(expected):
-            raise ValueError(
-                "structural validation artifact expected candidates must be unique"
-            )
+            raise ValueError("structural validation artifact expected candidates must be unique")
         if len({candidate_id for candidate_id, _ in entries}) != len(entries):
-            raise ValueError(
-                "structural validation artifact batch candidates must be unique"
-            )
+            raise ValueError("structural validation artifact batch candidates must be unique")
         if any(candidate_id not in expected for candidate_id, _ in entries):
             raise ValueError(
                 "structural validation artifact batch contains an unexpected candidate"
             )
-        if any(not candidate_id or not artifact_digest for candidate_id, artifact_digest in entries):
-            raise ValueError(
-                "structural validation artifact batch entries must not be empty"
-            )
+        if any(
+            not candidate_id or not artifact_digest for candidate_id, artifact_digest in entries
+        ):
+            raise ValueError("structural validation artifact batch entries must not be empty")
         if not str(self.batch_digest):
             raise ValueError("structural validation artifact batch digest must not be empty")
         entries = tuple(sorted(entries))

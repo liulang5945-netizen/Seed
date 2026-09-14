@@ -3,11 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-REPORT = (
-    Path(__file__).resolve().parents[2]
-    / "reports"
-    / "taiji_m4v2_b3_pilot_probe_20260910.json"
-)
+REPORT = Path(__file__).resolve().parents[2] / "reports" / "taiji_m4v2_b3_pilot_probe_20260910.json"
 
 
 def test_b3_sg_probe_is_real_inherited_learning_but_not_promotion() -> None:

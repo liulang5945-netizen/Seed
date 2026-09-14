@@ -17,7 +17,9 @@ PARENT_MANIFEST = "a" * 64
 K_DIGESTS = {"k1": "b" * 64, "k2": "c" * 64}
 
 
-def _proposal(candidate_id: str, goal_id: str, content_id: str, *, score: float, confidence: float = 0.9) -> GSelectionCandidate:
+def _proposal(
+    candidate_id: str, goal_id: str, content_id: str, *, score: float, confidence: float = 0.9
+) -> GSelectionCandidate:
     goal = Goal(goal_id, f"goal {goal_id}", priority=0.8)
     content = ContentPlan(
         content_id=content_id,
@@ -97,9 +99,7 @@ def _trained_parent() -> GSelectionLearner:
 
 
 def test_projection_converges_on_simple_feasible_system() -> None:
-    result = project_to_joint_feasible_region(
-        [((1.0, 0.0), 1.0, "floor")], [0.0, 0.0]
-    )
+    result = project_to_joint_feasible_region([((1.0, 0.0), 1.0, "floor")], [0.0, 0.0])
 
     assert result["converged"] is True
     # The frozen criterion is violation-side: the projection must land on
@@ -121,9 +121,7 @@ def test_projection_is_deterministic() -> None:
 
 
 def test_anchor_already_feasible_stays_put() -> None:
-    result = project_to_joint_feasible_region(
-        [((1.0, 0.0), 0.5, "floor")], [1.0, 0.25]
-    )
+    result = project_to_joint_feasible_region([((1.0, 0.0), 0.5, "floor")], [1.0, 0.25])
 
     assert result["converged"] is True
     assert result["distance"]["l2"] < 1e-2
@@ -159,9 +157,7 @@ def test_extended_learner_applies_projection_without_touching_feature_source() -
         [((1.0,) * 16, 0.1, "synthetic")],
         [float(v) for v in learner.head.weight.detach().reshape(-1)],
     )
-    learner.apply_projected_weights(
-        result["weights"], projection_digest="p" * 64
-    )
+    learner.apply_projected_weights(result["weights"], projection_digest="p" * 64)
 
     assert learner.revision == 2
     assert learner.last_train_digest == "p" * 64

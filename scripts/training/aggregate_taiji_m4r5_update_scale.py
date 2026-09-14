@@ -52,14 +52,10 @@ def aggregate(reports: list[dict[str, Any]], output: Path) -> dict[str, Any]:
     if tuple(sorted(int(report["seed"]) for report in reports)) != EXPECTED_SEEDS:
         raise ValueError("aggregate requires exactly seed11, seed29, and seed47 reports")
     checks = {
-        f"seed{report['seed']}_technical_gate": bool(
-            report["technical_gate_all_passed"]
-        )
+        f"seed{report['seed']}_technical_gate": bool(report["technical_gate_all_passed"])
         for report in reports
     }
-    checks["all_reports_not_promoted"] = all(
-        report["can_promote"] is False for report in reports
-    )
+    checks["all_reports_not_promoted"] = all(report["can_promote"] is False for report in reports)
     checks["same_variant_set"] = all(
         set(report["variants"]) == set(EXPECTED_VARIANTS) for report in reports
     )
@@ -72,8 +68,7 @@ def aggregate(reports: list[dict[str, Any]], output: Path) -> dict[str, Any]:
     half = variants["scale_0p5"]
     legacy = variants["scale_1p0"]
     half_scale_supported = bool(
-        half["c3_gain_positive_count"] == len(EXPECTED_SEEDS)
-        and half["retention_gate_passed_all"]
+        half["c3_gain_positive_count"] == len(EXPECTED_SEEDS) and half["retention_gate_passed_all"]
     )
     report = {
         "format": FORMAT,
@@ -92,8 +87,7 @@ def aggregate(reports: list[dict[str, Any]], output: Path) -> dict[str, Any]:
                 half["c3_gain_mean_bpb"] > legacy["c3_gain_mean_bpb"]
             ),
             "half_scale_reduces_c_cycle2_degradation": (
-                half["c_cycle2_degradation_count"]
-                < legacy["c_cycle2_degradation_count"]
+                half["c_cycle2_degradation_count"] < legacy["c_cycle2_degradation_count"]
             ),
             "interpretation": (
                 "half-rate improves the cohort mean and reduces C cycle2 degradation, "

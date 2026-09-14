@@ -73,7 +73,9 @@ def evaluate() -> dict[str, object]:
 
         runtime.save(checkpoint_path)
         restored = SeedRuntime.load(checkpoint_path, workspace_root=PROJECT_ROOT)
-        before_budget = restored.model.architecture.cognitive_snapshot().development.structural_budget
+        before_budget = (
+            restored.model.architecture.cognitive_snapshot().development.structural_budget
+        )
         admission = restored.continue_structural_candidate_batch_from_validation_artifacts(
             batch.batch_id,
             artifacts_by_candidate={candidate_id: handed_off.to_payload()},

@@ -176,7 +176,9 @@ def main() -> int:
     parser.add_argument("--corpus", nargs="+", type=Path, default=[DEFAULT_CORPUS])
     parser.add_argument("--partition-seed", type=int, default=11)
     parser.add_argument("--seeds", nargs="+", type=int, default=[11, 29, 47])
-    parser.add_argument("--replay-scales", nargs="+", type=float, default=[0.05, 0.10, 0.25, 0.50, 1.0])
+    parser.add_argument(
+        "--replay-scales", nargs="+", type=float, default=[0.05, 0.10, 0.25, 0.50, 1.0]
+    )
     parser.add_argument(
         "--replay-targets",
         nargs="+",
@@ -212,7 +214,9 @@ def main() -> int:
     }
     result["report_path"] = str(args.report)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

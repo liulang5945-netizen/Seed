@@ -19,7 +19,9 @@ from taiji import SemanticEvidenceProposal, TSKV8Adapter  # noqa: E402
 REPORT_FORMAT = "taiji-w7-p3-1-semantic-provider-boundary-v1"
 
 
-def _proposal(runtime: SeedRuntime, prompt: str, *, confidence: float = 0.9, ambiguity: float = 0.1):
+def _proposal(
+    runtime: SeedRuntime, prompt: str, *, confidence: float = 0.9, ambiguity: float = 0.1
+):
     _, frame = runtime._task_frame(prompt)
     return SemanticEvidenceProposal.from_frame(
         frame,
@@ -164,7 +166,9 @@ def main() -> None:
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     report = evaluate()
-    report_path = PROJECT_ROOT / "reports" / "taiji_w7_p3_1_semantic_provider_boundary_20260831.json"
+    report_path = (
+        PROJECT_ROOT / "reports" / "taiji_w7_p3_1_semantic_provider_boundary_20260831.json"
+    )
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(
         json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"

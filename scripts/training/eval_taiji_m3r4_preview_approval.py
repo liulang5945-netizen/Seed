@@ -231,8 +231,7 @@ def run_gate(output_path: Path | None = None) -> dict[str, Any]:
             and preview_shape["operations"] == 1
             and preview_shape == approval_preview_shape
         ),
-        "preview_repeat_is_stable": content_digest(preview)
-        == content_digest(preview_repeat),
+        "preview_repeat_is_stable": content_digest(preview) == content_digest(preview_repeat),
         "approval_is_exactly_bound": approved_policy.decision == "allow"
         and approved_policy.reason_code == "explicit_approval"
         and approval["preview"] == preview,
@@ -312,9 +311,7 @@ def run_gate(output_path: Path | None = None) -> dict[str, Any]:
     }
     if output_path is not None:
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        output_path.write_text(
-            json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8"
-        )
+        output_path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     return report
 
 

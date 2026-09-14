@@ -115,9 +115,11 @@ def _k3_registry() -> ProgrammingLanguageRegistry:
     command = Path(sys.executable).name
     return ProgrammingLanguageRegistry(
         tuple(
-            replace(definition, toolchain_commands=(command,))
-            if definition.language_id in LANGS
-            else definition
+            (
+                replace(definition, toolchain_commands=(command,))
+                if definition.language_id in LANGS
+                else definition
+            )
             for definition in ProgrammingLanguageRegistry.default().definitions
         )
     )
@@ -128,7 +130,9 @@ def _model_world(world: WorldState) -> WorldState:
 
     return replace(
         world,
-        relations=tuple(relation for relation in world.relations if relation[0] not in FEEDBACK_SUBJECTS),
+        relations=tuple(
+            relation for relation in world.relations if relation[0] not in FEEDBACK_SUBJECTS
+        ),
     )
 
 
@@ -141,7 +145,9 @@ def _world_with_feedback(
     return replace(
         world,
         relations=(
-            *tuple(relation for relation in world.relations if relation[0] not in FEEDBACK_SUBJECTS),
+            *tuple(
+                relation for relation in world.relations if relation[0] not in FEEDBACK_SUBJECTS
+            ),
             ("outcome", "class", outcome_class),
         ),
     )
@@ -313,9 +319,7 @@ def _spec(branch: str, *, step: str) -> OutcomeDependencySpec:
         dependency_id=f"m5k3:dependency:{step}",
         next_task_id=f"m5k3:{branch}:{step}",
         capability_id=(
-            "workspace.read"
-            if branch == "success"
-            else "workspace.programming_language.resolve"
+            "workspace.read" if branch == "success" else "workspace.programming_language.resolve"
         ),
         required_outcome=branch,
     )
@@ -410,8 +414,12 @@ def _run_episode(
     current_world = initial_world
     projection = None
     dependency_token = ""
-    expected_content = "content:inspect-language" if branch == "success" else "content:clarify-toolchain"
-    expected_kind = "workspace.read" if branch == "success" else "workspace.programming_language.resolve"
+    expected_content = (
+        "content:inspect-language" if branch == "success" else "content:clarify-toolchain"
+    )
+    expected_kind = (
+        "workspace.read" if branch == "success" else "workspace.programming_language.resolve"
+    )
 
     # Step 1: Stage-1 semantic output still chooses the first read-only intent.
     probe_event = probe.to_percept_event(tick=1)
@@ -485,9 +493,7 @@ def _run_episode(
             "event_id": _latest_workbench_event(runtime).event_id,
         }
     )
-    probe_row["step_success"] = bool(
-        real_success == expected_probe_success and admitted
-    )
+    probe_row["step_success"] = bool(real_success == expected_probe_success and admitted)
     rows.append(probe_row)
     if not probe_row["step_success"] or probe_transition.world is None:
         return {"rows": rows, "episode_success": False}
@@ -509,8 +515,7 @@ def _run_episode(
                 relations=tuple(
                     relation
                     for relation in enriched.relations
-                    if relation in OUTCOME_FACTS
-                    or relation[0] == "workbench"
+                    if relation in OUTCOME_FACTS or relation[0] == "workbench"
                 ),
             )
             dependency_token = projection.dependency_digest
@@ -534,9 +539,7 @@ def _run_episode(
             ),
             "expected_content_id": expected_content,
             "expected_intent_kind": expected_kind,
-            "dependency_projection_accepted": bool(
-                projection is not None and projection.accepted
-            ),
+            "dependency_projection_accepted": bool(projection is not None and projection.accepted),
         }
         if transition.world is None or transition.goal is None or transition.content_plan is None:
             row["step_success"] = False
@@ -552,9 +555,7 @@ def _run_episode(
         )
         row["accepted"] = bool(decision.accepted)
         row["decision_reason"] = decision.reason_code
-        row["intent_kind"] = (
-            None if decision.action_intent is None else decision.action_intent.kind
-        )
+        row["intent_kind"] = None if decision.action_intent is None else decision.action_intent.kind
         dependency_gate = bool(
             projector is not None
             and projection is not None
@@ -587,9 +588,7 @@ def _run_episode(
                 "real_reward": float((execution.get("taiji_outcome") or {}).get("reward", 0.0)),
             }
         )
-        row["step_success"] = bool(
-            outcome.get("success") and row["lineage_matches"]
-        )
+        row["step_success"] = bool(outcome.get("success") and row["lineage_matches"])
         rows.append(row)
         if not row["step_success"]:
             break
@@ -657,22 +656,16 @@ def _run_arm(
                 parent_checkpoint_id="checkpoint:k3-parent",
             )
         )
-    probe_rows = [
-        episode["rows"][0] if episode["rows"] else {}
-        for episode in episodes
-    ]
+    probe_rows = [episode["rows"][0] if episode["rows"] else {} for episode in episodes]
     feedback_rows = [
         row
         for episode in episodes
         for row in episode["rows"]
-        if row.get("step") in {"followup", "verification"}
-        and row.get("dependency_gate")
+        if row.get("step") in {"followup", "verification"} and row.get("dependency_gate")
     ]
     return {
         "episodes": episodes,
-        "episode_success_rate": sum(
-            1 for episode in episodes if episode["episode_success"]
-        )
+        "episode_success_rate": sum(1 for episode in episodes if episode["episode_success"])
         / max(1, len(episodes)),
         "probe_outcome_admission_rate": sum(
             1 for row in probe_rows if row.get("outcome_admitted", False)
@@ -688,8 +681,7 @@ def _run_arm(
         )
         / max(1, len(feedback_rows)),
         "all_feedback_lineages_admitted": bool(
-            feedback_rows
-            and all(row.get("lineage_matches", False) for row in feedback_rows)
+            feedback_rows and all(row.get("lineage_matches", False) for row in feedback_rows)
         ),
         "feedback_row_count": len(feedback_rows),
     }
@@ -710,7 +702,8 @@ def _checkpoint_gate(
     )
     projector_restored = OutcomeDependencyProjector.from_checkpoint(projector.checkpoint())
     return {
-        "semantic_owner_digest_equal": semantic.owner_digests() == semantic_restored.owner_digests(),
+        "semantic_owner_digest_equal": semantic.owner_digests()
+        == semantic_restored.owner_digests(),
         "transition_owner_digest_equal": transition.owner_digests()
         == transition_restored.owner_digests(),
         "projector_checkpoint_equal": projector.checkpoint() == projector_restored.checkpoint(),
@@ -747,9 +740,7 @@ def run_cell(*, task_seed: int, learner_seed: int) -> dict[str, Any]:
         original_get_setting = workbench_module.get_setting
         active_workspace_root = {"path": temp_root}
         workbench_module.get_setting = lambda key, default=None: (
-            str(active_workspace_root["path"])
-            if key == "workspace_path"
-            else default
+            str(active_workspace_root["path"]) if key == "workspace_path" else default
         )
         try:
             train_root = temp_root / "train"
@@ -871,9 +862,7 @@ def run_cell(*, task_seed: int, learner_seed: int) -> dict[str, Any]:
                 ("success", ("python_07.py", "rust_07.rs", "typescript_07.ts")),
                 ("failure", ("typescript_05.ts", "rust_06.rs", "python_07.py")),
             )
-            planner = NativeReadOnlyIntentPlanner(
-                ReadOnlyIntentPolicy(routes=READ_ONLY_ROUTES)
-            )
+            planner = NativeReadOnlyIntentPlanner(ReadOnlyIntentPolicy(routes=READ_ONLY_ROUTES))
             train_arm = _run_arm(
                 arm="A-full-feedback",
                 sequences=train_sequences,
@@ -931,9 +920,7 @@ def run_cell(*, task_seed: int, learner_seed: int) -> dict[str, Any]:
                 "a_minus_c_at_least_0p25": (a_rate - c_rate) >= 0.25,
                 "a_train_success_is_1": train_arm["episode_success_rate"] == 1.0,
                 "train_episode_count_at_least_6": len(train_arm["episodes"]) >= 6,
-                "a_probe_outcomes_admitted": arms["A-full-feedback"][
-                    "all_probe_outcomes_admitted"
-                ],
+                "a_probe_outcomes_admitted": arms["A-full-feedback"]["all_probe_outcomes_admitted"],
                 "a_feedback_lineages_admitted": arms["A-full-feedback"][
                     "all_feedback_lineages_admitted"
                 ],
@@ -1007,7 +994,9 @@ def main() -> int:
         "cell": cell,
     }
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
     print(json.dumps({"status": payload["status"], "report": str(args.report)}, ensure_ascii=False))
     return 0 if payload["status"] == "passed" else 1
 

@@ -89,8 +89,7 @@ def build_world_corpus(*, count: int) -> WorldTransitionCorpus:
         raise ValueError("F3 world corpus needs at least four transitions")
     return WorldTransitionCorpus(
         train=tuple(
-            _world_case(f"m1-f3-world-train-{index}", float(index))
-            for index in range(int(count))
+            _world_case(f"m1-f3-world-train-{index}", float(index)) for index in range(int(count))
         ),
         holdout=tuple(
             _world_case(f"m1-f3-world-holdout-{index}", float(count + index))
@@ -124,9 +123,7 @@ def build_goal_corpus(*, count: int) -> GoalActionCorpus:
 
 def build_world_learner(corpus: WorldTransitionCorpus, *, seed: int):
     all_cases = (*corpus.train, *corpus.holdout, *corpus.retention)
-    schema = WorldSchema.from_corpus(
-        WorldInterventionCorpus(train=all_cases, holdout=())
-    )
+    schema = WorldSchema.from_corpus(WorldInterventionCorpus(train=all_cases, holdout=()))
     from taiji import WorldDynamicsLearner
 
     return WorldDynamicsLearner(schema, hidden_dim=32, seed=seed)
@@ -192,7 +189,9 @@ def main() -> int:
     )
     report_path.parent.mkdir(parents=True, exist_ok=True)
     result["report_path"] = str(report_path)
-    report_path.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    report_path.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

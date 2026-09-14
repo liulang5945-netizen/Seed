@@ -153,7 +153,11 @@ def begin_client_extension_call(plugin_id: str) -> dict[str, Any]:
         _client_host().begin_call(plugin_id)
     except Exception as exc:
         _raise_extension_error(exc)
-    return {"status": "in_flight", "plugin_id": plugin_id, "count": _client_host().inflight(plugin_id)}
+    return {
+        "status": "in_flight",
+        "plugin_id": plugin_id,
+        "count": _client_host().inflight(plugin_id),
+    }
 
 
 @router.post("/{plugin_id}/call/end")
@@ -162,7 +166,11 @@ def end_client_extension_call(plugin_id: str) -> dict[str, Any]:
         _client_host().end_call(plugin_id)
     except Exception as exc:
         _raise_extension_error(exc)
-    return {"status": "settled", "plugin_id": plugin_id, "count": _client_host().inflight(plugin_id)}
+    return {
+        "status": "settled",
+        "plugin_id": plugin_id,
+        "count": _client_host().inflight(plugin_id),
+    }
 
 
 @router.post("/{plugin_id}/retire")

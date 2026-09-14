@@ -80,20 +80,16 @@ def _geometry(model: Taiji, corpus: Any) -> dict[str, Any]:
     all_patterns = (*phase_a, *phase_b)
     return {
         "event_active_support_mean": float(
-            sum(float(item["event_active_support"]) for item in all_patterns)
-            / len(all_patterns)
+            sum(float(item["event_active_support"]) for item in all_patterns) / len(all_patterns)
         ),
         "cue_event_cosine_mean": float(
-            sum(float(item["cue_event_cosine"]) for item in all_patterns)
-            / len(all_patterns)
+            sum(float(item["cue_event_cosine"]) for item in all_patterns) / len(all_patterns)
         ),
         "association_completion_ratio_mean": float(
-            sum(float(item["association_completion_ratio"]) for item in phase_a)
-            / len(phase_a)
+            sum(float(item["association_completion_ratio"]) for item in phase_a) / len(phase_a)
         ),
         "association_error_ratio_mean": float(
-            sum(float(item["association_error_ratio"]) for item in phase_a)
-            / len(phase_a)
+            sum(float(item["association_error_ratio"]) for item in phase_a) / len(phase_a)
         ),
         "cross_phase_event_cosine_mean": float(cross.mean().item()),
         "cross_phase_event_cosine_max": float(cross.max().item()),
@@ -191,10 +187,7 @@ def _condition_passed(condition: dict[str, Any]) -> bool:
 
 def run_diagnosis() -> dict[str, Any]:
     corpus = _curriculum(phase_a_start=0, phase_b_start=192)
-    conditions = [
-        _condition_record(name, gains, corpus)
-        for name, gains in CONDITIONS.items()
-    ]
+    conditions = [_condition_record(name, gains, corpus) for name, gains in CONDITIONS.items()]
     for condition in conditions:
         condition["condition_gate_passed"] = _condition_passed(condition)
     default, candidate = conditions
@@ -217,8 +210,7 @@ def run_diagnosis() -> dict[str, Any]:
         "conclusion": {
             "candidate_passed": candidate["condition_gate_passed"],
             "episode_attenuation_is_sufficient_explanation": (
-                candidate["condition_gate_passed"]
-                and not default["condition_gate_passed"]
+                candidate["condition_gate_passed"] and not default["condition_gate_passed"]
             ),
             "next_boundary": (
                 "episode attenuation passed; require information-retention review"
@@ -236,7 +228,9 @@ def main() -> int:
     result = run_diagnosis()
     result["report_path"] = str(args.report)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

@@ -37,9 +37,7 @@ def _build_artifact(
     executions: tuple[dict[str, object], ...],
 ) -> tuple[WorkbenchStructuralValidationArtifact, dict[str, object]]:
     candidate = next(
-        item
-        for item in model.structural_proposal_candidates
-        if item.candidate_id == candidate_id
+        item for item in model.structural_proposal_candidates if item.candidate_id == candidate_id
     )
     candidate_region_id = str(dict(candidate.specification)["region_id"])
     capacity = model.measure_structural_capacity_pressure(
@@ -51,9 +49,7 @@ def _build_artifact(
         candidate_id,
     )
     workbench_region_id = (
-        "workbench.code"
-        if candidate_region_id == "adaptive.cortex"
-        else "workbench.docs"
+        "workbench.code" if candidate_region_id == "adaptive.cortex" else "workbench.docs"
     )
     outcome_digests = tuple(
         item["evidence"]["evidence"]["outcome_digest"]
@@ -114,9 +110,7 @@ def evaluate() -> dict[str, object]:
     )
     first_checkpoint = runtime.model.architecture.native_checkpoint()
     first_restored = TSKV8Adapter.from_native_checkpoint(first_checkpoint)
-    first_admitted_topology = tuple(
-        region.unit_ids for region in first_restored.neuron_regions
-    )
+    first_admitted_topology = tuple(region.unit_ids for region in first_restored.neuron_regions)
     second_artifact, second_replay = _build_artifact(
         first_restored,
         second_id,
@@ -161,9 +155,7 @@ def evaluate() -> dict[str, object]:
         artifacts_by_candidate={second_id: first_artifact},
         replays_by_candidate={second_id: first_replay},
     )
-    failure_topology = tuple(
-        region.unit_ids for region in failure_branch.neuron_regions
-    )
+    failure_topology = tuple(region.unit_ids for region in failure_branch.neuron_regions)
     failure_batch = failure_result["batch"]
     success_batch = success_result["batch"]
     repeated_batch = repeated["batch"]

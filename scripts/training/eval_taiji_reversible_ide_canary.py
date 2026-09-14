@@ -89,9 +89,7 @@ def evaluate() -> dict[str, object]:
 
             start = original_content.index(OLD_TEXT)
             updated_content = (
-                original_content[:start]
-                + NEW_TEXT
-                + original_content[start + len(OLD_TEXT) :]
+                original_content[:start] + NEW_TEXT + original_content[start + len(OLD_TEXT) :]
             )
             updated_digest = hashlib.sha256(updated_content.encode("utf-8")).hexdigest()
             patch_intent = ActionIntent(
@@ -134,15 +132,11 @@ def evaluate() -> dict[str, object]:
 
             runtime.save(checkpoint_path)
             restored = SeedRuntime.load(checkpoint_path)
-            restored_language_selections = restored.workbench_environment.language_state_checkpoint()[
-                "selections"
-            ]
+            restored_language_selections = (
+                restored.workbench_environment.language_state_checkpoint()["selections"]
+            )
             restored_language = next(
-                (
-                    item
-                    for item in restored_language_selections
-                    if item.get("path") == TARGET_PATH
-                ),
+                (item for item in restored_language_selections if item.get("path") == TARGET_PATH),
                 {},
             )
             undo_intent = ActionIntent(
@@ -178,7 +172,8 @@ def evaluate() -> dict[str, object]:
             metrics = {
                 "read_outcome_provided_content_digest": (
                     read_execution["outcome"]["status"] == "success"
-                    and original_digest == hashlib.sha256(original_content.encode("utf-8")).hexdigest()
+                    and original_digest
+                    == hashlib.sha256(original_content.encode("utf-8")).hexdigest()
                 ),
                 "language_plan_reaches_and_executes_editor_selection": (
                     planned["assessment"]["selection_state"] == "resolved"
@@ -232,9 +227,11 @@ def evaluate() -> dict[str, object]:
             "read_digest": original_digest,
             "updated_digest": updated_digest,
             "language_id": language_result["programming_language_id"],
-            "audit_phases": [event.phase for event in runtime.workbench_audit.events]
-            if runtime is not None
-            else [],
+            "audit_phases": (
+                [event.phase for event in runtime.workbench_audit.events]
+                if runtime is not None
+                else []
+            ),
         },
         "gap": {
             "current": (

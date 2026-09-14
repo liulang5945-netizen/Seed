@@ -60,9 +60,7 @@ ARTIFACT_VERSION = 1
 K3_SOURCE_FORMAT = "taiji-k3-projection-source-v1"
 EPSILON = 0.01
 DEFAULT_REPORT = (
-    PROJECT_ROOT
-    / "reports"
-    / "taiji_m4v2_r6_k_worker_attachment_preflight_20260909.json"
+    PROJECT_ROOT / "reports" / "taiji_m4v2_r6_k_worker_attachment_preflight_20260909.json"
 )
 DEFAULT_CANDIDATE_NAMESPACE = "taiji:k:candidate"
 WORKER_KEYWORDS = {
@@ -105,9 +103,7 @@ def _require_digest(value: Any, name: str) -> str:
 
 
 def _artifact_unsigned(payload: Mapping[str, Any]) -> dict[str, Any]:
-    return {
-        key: value for key, value in payload.items() if key != "artifact_digest"
-    }
+    return {key: value for key, value in payload.items() if key != "artifact_digest"}
 
 
 def _discover(worker_id: str) -> list[Path]:
@@ -167,9 +163,7 @@ def _restore_worker(
     candidate_namespace = str(artifact.get("candidate_namespace", "")).strip()
     if not candidate_namespace:
         raise ValueError("candidate_namespace cannot be empty")
-    if str(artifact.get("artifact_digest", "")) != content_digest(
-        _artifact_unsigned(artifact)
-    ):
+    if str(artifact.get("artifact_digest", "")) != content_digest(_artifact_unsigned(artifact)):
         raise ValueError("K worker artifact digest mismatch")
     if str(artifact.get("parent_checkpoint_digest", "")) != parent_digest:
         raise ValueError("K worker artifact crosses the selected parent")
@@ -199,9 +193,7 @@ def _restore_worker(
             raise ValueError("K1 probe did not return StructuredSemanticResult")
         extra = {"probe_type": probe_type, "feature_dim": worker.feature_dim}
     elif worker_id == "k2.transition":
-        worker = StructuredSemanticTransitionLearner.from_checkpoint(
-            checkpoint, device="cpu"
-        )
+        worker = StructuredSemanticTransitionLearner.from_checkpoint(checkpoint, device="cpu")
         derived_owner = worker.owner_digests()
         derived_source = worker.source_digest
         derived_steps = int(worker.training_steps)
@@ -251,7 +243,10 @@ def _restore_worker(
         raise ValueError("worker artifact carries optimizer state that cannot be restored")
     if str(artifact.get("input_contract_digest", "")) != K_WORKER_INPUT_CONTRACT_DIGESTS[worker_id]:
         raise ValueError("K worker input contract digest mismatch")
-    if str(artifact.get("output_contract_digest", "")) != K_WORKER_OUTPUT_CONTRACT_DIGESTS[worker_id]:
+    if (
+        str(artifact.get("output_contract_digest", ""))
+        != K_WORKER_OUTPUT_CONTRACT_DIGESTS[worker_id]
+    ):
         raise ValueError("K worker output contract digest mismatch")
 
     manifest = KWorkerManifest.create(
@@ -413,9 +408,7 @@ def run_preflight(
         errors={},
     )
     report["parent_restore"] = {
-        "fresh_restore": content_digest(
-            Taiji.from_checkpoint(copy.deepcopy(parent)).checkpoint()
-        )
+        "fresh_restore": content_digest(Taiji.from_checkpoint(copy.deepcopy(parent)).checkpoint())
         == parent_digest,
         "rollback_restore": content_digest(
             Taiji.from_checkpoint(copy.deepcopy(parent)).checkpoint()
@@ -455,7 +448,9 @@ def run_preflight(
     report["workers"] = restored_details
     if errors or len(manifests) != len(K_WORKER_IDS):
         report["status"] = "failed"
-        report["blocking_reason"] = "one or more real worker artifacts failed restore/lineage validation"
+        report["blocking_reason"] = (
+            "one or more real worker artifacts failed restore/lineage validation"
+        )
         return report
 
     artifact_payloads: dict[str, dict[str, Any]] = {}
@@ -465,12 +460,10 @@ def run_preflight(
             raise RuntimeError("worker artifact path disappeared during preflight")
         artifact_payloads[worker_id] = _load_torch_mapping(path)
     source_manifest_values = {
-        str(payload["source_manifest_digest"])
-        for payload in artifact_payloads.values()
+        str(payload["source_manifest_digest"]) for payload in artifact_payloads.values()
     }
     resource_manifest_values = {
-        str(payload["resource_manifest_digest"])
-        for payload in artifact_payloads.values()
+        str(payload["resource_manifest_digest"]) for payload in artifact_payloads.values()
     }
     if len(source_manifest_values) != 1 or len(resource_manifest_values) != 1:
         report["status"] = "failed"
@@ -510,9 +503,7 @@ def run_preflight(
 
         before = _scores(parent, course_seed)
         after = _scores(parent, course_seed)
-        retention = {
-            phase: abs(after[phase] - before[phase]) <= EPSILON for phase in ("S", "G")
-        }
+        retention = {phase: abs(after[phase] - before[phase]) <= EPSILON for phase in ("S", "G")}
         token = adapter.stage_candidate(
             candidate_checkpoint_digest=content_digest(
                 {"format": "r6-k-worker-candidate-v1", "parent": parent_digest}
@@ -531,9 +522,7 @@ def run_preflight(
         checks = {
             "parent_fresh_restore": bool(report["parent_restore"]["fresh_restore"]),
             "parent_rollback_restore": bool(report["parent_restore"]["rollback_restore"]),
-            "worker_bundle_exactly_k1_k2_k3": tuple(
-                item.worker_id for item in bundle.workers
-            )
+            "worker_bundle_exactly_k1_k2_k3": tuple(item.worker_id for item in bundle.workers)
             == K_WORKER_IDS,
             "worker_bundle_same_parent": all(
                 item.parent_checkpoint_digest == parent_digest for item in bundle.workers
@@ -542,12 +531,8 @@ def run_preflight(
             "typed_exchange_parent_echo": (
                 exchange.output.parent_checkpoint_digest == parent_digest
             ),
-            "typed_exchange_worker_bundle_roundtrip": (
-                exchange_restored.worker_bundle == bundle
-            ),
-            "typed_exchange_ledger_roundtrip": (
-                exchange_restored.last_exchange == exchange
-            ),
+            "typed_exchange_worker_bundle_roundtrip": (exchange_restored.worker_bundle == bundle),
+            "typed_exchange_ledger_roundtrip": (exchange_restored.last_exchange == exchange),
             "candidate_stage_worker_bundle_roundtrip": staged.worker_bundle == bundle,
             "rollback_worker_bundle_roundtrip": rollback.worker_bundle == bundle,
             "rollback_record_explicit": (

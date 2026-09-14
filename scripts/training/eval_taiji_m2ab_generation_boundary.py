@@ -64,9 +64,7 @@ def _authorization(
         capability_snapshot_id=boundary.capability_snapshot_id,
         authorized_capability_ids=("workspace.read",),
         active_boundary_digest=(
-            boundary.token_digest
-            if active_boundary_digest is None
-            else active_boundary_digest
+            boundary.token_digest if active_boundary_digest is None else active_boundary_digest
         ),
         current_tick=10,
         usage=usage,
@@ -129,7 +127,8 @@ def run_canary(checkpoint: Path) -> dict[str, Any]:
 
     checks = {
         "protected_generation_succeeded": bool(protected_output),
-        "protected_route_recorded": protected_route == {
+        "protected_route_recorded": protected_route
+        == {
             "boundary_digest": protected.token_digest,
             "generation_scope": "protected",
             "readout_owner": "predictive_readout",
@@ -144,7 +143,10 @@ def run_canary(checkpoint: Path) -> dict[str, Any]:
             replay_route is not None and replay_route["read_only_replay"] is True
         ),
         "persistent_owners_unchanged": (
-            owners_before == owners_after_protected == owners_after_active_rejection == owners_after_replay
+            owners_before
+            == owners_after_protected
+            == owners_after_active_rejection
+            == owners_after_replay
         ),
     }
     return {
@@ -193,9 +195,7 @@ def main() -> int:
                 "status": result["status"],
                 "checks_passed": sum(int(value) for value in result["checks"].values()),
                 "checks_total": len(result["checks"]),
-                "persistent_owners_read_only": result["owner_audit"][
-                    "persistent_owners_read_only"
-                ],
+                "persistent_owners_read_only": result["owner_audit"]["persistent_owners_read_only"],
             },
             ensure_ascii=False,
             indent=2,

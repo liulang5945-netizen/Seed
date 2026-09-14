@@ -207,12 +207,8 @@ def _save_continuation_boundary(
     parent_bundle_digest: str,
 ) -> tuple[TaijiContinuationCheckpoint, dict[str, Any]]:
     worker = _save_arm(directory / "workers", semantic, transition)
-    worker_digests = {
-        owner: str(worker["checkpoint_digests"][owner]) for owner in ("k1", "k2")
-    }
-    worker_refs = {
-        owner: str(worker["files"][owner]["path"]) for owner in ("k1", "k2")
-    }
+    worker_digests = {owner: str(worker["checkpoint_digests"][owner]) for owner in ("k1", "k2")}
+    worker_refs = {owner: str(worker["files"][owner]["path"]) for owner in ("k1", "k2")}
     checkpoint = TaijiContinuationCheckpoint.create(
         parent_checkpoint_digest=parent_bundle_digest,
         worker_checkpoint_digests=worker_digests,
@@ -322,10 +318,7 @@ def _resume_from_boundary(
     boundary.assert_parent(parent_bundle_digest)
     payloads = _load_worker_payloads(
         {
-            "files": {
-                owner: {"path": path}
-                for owner, path in boundary.worker_checkpoint_refs
-            },
+            "files": {owner: {"path": path} for owner, path in boundary.worker_checkpoint_refs},
             "checkpoint_digests": dict(boundary.worker_checkpoint_digests),
         }
     )
@@ -359,7 +352,9 @@ def _boundary_payload(path: str) -> dict[str, Any]:
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
 
-def _rejection_checks(checkpoint: TaijiContinuationCheckpoint, checkpoint_path: str) -> dict[str, bool]:
+def _rejection_checks(
+    checkpoint: TaijiContinuationCheckpoint, checkpoint_path: str
+) -> dict[str, bool]:
     tampered = _boundary_payload(checkpoint_path)
     tampered["phase_cursor"]["index"] = int(tampered["phase_cursor"]["index"]) + 1
     try:
@@ -413,9 +408,7 @@ def _trajectory_summary(
             == resumed_replay.stream_digest
         ),
         "final_cursor_equal": (
-            uninterrupted.phase_cursor
-            == resumed_wake.phase_cursor
-            == resumed_replay.phase_cursor
+            uninterrupted.phase_cursor == resumed_wake.phase_cursor == resumed_replay.phase_cursor
         ),
     }
 

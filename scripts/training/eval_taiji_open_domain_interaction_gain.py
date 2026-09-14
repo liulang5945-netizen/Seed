@@ -184,7 +184,9 @@ def _target_member_ids(first: str, second: str) -> tuple[str, str]:
     return tuple(sorted((MEMBER_IDS[first], MEMBER_IDS[second])))
 
 
-def _baseline_member(learner: InteractionGroupTransferLearner, members: tuple[str, str], mode: str) -> str:
+def _baseline_member(
+    learner: InteractionGroupTransferLearner, members: tuple[str, str], mode: str
+) -> str:
     profiles = {profile.member_id: profile for profile in learner.profiles}
     if mode == "weight_only" or mode == "memory_only":
         return min(
@@ -292,7 +294,8 @@ def evaluate() -> dict[str, object]:
                     "future_did_not_enter_train_learner": (
                         len(learner.observed_records) == before_observation_count
                     ),
-                    "checkpoint_candidate_rollback_equal": learner.checkpoint() == before_checkpoint,
+                    "checkpoint_candidate_rollback_equal": learner.checkpoint()
+                    == before_checkpoint,
                 }
             )
     restored = InteractionGroupTransferLearner.from_checkpoint(before_checkpoint)
@@ -321,10 +324,7 @@ def evaluate() -> dict[str, object]:
     metrics = {
         "future_round_count": len(FUTURE_FAMILIES) == 3,
         "independent_future_capability_families": len(
-            {
-                frozenset(MEMBER_ACTIONS[key][0] for key in family[1:])
-                for family in FUTURE_FAMILIES
-            }
+            {frozenset(MEMBER_ACTIONS[key][0] for key in family[1:]) for family in FUTURE_FAMILIES}
         )
         >= 2,
         "train_only_group_count": len(train_groups) >= 5,
@@ -371,8 +371,7 @@ def evaluate() -> dict[str, object]:
             for item in runs
         ),
         "native_checkpoint_replay_preserved": all(
-            all(bool(method["replay_equal"]) for method in item["methods"])
-            for item in runs
+            all(bool(method["replay_equal"]) for method in item["methods"]) for item in runs
         ),
         "interaction_lesion_evidence_preserved": bool(
             attribution.metrics["lesion_effects_observed"]
@@ -428,7 +427,9 @@ def main() -> int:
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_w7_p4_7_open_domain_interaction_gain_20260831.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_w7_p4_7_open_domain_interaction_gain_20260831.json",
     )
     args = parser.parse_args()
     report = evaluate()

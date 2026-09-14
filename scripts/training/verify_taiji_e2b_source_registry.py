@@ -74,7 +74,9 @@ def run_gate() -> dict[str, object]:
     mcp_results = mcp_registry.project_to_ledger(ledger, parent_checkpoint_digest=parent)
     plugin_results = plugin_registry.project_to_ledger(ledger, parent_checkpoint_digest=parent)
     for artifact in skill_registry.entries[0].projection.corpus:
-        ledger.admit_corpus(artifact.artifact_digest, admission_revision=f"e2b:{artifact.artifact_digest[:8]}")
+        ledger.admit_corpus(
+            artifact.artifact_digest, admission_revision=f"e2b:{artifact.artifact_digest[:8]}"
+        )
     ledger_checkpoint = ledger.checkpoint()
     restored_ledger = EvolutionExperienceLedger.from_checkpoint(ledger_checkpoint)
 
@@ -102,12 +104,20 @@ def run_gate() -> dict[str, object]:
         "partition_is_preserved": all(
             item.partition == "holdout" for item in ledger.records() if item.source_kind == "mcp"
         )
-        and all(item.partition == "security" for item in ledger.records() if item.source_kind == "client_plugin"),
-        "train_view_requires_admission": len(train_corpus) == len(skill_registry.entries[0].projection.corpus)
+        and all(
+            item.partition == "security"
+            for item in ledger.records()
+            if item.source_kind == "client_plugin"
+        ),
+        "train_view_requires_admission": len(train_corpus)
+        == len(skill_registry.entries[0].projection.corpus)
         and len(train_experiences) == 4,
-        "registry_checkpoint_rebinds": SkillRegistry.from_checkpoint(skill_registry.checkpoint()).snapshot_id
+        "registry_checkpoint_rebinds": SkillRegistry.from_checkpoint(
+            skill_registry.checkpoint()
+        ).snapshot_id
         == skill_registry.snapshot_id
-        and McpArtifactRegistry.from_checkpoint(mcp_registry.checkpoint()).snapshot_id == mcp_registry.snapshot_id
+        and McpArtifactRegistry.from_checkpoint(mcp_registry.checkpoint()).snapshot_id
+        == mcp_registry.snapshot_id
         and ClientPluginRegistry.from_checkpoint(plugin_registry.checkpoint()).snapshot_id
         == plugin_registry.snapshot_id,
         "ledger_checkpoint_rebinds": restored_ledger.tail_event_digest == ledger.tail_event_digest,
@@ -134,7 +144,9 @@ def main() -> int:
     args = parser.parse_args()
     result = run_gate()
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0 if result["status"] == "passed" else 1
 

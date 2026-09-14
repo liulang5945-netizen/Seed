@@ -43,7 +43,9 @@ def _runtime_with_terminal_lineage() -> SeedRuntime:
     if schedule.get("status") != "batch_created":
         raise AssertionError(f"S27 active batch was not created: {schedule}")
     model = runtime.model.architecture
-    active = next(item for item in model.structural_candidate_batches if item.batch_id == schedule["batch_id"])
+    active = next(
+        item for item in model.structural_candidate_batches if item.batch_id == schedule["batch_id"]
+    )
     _record_terminal_subgraph(model, active)
     return runtime
 
@@ -145,7 +147,8 @@ def evaluate() -> dict[str, object]:
             and switched_result is not None
             and switched_result.max_batches == 2
         ),
-        "invalid_policy_combination_is_atomic": invalid_failed_closed and invalid_before == invalid_after,
+        "invalid_policy_combination_is_atomic": invalid_failed_closed
+        and invalid_before == invalid_after,
         "tampered_policy_fails_closed": tamper_failed_closed,
         "inconsistent_checkpoint_policy_fails_closed": inconsistent_failed_closed,
     }
@@ -176,7 +179,9 @@ def main() -> None:
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_w7_r5c_s27_structural_lineage_policy_20260831.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_w7_r5c_s27_structural_lineage_policy_20260831.json",
     )
     args = parser.parse_args()
     report = evaluate()

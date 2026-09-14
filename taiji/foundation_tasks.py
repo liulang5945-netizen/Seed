@@ -211,8 +211,7 @@ class DelayedMemoryTask:
             "frozen_parent": min(frozen_values),
             "simple_rule": _majority_accuracy(corpus.train, corpus.holdout),
             "hash_only": min(
-                _hash_memory_accuracy(corpus.holdout, actions, seed=seed)
-                for seed in self.seeds
+                _hash_memory_accuracy(corpus.holdout, actions, seed=seed) for seed in self.seeds
             ),
             "memory_lesion": min(lesion_values),
             "identity_lesion": min(identity_lesion_values),
@@ -221,18 +220,19 @@ class DelayedMemoryTask:
         holdout_updates = max(int(record["holdout_updates"]) for record in seed_records)
         beats_controls = all(worst_native > value for value in baseline_metrics.values())
         causal_memory_gain = all(
-            float(record["taiji"]) > float(record["memory_lesion"])
-            for record in seed_records
+            float(record["taiji"]) > float(record["memory_lesion"]) for record in seed_records
         )
         causal_identity_gain = all(
-            float(record["taiji"]) > float(record["identity_lesion"])
-            for record in seed_records
+            float(record["taiji"]) > float(record["identity_lesion"]) for record in seed_records
         )
         return FoundationMeasurement(
             ability_id=self.ability_id,
             status=(
                 "passed"
-                if beats_controls and causal_memory_gain and causal_identity_gain and holdout_updates == 0
+                if beats_controls
+                and causal_memory_gain
+                and causal_identity_gain
+                and holdout_updates == 0
                 else "failed"
             ),
             primary_metric="recall_accuracy",
@@ -292,9 +292,7 @@ class DelayedMemoryTask:
         # M1-66 organ-first only applies to the full integral arm: the ablation
         # arms exist to show what the organ contributes, so they must keep the
         # original motor synthesis (lesion semantics) untouched.
-        verdict_enabled = bool(use_memory) and (
-            use_identity is None or bool(use_identity)
-        )
+        verdict_enabled = bool(use_memory) and (use_identity is None or bool(use_identity))
         for query in queries:
             model.reset_dynamics(episode_id=f"m0-b2-query-{query.query_id}")
             model.observe(
@@ -471,8 +469,7 @@ class ContinualMemoryTask:
     def evaluate(self, corpus: ContinualMemoryCorpus) -> FoundationMeasurement:
         actions = tuple(
             dict.fromkeys(
-                episode.action
-                for episode in (*corpus.phase_a_train, *corpus.phase_b_train)
+                episode.action for episode in (*corpus.phase_a_train, *corpus.phase_b_train)
             )
         )
         if len(actions) < 2:
@@ -545,9 +542,7 @@ class ContinualMemoryTask:
             )
 
         replay_values = [float(item["replay_backward_transfer"]) for item in seed_records]
-        no_replay_values = [
-            float(item["no_replay_backward_transfer"]) for item in seed_records
-        ]
+        no_replay_values = [float(item["no_replay_backward_transfer"]) for item in seed_records]
         baseline_metrics = {
             "random": 0.0,
             "frozen_parent": 0.0,
@@ -562,8 +557,7 @@ class ContinualMemoryTask:
             for item in seed_records
         )
         new_preserved = all(
-            float(item["replay_new_after"]) + 0.05
-            >= float(item["no_replay_new_after"])
+            float(item["replay_new_after"]) + 0.05 >= float(item["no_replay_new_after"])
             for item in seed_records
         )
         return FoundationMeasurement(
@@ -734,7 +728,9 @@ class GoalActionEpisode:
     def __post_init__(self) -> None:
         if not self.episode_id.strip():
             raise ValueError("goal action episode id must be non-empty")
-        if any(int(value) < 0 for value in (self.cue, self.preferred_action, self.alternate_action)):
+        if any(
+            int(value) < 0 for value in (self.cue, self.preferred_action, self.alternate_action)
+        ):
             raise ValueError("goal action episode symbols cannot be negative")
         if int(self.preferred_action) == int(self.alternate_action):
             raise ValueError("goal action episode needs two distinct actions")
@@ -827,8 +823,7 @@ class GoalActionTask:
             "frozen_parent": min(frozen_values),
             "simple_rule": _majority_goal_action_accuracy(corpus.train, corpus.holdout),
             "hash_only": min(
-                _hash_goal_action_accuracy(corpus.holdout, seed=seed)
-                for seed in self.seeds
+                _hash_goal_action_accuracy(corpus.holdout, seed=seed) for seed in self.seeds
             ),
             "credit_lesion": min(lesion_values),
         }
@@ -836,8 +831,7 @@ class GoalActionTask:
         holdout_updates = max(int(record["holdout_updates"]) for record in seed_records)
         beats_controls = all(worst_native > value for value in baseline_metrics.values())
         causal_credit_gain = all(
-            float(record["taiji"]) > float(record["credit_lesion"])
-            for record in seed_records
+            float(record["taiji"]) > float(record["credit_lesion"]) for record in seed_records
         )
         retention_preserved = all(
             retention >= native - 0.05
@@ -890,7 +884,9 @@ class GoalActionTask:
         learn: bool = True,
     ) -> bool:
         model.reset_dynamics(episode_id=f"m0-b4-train-{episode.episode_id}")
-        model.observe(model.config.boundary_symbol, learn=False, learn_motor=False, use_memory=False)
+        model.observe(
+            model.config.boundary_symbol, learn=False, learn_motor=False, use_memory=False
+        )
         model.observe(episode.cue, learn=learn, learn_motor=False, use_memory=False)
         decision = model.act(
             tuple(sorted((episode.preferred_action, episode.alternate_action))),
@@ -898,7 +894,9 @@ class GoalActionTask:
         )
         success = decision.action_symbol == episode.preferred_action
         model.settle_action(1.0 if success else -1.0, learn=learn, learn_memory=False)
-        model.observe(model.config.boundary_symbol, learn=False, learn_motor=False, use_memory=False)
+        model.observe(
+            model.config.boundary_symbol, learn=False, learn_motor=False, use_memory=False
+        )
         return success
 
     @staticmethod
@@ -922,7 +920,9 @@ class GoalActionTask:
             )
             correct += int(decision.action_symbol == episode.preferred_action)
             model.settle_action(0.0, learn=False, learn_memory=False)
-            model.observe(model.config.boundary_symbol, learn=False, learn_motor=False, use_memory=False)
+            model.observe(
+                model.config.boundary_symbol, learn=False, learn_motor=False, use_memory=False
+            )
         return correct / len(episodes)
 
 
@@ -967,8 +967,7 @@ def detect_partition_overlap(
     ngram_overlap_count = 0
     if train and holdout:
         train_ngrams = {
-            train[index : index + min_ngram]
-            for index in range(len(train) - min_ngram + 1)
+            train[index : index + min_ngram] for index in range(len(train) - min_ngram + 1)
         }
         for index in range(len(holdout) - min_ngram + 1):
             ngram = holdout[index : index + min_ngram]
@@ -1208,10 +1207,7 @@ def _world_error(
 
 def _world_learner_digest(learner: WorldDynamicsLearner) -> str:
     return content_digest(
-        {
-            name: tensor.detach().cpu().clone()
-            for name, tensor in learner.state_dict().items()
-        }
+        {name: tensor.detach().cpu().clone() for name, tensor in learner.state_dict().items()}
     )
 
 
@@ -1233,12 +1229,9 @@ def _prediction_error(
     )
 
 
-def _no_change_error(
-    cases: Sequence[WorldInterventionCase], schema: WorldSchema
-) -> float:
+def _no_change_error(cases: Sequence[WorldInterventionCase], schema: WorldSchema) -> float:
     predictions = tuple(
-        WorldPrediction(state=case.initial, reward=0.0, success_probability=0.5)
-        for case in cases
+        WorldPrediction(state=case.initial, reward=0.0, success_probability=0.5) for case in cases
     )
     return sum(
         _prediction_error(prediction, case, schema)
@@ -1254,9 +1247,10 @@ def _random_world_error(
     scales = torch.tensor(schema.state_scales, dtype=torch.float32)
     errors: list[float] = []
     for case in cases:
-        values = schema.state_values(case.initial) + (
-            torch.rand(schema.state_dim, generator=generator) - 0.5
-        ) * 2.0 * scales
+        values = (
+            schema.state_values(case.initial)
+            + (torch.rand(schema.state_dim, generator=generator) - 0.5) * 2.0 * scales
+        )
         prediction = WorldPrediction(
             state=_replace_numeric_state(case.initial, schema, values),
             reward=float(torch.rand((), generator=generator).item() * 2.0 - 1.0),
@@ -1458,14 +1452,10 @@ def _majority_goal_action_accuracy(
     return sum(int(episode.preferred_action == majority) for episode in holdout) / len(holdout)
 
 
-def _hash_goal_action_accuracy(
-    episodes: Sequence[GoalActionEpisode], *, seed: int
-) -> float:
+def _hash_goal_action_accuracy(episodes: Sequence[GoalActionEpisode], *, seed: int) -> float:
     correct = 0
     for episode in episodes:
-        digest = hashlib.sha256(
-            f"{int(seed)}\0{int(episode.cue)}".encode()
-        ).digest()
+        digest = hashlib.sha256(f"{int(seed)}\0{int(episode.cue)}".encode()).digest()
         actions = (episode.preferred_action, episode.alternate_action)
         prediction = actions[int.from_bytes(digest[:8], "big") % len(actions)]
         correct += int(prediction == episode.preferred_action)

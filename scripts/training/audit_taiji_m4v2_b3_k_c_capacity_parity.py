@@ -19,9 +19,7 @@ FORMAL_REPORT_FORMAT = "taiji-m4v2-b3-k-c-formal-v1"
 FIXED_LARGE_REPORT_FORMAT = "taiji-m4v2-b3-k-c-fixed-large-build-v1"
 PARAMETER_TOLERANCE_RATIO = 0.01
 DEFAULT_FORMAL_REPORT = (
-    Path(__file__).resolve().parents[2]
-    / "reports"
-    / "taiji_m4v2_b3_k_c_formal_20260910.json"
+    Path(__file__).resolve().parents[2] / "reports" / "taiji_m4v2_b3_k_c_formal_20260910.json"
 )
 DEFAULT_FIXED_LARGE_REPORT = (
     Path(__file__).resolve().parents[2]
@@ -87,10 +85,7 @@ def _fixed_cell(
     course_seed: int,
 ) -> dict[str, Any]:
     for cell in fixed_report.get("cells", []):
-        if (
-            cell.get("model_seed") == model_seed
-            and cell.get("course_seed") == course_seed
-        ):
+        if cell.get("model_seed") == model_seed and cell.get("course_seed") == course_seed:
             if not isinstance(cell, dict):
                 break
             return cell
@@ -106,32 +101,20 @@ def _audit_cell(
     candidate_inference = formal_cell["resource"]["candidate"]["inference"]
     fixed_inference = formal_cell["resource"]["fixed_large"]["inference"]
 
-    candidate_parameter_bytes = _resource_int(
-        candidate_training, "parameter_bytes"
-    )
+    candidate_parameter_bytes = _resource_int(candidate_training, "parameter_bytes")
     fixed_parameter_bytes = _resource_int(fixed_training, "parameter_bytes")
-    candidate_update_steps = _resource_int(
-        candidate_training, "training_update_steps"
-    )
+    candidate_update_steps = _resource_int(candidate_training, "training_update_steps")
     fixed_update_steps = _resource_int(fixed_training, "training_update_steps")
-    candidate_checkpoint_bytes = _resource_int(
-        candidate_training, "checkpoint_write_bytes"
-    )
-    fixed_checkpoint_bytes = _resource_int(
-        fixed_training, "checkpoint_write_bytes"
-    )
+    candidate_checkpoint_bytes = _resource_int(candidate_training, "checkpoint_write_bytes")
+    fixed_checkpoint_bytes = _resource_int(fixed_training, "checkpoint_write_bytes")
     candidate_checkpoint_count = _checkpoint_count(candidate_training)
     fixed_checkpoint_count = _checkpoint_count(fixed_training)
-    candidate_trace_count = _resource_int(
-        candidate_inference, "inference_trace_count"
-    )
+    candidate_trace_count = _resource_int(candidate_inference, "inference_trace_count")
     fixed_trace_count = _resource_int(fixed_inference, "inference_trace_count")
 
     fixed_build_resource = fixed_build_cell["resource"]
     fixed_build_steps = _resource_int(fixed_build_resource, "training_update_steps")
-    fixed_build_parameter_bytes = _resource_int(
-        fixed_build_resource, "parameter_bytes"
-    )
+    fixed_build_parameter_bytes = _resource_int(fixed_build_resource, "parameter_bytes")
     fixed_build_episode_indexes = fixed_build_cell.get("train_episode_indexes")
     if not isinstance(fixed_build_episode_indexes, list):
         raise ValueError("fixed-large train_episode_indexes must be a list")
@@ -144,9 +127,7 @@ def _audit_cell(
     parameter_ratio = _ratio(candidate_parameter_bytes, fixed_parameter_bytes)
     update_ratio = _ratio(candidate_update_steps, fixed_update_steps)
     checkpoint_count_equal = candidate_checkpoint_count == fixed_checkpoint_count
-    checkpoint_bytes_ratio = _ratio(
-        candidate_checkpoint_bytes, fixed_checkpoint_bytes
-    )
+    checkpoint_bytes_ratio = _ratio(candidate_checkpoint_bytes, fixed_checkpoint_bytes)
 
     return {
         "model_seed": formal_cell["model_seed"],
@@ -174,31 +155,22 @@ def _audit_cell(
         "training_examples": {
             "candidate_episode_indexes": candidate_episode_indexes,
             "fixed_large_episode_indexes": fixed_build_episode_indexes,
-            "same_episode_indexes": candidate_episode_indexes
-            == fixed_build_episode_indexes,
+            "same_episode_indexes": candidate_episode_indexes == fixed_build_episode_indexes,
         },
         "cross_report_consistency": {
             "fixed_large_parameter_bytes_matches_build": (
                 fixed_parameter_bytes == fixed_build_parameter_bytes
             ),
-            "fixed_large_update_steps_matches_build": (
-                fixed_update_steps == fixed_build_steps
-            ),
+            "fixed_large_update_steps_matches_build": (fixed_update_steps == fixed_build_steps),
         },
         "parity": {
             "parameter_bytes_ratio": parameter_ratio,
-            "parameter_bytes_within_tolerance": (
-                parameter_ratio <= PARAMETER_TOLERANCE_RATIO
-            ),
+            "parameter_bytes_within_tolerance": (parameter_ratio <= PARAMETER_TOLERANCE_RATIO),
             "training_update_steps_ratio": update_ratio,
-            "training_update_steps_equal": (
-                candidate_update_steps == fixed_update_steps
-            ),
+            "training_update_steps_equal": (candidate_update_steps == fixed_update_steps),
             "checkpoint_write_count_equal": checkpoint_count_equal,
             "checkpoint_write_bytes_ratio": checkpoint_bytes_ratio,
-            "inference_trace_count_equal": (
-                candidate_trace_count == fixed_trace_count
-            ),
+            "inference_trace_count_equal": (candidate_trace_count == fixed_trace_count),
         },
     }
 
@@ -290,9 +262,7 @@ def build_audit(
     if not aggregate["fixed_large_cross_report_consistent_all"]:
         reason_codes.append("fixed_large_report_mismatch")
 
-    strong_control_victory = bool(
-        formal_report.get("strong_fixed_large_comparison_passed", False)
-    )
+    strong_control_victory = bool(formal_report.get("strong_fixed_large_comparison_passed", False))
     preregistration = {
         "format": "taiji-m4v2-b3-k-capacity-parity-preregistration-v1",
         "status": "pre-registered-blocked-until-parity",
@@ -333,8 +303,7 @@ def build_audit(
         "current_formal_result": {
             "strong_control_victory": strong_control_victory,
             "comparison_valid_for_learning_rule_claim": comparison_valid,
-            "promotion_precondition_passed": comparison_valid
-            and strong_control_victory,
+            "promotion_precondition_passed": comparison_valid and strong_control_victory,
             "reason_codes": reason_codes,
         },
         "stop_rule": "do not add training, tune learning rate, revive R5/structure growth, or attach default runtime before the parity contract is satisfied",
@@ -344,9 +313,9 @@ def build_audit(
         "report_format": REPORT_FORMAT,
         "version": 1,
         "run_kind": "c-entry-capacity-parity-audit",
-        "status": "blocked-current-comparison-confounded"
-        if not comparison_valid
-        else "parity-ready",
+        "status": (
+            "blocked-current-comparison-confounded" if not comparison_valid else "parity-ready"
+        ),
         "formal_report_path": str(formal_report_path.resolve()),
         "fixed_large_report_path": str(fixed_large_report_path.resolve()),
         "formal_report_status": formal_report.get("status"),
@@ -376,9 +345,7 @@ def build_audit(
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--formal-report", type=Path, default=DEFAULT_FORMAL_REPORT)
-    parser.add_argument(
-        "--fixed-large-report", type=Path, default=DEFAULT_FIXED_LARGE_REPORT
-    )
+    parser.add_argument("--fixed-large-report", type=Path, default=DEFAULT_FIXED_LARGE_REPORT)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     args = parser.parse_args()
 

@@ -49,9 +49,7 @@ def _probabilities(data: bytes) -> list[float]:
 
 
 def _entropy(probabilities: Sequence[float]) -> float:
-    return -sum(
-        value * math.log2(value) for value in probabilities if value > 0.0
-    )
+    return -sum(value * math.log2(value) for value in probabilities if value > 0.0)
 
 
 def _js_divergence(first: Sequence[float], second: Sequence[float]) -> float:
@@ -135,31 +133,27 @@ def audit(
     phases = [_phase_row(name, dataset) for name, dataset in phase_datasets]
     for previous, current in zip(phases, phases[1:], strict=False):
         current["train_vs_previous_train_js_nats"] = _js_divergence(
-            _probabilities(chain.phase_c.train)
-            if previous["phase"] == "c"
-            else _probabilities(
-                chain.phase_c2.train
-                if previous["phase"] == "c2"
-                else chain.phase_c3.train
+            (
+                _probabilities(chain.phase_c.train)
+                if previous["phase"] == "c"
+                else _probabilities(
+                    chain.phase_c2.train if previous["phase"] == "c2" else chain.phase_c3.train
+                )
             ),
             _probabilities(
-                chain.phase_c2.train
-                if current["phase"] == "c2"
-                else chain.phase_c3.train
+                chain.phase_c2.train if current["phase"] == "c2" else chain.phase_c3.train
             ),
         )
         current["holdout_vs_previous_holdout_js_nats"] = _js_divergence(
-            _probabilities(chain.phase_c.holdout)
-            if previous["phase"] == "c"
-            else _probabilities(
-                chain.phase_c2.holdout
-                if previous["phase"] == "c2"
-                else chain.phase_c3.holdout
+            (
+                _probabilities(chain.phase_c.holdout)
+                if previous["phase"] == "c"
+                else _probabilities(
+                    chain.phase_c2.holdout if previous["phase"] == "c2" else chain.phase_c3.holdout
+                )
             ),
             _probabilities(
-                chain.phase_c2.holdout
-                if current["phase"] == "c2"
-                else chain.phase_c3.holdout
+                chain.phase_c2.holdout if current["phase"] == "c2" else chain.phase_c3.holdout
             ),
         )
 
@@ -177,9 +171,7 @@ def audit(
                 "c_cycle3_degraded": float(half_metrics["c_cycle3_delta_bpb"]) > 0.0,
             }
         )
-    c3_degraded = [
-        row for row in difficulty_rows if row["c_cycle3_degraded"]
-    ]
+    c3_degraded = [row for row in difficulty_rows if row["c_cycle3_degraded"]]
     c3_phase = phases[2]
     c2_phase = phases[1]
     c3_train_js = float(c3_phase["train_vs_previous_train_js_nats"])
@@ -192,20 +184,14 @@ def audit(
     )
     checks = {
         "preflight_passed": (
-            preflight["status"] == "passed"
-            and preflight["formal_allowed"] is True
+            preflight["status"] == "passed" and preflight["formal_allowed"] is True
         ),
-        "formal_aggregate_technical": bool(
-            formal_aggregate["technical_gate_all_passed"]
-        ),
+        "formal_aggregate_technical": bool(formal_aggregate["technical_gate_all_passed"]),
         "formal_aggregate_not_promoted": formal_aggregate["can_promote"] is False,
         "r8_technical": bool(r8_report["technical_gate_all_passed"]),
-        "record_disjoint_chain": all(
-            value == 0 for value in chain.overlap_counts.values()
-        ),
+        "record_disjoint_chain": all(value == 0 for value in chain.overlap_counts.values()),
         "formal_budget_available": all(
-            len(dataset.train) >= FORMAL_TRAIN_BYTES
-            and len(dataset.holdout) >= FORMAL_EVAL_BYTES
+            len(dataset.train) >= FORMAL_TRAIN_BYTES and len(dataset.holdout) >= FORMAL_EVAL_BYTES
             for _name, dataset in phase_datasets
         ),
         "distinct_phase_digests": len({phase["dataset_digest"] for phase in phases}) == 3,
@@ -312,9 +298,7 @@ def main(argv: list[str] | None = None) -> int:
                 "report": str(args.output),
                 "status": report["status"],
                 "technical_gate_all_passed": report["technical_gate_all_passed"],
-                "c3_boundary_js_outlier": report["diagnosis"][
-                    "c3_boundary_js_outlier"
-                ],
+                "c3_boundary_js_outlier": report["diagnosis"]["c3_boundary_js_outlier"],
             },
             ensure_ascii=False,
         )

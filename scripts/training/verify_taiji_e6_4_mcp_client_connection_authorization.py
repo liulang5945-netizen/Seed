@@ -195,9 +195,9 @@ def run_gate() -> dict[str, object]:
     auth_source = (
         PROJECT_ROOT / "seed_platform" / "mcp_client_connection_authorization.py"
     ).read_text(encoding="utf-8")
-    route_source = (
-        PROJECT_ROOT / "api" / "routes_mcp_client_capabilities.py"
-    ).read_text(encoding="utf-8")
+    route_source = (PROJECT_ROOT / "api" / "routes_mcp_client_capabilities.py").read_text(
+        encoding="utf-8"
+    )
     forbidden_markers = (
         "import requests",
         "import socket",
@@ -275,7 +275,9 @@ def main() -> int:
     args = parser.parse_args()
     result = run_gate()
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, ensure_ascii=True, indent=2))
     return 0 if result["status"] == "passed" else 1
 
