@@ -1,0 +1,170 @@
+{
+  "format": "taiji-b0-n2-stop-reason-disposition-v1",
+  "version": 2,
+  "status": "draft_for_review",
+  "does_not_decide_n2": "this is the review surface for N2, not the N2 preregistration; the preregistration still requires the D5=落地 decision",
+  "new_reason": "all_members_blocked",
+  "frozen_counterpart": "all_members_exhausted",
+  "interception_prefix": "contract_intercepted",
+  "new_reason_carries_interception_prefix": false,
+  "self_audit_paths_excluded": [
+    "scripts/training/audit_taiji_b0_n2_stop_reason_disposition.py",
+    "tests/taiji_native/test_b0_n2_stop_reason_disposition_contract.py"
+  ],
+  "consumer_count": 14,
+  "consumer_count_in_hardening_report": 11,
+  "consumer_count_now": 14,
+  "count_was_stale": true,
+  "added_since_hardening_report": [
+    "scripts/training/probe_taiji_b0_structure_space.py",
+    "tests/taiji_native/test_b0_m4_hardening_contract.py",
+    "tests/taiji_native/test_b0_structure_space_contract.py"
+  ],
+  "drift": {
+    "added": [],
+    "removed": [],
+    "clean": true,
+    "meaning": "a non-empty 'added' list means a new file consumes stop_reason and must be dispositioned before M4 lands; this check exists because the hardening report's own list went stale within one round"
+  },
+  "judgement_sites": [
+    {
+      "id": "J1",
+      "path": "scripts/training/eval_taiji_p5_2a_predictive_execution_gate.py",
+      "kind": "replica_equality",
+      "marker_present": true,
+      "safe_because": "the marker sits in deterministic_surface(), which compares the matrix run with a replica run under the same rule. A new reason must remain in the comparison; equality still requires an actual replica test"
+    },
+    {
+      "id": "J2",
+      "path": "scripts/training/eval_taiji_p5_2a_predictive_execution_gate.py",
+      "kind": "prefix_predicate",
+      "marker_present": true,
+      "safe_because": "it counts safety stops from the step-level 'stop' field by the contract_intercepted prefix; all_members_blocked does not carry that prefix, so it is never miscounted as a safety stop"
+    },
+    {
+      "id": "J3",
+      "path": "scripts/training/eval_taiji_p5_2b_group_causal_corpora_gate.py",
+      "kind": "replica_equality",
+      "marker_present": true,
+      "safe_because": "a matrix-vs-replica comparison under the same rule. The reason remains part of the equality; changing the rule does not prove determinism"
+    },
+    {
+      "id": "J4",
+      "path": "tests/taiji_native/test_b0_m4_artifact_audit_contract.py",
+      "kind": "test_assertion",
+      "marker_present": true,
+      "safe_because": "pins the FROZEN-rule baseline inside an already-generated report; it is historical evidence, not a live gate.  WP-3 must re-review it because the counterfactual is expected to degenerate to identity once M4 lands"
+    },
+    {
+      "id": "J5",
+      "path": "scripts/training/audit_taiji_b0_m4_hardening.py",
+      "kind": "substring_predicate",
+      "marker_present": true,
+      "safe_because": "tests substring membership, not startswith. The new reason does not contain contract_intercepted; this does not certify policy compliance"
+    },
+    {
+      "id": "J6",
+      "path": "tests/taiji_native/test_b0_m4_hardening_contract.py",
+      "kind": "test_assertion",
+      "marker_present": true,
+      "safe_because": "pins distinct reason counts in the historical two-rule report"
+    },
+    {
+      "id": "J7",
+      "path": "tests/taiji_native/test_b0_structure_space_contract.py",
+      "kind": "test_assertion",
+      "marker_present": true,
+      "safe_because": "pins the frozen versus counterfactual report, not a live admission gate"
+    }
+  ],
+  "missing_judgement_sites": [],
+  "judgement_sites_intact": true,
+  "review_checks_passed": true,
+  "consumers": [
+    {
+      "path": "scripts/training/audit_taiji_b0_m4_artifact.py",
+      "class": "record_only",
+      "why": "writes stop_reason into the audit payload and aggregates it; no comparison"
+    },
+    {
+      "path": "scripts/training/audit_taiji_b0_m4_hardening.py",
+      "class": "record_only + prefix_judgement",
+      "why": "aggregates per variant; its was_contract_intercepted() keys on the contract_intercepted prefix, which the new reason does not carry"
+    },
+    {
+      "path": "scripts/training/audit_taiji_b0_measurement_reachability.py",
+      "class": "record_only",
+      "why": "reads the frozen route-A report field block3_audit.stop_reason_classes; it does not scan a live tree"
+    },
+    {
+      "path": "scripts/training/eval_taiji_p5_2a_predictive_execution_gate.py",
+      "class": "judgement (replica equality + interception prefix)",
+      "why": "see J1 and J2 below"
+    },
+    {
+      "path": "scripts/training/eval_taiji_p5_2b_group_causal_corpora_gate.py",
+      "class": "judgement (replica equality)",
+      "why": "see J3 below; it is also the only file M4 actually edits"
+    },
+    {
+      "path": "scripts/training/eval_taiji_p5_2c_double_prime_unseen_combination_transfer_gate.py",
+      "class": "record_only",
+      "why": "aggregates by reason.split(':')[0] into the report; no comparison"
+    },
+    {
+      "path": "scripts/training/eval_taiji_p5_2c_prime_unseen_combination_transfer_gate.py",
+      "class": "record_only",
+      "why": "same class aggregation as the other P5.2c gates"
+    },
+    {
+      "path": "scripts/training/eval_taiji_p5_2c_triple_prime_representation_repair_gate.py",
+      "class": "record_only",
+      "why": "same class aggregation as the other P5.2c gates"
+    },
+    {
+      "path": "scripts/training/eval_taiji_p5_2c_unseen_combination_transfer_gate.py",
+      "class": "record_only",
+      "why": "same class aggregation as the other P5.2c gates"
+    },
+    {
+      "path": "scripts/training/probe_taiji_b0_m1_counterfactual.py",
+      "class": "record_only",
+      "why": "the counterfactual itself: produces and aggregates stop reasons"
+    },
+    {
+      "path": "scripts/training/probe_taiji_b0_structure_space.py",
+      "class": "record_only",
+      "why": "N1 probe: aggregates frozen/audited reason counters per cell",
+      "added_after_hardening_report": "yes"
+    },
+    {
+      "path": "tests/taiji_native/test_b0_m4_artifact_audit_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "see J4 below"
+    },
+    {
+      "path": "tests/taiji_native/test_b0_m4_hardening_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "see J4 below",
+      "added_after_hardening_report": "yes"
+    },
+    {
+      "path": "tests/taiji_native/test_b0_structure_space_contract.py",
+      "class": "judgement (test assertion)",
+      "why": "see J4 below",
+      "added_after_hardening_report": "yes"
+    }
+  ],
+  "classification_counts": {
+    "record_only_files": 8,
+    "judgement_or_mixed_files": 6
+  },
+  "scope_limit": "text scan and source markers only; not an exhaustive data-flow proof. Marker presence cannot establish an unchanged predicate or deterministic replicas",
+  "terminal_semantics": {
+    "all_members_blocked": "terminal task non-completion, not an intermediate successful handoff",
+    "implies_goal_reached": false,
+    "implies_global_member_inability": false,
+    "safety_status": "requires execution and policy evidence; cannot be inferred from reason alone"
+  },
+  "conclusion": "the reviewed sites record reasons, compare replicas, count interception prefixes/substrings, or assert historical reports. all_members_blocked is not a success label and by itself proves neither safety nor member incapability. N2 remains an unfrozen draft; runtime changes and admission require WP-1/WP-2"
+}
