@@ -50,11 +50,14 @@ def _native_import_contract() -> bool:
                 attributes.add(node.attr)
     # ``torch.topk`` is a native candidate-selection primitive used by the
     # adaptive shadow path; its name is not evidence of a Transformer stack.
-    # Keep the boundary focused on actual legacy/Transformer imports and
-    # autograd/Transformer module attributes.
+    # Autograd (``.backward()``) is likewise permitted: the joint projection
+    # solver uses it to solve a constrained quadratic program.  Keep this set
+    # in lockstep with tests/taiji_native/test_architecture_contract.py
+    # (``forbidden_names``) so this verify gate and the contract suite cannot
+    # drift apart.
     return (
         not any(module.startswith(("neuroplex", "transformers")) for module in imported)
-        and not {"backward", "MultiheadAttention", "TransformerEncoder"} & attributes
+        and not {"MultiheadAttention", "TransformerEncoder", "TransformerBlock"} & attributes
     )
 
 

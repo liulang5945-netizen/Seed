@@ -1,5 +1,6 @@
 import ast
 import importlib
+import inspect
 from pathlib import Path
 
 import torch
@@ -276,3 +277,23 @@ def test_checkpoint_preserves_learning_state_and_exact_next_step() -> None:
     assert torch.equal(left.probabilities, right.probabilities)
     for a, b in zip(original.parameter_tensors(), restored.parameter_tensors(), strict=False):
         assert torch.equal(a, b)
+
+
+def test_ci_verify_gate_shares_one_forbidden_symbol_set_with_this_suite() -> None:
+    """The CI verify gate must not drift away from this contract.
+
+    ``scripts/training/verify_taiji_native_v7.py::_native_import_contract`` is an
+    independent second implementation of the same self-sufficiency boundary and
+    runs as a blocking CI step *before* this suite.  When only one side is
+    updated, the stale side fails in CI while the other stays green — which is
+    exactly what happened when autograd was accepted here as a permitted
+    execution primitive (the projection solver's ``.backward()``) but the gate
+    still rejected it.  Pin the shared set so they cannot diverge again.
+    """
+
+    from scripts.training.verify_taiji_native_v7 import _native_import_contract
+
+    source = inspect.getsource(_native_import_contract)
+    assert "TransformerBlock" in source
+    assert '"backward"' not in source and "'backward'" not in source
+    assert _native_import_contract() is True
