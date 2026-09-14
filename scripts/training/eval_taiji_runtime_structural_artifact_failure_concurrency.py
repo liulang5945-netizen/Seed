@@ -55,7 +55,7 @@ def evaluate() -> dict[str, object]:
     try:
         runtime.save(checkpoint_path)
 
-        unknown_branch = SeedRuntime.load(checkpoint_path)
+        unknown_branch = SeedRuntime.load(checkpoint_path, workspace_root=PROJECT_ROOT)
         before_unknown = _checkpoint_digest(unknown_branch.model.architecture.native_checkpoint())
         try:
             unknown_branch.continue_structural_candidate_batch_from_validation_artifacts(
@@ -72,7 +72,7 @@ def evaluate() -> dict[str, object]:
             == before_unknown
         )
 
-        stale_branch = SeedRuntime.load(checkpoint_path)
+        stale_branch = SeedRuntime.load(checkpoint_path, workspace_root=PROJECT_ROOT)
         _execute_observation(
             stale_branch,
             ordinal=99,
@@ -107,7 +107,7 @@ def evaluate() -> dict[str, object]:
             == stale_before_budget
         )
 
-        tamper_branch = SeedRuntime.load(checkpoint_path)
+        tamper_branch = SeedRuntime.load(checkpoint_path, workspace_root=PROJECT_ROOT)
         malformed = copy.deepcopy(artifact.to_payload())
         malformed["measurement_digest"] = "0" * 64
         tampered = tamper_branch.continue_structural_candidate_batch_from_validation_artifacts(
@@ -133,7 +133,7 @@ def evaluate() -> dict[str, object]:
             )
         )
 
-        concurrent_branch = SeedRuntime.load(checkpoint_path)
+        concurrent_branch = SeedRuntime.load(checkpoint_path, workspace_root=PROJECT_ROOT)
         before_concurrent_topology = tuple(
             (region.region_id, region.unit_ids)
             for region in concurrent_branch.model.architecture.neuron_regions
@@ -165,7 +165,7 @@ def evaluate() -> dict[str, object]:
             and concurrent_budget == before_concurrent_budget - artifact.resource_cost
         )
         concurrent_branch.save(after_path)
-        resumed = SeedRuntime.load(after_path)
+        resumed = SeedRuntime.load(after_path, workspace_root=PROJECT_ROOT)
         provenance_persisted = any(
             item.artifact_digest == artifact.artifact_digest
             and item.measurement_digest == measurements.measurement_digest

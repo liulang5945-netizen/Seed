@@ -204,17 +204,17 @@ def _score_cell(
     resources: dict[str, Any] = {}
     for split, experiences in (("validation", validation), ("sealed", sealed)):
         frozen, frozen_resource = _timed_score(
-            lambda: _loss_score(parent_semantic, parent_transition, experiences),
+            lambda e=experiences: _loss_score(parent_semantic, parent_transition, e),
             trace_count=len(experiences),
             parameter_bytes=parent_parameter_bytes,
         )
         candidate, candidate_resource = _timed_score(
-            lambda: _loss_score(candidate_semantic, candidate_transition, experiences),
+            lambda e=experiences: _loss_score(candidate_semantic, candidate_transition, e),
             trace_count=len(experiences),
             parameter_bytes=candidate_parameter_bytes,
         )
         fixed_large_scores, fixed_resource = _timed_score(
-            lambda: _fixed_large_loss_score(fixed_large, experiences),
+            lambda e=experiences: _fixed_large_loss_score(fixed_large, e),
             trace_count=len(experiences),
             parameter_bytes=fixed_parameter_bytes,
         )

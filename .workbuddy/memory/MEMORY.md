@@ -1,0 +1,149 @@
+# Seed / Taiji 长期工作记忆
+
+## 项目双轨架构（机器强制契约）
+- `taiji/` = 自足认知基底：**禁止导入** seed / seed_platform / neuroplex / transformers（含传递性），
+  由 `tests/taiji_native/test_architecture_contract.py` 与 `test_naming_boundary_contract.py`
+  AST 级强制（ast.walk 连函数级导入都抓）。禁止放宽这两个测试的断言凑绿（登记册 §8）。
+- 共享测量仪器放顶层 `instruments/` 包（2026-09-13 起）：依赖方向 instruments → taiji 单向
+  （仅 content_digest），taiji/ 对 instruments 零引用（duck-typed 参数）。
+  `DocumentEmbedder` 现居 `instruments/document_embedding.py`；语义 encoder 的 embedder
+  必须显式注入（fail closed，无隐式构造）。
+- `neuroplex/` = 冻结 Transformer 基线，不得 import seed/taiji（单向替代关系）。
+- 语义 checkpoint 兼容性红线：`taiji-document-embedder-v1` payload 格式与 digest 锚
+  不得变更，P5.1x 预注册依赖它。
+
+## 工作流纪律（预注册→实现→门禁→报告→提交）
+- 负结果如实落账（transfer_no_gain / transfer_signal_constant），绝不改绿；
+  报告对自己机制的描述必须与代码同步。
+- 归属证明用引用图检查（谁 import 被改模块），不靠反复重跑。
+- 回归测试必须双向钉住（能过 + 该拒绝的拒绝），只查一侧会接受坏中间态。
+- 委托父模块 helper 会继承父模块全局常量——gate 有自己的数据集时必须本地实现。
+- matrix episode 无 `context_id` 键（身份在 episode_id 内）；step 层才有
+  executed_actions/provenance/safety_violation。
+- 测试改完必须读回全文/跑测试：Edit 工具可能匹配到错误缩进位置并成功，
+  造成断言被嵌套而静默失效（2026-09-13 实例）。
+- 临时探针用毕即删；预注册文件冻结不改，新结论写新预注册。
+
+## 环境硬约束（Python312 + shim 缺陷）
+- 用 `C:/Users/23747/AppData/Local/Programs/Python/Python312/python.exe`
+  （managed 3.13.12 无 torch/ruff/black）。
+- bash 外部命令 ls/cat/grep/head/tail/mkdir/rm 全部缺失：文件操作用 Read/Write/Edit/Glob/Grep
+  工具或 `python -c`；目录操作用 `python -c "os.makedirs(...)"`。
+- 严禁 heredoc / `python -c` 内长中文：shim 逐行执行内容。提交信息用 Write 写
+  `.git/COMMIT_MSG_TXT` 再 `git commit -F`。
+- 全量 pytest ~15 分钟会 SIGTERM：`run_in_background` 或分批；结果用 `--junitxml` 采集。
+
+## 伪影审计纪律（M4，2026-09-13）
+- **任何"正增益 + 改善既有面"的结果，必须先过四项审计**（本线曾被零步伪影坑过）：
+  ①**特异性**（正增益只在设计面；单成员可解面上必须为 0 或负）
+  ②**干预真实性**（`frozen._intervention_reality(...)["interventions_happened"]` 必须 true，零步非 baseline 必须 0）
+  ③**机制 lesion**（增益随交接消失 + 单体全败）
+  ④**种子稳健性**（多偏移重训，且不得在无组合可解 context 的面上制造增益）
+- **改善必须逐步归因**：导出每个翻转 cell 的 tick 级轨迹（`chosen`/`kind`/`executed`），
+  能指出"基线里谁一次机会都没有、M4 让谁进场"才算解释清楚。
+- M4 审计结论：四项全过（3 种子恒 +2.000）；冻结面 2 改善确认为真实交接。
+- **扩规模必须区分"表面变体"与"结构变体"**：只换扩展名/语言/内容形状而**组合结构不变**，
+  结果指纹会逐位相同 ⇒ 只能排除表面偶然性，**不排除结构特异性**。加 n 个同构 context = 没加。
+  任何"扩样"交付都要自带 distinctness 诊断（`variant_outcome_distinctness`）并写明 bounds/does_not_bound。
+- **写进代码的预期值必须有可否决通路**：否则是装饰性字段。检验"合同是否接受该任务"要用
+  **与规则无关但含合同层的脚本化执行**（见下条：不能用 `_run_scripted`），
+  也不能用真值表跑规则（会混淆"没走到那步"与"被拒"）。
+  预期与观测不符 ⇒ 改判 + `SystemExit` 拒出报告，**不静默保留也不删掉错误推理**。
+- **⚠️ `counterfactual._run_scripted` 不能判合同合法性**：它直调 `execute_tool`，
+  而 `language_evidence_ambiguous` / `language_assessment_unavailable` 一类拦截**只由
+  `environment.policy_for` 发出**。用它做的 `contract_admissible` 会把"没人能合法执行"的
+  格认证为合法 ⇒ 0 增益被误读为结构结论（2026-09-13 N1 第一轮实测踩中）。
+  正确做法：复现 `_member_episode` 的完整路径 bind → `ActionIntent` →
+  `WorkbenchActionRequest.from_action_intent` → `policy_for` →（`issue_approval` →
+  `dataclasses.replace(approval_token=…)` → 再判 → `consume_approval`）→ `execute_tool`，
+  并在 deny / 非审批类 ask_user 处**像真系统那样终止**。
+- **修好测量门之后必须重跑并逐格 diff 数值**，把"哪些结论被改变"写进文档：
+  本轮 `create__mismatch` `0.000`→`+2.000`、3 个假矛盾归零。同时说明**预测函数未改**
+  （否则"预测与观测一致"就可能是事后拟合）。
+- **清单/扫描型结论归档前必须删掉临时探针**：全仓 `stop_reason` 扫描会把自己的
+  `scripts/_smoke_*.py` 算进清单（12 → 11），污染审查面。
+
+## 机制修法（B0 反事实测量，2026-09-13）
+- **反事实方法**：`inspect.getsource(frozen._member_episode)` + **唯一锚点替换**，
+  在冻结模块命名空间的**副本**中 exec ⇒ 冻结函数从不被 rebind；锚点非唯一即 `SystemExit`。
+- **两个关键锚点**（各只出现一次）：`chosen = bindable[0]`、`cues = tuple([cue] * (len(steps) + 1))`。
+- **`editor.set_language` 在文件缺失时 `bound=True` 但 `success=False`** ⇒
+  "绑定失败"**不能**当交接信号。失败动作**既不消耗回合也不触发交接** ⇒ 首成员独占 episode。
+- **`m4_failure_handoff`（唯一实测可行，未实施）** = ①失败即让位（有人成功则解除封锁）
+  ②`cues` 用**该成员自身**已执行步数而非整集步数。冻结面 **0 回归 / 2 改善**，
+  候选面 **interleaved=4/4、同参照增益 +2.000 > 1.65** ⇒ H2 首次可达。
+- 备选均否决：`m1a` 安全但完全无效；`m1b` 破坏基线（3 回归）；`m2`/`m2a`/`m3` 回归且无效。
+- **候选任务必须先证"可满足 + 顺序是否强制"**，否则负结果不可解释。
+
+## 任务/机制/表征三层分离（B0 交接探针，2026-09-13）
+- **探针必须先复现冻结历史**：用冻结执行器逐字重跑验证面，11/11 一致才允许谈候选面。
+- **`_bind` 只作用于 `task.main_path`**（所有动作种类），且 `workspace.create` 绑定
+  `content = goal_files[main_path]` ⇒ 单任务只能有一个 `main_path`；`goal_files` 中非 main 的文件
+  **永远无法满足**；"创建后打补丁"**不可表达**（创建即达标）。
+- **"双要求"任务不天然是协作任务**：`header_override` 家族政策本身就是
+  `read→resolve→set_language→apply_patch`，故"覆盖+补丁"有成员能独做。
+  只有 **`create` + `override`** 这类"无任何单成员政策覆盖"的组合才是组合专属可解。
+- **机制根因**：交接触发 = "第一个成员**绑定失败**"。`read`/`list`/`resolve` 几乎总能绑定成功 ⇒
+  首成员**独占 episode**（到 STEP_CAP），其他成员永不执行 ⇒ 24 单元零交错。
+  **修法是 M1：触发条件改为"无进展"**（待决策 D5，未实施）。
+- **M1 不违反仲裁上界**：上界针对 `P ∈ {S_i}` 的机制；M1 目的是让 `P ∉ {S_i}` 成为可能。
+- 探针/预检都必须**只读**：不训练候选任务的模型、不注册任务、不改 gate；候选定义只存在于探针内。
+
+## 组合机制与协作上界（B0 续篇，2026-09-13）
+- `_member_episode`（p5_2b runner）的组合规则 = **优先级回退链**：
+  每 tick 所有 active member 预测，但 **`chosen = bindable[0]`**，只执行第一个绑定成功的成员。
+  **学习者从不仲裁 cell 内部谁上**（只决定动作类型与选哪一对）。
+- **可证上界**：`max(S_i,S_j) ≤ max_i S_i` ⇒ 任何"结果取自某个单体政策"的机制，
+  `mean(P − max_i S_i) ≤ 0`。**表征/排序改进永远无法单独支撑协作主张（H2）。**
+- 协作（同参照增益 > 0）**只能**来自"**组合专属可解 context**"（所有单体失败、组合成功）：
+  `k > n·(参照+margin)/(成功−B)`。n=4、margin=0.15 时：参照 0.5 ⇒ k≥2；1.0 ⇒ k≥3；1.5 ⇒ k≥4。
+- 预检脚本 `scripts/training/audit_taiji_b0_task_reachability_precheck.py` 为 B1 **入场强制**；
+  新任务须过六条（k 足够、脚本探针能产生交错、lesion 归零、非平凡、合同合法、不可脚本补答案）。
+  条件 2 **无法由 oracle 推出**（oracle 不知道绑定失败模式），必须跑脚本化真实执行。
+
+## 测量字典硬约束（B0 起，v1 草案）
+- **参照唯一**：任何"增益"必须声明参照；不同参照的数值禁止相减、禁止共用一个字段名。
+  旧字段 `mean_gain_vs_strongest_single` 同时承载了 pair 内参照与全体 oracle 参照（已停用）。
+- `max(S_i,S_j) ≤ max_i S_i` ⇒ pair 内参照**恒不严于**全体参照；两者不是同一量的两次读数。
+- oracle（全体单体 / 全 cell）必须标记 `deployable=False`，不得当策略用；interaction 不是效用。
+- **成本权重必须事先冻结**：看到结果再定权重等于事后调参。
+- 审计脚本 `scripts/training/audit_taiji_b0_measurement_reachability.py` 为只读；
+  其 `cross_check` 失败即 `SystemExit` 拒出报告（不发布建立在不可信重建上的上界）。
+- 当前结论：**目标不可达**（三种参照天花板 −0.5/0.5/0.0 vs 要求 1.65/0.65/1.15）⇒
+  D1–D4 决策明确前不启动 B1 训练；改任务优先于加特征列。
+
+## N1 结构空间探针（2026-09-13）
+- **"结构稳健"的正确计数单位是结果指纹与失败形态，不是 cell 数**：若干格共享同一
+  `(增益, 冻结增益, 联合必需 context 数, 交错数)` ⇒ 它们是**一个结构因素经由多条路线**，
+  不是多次独立确认。可主张宽度写作"1 因素 × N 路线 × M 失败形态"，并把指纹计数留在报告里。
+- **计划的"下一步候选"要先做可表达性探针**：本轮 T1/T3 在冻结 binder 下根本建不出来
+  （`workspace.create` 绑 `goal_files[main_path]` ⇒ 创建即达标；`_bind` 恒指向 `main_path`
+  ⇒ 第二目标路径不可达），T2 无成员间证据通道（`predict_episode(self, cues)` 单参数、
+  元组内是同一张量重复）。⇒ 正确替换方案是**枚举目标谓词能表达的全部子句路线并逐格测**，
+  候选本身作为**界限**报告（witness 字段，不是断言）。
+- **规则改动后的 cell 归因分三桶**：`handoff_explained`（联合必需 context 上有 ≥2 个
+  **执行成功**的成员）/ `fallback_only`（变化只落在某单体已能解决的 context ⇒
+  oracle 已在 success，承重增益不可能移动）/ `unexplained`（联合必需 context 上无第二执行者）。
+  只分两桶会把普通回退效应报成"无法解释"，诊断哭狼之后人们就会忽略它。
+- **N1 结论**：11 格 / 22 context / 3 种子全测，**M4 正增益覆盖 `create` 行全部三条语言路由**
+  （各 +2.000、interleaved 0→2、由 `member-a+member-c` 真实交接解释），其余 8 格 0.000，
+  `patch` 行两规则同 −2.000（未把不可达变可达），零回归，预测与观测 11/11 一致，
+  两种重跑 JSON 字节相同。**界限**：N1a 跨内容结构须先改 binder（另立议题，不属 D5 的改让位规则）；
+  N1b 每格仅 2 context；N1c 仅 3 种子（5 种子证据只覆盖 `create__override`）；N2 仍为落地前置。
+- 新工具入口：`scripts/training/probe_taiji_b0_structure_space.py` /
+  `reports/taiji_b0_structure_space_probe_20260913.json`（≈3.5 分钟整轮，有效性半程 2.8 秒）/
+  `tests/taiji_native/test_b0_structure_space_contract.py`（30 项，读 JSON + 源码 + 单个
+  合同感知 validity，不训练）。
+
+## 文档链接前缀（写 plans 文档必查）
+- `plans/reference/*.md` → `../../` 到仓库根；`plans/active/roadmap/*.md` → `../../../`。
+- 同一文件的多处替换**必须串行**：并行 Edit 会丢更新（两条都报 success，实际只生效一条）。
+- 写完跑一次链接校验（解析所有 `](path)` 是否 exists）。
+
+## Git 恢复硬知识
+- git 仓库必须有 `refs/` 目录（空也要存在）；`git fsck` 解析 `.git/logs/` 下**所有**文件，
+  坏 reflog 必须移出该目录。
+- 判定产出是否丢失：先核文件在盘 → 再核哈希差异能否被 CRLF/LF 解释 → 最后才下结论。
+- 修复前整体备份 `.git`；**确认无需回溯历史前不要跑 `git gc` / `git prune`**
+  （dangling commit 与孤儿 .idx 是仅存线索）。
+- 备份位置：`E:/Seed-backup-gitstate-20260913-183929/`。

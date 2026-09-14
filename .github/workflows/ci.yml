@@ -157,10 +157,10 @@ jobs:
           path: reports/ci_verify/
 
       - name: Run native architecture contracts
-        run: python -m pytest tests/taiji_native -q
+        run: python -m pytest tests/taiji_native -q --tb=short --junitxml=native-report.xml -o junit_logging=all
 
       - name: Run Seed model-boundary contracts
-        run: python -m pytest tests/seed -q
+        run: python -m pytest tests/seed -q --tb=short --junitxml=seed-report.xml -o junit_logging=all
 
       - name: Run complete regression suite
         # Legacy real-checkpoint tests skip when local artifacts are absent.
@@ -189,6 +189,8 @@ jobs:
         with:
           name: test-results-${{ matrix.python-version }}
           path: |
+            native-report.xml
+            seed-report.xml
             report.xml
             coverage.xml
 

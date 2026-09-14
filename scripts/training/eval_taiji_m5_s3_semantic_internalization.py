@@ -172,19 +172,19 @@ def main() -> int:
     ledger = InternalizationLedger(converter=converter)
     train_examples = []
     rejected = 0
-    for domain, record_digest, text in train_records:
+    for domain, record_digest, _text in train_records:
         result = ledger.ingest(_evidence(domain, record_digest, embeddings[record_digest]))
         if result.example is None:
             rejected += 1
         else:
             train_examples.append(result.example)
     holdout_examples = []
-    for domain, record_digest, text in holdout_records:
+    for domain, record_digest, _text in holdout_records:
         result = converter.convert(_evidence(domain, record_digest, embeddings[record_digest]))
         if result.example is not None:
             holdout_examples.append(result.example)
     retention_examples = []
-    for domain, record_digest, text in retention_records:
+    for domain, record_digest, _text in retention_records:
         result = converter.convert(_evidence(domain, record_digest, embeddings[record_digest]))
         if result.example is not None:
             retention_examples.append(result.example)

@@ -117,7 +117,7 @@ def evaluate() -> dict[str, object]:
     after_rollback_path = checkpoint_root / f"s31-after-rollback-{suffix}.pt"
     try:
         runtime.save(before_path)
-        restored = SeedRuntime.load(before_path)
+        restored = SeedRuntime.load(before_path, workspace_root=PROJECT_ROOT)
         foreign_candidate = next(
             candidate_id
             for other_batch in restored.model.architecture.structural_candidate_batches
@@ -144,7 +144,7 @@ def evaluate() -> dict[str, object]:
             },
         )
         restored.save(after_first_path)
-        resumed = SeedRuntime.load(after_first_path)
+        resumed = SeedRuntime.load(after_first_path, workspace_root=PROJECT_ROOT)
         second = resumed.continue_structural_candidate_batch(
             batch.batch_id,
             continuations_by_candidate={
@@ -163,7 +163,7 @@ def evaluate() -> dict[str, object]:
         )
         rollback_budget = resumed.model.architecture.cognitive_snapshot().development.structural_budget
         resumed.save(after_rollback_path)
-        final = SeedRuntime.load(after_rollback_path)
+        final = SeedRuntime.load(after_rollback_path, workspace_root=PROJECT_ROOT)
         final_model = final.model.architecture
         first_region = next(item for item in final_model.neuron_regions if item.region_id == first_region_id)
         second_region = next(item for item in final_model.neuron_regions if item.region_id == second_region_id)

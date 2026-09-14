@@ -482,7 +482,7 @@ def _joint_constraints(
             if candidate.candidate_id == target_id:
                 continue
             difference = tuple(
-                t - o for t, o in zip(features[target_id], features[candidate.candidate_id])
+                t - o for t, o in zip(features[target_id], features[candidate.candidate_id], strict=True)
             )
             constraints.append(
                 (
@@ -493,7 +493,7 @@ def _joint_constraints(
             )
         if target.candidate_role == "proposal":
             difference = tuple(
-                t - o for t, o in zip(features[target_id], features[safe.candidate_id])
+                t - o for t, o in zip(features[target_id], features[safe.candidate_id], strict=True)
             )
             constraints.append(
                 (
@@ -516,7 +516,7 @@ def _joint_constraints(
                 if candidate.candidate_id == picked_id:
                     continue
                 difference = tuple(
-                    t - o for t, o in zip(features[picked_id], features[candidate.candidate_id])
+                    t - o for t, o in zip(features[picked_id], features[candidate.candidate_id], strict=True)
                 )
                 constraints.append(
                     (
@@ -526,7 +526,7 @@ def _joint_constraints(
                     )
                 )
             difference = tuple(
-                t - o for t, o in zip(features[picked_id], features[safe.candidate_id])
+                t - o for t, o in zip(features[picked_id], features[safe.candidate_id], strict=True)
             )
             constraints.append(
                 (
@@ -541,7 +541,7 @@ def _joint_constraints(
                 if candidate.candidate_role != "proposal":
                     continue
                 difference = tuple(
-                    t - o for t, o in zip(features[candidate.candidate_id], features[picked_id])
+                    t - o for t, o in zip(features[candidate.candidate_id], features[picked_id], strict=True)
                 )
                 constraints.append(
                     (

@@ -96,7 +96,7 @@ def project_to_joint_feasible_region(
         total_violation = float(final_violations.sum().item())
         max_violation = float(final_violations.max().item()) if final_violations.numel() else 0.0
         per_family: dict[str, float] = {}
-        for (_a, _b, label), violation in zip(constraints, final_violations):
+        for (_a, _b, label), violation in zip(constraints, final_violations, strict=True):
             family = label.split(":")[0]
             per_family[family] = per_family.get(family, 0.0) + float(violation.item())
         displacement = variable - anchor_tensor

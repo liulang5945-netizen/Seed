@@ -71,7 +71,7 @@ def evaluate() -> dict[str, object]:
         strict_store = StructuralValidationArtifactStore(root / "strict")
         strict_store.put_measured_artifact(strict_artifact, strict_measurements)
         strict_runtime.save(strict_checkpoint)
-        strict_restored = SeedRuntime.load(strict_checkpoint)
+        strict_restored = SeedRuntime.load(strict_checkpoint, workspace_root=PROJECT_ROOT)
         strict_result = strict_restored.continue_structural_candidate_batch_from_artifact_store(
             strict_batch_id,
             artifact_store=strict_store,
@@ -100,7 +100,7 @@ def evaluate() -> dict[str, object]:
         legacy_store = StructuralValidationArtifactStore(root / "legacy")
         legacy_store.put(legacy_artifact)
         legacy_runtime.save(legacy_checkpoint)
-        legacy_restored = SeedRuntime.load(legacy_checkpoint)
+        legacy_restored = SeedRuntime.load(legacy_checkpoint, workspace_root=PROJECT_ROOT)
         before_legacy_rejection = _checkpoint_digest(
             legacy_restored.model.architecture.native_checkpoint()
         )
@@ -160,7 +160,7 @@ def evaluate() -> dict[str, object]:
             explicit_legacy_policy
         )
         checkpointed_runtime.save(checkpointed_policy_checkpoint)
-        checkpointed_restored = SeedRuntime.load(checkpointed_policy_checkpoint)
+        checkpointed_restored = SeedRuntime.load(checkpointed_policy_checkpoint, workspace_root=PROJECT_ROOT)
         checkpointed_result = checkpointed_restored.continue_structural_candidate_batch_from_artifact_store(
             checkpointed_batch_id,
             artifact_store=checkpointed_store,

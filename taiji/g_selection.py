@@ -172,7 +172,7 @@ class GSelectionCandidate:
             "confidence": float(confidence),
             "ambiguity": float(ambiguity),
         }
-        return cls(candidate_digest=content_digest(unsigned), **unsigned)
+        return cls.from_payload({**unsigned, "candidate_digest": content_digest(unsigned)})
 
     @property
     def joint_score(self) -> float:

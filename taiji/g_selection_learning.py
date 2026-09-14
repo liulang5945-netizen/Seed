@@ -201,7 +201,7 @@ class GSelectionDecision:
             "ambiguity": selected.ambiguity,
             "external_target_used": False,
         }
-        return cls(decision_digest=content_digest(unsigned), **unsigned)
+        return cls.from_payload({**unsigned, "decision_digest": content_digest(unsigned)})
 
     def to_payload(self) -> dict[str, Any]:
         return {

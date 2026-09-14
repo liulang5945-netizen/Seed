@@ -14,7 +14,6 @@
 
 import json
 import logging
-import pickle
 import queue
 import threading
 import time
@@ -291,14 +290,8 @@ def resume_checkpoint(req: ResumeRequest):
         corpus_paths = [_DEFAULT_CORPUS]
 
     try:
-        try:
-            envelope = torch.load(ckpt_path, map_location="cpu", weights_only=True)
-        except pickle.UnpicklingError:
-            logger.warning(
-                f"checkpoint {name} 含自定义对象，以不安全模式"
-                "（weights_only=False）加载受信 checkpoint"
-            )
-            envelope = torch.load(ckpt_path, map_location="cpu", weights_only=False)
+        # A failed safe load is a refusal, not permission to execute pickle code.
+        envelope = torch.load(ckpt_path, map_location="cpu", weights_only=True)
         model = Seed.from_checkpoint(envelope)
     except Exception as exc:
         logger.error(f"checkpoint load failed ({name}): {exc}")

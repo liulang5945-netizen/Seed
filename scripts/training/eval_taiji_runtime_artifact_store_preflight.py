@@ -61,7 +61,7 @@ def evaluate() -> dict[str, object]:
     try:
         store.put(artifact)
         runtime.save(checkpoint_path)
-        restored = SeedRuntime.load(checkpoint_path)
+        restored = SeedRuntime.load(checkpoint_path, workspace_root=PROJECT_ROOT)
         before = _checkpoint_digest(restored.model.architecture.native_checkpoint())
         try:
             restored.continue_structural_candidate_batch_from_artifact_store(

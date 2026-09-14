@@ -92,9 +92,9 @@ def test_declares_opaque_indexed_pair(runner) -> None:
     assert runner.HELD_OUT_PAIR_INDEX == (0, 3)
     assert len(runner.HELD_OUT_PAIR) == 2
     members = runner.MEMBER_IDS
-    assert runner.HELD_OUT_PAIR == tuple(
+    assert tuple(
         sorted((members[0], members[3]))
-    ), "the opaque index must resolve through MEMBER_IDS, not be hardcoded"
+    ) == runner.HELD_OUT_PAIR, "the opaque index must resolve through MEMBER_IDS, not be hardcoded"
     # and the remaining observable pairs must be exactly the complement
     assert len(runner.OBSERVED_PAIR_MEMBER_SETS) == len(runner.PAIR_MEMBER_SETS) - 1
 
@@ -308,5 +308,5 @@ def test_report_does_not_overwrite_predecessor(runner) -> None:
     assert runner.DEFAULT_REPORT.name == (
         "taiji_p5_2c_prime_unseen_combination_transfer_20260913.json"
     )
-    assert runner.DEFAULT_REPORT != predecessor
+    assert predecessor != runner.DEFAULT_REPORT
     assert "P5_2C_PRIME" in runner.PREREGISTRATION

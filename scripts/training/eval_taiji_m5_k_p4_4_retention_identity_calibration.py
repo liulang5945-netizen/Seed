@@ -136,7 +136,7 @@ def _structure_row(
     safe_roles = sorted(
         {
             candidate.candidate_role
-            for candidate, outcome in zip(candidate_set.candidates, behavior_set.outcomes)
+            for candidate, outcome in zip(candidate_set.candidates, behavior_set.outcomes, strict=True)
             if outcome.safe_exit_valid or outcome.safe_exit_progress
         }
     )
@@ -482,7 +482,11 @@ def _structure_gate(
     contract: Mapping[str, Any], records: Sequence[Mapping[str, Any]]
 ) -> dict[str, Any]:
     actual = [_structure_row(record["candidate_set"], record["behavior_set"]) for record in records]
-    row_checks = [actual_row == expected for actual_row, expected in zip(actual, contract["rows"])]
+    # 仅比较共有行；数量不符由独立的 row_count 门禁判定，保留诊断返回行为。
+    row_checks = [
+        actual_row == expected
+        for actual_row, expected in zip(actual, contract["rows"], strict=False)
+    ]
     return {
         "row_count": len(records) == int(contract["row_count"]),
         "candidate_role_and_width_match": all(row_checks),

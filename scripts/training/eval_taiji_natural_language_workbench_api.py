@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import sys
+import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
@@ -16,7 +17,6 @@ if str(PROJECT_ROOT) not in sys.path:
 from api.app import create_app  # noqa: E402
 from api.seed_runtime import SeedRuntime  # noqa: E402
 from seed import Seed  # noqa: E402
-from seed_platform.workbench import WorkbenchEnvironment  # noqa: E402
 from taiji import SemanticEvidenceProposal  # noqa: E402
 
 REPORT_FORMAT = "taiji-w7-p2-13-natural-language-workbench-api-v1"
@@ -25,13 +25,12 @@ ORIGINAL_CONTENT = "Seed API source\n"
 UPDATED_CONTENT = "Taiji API source\n"
 
 
-def _runtime(seed: int, checkpoint_path: Path) -> SeedRuntime:
-    runtime = SeedRuntime(
+def _runtime(seed: int, checkpoint_path: Path, *, workspace_root: Path = PROJECT_ROOT) -> SeedRuntime:
+    return SeedRuntime(
         Seed(episode_id=f"p2-13-natural-language-api-{seed}"),
         checkpoint_path=checkpoint_path,
+        workspace_root=workspace_root,
     )
-    runtime._workbench_environment = WorkbenchEnvironment(PROJECT_ROOT)
-    return runtime
 
 
 def _proposal(runtime: SeedRuntime, prompt: str) -> SemanticEvidenceProposal:
@@ -67,20 +66,31 @@ def _proposal(runtime: SeedRuntime, prompt: str) -> SemanticEvidenceProposal:
     )
 
 
-def evaluate() -> dict[str, object]:
-    fixture_path = PROJECT_ROOT / TARGET_PATH
-    checkpoint_path = PROJECT_ROOT / "checkpoints" / ".p2-13-natural-language-api.pt"
+def evaluate(*, work_dir: Path | None = None) -> dict[str, object]:
+    """Run inside an owned work directory; never overwrite repository fixtures.
+
+    A caller-supplied directory owns its artifacts and cleanup. The CLI uses a
+    fresh temporary directory and cleans only that directory on exit.
+    """
+    if work_dir is None:
+        with tempfile.TemporaryDirectory(prefix="seed-p2-13-") as temporary:
+            return evaluate(work_dir=Path(temporary))
+    workspace_root = Path(work_dir).resolve()
+    fixture_path = workspace_root / TARGET_PATH
+    checkpoint_path = workspace_root / "checkpoints" / ".p2-13-natural-language-api.pt"
+    if fixture_path.exists() or checkpoint_path.exists():
+        raise FileExistsError("canary requires a fresh work directory")
     fixture_path.parent.mkdir(parents=True, exist_ok=True)
-    checkpoint_path.unlink(missing_ok=True)
+    checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
     fixture_path.write_text(ORIGINAL_CONTENT, encoding="utf-8")
     prompt = "请把 reports/.p2-13-api-fixture.txt 中的 Seed 改成 Taiji"
 
     try:
         with patch(
             "seed_platform.workbench.get_setting",
-            lambda key, default=None: str(PROJECT_ROOT) if key == "workspace_path" else default,
+            lambda key, default=None: str(workspace_root) if key == "workspace_path" else default,
         ):
-            runtime = _runtime(13, checkpoint_path)
+            runtime = _runtime(13, checkpoint_path, workspace_root=workspace_root)
             with (
                 patch("api.seed_runtime._runtime", runtime),
                 TestClient(create_app(startup_tasks=False)) as client,
@@ -251,8 +261,8 @@ def evaluate() -> dict[str, object]:
             ),
         }
     finally:
-        checkpoint_path.unlink(missing_ok=True)
-        fixture_path.unlink(missing_ok=True)
+        # Caller/TemporaryDirectory owns these artifacts and their cleanup.
+        pass
 
 
 def main() -> None:

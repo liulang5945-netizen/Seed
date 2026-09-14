@@ -154,7 +154,7 @@ def test_manual_score_equals_explicit_linear_combination() -> None:
     expected = (
         sum(
             float(w) * float(f)
-            for w, f in zip(child.model.weight.detach()[0][:12], candidate.feature_vector)
+            for w, f in zip(child.model.weight.detach()[0][:12], candidate.feature_vector, strict=True)
         )
         + 0.5 * context["good"][0]
         - 2.0 * context["good"][8]

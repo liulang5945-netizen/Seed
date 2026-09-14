@@ -75,7 +75,7 @@ def evaluate() -> dict[str, object]:
         first_parent_digest = _checkpoint_digest(runtime.model.architecture.native_checkpoint())
         store.put(first_artifact)
         runtime.save(paths[0])
-        first_parent = SeedRuntime.load(paths[0])
+        first_parent = SeedRuntime.load(paths[0], workspace_root=PROJECT_ROOT)
         first_result = first_parent.continue_structural_candidate_batch_from_artifact_store(
             batch.batch_id,
             artifact_store=StructuralValidationArtifactStore(store_root),
@@ -93,7 +93,7 @@ def evaluate() -> dict[str, object]:
         second_parent_digest = _checkpoint_digest(first_parent.model.architecture.native_checkpoint())
         store.put(second_artifact)
         first_parent.save(paths[1])
-        second_parent = SeedRuntime.load(paths[1])
+        second_parent = SeedRuntime.load(paths[1], workspace_root=PROJECT_ROOT)
         second_result = second_parent.continue_structural_candidate_batch_from_artifact_store(
             batch.batch_id,
             artifact_store=store,
@@ -103,7 +103,7 @@ def evaluate() -> dict[str, object]:
         )
         second_budget = _budget(second_parent)
         second_parent.save(paths[2])
-        final = SeedRuntime.load(paths[2])
+        final = SeedRuntime.load(paths[2], workspace_root=PROJECT_ROOT)
         repeated = final.continue_structural_candidate_batch_from_artifact_store(
             batch.batch_id,
             artifact_store=StructuralValidationArtifactStore(store_root),

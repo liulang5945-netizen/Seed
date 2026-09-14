@@ -15,6 +15,8 @@ from scripts.training.eval_taiji_workbench_multi_region_batch import (
 from scripts.training.eval_taiji_workbench_multi_region_lifecycle import _record_real_evidence
 from taiji.adapter import _checkpoint_digest
 
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
 
 def test_runtime_artifact_failures_are_isolated_and_concurrent_submit_is_idempotent() -> None:
     runtime = _build_runtime()
@@ -37,7 +39,7 @@ def test_runtime_artifact_failures_are_isolated_and_concurrent_submit_is_idempot
     after_path = checkpoint_root / f"s37-runtime-artifact-after-{suffix}.pt"
     try:
         runtime.save(checkpoint_path)
-        unknown_branch = SeedRuntime.load(checkpoint_path)
+        unknown_branch = SeedRuntime.load(checkpoint_path, workspace_root=PROJECT_ROOT)
         before_unknown = _checkpoint_digest(unknown_branch.model.architecture.native_checkpoint())
         try:
             unknown_branch.continue_structural_candidate_batch_from_validation_artifacts(
@@ -51,7 +53,7 @@ def test_runtime_artifact_failures_are_isolated_and_concurrent_submit_is_idempot
             raise AssertionError("runtime accepted a cross-batch artifact key")
         assert _checkpoint_digest(unknown_branch.model.architecture.native_checkpoint()) == before_unknown
 
-        stale_branch = SeedRuntime.load(checkpoint_path)
+        stale_branch = SeedRuntime.load(checkpoint_path, workspace_root=PROJECT_ROOT)
         _execute_observation(
             stale_branch,
             ordinal=99,
@@ -78,7 +80,7 @@ def test_runtime_artifact_failures_are_isolated_and_concurrent_submit_is_idempot
         ) == stale_before_topology
         assert stale_branch.model.architecture.cognitive_snapshot().development.structural_budget == stale_before_budget
 
-        tamper_branch = SeedRuntime.load(checkpoint_path)
+        tamper_branch = SeedRuntime.load(checkpoint_path, workspace_root=PROJECT_ROOT)
         malformed = copy.deepcopy(artifact.to_payload())
         malformed["measurement_digest"] = "0" * 64
         tampered = tamper_branch.continue_structural_candidate_batch_from_validation_artifacts(
@@ -93,7 +95,7 @@ def test_runtime_artifact_failures_are_isolated_and_concurrent_submit_is_idempot
         )
         assert tamper_batch.state_by_candidate[candidate_id] == "failed_closed"
 
-        concurrent_branch = SeedRuntime.load(checkpoint_path)
+        concurrent_branch = SeedRuntime.load(checkpoint_path, workspace_root=PROJECT_ROOT)
         before_concurrent_topology = tuple(
             (region.region_id, region.unit_ids)
             for region in concurrent_branch.model.architecture.neuron_regions
@@ -122,7 +124,7 @@ def test_runtime_artifact_failures_are_isolated_and_concurrent_submit_is_idempot
             == before_concurrent_budget - artifact.resource_cost
         )
         concurrent_branch.save(after_path)
-        resumed = SeedRuntime.load(after_path)
+        resumed = SeedRuntime.load(after_path, workspace_root=PROJECT_ROOT)
         assert any(
             item.artifact_digest == artifact.artifact_digest
             for item in resumed.model.architecture.structural_validation_artifacts

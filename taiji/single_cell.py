@@ -74,9 +74,9 @@ def _scope_tags(value: Any, name: str) -> tuple[str, ...]:
 
 def _digest_pairs(value: Any, name: str) -> tuple[tuple[str, str], ...]:
     if isinstance(value, Mapping):
-        items = value.items()
+        items = tuple(value.items())
     elif isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
-        items = value
+        items = tuple(value)
     else:
         raise TypeError(f"{name} must be a mapping or pair sequence")
     normalized = tuple(
@@ -90,9 +90,9 @@ def _digest_pairs(value: Any, name: str) -> tuple[tuple[str, str], ...]:
 
 def _text_pairs(value: Any, name: str) -> tuple[tuple[str, str], ...]:
     if isinstance(value, Mapping):
-        items = value.items()
+        items = tuple(value.items())
     elif isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
-        items = value
+        items = tuple(value)
     else:
         raise TypeError(f"{name} must be a mapping or pair sequence")
     normalized = tuple(
@@ -106,9 +106,9 @@ def _text_pairs(value: Any, name: str) -> tuple[tuple[str, str], ...]:
 
 def _budget_pairs(value: Any, name: str) -> tuple[tuple[str, int], ...]:
     if isinstance(value, Mapping):
-        items = value.items()
+        items = tuple(value.items())
     elif isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
-        items = value
+        items = tuple(value)
     else:
         raise TypeError(f"{name} must be a mapping or pair sequence")
     normalized = tuple(
@@ -216,7 +216,7 @@ class SingleCellOwnerContract:
             "write_scopes": list(_scope_tags(write_scopes, "write_scopes")),
             "learning_owner": str(learning_owner),
         }
-        return cls(**unsigned, contract_digest=content_digest(unsigned))
+        return cls.from_payload({**unsigned, "contract_digest": content_digest(unsigned)})
 
     @classmethod
     def from_payload(cls, payload: Mapping[str, Any]) -> SingleCellOwnerContract:
@@ -347,9 +347,9 @@ class TaijiSingleCellManifest:
 
 def _state_pairs(value: Any, name: str) -> tuple[tuple[str, str | None], ...]:
     if isinstance(value, Mapping):
-        items = value.items()
+        items = tuple(value.items())
     elif isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
-        items = value
+        items = tuple(value)
     else:
         raise TypeError(f"{name} must be a mapping or pair sequence")
     normalized = []
@@ -529,10 +529,7 @@ class TaijiSingleCellEvent:
             "status": str(status),
             "attributes": dict(attributes),
         }
-        return cls(
-            **unsigned,
-            event_digest=content_digest(unsigned),
-        )
+        return cls.from_payload({**unsigned, "event_digest": content_digest(unsigned)})
 
     @classmethod
     def from_payload(cls, payload: Mapping[str, Any]) -> TaijiSingleCellEvent:

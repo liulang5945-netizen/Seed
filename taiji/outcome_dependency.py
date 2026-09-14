@@ -385,9 +385,11 @@ class OutcomeDependencyProjector:
         if world.tick != projection.parent_tick:
             raise ValueError("outcome dependency projection is stale for the current world")
         existing = {item.event_id: item for item in world.events}
-        if projection.event.event_id in existing:
-            if existing[projection.event.event_id].to_payload() != projection.event.to_payload():
-                raise ValueError("outcome dependency event identity conflict")
+        if (
+            projection.event.event_id in existing
+            and existing[projection.event.event_id].to_payload() != projection.event.to_payload()
+        ):
+            raise ValueError("outcome dependency event identity conflict")
         if ("dependency", "id", projection.spec.dependency_id) in world.relations:
             raise ValueError("outcome dependency projection was already applied")
         events = world.events

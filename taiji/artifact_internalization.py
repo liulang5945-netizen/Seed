@@ -13,7 +13,7 @@ import hashlib
 import math
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 import torch
 
@@ -246,7 +246,7 @@ class SemanticArtifactKnowledgeEncoder:
         return ". ".join(parts)
 
     def encode(self, artifact: EvolutionCorpusArtifact) -> torch.Tensor:
-        return self.embedder.embed([self._text(artifact)])[0]
+        return cast(torch.Tensor, self.embedder.embed([self._text(artifact)])[0])
 
     def checkpoint(self) -> dict[str, Any]:
         return {

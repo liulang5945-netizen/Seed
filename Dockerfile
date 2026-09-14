@@ -51,10 +51,12 @@ COPY taiji/ ./taiji/
 COPY seed_platform/ ./seed_platform/
 COPY neuroplex/ ./neuroplex/
 COPY api/ ./api/
+COPY instruments/ ./instruments/
+COPY desktop/ ./desktop/
 RUN pip install -e ".[legacy]"
 
 # 构建期导入断言：把「镜像内缺包」从运行时 smoke 前移到 build 层，漏拷贝即刻失败。
-RUN python -c "import api.app"
+RUN python -c "import api.app, instruments; import importlib.util; assert importlib.util.find_spec('desktop.main') is not None"
 
 # 拷贝前端构建产物（后端以此为静态资源）
 COPY --from=frontend-builder /app/frontend/dist ./frontend/dist

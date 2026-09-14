@@ -12,6 +12,7 @@ Minimal by design:
 from __future__ import annotations
 
 import logging
+from dataclasses import fields
 
 import pytest
 
@@ -47,23 +48,36 @@ def _observe_logging() -> None:
     yield
 
 
+def _reset_app_state_in_place(module) -> None:
+    """Preserve imported singleton references while replacing per-test values."""
+    fresh = module.AppState()
+    for descriptor in fields(fresh):
+        setattr(module.app_state, descriptor.name, getattr(fresh, descriptor.name))
+
+
 @pytest.fixture(autouse=True, scope="session")
 def _reset_global_app_state() -> None:
     """Reinitialize the platform app-state singleton for a clean slate.
 
-    The singleton is created at import time and persists across tests. We
-    replace it with a fresh instance at session teardown only if the module
-    imported cleanly, so importing this fixture never fails a collection.
+    Reset fields in place so modules that imported app_state directly observe
+    the reset too; replacing the module attribute would leave stale aliases.
     """
     yield
     try:
         import seed_platform.app_state as _app_state_mod
-    except Exception:  # pragma: no cover - neuroplex optional in some envs
+    except Exception:  # pragma: no cover - optional platform dependencies
         return
     try:
-        _app_state_mod.app_state = _app_state_mod.AppState()
+        _reset_app_state_in_place(_app_state_mod)
     except Exception:  # pragma: no cover - never break teardown
         return
+
+
+@pytest.fixture(autouse=True)
+def _apply_reset_state_marker(request):
+    """The marker opts into the fixture; registering a marker alone does not."""
+    if request.node.get_closest_marker("reset_state") is not None:
+        request.getfixturevalue("reset_state")
 
 
 @pytest.fixture(autouse=False)
@@ -77,13 +91,13 @@ def reset_state():
     try:
         import seed_platform.app_state as _mod
 
-        _mod.app_state = _mod.AppState()
+        _reset_app_state_in_place(_mod)
     except Exception:
         pass
     yield
     try:
         import seed_platform.app_state as _mod
 
-        _mod.app_state = _mod.AppState()
+        _reset_app_state_in_place(_mod)
     except Exception:
         pass

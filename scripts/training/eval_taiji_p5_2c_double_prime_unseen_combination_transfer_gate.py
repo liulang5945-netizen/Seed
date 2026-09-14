@@ -923,7 +923,7 @@ def run_gate() -> dict[str, Any]:
                 "contexts_scored": len(singleton_per_context),
             },
         }
-        for name, value in pair_control_scores.items():
+        for name, _value in pair_control_scores.items():
             control_scores[name]["kind"] = "pair_selection"
 
         margin_controls = {

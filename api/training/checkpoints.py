@@ -7,7 +7,6 @@
 """
 
 import logging
-import pickle
 from pathlib import Path
 
 import torch
@@ -36,15 +35,8 @@ def _describe(path: Path) -> dict:
         item["modified_utc"] = time.strftime(
             "%Y-%m-%dT%H:%M:%SZ", time.gmtime(path.stat().st_mtime)
         )
-        try:
-            envelope = torch.load(path, map_location="cpu", weights_only=True)
-        except pickle.UnpicklingError:
-            logger.warning(
-                "checkpoint %s 含自定义对象，以不安全模式（weights_only=False）"
-                "加载受信 checkpoint",
-                path.name,
-            )
-            envelope = torch.load(path, map_location="cpu", weights_only=False)
+        # Metadata listing must never execute an unsupported pickle payload.
+        envelope = torch.load(path, map_location="cpu", weights_only=True)
         metadata = (envelope or {}).get("metadata") or {}
         item["step"] = int(metadata.get("tick", 0) or 0)
         item["saved_at_utc"] = metadata.get("saved_at_utc", "")

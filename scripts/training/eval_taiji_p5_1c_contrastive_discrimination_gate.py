@@ -91,6 +91,7 @@ A_WORKFLOWS = (
                 "Assess",
                 "Study",
             ),
+            strict=True,
         )
     ),
 )
@@ -130,6 +131,7 @@ B_WORKFLOWS = (
                 "Query",
                 "Harvest",
             ),
+            strict=True,
         )
     ),
 )

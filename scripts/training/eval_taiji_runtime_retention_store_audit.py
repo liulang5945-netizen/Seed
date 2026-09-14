@@ -103,7 +103,7 @@ def evaluate() -> dict[str, object]:
         )
         first_rollback = runtime.rollback_structural_candidate_batch(terminal_batch_id, first_id)
         runtime.save(before_retention_path)
-        restored = SeedRuntime.load(before_retention_path)
+        restored = SeedRuntime.load(before_retention_path, workspace_root=PROJECT_ROOT)
         policy = StructuralLineageRetentionPolicy.create(1, revision=2)
         maintenance = restored.run_structural_maintenance_cycle(
             candidate_ids=(),
@@ -112,7 +112,7 @@ def evaluate() -> dict[str, object]:
             lineage_retention_policy=policy.to_payload(),
         )
         restored.save(after_retention_path)
-        after_retention = SeedRuntime.load(after_retention_path)
+        after_retention = SeedRuntime.load(after_retention_path, workspace_root=PROJECT_ROOT)
         before_audit_digest = _checkpoint_digest(
             after_retention.model.architecture.native_checkpoint()
         )

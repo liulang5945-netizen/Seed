@@ -177,13 +177,13 @@ def run_cell(
             "k3_unchanged": bool(
                 artifacts["k3.outcome_projection"]["checkpoint"].get("version")
             ),
-            "checkpoint_emissions": (
+            "checkpoint_emissions": TARGET_CHECKPOINT_COUNT
+            == (
                 2  # prefit + final bundle snapshots per channel pair
                 + 2  # channel receipts (logical training checkpoints)
                 + 2  # rollback snapshot + restored verification
                 + 3  # per-episode logical boundaries (S/G/K course structure)
-            )
-            == TARGET_CHECKPOINT_COUNT,
+            ),
         }
         return {
             "model_seed": model_seed,

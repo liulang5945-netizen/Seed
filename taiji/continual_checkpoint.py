@@ -36,9 +36,9 @@ def _digest(value: Any, name: str) -> str:
 
 def _pairs(value: Any, name: str, *, digest_values: bool = False) -> tuple[tuple[str, Any], ...]:
     if isinstance(value, Mapping):
-        items = value.items()
+        items = tuple(value.items())
     elif isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
-        items = value
+        items = tuple(value)
     else:
         raise TypeError(f"{name} must be a mapping or pair sequence")
     normalized: list[tuple[str, Any]] = []

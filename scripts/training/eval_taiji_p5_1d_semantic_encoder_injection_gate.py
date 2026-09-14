@@ -549,10 +549,7 @@ def run_gate() -> dict[str, Any]:
                 replica_consistent and trial_matches and total_wall <= TOTAL_SECONDS_CAP
             ),
         }
-        if all(gates.values()):
-            outcome = "semantic_encoder_injection_supported"
-        else:
-            outcome = "rejected"
+        outcome = "semantic_encoder_injection_supported" if all(gates.values()) else "rejected"
         status = "completed"
 
         payload.update(

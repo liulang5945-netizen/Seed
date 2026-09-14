@@ -56,7 +56,7 @@ def evaluate() -> dict[str, object]:
         )
         artifact_payload = json.loads(artifact_path.read_text(encoding="utf-8"))
         runtime.save(checkpoint_path)
-        restored = SeedRuntime.load(checkpoint_path)
+        restored = SeedRuntime.load(checkpoint_path, workspace_root=PROJECT_ROOT)
         parent_matches = (
             _checkpoint_digest(restored.model.architecture.native_checkpoint())
             == artifact.parent_checkpoint_digest
@@ -81,7 +81,7 @@ def evaluate() -> dict[str, object]:
             replays_by_candidate={candidate_id: replay},
         )
         restored.save(checkpoint_path)
-        resumed = SeedRuntime.load(checkpoint_path)
+        resumed = SeedRuntime.load(checkpoint_path, workspace_root=PROJECT_ROOT)
         repeated = resumed.continue_structural_candidate_batch_from_validation_artifacts(
             batch.batch_id,
             artifacts_by_candidate={candidate_id: artifact_payload},

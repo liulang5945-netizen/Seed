@@ -214,3 +214,7 @@ output/taiji_m5_k_default_runtime_rollout_review_*/
 
 # 手工 canary 运行产物（内容寻址 JSON，由 canvas/release 自检重放生成）
 output/manual-r5-canary/
+
+# Per-run diagnostics; retained locally, not research source or frozen evidence.
+outputs/project-audit-*/
+.workbuddy-ai/

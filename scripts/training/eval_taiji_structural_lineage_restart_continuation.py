@@ -111,7 +111,7 @@ def evaluate() -> dict[str, object]:
     terminal_batch_id = "batch:terminal-lineage"
     try:
         runtime.save(migrated_path)
-        restored = SeedRuntime.load(migrated_path)
+        restored = SeedRuntime.load(migrated_path, workspace_root=PROJECT_ROOT)
         old_tick = restored.model.architecture.structural_runtime_tick
         old_scheduler_revision = restored.model.architecture.structural_growth_scheduler_state.revision
         old_status = restored.structural_maintenance_status()
@@ -127,7 +127,7 @@ def evaluate() -> dict[str, object]:
         )
         new_status = restored.structural_maintenance_status()
         restored.save(continued_path)
-        resumed = SeedRuntime.load(continued_path)
+        resumed = SeedRuntime.load(continued_path, workspace_root=PROJECT_ROOT)
         default_replay = resumed.run_structural_maintenance_cycle(
             candidate_ids=(),
             holdout_inputs_by_candidate={},
