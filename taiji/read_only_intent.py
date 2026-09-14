@@ -86,7 +86,7 @@ class ReadOnlyIntentPolicy:
             if content_key not in route_keys:
                 raise ValueError("route parameters must reference a declared content route")
             if isinstance(raw_parameters, Mapping):
-                parameter_items = raw_parameters.items()
+                parameter_items = tuple(raw_parameters.items())
             else:
                 parameter_items = raw_parameters
             parameters = tuple(

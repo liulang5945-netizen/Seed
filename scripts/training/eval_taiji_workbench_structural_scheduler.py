@@ -15,8 +15,6 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from api.seed_runtime import SeedRuntime  # noqa: E402
 from seed import Seed  # noqa: E402
-from seed_platform import workbench as workbench_module  # noqa: E402
-from seed_platform.workbench import WorkbenchEnvironment  # noqa: E402
 from taiji import (  # noqa: E402
     ActionIntent,
     AdaptiveNeuronRegion,
@@ -29,11 +27,7 @@ REPORT_FORMAT = "taiji-w7-r5c-s6-workbench-structural-scheduler-v1"
 
 
 def _build_runtime() -> SeedRuntime:
-    workbench_module.get_setting = (
-        lambda key, default=None: str(PROJECT_ROOT) if key == "workspace_path" else default
-    )
-    runtime = SeedRuntime(Seed(episode_id="r5c-s6-workbench"))
-    runtime._workbench_environment = WorkbenchEnvironment(PROJECT_ROOT)
+    runtime = SeedRuntime(Seed(episode_id="r5c-s6-workbench"), workspace_root=PROJECT_ROOT)
     region = AdaptiveNeuronRegion(
         region_id="adaptive.cortex",
         input_dim=5,

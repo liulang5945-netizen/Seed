@@ -157,7 +157,7 @@ def _structure_row(
     safe_roles = sorted(
         {
             candidate.candidate_role
-            for candidate, outcome in zip(candidate_set.candidates, behavior_set.outcomes)
+            for candidate, outcome in zip(candidate_set.candidates, behavior_set.outcomes, strict=True)
             if outcome.safe_exit_valid or outcome.safe_exit_progress
         }
     )

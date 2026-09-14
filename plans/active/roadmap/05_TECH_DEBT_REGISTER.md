@@ -13,6 +13,23 @@
   - 原始 XML：`%TEMP%/taiji_wp1_full.xml`（临时文件，不入库）；基线 XML：`%TEMP%/taiji_b0_full.xml`。
   - **远端仍未查询**（`gh` 未认证）⇒ 继续禁止"CI 已绿"表述；本文只声明**命令级**基线。
 
+- **【2026-09-14 晚｜归因更正 + 真实回归修复（本轮）】** 此条**推翻**上文对类别 B 的"顺序/状态污染"定性：
+  - **类别 B 的 `SystemExit` 级联 = 本地 WorkBuddy 沙箱 safe-delete 守卫伪影，不是项目债务**。
+    以 `--tb=long -o junit_logging=all` 复采，45 项失败的完整栈**全部**终止于
+    `...\cli\vendor\shim\sitecustomize.py:826 (_exit_bulk_guard_control)`
+    （帧链 `Path.unlink → _safe_path_unlink → _try_trash → _check_bulk_delete_guard`）；
+    同一套件加 `CODEBUDDY_SAFE_DELETE_ENABLED=0` 后 **45 → 5**。CI（GitHub Actions）无此守卫。
+  - **剩余 5 项是修复轮引入的真实回归**：`SeedRuntime.load(...)` 不保留构造时注入的
+    `workspace_root`，`workspace.read` 因此回退到 `agent_workspace`；旧代码被 gate 脚本的
+    **模块级 `get_setting` patch** 掩盖。已对 19 个脚本 + 2 个测试文件共 **68 处**补
+    `workspace_root=PROJECT_ROOT`。
+  - **本轮验证**：定向 6/6 通过；`tests/` 全量（守卫关闭）**1386 passed / 6 skipped / 0 failed**（1059s）；
+    `ruff check .`、`ruff check . --select B,SIM --ignore B008`、
+    `mypy --follow-imports=silent seed taiji`（114 源文件）三项**全部干净**。
+  - **`black --check .` 仍红（460 文件）**：既有、**未登记**的债务（CI 有 blocking 门禁但从未清理），
+    本轮未处置，属独立决策项。
+  - ⇒ **本地复跑 `tests/` 必须设 `CODEBUDDY_SAFE_DELETE_ENABLED=0`**，否则读到的是环境伪影而非真实结果。
+
 - DEBT-A1/A2 已结项，见下方修复记录；原“只登记不修复”是建册时范围，不应把已完成修复写回未解决。
 - 30 失败/788 用例是 aa124f52 的历史基线；28 个 SystemExit 仍待定位，**当前 HEAD 重测计数为 27**（集合见 §6，为旧 28 项的严格子集）。
 - 下文引用图论证仅能缩小直接依赖范围，不能证明间接状态、动态导入、文件和环境污染不存在；失败归属须结合可复现顺序、父提交对照与栈证据。
@@ -181,6 +198,20 @@ gone = load("baseline.xml") - load("now.xml")  # 记录，用于识别抖动
 
 ## 4. 类别 B：`SystemExit: 1` 级联（28 项，中）
 
+> **【已定性 2026-09-14】真因不是项目代码，而是本地 WorkBuddy 沙箱的 safe-delete 批量删除守卫。**
+> 该守卫经 `sitecustomize.py`（PYTHONPATH 注入）劫持 `pathlib.Path.unlink` / `os.remove`，
+> 按「单个 tool call 内删除 ≥50 个路径」计数，超限即 `raise SystemExit(1)`；
+> 于是**此后所有做清理的用例都被中断**。这解释了本节的每一项观测：
+> 失败集合每次不同（取决于计数器何时跨限）、单独跑全过、集中在后段、拿不到栈。
+>
+> **实测证据**：以 `--tb=long -o junit_logging=all` 复采，45 项失败的完整栈**全部**终止于
+> `D:\WorkBuddy\...\cli\vendor\shim\sitecustomize.py:826 (_exit_bulk_guard_control)`，
+> 中间帧为 `_safe_path_unlink → _try_trash → _check_bulk_delete_guard`；
+> 同一套件加 `CODEBUDDY_SAFE_DELETE_ENABLED=0` 后失败数 **45 → 5**（详见 §4.1）。
+>
+> **对 CI 的含义**：GitHub Actions 无此守卫，本类别**不构成项目债务**；
+> 本地复跑 `tests/` 必须设 `CODEBUDDY_SAFE_DELETE_ENABLED=0`，否则读到的是环境伪影而非真实结果。
+
 ### 现象
 
 28 个用例在**全量套件上下文**中以 `SystemExit: 1` 失败，单独运行或小批组合**全部通过**。
@@ -209,29 +240,41 @@ gone = load("baseline.xml") - load("now.xml")  # 记录，用于识别抖动
   `test_semantic_provider* + test_semantic_grounding`，均通过）。
 - 不属于本次改动（§1 引用图已证）。
 
-### 首要嫌疑（待验证，**未确认**）
+### 已推翻的原假设（保留记录，2026-09-14）
 
-`tests/conftest.py` 的会话级 fixture `_reset_global_app_state` **只在 session teardown 重置**
-`seed_platform.app_state` 单例：
+原首要嫌疑是 `tests/conftest.py` 的会话级 fixture `_reset_global_app_state`
+**只在 session teardown 重置** `seed_platform.app_state` 单例，于是 788 个用例共享同一单例。
+**该假设已被实测推翻**：`AppState` 只有 22 个 api 层字段（trainer/model/tokenizer/locks），
+构造开销 0.003 ms；且 `test_runtime_*` / `test_structural_*` 这些失败 gate **不读写 app_state**。
+真正的停点在有完整栈时一目了然（见本节开头的实测证据）。
 
-```python
-@pytest.fixture(autouse=True, scope="session")
-def _reset_global_app_state() -> None:
-    yield                      # <-- 整个会话期间不重置
-    ...                        # <-- 只在会话结束时重置一次
-```
+**方法教训（与 §1 并列）**：`SystemExit` 级联在**拿到栈之前**不要猜根因——本项目已因此
+把归因写错一轮。可观测性（`--tb=long -o junit_logging=all`）应先于假设建立。
 
-即：**788 个用例共享同一个 `app_state` 单例与全部模块级全局**。若有任一用例留下不可逆状态
-（单例缓存、torch 全局开关/随机种子、`reports/` artifact、环境变量、`sys.path` 变更），
-后续依赖该状态的 gate 就会真实地返回失败 → `sys.exit(1)`。
+### 4.1 真实回归（关闭守卫后剩余的 5 项，已修）
 
-这与「失败集合每次不同」和「单独跑就过」两个观测一致。
+关闭守卫后剩余的 5 项**不是**污染，而是**修复轮引入的真实回归**：
 
-### 处置时需先建立的观测能力
+- 失败点统一在 `eval_taiji_workbench_multi_region_batch.py:97`，形如
+  `workspace.read` → `error_code: not_found`（`README.md` 不存在）。
+- 根因：`SeedRuntime.load(...)` **不保留**构造时注入的 `workspace_root`
+  （override 只在 `__init__` 生效），于是恢复后的 runtime 回退到产品默认工作区
+  `default_workspace_root()` → `agent_workspace`；`README.md` 自然找不到。
+- 旧代码被 **gate 脚本模块级 patch** `workbench_module.get_setting`（全局副作用，
+  本身就是污染源）掩盖；修复轮把 patch 换成显式 `workspace_root=` 注入时，
+  **只改了构造、漏改了 `load`**，于是暴露。
 
-1. 让 `SystemExit` 带栈：给相关 gate runner 的 `sys.exit` 路径加包装，或在测试内捕获并打印栈。
-2. 二分定位污染源：用 `pytest -p no:randomly --lf` 或按文件二分（`--deselect`）缩小到引入污染的用例。
-3. 记录触发顺序：污染通常依赖特定前序用例，需把顺序一起记入回归。
+处置：对 19 个使用「仓库读取能力」的脚本（import multi_region 的 `_build_runtime` /
+`_execute_observation` / `_record_round`）+ 2 个直接调用该能力的测试文件，
+统一给 `SeedRuntime.load(...)` 显式传 `workspace_root=PROJECT_ROOT`。
+验证：6/6 定向用例通过；全量套件在守卫关闭下 **0 失败**。
+
+### 处置时需先建立的观测能力（已建立）
+
+1. ✅ 让 `SystemExit` 带栈：CI 已加 `--tb=short --junitxml=... -o junit_logging=all`
+   （`.github/workflows/ci.yml`），本次据此一次性定位真因。
+2. 二分定位污染源（`--deselect`）——本次未需要，直接由栈定案。
+3. 记录触发顺序——守卫计数是会话级，顺序仍应记入本地复跑说明。
 
 ## 5. 类别 C：既有 CI 口径差异（旁证，未计入 30）
 

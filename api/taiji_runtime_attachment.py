@@ -78,7 +78,8 @@ def _load_json(path: Path) -> dict[str, Any]:
 def _load_mapping(path: Path) -> dict[str, Any]:
     import torch
 
-    payload = torch.load(path, map_location="cpu", weights_only=False)
+    # Digest validation after deserialization cannot make arbitrary pickle safe.
+    payload = torch.load(path, map_location="cpu", weights_only=True)
     if not isinstance(payload, Mapping):
         raise AttachmentRefused(f"expected a mapping checkpoint at {path}")
     return {str(key): value for key, value in payload.items()}

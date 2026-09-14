@@ -66,7 +66,7 @@ def evaluate() -> dict[str, object]:
         store.put(artifact)
         runtime.save(checkpoint_path)
 
-        unknown = SeedRuntime.load(checkpoint_path)
+        unknown = SeedRuntime.load(checkpoint_path, workspace_root=PROJECT_ROOT)
         before_unknown = _checkpoint_digest(unknown.model.architecture.native_checkpoint())
         try:
             unknown.continue_structural_candidate_batch_from_artifact_store(
@@ -82,7 +82,7 @@ def evaluate() -> dict[str, object]:
             unknown_rejected = False
         unknown_atomic = _checkpoint_digest(unknown.model.architecture.native_checkpoint()) == before_unknown
 
-        missing = SeedRuntime.load(checkpoint_path)
+        missing = SeedRuntime.load(checkpoint_path, workspace_root=PROJECT_ROOT)
         before_missing = _checkpoint_digest(missing.model.architecture.native_checkpoint())
         try:
             missing.continue_structural_candidate_batch_from_artifact_store(
@@ -98,7 +98,7 @@ def evaluate() -> dict[str, object]:
             missing_rejected = False
         missing_atomic = _checkpoint_digest(missing.model.architecture.native_checkpoint()) == before_missing
 
-        restored = SeedRuntime.load(checkpoint_path)
+        restored = SeedRuntime.load(checkpoint_path, workspace_root=PROJECT_ROOT)
         handoff = StructuralValidationArtifactStore(store_root)
         result = restored.continue_structural_candidate_batch_from_artifact_store(
             batch.batch_id,

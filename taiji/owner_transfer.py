@@ -51,9 +51,9 @@ OWNER_TRANSFER_ROLES = tuple(
 
 def _float_pairs(value: Any, name: str) -> tuple[tuple[str, float], ...]:
     if isinstance(value, Mapping):
-        items = value.items()
+        items = tuple(value.items())
     elif isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
-        items = value
+        items = tuple(value)
     else:
         raise TypeError(f"{name} must be a mapping or pair sequence")
     normalized = tuple((_text(item[0], f"{name} key"), float(item[1])) for item in items)
@@ -160,28 +160,40 @@ class GSelectionState:
             and result.goal is not None
             and result.content_plan is not None
         )
+        candidate_digest = content_digest(candidate)
+        goal_scores = _float_pairs(result.goal_scores, "goal_scores")
+        content_scores = _float_pairs(result.content_scores, "content_scores")
+        selected_goal = result.goal.to_payload() if selected and result.goal is not None else None
+        selected_content = (
+            result.content_plan.to_payload()
+            if selected and result.content_plan is not None
+            else None
+        )
+        selection_status = "selected" if selected else "abstained"
+        confidence = float(result.confidence)
+        ambiguity = float(result.ambiguity)
         unsigned = {
             "format": TAIJI_OWNER_TRANSFER_FORMAT,
             "version": TAIJI_OWNER_TRANSFER_VERSION,
-            "candidate_digest": content_digest(candidate),
-            "goal_scores": dict(_float_pairs(result.goal_scores, "goal_scores")),
-            "content_scores": dict(_float_pairs(result.content_scores, "content_scores")),
-            "selected_goal": result.goal.to_payload() if selected else None,
-            "selected_content": result.content_plan.to_payload() if selected else None,
-            "selection_status": "selected" if selected else "abstained",
-            "confidence": float(result.confidence),
-            "ambiguity": float(result.ambiguity),
+            "candidate_digest": candidate_digest,
+            "goal_scores": dict(goal_scores),
+            "content_scores": dict(content_scores),
+            "selected_goal": selected_goal,
+            "selected_content": selected_content,
+            "selection_status": selection_status,
+            "confidence": confidence,
+            "ambiguity": ambiguity,
             "external_target_used": False,
         }
         return cls(
-            candidate_digest=str(unsigned["candidate_digest"]),
-            goal_scores=tuple(unsigned["goal_scores"].items()),
-            content_scores=tuple(unsigned["content_scores"].items()),
-            selected_goal=_optional_goal(unsigned["selected_goal"], "selected_goal"),
-            selected_content=_optional_content(unsigned["selected_content"], "selected_content"),
-            selection_status=str(unsigned["selection_status"]),
-            confidence=float(unsigned["confidence"]),
-            ambiguity=float(unsigned["ambiguity"]),
+            candidate_digest=candidate_digest,
+            goal_scores=goal_scores,
+            content_scores=content_scores,
+            selected_goal=_optional_goal(selected_goal, "selected_goal"),
+            selected_content=_optional_content(selected_content, "selected_content"),
+            selection_status=selection_status,
+            confidence=confidence,
+            ambiguity=ambiguity,
             external_target_used=False,
             selection_digest=content_digest(unsigned),
         )
@@ -287,14 +299,13 @@ class TaijiOwnerTransferManifest:
         base_continuation_checkpoint_digest: str,
         worker_checkpoint_digests: Mapping[str, str],
     ) -> TaijiOwnerTransferManifest:
+        workers = _digest_pairs(worker_checkpoint_digests, "worker_checkpoint_digests")
         unsigned = {
             "format": TAIJI_OWNER_TRANSFER_FORMAT,
             "version": TAIJI_OWNER_TRANSFER_VERSION,
             "base_single_cell_manifest_digest": str(base_single_cell_manifest_digest),
             "base_continuation_checkpoint_digest": str(base_continuation_checkpoint_digest),
-            "worker_checkpoint_digests": dict(
-                _digest_pairs(worker_checkpoint_digests, "worker_checkpoint_digests")
-            ),
+            "worker_checkpoint_digests": dict(workers),
             "owner_roles": dict(OWNER_TRANSFER_ROLES),
             "event_types": list(OWNER_TRANSFER_EVENT_TYPES),
             "external_target_used": False,
@@ -302,7 +313,7 @@ class TaijiOwnerTransferManifest:
         return cls(
             base_single_cell_manifest_digest=str(base_single_cell_manifest_digest),
             base_continuation_checkpoint_digest=str(base_continuation_checkpoint_digest),
-            worker_checkpoint_digests=tuple(unsigned["worker_checkpoint_digests"].items()),
+            worker_checkpoint_digests=workers,
             owner_roles=OWNER_TRANSFER_ROLES,
             event_types=OWNER_TRANSFER_EVENT_TYPES,
             external_target_used=False,
@@ -484,7 +495,7 @@ class TaijiOwnerTransferEvent:
             "status": str(status),
             "attributes": dict(attributes),
         }
-        return cls(**unsigned, event_digest=content_digest(unsigned))
+        return cls.from_payload({**unsigned, "event_digest": content_digest(unsigned)})
 
     def _payload_without_digest(self) -> dict[str, Any]:
         return {

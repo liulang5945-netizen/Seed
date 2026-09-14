@@ -69,7 +69,7 @@ def evaluate() -> dict[str, object]:
         verified_store = StructuralValidationArtifactStore(root / "verified")
         verified_store.put_measured_artifact(verified_artifact, verified_measurements)
         verified_runtime.save(verified_checkpoint)
-        verified_restored = SeedRuntime.load(verified_checkpoint)
+        verified_restored = SeedRuntime.load(verified_checkpoint, workspace_root=PROJECT_ROOT)
         verified_result = verified_restored.continue_structural_candidate_batch_from_artifact_store(
             verified_batch_id,
             artifact_store=verified_store,
@@ -93,7 +93,7 @@ def evaluate() -> dict[str, object]:
         legacy_store = StructuralValidationArtifactStore(root / "legacy")
         legacy_store.put(legacy_artifact)
         legacy_runtime.save(legacy_checkpoint)
-        strict_legacy = SeedRuntime.load(legacy_checkpoint)
+        strict_legacy = SeedRuntime.load(legacy_checkpoint, workspace_root=PROJECT_ROOT)
         before_strict_legacy = _checkpoint_digest(
             strict_legacy.model.architecture.native_checkpoint()
         )
@@ -115,7 +115,7 @@ def evaluate() -> dict[str, object]:
             _checkpoint_digest(strict_legacy.model.architecture.native_checkpoint())
             == before_strict_legacy
         )
-        default_legacy = SeedRuntime.load(legacy_checkpoint)
+        default_legacy = SeedRuntime.load(legacy_checkpoint, workspace_root=PROJECT_ROOT)
         default_result = default_legacy.continue_structural_candidate_batch_from_artifact_store(
             legacy_batch_id,
             artifact_store=legacy_store,

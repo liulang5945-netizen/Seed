@@ -473,8 +473,8 @@ def main() -> int:
                 fs_per = _per_experience_combined(fs_k1, fs_k2, sealed_experiences)
                 frozen_per = _per_experience_combined(frozen_k1, frozen_k2, sealed_experiences)
                 per_class = {}
-                for class_name, experience, c_combined, fs_combined, frozen_combined in zip(
-                    episode_classes, sealed_experiences, c_per, fs_per, frozen_per
+                for class_name, _experience, c_combined, fs_combined, frozen_combined in zip(
+                    episode_classes, sealed_experiences, c_per, fs_per, frozen_per, strict=True
                 ):
                     per_class[class_name] = {
                         "c_delta": c_combined - frozen_combined,

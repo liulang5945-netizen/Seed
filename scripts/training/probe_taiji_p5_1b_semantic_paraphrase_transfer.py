@@ -115,7 +115,6 @@ _CONTENT_WORDS = {
     "survey",
     "stored",
     "findings",
-    "survey",
 }
 
 

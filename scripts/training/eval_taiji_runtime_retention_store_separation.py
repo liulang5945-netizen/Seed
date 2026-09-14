@@ -110,7 +110,7 @@ def evaluate() -> dict[str, object]:
         second_rollback = runtime.rollback_structural_candidate_batch(terminal_batch_id, second_id)
         first_rollback = runtime.rollback_structural_candidate_batch(terminal_batch_id, first_id)
         runtime = _checkpoint(runtime, "before-retention", paths[2])
-        before_retention = SeedRuntime.load(paths[2])
+        before_retention = SeedRuntime.load(paths[2], workspace_root=PROJECT_ROOT)
         policy = StructuralLineageRetentionPolicy.create(1, revision=2)
         maintenance = before_retention.run_structural_maintenance_cycle(
             candidate_ids=(),
@@ -123,7 +123,7 @@ def evaluate() -> dict[str, object]:
             raise AssertionError("S45 retention audit was not recorded")
         before_terminal_replay = _checkpoint_digest(before_retention.model.architecture.native_checkpoint())
         before_retention.save(paths[3])
-        after_retention = SeedRuntime.load(paths[3])
+        after_retention = SeedRuntime.load(paths[3], workspace_root=PROJECT_ROOT)
         first_external = StructuralValidationArtifactStore(store_root).load(
             first_artifact.artifact_digest
         )
@@ -206,7 +206,10 @@ def _checkpoint(runtime: SeedRuntime, name: str, path: Path | None = None) -> Se
         PROJECT_ROOT / "output" / "manual-r5-canary" / f"s45-{name}-{os.getpid()}.pt"
     )
     runtime.save(target)
-    return SeedRuntime.load(target)
+    # Restoring must keep the workspace root this canary declared: the reads below
+    # are resolved against it, and the loader would otherwise fall back to the
+    # ambient product workspace setting.
+    return SeedRuntime.load(target, workspace_root=PROJECT_ROOT)
 
 
 def main() -> None:

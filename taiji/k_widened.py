@@ -29,7 +29,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 import torch
 
@@ -112,9 +112,10 @@ def anchored_permutation(
     if class_keys is None:
         order = derive(0)
         if order == tuple(range(count)):
-            order = list(order)
-            order[0], order[-1] = order[-1], order[0]
-        return tuple(order)
+            reordered = list(order)
+            reordered[0], reordered[-1] = reordered[-1], reordered[0]
+            return tuple(reordered)
+        return order
 
     keys = tuple(str(key) for key in class_keys)
     if len(keys) != count:
@@ -174,7 +175,7 @@ def _delta_norm(before: Any, after: Any) -> float:
     for name, value in after.state_dict().items():
         delta = value.detach().cpu() - before.state_dict()[name].detach().cpu()
         total += float(torch.sum(delta * delta))
-    return total**0.5
+    return float(total**0.5)
 
 
 def _copy_state(learner: Any) -> Any:
@@ -403,7 +404,10 @@ class WidenedKBundle:
         head = "fact_head" if worker_id == "k1.semantic" else "transition_head"
         forward = self.channels["forward"][worker_id]
         anchored = self.channels["anchored"][worker_id]
-        return getattr(forward, head)(percept_input) + getattr(anchored, head)(percept_input)
+        return cast(
+            torch.Tensor,
+            getattr(forward, head)(percept_input) + getattr(anchored, head)(percept_input),
+        )
 
 
 def widened_divergence_gate(

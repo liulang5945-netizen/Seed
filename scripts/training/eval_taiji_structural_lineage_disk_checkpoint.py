@@ -78,7 +78,7 @@ def evaluate() -> dict[str, object]:
     try:
         runtime.save(migrated_path)
         original_bytes = migrated_path.read_bytes()
-        restored = SeedRuntime.load(migrated_path)
+        restored = SeedRuntime.load(migrated_path, workspace_root=PROJECT_ROOT)
         restored_status = restored.structural_maintenance_status()
         restored_result = restored.model.architecture.structural_lineage_retention_result
 
@@ -96,7 +96,7 @@ def evaluate() -> dict[str, object]:
         tampered_payload["taiji"] = tampered_taiji
         torch.save(tampered_payload, tampered_path)
         try:
-            SeedRuntime.load(tampered_path)
+            SeedRuntime.load(tampered_path, workspace_root=PROJECT_ROOT)
         except ValueError as exc:
             tampered_rejected = "migration digest mismatch" in str(exc)
         else:
@@ -107,7 +107,7 @@ def evaluate() -> dict[str, object]:
         incomplete_payload["config"].pop("taiji", None)
         torch.save(incomplete_payload, missing_field_path)
         try:
-            SeedRuntime.load(missing_field_path)
+            SeedRuntime.load(missing_field_path, workspace_root=PROJECT_ROOT)
         except (KeyError, TypeError, ValueError):
             incomplete_rejected = True
         else:
@@ -115,7 +115,7 @@ def evaluate() -> dict[str, object]:
 
         rollback = restored.rollback_structural_lineage_retention_policy_migration(migration)
         restored.save(rolled_back_path)
-        resumed = SeedRuntime.load(rolled_back_path)
+        resumed = SeedRuntime.load(rolled_back_path, workspace_root=PROJECT_ROOT)
         resumed_status = resumed.structural_maintenance_status()
         topology_after = tuple(
             (region.region_id, region.unit_ids) for region in resumed.model.architecture.neuron_regions

@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 import sys
+import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
@@ -15,7 +16,6 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from api.seed_runtime import SeedRuntime  # noqa: E402
 from seed import Seed  # noqa: E402
-from seed_platform.workbench import WorkbenchEnvironment  # noqa: E402
 from taiji import ActionIntent, SemanticEvidenceProposal  # noqa: E402
 
 REPORT_FORMAT = "taiji-w7-p2-12-natural-language-write-v1"
@@ -24,13 +24,12 @@ ORIGINAL_CONTENT = "Seed editor source\n"
 UPDATED_CONTENT = "Taiji editor source\n"
 
 
-def _runtime(seed: int, checkpoint_path: Path) -> SeedRuntime:
-    runtime = SeedRuntime(
+def _runtime(seed: int, checkpoint_path: Path, *, workspace_root: Path = PROJECT_ROOT) -> SeedRuntime:
+    return SeedRuntime(
         Seed(episode_id=f"p2-12-natural-language-write-{seed}"),
         checkpoint_path=checkpoint_path,
+        workspace_root=workspace_root,
     )
-    runtime._workbench_environment = WorkbenchEnvironment(PROJECT_ROOT)
-    return runtime
 
 
 def _proposal(runtime: SeedRuntime, prompt: str) -> SemanticEvidenceProposal:
@@ -78,22 +77,29 @@ def _plan(runtime: SeedRuntime, prompt: str, loop_id: str) -> dict[str, object]:
     )
 
 
-def evaluate() -> dict[str, object]:
-    fixture_path = PROJECT_ROOT / TARGET_PATH
-    checkpoint_path = PROJECT_ROOT / "checkpoints" / ".p2-12-natural-language-write.pt"
+def evaluate(*, work_dir: Path | None = None) -> dict[str, object]:
+    """Use a fresh, caller-owned workspace instead of repository fixtures."""
+    if work_dir is None:
+        with tempfile.TemporaryDirectory(prefix="seed-p2-12-") as temporary:
+            return evaluate(work_dir=Path(temporary))
+    workspace_root = Path(work_dir).resolve()
+    fixture_path = workspace_root / TARGET_PATH
+    checkpoint_path = workspace_root / "checkpoints" / ".p2-12-natural-language-write.pt"
+    if fixture_path.exists() or checkpoint_path.exists():
+        raise FileExistsError("canary requires a fresh work directory")
     fixture_path.parent.mkdir(parents=True, exist_ok=True)
-    checkpoint_path.unlink(missing_ok=True)
+    checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
     fixture_path.write_text(ORIGINAL_CONTENT, encoding="utf-8")
     prompt = "请把 reports/.p2-12-edit-fixture.txt 中的 Seed 改成 Taiji"
 
     try:
         with patch(
             "seed_platform.workbench.get_setting",
-            lambda key, default=None: str(PROJECT_ROOT)
+            lambda key, default=None: str(workspace_root)
             if key == "workspace_path"
             else default,
         ):
-            runtime = _runtime(11, checkpoint_path)
+            runtime = _runtime(11, checkpoint_path, workspace_root=workspace_root)
             plan = _plan(runtime, prompt, "p2-12-write-loop")
             provider_steps = plan["provider_evidence"]["semantic_steps"]
             provider_patch_step = provider_steps[1]["semantic_slots"]
@@ -113,7 +119,7 @@ def evaluate() -> dict[str, object]:
             patch_step = approved["execution"]["steps"][1]
             patch_outcome = patch_step["outcome"]
             undo_token = patch_outcome["transaction"]["undo_token"]
-            restored = SeedRuntime.load(checkpoint_path)
+            restored = SeedRuntime.load(checkpoint_path, workspace_root=workspace_root)
             undo_intent = ActionIntent(
                 intent_id="p2-12-undo-edit",
                 kind="workspace.undo",
@@ -135,10 +141,9 @@ def evaluate() -> dict[str, object]:
             undo_restored = restored_content == ORIGINAL_CONTENT
 
             no_approval_checkpoint = (
-                PROJECT_ROOT / "checkpoints" / ".p2-12-no-approval.pt"
+                workspace_root / "checkpoints" / ".p2-12-no-approval.pt"
             )
-            no_approval_checkpoint.unlink(missing_ok=True)
-            no_approval_runtime = _runtime(29, no_approval_checkpoint)
+            no_approval_runtime = _runtime(29, no_approval_checkpoint, workspace_root=workspace_root)
             no_approval_plan = _plan(
                 no_approval_runtime,
                 prompt,
@@ -149,11 +154,9 @@ def evaluate() -> dict[str, object]:
                 {},
             )
             no_approval_unchanged = fixture_path.read_text(encoding="utf-8") == ORIGINAL_CONTENT
-            no_approval_checkpoint.unlink(missing_ok=True)
 
-            conflict_checkpoint = PROJECT_ROOT / "checkpoints" / ".p2-12-conflict.pt"
-            conflict_checkpoint.unlink(missing_ok=True)
-            conflict_runtime = _runtime(47, conflict_checkpoint)
+            conflict_checkpoint = workspace_root / "checkpoints" / ".p2-12-conflict.pt"
+            conflict_runtime = _runtime(47, conflict_checkpoint, workspace_root=workspace_root)
             conflict_plan = _plan(conflict_runtime, prompt, "p2-12-conflict-loop")
             conflict_request_id = conflict_plan["approval_requirements"][0]["request_id"]
             conflict_approval = (
@@ -169,7 +172,6 @@ def evaluate() -> dict[str, object]:
             )
             conflict_step = conflict["execution"]["steps"][1]
             conflict_content = fixture_path.read_text(encoding="utf-8")
-            conflict_checkpoint.unlink(missing_ok=True)
 
         metrics = {
             "provider_submits_semantic_edit_not_patch": (
@@ -261,8 +263,9 @@ def evaluate() -> dict[str, object]:
             ),
         }
     finally:
-        checkpoint_path.unlink(missing_ok=True)
-        fixture_path.unlink(missing_ok=True)
+        # The directory owner (pytest or TemporaryDirectory) controls teardown.
+        # Never delete caller-owned files from inside an evaluation.
+        pass
 
 
 def main() -> None:

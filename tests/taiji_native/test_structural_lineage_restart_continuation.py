@@ -13,6 +13,8 @@ from scripts.training.eval_taiji_workbench_multi_region_batch import (
 from scripts.training.eval_taiji_workbench_multi_region_lifecycle import _record_real_evidence
 from taiji import StructuralLineageRetentionPolicy
 
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
 
 def _continuation_requests() -> tuple[dict[str, object], ...]:
     return (
@@ -136,7 +138,7 @@ def test_restart_continuation_consumes_only_new_evidence() -> None:
     terminal_batch_id = "batch:terminal-lineage"
     try:
         runtime.save(migrated_path)
-        restored = SeedRuntime.load(migrated_path)
+        restored = SeedRuntime.load(migrated_path, workspace_root=PROJECT_ROOT)
         old_tick = restored.model.architecture.structural_runtime_tick
         old_revision = restored.model.architecture.structural_growth_scheduler_state.revision
         old_audit = restored.model.architecture.structural_lineage_retention_result
@@ -165,7 +167,7 @@ def test_restart_continuation_consumes_only_new_evidence() -> None:
         assert continuation_audit["lineage_retention"]["result_digest"] != old_audit.result_digest
 
         restored.save(continued_path)
-        resumed = SeedRuntime.load(continued_path)
+        resumed = SeedRuntime.load(continued_path, workspace_root=PROJECT_ROOT)
         resumed_default = resumed.run_structural_maintenance_cycle(
             candidate_ids=(),
             holdout_inputs_by_candidate={},

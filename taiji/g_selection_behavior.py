@@ -174,7 +174,7 @@ class GSelectionBehaviorOutcome:
             **values,
             "utility": utility,
         }
-        return cls(outcome_digest=content_digest(unsigned), **unsigned)
+        return cls.from_payload({**unsigned, "outcome_digest": content_digest(unsigned)})
 
     def to_payload(self) -> dict[str, Any]:
         return {

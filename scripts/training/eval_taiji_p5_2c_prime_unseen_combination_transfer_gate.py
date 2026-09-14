@@ -1006,10 +1006,7 @@ def run_gate() -> dict[str, Any]:
         if not all(mechanical.values()):
             outcome = "failed"
         elif not all(gates.values()):
-            if all_cells_constant:
-                outcome = "transfer_signal_constant"
-            else:
-                outcome = "transfer_no_gain"
+            outcome = "transfer_signal_constant" if all_cells_constant else "transfer_no_gain"
         else:
             outcome = "unseen_combination_transfer_supported"
 

@@ -72,7 +72,7 @@ def evaluate() -> dict[str, object]:
         concurrent_roundtrip = concurrent_store.load(artifact.artifact_digest)
 
         runtime.save(checkpoint_path)
-        restored = SeedRuntime.load(checkpoint_path)
+        restored = SeedRuntime.load(checkpoint_path, workspace_root=PROJECT_ROOT)
         before_budget = restored.model.architecture.cognitive_snapshot().development.structural_budget
         admission = restored.continue_structural_candidate_batch_from_validation_artifacts(
             batch.batch_id,

@@ -74,6 +74,8 @@ class SeedRuntime:
         provider_runtime: Any | None = None,
         provider_config: Any | None = None,
         semantic_provider: Any | None = None,
+        *,
+        workspace_root: Path | str | None = None,
     ) -> None:
         self.model = model
         self.checkpoint_path = checkpoint_path
@@ -108,7 +110,12 @@ class SeedRuntime:
         self.attach_semantic_provider(semantic_provider)
         from seed_platform.workbench import WorkbenchAuditLog, WorkbenchEnvironment
 
-        self._workbench_environment = WorkbenchEnvironment()
+        # Explicit roots isolate tests/embedded runtimes without rewriting settings.
+        # The default remains dynamically aligned with the product workspace.
+        self._workspace_root_override = (
+            Path(workspace_root).resolve() if workspace_root is not None else None
+        )
+        self._workbench_environment = WorkbenchEnvironment(self._workspace_root_override)
         self._workbench_audit = WorkbenchAuditLog()
         self._workbench_loop_state: dict[str, Any] = {}
         # The K/G attachment is explicitly opt-in, in-memory only, and loaded
@@ -185,6 +192,7 @@ class SeedRuntime:
         *,
         provider_config: Any | None = None,
         semantic_provider: Any | None = None,
+        workspace_root: Path | str | None = None,
     ) -> SeedRuntime:
         """从 seed-native-v1 检查点装配 Seed（与训练管线同一信封）。"""
         import torch
@@ -194,13 +202,13 @@ class SeedRuntime:
         path = Path(checkpoint_path) if checkpoint_path else DEFAULT_CHECKPOINT
         try:
             checkpoint = torch.load(path, map_location="cpu", weights_only=True)
-        except pickle.UnpicklingError:
-            logger.warning(
-                "checkpoint %s 含自定义对象，以不安全模式（weights_only=False）"
-                "加载受信 checkpoint",
-                path,
-            )
-            checkpoint = torch.load(path, map_location="cpu", weights_only=False)
+        except pickle.UnpicklingError as exc:
+            # A filename or caller-provided path is not a trust decision. Never
+            # retry a rejected payload through unrestricted pickle deserialization.
+            raise ValueError(
+                "checkpoint contains unsupported pickle objects; "
+                "only weights-only native checkpoints may be loaded"
+            ) from exc
         model = Seed.from_checkpoint(checkpoint)
         from seed import LanguageProviderConfig
         from seed.language_provider import activate_language_provider
@@ -224,6 +232,7 @@ class SeedRuntime:
             provider_runtime,
             selected_config,
             semantic_provider,
+            workspace_root=workspace_root,
         )
         metadata = checkpoint.get("metadata")
         if isinstance(metadata, Mapping):
@@ -1430,7 +1439,7 @@ class SeedRuntime:
 
         from seed_platform.workbench import default_workspace_root
 
-        current_root = default_workspace_root()
+        current_root = self._workspace_root_override or default_workspace_root()
         if current_root != self._workbench_environment.root:
             from seed_platform.workbench import WorkbenchEnvironment
 

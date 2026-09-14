@@ -13,6 +13,7 @@ reports ``can_promote=false``.
 from __future__ import annotations
 
 import argparse
+import contextlib
 import json
 import os
 import shutil
@@ -984,10 +985,8 @@ def run_cell(*, task_seed: int, learner_seed: int) -> dict[str, Any]:
     finally:
         shutil.rmtree(temp_root, ignore_errors=True)
         if temp_parent_created:
-            try:
+            with contextlib.suppress(OSError):
                 temp_parent.rmdir()
-            except OSError:
-                pass
 
 
 def main() -> int:

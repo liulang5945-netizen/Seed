@@ -151,7 +151,7 @@ class FastSlowKInstance:
         total = 0.0
         for value in self.fast[worker_id].values():
             total += float(torch.sum(value * value))
-        return total**0.5
+        return float(total**0.5)
 
     def is_fast_zero(self, worker_id: str) -> bool:
         return all(

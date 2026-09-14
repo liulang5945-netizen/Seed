@@ -503,14 +503,14 @@ def _joint_constraints(
             if candidate.candidate_id == target_id:
                 continue
             difference = tuple(
-                t - o for t, o in zip(features[target_id], features[candidate.candidate_id])
+                t - o for t, o in zip(features[target_id], features[candidate.candidate_id], strict=True)
             )
             constraints.append(
                 (difference, ARGMAX_EPSILON, f"newtask-argmax:{candidate_set.candidate_set_digest[:16]}:{candidate.candidate_id}")
             )
         if target.candidate_role == "proposal":
             difference = tuple(
-                t - o for t, o in zip(features[target_id], features[safe.candidate_id])
+                t - o for t, o in zip(features[target_id], features[safe.candidate_id], strict=True)
             )
             constraints.append(
                 (difference, SELECTION_MARGIN + SAFE_EPSILON, f"newtask-safe:{candidate_set.candidate_set_digest[:16]}")
@@ -526,13 +526,13 @@ def _joint_constraints(
                 if candidate.candidate_id == picked_id:
                     continue
                 difference = tuple(
-                    t - o for t, o in zip(features[picked_id], features[candidate.candidate_id])
+                    t - o for t, o in zip(features[picked_id], features[candidate.candidate_id], strict=True)
                 )
                 constraints.append(
                     (difference, ARGMAX_EPSILON, f"sibling-argmax:{candidate_set.candidate_set_digest[:16]}:{candidate.candidate_id}")
                 )
             difference = tuple(
-                t - o for t, o in zip(features[picked_id], features[safe.candidate_id])
+                t - o for t, o in zip(features[picked_id], features[safe.candidate_id], strict=True)
             )
             constraints.append(
                 (difference, SELECTION_MARGIN + SAFE_EPSILON, f"sibling-safe:{candidate_set.candidate_set_digest[:16]}")
@@ -543,7 +543,7 @@ def _joint_constraints(
                 if candidate.candidate_role != "proposal":
                     continue
                 difference = tuple(
-                    t - o for t, o in zip(features[candidate.candidate_id], features[picked_id])
+                    t - o for t, o in zip(features[candidate.candidate_id], features[picked_id], strict=True)
                 )
                 constraints.append(
                     (difference, -(SELECTION_MARGIN - SAFE_EPSILON), f"sibling-boundary:{candidate_set.candidate_set_digest[:16]}:{candidate.candidate_id}")
@@ -583,7 +583,7 @@ def _min_violation(
             if total < best_violation:
                 best_violation = total
                 per_class: dict[str, float] = {}
-                for (_a, _b, label), violation in zip(constraints, violations):
+                for (_a, _b, label), violation in zip(constraints, violations, strict=True):
                     family = label.split(":")[0]
                     per_class[family] = per_class.get(family, 0.0) + float(violation.item())
                 best_per_class = per_class
@@ -749,10 +749,10 @@ def _run(*, report_path: Path = DEFAULT_REPORT) -> dict[str, Any]:
         preserve_mean = [
             sum(row[d] for row in preserve_rows) / len(preserve_rows) for d in range(12)
         ]
-        difference = [f - p for f, p in zip(flip_mean, preserve_mean)]
+        difference = [f - p for f, p in zip(flip_mean, preserve_mean, strict=True)]
         parent_weight = parent.model.weight.detach().reshape(-1)
         norm_product = (
-            sum(a * b for a, b in zip(difference, parent_weight.tolist())) ** 2
+            sum(a * b for a, b in zip(difference, parent_weight.tolist(), strict=True)) ** 2
         ) / (
             sum(a * a for a in difference) * sum(a * a for a in parent_weight.tolist()) + 1e-12
         )

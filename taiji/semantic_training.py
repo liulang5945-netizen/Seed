@@ -910,7 +910,7 @@ class StructuredSemanticLearner(nn.Module):
         fact_feature_masks = (
             {
                 str(key): tuple(int(index) for index in indices)
-                for key, indices in zip(payload["fact_keys"], raw_masks)
+                for key, indices in zip(payload["fact_keys"], raw_masks, strict=True)
             }
             if raw_masks is not None
             else None

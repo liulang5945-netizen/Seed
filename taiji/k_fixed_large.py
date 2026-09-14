@@ -120,9 +120,8 @@ class NativeKFixedLargeEnsemble:
 
     @property
     def parameter_count(self) -> int:
-        return sum(
-            replica.parameter_count
-            for replica in (*self.semantic_replicas, *self.transition_replicas)
+        return sum(replica.parameter_count for replica in self.semantic_replicas) + sum(
+            replica.parameter_count for replica in self.transition_replicas
         )
 
     @property
@@ -131,8 +130,8 @@ class NativeKFixedLargeEnsemble:
         for index, replica in enumerate(self.semantic_replicas):
             for name, digest in replica.owner_digests().items():
                 owners[f"k1.replica.{index}.{name}"] = digest
-        for index, replica in enumerate(self.transition_replicas):
-            for name, digest in replica.owner_digests().items():
+        for index, transition_replica in enumerate(self.transition_replicas):
+            for name, digest in transition_replica.owner_digests().items():
                 owners[f"k2.replica.{index}.{name}"] = digest
         return owners
 

@@ -181,7 +181,7 @@ def evaluate() -> dict[str, object]:
         round_one_batch_id = str(round_one_schedule["batch_id"])
         round_one_before_restart = _signature(runtime)
         runtime.save(paths["round1"])
-        round_one_restored = SeedRuntime.load(paths["round1"])
+        round_one_restored = SeedRuntime.load(paths["round1"], workspace_root=PROJECT_ROOT)
         round_one_restart_stable = _signature(round_one_restored) == round_one_before_restart
 
         # Round two starts only from new windows.  Both candidates are admitted,
@@ -200,11 +200,11 @@ def evaluate() -> dict[str, object]:
         round_two_batch = _batch(round_one_restored, round_two_batch_id)
         round_two_first_id, round_two_second_id = round_two_batch.selected_candidate_ids
         round_one_restored.save(paths["round2-pre"])
-        round_two_parent = SeedRuntime.load(paths["round2-pre"])
+        round_two_parent = SeedRuntime.load(paths["round2-pre"], workspace_root=PROJECT_ROOT)
 
         # Produce a stale second artifact on an isolated branch before the first
         # admission.  Its failure must not poison the success branch.
-        stale_branch = SeedRuntime.load(paths["round2-pre"])
+        stale_branch = SeedRuntime.load(paths["round2-pre"], workspace_root=PROJECT_ROOT)
         stale_artifact, stale_replay, _ = _build_artifact(
             stale_branch.model.architecture,
             round_two_second_id,
@@ -217,14 +217,14 @@ def evaluate() -> dict[str, object]:
             round_two_evidence,
         )
         round_two_parent.save(paths["round2-first"])
-        round_two_after_first_measurement = SeedRuntime.load(paths["round2-first"])
+        round_two_after_first_measurement = SeedRuntime.load(paths["round2-first"], workspace_root=PROJECT_ROOT)
         first_result = round_two_after_first_measurement.continue_structural_candidate_batch_from_validation_artifacts(
             round_two_batch_id,
             artifacts_by_candidate={round_two_first_id: first_artifact},
             replays_by_candidate={round_two_first_id: first_replay},
         )
 
-        stale_isolated = SeedRuntime.load(paths["round2-first"])
+        stale_isolated = SeedRuntime.load(paths["round2-first"], workspace_root=PROJECT_ROOT)
         stale_topology = _topology(stale_isolated)
         stale_budget = _budget(stale_isolated)
         stale_result = stale_isolated.continue_structural_candidate_batch_from_validation_artifacts(
@@ -245,7 +245,7 @@ def evaluate() -> dict[str, object]:
             round_two_evidence,
         )
         round_two_after_first_measurement.save(paths["round2-second"])
-        round_two_before_second_admission = SeedRuntime.load(paths["round2-second"])
+        round_two_before_second_admission = SeedRuntime.load(paths["round2-second"], workspace_root=PROJECT_ROOT)
         second_result = round_two_before_second_admission.continue_structural_candidate_batch_from_validation_artifacts(
             round_two_batch_id,
             artifacts_by_candidate={round_two_second_id: second_artifact},
@@ -267,7 +267,7 @@ def evaluate() -> dict[str, object]:
         round_two_terminal = _batch(round_two_before_second_admission, round_two_batch_id)
         round_two_before_restart = _signature(round_two_before_second_admission)
         round_two_before_second_admission.save(paths["round2-done"])
-        round_two_restored = SeedRuntime.load(paths["round2-done"])
+        round_two_restored = SeedRuntime.load(paths["round2-done"], workspace_root=PROJECT_ROOT)
         round_two_restart_signature = _signature(round_two_restored)
 
         # Round three remains live after a candidate-level tamper failure.  This
@@ -287,14 +287,14 @@ def evaluate() -> dict[str, object]:
         round_three_first_id = round_three_batch.selected_candidate_ids[0]
         round_three_second_id = round_three_batch.selected_candidate_ids[1]
         round_two_restored.save(paths["round3-pre"])
-        round_three_parent = SeedRuntime.load(paths["round3-pre"])
+        round_three_parent = SeedRuntime.load(paths["round3-pre"], workspace_root=PROJECT_ROOT)
         round_three_artifact, round_three_replay, round_three_measurements = _build_artifact(
             round_three_parent.model.architecture,
             round_three_first_id,
             round_three_evidence,
         )
         round_three_parent.save(paths["round3-measured"])
-        round_three_measured = SeedRuntime.load(paths["round3-measured"])
+        round_three_measured = SeedRuntime.load(paths["round3-measured"], workspace_root=PROJECT_ROOT)
         malformed = copy.deepcopy(round_three_artifact.to_payload())
         malformed["measurement_digest"] = "0" * 64
         malformed_result = round_three_measured.continue_structural_candidate_batch_from_validation_artifacts(
@@ -333,7 +333,7 @@ def evaluate() -> dict[str, object]:
             terminal_replay_rejected = False
         after_replay = _checkpoint_digest(round_three_measured.model.architecture.native_checkpoint())
         round_three_measured.save(paths["round3-final"])
-        final = SeedRuntime.load(paths["round3-final"])
+        final = SeedRuntime.load(paths["round3-final"], workspace_root=PROJECT_ROOT)
         final_batch_ids = {item.batch_id for item in final.model.architecture.structural_candidate_batches}
         final_signature = _signature(final)
         metrics = {

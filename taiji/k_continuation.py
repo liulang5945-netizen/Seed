@@ -205,9 +205,11 @@ class KContinuationExperience:
         transition_payload = payload.get("transition_example")
         projection_payload = payload.get("projection")
         exchange_payload = payload.get("exchange")
-        if not all(
-            isinstance(item, Mapping)
-            for item in (semantic_payload, transition_payload, projection_payload, exchange_payload)
+        if not (
+            isinstance(semantic_payload, Mapping)
+            and isinstance(transition_payload, Mapping)
+            and isinstance(projection_payload, Mapping)
+            and isinstance(exchange_payload, Mapping)
         ):
             raise ValueError("K continuation experience contains an invalid nested payload")
         item = cls(

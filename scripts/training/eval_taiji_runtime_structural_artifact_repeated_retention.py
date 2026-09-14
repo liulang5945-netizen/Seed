@@ -44,7 +44,7 @@ def evaluate() -> dict[str, object]:
         path = checkpoint_root / f"s40-{name}-{suffix}.pt"
         checkpoint_paths.append(path)
         value.save(path)
-        return SeedRuntime.load(path)
+        return SeedRuntime.load(path, workspace_root=PROJECT_ROOT)
 
     try:
         base_topology = _topology(runtime)

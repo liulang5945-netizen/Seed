@@ -92,7 +92,7 @@ def evaluate() -> dict[str, object]:
         measurement_path.write_bytes(original_measurement_bytes)
 
         runtime.save(checkpoint_path)
-        restored = SeedRuntime.load(checkpoint_path)
+        restored = SeedRuntime.load(checkpoint_path, workspace_root=PROJECT_ROOT)
         before_runtime = _checkpoint_digest(
             restored.model.architecture.native_checkpoint()
         )

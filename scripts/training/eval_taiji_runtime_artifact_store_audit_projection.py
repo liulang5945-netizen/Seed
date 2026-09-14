@@ -135,7 +135,7 @@ def evaluate() -> dict[str, object]:
         )
 
         runtime.save(before_retention_path)
-        restored = SeedRuntime.load(before_retention_path)
+        restored = SeedRuntime.load(before_retention_path, workspace_root=PROJECT_ROOT)
         restored_projection = restored.project_structural_artifact_store_audit(
             artifact_store=StructuralValidationArtifactStore(store_root)
         )
@@ -147,7 +147,7 @@ def evaluate() -> dict[str, object]:
             lineage_retention_policy=policy.to_payload(),
         )
         restored.save(after_retention_path)
-        after_retention = SeedRuntime.load(after_retention_path)
+        after_retention = SeedRuntime.load(after_retention_path, workspace_root=PROJECT_ROOT)
         after_projection = after_retention.project_structural_artifact_store_audit(
             artifact_store=store
         )
