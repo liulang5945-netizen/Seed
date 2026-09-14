@@ -146,6 +146,12 @@ EXPECTED_CONSUMERS: tuple[dict[str, str], ...] = (
         "why": "see J4 below",
         "added_after_hardening_report": "yes",
     },
+    {
+        "path": "tests/taiji_native/test_b0_n2_stop_reason_semantics_contract.py",
+        "class": "judgement (test assertion)",
+        "why": "see J8 below: asserts the frozen N2 semantics against archived reports",
+        "added_after_hardening_report": "yes",
+    },
 )
 
 #: Every place a stop reason participates in a *decision*.  Each marker must still
@@ -218,6 +224,17 @@ JUDGEMENT_SITES: tuple[dict[str, str], ...] = (
         "kind": "test_assertion",
         "safe_because": "pins the frozen versus counterfactual report, not a live admission gate",
     },
+    {
+        "id": "J8",
+        "path": "tests/taiji_native/test_b0_n2_stop_reason_semantics_contract.py",
+        "marker": "assert GOAL_REASON not in block",
+        "kind": "test_assertion",
+        "safe_because": (
+            "the WP-2 two-direction guard itself: it pins the frozen semantics (terminal, "
+            "not goal_reached, not an interception, absent from the frozen rule) against "
+            "archived reports. It is an admission guard for WP-3, not a runtime gate"
+        ),
+    },
 )
 
 
@@ -277,10 +294,12 @@ def disposition() -> dict[str, Any]:
     return {
         "format": DISPOSITION_FORMAT,
         "version": VERSION,
-        "status": "draft_for_review",
+        "status": "inventory_guard_for_frozen_preregistration",
         "does_not_decide_n2": (
-            "this is the review surface for N2, not the N2 preregistration; the "
-            "preregistration still requires the D5=落地 decision"
+            "the N2 semantics are frozen in "
+            "plans/reference/M5_B0_N2_STOP_REASON_PREREGISTRATION_FROZEN_20260915.md; "
+            "this scan only verifies that the consumer inventory and the judgement-site "
+            "markers behind it are still complete and undisplaced"
         ),
         "new_reason": NEW_REASON,
         "frozen_counterpart": FROZEN_COUNTERPART,
@@ -329,7 +348,8 @@ def disposition() -> dict[str, Any]:
             "the reviewed sites record reasons, compare replicas, count interception "
             "prefixes/substrings, or assert historical reports. all_members_blocked is "
             "not a success label and by itself proves neither safety nor member incapability. "
-            "N2 remains an unfrozen draft; runtime changes and admission require WP-1/WP-2"
+            "The N2 semantics are frozen in the WP-2 preregistration; runtime changes "
+            "still require WP-3's five exits"
             if not missing_sites and not added and not removed
             else "the review surface changed; re-disposition before landing"
         ),

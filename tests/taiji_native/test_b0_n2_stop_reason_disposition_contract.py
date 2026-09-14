@@ -12,7 +12,7 @@ import pytest
 
 REPO = Path(__file__).resolve().parents[2]
 SCRIPT = REPO / "scripts/training/audit_taiji_b0_n2_stop_reason_disposition.py"
-REPORT = REPO / "reports/taiji_b0_n2_stop_reason_disposition_20260914.json"
+REPORT = REPO / "reports/taiji_b0_n2_stop_reason_disposition_20260915.json"
 
 
 @pytest.fixture(scope="module")
@@ -33,7 +33,7 @@ def report():
 
 def test_current_review_surface_is_complete(audit, report):
     expected = {row["path"] for row in audit.EXPECTED_CONSUMERS}
-    assert len(expected) == 14
+    assert len(expected) == 15
     assert audit.live_consumers() == expected
     current = audit.disposition()
     assert current["review_checks_passed"] is True
@@ -41,7 +41,7 @@ def test_current_review_surface_is_complete(audit, report):
     assert current == report
     assert report["classification_counts"] == {
         "record_only_files": 8,
-        "judgement_or_mixed_files": 6,
+        "judgement_or_mixed_files": 7,
     }
 
 
@@ -59,12 +59,12 @@ def test_historical_inventory_is_not_rewritten(report):
         (REPO / "reports/taiji_b0_m4_hardening_20260913.json").read_text(encoding="utf-8")
     )
     assert historic["stop_reason_consumers"]["file_count"] == 11
-    assert report["consumer_count_now"] == 14
-    assert len(report["added_since_hardening_report"]) == 3
+    assert report["consumer_count_now"] == 15
+    assert len(report["added_since_hardening_report"]) == 4
 
 
 def test_all_reviewed_sites_have_markers(audit, report):
-    assert len(audit.JUDGEMENT_SITES) == 7
+    assert len(audit.JUDGEMENT_SITES) == 8
     assert report["judgement_sites_intact"] is True
     assert report["missing_judgement_sites"] == []
     assert all(row["marker_present"] for row in report["judgement_sites"])
@@ -115,5 +115,6 @@ def test_blocked_is_terminal_noncompletion_not_success_or_safety_proof(report):
     assert "cannot be inferred" in semantics["safety_status"]
     assert report["new_reason_carries_interception_prefix"] is False
     assert "not an exhaustive data-flow proof" in report["scope_limit"]
-    assert report["status"] == "draft_for_review"
+    assert report["status"] == "inventory_guard_for_frozen_preregistration"
+    assert "M5_B0_N2_STOP_REASON_PREREGISTRATION_FROZEN_20260915.md" in report["does_not_decide_n2"]
     assert report["does_not_decide_n2"]
