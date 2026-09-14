@@ -19,7 +19,10 @@ jobs:
     # R9(2026-09-14): 测试规模 851→1392，且 black 与 verify 网关修复后 verify/contracts
     # 步骤才首次真实执行。30m 实测在最后的 complete regression suite 处被砍（30m16s）；
     # 全链路 ≈ 前 25 步 ~15m + 全量回归 ~20m ⇒ 上调至 60m（仍留负载波动余量）。
-    timeout-minutes: 60
+    # R9 复采（2026-09-14 23:0x）：60m 仍在 complete regression suite 处被砍
+    # （60m17s）—— 该步是 pytest tests/ --cov，含覆盖插桩，CI runner 上 >45m；
+    # 再上调至 90m。
+    timeout-minutes: 90
     strategy:
       fail-fast: false
       matrix:
@@ -374,7 +377,9 @@ jobs:
     # R9(2026-09-14): 与 test 腿同步上调——测试规模 851→1392，且 verify/contracts
     # 步骤修复后才首次真实执行；30m 不足以跑完全量回归，该 job 历史上多次因此被
     # timeout 取消（从未发布完整结论）。
-    timeout-minutes: 60
+    # R9 复采（2026-09-14 23:0x）：Windows 腿 47m33s 完成（未超时），与 test 腿
+    # 同步上调至 90m，避免同类截断。
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
 
