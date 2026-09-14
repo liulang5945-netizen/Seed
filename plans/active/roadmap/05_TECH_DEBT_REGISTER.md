@@ -275,6 +275,35 @@ gone = load("baseline.xml") - load("now.xml")  # 记录，用于识别抖动
 统一给 `SeedRuntime.load(...)` 显式传 `workspace_root=PROJECT_ROOT`。
 验证：6/6 定向用例通过；全量套件在守卫关闭下 **0 失败**。
 
+### 4.2 跨解释器数值一致性（Python 3.10 腿，2 项，**未修——待决策**）
+
+**发现（2026-09-14 深夜，run `34860023522` @`292b66a5`）**：CI 的 `test (3.12)` 与
+`test-windows` **首次全绿**（28 步 / 19 步全 success，含 `complete regression suite`），
+仅 `test (3.10)` 在步骤 24 有 2 项失败（该 job 的 JUnit 显示 960 用例中仅此 2 项）：
+
+| 用例 | 失败形态 |
+|---|---|
+| `test_continuous_structural_growth::test_continuous_structural_growth_gate` | `AssertionError: second-cycle online feedback was not admitted: online-de-next` |
+| `test_interaction_group_multifamily::test_interaction_group_multifamily_leave_one_out_gate` | `AssertionError: selector did not choose a group for held-out complementary-alpha`（`eval_taiji_interaction_group_multifamily.py:159`，即 `InteractionGroupUtilityLearner.select(resource_budget=2.0)` 返回 `None`） |
+
+**性质**：**既有**——3.10 腿此前一直被 black / verify 网关 / timeout 挡在步骤 24 之前，从未执行到。
+
+**已排除的假设**：
+- ❌ **顺序 / 哈希不确定**：`taiji/interaction_groups.py::train_only_candidates` 已是确定性的
+  （`tuple(sorted({...}))` + `itertools.combinations`），且该脚本用 `seed % 2` 显式对两种顺序都测；
+- ❌ **torch 版本差异**：从 CI 日志核对，两腿均装 `2.14.0+cpu`。
+
+**剩余怀疑**：CPython 3.10 与 3.12 的浮点 / 容器迭代边界差异，使候选在 `_estimate_pair`
+的资源 / 效用阈值处被判到不同侧。**本机无法复现**（本机只有 3.12.10 / 3.13.12）。
+
+**处置约束（重要）**：这 2 项触及 `InteractionGroupUtilityLearner`——**被多个既有报告依赖的
+冻结机制**；任何阈值或 tie-break 改动都会影响与既有报告的可比性，须先定性再动手，
+并遵守 §8「不得放宽断言凑绿」的纪律。
+
+**候选处置**：① 在 3.10 腿复跑该 job，确认是稳定复现还是 flaky（区分两类根因）；
+② 对 `_estimate_pair` / `select` 的阈值比较引入显式容差或确定性 tie-break（需预注册式审慎）；
+③ 给这 2 项 `xfail(strict=False)` 并注明「3.10 已知数值差异」（会弱化该腿门禁，需明确认可）。
+
 ### 处置时需先建立的观测能力（已建立）
 
 1. ✅ 让 `SystemExit` 带栈：CI 已加 `--tb=short --junitxml=... -o junit_logging=all`
