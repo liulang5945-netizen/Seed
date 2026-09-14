@@ -16,7 +16,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     # R8: 实测 495–697s（两腿验证脚本 + 全套回归）；30m 留 2.5 倍余量防 CI 负载波动。
-    timeout-minutes: 30
+    # R9(2026-09-14): 测试规模 851→1392，且 black 与 verify 网关修复后 verify/contracts
+    # 步骤才首次真实执行。30m 实测在最后的 complete regression suite 处被砍（30m16s）；
+    # 全链路 ≈ 前 25 步 ~15m + 全量回归 ~20m ⇒ 上调至 60m（仍留负载波动余量）。
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
@@ -368,7 +371,10 @@ jobs:
   test-windows:
     runs-on: windows-latest
     # R8: 实测 694s（全量回归 + 覆盖率采集）；30m 余量与 Ubuntu 测试腿一致。
-    timeout-minutes: 30
+    # R9(2026-09-14): 与 test 腿同步上调——测试规模 851→1392，且 verify/contracts
+    # 步骤修复后才首次真实执行；30m 不足以跑完全量回归，该 job 历史上多次因此被
+    # timeout 取消（从未发布完整结论）。
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
 
