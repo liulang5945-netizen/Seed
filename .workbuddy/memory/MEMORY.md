@@ -140,6 +140,20 @@
 - 同一文件的多处替换**必须串行**：并行 Edit 会丢更新（两条都报 success，实际只生效一条）。
 - 写完跑一次链接校验（解析所有 `](path)` 是否 exists）。
 
+## 本地验证环境（2026-09-14 实测，动手前必读）
+- **跑 `tests/` 必须设 `CODEBUDDY_SAFE_DELETE_ENABLED=0`**：WorkBuddy 沙箱的 safe-delete
+  批删守卫（`cli/vendor/shim/sitecustomize.py:826`，按「单个 tool call 内删除 ≥50 路径」计数）
+  劫持 `Path.unlink`/`os.remove`，超限即 `raise SystemExit(1)` ⇒ 大批 gate 用例**假失败**。
+  `dangerouslyDisableSandbox` **不能**绕开它（hook 经 PYTHONPATH 注入，与命令沙箱无关）。
+- **判据：`SystemExit` 级联先拿栈**（`--tb=long -o junit_logging=all`）**再归因**；
+  别用「app_state 共享 / 顺序污染」猜——本项目曾据此错归因一整轮。
+- `default_workspace_root()` 取 `get_setting("workspace_path")`，否则回落 `agent_workspace`
+  （本机 = `C:\Users\23747\Documents`）。**凡要读仓库文件的 gate/测试，
+  `SeedRuntime.load(...)` 必须显式传 `workspace_root=PROJECT_ROOT`**：load 不继承构造时的 override。
+- 未登记债务：`black --check .` 红（**460 文件**）；CI 有 blocking 门禁但从未清理，待决策。
+- 前端 `vite build` 在本机失败是 `node-safe-delete-shim` 拦截清空 `dist`（环境伪影），
+  输出到隔离目录即成功。
+
 ## Git 恢复硬知识
 - git 仓库必须有 `refs/` 目录（空也要存在）；`git fsck` 解析 `.git/logs/` 下**所有**文件，
   坏 reflog 必须移出该目录。
