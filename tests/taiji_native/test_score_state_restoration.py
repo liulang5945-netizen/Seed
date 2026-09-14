@@ -46,10 +46,13 @@ def _authorization(
 
 
 def _state_snapshot(model: Taiji) -> dict[str, object]:
+    # Torch-native values only: the CI test job installs the package with
+    # --no-deps (runtime dependencies are just ``torch``), so this snapshot must
+    # not reach for numpy through ``Tensor.numpy()``.
     return {
         "checkpoint_digest": content_digest(model.checkpoint()),
-        "rng_state": model._rng.get_state().clone().cpu().numpy().tobytes(),
-        "memory_rng_state": model._memory_rng.get_state().clone().cpu().numpy().tobytes(),
+        "rng_state": model._rng.get_state().clone().cpu().tolist(),
+        "memory_rng_state": model._memory_rng.get_state().clone().cpu().tolist(),
         "tick": model.tick,
         "development_ticks": model._development_ticks,
         "memory_write_count": model.memory.write_count,
