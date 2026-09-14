@@ -1,17 +1,28 @@
 # Seed / Taiji 技术债登记册
 
-## 最新状态补充（2026-09-13，B0 完成后）
+## 最新状态补充（2026-09-14，WP-1 决策窗口前）
+
+- **CI 命令级基线（2026-09-14，当前 HEAD `fba517cf` 复采）**：
+  - `ruff check .` → **All checks passed**（B0 修的 `I001` 未回归）；
+  - 全量 `tests/taiji_native/`（801s，`--junitxml` 后台跑）：**949 用例 / 27 失败 / 0 错误 / 1 跳过**
+    （921 passed + 27 failed + 1 skipped = 949，与 `--collect-only` 一致）；
+  - **失败集合与 2026-09-13 基线逐位相同：0 新增、0 消失**（27 项全为 `SystemExit: 1`）。
+  - ⇒ B0 十一轮新增的 **+98 个测试全部通过**（851→949），且**在全量顺序上下文下也无新增失败**
+    ——这一点重要，因为本仓库的既有失败形态正是顺序/状态污染，局部通过不足以说明问题。
+  - 该结果**预验证了 WP-3 出口判据④**（"全量失败集合对 27 项基线无新增"）。
+  - 原始 XML：`%TEMP%/taiji_wp1_full.xml`（临时文件，不入库）；基线 XML：`%TEMP%/taiji_b0_full.xml`。
+  - **远端仍未查询**（`gh` 未认证）⇒ 继续禁止"CI 已绿"表述；本文只声明**命令级**基线。
 
 - DEBT-A1/A2 已结项，见下方修复记录；原“只登记不修复”是建册时范围，不应把已完成修复写回未解决。
-- 30 失败/788 用例是 aa124f52 的历史基线；28 个 SystemExit 仍待定位，不是当前 HEAD 重测计数。
+- 30 失败/788 用例是 aa124f52 的历史基线；28 个 SystemExit 仍待定位，**当前 HEAD 重测计数为 27**（集合见 §6，为旧 28 项的严格子集）。
 - 下文引用图论证仅能缩小直接依赖范围，不能证明间接状态、动态导入、文件和环境污染不存在；失败归属须结合可复现顺序、父提交对照与栈证据。
 - DEBT-G1/G2/G3 的数量和路径是旧快照；后续 Git 修复见[路线 A 报告](../../../reports/M5_P5_2C_TRIPLE_PRIME_REPRESENTATION_REPAIR_RESULT_20260913.md)。本轮未做 fsck 或清理；继续禁止未经确认 gc/prune、删除备份。
 - 新研究阻塞（已由 B0 审查并给出结论）：路线 B 的收益参照不一致、任务协作上界与门禁语义差异。B0 复算 32/32 一致、三种候选参照全部不可达 ⇒ 暂停正式训练，先改任务与估计目标。见[B0 设计包](../../reference/M5_B0_MEASUREMENT_AND_REACHABILITY_AUDIT_20260913.md)。
 - **CI 命令级基线（2026-09-13，B0 建立）**：本地 `ruff check .` 原有 1 项 `I001`
   （`tests/taiji_native/test_p5_2c_triple_prime_representation_repair_gate.py` 的导入顺序），
   即两条 Linux CI 的 Ruff 失败原因；B0 已修复，现为 **All checks passed**。
-  B0 新增测试 14 passed、目标集八个文件 95 passed。**全量套件本轮未跑**，28 项 SystemExit 未定性；
-  不把局部通过当全仓绿。远端 workflow 本轮未查询（`gh` 未认证）。
+  B0 新增测试 14 passed、目标集八个文件 95 passed；当次全量基线见上（851 / 27）。
+  远端 workflow 本轮未查询（`gh` 未认证）。
 
 以下保留建册时的观察、命令和修复记录；现行顺序由[当前推进方案](03_CURRENT_EXECUTION.md)决定。
 
@@ -61,25 +72,32 @@ for root,dirs,files in os.walk('.'):
 - 全量套件的失败集合**每次运行都不同**（两次运行分别在不同进度点多出失败）。
 - 失败用例单独运行（或小批组合）**全部通过**。
 
-## 2. 量化基线（2026-09-13，`aa124f52`）
+## 2. 量化基线（三次复采，可对比）
 
 采集命令（**必须用 JUnit XML**，`-rf`/`--tb` 的文本输出会被工具截断丢失）：
 
 ```bash
 python -m pytest tests/taiji_native/ -q --no-header --tb=no -p no:cacheprovider \
   --junitxml=<tmp>/taiji.xml
-# 全量约 15 分钟，建议 run_in_background
+# 全量约 13–16 分钟，必须 run_in_background
 ```
 
-| 指标 | `aa124f52`（建册基线） | **`f9825943`+B0（2026-09-13 复采）** |
-|---|---|---|
-| 用例总数 | 788 | **851**（+63：C/A/B0 新增测试） |
-| 失败 | **30** | **27** |
-| 错误（error） | 0 | 0 |
-| 跳过（skipped） | 1 | 1 |
-| 全量墙钟 | ~15 分钟 | 938s（≈15.6 分钟） |
-| **类别 A（架构边界违反）** | **2** | **0 —— 已结项** |
-| 类别 B（`SystemExit: 1`） | 28 | **27** |
+| 指标 | `aa124f52`（建册基线） | `f9825943`+B0（2026-09-13） | **`fba517cf`（2026-09-14，当前 HEAD）** |
+|---|---|---|---|
+| 用例总数 | 788 | 851（+63） | **949（+98）** |
+| 通过 | — | 823 | **921** |
+| 失败 | **30** | **27** | **27** |
+| 错误（error） | 0 | 0 | 0 |
+| 跳过（skipped） | 1 | 1 | 1 |
+| 全量墙钟 | ~15 分钟 | 938s | **801s** |
+| **类别 A（架构边界违反）** | **2** | **0 —— 已结项** | **0** |
+| 类别 B（`SystemExit: 1`） | 28 | 27 | **27** |
+| 失败集合 vs 上一基线 | — | 旧 28 项的严格子集 | **逐位相同：0 新增、0 消失** |
+
+**2026-09-14 复采结论**：B0 十一轮新增的 **+98 个测试全部通过**，且**失败集合与 09-13 基线逐位相同**
+（`new = ∅`、`gone = ∅`，用 JUnit XML 集合差集判定，不靠计数）。
+这**预验证了 WP-3 出口判据④**。注意：本仓库既有失败形态正是**顺序/状态污染**，
+所以"局部目标集通过"不足以说明问题，必须在**全量顺序上下文**下比对集合。
 
 **复采结论（2026-09-13，B0 本轮）**：
 
@@ -92,6 +110,21 @@ python -m pytest tests/taiji_native/ -q --no-header --tb=no -p no:cacheprovider 
    §8 处置入口条件第 2 条仍未满足。
 4. 采集命令与原始 XML 路径：`C:/Users/23747/AppData/Local/Temp/taiji_b0_full.xml`（临时文件，不入库）。
    解析脚本模式见[B0 机制文档](../../reference/M5_B0_MECHANISM_AND_TASK_PRECHECK_20260913.md) §7。
+5. **（2026-09-14 追加）集合比对优于计数比对**：当前 HEAD 与 09-13 基线的失败集合
+   **逐位相同**（0 新增、0 消失），说明 09-13 那次"消失 1 项"确实是运行间抖动，
+   而本轮 +98 个新测试**没有引入任何新失败**。判定脚本见本节末。
+
+```python
+# 失败集合差集判定（比对比计数更硬）
+import xml.etree.ElementTree as ET
+def load(p):
+    r = ET.parse(p).getroot()
+    return {tc.get("classname") + "::" + tc.get("name")
+            for tc in r.iter("testcase")
+            if tc.find("failure") is not None or tc.find("error") is not None}
+new = load("now.xml") - load("baseline.xml")   # 必须为空
+gone = load("baseline.xml") - load("now.xml")  # 记录，用于识别抖动
+```
 
 失败分为三类（**分类很重要**：类别决定了严重性和修法）：
 

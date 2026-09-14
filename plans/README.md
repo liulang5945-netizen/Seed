@@ -87,6 +87,8 @@ N1 结构空间探针（[N1 结构空间结果](reference/M5_B0_STRUCTURE_SPACE_
 
 active 只保留当前决策与核心约束；reference 保留预注册/结果解释；archive 保存历史；manifests 保存冻结数据合同。失败报告不覆盖，临时产物逐项核验后清理。
 
-当前 f9825943 的 CI 34753643532 上次查询时两条 Linux 已在 Ruff 失败；本轮未查询远端（`gh` 未认证）。按命令级基线：本地 `ruff check .` 原有 1 项 `I001`（即上述失败原因），B0 已修复，现为 **All checks passed**。**全量套件本轮已跑**：851 用例 / 27 失败 / 0 错误 / 1 跳过（938s），**类别 A 架构边界违反已归零（2→0，A1/A2 结项可复现）**，27 项全为 `SystemExit: 1` 且**是旧 28 项的严格子集、无新增失败**。细节见[技术债登记册](active/roadmap/05_TECH_DEBT_REGISTER.md) §2 与[机制续篇](reference/M5_B0_MECHANISM_AND_TASK_PRECHECK_20260913.md) §7。
+当前 f9825943 的 CI 34753643532 上次查询时两条 Linux 已在 Ruff 失败；本轮未查询远端（`gh` 未认证）。按命令级基线：本地 `ruff check .` 原有 1 项 `I001`（即上述失败原因），B0 已修复，现为 **All checks passed**。
+
+**全量套件已两次复采**（`tests/taiji_native/`）：`f9825943`+B0 为 **851 用例 / 27 失败 / 0 错误 / 1 跳过（938s）**；**当前 HEAD `fba517cf` 为 949 用例 / 27 失败 / 0 错误 / 1 跳过（801s）**，且**失败集合与上一基线逐位相同（0 新增、0 消失）** ⇒ B0 十一轮新增的 **+98 个测试全部通过**，类别 A 架构边界违反保持归零。这**预验证了 WP-3 出口判据④**。注意本仓库既有失败形态是**顺序/状态污染**，故必须在全量顺序上下文下比对**集合**而非计数。细节见[技术债登记册](active/roadmap/05_TECH_DEBT_REGISTER.md) §2。
 
 **推送受阻（如实记录）**：本会话 `git push` 报 `could not read Username for 'https://github.com'`（无可用凭据；`ls-remote` 可通，属认证问题而非网络）。`origin/main` 仍停在 `f9825943`，本地 `main` 领先若干未推送提交（含 `4a94e9c6`、`104de608`、`b89ca217` 及本轮文档提交）⇒ **CI 不会被本次提交触发**，需用户提供凭据或在本机推送。
