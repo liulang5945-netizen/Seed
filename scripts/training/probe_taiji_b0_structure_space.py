@@ -422,7 +422,9 @@ def _run_scripted_under_contract(frozen: Any, task: Any, steps: Sequence[Any]) -
         shutil.rmtree(root, ignore_errors=True)
 
 
-def validity(frozen: Any, cell: Mapping[str, Any]) -> dict[str, Any]:
+def validity(
+    frozen: Any, cell: Mapping[str, Any], *, contexts_per_cell: int = CONTEXTS_PER_CELL
+) -> dict[str, Any]:
     """Scripted check, under the contract, that a cell's reference steps reach its goal.
 
     ``measurable`` is the gate this probe must not relax: a cell that the contract
@@ -431,7 +433,7 @@ def validity(frozen: Any, cell: Mapping[str, Any]) -> dict[str, Any]:
     """
 
     rows: list[dict[str, Any]] = []
-    for task in build_cell_tasks(frozen, cell)["tasks"]:
+    for task in build_cell_tasks(frozen, cell, contexts_per_cell)["tasks"]:
         forward = _run_scripted_under_contract(frozen, task, task.reference_steps)
         backward = _run_scripted_under_contract(frozen, task, tuple(reversed(task.reference_steps)))
         rows.append(
@@ -869,10 +871,11 @@ def measure_cell(
     audited_episode: Any,
     frozen_episode: Any,
     margin: float,
+    contexts_per_cell: int = CONTEXTS_PER_CELL,
 ) -> dict[str, Any]:
     """One structural cell under both rules, plus the forensic trace of any change."""
 
-    tasks = build_cell_tasks(frozen, cell)["tasks"]
+    tasks = build_cell_tasks(frozen, cell, contexts_per_cell)["tasks"]
     baseline = audit.measure_surface(
         frozen,
         counterfactual,
@@ -1016,14 +1019,16 @@ def seed_sweep(
     embedder: Any,
     audited_episode: Any,
     margin: float,
+    offsets: Sequence[int] = SEED_OFFSETS,
+    contexts_per_cell: int = CONTEXTS_PER_CELL,
 ) -> dict[str, Any]:
     """Is the structural result a seed artifact?  Re-run M4 at each offset."""
 
     rows: list[dict[str, Any]] = []
-    for offset in SEED_OFFSETS:
+    for offset in offsets:
         members = audit.train_members_with_seed(frozen, embedder, offset)
         for cell in cells:
-            tasks = build_cell_tasks(frozen, cell)["tasks"]
+            tasks = build_cell_tasks(frozen, cell, contexts_per_cell)["tasks"]
             measured = audit.measure_surface(
                 frozen,
                 counterfactual,
@@ -1051,7 +1056,7 @@ def seed_sweep(
         if all(row["positive"] for row in rows if row["cell"] == cell)
     }
     return {
-        "offsets": list(SEED_OFFSETS),
+        "offsets": list(offsets),
         "rows": rows,
         "positive_cells_any_seed": sorted(positive_cells),
         "positive_cells_every_seed": sorted(always),
@@ -1059,7 +1064,11 @@ def seed_sweep(
     }
 
 
-def probe() -> dict[str, Any]:
+def probe(
+    *,
+    contexts_per_cell: int = CONTEXTS_PER_CELL,
+    seed_offsets: Sequence[int] = SEED_OFFSETS,
+) -> dict[str, Any]:
     counterfactual = load_counterfactual()
     audit = load_audit()
     frozen = counterfactual.load_frozen()
@@ -1073,11 +1082,15 @@ def probe() -> dict[str, Any]:
     assert frozen._member_episode is frozen_episode
 
     cells = grid()
-    surfaces = {cell["label"]: build_cell_tasks(frozen, cell) for cell in cells}
+    surfaces = {
+        cell["label"]: build_cell_tasks(frozen, cell, contexts_per_cell) for cell in cells
+    }
     all_tasks = [task for surface in surfaces.values() for task in surface["tasks"]]
     frozen.p52a._assert_nontrivial_goals(all_tasks, partition="probe")
 
-    validity_rows = [validity(frozen, cell) for cell in cells]
+    validity_rows = [
+        validity(frozen, cell, contexts_per_cell=contexts_per_cell) for cell in cells
+    ]
     not_measurable = [
         {"cell": row["cell"], "because": row["not_measurable_because"]}
         for row in validity_rows
@@ -1112,6 +1125,7 @@ def probe() -> dict[str, Any]:
             audited_episode=audited_episode,
             frozen_episode=frozen_episode,
             margin=margin,
+            contexts_per_cell=contexts_per_cell,
         )
         for cell in measurable
     ]
@@ -1134,6 +1148,8 @@ def probe() -> dict[str, Any]:
         embedder=embedder,
         audited_episode=audited_episode,
         margin=margin,
+        offsets=seed_offsets,
+        contexts_per_cell=contexts_per_cell,
     )
 
     return {
@@ -1154,7 +1170,7 @@ def probe() -> dict[str, Any]:
         ],
         "frozen_attribute_intact": frozen._member_episode is frozen_episode,
         "margin": margin,
-        "contexts_per_cell": CONTEXTS_PER_CELL,
+        "contexts_per_cell": contexts_per_cell,
         "binder_expression_surface": binder_expression_surface(frozen),
         "validity": validity_rows,
         "not_measurable_cells": not_measurable,
@@ -1173,14 +1189,36 @@ def probe() -> dict[str, Any]:
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument(
+        "--contexts-per-cell",
+        type=int,
+        default=CONTEXTS_PER_CELL,
+        help="contexts per structural cell (default reproduces the archived 20260913 report)",
+    )
+    parser.add_argument(
+        "--seed-offsets",
+        type=int,
+        nargs="+",
+        default=list(SEED_OFFSETS),
+        help="seed offsets for the seed sweep (default reproduces the archived report)",
+    )
     args = parser.parse_args(argv)
 
-    payload = probe()
+    if args.contexts_per_cell < 1:
+        parser.error("--contexts-per-cell must be >= 1")
+
+    payload = probe(
+        contexts_per_cell=args.contexts_per_cell, seed_offsets=tuple(args.seed_offsets)
+    )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(
         json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
 
+    print(
+        f"scale: {payload['contexts_per_cell']} contexts/cell, "
+        f"{len(payload['seed_sweep']['offsets'])} seed offsets {payload['seed_sweep']['offsets']}"
+    )
     surface = payload["binder_expression_surface"]
     print(
         f"binder vocabulary: {surface['bindable_kind_count']} kinds; "

@@ -23,6 +23,7 @@ Measured payload: ``reports/taiji_b0_structure_space_probe_20260913.json``.
 from __future__ import annotations
 
 import importlib.util
+import inspect
 import json
 import sys
 from pathlib import Path
@@ -628,3 +629,69 @@ def test_the_probe_bounds_its_own_conclusion(payload):
     assert payload["contexts_per_cell"] == 2
     assert payload["binder_expression_surface"]["not_covered"]
     assert "T2" in payload["binder_expression_surface"]["not_covered"]
+
+
+# --------------------------------------------------------------------------- #
+# WP-1.5: scale is a parameter, and the defaults are the archived report
+# --------------------------------------------------------------------------- #
+
+
+def test_the_scale_parameters_default_to_the_archived_constants(probe):
+    """A flagless run must still reproduce the 20260913 report byte for byte.
+
+    Widening the sample is only evidence if the archived measurement stays
+    reachable from the same instrument, so the defaults are pinned here.
+    """
+
+    signatures = {
+        name: inspect.signature(getattr(probe, name)).parameters
+        for name in ("probe", "validity", "measure_cell", "seed_sweep")
+    }
+    assert signatures["probe"]["contexts_per_cell"].default == probe.CONTEXTS_PER_CELL == 2
+    assert signatures["probe"]["seed_offsets"].default == probe.SEED_OFFSETS == (0, 101, 202)
+    assert signatures["probe"]["contexts_per_cell"].kind is inspect.Parameter.KEYWORD_ONLY
+    assert signatures["validity"]["contexts_per_cell"].default == probe.CONTEXTS_PER_CELL
+    assert signatures["measure_cell"]["contexts_per_cell"].default == probe.CONTEXTS_PER_CELL
+    assert signatures["seed_sweep"]["offsets"].default == probe.SEED_OFFSETS
+    assert signatures["seed_sweep"]["contexts_per_cell"].default == probe.CONTEXTS_PER_CELL
+
+
+def test_a_wider_cell_yields_more_contexts_of_the_same_structure(probe):
+    frozen = _stub_frozen()
+    cell = next(item for item in probe.grid() if item["label"] == DESIGNED_CELL)
+
+    wide = probe.build_cell_tasks(frozen, cell, 6)["tasks"]
+
+    assert len(wide) == 6
+    assert len({task.kwargs["task_id"] for task in wide}) == 6
+    assert len({next(iter(task.kwargs["goal_files"])) for task in wide}) == 6
+    assert len({_task_index(task) for task in wide}) == 6
+    for task in wide:
+        kinds = [step.args[0] for step in task.kwargs["reference_steps"]]
+        assert kinds.count("workspace.create") == 1
+        assert "editor.set_language" in kinds
+        assert task.kwargs["requires_explicit_language_override"] is True
+
+
+def test_the_validity_gate_does_not_relax_at_a_wider_scale(probe, frozen):
+    """More contexts per cell must not make an untestable cell testable."""
+
+    trivial = {
+        "label": "none__none",
+        "ordinal": 90,
+        "content_route": "none",
+        "language_route": "none",
+    }
+    row = probe.validity(frozen, trivial, contexts_per_cell=4)
+    assert len(row["contexts"]) == 4
+    assert row["measurable"] is False
+    assert row["not_measurable_because"] == ["tick0_already_satisfied"]
+
+
+def test_main_rejects_a_degenerate_scale(probe, tmp_path):
+    with pytest.raises(SystemExit) as excinfo:
+        probe.main(
+            ["--contexts-per-cell", "0", "--output", str(tmp_path / "degenerate.json")]
+        )
+    assert excinfo.value.code == 2
+    assert not (tmp_path / "degenerate.json").exists()
