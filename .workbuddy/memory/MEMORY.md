@@ -150,7 +150,11 @@
 - `default_workspace_root()` 取 `get_setting("workspace_path")`，否则回落 `agent_workspace`
   （本机 = `C:\Users\23747\Documents`）。**凡要读仓库文件的 gate/测试，
   `SeedRuntime.load(...)` 必须显式传 `workspace_root=PROJECT_ROOT`**：load 不继承构造时的 override。
-- 未登记债务：`black --check .` 红（**460 文件**）；CI 有 blocking 门禁但从未清理，待决策。
+- 远端 CI 的 `test` job 曾**唯一**失败于 `black --check .`（460 文件）；已于 `75e9c97b` 全仓格式化
+  （纯格式、AST 保持、两次复检幂等，格式化后四段验证仍全绿）。其余 job 一直 success。
+  `gh` 已认证（`liulang5945-netizen`, keyring）⇒ 远端 CI 可查，T-CI 债务解除。
+- **教训：判定「既有格式债」是否阻塞，先查 CI 口径**——本次 black 是 CI 唯一红项，
+  属必做而非可选；只看本地 `black --check` 会把它误判为"未登记的旧账"。
 - 前端 `vite build` 在本机失败是 `node-safe-delete-shim` 拦截清空 `dist`（环境伪影），
   输出到隔离目录即成功。
 
