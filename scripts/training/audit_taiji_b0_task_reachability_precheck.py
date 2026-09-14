@@ -57,10 +57,12 @@ DICTIONARY_MODULE = (
 
 #: Identifier of the composition rule the P5.2b/P5.2c gates froze.  A different
 #: rule is a different mechanism and needs its own preregistration.
-COMPOSITION_RULE_ID = "p52b-priority-fallback-v1"
+COMPOSITION_RULE_ID = "p52b-priority-fallback-v1 (rule_revision=0)"
 COMPOSITION_RULE_TEXT = (
     "each tick every active member predicts; the first member in active_members "
-    "order whose action binds executes (lexicographic priority fallback)"
+    "order whose action binds executes (lexicographic priority fallback; "
+    "rule_revision=0 -- superseded by HANDOFF-M4 / rule_revision=1 on 2026-09-15, "
+    "so every verdict in this pre-check describes the revision it was computed under)"
 )
 
 #: Outcome encoding, frozen with the measurement dictionary.

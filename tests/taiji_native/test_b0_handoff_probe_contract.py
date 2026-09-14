@@ -262,10 +262,20 @@ def test_probe_report_matches_the_measured_findings():
     assert hard["order_sensitivity"]["mean_order_headroom"] == 0.0
 
 
-def test_frozen_gate_still_uses_priority_fallback(frozen):
-    """The rule this whole analysis is about must still be the frozen one."""
+def test_gate_reports_which_composition_rule_it_ships(frozen):
+    """This file's analysis is about rule_revision 0; the gate declares what it runs.
+
+    Landing HANDOFF-M4 replaces ``chosen = bindable[0]``, so "the old line is still
+    there" is not a durable guard.  What is durable: exactly one of the two rules is
+    present, and ``RULE_REVISION`` names it.  The cell structure below is rule-independent
+    and stays pinned.
+    """
 
     source = FROZEN_GATE.read_text(encoding="utf-8")
-    assert "chosen = bindable[0]" in source
+    body = source.split("def _member_episode", 1)[1].split("\ndef ", 1)[0]
+    revision_0 = "chosen = bindable[0]" in body
+    revision_1 = 'return finish("all_members_blocked")' in body
+    assert revision_0 != revision_1, "exactly one composition rule may be present"
+    assert getattr(frozen, "RULE_REVISION", None) == (0 if revision_0 else 1)
     assert frozen.CELL_MEMBER_SETS[0] == ()
     assert len(frozen.CELL_MEMBER_SETS) == 11

@@ -163,7 +163,7 @@ M4 用**同一个修法**（自身步失败即让位）把两者都转成"先创
 3. 若决定探索"跨内容结构"：那需要一个 binder 决策（N1a），不在 M4 的范围内，应先立独立议题。
 
 > **前向指针（2026-09-15，本文原文不改）**：上述三项**均已定案，全取上限档**——
-> **D5 = 落地** `m4_failure_handoff`；**N2 = 落地前**预注册（消费面重扫为 **15 个文件 / 8 处判断点（4 live gate + 4 测试断言）**，取代加固轮的 11 与审查文里的「14 / 5」；
+> **D5 = 落地** `m4_failure_handoff`；**N2 = 落地前**预注册（消费面现值 **17 个文件 / 10 处判断点（4 live gate + 6 测试断言）**，取代加固轮的 11 与审查文里的「14 / 5」；该计数随每个新增 `stop_reason` 消费者 +1，WP-2 落盘时为 15/8，**恒以[重扫报告](../../reports/taiji_b0_n2_stop_reason_disposition_20260915.json) 为准**；
 > `all_members_blocked` 定为**一类终局结果**，冻结于 [N2 冻结版预注册](M5_B0_N2_STOP_REASON_PREREGISTRATION_FROZEN_20260915.md)，底稿见[N2 处置审查](M5_B0_N2_STOP_REASON_DISPOSITION_20260914.md)）；
 > **N1a = 开**，升为正式工作包 **WP-6**（挂 WP-3 之后、打 `binder_version` 标注，出口含"新格结果指纹必须与 create 行三格不同"）；
 > N1a-2（T2 所需成员间证据通道）单列单独决策。
@@ -228,3 +228,38 @@ M4 用**同一个修法**（自身步失败即让位）把两者都转成"先创
   这是应当的——加 context 只是给**同一个结构**加样本，不会造出新的结构因素。
   ⇒ **独立结构因素仍是 1 个（存在性前提）**；要把它抬到 >1 只能走 **WP-6（改 binder）**，扩面对此无能为力。
 - **没有触碰 L2 / L3**：可表达性与成员间证据通道都是 binder / 签名的性质，与样本量无关。
+
+### 10.4 参照没有被被测规则移动（关键反伪影核对，2026-09-15）
+
+取最强参照 `all_singleton_oracle` 作主判据后，必须排除一类新伪影：**若 M4 让单体本身变差，oracle 会被压低，`+2.000` 就成了"削弱比较对象"的产物**。
+M4 确实带有这种风险——单元格里只剩一个成员时，"失败即让位"会变成"失败即终止"，不再重试到 `STEP_CAP`。
+
+逐格核对 `singleton_success_rates_frozen` 与 `singleton_success_rates_audited`：
+
+| 格 | 四个单体成功率（冻结 → M4） | 结论 |
+|---|---|---|
+| `create__observation` / `create__override` / `create__mismatch`（声称增益的三格） | 全 `0.0` → 全 `0.0` | **参照未动**。这些任务上单体本就做不到，早停与重试都还是 0 |
+| `none__*`、`create__none`、`patch__none`（存在单体成功的格） | 例如 `a=1.0, d=1.0` / `b=1.0` → **逐项相同** | 参照未动 |
+
+⇒ **`+2.000` 不是靠削弱 oracle 得到的**；它来自组合面把"两个成员各自做不到的事"接成了可做（`interleaved 0 → 6`、每格 6 个 context 全由 `member-a` 与 `member-c` 真实交接完成）。
+**待固化**（不是已完成）：本核对应写成逐格断言 `singleton_success_rates_frozen == singleton_success_rates_audited`
+加进 `test_b0_structure_space_contract.py`，这样**任何未来的规则改动只要压低参照就会被立刻拦住**，而不是悄悄变成更大的"增益"。
+该测试文件此刻仍**未改动**（全量基线套件在跑，期间不编辑 Python 文件）；落地前须完成，见任务清单。
+
+## 11. 规则版本标注（`rule_revision = 0`）
+
+本文（§1–§10.4）**全部数值只对 `rule_revision = 0` 有效**，即组合规则为 `chosen = bindable[0]`（冻结的字典序优先回退）+
+`cues = tuple([cue] * (len(steps) + 1))`（episode 级 cue 长度）。对应证据文件
+`taiji_b0_structure_space_probe_20260913.json`（`034560702…423e`）与
+`taiji_b0_structure_space_probe_wide_20260915.json`（`b09b3e62a…87b64`）已按 revision-0 封存
+（哈希见[推进计划修订](M5_B0_CLOSEOUT_AND_PLAN_REVISION_20260914.md) WP-3 证据封条表）。
+
+M4 落地后本文**不回改任何数字、不重跑覆盖**；"新规则下的实测"另写新结果文档，
+两版对照只能用显式版本化比较（禁止把 revision-1 的数字覆盖到本文引用的报告上）。
+
+**先前"特别提示"更正（2026-09-15，同批改动）**：这里曾写"落地后重跑两列会同时变成新规则、`gain_delta` 归 `0.000`
+是恒等退化的**预期结果**"——那是把**仪器缺陷**当成了语义。两臂同源时 `delta ≡ 0` 与"0 回归"都是同义反复，
+不能充当 WP-3 出口②。探针已改为**按 gate 自报的 `RULE_REVISION` 选臂**（`>=1` 时 baseline 臂由
+`build_reverted()` 反向还原成 revision 0，audited 臂取已发布源码），且**两臂同一函数即 `SystemExit`**
+⇒ 落地后的重跑仍是两臂对照，"**11 格与本文所属那次反事实测量逐字段相同**"才是可主张、也已被测试钉住的复现形式。
+详见[WP-3 落地结果 §3](M5_B0_M4_LANDING_RESULT_20260915.md)。

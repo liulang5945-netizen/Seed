@@ -25,9 +25,12 @@
 | F8 | 增益**对表面变化稳健** | [加固轮](M5_B0_M4_HARDENING_RESULT_20260913.md) | 12 context / 6 变体各自 `+2.000`；冻结规则 0/6 为正；5 种子恒定；重跑字节相同 |
 | F9 | 增益**不局限于 `create + override` 一种结构**，但承重结构因素只有一个 | [N1 结构空间](M5_B0_STRUCTURE_SPACE_RESULT_20260913.md) | 11 格全测：`create` 行三条语言路由各 `+2.000`（22/22 为正、两成员均执行）；其余 8 格不动；`patch` 行两规则同 `−2.000` |
 | F10 | 三种**候选参照**在达标格上全部 feasible | 同上 | `required = 2 ≤ available = 2`、`ceiling_gain = 2.0`、`max_clearable_reference = 1.85` |
-| F11 | 新停止原因 `all_members_blocked` 的消费面已清单化且不受 M4 污染 | 加固轮 + N1 + [N2 处置审查](M5_B0_N2_STOP_REASON_DISPOSITION_20260914.md) + [重扫](../../reports/taiji_b0_n2_stop_reason_disposition_20260915.json) | 加固轮清单 **11 个文件**；**2026-09-15 重扫为 15 个消费文件 / 8 处判断点（4 live + 4 测试断言）**，`drift.clean = true`；未修复的拦截 `preview_ValueError` 两规则逐格相同（`36 = 36`），N1 实测三格各 24 次（扩面后 72 次）。<br>**已由 WP-2 双向测试收窄的表述**：`language_assessment_unavailable` **并非**两规则相同——它只在 `create__observation` 的冻结侧出现 72 次、M4 侧归零，而那**正是让位修复的对象**，属机制证据而非污染 |
+| F11 | 新停止原因 `all_members_blocked` 的消费面已清单化且不受 M4 污染 | 加固轮 + N1 + [N2 处置审查](M5_B0_N2_STOP_REASON_DISPOSITION_20260914.md) + [重扫](../../reports/taiji_b0_n2_stop_reason_disposition_20260915.json) | 加固轮清单 **11 个文件**；**2026-09-15 重扫现值为 17 个消费文件 / 10 处判断点（4 live + 6 测试断言；WP-2 落盘时 15/8，WP-3 落地期增 J9/J10）**，`drift.clean = true`；未修复的拦截 `preview_ValueError` 两规则逐格相同（`36 = 36`），N1 实测三格各 24 次（扩面后 72 次）。<br>**已由 WP-2 双向测试收窄的表述**：`language_assessment_unavailable` **并非**两规则相同——它只在 `create__observation` 的冻结侧出现 72 次、M4 侧归零，而那**正是让位修复的对象**，属机制证据而非污染 |
 | F12 | 测量工具本身可复现 | 全部 | 每轮两次重跑 JSON **字节相同**；b0 测试组 142 passed / 1 skipped / 0 failed；仓库级 `ruff check .` 通过 |
 | F13 | 结构结论**对样本规模稳健**（WP-1.5 扩面，2026-09-15） | [扩面报告](../../reports/taiji_b0_structure_space_probe_wide_20260915.json) / [结果 §10](M5_B0_STRUCTURE_SPACE_RESULT_20260913.md) | 每格 **6 context**（66 总）/ **7 种子偏移**：三格各 `+2.000`、交错 **`0 → 6`**、7/7 偏移为正、`unexplained`/`regress` 皆空、11 格全 `measurable`、两跑字节相同（`b09b3e62…`）、单轮 **12 分钟**。**闭合 L4**；逃生通道 `required` 从 **2/2 → 5/6**（k 维度首次有余量），9 个「格 × 参照」全 `feasible`。**未闭合 L1**：指纹仍 `3 / 11 cells`，独立结构因素仍为 1 ⇒ 只能靠 WP-6 |
+| F14 | **被测规则不移动比较参照** ⇒ 取最强参照 `all_singleton_oracle` 作主判据是可信的（2026-09-15） | [结果 §10.4](M5_B0_STRUCTURE_SPACE_RESULT_20260913.md) / 扩面报告逐格 `singleton_success_rates_{frozen,audited}` | 三格声称增益处单体成功率 **全 `0.0` → 全 `0.0`**；存在单体成功的格逐项相同。**这条排除了"早停削弱单体 ⇒ oracle 被压低 ⇒ 增益是伪影"的路径**（M4 在单成员格里会把"失败重试到 `STEP_CAP`"变成"失败即终止"，确有此风险，**实测未发生**）。<br>**已固化**：逐格断言 `frozen == audited` 已写入 `test_the_audited_rule_does_not_move_the_comparison_reference`，任何未来抬高/压低参照的规则改动都会失败 |
+| F15 | **落地后两台仪器各自复现了 revision-0 的预测**（WP-3 出口②③，2026-09-15） | [落地结果 §3.3/§3.4](M5_B0_M4_LANDING_RESULT_20260915.md) / [落地后网格报告](../../reports/taiji_b0_structure_space_probe_m4landed_20260915.json) / [落地后反事实报告](../../reports/taiji_b0_m1_counterfactual_m4landed_20260915.json) | 结构空间 11 格与封存扩面报告 **`rows`/`validity`/`verdict`/`outcome_distinctness`/`seed_sweep` 逐字段相同**（三格 `0.000 → +2.000`、交错 `0→6`、7/7 偏移为正、`patch` 行仍 `−2.000`、指纹仍 3/11）；反事实冻结面 **`regressions=0` / `improvements=2`**、候选面 `interleaved=4`、`+2.000` 两序一致 ⇒ 出口②的原文判据在已发布源码上直接成立。**两臂对照的"无回归"是相减结果，不是恒等** |
+| F16 | **负结果/仪器缺陷**：落地会把 A/B 仪器的基线臂悄悄变成被测规则本身 | [落地结果 §3.1/§3.2](M5_B0_M4_LANDING_RESULT_20260915.md) / 物证 [`..._m4landed_degenerate_20260915.json`](../../reports/taiji_b0_structure_space_probe_m4landed_degenerate_20260915.json) | 第一次落地后重跑两臂同源 ⇒ `delta ≡ 0`、"`regresses: none`"为同义反复，却被本文误记为"出口②已过"（该表述已作废并留档）。修法：`build_reverted()` 反向还原基线 + 按 `RULE_REVISION` 选臂 + **两臂同一函数即 `SystemExit`** + 报告 `arm_provenance`。同批还抓出**六支仪器默认输出仍指向被封存的 revision-0 文件名**（忘记 `--output` 一次即可毁掉本轮基线），已全部改指新名并由全仓扫描测试把关 |
 
 ### 1.2 本轮新立的界限（写清楚，不能靠正结果隐含）
 
@@ -111,7 +114,7 @@
 - **出口判据**：14 行全部有处置（5 个判断点各有断言）+ 语义预注册冻结 + 双向测试通过 + `contract_intercepted` 两规则计数仍相同。
 - **机时**：分钟级（纯函数测试）。
 
-### WP-3 落地 `m4_failure_handoff`（**唯一会改行为的包，放最后**）
+### WP-3 落地 `m4_failure_handoff`（**唯一会改行为的包，放最后**）—— **已完成（2026-09-15，五条出口全过）**
 
 > **落地范围核实（2026-09-15，动手前查树）**：`_member_episode` / `bindable` / `stop_reason` **只存在于
 > [`scripts/training/eval_taiji_p5_2b_group_causal_corpora_gate.py`](../../scripts/training/eval_taiji_p5_2b_group_causal_corpora_gate.py)**，
@@ -121,19 +124,51 @@
 > **它不证明的是**"Taiji 产品机制已支持协作"——01 号能力账本里协作轴仍要求的**「机制正式版本」保持未闭合**，
 > 须另立 runtime 设计（不得用 gate 改动冒充）。本包结项时的所有报告与表述必须带这条限定。
 
+- **落地前证据封条（2026-09-15，sha256；出口 5 靠"落地后逐字节重算不变"来验证，不靠口头承诺）**：
+
+  | rule_revision=0 证据文件 | sha256 |
+  |---|---|
+  | `taiji_p5_2b_group_causal_corpora_20260913.json` | `531cf6efedb029bf67556e90c913ab3148629250772df8ce5d0b44a065f5939e` |
+  | `taiji_b0_handoff_feasibility_probe_20260913.json` | `576a0543a9141491842038a03dbf9cf747d2f51075b8693681378755d2e74ec9` |
+  | `taiji_b0_m1_counterfactual_20260913.json` | `cb22087e6a2fc9aba08e5e02efa02e54cd4e2eff60aca530d4daf460557b773f` |
+  | `taiji_b0_m4_artifact_audit_20260913.json` | `c3d328d50a91deb5623697b3f3d8f25250070c905be55c0fa441231dbdc003b5` |
+  | `taiji_b0_m4_hardening_20260913.json` | `79302dc0503dbbe46afb3db0ebade177270477861d9cdf51b8c4b3792f402f56` |
+  | `taiji_b0_structure_space_probe_20260913.json` | `03456070213c7657f49435fb67dc086cc6b6821d6dfb0ed5a441f179c486423e` |
+  | `taiji_b0_n2_stop_reason_disposition_20260914.json` | `49e965dad23c0932357995f38e2b921ce371b8aa7ea556d6298255f314d1fc58` |
+
+  **必须在落地同一批改动里处理的覆写风险**：gate 的 `DEFAULT_REPORT` 就指向上表第一份（`…_20260913.json`），
+  而 `_write_json` 用 `temporary.replace(path)` **原地覆盖**、`main()` 没有 `--output`
+  ⇒ **落地后只要跑一次 gate，revision-0 证据就消失**，且新规则的数字会写进名字叫 20260913 的文件里。
+  所以本包必须同时引入 `RULE_REVISION` 并让报告路径按版本分流（新默认名 + `--output`），使旧文件**物理上不可被覆写**。
+
 - **动作**：对 `_member_episode` 施加与反事实**完全相同**的 2 处替换（+21 行）：失败即让位（自身步失败 ⇒ 解除阻塞、下一成员上）+ 每成员自身进度 cue 长度。
 - **出口判据**（五条，全过才算落地）：
   1. **反事实 ≡ 实现**：探针的 M4 副本与落地后的真 runner 在同一面上**逐 episode 结果相同**；
   2. 冻结面回归：仍 **0 回归 / 2 改善**；
   3. 达标面：`interleaved > 0` 且同参照增益 `> 1.65`；
-  4. 全量套件失败集合**不新增**（基线 851 / 27 失败 / 0 错误 / 1 跳过，938 s，`--junitxml` 后台跑）；
+  4. 全量套件失败集合**不新增**（**基线 2026-09-15 复采：1408 用例 / 0 失败 / 0 错误 / 6 跳过，1063 s**，
+     `--junitxml` 后台跑。旧表述"对 27 项基线无新增"作废——那 27 项是本地沙箱批量删除守卫伪影，
+     本轮未复现且**非本轮修复成果**，详见[技术债登记册](../active/roadmap/05_TECH_DEBT_REGISTER.md) 2026-09-15 节）；
   5. 历史报告**只加"规则版本"指针，不改任何数字**；旧报告明示"只对旧规则有效"。
 - **同时冻结**：优先级定义（风险 1：反序成功 pair 不同 ⇒ `CELL_MEMBER_SETS` 的序必须写入预注册）。
-- **机时**：938 秒全量（实测）+ 各探针若干分钟。
+
+#### 落地后的仪器语义（#16 决策，2026-09-15）
+
+落地把"两条规则的对照"变成了"一条已发布规则"，因此各仪器的判读必须显式改口径，否则同一次改动会被误读为退步或矛盾：
+
+| 仪器 | 落地后的行为 | 规定 |
+|---|---|---|
+| 反事实探针 | 每个锚点三态：`applied` / `already_applied`（锚点消失**且**替换文本已在位 ⇒ 恒等）/ 否则**照旧硬失败** | `m4_failure_handoff` 现为 `variant_is_identity=true`、`added_lines=0` ⇒ **出口①**；不得靠放宽锚点检查让它"过" |
+| 加固扫描（六变体） | `m2`/`m4` 变恒等，`m1a`/`m1b`/`m2a`/`m3` **拒绝构造** | 它是 **`rule_revision=0` 仪器** ⇒ **不重跑**；其归档结论（六变体各自 `+2.000`、冻结规则 0/6）作为 revision-0 证据原样成立 |
+| 结构空间探针 | **缺陷已修, 而非改口径**：落地后 baseline 若仍取 `frozen._member_episode`，两臂就成了同一份函数 ⇒ `gain_delta` 恒 `0.000`、`positive_under_frozen` 翻真、"0 回归"变成同义反复 | 改为**按 gate 自报 `RULE_REVISION` 选臂**：`>=1` 时 audited 臂取源码、baseline 臂由 `build_reverted()` 反向还原成 revision 0；**两臂同一函数即 `SystemExit`**；报告新增 `arm_provenance`。⇒ 出口②保持其**两臂**含义，"11 格与反事实报告逐位相同"仍可比（对照封存 `b09b3e62…`） |
+| 反事实探针（整体） | `regression_check` 比的是**已封存的冻结矩阵数字**（`_frozen_rates()` 读旧报告），与被测臂无关 ⇒ 落地后**仍是有效的两臂陈述**；只有 `build_counterfactual` 对已落地变体退化 | **可重跑**并直接给出口②"冻结面 0 回归 / 2 改善"；四个未落地变体改为**如实记 `refused` 并继续**（不再让整台仪器在第一个变体上退出）；默认输出改指新文件名 |
+| 覆写防护 | 六支 B0 仪器的 `DEFAULT_OUTPUT` 原本仍指向**被封存的** revision-0 文件名，忘记 `--output` 一次即可原地毁掉本轮基线 | 全部改为 `REVISION_0_OUTPUT`（只读）+ 新默认名；由 `test_no_instrument_defaults_its_output_onto_sealed_evidence` 全仓扫描把关（含跨行赋值） |
+- **机时**：全量 **1063 s**（2026-09-15 复采，1408 用例）+ 结构空间探针**每轮约 12 分钟**（上限档实测）。
 
 ### WP-4 B1 入场（条件化关系表示）
 
-- **前置**：WP-1 出口 + WP-2 + WP-3 + **五件探针全绿**（预检 / 交接 / 反事实 / 加固 / 结构空间）+ 训练前六门（§9.2）。
+- **前置**：WP-1 出口 + WP-2 + WP-3 + **五件探针在各自所属 `rule_revision` 下全绿**（预检 / 交接 / 加固 = revision-0 归档结论，**不重跑**；反事实与结构空间 = **revision-1 实测复现**，前者比封存的冻结矩阵数字、后者两臂对照逐字段相同，见 WP-3 出口①②③）+ 训练前六门（§9.2）。
+  > 2026-09-15 更正：原写法"五件探针全绿"在 M4 落地后**按字面无法满足**——加固扫描为六变体逐一构造反事实，其中四个的锚点已随规则落地而消失，它现在**拒绝运行**。若不改这一条，未来任何一轮都会在这里卡住并误判为"证据不足"。
 - **纪律（B0 已证，不得违反）**：仲裁类机制上界恒 ≤0 ⇒ **B1 的表示改进最多回收冻结规则 headroom（实测 ≤ +0.5）**，
   **永远不能单独支撑 H2**；B1 不得把"预测区分度提升/秩提升"报告为协作证据。
 - **出口判据**：特征可区分候选、无标签泄漏、恢复通过；对照含无学习 / A 计数 / train-only 简单模型 / lesion / 固定与随机组合 / 可部署单体路由 / 重命名与编号置换。
@@ -181,12 +216,13 @@ WP-1.5 扩面（只读，上限档 6 context / 7 种子，冻结前必过）╣
 
 | # | 风险 | 状态 |
 |---|---|---|
-| 1 | 反序成功 pair 不同 ⇒ 须冻结优先级定义 | **仍开放**，随 WP-3 一并冻结 |
-| 2 | `all_members_blocked` 门禁语义 | **仍开放** ⇒ WP-2；**审查面已交付**（14 文件 / 5 判断点 / 6 条不变式，见[N2 处置审查](M5_B0_N2_STOP_REASON_DISPOSITION_20260914.md)），剩冻结版预注册 + 双向测试，**待许可** |
+| 1 | 反序成功 pair 不同 ⇒ 须冻结优先级定义 | **已闭合（2026-09-15）**：成员族与序（`CELL_MEMBER_SETS` 的索引规则、`STEP_CAP`、模板）已写进[路线 B 冻结版预注册](M5_B0_ROUTE_B_PREREGISTRATION_FROZEN_20260915.md) §「任务规格」，WP-3 未改动该序（落地后反事实两序均 `interleaved=4`、`+2.000`） |
+| 2 | `all_members_blocked` 门禁语义 | **已闭合（2026-09-15）**：[N2 冻结版](M5_B0_N2_STOP_REASON_PREREGISTRATION_FROZEN_20260915.md) I1–I8 + 双向测试；消费面现值 **17 文件 / 10 处判断点**，扫描器 fail-closed、`drift.clean=true`（细则见该文档 §0，计数只能来自重扫） |
 | 3 | 规模与种子 | **已闭合（2026-09-15）**：WP-1.5 上限档 6 context / 7 种子跑完，四条出口全过、两跑字节相同（F13）。**残留**：`ceiling_gain` 与 context 数无关（恒 2.0）而实测增益恰为 `+2.000` ⇒ **增益维度仍零余量**，须在冻结版写成显式风险条款；k 维度则已从 2/2 变为 5/6（有余量） |
 | 4 | 成员族变化须重跑 | **仍开放**（当前 4 成员族未变） |
-| 5 | 结构独立性 | 已回答并带界限（L1/L2/L3）⇒ 跨内容结构走 **WP-6**（N1a → N1a-2），2026-09-15 起为正式包而非可选分支 |
-| 6 | 报告自述与代码不同步（P5.2b 曾犯） | 已由 `frozen_attribute_intact` + 双向合同测试抑制 |
+| 5 | 结构独立性 | 已回答并带界限（L1/L2/L3）⇒ 跨内容结构走 **WP-6**（N1a → N1a-2），2026-09-15 起为正式包而非可选分支。**落地未改变此界限**（指纹仍 3/11，F15） |
+| 6 | 报告自述与代码不同步（P5.2b 曾犯） | 已由 `frozen_attribute_intact` + 双向合同测试抑制。**2026-09-15 扩展**：自述不止"是否实施"一行——`does_not_change`、机制描述串、以及**两臂标签**都要随 `RULE_REVISION` 变；已按 revision 取值并加测试 |
+| 7 | **A/B 仪器的基线臂会在改动落地后静默变成被测臂** | 本轮实际踩到（F16）。**常驻守卫**：`build_reverted()` + 两臂同一函数即 `SystemExit` + `arm_provenance` 入报告 + 逐字段对照封存报告。**任何"改完再重跑一次对照"的计划都必须先回答"基线从哪来"** |
 
 ## 5. 行动清单（取值已定，执行待许可）
 
@@ -213,10 +249,11 @@ WP-1.5 扩面（只读，上限档 6 context / 7 种子，冻结前必过）╣
 |---|---|---|---|
 | 0 | WP-1.5 扩面重跑（6 context / 7 种子，连跑两次校验字节） | **只读**，写新报告文件 | **已完成（2026-09-15）**：四条出口全过、两跑字节相同（F13）⇒ **冻结前必过门已通过**；未据此启动任何后续包 |
 | 1 | 把 WP-1 取值表写成**路线 B 冻结版预注册新文件** | 文档；**已落盘即冻结** | **已完成（2026-09-15）**：[冻结版（binder v1）](M5_B0_ROUTE_B_PREREGISTRATION_FROZEN_20260915.md) |
-| 2 | WP-2：N2 语义冻结版预注册 + 双向测试（**15 文件 / 8 处判断点**） | 文档 + 纯函数测试 + 扫描器处置同步 | **已完成（2026-09-15）**：[N2 冻结版](M5_B0_N2_STOP_REASON_PREREGISTRATION_FROZEN_20260915.md) + [双向测试](../../tests/taiji_native/test_b0_n2_stop_reason_semantics_contract.py) + J8 处置入扫描器，`drift.clean=true` |
-| 3 | WP-3：落地 `m4_failure_handoff`（+21 行 / 2 处替换）+ 冻结优先级定义 | **改 runner，唯一改行为的包** | **进行中**：前置 0/1/2 已过；须过五条出口（含全量套件基线复采） |
-| 4 | WP-4：B1 入场（五件探针 + 训练前六门） | 训练相关 | 待序 3 出口全过 |
+| 2 | WP-2：N2 语义冻结版预注册 + 双向测试（**现值 17 文件 / 10 处判断点**） | 文档 + 纯函数测试 + 扫描器处置同步 | **已完成（2026-09-15）**：[N2 冻结版](M5_B0_N2_STOP_REASON_PREREGISTRATION_FROZEN_20260915.md) + [双向测试](../../tests/taiji_native/test_b0_n2_stop_reason_semantics_contract.py) + J8 处置入扫描器，`drift.clean=true`；WP-2 落盘时为 15/8，WP-3 的封条与出口②守卫再加 J9/J10 ⇒ 17/10 |
+| 3 | WP-3：落地 `m4_failure_handoff`（+21 行 / 2 处替换）+ 冻结优先级定义 | **改 runner，唯一改行为的包** | **已完成（2026-09-15）**：五条出口全过（①恒等 ②冻结面 0 回归/2 改善 ③交错 6 且 +2.000>1.65 ④全量 1428/0/6 无新增失败 ⑤八份哈希不变）；另修两台仪器的落地语义与六支仪器的默认输出覆写风险，见[落地结果](M5_B0_M4_LANDING_RESULT_20260915.md) |
+| 4 | WP-4：B1 入场（五件探针 + 训练前六门） | 训练相关 | 序 3 已全过 ⇒ **等待训练授权** |
 | 5 | WP-6：binder 议题（N1a → N1a-2） | 改冻结面定义 | 待序 3（v1 基线先冻结） |
-| 并行 | 27 项 `SystemExit` 可观测性草案、WP-6 步骤 1 的 binder 只读可行性论证 | 只读/草案 | 排队，不阻塞主线 |
+| 并行 | WP-6 步骤 1 的 binder 只读可行性论证、DEBT-I3（revision-1 下缺多修法对照扫描） | 只读/登记 | 排队，不阻塞主线；**27 项 `SystemExit` 草案已随归因更正撤销**（系沙箱批量删除守卫伪影） |
+| 序 5 | **本轮主线审计**：WP-1 出口 + WP-2 + WP-3 全部交付并本地提交（不 push） | 记账 | **已完成（2026-09-15）** |
 
 **当前不做**：不改任何**已**冻结的预注册（冻结版只增不改）、不注册任务、不启动训练（须序 3 出口 + 五件探针 + 六门）、不 push、不 `gc`/`prune`。

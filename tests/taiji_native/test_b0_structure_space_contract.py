@@ -17,7 +17,11 @@ the answer leans on, in **both directions**:
 * the three section-5.2 candidates must stay reported as inexpressible, because that is
   the boundary on what decision D5 can claim from this evidence.
 
-Measured payload: ``reports/taiji_b0_structure_space_probe_20260913.json``.
+Measured payloads: ``reports/taiji_b0_structure_space_probe_20260913.json`` (the archived
+run every structural claim above is made from) and
+``reports/taiji_b0_structure_space_probe_m4landed_20260915.json`` (the same probe after
+HANDOFF-M4 shipped, pinned at the bottom of this file so "the counterfactual predicted it
+and the shipped rule reproduced it" is a checked statement, not a recollection).
 """
 
 from __future__ import annotations
@@ -80,7 +84,9 @@ def frozen(counterfactual):
 # --------------------------------------------------------------------------- #
 
 
-def test_probe_is_read_only_and_m4_still_not_implemented(payload):
+def test_probe_is_read_only_and_the_archived_report_states_its_scope(payload):
+    """Scoped to the sealed revision-0 artifact: it describes the rule as of 2026-09-13."""
+
     assert payload["status"] == "draft_for_review"
     assert payload["rule_under_audit"] == "m4_failure_handoff"
     assert payload["frozen_attribute_intact"] is True
@@ -423,6 +429,25 @@ def test_fallback_only_changes_move_no_claim(payload):
     assert rows["create__none"]["positive_under_m4"] is False
 
 
+def test_the_audited_rule_does_not_move_the_comparison_reference(payload):
+    """A rule change that lowers any singleton's success would inflate the oracle gain.
+
+    H2's criterion is ``mean(P - max_i S_i)``, so the reference ``S_i`` belongs to the rule
+    being tested.  If a handoff rule made singletons worse, ``+2.000`` could be manufactured
+    by weakening the comparator instead of by real collaboration.  Verified by hand on the
+    widened report and pinned here so any future rule change that lowers the reference fails.
+    """
+
+    for row in payload["rows"]:
+        assert row["singleton_success_rates_frozen"] == row["singleton_success_rates_audited"], (
+            row["cell"]
+        )
+    # and the three winning cells really do have a zero reference to beat
+    for cell in CREATE_ROW:
+        rates = {r["cell"]: r for r in payload["rows"]}[cell]["singleton_success_rates_audited"]
+        assert set(rates.values()) == {0.0}, cell
+
+
 def test_seed_sweep_reproduces_every_create_row_gain(payload, probe):
     sweep = payload["seed_sweep"]
     assert sweep["offsets"] == list(probe.SEED_OFFSETS)
@@ -695,3 +720,98 @@ def test_main_rejects_a_degenerate_scale(probe, tmp_path):
         )
     assert excinfo.value.code == 2
     assert not (tmp_path / "degenerate.json").exists()
+
+
+# --------------------------------------------------------------------------- #
+# WP-3 exits 2/3: the shipped rule vs the rule it replaced
+# --------------------------------------------------------------------------- #
+
+LANDED_REPORT = REPO / "reports" / "taiji_b0_structure_space_probe_m4landed_20260915.json"
+#: The sealed rule_revision=0 run at the same scale; it is what the counterfactual predicted.
+WIDE_REPORT = REPO / "reports" / "taiji_b0_structure_space_probe_wide_20260915.json"
+#: D1 of the frozen route-B preregistration: gain must clear this on the main criterion.
+REQUIRED_GAIN = 1.65
+
+
+@pytest.fixture(scope="module")
+def landed_payload() -> dict:
+    return json.loads(LANDED_REPORT.read_text(encoding="utf-8"))
+
+
+def test_the_landed_run_measures_two_distinct_rules(landed_payload):
+    """A landed rule turns the probe's baseline into itself unless the arms are resolved.
+
+    The first post-landing run did exactly that: ``frozen`` and ``audited`` were the same
+    function, ``gain_delta`` was 0.000 everywhere and "no regressions" was a tautology.  The
+    provenance block is what makes that state impossible to read as a result.
+    """
+
+    provenance = landed_payload["arm_provenance"]
+    assert landed_payload["shipped_rule_revision"] == 1
+    assert provenance["arms_are_distinct"] is True
+    assert provenance["audited_arm"] == "shipped source, unpatched"
+    assert provenance["baseline_arm"] == "shipped source reverted to rule_revision 0"
+    assert provenance["baseline_delta"]["direction"] == "revert"
+    assert [item["status"] for item in provenance["baseline_delta"]["replacements"]] == [
+        "reverted",
+        "reverted",
+    ]
+    assert landed_payload["frozen_attribute_intact"] is True
+    assert landed_payload["does_not_change"][0].startswith("HANDOFF-M4 ships")
+
+
+def test_the_landed_run_reproduces_the_sealed_prediction_field_by_field(landed_payload):
+    """Exit 2, in the strong form: landing changed nothing about the measured grid.
+
+    Compared against the sealed revision-0 wide report at the same scale, so the
+    reproduction is the same numbers rather than a paraphrase of a copied table.
+    """
+
+    wide = json.loads(WIDE_REPORT.read_text(encoding="utf-8"))
+    assert landed_payload["contexts_per_cell"] == wide["contexts_per_cell"]
+    assert landed_payload["seed_sweep"]["offsets"] == wide["seed_sweep"]["offsets"]
+
+    assert landed_payload["rows"] == wide["rows"]
+    assert landed_payload["validity"] == wide["validity"]
+    assert landed_payload["verdict"] == wide["verdict"]
+    assert landed_payload["outcome_distinctness"] == wide["outcome_distinctness"]
+    assert landed_payload["seed_sweep"] == wide["seed_sweep"]
+
+
+def test_the_shipped_rule_still_beats_the_reconstructed_revision_0(landed_payload):
+    """Exit 3, non-vacuously: the gain is a difference between two measured rules."""
+
+    seen = 0
+    for row in landed_payload["rows"]:
+        if row["cell"] in CREATE_ROW:
+            seen += 1
+            assert row["best_pair_gain_frozen"] == 0.0, row["cell"]
+            assert row["gain_delta"] > 0.0, row["cell"]
+            assert row["best_pair_gain_audited"] > REQUIRED_GAIN, row["cell"]
+            assert row["interleaved_contexts_audited"] > 0, row["cell"]
+            assert row["positive_under_frozen"] is False
+            assert row["positive_under_m4"] is True
+        else:
+            assert row["gain_delta"] == 0.0, row["cell"]
+            assert row["unexplained_changes"] == [], row["cell"]
+    assert seen == len(CREATE_ROW)
+    assert landed_payload["verdict"]["m4_regresses_cells"] == []
+    assert landed_payload["verdict"]["cells_with_unexplained_change"] == []
+    assert set(landed_payload["verdict"]["positive_gain_cells"]) == set(CREATE_ROW)
+
+    sweep = landed_payload["seed_sweep"]
+    assert set(sweep["positive_cells_every_seed"]) == set(CREATE_ROW)
+    assert len(sweep["offsets"]) == 7
+    for row in sweep["rows"]:
+        if row["cell"] in CREATE_ROW:
+            assert row["positive"] is True and row["reality_ok"] is True, row
+
+
+def test_the_landed_run_did_not_move_the_structural_boundary(landed_payload):
+    """L1 stays open: shipping a rule cannot manufacture a second independent structure."""
+
+    distinct = landed_payload["outcome_distinctness"]
+    assert distinct["distinct_outcome_fingerprints"] == 3
+    assert distinct["cells_compared"] == GRID_CELLS
+    for name, item in landed_payload["section_5_2_candidates"].items():
+        assert item["expressible"] is False, name

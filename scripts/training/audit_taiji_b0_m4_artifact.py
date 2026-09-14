@@ -38,7 +38,11 @@ from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 TRAINING_DIR = PROJECT_ROOT / "scripts" / "training"
-DEFAULT_OUTPUT = PROJECT_ROOT / "reports" / "taiji_b0_m4_artifact_audit_20260913.json"
+#: Revision-0 evidence, sealed by sha256 in test_b0_rule_revision_seal_contract.py.
+REVISION_0_OUTPUT = PROJECT_ROOT / "reports" / "taiji_b0_m4_artifact_audit_20260913.json"
+#: This instrument is a rule_revision=0 tool: after HANDOFF-M4 shipped its frozen arm is
+#: the audited arm, so a re-run is a record of the re-run, never revision-0 evidence.
+DEFAULT_OUTPUT = PROJECT_ROOT / "reports" / "taiji_b0_m4_artifact_audit_postlanding_20260915.json"
 
 COUNTERFACTUAL_MODULE = TRAINING_DIR / "probe_taiji_b0_m1_counterfactual.py"
 HANDOFF_PROBE = TRAINING_DIR / "probe_taiji_b0_handoff_feasibility.py"

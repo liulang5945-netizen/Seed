@@ -44,7 +44,10 @@ from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 TRAINING_DIR = PROJECT_ROOT / "scripts" / "training"
-DEFAULT_OUTPUT = PROJECT_ROOT / "reports" / "taiji_b0_m1_counterfactual_20260913.json"
+#: Revision-0 evidence, sealed by sha256 in test_b0_rule_revision_seal_contract.py.
+#: Referenced only as a read; a default run must never be able to write here.
+REVISION_0_OUTPUT = PROJECT_ROOT / "reports" / "taiji_b0_m1_counterfactual_20260913.json"
+DEFAULT_OUTPUT = PROJECT_ROOT / "reports" / "taiji_b0_m1_counterfactual_m4landed_20260915.json"
 
 FROZEN_GATE = TRAINING_DIR / "eval_taiji_p5_2b_group_causal_corpora_gate.py"
 HANDOFF_PROBE = TRAINING_DIR / "probe_taiji_b0_handoff_feasibility.py"
@@ -249,17 +252,25 @@ def build_counterfactual(
     replacements: list[dict[str, Any]] = []
     for anchor, replacement in VARIANTS[variant]:
         occurrences = transformed.count(anchor)
-        if occurrences != 1:
+        if occurrences == 1:
+            status = "applied"
+            transformed = transformed.replace(anchor, replacement)
+        elif occurrences == 0 and replacement in transformed:
+            # The variant is no longer a counterfactual: the shipped rule already says
+            # this.  Treating it as identity (rather than as a broken anchor) is what
+            # lets "counterfactual degenerates to identity" be checked after landing.
+            status = "already_applied"
+        else:
             raise SystemExit(
                 f"anchor appears {occurrences} times in the frozen source, expected "
                 f"exactly 1: {anchor.strip()!r}. The frozen rule changed and the "
                 "counterfactual must be re-derived."
             )
-        transformed = transformed.replace(anchor, replacement)
         replacements.append(
             {
                 "anchor": anchor.rstrip("\n"),
                 "replacement_lines": replacement.rstrip("\n").splitlines(),
+                "status": status,
             }
         )
 
@@ -275,10 +286,101 @@ def build_counterfactual(
         "variant": variant,
         "replacements": replacements,
         "replacement_count": len(replacements),
+        "already_applied": [
+            item["anchor"] for item in replacements if item["status"] == "already_applied"
+        ],
+        "variant_is_identity": bool(replacements)
+        and all(item["status"] == "already_applied" for item in replacements),
         "injected_names": sorted(extra_names) if extra_names else [],
         "frozen_source_lines": len(original.splitlines()),
         "counterfactual_source_lines": len(transformed.splitlines()),
         "added_lines": len(transformed.splitlines()) - len(original.splitlines()),
+        "frozen_attribute_unchanged": frozen._member_episode is not episode_fn,
+        "rule_text": " + ".join(item["anchor"].strip() for item in replacements),
+    }
+    return episode_fn, delta
+
+
+def build_reverted(
+    frozen: Any,
+    variant: str = "m4_failure_handoff",
+    *,
+    extra_names: Mapping[str, Any] | None = None,
+) -> tuple[Any, dict[str, Any]]:
+    """Return ``(episode_fn, delta)`` for the **pre-landing** arm of a shipped variant.
+
+    Once a variant is in the source, :func:`build_counterfactual` degenerates to identity,
+    so the two arms a probe compares become the same function and every ``*_frozen`` column
+    silently starts measuring the audited rule.  This reconstructs the old rule by applying
+    the same ``(anchor, replacement)`` pairs **backwards**, which keeps the counterfactual
+    contrast alive after landing instead of turning it into a tautology.
+
+    All-or-nothing on purpose: a source with one pair landed and another not is neither
+    revision, so neither arm means anything and the call fails closed.
+    """
+
+    if variant not in VARIANTS:
+        raise ValueError(f"unknown variant {variant!r}; known: {sorted(VARIANTS)}")
+
+    original = inspect.getsource(frozen._member_episode)
+    transformed = original
+    replacements: list[dict[str, Any]] = []
+    for anchor, replacement in VARIANTS[variant]:
+        occurrences = transformed.count(replacement)
+        if occurrences == 1:
+            status = "reverted"
+            transformed = transformed.replace(replacement, anchor)
+        elif occurrences == 0 and anchor in transformed:
+            status = "not_shipped"
+        else:
+            raise SystemExit(
+                f"replacement appears {occurrences} times in the shipped source, expected "
+                f"exactly 1: {replacement.strip()!r}. The shipped rule is not the recorded "
+                "variant, so the pre-landing arm cannot be reconstructed from it."
+            )
+        replacements.append(
+            {
+                "anchor": anchor.rstrip("\n"),
+                "replacement_lines": replacement.rstrip("\n").splitlines(),
+                "status": status,
+            }
+        )
+
+    statuses = {item["status"] for item in replacements}
+    if len(statuses) > 1:
+        raise SystemExit(
+            f"variant {variant!r} is only partially shipped ({sorted(statuses)}); the "
+            "source is neither rule revision, so no arm of a two-arm comparison is valid"
+        )
+    if statuses == {"not_shipped"}:
+        raise SystemExit(
+            f"variant {variant!r} is not in the source at all; use build_counterfactual to "
+            "measure it forward instead of reverting it"
+        )
+
+    namespace = dict(vars(frozen))
+    if extra_names:
+        namespace.update(extra_names)
+    exec(compile(transformed, f"<reverted:{variant}>", "exec"), namespace)
+    episode_fn = namespace["_member_episode"]
+
+    for anchor, replacement in VARIANTS[variant]:
+        if transformed.count(anchor) != 1 or replacement in transformed:
+            raise SystemExit(
+                f"the reconstructed pre-landing arm is not the recorded revision: {anchor.strip()!r}"
+            )
+
+    delta = {
+        "variant": variant,
+        "direction": "revert",
+        "replacements": replacements,
+        "replacement_count": len(replacements),
+        "reverted": [item["anchor"] for item in replacements if item["status"] == "reverted"],
+        "arm_is_shipped_source": False,
+        "injected_names": sorted(extra_names) if extra_names else [],
+        "shipped_source_lines": len(original.splitlines()),
+        "reverted_source_lines": len(transformed.splitlines()),
+        "removed_lines": len(original.splitlines()) - len(transformed.splitlines()),
         "frozen_attribute_unchanged": frozen._member_episode is not episode_fn,
         "rule_text": " + ".join(item["anchor"].strip() for item in replacements),
     }
@@ -589,9 +691,17 @@ def evaluate() -> dict[str, Any]:
     variants: list[dict[str, Any]] = []
     for name in VARIANTS:
         extra = {"REPERTOIRE": repertoire} if name in NEEDS_REPERTOIRE else None
-        episode_fn, delta = build_counterfactual(frozen, name, extra_names=extra)
+        try:
+            episode_fn, delta = build_counterfactual(frozen, name, extra_names=extra)
+        except SystemExit as exc:
+            # A variant whose anchor has already shipped is no longer a counterfactual.
+            # Recording the refusal keeps this instrument usable after landing instead of
+            # aborting the whole sweep before the shipped variant is ever measured.
+            variants.append({"variant": name, "refused": str(exc)})
+            continue
         variants.append(
             {
+                "variant": name,
                 "delta": delta,
                 "regression": regression_check(frozen, episode_fn, members, embedder),
                 "effect": effect_check(
@@ -609,8 +719,14 @@ def evaluate() -> dict[str, Any]:
         "format": COUNTERFACTUAL_FORMAT,
         "version": VERSION,
         "status": "draft_for_review",
+        "shipped_rule_revision": int(getattr(frozen, "RULE_REVISION", 0)),
         "does_not_change": [
-            "M1 is NOT implemented: no gate, runner or rule is modified",
+            (
+                "rule_revision=1 (m4_failure_handoff) ships in this gate script; every other "
+                "variant here is still a counterfactual, and no product mechanism uses this file"
+                if int(getattr(frozen, "RULE_REVISION", 0)) >= 1
+                else "M1 is NOT implemented: no gate, runner or rule is modified"
+            ),
             "the counterfactual runs in a copy of the module namespace; "
             "frozen._member_episode is never rebound",
             "no result here is claimed as collaboration; it is a counterfactual measurement",
@@ -651,11 +767,15 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"    forward steps: {[s['kind'] for s in row['forward']['steps']]}")
         print(f"    reversed steps: {[s['kind'] for s in row['reversed']['steps']]}")
     for variant in payload["variants"]:
+        if "refused" in variant:
+            print(f"  variant={variant['variant']} refused: {variant['refused']}")
+            continue
         delta = variant["delta"]
         regression = variant["regression"]
         effect = variant["effect"]
         print(
             f"  variant={delta['variant']} added_lines={delta['added_lines']} "
+            f"identity={delta['variant_is_identity']} "
             f"no_regression={regression['no_regression']} "
             f"regressions={len(regression['regressions'])} "
             f"improvements={len(regression['improvements'])}"

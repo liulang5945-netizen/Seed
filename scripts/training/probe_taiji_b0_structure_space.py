@@ -88,7 +88,11 @@ from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 TRAINING_DIR = PROJECT_ROOT / "scripts" / "training"
-DEFAULT_OUTPUT = PROJECT_ROOT / "reports" / "taiji_b0_structure_space_probe_20260913.json"
+#: Revision-0 evidence, sealed by sha256 in test_b0_rule_revision_seal_contract.py.
+REVISION_0_OUTPUT = PROJECT_ROOT / "reports" / "taiji_b0_structure_space_probe_20260913.json"
+DEFAULT_OUTPUT = (
+    PROJECT_ROOT / "reports" / "taiji_b0_structure_space_probe_m4landed_20260915.json"
+)
 
 COUNTERFACTUAL_MODULE = TRAINING_DIR / "probe_taiji_b0_m1_counterfactual.py"
 HANDOFF_PROBE = TRAINING_DIR / "probe_taiji_b0_handoff_feasibility.py"
@@ -1077,9 +1081,29 @@ def probe(
         json.loads(FROZEN_ROUTE_A_REPORT.read_text(encoding="utf-8"))["control_summary"]["margin"]
     )
 
-    frozen_episode = frozen._member_episode
-    audited_episode, delta = counterfactual.build_counterfactual(frozen, RULE_UNDER_AUDIT)
-    assert frozen._member_episode is frozen_episode
+    shipped_episode = frozen._member_episode
+    shipped_revision = int(getattr(frozen, "RULE_REVISION", 0))
+    if shipped_revision >= 1:
+        # The audited rule is what the source ships, so the contrast can only come from
+        # undoing it: ``*_frozen`` columns must not start measuring the audited rule.
+        audited_episode = shipped_episode
+        delta = {
+            "variant": RULE_UNDER_AUDIT,
+            "direction": "shipped",
+            "arm_is_shipped_source": True,
+            "shipped_rule_revision": shipped_revision,
+        }
+        frozen_episode, baseline_delta = counterfactual.build_reverted(frozen, RULE_UNDER_AUDIT)
+    else:
+        frozen_episode = shipped_episode
+        baseline_delta = None
+        audited_episode, delta = counterfactual.build_counterfactual(frozen, RULE_UNDER_AUDIT)
+    if frozen_episode is audited_episode:
+        raise SystemExit(
+            "both arms are the same function: the frozen-vs-audited contrast would be a "
+            "tautology. Resolve which rule revision the gate ships before measuring."
+        )
+    assert frozen._member_episode is shipped_episode
 
     cells = grid()
     surfaces = {
@@ -1161,14 +1185,35 @@ def probe(
             "create + explicit override?"
         ),
         "rule_under_audit": RULE_UNDER_AUDIT,
+        "shipped_rule_revision": shipped_revision,
+        "arm_provenance": {
+            "audited_arm": (
+                "shipped source, unpatched"
+                if shipped_revision >= 1
+                else "shipped source + forward patch"
+            ),
+            "baseline_arm": (
+                "shipped source reverted to rule_revision 0"
+                if shipped_revision >= 1
+                else "shipped source as-is (rule_revision 0)"
+            ),
+            "arms_are_distinct": frozen_episode is not audited_episode,
+            "forward_delta": delta,
+            "baseline_delta": baseline_delta,
+        },
         "rule_delta": delta,
         "does_not_change": [
-            "M4 is NOT implemented; no gate, runner, rule or frozen artifact changes",
+            (
+                "HANDOFF-M4 ships in this gate script as rule_revision=1; no product "
+                "mechanism adopts it and no runner uses this script"
+                if shipped_revision >= 1
+                else "M4 is NOT implemented; no gate, runner, rule or frozen artifact changes"
+            ),
             "no task is registered and nothing is trained for a candidate cell",
             "growth_admitted=false and can_promote=false remain in force",
             "a positive structural result is still not a claim of achieved collaboration",
         ],
-        "frozen_attribute_intact": frozen._member_episode is frozen_episode,
+        "frozen_attribute_intact": frozen._member_episode is shipped_episode,
         "margin": margin,
         "contexts_per_cell": contexts_per_cell,
         "binder_expression_surface": binder_expression_surface(frozen),
@@ -1231,6 +1276,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     for item in payload["not_measurable_cells"]:
         print(f"  dropped {item['cell']}: {item['because']}")
+    provenance = payload["arm_provenance"]
+    print(
+        f"arms: baseline={provenance['baseline_arm']}; audited={provenance['audited_arm']}; "
+        f"gate rule_revision={payload['shipped_rule_revision']}"
+    )
     print(f"{'cell':<24} {'combo_only':<11} {'frozen':<8} {'m4':<8} {'delta':<8} interleave")
     for row in payload["rows"]:
         print(

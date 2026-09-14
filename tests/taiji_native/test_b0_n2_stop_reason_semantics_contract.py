@@ -3,10 +3,13 @@
 ``all_members_blocked`` is the terminal reason the audited rule (M4) introduces.
 Its meaning has to be frozen *before* the runner changes, so every check here is
 two-directional against archived evidence: it pins what the reason is allowed to
-mean and what it must never be read as, while M4 is still not implemented.
+mean and what it must never be read as.  Written while M4 was still unimplemented and
+expected to keep holding after it shipped -- a semantics guard that only passes before
+landing is worth nothing once the rule is live.
 
-Measured payload: ``reports/taiji_b0_structure_space_probe_wide_20260915.json``
-and ``reports/taiji_b0_n2_stop_reason_disposition_20260915.json``.
+Measured payload: ``reports/taiji_b0_structure_space_probe_wide_20260915.json``,
+``reports/taiji_b0_structure_space_probe_m4landed_20260915.json`` and
+``reports/taiji_b0_n2_stop_reason_disposition_20260915.json``.
 """
 
 from __future__ import annotations
@@ -123,10 +126,25 @@ def test_the_blocked_branch_records_no_execution_and_no_goal(counterfactual: Any
     assert GOAL_REASON not in block
 
 
-def test_the_frozen_rule_cannot_produce_the_new_reason(
+def test_the_new_reason_only_ever_applies_to_a_handoff_rule(
     frozen_gate: Any, rows: dict[str, dict]
 ) -> None:
-    assert NEW_REASON not in inspect.getsource(frozen_gate._member_episode)
+    """The revision-0 claim ("the frozen rule cannot produce it") is now historical.
+
+    What must hold across revisions instead: the reason is produced only by a rule that
+    implements handoff, and the archived revision-0 evidence must show it never occurred
+    under the priority-fallback rule.  Pinning the live source here after landing would
+    assert a property of a rule that no longer ships.
+    """
+
+    source = inspect.getsource(frozen_gate._member_episode)
+    shipped = 'return finish("all_members_blocked")' in source
+    if shipped:
+        # revision 1: the shipped rule can terminate this way, and the frozen column of
+        # the archived revision-0 reports must stay clean (checked below).
+        assert 'if chosen is None:' in source
+    else:  # revision 0: no handoff, so the reason cannot exist in the rule at all
+        assert NEW_REASON not in source
     for cell, row in rows.items():
         assert row["stop_reasons_frozen"].get(NEW_REASON, 0) == 0, cell
 
@@ -263,7 +281,7 @@ def test_every_consumer_carries_a_class_and_a_reason(n2: dict) -> None:
 def test_the_inventory_separates_live_gates_from_test_assertions(n2: dict) -> None:
     live = [s for s in n2["judgement_sites"] if s["kind"] in LIVE_JUDGEMENT_KINDS]
     pinned = [s for s in n2["judgement_sites"] if s["kind"] == TEST_ASSERTION_KIND]
-    assert (len(live), len(pinned)) == (4, 4)
+    assert (len(live), len(pinned)) == (4, 6)
     assert len(live) + len(pinned) == len(n2["judgement_sites"])
     assert all(site["marker_present"] is True for site in n2["judgement_sites"])
 
@@ -297,4 +315,4 @@ def test_the_frozen_preregistration_states_the_measured_counts(n2: dict) -> None
     assert "FROZEN" in text
     assert str(n2["consumer_count"]) in text, "the consumer count must match the live scan"
     assert str(len(n2["judgement_sites"])) in text, "the judgement-site count must match"
-    assert "8 处判断点" in text and "15 个消费文件" in text
+    assert "10 处判断点" in text and "17 个消费文件" in text

@@ -68,7 +68,13 @@ from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 TRAINING_DIR = PROJECT_ROOT / "scripts" / "training"
-DEFAULT_OUTPUT = PROJECT_ROOT / "reports" / "taiji_b0_handoff_feasibility_probe_20260913.json"
+#: Revision-0 evidence, sealed by sha256 in test_b0_rule_revision_seal_contract.py.
+REVISION_0_OUTPUT = PROJECT_ROOT / "reports" / "taiji_b0_handoff_feasibility_probe_20260913.json"
+#: This probe measures the priority-fallback rule it was designed around; after HANDOFF-M4
+#: shipped, a re-run describes the shipped rule and must not wear the revision-0 filename.
+DEFAULT_OUTPUT = (
+    PROJECT_ROOT / "reports" / "taiji_b0_handoff_feasibility_probe_postlanding_20260915.json"
+)
 
 FROZEN_GATE = TRAINING_DIR / "eval_taiji_p5_2b_group_causal_corpora_gate.py"
 DICTIONARY_MODULE = TRAINING_DIR / "audit_taiji_b0_measurement_reachability.py"
@@ -614,7 +620,7 @@ def run_probe(candidates: Mapping[str, float] | None = None) -> dict[str, Any]:
         ],
         "frozen_artifacts_reused": {
             "gate": str(FROZEN_GATE.relative_to(PROJECT_ROOT)),
-            "composition_rule": "p5_2b._member_episode (priority fallback)",
+            "composition_rule": "p5_2b._member_episode (priority fallback; rule_revision=0)",
             "members": "p5_2b._train_members (four train template families only)",
             "cells": "p5_2b.CELL_MEMBER_SETS",
             "repeats": "p5_2b.REPEATS",

@@ -63,12 +63,30 @@ def frozen(counterfactual):
 # --------------------------------------------------------------------------- #
 
 
-def test_every_anchor_is_unique_in_the_frozen_source(counterfactual, frozen):
-    """A non-unique anchor means the frozen rule changed; the build must abort."""
+def test_every_anchor_is_unique_or_explicitly_shipped(counterfactual, frozen):
+    """Two legal states per anchor, and no third: rule changes must be legible.
+
+    * revision 0 -- the anchor appears exactly once and its replacement is absent.
+    * revision 1 -- the anchor is gone **and** the replacement text is present, i.e. that
+      variant was landed rather than silently edited away.
+
+    Anything else (anchor absent with no replacement, or duplicated) means the rule
+    changed in a way the instrument cannot account for, and must abort.
+    """
 
     source = counterfactual.inspect.getsource(frozen._member_episode)
-    assert source.count(counterfactual.FROZEN_SELECTION) == 1
-    assert source.count(counterfactual.CUE_ANCHOR) == 1
+
+    for anchor, replacement in counterfactual.VARIANTS["m4_failure_handoff"]:
+        occurrences = source.count(anchor)
+        if occurrences == 1:
+            assert replacement not in source, anchor
+        elif occurrences == 0:
+            assert replacement in source, (
+                f"anchor {anchor.strip()!r} vanished without its replacement being "
+                "shipped: the frozen rule changed in an unaccountable way"
+            )
+        else:
+            raise AssertionError(f"anchor {anchor.strip()!r} appears {occurrences} times")
 
     for variant, pairs in counterfactual.VARIANTS.items():
         assert pairs, f"{variant} has no replacements"
@@ -92,6 +110,165 @@ def test_counterfactual_never_rebinds_the_frozen_episode(counterfactual, frozen)
 def test_counterfactual_unknown_variant_is_rejected(counterfactual, frozen):
     with pytest.raises(ValueError):
         counterfactual.build_counterfactual(frozen, "not-a-variant")
+    with pytest.raises(ValueError):
+        counterfactual.build_reverted(frozen, "not-a-variant")
+
+
+# --------------------------------------------------------------------------- #
+# The post-landing baseline arm: undoing a variant that shipped
+# --------------------------------------------------------------------------- #
+
+
+def test_reverting_the_shipped_variant_rebuilds_rule_revision_0(counterfactual, frozen):
+    """After landing, the pre-landing arm is only reachable by undoing the patch.
+
+    A probe that keeps reading ``frozen._member_episode`` as its baseline now measures the
+    audited rule twice: every ``*_frozen`` column turns into the audited value, and
+    "0 regressions" becomes a tautology rather than a result.  The reverted arm must really
+    be the old rule, which is checkable here without running anything -- the locals the
+    shipped rule introduced have to be gone.
+    """
+
+    shipped = counterfactual.inspect.getsource(frozen._member_episode)
+    episode_fn, delta = counterfactual.build_reverted(frozen, "m4_failure_handoff")
+
+    assert delta["direction"] == "revert"
+    assert [item["status"] for item in delta["replacements"]] == ["reverted", "reverted"]
+    assert delta["arm_is_shipped_source"] is False
+    assert delta["frozen_attribute_unchanged"] is True
+    assert frozen._member_episode is not episode_fn
+    assert delta["shipped_source_lines"] == len(shipped.splitlines())
+    assert delta["removed_lines"] > 0
+    assert delta["reverted_source_lines"] == len(shipped.splitlines()) - delta["removed_lines"]
+
+    names = episode_fn.__code__.co_varnames
+    assert "last_success_index" not in names and "blocked" not in names
+    assert "own_steps" not in names
+    assert "last_success_index" in frozen._member_episode.__code__.co_varnames
+
+
+def test_the_revert_round_trips_back_to_the_shipped_rule(counterfactual, frozen):
+    """Reverting then re-applying the same pairs must be the identity on text."""
+
+    shipped = counterfactual.inspect.getsource(frozen._member_episode)
+    pairs = counterfactual.VARIANTS["m4_failure_handoff"]
+
+    reverted = shipped
+    for anchor, replacement in pairs:
+        reverted = reverted.replace(replacement, anchor)
+    forward = reverted
+    for anchor, replacement in pairs:
+        forward = forward.replace(anchor, replacement)
+
+    assert reverted != shipped
+    assert forward == shipped
+    for anchor, replacement in pairs:
+        assert reverted.count(anchor) == 1, anchor
+        assert replacement not in reverted, replacement
+
+
+def test_reverting_a_variant_that_never_shipped_fails_closed(counterfactual, frozen):
+    with pytest.raises(SystemExit, match="shipped source"):
+        counterfactual.build_reverted(frozen, "m1a_no_progress")
+
+
+def test_a_partially_shipped_source_is_no_revision_at_all(counterfactual, frozen, monkeypatch):
+    """One pair landed and one not is neither revision 0 nor 1: no arm is trustworthy."""
+
+    selection = counterfactual.VARIANTS["m4_failure_handoff"][0]
+    cue = counterfactual.VARIANTS["m4_failure_handoff"][1]
+    monkeypatch.setitem(
+        counterfactual.VARIANTS,
+        "_mixed_landing_probe",
+        (selection, (cue[1], cue[0])),
+    )
+
+    with pytest.raises(SystemExit, match="partially shipped"):
+        counterfactual.build_reverted(frozen, "_mixed_landing_probe")
+
+
+# --------------------------------------------------------------------------- #
+# WP-3 exit 2: the shipped rule must reproduce the numbers the counterfactual predicted
+# --------------------------------------------------------------------------- #
+
+LANDED_REPORT = REPO / "reports" / "taiji_b0_m1_counterfactual_m4landed_20260915.json"
+
+#: Fields that measure outcomes. ``regression_check`` compares against the sealed frozen
+#: matrix, so these stay comparable after landing even though the baseline is no longer
+#: re-measured from the working tree.
+PREDICTED_FIELDS = (
+    "rows",
+    "regressions",
+    "improvements",
+    "no_regression",
+    "stop_reasons",
+)
+
+
+def _variants_by_name(payload: dict) -> dict:
+    return {
+        item.get("variant") or item["delta"]["variant"]: item for item in payload["variants"]
+    }
+
+
+def _m4(path: Path) -> dict:
+    return _variants_by_name(json.loads(path.read_text(encoding="utf-8")))["m4_failure_handoff"]
+
+
+def test_unshipped_variants_are_recorded_as_refusals_not_identities():
+    sealed = _variants_by_name(json.loads(MODULE_REPORT.read_text(encoding="utf-8")))
+    landed = _variants_by_name(json.loads(LANDED_REPORT.read_text(encoding="utf-8")))
+
+    refused = sorted(name for name, item in landed.items() if "refused" in item)
+    assert refused == [
+        "m1a_no_progress",
+        "m1b_tick_rotation",
+        "m2a_progress_plus_handoff",
+        "m3_repertoire_aware",
+    ]
+    # Only the variants that actually shipped stay measurable; the sealed report built all
+    # six, so "still buildable" is a claim about the landed pair, not about the archive.
+    buildable = {name for name, item in landed.items() if "refused" not in item}
+    assert buildable == {"m2_per_member_progress", "m4_failure_handoff"}
+    assert set(sealed) - buildable == set(refused)
+
+    # The legible flip: the sealed run wrote 21 new lines and predates the identity keys;
+    # the landed run adds nothing and must report why.
+    sealed_delta = sealed["m4_failure_handoff"]["delta"]
+    landed_delta = landed["m4_failure_handoff"]["delta"]
+    assert sealed_delta["added_lines"] == 21
+    assert "variant_is_identity" not in sealed_delta
+    assert landed_delta["added_lines"] == 0
+    assert landed_delta["variant_is_identity"] is True
+    assert [item["status"] for item in landed_delta["replacements"]] == [
+        "already_applied",
+        "already_applied",
+    ]
+
+
+def test_the_shipped_rule_reproduces_the_predicted_frozen_surface_outcome():
+    """Exit 2 as preregistered: the frozen surface still shows 0 regressions / 2 improvements."""
+
+    sealed = _m4(MODULE_REPORT)
+    landed = _m4(LANDED_REPORT)
+
+    for field in PREDICTED_FIELDS:
+        assert landed["regression"][field] == sealed["regression"][field], field
+    assert len(landed["regression"]["regressions"]) == 0
+    assert len(landed["regression"]["improvements"]) == 2
+
+
+def test_the_shipped_rule_reproduces_the_predicted_candidate_surface_gain():
+    sealed = _m4(MODULE_REPORT)
+    landed = _m4(LANDED_REPORT)
+
+    for field in ("best_order", "best_pair", "best_pair_gain", "positive_same_reference_gain"):
+        assert landed["effect"][field] == sealed["effect"][field], field
+    for order, item in sealed["effect"]["by_order"].items():
+        got = landed["effect"]["by_order"][order]
+        for field in ("interleaved_contexts", "best_pair", "best_pair_gain", "stop_reasons"):
+            assert got[field] == item[field], (order, field)
+    assert landed["effect"]["by_order"]["frozen_order"]["interleaved_contexts"] == 4
 
 
 def test_counterfactual_is_read_only_and_not_wired_into_any_gate(counterfactual):
@@ -255,9 +432,26 @@ def test_m4_delta_is_two_documented_replacements():
     assert delta["injected_names"] == []
 
 
-def test_frozen_gate_still_uses_priority_fallback(frozen):
-    """If the frozen rule ever changes, these anchors stop matching and this fails."""
+def test_gate_declares_which_rule_revision_it_ships(frozen):
+    """The runner must say which rule it implements, and the code must agree.
+
+    Revision 0 pinned ``chosen = bindable[0]``.  Landing HANDOFF-M4 replaces it, so the
+    honest guard is not "the old line is still there" but "exactly one rule is in the
+    **episode body**, and ``RULE_REVISION`` names it".  The old line legitimately survives
+    inside a historical description, so the rule test reads the function body only.
+    """
 
     source = FROZEN_GATE.read_text(encoding="utf-8")
-    assert "chosen = bindable[0]" in source
-    assert "cues = tuple([cue] * (len(steps) + 1))" in source
+    body = source.split("def _member_episode", 1)[1].split("\ndef ", 1)[0]
+    revision_0_present = "chosen = bindable[0]" in body
+    revision_1_present = 'return finish("all_members_blocked")' in body
+    assert revision_0_present != revision_1_present, (
+        "the gate must implement exactly one of the two composition rules"
+    )
+    published = getattr(frozen, "RULE_REVISION", None)
+    assert published == (0 if revision_0_present else 1)
+    if published == 1:
+        assert frozen.COMPOSITION_RULE == "m4_failure_handoff"
+        # the old rule stays documented somewhere in the file, it is just not what runs
+        assert "revision 0 executed the lexicographically first bindable member" in source
+        assert "composition_rule_revision_0" in source

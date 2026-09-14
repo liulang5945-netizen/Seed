@@ -33,7 +33,7 @@ def report():
 
 def test_current_review_surface_is_complete(audit, report):
     expected = {row["path"] for row in audit.EXPECTED_CONSUMERS}
-    assert len(expected) == 15
+    assert len(expected) == 17
     assert audit.live_consumers() == expected
     current = audit.disposition()
     assert current["review_checks_passed"] is True
@@ -41,7 +41,7 @@ def test_current_review_surface_is_complete(audit, report):
     assert current == report
     assert report["classification_counts"] == {
         "record_only_files": 8,
-        "judgement_or_mixed_files": 7,
+        "judgement_or_mixed_files": 9,
     }
 
 
@@ -59,12 +59,12 @@ def test_historical_inventory_is_not_rewritten(report):
         (REPO / "reports/taiji_b0_m4_hardening_20260913.json").read_text(encoding="utf-8")
     )
     assert historic["stop_reason_consumers"]["file_count"] == 11
-    assert report["consumer_count_now"] == 15
-    assert len(report["added_since_hardening_report"]) == 4
+    assert report["consumer_count_now"] == 17
+    assert len(report["added_since_hardening_report"]) == 6
 
 
 def test_all_reviewed_sites_have_markers(audit, report):
-    assert len(audit.JUDGEMENT_SITES) == 8
+    assert len(audit.JUDGEMENT_SITES) == 10
     assert report["judgement_sites_intact"] is True
     assert report["missing_judgement_sites"] == []
     assert all(row["marker_present"] for row in report["judgement_sites"])
@@ -72,7 +72,14 @@ def test_all_reviewed_sites_have_markers(audit, report):
     assert kinds["J1"] == kinds["J3"] == "replica_equality"
     assert kinds["J2"] == "prefix_predicate"
     assert kinds["J5"] == "substring_predicate"
-    assert kinds["J4"] == kinds["J6"] == kinds["J7"] == "test_assertion"
+    assert (
+        kinds["J4"]
+        == kinds["J6"]
+        == kinds["J7"]
+        == kinds["J9"]
+        == kinds["J10"]
+        == "test_assertion"
+    )
 
 
 @pytest.mark.parametrize("mutation", ["added", "removed", "missing_marker"])

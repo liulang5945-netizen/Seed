@@ -48,7 +48,11 @@ from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 TRAINING_DIR = PROJECT_ROOT / "scripts" / "training"
-DEFAULT_OUTPUT = PROJECT_ROOT / "reports" / "taiji_b0_n2_stop_reason_disposition_20260914.json"
+#: The 2026-09-14 review snapshot, sealed by sha256 in test_b0_rule_revision_seal_contract.py.
+REVISION_0_OUTPUT = PROJECT_ROOT / "reports" / "taiji_b0_n2_stop_reason_disposition_20260914.json"
+#: The living inventory guard is re-scanned every round; it must never default onto the
+#: sealed snapshot above.
+DEFAULT_OUTPUT = PROJECT_ROOT / "reports" / "taiji_b0_n2_stop_reason_disposition_20260915.json"
 
 HARDENING_MODULE = TRAINING_DIR / "audit_taiji_b0_m4_hardening.py"
 DISPOSITION_FORMAT = "taiji-b0-n2-stop-reason-disposition-v1"
@@ -152,6 +156,18 @@ EXPECTED_CONSUMERS: tuple[dict[str, str], ...] = (
         "why": "see J8 below: asserts the frozen N2 semantics against archived reports",
         "added_after_hardening_report": "yes",
     },
+    {
+        "path": "tests/taiji_native/test_b0_rule_revision_seal_contract.py",
+        "class": "judgement (test assertion)",
+        "why": "see J9 below: pins the rule_revision=0 evidence seal and the shipped rule",
+        "added_after_hardening_report": "yes",
+    },
+    {
+        "path": "tests/taiji_native/test_b0_m1_counterfactual_contract.py",
+        "class": "judgement (test assertion)",
+        "why": "see J10 below: compares stop_reasons between the sealed and the landed reports",
+        "added_after_hardening_report": "yes",
+    },
 )
 
 #: Every place a stop reason participates in a *decision*.  Each marker must still
@@ -233,6 +249,31 @@ JUDGEMENT_SITES: tuple[dict[str, str], ...] = (
             "the WP-2 two-direction guard itself: it pins the frozen semantics (terminal, "
             "not goal_reached, not an interception, absent from the frozen rule) against "
             "archived reports. It is an admission guard for WP-3, not a runtime gate"
+        ),
+    },
+    {
+        "id": "J9",
+        "path": "tests/taiji_native/test_b0_rule_revision_seal_contract.py",
+        "marker": 'assert delta["variant_is_identity"] is True',
+        "kind": "test_assertion",
+        "safe_because": (
+            "the WP-3 exit-5 seal guard: it pins the rule_revision=0 report digests, the "
+            "version labels on the interpreting documents, and which single composition "
+            "rule ships. It reads reason names only to assert their immutability; it is "
+            "an evidence-integrity guard, not a runtime gate"
+        ),
+    },
+    {
+        "id": "J10",
+        "path": "tests/taiji_native/test_b0_m1_counterfactual_contract.py",
+        "marker": '"interleaved_contexts", "best_pair", "best_pair_gain", "stop_reasons"',
+        "kind": "test_assertion",
+        "safe_because": (
+            "the WP-3 exit-2 guard: it compares the frozen-surface and candidate-surface "
+            "stop_reasons of the sealed revision-0 report with the landed report, field by "
+            "field, so 'landing changed no outcome' is checked rather than recited. It reads "
+            "reason names only to assert immutability across rule revisions; it is an "
+            "evidence-integrity guard, not a runtime gate"
         ),
     },
 )

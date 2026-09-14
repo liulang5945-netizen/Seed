@@ -4,24 +4,28 @@
 > **状态：FROZEN。** 本文是 WP-3 落地 `m4_failure_handoff` 的**语义前置**：新停止原因的含义在改 runner 之前定死，落地后不得回改。
 > 取值来源：用户 2026-09-15 确认 **D5 = 落地** 且 **N2 = 落地前预注册**（见[冻结版路线 B](M5_B0_ROUTE_B_PREREGISTRATION_FROZEN_20260915.md) §8/§9）。
 > 证据：[审查报告 2026-09-14](../../reports/taiji_b0_n2_stop_reason_disposition_20260914.json)（审查面来源，`consumer_count = 14`）
-> 与[重扫报告 2026-09-15](../../reports/taiji_b0_n2_stop_reason_disposition_20260915.json)（**冻结后的清单守卫**：`consumer_count = 15`、`judgement_sites` 长度 8、`drift.clean = true`、`status = inventory_guard_for_frozen_preregistration`）。
+> 与[重扫报告 2026-09-15](../../reports/taiji_b0_n2_stop_reason_disposition_20260915.json)（**清单守卫，计数以它为准**：
+> `consumer_count = 17`、`judgement_sites` 长度 10、`drift.clean = true`、`status = inventory_guard_for_frozen_preregistration`）。
 
 ## §0 先更正底稿的一个数字
 
-底稿 §1/§4 写「**5 个判断点**」，实为**判断点站点数与文件数被混为一谈**。以
-[2026-09-15 重扫报告](../../reports/taiji_b0_n2_stop_reason_disposition_20260915.json) 为准（`consumer_count = 15`、
-`judgement_sites` 长度 8、`drift.clean = true`）：
+底稿 §1/§4 写「**5 个判断点**」，实为**站点数与文件数被混为一谈**。以
+[2026-09-15 重扫报告](../../reports/taiji_b0_n2_stop_reason_disposition_20260915.json) 为准（`consumer_count = 17`、
+`judgement_sites` 长度 10、`drift.clean = true`）：
 
 | 类别 | 数量 | 条目 |
 |---|---|---|
 | live gate 判据 | **4** | J1 副本一致性（P5.2a `deterministic_surface`）、J2 前缀判据（P5.2a 安全停止计数）、J3 副本一致性（P5.2b `surface`）、J5 子串判据（加固轮 `was_contract_intercepted`） |
-| 测试断言 | **4** | J4（`test_b0_m4_artifact_audit_contract`，钉旧规则历史证据）、J6（`test_b0_m4_hardening_contract`）、J7（`test_b0_structure_space_contract`）、J8（`test_b0_n2_stop_reason_semantics_contract`，本包新增的双向守卫） |
-| 仅记录 / 聚合 | **8 个文件** | 其余 consumer |
+| 测试断言 | **6** | J4（`test_b0_m4_artifact_audit_contract`，钉旧规则历史证据）、J6（`test_b0_m4_hardening_contract`）、J7（`test_b0_structure_space_contract`）、J8（`test_b0_n2_stop_reason_semantics_contract`，本包的双向守卫）、J9（`test_b0_rule_revision_seal_contract`，WP-3 出口⑤的证据封条守卫）、J10（`test_b0_m1_counterfactual_contract`，WP-3 出口②：逐字段比对两版报告的 `stop_reasons`） |
+| 仅记录 / 聚合 | **8 个文件** | 其余 consumer；判断点分布在 **9 个文件**（3 个 live 文件承载 4 处 + 6 个测试文件） |
 
-⇒ **正确表述恒为「15 个消费文件 / 8 处判断点（4 live gate + 4 测试断言，分布在 7 个文件），8 个文件仅记录聚合」**。
+⇒ **正确表述恒为「17 个消费文件 / 10 处判断点（4 live gate + 6 测试断言，分布在 9 个文件），8 个文件仅记录聚合」**。
 底稿的「5 / 9」既数错了站点也数错了文件；本文不回改底稿正文，只在此处更正，后续所有文档统一引用本节。
-**注**：J8 就是本文 §4 的测试文件——它自己也是新原因的消费者，因此必须先被处置、清单才算干净；
+**注 1**：J8/J9/J10 就是本文 §4 与 WP-3 出口②⑤的测试文件——它们自己也是新原因的消费者，必须先被处置、清单才算干净；
 扫描器在存在未处置消费者时**以退出码 1 失败**（"the review surface changed; re-disposition before landing"）。
+**注 2**：这张表在同一轮里从 14 → 15 → 16 → **17** 涨了**四次**，每次都因为"新写的守卫自己读了 stop_reason"，
+恰好证明**计数只能来自重扫，不能来自上文**；套件里那条 `test_the_frozen_preregistration_states_the_measured_counts`
+就是逼着文档与扫描同步变化的机制（本文件"冻结"的是判据 I1–I8 与 T-a…T-h，不是这张计数的表）。
 
 ## §1 两类终局结果的规范定义
 
@@ -45,10 +49,10 @@
 | I7 | 记录/聚合可保留完整 reason，但**不得**把新 reason 静默折叠为 `all_members_exhausted` | 双向测试 T-g |
 | I8 | 不同 `rule_revision` 的报告禁止数字覆盖；旧报告只加"规则版本"指针 | WP-3 出口⑤（T-h） |
 
-## §3 消费面逐条处置（15 文件；4 live gate + 4 测试断言 + 7 仅记录）
+## §3 消费面逐条处置（**17 个文件** = 承载判断点的 9 个 + 仅记录聚合的 8 个；**10 处判断点** = 4 live gate + 6 测试断言）
 
 处置原则：**live gate 判据（J1/J2/J3/J5）零改动即为安全**，因为新原因不带 `contract_intercepted` 前缀、且副本两侧同步；
-**测试断言（J4/J6/J7/J8）须显式双版本化**，不得把旧断言静默改绿。
+**测试断言（J4/J6/J7/J8/J9/J10）须显式双版本化**，不得把旧断言静默改绿。
 [扫描脚本](../../scripts/training/audit_taiji_b0_n2_stop_reason_disposition.py) 在存在未处置消费者时**退出码 1**（fail-closed），故本表与代码中的 `EXPECTED_CONSUMERS` 必须同步。
 
 | 文件 | 类 | 处置（冻结） | 断言 |
@@ -68,6 +72,8 @@
 | `test_b0_m4_hardening_contract.py` | **J6** | 新原因的出现与含义须继续显式断言 | T-d, T-h |
 | `test_b0_structure_space_contract.py` | **J7** | 正增益格**必须**出现该原因；冻结侧与零格**必须**不出现 | T-d（双向） |
 | `test_b0_n2_stop_reason_semantics_contract.py` | **J8**（本包新增） | 语义守卫自身：断言 I1–I5、I7；它是 WP-3 的**入场守卫**而非 runtime gate，故同样要随 `rule_revision` 迁移 | T-a, T-b, T-c, T-d, T-e, T-g |
+| `test_b0_rule_revision_seal_contract.py` | **J9**（WP-3 出口⑤新增） | 证据封条守卫：断言 revision-0 报告哈希不变、六份解读文档带版本标注、gate 内恰好一条规则；只在"证明证据没被改"的意义上读取 reason 名 | I8 / T-h |
+| `test_b0_m1_counterfactual_contract.py` | **J10**（WP-3 出口②新增） | 复现守卫：把封存 revision-0 报告与落地后报告的 `stop_reasons` **逐字段比对**，用以主张"落地未改变任何停止原因分布"；同样只在"证明未变"的意义上读原因名，不是 runtime gate | T-d, T-h |
 
 ## §4 双向测试清单
 
@@ -96,9 +102,9 @@
 
 ## §6 出口判据（WP-2）
 
-1. §3 的 14 行处置全部落地（4 个 live 判据零改动并说明理由；3 个测试断言标记为 WP-3 迁移项）。
+1. §3 的 17 行处置全部落地（4 个 live 判据零改动并说明理由；6 个测试断言标记为随 `rule_revision` 迁移项，其中 J4/J6/J7 属 WP-3 落地后须复核的历史断言）。
 2. §2 的 I1–I5、I7 由 T-a…T-e、T-g 双向钉住且**通过**。
-3. 计数新鲜度：`drift.clean = true` 且 consumer 清单仍为 14；若新增消费者 ⇒ 先补处置再落地 M4。
+3. 计数新鲜度：`drift.clean = true` 且 consumer 清单等于 §0 所引重扫报告的现值（本文写作时 17）；**若新增消费者 ⇒ 先补处置再落地 M4**，不得反过来改判据让扫描通过。
 4. 本文冻结；后续语义变化一律新预注册。
 
 ## §7 停止点

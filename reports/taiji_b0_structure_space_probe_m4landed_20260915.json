@@ -1,0 +1,4612 @@
+{
+  "format": "taiji-b0-structure-space-probe-v1",
+  "version": 1,
+  "status": "draft_for_review",
+  "question": "does the M4 gain hold on more than one composition structure, or only on create + explicit override?",
+  "rule_under_audit": "m4_failure_handoff",
+  "shipped_rule_revision": 1,
+  "arm_provenance": {
+    "audited_arm": "shipped source, unpatched",
+    "baseline_arm": "shipped source reverted to rule_revision 0",
+    "arms_are_distinct": true,
+    "forward_delta": {
+      "variant": "m4_failure_handoff",
+      "direction": "shipped",
+      "arm_is_shipped_source": true,
+      "shipped_rule_revision": 1
+    },
+    "baseline_delta": {
+      "variant": "m4_failure_handoff",
+      "direction": "revert",
+      "replacements": [
+        {
+          "anchor": "        chosen = bindable[0]",
+          "replacement_lines": [
+            "        last_success_index = max(",
+            "            (i for i, s in enumerate(steps) if s.get(\"executed\")), default=-1",
+            "        )",
+            "        blocked = {",
+            "            s.get(\"chosen\")",
+            "            for i, s in enumerate(steps)",
+            "            if s.get(\"chosen\") and not s.get(\"executed\") and i > last_success_index",
+            "        }",
+            "        chosen = next((c for c in bindable if c[\"member\"] not in blocked), None)",
+            "        if chosen is None:",
+            "            steps.append(",
+            "                {",
+            "                    \"tick\": tick,",
+            "                    \"called\": [c[\"member\"] for c in calls],",
+            "                    \"executed\": False,",
+            "                    \"stop\": \"all_members_blocked\",",
+            "                }",
+            "            )",
+            "            return finish(\"all_members_blocked\")"
+          ],
+          "status": "reverted"
+        },
+        {
+          "anchor": "            cues = tuple([cue] * (len(steps) + 1))",
+          "replacement_lines": [
+            "            own_steps = sum(",
+            "                1 for s in steps if s.get(\"executed\") and s.get(\"chosen\") == member_id",
+            "            )",
+            "            cues = tuple([cue] * (own_steps + 1))"
+          ],
+          "status": "reverted"
+        }
+      ],
+      "replacement_count": 2,
+      "reverted": [
+        "        chosen = bindable[0]",
+        "            cues = tuple([cue] * (len(steps) + 1))"
+      ],
+      "arm_is_shipped_source": false,
+      "injected_names": [],
+      "shipped_source_lines": 199,
+      "reverted_source_lines": 178,
+      "removed_lines": 21,
+      "frozen_attribute_unchanged": true,
+      "rule_text": "chosen = bindable[0] + cues = tuple([cue] * (len(steps) + 1))"
+    }
+  },
+  "rule_delta": {
+    "variant": "m4_failure_handoff",
+    "direction": "shipped",
+    "arm_is_shipped_source": true,
+    "shipped_rule_revision": 1
+  },
+  "does_not_change": [
+    "HANDOFF-M4 ships in this gate script as rule_revision=1; no product mechanism adopts it and no runner uses this script",
+    "no task is registered and nothing is trained for a candidate cell",
+    "growth_admitted=false and can_promote=false remain in force",
+    "a positive structural result is still not a claim of achieved collaboration"
+  ],
+  "frozen_attribute_intact": true,
+  "margin": 0.15,
+  "contexts_per_cell": 6,
+  "binder_expression_surface": {
+    "bindable_kinds": [
+      "editor.open",
+      "editor.set_language",
+      "workspace.apply_patch",
+      "workspace.create",
+      "workspace.list",
+      "workspace.programming_language.resolve",
+      "workspace.read",
+      "workspace.search",
+      "workspace.stat",
+      "workspace.undo"
+    ],
+    "bindable_kind_count": 10,
+    "goal_clauses": [
+      "requires_explicit_language_override",
+      "task.goal_files",
+      "task.goal_language"
+    ],
+    "goal_clause_present": {
+      "task.goal_files": true,
+      "task.goal_language": true,
+      "requires_explicit_language_override": true
+    },
+    "binder_targets_main_path_only": true,
+    "grid_axes": {
+      "content_route": [
+        "none",
+        "create",
+        "patch"
+      ],
+      "language_route": [
+        "none",
+        "observation",
+        "override",
+        "mismatch"
+      ]
+    },
+    "cells_in_grid": 11,
+    "cells_skipped_as_trivial": [
+      "none__none"
+    ],
+    "coverage_argument": "the goal predicate is a conjunction over goal_files content and goal_language selection (+ optional override flag); each clause has exactly one route from a given initial world, so the 3 x 4 route grid covers every conjunction the binder can express on a single path",
+    "not_covered": "anything needing a second action target (T3), a second transformation of one file (T1), or an inter-member evidence channel (T2) -- each reported with its own witness above"
+  },
+  "validity": [
+    {
+      "cell": "none__observation",
+      "contexts": [
+        "b0struct-none__observation-600",
+        "b0struct-none__observation-601",
+        "b0struct-none__observation-602",
+        "b0struct-none__observation-603",
+        "b0struct-none__observation-604",
+        "b0struct-none__observation-605"
+      ],
+      "rows": [
+        {
+          "task_id": "b0struct-none__observation-600",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-none__observation-601",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-none__observation-602",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-none__observation-603",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-none__observation-604",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-none__observation-605",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            }
+          ]
+        }
+      ],
+      "satisfiable": true,
+      "nontrivial": true,
+      "contract_admissible": true,
+      "scripted_path_clean": true,
+      "order_is_mandatory": false,
+      "measurable": true,
+      "not_measurable_because": []
+    },
+    {
+      "cell": "none__override",
+      "contexts": [
+        "b0struct-none__override-610",
+        "b0struct-none__override-611",
+        "b0struct-none__override-612",
+        "b0struct-none__override-613",
+        "b0struct-none__override-614",
+        "b0struct-none__override-615"
+      ],
+      "rows": [
+        {
+          "task_id": "b0struct-none__override-610",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-none__override-611",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-none__override-612",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-none__override-613",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-none__override-614",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-none__override-615",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            }
+          ]
+        }
+      ],
+      "satisfiable": true,
+      "nontrivial": true,
+      "contract_admissible": true,
+      "scripted_path_clean": true,
+      "order_is_mandatory": false,
+      "measurable": true,
+      "not_measurable_because": []
+    },
+    {
+      "cell": "none__mismatch",
+      "contexts": [
+        "b0struct-none__mismatch-620",
+        "b0struct-none__mismatch-621",
+        "b0struct-none__mismatch-622",
+        "b0struct-none__mismatch-623",
+        "b0struct-none__mismatch-624",
+        "b0struct-none__mismatch-625"
+      ],
+      "rows": [
+        {
+          "task_id": "b0struct-none__mismatch-620",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-none__mismatch-621",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-none__mismatch-622",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-none__mismatch-623",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-none__mismatch-624",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-none__mismatch-625",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            }
+          ]
+        }
+      ],
+      "satisfiable": true,
+      "nontrivial": true,
+      "contract_admissible": true,
+      "scripted_path_clean": true,
+      "order_is_mandatory": false,
+      "measurable": true,
+      "not_measurable_because": []
+    },
+    {
+      "cell": "create__none",
+      "contexts": [
+        "b0struct-create__none-630",
+        "b0struct-create__none-631",
+        "b0struct-create__none-632",
+        "b0struct-create__none-633",
+        "b0struct-create__none-634",
+        "b0struct-create__none-635"
+      ],
+      "rows": [
+        {
+          "task_id": "b0struct-create__none-630",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.list",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.create",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-create__none-631",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.list",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.create",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-create__none-632",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.list",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.create",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-create__none-633",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.list",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.create",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-create__none-634",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.list",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.create",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-create__none-635",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.list",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.create",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            }
+          ]
+        }
+      ],
+      "satisfiable": true,
+      "nontrivial": true,
+      "contract_admissible": true,
+      "scripted_path_clean": true,
+      "order_is_mandatory": false,
+      "measurable": true,
+      "not_measurable_because": []
+    },
+    {
+      "cell": "create__observation",
+      "contexts": [
+        "b0struct-create__observation-640",
+        "b0struct-create__observation-641",
+        "b0struct-create__observation-642",
+        "b0struct-create__observation-643",
+        "b0struct-create__observation-644",
+        "b0struct-create__observation-645"
+      ],
+      "rows": [
+        {
+          "task_id": "b0struct-create__observation-640",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": false,
+          "order_is_mandatory": true,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.list",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.create",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-create__observation-641",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": false,
+          "order_is_mandatory": true,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.list",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.create",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-create__observation-642",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": false,
+          "order_is_mandatory": true,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.list",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.create",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-create__observation-643",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": false,
+          "order_is_mandatory": true,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.list",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.create",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-create__observation-644",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": false,
+          "order_is_mandatory": true,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.list",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.create",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-create__observation-645",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": false,
+          "order_is_mandatory": true,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.list",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.create",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            }
+          ]
+        }
+      ],
+      "satisfiable": true,
+      "nontrivial": true,
+      "contract_admissible": true,
+      "scripted_path_clean": true,
+      "order_is_mandatory": true,
+      "measurable": true,
+      "not_measurable_because": []
+    },
+    {
+      "cell": "create__override",
+      "contexts": [
+        "b0struct-create__override-650",
+        "b0struct-create__override-651",
+        "b0struct-create__override-652",
+        "b0struct-create__override-653",
+        "b0struct-create__override-654",
+        "b0struct-create__override-655"
+      ],
+      "rows": [
+        {
+          "task_id": "b0struct-create__override-650",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": false,
+          "order_is_mandatory": true,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.list",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.create",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 4,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-create__override-651",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": false,
+          "order_is_mandatory": true,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.list",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.create",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 4,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-create__override-652",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": false,
+          "order_is_mandatory": true,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.list",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.create",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 4,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-create__override-653",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": false,
+          "order_is_mandatory": true,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.list",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.create",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 4,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-create__override-654",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": false,
+          "order_is_mandatory": true,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.list",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.create",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 4,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-create__override-655",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": false,
+          "order_is_mandatory": true,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.list",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.create",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 4,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            }
+          ]
+        }
+      ],
+      "satisfiable": true,
+      "nontrivial": true,
+      "contract_admissible": true,
+      "scripted_path_clean": true,
+      "order_is_mandatory": true,
+      "measurable": true,
+      "not_measurable_because": []
+    },
+    {
+      "cell": "create__mismatch",
+      "contexts": [
+        "b0struct-create__mismatch-660",
+        "b0struct-create__mismatch-661",
+        "b0struct-create__mismatch-662",
+        "b0struct-create__mismatch-663",
+        "b0struct-create__mismatch-664",
+        "b0struct-create__mismatch-665"
+      ],
+      "rows": [
+        {
+          "task_id": "b0struct-create__mismatch-660",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": false,
+          "order_is_mandatory": true,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.list",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.create",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 4,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-create__mismatch-661",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": false,
+          "order_is_mandatory": true,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.list",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.create",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 4,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-create__mismatch-662",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": false,
+          "order_is_mandatory": true,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.list",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.create",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 4,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-create__mismatch-663",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": false,
+          "order_is_mandatory": true,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.list",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.create",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 4,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-create__mismatch-664",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": false,
+          "order_is_mandatory": true,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.list",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.create",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 4,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-create__mismatch-665",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": false,
+          "order_is_mandatory": true,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.list",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.create",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 4,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            }
+          ]
+        }
+      ],
+      "satisfiable": true,
+      "nontrivial": true,
+      "contract_admissible": true,
+      "scripted_path_clean": true,
+      "order_is_mandatory": true,
+      "measurable": true,
+      "not_measurable_because": []
+    },
+    {
+      "cell": "patch__none",
+      "contexts": [
+        "b0struct-patch__none-670",
+        "b0struct-patch__none-671",
+        "b0struct-patch__none-672",
+        "b0struct-patch__none-673",
+        "b0struct-patch__none-674",
+        "b0struct-patch__none-675"
+      ],
+      "rows": [
+        {
+          "task_id": "b0struct-patch__none-670",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.apply_patch",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-patch__none-671",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.apply_patch",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-patch__none-672",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.apply_patch",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-patch__none-673",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.apply_patch",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-patch__none-674",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.apply_patch",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-patch__none-675",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.apply_patch",
+              "bound": true,
+              "success": true
+            }
+          ]
+        }
+      ],
+      "satisfiable": true,
+      "nontrivial": true,
+      "contract_admissible": true,
+      "scripted_path_clean": true,
+      "order_is_mandatory": false,
+      "measurable": true,
+      "not_measurable_because": []
+    },
+    {
+      "cell": "patch__observation",
+      "contexts": [
+        "b0struct-patch__observation-680",
+        "b0struct-patch__observation-681",
+        "b0struct-patch__observation-682",
+        "b0struct-patch__observation-683",
+        "b0struct-patch__observation-684",
+        "b0struct-patch__observation-685"
+      ],
+      "rows": [
+        {
+          "task_id": "b0struct-patch__observation-680",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.apply_patch",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-patch__observation-681",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.apply_patch",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-patch__observation-682",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.apply_patch",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-patch__observation-683",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.apply_patch",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-patch__observation-684",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.apply_patch",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-patch__observation-685",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "workspace.apply_patch",
+              "bound": true,
+              "success": true
+            }
+          ]
+        }
+      ],
+      "satisfiable": true,
+      "nontrivial": true,
+      "contract_admissible": true,
+      "scripted_path_clean": true,
+      "order_is_mandatory": false,
+      "measurable": true,
+      "not_measurable_because": []
+    },
+    {
+      "cell": "patch__override",
+      "contexts": [
+        "b0struct-patch__override-690",
+        "b0struct-patch__override-691",
+        "b0struct-patch__override-692",
+        "b0struct-patch__override-693",
+        "b0struct-patch__override-694",
+        "b0struct-patch__override-695"
+      ],
+      "rows": [
+        {
+          "task_id": "b0struct-patch__override-690",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.apply_patch",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-patch__override-691",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.apply_patch",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-patch__override-692",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.apply_patch",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-patch__override-693",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.apply_patch",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-patch__override-694",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.apply_patch",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-patch__override-695",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.apply_patch",
+              "bound": true,
+              "success": true
+            }
+          ]
+        }
+      ],
+      "satisfiable": true,
+      "nontrivial": true,
+      "contract_admissible": true,
+      "scripted_path_clean": true,
+      "order_is_mandatory": false,
+      "measurable": true,
+      "not_measurable_because": []
+    },
+    {
+      "cell": "patch__mismatch",
+      "contexts": [
+        "b0struct-patch__mismatch-700",
+        "b0struct-patch__mismatch-701",
+        "b0struct-patch__mismatch-702",
+        "b0struct-patch__mismatch-703",
+        "b0struct-patch__mismatch-704",
+        "b0struct-patch__mismatch-705"
+      ],
+      "rows": [
+        {
+          "task_id": "b0struct-patch__mismatch-700",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.apply_patch",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-patch__mismatch-701",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.apply_patch",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-patch__mismatch-702",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.apply_patch",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-patch__mismatch-703",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.apply_patch",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-patch__mismatch-704",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.apply_patch",
+              "bound": true,
+              "success": true
+            }
+          ]
+        },
+        {
+          "task_id": "b0struct-patch__mismatch-705",
+          "forward_reaches_goal": true,
+          "reversed_reaches_goal": true,
+          "order_is_mandatory": false,
+          "tick0_already_satisfied": false,
+          "contract_blocked_steps": [],
+          "scripted_blocked_steps": [],
+          "trace": [
+            {
+              "tick": 0,
+              "kind": "workspace.read",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 1,
+              "kind": "workspace.programming_language.resolve",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 2,
+              "kind": "editor.set_language",
+              "bound": true,
+              "success": true
+            },
+            {
+              "tick": 3,
+              "kind": "workspace.apply_patch",
+              "bound": true,
+              "success": true
+            }
+          ]
+        }
+      ],
+      "satisfiable": true,
+      "nontrivial": true,
+      "contract_admissible": true,
+      "scripted_path_clean": true,
+      "order_is_mandatory": false,
+      "measurable": true,
+      "not_measurable_because": []
+    }
+  ],
+  "not_measurable_cells": [],
+  "cells_measured": [
+    "none__observation",
+    "none__override",
+    "none__mismatch",
+    "create__none",
+    "create__observation",
+    "create__override",
+    "create__mismatch",
+    "patch__none",
+    "patch__observation",
+    "patch__override",
+    "patch__mismatch"
+  ],
+  "rows": [
+    {
+      "cell": "none__observation",
+      "content_route": "none",
+      "language_route": "observation",
+      "existence_precondition": false,
+      "expect_combination_only": false,
+      "observed_combination_only": false,
+      "combination_only_prediction_matches": true,
+      "contexts": [
+        "b0struct-none__observation-600",
+        "b0struct-none__observation-601",
+        "b0struct-none__observation-602",
+        "b0struct-none__observation-603",
+        "b0struct-none__observation-604",
+        "b0struct-none__observation-605"
+      ],
+      "singleton_success_rates_frozen": {
+        "member-a": 1.0,
+        "member-b": 0.0,
+        "member-c": 0.0,
+        "member-d": 1.0
+      },
+      "singleton_success_rates_audited": {
+        "member-a": 1.0,
+        "member-b": 0.0,
+        "member-c": 0.0,
+        "member-d": 1.0
+      },
+      "best_pair_frozen": "member-a+member-b",
+      "best_pair_gain_frozen": 0.0,
+      "best_pair_audited": "member-a+member-b",
+      "best_pair_gain_audited": 0.0,
+      "gain_delta": 0.0,
+      "positive_under_frozen": false,
+      "positive_under_m4": false,
+      "combination_only_contexts": 0,
+      "interleaved_contexts_frozen": 0,
+      "interleaved_contexts_audited": 0,
+      "changed_cells": 0,
+      "handoff_explained_changes": [],
+      "fallback_only_changes": [],
+      "unexplained_changes": [],
+      "jointly_required_contexts_audited": [],
+      "stop_reasons_frozen": {
+        "all_members_exhausted": 24,
+        "goal_reached": 72,
+        "contract_intercepted:preview_WorkbenchConflictError": 36
+      },
+      "stop_reasons_audited": {
+        "all_members_exhausted": 24,
+        "goal_reached": 72,
+        "contract_intercepted:preview_WorkbenchConflictError": 36
+      },
+      "intervention_reality_frozen_ok": true,
+      "intervention_reality_audited_ok": true,
+      "reference_requirements_audited": [
+        {
+          "reference": "all_singleton_oracle",
+          "reference_gain": 1.5,
+          "required": 1.65,
+          "required_combination_only_contexts": 5,
+          "available_combination_only_contexts": 0,
+          "context_count": 6,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        },
+        {
+          "reference": "best_fixed_singleton",
+          "reference_gain": 0.5,
+          "required": 0.65,
+          "required_combination_only_contexts": 2,
+          "available_combination_only_contexts": 0,
+          "context_count": 6,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        },
+        {
+          "reference": "best_observed_fixed_pair",
+          "reference_gain": 1.0,
+          "required": 1.15,
+          "required_combination_only_contexts": 4,
+          "available_combination_only_contexts": 0,
+          "context_count": 6,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        }
+      ]
+    },
+    {
+      "cell": "none__override",
+      "content_route": "none",
+      "language_route": "override",
+      "existence_precondition": false,
+      "expect_combination_only": false,
+      "observed_combination_only": false,
+      "combination_only_prediction_matches": true,
+      "contexts": [
+        "b0struct-none__override-610",
+        "b0struct-none__override-611",
+        "b0struct-none__override-612",
+        "b0struct-none__override-613",
+        "b0struct-none__override-614",
+        "b0struct-none__override-615"
+      ],
+      "singleton_success_rates_frozen": {
+        "member-a": 1.0,
+        "member-b": 0.0,
+        "member-c": 0.0,
+        "member-d": 1.0
+      },
+      "singleton_success_rates_audited": {
+        "member-a": 1.0,
+        "member-b": 0.0,
+        "member-c": 0.0,
+        "member-d": 1.0
+      },
+      "best_pair_frozen": "member-a+member-b",
+      "best_pair_gain_frozen": 0.0,
+      "best_pair_audited": "member-a+member-b",
+      "best_pair_gain_audited": 0.0,
+      "gain_delta": 0.0,
+      "positive_under_frozen": false,
+      "positive_under_m4": false,
+      "combination_only_contexts": 0,
+      "interleaved_contexts_frozen": 0,
+      "interleaved_contexts_audited": 0,
+      "changed_cells": 0,
+      "handoff_explained_changes": [],
+      "fallback_only_changes": [],
+      "unexplained_changes": [],
+      "jointly_required_contexts_audited": [],
+      "stop_reasons_frozen": {
+        "all_members_exhausted": 24,
+        "goal_reached": 72,
+        "contract_intercepted:preview_WorkbenchConflictError": 36
+      },
+      "stop_reasons_audited": {
+        "all_members_exhausted": 24,
+        "goal_reached": 72,
+        "contract_intercepted:preview_WorkbenchConflictError": 36
+      },
+      "intervention_reality_frozen_ok": true,
+      "intervention_reality_audited_ok": true,
+      "reference_requirements_audited": [
+        {
+          "reference": "all_singleton_oracle",
+          "reference_gain": 1.5,
+          "required": 1.65,
+          "required_combination_only_contexts": 5,
+          "available_combination_only_contexts": 0,
+          "context_count": 6,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        },
+        {
+          "reference": "best_fixed_singleton",
+          "reference_gain": 0.5,
+          "required": 0.65,
+          "required_combination_only_contexts": 2,
+          "available_combination_only_contexts": 0,
+          "context_count": 6,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        },
+        {
+          "reference": "best_observed_fixed_pair",
+          "reference_gain": 1.0,
+          "required": 1.15,
+          "required_combination_only_contexts": 4,
+          "available_combination_only_contexts": 0,
+          "context_count": 6,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        }
+      ]
+    },
+    {
+      "cell": "none__mismatch",
+      "content_route": "none",
+      "language_route": "mismatch",
+      "existence_precondition": false,
+      "expect_combination_only": false,
+      "observed_combination_only": false,
+      "combination_only_prediction_matches": true,
+      "contexts": [
+        "b0struct-none__mismatch-620",
+        "b0struct-none__mismatch-621",
+        "b0struct-none__mismatch-622",
+        "b0struct-none__mismatch-623",
+        "b0struct-none__mismatch-624",
+        "b0struct-none__mismatch-625"
+      ],
+      "singleton_success_rates_frozen": {
+        "member-a": 1.0,
+        "member-b": 0.0,
+        "member-c": 0.0,
+        "member-d": 1.0
+      },
+      "singleton_success_rates_audited": {
+        "member-a": 1.0,
+        "member-b": 0.0,
+        "member-c": 0.0,
+        "member-d": 1.0
+      },
+      "best_pair_frozen": "member-a+member-b",
+      "best_pair_gain_frozen": 0.0,
+      "best_pair_audited": "member-a+member-b",
+      "best_pair_gain_audited": 0.0,
+      "gain_delta": 0.0,
+      "positive_under_frozen": false,
+      "positive_under_m4": false,
+      "combination_only_contexts": 0,
+      "interleaved_contexts_frozen": 0,
+      "interleaved_contexts_audited": 0,
+      "changed_cells": 0,
+      "handoff_explained_changes": [],
+      "fallback_only_changes": [],
+      "unexplained_changes": [],
+      "jointly_required_contexts_audited": [],
+      "stop_reasons_frozen": {
+        "all_members_exhausted": 24,
+        "goal_reached": 72,
+        "contract_intercepted:preview_WorkbenchConflictError": 36
+      },
+      "stop_reasons_audited": {
+        "all_members_exhausted": 24,
+        "goal_reached": 72,
+        "contract_intercepted:preview_WorkbenchConflictError": 36
+      },
+      "intervention_reality_frozen_ok": true,
+      "intervention_reality_audited_ok": true,
+      "reference_requirements_audited": [
+        {
+          "reference": "all_singleton_oracle",
+          "reference_gain": 1.5,
+          "required": 1.65,
+          "required_combination_only_contexts": 5,
+          "available_combination_only_contexts": 0,
+          "context_count": 6,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        },
+        {
+          "reference": "best_fixed_singleton",
+          "reference_gain": 0.5,
+          "required": 0.65,
+          "required_combination_only_contexts": 2,
+          "available_combination_only_contexts": 0,
+          "context_count": 6,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        },
+        {
+          "reference": "best_observed_fixed_pair",
+          "reference_gain": 1.0,
+          "required": 1.15,
+          "required_combination_only_contexts": 4,
+          "available_combination_only_contexts": 0,
+          "context_count": 6,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        }
+      ]
+    },
+    {
+      "cell": "create__none",
+      "content_route": "create",
+      "language_route": "none",
+      "existence_precondition": true,
+      "expect_combination_only": false,
+      "observed_combination_only": false,
+      "combination_only_prediction_matches": true,
+      "contexts": [
+        "b0struct-create__none-630",
+        "b0struct-create__none-631",
+        "b0struct-create__none-632",
+        "b0struct-create__none-633",
+        "b0struct-create__none-634",
+        "b0struct-create__none-635"
+      ],
+      "singleton_success_rates_frozen": {
+        "member-a": 0.0,
+        "member-b": 0.0,
+        "member-c": 1.0,
+        "member-d": 0.0
+      },
+      "singleton_success_rates_audited": {
+        "member-a": 0.0,
+        "member-b": 0.0,
+        "member-c": 1.0,
+        "member-d": 0.0
+      },
+      "best_pair_frozen": "member-b+member-c",
+      "best_pair_gain_frozen": 0.0,
+      "best_pair_audited": "member-a+member-c",
+      "best_pair_gain_audited": 0.0,
+      "gain_delta": 0.0,
+      "positive_under_frozen": false,
+      "positive_under_m4": false,
+      "combination_only_contexts": 0,
+      "interleaved_contexts_frozen": 0,
+      "interleaved_contexts_audited": 0,
+      "changed_cells": 1,
+      "handoff_explained_changes": [],
+      "fallback_only_changes": [
+        {
+          "cell": "member-a+member-c",
+          "delta": 1.0,
+          "baseline_success_rate": 0.0,
+          "audited_success_rate": 1.0,
+          "per_context": [
+            {
+              "context": "b0struct-create__none-630",
+              "jointly_required": false,
+              "acting_members": [
+                "member-c"
+              ]
+            },
+            {
+              "context": "b0struct-create__none-631",
+              "jointly_required": false,
+              "acting_members": [
+                "member-c"
+              ]
+            },
+            {
+              "context": "b0struct-create__none-632",
+              "jointly_required": false,
+              "acting_members": [
+                "member-c"
+              ]
+            },
+            {
+              "context": "b0struct-create__none-633",
+              "jointly_required": false,
+              "acting_members": [
+                "member-c"
+              ]
+            },
+            {
+              "context": "b0struct-create__none-634",
+              "jointly_required": false,
+              "acting_members": [
+                "member-c"
+              ]
+            },
+            {
+              "context": "b0struct-create__none-635",
+              "jointly_required": false,
+              "acting_members": [
+                "member-c"
+              ]
+            }
+          ]
+        }
+      ],
+      "unexplained_changes": [],
+      "jointly_required_contexts_audited": [],
+      "stop_reasons_frozen": {
+        "all_members_exhausted": 96,
+        "goal_reached": 36
+      },
+      "stop_reasons_audited": {
+        "all_members_exhausted": 12,
+        "all_members_blocked": 72,
+        "goal_reached": 48
+      },
+      "intervention_reality_frozen_ok": true,
+      "intervention_reality_audited_ok": true,
+      "reference_requirements_audited": [
+        {
+          "reference": "all_singleton_oracle",
+          "reference_gain": 1.5,
+          "required": 1.65,
+          "required_combination_only_contexts": 5,
+          "available_combination_only_contexts": 0,
+          "context_count": 6,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        },
+        {
+          "reference": "best_fixed_singleton",
+          "reference_gain": 0.5,
+          "required": 0.65,
+          "required_combination_only_contexts": 2,
+          "available_combination_only_contexts": 0,
+          "context_count": 6,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        },
+        {
+          "reference": "best_observed_fixed_pair",
+          "reference_gain": 1.0,
+          "required": 1.15,
+          "required_combination_only_contexts": 4,
+          "available_combination_only_contexts": 0,
+          "context_count": 6,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        }
+      ]
+    },
+    {
+      "cell": "create__observation",
+      "content_route": "create",
+      "language_route": "observation",
+      "existence_precondition": true,
+      "expect_combination_only": true,
+      "observed_combination_only": true,
+      "combination_only_prediction_matches": true,
+      "contexts": [
+        "b0struct-create__observation-640",
+        "b0struct-create__observation-641",
+        "b0struct-create__observation-642",
+        "b0struct-create__observation-643",
+        "b0struct-create__observation-644",
+        "b0struct-create__observation-645"
+      ],
+      "singleton_success_rates_frozen": {
+        "member-a": 0.0,
+        "member-b": 0.0,
+        "member-c": 0.0,
+        "member-d": 0.0
+      },
+      "singleton_success_rates_audited": {
+        "member-a": 0.0,
+        "member-b": 0.0,
+        "member-c": 0.0,
+        "member-d": 0.0
+      },
+      "best_pair_frozen": "member-a+member-b",
+      "best_pair_gain_frozen": 0.0,
+      "best_pair_audited": "member-a+member-c",
+      "best_pair_gain_audited": 2.0,
+      "gain_delta": 2.0,
+      "positive_under_frozen": false,
+      "positive_under_m4": true,
+      "combination_only_contexts": 6,
+      "interleaved_contexts_frozen": 0,
+      "interleaved_contexts_audited": 6,
+      "changed_cells": 1,
+      "handoff_explained_changes": [
+        {
+          "cell": "member-a+member-c",
+          "delta": 1.0,
+          "baseline_success_rate": 0.0,
+          "audited_success_rate": 1.0,
+          "per_context": [
+            {
+              "context": "b0struct-create__observation-640",
+              "jointly_required": true,
+              "acting_members": [
+                "member-a",
+                "member-c"
+              ]
+            },
+            {
+              "context": "b0struct-create__observation-641",
+              "jointly_required": true,
+              "acting_members": [
+                "member-a",
+                "member-c"
+              ]
+            },
+            {
+              "context": "b0struct-create__observation-642",
+              "jointly_required": true,
+              "acting_members": [
+                "member-a",
+                "member-c"
+              ]
+            },
+            {
+              "context": "b0struct-create__observation-643",
+              "jointly_required": true,
+              "acting_members": [
+                "member-a",
+                "member-c"
+              ]
+            },
+            {
+              "context": "b0struct-create__observation-644",
+              "jointly_required": true,
+              "acting_members": [
+                "member-a",
+                "member-c"
+              ]
+            },
+            {
+              "context": "b0struct-create__observation-645",
+              "jointly_required": true,
+              "acting_members": [
+                "member-a",
+                "member-c"
+              ]
+            }
+          ]
+        }
+      ],
+      "fallback_only_changes": [],
+      "unexplained_changes": [],
+      "jointly_required_contexts_audited": [
+        "b0struct-create__observation-640",
+        "b0struct-create__observation-641",
+        "b0struct-create__observation-642",
+        "b0struct-create__observation-643",
+        "b0struct-create__observation-644",
+        "b0struct-create__observation-645"
+      ],
+      "stop_reasons_frozen": {
+        "all_members_exhausted": 24,
+        "contract_intercepted:language_assessment_unavailable": 72,
+        "contract_intercepted:preview_ValueError": 36
+      },
+      "stop_reasons_audited": {
+        "all_members_exhausted": 12,
+        "all_members_blocked": 72,
+        "contract_intercepted:preview_ValueError": 36,
+        "goal_reached": 12
+      },
+      "intervention_reality_frozen_ok": true,
+      "intervention_reality_audited_ok": true,
+      "reference_requirements_audited": [
+        {
+          "reference": "all_singleton_oracle",
+          "reference_gain": 1.5,
+          "required": 1.65,
+          "required_combination_only_contexts": 5,
+          "available_combination_only_contexts": 6,
+          "context_count": 6,
+          "feasible": true,
+          "ceiling_gain": 2.0,
+          "max_clearable_reference": 1.85
+        },
+        {
+          "reference": "best_fixed_singleton",
+          "reference_gain": 0.5,
+          "required": 0.65,
+          "required_combination_only_contexts": 2,
+          "available_combination_only_contexts": 6,
+          "context_count": 6,
+          "feasible": true,
+          "ceiling_gain": 2.0,
+          "max_clearable_reference": 1.85
+        },
+        {
+          "reference": "best_observed_fixed_pair",
+          "reference_gain": 1.0,
+          "required": 1.15,
+          "required_combination_only_contexts": 4,
+          "available_combination_only_contexts": 6,
+          "context_count": 6,
+          "feasible": true,
+          "ceiling_gain": 2.0,
+          "max_clearable_reference": 1.85
+        }
+      ]
+    },
+    {
+      "cell": "create__override",
+      "content_route": "create",
+      "language_route": "override",
+      "existence_precondition": true,
+      "expect_combination_only": true,
+      "observed_combination_only": true,
+      "combination_only_prediction_matches": true,
+      "contexts": [
+        "b0struct-create__override-650",
+        "b0struct-create__override-651",
+        "b0struct-create__override-652",
+        "b0struct-create__override-653",
+        "b0struct-create__override-654",
+        "b0struct-create__override-655"
+      ],
+      "singleton_success_rates_frozen": {
+        "member-a": 0.0,
+        "member-b": 0.0,
+        "member-c": 0.0,
+        "member-d": 0.0
+      },
+      "singleton_success_rates_audited": {
+        "member-a": 0.0,
+        "member-b": 0.0,
+        "member-c": 0.0,
+        "member-d": 0.0
+      },
+      "best_pair_frozen": "member-a+member-b",
+      "best_pair_gain_frozen": 0.0,
+      "best_pair_audited": "member-a+member-c",
+      "best_pair_gain_audited": 2.0,
+      "gain_delta": 2.0,
+      "positive_under_frozen": false,
+      "positive_under_m4": true,
+      "combination_only_contexts": 6,
+      "interleaved_contexts_frozen": 0,
+      "interleaved_contexts_audited": 6,
+      "changed_cells": 1,
+      "handoff_explained_changes": [
+        {
+          "cell": "member-a+member-c",
+          "delta": 1.0,
+          "baseline_success_rate": 0.0,
+          "audited_success_rate": 1.0,
+          "per_context": [
+            {
+              "context": "b0struct-create__override-650",
+              "jointly_required": true,
+              "acting_members": [
+                "member-a",
+                "member-c"
+              ]
+            },
+            {
+              "context": "b0struct-create__override-651",
+              "jointly_required": true,
+              "acting_members": [
+                "member-a",
+                "member-c"
+              ]
+            },
+            {
+              "context": "b0struct-create__override-652",
+              "jointly_required": true,
+              "acting_members": [
+                "member-a",
+                "member-c"
+              ]
+            },
+            {
+              "context": "b0struct-create__override-653",
+              "jointly_required": true,
+              "acting_members": [
+                "member-a",
+                "member-c"
+              ]
+            },
+            {
+              "context": "b0struct-create__override-654",
+              "jointly_required": true,
+              "acting_members": [
+                "member-a",
+                "member-c"
+              ]
+            },
+            {
+              "context": "b0struct-create__override-655",
+              "jointly_required": true,
+              "acting_members": [
+                "member-a",
+                "member-c"
+              ]
+            }
+          ]
+        }
+      ],
+      "fallback_only_changes": [],
+      "unexplained_changes": [],
+      "jointly_required_contexts_audited": [
+        "b0struct-create__override-650",
+        "b0struct-create__override-651",
+        "b0struct-create__override-652",
+        "b0struct-create__override-653",
+        "b0struct-create__override-654",
+        "b0struct-create__override-655"
+      ],
+      "stop_reasons_frozen": {
+        "all_members_exhausted": 48,
+        "step_cap": 48,
+        "contract_intercepted:preview_ValueError": 36
+      },
+      "stop_reasons_audited": {
+        "all_members_exhausted": 12,
+        "all_members_blocked": 72,
+        "contract_intercepted:preview_ValueError": 36,
+        "goal_reached": 12
+      },
+      "intervention_reality_frozen_ok": true,
+      "intervention_reality_audited_ok": true,
+      "reference_requirements_audited": [
+        {
+          "reference": "all_singleton_oracle",
+          "reference_gain": 1.5,
+          "required": 1.65,
+          "required_combination_only_contexts": 5,
+          "available_combination_only_contexts": 6,
+          "context_count": 6,
+          "feasible": true,
+          "ceiling_gain": 2.0,
+          "max_clearable_reference": 1.85
+        },
+        {
+          "reference": "best_fixed_singleton",
+          "reference_gain": 0.5,
+          "required": 0.65,
+          "required_combination_only_contexts": 2,
+          "available_combination_only_contexts": 6,
+          "context_count": 6,
+          "feasible": true,
+          "ceiling_gain": 2.0,
+          "max_clearable_reference": 1.85
+        },
+        {
+          "reference": "best_observed_fixed_pair",
+          "reference_gain": 1.0,
+          "required": 1.15,
+          "required_combination_only_contexts": 4,
+          "available_combination_only_contexts": 6,
+          "context_count": 6,
+          "feasible": true,
+          "ceiling_gain": 2.0,
+          "max_clearable_reference": 1.85
+        }
+      ]
+    },
+    {
+      "cell": "create__mismatch",
+      "content_route": "create",
+      "language_route": "mismatch",
+      "existence_precondition": true,
+      "expect_combination_only": true,
+      "observed_combination_only": true,
+      "combination_only_prediction_matches": true,
+      "contexts": [
+        "b0struct-create__mismatch-660",
+        "b0struct-create__mismatch-661",
+        "b0struct-create__mismatch-662",
+        "b0struct-create__mismatch-663",
+        "b0struct-create__mismatch-664",
+        "b0struct-create__mismatch-665"
+      ],
+      "singleton_success_rates_frozen": {
+        "member-a": 0.0,
+        "member-b": 0.0,
+        "member-c": 0.0,
+        "member-d": 0.0
+      },
+      "singleton_success_rates_audited": {
+        "member-a": 0.0,
+        "member-b": 0.0,
+        "member-c": 0.0,
+        "member-d": 0.0
+      },
+      "best_pair_frozen": "member-a+member-b",
+      "best_pair_gain_frozen": 0.0,
+      "best_pair_audited": "member-a+member-c",
+      "best_pair_gain_audited": 2.0,
+      "gain_delta": 2.0,
+      "positive_under_frozen": false,
+      "positive_under_m4": true,
+      "combination_only_contexts": 6,
+      "interleaved_contexts_frozen": 0,
+      "interleaved_contexts_audited": 6,
+      "changed_cells": 1,
+      "handoff_explained_changes": [
+        {
+          "cell": "member-a+member-c",
+          "delta": 1.0,
+          "baseline_success_rate": 0.0,
+          "audited_success_rate": 1.0,
+          "per_context": [
+            {
+              "context": "b0struct-create__mismatch-660",
+              "jointly_required": true,
+              "acting_members": [
+                "member-a",
+                "member-c"
+              ]
+            },
+            {
+              "context": "b0struct-create__mismatch-661",
+              "jointly_required": true,
+              "acting_members": [
+                "member-a",
+                "member-c"
+              ]
+            },
+            {
+              "context": "b0struct-create__mismatch-662",
+              "jointly_required": true,
+              "acting_members": [
+                "member-a",
+                "member-c"
+              ]
+            },
+            {
+              "context": "b0struct-create__mismatch-663",
+              "jointly_required": true,
+              "acting_members": [
+                "member-a",
+                "member-c"
+              ]
+            },
+            {
+              "context": "b0struct-create__mismatch-664",
+              "jointly_required": true,
+              "acting_members": [
+                "member-a",
+                "member-c"
+              ]
+            },
+            {
+              "context": "b0struct-create__mismatch-665",
+              "jointly_required": true,
+              "acting_members": [
+                "member-a",
+                "member-c"
+              ]
+            }
+          ]
+        }
+      ],
+      "fallback_only_changes": [],
+      "unexplained_changes": [],
+      "jointly_required_contexts_audited": [
+        "b0struct-create__mismatch-660",
+        "b0struct-create__mismatch-661",
+        "b0struct-create__mismatch-662",
+        "b0struct-create__mismatch-663",
+        "b0struct-create__mismatch-664",
+        "b0struct-create__mismatch-665"
+      ],
+      "stop_reasons_frozen": {
+        "all_members_exhausted": 48,
+        "step_cap": 48,
+        "contract_intercepted:preview_ValueError": 36
+      },
+      "stop_reasons_audited": {
+        "all_members_exhausted": 12,
+        "all_members_blocked": 72,
+        "contract_intercepted:preview_ValueError": 36,
+        "goal_reached": 12
+      },
+      "intervention_reality_frozen_ok": true,
+      "intervention_reality_audited_ok": true,
+      "reference_requirements_audited": [
+        {
+          "reference": "all_singleton_oracle",
+          "reference_gain": 1.5,
+          "required": 1.65,
+          "required_combination_only_contexts": 5,
+          "available_combination_only_contexts": 6,
+          "context_count": 6,
+          "feasible": true,
+          "ceiling_gain": 2.0,
+          "max_clearable_reference": 1.85
+        },
+        {
+          "reference": "best_fixed_singleton",
+          "reference_gain": 0.5,
+          "required": 0.65,
+          "required_combination_only_contexts": 2,
+          "available_combination_only_contexts": 6,
+          "context_count": 6,
+          "feasible": true,
+          "ceiling_gain": 2.0,
+          "max_clearable_reference": 1.85
+        },
+        {
+          "reference": "best_observed_fixed_pair",
+          "reference_gain": 1.0,
+          "required": 1.15,
+          "required_combination_only_contexts": 4,
+          "available_combination_only_contexts": 6,
+          "context_count": 6,
+          "feasible": true,
+          "ceiling_gain": 2.0,
+          "max_clearable_reference": 1.85
+        }
+      ]
+    },
+    {
+      "cell": "patch__none",
+      "content_route": "patch",
+      "language_route": "none",
+      "existence_precondition": false,
+      "expect_combination_only": false,
+      "observed_combination_only": false,
+      "combination_only_prediction_matches": true,
+      "contexts": [
+        "b0struct-patch__none-670",
+        "b0struct-patch__none-671",
+        "b0struct-patch__none-672",
+        "b0struct-patch__none-673",
+        "b0struct-patch__none-674",
+        "b0struct-patch__none-675"
+      ],
+      "singleton_success_rates_frozen": {
+        "member-a": 0.0,
+        "member-b": 1.0,
+        "member-c": 0.0,
+        "member-d": 0.0
+      },
+      "singleton_success_rates_audited": {
+        "member-a": 0.0,
+        "member-b": 1.0,
+        "member-c": 0.0,
+        "member-d": 0.0
+      },
+      "best_pair_frozen": "member-b+member-c",
+      "best_pair_gain_frozen": 0.0,
+      "best_pair_audited": "member-a+member-b",
+      "best_pair_gain_audited": 0.0,
+      "gain_delta": 0.0,
+      "positive_under_frozen": false,
+      "positive_under_m4": false,
+      "combination_only_contexts": 0,
+      "interleaved_contexts_frozen": 0,
+      "interleaved_contexts_audited": 0,
+      "changed_cells": 1,
+      "handoff_explained_changes": [],
+      "fallback_only_changes": [
+        {
+          "cell": "member-a+member-b",
+          "delta": 1.0,
+          "baseline_success_rate": 0.0,
+          "audited_success_rate": 1.0,
+          "per_context": [
+            {
+              "context": "b0struct-patch__none-670",
+              "jointly_required": false,
+              "acting_members": [
+                "member-a",
+                "member-b"
+              ]
+            },
+            {
+              "context": "b0struct-patch__none-671",
+              "jointly_required": false,
+              "acting_members": [
+                "member-a",
+                "member-b"
+              ]
+            },
+            {
+              "context": "b0struct-patch__none-672",
+              "jointly_required": false,
+              "acting_members": [
+                "member-a",
+                "member-b"
+              ]
+            },
+            {
+              "context": "b0struct-patch__none-673",
+              "jointly_required": false,
+              "acting_members": [
+                "member-a",
+                "member-b"
+              ]
+            },
+            {
+              "context": "b0struct-patch__none-674",
+              "jointly_required": false,
+              "acting_members": [
+                "member-a",
+                "member-b"
+              ]
+            },
+            {
+              "context": "b0struct-patch__none-675",
+              "jointly_required": false,
+              "acting_members": [
+                "member-a",
+                "member-b"
+              ]
+            }
+          ]
+        }
+      ],
+      "unexplained_changes": [],
+      "jointly_required_contexts_audited": [],
+      "stop_reasons_frozen": {
+        "all_members_exhausted": 72,
+        "goal_reached": 36,
+        "contract_intercepted:preview_WorkbenchConflictError": 24
+      },
+      "stop_reasons_audited": {
+        "all_members_exhausted": 48,
+        "goal_reached": 48,
+        "contract_intercepted:preview_WorkbenchConflictError": 36
+      },
+      "intervention_reality_frozen_ok": true,
+      "intervention_reality_audited_ok": true,
+      "reference_requirements_audited": [
+        {
+          "reference": "all_singleton_oracle",
+          "reference_gain": 1.5,
+          "required": 1.65,
+          "required_combination_only_contexts": 5,
+          "available_combination_only_contexts": 0,
+          "context_count": 6,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        },
+        {
+          "reference": "best_fixed_singleton",
+          "reference_gain": 0.5,
+          "required": 0.65,
+          "required_combination_only_contexts": 2,
+          "available_combination_only_contexts": 0,
+          "context_count": 6,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        },
+        {
+          "reference": "best_observed_fixed_pair",
+          "reference_gain": 1.0,
+          "required": 1.15,
+          "required_combination_only_contexts": 4,
+          "available_combination_only_contexts": 0,
+          "context_count": 6,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        }
+      ]
+    },
+    {
+      "cell": "patch__observation",
+      "content_route": "patch",
+      "language_route": "observation",
+      "existence_precondition": false,
+      "expect_combination_only": false,
+      "observed_combination_only": false,
+      "combination_only_prediction_matches": true,
+      "contexts": [
+        "b0struct-patch__observation-680",
+        "b0struct-patch__observation-681",
+        "b0struct-patch__observation-682",
+        "b0struct-patch__observation-683",
+        "b0struct-patch__observation-684",
+        "b0struct-patch__observation-685"
+      ],
+      "singleton_success_rates_frozen": {
+        "member-a": 0.0,
+        "member-b": 0.0,
+        "member-c": 0.0,
+        "member-d": 1.0
+      },
+      "singleton_success_rates_audited": {
+        "member-a": 0.0,
+        "member-b": 0.0,
+        "member-c": 0.0,
+        "member-d": 1.0
+      },
+      "best_pair_frozen": "member-a+member-b",
+      "best_pair_gain_frozen": -2.0,
+      "best_pair_audited": "member-a+member-b",
+      "best_pair_gain_audited": -2.0,
+      "gain_delta": 0.0,
+      "positive_under_frozen": false,
+      "positive_under_m4": false,
+      "combination_only_contexts": 0,
+      "interleaved_contexts_frozen": 0,
+      "interleaved_contexts_audited": 0,
+      "changed_cells": 0,
+      "handoff_explained_changes": [],
+      "fallback_only_changes": [],
+      "unexplained_changes": [],
+      "jointly_required_contexts_audited": [],
+      "stop_reasons_frozen": {
+        "all_members_exhausted": 12,
+        "step_cap": 48,
+        "contract_intercepted:preview_ValueError": 36,
+        "contract_intercepted:preview_WorkbenchConflictError": 24,
+        "goal_reached": 12
+      },
+      "stop_reasons_audited": {
+        "all_members_exhausted": 12,
+        "step_cap": 48,
+        "contract_intercepted:preview_ValueError": 36,
+        "contract_intercepted:preview_WorkbenchConflictError": 24,
+        "goal_reached": 12
+      },
+      "intervention_reality_frozen_ok": true,
+      "intervention_reality_audited_ok": true,
+      "reference_requirements_audited": [
+        {
+          "reference": "all_singleton_oracle",
+          "reference_gain": 1.5,
+          "required": 1.65,
+          "required_combination_only_contexts": 5,
+          "available_combination_only_contexts": 0,
+          "context_count": 6,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        },
+        {
+          "reference": "best_fixed_singleton",
+          "reference_gain": 0.5,
+          "required": 0.65,
+          "required_combination_only_contexts": 2,
+          "available_combination_only_contexts": 0,
+          "context_count": 6,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        },
+        {
+          "reference": "best_observed_fixed_pair",
+          "reference_gain": 1.0,
+          "required": 1.15,
+          "required_combination_only_contexts": 4,
+          "available_combination_only_contexts": 0,
+          "context_count": 6,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        }
+      ]
+    },
+    {
+      "cell": "patch__override",
+      "content_route": "patch",
+      "language_route": "override",
+      "existence_precondition": false,
+      "expect_combination_only": false,
+      "observed_combination_only": false,
+      "combination_only_prediction_matches": true,
+      "contexts": [
+        "b0struct-patch__override-690",
+        "b0struct-patch__override-691",
+        "b0struct-patch__override-692",
+        "b0struct-patch__override-693",
+        "b0struct-patch__override-694",
+        "b0struct-patch__override-695"
+      ],
+      "singleton_success_rates_frozen": {
+        "member-a": 0.0,
+        "member-b": 0.0,
+        "member-c": 0.0,
+        "member-d": 1.0
+      },
+      "singleton_success_rates_audited": {
+        "member-a": 0.0,
+        "member-b": 0.0,
+        "member-c": 0.0,
+        "member-d": 1.0
+      },
+      "best_pair_frozen": "member-a+member-b",
+      "best_pair_gain_frozen": -2.0,
+      "best_pair_audited": "member-a+member-b",
+      "best_pair_gain_audited": -2.0,
+      "gain_delta": 0.0,
+      "positive_under_frozen": false,
+      "positive_under_m4": false,
+      "combination_only_contexts": 0,
+      "interleaved_contexts_frozen": 0,
+      "interleaved_contexts_audited": 0,
+      "changed_cells": 0,
+      "handoff_explained_changes": [],
+      "fallback_only_changes": [],
+      "unexplained_changes": [],
+      "jointly_required_contexts_audited": [],
+      "stop_reasons_frozen": {
+        "all_members_exhausted": 12,
+        "step_cap": 48,
+        "contract_intercepted:preview_ValueError": 36,
+        "contract_intercepted:preview_WorkbenchConflictError": 24,
+        "goal_reached": 12
+      },
+      "stop_reasons_audited": {
+        "all_members_exhausted": 12,
+        "step_cap": 48,
+        "contract_intercepted:preview_ValueError": 36,
+        "contract_intercepted:preview_WorkbenchConflictError": 24,
+        "goal_reached": 12
+      },
+      "intervention_reality_frozen_ok": true,
+      "intervention_reality_audited_ok": true,
+      "reference_requirements_audited": [
+        {
+          "reference": "all_singleton_oracle",
+          "reference_gain": 1.5,
+          "required": 1.65,
+          "required_combination_only_contexts": 5,
+          "available_combination_only_contexts": 0,
+          "context_count": 6,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        },
+        {
+          "reference": "best_fixed_singleton",
+          "reference_gain": 0.5,
+          "required": 0.65,
+          "required_combination_only_contexts": 2,
+          "available_combination_only_contexts": 0,
+          "context_count": 6,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        },
+        {
+          "reference": "best_observed_fixed_pair",
+          "reference_gain": 1.0,
+          "required": 1.15,
+          "required_combination_only_contexts": 4,
+          "available_combination_only_contexts": 0,
+          "context_count": 6,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        }
+      ]
+    },
+    {
+      "cell": "patch__mismatch",
+      "content_route": "patch",
+      "language_route": "mismatch",
+      "existence_precondition": false,
+      "expect_combination_only": false,
+      "observed_combination_only": false,
+      "combination_only_prediction_matches": true,
+      "contexts": [
+        "b0struct-patch__mismatch-700",
+        "b0struct-patch__mismatch-701",
+        "b0struct-patch__mismatch-702",
+        "b0struct-patch__mismatch-703",
+        "b0struct-patch__mismatch-704",
+        "b0struct-patch__mismatch-705"
+      ],
+      "singleton_success_rates_frozen": {
+        "member-a": 0.0,
+        "member-b": 0.0,
+        "member-c": 0.0,
+        "member-d": 1.0
+      },
+      "singleton_success_rates_audited": {
+        "member-a": 0.0,
+        "member-b": 0.0,
+        "member-c": 0.0,
+        "member-d": 1.0
+      },
+      "best_pair_frozen": "member-a+member-b",
+      "best_pair_gain_frozen": -2.0,
+      "best_pair_audited": "member-a+member-b",
+      "best_pair_gain_audited": -2.0,
+      "gain_delta": 0.0,
+      "positive_under_frozen": false,
+      "positive_under_m4": false,
+      "combination_only_contexts": 0,
+      "interleaved_contexts_frozen": 0,
+      "interleaved_contexts_audited": 0,
+      "changed_cells": 0,
+      "handoff_explained_changes": [],
+      "fallback_only_changes": [],
+      "unexplained_changes": [],
+      "jointly_required_contexts_audited": [],
+      "stop_reasons_frozen": {
+        "all_members_exhausted": 12,
+        "step_cap": 48,
+        "contract_intercepted:preview_ValueError": 36,
+        "contract_intercepted:preview_WorkbenchConflictError": 24,
+        "goal_reached": 12
+      },
+      "stop_reasons_audited": {
+        "all_members_exhausted": 12,
+        "step_cap": 48,
+        "contract_intercepted:preview_ValueError": 36,
+        "contract_intercepted:preview_WorkbenchConflictError": 24,
+        "goal_reached": 12
+      },
+      "intervention_reality_frozen_ok": true,
+      "intervention_reality_audited_ok": true,
+      "reference_requirements_audited": [
+        {
+          "reference": "all_singleton_oracle",
+          "reference_gain": 1.5,
+          "required": 1.65,
+          "required_combination_only_contexts": 5,
+          "available_combination_only_contexts": 0,
+          "context_count": 6,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        },
+        {
+          "reference": "best_fixed_singleton",
+          "reference_gain": 0.5,
+          "required": 0.65,
+          "required_combination_only_contexts": 2,
+          "available_combination_only_contexts": 0,
+          "context_count": 6,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        },
+        {
+          "reference": "best_observed_fixed_pair",
+          "reference_gain": 1.0,
+          "required": 1.15,
+          "required_combination_only_contexts": 4,
+          "available_combination_only_contexts": 0,
+          "context_count": 6,
+          "feasible": false,
+          "ceiling_gain": 0.0,
+          "max_clearable_reference": -0.15
+        }
+      ]
+    }
+  ],
+  "outcome_distinctness": {
+    "cells_compared": 11,
+    "distinct_outcome_fingerprints": 3,
+    "fingerprints": {
+      "create__mismatch": "(2.0, 0.0, 6, 6)",
+      "create__none": "(0.0, 0.0, 0, 0)",
+      "create__observation": "(2.0, 0.0, 6, 6)",
+      "create__override": "(2.0, 0.0, 6, 6)",
+      "none__mismatch": "(0.0, 0.0, 0, 0)",
+      "none__observation": "(0.0, 0.0, 0, 0)",
+      "none__override": "(0.0, 0.0, 0, 0)",
+      "patch__mismatch": "(-2.0, -2.0, 0, 0)",
+      "patch__none": "(0.0, 0.0, 0, 0)",
+      "patch__observation": "(-2.0, -2.0, 0, 0)",
+      "patch__override": "(-2.0, -2.0, 0, 0)"
+    },
+    "grid_separates_cells": true
+  },
+  "verdict": {
+    "positive_gain_cells": [
+      "create__mismatch",
+      "create__observation",
+      "create__override"
+    ],
+    "positive_gain_count": 3,
+    "gain_delta_positive_cells": [
+      "create__mismatch",
+      "create__observation",
+      "create__override"
+    ],
+    "observed_combination_only_cells": [
+      "create__mismatch",
+      "create__observation",
+      "create__override"
+    ],
+    "predicted_combination_only_cells": [
+      "create__mismatch",
+      "create__observation",
+      "create__override"
+    ],
+    "combination_only_prediction_contradicted": [],
+    "prediction_contradictions_are_findings": true,
+    "gain_confined_to_create_and_override": false,
+    "gain_reproduces_on_a_second_structure": true,
+    "shared_by_positive_cells": {
+      "existence_precondition": true,
+      "combination_only": true,
+      "requires_second_member": true
+    },
+    "cells_with_unexplained_change": [],
+    "handoff_explained_pair_cells": [
+      "member-a+member-c"
+    ],
+    "fallback_only_pair_cells": [
+      "member-a+member-b",
+      "member-a+member-c"
+    ],
+    "m4_regresses_cells": []
+  },
+  "seed_sweep": {
+    "offsets": [
+      0,
+      101,
+      202,
+      303,
+      404,
+      505,
+      606
+    ],
+    "rows": [
+      {
+        "seed_offset": 0,
+        "cell": "none__observation",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 0,
+        "cell": "none__override",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 0,
+        "cell": "none__mismatch",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 0,
+        "cell": "create__none",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 0,
+        "cell": "create__observation",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 2.0,
+        "positive": true,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 0,
+        "cell": "create__override",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 2.0,
+        "positive": true,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 0,
+        "cell": "create__mismatch",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 2.0,
+        "positive": true,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 0,
+        "cell": "patch__none",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 0,
+        "cell": "patch__observation",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": -2.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 0,
+        "cell": "patch__override",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": -2.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 0,
+        "cell": "patch__mismatch",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": -2.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 101,
+        "cell": "none__observation",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 101,
+        "cell": "none__override",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 101,
+        "cell": "none__mismatch",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 101,
+        "cell": "create__none",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 101,
+        "cell": "create__observation",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 2.0,
+        "positive": true,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 101,
+        "cell": "create__override",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 2.0,
+        "positive": true,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 101,
+        "cell": "create__mismatch",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 2.0,
+        "positive": true,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 101,
+        "cell": "patch__none",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 101,
+        "cell": "patch__observation",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": -2.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 101,
+        "cell": "patch__override",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": -2.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 101,
+        "cell": "patch__mismatch",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": -2.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 202,
+        "cell": "none__observation",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 202,
+        "cell": "none__override",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 202,
+        "cell": "none__mismatch",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 202,
+        "cell": "create__none",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 202,
+        "cell": "create__observation",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 2.0,
+        "positive": true,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 202,
+        "cell": "create__override",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 2.0,
+        "positive": true,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 202,
+        "cell": "create__mismatch",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 2.0,
+        "positive": true,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 202,
+        "cell": "patch__none",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 202,
+        "cell": "patch__observation",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": -2.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 202,
+        "cell": "patch__override",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": -2.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 202,
+        "cell": "patch__mismatch",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": -2.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 303,
+        "cell": "none__observation",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 303,
+        "cell": "none__override",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 303,
+        "cell": "none__mismatch",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 303,
+        "cell": "create__none",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 303,
+        "cell": "create__observation",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 2.0,
+        "positive": true,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 303,
+        "cell": "create__override",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 2.0,
+        "positive": true,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 303,
+        "cell": "create__mismatch",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 2.0,
+        "positive": true,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 303,
+        "cell": "patch__none",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 303,
+        "cell": "patch__observation",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": -2.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 303,
+        "cell": "patch__override",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": -2.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 303,
+        "cell": "patch__mismatch",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": -2.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 404,
+        "cell": "none__observation",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 404,
+        "cell": "none__override",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 404,
+        "cell": "none__mismatch",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 404,
+        "cell": "create__none",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 404,
+        "cell": "create__observation",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 2.0,
+        "positive": true,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 404,
+        "cell": "create__override",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 2.0,
+        "positive": true,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 404,
+        "cell": "create__mismatch",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 2.0,
+        "positive": true,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 404,
+        "cell": "patch__none",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 404,
+        "cell": "patch__observation",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": -2.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 404,
+        "cell": "patch__override",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": -2.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 404,
+        "cell": "patch__mismatch",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": -2.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 505,
+        "cell": "none__observation",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 505,
+        "cell": "none__override",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 505,
+        "cell": "none__mismatch",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 505,
+        "cell": "create__none",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 505,
+        "cell": "create__observation",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 2.0,
+        "positive": true,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 505,
+        "cell": "create__override",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 2.0,
+        "positive": true,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 505,
+        "cell": "create__mismatch",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 2.0,
+        "positive": true,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 505,
+        "cell": "patch__none",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 505,
+        "cell": "patch__observation",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": -2.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 505,
+        "cell": "patch__override",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": -2.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 505,
+        "cell": "patch__mismatch",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": -2.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 606,
+        "cell": "none__observation",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 606,
+        "cell": "none__override",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 606,
+        "cell": "none__mismatch",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 606,
+        "cell": "create__none",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 606,
+        "cell": "create__observation",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 2.0,
+        "positive": true,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 606,
+        "cell": "create__override",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 2.0,
+        "positive": true,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 606,
+        "cell": "create__mismatch",
+        "best_pair": "member-a+member-c",
+        "best_pair_gain": 2.0,
+        "positive": true,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 606,
+        "cell": "patch__none",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": 0.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 606,
+        "cell": "patch__observation",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": -2.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 606,
+        "cell": "patch__override",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": -2.0,
+        "positive": false,
+        "reality_ok": true
+      },
+      {
+        "seed_offset": 606,
+        "cell": "patch__mismatch",
+        "best_pair": "member-a+member-b",
+        "best_pair_gain": -2.0,
+        "positive": false,
+        "reality_ok": true
+      }
+    ],
+    "positive_cells_any_seed": [
+      "create__mismatch",
+      "create__observation",
+      "create__override"
+    ],
+    "positive_cells_every_seed": [
+      "create__mismatch",
+      "create__observation",
+      "create__override"
+    ],
+    "reality_ok_everywhere": true
+  },
+  "section_5_2_candidates": {
+    "T1_serial_handoff": {
+      "spec": "create a file, then patch the freshly created content",
+      "expressible": false,
+      "verdict": "inexpressible_under_frozen_binder",
+      "why": "workspace.create binds content = task.goal_files[main_path], so the created file is already at its goal state and workspace.apply_patch then refuses with 'file already at goal state'",
+      "scripted_steps": [
+        {
+          "kind": "workspace.list",
+          "bound": true,
+          "success": true,
+          "failure": null
+        },
+        {
+          "kind": "workspace.create",
+          "bound": true,
+          "success": true,
+          "failure": null
+        },
+        {
+          "kind": "workspace.read",
+          "bound": true,
+          "success": true,
+          "failure": null
+        },
+        {
+          "kind": "workspace.apply_patch",
+          "bound": false,
+          "success": null,
+          "failure": "bind_failure: file already at goal state"
+        }
+      ],
+      "goal_reached_by_create_alone": true,
+      "create_bound_content": "x = 2\n",
+      "consequence": "the earlier create_then_patch surface is a create-only task, which is why member-c solves it alone; a serial-handoff structure needs a binder change, not a composition change"
+    },
+    "T3_dual_goal_two_files": {
+      "spec": "two independent files, one needing an override and one needing a patch",
+      "expressible": false,
+      "verdict": "inexpressible_under_frozen_binder",
+      "why": "_bind resolves every action kind against task.main_path, so no action can ever target the second goal path; its content clause can be pre-satisfied in initial_files but its language clause cannot",
+      "scripted_goal_reached": false,
+      "bound_paths_for_a_two_path_goal": {
+        "workspace.create": [
+          "t3_main.py",
+          null
+        ],
+        "editor.set_language": [
+          "t3_main.py",
+          "python"
+        ]
+      },
+      "note": "the expressible reading of 'jointly required' is one file with two clauses, which is the patch x * row of the grid -- and member-d covers it alone.  The grid is therefore the closest admissible substitute."
+    }
+  },
+  "t2_member_input_surface": {
+    "cell": "create__observation",
+    "episodes": 44,
+    "predict_episode_signature": "(self, cues: 'Sequence[torch.Tensor]') -> 'tuple[str, ...]'",
+    "per_member": {
+      "member-a": {
+        "calls": 56,
+        "distinct_cue_fingerprints": [
+          0.023131,
+          0.037774
+        ],
+        "history_lengths_seen": [
+          1,
+          2
+        ],
+        "max_distinct_cue_objects_in_one_call": 1,
+        "kinds_predicted": [
+          "workspace.programming_language.resolve",
+          "workspace.read"
+        ]
+      },
+      "member-b": {
+        "calls": 60,
+        "distinct_cue_fingerprints": [
+          0.023131,
+          0.037774
+        ],
+        "history_lengths_seen": [
+          1,
+          2
+        ],
+        "max_distinct_cue_objects_in_one_call": 1,
+        "kinds_predicted": [
+          "workspace.apply_patch",
+          "workspace.read"
+        ]
+      },
+      "member-c": {
+        "calls": 84,
+        "distinct_cue_fingerprints": [
+          0.023131,
+          0.037774
+        ],
+        "history_lengths_seen": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "max_distinct_cue_objects_in_one_call": 1,
+        "kinds_predicted": [
+          "workspace.create",
+          "workspace.list",
+          "workspace.undo"
+        ]
+      },
+      "member-d": {
+        "calls": 48,
+        "distinct_cue_fingerprints": [
+          0.023131,
+          0.037774
+        ],
+        "history_lengths_seen": [
+          1
+        ],
+        "max_distinct_cue_objects_in_one_call": 1,
+        "kinds_predicted": [
+          "workspace.read"
+        ]
+      }
+    },
+    "distinct_cue_values_seen": 2,
+    "cue_values_per_task": true,
+    "arguments_carry_history_length_only": true,
+    "expressible": false,
+    "verdict": "requires_new_evidence_channel",
+    "why": "predict_episode takes one argument, and every element of the tuple passed to it is the same tensor object repeated -- so the only per-call variation is the member's own history length.  No member is ever handed another member's failure, so 'B reads A's failure evidence' cannot be built out of task design",
+    "consequence": "M4 does carry that failure information, but in the composition layer (it reads the step list), not in any member -- which is why M4 is a rule change while T2 would be a capability change"
+  }
+}

@@ -1,0 +1,283 @@
+{
+  "format": "taiji-p5-2b-group-causal-corpora-report-v1",
+  "version": 1,
+  "status": "completed",
+  "growth_admitted": false,
+  "can_promote": false,
+  "preregistration": "plans/reference/M5_P5_2B_GROUP_CAUSAL_CORPORA_PREREGISTRATION_20260913.md",
+  "static_checks": {
+    "scope": [
+      "seed_platform/workbench.py",
+      "taiji/interaction_groups.py",
+      "taiji/interaction_group_transfer.py",
+      "scripts/training/eval_taiji_p5_2a_predictive_execution_gate.py",
+      "scripts/training/eval_taiji_p5_2b_group_causal_corpora_gate.py"
+    ],
+    "commands": [
+      "python -m py_compile <scope files>",
+      "python -m ruff check scripts/training (and full repo)",
+      "python -m mypy --follow-imports=silent seed taiji",
+      "python -m black --no-cache --check <scope files>",
+      "python -m pytest (baseline 2 failed known debts, no new failures)"
+    ],
+    "executed_before_run": true
+  },
+  "outcome": "group_causal_corpora_supported",
+  "experiment_passed": true,
+  "design": {
+    "members": [
+      "member-a",
+      "member-b",
+      "member-c",
+      "member-d"
+    ],
+    "member_kind": "family-specialist procedural readouts (real intervenable learner instances)",
+    "rule_revision": 1,
+    "composition_rule": "m4_failure_handoff",
+    "composition": "dual-predict-select with failure handoff: every active member predicts each tick; the first member in active_members order whose prediction binds and whose most recent attempt did not fail executes; a member is unblocked as soon as anyone succeeds; each member is cued at its own executed step count",
+    "composition_rule_revision_0": {
+      "rule": "priority_fallback",
+      "composition": "dual-predict-select: every active member predicts each tick; the lexicographically first member whose prediction binds executes",
+      "note": "historical description; the numbers in the sealed rule_revision=0 report were produced under this rule"
+    },
+    "contexts": 12,
+    "repeats": 2,
+    "cells": [
+      "(F,F)",
+      "(T,F)",
+      "(F,T)",
+      "(T,T)"
+    ],
+    "recovery_effect_disclosure": "recovery interaction not measured this gate; recorded as 0 without fabrication",
+    "semantic_mapping_disclosure": "member id -> training family mapping stored in runner config only"
+  },
+  "member_integrity": {
+    "member-a": {
+      "restored_prediction_match": true,
+      "tamper_rejected": true,
+      "family_scene_count": 10
+    },
+    "member-b": {
+      "restored_prediction_match": true,
+      "tamper_rejected": true,
+      "family_scene_count": 10
+    },
+    "member-c": {
+      "restored_prediction_match": true,
+      "tamper_rejected": true,
+      "family_scene_count": 10
+    },
+    "member-d": {
+      "restored_prediction_match": true,
+      "tamper_rejected": true,
+      "family_scene_count": 10
+    }
+  },
+  "family_disjoint": true,
+  "matrix": {
+    "episodes": 264,
+    "per_cell_success": {
+      "p52a-validation-100:member-a": 2,
+      "p52a-validation-100:member-a-member-b": 2,
+      "p52a-validation-100:member-a-member-c": 2,
+      "p52a-validation-100:member-a-member-d": 2,
+      "p52a-validation-100:member-b": 0,
+      "p52a-validation-100:member-b-member-c": 0,
+      "p52a-validation-100:member-b-member-d": 2,
+      "p52a-validation-100:member-c": 0,
+      "p52a-validation-100:member-c-member-d": 0,
+      "p52a-validation-100:member-d": 2,
+      "p52a-validation-100:none": 0,
+      "p52a-validation-101:member-a": 0,
+      "p52a-validation-101:member-a-member-b": 2,
+      "p52a-validation-101:member-a-member-c": 0,
+      "p52a-validation-101:member-a-member-d": 0,
+      "p52a-validation-101:member-b": 2,
+      "p52a-validation-101:member-b-member-c": 2,
+      "p52a-validation-101:member-b-member-d": 2,
+      "p52a-validation-101:member-c": 0,
+      "p52a-validation-101:member-c-member-d": 0,
+      "p52a-validation-101:member-d": 0,
+      "p52a-validation-101:none": 0,
+      "p52a-validation-102:member-a": 0,
+      "p52a-validation-102:member-a-member-b": 0,
+      "p52a-validation-102:member-a-member-c": 2,
+      "p52a-validation-102:member-a-member-d": 0,
+      "p52a-validation-102:member-b": 0,
+      "p52a-validation-102:member-b-member-c": 2,
+      "p52a-validation-102:member-b-member-d": 0,
+      "p52a-validation-102:member-c": 2,
+      "p52a-validation-102:member-c-member-d": 2,
+      "p52a-validation-102:member-d": 0,
+      "p52a-validation-102:none": 0,
+      "p52a-validation-103:member-a": 0,
+      "p52a-validation-103:member-a-member-b": 0,
+      "p52a-validation-103:member-a-member-c": 0,
+      "p52a-validation-103:member-a-member-d": 0,
+      "p52a-validation-103:member-b": 0,
+      "p52a-validation-103:member-b-member-c": 0,
+      "p52a-validation-103:member-b-member-d": 0,
+      "p52a-validation-103:member-c": 0,
+      "p52a-validation-103:member-c-member-d": 0,
+      "p52a-validation-103:member-d": 0,
+      "p52a-validation-103:none": 0,
+      "p52a-validation-104:member-a": 2,
+      "p52a-validation-104:member-a-member-b": 2,
+      "p52a-validation-104:member-a-member-c": 2,
+      "p52a-validation-104:member-a-member-d": 2,
+      "p52a-validation-104:member-b": 0,
+      "p52a-validation-104:member-b-member-c": 0,
+      "p52a-validation-104:member-b-member-d": 2,
+      "p52a-validation-104:member-c": 0,
+      "p52a-validation-104:member-c-member-d": 0,
+      "p52a-validation-104:member-d": 2,
+      "p52a-validation-104:none": 0,
+      "p52a-validation-105:member-a": 0,
+      "p52a-validation-105:member-a-member-b": 2,
+      "p52a-validation-105:member-a-member-c": 0,
+      "p52a-validation-105:member-a-member-d": 0,
+      "p52a-validation-105:member-b": 2,
+      "p52a-validation-105:member-b-member-c": 2,
+      "p52a-validation-105:member-b-member-d": 2,
+      "p52a-validation-105:member-c": 0,
+      "p52a-validation-105:member-c-member-d": 0,
+      "p52a-validation-105:member-d": 0,
+      "p52a-validation-105:none": 0,
+      "p52a-validation-106:member-a": 0,
+      "p52a-validation-106:member-a-member-b": 0,
+      "p52a-validation-106:member-a-member-c": 2,
+      "p52a-validation-106:member-a-member-d": 0,
+      "p52a-validation-106:member-b": 0,
+      "p52a-validation-106:member-b-member-c": 2,
+      "p52a-validation-106:member-b-member-d": 0,
+      "p52a-validation-106:member-c": 2,
+      "p52a-validation-106:member-c-member-d": 2,
+      "p52a-validation-106:member-d": 0,
+      "p52a-validation-106:none": 0,
+      "p52a-validation-107:member-a": 0,
+      "p52a-validation-107:member-a-member-b": 0,
+      "p52a-validation-107:member-a-member-c": 0,
+      "p52a-validation-107:member-a-member-d": 0,
+      "p52a-validation-107:member-b": 0,
+      "p52a-validation-107:member-b-member-c": 0,
+      "p52a-validation-107:member-b-member-d": 0,
+      "p52a-validation-107:member-c": 0,
+      "p52a-validation-107:member-c-member-d": 0,
+      "p52a-validation-107:member-d": 0,
+      "p52a-validation-107:none": 0,
+      "p52a-validation-108:member-a": 2,
+      "p52a-validation-108:member-a-member-b": 2,
+      "p52a-validation-108:member-a-member-c": 2,
+      "p52a-validation-108:member-a-member-d": 2,
+      "p52a-validation-108:member-b": 0,
+      "p52a-validation-108:member-b-member-c": 0,
+      "p52a-validation-108:member-b-member-d": 2,
+      "p52a-validation-108:member-c": 0,
+      "p52a-validation-108:member-c-member-d": 0,
+      "p52a-validation-108:member-d": 2,
+      "p52a-validation-108:none": 0,
+      "p52a-validation-109:member-a": 0,
+      "p52a-validation-109:member-a-member-b": 2,
+      "p52a-validation-109:member-a-member-c": 0,
+      "p52a-validation-109:member-a-member-d": 0,
+      "p52a-validation-109:member-b": 2,
+      "p52a-validation-109:member-b-member-c": 2,
+      "p52a-validation-109:member-b-member-d": 2,
+      "p52a-validation-109:member-c": 0,
+      "p52a-validation-109:member-c-member-d": 0,
+      "p52a-validation-109:member-d": 0,
+      "p52a-validation-109:none": 0,
+      "p52a-validation-110:member-a": 0,
+      "p52a-validation-110:member-a-member-b": 0,
+      "p52a-validation-110:member-a-member-c": 2,
+      "p52a-validation-110:member-a-member-d": 0,
+      "p52a-validation-110:member-b": 0,
+      "p52a-validation-110:member-b-member-c": 2,
+      "p52a-validation-110:member-b-member-d": 0,
+      "p52a-validation-110:member-c": 2,
+      "p52a-validation-110:member-c-member-d": 2,
+      "p52a-validation-110:member-d": 0,
+      "p52a-validation-110:none": 0,
+      "p52a-validation-111:member-a": 0,
+      "p52a-validation-111:member-a-member-b": 0,
+      "p52a-validation-111:member-a-member-c": 0,
+      "p52a-validation-111:member-a-member-d": 0,
+      "p52a-validation-111:member-b": 0,
+      "p52a-validation-111:member-b-member-c": 0,
+      "p52a-validation-111:member-b-member-d": 0,
+      "p52a-validation-111:member-c": 0,
+      "p52a-validation-111:member-c-member-d": 0,
+      "p52a-validation-111:member-d": 0,
+      "p52a-validation-111:none": 0
+    },
+    "matrix_constant": false,
+    "intervention_reality": {
+      "cells": 132,
+      "baseline_cells": 12,
+      "zero_step_episodes_total": 0,
+      "zero_step_intervention_cells": {},
+      "zero_step_intervention_episodes": 0,
+      "interventions_happened": true
+    },
+    "zero_step_by_cell": {}
+  },
+  "evaluator": {
+    "groups": 2,
+    "rejected": 4,
+    "rejected_reasons": [
+      [
+        "low_confidence",
+        4
+      ]
+    ],
+    "group_contributions": [
+      {
+        "group_id": "group:7bf2a65ddc9b8ce71fbd2bc9",
+        "member_ids": [
+          "member-a",
+          "member-b"
+        ],
+        "contribution": 0.625,
+        "interaction": -0.12500000000000003,
+        "holdout_interaction": -0.12500000000000003
+      },
+      {
+        "group_id": "group:5571933007e239a764b9ca0a",
+        "member_ids": [
+          "member-b",
+          "member-c"
+        ],
+        "contribution": 0.625,
+        "interaction": -0.125,
+        "holdout_interaction": -0.125
+      }
+    ]
+  },
+  "member_evidence": {
+    "profiles": 4,
+    "member_ids": [
+      "member-a",
+      "member-b",
+      "member-c",
+      "member-d"
+    ]
+  },
+  "deterministic_and_budget": {
+    "replica_consistent": true,
+    "elapsed_seconds": 24.772,
+    "total_seconds_cap": 900.0
+  },
+  "gates": {
+    "static_checks": true,
+    "member_integrity": true,
+    "cell_completeness": true,
+    "pairing_identity": true,
+    "label_opaqueness": true,
+    "real_execution": true,
+    "holdout_independence": true,
+    "nonempty_records": true,
+    "deterministic_and_budget": true
+  },
+  "interpretation": "completed: outcome=group_causal_corpora_supported; cells varying=True; groups=2 rejected=4",
+  "elapsed_seconds": 24.772
+}

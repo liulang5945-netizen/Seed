@@ -10,8 +10,10 @@ all four factorial cells are executed through the same
 policy -> approval -> execute path used by P5.2/P5.2a: (F,F) inactive
 baseline (no cognitive member -> no actions), two singletons, and the pair
 under the dual-predict-select composition (every active member predicts each
-tick; the lexicographically first member whose prediction binds executes, the
-others are recorded as dissent).  Episodes are projected into
+tick; since rule_revision 1 the first member in order whose prediction binds and
+whose most recent attempt did not fail executes, the others are recorded as
+dissent -- revision 0 executed the lexicographically first bindable member).
+Episodes are projected into
 InteractionTraceEpisode records (owner = executing member), consumed by
 InteractionGroupEvaluator, and profiled via build_member_evidence.  Member
 ids are opaque; the semantic mapping lives only in this runner's config
@@ -59,7 +61,31 @@ from taiji.procedural_memory import ProceduralSequenceLearner  # noqa: E402
 REPORT_FORMAT = "taiji-p5-2b-group-causal-corpora-report-v1"
 VERSION = 1
 PREREGISTRATION = "plans/reference/M5_P5_2B_GROUP_CAUSAL_CORPORA_PREREGISTRATION_20260913.md"
-DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_p5_2b_group_causal_corpora_20260913.json"
+
+#: Which composition rule this runner implements.  Landing HANDOFF-M4 (WP-3) moves this
+#: from 0 to 1.  Every report carries it so rule_revision=0 numbers are never overwritten
+#: and cross-version comparison stays explicit (route B frozen preregistration section 8;
+#: N2 frozen preregistration invariants I6/I8).
+RULE_REVISION = 1
+COMPOSITION_RULE = "m4_failure_handoff"
+COMPOSITION_RULE_TEXT = (
+    "dual-predict-select with failure handoff: every active member predicts each tick; "
+    "the first member in active_members order whose prediction binds and whose most recent "
+    "attempt did not fail executes; a member is unblocked as soon as anyone succeeds; "
+    "each member is cued at its own executed step count"
+)
+REVISION_0_RULE_TEXT = (
+    "dual-predict-select: every active member predicts each tick; "
+    "the lexicographically first member whose prediction binds executes"
+)
+
+#: Rule-revision 0 evidence, produced once on 2026-09-13 and sealed by sha256 in the plan
+#: documents.  It is referenced read-only: writing a revision-1 run into it would destroy
+#: the baseline that WP-3's exits 2 and 3 are measured against.
+REVISION_0_REPORT = PROJECT_ROOT / "reports" / "taiji_p5_2b_group_causal_corpora_20260913.json"
+DEFAULT_REPORT = (
+    PROJECT_ROOT / "reports" / "taiji_p5_2b_group_causal_corpora_m4_20260915.json"
+)
 
 TOTAL_SECONDS_CAP = 900.0
 PROCEDURAL_HIDDEN_DIM = 64
@@ -161,11 +187,14 @@ def _member_episode(
     """One factorial-cell execution: dual-predict-select composition.
 
     Every active member is genuinely invoked each tick (its readout predicts
-    and its prediction is bound); the frozen selection rule executes the
-    lexicographically first member whose prediction binds.  This keeps the
-    episode's member set equal to the intervention configuration, which the
-    evaluator's event-derived member_ids require (a pure fallback chain would
-    structurally prevent pair cells from forming).
+    and its prediction is bound).  As of ``rule_revision = 1`` (HANDOFF-M4) the
+    selection rule is *failure handoff*: the first member in ``active_members``
+    order whose prediction binds **and whose most recent attempt did not fail**
+    executes, and a blocked member is released as soon as anyone succeeds.
+    This keeps the episode's member set equal to the intervention
+    configuration, which the evaluator's event-derived member_ids require (a
+    pure fallback chain would structurally prevent pair cells from forming).
+    The superseded revision-0 rule is documented at module level, not here.
     """
 
     # Fixed initial world (roadmap section 6.2): every episode starts from a
@@ -215,14 +244,19 @@ def _member_episode(
     for tick in range(1, STEP_CAP + 1):
         if p52a._goal_reached(environment, task):
             return finish("goal_reached")
-        # Every active member is genuinely invoked each tick (cognitive call);
-        # the frozen selection rule executes the lexicographically first
-        # member whose prediction binds, recording the others as dissent.
+        # Every active member is genuinely invoked each tick (cognitive call).
+        # Each member is cued at its OWN executed step count, not the episode's
+        # step count: a member that joins late is queried inside the repertoire it
+        # was trained on instead of outside it.  (rule_revision 1 / HANDOFF-M4;
+        # byte-identical to the counterfactual replacement it was measured with.)
         calls: list[dict[str, Any]] = []
         bindable: list[dict[str, Any]] = []
         for member_id in active_members:
             learner = members[member_id]
-            cues = tuple([cue] * (len(steps) + 1))
+            own_steps = sum(
+                1 for s in steps if s.get("executed") and s.get("chosen") == member_id
+            )
+            cues = tuple([cue] * (own_steps + 1))
             kind = str(learner.predict_episode(cues)[-1])
             params, provenance, failure = p52a._bind(kind, task, state)
             call = {
@@ -245,7 +279,25 @@ def _member_episode(
                 }
             )
             return finish("all_members_exhausted")
-        chosen = bindable[0]
+        last_success_index = max(
+            (i for i, s in enumerate(steps) if s.get("executed")), default=-1
+        )
+        blocked = {
+            s.get("chosen")
+            for i, s in enumerate(steps)
+            if s.get("chosen") and not s.get("executed") and i > last_success_index
+        }
+        chosen = next((c for c in bindable if c["member"] not in blocked), None)
+        if chosen is None:
+            steps.append(
+                {
+                    "tick": tick,
+                    "called": [c["member"] for c in calls],
+                    "executed": False,
+                    "stop": "all_members_blocked",
+                }
+            )
+            return finish("all_members_blocked")
         kind = chosen["kind"]
         params = chosen["params"]
         intent = ActionIntent(
@@ -595,10 +647,15 @@ def run_gate() -> dict[str, Any]:
                 "design": {
                     "members": list(MEMBER_IDS),
                     "member_kind": "family-specialist procedural readouts (real intervenable learner instances)",
-                    "composition": (
-                        "dual-predict-select: every active member predicts each tick; "
-                        "the lexicographically first member whose prediction binds executes"
-                    ),
+                    "rule_revision": RULE_REVISION,
+                    "composition_rule": COMPOSITION_RULE,
+                    "composition": COMPOSITION_RULE_TEXT,
+                    "composition_rule_revision_0": {
+                        "rule": "priority_fallback",
+                        "composition": REVISION_0_RULE_TEXT,
+                        "note": "historical description; the numbers in the sealed "
+                        "rule_revision=0 report were produced under this rule",
+                    },
                     "contexts": CONTEXT_COUNT,
                     "repeats": REPEATS,
                     "cells": ["(F,F)", "(T,F)", "(F,T)", "(T,T)"],
