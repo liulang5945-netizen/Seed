@@ -26,8 +26,14 @@
   - **本轮验证**：定向 6/6 通过；`tests/` 全量（守卫关闭）**1386 passed / 6 skipped / 0 failed**（1059s）；
     `ruff check .`、`ruff check . --select B,SIM --ignore B008`、
     `mypy --follow-imports=silent seed taiji`（114 源文件）三项**全部干净**。
-  - **`black --check .` 仍红（460 文件）**：既有、**未登记**的债务（CI 有 blocking 门禁但从未清理），
-    本轮未处置，属独立决策项。
+  - **`black --check .` 已处置（`75e9c97b`）**：实测它是**远端 CI `test` job 唯一的失败步骤**
+    （`test (3.10)` 与 `test (3.12)` 的失败步骤均只有 `Format check with black`；其余
+    ruff / ruff B,SIM / mypy / pytest / coverage / startup-smoke / build-frontend / docker-build 全绿）。
+    按项目既有配置（`[tool.black]` line-length=100 + `.pre-commit-config.yaml` hook == CI pin 26.5.1）
+    执行一次全仓格式化 **460 文件**（纯格式、AST 保持）：`black --check .` 460 → 0（两次复检幂等）；
+    格式化后四段验证仍全绿 —— ruff ×2、`mypy --follow-imports=silent seed taiji`（114 文件）、
+    `tests/` 全量 **1386 passed / 6 skipped / 0 failed**。
+    ⇒ 该项**不是可选债务而是 CI 绿的必要条件**；教训：判定"既有格式债"的优先级应先看 CI 口径。
   - ⇒ **本地复跑 `tests/` 必须设 `CODEBUDDY_SAFE_DELETE_ENABLED=0`**，否则读到的是环境伪影而非真实结果。
 
 - DEBT-A1/A2 已结项，见下方修复记录；原“只登记不修复”是建册时范围，不应把已完成修复写回未解决。
