@@ -1,0 +1,201 @@
+{
+  "format": "taiji-b0-checkpoint-preflight-report-v1",
+  "version": 1,
+  "status": "completed",
+  "preregistration": "plans/reference/M5_B0_ROUTE_B_PREREGISTRATION_FROZEN_20260915.md",
+  "scope": "WP-4 precondition evidence only; no B1 fit started",
+  "static_checks": {
+    "scope": [
+      "scripts/training/audit_taiji_b0_checkpoint_preflight.py",
+      "scripts/training/eval_taiji_p5_2b_group_causal_corpora_gate.py",
+      "scripts/training/audit_taiji_b0_task_reachability_precheck.py"
+    ],
+    "commands": [
+      "python -m py_compile <scope files>",
+      "python -m ruff check scripts/training (and full repo)",
+      "python -m black --no-cache --check <scope files>",
+      "pytest baseline cited from M5_B0_M4_LANDING_RESULT_20260915 (1428 passed / 0 failed / 6 skipped)"
+    ]
+  },
+  "record": {
+    "commit": "101da55a036c130c48d3aee9ee1b84d47a87bd26",
+    "python_version": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "command": "python scripts/training/audit_taiji_b0_checkpoint_preflight.py",
+    "member_build_seconds": 10.77,
+    "started_epoch": 349713.433,
+    "elapsed_seconds": 17.238
+  },
+  "gates": {
+    "paths": {
+      "work_dir": "C:\\Users\\23747\\AppData\\Local\\Temp\\b0-preflight-emte9__x",
+      "writable": true,
+      "free_disk_bytes": 278918926336,
+      "free_disk_sufficient": true,
+      "atomic_save_roundtrip": true,
+      "fresh_dir_no_clobber": true
+    },
+    "save_restore": {
+      "per_member": {
+        "member-a": {
+          "parent_prediction_digest": "f1c05f75799c56402992ae63042fdd876d65d6188b188cee1be7ff3f1c359760",
+          "parent_payload_digest": "56308631171904bddd309abd044293ade3bb2ee2aca36172151c5ae18845d5a6",
+          "child_prediction_digest": "f1c05f75799c56402992ae63042fdd876d65d6188b188cee1be7ff3f1c359760",
+          "child_payload_digest": "56308631171904bddd309abd044293ade3bb2ee2aca36172151c5ae18845d5a6",
+          "match": true,
+          "zero_step": true
+        },
+        "member-b": {
+          "parent_prediction_digest": "b779178a81d6a7d46fd2f168580a4dc205c6c99e7816afbb65e8ef80063f12d4",
+          "parent_payload_digest": "fd7ee7c285e268c74f0f95f7b96dee3f59f6ec71db88a4f205f544192b601697",
+          "child_prediction_digest": "b779178a81d6a7d46fd2f168580a4dc205c6c99e7816afbb65e8ef80063f12d4",
+          "child_payload_digest": "fd7ee7c285e268c74f0f95f7b96dee3f59f6ec71db88a4f205f544192b601697",
+          "match": true,
+          "zero_step": true
+        },
+        "member-c": {
+          "parent_prediction_digest": "d302b83e8b198674c450712c479b4938103c9e9f74a43c8cefeb192b674ce732",
+          "parent_payload_digest": "fb0ffb5fad409248f28fff75592e3a024b4dd1f5ea4a968a4df3daadd61f588b",
+          "child_prediction_digest": "d302b83e8b198674c450712c479b4938103c9e9f74a43c8cefeb192b674ce732",
+          "child_payload_digest": "fb0ffb5fad409248f28fff75592e3a024b4dd1f5ea4a968a4df3daadd61f588b",
+          "match": true,
+          "zero_step": true
+        },
+        "member-d": {
+          "parent_prediction_digest": "f1c05f75799c56402992ae63042fdd876d65d6188b188cee1be7ff3f1c359760",
+          "parent_payload_digest": "6a6cfee41ea242ca29f4c1c817c0c28c89516e1065b8250c040a67092cda166e",
+          "child_prediction_digest": "f1c05f75799c56402992ae63042fdd876d65d6188b188cee1be7ff3f1c359760",
+          "child_payload_digest": "6a6cfee41ea242ca29f4c1c817c0c28c89516e1065b8250c040a67092cda166e",
+          "match": true,
+          "zero_step": true
+        }
+      },
+      "all_match": true
+    },
+    "tamper": {
+      "per_member": {
+        "member-a": {
+          "format_rejected": true,
+          "wrong_parent_rejected": true,
+          "behavioral_tamper_detected": true,
+          "structural_tamper_detected": true,
+          "rollback_restores_predictions": true,
+          "ok": true
+        },
+        "member-b": {
+          "format_rejected": true,
+          "wrong_parent_rejected": true,
+          "behavioral_tamper_detected": true,
+          "structural_tamper_detected": true,
+          "rollback_restores_predictions": true,
+          "ok": true
+        },
+        "member-c": {
+          "format_rejected": true,
+          "wrong_parent_rejected": true,
+          "behavioral_tamper_detected": true,
+          "structural_tamper_detected": true,
+          "rollback_restores_predictions": true,
+          "ok": true
+        },
+        "member-d": {
+          "format_rejected": true,
+          "wrong_parent_rejected": true,
+          "behavioral_tamper_detected": true,
+          "structural_tamper_detected": true,
+          "rollback_restores_predictions": true,
+          "ok": true
+        }
+      },
+      "all_ok": true
+    },
+    "data_split": {
+      "context_manifest": {
+        "create__observation": [
+          600,
+          601,
+          602,
+          603,
+          604,
+          605
+        ],
+        "create__override": [
+          610,
+          611,
+          612,
+          613,
+          614,
+          615
+        ],
+        "create__mismatch": [
+          620,
+          621,
+          622,
+          623,
+          624,
+          625
+        ]
+      },
+      "manifest_digest": "be605661194c7c0d3c8ff7f41a54f73606812684c100e114c4f4564b6f84882d",
+      "index_collision_free": true,
+      "context_count_per_cell": 6,
+      "threshold_arithmetic": {
+        "all_singleton_oracle": {
+          "computed_required": 1.65,
+          "computed_required_k": 5,
+          "frozen_required": 1.65,
+          "frozen_required_k": 5,
+          "match": true
+        },
+        "best_observed_fixed_pair": {
+          "computed_required": 1.15,
+          "computed_required_k": 4,
+          "frozen_required": 1.15,
+          "frozen_required_k": 4,
+          "match": true
+        },
+        "best_fixed_singleton": {
+          "computed_required": 0.65,
+          "computed_required_k": 2,
+          "frozen_required": 0.65,
+          "frozen_required_k": 2,
+          "match": true
+        }
+      },
+      "max_clearable_reference": {
+        "computed": 1.85,
+        "frozen": 1.85,
+        "match": true
+      },
+      "ok": true
+    },
+    "frozen_constants": {
+      "step_cap": 8,
+      "step_cap_frozen": true,
+      "repeats_frozen": true,
+      "margin_frozen": true,
+      "reference_gains_frozen": true,
+      "gate_rule_revision": 1,
+      "gate_rule_revision_is_1": true,
+      "composition_rule_marker": true,
+      "terminal_stop_reason_marker": true,
+      "execution_budget_from_gate": true,
+      "ok": true
+    },
+    "record_evidence": {
+      "commit_present": true
+    }
+  },
+  "six_gates_passed": true,
+  "gates_summary": {
+    "paths": true,
+    "save_restore": true,
+    "tamper": true,
+    "data_split": true,
+    "frozen_constants": true,
+    "record": true
+  },
+  "growth_admitted": false,
+  "can_promote": false,
+  "interpretation": "completed: all six checkpoint-preflight gates passed; WP-4 entry evidence complete (training itself still requires user authorization)",
+  "elapsed_seconds": 17.238
+}
