@@ -242,35 +242,63 @@ B0 逐条状态见[B0 设计包](../../reference/M5_B0_MEASUREMENT_AND_REACHABIL
 ## 当前唯一下一步：**等待 P3b 双臂 campaign 的阶段结果（已按上限档授权并在跑）**
 
 > **2026-09-15 授权与执行**：用户指示"遇到决策点默认最高上限方案，直到主线完成" ⇒ P3b 取 **48 h 档**
-> （每臂 **47,280,000 符号**，273.7 steps/s ⇒ 约 48 h），并按[预注册 §2.2](../../reference/M5_P3B_ALIGNED_LANGUAGE_TRAINING_PREREGISTRATION_20260915.md)
-> 的**双臂**设计并行跑：**treatment** = 对话子集，**control** = 16M ticks 原本训练用的原始流；
+> （每臂 **47,280,000 符号**，按 §2.1 冻结标定 273.7 符号/s 折算约 48 h），并按
+> [预注册 §2.2](../../reference/M5_P3B_ALIGNED_LANGUAGE_TRAINING_PREREGISTRATION_20260915.md)
+> 的**双臂**设计并行跑：**treatment** = 对话密集行，**control** = 同一源窗口的全部行（原始分布）；
 > 同起点 `seed_beta.pt`、同预算、同目标函数、同链路（放宽守卫 + UTF-8 约束解码）。
-> **主效应读法 = `treatment − control`**；任一带对 P3a 的单边差值都不足以说"数据分布起了作用"
-> （守卫会挂全新随机 identity organ、任何预算本身都等于"多训一遍"，两者两臂同受）。
+> **主效应读法 = 同一 tick 上的 `treatment − control`**；任一带对 P3a 的单边差值都不足以说
+> "数据分布起了作用"（守卫会挂全新随机 identity organ、任何预算本身都等于"多训一遍"，两者两臂同受）。
 >
-> **进度与产物**（每阶段 = 每 1,000,000 符号一次，评测约 206 s，首个阶段约 1 h 后出现）：
+> **00:25 的第一次跑已在有成绩之前作废并重启**（本地 01:17 重启，`stages_recorded` 当时为 0）：
+> 实测发现 §2.2 混淆表漏登记**第三源混淆——数据新颖度**（起点状态已在原始流上消耗过前
+> 11,199,800 符号 ⇒ 对照臂 23.69% 预算在重放、实验臂 22.27%）。处置与全部数字见
+> [双臂新颖度配对修订](../../reference/M5_P3B_NOVELTY_MATCHED_ARMS_AMENDMENT_20260915.md)；
+> 作废跑的进度日志与 campaign 状态改名为 `*.discarded_novelty_mismatch*` 保留（不作证据、不删除）。
+> **判据 J1–J5 与 §4 停止条件一字未改**，冻结件只在原处加了前进指针。
+>
+> **修订后的两臂语料**（同一 skip、同一源窗口起点、只差行规则；由
+> `scripts/training/build_p3b_arm_corpus.py` 一码产出）：
+>
+> | 臂 | 语料 | 行数 | 符号 | 源行范围 | 对话密度 |
+> |---|---|---|---|---|---|
+> | treatment | `data/p3b_dialogue_fresh.jsonl` | 44,527 | 52,280,541 | 2,893–106,324 | **1.000** |
+> | control | `data/p3b_all_fresh.jsonl` | 29,876 | 52,280,150 | 2,893–32,768 | **0.2356** |
+>
+> 两臂共享 leading 符号 61,249（预算 0.13%，构建时超 1% 即拒绝产出）；
+> [manifest 两份](../../manifests/p3b_dialogue_fresh_manifest.json)已提交，
+> **两臂**语料都与 manifest 强绑（sha 不符即拒跑）。
+>
+> **进度与产物**（每阶段 = 每 1,000,000 符号一次，评测约 206 s，首个阶段约 65 min 后出现）：
 > `reports/taiji_p3b_campaign_{treatment,control}_20260915.json`（原子重写，含 `stop_definitions`）、
 > `reports/p3b_stages/<arm>/cap0_tick_<tick>.json`、`checkpoints/p3b/snapshots/`（评前冻结的快照，防跨维混态）。
-> 监控：`tail -3 %TEMP%/p3b_{treatment,control}.log`；判据随时可复核：
+> 监控：`python -X utf8 scripts/training/summarize_p3b.py [--json]`（一次看两臂），
+> 事件化等待：`python -X utf8 scripts/training/wait_p3b_stage.py --stages N --deadline-seconds S`；
+> 判据随时可复核：
 > `python -X utf8 scripts/training/check_p3b_criteria.py --baseline reports/taiji_cap0_baseline_constrained_20260915.json --candidate reports/p3b_stages/<arm>/cap0_tick_<tick>.json --output <out>`。
 > **崩溃续跑**：`train_p3b_aligned.py --arm <arm> --resume-from checkpoints/p3b/seed_aligned[_control].pt`
 > 后重启对应 campaign；已评测过的 tick 会自动跳过（阶段报告存在即复用）。
 > 停止条件按预注册 §4（预算耗尽 / 连续 3 个检查点无改善 / 实质或持续退化 ⇒ 停 + 起点不动）。
 >
 > 仪器与守卫：`scripts/training/train_p3b_aligned.py`、`run_p3b_campaign.py`、
-> `tests/taiji_native/test_p3b_campaign_contract.py`（**13 项**：机时档绑定标定值、受保护检查点拒写、
-> 无 `--scale` 等于 v8 画像故必须从信封重建配置、噪声不算回归需 material/persistent、快照不可变）。
+> `build_p3b_arm_corpus.py`、`tests/taiji_native/test_p3b_campaign_contract.py`（机时档绑定标定值、
+> 受保护检查点拒写、无 `--scale` 等于 v8 画像故必须从信封重建配置、噪声不算回归需
+> material/persistent、快照不可变、评测面漂移即停）与
+> `tests/taiji_native/test_p3b_arm_corpus_contract.py`（**12 项**：血缘推导的三条拒跑、
+> 覆盖不足拒产、与配对语料重复拒产、两份已提交 manifest 的配对事实、操作检验、训练器默认值）。
 >
 > **键名说明（`campaign_stop`）**：campaign 的"为什么停"字段原名与 episode 停止原因的**受审计令牌**撞名，
 > 一度把无关文件推进 N2 消费面清单（清单第四次因此长大）。已改名 `campaign_stop`；
-> **16:25 启动的两次 campaign 因代码已加载，仍写旧键名**——监控时一次性读取即可，
 > **不加**同时读两种键的兼容 shim（那会让本文件重新出现该令牌，等于把污染留在清单里）。
-> 监控汇总：`python -X utf8 scripts/training/summarize_p3b.py [--json]`。
 >
-> **诚实注记（守卫与在跑进程的时序）**：16:25 启动的两臂加载的是**加入评测面可比性守卫之前**的驱动，
-> 因此每阶段需手工核一次 stage 报告的 `eval_set` / `eval_set_format` / `eval_set_frozen_on` /
-> `declared_mode` 与 C/D/E 题目 id 顺序是否等于 P3a 基线（**冒烟阶段已实测全等，只差 `checkpoint`**）。
-> 守卫本身已进 `run_p3b_campaign.py`（漂移即以 `eval_surface_drift` 停止）并由契约测试钉住，重启后自动生效。
+> **评测面可比性**：00:25 那次跑的驱动加载的是**加入守卫之前**的代码，故当时要求每阶段手工核一次
+> stage 报告的 `eval_set` / `eval_set_format` / `eval_set_frozen_on` / `declared_mode` 与 C/D/E 题目
+> id 顺序；**01:17 重启后跑的驱动已含该守卫**（漂移即以 `eval_surface_drift` 停止并被契约测试钉住），
+> 手工复核降为"头两个检查点各确认一次"。
+>
+> **诚实注记（机时）**：两臂并行实测 **~252–253 符号/s**，是单臂标定值 273.7 的 **92.3%**
+> ⇒ 每臂训练约 **51.8 h**，另加 47 个检查点 × ~206 s ≈ 2.7 h 评测，合计 **约 54.5 h**
+> （预计本地 2026-09-18 傍晚）。**标定外推低估**，按 B1 先例以实测为准并披露。
+> 吞吐标定是在**旧的**子集文件上做的（符号率与行选择无关，故仍可用）。
 
 
 > **2026-09-15 晚更新**：P3b 的四项前置在同一日全部完成 ——

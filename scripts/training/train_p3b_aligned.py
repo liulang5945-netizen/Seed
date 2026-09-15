@@ -37,11 +37,18 @@ from scripts.training.train_seed_corpus import run_training  # noqa: E402
 from seed import SeedConfig  # noqa: E402
 
 START_CHECKPOINT = PROJECT_ROOT / "checkpoints" / "seed_beta.pt"
-SUBSET_PATH = PROJECT_ROOT / "data" / "p3b_dialogue_subset.jsonl"
-#: Control arm: the raw stream the 16M-tick state was actually trained on, so the two arms
-#: differ in data distribution only -- same start, same budget, same objective, same chain.
-CONTROL_CORPUS = PROJECT_ROOT / "data" / "simple_zh" / "simple_zh_texts.jsonl"
-SUBSET_MANIFEST = PROJECT_ROOT / "plans" / "manifests" / "p3b_dialogue_subset_manifest.json"
+#: Both arm corpora are sliced from the **same unseen source window**: the start checkpoint had
+#: already consumed the first 11,199,800 symbols of ``simple_zh_texts.jsonl``, so a stream that
+#: begins at row 0 spends ~23% of its budget replaying data the state has seen (treatment 22.27%,
+#: control 23.69%).  Slicing both arms to the same window leaves row selection as the only
+#: difference.  See M5_P3B_NOVELTY_MATCHED_ARMS_AMENDMENT_20260915.md.
+SUBSET_PATH = PROJECT_ROOT / "data" / "p3b_dialogue_fresh.jsonl"
+CONTROL_CORPUS = PROJECT_ROOT / "data" / "p3b_all_fresh.jsonl"
+SUBSET_MANIFEST = PROJECT_ROOT / "plans" / "manifests" / "p3b_dialogue_fresh_manifest.json"
+CONTROL_MANIFEST = PROJECT_ROOT / "plans" / "manifests" / "p3b_all_fresh_manifest.json"
+#: Both arms are manifest-bound: a corpus that drifted from its manifest means the arm read
+#: something other than the registered stream, and treatment minus control stops being an effect.
+ARM_MANIFESTS: dict[Path, Path] = {SUBSET_PATH: SUBSET_MANIFEST, CONTROL_CORPUS: CONTROL_MANIFEST}
 CALIBRATION_REPORT = PROJECT_ROOT / "reports" / "taiji_p3b_throughput_calibration_20260915.json"
 PREREG_PATH = "plans/reference/M5_P3B_ALIGNED_LANGUAGE_TRAINING_PREREGISTRATION_20260915.md"
 WORKING_CHECKPOINT = PROJECT_ROOT / "checkpoints" / "p3b" / "seed_aligned.pt"
@@ -84,22 +91,25 @@ def _sha256(path: Path) -> str:
 
 
 def _guard_data_provenance(corpus: Path) -> dict[str, object]:
-    """Fail closed on the treatment arm's data; record provenance for any other corpus."""
+    """Fail closed on either arm's corpus; only an ad-hoc file is accepted unbound."""
 
     if not corpus.exists():
         raise SystemExit(f"P3b corpus missing: {corpus}")
     actual = _sha256(corpus)
-    if corpus.resolve() == SUBSET_PATH.resolve():
-        manifest = json.loads(SUBSET_MANIFEST.read_text(encoding="utf-8"))
+    resolved = corpus.resolve()
+    binding = "none (ad-hoc corpus: neither arm's registered stream)"
+    for arm_path, manifest_path in ARM_MANIFESTS.items():
+        if resolved != arm_path.resolve():
+            continue
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         expected = str(manifest.get("output_sha256", ""))
         if expected and actual != expected:
             raise SystemExit(
-                f"P3b subset sha256 drifted from the manifest ({actual[:12]}… != {expected[:12]}…); "
-                "rebuild it with build_p3b_dialogue_subset.py before spending any budget"
+                f"P3b corpus {arm_path.name} sha256 drifted from {manifest_path.name} "
+                f"({actual[:12]}… != {expected[:12]}…); rebuild it with build_p3b_arm_corpus.py "
+                "before spending any budget, or treatment minus control is not the registered contrast"
             )
-        binding = "p3b_dialogue_subset_manifest"
-    else:
-        binding = "none (control arm: the raw stream the 16M-tick state was trained on)"
+        binding = str(_relative(manifest_path))
     return {
         "path": str(_relative(corpus)),
         "bytes": corpus.stat().st_size,

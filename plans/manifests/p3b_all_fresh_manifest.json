@@ -1,0 +1,59 @@
+{
+  "format": "p3b-arm-corpus-manifest-v1",
+  "purpose": "P3b all arm corpus: source rows past the already-seen prefix",
+  "rule": "all",
+  "source": "data\\simple_zh\\simple_zh_texts.jsonl",
+  "source_bytes": 1394775610,
+  "source_rows_scanned": 32769,
+  "boundary_symbol": 256,
+  "symbol_accounting": "1 boundary symbol + len(text.encode('utf-8')) per jsonl row",
+  "skip_symbols": 11199800,
+  "first_emitted_row": 2893,
+  "last_emitted_row": 32768,
+  "emitted_rows": 29876,
+  "dropped_rows_in_window": 0,
+  "emitted_symbols": 52280150,
+  "emitted_bytes": 53153991,
+  "max_symbols": 52280000,
+  "replay_symbols_from_seen_region": 0,
+  "dialogue_qualified_rows": 7039,
+  "dialogue_density_of_emitted_rows": 0.235607,
+  "arm_overlap_check": {
+    "against": "data\\p3b_dialogue_fresh.jsonl",
+    "shared_prefix_symbols": 61249,
+    "cap": 472800,
+    "passed": true
+  },
+  "dialogue_rule": {
+    "min_distinct_speakers": 2,
+    "speaker_pattern": "(?:^|\\n)\\s*([\\u4e00-\\u9fffA-Za-z0-9_（）()·]{1,12})：",
+    "excluded_speakers": [
+      "作者",
+      "出处",
+      "来源",
+      "标题",
+      "校对",
+      "编辑",
+      "译者"
+    ]
+  },
+  "output": "data\\p3b_all_fresh.jsonl",
+  "output_sha256": "a21bfcef93566acd80a0591b0e387b0dff54ebbbfeeefa6fdd7d0405dd0403ad",
+  "skip_derivation": {
+    "beta": {
+      "checkpoint": "checkpoints\\seed_beta.pt",
+      "tick": 16000000,
+      "corpus_names": [
+        "simple_zh_texts.jsonl"
+      ]
+    },
+    "prior": {
+      "checkpoint": "checkpoints\\resumed_seed_corpus.pt",
+      "tick": 4800200,
+      "corpus_names": [
+        "dialogue_extended_clean.jsonl"
+      ]
+    },
+    "method": "tick difference"
+  }
+}

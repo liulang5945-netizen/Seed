@@ -1,0 +1,43 @@
+{
+  "format": "taiji-p3b-campaign-v1",
+  "status": "running",
+  "arm": "treatment",
+  "companion_arm": "control",
+  "preregistration": "plans/reference/M5_P3B_ALIGNED_LANGUAGE_TRAINING_PREREGISTRATION_20260915.md",
+  "why_two_arms": "the relaxed guard attaches a fresh identity organ and any budget adds training, so a single arm cannot separate data distribution from those two effects",
+  "p3a_baseline": "taiji_cap0_baseline_constrained_20260915.json",
+  "baseline_scores": {
+    "C": 0.0,
+    "D": 0.0625,
+    "E": 0.15
+  },
+  "stop_definitions": {
+    "improved": "max(C/D/E delta vs P3a) > 0",
+    "stall": "3 consecutive checkpoints with improved=false",
+    "regression": "material: any mechanised delta <= -0.1 (two items of twenty); persistent: the same dimension below P3a at two consecutive checkpoints; or B/G pending-review count above P3a",
+    "stage_scoring": "the live checkpoint is copied to checkpoints/p3b/snapshots before scoring, because a stage costs ~205 s while the trainer overwrites the file",
+    "chain_required": {
+      "relax_legacy_guard": true,
+      "constrained_decode": true
+    }
+  },
+  "budget_args": [
+    "--budget-tier",
+    "48h"
+  ],
+  "checkpoint_every": 1000000,
+  "checkpoint": "checkpoints\\p3b\\seed_aligned.pt",
+  "stages": [],
+  "started_at": "2026-09-16T00:25:07",
+  "trainer_pid": 3744,
+  "protected_checkpoints_at_start": {
+    "seed_corpus.pt": [
+      43223183,
+      1789470997
+    ],
+    "seed_beta.pt": [
+      4143542,
+      1787538206
+    ]
+  }
+}

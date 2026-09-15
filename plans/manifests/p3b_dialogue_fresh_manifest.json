@@ -1,0 +1,54 @@
+{
+  "format": "p3b-arm-corpus-manifest-v1",
+  "purpose": "P3b dialogue arm corpus: source rows past the already-seen prefix",
+  "rule": "dialogue",
+  "source": "data\\simple_zh\\simple_zh_texts.jsonl",
+  "source_bytes": 1394775610,
+  "source_rows_scanned": 106325,
+  "boundary_symbol": 256,
+  "symbol_accounting": "1 boundary symbol + len(text.encode('utf-8')) per jsonl row",
+  "skip_symbols": 11199800,
+  "first_emitted_row": 2893,
+  "last_emitted_row": 106324,
+  "emitted_rows": 44527,
+  "dropped_rows_in_window": 58905,
+  "emitted_symbols": 52280541,
+  "emitted_bytes": 53956269,
+  "max_symbols": 52280000,
+  "replay_symbols_from_seen_region": 0,
+  "dialogue_qualified_rows": 44527,
+  "dialogue_density_of_emitted_rows": 1.0,
+  "arm_overlap_check": null,
+  "dialogue_rule": {
+    "min_distinct_speakers": 2,
+    "speaker_pattern": "(?:^|\\n)\\s*([\\u4e00-\\u9fffA-Za-z0-9_（）()·]{1,12})：",
+    "excluded_speakers": [
+      "作者",
+      "出处",
+      "来源",
+      "标题",
+      "校对",
+      "编辑",
+      "译者"
+    ]
+  },
+  "output": "data\\p3b_dialogue_fresh.jsonl",
+  "output_sha256": "2fdd7f90f59b0bcf2dc15513f3bdfb0a695003b230f1cb258aba8c61881493f8",
+  "skip_derivation": {
+    "beta": {
+      "checkpoint": "checkpoints\\seed_beta.pt",
+      "tick": 16000000,
+      "corpus_names": [
+        "simple_zh_texts.jsonl"
+      ]
+    },
+    "prior": {
+      "checkpoint": "checkpoints\\resumed_seed_corpus.pt",
+      "tick": 4800200,
+      "corpus_names": [
+        "dialogue_extended_clean.jsonl"
+      ]
+    },
+    "method": "tick difference"
+  }
+}

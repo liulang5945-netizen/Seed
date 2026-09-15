@@ -141,20 +141,26 @@ def test_config_must_be_rebuilt_from_the_envelope(trainer: Any) -> None:
         assert profile != config.taiji, f"scale {scale} now matches; the CLI path may be usable"
 
 
-def test_treatment_data_provenance_is_manifest_bound(trainer: Any, tmp_path: Path) -> None:
+def test_both_arm_corpora_are_manifest_bound(trainer: Any, tmp_path: Path) -> None:
     other = tmp_path / "corpus.jsonl"
     other.write_text('{"text": "a"}\n', encoding="utf-8")
     record = trainer._guard_data_provenance(other)
-    assert record["manifest_binding"].startswith("none (control arm")
+    assert record["manifest_binding"].startswith("none (ad-hoc corpus")
 
-    subset = tmp_path / "p3b_dialogue_subset.jsonl"
-    subset.write_text('{"text": "老师：甲\n乙：乙\n"}\n', encoding="utf-8")
-    manifest = tmp_path / "manifest.json"
-    manifest.write_text(json.dumps({"output_sha256": "0" * 64}), encoding="utf-8")
-    trainer.SUBSET_PATH = subset
-    trainer.SUBSET_MANIFEST = manifest
-    with pytest.raises(SystemExit, match="drifted"):
-        trainer._guard_data_provenance(subset)
+    for arm_path, manifest_path in (
+        (tmp_path / "p3b_dialogue_fresh.jsonl", tmp_path / "dialogue_manifest.json"),
+        (tmp_path / "p3b_all_fresh.jsonl", tmp_path / "all_manifest.json"),
+    ):
+        arm_path.write_text('{"text": "老师：甲\n乙：乙\n"}\n', encoding="utf-8")
+        manifest_path.write_text(json.dumps({"output_sha256": "0" * 64}), encoding="utf-8")
+        trainer.ARM_MANIFESTS = {arm_path: manifest_path}
+        with pytest.raises(SystemExit, match="drifted"):
+            trainer._guard_data_provenance(arm_path)
+        manifest_path.write_text(
+            json.dumps({"output_sha256": trainer._sha256(arm_path)}), encoding="utf-8"
+        )
+        bound = trainer._guard_data_provenance(arm_path)
+        assert bound["manifest_binding"].endswith(manifest_path.name)
 
 
 def test_missing_corpus_fails_closed(trainer: Any, tmp_path: Path) -> None:
@@ -310,7 +316,11 @@ def test_missing_arm_reads_as_missing_not_zero() -> None:
 
 
 def test_headline_only_carries_recorded_fields() -> None:
-    """The summariser has no judgement of its own -- J1-J5 stay in check_p3b_criteria."""
+    """The summariser holds no **criterion** judgement -- J1-J5 stay in check_p3b_criteria.
+
+    The one reading rule it does apply is the resolution threshold pre-declared in the
+    novelty-matched amendment §4, and that rule has its own tests below.
+    """
 
     summarize = _load("_p3b_summarize_under_test", SUMMARIZER)
     source = SUMMARIZER.read_text(encoding="utf-8")
@@ -320,6 +330,81 @@ def test_headline_only_carries_recorded_fields() -> None:
     headline = summarize.arm_headline({"arm": "treatment", "stages": [stage], "status": "running"})
     assert headline["latest_tick"] == 17_000_000
     assert headline["latest_scores"] == stage["scores"]
+
+
+def _matched(tick: int, **deltas: Any) -> dict[str, Any]:
+    return {"tick": tick, "treatment_minus_control": dict(deltas)}
+
+
+def _all(delta: float) -> dict[str, Any]:
+    return {"C": delta, "D": delta, "E": delta}
+
+
+def test_one_item_of_twenty_is_not_an_effect() -> None:
+    summarize = _load("_p3b_summarize_under_test", SUMMARIZER)
+    assert summarize.MAIN_EFFECT_RESOLUTION == 0.15  # three items, not one flipped answer
+    assert summarize.CONSECUTIVE_CONFIRMATIONS == 2
+    one_item = summarize.main_effect_verdict([_matched(17_000_000, **_all(0.05))])
+    assert one_item["C"]["verdict"] == "not_detected_at_this_resolution"
+    assert one_item["C"]["confirmed_direction"] is None
+    one_point = summarize.main_effect_verdict([_matched(17_000_000, **_all(0.15))])
+    assert one_point["C"]["verdict"] == "above_resolution_single_point"
+
+
+def test_two_consecutive_same_direction_points_are_an_effect() -> None:
+    summarize = _load("_p3b_summarize_under_test", SUMMARIZER)
+    twice = summarize.main_effect_verdict(
+        [_matched(17_000_000, **_all(0.15)), _matched(18_000_000, **_all(0.20))]
+    )
+    assert twice["C"]["verdict"] == "effect_positive"
+    assert twice["C"]["confirmed_direction"] == "positive"
+    assert twice["C"]["longest_confirmed_run"] == 2
+    negative = summarize.main_effect_verdict(
+        [_matched(17_000_000, **_all(-0.15)), _matched(18_000_000, **_all(-0.25))]
+    )
+    assert negative["D"]["verdict"] == "effect_negative"
+
+
+def test_a_direction_flip_resets_the_run_and_noise_cannot_undo_it() -> None:
+    summarize = _load("_p3b_summarize_under_test", SUMMARIZER)
+    flipped = summarize.main_effect_verdict(
+        [_matched(17_000_000, **_all(0.15)), _matched(18_000_000, **_all(-0.15))]
+    )
+    assert flipped["C"]["longest_confirmed_run"] == 1
+    assert flipped["C"]["verdict"] == "above_resolution_single_point"
+    faded = summarize.main_effect_verdict(
+        [
+            _matched(17_000_000, **_all(0.20)),
+            _matched(18_000_000, **_all(0.20)),
+            _matched(19_000_000, **_all(0.0)),
+        ]
+    )
+    assert faded["C"]["verdict"] == "effect_positive"
+    assert faded["C"]["latest_delta"] == 0.0
+    assert faded["C"]["matched_ticks"] == 3
+
+
+def test_ticks_without_both_arms_are_no_data_not_zero() -> None:
+    summarize = _load("_p3b_summarize_under_test", SUMMARIZER)
+    rows = [
+        _matched(17_000_000, C=0.15, D=None, E=None),
+        {"tick": 18_000_000, "treatment_minus_control": None},
+        _matched(19_000_000, C=0.15, D=0.15, E=None),
+    ]
+    out = summarize.main_effect_verdict(rows)
+    assert out["C"]["matched_ticks"] == 2
+    assert out["D"]["matched_ticks"] == 1
+    assert out["E"]["matched_ticks"] == 0
+    assert out["E"]["verdict"] == "no_matched_checkpoint"
+    assert out["E"]["latest_delta"] is None
+
+
+def test_the_summariser_says_what_it_cannot_judge() -> None:
+    summarize = _load("_p3b_summarize_under_test", SUMMARIZER)
+    unjudged = summarize.main_effect_verdict([])["unjudged"]
+    assert unjudged["dimensions_not_executed_by_this_runner"] == ["A", "F", "H"]
+    assert "untested" in unjudged["consequence"]
+    assert unjudged["resolution"] == 0.15
 
 
 # --------------------------------------------------------------------------- #

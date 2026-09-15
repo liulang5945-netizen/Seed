@@ -21,6 +21,13 @@ from typing import Any
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 ARMS = ("treatment", "control")
 MECHANISED = ("C", "D", "E")
+#: 修订 §4 预声明的读法：每维 20 题 => 单题翻转 = 0.05 是噪声，主效应要到 **0.15（三题）**
+#: 且方向在 **两个连续共同检查点** 一致才称为效应；否则只能记 not detected at this resolution。
+MAIN_EFFECT_RESOLUTION = 0.15
+CONSECUTIVE_CONFIRMATIONS = 2
+#: 阶段报告里这三维整维是 not_executed（07 §5：不记 0 也不记通过），所以 J4 的 A/H 分支
+#: 在本链路上判不了 -- 缺字段不是通过，汇总器必须把它显式说出来。
+NOT_EXECUTED_DIMENSIONS = ("A", "F", "H")
 
 
 def load_arm(arm: str, root: Path | None = None) -> dict[str, Any]:
@@ -69,14 +76,70 @@ def tick_table(treatment: dict[str, Any], control: dict[str, Any]) -> list[dict[
     return rows
 
 
+def main_effect_verdict(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    """Apply the pre-declared resolution to the tick-matched arm differences.
+
+    Only ticks where **both** arms have a score count; a tick missing one arm is not a zero, it is
+    no data.  A dimension is called an effect only when ``CONSECUTIVE_CONFIRMATIONS`` matched
+    checkpoints in a row reach ``MAIN_EFFECT_RESOLUTION`` with the same sign -- anything less is
+    reported as noise, in both directions.
+    """
+
+    out: dict[str, Any] = {}
+    for key in MECHANISED:
+        series = [
+            (row["tick"], row["treatment_minus_control"][key])
+            for row in rows
+            if row["treatment_minus_control"] is not None
+            and row["treatment_minus_control"].get(key) is not None
+        ]
+        best = streak = 0
+        confirmed_sign: float | None = None
+        previous: float | None = None
+        for _, delta in series:
+            reached = abs(delta) >= MAIN_EFFECT_RESOLUTION
+            same_sign = reached and previous is not None and delta * previous > 0
+            streak = (streak + 1) if same_sign else (1 if reached else 0)
+            best = max(best, streak)
+            if streak >= CONSECUTIVE_CONFIRMATIONS:
+                confirmed_sign = delta
+            previous = delta if reached else None
+        last = series[-1][1] if series else None
+        direction = (
+            None if confirmed_sign is None else ("positive" if confirmed_sign > 0 else "negative")
+        )
+        if not series:
+            call = "no_matched_checkpoint"
+        elif direction is not None:
+            call = f"effect_{direction}"
+        elif best == 1:
+            call = "above_resolution_single_point"
+        else:
+            call = "not_detected_at_this_resolution"
+        out[key] = {
+            "matched_ticks": len(series),
+            "latest_delta": last,
+            "longest_confirmed_run": best,
+            "confirmed_direction": direction,
+            "verdict": call,
+        }
+    out["unjudged"] = {
+        "dimensions_not_executed_by_this_runner": list(NOT_EXECUTED_DIMENSIONS),
+        "consequence": "J4's A/H branch has no data in stage reports; it must be reported untested",
+        "resolution": MAIN_EFFECT_RESOLUTION,
+        "consecutive_confirmations": CONSECUTIVE_CONFIRMATIONS,
+    }
+    return out
+
+
 def arm_headline(report: dict[str, Any]) -> dict[str, Any]:
     """Only the current key is read here.
 
-    The two campaigns started at 2026-09-15 16:25 write their stop verdict under the field's
-    **previous** name, because their code was loaded before the rename.  That rename exists so
-    the earlier token stays reserved for episode termination reasons (the N2 audit surface);
-    reading those in-flight artifacts is a one-off monitoring command, not a second concept
-    living in this file.  See 03 §「P3b 双臂 campaign」的键名说明。
+    A campaign started before the rename writes its stop verdict under the field's **previous**
+    name; such artifacts survive only under a ``discarded_*`` name and are read by a one-off
+    command.  The rename exists so the earlier token stays reserved for episode termination
+    reasons (the N2 audit surface) -- reading both keys here would put that token back into this
+    file.  See 03 §「P3b 双臂 campaign」的键名说明。
     """
 
     stage = latest_stage(report)
@@ -102,8 +165,15 @@ def main(argv: list[str] | None = None) -> int:
     reports = {arm: load_arm(arm) for arm in ARMS}
     headlines = {arm: arm_headline(reports[arm]) for arm in ARMS}
     rows = tick_table(reports["treatment"], reports["control"])
+    effect = main_effect_verdict(rows)
     if args.json:
-        print(json.dumps({"arms": headlines, "stages": rows}, ensure_ascii=True, indent=2))
+        print(
+            json.dumps(
+                {"arms": headlines, "stages": rows, "main_effect": effect},
+                ensure_ascii=True,
+                indent=2,
+            )
+        )
         return 0
     for arm in ARMS:
         print(f"== {arm} ==")
@@ -114,6 +184,18 @@ def main(argv: list[str] | None = None) -> int:
         delta = row["treatment_minus_control"]
         printable = "n/a" if delta is None else ", ".join(f"{k}={delta[k]:+}" for k in MECHANISED)
         print(f"  tick {row['tick']}: {printable}  chain_ok={row['chain_ok']}")
+    unjudged = effect["unjudged"]
+    print(
+        f"== 主效应（>= {unjudged['resolution']} 且连续 "
+        f"{unjudged['consecutive_confirmations']} 个共同检查点同向）=="
+    )
+    for key in MECHANISED:
+        block = effect[key]
+        print(
+            f"  {key}: {block['verdict']}  latest={block['latest_delta']} "
+            f"run={block['longest_confirmed_run']} matched={block['matched_ticks']}"
+        )
+    print(f"  A/F/H: {unjudged['consequence']}")
     return 0
 
 

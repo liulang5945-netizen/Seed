@@ -5,10 +5,14 @@ checkpoint it writes is scored with the **same chain P3a was scored on** (relaxe
 UTF-8 constrained decode) through ``eval_taiji_cap0_baseline.py``.  The campaign record is rewritten
 atomically after every stage, so an interrupted 48-hour run loses nothing.
 
-Two arms, one difference (decided 2026-09-15, ceiling option):
-* ``--arm treatment`` trains on the dialogue-dense subset (P3b 预注册 §2 data row);
-* ``--arm control`` trains on the raw ``simple_zh`` stream the 16M-tick state was trained on,
+Two arms, one difference (decided 2026-09-15, ceiling option; novelty-matched per the amendment):
+* ``--arm treatment`` trains on dialogue-dense rows (``build_p3b_arm_corpus.py --rule dialogue``);
+* ``--arm control`` trains on **every** row of the *same* source window (``--rule all``),
   with the **same** start checkpoint, budget, objective and chain.
+
+The 16M-tick state had already consumed the first 11,199,800 symbols of ``simple_zh_texts.jsonl``,
+so an unslliced stream would spend ~23% of its budget on replay and the arms would differ in data
+novelty as well as distribution.  Both corpora therefore start at the same unseen row.
 Without the control, a gain could equally be "more training" or "the fresh identity organ the
 guard attaches", and neither would say anything about H-P3b (data distribution).
 
@@ -297,7 +301,9 @@ def run(
         ),
         "why_two_arms": (
             "the relaxed guard attaches a fresh identity organ and any budget adds training, "
-            "so a single arm cannot separate data distribution from those two effects"
+            "so a single arm cannot separate data distribution from those two effects; "
+            "both arm corpora are sliced past the 11,199,800 symbols the start checkpoint had "
+            "already seen, so the arms differ in row selection and not in data novelty either"
         ),
         "p3a_baseline": P3A_BASELINE.name,
         "baseline_scores": {key: _normalised(baseline, key) for key in MECHANISED},
