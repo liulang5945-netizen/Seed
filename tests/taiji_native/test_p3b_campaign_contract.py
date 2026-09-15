@@ -67,6 +67,11 @@ def criteria() -> Any:
     return _load("_p3b_criteria_under_test", CRITERIA)
 
 
+@pytest.fixture(scope="module")
+def waiter() -> Any:
+    return _load("_p3b_waiter_under_test", WAITER)
+
+
 def _report(c: float | None, d: float | None, e: float | None, pending: int = 0) -> dict[str, Any]:
     def dim(score: float | None, key: str) -> dict[str, Any]:
         return {
@@ -458,7 +463,7 @@ def test_swapped_eval_surface_or_item_order_is_drift(campaign: Any) -> None:
 
 
 # --------------------------------------------------------------------------- #
-# Waiting is a reader, not a judge
+# Waiting is a reader.  Its only judgement is liveness, never capability.
 # --------------------------------------------------------------------------- #
 
 
@@ -480,3 +485,39 @@ def test_waiter_needs_a_real_stage_count() -> None:
     assert waiter.reached({"treatment": {"stages": [{"tick": 1}]}}, 1) is True
     assert waiter.reached({"treatment": {"stages": [{"tick": 1}]}}, 2) is False
     assert waiter.reached({"treatment": {"stages": [{"tick": 1}]}, "control": {}}, 1) is True
+
+
+def test_checkpoints_owed_arithmetic(waiter: Any) -> None:
+    assert waiter.STALL_THRESHOLD == 2, "one pending checkpoint is normal scoring lag"
+    assert waiter.unscored_checkpoints(18_000_000, 17_000_000, 1_000_000) == 1
+    assert waiter.unscored_checkpoints(19_000_000, 17_000_000, 1_000_000) == 2
+    assert waiter.unscored_checkpoints(16_050_000, 16_000_000, 1_000_000) == 0
+    assert waiter.unscored_checkpoints(15_000_000, 16_000_000, 1_000_000) == 0, "never negative"
+    for unknown in (
+        (None, 17_000_000, 1_000_000),
+        (18_000_000, None, 1_000_000),
+        (18_000_000, 17_000_000, 0),
+        (18_000_000, 17_000_000, None),
+    ):
+        assert waiter.unscored_checkpoints(*unknown) == 0, unknown
+
+
+def test_an_orphaned_trainer_is_reported_as_a_stall(
+    waiter: Any, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(waiter, "progress_tick", lambda arm: 18_000_000)
+    report: dict[str, Any] = {
+        "arm": "treatment",
+        "status": "running",
+        "checkpoint_every": 1_000_000,
+        "stages": [{"tick": 17_000_000}],
+    }
+    state = waiter.arm_state(report)
+    assert state["checkpoints_owed"] == 1
+    assert state["driver_stalled"] is False, "the driver may simply be mid-scoring"
+    report["stages"] = [{"tick": 16_000_000}]
+    stalled = waiter.arm_state(report)
+    assert stalled["checkpoints_owed"] == 2 and stalled["driver_stalled"] is True
+    # a missing campaign record is no data, not a dead driver
+    empty = waiter.arm_state({})
+    assert empty["driver_stalled"] is False and empty["stages"] == 0

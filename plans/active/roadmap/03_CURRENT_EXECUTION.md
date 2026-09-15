@@ -271,8 +271,12 @@ B0 逐条状态见[B0 设计包](../../reference/M5_B0_MEASUREMENT_AND_REACHABIL
 > **进度与产物**（每阶段 = 每 1,000,000 符号一次，评测约 206 s，首个阶段约 65 min 后出现）：
 > `reports/taiji_p3b_campaign_{treatment,control}_20260915.json`（原子重写，含 `stop_definitions`）、
 > `reports/p3b_stages/<arm>/cap0_tick_<tick>.json`、`checkpoints/p3b/snapshots/`（评前冻结的快照，防跨维混态）。
-> 监控：`python -X utf8 scripts/training/summarize_p3b.py [--json]`（一次看两臂），
-> 事件化等待：`python -X utf8 scripts/training/wait_p3b_stage.py --stages N --deadline-seconds S`；
+> 监控：`python -X utf8 scripts/training/summarize_p3b.py [--json]`（一次看两臂，
+> 并直接打印修订件 §4 预声明的**主效应判定**，不需要人再解释差值），
+> 事件化等待：`python -X utf8 scripts/training/wait_p3b_stage.py --stages N --deadline-seconds S`
+> ——它还检查**驱动存活**：阶段评测失败时驱动会退出而训练器继续写检查点，
+> 因此按"产生了但没评分的检查点个数"判定，≥2 即报 `driver_stalled` 并以退出码 1 结束
+> （只喊不停，不杀进程；缺 campaign 记录记"无数据"不记停摆）。
 > 判据随时可复核：
 > `python -X utf8 scripts/training/check_p3b_criteria.py --baseline reports/taiji_cap0_baseline_constrained_20260915.json --candidate reports/p3b_stages/<arm>/cap0_tick_<tick>.json --output <out>`。
 > **崩溃续跑**：`train_p3b_aligned.py --arm <arm> --resume-from checkpoints/p3b/seed_aligned[_control].pt`
