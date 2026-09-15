@@ -255,3 +255,23 @@ def test_p1_diagnosis_and_probe_are_archived() -> None:
     ):
         assert token in text, token
     assert "只读" in P1_PROBE.read_text(encoding="utf-8")
+
+
+def test_p1_section_8_records_the_two_independent_gaps() -> None:
+    """§8 的决定性补充：**训练态**（16M-tick）同样产不出合法 UTF-8，文本也不成句。"""
+
+    text = P1_DIAGNOSIS.read_text(encoding="utf-8")
+    for token in (
+        "§8",
+        "tick = 16,000,000",
+        "longest_valid_utf8_prefix_bytes = 0",
+        "**编码层**",
+        "**语义层**",
+        "P3a",
+        "P3b",
+    ):
+        assert token in text, token
+    # 探针必须保留"放宽守卫 + 解码分析"这两个只读测量入口。
+    probe = P1_PROBE.read_text(encoding="utf-8")
+    assert "--relax-legacy-guard" in probe
+    assert "longest_valid_utf8_prefix_bytes" in probe
