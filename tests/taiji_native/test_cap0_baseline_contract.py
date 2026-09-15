@@ -329,3 +329,43 @@ def test_constrained_chain_report_discloses_its_chain_and_scores() -> None:
     assert report["dimensions"]["D"]["tally"]["machine_normalised"] == 0.0625
     assert report["dimensions"]["E"]["tally"]["machine_normalised"] == 0.15
     assert report["min_lines"]["C"] == 0.70 and report["min_lines"]["D"] == 0.80
+
+
+# --- P3b 预注册（目标对齐训练，草案） ---------------------------------------
+
+P3B = (
+    PROJECT_ROOT
+    / "plans"
+    / "reference"
+    / "M5_P3B_ALIGNED_LANGUAGE_TRAINING_PREREGISTRATION_20260915.md"
+)
+
+
+def test_p3b_preregistration_freezes_protocol_and_judgements() -> None:
+    """P3b 必须：不改架构、链路与 P3a 一致、判据可机检、含停止条件与反假设、且未授权执行。"""
+
+    assert P3B.is_file()
+    text = P3B.read_text(encoding="utf-8")
+    for token in (
+        "本包不改架构",
+        "必须与 P3a 完全一致",
+        "trained_during_eval = false",
+        "C/E ≥ 70%、D ≥ 80%",
+        "连续 3 个检查点",
+        "反假设",
+        "## §0",
+    ):
+        assert token in text, token
+    assert "本文件不启动训练" in text
+
+
+def test_p3b_records_the_corpus_format_correction() -> None:
+    """语料不是问答格式 —— 这条事实必须写进预注册，避免再以"问答对"为设计前提。"""
+
+    text = P3B.read_text(encoding="utf-8")
+    assert "抽样 2000 行" in text
+    assert "多角色脚本" in text
+    # P1 报告同步记录了该更正
+    p1 = P1_DIAGNOSIS.read_text(encoding="utf-8")
+    assert "实测更正" in p1
+    assert "仅 1 行" in p1
