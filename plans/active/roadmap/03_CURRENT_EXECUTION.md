@@ -287,6 +287,11 @@ B0 逐条状态见[B0 设计包](../../reference/M5_B0_MEASUREMENT_AND_REACHABIL
 > 被跳过的题号仍会列在表尾并标注"不等于已复核"。另登记 **DEBT-I4**：A/F/H 整维
 > `not_executed` ⇒ J4 的"A/H 不退化"分支本链路判不了，结项记 `untested`。
 >
+> **结项口径已预先冻结**：[P3b 结项报告结构与允许表述预案](../../reference/M5_P3B_RESULT_REPORTING_PLAN_20260915.md)
+> 写于 `stages_recorded = 0` 时（本地 01:38）——表 A/B/C/D 的结构、数值唯一来源、
+> 8 条禁止表述与 6 步结项动作已全部定死；正式结果文档**只能填格**，发现结构不够用另立文档说明，
+> 不得回改该预案（与冻结件同一纪律）。
+>
 > 仪器与守卫：`scripts/training/train_p3b_aligned.py`、`run_p3b_campaign.py`、
 > `build_p3b_arm_corpus.py`、`tests/taiji_native/test_p3b_campaign_contract.py`（机时档绑定标定值、
 > 受保护检查点拒写、无 `--scale` 等于 v8 画像故必须从信封重建配置、噪声不算回归需
