@@ -30,6 +30,16 @@
   修法：断言**错误文本**（`"enabled identity organ checkpoint payload is missing"`）或从源码实际
   解析该行区间；**须与 CAP-0 加载器改动同批做**（见 [决策简报 §5 第 3 步](../../reference/CAP0_LEGACY_LOADER_DECISION_BRIEF_20260915.md)）；
   本轮不做（campaign 在跑，不能动 `taiji/` 与其评测面）。
+- **DEBT-I6（只登记，不处置）阶段报告非原子写 + 驱动"文件存在即复用"的续跑缺口**。
+  实测：`eval_taiji_cap0_baseline.py:792` 用 `report_path.write_text(...)` **普通覆写**写阶段报告；
+  `run_p3b_campaign.py:149-150` 的 `_score_stage` 只看 `if stage_path.exists(): return _load(stage_path)`。
+  ⇒ 若在写报告途中断电/被杀，续跑会**直接消费一份被截断的报告**（当前表现是 `json.loads` 抛错、
+  驱动退出、训练器成孤儿——由等待器的 `driver_stalled` 兜住，故是"响亮的错"而非静默失真，
+  这正是本轮不处置的原因）。
+  修法（须与 §5 加载器批次同做）：**复用前先校验**（能解析 + 四个评测面字段齐 + C/D/E 各 20 题 +
+  `trained_during_eval is false`）；不合格时**只有** `checkpoints/p3b/snapshots/` 里该 tick 的快照仍在
+  才可重评（快照才是"该 tick 可复现"的唯一凭据——实时检查点早已前进），快照缺失时**拒绝续跑并报错**，
+  不得静默重评一个更晚的状态。**必须配一支故障注入测试**（写一半的 JSON → 断言被识别、且无快照时拒绝）。
 - 出口④的对照基线仍为上一节所述 **1408 / 0 失败 / 6 跳过**；**远端仍未查询**（`gh` 未认证）⇒ 继续禁止"CI 已绿"表述。
 
 

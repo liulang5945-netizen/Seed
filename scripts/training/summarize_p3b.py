@@ -157,6 +157,36 @@ def arm_headline(report: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+#: DEBT-I6: stage reports are written non-atomically, and the driver reuses any existing file on
+#: resume.  Nothing in the running campaign notices a truncated report, so the monitor checks the
+#: files themselves.  An empty problem list means the stage is intact.
+REQUIRED_SURFACE_FIELDS = ("eval_set", "eval_set_format", "eval_set_frozen_on", "declared_mode")
+ITEMS_PER_MECHANISED_DIMENSION = 20
+
+
+def stage_integrity(arm: str, row: dict[str, Any]) -> list[str]:
+    """What is wrong with this stage's report on disk; ``[]`` means it is intact."""
+
+    path = PROJECT_ROOT / "reports" / "p3b_stages" / arm / str(row.get("report"))
+    if not path.exists():
+        return ["missing_report"]
+    try:
+        report = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return ["torn_json"]
+    problems = [f"no_{field}" for field in REQUIRED_SURFACE_FIELDS if field not in report]
+    dimensions = report.get("dimensions") or {}
+    for key in MECHANISED:
+        items = (dimensions.get(key) or {}).get("items")
+        if not isinstance(items, list):
+            problems.append(f"{key}:no_items")
+        elif len(items) != ITEMS_PER_MECHANISED_DIMENSION:
+            problems.append(f"{key}:items={len(items)}")
+    if report.get("trained_during_eval") is not False:
+        problems.append("trained_during_eval_not_false")
+    return problems
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="P3b 双臂进度汇总（只读）")
     parser.add_argument("--json", action="store_true", help="输出机器可读汇总")
@@ -166,10 +196,22 @@ def main(argv: list[str] | None = None) -> int:
     headlines = {arm: arm_headline(reports[arm]) for arm in ARMS}
     rows = tick_table(reports["treatment"], reports["control"])
     effect = main_effect_verdict(rows)
+    integrity = {
+        arm: [
+            {"tick": row.get("tick"), "problems": stage_integrity(arm, row)}
+            for row in (reports[arm].get("stages") or [])
+        ]
+        for arm in ARMS
+    }
     if args.json:
         print(
             json.dumps(
-                {"arms": headlines, "stages": rows, "main_effect": effect},
+                {
+                    "arms": headlines,
+                    "stages": rows,
+                    "main_effect": effect,
+                    "integrity": integrity,
+                },
                 ensure_ascii=True,
                 indent=2,
             )
@@ -196,6 +238,14 @@ def main(argv: list[str] | None = None) -> int:
             f"run={block['longest_confirmed_run']} matched={block['matched_ticks']}"
         )
     print(f"  A/F/H: {unjudged['consequence']}")
+    broken = [
+        f"  {arm} tick {item['tick']}: {', '.join(item['problems'])}"
+        for arm in ARMS
+        for item in integrity[arm]
+        if item["problems"]
+    ]
+    print("== 阶段报告完整性（DEBT-I6 监视）==")
+    print("\n".join(broken) if broken else "  all recorded stage reports intact")
     return 0
 
 

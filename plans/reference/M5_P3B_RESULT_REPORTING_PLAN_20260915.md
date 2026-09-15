@@ -59,8 +59,12 @@
 4. 机时：达成符号数与真实墙钟；**不写**"速率 × 预算"式承诺。符号率随同机进程数变化
    （273.7 / ~253 / ~180），并列出跑测期间本机还跑了什么。
 5. 评测面：每阶段 `eval_set` / `eval_set_format` / `eval_set_frozen_on` / `declared_mode`
-   与 C/D/E 题序**全等**（驱动守卫 `eval_surface_drift` 未触发），且两臂快照的
-   `metadata.corpus_fingerprint` **不同**（证明两臂确实吃了不同数据）。
+   与 C/D/E 题序**全等**（驱动守卫 `eval_surface_drift` 未触发），两臂快照的
+   `metadata.corpus_fingerprint` **不同**（证明两臂确实吃了不同数据）；
+   并且 `summarize_p3b.py --json` 的 `integrity` 段对**每份**阶段报告核过
+   "能解析 + 四字段齐 + C/D/E 各 20 题 + `trained_during_eval=false`"，
+   文本模式须输出 `all recorded stage reports intact`
+   （阶段报告是非原子写、驱动又是"文件存在即复用"⇒ DEBT-I6 仍未修，本项只是**监视**不是修复）。
 6. 受保护检查点 `seed_corpus.pt` / `seed_beta.pt` 起止大小与 mtime 未变。
 7. 作废的第一次跑（35 分钟）与其原因，指向修订件。
 8. 远端 CI **未查询** ⇒ 全文禁止"CI 已绿"表述。
