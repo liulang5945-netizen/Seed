@@ -192,6 +192,31 @@ def _evaluate(checkpoint: Path, stage_path: Path) -> dict[str, Any]:
 EVAL_SURFACE_FIELDS = ("eval_set", "eval_set_format", "eval_set_frozen_on", "declared_mode")
 
 
+#: The stop rules as written into every campaign record.  A module constant, not an inline
+#: literal, so a contract test can assert its **structure** instead of grepping words that also
+#: appear in identifiers and docstrings.
+STOP_DEFINITIONS: dict[str, Any] = {
+    "improved": "max(C/D/E delta vs P3a) > 0",
+    "stall": f"{STALL_LIMIT} consecutive checkpoints with improved=false",
+    "regression": (
+        f"material: any mechanised delta <= -{REGRESSION_MARGIN} (two items of twenty); "
+        "persistent: the same dimension below P3a at two consecutive checkpoints; "
+        "or B/G pending-review count above P3a"
+    ),
+    "stage_scoring": (
+        "the live checkpoint is copied to checkpoints/p3b/snapshots before scoring, "
+        "because a stage costs ~205 s while the trainer overwrites the file"
+    ),
+    "comparability": (
+        "a stage must reproduce the P3a evaluation surface exactly ("
+        + ", ".join(EVAL_SURFACE_FIELDS)
+        + ", plus C/D/E item id order); "
+        "drift stops the run, because two numbers from different surfaces are not an effect"
+    ),
+    "chain_required": REQUIRED_CHAIN,
+}
+
+
 def _surface_drift(stage: dict[str, Any], baseline: dict[str, Any]) -> list[str]:
     drift = [field for field in EVAL_SURFACE_FIELDS if stage.get(field) != baseline.get(field)]
     for key in MECHANISED:
@@ -329,26 +354,7 @@ def run(
         ),
         "p3a_baseline": P3A_BASELINE.name,
         "baseline_scores": {key: _normalised(baseline, key) for key in MECHANISED},
-        "stop_definitions": {
-            "improved": "max(C/D/E delta vs P3a) > 0",
-            "stall": f"{STALL_LIMIT} consecutive checkpoints with improved=false",
-            "regression": (
-                f"material: any mechanised delta <= -{REGRESSION_MARGIN} (two items of twenty); "
-                "persistent: the same dimension below P3a at two consecutive checkpoints; "
-                "or B/G pending-review count above P3a"
-            ),
-            "stage_scoring": (
-                "the live checkpoint is copied to checkpoints/p3b/snapshots before scoring, "
-                "because a stage costs ~205 s while the trainer overwrites the file"
-            ),
-            "comparability": (
-                "a stage must reproduce the P3a evaluation surface exactly ("
-                + ", ".join(EVAL_SURFACE_FIELDS)
-                + ", plus C/D/E item id order); "
-                "drift stops the run, because two numbers from different surfaces are not an effect"
-            ),
-            "chain_required": REQUIRED_CHAIN,
-        },
+        "stop_definitions": STOP_DEFINITIONS,
         "budget_args": budget_args,
         "checkpoint_every": checkpoint_every,
         "checkpoint": str(checkpoint.relative_to(PROJECT_ROOT)),

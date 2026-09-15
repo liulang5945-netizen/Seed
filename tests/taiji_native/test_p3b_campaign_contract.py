@@ -108,14 +108,28 @@ def test_budget_tiers_stay_tied_to_the_frozen_calibration(trainer: Any) -> None:
     for tier, symbols in trainer.BUDGET_TIERS.items():
         hours = symbols / measured / 3600.0
         assert abs(hours - float(tier.rstrip("h"))) < 1.5, tier
-        # both tiers stay below one pass of the subset, which the preregistration calls
-        # infeasible (568 h), so "budget exhausted" can never mean "the corpus ran out"
-        assert symbols < 559_000_000
+        # `epochs=1` means a corpus shorter than the budget ends the run early and the arm
+        # silently trains on less data.  Both arm manifests carry their own emitted symbol
+        # count, so the bound is measured, not a remembered constant.
+        for manifest in (trainer.SUBSET_MANIFEST, trainer.CONTROL_MANIFEST):
+            emitted = int(json.loads(manifest.read_text(encoding="utf-8"))["emitted_symbols"])
+            assert symbols < emitted, (tier, manifest.name, emitted)
 
 
-def test_protected_checkpoints_cannot_be_run_targets(trainer: Any) -> None:
-    for path in trainer.PROTECTED_OUTPUTS:
-        with pytest.raises(SystemExit):
+def test_protected_checkpoints_cannot_be_run_targets(trainer: Any, campaign: Any) -> None:
+    """Membership first, behaviour second.
+
+    Iterating ``PROTECTED_OUTPUTS`` to prove each entry is refused says nothing if an entry is
+    simply deleted -- and the two entries that matter are the product's default checkpoint and
+    the P3b start state, the only files this run must never touch.
+    """
+
+    names = {path.name for path in trainer.PROTECTED_OUTPUTS}
+    assert {"seed_corpus.pt", "seed_beta.pt"} <= names, names
+    assert trainer.START_CHECKPOINT in trainer.PROTECTED_OUTPUTS
+    assert set(campaign.PROTECTED_CHECKPOINTS) <= set(trainer.PROTECTED_OUTPUTS)
+    for path in (trainer.PROTECTED_OUTPUTS[0], trainer.START_CHECKPOINT):
+        with pytest.raises(SystemExit, match="protected"):
             trainer._refuse_protected(path)
     checkpoint = trainer.arm_paths("treatment")[0]
     assert trainer._refuse_protected(checkpoint) == checkpoint.resolve()
@@ -146,7 +160,9 @@ def test_config_must_be_rebuilt_from_the_envelope(trainer: Any) -> None:
         assert profile != config.taiji, f"scale {scale} now matches; the CLI path may be usable"
 
 
-def test_both_arm_corpora_are_manifest_bound(trainer: Any, tmp_path: Path) -> None:
+def test_both_arm_corpora_are_manifest_bound(
+    trainer: Any, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     other = tmp_path / "corpus.jsonl"
     other.write_text('{"text": "a"}\n', encoding="utf-8")
     record = trainer._guard_data_provenance(other)
@@ -158,7 +174,9 @@ def test_both_arm_corpora_are_manifest_bound(trainer: Any, tmp_path: Path) -> No
     ):
         arm_path.write_text('{"text": "老师：甲\n乙：乙\n"}\n', encoding="utf-8")
         manifest_path.write_text(json.dumps({"output_sha256": "0" * 64}), encoding="utf-8")
-        trainer.ARM_MANIFESTS = {arm_path: manifest_path}
+        # monkeypatch, not assignment: this trainer module is cached in sys.modules and shared
+        # with test_p3b_arm_corpus_contract.py, which asserts on the real registry
+        monkeypatch.setattr(trainer, "ARM_MANIFESTS", {arm_path: manifest_path})
         with pytest.raises(SystemExit, match="drifted"):
             trainer._guard_data_provenance(arm_path)
         manifest_path.write_text(
@@ -184,11 +202,12 @@ def test_arms_own_disjoint_files(campaign: Any) -> None:
     assert set(map(str, treatment)).isdisjoint(set(map(str, control)))
 
 
-def test_the_campaign_scores_the_very_file_the_trainer_writes(trainer: Any, campaign: Any) -> None:
-    """``campaign_paths()[0]`` must be the trainer's own output path, not a lookalike.
+def test_the_driver_and_the_trainer_agree_on_the_arm_path(trainer: Any, campaign: Any) -> None:
+    """``campaign_paths()[0]`` is ``arm_paths()[0]``, not a lookalike recomputed in the driver.
 
-    If the two ever disagree, the driver scores a copy while the trainer keeps writing the
-    original, and every stage number silently describes an earlier training state.
+    This catches path drift between the two files.  The distinct hazard of scoring a copy while
+    the trainer writes the original is covered by the snapshot tests, which pin the file that
+    gets scored back to this path.
     """
 
     for arm in ("treatment", "control"):
@@ -249,23 +268,33 @@ def test_campaign_requires_the_p3a_chain(campaign: Any, criteria: Any) -> None:
 
 
 def test_stop_definitions_are_recorded_in_every_report(campaign: Any) -> None:
-    """A stop rule that exists only in prose gets re-interpreted under pressure."""
+    """A stop rule that exists only in prose gets re-interpreted under pressure.
 
-    source = CAMPAIGN.read_text(encoding="utf-8")
-    for token in (
+    Asserted against the shipped payload object, not against source text: grepping words such as
+    "improved" or "material" is satisfied by identifiers and docstrings alone, so deleting the
+    whole ``stop_definitions`` block from the record would have kept the old check green.
+    """
+
+    definitions = campaign.STOP_DEFINITIONS
+    assert set(definitions) >= {
         "improved",
         "stall",
         "regression",
-        "chain_required",
-        "material",
-        "persistent",
         "stage_scoring",
-        "why_two_arms",
-    ):
-        assert token in source, token
+        "comparability",
+        "chain_required",
+    }, sorted(definitions)
+    assert definitions["improved"] == "max(C/D/E delta vs P3a) > 0"
     assert campaign.STALL_LIMIT == 3
+    assert str(campaign.STALL_LIMIT) in definitions["stall"]
     # 20 items per dimension: one flipped item is 0.05, so the noise floor sits at two items
     assert campaign.REGRESSION_MARGIN == 0.10
+    assert f"-{campaign.REGRESSION_MARGIN}" in definitions["regression"]
+    assert "material" in definitions["regression"] and "persistent" in definitions["regression"]
+    assert definitions["chain_required"] == campaign.REQUIRED_CHAIN
+    for field in campaign.EVAL_SURFACE_FIELDS:
+        assert field in definitions["comparability"], field
+    assert "snapshots" in definitions["stage_scoring"]
 
 
 def test_one_item_wobble_is_not_a_regression(campaign: Any) -> None:
@@ -382,10 +411,13 @@ def test_headline_only_carries_recorded_fields() -> None:
     source = SUMMARIZER.read_text(encoding="utf-8")
     for invented in ("machine_normalised", "min_lines", "passed =", "verdict ="):
         assert invented not in source, invented
-    stage = _stage(17_000_000, {"C": 0.2, "D": 0.1, "E": 0.3})
-    headline = summarize.arm_headline({"arm": "treatment", "stages": [stage], "status": "running"})
-    assert headline["latest_tick"] == 17_000_000
-    assert headline["latest_scores"] == stage["scores"]
+    older = _stage(17_000_000, {"C": 0.2, "D": 0.1, "E": 0.3})
+    newer = _stage(18_000_000, {"C": 0.4, "D": 0.2, "E": 0.5})
+    headline = summarize.arm_headline(
+        {"arm": "treatment", "stages": [older, newer], "status": "running"}
+    )
+    assert headline["latest_tick"] == 18_000_000, "latest must mean last, not first"
+    assert headline["latest_scores"] == newer["scores"]
 
 
 def _matched(tick: int, **deltas: Any) -> dict[str, Any]:
@@ -523,7 +555,12 @@ def test_waiter_reads_only_the_current_stop_key() -> None:
     assert waiter.stop_of({"campaign_stop": "stalled"}) == "stalled"
     assert waiter.stop_of({}) is None
     assert waiter.stop_of({"campaign_stop": None}) is None
-    # the reserved episode-level token must not appear in this file at all
+    # What this pins: the waiter reads the current key and nothing else. The reserved
+    # episode-level token is deliberately not spelled out even to assert its absence -- the
+    # fail-closed N2 disposition scanner audits every file that mentions it, so writing it here
+    # would add this test to the very inventory it is meant to protect. That scanner, not this
+    # line, is the enforcement. (It matches the token as a plain substring, so even citing the
+    # scanner's own file name would pull a file into the surface -- hence "by role, not path".)
     source = WAITER.read_text(encoding="utf-8")
     assert "campaign_stop" in source
     assert waiter.STOP_KEY == "campaign_stop"
