@@ -309,6 +309,9 @@ B0 逐条状态见[B0 设计包](../../reference/M5_B0_MEASUREMENT_AND_REACHABIL
 > "同一方向连续两个共同检查点"才可称效应 ⇒ **H-P3b 既不能判真也不能判伪，只能记 un-judged**。
 > 下一步就是等这个结论落地，然后按[结果报告计划](../../reference/M5_P3B_RESULT_REPORTING_PLAN_20260915.md)
 > 的表 A–D 与十条禁令写结项（负结果/不可判按实登记，不写成"无效应"）。
+> **另立一件已提前办掉的事**：若要做第二次，读法必须在看到新数据**之前**定 ⇒
+> 已在阶段 2 落地前起草[第二次怎么跑才判得动（决策简报）](../../reference/M5_P3B_SECOND_CAMPAIGN_DECISION_BRIEF_20260916.md)：
+> 先只读量头寸（A，不耗训练机时）再决定要不要固定阶段数成对跑（B，需新机时授权）。
 > 判据随时可复核：
 > `python -X utf8 scripts/training/check_p3b_criteria.py --baseline reports/taiji_cap0_baseline_constrained_20260915.json --candidate reports/p3b_stages/<arm>/cap0_tick_<tick>.json --output <out>`。
 > **崩溃续跑**：`train_p3b_aligned.py --arm <arm> --resume-from checkpoints/p3b/seed_aligned[_control].pt`
