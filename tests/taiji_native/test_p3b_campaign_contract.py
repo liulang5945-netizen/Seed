@@ -32,6 +32,7 @@ REPO = Path(__file__).resolve().parents[2]
 TRAINER = REPO / "scripts" / "training" / "train_p3b_aligned.py"
 CAMPAIGN = REPO / "scripts" / "training" / "run_p3b_campaign.py"
 SUMMARIZER = REPO / "scripts" / "training" / "summarize_p3b.py"
+WAITER = REPO / "scripts" / "training" / "wait_p3b_stage.py"
 CRITERIA = REPO / "scripts" / "training" / "check_p3b_criteria.py"
 CALIBRATION = REPO / "reports" / "taiji_p3b_throughput_calibration_20260915.json"
 START_CHECKPOINT = REPO / "checkpoints" / "seed_beta.pt"
@@ -369,3 +370,28 @@ def test_swapped_eval_surface_or_item_order_is_drift(campaign: Any) -> None:
     echoed = json.loads(json.dumps(stage))
     echoed["declared_mode"] = "T"
     assert "declared_mode" in campaign._surface_drift(echoed, base)
+
+
+# --------------------------------------------------------------------------- #
+# Waiting is a reader, not a judge
+# --------------------------------------------------------------------------- #
+
+
+def test_waiter_reads_only_the_current_stop_key() -> None:
+    waiter = _load("_p3b_waiter_under_test", WAITER)
+    assert waiter.stop_of({"campaign_stop": "stalled"}) == "stalled"
+    assert waiter.stop_of({}) is None
+    assert waiter.stop_of({"campaign_stop": None}) is None
+    # the reserved episode-level token must not appear in this file at all
+    source = WAITER.read_text(encoding="utf-8")
+    assert "campaign_stop" in source
+    assert waiter.STOP_KEY == "campaign_stop"
+
+
+def test_waiter_needs_a_real_stage_count() -> None:
+    waiter = _load("_p3b_waiter_under_test", WAITER)
+    assert waiter.reached({}, 1) is False
+    assert waiter.reached({"treatment": {}}, 1) is False
+    assert waiter.reached({"treatment": {"stages": [{"tick": 1}]}}, 1) is True
+    assert waiter.reached({"treatment": {"stages": [{"tick": 1}]}}, 2) is False
+    assert waiter.reached({"treatment": {"stages": [{"tick": 1}]}, "control": {}}, 1) is True
