@@ -92,11 +92,27 @@ def _manifest(path: Path) -> dict[str, Any]:
 
 
 def test_the_two_arms_differ_only_by_the_row_rule(builder: Any) -> None:
-    assert builder.qualifies(PLAIN_TEXT, "all") is True
-    assert builder.qualifies(DIALOGUE_TEXT, "dialogue") is True
-    # a metadata speaker is not a speaker, so this row joins control but not treatment
-    assert builder.qualifies(META_ONLY_TEXT, "dialogue") is False
-    assert builder.qualifies(META_ONLY_TEXT, "all") is True
+    """Where the filter cuts, and that the two acceptance sets are nested.
+
+    The previous version of this test spent two of its four lines on
+    ``qualifies(PLAIN_TEXT, "all") is True`` and ``qualifies(META_ONLY_TEXT, "all") is True``.
+    Those say nothing: the ``all`` branch is a literal ``return True`` that ignores its text, so
+    both lines restate one line of source.  What the matched design actually relies on is that
+    the cut lands on metadata-only speakers, and that control is a **superset** of treatment.
+    """
+
+    samples = (DIALOGUE_TEXT, META_ONLY_TEXT, PLAIN_TEXT)
+    assert {text: builder.qualifies(text, "dialogue") for text in samples} == {
+        DIALOGUE_TEXT: True,
+        # a metadata speaker is not a speaker, so this row joins control but not treatment
+        META_ONLY_TEXT: False,
+        PLAIN_TEXT: False,
+    }
+    accepted = {text for text in samples if builder.qualifies(text, "dialogue")}
+    rejected = set(samples) - accepted
+    assert accepted and rejected, "samples where the two rules coincide prove no nesting"
+    for text in accepted:
+        assert builder.qualifies(text, "all"), text
 
 
 def test_unknown_rule_fails_closed(builder: Any) -> None:
@@ -208,12 +224,11 @@ def test_the_manipulation_actually_happened() -> None:
     dialogue = _manifest(DIALOGUE_MANIFEST)
     everything = _manifest(ALL_MANIFEST)
     assert dialogue["dialogue_density_of_emitted_rows"] == 1.0
-    # control is the untouched distribution: far fewer multi-speaker documents
-    assert everything["dialogue_density_of_emitted_rows"] < 0.5
-    assert (
-        dialogue["dialogue_density_of_emitted_rows"]
-        > 2 * everything["dialogue_density_of_emitted_rows"]
-    )
+    # control is the untouched distribution: measured 0.2356.  Pinned as an independent
+    # interval rather than "less than 0.5" plus a ratio against the treatment arm -- that ratio
+    # was entailed by the two neighbouring lines, so it could not fail on its own.  If control
+    # ever drifts toward the treatment arm's density, this is the line that goes red.
+    assert 0.15 < everything["dialogue_density_of_emitted_rows"] < 0.30
     assert (
         dialogue["source_rows_scanned"] > everything["source_rows_scanned"]
     ), "a denser filter must read further into the same source to fill the same budget"

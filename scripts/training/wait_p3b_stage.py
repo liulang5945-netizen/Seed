@@ -1,13 +1,17 @@
 """Block until a P3b campaign arm reaches a stage target (or stops), then report.
 
 The campaigns run for ~50 hours, so polling them turn by turn wastes both turns and CPU.
-This waits on the condition instead: it exits as soon as either arm has ``--stages`` scored
-checkpoints, or either arm has written a stop verdict, or the deadline hits.  Output is
-ASCII so it can be redirected to a log safely.
+This waits on the condition instead: by default it exits as soon as **either** arm has
+``--stages`` scored checkpoints, or **either** arm has written a stop verdict, or the
+deadline hits.  Naming an arm with ``--arm`` restricts both conditions to that arm, which
+is what you need once the other arm has stopped: a finished arm satisfies "some arm wrote a
+stop verdict" forever, so the default would return immediately on every subsequent wait.
+Output is ASCII so it can be redirected to a log safely.
 
 Usage::
 
     python -X utf8 scripts/training/wait_p3b_stage.py --stages 6 --deadline-seconds 25200
+    python -X utf8 scripts/training/wait_p3b_stage.py --arm treatment --stages 3
 """
 
 from __future__ import annotations
@@ -90,18 +94,37 @@ def arm_state(report: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def wait(target: int, deadline_seconds: int, poll_seconds: int) -> dict[str, Any]:
+def decide(reports: dict[str, Any], target: int, watch: str = "any") -> dict[str, Any] | None:
+    """One look at the campaign records: a verdict dict, or ``None`` to keep waiting.
+
+    Split out of ``wait`` so both directions of the selector are testable without sleeping.
+    Its only I/O is the trainer's progress line, reached through ``arm_state`` (tests replace
+    that reader wholesale).
+    """
+
+    selected = ARMS if watch == "any" else (watch,)
+    state = {arm: arm_state(reports.get(arm) or {}) for arm in ARMS}
+    if watch != "any" and not reports.get(watch):
+        # A typo'd or not-yet-created arm must not turn into a silent wait for the deadline.
+        return {"reason": "arm_missing", "watch": watch, "state": state}
+    stalled = [arm for arm in selected if state[arm]["driver_stalled"]]
+    if stalled:
+        return {"reason": "driver_stalled", "arms": stalled, "state": state}
+    watched = {arm: reports.get(arm) or {} for arm in selected}
+    if any(stop_of(report) for report in watched.values()) or reached(watched, target):
+        return {"reason": "condition", "state": state}
+    return None
+
+
+def wait(
+    target: int, deadline_seconds: int, poll_seconds: int, watch: str = "any"
+) -> dict[str, Any]:
     deadline = time.time() + deadline_seconds
     state: dict[str, Any] = {arm: {"stages": 0, "status": "missing"} for arm in ARMS}
     while time.time() < deadline:
-        reports = {arm: read_arm(arm) for arm in ARMS}
-        state = {arm: arm_state(reports[arm]) for arm in ARMS}
-        stops = {arm: state[arm]["stop"] for arm in ARMS}
-        stalled = [arm for arm in ARMS if state[arm]["driver_stalled"]]
-        if stalled:
-            return {"reason": "driver_stalled", "arms": stalled, "state": state}
-        if any(stops.values()) or reached(reports, target):
-            return {"reason": "condition", "state": state}
+        verdict = decide({arm: read_arm(arm) for arm in ARMS}, target, watch)
+        if verdict is not None:
+            return verdict
         time.sleep(poll_seconds)
     return {"reason": "deadline", "state": state}
 
@@ -111,10 +134,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--stages", type=int, default=1)
     parser.add_argument("--deadline-seconds", type=int, default=6 * 3600)
     parser.add_argument("--poll-seconds", type=int, default=120)
+    parser.add_argument(
+        "--arm",
+        choices=("any",) + ARMS,
+        default="any",
+        help="只按这一臂判定；另一臂已停时用它才能继续等活着的臂",
+    )
     args = parser.parse_args(argv)
-    result = wait(args.stages, args.deadline_seconds, args.poll_seconds)
+    result = wait(args.stages, args.deadline_seconds, args.poll_seconds, args.arm)
     print(json.dumps(result, ensure_ascii=True, indent=2), flush=True)
-    return 1 if result["reason"] == "driver_stalled" else 0
+    return 1 if result["reason"] in ("driver_stalled", "arm_missing") else 0
 
 
 if __name__ == "__main__":

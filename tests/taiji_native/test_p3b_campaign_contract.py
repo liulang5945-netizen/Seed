@@ -424,20 +424,48 @@ def _stage(tick: int, scores: dict[str, float | None]) -> dict[str, Any]:
 
 
 def test_arm_difference_is_matched_by_tick_not_by_order() -> None:
+    """Pairing must follow the tick, not the position in each arm's stage list.
+
+    The previous fixture could not tell those two implementations apart: treatment had one
+    stage, control had two, and control's *first* entry shared treatment's tick -- so zipping
+    by order produced the same table.  Here each arm lists its stages out of tick order, the
+    shared tick is the second element on one side, and the two control stages differ from each
+    other, so a mis-paired row shows up as a wrong delta rather than silently matching.
+    """
+
     summarize = _load("_p3b_summarize_under_test", SUMMARIZER)
-    treatment = {"stages": [_stage(17_000_000, {"C": 0.2, "D": 0.1, "E": 0.3})]}
+    unverified = _stage(19_000_000, {"C": 0.25, "D": 0.125, "E": 0.75})
+    unverified["chain_matches_p3a"] = False
+    treatment = {
+        "stages": [
+            unverified,
+            _stage(17_000_000, {"C": 0.25, "D": 0.125, "E": 0.5}),
+        ]
+    }
     control = {
         "stages": [
-            _stage(17_000_000, {"C": 0.1, "D": 0.0625, "E": 0.2}),
-            _stage(18_000_000, {"C": 0.1, "D": 0.0625, "E": 0.15}),
+            _stage(18_000_000, {"C": 0.125, "D": 0.0625, "E": 0.375}),
+            _stage(17_000_000, {"C": 0.125, "D": 0.0625, "E": 0.25}),
+            _stage(19_000_000, {"C": 0.125, "D": 0.0625, "E": 0.5}),
         ]
     }
     rows = summarize.tick_table(treatment, control)
-    assert [row["tick"] for row in rows] == [17_000_000, 18_000_000]
-    assert rows[0]["treatment_minus_control"]["C"] == 0.1
-    assert rows[0]["treatment_minus_control"]["E"] == 0.1
-    assert rows[1]["treatment_minus_control"] is None  # treatment has no 18M stage yet
-    assert rows[1]["control"] == {"C": 0.1, "D": 0.0625, "E": 0.15}
+    assert [row["tick"] for row in rows] == [17_000_000, 18_000_000, 19_000_000], "sorted by tick"
+
+    # the only comparable row: 17M pairs with 17M even though the two lists disagree on order
+    matched = rows[0]
+    assert matched["treatment"] == {"C": 0.25, "D": 0.125, "E": 0.5}
+    assert matched["control"] == {"C": 0.125, "D": 0.0625, "E": 0.25}
+    assert matched["treatment_minus_control"] == {"C": 0.125, "D": 0.0625, "E": 0.25}
+    assert matched["chain_ok"] is True
+
+    # a tick only one arm reached is no data, not a difference against nothing
+    assert rows[1]["treatment"] is None and rows[1]["treatment_minus_control"] is None
+    assert rows[1]["chain_ok"] is False
+    assert rows[1]["control"] == {"C": 0.125, "D": 0.0625, "E": 0.375}
+    # an unverified chain is still a number, but it must not be labelled comparable
+    assert rows[2]["treatment_minus_control"] == {"C": 0.125, "D": 0.0625, "E": 0.25}
+    assert rows[2]["chain_ok"] is False, "flagged as not chain-matched"
 
 
 def test_missing_arm_reads_as_missing_not_zero() -> None:
@@ -657,3 +685,75 @@ def test_an_orphaned_trainer_is_reported_as_a_stall(
     # a missing campaign record is no data, not a dead driver
     empty = waiter.arm_state({})
     assert empty["driver_stalled"] is False and empty["stages"] == 0
+
+
+def test_a_stopped_arm_cannot_satisfy_a_wait_on_the_live_one(
+    waiter: Any, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """``--arm`` exists because of a real event: the control arm stopped after stage 1.
+
+    With one arm terminal, "some arm wrote a stop verdict" stays true forever, so an
+    unfiltered wait returns on the spot and the surviving arm cannot be watched at all.
+    Both directions are pinned here, because either half could regress alone.
+    """
+
+    monkeypatch.setattr(waiter, "progress_tick", lambda arm: 17_250_000)
+    live: dict[str, Any] = {
+        "arm": "treatment",
+        "status": "running",
+        "checkpoint_every": 1_000_000,
+        "stages": [{"tick": 17_000_000}],
+    }
+    dead: dict[str, Any] = {
+        "arm": "control",
+        "status": "completed",
+        "campaign_stop": "regressed",
+        "checkpoint_every": 1_000_000,
+        "stages": [{"tick": 17_000_000}],
+    }
+    reports = {"treatment": live, "control": dead}
+
+    # The hazard itself: unfiltered, the dead arm ends the wait two stages early.
+    assert waiter.decide(reports, 2)["reason"] == "condition"
+    # Naming the live arm must keep waiting, and must still fire on its own terms.
+    assert waiter.decide(reports, 2, "treatment") is None
+    assert waiter.decide(reports, 1, "treatment")["reason"] == "condition"
+    assert waiter.decide(reports, 2, "control")["reason"] == "condition"
+
+    # Liveness is selected the same way: an orphaned trainer on the *other* arm is not a
+    # reason to abandon the arm being watched.
+    monkeypatch.setattr(
+        waiter, "progress_tick", lambda arm: 20_000_000 if arm == "control" else 17_250_000
+    )
+    assert waiter.decide(reports, 2, "treatment") is None
+    verdict = waiter.decide(reports, 2)
+    assert verdict["reason"] == "driver_stalled" and verdict["arms"] == ["control"]
+
+
+def _wait_stub(reason: str) -> Any:
+    def _stub(*_args: Any, **_kwargs: Any) -> dict[str, Any]:
+        return {"reason": reason, "state": {}}
+
+    return _stub
+
+
+def test_an_unwatchable_wait_and_a_typo_arm_both_fail_loudly(
+    waiter: Any, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A selector that silently waits out a 6-hour deadline would be worse than no waiter."""
+
+    assert (
+        waiter.decide({"treatment": {}, "control": {}}, 2, "treatment")["reason"] == "arm_missing"
+    )
+    for reason, expected in (
+        ("driver_stalled", 1),
+        ("arm_missing", 1),
+        ("condition", 0),
+        ("deadline", 0),
+    ):
+        monkeypatch.setattr(waiter, "wait", _wait_stub(reason))
+        assert waiter.main(["--arm", "treatment"]) == expected, reason
+
+    with pytest.raises(SystemExit) as raised:
+        waiter.main(["--arm", "treatmen"])
+    assert raised.value.code == 2, "an unknown arm must be rejected, not defaulted to"

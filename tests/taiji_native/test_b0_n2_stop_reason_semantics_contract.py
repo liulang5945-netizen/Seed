@@ -115,11 +115,35 @@ def test_handoff_and_interception_stay_separate_categories(rows: dict[str, dict]
 # --------------------------------------------------------------------------- #
 
 
-def test_the_blocked_branch_records_no_execution_and_no_goal(counterfactual: Any) -> None:
-    """Source-level pin: the branch that stops on ``all_members_blocked`` is terminal,
-    reports the step as not executed, and never mentions goal attainment."""
+def _blocked_branch(source: str) -> str:
+    """The ``if chosen is None:`` arm of the shipped rule, up to its terminating return."""
 
-    block = counterfactual.M4_SELECTION
+    marker = "        if chosen is None:"
+    terminator = f'return finish("{NEW_REASON}")'
+    assert marker in source and terminator in source, "the blocked arm is no longer in the gate"
+    start = source.index(marker)
+    end = source.index(terminator, start) + len(terminator)
+    return source[start:end]
+
+
+def test_the_blocked_branch_records_no_execution_and_no_goal(
+    counterfactual: Any, frozen_gate: Any
+) -> None:
+    """The blocked branch is terminal, reports the step as not executed, never as goal attainment.
+
+    Audit item B3: the first version grepped four strings out of ``M4_SELECTION``, a constant
+    defined *inside the probe*, so it stayed green however the shipped gate was edited -- a
+    "source-level pin" that never opened the source.  The constant is now required to be a
+    verbatim substring of the live ``_member_episode``, which makes the two agree or the test
+    red, and the properties are read off a slice of the real file.
+    """
+
+    source = inspect.getsource(frozen_gate._member_episode)
+    assert (
+        counterfactual.M4_SELECTION in source
+    ), "the probe's idea of the selection block is no longer the code that ships"
+
+    block = _blocked_branch(source)
     assert f'"stop": "{NEW_REASON}"' in block
     assert '"executed": False' in block
     assert f'return finish("{NEW_REASON}")' in block
