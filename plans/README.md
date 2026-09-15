@@ -1,5 +1,7 @@
 # Seed / Taiji 计划与架构入口
 
+> **2026-09-15：架构设计与可体验模型交付**。未来核心方案已写入 [VISION 详细设计](reference/VISION_COGNITIVE_CORE_DESIGN_20260915.md)，仅为候选，不替换当前主线。[Taiji Mini 里程碑](active/roadmap/07_MINI_MODEL_DELIVERY.md) 明确 B1 后交实际 checkpoint 预览、B2 后交可独立运行的有限能力模型，不等整个项目完成。原生生成与模板/外部文字严格分账。
+
 > 更新：2026-09-14；总计划审查基线 `cd8e4acc`。执行顺序仅由[当前推进方案](active/roadmap/03_CURRENT_EXECUTION.md)决定。
 
 ## 先看项目全局
