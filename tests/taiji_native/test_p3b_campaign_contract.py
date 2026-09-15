@@ -228,6 +228,54 @@ def test_the_campaign_cannot_point_an_arm_at_a_stray_corpus() -> None:
     assert '"--budget-tier"' in source, "the tier guard, not an ad-hoc symbol count, sizes the run"
 
 
+def test_the_trainer_refuses_to_guess_which_arm_it_is(trainer: Any) -> None:
+    """No default for ``--arm``: a defaulted arm resolves to treatment's live files.
+
+    The arm decides the checkpoint, the progress log (appended, not rewritten) and the run
+    report, so guessing wrong does not fail -- it contaminates the campaign in progress.
+    """
+
+    with pytest.raises(SystemExit):
+        trainer.main(["--budget-tier", "48h"])
+    source = TRAINER.read_text(encoding="utf-8")
+    assert "--arm treatment --budget-tier" in source, "the documented usage must pass an arm"
+    assert "--arm control --budget-tier" in source
+
+
+def test_stage_integrity_accepts_whole_reports_and_flags_broken_ones(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """DEBT-I6 is unfixed while a campaign is in flight, so the monitor has to be able to see it."""
+
+    summarize = _load("_p3b_summarize_under_test", SUMMARIZER)
+    # monkeypatch, not assignment: this module is cached in sys.modules and shared
+    monkeypatch.setattr(summarize, "PROJECT_ROOT", tmp_path)
+    directory = tmp_path / "reports" / "p3b_stages" / "treatment"
+    directory.mkdir(parents=True)
+    good = {
+        "eval_set": "plans/manifests/cap0_eval_set_v1.json",
+        "eval_set_format": "cap0-eval-set-v1",
+        "eval_set_frozen_on": "2026-09-15",
+        "declared_mode": "N",
+        "trained_during_eval": False,
+        "dimensions": {
+            key: {"items": [{"id": f"{key}{i}"} for i in range(20)]} for key in ("C", "D", "E")
+        },
+    }
+    (directory / "ok.json").write_text(json.dumps(good), encoding="utf-8")
+    assert summarize.stage_integrity("treatment", {"report": "ok.json"}) == []
+
+    (directory / "torn.json").write_text(json.dumps(good)[:120], encoding="utf-8")
+    assert summarize.stage_integrity("treatment", {"report": "torn.json"}) == ["torn_json"]
+
+    short = json.loads(json.dumps(good))
+    short["dimensions"]["D"]["items"] = []
+    (directory / "short.json").write_text(json.dumps(short), encoding="utf-8")
+    assert summarize.stage_integrity("treatment", {"report": "short.json"}) == ["D:items=0"]
+
+    assert summarize.stage_integrity("treatment", {"report": "gone.json"}) == ["missing_report"]
+
+
 def test_stage_row_marks_improvement_only_when_a_score_moves(campaign: Any) -> None:
     baseline = _report(0.0, 0.0625, 0.15, pending=20)  # P3a: B and G fully pending
     flat = campaign._stage_row(1, _report(0.0, 0.0625, 0.15), baseline, "flat.json")

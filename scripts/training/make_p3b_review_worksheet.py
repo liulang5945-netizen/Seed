@@ -80,11 +80,16 @@ def build_worksheet(
     ticks = sorted(
         {str(item.get("tick")) for _, _, item in _all_items(report) if item.get("tick") is not None}
     )
+    per_dimension = "；".join(
+        f"{dimension}：{sum(1 for dimension_name, _, _ in pending if dimension_name == dimension)} 题"
+        for dimension in PENDING_DIMENSIONS
+    )
     lines: list[str] = [
         f"# CAP-0 人工复核工作表 · {label}",
         "",
         f"- 来源检查点：{report.get('checkpoint', '?')}（tick {'、'.join(ticks) or '?'}）",
         f"- 待复核维度：{'、'.join(PENDING_DIMENSIONS)}（其余维度有机检分，或整维记 not_executed）",
+        f"- 每维待复核题数：{per_dimension}",
         f"- 量表：{RUBRIC}",
         "- 纪律：**未复核的题不得记为通过**；跳过的题号在表尾列出，空白评分位等于没复核。",
         "",
