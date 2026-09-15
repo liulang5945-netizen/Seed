@@ -1,0 +1,84 @@
+# M5 CAP-0 P1 诊断：训练目标是**纯字节自监督**，未对齐"生成可读回答"
+
+日期：2026-09-15。状态：**已执行（只读；未训练、未改源码、未写检查点）**。
+依据：[语言能力工作包草案](M5_CAP0_LANGUAGE_WORKPACKAGE_DRAFT_20260915.md) §4 的 **P1**；
+上游：[CAP-0 基线](M5_CAP0_BASELINE_RESULT_20260915.md)、
+[legacy-load 反事实](M5_CAP0_LEGACY_LOAD_COUNTERFACTUAL_20260915.md)。
+
+## §1 一句话结论
+
+**既不是"没训过语言"，也不是"训了但没接出来"，而是第三种**：
+
+- **训练确实喂过 1.4 GB 中文文本**，但**唯一监督信号是字节级下一符号预测**（不对齐"回答问题"）；
+- **推理链路是通的**（能产出字节、能解码、语言器官的判据**很宽松**）；
+- **但字节预测器产出的字节流不是合法 UTF-8**（含替换字符）⇒ 被判"不是文本" ⇒ 回落模板。
+
+⇒ **缺口 = 训练目标未对齐"生成可读回答"**，不是链路缺陷、也不是判据过严。
+
+## §2 训练目标（读 `scripts/training/train_seed_corpus.py`）
+
+- **语料**：`data/simple_zh/simple_zh_texts.jsonl`（**1,394,775,610 B ≈ 1.4 GB 中文**）；
+  每行一个 session = 一个 `boundary_symbol` + 该文档的 UTF-8 字节。
+- **唯一监督**：`step = model.observe(symbol, learn=True)` ⇒ 下一符号预测
+  （统计 `prior_prediction` 正确率与 `surprise`）。
+- 代码原话（该文件 L92-95）：**"对话结构已经在文本里（问：/答： 标记），所以不需要
+  tokenizer、也不需要结构化重编码 —— 模型看到的正是读者会看到的那些字节。"**
+- **没有**语言/对话/回答形式的专门损失项。
+- 佐证：`seed_beta.pt` 的 `trainer = train_seed_corpus`、`tick = 16,000,000`；
+  长训命令为 `--corpus data/simple_zh/simple_zh_texts.jsonl --max-symbols 95200000 --scale 2`。
+
+## §3 推理链路（读 `api/seed_runtime.py::chat`）
+
+1. 构造 `InputFrame(modality="text", payload=prompt 的 UTF-8, provenance="external")`；
+2. `raw = model.generate_input(frame, max_length, stop_at_boundary=True, sample=False)`；
+3. `native_prediction = raw.decode("utf-8", errors="replace")`，按 `_TURN_MARKERS` 截断；
+4. 交给 `ExpressionPlan`（`intent_kind="chat_answer"`）⇒ 语言器官；
+5. 器官用 `_readable_surface(value)` 判定（`taiji/language_organ.py:1214`）：
+   **非空 + 不含 `\ufffd` + 无控制字符 + 至少一个字母数字** ⇒ 否则回落状态说明。
+
+**判据是宽松的**：它并没有要求"语义正确"，只要"看起来是可读文本"。被拒绝说明产出**连这一点都不满足**。
+
+## §4 只读探针实测（默认入口 tick=2，4 条提问）
+
+探针：[`scripts/training/probe_taiji_cap0_byte_output.py`](../../scripts/training/probe_taiji_cap0_byte_output.py)
+（只读、可复现；重跑结果一致：4/4 条提问 `readable_surface=None`、`has_replacement_char=true`）。
+
+| 提问 | `raw_bytes` | 含替换字符 | `_readable_surface` | chat 输出 |
+|---|---|---|---|---|
+| 水的沸点是多少？ | 64 | **是** | `None` | 固定模板 |
+| 你好。 | 64 | **是** | `None` | 固定模板 |
+| 1+1 等于几？ | 64 | **是** | `None` | 固定模板 |
+| 用一句话说明你能做什么。 | 64 | **是** | `None` | 固定模板 |
+
+字节头示例（十六进制）：
+
+```
+eb947070707070707070707070707070707070a478723d3dff707033017b6445eac74536d17070707070
+```
+
+⇒ **大量 `0x70`（ASCII `p`）夹杂不可解码的高位字节**；解码后含 `\ufffd`（替换字符），
+语言器官因此判定"不是文本"—— **这是正确判定**。
+
+## §5 对工作包路径的影响（更新草案 §4）
+
+- **P2（语言表层接入）不适用**：不是"有可读候选但没接上"，而是**根本没有产出可读文本**；
+- **P3（语言学习训练）成为主路径**：需要**目标对齐**的训练（回答形式的监督，或能让字节预测
+  收敛到可解码文本的自监督目标），而**不是简单加长字节预训练**；
+- **P4（换评价对象）暂不需要**：链路本身可用；
+- **新增注意点**：`0x70` 在四条不同提示下**高度稳定**地占主导 ⇒ 值得检查它是否是该配置的
+  退化/默认输出（tick=2 是刚初始化基底，与"未训练"一致）。
+
+## §6 界限：本轮**不能**主张什么
+
+- **不能**说"训练了 16M ticks 也没用"：本探针只测**默认入口（tick=2）**；
+  16M-tick 状态的**字节产物**未测（需放宽 legacy 守卫 ⇒ 属加载策略决策**之后**的动作）。
+  [反事实](M5_CAP0_LEGACY_LOAD_COUNTERFACTUAL_20260915.md) 只测到"chat 输出同模板"。
+- **不能**说"语言器官判得太严"：它的判据很宽松，拒绝是**正确**的。
+- **不能**据此断言架构上限：只能说明**当前训练目标不对齐语言产出**。
+- **不能**把本诊断当作能力分数：它没有评分，也不替代冻结评价集。
+
+## §7 下一步（承接草案 §4/§5）
+
+1. **拍板加载策略**（legacy 守卫 a/b/c）⇒ 之后才可能测 **16M-tick 的字节产物**；
+2. **P3 设计**：先写"目标对齐"的预注册（训练形式、监督来源、停止条件），评价集已冻结可作前后对照；
+3. 评价集与基线均已就绪（B/C/D/E/G 有分数，A/H/F 有确定性检查）⇒ P3 的前后对照无需再等。

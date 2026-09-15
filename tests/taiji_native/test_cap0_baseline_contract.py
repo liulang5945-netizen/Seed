@@ -214,3 +214,44 @@ def test_adjudication_does_not_overwrite_the_baseline_report() -> None:
     for row in baseline["dimensions"]["B"]["items"]:
         assert row.get("score") is None
         assert row.get("pending_human_review") is True
+
+
+# --- P1 诊断：训练目标 vs 语言产出 -----------------------------------------
+
+P1_DIAGNOSIS = (
+    PROJECT_ROOT / "plans" / "reference" / "M5_CAP0_P1_LANGUAGE_SUPERVISION_DIAGNOSIS_20260915.md"
+)
+P1_PROBE = PROJECT_ROOT / "scripts" / "training" / "probe_taiji_cap0_byte_output.py"
+
+
+def test_readable_surface_rejects_undecodable_byte_streams() -> None:
+    """P1 中机器可验的部分：含替换字符的字节流必须被判"不是文本"。
+
+    语言器官的判据是**宽松**的（非空 / 无替换字符 / 无控制字符 / 含字母数字），
+    所以"回落模板"说明产出连这一点都不满足 —— 不是判据过严。
+    """
+
+    from taiji.language_organ import _readable_surface
+
+    assert _readable_surface("答案是 5。") == "答案是 5。"
+    assert _readable_surface("abc123") == "abc123"
+    assert _readable_surface("\ufffdppp") is None
+    assert _readable_surface("") is None
+    assert _readable_surface("   ") is None
+    assert _readable_surface("\x00\x01") is None
+    assert _readable_surface(123) is None
+
+
+def test_p1_diagnosis_and_probe_are_archived() -> None:
+    assert P1_DIAGNOSIS.is_file()
+    assert P1_PROBE.is_file(), "P1 探针作为诊断脚本保留，便于复现证据"
+    text = P1_DIAGNOSIS.read_text(encoding="utf-8")
+    for token in (
+        "既不是",
+        "第三种",
+        "唯一监督信号是字节级下一符号预测",
+        "0x70",
+        "判据是宽松的",
+    ):
+        assert token in text, token
+    assert "只读" in P1_PROBE.read_text(encoding="utf-8")
