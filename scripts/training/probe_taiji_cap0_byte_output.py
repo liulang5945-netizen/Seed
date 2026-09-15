@@ -13,6 +13,8 @@ import json
 import sys
 from pathlib import Path
 
+import torch
+
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
@@ -22,6 +24,80 @@ from taiji import InputFrame  # noqa: E402
 from taiji.language_organ import _readable_surface  # noqa: E402
 
 CHECKPOINT = PROJECT_ROOT / "checkpoints" / "seed_corpus.pt"
+
+
+def _utf8_allowed(remaining: int, lead: int) -> list[int]:
+    """UTF-8 DFA：给定"还期望几个续字节"与当前字符的首字节，返回合法后继字节。
+
+    这是**精确**的 UTF-8 结构约束（含 overlong / surrogate / 超范围排除）：
+    - ``remaining == 0`` ⇒ 合法首字节：ASCII 或 2/3/4 字节序列的引导字节；
+    - ``remaining > 0`` ⇒ 续字节 ``0x80..0xBF``，并按首字节收紧边界。
+    """
+
+    if remaining == 0:
+        return list(range(0x00, 0x80)) + list(range(0xC2, 0xF5))
+    low, high = 0x80, 0xBF
+    if remaining == 3 and lead == 0xE0:
+        low = 0xA0
+    elif remaining == 3 and lead == 0xED:
+        high = 0x9F
+    elif remaining == 3 and lead == 0xF0:
+        low = 0x90
+    elif remaining == 3 and lead == 0xF4:
+        high = 0x8F
+    return list(range(low, high + 1))
+
+
+def _constrained_generate(runtime: object, prompt: bytes, length: int) -> bytes:
+    """复现 ``Taiji.generate`` 的循环，但每步**只在 UTF-8 合法后继里取 argmax**。
+
+    只读对照实验：模型本身不动，仅改变"逐字节选择"的可行集，
+    用来判定"编码层缺口能否靠推理侧约束修复"。
+    """
+
+    # Seed 是适配层，逐字节循环与 boundary_symbol 都在其 substrate（Taiji）上。
+    model = getattr(runtime.model, "substrate", runtime.model)  # type: ignore[attr-defined]
+    model.reset_dynamics(episode_id="p3a-constrained")
+    step = model.observe(
+        model.config.boundary_symbol,
+        learn=False,
+        readout="predictive",
+        use_memory=False,
+        use_identity=False,
+    )
+    for symbol in prompt:
+        step = model.observe(
+            int(symbol), learn=False, readout="predictive", use_memory=False, use_identity=False
+        )
+    out = bytearray()
+    remaining = 0
+    lead = 0
+    for _ in range(length):
+        allowed = _utf8_allowed(remaining, lead)
+        probabilities = step.probabilities.detach().cpu()
+        masked = probabilities.clone()
+        keep = torch.zeros_like(masked, dtype=torch.bool)
+        keep[torch.tensor(allowed, dtype=torch.long)] = True
+        masked[~keep] = -1.0
+        symbol = int(masked.argmax().item())
+        if symbol == model.config.boundary_symbol:
+            break
+        out.append(symbol)
+        if remaining == 0:
+            if symbol < 0x80:
+                remaining, lead = 0, 0
+            elif symbol < 0xE0:
+                remaining, lead = 1, symbol
+            elif symbol < 0xF0:
+                remaining, lead = 2, symbol
+            else:
+                remaining, lead = 3, symbol
+        else:
+            remaining -= 1
+        step = model.observe(
+            symbol, learn=False, readout="predictive", use_memory=False, use_identity=False
+        )
+    return bytes(out)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -35,6 +111,11 @@ def main(argv: list[str] | None = None) -> int:
         help="进程内放宽 legacy 守卫（复用反事实探针的同一实现；不改源码、不训练）",
     )
     parser.add_argument("--max-length", type=int, default=64, help="每次生成的字节上限")
+    parser.add_argument(
+        "--constrained",
+        action="store_true",
+        help="额外跑一次 UTF-8 约束解码对照（只读；模型不动，只限制每步的可行字节集）",
+    )
     args = parser.parse_args(argv)
     max_length = int(args.max_length)
 
@@ -78,20 +159,39 @@ def main(argv: list[str] | None = None) -> int:
             except UnicodeDecodeError:
                 break
             prefix = size
-        payload["probes"].append(
-            {
-                "prompt": prompt,
-                "raw_bytes": len(raw),
-                "raw_hex_head": raw[:48].hex(),
-                "decoded_head": decoded[:120],
-                "decoded_ignore": ignored[:120],
-                "decoded_ignore_chars": len(ignored),
-                "longest_valid_utf8_prefix_bytes": prefix,
-                "has_replacement_char": "\ufffd" in decoded,
-                "readable_surface": _readable_surface(decoded),
-                "chat_output_head": runtime.chat(prompt, learn=False)[:90],
+        entry: dict[str, object] = {
+            "prompt": prompt,
+            "raw_bytes": len(raw),
+            "raw_hex_head": raw[:48].hex(),
+            "decoded_head": decoded[:120],
+            "decoded_ignore": ignored[:120],
+            "decoded_ignore_chars": len(ignored),
+            "longest_valid_utf8_prefix_bytes": prefix,
+            "has_replacement_char": "\ufffd" in decoded,
+            "readable_surface": _readable_surface(decoded),
+            "chat_output_head": runtime.chat(prompt, learn=False)[:90],
+        }
+        if args.constrained:
+            constrained = _constrained_generate(runtime, text.encode("utf-8"), max_length)
+            # 截断到最后一个**完整**字符：长度截断不能被误读成"约束失败"。
+            trimmed = constrained
+            for cut in range(len(constrained), max(0, len(constrained) - 4), -1):
+                try:
+                    constrained[:cut].decode("utf-8")
+                except UnicodeDecodeError:
+                    continue
+                trimmed = constrained[:cut]
+                break
+            constrained_text = trimmed.decode("utf-8", errors="replace")
+            entry["constrained"] = {
+                "raw_bytes": len(constrained),
+                "kept_bytes": len(trimmed),
+                "decoded": constrained_text[:160],
+                "decoded_chars": len(constrained_text),
+                "has_replacement_char": "\ufffd" in constrained_text,
+                "readable_surface_present": _readable_surface(constrained_text) is not None,
             }
-        )
+        payload["probes"].append(entry)
 
     print(json.dumps(payload, ensure_ascii=False, indent=2))
     return 0

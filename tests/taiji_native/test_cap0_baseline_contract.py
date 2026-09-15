@@ -275,3 +275,31 @@ def test_p1_section_8_records_the_two_independent_gaps() -> None:
     probe = P1_PROBE.read_text(encoding="utf-8")
     assert "--relax-legacy-guard" in probe
     assert "longest_valid_utf8_prefix_bytes" in probe
+
+
+def test_p1_section_9_records_the_constrained_decoding_result() -> None:
+    """§9：UTF-8 约束解码把可读判定从 0/4 修到 4/4（模型不动、不训练）。"""
+
+    text = P1_DIAGNOSIS.read_text(encoding="utf-8")
+    for token in ("§9", "UTF-8 约束解码", "0 / 4", "4 / 4", "P3b"):
+        assert token in text, token
+    probe = P1_PROBE.read_text(encoding="utf-8")
+    assert "_utf8_allowed" in probe
+    assert "--constrained" in probe
+
+
+def test_utf8_dfa_excludes_invalid_byte_sequences() -> None:
+    """约束解码依赖的 DFA 必须是**精确** UTF-8（否则"可读"是假的）。"""
+
+    from scripts.training.probe_taiji_cap0_byte_output import _utf8_allowed
+
+    lead = _utf8_allowed(0, 0)
+    assert 0x41 in lead and 0xE4 in lead  # 'A' 与 3 字节引导合法
+    assert 0x80 not in lead  # 续字节不能当首字节
+    assert 0xC0 not in lead and 0xC1 not in lead  # overlong 引导被排除
+    assert 0xF5 not in lead and 0xFF not in lead  # 超出 U+10FFFF
+    assert _utf8_allowed(1, 0xE4) == list(range(0x80, 0xC0))
+    assert _utf8_allowed(3, 0xE0)[0] == 0xA0  # 排除 overlong
+    assert _utf8_allowed(3, 0xED)[-1] == 0x9F  # 排除 surrogate
+    assert _utf8_allowed(3, 0xF0)[0] == 0x90
+    assert _utf8_allowed(3, 0xF4)[-1] == 0x8F
