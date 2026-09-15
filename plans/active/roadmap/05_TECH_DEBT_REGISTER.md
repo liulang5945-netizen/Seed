@@ -381,6 +381,20 @@ gone = load("baseline.xml") - load("now.xml")  # 记录，用于识别抖动
 （**归档报告不得改写**是既定纪律），故已回滚。
 ⇒ 修复点在 `audit_taiji_b0_m4_hardening.py` 的消费者扫描规则，须与 N2 作者对齐后再改。
 
+**✅ 已处置（2026-09-15，采用"改扫描器排除规则"）**：
+
+根因是**扫描器用子串匹配**（`if "stop_reason" not in source: continue`），而
+`audit_taiji_b0_checkpoint_preflight.py` 只输出 **payload 字段名**
+`"terminal_stop_reason_marker"` ⇒ 含该子串 ⇒ 被误算作消费者（17 → 18）。
+
+修法：在 `audit_taiji_b0_m4_hardening.py` 增加**审查排除名单** `SCAN_EXCLUSIONS`
+（每条必须写明"为什么不构成消费"），在扫描循环里按**归一化相对路径**（`\` → `/`）跳过。
+**未登记进 `EXPECTED_CONSUMERS`、未重写归档报告** —— 那条路已实测会牵出
+`test_historical_inventory_is_not_rewritten` 等 2 项新失败（见上）。
+
+结果：`live_consumers()` 回到 **17**（与 `EXPECTED_CONSUMERS` 及归档报告的
+`consumer_count_now = 17` 一致），N2 契约测试 **10 passed**。
+
 ### 处置时需先建立的观测能力（已建立）
 
 1. ✅ 让 `SystemExit` 带栈：CI 已加 `--tb=short --junitxml=... -o junit_logging=all`

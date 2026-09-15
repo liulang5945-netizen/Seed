@@ -75,6 +75,16 @@ CONTEXTS_PER_VARIANT = 2
 #: Files scanned for ``stop_reason`` consumers (risk 2).
 SCAN_ROOTS: tuple[str, ...] = ("scripts", "seed_platform", "taiji", "tests")
 
+#: 仅**提到**类 stop-reason 字段名、并不读取 stop reason 的文件。
+#: 每条都是**审查结论**（技术债册 §4.3(二)），不是无条件忽略；
+#: 新增条目必须写明"为什么不构成消费"。
+SCAN_EXCLUSIONS: dict[str, str] = {
+    "scripts/training/audit_taiji_b0_checkpoint_preflight.py": (
+        "only emits the payload field name 'terminal_stop_reason_marker'; "
+        "it never reads or compares a stop reason"
+    ),
+}
+
 CANDIDATES_FOR_REVIEW: dict[str, float] = {
     "all_singleton_oracle": 1.5,
     "best_fixed_singleton": 0.5,
@@ -241,6 +251,9 @@ def stop_reason_consumers() -> dict[str, Any]:
         for path in sorted(base.rglob("*.py")):
             if any(part in {"__pycache__", "archive"} for part in path.parts):
                 continue
+            relative = str(path.relative_to(PROJECT_ROOT)).replace("\\", "/")
+            if relative in SCAN_EXCLUSIONS:
+                continue
             try:
                 source = path.read_text(encoding="utf-8")
             except (UnicodeDecodeError, OSError):
@@ -254,7 +267,7 @@ def stop_reason_consumers() -> dict[str, Any]:
                 reasons.update(_REASON_TOKEN.findall(line))
             rows.append(
                 {
-                    "path": str(path.relative_to(PROJECT_ROOT)),
+                    "path": relative,
                     "literals_on_stop_lines": sorted(reasons),
                 }
             )
