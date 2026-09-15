@@ -239,7 +239,28 @@ B0 逐条状态见[B0 设计包](../../reference/M5_B0_MEASUREMENT_AND_REACHABIL
 
 每阶段提交预注册、必要报告、checkpoint/manifest，更新台账与唯一下一步。历史负结果、审计、Git 修复备份保留，不 gc/prune、不批量删除未知目录。用户已有 .workbuddy 修改不纳入本次提交。
 
-## 当前唯一下一步：**P3b 训练授权决策（前置已全部就绪）**
+## 当前唯一下一步：**等待 P3b 双臂 campaign 的阶段结果（已按上限档授权并在跑）**
+
+> **2026-09-15 授权与执行**：用户指示"遇到决策点默认最高上限方案，直到主线完成" ⇒ P3b 取 **48 h 档**
+> （每臂 **47,280,000 符号**，273.7 steps/s ⇒ 约 48 h），并按[预注册 §2.2](../../reference/M5_P3B_ALIGNED_LANGUAGE_TRAINING_PREREGISTRATION_20260915.md)
+> 的**双臂**设计并行跑：**treatment** = 对话子集，**control** = 16M ticks 原本训练用的原始流；
+> 同起点 `seed_beta.pt`、同预算、同目标函数、同链路（放宽守卫 + UTF-8 约束解码）。
+> **主效应读法 = `treatment − control`**；任一带对 P3a 的单边差值都不足以说"数据分布起了作用"
+> （守卫会挂全新随机 identity organ、任何预算本身都等于"多训一遍"，两者两臂同受）。
+>
+> **进度与产物**（每阶段 = 每 1,000,000 符号一次，评测约 206 s，首个阶段约 1 h 后出现）：
+> `reports/taiji_p3b_campaign_{treatment,control}_20260915.json`（原子重写，含 `stop_definitions`）、
+> `reports/p3b_stages/<arm>/cap0_tick_<tick>.json`、`checkpoints/p3b/snapshots/`（评前冻结的快照，防跨维混态）。
+> 监控：`tail -3 %TEMP%/p3b_{treatment,control}.log`；判据随时可复核：
+> `python -X utf8 scripts/training/check_p3b_criteria.py --baseline reports/taiji_cap0_baseline_constrained_20260915.json --candidate reports/p3b_stages/<arm>/cap0_tick_<tick>.json --output <out>`。
+> **崩溃续跑**：`train_p3b_aligned.py --arm <arm> --resume-from checkpoints/p3b/seed_aligned[_control].pt`
+> 后重启对应 campaign；已评测过的 tick 会自动跳过（阶段报告存在即复用）。
+> 停止条件按预注册 §4（预算耗尽 / 连续 3 个检查点无改善 / 实质或持续退化 ⇒ 停 + 起点不动）。
+>
+> 仪器与守卫：`scripts/training/train_p3b_aligned.py`、`run_p3b_campaign.py`、
+> `tests/taiji_native/test_p3b_campaign_contract.py`（**13 项**：机时档绑定标定值、受保护检查点拒写、
+> 无 `--scale` 等于 v8 画像故必须从信封重建配置、噪声不算回归需 material/persistent、快照不可变）。
+
 
 > **2026-09-15 晚更新**：P3b 的四项前置在同一日全部完成 ——
 > ① [P3b 预注册](../../reference/M5_P3B_ALIGNED_LANGUAGE_TRAINING_PREREGISTRATION_20260915.md)
