@@ -43,6 +43,22 @@ MODULE_REPORT = REPO / "reports" / "taiji_b0_structure_space_probe_20260913.json
 DESIGNED_CELL = "create__override"
 CREATE_ROW = ["create__mismatch", "create__observation", "create__override"]
 GRID_CELLS = 11
+#: Per-cell ``best_pair_gain`` measured from **both** sealed structure-space reports (wide and
+#: post-landing), which agree cell by cell.  Three create cells gain 2.0; the patch row's three
+#: non-``none`` cells stay at the preregistration's declared counterexample of -2.0; the rest 0.0.
+SWEEP_EXPECTED_GAIN = {
+    "create__mismatch": 2.0,
+    "create__observation": 2.0,
+    "create__override": 2.0,
+    "create__none": 0.0,
+    "none__mismatch": 0.0,
+    "none__observation": 0.0,
+    "none__override": 0.0,
+    "patch__mismatch": -2.0,
+    "patch__observation": -2.0,
+    "patch__override": -2.0,
+    "patch__none": 0.0,
+}
 
 
 def _load(name: str, path: Path):
@@ -449,16 +465,27 @@ def test_the_audited_rule_does_not_move_the_comparison_reference(payload):
 
 
 def test_seed_sweep_reproduces_every_create_row_gain(payload, probe):
+    """Every swept cell, not just the three that gained.
+
+    Measured from both sealed reports (wide and post-landing), which agree cell by cell.
+    ``patch__*`` sitting at ``-2.000`` is the counterexample face the frozen route B
+    preregistration declares, so the old "assert only the create row" left the load-bearing
+    half of the sweep -- and the naive "everything else is 0.0" would have been wrong anyway.
+    """
+
     sweep = payload["seed_sweep"]
     assert sweep["offsets"] == list(probe.SEED_OFFSETS)
     assert sweep["positive_cells_every_seed"] == CREATE_ROW
     assert sweep["positive_cells_any_seed"] == CREATE_ROW
     assert sweep["reality_ok_everywhere"] is True
+    assert (
+        len(sweep["rows"]) == len(sweep["offsets"]) * GRID_CELLS
+    ), "a shrinking sweep must not pass"
+    assert {row["cell"] for row in sweep["rows"]} == set(SWEEP_EXPECTED_GAIN), "cell set changed"
     for row in sweep["rows"]:
-        expected = 2.0 if row["cell"] in CREATE_ROW else 0.0
-        if row["cell"] in CREATE_ROW:
-            assert row["best_pair_gain"] == expected, row
-            assert row["positive"] is True, row
+        expected = SWEEP_EXPECTED_GAIN[row["cell"]]
+        assert row["best_pair_gain"] == expected, row
+        assert row["positive"] is (expected > 0), row
 
 
 def test_grid_separates_the_cells_it_claims_to_separate(payload):

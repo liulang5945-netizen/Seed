@@ -51,7 +51,7 @@
 | A2 | 同文件 `:109` | `assert "待复核维度" in text` 对任意输入恒真（表头无条件输出） | 导出器打印**每维待复核题数**，测试断言 0/0 与非 0 两种情形 |
 | A3 | 同文件 `:112-116` | 名叫"绝不指向封存报告"，实际只做一次子串禁令，从未与任何封存路径比较 | 与 P3a 基线路径及封存产物文件名集合**实际求交为空** |
 | B1 | `test_cap0_baseline_contract.py:84-94` | **整支测试空转**：唯一的断言藏在 `score != 1 → continue` 之后，而 `taiji_cap0_baseline_v1_20260915.json` 里 `score==1` 的行数为 **0** ⇒ 现在与今后都不会失败 | 对着**回声污染**那份报告（恰有 14 行 `score==1`）重放 `_strip_prompt_echo`+`_score_closed`，断言这 14 个假阳性全部归 0 |
-| B2 | `test_b0_structure_space_contract.py:457-461` | 11 格算 `expected` 只对 3 格断言（漏 else）⇒ 33 条种子扫描行里 **30 条无约束**，"非 create 格却涨了"恰好是其余守卫要防的事 | 补 `else: assert best_pair_gain == 0.0 and positive is False` |
+| B2 ✅**已修（02:41）** | `test_b0_structure_space_contract.py` 原 `:457-461` | 11 格算 `expected` 只对 3 格断言（漏 else）⇒ **77 条种子扫描行（7 偏移 × 11 格）里 56 条无约束**。（普查报告写的"33 条"也是错的，实测 77 条。） | 改为逐格 `SWEEP_EXPECTED_GAIN` 全表断言 + "扫描格集合 == 表键集合"（新增/缺失一格都会红）+ `positive` 由符号**推导**而非采信字段。<br>**普查给的修法本身是错的**：它建议 `else: assert gain == 0.0`，而 `patch__*` 三格实测为 **−2.000**（正是路线 B 冻结版声明的反例面）——照它写会把测试跑红才发现。两份封存报告（扩面 / 落地后）逐格一致，故该表可安全钉死 |
 | B3 | `test_b0_n2_stop_reason_semantics_contract.py:118-126` | 名叫"源码级钉住"，四条断言全部 grep **同一支仪器里定义的字符串常量**，从不打开真正落地的 gate 源码 | `assert counterfactual.M4_SELECTION in inspect.getsource(frozen_gate._member_episode)`，再把三条性质查在那段真实源码上 |
 | B4 | `test_cap0_legacy_load_contract.py:37-41` | `source_edited` 是探针**初始化的字面 False**，无人重算 ⇒ 断言的是声明不是测量 | 让探针实测（对 `taiji/` 取 `git status --porcelain` 或哈希前后差）后再断言该差为空 |
 | B5 | `test_cap0_inventory_contract.py:99-103` | 三条"格式支持"断言查的是 runner 自己拼的散文（句子含句子），不碰 `taiji/model.py`；`"2726-2732"` 是会腐烂的行号化石（已登记 DEBT-I5） | `assert {"taiji-native-v8","taiji-native-v9"} <= set(Taiji.LEGACY_CHECKPOINT_FORMATS)`；行号断言换成已被行为测量的那条错误文本 |
