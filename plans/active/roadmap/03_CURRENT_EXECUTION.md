@@ -277,6 +277,11 @@ B0 逐条状态见[B0 设计包](../../reference/M5_B0_MEASUREMENT_AND_REACHABIL
 > ——它还检查**驱动存活**：阶段评测失败时驱动会退出而训练器继续写检查点，
 > 因此按"产生了但没评分的检查点个数"判定，≥2 即报 `driver_stalled` 并以退出码 1 结束
 > （只喊不停，不杀进程；缺 campaign 记录记"无数据"不记停摆）。
+> **逐阶段证据当场登记**：[P3b 阶段核验记录](../../reference/M5_P3B_STAGE_VERIFICATION_LOG_20260915.md)
+> ——表 D 的"快照标签即状态 / 两臂语料指纹不同 / 评测面全等"最多要核 94 次，凭结项时回忆不可靠，
+> 故每阶段发生当时记一行（只增不改）。**阶段 1（tick 17,000,000）已过**：
+> 两臂快照 `metadata.tick` 均等于文件名 tick，指纹分别为 `p3b_dialogue_fresh` 与 `p3b_all_fresh`，
+> 字节数不同（88,303,741 对 88,314,093），tick_gap=0 ⇒ 配对与语料差异都有了一手物证。
 > 判据随时可复核：
 > `python -X utf8 scripts/training/check_p3b_criteria.py --baseline reports/taiji_cap0_baseline_constrained_20260915.json --candidate reports/p3b_stages/<arm>/cap0_tick_<tick>.json --output <out>`。
 > **崩溃续跑**：`train_p3b_aligned.py --arm <arm> --resume-from checkpoints/p3b/seed_aligned[_control].pt`
