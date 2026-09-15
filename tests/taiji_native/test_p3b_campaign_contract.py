@@ -319,3 +319,53 @@ def test_headline_only_carries_recorded_fields() -> None:
     headline = summarize.arm_headline({"arm": "treatment", "stages": [stage], "status": "running"})
     assert headline["latest_tick"] == 17_000_000
     assert headline["latest_scores"] == stage["scores"]
+
+
+# --------------------------------------------------------------------------- #
+# Comparability: two numbers off different surfaces are not an effect
+# --------------------------------------------------------------------------- #
+
+
+def _surface(items: list[str]) -> dict[str, Any]:
+    report = {
+        "eval_set": "plans/manifests/cap0_eval_set_v1.json",
+        "eval_set_format": "cap0-eval-set-v1",
+        "eval_set_frozen_on": "2026-09-15",
+        "declared_mode": "N",
+        "dimensions": {},
+    }
+    for key in ("C", "D", "E"):
+        report["dimensions"][key] = {"items": [{"id": item} for item in items]}
+    return report
+
+
+def test_identical_eval_surface_reports_no_drift(campaign: Any) -> None:
+    items = [f"{key}-{index}" for key in ("C", "D", "E") for index in range(20)]
+    stage = _surface([])
+    base = _surface([])
+    for key in ("C", "D", "E"):
+        stage["dimensions"][key]["items"] = [{"id": i} for i in items if i.startswith(key)]
+        base["dimensions"][key]["items"] = [{"id": i} for i in items if i.startswith(key)]
+    assert campaign._surface_drift(stage, base) == []
+
+
+def test_swapped_eval_surface_or_item_order_is_drift(campaign: Any) -> None:
+    items = [{"id": f"C{i}"} for i in range(3)]
+    stage = _surface([])
+    base = _surface([])
+    stage["dimensions"]["C"]["items"] = items
+    base["dimensions"]["C"]["items"] = items
+    base["dimensions"]["D"]["items"] = base["dimensions"]["E"]["items"] = []
+    assert campaign._surface_drift(stage, base) == []
+
+    other = json.loads(json.dumps(stage))
+    other["eval_set"] = "plans/manifests/cap0_eval_set_v2.json"
+    assert campaign._surface_drift(other, base) == ["eval_set"]
+
+    reordered = json.loads(json.dumps(stage))
+    reordered["dimensions"]["C"]["items"] = list(reversed(reordered["dimensions"]["C"]["items"]))
+    assert campaign._surface_drift(reordered, base) == ["C:item_ids"]
+
+    echoed = json.loads(json.dumps(stage))
+    echoed["declared_mode"] = "T"
+    assert "declared_mode" in campaign._surface_drift(echoed, base)

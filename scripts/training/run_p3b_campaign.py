@@ -168,6 +168,26 @@ def _evaluate(checkpoint: Path, stage_path: Path) -> dict[str, Any]:
     return report
 
 
+#: A stage is only comparable with the P3a baseline if the frozen evaluation surface is the
+#: same surface -- not merely "the same script".  Verified equal on the plumbing smoke
+#: (same manifest, format, frozen date, mode, and C/D/E item order; only ``checkpoint`` differs).
+EVAL_SURFACE_FIELDS = ("eval_set", "eval_set_format", "eval_set_frozen_on", "declared_mode")
+
+
+def _surface_drift(stage: dict[str, Any], baseline: dict[str, Any]) -> list[str]:
+    drift = [field for field in EVAL_SURFACE_FIELDS if stage.get(field) != baseline.get(field)]
+    for key in MECHANISED:
+        scored = [
+            item.get("id") for item in stage.get("dimensions", {}).get(key, {}).get("items", [])
+        ]
+        frozen = [
+            item.get("id") for item in baseline.get("dimensions", {}).get(key, {}).get("items", [])
+        ]
+        if scored != frozen:
+            drift.append(f"{key}:item_ids")
+    return drift
+
+
 def _stage_row(
     tick: int, report: dict[str, Any], baseline: dict[str, Any], stage_name: str
 ) -> dict[str, Any]:
@@ -293,6 +313,12 @@ def run(
                 "the live checkpoint is copied to checkpoints/p3b/snapshots before scoring, "
                 "because a stage costs ~205 s while the trainer overwrites the file"
             ),
+            "comparability": (
+                "a stage must reproduce the P3a evaluation surface exactly ("
+                + ", ".join(EVAL_SURFACE_FIELDS)
+                + ", plus C/D/E item id order); "
+                "drift stops the run, because two numbers from different surfaces are not an effect"
+            ),
             "chain_required": REQUIRED_CHAIN,
         },
         "budget_args": budget_args,
@@ -322,6 +348,7 @@ def run(
             scored = _evaluate(frozen, stage_path)
             row = _stage_row(tick, scored, baseline, stage_path.name)
             row["snapshot"] = frozen.name
+            row["eval_surface_drift"] = _surface_drift(scored, baseline)
             record["stages"].append(row)
             record["stall_streak"] = _stall_streak(record["stages"])
             print(
@@ -330,7 +357,9 @@ def run(
             )
             kind = _regression_kind(record["stages"])
             row["regression_kind"] = kind
-            if kind is not None or row["pending_grew"]:
+            if row["eval_surface_drift"]:
+                campaign_stop = "eval_surface_drift"
+            elif kind is not None or row["pending_grew"]:
                 campaign_stop = "regressed"
             elif record["stall_streak"] >= STALL_LIMIT:
                 campaign_stop = "stalled"

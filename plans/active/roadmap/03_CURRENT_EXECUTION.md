@@ -266,6 +266,11 @@ B0 逐条状态见[B0 设计包](../../reference/M5_B0_MEASUREMENT_AND_REACHABIL
 > **16:25 启动的两次 campaign 因代码已加载，仍写旧键名**——监控时一次性读取即可，
 > **不加**同时读两种键的兼容 shim（那会让本文件重新出现该令牌，等于把污染留在清单里）。
 > 监控汇总：`python -X utf8 scripts/training/summarize_p3b.py [--json]`。
+>
+> **诚实注记（守卫与在跑进程的时序）**：16:25 启动的两臂加载的是**加入评测面可比性守卫之前**的驱动，
+> 因此每阶段需手工核一次 stage 报告的 `eval_set` / `eval_set_format` / `eval_set_frozen_on` /
+> `declared_mode` 与 C/D/E 题目 id 顺序是否等于 P3a 基线（**冒烟阶段已实测全等，只差 `checkpoint`**）。
+> 守卫本身已进 `run_p3b_campaign.py`（漂移即以 `eval_surface_drift` 停止）并由契约测试钉住，重启后自动生效。
 
 
 > **2026-09-15 晚更新**：P3b 的四项前置在同一日全部完成 ——
