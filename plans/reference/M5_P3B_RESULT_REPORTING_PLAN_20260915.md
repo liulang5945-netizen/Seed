@@ -89,11 +89,22 @@
 9. **不得**把"某一臂先触发 §4.2 止损"读成"它的分布更差"，也**不得**把"跑满 48 h 档预算"读成
    "有效应"——止损门槛（任一维度 > 0）与结论门槛（≥ 0.15 且两点同向）**故意不对称**，
    见修订件 §4.1；两臂停止时刻不同只是预算事实，写进表 C 即可。
+10. **不得使用 campaign 记录里的 `best_stage` / `best_stage_tick`**。实测该字段是
+    `max(stages, key=scores["D"])`——**只按 D 一个维度取最大**，与本预案"按 tick 配对、
+    不用各自最好的一次"直接冲突，是一个坐在仪器里的挑数钩子。
+    结项只用表 A 的逐 tick 序列与表 C 的停止轨迹；`best_stage` 只能作为"我们看到了这个风险"的证据。
+    删掉/改造它是**campaign 结束后**的代码改动（在跑的驱动已把该逻辑加载进内存，
+    本次记录必然含此字段；为此重启要再花 54 小时，不值得，故按"文档先行设界 + 事后修仪器"处置）。
 
 ## §4 结项最小动作清单（顺序即检查清单）
 
 1. `summarize_p3b.py --json` → 取 `main_effect`（表 A 的判定列）。
-2. 两臂各跑 `check_p3b_criteria.py`（表 B），并对**每一**阶段报告跑一次，留报告。
+2. **逐阶段**跑判据检查器，且**每阶段一个独立输出名**（默认路径只有一个，连跑会互相覆盖）：
+   `check_p3b_criteria.py --baseline reports/taiji_cap0_baseline_constrained_20260915.json
+   --candidate reports/p3b_stages/<arm>/cap0_tick_<tick>.json
+   --output reports/p3b_criteria/<arm>_tick_<tick>.json`（机检只读两份 JSON，秒级）。
+   表 B 的 J2 单元格必须写成**"通过的阶段数 / 共同阶段数"**，不得只给末阶段的单次结论——
+   否则一次非单调波动就能把"通过/不通过"整个翻掉，而读者看不见。
 3. `make_p3b_review_worksheet.py --report <末阶段> --changed-vs <上一阶段>` → 交用户打分；
    **未回表前 J3 的 B 分支写 `待人工复核`**，不得自行填分。
 4. 读两臂最后两个快照的 `metadata.corpus_fingerprint`，确认不同并写进表 D 第 5 项。

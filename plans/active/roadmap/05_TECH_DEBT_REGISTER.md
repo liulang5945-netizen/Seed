@@ -22,6 +22,14 @@
   结项文档该分支只能记 `untested`，**禁止**写成"未见退化故通过"。修法：另立 runner 覆盖 A（真实性/来源/
   拒绝类）、F（项目代表能力）、H（性能与稳定性）三类流程性检查；**本轮不做**（改 runner 会打断在跑双臂
   campaign 的评测链路）。
+- **DEBT-I5（只登记，不处置）契约测试用字面行号锚定源码位置 ⇒ 源码一漂移，断言就失真而测试仍绿**。
+  `scripts/training/eval_taiji_cap0_inventory.py:350-356` 把 `"line 2726-2732"`（以及 `"line 2611"`）
+  作为**硬编码字符串**写进诊断文本，`tests/taiji_native/test_cap0_inventory_contract.py:102`
+  再断言这个字面串存在。行号没有任何东西重算：只要在 `taiji/model.py` 第 2726 行之上增删代码，
+  报告里的行号就指错位置，而**套件不会失败**——这是最坏的一类假绿。
+  修法：断言**错误文本**（`"enabled identity organ checkpoint payload is missing"`）或从源码实际
+  解析该行区间；**须与 CAP-0 加载器改动同批做**（见 [决策简报 §5 第 3 步](../../reference/CAP0_LEGACY_LOADER_DECISION_BRIEF_20260915.md)）；
+  本轮不做（campaign 在跑，不能动 `taiji/` 与其评测面）。
 - 出口④的对照基线仍为上一节所述 **1408 / 0 失败 / 6 跳过**；**远端仍未查询**（`gh` 未认证）⇒ 继续禁止"CI 已绿"表述。
 
 

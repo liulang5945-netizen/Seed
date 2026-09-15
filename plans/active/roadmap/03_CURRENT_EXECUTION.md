@@ -367,6 +367,13 @@ B0 逐条状态见[B0 设计包](../../reference/M5_B0_MEASUREMENT_AND_REACHABIL
 >    **(b) 重导出**为当前格式——**已证"改信封 config"不可行**（第二道守卫 `checkpoint configuration does not match architecture`），需显式重建流程，成本更高；
 >    **(c) 明示降级**（保持严格，产品入口声明"当前无可用训练态"，语言训练排期）——不解决"能不能对话"。
 >    三者都**改动安全语义或产品行为**，故仍需你拍板；本轮**未改加载器**。
+>    **已备好可一次性执行的决策简报**（本轮逐条核对行号）：
+>    [CAP-0 加载策略决策简报](../../reference/CAP0_LEGACY_LOADER_DECISION_BRIEF_20260915.md)——
+>    补充了本段没有的东西：上限排序 **(a) > (c) > (b)** 及理由、**为什么现在不能做**（改
+>    `taiji/model.py` 会中途换掉在跑 campaign 的评测语义，并被 `test_cap0_baseline_contract.py:325`
+>    钉住的 P3a `chain` 字段挡住）、落地 5 步与 6 条出口、以及**必须同批再生**的三处旧证据
+>    （legacy-load 探针报告、inventory 报告、以及硬编码行号 `"2726-2732"` ⇒ 已登记 DEBT-I5）。
+>    **落地时机 = P3b campaign 结束之后**（与 WP-6 的 v2 预注册同一门后）。
 > 2. **冻结 CAP 评价集** —— **已于 2026-09-15 完成**：[冻版 v1 协议](../../reference/M5_CAP0_EVAL_SET_FROZEN_20260915.md) +
 >    [机读实例](../../manifests/cap0_eval_set_v1.json)：B/C/D/E/G **各 20 项**（合计 100 项任务实例）+
 >    A/H **各 6 项**确定性检查 + F **4 项**合同引用；最低线沿用 07 §4.2（B/C/E ≥70%、D ≥80%、G 硬安全失败 = 0 等）。
