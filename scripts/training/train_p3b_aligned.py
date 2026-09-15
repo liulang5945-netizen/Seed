@@ -1,4 +1,9 @@
-"""P3b trainer: continue ``seed_beta.pt`` on the dialogue-dense subset (P3b 预注册 §2).
+"""P3b trainer: continue ``seed_beta.pt`` on one of two arms (P3b 预注册 §2 / §2.2).
+
+The arms differ **only** in which rows of the same unseen source window they read
+(``build_p3b_arm_corpus.py --rule dialogue`` vs ``--rule all``); see
+``M5_P3B_NOVELTY_MATCHED_ARMS_AMENDMENT_20260915.md`` for why both are sliced past the
+11,199,800 symbols this start checkpoint had already consumed.
 
 Why this file exists instead of calling ``train_seed_corpus.py --resume``: no ``--scale``
 reproduces the stored v8 profile of ``seed_beta.pt`` (``predictive_context_fan_in 12 vs 24``,
@@ -10,13 +15,16 @@ Discipline inherited from the preregistration (§2/§5, §4 stop conditions):
 * the objective function is untouched -- byte-level next-symbol ``observe(..., learn=True)``;
 * no architecture, loader or binder change -- the legacy guard is patched **in process only**;
 * the product entry checkpoint and the start checkpoint are protected from being overwritten;
-* the budget tier comes from the frozen throughput calibration, not from a new number.
+* the budget tier comes from the frozen throughput calibration, not from a new number;
+* ``--arm`` is **required, with no default**: an omitted arm used to resolve to ``treatment``,
+  whose checkpoint, progress log and run report are the live campaign's own files.
 
 Usage::
 
-    python -X utf8 -u scripts/training/train_p3b_aligned.py --budget-tier 48h
-    python -X utf8 -u scripts/training/train_p3b_aligned.py --max-symbols 30000 \\
-        --checkpoint-every 10000          # plumbing smoke test
+    python -X utf8 -u scripts/training/train_p3b_aligned.py --arm treatment --budget-tier 48h
+    python -X utf8 -u scripts/training/train_p3b_aligned.py --arm control --budget-tier 48h
+    python -X utf8 -u scripts/training/train_p3b_aligned.py --arm treatment \\
+        --budget-tier custom --max-symbols 12000 --checkpoint-every 6000   # plumbing smoke
 """
 
 from __future__ import annotations
@@ -263,7 +271,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--max-symbols", type=int, default=None, help="only with --budget-tier custom"
     )
-    parser.add_argument("--arm", choices=("treatment", "control"), default="treatment")
+    parser.add_argument(
+        "--arm",
+        choices=("treatment", "control"),
+        required=True,
+        help="required: a defaulted arm would silently write the other arm's checkpoint and logs",
+    )
     parser.add_argument("--corpus", type=Path, default=None, help="defaults by --arm")
     parser.add_argument("--checkpoint-every", type=int, default=DEFAULT_CHECKPOINT_EVERY)
     parser.add_argument("--progress-every", type=int, default=DEFAULT_PROGRESS_EVERY)
