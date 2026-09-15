@@ -73,12 +73,7 @@ def test_all_reviewed_sites_have_markers(audit, report):
     assert kinds["J2"] == "prefix_predicate"
     assert kinds["J5"] == "substring_predicate"
     assert (
-        kinds["J4"]
-        == kinds["J6"]
-        == kinds["J7"]
-        == kinds["J9"]
-        == kinds["J10"]
-        == "test_assertion"
+        kinds["J4"] == kinds["J6"] == kinds["J7"] == kinds["J9"] == kinds["J10"] == "test_assertion"
     )
 
 

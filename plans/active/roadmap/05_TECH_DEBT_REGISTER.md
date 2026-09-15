@@ -354,7 +354,18 @@ gone = load("baseline.xml") - load("now.xml")  # 记录，用于识别抖动
 
 **处置选项**：① 对锚点区域加 `# fmt: off` / `# fmt: on` 包裹、其余部分照常格式化（推荐）；
 ② 把锚点判定改为不依赖格式（AST / 正则）；③ 在 `[tool.black] extend-exclude` 中豁免
-（等于放宽门禁，需明确认可）。**在处置前，CI 的 `Format check with black` 步骤会红。**
+（等于放宽门禁，需明确认可）。
+
+**✅ 已处置（2026-09-15，采用选项 ①）**：
+
+- 在 `eval_taiji_p5_2b_group_causal_corpora_gate.py` 里，对被反事实锚点/替换文本**逐字节匹配**
+  的两个区域加 `# fmt: off` / `# fmt: on`：`M2_CUE` 覆盖区（原 L256-260）与 `M4_SELECTION`
+  覆盖区（原 L282-301）；其余部分照常格式化。**未改任何测试、未改测量文本**。
+- 结果：7 个文件全部格式化，`black --check .` ⇒ **1169 files unchanged（0 待格式化）**；
+  `M2_CUE` / `M4_SELECTION` 在格式化后**仍逐字节存在于 gate 源码**（用 AST 取值后 `in` 校验）；
+  b0 契约组 **172 passed / 1 failed**（该 1 项即下方 (二) 的 N2 清单漂移，与格式化无关）。
+- **关键经验（实测 black 26.5.1）**：`# fmt: off` **必须顶格（行首无缩进）才生效** ——
+  带块内缩进的 `# fmt: off` 会被照常格式化；顶格的会被 black 规范化为块内注释且**保护依然有效**。**在处置前，CI 的 `Format check with black` 步骤会红。**
 
 #### （二）N2 消费面清单漂移（1 项既有失败）
 

@@ -83,9 +83,7 @@ REVISION_0_RULE_TEXT = (
 #: documents.  It is referenced read-only: writing a revision-1 run into it would destroy
 #: the baseline that WP-3's exits 2 and 3 are measured against.
 REVISION_0_REPORT = PROJECT_ROOT / "reports" / "taiji_p5_2b_group_causal_corpora_20260913.json"
-DEFAULT_REPORT = (
-    PROJECT_ROOT / "reports" / "taiji_p5_2b_group_causal_corpora_m4_20260915.json"
-)
+DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_p5_2b_group_causal_corpora_m4_20260915.json"
 
 TOTAL_SECONDS_CAP = 900.0
 PROCEDURAL_HIDDEN_DIM = 64
@@ -253,11 +251,13 @@ def _member_episode(
         bindable: list[dict[str, Any]] = []
         for member_id in active_members:
             learner = members[member_id]
+            # fmt: off
             own_steps = sum(
                 1 for s in steps if s.get("executed") and s.get("chosen") == member_id
             )
             cues = tuple([cue] * (own_steps + 1))
             kind = str(learner.predict_episode(cues)[-1])
+            # fmt: on
             params, provenance, failure = p52a._bind(kind, task, state)
             call = {
                 "member": member_id,
@@ -279,6 +279,7 @@ def _member_episode(
                 }
             )
             return finish("all_members_exhausted")
+        # fmt: off
         last_success_index = max(
             (i for i, s in enumerate(steps) if s.get("executed")), default=-1
         )
@@ -299,6 +300,7 @@ def _member_episode(
             )
             return finish("all_members_blocked")
         kind = chosen["kind"]
+        # fmt: on
         params = chosen["params"]
         intent = ActionIntent(
             f"p52b-intent:{task.task_id}:{chosen['member']}:{tick:04d}",

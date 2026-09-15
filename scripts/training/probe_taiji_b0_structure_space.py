@@ -90,9 +90,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 TRAINING_DIR = PROJECT_ROOT / "scripts" / "training"
 #: Revision-0 evidence, sealed by sha256 in test_b0_rule_revision_seal_contract.py.
 REVISION_0_OUTPUT = PROJECT_ROOT / "reports" / "taiji_b0_structure_space_probe_20260913.json"
-DEFAULT_OUTPUT = (
-    PROJECT_ROOT / "reports" / "taiji_b0_structure_space_probe_m4landed_20260915.json"
-)
+DEFAULT_OUTPUT = PROJECT_ROOT / "reports" / "taiji_b0_structure_space_probe_m4landed_20260915.json"
 
 COUNTERFACTUAL_MODULE = TRAINING_DIR / "probe_taiji_b0_m1_counterfactual.py"
 HANDOFF_PROBE = TRAINING_DIR / "probe_taiji_b0_handoff_feasibility.py"
@@ -1106,15 +1104,11 @@ def probe(
     assert frozen._member_episode is shipped_episode
 
     cells = grid()
-    surfaces = {
-        cell["label"]: build_cell_tasks(frozen, cell, contexts_per_cell) for cell in cells
-    }
+    surfaces = {cell["label"]: build_cell_tasks(frozen, cell, contexts_per_cell) for cell in cells}
     all_tasks = [task for surface in surfaces.values() for task in surface["tasks"]]
     frozen.p52a._assert_nontrivial_goals(all_tasks, partition="probe")
 
-    validity_rows = [
-        validity(frozen, cell, contexts_per_cell=contexts_per_cell) for cell in cells
-    ]
+    validity_rows = [validity(frozen, cell, contexts_per_cell=contexts_per_cell) for cell in cells]
     not_measurable = [
         {"cell": row["cell"], "because": row["not_measurable_because"]}
         for row in validity_rows
@@ -1252,9 +1246,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.contexts_per_cell < 1:
         parser.error("--contexts-per-cell must be >= 1")
 
-    payload = probe(
-        contexts_per_cell=args.contexts_per_cell, seed_offsets=tuple(args.seed_offsets)
-    )
+    payload = probe(contexts_per_cell=args.contexts_per_cell, seed_offsets=tuple(args.seed_offsets))
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(
         json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"

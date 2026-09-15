@@ -128,7 +128,7 @@ def test_no_instrument_defaults_its_output_onto_sealed_evidence() -> None:
     written new numbers into a file whose name promises revision 0.
     """
 
-    assignment = re.compile(r'DEFAULT_(?:OUTPUT|REPORT)\s*=\s*(?:\([\s\S]*?\)|[^\n]*)')
+    assignment = re.compile(r"DEFAULT_(?:OUTPUT|REPORT)\s*=\s*(?:\([\s\S]*?\)|[^\n]*)")
     offenders: list[str] = []
     for script in sorted((REPO / "scripts" / "training").glob("*.py")):
         text = script.read_text(encoding="utf-8")

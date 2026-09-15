@@ -206,9 +206,7 @@ PREDICTED_FIELDS = (
 
 
 def _variants_by_name(payload: dict) -> dict:
-    return {
-        item.get("variant") or item["delta"]["variant"]: item for item in payload["variants"]
-    }
+    return {item.get("variant") or item["delta"]["variant"]: item for item in payload["variants"]}
 
 
 def _m4(path: Path) -> dict:
@@ -445,9 +443,9 @@ def test_gate_declares_which_rule_revision_it_ships(frozen):
     body = source.split("def _member_episode", 1)[1].split("\ndef ", 1)[0]
     revision_0_present = "chosen = bindable[0]" in body
     revision_1_present = 'return finish("all_members_blocked")' in body
-    assert revision_0_present != revision_1_present, (
-        "the gate must implement exactly one of the two composition rules"
-    )
+    assert (
+        revision_0_present != revision_1_present
+    ), "the gate must implement exactly one of the two composition rules"
     published = getattr(frozen, "RULE_REVISION", None)
     assert published == (0 if revision_0_present else 1)
     if published == 1:

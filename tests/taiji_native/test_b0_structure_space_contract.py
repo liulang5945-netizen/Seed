@@ -439,9 +439,9 @@ def test_the_audited_rule_does_not_move_the_comparison_reference(payload):
     """
 
     for row in payload["rows"]:
-        assert row["singleton_success_rates_frozen"] == row["singleton_success_rates_audited"], (
-            row["cell"]
-        )
+        assert row["singleton_success_rates_frozen"] == row["singleton_success_rates_audited"], row[
+            "cell"
+        ]
     # and the three winning cells really do have a zero reference to beat
     for cell in CREATE_ROW:
         rates = {r["cell"]: r for r in payload["rows"]}[cell]["singleton_success_rates_audited"]
@@ -715,9 +715,7 @@ def test_the_validity_gate_does_not_relax_at_a_wider_scale(probe, frozen):
 
 def test_main_rejects_a_degenerate_scale(probe, tmp_path):
     with pytest.raises(SystemExit) as excinfo:
-        probe.main(
-            ["--contexts-per-cell", "0", "--output", str(tmp_path / "degenerate.json")]
-        )
+        probe.main(["--contexts-per-cell", "0", "--output", str(tmp_path / "degenerate.json")])
     assert excinfo.value.code == 2
     assert not (tmp_path / "degenerate.json").exists()
 

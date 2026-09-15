@@ -142,7 +142,7 @@ def test_the_new_reason_only_ever_applies_to_a_handoff_rule(
     if shipped:
         # revision 1: the shipped rule can terminate this way, and the frozen column of
         # the archived revision-0 reports must stay clean (checked below).
-        assert 'if chosen is None:' in source
+        assert "if chosen is None:" in source
     else:  # revision 0: no handoff, so the reason cannot exist in the rule at all
         assert NEW_REASON not in source
     for cell, row in rows.items():
@@ -174,9 +174,7 @@ def test_a_handoff_without_gain_still_terminates_honestly(rows: dict[str, dict])
 # --------------------------------------------------------------------------- #
 
 
-def test_unrepaired_interceptions_are_identical_under_both_rules(
-    rows: dict[str, dict]
-) -> None:
+def test_unrepaired_interceptions_are_identical_under_both_rules(rows: dict[str, dict]) -> None:
     """I5 (narrowed): only the interceptions the handoff does *not* touch must stay equal.
 
     ``contract_intercepted:preview_ValueError`` is unrelated to member selection, so any
