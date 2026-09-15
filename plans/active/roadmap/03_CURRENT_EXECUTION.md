@@ -274,7 +274,7 @@ B0 逐条状态见[B0 设计包](../../reference/M5_B0_MEASUREMENT_AND_REACHABIL
 >    由 `tests/taiji_native/test_cap0_eval_set_contract.py`（**13 项**）钉住项数/维度/族/量表/最低线/授权边界。
 >    冻结时点满足 07 §4.1「须在看到候选成绩前冻结」：CAP-0 只有 3 轮**无评分**诊断探针，无任何维度成绩。
 >    **下一步 = 实现 CAP-0 评价 runner 并跑首次计分 B～H 基线**（用分数定位语言缺口规模，见
->    [legacy-load 反事实](M5_CAP0_LEGACY_LOAD_COUNTERFACTUAL_20260915.md) §7.2）。
+>    [legacy-load 反事实](../../reference/M5_CAP0_LEGACY_LOAD_COUNTERFACTUAL_20260915.md) §7.2）。
 >
 > **同时待裁定的选路**：B2 负结果的出口是路线 B §7「表示不足回 B1」，
 > 但 B1 门已过；是**先修加载链 + 做 CAP-0 计分基线**（推荐：先让"实际模型"可被看见），

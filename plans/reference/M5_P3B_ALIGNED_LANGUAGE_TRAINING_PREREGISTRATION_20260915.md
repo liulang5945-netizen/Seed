@@ -44,7 +44,7 @@ C `0.00`、D `0.0625`、E `0.15`（最低线 70% / 80% / 70%）。
 
 数据侧已就绪、吞吐已实测，产物：
 [子集 manifest](../manifests/p3b_dialogue_subset_manifest.json)、
-[标定报告](../../../reports/taiji_p3b_throughput_calibration_20260915.json)；
+[标定报告](../../reports/taiji_p3b_throughput_calibration_20260915.json)；
 构建脚本 `scripts/training/build_p3b_dialogue_subset.py`、标定脚本 `scripts/training/calibrate_p3b_throughput.py`。
 
 | 项 | 实测 / 外推值 |
