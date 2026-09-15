@@ -1,0 +1,396 @@
+{
+  "format": "taiji-p3b-s42-boundary-diagnosis-v1",
+  "thresholds": {
+    "minimum_utility": 0.0,
+    "resource_budget": 2.0
+  },
+  "cases": [
+    {
+      "family": "complementary-alpha",
+      "seed": 11,
+      "candidate_count": 2,
+      "group_count": 2,
+      "closest_boundary_margin": 0.0,
+      "margins": [
+        {
+          "group_id": "group:396090f3a1a0478e891c4522",
+          "utility": -1.0,
+          "utility_margin": -1.0,
+          "resource_cost": 2.0,
+          "cost_margin": 0.0
+        },
+        {
+          "group_id": "group:cd7be9c972712a0ed9dfdfd0",
+          "utility": 0.5,
+          "utility_margin": 0.5,
+          "resource_cost": 2.0,
+          "cost_margin": 0.0
+        }
+      ],
+      "epsilon_probe": {
+        "1e-12": {
+          "base": "group:cd7be9c972712a0ed9dfdfd0",
+          "plus_epsilon": null,
+          "minus_epsilon": "group:cd7be9c972712a0ed9dfdfd0",
+          "flips": true
+        },
+        "1e-09": {
+          "base": "group:cd7be9c972712a0ed9dfdfd0",
+          "plus_epsilon": null,
+          "minus_epsilon": "group:cd7be9c972712a0ed9dfdfd0",
+          "flips": true
+        },
+        "1e-06": {
+          "base": "group:cd7be9c972712a0ed9dfdfd0",
+          "plus_epsilon": null,
+          "minus_epsilon": "group:cd7be9c972712a0ed9dfdfd0",
+          "flips": true
+        }
+      }
+    },
+    {
+      "family": "complementary-alpha",
+      "seed": 29,
+      "candidate_count": 2,
+      "group_count": 2,
+      "closest_boundary_margin": 0.0,
+      "margins": [
+        {
+          "group_id": "group:396090f3a1a0478e891c4522",
+          "utility": -1.0,
+          "utility_margin": -1.0,
+          "resource_cost": 2.0,
+          "cost_margin": 0.0
+        },
+        {
+          "group_id": "group:cd7be9c972712a0ed9dfdfd0",
+          "utility": 0.5,
+          "utility_margin": 0.5,
+          "resource_cost": 2.0,
+          "cost_margin": 0.0
+        }
+      ],
+      "epsilon_probe": {
+        "1e-12": {
+          "base": "group:cd7be9c972712a0ed9dfdfd0",
+          "plus_epsilon": null,
+          "minus_epsilon": "group:cd7be9c972712a0ed9dfdfd0",
+          "flips": true
+        },
+        "1e-09": {
+          "base": "group:cd7be9c972712a0ed9dfdfd0",
+          "plus_epsilon": null,
+          "minus_epsilon": "group:cd7be9c972712a0ed9dfdfd0",
+          "flips": true
+        },
+        "1e-06": {
+          "base": "group:cd7be9c972712a0ed9dfdfd0",
+          "plus_epsilon": null,
+          "minus_epsilon": "group:cd7be9c972712a0ed9dfdfd0",
+          "flips": true
+        }
+      }
+    },
+    {
+      "family": "complementary-alpha",
+      "seed": 47,
+      "candidate_count": 2,
+      "group_count": 2,
+      "closest_boundary_margin": 0.0,
+      "margins": [
+        {
+          "group_id": "group:396090f3a1a0478e891c4522",
+          "utility": -1.0,
+          "utility_margin": -1.0,
+          "resource_cost": 2.0,
+          "cost_margin": 0.0
+        },
+        {
+          "group_id": "group:cd7be9c972712a0ed9dfdfd0",
+          "utility": 0.5,
+          "utility_margin": 0.5,
+          "resource_cost": 2.0,
+          "cost_margin": 0.0
+        }
+      ],
+      "epsilon_probe": {
+        "1e-12": {
+          "base": "group:cd7be9c972712a0ed9dfdfd0",
+          "plus_epsilon": null,
+          "minus_epsilon": "group:cd7be9c972712a0ed9dfdfd0",
+          "flips": true
+        },
+        "1e-09": {
+          "base": "group:cd7be9c972712a0ed9dfdfd0",
+          "plus_epsilon": null,
+          "minus_epsilon": "group:cd7be9c972712a0ed9dfdfd0",
+          "flips": true
+        },
+        "1e-06": {
+          "base": "group:cd7be9c972712a0ed9dfdfd0",
+          "plus_epsilon": null,
+          "minus_epsilon": "group:cd7be9c972712a0ed9dfdfd0",
+          "flips": true
+        }
+      }
+    },
+    {
+      "family": "complementary-beta",
+      "seed": 11,
+      "candidate_count": 2,
+      "group_count": 2,
+      "closest_boundary_margin": 0.0,
+      "margins": [
+        {
+          "group_id": "group:2fb88b6cf664e0a9365e84dd",
+          "utility": -1.0,
+          "utility_margin": -1.0,
+          "resource_cost": 2.0,
+          "cost_margin": 0.0
+        },
+        {
+          "group_id": "group:a48f8b310d792232397a4ffd",
+          "utility": 0.5,
+          "utility_margin": 0.5,
+          "resource_cost": 2.0,
+          "cost_margin": 0.0
+        }
+      ],
+      "epsilon_probe": {
+        "1e-12": {
+          "base": "group:a48f8b310d792232397a4ffd",
+          "plus_epsilon": null,
+          "minus_epsilon": "group:a48f8b310d792232397a4ffd",
+          "flips": true
+        },
+        "1e-09": {
+          "base": "group:a48f8b310d792232397a4ffd",
+          "plus_epsilon": null,
+          "minus_epsilon": "group:a48f8b310d792232397a4ffd",
+          "flips": true
+        },
+        "1e-06": {
+          "base": "group:a48f8b310d792232397a4ffd",
+          "plus_epsilon": null,
+          "minus_epsilon": "group:a48f8b310d792232397a4ffd",
+          "flips": true
+        }
+      }
+    },
+    {
+      "family": "complementary-beta",
+      "seed": 29,
+      "candidate_count": 2,
+      "group_count": 2,
+      "closest_boundary_margin": 0.0,
+      "margins": [
+        {
+          "group_id": "group:2fb88b6cf664e0a9365e84dd",
+          "utility": -1.0,
+          "utility_margin": -1.0,
+          "resource_cost": 2.0,
+          "cost_margin": 0.0
+        },
+        {
+          "group_id": "group:a48f8b310d792232397a4ffd",
+          "utility": 0.5,
+          "utility_margin": 0.5,
+          "resource_cost": 2.0,
+          "cost_margin": 0.0
+        }
+      ],
+      "epsilon_probe": {
+        "1e-12": {
+          "base": "group:a48f8b310d792232397a4ffd",
+          "plus_epsilon": null,
+          "minus_epsilon": "group:a48f8b310d792232397a4ffd",
+          "flips": true
+        },
+        "1e-09": {
+          "base": "group:a48f8b310d792232397a4ffd",
+          "plus_epsilon": null,
+          "minus_epsilon": "group:a48f8b310d792232397a4ffd",
+          "flips": true
+        },
+        "1e-06": {
+          "base": "group:a48f8b310d792232397a4ffd",
+          "plus_epsilon": null,
+          "minus_epsilon": "group:a48f8b310d792232397a4ffd",
+          "flips": true
+        }
+      }
+    },
+    {
+      "family": "complementary-beta",
+      "seed": 47,
+      "candidate_count": 2,
+      "group_count": 2,
+      "closest_boundary_margin": 0.0,
+      "margins": [
+        {
+          "group_id": "group:2fb88b6cf664e0a9365e84dd",
+          "utility": -1.0,
+          "utility_margin": -1.0,
+          "resource_cost": 2.0,
+          "cost_margin": 0.0
+        },
+        {
+          "group_id": "group:a48f8b310d792232397a4ffd",
+          "utility": 0.5,
+          "utility_margin": 0.5,
+          "resource_cost": 2.0,
+          "cost_margin": 0.0
+        }
+      ],
+      "epsilon_probe": {
+        "1e-12": {
+          "base": "group:a48f8b310d792232397a4ffd",
+          "plus_epsilon": null,
+          "minus_epsilon": "group:a48f8b310d792232397a4ffd",
+          "flips": true
+        },
+        "1e-09": {
+          "base": "group:a48f8b310d792232397a4ffd",
+          "plus_epsilon": null,
+          "minus_epsilon": "group:a48f8b310d792232397a4ffd",
+          "flips": true
+        },
+        "1e-06": {
+          "base": "group:a48f8b310d792232397a4ffd",
+          "plus_epsilon": null,
+          "minus_epsilon": "group:a48f8b310d792232397a4ffd",
+          "flips": true
+        }
+      }
+    },
+    {
+      "family": "complementary-gamma",
+      "seed": 11,
+      "candidate_count": 2,
+      "group_count": 2,
+      "closest_boundary_margin": 0.0,
+      "margins": [
+        {
+          "group_id": "group:845d6af1d72d896bc2ecafb4",
+          "utility": -1.0,
+          "utility_margin": -1.0,
+          "resource_cost": 2.0,
+          "cost_margin": 0.0
+        },
+        {
+          "group_id": "group:aa4f636e905baa817dcd9be8",
+          "utility": 0.5,
+          "utility_margin": 0.5,
+          "resource_cost": 2.0,
+          "cost_margin": 0.0
+        }
+      ],
+      "epsilon_probe": {
+        "1e-12": {
+          "base": "group:aa4f636e905baa817dcd9be8",
+          "plus_epsilon": null,
+          "minus_epsilon": "group:aa4f636e905baa817dcd9be8",
+          "flips": true
+        },
+        "1e-09": {
+          "base": "group:aa4f636e905baa817dcd9be8",
+          "plus_epsilon": null,
+          "minus_epsilon": "group:aa4f636e905baa817dcd9be8",
+          "flips": true
+        },
+        "1e-06": {
+          "base": "group:aa4f636e905baa817dcd9be8",
+          "plus_epsilon": null,
+          "minus_epsilon": "group:aa4f636e905baa817dcd9be8",
+          "flips": true
+        }
+      }
+    },
+    {
+      "family": "complementary-gamma",
+      "seed": 29,
+      "candidate_count": 2,
+      "group_count": 2,
+      "closest_boundary_margin": 0.0,
+      "margins": [
+        {
+          "group_id": "group:845d6af1d72d896bc2ecafb4",
+          "utility": -1.0,
+          "utility_margin": -1.0,
+          "resource_cost": 2.0,
+          "cost_margin": 0.0
+        },
+        {
+          "group_id": "group:aa4f636e905baa817dcd9be8",
+          "utility": 0.5,
+          "utility_margin": 0.5,
+          "resource_cost": 2.0,
+          "cost_margin": 0.0
+        }
+      ],
+      "epsilon_probe": {
+        "1e-12": {
+          "base": "group:aa4f636e905baa817dcd9be8",
+          "plus_epsilon": null,
+          "minus_epsilon": "group:aa4f636e905baa817dcd9be8",
+          "flips": true
+        },
+        "1e-09": {
+          "base": "group:aa4f636e905baa817dcd9be8",
+          "plus_epsilon": null,
+          "minus_epsilon": "group:aa4f636e905baa817dcd9be8",
+          "flips": true
+        },
+        "1e-06": {
+          "base": "group:aa4f636e905baa817dcd9be8",
+          "plus_epsilon": null,
+          "minus_epsilon": "group:aa4f636e905baa817dcd9be8",
+          "flips": true
+        }
+      }
+    },
+    {
+      "family": "complementary-gamma",
+      "seed": 47,
+      "candidate_count": 2,
+      "group_count": 2,
+      "closest_boundary_margin": 0.0,
+      "margins": [
+        {
+          "group_id": "group:845d6af1d72d896bc2ecafb4",
+          "utility": -1.0,
+          "utility_margin": -1.0,
+          "resource_cost": 2.0,
+          "cost_margin": 0.0
+        },
+        {
+          "group_id": "group:aa4f636e905baa817dcd9be8",
+          "utility": 0.5,
+          "utility_margin": 0.5,
+          "resource_cost": 2.0,
+          "cost_margin": 0.0
+        }
+      ],
+      "epsilon_probe": {
+        "1e-12": {
+          "base": "group:aa4f636e905baa817dcd9be8",
+          "plus_epsilon": null,
+          "minus_epsilon": "group:aa4f636e905baa817dcd9be8",
+          "flips": true
+        },
+        "1e-09": {
+          "base": "group:aa4f636e905baa817dcd9be8",
+          "plus_epsilon": null,
+          "minus_epsilon": "group:aa4f636e905baa817dcd9be8",
+          "flips": true
+        },
+        "1e-06": {
+          "base": "group:aa4f636e905baa817dcd9be8",
+          "plus_epsilon": null,
+          "minus_epsilon": "group:aa4f636e905baa817dcd9be8",
+          "flips": true
+        }
+      }
+    }
+  ]
+}

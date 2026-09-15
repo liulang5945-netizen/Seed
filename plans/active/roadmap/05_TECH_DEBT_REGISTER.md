@@ -329,6 +329,23 @@ gone = load("baseline.xml") - load("now.xml")  # 记录，用于识别抖动
 **剩余怀疑**：CPython 3.10 与 3.12 的浮点 / 容器迭代边界差异，使候选在 `_estimate_pair`
 的资源 / 效用阈值处被判到不同侧。**本机无法复现**（本机只有 3.12.10 / 3.13.12）。
 
+**🔍 已诊断（2026-09-15，只读）：根因是「恰好压线」，不是数值噪声**
+
+只读探针 [`diagnose_p3b_s42_boundary.py`](../../../scripts/training/diagnose_p3b_s42_boundary.py)
+在 3.12 上复现 3 family × 3 seed 的 leave-one-out 候选与 learner 状态，结果：
+
+**9 / 9 case 的 `closest_boundary_margin = 0.0`** —— 候选的 `utility` 或 `resource_cost`
+**精确压在阈值上**（`utility >= minimum_utility(0.0)`、`resource_cost <= budget(2.0)`），
+**±1e-12 即可翻转 `select` 的结论**；而 `select` 本身**没有任何容差**
+（`interaction = pair - first - second` 与 `pair_resource_cost` 均值都是浮点量）。
+⇒ **CPython 3.10 与 3.12 的浮点差异足以触发该翻转**，这解释了 3.10 腿的失败。
+
+**修法建议（**未实施**，需决策）**：**A（推荐）** 给 `select` 的两个比较加显式容差
+`eps = 1e-9`（语义只影响"恰好压线"，正是 gate 想表达的意思）；
+**B** 不动比较、由 multifamily gate 在阈值/预算上留余量。
+详见[诊断文档](../../reference/M5_S42_BOUNDARY_DIAGNOSIS_20260915.md) §4。
+**铁证仍需在 3.10 腿补一次带该探针的 job**（本机无 3.10）。
+
 **处置约束（重要）**：这 2 项触及 `InteractionGroupUtilityLearner`——**被多个既有报告依赖的
 冻结机制**；任何阈值或 tie-break 改动都会影响与既有报告的可比性，须先定性再动手，
 并遵守 §8「不得放宽断言凑绿」的纪律。
