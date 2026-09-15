@@ -1,0 +1,193 @@
+{
+  "format": "taiji-b0-b1-representation-gate-report-v1",
+  "version": 1,
+  "status": "completed",
+  "preregistration": "plans/reference/M5_B0_ROUTE_B_PREREGISTRATION_FROZEN_20260915.md",
+  "scope": "B1 representation training on non-candidate structure cells; candidate create cells are evaluation-only; no collaboration claim (H2 stays with the G5 real-execution gate)",
+  "static_checks": {
+    "scope": [
+      "scripts/training/eval_taiji_b0_b1_representation_gate.py",
+      "scripts/training/probe_taiji_b0_structure_space.py",
+      "scripts/training/eval_taiji_p5_2b_group_causal_corpora_gate.py"
+    ],
+    "commands": [
+      "python -m py_compile <scope files>",
+      "python -m ruff check scripts/training (and full repo)",
+      "python -m black --no-cache --check <scope files>"
+    ]
+  },
+  "outcome": "representation_discriminative",
+  "experiment_passed": true,
+  "record": {
+    "commit": "8198717b12453161607222c850c068550f972c2d",
+    "rule_revision": 1,
+    "composition_rule": "m4_failure_handoff",
+    "budget_seconds": 28.0,
+    "elapsed_seconds": 37.52
+  },
+  "corpus": {
+    "training_cells": [
+      "none__observation",
+      "none__override",
+      "none__mismatch",
+      "create__none",
+      "patch__none",
+      "patch__observation",
+      "patch__override",
+      "patch__mismatch"
+    ],
+    "candidate_cells": [
+      "create__observation",
+      "create__override",
+      "create__mismatch"
+    ],
+    "fit_contexts": 8,
+    "indomain_holdout_contexts": 8,
+    "candidate_contexts": 18,
+    "episodes": {
+      "fit": 176,
+      "indomain_holdout": 176,
+      "candidate": 396
+    },
+    "fit_resource_cap_disclosure": "evaluator maximum_resource_cost raised to 64.0 for the fit corpus: dual-predict-select pair cells legitimately exceed the default 10-action cap; candidate-cell outcomes are execution-only and never enter the fit"
+  },
+  "representation": {
+    "profiles": {
+      "member-a": {
+        "contribution": 0.75,
+        "observations": 16,
+        "surface": [
+          0,
+          2
+        ]
+      },
+      "member-b": {
+        "contribution": 0.25,
+        "observations": 16,
+        "surface": [
+          2
+        ]
+      },
+      "member-c": {
+        "contribution": 0.25,
+        "observations": 16,
+        "surface": [
+          2
+        ]
+      },
+      "member-d": {
+        "contribution": 1.5,
+        "observations": 16,
+        "surface": [
+          0,
+          2
+        ]
+      }
+    },
+    "train_only_candidate_records": 6,
+    "feature_rank": 4,
+    "coefficients": [
+      0.2654861533314098,
+      -0.7523767418719287,
+      -0.38052277078249064,
+      0.35450569803245724,
+      -0.001733759938611433,
+      0.3562394579710691
+    ],
+    "predicted_interaction": {
+      "member-a+member-b": 0.083829,
+      "member-a+member-c": 0.083829,
+      "member-a+member-d": -0.83264,
+      "member-b+member-c": 0.141802,
+      "member-b+member-d": -0.26966,
+      "member-c+member-d": -0.26966
+    },
+    "predictions_vary": true
+  },
+  "discrimination": {
+    "disclosure": "representation evidence; not a collaboration claim",
+    "candidate_surface": {
+      "actual_gain_vs_all_singleton_oracle": {
+        "member-a+member-b": 0.0,
+        "member-a+member-c": 1.0,
+        "member-a+member-d": 0.0,
+        "member-b+member-c": 0.0,
+        "member-b+member-d": 0.0,
+        "member-c+member-d": 0.0
+      },
+      "rank_correlation": 0.26968,
+      "best_actual": "member-a+member-c",
+      "best_predicted": "member-b+member-c",
+      "singleton_success_rates": {
+        "member-a": 0.0,
+        "member-b": 0.0,
+        "member-c": 0.0,
+        "member-d": 0.0
+      }
+    },
+    "in_domain_holdout": {
+      "rank_correlation": 0.093796
+    },
+    "controls": {
+      "no_learning": {
+        "constant_prediction": true,
+        "discriminates": false
+      },
+      "a_count": {
+        "prediction_equal_for_all_pairs": true,
+        "discriminates": false
+      },
+      "additive_train_only": {
+        "rank_correlation_vs_candidate": -0.26968
+      },
+      "lesion_zero_coefficients": {
+        "discriminates": false
+      },
+      "fixed_pair": {
+        "pair": "member-a+member-b",
+        "actual_gain": 0.0
+      },
+      "random_pair": {
+        "pair": "member-b+member-d",
+        "actual_gain": 0.0
+      },
+      "best_singleton_routing": {
+        "singleton_success_rates": {
+          "member-a": 0.0,
+          "member-b": 0.0,
+          "member-c": 0.0,
+          "member-d": 0.0
+        },
+        "best_singleton": "member-a"
+      }
+    }
+  },
+  "stability": {
+    "renaming_stable": true,
+    "order_permutation_stable": true,
+    "order_permutation_seconds": 0.029
+  },
+  "checkpoint": {
+    "restore_matches_parent": true,
+    "tamper_rejected": true
+  },
+  "cost": {
+    "member_training_seconds": 10.976,
+    "matrix_seconds": 24.738,
+    "fit_seconds": 0.038,
+    "restore_seconds": 1.543,
+    "episodes_total": 748
+  },
+  "gates": {
+    "static_checks": true,
+    "fit_integrity": true,
+    "no_leakage": true,
+    "restore": true,
+    "controls_complete": true,
+    "stability": true
+  },
+  "growth_admitted": false,
+  "can_promote": false,
+  "interpretation": "completed: outcome=representation_discriminative; feature_rank=4; candidate-surface rank correlation=0.26968; controls executed; H2 collaboration claims remain with the G5 real-execution gate",
+  "elapsed_seconds": 37.52
+}
