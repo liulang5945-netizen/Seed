@@ -346,6 +346,18 @@ gone = load("baseline.xml") - load("now.xml")  # 记录，用于识别抖动
 详见[诊断文档](../../reference/M5_S42_BOUNDARY_DIAGNOSIS_20260915.md) §4。
 **铁证仍需在 3.10 腿补一次带该探针的 job**（本机无 3.10）。
 
+**✅ 边界语义已加契约测试（2026-09-15）**：
+`tests/taiji_native/test_interaction_group_learner_boundary_contract.py`（**12 passed**）钉住 ——
+`utility == minimum_utility` 与 `resource_cost == budget`（**margin = 0**）**必须被选中**；
+略负 / 略超界即不选；`-0.0` 被选中；`budget=None` 忽略 cost；负 budget 报错；
+tie-break 顺序确定（utility → cost → group_id）；并**复述诊断报告**（所有 case
+`closest_boundary_margin == 0.0`、±1e-12 即翻转）。
+
+顺带在测试里显式记录一条浮点事实：**`2.0 + 1e-18 == 2.0`**（增量被舍入吞掉）⇒
+"构造刚过界"必须用**可表示**的 ε（如 `1e-12`）；边界敏感的真实尺度由双精度相对精度
+（≈2.2e-16 × 量级）决定。
+⇒ 现在**任何对阈值 / 比较符 / 排序的改动都会显式失败**，而不是静默改变被测机制的含义。
+
 **处置约束（重要）**：这 2 项触及 `InteractionGroupUtilityLearner`——**被多个既有报告依赖的
 冻结机制**；任何阈值或 tie-break 改动都会影响与既有报告的可比性，须先定性再动手，
 并遵守 §8「不得放宽断言凑绿」的纪律。
