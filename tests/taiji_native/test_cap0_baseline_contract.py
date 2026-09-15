@@ -102,3 +102,63 @@ def test_contaminated_first_report_is_kept_as_evidence() -> None:
 
 def test_reset_marker_semantics_are_explicit() -> None:
     assert RESET_MARKER == "__RESET__"
+
+
+# --- A/H/F 与人工复核清单 --------------------------------------------------
+
+WORKSHEET = PROJECT_ROOT / "reports" / "cap0_bg_review_worksheet_20260915.md"
+HEALTH = PROJECT_ROOT / "reports" / "taiji_cap0_health_v1_20260915.json"
+
+
+def test_worksheet_covers_every_b_and_g_item() -> None:
+    text = WORKSHEET.read_text(encoding="utf-8")
+    assert text.count("verdict = ______") == 40
+    for index in range(1, 21):
+        assert f"### B{index:02d}" in text, index
+        assert f"### G{index:02d}" in text, index
+    # 机检只做预筛，不得被当成分数。
+    assert "不构成分数" in text
+
+
+def test_health_checks_are_deterministic_and_honest() -> None:
+    report = json.loads(HEALTH.read_text(encoding="utf-8"))
+    assert report["format"] == "taiji-cap0-health-v1"
+    assert report["trained_during_eval"] is False
+    checks = report["dimensions"]["A"]["checks"]
+    for key in (
+        "A01_new_process_load",
+        "A01_load_does_not_advance_tick",
+        "A02_missing_checkpoint_rejected",
+        "A03_fixed_input_reproducible",
+        "A06_no_external_provider_in_N_mode",
+    ):
+        assert checks[key] is True, key
+    # 消融必须显式"未执行"，不得伪装成通过。
+    assert checks["A05_isolated_ablation"] is None
+    assert "not_executed" in report["dimensions"]["A"]["notes"]["A05_isolated_ablation"]
+    # A04 必须带语义说明，避免被读成"已具备语言能力"。
+    assert "固定模板回显" in report["dimensions"]["A"]["notes"]["A04_semantics"]
+
+
+def test_health_gates_are_not_silently_declared() -> None:
+    report = json.loads(HEALTH.read_text(encoding="utf-8"))
+    block = report["dimensions"]["H"]
+    assert block["gate_status"] == "to_be_calibrated"
+    assert block["stability_runs"] >= 30
+    assert block["stability_crashes"] == 0
+    assert set(block["measurements"]) >= {
+        "H01_cold_start_seconds",
+        "H02_first_response_seconds",
+        "H04_peak_traced_bytes",
+    }
+
+
+def test_f_contracts_reference_existing_reports_and_state_their_verdict() -> None:
+    report = json.loads(HEALTH.read_text(encoding="utf-8"))
+    contracts = report["dimensions"]["F"]["contracts"]
+    assert [c["id"] for c in contracts] == ["F01", "F02", "F03", "F04"]
+    for contract in contracts:
+        assert contract["report_present"] is True, contract["id"]
+    by_id = {c["id"]: c for c in contracts}
+    assert "负结果" in by_id["F02"]["gate"]
+    assert "独立结构因素仍为 1" in by_id["F03"]["gate"]
