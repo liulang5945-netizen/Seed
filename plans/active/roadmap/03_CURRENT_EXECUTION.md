@@ -279,6 +279,14 @@ B0 逐条状态见[B0 设计包](../../reference/M5_B0_MEASUREMENT_AND_REACHABIL
 > 后重启对应 campaign；已评测过的 tick 会自动跳过（阶段报告存在即复用）。
 > 停止条件按预注册 §4（预算耗尽 / 连续 3 个检查点无改善 / 实质或持续退化 ⇒ 停 + 起点不动）。
 >
+> **人工复核并行推进**（不占机时，趁训练跑的时候做）：J3 的"B 经人工复核达标"**没有仪器能替代**——
+> B/G 两维每题都是 `score = null` + `pending_human_review = true`（机检预判只是线索）。
+> `scripts/training/make_p3b_review_worksheet.py --report <报告> [--changed-vs <上一份>]`
+> 只导待人工打分的题（0/1/2 量表，含空白评分位与备注位）。**P3a 基线表已生成**：
+> `reports/p3b_review_worksheet_20260916.md`（40 题）。后续阶段表用 `--changed-vs` 只导**答案变了**的题，
+> 被跳过的题号仍会列在表尾并标注"不等于已复核"。另登记 **DEBT-I4**：A/F/H 整维
+> `not_executed` ⇒ J4 的"A/H 不退化"分支本链路判不了，结项记 `untested`。
+>
 > 仪器与守卫：`scripts/training/train_p3b_aligned.py`、`run_p3b_campaign.py`、
 > `build_p3b_arm_corpus.py`、`tests/taiji_native/test_p3b_campaign_contract.py`（机时档绑定标定值、
 > 受保护检查点拒写、无 `--scale` 等于 v8 画像故必须从信封重建配置、噪声不算回归需
