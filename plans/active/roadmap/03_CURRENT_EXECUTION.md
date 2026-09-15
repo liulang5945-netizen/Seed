@@ -239,7 +239,7 @@ B0 逐条状态见[B0 设计包](../../reference/M5_B0_MEASUREMENT_AND_REACHABIL
 
 每阶段提交预注册、必要报告、checkpoint/manifest，更新台账与唯一下一步。历史负结果、审计、Git 修复备份保留，不 gc/prune、不批量删除未知目录。用户已有 .workbuddy 修改不纳入本次提交。
 
-## 当前唯一下一步：**等待 P3b 双臂 campaign 的阶段结果（已按上限档授权并在跑）**
+## 当前唯一下一步：**等实验臂自己的停止结论，再按报告计划写 P3b 结项**（对照臂已在阶段 1 按 §4.3 停机）
 
 > **2026-09-15 授权与执行**：用户指示"遇到决策点默认最高上限方案，直到主线完成" ⇒ P3b 取 **48 h 档**
 > （每臂 **47,280,000 符号**，按 §2.1 冻结标定 273.7 符号/s 折算约 48 h），并按
@@ -274,6 +274,9 @@ B0 逐条状态见[B0 设计包](../../reference/M5_B0_MEASUREMENT_AND_REACHABIL
 > 监控：`python -X utf8 scripts/training/summarize_p3b.py [--json]`（一次看两臂，
 > 并直接打印修订件 §4 预声明的**主效应判定**，不需要人再解释差值），
 > 事件化等待：`python -X utf8 scripts/training/wait_p3b_stage.py --stages N --deadline-seconds S`
+> **再加 `--arm <臂>`**——判定原本是"任一臂"，故**一臂停机后 condition 恒成立**、活臂再也等不到
+> （本轮实测踩到：对照臂一停，`--stages 2` 秒回）。选一臂后 condition/停摆都只按该臂判定，
+> 选中无记录的臂 ⇒ `arm_missing` 且退出码 1（不静默等满 deadline）。
 > ——它还检查**驱动存活**：阶段评测失败时驱动会退出而训练器继续写检查点，
 > 因此按"产生了但没评分的检查点个数"判定，≥2 即报 `driver_stalled` 并以退出码 1 结束
 > （只喊不停，不杀进程；缺 campaign 记录记"无数据"不记停摆）。
@@ -282,6 +285,30 @@ B0 逐条状态见[B0 设计包](../../reference/M5_B0_MEASUREMENT_AND_REACHABIL
 > 故每阶段发生当时记一行（只增不改）。**阶段 1（tick 17,000,000）已过**：
 > 两臂快照 `metadata.tick` 均等于文件名 tick，指纹分别为 `p3b_dialogue_fresh` 与 `p3b_all_fresh`，
 > 字节数不同（88,303,741 对 88,314,093），tick_gap=0 ⇒ 配对与语料差异都有了一手物证。
+>
+> **阶段 1 的结果已经改变了这一条的性质（本地 02:47–03:15 实测）**：
+> - **对照臂被 §4.3 的 `material` 停掉**（E 0.15→0.05，恰好 2 题），训练器被 terminate，
+>   只消耗了预算的 **2.2%**（1,050,200 / 47,280,000 符号；起点 tick 16,000,000 → 17,050,000）
+>   ⇒ **48 h 档从未跑到**；`verdict: fail`（J2/J3 FAIL，J1/J4/J5 PASS）。
+>   实测节奏：每 1,000,000 符号一个检查点、每个检查点评一次，争核下约 196 符号/s
+>   ⇒ **一阶段 ≈ 85 min 训练 + ~6 min 评测**；跑满 48 h 档需要 **47 个阶段**。
+>   （此处我曾算错过一次：把**祖先状态消耗过的前缀** 11,199,800 当作本次起点，
+>   得到"12.4%"。11,199,800 只用于语料切片，两臂本次训练量要从 tick 16,000,000 起算。）
+> - **同一份快照二次打分全等**（100 题的 score/matched/load_ok/raw_last_output 逐字段一致，
+>   只差墙钟与路径写法）⇒ −0.10 是**状态变化不是评测抖动**，停臂判定不被推翻。
+> - **逐题定位**：基线 E 的得分题恰是 E07/E17/E20；两臂共同失去 E07（对差分贡献 0），
+>   对照臂额外失去 E20 ⇒ **阶段 1 的 +0.05 主效应全部来自一题的存活差异**，低于 §4 分辨率（3 题）。
+>   C/D 两维三态一题未动 ⇒ 它们当前**没有分辨率**，"持平"即"全错"。
+> - ⇒ 本 campaign 对 H-P3b 的结论只能是 **un-judged（未达预算档、只有 1 个共同 tick）**，
+>   不是"无效应"；而 `material`(2 题) 与"效应需 3 题"不同源这条口径不一致，**须另立预注册**处置
+>   （不得回改冻结 §4.2/§4.3）。
+> 剩余动作与**已可预见的结局**：`persistent` 的定义是"同一维度在**两个连续**检查点都低于 P3a"，
+> 而实验臂 E 在阶段 1 已经低着（−0.05）⇒ 除非 E 在阶段 2 回到 ≥0.15，
+> 实验臂会在 **tick 18,000,000（约 45 min 后）** 也被判 `regressed`。
+> 无论它停或不停，**本 campaign 最多只产出 1 个共同 tick**，而预注册的读法要求
+> "同一方向连续两个共同检查点"才可称效应 ⇒ **H-P3b 既不能判真也不能判伪，只能记 un-judged**。
+> 下一步就是等这个结论落地，然后按[结果报告计划](../../reference/M5_P3B_RESULT_REPORTING_PLAN_20260915.md)
+> 的表 A–D 与十条禁令写结项（负结果/不可判按实登记，不写成"无效应"）。
 > 判据随时可复核：
 > `python -X utf8 scripts/training/check_p3b_criteria.py --baseline reports/taiji_cap0_baseline_constrained_20260915.json --candidate reports/p3b_stages/<arm>/cap0_tick_<tick>.json --output <out>`。
 > **崩溃续跑**：`train_p3b_aligned.py --arm <arm> --resume-from checkpoints/p3b/seed_aligned[_control].pt`
