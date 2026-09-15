@@ -337,6 +337,39 @@ gone = load("baseline.xml") - load("now.xml")  # 记录，用于识别抖动
 ② 对 `_estimate_pair` / `select` 的阈值比较引入显式容差或确定性 tie-break（需预注册式审慎）；
 ③ 给这 2 项 `xfail(strict=False)` 并注明「3.10 已知数值差异」（会弱化该腿门禁，需明确认可）。
 
+### 4.3 两项交接债（2026-09-15 发现，**未处理**）
+
+#### （一）7 个文件的 black 格式债与锚点契约冲突
+
+夜间 WP-2 / WP-3 提交的 7 个文件不符合 `black --check .`：
+`test_b0_n2_stop_reason_disposition_contract.py`、`test_b0_rule_revision_seal_contract.py`、
+`test_b0_n2_stop_reason_semantics_contract.py`、`test_b0_m1_counterfactual_contract.py`、
+`test_b0_structure_space_contract.py`、`probe_taiji_b0_structure_space.py`、
+`eval_taiji_p5_2b_group_causal_corpora_gate.py`。
+
+**已实测的冲突**：直接 `black` 这 7 个文件后出现 **8 项契约测试失败**
+（`test_b0_m1_counterfactual_contract` 5 项、`test_b0_rule_revision_seal_contract` 2 项、
+`test_b0_n2_stop_reason_disposition_contract` 1 项）——black 重排了**锚点所在的代码行**，
+而 WP-3 的锚点/规则文本要求**逐字节匹配**。⇒ 已回滚，**未提交任何格式化**。
+
+**处置选项**：① 对锚点区域加 `# fmt: off` / `# fmt: on` 包裹、其余部分照常格式化（推荐）；
+② 把锚点判定改为不依赖格式（AST / 正则）；③ 在 `[tool.black] extend-exclude` 中豁免
+（等于放宽门禁，需明确认可）。**在处置前，CI 的 `Format check with black` 步骤会红。**
+
+#### （二）N2 消费面清单漂移（1 项既有失败）
+
+`tests/taiji_native/test_b0_n2_stop_reason_disposition_contract.py` 的
+`test_current_review_surface_is_complete` 失败：live 扫描多出
+`scripts/training/audit_taiji_b0_checkpoint_preflight.py`（WP-4 预检脚本，11:44 新增）。
+
+该文件对 `stop_reason` 的用法只是 **payload 字段名**（`"terminal_stop_reason_marker"`），
+按 N2 语义**不是判断点** ⇒ **属扫描器误报**，正确处置应是**排除该文件**，
+而不是把它登记进 `EXPECTED_CONSUMERS`：已实测「登记 + 重新生成归档报告」会同时引出
+`test_historical_inventory_is_not_rewritten` 与
+`test_the_frozen_preregistration_states_the_measured_counts` 两项新失败
+（**归档报告不得改写**是既定纪律），故已回滚。
+⇒ 修复点在 `audit_taiji_b0_m4_hardening.py` 的消费者扫描规则，须与 N2 作者对齐后再改。
+
 ### 处置时需先建立的观测能力（已建立）
 
 1. ✅ 让 `SystemExit` 带栈：CI 已加 `--tb=short --junitxml=... -o junit_logging=all`
