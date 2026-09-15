@@ -239,7 +239,29 @@ B0 逐条状态见[B0 设计包](../../reference/M5_B0_MEASUREMENT_AND_REACHABIL
 
 每阶段提交预注册、必要报告、checkpoint/manifest，更新台账与唯一下一步。历史负结果、审计、Git 修复备份保留，不 gc/prune、不批量删除未知目录。用户已有 .workbuddy 修改不纳入本次提交。
 
-## 当前唯一下一步：**CAP-0 清点已完成 → 决策"默认检查点/加载策略"处置 + 冻结 CAP 评价集**
+## 当前唯一下一步：**P3b 训练授权决策（前置已全部就绪）**
+
+> **2026-09-15 晚更新**：P3b 的四项前置在同一日全部完成 ——
+> ① [P3b 预注册](../../reference/M5_P3B_ALIGNED_LANGUAGE_TRAINING_PREREGISTRATION_20260915.md)
+> （协议 / 判据 J1–J5 / 停止条件 / 反假设冻结）；
+> ② [对话子集](../../manifests/p3b_dialogue_subset_manifest.json)（282,581 行 / 534.3 MB，筛选规则与 sha256 已归档）；
+> ③ [吞吐标定](../../../reports/taiji_p3b_throughput_calibration_20260915.json)
+> （**273.7 steps/s**；过一遍子集需 **23.7 天** ⇒ 不可行，建议 **16–48 h** 档）；
+> ④ [判据检查器](../../../scripts/training/check_p3b_criteria.py)（J1–J5 机检，fail ⇒ 退出码 1）。
+>
+> **同日诊断（P1 + P3a）**：
+> [P1](../../reference/M5_CAP0_P1_LANGUAGE_SUPERVISION_DIAGNOSIS_20260915.md) 证明训练目标是**纯字节自监督**
+> （唯一信号 `observe(symbol, learn=True)`；语料实为「角色名：内容」多角色脚本，**不是**问答对），
+> 且训练态（16M ticks）**也产不出合法 UTF-8** ⇒ **两个独立缺口**（编码层 / 语义层）；
+> **P3a 已证编码层可由推理侧约束修复**（可读判定 **0/4 → 4/4**，模型不动、不训练），
+> 在约束解码链路上 **D/E 首次非 0**（`0.0625` / `0.15`），但**仍远低于最低线**。
+>
+> **⇒ 唯一待决：是否授权 P3b 训练**（本包**不改架构**；若为负结果，缺口归因架构层，另立议题）。
+>
+> **同日清账**：技术债册 [§4.3](05_TECH_DEBT_REGISTER.md) 两项交接债均已处置 ——
+> black 格式债（锚点区顶格 `# fmt: off/on` ⇒ `black --check .` 0 待格式化）与
+> N2 消费面误报（扫描器加审查排除名单 ⇒ `live_consumers()` 回到 17）；
+> **全量测试 1500 passed / 0 failed / 6 skipped**（零回归）。
 
 > **CAP-0 清点段已于 2026-09-15 执行完毕（只读）**：见[清点结果](../../reference/M5_CAP0_INVENTORY_RESULT_20260915.md) /
 > [报告](../../../reports/taiji_cap0_inventory_20260915.json)。**三段事实必须分开读**：
