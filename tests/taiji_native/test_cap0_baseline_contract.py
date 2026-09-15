@@ -369,3 +369,35 @@ def test_p3b_records_the_corpus_format_correction() -> None:
     p1 = P1_DIAGNOSIS.read_text(encoding="utf-8")
     assert "实测更正" in p1
     assert "仅 1 行" in p1
+
+
+# --- P3b 数据侧与吞吐标定 ---------------------------------------------------
+
+P3B_SUBSET_MANIFEST = PROJECT_ROOT / "plans" / "manifests" / "p3b_dialogue_subset_manifest.json"
+P3B_CALIBRATION = PROJECT_ROOT / "reports" / "taiji_p3b_throughput_calibration_20260915.json"
+
+
+def test_p3b_subset_manifest_archives_rule_counts_and_digest() -> None:
+    """§2 要求：筛选规则、命中行数与产物 sha256 必须归档。"""
+
+    meta = json.loads(P3B_SUBSET_MANIFEST.read_text(encoding="utf-8"))
+    assert meta["format"] == "p3b-dialogue-subset-manifest-v1"
+    assert meta["source_rows_scanned"] == 787399
+    assert meta["kept_rows"] == 282581
+    assert len(meta["output_sha256"]) == 64
+    assert meta["rule"]["min_distinct_speakers"] == 2
+    assert "作者" in meta["rule"]["excluded_speakers"]
+    assert "speaker_pattern" in meta["rule"]
+
+
+def test_p3b_throughput_calibration_is_read_only_and_extrapolated() -> None:
+    report = json.loads(P3B_CALIBRATION.read_text(encoding="utf-8"))
+    assert report["format"] == "taiji-p3b-throughput-calibration-v1"
+    # 标定必须只读：不写检查点
+    assert report["checkpoint_written"] is False
+    assert report["steps_per_second"] > 0
+    ext = report["extrapolation"]
+    # 外推必须标明"外推"，且"过一遍子集"被实测外推证为不可行
+    assert "外推" in ext["note"]
+    assert ext["one_pass_hours"] > 100
+    assert ext["hours_for_16m_ticks"] > 1

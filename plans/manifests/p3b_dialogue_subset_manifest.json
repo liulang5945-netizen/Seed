@@ -1,0 +1,24 @@
+{
+  "format": "p3b-dialogue-subset-manifest-v1",
+  "source": "data\\simple_zh\\simple_zh_texts.jsonl",
+  "source_bytes": 1394775610,
+  "source_rows_scanned": 787399,
+  "truncated_by_limit": false,
+  "rule": {
+    "min_distinct_speakers": 2,
+    "speaker_pattern": "(?:^|\\n)\\s*([\\u4e00-\\u9fffA-Za-z0-9_（）()·]{1,12})：",
+    "excluded_speakers": [
+      "作者",
+      "出处",
+      "来源",
+      "标题",
+      "校对",
+      "编辑",
+      "译者"
+    ]
+  },
+  "kept_rows": 282581,
+  "kept_bytes": 560210562,
+  "output": "data\\p3b_dialogue_subset.jsonl",
+  "output_sha256": "2abf6f03c8b38d9b8a07d1b8dd439ebb0afacf346fbd73ea08ec428ea2994fe0"
+}

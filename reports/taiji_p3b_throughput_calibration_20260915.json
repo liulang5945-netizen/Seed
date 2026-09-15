@@ -1,0 +1,30 @@
+{
+  "format": "taiji-p3b-throughput-calibration-v1",
+  "checkpoint": "checkpoints\\seed_beta.pt",
+  "subset": "data\\p3b_dialogue_subset.jsonl",
+  "subset_sha256": "2abf6f03c8b38d9b8a07d1b8dd439ebb0afacf346fbd73ea08ec428ea2994fe0",
+  "guard_relaxed": true,
+  "legacy_guard": {
+    "patched": true,
+    "legacy_formats": [
+      "taiji-native-v8",
+      "taiji-native-v9"
+    ],
+    "applied_marker": [
+      "taiji-native-v8"
+    ]
+  },
+  "measured_steps": 5000,
+  "measured_seconds": 18.2652,
+  "steps_per_second": 273.744,
+  "checkpoint_written": false,
+  "extrapolation": {
+    "baseline_ticks": 16000000,
+    "one_pass_symbols": 560210562,
+    "note": "机时为外推值，非实测；标定前不承诺任何机时数字。",
+    "one_pass_hours": 568.465,
+    "seconds_per_1m_symbols": 3653.044,
+    "hours_for_16m_ticks": 16.236,
+    "symbols_in_1_hour": 985479
+  }
+}
