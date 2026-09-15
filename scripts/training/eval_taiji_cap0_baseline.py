@@ -237,7 +237,21 @@ def _health_child(payload: dict[str, Any]) -> int:
 
 
 def _run_item_child(payload: dict[str, Any]) -> int:
-    """子进程：加载真实模型，逐项独立会话驱动，返回原始输出。"""
+    """子进程：加载真实模型，逐项独立会话驱动，返回原始输出。
+
+    可选链路开关（都**只在进程内生效**，不改任何源码）：
+    ``relax_legacy_guard``（放宽身份器官守卫，才能加载旧格式训练态）与
+    ``constrained_decode``（UTF-8 约束解码，使字节预测产出可解码文本）。
+    """
+
+    if payload.get("relax_legacy_guard"):
+        from scripts.training.probe_taiji_cap0_legacy_load import _install_legacy_guard
+
+        _install_legacy_guard()
+    if payload.get("constrained_decode"):
+        from scripts.training.probe_taiji_cap0_byte_output import install_constrained_decode
+
+        install_constrained_decode()
 
     from api.seed_runtime import SeedRuntime
 
@@ -337,23 +351,39 @@ def _tally(items: list[dict[str, Any]]) -> dict[str, Any]:
 def run_baseline(
     checkpoint: Path = DEFAULT_CHECKPOINT,
     dimensions: tuple[str, ...] = DRIVEN_DIMENSIONS,
+    *,
+    relax_legacy_guard: bool = False,
+    constrained_decode: bool = False,
 ) -> dict[str, Any]:
-    payload = _eval_set()
+    payload_set = _eval_set()
     report: dict[str, Any] = {
         "format": REPORT_FORMAT,
         "eval_set": str(EVAL_SET_PATH.relative_to(PROJECT_ROOT)),
-        "eval_set_format": payload["format"],
-        "eval_set_frozen_on": payload["frozen_on"],
+        "eval_set_format": payload_set["format"],
+        "eval_set_frozen_on": payload_set["frozen_on"],
         "checkpoint": str(checkpoint),
-        "declared_mode": payload["declared_mode"],
+        "declared_mode": payload_set["declared_mode"],
         "trained_during_eval": False,
+        # 链路必须显式披露：报告读者要能判断分数是在哪条链路上取得的（07 §4.1）。
+        "chain": {
+            "relax_legacy_guard": bool(relax_legacy_guard),
+            "constrained_decode": bool(constrained_decode),
+        },
         "dimensions": {},
     }
 
     for key in dimensions:
-        items = _dimension_items(payload, key)
+        items = _dimension_items(payload_set, key)
         started = time.perf_counter()
-        raw = _run_child({"dimension": key, "checkpoint": str(checkpoint), "items": items})
+        raw = _run_child(
+            {
+                "dimension": key,
+                "checkpoint": str(checkpoint),
+                "items": items,
+                "relax_legacy_guard": bool(relax_legacy_guard),
+                "constrained_decode": bool(constrained_decode),
+            }
+        )
         rows: list[dict[str, Any]] = []
         for record in raw.get("items", ()):
             source = next((i for i in items if i["id"] == record["id"]), {})
@@ -385,7 +415,7 @@ def run_baseline(
             rows.append(row)
 
         report["dimensions"][key] = {
-            "name": payload["dimensions"][key]["name"],
+            "name": payload_set["dimensions"][key]["name"],
             "item_count": len(rows),
             "error": raw.get("error"),
             "seconds": round(time.perf_counter() - started, 2),
@@ -398,14 +428,14 @@ def run_baseline(
         if key in report["dimensions"]:
             continue
         report["dimensions"][key] = {
-            "name": payload["dimensions"][key]["name"],
-            "item_count": len(_dimension_items(payload, key)),
+            "name": payload_set["dimensions"][key]["name"],
+            "item_count": len(_dimension_items(payload_set, key)),
             "status": "not_executed",
             "note": "本 runner 未覆盖该维度；按 07 §5 记 not_executed，不记 0 也不记通过。",
         }
 
-    report["min_lines"] = payload["min_lines"]
-    report["scoring_discipline"] = payload["scoring_discipline"]
+    report["min_lines"] = payload_set["min_lines"]
+    report["scoring_discipline"] = payload_set["scoring_discipline"]
     return report
 
 
@@ -674,7 +704,21 @@ def main(argv: list[str] | None = None) -> int:
         help="读取既有基线报告，做 B/G 规则化辅助判定并写**新**报告（不覆盖原报告）",
     )
     parser.add_argument("--adjudication-report", type=Path, default=DEFAULT_ADJUDICATION_REPORT)
+    parser.add_argument(
+        "--relax-legacy-guard",
+        action="store_true",
+        help="进程内放宽身份器官守卫（才能加载旧格式训练态；源码不动）",
+    )
+    parser.add_argument(
+        "--constrained-decode",
+        action="store_true",
+        help="进程内启用 UTF-8 约束解码（使字节预测产出可解码文本；源码不动）",
+    )
     args = parser.parse_args(argv)
+
+    if (args.relax_legacy_guard or args.constrained_decode) and args.report == DEFAULT_REPORT:
+        # 非默认链路必须显式指定报告路径，避免覆盖"默认入口"的基线报告。
+        parser.error("启用 --relax-legacy-guard / --constrained-decode 时必须显式指定 --report")
 
     if args.child:
         payload = json.loads(sys.stdin.read())
@@ -738,7 +782,12 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     dimensions = tuple(d.strip() for d in args.dimensions.split(",") if d.strip())
-    report = run_baseline(args.checkpoint, dimensions)
+    report = run_baseline(
+        args.checkpoint,
+        dimensions,
+        relax_legacy_guard=bool(args.relax_legacy_guard),
+        constrained_decode=bool(args.constrained_decode),
+    )
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(
         json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"

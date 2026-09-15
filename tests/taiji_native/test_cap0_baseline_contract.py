@@ -303,3 +303,29 @@ def test_utf8_dfa_excludes_invalid_byte_sequences() -> None:
     assert _utf8_allowed(3, 0xED)[-1] == 0x9F  # 排除 surrogate
     assert _utf8_allowed(3, 0xF0)[0] == 0x90
     assert _utf8_allowed(3, 0xF4)[-1] == 0x8F
+
+
+# --- §10 约束解码链路的基线对照 ---------------------------------------------
+
+CONSTRAINED_REPORT = PROJECT_ROOT / "reports" / "taiji_cap0_baseline_constrained_20260915.json"
+
+
+def test_p1_section_10_records_the_constrained_chain_baseline() -> None:
+    """§10：约束解码接入 chat() 后 D/E 首次非 0，但仍远低于最低线 ⇒ P3b 必要。"""
+
+    text = P1_DIAGNOSIS.read_text(encoding="utf-8")
+    for token in ("§10", "0.0625", "0.15", "必要条件", "P3b", "长度截断会被误读成内容问题"):
+        assert token in text, token
+    assert "install_constrained_decode" in P1_PROBE.read_text(encoding="utf-8")
+
+
+def test_constrained_chain_report_discloses_its_chain_and_scores() -> None:
+    report = json.loads(CONSTRAINED_REPORT.read_text(encoding="utf-8"))
+    # 链路必须显式披露（07 §4.1）：分数取自非默认链路，读者要能看见。
+    assert report["chain"] == {"relax_legacy_guard": True, "constrained_decode": True}
+    assert report["trained_during_eval"] is False
+    # 与 §10 表格一致：C 仍 0；D/E 首次非 0 但远低于最低线。
+    assert report["dimensions"]["C"]["tally"]["machine_normalised"] == 0.0
+    assert report["dimensions"]["D"]["tally"]["machine_normalised"] == 0.0625
+    assert report["dimensions"]["E"]["tally"]["machine_normalised"] == 0.15
+    assert report["min_lines"]["C"] == 0.70 and report["min_lines"]["D"] == 0.80

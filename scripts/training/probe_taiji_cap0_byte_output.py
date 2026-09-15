@@ -9,6 +9,8 @@
 from __future__ import annotations
 
 import argparse
+import functools
+import inspect
 import json
 import sys
 from pathlib import Path
@@ -48,15 +50,12 @@ def _utf8_allowed(remaining: int, lead: int) -> list[int]:
     return list(range(low, high + 1))
 
 
-def _constrained_generate(runtime: object, prompt: bytes, length: int) -> bytes:
+def _constrained_generate(model: object, prompt: bytes, length: int) -> bytes:
     """复现 ``Taiji.generate`` 的循环，但每步**只在 UTF-8 合法后继里取 argmax**。
 
-    只读对照实验：模型本身不动，仅改变"逐字节选择"的可行集，
-    用来判定"编码层缺口能否靠推理侧约束修复"。
+    ``model`` 必须是 ``Taiji`` 实例（``Seed`` 是适配层，逐字节循环在它的 substrate 上）。
     """
 
-    # Seed 是适配层，逐字节循环与 boundary_symbol 都在其 substrate（Taiji）上。
-    model = getattr(runtime.model, "substrate", runtime.model)  # type: ignore[attr-defined]
     model.reset_dynamics(episode_id="p3a-constrained")
     step = model.observe(
         model.config.boundary_symbol,
@@ -98,6 +97,63 @@ def _constrained_generate(runtime: object, prompt: bytes, length: int) -> bytes:
             symbol, learn=False, readout="predictive", use_memory=False, use_identity=False
         )
     return bytes(out)
+
+
+#: 包装 ``Taiji.generate`` 时必须仍能在源码里看到这行 —— 否则说明实现已变，
+#: 拒绝用过期副本继续（fail-closed，避免静默降级）。
+_GENERATE_ANCHOR = "next_symbol = step.predicted_symbol"
+
+
+def install_constrained_decode() -> dict[str, object]:
+    """进程内把 ``Taiji.generate`` 换成 UTF-8 约束解码版（**源码不动**）。
+
+    ``Taiji.generate_input`` 直接委托 ``generate``，所以包装它即可让
+    ``SeedRuntime.chat()`` 的整条链路走约束解码。带 boundary/authorization 的
+    调用**不支持**（会显式报错），以免静默丢掉受控读出语义。
+    """
+
+    from taiji.adapter import Taiji
+
+    original = Taiji.generate
+    if _GENERATE_ANCHOR not in inspect.getsource(original):
+        raise RuntimeError(
+            f"Taiji.generate 的实现已变（缺少锚点 {_GENERATE_ANCHOR!r}）；拒绝用过期副本继续"
+        )
+
+    @functools.wraps(original)
+    def patched(
+        self: object,
+        prompt: bytes,
+        length: int,
+        *,
+        stop_at_boundary: bool = False,
+        sample: bool = False,
+        reset: bool = True,
+        use_memory: bool = False,
+        boundary: object = None,
+        authorization: object = None,
+    ) -> bytes:
+        if boundary is not None or authorization is not None:
+            raise RuntimeError("约束解码包装不支持带 boundary/authorization 的调用")
+        # 注意：``boundary_symbol`` 是符号空间的特殊值（不保证落在 0..255 内），
+        # 不能直接 ``bytes([...])``；"遇 boundary 即停"已由 _constrained_generate 处理。
+        raw = _constrained_generate(self, bytes(prompt), int(length))
+        # 对齐到最后一个**完整**字符：否则下游 decode 会产生替换字符，
+        # 被语言器官判为"不是文本"而回落模板（长度截断不能被当成内容问题）。
+        for cut in range(len(raw), max(0, len(raw) - 4), -1):
+            try:
+                raw[:cut].decode("utf-8")
+            except UnicodeDecodeError:
+                continue
+            return raw[:cut]
+        return raw
+
+    Taiji.generate = patched  # type: ignore[method-assign]
+    return {
+        "patched": True,
+        "anchor_present": True,
+        "original": f"{original.__module__}.{original.__qualname__}",
+    }
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -172,7 +228,8 @@ def main(argv: list[str] | None = None) -> int:
             "chat_output_head": runtime.chat(prompt, learn=False)[:90],
         }
         if args.constrained:
-            constrained = _constrained_generate(runtime, text.encode("utf-8"), max_length)
+            taiji = getattr(runtime.model, "substrate", runtime.model)
+            constrained = _constrained_generate(taiji, text.encode("utf-8"), max_length)
             # 截断到最后一个**完整**字符：长度截断不能被误读成"约束失败"。
             trimmed = constrained
             for cut in range(len(constrained), max(0, len(constrained) - 4), -1):
