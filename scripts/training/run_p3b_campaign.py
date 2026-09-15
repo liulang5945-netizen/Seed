@@ -285,11 +285,19 @@ def run(
         "--device",
         device,
     ]
+    child = subprocess.Popen(command, cwd=str(PROJECT_ROOT))
     print(
-        json.dumps({"event": "p3b_campaign_launch", "arm": arm, "pid": os.getpid()}),
+        json.dumps(
+            {
+                "event": "p3b_campaign_launch",
+                "arm": arm,
+                "driver_pid": os.getpid(),
+                "trainer_pid": child.pid,
+            },
+            ensure_ascii=True,
+        ),
         flush=True,
     )
-    child = subprocess.Popen(command, cwd=str(PROJECT_ROOT))
     record: dict[str, Any] = {
         "format": "taiji-p3b-campaign-v1",
         "status": "running",

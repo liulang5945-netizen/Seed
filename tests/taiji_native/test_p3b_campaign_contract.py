@@ -182,13 +182,31 @@ def test_arms_own_disjoint_files(campaign: Any) -> None:
     treatment = campaign.campaign_paths("treatment")
     control = campaign.campaign_paths("control")
     assert set(map(str, treatment)).isdisjoint(set(map(str, control)))
-    assert treatment[0] == trainer_checkpoint(treatment[0])
 
 
-def trainer_checkpoint(path: Path) -> Path:
-    """The campaign must score the very file the trainer writes, not a copy of it."""
+def test_the_campaign_scores_the_very_file_the_trainer_writes(trainer: Any, campaign: Any) -> None:
+    """``campaign_paths()[0]`` must be the trainer's own output path, not a lookalike.
 
-    return path
+    If the two ever disagree, the driver scores a copy while the trainer keeps writing the
+    original, and every stage number silently describes an earlier training state.
+    """
+
+    for arm in ("treatment", "control"):
+        assert campaign.campaign_paths(arm)[0] == trainer.arm_paths(arm)[0], arm
+
+
+def test_the_campaign_cannot_point_an_arm_at_a_stray_corpus() -> None:
+    """The trainer resolves its corpus from ``--arm``, and both arms are manifest-bound.
+
+    A ``--corpus`` passthrough here would let a campaign train on a file that no manifest
+    describes, which is precisely the situation where ``treatment - control`` stops meaning
+    anything -- so the absence of that flag is the invariant, not an oversight.
+    """
+
+    source = CAMPAIGN.read_text(encoding="utf-8")
+    assert '"--corpus"' not in source, "an arm corpus must come from the trainer's arm mapping"
+    assert '"--arm"' in source
+    assert '"--budget-tier"' in source, "the tier guard, not an ad-hoc symbol count, sizes the run"
 
 
 def test_stage_row_marks_improvement_only_when_a_score_moves(campaign: Any) -> None:
