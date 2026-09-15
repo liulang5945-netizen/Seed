@@ -22,6 +22,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import sys
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -30,6 +31,7 @@ import pytest
 REPO = Path(__file__).resolve().parents[2]
 TRAINER = REPO / "scripts" / "training" / "train_p3b_aligned.py"
 CAMPAIGN = REPO / "scripts" / "training" / "run_p3b_campaign.py"
+SUMMARIZER = REPO / "scripts" / "training" / "summarize_p3b.py"
 CRITERIA = REPO / "scripts" / "training" / "check_p3b_criteria.py"
 CALIBRATION = REPO / "reports" / "taiji_p3b_throughput_calibration_20260915.json"
 START_CHECKPOINT = REPO / "checkpoints" / "seed_beta.pt"
@@ -69,7 +71,7 @@ def _report(c: float | None, d: float | None, e: float | None, pending: int = 0)
         return {
             "tally": {
                 "machine_normalised": score,
-                "pending_human_review_items": pending if key in ("B", "G") else 0
+                "pending_human_review_items": pending if key in ("B", "G") else 0,
             },
             "items": [],
         }
@@ -114,7 +116,9 @@ def test_protected_checkpoints_cannot_be_run_targets(trainer: Any) -> None:
     assert trainer._refuse_protected(trainer.arm_paths("control")[0]) != checkpoint.resolve()
 
 
-def test_no_default_output_path_points_at_a_protected_checkpoint(trainer: Any, campaign: Any) -> None:
+def test_no_default_output_path_points_at_a_protected_checkpoint(
+    trainer: Any, campaign: Any
+) -> None:
     """A guard is only as good as its defaults: the shipped defaults must be safe too."""
 
     protected = {path.resolve() for path in trainer.PROTECTED_OUTPUTS}
@@ -263,3 +267,55 @@ def test_scoring_freezes_the_checkpoint_before_reading_it(campaign: Any, tmp_pat
     assert frozen.read_bytes() == b"state-at-tick-17000000", "the snapshot must be immutable"
     again = campaign._snapshot(live, 17_000_000)
     assert again == frozen and again.read_bytes() == b"state-at-tick-17000000"
+
+
+# --------------------------------------------------------------------------- #
+# Monitoring must not invent criteria
+# --------------------------------------------------------------------------- #
+
+
+def _stage(tick: int, scores: dict[str, float | None]) -> dict[str, Any]:
+    return {
+        "tick": tick,
+        "scores": scores,
+        "deltas_vs_p3a": {key: 0.0 for key in ("C", "D", "E")},
+        "chain_matches_p3a": True,
+    }
+
+
+def test_arm_difference_is_matched_by_tick_not_by_order() -> None:
+    summarize = _load("_p3b_summarize_under_test", SUMMARIZER)
+    treatment = {"stages": [_stage(17_000_000, {"C": 0.2, "D": 0.1, "E": 0.3})]}
+    control = {
+        "stages": [
+            _stage(17_000_000, {"C": 0.1, "D": 0.0625, "E": 0.2}),
+            _stage(18_000_000, {"C": 0.1, "D": 0.0625, "E": 0.15}),
+        ]
+    }
+    rows = summarize.tick_table(treatment, control)
+    assert [row["tick"] for row in rows] == [17_000_000, 18_000_000]
+    assert rows[0]["treatment_minus_control"]["C"] == 0.1
+    assert rows[0]["treatment_minus_control"]["E"] == 0.1
+    assert rows[1]["treatment_minus_control"] is None  # treatment has no 18M stage yet
+    assert rows[1]["control"] == {"C": 0.1, "D": 0.0625, "E": 0.15}
+
+
+def test_missing_arm_reads_as_missing_not_zero() -> None:
+    summarize = _load("_p3b_summarize_under_test", SUMMARIZER)
+    report = summarize.load_arm("control", root=Path(tempfile.mkdtemp()))
+    assert report["status"] == "missing" and report["stages"] == []
+    headline = summarize.arm_headline(report)
+    assert headline["latest_scores"] is None and headline["criteria_verdict"] is None
+
+
+def test_headline_only_carries_recorded_fields() -> None:
+    """The summariser has no judgement of its own -- J1-J5 stay in check_p3b_criteria."""
+
+    summarize = _load("_p3b_summarize_under_test", SUMMARIZER)
+    source = SUMMARIZER.read_text(encoding="utf-8")
+    for invented in ("machine_normalised", "min_lines", "passed =", "verdict ="):
+        assert invented not in source, invented
+    stage = _stage(17_000_000, {"C": 0.2, "D": 0.1, "E": 0.3})
+    headline = summarize.arm_headline({"arm": "treatment", "stages": [stage], "status": "running"})
+    assert headline["latest_tick"] == 17_000_000
+    assert headline["latest_scores"] == stage["scores"]

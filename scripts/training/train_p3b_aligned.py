@@ -43,9 +43,7 @@ SUBSET_PATH = PROJECT_ROOT / "data" / "p3b_dialogue_subset.jsonl"
 CONTROL_CORPUS = PROJECT_ROOT / "data" / "simple_zh" / "simple_zh_texts.jsonl"
 SUBSET_MANIFEST = PROJECT_ROOT / "plans" / "manifests" / "p3b_dialogue_subset_manifest.json"
 CALIBRATION_REPORT = PROJECT_ROOT / "reports" / "taiji_p3b_throughput_calibration_20260915.json"
-PREREG_PATH = (
-    "plans/reference/M5_P3B_ALIGNED_LANGUAGE_TRAINING_PREREGISTRATION_20260915.md"
-)
+PREREG_PATH = "plans/reference/M5_P3B_ALIGNED_LANGUAGE_TRAINING_PREREGISTRATION_20260915.md"
 WORKING_CHECKPOINT = PROJECT_ROOT / "checkpoints" / "p3b" / "seed_aligned.pt"
 PROGRESS_PATH = PROJECT_ROOT / "reports" / "p3b_aligned_progress.jsonl"
 RUN_REPORT = PROJECT_ROOT / "reports" / "taiji_p3b_training_run_20260915.json"
@@ -60,6 +58,7 @@ def arm_paths(arm: str) -> tuple[Path, Path, Path]:
         PROJECT_ROOT / "reports" / f"p3b_aligned_progress_{arm}.jsonl",
         PROJECT_ROOT / "reports" / f"taiji_p3b_training_run_{arm}_20260915.json",
     )
+
 
 #: Checkpoints the run must never write to: the product default entry and the start state.
 PROTECTED_OUTPUTS = (
@@ -251,7 +250,9 @@ def _relative(path: Path) -> Path | str:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="P3b 对齐语言训练（不改架构/损失/加载器）")
     parser.add_argument("--budget-tier", choices=(*BUDGET_TIERS, "custom"), default="48h")
-    parser.add_argument("--max-symbols", type=int, default=None, help="only with --budget-tier custom")
+    parser.add_argument(
+        "--max-symbols", type=int, default=None, help="only with --budget-tier custom"
+    )
     parser.add_argument("--arm", choices=("treatment", "control"), default="treatment")
     parser.add_argument("--corpus", type=Path, default=None, help="defaults by --arm")
     parser.add_argument("--checkpoint-every", type=int, default=DEFAULT_CHECKPOINT_EVERY)
@@ -277,10 +278,7 @@ def main(argv: list[str] | None = None) -> int:
         symbols = BUDGET_TIERS[args.budget_tier]
 
     default_checkpoint, progress_path, run_report = arm_paths(args.arm)
-    corpus = Path(
-        args.corpus
-        or (SUBSET_PATH if args.arm == "treatment" else CONTROL_CORPUS)
-    )
+    corpus = Path(args.corpus or (SUBSET_PATH if args.arm == "treatment" else CONTROL_CORPUS))
     output = _refuse_protected(Path(args.checkpoint or default_checkpoint))
     data_meta = _guard_data_provenance(corpus)
     budget_meta = _guard_budget_tier(args.budget_tier, int(symbols))

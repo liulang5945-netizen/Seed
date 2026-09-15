@@ -99,9 +99,7 @@ def _protected_state() -> dict[str, list[int]]:
 def _write(report_path: Path, record: dict[str, Any]) -> None:
     report_path.parent.mkdir(parents=True, exist_ok=True)
     temporary = report_path.with_suffix(".tmp")
-    temporary.write_text(
-        json.dumps(record, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-    )
+    temporary.write_text(json.dumps(record, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     temporary.replace(report_path)
 
 
@@ -202,11 +200,10 @@ def _stage_row(
         "deltas_vs_p3a": deltas,
         "pending_delta_vs_p3a": pending_delta,
         "improved": bool(numeric) and max(numeric) > 0,
-        "all_three_strictly_higher": bool(len(numeric) == 3) and all(value > 0 for value in numeric),
+        "all_three_strictly_higher": bool(len(numeric) == 3)
+        and all(value > 0 for value in numeric),
         "regressed": bool(numeric) and min(numeric) < 0,
-        "pending_grew": any(
-            value is not None and value > 0 for value in pending_delta.values()
-        ),
+        "pending_grew": any(value is not None and value > 0 for value in pending_delta.values()),
     }
 
 
@@ -273,6 +270,7 @@ def run(
         "format": "taiji-p3b-campaign-v1",
         "status": "running",
         "arm": arm,
+        "campaign_stop": None,
         "companion_arm": "control" if arm == "treatment" else "treatment",
         "preregistration": (
             "plans/reference/M5_P3B_ALIGNED_LANGUAGE_TRAINING_PREREGISTRATION_20260915.md"
@@ -308,7 +306,7 @@ def run(
     _write(report_path, record)
 
     last_state = _file_state(checkpoint)
-    stop_reason: str | None = None
+    campaign_stop: str | None = None
     while True:
         state = _file_state(checkpoint)
         alive = child.poll() is None
@@ -333,19 +331,19 @@ def run(
             kind = _regression_kind(record["stages"])
             row["regression_kind"] = kind
             if kind is not None or row["pending_grew"]:
-                stop_reason = "regressed"
+                campaign_stop = "regressed"
             elif record["stall_streak"] >= STALL_LIMIT:
-                stop_reason = "stalled"
-            if stop_reason and alive:
+                campaign_stop = "stalled"
+            if campaign_stop and alive:
                 child.terminate()
                 record["terminated_trainer_pid"] = child.pid
             _write(report_path, record)
-        if not alive or stop_reason:
+        if not alive or campaign_stop:
             break
         time.sleep(poll_seconds)
 
     record["trainer_exit_code"] = child.wait()
-    record["stop_reason"] = stop_reason or (
+    record["campaign_stop"] = campaign_stop or (
         "budget_exhausted" if record["trainer_exit_code"] == 0 else "trainer_failed"
     )
     if record["stages"]:
@@ -419,7 +417,7 @@ def main(argv: list[str] | None = None) -> int:
             {
                 "event": "p3b_campaign_done",
                 "arm": record["arm"],
-                "stop_reason": record["stop_reason"],
+                "campaign_stop": record["campaign_stop"],
                 "stages": len(record["stages"]),
                 "verdict": (record.get("criteria") or {}).get("verdict"),
                 "protected_checkpoints_unchanged": protected_ok,

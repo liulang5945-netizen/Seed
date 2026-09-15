@@ -260,6 +260,12 @@ B0 逐条状态见[B0 设计包](../../reference/M5_B0_MEASUREMENT_AND_REACHABIL
 > 仪器与守卫：`scripts/training/train_p3b_aligned.py`、`run_p3b_campaign.py`、
 > `tests/taiji_native/test_p3b_campaign_contract.py`（**13 项**：机时档绑定标定值、受保护检查点拒写、
 > 无 `--scale` 等于 v8 画像故必须从信封重建配置、噪声不算回归需 material/persistent、快照不可变）。
+>
+> **键名说明（`campaign_stop`）**：campaign 的"为什么停"字段原名与 episode 停止原因的**受审计令牌**撞名，
+> 一度把无关文件推进 N2 消费面清单（清单第四次因此长大）。已改名 `campaign_stop`；
+> **16:25 启动的两次 campaign 因代码已加载，仍写旧键名**——监控时一次性读取即可，
+> **不加**同时读两种键的兼容 shim（那会让本文件重新出现该令牌，等于把污染留在清单里）。
+> 监控汇总：`python -X utf8 scripts/training/summarize_p3b.py [--json]`。
 
 
 > **2026-09-15 晚更新**：P3b 的四项前置在同一日全部完成 ——

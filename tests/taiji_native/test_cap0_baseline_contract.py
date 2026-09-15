@@ -357,6 +357,10 @@ def test_p3b_preregistration_freezes_protocol_and_judgements() -> None:
     ):
         assert token in text, token
     assert "本文件不启动训练" in text
+    # 2026-09-15 执行期新增，且必须与判据同生共死
+    for token in ("§2.2", "treatment − control", "material", "persistent"):
+        assert token in text, token
+    assert "单臂" in text, "两臂的理由必须留在文档里，否则以后会被简化回单臂"
 
 
 def test_p3b_records_the_corpus_format_correction() -> None:
