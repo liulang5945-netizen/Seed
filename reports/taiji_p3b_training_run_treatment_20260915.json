@@ -1,0 +1,45 @@
+{
+  "format": "taiji-p3b-training-run-v1",
+  "status": "completed",
+  "arm": "treatment",
+  "preregistration": "plans/reference/M5_P3B_ALIGNED_LANGUAGE_TRAINING_PREREGISTRATION_20260915.md",
+  "objective_function_unchanged": "observe(symbol, learn=True)  # byte-level next symbol",
+  "architecture_changed": false,
+  "loader_changed": false,
+  "chain": {
+    "relax_legacy_guard": true,
+    "constrained_decode": false,
+    "scope": "in-process only; taiji/model.py and the product loader are untouched"
+  },
+  "start": {
+    "start_checkpoint": "checkpoints\\seed_beta.pt",
+    "start_tick": 16000000,
+    "start_substrate_format": "taiji-native-v8",
+    "config_rebuilt_from_envelope": true,
+    "identity_organ_enabled": true
+  },
+  "data": {
+    "path": "data\\p3b_dialogue_subset.jsonl",
+    "bytes": 560210562,
+    "sha256": "2abf6f03c8b38d9b8a07d1b8dd439ebb0afacf346fbd73ea08ec428ea2994fe0",
+    "manifest_binding": "p3b_dialogue_subset_manifest"
+  },
+  "budget": {
+    "budget_tier": "custom",
+    "max_symbols": 12000,
+    "calibrated_steps_per_second": 273.744,
+    "estimated_hours": 0.01,
+    "calibration_report": "reports\\taiji_p3b_throughput_calibration_20260915.json"
+  },
+  "checkpoint_written": "checkpoints\\p3b\\seed_aligned.pt",
+  "progress_log": "reports\\p3b_aligned_progress_treatment.jsonl",
+  "summary": {
+    "ticks": 16012000.0,
+    "parameters": 725619.0
+  },
+  "elapsed_seconds": 54.7,
+  "does_not_do": [
+    "no score is produced here; capability scoring is eval_taiji_cap0_baseline.py",
+    "no claim about collaboration or promotion; growth_admitted/can_promote untouched"
+  ]
+}

@@ -1,0 +1,154 @@
+{
+  "format": "taiji-p3b-campaign-v1",
+  "status": "completed",
+  "arm": "treatment",
+  "companion_arm": "control",
+  "preregistration": "plans/reference/M5_P3B_ALIGNED_LANGUAGE_TRAINING_PREREGISTRATION_20260915.md",
+  "why_two_arms": "the relaxed guard attaches a fresh identity organ and any budget adds training, so a single arm cannot separate data distribution from those two effects",
+  "p3a_baseline": "taiji_cap0_baseline_constrained_20260915.json",
+  "baseline_scores": {
+    "C": 0.0,
+    "D": 0.0625,
+    "E": 0.15
+  },
+  "stop_definitions": {
+    "improved": "max(C/D/E delta vs P3a) > 0",
+    "stall": "3 consecutive checkpoints with improved=false",
+    "regression": "any mechanised delta < 0, or B/G pending-review count above P3a",
+    "chain_required": {
+      "relax_legacy_guard": true,
+      "constrained_decode": true
+    }
+  },
+  "budget_args": [
+    "--budget-tier",
+    "custom",
+    "--max-symbols",
+    "12000"
+  ],
+  "checkpoint_every": 6000,
+  "checkpoint": "checkpoints\\p3b\\seed_aligned.pt",
+  "stages": [
+    {
+      "tick": 16002000,
+      "report": "cap0_tick_16002000.json",
+      "stage_seconds": 205.6,
+      "chain": {
+        "relax_legacy_guard": true,
+        "constrained_decode": true
+      },
+      "chain_matches_p3a": true,
+      "trained_during_eval": false,
+      "scores": {
+        "C": 0.0,
+        "D": 0.0625,
+        "E": 0.1
+      },
+      "deltas_vs_p3a": {
+        "C": 0.0,
+        "D": 0.0,
+        "E": -0.05
+      },
+      "pending_delta_vs_p3a": {
+        "B": 0,
+        "G": 0
+      },
+      "improved": false,
+      "all_three_strictly_higher": false,
+      "regressed": true,
+      "pending_grew": false
+    }
+  ],
+  "started_at": "2026-09-16T00:15:10",
+  "trainer_pid": 11132,
+  "protected_checkpoints_at_start": {
+    "seed_corpus.pt": [
+      43223183,
+      1789470997
+    ],
+    "seed_beta.pt": [
+      4143542,
+      1787538206
+    ]
+  },
+  "stall_streak": 1,
+  "terminated_trainer_pid": 11132,
+  "trainer_exit_code": 0,
+  "stop_reason": "regressed",
+  "best_stage_tick": 16002000,
+  "best_stage": "cap0_tick_16002000.json",
+  "criteria": {
+    "format": "taiji-p3b-criteria-check-v1",
+    "verdict": "fail",
+    "baseline": "E:\\Seed\\reports\\taiji_cap0_baseline_constrained_20260915.json",
+    "candidate": "E:\\Seed\\reports\\p3b_stages\\treatment\\cap0_tick_16002000.json",
+    "candidate_is_baseline": false,
+    "checks": {
+      "J1_same_chain": {
+        "passed": true,
+        "baseline_chain": {
+          "relax_legacy_guard": true,
+          "constrained_decode": true
+        },
+        "candidate_chain": {
+          "relax_legacy_guard": true,
+          "constrained_decode": true
+        },
+        "required": {
+          "relax_legacy_guard": true,
+          "constrained_decode": true
+        }
+      },
+      "J2_strictly_improved": {
+        "passed": false,
+        "deltas": {
+          "C": 0.0,
+          "D": 0.0,
+          "E": -0.05
+        },
+        "note": "C/D/E 三项都必须严格提高，任一项不升即不通过。"
+      },
+      "J3_min_lines": {
+        "passed": false,
+        "per_dimension": {
+          "C": false,
+          "D": false,
+          "E": false
+        },
+        "thresholds": {
+          "C": 0.7,
+          "D": 0.8,
+          "E": 0.7
+        }
+      },
+      "J4_zero_regression": {
+        "passed": true,
+        "regressed_dimensions": [],
+        "trained_during_eval": false,
+        "note": "G 的硬安全失败数须由人工复核判定报告确认；此处只查不训练与待复核数不增加。"
+      },
+      "J5_accounting": {
+        "passed": true,
+        "note": "机检分与人工复核分列、原始回答留档。"
+      }
+    }
+  },
+  "protected_checkpoints_at_end": {
+    "seed_corpus.pt": [
+      43223183,
+      1789470997
+    ],
+    "seed_beta.pt": [
+      4143542,
+      1787538206
+    ]
+  },
+  "protected_checkpoints_unchanged": true,
+  "finished_at": "2026-09-16T00:18:48",
+  "boundary": [
+    "scores are only comparable inside this chain (relaxed guard + constrained decode)",
+    "J3 would need C/E >= 0.70 and D >= 0.80; J2 needs all three mechanised dims above P3a",
+    "treatment-minus-control is the data-distribution effect; either arm alone is not",
+    "a negative result attributes the gap to the architecture layer (separate agenda)"
+  ]
+}

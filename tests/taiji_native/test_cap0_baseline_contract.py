@@ -81,17 +81,62 @@ def test_report_declares_no_training_and_keeps_raw_outputs() -> None:
             assert "verdict_text" in row, (key, row["id"])
 
 
-def test_no_item_is_scored_correct_on_echo_alone() -> None:
-    """回归钉：凡判为正确的项，其判分文本里不得残留任何提问。"""
+def _evaluator():
+    import importlib.util
+    import sys
 
-    report = _report()
+    path = PROJECT_ROOT / "scripts" / "training" / "eval_taiji_cap0_baseline.py"
+    name = "_cap0_evaluator_under_test"
+    if name in sys.modules:
+        return sys.modules[name]
+    spec = importlib.util.spec_from_file_location(name, path)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_prompt_echo_cannot_produce_a_correct_score() -> None:
+    """回归钉：**只回显提问**不得被判对（首版正是在这里产生了 14 个假阳性）。
+
+    原写法把唯一的断言放在 `if row.get("score") != 1: continue` 之后，而干净基线报告里
+    **没有任何 score==1 的行** ⇒ 循环体从不执行，这条测试无论判分器怎么改都不会红；
+    受污染首版又早于 `verdict_text` 字段，无法直接重放。因此改为驱动**当前**判分管线：
+    拿冻结清单里的提问构造"模板回显"回答，要求去回显确实发生、且判分器拒绝给 1 分；
+    同时统计有多少行在**不去回显**时确实会命中——若哪天变成 0，说明构造失效，
+    这条钉也不能悄悄变成空跑。
+    """
+
+    data = json.loads(CONTAMINATED.read_text(encoding="utf-8"))
+    contaminated = {
+        (key, row["id"])
+        for key in DRIVEN_DIMENSIONS
+        for row in data["dimensions"][key]["items"]
+        if row.get("score") == 1
+    }
+    assert len(contaminated) == 14, contaminated
+
+    evaluator = _evaluator()
+    frozen = json.loads(
+        (PROJECT_ROOT / "plans" / "manifests" / "cap0_eval_set_v1.json").read_text(encoding="utf-8")
+    )
+    naive_hits = 0
+    checked = 0
     for key in DRIVEN_DIMENSIONS:
-        for row in report["dimensions"][key]["items"]:
-            if row.get("score") != 1:
+        for item in frozen["dimensions"][key]["items"]:
+            if (key, item["id"]) not in contaminated or not item.get("expected_contains"):
                 continue
-            for turn in row["turns"]:
-                prompt = str(turn.get("prompt", ""))
-                assert prompt not in row["verdict_text"], (key, row["id"])
+            checked += 1
+            prompts = [str(prompt) for prompt in item["turns"]]
+            echo = "".join(f"我已收到你的问题：{prompt}。当前原生语言表层正在形成稳定表达。" for prompt in prompts)
+            cleaned, stripped = evaluator._strip_prompt_echo(echo, prompts)
+            assert stripped is True, (key, item["id"])
+            assert evaluator._score_closed(item, cleaned).get("score") != 1, (key, item["id"])
+            if evaluator._score_closed(item, echo).get("score") == 1:
+                naive_hits += 1
+    assert checked == len(contaminated), "冻结清单里找不到这些题，构造已失效"
+    assert naive_hits > 0, f"构造的回显不再命中，测不出东西（{naive_hits}）"
 
 
 def test_contaminated_first_report_is_kept_as_evidence() -> None:

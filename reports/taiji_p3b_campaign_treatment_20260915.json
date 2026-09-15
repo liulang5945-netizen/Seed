@@ -1,0 +1,79 @@
+{
+  "format": "taiji-p3b-campaign-v1",
+  "status": "running",
+  "arm": "treatment",
+  "campaign_stop": null,
+  "companion_arm": "control",
+  "preregistration": "plans/reference/M5_P3B_ALIGNED_LANGUAGE_TRAINING_PREREGISTRATION_20260915.md",
+  "why_two_arms": "the relaxed guard attaches a fresh identity organ and any budget adds training, so a single arm cannot separate data distribution from those two effects; both arm corpora are sliced past the 11,199,800 symbols the start checkpoint had already seen, so the arms differ in row selection and not in data novelty either",
+  "p3a_baseline": "taiji_cap0_baseline_constrained_20260915.json",
+  "baseline_scores": {
+    "C": 0.0,
+    "D": 0.0625,
+    "E": 0.15
+  },
+  "stop_definitions": {
+    "improved": "max(C/D/E delta vs P3a) > 0",
+    "stall": "3 consecutive checkpoints with improved=false",
+    "regression": "material: any mechanised delta <= -0.1 (two items of twenty); persistent: the same dimension below P3a at two consecutive checkpoints; or B/G pending-review count above P3a",
+    "stage_scoring": "the live checkpoint is copied to checkpoints/p3b/snapshots before scoring, because a stage costs ~205 s while the trainer overwrites the file",
+    "comparability": "a stage must reproduce the P3a evaluation surface exactly (eval_set, eval_set_format, eval_set_frozen_on, declared_mode, plus C/D/E item id order); drift stops the run, because two numbers from different surfaces are not an effect",
+    "chain_required": {
+      "relax_legacy_guard": true,
+      "constrained_decode": true
+    }
+  },
+  "budget_args": [
+    "--budget-tier",
+    "48h"
+  ],
+  "checkpoint_every": 1000000,
+  "checkpoint": "checkpoints\\p3b\\seed_aligned.pt",
+  "stages": [
+    {
+      "tick": 17000000,
+      "report": "cap0_tick_17000000.json",
+      "stage_seconds": 343.8,
+      "chain": {
+        "relax_legacy_guard": true,
+        "constrained_decode": true
+      },
+      "chain_matches_p3a": true,
+      "trained_during_eval": false,
+      "scores": {
+        "C": 0.0,
+        "D": 0.0625,
+        "E": 0.1
+      },
+      "deltas_vs_p3a": {
+        "C": 0.0,
+        "D": 0.0,
+        "E": -0.05
+      },
+      "pending_delta_vs_p3a": {
+        "B": 0,
+        "G": 0
+      },
+      "improved": false,
+      "all_three_strictly_higher": false,
+      "regressed": true,
+      "pending_grew": false,
+      "snapshot": "seed_aligned_tick_17000000.pt",
+      "eval_surface_drift": [],
+      "regression_kind": null
+    }
+  ],
+  "started_at": "2026-09-16T01:17:07",
+  "trainer_pid": 6624,
+  "protected_checkpoints_at_start": {
+    "seed_corpus.pt": [
+      43223183,
+      1789470997
+    ],
+    "seed_beta.pt": [
+      4143542,
+      1787538206
+    ]
+  },
+  "stall_streak": 1
+}

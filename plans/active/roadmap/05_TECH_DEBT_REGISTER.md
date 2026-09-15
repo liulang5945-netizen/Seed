@@ -40,6 +40,29 @@
   `trained_during_eval is false`）；不合格时**只有** `checkpoints/p3b/snapshots/` 里该 tick 的快照仍在
   才可重评（快照才是"该 tick 可复现"的唯一凭据——实时检查点早已前进），快照缺失时**拒绝续跑并报错**，
   不得静默重评一个更晚的状态。**必须配一支故障注入测试**（写一半的 JSON → 断言被识别、且无快照时拒绝）。
+- **DEBT-I7（只登记，不处置）测试套件可以写产品默认检查点 `checkpoints/seed_corpus.pt`**。
+  实证：本次双臂 campaign 期间（本地 01:41，全量套件在跑）该文件被 `trainer = "api_seed_runtime"`
+  重新保存 —— 路径是 `api/seed_runtime.py` 的多处 `self.save()`（默认落在 `DEFAULT_CHECKPOINT`），
+  而 `tests/` 下有 26 个文件同时出现 `SeedRuntime` 与 save/train/reset 类动作，没有任何隔离。
+  **本次没有丢训练产物**：封存盘点报告显示该文件本来就不是训练态（`tick = 2` 的默认基座，
+  重存前后同为 43,223,183 B），损失限于"基座权重被重新初始化了一遍"。
+  但危害类别是真的：**一支测试可以改动产品入口指向的模型文件**，而它在共享工作区里还会
+  连带触发别的守卫（本次就惊动了 P3b 的受保护检查点核对）。
+  修法（二选一，都要先让红测试存在）：① 那些测试必须把 runtime 的 checkpoint 路径指到 `tmp_path`
+  （fixture 级隔离，且加一支"任何测试运行后 `seed_corpus.pt` 的 sha256 不变"的守卫测试）；
+  ② 或让 `SeedRuntime.save()` 写默认路径需要显式参数，默认拒写。
+  本轮不做：涉及 `api/` 与 26 个测试文件的公共夹具，且改 `taiji/`/评测面会打断在跑 campaign。
+- **DEBT-I8（只登记，不处置）已提交的 P3b 报告里嵌着机器绝对路径 ⇒ 同一份快照的两次打分无法逐字节比对**。
+  实证：驱动写的 `reports/p3b_stages/control/cap0_tick_17000000.json` 顶层
+  `checkpoint = "E:\\Seed\\checkpoints\\..."`，而我手工复评同一份快照得到的却是
+  `"checkpoints\\..."`（因为我传的是相对路径）——两份报告除这一处拼写外**逐字段全等**。
+  `reports/taiji_p3b_campaign_control_20260915.json` 的 `criteria.baseline` / `criteria.candidate`
+  同样是 `E:\\Seed\\...`。后果：产物不可跨机比对、把本机目录结构写进了仓库、
+  且"复评是否等价"这类判断只能靠字段级 diff 而不能靠哈希。
+  修法：报告写出处统一用 `train_p3b_aligned._relative()` 那套相对化，并在合同测试里断言
+  报告内不含盘符（`re.search(r"[A-Za-z]:\\\\", text) is None`）。
+  本轮不做：需要同时改评测面脚本与驱动收尾，而实验臂正在跑（驱动每阶段起子进程、
+  收尾时重写campaign 记录）；等双臂结束后与 DEBT-I5/I6 同批处理。
 - 出口④的对照基线仍为上一节所述 **1408 / 0 失败 / 6 跳过**；**远端仍未查询**（`gh` 未认证）⇒ 继续禁止"CI 已绿"表述。
 
 

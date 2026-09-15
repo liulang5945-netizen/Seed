@@ -33,6 +33,7 @@ Usage::
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import subprocess
@@ -107,11 +108,23 @@ def _write(report_path: Path, record: dict[str, Any]) -> None:
     temporary.replace(report_path)
 
 
-def _file_state(path: Path) -> tuple[int, int]:
+def _file_state(path: Path) -> tuple[int, str]:
+    """(size, sha256).
+
+    mtime was not good enough: during this campaign a test re-saved the product default
+    checkpoint, and size+mtime flagged it as damage while a same-size *content* change by a real
+    writer would have looked equally alarming or equally innocent either way.  A hash answers the
+    only question that matters -- did the bytes change.
+    """
+
     if not path.exists():
-        return (0, 0)
+        return (0, "")
     stat = path.stat()
-    return (stat.st_size, int(stat.st_mtime))
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for block in iter(lambda: handle.read(1 << 20), b""):
+            digest.update(block)
+    return (stat.st_size, digest.hexdigest())
 
 
 def _latest_tick(checkpoint: Path) -> int:
