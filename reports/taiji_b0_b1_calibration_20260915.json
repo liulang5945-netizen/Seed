@@ -1,0 +1,142 @@
+{
+  "format": "taiji-b0-b1-calibration-report-v1",
+  "version": 1,
+  "status": "completed",
+  "preregistration": "plans/reference/M5_B0_ROUTE_B_PREREGISTRATION_FROZEN_20260915.md",
+  "scope": "WP-4 calibration: unit cost + pipeline rehearsal; no capability verdict; development-only context band (steps 8-9)",
+  "static_checks": {
+    "scope": [
+      "scripts/training/probe_taiji_b0_b1_calibration.py",
+      "scripts/training/probe_taiji_b0_structure_space.py",
+      "scripts/training/eval_taiji_p5_2b_group_causal_corpora_gate.py"
+    ],
+    "commands": [
+      "python -m py_compile <scope files>",
+      "python -m ruff check scripts/training (and full repo)",
+      "python -m black --no-cache --check <scope files>"
+    ]
+  },
+  "record": {
+    "commit": "169e20711c841b2221d85498f50bebb6d16a55f3",
+    "rule_revision": 1,
+    "composition_rule": "m4_failure_handoff",
+    "calibration_context_band": "steps 8-9 (full run uses 0-5)",
+    "elapsed_seconds": 13.177
+  },
+  "cost": {
+    "member_training_seconds": 10.287,
+    "matrix_seconds": 1.231,
+    "episodes": 132,
+    "episodes_per_second": 107.186,
+    "fit_seconds": 0.009,
+    "restore_seconds": 1.581,
+    "full_scale_extrapolation": {
+      "full_scale_episodes": 396,
+      "matrix_seconds_projected": 3.694,
+      "fit_and_eval_seconds_measured": 0.009,
+      "member_training_seconds_measured": 10.287,
+      "recommended_budget_seconds_with_2x_margin": 27.98
+    }
+  },
+  "pipeline": {
+    "profiles": 4,
+    "member_ids": [
+      "member-a",
+      "member-b",
+      "member-c",
+      "member-d"
+    ],
+    "train_only_candidate_records": 4,
+    "feature_rank": 1,
+    "observed_members": [
+      "member-a",
+      "member-b",
+      "member-c",
+      "member-d"
+    ],
+    "observed_records": [
+      "group:67a6f7db98ebff7b35a940fb",
+      "group:e7f14338720e088f29ecd57e",
+      "group:fc60a048c83ea125d38f9a29",
+      "group:cb431af9122272a7dd9a6ea3"
+    ]
+  },
+  "discrimination_smoke": {
+    "disclosure": "calibration-scale pipeline smoke; no capability verdict",
+    "predicted_interaction": {
+      "member-a+member-b": -0.375,
+      "member-a+member-c": -0.375,
+      "member-a+member-d": -0.375,
+      "member-b+member-c": -0.375,
+      "member-b+member-d": -0.375,
+      "member-c+member-d": -0.375
+    },
+    "actual_gain_holdout": {
+      "member-a+member-b": 0.0,
+      "member-a+member-c": 1.0,
+      "member-a+member-d": 0.0,
+      "member-b+member-c": 0.0,
+      "member-b+member-d": 0.0,
+      "member-c+member-d": 0.0
+    },
+    "rank_correlation": 0.0,
+    "best_pair_hit": false,
+    "best_actual": "member-a+member-c",
+    "best_predicted": "member-a+member-b",
+    "controls": {
+      "no_learning": {
+        "constant_prediction": true,
+        "discriminates": false
+      },
+      "a_count": {
+        "prediction_equal_for_all_pairs": true,
+        "discriminates": false
+      },
+      "additive_train_only": {
+        "rank_correlation": 0.0
+      },
+      "lesion_zero_coefficients": {
+        "discriminates": false
+      },
+      "fixed_pair": {
+        "pair": [
+          "member-a",
+          "member-b"
+        ],
+        "actual_gain": 0.0
+      },
+      "random_pair": {
+        "pair": [
+          "member-b",
+          "member-d"
+        ],
+        "actual_gain": 0.0
+      },
+      "best_singleton_routing": {
+        "singleton_success_rates_holdout": {
+          "member-a": 0.0,
+          "member-b": 0.0,
+          "member-c": 0.0,
+          "member-d": 0.0
+        },
+        "best_singleton": "member-a"
+      }
+    }
+  },
+  "checkpoint": {
+    "restore_matches_parent": true,
+    "tamper_rejected": true
+  },
+  "gates": {
+    "matrix_executed": true,
+    "split_disjoint": true,
+    "fit_completed": true,
+    "restore_matches": true,
+    "tamper_rejected": true,
+    "renaming_stable": true
+  },
+  "growth_admitted": false,
+  "can_promote": false,
+  "interpretation": "completed: B1 calibration pipeline green; 132 episodes at 107.186 eps/s; full-scale extrapolation 3.694s matrix; full B1 run budget = recommended_budget_seconds_with_2x_margin",
+  "elapsed_seconds": 13.177
+}
