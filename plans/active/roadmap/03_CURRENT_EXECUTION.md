@@ -233,9 +233,13 @@ B0 逐条状态见[B0 设计包](../../reference/M5_B0_MEASUREMENT_AND_REACHABIL
 
 每阶段提交预注册、必要报告、checkpoint/manifest，更新台账与唯一下一步。历史负结果、审计、Git 修复备份保留，不 gc/prune、不批量删除未知目录。用户已有 .workbuddy 修改不纳入本次提交。
 
-## 当前唯一下一步：**WP-4（B1 入场）仅剩训练授权**；checkpoint 预检六门已取证
+## 当前唯一下一步：**WP-4 标定跑已完成（B1 训练已授权）→ 实现全量 B1 训练 runner**
 
-> **2026-09-15 checkpoint 预检六门已取证**（[预检报告](../../reports/taiji_b0_checkpoint_preflight_20260915.json)，提交 `252df869`，§14 第 6 项闭合）：路径/原子保存、四成员零步 checkpoint 独立进程恢复逐位一致、format/wrong-parent/语义篡改拒绝 + rollback、路线 B manifest 无碰撞 + `reference_requirements()` 复算冻结表（k=5/4/2、max_clearable 1.85）、冻结常数与 `RULE_REVISION=1` 源码标记、全程记录。**WP-4 的全部入场前置（五件探针各自 revision + 训练前六门）现均已满足；唯一未决项 = 用户对 B1 训练本身的授权。**
+> **2026-09-15 B1 训练已授权 + 标定跑已完成**（[标定报告](../../reports/taiji_b0_b1_calibration_20260915.json)，提交 `33095898`）：六项管线门全绿——132 episodes 真实合同执行（3 个 create 候选格 × 标定指数带 step 8-9，与全量 step 0-5 不相交）、官方 train-only 面（`build_member_evidence` → `observe_members` → `evaluator.train_only_candidates` → `observe_records`）、fresh-process checkpoint 恢复逐位一致、篡改拒绝、成员重命名稳定性。**成本实测：全量 B1 预算（2× 余量）≈ 28 秒**——成本不是约束。
+>
+> **标定的实质发现（全量 B1 语料设计输入）**：`feature_rank=1` 表示秩坍缩——仅用 3 个候选 create 格作训练语料时四成员 profile 全同（create 行单成员按设计全败 ⇒ 贡献/表面特征零差异），ridge 预测退化为常数（−0.375）、判别力为零。**推论：全量 B1 训练语料必须跨结构格**（patch/none 行单成员真实可区分，profile 才有信息），且候选 create 格的 pair 结果不入训练（冻结 §4 隔离条款）——这与 §4「未见联合 cell 在 train 全分区移除」一致，设计是确定的，不需要新决策。
+>
+> **全量 B1 runner 规格**（依冻结预注册 §2/§3/§4 + 本发现）：训练语料 = 非候选结构格（8 格：patch 行 ×4、none 行 ×3、create__none）的 factorial 面；评估面 = 3 个候选 create 格（pair 结果仅来自真实执行）；fit = 官方 train-only 面（同标定）；判别验收 = 特征 rank > 1 + holdout 判别 + 全部冻结对照（无学习/A 计数/加性/lesion/固定/随机/可部署单体路由/重命名与编号置换）+ checkpoint 恢复；预算 28s（2× 余量已含）；判别度提升不得报告为协作证据（H2 归 G5 真实执行门）。
 
 > **2026-09-15 取值确认**：用户答复"全部按照上限档来"⇒ D1–D5 / N2 / N1a / N1a-2 **全部取上限档并已确认**（逐项见下表与[推进计划修订 §2](../../reference/M5_B0_CLOSEOUT_AND_PLAN_REVISION_20260914.md)「WP-1 取值已确认」）。
 > **同日用户解除"先不开始实际推进"限制**并指示持续推进 ⇒ 冻结版预注册、WP-1.5 扩面、WP-2 语义冻结、WP-3 落地与仪器修复**均已执行**；
