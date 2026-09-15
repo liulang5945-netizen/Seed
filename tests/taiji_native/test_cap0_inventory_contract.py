@@ -74,6 +74,35 @@ def test_trained_state_is_stranded_not_merely_unwired(report):
     assert inventory["seed_corpus_prev_20260823.pt"]["tick"] is None
 
 
+def test_model_format_is_read_from_the_substrate_key(report):
+    """The decisive evidence for the fix: the stranded files are a *supported* legacy format.
+
+    ``taiji/model.py`` reads the model format from the ``substrate`` payload and
+    accepts ``taiji-native-v8``/``v9`` via ``LEGACY_CHECKPOINT_FORMATS``.  The sibling
+    ``taiji`` key is the Seed adapter envelope with an unrelated version string, so a
+    check that read that key would misreport the format.
+    """
+
+    reality = report["model_reality"]
+    assert reality["default_model_format"] == "taiji-native-v10"
+    assert reality["most_trained_model_format"] == "taiji-native-v8"
+    assert reality["stranded_is_legacy_format"] is True
+
+    inventory = {row["filename"]: row for row in report["checkpoint_inventory"]}
+    for name in ("seed_beta.pt", "resumed_seed_corpus.pt", "seed_corpus_prev_20260823.pt"):
+        assert inventory[name]["model_format"] == "taiji-native-v8", name
+        assert inventory[name]["has_taiji_adapter_block"] is False, name
+    # The default is current-format and *does* carry the adapter block: the two keys
+    # must not be conflated.
+    assert inventory["seed_corpus.pt"]["has_taiji_adapter_block"] is True
+
+    diagnosis = reality["stranded_defect_diagnosis"]
+    assert "LEGACY_CHECKPOINT_FORMATS" in diagnosis
+    assert "is_legacy_checkpoint" in diagnosis
+    assert "2726-2732" in diagnosis
+    assert "policy decision" in diagnosis
+
+
 def test_probe_output_collapses_to_one_template(report):
     """07 section 3.B: fixed phrasing does not count as content ability."""
 

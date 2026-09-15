@@ -97,3 +97,40 @@
    冻结后才跑首次**计分** B～H 基线。
 
 **本轮不启动训练、不改加载器、不改 binder、不做产品采用。**
+
+## §9 附：搁浅缺陷的精确定位（决策所需证据）
+
+报告已把下列事实落为字段（`model_reality.default_model_format` / `most_trained_model_format` /
+`stranded_is_legacy_format` / `stranded_defect_diagnosis`）：
+
+| 事实 | 值 |
+|---|---|
+| 默认 `seed_corpus.pt` 的**模型格式**（读 `substrate.format`） | `taiji-native-v10`（当前格式） |
+| `seed_beta.pt` / `resumed_seed_corpus.pt` / `…prev_20260823.pt` | **`taiji-native-v8`**（legacy） |
+| `taiji/model.py` 是否支持 v8 | **是**：`LEGACY_CHECKPOINT_FORMATS = {v8, v9}`，且 `is_legacy_checkpoint` 在 **9 处**被使用（2611/2623/2637/2652/2669/2682/2708/2790/2856） |
+
+**注意一个易错点**：模型格式在 **`substrate`** 键下；同级的 `taiji` 键是 Seed 适配层，带**另一条版本轴**
+（`seed_corpus.pt` 的 `taiji.format = taiji-native-v1`，而 `substrate.format = taiji-native-v10`）。
+读错键会把格式报错——本报告第一版就踩了这个坑并已修正。
+
+**缺陷形态（与同文件既有模式对照）**：
+
+```python
+# 2611 行：已有的正确 legacy 模式（并附 M2-2h 迁移说明）
+if predictive_context_payload is None and not is_legacy_checkpoint:
+    raise ValueError("v10 checkpoint is missing its predictive context")
+
+# 2726-2732 行：身份器官分支漏了同一个守卫
+else:
+    if not isinstance(identity_payload, Mapping):
+        raise ValueError("enabled identity organ checkpoint payload is missing")
+```
+
+⇒ 该分支对**任何**缺载荷的检查点都拒绝，**包括身份器官尚不存在的 v8 文件**。
+修法即沿用文件内既有模式（`and not is_legacy_checkpoint` + 一条迁移说明），
+**属于"拒绝 vs 迁移"的安全语义决策，不是代码难题**——这正是本轮停在此处的原因。
+
+**同时说明**：曾尝试"把信封 config 的 `identity_organ_enabled` 改成 False 再读入"，
+被第二道守卫拒绝（`checkpoint configuration does not match architecture`，`taiji/model.py:2604-2606`：
+`TaijiConfig.from_dict(checkpoint["config"]) != self.config`）⇒ **重导出不是改配置就能做到的**，
+需要显式的迁移实现或重建流程。这把原先三选项收敛为：**(a) 加 legacy 守卫（小改、有先例）** 为首选。

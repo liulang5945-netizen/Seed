@@ -35,6 +35,7 @@ import json
 import subprocess
 import sys
 import time
+from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
@@ -77,12 +78,22 @@ def _checkpoint_metadata(path: Path) -> dict[str, Any]:
         return {"readable": False, "error": f"{type(exc).__name__}: {exc}"}
     metadata = envelope.get("metadata") if isinstance(envelope, dict) else None
     metadata = metadata if isinstance(metadata, dict) else {}
+    # The Taiji model checkpoint format lives under ``substrate`` -- that is the
+    # mapping TaijiModel.restore() reads ``format`` from.  The sibling ``taiji`` key
+    # is the Seed adapter envelope and carries its own, unrelated version string
+    # (seed_corpus.pt has taiji=taiji-native-v1 but substrate=taiji-native-v10), so
+    # reading the wrong key would silently misreport the format.
+    substrate = envelope.get("substrate") if isinstance(envelope, dict) else None
     return {
         "readable": True,
         "tick": metadata.get("tick"),
         "trainer": metadata.get("trainer"),
         "saved_at_utc": metadata.get("saved_at_utc"),
         "has_metadata": bool(metadata),
+        "model_format": (substrate.get("format") if isinstance(substrate, Mapping) else None),
+        "has_taiji_adapter_block": bool(
+            isinstance(envelope, dict) and isinstance(envelope.get("taiji"), Mapping)
+        ),
     }
 
 
@@ -274,6 +285,24 @@ def run_inventory() -> dict[str, Any]:
             and int(best["tick"]) > int(default_tick)
         )
 
+        # ---- why the trained files cannot load: format support already exists,
+        # the identity-organ guard simply does not consult it.
+        legacy_formats = {"taiji-native-v8", "taiji-native-v9"}
+        default_format = next(
+            (row.get("model_format") for row in inventory if row["is_default"]), None
+        )
+        trained_format = None
+        if best is not None:
+            trained_format = next(
+                (
+                    row.get("model_format")
+                    for row in inventory
+                    if row["filename"] == best["filename"]
+                ),
+                None,
+            )
+        stranded_is_legacy = trained_format in legacy_formats
+
         def _probe_summary(
             probe: dict[str, Any] | None, signature: dict[str, Any] | None
         ) -> dict[str, Any]:
@@ -314,6 +343,21 @@ def run_inventory() -> dict[str, Any]:
                         "path serves"
                         if wiring_defect and best is not None
                         else None
+                    ),
+                    "default_model_format": default_format,
+                    "most_trained_model_format": trained_format,
+                    "stranded_is_legacy_format": stranded_is_legacy,
+                    "stranded_defect_diagnosis": (
+                        "restore() already supports legacy formats "
+                        "(taiji/model.py LEGACY_CHECKPOINT_FORMATS = v8/v9) and guards other "
+                        "payloads with 'is None and not is_legacy_checkpoint' (e.g. line 2611 "
+                        "for the predictive context, with a documented M2-2h migration), but the "
+                        "identity-organ branch at line 2726-2732 raises for ANY checkpoint whose "
+                        "payload is absent -- including v8 files that predate the organ. The fix "
+                        "follows an existing in-file pattern; whether to apply it is a "
+                        "refuse-vs-migrate policy decision, not a code question"
+                        if stranded_is_legacy
+                        else "the stranded checkpoint is not in a format restore() claims to support"
                     ),
                     "missing_checkpoint_rejected": missing_rejected,
                     "missing_checkpoint_error": missing_error,
