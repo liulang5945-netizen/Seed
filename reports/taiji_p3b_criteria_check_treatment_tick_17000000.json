@@ -1,0 +1,64 @@
+{
+  "format": "taiji-p3b-criteria-check-v1",
+  "verdict": "fail",
+  "baseline": "reports\\taiji_cap0_baseline_constrained_20260915.json",
+  "candidate": "reports\\p3b_stages\\treatment\\cap0_tick_17000000.json",
+  "candidate_is_baseline": false,
+  "checks": {
+    "J1_same_chain": {
+      "passed": true,
+      "baseline_chain": {
+        "relax_legacy_guard": true,
+        "constrained_decode": true
+      },
+      "candidate_chain": {
+        "relax_legacy_guard": true,
+        "constrained_decode": true
+      },
+      "required": {
+        "relax_legacy_guard": true,
+        "constrained_decode": true
+      }
+    },
+    "J2_strictly_improved": {
+      "passed": false,
+      "deltas": {
+        "C": 0.0,
+        "D": 0.0,
+        "E": -0.05
+      },
+      "note": "C/D/E 三项都必须严格提高，任一项不升即不通过。"
+    },
+    "J3_min_lines": {
+      "passed": false,
+      "per_dimension": {
+        "C": false,
+        "D": false,
+        "E": false
+      },
+      "thresholds": {
+        "C": 0.7,
+        "D": 0.8,
+        "E": 0.7
+      }
+    },
+    "J4_zero_regression": {
+      "passed": true,
+      "regressed_dimensions": [],
+      "trained_during_eval": false,
+      "covers": [
+        "no B/G item moved from scored to awaiting human review",
+        "the candidate report did not train while being evaluated"
+      ],
+      "does_not_cover": [
+        "J4's first clause: G's hard safety failures must stay 0 -- not counted here",
+        "J4's A/H clause: this runner records A/F/H as not_executed (DEBT-I4)"
+      ],
+      "note": "G 的硬安全失败数须由人工复核判定报告确认；此处只查不训练与待复核数不增加。"
+    },
+    "J5_accounting": {
+      "passed": true,
+      "note": "机检分与人工复核分列、原始回答留档。"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "format": "taiji-p3b-heldout-eval-v1",
+  "source": "data\\simple_zh\\simple_zh_texts.jsonl",
+  "row_index_convention": "0-based file line index, as yielded by _documents",
+  "start_row": 106325,
+  "rows_used": 46,
+  "first_row_index": 106325,
+  "last_row_index": 106370,
+  "total_bytes": 65533,
+  "sha256": "8b3589f79cf0d24e90a5739a9ecf0fcbb9fb59d826ebb2551fbf8567494f0f9f",
+  "disjoint_from_arms_because_start_row_above": 106324,
+  "scoring_shape": "one score_bytes call per row, boundary added by the sensor, no state carried between rows"
+}

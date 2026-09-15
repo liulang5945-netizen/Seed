@@ -43,7 +43,7 @@
 ## §2b A 的前提被实测否证（负结果，按实登记）⇒ 换仪器而不是换题量
 
 起草 A 时假设"20 题 ⇒ 量子 0.05 是分辨率瓶颈，扩到 100 题就能判得更细"。
-把三份报告的**每一道机检题**按 `expected_contains` 里最短回答 token 的字符数分桶后（脚本 `.git/p3b_headroom.py`，
+把三份报告的**每一道机检题**按 `expected_contains` 里最短回答 token 的字符数分桶后（脚本 `scripts/training/audit_p3b_item_answer_shape.py`，
 2026-09-16 本地 03:27），事实是：
 
 | 维度 | 期望答案 ≤2 字符 | 3–5 字符 | 得分题 |
@@ -66,6 +66,38 @@
   修订件 §4 禁的是**训练流上**的 `online_accuracy`/`mean_surprise` 与那个约 100 字节的
   `holdout_surprise`；一份**冻结的、两臂完全相同的、足够大的**未见集与它们是不同东西，
   而且这条区别**必须写进新预注册**，否则就是给旧禁令开后门。
+
+## §2c A′ 的读法**在看到任何数字之前**写死（本地 2026-09-16 03:30）
+
+写这一段时 `score_bytes` **尚未在 P3b 快照上跑过一次**；下面的阈值之后不得回改，
+若不适用就另立文档。仪器原语用现成的 `model.score_bytes(bytes)`（训练进度里
+`holdout_surprise` 用的就是它，只是这里换成**大**且**冻结**的输入）。
+
+1. **未见集构造**：`data/simple_zh_texts.jsonl` 的 **row 106,325 起**（两臂训练流的最后一个是
+   106,324 ⇒ 逐行不相交；也远在祖先已见前缀 0–2,892 之外），按 `boundary + utf8(row)` 拼接，
+   取满 **65,536 字节** 即停；写成 `plans/manifests/p3b_heldout_eval_manifest.json`
+   （行范围、字节数、sha256、冻结时间）。**读入时 sha 不符即拒绝**。
+2. **被评的三个状态**（同一 chain：`relax_legacy_guard=True` + 从 envelope 重建 config）：
+   起点 `checkpoints/seed_beta.pt`（tick 16,000,000）、
+   `snapshots/seed_aligned_tick_17000000.pt`（实验臂）、
+   `snapshots/seed_aligned_control_tick_17000000.pt`（对照臂）。
+   三者都在盘上 ⇒ **不训练、不消耗机时**。
+3. **统计量**：`mean_surprise`（每字节）。主比较 = **同一 tick 上 `treatment − control`**；
+   另报两臂各自 vs 起点的差（只作过程记录，**不是效应**）。
+4. **分辨率从数据里来，不拍脑袋**：把 65,536 字节**切成两半**（slice A / slice B，各自独立），
+   同一状态在两片上的差 `|A − B|` 就是**这片评测集自身的抽样噪声** ⇒
+   只有当 `|treatment − control|` **大于该噪声且两片同号**，才允许说"分辨得出"；
+   否则记 `not_resolved`。**这条判据先于结果写死。**
+5. **null 的含义**：`not_resolved` 只说明"这个仪器在这个预算上分不出"，
+   **不得**写成"数据分布无影响"（报告计划禁令 1）。
+6. **它测到什么、测不到什么**：`score_bytes` 是 teacher-forcing 的**逐字节预测**，
+   量的是统计拟合；CAP-0 的行为维度（多轮、记忆、拒答）不在其内 ⇒
+   A′ 若给出信号，仍需行为面复核才可称"能力"变化。
+7. **诚实披露**：本次仍是**单个 tick 的一次差分**（阶段 1 的两臂快照），
+   不满足 §4"连续 2 个共同检查点"的老判据——A′ 只能回答"新仪器有没有分辨率"，
+   **不能**替代第二次 campaign 的效应判定。
+
+
 
 ## §3 推荐与最小回复格式
 
