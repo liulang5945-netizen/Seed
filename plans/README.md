@@ -1,6 +1,6 @@
 # Seed / Taiji 计划与架构入口
 
-> **2026-09-15：架构设计与可体验模型交付**。未来核心方案已写入 [VISION 详细设计](reference/VISION_COGNITIVE_CORE_DESIGN_20260915.md)，仅为候选，不替换当前主线。[Taiji Mini 里程碑](active/roadmap/07_MINI_MODEL_DELIVERY.md) 明确 B1 后交实际 checkpoint 预览、B2 后交可独立运行的有限能力模型，不等整个项目完成。原生生成与模板/外部文字严格分账。
+> **2026-09-15 用户纠正后的安排**：未来架构只保留一份 [完整 VISION](reference/VISION_FUTURE_TECHNOLOGY.md)，按计算结构、语言生成、训练适应、工程与验证有序展开，不切换主线。[整模型能力评价与用户验收](active/roadmap/07_MINI_MODEL_DELIVERY.md) 取代立即做预览的安排：阶段结项必须检查真实模型输出，基本对话/问答/上下文和代表能力达标后，才冻结最小版本交用户自由提问验收。
 
 > 更新：2026-09-14；总计划审查基线 `cd8e4acc`。执行顺序仅由[当前推进方案](active/roadmap/03_CURRENT_EXECUTION.md)决定。
 
@@ -39,7 +39,7 @@ N1 结构空间探针（[N1 结构空间结果](reference/M5_B0_STRUCTURE_SPACE_
 **当前状态（2026-09-15）：WP-1 出口、WP-2 语义冻结、WP-3 落地与五条出口验收全部交付。** 取值定案（全取上限档）：D1 = 主判据 `all_singleton_oracle`（`required 1.65`；口径更正见[草案 §10.2](reference/M5_B0_ROUTE_B_PREREGISTRATION_DRAFT_20260913.md)：实测 `+2.000` 本来就是对该参照算的，且 `+2.000 = ceiling_gain 2.0` ⇒ **增益维度零余量**）｜D2 = create 行全部 3 条语言路由｜D3 = 逐格公布 `required`｜D4 = 旧 144/88 降级、新面独立冻结｜**D5 = 落地**｜N2 = 落地前预注册并把 `all_members_blocked` 定为一类终局结果｜**N1a = 开**（WP-6）｜N1a-2 = T2 证据通道单列。
 - 序 0 **WP-1.5 扩面**：四条出口全过（6 context / 7 种子、7/7 偏移为正、两跑字节相同）⇒ 冻结前必过门已通过；**闭合 L4/N1b/N1c，未闭合 L1**（指纹仍 3/11）。
 - 序 1 **WP-1 出口**：[路线 B 冻结版预注册（binder v1）](reference/M5_B0_ROUTE_B_PREREGISTRATION_FROZEN_20260915.md) 已落盘。
-- 序 2 **WP-2**：[N2 冻结版](reference/M5_B0_N2_STOP_REASON_PREREGISTRATION_FROZEN_20260915.md) + [双向测试](tests/taiji_native/test_b0_n2_stop_reason_semantics_contract.py)；消费面 **17 文件 / 10 处判断点（4 live gate + 6 测试断言）**（WP-2 落盘时 15/8，WP-3 的规则版本封条测试成为第 16 个消费者 ⇒ J9；出口②复现守卫再加第 17 个 ⇒ J10），扫描器 fail-closed 且 `drift.clean=true`。**计数恒以[重扫报告](../reports/taiji_b0_n2_stop_reason_disposition_20260915.json) 为准，不得由正文填**。
+- 序 2 **WP-2**：[N2 冻结版](reference/M5_B0_N2_STOP_REASON_PREREGISTRATION_FROZEN_20260915.md) + [双向测试](../tests/taiji_native/test_b0_n2_stop_reason_semantics_contract.py)；消费面 **17 文件 / 10 处判断点（4 live gate + 6 测试断言）**（WP-2 落盘时 15/8，WP-3 的规则版本封条测试成为第 16 个消费者 ⇒ J9；出口②复现守卫再加第 17 个 ⇒ J10），扫描器 fail-closed 且 `drift.clean=true`。**计数恒以[重扫报告](../reports/taiji_b0_n2_stop_reason_disposition_20260915.json) 为准，不得由正文填**。
 - 序 3 **WP-3 落地**：两处替换已写进 gate（与反事实**逐字节相同**）。**出口①已证**（`variant_is_identity=true`、`added_lines=0`、未重绑定冻结属性）；**出口②③已证**，但**第一次重跑被判无效**——落地使探针基线臂变成被测规则本身（两臂同源 ⇒ `delta ≡ 0`、"无回归"为同义反复），已改为反向还原 revision-0 基线 + 两臂同一函数即失败 + `arm_provenance`，有效重跑与封存报告**逐字段相同**（详见[落地结果 §3](reference/M5_B0_M4_LANDING_RESULT_20260915.md)）；**出口④已证**（落地后全量 **1428 passed / 0 failed / 6 skipped**，对基线 1408/0/6 失败集合无新增；消失的 5 个测试名全是有意重命名，逐个列在落地结果 §4）；**出口⑤已证**（八份 revision-0 产物哈希逐份重算不变 + 六支仪器默认输出改指新名的覆写防护）。同批补做 **gate 端到端实测**：默认路径直跑 24.8 s、九门无失败、报告 `rule_revision=1`，且封存报告哈希不变（`groups=2`/`rejected=4` 只是 gate 表面量，不是能力主张）。范围限定：该组合规则**只存在于 gate 脚本**，`taiji/` 无对应实现 ⇒ **不证明产品机制已支持协作**。
 
 **执行顺序（工作包制）**：WP-1 决策 → WP-1.5 扩面 → 冻结版预注册 → WP-2 语义 → **WP-3 落地（五条出口：① 反事实 ≡ 实现（已证）② 冻结面 0 回归 / 2 改善（已证：反事实探针在已发布源码上 `regressions=0`/`improvements=2`，结构空间 11 格逐字段复现封存报告）③ 达标面 `interleaved>0` 且逐格 `> required`（已证：`interleaved=6`、`+2.000 > 1.65`、7/7 偏移）④ 全量失败集合不新增，**基线 2026-09-15 复采 = 1408 / 0 失败 / 6 跳过**（旧 851/27、949/27 均作废，那 27 项系本地沙箱批量删除守卫伪影）⑤ 历史报告只加"规则版本"指针不改数字 + 哈希封条与默认输出覆写防护）→ WP-4 B1 入场（五件探针**各在其所属 `rule_revision` 下**全绿：预检/交接/加固为 revision-0 归档结论、**落地后不重跑**；**反事实与结构空间为 revision-1 实测复现** + 训练前六门）→ WP-5 下游链**；**WP-6 binder 议题**挂在 WP-3 之后。
