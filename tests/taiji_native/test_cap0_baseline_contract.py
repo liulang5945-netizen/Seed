@@ -401,3 +401,59 @@ def test_p3b_throughput_calibration_is_read_only_and_extrapolated() -> None:
     assert "外推" in ext["note"]
     assert ext["one_pass_hours"] > 100
     assert ext["hours_for_16m_ticks"] > 1
+
+
+# --- P3b 判据检查器（J1–J5） -------------------------------------------------
+
+P3B_CHECKER = PROJECT_ROOT / "scripts" / "training" / "check_p3b_criteria.py"
+
+
+def _improved_candidate(tmp_path, source: Path) -> Path:
+    payload = json.loads(source.read_text(encoding="utf-8"))
+    for key, value in (("C", 0.80), ("D", 0.85), ("E", 0.75)):
+        payload["dimensions"][key]["tally"]["machine_normalised"] = value
+    path = tmp_path / "candidate.json"
+    path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+    return path
+
+
+def test_p3b_checker_detects_no_improvement() -> None:
+    """候选=基线 ⇒ 必须判 fail（J2/J3 不通过）—— 检查器不能只走过场。"""
+
+    from scripts.training.check_p3b_criteria import check
+
+    result = check(CONSTRAINED_REPORT)
+    assert result["verdict"] == "fail"
+    assert result["checks"]["J1_same_chain"]["passed"] is True
+    assert result["checks"]["J2_strictly_improved"]["passed"] is False
+    assert result["checks"]["J2_strictly_improved"]["deltas"] == {"C": 0.0, "D": 0.0, "E": 0.0}
+    assert result["checks"]["J3_min_lines"]["passed"] is False
+
+
+def test_p3b_checker_accepts_a_genuine_improvement(tmp_path) -> None:
+    from scripts.training.check_p3b_criteria import check
+
+    candidate = _improved_candidate(tmp_path, CONSTRAINED_REPORT)
+    result = check(CONSTRAINED_REPORT, candidate)
+    assert result["verdict"] == "pass", result["checks"]
+    assert result["candidate_is_baseline"] is False
+    assert result["checks"]["J3_min_lines"]["passed"] is True
+
+
+def test_p3b_checker_rejects_a_different_chain(tmp_path) -> None:
+    """J1：拿默认入口的报告当"改善后的候选"必须判失败（链路不同 ⇒ 不可比）。"""
+
+    from scripts.training.check_p3b_criteria import check
+
+    candidate = _improved_candidate(tmp_path, REPORT)  # REPORT = 默认入口基线
+    result = check(CONSTRAINED_REPORT, candidate)
+    assert result["checks"]["J1_same_chain"]["passed"] is False
+    assert result["verdict"] == "fail"
+
+
+def test_p3b_checker_is_read_only_and_has_exit_code_contract() -> None:
+    source = P3B_CHECKER.read_text(encoding="utf-8")
+    # 只读：不写训练/检查点；失败用退出码 1
+    assert "checkpoint_written" not in source
+    assert "return 0 if result[" in source and "else 1" in source
+    assert "不训练" in source or "只读" in source
