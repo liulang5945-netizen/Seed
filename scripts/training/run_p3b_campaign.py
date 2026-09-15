@@ -126,11 +126,16 @@ def _latest_tick(checkpoint: Path) -> int:
     return int((envelope.get("metadata") or {}).get("tick", 0))
 
 
-def _snapshot(checkpoint: Path, tick: int) -> Path:
-    """Freeze the live checkpoint before scoring it.
+def _snapshot(checkpoint: Path, tick: int) -> tuple[Path, int]:
+    """Freeze the live checkpoint before scoring it, and **trust the copy over the caller**.
 
     One CAP-0 stage costs ~205 s and the trainer overwrites its checkpoint while the stage is
     running, so scoring the live file could mix two training states across dimensions.
+
+    The caller learned ``tick`` from the live file a moment ago; the trainer may have atomic-saved
+    again before these bytes were taken.  Naming the copy after the older tick would then score a
+    later state and label it as an earlier one, which no later reading could detect -- so the
+    envelope inside the copy decides, and a mismatch renames the file to the truth.
     """
 
     directory = checkpoint.parent / "snapshots"
@@ -140,7 +145,16 @@ def _snapshot(checkpoint: Path, tick: int) -> Path:
         temporary = frozen.with_suffix(".tmp")
         temporary.write_bytes(checkpoint.read_bytes())
         temporary.replace(frozen)
-    return frozen
+    actual = _latest_tick(frozen)
+    if actual <= 0:
+        raise SystemExit(
+            f"snapshot {frozen.name} carries no readable tick; refusing to score a torn copy"
+        )
+    if actual != tick:
+        corrected = directory / f"{checkpoint.stem}_tick_{actual}.pt"
+        frozen.replace(corrected)
+        return corrected, actual
+    return frozen, actual
 
 
 def _evaluate(checkpoint: Path, stage_path: Path) -> dict[str, Any]:
@@ -353,15 +367,16 @@ def run(
         if state != last_state and state[0] > 0:
             time.sleep(2)  # let the atomic replace land before reading it back
             last_state = state
-            tick = _latest_tick(checkpoint)
-            if tick <= 0:
+            requested = _latest_tick(checkpoint)
+            if requested <= 0:
                 time.sleep(poll_seconds)
                 continue
+            frozen, tick = _snapshot(checkpoint, requested)
             stage_path = stage_dir / f"cap0_tick_{tick}.json"
-            frozen = _snapshot(checkpoint, tick)
             scored = _evaluate(frozen, stage_path)
             row = _stage_row(tick, scored, baseline, stage_path.name)
             row["snapshot"] = frozen.name
+            row["tick_corrected_from"] = None if tick == requested else requested
             row["eval_surface_drift"] = _surface_drift(scored, baseline)
             record["stages"].append(row)
             record["stall_streak"] = _stall_streak(record["stages"])

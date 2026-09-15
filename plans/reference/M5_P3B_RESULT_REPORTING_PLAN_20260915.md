@@ -65,6 +65,13 @@
    "能解析 + 四字段齐 + C/D/E 各 20 题 + `trained_during_eval=false`"，
    文本模式须输出 `all recorded stage reports intact`
    （阶段报告是非原子写、驱动又是"文件存在即复用"⇒ DEBT-I6 仍未修，本项只是**监视**不是修复）。
+   **5b. 逐阶段实测"标签即状态"**：驱动存在一处 tick 竞态（先从活文件读 tick、再复制文件，
+   中途训练器原子保存一次，快照内容就是更晚的状态却用较早的 tick 命名）。该竞态**已在本轮修复**
+   （快照自身的信封决定它的 tick，不一致即改名并记 `tick_corrected_from`），
+   但**在跑的驱动加载的是修复前的代码**，所以本次 campaign 的这条假设没有机器保护：
+   结项前须逐阶段执行
+   `torch.load(快照).metadata.tick == 阶段行里的 tick == cap0_tick_<N> 的 N`，
+   并把"94 个快照全部核对一致"或"第 X 个不一致"写进表 D。
 6. 受保护检查点 `seed_corpus.pt` / `seed_beta.pt` 起止大小与 mtime 未变。
 7. 作废的第一次跑（35 分钟）与其原因，指向修订件。
 8. 远端 CI **未查询** ⇒ 全文禁止"CI 已绿"表述。

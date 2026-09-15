@@ -284,19 +284,52 @@ def test_one_item_wobble_is_not_a_regression(campaign: Any) -> None:
     assert campaign._regression_kind([soft]) is None
 
 
+def _envelope(path: Path, tick: int) -> Path:
+    """A minimal stand-in for what `atomic_save` leaves behind: metadata carrying the tick."""
+
+    import torch
+
+    torch.save({"format": "taiji-native-v8", "metadata": {"tick": tick}}, path)
+    return path
+
+
 def test_scoring_freezes_the_checkpoint_before_reading_it(campaign: Any, tmp_path: Path) -> None:
-    """The trainer overwrites its checkpoint while a ~205 s stage is running."""
+    """The trainer overwrites its checkpoint while a ~205 s stage is running.
 
-    live = tmp_path / "seed_aligned.pt"
-    live.write_bytes(b"state-at-tick-17000000")
-    frozen = campaign._snapshot(live, 17_000_000)
-    assert frozen.read_bytes() == live.read_bytes()
+    Three separate hazards, all real: scoring the live file mixes two training states across
+    dimensions; reusing a snapshot must not re-copy the moved-on live file; and a snapshot must
+    never be labelled with a tick it does not contain.
+    """
+
+    live = _envelope(tmp_path / "seed_aligned.pt", 17_000_000)
+    frozen, tick = campaign._snapshot(live, 17_000_000)
+    assert tick == 17_000_000
     assert frozen.parent == tmp_path / "snapshots"
+    assert frozen.read_bytes() == live.read_bytes()
 
-    live.write_bytes(b"state-at-tick-18000000")
-    assert frozen.read_bytes() == b"state-at-tick-17000000", "the snapshot must be immutable"
-    again = campaign._snapshot(live, 17_000_000)
-    assert again == frozen and again.read_bytes() == b"state-at-tick-17000000"
+    _envelope(live, 18_000_000)  # the trainer moves on mid-stage
+    assert campaign._latest_tick(frozen) == 17_000_000, "the snapshot must be immutable"
+    again, again_tick = campaign._snapshot(live, 17_000_000)
+    assert again == frozen and again_tick == 17_000_000, "existing snapshot is reused, not recopied"
+
+
+def test_a_snapshot_is_never_labelled_with_a_tick_it_does_not_hold(
+    campaign: Any, tmp_path: Path
+) -> None:
+    """The caller's tick is a guess about a moving file; the envelope inside the copy decides."""
+
+    live = _envelope(tmp_path / "seed_aligned.pt", 18_000_000)
+    frozen, tick = campaign._snapshot(live, 17_000_000)
+    assert tick == 18_000_000, "scoring a later state under an earlier label is undetectable later"
+    assert frozen.name == "seed_aligned_tick_18000000.pt"
+    assert not (tmp_path / "snapshots" / "seed_aligned_tick_17000000.pt").exists()
+
+
+def test_a_snapshot_without_a_readable_tick_is_refused(campaign: Any, tmp_path: Path) -> None:
+    live = tmp_path / "seed_aligned.pt"
+    live.write_bytes(b"\x00\x01 truncated mid-write")
+    with pytest.raises(SystemExit, match="no readable tick"):
+        campaign._snapshot(live, 19_000_000)
 
 
 # --------------------------------------------------------------------------- #
