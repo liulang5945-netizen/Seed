@@ -1,6 +1,6 @@
 """契约测试：`InteractionGroupUtilityLearner.select` 的**边界语义**。
 
-存在理由（技术债册 §4.2 / [诊断](../../../plans/reference/M5_S42_BOUNDARY_DIAGNOSIS_20260915.md)）：
+存在理由（技术债册 §4.2 / [诊断](../../plans/reference/M5_S42_BOUNDARY_DIAGNOSIS_20260915.md)）：
 CI 的 `test (3.10)` 腿报 `selector did not choose a group`，实测根因是候选
 **恰好压在阈值上**（`closest_boundary_margin = 0.0`，±1e-12 即翻转），
 而 `select` 用的是**无容差**的浮点比较：
