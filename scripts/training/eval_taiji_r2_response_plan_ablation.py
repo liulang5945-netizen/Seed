@@ -121,19 +121,28 @@ def main() -> int:
 
     is_h37 = trainer.config.response_plan_target_geometry == H37_TARGET_GEOMETRY
     normal = trainer.evaluate(args.split)
+    # score_episode restores the model by replacing the readout instance;
+    # always rebind after a read-only evaluation before changing its bridge.
     readout = trainer.model.response_plan_readout
+    if readout is None:
+        raise RuntimeError("response-plan readout disappeared during evaluation")
     bridge = readout.plan_bridge.detach().clone()
     try:
         readout.plan_bridge.zero_()
         ablated = trainer.evaluate(args.split)
-        readout.plan_bridge.copy_(bridge)
+        restored_readout = trainer.model.response_plan_readout
+        if restored_readout is None:
+            raise RuntimeError("response-plan readout disappeared after bridge ablation")
+        restored_readout.plan_bridge.copy_(bridge)
         slot_credit_ablated = None
         if is_h37:
-            readout.set_ablation_mode("slot_credit")
+            restored_readout.set_ablation_mode("slot_credit")
             slot_credit_ablated = trainer.evaluate(args.split)
     finally:
-        readout.plan_bridge.copy_(bridge)
-        readout.set_ablation_mode(None)
+        restored_readout = trainer.model.response_plan_readout
+        if restored_readout is not None:
+            restored_readout.plan_bridge.copy_(bridge)
+            restored_readout.set_ablation_mode(None)
     if str(trainer.checkpoint()["checkpoint_digest"]) != original_digest:
         raise RuntimeError("plan ablation did not restore the source checkpoint")
 

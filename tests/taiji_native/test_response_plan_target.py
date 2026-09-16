@@ -227,3 +227,12 @@ def test_h37_factorized_plan_preflight_and_checkpoint_round_trip() -> None:
     assert restored.config.response_plan_variant == "factorized_v1"
     assert restored.response_plan_target_digest == encoder.target_digest
     assert restored.checkpoint()["checkpoint_digest"] == checkpoint["checkpoint_digest"]
+
+    # The ablation is transient and must survive score_episode's read-only
+    # model replacement without entering the checkpoint payload.
+    before_evaluation = content_digest(restored.checkpoint())
+    restored.model.response_plan_readout.set_ablation_mode("slot_credit")
+    restored.evaluate("dev")
+    assert restored.model.response_plan_readout.ablation_mode == "slot_credit"
+    assert content_digest(restored.checkpoint()) == before_evaluation
+    restored.model.response_plan_readout.set_ablation_mode(None)

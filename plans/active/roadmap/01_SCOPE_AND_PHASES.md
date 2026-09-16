@@ -41,7 +41,7 @@
 | 协作与自主选择 | C/A 负结果；B0 的 HANDOFF-M4 已由反事实转成**已发布规则**：2026-09-15 落地进 P5.2b gate（`rule_revision=1`，五条出口见 WP-3 落地结果），独立结构因素仍为 1。**注意**：该规则目前**只存在于 gate 脚本**，`taiji/` 无对应实现 ⇒ 落地证明的是仪器，不是产品能力 | B2-v4已证冻结create族内学习选择与协作；仍缺独立内容结构、产品同入口集成及轴级共同门/批准，H1/H2/H3不混称 | 已完成B链继承；R4集成、R5独立扩面与轴评审 |
 | 身体与在线闭环 | Workbench 合同与预测路径、恢复资产可复用 | 真实结果驱动合格更新、多轮保持/幂等/中断恢复；能力注册/撤销、执行与认知责任分离 | R0逐门审查→R3闭环；身体生命周期由R5在M5评审前闭合 |
 
-**最新状态**：R2-H3.5-A已因plan target不迁移在final前停止。H3.6三种子无训练geometry审计已完成，选定train-only whitened native response state与compositional n-gram混合目标；随后完成了版本化target encoder、train-only拟合、冻结变换、trainer接线、保存恢复 smoke及H3.6-B control/treatment零步前置。六个H3.6-B正式dev run和三组只读bridge ablation已按冻结合同完成，但seed方向、非代理序列收益与bridge因果门未成立，已在final前负结果结项；final仍不读，不扩容量、不追加同质epoch。基于这一失败形态，H3.7改为4-slot/48维/16-byte phase的分解式 workspace，并冻结renderer→bridge→slot credit实现门；提交版本的 control/treatment preflight 已分别以 273,890/277,970 个 active parameters 通过，当前进入三 seed dev，仍不代表S2/L2/Mini或架构采用。
+**最新状态**：R2-H3.5-A已因plan target不迁移在final前停止。H3.6三种子无训练geometry审计已完成，选定train-only whitened native response state与compositional n-gram混合目标；随后完成了版本化target encoder、train-only拟合、冻结变换、trainer接线、保存恢复 smoke及H3.6-B control/treatment零步前置。六个H3.6-B正式dev run和三组只读bridge ablation已按冻结合同完成，但seed方向、非代理序列收益与bridge因果门未成立，已在final前负结果结项；final仍不读，不扩容量、不追加同质epoch。基于这一失败形态，H3.7改为4-slot/48维/16-byte phase的分解式 workspace，并冻结renderer→bridge→slot credit实现门；提交版本的 control/treatment preflight 已分别以 273,890/277,970 个 active parameters 通过，seed `20260917` 的首组正式dev与bridge/slot-credit消融已经完成，尚余两个seed；单seed不触发晋级，仍不代表S2/L2/Mini或架构采用。
 
 **M5 限定阶段退出**还需知识准入、在线/身体轴与共同保持恢复门闭合。若某能力决定留到以后，必须列为“未完成且从本次交付范围排除”，由项目所有者批准；不能写为已完成。当前没有这种新增豁免。
 

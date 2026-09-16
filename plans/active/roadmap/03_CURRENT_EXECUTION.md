@@ -140,6 +140,8 @@ R2-D0设计合同已经转为实施，当前工作包分成四个连续出口，
 
 21. **R2-H3.7分解式回答工作空间与因果信用合同冻结**：H3.6失败不是输入未到达，而是单一静态 plan、未学习的 bridge 和断开的回答级信用链共同导致。新合同采用 4 个 12 维 plan slots、总宽度48、每16个已生成 byte 切换消费槽；slot0保留全局回答头部结构，其余槽承载后续固定chunk；byte error显式更新 `plan_bridge` 和当前槽 planner rows。目标由 train-only、corpus/parent绑定的 UTF-8-safe chunk count-sketch生成，运行时不读标签或reference。control为同预算response-phase，treatment为factorized workspace，bridge/slot-credit均做只读消融。合同与机读版本见[M5 R2-H3.7合同](../../reference/M5_R2_H3_7_FACTORIZED_RESPONSE_WORKSPACE_CONTRACT_20260917.md)和`plans/reference/contracts/r2_h3_7_factorized_response_workspace_v1.json`；实现、回归测试、双臂checkpoint preflight已通过，证据为`reports/taiji_r2_h3_7_control_preflight_20260917.json`与`reports/taiji_r2_h3_7_treatment_preflight_20260917.json`，training_performed=false；现在进入三seed dev，final继续延迟。
 
+22. **R2-H3.7首个seed正式matched dev与因果消融**：按冻结合同完成seed `20260917` 的control/treatment各10 epoch、120 train episodes、global step 5370；两份正式checkpoint和报告均落盘，effective parameters分别为273,890与277,970，paired/native-only/read-only与final延迟字段均通过。dev sequence criterion control/treatment均为0.25，teacher-forced mean surprise分别为2.73/3.55；单个seed尚不能判定三seed方向，也不能把surprise差异写成能力收益。treatment只读消融恢复校验首次暴露了评估器在替换readout实例后仍操作旧引用的问题，已修复并加入 transient slot-credit 跨episode恢复回归测试；修复后该seed消融正常为0.25、bridge=0.125、slot-credit=0.0，checkpoint_read_only=true。证据见`reports/taiji_r2_h3_7_control_dev_20260917_seed20260917.json`、`reports/taiji_r2_h3_7_treatment_dev_20260917_seed20260917.json`和`reports/taiji_r2_h3_7_ablation_20260917_seed20260917.json`；不读final，不追加epoch，唯一下一步是继续seed `20260918`与`20260919`的matched dev及各自消融。
+
 不得复用P3b报告名或把`seed_beta.pt`当作可写目标。设计包的出口仍包括输入/上下文/回答边界/目标定义、训练与运行期分工、编码/语义/上下文/结果四层评价、checkpoint前置、L2/L3停止条件，以及失败后回到数据、目标、表示、读出或架构哪一层的判读规则；本轮已把其中的可执行保存恢复和S1读出部分先落地。
 
 ### 6.1 设计评审必须回答
@@ -264,4 +266,4 @@ H3.6三种子无训练geometry审计已完成。唯一入选方案是train-only 
 
 H3.6-B matched dev预注册、训练入口的geometry选择、train-only encoder拟合、target payload血缘报告和`--preflight-only`已完成。control/treatment的零步前置均通过：effective=276,610≤300,000，checkpoint保存恢复、一次child更新、parent保护与target血缘检查均成立；正式报告明确`training_performed=false`，因此没有把前置的一次恢复性child update冒充正式能力训练。用户授权的control/treatment三seed正式dev已全部完成：六个run均为10 epoch、120 episodes，checkpoint与report均落盘；三组只读bridge ablation也已完成，aggregate判定为`stopped_before_final`。
 
-H3.6-B按预注册停止规则结项：不读取H3.5-A或H3.6-B final，不追加同质epoch，不进入S2/L2/Mini，也不把surprise、collision或bridge影响写成模型能力。H3.7已把复审结论冻结为4-slot/48维/16-byte phase的分解式 workspace 与 renderer→bridge→slot credit 实现门；提交版本的 control/treatment preflight 已通过，下一步是执行授权的三seed matched dev和冻结的bridge/slot-credit只读消融，H3.6-B child继续作为只读失败证据。
+H3.6-B按预注册停止规则结项：不读取H3.5-A或H3.6-B final，不追加同质epoch，不进入S2/L2/Mini，也不把surprise、collision或bridge影响写成模型能力。H3.7已把复审结论冻结为4-slot/48维/16-byte phase的分解式 workspace 与 renderer→bridge→slot credit 实现门；提交版本的 control/treatment preflight 已通过，seed `20260917` 的首组正式dev与两组只读消融已完成但尚未形成三seed gate，当前继续执行seed `20260918`和`20260919`，H3.6-B child继续作为只读失败证据。

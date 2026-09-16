@@ -204,6 +204,7 @@ not yet produced an L2 conversational model; the work below is the path toward o
 | H3.6-B result | Six matched dev runs and three read-only bridge ablations completed; seed direction and non-proxy sequence gates failed, so final was not read and no more epochs are allowed |
 | R2-H3.7 contract | Frozen 4-slot/48-wide/16-byte-phase factorized response workspace; byte error updates the bridge and current-slot credit |
 | R2-H3.7 preflight | Control (273,890) and treatment (277,970) both passed committed-code preflight; `training_performed=false`, three-seed dev is now authorized |
+| R2-H3.7 seed 20260917 | First matched dev pair completed; dev sequence criterion is 0.25/0.25 (control/treatment), and read-only ablation is 0.25/0.125/0.0 (normal/bridge/slot-credit); three-seed gate remains open |
 
 The authoritative execution order is the [current plan](plans/active/roadmap/03_CURRENT_EXECUTION.md),
 with the H3.6 target contract in [M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md](plans/reference/M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md),
@@ -223,7 +224,7 @@ current R2 language mainline and does not imply a default-runtime promotion.
   but no S2/L2 conversational capability has been established. `promotion_gate=false`,
   `can_promote=false`, and `growth_admitted=false` remain the honest K-axis boundary; no
   default-runtime owner or product rollout is implied.
-- Next planned action: run the authorized H3.7 three-seed matched dev (control/treatment, 10 epochs, at most 120 episodes per arm, final deferred), then execute the frozen read-only bridge/slot-credit ablations. H3.6-B final remains unread; no same-target epochs or Mini acceptance are authorized by this result.
+- Next planned action: continue the authorized H3.7 matched dev for seeds 20260918 and 20260919, run each frozen read-only bridge/slot-credit ablation, then execute the three-seed aggregate gate. H3.6-B final remains unread; H3.7 final, same-target extra epochs, default adoption, and Mini acceptance remain unauthorized until that gate.
 - Honest boundary: this is a learning-mechanism research prototype, **not** a completed
   cognitive architecture, not yet a general-purpose language model, and not a claim about AGI.
   The current R2 work explicitly treats unreadable or non-transferring responses as failures to

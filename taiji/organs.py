@@ -869,6 +869,12 @@ class ResponsePlanReadout(BytePredictiveReadout):
             raise ValueError("slot-credit ablation requires the factorized variant")
         self._ablation_mode = mode
 
+    @property
+    def ablation_mode(self) -> str | None:
+        """Return the transient diagnostic mode without serializing it."""
+
+        return self._ablation_mode
+
     def _active_plan_vector(self) -> torch.Tensor:
         if self._plan_state is None:
             raise RuntimeError("response plan has not been created")
