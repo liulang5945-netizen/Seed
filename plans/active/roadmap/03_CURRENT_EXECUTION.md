@@ -32,7 +32,7 @@
 | 本地heldout | 未跟踪reports/taiji_p3b_heldout_surprise_20260916.json为not_resolved | 先审协议与血缘；surprise不能替代对话评价 |
 | 知识/身体 | P5.1g仍trial并回滚；Workbench合同资产存在 | 真实语料child未准入、身体全生命周期未结项 |
 | CI | 9月16日查询run34869725409，d09dcc21，总体failure；3.10失败，3.12/Windows等通过 | 不是当前HEAD的CI；不称全绿，旧27项SystemExit不再视作未定位代码缺陷 |
-| R2 aligned language seam | 结构化episode、response-only native readout、checkpoint digest/atomic save、zero/child恢复前置、paired诊断、static/slow/fast/fast_slow四臂、P2序列级只读评价、H3.1 beam、H3.2 response-start、H3.3 response-phase与泛化剖面、H3.4逐位置信用审计、H3.5表示合同、H3.6-A target encoder plumbing及H3.6-B零步前置均已完成 | H3.4确认UTF-8/end-marker稳定但条件首字节与未见continuation不可迁移；H3.5-A已停止，H3.6-A/B仍未形成S2/L2/Mini。H3.6-B control/treatment的容量、parent保护、target血缘和checkpoint preflight均通过；下一步只等待明确的三seed dev训练授权，不读取H3.5-A final、不追加epoch |
+| R2 aligned language seam | 结构化episode、response-only native readout、checkpoint digest/atomic save、zero/child恢复前置、paired诊断、static/slow/fast/fast_slow四臂、P2序列级只读评价、H3.1 beam、H3.2 response-start、H3.3 response-phase与泛化剖面、H3.4逐位置信用审计、H3.5表示合同、H3.6-A target encoder plumbing及H3.6-B零步前置均已完成；H3.6-B正式dev已获授权并启动 | H3.4确认UTF-8/end-marker稳定但条件首字节与未见continuation不可迁移；H3.5-A已停止，H3.6-A/B仍未形成S2/L2/Mini。H3.6-B control/treatment按冻结合同执行三seed dev，final仍延迟；任一前置、恢复、预算、血缘或停止门失败即停止，不追加同质epoch |
 | R2-G1 conditional response v2 | v2显式policy prefix、版本化checkpoint/corpus、train/dev/final输出碰撞指标和G1-S0/S1受控诊断已实现 | preflight通过；20 epoch混合训练的train collision=0.5、train exact=0.5，dev/final sequence criterion=0，paired改写敏感性=0；H2/H3审计显示train prefix context distinct=2/2、context L2=0.9694、next-byte probability L1=0.0771、argmax difference=0、recovery repeatable=true；输入已进入native state，但readout首选路径未形成可分离margin，不扩大同质训练 |
 
 未提交结果转正须有：代码/协议版本、执行时间、产物hash、数据与模型血缘、原始结果、失败说明、独立输出路径。提交本身不证明有效；已见结果不得包装成前瞻预注册。
@@ -245,7 +245,7 @@ B2已结项，同族复现不反复计新能力。以[binder可行性](../../ref
 
 唯一[未来VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)记录候选架构，本文管当前依赖与权限。每包结项同步01/02/03/07和首页，不追加互相矛盾的“最新状态”。
 
-## H3.6-B结论与当前唯一下一步：等待三seed dev训练授权
+## H3.6-B结论与当前执行：三seed dev训练进行中，final延迟
 
 H3.3的预算一致证据已经完成：H3.3-B response-start与H3.3-C response-phase在同一v2控制集、同一300k总预算、同一10 epoch和同一评价链上均通过preflight与恢复，但train/dev/final exact和sequence均为0；两者dev/final首字节top1均为0.25/0，paired改写敏感性均为0.42857。B的dev/final首字节margin为0.06973/-0.02639，C为-0.10842/-0.18765；统一整段response owner没有产生能力出口。由此H3.3结项，不再追加同质byte训练或继续堆叠边界候选。
 
@@ -259,6 +259,6 @@ H3.5-A dev阶段六次matched运行已完成并触发停止：treatment在三个
 
 H3.6三种子无训练geometry审计已完成。唯一入选方案是train-only whitened native response state与compositional n-gram等权混合：它的迁移下限和防塌缩距离同时优于signed-hash。H3.6-A target encoder plumbing已经完成：实现了train-only拟合、冻结均值/基向量/尺度、payload/digest、错误corpus/parent拒绝、教师checkpoint守卫，并已通过真实fixture reconstruction smoke；H3.6 target 已接入隔离的LanguageAlignmentTrainer，child checkpoint 可恢复同一份train target map。实现与报告见`taiji/response_plan_target.py`、`scripts/training/smoke_taiji_r2_h3_6_target_encoder.py`、`reports/taiji_r2_h3_6_target_encoder_smoke_20260916.json`。
 
-H3.6-B matched dev预注册、训练入口的geometry选择、train-only encoder拟合、target payload血缘报告和`--preflight-only`已完成。control/treatment的零步前置均通过：effective=276,610≤300,000，checkpoint保存恢复、一次child更新、parent保护与target血缘检查均成立；正式报告明确`training_performed=false`，因此没有把前置的一次恢复性child update冒充正式能力训练。
+H3.6-B matched dev预注册、训练入口的geometry选择、train-only encoder拟合、target payload血缘报告和`--preflight-only`已完成。control/treatment的零步前置均通过：effective=276,610≤300,000，checkpoint保存恢复、一次child更新、parent保护与target血缘检查均成立；正式报告明确`training_performed=false`，因此没有把前置的一次恢复性child update冒充正式能力训练。用户已明确授权正式训练，当前按合同运行control/treatment各三个seed、每臂10 epoch，final仍延迟。
 
-当前唯一下一步是取得明确的三seed dev训练授权，然后严格按[H3.6-B合同](../../reference/M5_R2_H3_6B_MATCHED_RUN_PREREGISTRATION_20260916.md)分别运行control与treatment；先跑dev、保持final延迟，任何停止条件触发就结项。未得到授权前不执行正式epoch、不读取H3.5-A final、不进入S2/L2/Mini，也不把本次preflight原始输出写成模型能力。
+当前执行包是严格按[H3.6-B合同](../../reference/M5_R2_H3_6B_MATCHED_RUN_PREREGISTRATION_20260916.md)分别运行control与treatment各三个seed；先冻结六个dev child和三组bridge ablation，再按预注册停止门判读，final至多统一读取一次。训练期间不读取H3.5-A final、不进入S2/L2/Mini、不追加同质epoch，也不把任何train-only或代理指标写成模型能力。

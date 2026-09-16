@@ -201,7 +201,7 @@ not yet produced an L2 conversational model; the work below is the path toward o
 | R2-H3.6 geometry | A no-training, three-seed audit selected train-whitened native response state + compositional character n-grams; this is a target-design result, not language ability |
 | R2-H3.6-A | Versioned train-only target encoder, trainer integration and save/restore smoke passed on the 12/8/4 fixture; no capability training was performed |
 | H3.6-B preflight | Control and treatment zero-step preflights passed at 276,610≤300,000 with parent/restore/target-lineage checks; `training_performed=false` |
-| Next | Obtain explicit authorization for the three-seed dev run; then execute the frozen H3.6-B contract with final deferred. Do not read H3.5-A final or start formal epochs before authorization |
+| H3.6-B dev | Training explicitly authorized; control/treatment three-seed dev runs are executing under the frozen contract, with final deferred and stop gates active |
 
 The authoritative execution order is the [current plan](plans/active/roadmap/03_CURRENT_EXECUTION.md),
 with the H3.6 target contract in [M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md](plans/reference/M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md),
