@@ -1,6 +1,6 @@
 # M5 R2-H3.6-B matched dev 训练预注册
 
-> 状态：预注册已冻结；已获授权，正在执行三 seed dev 能力训练，final 仍延迟读取。
+> 状态：预注册已冻结；三 seed control/treatment dev 已完成，正在执行三组只读 bridge ablation，final 仍延迟读取。
 >
 > 可机读合同：`plans/reference/contracts/r2_h3_6b_matched_run_v1.json`
 >
@@ -71,4 +71,4 @@ dev阶段只有在三seed treatment相对control的主要方向一致、至少�
 1. 将本合同和JSON合同加入提交；
 2. 为训练入口增加显式H3.6 target geometry选择、train-only encoder拟合和target payload digest报告；
 3. 对control/treatment各跑零步保存恢复、容量/磁盘前置，不开始epoch；
-4. 已取得训练授权；按三个seed完成dev阶段，final仍后置。任何前置、恢复、预算、血缘或停止门失败都立即停止后续run。
+4. 训练授权已执行完毕；六个dev child均已完成并通过机器门，当前冻结child后执行三组只读bridge ablation，final仍后置。任何恢复、预算、血缘或停止门失败都立即停止后续读取。
