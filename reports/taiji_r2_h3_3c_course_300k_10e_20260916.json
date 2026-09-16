@@ -1,0 +1,102 @@
+{
+  "format": "taiji-r2-h3-3c-course-result-v1",
+  "status": "completed",
+  "hypothesis": "one_isolated_native_owner_from_assistant_boundary_can_stabilize_first_byte_and_continuation_credit",
+  "dataset": {
+    "path": "tests/fixtures/r2_language_alignment_generalization.jsonl",
+    "sha256": "cd2d7869fc5954182c7101e413649e2f5ea3042912b28d25f998bd874b00d820",
+    "corpus_digest": "77b54dbd8660f33dbbcd723c5415fe10fe7723e82341c5b4cf030ad184fe1411",
+    "sample_counts": {
+      "train": 6,
+      "dev": 4,
+      "final": 3,
+      "retention": 0
+    }
+  },
+  "source_runner": "scripts/training/train_taiji_r2_aligned.py",
+  "source_report": {
+    "path": ".tmp-r2-language-run/h3-3c-course-300k-10e-budgeted-rerun.json",
+    "sha256": "a43c69f6c1c2c53452c25cad7286eda12563b4146edb1457655ad286a5460e0a"
+  },
+  "source_checkpoint": {
+    "path": ".tmp-r2-language-run/h3-3c-course-300k-10e-budgeted-rerun.pt",
+    "sha256": "75c535120edae4964621abe3de4e66321594c1b1d70f1a0c0b68b155d16422d1"
+  },
+  "config": {
+    "parameter_budget": 300000,
+    "planned_core_active_parameters": 262839,
+    "additional_predictive_readout_parameters": 11051,
+    "effective_active_parameters": 273890,
+    "within_target": true,
+    "epochs": 10,
+    "device": "cpu",
+    "response_start_readout": false,
+    "response_phase_readout": true,
+    "constrained_decode": true,
+    "training_episodes": 6
+  },
+  "preflight": {
+    "status": "passed",
+    "checkpoint_save_restore_checked": true
+  },
+  "training": {
+    "response_accuracy_proxy": 0.6373015873015874,
+    "train_teacher_forced_accuracy": 0.7671957671957671,
+    "dev_teacher_forced_accuracy": 0.626984126984127,
+    "final_teacher_forced_accuracy": 0.5740740740740741
+  },
+  "response_phase_margin": {
+    "train": {
+      "baseline_mean_target_margin_vs_second": -0.006482357236867149,
+      "final_mean_target_margin_vs_second": -0.017532965168356895,
+      "final_target_top1_rate": 0.5
+    },
+    "dev": {
+      "baseline_mean_target_margin_vs_second": -0.006299384753219783,
+      "final_mean_target_margin_vs_second": -0.10842247307300568,
+      "final_target_top1_rate": 0.25
+    },
+    "final": {
+      "baseline_mean_target_margin_vs_second": -0.006160593979681532,
+      "final_mean_target_margin_vs_second": -0.1876482137789329,
+      "final_target_top1_rate": 0.0
+    }
+  },
+  "evaluation": {
+    "train": {
+      "exact_response_rate": 0.0,
+      "sequence_criterion_pass_rate": 0.0
+    },
+    "dev": {
+      "exact_response_rate": 0.0,
+      "sequence_criterion_pass_rate": 0.0
+    },
+    "final": {
+      "exact_response_rate": 0.0,
+      "sequence_criterion_pass_rate": 0.0
+    }
+  },
+  "paired_diagnostic": {
+    "exact_response_delta": 0.0,
+    "child_prompt_sensitivity_rate": 0.2857142857142857,
+    "child_output_changed_after_update_rate": 1.0
+  },
+  "checkpoint_read_only_after_evaluation": true,
+  "generalization_profile": {
+    "report": "reports/taiji_r2_h3_3c_shared_support_profile_20260916.json",
+    "checkpoint_digest": "a52c458643182fc2da47ed7dba701a9fa89614bed1a55fe23fe857a5bf681052",
+    "training_performed": false,
+    "checkpoint_read_only": true,
+    "recovery_repeatable": true,
+    "train_first_byte_support_rate": 1.0,
+    "dev_first_byte_support_rate": 1.0,
+    "final_first_byte_support_rate": 1.0,
+    "train_first_byte_top1_rate": 0.5,
+    "dev_first_byte_top1_rate": 0.25,
+    "final_first_byte_top1_rate": 0.0
+  },
+  "native_mode_only": true,
+  "external_provider": false,
+  "mini_or_l2_claim": false,
+  "interpretation": "With candidate parameters reserved inside the total 300k budget, a single response-phase owner failed to improve train first-byte margin, worsened dev/final margin and produced no exact or sequence-level response. The phase credit split is not the sole bottleneck; do not advance to formal pilot or continue homogeneous byte training."
+}

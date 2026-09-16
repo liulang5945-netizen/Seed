@@ -1,8 +1,8 @@
 # Seed / Taiji 当前详细推进方案
 
-> 更新：2026-09-16；R0证据与门禁审计已完成。本次决定将R2整模型语言能力设为当前主线；本地未提交观察与正式结果继续分账。
+> 更新：2026-09-16；R0证据与门禁审计已完成。本次决定将R2整模型语言能力设为当前主线；结构化R2入口、checkpoint前置、P1 developmental 对照、P2序列级只读评价、G1条件接口、H2/H3内部表示/读出审计、H3.1序列路径对照、H3.2 response-start候选读出、H3.3泛化控制与response-phase候选、H3.4逐位置条件信用审计均已完成，本地未提交观察与正式结果继续分账。
 > 本文是唯一执行顺序来源；[01](01_SCOPE_AND_PHASES.md)管总阶段，[02](02_GATES_AND_CI.md)管晋级，[07](07_MINI_MODEL_DELIVERY.md)管整模型验收。
-> 旧逐轮台账完整保留于Git的56a4c3e4:plans/active/roadmap/03_CURRENT_EXECUTION.md及各冻结报告。本次不改历史结果、不授权训练、产品采用或架构切换。
+> 旧逐轮台账完整保留于Git的56a4c3e4:plans/active/roadmap/03_CURRENT_EXECUTION.md及各冻结报告。本次不改历史结果、不修改默认入口、不授权产品采用或架构切换；R2隔离smoke只用于验证新入口。
 
 ## 1. 项目位置与推进目标
 
@@ -32,6 +32,8 @@
 | 本地heldout | 未跟踪reports/taiji_p3b_heldout_surprise_20260916.json为not_resolved | 先审协议与血缘；surprise不能替代对话评价 |
 | 知识/身体 | P5.1g仍trial并回滚；Workbench合同资产存在 | 真实语料child未准入、身体全生命周期未结项 |
 | CI | 9月16日查询run34869725409，d09dcc21，总体failure；3.10失败，3.12/Windows等通过 | 不是当前HEAD的CI；不称全绿，旧27项SystemExit不再视作未定位代码缺陷 |
+| R2 aligned language seam | 结构化episode、response-only native readout、checkpoint digest/atomic save、zero/child恢复前置、paired诊断、static/slow/fast/fast_slow四臂、P2序列级只读评价、H3.1 beam、H3.2 response-start、H3.3 response-phase与泛化剖面、H3.4逐位置信用审计均已实现 | H3.3-B/C在同一300k预算下均为effective=273,890，preflight/恢复/只读成立；H3.4显示UTF-8、end-marker和边界读出已稳定，但dev/final exact/sequence仍为0，条件首字节与未见continuation仍不可迁移；未形成S2/L2/Mini，下一步转H3.5目标/数据/表示合同复审 |
+| R2-G1 conditional response v2 | v2显式policy prefix、版本化checkpoint/corpus、train/dev/final输出碰撞指标和G1-S0/S1受控诊断已实现 | preflight通过；20 epoch混合训练的train collision=0.5、train exact=0.5，dev/final sequence criterion=0，paired改写敏感性=0；H2/H3审计显示train prefix context distinct=2/2、context L2=0.9694、next-byte probability L1=0.0771、argmax difference=0、recovery repeatable=true；输入已进入native state，但readout首选路径未形成可分离margin，不扩大同质训练 |
 
 未提交结果转正须有：代码/协议版本、执行时间、产物hash、数据与模型血缘、原始结果、失败说明、独立输出路径。提交本身不证明有效；已见结果不得包装成前瞻预注册。
 
@@ -85,6 +87,15 @@ R0关闭的是“状态不清”，不关闭P5.2d、不晋级在线轴、不授�
 
 详细设计见[R2语言目标与信用分配设计](../../reference/M5_R2_LANGUAGE_TARGET_CREDIT_DESIGN_20260916.md)。
 
+### Mini模型验收后置决策（2026-09-16）
+
+用户明确要求先把主线推完，暂不推进Mini模型验收。这里的“后置”只改变当前执行顺序，不删除评价体系、不撤回L2/L3标准，也不把最终用户验收改写成可选项：
+
+1. 当前工作集中在R2目标对齐训练、原生语言读出、成熟发展训练与运行期原生持续适应的架构落地。
+2. 07整模型评价文档、CAP题集和L2/L3门继续作为后置验收合同保留，但不再作为当前R2实现的阻塞工作。
+3. 当前不做Mini演示、不做用户自由提问、不反复跑CAP-0；只有R2训练链完成一个可加载的主线bundle后，才统一做后置验收。
+4. P5.2d修正仪器仍是并行债务；Mini后置不意味着在线适应提前占用主线资源。
+
 ## 5. R1：可信实验底座
 
 | 项目 | 具体实施要求 | 验收 |
@@ -100,13 +111,29 @@ R0关闭的是“状态不清”，不关闭P5.2d、不晋级在线轴、不授�
 
 ## 6. R2：整模型语言能力与高上限设计
 
-继承[已有语言监督诊断](../../reference/M5_CAP0_P1_LANGUAGE_SUPERVISION_DIAGNOSIS_20260915.md)及P3a/P3b，不重做已完成P1。P3b不可判不足以证明架构失效，也不支持直接重复加训。当前R2的设计合同、根因排序、目标对齐方案、信用分配和晋级条件集中记录在[R2设计文档](../../reference/M5_R2_LANGUAGE_TARGET_CREDIT_DESIGN_20260916.md)。
+继承[已有语言监督诊断](../../reference/M5_CAP0_P1_LANGUAGE_SUPERVISION_DIAGNOSIS_20260915.md)及P3a/P3b，不重做已完成P1。P3b不可判不足以证明架构失效，也不支持直接重复加训。当前R2的设计合同、根因排序、目标对齐方案、信用分配和晋级条件集中记录在[R2设计文档](../../reference/M5_R2_LANGUAGE_TARGET_CREDIT_DESIGN_20260916.md)。结构化入口已经落地为可执行代码和隔离预注册；本轮结果仍按“链路证据”和“能力证据”分账。
 
 ### 6.0 当前主线工作包
 
-R2先完成一个只读设计包，回答“模型到底要学什么、哪些状态承担回答、错误如何回传、哪些证据才允许晋级”。设计包通过后，另立新版本化训练预注册和隔离的pilot checkpoint lineage；不得复用P3b报告名或把seed_beta.pt当作可写目标。
+R2-D0设计合同已经转为实施，当前工作包分成四个连续出口，不把“脚本跑完”直接当成语言能力：
 
-设计包的最小出口是：输入/上下文/回答边界/目标的结构化定义；训练目标与运行期目标的分工；编码、语义、上下文、结果四层评价；训练前checkpoint保存恢复试验；L2与L3的停止条件；失败后回到数据、目标、表示、读出或架构哪一层的判读规则。
+1. **D0结构化目标**：P2历史版本以`taiji-native-language-alignment-v1`固定system/context/history/user/assistant/end边界；G1当前版本升级为`taiji-native-language-alignment-v2`，在同一native边界中显式加入policy，JSONL仍按episode、family和split做内容寻址隔离。已完成版本化实现；实现位于`taiji/language_alignment.py`，P2预注册位于[M5 R2 aligned language pilot预注册](../../reference/M5_R2_ALIGNED_LANGUAGE_PILOT_PREREGISTRATION_20260916.md)，G1预注册位于[M5 R2-G1条件回答接口预注册](../../reference/M5_R2_G1_CONDITIONAL_RESPONSE_PREREGISTRATION_20260916.md)。
+2. **P0保存恢复前置**：零步保存、新进程恢复、一次response更新、child恢复、parent保护和atomic save。已通过；任何正式pilot仍必须由入口自动重跑。
+3. **plumbing smoke**：用四个受控episode验证训练入口、报告、原生读出和dev/final记录。已完成；受限UTF-8读出修复后dev/final合法率与无替换字符率均为1.0，但exact response为0，结论只能是S1与链路通过、S2未通过。
+4. **paired目标诊断**：同一zero/child对照和原题/改写题四格读出已完成；输出对输入敏感且局部surprise下降，但exact response没有迁移，按停止规则不能直接扩大同质byte目标。
+5. **R2-P1目标/读出升级**：把response-only字节信用接入已有fast/slow developmental F1状态，明确slow发展训练、fast运行期候选和边界replay巩固的边界；同一paired诊断下static/slow/fast/fast_slow四臂均已跑通，但未产生exact response收益，P1结论为“owner接线成立、目标不足”。
+6. **R2-P2序列级目标与语义评价**：已固定回答边界、必需内容、禁止内容、未知策略和原始生成回传；`LanguageEpisode`支持`required_terms`、`forbidden_terms`和独立的`unknown_markers`，报告保存raw bytes hex、stop reason、sequence validity、semantic proxy和exact response。四臂只读核对通过，semantic规则没有进入fast/slow更新，避免把规则评分冒充语言能力。
+7. **R2-G1条件回答接口/读出升级**：G1只把`unknown_policy`显式纳入同构prefix，`task_family`留作分层元数据，完成v2 response interface、版本隔离和训练样本之间的输出碰撞诊断；20 epoch有限过拟合仍出现50% train collision，dev/final sequence criterion为0，paired改写敏感性为0，接口升级未解决输出条件化。
+8. **R2-H2/H3内部表示与读出owner审计**：已完成只读审计。20 epoch child 的train prefix context保持2/2 distinct，context pair L2=0.9694、cosine distance=0.0294，下一字节概率L1=0.0771、JS=0.00467，但argmax difference=0；原题改写的context L2=1.0004，probability L1=0.0797，恢复重复性为true。结论是输入条件已进入native predictive state，当前失败更接近readout margin/序列路径，而不是输入完全被压平。
+9. **R2-H3.1原生读出/序列路径对照**：已完成只读对照。在同一protected native owner上保留greedy并加入bounded beam；beam改变了训练样本的候选输出，但只是把两个样本的正确/错误归属互换，collision和exact/sequence聚合均没有收益，恢复重复性成立。因此不能把搜索解码当作能力修复。
+10. **R2-H3.2 response-start候选读出**：已完成隔离候选实现。候选只负责显式assistant boundary后的首字节，后续仍由protected predictive readout负责；候选可独立学习、保存、恢复和只读审计，不接`task_family` oracle、不改共享fabric。20 epoch smoke的train exact/sequence/top1均为1.0，dev/final exact/sequence/top1均为0，paired delta=0，preflight与恢复均通过；结论是首字节候选能拟合已见条件，但没有形成可迁移条件表示，不能进入L2。
+11. **R2-H3.3-A泛化剖面**：已完成只读实现与同lineage执行。对H3.2 checkpoint记录train/dev/final的目标首字节覆盖、完整答案/答案前缀重合、任务族/策略覆盖、原生首字节top1/margin、context/probability digest和恢复重复性；结果为train首字节top1=1.0，dev/final=0，dev/final目标首字节均未在train出现，dev/final margin分别为-0.29182/-0.27589，training_performed=false，read-only与recovery均为true。结论是旧smoke同时存在输出支持集不足和条件迁移失败，不能据此直接定H5。
+12. **R2-H3.3-B共享首字节支持的family-disjoint泛化与课程/容量对照**：已完成预算一致复测。dev/final首字节和unknown policy均在train有支持，但完整response/family未见；同一300k总预算中core=262,839、response-start候选=11,051、effective=273,890，`within_target=true`，preflight通过。10 epoch结果为response proxy=0.63730、train/dev/final exact与sequence均为0，response-start首字节top1为0.5/0.25/0，dev/final margin为0.06973/-0.02639，paired sensitivity=0.42857。结论是支持集混杂已排除，但整段response仍未形成可迁移读出。
+13. **R2-H3.3-C phase-consistent完整response candidate**：已完成预算一致复测。使用同一v2输入合同、同一300k总预算和同一family-disjoint控制集，让`predictive_readout.response_phase`从assistant boundary开始承担整段response概率和局部学习；core=262,839、candidate=11,051、effective=273,890，`within_target=true`，preflight、checkpoint恢复和只读泛化均通过。10 epoch结果为response proxy=0.63730、train/dev/final exact与sequence均为0，phase首字节top1为0.5/0.25/0，dev/final margin为-0.10842/-0.18765，paired sensitivity=0.42857。结论是首字节/后续信用统一后仍未出现未见条件回答，不进入正式pilot。
+14. **R2-H3.4条件信用可观测性审计**：已完成。固定预算一致的H3.3-B/C child checkpoint和同一family-disjoint控制集，逐回答位置记录teacher-forced目标概率/排名/熵/累计似然，并绑定free-generation的原始bytes、UTF-8合法性、end-marker停止、边界和输出碰撞；结果见`reports/taiji_r2_h3_4_conditional_credit_20260916.json`。B/C均为effective=273,890，preflight、恢复和只读成立；train/dev/final自由生成UTF-8、无替换字符、边界率均为1.0，但exact/sequence均为0，文本碰撞率为0.5/0.5/0.333。B首字节legal top1为0.5/0.25/0，C为0.5/0.25/0；continuation legal top1两者相同，为0.78431/0.37143/0.26667；end-marker位置三组均为1.0。结论是停止/边界信用不是主瓶颈，失败集中在条件响应起点与未见continuation的可迁移性；不进入正式pilot，不追加同质byte训练。
+15. **R2-H3.5目标/数据/表示合同复审**：当前唯一下一包。围绕H3.4的分层结果审查response target是否把自然语言内容压成过细的byte信用、prefix到response的状态是否可读、family-disjoint课程是否覆盖“共享起点但不同内容”的结构；必须同时复审response边界、未知策略、历史上下文、保持/恢复与总预算，不以调学习率或再加epoch替代。出口只能是：形成一个版本化的高上限条件目标/表示合同并配套最小可证伪对照，或明确记录该路线的结构性失败后转入一次有预算的结构容量比较；在此之前不启动正式pilot、L2/Mini或默认入口改造。
+
+不得复用P3b报告名或把`seed_beta.pt`当作可写目标。设计包的出口仍包括输入/上下文/回答边界/目标定义、训练与运行期分工、编码/语义/上下文/结果四层评价、checkpoint前置、L2/L3停止条件，以及失败后回到数据、目标、表示、读出或架构哪一层的判读规则；本轮已把其中的可执行保存恢复和S1读出部分先落地。
 
 ### 6.1 设计评审必须回答
 
@@ -134,6 +161,8 @@ R2先完成一个只读设计包，回答“模型到底要学什么、哪些状
 4. surprise、短token准确率、CAP对话分账；人工B/G、真实性A、性能H缺测不算通过。
 5. 连续两次正式评审只有局部/代理分改善、整模型不动，暂停同质训练，进入目标/集成评审。
 6. 新预算根据实测并注明同机竞争估算；历史符号速率不当未来承诺。
+
+本轮R2-P1/P2/G1的具体读法：response-only训练使输入进入原生输出，受限读出把dev/final UTF-8合法率和无替换率保持在1.0；static/slow/fast/fast_slow均有原题与改写题输出变化，且所有preflight、fresh restore、parent保护和只读评分通过，但四臂exact response均为0→0。P2进一步显示dev/final回答边界、必需内容覆盖、未知策略和sequence criterion均未通过；G1 v2只显式加入运行时可提供的policy，20 epoch有限过拟合仍有50% train output collision、train exact=0.5，dev/final sequence criterion=0，paired改写敏感性=0。H2/H3只读审计进一步确认train prefix context与概率分布已经不同但argmax仍相同，且恢复重复性成立。结论是owner生命周期和输入状态链路成立，当前瓶颈转入readout margin/序列停止路径；不扩大同质byte训练或正式pilot。
 
 **交付**：可加载bundle、训练/数据manifest、原始回答、学习曲线、保持矩阵、资源与恢复报告。
 **出口**：L2达标；否则记录真实缺口，不降线、不宣布mini就绪。
@@ -212,8 +241,10 @@ B2已结项，同族复现不反复计新能力。以[binder可行性](../../ref
 
 唯一[未来VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)记录候选架构，本文管当前依赖与权限。每包结项同步01/02/03/07和首页，不追加互相矛盾的“最新状态”。
 
-## 当前唯一下一步：R2语言目标与信用分配设计冻结
+## H3.4结论与当前唯一下一步：实施R2-H3.5目标/数据/表示合同复审
 
-以[语言监督诊断](../../reference/M5_CAP0_P1_LANGUAGE_SUPERVISION_DIAGNOSIS_20260915.md)、[P3b结果](../../reference/M5_P3B_RESULT_20260916.md)、[R0审计](../../reference/M5_R0_EVIDENCE_GATE_AUDIT_20260916.md)和[R2设计文档](../../reference/M5_R2_LANGUAGE_TARGET_CREDIT_DESIGN_20260916.md)为输入，完成一次只读设计评审并冻结：回答episode结构、训练目标、原生读出、四层信用分配、数据split、CAP指标、停止条件和checkpoint前置检查。
+H3.3的预算一致证据已经完成：H3.3-B response-start与H3.3-C response-phase在同一v2控制集、同一300k总预算、同一10 epoch和同一评价链上均通过preflight与恢复，但train/dev/final exact和sequence均为0；两者dev/final首字节top1均为0.25/0，paired改写敏感性均为0.42857。B的dev/final首字节margin为0.06973/-0.02639，C为-0.10842/-0.18765；统一整段response owner没有产生能力出口。由此H3.3结项，不再追加同质byte训练或继续堆叠边界候选。
 
-冻结前不启动新训练、不改默认入口、不把P5.2d修正仪器混入主线。冻结后唯一允许的下一件实施工作是创建隔离的R2 pilot预注册与checkpoint保存/恢复preflight；通过preflight并获得训练授权后，才运行最小pilot。P5.2d修正继续作为并行债务单列，不改变本次主线出口。
+H3.4已固定上述child checkpoint与数据完成审计。B的response-start owner与C的response-phase owner在训练后都给出相同的continuation surface：train/dev/final continuation legal top1为0.78431/0.37143/0.26667，平均legal rank为1.3137/14.8571/17.8667；end-marker位置legal top1三组均为1.0。两者自由生成的UTF-8合法率、无替换率、end-marker边界率均为1.0，但exact/sequence均为0，dev/final文本碰撞率仍为0.5/0.333。H3.4因此排除了“停止器或UTF-8读出是主要瓶颈”，也没有发现可直接支持S2的稳定未见margin。
+
+H3.5必须先完成目标/数据/表示合同复审：检查byte级信用是否在自然语言边界上过细，检查prefix状态能否区分共享首字节但不同答案，检查课程是否覆盖未见response与未知策略，同时保持原生owner、预算、恢复、旧能力保持和family-disjoint边界。只有复审形成一个新的、版本化的高上限条件表示方案，才允许设计最小对照；如果复审不能提出可证伪机制，才进入一次明确总预算的结构容量比较。无论哪一种，都不进入正式pilot、L2或Mini，不修改共享fabric、默认`SeedRuntime.chat`入口、P3b历史文件、Mini验收合同或P5.2d未提交实验文件。

@@ -87,6 +87,10 @@ class Taiji:
     ADAPTIVE_RESIDUAL_CANDIDATE_KEY = "adaptive_residual_candidate"
     READOUT_REGISTRY_FORMAT = "taiji-predictive-readout-registry-v1"
     READOUT_REGISTRY_VERSION = 1
+    RESPONSE_START_READOUT_KEY = "response_start_readout"
+    RESPONSE_START_READOUT_SEED_OFFSET = 5929
+    RESPONSE_PHASE_READOUT_KEY = "response_phase_readout"
+    RESPONSE_PHASE_READOUT_SEED_OFFSET = 5931
     DEVELOPMENTAL_F1_KEY = "developmental_f1"
     DEVELOPMENTAL_F1_REPLAY_KEY = "developmental_f1_replay"
     DEVELOPMENTAL_F1_LEARNING_MODES = frozenset({"read_only", "fast", "slow", "fast_slow"})
@@ -162,6 +166,14 @@ class Taiji:
         # branch impossible without a Workbench boundary.
         self._active_predictive_readout: BytePredictiveReadout | None = None
         self._active_predictive_readout_metadata: dict[str, Any] | None = None
+        # The response-start decoder is an explicit, optional phase-specific
+        # F1 candidate.  It is absent from ordinary v10 checkpoints so the
+        # protected byte decoder keeps its historical default path exactly.
+        self._response_start_readout: BytePredictiveReadout | None = None
+        # H3.3-C candidate.  Unlike response-start, this owner remains active
+        # for every byte after the assistant boundary, so one isolated native
+        # surface receives both first-byte and continuation credit.
+        self._response_phase_readout: BytePredictiveReadout | None = None
         self._state = self._initial_state(episode_id)
 
     def _initial_state(self, episode_id: str) -> TaijiState:
@@ -209,6 +221,262 @@ class Taiji:
                 self._active_predictive_readout.to_payload()
             )
         return metadata
+
+    @property
+    def response_start_readout_enabled(self) -> bool:
+        """Whether the optional native response-start readout is attached."""
+
+        return self._response_start_readout is not None
+
+    @property
+    def response_start_readout_digest(self) -> str | None:
+        """Return the optional response-start owner digest, if mounted."""
+
+        if self._response_start_readout is None:
+            return None
+        return content_digest(self._response_start_readout.to_payload())
+
+    @property
+    def response_phase_readout_enabled(self) -> bool:
+        """Whether the optional native full-response readout is attached."""
+
+        return self._response_phase_readout is not None
+
+    @property
+    def response_phase_readout_digest(self) -> str | None:
+        """Return the optional response-phase owner digest, if mounted."""
+
+        if self._response_phase_readout is None:
+            return None
+        return content_digest(self._response_phase_readout.to_payload())
+
+    @property
+    def response_phase_readout(self) -> BytePredictiveReadout:
+        """Return the mounted full-response owner for explicit native routes."""
+
+        if self._response_phase_readout is None:
+            raise RuntimeError("response-phase readout is not enabled")
+        return self._response_phase_readout
+
+    def _new_response_start_readout(self) -> BytePredictiveReadout:
+        generator = torch.Generator(device="cpu")
+        generator.manual_seed(
+            int(self.config.seed)
+            + int(self.config.predictive_readout_seed_offset)
+            + int(self.RESPONSE_START_READOUT_SEED_OFFSET)
+        )
+        return BytePredictiveReadout(
+            self.config,
+            generator=generator,
+            device=self.device,
+        )
+
+    @torch.no_grad()
+    def enable_response_start_readout(
+        self,
+        *,
+        seed_from_protected: bool = True,
+    ) -> dict[str, Any]:
+        """Attach the optional native response-start decoder.
+
+        The decoder is a separate F1 owner for the first byte after an
+        explicit assistant boundary.  It is not selected by task labels and
+        it never replaces the protected continuation readout.  Starting from
+        the protected surface makes the candidate behaviourally neutral until
+        its own local updates are made.
+        """
+
+        if self._response_start_readout is not None:
+            raise RuntimeError("response-start readout is already enabled")
+        if self._response_phase_readout is not None:
+            raise RuntimeError(
+                "response-start and response-phase readouts are mutually exclusive"
+            )
+        if self._active_predictive_readout is not None:
+            raise RuntimeError(
+                "response-start readout cannot change the protected substrate while an active branch is mounted"
+            )
+        if self._state.pending_action is not None or self._state.pending_experience is not None:
+            raise RuntimeError("response-start readout attachment requires a settled state")
+        candidate = self._new_response_start_readout()
+        if seed_from_protected:
+            candidate.load_payload(self.predictive_readout.to_payload())
+        self._response_start_readout = candidate
+        return {
+            "owner": "predictive_readout.response_start",
+            "scope": "candidate",
+            "mutable": True,
+            "seed_from_protected": bool(seed_from_protected),
+            "readout_digest": content_digest(candidate.to_payload()),
+        }
+
+    @torch.no_grad()
+    def clear_response_start_readout(self) -> None:
+        """Detach the optional response-start decoder explicitly."""
+
+        if self._active_predictive_readout is not None:
+            raise RuntimeError(
+                "response-start readout cannot change the protected substrate while an active branch is mounted"
+            )
+        if self._state.pending_action is not None or self._state.pending_experience is not None:
+            raise RuntimeError("response-start readout detachment requires a settled state")
+        self._response_start_readout = None
+
+    def _new_response_phase_readout(self) -> BytePredictiveReadout:
+        generator = torch.Generator(device="cpu")
+        generator.manual_seed(
+            int(self.config.seed)
+            + int(self.config.predictive_readout_seed_offset)
+            + int(self.RESPONSE_PHASE_READOUT_SEED_OFFSET)
+        )
+        return BytePredictiveReadout(
+            self.config,
+            generator=generator,
+            device=self.device,
+        )
+
+    @torch.no_grad()
+    def enable_response_phase_readout(
+        self,
+        *,
+        seed_from_protected: bool = True,
+    ) -> dict[str, Any]:
+        """Attach the isolated native owner for an entire response phase.
+
+        The prefix is still encoded by the protected predictive path.  Once
+        the caller explicitly enters the response phase, this owner supplies
+        the next-byte distribution and receives all subsequent local credit.
+        It is intentionally exclusive with the first-byte-only candidate so a
+        run cannot hide two different owners behind one response score.
+        """
+
+        if self._response_phase_readout is not None:
+            raise RuntimeError("response-phase readout is already enabled")
+        if self._response_start_readout is not None:
+            raise RuntimeError(
+                "response-phase and response-start readouts are mutually exclusive"
+            )
+        if self._active_predictive_readout is not None:
+            raise RuntimeError(
+                "response-phase readout cannot change the protected substrate while an active branch is mounted"
+            )
+        if self._state.pending_action is not None or self._state.pending_experience is not None:
+            raise RuntimeError("response-phase readout attachment requires a settled state")
+        candidate = self._new_response_phase_readout()
+        if seed_from_protected:
+            candidate.load_payload(self.predictive_readout.to_payload())
+        self._response_phase_readout = candidate
+        return {
+            "owner": "predictive_readout.response_phase",
+            "scope": "candidate",
+            "mutable": True,
+            "seed_from_protected": bool(seed_from_protected),
+            "readout_digest": content_digest(candidate.to_payload()),
+        }
+
+    @torch.no_grad()
+    def clear_response_phase_readout(self) -> None:
+        """Detach the optional full-response decoder explicitly."""
+
+        if self._active_predictive_readout is not None:
+            raise RuntimeError(
+                "response-phase readout cannot change the protected substrate while an active branch is mounted"
+            )
+        if self._state.pending_action is not None or self._state.pending_experience is not None:
+            raise RuntimeError("response-phase readout detachment requires a settled state")
+        self._response_phase_readout = None
+
+    def response_phase_probabilities(
+        self,
+        *,
+        episodic_evidence: torch.Tensor | None = None,
+    ) -> torch.Tensor:
+        """Read the full-response owner at the current predictive state."""
+
+        if self._response_phase_readout is None:
+            raise RuntimeError("response-phase readout is not enabled")
+        if self._response_start_readout is not None:
+            raise RuntimeError(
+                "response-phase and response-start readouts are mutually exclusive"
+            )
+        if self._active_predictive_readout is not None:
+            raise RuntimeError(
+                "response-phase readout cannot be mixed with an active predictive branch"
+            )
+        if self._state.readout_kind != "predictive":
+            raise RuntimeError("response-phase readout requires predictive dynamics")
+        return self._response_phase_readout.probabilities(
+            self._state.motor_context,
+            episodic_evidence=episodic_evidence,
+        )
+
+    @torch.no_grad()
+    def begin_response_phase(
+        self,
+        *,
+        episodic_evidence: torch.Tensor | None = None,
+    ) -> torch.Tensor:
+        """Bind the next prediction to the full-response native owner.
+
+        This changes only the current dynamics state's probability consumer;
+        it does not tick the model or update any learned synapse.  The next
+        ``observe`` call can therefore apply causal local credit to the same
+        owner that produced the first response-byte prior.
+        """
+
+        probabilities = self.response_phase_probabilities(
+            episodic_evidence=episodic_evidence,
+        )
+        state = self._state.clone()
+        state.motor_probabilities = probabilities.detach().clone()
+        self._state = state
+        return probabilities.detach().clone()
+
+    def response_start_probabilities(
+        self,
+        *,
+        episodic_evidence: torch.Tensor | None = None,
+    ) -> torch.Tensor:
+        """Read the optional response-start decoder at the current state."""
+
+        if self._response_start_readout is None:
+            raise RuntimeError("response-start readout is not enabled")
+        if self._active_predictive_readout is not None:
+            raise RuntimeError(
+                "response-start readout cannot be mixed with an active predictive branch"
+            )
+        if self._state.readout_kind != "predictive":
+            raise RuntimeError("response-start readout requires predictive dynamics")
+        return self._response_start_readout.probabilities(
+            self._state.motor_context,
+            episodic_evidence=episodic_evidence,
+        )
+
+    @torch.no_grad()
+    def learn_response_start(
+        self,
+        context: torch.Tensor,
+        predicted: torch.Tensor,
+        observed_symbol: int,
+        *,
+        learning_rate_scale: float = 1.0,
+    ) -> torch.Tensor:
+        """Apply local first-response-byte credit to the optional owner."""
+
+        if self._response_start_readout is None:
+            raise RuntimeError("response-start readout is not enabled")
+        if self._active_predictive_readout is not None:
+            raise RuntimeError(
+                "response-start readout cannot update the protected substrate while an active branch is mounted"
+            )
+        if context.shape != (self.config.motor_context_dim,):
+            raise ValueError("response-start context dimension mismatch")
+        return self._response_start_readout.learn(
+            context,
+            predicted,
+            observed_symbol,
+            learning_rate_scale=learning_rate_scale,
+        )
 
     @property
     def gated_temporal_candidate_enabled(self) -> bool:
@@ -867,6 +1135,10 @@ class Taiji:
         replay_payload = self._developmental_f1_replay_payload()
         if replay_payload is not None:
             payload[self.DEVELOPMENTAL_F1_REPLAY_KEY] = replay_payload
+        if self._response_start_readout is not None:
+            payload[self.RESPONSE_START_READOUT_KEY] = self._response_start_readout.to_payload()
+        if self._response_phase_readout is not None:
+            payload[self.RESPONSE_PHASE_READOUT_KEY] = self._response_phase_readout.to_payload()
         if self.identity_organ is not None:
             payload["identity_organ"] = self.identity_organ.to_payload(
                 parent_checkpoint_digest=content_digest(payload),
@@ -887,6 +1159,30 @@ class Taiji:
                 "readout_digest": content_digest(self.predictive_readout.to_payload()),
             },
             "active": active,
+            "response_start": (
+                None
+                if self._response_start_readout is None
+                else {
+                    "scope": "candidate",
+                    "owner": "predictive_readout.response_start",
+                    "mutable": True,
+                    "readout_digest": content_digest(
+                        self._response_start_readout.to_payload()
+                    ),
+                }
+            ),
+            "response_phase": (
+                None
+                if self._response_phase_readout is None
+                else {
+                    "scope": "candidate",
+                    "owner": "predictive_readout.response_phase",
+                    "mutable": True,
+                    "readout_digest": content_digest(
+                        self._response_phase_readout.to_payload()
+                    ),
+                }
+            ),
         }
 
     @torch.no_grad()
@@ -1094,6 +1390,32 @@ class Taiji:
 
     def snapshot(self) -> TaijiState:
         return self._state.clone()
+
+    @torch.no_grad()
+    def restore_dynamics(self, state: TaijiState) -> None:
+        """Restore one isolated dynamics branch without changing learned state.
+
+        Native sequence decoders may need to compare several candidate byte
+        paths from the same prefix.  A dynamics fork is sufficient for that
+        read-only comparison; copying a full learned checkpoint for every
+        candidate would be both needlessly expensive and easy to mistake for
+        a parameter update.  Learned synapses, RNG streams and ownership
+        registries are intentionally untouched.
+        """
+
+        if not isinstance(state, TaijiState):
+            raise TypeError("dynamics state must be a TaijiState")
+        if int(state.version) != self.STATE_VERSION:
+            raise ValueError("dynamics state version does not match architecture")
+        if state.pending_action is not None or state.pending_experience is not None:
+            raise ValueError("dynamics branch cannot contain pending action or experience")
+        if len(state.regions) != len(self.config.region_sizes):
+            raise ValueError("dynamics state region count does not match architecture")
+        if state.motor_context.shape != (self.config.motor_context_dim,):
+            raise ValueError("dynamics state context does not match architecture")
+        if state.motor_probabilities.shape != (self.config.alphabet_size,):
+            raise ValueError("dynamics state probabilities do not match architecture")
+        self._state = state.clone()
 
     def reset_dynamics(self, *, episode_id: str | None = None) -> None:
         """Clear activity while preserving all learned synapses."""
@@ -2367,6 +2689,8 @@ class Taiji:
         sample: bool = False,
         reset: bool = True,
         use_memory: bool = False,
+        response_start: bool = False,
+        response_phase: bool = False,
         boundary: WorkbenchTaskBoundary | Mapping[str, Any] | None = None,
         authorization: WorkbenchBoundaryAuthorization | None = None,
     ) -> bytes:
@@ -2381,6 +2705,12 @@ class Taiji:
             raise ValueError("length cannot be negative")
         if (boundary is None) != (authorization is None):
             raise ValueError("boundary and authorization must be supplied together")
+        if not isinstance(response_start, bool):
+            raise TypeError("response_start must be a bool")
+        if not isinstance(response_phase, bool):
+            raise TypeError("response_phase must be a bool")
+        if response_start and response_phase:
+            raise ValueError("response_start and response_phase cannot both be enabled")
         predictive_readout: BytePredictiveReadout | None = None
         if boundary is not None and authorization is not None:
             resolved_boundary = (
@@ -2389,6 +2719,14 @@ class Taiji:
                 else WorkbenchTaskBoundary.from_payload(boundary)
             )
             generation_scope = select_readout_generation(resolved_boundary, authorization)
+            if response_start and generation_scope == "active":
+                raise RuntimeError(
+                    "response-start readout is not mounted on active generation"
+                )
+            if response_phase and generation_scope == "active":
+                raise RuntimeError(
+                    "response-phase readout is not mounted on active generation"
+                )
             predictive_readout = self._predictive_readout_for_scope(
                 generation_scope,
                 boundary_digest=resolved_boundary.token_digest,
@@ -2403,6 +2741,18 @@ class Taiji:
                 ),
                 "read_only_replay": authorization.usage == "read_only_replay",
             }
+        if response_start and self._response_start_readout is None:
+            raise RuntimeError("response-start readout is not enabled")
+        if response_phase and self._response_phase_readout is None:
+            raise RuntimeError("response-phase readout is not enabled")
+        if response_start and self._response_phase_readout is not None:
+            raise RuntimeError(
+                "response-start and response-phase readouts are mutually exclusive"
+            )
+        if response_phase and self._response_start_readout is not None:
+            raise RuntimeError(
+                "response-phase and response-start readouts are mutually exclusive"
+            )
         if reset:
             self.reset_dynamics(episode_id="generation")
         step = self.observe(
@@ -2424,27 +2774,45 @@ class Taiji:
             )
 
         generated = bytearray()
+        response_start_pending = bool(response_start)
+        response_phase_readout = self._response_phase_readout if response_phase else None
+        if response_phase:
+            self.begin_response_phase()
         for _ in range(length):
+            probabilities = (
+                self.response_start_probabilities()
+                if response_start_pending
+                else (
+                    self.response_phase_probabilities().detach().cpu()
+                    if response_phase
+                    else step.probabilities.detach().cpu()
+                )
+            )
             if sample:
                 next_symbol = int(
                     torch.multinomial(
-                        step.probabilities.detach().cpu(), 1, generator=self._rng
+                        probabilities.detach().cpu(), 1, generator=self._rng
                     ).item()
                 )
             else:
-                next_symbol = step.predicted_symbol
+                next_symbol = int(probabilities.argmax().item())
             if next_symbol == self.config.boundary_symbol and stop_at_boundary:
                 break
             if not 0 <= next_symbol <= 255:
                 next_symbol = 0
             generated.append(next_symbol)
+            response_start_pending = False
             step = self.observe(
                 next_symbol,
                 learn=False,
                 readout="predictive",
                 use_memory=use_memory,
                 use_identity=False,
-                _predictive_readout=predictive_readout,
+                _predictive_readout=(
+                    response_phase_readout
+                    if response_phase
+                    else predictive_readout
+                ),
             )
         return bytes(generated)
 
@@ -2466,6 +2834,16 @@ class Taiji:
             tensors += (
                 self._active_predictive_readout.synapses.edge_weight,
                 self._active_predictive_readout.bias,
+            )
+        if self._response_start_readout is not None:
+            tensors += (
+                self._response_start_readout.synapses.edge_weight,
+                self._response_start_readout.bias,
+            )
+        if self._response_phase_readout is not None:
+            tensors += (
+                self._response_phase_readout.synapses.edge_weight,
+                self._response_phase_readout.bias,
             )
         if self.identity_organ is not None:
             tensors += self.identity_organ.parameter_tensors()
@@ -2493,6 +2871,16 @@ class Taiji:
             active += (
                 self._active_predictive_readout.synapses.edge_count
                 + self._active_predictive_readout.bias.numel()
+            )
+        if self._response_start_readout is not None:
+            active += (
+                self._response_start_readout.synapses.edge_count
+                + self._response_start_readout.bias.numel()
+            )
+        if self._response_phase_readout is not None:
+            active += (
+                self._response_phase_readout.synapses.edge_count
+                + self._response_phase_readout.bias.numel()
             )
         if self.identity_organ is not None:
             active += self.identity_organ.parameter_count
@@ -2525,6 +2913,16 @@ class Taiji:
             count += (
                 self._active_predictive_readout.synapses.dense_equivalent_count
                 + self._active_predictive_readout.bias.numel()
+            )
+        if self._response_start_readout is not None:
+            count += (
+                self._response_start_readout.synapses.dense_equivalent_count
+                + self._response_start_readout.bias.numel()
+            )
+        if self._response_phase_readout is not None:
+            count += (
+                self._response_phase_readout.synapses.dense_equivalent_count
+                + self._response_phase_readout.bias.numel()
             )
         if self.identity_organ is not None:
             count += self.identity_organ.capacity * self.identity_organ.pattern_dim
@@ -2561,6 +2959,10 @@ class Taiji:
         replay_payload = self._developmental_f1_replay_payload()
         if replay_payload is not None:
             core[self.DEVELOPMENTAL_F1_REPLAY_KEY] = replay_payload
+        if self._response_start_readout is not None:
+            core[self.RESPONSE_START_READOUT_KEY] = self._response_start_readout.to_payload()
+        if self._response_phase_readout is not None:
+            core[self.RESPONSE_PHASE_READOUT_KEY] = self._response_phase_readout.to_payload()
         return core
 
     def checkpoint(self) -> dict[str, Any]:
@@ -2631,6 +3033,30 @@ class Taiji:
             raise ValueError("predictive readout checkpoint payload is invalid")
         else:
             self.predictive_readout.load_payload(predictive_payload)
+        response_start_payload = checkpoint.get(self.RESPONSE_START_READOUT_KEY)
+        response_phase_payload = checkpoint.get(self.RESPONSE_PHASE_READOUT_KEY)
+        if response_start_payload is not None and response_phase_payload is not None:
+            raise ValueError(
+                "checkpoint cannot contain both response-start and response-phase readouts"
+            )
+        self._response_start_readout = None
+        if response_start_payload is not None:
+            if is_legacy_checkpoint:
+                raise ValueError("legacy checkpoint cannot contain a response-start readout")
+            if not isinstance(response_start_payload, Mapping):
+                raise ValueError("response-start readout checkpoint payload is invalid")
+            response_start = self._new_response_start_readout()
+            response_start.load_payload(response_start_payload)
+            self._response_start_readout = response_start
+        self._response_phase_readout = None
+        if response_phase_payload is not None:
+            if is_legacy_checkpoint:
+                raise ValueError("legacy checkpoint cannot contain a response-phase readout")
+            if not isinstance(response_phase_payload, Mapping):
+                raise ValueError("response-phase readout checkpoint payload is invalid")
+            response_phase = self._new_response_phase_readout()
+            response_phase.load_payload(response_phase_payload)
+            self._response_phase_readout = response_phase
         candidate_payload = checkpoint.get(self.GATED_TEMPORAL_CANDIDATE_KEY)
         self._gated_temporal_candidate = None
         if candidate_payload is not None:
@@ -2753,6 +3179,12 @@ class Taiji:
                         include_developmental_f1_replay=(
                             self.DEVELOPMENTAL_F1_REPLAY_KEY in checkpoint
                         ),
+                        include_response_start_readout=(
+                            self.RESPONSE_START_READOUT_KEY in checkpoint
+                        ),
+                        include_response_phase_readout=(
+                            self.RESPONSE_PHASE_READOUT_KEY in checkpoint
+                        ),
                     )
                 }
             )
@@ -2869,6 +3301,8 @@ class Taiji:
         include_adaptive_residual_candidate: bool = False,
         include_developmental_f1: bool = False,
         include_developmental_f1_replay: bool = False,
+        include_response_start_readout: bool = False,
+        include_response_phase_readout: bool = False,
     ) -> tuple[str, ...]:
         if include_predictive_context is None:
             # Existing callers reconstructing a v8 lineage pass only
@@ -2900,6 +3334,10 @@ class Taiji:
             keys += (Taiji.DEVELOPMENTAL_F1_KEY,)
         if include_developmental_f1_replay:
             keys += (Taiji.DEVELOPMENTAL_F1_REPLAY_KEY,)
+        if include_response_start_readout:
+            keys += (Taiji.RESPONSE_START_READOUT_KEY,)
+        if include_response_phase_readout:
+            keys += (Taiji.RESPONSE_PHASE_READOUT_KEY,)
         return (*keys, "memory", "state", "rng_state")
 
     @classmethod

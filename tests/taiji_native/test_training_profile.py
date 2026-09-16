@@ -65,6 +65,21 @@ def test_capacity_profile_fits_a_parameter_budget_deterministically() -> None:
     assert Taiji(profile).parameter_count() == profile.planned_active_parameter_count
 
 
+def test_capacity_profile_reserves_one_optional_predictive_readout() -> None:
+    budget = 300_000
+    profile = TaijiConfig.capacity_profile(
+        budget,
+        seed=311,
+        additional_predictive_readouts=1,
+    )
+    model = Taiji(profile)
+    model.enable_response_phase_readout()
+
+    optional_parameters = profile.alphabet_size * profile.motor_context_dim + profile.alphabet_size
+    assert profile.planned_active_parameter_count + optional_parameters <= budget
+    assert model.parameter_count() <= budget
+
+
 def test_capacity_profile_rejects_a_budget_below_the_smallest_valid_fabric() -> None:
     try:
         TaijiConfig.capacity_profile(1, seed=311)

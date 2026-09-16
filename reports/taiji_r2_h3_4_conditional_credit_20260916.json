@@ -1,0 +1,247 @@
+{
+  "format": "taiji-r2-h3-4-conditional-credit-comparison-result-v1",
+  "status": "completed",
+  "hypothesis": "position-wise native credit can separate first-byte, continuation, boundary and free-generation failure modes",
+  "dataset": {
+    "path": "tests/fixtures/r2_language_alignment_generalization.jsonl",
+    "sha256": "cd2d7869fc5954182c7101e413649e2f5ea3042912b28d25f998bd874b00d820",
+    "corpus_digest": "77b54dbd8660f33dbbcd723c5415fe10fe7723e82341c5b4cf030ad184fe1411",
+    "sample_counts": {
+      "train": 6,
+      "dev": 4,
+      "final": 3,
+      "retention": 0
+    }
+  },
+  "source_evaluator": "scripts/training/eval_taiji_r2_conditional_credit.py",
+  "source_report": {
+    "path": ".tmp-r2-language-run/h3-4-conditional-credit-comparison-rerun.json",
+    "sha256": "70e2fe8cdb6b01bb23f6923e53c342c4200b925666ada26adec83571ea87f503"
+  },
+  "comparison": {
+    "checkpoint_count": 2,
+    "same_corpus": true,
+    "same_effective_active_parameters": true,
+    "effective_active_parameters": 273890,
+    "parameter_budget": 300000,
+    "preflight_passed_for_b_and_c": true,
+    "checkpoint_read_only_for_b_and_c": true,
+    "recovery_repeatable_for_b_and_c": true,
+    "native_mode_only": true,
+    "external_provider": false,
+    "result_credit_applied": false,
+    "task_family_and_unknown_policy_forwarded": false
+  },
+  "checkpoints": {
+    "h3_3b_response_start": {
+      "path": ".tmp-r2-language-run/h3-3b-course-300k-10e-budgeted.pt",
+      "sha256": "4c073ea561783ca68d750d374dc8e4fa99cb094fb02901738b8db4069f2ec2f8",
+      "checkpoint_digest": "d673850d899ab79fed832ab772f8966df879751c442abb3f2ec38080794e9e08",
+      "readout_owner": "predictive_readout.response_start+predictive_readout",
+      "splits": {
+        "train": {
+          "free_generation": {
+            "collision_rate": 0.5,
+            "utf8_valid_rate": 1.0,
+            "no_replacement_rate": 1.0,
+            "boundary_rate": 1.0,
+            "stop_reasons": ["end_marker"],
+            "exact_response_rate": 0.0,
+            "sequence_criterion_pass_rate": 0.0
+          },
+          "response_first_byte": {
+            "observations": 6,
+            "legal_top1_rate": 0.5,
+            "mean_legal_rank": 2.0,
+            "mean_legal_probability": 0.292443945360786,
+            "mean_legal_entropy": 2.78198293844859
+          },
+          "response_continuation_byte": {
+            "observations": 51,
+            "legal_top1_rate": 0.784313725490196,
+            "mean_legal_rank": 1.31372549019608,
+            "mean_legal_probability": 0.452435799481523,
+            "mean_legal_entropy": 2.45383404867322
+          },
+          "response_end_marker_byte": {
+            "observations": 42,
+            "legal_top1_rate": 1.0,
+            "mean_legal_rank": 1.0,
+            "mean_legal_probability": 0.845263155605708,
+            "mean_legal_entropy": 0.924140305746169
+          }
+        },
+        "dev": {
+          "free_generation": {
+            "collision_rate": 0.5,
+            "utf8_valid_rate": 1.0,
+            "no_replacement_rate": 1.0,
+            "boundary_rate": 1.0,
+            "stop_reasons": ["end_marker"],
+            "exact_response_rate": 0.0,
+            "sequence_criterion_pass_rate": 0.0
+          },
+          "response_first_byte": {
+            "observations": 4,
+            "legal_top1_rate": 0.25,
+            "mean_legal_rank": 2.5,
+            "mean_legal_probability": 0.166896482353094,
+            "mean_legal_entropy": 2.81949853897095
+          },
+          "response_continuation_byte": {
+            "observations": 35,
+            "legal_top1_rate": 0.371428571428571,
+            "mean_legal_rank": 14.8571428571429,
+            "mean_legal_probability": 0.279528035479907,
+            "mean_legal_entropy": 2.79382876370634
+          },
+          "response_end_marker_byte": {
+            "observations": 28,
+            "legal_top1_rate": 1.0,
+            "mean_legal_rank": 1.0,
+            "mean_legal_probability": 0.837069299428651,
+            "mean_legal_entropy": 0.927546021129404
+          }
+        },
+        "final": {
+          "free_generation": {
+            "collision_rate": 0.333333333333333,
+            "utf8_valid_rate": 1.0,
+            "no_replacement_rate": 1.0,
+            "boundary_rate": 1.0,
+            "stop_reasons": ["end_marker"],
+            "exact_response_rate": 0.0,
+            "sequence_criterion_pass_rate": 0.0
+          },
+          "response_first_byte": {
+            "observations": 3,
+            "legal_top1_rate": 0.0,
+            "mean_legal_rank": 3.33333333333333,
+            "mean_legal_probability": 0.0563996170758785,
+            "mean_legal_entropy": 2.75783880551656
+          },
+          "response_continuation_byte": {
+            "observations": 30,
+            "legal_top1_rate": 0.266666666666667,
+            "mean_legal_rank": 17.8666666666667,
+            "mean_legal_probability": 0.211846465678782,
+            "mean_legal_entropy": 3.07785568237305
+          },
+          "response_end_marker_byte": {
+            "observations": 21,
+            "legal_top1_rate": 1.0,
+            "mean_legal_rank": 1.0,
+            "mean_legal_probability": 0.80936059653686,
+            "mean_legal_entropy": 1.09238926995368
+          }
+        }
+      }
+    },
+    "h3_3c_response_phase": {
+      "path": ".tmp-r2-language-run/h3-3c-course-300k-10e-budgeted-rerun.pt",
+      "sha256": "75c535120edae4964621abe3de4e66321594c1b1d70f1a0c0b68b155d16422d1",
+      "checkpoint_digest": "a52c458643182fc2da47ed7dba701a9fa89614bed1a55fe23fe857a5bf681052",
+      "readout_owner": "predictive_readout.response_phase",
+      "splits": {
+        "train": {
+          "free_generation": {
+            "collision_rate": 0.5,
+            "utf8_valid_rate": 1.0,
+            "no_replacement_rate": 1.0,
+            "boundary_rate": 1.0,
+            "stop_reasons": ["end_marker"],
+            "exact_response_rate": 0.0,
+            "sequence_criterion_pass_rate": 0.0
+          },
+          "response_first_byte": {
+            "observations": 6,
+            "legal_top1_rate": 0.5,
+            "mean_legal_rank": 2.5,
+            "mean_legal_probability": 0.234896607807487,
+            "mean_legal_entropy": 2.39043108622233
+          },
+          "response_continuation_byte": {
+            "observations": 51,
+            "legal_top1_rate": 0.784313725490196,
+            "mean_legal_rank": 1.31372549019608,
+            "mean_legal_probability": 0.452435799481523,
+            "mean_legal_entropy": 2.45383404867322
+          },
+          "response_end_marker_byte": {
+            "observations": 42,
+            "legal_top1_rate": 1.0,
+            "mean_legal_rank": 1.0,
+            "mean_legal_probability": 0.845263155605708,
+            "mean_legal_entropy": 0.924140305746169
+          }
+        },
+        "dev": {
+          "free_generation": {
+            "collision_rate": 0.5,
+            "utf8_valid_rate": 1.0,
+            "no_replacement_rate": 1.0,
+            "boundary_rate": 1.0,
+            "stop_reasons": ["end_marker"],
+            "exact_response_rate": 0.0,
+            "sequence_criterion_pass_rate": 0.0
+          },
+          "response_first_byte": {
+            "observations": 4,
+            "legal_top1_rate": 0.25,
+            "mean_legal_rank": 3.25,
+            "mean_legal_probability": 0.129970192534407,
+            "mean_legal_entropy": 2.41970139741898
+          },
+          "response_continuation_byte": {
+            "observations": 35,
+            "legal_top1_rate": 0.371428571428571,
+            "mean_legal_rank": 14.8571428571429,
+            "mean_legal_probability": 0.279528035479907,
+            "mean_legal_entropy": 2.79382876370634
+          },
+          "response_end_marker_byte": {
+            "observations": 28,
+            "legal_top1_rate": 1.0,
+            "mean_legal_rank": 1.0,
+            "mean_legal_probability": 0.837069299428651,
+            "mean_legal_entropy": 0.927546021129404
+          }
+        },
+        "final": {
+          "free_generation": {
+            "collision_rate": 0.333333333333333,
+            "utf8_valid_rate": 1.0,
+            "no_replacement_rate": 1.0,
+            "boundary_rate": 1.0,
+            "stop_reasons": ["end_marker"],
+            "exact_response_rate": 0.0,
+            "sequence_criterion_pass_rate": 0.0
+          },
+          "response_first_byte": {
+            "observations": 3,
+            "legal_top1_rate": 0.0,
+            "mean_legal_rank": 4.33333333333333,
+            "mean_legal_probability": 0.0428871410462267,
+            "mean_legal_entropy": 2.36404824256897
+          },
+          "response_continuation_byte": {
+            "observations": 30,
+            "legal_top1_rate": 0.266666666666667,
+            "mean_legal_rank": 17.8666666666667,
+            "mean_legal_probability": 0.211846465678782,
+            "mean_legal_entropy": 3.07785568237305
+          },
+          "response_end_marker_byte": {
+            "observations": 21,
+            "legal_top1_rate": 1.0,
+            "mean_legal_rank": 1.0,
+            "mean_legal_probability": 0.80936059653686,
+            "mean_legal_entropy": 1.09238926995368
+          }
+        }
+      }
+    }
+  },
+  "interpretation": "Both owners produce the same continuation and boundary surface once the protected continuation owner is trained; neither produces an exact or sequence-level answer on dev/final. The remaining failure is concentrated at conditional response starts and unseen continuation content, while UTF-8 readability and end-marker stopping are already healthy. H3.3-C therefore changes ownership but does not establish transferable S2 capability.",
+  "next_step": "Do not add more homogeneous byte epochs. Review conditional target representation and data curriculum, then run one explicit structural-capacity comparison only if that review identifies a capacity-limited mechanism."
+}

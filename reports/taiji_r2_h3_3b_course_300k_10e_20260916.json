@@ -1,0 +1,91 @@
+{
+  "format": "taiji-r2-h3-3b-course-result-v1",
+  "status": "completed",
+  "hypothesis": "shared_first_byte_and_policy_support_can_separate_data_support_shortage_from_conditional_transfer_failure",
+  "dataset": {
+    "path": "tests/fixtures/r2_language_alignment_generalization.jsonl",
+    "sha256": "cd2d7869fc5954182c7101e413649e2f5ea3042912b28d25f998bd874b00d820",
+    "corpus_digest": "77b54dbd8660f33dbbcd723c5415fe10fe7723e82341c5b4cf030ad184fe1411",
+    "sample_counts": {
+      "train": 6,
+      "dev": 4,
+      "final": 3,
+      "retention": 0
+    }
+  },
+  "source_runner": "scripts/training/train_taiji_r2_aligned.py",
+  "source_report": {
+    "path": ".tmp-r2-language-run/h3-3b-course-300k-10e-budgeted.json",
+    "sha256": "f8988391ef1314499daca0de4ca8d5843a0d2860b8726df3e7a3f0b84d737f6c"
+  },
+  "source_checkpoint": {
+    "path": ".tmp-r2-language-run/h3-3b-course-300k-10e-budgeted.pt",
+    "sha256": "4c073ea561783ca68d750d374dc8e4fa99cb094fb02901738b8db4069f2ec2f8"
+  },
+  "config": {
+    "parameter_budget": 300000,
+    "planned_core_active_parameters": 262839,
+    "additional_predictive_readout_parameters": 11051,
+    "effective_active_parameters": 273890,
+    "within_target": true,
+    "epochs": 10,
+    "device": "cpu",
+    "response_start_readout": true,
+    "response_phase_readout": false,
+    "constrained_decode": true,
+    "training_episodes": 6
+  },
+  "preflight": {
+    "status": "passed",
+    "checkpoint_save_restore_checked": true
+  },
+  "training": {
+    "response_accuracy_proxy": 0.6373015873015874,
+    "train_teacher_forced_accuracy": 0.7671957671957671,
+    "dev_teacher_forced_accuracy": 0.626984126984127,
+    "final_teacher_forced_accuracy": 0.5740740740740741
+  },
+  "evaluation": {
+    "train": {
+      "exact_response_rate": 0.0,
+      "sequence_criterion_pass_rate": 0.0,
+      "response_start_first_byte_top1_rate": 0.5
+    },
+    "dev": {
+      "exact_response_rate": 0.0,
+      "sequence_criterion_pass_rate": 0.0,
+      "response_start_first_byte_top1_rate": 0.25,
+      "response_start_mean_target_margin_vs_second": 0.06973025668412447
+    },
+    "final": {
+      "exact_response_rate": 0.0,
+      "sequence_criterion_pass_rate": 0.0,
+      "response_start_first_byte_top1_rate": 0.0,
+      "response_start_mean_target_margin_vs_second": -0.026390918840964634
+    }
+  },
+  "paired_diagnostic": {
+    "exact_response_delta": 0.0,
+    "child_prompt_sensitivity_rate": 0.2857142857142857,
+    "child_output_changed_after_update_rate": 1.0
+  },
+  "checkpoint_read_only_after_evaluation": true,
+  "response_start_margin": {
+    "train": {
+      "baseline_mean_target_margin_vs_second": -0.006482357236867149,
+      "final_mean_target_margin_vs_second": 0.1817980594933033
+    },
+    "dev": {
+      "baseline_mean_target_margin_vs_second": -0.006299384753219783,
+      "final_mean_target_margin_vs_second": 0.06973025668412447
+    },
+    "final": {
+      "baseline_mean_target_margin_vs_second": -0.006160593979681532,
+      "final_mean_target_margin_vs_second": -0.026390918840964634
+    }
+  },
+  "native_mode_only": true,
+  "external_provider": false,
+  "mini_or_l2_claim": false,
+  "interpretation": "With the candidate readout reserved inside the total 300k budget, the shared-support control removed the first-byte and unknown-policy support confound, but the response-start owner still did not transfer a complete unseen response. The next decision is conditional-credit or structural-capacity review, not more homogeneous byte training."
+}

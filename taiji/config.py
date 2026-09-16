@@ -642,6 +642,7 @@ class TaijiConfig:
         policy: CapacityPolicy | None = None,
         seed: int | None = None,
         alignment: int | None = None,
+        additional_predictive_readouts: int = 0,
     ) -> TaijiConfig:
         """Build the largest substrate that fits an active-parameter budget.
 
@@ -649,12 +650,19 @@ class TaijiConfig:
         structural depth and proportions; when omitted, proportions are
         recovered from the template for backward compatibility.  The returned
         configuration is deterministic and its exact learned-scalar count is
-        available before any tensors are allocated.
+        available before any tensors are allocated.  Optional isolated
+        predictive owners can reserve their readout parameters through
+        ``additional_predictive_readouts``; this keeps candidate comparisons
+        inside the same total active-parameter budget instead of silently
+        adding capacity after planning.
         """
 
         target = int(target_active_parameters)
         if target <= 0:
             raise ValueError("target_active_parameters must be positive")
+        optional_readouts = int(additional_predictive_readouts)
+        if optional_readouts < 0:
+            raise ValueError("additional_predictive_readouts must be non-negative")
         base = cls(seed=cls.seed if seed is None else int(seed)) if template is None else template
         if policy is None:
             capacity = CapacityPolicy.from_config(
@@ -742,22 +750,32 @@ class TaijiConfig:
             )
             return cls.from_dict(values)
 
+        def planned_total(profile: TaijiConfig) -> int:
+            # BytePredictiveReadout uses one fixed-fan-in row for every byte
+            # over the motor context, plus one bias per output byte.  This is
+            # exactly the active scalar contribution of each optional owner.
+            optional_parameters = optional_readouts * (
+                profile.alphabet_size * profile.motor_context_dim
+                + profile.alphabet_size
+            )
+            return int(profile.planned_active_parameter_count + optional_parameters)
+
         smallest = candidate(1)
-        if smallest.planned_active_parameter_count > target:
+        if planned_total(smallest) > target:
             raise ValueError(
                 "target_active_parameters is below the smallest valid aligned fabric "
-                f"({smallest.planned_active_parameter_count})"
+                f"({planned_total(smallest)})"
             )
 
         lower = 1
         upper = 2
-        while candidate(upper).planned_active_parameter_count <= target:
+        while planned_total(candidate(upper)) <= target:
             lower = upper
             upper *= 2
 
         while upper - lower > 1:
             middle = (lower + upper) // 2
-            if candidate(middle).planned_active_parameter_count <= target:
+            if planned_total(candidate(middle)) <= target:
                 lower = middle
             else:
                 upper = middle
