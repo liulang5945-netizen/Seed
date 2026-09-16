@@ -2174,7 +2174,7 @@ class LanguageAlignmentTrainer:
         checkpoint = self.model.checkpoint()
         before_digest = content_digest(checkpoint)
         response_plan_ablation_mode = None
-        if self.model.response_plan_readout is not None:
+        if self.model.response_plan_readout_enabled:
             response_plan_ablation_mode = self.model.response_plan_readout.ablation_mode
         try:
             teacher = self._target_pass(episode, learn=False)
@@ -2223,7 +2223,11 @@ class LanguageAlignmentTrainer:
             # from checkpoints.  Restore replaces the readout instance, so
             # carry the diagnostic mode across this read-only episode reset
             # without turning it into learned state.
-            restored_response_plan = self.model.response_plan_readout
+            restored_response_plan = (
+                self.model.response_plan_readout
+                if self.model.response_plan_readout_enabled
+                else None
+            )
             if restored_response_plan is not None:
                 restored_response_plan.set_ablation_mode(response_plan_ablation_mode)
             # Taiji restores developmental F1 in read-only mode by contract.

@@ -323,6 +323,10 @@ def test_response_phase_readout_isolated_and_checkpointable() -> None:
     assert margin["checkpoint_read_only"] is True
     assert margin["recovery_repeatable"] is True
     assert margin["legal_start_count"] > 0
+    before_evaluation_digest = trainer.checkpoint()["checkpoint_digest"]
+    evaluation = trainer.evaluate("train")
+    assert evaluation["checkpoint_read_only"] is True
+    assert trainer.checkpoint()["checkpoint_digest"] == before_evaluation_digest
 
     restored = LanguageAlignmentTrainer.from_checkpoint(trainer.checkpoint(), corpus)
     assert restored.config.response_phase_readout is True
