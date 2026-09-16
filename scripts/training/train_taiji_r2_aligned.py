@@ -254,6 +254,8 @@ def main() -> int:
             "status": "preflight_passed",
             "training_performed": False,
             "pre_registration": report_preregistration,
+            "model_seed": None if args.resume is not None else int(args.seed),
+            "code_revision": trainer.code_revision,
             "dataset": corpus.manifest(),
             "config": trainer.config.to_payload(),
             "response_plan_target": {
@@ -305,6 +307,8 @@ def main() -> int:
         "format": "taiji-r2-aligned-language-run-v2",
         "status": "completed",
         "pre_registration": report_preregistration,
+        "model_seed": None if args.resume is not None else int(args.seed),
+        "code_revision": trainer.code_revision,
         "dataset": corpus.manifest(),
         "config": trainer.config.to_payload(),
         "response_plan_target": {

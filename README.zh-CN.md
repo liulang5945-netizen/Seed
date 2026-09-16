@@ -145,7 +145,7 @@ readout 学习；每个候选都隔离、可保存恢复，并在 family-disjoin
 | R2-H3.6 几何 | 三 seed 无训练审计选择 train-whitened native response state + compositional 字符 n-gram；这是目标设计结果，不是语言能力结果 |
 | R2-H3.6-A | 版本化 train-only target encoder、训练器接线与保存恢复 smoke 已在 12/8/4 fixture 通过；没有进行能力训练 |
 | H3.6-B 前置 | control/treatment 零步前置均通过，effective=276,610≤300,000，parent/恢复/target 血缘检查成立；`training_performed=false` |
-| H3.6-B dev | control/treatment 三 seed dev 已按冻结合同完成；下一步为三组只读 bridge ablation，final 延迟读取，停止门保持有效 |
+| H3.6-B 结果 | 六个 matched dev run 与三组只读 bridge ablation 已完成；seed 方向与非代理序列门失败，final 未读，不追加 epoch |
 
 权威执行顺序见[当前推进计划](plans/active/roadmap/03_CURRENT_EXECUTION.md)；H3.6 目标合同见
 [M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md](plans/reference/M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md)，
@@ -162,7 +162,7 @@ M5 K 轴 scorecard 仍是有效的并行、限定范围机制结果；它不是�
 - 当前边界：原生语言路线已有结构化训练与恢复证据，但尚未建立 S2/L2 对话能力。K 轴的
   `promotion_gate=false`、`can_promote=false`、`growth_admitted=false` 仍保持诚实边界；不代表默认
   runtime 已挂接 owner，也不代表产品 rollout 已发生。
-- 当前主线：冻结 H3.6-B 六个 dev child，完成三组只读 bridge ablation，再依据停止门决定是否允许一次性读取 final；Mini 继续后置。
+- 当前主线：回到 R2 target/representation/readout 设计复审，先冻结新的可证伪合同再讨论新训练；H3.6-B final 保持未读，Mini 继续后置。
 - 诚实边界：这是一个训练中的学习机制原型，**不是**完整的认知架构，尚不是通用语言模型，也不构成任何 AGI 主张。当前 R2 将不可读或不可迁移的回答视为待解决失败，不包装成模型能力。
 
 ## 快速开始

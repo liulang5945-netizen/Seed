@@ -1,6 +1,6 @@
 # M5 R2-H3.6 计划目标几何与信用接口合同
 
-> 状态：三种子无训练审计完成；H3.6-A target encoder与trainer保存恢复 smoke、H3.6-B control/treatment零步前置已完成；尚未授权正式能力训练。
+> 状态：三种子无训练审计完成；H3.6-A target encoder与trainer保存恢复 smoke、H3.6-B control/treatment零步前置及三seed matched dev/bridge ablation均已完成；H3.6-B按预注册在final前负结果结项。
 
 ## 结论
 
@@ -33,6 +33,6 @@ H3.5-A 的 signed-hash span 为每段回答分配近似随机方向，相近回�
 
 ## 最小可证伪顺序
 
-H3.6-A 的实现、trainer接线与 target reconstruction/save-restore smoke 已完成；H3.6-B matched dev预注册也已冻结，control/treatment各自的`--preflight-only`已通过：effective=276,610≤300,000，zero-step/child restore、parent保护、atomic save和treatment target血缘均成立，且`training_performed=false`。下一步是取得明确的三seed dev训练授权；得到授权后才按H3.6-B合同运行10 epoch matched dev，final继续延迟。没有新授权，不运行正式epoch；若任何target map、split隔离、parent digest或geometry复算不一致，立即停止。
+H3.6-A 的实现、trainer接线与 target reconstruction/save-restore smoke 已完成；H3.6-B matched dev预注册也已冻结，control/treatment各自的`--preflight-only`已通过：effective=276,610≤300,000，zero-step/child restore、parent保护、atomic save和treatment target血缘均成立，且`training_performed=false`。随后按授权完成10 epoch matched dev与三组只读bridge ablation：control dev sequence为`0/0.125/0.125`，treatment为`0/0.25/0`，均值没有改善且seed方向不一致；exact与required-term coverage均未形成收益，bridge ablation也未撤销可确认的treatment核心收益。因此H3.6-B不读取final、不追加epoch、不晋级S2/L2/Mini；后续必须回到target/representation/readout设计复审，另立可证伪合同。
 
 即使 encoder smoke 通过，下一轮能力对照仍需新预注册；不得读取H3.5-A final，也不得把本次离线最近邻分数写成语言能力。

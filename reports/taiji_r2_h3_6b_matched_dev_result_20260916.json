@@ -1,0 +1,665 @@
+{
+  "format": "taiji-r2-h3-6b-matched-dev-result-v1",
+  "status": "stopped_before_final",
+  "pre_registration": "plans/reference/M5_R2_H3_6B_MATCHED_RUN_PREREGISTRATION_20260916.md",
+  "dataset_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+  "protocol": {
+    "seeds": [
+      20260916,
+      20260917,
+      20260918
+    ],
+    "epochs": 10,
+    "max_episodes_per_epoch": 12,
+    "episodes_per_run": 120,
+    "parameter_budget": 300000,
+    "final_deferred_for_all_runs": true,
+    "final_capability_read_performed": false,
+    "control_geometry": "signed_hash_span",
+    "treatment_geometry": "h3_6_whitened_native_compositional"
+  },
+  "source_artifacts": [
+    {
+      "seed": 20260916,
+      "control": {
+        "seed": 20260916,
+        "arm": "control",
+        "report_path": "E:\\Seed\\reports\\taiji_r2_h3_6b_control_dev_20260916_seed20260916.json",
+        "report_sha256": "8fd131dbc9d60ab6b7fd7c3458a819b9acd764de7185664895dea8ee095e99e6",
+        "checkpoint_path": "E:\\Seed\\outputs\\r2_h3_6b_dev_20260916\\control_seed_20260916\\checkpoint.pt",
+        "checkpoint_sha256": "5edb2b5a6f1656f669f899f6ae8db5f918c3ed23ec8107538f9dd2095e4ba14e",
+        "checkpoint_digest": "6187ea2831a95886ecb84f99927a71934ed7cdca6805770b9005552c2cc3e7f0",
+        "model_seed": 20260916,
+        "code_revision": "c8ab7570a9f3a464bbe4b99eed58fa5a3dcadbf9",
+        "metadata_source": "checkpoint_and_report_filename",
+        "dataset_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+        "target_geometry": {
+          "geometry": "signed_hash_span",
+          "encoder_digest": null,
+          "encoder_parent_checkpoint_digest": null,
+          "encoder_corpus_digest": null,
+          "train_target_map_digest": null,
+          "fit_episode_ids": []
+        },
+        "capacity": {
+          "target_active_parameters": 300000,
+          "planned_core_active_parameters": 262839,
+          "additional_predictive_readouts": 1,
+          "additional_predictive_readout_parameters": 11051,
+          "response_plan_parameters": 2720,
+          "effective_active_parameters": 276610,
+          "within_target": true
+        },
+        "training": {
+          "epochs": 10,
+          "episodes": 120,
+          "global_step": 5370,
+          "response_accuracy": 0.264365176626206,
+          "response_mean_surprise": 3.338647167323357
+        },
+        "dev": {
+          "episodes": 8,
+          "teacher_forced_accuracy": 0.20919601393188852,
+          "teacher_forced_mean_surprise": 3.706541864291057,
+          "exact_response_rate": 0.0,
+          "utf8_valid_rate": 1.0,
+          "no_replacement_rate": 1.0,
+          "response_boundary_rate": 0.0,
+          "sequence_valid_rate": 0.0,
+          "sequence_criterion_pass_rate": 0.0,
+          "required_term_coverage": 0.0,
+          "semantic_criteria_pass_rate": 0.25,
+          "unique_generated_texts": 8,
+          "generated_text_collision_rate": 0.0,
+          "checkpoint_read_only": true,
+          "native_mode_only": true
+        },
+        "paired": {
+          "episodes": 8,
+          "teacher_forced_mean_surprise_delta": -1.9059275534897138,
+          "exact_response_delta": 0.0,
+          "baseline_prompt_sensitivity_rate": 1.0,
+          "child_prompt_sensitivity_rate": 1.0,
+          "child_output_changed_after_update_rate": 1.0,
+          "checkpoint_read_only": true,
+          "native_mode_only": true,
+          "external_provider": false
+        }
+      },
+      "treatment": {
+        "seed": 20260916,
+        "arm": "treatment",
+        "report_path": "E:\\Seed\\reports\\taiji_r2_h3_6b_treatment_dev_20260916_seed20260916.json",
+        "report_sha256": "f89133145089fd20b915bf80b6513ac83d967d129bac4b8fddbe397ce5c2d103",
+        "checkpoint_path": "E:\\Seed\\outputs\\r2_h3_6b_dev_20260916\\treatment_seed_20260916\\checkpoint.pt",
+        "checkpoint_sha256": "dc411ea4e897b8b1af792dc304854d70e63edb0f6b6eed079d8933778866e30e",
+        "checkpoint_digest": "af5f64df07ee9482934a91facbe62cd4c7ca5e44d8bd5a021eeb78a12762de36",
+        "model_seed": 20260916,
+        "code_revision": "c8ab7570a9f3a464bbe4b99eed58fa5a3dcadbf9",
+        "metadata_source": "checkpoint_and_report_filename",
+        "dataset_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+        "target_geometry": {
+          "geometry": "h3_6_whitened_native_compositional",
+          "encoder_digest": "22f11dc67be120b0f8016f6a2bb3f22135de694c37c7dc3c7aca4713e89cfb7a",
+          "encoder_parent_checkpoint_digest": "b83ca0fb537f3e083981a1e1832faa5917410d97d187e83fc3e20b820f9c8c9f",
+          "encoder_corpus_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+          "train_target_map_digest": "6f97b38adb8be41c873ace22d6102e4057ca2260158aeb4e6ee4a5dce15eb6cc",
+          "fit_episode_ids": [
+            "train-answer-red",
+            "train-answer-blue",
+            "train-answer-east-history",
+            "train-unknown-weather",
+            "train-unknown-price",
+            "train-unknown-owner",
+            "train-clarify-city",
+            "train-clarify-date",
+            "train-clarify-file",
+            "train-refuse-password",
+            "train-refuse-token",
+            "train-refuse-bypass"
+          ]
+        },
+        "capacity": {
+          "target_active_parameters": 300000,
+          "planned_core_active_parameters": 262839,
+          "additional_predictive_readouts": 1,
+          "additional_predictive_readout_parameters": 11051,
+          "response_plan_parameters": 2720,
+          "effective_active_parameters": 276610,
+          "within_target": true
+        },
+        "training": {
+          "epochs": 10,
+          "episodes": 120,
+          "global_step": 5370,
+          "response_accuracy": 0.27124941643323996,
+          "response_mean_surprise": 3.3221863748821705
+        },
+        "dev": {
+          "episodes": 8,
+          "teacher_forced_accuracy": 0.1806469298245614,
+          "teacher_forced_mean_surprise": 3.6798696079129964,
+          "exact_response_rate": 0.0,
+          "utf8_valid_rate": 1.0,
+          "no_replacement_rate": 1.0,
+          "response_boundary_rate": 0.0,
+          "sequence_valid_rate": 0.0,
+          "sequence_criterion_pass_rate": 0.0,
+          "required_term_coverage": 0.0,
+          "semantic_criteria_pass_rate": 0.25,
+          "unique_generated_texts": 8,
+          "generated_text_collision_rate": 0.0,
+          "checkpoint_read_only": true,
+          "native_mode_only": true
+        },
+        "paired": {
+          "episodes": 8,
+          "teacher_forced_mean_surprise_delta": -1.9325998098677741,
+          "exact_response_delta": 0.0,
+          "baseline_prompt_sensitivity_rate": 1.0,
+          "child_prompt_sensitivity_rate": 1.0,
+          "child_output_changed_after_update_rate": 1.0,
+          "checkpoint_read_only": true,
+          "native_mode_only": true,
+          "external_provider": false
+        }
+      },
+      "bridge_ablation": {
+        "seed": 20260916,
+        "report_path": "E:\\Seed\\reports\\taiji_r2_h3_6b_bridge_ablation_20260916_seed20260916.json",
+        "report_sha256": "de4b97b3a758143be3f7e1115b0d3ee39f9e76e49d837499aac2792c1ee809c3",
+        "checkpoint_digest": "af5f64df07ee9482934a91facbe62cd4c7ca5e44d8bd5a021eeb78a12762de36",
+        "checkpoint_read_only": true,
+        "normal": {
+          "sequence_criterion_pass_rate": 0.0,
+          "exact_response_rate": 0.0,
+          "required_term_coverage": 0.0,
+          "generated_text_collision_rate": 0.0
+        },
+        "ablated": {
+          "sequence_criterion_pass_rate": 0.25,
+          "exact_response_rate": 0.0,
+          "required_term_coverage": 0.0,
+          "generated_text_collision_rate": 0.75
+        }
+      }
+    },
+    {
+      "seed": 20260917,
+      "control": {
+        "seed": 20260917,
+        "arm": "control",
+        "report_path": "E:\\Seed\\reports\\taiji_r2_h3_6b_control_dev_20260916_seed20260917.json",
+        "report_sha256": "9573fed53874e2050274b2e02f904fa27b5b435c28afd18d6ab0c6d751c67040",
+        "checkpoint_path": "E:\\Seed\\outputs\\r2_h3_6b_dev_20260916\\control_seed_20260917\\checkpoint.pt",
+        "checkpoint_sha256": "a57b4d7012a9b230add777d68f795e13684981a17a957fa26ccea3a7878b7b7a",
+        "checkpoint_digest": "5e807656535e5ecf844fa5df847289706caee5bafa32c37d2160ba33e37726cb",
+        "model_seed": 20260917,
+        "code_revision": "c8ab7570a9f3a464bbe4b99eed58fa5a3dcadbf9",
+        "metadata_source": "checkpoint_and_report_filename",
+        "dataset_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+        "target_geometry": {
+          "geometry": "signed_hash_span",
+          "encoder_digest": null,
+          "encoder_parent_checkpoint_digest": null,
+          "encoder_corpus_digest": null,
+          "train_target_map_digest": null,
+          "fit_episode_ids": []
+        },
+        "capacity": {
+          "target_active_parameters": 300000,
+          "planned_core_active_parameters": 262839,
+          "additional_predictive_readouts": 1,
+          "additional_predictive_readout_parameters": 11051,
+          "response_plan_parameters": 2720,
+          "effective_active_parameters": 276610,
+          "within_target": true
+        },
+        "training": {
+          "epochs": 10,
+          "episodes": 120,
+          "global_step": 5370,
+          "response_accuracy": 0.28448529411764706,
+          "response_mean_surprise": 3.230975146099739
+        },
+        "dev": {
+          "episodes": 8,
+          "teacher_forced_accuracy": 0.2318998323013416,
+          "teacher_forced_mean_surprise": 3.641238249324963,
+          "exact_response_rate": 0.0,
+          "utf8_valid_rate": 1.0,
+          "no_replacement_rate": 1.0,
+          "response_boundary_rate": 0.125,
+          "sequence_valid_rate": 0.125,
+          "sequence_criterion_pass_rate": 0.125,
+          "required_term_coverage": 0.0,
+          "semantic_criteria_pass_rate": 0.25,
+          "unique_generated_texts": 8,
+          "generated_text_collision_rate": 0.0,
+          "checkpoint_read_only": true,
+          "native_mode_only": true
+        },
+        "paired": {
+          "episodes": 8,
+          "teacher_forced_mean_surprise_delta": -2.071775356217926,
+          "exact_response_delta": 0.0,
+          "baseline_prompt_sensitivity_rate": 1.0,
+          "child_prompt_sensitivity_rate": 1.0,
+          "child_output_changed_after_update_rate": 1.0,
+          "checkpoint_read_only": true,
+          "native_mode_only": true,
+          "external_provider": false
+        }
+      },
+      "treatment": {
+        "seed": 20260917,
+        "arm": "treatment",
+        "report_path": "E:\\Seed\\reports\\taiji_r2_h3_6b_treatment_dev_20260916_seed20260917.json",
+        "report_sha256": "3018f1bd9bcdef39121be50146c5fd11f42ced4f68d31e67dc56f1ee63da9b0a",
+        "checkpoint_path": "E:\\Seed\\outputs\\r2_h3_6b_dev_20260916\\treatment_seed_20260917\\checkpoint.pt",
+        "checkpoint_sha256": "2a05b13a94c803356b46468dd46141aa6b1ea987842237a983d4e3af21e250d8",
+        "checkpoint_digest": "0c9571c2376585ed9f027caac65be41b560c851c58aa806e4c0e47f7bd1a300d",
+        "model_seed": 20260917,
+        "code_revision": "c8ab7570a9f3a464bbe4b99eed58fa5a3dcadbf9",
+        "metadata_source": "checkpoint_and_report_filename",
+        "dataset_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+        "target_geometry": {
+          "geometry": "h3_6_whitened_native_compositional",
+          "encoder_digest": "c26a435bb64c38032041c2170f300b137cda5dc0acd74d46df14fd11867d9ef9",
+          "encoder_parent_checkpoint_digest": "e2185c36554b349d9c934be999257f071d9c57cd9e0c7150e38e2922d0df25e8",
+          "encoder_corpus_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+          "train_target_map_digest": "e6ffadfce1ec678afb7a765264bce42790edd28b47985850bc5e2faad4c76b83",
+          "fit_episode_ids": [
+            "train-answer-red",
+            "train-answer-blue",
+            "train-answer-east-history",
+            "train-unknown-weather",
+            "train-unknown-price",
+            "train-unknown-owner",
+            "train-clarify-city",
+            "train-clarify-date",
+            "train-clarify-file",
+            "train-refuse-password",
+            "train-refuse-token",
+            "train-refuse-bypass"
+          ]
+        },
+        "capacity": {
+          "target_active_parameters": 300000,
+          "planned_core_active_parameters": 262839,
+          "additional_predictive_readouts": 1,
+          "additional_predictive_readout_parameters": 11051,
+          "response_plan_parameters": 2720,
+          "effective_active_parameters": 276610,
+          "within_target": true
+        },
+        "training": {
+          "epochs": 10,
+          "episodes": 120,
+          "global_step": 5370,
+          "response_accuracy": 0.2814807033924681,
+          "response_mean_surprise": 3.3018767693715683
+        },
+        "dev": {
+          "episodes": 8,
+          "teacher_forced_accuracy": 0.2334236326109391,
+          "teacher_forced_mean_surprise": 3.539282610836522,
+          "exact_response_rate": 0.0,
+          "utf8_valid_rate": 1.0,
+          "no_replacement_rate": 1.0,
+          "response_boundary_rate": 0.25,
+          "sequence_valid_rate": 0.25,
+          "sequence_criterion_pass_rate": 0.25,
+          "required_term_coverage": 0.0,
+          "semantic_criteria_pass_rate": 0.25,
+          "unique_generated_texts": 8,
+          "generated_text_collision_rate": 0.0,
+          "checkpoint_read_only": true,
+          "native_mode_only": true
+        },
+        "paired": {
+          "episodes": 8,
+          "teacher_forced_mean_surprise_delta": -2.173730994706367,
+          "exact_response_delta": 0.0,
+          "baseline_prompt_sensitivity_rate": 1.0,
+          "child_prompt_sensitivity_rate": 1.0,
+          "child_output_changed_after_update_rate": 1.0,
+          "checkpoint_read_only": true,
+          "native_mode_only": true,
+          "external_provider": false
+        }
+      },
+      "bridge_ablation": {
+        "seed": 20260917,
+        "report_path": "E:\\Seed\\reports\\taiji_r2_h3_6b_bridge_ablation_20260916_seed20260917.json",
+        "report_sha256": "01db7149deeb66fe45edc5e92e17a653992cbe3602a2f68e9214181d05476fda",
+        "checkpoint_digest": "0c9571c2376585ed9f027caac65be41b560c851c58aa806e4c0e47f7bd1a300d",
+        "checkpoint_read_only": true,
+        "normal": {
+          "sequence_criterion_pass_rate": 0.25,
+          "exact_response_rate": 0.0,
+          "required_term_coverage": 0.0,
+          "generated_text_collision_rate": 0.0
+        },
+        "ablated": {
+          "sequence_criterion_pass_rate": 0.25,
+          "exact_response_rate": 0.0,
+          "required_term_coverage": 0.0,
+          "generated_text_collision_rate": 0.75
+        }
+      }
+    },
+    {
+      "seed": 20260918,
+      "control": {
+        "seed": 20260918,
+        "arm": "control",
+        "report_path": "E:\\Seed\\reports\\taiji_r2_h3_6b_control_dev_20260916_seed20260918.json",
+        "report_sha256": "67a76487e227db706700257e0329c24481ef5234fdc04c0705d1616db7d2a708",
+        "checkpoint_path": "E:\\Seed\\outputs\\r2_h3_6b_dev_20260916\\control_seed_20260918\\checkpoint.pt",
+        "checkpoint_sha256": "43788cc4d874d3088ecc3ba1d4782ea75551fe19325ddff3f30a49f455b6f263",
+        "checkpoint_digest": "f53b13da0c2126714b91873f43aa86f8502c1a36477cd5d417268481bfda2436",
+        "model_seed": 20260918,
+        "code_revision": "c8ab7570a9f3a464bbe4b99eed58fa5a3dcadbf9",
+        "metadata_source": "checkpoint_and_report_filename",
+        "dataset_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+        "target_geometry": {
+          "geometry": "signed_hash_span",
+          "encoder_digest": null,
+          "encoder_parent_checkpoint_digest": null,
+          "encoder_corpus_digest": null,
+          "train_target_map_digest": null,
+          "fit_episode_ids": []
+        },
+        "capacity": {
+          "target_active_parameters": 300000,
+          "planned_core_active_parameters": 262839,
+          "additional_predictive_readouts": 1,
+          "additional_predictive_readout_parameters": 11051,
+          "response_plan_parameters": 2720,
+          "effective_active_parameters": 276610,
+          "within_target": true
+        },
+        "training": {
+          "epochs": 10,
+          "episodes": 120,
+          "global_step": 5370,
+          "response_accuracy": 0.2983758364456894,
+          "response_mean_surprise": 3.3897082701670205
+        },
+        "dev": {
+          "episodes": 8,
+          "teacher_forced_accuracy": 0.23452012383900928,
+          "teacher_forced_mean_surprise": 3.811490333690756,
+          "exact_response_rate": 0.0,
+          "utf8_valid_rate": 1.0,
+          "no_replacement_rate": 1.0,
+          "response_boundary_rate": 0.25,
+          "sequence_valid_rate": 0.25,
+          "sequence_criterion_pass_rate": 0.125,
+          "required_term_coverage": 0.0,
+          "semantic_criteria_pass_rate": 0.25,
+          "unique_generated_texts": 8,
+          "generated_text_collision_rate": 0.0,
+          "checkpoint_read_only": true,
+          "native_mode_only": true
+        },
+        "paired": {
+          "episodes": 8,
+          "teacher_forced_mean_surprise_delta": -1.883146002139311,
+          "exact_response_delta": 0.0,
+          "baseline_prompt_sensitivity_rate": 1.0,
+          "child_prompt_sensitivity_rate": 1.0,
+          "child_output_changed_after_update_rate": 1.0,
+          "checkpoint_read_only": true,
+          "native_mode_only": true,
+          "external_provider": false
+        }
+      },
+      "treatment": {
+        "seed": 20260918,
+        "arm": "treatment",
+        "report_path": "E:\\Seed\\reports\\taiji_r2_h3_6b_treatment_dev_20260916_seed20260918.json",
+        "report_sha256": "890157989855266931cd3f66c8c1574f5544192cb810e0fea7a2de33bbaeb429",
+        "checkpoint_path": "E:\\Seed\\outputs\\r2_h3_6b_dev_20260916\\treatment_seed_20260918\\checkpoint.pt",
+        "checkpoint_sha256": "84b6c75bc776c3ee8c502368e1422e19995559466def6670e059530b77f86e37",
+        "checkpoint_digest": "84e982df11f3ee57f8f7a181faaefc4f84f1dd2c99c10ca70abea492592f8be2",
+        "model_seed": 20260918,
+        "code_revision": "c8ab7570a9f3a464bbe4b99eed58fa5a3dcadbf9",
+        "metadata_source": "checkpoint_and_report_filename",
+        "dataset_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+        "target_geometry": {
+          "geometry": "h3_6_whitened_native_compositional",
+          "encoder_digest": "7e4a7b14eb1c7c5df7ade8ff5424f3de59af884a613e8d766ba7c5546e3aeeb0",
+          "encoder_parent_checkpoint_digest": "c53c5c29555df69eedcbdb57eb41dc4c70618e05510f574f97873953ee4404e4",
+          "encoder_corpus_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+          "train_target_map_digest": "5a5f688b4da3cd805dd2c3558b6b0ff415fdeeeaf86cd63fbf99259f2c79fd41",
+          "fit_episode_ids": [
+            "train-answer-red",
+            "train-answer-blue",
+            "train-answer-east-history",
+            "train-unknown-weather",
+            "train-unknown-price",
+            "train-unknown-owner",
+            "train-clarify-city",
+            "train-clarify-date",
+            "train-clarify-file",
+            "train-refuse-password",
+            "train-refuse-token",
+            "train-refuse-bypass"
+          ]
+        },
+        "capacity": {
+          "target_active_parameters": 300000,
+          "planned_core_active_parameters": 262839,
+          "additional_predictive_readouts": 1,
+          "additional_predictive_readout_parameters": 11051,
+          "response_plan_parameters": 2720,
+          "effective_active_parameters": 276610,
+          "within_target": true
+        },
+        "training": {
+          "epochs": 10,
+          "episodes": 120,
+          "global_step": 5370,
+          "response_accuracy": 0.2968208255524432,
+          "response_mean_surprise": 3.3733328505701192
+        },
+        "dev": {
+          "episodes": 8,
+          "teacher_forced_accuracy": 0.21997549019607843,
+          "teacher_forced_mean_surprise": 3.8758781186454474,
+          "exact_response_rate": 0.0,
+          "utf8_valid_rate": 1.0,
+          "no_replacement_rate": 1.0,
+          "response_boundary_rate": 0.0,
+          "sequence_valid_rate": 0.0,
+          "sequence_criterion_pass_rate": 0.0,
+          "required_term_coverage": 0.0,
+          "semantic_criteria_pass_rate": 0.25,
+          "unique_generated_texts": 8,
+          "generated_text_collision_rate": 0.0,
+          "checkpoint_read_only": true,
+          "native_mode_only": true
+        },
+        "paired": {
+          "episodes": 8,
+          "teacher_forced_mean_surprise_delta": -1.8187582171846195,
+          "exact_response_delta": 0.0,
+          "baseline_prompt_sensitivity_rate": 1.0,
+          "child_prompt_sensitivity_rate": 1.0,
+          "child_output_changed_after_update_rate": 1.0,
+          "checkpoint_read_only": true,
+          "native_mode_only": true,
+          "external_provider": false
+        }
+      },
+      "bridge_ablation": {
+        "seed": 20260918,
+        "report_path": "E:\\Seed\\reports\\taiji_r2_h3_6b_bridge_ablation_20260916_seed20260918.json",
+        "report_sha256": "d2147ceb39ae513e316cec539020cd0cc4f292d63543407326b3866060408b5f",
+        "checkpoint_digest": "84e982df11f3ee57f8f7a181faaefc4f84f1dd2c99c10ca70abea492592f8be2",
+        "checkpoint_read_only": true,
+        "normal": {
+          "sequence_criterion_pass_rate": 0.0,
+          "exact_response_rate": 0.0,
+          "required_term_coverage": 0.0,
+          "generated_text_collision_rate": 0.0
+        },
+        "ablated": {
+          "sequence_criterion_pass_rate": 0.25,
+          "exact_response_rate": 0.0,
+          "required_term_coverage": 0.0,
+          "generated_text_collision_rate": 0.125
+        }
+      }
+    }
+  ],
+  "aggregate": {
+    "control_effective_parameters": 276610,
+    "treatment_effective_parameters": 276610,
+    "control_dev_sequence_rate_by_seed": [
+      0.0,
+      0.125,
+      0.125
+    ],
+    "treatment_dev_sequence_rate_by_seed": [
+      0.0,
+      0.25,
+      0.0
+    ],
+    "treatment_minus_control_dev_sequence_rate_by_seed": [
+      0.0,
+      0.125,
+      -0.125
+    ],
+    "control_dev_exact_rate_by_seed": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "treatment_dev_exact_rate_by_seed": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "treatment_minus_control_dev_exact_rate_by_seed": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "control_dev_required_term_coverage_by_seed": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "treatment_dev_required_term_coverage_by_seed": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "treatment_minus_control_dev_required_term_coverage_by_seed": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "control_dev_surprise_by_seed": [
+      3.706541864291057,
+      3.641238249324963,
+      3.811490333690756
+    ],
+    "treatment_dev_surprise_by_seed": [
+      3.6798696079129964,
+      3.539282610836522,
+      3.8758781186454474
+    ],
+    "treatment_minus_control_dev_surprise_by_seed": [
+      -0.026672256378060588,
+      -0.10195563848844102,
+      0.06438778495469144
+    ],
+    "control_dev_collision_rate_by_seed": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "treatment_dev_collision_rate_by_seed": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "control_paired_sensitivity_by_seed": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "treatment_paired_sensitivity_by_seed": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "bridge_normal_sequence_rate_by_seed": [
+      0.0,
+      0.25,
+      0.0
+    ],
+    "bridge_ablated_sequence_rate_by_seed": [
+      0.25,
+      0.25,
+      0.25
+    ],
+    "bridge_ablated_minus_normal_sequence_rate_by_seed": [
+      0.25,
+      0.0,
+      0.25
+    ],
+    "bridge_normal_collision_rate_by_seed": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "bridge_ablated_collision_rate_by_seed": [
+      0.75,
+      0.75,
+      0.125
+    ],
+    "bridge_ablated_minus_normal_collision_rate_by_seed": [
+      0.75,
+      0.75,
+      0.125
+    ],
+    "mean_control_dev_sequence_rate": 0.08333333333333333,
+    "mean_treatment_dev_sequence_rate": 0.08333333333333333,
+    "mean_treatment_minus_control_dev_sequence_rate": 0.0,
+    "mean_treatment_minus_control_dev_surprise": -0.02141336997060339
+  },
+  "gates": {
+    "all_runs_completed": true,
+    "all_runs_within_budget": true,
+    "all_preflights_passed": true,
+    "all_final_reads_deferred": true,
+    "all_bridge_ablations_read_only": true,
+    "runtime_oracle_detected": false,
+    "protected_parent_failures": false,
+    "target_lineage_failures": false,
+    "three_seed_dev_sequence_direction_consistent": false,
+    "non_proxy_sequence_improvement": false,
+    "non_proxy_exact_improvement": false,
+    "non_proxy_required_term_improvement": false,
+    "paired_sensitivity_not_degraded": true,
+    "bridge_effect_present": true,
+    "bridge_ablation_removes_core_treatment_gain": false
+  },
+  "decision": {
+    "development_gate_passed": false,
+    "stop_reason": [
+      "seed_direction_inconsistent",
+      "no_non_proxy_sequence_improvement",
+      "bridge_does_not_remove_a_treatment_sequence_gain"
+    ],
+    "no_more_epochs": true,
+    "do_not_read_final": true,
+    "final_access_allowed": false,
+    "next": "H3.6-B negative result; do not read final or add epochs; return to target, representation, or readout design"
+  }
+}

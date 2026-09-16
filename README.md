@@ -201,7 +201,7 @@ not yet produced an L2 conversational model; the work below is the path toward o
 | R2-H3.6 geometry | A no-training, three-seed audit selected train-whitened native response state + compositional character n-grams; this is a target-design result, not language ability |
 | R2-H3.6-A | Versioned train-only target encoder, trainer integration and save/restore smoke passed on the 12/8/4 fixture; no capability training was performed |
 | H3.6-B preflight | Control and treatment zero-step preflights passed at 276,610≤300,000 with parent/restore/target-lineage checks; `training_performed=false` |
-| H3.6-B dev | Control/treatment three-seed dev runs completed under the frozen contract; three read-only bridge ablations are next, with final deferred and stop gates active |
+| H3.6-B result | Six matched dev runs and three read-only bridge ablations completed; seed direction and non-proxy sequence gates failed, so final was not read and no more epochs are allowed |
 
 The authoritative execution order is the [current plan](plans/active/roadmap/03_CURRENT_EXECUTION.md),
 with the H3.6 target contract in [M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md](plans/reference/M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md),
@@ -221,8 +221,7 @@ current R2 language mainline and does not imply a default-runtime promotion.
   but no S2/L2 conversational capability has been established. `promotion_gate=false`,
   `can_promote=false`, and `growth_admitted=false` remain the honest K-axis boundary; no
   default-runtime owner or product rollout is implied.
-- Next planned action: obtain explicit authorization, then execute the three-seed H3.6-B
-  matched dev run with final deferred. This is the only active next step in the [current execution plan](plans/active/roadmap/03_CURRENT_EXECUTION.md).
+- Next planned action: return to the R2 target/representation/readout design review and freeze a new falsifiable contract before any new training. H3.6-B final remains unread; no same-target epochs or Mini acceptance are authorized by this result.
 - Honest boundary: this is a learning-mechanism research prototype, **not** a completed
   cognitive architecture, not yet a general-purpose language model, and not a claim about AGI.
   The current R2 work explicitly treats unreadable or non-transferring responses as failures to
