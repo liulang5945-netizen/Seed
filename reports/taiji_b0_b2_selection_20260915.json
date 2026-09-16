@@ -4,387 +4,386 @@
   "status": "completed",
   "preregistration": "plans/reference/M5_WP5A_B2_SELECTION_PREREGISTRATION_FROZEN_20260915.md",
   "route_b_preregistration": "plans/reference/M5_B0_ROUTE_B_PREREGISTRATION_FROZEN_20260915.md",
-  "scope": "B2 offline learned selection evaluated by real contract execution on the frozen candidate surface; selection score is a prior, never a benefit claim",
+  "scope": "B2 selection gate: B1 representation selects one pair; real contract execution on the candidate surface decides G4/G5; no collaboration claim outside G5",
   "static_checks": {
     "scope": [
       "scripts/training/eval_taiji_b0_b2_selection_gate.py",
       "scripts/training/eval_taiji_b0_b1_representation_gate.py",
-      "scripts/training/probe_taiji_b0_structure_space.py",
-      "scripts/training/eval_taiji_p5_2b_group_causal_corpora_gate.py"
+      "scripts/training/probe_taiji_b0_structure_space.py"
     ],
     "commands": [
       "python -m py_compile <scope files>",
-      "python -m ruff check .",
+      "python -m ruff check scripts/training (and full repo)",
       "python -m black --no-cache --check <scope files>"
     ]
   },
   "outcome": "failed",
-  "outcome_detail": "no_task_benefit: G4 and G5 both failed while mechanical gates passed",
-  "preregistration_gap": "frozen three-state list defines no label for (G4 fail, G5 fail) with mechanical gates green; reported as failed + detail, needs a plan amendment",
   "experiment_passed": false,
   "record": {
-    "commit": "c48fefb4a507c81525474ee3064c3a18dff4da46",
+    "commit": "e48a6ebebf66ecc2d16e5c01f456eda5288ce0e7",
     "rule_revision": 1,
     "composition_rule": "m4_failure_handoff",
     "wall_cap_seconds": 60.0,
-    "elapsed_seconds": 32.461
-  },
-  "corpus": {
-    "training_cells": [
-      "none__observation",
-      "none__override",
-      "none__mismatch",
-      "create__none",
-      "patch__none",
-      "patch__observation",
-      "patch__override",
-      "patch__mismatch"
-    ],
-    "candidate_cells": [
-      "create__observation",
-      "create__override",
-      "create__mismatch"
-    ],
-    "fit_contexts": 8,
-    "indomain_holdout_contexts": 8,
-    "candidate_contexts": 18,
-    "episodes": {
-      "fit": 176,
-      "indomain_holdout": 176,
-      "candidate": 396
-    },
-    "candidate_episode_budget": "3 cells x 6 contexts x 11 cells x 2 repeats = 396",
-    "fit_resource_cap_disclosure": "evaluator maximum_resource_cost raised to 64.0 for the fit corpus; candidate-cell outcomes are execution-only and never enter the fit"
+    "elapsed_seconds": 39.018
   },
   "selection": {
-    "protocol": "learner.select(6 pairs, unseen_only=False) -> argmax predicted_interaction",
     "selected_pair": "member-b+member-c",
-    "predictions": {
+    "predicted_interaction": 0.141802,
+    "selection_disclosure": "learner.select returned the highest predicted-interaction pair",
+    "context_free_boundary": "the representation does not condition on context, so one pair serves all three candidate cells; per-cell routing is not claimed",
+    "feature_rank": 4,
+    "predicted_interaction_by_pair": {
       "member-a+member-b": 0.083829,
       "member-a+member-c": 0.083829,
       "member-a+member-d": -0.83264,
       "member-b+member-c": 0.141802,
       "member-b+member-d": -0.26966,
       "member-c+member-d": -0.26966
-    },
-    "detail": {
-      "predictions": {
-        "member-a+member-b": 0.08382903639807149,
-        "member-a+member-c": 0.08382903639807149,
-        "member-a+member-d": -0.8326398293578892,
-        "member-b+member-c": 0.1418022792129834,
-        "member-b+member-d": -0.2696602613256187,
-        "member-c+member-d": -0.2696602613256187
-      },
-      "select_returned_none": false,
-      "group_id": "transfer-group:fb3497a499213d0fbba99f1e",
-      "member_ids": [
-        "member-b",
-        "member-c"
-      ],
-      "utility": 0.141802279,
-      "uncertainty": 0.604566199,
-      "resource_cost": 4.75,
-      "observations": 5
-    },
-    "context_conditioned": false,
-    "context_conditioning_note": "the representation is not conditioned on context, so all three candidate cells receive the same selected pair; this is reported as the current boundary and is not per-cell routing",
-    "seconds": 0.000963
-  },
-  "representation": {
-    "profiles": {
-      "member-a": {
-        "contribution": 0.75,
-        "observations": 16,
-        "surface": [
-          0,
-          2
-        ]
-      },
-      "member-b": {
-        "contribution": 0.25,
-        "observations": 16,
-        "surface": [
-          2
-        ]
-      },
-      "member-c": {
-        "contribution": 0.25,
-        "observations": 16,
-        "surface": [
-          2
-        ]
-      },
-      "member-d": {
-        "contribution": 1.5,
-        "observations": 16,
-        "surface": [
-          0,
-          2
-        ]
-      }
-    },
-    "train_only_candidate_records": 6,
-    "feature_rank": 4,
-    "predictions_vary": true
-  },
-  "estimation_targets": {
-    "primary_reference": "all_singleton_oracle",
-    "primary_reference_gain": 1.5,
-    "required": 1.65,
-    "margin": 0.15,
-    "per_cell_derivation": "frozen Route B section 2 derives required/k per cell with n=6; each cell entry carries its own reference_requirements",
-    "per_cell_context_count": 6,
-    "per_cell_required_combination_only_contexts": 5,
-    "per_cell_available_combination_only_contexts": 6,
-    "pooled_context_count": 18,
-    "pooled_required_combination_only_contexts": 15,
-    "pooled_available_combination_only_contexts": 18,
-    "pooled_feasible": true,
-    "pooled_all_references": [
-      {
-        "reference": "all_singleton_oracle",
-        "reference_gain": 1.5,
-        "required": 1.65,
-        "required_combination_only_contexts": 15,
-        "available_combination_only_contexts": 18,
-        "context_count": 18,
-        "feasible": true,
-        "ceiling_gain": 2.0,
-        "max_clearable_reference": 1.85
-      },
-      {
-        "reference": "best_fixed_singleton",
-        "reference_gain": 0.5,
-        "required": 0.65,
-        "required_combination_only_contexts": 6,
-        "available_combination_only_contexts": 18,
-        "context_count": 18,
-        "feasible": true,
-        "ceiling_gain": 2.0,
-        "max_clearable_reference": 1.85
-      },
-      {
-        "reference": "best_observed_fixed_pair",
-        "reference_gain": 1.0,
-        "required": 1.15,
-        "required_combination_only_contexts": 11,
-        "available_combination_only_contexts": 18,
-        "context_count": 18,
-        "feasible": true,
-        "ceiling_gain": 2.0,
-        "max_clearable_reference": 1.85
-      }
-    ],
-    "risk_clause_R_ZS": "mean gains must always be reported with required/available/ceiling_gain"
-  },
-  "cells": [
-    {
-      "cell": "create__observation",
-      "contexts": 6,
-      "gain_vs_all_singleton_oracle": {
-        "member-a+member-b": 0.0,
-        "member-a+member-c": 2.0,
-        "member-a+member-d": 0.0,
-        "member-b+member-c": 0.0,
-        "member-b+member-d": 0.0,
-        "member-c+member-d": 0.0
-      },
-      "selected_pair_gain": 0.0,
-      "selected_pair_meets_required": false,
-      "required": 1.65,
-      "required_combination_only_contexts": 5,
-      "available_combination_only_contexts": 6,
-      "context_count": 6,
-      "ceiling_gain": 2.0,
-      "max_clearable_reference": 1.85,
-      "lesion": {
-        "pair": "member-b+member-c",
-        "successful_contexts": 0,
-        "attributed_contexts": 0,
-        "holds": false,
-        "unattributed_contexts": 0
-      },
-      "selected_pair_interleaved_contexts": 0,
-      "any_pair_interleaved_contexts": 6
-    },
-    {
-      "cell": "create__override",
-      "contexts": 6,
-      "gain_vs_all_singleton_oracle": {
-        "member-a+member-b": 0.0,
-        "member-a+member-c": 2.0,
-        "member-a+member-d": 0.0,
-        "member-b+member-c": 0.0,
-        "member-b+member-d": 0.0,
-        "member-c+member-d": 0.0
-      },
-      "selected_pair_gain": 0.0,
-      "selected_pair_meets_required": false,
-      "required": 1.65,
-      "required_combination_only_contexts": 5,
-      "available_combination_only_contexts": 6,
-      "context_count": 6,
-      "ceiling_gain": 2.0,
-      "max_clearable_reference": 1.85,
-      "lesion": {
-        "pair": "member-b+member-c",
-        "successful_contexts": 0,
-        "attributed_contexts": 0,
-        "holds": false,
-        "unattributed_contexts": 0
-      },
-      "selected_pair_interleaved_contexts": 0,
-      "any_pair_interleaved_contexts": 6
-    },
-    {
-      "cell": "create__mismatch",
-      "contexts": 6,
-      "gain_vs_all_singleton_oracle": {
-        "member-a+member-b": 0.0,
-        "member-a+member-c": 2.0,
-        "member-a+member-d": 0.0,
-        "member-b+member-c": 0.0,
-        "member-b+member-d": 0.0,
-        "member-c+member-d": 0.0
-      },
-      "selected_pair_gain": 0.0,
-      "selected_pair_meets_required": false,
-      "required": 1.65,
-      "required_combination_only_contexts": 5,
-      "available_combination_only_contexts": 6,
-      "context_count": 6,
-      "ceiling_gain": 2.0,
-      "max_clearable_reference": 1.85,
-      "lesion": {
-        "pair": "member-b+member-c",
-        "successful_contexts": 0,
-        "attributed_contexts": 0,
-        "holds": false,
-        "unattributed_contexts": 0
-      },
-      "selected_pair_interleaved_contexts": 0,
-      "any_pair_interleaved_contexts": 6
     }
-  ],
-  "pooled": {
-    "selected_pair_gain_vs_all_singleton_oracle": 0.0,
-    "all_pair_gains": {
-      "member-a+member-b": 0.0,
-      "member-a+member-c": 2.0,
-      "member-a+member-d": 0.0,
-      "member-b+member-c": 0.0,
-      "member-b+member-d": 0.0,
-      "member-c+member-d": 0.0
-    },
-    "singleton_mean_outcomes": {
-      "member-a": -1.0,
-      "member-b": -1.0,
-      "member-c": -1.0,
-      "member-d": -1.0
-    },
-    "lesion": {
-      "pair": "member-b+member-c",
-      "successful_contexts": 0,
-      "attributed_contexts": 0,
-      "holds": false,
-      "unattributed_contexts": 0
-    },
-    "selected_pair_interleaved_contexts": 0,
-    "any_pair_interleaved_contexts": 18,
-    "interleaved_note": "the G5 criterion reads the SELECTED pair's own interleaving; the any-pair sum is reported only so a positive number cannot be mistaken for the treatment arm's interleaving",
-    "selected_pair_mean_outcome": -1.0
   },
-  "controls": {
+  "cells": {
+    "create__observation": {
+      "gain_vs_all_singleton_oracle": 0.0,
+      "required": 1.65,
+      "required_k": 5,
+      "positive_gain_contexts": 0,
+      "k_criterion_met": false,
+      "causal_interaction": 0.0,
+      "pair_mean_outcome": 0.0,
+      "best_singleton_member": "member-a",
+      "best_singleton_mean_outcome": 0.0,
+      "g4_beats_deployable_control": false,
+      "lesion_contexts_checked": 0,
+      "lesion_attribution_holds": false,
+      "per_context": {
+        "b2cand-create__observation-640": {
+          "pair_success_rate": 0.0,
+          "singleton_success_rates": {
+            "member-a": 0.0,
+            "member-b": 0.0,
+            "member-c": 0.0,
+            "member-d": 0.0
+          },
+          "best_singleton_rate": 0.0,
+          "baseline_rate": 0.0,
+          "gain_vs_all_singleton_oracle": 0.0,
+          "causal_interaction": 0.0
+        },
+        "b2cand-create__observation-641": {
+          "pair_success_rate": 0.0,
+          "singleton_success_rates": {
+            "member-a": 0.0,
+            "member-b": 0.0,
+            "member-c": 0.0,
+            "member-d": 0.0
+          },
+          "best_singleton_rate": 0.0,
+          "baseline_rate": 0.0,
+          "gain_vs_all_singleton_oracle": 0.0,
+          "causal_interaction": 0.0
+        },
+        "b2cand-create__observation-642": {
+          "pair_success_rate": 0.0,
+          "singleton_success_rates": {
+            "member-a": 0.0,
+            "member-b": 0.0,
+            "member-c": 0.0,
+            "member-d": 0.0
+          },
+          "best_singleton_rate": 0.0,
+          "baseline_rate": 0.0,
+          "gain_vs_all_singleton_oracle": 0.0,
+          "causal_interaction": 0.0
+        },
+        "b2cand-create__observation-643": {
+          "pair_success_rate": 0.0,
+          "singleton_success_rates": {
+            "member-a": 0.0,
+            "member-b": 0.0,
+            "member-c": 0.0,
+            "member-d": 0.0
+          },
+          "best_singleton_rate": 0.0,
+          "baseline_rate": 0.0,
+          "gain_vs_all_singleton_oracle": 0.0,
+          "causal_interaction": 0.0
+        },
+        "b2cand-create__observation-644": {
+          "pair_success_rate": 0.0,
+          "singleton_success_rates": {
+            "member-a": 0.0,
+            "member-b": 0.0,
+            "member-c": 0.0,
+            "member-d": 0.0
+          },
+          "best_singleton_rate": 0.0,
+          "baseline_rate": 0.0,
+          "gain_vs_all_singleton_oracle": 0.0,
+          "causal_interaction": 0.0
+        },
+        "b2cand-create__observation-645": {
+          "pair_success_rate": 0.0,
+          "singleton_success_rates": {
+            "member-a": 0.0,
+            "member-b": 0.0,
+            "member-c": 0.0,
+            "member-d": 0.0
+          },
+          "best_singleton_rate": 0.0,
+          "baseline_rate": 0.0,
+          "gain_vs_all_singleton_oracle": 0.0,
+          "causal_interaction": 0.0
+        }
+      }
+    },
+    "create__override": {
+      "gain_vs_all_singleton_oracle": 0.0,
+      "required": 1.65,
+      "required_k": 5,
+      "positive_gain_contexts": 0,
+      "k_criterion_met": false,
+      "causal_interaction": 0.0,
+      "pair_mean_outcome": 0.0,
+      "best_singleton_member": "member-a",
+      "best_singleton_mean_outcome": 0.0,
+      "g4_beats_deployable_control": false,
+      "lesion_contexts_checked": 0,
+      "lesion_attribution_holds": false,
+      "per_context": {
+        "b2cand-create__override-650": {
+          "pair_success_rate": 0.0,
+          "singleton_success_rates": {
+            "member-a": 0.0,
+            "member-b": 0.0,
+            "member-c": 0.0,
+            "member-d": 0.0
+          },
+          "best_singleton_rate": 0.0,
+          "baseline_rate": 0.0,
+          "gain_vs_all_singleton_oracle": 0.0,
+          "causal_interaction": 0.0
+        },
+        "b2cand-create__override-651": {
+          "pair_success_rate": 0.0,
+          "singleton_success_rates": {
+            "member-a": 0.0,
+            "member-b": 0.0,
+            "member-c": 0.0,
+            "member-d": 0.0
+          },
+          "best_singleton_rate": 0.0,
+          "baseline_rate": 0.0,
+          "gain_vs_all_singleton_oracle": 0.0,
+          "causal_interaction": 0.0
+        },
+        "b2cand-create__override-652": {
+          "pair_success_rate": 0.0,
+          "singleton_success_rates": {
+            "member-a": 0.0,
+            "member-b": 0.0,
+            "member-c": 0.0,
+            "member-d": 0.0
+          },
+          "best_singleton_rate": 0.0,
+          "baseline_rate": 0.0,
+          "gain_vs_all_singleton_oracle": 0.0,
+          "causal_interaction": 0.0
+        },
+        "b2cand-create__override-653": {
+          "pair_success_rate": 0.0,
+          "singleton_success_rates": {
+            "member-a": 0.0,
+            "member-b": 0.0,
+            "member-c": 0.0,
+            "member-d": 0.0
+          },
+          "best_singleton_rate": 0.0,
+          "baseline_rate": 0.0,
+          "gain_vs_all_singleton_oracle": 0.0,
+          "causal_interaction": 0.0
+        },
+        "b2cand-create__override-654": {
+          "pair_success_rate": 0.0,
+          "singleton_success_rates": {
+            "member-a": 0.0,
+            "member-b": 0.0,
+            "member-c": 0.0,
+            "member-d": 0.0
+          },
+          "best_singleton_rate": 0.0,
+          "baseline_rate": 0.0,
+          "gain_vs_all_singleton_oracle": 0.0,
+          "causal_interaction": 0.0
+        },
+        "b2cand-create__override-655": {
+          "pair_success_rate": 0.0,
+          "singleton_success_rates": {
+            "member-a": 0.0,
+            "member-b": 0.0,
+            "member-c": 0.0,
+            "member-d": 0.0
+          },
+          "best_singleton_rate": 0.0,
+          "baseline_rate": 0.0,
+          "gain_vs_all_singleton_oracle": 0.0,
+          "causal_interaction": 0.0
+        }
+      }
+    },
+    "create__mismatch": {
+      "gain_vs_all_singleton_oracle": 0.0,
+      "required": 1.65,
+      "required_k": 5,
+      "positive_gain_contexts": 0,
+      "k_criterion_met": false,
+      "causal_interaction": 0.0,
+      "pair_mean_outcome": 0.0,
+      "best_singleton_member": "member-a",
+      "best_singleton_mean_outcome": 0.0,
+      "g4_beats_deployable_control": false,
+      "lesion_contexts_checked": 0,
+      "lesion_attribution_holds": false,
+      "per_context": {
+        "b2cand-create__mismatch-660": {
+          "pair_success_rate": 0.0,
+          "singleton_success_rates": {
+            "member-a": 0.0,
+            "member-b": 0.0,
+            "member-c": 0.0,
+            "member-d": 0.0
+          },
+          "best_singleton_rate": 0.0,
+          "baseline_rate": 0.0,
+          "gain_vs_all_singleton_oracle": 0.0,
+          "causal_interaction": 0.0
+        },
+        "b2cand-create__mismatch-661": {
+          "pair_success_rate": 0.0,
+          "singleton_success_rates": {
+            "member-a": 0.0,
+            "member-b": 0.0,
+            "member-c": 0.0,
+            "member-d": 0.0
+          },
+          "best_singleton_rate": 0.0,
+          "baseline_rate": 0.0,
+          "gain_vs_all_singleton_oracle": 0.0,
+          "causal_interaction": 0.0
+        },
+        "b2cand-create__mismatch-662": {
+          "pair_success_rate": 0.0,
+          "singleton_success_rates": {
+            "member-a": 0.0,
+            "member-b": 0.0,
+            "member-c": 0.0,
+            "member-d": 0.0
+          },
+          "best_singleton_rate": 0.0,
+          "baseline_rate": 0.0,
+          "gain_vs_all_singleton_oracle": 0.0,
+          "causal_interaction": 0.0
+        },
+        "b2cand-create__mismatch-663": {
+          "pair_success_rate": 0.0,
+          "singleton_success_rates": {
+            "member-a": 0.0,
+            "member-b": 0.0,
+            "member-c": 0.0,
+            "member-d": 0.0
+          },
+          "best_singleton_rate": 0.0,
+          "baseline_rate": 0.0,
+          "gain_vs_all_singleton_oracle": 0.0,
+          "causal_interaction": 0.0
+        },
+        "b2cand-create__mismatch-664": {
+          "pair_success_rate": 0.0,
+          "singleton_success_rates": {
+            "member-a": 0.0,
+            "member-b": 0.0,
+            "member-c": 0.0,
+            "member-d": 0.0
+          },
+          "best_singleton_rate": 0.0,
+          "baseline_rate": 0.0,
+          "gain_vs_all_singleton_oracle": 0.0,
+          "causal_interaction": 0.0
+        },
+        "b2cand-create__mismatch-665": {
+          "pair_success_rate": 0.0,
+          "singleton_success_rates": {
+            "member-a": 0.0,
+            "member-b": 0.0,
+            "member-c": 0.0,
+            "member-d": 0.0
+          },
+          "best_singleton_rate": 0.0,
+          "baseline_rate": 0.0,
+          "gain_vs_all_singleton_oracle": 0.0,
+          "causal_interaction": 0.0
+        }
+      }
+    }
+  },
+  "interleaved": {
+    "contexts_interleaved": 0,
+    "required": "> 0"
+  },
+  "control_arms": {
     "selected_pair": {
       "pair": "member-b+member-c",
-      "mean_outcome": -1.0,
-      "gain_vs_all_singleton_oracle": 0.0
+      "mean_gain_vs_all_singleton_oracle": 0.0
     },
-    "no_learning": {
+    "no_learning_fallback_ab": {
       "pair": "member-a+member-b",
-      "gain_vs_all_singleton_oracle": 0.0,
-      "note": "unfitted representation has no candidate, so it falls back to a fixed pair"
+      "mean_gain_vs_all_singleton_oracle": 0.0
     },
     "best_fixed_singleton": {
       "member": "member-a",
-      "mean_outcome": -1.0,
-      "deployable": true,
-      "all_singleton_mean_outcomes": {
-        "member-a": -1.0,
-        "member-b": -1.0,
-        "member-c": -1.0,
-        "member-d": -1.0
-      },
-      "tied_at_floor": true,
-      "note": "H1/G4 control: deployable strongest-singleton routing. When every singleton ties (all fail on a combination-only surface) the tie-break is deterministic but arbitrary; disclosed so the control is not read as a distinctive winner"
+      "mean_gain_vs_all_singleton_oracle": 0.0,
+      "note": "the deployable control IS the max singleton; its gain vs itself is 0"
     },
     "best_observed_fixed_pair": {
       "pair": "member-a+member-c",
-      "gain_vs_all_singleton_oracle": 2.0,
-      "deployable": false,
-      "note": "diagnostic only; it is not a deployable policy"
+      "mean_gain_vs_all_singleton_oracle": 1.0,
+      "note": "post-hoc diagnostic column; oracle-deployable=False"
     },
     "random_pair": {
       "pair": "member-b+member-d",
-      "gain_vs_all_singleton_oracle": 0.0
+      "mean_gain_vs_all_singleton_oracle": 0.0
     },
     "a_count": {
-      "prediction_equal_for_all_pairs": true,
+      "constant_prediction": true,
       "discriminates": false
     },
     "additive_train_only": {
-      "ranking": {
-        "member-a+member-d": 2.25,
-        "member-b+member-d": 1.75,
-        "member-c+member-d": 1.75,
-        "member-a+member-b": 1.0,
-        "member-a+member-c": 1.0,
-        "member-b+member-c": 0.5
-      },
-      "note": "train-only additive control; no pair-interaction term"
+      "rank_correlation_vs_candidate": -0.26968
     }
   },
-  "causal_interaction": {
-    "member-a+member-b": 0.0,
-    "member-a+member-c": 2.0,
-    "member-a+member-d": 0.0,
-    "member-b+member-c": 0.0,
-    "member-b+member-d": 0.0,
-    "member-c+member-d": 0.0
-  },
-  "stability": {
-    "renaming_stable": true,
-    "order_permutation_stable": true
+  "gates": {
+    "static_checks": true,
+    "g1_intervention_reality": true,
+    "g2_data_isolation": true,
+    "g3_ranking_stability": true,
+    "g4_routing_beats_deployable": false,
+    "g5_collaboration": false,
+    "g6_budget": true,
+    "restore": true,
+    "representation": true
   },
   "checkpoint": {
     "restore_matches_parent": true,
     "tamper_rejected": true
   },
   "cost": {
-    "member_training_seconds": 10.597,
-    "matrix_seconds": 20.098,
-    "fit_seconds": 0.038,
+    "member_training_seconds": 11.098,
+    "fit_seconds": 22.076,
+    "matrix_seconds": 3.955,
+    "restore_seconds": 1.631,
     "episodes_total": 748
-  },
-  "intervention_reality": {
-    "cells": 198,
-    "baseline_cells": 18,
-    "zero_step_episodes_total": 0,
-    "zero_step_intervention_cells": {},
-    "zero_step_intervention_episodes": 0,
-    "interventions_happened": true
-  },
-  "gates": {
-    "G1_intervention_reality": true,
-    "G2_data_isolation": true,
-    "G3_ranking_stability": true,
-    "G4_task_gate_H1": false,
-    "G5_collaboration_gate_H2": false,
-    "G6_budget_gate": true
   },
   "growth_admitted": false,
   "can_promote": false,
-  "boundary": "selection and discrimination scores are not collaboration evidence; the load-bearing structural factor is still one (existence precondition); a mean gain above the oracle is not one observed collaboration event",
-  "elapsed_seconds": 32.461
+  "interpretation": "completed: outcome=failed; gates failed: ['g4_routing_beats_deployable', 'g5_collaboration']",
+  "elapsed_seconds": 39.018
 }
