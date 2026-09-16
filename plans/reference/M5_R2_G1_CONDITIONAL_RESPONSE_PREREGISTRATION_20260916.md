@@ -1,7 +1,7 @@
 # M5 R2-G1 条件回答接口与原生读出路由预注册
 
 > 更新：2026-09-16。本文是 R2-P2 之后的独立接口版本，用于验证训练输入与原生回答读出是否同构。它不追改 [R2 aligned language pilot 预注册](M5_R2_ALIGNED_LANGUAGE_PILOT_PREREGISTRATION_20260916.md) 的 v1 结果，也不授权正式 256-episode pilot、默认入口切换、外部模型接入或 Mini 验收。
-> 当前状态：G1-S0/S1 已完成协议与受控 smoke；preflight通过，但20 epoch混合训练仍出现50% train output collision、train exact=0.5，dev/final sequence criterion=0，paired改写敏感性=0。随后完成H2/H3只读审计：train prefix context distinct=2/2、context pair L2=0.9694、next-byte probability L1=0.0771、argmax difference=0、recovery repeatable=true。H3.1 beam只改变候选归属，没有聚合收益；H3.2 response-start candidate在20 epoch后train exact/sequence/top1=1.0，但dev/final exact/sequence/top1=0，paired delta=0，preflight和恢复均通过；H3.3-B/C同预算泛化与H3.4逐位置条件信用审计已经完成，仍未形成S2/L2能力结论，下一包转H3.5目标/数据/表示合同复审。
+> 当前状态：G1-S0/S1 已完成协议与受控 smoke；preflight通过，但20 epoch混合训练仍出现50% train output collision、train exact=0.5，dev/final sequence criterion=0，paired改写敏感性=0。随后完成H2/H3只读审计、H3.1 beam、H3.2 response-start、H3.3-B/C同预算泛化和H3.4逐位置信用审计，仍未形成S2/L2能力结论。H3.5已完成表示复审，H3.5-A已冻结持久response plan候选合同，下一步为隔离candidate与plumbing smoke。
 
 ## 1. 目的
 
@@ -144,4 +144,4 @@ H3.3-A只读泛化剖面已经完成：旧smoke的dev/final目标首字节均未
 
 H3.3-C的response-phase owner从assistant boundary开始承担整段response的概率和局部学习，不加入`task_family` oracle、外部provider、结果信用或默认入口。H3.4随后在固定B/C child上逐位置记录target rank/probability/entropy/cumulative likelihood，并绑定free-generation的UTF-8、无替换、end-marker、边界、停止原因和输出碰撞；结果见`reports/taiji_r2_h3_4_conditional_credit_20260916.json`。B/C的continuation legal top1均为train/dev/final=0.78431/0.37143/0.26667，end-marker位置均为1.0；自由生成合法率、无替换率和边界率均为1.0，但exact/sequence仍为0，dev/final碰撞率为0.5/0.333。结论是停止/编码不是主瓶颈，失败集中在条件response首字节与未见continuation的可迁移性。
 
-当前唯一下一步是H3.5目标/数据/表示合同复审：检查byte级credit是否过细、prefix state是否能被response readout使用、family-disjoint课程是否覆盖共享起点但不同内容，并保持response边界、未知策略、历史上下文、旧能力保持、恢复和300k预算约束。H3.5必须形成版本化的高上限条件目标/表示方案及最小可证伪对照；若不能提出可证伪机制，才进入一次明确总预算的结构容量比较。未完成前不启动正式pilot、不进入L2/Mini、不修改默认入口或P3b/P5.2d历史与未提交实验文件。
+H3.5已完成目标/数据/表示合同复审，并选定`response_plan_state + plan-conditioned byte renderer`。H3.5-A进一步冻结32维plan、确定性span监督、family-disjoint数据结构、300k总预算、运行时oracle禁令、checkpoint preflight与plan消融。当前唯一下一步是实现隔离candidate与plumbing smoke；在全部保存恢复和预算门通过前不训练，不启动正式pilot/L2/Mini，也不修改默认入口或P3b/P5.2d历史与未提交实验文件。

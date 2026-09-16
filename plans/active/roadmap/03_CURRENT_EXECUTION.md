@@ -32,7 +32,7 @@
 | 本地heldout | 未跟踪reports/taiji_p3b_heldout_surprise_20260916.json为not_resolved | 先审协议与血缘；surprise不能替代对话评价 |
 | 知识/身体 | P5.1g仍trial并回滚；Workbench合同资产存在 | 真实语料child未准入、身体全生命周期未结项 |
 | CI | 9月16日查询run34869725409，d09dcc21，总体failure；3.10失败，3.12/Windows等通过 | 不是当前HEAD的CI；不称全绿，旧27项SystemExit不再视作未定位代码缺陷 |
-| R2 aligned language seam | 结构化episode、response-only native readout、checkpoint digest/atomic save、zero/child恢复前置、paired诊断、static/slow/fast/fast_slow四臂、P2序列级只读评价、H3.1 beam、H3.2 response-start、H3.3 response-phase与泛化剖面、H3.4逐位置信用审计均已实现 | H3.3-B/C在同一300k预算下均为effective=273,890，preflight/恢复/只读成立；H3.4显示UTF-8、end-marker和边界读出已稳定，但dev/final exact/sequence仍为0，条件首字节与未见continuation仍不可迁移；未形成S2/L2/Mini，下一步转H3.5目标/数据/表示合同复审 |
+| R2 aligned language seam | 结构化episode、response-only native readout、checkpoint digest/atomic save、zero/child恢复前置、paired诊断、static/slow/fast/fast_slow四臂、P2序列级只读评价、H3.1 beam、H3.2 response-start、H3.3 response-phase与泛化剖面、H3.4逐位置信用审计及H3.5表示合同均已完成 | H3.4确认UTF-8/end-marker稳定但条件首字节与未见continuation不可迁移；H3.5-A已冻结32维持久plan、span监督、300k预算、oracle禁令和preflight，未形成S2/L2/Mini，下一步实现隔离candidate与plumbing smoke |
 | R2-G1 conditional response v2 | v2显式policy prefix、版本化checkpoint/corpus、train/dev/final输出碰撞指标和G1-S0/S1受控诊断已实现 | preflight通过；20 epoch混合训练的train collision=0.5、train exact=0.5，dev/final sequence criterion=0，paired改写敏感性=0；H2/H3审计显示train prefix context distinct=2/2、context L2=0.9694、next-byte probability L1=0.0771、argmax difference=0、recovery repeatable=true；输入已进入native state，但readout首选路径未形成可分离margin，不扩大同质训练 |
 
 未提交结果转正须有：代码/协议版本、执行时间、产物hash、数据与模型血缘、原始结果、失败说明、独立输出路径。提交本身不证明有效；已见结果不得包装成前瞻预注册。
@@ -131,7 +131,8 @@ R2-D0设计合同已经转为实施，当前工作包分成四个连续出口，
 12. **R2-H3.3-B共享首字节支持的family-disjoint泛化与课程/容量对照**：已完成预算一致复测。dev/final首字节和unknown policy均在train有支持，但完整response/family未见；同一300k总预算中core=262,839、response-start候选=11,051、effective=273,890，`within_target=true`，preflight通过。10 epoch结果为response proxy=0.63730、train/dev/final exact与sequence均为0，response-start首字节top1为0.5/0.25/0，dev/final margin为0.06973/-0.02639，paired sensitivity=0.42857。结论是支持集混杂已排除，但整段response仍未形成可迁移读出。
 13. **R2-H3.3-C phase-consistent完整response candidate**：已完成预算一致复测。使用同一v2输入合同、同一300k总预算和同一family-disjoint控制集，让`predictive_readout.response_phase`从assistant boundary开始承担整段response概率和局部学习；core=262,839、candidate=11,051、effective=273,890，`within_target=true`，preflight、checkpoint恢复和只读泛化均通过。10 epoch结果为response proxy=0.63730、train/dev/final exact与sequence均为0，phase首字节top1为0.5/0.25/0，dev/final margin为-0.10842/-0.18765，paired sensitivity=0.42857。结论是首字节/后续信用统一后仍未出现未见条件回答，不进入正式pilot。
 14. **R2-H3.4条件信用可观测性审计**：已完成。固定预算一致的H3.3-B/C child checkpoint和同一family-disjoint控制集，逐回答位置记录teacher-forced目标概率/排名/熵/累计似然，并绑定free-generation的原始bytes、UTF-8合法性、end-marker停止、边界和输出碰撞；结果见`reports/taiji_r2_h3_4_conditional_credit_20260916.json`。B/C均为effective=273,890，preflight、恢复和只读成立；train/dev/final自由生成UTF-8、无替换字符、边界率均为1.0，但exact/sequence均为0，文本碰撞率为0.5/0.5/0.333。B首字节legal top1为0.5/0.25/0，C为0.5/0.25/0；continuation legal top1两者相同，为0.78431/0.37143/0.26667；end-marker位置三组均为1.0。结论是停止/边界信用不是主瓶颈，失败集中在条件响应起点与未见continuation的可迁移性；不进入正式pilot，不追加同质byte训练。
-15. **R2-H3.5目标/数据/表示合同复审**：当前唯一下一包。围绕H3.4的分层结果审查response target是否把自然语言内容压成过细的byte信用、prefix到response的状态是否可读、family-disjoint课程是否覆盖“共享起点但不同内容”的结构；必须同时复审response边界、未知策略、历史上下文、保持/恢复与总预算，不以调学习率或再加epoch替代。出口只能是：形成一个版本化的高上限条件目标/表示合同并配套最小可证伪对照，或明确记录该路线的结构性失败后转入一次有预算的结构容量比较；在此之前不启动正式pilot、L2/Mini或默认入口改造。
+15. **R2-H3.5目标/数据/表示合同复审**：已完成。复审确认现有链路已经学会UTF-8/end-marker并保留条件状态差异，但`prefix state -> 单步byte局部误差`缺少贯穿回答的内容计划；继续同构byte训练、只换token粒度或先扩shared fabric都不能直接补上该机制。已冻结[分层回答计划与渲染合同](../../reference/M5_R2_H3_5_HIERARCHICAL_RESPONSE_PLAN_CONTRACT_20260916.md)：采用`prefix encoder -> response_plan_state -> plan-conditioned byte renderer`，运行时不读取task label/参考答案，计划与渲染分账、可消融、可保存恢复，并保持300k总预算和family-disjoint边界。当前到达核心架构决策后的实现入口，仍不构成S2/L2/Mini。
+16. **R2-H3.5-A分层回答计划隔离候选**：实现前冻结已完成，见[预注册](../../reference/M5_R2_H3_5A_RESPONSE_PLAN_PREREGISTRATION_20260916.md)与[可机读合同](../../reference/contracts/r2_h3_5a_response_plan_v1.json)。已固定32维plan、确定性response span监督编码、同一300k总预算、运行时oracle禁令、control/treatment匹配项、checkpoint preflight、消融和停止门。当前唯一下一包是实现最小candidate与plumbing smoke；在zero/fresh restore/一次更新/child restore/parent保护/预算预报/plan消融全部通过前不训练。只有后续同预算treatment在dev出现plan margin与未见continuation方向一致改善、final无collision/UTF-8/boundary退化且plan消融撤销收益，才允许继续；否则按目标编码、接口信用或结构机制层结项，不以更多epoch掩盖。
 
 不得复用P3b报告名或把`seed_beta.pt`当作可写目标。设计包的出口仍包括输入/上下文/回答边界/目标定义、训练与运行期分工、编码/语义/上下文/结果四层评价、checkpoint前置、L2/L3停止条件，以及失败后回到数据、目标、表示、读出或架构哪一层的判读规则；本轮已把其中的可执行保存恢复和S1读出部分先落地。
 
@@ -241,10 +242,12 @@ B2已结项，同族复现不反复计新能力。以[binder可行性](../../ref
 
 唯一[未来VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)记录候选架构，本文管当前依赖与权限。每包结项同步01/02/03/07和首页，不追加互相矛盾的“最新状态”。
 
-## H3.4结论与当前唯一下一步：实施R2-H3.5目标/数据/表示合同复审
+## H3.5结论与当前唯一下一步：冻结并实现R2-H3.5-A分层回答计划候选
 
 H3.3的预算一致证据已经完成：H3.3-B response-start与H3.3-C response-phase在同一v2控制集、同一300k总预算、同一10 epoch和同一评价链上均通过preflight与恢复，但train/dev/final exact和sequence均为0；两者dev/final首字节top1均为0.25/0，paired改写敏感性均为0.42857。B的dev/final首字节margin为0.06973/-0.02639，C为-0.10842/-0.18765；统一整段response owner没有产生能力出口。由此H3.3结项，不再追加同质byte训练或继续堆叠边界候选。
 
 H3.4已固定上述child checkpoint与数据完成审计。B的response-start owner与C的response-phase owner在训练后都给出相同的continuation surface：train/dev/final continuation legal top1为0.78431/0.37143/0.26667，平均legal rank为1.3137/14.8571/17.8667；end-marker位置legal top1三组均为1.0。两者自由生成的UTF-8合法率、无替换率、end-marker边界率均为1.0，但exact/sequence均为0，dev/final文本碰撞率仍为0.5/0.333。H3.4因此排除了“停止器或UTF-8读出是主要瓶颈”，也没有发现可直接支持S2的稳定未见margin。
 
-H3.5必须先完成目标/数据/表示合同复审：检查byte级信用是否在自然语言边界上过细，检查prefix状态能否区分共享首字节但不同答案，检查课程是否覆盖未见response与未知策略，同时保持原生owner、预算、恢复、旧能力保持和family-disjoint边界。只有复审形成一个新的、版本化的高上限条件表示方案，才允许设计最小对照；如果复审不能提出可证伪机制，才进入一次明确总预算的结构容量比较。无论哪一种，都不进入正式pilot、L2或Mini，不修改共享fabric、默认`SeedRuntime.chat`入口、P3b历史文件、Mini验收合同或P5.2d未提交实验文件。
+H3.5复审已经完成。结论不是废弃现有主线，而是在已有原生状态、checkpoint、预算与评价底座上补上缺失层：assistant boundary由prefix state产生持久`response_plan_state`，byte renderer在整个回答中同时读取当前上下文与计划状态；计划目标、byte渲染、boundary和retention分别记账。运行时不得读取`task_family`、split、评分字段或参考response，现有UTF-8/end-marker路径保持不动。完整选择、数据课程、两臂、指标和停止规则见[H3.5分层回答计划与渲染合同](../../reference/M5_R2_H3_5_HIERARCHICAL_RESPONSE_PLAN_CONTRACT_20260916.md)。
+
+H3.5-A实现前冻结已经完成：32维plan、确定性response span监督编码、参数预算、数据结构、control/treatment匹配、preflight、plan消融和失败归因均已形成可机读合同。当前唯一下一步自动进入最小candidate与plumbing smoke；先实现保存恢复和预算预报，再运行zero/fresh restore/一次更新/child restore/parent保护/plan消融，不执行正式训练。H3.5-A只验证“持久回答计划”机制，不启动正式pilot、L2或Mini，不修改共享fabric、默认`SeedRuntime.chat`入口、P3b历史文件、Mini验收合同或P5.2d未提交实验文件。

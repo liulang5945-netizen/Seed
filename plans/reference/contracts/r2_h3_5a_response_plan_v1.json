@@ -1,0 +1,104 @@
+{
+  "format": "taiji-r2-h3-5a-response-plan-preregistration-v1",
+  "status": "frozen_before_implementation",
+  "serialization": "r2-h3-5a-hierarchical-response-v1",
+  "hypothesis": "a persistent native response plan improves unseen conditional continuation under a matched total budget",
+  "authorization": {
+    "allowed": [
+      "isolated_candidate_implementation",
+      "plumbing_smoke",
+      "checkpoint_preflight"
+    ],
+    "forbidden": [
+      "formal_training",
+      "default_runtime_change",
+      "shared_fabric_change",
+      "l2_or_mini_claim",
+      "external_provider"
+    ]
+  },
+  "architecture": {
+    "prefix_owner": "predictive_state.motor_context",
+    "assistant_boundary": "explicit_v2_marker",
+    "plan_owner": "predictive_readout.response_plan",
+    "plan_width": 32,
+    "plan_activation": "bounded",
+    "plan_lifecycle": "create_once_at_assistant_boundary_clear_on_reset",
+    "renderer_owner": "predictive_readout.response_plan_renderer",
+    "renderer_inputs": ["motor_context", "response_plan_state"],
+    "utf8_and_end_marker": "reuse_protected_constraints",
+    "mutually_exclusive_with": ["response_start", "response_phase"]
+  },
+  "target_encoder": {
+    "runtime_available": false,
+    "source": "reference_response_without_end_marker",
+    "unit": "utf8_codepoint_contiguous_span",
+    "max_spans": 8,
+    "projection": "version_salted_deterministic_signed_hash",
+    "output_width": 32,
+    "normalization": "mean_then_l2"
+  },
+  "budget": {
+    "effective_active_parameter_limit": 300000,
+    "reserve_before_allocation": true,
+    "report": ["core", "planner", "renderer", "effective", "remaining"]
+  },
+  "runtime_oracles_forbidden": [
+    "task_family",
+    "family_id",
+    "split",
+    "required_terms",
+    "forbidden_terms",
+    "unknown_markers",
+    "reference_response"
+  ],
+  "data": {
+    "family_disjoint": true,
+    "response_disjoint": true,
+    "required_structures": [
+      "same_first_codepoint_different_content",
+      "different_surface_same_intent",
+      "answer_policy",
+      "say_unknown_policy",
+      "clarify_policy",
+      "refuse_policy",
+      "history_paraphrase",
+      "context_permutation"
+    ],
+    "exposed_h3_3_h3_4_fixture_role": "regression_only",
+    "final_during_smoke": "schema_and_recovery_only"
+  },
+  "comparison": {
+    "control": "response_phase",
+    "treatment": "response_plan_plus_plan_conditioned_renderer",
+    "matched": ["parent", "total_budget", "data_order", "seeds", "max_updates", "utf8_constraints", "end_marker"]
+  },
+  "checkpoint_preflight": [
+    "zero_save",
+    "fresh_process_restore",
+    "one_target_update",
+    "child_atomic_save",
+    "child_restore",
+    "parent_digest_unchanged",
+    "read_only_repeatable_after_restore",
+    "candidate_clear_restores_protected_path"
+  ],
+  "smoke_exit": [
+    "schema_and_digest_fail_closed",
+    "distinct_prefixes_produce_repeatable_distinct_plan_digests",
+    "target_update_changes_candidate_only",
+    "restore_repeats_plan_renderer_and_generation",
+    "plan_ablation_available",
+    "preallocation_budget_report_within_limit"
+  ],
+  "stop_conditions": [
+    "checkpoint_incomplete",
+    "parent_digest_changed",
+    "effective_parameters_over_budget",
+    "runtime_oracle_used",
+    "train_only_improvement",
+    "boundary_only_improvement",
+    "ablation_does_not_remove_effect",
+    "restore_not_repeatable"
+  ]
+}

@@ -3,7 +3,7 @@
 > 更新：2026-09-16。本文是R2当前主线的设计合同；结构化episode入口、checkpoint前置、P1 developmental 对照、P2序列级只读评价、G1条件prefix、H2/H3内部表示/读出审计、H3.1序列路径对照、H3.2 response-start候选读出、H3.3泛化控制、H3.3-C response-phase候选和H3.4逐位置条件信用审计已经按本文落地。当前结果只证明链路、S1编码层和局部训练样本拟合可审计，不证明S2条件回答或L2能力；正式pilot、默认入口修改、外部模型接入和产品采用仍未授权。
 > 上游依据：[当前推进方案](../active/roadmap/03_CURRENT_EXECUTION.md)、[语言监督诊断](M5_CAP0_P1_LANGUAGE_SUPERVISION_DIAGNOSIS_20260915.md)、[P3b预注册](M5_P3B_ALIGNED_LANGUAGE_TRAINING_PREREGISTRATION_20260915.md)、[R0证据与门禁审计](M5_R0_EVIDENCE_GATE_AUDIT_20260916.md)。
 > 目标不是立刻交付聊天演示，而是在有明确停止条件的前提下，建立第一个真正能够回答基础问题的原生模型验收路径。
-> 当前状态：R2-D0设计合同已转为实施，R2-P0保存/恢复preflight已通过；static/slow/fast/fast_slow四臂均通过同一恢复与只读边界。P2 smoke的dev/final UTF-8合法率和无替换率为1.0，但回答边界、必需内容覆盖、未知策略、sequence criterion和exact response均未通过；G1 v2显式policy后，20 epoch混合训练仍有50% train output collision、dev/final sequence criterion为0、paired改写敏感性为0。H2/H3只读审计显示train prefix context distinct=2/2、context pair L2=0.9694、next-byte probability L1=0.0771、argmax difference=0、recovery repeatable=true；H3.1 beam只交换训练样本的候选归属而无聚合收益，H3.2 response-start候选只在train拟合成功；预算一致的H3.3-B/C均为effective=273,890且exact/sequence仍为0；H3.4显示UTF-8与end-marker边界可读，但条件首字节和未见continuation仍不可迁移；当前进入H3.5目标/数据/表示合同复审。
+> 当前状态：R2-D0设计合同已转为实施，R2-P0保存/恢复preflight已通过；static/slow/fast/fast_slow四臂均通过同一恢复与只读边界。P2 smoke的dev/final UTF-8合法率和无替换率为1.0，但回答边界、必需内容覆盖、未知策略、sequence criterion和exact response均未通过；G1 v2显式policy后，20 epoch混合训练仍有50% train output collision、dev/final sequence criterion为0、paired改写敏感性为0。H2/H3只读审计显示train prefix context distinct=2/2、context pair L2=0.9694、next-byte probability L1=0.0771、argmax difference=0、recovery repeatable=true；H3.1 beam只交换训练样本的候选归属而无聚合收益，H3.2 response-start候选只在train拟合成功；预算一致的H3.3-B/C均为effective=273,890且exact/sequence仍为0；H3.4显示UTF-8与end-marker边界可读，但条件首字节和未见continuation仍不可迁移；H3.5复审已选定分层`response_plan_state + byte renderer`合同，下一步为H3.5-A隔离candidate冻结与smoke。
 
 ## 1. 本次主线决策
 
@@ -313,4 +313,4 @@ H3.3-A已在同一v2 child checkpoint上完成只读数据/读出剖面：train�
 
 H3.3-B/C的只读延伸H3.4已经完成：在固定child上逐位置记录target rank/probability/entropy/cumulative likelihood，并绑定free-generation的UTF-8、无替换、end-marker、边界、停止原因和输出碰撞。两种owner的continuation legal top1在train/dev/final均为0.78431/0.37143/0.26667，end-marker位置均为1.0；自由生成合法率、无替换率和边界率均为1.0，但exact/sequence仍为0。该结果排除了停止器与编码合法性作为主瓶颈，失败集中在条件response首字节与未见continuation的可迁移性。
 
-当前证据支持的唯一下一步是R2-H3.5目标/数据/表示合同复审：检查byte级credit是否过细、prefix state是否能被response readout使用、family-disjoint课程是否覆盖共享起点但不同内容，并保持response边界、未知策略、历史上下文、旧能力保持、恢复和300k预算约束。H3.5必须形成一个版本化的高上限条件目标/表示方案及最小可证伪对照；若不能提出可证伪机制，才进入一次明确总预算的结构容量比较。未完成前不启动正式pilot、不进入L2/Mini、不修改默认入口、P3b历史结果、Mini验收合同或P5.2d未提交实验文件。
+H3.5目标/数据/表示合同复审已经完成，详见[分层回答计划与渲染合同](M5_R2_H3_5_HIERARCHICAL_RESPONSE_PLAN_CONTRACT_20260916.md)。结论是现有byte信用已经覆盖编码/停止，却缺少从prefix产生并贯穿回答的内容计划；下一步采用`prefix encoder -> response_plan_state -> plan-conditioned byte renderer`，把plan、render、boundary和retention信用分账。当前唯一下一步是H3.5-A实现前冻结包与隔离candidate smoke，保持family-disjoint、恢复和300k总预算约束；不启动正式pilot、不进入L2/Mini、不修改默认入口、P3b历史结果、Mini验收合同或P5.2d未提交实验文件。
