@@ -68,10 +68,21 @@ def _parse_args() -> argparse.Namespace:
         action="store_true",
         help="enable the isolated native full-response readout candidate",
     )
+    parser.add_argument(
+        "--response-plan-readout",
+        action="store_true",
+        help="enable the isolated persistent response-plan candidate",
+    )
+    parser.add_argument("--response-plan-width", type=int, default=32)
     parser.add_argument("--sequence-beam-width", type=int, default=4)
     parser.add_argument("--sequence-top-k", type=int, default=8)
     parser.add_argument("--sequence-max-bytes", type=int, default=64)
     parser.add_argument("--resume", type=Path)
+    parser.add_argument(
+        "--defer-final",
+        action="store_true",
+        help="do not read final capability outputs during development runs",
+    )
     return parser.parse_args()
 
 
@@ -102,8 +113,17 @@ def main() -> int:
         raise SystemExit("--max-episodes must be positive")
     if args.sequence_beam_width <= 0 or args.sequence_top_k <= 0 or args.sequence_max_bytes <= 0:
         raise SystemExit("sequence diagnostic parameters must be positive")
-    if args.response_start_readout and args.response_phase_readout:
-        raise SystemExit("response-start and response-phase readouts are mutually exclusive")
+    if args.response_plan_width <= 0:
+        raise SystemExit("--response-plan-width must be positive")
+    if sum(
+        bool(item)
+        for item in (
+            args.response_start_readout,
+            args.response_phase_readout,
+            args.response_plan_readout,
+        )
+    ) > 1:
+        raise SystemExit("response candidate readouts are mutually exclusive")
     if not args.dataset.is_file():
         raise SystemExit(f"dataset does not exist: {args.dataset}")
     _refuse_protected(args.checkpoint)
@@ -118,7 +138,12 @@ def main() -> int:
             args.parameter_budget,
             seed=args.seed,
             additional_predictive_readouts=int(
-                args.response_start_readout or args.response_phase_readout
+                args.response_start_readout
+                or args.response_phase_readout
+                or args.response_plan_readout
+            ),
+            response_plan_width=(
+                args.response_plan_width if args.response_plan_readout else 0
             ),
         )
 
@@ -129,12 +154,15 @@ def main() -> int:
                 developmental_mode=args.developmental_mode or "static",
                 response_start_readout=args.response_start_readout,
                 response_phase_readout=args.response_phase_readout,
+                response_plan_readout=args.response_plan_readout,
+                response_plan_width=args.response_plan_width,
             ),
         )
 
     additional_readouts = int(
         trainer.model.response_start_readout_enabled
         or trainer.model.response_phase_readout_enabled
+        or trainer.model.response_plan_readout_enabled
     )
 
     # Keep the exact zero-step payload for the paired post-training diagnostic.
@@ -143,14 +171,12 @@ def main() -> int:
     # preflight still performs its own fixed-train-episode round-trip, while
     # this paired baseline makes it impossible to read a post-training report
     # without a same-lineage dev/final comparator.
-    baseline = {
-        "train": trainer.evaluate("train"),
-        "dev": trainer.evaluate("dev"),
-        "final": trainer.evaluate("final"),
-    }
+    evaluation_splits = ("train", "dev") if args.defer_final else ("train", "dev", "final")
+    transfer_splits = ("dev",) if args.defer_final else ("dev", "final")
+    baseline = {split: trainer.evaluate(split) for split in evaluation_splits}
     baseline_condition_route = {
         split: trainer.condition_route_diagnostic(split)
-        for split in ("train", "dev", "final")
+        for split in evaluation_splits
     }
     baseline_sequence_decode = None
     if args.sequence_diagnostic:
@@ -161,31 +187,34 @@ def main() -> int:
                 top_k=args.sequence_top_k,
                 max_generation_bytes=args.sequence_max_bytes,
             )
-            for split in ("train", "dev", "final")
+            for split in evaluation_splits
         }
     baseline_response_start_margin = None
     if args.response_start_readout:
         baseline_response_start_margin = {
             split: trainer.response_start_margin_diagnostic(split)
-            for split in ("train", "dev", "final")
+            for split in evaluation_splits
         }
     baseline_response_phase_margin = None
     if args.response_phase_readout:
         baseline_response_phase_margin = {
             split: trainer.response_phase_margin_diagnostic(split)
-            for split in ("train", "dev", "final")
+            for split in evaluation_splits
         }
     preflight_dir = args.preflight_dir or args.checkpoint.parent / "preflight"
     preflight = checkpoint_roundtrip_preflight(trainer, directory=preflight_dir)
     training = trainer.train(epochs=args.epochs, max_episodes=args.max_episodes)
     checkpoint_path = trainer.save(args.checkpoint)
-    paired = paired_checkpoint_diagnostic(trainer, baseline_payload)
+    paired = paired_checkpoint_diagnostic(
+        trainer, baseline_payload, splits=transfer_splits
+    )
     report = {
         "format": "taiji-r2-aligned-language-run-v2",
         "status": "completed",
         "pre_registration": PRE_REGISTRATION,
         "dataset": corpus.manifest(),
         "config": trainer.config.to_payload(),
+        "final_deferred": bool(args.defer_final),
         "capacity": {
             "target_active_parameters": int(args.parameter_budget),
             "planned_core_active_parameters": trainer.model.config.planned_active_parameter_count,
@@ -196,6 +225,16 @@ def main() -> int:
                     trainer.model.config.alphabet_size * trainer.model.config.motor_context_dim
                     + trainer.model.config.alphabet_size
                 )
+            ),
+            "response_plan_parameters": (
+                trainer.model.response_plan_readout.active_parameter_count
+                - (
+                    trainer.model.config.alphabet_size
+                    * trainer.model.config.motor_context_dim
+                    + trainer.model.config.alphabet_size
+                )
+                if trainer.model.response_plan_readout_enabled
+                else 0
             ),
             "effective_active_parameters": trainer.model.parameter_count(),
             "within_target": trainer.model.parameter_count() <= int(args.parameter_budget),
@@ -212,10 +251,10 @@ def main() -> int:
         "checkpoint": str(checkpoint_path),
         "train": trainer.evaluate("train"),
         "dev": trainer.evaluate("dev"),
-        "final": trainer.evaluate("final"),
+        "final": None if args.defer_final else trainer.evaluate("final"),
         "condition_route": {
             split: trainer.condition_route_diagnostic(split)
-            for split in ("train", "dev", "final")
+            for split in evaluation_splits
         },
         "sequence_decode": (
             {
@@ -225,7 +264,7 @@ def main() -> int:
                     top_k=args.sequence_top_k,
                     max_generation_bytes=args.sequence_max_bytes,
                 )
-                for split in ("train", "dev", "final")
+                for split in evaluation_splits
             }
             if args.sequence_diagnostic
             else None
@@ -233,7 +272,7 @@ def main() -> int:
         "response_start_margin": (
             {
                 split: trainer.response_start_margin_diagnostic(split)
-                for split in ("train", "dev", "final")
+                for split in evaluation_splits
             }
             if args.response_start_readout
             else None
@@ -241,7 +280,7 @@ def main() -> int:
         "response_phase_margin": (
             {
                 split: trainer.response_phase_margin_diagnostic(split)
-                for split in ("train", "dev", "final")
+                for split in evaluation_splits
             }
             if args.response_phase_readout
             else None

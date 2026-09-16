@@ -1,0 +1,81 @@
+{
+  "format": "taiji-r2-h3-5a-matched-run-v1",
+  "status": "frozen_before_training",
+  "dataset": "tests/fixtures/r2_h3_5a_response_plan_v3.jsonl",
+  "parameter_budget": 300000,
+  "seeds": [20260916, 20260917, 20260918],
+  "epochs": 10,
+  "max_episodes_per_epoch": 12,
+  "device": "cpu",
+  "final_access": {
+    "during_development": "schema_and_restore_only",
+    "capability_read": "once_after_all_seeds_and_dev_reports_are_frozen"
+  },
+  "arms": {
+    "legacy_control": {
+      "flag": "--response-phase-readout",
+      "purpose": "compare against the H3.3-C owner"
+    },
+    "treatment": {
+      "flags": ["--response-plan-readout", "--response-plan-width", "32"],
+      "purpose": "test the persistent native response plan"
+    },
+    "causal_ablation": {
+      "source": "treatment_checkpoint",
+      "operation": "response_plan_probabilities(ablate_plan=true)",
+      "parameter_matched": true,
+      "learning_disabled": true
+    }
+  },
+  "matched": [
+    "dataset_digest",
+    "seed",
+    "epoch_count",
+    "episode_order",
+    "maximum_updates",
+    "parameter_budget_ceiling",
+    "utf8_constraints",
+    "end_marker",
+    "checkpoint_preflight",
+    "evaluation_code"
+  ],
+  "command_template": [
+    "python",
+    "scripts/training/train_taiji_r2_aligned.py",
+    "--dataset",
+    "tests/fixtures/r2_h3_5a_response_plan_v3.jsonl",
+    "--parameter-budget",
+    "300000",
+    "--epochs",
+    "10",
+    "--max-episodes",
+    "12",
+    "--defer-final",
+    "--seed",
+    "{seed}",
+    "--checkpoint",
+    "{isolated_checkpoint_path}",
+    "--report",
+    "{isolated_report_path}",
+    "--preflight-dir",
+    "{isolated_preflight_path}"
+  ],
+  "development_gate": {
+    "required_before_final": [
+      "all_preflights_pass",
+      "all_runs_within_budget",
+      "parent_digests_unchanged",
+      "three_seed_dev_plan_margin_direction_consistent",
+      "three_seed_dev_continuation_direction_consistent",
+      "causal_ablation_removes_treatment_gain"
+    ],
+    "stop": [
+      "runtime_oracle_detected",
+      "checkpoint_or_restore_failure",
+      "budget_exceeded",
+      "train_only_gain",
+      "boundary_only_gain",
+      "ablation_no_effect"
+    ]
+  }
+}

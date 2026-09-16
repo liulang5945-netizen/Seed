@@ -4,7 +4,7 @@
 
 ## 项目位置
 
-当前为M5知识与身体。K轴限定晋级；B2-v4在冻结create族内支持协作，但不等于轴独立晋级或产品采用。在线回写仍失败，且[R0审计](reference/M5_R0_EVIDENCE_GATE_AUDIT_20260916.md)确认v2存在门禁假阳性与不可判门。整模型语言能力未达到用户验收线。R2-H3.4确认UTF-8/end-marker已稳定但条件内容不可迁移；H3.5据此选定`prefix encoder -> response_plan_state -> plan-conditioned byte renderer`。H3.5-A隔离candidate与磁盘plumbing smoke现已通过：32维plan、span监督、owner互斥、checkpoint/identity lineage、清除消融均成立，effective=276,610、candidate=13,771≤300k。当前唯一下一步是冻结v3控制数据和matched control/treatment命令，尚不执行正式训练。Mini模型验收后置，P5.2d修正仪器降为并行债务。
+当前为M5知识与身体。R2-H3.5-A隔离candidate、磁盘smoke和matched训练冻结均已完成：32维plan、span监督、checkpoint/identity lineage、消融和276,610≤300k预算成立；v3数据固定12/8/4并覆盖四policy、history和context permutation；三seed×control/treatment、10 epoch和`--defer-final`已冻结。当前到达正式训练授权节点，唯一建议是执行dev阶段六次matched运行，未授权前不读取final。Mini模型验收后置，P5.2d修正仪器降为并行债务。
 
 P3b两臂已停止，数据分布效应只有一个共同检查点，阶段结论应按“不可判”封存；64预算在线复测是未提交候选，不能继续仅写“等训练结束”或“放宽预算即可通过”。
 
@@ -19,6 +19,7 @@ P3b两臂已停止，数据分布效应只有一个共同检查点，阶段结�
 | [R2语言目标与信用分配设计](reference/M5_R2_LANGUAGE_TARGET_CREDIT_DESIGN_20260916.md) | 从字节预测到可回答模型的根因、目标、信用分配、checkpoint前置、状态审计和晋级计划 |
 | [R2-H3.5分层回答计划合同](reference/M5_R2_H3_5_HIERARCHICAL_RESPONSE_PLAN_CONTRACT_20260916.md) | 回答计划与byte渲染分层、v3数据课程、预算、恢复、消融和最小可证伪对照 |
 | [R2-H3.5-A候选预注册](reference/M5_R2_H3_5A_RESPONSE_PLAN_PREREGISTRATION_20260916.md) | 32维plan、监督编码、运行时oracle禁令、checkpoint前置和smoke出口 |
+| [R2-H3.5-A matched预注册](reference/M5_R2_H3_5A_MATCHED_RUN_PREREGISTRATION_20260916.md) | v3控制集、三seed对照、plan消融、final延迟权限和停止门 |
 | [07 整模型验收](active/roadmap/07_MINI_MODEL_DELIVERY.md) | 真实输出评价、L3触发最小用户版本 |
 | [05 技术债](active/roadmap/05_TECH_DEBT_REGISTER.md) | 隔离、仪器、恢复与CI；最新日期优先 |
 | [唯一完整VISION](reference/VISION_FUTURE_TECHNOLOGY.md) | 成熟发展训练＋运行期适应候选架构，不自动改变主线合同 |

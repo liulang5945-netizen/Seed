@@ -402,6 +402,32 @@ def test_response_plan_is_mutually_exclusive_with_existing_candidates() -> None:
         )
 
 
+def test_h3_5a_v3_fixture_is_family_and_response_disjoint() -> None:
+    corpus = LanguageEpisodeCorpus.from_jsonl(
+        [Path("tests/fixtures/r2_h3_5a_response_plan_v3.jsonl")]
+    )
+    assert corpus.sample_counts == {
+        "train": 12,
+        "dev": 8,
+        "final": 4,
+        "retention": 0,
+    }
+    policies_by_split = {
+        split: {episode.unknown_policy for episode in corpus.for_split(split)}
+        for split in ("train", "dev", "final")
+    }
+    expected = {"answer", "say_unknown", "clarify", "refuse"}
+    assert policies_by_split["train"] == expected
+    assert policies_by_split["dev"] == expected
+    assert policies_by_split["final"] == expected
+    responses = [episode.response for episode in corpus.episodes]
+    assert len(responses) == len(set(responses))
+    assert any(episode.history for episode in corpus.episodes)
+    assert any(
+        episode.task_family == "context_permutation" for episode in corpus.episodes
+    )
+
+
 def test_generalization_diagnostic_is_read_only_and_reports_transfer_surface() -> None:
     corpus = LanguageEpisodeCorpus.from_jsonl(
         [Path("tests/fixtures/r2_language_alignment_smoke.jsonl")]

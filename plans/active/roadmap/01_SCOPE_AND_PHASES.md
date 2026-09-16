@@ -41,7 +41,7 @@
 | 协作与自主选择 | C/A 负结果；B0 的 HANDOFF-M4 已由反事实转成**已发布规则**：2026-09-15 落地进 P5.2b gate（`rule_revision=1`，五条出口见 WP-3 落地结果），独立结构因素仍为 1。**注意**：该规则目前**只存在于 gate 脚本**，`taiji/` 无对应实现 ⇒ 落地证明的是仪器，不是产品能力 | B2-v4已证冻结create族内学习选择与协作；仍缺独立内容结构、产品同入口集成及轴级共同门/批准，H1/H2/H3不混称 | 已完成B链继承；R4集成、R5独立扩面与轴评审 |
 | 身体与在线闭环 | Workbench 合同与预测路径、恢复资产可复用 | 真实结果驱动合格更新、多轮保持/幂等/中断恢复；能力注册/撤销、执行与认知责任分离 | R0逐门审查→R3闭环；身体生命周期由R5在M5评审前闭合 |
 
-**最新状态**：B2-v4已完成，冻结create族内支持协作；D1–D5/N2与B链不再是待执行事项。当前主线已完成R2-D0/P0/P1/P2/G1/H2-H3/H3.1/H3.2/H3.3-A/B/C/H3.4/H3.5，并完成H3.5-A隔离candidate与plumbing smoke。H3.4确认UTF-8/end-marker已稳定、条件首字节与未见continuation不可迁移；H3.5选定持久`response_plan_state`与byte renderer分层的v3合同；H3.5-A已证明32维plan、span监督、owner互斥、checkpoint/identity lineage、消融和276,610≤300k预算链可运行，但尚未训练或证明S2/L2/Mini。下一步按03冻结v3控制数据和matched control/treatment命令，不扩大同质byte训练，不承诺几轮或某日期晋级。
+**最新状态**：B2-v4已完成，冻结create族内支持协作；D1–D5/N2与B链不再是待执行事项。当前主线已完成R2-D0/P0/P1/P2/G1/H2-H3/H3.1/H3.2/H3.3-A/B/C/H3.4/H3.5，并完成H3.5-A隔离candidate、plumbing smoke和matched训练冻结。32维plan、span监督、checkpoint/identity lineage、消融和276,610≤300k预算链可运行；v3数据12/8/4、三seed×两臂、10 epoch与final延迟权限已冻结，但尚未正式训练或证明S2/L2/Mini。下一步按03在明确授权后执行dev阶段matched运行，不扩大同质byte训练。
 
 **M5 限定阶段退出**还需知识准入、在线/身体轴与共同保持恢复门闭合。若某能力决定留到以后，必须列为“未完成且从本次交付范围排除”，由项目所有者批准；不能写为已完成。当前没有这种新增豁免。
 
