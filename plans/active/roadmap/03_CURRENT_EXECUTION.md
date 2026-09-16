@@ -1,6 +1,6 @@
 # Seed / Taiji 当前详细推进方案
 
-> 更新：2026-09-16；R0证据与门禁审计已完成。本次决定将R2整模型语言能力设为当前主线；结构化R2入口、checkpoint前置、P1 developmental 对照、P2序列级只读评价、G1条件接口、H2/H3内部表示/读出审计、H3.1序列路径对照、H3.2 response-start候选读出、H3.3泛化控制与response-phase候选、H3.4逐位置条件信用审计均已完成，本地未提交观察与正式结果继续分账。
+> 更新：2026-09-16；R0证据与门禁审计已完成。本次决定将R2整模型语言能力设为当前主线；结构化R2入口、checkpoint前置、P1 developmental 对照、P2序列级只读评价、G1条件接口、H2/H3内部表示/读出审计、H3.1序列路径对照、H3.2 response-start候选读出、H3.3泛化控制与response-phase候选、H3.4逐位置条件信用审计、H3.5目标合同和H3.6-A target encoder plumbing均已完成，本地未提交观察与正式结果继续分账。
 > 本文是唯一执行顺序来源；[01](01_SCOPE_AND_PHASES.md)管总阶段，[02](02_GATES_AND_CI.md)管晋级，[07](07_MINI_MODEL_DELIVERY.md)管整模型验收。
 > 旧逐轮台账完整保留于Git的56a4c3e4:plans/active/roadmap/03_CURRENT_EXECUTION.md及各冻结报告。本次不改历史结果、不修改默认入口、不授权产品采用或架构切换；R2隔离smoke只用于验证新入口。
 
@@ -32,7 +32,7 @@
 | 本地heldout | 未跟踪reports/taiji_p3b_heldout_surprise_20260916.json为not_resolved | 先审协议与血缘；surprise不能替代对话评价 |
 | 知识/身体 | P5.1g仍trial并回滚；Workbench合同资产存在 | 真实语料child未准入、身体全生命周期未结项 |
 | CI | 9月16日查询run34869725409，d09dcc21，总体failure；3.10失败，3.12/Windows等通过 | 不是当前HEAD的CI；不称全绿，旧27项SystemExit不再视作未定位代码缺陷 |
-| R2 aligned language seam | 结构化episode、response-only native readout、checkpoint digest/atomic save、zero/child恢复前置、paired诊断、static/slow/fast/fast_slow四臂、P2序列级只读评价、H3.1 beam、H3.2 response-start、H3.3 response-phase与泛化剖面、H3.4逐位置信用审计及H3.5表示合同均已完成 | H3.4确认UTF-8/end-marker稳定但条件首字节与未见continuation不可迁移；H3.5-A已冻结32维持久plan、span监督、300k预算、oracle禁令和preflight，未形成S2/L2/Mini，下一步实现隔离candidate与plumbing smoke |
+| R2 aligned language seam | 结构化episode、response-only native readout、checkpoint digest/atomic save、zero/child恢复前置、paired诊断、static/slow/fast/fast_slow四臂、P2序列级只读评价、H3.1 beam、H3.2 response-start、H3.3 response-phase与泛化剖面、H3.4逐位置信用审计、H3.5表示合同、H3.6-A target encoder plumbing及H3.6-B零步前置均已完成 | H3.4确认UTF-8/end-marker稳定但条件首字节与未见continuation不可迁移；H3.5-A已停止，H3.6-A/B仍未形成S2/L2/Mini。H3.6-B control/treatment的容量、parent保护、target血缘和checkpoint preflight均通过；下一步只等待明确的三seed dev训练授权，不读取H3.5-A final、不追加epoch |
 | R2-G1 conditional response v2 | v2显式policy prefix、版本化checkpoint/corpus、train/dev/final输出碰撞指标和G1-S0/S1受控诊断已实现 | preflight通过；20 epoch混合训练的train collision=0.5、train exact=0.5，dev/final sequence criterion=0，paired改写敏感性=0；H2/H3审计显示train prefix context distinct=2/2、context L2=0.9694、next-byte probability L1=0.0771、argmax difference=0、recovery repeatable=true；输入已进入native state，但readout首选路径未形成可分离margin，不扩大同质训练 |
 
 未提交结果转正须有：代码/协议版本、执行时间、产物hash、数据与模型血缘、原始结果、失败说明、独立输出路径。提交本身不证明有效；已见结果不得包装成前瞻预注册。
@@ -133,7 +133,9 @@ R2-D0设计合同已经转为实施，当前工作包分成四个连续出口，
 14. **R2-H3.4条件信用可观测性审计**：已完成。固定预算一致的H3.3-B/C child checkpoint和同一family-disjoint控制集，逐回答位置记录teacher-forced目标概率/排名/熵/累计似然，并绑定free-generation的原始bytes、UTF-8合法性、end-marker停止、边界和输出碰撞；结果见`reports/taiji_r2_h3_4_conditional_credit_20260916.json`。B/C均为effective=273,890，preflight、恢复和只读成立；train/dev/final自由生成UTF-8、无替换字符、边界率均为1.0，但exact/sequence均为0，文本碰撞率为0.5/0.5/0.333。B首字节legal top1为0.5/0.25/0，C为0.5/0.25/0；continuation legal top1两者相同，为0.78431/0.37143/0.26667；end-marker位置三组均为1.0。结论是停止/边界信用不是主瓶颈，失败集中在条件响应起点与未见continuation的可迁移性；不进入正式pilot，不追加同质byte训练。
 15. **R2-H3.5目标/数据/表示合同复审**：已完成。复审确认现有链路已经学会UTF-8/end-marker并保留条件状态差异，但`prefix state -> 单步byte局部误差`缺少贯穿回答的内容计划；继续同构byte训练、只换token粒度或先扩shared fabric都不能直接补上该机制。已冻结[分层回答计划与渲染合同](../../reference/M5_R2_H3_5_HIERARCHICAL_RESPONSE_PLAN_CONTRACT_20260916.md)：采用`prefix encoder -> response_plan_state -> plan-conditioned byte renderer`，运行时不读取task label/参考答案，计划与渲染分账、可消融、可保存恢复，并保持300k总预算和family-disjoint边界。当前到达核心架构决策后的实现入口，仍不构成S2/L2/Mini。
 16. **R2-H3.5-A分层回答计划隔离候选**：已按授权完成三seed×两臂dev训练和parameter-matched消融，并按停止门在final前结项。六次preflight与预算均通过，control/treatment参数为273,890/276,610≤300k；control dev sequence三seed均为0.25，treatment为0/0.125/0.125，treatment dev surprise三seed均更高，exact与required coverage均为0。plan target cosine为0.007/-0.033/-0.089；移除plan bridge后三seedsequence均恢复0.25，但collision升高，说明hash plan没有形成可迁移内容几何且会干扰renderer。结果见`reports/taiji_r2_h3_5a_matched_dev_20260916.json`；final未读，不加epoch，不进入S2/L2/Mini。
-17. **R2-H3.6计划目标几何与信用接口复审**：三种子无训练审计已完成，见`reports/taiji_r2_h3_6_plan_target_geometry_multiseed_20260916.json`和[H3.6合同](../../reference/M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md)。比较signed-hash、字符n-gram、native response state、train-only whitening及两种hybrid后，只有`train-whitened native response state + compositional char n-gram`在三个种子都保持0.583跨split最近邻策略匹配且最小样本距离≥0.212；纯native虽然部分种子更高但存在0.012级塌缩。当前唯一下一包是实现版本化H3.6-A target encoder、train-only fit/apply、checkpoint payload/digest和恢复测试，只做reconstruction smoke，不运行能力训练。
+17. **R2-H3.6计划目标几何与信用接口复审**：三种子无训练审计已完成，见`reports/taiji_r2_h3_6_plan_target_geometry_multiseed_20260916.json`和[H3.6合同](../../reference/M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md)。比较signed-hash、字符n-gram、native response state、train-only whitening及两种hybrid后，只有`train-whitened native response state + compositional char n-gram`在三个种子都保持0.583跨split最近邻策略匹配且最小样本距离≥0.212；纯native虽然部分种子更高但存在0.012级塌缩。几何选择已结项，不把离线最近邻分数写成语言能力。
+18. **R2-H3.6-A target encoder plumbing与恢复 smoke**：已完成版本化`ResponsePlanTargetEncoder`。它绑定corpus digest和parent checkpoint digest，只用12条train样本拟合native均值/特征基/尺度，冻结后对24条样本生成32维等权hybrid target；本次fixture的model context为45维、有效白化秩为11。`reports/taiji_r2_h3_6_target_encoder_smoke_20260916.json`记录target payload磁盘保存恢复、H3.6 trainer target map保存恢复、24个target归一化和teacher checkpoint前后摘要一致；训练未发生。当前唯一下一包是冻结[H3.6-B matched dev预注册](../../reference/M5_R2_H3_6B_MATCHED_RUN_PREREGISTRATION_20260916.md)并接入正式训练前置检查，未完成前不启动能力训练。
+19. **R2-H3.6-B预注册与零步前置**：已冻结[H3.6-B matched dev预注册](../../reference/M5_R2_H3_6B_MATCHED_RUN_PREREGISTRATION_20260916.md)及机读合同。control和treatment均使用response-plan candidate、32维plan、300k预算、同一fixture和seed 20260916完成`--preflight-only`；两者effective均为276,610≤300,000，zero-step round-trip、一次child更新恢复、parent保护和atomic save均通过。treatment额外写入encoder digest、encoder parent/corpus digest及train target map digest；两份证据见`reports/taiji_r2_h3_6b_control_preflight_20260916.json`与`reports/taiji_r2_h3_6b_treatment_preflight_20260916.json`。本包没有进行正式epoch训练；当前唯一下一步是用户明确授权后按合同执行三seed dev训练，否则保持在此决策点。
 
 不得复用P3b报告名或把`seed_beta.pt`当作可写目标。设计包的出口仍包括输入/上下文/回答边界/目标定义、训练与运行期分工、编码/语义/上下文/结果四层评价、checkpoint前置、L2/L3停止条件，以及失败后回到数据、目标、表示、读出或架构哪一层的判读规则；本轮已把其中的可执行保存恢复和S1读出部分先落地。
 
@@ -243,7 +245,7 @@ B2已结项，同族复现不反复计新能力。以[binder可行性](../../ref
 
 唯一[未来VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)记录候选架构，本文管当前依赖与权限。每包结项同步01/02/03/07和首页，不追加互相矛盾的“最新状态”。
 
-## H3.5结论与当前唯一下一步：冻结并实现R2-H3.5-A分层回答计划候选
+## H3.6-B结论与当前唯一下一步：等待三seed dev训练授权
 
 H3.3的预算一致证据已经完成：H3.3-B response-start与H3.3-C response-phase在同一v2控制集、同一300k总预算、同一10 epoch和同一评价链上均通过preflight与恢复，但train/dev/final exact和sequence均为0；两者dev/final首字节top1均为0.25/0，paired改写敏感性均为0.42857。B的dev/final首字节margin为0.06973/-0.02639，C为-0.10842/-0.18765；统一整段response owner没有产生能力出口。由此H3.3结项，不再追加同质byte训练或继续堆叠边界候选。
 
@@ -255,4 +257,8 @@ H3.5-A最小candidate、plumbing smoke和matched训练冻结已经完成。v3控
 
 H3.5-A dev阶段六次matched运行已完成并触发停止：treatment在三个seed的dev sequence和surprise均不优于control，plan target cosine接近零或为负；plan bridge消融恢复sequence但增加collision。final保持未读，不能继续同一target加训，也不能把输出去碰撞当作内容能力。
 
-H3.6三种子无训练geometry审计已完成。唯一入选方案是train-only whitened native response state与compositional n-gram等权混合：它的迁移下限和防塌缩距离同时优于signed-hash。当前唯一下一步是H3.6-A target encoder plumbing：实现train-only拟合、冻结变换、payload/digest、错误split/corpus/parent拒绝和保存恢复，再做reconstruction smoke。未完成前不启动能力训练、不读取H3.5-A final、不进入L2/Mini。
+H3.6三种子无训练geometry审计已完成。唯一入选方案是train-only whitened native response state与compositional n-gram等权混合：它的迁移下限和防塌缩距离同时优于signed-hash。H3.6-A target encoder plumbing已经完成：实现了train-only拟合、冻结均值/基向量/尺度、payload/digest、错误corpus/parent拒绝、教师checkpoint守卫，并已通过真实fixture reconstruction smoke；H3.6 target 已接入隔离的LanguageAlignmentTrainer，child checkpoint 可恢复同一份train target map。实现与报告见`taiji/response_plan_target.py`、`scripts/training/smoke_taiji_r2_h3_6_target_encoder.py`、`reports/taiji_r2_h3_6_target_encoder_smoke_20260916.json`。
+
+H3.6-B matched dev预注册、训练入口的geometry选择、train-only encoder拟合、target payload血缘报告和`--preflight-only`已完成。control/treatment的零步前置均通过：effective=276,610≤300,000，checkpoint保存恢复、一次child更新、parent保护与target血缘检查均成立；正式报告明确`training_performed=false`，因此没有把前置的一次恢复性child update冒充正式能力训练。
+
+当前唯一下一步是取得明确的三seed dev训练授权，然后严格按[H3.6-B合同](../../reference/M5_R2_H3_6B_MATCHED_RUN_PREREGISTRATION_20260916.md)分别运行control与treatment；先跑dev、保持final延迟，任何停止条件触发就结项。未得到授权前不执行正式epoch、不读取H3.5-A final、不进入S2/L2/Mini，也不把本次preflight原始输出写成模型能力。

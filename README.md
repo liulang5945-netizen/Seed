@@ -186,40 +186,47 @@ These M0–M2 results remain the historical foundation baseline. The active exec
 moved to the M5 K-axis track below; the full chronology and evidence links are maintained in
 [the single execution plan](plans/active/roadmap/03_CURRENT_EXECUTION.md).
 
-### Current research track: M5 K-axis and solver evidence
+### Current research track: R2 native language capability
 
-The current line is a controlled continual-learning study over five typed workbench classes.
-Each result is backed by frozen manifests, disjoint identities, holdout/retention checks,
-independent-process checkpoint restoration, tamper rejection and fail-closed promotion gates.
-It is evidence about specific mechanisms, not a claim that the whole architecture is complete.
+The current mainline is the R2 structured-language path: Taiji remains the native owner,
+responses are trained through the native predictive readout, and every candidate is isolated,
+checkpointable and evaluated on family-disjoint train/dev/final episodes. The repository has
+not yet produced an L2 conversational model; the work below is the path toward one.
 
 | Stage | Result |
 |---|---|
-| P4.7 capacity clean test | `capacity_hypothesis_closed`: the 13-vs-22 parameter comparison did not remove the retention/new-task tension |
-| P4.8–P4.10 representation track | The original invariant constraint was insufficient; a parent-relative feature factorization was identified, while the base feature space retained a measured learnability gap |
-| P4.11 projection solver | `projection_solver_supported`: both seeds passed the new-task and dual-retention gates on fresh identities |
-| P4.12 course-level validation | `course_level_validation_supported`: 9/9 projected cells passed across 3 identity batches × 3 seeds |
-| P4.13 promotion course | `promotion_course_supported`: 9/9 two-phase A → B cells passed; cumulative A+B+retention projection converged with zero violations and backward retention held |
-| K-axis scorecard v4 | G-side solver evidence is closed; promotion remains fail-closed |
+| R2-D0/P0 | Structured episode boundaries, response-only native readout, atomic checkpointing and fresh-restore preflight are implemented |
+| R2-H3.4 | UTF-8 and end-marker credit are stable, but unseen conditional response starts and continuations do not yet transfer |
+| R2-H3.5-A | The signed-hash response-plan candidate was stopped before final: its target geometry did not transfer and the plan bridge could interfere with rendering |
+| R2-H3.6 geometry | A no-training, three-seed audit selected train-whitened native response state + compositional character n-grams; this is a target-design result, not language ability |
+| R2-H3.6-A | Versioned train-only target encoder, trainer integration and save/restore smoke passed on the 12/8/4 fixture; no capability training was performed |
+| H3.6-B preflight | Control and treatment zero-step preflights passed at 276,610≤300,000 with parent/restore/target-lineage checks; `training_performed=false` |
+| Next | Obtain explicit authorization for the three-seed dev run; then execute the frozen H3.6-B contract with final deferred. Do not read H3.5-A final or start formal epochs before authorization |
 
-The authoritative summary is the [M5 K-axis scorecard v4](plans/reference/M5_K_AXIS_SCORECARD_V4_CONTRACT_20260911.md),
-with machine-readable evidence in [the scorecard report](reports/taiji_m5_k_axis_scorecard_v4_20260911.json).
+The authoritative execution order is the [current plan](plans/active/roadmap/03_CURRENT_EXECUTION.md),
+with the H3.6 target contract in [M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md](plans/reference/M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md),
+the matched-run preregistration in [M5_R2_H3_6B_MATCHED_RUN_PREREGISTRATION_20260916.md](plans/reference/M5_R2_H3_6B_MATCHED_RUN_PREREGISTRATION_20260916.md),
+the latest plumbing evidence in [taiji_r2_h3_6_target_encoder_smoke_20260916.json](reports/taiji_r2_h3_6_target_encoder_smoke_20260916.json),
+and the zero-step control/treatment evidence in [taiji_r2_h3_6b_control_preflight_20260916.json](reports/taiji_r2_h3_6b_control_preflight_20260916.json) and [taiji_r2_h3_6b_treatment_preflight_20260916.json](reports/taiji_r2_h3_6b_treatment_preflight_20260916.json).
+
+The M5 K-axis scorecard remains valid as a parallel, limited mechanism result; it is not the
+current R2 language mainline and does not imply a default-runtime promotion.
 
 ## Status
 
 - Completed and committed: the TSK-v8 substrate and regression chain, structural-growth
-  mechanism gates, the M0–M2 foundation evidence, M5 K1/K2/K3 scorecard evidence, and the
-  G-side solver mechanism through P4.13.
-- Current boundary: `g_solver_mechanism_course_closed=true`, but
-  `promotion_gate=false`, `can_promote=false`, and `growth_admitted=false`. The K-worker joint
-  course has not yet been preregistered or run, no owner has been attached to the default
-  runtime, and the default-runtime rollout review has not happened.
-- Next planned action: preregister the K-worker joint course that combines the P2.6/P2.7
-  continuation machinery with the solver mechanism on the same parent. This is the only active
-  next step in the [current execution plan](plans/active/roadmap/03_CURRENT_EXECUTION.md).
+  mechanism gates, the M0–M2 foundation evidence, the limited M5 K-axis scorecard evidence,
+  and the R2-H3.6-A target-plumbing implementation described above.
+- Current boundary: the native language route has structured training and recovery evidence,
+  but no S2/L2 conversational capability has been established. `promotion_gate=false`,
+  `can_promote=false`, and `growth_admitted=false` remain the honest K-axis boundary; no
+  default-runtime owner or product rollout is implied.
+- Next planned action: obtain explicit authorization, then execute the three-seed H3.6-B
+  matched dev run with final deferred. This is the only active next step in the [current execution plan](plans/active/roadmap/03_CURRENT_EXECUTION.md).
 - Honest boundary: this is a learning-mechanism research prototype, **not** a completed
-  cognitive architecture, not a general-purpose language model, and not a claim about AGI.
-  Garbled replies are expected kernel behavior.
+  cognitive architecture, not yet a general-purpose language model, and not a claim about AGI.
+  The current R2 work explicitly treats unreadable or non-transferring responses as failures to
+  resolve, not as completed model capability.
 
 ## Quick start
 

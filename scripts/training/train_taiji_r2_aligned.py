@@ -20,9 +20,11 @@ from taiji import (
     LanguageAlignmentConfig,
     LanguageAlignmentTrainer,
     LanguageEpisodeCorpus,
+    ResponsePlanTargetEncoder,
     Taiji,
     TaijiConfig,
     checkpoint_roundtrip_preflight,
+    content_digest,
     paired_checkpoint_diagnostic,
 )
 
@@ -32,9 +34,9 @@ PROTECTED_NAMES = {
     "resumed_seed_corpus.pt",
     "seed_corpus_prev_20260823.pt",
 }
-PRE_REGISTRATION = (
-    "plans/reference/M5_R2_G1_CONDITIONAL_RESPONSE_PREREGISTRATION_20260916.md"
-)
+PRE_REGISTRATION = "plans/reference/M5_R2_G1_CONDITIONAL_RESPONSE_PREREGISTRATION_20260916.md"
+H36_PRE_REGISTRATION = "plans/reference/M5_R2_H3_6B_MATCHED_RUN_PREREGISTRATION_20260916.md"
+H36_TARGET_GEOMETRY = "h3_6_whitened_native_compositional"
 
 
 def _parse_args() -> argparse.Namespace:
@@ -74,6 +76,12 @@ def _parse_args() -> argparse.Namespace:
         help="enable the isolated persistent response-plan candidate",
     )
     parser.add_argument("--response-plan-width", type=int, default=32)
+    parser.add_argument(
+        "--response-plan-target-geometry",
+        choices=("signed_hash_span", H36_TARGET_GEOMETRY),
+        default="signed_hash_span",
+        help="select the response-plan target geometry for a fresh candidate run",
+    )
     parser.add_argument("--sequence-beam-width", type=int, default=4)
     parser.add_argument("--sequence-top-k", type=int, default=8)
     parser.add_argument("--sequence-max-bytes", type=int, default=64)
@@ -82,6 +90,17 @@ def _parse_args() -> argparse.Namespace:
         "--defer-final",
         action="store_true",
         help="do not read final capability outputs during development runs",
+    )
+    parser.add_argument(
+        "--preflight-only",
+        action="store_true",
+        help="run zero-step checkpoint/capacity preflight without capability training",
+    )
+    parser.add_argument(
+        "--preregistration",
+        choices=("legacy", "h3_6b"),
+        default="legacy",
+        help="select the frozen report contract for a fresh matched run",
     )
     return parser.parse_args()
 
@@ -115,14 +134,21 @@ def main() -> int:
         raise SystemExit("sequence diagnostic parameters must be positive")
     if args.response_plan_width <= 0:
         raise SystemExit("--response-plan-width must be positive")
-    if sum(
-        bool(item)
-        for item in (
-            args.response_start_readout,
-            args.response_phase_readout,
-            args.response_plan_readout,
+    if args.response_plan_target_geometry != "signed_hash_span" and not args.response_plan_readout:
+        raise SystemExit("a non-legacy target geometry requires --response-plan-readout")
+    if args.preregistration == "h3_6b" and not args.response_plan_readout:
+        raise SystemExit("the H3.6-B contract requires --response-plan-readout")
+    if (
+        sum(
+            bool(item)
+            for item in (
+                args.response_start_readout,
+                args.response_phase_readout,
+                args.response_plan_readout,
+            )
         )
-    ) > 1:
+        > 1
+    ):
         raise SystemExit("response candidate readouts are mutually exclusive")
     if not args.dataset.is_file():
         raise SystemExit(f"dataset does not exist: {args.dataset}")
@@ -131,6 +157,16 @@ def main() -> int:
     device = _resolve_device(args.device)
 
     if args.resume is not None:
+        if args.preregistration != "legacy":
+            raise SystemExit(
+                "--preregistration is only selectable for a fresh run; "
+                "a resumed checkpoint owns its report contract"
+            )
+        if args.response_plan_target_geometry != "signed_hash_span":
+            raise SystemExit(
+                "--response-plan-target-geometry is only selectable for a fresh run; "
+                "a resumed checkpoint owns its target geometry"
+            )
         payload = torch.load(args.resume, map_location="cpu", weights_only=False)
         trainer = LanguageAlignmentTrainer.from_checkpoint(payload, corpus, device=device)
     else:
@@ -142,13 +178,17 @@ def main() -> int:
                 or args.response_phase_readout
                 or args.response_plan_readout
             ),
-            response_plan_width=(
-                args.response_plan_width if args.response_plan_readout else 0
-            ),
+            response_plan_width=(args.response_plan_width if args.response_plan_readout else 0),
         )
 
+        model = Taiji(config, device=device, episode_id="r2-aligned-pilot")
+        target_encoder = None
+        if args.response_plan_target_geometry == H36_TARGET_GEOMETRY:
+            model.enable_response_plan_readout(plan_width=args.response_plan_width)
+            target_encoder = ResponsePlanTargetEncoder.fit(model, corpus)
+
         trainer = LanguageAlignmentTrainer(
-            Taiji(config, device=device, episode_id="r2-aligned-pilot"),
+            model,
             corpus,
             config=LanguageAlignmentConfig(
                 developmental_mode=args.developmental_mode or "static",
@@ -156,7 +196,9 @@ def main() -> int:
                 response_phase_readout=args.response_phase_readout,
                 response_plan_readout=args.response_plan_readout,
                 response_plan_width=args.response_plan_width,
+                response_plan_target_geometry=args.response_plan_target_geometry,
             ),
+            response_plan_target_encoder=target_encoder,
         )
 
     additional_readouts = int(
@@ -175,8 +217,7 @@ def main() -> int:
     transfer_splits = ("dev",) if args.defer_final else ("dev", "final")
     baseline = {split: trainer.evaluate(split) for split in evaluation_splits}
     baseline_condition_route = {
-        split: trainer.condition_route_diagnostic(split)
-        for split in evaluation_splits
+        split: trainer.condition_route_diagnostic(split) for split in evaluation_splits
     }
     baseline_sequence_decode = None
     if args.sequence_diagnostic:
@@ -192,28 +233,109 @@ def main() -> int:
     baseline_response_start_margin = None
     if args.response_start_readout:
         baseline_response_start_margin = {
-            split: trainer.response_start_margin_diagnostic(split)
-            for split in evaluation_splits
+            split: trainer.response_start_margin_diagnostic(split) for split in evaluation_splits
         }
     baseline_response_phase_margin = None
     if args.response_phase_readout:
         baseline_response_phase_margin = {
-            split: trainer.response_phase_margin_diagnostic(split)
-            for split in evaluation_splits
+            split: trainer.response_phase_margin_diagnostic(split) for split in evaluation_splits
         }
     preflight_dir = args.preflight_dir or args.checkpoint.parent / "preflight"
     preflight = checkpoint_roundtrip_preflight(trainer, directory=preflight_dir)
+    report_preregistration = (
+        H36_PRE_REGISTRATION
+        if args.preregistration == "h3_6b"
+        or trainer.config.response_plan_target_geometry == H36_TARGET_GEOMETRY
+        else PRE_REGISTRATION
+    )
+    if args.preflight_only:
+        report = {
+            "format": "taiji-r2-aligned-language-run-v2",
+            "status": "preflight_passed",
+            "training_performed": False,
+            "pre_registration": report_preregistration,
+            "dataset": corpus.manifest(),
+            "config": trainer.config.to_payload(),
+            "response_plan_target": {
+                "geometry": trainer.config.response_plan_target_geometry,
+                "encoder_digest": trainer.response_plan_target_digest,
+                "encoder_parent_checkpoint_digest": (
+                    None
+                    if trainer.response_plan_target_encoder is None
+                    else trainer.response_plan_target_encoder.parent_checkpoint_digest
+                ),
+                "encoder_corpus_digest": (
+                    None
+                    if trainer.response_plan_target_encoder is None
+                    else trainer.response_plan_target_encoder.corpus_digest
+                ),
+                "train_target_map_digest": (
+                    None
+                    if not trainer.response_plan_targets
+                    else content_digest(
+                        {
+                            key: value.detach().cpu().clone()
+                            for key, value in sorted(trainer.response_plan_targets.items())
+                        }
+                    )
+                ),
+                "fit_episode_ids": (
+                    []
+                    if trainer.response_plan_target_encoder is None
+                    else list(trainer.response_plan_target_encoder.fit_episode_ids)
+                ),
+            },
+            "capacity": {
+                "target_active_parameters": int(args.parameter_budget),
+                "effective_active_parameters": trainer.model.parameter_count(),
+                "within_target": trainer.model.parameter_count() <= int(args.parameter_budget),
+            },
+            "zero_step_trainer_checkpoint_digest": trainer.checkpoint()["checkpoint_digest"],
+            "preflight": preflight,
+            "checkpoint": None,
+        }
+        report_path = args.report or args.checkpoint.with_name(args.checkpoint.stem + ".json")
+        _write_json(report_path, report)
+        print(json.dumps(report, ensure_ascii=False, indent=2))
+        return 0
     training = trainer.train(epochs=args.epochs, max_episodes=args.max_episodes)
     checkpoint_path = trainer.save(args.checkpoint)
-    paired = paired_checkpoint_diagnostic(
-        trainer, baseline_payload, splits=transfer_splits
-    )
+    paired = paired_checkpoint_diagnostic(trainer, baseline_payload, splits=transfer_splits)
     report = {
         "format": "taiji-r2-aligned-language-run-v2",
         "status": "completed",
-        "pre_registration": PRE_REGISTRATION,
+        "pre_registration": report_preregistration,
         "dataset": corpus.manifest(),
         "config": trainer.config.to_payload(),
+        "response_plan_target": {
+            "geometry": trainer.config.response_plan_target_geometry,
+            "encoder_digest": trainer.response_plan_target_digest,
+            "encoder_parent_checkpoint_digest": (
+                None
+                if trainer.response_plan_target_encoder is None
+                else trainer.response_plan_target_encoder.parent_checkpoint_digest
+            ),
+            "encoder_corpus_digest": (
+                None
+                if trainer.response_plan_target_encoder is None
+                else trainer.response_plan_target_encoder.corpus_digest
+            ),
+            "train_target_map_digest": (
+                None
+                if not trainer.response_plan_targets
+                else content_digest(
+                    {
+                        key: value.detach().cpu().clone()
+                        for key, value in sorted(trainer.response_plan_targets.items())
+                    }
+                )
+            ),
+            "fit_episode_ids": (
+                []
+                if trainer.response_plan_target_encoder is None
+                else list(trainer.response_plan_target_encoder.fit_episode_ids)
+            ),
+        },
         "final_deferred": bool(args.defer_final),
         "capacity": {
             "target_active_parameters": int(args.parameter_budget),
@@ -229,8 +351,7 @@ def main() -> int:
             "response_plan_parameters": (
                 trainer.model.response_plan_readout.active_parameter_count
                 - (
-                    trainer.model.config.alphabet_size
-                    * trainer.model.config.motor_context_dim
+                    trainer.model.config.alphabet_size * trainer.model.config.motor_context_dim
                     + trainer.model.config.alphabet_size
                 )
                 if trainer.model.response_plan_readout_enabled
@@ -253,8 +374,7 @@ def main() -> int:
         "dev": trainer.evaluate("dev"),
         "final": None if args.defer_final else trainer.evaluate("final"),
         "condition_route": {
-            split: trainer.condition_route_diagnostic(split)
-            for split in evaluation_splits
+            split: trainer.condition_route_diagnostic(split) for split in evaluation_splits
         },
         "sequence_decode": (
             {
@@ -270,18 +390,12 @@ def main() -> int:
             else None
         ),
         "response_start_margin": (
-            {
-                split: trainer.response_start_margin_diagnostic(split)
-                for split in evaluation_splits
-            }
+            {split: trainer.response_start_margin_diagnostic(split) for split in evaluation_splits}
             if args.response_start_readout
             else None
         ),
         "response_phase_margin": (
-            {
-                split: trainer.response_phase_margin_diagnostic(split)
-                for split in evaluation_splits
-            }
+            {split: trainer.response_phase_margin_diagnostic(split) for split in evaluation_splits}
             if args.response_phase_readout
             else None
         ),

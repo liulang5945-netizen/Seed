@@ -1,0 +1,105 @@
+{
+  "format": "taiji-r2-h3-6b-matched-run-v1",
+  "status": "frozen_before_training",
+  "dataset": "tests/fixtures/r2_h3_5a_response_plan_v3.jsonl",
+  "dataset_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+  "parameter_budget": 300000,
+  "seeds": [20260916, 20260917, 20260918],
+  "epochs": 10,
+  "max_episodes_per_epoch": 12,
+  "device": "cpu",
+  "final_access": {
+    "during_development": "schema_and_restore_only",
+    "capability_read": "once_after_all_seeds_and_dev_reports_are_frozen"
+  },
+  "target_encoder": {
+    "format": "taiji-r2-h3-6-response-plan-target-v1",
+    "fit_split": "train",
+    "native_source": "mean_teacher_forced_motor_context",
+    "native_transform": "train_covariance_eigendecomposition_whitened",
+    "composition": "equal_normalized_native_and_signed_char_ngram",
+    "width": 32,
+    "teacher_runtime_access": false,
+    "checkpoint_payload_required": true
+  },
+  "arms": {
+    "legacy_control": {
+      "target_geometry": "signed_hash_span",
+      "purpose": "same response-plan candidate with the prior target geometry"
+    },
+    "h36_treatment": {
+      "target_geometry": "h3_6_whitened_native_compositional",
+      "purpose": "test the frozen H3.6-A target geometry"
+    },
+    "causal_ablation": {
+      "source": "h36_treatment_child_checkpoint",
+      "operation": "zero_response_plan_readout_plan_bridge",
+      "parameter_matched": true,
+      "learning_disabled": true
+    }
+  },
+  "matched": [
+    "dataset_digest",
+    "model_seed",
+    "candidate_initialization",
+    "epoch_count",
+    "episode_order",
+    "maximum_updates",
+    "parameter_budget_ceiling",
+    "utf8_constraints",
+    "end_marker",
+    "checkpoint_preflight",
+    "target_parent_digest",
+    "target_corpus_digest",
+    "evaluation_code"
+  ],
+  "command_template": [
+    "python",
+    "scripts/training/train_taiji_r2_aligned.py",
+    "--dataset",
+    "tests/fixtures/r2_h3_5a_response_plan_v3.jsonl",
+    "--parameter-budget",
+    "300000",
+    "--epochs",
+    "10",
+    "--max-episodes",
+    "12",
+    "--defer-final",
+    "--seed",
+    "{seed}",
+    "--response-plan-readout",
+    "--response-plan-width",
+    "32",
+    "--preregistration",
+    "h3_6b",
+    "--response-plan-target-geometry",
+    "{target_geometry}",
+    "--checkpoint",
+    "{isolated_checkpoint_path}",
+    "--report",
+    "{isolated_report_path}",
+    "--preflight-dir",
+    "{isolated_preflight_path}"
+  ],
+  "development_gate": {
+    "required_before_final": [
+      "all_zero_step_preflights_pass",
+      "all_runs_within_budget",
+      "parent_digests_unchanged",
+      "target_payloads_and_train_maps_roundtrip",
+      "three_seed_dev_sequence_direction_consistent",
+      "paired_sensitivity_not_degraded",
+      "bridge_ablation_removes_core_treatment_gain"
+    ],
+    "stop": [
+      "runtime_oracle_detected",
+      "checkpoint_or_restore_failure",
+      "target_parent_or_corpus_mismatch",
+      "budget_exceeded",
+      "train_only_gain",
+      "boundary_only_gain",
+      "ablation_no_effect",
+      "seed_direction_inconsistent"
+    ]
+  }
+}

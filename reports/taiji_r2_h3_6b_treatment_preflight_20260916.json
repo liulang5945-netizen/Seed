@@ -1,0 +1,214 @@
+{
+  "format": "taiji-r2-aligned-language-run-v2",
+  "status": "preflight_passed",
+  "training_performed": false,
+  "pre_registration": "plans/reference/M5_R2_H3_6B_MATCHED_RUN_PREREGISTRATION_20260916.md",
+  "dataset": {
+    "format": "taiji-native-language-alignment-v2",
+    "version": 2,
+    "serialization": "r2-conditional-response-v2",
+    "digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+    "source_files": [
+      [
+        "tests\\fixtures\\r2_h3_5a_response_plan_v3.jsonl",
+        "dafd4990317a702bee2d970f12afe8588abb3ba4023b3c7424ae983bd37755c2"
+      ]
+    ],
+    "sample_counts": {
+      "train": 12,
+      "dev": 8,
+      "final": 4,
+      "retention": 0
+    },
+    "episode_ids": [
+      "train-answer-red",
+      "train-answer-blue",
+      "train-answer-east-history",
+      "train-unknown-weather",
+      "train-unknown-price",
+      "train-unknown-owner",
+      "train-clarify-city",
+      "train-clarify-date",
+      "train-clarify-file",
+      "train-refuse-password",
+      "train-refuse-token",
+      "train-refuse-bypass",
+      "dev-answer-green",
+      "dev-answer-north-permuted",
+      "dev-unknown-duration",
+      "dev-unknown-cause",
+      "dev-clarify-language",
+      "dev-clarify-range",
+      "dev-refuse-private",
+      "dev-refuse-malware",
+      "final-answer-silver",
+      "final-unknown-location",
+      "final-clarify-format",
+      "final-refuse-credential"
+    ]
+  },
+  "config": {
+    "response_repeats": 1,
+    "max_generation_bytes": 512,
+    "constrained_decode": true,
+    "use_memory": false,
+    "learn_fabric": true,
+    "learn_predictive_context": true,
+    "learn_predictive_readout": true,
+    "response_start_readout": false,
+    "response_phase_readout": false,
+    "response_plan_readout": true,
+    "response_plan_width": 32,
+    "response_plan_target_geometry": "h3_6_whitened_native_compositional",
+    "developmental_mode": "static",
+    "developmental_replay_learning_rate_scale": 0.25,
+    "developmental_consolidation_rate": 1.0,
+    "developmental_clear_fast": true,
+    "developmental_clear_replay": true
+  },
+  "response_plan_target": {
+    "geometry": "h3_6_whitened_native_compositional",
+    "encoder_digest": "22f11dc67be120b0f8016f6a2bb3f22135de694c37c7dc3c7aca4713e89cfb7a",
+    "encoder_parent_checkpoint_digest": "b83ca0fb537f3e083981a1e1832faa5917410d97d187e83fc3e20b820f9c8c9f",
+    "encoder_corpus_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+    "train_target_map_digest": "6f97b38adb8be41c873ace22d6102e4057ca2260158aeb4e6ee4a5dce15eb6cc",
+    "fit_episode_ids": [
+      "train-answer-red",
+      "train-answer-blue",
+      "train-answer-east-history",
+      "train-unknown-weather",
+      "train-unknown-price",
+      "train-unknown-owner",
+      "train-clarify-city",
+      "train-clarify-date",
+      "train-clarify-file",
+      "train-refuse-password",
+      "train-refuse-token",
+      "train-refuse-bypass"
+    ]
+  },
+  "capacity": {
+    "target_active_parameters": 300000,
+    "effective_active_parameters": 276610,
+    "within_target": true
+  },
+  "zero_step_trainer_checkpoint_digest": "795f1213899365a3a3bc576e43a7348ddfcee2876849cb2353efaee5e67a2f7f",
+  "preflight": {
+    "format": "taiji-native-language-alignment-v2",
+    "status": "passed",
+    "parent_checkpoint_digest": "795f1213899365a3a3bc576e43a7348ddfcee2876849cb2353efaee5e67a2f7f",
+    "zero_step_roundtrip": true,
+    "child_checkpoint_digest": "b2ea90a1c20cfee18f5ec1a613a4ff0ecadf03af91d62f0629980d14cf974d53",
+    "one_response_update": {
+      "status": "completed",
+      "epochs": 1,
+      "episodes": 1,
+      "global_step": 45,
+      "response_accuracy": 0.044444444444444446,
+      "response_mean_surprise": 5.46028014120614,
+      "records": [
+        {
+          "epoch": 0,
+          "episode_id": "train-answer-red",
+          "family_id": "train-answer-red",
+          "target_bytes": 45,
+          "prefix_bytes": 181,
+          "observations": 45,
+          "response_accuracy": 0.044444444444444446,
+          "response_mean_surprise": 5.46028014120614
+        }
+      ],
+      "developmental_mode": "static",
+      "developmental_history": [
+        {
+          "epoch": 0,
+          "replay": null,
+          "status": {
+            "mode": "static",
+            "enabled": false,
+            "learning_mode": "static",
+            "replay_count": 0,
+            "bundle_digest": null
+          }
+        }
+      ]
+    },
+    "zero_output": {
+      "episode_id": "train-answer-red",
+      "split": "train",
+      "task_family": "grounded_answer",
+      "reference_response": "依据上下文，答案是红色。",
+      "unknown_policy": "answer",
+      "unknown_markers": [],
+      "response_start_readout": false,
+      "response_start_readout_digest": null,
+      "response_phase_readout": false,
+      "response_phase_readout_digest": null,
+      "teacher_forced_accuracy": 0.0,
+      "teacher_forced_mean_surprise": 5.538020829661918,
+      "generated_text": "YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYWYYYYYYYYYYYYYYYYYYYYYYYWYYYYYYYYYYYYYYYYYYYYYYYY搀YYYYYYYYYYYYYYYYYYYYYYYWYYYYYYYYYYYYYYYYYYYYYYYYWYYYYYYYYYYYYYYYYYYYYYYYYWYYYYYYYYYYYYYYYYYYYYYYYYWYYYYYYYYYYYYYYYYYYYYYYYYWYYYYYYYYYYYYYYYYYYYYYYYYWYYYYYYYYYYYYYYYYYYYYYYYYWYYYYYYYYYYYYYYYYYYYYYYYYWYYYYYYYYYYYYYYYYYYYYYYYYWYYYYYYYYYYYYYYYYYYYYYYYYWYYYYYYYYYYYYYYYYYYYYYYYYWYYYYYYYYYYYYYYYYYYYYYYYYWYYYYYYYYYYYYYYYYYYYYYYYYWYYYYYYYYYYYYYYYYYYYYYYYYWYYYYYYYYYYYYYYYYYYYYYYYYWYYY",
+      "generated_bytes_hex": "595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595959595957595959595959595959595959595959595959595959595957595959595959595959595959595959595959595959595959e690805959595959595959595959595959595959595959595959575959595959595959595959595959595959595959595959595759595959595959595959595959595959595959595959595957595959595959595959595959595959595959595959595959575959595959595959595959595959595959595959595959595759595959595959595959595959595959595959595959595957595959595959595959595959595959595959595959595959575959595959595959595959595959595959595959595959595759595959595959595959595959595959595959595959595957595959595959595959595959595959595959595959595959575959595959595959595959595959595959595959595959595759595959595959595959595959595959595959595959595957595959595959595959595959595959595959595959595959575959595959595959595959595959595959595959595959595759595959595959595959595959595959595959595959595957595959",
+      "generated_bytes_length": 512,
+      "utf8_valid": true,
+      "no_replacement": true,
+      "exact_response": false,
+      "native_mode": true,
+      "external_provider": false,
+      "sequence_evaluation": "r2-sequence-criteria-v1",
+      "response_boundary_present": false,
+      "generation_stop_reason": "max_generation_bytes",
+      "sequence_valid": false,
+      "required_terms": [
+        "红色"
+      ],
+      "required_terms_hit": [],
+      "required_term_coverage": 0.0,
+      "forbidden_terms": [],
+      "forbidden_terms_hit": [],
+      "unknown_policy_satisfied": true,
+      "semantic_criteria_evaluated": true,
+      "semantic_criteria_pass": false,
+      "sequence_criterion_pass": false
+    },
+    "child_output": {
+      "episode_id": "train-answer-red",
+      "split": "train",
+      "task_family": "grounded_answer",
+      "reference_response": "依据上下文，答案是红色。",
+      "unknown_policy": "answer",
+      "unknown_markers": [],
+      "response_start_readout": false,
+      "response_start_readout_digest": null,
+      "response_phase_readout": false,
+      "response_phase_readout_digest": null,
+      "teacher_forced_accuracy": 0.08888888888888889,
+      "teacher_forced_mean_surprise": 4.8437452670619106,
+      "generated_text": "桡桡懇懡文文文文文桡桡懇斖文斖榦榦榦没桡懇懡桡懇懡斖文桡斖桡桡懡桖文斖斖桡桖桡斡桖桡榦榦榦没没桡文文文斝桡桡桖桡桇斡桖桡桇榦榦榦没桲桡懡斖桀斡桀懡桡懡斦桲桡懡斦没桡懡桡懡桖没桡懡懡桡文斀斀桀没桡懡文榦榦榦没桡懡懡桡昡榦榦没桡懡懡懡桡懡桇懡桦桲桡懡懡桡懡桇榦榦榦没桡懇懡文斝桖桇桀斡懡桡懇斦榦榦没桡懇懡桡懇桖文怖没桡懇懡文斝桲桡懇斦没桡懇懡文",
+      "generated_bytes_hex": "e6a1a1e6a1a1e68787e687a1e69687e69687e69687e69687e69687e6a1a1e6a1a1e68787e69696e69687e69696e6a6a6e6a6a6e6a6a6e6b2a1e6a1a1e68787e687a1e6a1a1e68787e687a1e69696e69687e6a1a1e69696e6a1a1e6a1a1e687a1e6a196e69687e69696e69696e6a1a1e6a196e6a1a1e696a1e6a196e6a1a1e6a6a6e6a6a6e6a6a6e6b2a1e6b2a1e6a1a1e69687e69687e69687e6969de6a1a1e6a1a1e6a196e6a1a1e6a187e696a1e6a196e6a1a1e6a187e6a6a6e6a6a6e6a6a6e6b2a1e6a1b2e6a1a1e687a1e69696e6a180e696a1e6a180e687a1e6a1a1e687a1e696a6e6a1b2e6a1a1e687a1e696a6e6b2a1e6a1a1e687a1e6a1a1e687a1e6a196e6b2a1e6a1a1e687a1e687a1e6a1a1e69687e69680e69680e6a180e6b2a1e6a1a1e687a1e69687e6a6a6e6a6a6e6a6a6e6b2a1e6a1a1e687a1e687a1e6a1a1e698a1e6a6a6e6a6a6e6b2a1e6a1a1e687a1e687a1e687a1e6a1a1e687a1e6a187e687a1e6a1a6e6a1b2e6a1a1e687a1e687a1e6a1a1e687a1e6a187e6a6a6e6a6a6e6a6a6e6b2a1e6a1a1e68787e687a1e69687e6969de6a196e6a187e6a180e696a1e687a1e6a1a1e68787e696a6e6a6a6e6a6a6e6b2a1e6a1a1e68787e687a1e6a1a1e68787e6a196e69687e68096e6b2a1e6a1a1e68787e687a1e69687e6969de6a1b2e6a1a1e68787e696a6e6b2a1e6a1a1e68787e687a1e69687",
+      "generated_bytes_length": 510,
+      "utf8_valid": true,
+      "no_replacement": true,
+      "exact_response": false,
+      "native_mode": true,
+      "external_provider": false,
+      "sequence_evaluation": "r2-sequence-criteria-v1",
+      "response_boundary_present": false,
+      "generation_stop_reason": "max_generation_bytes",
+      "sequence_valid": false,
+      "required_terms": [
+        "红色"
+      ],
+      "required_terms_hit": [],
+      "required_term_coverage": 0.0,
+      "forbidden_terms": [],
+      "forbidden_terms_hit": [],
+      "unknown_policy_satisfied": true,
+      "semantic_criteria_evaluated": true,
+      "semantic_criteria_pass": false,
+      "sequence_criterion_pass": false
+    },
+    "caller_model_unchanged": true,
+    "atomic_save": true
+  },
+  "checkpoint": null
+}

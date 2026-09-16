@@ -1,6 +1,6 @@
 # M5 R2-H3.6 计划目标几何与信用接口合同
 
-> 状态：三种子无训练审计完成；选定 H3.6-A 唯一候选，尚未授权新一轮能力训练。
+> 状态：三种子无训练审计完成；H3.6-A target encoder与trainer保存恢复 smoke、H3.6-B control/treatment零步前置已完成；尚未授权正式能力训练。
 
 ## 结论
 
@@ -18,8 +18,21 @@ H3.5-A 的 signed-hash span 为每段回答分配近似随机方向，相近回�
 6. policy、task family、required terms、split 和人工语义标签仅用于只读评价，不进入 teacher、planner 或 renderer。
 7. checkpoint 必须拒绝缺失/错误 corpus digest、target format、whitening transform 或 teacher parent digest。
 
+## H3.6-A 实现与 smoke 结果
+
+实现位于`taiji/response_plan_target.py`，训练器接线位于`taiji/language_alignment.py`。真实fixture为12/8/4、corpus digest为`0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691`；target encoder绑定的parent checkpoint digest为`73a43242887f4bb5d64a55a99d12642204aed709402e7bafb05e331cc13c3108`，target encoder digest为`6aa82199c8f123532fd739e35687bedf1aa0cc6a2e760fc23412d2211b6fa4d9`。本次运行的有效白化秩为11，model context为45维，输出宽度为32，24条train/dev/final target均为有限单位向量。
+
+正式可复核报告为`reports/taiji_r2_h3_6_target_encoder_smoke_20260916.json`。报告证明：
+
+1. fit只读取12条train response；model checkpoint在fit和全量read-only target reconstruction之后保持原digest。
+2. target payload可写盘、加载并保持同一target digest；错误corpus/parent绑定在单元测试中拒绝。
+3. H3.6 target map已经接入`LanguageAlignmentTrainer`，zero-step trainer checkpoint写入encoder payload和train target map，并能保存恢复为相同checkpoint digest。
+4. `training_performed=false`；这不是能力、对话、S2、L2或Mini证据。
+
+> 注：parent digest以本次 smoke 的完整 candidate parent 为准；若后续改变seed、预算、plan readout或代码血缘，必须重新生成独立 encoder，不能复用这个 digest。
+
 ## 最小可证伪顺序
 
-先实现版本化 target encoder、train-only fit/apply、payload/digest 和恢复测试；随后只做 target reconstruction smoke，要求 train target 可学、dev target cosine 不低于零且不破坏parent。完成前不运行10 epoch matched训练。若 encoder 本身在恢复、split隔离或geometry复算上不一致，立即停止。
+H3.6-A 的实现、trainer接线与 target reconstruction/save-restore smoke 已完成；H3.6-B matched dev预注册也已冻结，control/treatment各自的`--preflight-only`已通过：effective=276,610≤300,000，zero-step/child restore、parent保护、atomic save和treatment target血缘均成立，且`training_performed=false`。下一步是取得明确的三seed dev训练授权；得到授权后才按H3.6-B合同运行10 epoch matched dev，final继续延迟。没有新授权，不运行正式epoch；若任何target map、split隔离、parent digest或geometry复算不一致，立即停止。
 
 即使 encoder smoke 通过，下一轮能力对照仍需新预注册；不得读取H3.5-A final，也不得把本次离线最近邻分数写成语言能力。

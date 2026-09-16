@@ -131,34 +131,39 @@ M1 随后在 CPU 上训练这个闭环（课程 F1→F5、三个固定种子、�
 
 M2-0 完成三 seed 的首轮真实 F1→F4：延迟记忆召回达到 `0.87/0.85/0.87`，世界误差降到约 `3.5e-08`，目标行动成功率达到 `1.0`。M2-1 随后纠正了一项关键测量误区：F2 后看似 F1 崩塌的主因是长期情景记忆反馈泄漏进原始 byte 语言评分，而不是 F2 覆盖了 F1 权重。现在 raw-byte 学习、评分和 native generation 默认隔离长期记忆；将既有三个 child checkpoint 放入全新进程恢复后，F1 holdout 分别为 `4.826/4.931/4.805 BPB`，均优于 `5.942` unigram 基线，B2/B3/B4 同时保持不变。上述结果仍是历史基础基线；完整时间线与证据链接由[唯一执行计划](plans/active/roadmap/03_CURRENT_EXECUTION.md)维护。
 
-### 当前研究路线：M5 K 轴与求解器证据
+### 当前研究路线：R2 原生语言能力主线
 
-当前路线是在五类 typed Workbench 任务上进行受控的持续学习研究。每项结果都有冻结 manifest、
-隔离身份、holdout/retention 检查、全新进程 checkpoint 恢复、篡改拒绝与 fail-closed 晋级门。
-它证明的是具体机制，不等于整个架构已经完成。
+当前主线是 R2 结构化语言路径：Taiji 仍是原生认知与输出 owner，回答通过原生 predictive
+readout 学习；每个候选都隔离、可保存恢复，并在 family-disjoint 的 train/dev/final episode
+上评价。仓库目前还没有形成 L2 对话模型，下面记录的是通向该目标的真实推进，而不是能力宣传。
 
 | 阶段 | 结果 |
 |---|---|
-| P4.7 容量干净检验 | `capacity_hypothesis_closed`：13 与 22 参数对照没有消除保持/新任务张力 |
-| P4.8–P4.10 表征路线 | 原 invariant 约束不足；识别出 parent-relative 特征因子化，而基础特征空间仍存在已测 learnability gap |
-| P4.11 投影求解器 | `projection_solver_supported`：两个 seed 在全新身份上同时通过新任务与双保持门 |
-| P4.12 课程级验证 | `course_level_validation_supported`：3 个身份批次 × 3 个 seed，共 9/9 projected cell 通过 |
-| P4.13 晋级课程 | `promotion_course_supported`：9/9 两阶段 A → B cell 通过；A+B+保持的累积投影零违反，向后保持通过 |
-| K 轴 scorecard v4 | G 侧求解器证据闭合；晋级仍保持 fail-closed |
+| R2-D0/P0 | 结构化 episode 边界、response-only 原生读出、原子 checkpoint 与全新恢复前置已落地 |
+| R2-H3.4 | UTF-8 与 end-marker 信用稳定，但未见条件回答的起点和 continuation 尚未迁移 |
+| R2-H3.5-A | signed-hash 回答计划候选在 final 前停止：目标几何不迁移，plan bridge 还可能干扰 renderer |
+| R2-H3.6 几何 | 三 seed 无训练审计选择 train-whitened native response state + compositional 字符 n-gram；这是目标设计结果，不是语言能力结果 |
+| R2-H3.6-A | 版本化 train-only target encoder、训练器接线与保存恢复 smoke 已在 12/8/4 fixture 通过；没有进行能力训练 |
+| H3.6-B 前置 | control/treatment 零步前置均通过，effective=276,610≤300,000，parent/恢复/target 血缘检查成立；`training_performed=false` |
+| 下一步 | 取得三 seed dev 训练的明确授权，再按冻结 H3.6-B 合同执行并继续延迟 final；授权前不读取 H3.5-A final、不启动正式 epoch |
 
-权威摘要见 [M5 K 轴 scorecard v4](plans/reference/M5_K_AXIS_SCORECARD_V4_CONTRACT_20260911.md)，
-机器可读证据见 [scorecard 报告](reports/taiji_m5_k_axis_scorecard_v4_20260911.json)。
+权威执行顺序见[当前推进计划](plans/active/roadmap/03_CURRENT_EXECUTION.md)；H3.6 目标合同见
+[M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md](plans/reference/M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md)，
+matched 预注册见[M5_R2_H3_6B_MATCHED_RUN_PREREGISTRATION_20260916.md](plans/reference/M5_R2_H3_6B_MATCHED_RUN_PREREGISTRATION_20260916.md)，
+最新 plumbing 证据见[taiji_r2_h3_6_target_encoder_smoke_20260916.json](reports/taiji_r2_h3_6_target_encoder_smoke_20260916.json)，
+control/treatment 零步证据见[taiji_r2_h3_6b_control_preflight_20260916.json](reports/taiji_r2_h3_6b_control_preflight_20260916.json)与[taiji_r2_h3_6b_treatment_preflight_20260916.json](reports/taiji_r2_h3_6b_treatment_preflight_20260916.json)。
+
+M5 K 轴 scorecard 仍是有效的并行、限定范围机制结果；它不是当前 R2 语言主线，也不代表默认 runtime 晋级。
 
 ## 现状
 
-- 已完成并提交：TSK-v8 基座与回归链、结构成长机制 Gate、M0–M2 基础证据、M5 K1/K2/K3
-  scorecard 证据，以及到 P4.13 为止的 G 侧求解器机制。
-- 当前边界：`g_solver_mechanism_course_closed=true`，但 `promotion_gate=false`、
-  `can_promote=false`、`growth_admitted=false`。K worker 联合课程尚未预注册或运行；默认
-  runtime 尚未挂接 owner，默认 runtime rollout review 也尚未执行。
-- 下一步：预注册 K worker 联合课程，把 P2.6/P2.7 continuation 机械与求解器机制接到同一父代上。
-  这是[当前执行计划](plans/active/roadmap/03_CURRENT_EXECUTION.md)中唯一的下一步。
-- 诚实边界：这是一个训练中的学习机制原型，**不是**完整的认知架构，不是语言模型，也不构成任何 AGI 主张。乱码输出是预期的内核行为。
+- 已完成并提交：TSK-v8 基座与回归链、结构成长机制 Gate、M0–M2 基础证据、限定范围的 M5
+  K 轴 scorecard，以及上文所述的 R2-H3.6-A 目标 plumbing。
+- 当前边界：原生语言路线已有结构化训练与恢复证据，但尚未建立 S2/L2 对话能力。K 轴的
+  `promotion_gate=false`、`can_promote=false`、`growth_admitted=false` 仍保持诚实边界；不代表默认
+  runtime 已挂接 owner，也不代表产品 rollout 已发生。
+- 下一步：取得明确授权后执行 H3.6-B 三 seed matched dev，继续延迟 final。这是[当前执行计划](plans/active/roadmap/03_CURRENT_EXECUTION.md)中唯一的下一步。
+- 诚实边界：这是一个训练中的学习机制原型，**不是**完整的认知架构，尚不是通用语言模型，也不构成任何 AGI 主张。当前 R2 将不可读或不可迁移的回答视为待解决失败，不包装成模型能力。
 
 ## 快速开始
 

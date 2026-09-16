@@ -1,6 +1,6 @@
 # Seed / Taiji 总阶段与能力晋级地图
 
-> 更新：2026-09-16；本地未提交观察见03。R2结构化入口、P0保存恢复、P1 fast/slow 对照、P2序列级只读评价、G1条件接口 smoke、H2/H3内部表示/读出审计、H3.1序列路径对照、H3.2 response-start候选读出、H3.3泛化控制、H3.4逐位置条件信用审计与H3.5表示合同复审已形成主线证据；本文恢复总范围与阶段状态，不发布第二条执行顺序。
+> 更新：2026-09-16；本地未提交观察见03。R2结构化入口、P0保存恢复、P1 fast/slow 对照、P2序列级只读评价、G1条件接口 smoke、H2/H3内部表示/读出审计、H3.1序列路径对照、H3.2 response-start候选读出、H3.3泛化控制、H3.4逐位置条件信用审计、H3.5表示合同复审与H3.6-A target encoder plumbing已形成主线证据；本文恢复总范围与阶段状态，不发布第二条执行顺序。
 > 日常执行只看 [03 当前执行](03_CURRENT_EXECUTION.md)；晋级与批准规则只看 [02 晋级门禁](02_GATES_AND_CI.md)。
 > 下列新增阶段出口是本轮规划合同，不是补发历史通过结论，也不是冻结新实验阈值。
 
@@ -41,7 +41,7 @@
 | 协作与自主选择 | C/A 负结果；B0 的 HANDOFF-M4 已由反事实转成**已发布规则**：2026-09-15 落地进 P5.2b gate（`rule_revision=1`，五条出口见 WP-3 落地结果），独立结构因素仍为 1。**注意**：该规则目前**只存在于 gate 脚本**，`taiji/` 无对应实现 ⇒ 落地证明的是仪器，不是产品能力 | B2-v4已证冻结create族内学习选择与协作；仍缺独立内容结构、产品同入口集成及轴级共同门/批准，H1/H2/H3不混称 | 已完成B链继承；R4集成、R5独立扩面与轴评审 |
 | 身体与在线闭环 | Workbench 合同与预测路径、恢复资产可复用 | 真实结果驱动合格更新、多轮保持/幂等/中断恢复；能力注册/撤销、执行与认知责任分离 | R0逐门审查→R3闭环；身体生命周期由R5在M5评审前闭合 |
 
-**最新状态**：R2-H3.5-A已因plan target不迁移在final前停止。H3.6三种子无训练geometry审计已完成，选定train-only whitened native response state与compositional n-gram混合目标；它是唯一在三个种子都超过signed-hash迁移下限且保持样本分离的候选，但不证明S2/L2/Mini。下一步按03实现版本化target encoder与reconstruction smoke，不读final、不扩容量。
+**最新状态**：R2-H3.5-A已因plan target不迁移在final前停止。H3.6三种子无训练geometry审计已完成，选定train-only whitened native response state与compositional n-gram混合目标；随后完成了版本化target encoder、train-only拟合、冻结变换、trainer接线、保存恢复 smoke及H3.6-B control/treatment零步前置，证据见03、`reports/taiji_r2_h3_6_target_encoder_smoke_20260916.json`和两份H3.6-B preflight报告。前置只证明目标链路、容量与恢复边界成立，不证明S2/L2/Mini。当前下一步是取得明确授权后执行H3.6-B三seed dev训练；授权前不读final、不扩容量、不启动正式epoch。
 
 **M5 限定阶段退出**还需知识准入、在线/身体轴与共同保持恢复门闭合。若某能力决定留到以后，必须列为“未完成且从本次交付范围排除”，由项目所有者批准；不能写为已完成。当前没有这种新增豁免。
 

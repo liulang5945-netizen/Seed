@@ -32,6 +32,7 @@ import torch
 from .internalization import content_digest
 from .model import Taiji
 from .organs import BytePredictiveReadout
+from .response_plan_target import ResponsePlanTargetEncoder
 
 LANGUAGE_ALIGNMENT_FORMAT = "taiji-native-language-alignment-v2"
 LANGUAGE_ALIGNMENT_VERSION = 2
@@ -51,6 +52,13 @@ LANGUAGE_ALIGNMENT_MARKERS = (
     "<|end|>",
     "<|none|>",
 )
+LANGUAGE_RESPONSE_PLAN_TARGET_GEOMETRIES = frozenset(
+    {
+        "signed_hash_span",
+        "h3_6_whitened_native_compositional",
+    }
+)
+LANGUAGE_RESPONSE_PLAN_TARGET_H36 = "h3_6_whitened_native_compositional"
 
 
 def _text(value: Any, name: str, *, allow_empty: bool = False) -> str:
@@ -175,9 +183,7 @@ class LanguageEpisode:
             "split": self.split,
             "system": self.system,
             "context": self.context,
-            "history": [
-                {"user": user, "assistant": assistant} for user, assistant in self.history
-            ],
+            "history": [{"user": user, "assistant": assistant} for user, assistant in self.history],
             "user_input": self.user_input,
             "response": self.response,
             "unknown_policy": self.unknown_policy,
@@ -248,7 +254,9 @@ class LanguageEpisodeCorpus:
         family_splits: dict[str, set[str]] = defaultdict(set)
         for item in episodes:
             family_splits[item.family_id].add(item.split)
-        leaking = {family: sorted(splits) for family, splits in family_splits.items() if len(splits) > 1}
+        leaking = {
+            family: sorted(splits) for family, splits in family_splits.items() if len(splits) > 1
+        }
         if leaking:
             raise ValueError(f"language episode family crosses splits: {leaking}")
         if not any(item.split == "train" for item in episodes):
@@ -342,6 +350,7 @@ class LanguageAlignmentConfig:
     response_phase_readout: bool = False
     response_plan_readout: bool = False
     response_plan_width: int = 32
+    response_plan_target_geometry: str = "signed_hash_span"
     developmental_mode: str = "static"
     developmental_replay_learning_rate_scale: float = 0.25
     developmental_consolidation_rate: float = 1.0
@@ -378,17 +387,28 @@ class LanguageAlignmentConfig:
                 raise TypeError(f"{name} must be a bool")
         if int(self.response_plan_width) <= 0:
             raise ValueError("response_plan_width must be positive")
-        if sum(
-            bool(item)
-            for item in (
-                self.response_start_readout,
-                self.response_phase_readout,
-                self.response_plan_readout,
-            )
-        ) > 1:
+        if self.response_plan_target_geometry not in LANGUAGE_RESPONSE_PLAN_TARGET_GEOMETRIES:
             raise ValueError(
-                "response candidate readouts are mutually exclusive"
+                "response_plan_target_geometry must be signed_hash_span or "
+                "h3_6_whitened_native_compositional"
             )
+        if (
+            self.response_plan_target_geometry != "signed_hash_span"
+            and not self.response_plan_readout
+        ):
+            raise ValueError("a non-legacy response-plan target requires response_plan_readout")
+        if (
+            sum(
+                bool(item)
+                for item in (
+                    self.response_start_readout,
+                    self.response_phase_readout,
+                    self.response_plan_readout,
+                )
+            )
+            > 1
+        ):
+            raise ValueError("response candidate readouts are mutually exclusive")
 
     def to_payload(self) -> dict[str, Any]:
         return asdict(self)
@@ -429,6 +449,8 @@ class LanguageAlignmentTrainer:
         *,
         config: LanguageAlignmentConfig | None = None,
         code_revision: str | None = None,
+        response_plan_target_encoder: ResponsePlanTargetEncoder | None = None,
+        response_plan_targets: Mapping[str, torch.Tensor] | None = None,
     ) -> None:
         if not isinstance(model, Taiji):
             raise TypeError("language alignment trainer requires a Taiji model")
@@ -443,10 +465,16 @@ class LanguageAlignmentTrainer:
         self.episode_count = 0
         self.history: list[dict[str, Any]] = []
         self.developmental_history: list[dict[str, Any]] = []
+        self.response_plan_target_encoder = response_plan_target_encoder
+        self.response_plan_targets: dict[str, torch.Tensor] = {
+            str(key): value.detach().cpu().to(dtype=torch.float32).clone()
+            for key, value in (response_plan_targets or {}).items()
+        }
         self._configure_developmental_mode()
         self._configure_response_start_readout()
         self._configure_response_phase_readout()
         self._configure_response_plan_readout()
+        self._configure_response_plan_target()
 
     def _configure_response_start_readout(self) -> None:
         if not self.config.response_start_readout:
@@ -464,12 +492,63 @@ class LanguageAlignmentTrainer:
         if not self.config.response_plan_readout:
             return
         if not self.model.response_plan_readout_enabled:
-            self.model.enable_response_plan_readout(
-                plan_width=self.config.response_plan_width
-            )
+            self.model.enable_response_plan_readout(plan_width=self.config.response_plan_width)
+
+    def _configure_response_plan_target(self) -> None:
+        geometry = self.config.response_plan_target_geometry
+        if geometry == "signed_hash_span":
+            if self.response_plan_target_encoder is not None or self.response_plan_targets:
+                raise ValueError(
+                    "legacy response-plan geometry cannot carry an H3.6 target encoder"
+                )
+            return
+        if geometry != LANGUAGE_RESPONSE_PLAN_TARGET_H36:
+            raise ValueError("unsupported response-plan target geometry")
+        if self.response_plan_target_encoder is None:
+            raise ValueError("H3.6 response-plan geometry requires a target encoder")
+        if not self.model.response_plan_readout_enabled:
+            raise ValueError("H3.6 response-plan geometry requires the plan readout")
+        if self.response_plan_target_encoder.width != self.config.response_plan_width:
+            raise ValueError("target encoder width does not match response-plan width")
+        self.response_plan_target_encoder.assert_compatible(corpus_digest=self.corpus_digest)
+        train_ids = tuple(item.episode_id for item in self.corpus.for_split("train"))
+        if self.response_plan_targets:
+            if set(self.response_plan_targets) != set(train_ids):
+                raise ValueError("checkpointed H3.6 targets do not match the train split")
+            targets = self.response_plan_targets
+        else:
+            targets = {
+                episode.episode_id: self.response_plan_target_encoder.encode_episode(
+                    self.model, episode
+                )
+                for episode in self.corpus.for_split("train")
+            }
+        self.response_plan_targets = {}
+        for episode_id in train_ids:
+            target = targets[episode_id].detach().cpu().to(dtype=torch.float32).clone()
+            if target.shape != (self.config.response_plan_width,):
+                raise ValueError("H3.6 response-plan target dimension mismatch")
+            norm = float(torch.linalg.vector_norm(target))
+            if not math.isfinite(norm) or abs(norm - 1.0) > 1e-4:
+                raise ValueError("H3.6 response-plan targets must be unit normalized")
+            if not bool(torch.isfinite(target).all()):
+                raise ValueError("H3.6 response-plan target contains non-finite values")
+            self.response_plan_targets[episode_id] = target
+
+    @property
+    def response_plan_target_digest(self) -> str | None:
+        if self.response_plan_target_encoder is None:
+            return None
+        return self.response_plan_target_encoder.target_digest
 
     def _response_plan_target(self, episode: LanguageEpisode) -> torch.Tensor:
-        """Create the frozen v1 training-only signed-hash span target."""
+        """Return the selected training-only response-plan target."""
+
+        if self.config.response_plan_target_geometry == LANGUAGE_RESPONSE_PLAN_TARGET_H36:
+            try:
+                return self.response_plan_targets[episode.episode_id].clone()
+            except KeyError as exc:
+                raise ValueError("H3.6 response-plan target is missing for the episode") from exc
 
         characters = list(episode.response)
         span_count = min(8, max(1, len(characters)))
@@ -479,9 +558,7 @@ class LanguageAlignmentTrainer:
             start = (index * len(characters)) // span_count
             end = ((index + 1) * len(characters)) // span_count
             span = "".join(characters[start:end]).encode("utf-8")
-            digest = hashlib.sha256(
-                b"r2-h3-5a-response-plan-v1\x00" + span
-            ).digest()
+            digest = hashlib.sha256(b"r2-h3-5a-response-plan-v1\x00" + span).digest()
             for offset in range(width):
                 byte = digest[offset % len(digest)]
                 target[offset] += 1.0 if byte & 1 else -1.0
@@ -586,9 +663,7 @@ class LanguageAlignmentTrainer:
             self.model.begin_response_plan()
             response_phase_readout = self.model.response_plan_readout
             if learn:
-                response_phase_readout.learn_plan_target(
-                    self._response_plan_target(episode)
-                )
+                response_phase_readout.learn_plan_target(self._response_plan_target(episode))
         observations = 0
         correct = 0
         surprise_sum = 0.0
@@ -680,9 +755,13 @@ class LanguageAlignmentTrainer:
                 )
             )
             if self.config.response_plan_readout:
-                probabilities = self.model.response_plan_readout.probabilities(
-                    self.model.snapshot().motor_context
-                ).detach().cpu()
+                probabilities = (
+                    self.model.response_plan_readout.probabilities(
+                        self.model.snapshot().motor_context
+                    )
+                    .detach()
+                    .cpu()
+                )
             mask = torch.zeros_like(probabilities, dtype=torch.bool)
             mask[torch.tensor(allowed, dtype=torch.long)] = True
             masked = probabilities.clone()
@@ -730,9 +809,9 @@ class LanguageAlignmentTrainer:
         original = self.model.checkpoint()
         try:
             self.model.reset_dynamics(episode_id=f"r2-beam:{episode.episode_id}")
-            step = self._observe(self.model.config.boundary_symbol, learn=False)
+            self._observe(self.model.config.boundary_symbol, learn=False)
             for symbol in episode.prompt_bytes:
-                step = self._observe(symbol, learn=False)
+                self._observe(symbol, learn=False)
             response_phase_readout = None
             if self.config.response_phase_readout:
                 self.model.begin_response_phase()
@@ -754,9 +833,7 @@ class LanguageAlignmentTrainer:
                             else self.model.snapshot().motor_probabilities.detach().cpu()
                         )
                     )
-                    allowed = torch.tensor(
-                        self._utf8_allowed(remaining, lead), dtype=torch.long
-                    )
+                    allowed = torch.tensor(self._utf8_allowed(remaining, lead), dtype=torch.long)
                     values = probabilities[allowed].clamp_min(1e-12).log()
                     count = min(int(top_k), int(allowed.numel()))
                     top_values, top_indices = torch.topk(values, count)
@@ -769,9 +846,7 @@ class LanguageAlignmentTrainer:
                         if next_generated.endswith(b"<|end|>"):
                             completed.append((next_score, next_generated))
                             continue
-                        next_remaining, next_lead = self._advance_utf8(
-                            remaining, lead, symbol
-                        )
+                        next_remaining, next_lead = self._advance_utf8(remaining, lead, symbol)
                         self.model.restore_dynamics(state)
                         self._observe(
                             symbol,
@@ -900,17 +975,12 @@ class LanguageAlignmentTrainer:
                 "max_generation_bytes": int(max_generation_bytes),
                 "episodes": len(records),
                 "greedy_unique_generated_texts": len(set(greedy_texts)),
-                "greedy_collision_rate": 1.0
-                - (len(set(greedy_texts)) / len(records)),
+                "greedy_collision_rate": 1.0 - (len(set(greedy_texts)) / len(records)),
                 "beam_unique_generated_texts": len(set(beam_texts)),
                 "beam_collision_rate": 1.0 - (len(set(beam_texts)) / len(records)),
-                "beam_changed_output_rate": sum(
-                    item["beam_changed_output"] for item in records
-                )
+                "beam_changed_output_rate": sum(item["beam_changed_output"] for item in records)
                 / len(records),
-                "beam_exact_response_rate": sum(
-                    item["beam"]["exact_response"] for item in records
-                )
+                "beam_exact_response_rate": sum(item["beam"]["exact_response"] for item in records)
                 / len(records),
                 "beam_sequence_criterion_pass_rate": sum(
                     item["beam"]["sequence_criterion_pass"] for item in records
@@ -961,9 +1031,7 @@ class LanguageAlignmentTrainer:
             self._prime(episode)
             state = self.model.checkpoint()["state"]
             context = state["motor_context"].detach().to("cpu", dtype=torch.float32)
-            probabilities = state["motor_probabilities"].detach().to(
-                "cpu", dtype=torch.float32
-            )
+            probabilities = state["motor_probabilities"].detach().to("cpu", dtype=torch.float32)
             return {
                 "episode_id": episode.episode_id,
                 "context": context,
@@ -994,9 +1062,7 @@ class LanguageAlignmentTrainer:
         trainer_checkpoint_digest = str(trainer_checkpoint["checkpoint_digest"])
         snapshots = [self._prefix_condition_snapshot(episode) for episode in episodes]
         restored = self.from_checkpoint(trainer_checkpoint, self.corpus)
-        restored_snapshots = [
-            restored._prefix_condition_snapshot(episode) for episode in episodes
-        ]
+        restored_snapshots = [restored._prefix_condition_snapshot(episode) for episode in episodes]
         recovery_repeatable = all(
             left["context_digest"] == right["context_digest"]
             and left["probabilities_digest"] == right["probabilities_digest"]
@@ -1011,7 +1077,9 @@ class LanguageAlignmentTrainer:
         pair_argmax_difference: list[bool] = []
         for index, left in enumerate(snapshots):
             for right in snapshots[index + 1 :]:
-                pair_context_l2.append(float(torch.linalg.vector_norm(left["context"] - right["context"])))
+                pair_context_l2.append(
+                    float(torch.linalg.vector_norm(left["context"] - right["context"]))
+                )
                 left_norm = float(torch.linalg.vector_norm(left["context"]))
                 right_norm = float(torch.linalg.vector_norm(right["context"]))
                 if left_norm == 0.0 or right_norm == 0.0:
@@ -1024,13 +1092,10 @@ class LanguageAlignmentTrainer:
                     float(0.5 * torch.abs(left["probabilities"] - right["probabilities"]).sum())
                 )
                 pair_probability_js.append(
-                    self._distribution_js_divergence(
-                        left["probabilities"], right["probabilities"]
-                    )
+                    self._distribution_js_divergence(left["probabilities"], right["probabilities"])
                 )
                 pair_argmax_difference.append(
-                    int(left["probabilities"].argmax())
-                    != int(right["probabilities"].argmax())
+                    int(left["probabilities"].argmax()) != int(right["probabilities"].argmax())
                 )
 
         perturbation_context_l2: list[float] = []
@@ -1046,10 +1111,7 @@ class LanguageAlignmentTrainer:
                 float(torch.linalg.vector_norm(original["context"] - changed["context"]))
             )
             perturbation_probability_l1.append(
-                float(
-                    0.5
-                    * torch.abs(original["probabilities"] - changed["probabilities"]).sum()
-                )
+                float(0.5 * torch.abs(original["probabilities"] - changed["probabilities"]).sum())
             )
 
         context_digests = [item["context_digest"] for item in snapshots]
@@ -1124,9 +1186,7 @@ class LanguageAlignmentTrainer:
                 target_legal_probability = float(
                     legal_probabilities[allowed == target_symbol].item()
                 )
-                target_rank = 1 + int(
-                    (legal_probabilities > target_legal_probability).sum().item()
-                )
+                target_rank = 1 + int((legal_probabilities > target_legal_probability).sum().item())
                 top_index = int(legal_probabilities.argmax().item())
                 top_symbol = int(allowed[top_index].item())
                 top_probability = float(legal_probabilities[top_index].item())
@@ -1144,9 +1204,10 @@ class LanguageAlignmentTrainer:
                         "argmax_legal_start": top_symbol,
                         "argmax_legal_start_hex": f"{top_symbol:02x}",
                         "argmax_legal_probability": top_probability,
-                        "target_margin_vs_second": target_legal_probability
-                        - second_probability,
-                        "context_digest": content_digest(state.motor_context.detach().cpu().tolist()),
+                        "target_margin_vs_second": target_legal_probability - second_probability,
+                        "context_digest": content_digest(
+                            state.motor_context.detach().cpu().tolist()
+                        ),
                         "probabilities_digest": content_digest(probabilities.tolist()),
                     }
                 )
@@ -1172,7 +1233,9 @@ class LanguageAlignmentTrainer:
                 for item in repeated
             ]
             if not recovery_repeatable:
-                raise RuntimeError("response-start margin diagnostic was not repeatable after restore")
+                raise RuntimeError(
+                    "response-start margin diagnostic was not repeatable after restore"
+                )
             return {
                 "format": LANGUAGE_ALIGNMENT_FORMAT,
                 "status": "completed",
@@ -1207,7 +1270,9 @@ class LanguageAlignmentTrainer:
             self._configure_developmental_mode()
             self._configure_response_start_readout()
             if str(self.checkpoint()["checkpoint_digest"]) != checkpoint_digest:
-                raise RuntimeError("response-start margin diagnostic mutated the trainer checkpoint")
+                raise RuntimeError(
+                    "response-start margin diagnostic mutated the trainer checkpoint"
+                )
 
     def response_phase_margin_diagnostic(self, split: str = "train") -> dict[str, Any]:
         """Measure the first-byte margin of the continuous response owner.
@@ -1241,9 +1306,7 @@ class LanguageAlignmentTrainer:
                 target_legal_probability = float(
                     legal_probabilities[allowed == target_symbol].item()
                 )
-                target_rank = 1 + int(
-                    (legal_probabilities > target_legal_probability).sum().item()
-                )
+                target_rank = 1 + int((legal_probabilities > target_legal_probability).sum().item())
                 top_index = int(legal_probabilities.argmax().item())
                 top_symbol = int(allowed[top_index].item())
                 top_probability = float(legal_probabilities[top_index].item())
@@ -1261,8 +1324,7 @@ class LanguageAlignmentTrainer:
                         "argmax_legal_start": top_symbol,
                         "argmax_legal_start_hex": f"{top_symbol:02x}",
                         "argmax_legal_probability": top_probability,
-                        "target_margin_vs_second": target_legal_probability
-                        - second_probability,
+                        "target_margin_vs_second": target_legal_probability - second_probability,
                         "context_digest": content_digest(
                             state.motor_context.detach().cpu().tolist()
                         ),
@@ -1350,25 +1412,17 @@ class LanguageAlignmentTrainer:
         requested = tuple(str(split) for split in splits)
         if not requested or len(set(requested)) != len(requested):
             raise ValueError("generalization diagnostic needs unique non-empty splits")
-        episodes_by_split = {
-            split: self.corpus.for_split(split)
-            for split in requested
-        }
+        episodes_by_split = {split: self.corpus.for_split(split) for split in requested}
         if any(not episodes for episodes in episodes_by_split.values()):
             raise ValueError("generalization diagnostic cannot profile an empty split")
         train_episodes = self.corpus.for_split("train")
         train_response_bytes = {
-            episode.episode_id: episode.response.encode("utf-8")
-            for episode in train_episodes
+            episode.episode_id: episode.response.encode("utf-8") for episode in train_episodes
         }
         train_user_bytes = {
-            episode.episode_id: episode.user_input.encode("utf-8")
-            for episode in train_episodes
+            episode.episode_id: episode.user_input.encode("utf-8") for episode in train_episodes
         }
-        train_first_bytes = {
-            int(episode.target_bytes[0])
-            for episode in train_episodes
-        }
+        train_first_bytes = {int(episode.target_bytes[0]) for episode in train_episodes}
         train_families = {episode.task_family for episode in train_episodes}
         train_policies = {episode.unknown_policy for episode in train_episodes}
         allowed = torch.tensor(self._utf8_allowed(0, 0), dtype=torch.long)
@@ -1393,18 +1447,10 @@ class LanguageAlignmentTrainer:
                     state = decoder.model.snapshot()
                     if decoder.config.response_phase_readout:
                         decoder.model.begin_response_phase()
-                        probabilities = (
-                            decoder.model.response_phase_probabilities()
-                            .detach()
-                            .cpu()
-                        )
+                        probabilities = decoder.model.response_phase_probabilities().detach().cpu()
                         readout_owner = "predictive_readout.response_phase"
                     elif decoder.config.response_start_readout:
-                        probabilities = (
-                            decoder.model.response_start_probabilities()
-                            .detach()
-                            .cpu()
-                        )
+                        probabilities = decoder.model.response_start_probabilities().detach().cpu()
                         readout_owner = "predictive_readout.response_start"
                     else:
                         probabilities = state.motor_probabilities.detach().cpu()
@@ -1466,7 +1512,8 @@ class LanguageAlignmentTrainer:
                             "target_response_prefix_max_lcp_bytes": response_prefix_overlap,
                             "target_user_input_max_lcp_bytes": user_prefix_overlap,
                             "task_family_seen_in_train": episode.task_family in train_families,
-                            "unknown_policy_seen_in_train": episode.unknown_policy in train_policies,
+                            "unknown_policy_seen_in_train": episode.unknown_policy
+                            in train_policies,
                             "target_response_byte_length": len(response_bytes),
                             "target_probability": target_probability,
                             "target_legal_probability": target_legal_probability,
@@ -1489,9 +1536,7 @@ class LanguageAlignmentTrainer:
                 profiles[split] = {
                     "split": split,
                     "episodes": len(records),
-                    "target_first_byte_seen_in_train_rate": mean(
-                        "target_first_byte_seen_in_train"
-                    ),
+                    "target_first_byte_seen_in_train_rate": mean("target_first_byte_seen_in_train"),
                     "target_response_exact_seen_in_train_rate": mean(
                         "target_response_exact_seen_in_train"
                     ),
@@ -1501,20 +1546,14 @@ class LanguageAlignmentTrainer:
                     "target_response_prefix_max_lcp_bytes_mean": mean(
                         "target_response_prefix_max_lcp_bytes"
                     ),
-                    "target_user_input_max_lcp_bytes_mean": mean(
-                        "target_user_input_max_lcp_bytes"
-                    ),
+                    "target_user_input_max_lcp_bytes_mean": mean("target_user_input_max_lcp_bytes"),
                     "task_family_seen_in_train_rate": mean("task_family_seen_in_train"),
-                    "unknown_policy_seen_in_train_rate": mean(
-                        "unknown_policy_seen_in_train"
-                    ),
+                    "unknown_policy_seen_in_train_rate": mean("unknown_policy_seen_in_train"),
                     "target_first_byte_top1_rate": sum(
                         item["target_rank_among_legal_starts"] == 1 for item in records
                     )
                     / len(records),
-                    "mean_target_rank_among_legal_starts": mean(
-                        "target_rank_among_legal_starts"
-                    ),
+                    "mean_target_rank_among_legal_starts": mean("target_rank_among_legal_starts"),
                     "mean_target_legal_probability": mean("target_legal_probability"),
                     "mean_target_margin_vs_second": mean("target_margin_vs_second"),
                     "readout_owner": readout_owner,
@@ -1594,10 +1633,7 @@ class LanguageAlignmentTrainer:
             raise ValueError("conditional credit diagnostic needs unique non-empty splits")
         if int(max_generation_bytes) <= 0:
             raise ValueError("max_generation_bytes must be positive")
-        episodes_by_split = {
-            split: self.corpus.for_split(split)
-            for split in requested
-        }
+        episodes_by_split = {split: self.corpus.for_split(split) for split in requested}
         if any(not episodes for episodes in episodes_by_split.values()):
             raise ValueError("conditional credit diagnostic cannot profile an empty split")
 
@@ -1660,8 +1696,8 @@ class LanguageAlignmentTrainer:
                             predictive_readout = None
                         else:
                             probabilities = (
-                                decoder.model.snapshot().motor_probabilities
-                                .detach()
+                                decoder.model.snapshot()
+                                .motor_probabilities.detach()
                                 .to("cpu", dtype=torch.float32)
                             )
                             readout_owner = "predictive_readout"
@@ -1766,18 +1802,12 @@ class LanguageAlignmentTrainer:
                                 "response_boundary_present": boundary_present,
                                 "generation_stop_reason": stop_reason,
                                 "exact_response": generated_text == episode.response.strip(),
-                                "sequence_criterion_pass": sequence[
-                                    "sequence_criterion_pass"
-                                ],
+                                "sequence_criterion_pass": sequence["sequence_criterion_pass"],
                             },
                         }
                     )
 
-                all_positions = [
-                    position
-                    for record in records
-                    for position in record["positions"]
-                ]
+                all_positions = [position for record in records for position in record["positions"]]
 
                 def mean(items: Sequence[Mapping[str, Any]], name: str) -> float:
                     return sum(float(item[name]) for item in items) / max(1, len(items))
@@ -1802,12 +1832,8 @@ class LanguageAlignmentTrainer:
                             sum(item["target_legal_rank"] is not None for item in items),
                         ),
                         "mean_target_probability": mean(items, "target_probability"),
-                        "mean_target_legal_probability": mean(
-                            items, "target_legal_probability"
-                        ),
-                        "mean_target_log_probability": mean(
-                            items, "target_log_probability"
-                        ),
+                        "mean_target_legal_probability": mean(items, "target_legal_probability"),
+                        "mean_target_log_probability": mean(items, "target_log_probability"),
                         "mean_target_legal_log_probability": mean(
                             items, "target_legal_log_probability"
                         ),
@@ -1830,18 +1856,18 @@ class LanguageAlignmentTrainer:
                     for index in indices
                 }
                 generated = [record["free_generation"] for record in records]
-                unique_generated = len(
-                    {str(item["generated_text"]) for item in generated}
-                )
+                unique_generated = len({str(item["generated_text"]) for item in generated})
                 profiles[split] = {
                     "split": split,
                     "episodes": len(records),
                     "readout_owner": (
                         "predictive_readout.response_phase"
                         if decoder.config.response_phase_readout
-                        else "predictive_readout.response_start+predictive_readout"
-                        if decoder.config.response_start_readout
-                        else "predictive_readout"
+                        else (
+                            "predictive_readout.response_start+predictive_readout"
+                            if decoder.config.response_start_readout
+                            else "predictive_readout"
+                        )
                     ),
                     "records": records,
                     "by_role": by_role,
@@ -1850,9 +1876,7 @@ class LanguageAlignmentTrainer:
                         "unique_generated_texts": unique_generated,
                         "generated_text_collision_rate": 1.0
                         - (unique_generated / max(1, len(generated))),
-                        "utf8_valid_rate": sum(
-                            bool(item["utf8_valid"]) for item in generated
-                        )
+                        "utf8_valid_rate": sum(bool(item["utf8_valid"]) for item in generated)
                         / max(1, len(generated)),
                         "no_replacement_rate": sum(
                             bool(item["no_replacement"]) for item in generated
@@ -1904,9 +1928,7 @@ class LanguageAlignmentTrainer:
 
             recovery_repeatable = recovery_signature(profiles) == recovery_signature(repeated)
             if not recovery_repeatable:
-                raise RuntimeError(
-                    "conditional credit diagnostic was not repeatable after restore"
-                )
+                raise RuntimeError("conditional credit diagnostic was not repeatable after restore")
             return {
                 "format": LANGUAGE_ALIGNMENT_CREDIT_EVALUATION,
                 "status": "completed",
@@ -2016,12 +2038,8 @@ class LanguageAlignmentTrainer:
         boundary_present: bool,
         stop_reason: str,
     ) -> dict[str, Any]:
-        required_hits = tuple(
-            term for term in episode.required_terms if term in generated_text
-        )
-        forbidden_hits = tuple(
-            term for term in episode.forbidden_terms if term in generated_text
-        )
+        required_hits = tuple(term for term in episode.required_terms if term in generated_text)
+        forbidden_hits = tuple(term for term in episode.forbidden_terms if term in generated_text)
         required_coverage = len(required_hits) / max(1, len(episode.required_terms))
         if episode.unknown_policy == "answer":
             unknown_policy_satisfied: bool | None = True
@@ -2059,10 +2077,7 @@ class LanguageAlignmentTrainer:
             "semantic_criteria_evaluated": semantic_evaluated,
             "semantic_criteria_pass": semantic_pass,
             "sequence_criterion_pass": bool(
-                valid_utf8
-                and no_replacement
-                and boundary_present
-                and (semantic_pass is not False)
+                valid_utf8 and no_replacement and boundary_present and (semantic_pass is not False)
             ),
         }
 
@@ -2161,9 +2176,7 @@ class LanguageAlignmentTrainer:
                 bool(item["sequence_criterion_pass"]) for item in records
             )
             / len(records),
-            "required_term_coverage": sum(
-                float(item["required_term_coverage"]) for item in records
-            )
+            "required_term_coverage": sum(float(item["required_term_coverage"]) for item in records)
             / len(records),
             "semantic_criteria_evaluated": sum(
                 bool(item["semantic_criteria_evaluated"]) for item in records
@@ -2176,15 +2189,11 @@ class LanguageAlignmentTrainer:
                 )
                 / max(
                     1,
-                    sum(
-                        bool(item["semantic_criteria_evaluated"]) for item in records
-                    ),
+                    sum(bool(item["semantic_criteria_evaluated"]) for item in records),
                 )
             ),
             "unique_generated_texts": unique_generated_texts,
-            "generated_text_collision_rate": 1.0 - (
-                unique_generated_texts / len(records)
-            ),
+            "generated_text_collision_rate": 1.0 - (unique_generated_texts / len(records)),
             "records": records,
             "checkpoint_read_only": True,
             "native_mode_only": True,
@@ -2204,6 +2213,14 @@ class LanguageAlignmentTrainer:
             "developmental_history": list(self.developmental_history),
             "model": self.model.checkpoint(),
         }
+        if self.config.response_plan_target_geometry == LANGUAGE_RESPONSE_PLAN_TARGET_H36:
+            if self.response_plan_target_encoder is None:
+                raise RuntimeError("H3.6 response-plan target encoder is not configured")
+            payload["response_plan_target_encoder"] = self.response_plan_target_encoder.to_payload()
+            payload["response_plan_targets"] = {
+                episode_id: target.detach().cpu().clone()
+                for episode_id, target in sorted(self.response_plan_targets.items())
+            }
         payload["checkpoint_digest"] = content_digest(payload)
         return payload
 
@@ -2236,11 +2253,34 @@ class LanguageAlignmentTrainer:
         config_payload = payload.get("config")
         if not isinstance(config_payload, Mapping):
             raise ValueError("language alignment checkpoint is missing config")
+        config = LanguageAlignmentConfig(**dict(config_payload))
+        target_encoder = None
+        target_payload = payload.get("response_plan_target_encoder")
+        target_targets_payload = payload.get("response_plan_targets")
+        if config.response_plan_target_geometry == LANGUAGE_RESPONSE_PLAN_TARGET_H36:
+            if not isinstance(target_payload, Mapping):
+                raise ValueError("H3.6 checkpoint is missing its target encoder")
+            target_encoder = ResponsePlanTargetEncoder.from_payload(
+                target_payload,
+                expected_corpus_digest=corpus.digest,
+            )
+            if not isinstance(target_targets_payload, Mapping):
+                raise ValueError("H3.6 checkpoint is missing its train targets")
+            target_targets = {
+                str(key): value.detach().cpu().to(dtype=torch.float32).clone()
+                for key, value in target_targets_payload.items()
+            }
+        else:
+            if target_payload is not None or target_targets_payload is not None:
+                raise ValueError("legacy response-plan checkpoint cannot contain H3.6 target state")
+            target_targets = None
         trainer = cls(
             model,
             corpus,
-            config=LanguageAlignmentConfig(**dict(config_payload)),
+            config=config,
             code_revision=str(payload.get("code_revision", "working-tree")),
+            response_plan_target_encoder=target_encoder,
+            response_plan_targets=target_targets,
         )
         trainer.global_step = int(payload.get("global_step", 0))
         trainer.episode_count = int(payload.get("episode_count", 0))
@@ -2301,15 +2341,13 @@ def paired_checkpoint_diagnostic(
                     "baseline_perturbed": baseline_perturbed,
                     "child_perturbed": child_perturbed,
                     "baseline_prompt_sensitive": (
-                        baseline_original["generated_text"]
-                        != baseline_perturbed["generated_text"]
+                        baseline_original["generated_text"] != baseline_perturbed["generated_text"]
                     ),
                     "child_prompt_sensitive": (
                         child_original["generated_text"] != child_perturbed["generated_text"]
                     ),
                     "child_output_changed_after_update": (
-                        baseline_original["generated_text"]
-                        != child_original["generated_text"]
+                        baseline_original["generated_text"] != child_original["generated_text"]
                     ),
                 }
             )
