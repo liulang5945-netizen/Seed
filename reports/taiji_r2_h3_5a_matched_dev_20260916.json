@@ -1,0 +1,58 @@
+{
+  "format": "taiji-r2-h3-5a-matched-dev-result-v1",
+  "status": "stopped_before_final",
+  "dataset": {
+    "path": "tests/fixtures/r2_h3_5a_response_plan_v3.jsonl",
+    "corpus_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+    "sample_counts": {"train": 12, "dev": 8, "final": 4, "retention": 0}
+  },
+  "protocol": {
+    "seeds": [20260916, 20260917, 20260918],
+    "epochs": 10,
+    "max_episodes_per_epoch": 12,
+    "parameter_budget": 300000,
+    "final_deferred_for_all_runs": true,
+    "final_capability_read_performed": false,
+    "all_preflights_passed": true,
+    "all_runs_within_budget": true
+  },
+  "aggregate": {
+    "control_effective_parameters": 273890,
+    "treatment_effective_parameters": 276610,
+    "control_dev_sequence_rate_by_seed": [0.25, 0.25, 0.25],
+    "treatment_dev_sequence_rate_by_seed": [0.0, 0.125, 0.125],
+    "control_dev_surprise_by_seed": [2.7918561448380603, 2.731276052872558, 2.749411109386778],
+    "treatment_dev_surprise_by_seed": [3.706541864291057, 3.641238249324963, 3.811490333690756],
+    "control_dev_exact_rate_by_seed": [0.0, 0.0, 0.0],
+    "treatment_dev_exact_rate_by_seed": [0.0, 0.0, 0.0],
+    "control_dev_collision_rate_by_seed": [0.125, 0.125, 0.125],
+    "treatment_dev_collision_rate_by_seed": [0.0, 0.0, 0.0],
+    "dev_required_term_coverage_all_runs": 0.0,
+    "dev_semantic_criteria_rate_all_runs": 0.25
+  },
+  "plan_ablation": {
+    "checkpoint_read_only_for_all_seeds": true,
+    "mean_plan_cosine_by_seed": [0.007146952324546874, -0.032507377211004496, -0.08932260621804744],
+    "mean_plan_l2_by_seed": [2.7487530410289764, 2.739602953195572, 2.587093159556389],
+    "normal_dev_sequence_rate_by_seed": [0.0, 0.125, 0.125],
+    "bridge_ablated_dev_sequence_rate_by_seed": [0.25, 0.25, 0.25],
+    "normal_dev_collision_rate_by_seed": [0.0, 0.0, 0.0],
+    "bridge_ablated_dev_collision_rate_by_seed": [0.75, 0.875, 0.25],
+    "interpretation": "the learned plan is not aligned with unseen response targets and its bridge consistently suppresses the legacy sequence signal; removing it restores sequence rate but increases collision"
+  },
+  "source_artifacts": [
+    {"arm": "control", "seed": 20260916, "report_sha256": "343b2458175a0c45299da7f55525705884fce23620d97243dd24dee3d5a8d12b", "checkpoint_sha256": "ff08d76a87fd93a1093bd82725e0a994b0eb5c4f92bb74c703b710710f430334"},
+    {"arm": "treatment", "seed": 20260916, "report_sha256": "01e2b6f0d7a330a00c30c1e19f67f4d4c7875c226883417050b6ab67e178dc71", "checkpoint_sha256": "6190469a341fc38260cf7fc413fcb3eca8d28aafb464c98c5019fb4d24c6a6e4", "ablation_sha256": "98d06ac1a85edbb02201cea3f6d64d54ccc6d544a859e2ac9b077118eb29f933"},
+    {"arm": "control", "seed": 20260917, "report_sha256": "8a6f379be62d3a440a4c484557e8b0b5ef977b2623bfc8e757ad4aeba8541f31", "checkpoint_sha256": "05480d8cf43ca92b27da4e5fb3eef0d31832e5d8f60e84c57cd609235456d282"},
+    {"arm": "treatment", "seed": 20260917, "report_sha256": "4da8b185be0696260856be7f58e9cdd610df6425dc10554a5f5944af4a09f45e", "checkpoint_sha256": "27317a59bc3850527f7864ec7a2853ea5a7bc7b739c0b6a94fe949b8e619f4ee", "ablation_sha256": "83b0be61c29b2ff3cdf56585747fb5ce601b733ca53c00027f7fa34e2015a20e"},
+    {"arm": "control", "seed": 20260918, "report_sha256": "264e534dde5d9b2331f22742fa50bf8aeb4978ae44e076421025c285fd10c5a1", "checkpoint_sha256": "9aeaac6cb1cf6984e3b557de7883defaa52d39ccc88ec549072b2c73f1cc82ef"},
+    {"arm": "treatment", "seed": 20260918, "report_sha256": "58cd8553a5d589e242606e0c503aaab020d0c4836d6c3309afa3da14d005167c", "checkpoint_sha256": "75179243d0fa270850f97521a4680f2db3a4898901fb27a595679c2572b24ffa", "ablation_sha256": "e26f92090837086100e79fbcc7859c61d94d085e239efdbb8583ceba24fdb73a"}
+  ],
+  "decision": {
+    "development_gate_passed": false,
+    "stop_reason": "treatment is directionally worse than control for dev sequence and surprise in every seed; plan target cosine is near zero or negative and bridge ablation restores the control sequence rate",
+    "no_more_epochs": true,
+    "do_not_read_final": true,
+    "next": "H3.6 redesign the plan target geometry and credit interface before any further training"
+  }
+}

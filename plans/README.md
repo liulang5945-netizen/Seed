@@ -4,7 +4,7 @@
 
 ## 项目位置
 
-当前为M5知识与身体。R2-H3.5-A隔离candidate、磁盘smoke和matched训练冻结均已完成：32维plan、span监督、checkpoint/identity lineage、消融和276,610≤300k预算成立；v3数据固定12/8/4并覆盖四policy、history和context permutation；三seed×control/treatment、10 epoch和`--defer-final`已冻结。当前到达正式训练授权节点，唯一建议是执行dev阶段六次matched运行，未授权前不读取final。Mini模型验收后置，P5.2d修正仪器降为并行债务。
+当前为M5知识与身体。R2-H3.5-A三seed×control/treatment dev训练已完成并按门停止：全部preflight/预算通过，但treatment的dev sequence为0/0.125/0.125，低于control稳定的0.25，surprise也一致更差；plan cosine接近零或为负，bridge消融恢复sequence但增加collision。final未读，不追加epoch。当前唯一下一步是H3.6计划目标几何与信用接口复审，先做无训练geometry审计。Mini模型验收继续后置。
 
 P3b两臂已停止，数据分布效应只有一个共同检查点，阶段结论应按“不可判”封存；64预算在线复测是未提交候选，不能继续仅写“等训练结束”或“放宽预算即可通过”。
 
