@@ -745,14 +745,18 @@ class BytePredictiveReadout:
 
 
 class ResponsePlanReadout(BytePredictiveReadout):
-    """Isolated byte renderer conditioned by one persistent response plan.
+    """Native byte renderer with legacy and factorized response-plan modes.
 
-    The plan is created explicitly at the assistant boundary and remains
-    fixed for the response.  Reference-derived plan targets are training-only:
-    generation calls :meth:`begin_plan` without ever seeing a target.
+    The legacy ``single`` mode is preserved for H3.5/H3.6 checkpoint
+    compatibility.  H3.7's ``factorized_v1`` mode keeps the same total plan
+    width but consumes ordered slots over the response and routes causal byte
+    error into the plan bridge and the active planner rows.
     """
 
     PAYLOAD_FORMAT = "taiji-response-plan-readout-v1"
+    FACTORIZED_PAYLOAD_FORMAT = "taiji-response-plan-readout-factorized-v1"
+    VARIANT_SINGLE = "single"
+    VARIANT_FACTORIZED = "factorized_v1"
 
     def __init__(
         self,
@@ -760,12 +764,40 @@ class ResponsePlanReadout(BytePredictiveReadout):
         *,
         generator: torch.Generator,
         plan_width: int = 32,
+        variant: str = VARIANT_SINGLE,
+        plan_slots: int = 4,
+        phase_stride: int = 16,
+        bridge_learning_rate_scale: float = 1.0,
+        slot_credit_scale: float = 0.25,
         device: torch.device | str = "cpu",
     ) -> None:
         super().__init__(config, generator=generator, device=device)
         self.plan_width = int(plan_width)
+        self.variant = str(variant)
+        self.plan_slots = int(plan_slots)
+        self.phase_stride = int(phase_stride)
+        self.bridge_learning_rate_scale = float(bridge_learning_rate_scale)
+        self.slot_credit_scale = float(slot_credit_scale)
         if self.plan_width <= 0:
             raise ValueError("plan_width must be positive")
+        if self.variant not in {self.VARIANT_SINGLE, self.VARIANT_FACTORIZED}:
+            raise ValueError("unsupported response plan variant")
+        if self.variant == self.VARIANT_SINGLE:
+            self.plan_slots = 1
+            self.phase_stride = max(1, self.phase_stride)
+        else:
+            if self.plan_slots <= 1 or self.plan_width % self.plan_slots != 0:
+                raise ValueError("factorized response plan width must divide into multiple slots")
+            if self.phase_stride <= 0:
+                raise ValueError("factorized response plan phase_stride must be positive")
+        if (
+            not math.isfinite(self.bridge_learning_rate_scale)
+            or self.bridge_learning_rate_scale < 0.0
+        ):
+            raise ValueError("bridge_learning_rate_scale must be finite and non-negative")
+        if not math.isfinite(self.slot_credit_scale) or self.slot_credit_scale < 0.0:
+            raise ValueError("slot_credit_scale must be finite and non-negative")
+        self.plan_slot_width = self.plan_width // self.plan_slots
         scale = float(config.weight_init_scale)
         self.planner_weight = torch.randn(
             self.plan_width,
@@ -782,10 +814,28 @@ class ResponsePlanReadout(BytePredictiveReadout):
         ) * scale
         self._plan_state: torch.Tensor | None = None
         self._plan_source: torch.Tensor | None = None
+        self._plan_step = 0
+        self._ablation_mode: str | None = None
 
     @property
     def plan_state(self) -> torch.Tensor | None:
         return None if self._plan_state is None else self._plan_state.detach().clone()
+
+    @property
+    def plan_slots_state(self) -> torch.Tensor | None:
+        if self._plan_state is None:
+            return None
+        return self._plan_state.detach().reshape(self.plan_slots, self.plan_slot_width).clone()
+
+    @property
+    def plan_phase(self) -> int:
+        if self.variant != self.VARIANT_FACTORIZED:
+            return 0
+        return min(self._plan_step // self.phase_stride, self.plan_slots - 1)
+
+    @property
+    def plan_step(self) -> int:
+        return int(self._plan_step)
 
     @torch.no_grad()
     def begin_plan(self, context: torch.Tensor) -> torch.Tensor:
@@ -794,17 +844,52 @@ class ResponsePlanReadout(BytePredictiveReadout):
             raise ValueError("response plan context dimension mismatch")
         self._plan_source = source.clone()
         self._plan_state = torch.tanh(self.planner_weight @ source + self.planner_bias)
+        self._plan_step = 0
         return self._plan_state.detach().clone()
+
+    @torch.no_grad()
+    def advance_phase(self) -> int:
+        if self._plan_state is None:
+            raise RuntimeError("response plan has not been created")
+        if self.variant == self.VARIANT_FACTORIZED:
+            self._plan_step += 1
+        return self.plan_phase
 
     def clear_plan(self) -> None:
         self._plan_state = None
         self._plan_source = None
+        self._plan_step = 0
 
-    def _conditioned_context(self, context: torch.Tensor) -> torch.Tensor:
+    def set_ablation_mode(self, mode: str | None) -> None:
+        """Set a transient read-only diagnostic mode excluded from payloads."""
+
+        if mode not in {None, "slot_credit"}:
+            raise ValueError("unsupported response plan ablation mode")
+        if mode == "slot_credit" and self.variant != self.VARIANT_FACTORIZED:
+            raise ValueError("slot-credit ablation requires the factorized variant")
+        self._ablation_mode = mode
+
+    def _active_plan_vector(self) -> torch.Tensor:
         if self._plan_state is None:
             raise RuntimeError("response plan has not been created")
+        if self.variant != self.VARIANT_FACTORIZED:
+            return self._plan_state
+        slots = self._plan_state.reshape(self.plan_slots, self.plan_slot_width)
+        phase = self.plan_phase
+        active = slots[phase].clone()
+        if phase > 0:
+            active = 0.75 * active + 0.25 * slots[0]
+            if self._ablation_mode == "slot_credit":
+                active = 0.25 * slots[0]
+        vector = torch.zeros_like(self._plan_state)
+        start = phase * self.plan_slot_width
+        vector[start : start + self.plan_slot_width] = active
+        return vector
+
+    def _conditioned_context(self, context: torch.Tensor) -> torch.Tensor:
+        vector = self._active_plan_vector()
         context = context.to(self.device)
-        return torch.tanh(context + self.plan_bridge @ self._plan_state)
+        return torch.tanh(context + self.plan_bridge @ vector)
 
     def probabilities(self, context: torch.Tensor, **kwargs: Any) -> torch.Tensor:
         return super().probabilities(self._conditioned_context(context), **kwargs)
@@ -818,9 +903,63 @@ class ResponsePlanReadout(BytePredictiveReadout):
         return super().context_feedback(error, **kwargs)
 
     @torch.no_grad()
-    def learn(self, context: torch.Tensor, predicted: torch.Tensor, observed_symbol: int, **kwargs: Any) -> torch.Tensor:
+    def learn(
+        self,
+        context: torch.Tensor,
+        predicted: torch.Tensor,
+        observed_symbol: int,
+        **kwargs: Any,
+    ) -> torch.Tensor:
+        learning_rate_scale = float(kwargs.get("learning_rate_scale", 1.0))
+        conditioned = self._conditioned_context(context)
+        error = self.prediction_error(predicted, observed_symbol)
+        if (
+            self.variant == self.VARIANT_FACTORIZED
+            and learning_rate_scale > 0.0
+            and self.bridge_learning_rate_scale > 0.0
+        ):
+            if self._plan_source is None or self._plan_state is None:
+                raise RuntimeError("factorized response plan has not been created")
+            # This is the explicit H3.7 causal bridge: use the same surface
+            # that produced the byte prior, then project its error through the
+            # local tanh derivative before changing bridge or planner rows.
+            feedback = super().context_feedback(error)
+            conditioned_delta = feedback * (1.0 - conditioned.square())
+            active_vector = self._active_plan_vector()
+            bridge_before = self.plan_bridge.detach().clone()
+            plan_feedback = bridge_before.T @ conditioned_delta
+            bridge_rate = (
+                float(self.config.predictive_context_learning_rate)
+                * learning_rate_scale
+                * self.bridge_learning_rate_scale
+            )
+            self.plan_bridge.add_(bridge_rate * torch.outer(conditioned_delta, active_vector))
+            active_phase = self.plan_phase
+            start = active_phase * self.plan_slot_width
+            stop = start + self.plan_slot_width
+            slot_feedback = plan_feedback[start:stop]
+            state = self._plan_state[start:stop]
+            slot_delta = slot_feedback * (1.0 - state.square())
+            planner_rate = bridge_rate * self.slot_credit_scale
+            self.planner_weight[start:stop].add_(
+                planner_rate * torch.outer(slot_delta, self._plan_source)
+            )
+            self.planner_bias[start:stop].add_(
+                float(self.config.bias_learning_rate)
+                * learning_rate_scale
+                * self.bridge_learning_rate_scale
+                * self.slot_credit_scale
+                * slot_delta
+            )
+            limit = float(self.config.max_weight_norm)
+            self.plan_bridge.clamp_(-limit, limit)
+            self.planner_weight[start:stop].clamp_(-limit, limit)
+            self.planner_bias[start:stop].clamp_(-limit, limit)
+            self._plan_state = torch.tanh(
+                self.planner_weight @ self._plan_source + self.planner_bias
+            )
         return super().learn(
-            self._conditioned_context(context), predicted, observed_symbol, **kwargs
+            conditioned, predicted, observed_symbol, **kwargs
         )
 
     @torch.no_grad()
@@ -855,22 +994,59 @@ class ResponsePlanReadout(BytePredictiveReadout):
         )
 
     def to_payload(self) -> dict[str, Any]:
-        return {
-            "format": self.PAYLOAD_FORMAT,
+        common = {
             "plan_width": self.plan_width,
             "renderer": super().to_payload(),
             "planner_weight": self.planner_weight.detach().cpu().clone(),
             "planner_bias": self.planner_bias.detach().cpu().clone(),
             "plan_bridge": self.plan_bridge.detach().cpu().clone(),
-            "plan_state": None if self._plan_state is None else self._plan_state.detach().cpu().clone(),
-            "plan_source": None if self._plan_source is None else self._plan_source.detach().cpu().clone(),
+            "plan_state": None
+            if self._plan_state is None
+            else self._plan_state.detach().cpu().clone(),
+            "plan_source": None
+            if self._plan_source is None
+            else self._plan_source.detach().cpu().clone(),
+        }
+        if self.variant == self.VARIANT_SINGLE:
+            return {"format": self.PAYLOAD_FORMAT, **common}
+        return {
+            "format": self.FACTORIZED_PAYLOAD_FORMAT,
+            "variant": self.variant,
+            "plan_slots": self.plan_slots,
+            "plan_slot_width": self.plan_slot_width,
+            "phase_stride": self.phase_stride,
+            "bridge_learning_rate_scale": self.bridge_learning_rate_scale,
+            "slot_credit_scale": self.slot_credit_scale,
+            "plan_step": self.plan_step,
+            **common,
         }
 
     def load_payload(self, payload: Mapping[str, Any]) -> None:
-        if payload.get("format") != self.PAYLOAD_FORMAT:
+        expected_format = (
+            self.PAYLOAD_FORMAT
+            if self.variant == self.VARIANT_SINGLE
+            else self.FACTORIZED_PAYLOAD_FORMAT
+        )
+        if payload.get("format") != expected_format:
             raise ValueError("unsupported response plan readout payload")
         if int(payload.get("plan_width", -1)) != self.plan_width:
             raise ValueError("response plan width does not match architecture")
+        if self.variant == self.VARIANT_FACTORIZED:
+            if payload.get("variant") != self.variant:
+                raise ValueError("response plan variant does not match architecture")
+            if int(payload.get("plan_slots", -1)) != self.plan_slots:
+                raise ValueError("response plan slot count does not match architecture")
+            if int(payload.get("plan_slot_width", -1)) != self.plan_slot_width:
+                raise ValueError("response plan slot width does not match architecture")
+            if int(payload.get("phase_stride", -1)) != self.phase_stride:
+                raise ValueError("response plan phase stride does not match architecture")
+            for name, expected in (
+                ("bridge_learning_rate_scale", self.bridge_learning_rate_scale),
+                ("slot_credit_scale", self.slot_credit_scale),
+            ):
+                actual = float(payload.get(name, float("nan")))
+                if not math.isfinite(actual) or abs(actual - expected) > 1e-12:
+                    raise ValueError(f"response plan {name} does not match architecture")
         super().load_payload(payload["renderer"])
         for name, shape in (
             ("planner_weight", (self.plan_width, self.config.motor_context_dim)),
@@ -891,3 +1067,13 @@ class ResponsePlanReadout(BytePredictiveReadout):
             if payload.get("plan_source") is None
             else payload["plan_source"].detach().to(self.device).clone()
         )
+        if self._plan_state is not None and self._plan_state.shape != (self.plan_width,):
+            raise ValueError("response plan state shape does not match architecture")
+        if self._plan_source is not None and self._plan_source.shape != (
+            self.config.motor_context_dim,
+        ):
+            raise ValueError("response plan source shape does not match architecture")
+        self._plan_step = int(payload.get("plan_step", 0))
+        if self._plan_step < 0:
+            raise ValueError("response plan phase step must be non-negative")
+        self._ablation_mode = None

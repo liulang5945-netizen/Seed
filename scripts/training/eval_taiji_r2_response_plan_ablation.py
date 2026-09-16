@@ -1,4 +1,4 @@
-"""Read-only H3.5-A plan-state and parameter-matched bridge ablation."""
+"""Run read-only response-plan and causal-credit ablations."""
 
 from __future__ import annotations
 
@@ -17,6 +17,8 @@ from taiji.internalization import content_digest
 
 H36_TARGET_GEOMETRY = "h3_6_whitened_native_compositional"
 H36_PRE_REGISTRATION = "plans/reference/M5_R2_H3_6B_MATCHED_RUN_PREREGISTRATION_20260916.md"
+H37_TARGET_GEOMETRY = "h3_7_factorized_response_chunks"
+H37_PRE_REGISTRATION = "plans/reference/M5_R2_H3_7_FACTORIZED_RESPONSE_WORKSPACE_CONTRACT_20260917.md"
 
 
 def _target_for_diagnostic(
@@ -44,7 +46,7 @@ def _target_lineage(trainer: LanguageAlignmentTrainer) -> dict[str, object]:
                 for key, value in sorted(trainer.response_plan_targets.items())
             }
         )
-    return {
+    lineage = {
         "geometry": trainer.config.response_plan_target_geometry,
         "encoder_digest": None if encoder is None else encoder.target_digest,
         "encoder_parent_checkpoint_digest": (
@@ -54,6 +56,15 @@ def _target_lineage(trainer: LanguageAlignmentTrainer) -> dict[str, object]:
         "train_target_map_digest": target_map_digest,
         "fit_episode_ids": [] if encoder is None else list(encoder.fit_episode_ids),
     }
+    if trainer.config.response_plan_variant == "factorized_v1":
+        lineage.update(
+            {
+                "variant": trainer.config.response_plan_variant,
+                "plan_slots": trainer.config.response_plan_slots,
+                "phase_stride": trainer.config.response_plan_phase_stride,
+            }
+        )
+    return lineage
 
 
 def _parse_args() -> argparse.Namespace:
@@ -108,23 +119,43 @@ def main() -> int:
     # digest guard covers both parameters and runtime state.
     trainer = LanguageAlignmentTrainer.from_checkpoint(original, corpus)
 
+    is_h37 = trainer.config.response_plan_target_geometry == H37_TARGET_GEOMETRY
     normal = trainer.evaluate(args.split)
-    bridge = trainer.model.response_plan_readout.plan_bridge.detach().clone()
-    trainer.model.response_plan_readout.plan_bridge.zero_()
-    ablated = trainer.evaluate(args.split)
-    trainer.model.response_plan_readout.plan_bridge.copy_(bridge)
+    readout = trainer.model.response_plan_readout
+    bridge = readout.plan_bridge.detach().clone()
+    try:
+        readout.plan_bridge.zero_()
+        ablated = trainer.evaluate(args.split)
+        readout.plan_bridge.copy_(bridge)
+        slot_credit_ablated = None
+        if is_h37:
+            readout.set_ablation_mode("slot_credit")
+            slot_credit_ablated = trainer.evaluate(args.split)
+    finally:
+        readout.plan_bridge.copy_(bridge)
+        readout.set_ablation_mode(None)
     if str(trainer.checkpoint()["checkpoint_digest"]) != original_digest:
         raise RuntimeError("plan ablation did not restore the source checkpoint")
 
     is_h36 = trainer.config.response_plan_target_geometry == H36_TARGET_GEOMETRY
     report = {
         "format": (
+            "taiji-r2-h3-7-response-plan-ablation-v1"
+            if is_h37
+            else (
             "taiji-r2-h3-6b-response-plan-ablation-v1"
             if is_h36
             else "taiji-r2-h3-5a-response-plan-ablation-v1"
+            )
         ),
         "status": "completed",
-        "pre_registration": H36_PRE_REGISTRATION if is_h36 else None,
+        "pre_registration": (
+            H37_PRE_REGISTRATION
+            if is_h37
+            else H36_PRE_REGISTRATION
+            if is_h36
+            else None
+        ),
         "split": args.split,
         "dataset_digest": corpus.digest,
         "checkpoint": str(args.checkpoint),
@@ -147,6 +178,7 @@ def main() -> int:
         ),
         "normal": normal,
         "plan_bridge_ablated": ablated,
+        "slot_credit_ablated": slot_credit_ablated,
         "records": records,
     }
     args.report.parent.mkdir(parents=True, exist_ok=True)
@@ -160,6 +192,11 @@ def main() -> int:
                 "mean_plan_cosine": report["mean_plan_cosine"],
                 "normal_sequence": normal["sequence_criterion_pass_rate"],
                 "ablated_sequence": ablated["sequence_criterion_pass_rate"],
+                "slot_credit_ablated_sequence": (
+                    None
+                    if slot_credit_ablated is None
+                    else slot_credit_ablated["sequence_criterion_pass_rate"]
+                ),
                 "checkpoint_read_only": True,
             },
             ensure_ascii=False,

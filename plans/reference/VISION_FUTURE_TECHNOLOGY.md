@@ -149,6 +149,12 @@ B 为独立 episode 批数，D 为宽度，K 为槽数，R 为头数。以下形
 
 原型优先短回答的相关性、正确性、上下文和不知道时拒答，而不是长篇流畅度。知识未知、理解失败、检索错误、推理错误和表达错误分开统计。算术使用计算工具时明确标注辅助，不计为无工具内生算术。
 
+### 7.4 H3.7 分解式回答工作空间候选
+
+R2-H3.5/H3.6 已证明“一个静态 plan 向量＋逐 byte 局部更新”没有形成稳定的未见回答迁移。当前进入隔离候选的高上限方向是 factorized response workspace：prefix native state 在 assistant boundary 产生 4 个有序 plan slots，renderer 按已生成 byte 的固定 phase 消费当前 slot，同时保留少量 slot0 的全局回答结构信号。每个 byte 的 predictive error 通过 renderer 的 backprojection 和 conditioned tanh 的局部导数更新 `plan_bridge`，再以固定较小比例更新当前槽的 planner rows。
+
+该候选仍保持原生 byte renderer、UTF-8/end-marker、Taiji-owned checkpoint 和运行期不读 task/family/split/reference 的边界。计划目标是训练期由 response 的固定 UTF-8-safe chunk 生成的 train-bound count-sketch，仅作为监督坐标，不是运行时答案或外部语义标签。总计划宽度、slot 数、phase stride、credit 规则、保存恢复和停止门由[H3.7合同](M5_R2_H3_7_FACTORIZED_RESPONSE_WORKSPACE_CONTRACT_20260917.md)冻结；它是 VISION 的可证伪原型，不是架构采用或 L2 能力结论。
+
 ### 7.3 否决信号
 
 固定字符串也能达到同分、改问法即失效、上下文被忽略、缺权重仍有相同回答、外部 provider 禁用后失语，都必须改变能力声明或记录为失败；不能仅靠 UI 效果通过。

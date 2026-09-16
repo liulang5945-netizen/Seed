@@ -1,0 +1,115 @@
+{
+  "format": "taiji-r2-h3-7-factorized-response-workspace-v1",
+  "status": "frozen_before_implementation",
+  "dataset": "tests/fixtures/r2_h3_5a_response_plan_v3.jsonl",
+  "dataset_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+  "parameter_budget": 300000,
+  "seeds": [20260917, 20260918, 20260919],
+  "epochs": 10,
+  "max_episodes_per_epoch": 12,
+  "device": "cpu",
+  "final_access": {
+    "during_development": "schema_restore_and_dev_only",
+    "capability_read": "once_after_all_seeds_and_dev_reports_and_ablation_are_frozen"
+  },
+  "architecture": {
+    "variant": "factorized_v1",
+    "prefix_owner": "predictive_state.motor_context",
+    "plan_owner": "predictive_readout.response_plan.factorized",
+    "plan_width": 48,
+    "plan_slots": 4,
+    "plan_slot_width": 12,
+    "phase_stride": 16,
+    "phase_mix": {
+      "current_slot": 0.75,
+      "global_slot_zero": 0.25,
+      "phase_zero_only_slot_zero": true
+    },
+    "renderer_owner": "predictive_readout.response_plan.factorized_renderer",
+    "renderer_inputs": ["motor_context", "active_plan_slot_mix"],
+    "bridge_credit": "renderer_backprojected_error_times_conditioned_tanh_derivative",
+    "slot_credit_scale": 0.25,
+    "utf8_and_end_marker": "reuse_protected_constraints",
+    "mutually_exclusive_with": ["response_start", "response_phase", "response_plan_single"]
+  },
+  "target_encoder": {
+    "format": "taiji-r2-h3-7-factorized-response-target-v1",
+    "runtime_available": false,
+    "source": "reference_response_without_end_marker",
+    "unit": "fixed_utf8_safe_byte_chunks",
+    "slots": 4,
+    "slot_width": 12,
+    "phase_stride": 16,
+    "projection": "train_bound_count_sketch_signed_ngram",
+    "normalization": "per_slot_l2",
+    "fit_split": "train",
+    "checkpoint_payload_required": true
+  },
+  "arms": {
+    "control": {
+      "readout": "response_phase",
+      "purpose": "matched native full-response owner"
+    },
+    "treatment": {
+      "readout": "response_plan_factorized",
+      "purpose": "test multi-slot response workspace and causal bridge/slot credit"
+    },
+    "causal_ablation": {
+      "source": "treatment_child_checkpoint",
+      "operations": [
+        "zero_factorized_plan_bridge",
+        "disable_factorized_slot_credit"
+      ],
+      "learning_disabled": true,
+      "checkpoint_read_only": true
+    }
+  },
+  "matched": [
+    "dataset_digest",
+    "model_seed",
+    "candidate_initialization",
+    "epoch_count",
+    "episode_order",
+    "maximum_updates",
+    "parameter_budget_ceiling",
+    "utf8_constraints",
+    "end_marker",
+    "checkpoint_preflight",
+    "parent_digest",
+    "target_corpus_digest",
+    "evaluation_code"
+  ],
+  "required_preflight": [
+    "zero_step_fresh_restore",
+    "one_plan_target_update_candidate_only",
+    "one_byte_update_changes_bridge_or_slot_credit",
+    "phase_advance_and_reset",
+    "child_atomic_save_restore",
+    "parent_digest_unchanged",
+    "target_format_slot_stride_fail_closed",
+    "effective_parameters_within_budget"
+  ],
+  "development_gate": {
+    "required_before_final": [
+      "all_runs_completed",
+      "all_preflights_pass",
+      "all_runs_within_budget",
+      "parent_digests_unchanged",
+      "target_payloads_roundtrip",
+      "three_seed_non_proxy_direction_consistent",
+      "paired_sensitivity_not_degraded",
+      "bridge_and_slot_credit_ablation_remove_core_gain"
+    ],
+    "stop": [
+      "runtime_oracle_detected",
+      "checkpoint_or_restore_failure",
+      "target_parent_or_corpus_mismatch",
+      "budget_exceeded",
+      "train_only_gain",
+      "boundary_only_gain",
+      "ablation_no_effect",
+      "seed_direction_inconsistent",
+      "factorization_no_content_signal"
+    ]
+  }
+}

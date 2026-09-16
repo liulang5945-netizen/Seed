@@ -94,6 +94,7 @@ class Taiji:
     RESPONSE_PHASE_READOUT_SEED_OFFSET = 5931
     RESPONSE_PLAN_READOUT_KEY = "response_plan_readout"
     RESPONSE_PLAN_READOUT_SEED_OFFSET = 5933
+    RESPONSE_PLAN_FACTORIZED_READOUT_SEED_OFFSET = 5935
     DEVELOPMENTAL_F1_KEY = "developmental_f1"
     DEVELOPMENTAL_F1_REPLAY_KEY = "developmental_f1_replay"
     DEVELOPMENTAL_F1_LEARNING_MODES = frozenset({"read_only", "fast", "slow", "fast_slow"})
@@ -278,19 +279,49 @@ class Taiji:
             return None
         return content_digest(self._response_plan_readout.to_payload())
 
-    def _new_response_plan_readout(self, *, plan_width: int = 32) -> ResponsePlanReadout:
+    def _new_response_plan_readout(
+        self,
+        *,
+        plan_width: int = 32,
+        variant: str = ResponsePlanReadout.VARIANT_SINGLE,
+        plan_slots: int = 4,
+        phase_stride: int = 16,
+        bridge_learning_rate_scale: float = 1.0,
+        slot_credit_scale: float = 0.25,
+    ) -> ResponsePlanReadout:
         generator = torch.Generator(device="cpu")
         generator.manual_seed(
             int(self.config.seed)
             + int(self.config.predictive_readout_seed_offset)
-            + int(self.RESPONSE_PLAN_READOUT_SEED_OFFSET)
+            + int(
+                self.RESPONSE_PLAN_FACTORIZED_READOUT_SEED_OFFSET
+                if variant == ResponsePlanReadout.VARIANT_FACTORIZED
+                else self.RESPONSE_PLAN_READOUT_SEED_OFFSET
+            )
         )
         return ResponsePlanReadout(
-            self.config, generator=generator, plan_width=plan_width, device=self.device
+            self.config,
+            generator=generator,
+            plan_width=plan_width,
+            variant=variant,
+            plan_slots=plan_slots,
+            phase_stride=phase_stride,
+            bridge_learning_rate_scale=bridge_learning_rate_scale,
+            slot_credit_scale=slot_credit_scale,
+            device=self.device,
         )
 
     @torch.no_grad()
-    def enable_response_plan_readout(self, *, plan_width: int = 32) -> dict[str, Any]:
+    def enable_response_plan_readout(
+        self,
+        *,
+        plan_width: int = 32,
+        variant: str = ResponsePlanReadout.VARIANT_SINGLE,
+        plan_slots: int = 4,
+        phase_stride: int = 16,
+        bridge_learning_rate_scale: float = 1.0,
+        slot_credit_scale: float = 0.25,
+    ) -> dict[str, Any]:
         if any(
             owner is not None
             for owner in (self._response_start_readout, self._response_phase_readout, self._response_plan_readout)
@@ -298,13 +329,24 @@ class Taiji:
             raise RuntimeError("response candidate readouts are mutually exclusive")
         if self._active_predictive_readout is not None:
             raise RuntimeError("response-plan readout cannot coexist with an active branch")
-        candidate = self._new_response_plan_readout(plan_width=plan_width)
+        candidate = self._new_response_plan_readout(
+            plan_width=plan_width,
+            variant=variant,
+            plan_slots=plan_slots,
+            phase_stride=phase_stride,
+            bridge_learning_rate_scale=bridge_learning_rate_scale,
+            slot_credit_scale=slot_credit_scale,
+        )
         candidate.synapses.load_payload(self.predictive_readout.synapses.to_payload())
         candidate.bias = self.predictive_readout.bias.detach().clone()
         self._response_plan_readout = candidate
         return {
             "owner": "predictive_readout.response_plan",
+            "variant": candidate.variant,
             "plan_width": int(plan_width),
+            "plan_slots": candidate.plan_slots,
+            "plan_slot_width": candidate.plan_slot_width,
+            "phase_stride": candidate.phase_stride,
             "active_parameters": candidate.active_parameter_count,
             "readout_digest": content_digest(candidate.to_payload()),
         }
@@ -317,6 +359,18 @@ class Taiji:
         state.motor_probabilities = probabilities.detach().clone()
         self._state = state
         return plan
+
+    @torch.no_grad()
+    def advance_response_plan_phase(self) -> int:
+        """Advance a factorized plan and refresh the current byte prior."""
+
+        readout = self.response_plan_readout
+        phase = readout.advance_phase()
+        probabilities = readout.probabilities(self._state.motor_context)
+        state = self._state.clone()
+        state.motor_probabilities = probabilities.detach().clone()
+        self._state = state
+        return phase
 
     def response_plan_probabilities(self, *, ablate_plan: bool = False) -> torch.Tensor:
         readout = self.response_plan_readout
@@ -1261,7 +1315,11 @@ class Taiji:
                     "scope": "candidate",
                     "owner": "predictive_readout.response_plan",
                     "mutable": True,
+                    "variant": self._response_plan_readout.variant,
                     "plan_width": self._response_plan_readout.plan_width,
+                    "plan_slots": self._response_plan_readout.plan_slots,
+                    "plan_slot_width": self._response_plan_readout.plan_slot_width,
+                    "phase_stride": self._response_plan_readout.phase_stride,
                     "active_parameters": self._response_plan_readout.active_parameter_count,
                     "readout_digest": content_digest(
                         self._response_plan_readout.to_payload()
@@ -3170,7 +3228,21 @@ class Taiji:
             if is_legacy_checkpoint or not isinstance(response_plan_payload, Mapping):
                 raise ValueError("response-plan readout checkpoint payload is invalid")
             plan_width = int(response_plan_payload.get("plan_width", -1))
-            response_plan = self._new_response_plan_readout(plan_width=plan_width)
+            variant = str(
+                response_plan_payload.get("variant", ResponsePlanReadout.VARIANT_SINGLE)
+            )
+            response_plan = self._new_response_plan_readout(
+                plan_width=plan_width,
+                variant=variant,
+                plan_slots=int(response_plan_payload.get("plan_slots", 4)),
+                phase_stride=int(response_plan_payload.get("phase_stride", 16)),
+                bridge_learning_rate_scale=float(
+                    response_plan_payload.get("bridge_learning_rate_scale", 1.0)
+                ),
+                slot_credit_scale=float(
+                    response_plan_payload.get("slot_credit_scale", 0.25)
+                ),
+            )
             response_plan.load_payload(response_plan_payload)
             self._response_plan_readout = response_plan
         candidate_payload = checkpoint.get(self.GATED_TEMPORAL_CANDIDATE_KEY)

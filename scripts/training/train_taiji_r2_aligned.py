@@ -17,6 +17,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 import torch
 
 from taiji import (
+    FactorizedResponsePlanTargetEncoder,
     LanguageAlignmentConfig,
     LanguageAlignmentTrainer,
     LanguageEpisodeCorpus,
@@ -25,6 +26,7 @@ from taiji import (
     TaijiConfig,
     checkpoint_roundtrip_preflight,
     content_digest,
+    factorized_response_plan_preflight,
     paired_checkpoint_diagnostic,
 )
 
@@ -37,6 +39,10 @@ PROTECTED_NAMES = {
 PRE_REGISTRATION = "plans/reference/M5_R2_G1_CONDITIONAL_RESPONSE_PREREGISTRATION_20260916.md"
 H36_PRE_REGISTRATION = "plans/reference/M5_R2_H3_6B_MATCHED_RUN_PREREGISTRATION_20260916.md"
 H36_TARGET_GEOMETRY = "h3_6_whitened_native_compositional"
+H37_PRE_REGISTRATION = "plans/reference/M5_R2_H3_7_FACTORIZED_RESPONSE_WORKSPACE_CONTRACT_20260917.md"
+H37_CONTROL_PREREGISTRATION = "h3_7_control"
+H37_TARGET_GEOMETRY = "h3_7_factorized_response_chunks"
+H37_VARIANT = "factorized_v1"
 
 
 def _parse_args() -> argparse.Namespace:
@@ -77,8 +83,18 @@ def _parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--response-plan-width", type=int, default=32)
     parser.add_argument(
+        "--response-plan-variant",
+        choices=("single", H37_VARIANT),
+        default="single",
+        help="select the response-plan workspace variant for a fresh candidate run",
+    )
+    parser.add_argument("--response-plan-slots", type=int, default=4)
+    parser.add_argument("--response-plan-phase-stride", type=int, default=16)
+    parser.add_argument("--response-plan-bridge-learning-rate-scale", type=float, default=1.0)
+    parser.add_argument("--response-plan-slot-credit-scale", type=float, default=0.25)
+    parser.add_argument(
         "--response-plan-target-geometry",
-        choices=("signed_hash_span", H36_TARGET_GEOMETRY),
+        choices=("signed_hash_span", H36_TARGET_GEOMETRY, H37_TARGET_GEOMETRY),
         default="signed_hash_span",
         help="select the response-plan target geometry for a fresh candidate run",
     )
@@ -98,7 +114,7 @@ def _parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--preregistration",
-        choices=("legacy", "h3_6b"),
+        choices=("legacy", "h3_6b", H37_CONTROL_PREREGISTRATION, "h3_7"),
         default="legacy",
         help="select the frozen report contract for a fresh matched run",
     )
@@ -138,6 +154,28 @@ def main() -> int:
         raise SystemExit("a non-legacy target geometry requires --response-plan-readout")
     if args.preregistration == "h3_6b" and not args.response_plan_readout:
         raise SystemExit("the H3.6-B contract requires --response-plan-readout")
+    if args.preregistration == H37_CONTROL_PREREGISTRATION:
+        if not args.response_phase_readout:
+            raise SystemExit("the H3.7 control contract requires --response-phase-readout")
+        if args.response_plan_readout or args.response_start_readout:
+            raise SystemExit("the H3.7 control contract cannot enable a plan or start readout")
+        if args.response_plan_target_geometry != "signed_hash_span":
+            raise SystemExit("the H3.7 control contract cannot use a plan target geometry")
+        if args.response_plan_variant != "single":
+            raise SystemExit("the H3.7 control contract requires the single plan variant")
+    if args.preregistration == "h3_7" and not args.response_plan_readout:
+        raise SystemExit("the H3.7 contract requires --response-plan-readout")
+    if args.preregistration == "h3_7" and args.response_plan_target_geometry != H37_TARGET_GEOMETRY:
+        raise SystemExit("the H3.7 contract requires its factorized target geometry")
+    if args.response_plan_target_geometry == H37_TARGET_GEOMETRY:
+        if args.response_plan_variant != H37_VARIANT:
+            raise SystemExit("H3.7 target geometry requires --response-plan-variant factorized_v1")
+        if args.response_plan_width != 48 or args.response_plan_slots != 4:
+            raise SystemExit("the H3.7 contract fixes plan width 48 and four slots")
+        if args.response_plan_phase_stride != 16:
+            raise SystemExit("the H3.7 contract fixes a 16-byte phase stride")
+    elif args.response_plan_variant != "single":
+        raise SystemExit("factorized_v1 is only available with the H3.7 target geometry")
     if (
         sum(
             bool(item)
@@ -167,6 +205,11 @@ def main() -> int:
                 "--response-plan-target-geometry is only selectable for a fresh run; "
                 "a resumed checkpoint owns its target geometry"
             )
+        if args.response_plan_variant != "single":
+            raise SystemExit(
+                "--response-plan-variant is only selectable for a fresh run; "
+                "a resumed checkpoint owns its workspace variant"
+            )
         payload = torch.load(args.resume, map_location="cpu", weights_only=False)
         trainer = LanguageAlignmentTrainer.from_checkpoint(payload, corpus, device=device)
     else:
@@ -184,8 +227,31 @@ def main() -> int:
         model = Taiji(config, device=device, episode_id="r2-aligned-pilot")
         target_encoder = None
         if args.response_plan_target_geometry == H36_TARGET_GEOMETRY:
-            model.enable_response_plan_readout(plan_width=args.response_plan_width)
+            model.enable_response_plan_readout(
+                plan_width=args.response_plan_width,
+                variant=args.response_plan_variant,
+                plan_slots=args.response_plan_slots,
+                phase_stride=args.response_plan_phase_stride,
+                bridge_learning_rate_scale=args.response_plan_bridge_learning_rate_scale,
+                slot_credit_scale=args.response_plan_slot_credit_scale,
+            )
             target_encoder = ResponsePlanTargetEncoder.fit(model, corpus)
+        elif args.response_plan_target_geometry == H37_TARGET_GEOMETRY:
+            model.enable_response_plan_readout(
+                plan_width=args.response_plan_width,
+                variant=args.response_plan_variant,
+                plan_slots=args.response_plan_slots,
+                phase_stride=args.response_plan_phase_stride,
+                bridge_learning_rate_scale=args.response_plan_bridge_learning_rate_scale,
+                slot_credit_scale=args.response_plan_slot_credit_scale,
+            )
+            target_encoder = FactorizedResponsePlanTargetEncoder.fit(
+                model,
+                corpus,
+                slots=args.response_plan_slots,
+                slot_width=args.response_plan_width // args.response_plan_slots,
+                phase_stride=args.response_plan_phase_stride,
+            )
 
         trainer = LanguageAlignmentTrainer(
             model,
@@ -196,6 +262,11 @@ def main() -> int:
                 response_phase_readout=args.response_phase_readout,
                 response_plan_readout=args.response_plan_readout,
                 response_plan_width=args.response_plan_width,
+                response_plan_variant=args.response_plan_variant,
+                response_plan_slots=args.response_plan_slots,
+                response_plan_phase_stride=args.response_plan_phase_stride,
+                response_plan_bridge_learning_rate_scale=args.response_plan_bridge_learning_rate_scale,
+                response_plan_slot_credit_scale=args.response_plan_slot_credit_scale,
                 response_plan_target_geometry=args.response_plan_target_geometry,
             ),
             response_plan_target_encoder=target_encoder,
@@ -242,11 +313,20 @@ def main() -> int:
         }
     preflight_dir = args.preflight_dir or args.checkpoint.parent / "preflight"
     preflight = checkpoint_roundtrip_preflight(trainer, directory=preflight_dir)
+    if trainer.config.response_plan_variant == H37_VARIANT:
+        preflight["factorized_response_plan"] = factorized_response_plan_preflight(trainer)
+        if preflight["factorized_response_plan"].get("status") != "passed":
+            raise SystemExit("H3.7 factorized response-plan preflight failed")
     report_preregistration = (
+        H37_PRE_REGISTRATION
+        if args.preregistration in {H37_CONTROL_PREREGISTRATION, "h3_7"}
+        or trainer.config.response_plan_target_geometry == H37_TARGET_GEOMETRY
+        else (
         H36_PRE_REGISTRATION
         if args.preregistration == "h3_6b"
         or trainer.config.response_plan_target_geometry == H36_TARGET_GEOMETRY
         else PRE_REGISTRATION
+        )
     )
     if args.preflight_only:
         report = {

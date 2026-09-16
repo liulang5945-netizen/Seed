@@ -30,6 +30,14 @@ RESPONSE_PLAN_TARGET_NATIVE_SOURCE = "mean_teacher_forced_motor_context"
 RESPONSE_PLAN_TARGET_NATIVE_TRANSFORM = "train_covariance_eigendecomposition_whitened"
 RESPONSE_PLAN_TARGET_COMPOSITION = "equal_normalized_native_and_signed_char_ngram"
 RESPONSE_PLAN_TARGET_NGRAM_SALT = b"r2-h3-6-plan-geometry-v1\x00"
+FACTOR_RESPONSE_PLAN_TARGET_FORMAT = "taiji-r2-h3-7-factorized-response-target-v1"
+FACTOR_RESPONSE_PLAN_TARGET_VERSION = 1
+FACTOR_RESPONSE_PLAN_TARGET_SLOTS = 4
+FACTOR_RESPONSE_PLAN_TARGET_SLOT_WIDTH = 12
+FACTOR_RESPONSE_PLAN_TARGET_PHASE_STRIDE = 16
+FACTOR_RESPONSE_PLAN_TARGET_PROJECTION = "train_bound_count_sketch_signed_ngram"
+FACTOR_RESPONSE_PLAN_TARGET_NORMALIZATION = "per_slot_l2"
+FACTOR_RESPONSE_PLAN_TARGET_SALT = b"r2-h3-7-factorized-response-target-v1\x00"
 
 
 def _normalize(vector: torch.Tensor, *, name: str) -> torch.Tensor:
@@ -360,6 +368,263 @@ class ResponsePlanTargetEncoder:
         return encoder
 
 
+def _count_sketch_chunk(chunk: bytes, *, slot: int, width: int) -> torch.Tensor:
+    """Build a deterministic additive sketch for one response chunk.
+
+    Unlike H3.6's dense signed projection, each n-gram contributes to one
+    bucket.  This keeps shared response prefixes and local fragments in a
+    factorized slot instead of mixing every fragment into one global vector.
+    The sketch is a training target only; no runtime decoder can call it.
+    """
+
+    if int(width) <= 0:
+        raise ValueError("factorized target width must be positive")
+    value = bytes(chunk) or b"<empty>"
+    result = torch.zeros(int(width), dtype=torch.float32)
+    for size, weight in ((1, 1.0), (2, 1.5), (3, 2.0)):
+        count = max(1, len(value) - size + 1)
+        for index in range(count):
+            token = bytes((int(slot) & 0xFF, int(size) & 0xFF)) + value[
+                index : index + size
+            ]
+            digest = hashlib.sha256(FACTOR_RESPONSE_PLAN_TARGET_SALT + token).digest()
+            bucket = int.from_bytes(digest[:4], "little") % int(width)
+            sign = 1.0 if digest[4] & 1 else -1.0
+            result[bucket] += float(weight) * sign
+    if not bool(torch.isfinite(result).all()) or not bool(result.abs().any()):
+        raise ValueError("factorized target sketch is zero or non-finite")
+    return result
+
+
+def _response_chunks(
+    response: str,
+    *,
+    slots: int,
+    phase_stride: int,
+) -> tuple[bytes, ...]:
+    """Split a response at UTF-8 codepoint boundaries for ordered plan slots."""
+
+    if not isinstance(response, str) or not response:
+        raise ValueError("factorized response target requires a non-empty response")
+    if int(slots) <= 0 or int(phase_stride) <= 0:
+        raise ValueError("factorized response target slots and stride must be positive")
+    raw = response.encode("utf-8")
+    chunks: list[bytes] = []
+    cursor = 0
+    for slot in range(int(slots)):
+        if slot == int(slots) - 1:
+            end = len(raw)
+        else:
+            end = min(len(raw), cursor + int(phase_stride))
+            while end > cursor:
+                try:
+                    raw[cursor:end].decode("utf-8")
+                    break
+                except UnicodeDecodeError:
+                    end -= 1
+        chunks.append(raw[cursor:end])
+        cursor = end
+    if cursor < len(raw):
+        chunks[-1] += raw[cursor:]
+    return tuple(chunks)
+
+
+class FactorizedResponsePlanTargetEncoder:
+    """Train-bound ordered response-chunk target geometry for H3.7."""
+
+    def __init__(
+        self,
+        *,
+        slots: int,
+        slot_width: int,
+        phase_stride: int,
+        corpus_digest: str,
+        parent_checkpoint_digest: str,
+        fit_episode_ids: Sequence[str],
+        slot_scale: torch.Tensor,
+    ) -> None:
+        self.slots = int(slots)
+        self.slot_width = int(slot_width)
+        self.phase_stride = int(phase_stride)
+        self.width = self.slots * self.slot_width
+        self.corpus_digest = _required_digest(corpus_digest, "corpus_digest")
+        self.parent_checkpoint_digest = _required_digest(
+            parent_checkpoint_digest, "parent_checkpoint_digest"
+        )
+        if self.slots <= 0 or self.slot_width <= 0 or self.phase_stride <= 0:
+            raise ValueError("factorized target dimensions and stride must be positive")
+        if isinstance(fit_episode_ids, (str, bytes)) or not isinstance(
+            fit_episode_ids, Sequence
+        ):
+            raise TypeError("fit_episode_ids must be a sequence of episode ids")
+        self.fit_episode_ids = tuple(str(item) for item in fit_episode_ids)
+        if not self.fit_episode_ids or any(not item for item in self.fit_episode_ids):
+            raise ValueError("fit_episode_ids cannot be empty")
+        if len(set(self.fit_episode_ids)) != len(self.fit_episode_ids):
+            raise ValueError("fit_episode_ids must be unique")
+        self.slot_scale = slot_scale.detach().cpu().to(dtype=torch.float32).contiguous()
+        if self.slot_scale.shape != (self.slots,):
+            raise ValueError("factorized target slot_scale shape is invalid")
+        if not bool(torch.isfinite(self.slot_scale).all()) or bool(
+            (self.slot_scale <= 0).any()
+        ):
+            raise ValueError("factorized target slot_scale must be finite and positive")
+
+    @classmethod
+    def fit(
+        cls,
+        model: Any,
+        corpus: Any,
+        *,
+        slots: int = FACTOR_RESPONSE_PLAN_TARGET_SLOTS,
+        slot_width: int = FACTOR_RESPONSE_PLAN_TARGET_SLOT_WIDTH,
+        phase_stride: int = FACTOR_RESPONSE_PLAN_TARGET_PHASE_STRIDE,
+        parent_checkpoint_digest: str | None = None,
+    ) -> FactorizedResponsePlanTargetEncoder:
+        """Fit only per-slot scale on train responses and bind the parent."""
+
+        corpus_digest = _corpus_digest(corpus)
+        train = _episodes_for_split(corpus, RESPONSE_PLAN_TARGET_FIT_SPLIT)
+        actual_parent_digest = content_digest(model.checkpoint())
+        if parent_checkpoint_digest is not None:
+            expected = _required_digest(parent_checkpoint_digest, "parent_checkpoint_digest")
+            if expected != actual_parent_digest:
+                raise ValueError(
+                    "parent_checkpoint_digest does not match the current teacher checkpoint"
+                )
+        raw: list[torch.Tensor] = []
+        for episode in train:
+            chunks = _response_chunks(
+                str(episode.response), slots=int(slots), phase_stride=int(phase_stride)
+            )
+            raw.append(
+                torch.stack(
+                    [
+                        _count_sketch_chunk(
+                            chunk, slot=index, width=int(slot_width)
+                        )
+                        for index, chunk in enumerate(chunks)
+                    ]
+                )
+            )
+        matrix = torch.stack(raw)
+        scale = torch.sqrt(matrix.square().mean(dim=(0, 2)).clamp_min(1e-6))
+        encoder = cls(
+            slots=int(slots),
+            slot_width=int(slot_width),
+            phase_stride=int(phase_stride),
+            corpus_digest=corpus_digest,
+            parent_checkpoint_digest=actual_parent_digest,
+            fit_episode_ids=tuple(str(item.episode_id) for item in train),
+            slot_scale=scale,
+        )
+        for episode in train:
+            encoder.encode_response(str(episode.response))
+        return encoder
+
+    def assert_compatible(
+        self,
+        *,
+        corpus_digest: str | None = None,
+        parent_checkpoint_digest: str | None = None,
+    ) -> None:
+        if (
+            corpus_digest is not None
+            and _required_digest(corpus_digest, "corpus_digest") != self.corpus_digest
+        ):
+            raise ValueError("factorized response target corpus digest is incompatible")
+        if (
+            parent_checkpoint_digest is not None
+            and _required_digest(parent_checkpoint_digest, "parent_checkpoint_digest")
+            != self.parent_checkpoint_digest
+        ):
+            raise ValueError("factorized response target parent checkpoint is incompatible")
+
+    def encode_response(self, response: str) -> torch.Tensor:
+        chunks = _response_chunks(
+            response, slots=self.slots, phase_stride=self.phase_stride
+        )
+        slots: list[torch.Tensor] = []
+        for index, chunk in enumerate(chunks):
+            value = _count_sketch_chunk(chunk, slot=index, width=self.slot_width)
+            value = value / self.slot_scale[index]
+            slots.append(_normalize(value, name=f"factorized response target slot {index}"))
+        return torch.cat(slots, dim=0)
+
+    def encode_episode(self, model: Any, episode: Any) -> torch.Tensor:
+        self.assert_compatible(parent_checkpoint_digest=content_digest(model.checkpoint()))
+        return self.encode_response(str(episode.response))
+
+    def encode_corpus(self, model: Any, corpus: Any) -> dict[str, torch.Tensor]:
+        self.assert_compatible(corpus_digest=_corpus_digest(corpus))
+        self.assert_compatible(parent_checkpoint_digest=content_digest(model.checkpoint()))
+        return {
+            str(episode.episode_id): self.encode_response(str(episode.response))
+            for episode in tuple(corpus.episodes)
+        }
+
+    @property
+    def target_digest(self) -> str:
+        return content_digest(self.to_payload())
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": FACTOR_RESPONSE_PLAN_TARGET_FORMAT,
+            "version": FACTOR_RESPONSE_PLAN_TARGET_VERSION,
+            "slots": self.slots,
+            "slot_width": self.slot_width,
+            "width": self.width,
+            "phase_stride": self.phase_stride,
+            "corpus_digest": self.corpus_digest,
+            "parent_checkpoint_digest": self.parent_checkpoint_digest,
+            "fitted_split": RESPONSE_PLAN_TARGET_FIT_SPLIT,
+            "fit_episode_ids": list(self.fit_episode_ids),
+            "projection": FACTOR_RESPONSE_PLAN_TARGET_PROJECTION,
+            "normalization": FACTOR_RESPONSE_PLAN_TARGET_NORMALIZATION,
+            "salt": FACTOR_RESPONSE_PLAN_TARGET_SALT,
+            "slot_scale": self.slot_scale.detach().cpu().clone(),
+        }
+
+    @classmethod
+    def from_payload(
+        cls,
+        payload: Mapping[str, Any],
+        *,
+        expected_corpus_digest: str | None = None,
+        expected_parent_checkpoint_digest: str | None = None,
+    ) -> FactorizedResponsePlanTargetEncoder:
+        if not isinstance(payload, Mapping):
+            raise TypeError("factorized response target payload must be a mapping")
+        if payload.get("format") != FACTOR_RESPONSE_PLAN_TARGET_FORMAT:
+            raise ValueError("unsupported factorized response target format")
+        if int(payload.get("version", -1)) != FACTOR_RESPONSE_PLAN_TARGET_VERSION:
+            raise ValueError("unsupported factorized response target version")
+        if payload.get("fitted_split") != RESPONSE_PLAN_TARGET_FIT_SPLIT:
+            raise ValueError("factorized response target must be fitted on train")
+        if payload.get("projection") != FACTOR_RESPONSE_PLAN_TARGET_PROJECTION:
+            raise ValueError("factorized response target projection is incompatible")
+        if payload.get("normalization") != FACTOR_RESPONSE_PLAN_TARGET_NORMALIZATION:
+            raise ValueError("factorized response target normalization is incompatible")
+        if payload.get("salt") != FACTOR_RESPONSE_PLAN_TARGET_SALT:
+            raise ValueError("factorized response target salt is incompatible")
+        encoder = cls(
+            slots=int(payload["slots"]),
+            slot_width=int(payload["slot_width"]),
+            phase_stride=int(payload["phase_stride"]),
+            corpus_digest=payload["corpus_digest"],
+            parent_checkpoint_digest=payload["parent_checkpoint_digest"],
+            fit_episode_ids=payload["fit_episode_ids"],
+            slot_scale=payload["slot_scale"],
+        )
+        if int(payload.get("width", -1)) != encoder.width:
+            raise ValueError("factorized response target width is inconsistent")
+        encoder.assert_compatible(
+            corpus_digest=expected_corpus_digest,
+            parent_checkpoint_digest=expected_parent_checkpoint_digest,
+        )
+        return encoder
+
+
 __all__ = [
     "RESPONSE_PLAN_TARGET_COMPOSITION",
     "RESPONSE_PLAN_TARGET_FIT_SPLIT",
@@ -369,5 +634,14 @@ __all__ = [
     "RESPONSE_PLAN_TARGET_NGRAM_SALT",
     "RESPONSE_PLAN_TARGET_VERSION",
     "RESPONSE_PLAN_TARGET_WIDTH",
+    "FACTOR_RESPONSE_PLAN_TARGET_FORMAT",
+    "FACTOR_RESPONSE_PLAN_TARGET_NORMALIZATION",
+    "FACTOR_RESPONSE_PLAN_TARGET_PHASE_STRIDE",
+    "FACTOR_RESPONSE_PLAN_TARGET_PROJECTION",
+    "FACTOR_RESPONSE_PLAN_TARGET_SALT",
+    "FACTOR_RESPONSE_PLAN_TARGET_SLOT_WIDTH",
+    "FACTOR_RESPONSE_PLAN_TARGET_SLOTS",
+    "FACTOR_RESPONSE_PLAN_TARGET_VERSION",
+    "FactorizedResponsePlanTargetEncoder",
     "ResponsePlanTargetEncoder",
 ]

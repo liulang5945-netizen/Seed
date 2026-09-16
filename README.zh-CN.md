@@ -146,12 +146,13 @@ readout 学习；每个候选都隔离、可保存恢复，并在 family-disjoin
 | R2-H3.6-A | 版本化 train-only target encoder、训练器接线与保存恢复 smoke 已在 12/8/4 fixture 通过；没有进行能力训练 |
 | H3.6-B 前置 | control/treatment 零步前置均通过，effective=276,610≤300,000，parent/恢复/target 血缘检查成立；`training_performed=false` |
 | H3.6-B 结果 | 六个 matched dev run 与三组只读 bridge ablation 已完成；seed 方向与非代理序列门失败，final 未读，不追加 epoch |
+| R2-H3.7 合同 | 已冻结 4-slot/48维/16-byte phase 分解式回答 workspace；byte error 将显式更新 bridge 与当前 slot credit，待隔离实现与 preflight，不代表能力通过 |
 
 权威执行顺序见[当前推进计划](plans/active/roadmap/03_CURRENT_EXECUTION.md)；H3.6 目标合同见
 [M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md](plans/reference/M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md)，
 matched 预注册见[M5_R2_H3_6B_MATCHED_RUN_PREREGISTRATION_20260916.md](plans/reference/M5_R2_H3_6B_MATCHED_RUN_PREREGISTRATION_20260916.md)，
 最新 plumbing 证据见[taiji_r2_h3_6_target_encoder_smoke_20260916.json](reports/taiji_r2_h3_6_target_encoder_smoke_20260916.json)，
-control/treatment 零步证据见[taiji_r2_h3_6b_control_preflight_20260916.json](reports/taiji_r2_h3_6b_control_preflight_20260916.json)与[taiji_r2_h3_6b_treatment_preflight_20260916.json](reports/taiji_r2_h3_6b_treatment_preflight_20260916.json)。
+control/treatment 零步证据见[taiji_r2_h3_6b_control_preflight_20260916.json](reports/taiji_r2_h3_6b_control_preflight_20260916.json)与[taiji_r2_h3_6b_treatment_preflight_20260916.json](reports/taiji_r2_h3_6b_treatment_preflight_20260916.json)；H3.7执行合同见[M5_R2_H3_7_FACTORIZED_RESPONSE_WORKSPACE_CONTRACT_20260917.md](plans/reference/M5_R2_H3_7_FACTORIZED_RESPONSE_WORKSPACE_CONTRACT_20260917.md)。
 
 M5 K 轴 scorecard 仍是有效的并行、限定范围机制结果；它不是当前 R2 语言主线，也不代表默认 runtime 晋级。
 
@@ -162,7 +163,7 @@ M5 K 轴 scorecard 仍是有效的并行、限定范围机制结果；它不是�
 - 当前边界：原生语言路线已有结构化训练与恢复证据，但尚未建立 S2/L2 对话能力。K 轴的
   `promotion_gate=false`、`can_promote=false`、`growth_admitted=false` 仍保持诚实边界；不代表默认
   runtime 已挂接 owner，也不代表产品 rollout 已发生。
-- 当前主线：回到 R2 target/representation/readout 设计复审，先冻结新的可证伪合同再讨论新训练；H3.6-B final 保持未读，Mini 继续后置。
+- 当前主线：实现已冻结的 H3.7 分解式回答 workspace 并完成 checkpoint preflight；只有 plan target、phase reset、bridge/slot credit、parent保护与 300k 预算门通过后才进入授权的三 seed dev；H3.6-B final 保持未读，Mini 继续后置。
 - 诚实边界：这是一个训练中的学习机制原型，**不是**完整的认知架构，尚不是通用语言模型，也不构成任何 AGI 主张。当前 R2 将不可读或不可迁移的回答视为待解决失败，不包装成模型能力。
 
 ## 快速开始
