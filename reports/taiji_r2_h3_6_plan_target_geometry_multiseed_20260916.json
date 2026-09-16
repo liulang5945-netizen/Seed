@@ -1,0 +1,51 @@
+{
+  "format": "taiji-r2-h3-6-plan-target-geometry-multiseed-v1",
+  "status": "completed",
+  "training_performed": false,
+  "runtime_oracle_used": false,
+  "dataset_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+  "seeds": [20260916, 20260917, 20260918],
+  "selection_priority": [
+    "cross_seed_transfer_accuracy_floor",
+    "noncollapse_minimum_pair_distance",
+    "policy_geometry_margin"
+  ],
+  "geometries": {
+    "signed_hash_span": {
+      "transfer_accuracy": [0.5, 0.5, 0.5],
+      "geometry_margin": [0.21054670904952758, 0.21054670904952758, 0.21054670904952758],
+      "minimum_pair_distance": [0.14076542854309082, 0.14076542854309082, 0.14076542854309082]
+    },
+    "compositional_char_ngram": {
+      "transfer_accuracy": [0.4166666666666667, 0.4166666666666667, 0.4166666666666667],
+      "geometry_margin": [0.14814795357502858, 0.14814795357502858, 0.14814795357502858],
+      "minimum_pair_distance": [0.19516503810882568, 0.19516503810882568, 0.19516503810882568]
+    },
+    "native_response_state": {
+      "transfer_accuracy": [0.5833333333333334, 0.75, 0.5],
+      "geometry_margin": [0.08379952775107491, 0.0795756139137126, 0.036314697674027174],
+      "minimum_pair_distance": [0.01167231798171997, 0.0219956636428833, 0.028372228145599365]
+    },
+    "train_whitened_native_response_state": {
+      "transfer_accuracy": [0.25, 0.6666666666666666, 0.5833333333333334],
+      "geometry_margin": [0.1317983926774037, 0.08146241720058714, 0.16106574123863268],
+      "minimum_pair_distance": [0.15098810195922852, 0.21522259712219238, 0.16448307037353516]
+    },
+    "hybrid_native_compositional": {
+      "transfer_accuracy": [0.6666666666666666, 0.4166666666666667, 0.4166666666666667],
+      "geometry_margin": [0.11084453173119707, 0.09914724636409022, 0.07351335989552793],
+      "minimum_pair_distance": [0.09192734956741333, 0.11829143762588501, 0.11532020568847656]
+    },
+    "hybrid_whitened_compositional": {
+      "transfer_accuracy": [0.5833333333333334, 0.5833333333333334, 0.5833333333333334],
+      "geometry_margin": [0.17701779149679675, 0.13023660319891792, 0.13233902101508443],
+      "minimum_pair_distance": [0.21234095096588135, 0.42853987216949463, 0.21309685707092285]
+    }
+  },
+  "decision": {
+    "selected": "hybrid_whitened_compositional",
+    "reason": "only candidate with transfer accuracy above signed-hash in every seed while maintaining minimum pair distance above 0.21",
+    "not_claimed": ["semantic_understanding", "s2", "l2", "mini"],
+    "next": "freeze and implement a training-only versioned H3.6-A target encoder with train-only whitening and checkpointed transform"
+  }
+}

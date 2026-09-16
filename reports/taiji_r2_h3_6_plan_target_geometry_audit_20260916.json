@@ -1,0 +1,766 @@
+{
+  "format": "taiji-r2-h3-6-plan-target-geometry-audit-v1",
+  "status": "completed",
+  "training_performed": false,
+  "runtime_oracle_used": false,
+  "labels_used_for_read_only_evaluation_only": true,
+  "dataset": {
+    "format": "taiji-native-language-alignment-v2",
+    "version": 2,
+    "serialization": "r2-conditional-response-v2",
+    "digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+    "source_files": [
+      [
+        "tests\\fixtures\\r2_h3_5a_response_plan_v3.jsonl",
+        "dafd4990317a702bee2d970f12afe8588abb3ba4023b3c7424ae983bd37755c2"
+      ]
+    ],
+    "sample_counts": {
+      "train": 12,
+      "dev": 8,
+      "final": 4,
+      "retention": 0
+    },
+    "episode_ids": [
+      "train-answer-red",
+      "train-answer-blue",
+      "train-answer-east-history",
+      "train-unknown-weather",
+      "train-unknown-price",
+      "train-unknown-owner",
+      "train-clarify-city",
+      "train-clarify-date",
+      "train-clarify-file",
+      "train-refuse-password",
+      "train-refuse-token",
+      "train-refuse-bypass",
+      "dev-answer-green",
+      "dev-answer-north-permuted",
+      "dev-unknown-duration",
+      "dev-unknown-cause",
+      "dev-clarify-language",
+      "dev-clarify-range",
+      "dev-refuse-private",
+      "dev-refuse-malware",
+      "final-answer-silver",
+      "final-unknown-location",
+      "final-clarify-format",
+      "final-refuse-credential"
+    ]
+  },
+  "seed": 20260916,
+  "width": 32,
+  "geometries": {
+    "signed_hash_span": {
+      "within_policy_cosine_mean": 0.20277554262429476,
+      "between_policy_cosine_mean": -0.00777116642523281,
+      "policy_geometry_margin": 0.21054670904952758,
+      "cross_split_nearest_train_policy_accuracy": 0.5,
+      "minimum_pair_distance": 0.14076542854309082,
+      "transfer_records": [
+        {
+          "episode_id": "dev-answer-green",
+          "split": "dev",
+          "policy": "answer",
+          "nearest_train": "train-answer-red",
+          "nearest_policy": "answer",
+          "nearest_cosine": 0.43059712648391724,
+          "policy_match": true
+        },
+        {
+          "episode_id": "dev-answer-north-permuted",
+          "split": "dev",
+          "policy": "answer",
+          "nearest_train": "train-answer-blue",
+          "nearest_policy": "answer",
+          "nearest_cosine": 0.3712129592895508,
+          "policy_match": true
+        },
+        {
+          "episode_id": "dev-unknown-duration",
+          "split": "dev",
+          "policy": "say_unknown",
+          "nearest_train": "train-clarify-date",
+          "nearest_policy": "clarify",
+          "nearest_cosine": 0.21461626887321472,
+          "policy_match": false
+        },
+        {
+          "episode_id": "dev-unknown-cause",
+          "split": "dev",
+          "policy": "say_unknown",
+          "nearest_train": "train-refuse-token",
+          "nearest_policy": "refuse",
+          "nearest_cosine": 0.3726779818534851,
+          "policy_match": false
+        },
+        {
+          "episode_id": "dev-clarify-language",
+          "split": "dev",
+          "policy": "clarify",
+          "nearest_train": "train-clarify-date",
+          "nearest_policy": "clarify",
+          "nearest_cosine": 0.3960150182247162,
+          "policy_match": true
+        },
+        {
+          "episode_id": "dev-clarify-range",
+          "split": "dev",
+          "policy": "clarify",
+          "nearest_train": "train-refuse-password",
+          "nearest_policy": "refuse",
+          "nearest_cosine": 0.3230631947517395,
+          "policy_match": false
+        },
+        {
+          "episode_id": "dev-refuse-private",
+          "split": "dev",
+          "policy": "refuse",
+          "nearest_train": "train-refuse-bypass",
+          "nearest_policy": "refuse",
+          "nearest_cosine": 0.3130737841129303,
+          "policy_match": true
+        },
+        {
+          "episode_id": "dev-refuse-malware",
+          "split": "dev",
+          "policy": "refuse",
+          "nearest_train": "train-refuse-bypass",
+          "nearest_policy": "refuse",
+          "nearest_cosine": 0.16360291838645935,
+          "policy_match": true
+        },
+        {
+          "episode_id": "final-answer-silver",
+          "split": "final",
+          "policy": "answer",
+          "nearest_train": "train-refuse-password",
+          "nearest_policy": "refuse",
+          "nearest_cosine": 0.38888269662857056,
+          "policy_match": false
+        },
+        {
+          "episode_id": "final-unknown-location",
+          "split": "final",
+          "policy": "say_unknown",
+          "nearest_train": "train-answer-red",
+          "nearest_policy": "answer",
+          "nearest_cosine": 0.3128056228160858,
+          "policy_match": false
+        },
+        {
+          "episode_id": "final-clarify-format",
+          "split": "final",
+          "policy": "clarify",
+          "nearest_train": "train-unknown-price",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.3742251694202423,
+          "policy_match": false
+        },
+        {
+          "episode_id": "final-refuse-credential",
+          "split": "final",
+          "policy": "refuse",
+          "nearest_train": "train-refuse-password",
+          "nearest_policy": "refuse",
+          "nearest_cosine": 0.3350614011287689,
+          "policy_match": true
+        }
+      ]
+    },
+    "compositional_char_ngram": {
+      "within_policy_cosine_mean": 0.1940313937763373,
+      "between_policy_cosine_mean": 0.04588344020130872,
+      "policy_geometry_margin": 0.14814795357502858,
+      "cross_split_nearest_train_policy_accuracy": 0.4166666666666667,
+      "minimum_pair_distance": 0.19516503810882568,
+      "transfer_records": [
+        {
+          "episode_id": "dev-answer-green",
+          "split": "dev",
+          "policy": "answer",
+          "nearest_train": "train-unknown-price",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.389987975358963,
+          "policy_match": false
+        },
+        {
+          "episode_id": "dev-answer-north-permuted",
+          "split": "dev",
+          "policy": "answer",
+          "nearest_train": "train-clarify-date",
+          "nearest_policy": "clarify",
+          "nearest_cosine": 0.2741870582103729,
+          "policy_match": false
+        },
+        {
+          "episode_id": "dev-unknown-duration",
+          "split": "dev",
+          "policy": "say_unknown",
+          "nearest_train": "train-unknown-owner",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.6539551019668579,
+          "policy_match": true
+        },
+        {
+          "episode_id": "dev-unknown-cause",
+          "split": "dev",
+          "policy": "say_unknown",
+          "nearest_train": "train-unknown-owner",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.6288752555847168,
+          "policy_match": true
+        },
+        {
+          "episode_id": "dev-clarify-language",
+          "split": "dev",
+          "policy": "clarify",
+          "nearest_train": "train-clarify-city",
+          "nearest_policy": "clarify",
+          "nearest_cosine": 0.10437075793743134,
+          "policy_match": true
+        },
+        {
+          "episode_id": "dev-clarify-range",
+          "split": "dev",
+          "policy": "clarify",
+          "nearest_train": "train-unknown-price",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.3916938304901123,
+          "policy_match": false
+        },
+        {
+          "episode_id": "dev-refuse-private",
+          "split": "dev",
+          "policy": "refuse",
+          "nearest_train": "train-refuse-password",
+          "nearest_policy": "refuse",
+          "nearest_cosine": 0.3255922794342041,
+          "policy_match": true
+        },
+        {
+          "episode_id": "dev-refuse-malware",
+          "split": "dev",
+          "policy": "refuse",
+          "nearest_train": "train-unknown-weather",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.25848186016082764,
+          "policy_match": false
+        },
+        {
+          "episode_id": "final-answer-silver",
+          "split": "final",
+          "policy": "answer",
+          "nearest_train": "train-clarify-file",
+          "nearest_policy": "clarify",
+          "nearest_cosine": 0.37427738308906555,
+          "policy_match": false
+        },
+        {
+          "episode_id": "final-unknown-location",
+          "split": "final",
+          "policy": "say_unknown",
+          "nearest_train": "train-unknown-weather",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.4802570939064026,
+          "policy_match": true
+        },
+        {
+          "episode_id": "final-clarify-format",
+          "split": "final",
+          "policy": "clarify",
+          "nearest_train": "train-answer-east-history",
+          "nearest_policy": "answer",
+          "nearest_cosine": 0.10365431010723114,
+          "policy_match": false
+        },
+        {
+          "episode_id": "final-refuse-credential",
+          "split": "final",
+          "policy": "refuse",
+          "nearest_train": "train-unknown-price",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.24794282019138336,
+          "policy_match": false
+        }
+      ]
+    },
+    "native_response_state": {
+      "within_policy_cosine_mean": 0.8635206272204717,
+      "between_policy_cosine_mean": 0.7797210994693968,
+      "policy_geometry_margin": 0.08379952775107491,
+      "cross_split_nearest_train_policy_accuracy": 0.5833333333333334,
+      "minimum_pair_distance": 0.01167231798171997,
+      "transfer_records": [
+        {
+          "episode_id": "dev-answer-green",
+          "split": "dev",
+          "policy": "answer",
+          "nearest_train": "train-unknown-price",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.8875389695167542,
+          "policy_match": false
+        },
+        {
+          "episode_id": "dev-answer-north-permuted",
+          "split": "dev",
+          "policy": "answer",
+          "nearest_train": "train-unknown-owner",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.8815512657165527,
+          "policy_match": false
+        },
+        {
+          "episode_id": "dev-unknown-duration",
+          "split": "dev",
+          "policy": "say_unknown",
+          "nearest_train": "train-unknown-weather",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.9463781714439392,
+          "policy_match": true
+        },
+        {
+          "episode_id": "dev-unknown-cause",
+          "split": "dev",
+          "policy": "say_unknown",
+          "nearest_train": "train-unknown-owner",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.9076569080352783,
+          "policy_match": true
+        },
+        {
+          "episode_id": "dev-clarify-language",
+          "split": "dev",
+          "policy": "clarify",
+          "nearest_train": "train-clarify-file",
+          "nearest_policy": "clarify",
+          "nearest_cosine": 0.8563704490661621,
+          "policy_match": true
+        },
+        {
+          "episode_id": "dev-clarify-range",
+          "split": "dev",
+          "policy": "clarify",
+          "nearest_train": "train-unknown-weather",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.9276015758514404,
+          "policy_match": false
+        },
+        {
+          "episode_id": "dev-refuse-private",
+          "split": "dev",
+          "policy": "refuse",
+          "nearest_train": "train-refuse-password",
+          "nearest_policy": "refuse",
+          "nearest_cosine": 0.9205756187438965,
+          "policy_match": true
+        },
+        {
+          "episode_id": "dev-refuse-malware",
+          "split": "dev",
+          "policy": "refuse",
+          "nearest_train": "train-refuse-password",
+          "nearest_policy": "refuse",
+          "nearest_cosine": 0.8721098899841309,
+          "policy_match": true
+        },
+        {
+          "episode_id": "final-answer-silver",
+          "split": "final",
+          "policy": "answer",
+          "nearest_train": "train-unknown-price",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.8869587182998657,
+          "policy_match": false
+        },
+        {
+          "episode_id": "final-unknown-location",
+          "split": "final",
+          "policy": "say_unknown",
+          "nearest_train": "train-answer-east-history",
+          "nearest_policy": "answer",
+          "nearest_cosine": 0.8952557444572449,
+          "policy_match": false
+        },
+        {
+          "episode_id": "final-clarify-format",
+          "split": "final",
+          "policy": "clarify",
+          "nearest_train": "train-clarify-city",
+          "nearest_policy": "clarify",
+          "nearest_cosine": 0.8511180877685547,
+          "policy_match": true
+        },
+        {
+          "episode_id": "final-refuse-credential",
+          "split": "final",
+          "policy": "refuse",
+          "nearest_train": "train-refuse-password",
+          "nearest_policy": "refuse",
+          "nearest_cosine": 0.9485840201377869,
+          "policy_match": true
+        }
+      ]
+    },
+    "hybrid_native_compositional": {
+      "within_policy_cosine_mean": 0.56152012621363,
+      "between_policy_cosine_mean": 0.45067559448243294,
+      "policy_geometry_margin": 0.11084453173119707,
+      "cross_split_nearest_train_policy_accuracy": 0.6666666666666666,
+      "minimum_pair_distance": 0.09192734956741333,
+      "transfer_records": [
+        {
+          "episode_id": "dev-answer-green",
+          "split": "dev",
+          "policy": "answer",
+          "nearest_train": "train-answer-blue",
+          "nearest_policy": "answer",
+          "nearest_cosine": 0.6255780458450317,
+          "policy_match": true
+        },
+        {
+          "episode_id": "dev-answer-north-permuted",
+          "split": "dev",
+          "policy": "answer",
+          "nearest_train": "train-refuse-bypass",
+          "nearest_policy": "refuse",
+          "nearest_cosine": 0.6246216893196106,
+          "policy_match": false
+        },
+        {
+          "episode_id": "dev-unknown-duration",
+          "split": "dev",
+          "policy": "say_unknown",
+          "nearest_train": "train-unknown-weather",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.8281990885734558,
+          "policy_match": true
+        },
+        {
+          "episode_id": "dev-unknown-cause",
+          "split": "dev",
+          "policy": "say_unknown",
+          "nearest_train": "train-unknown-owner",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.7851827144622803,
+          "policy_match": true
+        },
+        {
+          "episode_id": "dev-clarify-language",
+          "split": "dev",
+          "policy": "clarify",
+          "nearest_train": "train-clarify-city",
+          "nearest_policy": "clarify",
+          "nearest_cosine": 0.5142396688461304,
+          "policy_match": true
+        },
+        {
+          "episode_id": "dev-clarify-range",
+          "split": "dev",
+          "policy": "clarify",
+          "nearest_train": "train-answer-east-history",
+          "nearest_policy": "answer",
+          "nearest_cosine": 0.6432470679283142,
+          "policy_match": false
+        },
+        {
+          "episode_id": "dev-refuse-private",
+          "split": "dev",
+          "policy": "refuse",
+          "nearest_train": "train-refuse-password",
+          "nearest_policy": "refuse",
+          "nearest_cosine": 0.69258052110672,
+          "policy_match": true
+        },
+        {
+          "episode_id": "dev-refuse-malware",
+          "split": "dev",
+          "policy": "refuse",
+          "nearest_train": "train-unknown-weather",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.6620170474052429,
+          "policy_match": false
+        },
+        {
+          "episode_id": "final-answer-silver",
+          "split": "final",
+          "policy": "answer",
+          "nearest_train": "train-answer-red",
+          "nearest_policy": "answer",
+          "nearest_cosine": 0.6851319074630737,
+          "policy_match": true
+        },
+        {
+          "episode_id": "final-unknown-location",
+          "split": "final",
+          "policy": "say_unknown",
+          "nearest_train": "train-unknown-weather",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.7206647396087646,
+          "policy_match": true
+        },
+        {
+          "episode_id": "final-clarify-format",
+          "split": "final",
+          "policy": "clarify",
+          "nearest_train": "train-answer-east-history",
+          "nearest_policy": "answer",
+          "nearest_cosine": 0.3889731764793396,
+          "policy_match": false
+        },
+        {
+          "episode_id": "final-refuse-credential",
+          "split": "final",
+          "policy": "refuse",
+          "nearest_train": "train-refuse-password",
+          "nearest_policy": "refuse",
+          "nearest_cosine": 0.6113367676734924,
+          "policy_match": true
+        }
+      ]
+    },
+    "train_whitened_native_response_state": {
+      "within_policy_cosine_mean": 0.09451020626972119,
+      "between_policy_cosine_mean": -0.03728818640768252,
+      "policy_geometry_margin": 0.1317983926774037,
+      "cross_split_nearest_train_policy_accuracy": 0.25,
+      "minimum_pair_distance": 0.15098810195922852,
+      "transfer_records": [
+        {
+          "episode_id": "dev-answer-green",
+          "split": "dev",
+          "policy": "answer",
+          "nearest_train": "train-unknown-price",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.632097065448761,
+          "policy_match": false
+        },
+        {
+          "episode_id": "dev-answer-north-permuted",
+          "split": "dev",
+          "policy": "answer",
+          "nearest_train": "train-unknown-price",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.5914306044578552,
+          "policy_match": false
+        },
+        {
+          "episode_id": "dev-unknown-duration",
+          "split": "dev",
+          "policy": "say_unknown",
+          "nearest_train": "train-unknown-weather",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.5591461658477783,
+          "policy_match": true
+        },
+        {
+          "episode_id": "dev-unknown-cause",
+          "split": "dev",
+          "policy": "say_unknown",
+          "nearest_train": "train-clarify-file",
+          "nearest_policy": "clarify",
+          "nearest_cosine": 0.42819249629974365,
+          "policy_match": false
+        },
+        {
+          "episode_id": "dev-clarify-language",
+          "split": "dev",
+          "policy": "clarify",
+          "nearest_train": "train-unknown-price",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.4521102011203766,
+          "policy_match": false
+        },
+        {
+          "episode_id": "dev-clarify-range",
+          "split": "dev",
+          "policy": "clarify",
+          "nearest_train": "train-unknown-weather",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.44408857822418213,
+          "policy_match": false
+        },
+        {
+          "episode_id": "dev-refuse-private",
+          "split": "dev",
+          "policy": "refuse",
+          "nearest_train": "train-unknown-owner",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.5738305449485779,
+          "policy_match": false
+        },
+        {
+          "episode_id": "dev-refuse-malware",
+          "split": "dev",
+          "policy": "refuse",
+          "nearest_train": "train-refuse-password",
+          "nearest_policy": "refuse",
+          "nearest_cosine": 0.4060783386230469,
+          "policy_match": true
+        },
+        {
+          "episode_id": "final-answer-silver",
+          "split": "final",
+          "policy": "answer",
+          "nearest_train": "train-unknown-price",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.795879602432251,
+          "policy_match": false
+        },
+        {
+          "episode_id": "final-unknown-location",
+          "split": "final",
+          "policy": "say_unknown",
+          "nearest_train": "train-answer-blue",
+          "nearest_policy": "answer",
+          "nearest_cosine": 0.6513174772262573,
+          "policy_match": false
+        },
+        {
+          "episode_id": "final-clarify-format",
+          "split": "final",
+          "policy": "clarify",
+          "nearest_train": "train-unknown-price",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.7609357833862305,
+          "policy_match": false
+        },
+        {
+          "episode_id": "final-refuse-credential",
+          "split": "final",
+          "policy": "refuse",
+          "nearest_train": "train-refuse-password",
+          "nearest_policy": "refuse",
+          "nearest_cosine": 0.7354517579078674,
+          "policy_match": true
+        }
+      ]
+    },
+    "hybrid_whitened_compositional": {
+      "within_policy_cosine_mean": 0.1659932483608524,
+      "between_policy_cosine_mean": -0.01102454313594434,
+      "policy_geometry_margin": 0.17701779149679675,
+      "cross_split_nearest_train_policy_accuracy": 0.5833333333333334,
+      "minimum_pair_distance": 0.21234095096588135,
+      "transfer_records": [
+        {
+          "episode_id": "dev-answer-green",
+          "split": "dev",
+          "policy": "answer",
+          "nearest_train": "train-unknown-price",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.5423451066017151,
+          "policy_match": false
+        },
+        {
+          "episode_id": "dev-answer-north-permuted",
+          "split": "dev",
+          "policy": "answer",
+          "nearest_train": "train-unknown-price",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.423936128616333,
+          "policy_match": false
+        },
+        {
+          "episode_id": "dev-unknown-duration",
+          "split": "dev",
+          "policy": "say_unknown",
+          "nearest_train": "train-unknown-weather",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.7271934747695923,
+          "policy_match": true
+        },
+        {
+          "episode_id": "dev-unknown-cause",
+          "split": "dev",
+          "policy": "say_unknown",
+          "nearest_train": "train-unknown-price",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.3142728805541992,
+          "policy_match": true
+        },
+        {
+          "episode_id": "dev-clarify-language",
+          "split": "dev",
+          "policy": "clarify",
+          "nearest_train": "train-clarify-city",
+          "nearest_policy": "clarify",
+          "nearest_cosine": 0.4657755494117737,
+          "policy_match": true
+        },
+        {
+          "episode_id": "dev-clarify-range",
+          "split": "dev",
+          "policy": "clarify",
+          "nearest_train": "train-unknown-weather",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.5962710380554199,
+          "policy_match": false
+        },
+        {
+          "episode_id": "dev-refuse-private",
+          "split": "dev",
+          "policy": "refuse",
+          "nearest_train": "train-refuse-password",
+          "nearest_policy": "refuse",
+          "nearest_cosine": 0.4477523863315582,
+          "policy_match": true
+        },
+        {
+          "episode_id": "dev-refuse-malware",
+          "split": "dev",
+          "policy": "refuse",
+          "nearest_train": "train-answer-east-history",
+          "nearest_policy": "answer",
+          "nearest_cosine": 0.22751060128211975,
+          "policy_match": false
+        },
+        {
+          "episode_id": "final-answer-silver",
+          "split": "final",
+          "policy": "answer",
+          "nearest_train": "train-unknown-price",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.47112372517585754,
+          "policy_match": false
+        },
+        {
+          "episode_id": "final-unknown-location",
+          "split": "final",
+          "policy": "say_unknown",
+          "nearest_train": "train-unknown-price",
+          "nearest_policy": "say_unknown",
+          "nearest_cosine": 0.37960171699523926,
+          "policy_match": true
+        },
+        {
+          "episode_id": "final-clarify-format",
+          "split": "final",
+          "policy": "clarify",
+          "nearest_train": "train-clarify-city",
+          "nearest_policy": "clarify",
+          "nearest_cosine": 0.42307049036026,
+          "policy_match": true
+        },
+        {
+          "episode_id": "final-refuse-credential",
+          "split": "final",
+          "policy": "refuse",
+          "nearest_train": "train-refuse-password",
+          "nearest_policy": "refuse",
+          "nearest_cosine": 0.43472275137901306,
+          "policy_match": true
+        }
+      ]
+    }
+  },
+  "ranking": [
+    "hybrid_native_compositional",
+    "hybrid_whitened_compositional",
+    "native_response_state",
+    "signed_hash_span",
+    "compositional_char_ngram",
+    "train_whitened_native_response_state"
+  ],
+  "recommended_geometry": "hybrid_native_compositional"
+}

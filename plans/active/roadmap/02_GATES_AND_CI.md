@@ -48,5 +48,5 @@
 - 每次改动执行风险相称的相关检查；新回归先修，存量失败保留可复现账本。
 - 能力研究的局部检查、全量测试、远端 workflow 三套状态分账。正式发布须实际 workflow 通过，不以历史计数豁免。
 - 2026-09-16已查询远端：run34869725409，d09dcc21，总体failure（3.10腿）；3.12/Windows等通过。这不是当前HEAD的CI，不声称全绿。
-- R2-H3.5-A三seed×两臂dev训练已执行并触发停止门：treatment方向不优于control，final未读。当前只授权H3.6无训练的计划目标几何/信用接口复审；不授权追加epoch、读取final、默认入口、L2/Mini或shared fabric扩容，详见03。
+- R2-H3.5-A已触发停止，H3.6三种子无训练geometry审计已选定hybrid whitened target。当前只授权H3.6-A target encoder plumbing与reconstruction smoke；不授权能力训练、追加epoch、读取final、默认入口、L2/Mini或shared fabric扩容，详见03。
 - 冻结报告只追加后继指针或另存复审，不覆盖失败；证据失效时撤回对应范围，不能无依据撤销整个项目。

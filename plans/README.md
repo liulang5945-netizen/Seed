@@ -4,7 +4,7 @@
 
 ## 项目位置
 
-当前为M5知识与身体。R2-H3.5-A三seed×control/treatment dev训练已完成并按门停止：全部preflight/预算通过，但treatment的dev sequence为0/0.125/0.125，低于control稳定的0.25，surprise也一致更差；plan cosine接近零或为负，bridge消融恢复sequence但增加collision。final未读，不追加epoch。当前唯一下一步是H3.6计划目标几何与信用接口复审，先做无训练geometry审计。Mini模型验收继续后置。
+当前为M5知识与身体。H3.5-A已在final前按负结果停止；H3.6三种子无训练geometry审计进一步选定`train-whitened native response state + compositional char n-gram`，其跨split匹配三seed均为0.583且最小距离≥0.212，优于signed-hash的稳定0.5。当前唯一下一步是实现版本化H3.6-A target encoder与reconstruction smoke，不运行能力训练、不读final。Mini继续后置。
 
 P3b两臂已停止，数据分布效应只有一个共同检查点，阶段结论应按“不可判”封存；64预算在线复测是未提交候选，不能继续仅写“等训练结束”或“放宽预算即可通过”。
 

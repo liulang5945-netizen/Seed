@@ -41,7 +41,7 @@
 | 协作与自主选择 | C/A 负结果；B0 的 HANDOFF-M4 已由反事实转成**已发布规则**：2026-09-15 落地进 P5.2b gate（`rule_revision=1`，五条出口见 WP-3 落地结果），独立结构因素仍为 1。**注意**：该规则目前**只存在于 gate 脚本**，`taiji/` 无对应实现 ⇒ 落地证明的是仪器，不是产品能力 | B2-v4已证冻结create族内学习选择与协作；仍缺独立内容结构、产品同入口集成及轴级共同门/批准，H1/H2/H3不混称 | 已完成B链继承；R4集成、R5独立扩面与轴评审 |
 | 身体与在线闭环 | Workbench 合同与预测路径、恢复资产可复用 | 真实结果驱动合格更新、多轮保持/幂等/中断恢复；能力注册/撤销、执行与认知责任分离 | R0逐门审查→R3闭环；身体生命周期由R5在M5评审前闭合 |
 
-**最新状态**：R2-H3.5-A隔离candidate、smoke和三seed×两臂dev训练已完成。全部preflight/预算通过，但treatment的dev sequence和surprise三seed均不优于control，plan target cosine接近零或为负；bridge消融恢复sequence但增加collision。按冻结门已在final前停止，不证明S2/L2/Mini。下一步按03执行H3.6计划目标几何与信用接口复审，不加epoch、不读final、不扩容量。
+**最新状态**：R2-H3.5-A已因plan target不迁移在final前停止。H3.6三种子无训练geometry审计已完成，选定train-only whitened native response state与compositional n-gram混合目标；它是唯一在三个种子都超过signed-hash迁移下限且保持样本分离的候选，但不证明S2/L2/Mini。下一步按03实现版本化target encoder与reconstruction smoke，不读final、不扩容量。
 
 **M5 限定阶段退出**还需知识准入、在线/身体轴与共同保持恢复门闭合。若某能力决定留到以后，必须列为“未完成且从本次交付范围排除”，由项目所有者批准；不能写为已完成。当前没有这种新增豁免。
 

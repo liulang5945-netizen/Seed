@@ -118,6 +118,6 @@
 
 [CAP-0冻结集v1](../../reference/M5_CAP0_EVAL_SET_FROZEN_20260915.md)和[基线结果](../../reference/M5_CAP0_BASELINE_RESULT_20260915.md)是已执行证据；本文建议不得追改其题量、分母或阈值。C知识题14项与未知题、D计分16项与重置项分别记账，不混用“各20项”作所有指标分母。规则辅助判分不替代人工确认；健康报告不自动补齐另一条P3b链路的A/F/H。
 
-R2-H3.5-A三seed×两臂dev训练已完成并因treatment劣于control而在final前停止，没有形成S2/L2能力证据。主线转H3.6计划目标几何复审，不执行Mini验收。Mini评价体系、L2/L3门和用户验收材料继续保留，待R2形成可加载主线bundle后统一执行。
+R2-H3.5-A已在final前停止；H3.6仅完成无训练target geometry审计并选定hybrid whitened候选，没有形成S2/L2能力证据。主线下一步是target encoder plumbing与reconstruction smoke，不执行Mini验收。Mini评价体系、L2/L3门和用户验收材料继续保留。
 
 L3材料齐备即触发用户验收，无需等所有M5轴或VISION完成；反之B2通过、一次回写成功、surprise改善均不触发交付。详见03的R2/R4与阶段出口表。
