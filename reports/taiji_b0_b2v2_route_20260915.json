@@ -1,0 +1,517 @@
+{
+  "format": "taiji-b0-b2v2-route-gate-report-v1",
+  "version": 1,
+  "status": "completed",
+  "preregistration": "plans/reference/M5_B2V2_ROUTE_CONDITIONAL_PREREGISTRATION_FROZEN_20260915.md",
+  "scope": "B2-v2 route-conditional selection gate; same corpus/candidates/gates as B2-v1, only the representation changes; library learner untouched and runs as the v1 control arm",
+  "static_checks": {
+    "scope": [
+      "scripts/training/eval_taiji_b0_b2v2_route_gate.py",
+      "scripts/training/eval_taiji_b0_b2_selection_gate.py",
+      "scripts/training/eval_taiji_b0_b1_representation_gate.py"
+    ],
+    "commands": [
+      "python -m py_compile <scope files>",
+      "python -m ruff check scripts/training (and full repo)",
+      "python -m black --no-cache --check <scope files>"
+    ]
+  },
+  "outcome": "failed",
+  "experiment_passed": false,
+  "record": {
+    "commit": "99635549d400a90ebb8fe8008b388f6823554976",
+    "rule_revision": 1,
+    "composition_rule": "m4_failure_handoff",
+    "wall_cap_seconds": 60.0,
+    "elapsed_seconds": 39.911
+  },
+  "representation": {
+    "route_means": {
+      "member-a": {
+        "none": 1.0,
+        "create": 0.0,
+        "patch": 0.0
+      },
+      "member-b": {
+        "none": 0.0,
+        "create": 0.0,
+        "patch": 0.25
+      },
+      "member-c": {
+        "none": 0.0,
+        "create": 1.0,
+        "patch": 0.0
+      },
+      "member-d": {
+        "none": 1.0,
+        "create": 0.0,
+        "patch": 0.75
+      }
+    },
+    "contributions": {
+      "member-a": 0.375,
+      "member-b": 0.125,
+      "member-c": 0.125,
+      "member-d": 0.75
+    },
+    "coefficients": {
+      "bias": -0.3125,
+      "exclusive_first": 0.076154,
+      "exclusive_second": -0.039015,
+      "exclusive_total": 0.024847,
+      "redundant": -0.10723,
+      "neither_covers": 0.099588,
+      "mean_contrib": -0.247427,
+      "product_contrib": 0.058123
+    },
+    "v2_predictions_create_route": {
+      "member-a+member-b": 0.008039,
+      "member-a+member-c": -0.274928,
+      "member-a+member-d": -0.359287,
+      "member-b+member-c": -0.086334,
+      "member-b+member-d": -0.274852,
+      "member-c+member-d": -0.245717
+    },
+    "v2_selected_pair": "member-a+member-b",
+    "v1_control_selected_pair": "member-b+member-c"
+  },
+  "diagnostic_training_interactions": {
+    "rows": [
+      {
+        "cell": "none__observation",
+        "route": "none",
+        "pair": "member-a+member-b",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "none__observation",
+        "route": "none",
+        "pair": "member-a+member-c",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "none__observation",
+        "route": "none",
+        "pair": "member-a+member-d",
+        "interaction": -1.0,
+        "contexts": 1
+      },
+      {
+        "cell": "none__observation",
+        "route": "none",
+        "pair": "member-b+member-c",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "none__observation",
+        "route": "none",
+        "pair": "member-b+member-d",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "none__observation",
+        "route": "none",
+        "pair": "member-c+member-d",
+        "interaction": -1.0,
+        "contexts": 1
+      },
+      {
+        "cell": "none__override",
+        "route": "none",
+        "pair": "member-a+member-b",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "none__override",
+        "route": "none",
+        "pair": "member-a+member-c",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "none__override",
+        "route": "none",
+        "pair": "member-a+member-d",
+        "interaction": -1.0,
+        "contexts": 1
+      },
+      {
+        "cell": "none__override",
+        "route": "none",
+        "pair": "member-b+member-c",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "none__override",
+        "route": "none",
+        "pair": "member-b+member-d",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "none__override",
+        "route": "none",
+        "pair": "member-c+member-d",
+        "interaction": -1.0,
+        "contexts": 1
+      },
+      {
+        "cell": "none__mismatch",
+        "route": "none",
+        "pair": "member-a+member-b",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "none__mismatch",
+        "route": "none",
+        "pair": "member-a+member-c",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "none__mismatch",
+        "route": "none",
+        "pair": "member-a+member-d",
+        "interaction": -1.0,
+        "contexts": 1
+      },
+      {
+        "cell": "none__mismatch",
+        "route": "none",
+        "pair": "member-b+member-c",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "none__mismatch",
+        "route": "none",
+        "pair": "member-b+member-d",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "none__mismatch",
+        "route": "none",
+        "pair": "member-c+member-d",
+        "interaction": -1.0,
+        "contexts": 1
+      },
+      {
+        "cell": "create__none",
+        "route": "create",
+        "pair": "member-a+member-b",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "create__none",
+        "route": "create",
+        "pair": "member-a+member-c",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "create__none",
+        "route": "create",
+        "pair": "member-a+member-d",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "create__none",
+        "route": "create",
+        "pair": "member-b+member-c",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "create__none",
+        "route": "create",
+        "pair": "member-b+member-d",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "create__none",
+        "route": "create",
+        "pair": "member-c+member-d",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "patch__none",
+        "route": "patch",
+        "pair": "member-a+member-b",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "patch__none",
+        "route": "patch",
+        "pair": "member-a+member-c",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "patch__none",
+        "route": "patch",
+        "pair": "member-a+member-d",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "patch__none",
+        "route": "patch",
+        "pair": "member-b+member-c",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "patch__none",
+        "route": "patch",
+        "pair": "member-b+member-d",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "patch__none",
+        "route": "patch",
+        "pair": "member-c+member-d",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "patch__observation",
+        "route": "patch",
+        "pair": "member-a+member-b",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "patch__observation",
+        "route": "patch",
+        "pair": "member-a+member-c",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "patch__observation",
+        "route": "patch",
+        "pair": "member-a+member-d",
+        "interaction": -1.0,
+        "contexts": 1
+      },
+      {
+        "cell": "patch__observation",
+        "route": "patch",
+        "pair": "member-b+member-c",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "patch__observation",
+        "route": "patch",
+        "pair": "member-b+member-d",
+        "interaction": -1.0,
+        "contexts": 1
+      },
+      {
+        "cell": "patch__observation",
+        "route": "patch",
+        "pair": "member-c+member-d",
+        "interaction": -1.0,
+        "contexts": 1
+      },
+      {
+        "cell": "patch__override",
+        "route": "patch",
+        "pair": "member-a+member-b",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "patch__override",
+        "route": "patch",
+        "pair": "member-a+member-c",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "patch__override",
+        "route": "patch",
+        "pair": "member-a+member-d",
+        "interaction": -1.0,
+        "contexts": 1
+      },
+      {
+        "cell": "patch__override",
+        "route": "patch",
+        "pair": "member-b+member-c",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "patch__override",
+        "route": "patch",
+        "pair": "member-b+member-d",
+        "interaction": -1.0,
+        "contexts": 1
+      },
+      {
+        "cell": "patch__override",
+        "route": "patch",
+        "pair": "member-c+member-d",
+        "interaction": -1.0,
+        "contexts": 1
+      },
+      {
+        "cell": "patch__mismatch",
+        "route": "patch",
+        "pair": "member-a+member-b",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "patch__mismatch",
+        "route": "patch",
+        "pair": "member-a+member-c",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "patch__mismatch",
+        "route": "patch",
+        "pair": "member-a+member-d",
+        "interaction": -1.0,
+        "contexts": 1
+      },
+      {
+        "cell": "patch__mismatch",
+        "route": "patch",
+        "pair": "member-b+member-c",
+        "interaction": 0.0,
+        "contexts": 1
+      },
+      {
+        "cell": "patch__mismatch",
+        "route": "patch",
+        "pair": "member-b+member-d",
+        "interaction": -1.0,
+        "contexts": 1
+      },
+      {
+        "cell": "patch__mismatch",
+        "route": "patch",
+        "pair": "member-c+member-d",
+        "interaction": -1.0,
+        "contexts": 1
+      }
+    ],
+    "positive_rows": 0,
+    "note": "if positive_rows is 0 the training surface contains no complementary-success pattern; the fit degrades honestly and training-surface expansion becomes the axis finding"
+  },
+  "cells": {
+    "create__observation": {
+      "gain_vs_all_singleton_oracle": 0.0,
+      "required": 1.65,
+      "positive_gain_contexts": 0,
+      "k_criterion_met": false,
+      "pair_mean_outcome": 0.0,
+      "best_singleton_member": "member-a",
+      "best_singleton_mean_outcome": 0.0,
+      "g4_beats_deployable_control": false,
+      "lesion_attribution_holds": false
+    },
+    "create__override": {
+      "gain_vs_all_singleton_oracle": 0.0,
+      "required": 1.65,
+      "positive_gain_contexts": 0,
+      "k_criterion_met": false,
+      "pair_mean_outcome": 0.0,
+      "best_singleton_member": "member-a",
+      "best_singleton_mean_outcome": 0.0,
+      "g4_beats_deployable_control": false,
+      "lesion_attribution_holds": false
+    },
+    "create__mismatch": {
+      "gain_vs_all_singleton_oracle": 0.0,
+      "required": 1.65,
+      "positive_gain_contexts": 0,
+      "k_criterion_met": false,
+      "pair_mean_outcome": 0.0,
+      "best_singleton_member": "member-a",
+      "best_singleton_mean_outcome": 0.0,
+      "g4_beats_deployable_control": false,
+      "lesion_attribution_holds": false
+    }
+  },
+  "interleaved": {
+    "contexts_interleaved": 0,
+    "required": "> 0"
+  },
+  "control_arms": {
+    "v2_selected_pair": {
+      "pair": "member-a+member-b",
+      "mean_gain_vs_all_singleton_oracle": 0.0
+    },
+    "v1_control_selection": {
+      "pair": "member-b+member-c",
+      "mean_gain_vs_all_singleton_oracle": 0.0
+    },
+    "no_learning_fallback_ab": {
+      "pair": "member-a+member-b",
+      "mean_gain_vs_all_singleton_oracle": 0.0
+    },
+    "best_fixed_singleton": {
+      "member": "member-a",
+      "mean_gain_vs_all_singleton_oracle": 0.0
+    },
+    "best_observed_fixed_pair": {
+      "pair": "member-a+member-c",
+      "mean_gain_vs_all_singleton_oracle": 1.0,
+      "note": "post-hoc diagnostic column; oracle-deployable=False"
+    },
+    "random_pair": {
+      "pair": "member-b+member-d",
+      "mean_gain_vs_all_singleton_oracle": 0.0
+    }
+  },
+  "gates": {
+    "static_checks": true,
+    "g1_intervention_reality": true,
+    "g2_data_isolation": true,
+    "g3_ranking_stability": true,
+    "g4_routing_beats_deployable": false,
+    "g5_collaboration": false,
+    "g6_budget": true,
+    "restore": true
+  },
+  "stability_detail": {
+    "renaming_stable": true,
+    "order_permutation_stable": true,
+    "rotated_selected": "member-b+member-c",
+    "expected_rotated_selected": "member-b+member-c",
+    "rotated_prediction_of_expected": 0.008039
+  },
+  "checkpoint": {
+    "restore_matches_parent": true,
+    "tamper_rejected": true
+  },
+  "cost": {
+    "member_training_seconds": 11.98,
+    "matrix_seconds": 3.99,
+    "restore_seconds": 1.59,
+    "episodes_total": 748
+  },
+  "growth_admitted": false,
+  "can_promote": false,
+  "interpretation": "completed: outcome=failed; mechanical gates ['g4_routing_beats_deployable', 'g5_collaboration']",
+  "elapsed_seconds": 39.911
+}
