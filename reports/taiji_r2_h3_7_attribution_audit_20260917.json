@@ -1,0 +1,1231 @@
+{
+  "format": "taiji-r2-h3-7-attribution-audit-v1",
+  "status": "completed",
+  "scope": {
+    "dataset_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+    "split": "dev",
+    "final_read": false,
+    "training_performed": false,
+    "read_only": true,
+    "native_mode_only": true,
+    "order": [
+      "target_sketch",
+      "slot_phase_schedule",
+      "bridge_credit",
+      "renderer_readout",
+      "native_prefix_representation",
+      "capacity_data"
+    ]
+  },
+  "source": {
+    "aggregate_report": "E:\\Seed\\reports\\taiji_r2_h3_7_matched_dev_result_20260917.json",
+    "aggregate_sha256": "286c97bd06903e9cf440e6fb552545211b798fe42591ec5be3e07d53dc4c5fdd",
+    "treatment_reports": [
+      {
+        "seed": 20260917,
+        "report_path": "E:\\Seed\\reports\\taiji_r2_h3_7_treatment_dev_20260917_seed20260917.json",
+        "report_sha256": "a90f1048f515bd72a1c8fa099cf5acecc854c46ee6e65ab4a8eb75e6f32fb8e7",
+        "checkpoint_path": "E:\\Seed\\outputs\\r2_h3_7_dev_20260917\\treatment_seed_20260917\\checkpoint.pt",
+        "checkpoint_sha256": "5f83ed5435d8c91200f274cf7b7f08fcd9bcba70529717c654c55b5401371381",
+        "checkpoint_digest": "40fb5e694879f68d432c8512b02c20f39344909f2dfec05912d1e857887dfa30",
+        "code_revision": "ddb12d7a37352276dedd4edbe73ea61f59eb2429",
+        "effective_active_parameters": 277970,
+        "bridge_norm": 21.54328155517578,
+        "records": [
+          {
+            "episode_id": "dev-answer-green",
+            "plan_digest": "45a366e024ce99010f615579702ab87344c7f2228a34a5c596e702b5abfbe895",
+            "target_digest": "076efd9d4aef655a77ddd72cc8255bf1818074157ad0818df5dd09d01251136a",
+            "plan_norm": 3.0347888469696045,
+            "target_norm": 1.9999998807907104,
+            "plan_target_cosine": 0.3197041451931,
+            "plan_target_l2": 3.0543417930603027,
+            "slot_plan_norms": [
+              1.482038974761963,
+              1.2814913988113403,
+              1.1300828456878662,
+              2.023411989212036
+            ],
+            "slot_target_norms": [
+              0.9999998807907104,
+              1.0,
+              0.9999999403953552,
+              0.9999998807907104
+            ],
+            "slot_target_cosines": [
+              0.08965665102005005,
+              0.16664661467075348,
+              -0.03600413352251053,
+              0.8079055547714233
+            ],
+            "phase_probability_digests": [
+              "92202c70c4d2b1d184da6c8a28459ee25ec229848a3fd561d7b55a6d88647846",
+              "dd8112ebf47d4b91be562819d7a189c79d615b95ed3bca52d80ee9fe0f2ebf6f",
+              "c19a6fc4280ad33eb282721fbd328b163c0f4c44f6b7fa237b2752aed20706b3",
+              "ff3ff67ab81a347d831d27449d3b780a77eaf5e0365936adfa7a670fd2c16692"
+            ],
+            "phase_js_vs_phase_zero": [
+              0.0,
+              0.260191410779953,
+              0.6306527853012085,
+              0.40346577763557434
+            ],
+            "phase_argmax_changed_vs_phase_zero": [
+              false,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "episode_id": "dev-answer-north-permuted",
+            "plan_digest": "b9810deb05229ae685538cc44d37c33e867a15e0ac39feb021f77cd6421cc24a",
+            "target_digest": "8e1e2508886004ddf2d34a4b482d5da8a8ecb8bd90b8f938694db103f8c990f0",
+            "plan_norm": 3.3318610191345215,
+            "target_norm": 1.9999998807907104,
+            "plan_target_cosine": 0.39650294184684753,
+            "plan_target_l2": 3.13319730758667,
+            "slot_plan_norms": [
+              1.6213895082473755,
+              1.8900806903839111,
+              1.4658145904541016,
+              1.6587270498275757
+            ],
+            "slot_target_norms": [
+              0.9999998807907104,
+              1.0,
+              0.9999999403953552,
+              0.9999998807907104
+            ],
+            "slot_target_cosines": [
+              0.25111013650894165,
+              0.1732335388660431,
+              0.5758715271949768,
+              0.6411494612693787
+            ],
+            "phase_probability_digests": [
+              "c4343791bff4971902d02a4d19e6a61892d408e1b9f9e6c19a56be9dafcea784",
+              "72b7619beb4acfd348a13264e43ae5f054f5eff1bd24df5d060452caf5db00b9",
+              "7a02b94d111619cd8ceb812a81ac7644d5b5e67a3d87d01b77707e6519dd43d5",
+              "f6e6c3feee694ee4f46981b8f809624f3f46b45c4a20e7a1ef0a5f2f9d228c1b"
+            ],
+            "phase_js_vs_phase_zero": [
+              0.0,
+              0.2122901976108551,
+              0.45510053634643555,
+              0.16602808237075806
+            ],
+            "phase_argmax_changed_vs_phase_zero": [
+              false,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "episode_id": "dev-unknown-duration",
+            "plan_digest": "297b68160cec458ccc705ddb8ef0223b98fadf514d33cbe6466d5ed8d2afd229",
+            "target_digest": "f19b11801db6116ea5709be26b6e6763d1fc8460d62fcb2eb998598ab43fd435",
+            "plan_norm": 3.1848292350769043,
+            "target_norm": 2.0,
+            "plan_target_cosine": 0.22805240750312805,
+            "plan_target_l2": 3.3522982597351074,
+            "slot_plan_norms": [
+              1.7995572090148926,
+              1.2792561054229736,
+              1.2331653833389282,
+              1.935855507850647
+            ],
+            "slot_target_norms": [
+              0.9999999403953552,
+              1.0,
+              0.9999999403953552,
+              1.0
+            ],
+            "slot_target_cosines": [
+              0.30990639328956604,
+              -0.04514763876795769,
+              0.30190399289131165,
+              0.29980525374412537
+            ],
+            "phase_probability_digests": [
+              "bc36455fd75ec9e92f71e4841d0ec528b681fa7d868f83393848776980887bd3",
+              "b863de843cd030c3b3c7e4283468dc79a91ac8acb80780f07705cbb830282fbc",
+              "844faf88649d2ed7cb6fd5794b77f1195590a56f6c36c9525d0a21c5f352a5bf",
+              "96d959b6f630b8eea485b2a48a2658c3373c6b853dcee835570cccf1089e1b0c"
+            ],
+            "phase_js_vs_phase_zero": [
+              0.0,
+              0.12560763955116272,
+              0.6256381273269653,
+              0.2819187343120575
+            ],
+            "phase_argmax_changed_vs_phase_zero": [
+              false,
+              false,
+              true,
+              true
+            ]
+          },
+          {
+            "episode_id": "dev-unknown-cause",
+            "plan_digest": "cf35f5adaee521f620619700865100f46d2f63af808de3a2bfb04b094e45e7b4",
+            "target_digest": "78082897cea54665057f676f98f0c7ba0a279f1b060fbfb5d7e3c8282c8b0648",
+            "plan_norm": 3.0682249069213867,
+            "target_norm": 2.0,
+            "plan_target_cosine": 0.18402598798274994,
+            "plan_target_l2": 3.3399808406829834,
+            "slot_plan_norms": [
+              1.4331574440002441,
+              1.5444562435150146,
+              1.0655077695846558,
+              1.959441900253296
+            ],
+            "slot_target_norms": [
+              0.9999999403953552,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "slot_target_cosines": [
+              0.48466676473617554,
+              0.027143467217683792,
+              -0.015207977034151554,
+              0.20870475471019745
+            ],
+            "phase_probability_digests": [
+              "0553e53b08fc20639fc8df3d8b745556d7fb484d29e5749e9feb17b804d9a79a",
+              "1a926f6ae237b57f4b4b2d89449462353ae1616619055ec8f9a33e1cc6180d30",
+              "26e0b0e2f52508ebefc29b5aedb5de70bfdea7deb7692ab02dc7ff5fb575f2c7",
+              "e94ae2e9f42a2881a935cc420107c2803e9949c7ee5c65198158070a67cca859"
+            ],
+            "phase_js_vs_phase_zero": [
+              0.0,
+              0.25656819343566895,
+              0.6274897456169128,
+              0.3883606791496277
+            ],
+            "phase_argmax_changed_vs_phase_zero": [
+              false,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "episode_id": "dev-clarify-language",
+            "plan_digest": "48471e06102421ce689115c8f624318bafed96bf2549b9b815f7978b5b5a1afe",
+            "target_digest": "0c8d44d82cc5be15c4e2f7df951740ada8b099763ca4b6e3f5b4ed0acdbca8df",
+            "plan_norm": 3.0626115798950195,
+            "target_norm": 1.9999998807907104,
+            "plan_target_cosine": 0.19396807253360748,
+            "plan_target_l2": 3.317136526107788,
+            "slot_plan_norms": [
+              1.6020961999893188,
+              1.661483645439148,
+              1.4240548610687256,
+              1.4228202104568481
+            ],
+            "slot_target_norms": [
+              1.0,
+              0.9999999403953552,
+              1.0,
+              0.9999998807907104
+            ],
+            "slot_target_cosines": [
+              -0.36010798811912537,
+              0.2709576487541199,
+              0.2777286171913147,
+              0.6461342573165894
+            ],
+            "phase_probability_digests": [
+              "7919a7065d45731da68caff63e11c6225c0eeda77437e2bc9153d88e6d43bb6d",
+              "4142c0611e6d86b8c95bb5cdb557afa3aa954703bd841fccf3a38616b25cb3b8",
+              "012a75d2c737032834325390df5c3d71fbd2b5357755d77052fcc34dfedbe0e9",
+              "4e5d49936564f809498cec50190b9b45d6ee98dfcf4830a1afc67391f617ba91"
+            ],
+            "phase_js_vs_phase_zero": [
+              0.0,
+              0.12725576758384705,
+              0.5352176427841187,
+              0.15693436563014984
+            ],
+            "phase_argmax_changed_vs_phase_zero": [
+              false,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "episode_id": "dev-clarify-range",
+            "plan_digest": "5b23c636cbeadbc510300bb3faeb6f89936428681aa2c2efd35bb1181abf072d",
+            "target_digest": "081cd2914c266c07db1717adeb1786a3918035a1ea050c572e7675ea12bdb169",
+            "plan_norm": 3.0500338077545166,
+            "target_norm": 1.9999998807907104,
+            "plan_target_cosine": 0.20694266259670258,
+            "plan_target_l2": 3.28298282623291,
+            "slot_plan_norms": [
+              1.5002907514572144,
+              1.5594112873077393,
+              1.5164936780929565,
+              1.5232585668563843
+            ],
+            "slot_target_norms": [
+              1.0,
+              0.9999999403953552,
+              1.0,
+              0.9999998807907104
+            ],
+            "slot_target_cosines": [
+              -0.06528501212596893,
+              0.30332064628601074,
+              -0.015889883041381836,
+              0.5983266234397888
+            ],
+            "phase_probability_digests": [
+              "b928860154d353838c545fe6150ba15390e0a8e8b4da92edc46ad292d9a4b4df",
+              "7fdc8c19bce63974e1c68c11e7c544127221a03110ea2d169c2e9e30fc3f30ed",
+              "7dc250105351f6fb0ad19908fda7dd89ce8e5abc323e16bbe331e1ea4a5eac55",
+              "18aa8d73260605b3cbf7c45f585550f0d67f807731ac83d7318466370d1c6374"
+            ],
+            "phase_js_vs_phase_zero": [
+              0.0,
+              0.13274997472763062,
+              0.501514196395874,
+              0.18079453706741333
+            ],
+            "phase_argmax_changed_vs_phase_zero": [
+              false,
+              false,
+              true,
+              true
+            ]
+          },
+          {
+            "episode_id": "dev-refuse-private",
+            "plan_digest": "537ec9c95a9ddbde3571458531993a0008a53b38d7104b2337cfbcea7664901c",
+            "target_digest": "b9bdbcb3dccd94422045d58a075b836bf2da4c637dd71e212ff7b5fe95cd051d",
+            "plan_norm": 3.3870930671691895,
+            "target_norm": 1.999999761581421,
+            "plan_target_cosine": 0.37791451811790466,
+            "plan_target_l2": 3.2174947261810303,
+            "slot_plan_norms": [
+              2.0650196075439453,
+              1.3691222667694092,
+              1.4781715869903564,
+              1.7744313478469849
+            ],
+            "slot_target_norms": [
+              0.9999999403953552,
+              0.9999999403953552,
+              0.9999998807907104,
+              0.9999998807907104
+            ],
+            "slot_target_cosines": [
+              0.25908979773521423,
+              0.3990110456943512,
+              0.11263734102249146,
+              0.7395300269126892
+            ],
+            "phase_probability_digests": [
+              "06270ba5e225d688b0cfe6582bab44c59e4fb4e709eb36ca60a28bf2da57a47c",
+              "58edcab3831609276354033ab7ff8a517d03973514bcd6790d97d04613214b7b",
+              "7246b27872e93c8897dbcf85d188988b4d34df51ee66cad4d3a1fd4372c7ee2b",
+              "003b7a8eb5515bf4fb39cfb72c992fc666ea736a652f7ec1cf47fa6ea5d4876b"
+            ],
+            "phase_js_vs_phase_zero": [
+              0.0,
+              0.16177025437355042,
+              0.652214527130127,
+              0.39131975173950195
+            ],
+            "phase_argmax_changed_vs_phase_zero": [
+              false,
+              false,
+              true,
+              true
+            ]
+          },
+          {
+            "episode_id": "dev-refuse-malware",
+            "plan_digest": "f1ef9187730f981392d9513a47361d6ce8b3156ca54cd58df49dc7c9efccfc94",
+            "target_digest": "d0d7dfb62f66c398c65add28fbfa3e2cfcb04e32d6f2235748efe8dccdd91b46",
+            "plan_norm": 3.3206119537353516,
+            "target_norm": 1.9999998807907104,
+            "plan_target_cosine": 0.20540478825569153,
+            "plan_target_l2": 3.5068769454956055,
+            "slot_plan_norms": [
+              2.0314218997955322,
+              1.4363845586776733,
+              1.2345736026763916,
+              1.8200047016143799
+            ],
+            "slot_target_norms": [
+              1.0,
+              0.9999999403953552,
+              0.9999999403953552,
+              0.9999998807907104
+            ],
+            "slot_target_cosines": [
+              0.25770795345306396,
+              -0.31106749176979065,
+              -0.18693907558918,
+              0.8341891765594482
+            ],
+            "phase_probability_digests": [
+              "60e64f3d2bd45b32e1e3ed2a1db2e6c18266335313c9775a1ba84fbb98d9b7ea",
+              "b0bf0f29ad29c0572475e38612c20976edff6a46bdaf842b07fe2b3d5705086c",
+              "285ed26e138662ddd77b59c74c1f833020639001d58dbfb7f93d4ecc6331f154",
+              "8826e21ae8ea1da45262e1edb307634469d9ce0d287d7d4ed7c2307e846d52a1"
+            ],
+            "phase_js_vs_phase_zero": [
+              0.0,
+              0.1983952671289444,
+              0.6636154651641846,
+              0.3329280614852905
+            ],
+            "phase_argmax_changed_vs_phase_zero": [
+              false,
+              false,
+              true,
+              true
+            ]
+          }
+        ],
+        "checkpoint_read_only": true,
+        "final_read": false,
+        "native_mode_only": true
+      },
+      {
+        "seed": 20260918,
+        "report_path": "E:\\Seed\\reports\\taiji_r2_h3_7_treatment_dev_20260917_seed20260918.json",
+        "report_sha256": "20ef58dca4f145baba1dc601a05c990a792386d93f9c4259539be41acece2a31",
+        "checkpoint_path": "E:\\Seed\\outputs\\r2_h3_7_dev_20260917\\treatment_seed_20260918\\checkpoint.pt",
+        "checkpoint_sha256": "6694b417b8ac322024ac6a7bd20835117f103f1bf356b75a4d9e0e1ee11f1855",
+        "checkpoint_digest": "c31d12fc151aa4f51b58e01a877b956e6101b1125a2651de2f6026e372de9598",
+        "code_revision": "69b20eaa73e98264e16ea8f3a2125da565ec1990",
+        "effective_active_parameters": 277970,
+        "bridge_norm": 20.79462242126465,
+        "records": [
+          {
+            "episode_id": "dev-answer-green",
+            "plan_digest": "2a90ab1bdd650b3d8cdc635d1e294129da8cf56a21c7bd9ebea9a87f40fa8390",
+            "target_digest": "076efd9d4aef655a77ddd72cc8255bf1818074157ad0818df5dd09d01251136a",
+            "plan_norm": 3.1882314682006836,
+            "target_norm": 1.9999998807907104,
+            "plan_target_cosine": 0.3967418372631073,
+            "plan_target_l2": 3.017482280731201,
+            "slot_plan_norms": [
+              1.43844735622406,
+              1.2083871364593506,
+              1.4414101839065552,
+              2.134906530380249
+            ],
+            "slot_target_norms": [
+              0.9999998807907104,
+              1.0,
+              0.9999999403953552,
+              0.9999998807907104
+            ],
+            "slot_target_cosines": [
+              0.19609694182872772,
+              0.7042533159255981,
+              0.03469473496079445,
+              0.6308072805404663
+            ],
+            "phase_probability_digests": [
+              "54657ee8e215f393f4ee88f2f78eee52bc84d013cbf66922d88e837384ad0245",
+              "e0ee5ad5ad1141429d58cc820901b4ba3ee51a1549ce4c52c38e93b4c2dff15f",
+              "9d822d65274d32416968fe9332708808e41803dd1f088f1cb2a04b093ec94418",
+              "b92b84ad11950eddecedf01aacdf863459462f7235f976dc425a85bb3585b5fc"
+            ],
+            "phase_js_vs_phase_zero": [
+              0.0,
+              0.12503933906555176,
+              0.5076192617416382,
+              0.249569833278656
+            ],
+            "phase_argmax_changed_vs_phase_zero": [
+              false,
+              true,
+              true,
+              false
+            ]
+          },
+          {
+            "episode_id": "dev-answer-north-permuted",
+            "plan_digest": "2f376c960b12afde1aed8cffd5e99cd17a2bd1014b91e4253335350283c7c517",
+            "target_digest": "8e1e2508886004ddf2d34a4b482d5da8a8ecb8bd90b8f938694db103f8c990f0",
+            "plan_norm": 3.748408079147339,
+            "target_norm": 1.9999998807907104,
+            "plan_target_cosine": 0.4268130958080292,
+            "plan_target_l2": 3.4133682250976562,
+            "slot_plan_norms": [
+              1.3149503469467163,
+              1.820098876953125,
+              2.0796632766723633,
+              2.164187431335449
+            ],
+            "slot_target_norms": [
+              0.9999998807907104,
+              1.0,
+              0.9999999403953552,
+              0.9999998807907104
+            ],
+            "slot_target_cosines": [
+              0.026591556146740913,
+              0.4426341652870178,
+              0.4886690378189087,
+              0.6204952597618103
+            ],
+            "phase_probability_digests": [
+              "2c7f2278ad6afdf1924a6bcf3d974a5215fbf7fe36ea5f5f7b80e63ab51a1b94",
+              "7146670a60ffb9e1b6d51ea136d3ca878281d510e19fad9d11b2d23c503ac883",
+              "da36d2a790a6a6470ff433e437ca1e6c580f0294d791e24ecbe2fb4c806c86ec",
+              "ce993bf16aee7e4177b4895c4e6bd06b3cc995446cc2166ae8ff0e4bba560b06"
+            ],
+            "phase_js_vs_phase_zero": [
+              0.0,
+              0.19498038291931152,
+              0.4301314949989319,
+              0.16739313304424286
+            ],
+            "phase_argmax_changed_vs_phase_zero": [
+              false,
+              false,
+              true,
+              false
+            ]
+          },
+          {
+            "episode_id": "dev-unknown-duration",
+            "plan_digest": "c2b8b31bc55b6d8f190dc0084a66f12f7aa760593951b032228b7b1d93ea6247",
+            "target_digest": "f19b11801db6116ea5709be26b6e6763d1fc8460d62fcb2eb998598ab43fd435",
+            "plan_norm": 3.3232691287994385,
+            "target_norm": 2.0,
+            "plan_target_cosine": 0.25908687710762024,
+            "plan_target_l2": 3.405885696411133,
+            "slot_plan_norms": [
+              1.4674980640411377,
+              1.4350411891937256,
+              1.8640527725219727,
+              1.8320839405059814
+            ],
+            "slot_target_norms": [
+              0.9999999403953552,
+              1.0,
+              0.9999999403953552,
+              1.0
+            ],
+            "slot_target_cosines": [
+              0.5354262590408325,
+              0.09389331191778183,
+              0.12064868956804276,
+              0.3147549331188202
+            ],
+            "phase_probability_digests": [
+              "8347739dc0b15c458babde2b618269175b4a383823dfe38c718a1f7080df1a3b",
+              "597d7302e2bb788011a761a16cbfe042f954d09868f30ebaf77aded1df4f1114",
+              "ffdb540c792e4dc5340388981bd8f8be31e566c238e46c9bcb4ddd056a1bb50a",
+              "d8a99bf508b95252d557c2735d5c61fb2885c5258190679578fe58ae68f0a927"
+            ],
+            "phase_js_vs_phase_zero": [
+              0.0,
+              0.17624065279960632,
+              0.33054137229919434,
+              0.10268223285675049
+            ],
+            "phase_argmax_changed_vs_phase_zero": [
+              false,
+              true,
+              true,
+              false
+            ]
+          },
+          {
+            "episode_id": "dev-unknown-cause",
+            "plan_digest": "8ce3c3c7763a4e575e125728d89b738afb55fac51913d93b3c6a1cd584cffdf1",
+            "target_digest": "78082897cea54665057f676f98f0c7ba0a279f1b060fbfb5d7e3c8282c8b0648",
+            "plan_norm": 3.885908365249634,
+            "target_norm": 2.0,
+            "plan_target_cosine": 0.1649690568447113,
+            "plan_target_l2": 4.066455841064453,
+            "slot_plan_norms": [
+              1.5810480117797852,
+              1.7624741792678833,
+              2.112940549850464,
+              2.2427079677581787
+            ],
+            "slot_target_norms": [
+              0.9999999403953552,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "slot_target_cosines": [
+              0.3900219798088074,
+              0.5396314859390259,
+              -0.48123085498809814,
+              0.3260306715965271
+            ],
+            "phase_probability_digests": [
+              "ebdea1efda5921e6ce8ae27ac72a7852b1cfa3c826f1557f315676e8d8af48d1",
+              "621120867d9782fa3813f457ceac57ed60e8462ca36fd4541eeadfe44110e743",
+              "b9caf0d879f3ddfbe819d6ad5e2d5a481ca55328c59e712f59f1f6635acd730b",
+              "9d81019045c577afed354b634069b45453e4b524523b848da5d75588b370c20a"
+            ],
+            "phase_js_vs_phase_zero": [
+              0.0,
+              0.14387297630310059,
+              0.5144783854484558,
+              0.3159737288951874
+            ],
+            "phase_argmax_changed_vs_phase_zero": [
+              false,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "episode_id": "dev-clarify-language",
+            "plan_digest": "ca6abe0d530d1fd52a4ffee9cddbe4cc1db7a87505698d3cced179a32e69158e",
+            "target_digest": "0c8d44d82cc5be15c4e2f7df951740ada8b099763ca4b6e3f5b4ed0acdbca8df",
+            "plan_norm": 3.8545777797698975,
+            "target_norm": 1.9999998807907104,
+            "plan_target_cosine": 0.15713247656822205,
+            "plan_target_l2": 4.054017066955566,
+            "slot_plan_norms": [
+              1.9877703189849854,
+              1.982425570487976,
+              1.7402137517929077,
+              1.9870041608810425
+            ],
+            "slot_target_norms": [
+              1.0,
+              0.9999999403953552,
+              1.0,
+              0.9999998807907104
+            ],
+            "slot_target_cosines": [
+              0.012060217559337616,
+              0.13489651679992676,
+              0.039678752422332764,
+              0.4282396733760834
+            ],
+            "phase_probability_digests": [
+              "0cb1dc718e4a356c00bc6baa5c761cb3ffd4c7ea72d3d4177a42af9b84328cb6",
+              "cb68432037bc6be565e480479efe3ac9f0615c77d469b675e4ab0789f6f07035",
+              "3d139cdff1a25b5834a3206ebbcf9e18068ac439a9159357bd4fd3f0d26c4050",
+              "cc4a74c6ccd802933b84e6bb8bdbb892dd5bd62bab7fa92dcc23d099070adeb3"
+            ],
+            "phase_js_vs_phase_zero": [
+              0.0,
+              0.1531791388988495,
+              0.46195799112319946,
+              0.16491183638572693
+            ],
+            "phase_argmax_changed_vs_phase_zero": [
+              false,
+              false,
+              true,
+              false
+            ]
+          },
+          {
+            "episode_id": "dev-clarify-range",
+            "plan_digest": "bd415282f346f1abbf1e5d7a1987536186aaf628a25ea9096995f176338e6fbc",
+            "target_digest": "081cd2914c266c07db1717adeb1786a3918035a1ea050c572e7675ea12bdb169",
+            "plan_norm": 3.541659355163574,
+            "target_norm": 1.9999998807907104,
+            "plan_target_cosine": 0.08198730647563934,
+            "plan_target_l2": 3.9219720363616943,
+            "slot_plan_norms": [
+              1.7929102182388306,
+              1.7241361141204834,
+              1.8268178701400757,
+              1.7375024557113647
+            ],
+            "slot_target_norms": [
+              1.0,
+              0.9999999403953552,
+              1.0,
+              0.9999998807907104
+            ],
+            "slot_target_cosines": [
+              0.1840372085571289,
+              0.00797963421791792,
+              -0.08420617133378983,
+              0.22495007514953613
+            ],
+            "phase_probability_digests": [
+              "a64c8dd9b20ccce1f5976ba94ca0d8277ebcb78cadabaef61d1b075552ef1fb1",
+              "4f799aa09dba846af367759dd402f0fb07cbdb92d9624c40c322523c25850793",
+              "fbb37bf3e24b110c6aa93baf12c28c043070ffe09470f5cec7c6cd8b8a82046c",
+              "5de10aada1974c94f75c047907b99a2dbaa12052f3c264df95e8f91cf2f15ac9"
+            ],
+            "phase_js_vs_phase_zero": [
+              0.0,
+              0.20754238963127136,
+              0.3669985234737396,
+              0.22337427735328674
+            ],
+            "phase_argmax_changed_vs_phase_zero": [
+              false,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "episode_id": "dev-refuse-private",
+            "plan_digest": "851bfb07052f56ed1c6c43407f36d0dcf4315b12e1a5983a4fb44f09f57cddc6",
+            "target_digest": "b9bdbcb3dccd94422045d58a075b836bf2da4c637dd71e212ff7b5fe95cd051d",
+            "plan_norm": 3.5771970748901367,
+            "target_norm": 1.999999761581421,
+            "plan_target_cosine": 0.43568357825279236,
+            "plan_target_l2": 3.2499589920043945,
+            "slot_plan_norms": [
+              1.5898631811141968,
+              1.4655174016952515,
+              1.9363361597061157,
+              2.0908215045928955
+            ],
+            "slot_target_norms": [
+              0.9999999403953552,
+              0.9999999403953552,
+              0.9999998807907104,
+              0.9999998807907104
+            ],
+            "slot_target_cosines": [
+              0.5711259245872498,
+              0.24203303456306458,
+              0.26050183176994324,
+              0.6456396579742432
+            ],
+            "phase_probability_digests": [
+              "d17be59a111a315d7b01c43682a148fb99ad6c86f5747d4094d1a35395797793",
+              "91bfc0a9ccd30d4248c32cb40e605454ad682d8f83e93744144b1fe04888727b",
+              "e9db9ecaefecaa7557bc4e10533e958642ef38ee6286dbf83148482875954897",
+              "86b5ae39637bb16ed56847f2bbc5e9a1d3da983cde619a5f79ec3b45d18d39e1"
+            ],
+            "phase_js_vs_phase_zero": [
+              0.0,
+              0.2326870858669281,
+              0.44625288248062134,
+              0.4182635247707367
+            ],
+            "phase_argmax_changed_vs_phase_zero": [
+              false,
+              true,
+              true,
+              true
+            ]
+          },
+          {
+            "episode_id": "dev-refuse-malware",
+            "plan_digest": "b9bfcf401be1ebd5bf3cb5281f283be01583c9ad7bf7505e4ea06370cbf303cb",
+            "target_digest": "d0d7dfb62f66c398c65add28fbfa3e2cfcb04e32d6f2235748efe8dccdd91b46",
+            "plan_norm": 3.460639238357544,
+            "target_norm": 1.9999998807907104,
+            "plan_target_cosine": 0.1623573899269104,
+            "plan_target_l2": 3.7052102088928223,
+            "slot_plan_norms": [
+              1.57437264919281,
+              1.599707007408142,
+              1.7127317190170288,
+              2.0012152194976807
+            ],
+            "slot_target_norms": [
+              1.0,
+              0.9999999403953552,
+              0.9999999403953552,
+              0.9999998807907104
+            ],
+            "slot_target_cosines": [
+              0.32542884349823,
+              -0.20645971596240997,
+              -0.2143733650445938,
+              0.6540094614028931
+            ],
+            "phase_probability_digests": [
+              "bc990000cb3076ceab19b8dcb2a4222cf8ab9d9e1e69415245f77eee1dd242e3",
+              "44c310d95d6db80e0ab46aa4ad00c05808ba56eef8e85eff703748d52a76ac53",
+              "cf269daf9917d536736c999631049251651a6bdca07c2cc88f23b09113f348d5",
+              "be8d2cd2ce511dde4d5d4b7dd8975226bc92cbdfdafe650c3b0ab97b0a8b4fec"
+            ],
+            "phase_js_vs_phase_zero": [
+              0.0,
+              0.3009408116340637,
+              0.4276633560657501,
+              0.41331595182418823
+            ],
+            "phase_argmax_changed_vs_phase_zero": [
+              false,
+              true,
+              true,
+              true
+            ]
+          }
+        ],
+        "checkpoint_read_only": true,
+        "final_read": false,
+        "native_mode_only": true
+      },
+      {
+        "seed": 20260919,
+        "report_path": "E:\\Seed\\reports\\taiji_r2_h3_7_treatment_dev_20260917_seed20260919.json",
+        "report_sha256": "f5b85def4ddbd7ac2d7058d77483374f48b1f0b5d9d17d2cf9f7148dd4d46944",
+        "checkpoint_path": "E:\\Seed\\outputs\\r2_h3_7_dev_20260917\\treatment_seed_20260919\\checkpoint.pt",
+        "checkpoint_sha256": "f6f61ffd12c60ec0a32cd3b91271fac438fd1cea3e735bffe255a3c7d690bfb7",
+        "checkpoint_digest": "307374e61fdedd4f6b3da5460dab1c64d1b428fadf4270bac300737ab1295e1b",
+        "code_revision": "3849b40dda322819c5001a4c033647f43051586f",
+        "effective_active_parameters": 277970,
+        "bridge_norm": 20.770843505859375,
+        "records": [
+          {
+            "episode_id": "dev-answer-green",
+            "plan_digest": "31e95d2e6c50ab2999bf4e10af6911db57ae0a37c1e8c32e9fde66bee1e8ba16",
+            "target_digest": "076efd9d4aef655a77ddd72cc8255bf1818074157ad0818df5dd09d01251136a",
+            "plan_norm": 3.122840404510498,
+            "target_norm": 1.9999998807907104,
+            "plan_target_cosine": 0.23931384086608887,
+            "plan_target_l2": 3.280667304992676,
+            "slot_plan_norms": [
+              1.5731477737426758,
+              1.2879959344863892,
+              1.6639305353164673,
+              1.688117504119873
+            ],
+            "slot_target_norms": [
+              0.9999998807907104,
+              1.0,
+              0.9999999403953552,
+              0.9999998807907104
+            ],
+            "slot_target_cosines": [
+              0.1876148283481598,
+              0.15478605031967163,
+              0.16917464137077332,
+              0.4257247745990753
+            ],
+            "phase_probability_digests": [
+              "6201140eb61cbad624fa32b520d22110ae6ae94a49ba4022d6936545cfe9fdde",
+              "7ceb8181271d116966bb986785be17d82a1fdb3e0ffb00a68757bca8d08d290d",
+              "0a3cac8bedb5d2ea5d3341d86d223f884b7c0283601b12589214f53f43670eb7",
+              "dc935836d2452629afb89aa655afe6234a2a45c7771dce4ab7f034b89aa7c13b"
+            ],
+            "phase_js_vs_phase_zero": [
+              0.0,
+              0.1532706320285797,
+              0.5863902568817139,
+              0.24728623032569885
+            ],
+            "phase_argmax_changed_vs_phase_zero": [
+              false,
+              false,
+              true,
+              false
+            ]
+          },
+          {
+            "episode_id": "dev-answer-north-permuted",
+            "plan_digest": "37bf5c204cae3274e7e741383333ddf3f63d7dfd5a846f3f113796e8a561e543",
+            "target_digest": "8e1e2508886004ddf2d34a4b482d5da8a8ecb8bd90b8f938694db103f8c990f0",
+            "plan_norm": 3.6094436645507812,
+            "target_norm": 1.9999998807907104,
+            "plan_target_cosine": 0.29778292775154114,
+            "plan_target_l2": 3.5677387714385986,
+            "slot_plan_norms": [
+              1.5703264474868774,
+              1.710418701171875,
+              2.0638065338134766,
+              1.8377511501312256
+            ],
+            "slot_target_norms": [
+              0.9999998807907104,
+              1.0,
+              0.9999999403953552,
+              0.9999998807907104
+            ],
+            "slot_target_cosines": [
+              -0.07236378639936447,
+              0.564495325088501,
+              0.250745952129364,
+              0.4245850741863251
+            ],
+            "phase_probability_digests": [
+              "258f40e106ab7b9038ce140a64cbcf5f26cd0d6d739dbf72940b520684a88264",
+              "f7758cedfb229757e4f3ac21cc16bd214e722699e6a39b5e419a61904977c973",
+              "8bbaf880319e01a4d72946d545be0b9f4e1954865cc41948a0bb969a7ac08492",
+              "db772177414f4f648791255a15b41de235832f74c55859ed743dda44623d9498"
+            ],
+            "phase_js_vs_phase_zero": [
+              0.0,
+              0.13608470559120178,
+              0.5448231101036072,
+              0.24428638815879822
+            ],
+            "phase_argmax_changed_vs_phase_zero": [
+              false,
+              false,
+              true,
+              true
+            ]
+          },
+          {
+            "episode_id": "dev-unknown-duration",
+            "plan_digest": "21b25bd2f9e8681cd59ce795da66b6a4909a4c834f765372eeb306b9f9af85ec",
+            "target_digest": "f19b11801db6116ea5709be26b6e6763d1fc8460d62fcb2eb998598ab43fd435",
+            "plan_norm": 3.5838046073913574,
+            "target_norm": 2.0,
+            "plan_target_cosine": 0.14999012649059296,
+            "plan_target_l2": 3.83321213722229,
+            "slot_plan_norms": [
+              1.8272554874420166,
+              1.4477883577346802,
+              2.0525989532470703,
+              1.7876073122024536
+            ],
+            "slot_target_norms": [
+              0.9999999403953552,
+              1.0,
+              0.9999999403953552,
+              1.0
+            ],
+            "slot_target_cosines": [
+              0.4256782531738281,
+              0.20075055956840515,
+              0.12189318984746933,
+              -0.13626842200756073
+            ],
+            "phase_probability_digests": [
+              "5c35242239f0acb3fe57abcfa85ef7094ce9b4dbbe6c0a9d13c017fb54aae17a",
+              "a9d2411ff80e90a4f59b93bd0705da294328feb9f2c78c402b0683b7318a5863",
+              "97baa8787c5624b14f11c9bdc9b56cba26b832a33b5561ba57ea8137b1f6c893",
+              "8b3f0fc889e2a5af5fae26c39c5db0537d2160736359f73ff688230d38a79d0d"
+            ],
+            "phase_js_vs_phase_zero": [
+              0.0,
+              0.13066592812538147,
+              0.5170010328292847,
+              0.19100375473499298
+            ],
+            "phase_argmax_changed_vs_phase_zero": [
+              false,
+              false,
+              true,
+              true
+            ]
+          },
+          {
+            "episode_id": "dev-unknown-cause",
+            "plan_digest": "4c1b42bd96600810e2c881961b98031dd29153f072707e9dca73d87075d6ffa8",
+            "target_digest": "78082897cea54665057f676f98f0c7ba0a279f1b060fbfb5d7e3c8282c8b0648",
+            "plan_norm": 3.3269388675689697,
+            "target_norm": 2.0,
+            "plan_target_cosine": 0.10067400336265564,
+            "plan_target_l2": 3.7052364349365234,
+            "slot_plan_norms": [
+              1.5825145244598389,
+              1.327908992767334,
+              1.7764281034469604,
+              1.9092224836349487
+            ],
+            "slot_target_norms": [
+              0.9999999403953552,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "slot_target_cosines": [
+              0.41161543130874634,
+              -0.12119987607002258,
+              0.11670288443565369,
+              -0.014606388285756111
+            ],
+            "phase_probability_digests": [
+              "bf79b88738c803f1f65c8dbb12e52b4a144cccf1d0095d9288ec5a26ef929931",
+              "92211edf0026abec51dcf35a368b8476a9357ae56deca5d80634ae49df97417d",
+              "8cd833c611e9c0eb807cc577fe2a6969a7e392b62da19843ec3e13571b2e8093",
+              "7573bc0b74b640c80dd8912b0be42ffc98cf69204955f55f012f10bcf86d2859"
+            ],
+            "phase_js_vs_phase_zero": [
+              0.0,
+              0.10337279736995697,
+              0.5849891901016235,
+              0.20841467380523682
+            ],
+            "phase_argmax_changed_vs_phase_zero": [
+              false,
+              false,
+              true,
+              false
+            ]
+          },
+          {
+            "episode_id": "dev-clarify-language",
+            "plan_digest": "60da9a40610c288a389cc0444f0bde3312303128491752a86372dcf8198c2d5f",
+            "target_digest": "0c8d44d82cc5be15c4e2f7df951740ada8b099763ca4b6e3f5b4ed0acdbca8df",
+            "plan_norm": 3.422731637954712,
+            "target_norm": 1.9999998807907104,
+            "plan_target_cosine": 0.21533717215061188,
+            "plan_target_l2": 3.5730836391448975,
+            "slot_plan_norms": [
+              1.3384621143341064,
+              1.7998933792114258,
+              1.7763872146606445,
+              1.8784153461456299
+            ],
+            "slot_target_norms": [
+              1.0,
+              0.9999999403953552,
+              1.0,
+              0.9999998807907104
+            ],
+            "slot_target_cosines": [
+              -0.2468174695968628,
+              0.15267036855220795,
+              0.422920823097229,
+              0.41437965631484985
+            ],
+            "phase_probability_digests": [
+              "4285c31db6db78aef3d27b406c6a2ab9d3207e715adb74db3bb75ee886802cc5",
+              "196984bf092fc09136c6068e41aede79ad58d41519a99ba84bf9ec303cc2133f",
+              "da9b7ebbf7e590caf26164af6f3bd2e700c25faeec74d03dd53209af9307a9a2",
+              "e4851367fa2e032373ed3e4c4a07b2ed2a3d80b32261f418338ee5d6fe58bc4f"
+            ],
+            "phase_js_vs_phase_zero": [
+              0.0,
+              0.13541631400585175,
+              0.5474095344543457,
+              0.1816180944442749
+            ],
+            "phase_argmax_changed_vs_phase_zero": [
+              false,
+              false,
+              true,
+              true
+            ]
+          },
+          {
+            "episode_id": "dev-clarify-range",
+            "plan_digest": "ed779cfc2a6b80e81e600ba8a1b08248a3b0b3cebd7dcab4b6f5f9e0f84c5206",
+            "target_digest": "081cd2914c266c07db1717adeb1786a3918035a1ea050c572e7675ea12bdb169",
+            "plan_norm": 3.5296053886413574,
+            "target_norm": 1.9999998807907104,
+            "plan_target_cosine": 0.23045019805431366,
+            "plan_target_l2": 3.633802652359009,
+            "slot_plan_norms": [
+              1.6899569034576416,
+              1.4454691410064697,
+              1.9490363597869873,
+              1.9271835088729858
+            ],
+            "slot_target_norms": [
+              1.0,
+              0.9999999403953552,
+              1.0,
+              0.9999998807907104
+            ],
+            "slot_target_cosines": [
+              -0.0674280896782875,
+              -0.026730956509709358,
+              0.36739015579223633,
+              0.5517527461051941
+            ],
+            "phase_probability_digests": [
+              "7ab1c649c32a2d96089b084e1ca30754f7bf5a044ae329202349c1b4be6e0646",
+              "934d83792055cf4c91e9cdfa47f5f86443400c9e27ce15c96557060030e7d035",
+              "2f844a3e641a510e1203cfd3c1a17b946c916a6f2ba5ac03e8549745ba40964c",
+              "44c55f7e5c83b3a28615f1b1f0bdd735f8edcc30b0c3f4d6ad0392626056bce0"
+            ],
+            "phase_js_vs_phase_zero": [
+              0.0,
+              0.18387958407402039,
+              0.427497923374176,
+              0.18439647555351257
+            ],
+            "phase_argmax_changed_vs_phase_zero": [
+              false,
+              false,
+              true,
+              false
+            ]
+          },
+          {
+            "episode_id": "dev-refuse-private",
+            "plan_digest": "1b8ba4ac7ece9cc471d57ad0463886ea45d58d3dfeac1e5c7ad15f471a574191",
+            "target_digest": "b9bdbcb3dccd94422045d58a075b836bf2da4c637dd71e212ff7b5fe95cd051d",
+            "plan_norm": 3.3679122924804688,
+            "target_norm": 1.999999761581421,
+            "plan_target_cosine": 0.4651395082473755,
+            "plan_target_l2": 3.0127458572387695,
+            "slot_plan_norms": [
+              1.4120852947235107,
+              1.4688767194747925,
+              1.9370181560516357,
+              1.85451078414917
+            ],
+            "slot_target_norms": [
+              0.9999999403953552,
+              0.9999999403953552,
+              0.9999998807907104,
+              0.9999998807907104
+            ],
+            "slot_target_cosines": [
+              0.4191782772541046,
+              0.3310246467590332,
+              0.5486322641372681,
+              0.5350399613380432
+            ],
+            "phase_probability_digests": [
+              "0e1582170dbd3e7579f51e81bdb98dda0f698c9e461e191d6612173b557436e9",
+              "e7d18c81145489984e470308730e1df17cad3618e7a38e3201c3f05dfa23b6f2",
+              "b58433b2efa6024c35365101f7402a4cf5b02bbedf7ef75a34fa7b6f83850bc5",
+              "11f0f3ac40ec20faa1f73abff91c122a7a509d00b7ca6f6cf6d055b8c895db74"
+            ],
+            "phase_js_vs_phase_zero": [
+              0.0,
+              0.05717761069536209,
+              0.5375561714172363,
+              0.3079037666320801
+            ],
+            "phase_argmax_changed_vs_phase_zero": [
+              false,
+              false,
+              true,
+              true
+            ]
+          },
+          {
+            "episode_id": "dev-refuse-malware",
+            "plan_digest": "35b51d6c2cac0f1d918a49ea7e71eb925a5d49beb48b1e4abf08da44fa3ff7a6",
+            "target_digest": "d0d7dfb62f66c398c65add28fbfa3e2cfcb04e32d6f2235748efe8dccdd91b46",
+            "plan_norm": 3.185413122177124,
+            "target_norm": 1.9999998807907104,
+            "plan_target_cosine": 0.09030355513095856,
+            "plan_target_l2": 3.605029821395874,
+            "slot_plan_norms": [
+              1.6887446641921997,
+              1.2426401376724243,
+              1.6954421997070312,
+              1.6959714889526367
+            ],
+            "slot_target_norms": [
+              1.0,
+              0.9999999403953552,
+              0.9999999403953552,
+              0.9999998807907104
+            ],
+            "slot_target_cosines": [
+              0.28644365072250366,
+              -0.25085020065307617,
+              -0.15595263242721558,
+              0.39369964599609375
+            ],
+            "phase_probability_digests": [
+              "6198d61d87d6b4e0de28f0975c76d0c8f5f877c627930223475969dbb2575449",
+              "eda8f3d3af222d367207aef7ab31fcaa8b93f57414ab7f852218f198e3f5ab92",
+              "b588c5da7d8a060249c77902d74a851eaf5bc371bcfcd5d65b6e66e57d0acea4",
+              "9fc495d831bdb465a1458ad5087192f30d4ed608d1fd04bdd4252f895bd9c410"
+            ],
+            "phase_js_vs_phase_zero": [
+              0.0,
+              0.1255786418914795,
+              0.5898764729499817,
+              0.2783021926879883
+            ],
+            "phase_argmax_changed_vs_phase_zero": [
+              false,
+              false,
+              true,
+              true
+            ]
+          }
+        ],
+        "checkpoint_read_only": true,
+        "final_read": false,
+        "native_mode_only": true
+      }
+    ]
+  },
+  "target_sketch": {
+    "mean_plan_target_cosine": 0.2494282697637876,
+    "mean_plan_target_l2": 3.4687573413054147,
+    "mean_slot_target_cosine_by_slot": [
+      0.20047728011074165,
+      0.16449606236225614,
+      0.12583293094454953,
+      0.4672907987454285
+    ],
+    "slot_target_norms_are_one": true
+  },
+  "slot_phase_schedule": {
+    "mean_probability_js_vs_phase_zero_by_phase": [
+      0.0,
+      0.1681149040038387,
+      0.5213595827420553,
+      0.25835192017257214
+    ],
+    "argmax_change_rate_vs_phase_zero_by_phase": [
+      0.0,
+      0.4166666666666667,
+      1.0,
+      0.7083333333333334
+    ],
+    "nonzero_phase_surface_rate": 1.0
+  },
+  "bridge_credit": {
+    "bridge_norm_by_seed": [
+      21.54328155517578,
+      20.79462242126465,
+      20.770843505859375
+    ],
+    "aggregate_gate": false,
+    "aggregate_stop_reason_present": true
+  },
+  "renderer_readout": {
+    "dev_sequence_by_seed": [
+      0.25,
+      0.25,
+      0.25
+    ],
+    "dev_required_term_coverage_by_seed": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "dev_exact_by_seed": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "native_prefix_representation": {
+    "paired_child_prompt_sensitivity_by_seed": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "paired_sensitivity_gate": true,
+    "content_direction_gate": false
+  },
+  "capacity_data": {
+    "effective_active_parameters_by_seed": [
+      277970,
+      277970,
+      277970
+    ],
+    "parameter_budget": 300000,
+    "sample_counts": {
+      "train": 12,
+      "dev": 8,
+      "final": 4,
+      "retention": 0
+    },
+    "within_budget_gate": true
+  },
+  "checkpoint_read_only": true
+}

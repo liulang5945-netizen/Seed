@@ -157,4 +157,4 @@ H3.7 只允许从 preflight 进入一次 3-seed matched dev。每个 seed 先完
 
 保持不变：H3.5/H3.6 负结果只读保留；不读它们的 final、不追加旧 target epoch；不改默认 SeedRuntime.chat；不把 H3.7 candidate 当作产品模型；Mini 验收仍后置。
 
-**执行结果与后续唯一下一步**：三 seed matched dev、只读消融和 aggregate 已完成，结果见`reports/taiji_r2_h3_7_matched_dev_result_20260917.json`。aggregate 判定`stopped_before_final`，因此不读 final、不追加 epoch、不切默认入口；下一步只做有界的只读归因复审，顺序固定为 target sketch → slot phase schedule → bridge credit → renderer readout → native prefix representation → capacity/data。该复审不得修改历史报告或将 H3.7 candidate 晋级为产品模型。
+**执行结果与后续唯一下一步**：三 seed matched dev、只读消融、aggregate和有界归因审计已完成，结果见`reports/taiji_r2_h3_7_matched_dev_result_20260917.json`与`reports/taiji_r2_h3_7_attribution_audit_20260917.json`。aggregate 判定`stopped_before_final`，因此不读 final、不追加 epoch、不切默认入口；归因审计确认target/phase存在运行信号但没有可迁移内容闭环。下一步进入架构设计讨论，仍须遵守 target sketch → slot phase schedule → bridge credit → renderer readout → native prefix representation → capacity/data 的固定判读顺序；不得修改历史报告或将 H3.7 candidate 晋级为产品模型。

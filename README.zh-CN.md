@@ -151,6 +151,7 @@ readout 学习；每个候选都隔离、可保存恢复，并在 family-disjoin
 | R2-H3.7 seed 20260917 | 首组 matched dev 已完成；dev sequence criterion 为 control/treatment=`0.25/0.25`，只读消融 normal/bridge/slot-credit=`0.25/0.125/0.0`；三 seed gate 尚未判定 |
 | R2-H3.7 seed 20260918 | 第二组 matched dev 已完成；dev sequence criterion 仍为 control/treatment=`0.25/0.25`，只读消融为`0.25/0.25/0.25`；等待最后一个 seed 后 aggregate |
 | R2-H3.7 aggregate | [三组 matched dev 与三组只读消融](reports/taiji_r2_h3_7_matched_dev_result_20260917.json) 已完成；aggregate 在 final 前停止，非代理方向为`0/0/0`，boundary 与因果消融门失败 |
+| R2-H3.7 attribution audit | [有界只读归因审计](reports/taiji_r2_h3_7_attribution_audit_20260917.json) 发现 target 对齐非零但不均匀、phase 概率面确实变化，但没有可迁移内容/readout收益 |
 
 权威执行顺序见[当前推进计划](plans/active/roadmap/03_CURRENT_EXECUTION.md)；H3.6 目标合同见
 [M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md](plans/reference/M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md)，
@@ -168,7 +169,7 @@ M5 K 轴 scorecard 仍是有效的并行、限定范围机制结果；它不是�
 - 当前边界：原生语言路线已有结构化训练与恢复证据，但尚未建立 S2/L2 对话能力。K 轴的
   `promotion_gate=false`、`can_promote=false`、`growth_admitted=false` 仍保持诚实边界；不代表默认
   runtime 已挂接 owner，也不代表产品 rollout 已发生。
-- 当前主线：执行冻结顺序的 H3.7 只读归因复审：target sketch → slot phase schedule → bridge credit → renderer readout → native prefix representation → capacity/data。H3.6-B 与 H3.7 final 保持未读；本次负结果不追加 epoch、不切默认入口、不进入 Mini 验收。
+- 当前主线：进入冻结归因结果对应的架构设计讨论，重点解决 workspace 状态如何转化为可迁移回答内容。H3.6-B 与 H3.7 final 保持未读；本次负结果不追加 epoch、不切默认入口、不进入 Mini 验收。
 - 诚实边界：这是一个训练中的学习机制原型，**不是**完整的认知架构，尚不是通用语言模型，也不构成任何 AGI 主张。当前 R2 将不可读或不可迁移的回答视为待解决失败，不包装成模型能力。
 
 ## 快速开始

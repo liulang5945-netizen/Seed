@@ -155,7 +155,7 @@ R2-H3.5/H3.6 已证明“一个静态 plan 向量＋逐 byte 局部更新”没�
 
 该候选仍保持原生 byte renderer、UTF-8/end-marker、Taiji-owned checkpoint 和运行期不读 task/family/split/reference 的边界。计划目标是训练期由 response 的固定 UTF-8-safe chunk 生成的 train-bound count-sketch，仅作为监督坐标，不是运行时答案或外部语义标签。总计划宽度、slot 数、phase stride、credit 规则、保存恢复和停止门由[H3.7合同](M5_R2_H3_7_FACTORIZED_RESPONSE_WORKSPACE_CONTRACT_20260917.md)冻结；它是 VISION 的可证伪原型，不是架构采用或 L2 能力结论。
 
-H3.7 已按冻结合同完成三 seed matched dev、三组 treatment 消融和 aggregate，但判定为 `stopped_before_final`：control/treatment 的 dev sequence 均为 `0.25/0.25/0.25`，exact 与 required-term coverage 均为0，seed `20260918` 的 treatment boundary 相对 control 从1.0降为0.875；桥接与 slot-credit 只有首 seed改变 sequence，因不存在真实 treatment-vs-control 内容增益，不能把该变化误报为因果收益。该候选保留为已实现的失败证据，不进入默认 Taiji 架构、不读取 final、不追加同质训练；后续设计必须先按 H3.7 固定归因顺序拆分 target、phase、credit、renderer、prefix representation 与 capacity/data，新的方案需要独立合同与复审。
+H3.7 已按冻结合同完成三 seed matched dev、三组 treatment 消融、aggregate和有界只读归因审计，但判定为 `stopped_before_final`：control/treatment 的 dev sequence 均为 `0.25/0.25/0.25`，exact 与 required-term coverage 均为0，seed `20260918` 的 treatment boundary 相对 control 从1.0降为0.875；审计显示target有弱且不均匀的dev对齐，phase概率面确实变化，但workspace没有转化为可迁移内容，bridge/slot-credit也没有撤销真实treatment收益。该候选保留为已实现的失败证据，不进入默认 Taiji 架构、不读取 final、不追加同质训练；后续设计必须先按 H3.7 固定归因顺序拆分 target、phase、credit、renderer、prefix representation 与 capacity/data，新的方案需要独立合同与复审。
 
 ### 7.3 否决信号
 
