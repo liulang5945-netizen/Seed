@@ -42,3 +42,15 @@ H-d：在真实执行反馈的在线循环下，`InteractionGroupOnlineLearner` 
 1. `scripts/training/eval_taiji_p5_2d_online_writeback_gate.py`（scoped 静态检查先行）。
 2. 执行落盘 `reports/taiji_p5_2d_online_writeback_20260916.json` + 验收类对账。
 3. roadmap 状态表更新 + 独立提交。
+
+## §6 修订（2026-09-16，执行前静态契约分析——未运行任何实验、未看任何数据）
+
+实现前静态分析发现 §2.1 的基 learner 设计与库选择语义不相容，按 B2-v3 §0 先例在执行前修订：
+
+1. **缺陷**：`InteractionGroupTransferLearner._fit` 的系数仅由 records 驱动（零 records ⇒ 零系数 ⇒ `candidate` 返回 None），且 `candidate(allow_observed=False)` 对**任何已有 record 的 pair** 返回 None。全量 B1 遗留语料的 `train_only_candidates` 覆盖全部 6 pair ⇒ 在线 `select`（unseen_only=True）每轮必然返回 None，循环结构性空转。库自身测试（`test_interaction_group_online.py`）证实预期用法：基谱系只覆盖部分 pair（测试中仅 (a,b) 有 record），在线探索未观测 pair。
+2. **§2.1 修订为**：基 learner = 全 4 成员 profiles + records 来自**基谱系投影**——遗留拟合语料的成员集子集 `{(), (a,), (b,), (c,), (d,), (a,b)}`（完整单体证据 + 历史默认配对），即部署谱系恰好未观测 (a,c)/(a,d)/(b,c)/(b,d)/(c,d) 五个 pair。基谱系 digest 为该投影的 digest（与全量 B1 语料 digest 不同，披露）。`minimum_utility=-10.0`、`maximum_uncertainty=2.0` 与在线默认拒绝阈值不变。
+3. **§2.4「旧任务保持」修订为可检验形态**：(i) 基谱系唯一 pair (a,b) 的 `predicted_interaction` 在在线更新前后**逐位一致**（其 record 集不被在线轮触碰——(a,b) 已观测、永不被在线选择）；(ii) 遗留 held-out 执行抽查不回归（父代与更新臂在同一遗留 context 的真实执行结果一致或更优）。
+4. **§2.3 child 澄清**：等预算 child = 同基 learner checkpoint + 同 6 条 feedback 对应 records **一次批量** `observe_records`；与在线增量臂的比较为选择一致 + 共享查询预测差 ≤ 1e-9（浮点求和顺序差异容差），非逐字节 digest。
+5. **中断恢复框架澄清**：第 3 轮后 checkpoint + 第 4-6 轮 pending feedback payloads（`to_payload`）交 fresh 进程依序 `apply_feedback`，最终 learner digest 与不间断运行逐字节一致；trial 执行发生在「中断」前，恢复的是状态与待写回队列——框架在报告中披露。
+6. **反馈构造口径修正**：原生 trace 口径为 ±1（`_project` 的 `outcome=1.0/-1.0`），`realized_interaction`/`contribution` 按 `_estimate_pair` 的冻结估计量在该口径计算（interaction = P − S_i − S_j + B，contribution = P − B；成功 trial = +2.0）；§2.2 原文「成功率口径」为笔误，绑定条款「与遗留语料 records 同口径」不变。单轮单 context 的 feedback `uncertainty=0.0`（无样本方差）。
+7. **member-mismatch 处理**：若 trial 的 pair trace 事件所有者与 candidate.member_ids 不符（某成员从未被调用），feedback 不可构造——该轮如实记录 `feedback_unconstructible_member_mismatch`，该 pair 本地排除出后续轮的候选集（防死循环），披露于报告。
