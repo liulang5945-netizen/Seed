@@ -24,11 +24,11 @@
 | B0/B1 | 评分/可达性审查、HANDOFF-M4 gate落地、B1表示门已完成 | 不再重开早期D1–D5；gate实现不等于产品核心实现 |
 | B2-v4 | [冻结协议](../../reference/M5_B2V4_COLLABORATION_JUDGMENT_PREREGISTRATION_FROZEN_20260916.md)，28a1cf02记录九门通过；a+c增益2.0≥1.65，逐格6/6、交错和lesion成立 | collaboration_supported只指冻结机制＋v3选择程序＋create族内；轴未独立晋级、产品未采用、跨内容结构未证 |
 | P5.2d v1 | [已提交报告](../../../reports/taiji_p5_2d_online_writeback_20260916.json)失败；成功反馈被10.0资源上限拒绝 | 找到信号不是完成在线学习；未触达验收不算通过 |
-| P5.2d本地v2 | 未跟踪reports/taiji_p5_2d_online_writeback_v2_20260916.json：预算64，a+c反馈applied，outcome仍failed；协议和runner亦有未提交修改 | 候选证据，不能替代正式结论或视为新协议已获批准 |
+| P5.2d本地v2 | 未跟踪reports/taiji_p5_2d_online_writeback_v2_20260916.json：预算64，a+c反馈applied，outcome仍failed；[R0审计](../../reference/M5_R0_EVIDENCE_GATE_AUDIT_20260916.md)已逐门核对 | 预算校准信号可作局部事实；A1假阳性，A2/A3/A5/G1不可判，A6仅部分可用；协议和runner的§8修订仍未同步，不得晋级 |
 | v2审查线索 | updated_pair仍b+c、六对预测全1.291667、后测收益0，但a1=true；a2/a3/a5/g1失败；恢复及rollback说明与细节需核对 | 必须逐门查证，不能认定只是预算问题，也不能未经诊断归罪核心架构 |
 | CAP默认入口 | [基线](../../reference/M5_CAP0_BASELINE_RESULT_20260915.md)：原tick=2入口去回显后C/D/E为0；B/G辅助判断待人工确认 | 限定当时快照；默认checkpoint存在被测试写动的风险，不能沿用旧身份 |
 | P3b已提交材料 | [阶段结果](../../reference/M5_P3B_RESULT_20260916.md)：唯一共同tick17M，C/D差0，E差+0.05，未检测到该分辨率下效应 | 不等于分布无关或架构无效；J4 A/H及人工安全分支缺证 |
-| P3b工作区终态 | treatment记录finished_at、campaign_stop=regressed；18M persistent；对照17M material | 文档“实验臂仍跑”已落后；报告终态不等于进程退出、产物封存已核验 |
+| P3b工作区终态 | treatment记录finished_at、campaign_stop=regressed；18M persistent；对照17M material；R0已核实两臂停止 | 数据分布效应只有一个共同tick，仍not_resolved；18M原始输出可观察但C/D/E未达标，保护隔离仍有DEBT-I7 |
 | 本地heldout | 未跟踪reports/taiji_p3b_heldout_surprise_20260916.json为not_resolved | 先审协议与血缘；surprise不能替代对话评价 |
 | 知识/身体 | P5.1g仍trial并回滚；Workbench合同资产存在 | 真实语料child未准入、身体全生命周期未结项 |
 | CI | 9月16日查询run34869725409，d09dcc21，总体failure；3.10失败，3.12/Windows等通过 | 不是当前HEAD的CI；不称全绿，旧27项SystemExit不再视作未定位代码缺陷 |
@@ -64,6 +64,14 @@ R0先做；R1只解决阻塞项，不无限清债。R2是面向用户能力的�
 
 **出口**：状态无矛盾；每个失败有证据位置和责任包；用户进行中文件不被改写。
 **停止点**：保持定义、重复写入语义、预算、加载策略或学习机制变化，先说明选择、收益、风险再批准。
+
+### R0审计结论（2026-09-16）
+
+[完整证据与门禁审计](../../reference/M5_R0_EVIDENCE_GATE_AUDIT_20260916.md)已经完成。结论不是“在线机制通过”：预算64只让第4轮真实反馈进入learner；v2的A1通过是由“零收益也可通过、并列最高也可通过、未要求更新选择等于a+c”造成的假阳性。A2/A3/A5/G1分别受全局重拟合、stale优先级、恢复ID切片和rollback后计数影响，当前报告不能把它们归因为模型或库机制失败。A6的恢复/墓碑/环境undo有局部证据，但replay实际返回stale，不能按冻结协议宣布墓碑拒绝已通过。
+
+P3b两臂已经结束：对照17M material停止，实验18M persistent停止；只有17M共同检查点，因此数据分布主效应仍不可判。实验18M确实产生了训练态原始输出，但C=0、D=0.0625、E=0.10，B/G待人工复核，A/F/H未测，不能触发L2/L3或用户验收。
+
+R0关闭的是“状态不清”，不关闭P5.2d、不晋级在线轴、不授权第二次P3b。预注册§8是待实现的修订设计，不是本次v2的执行条件；历史v1/v2报告保持原样。
 
 ## 5. R1：可信实验底座
 
@@ -186,8 +194,8 @@ B2已结项，同族复现不反复计新能力。以[binder可行性](../../ref
 
 唯一[未来VISION](../../reference/VISION_FUTURE_TECHNOLOGY.md)记录候选架构，本文管当前依赖与权限。每包结项同步01/02/03/07和首页，不追加互相矛盾的“最新状态”。
 
-## 当前唯一下一步：R0证据封存与门禁一致性审查
+## 当前唯一下一步：R1冻结并批准P5.2d修正仪器批次
 
-核对P3b终态、P5.2d本地复测及协议/代码来源，形成结项与决策包。优先回答：为什么反馈写入仍选错、为什么无后测收益却a1通过、幂等/恢复失败属于哪一层。
+以[R0审计](../../reference/M5_R0_EVIDENCE_GATE_AUDIT_20260916.md)为输入，先把A1/A2/A3/A5/G1/A6修正落实为一个新版本化runner、测试与预注册；不改写v1/v2报告，不启动新训练或新预算运行。先完成库级/门级小测试、静态检查、checkpoint隔离检查，再提交一次新的运行授权。
 
-本次修订已发现疑点，但未实施根因诊断、未接管未提交成果。R0完成后依次进入相关R1；涉及语义、架构或预算先讨论。不要直接再跑64预算实验、第二次语言campaign或立即赶演示。
+该步骤涉及验收合同的严格排序条件、保持定义和replay语义，属于需要确认的设计节点；在确认前不得直接修改当前用户未提交的runner/预注册，也不得把“预算64已运行”重复当作新证据。R1通过后才决定是否值得追加在线预算；R2语言目标/信用分配评审与R3在线闭环继续分账。
