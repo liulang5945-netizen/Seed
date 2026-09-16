@@ -118,6 +118,6 @@
 
 [CAP-0冻结集v1](../../reference/M5_CAP0_EVAL_SET_FROZEN_20260915.md)和[基线结果](../../reference/M5_CAP0_BASELINE_RESULT_20260915.md)是已执行证据；本文建议不得追改其题量、分母或阈值。C知识题14项与未知题、D计分16项与重置项分别记账，不混用“各20项”作所有指标分母。规则辅助判分不替代人工确认；健康报告不自动补齐另一条P3b链路的A/F/H。
 
-R2-H3.5-A已在final前停止；H3.6 geometry审计、target encoder plumbing、trainer接线与reconstruction/save-restore smoke已完成，H3.6-B control/treatment零步前置也已通过，但没有形成S2/L2能力证据。H3.6-B三seed matched dev与只读bridge ablation均已完成并在final前负结果结项；不执行Mini验收、不读取H3.5-A或H3.6-B final。H3.7分解式回答工作空间合同、实现与两臂preflight已通过，训练授权现在仅覆盖其三seed dev和冻结消融；Mini评价体系、L2/L3门和用户验收材料继续保留，只有新候选形成可加载并达到L2后才触发后置验收。
+R2-H3.5-A已在final前停止；H3.6 geometry审计、target encoder plumbing、trainer接线与reconstruction/save-restore smoke已完成，H3.6-B control/treatment零步前置也已通过，但没有形成S2/L2能力证据。H3.6-B三seed matched dev与只读bridge ablation均已完成并在final前负结果结项；不执行Mini验收、不读取H3.5-A或H3.6-B final。H3.7分解式回答工作空间合同、实现、三seed dev、三组消融与aggregate已完成，但在final前负结果停止，未形成L2；不追加epoch、不读取H3.7 final、不切默认入口。Mini评价体系、L2/L3门和用户验收材料继续保留，只有后续候选形成可加载并达到L2后才触发后置验收。
 
 L3材料齐备即触发用户验收，无需等所有M5轴或VISION完成；反之B2通过、一次回写成功、surprise改善均不触发交付。详见03的R2/R4与阶段出口表。

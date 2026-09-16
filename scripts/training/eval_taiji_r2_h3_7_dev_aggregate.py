@@ -312,7 +312,31 @@ def _validate_ablation(
     _require(report.get("dataset_digest") == EXPECTED_DATASET_DIGEST, f"ablation dataset mismatch: {report_path}")
     _require(report.get("checkpoint_read_only") is True, f"ablation was not read-only: {report_path}")
     _require(report.get("checkpoint_digest") == treatment_checkpoint.get("checkpoint_digest"), f"ablation source digest mismatch: {report_path}")
-    _require(report.get("target_lineage") == treatment["target_geometry"], f"ablation target lineage mismatch: {report_path}")
+    target_lineage = report.get("target_lineage")
+    treatment_lineage = treatment["target_geometry"]
+    _require(isinstance(target_lineage, dict), f"ablation target lineage missing: {report_path}")
+    _require(isinstance(treatment_lineage, dict), f"treatment target lineage missing: {report_path}")
+    # The ablation report may carry the H3.7 architecture annotations
+    # (variant/slots/stride) in addition to the runner's canonical target
+    # lineage.  Compare the bound target identity field-by-field and validate
+    # those extra annotations against the frozen contract instead of requiring
+    # byte-for-byte equality between two report schemas.
+    for key in (
+        "geometry",
+        "encoder_digest",
+        "encoder_parent_checkpoint_digest",
+        "encoder_corpus_digest",
+        "train_target_map_digest",
+        "fit_episode_ids",
+    ):
+        _require(
+            target_lineage.get(key) == treatment_lineage.get(key),
+            f"ablation target lineage {key} mismatch: {report_path}",
+        )
+    _require(target_lineage.get("geometry") == EXPECTED_GEOMETRIES["treatment"], f"ablation target geometry mismatch: {report_path}")
+    _require(target_lineage.get("variant") == "factorized_v1", f"ablation target variant mismatch: {report_path}")
+    _require(target_lineage.get("plan_slots") == EXPECTED_PLAN_SLOTS, f"ablation target slot mismatch: {report_path}")
+    _require(target_lineage.get("phase_stride") == EXPECTED_PHASE_STRIDE, f"ablation target stride mismatch: {report_path}")
     _require(report.get("target_available_count") == 0, f"H3.7 dev ablation read a dev target: {report_path}")
     _require(report.get("episodes") == 8, f"ablation episode count mismatch: {report_path}")
     for name in ("normal", "plan_bridge_ablated", "slot_credit_ablated"):
@@ -370,17 +394,25 @@ def _ablation_removes_core_gain(
     rows: list[dict[str, Any]],
     name: str,
 ) -> bool:
-    strict = False
+    treatment_gain_observed = False
+    core_gain_removed = False
     for row in rows:
+        control = row["control"]["dev"]
         treatment = row["treatment"]["dev"]
         ablated = row["ablation"][name]
         for key in ("sequence_criterion_pass_rate", "required_term_coverage"):
+            control_value = float(control[key])
             treatment_value = float(treatment[key])
             ablated_value = float(ablated[key])
             if ablated_value > treatment_value + 1e-12:
                 return False
-            strict = strict or ablated_value < treatment_value - 1e-12
-    return strict
+            if treatment_value > control_value + 1e-12:
+                treatment_gain_observed = True
+                # A causal ablation must remove the observed treatment gain,
+                # not merely make an already-tied treatment score smaller.
+                if ablated_value <= control_value + 1e-12:
+                    core_gain_removed = True
+    return treatment_gain_observed and core_gain_removed
 
 
 def main() -> int:

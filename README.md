@@ -206,6 +206,7 @@ not yet produced an L2 conversational model; the work below is the path toward o
 | R2-H3.7 preflight | Control (273,890) and treatment (277,970) both passed committed-code preflight; `training_performed=false`, three-seed dev is now authorized |
 | R2-H3.7 seed 20260917 | First matched dev pair completed; dev sequence criterion is 0.25/0.25 (control/treatment), and read-only ablation is 0.25/0.125/0.0 (normal/bridge/slot-credit); three-seed gate remains open |
 | R2-H3.7 seed 20260918 | Second matched dev pair completed; dev sequence criterion remains 0.25/0.25 and read-only ablation is 0.25/0.25/0.25; aggregate remains pending the final seed |
+| R2-H3.7 aggregate | [Three matched seeds and three read-only ablations](reports/taiji_r2_h3_7_matched_dev_result_20260917.json) completed; aggregate stopped before final because non-proxy direction was 0/0/0 and boundary/causal-ablation gates failed |
 
 The authoritative execution order is the [current plan](plans/active/roadmap/03_CURRENT_EXECUTION.md),
 with the H3.6 target contract in [M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md](plans/reference/M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md),
@@ -220,12 +221,13 @@ current R2 language mainline and does not imply a default-runtime promotion.
 
 - Completed and committed: the TSK-v8 substrate and regression chain, structural-growth
   mechanism gates, the M0–M2 foundation evidence, the limited M5 K-axis scorecard evidence,
-  and the R2-H3.6-A target-plumbing implementation described above.
+  the R2-H3.6-A target-plumbing implementation, and the completed H3.7
+  three-seed development/aggregate evidence described above.
 - Current boundary: the native language route has structured training and recovery evidence,
   but no S2/L2 conversational capability has been established. `promotion_gate=false`,
   `can_promote=false`, and `growth_admitted=false` remain the honest K-axis boundary; no
   default-runtime owner or product rollout is implied.
-- Next planned action: run the final authorized H3.7 matched dev for seed 20260919, run its frozen read-only bridge/slot-credit ablation, then execute the three-seed aggregate gate. H3.6-B final remains unread; H3.7 final, same-target extra epochs, default adoption, and Mini acceptance remain unauthorized until that gate.
+- Next planned action: perform the bounded read-only H3.7 attribution review in the frozen order target sketch → slot phase schedule → bridge credit → renderer readout → native prefix representation → capacity/data. H3.6-B and H3.7 finals remain unread; no extra epochs, default adoption, or Mini acceptance follow this negative result.
 - Honest boundary: this is a learning-mechanism research prototype, **not** a completed
   cognitive architecture, not yet a general-purpose language model, and not a claim about AGI.
   The current R2 work explicitly treats unreadable or non-transferring responses as failures to

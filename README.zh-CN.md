@@ -150,6 +150,7 @@ readout 学习；每个候选都隔离、可保存恢复，并在 family-disjoin
 | R2-H3.7 前置 | control (273,890) 与 treatment (277,970) 均已通过提交版本的 preflight；`training_performed=false`，三 seed dev 已获准进入 |
 | R2-H3.7 seed 20260917 | 首组 matched dev 已完成；dev sequence criterion 为 control/treatment=`0.25/0.25`，只读消融 normal/bridge/slot-credit=`0.25/0.125/0.0`；三 seed gate 尚未判定 |
 | R2-H3.7 seed 20260918 | 第二组 matched dev 已完成；dev sequence criterion 仍为 control/treatment=`0.25/0.25`，只读消融为`0.25/0.25/0.25`；等待最后一个 seed 后 aggregate |
+| R2-H3.7 aggregate | [三组 matched dev 与三组只读消融](reports/taiji_r2_h3_7_matched_dev_result_20260917.json) 已完成；aggregate 在 final 前停止，非代理方向为`0/0/0`，boundary 与因果消融门失败 |
 
 权威执行顺序见[当前推进计划](plans/active/roadmap/03_CURRENT_EXECUTION.md)；H3.6 目标合同见
 [M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md](plans/reference/M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md)，
@@ -162,11 +163,12 @@ M5 K 轴 scorecard 仍是有效的并行、限定范围机制结果；它不是�
 ## 现状
 
 - 已完成并提交：TSK-v8 基座与回归链、结构成长机制 Gate、M0–M2 基础证据、限定范围的 M5
-  K 轴 scorecard，以及上文所述的 R2-H3.6-A 目标 plumbing。
+  K 轴 scorecard、上文所述的 R2-H3.6-A 目标 plumbing，以及已完成的 H3.7
+  三 seed dev/aggregate 证据。
 - 当前边界：原生语言路线已有结构化训练与恢复证据，但尚未建立 S2/L2 对话能力。K 轴的
   `promotion_gate=false`、`can_promote=false`、`growth_admitted=false` 仍保持诚实边界；不代表默认
   runtime 已挂接 owner，也不代表产品 rollout 已发生。
-- 当前主线：执行最后一个已获准的 H3.7 seed `20260919` matched dev（control/treatment，各10 epoch、每臂最多120 episodes、final延迟），随后执行冻结的只读 bridge/slot-credit ablation，最后运行三 seed aggregate gate；H3.6-B final 保持未读，H3.7 final、默认采用与 Mini 继续后置。
+- 当前主线：执行冻结顺序的 H3.7 只读归因复审：target sketch → slot phase schedule → bridge credit → renderer readout → native prefix representation → capacity/data。H3.6-B 与 H3.7 final 保持未读；本次负结果不追加 epoch、不切默认入口、不进入 Mini 验收。
 - 诚实边界：这是一个训练中的学习机制原型，**不是**完整的认知架构，尚不是通用语言模型，也不构成任何 AGI 主张。当前 R2 将不可读或不可迁移的回答视为待解决失败，不包装成模型能力。
 
 ## 快速开始

@@ -1,7 +1,7 @@
 # Taiji VISION：架构设计、未来能力与验证路线
 
 > 更新：2026-09-15。唯一 VISION 文件，合并原未来方向与可替换核心设计；旧版本由 Git 保留。
-> 状态：**详细设计候选，未授权实施**。用户认可成熟发展训练＋运行期原生持续适应，并明确当前主线继续。
+> 状态：**详细设计候选；H3.7隔离验证已结束，未授权架构采用或扩展实施**。用户认可成熟发展训练＋运行期原生持续适应，并明确当前主线继续。
 > 执行顺序由 [当前计划](../active/roadmap/03_CURRENT_EXECUTION.md)决定；整模型评价与用户验收见 [能力评价体系](../active/roadmap/07_MINI_MODEL_DELIVERY.md)。
 > 本文不补发实验通过、不删除原生合同、不选择新硬件、不启动训练。方案中的式子/接口/阶段是候选设计，不冒称现有实现。
 
@@ -154,6 +154,8 @@ B 为独立 episode 批数，D 为宽度，K 为槽数，R 为头数。以下形
 R2-H3.5/H3.6 已证明“一个静态 plan 向量＋逐 byte 局部更新”没有形成稳定的未见回答迁移。当前进入隔离候选的高上限方向是 factorized response workspace：prefix native state 在 assistant boundary 产生 4 个有序 plan slots，renderer 按已生成 byte 的固定 phase 消费当前 slot，同时保留少量 slot0 的全局回答结构信号。每个 byte 的 predictive error 通过 renderer 的 backprojection 和 conditioned tanh 的局部导数更新 `plan_bridge`，再以固定较小比例更新当前槽的 planner rows。
 
 该候选仍保持原生 byte renderer、UTF-8/end-marker、Taiji-owned checkpoint 和运行期不读 task/family/split/reference 的边界。计划目标是训练期由 response 的固定 UTF-8-safe chunk 生成的 train-bound count-sketch，仅作为监督坐标，不是运行时答案或外部语义标签。总计划宽度、slot 数、phase stride、credit 规则、保存恢复和停止门由[H3.7合同](M5_R2_H3_7_FACTORIZED_RESPONSE_WORKSPACE_CONTRACT_20260917.md)冻结；它是 VISION 的可证伪原型，不是架构采用或 L2 能力结论。
+
+H3.7 已按冻结合同完成三 seed matched dev、三组 treatment 消融和 aggregate，但判定为 `stopped_before_final`：control/treatment 的 dev sequence 均为 `0.25/0.25/0.25`，exact 与 required-term coverage 均为0，seed `20260918` 的 treatment boundary 相对 control 从1.0降为0.875；桥接与 slot-credit 只有首 seed改变 sequence，因不存在真实 treatment-vs-control 内容增益，不能把该变化误报为因果收益。该候选保留为已实现的失败证据，不进入默认 Taiji 架构、不读取 final、不追加同质训练；后续设计必须先按 H3.7 固定归因顺序拆分 target、phase、credit、renderer、prefix representation 与 capacity/data，新的方案需要独立合同与复审。
 
 ### 7.3 否决信号
 

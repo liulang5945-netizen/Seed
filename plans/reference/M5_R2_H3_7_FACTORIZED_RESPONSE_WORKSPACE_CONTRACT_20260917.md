@@ -1,6 +1,6 @@
 # M5 R2-H3.7 分解式回答工作空间与因果信用合同
 
-> 状态：设计复审、隔离实现与两臂 preflight 已通过，等待三 seed matched dev；训练权限仅覆盖本合同的 dev 与只读消融，本合同之外的训练、final 读取和默认入口变更不被授权。
+> 状态：设计复审、隔离实现、三 seed matched dev、三组只读消融与 aggregate 已完成；aggregate 在 final 前停止。训练权限已消耗完毕，本合同之外的训练、final 读取和默认入口变更不被授权。
 >
 > 日期：2026-09-17
 
@@ -157,4 +157,4 @@ H3.7 只允许从 preflight 进入一次 3-seed matched dev。每个 seed 先完
 
 保持不变：H3.5/H3.6 负结果只读保留；不读它们的 final、不追加旧 target epoch；不改默认 SeedRuntime.chat；不把 H3.7 candidate 当作产品模型；Mini 验收仍后置。
 
-**当前唯一下一步**：执行 H3.7 三 seed matched dev；每个 seed 运行 control/treatment 各 10 epoch、每臂最多 120 train episodes，final 保持延迟，完成后执行 bridge 与 slot-credit 只读消融并运行 aggregate gate。
+**执行结果与后续唯一下一步**：三 seed matched dev、只读消融和 aggregate 已完成，结果见`reports/taiji_r2_h3_7_matched_dev_result_20260917.json`。aggregate 判定`stopped_before_final`，因此不读 final、不追加 epoch、不切默认入口；下一步只做有界的只读归因复审，顺序固定为 target sketch → slot phase schedule → bridge credit → renderer readout → native prefix representation → capacity/data。该复审不得修改历史报告或将 H3.7 candidate 晋级为产品模型。

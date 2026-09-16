@@ -1,0 +1,680 @@
+{
+  "format": "taiji-r2-h3-7-matched-dev-result-v1",
+  "status": "stopped_before_final",
+  "pre_registration": "plans/reference/M5_R2_H3_7_FACTORIZED_RESPONSE_WORKSPACE_CONTRACT_20260917.md",
+  "dataset_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+  "evaluation_code": {
+    "path": "E:\\Seed\\scripts\\training\\eval_taiji_r2_h3_7_dev_aggregate.py",
+    "sha256": "de3f644ef5365e4de8149603a7cfbcfca4f5871dff04291c8fc479663386b4fa"
+  },
+  "protocol": {
+    "seeds": [
+      20260917,
+      20260918,
+      20260919
+    ],
+    "epochs": 10,
+    "max_episodes_per_epoch": 12,
+    "episodes_per_run": 120,
+    "global_step": 5370,
+    "parameter_budget": 300000,
+    "final_deferred_for_all_runs": true,
+    "final_capability_read_performed": false,
+    "control_geometry": "signed_hash_span",
+    "treatment_geometry": "h3_7_factorized_response_chunks",
+    "plan_width": 48,
+    "plan_slots": 4,
+    "phase_stride": 16
+  },
+  "source_artifacts": [
+    {
+      "seed": 20260917,
+      "control": {
+        "seed": 20260917,
+        "arm": "control",
+        "report_path": "E:\\Seed\\reports\\taiji_r2_h3_7_control_dev_20260917_seed20260917.json",
+        "report_sha256": "03c658f5f3747e8486cb1a8c951e6e93614a193562e3c755fc70caad3005846c",
+        "checkpoint_path": "E:\\Seed\\outputs\\r2_h3_7_dev_20260917\\control_seed_20260917\\checkpoint.pt",
+        "checkpoint_sha256": "f121979ee1a496acc71d3565fdc2d8a076f0aeb80687500f9d3484a23d43a625",
+        "checkpoint_digest": "3488a2b7aeae9f2851d2d35cfdb494a8204f5654255ea05ec9067e9b81f7a546",
+        "model_seed": 20260917,
+        "code_revision": "ddb12d7a37352276dedd4edbe73ea61f59eb2429",
+        "dataset_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+        "target_geometry": {
+          "geometry": "signed_hash_span",
+          "encoder_digest": null,
+          "encoder_parent_checkpoint_digest": null,
+          "encoder_corpus_digest": null,
+          "train_target_map_digest": null,
+          "fit_episode_ids": []
+        },
+        "capacity": {
+          "target_active_parameters": 300000,
+          "planned_core_active_parameters": 262839,
+          "additional_predictive_readouts": 1,
+          "additional_predictive_readout_parameters": 11051,
+          "response_plan_parameters": 0,
+          "effective_active_parameters": 273890,
+          "within_target": true
+        },
+        "training": {
+          "epochs": 10,
+          "episodes": 120,
+          "global_step": 5370,
+          "response_accuracy": 0.5151244942421412,
+          "response_mean_surprise": 2.3763660956747534
+        },
+        "dev": {
+          "episodes": 8,
+          "teacher_forced_accuracy": 0.4380643704850361,
+          "teacher_forced_mean_surprise": 2.731276052872558,
+          "exact_response_rate": 0.0,
+          "utf8_valid_rate": 1.0,
+          "no_replacement_rate": 1.0,
+          "response_boundary_rate": 1.0,
+          "sequence_valid_rate": 1.0,
+          "sequence_criterion_pass_rate": 0.25,
+          "required_term_coverage": 0.0,
+          "semantic_criteria_pass_rate": 0.25,
+          "unique_generated_texts": 7,
+          "generated_text_collision_rate": 0.125,
+          "checkpoint_read_only": true,
+          "native_mode_only": true
+        },
+        "paired": {
+          "episodes": 8,
+          "teacher_forced_mean_surprise_delta": -2.891651124490424,
+          "exact_response_delta": 0.0,
+          "baseline_prompt_sensitivity_rate": 1.0,
+          "child_prompt_sensitivity_rate": 1.0,
+          "child_output_changed_after_update_rate": 1.0,
+          "checkpoint_read_only": true,
+          "native_mode_only": true,
+          "external_provider": false
+        }
+      },
+      "treatment": {
+        "seed": 20260917,
+        "arm": "treatment",
+        "report_path": "E:\\Seed\\reports\\taiji_r2_h3_7_treatment_dev_20260917_seed20260917.json",
+        "report_sha256": "a90f1048f515bd72a1c8fa099cf5acecc854c46ee6e65ab4a8eb75e6f32fb8e7",
+        "checkpoint_path": "E:\\Seed\\outputs\\r2_h3_7_dev_20260917\\treatment_seed_20260917\\checkpoint.pt",
+        "checkpoint_sha256": "5f83ed5435d8c91200f274cf7b7f08fcd9bcba70529717c654c55b5401371381",
+        "checkpoint_digest": "40fb5e694879f68d432c8512b02c20f39344909f2dfec05912d1e857887dfa30",
+        "model_seed": 20260917,
+        "code_revision": "ddb12d7a37352276dedd4edbe73ea61f59eb2429",
+        "dataset_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+        "target_geometry": {
+          "geometry": "h3_7_factorized_response_chunks",
+          "encoder_digest": "06b8f826034cafcfe38d9a3fa4d972bf6943d4f823854d5245519a9afe4989f3",
+          "encoder_parent_checkpoint_digest": "c4359e528f897e2559067d513d4718f8ff38e0baeb6fba2c4ae8e5892d1a93d7",
+          "encoder_corpus_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+          "train_target_map_digest": "ceed54388f3591a1df045baebc2255724211a1e47afd9f72d566f8a51b608fc9",
+          "fit_episode_ids": [
+            "train-answer-red",
+            "train-answer-blue",
+            "train-answer-east-history",
+            "train-unknown-weather",
+            "train-unknown-price",
+            "train-unknown-owner",
+            "train-clarify-city",
+            "train-clarify-date",
+            "train-clarify-file",
+            "train-refuse-password",
+            "train-refuse-token",
+            "train-refuse-bypass"
+          ]
+        },
+        "capacity": {
+          "target_active_parameters": 300000,
+          "planned_core_active_parameters": 262839,
+          "additional_predictive_readouts": 1,
+          "additional_predictive_readout_parameters": 11051,
+          "response_plan_parameters": 4080,
+          "effective_active_parameters": 277970,
+          "within_target": true
+        },
+        "training": {
+          "epochs": 10,
+          "episodes": 120,
+          "global_step": 5370,
+          "response_accuracy": 0.4021972261126673,
+          "response_mean_surprise": 2.7681191240709113
+        },
+        "dev": {
+          "episodes": 8,
+          "teacher_forced_accuracy": 0.3022607069143447,
+          "teacher_forced_mean_surprise": 3.5464854152495295,
+          "exact_response_rate": 0.0,
+          "utf8_valid_rate": 1.0,
+          "no_replacement_rate": 1.0,
+          "response_boundary_rate": 1.0,
+          "sequence_valid_rate": 1.0,
+          "sequence_criterion_pass_rate": 0.25,
+          "required_term_coverage": 0.0,
+          "semantic_criteria_pass_rate": 0.25,
+          "unique_generated_texts": 8,
+          "generated_text_collision_rate": 0.0,
+          "checkpoint_read_only": true,
+          "native_mode_only": true
+        },
+        "paired": {
+          "episodes": 8,
+          "teacher_forced_mean_surprise_delta": -2.083619556453023,
+          "exact_response_delta": 0.0,
+          "baseline_prompt_sensitivity_rate": 1.0,
+          "child_prompt_sensitivity_rate": 1.0,
+          "child_output_changed_after_update_rate": 1.0,
+          "checkpoint_read_only": true,
+          "native_mode_only": true,
+          "external_provider": false
+        }
+      },
+      "causal_ablation": {
+        "seed": 20260917,
+        "report_path": "E:\\Seed\\reports\\taiji_r2_h3_7_ablation_20260917_seed20260917.json",
+        "report_sha256": "f26761b1cd3eb2882bf5788b131318b94da760f6dc1df2fcadbac38ce4bdc5e2",
+        "checkpoint_digest": "40fb5e694879f68d432c8512b02c20f39344909f2dfec05912d1e857887dfa30",
+        "checkpoint_read_only": true,
+        "normal": {
+          "sequence_criterion_pass_rate": 0.25,
+          "exact_response_rate": 0.0,
+          "required_term_coverage": 0.0,
+          "generated_text_collision_rate": 0.0
+        },
+        "bridge_ablated": {
+          "sequence_criterion_pass_rate": 0.125,
+          "exact_response_rate": 0.0,
+          "required_term_coverage": 0.0,
+          "generated_text_collision_rate": 0.0
+        },
+        "slot_credit_ablated": {
+          "sequence_criterion_pass_rate": 0.0,
+          "exact_response_rate": 0.0,
+          "required_term_coverage": 0.0,
+          "generated_text_collision_rate": 0.0
+        }
+      }
+    },
+    {
+      "seed": 20260918,
+      "control": {
+        "seed": 20260918,
+        "arm": "control",
+        "report_path": "E:\\Seed\\reports\\taiji_r2_h3_7_control_dev_20260917_seed20260918.json",
+        "report_sha256": "a52ab47a40636f86435ab267d88e6d598362cda782b36cba848959aef924c0c5",
+        "checkpoint_path": "E:\\Seed\\outputs\\r2_h3_7_dev_20260917\\control_seed_20260918\\checkpoint.pt",
+        "checkpoint_sha256": "e42dbe914ff1d4055df5fd88cefd705b5107f095ff20f72a43895baa6be73626",
+        "checkpoint_digest": "6be2726c895dd328eac09cf57d9824c78ab097c9b710027f186796436798cba0",
+        "model_seed": 20260918,
+        "code_revision": "69b20eaa73e98264e16ea8f3a2125da565ec1990",
+        "dataset_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+        "target_geometry": {
+          "geometry": "signed_hash_span",
+          "encoder_digest": null,
+          "encoder_parent_checkpoint_digest": null,
+          "encoder_corpus_digest": null,
+          "train_target_map_digest": null,
+          "fit_episode_ids": []
+        },
+        "capacity": {
+          "target_active_parameters": 300000,
+          "planned_core_active_parameters": 262839,
+          "additional_predictive_readouts": 1,
+          "additional_predictive_readout_parameters": 11051,
+          "response_plan_parameters": 0,
+          "effective_active_parameters": 273890,
+          "within_target": true
+        },
+        "training": {
+          "epochs": 10,
+          "episodes": 120,
+          "global_step": 5370,
+          "response_accuracy": 0.5217442810457517,
+          "response_mean_surprise": 2.3721510692960015
+        },
+        "dev": {
+          "episodes": 8,
+          "teacher_forced_accuracy": 0.443562951496388,
+          "teacher_forced_mean_surprise": 2.749411109386778,
+          "exact_response_rate": 0.0,
+          "utf8_valid_rate": 1.0,
+          "no_replacement_rate": 1.0,
+          "response_boundary_rate": 1.0,
+          "sequence_valid_rate": 1.0,
+          "sequence_criterion_pass_rate": 0.25,
+          "required_term_coverage": 0.0,
+          "semantic_criteria_pass_rate": 0.25,
+          "unique_generated_texts": 7,
+          "generated_text_collision_rate": 0.125,
+          "checkpoint_read_only": true,
+          "native_mode_only": true
+        },
+        "paired": {
+          "episodes": 8,
+          "teacher_forced_mean_surprise_delta": -2.8719898851271726,
+          "exact_response_delta": 0.0,
+          "baseline_prompt_sensitivity_rate": 1.0,
+          "child_prompt_sensitivity_rate": 1.0,
+          "child_output_changed_after_update_rate": 1.0,
+          "checkpoint_read_only": true,
+          "native_mode_only": true,
+          "external_provider": false
+        }
+      },
+      "treatment": {
+        "seed": 20260918,
+        "arm": "treatment",
+        "report_path": "E:\\Seed\\reports\\taiji_r2_h3_7_treatment_dev_20260917_seed20260918.json",
+        "report_sha256": "20ef58dca4f145baba1dc601a05c990a792386d93f9c4259539be41acece2a31",
+        "checkpoint_path": "E:\\Seed\\outputs\\r2_h3_7_dev_20260917\\treatment_seed_20260918\\checkpoint.pt",
+        "checkpoint_sha256": "6694b417b8ac322024ac6a7bd20835117f103f1bf356b75a4d9e0e1ee11f1855",
+        "checkpoint_digest": "c31d12fc151aa4f51b58e01a877b956e6101b1125a2651de2f6026e372de9598",
+        "model_seed": 20260918,
+        "code_revision": "69b20eaa73e98264e16ea8f3a2125da565ec1990",
+        "dataset_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+        "target_geometry": {
+          "geometry": "h3_7_factorized_response_chunks",
+          "encoder_digest": "c969898b873a3e4a6d7e59ef820e79e823cd6e1cb7b86efc7620774810d587b3",
+          "encoder_parent_checkpoint_digest": "f6f55448bb14b0da55b23952cc6b221545007a40b35498e2b30db1f1acc88958",
+          "encoder_corpus_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+          "train_target_map_digest": "ceed54388f3591a1df045baebc2255724211a1e47afd9f72d566f8a51b608fc9",
+          "fit_episode_ids": [
+            "train-answer-red",
+            "train-answer-blue",
+            "train-answer-east-history",
+            "train-unknown-weather",
+            "train-unknown-price",
+            "train-unknown-owner",
+            "train-clarify-city",
+            "train-clarify-date",
+            "train-clarify-file",
+            "train-refuse-password",
+            "train-refuse-token",
+            "train-refuse-bypass"
+          ]
+        },
+        "capacity": {
+          "target_active_parameters": 300000,
+          "planned_core_active_parameters": 262839,
+          "additional_predictive_readouts": 1,
+          "additional_predictive_readout_parameters": 11051,
+          "response_plan_parameters": 4080,
+          "effective_active_parameters": 277970,
+          "within_target": true
+        },
+        "training": {
+          "epochs": 10,
+          "episodes": 120,
+          "global_step": 5370,
+          "response_accuracy": 0.4032084500466854,
+          "response_mean_surprise": 2.772210245313572
+        },
+        "dev": {
+          "episodes": 8,
+          "teacher_forced_accuracy": 0.32655282507739936,
+          "teacher_forced_mean_surprise": 3.3205824822404244,
+          "exact_response_rate": 0.0,
+          "utf8_valid_rate": 1.0,
+          "no_replacement_rate": 1.0,
+          "response_boundary_rate": 0.875,
+          "sequence_valid_rate": 0.875,
+          "sequence_criterion_pass_rate": 0.25,
+          "required_term_coverage": 0.0,
+          "semantic_criteria_pass_rate": 0.25,
+          "unique_generated_texts": 8,
+          "generated_text_collision_rate": 0.0,
+          "checkpoint_read_only": true,
+          "native_mode_only": true
+        },
+        "paired": {
+          "episodes": 8,
+          "teacher_forced_mean_surprise_delta": -2.3490973013731384,
+          "exact_response_delta": 0.0,
+          "baseline_prompt_sensitivity_rate": 1.0,
+          "child_prompt_sensitivity_rate": 1.0,
+          "child_output_changed_after_update_rate": 1.0,
+          "checkpoint_read_only": true,
+          "native_mode_only": true,
+          "external_provider": false
+        }
+      },
+      "causal_ablation": {
+        "seed": 20260918,
+        "report_path": "E:\\Seed\\reports\\taiji_r2_h3_7_ablation_20260917_seed20260918.json",
+        "report_sha256": "807a2ef98ae7af9354ae2f3d816f9643e4e7ec601afbe2f00a8f8699d3be0c40",
+        "checkpoint_digest": "c31d12fc151aa4f51b58e01a877b956e6101b1125a2651de2f6026e372de9598",
+        "checkpoint_read_only": true,
+        "normal": {
+          "sequence_criterion_pass_rate": 0.25,
+          "exact_response_rate": 0.0,
+          "required_term_coverage": 0.0,
+          "generated_text_collision_rate": 0.0
+        },
+        "bridge_ablated": {
+          "sequence_criterion_pass_rate": 0.25,
+          "exact_response_rate": 0.0,
+          "required_term_coverage": 0.0,
+          "generated_text_collision_rate": 0.25
+        },
+        "slot_credit_ablated": {
+          "sequence_criterion_pass_rate": 0.25,
+          "exact_response_rate": 0.0,
+          "required_term_coverage": 0.0,
+          "generated_text_collision_rate": 0.0
+        }
+      }
+    },
+    {
+      "seed": 20260919,
+      "control": {
+        "seed": 20260919,
+        "arm": "control",
+        "report_path": "E:\\Seed\\reports\\taiji_r2_h3_7_control_dev_20260917_seed20260919.json",
+        "report_sha256": "589e9d84a1c5fb3d326788a926146a1eb7308f448fb95afe7dd56392ffafdd8b",
+        "checkpoint_path": "E:\\Seed\\outputs\\r2_h3_7_dev_20260917\\control_seed_20260919\\checkpoint.pt",
+        "checkpoint_sha256": "f3394d01f654a4a453d3d84ff7970d5bd7089c8403d5e9a51b3f323141c92718",
+        "checkpoint_digest": "a1b23cad37fecfd8eb204a65dba1afcefbea223b48bc907798d6f0a7ebdf5a5b",
+        "model_seed": 20260919,
+        "code_revision": "3849b40dda322819c5001a4c033647f43051586f",
+        "dataset_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+        "target_geometry": {
+          "geometry": "signed_hash_span",
+          "encoder_digest": null,
+          "encoder_parent_checkpoint_digest": null,
+          "encoder_corpus_digest": null,
+          "train_target_map_digest": null,
+          "fit_episode_ids": []
+        },
+        "capacity": {
+          "target_active_parameters": 300000,
+          "planned_core_active_parameters": 262839,
+          "additional_predictive_readouts": 1,
+          "additional_predictive_readout_parameters": 11051,
+          "response_plan_parameters": 0,
+          "effective_active_parameters": 273890,
+          "within_target": true
+        },
+        "training": {
+          "epochs": 10,
+          "episodes": 120,
+          "global_step": 5370,
+          "response_accuracy": 0.5236164604730782,
+          "response_mean_surprise": 2.347570164885913
+        },
+        "dev": {
+          "episodes": 8,
+          "teacher_forced_accuracy": 0.4464734907120743,
+          "teacher_forced_mean_surprise": 2.7851229768628176,
+          "exact_response_rate": 0.0,
+          "utf8_valid_rate": 1.0,
+          "no_replacement_rate": 1.0,
+          "response_boundary_rate": 0.875,
+          "sequence_valid_rate": 0.875,
+          "sequence_criterion_pass_rate": 0.25,
+          "required_term_coverage": 0.0,
+          "semantic_criteria_pass_rate": 0.25,
+          "unique_generated_texts": 8,
+          "generated_text_collision_rate": 0.0,
+          "checkpoint_read_only": true,
+          "native_mode_only": true
+        },
+        "paired": {
+          "episodes": 8,
+          "teacher_forced_mean_surprise_delta": -2.7899181718638637,
+          "exact_response_delta": 0.0,
+          "baseline_prompt_sensitivity_rate": 1.0,
+          "child_prompt_sensitivity_rate": 1.0,
+          "child_output_changed_after_update_rate": 1.0,
+          "checkpoint_read_only": true,
+          "native_mode_only": true,
+          "external_provider": false
+        }
+      },
+      "treatment": {
+        "seed": 20260919,
+        "arm": "treatment",
+        "report_path": "E:\\Seed\\reports\\taiji_r2_h3_7_treatment_dev_20260917_seed20260919.json",
+        "report_sha256": "f5b85def4ddbd7ac2d7058d77483374f48b1f0b5d9d17d2cf9f7148dd4d46944",
+        "checkpoint_path": "E:\\Seed\\outputs\\r2_h3_7_dev_20260917\\treatment_seed_20260919\\checkpoint.pt",
+        "checkpoint_sha256": "f6f61ffd12c60ec0a32cd3b91271fac438fd1cea3e735bffe255a3c7d690bfb7",
+        "checkpoint_digest": "307374e61fdedd4f6b3da5460dab1c64d1b428fadf4270bac300737ab1295e1b",
+        "model_seed": 20260919,
+        "code_revision": "3849b40dda322819c5001a4c033647f43051586f",
+        "dataset_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+        "target_geometry": {
+          "geometry": "h3_7_factorized_response_chunks",
+          "encoder_digest": "716e7548dbb6cb69a8158c25aa0cad865cd41cf8d8b562708a56f8ab6117ef23",
+          "encoder_parent_checkpoint_digest": "3261db556045fb87244e22328e0f9c72f624288aa3ba8899ca22a29686cce21d",
+          "encoder_corpus_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+          "train_target_map_digest": "ceed54388f3591a1df045baebc2255724211a1e47afd9f72d566f8a51b608fc9",
+          "fit_episode_ids": [
+            "train-answer-red",
+            "train-answer-blue",
+            "train-answer-east-history",
+            "train-unknown-weather",
+            "train-unknown-price",
+            "train-unknown-owner",
+            "train-clarify-city",
+            "train-clarify-date",
+            "train-clarify-file",
+            "train-refuse-password",
+            "train-refuse-token",
+            "train-refuse-bypass"
+          ]
+        },
+        "capacity": {
+          "target_active_parameters": 300000,
+          "planned_core_active_parameters": 262839,
+          "additional_predictive_readouts": 1,
+          "additional_predictive_readout_parameters": 11051,
+          "response_plan_parameters": 4080,
+          "effective_active_parameters": 277970,
+          "within_target": true
+        },
+        "training": {
+          "epochs": 10,
+          "episodes": 120,
+          "global_step": 5370,
+          "response_accuracy": 0.4204943783068783,
+          "response_mean_surprise": 2.7868607298732138
+        },
+        "dev": {
+          "episodes": 8,
+          "teacher_forced_accuracy": 0.29821336429308565,
+          "teacher_forced_mean_surprise": 3.5104504635511184,
+          "exact_response_rate": 0.0,
+          "utf8_valid_rate": 1.0,
+          "no_replacement_rate": 1.0,
+          "response_boundary_rate": 0.875,
+          "sequence_valid_rate": 0.875,
+          "sequence_criterion_pass_rate": 0.25,
+          "required_term_coverage": 0.0,
+          "semantic_criteria_pass_rate": 0.25,
+          "unique_generated_texts": 8,
+          "generated_text_collision_rate": 0.0,
+          "checkpoint_read_only": true,
+          "native_mode_only": true
+        },
+        "paired": {
+          "episodes": 8,
+          "teacher_forced_mean_surprise_delta": -2.126574432959208,
+          "exact_response_delta": 0.0,
+          "baseline_prompt_sensitivity_rate": 1.0,
+          "child_prompt_sensitivity_rate": 1.0,
+          "child_output_changed_after_update_rate": 1.0,
+          "checkpoint_read_only": true,
+          "native_mode_only": true,
+          "external_provider": false
+        }
+      },
+      "causal_ablation": {
+        "seed": 20260919,
+        "report_path": "E:\\Seed\\reports\\taiji_r2_h3_7_ablation_20260917_seed20260919.json",
+        "report_sha256": "b2315c4d7653821644592b93e1b7ebfc06319e6db431769e75c0b2b44f34a64a",
+        "checkpoint_digest": "307374e61fdedd4f6b3da5460dab1c64d1b428fadf4270bac300737ab1295e1b",
+        "checkpoint_read_only": true,
+        "normal": {
+          "sequence_criterion_pass_rate": 0.25,
+          "exact_response_rate": 0.0,
+          "required_term_coverage": 0.0,
+          "generated_text_collision_rate": 0.0
+        },
+        "bridge_ablated": {
+          "sequence_criterion_pass_rate": 0.25,
+          "exact_response_rate": 0.0,
+          "required_term_coverage": 0.0,
+          "generated_text_collision_rate": 0.25
+        },
+        "slot_credit_ablated": {
+          "sequence_criterion_pass_rate": 0.25,
+          "exact_response_rate": 0.0,
+          "required_term_coverage": 0.0,
+          "generated_text_collision_rate": 0.125
+        }
+      }
+    }
+  ],
+  "aggregate": {
+    "control_dev_sequence_rate_by_seed": [
+      0.25,
+      0.25,
+      0.25
+    ],
+    "treatment_dev_sequence_rate_by_seed": [
+      0.25,
+      0.25,
+      0.25
+    ],
+    "treatment_minus_control_dev_sequence_rate_by_seed": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "control_dev_required_term_coverage_by_seed": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "treatment_dev_required_term_coverage_by_seed": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "treatment_minus_control_dev_required_term_coverage_by_seed": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "control_dev_exact_rate_by_seed": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "treatment_dev_exact_rate_by_seed": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "treatment_minus_control_dev_exact_rate_by_seed": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "control_dev_utf8_rate_by_seed": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "treatment_dev_utf8_rate_by_seed": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "control_dev_boundary_rate_by_seed": [
+      1.0,
+      1.0,
+      0.875
+    ],
+    "treatment_dev_boundary_rate_by_seed": [
+      1.0,
+      0.875,
+      0.875
+    ],
+    "control_paired_sensitivity_by_seed": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "treatment_paired_sensitivity_by_seed": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "bridge_normal_sequence_rate_by_seed": [
+      0.25,
+      0.25,
+      0.25
+    ],
+    "bridge_ablated_sequence_rate_by_seed": [
+      0.125,
+      0.25,
+      0.25
+    ],
+    "slot_credit_ablated_sequence_rate_by_seed": [
+      0.0,
+      0.25,
+      0.25
+    ],
+    "bridge_normal_required_term_coverage_by_seed": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "bridge_ablated_required_term_coverage_by_seed": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "slot_credit_ablated_required_term_coverage_by_seed": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "mean_control_dev_sequence_rate": 0.25,
+    "mean_treatment_dev_sequence_rate": 0.25,
+    "mean_treatment_minus_control_dev_sequence_rate": 0.0,
+    "mean_treatment_minus_control_dev_required_term_coverage": 0.0
+  },
+  "gates": {
+    "all_runs_completed": true,
+    "all_runs_within_budget": true,
+    "all_preflights_passed": true,
+    "all_final_reads_deferred": true,
+    "all_ablations_read_only": true,
+    "native_only": true,
+    "runtime_oracle_detected": false,
+    "protected_parent_failures": false,
+    "target_lineage_failures": false,
+    "sequence_direction_consistent": false,
+    "required_term_direction_consistent": false,
+    "non_proxy_content_direction_consistent": false,
+    "utf8_and_boundary_not_degraded": false,
+    "paired_sensitivity_not_degraded": true,
+    "bridge_ablation_removes_core_gain": false,
+    "slot_credit_ablation_removes_core_gain": false
+  },
+  "decision": {
+    "development_gate_passed": false,
+    "stop_reason": [
+      "no_three_seed_non_proxy_content_direction",
+      "utf8_or_boundary_degraded",
+      "bridge_ablation_does_not_remove_core_gain",
+      "slot_credit_ablation_does_not_remove_core_gain"
+    ],
+    "no_more_epochs": true,
+    "do_not_read_final": true,
+    "final_access_allowed": false,
+    "next": "H3.7 negative or incomplete development result; do not read final or add epochs; return to the frozen attribution order"
+  }
+}
