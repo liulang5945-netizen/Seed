@@ -1,0 +1,208 @@
+{
+  "format": "taiji-r2-aligned-language-run-v2",
+  "status": "preflight_passed",
+  "training_performed": false,
+  "pre_registration": "plans/reference/M5_R2_H3_7_FACTORIZED_RESPONSE_WORKSPACE_CONTRACT_20260917.md",
+  "model_seed": 20260917,
+  "code_revision": "adfc79ea62d99d5b345bd84291610d78df99b9e7",
+  "dataset": {
+    "format": "taiji-native-language-alignment-v2",
+    "version": 2,
+    "serialization": "r2-conditional-response-v2",
+    "digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+    "source_files": [
+      [
+        "tests\\fixtures\\r2_h3_5a_response_plan_v3.jsonl",
+        "dafd4990317a702bee2d970f12afe8588abb3ba4023b3c7424ae983bd37755c2"
+      ]
+    ],
+    "sample_counts": {
+      "train": 12,
+      "dev": 8,
+      "final": 4,
+      "retention": 0
+    },
+    "episode_ids": [
+      "train-answer-red",
+      "train-answer-blue",
+      "train-answer-east-history",
+      "train-unknown-weather",
+      "train-unknown-price",
+      "train-unknown-owner",
+      "train-clarify-city",
+      "train-clarify-date",
+      "train-clarify-file",
+      "train-refuse-password",
+      "train-refuse-token",
+      "train-refuse-bypass",
+      "dev-answer-green",
+      "dev-answer-north-permuted",
+      "dev-unknown-duration",
+      "dev-unknown-cause",
+      "dev-clarify-language",
+      "dev-clarify-range",
+      "dev-refuse-private",
+      "dev-refuse-malware",
+      "final-answer-silver",
+      "final-unknown-location",
+      "final-clarify-format",
+      "final-refuse-credential"
+    ]
+  },
+  "config": {
+    "response_repeats": 1,
+    "max_generation_bytes": 512,
+    "constrained_decode": true,
+    "use_memory": false,
+    "learn_fabric": true,
+    "learn_predictive_context": true,
+    "learn_predictive_readout": true,
+    "response_start_readout": false,
+    "response_phase_readout": true,
+    "response_plan_readout": false,
+    "response_plan_width": 32,
+    "response_plan_variant": "single",
+    "response_plan_slots": 4,
+    "response_plan_phase_stride": 16,
+    "response_plan_bridge_learning_rate_scale": 1.0,
+    "response_plan_slot_credit_scale": 0.25,
+    "response_plan_target_geometry": "signed_hash_span",
+    "developmental_mode": "static",
+    "developmental_replay_learning_rate_scale": 0.25,
+    "developmental_consolidation_rate": 1.0,
+    "developmental_clear_fast": true,
+    "developmental_clear_replay": true
+  },
+  "response_plan_target": {
+    "geometry": "signed_hash_span",
+    "encoder_digest": null,
+    "encoder_parent_checkpoint_digest": null,
+    "encoder_corpus_digest": null,
+    "train_target_map_digest": null,
+    "fit_episode_ids": []
+  },
+  "capacity": {
+    "target_active_parameters": 300000,
+    "effective_active_parameters": 273890,
+    "within_target": true
+  },
+  "zero_step_trainer_checkpoint_digest": "ccb7ca35d30809f9d829fa5b4ba2b74b8ce5c72418aaa4e31bb312648429dc9c",
+  "preflight": {
+    "format": "taiji-native-language-alignment-v2",
+    "status": "passed",
+    "parent_checkpoint_digest": "ccb7ca35d30809f9d829fa5b4ba2b74b8ce5c72418aaa4e31bb312648429dc9c",
+    "zero_step_roundtrip": true,
+    "child_checkpoint_digest": "4c7146ecd8f8f62404e4590e505a07b39c444a082133bbd89398342fcd883916",
+    "one_response_update": {
+      "status": "completed",
+      "epochs": 1,
+      "episodes": 1,
+      "global_step": 45,
+      "response_accuracy": 0.0,
+      "response_mean_surprise": 5.55270727888331,
+      "records": [
+        {
+          "epoch": 0,
+          "episode_id": "train-answer-red",
+          "family_id": "train-answer-red",
+          "target_bytes": 45,
+          "prefix_bytes": 181,
+          "observations": 45,
+          "response_accuracy": 0.0,
+          "response_mean_surprise": 5.55270727888331
+        }
+      ],
+      "developmental_mode": "static",
+      "developmental_history": [
+        {
+          "epoch": 0,
+          "replay": null,
+          "status": {
+            "mode": "static",
+            "enabled": false,
+            "learning_mode": "static",
+            "replay_count": 0,
+            "bundle_digest": null
+          }
+        }
+      ]
+    },
+    "zero_output": {
+      "episode_id": "train-answer-red",
+      "split": "train",
+      "task_family": "grounded_answer",
+      "reference_response": "依据上下文，答案是红色。",
+      "unknown_policy": "answer",
+      "unknown_markers": [],
+      "response_start_readout": false,
+      "response_start_readout_digest": null,
+      "response_phase_readout": true,
+      "response_phase_readout_digest": "c40a35b6eca62a4136f1f48c6580616db1bea67f614ac5fc8df04114e4d4f075",
+      "teacher_forced_accuracy": 0.0,
+      "teacher_forced_mean_surprise": 5.568649771163363,
+      "generated_text": "ןooooooooooS䢾2յ).х씨8)ߋ\u0012\u0015t\u0000i\u001e_*\u001bO\b$ݺe_*׵).љ\u000b<iVy݄V \u0017;Q*i\n\u001b׷ѧ\u0007+p)׵).ё\u0004\u0011;Q*i\n׷\b$l)2ը22222222222222222222222222222222\u0019F巧\u0007+V\u0014O\u0003fc!݄Vy׵)˂2c!ݨ8\u001b߬㛫\b$?|-\u0007+\u0014\u0014OO\u0002oooooooooS䢾鞢̵)j\u001fopwi\t\fOO\u0002oooooooooo񕺺e\u0019J\u0001y׵).r`\u0001G2ȟW\u001bښ\u0012˼\u001c\u001cB&g݄Ӫ&gcFa-Fϱ\u001f;;Qpᄓp׸-⛯\u001fQpi\t\f\u001bOO\u0002oU?\u0007+Vg\u0007cFFKd\u00172\u001bƹOOܵ).r`6_e\u000b\u001b\u0012˩\u000eޛJ\u001cB&gѯȷHWsQQpᄓpᄪ\u001bOM\b$$ݨ;Q@.U;;Q\n׵)TN+<i;6\n\u001b׵)ToooooooooooS䢾2յ)i\t􃨂ʓp(ᄃƨ8j\u0007+cFFaJ⛟6_כF\b$P \u0011YccFFa-К\u0012_ߵ)ToooooooooorԒe_`¦\u00123\u001b񕅶\u0017Q*2222222222222222222222222222222",
+      "generated_bytes_hex": "d79f6f6f6f6f6f6f6f6f6f6f53e4a2be32d5b5292ed185ec94a83829df8b12157400691e5f2a1b4f0824ddba655f2ad7b5292ed1990b3c695679dd845620173b512a690a1bd7b7d1a7072b7029d7b5292ed19104113b512a690ad7b708246c2932d5a832323232323232323232323232323232323232323232323232323232323232321946e5b7a7072b56144f03666321dd845679d7b529cb82326321dda8381bdface39bab08243f7c2d072b14144f4f026f6f6f6f6f6f6f6f6f53e4a2bee99ea2ccb5296a1f6f707769090c4f4f026f6f6f6f6f6f6f6f6f6ff195baba65194a0179d7b5292e7260014732c89f571bda9a12cbbc1c1c422667dd84d3aa26676346612d46cfb11f3b3b5170e1849370d7b82de29baf1f517069090c1b4f4f026f553f072b5667076346464b6417321bc6b94f4fdcb5292e7260365f650b1b12cba90ede9b4a1c422667d1afc8b7485773515170e1849370e184aa1b4f4d082424dda83b51c282402e553b3b510ad7b529544e2b3c693b360a1bd7b529546f6f6f6f6f6f6f6f6f6f6f53e4a2be32d5b5296909f483a882ca937028e18483c6a8386a072b634646614ae29b9f365fd79b4608245020115963634646612dd09a125fdfb529546f6f6f6f6f6f6f6f6f6f72d492655f60c2a612331bf19585b617512a32323232323232323232323232323232323232323232323232323232323232",
+      "generated_bytes_length": 512,
+      "utf8_valid": true,
+      "no_replacement": true,
+      "exact_response": false,
+      "native_mode": true,
+      "external_provider": false,
+      "sequence_evaluation": "r2-sequence-criteria-v1",
+      "response_boundary_present": false,
+      "generation_stop_reason": "max_generation_bytes",
+      "sequence_valid": false,
+      "required_terms": [
+        "红色"
+      ],
+      "required_terms_hit": [],
+      "required_term_coverage": 0.0,
+      "forbidden_terms": [],
+      "forbidden_terms_hit": [],
+      "unknown_policy_satisfied": true,
+      "semantic_criteria_evaluated": true,
+      "semantic_criteria_pass": false,
+      "sequence_criterion_pass": false
+    },
+    "child_output": {
+      "episode_id": "train-answer-red",
+      "split": "train",
+      "task_family": "grounded_answer",
+      "reference_response": "依据上下文，答案是红色。",
+      "unknown_policy": "answer",
+      "unknown_markers": [],
+      "response_start_readout": false,
+      "response_start_readout_digest": null,
+      "response_phase_readout": true,
+      "response_phase_readout_digest": "c28742f1a86de01134f62d2b8639756350dc2305a693f41cebecffa1ed2a399f",
+      "teacher_forced_accuracy": 0.044444444444444446,
+      "teacher_forced_mean_surprise": 5.1759079317062,
+      "generated_text": "׸cFFKQ#pacF\nכF啜-\u0007+\u0018c\u001bd\u0006F\u0007+\u0014c\u001aaS\u0003\u0007cS䢵)եQ檪e\u001722222222222222222222222222222222222222222222ߋ段).T\u00005\u0003V Hllllll\u001e--\u0007+ℋ檪d򳋿+󋿳--\u0007+S\u0003\u000eեUd\u0006F˷ѧ\u0007+p݄Oܵ).ѽᾝ2`\u001bd>׸)u\u001bd\u0006F巧:\u001bOM\b$݇\u001c\u001cB&g\u0001 \u0011Yc\u001bS\u0003䢢BB㷂\\_e6_*רd\u0006FJ􃶢T&g\u0007+℄b3\u001bcFFa--\u0007+₱\u001f;22˩\u000e\u000e޺ooooooooooS䢾酈\\Vy݄Vy׵).rg\u0007+蘟\u0003\u0004*\u001b׋;KH{_e˩\u000e޺_e_*d>׸c\nףcFKd\u001722˚\u0012\u0003i:\u001bO\u0002U\u000b\u001b\u001bѧ\u001b\u001by׸cBCfc˼\u001cʯ݄\u001b\t\nOM\b$ݺe_e_ߏțȷLᘟ➢;Qi\n׊vFC椺ooooooo6_eS\u0003\u000e޺К\u0012\u0007+腦22˷ф㚚N\u0006\u0007+迱i\n׵)˂􃟯FK\u0017d>׳򳋳򳋿-\u0007+ℋ;Q\nף\u0017;Qoooooooooo6_ee_*",
+      "generated_bytes_hex": "d7b86346464b51237061eeb8b863460ad79b46e5959c2d072b18631b640646072b14631a615303076353e4a2b529d5a551e6aaaa65173232323232323232323232323232323232323232323232323232323232323232323232323232323232323232df8be6aeb5292e540035035620486c6c6c6c6c6c1e2d2d072be2848be6aaaa64f2b38bbf2bf38bbfb32d2d072b53030ed5a555640646cbb7d1a7072b70dd844fdcb5292ed1bde1be9d32601b643ed7b829751b640646e5b7a73a1b4f4d0824dd871c1c42266701201159631b5303e4a2a2eeb8b842eeb8b842eeb8ace3b7825c5f65365f2ad7a86406464af483b6a2eeb8af542667072be2848462331b634646612d2d072be282b11f3b3232cba90e0edeba6f6f6f6f6f6f6f6f6f6f53e4a2bee985885c5679dd845679d7b5292e7267072be8989f03042a1bd78b3b4b487b5f65cba90edeba5f655f2a643ed7b8630ad7a363464b64173232cb9a1203693a1b4f02550b1b1bd1a71b1b79d7b86342436663cbbc1ccaafdd841b090a4f4d0824ddba655f655fdf8fc89bc8b74ce1989fe29ea23b51690ad78a764643e6a4ba6f6f6f6f6f6f6f365f6553030edebad09a12072be885a63232cbb7d184e39a9a4e06072be8bfb1690ad7b529cb82f4839faf464b17643ed7b3f2b38bb3f2b38bbf2d072be2848b3b510ad7a3173b516f6f6f6f6f6f6f6f6f6f365f65655f2a",
+      "generated_bytes_length": 512,
+      "utf8_valid": true,
+      "no_replacement": true,
+      "exact_response": false,
+      "native_mode": true,
+      "external_provider": false,
+      "sequence_evaluation": "r2-sequence-criteria-v1",
+      "response_boundary_present": false,
+      "generation_stop_reason": "max_generation_bytes",
+      "sequence_valid": false,
+      "required_terms": [
+        "红色"
+      ],
+      "required_terms_hit": [],
+      "required_term_coverage": 0.0,
+      "forbidden_terms": [],
+      "forbidden_terms_hit": [],
+      "unknown_policy_satisfied": true,
+      "semantic_criteria_evaluated": true,
+      "semantic_criteria_pass": false,
+      "sequence_criterion_pass": false
+    },
+    "caller_model_unchanged": true,
+    "atomic_save": true
+  },
+  "checkpoint": null
+}

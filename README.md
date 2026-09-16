@@ -202,13 +202,14 @@ not yet produced an L2 conversational model; the work below is the path toward o
 | R2-H3.6-A | Versioned train-only target encoder, trainer integration and save/restore smoke passed on the 12/8/4 fixture; no capability training was performed |
 | H3.6-B preflight | Control and treatment zero-step preflights passed at 276,610≤300,000 with parent/restore/target-lineage checks; `training_performed=false` |
 | H3.6-B result | Six matched dev runs and three read-only bridge ablations completed; seed direction and non-proxy sequence gates failed, so final was not read and no more epochs are allowed |
-| R2-H3.7 contract | Frozen 4-slot/48-wide/16-byte-phase factorized response workspace; byte error will update the bridge and current-slot credit, pending isolated implementation and preflight |
+| R2-H3.7 contract | Frozen 4-slot/48-wide/16-byte-phase factorized response workspace; byte error updates the bridge and current-slot credit |
+| R2-H3.7 preflight | Control (273,890) and treatment (277,970) both passed committed-code preflight; `training_performed=false`, three-seed dev is now authorized |
 
 The authoritative execution order is the [current plan](plans/active/roadmap/03_CURRENT_EXECUTION.md),
 with the H3.6 target contract in [M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md](plans/reference/M5_R2_H3_6_PLAN_TARGET_GEOMETRY_CONTRACT_20260916.md),
 the matched-run preregistration in [M5_R2_H3_6B_MATCHED_RUN_PREREGISTRATION_20260916.md](plans/reference/M5_R2_H3_6B_MATCHED_RUN_PREREGISTRATION_20260916.md),
 the latest plumbing evidence in [taiji_r2_h3_6_target_encoder_smoke_20260916.json](reports/taiji_r2_h3_6_target_encoder_smoke_20260916.json),
-and the zero-step control/treatment evidence in [taiji_r2_h3_6b_control_preflight_20260916.json](reports/taiji_r2_h3_6b_control_preflight_20260916.json) and [taiji_r2_h3_6b_treatment_preflight_20260916.json](reports/taiji_r2_h3_6b_treatment_preflight_20260916.json). The H3.7 execution contract is [M5_R2_H3_7_FACTORIZED_RESPONSE_WORKSPACE_CONTRACT_20260917.md](plans/reference/M5_R2_H3_7_FACTORIZED_RESPONSE_WORKSPACE_CONTRACT_20260917.md).
+and the zero-step control/treatment evidence in [taiji_r2_h3_6b_control_preflight_20260916.json](reports/taiji_r2_h3_6b_control_preflight_20260916.json) and [taiji_r2_h3_6b_treatment_preflight_20260916.json](reports/taiji_r2_h3_6b_treatment_preflight_20260916.json). The H3.7 execution contract is [M5_R2_H3_7_FACTORIZED_RESPONSE_WORKSPACE_CONTRACT_20260917.md](plans/reference/M5_R2_H3_7_FACTORIZED_RESPONSE_WORKSPACE_CONTRACT_20260917.md), with committed-code preflight evidence in [taiji_r2_h3_7_control_preflight_20260917.json](reports/taiji_r2_h3_7_control_preflight_20260917.json) and [taiji_r2_h3_7_treatment_preflight_20260917.json](reports/taiji_r2_h3_7_treatment_preflight_20260917.json).
 
 The M5 K-axis scorecard remains valid as a parallel, limited mechanism result; it is not the
 current R2 language mainline and does not imply a default-runtime promotion.
@@ -222,7 +223,7 @@ current R2 language mainline and does not imply a default-runtime promotion.
   but no S2/L2 conversational capability has been established. `promotion_gate=false`,
   `can_promote=false`, and `growth_admitted=false` remain the honest K-axis boundary; no
   default-runtime owner or product rollout is implied.
-- Next planned action: implement the frozen H3.7 factorized response workspace and run its checkpoint preflight; only after plan-target, phase-reset, bridge/slot-credit, parent-protection and 300k-budget gates pass may the authorized three-seed dev run begin. H3.6-B final remains unread; no same-target epochs or Mini acceptance are authorized by this result.
+- Next planned action: run the authorized H3.7 three-seed matched dev (control/treatment, 10 epochs, at most 120 episodes per arm, final deferred), then execute the frozen read-only bridge/slot-credit ablations. H3.6-B final remains unread; no same-target epochs or Mini acceptance are authorized by this result.
 - Honest boundary: this is a learning-mechanism research prototype, **not** a completed
   cognitive architecture, not yet a general-purpose language model, and not a claim about AGI.
   The current R2 work explicitly treats unreadable or non-transferring responses as failures to

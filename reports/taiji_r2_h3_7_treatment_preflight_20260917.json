@@ -1,0 +1,233 @@
+{
+  "format": "taiji-r2-aligned-language-run-v2",
+  "status": "preflight_passed",
+  "training_performed": false,
+  "pre_registration": "plans/reference/M5_R2_H3_7_FACTORIZED_RESPONSE_WORKSPACE_CONTRACT_20260917.md",
+  "model_seed": 20260917,
+  "code_revision": "adfc79ea62d99d5b345bd84291610d78df99b9e7",
+  "dataset": {
+    "format": "taiji-native-language-alignment-v2",
+    "version": 2,
+    "serialization": "r2-conditional-response-v2",
+    "digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+    "source_files": [
+      [
+        "tests\\fixtures\\r2_h3_5a_response_plan_v3.jsonl",
+        "dafd4990317a702bee2d970f12afe8588abb3ba4023b3c7424ae983bd37755c2"
+      ]
+    ],
+    "sample_counts": {
+      "train": 12,
+      "dev": 8,
+      "final": 4,
+      "retention": 0
+    },
+    "episode_ids": [
+      "train-answer-red",
+      "train-answer-blue",
+      "train-answer-east-history",
+      "train-unknown-weather",
+      "train-unknown-price",
+      "train-unknown-owner",
+      "train-clarify-city",
+      "train-clarify-date",
+      "train-clarify-file",
+      "train-refuse-password",
+      "train-refuse-token",
+      "train-refuse-bypass",
+      "dev-answer-green",
+      "dev-answer-north-permuted",
+      "dev-unknown-duration",
+      "dev-unknown-cause",
+      "dev-clarify-language",
+      "dev-clarify-range",
+      "dev-refuse-private",
+      "dev-refuse-malware",
+      "final-answer-silver",
+      "final-unknown-location",
+      "final-clarify-format",
+      "final-refuse-credential"
+    ]
+  },
+  "config": {
+    "response_repeats": 1,
+    "max_generation_bytes": 512,
+    "constrained_decode": true,
+    "use_memory": false,
+    "learn_fabric": true,
+    "learn_predictive_context": true,
+    "learn_predictive_readout": true,
+    "response_start_readout": false,
+    "response_phase_readout": false,
+    "response_plan_readout": true,
+    "response_plan_width": 48,
+    "response_plan_variant": "factorized_v1",
+    "response_plan_slots": 4,
+    "response_plan_phase_stride": 16,
+    "response_plan_bridge_learning_rate_scale": 1.0,
+    "response_plan_slot_credit_scale": 0.25,
+    "response_plan_target_geometry": "h3_7_factorized_response_chunks",
+    "developmental_mode": "static",
+    "developmental_replay_learning_rate_scale": 0.25,
+    "developmental_consolidation_rate": 1.0,
+    "developmental_clear_fast": true,
+    "developmental_clear_replay": true
+  },
+  "response_plan_target": {
+    "geometry": "h3_7_factorized_response_chunks",
+    "encoder_digest": "06b8f826034cafcfe38d9a3fa4d972bf6943d4f823854d5245519a9afe4989f3",
+    "encoder_parent_checkpoint_digest": "c4359e528f897e2559067d513d4718f8ff38e0baeb6fba2c4ae8e5892d1a93d7",
+    "encoder_corpus_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
+    "train_target_map_digest": "ceed54388f3591a1df045baebc2255724211a1e47afd9f72d566f8a51b608fc9",
+    "fit_episode_ids": [
+      "train-answer-red",
+      "train-answer-blue",
+      "train-answer-east-history",
+      "train-unknown-weather",
+      "train-unknown-price",
+      "train-unknown-owner",
+      "train-clarify-city",
+      "train-clarify-date",
+      "train-clarify-file",
+      "train-refuse-password",
+      "train-refuse-token",
+      "train-refuse-bypass"
+    ]
+  },
+  "capacity": {
+    "target_active_parameters": 300000,
+    "effective_active_parameters": 277970,
+    "within_target": true
+  },
+  "zero_step_trainer_checkpoint_digest": "04de46ab21684eb565e6d20c383ead1e95a67c190cc736cb99674dfafddd297b",
+  "preflight": {
+    "format": "taiji-native-language-alignment-v2",
+    "status": "passed",
+    "parent_checkpoint_digest": "04de46ab21684eb565e6d20c383ead1e95a67c190cc736cb99674dfafddd297b",
+    "zero_step_roundtrip": true,
+    "child_checkpoint_digest": "8301d365e5194e685c1d50f7cf4e4d00386971c771ccab5e9b7f338a23ba0e50",
+    "one_response_update": {
+      "status": "completed",
+      "epochs": 1,
+      "episodes": 1,
+      "global_step": 45,
+      "response_accuracy": 0.0,
+      "response_mean_surprise": 5.526052653354828,
+      "records": [
+        {
+          "epoch": 0,
+          "episode_id": "train-answer-red",
+          "family_id": "train-answer-red",
+          "target_bytes": 45,
+          "prefix_bytes": 181,
+          "observations": 45,
+          "response_accuracy": 0.0,
+          "response_mean_surprise": 5.526052653354828
+        }
+      ],
+      "developmental_mode": "static",
+      "developmental_history": [
+        {
+          "epoch": 0,
+          "replay": null,
+          "status": {
+            "mode": "static",
+            "enabled": false,
+            "learning_mode": "static",
+            "replay_count": 0,
+            "bundle_digest": null
+          }
+        }
+      ]
+    },
+    "zero_output": {
+      "episode_id": "train-answer-red",
+      "split": "train",
+      "task_family": "grounded_answer",
+      "reference_response": "依据上下文，答案是红色。",
+      "unknown_policy": "answer",
+      "unknown_markers": [],
+      "response_start_readout": false,
+      "response_start_readout_digest": null,
+      "response_phase_readout": false,
+      "response_phase_readout_digest": null,
+      "teacher_forced_accuracy": 0.0,
+      "teacher_forced_mean_surprise": 5.601900642643427,
+      "generated_text": "כ<<<țțț<<6Աi\u0007i\t\t\t)ccccccc˯˯˷yů跒ӯ诵222222222222222222222222222222222222222222222222\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e2V\u0017\u001e\u001e2\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e2)H22\u001e2222\u001e2\u001e2222\u001e222\u001e222\u001e222V\u0017222\u001e2\u001e2\u001e\u001e222ƈV\u001722񯯯222222222222222\n2222222222222222FK\u001e2ƹ22222222222222222222\u001e2\u001e\u001e\u001e\u001e\u001e巷\\\u0019\n巷\\\u001e\n2\u001e2\u001e\n22V\u001722ƯVᯯ222)H222222222222222228\u001e\u001e巷2H22222222222222222\u001e\n22V\u0017222\u001e\n\u001e\u001e\u001e\n\u001e\n\u001e\u001e\n\u001e\u001e\n\u001e\u001e\n\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e_p\u001e2׸\u001e222񵵆t2222222222222222222222222222\u001e2\u001e2\u001e2\u001e\u001e\u001e\n22V\u0017222\u001e\u001eƹ22)H2222222222222222FK\u001e2ƹ2222222222222222222FK\u001e\u001e\n2",
+      "generated_bytes_hex": "d79b3c3c3cc89bc89bc89b3c3cc29f36d4b16907690909092963636363636363cbafcbafcbb779c5afe8b792d3afe8afb53232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232321e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e3256171e1e321e1e1e1e1e1e1e1e1e32294832321e323232321e321e323232321e3232321e3232321e32323256173232321e321e321e1e323232c68856173232f1afafaf3232323232323232323232323232320a32323232323232323232323232323232464b1e32c6b932323232323232323232323232323232323232321e321e1e1e1e1ee5b7b75c190ae5b7b75c1e0a321e321e0a323256173232c6af56e1afaf32323229483232323232323232323232323232323232381e1ee5b7b7324832323232323232323232323232323232321e0a323256173232321e0a1e1e1e0a1e0a1e1e0a1e1e0a1e1e0a1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e5f701e32d7b81e323232f1b5b58674323232323232323232323232323232323232323232323232323232321e321e321e321e1e1e0a323256173232321e1ec6b93232294832323232323232323232323232323232464b1e32c6b932323232323232323232323232323232323232464b1e1e0a32",
+      "generated_bytes_length": 512,
+      "utf8_valid": true,
+      "no_replacement": true,
+      "exact_response": false,
+      "native_mode": true,
+      "external_provider": false,
+      "sequence_evaluation": "r2-sequence-criteria-v1",
+      "response_boundary_present": false,
+      "generation_stop_reason": "max_generation_bytes",
+      "sequence_valid": false,
+      "required_terms": [
+        "红色"
+      ],
+      "required_terms_hit": [],
+      "required_term_coverage": 0.0,
+      "forbidden_terms": [],
+      "forbidden_terms_hit": [],
+      "unknown_policy_satisfied": true,
+      "semantic_criteria_evaluated": true,
+      "semantic_criteria_pass": false,
+      "sequence_criterion_pass": false
+    },
+    "child_output": {
+      "episode_id": "train-answer-red",
+      "split": "train",
+      "task_family": "grounded_answer",
+      "reference_response": "依据上下文，答案是红色。",
+      "unknown_policy": "answer",
+      "unknown_markers": [],
+      "response_start_readout": false,
+      "response_start_readout_digest": null,
+      "response_phase_readout": false,
+      "response_phase_readout_digest": null,
+      "teacher_forced_accuracy": 0.06666666666666667,
+      "teacher_forced_mean_surprise": 5.0770644570558385,
+      "generated_text": "MM橩M橩TMשM橢浵ccccccccccccBB\n|Я|n˯nB||Я2222222222222222222222222222222222222\n222222222\n\u001e\n\u001e\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n2\u001722ڷԷԡ\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\u001e\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\u001e\n\n\n\n\n\n\n\n\n\n\n\n\n\u001e\n\n\n\n\n\n\n\u001e\n\n\n\n\n\n\nƯ222222222222222222222\n\n\u001e\n\n\u001e\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\u001e\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\u001e\n\n\n\n\n\n\n\n\n\n\n\n\u001e\n\n\n\n\n\n\n\n\u001e\n\n\n\n\n\n\u001e\n\n\n\n\n\n\n\nƹ222222222222222\n\n\n2\n\n22\n2\n\n\u001e\n\n\n\n\n\n\n\n\n\n\n\nH2222222222222222\n2\n\n2\n\n2",
+      "generated_bytes_hex": "4d4de6a9a94de6a9a9544dd7a94de6a9a2e6b5b563636363636363636363636342420a7cd0af7c6ecbaf6e427c7cd0af323232323232323232323232323232323232323232323232323232323232323232323232320a3232323232323232320a1e0a1e0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a32173232dab7d4b7d4a10a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a1e0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a1e0a0a0a0a0a0a0a0a0a0a0a0a0a1e0a0a0a0a0a0a0a1e0a0a0a0a0a0a0ac6af3232323232323232323232323232323232323232320a0a1e0a0a1e0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a1e0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a1e0a0a0a0a0a0a0a0a0a0a0a0a1e0a0a0a0a0a0a0a0a1e0a0a0a0a0a0a1e0a0a0a0a0a0a0a0ac6b93232323232323232323232323232320a0a0a320a0a32320a320a0a1e0a0a0a0a0a0a0a0a0a0a0a0a48323232323232323232323232323232320a320a0a320a0a320a0a1e0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a1e0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a1e0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a1e0a0a0a0a0a0a0a0a0a0a0a0a0a",
+      "generated_bytes_length": 512,
+      "utf8_valid": true,
+      "no_replacement": true,
+      "exact_response": false,
+      "native_mode": true,
+      "external_provider": false,
+      "sequence_evaluation": "r2-sequence-criteria-v1",
+      "response_boundary_present": false,
+      "generation_stop_reason": "max_generation_bytes",
+      "sequence_valid": false,
+      "required_terms": [
+        "红色"
+      ],
+      "required_terms_hit": [],
+      "required_term_coverage": 0.0,
+      "forbidden_terms": [],
+      "forbidden_terms_hit": [],
+      "unknown_policy_satisfied": true,
+      "semantic_criteria_evaluated": true,
+      "semantic_criteria_pass": false,
+      "sequence_criterion_pass": false
+    },
+    "caller_model_unchanged": true,
+    "atomic_save": true,
+    "factorized_response_plan": {
+      "format": "taiji-r2-h3-7-factorized-preflight-v1",
+      "status": "passed",
+      "episode_id": "train-answer-red",
+      "plan_target_candidate_changed": true,
+      "bridge_changed_after_byte_update": true,
+      "slot_planner_changed_after_byte_update": true,
+      "phase_after_advance": 0,
+      "reset_cleared_plan": true,
+      "protected_readout_unchanged": true,
+      "caller_restore_verified_in_finally": true
+    }
+  },
+  "checkpoint": null
+}

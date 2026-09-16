@@ -1,6 +1,6 @@
 {
   "format": "taiji-r2-h3-7-factorized-response-workspace-v1",
-  "status": "frozen_before_implementation",
+  "status": "implementation_preflight_passed_waiting_matched_dev",
   "dataset": "tests/fixtures/r2_h3_5a_response_plan_v3.jsonl",
   "dataset_digest": "0bc5b5540d4b622f907942f42d7b809e825932e50c6e6c505a3cd091edabd691",
   "parameter_budget": 300000,
