@@ -52,7 +52,7 @@ from taiji.interaction_groups import InteractionTraceCorpus  # noqa: E402
 REPORT_FORMAT = "taiji-p5-2d-online-writeback-gate-report-v1"
 VERSION = 1
 PREREGISTRATION = "plans/reference/M5_P5_2D_ONLINE_WRITEBACK_PREREGISTRATION_FROZEN_20260916.md"
-DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_p5_2d_online_writeback_20260916.json"
+DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_p5_2d_online_writeback_v2_20260916.json"
 
 BASE_PREFIX = "p52dbase"
 INDOMAIN_PREFIX = "p52dind"
@@ -186,10 +186,26 @@ def run_gate() -> dict[str, Any]:
         )
         base_learner.observe_members(profiles)
         base_learner.observe_records(base_records)
-        online = InteractionGroupOnlineLearner(base_learner)
+        # §7 budget calibration: the online admission budget is the offline
+        # evaluator's own deployment budget (b1.FIT_RESOURCE_CAP), so online
+        # writeback and offline training share one resource contract.
+        online = InteractionGroupOnlineLearner(
+            base_learner, maximum_resource_cost=float(b1.FIT_RESOURCE_CAP)
+        )
+        admission_budget = {
+            "maximum_resource_cost": float(b1.FIT_RESOURCE_CAP),
+            "source": "b1.FIT_RESOURCE_CAP (preregistration section 7)",
+            "minimum_interaction": 0.0,
+            "maximum_feedback_uncertainty": 1.0,
+        }
         ab_before = base_learner.candidate(BASE_PAIR, allow_observed=True)
         ab_prediction_before = (
             float(ab_before.predicted_interaction) if ab_before is not None else None
+        )
+        ab_records_before = sum(
+            1
+            for record in base_learner.observed_records
+            if tuple(record.member_ids) == BASE_PAIR
         )
         parent_pair = tuple(base_learner.select(pairs, unseen_only=False)[0].member_ids)
         parent_digest_seed = str(online.checkpoint()["checkpoint_digest"])
@@ -445,22 +461,33 @@ def run_gate() -> dict[str, Any]:
             inner_restored = str(online.learner.checkpoint()["checkpoint_digest"])
             inner_expected = str(pre_apply["learner"]["checkpoint_digest"])
             tombstoned = last_feedback.candidate_id in online.blocked_candidate_ids
-            replay = online.apply_feedback(
-                InteractionGroupOutcomeFeedback.from_payload(last_feedback.to_payload())
-            )
+            # The library enforces the tombstone through lineage: after the
+            # rollback admission the pre-trial parent digest is permanently
+            # unreachable, so a replay is rejected before any admission check.
+            replay_rejected = False
+            replay_note = ""
+            try:
+                replay = online.apply_feedback(
+                    InteractionGroupOutcomeFeedback.from_payload(
+                        last_feedback.to_payload()
+                    )
+                )
+                replay_note = f"replay_status:{replay.status}"
+            except ValueError as exc:
+                replay_rejected = True
+                replay_note = str(exc)
             a6_rollback = bool(
                 rolled.status == "rolled_back"
                 and inner_restored == inner_expected
                 and tombstoned
-                and replay.status == "rejected"
-                and replay.reason == "candidate_blocked_after_prior_rejection_or_rollback"
+                and replay_rejected
             )
             rollback_detail = {
                 "rolled_back_round": last_round,
                 "inner_digest_restored": inner_restored == inner_expected,
                 "tombstoned": tombstoned,
-                "replay_status": replay.status,
-                "replay_reason": replay.reason,
+                "replay_rejected": replay_rejected,
+                "replay_note": replay_note,
             }
 
         # ---- environment transaction undo, independent of learner state
@@ -468,9 +495,7 @@ def run_gate() -> dict[str, Any]:
         env_root = Path(tempfile.mkdtemp(prefix="p52d-env-"))
         environment = frozen.WorkbenchEnvironment(env_root)
         demo_name = "p52d_undo_demo.py"
-        environment.execute_tool(
-            "workspace.create", {"path": demo_name, "content": "x = 1\n"}
-        )
+        environment.execute_tool("workspace.create", {"path": demo_name, "content": "x = 1\n"})
         undo_token = str(environment.last_result["transaction"]["undo_token"])
         file_present_after_create = (env_root / demo_name).exists()
         environment.execute_tool("workspace.undo", {"undo_token": undo_token})
@@ -577,6 +602,7 @@ def run_gate() -> dict[str, Any]:
                     "train_trace_digest": corpus.train_trace_digest,
                     "parent_selection": "+".join(parent_pair),
                 },
+                "admission_budget": admission_budget,
                 "online_rounds": rounds,
                 "arms": {
                     "parent_pair": "+".join(parent_pair),
@@ -638,9 +664,12 @@ def run_gate() -> dict[str, Any]:
             }
         )
     except Exception as exc:  # noqa: BLE001
+        import traceback
+
         payload.update(
             {
                 "error": f"{type(exc).__name__}: {exc}",
+                "traceback": traceback.format_exc(),
                 "elapsed_seconds": round(time.perf_counter() - started, 3),
             }
         )

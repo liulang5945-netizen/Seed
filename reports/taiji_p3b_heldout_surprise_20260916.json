@@ -1,0 +1,76 @@
+{
+  "format": "taiji-p3b-heldout-surprise-v1",
+  "prereading_rules": "plans/reference/M5_P3B_SECOND_CAMPAIGN_DECISION_BRIEF_20260916.md §2c",
+  "eval_set": {
+    "source": "data\\simple_zh\\simple_zh_texts.jsonl",
+    "row_index_convention": "0-based file line index, as yielded by _documents",
+    "start_row": 106325,
+    "rows_used": 46,
+    "first_row_index": 106325,
+    "last_row_index": 106370,
+    "total_bytes": 65533,
+    "sha256": "8b3589f79cf0d24e90a5739a9ecf0fcbb9fb59d826ebb2551fbf8567494f0f9f",
+    "disjoint_from_arms_because_start_row_above": 106324,
+    "scoring_shape": "one score_bytes call per row, boundary added by the sensor, no state carried between rows"
+  },
+  "split_rows_after": 23,
+  "state_ticks": {
+    "start": 16000000,
+    "treatment": 17000000,
+    "control": 17000000
+  },
+  "scores": {
+    "start": {
+      "whole_observations": 65579.0,
+      "whole_mean_surprise": 3.634841269053013,
+      "whole_accuracy": 0.17485780509004406,
+      "slice_a_observations": 33249.0,
+      "slice_a_mean_surprise": 3.6125040063890657,
+      "slice_a_accuracy": 0.1765165869650215,
+      "slice_b_observations": 32330.0,
+      "slice_b_mean_surprise": 3.657813482053741,
+      "slice_b_accuracy": 0.17315187132694093
+    },
+    "treatment": {
+      "whole_observations": 65579.0,
+      "whole_mean_surprise": 3.6478800070632933,
+      "whole_accuracy": 0.17348541453819058,
+      "slice_a_observations": 33249.0,
+      "slice_a_mean_surprise": 3.6264208184608036,
+      "slice_a_accuracy": 0.17465186922914974,
+      "slice_b_observations": 32330.0,
+      "slice_b_mean_surprise": 3.6699491862109657,
+      "slice_b_accuracy": 0.17228580266006804
+    },
+    "control": {
+      "whole_observations": 65579.0,
+      "whole_mean_surprise": 3.6466094152574664,
+      "whole_accuracy": 0.17386663413592765,
+      "slice_a_observations": 33249.0,
+      "slice_a_mean_surprise": 3.6248809328896,
+      "slice_a_accuracy": 0.1749225540617763,
+      "slice_b_observations": 32330.0,
+      "slice_b_mean_surprise": 3.668955543010304,
+      "slice_b_accuracy": 0.17278069904113827
+    }
+  },
+  "paired": {
+    "split_half_noise": 0.045309,
+    "treatment_minus_control_whole": 0.001271,
+    "treatment_minus_control_slice_a": 0.00154,
+    "treatment_minus_control_slice_b": 0.000994,
+    "both_halves_same_sign": true,
+    "verdict_label": "not_resolved",
+    "meaning_of_not_resolved": "this instrument cannot separate the arms at this budget; it is NOT evidence that the data distribution does not matter"
+  },
+  "per_arm_vs_start": {
+    "treatment_minus_start": 0.013039,
+    "control_minus_start": 0.011768
+  },
+  "per_arm_vs_start_meaning": "process record only -- a one-sided delta is not the data effect (§2c rule 3)",
+  "does_not_do": [
+    "no training and no checkpoint writes (score_bytes is documented non-mutating)",
+    "no CAP-0 behavioural claim: this measures statistical fit only",
+    "does not satisfy the frozen §4 'two consecutive matched checkpoints' rule"
+  ]
+}

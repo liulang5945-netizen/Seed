@@ -1,0 +1,22 @@
+[
+  {
+    "check": "ruff-before",
+    "exit_code": 0,
+    "seconds": 0.748
+  },
+  {
+    "check": "ruff-bs-before",
+    "exit_code": 1,
+    "seconds": 0.798
+  },
+  {
+    "check": "core-types-before",
+    "exit_code": 0,
+    "seconds": 4.841
+  },
+  {
+    "check": "focused-before",
+    "exit_code": 1,
+    "seconds": 5.701
+  }
+]

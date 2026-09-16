@@ -1,8 +1,8 @@
 {
   "format": "taiji-p3b-criteria-check-v1",
   "verdict": "fail",
-  "baseline": "E:\\Seed\\reports\\taiji_cap0_baseline_constrained_20260915.json",
-  "candidate": "E:\\Seed\\reports\\p3b_stages\\treatment\\cap0_tick_18000000.json",
+  "baseline": "reports\\taiji_cap0_baseline_constrained_20260915.json",
+  "candidate": "reports\\p3b_stages\\treatment\\cap0_tick_18000000.json",
   "candidate_is_baseline": false,
   "checks": {
     "J1_same_chain": {

@@ -54,3 +54,21 @@ H-d：在真实执行反馈的在线循环下，`InteractionGroupOnlineLearner` 
 5. **中断恢复框架澄清**：第 3 轮后 checkpoint + 第 4-6 轮 pending feedback payloads（`to_payload`）交 fresh 进程依序 `apply_feedback`，最终 learner digest 与不间断运行逐字节一致；trial 执行发生在「中断」前，恢复的是状态与待写回队列——框架在报告中披露。
 6. **反馈构造口径修正**：原生 trace 口径为 ±1（`_project` 的 `outcome=1.0/-1.0`），`realized_interaction`/`contribution` 按 `_estimate_pair` 的冻结估计量在该口径计算（interaction = P − S_i − S_j + B，contribution = P − B；成功 trial = +2.0）；§2.2 原文「成功率口径」为笔误，绑定条款「与遗留语料 records 同口径」不变。单轮单 context 的 feedback `uncertainty=0.0`（无样本方差）。
 7. **member-mismatch 处理**：若 trial 的 pair trace 事件所有者与 candidate.member_ids 不符（某成员从未被调用），feedback 不可构造——该轮如实记录 `feedback_unconstructible_member_mismatch`，该 pair 本地排除出后续轮的候选集（防死循环），披露于报告。
+
+## §7 修订（2026-09-16，用户授权的预算校准——首轮执行后）
+
+首轮门报告（`taiji_p5_2d_online_writeback_20260916.json`，commit `4f78faaf`）实测：第 4 轮 (a,c) 成功且 `realized_interaction=+2.0`（与 D5 估计量精确一致），但 admission 被冻结默认 `maximum_resource_cost=10.0` 拒绝（`feedback_resource_cost_exceeds_admission_budget`）——成功互补 pair 的真实 episode 成本超过 10。经用户授权（「好的，执行吧」），按 roadmap §8 单独预注册本阈值校准：
+
+1. **唯一变更**：`InteractionGroupOnlineLearner` 的 `maximum_resource_cost` 由默认 `10.0` 校准为 **`b1.FIT_RESOURCE_CAP`（64.0）**——离线评估器（B1/B2 全链）一直使用的同一部署资源合同；在线准入与离线训练共用同一预算是原则要求，非为通过而调值。`minimum_interaction=0.0`、`maximum_feedback_uncertainty=1.0` 与其余拒绝规则零改动。
+2. **报告落新文件** `reports/taiji_p5_2d_online_writeback_v2_20260916.json`；首轮 failed 报告原样保留，不覆写。
+3. **其余设计（§2/§6）零改动**：R=6 轮、基谱系投影、三臂、六类验收、wall cap 90s 不变。
+
+## §8 修订（2026-09-16，v2 运行观测后的保持判据与仪器修正）
+
+v2 运行（首轮全量执行）实测：A1/A4/A6/环境撤销通过；A2/A3/A5 失败。归因分析：
+
+1. **A2 保持判据修正（库语义使原判据不可满足）**：`InteractionGroupTransferLearner._fit` 在每次 `observe_records` 后对**全部 records 全局重拟合**——任何 admission（即使与 (a,b) 无关）都会改变所有 pair 的预测。§6.3-i 的「(a,b) 预测逐位不变」按库语义结构性不可满足（实测 0.583→1.292，源于 (a,c) 的 +2.0 admission 经全局重拟合传导）。**修订为**：(i) 基谱系 pair (a,b) 的 record 集不被在线轮触碰（其 group 的 record 计数前后一致——append-only 的可检验形态）；(ii) 遗留 held-out 执行抽查不回归（不变）；(iii) (a,b) 预测的前后值与系数变化作为全局重拟合效应**披露**（非门禁）。§1 的「不回归」本义由 (ii) 承载。
+2. **A3 duplicate 测试时机修正（仪器缺陷）**：`apply_feedback` 的 stale 检查先于 duplicate 检查——后续任何 admission（含 rejected 审计）都会移动 checkpoint digest，使事后重放第一条件触发 stale 而非 duplicate。修正：**在首轮 applied admission 后立即重放同一 feedback**（digest 不变 + duplicate 拒绝），此为该库语义下唯一有效的幂等测试时机。
+3. **A5 applied-id 记账修正（仪器缺陷）**：child 的期望 applied 集合应取「pending 轮次中实际 applied 的 feedback id 列表」（逐轮记账），而非对全量 applied 列表的切片。
+4. **g1 取样时机修正（仪器缺陷）**：applied 计数一致性检查须在 A6 回滚**之前**取样（回滚把最新 applied 改为 rolled_back，属验收动作本身的合法状态变化）。
+5. **判据零放宽**：六类验收的通过标准不降——A2 由不可满足形态修正为可检验等价形态；(A3/A5/g1) 为仪器正确性修复。

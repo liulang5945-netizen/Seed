@@ -39,10 +39,14 @@ def _utf8_allowed(remaining: int, lead: int) -> list[int]:
     if remaining == 0:
         return list(range(0x00, 0x80)) + list(range(0xC2, 0xF5))
     low, high = 0x80, 0xBF
-    if remaining == 3 and lead == 0xE0:
+    # A 3-byte sequence has two continuation bytes remaining after its
+    # lead; the first one must enforce the E0/ED scalar-value bounds.
+    if remaining == 2 and lead == 0xE0:
         low = 0xA0
-    elif remaining == 3 and lead == 0xED:
+    elif remaining == 2 and lead == 0xED:
         high = 0x9F
+    # A 4-byte sequence has three continuation bytes remaining after its
+    # lead; the first one must enforce the F0/F4 scalar-value bounds.
     elif remaining == 3 and lead == 0xF0:
         low = 0x90
     elif remaining == 3 and lead == 0xF4:

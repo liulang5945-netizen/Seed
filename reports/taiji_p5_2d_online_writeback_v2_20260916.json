@@ -1,0 +1,210 @@
+{
+  "format": "taiji-p5-2d-online-writeback-gate-report-v1",
+  "version": 1,
+  "status": "completed",
+  "preregistration": "plans/reference/M5_P5_2D_ONLINE_WRITEBACK_PREREGISTRATION_FROZEN_20260916.md",
+  "scope": "P5.2d online outcome writeback acceptance gate over the existing library machinery with zero rule changes; base lineage = four member profiles plus the base projection (full singleton evidence plus the historical default pair member-a+member-b) of the legacy fit corpus, leaving five pairs unseen for six online rounds on fresh create__override contexts",
+  "static_checks": {
+    "scope": [
+      "scripts/training/eval_taiji_p5_2d_online_writeback_gate.py",
+      "scripts/training/eval_taiji_b0_b2_selection_gate.py",
+      "scripts/training/eval_taiji_b0_b1_representation_gate.py"
+    ],
+    "commands": [
+      "python -m py_compile <scope files>",
+      "python -m ruff check scripts/training (and full repo)",
+      "python -m black --no-cache --check <scope files>"
+    ]
+  },
+  "outcome": "failed",
+  "experiment_passed": false,
+  "record": {
+    "commit": "56a4c3e4237b5f98682bded0d00f0912a86c482d",
+    "rule_revision": 1,
+    "composition_rule": "m4_failure_handoff",
+    "wall_cap_seconds": 90.0,
+    "elapsed_seconds": 34.6
+  },
+  "base_lineage": {
+    "member_sets": [
+      "baseline",
+      "member-a",
+      "member-a/member-b",
+      "member-b",
+      "member-c",
+      "member-d"
+    ],
+    "record_pairs": [
+      "member-a+member-b"
+    ],
+    "train_trace_digest": "4bbe2007baac57dffcc579a73e492653d534de301e15b6111b028a3061012424",
+    "parent_selection": "member-b+member-c"
+  },
+  "admission_budget": {
+    "maximum_resource_cost": 64.0,
+    "source": "b1.FIT_RESOURCE_CAP (preregistration section 7)",
+    "minimum_interaction": 0.0,
+    "maximum_feedback_uncertainty": 1.0
+  },
+  "online_rounds": [
+    {
+      "round": 1,
+      "context": "p52dtrial-create__override-657",
+      "selection": "member-b+member-c",
+      "admission_status": "rejected",
+      "admission_reason": "outcome_unsuccessful",
+      "realized_interaction": 0.0,
+      "trace_means": {
+        "baseline": -1.0,
+        "first": -1.0,
+        "second": -1.0,
+        "pair": -1.0,
+        "interaction": 0.0,
+        "contribution": 0.0
+      }
+    },
+    {
+      "round": 2,
+      "context": "p52dtrial-create__override-658",
+      "selection": "member-c+member-d",
+      "admission_status": "rejected",
+      "admission_reason": "outcome_unsuccessful",
+      "realized_interaction": 0.0,
+      "trace_means": {
+        "baseline": -1.0,
+        "first": -1.0,
+        "second": -1.0,
+        "pair": -1.0,
+        "interaction": 0.0,
+        "contribution": 0.0
+      }
+    },
+    {
+      "round": 3,
+      "context": "p52dtrial-create__override-659",
+      "selection": "member-b+member-d",
+      "admission_status": "rejected",
+      "admission_reason": "outcome_unsuccessful",
+      "realized_interaction": 0.0,
+      "trace_means": {
+        "baseline": -1.0,
+        "first": -1.0,
+        "second": -1.0,
+        "pair": -1.0,
+        "interaction": 0.0,
+        "contribution": 0.0
+      }
+    },
+    {
+      "round": 4,
+      "context": "p52dtrial-create__override-660",
+      "selection": "member-a+member-c",
+      "admission_status": "applied",
+      "admission_reason": "native_terminal_outcome_admitted",
+      "realized_interaction": 2.0,
+      "trace_means": {
+        "baseline": -1.0,
+        "first": -1.0,
+        "second": -1.0,
+        "pair": 1.0,
+        "interaction": 2.0,
+        "contribution": 2.0
+      }
+    },
+    {
+      "round": 5,
+      "context": "p52dtrial-create__override-661",
+      "selection": "member-a+member-d",
+      "admission_status": "rejected",
+      "admission_reason": "outcome_unsuccessful",
+      "realized_interaction": 0.0,
+      "trace_means": {
+        "baseline": -1.0,
+        "first": -1.0,
+        "second": -1.0,
+        "pair": -1.0,
+        "interaction": 0.0,
+        "contribution": 0.0
+      }
+    },
+    {
+      "round": 6,
+      "context": "p52dtrial-create__override-662",
+      "selection": null,
+      "note": "online_select_returned_none"
+    }
+  ],
+  "arms": {
+    "parent_pair": "member-b+member-c",
+    "updated_pair": "member-b+member-c",
+    "parent_gain_rate_scale": 0.0,
+    "updated_gain_rate_scale": 0.0,
+    "updated_predictions": {
+      "member-a+member-b": 1.291667,
+      "member-a+member-c": 1.291667,
+      "member-a+member-d": 1.291667,
+      "member-b+member-c": 1.291667,
+      "member-b+member-d": 1.291667,
+      "member-c+member-d": 1.291667
+    }
+  },
+  "acceptance": {
+    "a1_new_task_gain": true,
+    "a2_old_task_retention": false,
+    "a3_duplicate_idempotency": false,
+    "a4_stale_parent_rejection": true,
+    "a5_interruption_recovery": false,
+    "a6_separated_rollback_and_env_undo": true,
+    "retention_detail": {
+      "ab_prediction_before": 0.5833333333333334,
+      "ab_prediction_after": 1.2916666666666667,
+      "retention_digest_ok": false,
+      "retention_execution_ok": true,
+      "parent_spot": 0.0,
+      "updated_spot": 0.0
+    },
+    "duplicate_note": "online feedback parent checkpoint is stale",
+    "stale_note": "online feedback parent checkpoint is stale",
+    "recovery_note": "recovery_checkpoint_missing",
+    "recovery_detail": {
+      "child_digest_matches": true,
+      "pending_rounds": 2
+    },
+    "rollback_note": "no_applied_feedback_to_rollback",
+    "rollback_detail": {
+      "rolled_back_round": 4,
+      "inner_digest_restored": true,
+      "tombstoned": true,
+      "replay_rejected": true,
+      "replay_note": "online feedback parent checkpoint is stale"
+    },
+    "env_undo_detail": {
+      "file_present_after_create": true,
+      "file_present_after_undo": false,
+      "learner_digest_unchanged": true
+    }
+  },
+  "stop_reasons": {
+    "trial_episodes": 40
+  },
+  "gates": {
+    "static_checks": true,
+    "g1_intervention_reality": false,
+    "g2_data_isolation": true,
+    "g6_budget": true,
+    "a1_new_task_gain": true,
+    "a2_old_task_retention": false,
+    "a3_duplicate_idempotency": false,
+    "a4_stale_parent_rejection": true,
+    "a5_interruption_recovery": false,
+    "a6_separated_rollback_and_env_undo": true
+  },
+  "cost": {
+    "member_training_seconds": 10.357,
+    "episodes_total": 662
+  },
+  "growth_admitted": false,
+  "can_promote": false,
+  "interpretation": "completed: outcome=failed; failed gates ['a2_old_task_retention', 'a3_duplicate_idempotency', 'a5_interruption_recovery', 'g1_intervention_reality']",
+  "elapsed_seconds": 34.6
+}
