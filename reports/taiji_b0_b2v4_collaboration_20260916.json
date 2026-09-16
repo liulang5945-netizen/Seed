@@ -1,0 +1,224 @@
+{
+  "format": "taiji-b0-b2v4-collaboration-gate-report-v1",
+  "version": 1,
+  "status": "completed",
+  "preregistration": "plans/reference/M5_B2V4_COLLABORATION_JUDGMENT_PREREGISTRATION_FROZEN_20260916.md",
+  "scope": "B2-v4 collaboration judgment gate; mechanism (m4_failure_handoff, rule_revision=1), thresholds (REQUIRED_GAIN=1.65, REQUIRED_K=5) and the candidate face are unchanged - G5 is judged per cell on the measurement-dictionary plus/minus-one outcome scale per the frozen D5 estimand, the B2-v3 selection procedure is re-instantiated under a drift gate, and both scales are disclosed for every control arm",
+  "static_checks": {
+    "scope": [
+      "scripts/training/eval_taiji_b0_b2v4_collaboration_gate.py",
+      "scripts/training/eval_taiji_b0_b2v3_family_gate.py",
+      "scripts/training/eval_taiji_b0_b2v2_route_gate.py",
+      "scripts/training/eval_taiji_b0_b2_selection_gate.py",
+      "scripts/training/eval_taiji_b0_b1_representation_gate.py"
+    ],
+    "commands": [
+      "python -m py_compile <scope files>",
+      "python -m ruff check scripts/training (and full repo)",
+      "python -m black --no-cache --check <scope files>"
+    ]
+  },
+  "outcome": "collaboration_supported",
+  "experiment_passed": true,
+  "record": {
+    "commit": "f8ef2558f330a01415044947665bb8f173b6688d",
+    "rule_revision": 1,
+    "composition_rule": "m4_failure_handoff",
+    "wall_cap_seconds": 60.0,
+    "elapsed_seconds": 36.081
+  },
+  "selection": {
+    "reinstated_pairs": {
+      "create__observation": "member-a+member-c",
+      "create__override": "member-a+member-c",
+      "create__mismatch": "member-a+member-c"
+    },
+    "v3_recorded_pairs": {
+      "create__observation": "member-a+member-c",
+      "create__override": "member-a+member-c",
+      "create__mismatch": "member-a+member-c"
+    },
+    "drift": {}
+  },
+  "cells": {
+    "create__observation": {
+      "selected_pair": "member-a+member-c",
+      "g4_rate_scale": {
+        "gain_vs_all_singleton_oracle": 1.0,
+        "pair_mean_outcome": 1.0,
+        "best_singleton_member": "member-a",
+        "best_singleton_mean_outcome": 0.0,
+        "g4_beats_deployable_control": true
+      },
+      "g5_dictionary_scale": {
+        "mean_gain_vs_all_singleton_oracle": 2.0,
+        "required": 1.65,
+        "positive_gain_contexts": 6,
+        "k_criterion_met": true,
+        "lesion_attribution_holds": true,
+        "contexts_interleaved": 6,
+        "best_deployable_singleton_outcome": -1.0,
+        "g5_collaboration_criteria_met": true
+      }
+    },
+    "create__override": {
+      "selected_pair": "member-a+member-c",
+      "g4_rate_scale": {
+        "gain_vs_all_singleton_oracle": 1.0,
+        "pair_mean_outcome": 1.0,
+        "best_singleton_member": "member-a",
+        "best_singleton_mean_outcome": 0.0,
+        "g4_beats_deployable_control": true
+      },
+      "g5_dictionary_scale": {
+        "mean_gain_vs_all_singleton_oracle": 2.0,
+        "required": 1.65,
+        "positive_gain_contexts": 6,
+        "k_criterion_met": true,
+        "lesion_attribution_holds": true,
+        "contexts_interleaved": 6,
+        "best_deployable_singleton_outcome": -1.0,
+        "g5_collaboration_criteria_met": true
+      }
+    },
+    "create__mismatch": {
+      "selected_pair": "member-a+member-c",
+      "g4_rate_scale": {
+        "gain_vs_all_singleton_oracle": 1.0,
+        "pair_mean_outcome": 1.0,
+        "best_singleton_member": "member-a",
+        "best_singleton_mean_outcome": 0.0,
+        "g4_beats_deployable_control": true
+      },
+      "g5_dictionary_scale": {
+        "mean_gain_vs_all_singleton_oracle": 2.0,
+        "required": 1.65,
+        "positive_gain_contexts": 6,
+        "k_criterion_met": true,
+        "lesion_attribution_holds": true,
+        "contexts_interleaved": 6,
+        "best_deployable_singleton_outcome": -1.0,
+        "g5_collaboration_criteria_met": true
+      }
+    }
+  },
+  "interleaved": {
+    "contexts_interleaved_per_pair": {
+      "member-a+member-c": 6
+    },
+    "required": "> 0"
+  },
+  "control_arms": {
+    "v3_selected_pairs": {
+      "create__observation": "member-a+member-c",
+      "create__override": "member-a+member-c",
+      "create__mismatch": "member-a+member-c"
+    },
+    "v3_selected_pooled": {
+      "pair": "member-a+member-c",
+      "mean_gain_rate_scale": 1.0,
+      "mean_gain_dictionary_scale": 2.0
+    },
+    "v2_control_selection": {
+      "pair": "member-a+member-b",
+      "mean_gain_rate_scale": 0.0,
+      "mean_gain_dictionary_scale": 0.0
+    },
+    "v1_control_selection": {
+      "pair": "member-b+member-c",
+      "mean_gain_rate_scale": 0.0,
+      "mean_gain_dictionary_scale": 0.0
+    },
+    "no_learning_fallback_ab": {
+      "pair": "member-a+member-b",
+      "mean_gain_rate_scale": 0.0,
+      "mean_gain_dictionary_scale": 0.0
+    },
+    "best_fixed_singleton": {
+      "member": "member-a",
+      "mean_gain_rate_scale": 0.0,
+      "mean_gain_dictionary_scale": 0.0
+    },
+    "best_observed_fixed_pair": {
+      "pair": "member-a+member-c",
+      "mean_gain_rate_scale": 1.0,
+      "mean_gain_dictionary_scale": 2.0,
+      "note": "post-hoc diagnostic column; oracle-deployable=False"
+    },
+    "random_pair": {
+      "pair": "member-b+member-d",
+      "mean_gain_rate_scale": 0.0,
+      "mean_gain_dictionary_scale": 0.0
+    }
+  },
+  "reversed_priority_diagnostic": {
+    "scope": "create__override only; diagnostic, not gated",
+    "best_pair": "member-c+member-d",
+    "mean_gain_dictionary_scale": 2.0,
+    "contexts_interleaved_best_pair": 6,
+    "pair_gains_dictionary_scale": {
+      "member-a+member-b": 0.0,
+      "member-a+member-c": 0.0,
+      "member-a+member-d": 0.0,
+      "member-b+member-c": 0.0,
+      "member-b+member-d": 0.0,
+      "member-c+member-d": 2.0
+    }
+  },
+  "stop_reasons": {
+    "candidate_face": {
+      "all_members_exhausted": 36,
+      "all_members_blocked": 216,
+      "contract_intercepted:preview_ValueError": 108,
+      "goal_reached": 36
+    },
+    "reversed_diagnostic": {
+      "all_members_exhausted": 12,
+      "all_members_blocked": 72,
+      "contract_intercepted:preview_ValueError": 36,
+      "goal_reached": 12
+    }
+  },
+  "gates": {
+    "static_checks": true,
+    "selection_drift_vs_v3": true,
+    "g1_intervention_reality": true,
+    "g2_data_isolation": true,
+    "g3_ranking_stability": true,
+    "g4_routing_beats_deployable": true,
+    "g5_collaboration": true,
+    "g6_budget": true,
+    "restore": true
+  },
+  "stability_detail": {
+    "predict_create__observation": {
+      "renaming_stable": true,
+      "rotated_selected": "member-b+member-d",
+      "expected_rotated_selected": "member-b+member-d"
+    },
+    "predict_create__override": {
+      "renaming_stable": true,
+      "rotated_selected": "member-b+member-d",
+      "expected_rotated_selected": "member-b+member-d"
+    },
+    "predict_create__mismatch": {
+      "renaming_stable": true,
+      "rotated_selected": "member-b+member-d",
+      "expected_rotated_selected": "member-b+member-d"
+    }
+  },
+  "checkpoint": {
+    "restore_matches_parent": true,
+    "tamper_rejected": true
+  },
+  "cost": {
+    "member_training_seconds": 10.132,
+    "matrix_seconds": 3.625,
+    "restore_seconds": 1.624,
+    "episodes_total": 924
+  },
+  "growth_admitted": false,
+  "can_promote": false,
+  "interpretation": "completed: outcome=collaboration_supported; per-cell dictionary-scale G5: create__observation=2.0(k=6,lesion=True,interleaved=6), create__override=2.0(k=6,lesion=True,interleaved=6), create__mismatch=2.0(k=6,lesion=True,interleaved=6); claim scope: frozen mechanism + frozen v3 selection procedure + create candidate face; growth_admitted=false and can_promote=false remain in force",
+  "elapsed_seconds": 36.081
+}
