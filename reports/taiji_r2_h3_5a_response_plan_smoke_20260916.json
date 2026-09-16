@@ -1,0 +1,47 @@
+{
+  "format": "taiji-r2-h3-5a-response-plan-smoke-v1",
+  "status": "passed",
+  "date": "2026-09-16",
+  "contract": "plans/reference/contracts/r2_h3_5a_response_plan_v1.json",
+  "scope": "isolated_candidate_and_checkpoint_plumbing_only",
+  "architecture": {
+    "owner": "predictive_readout.response_plan",
+    "plan_width": 32,
+    "renderer": "plan_conditioned_byte_predictive_readout",
+    "runtime_reference_target_available": false,
+    "protected_owner_unchanged": true,
+    "candidate_ablation_available": true
+  },
+  "budget": {
+    "limit": 300000,
+    "effective_active_parameters": 276610,
+    "candidate_active_parameters": 13771,
+    "within_limit": true,
+    "reservation": "additional_predictive_readouts=1,response_plan_width=32"
+  },
+  "checkpoint_preflight": {
+    "zero_step_roundtrip": true,
+    "one_response_update": true,
+    "atomic_save": true,
+    "child_restore": true,
+    "caller_model_unchanged": true,
+    "response_plan_restored": true,
+    "identity_lineage_restored": true
+  },
+  "tests": {
+    "response_plan_selected": "2 passed, 13 deselected",
+    "training_profile": "11 passed, 1 skipped",
+    "combined_language_and_profile": "24 passed, 1 skipped, 2 tmp-path tests deselected after Windows temp lock error",
+    "environment_errors": "The two deselected tmp-path tests were replaced for this candidate by a direct atomic-save preflight; no assertion or implementation failure",
+    "python_compile": true,
+    "git_diff_check": true
+  },
+  "claims": {
+    "plumbing_smoke": true,
+    "formal_training": false,
+    "s2": false,
+    "l2": false,
+    "mini": false
+  },
+  "next": "freeze_v3_control_dataset_and_matched_control_treatment_commands"
+}

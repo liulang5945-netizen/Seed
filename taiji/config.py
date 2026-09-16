@@ -643,6 +643,7 @@ class TaijiConfig:
         seed: int | None = None,
         alignment: int | None = None,
         additional_predictive_readouts: int = 0,
+        response_plan_width: int = 0,
     ) -> TaijiConfig:
         """Build the largest substrate that fits an active-parameter budget.
 
@@ -663,6 +664,13 @@ class TaijiConfig:
         optional_readouts = int(additional_predictive_readouts)
         if optional_readouts < 0:
             raise ValueError("additional_predictive_readouts must be non-negative")
+        plan_width = int(response_plan_width)
+        if plan_width < 0:
+            raise ValueError("response_plan_width must be non-negative")
+        if plan_width > 0 and optional_readouts < 1:
+            raise ValueError(
+                "response_plan_width requires one reserved predictive readout"
+            )
         base = cls(seed=cls.seed if seed is None else int(seed)) if template is None else template
         if policy is None:
             capacity = CapacityPolicy.from_config(
@@ -757,6 +765,9 @@ class TaijiConfig:
             optional_parameters = optional_readouts * (
                 profile.alphabet_size * profile.motor_context_dim
                 + profile.alphabet_size
+            )
+            optional_parameters += plan_width * (
+                2 * profile.motor_context_dim + 1
             )
             return int(profile.planned_active_parameter_count + optional_parameters)
 

@@ -742,3 +742,152 @@ class BytePredictiveReadout:
         if bias.shape != (self.config.alphabet_size,):
             raise ValueError("legacy motor bias shape does not match architecture")
         self.bias = bias
+
+
+class ResponsePlanReadout(BytePredictiveReadout):
+    """Isolated byte renderer conditioned by one persistent response plan.
+
+    The plan is created explicitly at the assistant boundary and remains
+    fixed for the response.  Reference-derived plan targets are training-only:
+    generation calls :meth:`begin_plan` without ever seeing a target.
+    """
+
+    PAYLOAD_FORMAT = "taiji-response-plan-readout-v1"
+
+    def __init__(
+        self,
+        config: TaijiConfig,
+        *,
+        generator: torch.Generator,
+        plan_width: int = 32,
+        device: torch.device | str = "cpu",
+    ) -> None:
+        super().__init__(config, generator=generator, device=device)
+        self.plan_width = int(plan_width)
+        if self.plan_width <= 0:
+            raise ValueError("plan_width must be positive")
+        scale = float(config.weight_init_scale)
+        self.planner_weight = torch.randn(
+            self.plan_width,
+            config.motor_context_dim,
+            generator=generator,
+            device=self.device,
+        ) * scale
+        self.planner_bias = torch.zeros(self.plan_width, device=self.device)
+        self.plan_bridge = torch.randn(
+            config.motor_context_dim,
+            self.plan_width,
+            generator=generator,
+            device=self.device,
+        ) * scale
+        self._plan_state: torch.Tensor | None = None
+        self._plan_source: torch.Tensor | None = None
+
+    @property
+    def plan_state(self) -> torch.Tensor | None:
+        return None if self._plan_state is None else self._plan_state.detach().clone()
+
+    @torch.no_grad()
+    def begin_plan(self, context: torch.Tensor) -> torch.Tensor:
+        source = context.detach().to(self.device)
+        if source.shape != (self.config.motor_context_dim,):
+            raise ValueError("response plan context dimension mismatch")
+        self._plan_source = source.clone()
+        self._plan_state = torch.tanh(self.planner_weight @ source + self.planner_bias)
+        return self._plan_state.detach().clone()
+
+    def clear_plan(self) -> None:
+        self._plan_state = None
+        self._plan_source = None
+
+    def _conditioned_context(self, context: torch.Tensor) -> torch.Tensor:
+        if self._plan_state is None:
+            raise RuntimeError("response plan has not been created")
+        context = context.to(self.device)
+        return torch.tanh(context + self.plan_bridge @ self._plan_state)
+
+    def probabilities(self, context: torch.Tensor, **kwargs: Any) -> torch.Tensor:
+        return super().probabilities(self._conditioned_context(context), **kwargs)
+
+    def ablated_probabilities(self, context: torch.Tensor) -> torch.Tensor:
+        """Read the same candidate renderer with the plan bridge removed."""
+
+        return super().probabilities(context.to(self.device))
+
+    def context_feedback(self, error: torch.Tensor, **kwargs: Any) -> torch.Tensor:
+        return super().context_feedback(error, **kwargs)
+
+    @torch.no_grad()
+    def learn(self, context: torch.Tensor, predicted: torch.Tensor, observed_symbol: int, **kwargs: Any) -> torch.Tensor:
+        return super().learn(
+            self._conditioned_context(context), predicted, observed_symbol, **kwargs
+        )
+
+    @torch.no_grad()
+    def learn_plan_target(self, target: torch.Tensor) -> torch.Tensor:
+        if self._plan_state is None or self._plan_source is None:
+            raise RuntimeError("response plan has not been created")
+        target = target.detach().to(self.device)
+        if target.shape != (self.plan_width,):
+            raise ValueError("response plan target dimension mismatch")
+        error = target - self._plan_state
+        derivative = 1.0 - self._plan_state.square()
+        delta = error * derivative
+        rate = float(self.config.motor_learning_rate)
+        self.planner_weight.add_(rate * torch.outer(delta, self._plan_source))
+        self.planner_bias.add_(float(self.config.bias_learning_rate) * delta)
+        limit = float(self.config.max_weight_norm)
+        self.planner_weight.clamp_(-limit, limit)
+        self.planner_bias.clamp_(-limit, limit)
+        self._plan_state = torch.tanh(
+            self.planner_weight @ self._plan_source + self.planner_bias
+        )
+        return error.detach().clone()
+
+    @property
+    def active_parameter_count(self) -> int:
+        return int(
+            self.synapses.edge_count
+            + self.bias.numel()
+            + self.planner_weight.numel()
+            + self.planner_bias.numel()
+            + self.plan_bridge.numel()
+        )
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": self.PAYLOAD_FORMAT,
+            "plan_width": self.plan_width,
+            "renderer": super().to_payload(),
+            "planner_weight": self.planner_weight.detach().cpu().clone(),
+            "planner_bias": self.planner_bias.detach().cpu().clone(),
+            "plan_bridge": self.plan_bridge.detach().cpu().clone(),
+            "plan_state": None if self._plan_state is None else self._plan_state.detach().cpu().clone(),
+            "plan_source": None if self._plan_source is None else self._plan_source.detach().cpu().clone(),
+        }
+
+    def load_payload(self, payload: Mapping[str, Any]) -> None:
+        if payload.get("format") != self.PAYLOAD_FORMAT:
+            raise ValueError("unsupported response plan readout payload")
+        if int(payload.get("plan_width", -1)) != self.plan_width:
+            raise ValueError("response plan width does not match architecture")
+        super().load_payload(payload["renderer"])
+        for name, shape in (
+            ("planner_weight", (self.plan_width, self.config.motor_context_dim)),
+            ("planner_bias", (self.plan_width,)),
+            ("plan_bridge", (self.config.motor_context_dim, self.plan_width)),
+        ):
+            value = payload[name].detach().to(self.device).clone()
+            if value.shape != shape:
+                raise ValueError(f"{name} shape does not match architecture")
+            setattr(self, name, value)
+        self._plan_state = (
+            None
+            if payload.get("plan_state") is None
+            else payload["plan_state"].detach().to(self.device).clone()
+        )
+        self._plan_source = (
+            None
+            if payload.get("plan_source") is None
+            else payload["plan_source"].detach().to(self.device).clone()
+        )

@@ -46,6 +46,7 @@ from .organs import (
     BytePredictiveReadout,
     ByteSensor,
     GatedMultiTimescaleTemporalResidual,
+    ResponsePlanReadout,
 )
 from .state import (
     PendingAction,
@@ -91,6 +92,8 @@ class Taiji:
     RESPONSE_START_READOUT_SEED_OFFSET = 5929
     RESPONSE_PHASE_READOUT_KEY = "response_phase_readout"
     RESPONSE_PHASE_READOUT_SEED_OFFSET = 5931
+    RESPONSE_PLAN_READOUT_KEY = "response_plan_readout"
+    RESPONSE_PLAN_READOUT_SEED_OFFSET = 5933
     DEVELOPMENTAL_F1_KEY = "developmental_f1"
     DEVELOPMENTAL_F1_REPLAY_KEY = "developmental_f1_replay"
     DEVELOPMENTAL_F1_LEARNING_MODES = frozenset({"read_only", "fast", "slow", "fast_slow"})
@@ -174,6 +177,7 @@ class Taiji:
         # for every byte after the assistant boundary, so one isolated native
         # surface receives both first-byte and continuation credit.
         self._response_phase_readout: BytePredictiveReadout | None = None
+        self._response_plan_readout: ResponsePlanReadout | None = None
         self._state = self._initial_state(episode_id)
 
     def _initial_state(self, episode_id: str) -> TaijiState:
@@ -257,6 +261,71 @@ class Taiji:
         if self._response_phase_readout is None:
             raise RuntimeError("response-phase readout is not enabled")
         return self._response_phase_readout
+
+    @property
+    def response_plan_readout_enabled(self) -> bool:
+        return self._response_plan_readout is not None
+
+    @property
+    def response_plan_readout(self) -> ResponsePlanReadout:
+        if self._response_plan_readout is None:
+            raise RuntimeError("response-plan readout is not enabled")
+        return self._response_plan_readout
+
+    @property
+    def response_plan_readout_digest(self) -> str | None:
+        if self._response_plan_readout is None:
+            return None
+        return content_digest(self._response_plan_readout.to_payload())
+
+    def _new_response_plan_readout(self, *, plan_width: int = 32) -> ResponsePlanReadout:
+        generator = torch.Generator(device="cpu")
+        generator.manual_seed(
+            int(self.config.seed)
+            + int(self.config.predictive_readout_seed_offset)
+            + int(self.RESPONSE_PLAN_READOUT_SEED_OFFSET)
+        )
+        return ResponsePlanReadout(
+            self.config, generator=generator, plan_width=plan_width, device=self.device
+        )
+
+    @torch.no_grad()
+    def enable_response_plan_readout(self, *, plan_width: int = 32) -> dict[str, Any]:
+        if any(
+            owner is not None
+            for owner in (self._response_start_readout, self._response_phase_readout, self._response_plan_readout)
+        ):
+            raise RuntimeError("response candidate readouts are mutually exclusive")
+        if self._active_predictive_readout is not None:
+            raise RuntimeError("response-plan readout cannot coexist with an active branch")
+        candidate = self._new_response_plan_readout(plan_width=plan_width)
+        candidate.synapses.load_payload(self.predictive_readout.synapses.to_payload())
+        candidate.bias = self.predictive_readout.bias.detach().clone()
+        self._response_plan_readout = candidate
+        return {
+            "owner": "predictive_readout.response_plan",
+            "plan_width": int(plan_width),
+            "active_parameters": candidate.active_parameter_count,
+            "readout_digest": content_digest(candidate.to_payload()),
+        }
+
+    @torch.no_grad()
+    def begin_response_plan(self) -> torch.Tensor:
+        plan = self.response_plan_readout.begin_plan(self._state.motor_context)
+        probabilities = self.response_plan_readout.probabilities(self._state.motor_context)
+        state = self._state.clone()
+        state.motor_probabilities = probabilities.detach().clone()
+        self._state = state
+        return plan
+
+    def response_plan_probabilities(self, *, ablate_plan: bool = False) -> torch.Tensor:
+        readout = self.response_plan_readout
+        if ablate_plan:
+            return readout.ablated_probabilities(self._state.motor_context)
+        return readout.probabilities(self._state.motor_context)
+
+    def clear_response_plan_readout(self) -> None:
+        self._response_plan_readout = None
 
     def _new_response_start_readout(self) -> BytePredictiveReadout:
         generator = torch.Generator(device="cpu")
@@ -1139,6 +1208,8 @@ class Taiji:
             payload[self.RESPONSE_START_READOUT_KEY] = self._response_start_readout.to_payload()
         if self._response_phase_readout is not None:
             payload[self.RESPONSE_PHASE_READOUT_KEY] = self._response_phase_readout.to_payload()
+        if self._response_plan_readout is not None:
+            payload[self.RESPONSE_PLAN_READOUT_KEY] = self._response_plan_readout.to_payload()
         if self.identity_organ is not None:
             payload["identity_organ"] = self.identity_organ.to_payload(
                 parent_checkpoint_digest=content_digest(payload),
@@ -1180,6 +1251,20 @@ class Taiji:
                     "mutable": True,
                     "readout_digest": content_digest(
                         self._response_phase_readout.to_payload()
+                    ),
+                }
+            ),
+            "response_plan": (
+                None
+                if self._response_plan_readout is None
+                else {
+                    "scope": "candidate",
+                    "owner": "predictive_readout.response_plan",
+                    "mutable": True,
+                    "plan_width": self._response_plan_readout.plan_width,
+                    "active_parameters": self._response_plan_readout.active_parameter_count,
+                    "readout_digest": content_digest(
+                        self._response_plan_readout.to_payload()
                     ),
                 }
             ),
@@ -1428,6 +1513,8 @@ class Taiji:
         self.fabric.clear_cue_snapshot()
         if self._adaptive_residual_bridge is not None:
             self._adaptive_residual_bridge.reset_dynamics()
+        if self._response_plan_readout is not None:
+            self._response_plan_readout.clear_plan()
         self._state = self._initial_state(episode_id or self._state.episode_id)
 
     @property
@@ -2845,6 +2932,14 @@ class Taiji:
                 self._response_phase_readout.synapses.edge_weight,
                 self._response_phase_readout.bias,
             )
+        if self._response_plan_readout is not None:
+            tensors += (
+                self._response_plan_readout.synapses.edge_weight,
+                self._response_plan_readout.bias,
+                self._response_plan_readout.planner_weight,
+                self._response_plan_readout.planner_bias,
+                self._response_plan_readout.plan_bridge,
+            )
         if self.identity_organ is not None:
             tensors += self.identity_organ.parameter_tensors()
         return tensors
@@ -2882,6 +2977,8 @@ class Taiji:
                 self._response_phase_readout.synapses.edge_count
                 + self._response_phase_readout.bias.numel()
             )
+        if self._response_plan_readout is not None:
+            active += self._response_plan_readout.active_parameter_count
         if self.identity_organ is not None:
             active += self.identity_organ.parameter_count
         if active_only:
@@ -2924,6 +3021,14 @@ class Taiji:
                 self._response_phase_readout.synapses.dense_equivalent_count
                 + self._response_phase_readout.bias.numel()
             )
+        if self._response_plan_readout is not None:
+            count += (
+                self._response_plan_readout.synapses.dense_equivalent_count
+                + self._response_plan_readout.bias.numel()
+                + self._response_plan_readout.planner_weight.numel()
+                + self._response_plan_readout.planner_bias.numel()
+                + self._response_plan_readout.plan_bridge.numel()
+            )
         if self.identity_organ is not None:
             count += self.identity_organ.capacity * self.identity_organ.pattern_dim
             count += self.identity_organ.action_synapses.dense_equivalent_count
@@ -2963,6 +3068,8 @@ class Taiji:
             core[self.RESPONSE_START_READOUT_KEY] = self._response_start_readout.to_payload()
         if self._response_phase_readout is not None:
             core[self.RESPONSE_PHASE_READOUT_KEY] = self._response_phase_readout.to_payload()
+        if self._response_plan_readout is not None:
+            core[self.RESPONSE_PLAN_READOUT_KEY] = self._response_plan_readout.to_payload()
         return core
 
     def checkpoint(self) -> dict[str, Any]:
@@ -3035,9 +3142,10 @@ class Taiji:
             self.predictive_readout.load_payload(predictive_payload)
         response_start_payload = checkpoint.get(self.RESPONSE_START_READOUT_KEY)
         response_phase_payload = checkpoint.get(self.RESPONSE_PHASE_READOUT_KEY)
-        if response_start_payload is not None and response_phase_payload is not None:
+        response_plan_payload = checkpoint.get(self.RESPONSE_PLAN_READOUT_KEY)
+        if sum(item is not None for item in (response_start_payload, response_phase_payload, response_plan_payload)) > 1:
             raise ValueError(
-                "checkpoint cannot contain both response-start and response-phase readouts"
+                "checkpoint cannot contain multiple response candidate readouts"
             )
         self._response_start_readout = None
         if response_start_payload is not None:
@@ -3057,6 +3165,14 @@ class Taiji:
             response_phase = self._new_response_phase_readout()
             response_phase.load_payload(response_phase_payload)
             self._response_phase_readout = response_phase
+        self._response_plan_readout = None
+        if response_plan_payload is not None:
+            if is_legacy_checkpoint or not isinstance(response_plan_payload, Mapping):
+                raise ValueError("response-plan readout checkpoint payload is invalid")
+            plan_width = int(response_plan_payload.get("plan_width", -1))
+            response_plan = self._new_response_plan_readout(plan_width=plan_width)
+            response_plan.load_payload(response_plan_payload)
+            self._response_plan_readout = response_plan
         candidate_payload = checkpoint.get(self.GATED_TEMPORAL_CANDIDATE_KEY)
         self._gated_temporal_candidate = None
         if candidate_payload is not None:
@@ -3185,6 +3301,9 @@ class Taiji:
                         include_response_phase_readout=(
                             self.RESPONSE_PHASE_READOUT_KEY in checkpoint
                         ),
+                        include_response_plan_readout=(
+                            self.RESPONSE_PLAN_READOUT_KEY in checkpoint
+                        ),
                     )
                 }
             )
@@ -3303,6 +3422,7 @@ class Taiji:
         include_developmental_f1_replay: bool = False,
         include_response_start_readout: bool = False,
         include_response_phase_readout: bool = False,
+        include_response_plan_readout: bool = False,
     ) -> tuple[str, ...]:
         if include_predictive_context is None:
             # Existing callers reconstructing a v8 lineage pass only
@@ -3338,6 +3458,8 @@ class Taiji:
             keys += (Taiji.RESPONSE_START_READOUT_KEY,)
         if include_response_phase_readout:
             keys += (Taiji.RESPONSE_PHASE_READOUT_KEY,)
+        if include_response_plan_readout:
+            keys += (Taiji.RESPONSE_PLAN_READOUT_KEY,)
         return (*keys, "memory", "state", "rng_state")
 
     @classmethod

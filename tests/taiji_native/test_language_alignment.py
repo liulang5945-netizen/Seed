@@ -14,6 +14,7 @@ from taiji import (
     LanguageEpisode,
     LanguageEpisodeCorpus,
     Taiji,
+    TaijiConfig,
     checkpoint_roundtrip_preflight,
     paired_checkpoint_diagnostic,
 )
@@ -339,6 +340,65 @@ def test_response_start_and_phase_candidates_are_exclusive() -> None:
         LanguageAlignmentConfig(
             response_start_readout=True,
             response_phase_readout=True,
+        )
+
+
+def test_response_plan_candidate_isolated_checkpointable_and_ablated() -> None:
+    corpus = LanguageEpisodeCorpus.from_jsonl(
+        [Path("tests/fixtures/r2_language_alignment_smoke.jsonl")]
+    )
+    trainer = LanguageAlignmentTrainer(
+        Taiji(
+            config=TaijiConfig.capacity_profile(
+                300_000,
+                additional_predictive_readouts=1,
+                response_plan_width=32,
+            ),
+            episode_id="r2-response-plan",
+        ),
+        corpus,
+        config=LanguageAlignmentConfig(
+            response_plan_readout=True,
+            response_plan_width=32,
+            learn_fabric=False,
+            learn_predictive_context=False,
+        ),
+    )
+    protected_before = trainer.model.readout_registry_status()["protected"]["readout_digest"]
+    candidate_before = trainer.model.response_plan_readout_digest
+    parent_parameters = trainer.model.parameter_count()
+
+    trainer.train(epochs=1, max_episodes=1)
+
+    assert (
+        trainer.model.readout_registry_status()["protected"]["readout_digest"]
+        == protected_before
+    )
+    assert trainer.model.response_plan_readout_digest != candidate_before
+    assert trainer.model.response_plan_readout.plan_state is not None
+    conditioned = trainer.model.response_plan_probabilities()
+    ablated = trainer.model.response_plan_probabilities(ablate_plan=True)
+    assert conditioned.shape == ablated.shape
+    assert not torch.equal(conditioned, ablated)
+    assert trainer.model.parameter_count() == parent_parameters
+    assert trainer.model.parameter_count() <= 300_000
+
+    checkpoint = trainer.checkpoint()
+    restored = LanguageAlignmentTrainer.from_checkpoint(checkpoint, corpus)
+    assert restored.config.response_plan_readout is True
+    assert restored.model.response_plan_readout_enabled is True
+    assert restored.checkpoint()["checkpoint_digest"] == checkpoint["checkpoint_digest"]
+
+    restored.model.clear_response_plan_readout()
+    assert restored.model.response_plan_readout_enabled is False
+    assert Taiji.RESPONSE_PLAN_READOUT_KEY not in restored.model.checkpoint()
+
+
+def test_response_plan_is_mutually_exclusive_with_existing_candidates() -> None:
+    with pytest.raises(ValueError, match="mutually exclusive"):
+        LanguageAlignmentConfig(
+            response_phase_readout=True,
+            response_plan_readout=True,
         )
 
 

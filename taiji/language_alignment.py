@@ -340,6 +340,8 @@ class LanguageAlignmentConfig:
     learn_predictive_readout: bool = True
     response_start_readout: bool = False
     response_phase_readout: bool = False
+    response_plan_readout: bool = False
+    response_plan_width: int = 32
     developmental_mode: str = "static"
     developmental_replay_learning_rate_scale: float = 0.25
     developmental_consolidation_rate: float = 1.0
@@ -368,14 +370,24 @@ class LanguageAlignmentConfig:
             "learn_predictive_readout",
             "response_start_readout",
             "response_phase_readout",
+            "response_plan_readout",
             "developmental_clear_fast",
             "developmental_clear_replay",
         ):
             if not isinstance(getattr(self, name), bool):
                 raise TypeError(f"{name} must be a bool")
-        if self.response_start_readout and self.response_phase_readout:
+        if int(self.response_plan_width) <= 0:
+            raise ValueError("response_plan_width must be positive")
+        if sum(
+            bool(item)
+            for item in (
+                self.response_start_readout,
+                self.response_phase_readout,
+                self.response_plan_readout,
+            )
+        ) > 1:
             raise ValueError(
-                "response_start_readout and response_phase_readout are mutually exclusive"
+                "response candidate readouts are mutually exclusive"
             )
 
     def to_payload(self) -> dict[str, Any]:
@@ -434,6 +446,7 @@ class LanguageAlignmentTrainer:
         self._configure_developmental_mode()
         self._configure_response_start_readout()
         self._configure_response_phase_readout()
+        self._configure_response_plan_readout()
 
     def _configure_response_start_readout(self) -> None:
         if not self.config.response_start_readout:
@@ -446,6 +459,36 @@ class LanguageAlignmentTrainer:
             return
         if not self.model.response_phase_readout_enabled:
             self.model.enable_response_phase_readout(seed_from_protected=True)
+
+    def _configure_response_plan_readout(self) -> None:
+        if not self.config.response_plan_readout:
+            return
+        if not self.model.response_plan_readout_enabled:
+            self.model.enable_response_plan_readout(
+                plan_width=self.config.response_plan_width
+            )
+
+    def _response_plan_target(self, episode: LanguageEpisode) -> torch.Tensor:
+        """Create the frozen v1 training-only signed-hash span target."""
+
+        characters = list(episode.response)
+        span_count = min(8, max(1, len(characters)))
+        width = int(self.config.response_plan_width)
+        target = torch.zeros(width, dtype=torch.float32)
+        for index in range(span_count):
+            start = (index * len(characters)) // span_count
+            end = ((index + 1) * len(characters)) // span_count
+            span = "".join(characters[start:end]).encode("utf-8")
+            digest = hashlib.sha256(
+                b"r2-h3-5a-response-plan-v1\x00" + span
+            ).digest()
+            for offset in range(width):
+                byte = digest[offset % len(digest)]
+                target[offset] += 1.0 if byte & 1 else -1.0
+        norm = torch.linalg.vector_norm(target)
+        if float(norm) == 0.0:
+            raise RuntimeError("response plan target unexpectedly has zero norm")
+        return target / norm
 
     def _configure_developmental_mode(self) -> None:
         mode = self.config.developmental_mode
@@ -539,6 +582,13 @@ class LanguageAlignmentTrainer:
         if self.config.response_phase_readout:
             self.model.begin_response_phase()
             response_phase_readout = self.model.response_phase_readout
+        if self.config.response_plan_readout:
+            self.model.begin_response_plan()
+            response_phase_readout = self.model.response_plan_readout
+            if learn:
+                response_phase_readout.learn_plan_target(
+                    self._response_plan_target(episode)
+                )
         observations = 0
         correct = 0
         surprise_sum = 0.0
@@ -615,6 +665,9 @@ class LanguageAlignmentTrainer:
         if self.config.response_phase_readout:
             self.model.begin_response_phase()
             response_phase_readout = self.model.response_phase_readout
+        if self.config.response_plan_readout:
+            self.model.begin_response_plan()
+            response_phase_readout = self.model.response_plan_readout
         for _ in range(limit):
             allowed = self._utf8_allowed(remaining, lead)
             probabilities = (
@@ -626,6 +679,10 @@ class LanguageAlignmentTrainer:
                     else step.probabilities.detach().cpu()
                 )
             )
+            if self.config.response_plan_readout:
+                probabilities = self.model.response_plan_readout.probabilities(
+                    self.model.snapshot().motor_context
+                ).detach().cpu()
             mask = torch.zeros_like(probabilities, dtype=torch.bool)
             mask[torch.tensor(allowed, dtype=torch.long)] = True
             masked = probabilities.clone()
