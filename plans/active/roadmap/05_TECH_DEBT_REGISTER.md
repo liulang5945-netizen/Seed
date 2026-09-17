@@ -8,6 +8,23 @@
 - 本轮较大范围pytest在`outputs/pytest_h37b_20260917`遇WinError 5及清理异常；局部18项通过不能替代该套件或当前HEAD全量CI。未删除目录、未批量修改权限。
 - 权威快照见[项目收束记录](../../reference/PROJECT_CONSOLIDATION_20260917.md)；其余条目保留历史范围，不补发绿灯。
 
+**DEBT-I7 的第二实例（2026-09-17 定位，**未修**）**：除 `checkpoints/seed_corpus.pt` 外，
+测试还会往**共享非临时目录** `output/manual-r5-canary/` 写中间产物且**从不清理**。
+
+- **实测**：该目录现存 **1054 个残留**（`s29-*` 到 `s51-*`，按 PID 分组；仅 `s45-*` 就有 215 个）。
+- **涉及测试至少 7 个**：`test_runtime_artifact_store_audit_projection` / `..._bridge` /
+  `..._preflight` / `..._runtime_reconciliation` / `test_runtime_retention_store_audit` /
+  `test_structural_artifact_measurement_sidecar` / `test_structural_artifact_store`，
+  统一以 `Path(__file__).resolve().parents[2] / "output" / "manual-r5-canary" / f"sNN-store-{os.getpid()}"`
+  作为 store 根，并把中间 `.pt` 放在**同一父目录**下。
+- **后果（已实测）**：全量套件里 5 项 `runtime/structural artifact store` 测试**单独跑全过、
+  全量跑失败**（`unexpected file: invalid-name.json`、orphan 集合多出 `external_orphan`、
+  `assert 2 == 1`、`DID NOT RAISE ValueError`）⇒ **是环境残留而非代码缺陷**，
+  但**使"全量测试"这一最基本的验收手段不可靠**（有掩盖真失败的风险）。
+- **修法（建议，未实施）**：把这 7 处的 `store_root` 改到 pytest 的 `tmp_path`；
+  或至少在 teardown 清理父目录中属于本次 PID 的中间文件。
+  **不要**删除 `output/` 内既有残留（可能含历史证据，且属"个人/产物目录"禁区）。
+
 ## 最新状态补充（2026-09-15，WP-3 落地后：仪器语义债）
 
 - **DEBT-I1（本轮已修）A/B 仪器的基线臂会在被测改动落地后静默变成被测臂**。结构空间探针以
