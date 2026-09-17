@@ -1,0 +1,82 @@
+{
+  "format": "r2-d1-measurement-v1",
+  "version": 1,
+  "generator": "scripts/training/build_taiji_r2_d1_measurement_fixture.py",
+  "fixture": "tests\\fixtures\\r2_d1_measurement_v1.jsonl",
+  "fixture_sha256": "4a088ed3408fc44421d21c2bf65099835aed9ede07612ce4eb7b9ac2ad3033f6",
+  "corpus_digest": "53ac9f88695f135d0bb04b4d25d98ab686c82175c45ca8d4d53e64639efbeecb",
+  "splits": {
+    "train": {
+      "episodes": 174,
+      "unique_pairs": 174,
+      "shapes": {
+        "fact": 48,
+        "negation": 48,
+        "unknown": 8,
+        "same_opening_fact": 48,
+        "same_opening_unknown": 8,
+        "combination_same": 7,
+        "combination_different": 7
+      },
+      "pairs": {
+        "fact_flip_pairs": 8,
+        "combo_flip_pairs": 7,
+        "invariance_pairs": 0,
+        "order_seed": 210
+      }
+    },
+    "dev": {
+      "episodes": 98,
+      "unique_pairs": 98,
+      "shapes": {
+        "fact": 28,
+        "negation": 24,
+        "unknown": 6,
+        "same_opening_fact": 24,
+        "same_opening_unknown": 6,
+        "combination_same": 5,
+        "combination_different": 5
+      },
+      "pairs": {
+        "fact_flip_pairs": 6,
+        "combo_flip_pairs": 5,
+        "invariance_pairs": 4,
+        "order_seed": 209
+      }
+    },
+    "final": {
+      "episodes": 94,
+      "unique_pairs": 94,
+      "shapes": {
+        "fact": 24,
+        "negation": 24,
+        "unknown": 6,
+        "same_opening_fact": 24,
+        "same_opening_unknown": 6,
+        "combination_same": 5,
+        "combination_different": 5
+      },
+      "pairs": {
+        "fact_flip_pairs": 6,
+        "combo_flip_pairs": 5,
+        "invariance_pairs": 0,
+        "order_seed": 209
+      }
+    }
+  },
+  "checks": {
+    "unique_prefixes_within_split": true,
+    "prefixes_disjoint_across_splits": true,
+    "pairs_disjoint_across_splits": true,
+    "entities_disjoint_across_splits": true,
+    "all_shapes_in_every_split": true,
+    "unknown_once_per_object": true,
+    "flip_pair_counts": true,
+    "invariance_pairs_dev": true,
+    "pair_members_non_adjacent": true,
+    "pair_structure": true,
+    "reference_self_check": true
+  },
+  "outcome": "passed",
+  "failed_checks": []
+}
